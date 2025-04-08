@@ -30,12 +30,12 @@ import {
   SystemCallTransaction,
 } from '../types';
 import { fetchEventsInBlockRange } from './blocks';
-import { CacheStore, createCacheStore, storeEvent } from './cache';
+import { StateCache, createStateCache, storeEvent } from './cache';
 import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');
 interface FetchOptions {
-  cacheStore: CacheStore;
+  stateCache: StateCache;
   kamigazeClient: KamigazeServiceClient;
   decode: ReturnType<typeof createDecode>;
   numChunks?: number;
@@ -51,22 +51,22 @@ export function createSnapshotClient(url: string): KamigazeServiceClient {
 }
 
 export async function fetchStateFromKamigaze(
-  cacheStore: CacheStore,
+  stateCache: StateCache,
   kamigazeClient: KamigazeServiceClient,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
   setPercentage: (percentage: number) => void
-): Promise<CacheStore> {
-  let currentBlock = cacheStore.lastKamigazeBlock;
+): Promise<StateCache> {
+  let currentBlock = stateCache.lastKamigazeBlock;
   let initialLoad = currentBlock == 0;
 
-  const options: FetchOptions = { cacheStore, kamigazeClient, decode, numChunks, setPercentage };
+  const options: FetchOptions = { stateCache, kamigazeClient, decode, numChunks, setPercentage };
 
   //block
   let BlockResponse = await kamigazeClient.getStateBlock({});
-  if (cacheStore.kamigazeNonce != BlockResponse.nonce) {
+  if (stateCache.kamigazeNonce != BlockResponse.nonce) {
     console.log('New nonce found, full state load required');
-    options.cacheStore = createCacheStore();
+    options.stateCache = createStateCache();
     initialLoad = true;
   }
 
@@ -82,47 +82,47 @@ export async function fetchStateFromKamigaze(
     throw error;
   }
 
-  storeBlock(options.cacheStore, BlockResponse);
-  options.cacheStore.lastKamigazeBlock = BlockResponse.blockNumber;
-  options.cacheStore.kamigazeNonce = BlockResponse.nonce;
+  storeBlock(options.stateCache, BlockResponse);
+  options.stateCache.lastKamigazeBlock = BlockResponse.blockNumber;
+  options.stateCache.kamigazeNonce = BlockResponse.nonce;
 
-  return options.cacheStore;
+  return options.stateCache;
 }
 
-async function fetchComponents({ cacheStore, kamigazeClient, setPercentage }: FetchOptions) {
+async function fetchComponents({ stateCache, kamigazeClient, setPercentage }: FetchOptions) {
   // remove from the cache any component added by the rpc sync
-  cacheStore.components.splice(cacheStore.lastKamigazeComponent + 1);
+  stateCache.components.splice(stateCache.lastKamigazeComponent + 1);
 
   const ComponentsResponse = await kamigazeClient.getComponents({
-    fromIdx: cacheStore.lastKamigazeComponent,
+    fromIdx: stateCache.lastKamigazeComponent,
   });
 
-  storeComponents(cacheStore, ComponentsResponse.components);
-  cacheStore.lastKamigazeComponent = cacheStore.components.length - 1;
+  storeComponents(stateCache, ComponentsResponse.components);
+  stateCache.lastKamigazeComponent = stateCache.components.length - 1;
   setPercentage(5);
 }
 
 async function fetchStateRemovals({
-  cacheStore,
+  stateCache,
   kamigazeClient,
   numChunks = 10,
   setPercentage,
 }: FetchOptions) {
   let percent = 5;
   const StateRemovalsResponse = await kamigazeClient.getState({
-    fromBlock: cacheStore.lastKamigazeBlock,
+    fromBlock: stateCache.lastKamigazeBlock,
     numChunks,
     removals: true,
   });
   for await (const responseChunk of StateRemovalsResponse) {
-    removeValues(cacheStore, responseChunk.state);
+    removeValues(stateCache, responseChunk.state);
     setPercentage(percent);
     percent += 3;
   }
 }
 
 async function fetchStateValues({
-  cacheStore,
+  stateCache,
   kamigazeClient,
   decode,
   numChunks = 10,
@@ -130,112 +130,112 @@ async function fetchStateValues({
 }: FetchOptions) {
   let percent = 40;
   const StateValuesResponse = await kamigazeClient.getState({
-    fromBlock: cacheStore.lastKamigazeBlock,
+    fromBlock: stateCache.lastKamigazeBlock,
     numChunks,
     removals: false,
   });
 
   for await (const responseChunk of StateValuesResponse) {
-    storeValues(cacheStore, responseChunk.state, decode);
+    storeValues(stateCache, responseChunk.state, decode);
     setPercentage(percent);
     percent += 3;
   }
 }
 
 async function fetchEntities({
-  cacheStore,
+  stateCache,
   kamigazeClient,
   numChunks = 10,
   setPercentage,
 }: FetchOptions) {
   // remove from the cache any entity added by the rpc sync
   let percent = 75;
-  cacheStore.entities.splice(cacheStore.lastKamigazeEntity + 1);
+  stateCache.entities.splice(stateCache.lastKamigazeEntity + 1);
 
   const EntitiesResponse = kamigazeClient.getEntities({
-    fromIdx: cacheStore.lastKamigazeEntity,
+    fromIdx: stateCache.lastKamigazeEntity,
     numChunks,
   });
 
   for await (const responseChunk of EntitiesResponse) {
-    storeEntities(cacheStore, responseChunk.entities);
+    storeEntities(stateCache, responseChunk.entities);
     setPercentage(percent);
     percent += 3;
   }
 
-  cacheStore.lastKamigazeEntity = cacheStore.entities.length - 1;
+  stateCache.lastKamigazeEntity = stateCache.entities.length - 1;
 }
 
-export function storeBlock(cacheStore: CacheStore, block: BlockResponse) {
-  cacheStore.blockNumber = block.blockNumber;
+export function storeBlock(stateCache: StateCache, block: BlockResponse) {
+  stateCache.blockNumber = block.blockNumber;
   console.log('Stored block');
 }
-export function storeComponents(cacheStore: CacheStore, components: Component[]) {
+export function storeComponents(stateCache: StateCache, components: Component[]) {
   if (typeof components === 'undefined') {
     console.log('No components to store');
     return;
   }
-  if (cacheStore.components.length == 0) {
-    cacheStore.components.push('0x0');
+  if (stateCache.components.length == 0) {
+    stateCache.components.push('0x0');
   }
   for (const component of components) {
     var hexId = uint8ArrayToHexString(component.id);
 
     //CHECK INDEX
-    if (component.idx != cacheStore.components.length) {
+    if (component.idx != stateCache.components.length) {
       console.log(
-        `Component.IDX ${component.idx} does not mach tail of list${cacheStore.components.length}`
+        `Component.IDX ${component.idx} does not mach tail of list${stateCache.components.length}`
       );
       continue;
     }
 
-    cacheStore.components.push(hexId);
-    cacheStore.componentToIndex.set(hexId, component.idx);
+    stateCache.components.push(hexId);
+    stateCache.componentToIndex.set(hexId, component.idx);
   }
-  console.log('Stored components: ' + cacheStore.components.length);
+  console.log('Stored components: ' + stateCache.components.length);
 }
 
-export function storeEntities(cacheStore: CacheStore, entities: Entity[]) {
+export function storeEntities(stateCache: StateCache, entities: Entity[]) {
   if (typeof entities === 'undefined') {
     console.log('No components to store');
     return;
   }
-  if (cacheStore.entities.length == 0) cacheStore.entities.push('0x0');
+  if (stateCache.entities.length == 0) stateCache.entities.push('0x0');
   for (const entity of entities) {
     var hexId = uint8ArrayToHexString(entity.id);
 
     //CHECK INDEX
-    if (entity.idx != cacheStore.entities.length) {
+    if (entity.idx != stateCache.entities.length) {
       console.log(
-        `Entity.IDX ${entity.idx} does not match tail of list ${cacheStore.entities.length}`
+        `Entity.IDX ${entity.idx} does not match tail of list ${stateCache.entities.length}`
       );
       continue;
     }
 
-    cacheStore.entities.push(hexId);
-    cacheStore.entityToIndex.set(hexId, entity.idx);
+    stateCache.entities.push(hexId);
+    stateCache.entityToIndex.set(hexId, entity.idx);
   }
   console.log('Stored entities');
 }
 
 export async function storeValues(
-  cacheStore: CacheStore,
+  stateCache: StateCache,
   values: State[],
   decode: ReturnType<typeof createDecode>
 ) {
   for (const event of values) {
     const { packedIdx, data } = event;
     let componentIdx = unpackTuple(packedIdx)[0];
-    const value = await decode(cacheStore.components[componentIdx], data);
-    cacheStore.state.set(packedIdx, value);
+    const value = await decode(stateCache.components[componentIdx], data);
+    stateCache.state.set(packedIdx, value);
   }
   console.log('Stored values');
 }
 
-export function removeValues(cacheStore: CacheStore, values: State[]) {
+export function removeValues(stateCache: StateCache, values: State[]) {
   for (const event of values) {
     const { packedIdx, data } = event;
-    cacheStore.state.delete(packedIdx);
+    stateCache.state.delete(packedIdx);
   }
   console.log('Removed values');
 }
@@ -246,7 +246,7 @@ export function removeValues(cacheStore: CacheStore, values: State[]) {
  * @param snapshotClient ECSStateSnapshotServiceClient
  * @param worldAddress Address of the World contract to get the snapshot for.
  * @param decode Function to decode raw component values ({@link createDecode}).
- * @returns Promise resolving with {@link CacheStore} containing the snapshot state.
+ * @returns Promise resolving with {@link StateCache} containing the snapshot state.
  */
 export async function fetchSnapshotChunked(
   snapshotClient: ECSStateSnapshotServiceClient,
@@ -255,8 +255,8 @@ export async function fetchSnapshotChunked(
   numChunks = 10,
   setPercentage?: (percentage: number) => void,
   pruneOptions?: { playerAddress: string; hashedComponentId: string }
-): Promise<CacheStore> {
-  const cacheStore = createCacheStore();
+): Promise<StateCache> {
+  const stateCache = createStateCache();
   const chunkPercentage = Math.ceil(100 / numChunks);
 
   try {
@@ -274,27 +274,27 @@ export async function fetchSnapshotChunked(
 
     let i = 0;
     for await (const responseChunk of response) {
-      await reduceFetchedState(responseChunk, cacheStore, decode);
+      await reduceFetchedState(responseChunk, stateCache, decode);
       setPercentage && setPercentage((i++ / numChunks) * 100);
     }
   } catch (e) {
     console.error(e);
   }
 
-  return cacheStore;
+  return stateCache;
 }
 
 /**
  * Reduces a snapshot response by storing corresponding ECS events into the cache store.
  *
  * @param response ECSStateReplyV2
- * @param cacheStore {@link CacheStore} to store snapshot state into.
+ * @param stateCache {@link StateCache} to store snapshot state into.
  * @param decode Function to decode raw component values ({@link createDecode}).
- * @returns Promise resolving once state is reduced into {@link CacheStore}.
+ * @returns Promise resolving once state is reduced into {@link StateCache}.
  */
 export async function reduceFetchedState(
   response: ECSStateReplyV2,
-  cacheStore: CacheStore,
+  stateCache: StateCache,
   decode: ReturnType<typeof createDecode>
 ): Promise<void> {
   const { state, blockNumber, stateComponents, stateEntities } = response;
@@ -306,7 +306,7 @@ export async function reduceFetchedState(
     const entity = stateEntitiesHex[entityIdIdx]!;
     if (entity == undefined) debug('invalid entity index', stateEntities.length, entityIdIdx);
     const value = await decode(component, rawValue);
-    storeEvent(cacheStore, {
+    storeEvent(stateCache, {
       type: NetworkEvents.NetworkComponentUpdate,
       component,
       entity,
@@ -537,7 +537,7 @@ function createBlockCache(provider: JsonRpcProvider) {
 //  * @param fromBlockNumber Start of block range (inclusive).
 //  * @param toBlockNumber End of block range (inclusive).
 //  * @param interval Chunk fetching the blocks in intervals to avoid overwhelming the client.
-//  * @returns Promise resolving with {@link CacheStore} containing the contract ECS state in the given block range.
+//  * @returns Promise resolving with {@link StateCache} containing the contract ECS state in the given block range.
 //  */
 // export async function fetchStateInBlockRange(
 //   fetchWorldEvents: ReturnType<typeof createFetchWorldEventsInBlockRange>,
@@ -545,8 +545,8 @@ function createBlockCache(provider: JsonRpcProvider) {
 //   toBlockNumber: number,
 //   interval = 50,
 //   setPercentage?: (percentage: number) => void
-// ): Promise<CacheStore> {
-//   const cacheStore = createCacheStore();
+// ): Promise<StateCache> {
+//   const stateCache = createStateCache();
 
 //   const events = await fetchEventsInBlockRangeChunked(
 //     fetchWorldEvents,
@@ -556,9 +556,9 @@ function createBlockCache(provider: JsonRpcProvider) {
 //     setPercentage
 //   );
 
-//   storeEvents(cacheStore, events);
+//   storeEvents(stateCache, events);
 
-//   return cacheStore;
+//   return stateCache;
 // }
 
 export function groupByTxHash(events: NetworkComponentUpdate[]) {

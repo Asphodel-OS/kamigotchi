@@ -8,11 +8,11 @@ import { transformIterator } from 'utils/iterators';
 import { debug as parentDebug } from 'workers/debug';
 import { NetworkComponentUpdate, NetworkEvents } from 'workers/types';
 
-const debug = parentDebug.extend('CacheStore');
+const debug = parentDebug.extend('StateCache');
 
-// TODO: either delineate or merge clear responssibilities between CacheStore and ECSCache
+// TODO: either delineate or merge clear responssibilities between StateCache and ECSCache
 export type State = Map<number, ComponentValue>;
-export type CacheStore = ReturnType<typeof createCacheStore>;
+export type StateCache = ReturnType<typeof createStateCache>;
 export type ECSCache = Awaited<ReturnType<typeof getStateCache>>;
 type StateReport = {
   blockNumber: number;
@@ -27,7 +27,7 @@ type StateReport = {
   };
 };
 
-export function createCacheStore() {
+export function createStateCache() {
   const components: string[] = [];
   const componentToIndex = new Map<string, number>();
   const entities: string[] = [];
@@ -54,7 +54,7 @@ export function createCacheStore() {
 }
 
 export function storeEvent<Cm extends Components>(
-  cacheStore: CacheStore,
+  stateCache: StateCache,
   {
     component,
     entity,
@@ -65,7 +65,7 @@ export function storeEvent<Cm extends Components>(
   // Remove the 0 padding from all entityes
   const normalizedEntity = formatEntityID(entity);
 
-  const { components, entities, componentToIndex, entityToIndex, state } = cacheStore;
+  const { components, entities, componentToIndex, entityToIndex, state } = stateCache;
 
   // Get component index
   let componentIndex = componentToIndex.get(component);
@@ -89,22 +89,22 @@ export function storeEvent<Cm extends Components>(
   // Set block number to one less than the last received event's block number
   // (Events are expected to be ordered, so once a new block number appears,
   // the previous block number is done processing)
-  cacheStore.blockNumber = blockNumber - 1;
+  stateCache.blockNumber = blockNumber - 1;
 }
 
 export function storeEvents<Cm extends Components>(
-  cacheStore: CacheStore,
+  stateCache: StateCache,
   events: Omit<NetworkComponentUpdate<Cm>, 'lastEventInTx' | 'txHash'>[]
 ) {
   for (const event of events) {
-    storeEvent(cacheStore, event);
+    storeEvent(stateCache, event);
   }
 }
 
-export function getCacheStoreEntries<Cm extends Components>(
-  cacheStore: CacheStore
+export function getStateCacheEntries<Cm extends Components>(
+  stateCache: StateCache
 ): IterableIterator<NetworkComponentUpdate<Cm>> {
-  const { blockNumber, state, components, entities } = cacheStore;
+  const { blockNumber, state, components, entities } = stateCache;
 
   return transformIterator(state.entries(), ([key, value]) => {
     const [componentIndex, entityIndex] = unpackTuple(key);
@@ -131,7 +131,7 @@ export function getCacheStoreEntries<Cm extends Components>(
   });
 }
 
-export async function saveCacheStoreToIndexDb(cache: ECSCache, store: CacheStore) {
+export async function saveStateCacheToIndexDb(cache: ECSCache, store: StateCache) {
   debug('store cache with size', store.state.size, 'at block', store.blockNumber);
   await cache.set('ComponentValues', 'current', store.state);
   await cache.set('Mappings', 'components', store.components);
@@ -143,7 +143,7 @@ export async function saveCacheStoreToIndexDb(cache: ECSCache, store: CacheStore
   await cache.set('KamigazeNonce', 'current', store.kamigazeNonce);
 }
 
-export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheStore> {
+export async function loadIndexDbToStateCache(cache: ECSCache): Promise<StateCache> {
   const state =
     (await cache.get('ComponentValues', 'current')) ?? new Map<number, ComponentValue>();
   const blockNumber = (await cache.get('BlockNumber', 'current')) ?? 0;
@@ -181,7 +181,7 @@ export async function loadIndexDbToCacheStore(cache: ECSCache): Promise<CacheSto
   };
 }
 
-export async function getIndexDBCacheStoreBlockNumber(cache: ECSCache): Promise<number> {
+export async function getIndexDBStateCacheBlockNumber(cache: ECSCache): Promise<number> {
   return (await cache.get('BlockNumber', 'current')) ?? 0;
 }
 
@@ -221,18 +221,18 @@ function getCacheId(namespace: string, chainId: number, worldAddress: string, ve
   return `${namespace}-${chainId}-${worldAddress}-v${version}`;
 }
 
-// gets the state report of the CacheStore
-export function getStateReport(cacheStore: CacheStore): StateReport {
+// gets the state report of the StateCache
+export function getStateReport(stateCache: StateCache): StateReport {
   return {
-    blockNumber: cacheStore.blockNumber,
-    numComponents: cacheStore.components.length,
-    numEntities: cacheStore.entities.length,
-    numStateEntries: cacheStore.state.size,
+    blockNumber: stateCache.blockNumber,
+    numComponents: stateCache.components.length,
+    numEntities: stateCache.entities.length,
+    numStateEntries: stateCache.state.size,
     kamigaze: {
-      lastBlock: cacheStore.lastKamigazeBlock,
-      lastEntity: cacheStore.lastKamigazeEntity,
-      lastComponent: cacheStore.lastKamigazeComponent,
-      kamigazeNonce: cacheStore.kamigazeNonce,
+      lastBlock: stateCache.lastKamigazeBlock,
+      lastEntity: stateCache.lastKamigazeEntity,
+      lastComponent: stateCache.lastKamigazeComponent,
+      kamigazeNonce: stateCache.kamigazeNonce,
     },
   };
 }

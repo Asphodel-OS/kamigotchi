@@ -4,6 +4,7 @@ import { BigNumber } from 'ethers';
 import { Channel, createChannel, createClient } from 'nice-grpc-web';
 import { Observable, concatMap, from, map, of } from 'rxjs';
 
+import { createDecode } from 'engine/encoders';
 import {
   KamigazeServiceClient,
   KamigazeServiceDefinition,
@@ -18,7 +19,7 @@ import {
   SystemCall,
   SystemCallTransaction,
 } from '../types';
-import { createDecode, groupByTxHash } from './utils';
+import { groupByTxHash } from './utils';
 
 const debug = parentDebug.extend('syncUtils');
 

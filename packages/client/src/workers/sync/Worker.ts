@@ -39,14 +39,14 @@ import {
   SyncWorkerConfig,
 } from '../types';
 import {
-  createCacheStore,
-  getCacheStoreEntries,
+  createStateCache,
   getStateCache,
-  loadIndexDbToCacheStore,
-  saveCacheStoreToIndexDb,
+  getStateCacheEntries,
+  loadIndexDbToStateCache,
+  saveStateCacheToIndexDb,
   storeEvents,
 } from './cache';
-import { getStateReport } from './cache/CacheStore';
+import { getStateReport } from './cache/StateCache';
 import {
   createKamigazeStreamService,
   createTransformWorldEventsFromStream,
@@ -169,7 +169,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       percentage: 0,
     });
     let outputLiveEvents = false;
-    const cacheStore = { current: createCacheStore() };
+    const stateCache = { current: createStateCache() };
     const { blockNumber$ } = createBlockNumberStream(providers);
 
     // Setup RPC event stream
@@ -266,7 +266,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     // load cache
     this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
-    let initialState = await loadIndexDbToCacheStore(indexedDB);
+    let initialState = await loadIndexDbToStateCache(indexedDB);
     console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
     // retrieve snapshot if url provided
@@ -323,30 +323,30 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     // Merge initial state, gap state and live events since initial sync started
     storeEvents(initialState, [...gapStateEvents, ...initialLiveEvents]);
-    cacheStore.current = initialState;
+    stateCache.current = initialState;
 
     /*
      * INITIALIZE STATE
      * - Initialize the app state from the list of network events
      */
     performance.mark('init');
-    const cacheStoreSize = cacheStore.current.state.size;
+    const stateCacheSize = stateCache.current.state.size;
     this.setLoadingState({
       state: SyncState.INITIALIZE,
-      msg: `Initializing with ${cacheStoreSize.toLocaleString()} state entries`,
+      msg: `Initializing with ${stateCacheSize.toLocaleString()} state entries`,
       percentage: 0,
     });
 
-    // Pass current cacheStore to output and start passing live events
+    // Pass current stateCache to output and start passing live events
     let i = 0;
-    for (const update of getCacheStoreEntries(cacheStore.current)) {
+    for (const update of getStateCacheEntries(stateCache.current)) {
       this.output$.next(update as NetworkEvent<C>);
       if (i++ % 5e4 === 0) {
-        const percentage = Math.floor((i / cacheStoreSize) * 100);
+        const percentage = Math.floor((i / stateCacheSize) * 100);
         this.setLoadingState({ percentage });
       }
     }
-    saveCacheStoreToIndexDb(indexedDB, cacheStore.current);
+    saveStateCacheToIndexDb(indexedDB, stateCache.current);
 
     /*
      * FINISH
@@ -354,7 +354,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     performance.mark('live');
     this.setLoadingState(
       { state: SyncState.LIVE, msg: `Streaming Live Events`, percentage: 100 },
-      cacheStore.current.blockNumber
+      stateCache.current.blockNumber
     );
 
     // Q: how does this retroactively affects the Latest Event subscription?
