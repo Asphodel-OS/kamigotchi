@@ -27,18 +27,23 @@ contract ListingSellSystem is System {
     if (merchantID == 0) revert("merchant does not exist");
     LibNPC.verifyRoom(components, merchantID, accID);
 
-    uint256 total;
     for (uint256 i; i < itemIndices.length; i++) {
       uint256 listingID = LibListingRegistry.get(components, merchantIndex, itemIndices[i]);
       if (listingID == 0) revert("listing does not exist");
       require(LibListing.meetsRequirements(components, listingID, accID), "reqs not met");
 
-      total += LibListing.sell(components, listingID, accID, itemIndices[i], amts[i]);
+      (uint32 currency, uint256 earned) = LibListing.sell(
+        components,
+        listingID,
+        accID,
+        itemIndices[i],
+        amts[i]
+      );
       LibListing.logIncItemSell(components, accID, itemIndices[i], amts[i]);
+      LibListing.logRevenue(components, accID, currency, earned);
     }
 
     // standard logging and tracking
-    LibListing.logEarnCoin(components, accID, total);
     LibAccount.updateLastTs(components, accID);
     return "";
   }

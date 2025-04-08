@@ -81,7 +81,7 @@ contract HarvestLiquidateSystem is System {
     LibKami.setLastActionTs(components, killerID, block.timestamp);
 
     // standard logging and tracking
-    LibScore.incFor(components, accID, "LIQUIDATE", 1);
+    LibScore.incFor(components, accID, 0, "LIQUIDATE", 1);
     LibAccount.updateLastTs(components, accID);
 
     return "";

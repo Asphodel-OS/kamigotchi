@@ -21,6 +21,7 @@ export interface Score {
 
 export interface ScoresFilter {
   epoch: number;
+  index: number;
   type: string;
 }
 
@@ -29,18 +30,19 @@ export const getScoreFromHash = (
   components: Components,
   holderID: EntityID,
   epoch: number,
+  index: number,
   type: string
 ): Score => {
   const { Value } = components;
 
   // populate the holder
-  const index = getEntityIndex(world, holderID, epoch, type);
+  const entity = getEntityIndex(world, holderID, epoch, index, type);
   const accountEntityIndex = world.entityToIndex.get(holderID) as EntityIndex;
   const account = getAccount(world, components, accountEntityIndex);
 
   return {
     account,
-    score: index ? (getComponentValue(Value, index)?.value as number) : 0,
+    score: entity ? (getComponentValue(Value, entity)?.value as number) : 0,
   };
 };
 
@@ -77,7 +79,7 @@ export const getScoresByFilter = (
   components: Components,
   filter: ScoresFilter
 ): Score[] => {
-  const typeID = getType(filter.type, filter.epoch);
+  const typeID = getType(filter.epoch, filter.index, filter.type);
   return getScoresByType(world, components, typeID);
 };
 
@@ -88,15 +90,16 @@ const getEntityIndex = (
   world: any,
   holderID: EntityID,
   epoch: number,
+  index: number,
   field: string
 ): EntityIndex | undefined => {
   return getEntityByHash(
     world,
-    ['is.score', holderID, epoch, field],
-    ['string', 'uint256', 'uint32', 'string']
+    ['is.score', holderID, epoch, index, field],
+    ['string', 'uint256', 'uint256', 'uint32', 'string']
   );
 };
 
-const getType = (type: string, epoch: number): EntityID => {
-  return hashArgs(['score.type', type, epoch], ['string', 'string', 'uint256'], true);
+const getType = (epoch: number, index: number, type: string): EntityID => {
+  return hashArgs(['score.type', epoch, index, type], ['uint256', 'uint32', 'string'], true);
 };

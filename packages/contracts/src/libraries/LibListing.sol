@@ -19,7 +19,7 @@ import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
 import { LibListingRegistry as LibRegistry } from "libraries/LibListingRegistry.sol";
 
 /** @notice
@@ -42,15 +42,15 @@ library LibListing {
     uint256 accID,
     uint32 itemIndex,
     uint256 amt
-  ) internal returns (uint256 total) {
-    uint256 price = calcBuyPrice(comps, id, amt);
+  ) internal returns (uint32 currencyIndex, uint256 price) {
+    price = calcBuyPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid buy price");
     incBalance(comps, id, amt);
 
     // move items
-    uint32 currencyIndex = LibRegistry.getCurrencyIndex(comps, id);
+    currencyIndex = LibRegistry.getCurrencyIndex(comps, id);
     LibInventory.incFor(comps, accID, itemIndex, amt); // gain item
-    LibInventory.decFor(comps, accID, currencyIndex, price); // take currecy
+    LibInventory.decFor(comps, accID, currencyIndex, price); // take currency
   }
 
   /// @notice processes a sell for amt of item from an account to a listing
@@ -60,13 +60,13 @@ library LibListing {
     uint256 accID,
     uint32 itemIndex,
     uint256 amt
-  ) internal returns (uint256 total) {
-    uint256 price = calcSellPrice(comps, id, amt);
+  ) internal returns (uint32 currencyIndex, uint256 price) {
+    price = calcSellPrice(comps, id, amt);
     if (price == 0) revert("LibListing: invalid sell price");
     decBalance(comps, id, amt);
 
     // move items
-    uint32 currencyIndex = LibRegistry.getCurrencyIndex(comps, id);
+    currencyIndex = LibRegistry.getCurrencyIndex(comps, id);
     LibInventory.decFor(comps, accID, itemIndex, amt); // take item
     LibInventory.incFor(comps, accID, currencyIndex, price); // gain currency
   }
@@ -163,8 +163,8 @@ library LibListing {
     indices[1] = itemIndex;
     indices[2] = itemIndex;
     string[] memory types = new string[](3);
-    types[0] = "ITEM_BUY_TOTAL";
-    types[1] = "ITEM_BUY";
+    types[0] = "LISTING_BUY_TOTAL";
+    types[1] = "LISTING_BUY";
     types[2] = "ITEM_TOTAL";
 
     LibData.inc(comps, accID, indices, types, amt);
@@ -175,27 +175,21 @@ library LibListing {
     uint32[] memory indices = new uint32[](2);
     indices[1] = itemIndex;
     string[] memory types = new string[](2);
-    types[0] = "ITEM_SELL_TOTAL";
+    types[0] = "LISTING_SELL_TOTAL";
     types[1] = "ITEM_SELL";
 
     LibData.inc(comps, accID, indices, types, amt);
   }
 
-  /// @notice log coins spent
-  function logSpendCoin(IUintComp comps, uint256 accID, uint256 amt) internal {
-    LibData.inc(comps, accID, MUSU_INDEX, "ITEM_SPEND", amt);
-  }
-
   /// @notice log coin revenue earned
-  function logEarnCoin(IUintComp comps, uint256 accID, uint256 amt) internal {
+  function logRevenue(IUintComp comps, uint256 accID, uint32 currency, uint256 amt) internal {
     uint32[] memory indices = new uint32[](2);
-    indices[0] = MUSU_INDEX;
-    indices[1] = MUSU_INDEX;
+    indices[0] = currency;
+    indices[1] = currency;
     string[] memory types = new string[](2);
-    types[0] = "ITEM_REVENUE";
+    types[0] = "LISTING_REVENUE"; // currency index
     types[1] = "ITEM_TOTAL";
 
     LibData.inc(comps, accID, indices, types, amt);
-    // LibData.inc(comps, accID, MUSU_INDEX, "ITEM_REVENUE", amt);
   }
 }

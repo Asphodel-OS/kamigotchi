@@ -42,6 +42,7 @@ export function registerLeaderboardModal() {
       const { leaderboardKey } = useSelected();
       const [filter, setFilter] = useState<ScoresFilter>({
         epoch: 1,
+        index: 0,
         type: 'TOTAL_SPENT',
       });
       const [tableData, setTableData] = useState<Score[]>([]);
@@ -53,6 +54,7 @@ export function registerLeaderboardModal() {
         setLbDetails(dets);
         setFilter({
           epoch: filter.epoch,
+          index: filter.index,
           type: dets ? dets.type : '',
         });
       }, [leaderboardKey]);

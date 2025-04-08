@@ -61,12 +61,13 @@ library LibScore {
   function incFor(
     IUintComp components,
     uint256 holderID,
+    uint32 index,
     string memory _type,
     uint256 amt
   ) internal {
     uint256 epoch = getCurentEpoch(components);
-    uint256 id = genScoreID(holderID, epoch, _type);
-    incFor(components, id, holderID, genTypeID(_type, epoch), amt);
+    uint256 id = genScoreID(holderID, epoch, index, _type);
+    incFor(components, id, holderID, genTypeID(epoch, index, _type), amt);
   }
 
   /// @notice decrements score balance, creates score if needed
@@ -86,12 +87,13 @@ library LibScore {
   function decFor(
     IUintComp components,
     uint256 holderID,
+    uint32 index,
     string memory _type,
     uint256 amt
   ) internal {
     uint256 epoch = getCurentEpoch(components);
-    uint256 id = genScoreID(holderID, epoch, _type);
-    decFor(components, id, holderID, genTypeID(_type, epoch), amt);
+    uint256 id = genScoreID(holderID, epoch, index, _type);
+    decFor(components, id, holderID, genTypeID(epoch, index, _type), amt);
   }
 
   /////////////////
@@ -120,12 +122,17 @@ library LibScore {
   function genScoreID(
     uint256 holderID,
     uint256 epoch,
+    uint32 index,
     string memory type_
   ) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("is.score", holderID, epoch, type_)));
+    return uint256(keccak256(abi.encodePacked("is.score", holderID, epoch, index, type_)));
   }
 
-  function genTypeID(string memory scoreType, uint256 epoch) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("score.type", scoreType, epoch)));
+  function genTypeID(
+    uint256 epoch,
+    uint32 index,
+    string memory scoreType
+  ) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("score.type", epoch, index, scoreType)));
   }
 }

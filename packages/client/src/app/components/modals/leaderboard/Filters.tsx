@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { MUSU_INDEX } from 'constants/items';
 import { ScoresFilter } from 'network/shapes/Score';
 import { ActionListButton } from '../../library';
 
@@ -16,7 +17,7 @@ export const Filters = (props: Props) => {
     const options = types.map((type) => {
       return {
         text: type,
-        onClick: () => props.setFilter({ ...props.filter, type }),
+        onClick: () => props.setFilter({ ...props.filter, type, index: MUSU_INDEX }),
       };
     });
 

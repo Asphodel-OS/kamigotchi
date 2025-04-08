@@ -49,7 +49,7 @@ contract HarvestCollectSystem is System {
     LibBonus.resetUponHarvestAction(components, kamiID);
 
     // standard logging and tracking
-    LibScore.incFor(components, accID, "COLLECT", output);
+    LibScore.incFor(components, accID, MUSU_INDEX, "COLLECT", output);
     LibInventory.logItemTotal(components, accID, MUSU_INDEX, output);
     LibHarvest.logAmounts(
       components,

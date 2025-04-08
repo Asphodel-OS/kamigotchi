@@ -56,7 +56,7 @@ contract HarvestStopSystem is System {
     LibBonus.resetUponHarvestAction(components, kamiID);
 
     // standard logging and tracking
-    LibScore.incFor(components, accID, "COLLECT", output);
+    LibScore.incFor(components, accID, MUSU_INDEX, "COLLECT", output);
     LibInventory.logItemTotal(components, accID, MUSU_INDEX, output);
     LibHarvest.logHarvestTimes(components, accID, nodeIndex, id); // log time only on stop
     LibHarvest.logAmounts(
