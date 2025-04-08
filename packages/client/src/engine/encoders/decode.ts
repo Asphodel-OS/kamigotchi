@@ -8,6 +8,8 @@ import { flattenValue } from './utils';
 const COMPONENTS_KEY = '0x4350dba81aa91e31664a09d24a668f006169a11b3d962b7557aed362d3252aec';
 const SYSTEMS_KEY = '0x017c816a964927a00e050edd780dcf113ca2756dfa9e9fda94a05c140d9317b0';
 
+export type Decode = ReturnType<typeof createDecode>;
+
 /**
  * Create a function to decode raw component values.
  * Fetches component schemas from the contracts and caches them.

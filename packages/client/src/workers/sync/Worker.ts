@@ -38,10 +38,6 @@ import {
   NetworkEvents,
   SyncWorkerConfig,
 } from '../types';
-import {
-  createKamigazeStreamService,
-  createTransformWorldEventsFromStream,
-} from './kamigazeStreamClient';
 import { createSnapshotClient, fetchSnapshot } from './snapshot';
 import {
   createStateCache,
@@ -52,6 +48,7 @@ import {
   saveStateCacheToStore,
   storeStateEvents,
 } from './state';
+import { connectStreamService, createTransformWorldEvents } from './stream';
 import {
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
@@ -180,9 +177,9 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     let currentSubscription: Subscription;
 
     // Setup Stream Service -> RPC event stream fallback
-    const transformWorldEvents = createTransformWorldEventsFromStream(decode);
+    const transformWorldEvents = createTransformWorldEvents(decode);
     let latestEvent$ = streamServiceUrl
-      ? createKamigazeStreamService(
+      ? connectStreamService(
           streamServiceUrl,
           worldContract.address,
           transformWorldEvents,
@@ -194,7 +191,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const handleStreamReconnection = () => {
       console.log('[worker] handleEventStreamError');
       latestEvent$ = streamServiceUrl
-        ? createKamigazeStreamService(
+        ? connectStreamService(
             streamServiceUrl,
             worldContract.address,
             transformWorldEvents,
