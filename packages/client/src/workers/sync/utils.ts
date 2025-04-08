@@ -30,7 +30,7 @@ import {
   SystemCallTransaction,
 } from '../types';
 import { fetchEventsInBlockRange } from './blocks';
-import { StateCache, createStateCache, storeEvent } from './cache';
+import { StateCache, createStateCache, storeEvent } from './state';
 import { createTopics } from './topics';
 
 const debug = parentDebug.extend('syncUtils');

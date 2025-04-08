@@ -39,18 +39,18 @@ import {
   SyncWorkerConfig,
 } from '../types';
 import {
-  createStateCache,
-  getStateCache,
-  getStateCacheEntries,
-  loadIndexDbToStateCache,
-  saveStateCacheToIndexDb,
-  storeEvents,
-} from './cache';
-import { getStateReport } from './cache/StateCache';
-import {
   createKamigazeStreamService,
   createTransformWorldEventsFromStream,
 } from './kamigazeStreamClient';
+import {
+  createStateCache,
+  getStateCacheEntries,
+  getStateReport,
+  getStateStore,
+  loadStateCacheFromStore,
+  saveStateCacheToStore,
+  storeEvents,
+} from './state';
 import {
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
@@ -148,7 +148,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       computed(() => computedConfig.get().provider)
     );
     const provider = providers.get().json;
-    const indexedDB = await getStateCache(chainId, worldContract.address, IDB_VERSION);
+    const indexedDB = await getStateStore(chainId, worldContract.address, IDB_VERSION);
     const decode = createDecode();
     const fetchWorldEvents = createFetchWorldEventsInBlockRange(
       provider,
@@ -266,7 +266,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     // load cache
     this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
-    let initialState = await loadIndexDbToStateCache(indexedDB);
+    let initialState = await loadStateCacheFromStore(indexedDB);
     console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
     // retrieve snapshot if url provided
@@ -346,7 +346,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         this.setLoadingState({ percentage });
       }
     }
-    saveStateCacheToIndexDb(indexedDB, stateCache.current);
+    saveStateCacheToStore(indexedDB, stateCache.current);
 
     /*
      * FINISH
