@@ -18,7 +18,7 @@ export async function initConfigs(api: AdminAPI) {
 
 // local config settings for faster testing
 export async function initLocalConfigs(api: AdminAPI) {
-  await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami');
+  // await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami');
   await api.config.set.array('ACCOUNT_STAMINA', [
     100, // total stamina
     1, // recovery period per point
@@ -37,7 +37,7 @@ export async function initLocalConfigs(api: AdminAPI) {
 // CATEGORIES
 
 async function initBase(api: AdminAPI) {
-  await api.config.set.string('BASE_URI', 'https://i.test.asphodel.io/kami');
+  await api.config.set.string('BASE_URI', 'i.test.kamigotchi.io/kami');
 }
 
 async function initLeaderboard(api: AdminAPI) {

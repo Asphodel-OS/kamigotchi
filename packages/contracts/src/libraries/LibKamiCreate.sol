@@ -82,7 +82,7 @@ library LibKamiCreate {
     setStats(comps, id, traits);
     setURI(comps, id, traits);
     Kami721 nft = LibKami721.getContract(comps);
-    nft.mint(address(nft), id);
+    nft.mint(address(nft), index);
   }
 
   function create(IUintComp comps, uint256 amt) public returns (uint256[] memory ids) {
@@ -132,7 +132,7 @@ library LibKamiCreate {
   function setURI(IUintComp comps, uint256 id, uint32[] memory traits) internal {
     string memory baseURI = LibConfig.getString(comps, "BASE_URI");
     string memory image = LibString.toString(LibPack.packArr(traits, 8));
-    string memory uri = string(abi.encodePacked(baseURI, "/", image, ".gif"));
+    string memory uri = string(abi.encodePacked("https://", baseURI, "/", image, ".gif"));
 
     MediaURIComponent(getAddrByID(comps, MediaURICompID)).set(id, uri);
   }

@@ -56,7 +56,6 @@ library LibKami721 {
 
   function getContract(IUintComp components) internal view returns (Kami721) {
     address addr = LibConfig.getAddress(components, "KAMI721_ADDRESS");
-    // return Kami721(0xc769462cc8C72A4A2497eEEcf0C818E8BbEc8310);
     return Kami721(addr);
   }
 
