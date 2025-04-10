@@ -13,7 +13,7 @@ library LibEmitter {
     bytes memory values
   ) internal {
     address emitter = world._emitter();
-    if (emitter != address(0)) IEmitter(emitter).emitSystemCalled(identifier, schema, values);
+    if (emitter != address(0)) IEmitter(emitter).emitWorldEvent(identifier, schema, values);
   }
 
   function emitMessage(

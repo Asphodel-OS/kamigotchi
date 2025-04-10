@@ -13,7 +13,7 @@ contract SampleSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint8[] memory _schema = new uint8[](1);
     _schema[0] = uint8(1);
-    Emitter(world._emitter()).emitSystemCalled("test", _schema, bytes("hi"));
+    Emitter(world._emitter()).emitWorldEvent("test", _schema, bytes("hi"));
   }
 
   function executeTyped() external returns (bytes memory) {
@@ -53,7 +53,7 @@ contract EmitterTest is BaseTester {
     // system, expect emit
     // vm.prank(address(system));
     vm.expectEmit(address(emitter));
-    emit Emitter.SystemCalled("test", _schema, bytes("hi"));
+    emit Emitter.WorldEvent("test", _schema, bytes("hi"));
     system.executeTyped();
   }
 
@@ -64,7 +64,7 @@ contract EmitterTest is BaseTester {
     // vm.prank(address(0));
     // vm.expectRevert();
     vm.expectEmit(address(emitter));
-    emit Emitter.SystemCalled("test", _schema, bytes("hi"));
-    emitter.emitSystemCalled("test", _schema, bytes("hi"));
+    emit Emitter.WorldEvent("test", _schema, bytes("hi"));
+    emitter.emitWorldEvent("test", _schema, bytes("hi"));
   }
 }
