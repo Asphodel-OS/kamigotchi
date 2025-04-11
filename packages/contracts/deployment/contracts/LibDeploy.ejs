@@ -114,13 +114,13 @@ function transferOwner(address newOwner, IWorld world, bool reuseComps) internal
 
   <% systems.forEach(system=> { -%>
     system = System(getAddrByID(systems, <%= system.name %>ID));
-    system.transferOwnership(newOwner);
+    system.transferOwnership{ gas: 400000 }(newOwner);
     <% });-%> 
 
   if (!reuseComps) {
     <% components.forEach(component=> { -%>
       component = Component(getAddrByID(components, <%= component.comp %>ComponentID));
-      component.transferOwnership(newOwner);
+      component.transferOwnership{ gas: 400000 }(newOwner);
       <% });-%>
     }
   }
