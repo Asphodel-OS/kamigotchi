@@ -374,13 +374,7 @@ contract _721BatchMinterSystem is System, TraitHandler {
       _setPetStats(ids[i], traits, offsets, stats);
 
       // set mediaURI
-      mediaURIComp.set(
-        ids[i],
-        LibString.concat(
-          LibString.concat(_baseURI, "/"),
-          LibString.concat(LibString.toString(LibPack.packArr(traits, 8)), ".gif")
-        )
-      );
+      mediaURIComp.set(ids[i], LibString.toString(LibPack.packArr(traits, 8)));
     }
   }
 

@@ -1,5 +1,6 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
+import { KAMI_BASE_URI } from 'constants/media';
 import { Components } from 'network/';
 import { Harvest } from '../Harvest';
 import { DetailedEntity } from '../utils';
@@ -72,7 +73,7 @@ export const getBase = (world: World, comps: Components, entity: EntityIndex): B
     id: world.entities[entity],
     index: getKamiIndex(comps, entity),
     name: getName(comps, entity),
-    image: getMediaURI(comps, entity),
+    image: getImage(comps, entity),
   };
 };
 
@@ -109,4 +110,9 @@ export const get = (
   if (options?.traits) kami.traits = getTraits(world, comps, entity);
 
   return kami;
+};
+
+const getImage = (comps: Components, entity: EntityIndex): string => {
+  const traits = getMediaURI(comps, entity);
+  return KAMI_BASE_URI + traits + '.gif';
 };

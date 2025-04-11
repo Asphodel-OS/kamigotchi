@@ -25,6 +25,7 @@ uint256 constant NUM_TRAITS = 5;
 /// @notice used for Kami721 related systems and interactions
 /// @dev    systems do not interact with the ERC721 directly, only through this lib
 library LibKami721 {
+  using LibString for string;
   using SafeCastLib for int32;
 
   ////////////////////////
@@ -32,65 +33,64 @@ library LibKami721 {
 
   /// @notice  stakes a kami, out of game -> in game ('bridging in')
   /// @dev     checks are performed in system
-  function stake(IUintComp components, address owner, uint256 kamiIndex) internal {
-    Kami721 token = getContract(components);
+  function stake(IUintComp comps, address owner, uint256 kamiIndex) internal {
+    Kami721 token = getContract(comps);
     token.stakeToken(owner, kamiIndex);
   }
 
   /// @notice  unstakes a kami, in game -> out of game
   /// @dev     checks are performed in system
-  function unstake(IUintComp components, address to, uint256 kamiIndex) internal {
-    Kami721 token = getContract(components);
+  function unstake(IUintComp comps, address to, uint256 kamiIndex) internal {
+    Kami721 token = getContract(comps);
     token.unstakeToken(to, kamiIndex);
   }
 
   /// @notice  emits a metadata update event. to be called whenever metadata changes
   /// @dev     no state changes, only emits event. for marketplaces
-  function updateEvent(IUintComp components, uint256 kamiIndex) internal {
-    Kami721 token = getContract(components);
+  function updateEvent(IUintComp comps, uint256 kamiIndex) internal {
+    Kami721 token = getContract(comps);
     token.emitMetadataUpdate(kamiIndex);
   }
 
   /////////////////////////
   // GETTERS
 
-  function getContract(IUintComp components) internal view returns (Kami721) {
-    address addr = LibConfig.getAddress(components, "KAMI721_ADDRESS");
+  function getContract(IUintComp comps) internal view returns (Kami721) {
+    address addr = LibConfig.getAddress(comps, "KAMI721_ADDRESS");
     return Kami721(addr);
   }
 
-  function getEOAOwner(IUintComp components, uint256 kamiIndex) internal view returns (address) {
-    return getContract(components).ownerOf(kamiIndex);
+  function getEOAOwner(IUintComp comps, uint256 kamiIndex) internal view returns (address) {
+    return getContract(comps).ownerOf(kamiIndex);
   }
 
-  function getMediaURI(IUintComp components, uint256 id) internal view returns (string memory) {
-    return MediaURIComponent(getAddrByID(components, MediaURICompID)).get(id);
+  /// @dev only imageID is stored in MediaURI. combine it with Config BASE_URI to get URI
+  function getMediaURI(IUintComp comps, uint256 id) internal view returns (string memory) {
+    string memory image = MediaURIComponent(getAddrByID(comps, MediaURICompID)).get(id);
+    string memory baseURI = LibConfig.getString(comps, "BASE_URI");
+
+    return string(abi.encodePacked("https://", baseURI, "/", image, ".gif"));
   }
 
-  function getName(IUintComp components, uint256 id) internal view returns (string memory) {
-    return NameComponent(getAddrByID(components, NameCompID)).get(id);
+  function getName(IUintComp comps, uint256 id) internal view returns (string memory) {
+    return NameComponent(getAddrByID(comps, NameCompID)).get(id);
   }
 
   ////////////////////////
   // METADATA
 
   /// @notice  gets json in base64 format. for NFT marketplaces
-  function getJsonBase64(
-    IUintComp components,
-    uint32 petIndex
-  ) public view returns (string memory) {
+  function getJsonBase64(IUintComp comps, uint32 kamiIndex) public view returns (string memory) {
     return
       LibString.concat(
         "data:application/json;base64,",
-        Base64.encode(abi.encodePacked(getJsonUtf(components, petIndex)), false, false)
+        Base64.encode(abi.encodePacked(getJsonUtf(comps, kamiIndex)), false, false)
       );
   }
 
   /// @notice  gets json in UTF-8 format. to view in plaintext
-  function getJsonUtf(IUintComp components, uint32 petIndex) public view returns (string memory) {
-    uint256 kamiID = LibKami.getByIndex(components, petIndex);
-
-    /// TODO: add affinities somewhere
+  function getJsonUtf(IUintComp comps, uint32 kamiIndex) public view returns (string memory) {
+    uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
 
     return
       string(
@@ -98,16 +98,17 @@ library LibKami721 {
           "{",
           '"external_url": "https://kamigotchi.io", ',
           '"name": "',
-          getName(components, kamiID),
+          getName(comps, kamiID),
           '", ',
           '"description": ',
           '"a lil network spirit :3", ',
           '"attributes": [',
-          _getBaseTraits(components, kamiID),
-          _getStats(components, kamiID),
+          _getBaseTraits(comps, kamiID),
+          _getAffinities(comps, kamiID),
+          _getStats(comps, kamiID),
           "], ",
           '"image": "',
-          getMediaURI(components, kamiID),
+          getMediaURI(comps, kamiID),
           '"',
           "}"
         )
@@ -115,29 +116,26 @@ library LibKami721 {
   }
 
   /// @notice  gets and parses base traits (body, color, face, hand, background)
-  function _getBaseTraits(
-    IUintComp components,
-    uint256 kamiID
-  ) internal view returns (string memory) {
+  function _getBaseTraits(IUintComp comps, uint256 kamiID) internal view returns (string memory) {
     string memory result = "";
 
     // getting values of base traits. values are hardcoded to array position
-    string[] memory comps = new string[](5);
-    comps[0] = "Body";
-    comps[1] = "Color";
-    comps[2] = "Face";
-    comps[3] = "Hand";
-    comps[4] = "Background";
+    string[] memory traitTypes = new string[](5);
+    traitTypes[0] = "Body";
+    traitTypes[1] = "Color";
+    traitTypes[2] = "Face";
+    traitTypes[3] = "Hand";
+    traitTypes[4] = "Background";
 
     string[] memory names = new string[](5);
-    names[0] = LibTraitRegistry.getNameOf(components, kamiID, "BODY");
-    names[1] = LibTraitRegistry.getNameOf(components, kamiID, "COLOR");
-    names[2] = LibTraitRegistry.getNameOf(components, kamiID, "FACE");
-    names[3] = LibTraitRegistry.getNameOf(components, kamiID, "HAND");
-    names[4] = LibTraitRegistry.getNameOf(components, kamiID, "BACKGROUND");
+    names[0] = LibTraitRegistry.getNameOf(comps, kamiID, "BODY");
+    names[1] = LibTraitRegistry.getNameOf(comps, kamiID, "COLOR");
+    names[2] = LibTraitRegistry.getNameOf(comps, kamiID, "FACE");
+    names[3] = LibTraitRegistry.getNameOf(comps, kamiID, "HAND");
+    names[4] = LibTraitRegistry.getNameOf(comps, kamiID, "BACKGROUND");
 
     for (uint256 i; i < names.length; i++) {
-      string memory entry = _traitToString(comps[i], names[i], true);
+      string memory entry = _traitToString(traitTypes[i], names[i], true);
       result = string(abi.encodePacked(result, entry));
     }
 
@@ -145,7 +143,7 @@ library LibKami721 {
   }
 
   /// @notice  gets and parses the 4 main stats (health, power, violence, harmony) and level
-  function _getStats(IUintComp components, uint256 kamiID) internal view returns (string memory) {
+  function _getStats(IUintComp comps, uint256 kamiID) internal view returns (string memory) {
     string memory result = "";
 
     // returns result for Health, Power, Violence, and Harmony
@@ -154,7 +152,7 @@ library LibKami721 {
         result,
         _traitToString(
           "Health",
-          LibStat.getStatComp(components, "HEALTH").safeGet(kamiID).base.toUint256(),
+          LibStat.getStatComp(comps, "HEALTH").safeGet(kamiID).base.toUint256(),
           true
         )
       )
@@ -164,7 +162,7 @@ library LibKami721 {
         result,
         _traitToString(
           "Power",
-          LibStat.getStatComp(components, "POWER").safeGet(kamiID).base.toUint256(),
+          LibStat.getStatComp(comps, "POWER").safeGet(kamiID).base.toUint256(),
           true
         )
       )
@@ -174,7 +172,7 @@ library LibKami721 {
         result,
         _traitToString(
           "Violence",
-          LibStat.getStatComp(components, "VIOLENCE").safeGet(kamiID).base.toUint256(),
+          LibStat.getStatComp(comps, "VIOLENCE").safeGet(kamiID).base.toUint256(),
           true
         )
       )
@@ -184,7 +182,7 @@ library LibKami721 {
         result,
         _traitToString(
           "Harmony",
-          LibStat.getStatComp(components, "HARMONY").safeGet(kamiID).base.toUint256(),
+          LibStat.getStatComp(comps, "HARMONY").safeGet(kamiID).base.toUint256(),
           true
         )
       )
@@ -192,11 +190,23 @@ library LibKami721 {
     result = string(
       abi.encodePacked(
         result,
-        _traitToString("Level", LibExperience.getLevel(components, kamiID), false)
+        _traitToString("Level", LibExperience.getLevel(comps, kamiID), false)
       )
     );
 
     return result;
+  }
+
+  function _getAffinities(IUintComp comps, uint256 kamiID) internal view returns (string memory) {
+    string memory affinity = LibKami.getBodyAffinity(comps, kamiID);
+    string memory bodyText = string(
+      abi.encodePacked('{"trait_type": "Body Affinity", "value": "', affinity, '"}, ')
+    );
+    affinity = LibKami.getHandAffinity(comps, kamiID);
+    string memory handText = string(
+      abi.encodePacked('{"trait_type": "Hand Affinity", "value": "', affinity, '"}, ')
+    );
+    return string(abi.encodePacked(bodyText, handText));
   }
 
   /// @notice  appends trait and trait type to metadata format

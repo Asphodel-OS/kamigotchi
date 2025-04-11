@@ -18,7 +18,6 @@ export async function initConfigs(api: AdminAPI) {
 
 // local config settings for faster testing
 export async function initLocalConfigs(api: AdminAPI) {
-  // await api.config.set.string('BASE_URI', 'https://image.asphodel.io/kami');
   await api.config.set.array('ACCOUNT_STAMINA', [
     100, // total stamina
     1, // recovery period per point

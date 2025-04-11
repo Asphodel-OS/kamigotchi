@@ -130,11 +130,8 @@ library LibKamiCreate {
   }
 
   function setURI(IUintComp comps, uint256 id, uint32[] memory traits) internal {
-    string memory baseURI = LibConfig.getString(comps, "BASE_URI");
     string memory image = LibString.toString(LibPack.packArr(traits, 8));
-    string memory uri = string(abi.encodePacked("https://", baseURI, "/", image, ".gif"));
-
-    MediaURIComponent(getAddrByID(comps, MediaURICompID)).set(id, uri);
+    MediaURIComponent(getAddrByID(comps, MediaURICompID)).set(id, image);
   }
 
   function setTrait(
