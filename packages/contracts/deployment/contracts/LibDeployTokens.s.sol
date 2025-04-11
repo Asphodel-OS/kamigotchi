@@ -53,7 +53,7 @@ library LibDeployTokens {
     LibConfig.setAddress(components, "VIP_SCORE_ADDRESS", address(vipScore));
 
     // set permissions for proxy contract
-    vipScore.addAllowList(getAddrByID(components, ProxyVIPScoreComponentID));
+    vipScore.addAllowList{ gas: 400000 }(getAddrByID(components, ProxyVIPScoreComponentID));
 
     console.log("VIP_SCORE_ADDRESS: ", address(vipScore));
     return address(vipScore);

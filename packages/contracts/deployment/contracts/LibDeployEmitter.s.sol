@@ -8,7 +8,7 @@ import { Emitter } from "solecs/Emitter.sol";
 library LibDeployEmitter {
   function deploy(IWorld world) internal returns (address) {
     Emitter emitter = new Emitter(world);
-    world.updateEmitter(address(emitter));
+    world.updateEmitter{ gas: 400000 }(address(emitter));
     console.log("Emitter Address: ", address(emitter));
     return address(emitter);
   }
