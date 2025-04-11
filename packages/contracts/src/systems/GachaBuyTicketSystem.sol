@@ -3,10 +3,12 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibInventory, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 
@@ -27,7 +29,7 @@ contract GachaBuyTicketSystem is System {
     LibInventory.decFor(components, accID, CURRENCY, cost);
     LibInventory.incFor(components, accID, GACHA_TICKET_INDEX, amount);
 
-    logMint(accID, amount);
+    logMint(accID, amount, cost);
     LibAccount.updateLastTs(components, accID);
   }
 
@@ -41,7 +43,8 @@ contract GachaBuyTicketSystem is System {
     LibInventory.decFor(components, accID, CURRENCY, cost);
     LibInventory.incFor(components, accID, GACHA_TICKET_INDEX, 1);
 
-    logMint(accID, 1);
+    logMint(accID, 1, cost);
+    LibData.inc(components, 0, 0, "MINT_WL_NUM_GLOBAL", 1);
     LibAccount.updateLastTs(components, accID);
   }
 
@@ -53,9 +56,16 @@ contract GachaBuyTicketSystem is System {
   //////////////////
   // INTERNAL
 
-  function logMint(uint256 accID, uint256 amount) internal {
+  function logMint(uint256 accID, uint256 amount, uint256 cost) internal {
     LibData.inc(components, 0, 0, "MINT_NUM_GLOBAL", amount);
     LibData.inc(components, accID, 0, "MINT_NUM", amount);
+
+    uint8[] memory _schema = new uint8[](3);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // accID
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // amount
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256); // cost
+
+    LibEmitter.emitEvent(world, "MINT", _schema, abi.encode(accID, amount, cost));
   }
 
   function verifyGlobalTotal(uint256 amount) internal view {

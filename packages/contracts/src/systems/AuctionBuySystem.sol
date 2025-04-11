@@ -30,7 +30,12 @@ contract AuctionBuySystem is System {
 
     // enable logging to support historic sales date + price history
     uint32 accIndex = LibAccount.getIndex(components, accID);
-    LibAuction.logBuy(world, LibAuction.BuyLog(itemIndex, accIndex, amt, cost));
+    LibAuction.logBuy(
+      world,
+      components,
+      accID,
+      LibAuction.BuyLog(itemIndex, amt, payItemIndex, cost)
+    );
 
     LibAccount.updateLastTs(components, accID);
     return "";

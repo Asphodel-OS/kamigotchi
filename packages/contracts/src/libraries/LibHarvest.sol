@@ -359,7 +359,7 @@ library LibHarvest {
     _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
     _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
 
-    LibEmitter.emitSystemCall(
+    LibEmitter.emitEvent(
       world,
       identifier,
       _schema,

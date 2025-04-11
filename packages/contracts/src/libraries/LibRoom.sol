@@ -253,7 +253,7 @@ library LibRoom {
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
     _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
 
-    LibEmitter.emitSystemCall(world, "MOVE", _schema, abi.encode(holderID, roomIndex));
+    LibEmitter.emitEvent(world, "MOVE", _schema, abi.encode(holderID, roomIndex));
   }
 
   //////////////////////

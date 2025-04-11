@@ -41,7 +41,12 @@ contract ListingBuySystem is System {
         itemIndices[i],
         amts[i]
       );
-      LibListing.logIncItemBuy(components, accID, itemIndices[i], amts[i]);
+      LibListing.logBuy(
+        world,
+        components,
+        accID,
+        LibListing.LogData(merchantIndex, itemIndices[i], amts[i], currency, spent)
+      );
       LibScore.incFor(components, accID, currency, "TOTAL_SPENT", spent);
     }
 

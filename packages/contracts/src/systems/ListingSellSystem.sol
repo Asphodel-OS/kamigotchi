@@ -39,8 +39,12 @@ contract ListingSellSystem is System {
         itemIndices[i],
         amts[i]
       );
-      LibListing.logIncItemSell(components, accID, itemIndices[i], amts[i]);
-      LibListing.logRevenue(components, accID, currency, earned);
+      LibListing.logSell(
+        world,
+        components,
+        accID,
+        LibListing.LogData(merchantIndex, itemIndices[i], amts[i], currency, earned)
+      );
     }
 
     // standard logging and tracking

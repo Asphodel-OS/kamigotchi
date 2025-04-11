@@ -19,6 +19,7 @@ import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
 import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
@@ -105,27 +106,33 @@ library LibAuction {
   // LOGGING
 
   struct BuyLog {
-    uint32 itemIndex;
-    uint32 accIndex;
+    uint32 item;
     uint32 amt;
-    uint256 price;
+    uint32 currency;
+    uint256 cost;
   }
 
-  // log a purchase from the auction
-  // accIndex, itemIndex, amt, price?, ts
-  function logBuy(IWorld world, BuyLog memory buy) internal {
-    uint8[] memory _schema = new uint8[](5);
-    _schema[0] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[1] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
+  /// @notice log a purchase from the auction
+  function logBuy(IWorld world, IUintComp comps, uint256 accID, BuyLog memory buy) internal {
+    LibData.inc(comps, accID, buy.item, "ITEM_AUCTION_BUY", buy.amt.toInt256().toUint256());
+    LibData.inc(comps, accID, buy.currency, "ITEM_AUCTION_SPEND", buy.cost);
 
-    LibEmitter.emitSystemCall(
+    LibEmitter.emitEvent(
       world,
       "AUCTION_BUY",
-      _schema,
-      abi.encode(buy.itemIndex, buy.accIndex, buy.amt, buy.price, block.timestamp)
+      eventSchema(),
+      abi.encode(accID, buy.item, buy.amt, buy.currency, buy.cost, block.timestamp)
     );
+  }
+
+  function eventSchema() internal pure returns (uint8[] memory) {
+    uint8[] memory _schema = new uint8[](6);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // accID
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT32); // item
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // amt
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT32); // currency
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // cost
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256); // time
+    return _schema;
   }
 }

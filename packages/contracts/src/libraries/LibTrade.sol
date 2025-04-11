@@ -228,7 +228,7 @@ library LibTrade {
     _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
     _schema[5] = uint8(LibTypes.SchemaValue.UINT256);
 
-    LibEmitter.emitSystemCall(
+    LibEmitter.emitEvent(
       world,
       "TRADE_EXECUTE",
       _schema,

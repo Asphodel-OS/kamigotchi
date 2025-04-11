@@ -291,7 +291,7 @@ library LibKill {
 
     bytes memory encoded = _encodeKillEvent(eventData);
 
-    LibEmitter.emitSystemCall(world, "KILL", _schema(), encoded);
+    LibEmitter.emitEvent(world, "KILL", _schema(), encoded);
   }
 
   function _schema() internal pure returns (uint8[] memory) {

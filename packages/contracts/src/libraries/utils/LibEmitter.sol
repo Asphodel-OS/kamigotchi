@@ -6,7 +6,7 @@ import { IEmitter } from "solecs/interfaces/IEmitter.sol";
 
 ///@notice library for centralized event emission calls to Emitter.sol
 library LibEmitter {
-  function emitSystemCall(
+  function emitEvent(
     IWorld world,
     string memory identifier,
     uint8[] memory schema,

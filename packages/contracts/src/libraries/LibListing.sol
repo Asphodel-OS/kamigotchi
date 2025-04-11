@@ -4,7 +4,9 @@ pragma solidity >=0.8.28;
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
+import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { DecayComponent, ID as DecayCompID } from "components/DecayComponent.sol";
@@ -16,6 +18,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -33,6 +36,8 @@ library LibListing {
   using LibComp for IUintComp;
   using LibString for string;
   using SafeCastLib for int32;
+  using SafeCastLib for int256;
+  using SafeCastLib for uint32;
   using SafeCastLib for uint256;
 
   /// @notice processes a buy for amt of item from a listing to an account
@@ -156,39 +161,65 @@ library LibListing {
   ///////////////////
   // LOGGING
 
+  struct LogData {
+    uint32 npc;
+    uint32 item;
+    uint32 amt;
+    uint32 currency;
+    uint256 cost;
+  }
+
   /// @notice log increase for item buy
-  function logIncItemBuy(IUintComp comps, uint256 accID, uint32 itemIndex, uint256 amt) internal {
+  function logBuy(IWorld world, IUintComp comps, uint256 accID, LogData memory data) internal {
     uint32[] memory indices = new uint32[](3);
-    indices[1] = itemIndex;
-    indices[2] = itemIndex;
+    indices[1] = data.item;
+    indices[2] = data.item;
     string[] memory types = new string[](3);
     types[0] = "LISTING_BUY_TOTAL";
     types[1] = "LISTING_BUY";
     types[2] = "ITEM_TOTAL";
 
-    LibData.inc(comps, accID, indices, types, amt);
+    LibData.inc(comps, accID, indices, types, data.amt.toInt256().toUint256());
+    LibData.inc(comps, accID, data.currency, "ITEM_SPEND", data.cost);
+    LibEmitter.emitEvent(
+      world,
+      "LISTING_BUY",
+      eventSchema(),
+      abi.encode(accID, data.npc, data.item, data.amt, data.currency, data.cost)
+    );
   }
 
   /// @notice log increase for item sell
-  function logIncItemSell(IUintComp comps, uint256 accID, uint32 itemIndex, uint256 amt) internal {
+  function logSell(IWorld world, IUintComp comps, uint256 accID, LogData memory data) internal {
     uint32[] memory indices = new uint32[](2);
-    indices[1] = itemIndex;
+    indices[1] = data.item;
     string[] memory types = new string[](2);
     types[0] = "LISTING_SELL_TOTAL";
-    types[1] = "ITEM_SELL";
+    types[1] = "LISTING_SELL";
+    LibData.inc(comps, accID, indices, types, data.amt.toInt256().toUint256());
 
-    LibData.inc(comps, accID, indices, types, amt);
+    indices[0] = data.currency;
+    indices[1] = data.currency;
+    types[0] = "ITEM_TOTAL";
+    types[1] = "ITEM_REVENUE";
+    LibData.inc(comps, accID, indices, types, data.cost);
+
+    LibEmitter.emitEvent(
+      world,
+      "LISTING_SELL",
+      eventSchema(),
+      abi.encode(accID, data.npc, data.item, data.amt, data.currency, data.cost)
+    );
   }
 
-  /// @notice log coin revenue earned
-  function logRevenue(IUintComp comps, uint256 accID, uint32 currency, uint256 amt) internal {
-    uint32[] memory indices = new uint32[](2);
-    indices[0] = currency;
-    indices[1] = currency;
-    string[] memory types = new string[](2);
-    types[0] = "LISTING_REVENUE"; // currency index
-    types[1] = "ITEM_TOTAL";
-
-    LibData.inc(comps, accID, indices, types, amt);
+  function eventSchema() internal pure returns (uint8[] memory) {
+    uint8[] memory _schema = new uint8[](6);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // accID
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT32); // npc
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // item
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT32); // amt
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT32); // currency
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256); // cost
+    return _schema;
   }
 }
