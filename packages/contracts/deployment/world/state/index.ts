@@ -19,6 +19,7 @@ import { initTraits } from './traits';
 export async function initAll(api: AdminAPI) {
   // independent
   await initAuth(api);
+  if (process.env.NODE_ENV === 'puter') await initLocalAuth(api); // needs to be declared prior
   console.log('\n---------------------------------------------\n');
   await initConfigs(api);
   console.log('\n---------------------------------------------\n');
