@@ -6,16 +6,17 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { Condition, LibQuestRegistry } from "libraries/LibQuestRegistry.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
 
 uint256 constant ID = uint256(keccak256("system.quest.registry"));
 
-contract _QuestRegistrySystem is System {
+contract _QuestRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory name,
@@ -32,7 +33,7 @@ contract _QuestRegistrySystem is System {
     return regID;
   }
 
-  function addObjective(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addObjective(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 questIndex,
       string memory name,
@@ -57,7 +58,7 @@ contract _QuestRegistrySystem is System {
       );
   }
 
-  function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 questIndex,
       string memory logicType,
@@ -80,7 +81,7 @@ contract _QuestRegistrySystem is System {
       );
   }
 
-  function addRewardBasic(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardBasic(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (uint32 questIndex, string memory type_, uint32 index, uint256 value) = abi.decode(
       arguments,
       (uint32, string, uint32, uint256)
@@ -96,7 +97,7 @@ contract _QuestRegistrySystem is System {
     return LibAllo.createBasic(components, anchorID, type_, index, value);
   }
 
-  function addRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardDT(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (uint32 questIndex, uint32[] memory keys, uint256[] memory weights, uint256 value) = abi.decode(
       arguments,
       (uint32, uint32[], uint256[], uint256)
@@ -111,7 +112,7 @@ contract _QuestRegistrySystem is System {
     return LibAllo.createDT(components, anchorID, keys, weights, value);
   }
 
-  function addRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardStat(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 questIndex,
       string memory statType,
@@ -130,21 +131,21 @@ contract _QuestRegistrySystem is System {
     return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
   }
 
-  function setDisabled(uint32 index, bool disabled) public onlyOwner {
+  function setDisabled(uint32 index, bool disabled) public onlyAdmin(components) {
     uint256 regID = LibQuestRegistry.getByIndex(components, index);
     require(regID != 0, "Quest does not exist");
 
     LibDisabled.set(components, regID, disabled);
   }
 
-  function remove(uint32 index) public onlyOwner {
+  function remove(uint32 index) public onlyAdmin(components) {
     uint256 regID = LibQuestRegistry.getByIndex(components, index);
     require(regID != 0, "Quest does not exist");
 
     LibQuestRegistry.removeQuest(components, regID, index);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }

@@ -4,6 +4,7 @@ pragma solidity >=0.8.28;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibInventory, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
@@ -12,17 +13,20 @@ uint256 constant ID = uint256(keccak256("system.setup.snapshot.t2"));
 
 uint32 constant PASSPORT_BOX = 21002;
 
-contract _SnapshotT2System is System {
+contract _SnapshotT2System is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function distributePassports(address[] memory owners, uint256[] memory amts) public onlyOwner {
+  function distributePassports(
+    address[] memory owners,
+    uint256[] memory amts
+  ) public onlyAdmin(components) {
     require(owners.length == amts.length, "array length mismatch");
     for (uint256 i; i < owners.length; i++) {
       distributePassport(owners[i], amts[i]);
     }
   }
 
-  function whitelistAccounts(address[] memory owners) public onlyOwner {
+  function whitelistAccounts(address[] memory owners) public onlyAdmin(components) {
     for (uint256 i; i < owners.length; i++) {
       whitelist(owners[i]);
     }

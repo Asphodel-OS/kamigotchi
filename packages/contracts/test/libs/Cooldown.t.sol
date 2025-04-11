@@ -14,6 +14,7 @@ contract LibCooldownTest is SetupTemplate {
 
   function setUp() public override {
     setUpWorld();
+    setUpAuthRoles();
 
     _setCooldown(100);
     _currTime = 1000000000; // set reasonable time to start at

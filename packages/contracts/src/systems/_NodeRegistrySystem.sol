@@ -6,6 +6,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
@@ -14,10 +15,10 @@ import { LibAllo } from "libraries/LibAllo.sol";
 uint256 constant ID = uint256(keccak256("system.node.registry"));
 
 // create a Node as specified
-contract _NodeRegistrySystem is System {
+contract _NodeRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256 id) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256 id) {
     (
       uint32 index,
       string memory nodeType,
@@ -35,7 +36,7 @@ contract _NodeRegistrySystem is System {
     );
   }
 
-  function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 nodeIndex,
       string memory type_,
@@ -58,7 +59,10 @@ contract _NodeRegistrySystem is System {
       );
   }
 
-  function addScavBar(uint32 nodeIndex, uint256 tierCost) public onlyOwner returns (uint256) {
+  function addScavBar(
+    uint32 nodeIndex,
+    uint256 tierCost
+  ) public onlyAdmin(components) returns (uint256) {
     uint256 nodeID = LibNode.getByIndex(components, nodeIndex);
     require(nodeID != 0, "Node: does not exist");
 
@@ -66,7 +70,9 @@ contract _NodeRegistrySystem is System {
     return LibScavenge.create(components, LibScavenge.Base("NODE", nodeIndex, affinity), tierCost);
   }
 
-  function addScavRewardBasic(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addScavRewardBasic(
+    bytes memory arguments
+  ) public onlyAdmin(components) returns (uint256) {
     (uint32 nodeIndex, string memory rwdType, uint32 rwdIndex, uint256 value) = abi.decode(
       arguments,
       (uint32, string, uint32, uint256)
@@ -80,7 +86,7 @@ contract _NodeRegistrySystem is System {
     return LibAllo.createBasic(components, anchorID, rwdType, rwdIndex, value);
   }
 
-  function addScavRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addScavRewardDT(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (uint32 nodeIndex, uint32[] memory keys, uint256[] memory weights, uint256 value) = abi.decode(
       arguments,
       (uint32, uint32[], uint256[], uint256)
@@ -94,7 +100,9 @@ contract _NodeRegistrySystem is System {
     return LibAllo.createDT(components, anchorID, keys, weights, value);
   }
 
-  function addScavRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addScavRewardStat(
+    bytes memory arguments
+  ) public onlyAdmin(components) returns (uint256) {
     (
       uint32 nodeIndex,
       string memory statType,
@@ -112,14 +120,14 @@ contract _NodeRegistrySystem is System {
     return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
   }
 
-  function remove(uint32 index) public onlyOwner {
+  function remove(uint32 index) public onlyAdmin(components) {
     uint256 id = LibNode.getByIndex(components, index);
     require(id != 0, "Node: does not exist");
 
     LibNode.remove(components, id, index);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }

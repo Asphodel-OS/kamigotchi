@@ -57,12 +57,12 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpWorld();
     setUpTokens();
 
+    setUpAuthRoles();
     setUpConfigs();
     setUpTime();
     _idleRequirement = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN") + 1;
 
     setUpAccounts();
-    setUpAuthRoles();
     setUpTraits();
     setUpMint();
     setUpItems();

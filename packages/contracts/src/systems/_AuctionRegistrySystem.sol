@@ -4,6 +4,7 @@ pragma solidity >=0.8.28;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibAuctionRegistry, Params } from "libraries/LibAuctionRegistry.sol";
@@ -11,7 +12,7 @@ import { LibAuctionRegistry, Params } from "libraries/LibAuctionRegistry.sol";
 uint256 constant ID = uint256(keccak256("system.auction.registry"));
 
 // create or update a Listing on a NPC by its Merchnat Index
-contract _AuctionRegistrySystem is System {
+contract _AuctionRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function create(
@@ -22,7 +23,7 @@ contract _AuctionRegistrySystem is System {
     int32 decay, // price decay per period (1e6)
     int32 rate, // number of purchases per period to counteract decay
     int32 max // total quantity to be auctioned
-  ) public onlyOwner returns (uint256) {
+  ) public onlyAdmin(components) returns (uint256) {
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id == 0, "auction already exists");
 
@@ -40,7 +41,7 @@ contract _AuctionRegistrySystem is System {
   }
 
   // remove an auction
-  function remove(uint32 itemIndex) public onlyOwner {
+  function remove(uint32 itemIndex) public onlyAdmin(components) {
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id != 0, "AuctionRegistry: auction does not exist");
     LibAuctionRegistry.remove(components, id);
@@ -54,7 +55,7 @@ contract _AuctionRegistrySystem is System {
     uint32 index,
     uint256 value,
     string memory condFor
-  ) public onlyOwner {
+  ) public onlyAdmin(components) {
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id != 0, "AuctionBuy: auction does not exist");
     LibAuctionRegistry.addRequirement(
@@ -65,7 +66,7 @@ contract _AuctionRegistrySystem is System {
     );
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }

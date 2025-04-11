@@ -5,15 +5,16 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibRecipe } from "libraries/LibRecipe.sol";
 import { Condition } from "libraries/LibConditional.sol";
 
 uint256 constant ID = uint256(keccak256("system.recipe.registry"));
 
-contract _RecipeRegistrySystem is System {
+contract _RecipeRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       uint32[] memory iIndices,
@@ -37,7 +38,7 @@ contract _RecipeRegistrySystem is System {
     uint32 index, // can be empty
     uint32 value, // can be empty
     string memory condFor
-  ) public onlyOwner returns (uint256) {
+  ) public onlyAdmin(components) returns (uint256) {
     return
       LibRecipe.createRequirement(
         world,
@@ -47,13 +48,13 @@ contract _RecipeRegistrySystem is System {
       );
   }
 
-  function remove(uint32 index) public onlyOwner {
+  function remove(uint32 index) public onlyAdmin(components) {
     uint256 regID = LibRecipe.get(components, index);
     require(regID != 0, "Recipe: does not exist");
     LibRecipe.remove(components, index, regID);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }

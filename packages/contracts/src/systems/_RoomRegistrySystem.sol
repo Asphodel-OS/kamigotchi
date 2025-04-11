@@ -5,16 +5,17 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { Coord, LibRoom } from "libraries/LibRoom.sol";
 import { Condition } from "libraries/LibConditional.sol";
 
 uint256 constant ID = uint256(keccak256("system.room.registry"));
 
 // create a room within the world
-contract _RoomRegistrySystem is System {
+contract _RoomRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       int32 x,
       int32 y,
@@ -36,7 +37,7 @@ contract _RoomRegistrySystem is System {
     return id;
   }
 
-  function addGate(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addGate(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 roomIndex,
       uint32 sourceIndex, // optional: if condition specific from Room A->B
@@ -63,18 +64,18 @@ contract _RoomRegistrySystem is System {
       );
   }
 
-  function addFlag(uint32 index, string memory flag) public onlyOwner {
+  function addFlag(uint32 index, string memory flag) public onlyAdmin(components) {
     LibRoom.addFlag(components, index, flag);
   }
 
-  function remove(uint32 index) public onlyOwner {
+  function remove(uint32 index) public onlyAdmin(components) {
     uint256 roomID = LibRoom.getByIndex(components, index);
     require(roomID != 0, "Room: does not exist");
 
     LibRoom.remove(components, index);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }

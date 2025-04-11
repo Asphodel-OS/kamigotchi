@@ -4,16 +4,17 @@ pragma solidity >=0.8.28;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
 uint256 constant ID = uint256(keccak256("system.item.registry"));
 
-contract _ItemRegistrySystem is System {
+contract _ItemRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory type_,
@@ -27,7 +28,7 @@ contract _ItemRegistrySystem is System {
     return id;
   }
 
-  function createConsumable(bytes memory arguments) public onlyOwner returns (uint256) {
+  function createConsumable(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory for_,
@@ -43,7 +44,7 @@ contract _ItemRegistrySystem is System {
     return id;
   }
 
-  function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory useCase,
@@ -65,17 +66,17 @@ contract _ItemRegistrySystem is System {
       );
   }
 
-  function addFlag(uint32 index, string memory flag) public onlyOwner {
+  function addFlag(uint32 index, string memory flag) public onlyAdmin(components) {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
     LibItem.addFlag(components, index, flag);
   }
 
-  function addERC20(uint32 index, address tokenAddress) public onlyOwner {
+  function addERC20(uint32 index, address tokenAddress) public onlyAdmin(components) {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
     LibItem.addERC20(components, index, tokenAddress);
   }
 
-  function addAlloBasic(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addAlloBasic(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory useCase,
@@ -90,7 +91,7 @@ contract _ItemRegistrySystem is System {
     return LibAllo.createBasic(components, anchorID, alloType, alloIndex, alloValue);
   }
 
-  function addAlloBonus(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addAlloBonus(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory useCase,
@@ -106,7 +107,7 @@ contract _ItemRegistrySystem is System {
     return LibAllo.createBonus(components, anchorID, bonusType, endType, duration, bonusValue);
   }
 
-  function addAlloDT(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addAlloDT(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory useCase,
@@ -121,7 +122,7 @@ contract _ItemRegistrySystem is System {
     return LibAllo.createDT(components, anchorID, keys, weights, value);
   }
 
-  function addAlloStat(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addAlloStat(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory useCase,
@@ -138,14 +139,14 @@ contract _ItemRegistrySystem is System {
     return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
   }
 
-  function remove(uint32 index) public onlyOwner {
+  function remove(uint32 index) public onlyAdmin(components) {
     uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
 
     LibItem.remove(components, index);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
     return "";
   }

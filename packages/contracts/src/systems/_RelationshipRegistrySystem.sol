@@ -6,14 +6,15 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibRelationshipRegistry as LibRegRel } from "libraries/LibRelationshipRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.relationship.registry"));
 
-contract _RelationshipRegistrySystem is System {
+contract _RelationshipRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 npcIndex,
       uint32 relIndex,
@@ -32,7 +33,7 @@ contract _RelationshipRegistrySystem is System {
     return registryID;
   }
 
-  function update(bytes memory arguments) public onlyOwner {
+  function update(bytes memory arguments) public onlyAdmin(components) {
     (
       uint32 npcIndex,
       uint32 relIndex,
@@ -49,14 +50,14 @@ contract _RelationshipRegistrySystem is System {
     if (whitelist.length > 0) LibRegRel.setWhitelist(components, registryID, whitelist);
   }
 
-  function remove(uint32 npcIndex, uint32 relIndex) public onlyOwner {
+  function remove(uint32 npcIndex, uint32 relIndex) public onlyAdmin(components) {
     uint256 registryID = LibRegRel.get(components, npcIndex, relIndex);
     require(registryID != 0, "RegistryDeleteRelationship: flag does not exist");
 
     LibRegRel.delete_(components, registryID);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }

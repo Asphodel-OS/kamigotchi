@@ -5,15 +5,16 @@ import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibSkillRegistry } from "libraries/LibSkillRegistry.sol";
 
 uint256 constant ID = uint256(keccak256("system.skill.registry"));
 
-contract _SkillRegistrySystem is System {
+contract _SkillRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 index,
       string memory for_,
@@ -51,7 +52,7 @@ contract _SkillRegistrySystem is System {
     return regID;
   }
 
-  function addBonus(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addBonus(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (uint32 skillIndex, string memory type_, int256 value) = abi.decode(
       arguments,
       (uint32, string, int256)
@@ -63,7 +64,7 @@ contract _SkillRegistrySystem is System {
     return id;
   }
 
-  function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 skillIndex,
       string memory type_,
@@ -84,13 +85,13 @@ contract _SkillRegistrySystem is System {
       );
   }
 
-  function remove(uint32 index) public onlyOwner {
+  function remove(uint32 index) public onlyAdmin(components) {
     uint256 regID = LibSkillRegistry.getByIndex(components, index);
     require(regID != 0, "Skill does not exist");
     LibSkillRegistry.remove(components, index);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }

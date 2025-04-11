@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibGoal } from "libraries/LibGoal.sol";
@@ -12,10 +13,10 @@ import { LibAllo } from "libraries/LibAllo.sol";
 
 uint256 constant ID = uint256(keccak256("system.goal.registry"));
 
-contract _GoalRegistrySystem is System {
+contract _GoalRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function create(bytes memory arguments) public onlyOwner returns (uint256) {
+  function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 goalIndex,
       string memory name,
@@ -37,14 +38,14 @@ contract _GoalRegistrySystem is System {
     return LibGoal.create(components, goalIndex, name, description, roomIndex, objective);
   }
 
-  function setDisabled(uint32 index, bool disabled) public onlyOwner {
+  function setDisabled(uint32 index, bool disabled) public onlyAdmin(components) {
     uint256 goalID = LibGoal.getByIndex(components, index);
     require(goalID != 0, "Goal does not exist");
 
     LibDisabled.set(components, goalID, disabled);
   }
 
-  function addRequirement(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 goalIndex,
       string memory reqType,
@@ -62,7 +63,7 @@ contract _GoalRegistrySystem is System {
     return LibGoal.addRequirement(world, components, goalIndex, requirement);
   }
 
-  function addRewardBasic(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardBasic(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 goalIndex,
       string memory name,
@@ -80,7 +81,7 @@ contract _GoalRegistrySystem is System {
     return id;
   }
 
-  function addRewardDT(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardDT(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 goalIndex,
       string memory name,
@@ -98,7 +99,7 @@ contract _GoalRegistrySystem is System {
     return id;
   }
 
-  function addRewardStat(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardStat(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 goalIndex,
       string memory name,
@@ -118,7 +119,7 @@ contract _GoalRegistrySystem is System {
     return id;
   }
 
-  function addRewardDisplay(bytes memory arguments) public onlyOwner returns (uint256) {
+  function addRewardDisplay(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (uint32 goalIndex, string memory name) = abi.decode(arguments, (uint32, string));
 
     require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
@@ -129,12 +130,12 @@ contract _GoalRegistrySystem is System {
     return id;
   }
 
-  function remove(uint32 goalIndex) public onlyOwner {
+  function remove(uint32 goalIndex) public onlyAdmin(components) {
     require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
     LibGoal.remove(components, goalIndex);
   }
 
-  function execute(bytes memory arguments) public onlyOwner returns (bytes memory) {
+  function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
   }
 }
