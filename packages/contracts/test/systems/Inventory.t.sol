@@ -62,14 +62,19 @@ contract InventoryTest is SetupTemplate {
 
     // increase back to original, test decrease
     vm.startPrank(deployer);
-    LibInventory.incFor(components, alice.id, index, initialAmt);
-    if (nextAmt > initialAmt) {
-      // decreases more than balance, will revert
-      vm.expectRevert();
-      ExternalCaller.decFor(alice.id, index, nextAmt);
+    if (UINT256_MAX / 2 <= initialAmt) {
+      vm.expectRevert(); // ITEM_TOTAL overflow
+      ExternalCaller.incFor(alice.id, index, initialAmt);
     } else {
-      LibInventory.decFor(components, alice.id, index, nextAmt);
-      assertBalance(alice, index, initialAmt - nextAmt);
+      ExternalCaller.incFor(alice.id, index, initialAmt);
+      if (nextAmt > initialAmt) {
+        // decreases more than balance, will revert
+        vm.expectRevert();
+        ExternalCaller.decFor(alice.id, index, nextAmt);
+      } else {
+        LibInventory.decFor(components, alice.id, index, nextAmt);
+        assertBalance(alice, index, initialAmt - nextAmt);
+      }
     }
     vm.stopPrank();
   }

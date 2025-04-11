@@ -171,13 +171,11 @@ library LibListing {
 
   /// @notice log increase for item buy
   function logBuy(IWorld world, IUintComp comps, uint256 accID, LogData memory data) internal {
-    uint32[] memory indices = new uint32[](3);
+    uint32[] memory indices = new uint32[](2);
     indices[1] = data.item;
-    indices[2] = data.item;
-    string[] memory types = new string[](3);
+    string[] memory types = new string[](2);
     types[0] = "LISTING_BUY_TOTAL";
     types[1] = "LISTING_BUY";
-    types[2] = "ITEM_TOTAL";
 
     LibData.inc(comps, accID, indices, types, data.amt.toInt256().toUint256());
     LibData.inc(comps, accID, data.currency, "ITEM_SPEND", data.cost);
@@ -196,14 +194,9 @@ library LibListing {
     string[] memory types = new string[](2);
     types[0] = "LISTING_SELL_TOTAL";
     types[1] = "LISTING_SELL";
+
     LibData.inc(comps, accID, indices, types, data.amt.toInt256().toUint256());
-
-    indices[0] = data.currency;
-    indices[1] = data.currency;
-    types[0] = "ITEM_TOTAL";
-    types[1] = "ITEM_REVENUE";
-    LibData.inc(comps, accID, indices, types, data.cost);
-
+    LibData.inc(comps, accID, data.currency, "ITEM_REVENUE", data.cost);
     LibEmitter.emitEvent(
       world,
       "LISTING_SELL",

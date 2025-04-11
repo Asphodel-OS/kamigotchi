@@ -55,6 +55,30 @@ library LibData {
 
   function inc(
     IUintComp components,
+    uint256[] memory holderIDs,
+    uint32 index,
+    string memory type_,
+    uint256 amt
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](holderIDs.length);
+    for (uint256 i; i < holderIDs.length; i++) dataIDs[i] = getID(holderIDs[i], index, type_);
+    return inc(components, dataIDs, amt);
+  }
+
+  function inc(
+    IUintComp components,
+    uint256[] memory holderIDs,
+    uint32 index,
+    string[] memory types,
+    uint256 amt
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](holderIDs.length);
+    for (uint256 i; i < holderIDs.length; i++) dataIDs[i] = getID(holderIDs[i], index, types[i]);
+    return inc(components, dataIDs, amt);
+  }
+
+  function inc(
+    IUintComp components,
     uint256 holderID,
     uint32[] memory indices,
     string memory type_,
@@ -122,6 +146,30 @@ library LibData {
   ) internal {
     uint256 dataID = getID(holderID, index, type_);
     return dec(components, dataID, amt);
+  }
+
+  function dec(
+    IUintComp components,
+    uint256[] memory holderIDs,
+    uint32 index,
+    string memory type_,
+    uint256 amt
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](holderIDs.length);
+    for (uint256 i; i < holderIDs.length; i++) dataIDs[i] = getID(holderIDs[i], index, type_);
+    return dec(components, dataIDs, amt);
+  }
+
+  function dec(
+    IUintComp components,
+    uint256[] memory holderIDs,
+    uint32 index,
+    string[] memory types,
+    uint256 amt
+  ) internal {
+    uint256[] memory dataIDs = new uint256[](holderIDs.length);
+    for (uint256 i; i < holderIDs.length; i++) dataIDs[i] = getID(holderIDs[i], index, types[i]);
+    return dec(components, dataIDs, amt);
   }
 
   function dec(

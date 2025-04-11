@@ -57,7 +57,6 @@ contract HarvestStopSystem is System {
 
     // standard logging and tracking
     LibScore.incFor(components, accID, MUSU_INDEX, "COLLECT", output);
-    LibInventory.logItemTotal(components, accID, MUSU_INDEX, output);
     LibHarvest.logHarvestTimes(components, accID, nodeIndex, id); // log time only on stop
     LibHarvest.logAmounts(
       components,

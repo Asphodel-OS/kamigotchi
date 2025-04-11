@@ -50,7 +50,6 @@ contract HarvestCollectSystem is System {
 
     // standard logging and tracking
     LibScore.incFor(components, accID, MUSU_INDEX, "COLLECT", output);
-    LibInventory.logItemTotal(components, accID, MUSU_INDEX, output);
     LibHarvest.logAmounts(
       components,
       accID,

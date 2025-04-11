@@ -140,7 +140,7 @@ library LibInventory {
       // regular inventory
       id = createFor(components, holderID, itemIndex);
       ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
-      LibData.inc(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
+      logItemTotal(components, holderID, itemIndex, amt);
     }
   }
 
@@ -285,16 +285,18 @@ library LibInventory {
   // LOGGING
 
   /// @notice log increase for item total
-  function logItemTotal(IUintComp components, uint256 accID, uint32 itemIndex, uint256 amt) public {
-    LibData.inc(components, accID, itemIndex, "ITEM_TOTAL", amt);
-  }
-
-  function logItemTotals(
+  function logItemTotal(
     IUintComp components,
     uint256 accID,
-    uint32[] memory itemIndices,
-    uint256[] memory amts
-  ) public {
-    LibData.inc(components, accID, itemIndices, "ITEM_TOTAL", amts);
+    uint32 itemIndex,
+    uint256 amt
+  ) internal {
+    uint256[] memory holderIDs = new uint256[](2);
+    holderIDs[1] = accID;
+    string[] memory types = new string[](2);
+    types[0] = "ITEM_COUNT_GLOBAL";
+    types[1] = "ITEM_TOTAL";
+
+    LibData.inc(components, holderIDs, itemIndex, types, amt);
   }
 }
