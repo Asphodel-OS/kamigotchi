@@ -22,6 +22,32 @@ contract Int32BareComponent is BareComponent {
     return TypeLib.decodeBatchInt32(_extractRaw(entities));
   }
 
+  function inc(uint256 entity, int32 value) external virtual onlyWriter {
+    _inc(entity, value);
+  }
+
+  function inc(uint256[] memory entities, int32 value) external virtual onlyWriter {
+    for (uint256 i; i < entities.length; i++) _inc(entities[i], value);
+  }
+
+  function inc(uint256[] memory entities, int32[] memory values) external virtual onlyWriter {
+    require(entities.length == values.length, "arr length mismatch");
+    for (uint256 i; i < entities.length; i++) _inc(entities[i], values[i]);
+  }
+
+  function dec(uint256 entity, int32 value) external virtual onlyWriter {
+    _dec(entity, value);
+  }
+
+  function dec(uint256[] memory entities, int32 value) external virtual onlyWriter {
+    for (uint256 i; i < entities.length; i++) _dec(entities[i], value);
+  }
+
+  function dec(uint256[] memory entities, int32[] memory values) external virtual onlyWriter {
+    require(entities.length == values.length, "arr length mismatch");
+    for (uint256 i; i < entities.length; i++) _dec(entities[i], values[i]);
+  }
+
   function get(uint256 entity) external view virtual returns (int32) {
     return TypeLib.decodeInt32(_getRaw(entity));
   }
@@ -36,5 +62,13 @@ contract Int32BareComponent is BareComponent {
 
   function safeGet(uint256[] memory entities) external view virtual returns (int32[] memory) {
     return TypeLib.safeDecodeBatchInt32(_getRaw(entities));
+  }
+
+  function _inc(uint256 entity, int32 value) internal virtual {
+    _set(entity, TypeLib.encodeInt32(TypeLib.safeDecodeInt32(_getRaw(entity)) + value));
+  }
+
+  function _dec(uint256 entity, int32 value) internal virtual {
+    _set(entity, TypeLib.encodeInt32(TypeLib.safeDecodeInt32(_getRaw(entity)) - value));
   }
 }

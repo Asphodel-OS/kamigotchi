@@ -46,6 +46,60 @@
     },
     {
       "type": "function",
+      "name": "dec",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "value",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "dec",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "values",
+          "type": "uint32[]",
+          "internalType": "uint32[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "dec",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "value",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "equal",
       "inputs": [
         {
@@ -294,6 +348,60 @@
         }
       ],
       "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "inc",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "values",
+          "type": "uint32[]",
+          "internalType": "uint32[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "inc",
+      "inputs": [
+        {
+          "name": "entities",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "value",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "inc",
+      "inputs": [
+        {
+          "name": "entity",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "value",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -638,6 +746,9 @@
     "authorizeWriter(address)": "4fef6a38",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
+    "dec(uint256,uint32)": "89b53ed5",
+    "dec(uint256[],uint32)": "f07ab3e6",
+    "dec(uint256[],uint32[])": "c085aea4",
     "equal(uint256,bytes)": "d2f27dcd",
     "equal(uint256[],bytes)": "2dfbb801",
     "extract(uint256)": "85b39782",
@@ -651,6 +762,9 @@
     "getRaw(uint256[])": "a1c58425",
     "has(uint256)": "cccf7a8e",
     "id()": "af640d0f",
+    "inc(uint256,uint32)": "b3fe5af4",
+    "inc(uint256[],uint32)": "985059b7",
+    "inc(uint256[],uint32[])": "7e4ac984",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "remove(uint256)": "4cc82215",

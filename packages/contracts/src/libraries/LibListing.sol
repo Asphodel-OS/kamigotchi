@@ -139,23 +139,22 @@ library LibListing {
   }
 
   //////////////////
-  // DATA LOGGING
+  // SETTERS
 
   /// @notice increase the balance of a listing by certain amount
   /// @dev how balance is interpreted depends on the type of listing
   function incBalance(IUintComp comps, uint256 id, uint256 amtRaw) internal {
-    int32 old = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id);
-    int32 amt = amtRaw.toInt32();
-    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, old + amt);
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).inc(id, amtRaw.toInt32());
   }
 
   /// @notice increase the balance of a listing by certain amount
   /// @dev how balance is interpreted depends on the type of listing
   function decBalance(IUintComp comps, uint256 id, uint256 amtRaw) internal {
-    int32 old = BalanceComponent(getAddrByID(comps, BalanceCompID)).safeGet(id);
-    int32 amt = amtRaw.toInt32();
-    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, old - amt);
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).dec(id, amtRaw.toInt32());
   }
+
+  ///////////////////
+  // LOGGING
 
   /// @notice log increase for item buy
   function logIncItemBuy(IUintComp comps, uint256 accID, uint32 itemIndex, uint256 amt) internal {
