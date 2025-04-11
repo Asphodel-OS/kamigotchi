@@ -24,7 +24,7 @@ contract InitWorld is SystemCall {
   
   function _initWorld( address worldAddr) internal {
     <% calls.forEach(call=> { -%>
-      <%- call.system %>(_getSysAddr(<%- call.id %>)).<%- call.func %>(
+      <%- call.system %>(_getSysAddr(<%- call.id %>)).<%- call.func %><%-`${call.gas ? `{gas: ${call.gas}}` : ''}`%>(
         <%- call.args %>
       ); 
     <% }); -%>

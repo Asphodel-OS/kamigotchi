@@ -14,7 +14,8 @@ export type GenCall = (
   systemID: keyof typeof SystemBytecodes,
   args: any[],
   func?: string,
-  encodedTypes?: any
+  encodedTypes?: any,
+  gasLimit?: BigNumberish
 ) => void;
 
 export function createAdminAPI(compiledCalls: string[]) {
@@ -27,7 +28,8 @@ export function createAdminAPI(compiledCalls: string[]) {
     systemID: keyof typeof SystemBytecodes,
     args: any[],
     func?: string,
-    encodedTypes?: any[]
+    encodedTypes?: any[],
+    gasLimit?: BigNumberish
   ) {
     // if execute or has typed args, encode args
     const encode = func === undefined || encodedTypes !== undefined;
@@ -38,6 +40,7 @@ export function createAdminAPI(compiledCalls: string[]) {
 "id": "${call.id}",
 "func": "${func ? func : 'execute'}",
 "args": "${call.args}"
+${gasLimit ? `, "gas": "${gasLimit}"` : ''}
 }`;
 
     compiledCalls.push(callData);
@@ -126,8 +129,8 @@ export function createAdminAPI(compiledCalls: string[]) {
     genCall('system.Kami721.BatchMint', [], 'setTraits');
   }
 
-  async function batchMint(amount: number) {
-    genCall('system.Kami721.BatchMint', [amount], 'batchMint');
+  async function batchMint(amount: number, gasLimit?: BigNumberish) {
+    genCall('system.Kami721.BatchMint', [amount], 'batchMint', undefined, gasLimit);
   }
 
   /////////////////
