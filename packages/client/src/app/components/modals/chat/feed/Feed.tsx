@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'app/cache/account';
+import { getChat, pushChat } from 'app/cache/chat';
 import { Kami } from 'app/cache/kami';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
@@ -45,7 +46,7 @@ interface Props {
 }
 
 // TODO: retrieve this in the flow of the application with hooks
-const client = getKamidenClient();
+const KamidenClient = getKamidenClient();
 
 export const Feed = (props: Props) => {
   const { utils, player, blocked, actionSystem, api, activeTab, setActiveTab } = props;
@@ -69,7 +70,7 @@ export const Feed = (props: Props) => {
       if (message.RoomIndex === player.roomIndex) {
         setKamidenMessages((prev) => [...prev, message]);
       }
-
+      pushChat(message);
       if (player.id === message.AccountId) {
         setScrollDown(!scrollDown);
       } else {
@@ -137,35 +138,29 @@ export const Feed = (props: Props) => {
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
   async function pollMessages() {
-    if (!client) return;
-
-    const response = await client.getRoomMessages({
-      RoomIndex: player.roomIndex,
-      Timestamp: Date.now(),
-    });
-
-    if (response.Messages.length === 0) {
+    if (!KamidenClient) return;
+    console.log(`[CHAT] pollMessages room ${player.roomIndex}`);
+    const messages = await getChat(player.roomIndex, false);
+    console.log(`[CHAT] ${messages} !`);
+    if (messages.length === kamidenMessages.length) {
       setNoMoreMessages(true);
       return;
     } else {
       setNoMoreMessages(false);
     }
-    setKamidenMessages(response.Messages);
+    setKamidenMessages(messages);
   }
 
   async function pollMoreMessages() {
-    if (!client || noMoreMessages) return;
+    if (!KamidenClient || noMoreMessages) return;
 
     setIsPolling(true);
     try {
-      const response = await client.getRoomMessages({
-        RoomIndex: player.roomIndex,
-        Timestamp: kamidenMessages[0].Timestamp,
-      });
-      if (response.Messages.length === 0) {
+      const messages = await getChat(player.roomIndex, true);
+      if (messages.length === kamidenMessages.length) {
         setNoMoreMessages(true);
       } else {
-        setKamidenMessages((prev) => [...response.Messages, ...prev]);
+        setKamidenMessages(messages);
       }
     } finally {
       setIsPolling(false);
