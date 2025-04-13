@@ -1,0 +1,35 @@
+import { Components, World } from '@mud-classic/recs';
+import { getKamidenClient, Message, subscribeToMessages } from '../../clients/kamiden/index';
+
+// nodeindex ,messages list
+export const ChatCache = new Map<number, Message[]>();
+const client = getKamidenClient();
+
+export const get = (world: World, components: Components, roomIndex: number, scroll: boolean) => {
+  if (!ChatCache.has(roomIndex) || scroll) process(world, components, roomIndex, scroll);
+  return ChatCache.get(roomIndex)!;
+};
+
+// !scroll (user hasnt scrolled yet), !empty(user had already opened the chat modal), empty(user hadnt already opened the chat modal)
+// scroll(user  has scrolled, old messages neeed to be loaded)
+export const process = async (
+  world: World,
+  components: Components,
+  roomIndex: number,
+  scroll: boolean
+) => {
+  if (!scroll) {
+    const response = await client.getRoomMessages({
+      RoomIndex: roomIndex,
+      Timestamp: Date.now(),
+    });
+    ChatCache.set(roomIndex, response.Messages);
+  } else {
+    const newMessages = ChatCache.get(roomIndex);
+    const response = await client.getRoomMessages({
+      RoomIndex: roomIndex,
+      Timestamp: newMessages?.[0]?.Timestamp,
+    });
+    ChatCache.set(roomIndex, response.Messages.concat(newMessages!));
+  }
+};
