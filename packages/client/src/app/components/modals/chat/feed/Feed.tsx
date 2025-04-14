@@ -138,10 +138,7 @@ export const Feed = (props: Props) => {
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
   async function pollMessages() {
-    if (!KamidenClient) return;
-    console.log(`[CHAT] pollMessages room ${player.roomIndex}`);
     const messages = await getChat(player.roomIndex, false);
-    console.log(`[CHAT] ${messages} !`);
     if (messages.length === kamidenMessages.length) {
       setNoMoreMessages(true);
       return;

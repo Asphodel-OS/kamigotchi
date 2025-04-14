@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getChatLastTimeStamp } from 'app/cache/chat';
 import { Modals, useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
-import { Message as KamiMessage, subscribeToMessages } from 'clients/kamiden';
 import { MenuButton } from './MenuButton';
 
+const chatOpened = new Map<number, number>();
+const nodeVisited = new Map<number, number>();
 export const ChatMenuButton = () => {
   const { modals } = useVisibility();
   const modalsToHide: Partial<Modals> = {
@@ -22,10 +24,10 @@ export const ChatMenuButton = () => {
     presale: false,
     trading: false,
   };
-  const [newMessage, setNewMassage] = useState(false);
-  const [messagesLength, setMessagesLength] = useState(0);
+
   const [lastRefresh, setLastRefresh] = useState(Date.now());
-  const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
+  const [notification, setNotification] = useState(false);
+
   const { roomIndex } = useSelected();
 
   // ticking
@@ -36,29 +38,34 @@ export const ChatMenuButton = () => {
     return () => clearInterval(timerId);
   }, []);
 
-  // hides status when changing rooms
   useEffect(() => {
-    setNewMassage(false);
+    nodeVisited.set(roomIndex, Date.now());
   }, [roomIndex]);
 
-  // registers new messages
   useEffect(() => {
-    if (!modals.chat) {
-      subscribeToMessages((message) => {
-        if (message.RoomIndex === roomIndex) {
-          setKamidenMessages((prev) => [...prev, message]);
+    if (modals.chat) {
+      chatOpened.set(roomIndex, Date.now());
+      setNotification(false);
+    } else {
+      // if chat has been opened before
+      if (chatOpened.has(roomIndex)) {
+        if (chatOpened.get(roomIndex)! < getChatLastTimeStamp(roomIndex)) {
+          setNotification(true);
+        } else {
+          setNotification(false);
         }
-      });
-    } else setNewMassage(false);
-  }, [lastRefresh]);
-
-  // if new messages are added we show the notification
-  useEffect(() => {
-    if (kamidenMessages.length > messagesLength) {
-      setNewMassage(true);
-      setMessagesLength(kamidenMessages.length);
+      } else {
+        // if room has been visited but chat hast been opened yet
+        if (nodeVisited.has(roomIndex)) {
+          if (nodeVisited.get(roomIndex)! < getChatLastTimeStamp(roomIndex)) {
+            setNotification(true);
+          } else {
+            setNotification(false);
+          }
+        }
+      }
     }
-  }, [kamidenMessages]);
+  }, [lastRefresh, roomIndex, modals.chat]);
 
   return (
     <Container>
@@ -69,7 +76,7 @@ export const ChatMenuButton = () => {
         targetModal='chat'
         hideModals={modalsToHide}
       />
-      <Status newMessage={newMessage} />
+      <Status notification={notification} />
     </Container>
   );
 };
@@ -78,8 +85,8 @@ const Container = styled.div`
   position: relative;
 `;
 
-const Status = styled.div<{ newMessage: boolean }>`
-  display: ${({ newMessage }) => (newMessage ? 'block' : 'none')};
+const Status = styled.div<{ notification: boolean }>`
+  display: ${({ notification }) => (notification ? 'block' : 'none')};
   border: solid 0.1vw white;
   position: absolute;
   bottom: 0.9%;
