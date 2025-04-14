@@ -17,6 +17,7 @@ import _RoomRegistrySystem from "../../../out/_RoomRegistrySystem.sol/_RoomRegis
 import _SkillRegistrySystem from "../../../out/_SkillRegistrySystem.sol/_SkillRegistrySystem.json";
 import _SnapshotT2System from "../../../out/_SnapshotT2System.sol/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../../../out/_TraitRegistrySystem.sol/_TraitRegistrySystem.json";
+import _WorldWhitelistSystem from "../../../out/_WorldWhitelistSystem.sol/_WorldWhitelistSystem.json";
 import AccountMoveSystem from "../../../out/AccountMoveSystem.sol/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../out/AccountRegisterSystem.sol/AccountRegisterSystem.json";
 import AccountSetNameSystem from "../../../out/AccountSetNameSystem.sol/AccountSetNameSystem.json";
@@ -86,6 +87,7 @@ export const SystemBytecodes = {
   "system.skill.registry": _SkillRegistrySystem,
   "system.setup.snapshot.t2": _SnapshotT2System,
   "system.trait.registry": _TraitRegistrySystem,
+  "system.world.whitelist.set": _WorldWhitelistSystem,
   "system.account.move": AccountMoveSystem,
   "system.account.register": AccountRegisterSystem,
   "system.account.set.name": AccountSetNameSystem,

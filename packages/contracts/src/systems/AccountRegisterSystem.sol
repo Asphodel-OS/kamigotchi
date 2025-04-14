@@ -14,7 +14,11 @@ contract AccountRegisterSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (address operator, string memory name) = abi.decode(arguments, (address, string));
-    // address unqiueness  constraints
+
+    // check for private world
+    LibAccount.verifyWorldWL(components, msg.sender);
+
+    // address uniqueness constraints
     if (LibAccount.ownerInUse(components, msg.sender)) revert("Account: exists for Owner");
     if (LibAccount.operatorInUse(components, operator)) revert("Account: exists for Operator");
 

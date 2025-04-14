@@ -71,6 +71,10 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     genCall('system._Config.Set', [field, value], 'setValueAddress');
   }
 
+  async function setConfigBool(field: string, value: boolean) {
+    genCall('system._Config.Set', [field, value], 'setValueBool');
+  }
+
   async function setConfigArray(field: string, value: number[]) {
     const arr = new Array(8);
     arr.fill(0);
@@ -567,12 +571,19 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     genCall('system.setup.snapshot.t2', [owners, amts], 'distributePassports');
   }
 
-  function distributeWhitelists(owners: string[]) {
+  function distributeGachaWhitelists(owners: string[]) {
     genCall('system.setup.snapshot.t2', [owners], 'whitelistAccounts');
   }
 
   ////////////////
-  // SETUP (LOCAL)
+  // SETUP (testing)
+
+  function worldWhitelistAccount(accounts: string) {
+    genCall('system.world.whitelist.set', [accounts], 'whitelist', undefined, 400000);
+  }
+
+  ////////////////
+  // SETUP (puter)
 
   function initAccounts() {
     genCall('system.local.setup', [], 'initAccounts');
@@ -599,6 +610,7 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
       set: {
         address: setConfigAddress,
         array: setConfigArray,
+        bool: setConfigBool,
         number: setConfig,
         string: setConfigString,
       },
@@ -692,9 +704,14 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
         initHarvests: initHarvests,
         attachItemERC20: attachItemERC20,
       },
+      testing: {
+        account: {
+          wl: worldWhitelistAccount,
+        },
+      },
       live: {
         passports: distributePassports,
-        whitelists: distributeWhitelists,
+        whitelists: distributeGachaWhitelists,
       },
     },
   };

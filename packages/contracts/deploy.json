@@ -183,6 +183,7 @@
       "name": "_TraitRegistrySystem",
       "writeAccess": ["*"]
     },
+    { "name": "_WorldWhitelistSystem", "writeAccess": ["HasFlag"] },
     {
       "name": "AccountUseItemSystem",
       "writeAccess": [

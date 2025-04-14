@@ -28,6 +28,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibFaction } from "libraries/LibFaction.sol";
+import { LibFlag } from "libraries/LibFlag.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
@@ -141,6 +142,11 @@ library LibAccount {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
+  /// @notice for closed worlds, addresses must be whitelisted to create an account
+  function setWorldWL(IUintComp components, address owner, bool wl) internal {
+    LibFlag.set(components, uint256(uint160(owner)), "WORLD_WHITELIST", wl);
+  }
+
   /////////////////
   // CHECKS
 
@@ -171,6 +177,12 @@ library LibAccount {
     uint256 id = getByOwner(comps, msg.sender);
     if (id == 0) revert("LibAccount: account owner not found");
     return id;
+  }
+
+  function verifyWorldWL(IUintComp comps, address owner) internal view {
+    uint256 id = uint256(uint160(owner));
+    if (LibConfig.getBool(comps, "WORLD_PRIVATE") && !LibFlag.has(comps, id, "WORLD_WHITELIST"))
+      revert("LibAccount: account not whitelisted");
   }
 
   /////////////////
