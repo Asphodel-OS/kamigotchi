@@ -23,7 +23,6 @@ interface Props {
   };
   data: {
     account: Account;
-    accountEntity: EntityIndex;
     poolKamis: EntityIndex[];
     auctions: {
       gacha: Auction;

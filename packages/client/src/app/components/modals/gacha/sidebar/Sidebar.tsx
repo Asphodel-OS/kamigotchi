@@ -19,7 +19,9 @@ interface Props {
   actions: {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
-    mint: (balance: number) => Promise<boolean>;
+    mintPublic: (amount: number) => void;
+    mintWL: () => void;
+    pull: (balance: number) => Promise<boolean>;
     reroll: (kamis: Kami[]) => Promise<boolean>;
     reveal: (commits: Commit[]) => Promise<void>;
   };

@@ -141,7 +141,7 @@ export function registerGachaModal() {
               revealTx(filtered);
               setTriedReveal(true);
             } catch (e) {
-              console.log('Gacha.tsx: handleMint() reveal failed', e);
+              console.log('Gacha.tsx: handlePull() reveal failed', e);
             }
           }
         };
@@ -173,6 +173,7 @@ export function registerGachaModal() {
         );
       };
 
+      // approve the spend of an ERC20 token
       const approveTx = async (payItem: Item, price: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -189,8 +190,44 @@ export function registerGachaModal() {
         });
       };
 
-      // get a pet from gacha with Mint20
-      const mintTx = (amount: number) => {
+      // mint a Gacha Ticket from the WL Mint
+      const mintWLTx = () => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'GachaMintWL',
+          params: [],
+          description: `Acquiring Gacha Ticket from the WL Mint`,
+          execute: async () => {
+            return api.gacha.tickets.buy.whitelist();
+          },
+        });
+        return actionID;
+      };
+
+      // mint a Gacha Ticket from the Public Mint
+      const mintPublicTx = (amount: number) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'GachaMintPublic',
+          params: [amount],
+          description: `Acquiring ${amount} Gacha Tickets from the Public Mint`,
+          execute: async () => {
+            return api.gacha.tickets.buy.public(amount);
+          },
+        });
+        return actionID;
+      };
+
+      // pull a pet from gacha with a Gacha Ticket
+      const pullTx = (amount: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -207,7 +244,7 @@ export function registerGachaModal() {
         return actionID;
       };
 
-      // reroll a pet with eth payment
+      // reroll a pet with a Reroll Ticket
       const rerollTx = (kamis: Kami[]) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -261,10 +298,10 @@ export function registerGachaModal() {
         setQuantity(0);
       };
 
-      const handleMint = async (amount: number) => {
+      const handlePull = async (amount: number) => {
         try {
           setWaitingToReveal(true);
-          const mintActionID = mintTx(amount);
+          const mintActionID = pullTx(amount);
           if (!mintActionID) throw new Error('Mint reveal failed');
 
           await waitForActionCompletion(
@@ -275,7 +312,7 @@ export function registerGachaModal() {
           playVend();
           return true;
         } catch (e) {
-          console.log('Gacha: handleMint() failed', e);
+          console.log('Gacha: handlePull() failed', e);
         }
         return false;
       };
@@ -332,7 +369,9 @@ export function registerGachaModal() {
               actions={{
                 approve: approveTx,
                 bid: auctionTx,
-                mint: handleMint,
+                mintPublic: mintPublicTx,
+                mintWL: mintWLTx,
+                pull: handlePull,
                 reroll: handleReroll,
                 reveal: revealTx,
               }}

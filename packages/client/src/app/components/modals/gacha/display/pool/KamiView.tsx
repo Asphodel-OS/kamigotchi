@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { EmptyText, Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Account } from 'network/shapes/Account';
 import { KamiStats } from 'network/shapes/Kami';
 import { BaseKami, Kami } from 'network/shapes/Kami/types';
 import { playClick } from 'utils/sounds';
@@ -23,7 +22,6 @@ interface Props {
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
-    account: Account;
     entities: EntityIndex[];
   };
   utils: {
@@ -36,7 +34,7 @@ export const KamiView = (props: Props) => {
   const { controls, caches, data, utils, isVisible } = props;
   const { filters, sorts } = controls;
   const { kamiBlocks } = caches;
-  const { account, entities } = data;
+  const { entities } = data;
   const { getKami } = utils;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();

@@ -13,7 +13,9 @@ interface Props {
   actions: {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
-    mint: (amount: number) => Promise<boolean>;
+    mintPublic: (amount: number) => void;
+    mintWL: () => void;
+    pull: (amount: number) => Promise<boolean>;
     reroll: (kamis: Kami[]) => Promise<boolean>;
   };
   controls: {
@@ -38,7 +40,7 @@ interface Props {
 
 export const Footer = (props: Props) => {
   const { actions, controls, data, state } = props;
-  const { approve, bid, mint, reroll } = actions;
+  const { approve, bid, mintPublic, mintWL, pull, reroll } = actions;
   const { mode, setMode, tab } = controls;
   const { payItem, saleItem, balance } = data;
   const { quantity, setQuantity, price, selectedKamis, setSelectedKamis } = state;
@@ -92,7 +94,7 @@ export const Footer = (props: Props) => {
     playClick();
     let success = false;
     if (tab === 'GACHA') {
-      if (mode === 'DEFAULT') success = await mint(quantity);
+      if (mode === 'DEFAULT') success = await pull(quantity);
       else if (mode === 'ALT') bid(saleItem, quantity);
     } else if (tab === 'REROLL') {
       if (mode === 'DEFAULT') {
@@ -104,7 +106,9 @@ export const Footer = (props: Props) => {
       }
     } else if (tab === 'MINT') {
       if (needsApproval) approve(payItem, price);
-      else bid(saleItem, quantity); // TODO: await on success
+      if (mode === 'DEFAULT') mintWL();
+      else if (mode === 'ALT') mintPublic(quantity);
+      else bid(saleItem, quantity);
     }
     if (success) setQuantity(0);
   };
