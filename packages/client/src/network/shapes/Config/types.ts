@@ -1,7 +1,7 @@
 import { EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { numberToHex } from 'viem';
+import { getAddress, numberToHex } from 'viem';
 import { getEntityByHash, unpackArray32 } from '../utils';
 
 // get an Config from its EntityIndex
@@ -28,7 +28,7 @@ export const getConfigFieldValueAddress = (
 
   const raw = getComponentValue(Value, entity)?.value;
   if (!raw) return '0x000000000000000000000000000000000000dEaD';
-  return numberToHex(raw);
+  return getAddress(numberToHex(raw, { size: 20 }));
 };
 
 // get an Config from its EntityIndex

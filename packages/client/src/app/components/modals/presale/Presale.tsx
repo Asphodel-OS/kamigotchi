@@ -12,7 +12,7 @@ import { ActionButton } from 'app/components/library/base/buttons';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
-import { ONYX_INDEX } from 'constants/items';
+import { ETH_INDEX } from 'constants/items';
 import { useERC20Balance, usePresaleInfo } from 'network/chain';
 import { useWatchBlockNumber } from 'wagmi';
 import { Rate } from './Rate';
@@ -36,7 +36,7 @@ export function registerPresaleModal() {
           return {
             network,
             presaleAddress: getAddress(getConfigAddress(world, components, 'ONYX_PRESALE_ADDRESS')),
-            currency: getItemByIndex(world, components, ONYX_INDEX), // onyx placeholder - to change to eth
+            currency: getItemByIndex(world, components, ETH_INDEX),
           };
         })
       );
@@ -108,7 +108,7 @@ export function registerPresaleModal() {
           id: actionID,
           action: 'Buy ONYX Presale',
           params: [toBuy],
-          description: `Buying ${toBuy} ONYX via presale`,
+          description: `Buying ${toReceive} ONYX via presale`,
           execute: async () => {
             return api.presale.buy(presaleAddress, toBuy);
           },
