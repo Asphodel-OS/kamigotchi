@@ -1,6 +1,5 @@
 import { EntityID } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
-import axios from 'axios';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -10,8 +9,6 @@ import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './shared';
-
-type FaucetState = 'unclaimed' | 'claiming' | 'claimed';
 
 interface Props {
   address: {
@@ -31,9 +28,6 @@ interface Props {
 export const Registration = (props: Props) => {
   const { address, actions, utils } = props;
   const [name, setName] = useState('');
-  const [faucetState, setFaucetState] = useState<FaucetState>('unclaimed');
-  const [faucetSymbol, setFaucetSymbol] = useState<string>('🚰');
-  const [faucetIndex, setFaucetIndex] = useState<number>(1);
 
   const isNameTaken = (username: string) => {
     return NameCache.has(username);
@@ -68,33 +62,6 @@ export const Registration = (props: Props) => {
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     const truncated = event.target.value.slice(0, 16);
     setName(truncated);
-  };
-
-  const dripFaucet = async (address: string) => {
-    console.log('Faucet Index', faucetIndex);
-    setFaucetState('claiming');
-    setFaucetSymbol('🌀');
-
-    let response: any;
-    try {
-      response = await axios.post(
-        `https://initia-faucet-0${faucetIndex + 1}.test.asphodel.io/claim`,
-        {
-          address,
-        }
-      );
-    } catch (e: any) {
-      console.error('Faucet Error', e.response.status, e.response.data);
-      setFaucetState('unclaimed');
-      setFaucetSymbol('❌');
-      // setFaucetIndex((faucetIndex + 1) % TOTAL_FAUCETS);
-    } finally {
-      if (response.status == 200) {
-        setFaucetState('claimed');
-        setFaucetSymbol('✅');
-        // TODO: play drippiest sound known to humankind
-      }
-    }
   };
 
   /////////////////
@@ -167,14 +134,6 @@ export const Registration = (props: Props) => {
       </Row>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />
-        <Tooltip text={['ONYX Faucet', `(${faucetState})`]} align='center'>
-          <ActionButton
-            onClick={() => dripFaucet(address.selected)}
-            size='medium'
-            text={`Faucet ${faucetSymbol}`}
-            disabled={faucetState !== 'unclaimed'}
-          />
-        </Tooltip>
       </Row>
     </>
   );

@@ -10,7 +10,6 @@ import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library'
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
-import axios from 'axios';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
 import { abbreviateAddress } from 'utils/address';
@@ -107,12 +106,6 @@ export function registerGasHarasser() {
         await waitForActionCompletion(actions!.Action, actionIndex);
       };
 
-      const dripFaucet = async (address: string) => {
-        await axios.post(' https://initia-faucet-02.test.asphodel.io/claim', {
-          address: address,
-        });
-      };
-
       /////////////////
       // INTERACTION
 
@@ -130,12 +123,6 @@ export function registerGasHarasser() {
       const feed = async () => {
         playFund();
         await fundTx();
-        playSuccess();
-      };
-
-      const drip = async () => {
-        playFund();
-        await dripFaucet(account.operatorAddress);
         playSuccess();
       };
 
@@ -164,7 +151,6 @@ export function registerGasHarasser() {
               style={{ pointerEvents: 'auto' }}
             />
             <ActionButton text='feed' onClick={feed} />
-            <ActionButton text='drip (faucet)' onClick={drip} />
           </Row>
         </ValidatorWrapper>
       );

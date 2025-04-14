@@ -11,7 +11,6 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork } from 'app/stores';
-import axios from 'axios';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { playFund } from 'utils/sounds';
 
@@ -97,14 +96,6 @@ export function registerFundOperatorModal() {
         await waitForActionCompletion(actions!.Action, actionIndex);
       };
 
-      const dripFaucet = async (address: string) => {
-        setIsDripping(true);
-        await axios.post(' https://initia-faucet-02.test.asphodel.io/claim', {
-          address: address,
-        });
-        setIsDripping(false);
-      };
-
       /////////////////
       // INTERACTIONS
 
@@ -129,17 +120,6 @@ export function registerFundOperatorModal() {
       const TxButton = () => {
         const text = isFunding! ? 'Fund Operator' : 'Send to Owner';
         return <ActionButton onClick={chooseTx} size='large' text={text} />;
-      };
-
-      const FaucetButton = () => {
-        const addr = isFunding! ? kamiAccount.ownerAddress : kamiAccount.operatorAddress;
-        return (
-          <ActionButton
-            onClick={() => dripFaucet(addr)}
-            size='medium'
-            text={`Drip Faucet ${isDripping ? '(pending)' : ''}`}
-          />
-        );
       };
 
       const StateBox = (fundState: boolean) => {
@@ -211,10 +191,7 @@ export function registerFundOperatorModal() {
               ></Input>
               <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
             </div>
-            <Column>
-              {TxButton()}
-              {FaucetButton()}
-            </Column>
+            <Column>{TxButton()}</Column>
           </Grid>
         </ModalWrapper>
       );
