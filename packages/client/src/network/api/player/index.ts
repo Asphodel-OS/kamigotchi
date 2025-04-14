@@ -1,7 +1,7 @@
 import { BigNumberish } from 'ethers';
 
 import { TxQueue } from 'engine/queue';
-import { accountsAPI } from './accounts';
+import { accountsAPI } from './accounts/accounts';
 import { auctionsAPI } from './auctions';
 import { bridgeAPI } from './bridge';
 import { echoAPI } from './echo';
@@ -10,7 +10,6 @@ import { gachaAPI } from './gacha';
 import { goalsAPI } from './goals';
 import { kamisAPI } from './kamis';
 import { npcsAPI } from './npcs';
-import { questsAPI } from './quests';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
@@ -47,7 +46,6 @@ export function createPlayerAPI(txQueue: TxQueue) {
     droptable: {
       reveal: droptableReveal,
     },
-    quests: questsAPI(systems),
     scavenge: {
       claim: claimScavenge,
     },

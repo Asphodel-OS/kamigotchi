@@ -165,7 +165,7 @@ export function registerQuestsModal() {
           params: [quest.index * 1],
           description: `Accepting Quest: ${quest.name}`,
           execute: async () => {
-            return api.player.quests.accept(quest.index);
+            return api.player.account.quest.accept(quest.index);
           },
         });
       };
@@ -176,7 +176,7 @@ export function registerQuestsModal() {
           params: [quest.id],
           description: `Completing Quest: ${quest.name}`,
           execute: async () => {
-            return api.player.quests.complete(quest.id);
+            return api.player.account.quest.complete(quest.id);
           },
         });
       };
