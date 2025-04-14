@@ -32,6 +32,10 @@ export async function initLocalConfigs(api: AdminAPI) {
   await api.config.set.number('BYPASS_VRF', 1);
 }
 
+export async function initTestingConfigs(api: AdminAPI) {
+  await api.config.set.bool('WORLD_PRIVATE', true);
+}
+
 ///////////////////
 // CATEGORIES
 

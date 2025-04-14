@@ -13,6 +13,7 @@ import {
   deleteSkills,
   initAll,
   initAllLocal,
+  initAllTesting,
   initAuctions,
   initAuth,
   initConfigs,
@@ -68,6 +69,9 @@ export class WorldState {
     local: {
       init: () => this.genCalls((api) => initAllLocal(api)),
     } as SubFunc,
+    testing: {
+      init: () => this.genCalls((api) => initAllTesting(api)),
+    },
     admin: {
       batchMint: (amt: number[]) => this.genCalls((api) => mintToGachaPool(api, amt)),
     },
