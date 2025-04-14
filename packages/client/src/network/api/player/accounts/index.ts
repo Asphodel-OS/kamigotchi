@@ -1,4 +1,4 @@
-import { BigNumberish } from '@ethersproject/bignumber';
+import { BigNumberish } from 'ethers';
 
 import { chatAPI } from './chat';
 import { friendsAPI } from './friends';

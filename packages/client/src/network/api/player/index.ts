@@ -1,7 +1,7 @@
 import { BigNumberish } from 'ethers';
 
 import { TxQueue } from 'engine/queue';
-import { accountsAPI } from './accounts/accounts';
+import { accountsAPI } from './accounts';
 import { auctionsAPI } from './auctions';
 import { bridgeAPI } from './bridge';
 import { echoAPI } from './echo';
