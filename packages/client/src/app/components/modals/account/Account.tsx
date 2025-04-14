@@ -96,7 +96,7 @@ export function registerAccountModal() {
           params: [friendship.id],
           description: `Accepting ${friendship.account.name} Friend Request`,
           execute: async () => {
-            return api.player.social.friend.accept(friendship.id);
+            return api.player.account.friend.accept(friendship.id);
           },
         });
       };
@@ -108,7 +108,7 @@ export function registerAccountModal() {
           params: [account.ownerAddress],
           description: `Blocking ${account.name}`,
           execute: async () => {
-            return api.player.social.friend.block(account.ownerAddress);
+            return api.player.account.friend.block(account.ownerAddress);
           },
         });
       };
@@ -120,7 +120,7 @@ export function registerAccountModal() {
           params: [friendship.id],
           description: `Cancelling ${friendship.target.name} Friendship`,
           execute: async () => {
-            return api.player.social.friend.cancel(friendship.id);
+            return api.player.account.friend.cancel(friendship.id);
           },
         });
       };
@@ -132,7 +132,7 @@ export function registerAccountModal() {
           params: [account.ownerAddress],
           description: `Sending ${account.name} Friend Request`,
           execute: async () => {
-            return api.player.social.friend.request(account.ownerAddress);
+            return api.player.account.friend.request(account.ownerAddress);
           },
         });
       };

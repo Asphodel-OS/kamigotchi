@@ -141,7 +141,7 @@ export function registerKamiModal() {
           params: [kami.id, skill.index],
           description: `Upgrading ${skill.name} for ${kami.name}`,
           execute: async () => {
-            return api.player.skill.upgrade(kami.id, skill.index);
+            return api.player.pet.skill.upgrade(kami.id, skill.index);
           },
         });
       };
@@ -152,7 +152,7 @@ export function registerKamiModal() {
           params: [kami.id],
           description: `Resetting skills for ${kami.name}`,
           execute: async () => {
-            return api.player.skill.reset(kami.id);
+            return api.player.pet.skill.reset(kami.id);
           },
         });
       };

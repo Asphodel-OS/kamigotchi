@@ -37,7 +37,7 @@ interface Props {
   actionSystem: ActionSystem;
   api: {
     player: {
-      social: {
+      account: {
         friend: { block: (account: string) => void; request: (account: string) => void };
       };
     };

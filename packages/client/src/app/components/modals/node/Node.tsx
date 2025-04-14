@@ -171,7 +171,7 @@ export function registerNodeModal() {
           params: [kami.id],
           description: `Collecting ${kami.name}'s Harvest`,
           execute: async () => {
-            return api.player.harvest.collect([kami.harvest!.id]);
+            return api.player.pet.harvest.collect([kami.harvest!.id]);
           },
         });
       };
@@ -184,7 +184,7 @@ export function registerNodeModal() {
           params: [enemyKami.harvest!.id, myKami.id],
           description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
           execute: async () => {
-            return api.player.harvest.liquidate(enemyKami.harvest!.id, myKami.id);
+            return api.player.pet.harvest.liquidate(enemyKami.harvest!.id, myKami.id);
           },
         });
       };
@@ -196,7 +196,7 @@ export function registerNodeModal() {
           params: [kami.id, node.id],
           description: `Placing ${kami.name} on ${node.name}`,
           execute: async () => {
-            return api.player.harvest.start([kami.id], node.index);
+            return api.player.pet.harvest.start([kami.id], node.index);
           },
         });
       };
@@ -208,7 +208,7 @@ export function registerNodeModal() {
           params: [kami.harvest!.id],
           description: `Removing ${kami.name} from ${kami.harvest!.node?.name}`,
           execute: async () => {
-            return api.player.harvest.stop([kami.harvest!.id]);
+            return api.player.pet.harvest.stop([kami.harvest!.id]);
           },
         });
       };

@@ -24,7 +24,7 @@ interface Props {
   actionSystem: ActionSystem;
   api: {
     player: {
-      social: {
+      account: {
         friend: { block: (account: string) => void; request: (account: string) => void };
       };
     };
@@ -63,7 +63,7 @@ export const Message = (props: Props) => {
       params: [account.ownerAddress],
       description: `Blocking ${account.name}`,
       execute: async () => {
-        return api.player.social.friend.block(account.ownerAddress);
+        return api.player.account.friend.block(account.ownerAddress);
       },
     });
   };
@@ -74,7 +74,7 @@ export const Message = (props: Props) => {
       params: [account.ownerAddress],
       description: `Sending ${account.name} Friend Request`,
       execute: async () => {
-        return api.player.social.friend.request(account.ownerAddress);
+        return api.player.account.friend.request(account.ownerAddress);
       },
     });
   };

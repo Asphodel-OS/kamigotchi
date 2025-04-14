@@ -28,7 +28,7 @@ export const UseItemButton = (
       params: [kami.id, item.index],
       description: `Using ${item.name} on ${kami.name}`,
       execute: async () => {
-        return api.player.pet.use.item(kami.id, item.index);
+        return api.player.pet.item.use(kami.id, item.index);
       },
     });
   };

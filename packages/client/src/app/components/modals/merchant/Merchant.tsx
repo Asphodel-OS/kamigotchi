@@ -108,7 +108,7 @@ export function registerMerchantModal() {
           params: [npcIndex, indices, amts],
           description: `Purchasing from ${merchant.name}`,
           execute: async () => {
-            return api.player.listing.buy(npcIndex, indices, amts);
+            return api.player.npc.listing.buy(npcIndex, indices, amts);
           },
         });
       };

@@ -91,7 +91,7 @@ export function registerEMABoardModal() {
           params: [kami.id, itemIndex],
           description: `Using holy dust on ${kami.name}`,
           execute: async () => {
-            return api.player.pet.use.item(kami.id, itemIndex);
+            return api.player.pet.item.use(kami.id, itemIndex);
           },
         });
       };

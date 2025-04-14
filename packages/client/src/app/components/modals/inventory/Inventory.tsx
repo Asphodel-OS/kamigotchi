@@ -75,7 +75,7 @@ export function registerInventoryModal() {
           params: [kami.id, item.index],
           description: `Using ${item.name} on ${kami.name}`,
           execute: async () => {
-            return api.player.pet.use.item(kami.id, item.index);
+            return api.player.pet.item.use(kami.id, item.index);
           },
         });
       };
@@ -90,7 +90,7 @@ export function registerInventoryModal() {
           params: [item.index],
           description: `${actionKey} ${item.name}`,
           execute: async () => {
-            return api.player.account.use.item(item.index, 1);
+            return api.player.account.item.use(item.index, 1);
           },
         });
       };

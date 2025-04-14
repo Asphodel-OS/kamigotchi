@@ -23,7 +23,7 @@ export function registerERC721BridgeModal() {
     // REQUIREMENT: serve network props, based on subscriptions
     (layers) => {
       const { network } = layers;
-      const { world, components, systems } = network;
+      const { world, components } = network;
       const { SourceID, State } = components;
 
       return merge(SourceID.update$, State.update$).pipe(
@@ -62,7 +62,7 @@ export function registerERC721BridgeModal() {
           params: [tokenID],
           description: `Staking Kami ${tokenID}`,
           execute: async () => {
-            return api.ERC721.deposit(tokenID);
+            return api.bridge.ERC721.deposit(tokenID);
           },
         });
       };
@@ -76,7 +76,7 @@ export function registerERC721BridgeModal() {
           params: [tokenID],
           description: `Unstaking Kami ${tokenID}`,
           execute: async () => {
-            return api.ERC721.withdraw(tokenID);
+            return api.bridge.ERC721.withdraw(tokenID);
           },
         });
       };

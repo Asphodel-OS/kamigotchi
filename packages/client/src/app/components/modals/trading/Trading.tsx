@@ -90,7 +90,13 @@ export function registerTradingModal() {
           params: [],
           description: `creating Trade `,
           execute: async () => {
-            return api.player.trade.create([buyIndices], [buyAmts], [sellIndices], [sellAmts], 0);
+            return api.player.account.trade.create(
+              [buyIndices],
+              [buyAmts],
+              [sellIndices],
+              [sellAmts],
+              0
+            );
           },
         });
         return actionID;
@@ -103,7 +109,7 @@ export function registerTradingModal() {
           params: [tradeId],
           description: `creating Trade `,
           execute: async () => {
-            return api.player.trade.execute(tradeId);
+            return api.player.account.trade.execute(tradeId);
           },
         });
         return actionID;
@@ -116,7 +122,7 @@ export function registerTradingModal() {
           params: [tradeId],
           description: `canceling Trade `,
           execute: async () => {
-            return api.player.trade.cancel(tradeId);
+            return api.player.account.trade.cancel(tradeId);
           },
         });
         return actionID;

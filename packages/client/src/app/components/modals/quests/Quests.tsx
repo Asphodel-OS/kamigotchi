@@ -193,7 +193,7 @@ export function registerQuestsModal() {
           params: [indices, amts],
           description,
           execute: async () => {
-            return api.player.item.burn(indices, amts);
+            return api.player.account.item.burn(indices, amts);
           },
         });
       };

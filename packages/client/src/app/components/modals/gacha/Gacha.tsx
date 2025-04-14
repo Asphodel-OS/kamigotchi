@@ -201,7 +201,7 @@ export function registerGachaModal() {
           params: [amount],
           description: `Minting ${amount} Kami`,
           execute: async () => {
-            return api.mint.mintPet(amount);
+            return api.gacha.pet.mint(amount);
           },
         });
         return actionID;
@@ -219,7 +219,7 @@ export function registerGachaModal() {
           params: [kamis.map((n) => n.name)],
           description: `Rerolling ${kamis.length} Kami`,
           execute: async () => {
-            return api.mint.reroll(kamis.map((n) => n.id));
+            return api.gacha.pet.reroll(kamis.map((n) => n.id));
           },
         });
         return actionID;
@@ -235,7 +235,7 @@ export function registerGachaModal() {
           params: commits,
           description: `Revealing ${commits.length} Gacha rolls`,
           execute: async () => {
-            return api.player.mint.reveal(toReveal);
+            return api.player.gacha.pet.reveal(toReveal);
           },
         });
 
