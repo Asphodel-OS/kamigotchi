@@ -1,11 +1,8 @@
-import {
-  CallContractTransactionInput,
-  encodeMulti,
-  encodeSingle,
-  MetaTransaction,
-  TransactionType,
-} from 'ethers-multisend';
-import { Interface } from 'ethers/lib/utils';
+import { TxBuilder } from '@morpho-labs/gnosis-tx-builder';
+import { BatchTransaction } from '@morpho-labs/gnosis-tx-builder/lib/src/types';
+import dotenv from 'dotenv';
+import execa = require('execa');
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 import { SystemABI, UintCompABI, WorldABI } from '../../contracts/mappings/worldABIs';
 import {
@@ -17,33 +14,43 @@ import {
 } from '../../utils';
 import { writeBatchTx } from './utils/write';
 
-genBatchTx('DEV', 'AccountMoveSystem');
+// genBatchTx('AccountRegisterSystem', '0x2722a36D8e1772A390e32494DE9Cc14365df63BB');
 
-async function genBatchTx(mode: string, systems: string) {
-  const World = new WorldAddresses(mode);
+export async function genBatchTx(systems: string, addrs: string) {
+  const World = new WorldAddresses();
 
   // assume only 1 system for now !!
   const deployConfig = getDeploySystems(systems);
   const sysConfig = deployConfig.systems[0];
 
-  let transactions: MetaTransaction[] = [];
+  let transactions: BatchTransaction[] = [];
   // checking for prev system, deprecate if so
-  let sysAddr = (await World.getSysAddr(getSystemIDByName(sysConfig.name))) || '0';
+  const sysID = getSystemIDByName(sysConfig.name);
+  let sysAddr = (await World.getSysAddr(sysID)) || '0';
   if (Number(sysAddr) !== 0) {
-    // transactions.push(await deprecateTx(sysAddr));
+    transactions.push(await deprecateTx(sysAddr));
     transactions = transactions.concat(
       await authorizeTxs(World, sysConfig.writeAccess, sysAddr, true)
     );
   }
+
   // todo: deploy new system now, + transfer owner
-  // transactions.push(await registerSystemTx(World, sysConfig)); // registering new system
+  // use regular deploy script, findLog system address. do deprecate + register + permissions if initWorld || multisig == 0
+  const newSysAddr = addrs;
+
+  transactions.push(await registerSystemTx(World, sysConfig)); // registering new system
   // authorize new system
-  // transactions = transactions.concat(await authorizeTxs(World, sysConfig.writeAccess, sysAddr));
+  transactions = transactions.concat(await authorizeTxs(World, sysConfig.writeAccess, newSysAddr));
 
   // write file
-  const batchJson = encodeMulti(transactions, '0xDaF87da790ECa0eD52211C0305b93b3086D15868');
+  const batchJson = TxBuilder.batch(process.env.MULTISIG!, transactions, {
+    chainId: Number(process.env.CHAIN_ID!),
+  });
   writeBatchTx(batchJson);
 }
+
+//////////////////
+// INDIVIDUAL TXS
 
 const authorizeTxs = async (
   World: WorldAddresses,
@@ -51,7 +58,7 @@ const authorizeTxs = async (
   writer: string,
   revoke?: boolean
 ) => {
-  const txs: MetaTransaction[] = [];
+  const txs: BatchTransaction[] = [];
   for (let i = 0; i < compNames.length; i++) {
     const compID = getCompIDByName(compNames[i]);
     const tx = await authorizeTx(World, compID, writer, revoke);
@@ -66,17 +73,14 @@ const authorizeTx = async (
   writer: string,
   revoke?: boolean
 ) => {
-  const abi = getCompMethod(revoke);
-  console.log(new Interface(JSON.stringify([abi])));
-  return encodeSingle({
-    type: TransactionType.callContract,
-    id: '',
+  return {
     to: (await World.getCompAddr(compID))!,
     value: '0',
-    abi: JSON.stringify([abi]),
-    functionSignature: `${revoke ? 'unauthorizeWriter' : 'authorizeWriter'}(address)`, // both args the same, hardcode
-    inputValues: [writer],
-  } as CallContractTransactionInput);
+    contractMethod: getCompMethod(revoke),
+    contractInputsValues: {
+      writer: writer,
+    },
+  };
 };
 
 const deprecateTx = (sysAddr: string) => {
@@ -115,10 +119,10 @@ const getCompMethod = (unauthorize?: boolean) => {
   const func = unauthorize ? 'unauthorizeWriter' : 'authorizeWriter';
   const raw = UintCompABI.find((abi: any) => abi.type === 'function' && abi.name === func);
   // return raw;
-  return `function ${func}(address writer)`;
+  // return `function ${func}(address writer)`;
   return {
     name: func,
-    inputs: JSON.stringify(raw!.inputs),
+    inputs: raw!.inputs,
     payable: false,
   };
 };

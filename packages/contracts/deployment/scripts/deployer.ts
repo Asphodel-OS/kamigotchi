@@ -43,7 +43,7 @@ export async function deploy(
   child.stdout?.on('data', (data) => console.log(data.toString()));
   // Extract world address from deploy script
   const lines = (await child).stdout?.split('\n');
-  const deployedWorldAddress = findLog(lines, 'world: contract IWorld');
+  const deployedWorldAddress = findLog(lines, 'world: contract World');
   const startBlock = findLog(lines, 'startBlock: uint256');
 
   console.log('---------------------------------------------\n');

@@ -8,39 +8,39 @@ import { console } from "forge-std/console.sol";
 // Imports (solecs, components, systems)
 import "deployment/Imports.sol";
 
-struct DeployResult {
-World world;
-address deployer;
-}
-
 library LibDeploy {
 function deploy(
-address _deployer,
 address _world,
-bool _reuseComponents
-) internal returns (DeployResult memory result) {
-result.deployer = _deployer;
+address owner,
+bool _reuseComponents,
+bool hasPerms
+) internal returns (World world) {
 
 // ------------------------
 // Deploy
 // ------------------------
 
 // Deploy world
-result.world = _world == address(0) ? new World() : World(_world);
-if(_world == address(0)) result.world.init(); // Init if it's a fresh world
+world = _world == address(0) ? new World() : World(_world);
+if(_world == address(0)) world.init(); // Init if it's a fresh world
 
 // Deploy components
 if(!_reuseComponents) {
-IComponent comp;
+BareComponent comp;
 <% components.forEach(component=> { %>
 console.log("Deploying <%= component.comp %>Component");
-comp = new <%= component.comp %>Component(address(result.world));
-result.world.registerComponent{ gas: 400000 }(address(comp), <%= component.comp %>ComponentID);
+comp = new <%= component.comp %>Component(address(world));
+if (hasPerms) {
+  world.registerComponent{ gas: 400000 }(address(comp), <%= component.comp %>ComponentID);
+} else {
+  comp.transferOwnership{ gas: 400000 }(owner);
+}
 console.log(address(comp));
 <% });%>
 }
 
-deploySystems(address(result.world), true);
+// Deploy systems
+deploySystems(world, owner, hasPerms);
 }
 
 
@@ -60,52 +60,57 @@ address writer
 Component(getAddrByID(components, componentId)).unauthorizeWriter{ gas: 400000 }(writer);
 }
 
-function deploySystems(address _world, bool init) internal {
-World world = World(_world);
+function deploySystems(World world, address owner, bool hasPerms) internal {
 IUint256Component components = world.components();
 IUint256Component systems = world.systems();
-ISystem system;
+System system;
 
 // Deploy systems
 <% systems.forEach(system=> { %>
-// unauthorizing previous system (if any)
-if(systems.getEntitiesWithValue(<%= system.name %>ID).length > 0) {
-  address prevSysAddr = getAddrByID(systems, <%= system.name %>ID);
-  console.log("unauthorizing writer for previous <%= system.name %> at address %s", prevSysAddr);
+  console.log("Deploying <%= system.name %>");
+  system = new <%= system.name %>(world, address(components));
+  console.log(address(system));
 
-  //<%= system.name %>(prevSysAddr).deprecate{ gas: 400000 }();
-  <% system.writeAccess?.forEach(component=> { -%>
+  // if world owner is deployer, deprecate and register new system 
+  if (hasPerms) {
+    // unauthorizing previous system (if any)
+      if(systems.getEntitiesWithValue(<%= system.name %>ID).length > 0) {
+        address prevSysAddr = getAddrByID(systems, <%= system.name %>ID);
+        console.log("unauthorizing writer for previous <%= system.name %> at address %s", prevSysAddr);
+
+        <%= system.name %>(prevSysAddr).deprecate{ gas: 400000 }();
+        <% system.writeAccess?.forEach(component=> { -%>
+          <% if(component==="*" ) { -%>
+          <% components.forEach(comp=> { -%>
+          unauthorizeWriter(components, <%= comp.comp %>ComponentID, address(prevSysAddr));
+          <% });-%>
+          <% } else { -%>
+          unauthorizeWriter(components, <%= component %>ComponentID, address(prevSysAddr));
+          <% } -%>
+          <% });-%>
+      }
+
+    world.registerSystem{ gas: 400000 }(address(system), <%= system.name %>ID);
+    <% system.writeAccess?.forEach(component=> { -%>
     <% if(component==="*" ) { -%>
     <% components.forEach(comp=> { -%>
-    unauthorizeWriter(components, <%= comp.comp %>ComponentID, address(prevSysAddr));
+          <% if(!protectedComponents.includes(comp.comp)) { -%> 
+    authorizeWriter(components, <%= comp.comp %>ComponentID, address(system));
+          <% } -%> 
     <% });-%>
     <% } else { -%>
-    unauthorizeWriter(components, <%= component %>ComponentID, address(prevSysAddr));
+    authorizeWriter(components, <%= component %>ComponentID, address(system));
     <% } -%>
     <% });-%>
-}
-console.log("Deploying <%= system.name %>");
-system = new <%= system.name %>(world, address(components));
-world.registerSystem{ gas: 400000 }(address(system), <%= system.name %>ID);
-<% system.writeAccess?.forEach(component=> { -%>
-<% if(component==="*" ) { -%>
-<% components.forEach(comp=> { -%>
-      <% if(!protectedComponents.includes(comp.comp)) { -%> 
-authorizeWriter(components, <%= comp.comp %>ComponentID, address(system));
-      <% } -%> 
-<% });-%>
-<% } else { -%>
-authorizeWriter(components, <%= component %>ComponentID, address(system));
-<% } -%>
-<% });-%>
-<% if(system.initialize) { -%>
-if(init) system.execute(<%= system.initialize -%>);
-<% } -%>
-console.log(address(system));
+    }
+  else {
+    // world owner is multisig, transfer new system owner
+    system.transferOwnership{ gas: 400000 }(owner);
+  }
 <% });%>
 }
 
-function transferOwner(address newOwner, IWorld world, bool reuseComps) internal {
+function transferOwner(World world, address newOwner, bool reuseComps) internal {
   IUint256Component components = world.components();
   IUint256Component systems = world.systems();
   

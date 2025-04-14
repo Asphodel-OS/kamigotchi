@@ -20,5 +20,6 @@ deployment/contracts/GodSystem.s.sol
 deployment/contracts/InitWorld.s.sol
 deployment/contracts/LibDeploy.sol
 deployment/contracts/Imports.sol
+deployment/batchTx.json
 test/utils/TestSetupImports.t.sol
 /types/
