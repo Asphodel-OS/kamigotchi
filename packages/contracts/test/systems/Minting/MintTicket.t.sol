@@ -20,8 +20,9 @@ contract MintTicketTest is SetupTemplate {
 
     pubPrice = LibConfig.get(components, "MINT_PRICE_PUBLIC");
     wlPrice = LibConfig.get(components, "MINT_PRICE_WL");
-    maxMints = LibConfig.get(components, "MINT_NUM_MAX");
-    maxPerAcc = LibConfig.get(components, "MINT_NUM_MAX_PER_ACC");
+    maxMints = LibConfig.get(components, "MINT_MAX_TOTAL");
+    maxPerAcc = LibConfig.get(components, "MINT_MAX_PUBLIC");
+    maxPerAcc = LibConfig.get(components, "MINT_MAX_WL");
 
     // creating items
     _createGenericItem(CURRENCY);
@@ -55,7 +56,7 @@ contract MintTicketTest is SetupTemplate {
     assertFalse(LibFlag.has(components, alice.id, "MINT_WHITELISTED"));
     assertEq(_getTokenBal(address(currency20), alice.owner), 0, "post buy mismatch currency");
     assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), 1, "post buy mismatch ticket");
-    assertEq(LibData.get(components, 0, 0, "MINT_NUM_GLOBAL"), 1, "post buy mismatch mint num");
+    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), 1, "post buy mismatch mint num");
 
     // fail mint again
     _mintERC20(address(currency20), wlPrice, alice.owner);
@@ -109,6 +110,7 @@ contract MintTicketTest is SetupTemplate {
     }
   }
 
+  // TODO: update this with start time configs
   function testMintPublicOpen() public {
     // setup
     _mintERC20(address(currency20), pubPrice, alice.owner);
@@ -128,7 +130,7 @@ contract MintTicketTest is SetupTemplate {
     // setup
     _setConfig("MINT_PUBLIC_OPEN", 1);
     maxPerAcc = 5;
-    _setConfig("MINT_NUM_MAX_PER_ACC", maxPerAcc);
+    _setConfig("MINT_MAX_PUBLIC_ACC", maxPerAcc);
     _mintERC20(address(currency20), pubPrice * maxPerAcc, alice.owner);
 
     // valid mints, till 5
@@ -170,13 +172,13 @@ contract MintTicketTest is SetupTemplate {
     // WL minting
     vm.prank(alice.owner);
     _GachaBuyTicketSystem.buyWL();
-    assertEq(LibData.get(components, 0, 0, "MINT_NUM_GLOBAL"), 1, "post buy mismatch mint num");
+    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), 1, "post buy mismatch mint num");
     vm.prank(bob.owner);
     _GachaBuyTicketSystem.buyWL();
-    assertEq(LibData.get(components, 0, 0, "MINT_NUM_GLOBAL"), 2, "post buy mismatch mint num");
+    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), 2, "post buy mismatch mint num");
 
     // public minting, till max
-    _setData(0, 0, "MINT_NUM_GLOBAL", maxMints - 9);
+    _setData(0, 0, "MINT_NUM_TOTAL", maxMints - 9);
     _mintERC20(address(currency20), pubPrice * 5, alice.owner);
     vm.prank(alice.owner);
     _GachaBuyTicketSystem.buyPublic(5);
