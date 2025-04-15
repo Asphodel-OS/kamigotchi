@@ -5,7 +5,7 @@ import { TabType, ViewMode } from '../../types';
 import { Public } from './Public';
 import { Whitelist } from './Whitelist';
 
-const CLAIMED = 2000;
+const CLAIMED = 1337;
 
 interface Props {
   isVisible: boolean;

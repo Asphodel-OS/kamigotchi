@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Overlay, Pairing, Tooltip } from 'app/components/library';
-import { ProgressBar } from 'app/components/library/base';
 import { depressFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { playClick } from 'utils/sounds';
@@ -11,7 +10,6 @@ import { ViewMode } from '../../types';
 
 const GACHA_TICKET_IMAGE = ItemImages.gacha_ticket;
 const START_TIME = Date.now() / 1000 + 3600;
-const TOTAL = 3333;
 
 interface Props {
   controls: {
@@ -44,15 +42,21 @@ export const Whitelist = (props: Props) => {
     playClick();
   };
 
+  /////////////////
+  // INTERPRETATION
+
+  // get the total minted out of the total whitelisted
   const getStatusText = () => {
-    return `${claimed}/${TOTAL}`;
+    return `${claimed} claimed`;
   };
 
+  // get the text for the countdown
   const getCountdownText = () => {
     if (countdown > 0) return formatCountdown(countdown);
     return '00:00:00';
   };
 
+  // get the tooltip for the countdown
   const getCountdownTooltip = () => {
     const startStr = getDateString(START_TIME, 0);
 
@@ -61,6 +65,9 @@ export const Whitelist = (props: Props) => {
     }
     return [`Whitelist Mint started`, `at ${startStr}`];
   };
+
+  /////////////////
+  // DISPLAY
 
   return (
     <Container isSelected={mode === 'DEFAULT'} onClick={handleClick}>
@@ -74,13 +81,7 @@ export const Whitelist = (props: Props) => {
         <Text size={0.9}>limit 1 per customer ^^</Text>
       </Section>
       <Section>
-        <Pairing icon={GACHA_TICKET_IMAGE} text={getStatusText()} reverse />
-        <ProgressBar
-          total={TOTAL}
-          current={claimed}
-          width={16}
-          colors={{ background: '#fff', progress: '#3DE167' }}
-        />
+        <Pairing icon={GACHA_TICKET_IMAGE} text={getStatusText()} />
       </Section>
     </Container>
   );
@@ -88,7 +89,7 @@ export const Whitelist = (props: Props) => {
 
 const Container = styled.div<{ isSelected: boolean }>`
   border-radius: 1.2vw;
-  background-color: ${({ isSelected }) => (isSelected ? 'white' : '#9c9')};
+  background-color: ${({ isSelected }) => (isSelected ? '#9c9' : 'white')};
   filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
   height: 18vw;
   width: 24vw;

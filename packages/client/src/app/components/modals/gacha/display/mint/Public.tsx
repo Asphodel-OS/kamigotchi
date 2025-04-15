@@ -11,7 +11,7 @@ import { ViewMode } from '../../types';
 
 const GACHA_TICKET_IMAGE = ItemImages.gacha_ticket;
 const START_TIME = Date.now() / 1000 + 24 * 3600;
-const TOTAL = 5000;
+const TOTAL = 3000;
 
 interface Props {
   controls: {
@@ -90,7 +90,7 @@ export const Public = (props: Props) => {
 
 const Container = styled.div<{ isSelected: boolean }>`
   border-radius: 1.2vw;
-  background-color: ${({ isSelected }) => (isSelected ? 'white' : '#9c9')};
+  background-color: ${({ isSelected }) => (isSelected ? '#9c9' : 'white')};
   filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
   height: 18vw;
   width: 24vw;
