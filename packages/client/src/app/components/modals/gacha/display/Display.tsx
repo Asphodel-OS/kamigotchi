@@ -81,7 +81,7 @@ export const Display = (props: Props) => {
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
-      <Mint controls={controls} isVisible={tab === 'MINT'} />
+      <Mint controls={controls} state={state} isVisible={tab === 'MINT'} />
       <Overlay top={0.9} right={0.6}>
         {tab !== 'MINT' && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>

@@ -82,7 +82,7 @@ export const KamiView = (props: Props) => {
     const sameKami = kamiIndex === kami.index;
     if (!sameKami) setKami(kami.index);
     if (modals.kami && sameKami) setModals({ kami: false });
-    else setModals({ gacha: true, kami: true, party: true });
+    else setModals({ kami: true });
     playClick();
   };
 
