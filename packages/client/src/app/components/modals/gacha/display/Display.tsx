@@ -52,14 +52,17 @@ export const Display = (props: Props) => {
   };
 
   const getButtonText = () => {
+    let text = '???';
+
     if (tab === 'GACHA') {
-      if (mode === 'DEFAULT') return 'Get Gacha Tickets';
-      else return 'Back to Gacha';
+      if (mode === 'DEFAULT') text = 'Get Gacha Tickets';
+      else text = 'Back to Gacha';
     } else if (tab === 'REROLL') {
-      if (mode === 'DEFAULT') return 'Get Reroll Tickets';
-      else return 'Back to Reroll';
+      if (mode === 'DEFAULT') text = 'Get Reroll Tickets';
+      else text = 'Back to Reroll';
     }
-    return '???';
+
+    return text;
   };
 
   return (
@@ -78,9 +81,9 @@ export const Display = (props: Props) => {
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
-      <Mint isVisible={tab === 'MINT'} />
+      <Mint controls={controls} isVisible={tab === 'MINT'} />
       <Overlay top={0.9} right={0.6}>
-        <ActionButton text={getButtonText()} onClick={toggleMode} />
+        {tab !== 'MINT' && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>
     </Container>
   );
