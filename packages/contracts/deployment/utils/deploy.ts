@@ -4,8 +4,10 @@ import { systemToId } from '../contracts/mappings/SystemMappings';
 
 export const DeployConfig = config;
 
-export const getDeployComponents = (toMatch: string) => {
+export const getDeployComponents = (toMatch?: string) => {
   let result = config;
+  result.systems = [];
+  if (!toMatch) return result;
   const componentsArray = toMatch.split(',').map((comp: string) => comp.trim());
   result.components = result.components.filter((component: any) =>
     componentsArray.includes(component.comp)
@@ -14,8 +16,9 @@ export const getDeployComponents = (toMatch: string) => {
   return result;
 };
 
-export const getDeploySystems = (toMatch: string) => {
+export const getDeploySystems = (toMatch?: string) => {
   let result = config;
+  if (!toMatch) return result;
   const systemsArray = toMatch.split(',').map((sys: string) => sys.trim());
   result.systems = result.systems.filter((system: { name: string }) =>
     systemsArray.includes(system.name)
