@@ -1,53 +1,72 @@
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
+import { interval, map } from 'rxjs';
 import styled from 'styled-components';
-import { useReadContract } from 'wagmi';
 
+import { getConfigAddress } from 'app/cache/config';
+import { getKami } from 'app/cache/kami';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useAccount, useNetwork } from 'app/stores';
+import { useNetwork } from 'app/stores';
+import { useERC721Balance } from 'network/chain';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
-import { getConfigFieldValueAddress } from 'network/shapes/Config/types';
-import { Kami, getKamiByIndex } from 'network/shapes/Kami';
+import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
+import { useWatchBlockNumber } from 'wagmi';
 
 export function registerERC721BridgeModal() {
   registerUIComponent(
     'ERC721Bridge',
     {
-      colStart: 28,
-      colEnd: 74,
+      colStart: 22,
+      colEnd: 80,
       rowStart: 15,
       rowEnd: 85,
     },
-    // REQUIREMENT: serve network props, based on subscriptions
     (layers) => {
       const { network } = layers;
       const { world, components } = network;
-      const { SourceID, State } = components;
 
-      return merge(SourceID.update$, State.update$).pipe(
+      return interval(1000).pipe(
         map(() => {
           return {
             network,
             data: {
-              erc721: getConfigFieldValueAddress(world, components, 'KAMI721_ADDRESS'),
-              account: getAccountFromEmbedded(network, { kamis: true }),
+              erc721: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+              account: getAccountFromEmbedded(network, { kamis: true }), // todo: change this to cache
             },
           };
         })
       );
     },
-    // RENDER: draw the damn thing
     ({ data, network }) => {
       const { erc721, account } = data;
       const { actions, components, world } = network;
-      const { EntityType, KamiIndex } = components;
 
-      const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
 
       const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);
+
+      /////////////////
+      // DATA
+
+      useWatchBlockNumber({
+        onBlockNumber: (n) => {
+          refetch();
+        },
+      });
+
+      const { refetch, tokenIndices } = useERC721Balance(account.ownerAddress, erc721);
+
+      // update list of externally owned kamis
+      useEffect(() => {
+        const getEOAKamis = (): Kami[] => {
+          const entities =
+            tokenIndices?.map((index: number) => queryKamiByIndex(world, components, index)) || [];
+          return entities.map((entity) => getKami(world, components, entity!, { live: 1 }));
+        };
+
+        setEOAKamis(getEOAKamis());
+      }, [data]);
 
       /////////////////
       // TRANSACTIONS
@@ -101,64 +120,6 @@ export function registerERC721BridgeModal() {
         }
       };
 
-      // External Kamis
-      const { data: erc721List } = useReadContract({
-        address: erc721 as `0x${string}`,
-        abi: [
-          {
-            inputs: [
-              {
-                internalType: 'address',
-                name: 'owner',
-                type: 'address',
-              },
-            ],
-            name: 'getAllTokens',
-            outputs: [
-              {
-                internalType: 'uint256[]',
-                name: '',
-                type: 'uint256[]',
-              },
-            ],
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ],
-        functionName: 'getAllTokens',
-        args: [kamiAccount.ownerAddress as `0x${string}`],
-      });
-
-      // update list of externally owned kamis
-      useEffect(() => {
-        const getEOAKamis = (): Kami[] => {
-          // get indices of external kamis
-          const getIndices = (): number[] => {
-            return erc721List ? [...erc721List.map((i) => Number(i))] : [];
-          };
-
-          // get kamis from index
-          const getKamis = (indices: number[]): Kami[] => {
-            let kamis: Kami[] = [];
-            for (let i = 0; i < indices.length; i++) {
-              const kami = getKamiByIndex(world, components, indices[i], {
-                // deaths: true,
-                harvest: true,
-                traits: true,
-              });
-              if (kami) kamis.push(kami);
-            }
-
-            return kamis;
-          };
-
-          const indices = getIndices();
-          return getKamis(indices);
-        };
-
-        setEOAKamis(getEOAKamis());
-      }, [erc721List, data]);
-
       const KamiCard = (props: any) => {
         return (
           <Card>
@@ -173,7 +134,6 @@ export function registerERC721BridgeModal() {
         );
       };
 
-      // Rendering of Individual Kami Cards in the Party Modal
       const KamiCards = (kamis: Kami[]) => {
         return kamis?.map((kami) => {
           return <KamiCard kami={kami} key={kami.index} image={kami.image} title={kami.name} />;
@@ -193,21 +153,18 @@ export function registerERC721BridgeModal() {
 
       // naive check right now, needs to be updated with murder check as well
       const isDead = (kami: Kami): boolean => kami.state === 'DEAD';
-
       const isHarvesting = (kami: Kami): boolean =>
         kami.state === 'HARVESTING' && kami.harvest != undefined;
-
       const isResting = (kami: Kami): boolean => kami.state === 'RESTING';
-
       const isOutOfWorld = (kami: Kami): boolean => kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapper id='bridgeERC721' canExit overlay>
+        <ModalWrapper id='bridgeERC721' canExit>
           <Title>Stake/Unstake Kamis</Title>
           <Grid>
             <Description style={{ gridRow: 1, gridColumn: 1 }}>In game</Description>
             <Scrollable style={{ gridRow: 2, gridColumn: 1 }}>
-              {KamiCards(account.kamis)}
+              {KamiCards(account.kamis || [])}
             </Scrollable>
             <Description style={{ gridRow: 1, gridColumn: 2 }}>In wallet</Description>
             <Scrollable style={{ gridRow: 2, gridColumn: 2 }}>{KamiCards(EOAKamis)}</Scrollable>

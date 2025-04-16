@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
+import { triggerERC721BridgeModal } from 'app/triggers/triggerERC721BridgeModal';
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
@@ -27,8 +28,6 @@ export function registerDialogueModal() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
-          const { world, components } = network;
-
           const accountEntity = queryAccountFromEmbedded(network);
 
           return {
@@ -89,9 +88,10 @@ export function registerDialogueModal() {
       //////////////////
       // ACTIONS
 
-      const getAction = (type: string, input: number) => {
-        if (type === 'move') return move(input);
-        else if (type === 'goal') return triggerGoalModal([input]);
+      const getAction = (type: string, input?: number) => {
+        if (type === 'move') return move(input ?? 0);
+        else if (type === 'goal') return triggerGoalModal([input ?? 0]);
+        else if (type === 'erc721Bridge') return triggerERC721BridgeModal();
       };
 
       const move = (roomIndex: number) => {

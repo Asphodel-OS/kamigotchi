@@ -14,25 +14,10 @@ export const room12: Room = {
     path: mystique,
   },
   objects: [
-    // {
-    //   // prayerwheels
-    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
-    //   onClick: () => triggerERC20BridgeModal(),
-    // },
-    // {
-    //   // bellshapeddevice
-    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
-    //   onClick: () => triggerERC721BridgeModal(),
-    // },
-    // {
-    //   // glassbox
-    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
-    //   dialogue: 121,
-    // },
-    // {
-    //   // monolith
-    //   coordinates: { x1: 0, y1: 0, x2: 20, y2: 20 },
-    //   onClick: () => triggerNodeModal(5),
-    // },
+    {
+      name: 'bell shaped device',
+      coordinates: { x1: 85, y1: 20, x2: 130, y2: 80 },
+      dialogue: 121,
+    },
   ],
 };

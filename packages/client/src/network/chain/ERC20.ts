@@ -18,8 +18,8 @@ export function useBalance(address: Address, token: Address, spender: Address) {
   return {
     ...results,
     balances: {
-      allowance: parseTokenBalance(results.data?.[1]?.result as bigint, 18),
-      balance: parseTokenBalance(results.data?.[0]?.result as bigint, 18),
+      allowance: parseTokenBalance(results.data?.[1]?.result, 18),
+      balance: parseTokenBalance(results.data?.[0]?.result, 18),
     },
   };
 }
