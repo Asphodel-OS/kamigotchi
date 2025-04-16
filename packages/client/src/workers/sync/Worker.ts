@@ -230,9 +230,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         )
         .subscribe({
           next: (event) => {
-            if (event.component === 'KeepAlive') {
-              return;
-            }
+            if (event.component === 'Void') return;
             if (!outputLiveEvents) {
               if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
               return;
