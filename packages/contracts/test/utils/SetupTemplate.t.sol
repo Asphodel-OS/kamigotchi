@@ -664,19 +664,18 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _createRoomGate(
-    uint32 roomIndex,
+    uint32 room,
     uint32 sourceIndex,
     uint32 conditionIndex,
     uint256 conditionValue,
     string memory logicType,
     string memory type_
   ) internal returns (uint256) {
-    return
-      _createRoomGate(roomIndex, sourceIndex, conditionIndex, conditionValue, logicType, type_, "");
+    return _createRoomGate(room, sourceIndex, conditionIndex, conditionValue, logicType, type_, "");
   }
 
   function _createRoomGate(
-    uint32 roomIndex,
+    uint32 room,
     uint32 sourceIndex,
     uint32 conditionIndex,
     uint256 conditionValue,
@@ -687,18 +686,29 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     return
       __RoomRegistrySystem.addGate(
-        abi.encode(roomIndex, sourceIndex, conditionIndex, conditionValue, logicType, type_, for_)
+        abi.encode(room, sourceIndex, conditionIndex, conditionValue, logicType, type_, for_)
       );
   }
 
-  function _createRoomFlag(uint32 roomIndex, string memory flag) internal {
+  function _createRoomFlag(uint32 room, string memory flag) internal {
     vm.prank(deployer);
-    __RoomRegistrySystem.addFlag(roomIndex, flag);
+    __RoomRegistrySystem.addFlag(room, flag);
   }
 
   function _createHarvestingNode(
     uint32 index,
-    uint32 roomIndex,
+    uint32 room,
+    string memory name,
+    string memory description,
+    string memory affinity
+  ) internal returns (uint) {
+    return _createHarvestingNode(index, 1, room, name, description, affinity);
+  }
+
+  function _createHarvestingNode(
+    uint32 index,
+    uint32 room,
+    uint32 item,
     string memory name,
     string memory description,
     string memory affinity
@@ -706,13 +716,13 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.prank(deployer);
     return
       __NodeRegistrySystem.create(
-        abi.encode(index, "HARVEST", roomIndex, name, description, affinity)
+        abi.encode(index, "HARVEST", item, room, name, description, affinity)
       );
   }
 
-  function _createNPC(uint32 index, uint32 roomIndex, string memory name) public returns (uint) {
+  function _createNPC(uint32 index, uint32 room, string memory name) public returns (uint) {
     vm.prank(deployer);
-    return __NPCRegistrySystem.create(abi.encode(index, name, roomIndex));
+    return __NPCRegistrySystem.create(abi.encode(index, name, room));
   }
 
   /////////////////////////////////////////////

@@ -6,9 +6,10 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { AffinityComponent, ID as AffCompID } from "components/AffinityComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
+import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
+import { IndexNodeComponent, ID as IndexNodeCompID } from "components/IndexNodeComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
@@ -19,8 +20,17 @@ import { LibData } from "libraries/LibData.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
 
-/*
- * LibNode handles all retrieval and manipulation of mining nodes/harvests
+/** @notice
+ * Nodes are shapes that can be harvested on.
+ *
+ * Shape:
+ *  - IndexNode
+ *  - Type // only uses HARVEST for now
+ *  - IndexItem: the item harvested
+ *  - Room (equivalent to nodeIndex)
+ *  - Name
+ *  - Description
+ *  - Affinity (optional)
  */
 library LibNode {
   using LibString for string;
@@ -28,6 +38,7 @@ library LibNode {
   struct Base {
     uint32 index;
     string type_;
+    uint32 item;
     uint32 room; // todo: ditch room comp entirely? since nodeIndex = roomIndex
     string name;
     string description; // todo: remove, room index is used instead
@@ -45,6 +56,7 @@ library LibNode {
 
     IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).set(id, node.index);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, node.type_);
+    IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, node.item);
     IndexRoomComponent(getAddrByID(components, RoomCompID)).set(id, node.room);
     NameComponent(getAddrByID(components, NameCompID)).set(id, node.name);
     DescriptionComponent(getAddrByID(components, DescCompID)).set(id, node.description);
@@ -126,6 +138,10 @@ library LibNode {
 
   function getIndex(IUintComp components, uint256 id) internal view returns (uint32) {
     return IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).get(id);
+  }
+
+  function getItem(IUintComp components, uint256 id) internal view returns (uint32) {
+    return IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(id);
   }
 
   function getRoom(IUintComp components, uint256 id) internal view returns (uint32) {

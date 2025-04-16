@@ -77,13 +77,14 @@ export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
 
 async function initNode(api: AdminAPI, entry: any) {
   const index = Number(entry['Index']);
+  const item = 1; // hardcoded, todo: update world sheet for specific item drops
   const name = entry['Name'];
   const description = 'placeholder';
   const affinity = entry['Affinity'].toUpperCase();
 
   try {
     console.log(`Creating Node: (${index}) ${name} (${affinity})`);
-    await api.node.create(index, 'HARVEST', index, name, description, affinity);
+    await api.node.create(index, 'HARVEST', item, index, name, description, affinity);
   } catch (e) {
     console.error(`Could not create node ${index}`, e);
   }

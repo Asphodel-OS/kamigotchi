@@ -25,7 +25,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
-import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
@@ -93,8 +93,10 @@ library LibHarvest {
       prodID
     );
 
-    LibInventory.incFor(components, recipientIDs, MUSU_INDEX, toPay); // to tax recipients
-    LibInventory.incFor(components, toID, MUSU_INDEX, amtLeft); // to original owner
+    // transferring items
+    uint32 item = LibNode.getItem(components, getNode(components, prodID));
+    LibInventory.incFor(components, recipientIDs, item, toPay); // to tax recipients
+    LibInventory.incFor(components, toID, item, amtLeft); // to original owner
     return amtLeft;
   }
 

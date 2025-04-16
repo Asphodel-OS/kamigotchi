@@ -26,7 +26,7 @@ contract NodeTest is SetupTemplate {
     // create node
     uint32 nodeIndex = 1;
     uint256 nodeID = __NodeRegistrySystem.create(
-      abi.encode(nodeIndex, "HARVEST", 1, "Test Node", "this is a node", "NORMAL")
+      abi.encode(nodeIndex, "HARVEST", 1, 1, "Test Node", "this is a node", "NORMAL")
     );
     // add requirement
     __NodeRegistrySystem.addRequirement(abi.encode(1, "ROOM", "BOOL_IS", 1, 0, "ACCOUNT"));

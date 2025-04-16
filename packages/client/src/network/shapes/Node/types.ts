@@ -45,7 +45,7 @@ export const getBaseNode = (
 
 // get a Node from its EntityIndex
 export const getNode = (world: World, components: Components, entity: EntityIndex): Node => {
-  const { Description, RoomIndex, NodeIndex, Type } = components;
+  const { Description, ItemIndex, RoomIndex, NodeIndex, Type } = components;
   const nodeIndex = getComponentValue(NodeIndex, entity)?.value as number;
   const scavEntity = queryScavRegistry(world, 'NODE', nodeIndex)!;
   if (!nodeIndex) {
@@ -58,7 +58,9 @@ export const getNode = (world: World, components: Components, entity: EntityInde
     type: getComponentValue(Type, entity)?.value as string,
     roomIndex: getComponentValue(RoomIndex, entity)?.value as number,
     description: getComponentValue(Description, entity)?.value as string,
-    drops: [getItemByIndex(world, components, 1)],
+    drops: [
+      getItemByIndex(world, components, getComponentValue(ItemIndex, entity)?.value as number),
+    ],
     requirements: getRequirements(world, components, nodeIndex),
     scavenge: getScavenge(world, components, scavEntity),
   };
