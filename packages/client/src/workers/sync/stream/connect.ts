@@ -2,7 +2,7 @@ import { awaitPromise } from '@mud-classic/utils';
 import { BigNumber } from 'ethers';
 import { concatMap, from, map, Observable, of } from 'rxjs';
 
-import { EntityID } from '@mud-classic/recs';
+import { EmptyNetworkEvent } from 'constants/stream';
 import { debug as parentDebug } from '../../debug';
 import {
   NetworkComponentUpdate,
@@ -52,20 +52,7 @@ export function connect(
         map(async (responseChunk) => {
           debug('[kamigaze] got events');
           const events = await transformWorldEvents(responseChunk);
-          if (events.length === 0) {
-            return [
-              {
-                type: NetworkEvents.NetworkComponentUpdate,
-                entity: '0' as EntityID,
-                component: 'KeepAlive',
-                value: undefined,
-                blockNumber: 0,
-                lastEventInTx: false,
-                txHash: 'KeepAlive',
-                txMetadata: undefined,
-              } as NetworkComponentUpdate,
-            ];
-          }
+          if (events.length === 0) return [EmptyNetworkEvent];
           if (includeSystemCalls && events.length > 0) {
             const systemCalls = parseSystemCalls(events);
             return [...events, ...systemCalls];
