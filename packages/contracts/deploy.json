@@ -359,86 +359,6 @@
       "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "TimeLast", "TokenAllowance", "Value"]
     },
     {
-      "name": "Kami721IsInWorldSystem",
-      "writeAccess": []
-    },
-    {
-      "name": "Kami721MetadataSystem",
-      "writeAccess": []
-    },
-    {
-      "name": "KamiGachaMintSystem",
-      "writeAccess": [
-        "Affinity",
-        "BlockReveal",
-        "EntityType",
-        "Experience",
-        "Health",
-        "Harmony",
-        "IDOwnsInventory",
-        "IDOwnsKami",
-        "IdHolder",
-        "IndexBackground",
-        "IndexBody",
-        "IndexColor",
-        "IndexFace",
-        "IndexHand",
-        "IndexItem",
-        "IndexKami",
-        "Level",
-        "MediaURI",
-        "Name",
-        "Power",
-        "Reroll",
-        "Slots",
-        "SkillPoint",
-        "State",
-        "ProxyPermissionsERC721",
-        "TimeLast",
-        "Type",
-        "Value",
-        "Violence"
-      ]
-    },
-    {
-      "name": "KamiGachaRerollSystem",
-      "writeAccess": [
-        "BlockReveal",
-        "EntityType",
-        "IDOwnsInventory",
-        "IDOwnsKami",
-        "IdHolder",
-        "IndexItem",
-        "Reroll",
-        "TimeLast",
-        "Type",
-        "State",
-        "Value"
-      ]
-    },
-    {
-      "name": "KamiGachaRevealSystem",
-      "writeAccess": ["BlockReveal", "IdHolder", "IDOwnsKami", "Reroll", "State", "Type", "Value"]
-    },
-    {
-      "name": "KamiLevelSystem",
-      "writeAccess": [
-        "Experience",
-        "Health",
-        "Level",
-        "ProxyPermissionsERC721",
-        "Rate",
-        "SkillPoint",
-        "TimeLast",
-        "TimeStart",
-        "Value"
-      ]
-    },
-    {
-      "name": "KamiUseItemSystem",
-      "writeAccess": ["*"]
-    },
-    {
       "name": "HarvestCollectSystem",
       "writeAccess": [
         "EntityType",
@@ -527,6 +447,101 @@
         "Type",
         "Value"
       ]
+    },
+    {
+      "name": "Kami721IsInWorldSystem",
+      "writeAccess": []
+    },
+    {
+      "name": "Kami721MetadataSystem",
+      "writeAccess": []
+    },
+    {
+      "name": "Kami721StakeSystem",
+      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
+      "skipEnv": ["testing"]
+    },
+    {
+      "name": "Kami721UnstakeSystem",
+      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
+      "skipEnv": ["testing"]
+    },
+    {
+      "name": "KamiGachaMintSystem",
+      "writeAccess": [
+        "Affinity",
+        "BlockReveal",
+        "EntityType",
+        "Experience",
+        "Health",
+        "Harmony",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IdHolder",
+        "IndexBackground",
+        "IndexBody",
+        "IndexColor",
+        "IndexFace",
+        "IndexHand",
+        "IndexItem",
+        "IndexKami",
+        "Level",
+        "MediaURI",
+        "Name",
+        "Power",
+        "Reroll",
+        "Slots",
+        "SkillPoint",
+        "State",
+        "ProxyPermissionsERC721",
+        "TimeLast",
+        "Type",
+        "Value",
+        "Violence"
+      ]
+    },
+    {
+      "name": "KamiGachaRerollSystem",
+      "writeAccess": [
+        "BlockReveal",
+        "EntityType",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IdHolder",
+        "IndexItem",
+        "Reroll",
+        "TimeLast",
+        "Type",
+        "State",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiGachaRevealSystem",
+      "writeAccess": ["BlockReveal", "IdHolder", "IDOwnsKami", "Reroll", "State", "Type", "Value"]
+    },
+    {
+      "name": "KamiLevelSystem",
+      "writeAccess": [
+        "Experience",
+        "Health",
+        "Level",
+        "ProxyPermissionsERC721",
+        "Rate",
+        "SkillPoint",
+        "TimeLast",
+        "TimeStart",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiNameSystem",
+      "writeAccess": ["HasFlag", "Name", "TimeLast", "Value"],
+      "skipEnv": ["testing"]
+    },
+    {
+      "name": "KamiUseItemSystem",
+      "writeAccess": ["*"]
     },
     {
       "name": "QuestAcceptSystem",

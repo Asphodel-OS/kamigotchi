@@ -13,11 +13,30 @@ import { generateImports } from './imports';
  * @returns path to generated LibDeploy.sol
  */
 export async function generateLibDeploy(out: string, components?: string, systems?: string) {
-  if (components && systems)
-    console.error(
-      'cannot update both components and systems at the same time, please update one at a time.'
-    );
+  if (components && systems) console.error('cant update components and systems simultaneously');
 
+  // getting config
+  let config = getConfig(components, systems);
+  config = filterConfigEnv(config); // filtering out skipped comps/systems specific to env
+
+  // generating LibDeploy
+  console.log(`Deploy config: \n`, JSON.stringify(config, null, 2));
+  await generateImports(out);
+  const LibDeploy = await ejs.renderFile(
+    path.join(deploymentDir, 'contracts/LibDeploy.ejs'),
+    config,
+    { async: true }
+  );
+  const libDeployPath = path.join(out, 'LibDeploy.sol');
+  await writeFile(libDeployPath, LibDeploy);
+
+  return libDeployPath;
+}
+
+//////////////////
+// UTILS
+
+function getConfig(components?: string, systems?: string) {
   let config: any;
   if (components) {
     config = getDeployComponents(components);
@@ -26,21 +45,23 @@ export async function generateLibDeploy(out: string, components?: string, system
   } else {
     config = DeployConfig; // full
   }
+  return config;
+}
 
-  console.log(`Deploy config: \n`, JSON.stringify(config, null, 2));
-  await generateImports(out);
-  // Generate LibDeploy
-  console.log('Generating deployment script');
-  // LibDeploy.sol
-  const LibDeploy = await ejs.renderFile(
-    path.join(deploymentDir, 'contracts/LibDeploy.ejs'),
-    config,
-    {
-      async: true,
+function filterConfigEnv(config: any) {
+  for (let i = 0; i < config.components.length; i++) {
+    const entry = config.components[i];
+    if (entry.skipEnv && entry.skipEnv.includes(process.env.NODE_ENV!)) {
+      config.components.splice(i, 1);
+      i--;
     }
-  );
-  const libDeployPath = path.join(out, 'LibDeploy.sol');
-  await writeFile(libDeployPath, LibDeploy);
-
-  return libDeployPath;
+  }
+  for (let i = 0; i < config.systems.length; i++) {
+    const entry = config.systems[i];
+    if (entry.skipEnv && entry.skipEnv.includes(process.env.NODE_ENV!)) {
+      config.systems.splice(i, 1);
+      i--;
+    }
+  }
+  return config;
 }
