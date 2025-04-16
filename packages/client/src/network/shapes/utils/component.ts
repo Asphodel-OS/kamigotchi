@@ -1,11 +1,11 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { BigNumber } from 'ethers';
+import { Address } from 'viem';
 
 import { Affinity } from 'constants/affinities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { parseAddress } from 'utils/address';
-import { Address } from 'viem';
 
 export const getAffinity = (components: Components, entity: EntityIndex): Affinity => {
   const { Affinity } = components;
@@ -213,6 +213,9 @@ export const getWeights = (components: Components, entity: EntityIndex): number[
 ////////////////
 // ADDRESSES
 
+// TODO: we should typecast the values of the XXAddress components
+// with some string validation 0x{40 chars} during decoding/unpacking
+
 // get an owner address
 export const getOwnerAddress = (
   components: Components,
@@ -228,6 +231,7 @@ export const getOwnerAddress = (
   return parseAddress(result);
 };
 
+// get an operator address
 export const getOperatorAddress = (
   components: Components,
   entity: EntityIndex
@@ -235,15 +239,13 @@ export const getOperatorAddress = (
   const { OperatorAddress } = components;
   const result = getComponentValue(OperatorAddress, entity)?.value;
   if (result === undefined) {
-    console.warn(`getTokenAddress(): undefined for entity ${entity}`);
+    console.warn(`getOperatorAddress(): undefined for entity ${entity}`);
     return;
   }
 
   return parseAddress(result);
 };
 
-// TODO: we should typecast the values of the TokenAddress component
-// with some string validation 0x{40 chars} during decoding/unpacking
 export const getTokenAddress = (
   components: Components,
   entity: EntityIndex

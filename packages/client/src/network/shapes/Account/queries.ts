@@ -1,6 +1,6 @@
 import { EntityIndex, HasValue, QueryFragment, runQuery, World } from '@mud-classic/recs';
-
 import { BigNumber } from 'ethers';
+
 import { Components, NetworkLayer } from 'network/';
 import { getKamiOwnerID } from '../utils/component';
 
@@ -62,12 +62,10 @@ export const queryByName = (comps: Components, name: string) => {
 };
 
 // query for an account entity by its attached operator address
-// todo: query directly with OperatorCacheComponent (operator address => accID)
-// NOTE: technically this can change during the lifespan of the app
+// NOTE: we format to match MUD's abbreviated style. fix, eventually
 export const queryByOperator = (comps: Components, operator: string) => {
   if (!OperatorCache.has(operator)) {
     const formatted = BigNumber.from(operator).toHexString();
-    console.log('querying for operator: ', operator, formatted);
     const results = query(comps, { operator: formatted });
     const length = results.length;
     if (length != 1) console.warn(`found ${length} entities for account operator: ${operator}`);
