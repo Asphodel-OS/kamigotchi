@@ -4,8 +4,8 @@ pragma solidity >=0.8.28;
 import "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 import { LibString } from "solady/utils/LibString.sol";
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { LibDeploy, DeployResult } from "deployment/LibDeploy.sol";
+import { World } from "solecs/World.sol";
+import { LibDeploy } from "deployment/LibDeploy.sol";
 import { LibDeployTokens } from "deployment/LibDeployTokens.s.sol";
 import { LibDeployEmitter } from "deployment/LibDeployEmitter.s.sol";
 import { Emitter } from "solecs/Emitter.sol";
@@ -20,13 +20,15 @@ contract Deploy is InitWorld {
     bool emitter,
     address multisig,
     bool local
-  ) external returns (IWorld world, uint256 startBlock) {
+  ) external returns (World world, uint256 startBlock) {
     startBlock = block.number;
     address deployer = address(uint160(uint256(keccak256(abi.encodePacked(deployerPriv)))));
+    address owner = multisig != address(0) ? multisig : deployer;
     vm.startBroadcast(deployerPriv);
 
-    DeployResult memory result = LibDeploy.deploy(deployer, worldAddr, reuseComps);
-    world = worldAddr == address(0) ? result.world : IWorld(worldAddr);
+    // in LibDeploy.deploy, if owner == deployer do permission auth. else transfer owner, nothing else
+    bool hasPerms = worldAddr == address(0) || multisig == address(0); // is owner if new world or no multisig
+    world = LibDeploy.deploy(worldAddr, owner, reuseComps, hasPerms);
 
     if (worldAddr == address(0) || emitter) {
       LibDeployEmitter.deploy(world);
@@ -48,10 +50,11 @@ contract Deploy is InitWorld {
       }
     }
 
-    // transfer ownership to multisig
-    if (multisig != address(0)) {
+    // if new world, transfer ownership to multisig
+    if (worldAddr == address(0) && multisig != address(0)) {
       console.log("Transferring ownership to multisig");
-      LibDeploy.transferOwner(multisig, world, reuseComps);
+      if (worldAddr == address(0)) world.transferOwnership(owner);
+      LibDeploy.transferOwner(world, owner, reuseComps);
     }
   }
 }
