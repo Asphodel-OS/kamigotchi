@@ -11,7 +11,7 @@ export async function initRecipes(api: AdminAPI, indices?: number[], all?: boole
 
   // TODO: support test world status
   const validStatuses = ['To Deploy'];
-  if (all) {
+  if (all || indices !== undefined) {
     validStatuses.push('Ready');
     validStatuses.push('In Game');
   }

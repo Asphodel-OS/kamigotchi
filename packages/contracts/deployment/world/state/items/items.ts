@@ -17,7 +17,7 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
   console.log('\n==INITIALIZING ITEMS==');
 
   const validStatuses = ['To Deploy'];
-  if (all) validStatuses.push('Ready', 'In Game');
+  if (all || indices !== undefined) validStatuses.push('Ready', 'In Game');
 
   // construct the map of allos for easier lookup
   const alloMap = new Map<string, any>();

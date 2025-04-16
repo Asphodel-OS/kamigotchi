@@ -16,7 +16,7 @@ export async function initListings(api: AdminAPI, indices?: number[], all?: bool
   const setSell = api.listing.set.price.sell;
 
   const validStatuses = ['In-game'];
-  if (all) validStatuses.push('Local');
+  if (all || indices !== undefined) validStatuses.push('Local');
 
   for (let i = 0; i < listingCSV.length; i++) {
     const row = listingCSV[i];
