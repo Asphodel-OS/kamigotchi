@@ -6,7 +6,8 @@
 ,In Game,ONYX,100,ERC20,,0x9D9c32921575Fd98e67E27C0189ED4b750Cb17C5,,,,"Asphodel’s premium game currency.
 
 You want this. You want this so bad."
-,To Deploy,ETH,103,ERC20,,,,,,Ethereum
+,To Deploy,INIT,101,ERC20,,0x0000000000000000000000000000000000000101,,,,Initia
+,To Deploy,ETH,103,ERC20,,0x0000000000000000000000000000000000000103,,,,Ethereum
 ,To Deploy,Kamigotchi World Passport (Orange),21,NFT,,,,,,
 ,To Deploy,Kamigotchi World Passport (Pink),22,NFT,,,,,,
 ,To Deploy,Kamigotchi World Passport (Red),23,NFT,,,,,,

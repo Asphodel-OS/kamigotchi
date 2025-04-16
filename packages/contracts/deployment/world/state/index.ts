@@ -96,7 +96,7 @@ export { deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
 export { initNpcs } from './npcs';
-export { deleteQuests, initQuests, reviseQuests } from './quests/quests';
+export { deleteQuests, initQuests, reviseQuests } from './quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes';
 export { deleteRelationships, initRelationships } from './relationships';
 export { deleteNodes, initNodes, reviseNodes } from './rooms/nodes';

@@ -4,6 +4,8 @@ import { addObjectives } from './objectives';
 import { addRequirements } from './requirements';
 import { addRewards } from './rewards';
 
+// STATE SCRIPTS SHOULD BE MODELED AFTER THIS DIRECTORY
+
 export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => {
   const index = Number(entry['Index']);
   const name = entry['Title'];

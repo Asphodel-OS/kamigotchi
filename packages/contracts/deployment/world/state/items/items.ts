@@ -3,6 +3,8 @@ import { getItemImage, getSheet, readFile } from '../utils';
 import { addAllo } from './allos';
 import { addRequirement } from './requirements';
 
+// TODO: update the set of state scripts in items/ to be modeled after quests/
+
 const IGNORE_TYPES = ['OTHER'];
 const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL', 'ERC20'];
 const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
