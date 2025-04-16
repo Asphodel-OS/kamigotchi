@@ -28,6 +28,12 @@ contract MudTest is Test {
 
     components = world.components();
     systems = world.systems();
+
+    // registering sender as system for getUniqueEntityId()
+    vm.startPrank(address(world));
+    systems.set(uint256(uint160((address(this)))), 0);
+    systems.set(uint256(uint160((address(deployer)))), 0);
+    vm.stopPrank();
   }
 
   /////////////////

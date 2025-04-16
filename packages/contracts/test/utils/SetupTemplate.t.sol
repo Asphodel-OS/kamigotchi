@@ -72,6 +72,10 @@ abstract contract SetupTemplate is TestSetupImports {
 
   function setUpWorld() public virtual {
     super.setUp();
+
+    // registering sender as system for getUniqueEntityId()
+    vm.prank(address(world));
+    systems.set(uint256(uint160((address(ExternalCaller)))), 0);
   }
 
   function setUpTokens() public virtual {

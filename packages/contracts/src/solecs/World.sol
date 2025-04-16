@@ -135,7 +135,9 @@ contract World is IWorld, Ownable {
   /** @notice
    * Get a unique entity ID.
    */
+  /// @dev can only be called by system
   function getUniqueEntityId() public returns (uint256) {
+    if (!_systems.has(addressToEntity(msg.sender))) revert("system not registered");
     return uint256(keccak256(abi.encodePacked(++nonce)));
   }
 
