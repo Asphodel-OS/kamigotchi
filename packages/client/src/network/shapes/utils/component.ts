@@ -217,44 +217,35 @@ export const getWeights = (components: Components, entity: EntityIndex): number[
 // with some string validation 0x{40 chars} during decoding/unpacking
 
 // get an owner address
-export const getOwnerAddress = (
-  components: Components,
-  entity: EntityIndex
-): Address | undefined => {
+export const getOwnerAddress = (components: Components, entity: EntityIndex): Address => {
   const { OwnerAddress } = components;
   const result = getComponentValue(OwnerAddress, entity)?.value;
   if (result === undefined) {
     console.warn(`getOwnerAddress(): undefined for entity ${entity}`);
-    return;
+    return '0x000000000000000000000000000000000000dEaD';
   }
 
   return parseAddress(result);
 };
 
 // get an operator address
-export const getOperatorAddress = (
-  components: Components,
-  entity: EntityIndex
-): Address | undefined => {
+export const getOperatorAddress = (components: Components, entity: EntityIndex): Address => {
   const { OperatorAddress } = components;
   const result = getComponentValue(OperatorAddress, entity)?.value;
   if (result === undefined) {
     console.warn(`getOperatorAddress(): undefined for entity ${entity}`);
-    return;
+    return '0x000000000000000000000000000000000000dEaD';
   }
 
   return parseAddress(result);
 };
 
-export const getTokenAddress = (
-  components: Components,
-  entity: EntityIndex
-): Address | undefined => {
+export const getTokenAddress = (components: Components, entity: EntityIndex): Address => {
   const { TokenAddress } = components;
   const result = getComponentValue(TokenAddress, entity)?.value;
   if (result === undefined) {
     console.warn(`getTokenAddress(): undefined for entity ${entity}`);
-    return;
+    return '0x000000000000000000000000000000000000dEaD';
   }
 
   return parseAddress(result);

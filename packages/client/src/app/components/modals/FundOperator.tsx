@@ -36,7 +36,6 @@ export function registerFundOperatorModal() {
       const { selectedAddress, apis } = useNetwork();
 
       const [isFunding, setIsFunding] = useState(true);
-      const [isDripping, setIsDripping] = useState(false);
       const [amount, setAmount] = useState(GasConstants.Full);
       const [statusText, setStatusText] = useState('');
       const [statusColor, setStatusColor] = useState('grey');
@@ -52,11 +51,11 @@ export function registerFundOperatorModal() {
       });
 
       const { data: OwnerBalance, refetch: refetchOwnerBalance } = useBalance({
-        address: kamiAccount.ownerAddress as `0x${string}`,
+        address: kamiAccount.ownerAddress,
       });
 
       const { data: OperatorBalance, refetch: refetchOperatorBalance } = useBalance({
-        address: kamiAccount.operatorAddress as `0x${string}`,
+        address: kamiAccount.operatorAddress,
       });
 
       /////////////////

@@ -1,6 +1,7 @@
 import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { Address } from 'viem';
 import { getReputation } from '../Faction';
 import { Inventory } from '../Inventory';
 import { getMusuBalance } from '../Item';
@@ -27,8 +28,8 @@ export interface BaseAccount {
   id: EntityID;
   index: number;
   entity: EntityIndex;
-  ownerAddress: string;
-  operatorAddress: string;
+  ownerAddress: Address;
+  operatorAddress: Address;
   name: string;
   pfpURI: string;
 }

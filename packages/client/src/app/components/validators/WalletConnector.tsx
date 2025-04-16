@@ -19,6 +19,7 @@ import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
 import { abbreviateAddress } from 'utils/address';
+import { Address } from 'viem';
 
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.
@@ -68,7 +69,7 @@ export function registerWalletConnecter() {
         const chainMatches = chain?.id === DefaultChain.id;
         if (!isConnected) {
           setState('disconnected');
-          setSelectedAddress('');
+          setSelectedAddress('0x000000000000000000000000000000000000dEaD');
         } else if (!chainMatches) setState('wrongChain');
         else if (!authenticated) setState('unauthenticated');
         else updateNetworkSettings();
@@ -137,7 +138,8 @@ export function registerWalletConnecter() {
 
       // update the network store with the injected wallet's api
       const addNetworkAPI = async (wallet: ConnectedWallet) => {
-        const injectedAddress = wallet.address.toLowerCase();
+        // const injectedAddress = wallet.address.toLowerCase();
+        const injectedAddress = wallet.address as Address;
         if (!apis.has(injectedAddress)) {
           console.log(`Establishing APIs for ${abbreviateAddress(injectedAddress)}`);
           let provider;
@@ -156,7 +158,8 @@ export function registerWalletConnecter() {
       // update the base network with the embedded wallet
       // TODO: properly dispose the old network layer
       const updateBaseNetwork = async (wallet: ConnectedWallet) => {
-        const embeddedAddress = wallet.address.toLowerCase();
+        // const embeddedAddress = wallet.address.toLowerCase();
+        const embeddedAddress = wallet.address as Address;
         if (burnerAddress !== embeddedAddress) {
           console.log(`Updating base network ${abbreviateAddress(embeddedAddress)}`);
           const provider = (await wallet.getEthereumProvider()) as ExternalProvider;

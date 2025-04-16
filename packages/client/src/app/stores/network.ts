@@ -1,12 +1,13 @@
 import { Signer } from 'ethers';
+import { Address } from 'viem';
 import { create } from 'zustand';
 
 import { TxQueue } from 'engine/queue';
 import { PlayerAPI, createPlayerAPI } from 'network/api';
 
 export interface State {
-  burnerAddress: string;
-  selectedAddress: string;
+  burnerAddress: Address;
+  selectedAddress: Address;
   signer: Signer | any;
   validations: Validations;
   randNum: number;
@@ -15,8 +16,8 @@ export interface State {
 
 interface Actions {
   addAPI: (address: string, txQueue: TxQueue) => void;
-  setSelectedAddress: (address: string) => void;
-  setBurnerAddress: (address: string) => void;
+  setSelectedAddress: (address: Address) => void;
+  setBurnerAddress: (address: Address) => void;
   setValidations: (validations: Validations) => void;
   setSigner: (signer: Signer) => void;
 }
@@ -29,8 +30,8 @@ interface Validations {
 
 export const useNetwork = create<State & Actions>((set) => {
   const initialState: State = {
-    burnerAddress: '',
-    selectedAddress: '',
+    burnerAddress: '0x000000000000000000000000000000000000dEaD',
+    selectedAddress: '0x000000000000000000000000000000000000dEaD',
     randNum: Math.random(),
     apis: new Map<string, PlayerAPI>(),
     validations: {
@@ -42,9 +43,9 @@ export const useNetwork = create<State & Actions>((set) => {
 
   return {
     ...initialState,
-    setBurnerAddress: (burnerAddress: string) =>
+    setBurnerAddress: (burnerAddress: Address) =>
       set((state: State) => ({ ...state, burnerAddress })),
-    setSelectedAddress: (selectedAddress: string) =>
+    setSelectedAddress: (selectedAddress: Address) =>
       set((state: State) => ({ ...state, selectedAddress })),
     setValidations: (validations: Validations) =>
       set((state: State) => ({ ...state, validations })),

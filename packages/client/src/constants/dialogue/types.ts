@@ -16,5 +16,5 @@ export interface GetterParam {
 export interface ActionParam {
   label: string;
   type: string;
-  input: number;
+  input?: number;
 }
