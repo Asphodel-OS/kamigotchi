@@ -38,7 +38,7 @@ export async function genBatchTx(systems: string, addrs: string) {
   // use regular deploy script, findLog system address. do deprecate + register + permissions if initWorld || multisig == 0
   const newSysAddr = addrs;
 
-  transactions.push(await registerSystemTx(World, sysConfig)); // registering new system
+  transactions.push(await registerSystemTx(World, sysConfig, newSysAddr)); // registering new system
   // authorize new system
   transactions = transactions.concat(await authorizeTxs(World, sysConfig.writeAccess, newSysAddr));
 
@@ -97,7 +97,7 @@ const deprecateTx = (sysAddr: string) => {
   };
 };
 
-const registerSystemTx = async (World: WorldAddresses, sysConfig: any) => {
+const registerSystemTx = async (World: WorldAddresses, sysConfig: any, newSysAddr: string) => {
   const sysID = keccak256(getSystemIDByName(sysConfig.name));
   const callABI = WorldABI.find((a: any) => a.type === 'function' && a.name === 'registerSystem')!;
   return {
@@ -109,7 +109,7 @@ const registerSystemTx = async (World: WorldAddresses, sysConfig: any) => {
       payable: false,
     },
     contractInputsValues: {
-      addr: (await World.getSysAddr(sysID))!,
+      addr: newSysAddr,
       id: sysID,
     },
   };

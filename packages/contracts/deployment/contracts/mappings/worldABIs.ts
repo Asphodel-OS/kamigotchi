@@ -339,7 +339,7 @@ export const WorldABI = [
     type: 'function',
     name: 'registerComponent',
     inputs: [
-      { name: 'componentAddr', type: 'address', internalType: 'address' },
+      { name: 'addr', type: 'address', internalType: 'address' },
       { name: 'id', type: 'uint256', internalType: 'uint256' },
     ],
     outputs: [],
@@ -366,7 +366,7 @@ export const WorldABI = [
     type: 'function',
     name: 'registerSystem',
     inputs: [
-      { name: 'systemAddr', type: 'address', internalType: 'address' },
+      { name: 'addr', type: 'address', internalType: 'address' },
       { name: 'id', type: 'uint256', internalType: 'uint256' },
     ],
     outputs: [],
