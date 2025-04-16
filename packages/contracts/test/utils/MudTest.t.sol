@@ -5,7 +5,7 @@ import { Test, console } from "forge-std/Test.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
 import { getAddrByID } from "solecs/utils.sol";
-import { LibDeploy, DeployResult } from "deployment/LibDeploy.sol";
+import { LibDeploy } from "deployment/LibDeploy.sol";
 
 string constant mnemonic = "test test test test test test test test test test test junk";
 
@@ -23,8 +23,7 @@ contract MudTest is Test {
 
   function setUp() public virtual {
     vm.startPrank(deployer);
-    DeployResult memory result = LibDeploy.deploy(deployer, address(0), false);
-    world = result.world;
+    world = LibDeploy.deploy(address(0), deployer, false, true);
     vm.stopPrank();
 
     components = world.components();
