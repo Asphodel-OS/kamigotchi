@@ -7,6 +7,7 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import { SystemABI, UintCompABI, WorldABI } from '../../contracts/mappings/worldABIs';
 import {
   getCompIDByName,
+  getDeployComponents,
   getDeploySystems,
   getSystemIDByName,
   keccak256,
@@ -58,6 +59,11 @@ const authorizeTxs = async (
   writer: string,
   revoke?: boolean
 ) => {
+  if (compNames.length === 1 && compNames[0] === '*') {
+    // authorize all components
+    compNames = getDeployComponents().components.map((comp: any) => comp.comp);
+  }
+
   const txs: BatchTransaction[] = [];
   for (let i = 0; i < compNames.length; i++) {
     const compID = getCompIDByName(compNames[i]);
