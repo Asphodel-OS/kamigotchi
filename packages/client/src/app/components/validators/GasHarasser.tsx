@@ -45,7 +45,7 @@ export function registerGasHarasser() {
       });
 
       const { data: balance, refetch } = useBalance({
-        address: account.operatorAddress as `0x${string}`,
+        address: account.operatorAddress,
       });
 
       /////////////////

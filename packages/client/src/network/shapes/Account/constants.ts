@@ -6,9 +6,8 @@ export const NullAccount: Account = {
   id: '0' as EntityID,
   entity: 0 as EntityIndex,
   index: 0,
-  operatorAddress: '',
-  ownerAddress: '',
-  fid: 0,
+  operatorAddress: '0x000000000000000000000000000000000000dEaD',
+  ownerAddress: '0x000000000000000000000000000000000000dEaD',
   name: '',
   pfpURI: '',
 

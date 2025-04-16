@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { map, merge } from 'rxjs';
-import { Address } from 'viem';
 import { useWatchBlockNumber } from 'wagmi';
 
 import { getItemByIndex } from 'app/cache/item';
@@ -56,7 +55,7 @@ export function registerTokenBalances() {
       // }, [balances]);
 
       const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
-        account.ownerAddress as Address,
+        account.ownerAddress,
         tokens.onyx,
         spender
       );

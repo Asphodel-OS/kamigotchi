@@ -1,5 +1,5 @@
 import { BigNumber, Wallet, utils } from 'ethers';
-import { Address, padHex } from 'viem';
+import { Address, getAddress, padHex } from 'viem';
 
 export const generatePrivateKey = (): string => {
   const wallet = Wallet.createRandom();
@@ -35,11 +35,10 @@ export const addressesMatch = (a1: string, a2: string) => {
   return a1 === a2;
 };
 
-export const parseAddress = (raw: string): Address | undefined => {
+export const parseAddress = (raw: string): Address => {
   if (raw.search('0x') !== 0) {
     console.warn(`parseAddress() invalid address format: ${raw}`);
-    return undefined;
+    return '0x000000000000000000000000000000000000dEaD';
   }
-  return padHex(raw as `0x${string}`, { size: 20 });
-  // return getAddress(padded, DefaultChain.id); // doesnt seem to pass checksum
+  return getAddress(padHex(raw as `0x${string}`, { size: 20 }));
 };

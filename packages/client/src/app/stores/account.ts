@@ -1,4 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { Address } from 'viem';
 import { create } from 'zustand';
 
 ////////////////
@@ -26,8 +27,8 @@ export interface Account {
   entity: EntityIndex;
   index: number;
   name: string;
-  ownerAddress: string;
-  operatorAddress: string;
+  ownerAddress: Address;
+  operatorAddress: Address;
 }
 
 export const emptyAccountDetails = (): Account => ({
@@ -35,8 +36,8 @@ export const emptyAccountDetails = (): Account => ({
   entity: 0 as EntityIndex,
   index: 0,
   name: '',
-  ownerAddress: '',
-  operatorAddress: '',
+  ownerAddress: '0x000000000000000000000000000000000000dEaD',
+  operatorAddress: '0x000000000000000000000000000000000000dEaD',
 });
 
 interface Debug {

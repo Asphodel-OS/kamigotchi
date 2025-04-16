@@ -6,9 +6,10 @@ import {
   getConfigFieldValueAddress,
   getConfigFieldValueArray,
 } from 'network/shapes/Config';
+import { Address } from 'viem';
 
 export const ValueCache = new Map<string, number>();
-export const AddressCache = new Map<string, string>();
+export const AddressCache = new Map<string, Address>();
 export const ArrayCache = new Map<string, number[]>();
 export const UpdateTs = new Map<string, number>(); // last update ts of config field
 
@@ -23,7 +24,7 @@ export const processValue = (world: World, components: Components, field: string
   return value;
 };
 
-export const getAddress = (world: World, components: Components, field: string): string => {
+export const getAddress = (world: World, components: Components, field: string): Address => {
   if (!AddressCache.has(field)) processAddress(world, components, field);
   return AddressCache.get(field)!;
 };
