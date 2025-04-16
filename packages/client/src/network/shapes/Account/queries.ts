@@ -1,5 +1,6 @@
 import { EntityIndex, HasValue, QueryFragment, runQuery, World } from '@mud-classic/recs';
 
+import { BigNumber } from 'ethers';
 import { Components, NetworkLayer } from 'network/';
 import { getKamiOwnerID } from '../utils/component';
 
@@ -65,7 +66,9 @@ export const queryByName = (comps: Components, name: string) => {
 // NOTE: technically this can change during the lifespan of the app
 export const queryByOperator = (comps: Components, operator: string) => {
   if (!OperatorCache.has(operator)) {
-    const results = query(comps, { operator });
+    const formatted = BigNumber.from(operator).toHexString();
+    console.log('querying for operator: ', operator, formatted);
+    const results = query(comps, { operator: formatted });
     const length = results.length;
     if (length != 1) console.warn(`found ${length} entities for account operator: ${operator}`);
     const result = results[0];
