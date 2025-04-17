@@ -6,3 +6,6 @@ export {
   processArray as processConfigArray,
   processValue as processConfigValue,
 } from './config';
+export { getMintConfig as getGachaMintConfig } from './gacha';
+
+export type { GachaMintConfig } from './gacha';

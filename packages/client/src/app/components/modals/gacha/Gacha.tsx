@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
+import { getGachaMintConfig } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { getKami } from 'app/cache/kami';
@@ -18,7 +19,9 @@ import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
+import { hasFlag } from 'network/shapes/Flag';
 import { getGachaCommits } from 'network/shapes/Gacha';
+import { getMintData } from 'network/shapes/Gacha/mint';
 import { Kami, queryKamis } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
@@ -70,6 +73,10 @@ export function registerGachaModal() {
                 getInventoryBalance(inventories, index),
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, kamiOptions, false),
+              getMintConfig: () => getGachaMintConfig(world, components),
+              getMintData: (accountID: EntityID) => getMintData(world, components, accountID),
+              isWhitelisted: (entity: EntityIndex) =>
+                hasFlag(world, components, entity, 'MINT_WHITELISTED'),
             },
           };
         })
