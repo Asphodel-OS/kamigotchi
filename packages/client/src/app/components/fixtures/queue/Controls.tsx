@@ -9,7 +9,7 @@ import { GasConstants, GasExponent } from 'constants/gas';
 import { parseTokenBalance } from 'utils/numbers';
 
 // NOTE: ACTUAL GAS EXPONENT HANDLED IN constants/gas.ts
-// the precision to represent gas numbers at readable scale (e.g. mONYX)
+// the precision to represent gas numbers at readable scale (e.g. mETH)
 const READABILITY_PRECISION = 3;
 
 interface Props {
@@ -36,7 +36,7 @@ export const Controls = (props: Props) => {
       // refresh gas price every 5 blocks
       if (n % 5n == 0n) {
         refetchGasPrice();
-        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent)); // mONYX
+        setGasPrice((gasPriceData ?? 0n) / 10n ** BigInt(GasExponent)); // mETH
       }
     },
   });
@@ -80,7 +80,7 @@ export const Controls = (props: Props) => {
   // get the tooltip
   const getBalanceTooltip = () => {
     const gas = operatorGas.toFixed(6);
-    return ['1 ONYX = 1000 milliONYX', '', `${gas} ONYX`];
+    return ['1 ETH = 1000 milliETH', '', `${gas} ETH`];
   };
 
   // get gas balance converted to readability precision units
@@ -120,7 +120,7 @@ export const Controls = (props: Props) => {
           <GasGauge level={calcGaugeSetting()} />
         </Tooltip>
         <Tooltip text={getBalanceTooltip()}>
-          <Text>{getScaledBalance().toFixed(2)}mONYX</Text>
+          <Text>{getScaledBalance().toFixed(2)}mETH</Text>
         </Tooltip>
         {PriceWarning()}
       </RowPrefix>
