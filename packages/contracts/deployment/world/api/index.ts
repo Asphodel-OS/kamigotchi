@@ -50,11 +50,11 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
   // AUTH
 
   async function addRole(addr: string, role: string) {
-    genCall('system._Auth.Manage.Role', [addr, role], 'addRole');
+    genCall('system.auth.registry', [addr, role], 'addRole');
   }
 
   async function removeRole(addr: string, role: string) {
-    genCall('system._Auth.Manage.Role', [addr, role], 'removeRole');
+    genCall('system.auth.registry', [addr, role], 'removeRole');
   }
 
   /////////////////
@@ -64,27 +64,27 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
-    genCall('system._Config.Set', [field, value]);
+    genCall('system.config.registry', [field, value]);
   }
 
   async function setConfigAddress(field: string, value: string) {
-    genCall('system._Config.Set', [field, value], 'setValueAddress');
+    genCall('system.config.registry', [field, value], 'setValueAddress');
   }
 
   async function setConfigBool(field: string, value: boolean) {
-    genCall('system._Config.Set', [field, value], 'setValueBool');
+    genCall('system.config.registry', [field, value], 'setValueBool');
   }
 
   async function setConfigArray(field: string, value: number[]) {
     const arr = new Array(8);
     arr.fill(0);
     for (let i = 0; i < value.length; i++) arr[i] = value[i];
-    genCall('system._Config.Set', [field, toUint32FixedArrayLiteral(arr)], 'setValueArray');
+    genCall('system.config.registry', [field, toUint32FixedArrayLiteral(arr)], 'setValueArray');
   }
 
   // values must be ≤ 32char
   async function setConfigString(field: string, value: string) {
-    genCall('system._Config.Set', [field, value], 'setValueString');
+    genCall('system.config.registry', [field, value], 'setValueString');
   }
 
   /////////////////

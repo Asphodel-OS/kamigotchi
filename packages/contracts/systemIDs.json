@@ -1,10 +1,10 @@
 {
   "_AuthManageRoleSystem": {
-    "id": "system._Auth.Manage.Role",
+    "id": "system.auth.registry",
     "encodedID": "0xfa9684ace25361f5f40e40125a8684f447957b66a008ef8f8a173bccb6fce62c"
   },
   "_ConfigSetSystem": {
-    "id": "system._Config.Set",
+    "id": "system.config.registry",
     "encodedID": "0x77ecdbeff66f6a1ed1858296770772bd6752009b6f5209269552793493aeed37"
   },
   "_FactionRegistrySystem": {

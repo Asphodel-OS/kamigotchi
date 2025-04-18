@@ -8,7 +8,7 @@ import { getAddrByID } from "solecs/utils.sol";
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 
-uint256 constant ID = uint256(keccak256("system._Config.Set"));
+uint256 constant ID = uint256(keccak256("system.config.registry"));
 
 // _ConfigSetSystem creates a global config field entity of the provided type
 contract _ConfigSetSystem is System, AuthRoles {
