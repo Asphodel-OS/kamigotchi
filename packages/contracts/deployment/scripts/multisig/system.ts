@@ -14,36 +14,40 @@ import {
 } from '../../utils';
 import { writeBatchTx } from './utils/write';
 
-// genBatchTx('AccountRegisterSystem', '0x2722a36D8e1772A390e32494DE9Cc14365df63BB');
-
-export async function genBatchTx(systems: string, addrs: string) {
+export async function genBatchTx(systems: string, rawAddrs: string) {
   const World = new WorldAddresses();
+  const addrs = rawAddrs.split(',');
 
   // assume only 1 system for now !!
   const deployConfig = getDeploySystems(systems);
-  const sysConfig = deployConfig.systems[0];
 
   let transactions: BatchTransaction[] = [];
+  for (let i = 0; i < deployConfig.systems.length; i++) {
+    const systemConfig = deployConfig.systems[i];
+    transactions = transactions.concat(await genSingleBatch(World, systemConfig, addrs[i]));
+  }
+  // write file
+  writeBatchTx(transactions);
+}
+
+async function genSingleBatch(World: WorldAddresses, systemConfig: any, newAddr: string) {
+  let transactions: BatchTransaction[] = [];
   // checking for prev system, deprecate if so
-  const sysID = getSystemIDByName(sysConfig.name);
+  const sysID = getSystemIDByName(systemConfig.name);
   let sysAddr = (await World.getSysAddr(sysID)) || '0';
   if (Number(sysAddr) !== 0) {
     transactions.push(await deprecateTx(sysAddr));
     transactions = transactions.concat(
-      await authorizeTxs(World, sysConfig.writeAccess, sysAddr, true)
+      await authorizeTxs(World, systemConfig.writeAccess, sysAddr, true)
     );
   }
 
-  // todo: deploy new system now, + transfer owner
-  // use regular deploy script, findLog system address. do deprecate + register + permissions if initWorld || multisig == 0
-  const newSysAddr = addrs;
+  // todo: deploy new system now, + transfer owner (currently implemented in regular deploy script)
 
-  transactions.push(await registerSystemTx(World, sysConfig, newSysAddr)); // registering new system
-  // authorize new system
-  transactions = transactions.concat(await authorizeTxs(World, sysConfig.writeAccess, newSysAddr));
+  transactions.push(await registerSystemTx(World, systemConfig, newAddr)); // registering new system
+  transactions = transactions.concat(await authorizeTxs(World, systemConfig.writeAccess, newAddr)); // auth new system
 
-  // write file
-  writeBatchTx(transactions);
+  return transactions;
 }
 
 //////////////////

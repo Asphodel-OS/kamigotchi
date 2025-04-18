@@ -5,10 +5,11 @@ pragma solidity >=0.8.28;
 import { DSTest } from "ds-test/test.sol";
 import { console } from "forge-std/console.sol";
 
-// Imports (solecs, components, systems)
+import { LibString } from "solady/utils/LibString.sol";
 import "deployment/Imports.sol";
 
 library LibDeploy {
+
 function deploy(
 address _world,
 address owner,
@@ -20,6 +21,10 @@ bool hasPerms
 // Deploy
 // ------------------------
 
+// Logging
+string[] memory compNames = new string[](<%= components.length %>);
+address[] memory compAddrs = new address[](<%= components.length %>);
+
 // Deploy world
 world = _world == address(0) ? new World() : World(_world);
 if(_world == address(0)) world.init(); // Init if it's a fresh world
@@ -27,7 +32,7 @@ if(_world == address(0)) world.init(); // Init if it's a fresh world
 // Deploy components
 if(!_reuseComponents) {
 BareComponent comp;
-<% components.forEach(component=> { %>
+<% components.forEach((component, i) => { %>
 console.log("Deploying <%= component.comp %>Component");
 comp = new <%= component.comp %>Component(address(world));
 if (hasPerms) {
@@ -35,8 +40,13 @@ if (hasPerms) {
 } else {
   comp.transferOwnership{ gas: 400000 }(owner);
 }
+
+compNames[<%= i %>] = string("<%= component.comp %>");
+compAddrs[<%= i %>] = address(comp);
 console.log(address(comp));
 <% });%>
+
+console.log(string(abi.encodePacked("--components ", stringFromArray(compNames), " --addresses ", stringFromArray(compAddrs))));
 }
 
 // Deploy systems
@@ -65,11 +75,14 @@ IUint256Component components = world.components();
 IUint256Component systems = world.systems();
 System system;
 
+// Logging
+string[] memory sysNames = new string[](<%= systems.length %>);
+address[] memory sysAddrs = new address[](<%= systems.length %>);
+
 // Deploy systems
-<% systems.forEach(system=> { %>
+<% systems.forEach((system, i) => { %>
   console.log("Deploying <%= system.name %>");
   system = new <%= system.name %>(world, address(components));
-  console.log(address(system));
 
   // if world owner is deployer, deprecate and register new system 
   if (hasPerms) {
@@ -107,7 +120,13 @@ System system;
     // world owner is multisig, transfer new system owner
     system.transferOwnership{ gas: 400000 }(owner);
   }
+
+  console.log(address(system));
+  sysNames[<%= i %>] = string("<%= system.name %>");
+  sysAddrs[<%= i %>] = address(system);
 <% });%>
+
+console.log(string(abi.encodePacked("--systems ", stringFromArray(sysNames), " --addresses ", stringFromArray(sysAddrs))));
 }
 
 function transferOwner(World world, address newOwner, bool reuseComps) internal {
@@ -129,4 +148,27 @@ function transferOwner(World world, address newOwner, bool reuseComps) internal 
       <% });-%>
     }
   }
+
+///////////////////
+// UTILS
+
+function stringFromArray(string[] memory arr) internal pure returns (string memory) {
+  string memory result = "";
+  if (arr.length == 0) return result;
+
+  for (uint i = 0; i < arr.length - 1; i++) 
+    result = string(abi.encodePacked(result, arr[i], ","));
+  result = string(abi.encodePacked(result, arr[arr.length - 1]));
+  return result;
+}
+
+function stringFromArray(address[] memory arr) internal pure returns (string memory) {
+  string memory result = "";
+  if (arr.length == 0) return result;
+
+  for (uint i = 0; i < arr.length - 1; i++) 
+    result = string(abi.encodePacked(result, LibString.toHexString(arr[i]), ","));
+  result = string(abi.encodePacked(result, LibString.toHexString(arr[arr.length - 1])));
+  return result;
+}
 }
