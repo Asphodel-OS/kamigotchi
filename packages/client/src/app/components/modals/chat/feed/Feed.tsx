@@ -44,7 +44,9 @@ interface Props {
   };
 }
 
+// TODO: retrieve this in the flow of the application with hooks
 const client = getKamidenClient();
+
 export const Feed = (props: Props) => {
   const { utils, player, blocked, actionSystem, api, activeTab, setActiveTab } = props;
   const { getAccount, getEntityIndex, getKami, getRoomByIndex } = props.utils;
@@ -135,6 +137,8 @@ export const Feed = (props: Props) => {
   // HELPERS
   // poll for recent messages. do not update the Feed state/cursor
   async function pollMessages() {
+    if (!client) return;
+
     const response = await client.getRoomMessages({
       RoomIndex: player.roomIndex,
       Timestamp: Date.now(),
@@ -150,7 +154,7 @@ export const Feed = (props: Props) => {
   }
 
   async function pollMoreMessages() {
-    if (noMoreMessages) return;
+    if (!client || noMoreMessages) return;
 
     setIsPolling(true);
     try {
