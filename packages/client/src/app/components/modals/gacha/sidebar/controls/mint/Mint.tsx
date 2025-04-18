@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { GachaMintConfig } from 'app/cache/config';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
+
 import { ViewMode } from '../../../types';
 import { Public } from './Public';
 import { Whitelist } from './Whitelist';

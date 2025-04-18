@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { GachaMintConfig } from 'app/cache/config';
 import { Stepper, Tooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { GACHA_MAX_PER_TX } from 'constants/gacha';
+import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -21,12 +23,19 @@ interface Props {
   controls: {
     tab: TabType;
     mode: ViewMode;
-    setMode: (mode: ViewMode) => void;
   };
   data: {
     payItem: Item;
     saleItem: Item;
     balance: number;
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+      whitelisted: boolean;
+    };
   };
   state: {
     quantity: number;
@@ -41,8 +50,8 @@ interface Props {
 export const Footer = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { approve, bid, mintPublic, mintWL, pull, reroll } = actions;
-  const { mode, setMode, tab } = controls;
-  const { payItem, saleItem, balance } = data;
+  const { mode, tab } = controls;
+  const { payItem, saleItem, balance, mint } = data;
   const { quantity, setQuantity, price, selectedKamis, setSelectedKamis } = state;
 
   /////////////////
@@ -87,6 +96,18 @@ export const Footer = (props: Props) => {
     else return true; // minting max not implemented
   };
 
+  // (MINT ONLY) check if a user is under the total mint allowance
+  const underMintMax = () => {
+    if (tab !== 'MINT') return true;
+
+    const config = mint.config;
+    const accountData = mint.data.account;
+    if (mode === 'DEFAULT') return accountData.whitelist + quantity <= config.whitelist.max;
+    if (mode === 'ALT') return accountData.public + quantity <= config.public.max;
+
+    return true; // minting max not implemented
+  };
+
   //////////////////
   // HANDLERS
 
@@ -124,20 +145,33 @@ export const Footer = (props: Props) => {
   // INTERPRETATION
 
   const getButtonText = () => {
-    if (mode === 'ALT') return needsApproval ? 'Approve' : 'Bid';
-    else if (tab === 'GACHA') return 'Mint';
-    else if (tab === 'REROLL') return 'Reroll';
-    else return '';
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') return 'Mint';
+      else if (mode === 'ALT') return 'Bid';
+    } else if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') return 'Reroll';
+      else if (mode === 'ALT') return needsApproval ? 'Approve' : 'Bid';
+    } else if (tab === 'MINT') {
+      return needsApproval ? 'Approve' : 'Bid';
+    } else return '';
   };
 
   const getSubmitTooltip = () => {
+    if (quantity <= 0) return ['no items to purchase'];
+    if (tab === 'MINT') {
+      if (mode === 'DEFAULT' && mint.whitelisted) return ['max per account'];
+      if (!underMintMax()) {
+        const max = mode === 'DEFAULT' ? mint.config.whitelist.max : mint.config.public.max;
+        const curr = mode === 'DEFAULT' ? mint.data.account.whitelist : mint.data.account.public;
+        return [`this purchase will exceed your mint limit`, `${curr}/${max} minted so far`];
+      }
+    }
     if (!enoughBalance) return ['too poore'];
     if (!underMax) return [`max ${GACHA_MAX_PER_TX} items per tx`];
-    if (quantity <= 0) return ['no items to purchase'];
 
     let saleDesc = `Purchase ${quantity} ${saleItem.name}`;
-    if (tab === 'GACHA') saleDesc = `Mint ${quantity} Kami`;
-    if (tab === 'REROLL') saleDesc = `Reroll ${quantity} Kami`;
+    if (tab === 'GACHA' && mode === 'DEFAULT') saleDesc = `Pull ${quantity} Kami`;
+    if (tab === 'REROLL' && mode === 'DEFAULT') saleDesc = `Reroll ${quantity} Kami`;
     return [saleDesc, `for ${price} ${payItem.name}`];
   };
 

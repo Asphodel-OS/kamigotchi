@@ -1,7 +1,7 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { calcAuctionCost } from 'app/cache/auction';
 import { GachaMintConfig } from 'app/cache/config';
 import { useTokens, useVisibility } from 'app/stores';
@@ -19,6 +19,7 @@ import { GachaMintData } from 'network/shapes/Gacha';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami/types';
+
 import { Filter, Sort, TabType, ViewMode } from '../types';
 import { Controls } from './controls/Controls';
 import { Footer } from './Footer';
@@ -168,8 +169,15 @@ export const Sidebar = (props: Props) => {
         setPrice(formattedAuctionCost);
       }
     } else if (tab === 'MINT') {
-      if (mode === 'DEFAULT') setPrice(quantity * mint.config.whitelist.price);
-      else if (mode === 'ALT') setPrice(quantity * mint.config.public.price);
+      if (mode === 'DEFAULT') {
+        const rawPrice = quantity * mint.config.whitelist.price;
+        const formattedPrice = toERC20DisplayUnits(rawPrice);
+        setPrice(formattedPrice);
+      } else if (mode === 'ALT') {
+        const rawPrice = quantity * mint.config.public.price;
+        const formattedPrice = toERC20DisplayUnits(rawPrice);
+        setPrice(formattedPrice);
+      }
     }
   };
 
@@ -186,7 +194,7 @@ export const Sidebar = (props: Props) => {
       <Footer
         actions={actions}
         controls={controls}
-        data={{ balance, payItem, saleItem }}
+        data={{ ...data, balance, payItem, saleItem }}
         state={{ ...state, price, setPrice }}
       />
     </Container>
