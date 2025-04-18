@@ -1,23 +1,31 @@
 ﻿Image,Index,Name,Affinity,Rarity,Tier,Tuning,Health,Power,Violence,Harmony,Slots,BPs
 "Body%2037ffb22974744a248c6d42ba98c90963/body_battery_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/battery.png",0,Battery,Scrap,Common,9,4,40,0,0,0,0,500
-"Body%2037ffb22974744a248c6d42ba98c90963/body_bee_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/bee.png",1,Bee,Insect,Common,9,4,10,1,2,0,0,500
-"Body%2037ffb22974744a248c6d42ba98c90963/body_butterfly_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/butterfly.png",2,Butterfly,Insect,Epic,6,8,0,0,8,0,0,100
+"Body%2037ffb22974744a248c6d42ba98c90963/body_bee_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/bee.png",1,Bee,Insect,Common,9,4,0,0,4,0,0,500
+"Body%2037ffb22974744a248c6d42ba98c90963/body_butterfly_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/butterfly.png",2,Butterfly,Insect,Epic,6,7,0,0,7,0,0,100
 Body%2037ffb22974744a248c6d42ba98c90963/body_caterpillar_default_green_0000.png,3,Caterpillar,Insect,Common,9,4,0,2,2,0,0,1500
 "Body%2037ffb22974744a248c6d42ba98c90963/body_cube_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/cube.png",4,Cube,Normal,Rare,7,6,0,4,0,0,1,550
 "Body%2037ffb22974744a248c6d42ba98c90963/body_default_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/ghost.png",5,Ghost,Normal,Common,9,4,10,1,1,1,0,2100
 "Body%2037ffb22974744a248c6d42ba98c90963/body_drip_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/melting.png",6,Drip,Eerie,Common,9,4,10,3,0,0,0,500
 "Body%2037ffb22974744a248c6d42ba98c90963/body_lightbulb_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/lightbulb.png",7,Lightbulb,Scrap,Common,9,4,0,3,0,1,0,1500
-"Body%2037ffb22974744a248c6d42ba98c90963/body_monitor_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/crt_inactive.png",8,"Working CRT Monitor ",Scrap,Epic,6,8,20,0,0,6,0,0
+"Body%2037ffb22974744a248c6d42ba98c90963/body_monitor_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/crt_inactive.png",8,"Working CRT Monitor ",Scrap,Epic,6,7,20,0,0,5,0,0
 "Body%2037ffb22974744a248c6d42ba98c90963/body_monitor_broken_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/crt_broken.png",9,Broken CRT Monitor,Scrap,Rare,7,6,40,0,0,2,0,100
-"Body%2037ffb22974744a248c6d42ba98c90963/body_octahedron_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/octahedron.png",10,Octahedron,Normal,Epic,6,9,20,1,1,1,2,50
+"Body%2037ffb22974744a248c6d42ba98c90963/body_octahedron_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/octahedron.png",10,Octahedron,Normal,Epic,6,7,0,1,1,1,2,50
 "Body%2037ffb22974744a248c6d42ba98c90963/body_octopus_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/octopus.png",11,Octopus,Eerie,Common,9,4,0,4,0,0,0,1500
 "Body%2037ffb22974744a248c6d42ba98c90963/body_orb_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/orb.png",12,Orb,Normal,Common,9,4,0,0,0,4,0,500
-Body%2037ffb22974744a248c6d42ba98c90963/body_pumpkin_default_green_0000.png,13,Pumpkin,Eerie,Epic,6,8,0,4,4,0,0,100
-"Body%2037ffb22974744a248c6d42ba98c90963/body_tube_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/tube.png",14,Tube,Normal,Common,8,4,10,1,2,0,0,500
-Body%2037ffb22974744a248c6d42ba98c90963/body_jellyfish_default_green_0000.png,15,Jellyfish,Eerie,Rare,7,6,0,2,2,2,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_pumpkin_default_green_0000.png,13,Pumpkin,Eerie,Epic,6,7,30,4,0,0,0,100
+"Body%2037ffb22974744a248c6d42ba98c90963/body_tube_default_green_0000.png, Body%2037ffb22974744a248c6d42ba98c90963/tube.png",14,Tube,Normal,Uncommon,8,5,10,1,2,1,0,500
+Body%2037ffb22974744a248c6d42ba98c90963/body_jellyfish_default_green_0000.png,15,Jellyfish,Eerie,Uncommon,8,5,20,3,0,0,0,
 Body%2037ffb22974744a248c6d42ba98c90963/body_eerie_eyes_default_green_0000.png,16,Eyes,Eerie,Rare,7,6,0,6,0,0,0,
 Body%2037ffb22974744a248c6d42ba98c90963/body_amphora_default_green_0000.png,17,Amphora,Scrap,Rare,7,6,0,2,0,4,0,
-Body%2037ffb22974744a248c6d42ba98c90963/body_shrimp_default_green_0000.png,18,Shrimp,Insect,Rare,7,6,0,0,3,3,0,
-Body%2037ffb22974744a248c6d42ba98c90963/body_spider_default_green_0000.png,19,Spider,Insect,Rare,7,6,0,3,3,0,0,
-Body%2037ffb22974744a248c6d42ba98c90963/body_spider_default_green_0000%201.png,20,Plant,Normal,Common,8,4,20,0,0,2,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_shrimp_default_green_0000.png,18,Shrimp,Insect,Uncommon,8,5,0,3,0,2,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_spider_default_green_0000.png,19,Spider,Insect,Rare,7,6,0,0,6,0,0,
+Body%2037ffb22974744a248c6d42ba98c90963/plant_body.png,20,Plant,Normal,Uncommon,8,5,0,0,0,5,0,
 Body%2037ffb22974744a248c6d42ba98c90963/body_magatama_default_green_0000.png,21,Magatama,Normal,Rare,7,6,30,3,0,0,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_snake_default_green_0000.png,22,Snake,Insect,Legendary,4,9,0,3,3,3,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_tank_0000.png,23,Tank,Scrap,Legendary,4,9,30,0,0,6,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_hagoromo_default_green_0000.png,24,Hagoromo,Eerie,Legendary,4,9,0,9,0,0,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_lotus_default_green_0000.png,25,Lotus,Eerie,Rare,7,6,20,0,0,4,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_ant_default_green_0000.png,26,Ant,Insect,Rare,7,6,20,2,0,2,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_soda_default_green_0000.png,27,Soda Cup,Scrap,Uncommon,8,5,50,0,0,0,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_suit_default_green_0000.png,28,Suit,Normal,Legendary,4,9,0,0,6,3,0,
+Body%2037ffb22974744a248c6d42ba98c90963/body_no_kamis_default_green_0000.png,29,No Kami,Normal,Epic,6,7,70,0,0,0,0,
