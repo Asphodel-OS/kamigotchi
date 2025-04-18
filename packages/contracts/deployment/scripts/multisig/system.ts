@@ -1,4 +1,3 @@
-import { TxBuilder } from '@morpho-labs/gnosis-tx-builder';
 import { BatchTransaction } from '@morpho-labs/gnosis-tx-builder/lib/src/types';
 import dotenv from 'dotenv';
 import execa = require('execa');
@@ -44,10 +43,7 @@ export async function genBatchTx(systems: string, addrs: string) {
   transactions = transactions.concat(await authorizeTxs(World, sysConfig.writeAccess, newSysAddr));
 
   // write file
-  const batchJson = TxBuilder.batch(process.env.MULTISIG!, transactions, {
-    chainId: Number(process.env.CHAIN_ID!),
-  });
-  writeBatchTx(batchJson);
+  writeBatchTx(transactions);
 }
 
 //////////////////
