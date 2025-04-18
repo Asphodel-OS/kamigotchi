@@ -30,8 +30,8 @@ export const KamiImage = (props: Props) => {
   const { calcExpRequirement } = utils;
   const { levelUp } = actions;
 
-  const progress = kami.progress;
-  const expCurr = progress ? progress.experience : 0;
+  const progress = kami.progress!;
+  const expCurr = progress.experience;
   const expLimit = progress ? calcExpRequirement(progress.level) : 40;
   const percentage = Math.floor((expCurr / expLimit) * 1000) / 10;
 
