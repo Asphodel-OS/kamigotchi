@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
 import { Filter, Sort, TabType, ViewMode } from '../../../types';
-import { AuctionPanel } from '../auctions/AuctionPanel';
+import { PricePanel } from '../PricePanel';
 import { KamiPanel } from './KamiPanel';
 
 interface Props {
@@ -36,7 +36,7 @@ export const Pool = (props: Props) => {
   return (
     <Container isVisible={isVisible}>
       <KamiPanel controls={controls} isVisible={mode === 'DEFAULT'} />
-      <AuctionPanel data={data} state={{ price, quantity }} isVisible={mode === 'ALT'} />
+      <PricePanel data={data} state={{ price, quantity }} isVisible={mode === 'ALT'} />
     </Container>
   );
 };

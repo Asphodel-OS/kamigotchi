@@ -36,6 +36,7 @@ interface Props {
         account: GachaMintData;
         gacha: GachaMintData;
       };
+      whitelisted: boolean;
     };
   };
   state: {

@@ -4,7 +4,7 @@ import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { ViewMode } from '../../../types';
-import { AuctionPanel } from '../auctions/AuctionPanel';
+import { PricePanel } from '../PricePanel';
 import { KamiPanel } from './KamiPanel';
 
 interface Props {
@@ -32,11 +32,7 @@ export const Reroll = (props: Props) => {
   return (
     <Container isVisible={isVisible}>
       <KamiPanel selectedKamis={selectedKamis} isVisible={isVisible && mode === 'DEFAULT'} />
-      <AuctionPanel
-        data={data}
-        state={{ price, quantity }}
-        isVisible={isVisible && mode === 'ALT'}
-      />
+      <PricePanel data={data} state={{ price, quantity }} isVisible={isVisible && mode === 'ALT'} />
     </Container>
   );
 };

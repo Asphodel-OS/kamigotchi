@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 
 import { EmptyText } from 'app/components/library';
-import { Commit } from 'network/shapes/Commit';
 import { Item } from 'network/shapes/Item';
 
 interface Props {
+  isVisible: boolean;
   data: {
     balance: number;
-    commits: Commit[];
     payItem: Item;
     saleItem: Item;
   };
@@ -15,10 +14,9 @@ interface Props {
     price: number;
     quantity: number;
   };
-  isVisible: boolean;
 }
 
-export const AuctionPanel = (props: Props) => {
+export const PricePanel = (props: Props) => {
   const { data, state, isVisible } = props;
   const { payItem, saleItem } = data;
   const { price, quantity } = state;

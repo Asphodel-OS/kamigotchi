@@ -57,6 +57,7 @@ interface Props {
         account: GachaMintData;
         gacha: GachaMintData;
       };
+      whitelisted: boolean;
     };
   };
   state: {
@@ -131,7 +132,7 @@ export const Sidebar = (props: Props) => {
   const updateSaleItem = () => {
     if (tab === 'GACHA' && mode === 'ALT') setSaleItem(getItem(GACHA_TICKET_INDEX));
     else if (tab === 'REROLL' && mode === 'ALT') setSaleItem(getItem(REROLL_TICKET_INDEX));
-    else if (tab === 'MINT') setSaleItem(getItem(ETH_INDEX));
+    else if (tab === 'MINT') setSaleItem(getItem(GACHA_TICKET_INDEX));
   };
 
   // update the balance according to tab/mode
@@ -167,9 +168,8 @@ export const Sidebar = (props: Props) => {
         setPrice(formattedAuctionCost);
       }
     } else if (tab === 'MINT') {
-      if (mode === 'DEFAULT') setPrice(quantity);
-      else if (mode === 'ALT')
-        setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.gacha, quantity)));
+      if (mode === 'DEFAULT') setPrice(quantity * mint.config.whitelist.price);
+      else if (mode === 'ALT') setPrice(quantity * mint.config.public.price);
     }
   };
 

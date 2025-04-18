@@ -22,6 +22,7 @@ interface Props {
         account: GachaMintData;
         gacha: GachaMintData;
       };
+      whitelisted: boolean;
     };
   };
   state: {
@@ -45,7 +46,6 @@ const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 0.6vw;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;

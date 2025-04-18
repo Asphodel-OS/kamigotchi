@@ -20,7 +20,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { hasFlag } from 'network/shapes/Flag';
-import { GachaMintData, getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
+import { getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
 import { Kami, queryKamis } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
@@ -84,8 +84,9 @@ export function registerGachaModal() {
       const { actions, world, api } = network;
       const { accountEntity, commits, poolKamis } = data;
       const { spenderAddr } = tokens;
-      const { getAccount, getAuction, getItemBalance, getMintConfig, getMintData, isWhitelisted } =
-        utils;
+      const { getAccount, getAuction, getItemBalance } = utils;
+      const { getMintConfig, getMintData, isWhitelisted } = utils;
+
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
@@ -95,24 +96,25 @@ export function registerGachaModal() {
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
 
+      // general data
+      const [account, setAccount] = useState<Account>(NullAccount);
+
+      // auction data
+      const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
+      const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
+
+      // mint data
+      const [mintConfig, _] = useState<GachaMintConfig>(getMintConfig());
+      const [accountMintData, setAccountMintData] = useState(getMintData(account.id));
+      const [gachaMintData, setGachaMintData] = useState(getMintData('0' as EntityID));
+      const [whitelisted, setWhitelisted] = useState(isWhitelisted(account.entity));
+
       // modal state
       const [quantity, setQuantity] = useState(0);
       const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
       const [tick, setTick] = useState(Date.now());
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
-
-      // modal data
-      const [account, setAccount] = useState<Account>(NullAccount);
-      const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
-      const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
-      const [mintConfig, _] = useState<GachaMintConfig>(getMintConfig());
-      const [accountMintData, setAccountMintData] = useState<GachaMintData>(
-        getMintData(account.id)
-      );
-      const [gachaMintData, setGachaMintData] = useState<GachaMintData>(
-        getMintData('0' as EntityID)
-      );
 
       /////////////////
       // SUBSCRIPTIONS
@@ -141,6 +143,7 @@ export function registerGachaModal() {
         } else if (tab === 'MINT') {
           setAccountMintData(getMintData(account.id));
           setGachaMintData(getMintData('0' as EntityID));
+          setWhitelisted(isWhitelisted(account.entity));
         }
       }, [modals.gacha, tab, mode, accountEntity, tick]);
 
@@ -419,6 +422,7 @@ export function registerGachaModal() {
                 mint: {
                   config: mintConfig,
                   data: { account: accountMintData, gacha: gachaMintData },
+                  whitelisted, // whether the account is whitelisted for mint
                 },
               }}
               state={{
