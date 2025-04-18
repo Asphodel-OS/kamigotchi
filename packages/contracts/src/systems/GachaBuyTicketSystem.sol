@@ -110,10 +110,10 @@ contract GachaBuyTicketSystem is System {
 
   // run validation checks on the public mint
   function verifyAccPublic(uint256 accID, uint256 amount) internal {
-    // // check if public mint has started
-    // if (block.timestamp < LibConfig.get(components, "MINT_START_PUBLIC")) {
-    //   revert("public mint has not yet started");
-    // }
+    // check if public mint has started
+    if (block.timestamp < LibConfig.get(components, "MINT_START_PUBLIC")) {
+      revert("public mint has not yet started");
+    }
 
     // check if max per account is being exceeded
     uint256 max = LibConfig.get(components, "MINT_MAX_PUBLIC");
@@ -127,10 +127,10 @@ contract GachaBuyTicketSystem is System {
     // check whether the account is whitelisted
     if (!LibFlag.has(components, accID, "MINT_WHITELISTED")) revert("not whitelisted");
 
-    // // check if whitelist mint has started
-    // if (block.timestamp < LibConfig.get(components, "MINT_START_WL")) {
-    //   revert("whitelist mint has not yet started");
-    // }
+    // check if whitelist mint has started
+    if (block.timestamp < LibConfig.get(components, "MINT_START_WL")) {
+      revert("whitelist mint has not yet started");
+    }
 
     // check if max per account is being exceeded
     uint256 max = LibConfig.get(components, "MINT_MAX_WL");

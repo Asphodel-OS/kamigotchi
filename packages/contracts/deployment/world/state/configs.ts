@@ -71,13 +71,15 @@ async function initMint(api: AdminAPI) {
 
   // whitelist
   // TODO: update price and start time
-  await api.config.set.number('MINT_START_WL', 1745452800); // 2025, Apr 24 12am epoch (s)
+  await api.config.set.number('MINT_START_WL', 1744934400); // 2025, Apr 18 7:43am epoch (s)
+  // await api.config.set.number('MINT_START_WL', 1745452800); // 2025, Apr 24 12am epoch (s)
   await api.config.set.number('MINT_PRICE_WL', 50); // 0.05 ETH, 50 mETH
   await api.config.set.number('MINT_MAX_WL', 1);
 
   // public
   // TODO: update price and start time
-  await api.config.set.number('MINT_START_PUBLIC', 1745539200); // 2025, Apr 25 12am epoch (s)
+  await api.config.set.number('MINT_START_PUBLIC', 1744966800); // 2025, Apr 18 9am epoch (s)
+  // await api.config.set.number('MINT_START_PUBLIC', 1745539200); // 2025, Apr 25 12am epoch (s)
   await api.config.set.number('MINT_PRICE_PUBLIC', 100); // 0.1 ETH, 100 mETH
   await api.config.set.number('MINT_MAX_PUBLIC', 5);
 }

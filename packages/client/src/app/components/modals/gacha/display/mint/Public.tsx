@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { GachaMintConfig } from 'app/cache/config/gacha';
 import { Overlay, Pairing, Tooltip } from 'app/components/library';
 import { ProgressBar } from 'app/components/library/base';
 import { depressFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
+import { GachaMintData } from 'network/shapes/Gacha';
 import { playClick } from 'utils/sounds';
 import { formatCountdown, getDateString } from 'utils/time';
 import { ViewMode } from '../../types';
 
 const GACHA_TICKET_IMAGE = ItemImages.gacha_ticket;
-const START_TIME = Date.now() / 1000 + 24 * 3600;
 const TOTAL = 3000;
 
 interface Props {
@@ -18,21 +19,25 @@ interface Props {
     mode: ViewMode;
     setMode: (mode: ViewMode) => void;
   };
+  data: {
+    mintConfig: GachaMintConfig;
+    gachaData: GachaMintData;
+  };
   state: {
     tick: number;
   };
-  claimed: number;
 }
 
 export const Public = (props: Props) => {
-  const { controls, state, claimed } = props;
+  const { controls, data, state } = props;
   const { mode, setMode } = controls;
+  const { mintConfig, gachaData } = data;
   const { tick } = state;
 
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    setCountdown(START_TIME - tick / 1000);
+    setCountdown(mintConfig.public.startTs - tick / 1000);
   }, [tick]);
 
   /////////////////
@@ -45,7 +50,7 @@ export const Public = (props: Props) => {
   };
 
   const getStatusText = () => {
-    return `${claimed}/${TOTAL}`;
+    return `${gachaData.total}/${mintConfig.total}`;
   };
 
   const getCountdownText = () => {
@@ -54,7 +59,7 @@ export const Public = (props: Props) => {
   };
 
   const getCountdownTooltip = () => {
-    const startStr = getDateString(START_TIME, 0);
+    const startStr = getDateString(mintConfig.public.startTs, 0);
 
     if (countdown > 0) {
       return [`Public Mint starts`, `at ${startStr}`];
@@ -78,7 +83,7 @@ export const Public = (props: Props) => {
           <Pairing icon={GACHA_TICKET_IMAGE} text={getStatusText()} reverse />
           <ProgressBar
             total={TOTAL}
-            current={claimed}
+            current={gachaData.total}
             width={16}
             colors={{ background: '#fff', progress: '#3DE167' }}
           />
@@ -104,6 +109,9 @@ const Container = styled.div<{ isSelected: boolean }>`
 
   user-select: none;
   cursor: pointer;
+  &:hover {
+    ${({ isSelected }) => !isSelected && 'opacity: 0.8;'}
+  }
   &:active {
     animation: ${() => depressFx(0.2)} 0.2s;
   }

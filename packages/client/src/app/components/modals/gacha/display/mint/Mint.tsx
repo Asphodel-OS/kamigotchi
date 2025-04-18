@@ -11,8 +11,6 @@ import { TabType, ViewMode } from '../../types';
 import { Public } from './Public';
 import { Whitelist } from './Whitelist';
 
-const CLAIMED = 1337;
-
 interface Props {
   isVisible: boolean;
   controls: {
@@ -42,20 +40,25 @@ export const Mint = (props: Props) => {
   const { modals, setModals } = useVisibility();
 
   const [mintConfig, setMintConfig] = useState<GachaMintConfig>(getMintConfig());
-  const [accountMintData, setAccountMintData] = useState<GachaMintData>(getMintData(account.id));
-  const [gachaMintData, setGachaMintData] = useState<GachaMintData>(getMintData('' as EntityID));
+  const [accountData, setAccountData] = useState<GachaMintData>(getMintData(account.id));
+  const [gachaData, setGachaData] = useState<GachaMintData>(getMintData('0' as EntityID));
   const [whitelisted, setWhitelisted] = useState<boolean>(isWhitelisted(account.entity));
 
   useEffect(() => {
     if (!modals.gacha || tab !== 'MINT') return;
-    setAccountMintData(getMintData(account.id));
+    setAccountData(getMintData(account.id));
+    setGachaData(getMintData('0' as EntityID));
     setWhitelisted(isWhitelisted(account.entity));
   }, [account.entity, tick]);
 
   return (
     <Container isVisible={isVisible}>
-      <Whitelist controls={controls} state={state} claimed={CLAIMED} />
-      <Public controls={controls} state={state} claimed={CLAIMED} />
+      <Whitelist
+        controls={controls}
+        state={state}
+        data={{ mintConfig: mintConfig.whitelist, gachaData }}
+      />
+      <Public controls={controls} state={state} data={{ mintConfig, gachaData }} />
       <Overlay bottom={6}>
         <Text>good things come</Text>
       </Overlay>
