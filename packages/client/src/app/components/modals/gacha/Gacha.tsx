@@ -20,8 +20,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { hasFlag } from 'network/shapes/Flag';
-import { getGachaCommits } from 'network/shapes/Gacha';
-import { getMintData } from 'network/shapes/Gacha/mint';
+import { getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
 import { Kami, queryKamis } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
@@ -74,7 +73,7 @@ export function registerGachaModal() {
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, kamiOptions, false),
               getMintConfig: () => getGachaMintConfig(world, components),
-              getMintData: (accountID: EntityID) => getMintData(world, components, accountID),
+              getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
               isWhitelisted: (entity: EntityIndex) =>
                 hasFlag(world, components, entity, 'MINT_WHITELISTED'),
             },
@@ -85,7 +84,7 @@ export function registerGachaModal() {
       const { actions, world, api } = network;
       const { accountEntity, commits, poolKamis } = data;
       const { spenderAddr } = tokens;
-      const { getAccount, getAuction, getItem, getItemBalance } = utils;
+      const { getAccount, getAuction, getItemBalance } = utils;
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
@@ -405,7 +404,7 @@ export function registerGachaModal() {
                 tick,
               }}
               utils={{
-                getItem,
+                ...utils,
                 getItemBalance: (index: number) => getItemBalance(account.inventories ?? [], index),
               }}
             />

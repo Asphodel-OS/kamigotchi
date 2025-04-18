@@ -3,7 +3,7 @@ import { EntityID, World } from '@mud-classic/recs';
 import { Components } from 'network/components';
 import { getData } from '../Data';
 
-type MintData = {
+export type MintData = {
   whitelist: number;
   public: number;
   total: number;

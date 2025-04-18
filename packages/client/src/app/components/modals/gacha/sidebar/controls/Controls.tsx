@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { GachaMintConfig } from 'app/cache/config';
 import { Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
+import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../../types';
@@ -34,6 +37,11 @@ interface Props {
     price: number;
     selectedKamis: Kami[];
     tick: number;
+  };
+  utils: {
+    getMintConfig: () => GachaMintConfig;
+    getMintData: (id: EntityID) => GachaMintData;
+    isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
 

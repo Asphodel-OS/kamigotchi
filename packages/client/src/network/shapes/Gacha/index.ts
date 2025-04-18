@@ -1,2 +1,4 @@
 export { getGachaCommits } from './functions';
-export { getMintData } from './mint';
+export { getMintData as getGachaMintData } from './mint';
+
+export type { MintData as GachaMintData } from './mint';

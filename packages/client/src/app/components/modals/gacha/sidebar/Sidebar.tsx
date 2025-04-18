@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { calcAuctionCost } from 'app/cache/auction';
+import { GachaMintConfig } from 'app/cache/config';
 import { useTokens, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, ONYX_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { toERC20DisplayUnits } from 'network/chain';
 import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
+import { GachaMintData } from 'network/shapes/Gacha';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami/types';
@@ -53,6 +56,9 @@ interface Props {
   utils: {
     getItem: (index: number) => Item;
     getItemBalance: (index: number) => number;
+    getMintConfig: () => GachaMintConfig;
+    getMintData: (id: EntityID) => GachaMintData;
+    isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
 
@@ -153,6 +159,7 @@ export const Sidebar = (props: Props) => {
         controls={controls}
         data={{ balance, commits, payItem, saleItem }}
         state={{ ...state, price }}
+        utils={utils}
       />
       <Footer
         actions={actions}

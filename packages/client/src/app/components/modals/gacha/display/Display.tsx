@@ -1,9 +1,11 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { GachaMintConfig } from 'app/cache/config';
 import { ActionButton, Overlay } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
+import { GachaMintData } from 'network/shapes/Gacha';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../types';
 import { Mint } from './mint/Mint';
@@ -38,6 +40,9 @@ interface Props {
   utils: {
     getKami: (entity: EntityIndex) => Kami;
     getAccountKamis: () => Kami[];
+    getMintConfig: () => GachaMintConfig;
+    getMintData: (id: EntityID) => GachaMintData;
+    isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
 
@@ -81,7 +86,13 @@ export const Display = (props: Props) => {
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
-      <Mint controls={controls} state={state} isVisible={tab === 'MINT'} />
+      <Mint
+        controls={controls}
+        data={data}
+        state={state}
+        utils={utils}
+        isVisible={tab === 'MINT'}
+      />
       <Overlay top={0.9} right={0.6}>
         {tab !== 'MINT' && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>
