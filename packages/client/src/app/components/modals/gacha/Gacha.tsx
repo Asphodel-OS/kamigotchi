@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
-import { getGachaMintConfig } from 'app/cache/config';
+import { GachaMintConfig, getGachaMintConfig } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { getKami } from 'app/cache/kami';
@@ -20,7 +20,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { hasFlag } from 'network/shapes/Flag';
-import { getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
+import { GachaMintData, getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
 import { Kami, queryKamis } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
@@ -84,7 +84,8 @@ export function registerGachaModal() {
       const { actions, world, api } = network;
       const { accountEntity, commits, poolKamis } = data;
       const { spenderAddr } = tokens;
-      const { getAccount, getAuction, getItemBalance } = utils;
+      const { getAccount, getAuction, getItemBalance, getMintConfig, getMintData, isWhitelisted } =
+        utils;
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
@@ -98,12 +99,20 @@ export function registerGachaModal() {
       const [quantity, setQuantity] = useState(0);
       const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
       const [tick, setTick] = useState(Date.now());
-
-      const [account, setAccount] = useState<Account>(NullAccount);
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
+
+      // modal data
+      const [account, setAccount] = useState<Account>(NullAccount);
       const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
       const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
+      const [mintConfig, _] = useState<GachaMintConfig>(getMintConfig());
+      const [accountMintData, setAccountMintData] = useState<GachaMintData>(
+        getMintData(account.id)
+      );
+      const [gachaMintData, setGachaMintData] = useState<GachaMintData>(
+        getMintData('0' as EntityID)
+      );
 
       /////////////////
       // SUBSCRIPTIONS
@@ -120,11 +129,19 @@ export function registerGachaModal() {
       // update the data when the modal is open
       useEffect(() => {
         if (!modals.gacha) return;
-        if (mode === 'ALT') {
-          if (tab === 'GACHA') setGachaAuction(getAuction(GACHA_TICKET_INDEX));
-          else if (tab === 'REROLL') setRerollAuction(getAuction(REROLL_TICKET_INDEX));
+        const account = getAccount();
+        setAccount(account);
+
+        if (tab === 'GACHA' && mode === 'ALT') {
+          const auction = getAuction(GACHA_TICKET_INDEX);
+          setGachaAuction(auction);
+        } else if (tab === 'REROLL' && mode === 'ALT') {
+          const auction = getAuction(REROLL_TICKET_INDEX);
+          setRerollAuction(auction);
+        } else if (tab === 'MINT') {
+          setAccountMintData(getMintData(account.id));
+          setGachaMintData(getMintData('0' as EntityID));
         }
-        setAccount(getAccount());
       }, [modals.gacha, tab, mode, accountEntity, tick]);
 
       // open the party modal when the reveal is triggered
@@ -367,6 +384,10 @@ export function registerGachaModal() {
                 ...data,
                 account,
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
+                mint: {
+                  config: mintConfig,
+                  data: { account: accountMintData, gacha: gachaMintData },
+                },
               }}
               state={{ setQuantity, selectedKamis, setSelectedKamis, tick }}
               utils={utils}

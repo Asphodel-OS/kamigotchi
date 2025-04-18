@@ -20,8 +20,13 @@ interface Props {
     setMode: (mode: ViewMode) => void;
   };
   data: {
-    mintConfig: GachaMintConfig;
-    gachaData: GachaMintData;
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+    };
   };
   state: {
     tick: number;
@@ -31,13 +36,16 @@ interface Props {
 export const Public = (props: Props) => {
   const { controls, data, state } = props;
   const { mode, setMode } = controls;
-  const { mintConfig, gachaData } = data;
+  const {
+    config,
+    data: { gacha: gachaData },
+  } = data.mint;
   const { tick } = state;
 
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    setCountdown(mintConfig.public.startTs - tick / 1000);
+    setCountdown(config.public.startTs - tick / 1000);
   }, [tick]);
 
   /////////////////
@@ -50,7 +58,7 @@ export const Public = (props: Props) => {
   };
 
   const getStatusText = () => {
-    return `${gachaData.total}/${mintConfig.total}`;
+    return `${gachaData.total}/${config.total}`;
   };
 
   const getCountdownText = () => {
@@ -59,7 +67,7 @@ export const Public = (props: Props) => {
   };
 
   const getCountdownTooltip = () => {
-    const startStr = getDateString(mintConfig.public.startTs, 0);
+    const startStr = getDateString(config.public.startTs, 0);
 
     if (countdown > 0) {
       return [`Public Mint starts`, `at ${startStr}`];

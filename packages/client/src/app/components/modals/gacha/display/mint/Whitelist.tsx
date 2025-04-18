@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { MintConstraints } from 'app/cache/config/gacha';
+import { GachaMintConfig } from 'app/cache/config/gacha';
 import { Overlay, Pairing, Tooltip } from 'app/components/library';
 import { depressFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
@@ -19,8 +19,13 @@ interface Props {
     setMode: (mode: ViewMode) => void;
   };
   data: {
-    mintConfig: MintConstraints;
-    gachaData: GachaMintData;
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+    };
   };
   state: {
     tick: number;
@@ -30,13 +35,16 @@ interface Props {
 export const Whitelist = (props: Props) => {
   const { controls, data, state } = props;
   const { mode, setMode } = controls;
-  const { mintConfig, gachaData } = data;
+  const {
+    config,
+    data: { gacha: gachaData },
+  } = data.mint;
   const { tick } = state;
 
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    setCountdown(mintConfig.startTs - tick / 1000);
+    setCountdown(config.whitelist.startTs - tick / 1000);
   }, [tick]);
 
   /////////////////

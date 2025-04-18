@@ -1,10 +1,7 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
 import { Overlay } from 'app/components/library';
-import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { TabType, ViewMode } from '../../types';
@@ -20,45 +17,27 @@ interface Props {
   };
   data: {
     account: Account;
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+    };
   };
   state: {
     tick: number;
   };
-  utils: {
-    getMintConfig: () => GachaMintConfig;
-    getMintData: (id: EntityID) => GachaMintData;
-    isWhitelisted: (entity: EntityIndex) => boolean;
-  };
 }
 
 export const Mint = (props: Props) => {
-  const { isVisible, controls, data, state, utils } = props;
-  const { tab } = controls;
-  const { account } = data;
-  const { tick } = state;
-  const { getMintConfig, getMintData, isWhitelisted } = utils;
-  const { modals, setModals } = useVisibility();
-
-  const [mintConfig, setMintConfig] = useState<GachaMintConfig>(getMintConfig());
-  const [accountData, setAccountData] = useState<GachaMintData>(getMintData(account.id));
-  const [gachaData, setGachaData] = useState<GachaMintData>(getMintData('0' as EntityID));
-  const [whitelisted, setWhitelisted] = useState<boolean>(isWhitelisted(account.entity));
-
-  useEffect(() => {
-    if (!modals.gacha || tab !== 'MINT') return;
-    setAccountData(getMintData(account.id));
-    setGachaData(getMintData('0' as EntityID));
-    setWhitelisted(isWhitelisted(account.entity));
-  }, [account.entity, tick]);
+  const { isVisible, controls, data, state } = props;
+  const { mint } = data;
 
   return (
     <Container isVisible={isVisible}>
-      <Whitelist
-        controls={controls}
-        state={state}
-        data={{ mintConfig: mintConfig.whitelist, gachaData }}
-      />
-      <Public controls={controls} state={state} data={{ mintConfig, gachaData }} />
+      <Whitelist controls={controls} state={state} data={data} />
+      <Public controls={controls} state={state} data={data} />
       <Overlay bottom={6}>
         <Text>good things come</Text>
       </Overlay>

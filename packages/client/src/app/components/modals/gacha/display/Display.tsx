@@ -30,6 +30,13 @@ interface Props {
       gacha: Auction;
       reroll: Auction;
     };
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+    };
   };
   state: {
     setQuantity: (quantity: number) => void;
@@ -42,7 +49,6 @@ interface Props {
     getAccountKamis: () => Kami[];
     getMintConfig: () => GachaMintConfig;
     getMintData: (id: EntityID) => GachaMintData;
-    isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
 
@@ -86,13 +92,7 @@ export const Display = (props: Props) => {
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
-      <Mint
-        controls={controls}
-        data={data}
-        state={state}
-        utils={utils}
-        isVisible={tab === 'MINT'}
-      />
+      <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Overlay top={0.9} right={0.6}>
         {tab !== 'MINT' && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>

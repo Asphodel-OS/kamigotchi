@@ -5,7 +5,13 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { calcAuctionCost } from 'app/cache/auction';
 import { GachaMintConfig } from 'app/cache/config';
 import { useTokens, useVisibility } from 'app/stores';
-import { GACHA_TICKET_INDEX, MUSU_INDEX, ONYX_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
+import {
+  ETH_INDEX,
+  GACHA_TICKET_INDEX,
+  MUSU_INDEX,
+  ONYX_INDEX,
+  REROLL_TICKET_INDEX,
+} from 'constants/items';
 import { toERC20DisplayUnits } from 'network/chain';
 import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
@@ -113,17 +119,14 @@ export const Sidebar = (props: Props) => {
     } else if (tab === 'REROLL') {
       if (mode === 'DEFAULT') setPayItem(getItem(REROLL_TICKET_INDEX));
       else if (mode === 'ALT') setPayItem(getItem(ONYX_INDEX));
-    } else {
-      if (mode === 'DEFAULT') setPayItem(getItem(MUSU_INDEX));
-      else if (mode === 'ALT') setPayItem(getItem(ONYX_INDEX));
-    }
+    } else if (tab === 'MINT') setPayItem(getItem(ETH_INDEX));
   };
 
   // update the sale item according to tab/mode
   const updateSaleItem = () => {
-    if (mode !== 'ALT') return;
-    if (tab === 'GACHA') setSaleItem(getItem(GACHA_TICKET_INDEX));
-    else if (tab === 'REROLL') setSaleItem(getItem(REROLL_TICKET_INDEX));
+    if (tab === 'GACHA' && mode === 'ALT') setSaleItem(getItem(GACHA_TICKET_INDEX));
+    else if (tab === 'REROLL' && mode === 'ALT') setSaleItem(getItem(REROLL_TICKET_INDEX));
+    else if (tab === 'MINT') setSaleItem(getItem(ETH_INDEX));
   };
 
   // update the balance according to tab/mode
@@ -145,10 +148,24 @@ export const Sidebar = (props: Props) => {
   // update the price according to tab/mode
   const updatePrice = () => {
     if (mode === 'DEFAULT') setPrice(quantity);
-    else if (tab === 'GACHA') setPrice(calcAuctionCost(auctions.gacha, quantity));
-    else if (tab === 'REROLL')
-      setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.reroll, quantity)));
-    else setPrice(0);
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') setPrice(quantity);
+      else if (mode === 'ALT') {
+        const auctionCost = calcAuctionCost(auctions.gacha, quantity);
+        setPrice(auctionCost);
+      }
+    } else if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') setPrice(quantity);
+      else if (mode === 'ALT') {
+        const rawAuctionCost = calcAuctionCost(auctions.reroll, quantity);
+        const formattedAuctionCost = toERC20DisplayUnits(rawAuctionCost);
+        setPrice(formattedAuctionCost);
+      }
+    } else if (tab === 'MINT') {
+      if (mode === 'DEFAULT') setPrice(quantity);
+      else if (mode === 'ALT')
+        setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.gacha, quantity)));
+    }
   };
 
   return (
