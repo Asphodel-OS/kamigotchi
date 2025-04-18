@@ -6,10 +6,12 @@ import { FeedCallbacks, MessageCallbacks } from './subscriptions';
 
 let Client: KamidenServiceClient | null = null;
 
-export function getClient(): KamidenServiceClient {
+export function getClient(): KamidenServiceClient | null {
+  if (!import.meta.env.VITE_KAMIGAZE_URL) return Client; // null when kamigaze url is not set
+
   if (!Client) {
     const channel = createChannel(
-      'https://api.prod.kamigotchi.io', //'http://localhost:80', //
+      import.meta.env.VITE_KAMIGAZE_URL, //'http://localhost:80', //
       grpc.WebsocketTransport()
     );
     Client = createClient(KamidenServiceDefinition, channel);
