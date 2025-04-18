@@ -49,11 +49,16 @@ export const getEntityType = (components: Components, entity: EntityIndex): stri
   return result ?? '';
 };
 
-export const getExperience = (components: Components, entity: EntityIndex): number => {
+export const getExperience = (
+  components: Components,
+  entity: EntityIndex,
+  fallback = 0,
+  debug = true
+): number => {
   const { Experience } = components;
   const result = getComponentValue(Experience, entity)?.value;
-  if (result === undefined) console.warn('getExperience(): undefined for entity', entity);
-  return result ?? 0;
+  if (debug && result === undefined) console.warn('getExperience(): undefined for entity', entity);
+  return (result ?? fallback) * 1;
 };
 
 export const getFor = (components: Components, entity: EntityIndex): string => {
