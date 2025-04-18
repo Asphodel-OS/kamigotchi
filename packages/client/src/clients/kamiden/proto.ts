@@ -42,7 +42,7 @@ export interface Kill {
   KillerId: string;
   VictimId: string;
   Spoils: string;
-  Timestamp: number;
+  Timestamp: string;
 }
 
 export interface Feed {
@@ -77,6 +77,15 @@ export interface AuctionBuysRequest {
 
 export interface AuctionBuysResponse {
   AuctionBuys: AuctionBuy[];
+}
+
+export interface KillsRequest {
+  KillerId?: string | undefined;
+  VictimId?: string | undefined;
+}
+
+export interface KillsResponse {
+  Kills: Kill[];
 }
 
 function createBaseMessage(): Message {
@@ -372,7 +381,7 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
 };
 
 function createBaseKill(): Kill {
-  return { RoomIndex: 0, KillerId: '', VictimId: '', Spoils: '', Timestamp: 0 };
+  return { RoomIndex: 0, KillerId: '', VictimId: '', Spoils: '', Timestamp: '' };
 }
 
 export const Kill: MessageFns<Kill> = {
@@ -389,8 +398,8 @@ export const Kill: MessageFns<Kill> = {
     if (message.Spoils !== '') {
       writer.uint32(34).string(message.Spoils);
     }
-    if (message.Timestamp !== 0) {
-      writer.uint32(40).uint64(message.Timestamp);
+    if (message.Timestamp !== '') {
+      writer.uint32(42).string(message.Timestamp);
     }
     return writer;
   },
@@ -435,11 +444,11 @@ export const Kill: MessageFns<Kill> = {
           continue;
         }
         case 5: {
-          if (tag !== 40) {
+          if (tag !== 42) {
             break;
           }
 
-          message.Timestamp = longToNumber(reader.uint64());
+          message.Timestamp = reader.string();
           continue;
         }
       }
@@ -460,7 +469,7 @@ export const Kill: MessageFns<Kill> = {
     message.KillerId = object.KillerId ?? '';
     message.VictimId = object.VictimId ?? '';
     message.Spoils = object.Spoils ?? '';
-    message.Timestamp = object.Timestamp ?? 0;
+    message.Timestamp = object.Timestamp ?? '';
     return message;
   },
 };
@@ -872,6 +881,110 @@ export const AuctionBuysResponse: MessageFns<AuctionBuysResponse> = {
   },
 };
 
+function createBaseKillsRequest(): KillsRequest {
+  return { KillerId: undefined, VictimId: undefined };
+}
+
+export const KillsRequest: MessageFns<KillsRequest> = {
+  encode(message: KillsRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.KillerId !== undefined) {
+      writer.uint32(10).string(message.KillerId);
+    }
+    if (message.VictimId !== undefined) {
+      writer.uint32(18).string(message.VictimId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KillsRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKillsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.KillerId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.VictimId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KillsRequest>): KillsRequest {
+    return KillsRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KillsRequest>): KillsRequest {
+    const message = createBaseKillsRequest();
+    message.KillerId = object.KillerId ?? undefined;
+    message.VictimId = object.VictimId ?? undefined;
+    return message;
+  },
+};
+
+function createBaseKillsResponse(): KillsResponse {
+  return { Kills: [] };
+}
+
+export const KillsResponse: MessageFns<KillsResponse> = {
+  encode(message: KillsResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Kills) {
+      Kill.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KillsResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKillsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Kills.push(Kill.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KillsResponse>): KillsResponse {
+    return KillsResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KillsResponse>): KillsResponse {
+    const message = createBaseKillsResponse();
+    message.Kills = object.Kills?.map((e) => Kill.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 /** Replies */
 export type KamidenServiceDefinition = typeof KamidenServiceDefinition;
 export const KamidenServiceDefinition = {
@@ -887,6 +1000,22 @@ export const KamidenServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getAuctionBuys: {
+      name: 'GetAuctionBuys',
+      requestType: AuctionBuysRequest,
+      requestStream: false,
+      responseType: AuctionBuysResponse,
+      responseStream: false,
+      options: {},
+    },
+    getKills: {
+      name: 'GetKills',
+      requestType: KillsRequest,
+      requestStream: false,
+      responseType: KillsResponse,
+      responseStream: false,
+      options: {},
+    },
     /** Stream */
     subscribeToStream: {
       name: 'SubscribeToStream',
@@ -894,14 +1023,6 @@ export const KamidenServiceDefinition = {
       requestStream: false,
       responseType: StreamResponse,
       responseStream: true,
-      options: {},
-    },
-    getAuctionBuys: {
-      name: 'GetAuctionBuys',
-      requestType: AuctionBuysRequest,
-      requestStream: false,
-      responseType: AuctionBuysResponse,
-      responseStream: false,
       options: {},
     },
   },
@@ -913,15 +1034,19 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
     request: RoomRequest,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<RoomResponse>>;
+  getAuctionBuys(
+    request: AuctionBuysRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<AuctionBuysResponse>>;
+  getKills(
+    request: KillsRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<KillsResponse>>;
   /** Stream */
   subscribeToStream(
     request: StreamRequest,
     context: CallContext & CallContextExt
   ): ServerStreamingMethodResult<DeepPartial<StreamResponse>>;
-  getAuctionBuys(
-    request: AuctionBuysRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<AuctionBuysResponse>>;
 }
 
 export interface KamidenServiceClient<CallOptionsExt = {}> {
@@ -930,15 +1055,19 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<RoomRequest>,
     options?: CallOptions & CallOptionsExt
   ): Promise<RoomResponse>;
+  getAuctionBuys(
+    request: DeepPartial<AuctionBuysRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<AuctionBuysResponse>;
+  getKills(
+    request: DeepPartial<KillsRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<KillsResponse>;
   /** Stream */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,
     options?: CallOptions & CallOptionsExt
   ): AsyncIterable<StreamResponse>;
-  getAuctionBuys(
-    request: DeepPartial<AuctionBuysRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<AuctionBuysResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
