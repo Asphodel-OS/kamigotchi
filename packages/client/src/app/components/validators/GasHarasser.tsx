@@ -97,7 +97,7 @@ export function registerGasHarasser() {
         actions.add({
           action: 'AccountFund',
           params: [value.toString()],
-          description: `Funding Operator ${value.toLocaleString()} ONYX`,
+          description: `Funding Operator ${value.toLocaleString()} ETH`,
           execute: async () => {
             return api.send(account.operatorAddress, value);
           },
@@ -134,7 +134,7 @@ export function registerGasHarasser() {
           id='gas-harasser'
           divName='gasHarasser'
           title='Embedded wallet is empty!'
-          errorPrimary={`pls feed me pls a crumb of onyx ._.`}
+          errorPrimary={`pls feed me pls a crumb of ETH ._.`}
         >
           <Tooltip text={[account.operatorAddress, '(click to copy)']}>
             <Description onClick={() => copy(account.operatorAddress)}>

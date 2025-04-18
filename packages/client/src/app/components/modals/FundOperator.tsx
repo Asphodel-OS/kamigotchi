@@ -70,7 +70,7 @@ export function registerFundOperatorModal() {
           id: actionID,
           action: 'AccountFund',
           params: [amount.toString()],
-          description: `Funding Operator ${amount.toString()} ONYX`,
+          description: `Funding Operator ${amount.toString()} ETH`,
           execute: async () => {
             return api.send(kamiAccount.operatorAddress, amount);
           },
@@ -86,7 +86,7 @@ export function registerFundOperatorModal() {
           id: actionID,
           action: 'AccountRefund',
           params: [amount.toString()],
-          description: `Refunding Owner ${amount.toString()} ONYX`,
+          description: `Refunding Owner ${amount.toString()} ETH`,
           execute: async () => {
             return network.api.player.send(kamiAccount.ownerAddress, amount);
           },
@@ -130,7 +130,7 @@ export function registerFundOperatorModal() {
         const textColor = fundState == isFunding ? 'white' : 'black';
         return (
           <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFunding(fundState)}>
-            <Description style={{ color: textColor }}> {balance} ONYX </Description>
+            <Description style={{ color: textColor }}> {balance} ETH </Description>
             <SubDescription style={{ color: textColor }}> {text} </SubDescription>
           </BoxButton>
         );
@@ -157,7 +157,7 @@ export function registerFundOperatorModal() {
             else setStatusText('This should last you for quite a while');
           } else {
             const remainBal = curBal - amount;
-            setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ONYX left');
+            setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ETH left');
           }
         }
       }, [amount, OwnerBalance, OperatorBalance, isFunding]);
