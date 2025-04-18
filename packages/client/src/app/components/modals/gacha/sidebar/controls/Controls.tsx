@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { GachaMintConfig } from 'app/cache/config';
 import { Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
@@ -30,6 +30,13 @@ interface Props {
     commits: Commit[];
     payItem: Item;
     saleItem: Item;
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+    };
   };
   state: {
     quantity: number;
@@ -39,8 +46,6 @@ interface Props {
     tick: number;
   };
   utils: {
-    getMintConfig: () => GachaMintConfig;
-    getMintData: (id: EntityID) => GachaMintData;
     isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
@@ -73,7 +78,7 @@ export const Controls = (props: Props) => {
       )}
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
       <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
-      <Mint isVisible={tab === 'MINT'} />
+      <Mint isVisible={tab === 'MINT'} controls={controls} data={data} state={state} />
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>

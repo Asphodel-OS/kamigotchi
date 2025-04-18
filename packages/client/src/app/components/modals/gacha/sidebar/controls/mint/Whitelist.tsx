@@ -1,17 +1,12 @@
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
+import { EmptyText } from 'app/components/library';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
-import { ViewMode } from '../../../types';
-import { Public } from './Public';
-import { Whitelist } from './Whitelist';
 
 interface Props {
   isVisible: boolean;
-  controls: {
-    mode: ViewMode;
-  };
   data: {
     balance: number;
     payItem: Item;
@@ -29,14 +24,24 @@ interface Props {
     price: number;
   };
 }
-export const Mint = (props: Props) => {
-  const { controls, data, state, isVisible } = props;
-  const { mode } = controls;
+
+export const Whitelist = (props: Props) => {
+  const { data, isVisible } = props;
+  const { mint } = data;
+
+  // check whether the mint has started
+  const hasStarted = () => {
+    const now = Date.now() / 1000;
+    return now > mint.config.whitelist.startTs;
+  };
+
+  const isComplete = () => {
+    return mint.data.gacha.total >= mint.config.total;
+  };
 
   return (
     <Container isVisible={isVisible}>
-      <Whitelist isVisible={mode === 'DEFAULT'} data={data} state={state} />
-      <Public isVisible={mode === 'ALT'} data={data} state={state} />
+      {!hasStarted() && <EmptyText text={['WHITELIST MINT HAS NOT YET STARTED']} />}
     </Container>
   );
 };

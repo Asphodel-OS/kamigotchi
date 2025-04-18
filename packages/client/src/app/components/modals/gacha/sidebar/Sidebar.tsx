@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { calcAuctionCost } from 'app/cache/auction';
 import { GachaMintConfig } from 'app/cache/config';
 import { useTokens, useVisibility } from 'app/stores';
@@ -51,6 +51,13 @@ interface Props {
       gacha: Auction;
       reroll: Auction;
     };
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+    };
   };
   state: {
     quantity: number;
@@ -62,8 +69,6 @@ interface Props {
   utils: {
     getItem: (index: number) => Item;
     getItemBalance: (index: number) => number;
-    getMintConfig: () => GachaMintConfig;
-    getMintData: (id: EntityID) => GachaMintData;
     isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
@@ -71,7 +76,7 @@ interface Props {
 export const Sidebar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
   const { mode, tab, setTab } = controls;
-  const { auctions, commits } = data;
+  const { auctions, commits, mint } = data;
   const { tick, quantity } = state;
   const { getItem, getItemBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
@@ -174,7 +179,7 @@ export const Sidebar = (props: Props) => {
       <Controls
         actions={actions}
         controls={controls}
-        data={{ balance, commits, payItem, saleItem }}
+        data={{ balance, commits, payItem, saleItem, mint }}
         state={{ ...state, price }}
         utils={utils}
       />

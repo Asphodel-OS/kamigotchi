@@ -1,17 +1,12 @@
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
+import { EmptyText } from 'app/components/library';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
-import { ViewMode } from '../../../types';
-import { Public } from './Public';
-import { Whitelist } from './Whitelist';
 
 interface Props {
   isVisible: boolean;
-  controls: {
-    mode: ViewMode;
-  };
   data: {
     balance: number;
     payItem: Item;
@@ -29,14 +24,13 @@ interface Props {
     price: number;
   };
 }
-export const Mint = (props: Props) => {
-  const { controls, data, state, isVisible } = props;
-  const { mode } = controls;
+
+export const Public = (props: Props) => {
+  const { data, state, isVisible } = props;
 
   return (
     <Container isVisible={isVisible}>
-      <Whitelist isVisible={mode === 'DEFAULT'} data={data} state={state} />
-      <Public isVisible={mode === 'ALT'} data={data} state={state} />
+      <EmptyText text={['PUBLIC MINT HAS NOT YET STARTED']} />
     </Container>
   );
 };

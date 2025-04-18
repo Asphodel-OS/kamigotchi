@@ -416,6 +416,10 @@ export function registerGachaModal() {
                 ...data,
                 inventories: account.inventories ?? [],
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
+                mint: {
+                  config: mintConfig,
+                  data: { account: accountMintData, gacha: gachaMintData },
+                },
               }}
               state={{
                 quantity,
