@@ -22,17 +22,18 @@ contract _NodeRegistrySystem is System, AuthRoles {
     (
       uint32 index,
       string memory nodeType,
-      uint32 roomIndex,
+      uint32 item,
+      uint32 room,
       string memory name,
       string memory description,
       string memory affinity
-    ) = abi.decode(arguments, (uint32, string, uint32, string, string, string));
+    ) = abi.decode(arguments, (uint32, string, uint32, uint32, string, string, string));
     id = LibNode.getByIndex(components, index);
     require(id == 0, "Node: already exists");
 
     id = LibNode.create(
       components,
-      LibNode.Base(index, nodeType, roomIndex, name, description, affinity)
+      LibNode.Base(index, nodeType, item, room, name, description, affinity)
     );
   }
 

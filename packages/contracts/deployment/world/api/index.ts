@@ -150,16 +150,17 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
   async function createNode(
     index: number,
     type: string,
-    roomIndex: number,
+    item: number,
+    room: number,
     name: string,
     description: string,
     affinity: string
   ) {
     genCall(
       'system.node.registry',
-      [index, type, roomIndex, name, description, affinity],
+      [index, type, item, room, name, description, affinity],
       'create',
-      ['uint32', 'string', 'uint32', 'string', 'string', 'string']
+      ['uint32', 'string', 'uint32', 'uint32', 'string', 'string', 'string']
     );
   }
 
