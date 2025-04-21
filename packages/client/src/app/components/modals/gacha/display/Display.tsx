@@ -76,6 +76,21 @@ export const Display = (props: Props) => {
     return text;
   };
 
+  // determine whether the mode toggle button should be visible
+  const isButtonVisible = () => {
+    if (tab === 'GACHA' && mode === 'DEFAULT') {
+      const startTime = auctions.gacha.time.start;
+      return startTime > Date.now();
+    }
+
+    if (tab === 'REROLL' && mode == 'DEFAULT') {
+      const startTime = auctions.reroll.time.start;
+      return startTime > Date.now();
+    }
+
+    return false;
+  };
+
   return (
     <Container>
       <Pool
@@ -94,7 +109,7 @@ export const Display = (props: Props) => {
       />
       <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Overlay top={0.9} right={0.6}>
-        {tab !== 'MINT' && <ActionButton text={getButtonText()} onClick={toggleMode} />}
+        {isButtonVisible() && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>
     </Container>
   );
