@@ -19,12 +19,13 @@ export function usePresaleInfo(address: Address, presaleAddr: Address) {
       { ...preAsset, functionName: 'deposits', args: [address] }, // user deposits
     ],
   });
+
   return {
     ...results,
     data: {
       depositCap: parseTokenBalance(results.data?.[0]?.result as bigint, 18),
       totalDeposits: parseTokenBalance(results.data?.[1]?.result as bigint, 18),
-      price: Number(results.data?.[2]?.result as bigint),
+      price: 1e18 / Number(results.data?.[2]?.result as bigint),
       allo: parseTokenBalance(results.data?.[3]?.result as bigint, 18),
       bought: parseTokenBalance(results.data?.[4]?.result as bigint, 18),
     },
