@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getChatLastTimeStamp } from 'app/cache/chat';
+import { getChatLastTimeStamp, getChatNumberNewMessages } from 'app/cache/chat';
 import { Modals, useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
@@ -76,7 +76,14 @@ export const ChatMenuButton = () => {
         targetModal='chat'
         hideModals={modalsToHide}
       />
-      <Status notification={notification} />
+      <Status notification={notification}>
+        <Number>
+          {getChatNumberNewMessages(
+            roomIndex,
+            chatOpened.get(roomIndex) ?? nodeVisited.get(roomIndex) ?? 0
+          )}
+        </Number>
+      </Status>
     </Container>
   );
 };
@@ -91,9 +98,15 @@ const Status = styled.div<{ notification: boolean }>`
   position: absolute;
   bottom: 0.9%;
   right: 0%;
-  width: 32%;
-  height: 32%;
+
+  height: fit-content;
+  padding: 0.2vw;
   border-radius: 33vw;
   z-index: 1;
   background-color: green;
+`;
+
+const Number = styled.text`
+  color: white;
+  font-size: 0.8vh;
 `;

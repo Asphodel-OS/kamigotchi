@@ -31,7 +31,7 @@ export const process = async (roomIndex: number, scroll: boolean) => {
 
 export const push = (newMessage: Message) => {
   const oldMessages = ChatCache.get(newMessage.RoomIndex);
-  if (!oldMessages || oldMessages.length === 0) return;
+  if (!oldMessages) return;
   ChatCache.set(newMessage.RoomIndex, oldMessages.concat(newMessage!));
 };
 
@@ -41,4 +41,13 @@ export const getLastTimeStamp = (roomIndex: number) => {
     return ChatCache.get(roomIndex)?.[len - 1]?.Timestamp ?? 0;
   }
   return 0;
+};
+
+export const getNumberNewMessages = (roomIndex: number, lastTimeStamp: number) => {
+  const fullLength = ChatCache.get(roomIndex)?.length ?? 0;
+  const lastVisitedPosition =
+    ChatCache.get(roomIndex)?.findIndex((message) => message.Timestamp >= lastTimeStamp) ?? 0;
+  const numberNewMessages = fullLength - lastVisitedPosition;
+  if (numberNewMessages > 10) return '+10';
+  else return numberNewMessages;
 };
