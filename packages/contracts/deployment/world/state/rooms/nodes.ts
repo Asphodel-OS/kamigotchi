@@ -77,7 +77,7 @@ export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
 
 async function initNode(api: AdminAPI, entry: any) {
   const index = Number(entry['Index']);
-  const item = 1; // hardcoded, todo: update world sheet for specific item drops
+  const item = entry['YieldIndex'];
   const name = entry['Name'];
   const description = 'placeholder';
   const affinity = entry['Affinity'].toUpperCase();
