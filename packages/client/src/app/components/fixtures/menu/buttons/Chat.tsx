@@ -39,7 +39,7 @@ export const ChatMenuButton = () => {
   }, []);
 
   useEffect(() => {
-    nodeVisited.set(roomIndex, Date.now());
+    if (!nodeVisited.has(roomIndex)) nodeVisited.set(roomIndex, Date.now());
   }, [roomIndex]);
 
   useEffect(() => {

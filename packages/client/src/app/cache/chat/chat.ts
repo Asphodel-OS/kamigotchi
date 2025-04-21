@@ -30,9 +30,12 @@ export const process = async (roomIndex: number, scroll: boolean) => {
 };
 
 export const push = (newMessage: Message) => {
-  const oldMessages = ChatCache.get(newMessage.RoomIndex);
-  if (!oldMessages) return;
-  ChatCache.set(newMessage.RoomIndex, oldMessages.concat(newMessage!));
+  var roomMessages = ChatCache.get(newMessage.RoomIndex);
+  if (roomMessages) {
+    ChatCache.set(newMessage.RoomIndex, roomMessages.concat(newMessage));
+  } else {
+    get(newMessage.RoomIndex, false);
+  }
 };
 
 export const getLastTimeStamp = (roomIndex: number) => {
