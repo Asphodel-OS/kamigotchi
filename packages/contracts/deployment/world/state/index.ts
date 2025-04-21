@@ -14,6 +14,7 @@ import { initRecipes } from './recipes';
 import { initRelationships } from './relationships';
 import { initNodes, initRooms } from './rooms';
 import { initSkills } from './skills';
+import { initSnapshot } from './snapshot';
 import { initTestingWorldWL } from './testing';
 import { initTraits } from './traits';
 
@@ -53,6 +54,8 @@ export async function initAll(api: AdminAPI) {
   await initRelationships(api);
   console.log('\n---------------------------------------------\n');
 
+  await initSnapshot(api);
+
   if (process.env.NODE_ENV === 'puter') {
     console.log('generating local inits');
     await initGachaPool(api, 88);
@@ -64,8 +67,6 @@ export async function initAll(api: AdminAPI) {
   } else {
     await initGachaPool(api, 2222);
   }
-
-  // await initSnapshot(api);
 }
 
 export async function initAllLocal(api: AdminAPI) {

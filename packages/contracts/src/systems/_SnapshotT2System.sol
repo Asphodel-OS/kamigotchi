@@ -16,17 +16,19 @@ uint32 constant PASSPORT_BOX = 21002;
 contract _SnapshotT2System is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function distributePassports(
-    address[] memory owners,
-    uint256[] memory amts
-  ) public onlyAdmin(components) {
+  function distributePassports(bytes memory arguments) public onlyAdmin(components) {
+    (address[] memory owners, uint256[] memory amts) = abi.decode(
+      arguments,
+      (address[], uint256[])
+    );
     require(owners.length == amts.length, "array length mismatch");
     for (uint256 i; i < owners.length; i++) {
       distributePassport(owners[i], amts[i]);
     }
   }
 
-  function whitelistAccounts(address[] memory owners) public onlyAdmin(components) {
+  function whitelistAccounts(bytes memory arguments) public onlyAdmin(components) {
+    address[] memory owners = abi.decode(arguments, (address[]));
     for (uint256 i; i < owners.length; i++) {
       whitelist(owners[i]);
     }

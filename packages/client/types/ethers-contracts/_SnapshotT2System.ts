@@ -4,7 +4,6 @@
 import type {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -33,14 +32,14 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
-    "distributePassports(address[],uint256[])": FunctionFragment;
+    "distributePassports(bytes)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "whitelistAccounts(address[])": FunctionFragment;
+    "whitelistAccounts(bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -69,7 +68,7 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "distributePassports",
-    values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
@@ -94,7 +93,7 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "whitelistAccounts",
-    values: [PromiseOrValue<string>[]]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
 
   decodeFunctionResult(
@@ -227,8 +226,7 @@ export interface _SnapshotT2System extends BaseContract {
     ): Promise<ContractTransaction>;
 
     distributePassports(
-      owners: PromiseOrValue<string>[],
-      amts: PromiseOrValue<BigNumberish>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -258,7 +256,7 @@ export interface _SnapshotT2System extends BaseContract {
     ): Promise<ContractTransaction>;
 
     whitelistAccounts(
-      owners: PromiseOrValue<string>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -277,8 +275,7 @@ export interface _SnapshotT2System extends BaseContract {
   ): Promise<ContractTransaction>;
 
   distributePassports(
-    owners: PromiseOrValue<string>[],
-    amts: PromiseOrValue<BigNumberish>[],
+    arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -308,7 +305,7 @@ export interface _SnapshotT2System extends BaseContract {
   ): Promise<ContractTransaction>;
 
   whitelistAccounts(
-    owners: PromiseOrValue<string>[],
+    arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -323,8 +320,7 @@ export interface _SnapshotT2System extends BaseContract {
     deprecate(overrides?: CallOverrides): Promise<void>;
 
     distributePassports(
-      owners: PromiseOrValue<string>[],
-      amts: PromiseOrValue<BigNumberish>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -350,7 +346,7 @@ export interface _SnapshotT2System extends BaseContract {
     ): Promise<void>;
 
     whitelistAccounts(
-      owners: PromiseOrValue<string>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -398,8 +394,7 @@ export interface _SnapshotT2System extends BaseContract {
     ): Promise<BigNumber>;
 
     distributePassports(
-      owners: PromiseOrValue<string>[],
-      amts: PromiseOrValue<BigNumberish>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -429,7 +424,7 @@ export interface _SnapshotT2System extends BaseContract {
     ): Promise<BigNumber>;
 
     whitelistAccounts(
-      owners: PromiseOrValue<string>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -449,8 +444,7 @@ export interface _SnapshotT2System extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     distributePassports(
-      owners: PromiseOrValue<string>[],
-      amts: PromiseOrValue<BigNumberish>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -480,7 +474,7 @@ export interface _SnapshotT2System extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     whitelistAccounts(
-      owners: PromiseOrValue<string>[],
+      arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
