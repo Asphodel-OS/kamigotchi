@@ -48,14 +48,9 @@
       "name": "distributePassports",
       "inputs": [
         {
-          "name": "owners",
-          "type": "address[]",
-          "internalType": "address[]"
-        },
-        {
-          "name": "amts",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "outputs": [],
@@ -144,9 +139,9 @@
       "name": "whitelistAccounts",
       "inputs": [
         {
-          "name": "owners",
-          "type": "address[]",
-          "internalType": "address[]"
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "outputs": [],
@@ -228,13 +223,13 @@
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
-    "distributePassports(address[],uint256[])": "23f63448",
+    "distributePassports(bytes)": "baed4ce5",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "transferOwnership(address)": "f2fde38b",
-    "whitelistAccounts(address[])": "5855279e"
+    "whitelistAccounts(bytes)": "dd289f52"
   }
 }
