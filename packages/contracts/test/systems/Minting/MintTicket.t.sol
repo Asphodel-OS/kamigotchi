@@ -8,21 +8,31 @@ import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { CURRENCY } from "systems/GachaBuyTicketSystem.sol";
 
 contract MintTicketTest is SetupTemplate {
-  uint256 pubPrice;
-  uint256 wlPrice;
-  uint256 maxMints;
-  uint256 maxPerAcc;
+  uint256 maxMints; // total mints allowed
+
+  uint256 mintsWL; // whitelist mints allowed per account
+  uint256 priceWL; // price of whitelist mint
+  uint256 startWL; // start epoch ts of whitelist mint
+
+  uint256 mintsPublic; // public mints allowed per account
+  uint256 pricePublic; // price of public mint
+  uint256 startPublic; // start epoch ts of public mint
 
   ERC20 currency20;
 
   function setUp() public override {
     super.setUp();
 
-    pubPrice = LibConfig.get(components, "MINT_PRICE_PUBLIC");
-    wlPrice = LibConfig.get(components, "MINT_PRICE_WL");
+    // below values are fed in from deployment/world/state/configs.ts
     maxMints = LibConfig.get(components, "MINT_MAX_TOTAL");
-    maxPerAcc = LibConfig.get(components, "MINT_MAX_PUBLIC");
-    maxPerAcc = LibConfig.get(components, "MINT_MAX_WL");
+
+    mintsWL = LibConfig.get(components, "MINT_MAX_WL");
+    priceWL = LibConfig.get(components, "MINT_PRICE_WL");
+    startWL = LibConfig.get(components, "MINT_START_WL");
+
+    mintsPublic = LibConfig.get(components, "MINT_MAX_PUBLIC");
+    pricePublic = LibConfig.get(components, "MINT_PRICE_PUBLIC");
+    startPublic = LibConfig.get(components, "MINT_START_PUBLIC");
 
     // creating items
     _createGenericItem(CURRENCY);
@@ -33,162 +43,169 @@ contract MintTicketTest is SetupTemplate {
     // pre-approving erc20
     _approveERC20(address(currency20), alice.owner);
     _approveERC20(address(currency20), bob.owner);
+    _approveERC20(address(currency20), charlie.owner);
+  }
+
+  // check some basic, relative values between WL and Public mint configs
+  function testConfigs() public {
+    assertGt(mintsPublic, mintsWL); // more mints allowed for public than WL
+    assertGt(pricePublic, priceWL); // greater price for public than WL
+    assertGt(startPublic, startWL); // public mint starts later than WL
   }
 
   /////////////////
-  // TESTS
+  // WHITELIST TESTS
 
-  function testMintWL() public {
-    // WL Alice, not Bob
-    _setFlag(alice.id, "MINT_WHITELISTED", true);
+  // test that whitelisting does indeed work even across multiple accounts
+  function testWhitelisting(bool aWL, bool bWL, bool cWL) public {
+    // set the whitelisted flags
+    _setFlag(alice.id, "MINT_WHITELISTED", aWL);
+    _setFlag(bob.id, "MINT_WHITELISTED", bWL);
+    _setFlag(charlie.id, "MINT_WHITELISTED", cWL);
 
-    // insufficient currency
+    // mint some tokens to everyone
+    _mintERC20(address(currency20), priceWL, alice.owner);
+    _mintERC20(address(currency20), priceWL, bob.owner);
+    _mintERC20(address(currency20), priceWL, charlie.owner);
+
+    // set the start time of the whitelist mint to be in the past
+    uint256 time = _getTime();
+    _setConfig("MINT_START_WL", time);
+    _fastForward(1000);
+
+    // check alice
     vm.prank(alice.owner);
-    vm.expectRevert();
+    if (!aWL) vm.expectRevert("not whitelisted");
     _GachaBuyTicketSystem.buyWL();
 
-    // good buy, enough currency
-    _mintERC20(address(currency20), wlPrice, alice.owner);
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyWL();
-
-    // checking post buy state
-    assertFalse(LibFlag.has(components, alice.id, "MINT_WHITELISTED"));
-    assertEq(_getTokenBal(address(currency20), alice.owner), 0, "post buy mismatch currency");
-    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), 1, "post buy mismatch ticket");
-    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), 1, "post buy mismatch mint num");
-
-    // fail mint again
-    _mintERC20(address(currency20), wlPrice, alice.owner);
-    vm.prank(alice.owner);
-    vm.expectRevert();
-    _GachaBuyTicketSystem.buyWL();
-
-    // fail mint not whitelisted
-    _mintERC20(address(currency20), wlPrice, bob.owner);
+    // check bob
     vm.prank(bob.owner);
-    vm.expectRevert();
+    if (!bWL) vm.expectRevert("not whitelisted");
+    _GachaBuyTicketSystem.buyWL();
+
+    // check charlie
+    vm.prank(charlie.owner);
+    if (!cWL) vm.expectRevert("not whitelisted");
     _GachaBuyTicketSystem.buyWL();
   }
 
-  function testMintPublic(uint32 _startingCurr, uint256 amt) public {
-    // setup
-    _setConfig("MINT_PUBLIC_OPEN", 1);
-    uint256 startingCurr = uint256(_startingCurr);
-    _mintERC20(address(currency20), startingCurr, alice.owner);
+  // ensure WL mints are not accessible prior to start time
+  function testWLStart(uint256 currTs, uint32 startDelta, bool flip) public {
+    vm.assume(currTs < 1 << 254); // healthy bounds to prevent overflow
+    vm.assume(currTs > 1 << 32); // healthy bounds to prevent underflow
 
-    if (amt > maxPerAcc) {
-      // failed mint
-      vm.prank(alice.owner);
-      if (amt > maxMints) vm.expectRevert("max mints reached");
-      else vm.expectRevert("max mints per account reached");
-      _GachaBuyTicketSystem.buyPublic(amt);
-    } else {
-      uint256 cost = pubPrice * amt;
-      if (startingCurr < cost) {
-        // not enough funds
-        vm.prank(alice.owner);
-        vm.expectRevert();
-        _GachaBuyTicketSystem.buyPublic(amt);
-      } else {
-        // enough funds, mint
-        vm.prank(alice.owner);
-        _GachaBuyTicketSystem.buyPublic(amt);
-        // check post-buy state
-        assertEq(
-          _getTokenBal(address(currency20), alice.owner),
-          (startingCurr - cost) * 1e15,
-          "post buy mismatch currency"
-        );
-        assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), amt, "post buy mismatch ticket");
-        assertEq(
-          LibData.get(components, alice.id, 0, "MINT_NUM"),
-          amt,
-          "post buy mismatch mint num"
-        );
-      }
+    // set up alice for success
+    _setFlag(alice.id, "MINT_WHITELISTED", true);
+    _mintERC20(address(currency20), priceWL, alice.owner);
+
+    // shift current and start time
+    uint256 startTime = currTs;
+    if (flip) startTime -= startDelta;
+    else startTime += startDelta;
+    _setConfig("MINT_START_WL", startTime);
+    _setTime(currTs);
+
+    // attempt to mint
+    vm.prank(alice.owner);
+    if (startDelta > 0 && !flip) vm.expectRevert("whitelist mint has not yet started");
+    _GachaBuyTicketSystem.buyWL();
+  }
+
+  // test that the WL mint limit is enforced and state is updated correctly
+  function testWLSolo(uint8 limit, uint8 numMints) public {
+    vm.assume(numMints < 16); // keep it reasonable
+    vm.assume(limit < 32);
+
+    // set up alice for success
+    uint256 tokenBalInitial = priceWL * limit;
+    _setFlag(alice.id, "MINT_WHITELISTED", true);
+    _mintERC20(address(currency20), tokenBalInitial, alice.owner);
+
+    // configure mint
+    _setConfig("MINT_MAX_WL", limit);
+    _setConfig("MINT_START_WL", _getTime());
+    _fastForward(1000);
+
+    // attempt mints
+    uint8 numMinted = 0;
+    vm.startPrank(alice.owner);
+    for (uint8 i = 0; i < numMints; i++) {
+      if (i >= limit) vm.expectRevert("max whitelist mint per account reached");
+      else numMinted++;
+      _GachaBuyTicketSystem.buyWL();
     }
+
+    uint256 tokenBal = _getTokenBal(address(currency20), alice.owner);
+    uint256 tokenBalRemaining = (tokenBalInitial - (priceWL * numMinted)) * 1e15; // these unit conversions are gonna bite us eventually..
+    assertEq(tokenBal, tokenBalRemaining, "unexpected token balance");
+    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), numMinted, "post buy mismatch ticket");
+    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), numMinted, "unexpected mint amount");
+    assertEq(
+      LibData.get(components, alice.id, 0, "MINT_NUM_TOTAL"),
+      numMinted,
+      "unexpected mint amount"
+    );
   }
 
-  // TODO: update this with start time configs
-  function testMintPublicOpen() public {
-    // setup
-    _mintERC20(address(currency20), pubPrice, alice.owner);
+  /////////////////
+  // PUBLIC TESTS
 
-    // public mint before open
-    vm.prank(alice.owner);
-    vm.expectRevert("public mint closed");
-    _GachaBuyTicketSystem.buyPublic(1);
+  // ensure public mints are not accessible prior to start time
+  function testPublicStart(uint256 currTs, uint32 startDelta, bool flip) public {
+    vm.assume(currTs < 1 << 254); // healthy bounds to prevent overflow
+    vm.assume(currTs > 1 << 32); // healthy bounds to prevent underflow
 
-    // open public mint
-    _setConfig("MINT_PUBLIC_OPEN", 1);
+    // set up alice for success
+    _mintERC20(address(currency20), pricePublic, alice.owner);
+
+    // shift current and start time
+    uint256 startTime = currTs;
+    if (flip) startTime -= startDelta;
+    else startTime += startDelta;
+    _setConfig("MINT_START_PUBLIC", startTime);
+    _setTime(currTs);
+
+    // attempt to mint
     vm.prank(alice.owner);
+    if (startDelta > 0 && !flip) vm.expectRevert("public mint has not yet started");
     _GachaBuyTicketSystem.buyPublic(1);
   }
 
-  function testMintPublicMultiple() public {
-    // setup
-    _setConfig("MINT_PUBLIC_OPEN", 1);
-    maxPerAcc = 5;
-    _setConfig("MINT_MAX_PUBLIC_ACC", maxPerAcc);
-    _mintERC20(address(currency20), pubPrice * maxPerAcc, alice.owner);
+  // test that the Public mint limit is enforced and state is updated correctly
+  function testPublicSolo(uint8 limit, uint8 numMints) public {
+    vm.assume(numMints < 16); // keep it reasonable
+    vm.assume(limit < 32);
 
-    // valid mints, till 5
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyPublic(0);
-    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), 0, "post buy mismatch ticket");
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyPublic(1);
-    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), 1, "post buy mismatch ticket");
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyPublic(2);
-    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), 3, "post buy mismatch ticket");
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyPublic(1);
-    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), 4, "post buy mismatch ticket");
+    // set up alice for success
+    uint256 tokenBalInitial = pricePublic * limit;
+    _mintERC20(address(currency20), tokenBalInitial, alice.owner);
 
-    // failed mint, exceeding max
-    vm.prank(alice.owner);
-    vm.expectRevert("max mints per account reached");
-    _GachaBuyTicketSystem.buyPublic(2);
-    vm.prank(alice.owner);
-    vm.expectRevert("max mints per account reached");
-    _GachaBuyTicketSystem.buyPublic(3);
+    // configure mint
+    _setConfig("MINT_MAX_PUBLIC", limit);
+    _setConfig("MINT_START_PUBLIC", _getTime());
+    _fastForward(1000);
 
-    // valid mint
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyPublic(1);
-    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), 5, "post buy mismatch ticket");
-  }
+    // attempt mints
+    uint256 numMinted = 0;
+    uint256 toMint = 0; // quanitty to mint
+    vm.startPrank(alice.owner);
+    for (uint256 i = 0; i < numMints; i++) {
+      toMint = uint256(keccak256(abi.encodePacked(limit, numMints, i))) % 10;
+      if (toMint == 0) vm.expectRevert("cannot mint 0 tickets");
+      else if (numMinted + toMint > limit) vm.expectRevert("max public mint per account reached");
+      else numMinted += toMint;
+      _GachaBuyTicketSystem.buyPublic(toMint);
+    }
 
-  function testMintMax(uint) public {
-    // setup
-    _setConfig("MINT_PUBLIC_OPEN", 1);
-    _setFlag(alice.id, "MINT_WHITELISTED", true);
-    _setFlag(bob.id, "MINT_WHITELISTED", true);
-    _mintERC20(address(currency20), wlPrice, alice.owner);
-    _mintERC20(address(currency20), wlPrice, bob.owner);
-
-    // WL minting
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyWL();
-    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), 1, "post buy mismatch mint num");
-    vm.prank(bob.owner);
-    _GachaBuyTicketSystem.buyWL();
-    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), 2, "post buy mismatch mint num");
-
-    // public minting, till max
-    _setData(0, 0, "MINT_NUM_TOTAL", maxMints - 9);
-    _mintERC20(address(currency20), pubPrice * 5, alice.owner);
-    vm.prank(alice.owner);
-    _GachaBuyTicketSystem.buyPublic(5);
-    // failed mint, exceeding max
-    _mintERC20(address(currency20), pubPrice * 5, bob.owner);
-    vm.prank(bob.owner);
-    vm.expectRevert("max mints reached");
-    _GachaBuyTicketSystem.buyPublic(5);
-    // ok mint
-    vm.prank(bob.owner);
-    _GachaBuyTicketSystem.buyPublic(4);
+    uint256 tokenBal = _getTokenBal(address(currency20), alice.owner);
+    uint256 tokenBalRemaining = (tokenBalInitial - (pricePublic * numMinted)) * 1e15; // these unit conversions are gonna bite us eventually..
+    assertEq(tokenBal, tokenBalRemaining, "unexpected token balance");
+    assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), numMinted, "post buy mismatch ticket");
+    assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), numMinted, "unexpected mint amount");
+    assertEq(
+      LibData.get(components, alice.id, 0, "MINT_NUM_TOTAL"),
+      numMinted,
+      "unexpected mint amount"
+    );
   }
 }

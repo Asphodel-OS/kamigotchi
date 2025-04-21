@@ -150,9 +150,17 @@ abstract contract SetupTemplate is TestSetupImports {
     _initCommonTraits();
   }
 
-  function _fastForward(uint timeDelta) internal {
-    _currTime += timeDelta;
+  function _getTime() internal view returns (uint) {
+    return _currTime;
+  }
+
+  function _setTime(uint time) internal {
+    _currTime = time;
     vm.warp(_currTime);
+  }
+
+  function _fastForward(uint timeDelta) internal {
+    _setTime(_currTime + timeDelta);
   }
 
   /////////////////

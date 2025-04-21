@@ -110,6 +110,8 @@ contract GachaBuyTicketSystem is System {
 
   // run validation checks on the public mint
   function verifyAccPublic(uint256 accID, uint256 amount) internal {
+    if (amount == 0) revert("cannot mint 0 tickets");
+
     // check if public mint has started
     if (block.timestamp < LibConfig.get(components, "MINT_START_PUBLIC")) {
       revert("public mint has not yet started");
