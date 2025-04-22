@@ -5,6 +5,14 @@ import { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { preAssetAbi } from './abi';
 
+export interface PresaleData {
+  depositCap: number;
+  totalDeposits: number;
+  price: number;
+  allo: number;
+  bought: number;
+}
+
 export function usePresaleInfo(address: Address, presaleAddr: Address) {
   const preAsset = {
     address: presaleAddr,

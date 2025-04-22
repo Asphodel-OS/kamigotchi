@@ -5,3 +5,5 @@ export {
 } from './ERC20';
 export { useBalance as useERC721Balance } from './ERC721';
 export { presaleDeposit, usePresaleInfo } from './PreSale';
+
+export type { PresaleData } from './PreSale';
