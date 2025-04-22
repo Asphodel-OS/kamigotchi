@@ -6,6 +6,7 @@ import { GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import "tests/utils/SetupTemplate.t.sol";
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { CURRENCY } from "systems/GachaBuyTicketSystem.sol";
+import { console } from "forge-std/console.sol";
 
 contract MintTicketTest is SetupTemplate {
   uint256 maxMints; // total mints allowed
@@ -135,6 +136,7 @@ contract MintTicketTest is SetupTemplate {
       _GachaBuyTicketSystem.buyWL();
     }
 
+    // check final state
     uint256 tokenBal = _getTokenBal(address(currency20), alice.owner);
     uint256 tokenBalRemaining = (tokenBalInitial - (priceWL * numMinted)) * 1e15; // these unit conversions are gonna bite us eventually..
     assertEq(tokenBal, tokenBalRemaining, "unexpected token balance");
@@ -145,6 +147,81 @@ contract MintTicketTest is SetupTemplate {
       numMinted,
       "unexpected mint amount"
     );
+  }
+
+  /**
+   *  test whitelist minting with multiple accounts and configurations.
+   *  @param numAccounts number of accounts participating in the mint
+   *  @param accLimit maximum number of whitelist mints per account
+   *  @param numMints number of mints to attempt
+   */
+  function testWLMulti(uint8 numAccounts, uint8 accLimit, uint32 numMints) public {
+    vm.assume(numAccounts < 10 && numAccounts > 0); // stay within our test setup total accounts
+    vm.assume(numMints < 100 && numMints > 10); // keep it reasonable
+    vm.assume(accLimit < 32 && accLimit > 0);
+
+    // useful variables
+    uint256 accIndex;
+    PlayerAccount storage account;
+
+    // fund all accounts and whitelist every other one
+    uint256 tokenBalInitial = priceWL * accLimit;
+    for (uint256 i = 0; i < numAccounts; i++) {
+      account = _accounts[i];
+      _mintERC20(address(currency20), tokenBalInitial, account.owner);
+      _approveERC20(address(currency20), account.owner);
+      if (i % 2 == 0) _setFlag(account.id, "MINT_WHITELISTED", true);
+    }
+
+    // configure mint
+    _setConfig("MINT_MAX_WL", accLimit);
+    _setConfig("MINT_START_WL", _getTime());
+    _fastForward(1000);
+
+    // attempt mints
+    uint256[] memory numMinted = new uint256[](numAccounts);
+    for (uint256 i = 0; i < numMints; i++) {
+      // pick a random account
+      accIndex = uint256(keccak256(abi.encodePacked(accLimit, numMints, i))) % numAccounts;
+      account = _accounts[accIndex];
+
+      // mint
+      vm.prank(account.owner);
+      if (account.index % 2 != 0) {
+        vm.expectRevert("not whitelisted");
+      } else if (numMinted[accIndex] >= accLimit) {
+        vm.expectRevert("max whitelist mint per account reached");
+      } else {
+        numMinted[accIndex]++;
+      }
+      _GachaBuyTicketSystem.buyWL();
+    }
+
+    // check that the total minted tokens is correct
+    uint256 totalMinted;
+    for (uint256 i = 0; i < numAccounts; i++) {
+      totalMinted += numMinted[i];
+    }
+    uint256 totalMintedData = LibData.get(components, 0, 0, "MINT_NUM_TOTAL");
+    assertEq(totalMintedData, totalMinted, "unexpected mint amount");
+
+    // check that the token balances are correct
+    uint256 amtSpent;
+    uint256 accTokenBal;
+    for (uint256 i = 0; i < numAccounts; i++) {
+      account = _accounts[i];
+      amtSpent = numMinted[i] * priceWL;
+      accTokenBal = _getTokenBal(address(currency20), account.owner);
+      assertEq(accTokenBal, (tokenBalInitial - amtSpent) * 1e15, "unexpected token balance");
+    }
+
+    // check that the sum of item balances is correct
+    uint256 accItemBal;
+    for (uint256 i = 0; i < numAccounts; i++) {
+      account = _accounts[i];
+      accItemBal = _getItemBal(account.id, GACHA_TICKET_INDEX);
+      assertEq(accItemBal, numMinted[i], "unexpected item balance");
+    }
   }
 
   /////////////////
@@ -187,7 +264,7 @@ contract MintTicketTest is SetupTemplate {
 
     // attempt mints
     uint256 numMinted = 0;
-    uint256 toMint = 0; // quanitty to mint
+    uint256 toMint = 0; // quantity to mint in an iteration
     vm.startPrank(alice.owner);
     for (uint256 i = 0; i < numMints; i++) {
       toMint = uint256(keccak256(abi.encodePacked(limit, numMints, i))) % 10;
@@ -197,6 +274,7 @@ contract MintTicketTest is SetupTemplate {
       _GachaBuyTicketSystem.buyPublic(toMint);
     }
 
+    // check final state
     uint256 tokenBal = _getTokenBal(address(currency20), alice.owner);
     uint256 tokenBalRemaining = (tokenBalInitial - (pricePublic * numMinted)) * 1e15; // these unit conversions are gonna bite us eventually..
     assertEq(tokenBal, tokenBalRemaining, "unexpected token balance");
