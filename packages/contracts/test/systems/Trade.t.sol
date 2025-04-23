@@ -8,6 +8,12 @@ contract TradeTest is SetupTemplate {
     super.setUp();
 
     vm.roll(_currBlock++);
+
+    vm.startPrank(deployer);
+    _IndexRoomComponent.set(alice.id, 66);
+    _IndexRoomComponent.set(bob.id, 66);
+    _IndexRoomComponent.set(charlie.id, 66);
+    vm.stopPrank();
   }
 
   /// @notice creates and cancels

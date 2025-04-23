@@ -19,6 +19,9 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibRoom } from "libraries/LibRoom.sol";
+
+uint256 constant TRADE_ROOM = 66;
 
 /**
  * @notice
@@ -178,6 +181,10 @@ library LibTrade {
   ) public view {
     uint32[] memory indices = LibArray.concat(buyIndices, sellIndices);
     if (!LibItem.checkFlag(components, indices, "NOT_TRADEABLE", false)) revert("tradeable item");
+  }
+
+  function verifyRoom(IUintComp components, uint256 accID) public view {
+    if (LibRoom.get(components, accID) != TRADE_ROOM) revert("trade room mismatch");
   }
 
   function verifySeller(IUintComp components, uint256 tradeID, uint256 seller) public view {
