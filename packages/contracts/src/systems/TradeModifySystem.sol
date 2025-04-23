@@ -25,6 +25,7 @@ contract TradeModifySystem is System {
     ) = abi.decode(arguments, (uint256, uint32[], uint256[], uint32[], uint256[], uint256));
 
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    LibTrade.verifyTradable(components, buyIndices, sellIndices);
     LibTrade.verifySeller(components, tradeID, accID);
 
     // modify trade order
