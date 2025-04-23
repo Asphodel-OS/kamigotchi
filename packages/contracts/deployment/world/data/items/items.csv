@@ -65,7 +65,7 @@ These ribbons are greatly prized…. "
 ,In Game,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM103",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
 ,Test,Mistletoe,,Food,Kami,,BYPASS_BONUS_RESET,BOUNTY+25%,,"Sacred, at this time of year..... can be used on Kami to Bless them!"
 ,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
-,Ready,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
+,To Deploy,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
 ,In Game,Scroll of Shop Teleportation,21100,Consumable,Account,,,MOVE13,,"Instantly transports the user to Mina’s Shop. Fully insured. "
 ,In Game,Ice Cream,21201,Food,Account,,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Account,,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
@@ -76,3 +76,4 @@ These ribbons are greatly prized…. "
 
 You feel like you should hold on to it. "
 ,In Game,Pomegranate,,Transferrer,,,,,,
+,To Deploy,VIPP,2,Misc,,,,VIP1,,"Sacred paper which can be sacrificed for VIP status. "

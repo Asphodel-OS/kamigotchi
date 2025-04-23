@@ -55,6 +55,13 @@ import { room54 } from './54_plane-interior';
 import { room55 } from './55_shady-path';
 import { room56 } from './56_butterfly-forest';
 import { room57 } from './57_river-crossing';
+import { room60 } from './60_scrap-trees';
+import { room61 } from './61_decaying-forest-path';
+import { room62 } from './62_centipedes';
+import { room63 } from './63_deeper-forest-paths';
+import { room64 } from './64_burning-room';
+import { room65 } from './65_forest-hut';
+import { room66 } from './66_trading-room';
 import { Room } from './types';
 
 export const duplicateRoomMusic = [
@@ -126,4 +133,13 @@ export const rooms: Room[] = [
   room55,
   room56,
   room57,
+  { index: 58, backgrounds: [''], objects: [] },
+  { index: 59, backgrounds: [''], objects: [] },
+  room60,
+  room61,
+  room62,
+  room63,
+  room64,
+  room65,
+  room66,
 ];

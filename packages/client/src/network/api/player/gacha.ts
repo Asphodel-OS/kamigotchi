@@ -9,7 +9,7 @@ export const gachaAPI = (systems: any) => {
   function mintPet(amount: number) {
     // RPC does not simulate gas properly, hardcode needed
     const gas = 3e6 + amount * 2e6; // ~ 3m base + 2m per pet
-    return systems['system.kami.gacha.mint'].executeTyped(amount, { gasLimit: 20000000 });
+    return systems['system.kami.gacha.mint'].executeTyped(amount, { gasLimit: gas });
   }
 
   // @dev reveal a minted pet
