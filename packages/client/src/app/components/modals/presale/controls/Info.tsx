@@ -70,20 +70,30 @@ export const Info = (props: Props) => {
 
   return (
     <Container>
-      {/* <Text size={1.2}>Total Allo: {(data.price * data.allo).toFixed(0)}</Text>
-      <Text size={1.2}>Total Claimed: {(data.price * data.bought).toFixed(0)}</Text> */}
-      <Text size={1.2}>Total Allo: {data.allo.toFixed(3)}</Text>
-      <Text size={1.2}>Total Claimed: {data.bought.toFixed(3)}</Text>
-      <InputButton
-        button={{
-          text: getButtonText(),
-          subtext: getButtonSubtext(),
-          tooltip: getButtonTooltip(),
-          onClick: getButtonAction(),
-          disabled: isButtonDisabled(),
-        }}
-        input={{ value: quantity, setValue: setQuantity, max: 0.5, min: 0, step: 0.001 }}
-      />
+      <TextSection>
+        <Text size={1.5}>Your Allocation</Text>
+        <Text size={0.9} shift={0.45}>
+          Total: {(data.allo * data.price).toLocaleString()}
+        </Text>
+        <Text size={0.9} shift={0.45}>
+          Claimed: {(data.bought * data.price).toLocaleString()}
+        </Text>
+        <Text size={0.9} shift={0.45}>
+          Claimable: {((data.allo - data.bought) * data.price).toLocaleString()}
+        </Text>
+      </TextSection>
+      <ButtonSection>
+        <InputButton
+          button={{
+            text: getButtonText(),
+            subtext: getButtonSubtext(),
+            tooltip: getButtonTooltip(),
+            onClick: getButtonAction(),
+            disabled: isButtonDisabled(),
+          }}
+          input={{ value: quantity, setValue: setQuantity, max: 0.5, min: 0, step: 0.001 }}
+        />
+      </ButtonSection>
     </Container>
   );
 };
@@ -97,10 +107,28 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
+  justify-content: space-between;
+`;
+
+const TextSection = styled.div`
+  width: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
   justify-content: space-around;
 `;
 
-const Text = styled.div<{ size: number }>`
+const Text = styled.div<{ size: number; shift?: number }>`
   font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
+  line-height: ${(props) => props.size * 2.1}vw;
+  padding-left: ${(props) => props.shift ?? 0}vw;
+`;
+
+const ButtonSection = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-end;
+  justify-content: flex-end;
 `;

@@ -174,7 +174,6 @@ const Container = styled.div`
 
 const Content = styled.div`
   width: 100%;
-  background-color: #ddd;
 
   display: flex;
   flex-flow: row nowrap;
@@ -195,7 +194,7 @@ const OnyxColumn = styled.div`
 `;
 
 const Image = styled.img`
-  height: 21vh;
+  height: 24vh;
   max-height: 15vw;
   margin: 1.2vw;
 

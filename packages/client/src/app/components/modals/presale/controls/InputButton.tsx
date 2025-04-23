@@ -45,7 +45,7 @@ export const InputButton = (props: Props) => {
       <Input
         type='number'
         step={input.step}
-        value={input.value.toFixed(3)}
+        value={input.value}
         onChange={(e) => handleChange(e)}
       />
       <Tooltip text={button.tooltip} alignText='center' grow>
