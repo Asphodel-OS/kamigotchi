@@ -28,12 +28,12 @@ export function createAdminAPI(txQueue: TxQueue) {
 
   async function addRole(addr: string, role: string) {
     await sleepIf();
-    return systems['system._Auth.Manage.Role'].addRole(addr, role);
+    return systems['system.auth.registry'].addRole(addr, role);
   }
 
   async function removeRole(addr: string, role: string) {
     await sleepIf();
-    return systems['system._Auth.Manage.Role'].removeRole(addr, role);
+    return systems['system.auth.registry'].removeRole(addr, role);
   }
 
   /////////////////
@@ -41,7 +41,7 @@ export function createAdminAPI(txQueue: TxQueue) {
 
   async function setConfig(field: string, value: BigNumberish) {
     await sleepIf();
-    return systems['system._Config.Set'].setValue(field, value);
+    return systems['system.config.registry'].setValue(field, value);
   }
 
   async function setConfigArray(field: string, value: number[]) {
@@ -49,13 +49,13 @@ export function createAdminAPI(txQueue: TxQueue) {
     const arr = new Array(8);
     arr.fill(0);
     for (let i = 0; i < value.length; i++) arr[i] = value[i];
-    return systems['system._Config.Set'].setValueArray(field, arr);
+    return systems['system.config.registry'].setValueArray(field, arr);
   }
 
   // values must be ≤ 32char
   async function setConfigString(field: string, value: string) {
     await sleepIf();
-    return systems['system._Config.Set'].setValueString(field, value);
+    return systems['system.config.registry'].setValueString(field, value);
   }
 
   /////////////////

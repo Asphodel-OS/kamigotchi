@@ -7,7 +7,7 @@ import { getAddrByID } from "solecs/utils.sol";
 
 import { LibFlag } from "libraries/LibFlag.sol";
 
-uint256 constant ID = uint256(keccak256("system._Auth.Manage.Role"));
+uint256 constant ID = uint256(keccak256("system.auth.registry"));
 
 contract _AuthManageRoleSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}

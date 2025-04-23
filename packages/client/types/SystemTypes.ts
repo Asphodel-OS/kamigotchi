@@ -72,8 +72,8 @@ export type SystemTypes = {
   "system.local.setup": __LocalSetupSystem;
   "system.Kami721.BatchMint": _721BatchMinterSystem;
   "system.auction.registry": _AuctionRegistrySystem;
-  "system._Auth.Manage.Role": _AuthManageRoleSystem;
-  "system._Config.Set": _ConfigSetSystem;
+  "system.auth.registry": _AuthManageRoleSystem;
+  "system.config.registry": _ConfigSetSystem;
   "system.faction.registry": _FactionRegistrySystem;
   "system.goal.registry": _GoalRegistrySystem;
   "system.item.registry": _ItemRegistrySystem;
