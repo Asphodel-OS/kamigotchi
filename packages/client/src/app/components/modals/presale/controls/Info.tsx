@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
 import { PresaleData } from 'network/chain';
 import { useState } from 'react';
 import { InputButton } from './InputButton';
@@ -30,6 +29,11 @@ export const Info = (props: Props) => {
     if (tokenBal.balance < quantity) return approve; // doesn't matter, disabled
     if (tokenBal.allowance < quantity) return approve;
     return buy;
+  };
+
+  // get the subtext above the button
+  const getButtonSubtext = () => {
+    return `${(data.price * quantity).toLocaleString()} $ONYX`;
   };
 
   const getButtonText = () => {
@@ -66,16 +70,17 @@ export const Info = (props: Props) => {
 
   return (
     <Container>
-      <Tooltip text={[`you have ${(data.allo - data.bought).toFixed(3)} available`]}>
-        <Text>Total Allo: {(data.price * data.allo).toFixed(0)}</Text>
-        <Text>Total Claimed: {(data.price * data.bought).toFixed(0)}</Text>
-      </Tooltip>
+      {/* <Text size={1.2}>Total Allo: {(data.price * data.allo).toFixed(0)}</Text>
+      <Text size={1.2}>Total Claimed: {(data.price * data.bought).toFixed(0)}</Text> */}
+      <Text size={1.2}>Total Allo: {data.allo.toFixed(3)}</Text>
+      <Text size={1.2}>Total Claimed: {data.bought.toFixed(3)}</Text>
       <InputButton
         button={{
           text: getButtonText(),
+          subtext: getButtonSubtext(),
+          tooltip: getButtonTooltip(),
           onClick: getButtonAction(),
           disabled: isButtonDisabled(),
-          tooltip: getButtonTooltip(),
         }}
         input={{ value: quantity, setValue: setQuantity, max: 0.5, min: 0, step: 0.001 }}
       />
@@ -84,7 +89,6 @@ export const Info = (props: Props) => {
 };
 
 const Container = styled.div`
-  background-color: red;
   position: relative;
   padding: 1.2vw;
   width: 32vw;
@@ -92,11 +96,11 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-around;
 `;
 
-const Text = styled.div`
-  font-size: 1.2vw;
-  line-height: 2.4vw;
+const Text = styled.div<{ size: number }>`
+  font-size: ${(props) => props.size}vw;
+  line-height: ${(props) => props.size * 1.5}vw;
 `;

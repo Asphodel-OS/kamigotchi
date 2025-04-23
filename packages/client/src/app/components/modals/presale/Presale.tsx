@@ -168,18 +168,20 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
 `;
 
 const Content = styled.div`
   width: 100%;
-  height: 50%;
+  background-color: #ddd;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
+
+  flex-grow: 1;
 `;
 
 const OnyxColumn = styled.div`
@@ -195,6 +197,8 @@ const OnyxColumn = styled.div`
 const Image = styled.img`
   height: 21vh;
   max-height: 15vw;
+  margin: 1.2vw;
+
   image-rendering: pixelated;
 
   cursor: pointer;

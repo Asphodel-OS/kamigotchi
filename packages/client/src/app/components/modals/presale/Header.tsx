@@ -24,7 +24,6 @@ export const Header = (props: Props) => {
 };
 
 const Container = styled.div`
-  background-color: red;
   position: relative;
 
   width: 100%;
@@ -35,7 +34,7 @@ const Container = styled.div`
 
 const Title = styled.div`
   font-size: 2.4vw;
-  margin: 1.2vw;
+  margin-top: 4.8vh;
 `;
 
 const Text = styled.div<{ size: number }>`

@@ -1,4 +1,4 @@
-import { Tooltip } from 'app/components/library';
+import { Overlay, Tooltip } from 'app/components/library';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
@@ -8,6 +8,7 @@ interface Props {
     onClick: (value: number) => void;
     disabled: boolean;
     tooltip: string[];
+    subtext: string;
   };
   input: {
     value: number;
@@ -33,8 +34,14 @@ export const InputButton = (props: Props) => {
     playClick();
   };
 
+  /////////////////
+  // RENDER
+
   return (
     <Container>
+      <Overlay right={0.3} top={-0.9}>
+        <Text size={0.6}>{button.subtext}</Text>
+      </Overlay>
       <Input
         type='number'
         step={input.step}
@@ -106,4 +113,9 @@ const Button = styled.div<{ disabled: boolean }>`
   &:active {
     opacity: 0.6;
   }
+`;
+
+const Text = styled.div<{ size: number }>`
+  font-size: ${(props) => props.size}vw;
+  line-height: ${(props) => props.size * 1.5}vw;
 `;
