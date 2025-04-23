@@ -4,10 +4,10 @@ import { EntityIndex } from '@mud-classic/recs';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Blocked } from './blocked/Blocked';
-import { Friends } from './friends/Friends';
-import { Kamis } from './party/Kamis';
-import { Requests } from './requests/Requests';
+import { Blocked } from '../blocked/Blocked';
+import { Friends } from '../friends/Friends';
+import { Kamis } from '../party/Kamis';
+import { Requests } from '../requests/Requests';
 
 interface Props {
   subTab: string;

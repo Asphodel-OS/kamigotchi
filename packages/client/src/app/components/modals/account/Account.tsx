@@ -20,8 +20,8 @@ import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
 import { waitForActionCompletion } from 'network/utils';
 import { Bio } from './bio/Bio';
-import { Bottom } from './Bottom';
-import { NewTabs } from './Newtabs';
+import { Bottom } from './bottom/Bottom';
+import { NewTabs } from './tabs/Tabs';
 
 export function registerAccountModal() {
   registerUIComponent(

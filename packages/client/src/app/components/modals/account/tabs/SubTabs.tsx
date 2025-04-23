@@ -8,7 +8,7 @@ interface Props {
   setSubTab: (tab: string) => void;
 }
 
-export const Tabs = (props: Props) => {
+export const SubTabs = (props: Props) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();

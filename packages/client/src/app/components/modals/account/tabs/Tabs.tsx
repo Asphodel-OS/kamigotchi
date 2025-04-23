@@ -15,7 +15,7 @@ export const NewTabs = (props: Props) => {
     props.setTab(tab);
   };
 
-  const SelfTabs = () => {
+  const Tabs = () => {
     return (
       <>
         <Button
@@ -39,7 +39,7 @@ export const NewTabs = (props: Props) => {
     );
   };
 
-  return <Container>{SelfTabs()}</Container>;
+  return <Container>{Tabs()}</Container>;
 };
 
 const Container = styled.div`

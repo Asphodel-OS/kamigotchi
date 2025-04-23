@@ -5,10 +5,10 @@ import { EntityIndex } from '@mud-classic/recs';
 import { Account, BaseAccount, getAllBaseAccounts } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
+import { SubTabs } from '../tabs/SubTabs';
 import { FactionsBottom } from './FactionsBottom';
 import { SocialBottom } from './SocialBottom';
 import { StatsBottom } from './StatsBottom';
-import { Tabs } from './Tabs';
 
 interface Props {
   tab: string;
@@ -45,7 +45,7 @@ export const Bottom = (props: Props) => {
     <>
       {tab === 'social' && (
         <>
-          <Tabs subTab={subTab} setSubTab={setSubTab} isSelf={isSelf} />
+          <SubTabs subTab={subTab} setSubTab={setSubTab} isSelf={isSelf} />
           <SocialBottom
             key='bottom'
             subTab={subTab}
