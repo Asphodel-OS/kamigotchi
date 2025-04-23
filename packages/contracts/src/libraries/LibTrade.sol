@@ -11,11 +11,13 @@ import { IdTargetComponent, ID as IdTargetCompID } from "components/IdTargetComp
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
 /**
@@ -167,6 +169,15 @@ library LibTrade {
   function verifyTarget(IUintComp components, uint256 tradeID, uint256 buyer) public view {
     uint256 targetID = IdTargetComponent(getAddrByID(components, IdTargetCompID)).safeGet(tradeID);
     if (targetID != 0 && targetID != buyer) revert("trade target mismatch");
+  }
+
+  function verifyTradable(
+    IUintComp components,
+    uint32[] memory buyIndices,
+    uint32[] memory sellIndices
+  ) public view {
+    uint32[] memory indices = LibArray.concat(buyIndices, sellIndices);
+    if (!LibItem.checkFlag(components, indices, "NOT_TRADEABLE", false)) revert("tradeable item");
   }
 
   function verifySeller(IUintComp components, uint256 tradeID, uint256 seller) public view {

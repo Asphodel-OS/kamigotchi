@@ -203,6 +203,26 @@ library LibItem {
     return LibFlag.has(components, genID(index), "BYPASS_BONUS_RESET");
   }
 
+  function checkFlag(
+    IUintComp components,
+    uint32 index,
+    string memory flag,
+    bool state
+  ) internal view returns (bool) {
+    return LibFlag.has(components, genID(index), flag) == state;
+  }
+
+  function checkFlag(
+    IUintComp components,
+    uint32[] memory indices,
+    string memory flag,
+    bool state
+  ) internal view returns (bool) {
+    uint256[] memory ids = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
+    return LibFlag.checkAll(components, ids, flag, state);
+  }
+
   /// @dev to prevent potential overflows, somehow
   function verifyMaxPerUse(IUintComp components, uint256 amt) public view {
     if (amt > 100) revert("max 100 item use at once");

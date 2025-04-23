@@ -37,6 +37,13 @@ library LibArray {
     return result;
   }
 
+  function concat(uint32[] memory a, uint32[] memory b) internal pure returns (uint32[] memory) {
+    uint32[] memory result = new uint32[](a.length + b.length);
+    for (uint256 i = 0; i < a.length; i++) result[i] = a[i];
+    for (uint256 i = 0; i < b.length; i++) result[a.length + i] = b[i];
+    return result;
+  }
+
   function flatten(uint256[][] memory arr) internal pure returns (uint256[] memory result) {
     uint256 total;
     for (uint256 i; i < arr.length; i++) total += arr[i].length;
