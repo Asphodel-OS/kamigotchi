@@ -183,7 +183,7 @@ library LibInventory {
         remove(components, id); // delete entity if zero
       else valComp.set(id, newBal);
 
-      LibData.dec(components, 0, itemIndex, "ITEM_COUNT_GLOBAL", amt);
+      LibData.dec(components, 0, itemIndex, "ITEM_COUNT", amt);
     }
   }
 
@@ -294,7 +294,7 @@ library LibInventory {
     uint256[] memory holderIDs = new uint256[](2);
     holderIDs[1] = accID;
     string[] memory types = new string[](2);
-    types[0] = "ITEM_COUNT_GLOBAL";
+    types[0] = "ITEM_COUNT";
     types[1] = "ITEM_TOTAL";
 
     LibData.inc(components, holderIDs, itemIndex, types, amt);

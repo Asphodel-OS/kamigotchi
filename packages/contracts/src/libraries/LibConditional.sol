@@ -157,6 +157,8 @@ library LibConditional {
     } else if (forShape.eq("KAMI")) {
       if (LibEntityType.isShape(components, targetID, "KAMI")) return targetID;
       else revert("LibCon: invalid for (exp kami, not kami)");
+    } else if (forShape.eq("GLOBAL")) {
+      return 0;
     } else revert("LibCon: invalid for shape");
   }
 

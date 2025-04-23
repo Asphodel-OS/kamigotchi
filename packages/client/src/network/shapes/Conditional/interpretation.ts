@@ -13,12 +13,6 @@ export const parseConditionalUnits = (con: Condition): [string, string] => {
   let tar = ((con.target.value ?? 0) * 1).toString();
   let curr = ((con.status?.current ?? 0) * 1).toString();
 
-  // hardcoding to visually remove t1 passports
-  if (con.target.type == 'ITEM_COUNT_GLOBAL' && con.target.index == 3) {
-    tar = ((con.target.value ?? 0) * 1 - 209).toString();
-    curr = ((con.status?.current ?? 0) * 1 - 210).toString(); // +1 t2 passport overshoot
-  }
-
   if (con.target.type.includes('TIME')) {
     tar = moment.duration((con.target.value ?? 0) * 1000).humanize();
     curr = moment.duration((con.status?.current ?? 0) * 1000).humanize();
