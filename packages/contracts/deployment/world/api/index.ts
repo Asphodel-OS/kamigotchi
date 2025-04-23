@@ -569,14 +569,17 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
   // SETUP
 
   function distributePassports(owners: string[], amts: number[]) {
-    genCall('system.setup.snapshot.t2', [owners, amts], 'distributePassports', [
-      'address[]',
-      'uint256[]',
-    ]);
+    genCall(
+      'system.setup.snapshot.t2',
+      [owners, amts],
+      'distributePassports',
+      ['address[]', 'uint256[]'],
+      '60000000'
+    );
   }
 
   function distributeGachaWhitelists(owners: string[]) {
-    genCall('system.setup.snapshot.t2', [owners], 'whitelistAccounts', ['address[]']);
+    genCall('system.setup.snapshot.t2', [owners], 'whitelistAccounts', ['address[]'], '60000000');
   }
 
   ////////////////

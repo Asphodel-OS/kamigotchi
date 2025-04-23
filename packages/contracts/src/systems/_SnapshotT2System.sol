@@ -46,6 +46,9 @@ contract _SnapshotT2System is System, AuthRoles {
     uint256 accID = uint256(uint160(owner));
     LibInventory.incFor(components, accID, PASSPORT_BOX, amt);
     LibInventory.incFor(components, accID, GACHA_TICKET_INDEX, amt);
+
+    // also whitelist account for private world
+    LibAccount.setWorldWL(components, owner, true);
   }
 
   function whitelist(address owner) internal {
