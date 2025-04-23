@@ -17,15 +17,15 @@ async function initPassports(api: AdminAPI) {
     const addresses = batch.map((p: any) => ethers.utils.getAddress(p['Address']));
     const amounts = batch.map((p: any) => Number(p['Count']));
     await api.setup.live.passports(addresses, amounts);
-    console.log(addresses);
-    console.log(amounts);
+    // console.log(addresses);
+    // console.log(amounts);
   }
   const batch = passportCSV.slice(i, passportCSV.length);
   const addresses = batch.map((p: any) => ethers.utils.getAddress(p['Address']));
   const amounts = batch.map((p: any) => Number(p['Count']));
   await api.setup.live.passports(addresses, amounts);
-  console.log(addresses);
-  console.log(amounts);
+  // console.log(addresses);
+  // console.log(amounts);
 }
 
 async function initGachaWhitelist(api: AdminAPI) {
@@ -37,10 +37,10 @@ async function initGachaWhitelist(api: AdminAPI) {
     const batch = whitelistCSV.slice(i, i + batchSize);
     const addresses = batch.map((w: any) => ethers.utils.getAddress(w['Address']));
     await api.setup.live.whitelists(addresses);
-    console.log(addresses);
+    // console.log(addresses);
   }
   const batch = whitelistCSV.slice(i, whitelistCSV.length);
   const addresses = batch.map((w: any) => ethers.utils.getAddress(w['Address']));
   await api.setup.live.whitelists(addresses);
-  console.log(addresses);
+  // console.log(addresses);
 }

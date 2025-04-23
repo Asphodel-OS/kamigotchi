@@ -18,6 +18,7 @@ export async function initRooms(api: AdminAPI, indices?: number[], all?: boolean
     validStatuses.push('Ready');
   }
 
+  const liveRooms = roomsCSV.map((room: any) => Number(room['Index'])); // get live indices
   for (let i = 0; i < roomsCSV.length; i++) {
     const room = roomsCSV[i];
     const index = Number(room['Index']);
@@ -25,7 +26,7 @@ export async function initRooms(api: AdminAPI, indices?: number[], all?: boolean
     if (indices && !indices.includes(index)) continue;
 
     const status = room['Status'];
-    if (validStatuses.includes(status)) await initRoom(api, room);
+    if (validStatuses.includes(status)) await initRoom(api, room, liveRooms);
   }
 }
 
@@ -69,14 +70,14 @@ export async function reviseRooms(api: AdminAPI, overrideIndices?: number[]) {
   await initRooms(api, indices);
 }
 
-async function initRoom(api: AdminAPI, entry: any) {
+async function initRoom(api: AdminAPI, entry: any, liveRooms: number[]) {
   const index = Number(entry['Index']);
   const name = entry['Name'];
   const description = entry['Description'];
   const x = Number(entry['X']);
   const y = Number(entry['Y']);
   const z = Number(entry['Z']);
-  const exits = stringToNumberArray(entry['Exits']);
+  const exits = parseExits(entry, liveRooms);
   const exitsStr = exits.length > 0 ? `with exit(s) ${exits.join(', ')}` : '';
 
   let success = true;
@@ -89,4 +90,17 @@ async function initRoom(api: AdminAPI, entry: any) {
   } finally {
     if (success) await createGates(api, index);
   }
+}
+
+/////////////////
+// UTILS
+
+// filter out exits to undeployed rooms
+function parseExits(entry: any, liveRooms: number[]) {
+  const raw = stringToNumberArray(entry['Exits']);
+  const exits: number[] = [];
+  for (let i = 0; i < raw.length; i++) {
+    if (liveRooms.includes(raw[i])) exits.push(raw[i]);
+  }
+  return exits;
 }
