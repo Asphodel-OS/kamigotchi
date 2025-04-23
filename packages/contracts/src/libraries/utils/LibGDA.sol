@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 import { SD59x18 } from "prb-math/SD59x18.sol";

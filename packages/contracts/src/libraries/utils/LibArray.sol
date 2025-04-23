@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
 /// @notice a general utility library for memory array operations
