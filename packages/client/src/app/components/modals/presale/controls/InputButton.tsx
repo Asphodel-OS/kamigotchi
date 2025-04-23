@@ -24,7 +24,6 @@ export const InputButton = (props: Props) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const quantityStr = event.target.value.replace('[^d.]/g', '');
     const rawValue = parseFloat(quantityStr || '0');
-    console.log(event.target.value, quantityStr, rawValue);
     const value = Math.max(input.min, Math.min(input.max, rawValue));
     input.setValue(value);
   };

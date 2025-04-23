@@ -23,13 +23,10 @@ export const Info = (props: Props) => {
 
   const [quantity, setQuantity] = useState(data.allo - data.bought);
 
-  const enoughApproval = () => tokenBal.allowance >= quantity;
-  const enoughCurrency = () => tokenBal.balance >= quantity;
-
   /////////////////
   // INTERPRETATION
 
-  const getAction = () => {
+  const getButtonAction = () => {
     if (tokenBal.balance < quantity) return approve; // doesn't matter, disabled
     if (tokenBal.allowance < quantity) return approve;
     return buy;
@@ -42,13 +39,11 @@ export const Info = (props: Props) => {
     return 'Buy';
   };
 
-  const isDisabled = () => {
-    return quantity == 0 || tokenBal.balance < quantity;
-  };
-
-  const getTooltip = () => {
+  const getButtonTooltip = () => {
     let tooltip: string[] = [];
-    if (tokenBal.balance < quantity) {
+    if (quantity == 0) {
+      tooltip = ['Sidelined?'];
+    } else if (tokenBal.balance < quantity) {
       tooltip = [
         'too poore',
         '',
@@ -62,18 +57,25 @@ export const Info = (props: Props) => {
     return tooltip;
   };
 
+  const isButtonDisabled = () => {
+    return quantity == 0 || tokenBal.balance < quantity;
+  };
+
+  /////////////////
+  // RENDER
+
   return (
     <Container>
       <Tooltip text={[`you have ${(data.allo - data.bought).toFixed(3)} available`]}>
-        <Text>Total Allo: {data.allo.toFixed(3)}</Text>
-        <Text>Total Claimed: {data.bought.toFixed(3)}</Text>
+        <Text>Total Allo: {(data.price * data.allo).toFixed(0)}</Text>
+        <Text>Total Claimed: {(data.price * data.bought).toFixed(0)}</Text>
       </Tooltip>
       <InputButton
         button={{
           text: getButtonText(),
-          onClick: getAction(),
-          disabled: isDisabled(),
-          tooltip: getTooltip(),
+          onClick: getButtonAction(),
+          disabled: isButtonDisabled(),
+          tooltip: getButtonTooltip(),
         }}
         input={{ value: quantity, setValue: setQuantity, max: 0.5, min: 0, step: 0.001 }}
       />
@@ -82,8 +84,8 @@ export const Info = (props: Props) => {
 };
 
 const Container = styled.div`
+  background-color: red;
   position: relative;
-  border-radius: 0.45vw;
   padding: 1.2vw;
   width: 32vw;
   height: 100%;

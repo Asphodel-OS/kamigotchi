@@ -1,22 +1,22 @@
+import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 import { Address, getAddress } from 'viem';
+import { useWatchBlockNumber } from 'wagmi';
 
-import { EntityID } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { getConfigAddress } from 'app/cache/config';
 import { getItemByIndex } from 'app/cache/item';
-import { ModalWrapper, Overlay, ProgressBar, Tooltip } from 'app/components/library';
+import { ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { ETH_INDEX } from 'constants/items';
 import { useERC20Balance, usePresaleInfo } from 'network/chain';
-import { useWatchBlockNumber } from 'wagmi';
 import { Info } from './controls/Info';
-
-const StartTime = Math.floor(Date.now() / 1000) + 3600 * 24;
+import { Footer } from './Footer';
+import { Header } from './Header';
 
 export function registerPresaleModal() {
   registerUIComponent(
@@ -52,7 +52,7 @@ export function registerPresaleModal() {
 
       // ticking
       useEffect(() => {
-        const tick = () => setTick(Date.now());
+        const tick = () => setTick(Math.floor(Date.now() / 1000));
         const timerID = setInterval(tick, 1000);
         return () => clearInterval(timerID);
       }, []);
@@ -127,58 +127,19 @@ export function registerPresaleModal() {
         window.open('https://docs.kamigotchi.io/onyx', '_blank');
       };
 
-      ////////////////
-      // COMPONENTS
-
-      // const MockUpData = () => {
-      //   return (
-      //     <Data>
-      //       <Numbers style={{ marginBottom: `0.2vw` }}>Your allo: {presaleData.allo}</Numbers>
-      //       <Numbers style={{ marginBottom: `0.8vw` }}>You bought: {presaleData.bought}</Numbers>
-      //     </Data>
-      //   );
-      // };
-
-      // const InputBox = () => {
-      //   return (
-      //     <InputButton>
-      //       <Input
-      //         type='number'
-      //         min='0'
-      //         onKeyDown={(e) => {
-      //           if (e.key === '-') e.preventDefault();
-      //         }}
-      //         ref={inputRef}
-      //         onChange={(e) => updateInput(Number(e.target.value))}
-      //       />
-      //       <ActionButton
-      //         text={enoughApproval() ? 'Buy' : 'Approve'}
-      //         disabled={!enoughCurrency()}
-      //         onClick={() => (enoughApproval() ? buyTx(toBuy) : approveTx(toBuy))}
-      //       />
-      //     </InputButton>
-      //   );
-      // };
-
       /////////////////
       // DISPLAY
 
       return (
         <ModalWrapper
           id='presale'
-          footer={<ProgressBar current={presaleData.totalDeposits} max={presaleData.depositCap} />}
+          footer={<Footer data={presaleData} />}
           // header={<ModalHeader title='Presale' icon={ItemImages.onyx} />}
           noPadding
           overlay
         >
           <Container>
-            <Overlay left={0.9} top={0.9}>
-              <Text size={1.2}>Mint is Live</Text>
-            </Overlay>
-            {/* <Overlay right={0.9} top={0.9}>
-              <Text size={1.2}>Mint is Live</Text>
-            </Overlay> */}
-            <Title>$ONYX Presale</Title>
+            <Header data={presaleData} />
             <Content>
               <OnyxColumn>
                 <Tooltip
@@ -202,8 +163,8 @@ export function registerPresaleModal() {
 }
 
 const Container = styled.div`
-  gap: 0.6vw;
   height: 100%;
+  gap: 0.6vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -217,28 +178,18 @@ const Content = styled.div`
 
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
 `;
 
 const OnyxColumn = styled.div`
   width: 24vw;
-  height: 100%;
+  height: 32vh;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-`;
-
-const Title = styled.div`
-  font-size: 2.7vw;
-  margin-top: 1.8vw;
-`;
-
-const Text = styled.div<{ size: number }>`
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
 `;
 
 const Image = styled.img`
