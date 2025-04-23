@@ -121,6 +121,8 @@ export const parseTargetShape = (
   if (!forShape || forShape === '') return target;
   else if (forShape === 'ACCOUNT') return getAccountFrom(world, components, target);
   else if (forShape === 'ROOM') return getRoomFrom(world, components, target);
+  else if (forShape === 'GLOBAL')
+    return undefined; // a hack to signal holderID = 0
   else return target;
 };
 

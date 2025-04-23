@@ -7,7 +7,7 @@ import { IComponent as IComp } from "solecs/interfaces/IComponent.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IDAnchorComponent, ID as IDAnchorCompID } from "components/IDAnchorComponent.sol";
 import { IDOwnsQuestComponent, ID as OwnQuestCompID } from "components/IDOwnsQuestComponent.sol";
 import { IsCompleteComponent, ID as IsCompleteCompID } from "components/IsCompleteComponent.sol";
@@ -18,6 +18,7 @@ import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
+import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibDisabled } from "libraries/utils/LibDisabled.sol";
@@ -130,7 +131,13 @@ library LibQuest {
   ) internal returns (uint256) {
     string memory _type = TypeComponent(getAddrByID(components, TypeCompID)).get(conditionID);
     uint32 index = IndexComponent(getAddrByID(components, IndexCompID)).safeGet(conditionID);
-    uint256 amount = LibData.get(components, accID, index, _type);
+    string memory for_ = ForComponent(getAddrByID(components, ForCompID)).safeGet(conditionID);
+    uint256 amount = LibData.get(
+      components,
+      LibConditional.parseTargetShape(components, accID, for_),
+      index,
+      _type
+    );
 
     // copy an objective
     uint256 id = genObjSnapshotID(questID, logicType, _type, index);

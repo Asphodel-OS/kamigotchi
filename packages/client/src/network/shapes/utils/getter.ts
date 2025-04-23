@@ -25,14 +25,12 @@ export const getBalance = (
   index: number | undefined,
   type: string
 ): number => {
-  if (!holder) return 0;
+  // todo: have a better pattern
+  // a hack for global context. undefined entityID represents holderID = 0 (global)
+  if (!holder) return getData(world, components, '0' as EntityID, type, index ?? 0);
 
-  const { Level, RoomIndex } = components;
+  const { RoomIndex } = components;
   let holderID = world.entities[holder];
-
-  if (type.includes('GLOBAL')) {
-    holderID = '0x0000000000000000000000000000000000000000' as EntityID;
-  }
 
   if (type === 'ITEM') {
     return getItemBalance(world, components, holderID, index ?? 0);
