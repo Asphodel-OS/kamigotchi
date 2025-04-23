@@ -2,7 +2,7 @@ import { AdminAPI } from '../api';
 import { initAuctions } from './auctions';
 
 import { initAuth, initLocalAuth } from './auth';
-import { initConfigs, initLocalConfigs, initTestingConfigs } from './configs';
+import { initConfigs, initLocalConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
@@ -15,7 +15,6 @@ import { initRelationships } from './relationships';
 import { initNodes, initRooms } from './rooms';
 import { initSkills } from './skills';
 import { initSnapshot } from './snapshot';
-import { initTestingWorldWL } from './testing';
 import { initTraits } from './traits';
 
 export async function initAll(api: AdminAPI) {
@@ -63,7 +62,7 @@ export async function initAll(api: AdminAPI) {
     await initAllLocal(api);
   } else if (process.env.NODE_ENV === 'testing') {
     await initAllTesting(api);
-    await initGachaPool(api, 100);
+    await initGachaPool(api, 2222);
   } else {
     await initGachaPool(api, 2222);
   }
@@ -79,8 +78,8 @@ export async function initAllLocal(api: AdminAPI) {
 }
 
 export async function initAllTesting(api: AdminAPI) {
-  await initTestingConfigs(api);
-  await initTestingWorldWL(api);
+  // await initTestingConfigs(api);
+  // await initTestingWorldWL(api);
 }
 
 export { deleteAuctions, initAuctions, reviseAuctions } from './auctions';
