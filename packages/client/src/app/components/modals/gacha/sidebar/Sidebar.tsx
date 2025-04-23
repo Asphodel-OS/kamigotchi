@@ -1,15 +1,25 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcAuctionCost } from 'app/cache/auction';
+import { GachaMintConfig } from 'app/cache/config';
 import { useTokens, useVisibility } from 'app/stores';
-import { GACHA_TICKET_INDEX, MUSU_INDEX, ONYX_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
+import {
+  ETH_INDEX,
+  GACHA_TICKET_INDEX,
+  MUSU_INDEX,
+  ONYX_INDEX,
+  REROLL_TICKET_INDEX,
+} from 'constants/items';
 import { toERC20DisplayUnits } from 'network/chain';
 import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
+import { GachaMintData } from 'network/shapes/Gacha';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami/types';
+
 import { Filter, Sort, TabType, ViewMode } from '../types';
 import { Controls } from './controls/Controls';
 import { Footer } from './Footer';
@@ -19,7 +29,9 @@ interface Props {
   actions: {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
-    mint: (balance: number) => Promise<boolean>;
+    mintPublic: (amount: number) => void;
+    mintWL: () => void;
+    pull: (balance: number) => Promise<boolean>;
     reroll: (kamis: Kami[]) => Promise<boolean>;
     reveal: (commits: Commit[]) => Promise<void>;
   };
@@ -40,6 +52,14 @@ interface Props {
       gacha: Auction;
       reroll: Auction;
     };
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+      whitelisted: boolean;
+    };
   };
   state: {
     quantity: number;
@@ -51,13 +71,14 @@ interface Props {
   utils: {
     getItem: (index: number) => Item;
     getItemBalance: (index: number) => number;
+    isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
 
 export const Sidebar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
   const { mode, tab, setTab } = controls;
-  const { auctions, commits } = data;
+  const { auctions, commits, mint } = data;
   const { tick, quantity } = state;
   const { getItem, getItemBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
@@ -105,17 +126,14 @@ export const Sidebar = (props: Props) => {
     } else if (tab === 'REROLL') {
       if (mode === 'DEFAULT') setPayItem(getItem(REROLL_TICKET_INDEX));
       else if (mode === 'ALT') setPayItem(getItem(ONYX_INDEX));
-    } else {
-      if (mode === 'DEFAULT') setPayItem(getItem(MUSU_INDEX));
-      else if (mode === 'ALT') setPayItem(getItem(ONYX_INDEX));
-    }
+    } else if (tab === 'MINT') setPayItem(getItem(ETH_INDEX));
   };
 
   // update the sale item according to tab/mode
   const updateSaleItem = () => {
-    if (mode !== 'ALT') return;
-    if (tab === 'GACHA') setSaleItem(getItem(GACHA_TICKET_INDEX));
-    else if (tab === 'REROLL') setSaleItem(getItem(REROLL_TICKET_INDEX));
+    if (tab === 'GACHA' && mode === 'ALT') setSaleItem(getItem(GACHA_TICKET_INDEX));
+    else if (tab === 'REROLL' && mode === 'ALT') setSaleItem(getItem(REROLL_TICKET_INDEX));
+    else if (tab === 'MINT') setSaleItem(getItem(GACHA_TICKET_INDEX));
   };
 
   // update the balance according to tab/mode
@@ -137,10 +155,30 @@ export const Sidebar = (props: Props) => {
   // update the price according to tab/mode
   const updatePrice = () => {
     if (mode === 'DEFAULT') setPrice(quantity);
-    else if (tab === 'GACHA') setPrice(calcAuctionCost(auctions.gacha, quantity));
-    else if (tab === 'REROLL')
-      setPrice(toERC20DisplayUnits(calcAuctionCost(auctions.reroll, quantity)));
-    else setPrice(0);
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') setPrice(quantity);
+      else if (mode === 'ALT') {
+        const auctionCost = calcAuctionCost(auctions.gacha, quantity);
+        setPrice(auctionCost);
+      }
+    } else if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') setPrice(quantity);
+      else if (mode === 'ALT') {
+        const rawAuctionCost = calcAuctionCost(auctions.reroll, quantity);
+        const formattedAuctionCost = toERC20DisplayUnits(rawAuctionCost);
+        setPrice(formattedAuctionCost);
+      }
+    } else if (tab === 'MINT') {
+      if (mode === 'DEFAULT') {
+        const rawPrice = quantity * mint.config.whitelist.price;
+        const formattedPrice = toERC20DisplayUnits(rawPrice);
+        setPrice(formattedPrice);
+      } else if (mode === 'ALT') {
+        const rawPrice = quantity * mint.config.public.price;
+        const formattedPrice = toERC20DisplayUnits(rawPrice);
+        setPrice(formattedPrice);
+      }
+    }
   };
 
   return (
@@ -149,13 +187,14 @@ export const Sidebar = (props: Props) => {
       <Controls
         actions={actions}
         controls={controls}
-        data={{ balance, commits, payItem, saleItem }}
+        data={{ balance, commits, payItem, saleItem, mint }}
         state={{ ...state, price }}
+        utils={utils}
       />
       <Footer
         actions={actions}
         controls={controls}
-        data={{ balance, payItem, saleItem }}
+        data={{ ...data, balance, payItem, saleItem }}
         state={{ ...state, price, setPrice }}
       />
     </Container>

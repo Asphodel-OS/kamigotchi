@@ -1,7 +1,7 @@
 import { EntityID, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { Commit, getHolderCommits } from './Commit';
+import { Commit, getHolderCommits } from '../Commit';
 
 export const getGachaCommits = (
   world: World,

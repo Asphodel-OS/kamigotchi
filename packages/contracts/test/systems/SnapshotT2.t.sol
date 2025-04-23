@@ -13,8 +13,8 @@ contract SnapshotT2Test is SetupTemplate {
     amts[1] = 25;
 
     vm.prank(deployer);
-    __SnapshotT2System.distributePassports(owners, amts);
+    __SnapshotT2System.distributePassports(abi.encode(owners, amts));
     vm.prank(deployer);
-    __SnapshotT2System.whitelistAccounts(owners);
+    __SnapshotT2System.whitelistAccounts(abi.encode(owners));
   }
 }

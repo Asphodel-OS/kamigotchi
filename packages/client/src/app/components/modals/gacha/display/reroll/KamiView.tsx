@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { KamiBlock } from '../KamiBlock';
 
 interface Props {
   data: {
-    accountEntity: EntityIndex;
+    account: Account;
   };
   state: {
     setQuantity: (balance: number) => void;
@@ -25,7 +25,7 @@ interface Props {
 
 export const KamiView = (props: Props) => {
   const { data, state, utils, isVisible } = props;
-  const { accountEntity } = data;
+  const { account } = data;
   const { setQuantity, selectedKamis, setSelectedKamis, tick } = state;
   const { getAccountKamis } = utils;
   const { modals } = useVisibility();
@@ -37,7 +37,7 @@ export const KamiView = (props: Props) => {
     if (!isVisible || !modals.gacha) return;
     const party = getAccountKamis();
     setPartyKamis(party);
-  }, [accountEntity, tick]);
+  }, [account, tick]);
 
   /////////////////
   // INTERACTION

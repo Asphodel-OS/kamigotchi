@@ -7,6 +7,28 @@ const SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
 /////////////////
 // NORMIETIME
 
+export const formatCountdown = (secs: number) => {
+  const pad = (n: number) => (n < 10 ? `0${n}` : n);
+
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor(secs / 60) - h * 60;
+  const s = Math.floor(secs - h * 3600 - m * 60);
+
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+};
+
+// parse an epoch time into a date string
+export const getDateString = (epochTime?: number, precision = 3): string => {
+  const time = epochTime ? epochTime * 10 ** (3 - precision) : Date.now();
+  const date = new Date(time);
+  return date.toLocaleString('default', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+};
+
 // get the string representation of a time delta (s)
 // NOTE: logic here is a bit messy. clean this up at some point
 export const getTimeDeltaString = (delta: number): string => {
@@ -107,19 +129,4 @@ export const getPhaseIcon = (index: number): string => {
   else if (index == 2) return EvenfallIcon;
   else if (index == 3) return MoonsideIcon;
   else return '';
-};
-
-/////////////////
-// IRL TIME
-
-// parse an epoch time into a date string
-export const getDateString = (epochTime?: number, precision = 3): string => {
-  const time = epochTime ? epochTime * 10 ** (3 - precision) : Date.now();
-  const date = new Date(time);
-  return date.toLocaleString('default', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  });
 };

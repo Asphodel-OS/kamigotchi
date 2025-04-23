@@ -1,6 +1,6 @@
-import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami';
 import { TabType, ViewMode } from '../../types';
@@ -14,7 +14,7 @@ interface Props {
     tab: TabType;
   };
   data: {
-    accountEntity: EntityIndex;
+    account: Account;
     auction: Auction;
   };
   state: {

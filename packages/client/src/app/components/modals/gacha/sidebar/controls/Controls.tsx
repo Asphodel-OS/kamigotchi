@@ -1,9 +1,13 @@
+import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { GachaMintConfig } from 'app/cache/config';
 import { Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
+import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
+
 import { Filter, Sort, TabType, ViewMode } from '../../types';
 import { Mint } from './mint/Mint';
 import { Pool } from './pool/Pool';
@@ -27,6 +31,14 @@ interface Props {
     commits: Commit[];
     payItem: Item;
     saleItem: Item;
+    mint: {
+      config: GachaMintConfig;
+      data: {
+        account: GachaMintData;
+        gacha: GachaMintData;
+      };
+      whitelisted: boolean;
+    };
   };
   state: {
     quantity: number;
@@ -34,6 +46,9 @@ interface Props {
     price: number;
     selectedKamis: Kami[];
     tick: number;
+  };
+  utils: {
+    isWhitelisted: (entity: EntityIndex) => boolean;
   };
 }
 
@@ -65,7 +80,7 @@ export const Controls = (props: Props) => {
       )}
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
       <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
-      <Mint isVisible={tab === 'MINT'} />
+      <Mint isVisible={tab === 'MINT'} controls={controls} data={data} state={state} />
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>

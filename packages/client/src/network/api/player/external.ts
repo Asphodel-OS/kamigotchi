@@ -1,11 +1,9 @@
 import { BigNumberish } from 'ethers';
-import { approveERC20, presaleDeposit } from 'network/chain';
 import { parseEther } from 'viem';
 
-export function externalAPI(callQueue: any) {
-  /////////////////
-  // NON-MUD
+import { approveERC20, presaleDeposit } from 'network/chain';
 
+export function externalAPI(callQueue: any) {
   // parses to ether (1e18) for convienience
   function send(address: string, amount: BigNumberish) {
     return callQueue({

@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
+import { GachaMintConfig, getGachaMintConfig } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { getKami } from 'app/cache/kami';
@@ -18,7 +19,8 @@ import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
-import { getGachaCommits } from 'network/shapes/Gacha';
+import { hasFlag } from 'network/shapes/Flag';
+import { getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
 import { Kami, queryKamis } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { playVend } from 'utils/sounds';
@@ -70,6 +72,10 @@ export function registerGachaModal() {
                 getInventoryBalance(inventories, index),
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, kamiOptions, false),
+              getMintConfig: () => getGachaMintConfig(world, components),
+              getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
+              isWhitelisted: (entity: EntityIndex) =>
+                hasFlag(world, components, entity, 'MINT_WHITELISTED'),
             },
           };
         })
@@ -78,7 +84,9 @@ export function registerGachaModal() {
       const { actions, world, api } = network;
       const { accountEntity, commits, poolKamis } = data;
       const { spenderAddr } = tokens;
-      const { getAccount, getAuction, getItem, getItemBalance } = utils;
+      const { getAccount, getAuction, getItemBalance } = utils;
+      const { getMintConfig, getMintData, isWhitelisted } = utils;
+
       const { modals, setModals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
@@ -88,16 +96,25 @@ export function registerGachaModal() {
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
 
+      // general data
+      const [account, setAccount] = useState<Account>(NullAccount);
+
+      // auction data
+      const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
+      const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
+
+      // mint data
+      const [mintConfig, _] = useState<GachaMintConfig>(getMintConfig());
+      const [accountMintData, setAccountMintData] = useState(getMintData(account.id));
+      const [gachaMintData, setGachaMintData] = useState(getMintData('0' as EntityID));
+      const [whitelisted, setWhitelisted] = useState(isWhitelisted(account.entity));
+
       // modal state
       const [quantity, setQuantity] = useState(0);
       const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
       const [tick, setTick] = useState(Date.now());
-
-      const [account, setAccount] = useState<Account>(NullAccount);
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
-      const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
-      const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
 
       /////////////////
       // SUBSCRIPTIONS
@@ -114,11 +131,20 @@ export function registerGachaModal() {
       // update the data when the modal is open
       useEffect(() => {
         if (!modals.gacha) return;
-        if (mode === 'ALT') {
-          if (tab === 'GACHA') setGachaAuction(getAuction(GACHA_TICKET_INDEX));
-          else if (tab === 'REROLL') setRerollAuction(getAuction(REROLL_TICKET_INDEX));
+        const account = getAccount();
+        setAccount(account);
+
+        if (tab === 'GACHA' && mode === 'ALT') {
+          const auction = getAuction(GACHA_TICKET_INDEX);
+          setGachaAuction(auction);
+        } else if (tab === 'REROLL' && mode === 'ALT') {
+          const auction = getAuction(REROLL_TICKET_INDEX);
+          setRerollAuction(auction);
+        } else if (tab === 'MINT') {
+          setAccountMintData(getMintData(account.id));
+          setGachaMintData(getMintData('0' as EntityID));
+          setWhitelisted(isWhitelisted(account.entity));
         }
-        setAccount(getAccount());
       }, [modals.gacha, tab, mode, accountEntity, tick]);
 
       // open the party modal when the reveal is triggered
@@ -141,7 +167,7 @@ export function registerGachaModal() {
               revealTx(filtered);
               setTriedReveal(true);
             } catch (e) {
-              console.log('Gacha.tsx: handleMint() reveal failed', e);
+              console.log('Gacha.tsx: handlePull() reveal failed', e);
             }
           }
         };
@@ -173,6 +199,7 @@ export function registerGachaModal() {
         );
       };
 
+      // approve the spend of an ERC20 token
       const approveTx = async (payItem: Item, price: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -189,8 +216,44 @@ export function registerGachaModal() {
         });
       };
 
-      // get a pet from gacha with Mint20
-      const mintTx = (amount: number) => {
+      // mint a Gacha Ticket from the WL Mint
+      const mintWLTx = () => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'GachaMintWL',
+          params: [],
+          description: `Acquiring Gacha Ticket from the WL Mint`,
+          execute: async () => {
+            return api.gacha.tickets.buy.whitelist();
+          },
+        });
+        return actionID;
+      };
+
+      // mint a Gacha Ticket from the Public Mint
+      const mintPublicTx = (amount: number) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions!.add({
+          id: actionID,
+          action: 'GachaMintPublic',
+          params: [amount],
+          description: `Acquiring ${amount} Gacha Tickets from the Public Mint`,
+          execute: async () => {
+            return api.gacha.tickets.buy.public(amount);
+          },
+        });
+        return actionID;
+      };
+
+      // pull a pet from gacha with a Gacha Ticket
+      const pullTx = (amount: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -207,7 +270,7 @@ export function registerGachaModal() {
         return actionID;
       };
 
-      // reroll a pet with eth payment
+      // reroll a pet with a Reroll Ticket
       const rerollTx = (kamis: Kami[]) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -261,10 +324,10 @@ export function registerGachaModal() {
         setQuantity(0);
       };
 
-      const handleMint = async (amount: number) => {
+      const handlePull = async (amount: number) => {
         try {
           setWaitingToReveal(true);
-          const mintActionID = mintTx(amount);
+          const mintActionID = pullTx(amount);
           if (!mintActionID) throw new Error('Mint reveal failed');
 
           await waitForActionCompletion(
@@ -275,7 +338,7 @@ export function registerGachaModal() {
           playVend();
           return true;
         } catch (e) {
-          console.log('Gacha: handleMint() failed', e);
+          console.log('Gacha: handlePull() failed', e);
         }
         return false;
       };
@@ -324,6 +387,10 @@ export function registerGachaModal() {
                 ...data,
                 account,
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
+                mint: {
+                  config: mintConfig,
+                  data: { account: accountMintData, gacha: gachaMintData },
+                },
               }}
               state={{ setQuantity, selectedKamis, setSelectedKamis, tick }}
               utils={utils}
@@ -332,7 +399,9 @@ export function registerGachaModal() {
               actions={{
                 approve: approveTx,
                 bid: auctionTx,
-                mint: handleMint,
+                mintPublic: mintPublicTx,
+                mintWL: mintWLTx,
+                pull: handlePull,
                 reroll: handleReroll,
                 reveal: revealTx,
               }}
@@ -350,6 +419,11 @@ export function registerGachaModal() {
                 ...data,
                 inventories: account.inventories ?? [],
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
+                mint: {
+                  config: mintConfig,
+                  data: { account: accountMintData, gacha: gachaMintData },
+                  whitelisted, // whether the account is whitelisted for mint
+                },
               }}
               state={{
                 quantity,
@@ -359,7 +433,7 @@ export function registerGachaModal() {
                 tick,
               }}
               utils={{
-                getItem,
+                ...utils,
                 getItemBalance: (index: number) => getItemBalance(account.inventories ?? [], index),
               }}
             />

@@ -6,32 +6,41 @@ import { calcPercentCompletion } from 'utils/numbers';
 interface Props {
   total: number;
   current: number;
+  width?: number;
   height?: number;
-  colors: {
-    background: string;
-    progress: string;
+  colors?: {
+    background?: string;
+    progress?: string;
   };
 }
 
 export const ProgressBar = (props: Props) => {
   const { total, current, height, colors } = props;
 
+  const getBgColor = () => {
+    return colors?.background ?? '#fff';
+  };
+
+  const getFgColor = () => {
+    return colors?.progress ?? '#000';
+  };
+
   return (
-    <Container>
+    <Container width={props.width}>
       <Tooltip text={[`${current}/${total}`]} grow>
         <Bar
           percent={calcPercentCompletion(current, total)}
           height={height ?? 1.2}
-          bgColor={colors.background}
-          fgColor={colors.progress}
+          bgColor={getBgColor()}
+          fgColor={getFgColor()}
         />
       </Tooltip>
     </Container>
   );
 };
 
-const Container = styled.div`
-  width: 100%;
+const Container = styled.div<{ width?: number }>`
+  width: ${({ width }) => (width ? `${width}vw;` : '100%')};
   opacity: 0.9;
 
   display: flex;

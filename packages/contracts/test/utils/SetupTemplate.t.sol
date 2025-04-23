@@ -150,9 +150,17 @@ abstract contract SetupTemplate is TestSetupImports {
     _initCommonTraits();
   }
 
-  function _fastForward(uint timeDelta) internal {
-    _currTime += timeDelta;
+  function _getTime() internal view returns (uint) {
+    return _currTime;
+  }
+
+  function _setTime(uint time) internal {
+    _currTime = time;
     vm.warp(_currTime);
+  }
+
+  function _fastForward(uint timeDelta) internal {
+    _setTime(_currTime + timeDelta);
   }
 
   /////////////////
@@ -248,13 +256,12 @@ abstract contract SetupTemplate is TestSetupImports {
     return LibAccount.getByOwner(components, owner);
   }
 
-  // create an account. autogenerate names by the address for simplicity
+  // create an account
   function _registerAccount(uint playerIndex) internal returns (uint) {
     address owner = _owners[playerIndex];
     address operator = _operators[owner];
 
     vm.startPrank(owner);
-    // string memory name = LibString.slice(LibString.toHexString(owner), 0, 15); // maxlen 16
     uint256 accID = abi.decode(
       _AccountRegisterSystem.executeTyped(operator, LibString.toString(playerIndex)),
       (uint256)

@@ -107,7 +107,7 @@ export const Header = (props: Props) => {
           </StatsContainer>
         </Row>
         <Overlay bottom={0.75} right={0.75}>
-          <Footer onClick={handleAccountClick()}>{isMine() ? 'yours' : owner.name}</Footer>
+          <Footer onClick={handleAccountClick}>{isMine() ? 'yours' : owner.name}</Footer>
         </Overlay>
       </Content>
     </Container>
