@@ -1,35 +1,44 @@
-﻿.,Status,Index,Name,Exits,Description,Z,Y,X
-,Ready,0,deadzone,,This room is for debugging! You may not enter.,0,0,0
-,In Game,1,Misty Riverside,20,The air is quiet and the trees grow thick overhead. In each direction the murky river disappears into mist and darkness.,1,1,3
-,In Game,2,Tunnel of Trees,13,A gate marks the boundary between the forest and the plains. The incongruous “SHOP” door has a cool glow.,1,3,3
-,In Game,3,Torii Gate,,The Torii gate standing here radiates an aura of spiritual significance. Piles of scrap and garbage rise like mountains on the horizon.,1,4,3
-,In Game,4,Vending Machine,,"A vending machine stands deep in the scrap, well stocked and operating despite the remote location and cut power cord.",1,6,3
-,In Game,5,Restricted Area,,"A restricted area, but no one is watching. Follow this road lined with cherry trees to reach an office complex. ",1,9,3
-,In Game,6,Labs Entrance,28,The exterior of this building was designed to resemble a shrine almost as much as an office.,1,10,4
-,In Game,9,Forest: Old Growth,,You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.,1,8,5
-,In Game,10,Forest: Insect Node,,The buzzing is loudest here. This mound draws insects of all types toward it. They writhe together in a trance.,1,5,5
-,In Game,11,Temple by the Waterfall,"24,15","A humble shrine lends this waterfall basin a peaceful aura, but the air has an unpleasant aroma like dirty laundry,",1,11,6
-,In Game,12,Scrap Confluence,,A collection of strange and hard to identify objects buried deep in the scrapyard. It could be dangerous to get close.,1,6,1
-,In Game,13,Convenience Store,2,"The glowing blue door seems to lead to a convenience store. Where is this? That “Exit” sign might let you leave. ",2,3,4
-,In Game,25,Lost Skeleton,,A crumbling human skeleton lies prone on the ground. It looks to have been decomposing for decades.,1,9,6
-,In Game,26,Trash-Strewn Graves,,Ancient gravestones emerge from the thinning piles of trash at the farthest edge of the scrapyard.,1,8,2
-,In Game,29,Misty Forest Path,,Dense mist and canopy blocks the sky. It would be impossible to navigate in this forest of illusion. Just follow the path.,1,2,3
-,In Game,30,Scrapyard Entrance,,"The detritus ahead stands in dark mountain peaks. A path has been dug for you through the towering piles of garbage. ",1,5,3
-,In Game,31,Scrapyard Exit,,"A literal and metaphorical fork in the road. Nature, man’s work and its leftovers. ",1,8,3
-,In Game,32,Road To Labs,,A paved road curled between green hills. The blacktop cracks as the world around it grows.,1,10,3
-,In Game,33,Forest Entrance,,"The forest canopy blots out the sky above. An eerie silence overwhelms the expected sounds of life. ",1,8,4
-,In Game,34,Deeper Into Scrap,,"Deeper into the scrapyard down a narrow path. After every turn, the mountains of trash grow taller and more precarious.",1,6,2
-,In Game,35,Forest Road 1,,"The forest grows so thick that the road is barely visible at times. The air is still, but the trees sway and twist in the darkness.",1,6,5
-,In Game,36,Forest Road 2,,"It seems as if the trees are parting to clear a path ahead, then shuffling back together. ",1,9,5
-,In Game,37,Forest Road 3,,"The mist is thinner here and the sky can be seen through holes in the canopy. ",1,10,6
-,In Game,47,Scrap Paths,,"The mountains of trash look more like hills, but the forest is no longer visible on the horizon.",1,7,3
-,In Game,48,"Forest Road 4 ",,The forest is dark and impenetrable. Thick tree trunks stretch high above.,1,7,5
-,In Game,49,Clearing,,"A secluded clearing, away from both the illusory mists of the labyrinthine forest and the towering trash maze of the scrapyard. ",1,9,7
-,In Game,50,Ancient Forest Entrance,,"The undergrowth here is very thick; there’s only a few paths to follow through the trees…. The forest here feels packed, almost a jungle.",1,5,6
-,In Game,51,"Scrap-Littered Undergrowth ",,"There are fragments of scrap metal littered around the forest here. ",1,5,7
-,In Game,52,Airplane Crash,54,"The wreckage of a plane is resting here, deep in the forest.",1,5,8
-,In Game,53,Blooming Tree,,"This tree has been….. struck by lightning, perhaps?",1,4,7
-,In Game,54,Plane Interior,52,The air inside this airplane is…. sterile. Something’s wrong here.,2,5,8
-,In Game,55,"Shady Path ",,The path runs along the edge of the forest for a little while. It’s quiet here.,1,3,4
-,In Game,56,Butterfly Forest,,The forest here grows thicker once more. The blue butterflies seem particularly common in this place.,1,3,5
-,In Game,57,River Crossing,,"This seems like a natural spot to try to cross the river… and indeed, there was once a bridge…",1,3,6
+﻿loadbearing,Status,Index,Name,Exits,Description,Z,Y,X,Exit Refs
+,Ready,0,deadzone,,This room is for debugging! You may not enter.,0,0,0,
+,In Game,1,Misty Riverside,20,The air is quiet and the trees grow thick overhead. In each direction the murky river disappears into mist and darkness.,1,1,3,Ancient Riverbed (https://www.notion.so/Ancient-Riverbed-1b90220c38848177a912db5ded762ef4?pvs=21)
+,In Game,2,Tunnel of Trees,13,A gate marks the boundary between the forest and the plains. The incongruous “SHOP” door has a cool glow.,1,3,3,Convenience Store (https://www.notion.so/Convenience-Store-1b90220c388481228373d0f0ebe6e1f1?pvs=21)
+,In Game,3,Torii Gate,,The Torii gate standing here radiates an aura of spiritual significance. Piles of scrap and garbage rise like mountains on the horizon.,1,4,3,
+,In Game,4,Vending Machine,,"A vending machine stands deep in the scrap, well stocked and operating despite the remote location and cut power cord.",1,6,3,
+,In Game,5,Restricted Area,,"A restricted area, but no one is watching. Follow this road lined with cherry trees to reach an office complex. ",1,9,3,
+,In Game,6,Labs Entrance,28,The exterior of this building was designed to resemble a shrine almost as much as an office.,1,10,4,Lobby (https://www.notion.so/Lobby-1b90220c388481838352c9cf8b23906c?pvs=21)
+,In Game,9,Forest: Old Growth,,You step into the forest and seem to enter a primordial age. The buzz of giant insects overwhelms your hearing.,1,8,5,
+,In Game,10,Forest: Insect Node,,The buzzing is loudest here. This mound draws insects of all types toward it. They writhe together in a trance.,1,5,5,
+,In Game,11,Temple by the Waterfall,"24,15","A humble shrine lends this waterfall basin a peaceful aura, but the air has an unpleasant aroma like dirty laundry,",1,11,6,"Impure Basin (https://www.notion.so/Impure-Basin-1b90220c3884818991edd1f7934aa03b?pvs=21), Temple Cave (https://www.notion.so/Temple-Cave-1b90220c388481fcaea7ed6a1b3d88ed?pvs=21)"
+,In Game,12,Scrap Confluence,,A collection of strange and hard to identify objects buried deep in the scrapyard. It could be dangerous to get close.,1,6,1,
+,In Game,13,Convenience Store,2,"The glowing blue door seems to lead to a convenience store. Where is this? That “Exit” sign might let you leave. ",2,3,4,Tunnel of Trees (https://www.notion.so/Tunnel-of-Trees-1b90220c388481d0b188c1ead3dd84ae?pvs=21)
+,In Game,25,Lost Skeleton,,A crumbling human skeleton lies prone on the ground. It looks to have been decomposing for decades.,1,9,6,
+,In Game,26,Trash-Strewn Graves,,Ancient gravestones emerge from the thinning piles of trash at the farthest edge of the scrapyard.,1,8,2,
+,In Game,29,Misty Forest Path,,Dense mist and canopy blocks the sky. It would be impossible to navigate in this forest of illusion. Just follow the path.,1,2,3,
+,In Game,30,Scrapyard Entrance,,"The detritus ahead stands in dark mountain peaks. A path has been dug for you through the towering piles of garbage. ",1,5,3,
+,In Game,31,Scrapyard Exit,,"A literal and metaphorical fork in the road. Nature, man’s work and its leftovers. ",1,8,3,
+,In Game,32,Road To Labs,,A paved road curled between green hills. The blacktop cracks as the world around it grows.,1,10,3,
+,In Game,33,Forest Entrance,,"The forest canopy blots out the sky above. An eerie silence overwhelms the expected sounds of life. ",1,8,4,
+,In Game,34,Deeper Into Scrap,,"Deeper into the scrapyard down a narrow path. After every turn, the mountains of trash grow taller and more precarious.",1,6,2,
+,In Game,35,Elder Path,,"The forest grows so thick that the road is barely visible at times. The air is still, but the trees sway and twist in the darkness.",1,6,5,
+,In Game,36,Parting Path,,"It seems as if the trees are parting to clear a path ahead, then shuffling back together. ",1,9,5,
+,In Game,37,Hollow Path,,"The mist is thinner here and the sky can be seen through holes in the canopy. ",1,10,6,
+,In Game,47,Scrap Paths,,"The mountains of trash look more like hills, but the forest is no longer visible on the horizon.",1,7,3,
+,In Game,48,Steps,,The forest is dark and impenetrable. Thick tree trunks stretch high above.,1,7,5,
+,In Game,49,Clearing,,"A secluded clearing, away from both the illusory mists of the labyrinthine forest and the towering trash maze of the scrapyard. ",1,9,7,
+,In Game,50,Ancient Forest Entrance,,"The undergrowth here is very thick; there’s only a few paths to follow through the trees…. The forest here feels packed, almost a jungle.",1,5,6,
+,In Game,51,"Scrap-Littered Undergrowth ",,"There are fragments of scrap metal littered around the forest here. ",1,5,7,
+,In Game,52,Airplane Crash,54,"The wreckage of a plane is resting here, deep in the forest.",1,5,8,Plane Interior (https://www.notion.so/Plane-Interior-1b90220c388481cf8036c7c48aad48b2?pvs=21)
+,In Game,53,Blooming Tree,,"This tree has been….. struck by lightning, perhaps?",1,4,7,
+,In Game,54,Plane Interior,52,The air inside this airplane is…. sterile. Something’s wrong here.,2,5,8,Airplane Crash (https://www.notion.so/Airplane-Crash-1b90220c388481729683d058a0f1010e?pvs=21)
+,In Game,55,"Shady Path ",,The path runs along the edge of the forest for a little while. It’s quiet here.,1,3,4,
+,In Game,56,Butterfly Forest,,The forest here grows thicker once more. The blue butterflies seem particularly common in this place.,1,3,5,
+,In Game,57,River Crossing,,"This seems like a natural spot to try to cross the river… and indeed, there was once a bridge…",1,3,6,
+,To Deploy,60,Scrap Trees,,"A clearing on the border between the forest and scrapyard. You see a shovel and a notebook lying on the grass, each bisected down the middle. The cuts are perfectly clean.",1,1,5,
+,To Deploy,61,Decaying Forest Path,,Dead stumps and knotted trees tell you the forest here is in declining health. Giant centipedes march back and forth; a living trail that leads deeper into the woods.,1,1,7,
+,To Deploy,62,Centipedes,,A dark hollow beneath a dying tree choked with polypore fungi. Mushrooms coat every tree in this part of the forest. The centipedes seem to like this place.,1,1,8,
+,To Deploy,63,Deeper Forest Path,,A stretch of forest road with light canopy and open sky. Wildflowers grow just off the path.,1,2,6,
+,To Deploy,64,Burning Room,65,"In the center of the hut, a large cauldron bubbles over a low fire. Dried flowers and herbs hang overhead, and jars with suspicious labels sit on a shelf in the back.
+
+Someone was just here brewing something, but the hut is empty for now.",,,,Forest Hut  (https://www.notion.so/Forest-Hut-1b90220c3884819dbd53d32278847632?pvs=21)
+,To Deploy,65,"Forest Hut ",64,Smoke rises from a small reed hut that sits tucked behind boulders in a secluded part of the forest. The door is open.,1,1,6,Burning Room (https://www.notion.so/Burning-Room-1b90220c3884811fa777e0ca36a0d5e1?pvs=21)
+,To Deploy,66,Trading Room,,,1,2,2,

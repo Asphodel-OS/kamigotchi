@@ -48,6 +48,7 @@ import shredded_mint from './shredded_mint.png';
 import spice_grinder from './spice_grinder.png';
 import stone from './stone.png';
 import sunset_apple_mochi from './sunset_apple_mochi.png';
+import vipp from './vipp.png';
 import wooden_stick from './wooden_stick.png';
 import xp_candy_huge from './xp_candy_huge.png';
 import xp_candy_large from './xp_candy_large.png';
@@ -64,13 +65,16 @@ export const ItemImages = {
   black_poppy: black_poppy,
   black_poppy_extract: black_poppy_extract,
   bless_potion: bless_potion,
+  candle: candle,
   cheeseburger: cheeseburger,
   daffodil: daffodil,
   essence_of_daffodil: essence_of_daffodil,
   gacha_ticket: gacha_ticket,
   gakki_cookie_sticks: gakki_cookie_sticks,
   gaokerena_mochi: gaokerena_mochi,
+  gingerbread_cookie: gingerbread_cookie,
   grace_potion: grace_potion,
+  greater_xp_potion: greater_xp_potion,
   holy_dust: holy_dust,
   ice_cream: ice_cream,
   glass_jar: glass_jar,
@@ -78,8 +82,9 @@ export const ItemImages = {
   kamigotchi_world_passport: kamigotchi_world_passport,
   mana_mochi: mana_mochi,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
-  mint: mint,
   microplastics: microplastics,
+  mint: mint,
+  mistletoe: mistletoe,
   musu: musu,
   onyx: onyx,
   pine_cone: pine_cone,
@@ -102,14 +107,11 @@ export const ItemImages = {
   shredded_mint: shredded_mint,
   stone: stone,
   sunset_apple_mochi: sunset_apple_mochi,
+  vipp: vipp,
   wooden_stick: wooden_stick,
   xp_candy_huge: xp_candy_huge,
   xp_candy_large: xp_candy_large,
   xp_candy_medium: xp_candy_medium,
   xp_candy_small: xp_candy_small,
   xp_potion: xp_potion,
-  greater_xp_potion: greater_xp_potion,
-  candle: candle,
-  gingerbread_cookie: gingerbread_cookie,
-  mistletoe: mistletoe,
 };
