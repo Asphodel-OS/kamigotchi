@@ -118,11 +118,6 @@ export function registerPresaleModal() {
         });
       };
 
-      // const updateInput = (value: number) => {
-      //   setToBuy(value);
-      //   setToReceive(value * presaleData.price);
-      // };
-
       const openOnyxDocs = () => {
         window.open('https://docs.kamigotchi.io/onyx', '_blank');
       };
@@ -139,11 +134,11 @@ export function registerPresaleModal() {
           overlay
         >
           <Container>
-            <Header data={presaleData} />
+            <Header tick={tick} />
             <Content>
               <OnyxColumn>
                 <Tooltip
-                  text={['What is $ONYX?', '', 'Click to find out more!']}
+                  text={['What is $ONYX?', '', "Wouldn't you like to know."]}
                   alignText='center'
                 >
                   <Image src={ItemImages.onyx} onClick={openOnyxDocs} />
@@ -163,6 +158,7 @@ export function registerPresaleModal() {
 }
 
 const Container = styled.div`
+  background-color: #1d3441;
   height: 100%;
   gap: 0.6vw;
 
@@ -170,6 +166,8 @@ const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
+
+  user-select: none;
 `;
 
 const Content = styled.div`
@@ -197,8 +195,13 @@ const Image = styled.img`
   height: 24vh;
   max-height: 15vw;
   margin: 1.2vw;
+  background-color: transparent;
 
   image-rendering: pixelated;
+  filter: drop-shadow(-0.9vh -0.9vh 0.9vh #fff) drop-shadow(0.9vh 0.9vh 0.9vh #d0fe41)
+    drop-shadow(0 0 0.6vh #fff);
+
+  user-select: none;
 
   cursor: pointer;
   &:hover {

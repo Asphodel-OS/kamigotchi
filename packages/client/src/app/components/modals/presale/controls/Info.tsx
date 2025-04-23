@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { Tooltip } from 'app/components/library';
 import { PresaleData } from 'network/chain';
 import { useState } from 'react';
 import { InputButton } from './InputButton';
@@ -33,14 +34,14 @@ export const Info = (props: Props) => {
 
   // get the subtext above the button
   const getButtonSubtext = () => {
-    return `${(data.price * quantity).toLocaleString()} $ONYX`;
+    return `${(quantity / data.price).toLocaleString()} $ONYX`;
   };
 
   const getButtonText = () => {
-    if (quantity == 0) return 'Buy';
+    if (quantity == 0) return 'Claim';
     if (tokenBal.balance < quantity) return 'Poore';
     if (tokenBal.allowance < quantity) return 'Approve';
-    return 'Buy';
+    return 'Claim';
   };
 
   const getButtonTooltip = () => {
@@ -48,15 +49,11 @@ export const Info = (props: Props) => {
     if (quantity == 0) {
       tooltip = ['Sidelined?'];
     } else if (tokenBal.balance < quantity) {
-      tooltip = [
-        'too poore',
-        '',
-        `you need ${quantity - tokenBal.balance} more ETH to claim ${quantity * data.price}`,
-      ];
+      tooltip = ['too poore', `you have ${tokenBal.balance.toFixed(3)} $ETH`];
     } else if (tokenBal.allowance < quantity) {
-      tooltip = ['Approve', 'to spend', 'your ONYX'];
+      tooltip = ['Approve you $ETH', 'to claim your $ONYX'];
     } else {
-      tooltip = ['claim ' + quantity * data.price + ' ONYX', 'for ' + quantity + ' ETH'];
+      tooltip = [`purchase ${quantity / data.price} $ONYX`, `for ${quantity} $ETH`];
     }
     return tooltip;
   };
@@ -72,15 +69,24 @@ export const Info = (props: Props) => {
     <Container>
       <TextSection>
         <Text size={1.5}>Your Allocation</Text>
-        <Text size={0.9} shift={0.45}>
-          Total: {(data.allo * data.price).toLocaleString()}
-        </Text>
-        <Text size={0.9} shift={0.45}>
-          Claimed: {(data.bought * data.price).toLocaleString()}
-        </Text>
-        <Text size={0.9} shift={0.45}>
-          Claimable: {((data.allo - data.bought) * data.price).toLocaleString()}
-        </Text>
+        <Tooltip
+          text={[
+            `Total: ${data.allo.toFixed(3)}ETH`,
+            `Claimed: ${data.bought.toFixed(3)}ETH`,
+            `Claimable: ${(data.allo - data.bought).toFixed(3)}ETH`,
+          ]}
+          grow
+        >
+          <Text size={0.9} shift={0.6}>
+            Total: {(data.allo / data.price).toLocaleString()}
+          </Text>
+          <Text size={0.9} shift={0.6}>
+            Claimed: {(data.bought / data.price).toLocaleString()}
+          </Text>
+          <Text size={0.9} shift={0.6}>
+            Claimable: {((data.allo - data.bought) / data.price).toLocaleString()}
+          </Text>
+        </Tooltip>
       </TextSection>
       <ButtonSection>
         <InputButton
@@ -91,7 +97,13 @@ export const Info = (props: Props) => {
             onClick: getButtonAction(),
             disabled: isButtonDisabled(),
           }}
-          input={{ value: quantity, setValue: setQuantity, max: 0.5, min: 0, step: 0.001 }}
+          input={{
+            value: quantity,
+            setValue: setQuantity,
+            max: data.allo,
+            min: 0,
+            step: 0.01,
+          }}
         />
       </ButtonSection>
     </Container>
@@ -120,6 +132,7 @@ const TextSection = styled.div`
 `;
 
 const Text = styled.div<{ size: number; shift?: number }>`
+  color: #d0fe41;
   font-size: ${(props) => props.size}vw;
   line-height: ${(props) => props.size * 2.1}vw;
   padding-left: ${(props) => props.shift ?? 0}vw;

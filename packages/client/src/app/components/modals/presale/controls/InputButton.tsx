@@ -39,7 +39,7 @@ export const InputButton = (props: Props) => {
 
   return (
     <Container>
-      <Overlay right={0.3} top={-0.9}>
+      <Overlay right={0.3} top={-1}>
         <Text size={0.6}>{button.subtext}</Text>
       </Overlay>
       <Input
@@ -60,7 +60,7 @@ export const InputButton = (props: Props) => {
 const Container = styled.div`
   position: relative;
   border: 0.15vw solid black;
-  border-radius: 0.45vw;
+  border-radius: 0.6vw;
   width: 21vw;
   height: 4.5vw;
 
@@ -72,8 +72,8 @@ const Container = styled.div`
 const Input = styled.input`
   background-color: #eee;
   border: none;
-  border-radius: 0.3vw 0 0 0.3vw;
-  width: 7.5vw;
+  border-radius: 0.45vw 0 0 0.45vw;
+  width: 9vw;
   height: 100%;
 
   padding: 0.3vw;
@@ -83,14 +83,13 @@ const Input = styled.input`
   font-size: 1.2vw;
   text-align: center;
 
-  box-shadow: inset 0.1vw 0.1vw 0.2vw #000;
   outline: none;
 `;
 
 const Button = styled.div<{ disabled: boolean }>`
-  background-color: ${(props) => (props.disabled ? '#bbb' : '#fff')};
+  background-color: ${(props) => (props.disabled ? '#bbb' : '#112535')};
   border-left: 0.15vw solid black;
-  border-radius: 0 0.3vw 0.3vw 0;
+  border-radius: 0 0.45vw 0.45vw 0;
 
   width: 100%;
   height: 100%;
@@ -100,15 +99,14 @@ const Button = styled.div<{ disabled: boolean }>`
   align-items: center;
   justify-content: center;
 
-  box-shadow: 0.1vw 0.1vw 0.2vw #000;
-
+  color: #d0fe41;
   font-size: 1.5vw;
 
   cursor: pointer;
   pointer-events: ${(props) => (props.disabled ? 'none' : 'auto')};
   user-select: none;
   &:hover {
-    opacity: 0.8;
+    background-color: #182630;
   }
   &:active {
     opacity: 0.6;
@@ -116,6 +114,7 @@ const Button = styled.div<{ disabled: boolean }>`
 `;
 
 const Text = styled.div<{ size: number }>`
+  color: #d0fe41;
   font-size: ${(props) => props.size}vw;
   line-height: ${(props) => props.size * 1.5}vw;
 `;
