@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { Address, getAddress } from 'viem';
@@ -14,7 +14,9 @@ import { ItemImages } from 'assets/images/items';
 import { ETH_INDEX } from 'constants/items';
 import { useERC20Balance, usePresaleInfo } from 'network/chain';
 import { useWatchBlockNumber } from 'wagmi';
-import { Info } from './Info';
+import { Info } from './controls/Info';
+
+const StartTime = Math.floor(Date.now() / 1000) + 3600 * 24;
 
 export function registerPresaleModal() {
   registerUIComponent(
@@ -46,9 +48,14 @@ export function registerPresaleModal() {
       const { selectedAddress, apis } = useNetwork();
       const { actions } = network;
 
-      const [toBuy, setToBuy] = useState<number>(0);
-      const [toReceive, setToReceive] = useState<number>(0);
-      const inputRef = useRef<HTMLInputElement>(null);
+      const [tick, setTick] = useState(Date.now());
+
+      // ticking
+      useEffect(() => {
+        const tick = () => setTick(Date.now());
+        const timerID = setInterval(tick, 1000);
+        return () => clearInterval(timerID);
+      }, []);
 
       useWatchBlockNumber({
         onBlockNumber: () => {
@@ -111,10 +118,10 @@ export function registerPresaleModal() {
         });
       };
 
-      const updateInput = (value: number) => {
-        setToBuy(value);
-        setToReceive(value * presaleData.price);
-      };
+      // const updateInput = (value: number) => {
+      //   setToBuy(value);
+      //   setToReceive(value * presaleData.price);
+      // };
 
       const openOnyxDocs = () => {
         window.open('https://docs.kamigotchi.io/onyx', '_blank');
@@ -178,7 +185,7 @@ export function registerPresaleModal() {
                   text={['What is $ONYX?', '', 'Click to find out more!']}
                   alignText='center'
                 >
-                  <Image src={ItemImages.onyx} />
+                  <Image src={ItemImages.onyx} onClick={openOnyxDocs} />
                 </Tooltip>
               </OnyxColumn>
               <Info
@@ -235,8 +242,8 @@ const Text = styled.div<{ size: number }>`
 `;
 
 const Image = styled.img`
-  width: 15vw;
-  height: 15vw;
+  height: 21vh;
+  max-height: 15vw;
   image-rendering: pixelated;
 
   cursor: pointer;

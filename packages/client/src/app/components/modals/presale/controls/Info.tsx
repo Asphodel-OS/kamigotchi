@@ -36,20 +36,30 @@ export const Info = (props: Props) => {
   };
 
   const getButtonText = () => {
+    if (quantity == 0) return 'Buy';
     if (tokenBal.balance < quantity) return 'Poore';
     if (tokenBal.allowance < quantity) return 'Approve';
     return 'Buy';
   };
 
   const isDisabled = () => {
-    if (tokenBal.balance < quantity) return true;
-    return false;
+    return quantity == 0 || tokenBal.balance < quantity;
   };
 
   const getTooltip = () => {
-    if (tokenBal.balance < quantity) return ['too poore'];
-    if (tokenBal.allowance < quantity) return ['Approve', 'to spend', 'your ONYX'];
-    return [`claim ${quantity * data.price} ONYX`, `for ${quantity} ETH`];
+    let tooltip: string[] = [];
+    if (tokenBal.balance < quantity) {
+      tooltip = [
+        'too poore',
+        '',
+        `you need ${quantity - tokenBal.balance} more ETH to claim ${quantity * data.price}`,
+      ];
+    } else if (tokenBal.allowance < quantity) {
+      tooltip = ['Approve', 'to spend', 'your ONYX'];
+    } else {
+      tooltip = ['claim ' + quantity * data.price + ' ONYX', 'for ' + quantity + ' ETH'];
+    }
+    return tooltip;
   };
 
   return (
@@ -59,7 +69,12 @@ export const Info = (props: Props) => {
         <Text>Total Claimed: {data.bought.toFixed(3)}</Text>
       </Tooltip>
       <InputButton
-        button={{ text: 'Approve', onClick: getAction(), disabled: isDisabled(), tooltip: [] }}
+        button={{
+          text: getButtonText(),
+          onClick: getAction(),
+          disabled: isDisabled(),
+          tooltip: getTooltip(),
+        }}
         input={{ value: quantity, setValue: setQuantity, max: 0.5, min: 0, step: 0.001 }}
       />
     </Container>
@@ -81,5 +96,5 @@ const Container = styled.div`
 
 const Text = styled.div`
   font-size: 1.2vw;
-  line-height: 1.8vw;
+  line-height: 2.4vw;
 `;

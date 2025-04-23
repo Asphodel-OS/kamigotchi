@@ -1,3 +1,4 @@
+import { Tooltip } from 'app/components/library';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
@@ -19,7 +20,6 @@ interface Props {
 
 export const InputButton = (props: Props) => {
   const { button, input } = props;
-  const { text, onClick, disabled, tooltip } = button;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const quantityStr = event.target.value.replace('[^d.]/g', '');
@@ -30,7 +30,7 @@ export const InputButton = (props: Props) => {
   };
 
   const handleSubmit = () => {
-    onClick(input.value);
+    button.onClick(input.value);
     playClick();
   };
 
@@ -42,9 +42,11 @@ export const InputButton = (props: Props) => {
         value={input.value.toFixed(3)}
         onChange={(e) => handleChange(e)}
       />
-      <Button onClick={handleSubmit} disabled={button.disabled}>
-        {text}
-      </Button>
+      <Tooltip text={button.tooltip} alignText='center' grow>
+        <Button onClick={handleSubmit} disabled={button.disabled}>
+          {button.text}
+        </Button>
+      </Tooltip>
     </Container>
   );
 };
@@ -58,13 +60,13 @@ const Container = styled.div`
 
   display: flex;
   flex-direction: row nowrap;
-  align-items: center;
+  align-items: space-between;
 `;
 
 const Input = styled.input`
   background-color: #eee;
   border: none;
-  border-radius: 0.45vw 0 0 0.45vw;
+  border-radius: 0.3vw 0 0 0.3vw;
   width: 7.5vw;
   height: 100%;
 
@@ -74,12 +76,15 @@ const Input = styled.input`
   color: black;
   font-size: 1.2vw;
   text-align: center;
+
+  box-shadow: inset 0.1vw 0.1vw 0.2vw #000;
+  outline: none;
 `;
 
 const Button = styled.div<{ disabled: boolean }>`
-  background-color: #eee;
+  background-color: ${(props) => (props.disabled ? '#bbb' : '#fff')};
   border-left: 0.15vw solid black;
-  border-radius: 0 0.45vw 0.45vw 0;
+  border-radius: 0 0.3vw 0.3vw 0;
 
   width: 100%;
   height: 100%;
@@ -89,9 +94,13 @@ const Button = styled.div<{ disabled: boolean }>`
   align-items: center;
   justify-content: center;
 
+  box-shadow: 0.1vw 0.1vw 0.2vw #000;
+
   font-size: 1.5vw;
 
   cursor: pointer;
+  pointer-events: ${(props) => (props.disabled ? 'none' : 'auto')};
+  user-select: none;
   &:hover {
     opacity: 0.8;
   }
