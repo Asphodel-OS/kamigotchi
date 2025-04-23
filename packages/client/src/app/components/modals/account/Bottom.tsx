@@ -1,16 +1,20 @@
 import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
-import { Account, BaseAccount } from 'network/shapes/Account';
+
+import { Account, BaseAccount, getAllBaseAccounts } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Blocked } from './blocked/Blocked';
-import { Friends } from './friends/Friends';
-import { Kamis } from './party/Kamis';
-import { Requests } from './requests/Requests';
+import { FactionsBottom } from './FactionsBottom';
+import { SocialBottom } from './SocialBottom';
+import { StatsBottom } from './StatsBottom';
+import { Tabs } from './Tabs';
 
 interface Props {
   tab: string;
+  subTab: string;
+  isSelf: boolean;
+  setSubTab: (tab: string) => void;
   data: {
     account: Account;
     getAllAccs: () => BaseAccount[];
@@ -24,55 +28,39 @@ interface Props {
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
+  network: { world: any; components: any };
 }
 
 export const Bottom = (props: Props) => {
-  const { tab, data, actions, utils } = props;
+  const { data, tab, subTab, setSubTab, utils, actions, isSelf, network } = props;
+  const { getAccountKamis } = utils;
+  const { acceptFren, blockFren, cancelFren, requestFren } = actions;
   const { account } = data;
+  const { world, components } = network;
 
-  // NOTE: any child components that maintain their own state need to be inlined below, to
-  // re-render and persist their state, rather than remounting
+  /////////////////
+  // RENDERING
+
   return (
-    <Container>
-      {tab === 'party' && <Kamis account={account} utils={utils} />}
-      {tab === 'frens' && (
-        <Friends
-          key='friends'
-          friendships={data.account.friends?.friends ?? []}
-          actions={{
-            blockFren: actions.blockFren,
-            removeFren: actions.cancelFren,
-          }}
-        />
+    <>
+      {tab === 'social' && (
+        <>
+          <Tabs subTab={subTab} setSubTab={setSubTab} isSelf={isSelf} />
+          <SocialBottom
+            key='bottom'
+            subTab={subTab}
+            data={{
+              account,
+              getAllAccs: () => getAllBaseAccounts(world, components),
+            }}
+            actions={{ acceptFren, blockFren, cancelFren, requestFren }}
+            utils={utils}
+          />
+        </>
       )}
-      {tab === 'requests' && (
-        <Requests
-          key='requests'
-          account={data.account}
-          accounts={data.getAllAccs()}
-          requests={{
-            inbound: data.account.friends?.incomingReqs ?? [],
-            outbound: data.account.friends?.outgoingReqs ?? [],
-          }}
-          actions={{
-            acceptFren: actions.acceptFren,
-            blockFren: actions.blockFren,
-            cancelFren: actions.cancelFren,
-            requestFren: actions.requestFren,
-          }}
-        />
-      )}
-      {tab === 'blocked' && (
-        <Blocked
-          key='blocked'
-          blocked={data.account.friends?.blocked ?? []}
-          actions={{
-            cancelFren: actions.cancelFren,
-          }}
-        />
-      )}
-      {tab === 'activity' && <EmptyText>not yet implemented</EmptyText>}
-    </Container>
+      {tab === 'stats' && <StatsBottom key='statsbottom' account={account} />}
+      {tab === 'factions' && <FactionsBottom key='statsbottom' account={account} />}
+    </>
   );
 };
 
@@ -90,12 +78,4 @@ const Container = styled.div`
   align-items: center;
 
   overflow-y: auto;
-`;
-
-const EmptyText = styled.div`
-  color: black;
-  margin: 1vw;
-
-  font-size: 0.9vw;
-  font-family: Pixel;
 `;

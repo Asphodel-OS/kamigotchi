@@ -19,9 +19,9 @@ import {
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
 import { waitForActionCompletion } from 'network/utils';
-import { Bottom } from './Bottom';
-import { Tabs } from './Tabs';
 import { Bio } from './bio/Bio';
+import { Bottom } from './Bottom';
+import { NewTabs } from './Newtabs';
 
 export function registerAccountModal() {
   registerUIComponent(
@@ -66,7 +66,8 @@ export function registerAccountModal() {
       const { accountIndex } = useSelected();
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
-      const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
+      const [subTab, setSubTab] = useState('frens'); // party | frens | activity | requests | blocked
+      const [tab, setTab] = useState('stats');
       const [account, setAccount] = useState<Account>(NullAccount);
       const [isSelf, setIsSelf] = useState(false);
       const [isLoading, setIsLoading] = useState(false);
@@ -83,8 +84,8 @@ export function registerAccountModal() {
       useEffect(() => {
         const isSelf = player.index === accountIndex;
         setIsSelf(isSelf);
-        if (isSelf) setTab('frens');
-        else setTab('party');
+        if (isSelf) setSubTab('frens');
+        else setSubTab('party');
       }, [accountIndex]);
 
       /////////////////
@@ -191,16 +192,17 @@ export function registerAccountModal() {
             isSelf={isSelf}
             utils={utils}
           />
-          <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
+          <NewTabs tab={tab} setTab={setTab} isSelf={isSelf} />
           <Bottom
             key='bottom'
             tab={tab}
-            data={{
-              account,
-              getAllAccs: () => getAllBaseAccounts(world, components),
-            }}
+            subTab={subTab}
+            isSelf={isSelf}
+            setSubTab={setSubTab}
+            data={{ account, getAllAccs: () => getAllBaseAccounts(world, components) }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
             utils={utils}
+            network={{ world, components }}
           />
         </ModalWrapper>
       );

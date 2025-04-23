@@ -1,7 +1,4 @@
 import { EntityIndex } from '@mud-classic/recs';
-import CakeIcon from '@mui/icons-material/Cake';
-import CheckroomIcon from '@mui/icons-material/Checkroom';
-import TollIcon from '@mui/icons-material/Toll';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -106,18 +103,6 @@ export const Bio = (props: Props) => {
           </TitleRow>
           <AddressDisplay />
         </Identifiers>
-        <DetailRow>
-          <CakeIcon style={{ height: '1.4vw' }} />
-          <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
-        </DetailRow>
-        <DetailRow>
-          <CheckroomIcon style={{ height: '1.4vw' }} />
-          <Description>{account.stats?.kills ?? 0} Lives Claimed</Description>
-        </DetailRow>
-        <DetailRow>
-          <TollIcon style={{ height: '1.4vw' }} />
-          <Description>{(account.stats?.coin ?? 0).toLocaleString()} MUSU Collected</Description>
-        </DetailRow>
       </Content>
       {isSelf ? (
         <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
