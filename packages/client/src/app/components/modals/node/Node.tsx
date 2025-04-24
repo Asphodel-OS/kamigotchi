@@ -7,6 +7,7 @@ import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getBonusesForEndType } from 'app/cache/bonus';
 import { getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
+import { getRoomByIndex } from 'app/cache/room';
 import { EmptyText, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
 import { registerUIComponent } from 'app/root';
@@ -108,6 +109,7 @@ export function registerNodeModal() {
               getOwner: (kamiEntity: EntityIndex) =>
                 getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
               getNode: (index: number) => getNodeByIndex(world, components, index),
+              getRoom: (index: number) => getRoomByIndex(world, components, index),
               getScavenge: (index: number) => getNodeByIndex(world, components, index).scavenge,
               getValue: (entity: EntityIndex) => getValue(components, entity),
               parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),

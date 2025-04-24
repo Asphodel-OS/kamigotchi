@@ -12,6 +12,7 @@ import { Allo } from 'network/shapes/Allo';
 import { Condition } from 'network/shapes/Conditional';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
+import { NullRoom, Room } from 'network/shapes/Room';
 import { NullScavenge, ScavBar } from 'network/shapes/Scavenge';
 import { DetailedEntity, getAffinityImage } from 'network/shapes/utils';
 import { ItemDrops } from './ItemDrops';
@@ -29,6 +30,7 @@ interface Props {
   };
   utils: {
     getAccountKamis: () => Kami[];
+    getRoom: (index: number) => Room;
     getValue: (entity: EntityIndex) => number;
     parseAllos: (scavAllo: Allo[]) => DetailedEntity[];
     parseConditionalText: (condition: Condition, tracking?: boolean) => string;
@@ -41,12 +43,13 @@ export const Header = (props: Props) => {
   const { data, utils, actions } = props;
   const { account, node } = data;
   const { addKami } = actions;
-  const { getAccountKamis, getValue } = utils;
+  const { getAccountKamis, getRoom, getValue } = utils;
   const { queryScavInstance } = utils;
   const { parseConditionalText, passesNodeReqs } = utils;
 
   const { modals } = useVisibility();
   const [kamis, setKamis] = useState<Kami[]>([]);
+  const [room, setRoom] = useState<Room>(NullRoom);
   const [scavenge, setScavenge] = useState<ScavBar>(NullScavenge);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
@@ -60,18 +63,16 @@ export const Header = (props: Props) => {
   // update the scavenge whenever the node changes
   useEffect(() => {
     if (!modals.node) return;
+
     const scavenge = node.scavenge;
-    if (scavenge) {
-      setScavenge(scavenge);
-    }
+    if (scavenge) setScavenge(scavenge);
+    if (node.roomIndex !== room.index) setRoom(getRoom(node.roomIndex));
   }, [node.index, modals.node]);
 
-  // keep the account kamis up to date whenever the account changes
+  // keep the account kamis up to date whenever the modal is open
   useEffect(() => {
     if (modals.node) setKamis(getAccountKamis());
-  }, [lastRefresh]);
-
-  // update the scavbar for its points every onc
+  }, [modals.node, lastRefresh]);
 
   /////////////////
   // INTERPRETATION
@@ -96,7 +97,7 @@ export const Header = (props: Props) => {
   };
 
   const getNodeImage = () => {
-    const roomObject = rooms[node.index] ?? rooms[0];
+    const roomObject = rooms[node.roomIndex] ?? rooms[0];
     return roomObject.backgrounds[0];
   };
 
@@ -141,7 +142,7 @@ export const Header = (props: Props) => {
             </Tooltip>
             <ItemDrops node={node} scavenge={scavenge} utils={utils} />
           </Row>
-          <Description>{node.description}</Description>
+          <Description>{room.description}</Description>
         </Details>
         {node.requirements.length > 0 && (
           <Footer>
@@ -177,7 +178,7 @@ const Content = styled.div`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 
 const Image = styled.img`
