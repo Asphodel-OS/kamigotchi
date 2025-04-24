@@ -5,6 +5,14 @@ import { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { preAssetAbi } from './abi';
 
+export interface PresaleData {
+  depositCap: number;
+  totalDeposits: number;
+  price: number;
+  allo: number;
+  bought: number;
+}
+
 export function usePresaleInfo(address: Address, presaleAddr: Address) {
   const preAsset = {
     address: presaleAddr,
@@ -24,7 +32,7 @@ export function usePresaleInfo(address: Address, presaleAddr: Address) {
     data: {
       depositCap: parseTokenBalance(results.data?.[0]?.result as bigint, 18),
       totalDeposits: parseTokenBalance(results.data?.[1]?.result as bigint, 18),
-      price: Number(results.data?.[2]?.result as bigint),
+      price: parseTokenBalance(results.data?.[2]?.result as bigint, 18),
       allo: parseTokenBalance(results.data?.[3]?.result as bigint, 18),
       bought: parseTokenBalance(results.data?.[4]?.result as bigint, 18),
     },

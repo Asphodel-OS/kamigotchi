@@ -73,7 +73,6 @@ const Content = styled.div<{ truncate?: boolean; width?: string }>`
 
   display: flex;
   flex-flow: column nowrap;
-  font-family: Pixel;
   overflow: hidden;
 `;
 
@@ -89,14 +88,14 @@ const ButtonRow = styled.div`
 
 const Header = styled.div<{ noBorder?: boolean }>`
   ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15vw;')}
-  border-radius: 1.2vw 1.2vw 0 0;
+  border-radius: 1.05vw 1.05vw 0 0;
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Footer = styled.div<{ noBorder?: boolean }>`
   ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15vw;')}
-  border-radius: 0 0 1.2vw 1.2vw;
+  border-radius: 0 0 1.05vw 1.05vw;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -112,7 +111,6 @@ const Children = styled.div<{
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
   flex-flow: column nowrap;
-  font-family: Pixel;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
 `;
 

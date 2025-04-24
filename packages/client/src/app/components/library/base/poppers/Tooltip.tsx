@@ -113,9 +113,9 @@ const Container = styled.div<{
   direction?: string;
   ref?: any;
 }>`
+  display: flex;
   flex-direction: ${({ direction }) => direction ?? 'column'};
   flex-grow: ${({ flexGrow }) => flexGrow};
-  display: flex;
   cursor: ${({ disabled }) => (disabled ? 'cursor' : 'help')};
 `;
 
