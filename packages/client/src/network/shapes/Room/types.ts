@@ -22,17 +22,6 @@ export interface Room {
   // owner?: Account; // not implemented
 }
 
-export const NullRoom: Room = {
-  index: 0,
-  entity: 0 as EntityIndex,
-  id: '' as EntityID,
-  name: '',
-  description: '',
-  exits: [],
-  gates: [],
-  location: { x: 0, y: 0, z: 0 },
-};
-
 export interface RoomOptions {
   exits?: boolean;
   // checkExits?: { account: Account }; // account to use to check gates against

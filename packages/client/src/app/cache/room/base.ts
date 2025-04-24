@@ -1,9 +1,8 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { queryRoomByIndex, Room } from 'network/shapes/Room';
+import { getRoom, NullRoom, queryRoomByIndex, Room } from 'network/shapes/Room';
 import { getExitsFor } from 'network/shapes/Room/exit';
-import { getRoom, NullRoom } from 'network/shapes/Room/types';
 
 export const RoomCache = new Map<EntityIndex, Room>();
 export const ExitUpdateTs = new Map<EntityIndex, number>();
