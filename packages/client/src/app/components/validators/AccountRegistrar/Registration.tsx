@@ -124,16 +124,16 @@ export const Registration = (props: Props) => {
           placeholder='your username'
           style={{ pointerEvents: 'auto' }}
         />
+      </Row>
+      <Row>
+        <BackButton step={2} setStep={utils.setStep} />{' '}
         <Tooltip text={[getSubmitTooltip()]}>
           <ActionButton
-            text='→'
+            text='Next ⟶'
             disabled={getSubmitTooltip() !== 'Register'}
             onClick={() => handleAccountCreation()}
           />
         </Tooltip>
-      </Row>
-      <Row>
-        <BackButton step={2} setStep={utils.setStep} />
       </Row>
     </>
   );
