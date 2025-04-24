@@ -126,13 +126,7 @@ export function registerPresaleModal() {
       // DISPLAY
 
       return (
-        <ModalWrapper
-          id='presale'
-          footer={<Footer data={presaleData} />}
-          // header={<ModalHeader title='Presale' icon={ItemImages.onyx} />}
-          noPadding
-          overlay
-        >
+        <ModalWrapper id='presale' footer={<Footer data={presaleData} />} noPadding overlay>
           <Container>
             <Header tick={tick} />
             <Content>

@@ -10,17 +10,17 @@ export const PresaleMenuButton = (props: Props) => {
   const { disabled } = props;
 
   const modalsToHide: Partial<Modals> = {
-    goal: false,
+    chat: false,
     crafting: false,
     bridgeERC20: false,
     bridgeERC721: false,
     dialogue: false,
-    kami: false,
-    gacha: false,
     emaBoard: false,
+    gacha: false,
+    goal: false,
+    kami: false,
     nameKami: false,
     node: false,
-    chat: false,
     quests: false,
   };
 
@@ -31,7 +31,6 @@ export const PresaleMenuButton = (props: Props) => {
       tooltip={disabled ? 'Disabled' : 'Presale'}
       targetModal='presale'
       hideModals={modalsToHide}
-      onClick={() => {}}
       disabled={disabled}
     />
   );
