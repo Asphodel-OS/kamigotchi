@@ -1,8 +1,8 @@
-import { getKamidenClient, Message } from '../../../clients/kamiden/index';
+import { getKamidenClient, Message } from 'clients/kamiden';
 
 // nodeindex ,messages list
 export const ChatCache = new Map<number, Message[]>();
-const client = getKamidenClient();
+const KamidenClient = getKamidenClient();
 
 export const get = async (roomIndex: number, append: boolean) => {
   if (!ChatCache.has(roomIndex) || append) await process(roomIndex, append);
@@ -12,21 +12,37 @@ export const get = async (roomIndex: number, append: boolean) => {
 // !append (user hasnt scrolled yet)
 // append(user has scrolled, older messages neeed to be loaded)
 export const process = async (roomIndex: number, append: boolean) => {
-  if (!append) {
-    const response = await client.getRoomMessages({
-      RoomIndex: roomIndex,
-      Timestamp: Date.now(),
-    });
-
-    ChatCache.set(roomIndex, response.Messages);
-  } else {
-    const loadedMessages = ChatCache.get(roomIndex);
-    const response = await client.getRoomMessages({
-      RoomIndex: roomIndex,
-      Timestamp: loadedMessages?.[0]?.Timestamp,
-    });
-    ChatCache.set(roomIndex, response.Messages.concat(loadedMessages!));
+  if (!KamidenClient) {
+    console.warn('process(): Kamiden client not initialized');
+    ChatCache.set(roomIndex, []);
+    return;
   }
+
+  const messages: Message[] = ChatCache.get(roomIndex) ?? [];
+  const lastTs = messages[0]?.Timestamp ?? Date.now();
+  const response = await KamidenClient.getRoomMessages({
+    RoomIndex: roomIndex,
+    Timestamp: lastTs,
+  });
+
+  ChatCache.set(roomIndex, response.Messages.concat(messages));
+
+  // if (!append) {
+  // // Previous Implementation
+  //   const response = await KamidenClient.getRoomMessages({
+  //     RoomIndex: roomIndex,
+  //     Timestamp: Date.now(),
+  //   });
+
+  //   ChatCache.set(roomIndex, response.Messages);
+  // } else {
+  //   const loadedMessages = ChatCache.get(roomIndex);
+  //   const response = await KamidenClient.getRoomMessages({
+  //     RoomIndex: roomIndex,
+  //     Timestamp: loadedMessages?.[0]?.Timestamp,
+  //   });
+  //   ChatCache.set(roomIndex, response.Messages.concat(loadedMessages!));
+  // }
 };
 
 // if the room has been visited before it appends the new message
