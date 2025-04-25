@@ -35,7 +35,6 @@ import FriendBlockSystem from "../abi/FriendBlockSystem.json";
 import FriendCancelSystem from "../abi/FriendCancelSystem.json";
 import FriendRequestSystem from "../abi/FriendRequestSystem.json";
 import GachaBuyTicketSystem from "../abi/GachaBuyTicketSystem.json";
-import GetterSystem from "../abi/GetterSystem.json";
 import GoalClaimSystem from "../abi/GoalClaimSystem.json";
 import GoalContributeSystem from "../abi/GoalContributeSystem.json";
 import HarvestCollectSystem from "../abi/HarvestCollectSystem.json";
@@ -105,7 +104,6 @@ export const SystemAbis = {
   "system.friend.cancel": FriendCancelSystem.abi,
   "system.friend.request": FriendRequestSystem.abi,
   "system.buy.gacha.ticket": GachaBuyTicketSystem.abi,
-  "system.getter": GetterSystem.abi,
   "system.goal.claim": GoalClaimSystem.abi,
   "system.goal.contribute": GoalContributeSystem.abi,
   "system.harvest.collect": HarvestCollectSystem.abi,

@@ -41,7 +41,6 @@ export type { FriendCancelSystem } from "./FriendCancelSystem";
 export type { FriendRequestSystem } from "./FriendRequestSystem";
 export type { FromPrototypeComponent } from "./FromPrototypeComponent";
 export type { GachaBuyTicketSystem } from "./GachaBuyTicketSystem";
-export type { GetterSystem } from "./GetterSystem";
 export type { GoalClaimSystem } from "./GoalClaimSystem";
 export type { GoalContributeSystem } from "./GoalContributeSystem";
 export type { HarmonyComponent } from "./HarmonyComponent";
@@ -230,7 +229,6 @@ export { FriendCancelSystem__factory } from "./factories/FriendCancelSystem__fac
 export { FriendRequestSystem__factory } from "./factories/FriendRequestSystem__factory";
 export { FromPrototypeComponent__factory } from "./factories/FromPrototypeComponent__factory";
 export { GachaBuyTicketSystem__factory } from "./factories/GachaBuyTicketSystem__factory";
-export { GetterSystem__factory } from "./factories/GetterSystem__factory";
 export { GoalClaimSystem__factory } from "./factories/GoalClaimSystem__factory";
 export { GoalContributeSystem__factory } from "./factories/GoalContributeSystem__factory";
 export { HarmonyComponent__factory } from "./factories/HarmonyComponent__factory";
