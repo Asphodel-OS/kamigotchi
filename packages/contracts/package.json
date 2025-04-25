@@ -15,7 +15,7 @@
     "nuke": "rimraf abi types out node_modules",
     "prepare": "pnpm abi && pnpm codegen",
     "start": "pnpm run-p -l node:local deploy:local",
-    "test": "pnpm codegen && forge test --contracts test --gas-limit=10000000000 --optimize false",
+    "test": "pnpm codegen && forge test --contracts test --gas-limit=10000000000000 --optimize false",
     "----- SPECIFIC COMMANDS -----": "---------------------------",
     "deploy:local": "NODE_ENV=puter pnpm deploy:script ",
     "deploy:local:partial": "pnpm deploy:local --partial",

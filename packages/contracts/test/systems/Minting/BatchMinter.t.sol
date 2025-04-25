@@ -124,6 +124,29 @@ contract BatchMinterTest is MintTemplate {
     }
   }
 
+  // commented out due to size
+  // function testMint721Max() public {
+  //   _initStockTraits();
+  //   vm.startPrank(deployer);
+  //   __721BatchMinterSystem.setTraits();
+
+  //   for (uint i = 0; i < 99; i++) {
+  //     __721BatchMinterSystem.batchMint(222);
+  //   }
+  //   __721BatchMinterSystem.batchMint(144); // max left: 100 (total 22122)
+
+  //   vm.expectRevert("Kami721: max supply reached");
+  //   __721BatchMinterSystem.batchMint(101);
+
+  //   __721BatchMinterSystem.batchMint(98);
+  //   __721BatchMinterSystem.batchMint(1);
+  //   vm.expectRevert("Kami721: max supply reached");
+  //   __721BatchMinterSystem.batchMint(2);
+  //   __721BatchMinterSystem.batchMint(1);
+
+  //   vm.stopPrank();
+  // }
+
   ////////////////
   // UTIL TESTS //
   ////////////////
