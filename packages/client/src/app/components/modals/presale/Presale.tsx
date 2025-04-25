@@ -18,6 +18,9 @@ import { Info } from './controls/Info';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
+const StartTime = 1745845200; // April 28th, 2025 – 1pm GMT
+const EndTime = StartTime + 3600 * 24 * 2;
+
 export function registerPresaleModal() {
   registerUIComponent(
     'Presale',
@@ -128,7 +131,7 @@ export function registerPresaleModal() {
       return (
         <ModalWrapper id='presale' footer={<Footer data={presaleData} />} noPadding overlay>
           <Container>
-            <Header tick={tick} />
+            <Header time={{ now: tick, start: StartTime, end: EndTime }} />
             <Content>
               <OnyxColumn>
                 <Tooltip
@@ -142,6 +145,7 @@ export function registerPresaleModal() {
                 actions={{ approve: approveTx, buy: buyTx }}
                 data={presaleData}
                 tokenBal={currencyBal}
+                time={{ now: tick, start: StartTime, end: EndTime }}
               />
             </Content>
           </Container>

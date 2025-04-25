@@ -3,31 +3,33 @@ import styled from 'styled-components';
 import { Overlay, Tooltip } from 'app/components/library';
 import { formatCountdown, getDateString } from 'utils/time';
 
-const StartTime = 1745845200; // April 28th, 2025 – 12am GMT
-const EndTime = StartTime + 3600 * 24 * 2;
-
 interface Props {
-  tick: number;
+  time: {
+    now: number;
+    start: number;
+    end: number;
+  };
 }
 
 export const Header = (props: Props) => {
-  const { tick } = props;
+  const { time } = props;
+  const { now, start, end } = time;
 
   const getStatus = () => {
-    if (tick < StartTime) return 'Soon';
-    if (tick < EndTime) return 'Live';
+    if (now < start) return 'Soon';
+    if (now < end) return 'Live';
     return 'Over';
   };
 
   const getCountdown = () => {
-    if (tick < StartTime) return formatCountdown(StartTime - tick);
-    if (tick < EndTime) return formatCountdown(EndTime - tick);
+    if (now < start) return formatCountdown(start - now);
+    if (now < end) return formatCountdown(end - now);
     return formatCountdown(0);
   };
 
   const getCountdownTooltip = () => {
-    if (tick < StartTime) return [`Mint starts ${getDateString(StartTime, 0)}`];
-    if (tick < EndTime) return [`Mint ends ${getDateString(EndTime, 0)}`];
+    if (now < start) return [`Mint starts ${getDateString(start, 0)}`];
+    if (now < end) return [`Mint ends ${getDateString(end, 0)}`];
     return [`Mint has ended`, '', `Thank you for your participation!`];
   };
 
