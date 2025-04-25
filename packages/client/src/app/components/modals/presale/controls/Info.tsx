@@ -21,7 +21,7 @@ export const Info = (props: Props) => {
   const { actions, data, tokenBal } = props;
   const { approve, buy } = actions;
 
-  const [quantity, setQuantity] = useState(data.allo - data.bought);
+  const [quantity, setQuantity] = useState(0);
 
   /////////////////
   // INTERPRETATION
@@ -100,7 +100,7 @@ export const Info = (props: Props) => {
           input={{
             value: quantity,
             setValue: setQuantity,
-            max: data.allo,
+            max: data.allo - data.bought,
             min: 0,
             step: 0.01,
           }}

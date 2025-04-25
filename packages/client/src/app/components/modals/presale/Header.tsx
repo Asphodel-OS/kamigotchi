@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Overlay, Tooltip } from 'app/components/library';
 import { formatCountdown, getDateString } from 'utils/time';
 
-const StartTime = Math.floor(Date.now() / 1000) + 3600 * 24;
+const StartTime = 1745845200; // April 28th, 2025 – 12am GMT
 const EndTime = StartTime + 3600 * 24 * 3;
 
 interface Props {
