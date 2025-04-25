@@ -41,6 +41,7 @@ string constant SYMBOL = "KAMI";
 */
 contract Kami721 is ERC721Enumerable, ERC2981, IERC4906 {
   IWorld internal immutable World;
+  uint256 public constant MAX_SUPPLY = 22222;
 
   /// @notice mirrors permissions from ProxyPermissionsComponent
   modifier onlyWriter() {
@@ -85,11 +86,13 @@ contract Kami721 is ERC721Enumerable, ERC2981, IERC4906 {
 
   /// @notice allow minting for approved systems
   function mint(address to, uint256 id) external onlyWriter {
+    require(totalSupply() < MAX_SUPPLY, "Kami721: max supply reached");
     _mint(to, id);
   }
 
   /// @notice mints multiple for approved systems
   function mintBatch(address to, uint256[] calldata ids) external onlyWriter {
+    require(totalSupply() + ids.length <= MAX_SUPPLY, "Kami721: max supply reached");
     for (uint256 i; i < ids.length; i++) _mint(to, ids[i]);
   }
 
