@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'packages/client/**'
 
 env:
   TARGET_REPO_OWNER: 'Asphodel-OS'
-  TARGET_REPO_NAME: 'kamigotchi-public'
+  TARGET_REPO_NAME: 'kamigotchi-client-public'
 
 jobs:
   sync:
@@ -23,7 +25,7 @@ jobs:
           ## SETUP SSH KEY
           eval $(ssh-agent -s)
           mkdir -p ~/.ssh
-          echo "${{secrets.KAMI_SHAPE_DEPLOY_KEY}}" > ~/.ssh/id_rsa
+          echo "${{secrets.KAMI_CONTRACTS_DEPLOY_KEY}}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ls -la ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
@@ -35,8 +37,7 @@ jobs:
           # Remove files from SOURCE
           rm -rf ./source-repo/.github
           rm -rf ./source-repo/.git
-          rm -rf ./source-repo/packages/contracts/deployment
-          rm -rf ./source-repo/packages/contracts/test
+          rm -rf ./source-repo/packages/contracts
 
           # Persist TARGET files
           mkdir ./temp_backup
@@ -54,7 +55,7 @@ jobs:
           # Check for changes
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            git commit -m "Publish from Kamigotchi repo
+            git commit -m "Publish Client from Kamigotchi repo
 
             Source Commit: ${{ github.sha }}
             Workflow: ${{ github.workflow }}
