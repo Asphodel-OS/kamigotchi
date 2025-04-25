@@ -29,6 +29,8 @@ const executeGodSystem = async (world: string, forge?: string) => {
       '--broadcast',
       '--fork-url',
       process.env.RPC!,
+      '--with-gas-price',
+      '0',
       '--sig',
       'run(uint256,address)',
       process.env.PRIV_KEY!,

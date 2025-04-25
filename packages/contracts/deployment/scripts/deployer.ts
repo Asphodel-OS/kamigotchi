@@ -29,6 +29,8 @@ export async function deploy(
       (process.env.NODE_ENV === 'puter').toString(), // Local mode
       '--fork-url',
       process.env.RPC!,
+      '--with-gas-price',
+      '0',
       '--skip',
       'test',
       '--gas-limit',
