@@ -37,7 +37,8 @@ export async function initQuests(api: AdminAPI, indices?: number[], all?: boolea
   // TODO: support test environment statuses
   // TODO: standardize env->status mapping in shared helper function
   const validStatuses = ['To Deploy'];
-  if (all || indices !== undefined) validStatuses.push('In Game', 'Test');
+  if (process.env.NODE_ENV !== 'production') validStatuses.push('Test');
+  if (all || indices !== undefined) validStatuses.push('In Game');
 
   // process quests
   for (let i = 0; i < csv.length; i++) {

@@ -6,8 +6,8 @@
 ,In Game,ONYX,100,ERC20,,0x9D9c32921575Fd98e67E27C0189ED4b750Cb17C5,,,,"Asphodel’s premium game currency.
 
 You want this. You want this so bad."
-,To Deploy,INIT,101,ERC20,,0x0000000000000000000000000000000000000101,,,,Initia
-,To Deploy,ETH,103,ERC20,,0x0000000000000000000000000000000000000103,,,,Ethereum
+,Test,INIT,101,ERC20,,0x0000000000000000000000000000000000000101,,,,Initia
+,To Deploy,ETH,103,ERC20,,0xE1Ff7038eAAAF027031688E1535a055B2Bac2546,,,,Ethereum
 ,To Deploy,Kamigotchi World Passport (Orange),21,NFT,,,,,,
 ,To Deploy,Kamigotchi World Passport (Pink),22,NFT,,,,,,
 ,To Deploy,Kamigotchi World Passport (Red),23,NFT,,,,,,
@@ -75,5 +75,12 @@ These ribbons are greatly prized…. "
 ,In Game,Astrolabe Disk,100001,Key Item,,,,,,"Some sort of golden disk. Purpose: completely unknown. 
 
 You feel like you should hold on to it. "
-,In Game,Pomegranate,,Transferrer,,,,,,
 ,To Deploy,VIPP,2,Misc,,,,VIP1,,"Sacred paper which can be sacrificed for VIP status. "
+,To Deploy,Disc-Shaped Map,100003,Key Item,,,,,,"A golden disk inlaid with other metals. It resembles an overhead map of a temple complex. Seems to depict roads, pyramids, and other structures."
+,To Deploy,Ancient Machine Part,100002,Key Item,,,,,,A durable part of some kind of high-tech machinery. It has wear and corrosion like it’s been exposed to the elements for thousands of years.
+,To Deploy,“Neith’s River of Life” Spell Card,21204,Food,Account,,NOT_TRADABLE,SP+80,,"The card depicts a flooding river beneath the night sky. The magical waters grant a bounty of stamina, and the reeds grow nearly as tall as the pyramids. Activating this Spell Card on an Operator will restore 80 Stamina."
+,To Deploy,“Paeon's Field of Flowers” Spell Card,11305,Food,Kami,,NOT_TRADABLE,HP+100,,The card depicts a mortally wounded man lying in a field of flowers. Some flowers take root on his body and knit the wounds closed while others bloom from the spilled blood. Activating this Spell Card on a Kamigotchi will restore 100 Health.
+,To Deploy,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Kami,,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
+,To Deploy,“Cultivation I” Spell Card,11211,Food,Kami,,NOT_TRADABLE,"XP+100,HP+20",,"The card depicts a pale sprout emerging from rich, black soil. Activating this Spell Card on a Kamigotchi will restore 5 HP and grant 25 XP."
+,To Deploy,“Cultivation II” Spell Card,11212,Food,Kami,,NOT_TRADABLE,"XP+200,HP+50",,The card depicts a teardrop-shaped flowerbud growing out of light brown soil. Activating this Spell Card on a Kamigotchi will restore 10 HP and grant 100 XP.
+,To Deploy,“Cultivation III” Spell Card,11213,Food,Kami,,NOT_TRADABLE,"XP+1000,HP+100",,The card depicts a flower heartily blooming in pale and sandy earth. Activating this Spell Card on a Kamigotchi will restore 20 HP and grant 200 XP.
