@@ -27,6 +27,7 @@ import holy_dust from './holy_dust.png';
 import ice_cream from './ice_cream.png';
 import initia_icon from './initia_icon.png';
 import kami_mochi from './kami_mochi.png';
+import kamigotchi_world_citizen_giftbox from './kamigotchi_world_citizen_giftbox.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
 import lily_sprout_card_native from './lily_sprout_card_native.png';
 import lotus_bud_card_native from './lotus_bud_card_native.png';
@@ -50,7 +51,6 @@ import passport_pink from './passport_pink.png';
 import passport_purple from './passport_purple.png';
 import passport_red from './passport_red.png';
 import passport_white from './passport_white.png';
-import passportboxindex from './passportboxindex.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
 import plastic_bottle from './plastic_bottle.png';
@@ -91,7 +91,7 @@ export const ItemImages = {
   passport_purple: passport_purple,
   passport_red: passport_red,
   passport_lime_green: passport_lime_green,
-  passportboxindex: passportboxindex,
+  kamigotchi_world_citizen_giftbox: kamigotchi_world_citizen_giftbox,
   passport_grey: passport_grey,
   passport_green: passport_green,
   passport_blue: passport_blue,
