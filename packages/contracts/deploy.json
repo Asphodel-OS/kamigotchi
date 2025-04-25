@@ -90,7 +90,7 @@
   ],
   "protectedComponents": ["ProxyPermissionsERC721", "TokenAllowance"],
   "systems": [
-    { "name": "__LocalSetupSystem", "writeAccess": ["*"] },
+    { "name": "__LocalSetupSystem", "writeAccess": ["*"], "skipEnv": ["testing", "production"] },
     { "name": "_SnapshotT2System", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "Value"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {
@@ -229,7 +229,8 @@
     },
     {
       "name": "AccountSetPFPSystem",
-      "writeAccess": ["MediaURI", "TimeLast"]
+      "writeAccess": ["MediaURI", "TimeLast"],
+      "skipEnv": ["production"]
     },
     {
       "name": "AccountSetNameSystem",
@@ -249,7 +250,8 @@
         "TokenAllowance",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "ChatSystem",
@@ -266,7 +268,8 @@
         "Stamina",
         "TimeLastAction",
         "TimeLast"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "DroptableRevealSystem",
@@ -306,7 +309,6 @@
       "name": "FriendRequestSystem",
       "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
-    { "name": "GetterSystem", "writeAccess": [] },
     {
       "name": "GoalContributeSystem",
       "writeAccess": [
@@ -318,11 +320,13 @@
         "IsComplete",
         "TimeLast",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "GoalClaimSystem",
-      "writeAccess": ["*"]
+      "writeAccess": ["*"],
+      "skipEnv": ["production"]
     },
     {
       "name": "ListingBuySystem",
@@ -338,7 +342,8 @@
         "TokenAllowance",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "ListingSellSystem",
@@ -352,11 +357,13 @@
         "TimeLast",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "GachaBuyTicketSystem",
-      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "TimeLast", "TokenAllowance", "Value"]
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "TimeLast", "TokenAllowance", "Value"],
+      "skipEnv": ["production"]
     },
     {
       "name": "HarvestCollectSystem",
@@ -379,7 +386,8 @@
         "TimeStart",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "HarvestLiquidateSystem",
@@ -402,7 +410,8 @@
         "TimeLast",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "HarvestStartSystem",
@@ -422,7 +431,8 @@
         "TimeReset",
         "TimeStart",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "HarvestStopSystem",
@@ -446,7 +456,8 @@
         "TimeStart",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "Kami721IsInWorldSystem",
@@ -459,12 +470,12 @@
     {
       "name": "Kami721StakeSystem",
       "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
-      "skipEnv": ["testing"]
+      "skipEnv": ["testing", "production"]
     },
     {
       "name": "Kami721UnstakeSystem",
       "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
-      "skipEnv": ["testing"]
+      "skipEnv": ["testing", "production"]
     },
     {
       "name": "KamiGachaMintSystem",
@@ -498,7 +509,8 @@
         "Type",
         "Value",
         "Violence"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "KamiGachaRerollSystem",
@@ -514,11 +526,13 @@
         "Type",
         "State",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "KamiGachaRevealSystem",
-      "writeAccess": ["BlockReveal", "IdHolder", "IDOwnsKami", "Reroll", "State", "Type", "Value"]
+      "writeAccess": ["BlockReveal", "IdHolder", "IDOwnsKami", "Reroll", "State", "Type", "Value"],
+      "skipEnv": ["production"]
     },
     {
       "name": "KamiLevelSystem",
@@ -532,16 +546,18 @@
         "TimeLast",
         "TimeStart",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "KamiNameSystem",
       "writeAccess": ["HasFlag", "Name", "TimeLast", "Value"],
-      "skipEnv": ["testing"]
+      "skipEnv": ["testing", "production"]
     },
     {
       "name": "KamiUseItemSystem",
-      "writeAccess": ["*"]
+      "writeAccess": ["*"],
+      "skipEnv": ["production"]
     },
     {
       "name": "QuestAcceptSystem",
@@ -555,11 +571,13 @@
         "TimeLast",
         "TimeStart",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "QuestCompleteSystem",
-      "writeAccess": ["*"]
+      "writeAccess": ["*"],
+      "skipEnv": ["production"]
     },
     {
       "name": "QuestDropSystem",
@@ -573,15 +591,18 @@
         "TimeLast",
         "TimeStart",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "RelationshipAdvanceSystem",
-      "writeAccess": ["EntityType", "IDOwnsRelationship", "IndexNPC", "IndexRelationship", "TimeLast"]
+      "writeAccess": ["EntityType", "IDOwnsRelationship", "IndexNPC", "IndexRelationship", "TimeLast"],
+      "skipEnv": ["production"]
     },
     {
       "name": "ScavengeClaimSystem",
-      "writeAccess": ["*"]
+      "writeAccess": ["*"],
+      "skipEnv": ["production"]
     },
     {
       "name": "SkillResetSystem",
@@ -603,7 +624,8 @@
         "TimeReset",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "SkillUpgradeSystem",
@@ -621,7 +643,8 @@
         "TimeStart",
         "Type",
         "Value"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "TradeCancelSystem",
@@ -635,7 +658,8 @@
         "TimeLast",
         "Value",
         "Values"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "TradeCreateSystem",
@@ -649,7 +673,8 @@
         "TimeLast",
         "Value",
         "Values"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "TradeExecuteSystem",
@@ -663,7 +688,8 @@
         "TimeLast",
         "Value",
         "Values"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "TradeModifySystem",
@@ -677,7 +703,8 @@
         "TimeLast",
         "Value",
         "Values"
-      ]
+      ],
+      "skipEnv": ["production"]
     },
     {
       "name": "_721BatchMinterSystem",

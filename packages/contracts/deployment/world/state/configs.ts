@@ -127,7 +127,7 @@ export async function initLiquidation(api: AdminAPI) {
 async function initTokens(api: AdminAPI) {
   await api.config.set.address(
     'ERC20_RECEIVER_ADDRESS',
-    '0x26274225b556D623367ddA1D07120B92F4983d6B'
+    '0x40abECC43205A13584EA75e49Bc039722c233E30'
   );
 }
 

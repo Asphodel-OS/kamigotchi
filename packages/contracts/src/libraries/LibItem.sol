@@ -120,7 +120,6 @@ library LibItem {
     id = LibConditional.createFor(world, components, data, genReqAnchor(refID));
   }
 
-  // todo: disambiguate registry flags. Convert to IsComponents instead
   function addFlag(IUintComp components, uint32 index, string memory flag) internal {
     LibFlag.setFull(components, genID(index), "ITEM", flag);
   }
