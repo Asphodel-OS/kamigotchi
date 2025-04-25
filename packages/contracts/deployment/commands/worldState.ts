@@ -52,8 +52,8 @@ async function initWorld(worldAddress?: string, forge?: string) {
       worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
       '--fork-url',
       process.env.RPC!,
-      '--with-gas-price',
-      '0',
+      '--priority-gas-price=0',
+      '--with-gas-price=0',
       '--skip',
       'test',
       ...ignoreSolcErrors,
