@@ -33,13 +33,15 @@ export async function initLocalConfigs(api: AdminAPI) {
 }
 
 export async function initTestingConfigs(api: AdminAPI) {
-  await api.config.set.bool('WORLD_PRIVATE', true);
+  // await api.config.set.bool('WORLD_PRIVATE', true);
+  await api.config.set.string('BASE_KAMI_NAME', 'Test Kami ');
 }
 
 ///////////////////
 // CATEGORIES
 
 async function initBase(api: AdminAPI) {
+  await api.config.set.string('BASE_KAMI_NAME', 'Kamigotchi ');
   await api.config.set.string('BASE_URI', 'i.test.kamigotchi.io/kami');
 }
 

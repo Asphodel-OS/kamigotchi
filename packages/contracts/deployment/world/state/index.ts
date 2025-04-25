@@ -2,7 +2,7 @@ import { AdminAPI } from '../api';
 import { initAuctions } from './auctions';
 
 import { initAuth, initLocalAuth } from './auth';
-import { initConfigs, initLocalConfigs } from './configs';
+import { initConfigs, initLocalConfigs, initTestingConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
@@ -78,7 +78,7 @@ export async function initAllLocal(api: AdminAPI) {
 }
 
 export async function initAllTesting(api: AdminAPI) {
-  // await initTestingConfigs(api);
+  await initTestingConfigs(api);
   // await initTestingWorldWL(api);
 }
 

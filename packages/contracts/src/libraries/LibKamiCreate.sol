@@ -96,7 +96,7 @@ library LibKamiCreate {
   function setBase(IUintComp comps, uint256 id, uint32 index) internal {
     IDOwnsKamiComponent(getAddrByID(comps, IDOwnsKamiCompID)).set(id, GACHA_ID); // seed in gacha
     IndexKamiComponent(getAddrByID(comps, IndexKamiCompID)).set(id, index);
-    NameComponent(getAddrByID(comps, NameCompID)).set(id, makeName(index));
+    NameComponent(getAddrByID(comps, NameCompID)).set(id, makeName(comps, index));
     StateComponent(getAddrByID(comps, StateCompID)).set(id, string("RESTING"));
     LevelComponent(getAddrByID(comps, LevelCompID)).set(id, 1);
     SkillPointComponent(getAddrByID(comps, SkillPointCompID)).set(id, 1);
@@ -158,7 +158,7 @@ library LibKamiCreate {
   /////////////////
   // UTILS
 
-  function makeName(uint32 index) internal pure returns (string memory) {
-    return BASE_NAME.concat(LibString.toString(index));
+  function makeName(IUintComp comps, uint32 index) internal view returns (string memory) {
+    return LibConfig.getString(comps, "BASE_KAMI_NAME").concat(LibString.toString(index));
   }
 }
