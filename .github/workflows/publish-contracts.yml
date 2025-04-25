@@ -1,11 +1,11 @@
-name: Publish to public repo
+name: Publish to Public Contracts Repo
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'packages/client/**'
+      - 'packages/contracts/**'
 
 env:
   TARGET_REPO_OWNER: 'Asphodel-OS'

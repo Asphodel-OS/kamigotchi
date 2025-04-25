@@ -1,4 +1,4 @@
-name: Publish to public repo
+name: Publish to Public Client Repo
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
           ## SETUP SSH KEY
           eval $(ssh-agent -s)
           mkdir -p ~/.ssh
-          echo "${{secrets.KAMI_CONTRACTS_DEPLOY_KEY}}" > ~/.ssh/id_rsa
+          echo "${{secrets.KAMI_CLIENT_DEPLOY_KEY}}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ls -la ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
