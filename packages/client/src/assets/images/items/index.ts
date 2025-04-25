@@ -42,6 +42,7 @@ import kamigotchi_world_passport_pink from './kamigotchi_world_passport_pink.png
 import kamigotchi_world_passport_purple from './kamigotchi_world_passport_purple.png';
 import kamigotchi_world_passport_red from './kamigotchi_world_passport_red.png';
 import kamigotchi_world_passport_white from './kamigotchi_world_passport_white.png';
+import kamigotchi_world_passport_yellow from './kamigotchi_world_passport_yellow.png';
 import lily_sprout_card_native from './lily_sprout_card_native.png';
 import lotus_bud_card_native from './lotus_bud_card_native.png';
 import mana_mochi from './mana_mochi.png';
@@ -94,6 +95,7 @@ export const ItemImages = {
   kamigotchi_world_citizen_giftbox: kamigotchi_world_citizen_giftbox,
   kamigotchi_world_passport_grey: kamigotchi_world_passport_grey,
   kamigotchi_world_passport_green: kamigotchi_world_passport_green,
+  kamigotchi_world_passport_yellow: kamigotchi_world_passport_yellow,
   kamigotchi_world_passport_blue: kamigotchi_world_passport_blue,
   kamigotchi_world_passport_1_bit_red_and_white: kamigotchi_world_passport_1_bit_red_and_white,
   kamigotchi_world_passport_1_bit_pink: kamigotchi_world_passport_1_bit_pink,
@@ -158,7 +160,6 @@ export const ItemImages = {
   shredded_mint: shredded_mint,
   stone: stone,
   sunset_apple_mochi: sunset_apple_mochi,
-  vipp: vipp,
   wooden_stick: wooden_stick,
   xp_candy_huge: xp_candy_huge,
   xp_candy_large: xp_candy_large,
