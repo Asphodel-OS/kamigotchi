@@ -17,10 +17,11 @@ interface Props {
     min: number;
     step: number;
   };
+  balance: number; // eth balance
 }
 
 export const InputButton = (props: Props) => {
-  const { button, input } = props;
+  const { button, input, balance } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const quantityStr = event.target.value.replace('[^d.]/g', '');
@@ -32,6 +33,25 @@ export const InputButton = (props: Props) => {
   const handleSubmit = () => {
     button.onClick(input.value);
     playClick();
+  };
+
+  // set the input value to the max biddable amount
+  const setValueToMax = () => {
+    const maxBiddable = Math.min(balance, input.max);
+    input.setValue(maxBiddable);
+    playClick();
+  };
+
+  const getMaxTooltip = () => {
+    let tooltip = ['Feeling bullish?'];
+    if (balance < input.max) {
+      tooltip = tooltip.concat([
+        '',
+        `You need ${input.max.toFixed(3)}ETH but only have ${balance.toFixed(3)}`,
+        'Looks like.. your size is not size.',
+      ]);
+    }
+    return tooltip;
   };
 
   /////////////////
@@ -48,6 +68,13 @@ export const InputButton = (props: Props) => {
         value={input.value}
         onChange={(e) => handleChange(e)}
       />
+      <Overlay left={7} bottom={0.1}>
+        <Tooltip text={getMaxTooltip()} alignText='center' grow>
+          <ClickableText size={0.6} onClick={setValueToMax}>
+            Max
+          </ClickableText>
+        </Tooltip>
+      </Overlay>
       <Tooltip text={button.tooltip} alignText='center' grow>
         <Button onClick={handleSubmit} disabled={button.disabled}>
           {button.text}
@@ -117,4 +144,17 @@ const Text = styled.div<{ size: number }>`
   color: #d0fe41;
   font-size: ${(props) => props.size}vw;
   line-height: ${(props) => props.size * 1.5}vw;
+`;
+
+const ClickableText = styled.div<{ size: number }>`
+  color: black;
+  font-size: ${(props) => props.size}vw;
+  line-height: ${(props) => props.size * 1.5}vw;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+  &:active {
+    opacity: 0.6;
+  }
 `;

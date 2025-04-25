@@ -104,6 +104,7 @@ export const Info = (props: Props) => {
             min: 0,
             step: 0.01,
           }}
+          balance={tokenBal.balance}
         />
       </ButtonSection>
     </Container>

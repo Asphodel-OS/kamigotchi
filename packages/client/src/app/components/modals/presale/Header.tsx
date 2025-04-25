@@ -4,7 +4,7 @@ import { Overlay, Tooltip } from 'app/components/library';
 import { formatCountdown, getDateString } from 'utils/time';
 
 const StartTime = 1745845200; // April 28th, 2025 – 12am GMT
-const EndTime = StartTime + 3600 * 24 * 3;
+const EndTime = StartTime + 3600 * 24 * 2;
 
 interface Props {
   tick: number;
