@@ -15,13 +15,18 @@ interface Props {
     allowance: number;
     balance: number;
   };
+  time: {
+    now: number;
+    start: number;
+    end: number;
+  };
 }
 
 export const Info = (props: Props) => {
-  const { actions, data, tokenBal } = props;
+  const { actions, data, tokenBal, time } = props;
   const { approve, buy } = actions;
 
-  const [quantity, setQuantity] = useState(data.allo - data.bought);
+  const [quantity, setQuantity] = useState(0);
 
   /////////////////
   // INTERPRETATION
@@ -46,7 +51,11 @@ export const Info = (props: Props) => {
 
   const getButtonTooltip = () => {
     let tooltip: string[] = [];
-    if (quantity == 0) {
+    if (time.now < time.start) {
+      tooltip = ['Mint has not yet started'];
+    } else if (time.now > time.end) {
+      tooltip = ['Mint is over'];
+    } else if (quantity == 0) {
       tooltip = ['Sidelined?'];
     } else if (tokenBal.balance < quantity) {
       tooltip = ['too poore', `you have ${tokenBal.balance.toFixed(3)} $ETH`];
@@ -59,7 +68,11 @@ export const Info = (props: Props) => {
   };
 
   const isButtonDisabled = () => {
-    return quantity == 0 || tokenBal.balance < quantity;
+    if (quantity == 0) return true;
+    if (tokenBal.balance < quantity) return true;
+    if (time.now < time.start) return true;
+    if (time.now > time.end) return true;
+    return false;
   };
 
   /////////////////
@@ -100,10 +113,11 @@ export const Info = (props: Props) => {
           input={{
             value: quantity,
             setValue: setQuantity,
-            max: data.allo,
+            max: data.allo - data.bought,
             min: 0,
             step: 0.01,
           }}
+          balance={tokenBal.balance}
         />
       </ButtonSection>
     </Container>

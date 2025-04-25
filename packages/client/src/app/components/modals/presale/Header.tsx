@@ -1,33 +1,45 @@
 import styled from 'styled-components';
 
 import { Overlay, Tooltip } from 'app/components/library';
-import { getDateString } from 'utils/time';
-
-const StartTime = Math.floor(Date.now() / 1000) + 3600 * 24;
+import { formatCountdown, getDateString } from 'utils/time';
 
 interface Props {
-  tick: number;
+  time: {
+    now: number;
+    start: number;
+    end: number;
+  };
 }
 
 export const Header = (props: Props) => {
-  const { tick } = props;
+  const { time } = props;
+  const { now, start, end } = time;
+
+  const getStatus = () => {
+    if (now < start) return 'Soon';
+    if (now < end) return 'Live';
+    return 'Over';
+  };
 
   const getCountdown = () => {
-    const diff = StartTime - tick;
-    const seconds = Math.floor(diff % 60);
-    const minutes = Math.floor((diff / 60) % 60);
-    const hours = Math.floor((diff / (60 * 60)) % 24);
+    if (now < start) return formatCountdown(start - now);
+    if (now < end) return formatCountdown(end - now);
+    return formatCountdown(0);
+  };
 
-    return `${hours}:${minutes}:${seconds}`;
+  const getCountdownTooltip = () => {
+    if (now < start) return [`Mint starts ${getDateString(start, 0)}`];
+    if (now < end) return [`Mint ends ${getDateString(end, 0)}`];
+    return [`Mint has ended`, '', `Thank you for your participation!`];
   };
 
   return (
     <Container>
       <Overlay left={0.9} top={0.9}>
-        <Text size={0.9}>Mint is Live</Text>
+        <Text size={0.9}>Mint is {getStatus()}</Text>
       </Overlay>
       <Overlay right={0.9} top={0.9}>
-        <Tooltip text={[`Mint ends ${getDateString(StartTime)}`]} grow>
+        <Tooltip text={getCountdownTooltip()} alignText='center' grow>
           <Text size={0.9}>{getCountdown()}</Text>
         </Tooltip>
       </Overlay>
