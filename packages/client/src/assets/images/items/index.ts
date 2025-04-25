@@ -73,7 +73,7 @@ import spice_grinder from './spice_grinder.png';
 import stone from './stone.png';
 import strange_machine_part_native from './strange_machine_part_native.png';
 import sunset_apple_mochi from './sunset_apple_mochi.png';
-import VIPP from './VIPP.png';
+import vipp from './vipp.png';
 import wooden_stick from './wooden_stick.png';
 import xp_candy_huge from './xp_candy_huge.png';
 import xp_candy_large from './xp_candy_large.png';
@@ -84,7 +84,7 @@ import xp_potion from './xp_potion.png';
 export const ItemImages = {
   river_of_life_card_native: river_of_life_card_native,
   strange_machine_part_native: strange_machine_part_native,
-  VIPP: VIPP,
+  vipp: vipp,
   passport_white: passport_white,
   passport_orange: passport_orange,
   passport_pink: passport_pink,
