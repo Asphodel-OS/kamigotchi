@@ -70,7 +70,7 @@ export const Footer = (props: Props) => {
     setNeedsApproval(needsApproval);
     setEnoughBalance(enoughBalance);
     setUnderMax(underMax);
-    setIsDisabled(quantity <= 0 || !enoughBalance || !underMax);
+    // setIsDisabled(quantity <= 0 || !enoughBalance || !underMax);
   }, [tokenBal, price]);
 
   // check if a user needs further spend approval for a token
@@ -157,6 +157,7 @@ export const Footer = (props: Props) => {
   };
 
   const getSubmitTooltip = () => {
+    return ["mint hasn't started yet!"];
     if (quantity <= 0) return ['no items to purchase'];
     if (tab === 'MINT') {
       if (mode === 'DEFAULT' && mint.whitelisted) return ['max per account'];
