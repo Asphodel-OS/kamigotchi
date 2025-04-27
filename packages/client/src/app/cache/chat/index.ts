@@ -1,7 +1,7 @@
 export {
   get as getChat,
-  getLastTimeStamp as getChatLastTimeStamp,
-  getNumberNewMessages as getChatNumberNewMessages,
+  getLastTimestamp as getChatLastTimestamp,
+  numMessagesSince as numMessagesChatSince,
   process as processChat,
   push as pushChat,
 } from './chat';

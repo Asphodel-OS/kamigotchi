@@ -56,18 +56,17 @@ export const push = (newMessage: Message) => {
   }
 };
 
-export const getLastTimeStamp = (roomIndex: number) => {
+export const getLastTimestamp = (roomIndex: number) => {
   const messages = ChatCache.get(roomIndex);
   if (!messages) return 0;
   const len = messages.length;
-  return messages[len - 1].Timestamp ?? 0;
+  return messages[len - 1]?.Timestamp ?? 0;
 };
 
-export const getNumberNewMessages = (roomIndex: number, lastTimeStamp: number) => {
+export const numMessagesSince = (roomIndex: number, lastTimeStamp: number) => {
   const cacheLength = ChatCache.get(roomIndex)?.length ?? 0;
   const lastVisitedPosition =
     ChatCache.get(roomIndex)?.findIndex((message) => message.Timestamp >= lastTimeStamp) ?? 0;
   const numberNewMessages = cacheLength - lastVisitedPosition;
-  if (numberNewMessages > 10) return '+10';
-  else return numberNewMessages;
+  return numberNewMessages;
 };

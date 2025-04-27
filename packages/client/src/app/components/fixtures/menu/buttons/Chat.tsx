@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getChatLastTimeStamp, getChatNumberNewMessages } from 'app/cache/chat';
+import { getChatLastTimestamp, numMessagesChatSince } from 'app/cache/chat';
 import { Modals, useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
-const chatOpened = new Map<number, number>();
-const nodeVisited = new Map<number, number>();
+const ChatOpened = new Map<number, number>(); // roomIndex => ts last opened
+const RoomVisited = new Map<number, number>(); // roomIndex => ts first visited
 export const ChatMenuButton = () => {
   const { modals } = useVisibility();
   const modalsToHide: Partial<Modals> = {
@@ -30,6 +30,14 @@ export const ChatMenuButton = () => {
 
   const { roomIndex } = useSelected();
 
+  const handleNumMessages = () => {
+    const numberNewMessages = numMessagesChatSince(
+      roomIndex,
+      ChatOpened.get(roomIndex) ?? RoomVisited.get(roomIndex) ?? 0
+    );
+    return numberNewMessages > 10 ? '+10' : numberNewMessages;
+  };
+
   // ticking
   useEffect(() => {
     const timerId = setInterval(() => {
@@ -39,25 +47,25 @@ export const ChatMenuButton = () => {
   }, []);
 
   useEffect(() => {
-    if (!nodeVisited.has(roomIndex)) nodeVisited.set(roomIndex, Date.now());
+    if (!RoomVisited.has(roomIndex)) RoomVisited.set(roomIndex, Date.now());
   }, [roomIndex]);
 
   useEffect(() => {
     if (modals.chat) {
-      chatOpened.set(roomIndex, Date.now());
+      ChatOpened.set(roomIndex, Date.now());
       setNotification(false);
     } else {
       // if chat has been opened before
-      if (chatOpened.has(roomIndex)) {
-        if (chatOpened.get(roomIndex)! < getChatLastTimeStamp(roomIndex)) {
+      if (ChatOpened.has(roomIndex)) {
+        if (ChatOpened.get(roomIndex)! < getChatLastTimestamp(roomIndex)) {
           setNotification(true);
         } else {
           setNotification(false);
         }
       } else {
         // if room has been visited but chat hast been opened yet
-        if (nodeVisited.has(roomIndex)) {
-          if (nodeVisited.get(roomIndex)! < getChatLastTimeStamp(roomIndex)) {
+        if (RoomVisited.has(roomIndex)) {
+          if (RoomVisited.get(roomIndex)! < getChatLastTimestamp(roomIndex)) {
             setNotification(true);
           } else {
             setNotification(false);
@@ -77,12 +85,7 @@ export const ChatMenuButton = () => {
         hideModals={modalsToHide}
       />
       <Status notification={notification}>
-        <Number>
-          {getChatNumberNewMessages(
-            roomIndex,
-            chatOpened.get(roomIndex) ?? nodeVisited.get(roomIndex) ?? 0
-          )}
-        </Number>
+        <Number>{handleNumMessages()}</Number>
       </Status>
     </Container>
   );
