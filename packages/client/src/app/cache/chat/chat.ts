@@ -14,10 +14,14 @@ export const get = async (roomIndex: number, append: boolean) => {
 export const process = async (roomIndex: number, append: boolean) => {
   if (!KamidenClient) {
     console.warn('process(): Kamiden client not initialized');
+    console.log('NO KAMIDEN');
     ChatCache.set(roomIndex, []);
     return;
   }
-
+  console.log(`process(): ${roomIndex}`);
+  console.log(`messages: ${ChatCache.get(roomIndex)?.length}`);
+  console.log(`messages[0]: ${ChatCache.get(roomIndex)?.[0]?.Timestamp}`);
+  console.log('_________________________________________________________');
   const messages: Message[] = ChatCache.get(roomIndex) ?? [];
   const lastTs = messages[0]?.Timestamp ?? Date.now();
   const response = await KamidenClient.getRoomMessages({
