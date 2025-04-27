@@ -15,7 +15,6 @@ import { LibDeployTokens } from "deployment/LibDeployTokens.s.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibGetter } from "libraries/utils/LibGetter.sol";
-import { console } from "forge-std/console.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;

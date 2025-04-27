@@ -6,7 +6,6 @@ import { GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import "tests/utils/SetupTemplate.t.sol";
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { CURRENCY } from "systems/GachaBuyTicketSystem.sol";
-import { console } from "forge-std/console.sol";
 
 contract MintTicketTest is SetupTemplate {
   uint256 private maxMints; // total mints allowed
