@@ -96,6 +96,13 @@ export const Bio = (props: Props) => {
 
   return (
     <Container>
+      {isSelf ? (
+        <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
+          {Pfp()}
+        </Popover>
+      ) : (
+        Pfp()
+      )}
       <Content>
         <Identifiers>
           <TitleRow>
@@ -104,13 +111,6 @@ export const Bio = (props: Props) => {
           <AddressDisplay />
         </Identifiers>
       </Content>
-      {isSelf ? (
-        <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
-          {Pfp()}
-        </Popover>
-      ) : (
-        Pfp()
-      )}
     </Container>
   );
 };
@@ -119,15 +119,16 @@ const Container = styled.div`
   padding: 0.75vw;
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
 `;
 
 const Content = styled.div`
   width: 100%;
-  padding: 0.5vw;
-
+  padding: 1.5vw;
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: column;
   justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 const Identifiers = styled.div`
