@@ -47,7 +47,7 @@ contract MintTicketTest is SetupTemplate {
   }
 
   // check some basic, relative values between WL and Public mint configs
-  function testConfigs() public {
+  function testMintTicketConfigs() public {
     assertGt(mintsPublic, mintsWL); // more mints allowed for public than WL
     assertGt(pricePublic, priceWL); // greater price for public than WL
     assertGt(startPublic, startWL); // public mint starts later than WL
@@ -57,7 +57,7 @@ contract MintTicketTest is SetupTemplate {
   // WHITELIST TESTS
 
   // test that whitelisting does indeed work even across multiple accounts
-  function testWhitelisting(bool aWL, bool bWL, bool cWL) public {
+  function testMintTicketWhitelisting(bool aWL, bool bWL, bool cWL) public {
     // set the whitelisted flags
     _setFlag(alice.id, "MINT_WHITELISTED", aWL);
     _setFlag(bob.id, "MINT_WHITELISTED", bWL);
@@ -90,7 +90,7 @@ contract MintTicketTest is SetupTemplate {
   }
 
   // ensure WL mints are not accessible prior to start time
-  function testWLStart(uint256 _currTs, uint32 _startDelta, bool _flip) public {
+  function testMintTicketWLStart(uint256 _currTs, uint32 _startDelta, bool _flip) public {
     vm.assume(_currTs < 1 << 254); // healthy bounds to prevent overflow
     vm.assume(_currTs > 1 << 32); // healthy bounds to prevent underflow
 
@@ -112,7 +112,7 @@ contract MintTicketTest is SetupTemplate {
   }
 
   // test that the WL mint limit is enforced and state is updated correctly
-  function testWLSolo(uint8 limit, uint8 _numMints) public {
+  function testMintTicketWLSolo(uint8 limit, uint8 _numMints) public {
     vm.assume(_numMints < 16); // keep it reasonable
     vm.assume(limit < 32);
 
@@ -154,7 +154,7 @@ contract MintTicketTest is SetupTemplate {
    *  @param _accLimit maximum number of whitelist mints per account
    *  @param _numMints number of mints to attempt
    */
-  function testWLMulti(uint8 _numAccounts, uint8 _accLimit, uint32 _numMints) public {
+  function testMintTicketWLMulti(uint8 _numAccounts, uint8 _accLimit, uint32 _numMints) public {
     vm.assume(_numAccounts < 10 && _numAccounts > 0); // stay within our test setup total accounts
     vm.assume(_numMints < 100 && _numMints > 10); // keep it reasonable
     vm.assume(_accLimit < 32 && _accLimit > 0);
@@ -227,7 +227,7 @@ contract MintTicketTest is SetupTemplate {
   // PUBLIC TESTS
 
   // ensure public mints are not accessible prior to start time
-  function testPublicStart(uint256 _currTs, uint32 _startDelta, bool _flip) public {
+  function testMintTicketPublicStart(uint256 _currTs, uint32 _startDelta, bool _flip) public {
     vm.assume(_currTs < 1 << 254); // healthy bounds to prevent overflow
     vm.assume(_currTs > 1 << 32); // healthy bounds to prevent underflow
 
@@ -248,7 +248,7 @@ contract MintTicketTest is SetupTemplate {
   }
 
   // test that the Public mint limit is enforced and state is updated correctly
-  function testPublicSolo(uint8 limit, uint8 _numMints) public {
+  function testMintTicketPublicSolo(uint8 limit, uint8 _numMints) public {
     vm.assume(_numMints < 16); // keep it reasonable
     vm.assume(limit < 32);
 
@@ -293,7 +293,7 @@ contract MintTicketTest is SetupTemplate {
    *  @param _accLimit maximum number of public mints per account
    *  @param _numMints number of mint iterations
    */
-  function testPublicMulti(uint8 _numAccounts, uint8 _accLimit, uint8 _numMints) public {
+  function testMintTicketPublicMulti(uint8 _numAccounts, uint8 _accLimit, uint8 _numMints) public {
     vm.assume(_numAccounts < 10 && _numAccounts > 0); // stay within our test setup total accounts
     vm.assume(_accLimit < 100 && _accLimit > 3); // total ticket limit per account
     vm.assume(_numMints < 100 && _numMints > 10); // number of mint iterations
@@ -367,7 +367,7 @@ contract MintTicketTest is SetupTemplate {
 
   // functional test of more realistic scenario combining whitelist and public mints
   // no data checking, just testing that max constraints are met
-  function testMaxMints(uint32 seed) public {
+  function testMintTicketMaxMints(uint32 seed) public {
     uint256 _maxMints = 1000;
     uint256 _publicLimit = 5;
     uint256 _numAccounts = 300;
