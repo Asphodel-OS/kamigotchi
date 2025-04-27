@@ -35,10 +35,7 @@ export const process = async (roomIndex: number, append: boolean) => {
     Timestamp: lastTs,
   });
   console.log(`requesting ${lastTs} ts`);
-  if (response.Messages.length === 0) {
-    console.log('NO MESSAGES');
-    return;
-  }
+  console.log(`response.Messages.length: ${response.Messages.length}`);
   console.log('_________________________________________________________');
   ChatCache.set(roomIndex, response.Messages.concat(messages));
 
