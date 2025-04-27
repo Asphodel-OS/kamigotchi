@@ -62,6 +62,7 @@ export const Controls = (props: Props) => {
   const getBalanceText = () => {
     let numDecimals = 0;
     if (tab === 'REROLL' && mode === 'ALT') numDecimals = 3;
+    else if (tab === 'MINT') numDecimals = 2;
     return balance.toFixed(numDecimals);
   };
 

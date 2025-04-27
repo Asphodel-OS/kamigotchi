@@ -6,7 +6,7 @@ import { useWatchBlockNumber } from 'wagmi';
 import { getItemByIndex } from 'app/cache/item';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useTokens } from 'app/stores';
-import { ONYX_INDEX } from 'constants/items';
+import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { useERC20Balance } from 'network/chain';
 import { getCompAddr } from 'network/shapes/utils';
 
@@ -31,6 +31,7 @@ export function registerTokenBalances() {
             tokens: {
               // todo: dynamically query based on items with address?
               onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
+              eth: getItemByIndex(world, components, ETH_INDEX).address!,
             },
             spender: getCompAddr(world, components, 'component.token.allowance'),
           };
@@ -43,9 +44,11 @@ export function registerTokenBalances() {
 
       useWatchBlockNumber({
         onBlockNumber(block) {
-          if (block % 4n === 0n) {
+          if (block % 2n === 0n) {
             refetchOnyx();
+            refetchEth();
             set(tokens.onyx, onyxBal);
+            set(tokens.eth, ethBal);
           }
         },
       });
@@ -57,6 +60,12 @@ export function registerTokenBalances() {
       const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
         account.ownerAddress,
         tokens.onyx,
+        spender
+      );
+
+      const { balances: ethBal, refetch: refetchEth } = useERC20Balance(
+        account.ownerAddress,
+        tokens.eth,
         spender
       );
 

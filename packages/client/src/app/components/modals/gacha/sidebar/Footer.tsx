@@ -70,7 +70,7 @@ export const Footer = (props: Props) => {
     setNeedsApproval(needsApproval);
     setEnoughBalance(enoughBalance);
     setUnderMax(underMax);
-    // setIsDisabled(quantity <= 0 || !enoughBalance || !underMax);
+    setIsDisabled(quantity <= 0 || !enoughBalance || !underMax);
   }, [tokenBal, price]);
 
   // check if a user needs further spend approval for a token
@@ -91,9 +91,11 @@ export const Footer = (props: Props) => {
 
   // check if a user is under max amt per tx
   const checkMax = () => {
+    if (tab === 'MINT') return underMintMax();
+
     if (mode === 'ALT') return true; // no max for auctions
     if (tab === 'GACHA' || tab === 'REROLL') return GACHA_MAX_PER_TX >= quantity;
-    else return true; // minting max not implemented
+    else return true;
   };
 
   // (MINT ONLY) check if a user is under the total mint allowance
@@ -105,7 +107,7 @@ export const Footer = (props: Props) => {
     if (mode === 'DEFAULT') return accountData.whitelist + quantity <= config.whitelist.max;
     if (mode === 'ALT') return accountData.public + quantity <= config.public.max;
 
-    return true; // minting max not implemented
+    return true;
   };
 
   //////////////////
@@ -157,10 +159,10 @@ export const Footer = (props: Props) => {
   };
 
   const getSubmitTooltip = () => {
-    return ["mint hasn't started yet!"];
     if (quantity <= 0) return ['no items to purchase'];
     if (tab === 'MINT') {
-      if (mode === 'DEFAULT' && mint.whitelisted) return ['max per account'];
+      if (mode === 'DEFAULT' && mint.whitelisted)
+        return ['this purchase will exceed your WL mint limit'];
       if (!underMintMax()) {
         const max = mode === 'DEFAULT' ? mint.config.whitelist.max : mint.config.public.max;
         const curr = mode === 'DEFAULT' ? mint.data.account.whitelist : mint.data.account.public;
