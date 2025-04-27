@@ -28,14 +28,18 @@ export const process = async (roomIndex: number, append: boolean) => {
     }
   }
 
-  console.log('_________________________________________________________');
   const messages: Message[] = ChatCache.get(roomIndex) ?? [];
   const lastTs = messages[0]?.Timestamp ?? Date.now();
   const response = await KamidenClient.getRoomMessages({
     RoomIndex: roomIndex,
     Timestamp: lastTs,
   });
-
+  console.log(`requesting ${lastTs} ts`);
+  if (response.Messages.length === 0) {
+    console.log('NO MESSAGES');
+    return;
+  }
+  console.log('_________________________________________________________');
   ChatCache.set(roomIndex, response.Messages.concat(messages));
 
   // if (!append) {
