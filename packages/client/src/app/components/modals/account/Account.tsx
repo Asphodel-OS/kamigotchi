@@ -180,7 +180,7 @@ export function registerAccountModal() {
       return (
         <ModalWrapper
           id='account'
-          header={<ModalHeader key='header' title='Friends' icon={OperatorIcon} />}
+          header={<ModalHeader key='header' title='Account' icon={OperatorIcon} />}
           canExit
           truncate
         >

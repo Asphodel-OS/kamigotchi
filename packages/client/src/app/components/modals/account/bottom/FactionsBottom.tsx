@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { EmptyText } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
+import { Factions } from '../Factions';
 
 interface Props {
   account: Account; // account selected for viewing
@@ -15,7 +15,7 @@ export const FactionsBottom = (props: Props) => {
 
   return (
     <Container>
-      <EmptyText text={['not yet implemented']} />
+      <Factions />
     </Container>
   );
 };
