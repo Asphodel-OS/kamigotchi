@@ -1,30 +1,35 @@
 import { ProgressBar } from 'app/components/library/base';
-import { ItemImages } from 'assets/images/items';
+import { FactionIcons } from 'assets/images/icons/factions';
 import styled from 'styled-components';
 
 interface Props {}
 
 export const Factions = (props: Props) => {
   const BarContent = [
-    { name: 'Reputation', progress: '#69a6f9', current: 30 },
-    { name: 'Loyalty', progress: '#fba1f8', current: 20 },
-    { name: 'Dedication', progress: '#fcc65a', current: 40 },
+    {
+      name: 'Reputation',
+      progress: '#69a6f9',
+      current: 30,
+      icon: FactionIcons.kamigotchi_tourism_agency,
+    },
+    { name: 'Loyalty', progress: '#fba1f8', current: 20, icon: FactionIcons.minas_shop },
+    { name: 'Dedication', progress: '#fcc65a', current: 40, icon: FactionIcons.kamigotchi_nursery },
   ];
 
   return (
     <Container>
-      {BarContent.map((item, index) => {
+      {BarContent.map((faction, index) => {
         return (
           <Row key={index}>
-            {item.name}
+            {faction.name}
             <ProgressBar
               width={15}
               total={100}
-              current={item.current}
-              icon={ItemImages.pomegranate}
+              current={faction.current}
+              icon={faction.icon}
               colors={{
                 background: 'white',
-                progress: item.progress,
+                progress: faction.progress,
               }}
             />
           </Row>
@@ -44,7 +49,7 @@ const Container = styled.div`
   font-size: 0.7vw;
   gap: 0.6vw;
   z-index: 0;
-  align-items: flex-start;
+  align-factions: flex-start;
 `;
 
 const Row = styled.div`
@@ -52,7 +57,7 @@ const Row = styled.div`
   display: flex;
   flex-flow: row;
   -webkit-box-align: center;
-  align-items: center;
+  align-factions: center;
   width: 100%;
   justify-content: space-between;
 `;

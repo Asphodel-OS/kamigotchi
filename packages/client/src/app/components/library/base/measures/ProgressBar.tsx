@@ -53,8 +53,11 @@ const Container = styled.div<{ width?: number }>`
 const Icon = styled.img<{ position: number }>`
   left: ${({ position }) => `calc(${position}% - 10px)`};
   position: absolute;
-  height: 1.2vw;
+  height: 1.8vw;
   width: auto;
+  border: solid black 0.15vw;
+  background-color: white;
+  border-radius: 50%;
 `;
 
 interface BarProps {
