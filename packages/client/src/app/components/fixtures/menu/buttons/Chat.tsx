@@ -44,7 +44,7 @@ export const ChatMenuButton = () => {
   }, []);
 
   useEffect(() => {
-    if (modals.chat && notification) {
+    if (modals.chat) {
       setNotification(false);
     } else {
       const lastChatTs = getChatLastTimestamp(roomIndex);

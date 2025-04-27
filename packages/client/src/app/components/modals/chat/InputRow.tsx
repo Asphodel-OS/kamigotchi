@@ -32,7 +32,7 @@ export const InputRow = (props: Props) => {
       params: [text],
       description: `Send Message`,
       execute: async () => {
-        return api.player.social.chat.send(text);
+        return api.player.account.chat.send(text);
       },
     });
     return actionID;
