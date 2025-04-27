@@ -2,25 +2,25 @@
 ,In Game,MUSU,1,Misc,,,,,,Kamigotchi kurrency
 ,In Game,Gacha Ticket,10,Misc,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
-,In Game,Kamigotchi World Passport (Yellow),20,NFT,,,,,,Your path to salvation during playtest. Your ticket to great fortunes.
+,In Game,Kamigotchi World Passport (Yellow),20,NFT,,,,,,Your ticket to great fortunes. In yellow.
 ,In Game,ONYX,100,ERC20,,0x9D9c32921575Fd98e67E27C0189ED4b750Cb17C5,,,,"Asphodel’s premium game currency.
 
 You want this. You want this so bad."
 ,Test,INIT,101,ERC20,,0x0000000000000000000000000000000000000101,,,,Initia
 ,To Deploy,ETH,103,ERC20,,0xE1Ff7038eAAAF027031688E1535a055B2Bac2546,,,,Ethereum
-,To Deploy,Kamigotchi World Passport (Orange),21,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (Pink),22,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (Red),23,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (Blue),24,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (Green),25,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (White),26,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (Grey),27,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (Purple),28,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (Lime Green),29,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (1-bit Red and White),30,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (1-bit Pink),31,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (1-bit Green),32,NFT,,,,,,
-,To Deploy,Kamigotchi World Passport (1-bit Black and White),33,NFT,,,,,,
+,To Update,Kamigotchi World Passport (Orange),21,NFT,,,,,,Your ticket to great fortunes. In orange.
+,To Update,Kamigotchi World Passport (Pink),22,NFT,,,,,,Your ticket to great fortunes. In pink.
+,To Update,Kamigotchi World Passport (Red),23,NFT,,,,,,"Your ticket to great fortunes. In red. "
+,To Update,Kamigotchi World Passport (Blue),24,NFT,,,,,,"Your ticket to great fortunes. In blue. "
+,To Update,Kamigotchi World Passport (Green),25,NFT,,,,,,Your ticket to great fortunes. In green.
+,To Update,Kamigotchi World Passport (White),26,NFT,,,,,,Your ticket to great fortunes. In white.
+,To Update,Kamigotchi World Passport (Grey),27,NFT,,,,,,Your ticket to great fortunes. In grey.
+,To Update,Kamigotchi World Passport (Purple),28,NFT,,,,,,Your ticket to great fortunes. In purple.
+,To Update,Kamigotchi World Passport (Lime Green),29,NFT,,,,,,Your ticket to great fortunes. In lime green.
+,To Update,Kamigotchi World Passport (1-bit Red and White),30,NFT,,,,,,Your ticket to great fortunes. In 1-bit red.
+,To Update,Kamigotchi World Passport (1-bit Pink),31,NFT,,,,,,Your ticket to great fortunes. In 1-bit pink.
+,To Update,Kamigotchi World Passport (1-bit Green),32,NFT,,,,,,Your ticket to great fortunes. In 1-bit green.
+,To Update,Kamigotchi World Passport (1-bit Black and White),33,NFT,,,,,,Your ticket to great fortunes. In 1-bit black.
 ,In Game,Screwdriver,201,Material,,,,,,For driving screws. May be of practical use….
 ,In Game,Wooden Stick,1001,Material,,,,,,"Wood in its unprocessed form. Grows on trees. "
 ,In Game,Stone,1002,Material,,,,,,"It’s just a stone. Can be used to get Stone. "
