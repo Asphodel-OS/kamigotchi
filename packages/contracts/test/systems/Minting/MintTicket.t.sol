@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
-import { GACHA_ID } from "libraries/LibGacha.sol";
+// import { GACHA_ID } from "libraries/LibGacha.sol";
 import { GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import "tests/utils/SetupTemplate.t.sol";
 import { ERC20 } from "solmate/tokens/ERC20.sol";
@@ -9,17 +9,17 @@ import { CURRENCY } from "systems/GachaBuyTicketSystem.sol";
 import { console } from "forge-std/console.sol";
 
 contract MintTicketTest is SetupTemplate {
-  uint256 maxMints; // total mints allowed
+  uint256 private maxMints; // total mints allowed
 
-  uint256 mintsWL; // whitelist mints allowed per account
-  uint256 priceWL; // price of whitelist mint
-  uint256 startWL; // start epoch ts of whitelist mint
+  uint256 private mintsWL; // whitelist mints allowed per account
+  uint256 private priceWL; // price of whitelist mint
+  uint256 private startWL; // start epoch ts of whitelist mint
 
-  uint256 mintsPublic; // public mints allowed per account
-  uint256 pricePublic; // price of public mint
-  uint256 startPublic; // start epoch ts of public mint
+  uint256 private mintsPublic; // public mints allowed per account
+  uint256 private pricePublic; // price of public mint
+  uint256 private startPublic; // start epoch ts of public mint
 
-  ERC20 currency20;
+  ERC20 private currency20;
 
   function setUp() public override {
     super.setUp();
@@ -360,6 +360,79 @@ contract MintTicketTest is SetupTemplate {
       account = _accounts[i];
       accItemBal = _getItemBal(account.id, GACHA_TICKET_INDEX);
       assertEq(accItemBal, numMinted[i], "unexpected item balance");
+    }
+  }
+
+  /////////////////
+  // COMBINED TESTS
+
+  // functional test of more realistic scenario combining whitelist and public mints
+  // no data checking, just testing that max constraints are met
+  function testMaxMints(uint32 seed) public {
+    uint256 _maxMints = 1000;
+    uint256 _publicLimit = 5;
+    uint256 _numAccounts = 300;
+    uint256 _numMints = 500;
+
+    _createOwnerOperatorPairs(_numAccounts);
+    _registerAccounts(_numAccounts);
+
+    // useful variables
+    uint256 accIndex;
+    PlayerAccount storage account;
+
+    // configure mint
+    _setConfig("MINT_MAX_TOTAL", _maxMints);
+    _setConfig("MINT_MAX_PUBLIC", _publicLimit);
+    _setConfig("MINT_MAX_WL", 1);
+    _setConfig("MINT_START_PUBLIC", _getTime());
+    _setConfig("MINT_START_WL", _getTime());
+    _fastForward(1000);
+
+    // fund all accounts and whitelist a third
+    uint256 tokenBalInitial = pricePublic * _publicLimit + priceWL;
+    for (uint256 i = 0; i < _numAccounts; i++) {
+      account = _accounts[i];
+      _mintERC20(address(currency20), tokenBalInitial, account.owner);
+      _approveERC20(address(currency20), account.owner);
+      if (i % 3 == 0) _setFlag(account.id, "MINT_WHITELISTED", true);
+    }
+
+    // attempt mints
+    uint256 numToMint;
+    uint256 totalMinted;
+    uint256[] memory numMinted = new uint256[](_numAccounts);
+    for (uint256 i = 0; i < _numMints; i++) {
+      accIndex = uint256(keccak256(abi.encodePacked(seed, i))) % _numAccounts;
+      account = _accounts[accIndex];
+
+      // mint
+      vm.prank(account.owner);
+      if (seed % 3 == 0) {
+        numToMint = 1;
+        if (totalMinted + numToMint > maxMints) {
+          vm.expectRevert("max mints reached");
+        } else if (accIndex % 3 != 0) {
+          vm.expectRevert("not whitelisted");
+        } else if (numMinted[accIndex] + numToMint > 1) {
+          vm.expectRevert("max whitelist mint per account reached");
+        } else {
+          numMinted[accIndex] += numToMint;
+          totalMinted += numToMint;
+        }
+        _GachaBuyTicketSystem.buyWL();
+      } else {
+        numToMint = (uint256(keccak256(abi.encodePacked(seed, i))) % _publicLimit) + 1;
+        if (totalMinted + numToMint > maxMints) {
+          vm.expectRevert("max mints reached");
+        } else if (numMinted[accIndex] + numToMint > _publicLimit) {
+          vm.expectRevert("max public mint per account reached");
+        } else {
+          numMinted[accIndex] += numToMint;
+          totalMinted += numToMint;
+        }
+        _GachaBuyTicketSystem.buyPublic(numToMint);
+      }
     }
   }
 }
