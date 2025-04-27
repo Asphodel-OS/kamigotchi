@@ -6,8 +6,8 @@ import { Modals, useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
-const ChatOpened = new Map<number, number>(); // roomIndex => ts last opened
-const RoomVisited = new Map<number, number>(); // roomIndex => ts first visited
+const LastClearTs = new Map<number, number>(); // roomIndex => ts last opened
+
 export const ChatMenuButton = () => {
   const { modals } = useVisibility();
   const modalsToHide: Partial<Modals> = {
@@ -31,10 +31,7 @@ export const ChatMenuButton = () => {
   const { roomIndex } = useSelected();
 
   const handleNumMessages = () => {
-    const numberNewMessages = numMessagesChatSince(
-      roomIndex,
-      ChatOpened.get(roomIndex) ?? RoomVisited.get(roomIndex) ?? 0
-    );
+    const numberNewMessages = numMessagesChatSince(roomIndex, LastClearTs.get(roomIndex) ?? 0);
     return numberNewMessages > 10 ? '+10' : numberNewMessages;
   };
 
@@ -47,33 +44,23 @@ export const ChatMenuButton = () => {
   }, []);
 
   useEffect(() => {
-    if (!RoomVisited.has(roomIndex)) RoomVisited.set(roomIndex, Date.now());
-  }, [roomIndex]);
-
-  useEffect(() => {
-    if (modals.chat) {
-      ChatOpened.set(roomIndex, Date.now());
+    if (modals.chat && notification) {
       setNotification(false);
     } else {
-      // if chat has been opened before
-      if (ChatOpened.has(roomIndex)) {
-        if (ChatOpened.get(roomIndex)! < getChatLastTimestamp(roomIndex)) {
-          setNotification(true);
-        } else {
-          setNotification(false);
-        }
-      } else {
-        // if room has been visited but chat hast been opened yet
-        if (RoomVisited.has(roomIndex)) {
-          if (RoomVisited.get(roomIndex)! < getChatLastTimestamp(roomIndex)) {
-            setNotification(true);
-          } else {
-            setNotification(false);
-          }
-        }
-      }
+      const lastChatTs = getChatLastTimestamp(roomIndex);
+      const lastClearTs = LastClearTs.get(roomIndex) ?? 0;
+      setNotification(lastChatTs > lastClearTs);
     }
-  }, [lastRefresh, roomIndex, modals.chat]);
+  }, [lastRefresh]);
+
+  useEffect(() => {
+    LastClearTs.set(roomIndex, Date.now());
+  }, [modals.chat]);
+
+  // added (!LastClearTs.has(roomIndex)) to not overwrite the last clear timestamp each time an already visited room is visited again
+  useEffect(() => {
+    if (!LastClearTs.has(roomIndex)) LastClearTs.set(roomIndex, Date.now());
+  }, [roomIndex]);
 
   return (
     <Container>
