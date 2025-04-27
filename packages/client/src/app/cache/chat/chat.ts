@@ -18,9 +18,16 @@ export const process = async (roomIndex: number, append: boolean) => {
     ChatCache.set(roomIndex, []);
     return;
   }
+  var msgs = ChatCache.get(roomIndex);
   console.log(`process(): ${roomIndex}`);
-  console.log(`messages: ${ChatCache.get(roomIndex)?.length}`);
-  console.log(`messages[0]: ${ChatCache.get(roomIndex)?.[0]?.Timestamp}`);
+  console.log(`messages: ${msgs?.length}`);
+  console.log(`messages[0]: ${msgs?.[0]?.Timestamp}`);
+  if (msgs) {
+    for (var i = 0; i < msgs.length; i++) {
+      console.log(`messages[${i}]: ${ChatCache.get(roomIndex)?.[i]?.Timestamp}`);
+    }
+  }
+
   console.log('_________________________________________________________');
   const messages: Message[] = ChatCache.get(roomIndex) ?? [];
   const lastTs = messages[0]?.Timestamp ?? Date.now();
