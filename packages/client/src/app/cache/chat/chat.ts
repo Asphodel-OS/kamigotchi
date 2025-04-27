@@ -14,47 +14,16 @@ export const get = async (roomIndex: number, append: boolean) => {
 export const process = async (roomIndex: number, append: boolean) => {
   if (!KamidenClient) {
     console.warn('process(): Kamiden client not initialized');
-    console.log('NO KAMIDEN');
     ChatCache.set(roomIndex, []);
     return;
   }
-  var msgs = ChatCache.get(roomIndex);
-  console.log(`process(): ${roomIndex}`);
-  console.log(`messages: ${msgs?.length}`);
-  console.log(`messages[0]: ${msgs?.[0]?.Timestamp}`);
-  if (msgs) {
-    for (var i = 0; i < msgs.length; i++) {
-      console.log(`messages[${i}]: ${ChatCache.get(roomIndex)?.[i]?.Timestamp}`);
-    }
-  }
-
   const messages: Message[] = ChatCache.get(roomIndex) ?? [];
   const lastTs = messages[0]?.Timestamp ?? Date.now();
   const response = await KamidenClient.getRoomMessages({
     RoomIndex: roomIndex,
     Timestamp: lastTs,
   });
-  console.log(`requesting ${lastTs} ts`);
-  console.log(`response.Messages.length: ${response.Messages.length}`);
-  console.log('_________________________________________________________');
   ChatCache.set(roomIndex, response.Messages.concat(messages));
-
-  // if (!append) {
-  // // Previous Implementation
-  //   const response = await KamidenClient.getRoomMessages({
-  //     RoomIndex: roomIndex,
-  //     Timestamp: Date.now(),
-  //   });
-
-  //   ChatCache.set(roomIndex, response.Messages);
-  // } else {
-  //   const loadedMessages = ChatCache.get(roomIndex);
-  //   const response = await KamidenClient.getRoomMessages({
-  //     RoomIndex: roomIndex,
-  //     Timestamp: loadedMessages?.[0]?.Timestamp,
-  //   });
-  //   ChatCache.set(roomIndex, response.Messages.concat(loadedMessages!));
-  // }
 };
 
 // if the room has been visited before it appends the new message
