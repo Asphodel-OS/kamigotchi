@@ -54,7 +54,6 @@ import { KamiNameSystem } from "./ethers-contracts/KamiNameSystem";
 import { KamiUseItemSystem } from "./ethers-contracts/KamiUseItemSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
-import { LootboxCommitSystem } from "./ethers-contracts/LootboxCommitSystem";
 import { QuestAcceptSystem } from "./ethers-contracts/QuestAcceptSystem";
 import { QuestCompleteSystem } from "./ethers-contracts/QuestCompleteSystem";
 import { QuestDropSystem } from "./ethers-contracts/QuestDropSystem";
@@ -123,7 +122,6 @@ export type SystemTypes = {
   "system.kami.use.item": KamiUseItemSystem;
   "system.listing.buy": ListingBuySystem;
   "system.listing.sell": ListingSellSystem;
-  "system.lootbox.commit": LootboxCommitSystem;
   "system.quest.accept": QuestAcceptSystem;
   "system.quest.complete": QuestCompleteSystem;
   "system.quest.drop": QuestDropSystem;

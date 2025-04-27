@@ -54,7 +54,6 @@ import KamiNameSystem from "../../../out/KamiNameSystem.sol/KamiNameSystem.json"
 import KamiUseItemSystem from "../../../out/KamiUseItemSystem.sol/KamiUseItemSystem.json";
 import ListingBuySystem from "../../../out/ListingBuySystem.sol/ListingBuySystem.json";
 import ListingSellSystem from "../../../out/ListingSellSystem.sol/ListingSellSystem.json";
-import LootboxCommitSystem from "../../../out/LootboxCommitSystem.sol/LootboxCommitSystem.json";
 import QuestAcceptSystem from "../../../out/QuestAcceptSystem.sol/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../../../out/QuestCompleteSystem.sol/QuestCompleteSystem.json";
 import QuestDropSystem from "../../../out/QuestDropSystem.sol/QuestDropSystem.json";
@@ -123,7 +122,6 @@ export const SystemBytecodes = {
   "system.kami.use.item": KamiUseItemSystem,
   "system.listing.buy": ListingBuySystem,
   "system.listing.sell": ListingSellSystem,
-  "system.lootbox.commit": LootboxCommitSystem,
   "system.quest.accept": QuestAcceptSystem,
   "system.quest.complete": QuestCompleteSystem,
   "system.quest.drop": QuestDropSystem,

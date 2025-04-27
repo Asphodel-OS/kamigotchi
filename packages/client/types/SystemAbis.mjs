@@ -54,7 +54,6 @@ import KamiNameSystem from "../abi/KamiNameSystem.json";
 import KamiUseItemSystem from "../abi/KamiUseItemSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
-import LootboxCommitSystem from "../abi/LootboxCommitSystem.json";
 import QuestAcceptSystem from "../abi/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../abi/QuestCompleteSystem.json";
 import QuestDropSystem from "../abi/QuestDropSystem.json";
@@ -123,7 +122,6 @@ export const SystemAbis = {
   "system.kami.use.item": KamiUseItemSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
   "system.listing.sell": ListingSellSystem.abi,
-  "system.lootbox.commit": LootboxCommitSystem.abi,
   "system.quest.accept": QuestAcceptSystem.abi,
   "system.quest.complete": QuestCompleteSystem.abi,
   "system.quest.drop": QuestDropSystem.abi,

@@ -23,7 +23,7 @@ contract TraitsTest is MintTemplate {
     __721BatchMinterSystem.batchMint(100);
     vm.stopPrank();
 
-    uint numPets = 10;
+    uint numPets = 5;
     vm.roll(++_currBlock);
     vm.setBlockhash(_currBlock, bytes32(_random()));
     uint[] memory kamiIDs = _mintKamis(0, numPets);

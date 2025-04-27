@@ -106,7 +106,6 @@ export type { ListingBuySystem } from "./ListingBuySystem";
 export type { ListingSellSystem } from "./ListingSellSystem";
 export type { LocationComponent } from "./LocationComponent";
 export type { LogicTypeComponent } from "./LogicTypeComponent";
-export type { LootboxCommitSystem } from "./LootboxCommitSystem";
 export type { MaxComponent } from "./MaxComponent";
 export type { MediaURIComponent } from "./MediaURIComponent";
 export type { NameComponent } from "./NameComponent";
@@ -294,7 +293,6 @@ export { ListingBuySystem__factory } from "./factories/ListingBuySystem__factory
 export { ListingSellSystem__factory } from "./factories/ListingSellSystem__factory";
 export { LocationComponent__factory } from "./factories/LocationComponent__factory";
 export { LogicTypeComponent__factory } from "./factories/LogicTypeComponent__factory";
-export { LootboxCommitSystem__factory } from "./factories/LootboxCommitSystem__factory";
 export { MaxComponent__factory } from "./factories/MaxComponent__factory";
 export { MediaURIComponent__factory } from "./factories/MediaURIComponent__factory";
 export { NameComponent__factory } from "./factories/NameComponent__factory";
