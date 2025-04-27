@@ -51,7 +51,7 @@ export const ChatMenuButton = () => {
       const lastClearTs = LastClearTs.get(roomIndex) ?? 0;
       setNotification(lastChatTs > lastClearTs);
     }
-  }, [lastRefresh]);
+  }, [lastRefresh, modals.chat, roomIndex]);
 
   useEffect(() => {
     LastClearTs.set(roomIndex, Date.now());
