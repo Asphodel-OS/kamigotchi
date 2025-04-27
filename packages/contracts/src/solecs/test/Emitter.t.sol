@@ -4,6 +4,7 @@ pragma solidity >=0.8.28;
 import "./BaseTester.t.sol";
 
 import { IWorld } from "../interfaces/IWorld.sol";
+import { IEmitter } from "../interfaces/IEmitter.sol";
 import { System } from "../System.sol";
 import { Emitter } from "../Emitter.sol";
 
@@ -53,7 +54,7 @@ contract EmitterTest is BaseTester {
     // system, expect emit
     // vm.prank(address(system));
     vm.expectEmit(address(emitter));
-    emit Emitter.WorldEvent("test", _schema, bytes("hi"));
+    emit IEmitter.WorldEvent("test", _schema, bytes("hi"));
     system.executeTyped();
   }
 
@@ -64,7 +65,7 @@ contract EmitterTest is BaseTester {
     // vm.prank(address(0));
     // vm.expectRevert();
     vm.expectEmit(address(emitter));
-    emit Emitter.WorldEvent("test", _schema, bytes("hi"));
+    emit IEmitter.WorldEvent("test", _schema, bytes("hi"));
     emitter.emitWorldEvent("test", _schema, bytes("hi"));
   }
 }
