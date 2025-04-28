@@ -48,31 +48,31 @@ interface Wrapper {
 }
 const Wrapper = styled.div<Wrapper>`
   display: none;
-  justify-content: center;
-  align-items: center;
+  position: fixed;
   opacity: ${({ isOpen }) => (isOpen ? '1' : '0')};
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
   pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
   z-index: 20;
+
+  width: 50vw;
+  height: 50vh;
+  left: 25vw;
+  top: 25vh;
 `;
 
 const Content = styled.div`
-  position: fixed;
+  position: relative;
   background-color: white;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
 
   padding: 2vw 4vw;
-  width: fit-content;
-  height: fit-content;
-  --height: 25em;
-  left: 31.4%;
-  top: max(calc((100vh - var(--height)) / 2), 0vh);
+  width: 100%;
 
   display: flex;
   flex-flow: column nowrap;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 `;
 
@@ -88,7 +88,7 @@ const Header = styled.div`
 const Title = styled.div`
   color: #333;
   padding: 0.6vw;
-  font-size: 1.5vw;
+  font-size: 2.1vw;
   text-align: center;
 `;
 
@@ -102,7 +102,8 @@ const Subtitle = styled.div`
 const ErrorPrimary = styled.div`
   color: #922;
   padding: 0.45vw;
-  font-size: 0.9vw;
+  font-size: 1.2vw;
+  line-height: 2.1vw;
   text-align: center;
 `;
 
@@ -110,6 +111,7 @@ const ErrorSecondary = styled.div`
   color: #922;
   padding: 0.45vw;
   font-size: 0.9vw;
+  line-height: 1.2vw;
   text-align: center;
 `;
 
