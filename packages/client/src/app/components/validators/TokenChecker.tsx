@@ -9,7 +9,7 @@ import { useNetwork, useTokens } from 'app/stores';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { useERC20Balance } from 'network/chain';
 import { getCompAddr } from 'network/shapes/utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export function registerTokenChecker() {
   registerUIComponent(
@@ -25,7 +25,7 @@ export function registerTokenChecker() {
       const { actions, components } = network;
       const { LoadingState } = components;
 
-      return merge(actions.Action.update$, LoadingState.update$, interval(1500)).pipe(
+      return merge(actions.Action.update$, interval(1500)).pipe(
         map(() => {
           const { world, components } = network;
           return {
@@ -45,28 +45,31 @@ export function registerTokenChecker() {
 
       const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-      // ticking
-      useEffect(() => {
-        const refreshClock = () => setLastRefresh(Date.now());
-        const timerId = setInterval(refreshClock, 4000);
-        return () => clearInterval(timerId);
-      }, []);
+      // // ticking
+      // useEffect(() => {
+      //   const refreshClock = () => setLastRefresh(Date.now());
+      //   const timerId = setInterval(refreshClock, 4000);
+      //   return () => clearInterval(timerId);
+      // }, []);
 
       // todo: convert to ws
-      useEffect(() => {
-        // refetchOnyx(); // onyx not used yet; saving some bandwidth
-        refetchEth();
-        // set(tokenAddresses.onyx, onyxBal);
-        set(tokenAddresses.eth, ethBal);
-        console.log('eth', ethBal);
-      }, [lastRefresh]);
+      // useEffect(() => {
+      //   // refetchOnyx(); // onyx not used yet; saving some bandwidth
+      //   refetchEth();
+      //   // set(tokenAddresses.onyx, onyxBal);
+      //   set(tokenAddresses.eth, ethBal);
+      //   console.log(tokenAddresses.eth);
+      //   console.log('eth', ethBal);
+      // }, [lastRefresh]);
 
       useWatchBlockNumber({
         onBlockNumber(block) {
           refetchOnyx();
-          // refetchEth();
+          refetchEth();
           set(tokenAddresses.onyx, onyxBal);
-          // set(tokenAddresses.eth, ethBal);
+          set(tokenAddresses.eth, ethBal);
+          console.log(tokenAddresses.eth);
+          console.log('eth', ethBal);
         },
       });
 
