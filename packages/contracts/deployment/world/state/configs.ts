@@ -145,5 +145,7 @@ async function initSkills(api: AdminAPI) {
 }
 
 async function initVIP(api: AdminAPI) {
-  await api.config.set.array('VIP_STAGE', [1737553572, 1209600, 0, 0, 0, 0, 0, 0]);
+  // starts on April 24, 2025 8:00:00 AM UTC
+  // each stage is 2 weeks
+  await api.config.set.array('VIP_STAGE', [1745481600, 1209600, 0, 0, 0, 0, 0, 0]);
 }
