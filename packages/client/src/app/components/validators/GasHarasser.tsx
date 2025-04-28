@@ -41,7 +41,9 @@ export function registerGasHarasser() {
       // SUBSCRIPTIONS
 
       useWatchBlockNumber({
-        onBlockNumber: (n) => refetch(),
+        onBlockNumber: (n) => {
+          if (n % 4n === 0n) refetch();
+        },
       });
 
       const { data: balance, refetch } = useBalance({

@@ -20,9 +20,9 @@ export function usePresaleInfo(address: Address, presaleAddr: Address) {
   };
   const results = useReadContracts({
     contracts: [
-      { ...preAsset, functionName: 'depositCap', args: [] }, // total cap
+      // { ...preAsset, functionName: 'depositCap', args: [] }, // total cap
       { ...preAsset, functionName: 'totalDeposits', args: [] }, // total currently bought
-      { ...preAsset, functionName: 'price', args: [] }, // price
+      // { ...preAsset, functionName: 'price', args: [] }, // price
       { ...preAsset, functionName: 'whitelist', args: [address] }, // allo
       { ...preAsset, functionName: 'deposits', args: [address] }, // user deposits
     ],
@@ -31,11 +31,16 @@ export function usePresaleInfo(address: Address, presaleAddr: Address) {
   return {
     ...results,
     data: {
-      depositCap: parseTokenBalance(results.data?.[0]?.result as bigint, 18),
-      totalDeposits: parseTokenBalance(results.data?.[1]?.result as bigint, 18),
-      price: parseTokenBalance(results.data?.[2]?.result as bigint, 18),
-      allo: parseTokenBalance(results.data?.[3]?.result as bigint, 18),
-      bought: parseTokenBalance(results.data?.[4]?.result as bigint, 18),
+      // depositCap: parseTokenBalance(results.data?.[0]?.result as bigint, 18),
+      // totalDeposits: parseTokenBalance(results.data?.[1]?.result as bigint, 18),
+      // price: parseTokenBalance(results.data?.[2]?.result as bigint, 18),
+      // allo: parseTokenBalance(results.data?.[3]?.result as bigint, 18),
+      // bought: parseTokenBalance(results.data?.[4]?.result as bigint, 18),
+      depositCap: 1000, // hardcoding values to avoid unnecessary rpc calls
+      totalDeposits: parseTokenBalance(results.data?.[0]?.result as bigint, 18),
+      price: 0.001,
+      allo: parseTokenBalance(results.data?.[1]?.result as bigint, 18),
+      bought: parseTokenBalance(results.data?.[2]?.result as bigint, 18),
     },
   };
 }

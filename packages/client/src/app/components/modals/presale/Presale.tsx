@@ -10,7 +10,7 @@ import { getConfigAddress } from 'app/cache/config';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useNetwork } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { ETH_INDEX } from 'constants/items';
 import { useERC20Balance, usePresaleInfo } from 'network/chain';
@@ -51,6 +51,7 @@ export function registerPresaleModal() {
       const { selectedAddress, apis } = useNetwork();
       const { actions } = network;
 
+      const { modals } = useVisibility();
       const [tick, setTick] = useState(Date.now());
 
       // ticking
@@ -62,8 +63,10 @@ export function registerPresaleModal() {
 
       useWatchBlockNumber({
         onBlockNumber: () => {
-          refetchInfo();
-          refetchToken();
+          if (modals.presale) {
+            refetchInfo();
+            refetchToken();
+          }
         },
       });
 
