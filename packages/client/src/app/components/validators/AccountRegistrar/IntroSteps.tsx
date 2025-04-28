@@ -12,7 +12,7 @@ export const IntroStep1 = (props: Props) => {
 
   return (
     <Container>
-      <Section>
+      <Section padding={0.9}>
         <Description size={0.9}>Welcome to Kamigotchi World.</Description>
         <Description size={0.9}>This world exists entirely on-chain.</Description>
       </Section>
@@ -28,7 +28,7 @@ export const IntroStep2 = (props: Props) => {
 
   return (
     <Container>
-      <Section>
+      <Section padding={0.9}>
         <Description size={0.9}>Kamigotchi are key to this world.</Description>
         <Description size={0.9}>You will need them to progress.</Description>
       </Section>

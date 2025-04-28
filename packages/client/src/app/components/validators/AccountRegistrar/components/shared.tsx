@@ -16,10 +16,11 @@ export const Description = styled.div<{ size: number }>`
   text-align: center;
 `;
 
-export const Section = styled.div`
+export const Section = styled.div<{ padding: number }>`
+  padding: ${({ padding }) => padding}vw;
+
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-  padding: 0.9vw;
 `;

@@ -9,6 +9,7 @@ import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './components';
+import { Section } from './components/shared';
 
 interface Props {
   address: {
@@ -79,13 +80,13 @@ export const Registration = (props: Props) => {
 
     return (
       <AddressRow>
-        <Tooltip text={[address.burner, '(click to copy)']} alignText='center'>
-          <Description size={0.75} onClick={() => copy(address.burner)}>
+        <Tooltip text={[address.burner, '', '(click to copy)']} alignText='center'>
+          <Description size={0.9} onClick={() => copy(address.burner)}>
             Operator: {abbreviateAddress(address.burner)}
           </Description>
         </Tooltip>
         <Tooltip text={infoText} alignText='center'>
-          <InfoIcon fontSize='small' style={{ color: '#666' }} />
+          <InfoIcon fontSize='small' style={{ color: '#666', width: '1.2vw' }} />
         </Tooltip>
       </AddressRow>
     );
@@ -94,8 +95,8 @@ export const Registration = (props: Props) => {
   const OwnerDisplay = () => {
     return (
       <AddressRow>
-        <Tooltip text={[address.selected, '(click to copy)']} alignText='center'>
-          <Description size={0.75} onClick={() => copy(address.selected)}>
+        <Tooltip text={[address.selected, '', '(click to copy)']} alignText='center'>
+          <Description size={0.9} onClick={() => copy(address.selected)}>
             Owner: {abbreviateAddress(address.selected)}
           </Description>
         </Tooltip>
@@ -112,9 +113,11 @@ export const Registration = (props: Props) => {
   };
 
   return (
-    <>
-      {OwnerDisplay()}
-      {OperatorDisplay()}
+    <Container>
+      <Section padding={0.6}>
+        {OwnerDisplay()}
+        {OperatorDisplay()}
+      </Section>
       <Row>
         <Input
           type='string'
@@ -135,9 +138,20 @@ export const Registration = (props: Props) => {
           />
         </Tooltip>
       </Row>
-    </>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  height: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  user-select: none;
+`;
 
 export const AddressRow = styled.div`
   display: flex;
