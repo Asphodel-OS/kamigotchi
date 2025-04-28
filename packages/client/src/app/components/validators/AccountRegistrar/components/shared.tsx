@@ -9,9 +9,17 @@ export const Row = styled.div`
   margin-top: 0.45vw;
 `;
 
-export const Description = styled.p`
+export const Description = styled.div<{ size: number }>`
   color: #333;
-  padding: 0.3vw 0;
-  font-size: 0.75vw;
+  font-size: ${({ size }) => size}vw;
+  line-height: ${({ size }) => size * 2.4}vw;
   text-align: center;
+`;
+
+export const Section = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  padding: 0.9vw;
 `;

@@ -80,7 +80,7 @@ export const Registration = (props: Props) => {
     return (
       <AddressRow>
         <Tooltip text={[address.burner, '(click to copy)']} alignText='center'>
-          <Description onClick={() => copy(address.burner)}>
+          <Description size={0.75} onClick={() => copy(address.burner)}>
             Operator: {abbreviateAddress(address.burner)}
           </Description>
         </Tooltip>
@@ -95,7 +95,7 @@ export const Registration = (props: Props) => {
     return (
       <AddressRow>
         <Tooltip text={[address.selected, '(click to copy)']} alignText='center'>
-          <Description onClick={() => copy(address.selected)}>
+          <Description size={0.75} onClick={() => copy(address.selected)}>
             Owner: {abbreviateAddress(address.selected)}
           </Description>
         </Tooltip>
