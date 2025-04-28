@@ -8,7 +8,7 @@ import { copy } from 'app/utils';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
-import { BackButton, Description, Row } from './shared';
+import { BackButton, Description, Row } from './components';
 
 interface Props {
   address: {
@@ -79,12 +79,12 @@ export const Registration = (props: Props) => {
 
     return (
       <AddressRow>
-        <Tooltip text={[address.burner, '(click to copy)']} align='center'>
+        <Tooltip text={[address.burner, '(click to copy)']} alignText='center'>
           <Description onClick={() => copy(address.burner)}>
             Operator: {abbreviateAddress(address.burner)}
           </Description>
         </Tooltip>
-        <Tooltip text={infoText} align='center'>
+        <Tooltip text={infoText} alignText='center'>
           <InfoIcon fontSize='small' style={{ color: '#666' }} />
         </Tooltip>
       </AddressRow>
@@ -94,7 +94,7 @@ export const Registration = (props: Props) => {
   const OwnerDisplay = () => {
     return (
       <AddressRow>
-        <Tooltip text={[address.selected, '(click to copy)']} align='center'>
+        <Tooltip text={[address.selected, '(click to copy)']} alignText='center'>
           <Description onClick={() => copy(address.selected)}>
             Owner: {abbreviateAddress(address.selected)}
           </Description>
