@@ -36,11 +36,8 @@ export const getScoreFromHash = (
   const { Value } = components;
 
   // populate the holder
-  console.log(`getscorefromhash1`);
   const entity = getEntityIndex(world, holderID, epoch, index, type);
-  console.log(`getscorefromhash2`);
   const accountEntityIndex = world.entityToIndex.get(holderID) as EntityIndex;
-  console.log(`getscorefromhash3`);
   const account = getAccount(world, components, accountEntityIndex);
 
   return {
