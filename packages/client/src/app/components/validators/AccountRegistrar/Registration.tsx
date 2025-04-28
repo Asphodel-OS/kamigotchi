@@ -4,6 +4,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
+import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
@@ -16,6 +17,9 @@ interface Props {
     selected: string;
     burner: string;
   };
+  tokens: {
+    ethAddress: string;
+  };
   actions: {
     createAccount: (username: string) => EntityID | void;
   };
@@ -27,8 +31,14 @@ interface Props {
 }
 
 export const Registration = (props: Props) => {
-  const { address, actions, utils } = props;
+  const { address, tokens, actions, utils } = props;
+  const { ethAddress } = tokens;
+  const { balances: tokenBalances } = useTokens();
+
   const [name, setName] = useState('');
+
+  /////////////////
+  // VALIDATION
 
   const isNameTaken = (username: string) => {
     return NameCache.has(username);
@@ -38,6 +48,12 @@ export const Registration = (props: Props) => {
     return OperatorCache.has(address);
   };
 
+  const hasEth = () => {
+    const ethBalances = tokenBalances.get(ethAddress);
+    if (!ethBalances) return false;
+    return ethBalances.balance > 0;
+  };
+
   /////////////////
   // INTERACTION
 
@@ -45,6 +61,11 @@ export const Registration = (props: Props) => {
     if (event.key === 'Enter' && !isNameTaken(name)) {
       handleAccountCreation();
     }
+  };
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const truncated = event.target.value.slice(0, 16);
+    setName(truncated);
   };
 
   const handleAccountCreation = async () => {
@@ -58,11 +79,6 @@ export const Registration = (props: Props) => {
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
     }
-  };
-
-  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const truncated = event.target.value.slice(0, 16);
-    setName(truncated);
   };
 
   /////////////////
@@ -105,11 +121,17 @@ export const Registration = (props: Props) => {
   };
 
   const getSubmitTooltip = () => {
-    if (isOperaterTaken(address.burner)) return 'That Operator address is already taken.';
-    else if (isNameTaken(name)) return 'That name is already taken.';
-    else if (name === '') return `Name cannot be empty.`;
-    else if (/\s/.test(name)) return `Name cannot contain whitespace.`;
-    return 'Register';
+    if (isOperaterTaken(address.burner)) return ['That Operator address is already taken.'];
+    else if (isNameTaken(name)) return ['That name is already taken.'];
+    else if (name === '') return [`Name cannot be empty.`];
+    else if (/\s/.test(name)) return [`Name cannot contain whitespace.`];
+    else if (!hasEth())
+      return [
+        `You need to some ETH to register.`,
+        '',
+        'you can bridge some over at bridge.initia.xyz',
+      ];
+    return ['Register'];
   };
 
   return (
@@ -122,7 +144,7 @@ export const Registration = (props: Props) => {
         <Input
           type='string'
           value={name}
-          onChange={(e) => handleChangeName(e)}
+          onChange={(e) => handleNameChange(e)}
           onKeyDown={(e) => catchKeys(e)}
           placeholder='your username'
           style={{ pointerEvents: 'auto' }}
@@ -130,10 +152,10 @@ export const Registration = (props: Props) => {
       </Row>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />{' '}
-        <Tooltip text={[getSubmitTooltip()]}>
+        <Tooltip text={getSubmitTooltip()} alignText='center'>
           <ActionButton
             text='Next ⟶'
-            disabled={getSubmitTooltip() !== 'Register'}
+            disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
             onClick={() => handleAccountCreation()}
           />
         </Tooltip>

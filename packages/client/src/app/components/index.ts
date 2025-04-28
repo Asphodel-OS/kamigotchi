@@ -79,4 +79,5 @@ export function registerValidators() {
   registerAccountRegistrar();
   registerOperatorUpdater();
   registerGasHarasser();
+  // registerTokenChecker();
 }

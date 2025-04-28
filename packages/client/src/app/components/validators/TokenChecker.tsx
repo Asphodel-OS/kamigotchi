@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
-import { map, merge } from 'rxjs';
+import { interval, map, merge } from 'rxjs';
 import { useWatchBlockNumber } from 'wagmi';
 
 import { getItemByIndex } from 'app/cache/item';
 import { registerUIComponent } from 'app/root';
-import { useAccount, useTokens } from 'app/stores';
+import { useNetwork, useTokens } from 'app/stores';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { useERC20Balance } from 'network/chain';
 import { getCompAddr } from 'network/shapes/utils';
 
-export function registerTokenBalances() {
+export function registerTokenChecker() {
   registerUIComponent(
     'TokenBalances',
     {
@@ -24,11 +24,11 @@ export function registerTokenBalances() {
       const { actions, components } = network;
       const { LoadingState } = components;
 
-      return merge(actions.Action.update$, LoadingState.update$).pipe(
+      return merge(actions.Action.update$, LoadingState.update$, interval(1500)).pipe(
         map(() => {
           const { world, components } = network;
           return {
-            tokens: {
+            tokenAddresses: {
               // todo: dynamically query based on items with address?
               onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
               eth: getItemByIndex(world, components, ETH_INDEX).address!,
@@ -38,38 +38,40 @@ export function registerTokenBalances() {
         })
       );
     },
-    ({ tokens, spender }) => {
-      const { account } = useAccount();
-      const { balances, set } = useTokens();
+    ({ tokenAddresses, spender }) => {
+      const { selectedAddress } = useNetwork();
+      const { set } = useTokens();
 
       useWatchBlockNumber({
         onBlockNumber(block) {
           if (block % 2n === 0n) {
             refetchOnyx();
             refetchEth();
-            set(tokens.onyx, onyxBal);
-            set(tokens.eth, ethBal);
+            set(tokenAddresses.onyx, onyxBal);
+            set(tokenAddresses.eth, ethBal);
+
+            // fields look correct but the resulting balances do not
+            console.log('selectedAddress', selectedAddress);
+            console.log('token addresses address', tokenAddresses);
+            console.log('onyx bal', onyxBal);
+            console.log('eth bal', ethBal);
           }
         },
       });
 
-      // useEffect(() => {
-      //   console.log('onyx bal', balances.get(tokens.onyx));
-      // }, [balances]);
-
       const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
-        account.ownerAddress,
-        tokens.onyx,
+        selectedAddress,
+        tokenAddresses.onyx,
         spender
       );
 
       const { balances: ethBal, refetch: refetchEth } = useERC20Balance(
-        account.ownerAddress,
-        tokens.eth,
+        selectedAddress,
+        tokenAddresses.eth,
         spender
       );
 
-      return <Wrapper style={{ display: 'block' }}></Wrapper>;
+      return <Wrapper style={{ display: 'block' }} />;
     }
   );
 }

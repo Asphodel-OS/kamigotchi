@@ -7,8 +7,10 @@ import { AccountCache, getAccount } from 'app/cache/account';
 import { ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { emptyAccountDetails, useAccount, useNetwork, useVisibility } from 'app/stores';
+import { ETH_INDEX } from 'constants/items';
 import { GodID, SyncState } from 'engine/constants';
 import { getBaseAccount, queryAccountFromEmbedded, queryAllAccounts } from 'network/shapes/Account';
+import { getItemByIndex } from 'network/shapes/Item';
 import { waitForActionCompletion } from 'network/utils';
 import { IntroStep1, IntroStep2 } from './IntroSteps';
 import { Registration } from './Registration';
@@ -50,6 +52,7 @@ export function registerAccountRegistrar() {
           return {
             data: {
               accountEntity,
+              ethAddress: getItemByIndex(world, components, ETH_INDEX).address!,
             },
             network,
             utils: {
@@ -80,6 +83,7 @@ export function registerAccountRegistrar() {
       const { validators, setValidators } = useVisibility();
       const { validations, setValidations } = useAccount();
       const { setAccount } = useAccount();
+
       const [step, setStep] = useState(0);
 
       // update the Kami Account and validation based on changes to the
@@ -151,6 +155,7 @@ export function registerAccountRegistrar() {
               selected: selectedAddress,
               burner: burnerAddress,
             }}
+            tokens={{ ethAddress: data.ethAddress }}
             actions={{ createAccount }}
             utils={{
               setStep,
