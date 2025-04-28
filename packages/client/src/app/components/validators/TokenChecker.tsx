@@ -44,12 +44,10 @@ export function registerTokenChecker() {
 
       useWatchBlockNumber({
         onBlockNumber(block) {
-          if (block % 2n === 0n) {
-            refetchOnyx();
-            refetchEth();
-            set(tokenAddresses.onyx, onyxBal);
-            set(tokenAddresses.eth, ethBal);
-          }
+          refetchOnyx();
+          refetchEth();
+          set(tokenAddresses.onyx, onyxBal);
+          set(tokenAddresses.eth, ethBal);
         },
       });
 
