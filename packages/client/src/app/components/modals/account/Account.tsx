@@ -71,7 +71,7 @@ export function registerAccountModal() {
       const [account, setAccount] = useState<Account>(NullAccount);
       const [isSelf, setIsSelf] = useState(false);
       const [isLoading, setIsLoading] = useState(false);
-
+      console.log(`account.stats?.vip = ${account?.stats?.vip}`);
       // update data of the selected account when account index or data changes
       useEffect(() => {
         if (!modals.account) return;

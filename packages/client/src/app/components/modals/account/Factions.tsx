@@ -12,8 +12,8 @@ export const Factions = (props: Props) => {
       current: 30,
       icon: FactionIcons.kamigotchi_tourism_agency,
     },
-    { name: 'Loyalty', progress: '#fba1f8', current: 20, icon: FactionIcons.minas_shop },
-    { name: 'Dedication', progress: '#fcc65a', current: 40, icon: FactionIcons.kamigotchi_nursery },
+    { name: 'Loyalty', progress: '#e53b21', current: 20, icon: FactionIcons.minas_shop },
+    { name: 'Dedication', progress: '#5d995c', current: 40, icon: FactionIcons.kamigotchi_nursery },
   ];
 
   return (
