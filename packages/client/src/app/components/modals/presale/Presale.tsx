@@ -114,7 +114,7 @@ export function registerPresaleModal() {
           id: actionID,
           action: 'Buy ONYX Presale',
           params: [quantity],
-          description: `Buying ${quantity * presaleData.price} ONYX via presale`,
+          description: `Buying ${quantity / presaleData.price} ONYX via presale`,
           execute: async () => {
             return api.presale.buy(presaleAddress, quantity);
           },
