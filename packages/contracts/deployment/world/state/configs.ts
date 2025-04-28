@@ -37,6 +37,11 @@ export async function initTestingConfigs(api: AdminAPI) {
   await api.config.set.string('BASE_KAMI_NAME', 'Test Kami ');
 }
 
+export async function initProdConfigs(api: AdminAPI) {
+  await api.config.set.number('MINT_START_WL', 1746086400); // Thursday, May 1, 2025 8:00:00 AM
+  await api.config.set.number('MINT_START_PUBLIC', 1746086400); // Thursday, May 1, 2025 8:00:00 AM
+}
+
 ///////////////////
 // CATEGORIES
 

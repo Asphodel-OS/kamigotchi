@@ -61,16 +61,19 @@ export const Footer = (props: Props) => {
   const [needsApproval, setNeedsApproval] = useState(true);
   const [enoughBalance, setEnoughBalance] = useState(true);
   const [underMax, setUnderMax] = useState(true);
+  const [hasStarted, setHasStarted] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
     const needsApproval = checkNeedsApproval();
     const enoughBalance = checkEnoughBalance();
     const underMax = checkMax();
+    const hasStarted = checkHasStarted();
     setNeedsApproval(needsApproval);
     setEnoughBalance(enoughBalance);
     setUnderMax(underMax);
-    setIsDisabled(quantity <= 0 || !enoughBalance || !underMax);
+    setHasStarted(hasStarted);
+    setIsDisabled(quantity <= 0 || !enoughBalance || !underMax || !hasStarted);
   }, [tokenBal, price]);
 
   // check if a user needs further spend approval for a token
@@ -108,6 +111,13 @@ export const Footer = (props: Props) => {
     if (mode === 'ALT') return accountData.public + quantity <= config.public.max;
 
     return true;
+  };
+
+  const checkHasStarted = () => {
+    if (tab === 'MINT') {
+      if (mode === 'DEFAULT') return Date.now() / 1000 >= data.mint.config.whitelist.startTs;
+      else return Date.now() / 1000 >= data.mint.config.public.startTs;
+    } else return true;
   };
 
   //////////////////
@@ -159,9 +169,10 @@ export const Footer = (props: Props) => {
   };
 
   const getSubmitTooltip = () => {
+    if (!hasStarted) return ['mint has not started'];
     if (quantity <= 0) return ['no items to purchase'];
     if (tab === 'MINT') {
-      if (mode === 'DEFAULT' && mint.whitelisted)
+      if (mode === 'DEFAULT' && !mint.whitelisted)
         return ['this purchase will exceed your WL mint limit'];
       if (!underMintMax()) {
         const max = mode === 'DEFAULT' ? mint.config.whitelist.max : mint.config.public.max;
