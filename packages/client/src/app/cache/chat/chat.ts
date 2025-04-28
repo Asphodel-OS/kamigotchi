@@ -5,13 +5,11 @@ export const ChatCache = new Map<number, Message[]>();
 const KamidenClient = getKamidenClient();
 
 export const get = async (roomIndex: number, append: boolean) => {
-  if (!ChatCache.has(roomIndex) || append) await process(roomIndex, append);
+  if (!ChatCache.has(roomIndex) || append) await process(roomIndex);
   return ChatCache.get(roomIndex)!;
 };
 
-// !append (user hasnt scrolled yet)
-// append(user has scrolled, older messages neeed to be loaded)
-export const process = async (roomIndex: number, append: boolean) => {
+export const process = async (roomIndex: number) => {
   if (!KamidenClient) {
     console.warn('process(): Kamiden client not initialized');
     ChatCache.set(roomIndex, []);
