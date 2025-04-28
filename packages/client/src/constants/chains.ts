@@ -14,7 +14,7 @@ const YominetRaw = {
     default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
   },
   blockExplorers: {
-    default: { name: 'Yomiscan', url: 'https://scan.testnet.initia.xyz/preyominet-1' },
+    default: { name: 'Yomiscan', url: 'https://scan.initia.xyz/yominet-1' },
   },
 } as const satisfies Chain;
 
