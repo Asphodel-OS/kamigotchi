@@ -49,12 +49,6 @@ export function registerTokenChecker() {
             refetchEth();
             set(tokenAddresses.onyx, onyxBal);
             set(tokenAddresses.eth, ethBal);
-
-            // fields look correct but the resulting balances do not
-            console.log('selectedAddress', selectedAddress);
-            console.log('token addresses address', tokenAddresses);
-            console.log('onyx bal', onyxBal);
-            console.log('eth bal', ethBal);
           }
         },
       });
