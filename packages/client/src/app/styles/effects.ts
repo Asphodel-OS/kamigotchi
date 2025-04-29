@@ -79,3 +79,9 @@ export const Shimmer = styled.div`
     }
   }
 `;
+
+export const Spin = keyframes` 
+  100% { 
+    transform: rotateZ(360deg); 
+  }
+`;

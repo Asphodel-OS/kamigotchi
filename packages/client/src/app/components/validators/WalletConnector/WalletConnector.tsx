@@ -20,6 +20,7 @@ import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
 import { abbreviateAddress } from 'utils/address';
 import { Address } from 'viem';
+import { Progress } from './Progress';
 
 // Detects network changes and populates network clients for inidividual addresses.
 // The purpose of this modal is to warn the user when something is amiss.
@@ -52,15 +53,8 @@ export function registerWalletConnecter() {
       const { validators, setValidators } = useVisibility();
 
       const [isUpdating, setIsUpdating] = useState(false);
-      const [lastTick, setLastTick] = useState(Date.now());
       const [state, setState] = useState('');
-
-      // ticking
-      useEffect(() => {
-        const updateTick = () => setLastTick(Date.now());
-        const interval = setInterval(() => updateTick(), 1000);
-        return () => clearInterval(interval);
-      }, []);
+      const [chainMatches, setChainMatches] = useState(false);
 
       // update network settings/validations on relevant network updates
       useEffect(() => {
@@ -77,7 +71,13 @@ export function registerWalletConnecter() {
         if (!isEqual(validations, { authenticated, chainMatches })) {
           setValidations({ authenticated, chainMatches });
         }
-      }, [ready, authenticated, isConnected, chain, wallets, walletsReady, lastTick]);
+      }, [ready, authenticated, isConnected, chain, wallets, walletsReady]);
+
+      // check whether the connected chain is correct
+      useEffect(() => {
+        const isCorrectChain = chain?.id === DefaultChain.id;
+        if (isCorrectChain != chainMatches) setChainMatches(isCorrectChain);
+      }, [chain, isConnected]);
 
       // adjust visibility of windows based on above determination
       useEffect(() => {
@@ -98,7 +98,7 @@ export function registerWalletConnecter() {
 
       // force logout the user when certain conditions are met:
       useEffect(() => {
-        if (!authenticated) return;
+        if (!authenticated) return; // wait for privy authentication
 
         // when the injected wallet is disconnected
         if (!isConnected) {
@@ -187,32 +187,23 @@ export function registerWalletConnecter() {
         return getEmbeddedConnectedWallet(wallets);
       };
 
-      const getTitle = () => {
-        if (state === 'disconnected') return 'Disconnected';
-        if (state === 'wrongChain') return 'Wrong Network';
-        if (state === 'unauthenticated') return 'Logged Out';
-        return '';
-      };
-
       const getWarning = () => {
-        const chainName = chain?.name ?? 'wrong';
         if (state === 'disconnected') return `Your wallet is currently disconnected.`;
-        if (state === 'wrongChain') return `You're currently connected to the ${chainName} network`;
+        if (state === 'wrongChain') return `You must connect to Yominet`;
         if (state === 'unauthenticated') return `You are currently logged out.`;
         return '';
       };
 
-      const getDescription = () => {
-        if (state === 'disconnected') return 'You must connect one to continue.';
-        if (state === 'wrongChain') return `Please connect to ${DefaultChain.name} network.`;
-        if (state === 'unauthenticated') return 'You must log in to continue.';
-        return '';
+      const getCurrentStep = () => {
+        if (state === 'disconnected') return 'CONNECTION';
+        if (state === 'wrongChain') return 'NETWORK';
+        return 'AUTHENTICATION';
       };
 
       const getButtonLabel = () => {
         if (state === 'disconnected') return 'Connect';
         if (state === 'wrongChain') return 'Change Networks';
-        if (state === 'unauthenticated') return 'Log in';
+        if (state === 'unauthenticated') return 'Login';
         return '';
       };
 
@@ -223,20 +214,31 @@ export function registerWalletConnecter() {
         <ValidatorWrapper
           id='wallet-connector'
           divName='walletConnector'
-          title={getTitle()}
+          title='Wallet Connector'
           errorPrimary={getWarning()}
         >
-          <Description>{getDescription()}</Description>
-          <ActionButton onClick={handleClick} text={getButtonLabel()} />
+          <Container>
+            <Progress
+              statuses={{
+                connected: isConnected,
+                networked: chainMatches,
+                authenticated: authenticated,
+              }}
+              step={getCurrentStep()}
+            />
+            <ActionButton onClick={handleClick} text={getButtonLabel()} size='large' />
+          </Container>
         </ValidatorWrapper>
       );
     }
   );
 }
 
-const Description = styled.div`
-  color: #333;
-  padding: 0.9vw 0;
-  font-size: 0.75vw;
-  text-align: center;
+const Container = styled.div`
+  height: 15vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
 `;
