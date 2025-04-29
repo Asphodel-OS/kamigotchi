@@ -44,7 +44,6 @@ export const ProgressBar = (props: Props) => {
 
 const Container = styled.div<{ width?: number }>`
   width: ${({ width }) => (width ? `${width}vw;` : '100%')};
-  opacity: 0.9;
   display: flex;
   justify-content: space-between;
   align-items: center;
