@@ -28,19 +28,27 @@ export const StatsBottom = (props: Props) => {
     <Container>
       <Content>
         <DetailRow>
-          <CakeIcon style={{ height: '1.4vw' }} />
+          <IconWrapper>
+            <CakeIcon style={{ height: '100%', width: '100%' }} />
+          </IconWrapper>
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
         </DetailRow>
         <DetailRow>
-          <CheckroomIcon style={{ height: '1.4vw' }} />
+          <IconWrapper>
+            <CheckroomIcon style={{ height: '100%', width: '100%' }} />
+          </IconWrapper>
           <Description>{account.stats?.kills ?? 0} Lives Claimed</Description>
         </DetailRow>
         <DetailRow>
-          <TollIcon style={{ height: '1.4vw' }} />
+          <IconWrapper>
+            <TollIcon style={{ height: '100%', width: '100%' }} />
+          </IconWrapper>
           <Description>{(account.stats?.coin ?? 0).toLocaleString()} MUSU Collected</Description>
         </DetailRow>
         <DetailRow>
-          <VipIcon src={ItemImages.vipp} />
+          <IconWrapper>
+            <VipIcon src={ItemImages.vipp} />
+          </IconWrapper>
           <Description>{(account.stats?.vip ?? 0).toLocaleString()} VIP score</Description>
         </DetailRow>
       </Content>
@@ -81,6 +89,15 @@ const DetailRow = styled.div`
   gap: 0.3vw;
 `;
 
+// needed to have the vip icon align with the mui icons
+const IconWrapper = styled.div`
+  height: 1.4vw;
+  width: 1.4vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Description = styled.div`
   font-size: 0.7vw;
   font-family: Pixel;
@@ -90,5 +107,7 @@ const Description = styled.div`
 `;
 
 const VipIcon = styled.img`
-  width: 1.4vw;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
 `;
