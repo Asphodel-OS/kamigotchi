@@ -26,10 +26,21 @@ export const Progress = (props: Props) => {
 
   const getConnectionTooltip = () => {
     if (statuses.connected) return ['Your wallet is connected!'];
-    else if (step === 'CONNECTION') {
-      return ['Press Connect!', '', `You'll be prompted to connect your wallet.`];
+    let tooltip = [
+      'Kamigotchi is a fully onchain game hosted ',
+      'on a blockchain. The network runs off an ',
+      'Ethereum Virtual Machine (EVM) environment',
+      'and requires a compatible wallet plugin.',
+    ];
+
+    if (step === 'CONNECTION') {
+      tooltip = tooltip.concat([
+        ``,
+        `You'll be prompted to connect your wallet.`,
+        `Press "Connect" to continue!`,
+      ]);
     }
-    return ['You must connect your injected wallet (e.g. Metamask) before continuing.'];
+    return tooltip;
   };
 
   /////////////////
@@ -42,11 +53,22 @@ export const Progress = (props: Props) => {
   };
 
   const getNetworkTooltip = () => {
-    if (statuses.networked) return ['Your wallet is connected to Yominet!'];
-    else if (step === 'NETWORK') {
-      return ['Press Change Networks!', '', `You'll be prompted to change your network.`];
+    if (statuses.networked) return [`You're connected to Yominet!`];
+    let tooltip = [
+      'Kamigotchi World is hosted on the Yominet network.',
+      'You must connect to Yominet via your wallet plugin ',
+      'to interact with the game.',
+    ];
+
+    if (step === 'NETWORK') {
+      tooltip = tooltip.concat([
+        ``,
+        `If this is your first time playing, you'll`,
+        `be prompted to add Yominet to your wallet plugin.`,
+        `Press "Change Networks" to continue!`,
+      ]);
     }
-    return ['You must connect to Yominet before continuing.'];
+    return tooltip;
   };
 
   /////////////////
@@ -60,10 +82,26 @@ export const Progress = (props: Props) => {
 
   const getAuthenticationTooltip = () => {
     if (statuses.authenticated) return [`You're authenticated!`];
-    else if (step === 'AUTHENTICATION') {
-      return ['Press Login!', '', `You'll be prompted to log in with Privy.`];
+    let tooltip = [
+      `Kamigotchi World supports headless transactions`,
+      `for gameplay. This means you don't need to explicitly`,
+      `sign each transaction with your wallet plugin.`,
+      ``,
+      `Instead you'll use a Privy Embedded Wallet,`,
+      `which you can learn more about at docs.privy.io.`,
+      `In game, we refer to this as your Account "Operator"`,
+    ];
+
+    if (step === 'AUTHENTICATION') {
+      tooltip = tooltip.concat([
+        ``,
+        `You'll be prompted to log in with Privy.`,
+        `If this is your first time playing, you'll also`,
+        `be prompted to create an embedded wallet.`,
+        `Press "Login" to continue!`,
+      ]);
     }
-    return ['You must authenticate your Privy account before continuing.'];
+    return tooltip;
   };
 
   return (
@@ -81,7 +119,7 @@ export const Progress = (props: Props) => {
         </Tooltip>
         <Text>Network</Text>
       </Pairing>
-      <DottedLines left={22.2} top={3.3} />
+      <DottedLines left={22.5} top={3.3} />
       <Pairing>
         <Tooltip text={getAuthenticationTooltip()} alignText='center'>
           <StatusCircle state={getAuthenticationStatus()} size={4.5} />
