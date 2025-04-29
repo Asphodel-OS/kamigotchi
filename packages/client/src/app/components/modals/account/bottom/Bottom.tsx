@@ -33,7 +33,6 @@ interface Props {
 
 export const Bottom = (props: Props) => {
   const { data, tab, subTab, setSubTab, utils, actions, isSelf, network } = props;
-  const { getAccountKamis } = utils;
   const { acceptFren, blockFren, cancelFren, requestFren } = actions;
   const { account } = data;
   const { world, components } = network;
@@ -59,7 +58,7 @@ export const Bottom = (props: Props) => {
         </>
       )}
       {tab === 'stats' && <StatsBottom key='statsbottom' account={account} />}
-      {tab === 'factions' && <FactionsBottom key='statsbottom' account={account} />}
+      {tab === 'factions' && <FactionsBottom data={{ account }} key='statsbottom' />}
     </>
   );
 };

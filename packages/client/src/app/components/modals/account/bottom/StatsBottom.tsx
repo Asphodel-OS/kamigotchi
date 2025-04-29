@@ -4,6 +4,7 @@ import TollIcon from '@mui/icons-material/Toll';
 import moment from 'moment';
 import styled from 'styled-components';
 
+import { ItemImages } from 'assets/images/items';
 import { Account } from 'network/shapes/Account';
 
 interface Props {
@@ -37,6 +38,10 @@ export const StatsBottom = (props: Props) => {
         <DetailRow>
           <TollIcon style={{ height: '1.4vw' }} />
           <Description>{(account.stats?.coin ?? 0).toLocaleString()} MUSU Collected</Description>
+        </DetailRow>
+        <DetailRow>
+          <VipIcon src={ItemImages.vipp} />
+          <Description>{(account.stats?.vip ?? 0).toLocaleString()} VIP score</Description>
         </DetailRow>
       </Content>
     </Container>
@@ -82,4 +87,8 @@ const Description = styled.div`
   line-height: 0.9vw;
   text-align: left;
   padding-top: 0.2vw;
+`;
+
+const VipIcon = styled.img`
+  width: 1.4vw;
 `;

@@ -4,18 +4,19 @@ import { Account } from 'network/shapes/Account';
 import { Factions } from '../Factions';
 
 interface Props {
-  account: Account; // account selected for viewing
+  data: { account: Account };
 }
 
 export const FactionsBottom = (props: Props) => {
-  const { account } = props;
+  const { data } = props;
+  const { account } = data;
 
   /////////////////
   // RENDERING
 
   return (
     <Container>
-      <Factions />
+      <Factions data={{ account }} />
     </Container>
   );
 };
