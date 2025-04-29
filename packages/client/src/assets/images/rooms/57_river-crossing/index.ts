@@ -1,5 +1,5 @@
-import bgPlaytestDay from './backgrounds/room57a.png';
-import bgPlaytestEvening from './backgrounds/room57b.png';
-import bgPlaytestNight from './backgrounds/room57c.png';
+import bgPlaytestDay from './backgrounds/room57a.gif';
+import bgPlaytestEvening from './backgrounds/room57b.gif';
+import bgPlaytestNight from './backgrounds/room57c.gif';
 
 export { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight };
