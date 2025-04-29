@@ -41,8 +41,6 @@ export const IntroStep2 = (props: Props) => {
 };
 
 const Container = styled.div`
-  height: 100%;
-
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;

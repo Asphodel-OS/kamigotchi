@@ -63,8 +63,9 @@ export const Progress = (props: Props) => {
     if (step === 'NETWORK') {
       tooltip = tooltip.concat([
         ``,
-        `If this is your first time playing, you'll`,
+        `If this is your first time playing, you'll also`,
         `be prompted to add Yominet to your wallet plugin.`,
+        ``,
         `Press "Change Networks" to continue!`,
       ]);
     }
@@ -98,6 +99,7 @@ export const Progress = (props: Props) => {
         `You'll be prompted to log in with Privy.`,
         `If this is your first time playing, you'll also`,
         `be prompted to create an embedded wallet.`,
+        ``,
         `Press "Login" to continue!`,
       ]);
     }

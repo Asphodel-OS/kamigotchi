@@ -42,25 +42,5 @@ const Container = styled.div<{ size: number }>`
 const Icon = styled.img`
   width: 70%;
   overflow: hidden;
+  user-drag: none;
 `;
-
-// .circle {
-//   position: relative;
-//   margin: 20px;
-//   height: 120px;
-//   width: 120px;
-//   background-color: orange;
-//   border-radius: 50%;
-// }
-
-// .circle:before {
-//   position: absolute;
-//   content: '';
-//   height: calc(100% + 10px);
-//   width: calc(100% + 10px);
-//   border: 8px dashed orange;
-//   top: -13px;
-//   left: -13px;
-//   border-radius: inherit;
-//   animation: spin 10s linear infinite;
-// }

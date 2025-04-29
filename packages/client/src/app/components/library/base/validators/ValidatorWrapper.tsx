@@ -59,6 +59,8 @@ const Wrapper = styled.div<Wrapper>`
   height: 50vh;
   left: 25vw;
   top: 25vh;
+
+  user-select: none;
 `;
 
 const Content = styled.div`
@@ -68,7 +70,6 @@ const Content = styled.div`
   border-radius: 1.2vw;
 
   padding: 2vw 4vw;
-  width: 100%;
 
   display: flex;
   flex-flow: column nowrap;
