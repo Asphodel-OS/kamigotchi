@@ -22,7 +22,7 @@ export interface Node extends BaseNode {
   roomIndex: number;
   drops: Item[];
   requirements: Condition[];
-  scavenge: ScavBar;
+  scavenge?: ScavBar;
 }
 
 export const getBaseNode = (
@@ -62,7 +62,7 @@ export const getNode = (world: World, components: Components, entity: EntityInde
       getItemByIndex(world, components, getComponentValue(ItemIndex, entity)?.value as number),
     ],
     requirements: getRequirements(world, components, nodeIndex),
-    scavenge: getScavenge(world, components, scavEntity),
+    scavenge: scavEntity ? getScavenge(world, components, scavEntity) : undefined,
   };
 
   return node;
