@@ -389,7 +389,11 @@ export function registerGachaModal() {
                 auctions: { gacha: gachaAuction, reroll: rerollAuction },
                 mint: {
                   config: mintConfig,
-                  data: { account: accountMintData, gacha: gachaMintData },
+                  data: {
+                    account: accountMintData,
+                    gacha: gachaMintData,
+                  },
+                  whitelisted: whitelisted,
                 },
               }}
               state={{ setQuantity, selectedKamis, setSelectedKamis, tick }}

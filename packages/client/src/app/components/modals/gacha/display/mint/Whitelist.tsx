@@ -25,6 +25,7 @@ interface Props {
         account: GachaMintData;
         gacha: GachaMintData;
       };
+      whitelisted: boolean;
     };
   };
   state: {
@@ -80,6 +81,15 @@ export const Whitelist = (props: Props) => {
     return [`Whitelist Mint started`, `at ${startStr}`];
   };
 
+  const isWhitelisted = () => {
+    return data.mint.whitelisted;
+  };
+
+  const getWhitelistText = () => {
+    if (isWhitelisted()) return `Don't worry pookie, you've got WL ;)`;
+    else return `You're not whitelisted. Skill issue?`;
+  };
+
   /////////////////
   // DISPLAY
 
@@ -96,6 +106,7 @@ export const Whitelist = (props: Props) => {
       </Section>
       <Section>
         <Pairing icon={GACHA_TICKET_IMAGE} text={getStatusText()} />
+        <Text size={0.6}>{getWhitelistText()}</Text>
       </Section>
     </Container>
   );
