@@ -99,6 +99,8 @@ library LibAuction {
 
   // check whether the account meets the requirements to interact with an auction
   function verifyRequirements(IUintComp comps, uint256 id, uint256 accID) internal view {
+    uint256 startTs = TimeStartComponent(getAddrByID(comps, TimeStartCompID)).get(id);
+    if (block.timestamp < startTs) revert("LibAuction: auction has not started");
     if (!meetsRequirements(comps, id, accID)) revert("LibAuction: reqs not met");
   }
 

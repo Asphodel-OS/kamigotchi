@@ -27,6 +27,7 @@ struct Params {
   int32 decay; // price decay per period
   int32 rate; // number of sales per period to counteract decay
   int32 max; // total quantity auctioned
+  uint256 startTs; // time after which auction is enabled
 }
 
 /// @notice LibAuction is for the handling of dedicated item auctions in game.
@@ -58,7 +59,7 @@ library LibAuctionRegistry {
     PeriodComponent(getAddrByID(comps, PeriodCompID)).set(id, params.period);
     DecayComponent(getAddrByID(comps, DecayCompID)).set(id, params.decay);
     RateComponent(getAddrByID(comps, RateCompID)).set(id, params.rate.toUint256());
-    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
+    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, params.startTs);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
     return id;
   }

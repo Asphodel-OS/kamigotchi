@@ -9,11 +9,12 @@ export function auctionAPI(genCall: GenCall) {
     period: number,
     decay: number,
     rate: number,
-    max: number
+    max: number,
+    startTs: number
   ) {
     genCall(
       'system.auction.registry',
-      [itemIndex, payItemIndex, priceTarget, period, decay, rate, max],
+      [itemIndex, payItemIndex, priceTarget, period, decay, rate, max, startTs],
       'create'
     );
   }

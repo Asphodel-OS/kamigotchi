@@ -22,7 +22,8 @@ contract _AuctionRegistrySystem is System, AuthRoles {
     int32 period, // reference duration period (in seconds)
     int32 decay, // price decay per period (1e6)
     int32 rate, // number of purchases per period to counteract decay
-    int32 max // total quantity to be auctioned
+    int32 max, // total quantity to be auctioned
+    uint256 startTs // target start time of the auction
   ) public onlyAdmin(components) returns (uint256) {
     uint256 id = LibAuctionRegistry.get(components, itemIndex);
     require(id == 0, "auction already exists");
@@ -35,7 +36,16 @@ contract _AuctionRegistrySystem is System, AuthRoles {
     require(LibItem.getByIndex(components, itemIndex) != 0, "auction item does not exist");
     require(LibItem.getByIndex(components, payItemIndex) != 0, "auction pay item does not exist");
 
-    Params memory params = Params(itemIndex, payItemIndex, priceTarget, period, decay, rate, max);
+    Params memory params = Params(
+      itemIndex,
+      payItemIndex,
+      priceTarget,
+      period,
+      decay,
+      rate,
+      max,
+      startTs
+    );
     LibAuctionRegistry.create(components, params); // id should be the same
     return id;
   }
