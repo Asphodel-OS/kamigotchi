@@ -85,7 +85,7 @@ export const ItemGrid = (props: Props) => {
 
   const getAccountOptions = (item: Item, bal: number): Option[] => {
     if (!meetsRequirements(account, item)) return [];
-    const count = Math.min(Math.max(bal, 2), 10);
+    const count = Math.min(Math.max(bal, 2), 100);
     const options = [{ text: 'Use', onClick: () => actions.useForAccount(item, 1) }];
     if (bal > 1) {
       options.push({ text: `Use ${count}`, onClick: () => actions.useForAccount(item, count) });

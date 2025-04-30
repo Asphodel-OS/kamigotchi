@@ -192,12 +192,14 @@
         "IdSource",
         "IdHolder",
         "IDOwnsInventory",
+        "IDType",
         "IndexItem",
         "IndexRoom",
         "TimeLast",
         "Type",
         "TimeLast",
         "TimeLastAction",
+        "ProxyVIPScore",
         "Stamina",
         "Value"
       ]

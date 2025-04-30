@@ -404,7 +404,7 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     type_: string,
     logicType: string,
     index_: number,
-    value: number,
+    value: BigNumberish,
     for_: string
   ) {
     genCall(

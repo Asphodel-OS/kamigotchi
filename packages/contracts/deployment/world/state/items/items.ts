@@ -1,7 +1,7 @@
 import { AdminAPI } from '../../api';
 import { getItemImage, getSheet, readFile } from '../utils';
 import { addAllo } from './allos';
-import { addRequirement } from './requirements';
+import { addRequirement, addTypeRequirement } from './requirements';
 
 // TODO: update the set of state scripts in items/ to be modeled after quests/
 
@@ -14,6 +14,8 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
   if (!itemsCSV) return console.log('No items/items.csv found');
   const allosCSV = await getSheet('items', 'allos');
   if (!allosCSV) return console.log('No items/allos.csv found');
+  const requirementsCSV = await getSheet('items', 'requirements');
+  if (!requirementsCSV) return console.log('No items/requirements.csv found');
   console.log('\n==INITIALIZING ITEMS==');
 
   const validStatuses = ['To Deploy'];
@@ -25,6 +27,12 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
     const row = allosCSV[i];
     const key = row['Name'].toUpperCase();
     if (!alloMap.has(key)) alloMap.set(key, row);
+  }
+  const requirementMap = new Map<string, any>();
+  for (let i = 0; i < requirementsCSV.length; i++) {
+    const row = requirementsCSV[i];
+    const key = row['Name'].toUpperCase();
+    if (!requirementMap.has(key)) requirementMap.set(key, row);
   }
 
   // iterate through rows of items
@@ -46,7 +54,7 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
       continue;
     }
 
-    // process item effectsa
+    // process item effects
     const effectsRaw = row['Effects'];
     if (!effectsRaw) continue;
 
@@ -56,6 +64,19 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
       const alloRow = alloMap.get(alloName);
       if (!alloRow) console.warn(`  Could not find allo ${alloName} for item ${index}`);
       else await addAllo(api, index, alloRow);
+    }
+
+    // process item requirements
+    const requirementsRaw = row['Requirements'];
+    if (!requirementsRaw) continue;
+
+    const requirements = requirementsRaw.split(',');
+    for (let i = 0; i < requirements.length; i++) {
+      const requirementName = requirements[i];
+      const requirementRow = requirementMap.get(requirementName);
+      if (!requirementRow)
+        console.warn(`  Could not find requirement ${requirementName} for item ${index}`);
+      else await addRequirement(api, index, requirementRow);
     }
   }
 }
@@ -152,5 +173,5 @@ async function createConsumable(api: AdminAPI, entry: any) {
   console.log(`creating ${type} item ${name} (${index}) for ${for_}`);
 
   await createEP.consumable(index, for_, name, description, type, image);
-  await addRequirement(api, entry); // hardcoded based on item types
+  await addTypeRequirement(api, entry); // hardcoded based on item types
 }

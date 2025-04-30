@@ -1,6 +1,6 @@
 ﻿.,Status,Name,Index,Type,For,Address,Flags,Effects,Requirements,Description
 ,In Game,MUSU,1,Misc,,,,,,Kamigotchi kurrency
-,To Deploy,VIPP,2,Misc,,,,VIP1,,"Sacred paper which can be sacrificed for VIP status. "
+,To Deploy,VIPP,2,Consumable,Account,,,VIP1,VIP_ROOM,"Sacred paper which can be sacrificed for VIP status. "
 ,In Game,Gacha Ticket,10,Misc,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
 ,In Game,Kamigotchi World Passport (Yellow),20,NFT,,,,,,Your ticket to great fortunes. In yellow.
