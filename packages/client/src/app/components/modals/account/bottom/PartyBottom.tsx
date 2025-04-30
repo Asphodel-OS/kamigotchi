@@ -1,14 +1,20 @@
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-import { Factions } from '../Factions';
+
+import { EntityIndex } from '@mud-classic/recs';
+import { Kami } from 'network/shapes/Kami';
+import { Kamis } from '../party/Kamis';
 
 interface Props {
   data: { account: Account };
+  utils: {
+    getAccountKamis: (accEntity: EntityIndex) => Kami[];
+  };
 }
 
-export const FactionsBottom = (props: Props) => {
-  const { data } = props;
+export const PartyBottom = (props: Props) => {
+  const { data, utils } = props;
   const { account } = data;
 
   /////////////////
@@ -16,7 +22,7 @@ export const FactionsBottom = (props: Props) => {
 
   return (
     <Container>
-      <Factions data={{ account }} />
+      <Kamis data={{ account }} utils={utils} />
     </Container>
   );
 };

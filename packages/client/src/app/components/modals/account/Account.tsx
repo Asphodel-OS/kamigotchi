@@ -21,7 +21,7 @@ import { Kami } from 'network/shapes/Kami';
 import { waitForActionCompletion } from 'network/utils';
 import { Bio } from './bio/Bio';
 import { Bottom } from './bottom/Bottom';
-import { NewTabs } from './tabs/Tabs';
+import { Tabs } from './tabs/Tabs';
 
 export function registerAccountModal() {
   registerUIComponent(
@@ -66,8 +66,8 @@ export function registerAccountModal() {
       const { accountIndex } = useSelected();
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
-      const [subTab, setSubTab] = useState('frens'); // party | frens | activity | requests | blocked
-      const [tab, setTab] = useState('stats');
+      const [subTab, setSubTab] = useState('frens'); //  frens | requests | blocked
+      const [tab, setTab] = useState('stats'); //  social | party | stats
       const [account, setAccount] = useState<Account>(NullAccount);
       const [isSelf, setIsSelf] = useState(false);
       const [isLoading, setIsLoading] = useState(false);
@@ -80,13 +80,13 @@ export function registerAccountModal() {
         setAccount(account);
       });
 
-      // set the default tab when account index switches
+      // set the default subtab and tab when account index switches or modal is closed
       useEffect(() => {
         const isSelf = player.index === accountIndex;
         setIsSelf(isSelf);
         if (isSelf) setSubTab('frens');
-        else setSubTab('party');
-      }, [accountIndex]);
+        setTab('stats');
+      }, [accountIndex, modals.account]);
 
       /////////////////
       // INTERACTION
@@ -192,7 +192,7 @@ export function registerAccountModal() {
             isSelf={isSelf}
             utils={utils}
           />
-          <NewTabs tab={tab} setTab={setTab} isSelf={isSelf} />
+          <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
           <Bottom
             key='bottom'
             tab={tab}

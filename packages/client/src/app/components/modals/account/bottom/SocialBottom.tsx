@@ -6,7 +6,6 @@ import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
 import { Blocked } from '../blocked/Blocked';
 import { Friends } from '../friends/Friends';
-import { Kamis } from '../party/Kamis';
 import { Requests } from '../requests/Requests';
 
 interface Props {
@@ -34,7 +33,6 @@ export const SocialBottom = (props: Props) => {
   // re-render and persist their state, rather than remounting
   return (
     <Container>
-      {subTab === 'party' && <Kamis account={account} utils={utils} />}
       {subTab === 'frens' && (
         <Friends
           key='friends'

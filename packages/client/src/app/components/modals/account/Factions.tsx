@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ProgressBar } from 'app/components/library/base';
+import { ProgressBar, Tooltip } from 'app/components/library/base';
 import { FactionIcons } from 'assets/images/icons/factions';
 import { Account } from 'network/shapes/Account';
 
@@ -18,18 +18,21 @@ export const Factions = (props: Props) => {
       progress: '#69a6f9',
       current: account.reputation.agency,
       icon: FactionIcons.kamigotchi_tourism_agency,
+      text: `Your relationship with the Quests Menu, and with the fundamental forces behind Kamigotchi World. `,
     },
     {
       name: 'Loyalty',
       progress: '#e53b21',
       current: account.reputation.mina,
       icon: FactionIcons.minas_shop,
+      text: `Your affinity with Mina, and her mysterious backers....`,
     },
     {
       name: 'Dedication',
       progress: '#5d995c',
       current: account.reputation.nursery,
       icon: FactionIcons.kamigotchi_nursery,
+      text: `Your progress down the path of darkness.`,
     },
   ];
 
@@ -38,7 +41,9 @@ export const Factions = (props: Props) => {
       {BarContent.map((faction, index) => {
         return (
           <Row key={index}>
-            {faction.name}
+            <Tooltip key={index} text={[faction.text]}>
+              {faction.name}{' '}
+            </Tooltip>
             <ProgressBar
               width={15}
               total={300}

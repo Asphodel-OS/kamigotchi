@@ -43,13 +43,6 @@ export const SubTabs = (props: Props) => {
     return (
       <>
         <Button
-          onClick={() => setTab('party')}
-          disabled={props.subTab === 'party'}
-          style={{ borderRight: 'solid black .15vw' }}
-        >
-          Party
-        </Button>
-        <Button
           onClick={() => setTab('frens')}
           disabled={props.subTab === 'frens'}
           style={{ borderRight: 'solid black .15vw' }}

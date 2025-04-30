@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
 
-import { Account, BaseAccount, getAllBaseAccounts } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
 import { SubTabs } from '../tabs/SubTabs';
-import { FactionsBottom } from './FactionsBottom';
+import { PartyBottom } from './PartyBottom';
 import { SocialBottom } from './SocialBottom';
 import { StatsBottom } from './StatsBottom';
 
@@ -48,17 +48,14 @@ export const Bottom = (props: Props) => {
           <SocialBottom
             key='bottom'
             subTab={subTab}
-            data={{
-              account,
-              getAllAccs: () => getAllBaseAccounts(world, components),
-            }}
+            data={data}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
             utils={utils}
           />
         </>
       )}
-      {tab === 'stats' && <StatsBottom key='statsbottom' account={account} />}
-      {tab === 'factions' && <FactionsBottom data={{ account }} key='statsbottom' />}
+      {tab === 'stats' && <StatsBottom key='statsbottom' data={{ account }} />}
+      {tab === 'party' && <PartyBottom data={{ account }} utils={utils} key='partybottom' />}
     </>
   );
 };

@@ -8,7 +8,7 @@ interface Props {
   setTab: (tab: string) => void;
 }
 
-export const NewTabs = (props: Props) => {
+export const Tabs = (props: Props) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
@@ -18,22 +18,19 @@ export const NewTabs = (props: Props) => {
   const Tabs = () => {
     return (
       <>
+        {' '}
+        <Button onClick={() => setTab('stats')} disabled={props.tab === 'stats'}>
+          Stats
+        </Button>
         <Button
           onClick={() => setTab('social')}
           disabled={props.tab === 'social'}
-          style={{ borderRight: 'solid black .15vw' }}
+          style={{ borderLeft: 'solid black 0.15vw', borderRight: 'solid black 0.15vw' }}
         >
           Social
         </Button>
-        <Button
-          onClick={() => setTab('factions')}
-          disabled={props.tab === 'factions'}
-          style={{ borderRight: 'solid black .15vw' }}
-        >
-          Factions
-        </Button>
-        <Button onClick={() => setTab('stats')} disabled={props.tab === 'stats'}>
-          Stats
+        <Button onClick={() => setTab('party')} disabled={props.tab === 'party'}>
+          Party
         </Button>
       </>
     );

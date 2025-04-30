@@ -6,13 +6,15 @@ import styled from 'styled-components';
 
 import { ItemImages } from 'assets/images/items';
 import { Account } from 'network/shapes/Account';
+import { Factions } from '../Factions';
 
 interface Props {
-  account: Account; // account selected for viewing
+  data: { account: Account };
 }
 
 export const StatsBottom = (props: Props) => {
-  const { account } = props;
+  const { data } = props;
+  const { account } = data;
 
   /////////////////
   // INTERPRETATION
@@ -26,6 +28,7 @@ export const StatsBottom = (props: Props) => {
 
   return (
     <Container>
+      <Factions data={{ account }} />
       <Content>
         <DetailRow>
           <IconWrapper>
@@ -67,9 +70,9 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  align-items: center;
 
   overflow-y: auto;
+  align-items: flex-start;
 `;
 
 const Content = styled.div`
