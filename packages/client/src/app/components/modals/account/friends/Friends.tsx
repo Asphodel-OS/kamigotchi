@@ -1,7 +1,8 @@
+import styled from 'styled-components';
+
 import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
-import styled from 'styled-components';
 
 interface Props {
   friendships: Friendship[];

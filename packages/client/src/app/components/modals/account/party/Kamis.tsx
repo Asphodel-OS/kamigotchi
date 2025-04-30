@@ -1,6 +1,6 @@
+import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';

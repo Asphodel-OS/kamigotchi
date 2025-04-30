@@ -1,6 +1,5 @@
-import styled from 'styled-components';
-
 import { EntityIndex } from '@mud-classic/recs';
+import styled from 'styled-components';
 
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';

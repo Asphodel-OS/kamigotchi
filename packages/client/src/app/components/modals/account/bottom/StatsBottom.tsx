@@ -1,4 +1,3 @@
-import CakeIcon from '@mui/icons-material/Cake';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import TollIcon from '@mui/icons-material/Toll';
 import moment from 'moment';
@@ -29,12 +28,6 @@ export const StatsBottom = (props: Props) => {
   return (
     <Container>
       <Content>
-        <DetailRow>
-          <IconWrapper>
-            <CakeIcon style={{ height: '100%', width: '100%' }} />
-          </IconWrapper>
-          <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
-        </DetailRow>
         <DetailRow>
           <IconWrapper>
             <CheckroomIcon style={{ height: '100%', width: '100%' }} />

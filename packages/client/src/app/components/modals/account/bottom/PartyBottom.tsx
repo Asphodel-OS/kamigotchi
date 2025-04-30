@@ -1,8 +1,7 @@
+import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
-
-import { EntityIndex } from '@mud-classic/recs';
 import { Kami } from 'network/shapes/Kami';
 import { Kamis } from '../party/Kamis';
 
