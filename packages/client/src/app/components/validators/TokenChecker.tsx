@@ -1,15 +1,15 @@
-import styled from 'styled-components';
-
+import { useEffect } from 'react';
 import { interval, map, merge } from 'rxjs';
-import { useWatchBlockNumber } from 'wagmi';
+import styled from 'styled-components';
+import { erc20Abi } from 'viem';
+import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getItemByIndex } from 'app/cache/item';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useTokens } from 'app/stores';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
-import { useERC20Balance } from 'network/chain';
 import { getCompAddr } from 'network/shapes/utils';
-import { useState } from 'react';
+import { parseTokenBalance } from 'utils/numbers';
 
 export function registerTokenChecker() {
   registerUIComponent(
@@ -35,55 +35,84 @@ export function registerTokenChecker() {
               eth: getItemByIndex(world, components, ETH_INDEX).address!,
             },
             spender: getCompAddr(world, components, 'component.token.allowance'),
+            utils: {
+              getItem: (index: number) => getItemByIndex(world, components, index),
+            },
           };
         })
       );
     },
     ({ tokenAddresses, spender }) => {
       const { selectedAddress } = useNetwork();
-      const { set } = useTokens();
-
-      const [lastRefresh, setLastRefresh] = useState(Date.now());
-
-      // // ticking
-      // useEffect(() => {
-      //   const refreshClock = () => setLastRefresh(Date.now());
-      //   const timerId = setInterval(refreshClock, 4000);
-      //   return () => clearInterval(timerId);
-      // }, []);
-
-      // todo: convert to ws
-      // useEffect(() => {
-      //   // refetchOnyx(); // onyx not used yet; saving some bandwidth
-      //   refetchEth();
-      //   // set(tokenAddresses.onyx, onyxBal);
-      //   set(tokenAddresses.eth, ethBal);
-      //   console.log(tokenAddresses.eth);
-      //   console.log('eth', ethBal);
-      // }, [lastRefresh]);
+      const { balances, set } = useTokens();
 
       useWatchBlockNumber({
         onBlockNumber(block) {
-          refetchOnyx();
-          refetchEth();
-          set(tokenAddresses.onyx, onyxBal);
-          set(tokenAddresses.eth, ethBal);
-          console.log(tokenAddresses.eth);
-          console.log('eth', ethBal);
+          if (block % 2n === 0n) {
+            refetchOnyx();
+            refetchEth();
+          }
         },
       });
 
-      const { balances: onyxBal, refetch: refetchOnyx } = useERC20Balance(
-        selectedAddress,
-        tokenAddresses.onyx,
-        spender
-      );
+      /////////////////
+      // ONYX SUB
 
-      const { balances: ethBal, refetch: refetchEth } = useERC20Balance(
-        selectedAddress,
-        tokenAddresses.eth,
-        spender
-      );
+      const onyxConfig = {
+        address: tokenAddresses.onyx,
+        abi: erc20Abi,
+      };
+
+      const { data: onyxData, refetch: refetchOnyx } = useReadContracts({
+        contracts: [
+          { ...onyxConfig, functionName: 'balanceOf', args: [selectedAddress] },
+          { ...onyxConfig, functionName: 'allowance', args: [selectedAddress, spender] },
+        ],
+      });
+
+      /////////////////
+      // ETH SUB
+
+      const ethConfig = {
+        address: tokenAddresses.eth,
+        abi: erc20Abi,
+      };
+
+      const { data: ethData, refetch: refetchEth } = useReadContracts({
+        contracts: [
+          { ...ethConfig, functionName: 'balanceOf', args: [selectedAddress] },
+          { ...ethConfig, functionName: 'allowance', args: [selectedAddress, spender] },
+        ],
+      });
+
+      /////////////////
+      // STORE UPDATES
+
+      // eth
+      useEffect(() => {
+        const balance = parseTokenBalance(ethData?.[0].result, 18);
+        const allowance = parseTokenBalance(ethData?.[1].result, 18);
+
+        const currEthData = balances.get(tokenAddresses.eth);
+        if (!currEthData) return;
+
+        const balanceMismatch = currEthData.balance !== balance;
+        const allowanceMismatch = currEthData.allowance !== allowance;
+        if (balanceMismatch || allowanceMismatch) set(tokenAddresses.eth, { balance, allowance });
+      }, [ethData]);
+
+      // onyx
+      useEffect(() => {
+        const balance = parseTokenBalance(onyxData?.[0].result, 18);
+        const allowance = parseTokenBalance(onyxData?.[1].result, 18);
+
+        const currOnyxData = balances.get(tokenAddresses.onyx);
+        if (!currOnyxData) return;
+
+        const balanceMismatch = currOnyxData.balance !== balance;
+        const allowanceMismatch = currOnyxData.allowance !== allowance;
+        if (balanceMismatch || allowanceMismatch) set(tokenAddresses.onyx, { balance, allowance });
+      }, [onyxData]);
 
       return <Wrapper style={{ display: 'block' }} />;
     }

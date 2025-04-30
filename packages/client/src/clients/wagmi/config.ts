@@ -5,15 +5,20 @@ import { DefaultChain } from 'constants/chains';
 
 const mode = import.meta.env.MODE;
 const transportUrl = import.meta.env.VITE_RPC_TRANSPORT_URL;
-const wssUrl = import.meta.env.VITE_RPC_WSS_URL;
-const defaultTransport = mode === 'puter' ? http() : http(transportUrl);
-const wssTransport = mode === 'puter' ? webSocket() : webSocket(wssUrl);
+const webSocketUrl = import.meta.env.VITE_RPC_WS_URL;
+
+const httpTransport = mode === 'puter' ? http() : http(transportUrl);
+const wsTransport =
+  mode === 'puter'
+    ? webSocket()
+    : webSocket(webSocketUrl, { timeout: 10000, retryDelay: 100, retryCount: 5 });
 
 export const config = createConfig({
   chains: [DefaultChain],
-  transports: {
-    [DefaultChain.id]: defaultTransport,
-  },
   connectors: [injected()],
-  pollingInterval: 2000, // TODO: set this with a config value
+  transports: {
+    // [DefaultChain.id]: httpTransport,
+    [DefaultChain.id]: wsTransport,
+  },
+  pollingInterval: 5000, // TODO: set this with a config value
 });

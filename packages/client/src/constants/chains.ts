@@ -11,7 +11,10 @@ const YominetRaw = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    default: { http: [import.meta.env.VITE_RPC_TRANSPORT_URL] },
+    default: {
+      webSocket: [import.meta.env.VITE_RPC_WS_URL],
+      http: [import.meta.env.VITE_RPC_TRANSPORT_URL],
+    },
   },
   blockExplorers: {
     default: { name: 'Yomiscan', url: 'https://scan.initia.xyz/yominet-1' },
