@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
 import { LibInventory, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibKamiCreate } from "libraries/LibKamiCreate.sol";
@@ -18,7 +19,11 @@ contract KamiGachaMintSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
-    require(amount <= 5, "too many mints");
+    require(amount <= 1, "too many mints"); // force 1 mint per tx at launch to reduce congestion
+    require(
+      LibConfig.get(components, "MINT_START_PUBLIC") < block.timestamp,
+      "public mint has not yet started"
+    ); // launch: enforce public mint start
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 

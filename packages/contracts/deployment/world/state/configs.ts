@@ -29,7 +29,6 @@ export async function initLocalConfigs(api: AdminAPI) {
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 100, 0, 0, 0, 1000, 3]);
   await api.config.set.array('KAMI_HARV_INTENSITY', [1, 0, 2, 0, 0, 0, 0, 0]); // 960x testnet rate
   await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 100, 0, 0, 0, 1000, 3]);
-  await api.config.set.number('BYPASS_VRF', 1);
 }
 
 export async function initTestingConfigs(api: AdminAPI) {
@@ -78,14 +77,14 @@ async function initMint(api: AdminAPI) {
 
   // whitelist
   // TODO: update price and start time
-  await api.config.set.number('MINT_START_WL', 1744934400); // 2025, Apr 18 7:43am epoch (s)
+  await api.config.set.number('MINT_START_WL', 1746086400); // Thursday, May 1, 2025 8:00:00 AM UTC
   // await api.config.set.number('MINT_START_WL', 1745452800); // 2025, Apr 24 12am epoch (s)
   await api.config.set.number('MINT_PRICE_WL', 50); // 0.05 ETH, 50 mETH
   await api.config.set.number('MINT_MAX_WL', 1);
 
   // public
   // TODO: update price and start time
-  await api.config.set.number('MINT_START_PUBLIC', 1744966800); // 2025, Apr 18 9am epoch (s)
+  await api.config.set.number('MINT_START_PUBLIC', 1746172800); // Thursday, May 2, 2025 8:00:00 AM UTC
   // await api.config.set.number('MINT_START_PUBLIC', 1745539200); // 2025, Apr 25 12am epoch (s)
   await api.config.set.number('MINT_PRICE_PUBLIC', 100); // 0.1 ETH, 100 mETH
   await api.config.set.number('MINT_MAX_PUBLIC', 5);

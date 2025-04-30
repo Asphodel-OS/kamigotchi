@@ -117,7 +117,7 @@ export const Footer = (props: Props) => {
     if (tab === 'MINT') {
       if (mode === 'DEFAULT') return Date.now() / 1000 >= data.mint.config.whitelist.startTs;
       else return Date.now() / 1000 >= data.mint.config.public.startTs;
-    } else return true;
+    } else return Date.now() / 1000 >= data.mint.config.public.startTs; // everything else starts with public
   };
 
   //////////////////
@@ -199,7 +199,7 @@ export const Footer = (props: Props) => {
         value={quantity}
         set={setQuantity}
         scale={6}
-        disableInc={!enoughBalance}
+        disableInc={!enoughBalance && !underMax}
         disableDec={quantity <= 0}
         isHidden={tab === 'REROLL' && mode === 'DEFAULT'}
       />
