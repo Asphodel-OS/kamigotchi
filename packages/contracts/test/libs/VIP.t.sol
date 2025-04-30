@@ -55,6 +55,11 @@ contract VIPTest is SetupTemplate {
     (stage, totalScore, isFinalized) = vipContract.stages(2);
     assertEq(7, totalScore); // stage 2 score
     assertFalse(isFinalized); // stage 2 not finalized
+    // checking individual scores
+    (bool isIndexed, uint64 score) = vipContract.scores(1, alice.owner);
+    assertEq(3, score);
+    (isIndexed, score) = vipContract.scores(2, alice.owner);
+    assertEq(7, score);
 
     // increase in stage 2 again
     LibVIP.inc(components, bob.id, 3);
@@ -64,6 +69,49 @@ contract VIPTest is SetupTemplate {
     (stage, totalScore, isFinalized) = vipContract.stages(2);
     assertEq(10, totalScore); // stage 2 score
     assertFalse(isFinalized); // stage 2 not finalized
+    // checking individual scores
+    (isIndexed, score) = vipContract.scores(1, alice.owner);
+    assertEq(3, score);
+    (isIndexed, score) = vipContract.scores(2, alice.owner);
+    assertEq(7, score);
+    (isIndexed, score) = vipContract.scores(1, bob.owner);
+    assertEq(0, score);
+    (isIndexed, score) = vipContract.scores(2, bob.owner);
+    assertEq(3, score);
+
+    // get to stage 3, increase and finalize
+    _fastForward(epochDuration + 10);
+    LibVIP.inc(components, alice.id, 11);
+    assertEq(3, LibVIP.getStage(components));
+    (stage, totalScore, isFinalized) = vipContract.stages(1);
+    assertEq(3, totalScore); // stage 1 score
+    assertTrue(isFinalized); // stage 1 finalized
+    (stage, totalScore, isFinalized) = vipContract.stages(2);
+    assertEq(10, totalScore); // stage 2 score
+    assertTrue(isFinalized); // stage 2 finalized
+    (stage, totalScore, isFinalized) = vipContract.stages(3);
+    assertEq(11, totalScore); // stage 3 score
+    assertFalse(isFinalized); // stage 3 not finalized
+
+    // increase in stage 3 again
+    LibVIP.inc(components, bob.id, 5);
+    LibVIP.inc(components, alice.id, 3);
+    (stage, totalScore, isFinalized) = vipContract.stages(3);
+    assertEq(19, totalScore); // stage 3 score
+    assertFalse(isFinalized); // stage 3 not finalized
+    // testing individual scores
+    (isIndexed, score) = vipContract.scores(1, alice.owner);
+    assertEq(3, score);
+    (isIndexed, score) = vipContract.scores(2, alice.owner);
+    assertEq(7, score);
+    (isIndexed, score) = vipContract.scores(3, alice.owner);
+    assertEq(14, score);
+    (isIndexed, score) = vipContract.scores(1, bob.owner);
+    assertEq(0, score);
+    (isIndexed, score) = vipContract.scores(2, bob.owner);
+    assertEq(3, score);
+    (isIndexed, score) = vipContract.scores(3, bob.owner);
+    assertEq(5, score);
 
     vm.stopPrank();
   }
