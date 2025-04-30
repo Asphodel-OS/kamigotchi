@@ -364,8 +364,7 @@
     },
     {
       "name": "GachaBuyTicketSystem",
-      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "TimeLast", "TokenAllowance", "Value"],
-      "skipEnv": ["production"]
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "TimeLast", "TokenAllowance", "Value"]
     },
     {
       "name": "HarvestCollectSystem",
