@@ -1,3 +1,4 @@
+import aetheric_sextant from './aetheric_sextant.png';
 import agency_giftbox from './agency_giftbox.png';
 import ancient_machine_part from './ancient_machine_part.png';
 import astrolabe_disk from './astrolabe_disk.png';
@@ -81,6 +82,7 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
+  aetheric_sextant: aetheric_sextant,
   ancient_machine_part: ancient_machine_part,
   astrolabe_disk: astrolabe_disk,
   best_ice_cream: best_ice_cream,
