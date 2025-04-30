@@ -1,8 +1,26 @@
 import { AdminAPI } from '../../api';
-import { parseKamiStateToIndex } from '../utils';
+import { parseKamiStateToIndex, parseToInitCon } from '../utils';
 
-/// @dev requirements depend on outdated item types (ie. FOOD, REVIVE, etc). to update
-export async function addRequirement(api: AdminAPI, item: any) {
+export async function addRequirement(api: AdminAPI, itemIndex: number, entry: any) {
+  const type = entry['Type'];
+  const index = Number(entry['Index'] ?? 0);
+  const value = Number(entry['Value'] ?? 0);
+  const cond = parseToInitCon(entry['Preposition'], type, index, value);
+
+  console.log(`  Adding Requirement (${type}) (${cond.logicType}) (${index}) (${value})`);
+  await api.registry.item.add.requirement(
+    itemIndex,
+    'USE',
+    cond.type,
+    cond.logicType,
+    cond.index,
+    cond.value,
+    ''
+  );
+}
+
+export /// @dev requirements depend on outdated item types (ie. FOOD, REVIVE, etc). to update
+async function addTypeRequirement(api: AdminAPI, item: any) {
   // only adds requirement from type for now. slightly hardcoded for state requirements
   if (item['For'].toUpperCase() !== 'KAMI') return; // only kami need state requirements
 

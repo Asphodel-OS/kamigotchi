@@ -23,7 +23,7 @@
 ,In Game,36,Parting Path,,"It seems as if the trees are parting to clear a path ahead, then shuffling back together. ",1,9,5,
 ,In Game,37,Hollow Path,,"The mist is thinner here and the sky can be seen through holes in the canopy. ",1,10,6,
 ,In Game,47,Scrap Paths,,"The mountains of trash look more like hills, but the forest is no longer visible on the horizon.",1,7,3,
-,In Game,48,Steps,,The forest is dark and impenetrable. Thick tree trunks stretch high above.,1,7,5,
+,In Game,48,Murky Forest Path,,The forest is dark and impenetrable. Thick tree trunks stretch high above.,1,7,5,
 ,In Game,49,Clearing,,"A secluded clearing, away from both the illusory mists of the labyrinthine forest and the towering trash maze of the scrapyard. ",1,9,7,
 ,In Game,50,Ancient Forest Entrance,,"The undergrowth here is very thick; there’s only a few paths to follow through the trees…. The forest here feels packed, almost a jungle.",1,5,6,
 ,In Game,51,"Scrap-Littered Undergrowth ",,"There are fragments of scrap metal littered around the forest here. ",1,5,7,
@@ -34,11 +34,11 @@
 ,In Game,56,Butterfly Forest,,The forest here grows thicker once more. The blue butterflies seem particularly common in this place.,1,3,5,
 ,In Game,57,River Crossing,,"This seems like a natural spot to try to cross the river… and indeed, there was once a bridge…",1,3,6,
 ,To Deploy,60,Scrap Trees,,"A clearing on the border between the forest and scrapyard. You see a shovel and a notebook lying on the grass, each bisected down the middle. The cuts are perfectly clean.",1,1,5,
-,To Deploy,61,Decaying Forest Path,,Dead stumps and knotted trees tell you the forest here is in declining health. Giant centipedes march back and forth; a living trail that leads deeper into the woods.,1,1,7,
+,To Deploy,61,Musty Forest Path,,Dead stumps and knotted trees tell you the forest here is in declining health. Giant centipedes march back and forth; a living trail that leads deeper into the woods.,1,1,7,
 ,To Deploy,62,Centipedes,,A dark hollow beneath a dying tree choked with polypore fungi. Mushrooms coat every tree in this part of the forest. The centipedes seem to like this place.,1,1,8,
 ,To Deploy,63,Deeper Forest Path,,A stretch of forest road with light canopy and open sky. Wildflowers grow just off the path.,1,2,6,
 ,To Deploy,64,Burning Room,65,"In the center of the hut, a large cauldron bubbles over a low fire. Dried flowers and herbs hang overhead, and jars with suspicious labels sit on a shelf in the back.
 
-Someone was just here brewing something, but the hut is empty for now.",,,,Forest Hut  (https://www.notion.so/Forest-Hut-1b90220c3884819dbd53d32278847632?pvs=21)
+Someone was just here brewing something, but the hut is empty for now.",2,5,5,Forest Hut  (https://www.notion.so/Forest-Hut-1b90220c3884819dbd53d32278847632?pvs=21)
 ,To Deploy,65,"Forest Hut ",64,Smoke rises from a small reed hut that sits tucked behind boulders in a secluded part of the forest. The door is open.,1,1,6,Burning Room (https://www.notion.so/Burning-Room-1b90220c3884811fa777e0ca36a0d5e1?pvs=21)
-,To Deploy,66,Trading Room,,,1,2,2,
+,To Deploy,66,Marketplace,,"A strange machine adorned with Asphodel flowers sits here, deep in the forest. What could it be for? ",1,2,2,

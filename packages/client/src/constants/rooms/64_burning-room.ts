@@ -14,5 +14,11 @@ export const room64: Room = {
     key: 'arrival',
     path: arrival,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'hut exit',
+      coordinates: { x1: 52, y1: 110, x2: 76, y2: 130 },
+      dialogue: 641,
+    },
+  ],
 };
