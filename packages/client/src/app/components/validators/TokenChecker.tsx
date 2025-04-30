@@ -90,27 +90,23 @@ export function registerTokenChecker() {
 
       // eth
       useEffect(() => {
+        const oldEthData = balances.get(tokenAddresses.eth);
         const balance = parseTokenBalance(ethData?.[0].result, 18);
         const allowance = parseTokenBalance(ethData?.[1].result, 18);
 
-        const currEthData = balances.get(tokenAddresses.eth);
-        if (!currEthData) return;
-
-        const balanceMismatch = currEthData.balance !== balance;
-        const allowanceMismatch = currEthData.allowance !== allowance;
+        const balanceMismatch = oldEthData?.balance !== balance;
+        const allowanceMismatch = oldEthData?.allowance !== allowance;
         if (balanceMismatch || allowanceMismatch) set(tokenAddresses.eth, { balance, allowance });
       }, [ethData]);
 
       // onyx
       useEffect(() => {
+        const oldOnyxData = balances.get(tokenAddresses.onyx);
         const balance = parseTokenBalance(onyxData?.[0].result, 18);
         const allowance = parseTokenBalance(onyxData?.[1].result, 18);
 
-        const currOnyxData = balances.get(tokenAddresses.onyx);
-        if (!currOnyxData) return;
-
-        const balanceMismatch = currOnyxData.balance !== balance;
-        const allowanceMismatch = currOnyxData.allowance !== allowance;
+        const balanceMismatch = oldOnyxData?.balance !== balance;
+        const allowanceMismatch = oldOnyxData?.allowance !== allowance;
         if (balanceMismatch || allowanceMismatch) set(tokenAddresses.onyx, { balance, allowance });
       }, [onyxData]);
 
