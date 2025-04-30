@@ -53,8 +53,6 @@ export async function initAll(api: AdminAPI) {
   await initRelationships(api);
   console.log('\n---------------------------------------------\n');
 
-  await initSnapshot(api);
-
   if (process.env.NODE_ENV === 'puter') {
     console.log('generating local inits');
     await initGachaPool(api, 88);
@@ -62,9 +60,10 @@ export async function initAll(api: AdminAPI) {
     await initAllLocal(api);
   } else if (process.env.NODE_ENV === 'testing') {
     await initAllTesting(api);
-    await initGachaPool(api, 2222);
+    await initGachaPool(api, 100);
   } else if (process.env.NODE_ENV === 'production') {
     await initAllProd(api);
+    await initSnapshot(api);
     await initGachaPool(api, 2222);
   } else {
     await initGachaPool(api, 2222);
