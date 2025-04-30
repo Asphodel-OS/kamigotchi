@@ -80,7 +80,7 @@ export function registerInventoryModal() {
         });
       };
 
-      const useForAccount = (item: Item) => {
+      const useForAccount = (item: Item, amount: number) => {
         // really hacky way to determine if we're using a giftbox
         let actionKey = 'Using';
         if (item.name === 'Giftbox') actionKey = 'Opening';
@@ -90,7 +90,7 @@ export function registerInventoryModal() {
           params: [item.index],
           description: `${actionKey} ${item.name}`,
           execute: async () => {
-            return api.player.account.item.use(item.index, 1);
+            return api.player.account.item.use(item.index, amount);
           },
         });
       };
