@@ -1,4 +1,5 @@
 import { EntityIndex } from '@mud-classic/recs';
+import CakeIcon from '@mui/icons-material/Cake';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -108,7 +109,11 @@ export const Bio = (props: Props) => {
           <TitleRow>
             <Title>{account.name}</Title>
           </TitleRow>
-          <AddressDisplay />
+          <AddressDisplay />{' '}
+          <DetailRow>
+            <CakeIcon style={{ height: '1.4vh' }} />
+            <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
+          </DetailRow>
         </Identifiers>
       </Content>
     </Container>

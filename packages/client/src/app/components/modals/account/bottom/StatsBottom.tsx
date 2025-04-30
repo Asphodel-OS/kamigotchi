@@ -28,7 +28,6 @@ export const StatsBottom = (props: Props) => {
 
   return (
     <Container>
-      <Factions data={{ account }} />
       <Content>
         <DetailRow>
           <IconWrapper>
@@ -54,7 +53,8 @@ export const StatsBottom = (props: Props) => {
           </IconWrapper>
           <Description>{(account.stats?.vip ?? 0).toLocaleString()} VIP score</Description>
         </DetailRow>
-      </Content>
+      </Content>{' '}
+      <Factions data={{ account }} />
     </Container>
   );
 };
