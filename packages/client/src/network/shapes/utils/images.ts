@@ -39,7 +39,8 @@ const cleanName = (name: string) => {
   if (!name) return '';
   name = name.toLowerCase();
   name = name.replaceAll(/ /g, '_').replaceAll(/-/g, '_');
-  name = name.replaceAll('(', '').replaceAll(')', '').replaceAll(`'`, '');
-  name = name.replaceAll('“', '').replaceAll('”', '').replaceAll(`-`, '_');
+  name = name.replaceAll('(', '').replaceAll(')', '');
+  name = name.replaceAll(`'`, '').replaceAll(`’`, '');
+  name = name.replaceAll('“', '').replaceAll('”', '').replaceAll(`"`, '');
   return name;
 };
