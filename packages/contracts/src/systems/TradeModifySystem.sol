@@ -24,7 +24,7 @@ contract TradeModifySystem is System {
       uint256 targetID
     ) = abi.decode(arguments, (uint256, uint32[], uint256[], uint32[], uint256[], uint256));
 
-    uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyRoom(components, accID);
     LibTrade.verifyTradable(components, buyIndices, sellIndices);
     LibTrade.verifySeller(components, tradeID, accID);

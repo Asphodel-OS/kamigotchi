@@ -171,7 +171,7 @@ contract TradeTest is SetupTemplate {
     uint256[] memory sellAmts,
     uint256 targetID
   ) public returns (uint256) {
-    vm.startPrank(acc.operator);
+    vm.startPrank(acc.owner);
     bytes memory tradeID = _TradeCreateSystem.executeTyped(
       buyIndices,
       buyAmts,
@@ -184,13 +184,13 @@ contract TradeTest is SetupTemplate {
   }
 
   function _cancelTrade(PlayerAccount memory acc, uint256 tradeID) public {
-    vm.startPrank(acc.operator);
+    vm.startPrank(acc.owner);
     _TradeCancelSystem.executeTyped(tradeID);
     vm.stopPrank();
   }
 
   function _executeTrade(PlayerAccount memory acc, uint256 tradeID) public {
-    vm.startPrank(acc.operator);
+    vm.startPrank(acc.owner);
     _TradeExecuteSystem.executeTyped(tradeID);
     vm.stopPrank();
   }
@@ -224,7 +224,7 @@ contract TradeTest is SetupTemplate {
     uint256[] memory sellAmts,
     uint256 targetID
   ) public {
-    vm.startPrank(acc.operator);
+    vm.startPrank(acc.owner);
     _TradeModifySystem.executeTyped(tradeID, buyIndices, buyAmts, sellIndices, sellAmts, targetID);
     vm.stopPrank();
   }

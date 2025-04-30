@@ -17,7 +17,7 @@ contract TradeExecuteSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 tradeID = abi.decode(arguments, (uint256));
 
-    uint256 accID = LibAccount.getByOperator(components, msg.sender);
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyRoom(components, accID);
     LibTrade.verifyTarget(components, tradeID, accID);
 
