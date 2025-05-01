@@ -80,9 +80,9 @@ export const Controls = (props: Props) => {
           }}
         />
       )}
+      <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
       <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
-      <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>

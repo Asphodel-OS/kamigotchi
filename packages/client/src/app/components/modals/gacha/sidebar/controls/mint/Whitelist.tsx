@@ -24,11 +24,13 @@ interface Props {
   state: {
     quantity: number;
     price: number;
+    tick: number;
   };
 }
 
 export const Whitelist = (props: Props) => {
   const { data, state, isVisible } = props;
+  const { tick } = state;
   const { mint } = data;
 
   /////////////////
@@ -36,7 +38,7 @@ export const Whitelist = (props: Props) => {
 
   // check whether the mint has started
   const hasStarted = () => {
-    const now = Date.now() / 1000;
+    const now = tick / 1000;
     return now > mint.config.whitelist.startTs;
   };
 
@@ -60,12 +62,11 @@ export const Whitelist = (props: Props) => {
 
   // get the error text if there's an issue
   const getErrorText = () => {
-    let text = '';
-    if (!hasStarted()) text = 'Whitelist mint has not yet started';
-    else if (isComplete()) text = 'All minted out ^^ thanks for playing';
-    else if (!isWhitelisted()) text = 'You are not whitelisted';
-    else if (hasReachedMax()) text = 'You have reached the max Whitelist mints';
-    return text;
+    if (isComplete()) return 'All minted out ^^ thanks for playing';
+    if (!hasStarted()) return 'Whitelist mint has not yet started';
+    if (!isWhitelisted()) return 'You are not whitelisted';
+    if (hasReachedMax()) return 'You have reached the max Whitelist mints';
+    return '';
   };
 
   return (

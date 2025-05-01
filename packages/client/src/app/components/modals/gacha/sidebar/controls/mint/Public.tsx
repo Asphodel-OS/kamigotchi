@@ -23,11 +23,13 @@ interface Props {
   state: {
     quantity: number;
     price: number;
+    tick: number;
   };
 }
 
 export const Public = (props: Props) => {
   const { data, state, isVisible } = props;
+  const { tick } = state;
   const { mint } = data;
 
   /////////////////
@@ -35,7 +37,7 @@ export const Public = (props: Props) => {
 
   // check whether the mint has started
   const hasStarted = () => {
-    const now = Date.now() / 1000;
+    const now = tick / 1000;
     return now > mint.config.public.startTs;
   };
 
@@ -54,11 +56,10 @@ export const Public = (props: Props) => {
 
   // get the error text if there's an issue
   const getErrorText = () => {
-    let text = '';
-    if (!hasStarted()) text = 'Public mint has not yet started';
-    else if (isComplete()) text = 'All minted out ^^ thanks for playing';
-    else if (hasReachedMax()) text = 'You have reached the max public mints';
-    return text;
+    if (!hasStarted()) return 'Public mint has not yet started';
+    if (isComplete()) return 'All minted out ^^ thanks for playing';
+    if (hasReachedMax()) return 'You have reached the max public mints';
+    return '';
   };
   return (
     <Container isVisible={isVisible}>

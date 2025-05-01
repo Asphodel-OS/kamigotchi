@@ -61,7 +61,7 @@ export const Footer = (props: Props) => {
 
   useEffect(() => {
     setIsDisabled(quantity <= 0 || needsFunds() || exceedsMax() || !hasStarted());
-  }, [tokenBal, price, balance, quantity]);
+  }, [price, balance, quantity]);
 
   /////////////////
   // CHECKERS
@@ -105,11 +105,7 @@ export const Footer = (props: Props) => {
 
   // check if a user has enough balance of a token to purchase
   const needsFunds = () => {
-    if (payItem.address) {
-      const tokenBalance = tokenBal.get(payItem.address)?.balance || 0;
-      return tokenBalance >= price;
-    }
-    return balance >= price;
+    return balance < price;
   };
 
   //////////////////
@@ -170,33 +166,90 @@ export const Footer = (props: Props) => {
     return '';
   };
 
-  const getSubmitTooltip = () => {
-    if (quantity <= 0) return ['no items to purchase'];
+  // get the sale description for the submit button tooltip
+  const getSaleDescription = () => {
+    // mint
+    if (tab === 'MINT') {
+      if (mode === 'DEFAULT') return [`Mint your whitelist ${saleItem.name}`];
+      if (mode === 'ALT') return [`Mint ${quantity} ${saleItem.name}s`];
+    }
 
+    // gacha
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') return [`Claim a Kami from the pool`];
+      if (mode === 'ALT') return [`Purchase ${quantity} ${saleItem.name}(s)`];
+    }
+
+    // reroll
+    if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') return [`Reroll ${selectedKamis.length} Kami`];
+      if (mode === 'ALT') return [`Purchase ${quantity} ${saleItem.name}(s)`];
+    }
+
+    return [];
+  };
+
+  // get the error description for the submit button tooltip
+  const getErrorDescription = () => {
     // mint
     if (tab === 'MINT') {
       if (mode === 'DEFAULT') {
+        if (!mint.whitelisted) return [`you're not whitelisted`];
         if (!hasStarted()) return ['whitelist mint has not started'];
         if (exceedsMax()) return [`max ${mint.config.whitelist.max} for whitelist mint`];
-        if (!mint.whitelisted) return [`you're not whitelisted`];
-      } else {
-        if (!hasStarted()) return ['public mint has not started'];
       }
+      if (mode === 'ALT') {
+        if (!hasStarted()) return ['public mint has not started'];
+        if (exceedsMax()) {
+          const max = mint.config.public.max;
+          const curr = mint.data.account.public;
+          return [`this purchase will exceed your mint limit`, `${curr}/${max} minted so far`];
+        }
+      }
+      if (needsFunds()) return ['too poore', `you need ${(price - balance).toFixed(3)} more ETH`];
+      if (needsApproval()) return [`approve ${balance.toFixed(3)}ETH to spend`];
+    }
 
-      if (exceedsMax()) {
-        const max = mode === 'DEFAULT' ? mint.config.whitelist.max : mint.config.public.max;
-        const curr = mode === 'DEFAULT' ? mint.data.account.whitelist : mint.data.account.public;
-        return [`this purchase will exceed your mint limit`, `${curr}/${max} minted so far`];
+    // gacha
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') {
+        if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
+        if (!exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
+      }
+      if (mode === 'ALT') {
+        if (!hasStarted()) return [`you're early!`, `this auction hasn't started yet`];
+        if (needsFunds()) return [`too poore`, `you need ${price - balance} more musu`];
       }
     }
 
-    if (needsFunds()) return ['too poore'];
-    if (exceedsMax()) return [`max ${GACHA_MAX_PER_TX} items per tx`];
+    // reroll
+    if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') {
+        const numKamis = selectedKamis.length;
+        if (numKamis == 0) {
+          return [
+            `you need to select at least one (1) Kami to disown`,
+            `it's time to play favorites..`,
+          ];
+        }
+      }
+      if (mode === 'ALT') {
+        if (!hasStarted()) return [`you're early!`, `this auction hasn't started yet`];
+        if (needsFunds()) {
+          return [`too poore`, `you need ${(price - balance).toFixed(3)} more ONYX`];
+        }
+        if (needsApproval()) return [`approve ${balance.toFixed(3)}ONYX to spend`];
+      }
+    }
 
-    let saleDesc = `Purchase ${quantity} ${saleItem.name}`;
-    if (tab === 'GACHA' && mode === 'DEFAULT') saleDesc = `Pull ${quantity} Kami`;
-    if (tab === 'REROLL' && mode === 'DEFAULT') saleDesc = `Reroll ${quantity} Kami`;
-    return [saleDesc, `for ${price} ${payItem.name}`];
+    return [];
+  };
+
+  // get the tooltip to display for the submit button
+  const getSubmitTooltip = () => {
+    let tooltip = getErrorDescription();
+    if (tooltip.length === 0) tooltip = getSaleDescription();
+    return tooltip;
   };
 
   /////////////////
@@ -209,7 +262,7 @@ export const Footer = (props: Props) => {
         value={quantity}
         set={setQuantity}
         scale={6}
-        disableInc={needsFunds() && exceedsMax()}
+        disableInc={needsFunds() || exceedsMax()}
         disableDec={quantity <= 0}
         isHidden={mode === 'DEFAULT'}
       />
