@@ -2,8 +2,9 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, Overlay, Tooltip } from 'app/components/library';
+import { EmptyText, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { Auction } from 'network/shapes/Auction';
 import { KamiStats } from 'network/shapes/Kami';
 import { BaseKami, Kami } from 'network/shapes/Kami/types';
 import { playClick } from 'utils/sounds';
@@ -22,7 +23,11 @@ interface Props {
     kamiBlocks: Map<EntityIndex, JSX.Element>;
   };
   data: {
+    auction: Auction;
     entities: EntityIndex[];
+  };
+  state: {
+    tick: number;
   };
   utils: {
     getKami: (entity: EntityIndex) => Kami;
@@ -31,11 +36,13 @@ interface Props {
 }
 
 export const KamiView = (props: Props) => {
-  const { controls, caches, data, utils, isVisible } = props;
+  const { controls, caches, data, state, utils, isVisible } = props;
   const { filters, sorts } = controls;
   const { kamiBlocks } = caches;
   const { entities } = data;
+  const { tick } = state;
   const { getKami } = utils;
+
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -210,11 +217,6 @@ export const KamiView = (props: Props) => {
 
   return (
     <Container ref={containerRef} isVisible={isVisible}>
-      <Overlay top={0.6} left={0.6}>
-        <Text>
-          {filtered.length}/{entities.length}
-        </Text>
-      </Overlay>
       <EmptyText size={2.1} text={LOADING_TEXT} isHidden={!isLoading} />
       <EmptyText size={2.1} text={EMPTY_TEXT} isHidden={!isLoaded || entities.length > 0} />
       {getVisibleKamis().map((kami) => getKamiBlock(kami))}
@@ -233,10 +235,6 @@ const Container = styled.div<{ isVisible: boolean }>`
   align-items: flex-start;
   justify-content: center;
   overflow-y: auto;
-`;
-
-const Text = styled.div`
-  font-size: 0.6vw;
 `;
 
 // Helper function for not blocking renders on large computations

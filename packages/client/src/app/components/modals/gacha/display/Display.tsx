@@ -56,7 +56,7 @@ interface Props {
 export const Display = (props: Props) => {
   const { state, controls, data, caches, utils } = props;
   const { mode, setMode, tab } = controls;
-  const { account, auctions, poolKamis } = data;
+  const { account, auctions, mint, poolKamis } = data;
 
   const toggleMode = () => {
     if (mode === 'DEFAULT') setMode('ALT');
@@ -67,11 +67,11 @@ export const Display = (props: Props) => {
     let text = '???';
 
     if (tab === 'GACHA') {
-      if (mode === 'DEFAULT') text = 'Get Gacha Tickets';
-      else text = 'Back to Gacha';
+      if (mode === 'DEFAULT') text = 'Auction >';
+      else text = '< Gacha';
     } else if (tab === 'REROLL') {
-      if (mode === 'DEFAULT') text = 'Get Reroll Tickets';
-      else text = 'Back to Reroll';
+      if (mode === 'DEFAULT') text = 'Auction >';
+      else text = '< Reroll';
     }
 
     return text;
@@ -79,6 +79,7 @@ export const Display = (props: Props) => {
 
   // determine whether the mode toggle button should be visible
   const isButtonVisible = () => {
+    return tab !== 'MINT';
     if (tab === 'GACHA' && mode === 'DEFAULT') {
       const startTime = auctions.gacha.time.start;
       return startTime > Date.now();
@@ -97,7 +98,14 @@ export const Display = (props: Props) => {
       <Pool
         caches={caches}
         controls={controls}
-        data={{ account, auction: auctions.gacha, entities: poolKamis }}
+        data={{
+          ...data,
+          account,
+          mintConfig: mint.config,
+          auction: auctions.gacha,
+          entities: poolKamis,
+        }}
+        state={state}
         utils={utils}
         isVisible={tab === 'GACHA'}
       />

@@ -19,7 +19,6 @@ import { GachaMintData } from 'network/shapes/Gacha';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami/types';
-
 import { Filter, Sort, TabType, ViewMode } from '../types';
 import { Controls } from './controls/Controls';
 import { Footer } from './Footer';
@@ -79,7 +78,7 @@ export const Sidebar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
   const { mode, tab, setTab } = controls;
   const { auctions, commits, mint } = data;
-  const { tick, quantity } = state;
+  const { tick, quantity, setQuantity } = state;
   const { getItem, getItemBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
   const { modals } = useVisibility();
@@ -92,11 +91,13 @@ export const Sidebar = (props: Props) => {
   /////////////////
   // HOOKS
 
-  // on startup it should be set to mint
+  // update context when changed
   useEffect(() => {
+    if (!modals.gacha) return;
     updatePayItem();
-    updateBalance();
-  }, [modals.gacha]);
+    updateSaleItem();
+    setQuantity(1); // default to 1 on context switch
+  }, [modals.gacha, tab, mode]);
 
   // maybe consider controlling this hook and the one below with a dedicated payItem vs buyItem
   useEffect(() => {
@@ -107,26 +108,21 @@ export const Sidebar = (props: Props) => {
   useEffect(() => {
     if (!modals.gacha) return;
     updateBalance();
-  }, [tab, mode, tick]);
-
-  useEffect(() => {
-    if (!modals.gacha) return;
-    updatePayItem();
-    updateSaleItem();
-  }, [tab, mode]);
+  }, [payItem, tick]);
 
   /////////////////
   // STATE
 
   // update the pay item according to tab/mode
   const updatePayItem = () => {
-    if (tab === 'GACHA') {
+    if (tab === 'MINT') setPayItem(getItem(ETH_INDEX));
+    else if (tab === 'GACHA') {
       if (mode === 'DEFAULT') setPayItem(getItem(GACHA_TICKET_INDEX));
       if (mode === 'ALT') setPayItem(getItem(MUSU_INDEX));
     } else if (tab === 'REROLL') {
       if (mode === 'DEFAULT') setPayItem(getItem(REROLL_TICKET_INDEX));
       else if (mode === 'ALT') setPayItem(getItem(ONYX_INDEX));
-    } else if (tab === 'MINT') setPayItem(getItem(ETH_INDEX));
+    }
   };
 
   // update the sale item according to tab/mode

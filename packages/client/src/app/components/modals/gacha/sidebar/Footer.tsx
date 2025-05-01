@@ -8,7 +8,7 @@ import { GACHA_MAX_PER_TX } from 'constants/gacha';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { playClick } from 'utils/sounds';
+import { playClick, playSuccess } from 'utils/sounds';
 import { TabType, ViewMode } from '../types';
 
 interface Props {
@@ -44,6 +44,7 @@ interface Props {
     setPrice: (price: number) => void;
     selectedKamis: Kami[];
     setSelectedKamis: (kamis: Kami[]) => void;
+    tick: number;
   };
 }
 
@@ -52,72 +53,59 @@ export const Footer = (props: Props) => {
   const { approve, bid, mintPublic, mintWL, pull, reroll } = actions;
   const { mode, tab } = controls;
   const { payItem, saleItem, balance, mint } = data;
-  const { quantity, setQuantity, price, selectedKamis, setSelectedKamis } = state;
-
-  /////////////////
-  // ERC20 APPROVAL
+  const { selectedKamis, setSelectedKamis } = state;
+  const { quantity, setQuantity, price, tick } = state;
 
   const { balances: tokenBal } = useTokens();
-  const [needsApproval, setNeedsApproval] = useState(true);
-  const [enoughBalance, setEnoughBalance] = useState(true);
-  const [underMax, setUnderMax] = useState(true);
-  const [hasStarted, setHasStarted] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
-    const needsApproval = checkNeedsApproval();
-    const enoughBalance = checkEnoughBalance();
-    const underMax = checkMax();
-    const hasStarted = checkHasStarted();
-    setNeedsApproval(needsApproval);
-    setEnoughBalance(enoughBalance);
-    setUnderMax(underMax);
-    setHasStarted(hasStarted);
-    setIsDisabled(quantity <= 0 || !enoughBalance || !underMax || !hasStarted);
-  }, [tokenBal, price]);
+    setIsDisabled(quantity <= 0 || needsFunds() || exceedsMax() || !hasStarted());
+  }, [price, balance, quantity]);
+
+  /////////////////
+  // CHECKERS
+
+  // check if a user is under max amt per tx
+  const exceedsMax = () => {
+    if (tab === 'MINT') {
+      const whitelistMax = mint.config.whitelist.max;
+      const publicMax = mint.config.public.max;
+      const whitelistMinted = mint.data.account.whitelist;
+      const publicMinted = mint.data.account.public;
+      if (mode === 'DEFAULT') return whitelistMinted + quantity > whitelistMax;
+      if (mode === 'ALT') return publicMinted + quantity > publicMax;
+    }
+
+    if (tab === 'GACHA' && mode === 'DEFAULT') return quantity > GACHA_MAX_PER_TX;
+
+    return false;
+  };
+
+  // hardcoded bc this only matters temporarily
+  const hasStarted = () => {
+    const now = tick / 1000;
+    const wlMintStart = data.mint.config.whitelist.startTs;
+    const publicMintStart = data.mint.config.public.startTs;
+
+    if (tab === 'MINT') {
+      if (mode === 'DEFAULT') return now >= wlMintStart;
+      else return now >= publicMintStart;
+    } else if (tab === 'GACHA') return now >= publicMintStart + 3600;
+    else if (tab === 'REROLL' && mode === 'ALT') return now >= publicMintStart + 3600;
+    return true;
+  };
 
   // check if a user needs further spend approval for a token
-  const checkNeedsApproval = () => {
+  const needsApproval = () => {
     if (!payItem.address) return false;
     const allowance = tokenBal.get(payItem.address!)?.allowance || 0;
     return allowance < price;
   };
 
   // check if a user has enough balance of a token to purchase
-  const checkEnoughBalance = () => {
-    if (payItem.address) {
-      const tokenBalance = tokenBal.get(payItem.address)?.balance || 0;
-      return tokenBalance >= price;
-    }
-    return balance >= price;
-  };
-
-  // check if a user is under max amt per tx
-  const checkMax = () => {
-    if (tab === 'MINT') return underMintMax();
-
-    if (mode === 'ALT') return true; // no max for auctions
-    if (tab === 'GACHA' || tab === 'REROLL') return GACHA_MAX_PER_TX >= quantity;
-    else return true;
-  };
-
-  // (MINT ONLY) check if a user is under the total mint allowance
-  const underMintMax = () => {
-    if (tab !== 'MINT') return true;
-
-    const config = mint.config;
-    const accountData = mint.data.account;
-    if (mode === 'DEFAULT') return accountData.whitelist + quantity <= config.whitelist.max;
-    if (mode === 'ALT') return accountData.public + quantity <= config.public.max;
-
-    return true;
-  };
-
-  const checkHasStarted = () => {
-    if (tab === 'MINT') {
-      if (mode === 'DEFAULT') return Date.now() / 1000 >= data.mint.config.whitelist.startTs;
-      else return Date.now() / 1000 >= data.mint.config.public.startTs;
-    } else return Date.now() / 1000 >= data.mint.config.public.startTs; // everything else starts with public
+  const needsFunds = () => {
+    return balance < price;
   };
 
   //////////////////
@@ -134,16 +122,19 @@ export const Footer = (props: Props) => {
         success = await reroll(selectedKamis);
         if (success) setSelectedKamis([]);
       } else if (mode === 'ALT') {
-        if (needsApproval) approve(payItem, price);
+        if (needsApproval()) approve(payItem, price);
         bid(saleItem, quantity);
       }
     } else if (tab === 'MINT') {
-      if (needsApproval) approve(payItem, price);
+      if (needsApproval()) approve(payItem, price);
       if (mode === 'DEFAULT') mintWL();
       else if (mode === 'ALT') mintPublic(quantity);
       else bid(saleItem, quantity);
     }
-    if (success) setQuantity(0);
+    if (success) {
+      playSuccess();
+      setQuantity(0);
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,37 +147,109 @@ export const Footer = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
+  // get the text of the submission button
   const getButtonText = () => {
+    // mint tab
+    if (tab === 'MINT') return needsApproval() ? 'Approve' : 'Mint';
+
+    // gacha pool tab
     if (tab === 'GACHA') {
-      if (mode === 'DEFAULT') return 'Mint';
+      if (mode === 'DEFAULT') return 'Claim';
       else if (mode === 'ALT') return 'Bid';
-    } else if (tab === 'REROLL') {
+    }
+
+    // reroll tab
+    if (tab === 'REROLL') {
       if (mode === 'DEFAULT') return 'Reroll';
-      else if (mode === 'ALT') return needsApproval ? 'Approve' : 'Bid';
-    } else if (tab === 'MINT') {
-      return needsApproval ? 'Approve' : 'Bid';
-    } else return '';
+      else if (mode === 'ALT') return needsApproval() ? 'Approve' : 'Bid';
+    }
+    return '';
   };
 
-  const getSubmitTooltip = () => {
-    if (!hasStarted) return ['mint has not started'];
-    if (quantity <= 0) return ['no items to purchase'];
+  // get the sale description for the submit button tooltip
+  const getSaleDescription = () => {
+    // mint
     if (tab === 'MINT') {
-      if (mode === 'DEFAULT' && !mint.whitelisted)
-        return ['this purchase will exceed your WL mint limit'];
-      if (!underMintMax()) {
-        const max = mode === 'DEFAULT' ? mint.config.whitelist.max : mint.config.public.max;
-        const curr = mode === 'DEFAULT' ? mint.data.account.whitelist : mint.data.account.public;
-        return [`this purchase will exceed your mint limit`, `${curr}/${max} minted so far`];
+      if (mode === 'DEFAULT') return [`Mint your whitelist ${saleItem.name}`];
+      if (mode === 'ALT') return [`Mint ${quantity} ${saleItem.name}s`];
+    }
+
+    // gacha
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') return [`Claim a Kami from the pool`];
+      if (mode === 'ALT') return [`Purchase ${quantity} ${saleItem.name}(s)`];
+    }
+
+    // reroll
+    if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') return [`Reroll ${selectedKamis.length} Kami`];
+      if (mode === 'ALT') return [`Purchase ${quantity} ${saleItem.name}(s)`];
+    }
+
+    return [];
+  };
+
+  // get the error description for the submit button tooltip
+  const getErrorDescription = () => {
+    // mint
+    if (tab === 'MINT') {
+      if (mode === 'DEFAULT') {
+        if (!mint.whitelisted) return [`you're not whitelisted`];
+        if (!hasStarted()) return ['whitelist mint has not started'];
+        if (exceedsMax()) return [`max ${mint.config.whitelist.max} for whitelist mint`];
+      }
+      if (mode === 'ALT') {
+        if (!hasStarted()) return ['public mint has not started'];
+        if (exceedsMax()) {
+          const max = mint.config.public.max;
+          const curr = mint.data.account.public;
+          return [`this purchase will exceed your mint limit`, `${curr}/${max} minted so far`];
+        }
+      }
+      if (needsFunds()) return ['too poore', `you need ${(price - balance).toFixed(3)} more ETH`];
+      if (needsApproval()) return [`approve ${balance.toFixed(3)}ETH to spend`];
+    }
+
+    // gacha
+    if (tab === 'GACHA') {
+      if (mode === 'DEFAULT') {
+        if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
+        if (!exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
+      }
+      if (mode === 'ALT') {
+        if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
+        if (needsFunds()) return [`too poore`, `you need ${price - balance} more musu`];
       }
     }
-    if (!enoughBalance) return ['too poore'];
-    if (!underMax) return [`max ${GACHA_MAX_PER_TX} items per tx`];
 
-    let saleDesc = `Purchase ${quantity} ${saleItem.name}`;
-    if (tab === 'GACHA' && mode === 'DEFAULT') saleDesc = `Pull ${quantity} Kami`;
-    if (tab === 'REROLL' && mode === 'DEFAULT') saleDesc = `Reroll ${quantity} Kami`;
-    return [saleDesc, `for ${price} ${payItem.name}`];
+    // reroll
+    if (tab === 'REROLL') {
+      if (mode === 'DEFAULT') {
+        const numKamis = selectedKamis.length;
+        if (numKamis == 0) {
+          return [
+            `you need to select at least one (1) Kami to disown`,
+            `it's time to play favorites..`,
+          ];
+        }
+      }
+      if (mode === 'ALT') {
+        if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
+        if (needsFunds()) {
+          return [`too poore`, `you need ${(price - balance).toFixed(3)} more ONYX`];
+        }
+        if (needsApproval()) return [`approve ${balance.toFixed(3)}ONYX to spend`];
+      }
+    }
+
+    return [];
+  };
+
+  // get the tooltip to display for the submit button
+  const getSubmitTooltip = () => {
+    let tooltip = getErrorDescription();
+    if (tooltip.length === 0) tooltip = getSaleDescription();
+    return tooltip;
   };
 
   /////////////////
@@ -199,9 +262,9 @@ export const Footer = (props: Props) => {
         value={quantity}
         set={setQuantity}
         scale={6}
-        disableInc={!enoughBalance && !underMax}
+        disableInc={needsFunds() || exceedsMax()}
         disableDec={quantity <= 0}
-        isHidden={tab === 'REROLL' && mode === 'DEFAULT'}
+        isHidden={mode === 'DEFAULT'}
       />
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
         <Tooltip text={getSubmitTooltip()} alignText='center' grow>

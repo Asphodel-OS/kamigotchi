@@ -61,8 +61,9 @@ export const Controls = (props: Props) => {
 
   const getBalanceText = () => {
     let numDecimals = 0;
-    if (tab === 'REROLL' && mode === 'ALT') numDecimals = 3;
-    else if (tab === 'MINT') numDecimals = 2;
+    if (tab === 'REROLL' && mode === 'ALT')
+      numDecimals = 3; // onyx
+    else if (tab === 'MINT') numDecimals = 4; // eth
     return balance.toFixed(numDecimals);
   };
 
@@ -79,9 +80,9 @@ export const Controls = (props: Props) => {
           }}
         />
       )}
+      <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
       <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
-      <Mint isVisible={tab === 'MINT'} controls={controls} data={data} state={state} />
       <Overlay right={0.75} bottom={0.75} orientation='row'>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>

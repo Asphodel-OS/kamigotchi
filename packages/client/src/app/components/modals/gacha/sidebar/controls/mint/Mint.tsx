@@ -29,6 +29,7 @@ interface Props {
   state: {
     quantity: number;
     price: number;
+    tick: number;
   };
 }
 export const Mint = (props: Props) => {
