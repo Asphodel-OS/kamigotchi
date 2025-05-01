@@ -24,18 +24,18 @@ export const Tooltip = (props: Props) => {
 
   const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
 
-  const conjoinedText = () => {
-    return !title ? (
-      text.join('\n')
-    ) : (
-      <div>
-        <div style={{ fontWeight: 'bold', position: 'relative', textAlign: 'center' }}>
-          {text[0] + '\n'}
+  const conjoinedText = () => (
+    <>
+      {title && (
+        <div style={{ fontWeight: 'bold', textAlign: alignText ?? 'center' }}>{text[0]}</div>
+      )}
+      {text.slice(title ? 1 : 0).map((line, idx) => (
+        <div key={idx} style={{ textAlign: alignText ?? 'center' }}>
+          {line}
         </div>
-        {text.slice(1).join('\n')}
-      </div>
-    );
-  };
+      ))}
+    </>
+  );
 
   const handleMouseMove = (event: React.MouseEvent) => {
     const { clientX: cursorX, clientY: cursorY } = event;
@@ -118,6 +118,7 @@ const Container = styled.div<{
 }>`
   display: flex;
   flex-direction: ${({ direction }) => direction ?? 'column'};
+
   flex-grow: ${({ flexGrow }) => flexGrow};
   cursor: ${({ disabled }) => (disabled ? 'cursor' : 'help')};
 `;
@@ -139,6 +140,7 @@ const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
   },
 }))<PopOverProps>`
   position: fixed;
+  flex-direction: column;
 
   border: solid black 0.15vw;
   border-radius: 0.6vw;
@@ -152,7 +154,7 @@ const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
   font-size: 0.7vw;
   line-height: 1.25vw;
 
-  white-space: pre-line;
+  white-space: normal;
   z-index: 10;
 
   pointer-events: none;
