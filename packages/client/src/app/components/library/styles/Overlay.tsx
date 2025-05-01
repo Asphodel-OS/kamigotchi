@@ -9,6 +9,7 @@ interface OverlayProps {
   translateY?: number;
   fullWidth?: boolean;
   passthrough?: boolean;
+  opacity?: number;
   orientation?: 'row' | 'column';
   align?: 'flex-start' | 'center' | 'flex-end';
   justify?: 'flex-start' | 'center' | 'flex-end';
@@ -27,6 +28,7 @@ export const Overlay = styled.div<OverlayProps>`
     translateX && translateY && `transform: translate(${translateX}%, ${translateY}%);`}
 
   ${({ gap }) => gap ?? `gap: ${gap}vw;`}
+  ${({ opacity }) => opacity !== undefined && `opacity: ${opacity};`}
 
   display: flex;
   flex-flow: ${({ orientation }) => orientation ?? 'row'} nowrap;

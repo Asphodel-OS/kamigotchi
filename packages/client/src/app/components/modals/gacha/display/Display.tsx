@@ -67,11 +67,11 @@ export const Display = (props: Props) => {
     let text = '???';
 
     if (tab === 'GACHA') {
-      if (mode === 'DEFAULT') text = 'Get Gacha Tickets';
-      else text = 'Back to Gacha';
+      if (mode === 'DEFAULT') text = 'Auction >';
+      else text = '< Gacha';
     } else if (tab === 'REROLL') {
-      if (mode === 'DEFAULT') text = 'Get Reroll Tickets';
-      else text = 'Back to Reroll';
+      if (mode === 'DEFAULT') text = 'Auction >';
+      else text = '< Reroll';
     }
 
     return text;
@@ -79,6 +79,7 @@ export const Display = (props: Props) => {
 
   // determine whether the mode toggle button should be visible
   const isButtonVisible = () => {
+    return tab !== 'MINT';
     if (tab === 'GACHA' && mode === 'DEFAULT') {
       const startTime = auctions.gacha.time.start;
       return startTime > Date.now();
