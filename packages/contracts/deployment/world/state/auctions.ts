@@ -10,7 +10,7 @@ export async function createAuction(api: AdminAPI, row: any) {
   const decay = Math.round(Number(row['Decay']) * 1e6);
   const rate = Number(row['Rate']);
   const max = Number(row['Supply']);
-  const startTs = Number(row['Start Ts']);
+  const startTs = Number(row['Start Epoch']);
   try {
     console.log(`Creating Auction: item ${index} with ${max} units`);
     await api.auction.create(index, payItemIndex, priceTarget, period, decay, rate, max, startTs);
