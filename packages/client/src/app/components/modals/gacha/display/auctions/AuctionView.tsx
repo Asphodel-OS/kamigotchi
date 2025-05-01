@@ -22,8 +22,7 @@ export const AuctionView = (props: Props) => {
   const getTimeLeft = () => {
     const now = Date.now() / 1000;
     const start = auction.time.start;
-    const timeLeft = (start - now) / 1000;
-    return Math.max(timeLeft, 0);
+    return Math.max(start - now, 0);
   };
 
   return (

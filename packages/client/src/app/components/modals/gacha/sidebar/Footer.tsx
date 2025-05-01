@@ -217,7 +217,7 @@ export const Footer = (props: Props) => {
         if (!exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
       }
       if (mode === 'ALT') {
-        if (!hasStarted()) return [`you're early!`, `this auction hasn't started yet`];
+        if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
         if (needsFunds()) return [`too poore`, `you need ${price - balance} more musu`];
       }
     }
@@ -234,7 +234,7 @@ export const Footer = (props: Props) => {
         }
       }
       if (mode === 'ALT') {
-        if (!hasStarted()) return [`you're early!`, `this auction hasn't started yet`];
+        if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
         if (needsFunds()) {
           return [`too poore`, `you need ${(price - balance).toFixed(3)} more ONYX`];
         }
