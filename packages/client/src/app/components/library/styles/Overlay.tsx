@@ -7,9 +7,13 @@ interface OverlayProps {
   left?: number;
   translateX?: number;
   translateY?: number;
+
   fullWidth?: boolean;
+  fullHeight?: boolean;
   passthrough?: boolean;
   opacity?: number;
+  zIndex?: number;
+
   orientation?: 'row' | 'column';
   align?: 'flex-start' | 'center' | 'flex-end';
   justify?: 'flex-start' | 'center' | 'flex-end';
@@ -19,7 +23,9 @@ interface OverlayProps {
 export const Overlay = styled.div<OverlayProps>`
   position: absolute;
   ${({ fullWidth }) => fullWidth && 'width: 100%;'}
+  ${({ fullHeight }) => fullHeight && 'height: 100%;'}
 
+  ${({ zIndex }) => zIndex !== undefined && `z-index: ${zIndex};`}
   ${({ bottom }) => bottom !== undefined && `bottom: ${bottom}vw;`}
   ${({ top }) => top !== undefined && `top: ${top}vw;`}
   ${({ right }) => right !== undefined && `right: ${right}vw;`}

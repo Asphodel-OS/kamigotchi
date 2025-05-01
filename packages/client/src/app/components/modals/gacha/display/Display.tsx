@@ -56,7 +56,7 @@ interface Props {
 export const Display = (props: Props) => {
   const { state, controls, data, caches, utils } = props;
   const { mode, setMode, tab } = controls;
-  const { account, auctions, poolKamis } = data;
+  const { account, auctions, mint, poolKamis } = data;
 
   const toggleMode = () => {
     if (mode === 'DEFAULT') setMode('ALT');
@@ -98,7 +98,14 @@ export const Display = (props: Props) => {
       <Pool
         caches={caches}
         controls={controls}
-        data={{ account, auction: auctions.gacha, entities: poolKamis }}
+        data={{
+          ...data,
+          account,
+          mintConfig: mint.config,
+          auction: auctions.gacha,
+          entities: poolKamis,
+        }}
+        state={state}
         utils={utils}
         isVisible={tab === 'GACHA'}
       />
