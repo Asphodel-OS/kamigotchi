@@ -15,12 +15,11 @@ import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
-import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
-import { LibEmitter } from "libraries/utils/LibEmitter.sol";
-
 import { LibAuctionRegistry } from "libraries/LibAuctionRegistry.sol";
-import { LibData } from "libraries/LibData.sol";
 import { LibConditional } from "libraries/LibConditional.sol";
+import { LibData } from "libraries/LibData.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
+import { LibGDA, Params as GDAParams } from "libraries/utils/LibGDA.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
 /// @notice a library for interacting with dedicated auctions
@@ -99,6 +98,8 @@ library LibAuction {
 
   // check whether the account meets the requirements to interact with an auction
   function verifyRequirements(IUintComp comps, uint256 id, uint256 accID) internal view {
+    uint256 startTs = TimeStartComponent(getAddrByID(comps, TimeStartCompID)).get(id);
+    if (block.timestamp < startTs) revert("LibAuction: auction has not started");
     if (!meetsRequirements(comps, id, accID)) revert("LibAuction: reqs not met");
   }
 

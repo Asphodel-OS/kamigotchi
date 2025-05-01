@@ -33,7 +33,7 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
     "addRequirement(uint32,string,string,uint32,uint256,string)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
-    "create(uint32,uint32,uint32,int32,int32,int32,int32)": FunctionFragment;
+    "create(uint32,uint32,uint32,int32,int32,int32,int32,uint256)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -82,6 +82,7 @@ export interface _AuctionRegistrySystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "create",
     values: [
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -259,6 +260,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
+      startTs: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -324,6 +326,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
     decay: PromiseOrValue<BigNumberish>,
     rate: PromiseOrValue<BigNumberish>,
     max: PromiseOrValue<BigNumberish>,
+    startTs: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -387,6 +390,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
+      startTs: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -475,6 +479,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
+      startTs: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -541,6 +546,7 @@ export interface _AuctionRegistrySystem extends BaseContract {
       decay: PromiseOrValue<BigNumberish>,
       rate: PromiseOrValue<BigNumberish>,
       max: PromiseOrValue<BigNumberish>,
+      startTs: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

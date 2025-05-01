@@ -252,8 +252,7 @@
         "TokenAllowance",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "ChatSystem",

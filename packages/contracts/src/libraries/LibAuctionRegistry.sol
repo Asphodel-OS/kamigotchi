@@ -27,6 +27,7 @@ struct Params {
   int32 decay; // price decay per period
   int32 rate; // number of sales per period to counteract decay
   int32 max; // total quantity auctioned
+  uint256 startTs; // time after which auction is enabled
 }
 
 /// @notice LibAuction is for the handling of dedicated item auctions in game.
@@ -34,14 +35,15 @@ struct Params {
 /// Assume, for now, all auctions are implemented as Discrete GDAs.
 /// SHAPE:
 ///  - EntityType: AUCTION
-///  - Index: index of the item being auctioned
-///  - ItemIndex: index of the item used as payment
+///  - IndexItem: index of the item being auctioned
+///  - IndexCurrency: index of the item used as payment
 ///  - Max: total amount of the item to auction
 ///  - Balance: number of sales since start
 ///  - Value: initial target price of the auction
 ///  - Period: reference duration period (in seconds)
 ///  - Decay: price decay per period (1e6)
 ///  - Rate: number of sales per period to counteract decay
+///  - StartTs: time after which auction is enabled
 ///  - (Requirement)[]
 
 library LibAuctionRegistry {
@@ -58,7 +60,7 @@ library LibAuctionRegistry {
     PeriodComponent(getAddrByID(comps, PeriodCompID)).set(id, params.period);
     DecayComponent(getAddrByID(comps, DecayCompID)).set(id, params.decay);
     RateComponent(getAddrByID(comps, RateCompID)).set(id, params.rate.toUint256());
-    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
+    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, params.startTs);
     BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
     return id;
   }
