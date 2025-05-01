@@ -39,11 +39,9 @@ export const Mint = (props: Props) => {
     <Container isVisible={isVisible}>
       <Whitelist controls={controls} state={state} data={data} />
       <Public controls={controls} state={state} data={data} />
-      <Overlay bottom={6}>
-        <Text>good things come</Text>
-      </Overlay>
-      <Overlay bottom={3}>
-        <Text>to those who mint kamis</Text>
+      <Overlay bottom={2.1} orientation='column'>
+        <Text size={1.2}>good things come</Text>
+        <Text size={1.2}>to those who mint kamis</Text>
       </Overlay>
     </Container>
   );
@@ -60,8 +58,8 @@ const Container = styled.div<{ isVisible: boolean }>`
   gap: 2.5vw;
 `;
 
-const Text = styled.div`
-  font-size: 1.2vw;
-  line-height: 1.8vw;
+const Text = styled.div<{ size: number }>`
+  font-size: ${(props) => props.size}vw;
+  line-height: ${(props) => props.size * 2}vw;
   color: #b9e9b9;
 `;

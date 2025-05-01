@@ -5,6 +5,7 @@ import { GachaMintConfig } from 'app/cache/config/gacha';
 import { Overlay, Pairing, Tooltip } from 'app/components/library';
 import { depressFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
+import { KamiImages } from 'assets/images/kamis';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { playClick } from 'utils/sounds';
 import { formatCountdown, getDateString } from 'utils/time';
@@ -104,6 +105,7 @@ export const Whitelist = (props: Props) => {
         <Text size={1.8}>Whitelist Mint</Text>
         <Text size={0.9}>limit 1 per customer ^^</Text>
       </Section>
+      <Image src={KamiImages.lethe} selected={mode === 'DEFAULT'} />
       <Section>
         <Pairing icon={GACHA_TICKET_IMAGE} text={getStatusText()} />
         <Text size={0.6}>{getWhitelistText()}</Text>
@@ -116,14 +118,13 @@ const Container = styled.div<{ isSelected: boolean }>`
   border-radius: 1.2vw;
   background-color: ${({ isSelected }) => (isSelected ? '#9c9' : 'white')};
   filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
-  height: 18vw;
   width: 24vw;
-  padding: 1.2vw;
+  padding: 2.1vw;
   gap: 0.6vw;
 
   display: flex;
   flex-flow: column nowrap;
-  align-items: stretch;
+  align-items: center;
   justify-content: space-around;
 
   user-select: none;
@@ -147,4 +148,12 @@ const Section = styled.div`
 const Text = styled.div<{ size: number }>`
   font-size: ${(props) => props.size}vw;
   line-height: ${(props) => props.size * 1.5}vw;
+`;
+
+const Image = styled.img<{ selected: boolean }>`
+  border-radius: 0.6vw;
+  height: 10vw;
+  width: 10vw;
+  image-rendering: pixelated;
+  opacity: ${({ selected }) => (selected ? 1 : 0.6)};
 `;
