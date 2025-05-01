@@ -231,8 +231,7 @@
     },
     {
       "name": "AccountSetPFPSystem",
-      "writeAccess": ["MediaURI", "TimeLast"],
-      "skipEnv": ["production"]
+      "writeAccess": ["MediaURI", "TimeLast"]
     },
     {
       "name": "AccountSetNameSystem",
@@ -269,8 +268,7 @@
         "Stamina",
         "TimeLastAction",
         "TimeLast"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "DroptableRevealSystem",
@@ -321,13 +319,11 @@
         "IsComplete",
         "TimeLast",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "GoalClaimSystem",
-      "writeAccess": ["*"],
-      "skipEnv": ["production"]
+      "writeAccess": ["*"]
     },
     {
       "name": "ListingBuySystem",
@@ -343,8 +339,7 @@
         "TokenAllowance",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "ListingSellSystem",
@@ -358,8 +353,7 @@
         "TimeLast",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "GachaBuyTicketSystem",
@@ -386,8 +380,7 @@
         "TimeStart",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "HarvestLiquidateSystem",
@@ -410,8 +403,7 @@
         "TimeLast",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "HarvestStartSystem",
@@ -431,8 +423,7 @@
         "TimeReset",
         "TimeStart",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "HarvestStopSystem",
@@ -456,8 +447,7 @@
         "TimeStart",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "Kami721IsInWorldSystem",
@@ -509,8 +499,7 @@
         "Type",
         "Value",
         "Violence"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "KamiGachaRerollSystem",
@@ -526,13 +515,11 @@
         "Type",
         "State",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "KamiGachaRevealSystem",
-      "writeAccess": ["BlockReveal", "IdHolder", "IDOwnsKami", "Reroll", "State", "Type", "Value"],
-      "skipEnv": ["production"]
+      "writeAccess": ["BlockReveal", "IdHolder", "IDOwnsKami", "Reroll", "State", "Type", "Value"]
     },
     {
       "name": "KamiLevelSystem",
@@ -546,18 +533,16 @@
         "TimeLast",
         "TimeStart",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "KamiNameSystem",
       "writeAccess": ["HasFlag", "Name", "TimeLast", "Value"],
-      "skipEnv": ["testing", "production"]
+      "skipEnv": ["testing"]
     },
     {
       "name": "KamiUseItemSystem",
-      "writeAccess": ["*"],
-      "skipEnv": ["production"]
+      "writeAccess": ["*"]
     },
     {
       "name": "QuestAcceptSystem",
@@ -571,13 +556,11 @@
         "TimeLast",
         "TimeStart",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "QuestCompleteSystem",
-      "writeAccess": ["*"],
-      "skipEnv": ["production"]
+      "writeAccess": ["*"]
     },
     {
       "name": "QuestDropSystem",
@@ -591,18 +574,15 @@
         "TimeLast",
         "TimeStart",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "RelationshipAdvanceSystem",
-      "writeAccess": ["EntityType", "IDOwnsRelationship", "IndexNPC", "IndexRelationship", "TimeLast"],
-      "skipEnv": ["production"]
+      "writeAccess": ["EntityType", "IDOwnsRelationship", "IndexNPC", "IndexRelationship", "TimeLast"]
     },
     {
       "name": "ScavengeClaimSystem",
-      "writeAccess": ["*"],
-      "skipEnv": ["production"]
+      "writeAccess": ["*"]
     },
     {
       "name": "SkillResetSystem",
@@ -624,8 +604,7 @@
         "TimeReset",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "SkillUpgradeSystem",
@@ -643,8 +622,7 @@
         "TimeStart",
         "Type",
         "Value"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "TradeCancelSystem",
