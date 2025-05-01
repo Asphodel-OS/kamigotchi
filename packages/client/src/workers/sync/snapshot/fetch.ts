@@ -31,29 +31,28 @@ export const fetchSnapshot = async (
 
   const options: FetchOptions = { stateCache, kamigazeClient, decode, numChunks, setPercentage };
 
-  //block
-  let BlockResponse = await kamigazeClient.getStateBlock({});
-  if (stateCache.kamigazeNonce != BlockResponse.nonce) {
-    console.log('New nonce found, full state load required');
-    options.stateCache = createStateCache();
-    initialLoad = true;
-  }
-
   try {
+    let BlockResponse = await kamigazeClient.getStateBlock({});
+    if (stateCache.kamigazeNonce != BlockResponse.nonce) {
+      console.log('New nonce found, full state load required');
+      options.stateCache = createStateCache();
+      initialLoad = true;
+    }
+
     await fetchComponents(options);
     if (!initialLoad) {
       await fetchStateRemovals(options);
     }
     await fetchStateValues(options);
     await fetchEntities(options);
+
+    storeStateBlock(options.stateCache, BlockResponse);
+    options.stateCache.lastKamigazeBlock = BlockResponse.blockNumber;
+    options.stateCache.kamigazeNonce = BlockResponse.nonce;
   } catch (error) {
     console.error('Error:', error);
     throw error;
   }
-
-  storeStateBlock(options.stateCache, BlockResponse);
-  options.stateCache.lastKamigazeBlock = BlockResponse.blockNumber;
-  options.stateCache.kamigazeNonce = BlockResponse.nonce;
 
   return options.stateCache;
 };

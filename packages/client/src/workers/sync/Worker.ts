@@ -38,7 +38,7 @@ import {
   NetworkEvents,
   SyncWorkerConfig,
 } from '../types';
-import { createSnapshotClient, fetchSnapshot } from './snapshot';
+import { createSnapshotClient, fetchSnapshot, isRateLimited } from './snapshot';
 import {
   createStateCache,
   getStateCacheEntries,
@@ -271,9 +271,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       this.setLoadingState({ msg: 'Querying for Partial Snapshot', percentage: 0 });
       const kamigazeClient = createSnapshotClient(snapshotUrl);
 
-      // NOTE(🥕) On the older version using the snapshot service is not mandatory so it can do the sync block by block
-      // I removed it here just to make sure Kamigaze is working as expected
-      // TODO: chunk this in a smart way based on block gap
       try {
         initialState = await fetchSnapshot(
           initialState,
@@ -283,10 +280,19 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           (percentage: number) => this.setLoadingState({ percentage })
         );
       } catch (e) {
+        console.log(snapshotUrl);
+        var errorMessage: string;
+
+        if (isRateLimited(snapshotUrl, e)) {
+          errorMessage = 'Your client is sending too many requests right now! Try to chill out!';
+        } else {
+          errorMessage =
+            "Unknown error. Ok, we haven't seen this one before. Can you drop this in our discord?";
+        }
         console.error('failed to retrieve state', e);
         this.setLoadingState({
           state: SyncState.FAILED,
-          msg: `Failed to Retrieve State, Try Again Later`,
+          msg: errorMessage,
         });
         return;
       }
