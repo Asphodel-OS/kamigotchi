@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 interface Props {
@@ -91,17 +92,19 @@ export const Tooltip = (props: Props) => {
         handleMouseMove(e);
       }}
     >
-      {isActive && (
-        <PopOverText
-          isVisible={isVisible}
-          alignText={alignText}
-          color={color}
-          tooltipPosition={tooltipPosition}
-          ref={tooltipRef}
-        >
-          {conjoinedText()}
-        </PopOverText>
-      )}
+      {isActive &&
+        createPortal(
+          <PopOverText
+            isVisible={isVisible}
+            alignText={alignText}
+            color={color}
+            tooltipPosition={tooltipPosition}
+            ref={tooltipRef}
+          >
+            {conjoinedText()}
+          </PopOverText>,
+          document.body
+        )}
       {children}
     </Container>
   );
@@ -150,7 +153,7 @@ const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
   line-height: 1.25vw;
 
   white-space: pre-line;
-  z-index: 5;
+  z-index: 10;
 
   pointer-events: none;
   user-select: none;
