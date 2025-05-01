@@ -21,9 +21,9 @@ contract KamiGachaMintSystem is System {
     uint256 amount = abi.decode(arguments, (uint256));
     require(amount <= 1, "too many mints"); // force 1 mint per tx at launch to reduce congestion
     require(
-      LibConfig.get(components, "MINT_START_PUBLIC") < block.timestamp,
+      LibConfig.get(components, "MINT_START_PUBLIC") + 1 hours < block.timestamp,
       "public mint has not yet started"
-    ); // launch: enforce public mint start
+    ); // launch: enforce 1h after public mint start
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
