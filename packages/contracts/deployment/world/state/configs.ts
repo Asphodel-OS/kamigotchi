@@ -133,6 +133,7 @@ async function initTokens(api: AdminAPI) {
     'ERC20_RECEIVER_ADDRESS',
     '0x6a2350be9eA194cB67df934Df24bFA939A1aAd40'
   );
+  await api.config.set.address('ONYX_BURNER_ADDRESS', '0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec');
 }
 
 async function initTrade(api: AdminAPI) {

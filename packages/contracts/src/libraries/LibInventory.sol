@@ -26,6 +26,7 @@ import { LibStat } from "libraries/LibStat.sol";
 uint32 constant MUSU_INDEX = 1;
 uint32 constant GACHA_TICKET_INDEX = 10;
 uint32 constant REROLL_TICKET_INDEX = 11;
+uint32 constant ONYX_INDEX = 100;
 
 // handles nonfungible inventory instances
 library LibInventory {
@@ -172,7 +173,9 @@ library LibInventory {
     address tokenAddr = LibItem.getTokenAddr(components, itemIndex);
     if (tokenAddr != address(0)) {
       // is a symbolink ERC20, spend it
-      LibERC20.spend(components, tokenAddr, amt, holderID);
+      if (itemIndex == ONYX_INDEX)
+        LibERC20.spendOnyx(components, tokenAddr, amt, holderID); // special onyx case
+      else LibERC20.spend(components, tokenAddr, amt, holderID);
     } else {
       // regular inventory
       uint256 id = genID(holderID, itemIndex);

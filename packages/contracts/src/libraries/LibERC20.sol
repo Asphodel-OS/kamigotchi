@@ -41,8 +41,15 @@ library LibERC20 {
   }
 
   /// @dev specific for onyx
-  function spendOnyx(IUintComp components, uint256 amount, uint256 spenderID) internal {
-    return spend(components, getOnyxAddr(components), amount, spenderID);
+  function spendOnyx(
+    IUintComp components,
+    address onyx,
+    uint256 amount,
+    uint256 spenderID
+  ) internal {
+    address burner = LibConfig.getAddress(components, "ONYX_BURNER_ADDRESS"); // 0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec
+    amount = toTokenUnits(amount); // convert from mToken to wei
+    return transfer(components, onyx, LibAccount.getOwner(components, spenderID), burner, amount);
   }
 
   /// @notice spends using TokenAddressComponent
