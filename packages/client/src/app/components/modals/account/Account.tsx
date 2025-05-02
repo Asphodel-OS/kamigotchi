@@ -4,21 +4,19 @@ import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { getAccount, getAccountKamis } from 'app/cache/account';
+import { Account, getAccount, getAccountKamis } from 'app/cache/account';
+import { Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
-
 import {
-  Account,
   BaseAccount,
   getAllBaseAccounts,
   NullAccount,
   queryAccountByIndex,
 } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
-import { Kami } from 'network/shapes/Kami';
 import { waitForActionCompletion } from 'network/utils';
 import { Bio } from './bio/Bio';
 import { Bottom } from './bottom/Bottom';
