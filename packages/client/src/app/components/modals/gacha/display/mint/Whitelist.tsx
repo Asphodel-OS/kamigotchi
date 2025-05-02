@@ -121,6 +121,7 @@ const Container = styled.div<{ isSelected: boolean }>`
   width: 24vw;
   padding: 2.1vw;
   gap: 0.6vw;
+  z-index: 5;
 
   display: flex;
   flex-flow: column nowrap;
