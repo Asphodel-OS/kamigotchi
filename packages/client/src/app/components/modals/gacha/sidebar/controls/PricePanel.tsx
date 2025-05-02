@@ -24,7 +24,10 @@ export const PricePanel = (props: Props) => {
   return (
     <Container isVisible={isVisible}>
       <EmptyText
-        text={[`Total Price ${price} ${payItem.name}`, `for ${quantity} ${saleItem.name}(s)`]}
+        text={[
+          `Total ${price} ${payItem.name}`,
+          `for ${quantity} ${saleItem.name}${quantity == 1 ? '' : 's'}`,
+        ]}
       />
     </Container>
   );
