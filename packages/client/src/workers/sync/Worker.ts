@@ -283,11 +283,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         console.log(snapshotUrl);
         var errorMessage: string;
 
-        if (isRateLimited(snapshotUrl, e)) {
-          errorMessage = 'Your client is sending too many requests right now! Try to chill out!';
+        if (await isRateLimited(snapshotUrl, e)) {
+          errorMessage = "You're refreshing too much! Try again in a minute or two";
         } else {
-          errorMessage =
-            "Unknown error. Ok, we haven't seen this one before. Can you drop this in our discord?";
+          errorMessage = `Unknown error: ${e.code}. Can you drop this in the discord?`;
         }
         console.error('failed to retrieve state', e);
         this.setLoadingState({

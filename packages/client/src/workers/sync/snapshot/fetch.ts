@@ -88,7 +88,7 @@ const fetchEntities = async ({
   });
 
   for await (const responseChunk of EntitiesResponse) {
-    if (delta == 0) delta = 35 / responseChunk.pending;
+    if (delta == 0) delta = 25 / responseChunk.pending;
     percent += delta;
     storeStateEntities(stateCache, responseChunk.entities);
     setPercentage(percent);
@@ -106,7 +106,7 @@ const fetchStateRemovals = async ({ stateCache, kamigazeClient, setPercentage }:
     removals: true,
   });
   for await (const responseChunk of StateRemovalsResponse) {
-    if (delta == 0) delta = 35 / responseChunk.pending;
+    if (delta == 0) delta = 10 / responseChunk.pending;
     percent += delta;
     removeStateValues(stateCache, responseChunk.state);
     setPercentage(percent);
@@ -120,7 +120,7 @@ const fetchStateValues = async ({
   decode,
   setPercentage,
 }: FetchOptions) => {
-  let percent = 40;
+  let percent = 15;
   let delta = 0;
   const StateValuesResponse = await kamigazeClient.getState({
     fromBlock: stateCache.lastKamigazeBlock,
@@ -128,7 +128,7 @@ const fetchStateValues = async ({
   });
 
   for await (const responseChunk of StateValuesResponse) {
-    if (delta == 0) delta = 35 / responseChunk.pending;
+    if (delta == 0) delta = 60 / responseChunk.pending;
     percent += delta;
     storeStateValues(stateCache, responseChunk.state, decode);
     setPercentage(percent);
