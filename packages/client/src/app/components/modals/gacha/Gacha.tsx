@@ -110,7 +110,7 @@ export function registerGachaModal() {
       const [whitelisted, setWhitelisted] = useState(isWhitelisted(account.entity));
 
       // modal state
-      const [quantity, setQuantity] = useState(0);
+      const [quantity, setQuantity] = useState(1);
       const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
       const [tick, setTick] = useState(Date.now());
       const [triedReveal, setTriedReveal] = useState(true);
@@ -315,13 +315,14 @@ export function registerGachaModal() {
       const handleSetTab = (tab: TabType) => {
         setTab(tab);
         setMode('DEFAULT');
-        setQuantity(0);
+        if (tab !== 'REROLL') setQuantity(1);
+        else setQuantity(0);
       };
 
       // reset quantity on mode change
       const handleSetMode = (mode: ViewMode) => {
         setMode(mode);
-        setQuantity(0);
+        setQuantity(1);
       };
 
       const handlePull = async (amount: number) => {
