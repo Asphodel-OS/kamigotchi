@@ -114,7 +114,7 @@ export const Grid = (props: Props) => {
       name,
       '',
       room.description,
-      '',
+      '\n',
       `${playerEntities.length} players on this tile`,
       `${kamiEntities.length} kamis harvesting`,
       getKamiString(room.index),
@@ -170,7 +170,7 @@ export const Grid = (props: Props) => {
               }
 
               return (
-                <Tooltip key={j} text={getTooltip(room)} grow>
+                <Tooltip key={j} text={getTooltip(room)} title={true} maxWidth={24} grow>
                   <Tile
                     key={j}
                     backgroundColor={backgroundColor}

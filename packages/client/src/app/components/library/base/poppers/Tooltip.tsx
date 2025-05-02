@@ -5,18 +5,24 @@ import styled from 'styled-components';
 interface Props {
   text: string[];
   children: React.ReactNode;
-  grow?: boolean;
+
+  // parent container
+  grow?: boolean; // parent prop
   direction?: 'row' | 'column';
-  alignText?: 'left' | 'right' | 'center';
+
+  // tooltip
   title?: boolean;
+  maxWidth?: number;
+  size?: number;
+  alignText?: 'left' | 'right' | 'center';
   color?: string;
   delay?: number;
 }
 
 export const Tooltip = (props: Props) => {
-  const { children, text, direction } = props;
-  const { alignText, title, color, delay } = props;
-  const flexGrow = props.grow ? '1' : '0';
+  const { children, grow, direction } = props;
+  const { text, title, alignText, maxWidth, color, delay } = props;
+  const textSize = props.size ?? 0.75;
 
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -24,18 +30,8 @@ export const Tooltip = (props: Props) => {
 
   const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
 
-  const conjoinedText = () => (
-    <>
-      {title && (
-        <div style={{ fontWeight: 'bold', textAlign: alignText ?? 'center' }}>{text[0]}</div>
-      )}
-      {text.slice(title ? 1 : 0).map((line, idx) => (
-        <div key={idx} style={{ textAlign: alignText ?? 'center' }}>
-          {line}
-        </div>
-      ))}
-    </>
-  );
+  /////////////////
+  // HANDLERS
 
   const handleMouseMove = (event: React.MouseEvent) => {
     const { clientX: cursorX, clientY: cursorY } = event;
@@ -68,6 +64,9 @@ export const Tooltip = (props: Props) => {
     }
   };
 
+  /////////////////
+  // HOOKS
+
   useEffect(() => {
     let timeoutId: ReturnType<typeof window.setTimeout>;
 
@@ -79,9 +78,12 @@ export const Tooltip = (props: Props) => {
     return () => clearTimeout(timeoutId);
   }, [isActive, delay]);
 
+  /////////////////
+  // DISPLAY
+
   return (
     <Container
-      flexGrow={flexGrow}
+      flexGrow={grow ? '1' : '0'}
       direction={direction}
       disabled={text.length === 0}
       onMouseEnter={(e) => handleMouseEnter(e)}
@@ -94,15 +96,20 @@ export const Tooltip = (props: Props) => {
     >
       {isActive &&
         createPortal(
-          <PopOverText
+          <PopoverContainer
             isVisible={isVisible}
-            alignText={alignText}
+            maxWidth={maxWidth}
             color={color}
             tooltipPosition={tooltipPosition}
             ref={tooltipRef}
           >
-            {conjoinedText()}
-          </PopOverText>,
+            {title && <Text size={textSize * 1.35}>{text[0]}</Text>}
+            {text.slice(title ? 1 : 0).map((line, idx) => (
+              <Text key={idx} size={textSize} align={alignText}>
+                {line}
+              </Text>
+            ))}
+          </PopoverContainer>,
           document.body
         )}
       {children}
@@ -124,19 +131,19 @@ const Container = styled.div<{
 `;
 
 interface PopOverProps {
-  alignText?: string;
   isVisible: boolean;
   color?: string;
   tooltipPosition?: any;
+  maxWidth?: number;
 }
 
-const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
+const PopoverContainer = styled.div.attrs<PopOverProps>((props) => ({
   style: {
     backgroundColor: props.color ?? '#fff',
     opacity: props.isVisible ? 1 : 0,
-    textAlign: props.alignText ?? 'left',
     top: props.tooltipPosition.y,
     left: props.tooltipPosition.x,
+    maxWidth: props.maxWidth ? `${props.maxWidth}vw` : '36vw',
   },
 }))<PopOverProps>`
   position: fixed;
@@ -145,7 +152,6 @@ const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
   border: solid black 0.15vw;
   border-radius: 0.6vw;
 
-  max-width: 36vw;
   padding: 0.9vw;
   display: flex;
   overflow-wrap: anywhere;
@@ -159,4 +165,11 @@ const PopOverText = styled.div.attrs<PopOverProps>((props) => ({
 
   pointer-events: none;
   user-select: none;
+`;
+
+const Text = styled.div<{ size: number; align?: string }>`
+  font-size: ${(props) => props.size}vw;
+  line-height: ${(props) => props.size * 1.8}vw;
+  text-align: ${(props) => props.align ?? 'center'};
+  white-space: pre-line;
 `;
