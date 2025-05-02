@@ -39,6 +39,10 @@ contract SystemCall is Script {
     return _getSys(systemID).execute(args);
   }
 
+  function _call(string memory systemID, bytes memory args) public returns (bytes memory) {
+    return _getSys(systemID).execute(args);
+  }
+
   function _getBoolComp(string memory id) public returns (BoolComponent) {
     return BoolComponent(_getCompAddr(id));
   }
