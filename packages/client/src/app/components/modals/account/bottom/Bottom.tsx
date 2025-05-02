@@ -1,4 +1,5 @@
 import { EntityIndex } from '@mud-classic/recs';
+import styled from 'styled-components';
 
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
@@ -38,7 +39,7 @@ export const Bottom = (props: Props) => {
 
   return (
     <>
-      <div style={{ display: tab === 'social' ? 'flex' : 'none' }}>
+      <Tab isVisible={tab === 'social'}>
         <SubTabs subTab={subTab} setSubTab={setSubTab} isSelf={isSelf} />
         <SocialBottom
           key='bottom'
@@ -47,13 +48,17 @@ export const Bottom = (props: Props) => {
           actions={{ acceptFren, blockFren, cancelFren, requestFren }}
           utils={utils}
         />
-      </div>
-      <div style={{ display: tab === 'stats' ? 'flex' : 'none', flexDirection: 'column' }}>
+      </Tab>
+      <Tab isVisible={tab === 'stats'}>
         <StatsBottom key='statsbottom' data={{ account }} />
-      </div>
-      <div style={{ display: tab === 'party' ? 'flex' : 'none' }}>
+      </Tab>
+      <Tab isVisible={tab === 'party'}>
         <PartyBottom data={{ account }} utils={utils} key='partybottom' />
-      </div>
+      </Tab>
     </>
   );
 };
+
+const Tab = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => (isVisible ? `display: flex;flex-direction: column;` : `display: none;`)}
+`;
