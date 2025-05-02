@@ -86,12 +86,6 @@ export const Bio = (props: Props) => {
     return kamis;
   };
 
-  const getAccountPfp = () => {
-    const pfpURI = account.pfpURI;
-    return pfpURI !== 'https://miladymaker.net/milady/8365.png'
-      ? `${KAMI_BASE_URI}${pfpURI}.gif`
-      : pfpURI;
-  };
   const Pfp = () => {
     return (
       <PfpContainer>
