@@ -207,7 +207,7 @@ export const Footer = (props: Props) => {
         }
       }
       if (needsFunds()) return ['too poore', `you need ${(price - balance).toFixed(3)} more ETH`];
-      if (needsApproval()) return [`approve ${balance.toFixed(3)}ETH to spend`];
+      if (needsApproval()) return [`approve ${price.toFixed(3)}ETH to spend`];
     }
 
     // gacha
@@ -238,7 +238,7 @@ export const Footer = (props: Props) => {
         if (needsFunds()) {
           return [`too poore`, `you need ${(price - balance).toFixed(3)} more ONYX`];
         }
-        if (needsApproval()) return [`approve ${balance.toFixed(3)}ONYX to spend`];
+        if (needsApproval()) return [`approve ${price.toFixed(3)}ONYX to spend`];
       }
     }
 
