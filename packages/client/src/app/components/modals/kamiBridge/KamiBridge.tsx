@@ -1,53 +1,75 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
+import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
+import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
 import { getKami } from 'app/cache/kami';
-import { ModalWrapper } from 'app/components/library';
+import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork } from 'app/stores';
-import { useERC721Balance } from 'network/chain';
-import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { MenuIcons } from 'assets/images/icons/menu';
 import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
-import { useWatchBlockNumber } from 'wagmi';
 
-export function registerERC721BridgeModal() {
+import { erc721ABI } from 'network/chain/ERC721';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
+
+export function registerKamiBridge() {
   registerUIComponent(
-    'ERC721Bridge',
+    'KamiBridge',
     {
-      colStart: 22,
-      colEnd: 80,
-      rowStart: 15,
-      rowEnd: 85,
+      colStart: 33,
+      colEnd: 67,
+      rowStart: 3,
+      rowEnd: 99,
     },
     (layers) => {
       const { network } = layers;
       const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const kamiRefreshOptions = {
+        live: 2,
+      };
 
       return interval(1000).pipe(
         map(() => {
           return {
             network,
             data: {
-              erc721: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
-              account: getAccountFromEmbedded(network, { kamis: true }), // todo: change this to cache
+              account: getAccount(world, components, accountEntity),
+              worldKamis: getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
+              kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+            },
+            utils: {
+              queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
+              getKami: (entity: EntityIndex) =>
+                getKami(world, components, entity, kamiRefreshOptions),
             },
           };
         })
       );
     },
-    ({ data, network }) => {
-      const { erc721, account } = data;
-      const { actions, components, world } = network;
-
+    ({ data, network, utils }) => {
+      const { actions } = network;
+      const { kamiNFTAddress, account, worldKamis } = data;
+      const { getKami, queryKamiByIndex } = utils;
       const { selectedAddress, apis } = useNetwork();
 
-      const [EOAKamis, setEOAKamis] = useState<Kami[]>([]);
+      const [wildKamis, setWildKamis] = useState<Kami[]>([]);
+      const [tick, setTick] = useState(Date.now());
 
       /////////////////
-      // DATA
+      // SUBSCRIPTIONS
+
+      // ticking
+      useEffect(() => {
+        const tick = () => setTick(Math.floor(Date.now() / 1000));
+        const timerID = setInterval(tick, 1000);
+        return () => clearInterval(timerID);
+      }, []);
 
       useWatchBlockNumber({
         onBlockNumber: (n) => {
@@ -55,22 +77,31 @@ export function registerERC721BridgeModal() {
         },
       });
 
-      const { refetch, tokenIndices } = useERC721Balance(account.ownerAddress, erc721);
+      const { refetch, data: nftData } = useReadContracts({
+        contracts: [
+          {
+            address: kamiNFTAddress,
+            abi: erc721ABI,
+            functionName: 'getAllTokens',
+            args: [account.ownerAddress],
+          },
+        ],
+      });
 
-      // update list of externally owned kamis
+      // update list of wild kamis
+      // TOTO: figure out how to properly typecast the result
       useEffect(() => {
-        const getEOAKamis = (): Kami[] => {
-          const entities =
-            tokenIndices?.map((index: number) => queryKamiByIndex(world, components, index)) || [];
-          return entities.map((entity) => getKami(world, components, entity!, { live: 1 }));
-        };
-
-        setEOAKamis(getEOAKamis());
-      }, [data]);
+        console.log('token indices updated');
+        const result = nftData?.[0]?.result;
+        const entities = result?.map((index: number) => queryKamiByIndex(index)) ?? [];
+        const externalKamis = entities.map((entity: EntityIndex) => getKami(entity));
+        setWildKamis(externalKamis);
+      }, [nftData]);
 
       /////////////////
       // TRANSACTIONS
 
+      // import a kami from the wild to the world
       // TODO: pets without accounts are linked to EOA, no account. link EOA
       const depositTx = (tokenID: BigNumberish) => {
         const api = apis.get(selectedAddress);
@@ -86,6 +117,7 @@ export function registerERC721BridgeModal() {
         });
       };
 
+      // export a kami from the world to the wild
       const withdrawTx = (tokenID: BigNumberish) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -159,15 +191,19 @@ export function registerERC721BridgeModal() {
       const isOutOfWorld = (kami: Kami): boolean => kami.state === '721_EXTERNAL';
 
       return (
-        <ModalWrapper id='bridgeERC721' canExit>
-          <Title>Stake/Unstake Kamis</Title>
+        <ModalWrapper
+          id='bridgeERC721'
+          header={<ModalHeader title='Kami Bridge' icon={MenuIcons.kami} />}
+          canExit
+          truncate
+        >
           <Grid>
             <Description style={{ gridRow: 1, gridColumn: 1 }}>In game</Description>
             <Scrollable style={{ gridRow: 2, gridColumn: 1 }}>
-              {KamiCards(account.kamis || [])}
+              {KamiCards(worldKamis || [])}
             </Scrollable>
             <Description style={{ gridRow: 1, gridColumn: 2 }}>In wallet</Description>
-            <Scrollable style={{ gridRow: 2, gridColumn: 2 }}>{KamiCards(EOAKamis)}</Scrollable>
+            <Scrollable style={{ gridRow: 2, gridColumn: 2 }}>{KamiCards(wildKamis)}</Scrollable>
           </Grid>
         </ModalWrapper>
       );

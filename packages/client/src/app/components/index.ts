@@ -12,6 +12,7 @@ import { registerGoalModal } from './modals/goals';
 import { registerHelpModal } from './modals/help';
 import { registerInventoryModal } from './modals/inventory';
 import { registerKamiModal } from './modals/kami';
+import { registerKamiBridge } from './modals/kamiBridge';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
@@ -24,7 +25,6 @@ import { registerRevealModal } from './modals/reveal/Reveal';
 import { registerSettingsModal } from './modals/settings';
 import { registerTradingModal } from './modals/trading';
 // unused
-import { registerERC721BridgeModal } from './modals/BridgeERC721';
 import { registerFundOperatorModal } from './modals/FundOperator';
 
 import {
@@ -62,7 +62,7 @@ export function registerModals() {
 
   // scene modals
   registerDialogueModal();
-  registerERC721BridgeModal();
+  registerKamiBridge();
   registerEMABoardModal();
   registerFundOperatorModal();
   registerGachaModal();

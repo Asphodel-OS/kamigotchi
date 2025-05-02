@@ -5,7 +5,7 @@ import { useReadContracts } from 'wagmi';
 export function useBalance(owner: Address, token: Address) {
   const kami721 = {
     address: token,
-    abi: abi,
+    abi: erc721ABI,
   };
   const results = useReadContracts({
     contracts: [{ ...kami721, functionName: 'getAllTokens', args: [owner] }],
@@ -19,8 +19,11 @@ export function useBalance(owner: Address, token: Address) {
 ////////////////
 // INTERNALS
 
-const abi = [
+export const erc721ABI = [
   {
+    name: 'getAllTokens',
+    type: 'function',
+    stateMutability: 'view',
     inputs: [
       {
         internalType: 'address',
@@ -28,15 +31,12 @@ const abi = [
         type: 'address',
       },
     ],
-    name: 'getAllTokens',
     outputs: [
       {
         internalType: 'uint256[]',
-        name: '',
+        name: 'tokenIDs',
         type: 'uint256[]',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
   },
 ];
