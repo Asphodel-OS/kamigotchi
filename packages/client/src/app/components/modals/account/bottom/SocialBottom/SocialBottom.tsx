@@ -1,16 +1,15 @@
+import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Blocked } from './blocked/Blocked';
-import { Friends } from './friends/Friends';
-import { Kamis } from './party/Kamis';
-import { Requests } from './requests/Requests';
+import { Blocked } from '../../blocked/Blocked';
+import { Friends } from '../../friends/Friends';
+import { Requests } from '../../requests/Requests';
 
 interface Props {
-  tab: string;
+  subTab: string;
   data: {
     account: Account;
     getAllAccs: () => BaseAccount[];
@@ -26,16 +25,15 @@ interface Props {
   };
 }
 
-export const Bottom = (props: Props) => {
-  const { tab, data, actions, utils } = props;
+export const SocialBottom = (props: Props) => {
+  const { subTab, data, actions, utils } = props;
   const { account } = data;
 
   // NOTE: any child components that maintain their own state need to be inlined below, to
   // re-render and persist their state, rather than remounting
   return (
     <Container>
-      {tab === 'party' && <Kamis account={account} utils={utils} />}
-      {tab === 'frens' && (
+      {subTab === 'frens' && (
         <Friends
           key='friends'
           friendships={data.account.friends?.friends ?? []}
@@ -45,7 +43,7 @@ export const Bottom = (props: Props) => {
           }}
         />
       )}
-      {tab === 'requests' && (
+      {subTab === 'requests' && (
         <Requests
           key='requests'
           account={data.account}
@@ -62,7 +60,7 @@ export const Bottom = (props: Props) => {
           }}
         />
       )}
-      {tab === 'blocked' && (
+      {subTab === 'blocked' && (
         <Blocked
           key='blocked'
           blocked={data.account.friends?.blocked ?? []}
@@ -71,13 +69,14 @@ export const Bottom = (props: Props) => {
           }}
         />
       )}
-      {tab === 'activity' && <EmptyText>not yet implemented</EmptyText>}
+      {subTab === 'activity' && <EmptyText>not yet implemented</EmptyText>}
     </Container>
   );
 };
 
 const Container = styled.div`
   border: solid 0.15vw black;
+  border-top: none;
   border-radius: 0 0 0.6vw 0.6vw;
   width: 100%;
   height: 100%;

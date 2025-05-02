@@ -3,16 +3,16 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  tab: string;
+  subTab: string;
   isSelf: boolean;
-  setTab: (tab: string) => void;
+  setSubTab: (tab: string) => void;
 }
 
-export const Tabs = (props: Props) => {
+export const SubTabs = (props: Props) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
-    props.setTab(tab);
+    props.setSubTab(tab);
   };
 
   const SelfTabs = () => {
@@ -20,19 +20,19 @@ export const Tabs = (props: Props) => {
       <>
         <Button
           onClick={() => setTab('frens')}
-          disabled={props.tab === 'frens'}
+          disabled={props.subTab === 'frens'}
           style={{ borderRight: 'solid black .15vw' }}
         >
           Friends
         </Button>
         <Button
           onClick={() => setTab('requests')}
-          disabled={props.tab === 'requests'}
+          disabled={props.subTab === 'requests'}
           style={{ borderRight: 'solid black .15vw' }}
         >
           Requests
         </Button>
-        <Button onClick={() => setTab('blocked')} disabled={props.tab === 'blocked'}>
+        <Button onClick={() => setTab('blocked')} disabled={props.subTab === 'blocked'}>
           Blocked
         </Button>
       </>
@@ -43,20 +43,13 @@ export const Tabs = (props: Props) => {
     return (
       <>
         <Button
-          onClick={() => setTab('party')}
-          disabled={props.tab === 'party'}
-          style={{ borderRight: 'solid black .15vw' }}
-        >
-          Party
-        </Button>
-        <Button
           onClick={() => setTab('frens')}
-          disabled={props.tab === 'frens'}
+          disabled={props.subTab === 'frens'}
           style={{ borderRight: 'solid black .15vw' }}
         >
           Friends
         </Button>
-        <Button onClick={() => setTab('activity')} disabled={props.tab === 'activity'}>
+        <Button onClick={() => setTab('activity')} disabled={props.subTab === 'activity'}>
           Activity
         </Button>
       </>
@@ -79,8 +72,10 @@ const Container = styled.div`
 `;
 
 const Button = styled.button`
-  border: none;
+  border: solid 0.15vw black;
+  border-radius: 0.3vw;
   padding: 0.5vw;
+  margin: 0.5vw;
   flex-grow: 1;
   color: black;
   justify-content: center;

@@ -41,6 +41,8 @@ export interface Account extends BaseAccount {
   roomIndex: number;
   reputation: {
     agency: number;
+    mina: number;
+    nursery: number;
   };
   time: {
     last: number;
@@ -100,6 +102,8 @@ export const getAccount = (
     roomIndex: getRoomIndex(components, entity),
     reputation: {
       agency: getReputation(world, components, id, 1), // get agency rep
+      mina: getReputation(world, components, id, 2), // get mina rep
+      nursery: getReputation(world, components, id, 3), // get nursery rep
     },
     time: {
       last: getLastTime(components, entity),

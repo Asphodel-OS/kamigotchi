@@ -1,6 +1,6 @@
+import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
@@ -9,14 +9,15 @@ import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  account: Account;
+  data: { account: Account };
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }
 
 export const Kamis = (props: Props) => {
-  const { account, utils } = props;
+  const { data, utils } = props;
+  const { account } = data;
   const { getAccountKamis } = utils;
 
   const { modals, setModals } = useVisibility();
@@ -24,7 +25,7 @@ export const Kamis = (props: Props) => {
   const [kamis, setKamis] = useState<Kami[]>([]);
 
   useEffect(() => {
-    const kamis = getAccountKamis(account.entity);
+    const kamis = getAccountKamis(account?.entity);
     setKamis(kamis);
   }, [account.entity]);
 

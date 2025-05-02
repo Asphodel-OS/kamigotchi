@@ -12,10 +12,11 @@ interface Props {
     background?: string;
     progress?: string;
   };
+  icon?: string;
 }
 
 export const ProgressBar = (props: Props) => {
-  const { total, current, height, colors } = props;
+  const { total, current, height, colors, icon } = props;
 
   const getBgColor = () => {
     return colors?.background ?? '#fff';
@@ -33,7 +34,9 @@ export const ProgressBar = (props: Props) => {
           height={height ?? 1.2}
           bgColor={getBgColor()}
           fgColor={getFgColor()}
-        />
+        >
+          {icon && <Icon src={icon} alt='icon' position={calcPercentCompletion(current, total)} />}
+        </Bar>
       </Tooltip>
     </Container>
   );
@@ -41,11 +44,19 @@ export const ProgressBar = (props: Props) => {
 
 const Container = styled.div<{ width?: number }>`
   width: ${({ width }) => (width ? `${width}vw;` : '100%')};
-  opacity: 0.9;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+
+const Icon = styled.img<{ position: number }>`
+  left: ${({ position }) => `calc(${position}% - 10px)`};
+  position: absolute;
+  height: 1.8vw;
+  width: auto;
+  border: solid black 0.15vw;
+  background-color: white;
+  border-radius: 50%;
 `;
 
 interface BarProps {

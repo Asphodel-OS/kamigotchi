@@ -1,7 +1,6 @@
 import { EntityIndex } from '@mud-classic/recs';
 import CakeIcon from '@mui/icons-material/Cake';
-import CheckroomIcon from '@mui/icons-material/Checkroom';
-import TollIcon from '@mui/icons-material/Toll';
+import TagIcon from '@mui/icons-material/Tag';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -99,26 +98,6 @@ export const Bio = (props: Props) => {
 
   return (
     <Container>
-      <Content>
-        <Identifiers>
-          <TitleRow>
-            <Title>{account.name}</Title>
-          </TitleRow>
-          <AddressDisplay />
-        </Identifiers>
-        <DetailRow>
-          <CakeIcon style={{ height: '1.4vw' }} />
-          <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
-        </DetailRow>
-        <DetailRow>
-          <CheckroomIcon style={{ height: '1.4vw' }} />
-          <Description>{account.stats?.kills ?? 0} Lives Claimed</Description>
-        </DetailRow>
-        <DetailRow>
-          <TollIcon style={{ height: '1.4vw' }} />
-          <Description>{(account.stats?.coin ?? 0).toLocaleString()} MUSU Collected</Description>
-        </DetailRow>
-      </Content>
       {isSelf ? (
         <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
           {Pfp()}
@@ -126,6 +105,22 @@ export const Bio = (props: Props) => {
       ) : (
         Pfp()
       )}
+      <Content>
+        <Identifiers>
+          <TitleRow>
+            <Title>{account.name}</Title>
+          </TitleRow>
+          <AddressDisplay />
+          <DetailRow>
+            <TagIcon style={{ height: '1.4vh' }} />
+            <Description>Account Index: {account.index}</Description>
+          </DetailRow>
+          <DetailRow>
+            <CakeIcon style={{ height: '1.4vh' }} />
+            <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
+          </DetailRow>
+        </Identifiers>
+      </Content>
     </Container>
   );
 };
@@ -134,15 +129,16 @@ const Container = styled.div`
   padding: 0.75vw;
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
 `;
 
 const Content = styled.div`
   width: 100%;
-  padding: 0.5vw;
-
+  padding: 1.5vw;
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: column;
   justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 const Identifiers = styled.div`

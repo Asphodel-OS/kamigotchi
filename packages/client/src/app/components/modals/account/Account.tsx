@@ -1,27 +1,26 @@
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
+import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
-import { getAccount, getAccountKamis } from 'app/cache/account';
+import { Account, getAccount, getAccountKamis } from 'app/cache/account';
+import { Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
-import { BigNumberish } from 'ethers';
 import {
-  Account,
   BaseAccount,
   getAllBaseAccounts,
   NullAccount,
   queryAccountByIndex,
 } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
-import { Kami } from 'network/shapes/Kami';
 import { waitForActionCompletion } from 'network/utils';
-import { Bottom } from './Bottom';
-import { Tabs } from './Tabs';
 import { Bio } from './bio/Bio';
+import { Bottom } from './bottom/Bottom';
+import { Tabs } from './tabs/Tabs';
 
 export function registerAccountModal() {
   registerUIComponent(
@@ -43,7 +42,7 @@ export function registerAccountModal() {
         pfp: 5,
         stats: 5,
       };
-
+      // TODO: reduce update frequency
       return interval(3333).pipe(
         map(() => {
           return {
@@ -66,7 +65,8 @@ export function registerAccountModal() {
       const { accountIndex } = useSelected();
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
-      const [tab, setTab] = useState('frens'); // party | frens | activity | requests | blocked
+      const [subTab, setSubTab] = useState('frens'); //  frens | requests | blocked
+      const [tab, setTab] = useState('stats'); //  social | party | stats
       const [account, setAccount] = useState<Account>(NullAccount);
       const [isSelf, setIsSelf] = useState(false);
       const [isLoading, setIsLoading] = useState(false);
@@ -79,13 +79,13 @@ export function registerAccountModal() {
         setAccount(account);
       });
 
-      // set the default tab when account index switches
+      // set the default subtab and tab when account index switches or modal is closed
       useEffect(() => {
         const isSelf = player.index === accountIndex;
         setIsSelf(isSelf);
-        if (isSelf) setTab('frens');
-        else setTab('party');
-      }, [accountIndex]);
+        if (isSelf) setSubTab('frens');
+        setTab('stats');
+      }, [accountIndex, modals.account]);
 
       /////////////////
       // INTERACTION
@@ -179,7 +179,7 @@ export function registerAccountModal() {
       return (
         <ModalWrapper
           id='account'
-          header={<ModalHeader key='header' title='Friends' icon={OperatorIcon} />}
+          header={<ModalHeader key='header' title='Account' icon={OperatorIcon} />}
           canExit
           truncate
         >
@@ -195,10 +195,10 @@ export function registerAccountModal() {
           <Bottom
             key='bottom'
             tab={tab}
-            data={{
-              account,
-              getAllAccs: () => getAllBaseAccounts(world, components),
-            }}
+            subTab={subTab}
+            isSelf={isSelf}
+            setSubTab={setSubTab}
+            data={{ account, getAllAccs: () => getAllBaseAccounts(world, components) }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
             utils={utils}
           />

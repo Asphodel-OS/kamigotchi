@@ -1,6 +1,7 @@
+import styled from 'styled-components';
+
 import { AccountCard, ActionListButton } from 'app/components/library';
 import { BaseAccount } from 'network/shapes/Account';
-import styled from 'styled-components';
 
 interface Props {
   accounts: BaseAccount[];
