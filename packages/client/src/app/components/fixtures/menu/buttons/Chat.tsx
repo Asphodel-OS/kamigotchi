@@ -96,7 +96,7 @@ const Status = styled.div<{ notification: boolean }>`
   background-color: green;
 `;
 
-const Number = styled.text`
+const Number = styled.p`
   color: white;
   font-size: 0.8vh;
 `;
