@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { EmptyText, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -79,6 +79,7 @@ export const KamiView = (props: Props) => {
 
   return (
     <Container isVisible={isVisible}>
+      {partyKamis.length == 0 && <EmptyText text={['No Kamis?', 'Sad!']} size={1.8} />}
       {partyKamis.map((kami) => (
         <Tooltip key={kami.index} text={getKamiTooltip(kami)}>
           <KamiBlock
