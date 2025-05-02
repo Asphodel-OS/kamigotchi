@@ -1,6 +1,7 @@
+import styled from 'styled-components';
+
 import { ActionButton } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
-import styled from 'styled-components';
 import { Mode } from './types';
 
 interface Props {
@@ -33,7 +34,8 @@ export const Controls = (props: Props) => {
 
   return (
     <Container>
-      <ActionButton onClick={handleToggle} text={mode === 'IMPORT' ? 'up' : 'down'} />
+      <ActionButton onClick={handleToggle} text={'Filters'} disabled />
+      <ActionButton onClick={handleToggle} text={mode === 'IMPORT' ? '↑' : '↓'} />
       <ActionButton onClick={handleAction} text={mode === 'IMPORT' ? 'Import' : 'Export'} />
     </Container>
   );
@@ -41,6 +43,8 @@ export const Controls = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
+  border-top: solid black 0.15vw;
+  border-bottom: solid black 0.15vw;
   width: 100%;
   padding: 0.6vw;
 

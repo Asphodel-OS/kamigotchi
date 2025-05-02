@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Overlay } from 'app/components/library';
+import { isResting } from 'app/cache/kami';
+import { EmptyText, Overlay } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
-import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 import { KamiBlock } from '../gacha/display/KamiBlock';
 import { Mode } from './types';
@@ -39,25 +40,41 @@ export const WorldKamis = (props: Props) => {
     }
   };
 
+  const isExportable = (kami: Kami) => {
+    return isResting(kami);
+  };
+
+  const getEmptyText = () => {
+    if (mode === 'EXPORT') return ['You have no Kami', 'in the world'];
+    else return ['You must select', 'some Kami'];
+  };
+
   return (
     <Container>
-      <Overlay top={0.9} right={0.9}>
-        <Text size={0.9}>{kamis.length} World</Text>
+      <Overlay top={0.9} left={0.9}>
+        <Text size={0.9}>World</Text>
       </Overlay>
       <Scrollable>
-        {displayedKamis.map((kami) => {
-          return <KamiBlock key={kami.index} kami={kami} onClick={() => handleClick(kami)} />;
-        })}
+        {displayedKamis.map((kami) => (
+          <KamiBlock
+            key={kami.index}
+            kami={kami}
+            onClick={() => handleClick(kami)}
+            select={{ isDisabled: !isExportable(kami) }}
+          />
+        ))}
       </Scrollable>
+      <Overlay fullWidth fullHeight passthrough>
+        <EmptyText text={getEmptyText()} size={1} isHidden={!!displayedKamis.length} />
+      </Overlay>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  background-color: blue;
   width: 100%;
-  height: 12vw;
+  height: 15vw;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -66,6 +83,7 @@ const Scrollable = styled.div`
   height: 100%;
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
   overflow-x: scroll;
 `;
 

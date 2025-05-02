@@ -166,6 +166,7 @@ export function registerKamiBridge() {
           header={<ModalHeader title='Kami Bridge' icon={MenuIcons.kami} />}
           canExit
           truncate
+          noPadding
         >
           <WorldKamis mode={mode} kamis={worldKamis} state={{ selectedKamis, setSelectedKamis }} />
           <Controls

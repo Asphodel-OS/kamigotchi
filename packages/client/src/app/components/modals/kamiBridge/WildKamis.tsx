@@ -1,8 +1,8 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Overlay } from 'app/components/library';
+import { EmptyText, Overlay } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
-import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 import { KamiBlock } from '../gacha/display/KamiBlock';
 import { Mode } from './types';
@@ -39,25 +39,32 @@ export const WildKamis = (props: Props) => {
     }
   };
 
+  const getEmptyText = () => {
+    if (mode === 'IMPORT') return ['You have no Kami', 'in the wild'];
+    else return ['You must select', 'some Kami'];
+  };
+
   return (
     <Container>
-      <Overlay top={0.9} right={0.9}>
-        <Text size={0.9}>{kamis.length} Wilderness</Text>
+      <Overlay top={0.9} left={0.9}>
+        <Text size={0.9}>Wilderness</Text>
       </Overlay>
       <Scrollable>
-        {displayedKamis.map((kami) => {
-          return <KamiBlock key={kami.index} kami={kami} onClick={() => handleClick(kami)} />;
-        })}
+        {displayedKamis.map((kami) => (
+          <KamiBlock key={kami.index} kami={kami} onClick={() => handleClick(kami)} />
+        ))}
       </Scrollable>
+      <Overlay fullWidth fullHeight passthrough>
+        <EmptyText text={getEmptyText()} size={1} isHidden={!!displayedKamis.length} />
+      </Overlay>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  background-color: red;
   width: 100%;
-  height: 12vw;
+  height: 18vw;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -66,6 +73,7 @@ const Scrollable = styled.div`
   height: 100%;
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
   overflow-x: scroll;
 `;
 
