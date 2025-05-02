@@ -33,7 +33,6 @@ interface Props {
 
 export const Mint = (props: Props) => {
   const { isVisible, controls, data, state } = props;
-  const { mint } = data;
 
   return (
     <Container isVisible={isVisible}>
@@ -41,7 +40,7 @@ export const Mint = (props: Props) => {
       <Public controls={controls} state={state} data={data} />
       <Overlay bottom={2.1} orientation='column'>
         <Text size={1.2}>good things come</Text>
-        <Text size={1.2}>to those who mint kamis</Text>
+        <Text size={1.2}>to those who mint kami</Text>
       </Overlay>
     </Container>
   );
