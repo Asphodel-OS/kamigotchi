@@ -8,7 +8,7 @@
 ,Give 3 Scrap Metal,MIN,INC,ITEM_BURN,1005,3
 ,Give 5 Scrap Metal,MIN,INC,ITEM_BURN,1005,5
 ,Give 1 Mint,MIN,INC,ITEM_BURN,1012,1
-,Buy something from any vendor using $MUSU,MIN,INC,ITEM_BUY_TOTAL,,1
+,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
 ,Own 1 Kamigotchi,MIN,CURR,KAMI_NUM_OWNED,,1
 ,Liquidate another Kamigotchi,MIN,INC,LIQUIDATE_TOTAL,,1
 ,Have your Kami Liquidated,MIN,,LIQUIDATED_VICTIM,,1

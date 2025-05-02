@@ -18,8 +18,8 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(1, 'Bronze', 500, 'REPUTATION', 1, 3);
   await api.goal.add.reward.basic(1, 'Silver', 1000, 'ITEM', 11002, 10);
   await api.goal.add.reward.basic(1, 'Silver', 1000, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(1, 'Gold', 3333, 'ITEM', 100001, 3);
-  await api.goal.add.reward.basic(1, 'Gold', 3333, 'REPUTATION', 1, 1);
+  await api.goal.add.reward.basic(1, 'Gold', 3333, 'ITEM', 100001, 1);
+  await api.goal.add.reward.basic(1, 'Gold', 3333, 'REPUTATION', 1, 3);
   await api.goal.enable(1);
 
   // await api.goal.create(
