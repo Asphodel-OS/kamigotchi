@@ -133,7 +133,8 @@ export const Footer = (props: Props) => {
     }
     if (success) {
       playSuccess();
-      setQuantity(0);
+      if (tab !== 'REROLL') setQuantity(1);
+      else setQuantity(0);
     }
   };
 
