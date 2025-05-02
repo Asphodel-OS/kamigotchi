@@ -201,7 +201,6 @@ export function registerAccountModal() {
             data={{ account, getAllAccs: () => getAllBaseAccounts(world, components) }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
             utils={utils}
-            network={{ world, components }}
           />
         </ModalWrapper>
       );

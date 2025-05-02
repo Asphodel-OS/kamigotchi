@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Blocked } from '../blocked/Blocked';
-import { Friends } from '../friends/Friends';
-import { Requests } from '../requests/Requests';
+import { Blocked } from '../../blocked/Blocked';
+import { Friends } from '../../friends/Friends';
+import { Requests } from '../../requests/Requests';
 
 interface Props {
   subTab: string;
