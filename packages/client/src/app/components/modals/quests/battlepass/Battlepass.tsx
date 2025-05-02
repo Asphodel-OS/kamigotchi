@@ -41,7 +41,8 @@ export const Battlepass = (props: Props) => {
   const { account, quests, actions, utils } = props;
   const { describeEntity, populate, filterForBattlePass, parseRequirements } = utils;
   const { modals } = useVisibility();
-  const [maxRep, setMaxRep] = useState(1);
+  // const [maxRep, setMaxRep] = useState(1);
+  const maxRep = 300; // temp: hardcoded max rep
   const [currRep, setCurrRep] = useState(0);
   const [agency, setAgency] = useState<Quest[]>([]); // aggregate list of quests from the agency
 
@@ -53,10 +54,10 @@ export const Battlepass = (props: Props) => {
   }, [quests.registry.length]);
 
   // update the max reputation when the number of agency quests changes
-  useEffect(() => {
-    const newMaxRep = Math.max(...agency.map((q) => getRepObjective(q)));
-    if (newMaxRep !== maxRep) setMaxRep(newMaxRep);
-  }, [agency.length]);
+  // useEffect(() => {
+  //   const newMaxRep = Math.max(...agency.map((q) => getRepObjective(q)));
+  //   if (newMaxRep !== maxRep) setMaxRep(newMaxRep);
+  // }, [agency.length]);
 
   // update the current reputation when that changes
   useEffect(() => {
