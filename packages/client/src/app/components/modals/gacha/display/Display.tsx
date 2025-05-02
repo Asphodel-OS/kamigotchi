@@ -79,7 +79,7 @@ export const Display = (props: Props) => {
 
   // determine whether the mode toggle button should be visible
   const isButtonVisible = () => {
-    return tab !== 'MINT';
+    return tab !== 'MINT' && tab !== 'GACHA'; // hardcode out gacha auctions
     if (tab === 'GACHA' && mode === 'DEFAULT') {
       const startTime = auctions.gacha.time.start;
       return startTime > Date.now();
