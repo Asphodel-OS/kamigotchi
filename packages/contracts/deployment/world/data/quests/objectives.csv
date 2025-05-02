@@ -15,7 +15,7 @@
 ,Move 3 Times,MIN,INC,MOVE,,3
 ,Move 7 Times,MIN,INC,MOVE,,
 ,Enter Mina's Shop,IS,BOOL,ROOM,13,
-,Scavenge 1 Item,MIN,CURR,SCAV_CLAIM_NODE,,1
+,Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
 ,Make a Scavenging roll in 3 rooms of the Scrap type,MIN,INC,SCAV_CLAIM_AFFINITY_SCRAP,,3
 ,Make a Scavenging roll in 3 rooms of the Insect type,MIN,INC,SCAV_CLAIM_AFFINITY_INSECT,,3
 ,Make a Scavenging roll in 3 rooms of the Eerie type,MIN,INC,SCAV_CLAIM_AFFINITY_EERIE,,3

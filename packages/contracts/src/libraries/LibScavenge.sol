@@ -155,12 +155,13 @@ library LibScavenge {
   // LOGGING
 
   function logClaim(IUintComp components, Base memory data, uint256 amt, uint256 accID) public {
-    uint32[] memory indices = new uint32[](2);
-    indices[0] = data.index; // rolls claim per index (e.g. node)
-    indices[1] = 0; // rolls claim per affinity (e.g. SCRAP, NORMAL)
-    string[] memory types = new string[](2);
+    uint32[] memory indices = new uint32[](3);
+    indices[1] = data.index; // rolls claim per index (e.g. node)
+    indices[2] = 0; // rolls claim per affinity (e.g. SCRAP, NORMAL)
+    string[] memory types = new string[](3);
     types[0] = string("SCAV_CLAIM_").concat(data.field);
-    types[1] = string("SCAV_CLAIM_AFFINITY_").concat(data.affinity);
+    types[1] = string("SCAV_CLAIM_").concat(data.field);
+    types[2] = string("SCAV_CLAIM_AFFINITY_").concat(data.affinity);
 
     LibData.inc(components, accID, indices, types, amt);
   }
