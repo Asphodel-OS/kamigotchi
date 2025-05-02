@@ -460,12 +460,12 @@
     {
       "name": "Kami721StakeSystem",
       "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
-      "skipEnv": ["testing", "production"]
+      "skipEnv": ["testing"]
     },
     {
       "name": "Kami721UnstakeSystem",
       "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
-      "skipEnv": ["testing", "production"]
+      "skipEnv": ["testing"]
     },
     {
       "name": "KamiGachaMintSystem",

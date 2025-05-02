@@ -4,8 +4,7 @@ import { getGoalID } from '../utils';
 // hardcoded gates - placeholder until notion is up
 const gates = {
   1: (api: AdminAPI) => api.room.createGate(1, 1, 0, 0, 'CURR_MIN', 'KAMI', ''), // load bearing test to initialse IndexSourceComponent - queries wont work without
-  // 12: (api: AdminAPI) =>
-  //   api.room.createGate(12, 0, 0, getGoalID(2), 'COMPLETE_COMP', 'BOOL_IS', ''),
+  12: (api: AdminAPI) => api.room.createGate(12, 0, 0, 1, 'COMPLETE_COMP', 'BOOL_IS', ''), // block room 12
   31: (api: AdminAPI) =>
     api.room.createGate(31, 0, 0, getGoalID(1), 'COMPLETE_COMP', 'BOOL_IS', ''),
   50: (api: AdminAPI) =>
