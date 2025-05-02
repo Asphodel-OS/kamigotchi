@@ -140,7 +140,7 @@ export const Footer = (props: Props) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
     const rawQuantity = parseInt(quantityStr || '0');
-    const quantity = Math.max(0, Math.min(balance, rawQuantity));
+    const quantity = Math.max(0, rawQuantity);
     setQuantity(quantity);
   };
 
@@ -231,6 +231,9 @@ export const Footer = (props: Props) => {
             `you need to select at least one (1) Kami to disown`,
             `it's time to play favorites..`,
           ];
+        }
+        if (needsFunds()) {
+          return [`too poore`, `you need ${price - balance} more Reroll Tickets`];
         }
       }
       if (mode === 'ALT') {
