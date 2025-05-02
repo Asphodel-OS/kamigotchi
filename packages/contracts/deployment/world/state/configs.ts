@@ -107,7 +107,7 @@ async function initStats(api: AdminAPI) {
 
 export async function initHarvest(api: AdminAPI) {
   // efficacy configs [prec, neut, +, -]
-  await api.config.set.array('KAMI_HARV_EFFICACY_BODY', [3, 0, 650, 250]);
+  await api.config.set.array('KAMI_HARV_EFFICACY_BODY', [3, 0, 600, 250]);
   await api.config.set.array('KAMI_HARV_EFFICACY_HAND', [3, 0, 400, 150]);
 
   // standard configs [nudge, n_prec, ratio, r_prec, shift, s_prec, boost, b_prec]
