@@ -29,9 +29,5 @@ export const room02: Room = {
       coordinates: { x1: 55, y1: 32, x2: 83, y2: 82 },
       dialogue: 23,
     },
-    {
-      name: 'trading',
-      coordinates: { x1: 100, y1: 52, x2: 1150, y2: 100 },
-    },
   ],
 };
