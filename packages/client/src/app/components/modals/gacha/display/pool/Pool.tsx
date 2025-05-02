@@ -51,7 +51,7 @@ export const Pool = (props: Props) => {
 
   return (
     <Container isVisible={isVisible}>
-      {mode === 'DEFAULT' && (
+      {mode === 'DEFAULT' && getTimeLeft() > 0 && (
         <Overlay orientation='column' opacity={0.6} zIndex={1} fullWidth fullHeight passthrough>
           <Text size={3}>No Running</Text>
           <Text size={3}>Around the Pool</Text>
