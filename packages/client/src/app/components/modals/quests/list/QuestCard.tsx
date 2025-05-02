@@ -45,7 +45,7 @@ export const QuestCard = (props: Props) => {
 
     const key = `faction-${reward.type}-${reward.index}`;
     if (!imageCache.has(key)) {
-      const icon = getFactionImage('kamigotchi_tourism_agency');
+      const icon = getFactionImage('agency');
       const component = <Image src={icon} size={1.8} />;
       imageCache.set(key, component);
     }

@@ -18,7 +18,6 @@ export const Tabs = (props: Props) => {
   const Tabs = () => {
     return (
       <>
-        {' '}
         <Button onClick={() => setTab('stats')} disabled={props.tab === 'stats'}>
           Stats
         </Button>

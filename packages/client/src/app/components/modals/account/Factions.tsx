@@ -17,7 +17,7 @@ export const Factions = (props: Props) => {
       name: 'Reputation',
       progress: '#69a6f9',
       current: account.reputation.agency,
-      icon: FactionIcons.kamigotchi_tourism_agency,
+      icon: FactionIcons.agency,
       text: `Your relationship with the Quests Menu, and with the fundamental forces behind Kamigotchi World. `,
     },
     {
@@ -31,7 +31,7 @@ export const Factions = (props: Props) => {
       name: 'Dedication',
       progress: '#5d995c',
       current: account.reputation.nursery,
-      icon: FactionIcons.kamigotchi_nursery,
+      icon: FactionIcons.nursery,
       text: `Your progress down the path of darkness.`,
     },
   ];
