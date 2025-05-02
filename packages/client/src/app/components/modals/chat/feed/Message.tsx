@@ -7,6 +7,7 @@ import { Account } from 'app/cache/account';
 import { Popover } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Message as KamiMessage } from 'clients/kamiden/proto';
+import { KAMI_BASE_URI } from 'constants/media';
 import { formatEntityID } from 'engine/utils';
 import { BaseAccount } from 'network/shapes/Account';
 import { ActionSystem } from 'network/systems';
@@ -46,6 +47,13 @@ export const Message = (props: Props) => {
   // INTERPRETATION
   const getAccountFunc = () => {
     return getAccount(getEntityIndex(formatEntityID(message.AccountId)));
+  };
+
+  const getAccountPfp = () => {
+    const { pfpURI } = getAccountFunc();
+    return pfpURI !== 'https://miladymaker.net/milady/8365.png'
+      ? `${KAMI_BASE_URI}${pfpURI}.gif`
+      : pfpURI;
   };
   // TODO: fix this
   useEffect(() => {
@@ -117,7 +125,7 @@ export const Message = (props: Props) => {
                       onClick={() => {
                         showUser();
                       }}
-                      src={getAccountFunc().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
+                      src={getAccountPfp()}
                     />
                   </Popover>
                   <Body previousEqual={previousEqual} yours={yours}>
@@ -146,7 +154,7 @@ export const Message = (props: Props) => {
                     onClick={() => {
                       showUser();
                     }}
-                    src={getAccountFunc().pfpURI ?? 'https://miladymaker.net/milady/8365.png'}
+                    src={getAccountPfp()}
                   />
                 </PfpAuthor>
               </>

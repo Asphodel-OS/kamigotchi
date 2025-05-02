@@ -86,14 +86,16 @@ export const Bio = (props: Props) => {
     return kamis;
   };
 
+  const getAccountPfp = () => {
+    const pfpURI = account.pfpURI;
+    return pfpURI !== 'https://miladymaker.net/milady/8365.png'
+      ? `${KAMI_BASE_URI}${pfpURI}.gif`
+      : pfpURI;
+  };
   const Pfp = () => {
     return (
       <PfpContainer>
-        <PfpImage
-          isLoading={isLoading}
-          draggable='false'
-          src={`${KAMI_BASE_URI + account.pfpURI}.gif`}
-        />
+        <PfpImage isLoading={isLoading} draggable='false' src={getAccountPfp()} />
         <Tooltip text={[getLastSeenString()]}>
           <PfpStatus isLoading={isLoading} timeDelta={tick / 1000 - account.time.last} />
         </Tooltip>
