@@ -290,7 +290,7 @@ export function registerGachaModal() {
 
       // reveal gacha result(s)
       const revealTx = async (commits: Commit[]) => {
-        const toReveal = commits.map((n) => n.id);
+        const toReveal = commits.slice(0, 5).map((n) => n.id); // reveal 5 at a time
         const actionID = uuid() as EntityID;
         actions!.add({
           id: actionID,
