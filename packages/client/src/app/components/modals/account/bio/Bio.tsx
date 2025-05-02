@@ -95,7 +95,11 @@ export const Bio = (props: Props) => {
   const Pfp = () => {
     return (
       <PfpContainer>
-        <PfpImage isLoading={isLoading} draggable='false' src={getAccountPfp()} />
+        <PfpImage
+          isLoading={isLoading}
+          draggable='false'
+          src={`${KAMI_BASE_URI + account.pfpURI}.gif`}
+        />
         <Tooltip text={[getLastSeenString()]}>
           <PfpStatus isLoading={isLoading} timeDelta={tick / 1000 - account.time.last} />
         </Tooltip>

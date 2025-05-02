@@ -49,12 +49,6 @@ export const Message = (props: Props) => {
     return getAccount(getEntityIndex(formatEntityID(message.AccountId)));
   };
 
-  const getAccountPfp = () => {
-    const { pfpURI } = getAccountFunc();
-    return pfpURI !== 'https://miladymaker.net/milady/8365.png'
-      ? `${KAMI_BASE_URI}${pfpURI}.gif`
-      : pfpURI;
-  };
   // TODO: fix this
   useEffect(() => {
     setYours(player.id !== getAccountFunc().id);
@@ -125,7 +119,7 @@ export const Message = (props: Props) => {
                       onClick={() => {
                         showUser();
                       }}
-                      src={getAccountPfp()}
+                      src={`${KAMI_BASE_URI}${getAccountFunc().pfpURI}.gif`}
                     />
                   </Popover>
                   <Body previousEqual={previousEqual} yours={yours}>
@@ -154,7 +148,7 @@ export const Message = (props: Props) => {
                     onClick={() => {
                       showUser();
                     }}
-                    src={getAccountPfp()}
+                    src={`${KAMI_BASE_URI}${getAccountFunc().pfpURI}.gif`}
                   />
                 </PfpAuthor>
               </>
