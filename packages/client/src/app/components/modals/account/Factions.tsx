@@ -24,7 +24,7 @@ export const Factions = (props: Props) => {
       name: 'Loyalty',
       progress: '#e53b21',
       current: account.reputation.mina,
-      icon: FactionIcons.minas_shop,
+      icon: FactionIcons.mina,
       text: `Your affinity with Mina, and her mysterious backers....`,
     },
     {
