@@ -1,5 +1,4 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
@@ -10,12 +9,16 @@ import { getConfigAddress } from 'app/cache/config';
 import { getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useNetwork } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
 
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Controls } from './Controls';
+import { Mode } from './types';
+import { WildKamis } from './WildKamis';
+import { WorldKamis } from './WorldKamis';
 
 export function registerKamiBridge() {
   registerUIComponent(
@@ -57,9 +60,12 @@ export function registerKamiBridge() {
       const { kamiNFTAddress, account, worldKamis } = data;
       const { getKami, queryKamiByIndex } = utils;
       const { selectedAddress, apis } = useNetwork();
+      const { modals } = useVisibility();
 
       const [wildKamis, setWildKamis] = useState<Kami[]>([]);
+      const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
       const [tick, setTick] = useState(Date.now());
+      const [mode, setMode] = useState<Mode>('IMPORT');
 
       /////////////////
       // SUBSCRIPTIONS
@@ -70,6 +76,10 @@ export function registerKamiBridge() {
         const timerID = setInterval(tick, 1000);
         return () => clearInterval(timerID);
       }, []);
+
+      useEffect(() => {
+        setSelectedKamis([]);
+      }, [modals.bridgeERC721, mode]);
 
       useWatchBlockNumber({
         onBlockNumber: (n) => {
@@ -89,11 +99,11 @@ export function registerKamiBridge() {
       });
 
       // update list of wild kamis
-      // TOTO: figure out how to properly typecast the result
+      // TOTO: figure out how to properly typecast the result of the abi call
       useEffect(() => {
-        console.log('token indices updated');
-        const result = nftData?.[0]?.result;
-        const entities = result?.map((index: number) => queryKamiByIndex(index)) ?? [];
+        const result = nftData?.[0]?.result as number[];
+        const entities = (result?.map((index: number) => queryKamiByIndex(index)) ??
+          []) as EntityIndex[];
         const externalKamis = entities.map((entity: EntityIndex) => getKami(entity));
         setWildKamis(externalKamis);
       }, [nftData]);
@@ -103,72 +113,32 @@ export function registerKamiBridge() {
 
       // import a kami from the wild to the world
       // TODO: pets without accounts are linked to EOA, no account. link EOA
-      const depositTx = (tokenID: BigNumberish) => {
+      const depositTx = (kamis: Kami[]) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         actions.add({
           action: 'KamiDeposit',
-          params: [tokenID],
-          description: `Staking Kami ${tokenID}`,
+          params: [kamis[0].index],
+          description: `Staking Kami ${kamis[0].index}`,
           execute: async () => {
-            return api.bridge.ERC721.deposit(tokenID);
+            return api.bridge.ERC721.deposit(kamis[0].index);
           },
         });
       };
 
       // export a kami from the world to the wild
-      const withdrawTx = (tokenID: BigNumberish) => {
+      const withdrawTx = (kamis: Kami[]) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         actions.add({
           action: 'KamiWithdraw',
-          params: [tokenID],
-          description: `Unstaking Kami ${tokenID}`,
+          params: [kamis[0].index],
+          description: `Unstaking Kami ${kamis[0].index}`,
           execute: async () => {
-            return api.bridge.ERC721.withdraw(tokenID);
+            return api.bridge.ERC721.withdraw(kamis[0].index);
           },
-        });
-      };
-
-      //////////////////
-      // MODAL LOGIC
-
-      // for use in mud
-      const buttonSelect = (props: any) => {
-        if (isExportable(props.kami)) {
-          return <Button onClick={() => withdrawTx(props.kami.index)}>Unstake</Button>;
-        } else if (isImportable(props.kami)) {
-          return <Button onClick={() => depositTx(props.kami.index)}>Stake</Button>;
-        }
-        // specific conditions that disable bridging
-        else if (isHarvesting(props.kami)) {
-          return <NotButton>Harvesting...</NotButton>;
-        } else if (isDead(props.kami)) {
-          return <NotButton>Dead!</NotButton>;
-        } else {
-          return <NotButton>cannot be bridged</NotButton>;
-        }
-      };
-
-      const KamiCard = (props: any) => {
-        return (
-          <Card>
-            <Image src={props.image} />
-            <Container>
-              <TitleBar>
-                <TitleText>{props.title}</TitleText>
-              </TitleBar>
-              {buttonSelect(props)}
-            </Container>
-          </Card>
-        );
-      };
-
-      const KamiCards = (kamis: Kami[]) => {
-        return kamis?.map((kami) => {
-          return <KamiCard kami={kami} key={kami.index} image={kami.image} title={kami.name} />;
         });
       };
 
@@ -197,32 +167,18 @@ export function registerKamiBridge() {
           canExit
           truncate
         >
-          <Grid>
-            <Description style={{ gridRow: 1, gridColumn: 1 }}>In game</Description>
-            <Scrollable style={{ gridRow: 2, gridColumn: 1 }}>
-              {KamiCards(worldKamis || [])}
-            </Scrollable>
-            <Description style={{ gridRow: 1, gridColumn: 2 }}>In wallet</Description>
-            <Scrollable style={{ gridRow: 2, gridColumn: 2 }}>{KamiCards(wildKamis)}</Scrollable>
-          </Grid>
+          <WorldKamis mode={mode} kamis={worldKamis} state={{ selectedKamis, setSelectedKamis }} />
+          <Controls
+            actions={{ import: depositTx, export: withdrawTx }}
+            controls={{ mode, setMode }}
+            state={{ selectedKamis }}
+          />
+          <WildKamis mode={mode} kamis={wildKamis} state={{ selectedKamis, setSelectedKamis }} />
         </ModalWrapper>
       );
     }
   );
 }
-
-const Card = styled.div`
-  background-color: #fff;
-  border-color: black;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 2px;
-  color: black;
-  margin: 0px 2px 4px 2px;
-
-  display: flex;
-  flex-flow: row nowrap;
-`;
 
 const Container = styled.div`
   border-color: black;
@@ -235,100 +191,4 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
-`;
-
-const Description = styled.div`
-  font-size: 16px;
-  color: #333;
-  text-align: center;
-  padding: 10px;
-  font-family: Pixel;
-`;
-
-const Grid = styled.div`
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  grid-column-gap: 32px;
-  max-height: 80%;
-`;
-
-const Image = styled.img`
-  border-style: solid;
-  border-width: 0px 2px 0px 0px;
-  border-color: black;
-  height: 110px;
-  margin: 0px;
-  padding: 0px;
-
-  &:hover {
-    opacity: 0.75;
-  }
-`;
-
-const Scrollable = styled.div`
-  overflow-y: scroll;
-  height: 100%;
-  max-height: 100%;
-`;
-
-const Button = styled.button`
-  cursor: pointer;
-  &:active {
-    background-color: #c4c4c4;
-  }
-  font-family: Pixel;
-  font-size: 14px;
-  background-color: #ffffff;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-
-  padding: 5px;
-  pointer-events: auto;
-  margin: 5px;
-`;
-
-const NotButton = styled.div`
-  text-align: center;
-  font-family: Pixel;
-  font-size: 14px;
-  background-color: #c4c4c4;
-  border-style: solid;
-  border-width: 2px;
-  border-color: black;
-  padding: 5px;
-  pointer-events: auto;
-  margin: 5px;
-`;
-
-const Title = styled.div`
-  font-size: 1.5vw;
-  color: black;
-  text-align: center;
-  padding: 1.5vw;
-  font-family: Pixel;
-`;
-
-const TitleBar = styled.div`
-  border-style: solid;
-  border-width: 0px 0px 2px 0px;
-  border-color: black;
-
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-`;
-
-const TitleText = styled.p`
-  padding: 6px 9px;
-
-  font-family: Pixel;
-  font-size: 14px;
-  text-align: left;
-  justify-content: flex-start;
-
-  &:hover {
-    opacity: 0.6;
-  }
 `;

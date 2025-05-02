@@ -1,0 +1,51 @@
+import { ActionButton } from 'app/components/library';
+import { Kami } from 'network/shapes/Kami';
+import styled from 'styled-components';
+import { Mode } from './types';
+
+interface Props {
+  actions: {
+    import: (kamis: Kami[]) => void;
+    export: (kamis: Kami[]) => void;
+  };
+  controls: {
+    mode: Mode;
+    setMode: (mode: Mode) => void;
+  };
+  state: {
+    selectedKamis: Kami[];
+  };
+}
+
+export const Controls = (props: Props) => {
+  const { actions, controls, state } = props;
+  const { mode, setMode } = controls;
+  const { selectedKamis } = state;
+
+  const handleToggle = () => {
+    setMode(mode === 'IMPORT' ? 'EXPORT' : 'IMPORT');
+  };
+
+  const handleAction = () => {
+    if (mode === 'IMPORT') actions.import(selectedKamis);
+    else actions.export(selectedKamis);
+  };
+
+  return (
+    <Container>
+      <ActionButton onClick={handleToggle} text={mode === 'IMPORT' ? 'up' : 'down'} />
+      <ActionButton onClick={handleAction} text={mode === 'IMPORT' ? 'Import' : 'Export'} />
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  position: relative;
+  width: 100%;
+  padding: 0.6vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+`;
