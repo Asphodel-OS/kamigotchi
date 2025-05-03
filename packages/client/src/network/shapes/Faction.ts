@@ -10,6 +10,7 @@ import {
 
 import { Components } from 'network/';
 import { DetailedEntity, getEntityByHash } from './utils';
+import { getMediaURI, getName } from './utils/component';
 import { getFactionImage } from './utils/images';
 
 // standardized Object shape of a Score Entity
@@ -72,21 +73,21 @@ export const getReputation = (
 export const getFaction = (
   world: World,
   components: Components,
-  index: EntityIndex,
+  entity: EntityIndex,
   factionIndex?: number
 ): Faction => {
-  const { FactionIndex, Name, Description } = components;
-
-  const name = getComponentValue(Name, index)?.value as string;
+  const { FactionIndex, Description } = components;
+  const name = getName(components, entity);
+  const media = getMediaURI(components, entity);
 
   return {
     ObjectType: 'FACTION',
-    id: world.entities[index],
-    entity: index,
-    index: factionIndex ?? (getComponentValue(FactionIndex, index)?.value as number) * 1,
+    id: world.entities[entity],
+    entity,
+    index: factionIndex ?? (getComponentValue(FactionIndex, entity)?.value as number) * 1,
     name: name,
-    description: getComponentValue(Description, index)?.value as string,
-    image: getFactionImage(name),
+    description: getComponentValue(Description, entity)?.value as string,
+    image: getFactionImage(media),
   };
 };
 

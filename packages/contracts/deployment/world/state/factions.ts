@@ -1,59 +1,61 @@
 import { AdminAPI } from '../api';
+import { getSheet } from './utils';
 
-// hardcoded factions
-const factions = [
-  {
-    index: 1,
-    name: 'Kamigotchi Tourism Agency',
-    description: 'Your relationship with the Kamigotchi Tourism Agency.',
-    image: '',
-  },
-  {
-    index: 2,
-    name: "Mina's Shop",
-    description: 'Most visited shop in Kamigotchi World. Sells a variety of items.',
-    image: '',
-  },
-];
+// initialize a single faction
+async function initFaction(api: AdminAPI, entry: any) {
+  const index = Number(entry['Index']);
+  const name = entry['Name'];
+  const key = entry['Key'] ?? '';
+  const description = entry['Description'] ?? '';
+  console.log(`Creating Faction: ${name} (${index}: ${key})`);
 
-export async function initFactions(api: AdminAPI, overrideIndices?: number[]) {
-  for (let i = 0; i < factions.length; i++) {
-    const faction = factions[i];
-    if (overrideIndices && !overrideIndices.includes(Number(faction.index))) continue;
+  let success = true;
+  try {
+    await api.faction.create(index, name, description, key);
+  } catch (e) {
+    console.log(`Error: Failed to create Faction ${name}`);
+    console.log(e);
+    success = false;
+  }
+  return success;
+}
 
-    try {
-      await initFaction(api, faction);
-    } catch {
-      console.error('Could not create faction', faction.index);
+/////////////////
+// SCRIPTS
+
+export async function initFactions(api: AdminAPI, indices?: number[]) {
+  const csv = await getSheet('factions', 'factions');
+  if (!csv) return console.log('No factions/factions.csv found');
+  console.log('\n==INITIALIZING FACTIONS==');
+
+  // process factions
+  for (let i = 0; i < csv.length; i++) {
+    const row = csv[i];
+    const index = Number(row['Index']);
+
+    if (indices && indices.length > 0) {
+      if (!indices.includes(index)) continue;
     }
+
+    await initFaction(api, row);
   }
 }
 
 export async function reviseFactions(api: AdminAPI, overrideIndices?: number[]) {
   let indices: number[] = [];
   if (overrideIndices) indices = overrideIndices;
-  // else {
-  //   const factionsCSV = await readFile('factions/factions.csv');
-  //   for (let i = 0; i < factionsCSV.length; i++) {
-  //     if (factionsCSV[i]['Status'] === 'Revise Deployment')
-  //       indices.push(Number(factionsCSV[i]['Index']));
-  //   }
-  // }
-
   await deleteFactions(api, indices);
   await initFactions(api, indices);
 }
 
 export async function deleteFactions(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
+    const index = indices[i];
     try {
-      await api.faction.delete(indices[i]);
+      console.log(`Deleting faction ${index}`);
+      await api.faction.delete(index);
     } catch {
-      console.error('Could not delete faction ' + indices[i]);
+      console.error(`Could not delete faction ${index}`);
     }
   }
-}
-
-async function initFaction(api: AdminAPI, faction: any) {
-  await api.faction.create(faction.index, faction.name, faction.description, faction.image);
 }
