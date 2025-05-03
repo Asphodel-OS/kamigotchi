@@ -95,6 +95,7 @@ export {
   initHarvest as initHarvestConfigs,
   initLiquidation as initLiquidationConfigs,
   initLocalConfigs,
+  initMint as initMintConfigs,
 } from './configs';
 export { deleteFactions, initFactions, reviseFactions } from './factions';
 export { initGachaPool, mintToGachaPool } from './gacha';

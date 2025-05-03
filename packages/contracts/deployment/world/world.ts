@@ -24,6 +24,7 @@ import {
   initItems,
   initLiquidationConfigs,
   initListings,
+  initMintConfigs,
   initNodes,
   initNpcs,
   initQuests,
@@ -85,6 +86,7 @@ export class WorldState {
     },
     config: {
       init: () => this.genCalls(initConfigs),
+      initMint: () => this.genCalls(initMintConfigs),
       initHarvest: () => this.genCalls(initHarvestConfigs),
       initLiquidation: () => this.genCalls(initLiquidationConfigs),
     } as SubFunc,

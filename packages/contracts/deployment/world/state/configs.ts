@@ -72,22 +72,20 @@ async function initLeveling(api: AdminAPI) {
   await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
 }
 
-async function initMint(api: AdminAPI) {
+export async function initMint(api: AdminAPI) {
   await api.config.set.number('MINT_MAX_TOTAL', 3000);
 
   // whitelist
   // TODO: update price and start time
   await api.config.set.number('MINT_START_WL', 1746086400); // Thursday, May 1, 2025 8:00:00 AM UTC
-  // await api.config.set.number('MINT_START_WL', 1745452800); // 2025, Apr 24 12am epoch (s)
   await api.config.set.number('MINT_PRICE_WL', 50); // 0.05 ETH, 50 mETH
   await api.config.set.number('MINT_MAX_WL', 1);
 
   // public
   // TODO: update price and start time
   await api.config.set.number('MINT_START_PUBLIC', 1746172800); // Thursday, May 2, 2025 8:00:00 AM UTC
-  // await api.config.set.number('MINT_START_PUBLIC', 1745539200); // 2025, Apr 25 12am epoch (s)
   await api.config.set.number('MINT_PRICE_PUBLIC', 100); // 0.1 ETH, 100 mETH
-  await api.config.set.number('MINT_MAX_PUBLIC', 5);
+  await api.config.set.number('MINT_MAX_PUBLIC', 222);
 }
 
 async function initStats(api: AdminAPI) {
