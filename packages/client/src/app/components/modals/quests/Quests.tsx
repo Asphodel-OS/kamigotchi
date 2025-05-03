@@ -12,8 +12,6 @@ import { getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
   filterQuestsByAvailable,
-  filterQuestsByNotObjective,
-  filterQuestsByObjective,
   getBaseQuest,
   parseQuestObjectives,
   parseQuestRequirements,
@@ -83,8 +81,6 @@ export function registerQuestsModal() {
                 completed: BaseQuest[]
               ) =>
                 filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
-              filterForBattlePass: (quests: Quest[]) => filterQuestsByObjective(quests, 1),
-              filterOutBattlePass: (quests: Quest[]) => filterQuestsByNotObjective(quests, 1),
               parseObjectives: (quest: Quest) =>
                 parseQuestObjectives(world, components, account, quest),
               parseRequirements: (quest: Quest) =>
@@ -97,9 +93,8 @@ export function registerQuestsModal() {
       ),
     ({ network, data, utils }) => {
       const { actions, api, notifications } = network;
-      const { account, quests } = data;
-      const { ongoing, completed, registry } = quests;
-      const { getItem, populate, filterByAvailable, filterOutBattlePass } = utils;
+      const { ongoing, completed, registry } = data.quests;
+      const { getItem, populate, filterByAvailable } = utils;
       const { modals } = useVisibility();
 
       const isUpdating = useRef(false);
@@ -117,10 +112,9 @@ export function registerQuestsModal() {
 
         const raw = filterByAvailable(registry, ongoing, completed);
         const populated = raw.map((q) => populate(q));
-        const newAvailable = filterOutBattlePass(populated);
 
-        setAvailable(newAvailable);
-        if (newAvailable.length > available.length) setTab('AVAILABLE');
+        setAvailable(populated);
+        if (populated.length > available.length) setTab('AVAILABLE');
 
         isUpdating.current = false;
       }, [modals.quests, registry.length, completed.length, ongoing.length]);

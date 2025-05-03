@@ -22,7 +22,6 @@ interface Props {
     parseObjectives: (quest: Quest) => Quest;
     parseRequirements: (quest: Quest) => Quest;
     describeEntity: (type: string, index: number) => DetailedEntity;
-    filterOutBattlePass: (quests: Quest[]) => Quest[];
   };
 }
 

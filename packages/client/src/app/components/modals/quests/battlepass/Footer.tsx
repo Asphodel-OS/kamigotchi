@@ -6,7 +6,7 @@ import { Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
-import { Battlepass } from './battlepass/Battlepass';
+import { Battlepass } from './Battlepass';
 
 interface Props {
   account: Account;
