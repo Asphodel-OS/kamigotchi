@@ -5,6 +5,7 @@ import { getHarvestItem } from 'app/cache/harvest';
 import {
   calcCooldown,
   calcHealth,
+  calcHealthPercent,
   calcOutput,
   isDead,
   isHarvesting,
@@ -61,7 +62,7 @@ export const Kards = (props: Props) => {
     } else if (sort === 'name') {
       sorted = kamis.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sort === 'health') {
-      sorted = kamis.sort((a, b) => calcHealth(a) - calcHealth(b));
+      sorted = kamis.sort((a, b) => calcHealthPercent(a) - calcHealthPercent(b));
     } else if (sort === 'cooldown') {
       sorted = kamis.sort((a, b) => calcCooldown(a) - calcCooldown(b));
     } else if (sort === 'body') {
