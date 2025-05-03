@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getHarvestItem } from 'app/cache/harvest';
 import {
   calcCooldown,
   calcHealth,
@@ -18,7 +19,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Node } from 'network/shapes/Node';
+import { Node, NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { SortIcons } from './constants';
@@ -97,14 +98,18 @@ export const Kards = (props: Props) => {
     else if (isResting(kami)) description = ['Resting', `${healthRate} HP/hr`];
     else if (isDead(kami)) description = [`Murdered`];
     else if (isHarvesting(kami) && kami.harvest) {
-      const harvestRate = getRateDisplay(kami.harvest.rates.total.spot, 2);
+      const harvest = kami.harvest;
+      const harvestRate = getRateDisplay(harvest.rates.total.spot, 2);
+      const item = getHarvestItem(harvest);
+      const node = harvest.node ?? NullNode;
+
       if (calcHealth(kami) == 0) {
-        description = [`Starving.. `, `on ${kami.harvest.node?.name}`];
-      } else if (kami.harvest.node != undefined) {
+        description = [`Starving.. `, `on ${node.name}`];
+      } else {
         description = [
           `Harvesting`,
-          `on ${kami.harvest.node.name}`,
-          `${harvestRate} MUSU/hr`,
+          `on ${node.name}`,
+          `${harvestRate} ${item.name}/hr`,
           `${healthRate} HP/hr`,
         ];
       }
@@ -112,14 +117,24 @@ export const Kards = (props: Props) => {
     return description;
   };
 
+  // get the balance subtext for a kami
+  // TODO: update this with iconography
+  const getSubtext = (kami: Kami): string => {
+    const harvest = kami.harvest;
+    if (!harvest || harvest.state != 'ACTIVE') return '';
+    const item = getHarvestItem(harvest);
+    return `${calcOutput(kami)} ${item.name}`;
+  };
+
   const getTooltip = (kami: Kami): string[] => {
     const tooltip: string[] = [];
     if (isHarvesting(kami) && kami.harvest) {
       const harvest = kami.harvest;
       const avgRate = getRateDisplay(harvest.rates.total.average, 2);
+      const item = getHarvestItem(harvest);
       const now = Math.floor(Date.now() / 1000);
       const lastDuration = (now - harvest.time.last) / 3600;
-      tooltip.push(`Average: ${avgRate} MUSU/hr`);
+      tooltip.push(`Average: ${avgRate} ${item.name}/hr`);
       tooltip.push(`> over the last ${lastDuration.toFixed(2)}hours`);
     }
     return tooltip;
@@ -172,7 +187,7 @@ export const Kards = (props: Props) => {
             kami={kami}
             description={getDescription(kami)}
             descriptionOnClick={getDescriptionOnClick(kami)}
-            subtext={`${calcOutput(kami)} MUSU`}
+            subtext={getSubtext(kami)}
             contentTooltip={getTooltip(kami)}
             actions={DisplayedAction(account, kami, node)}
             showBattery

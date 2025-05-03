@@ -7,5 +7,6 @@ export {
   calcNetBounty as calcHarvestNetBounty,
   updateRates as updateHarvestRates,
 } from './calcs';
+export { getItem as getHarvestItem } from './functions';
 
 export type { Harvest } from 'network/shapes/Harvest';

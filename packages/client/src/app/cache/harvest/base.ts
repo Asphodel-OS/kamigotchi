@@ -10,7 +10,7 @@ import {
   getValue,
 } from 'network/shapes/utils/component';
 import { getKami } from '../kami';
-import { getNode } from '../node';
+import { getHarvestNode } from './getters';
 
 export const HarvestCache = new Map<EntityIndex, Harvest>();
 export const HarvestLastTs = new Map<EntityIndex, number>();
@@ -63,7 +63,7 @@ export const get = (world: World, comps: Components, entity: EntityIndex, option
     const updateTs = NodeUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.node) {
-      harvest.node = getNode(world, comps, entity);
+      harvest.node = getHarvestNode(world, comps, entity);
       NodeUpdateTs.set(entity, now);
     }
   }

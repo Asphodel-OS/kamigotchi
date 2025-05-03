@@ -1,7 +1,6 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getHarvestNode } from 'network/shapes/Harvest';
 import {
   getKami,
   getKamiBonuses,
@@ -151,7 +150,6 @@ export const get = (
       // ideally we want to flatten the shapes and avoid automatically populating
       // the nested Node object this way
       if (kami.harvest && kami.harvest.state === 'ACTIVE') {
-        kami.harvest.node = getHarvestNode(world, components, kami.harvest.entity);
         updateHarvestRate(kami);
       }
       HarvestUpdateTs.set(entity, now);

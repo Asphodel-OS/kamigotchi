@@ -60,7 +60,7 @@ export const getKamiHarvest = (world: World, comps: Components, entity: EntityIn
   if (!entity) return NullHarvest;
   const harvestEntity = queryKamiHarvest(world, entity);
   if (!harvestEntity) return NullHarvest; // not expecting this but prevents crashes
-  return getHarvest(world, comps, harvestEntity, { live: 2 });
+  return getHarvest(world, comps, harvestEntity, { live: 2, node: 2 });
 };
 
 // get the Skill investment objects for a Kami entity
