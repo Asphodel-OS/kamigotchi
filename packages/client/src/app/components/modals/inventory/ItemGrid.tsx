@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { cleanInventories, Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton, Tooltip } from 'app/components/library';
+import { ButtonListOption } from 'app/components/library/base/buttons';
 import { Option } from 'app/components/library/base/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
 import { Account, NullAccount } from 'network/shapes/Account';
@@ -85,11 +86,16 @@ export const ItemGrid = (props: Props) => {
 
   const getAccountOptions = (item: Item, bal: number): Option[] => {
     if (!meetsRequirements(account, item)) return [];
-    const count = Math.min(Math.max(bal, 2), 100);
-    const options = [{ text: 'Use', onClick: () => actions.useForAccount(item, 1) }];
-    if (bal > 1) {
-      options.push({ text: `Use ${count}`, onClick: () => actions.useForAccount(item, count) });
-    }
+    const useItem = (amt: number) => actions.useForAccount(item, amt);
+
+    const options: ButtonListOption[] = [];
+    const increments = [1, 3, 10, 33, 100, 333, 1000];
+    increments.forEach((i) => {
+      if (bal >= i) options.push({ text: `Use ${i}`, onClick: () => useItem(i) });
+    });
+
+    if (bal > 1) options.push({ text: 'Use All', onClick: () => useItem(bal) });
+
     return options;
   };
 
