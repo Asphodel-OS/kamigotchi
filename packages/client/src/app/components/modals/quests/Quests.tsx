@@ -25,7 +25,6 @@ import {
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getDescribedEntity } from 'network/shapes/utils/parse';
-import { Footer } from './Footer';
 import { List } from './list/List';
 import { Tabs } from './Tabs';
 
@@ -211,18 +210,6 @@ export function registerQuestsModal() {
             <ModalHeader key='header' title='Quests' icon={QuestsIcon} />,
             <Tabs key='tabs' tab={tab} setTab={setTab} />,
           ]}
-          footer={
-            <Footer
-              account={account}
-              quests={{
-                registry: registry,
-                ongoing: ongoing,
-                completed: completed,
-              }}
-              actions={transactions}
-              utils={utils}
-            />
-          }
           canExit
           truncate
           noPadding
