@@ -1,8 +1,8 @@
-import { EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import {
+  calcCooldown,
   calcHealth,
   calcOutput,
   isDead,
@@ -12,20 +12,23 @@ import {
   isUnrevealed,
   KamiRefreshOptions,
 } from 'app/cache/kami';
-import { EmptyText, KamiCard } from 'app/components/library';
+import { compareTraits } from 'app/cache/trait';
+import { EmptyText, IconListButton, KamiCard } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
-import { Account, NullAccount } from 'network/shapes/Account';
+import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Node, NullNode } from 'network/shapes/Node';
+import { Node } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
-
-const REFRESH_INTERVAL = 2000;
+import { SortIcons } from './constants';
+import { Sort } from './types';
 
 interface Props {
   data: {
-    accountEntity: EntityIndex;
+    account: Account;
+    kamis: Kami[];
+    node: Node;
   };
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
@@ -39,43 +42,46 @@ interface Props {
 }
 
 export const Kards = (props: Props) => {
-  const { display, data, utils } = props;
-  const { accountEntity } = data;
+  const { data, display } = props;
+  const { account, kamis, node } = data;
   const { HarvestButton, UseItemButton } = display;
-  const { getAccount, getKamis, getNode } = utils;
-
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
+  const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
 
-  const [account, setAccount] = useState<Account>(NullAccount);
-  const [kamis, setKamis] = useState<Kami[]>([]);
-  const [node, setNode] = useState<Node>(NullNode); // node of the current room
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [sort, setSort] = useState<Sort>('index');
 
-  // ticking
+  // sort kamis when sort is changed
+  // sorts in place so the seDisplayedKamis is just to triggere an update
   useEffect(() => {
-    updateData();
-    const refreshClock = () => setLastRefresh(Date.now());
-    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-    return () => clearInterval(timerId);
-  }, []);
+    let sorted = kamis;
+    if (sort === 'index') {
+      sorted = kamis.sort((a, b) => a.index - b.index);
+    } else if (sort === 'name') {
+      sorted = kamis.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === 'health') {
+      sorted = kamis.sort((a, b) => calcHealth(a) - calcHealth(b));
+    } else if (sort === 'cooldown') {
+      sorted = kamis.sort((a, b) => calcCooldown(a) - calcCooldown(b));
+    } else if (sort === 'body') {
+      sorted = kamis.sort((a, b) => compareTraits(a.traits?.body!, b.traits?.body!));
+    } else if (sort === 'hands') {
+      sorted = kamis.sort((a, b) => compareTraits(a.traits?.hand!, b.traits?.hand!));
+    }
 
-  useEffect(() => {
-    if (nodeIndex == 0) setNode(NullNode);
-    else setNode(getNode(nodeIndex));
-  }, [account.roomIndex]);
+    setDisplayedKamis(kamis);
+  }, [modals.party, sort]);
 
-  // refresh data whenever the modal is opened
-  useEffect(() => {
-    if (!modals.party) return;
-    updateData();
-  }, [modals.party, lastRefresh, accountEntity]);
-
-  // set the data required to populate the modal
-  const updateData = () => {
-    setAccount(getAccount());
-    setKamis(getKamis());
-  };
+  // memoized sort options
+  const sortOptions = useMemo(
+    () =>
+      Object.entries(SortIcons).map(([key, image]) => ({
+        text: key,
+        image,
+        onClick: () => setSort(key as Sort),
+      })),
+    []
+  );
 
   /////////////////
   // INTERPRETATION
@@ -153,19 +159,27 @@ export const Kards = (props: Props) => {
       {kamis.length == 0 && (
         <EmptyText text={['Need Kamis?', 'Some have been seen in the Vending Machine.']} />
       )}
-      {kamis.map((kami) => (
-        <KamiCard
-          key={kami.entity}
-          kami={kami}
-          description={getDescription(kami)}
-          descriptionOnClick={getDescriptionOnClick(kami)}
-          subtext={`${calcOutput(kami)} MUSU`}
-          contentTooltip={getTooltip(kami)}
-          actions={DisplayedAction(account, kami, node)}
-          showBattery
-          showCooldown
-        />
-      ))}
+      {kamis.length > 6 && (
+        <StickyRow>
+          <Text size={1.2}>Whale Tools</Text>
+          <IconListButton img={SortIcons[sort]} text={sort} options={sortOptions} radius={0.6} />
+        </StickyRow>
+      )}
+      <KamiContainer>
+        {displayedKamis.map((kami) => (
+          <KamiCard
+            key={kami.entity}
+            kami={kami}
+            description={getDescription(kami)}
+            descriptionOnClick={getDescriptionOnClick(kami)}
+            subtext={`${calcOutput(kami)} MUSU`}
+            contentTooltip={getTooltip(kami)}
+            actions={DisplayedAction(account, kami, node)}
+            showBattery
+            showCooldown
+          />
+        ))}
+      </KamiContainer>
     </Container>
   );
 };
@@ -173,5 +187,35 @@ export const Kards = (props: Props) => {
 const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
+`;
+
+const KamiContainer = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
   gap: 0.45vw;
+  padding: 0.6vw;
+  padding-top: 0vw;
+`;
+
+const StickyRow = styled.div`
+  position: sticky;
+  z-index: 1;
+  top: 0;
+
+  background-color: #eee;
+  opacity: 0.9;
+  width: 100%;
+
+  padding: 0.6vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+`;
+
+const Text = styled.div<{ size: number }>`
+  font-size: ${(props) => props.size}vw;
+  line-height: ${(props) => props.size * 1.5}vw;
 `;

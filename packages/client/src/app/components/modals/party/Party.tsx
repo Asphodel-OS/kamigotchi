@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
@@ -6,12 +7,14 @@ import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UseItemButton } from 'app/components/library/actions';
 import { HarvestButton } from 'app/components/library/actions/HarvestButton';
 import { registerUIComponent } from 'app/root';
-import { useAccount } from 'app/stores';
+import { useAccount, useVisibility } from 'app/stores';
 import { KamiIcon } from 'assets/images/icons/menu';
-import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Node } from 'network/shapes/Node';
+import { Node, NullNode } from 'network/shapes/Node';
 import { Kards } from './Kards';
+
+const REFRESH_INTERVAL = 2000;
 
 export function registerPartyModal() {
   registerUIComponent(
@@ -71,6 +74,40 @@ export function registerPartyModal() {
     // Render
     ({ display, data, utils }) => {
       const { accountEntity } = data;
+      const { getAccount, getKamis, getNode } = utils;
+      const { modals } = useVisibility();
+
+      const [account, setAccount] = useState<Account>(NullAccount);
+      const [kamis, setKamis] = useState<Kami[]>([]);
+      const [node, setNode] = useState<Node>(NullNode); // node of the current room
+      const [tick, setTick] = useState(Date.now());
+
+      // mounting
+      useEffect(() => {
+        // populate initial data
+        const account = getAccount();
+        setAccount(account);
+        setKamis(getKamis());
+
+        // set ticking
+        const refreshClock = () => setTick(Date.now());
+        const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+        return () => clearInterval(timerId);
+      }, []);
+
+      // update account and kamis every tick or if the connnected account changes
+      useEffect(() => {
+        if (!modals.party) return;
+        const account = getAccount();
+        setAccount(account);
+        setKamis(getKamis());
+      }, [modals.party, accountEntity, tick]);
+
+      // update node if the account or room changes
+      useEffect(() => {
+        const room = account.roomIndex;
+        setNode(getNode(room));
+      }, [accountEntity, account.roomIndex]);
 
       return (
         <ModalWrapper
@@ -78,11 +115,12 @@ export function registerPartyModal() {
           header={<ModalHeader title='Party' icon={KamiIcon} />}
           canExit
           truncate
+          noPadding
         >
           {!accountEntity ? (
             <EmptyText text={['Failed to Connect Account']} size={1} />
           ) : (
-            <Kards data={data} display={display} utils={utils} />
+            <Kards data={{ account, kamis, node }} display={display} utils={utils} />
           )}
         </ModalWrapper>
       );
