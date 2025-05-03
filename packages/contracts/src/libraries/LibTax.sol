@@ -33,7 +33,7 @@ library LibTax {
     uint256 recipientID,
     uint256 value
   ) internal returns (uint256 id) {
-    if (value > 1000) revert("LibTax: cannot be more than 100%");
+    if (value > 10000) revert("LibTax: cannot be more than 100%");
     id = genID(payerID, recipientID);
 
     LibEntityType.set(comps, id, "TAX");
