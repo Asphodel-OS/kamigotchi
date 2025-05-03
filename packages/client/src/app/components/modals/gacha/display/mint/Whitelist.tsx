@@ -103,7 +103,7 @@ export const Whitelist = (props: Props) => {
       </Overlay>
       <Section>
         <Text size={1.8}>Whitelist Mint</Text>
-        <Text size={0.9}>limit 1 per customer ^^</Text>
+        <Text size={0.9}>limit {config.whitelist.max} per customer ^^</Text>
       </Section>
       <Image src={KamiImages.lethe} selected={mode === 'DEFAULT'} />
       <Section>

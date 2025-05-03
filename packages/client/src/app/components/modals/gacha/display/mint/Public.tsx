@@ -85,7 +85,7 @@ export const Public = (props: Props) => {
       </Overlay>
       <Section>
         <Text size={1.8}>Public Mint</Text>
-        <Text size={0.9}>limit 5 per customer (⌐■_■) </Text>
+        <Text size={0.9}>limit {config.public.max} per customer (⌐■_■) </Text>
       </Section>
       <Image src={KamiImages.happy} selected={mode === 'ALT'} />
       <Tooltip text={[`You're probably hoping these`, `don't mint out :3`]}>

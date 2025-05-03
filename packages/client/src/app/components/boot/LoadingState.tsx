@@ -57,19 +57,19 @@ export function registerLoadingState() {
           setTimeout(() => {
             console.log('Registering Validators');
             registerValidators();
-          }, 500);
+          }, 250);
           setTimeout(() => {
             console.log('Registering Fixtures');
             registerFixtures();
-          }, 1000);
+          }, 500);
           setTimeout(() => {
             console.log('Registering Scene');
             registerScene();
-          }, 1500);
+          }, 1000);
           setTimeout(() => {
             console.log('Registering Modals');
             registerModals();
-          }, 2000);
+          }, 1500);
         }
       }, [state]);
 
