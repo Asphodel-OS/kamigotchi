@@ -34,7 +34,7 @@ export interface KamiOnyxReviveSystemInterface extends utils.Interface {
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,string)": FunctionFragment;
+    "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -71,7 +71,7 @@ export interface KamiOnyxReviveSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -223,7 +223,6 @@ export interface KamiOnyxReviveSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -268,7 +267,6 @@ export interface KamiOnyxReviveSystem extends BaseContract {
 
   executeTyped(
     id: PromiseOrValue<BigNumberish>,
-    name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -309,7 +307,6 @@ export interface KamiOnyxReviveSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -379,7 +376,6 @@ export interface KamiOnyxReviveSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -425,7 +421,6 @@ export interface KamiOnyxReviveSystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

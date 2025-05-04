@@ -41,7 +41,7 @@ contract KamiOnyxReviveSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 id, string memory name) public returns (bytes memory) {
-    return execute(abi.encode(id, name));
+  function executeTyped(uint256 id) public returns (bytes memory) {
+    return execute(abi.encode(id));
   }
 }

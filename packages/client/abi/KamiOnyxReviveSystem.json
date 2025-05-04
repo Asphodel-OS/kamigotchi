@@ -70,11 +70,6 @@
           "name": "id",
           "type": "uint256",
           "internalType": "uint256"
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "internalType": "string"
         }
       ],
       "outputs": [
@@ -222,7 +217,7 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,string)": "68c47df2",
+    "executeTyped(uint256)": "3e991df3",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
