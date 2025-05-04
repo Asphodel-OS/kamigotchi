@@ -13,10 +13,18 @@ import { Sort } from './types';
 export const WHALE_LIMIT = 6;
 
 interface Props {
+  actions: {
+    onyxApprove: (price: number) => void;
+    onyxRevive: (kami: Kami) => void;
+  };
   data: {
     account: Account;
     kamis: Kami[];
     node: Node;
+    onyx: {
+      allowance: number;
+      balance: number;
+    };
   };
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
@@ -28,8 +36,9 @@ interface Props {
 }
 
 export const KamiList = (props: Props) => {
-  const { data, display, state } = props;
-  const { account, kamis, node } = data;
+  const { actions, data, display, state } = props;
+  const { kamis } = data;
+  const { HarvestButton, UseItemButton } = display;
   const { tick } = state;
 
   const [sort, setSort] = useState<Sort>('index');
@@ -55,13 +64,14 @@ export const KamiList = (props: Props) => {
         />
       )}
       <Kards
-        data={{ account, kamis, node }}
+        actions={actions}
+        data={data}
         display={display}
         state={{ displayedKamis }}
         isVisible={!collapsed}
       />
       <KamiBars
-        data={{ account, kamis, node }}
+        data={data}
         display={display}
         state={{ displayedKamis, tick }}
         isVisible={collapsed}

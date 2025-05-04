@@ -11,6 +11,7 @@ import {
   isUnrevealed,
 } from 'app/cache/kami';
 import { KamiCard } from 'app/components/library';
+import { OnyxReviveButton } from 'app/components/library/buttons/actions/OnyxReviveButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
@@ -20,10 +21,18 @@ import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 
 interface Props {
+  actions: {
+    onyxApprove: (price: number) => void;
+    onyxRevive: (kami: Kami) => void;
+  };
   data: {
     account: Account;
     kamis: Kami[];
     node: Node;
+    onyx: {
+      allowance: number;
+      balance: number;
+    };
   };
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
@@ -36,8 +45,8 @@ interface Props {
 }
 
 export const Kards = (props: Props) => {
-  const { data, display, state, isVisible } = props;
-  const { account, node } = data;
+  const { actions, data, display, state, isVisible } = props;
+  const { account, node, onyx } = data;
   const { displayedKamis } = state;
   const { HarvestButton, UseItemButton } = display;
   const { modals, setModals } = useVisibility();
@@ -123,10 +132,13 @@ export const Kards = (props: Props) => {
   // Choose and return the action button to display
   const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
     let buttons = [];
-    let useIcon = FeedIcon;
-    if (isDead(kami)) useIcon = ReviveIcon;
-    else buttons.push(HarvestButton(account, kami, node));
+    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
+
+    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
     buttons.push(UseItemButton(kami, account, useIcon));
+    if (isDead(kami)) {
+      buttons.push(<OnyxReviveButton kami={kami} onyx={onyx} actions={actions} />);
+    }
     return buttons;
   };
 
