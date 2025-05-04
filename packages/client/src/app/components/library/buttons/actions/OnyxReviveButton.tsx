@@ -31,7 +31,6 @@ export const OnyxReviveButton = (props: Props) => {
   // INTERPRETATION
 
   const getTooltip = () => {
-    console.log(allowance);
     let tooltip: string[] = [`the Fortunate may resurrect`, 'their kami in other ways..', `\n`];
 
     if (balance < PRICE) {
