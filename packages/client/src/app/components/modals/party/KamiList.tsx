@@ -1,9 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { isDead } from 'app/cache/kami';
 import { EmptyText } from 'app/components/library';
-import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
@@ -11,6 +9,8 @@ import { KamiBars } from './KamiBars';
 import { Kards } from './Kards';
 import { Toolbar } from './Toolbar';
 import { Sort } from './types';
+
+export const WHALE_LIMIT = 6;
 
 interface Props {
   data: {
@@ -30,32 +30,25 @@ interface Props {
 export const KamiList = (props: Props) => {
   const { data, display, state } = props;
   const { account, kamis, node } = data;
-  const { HarvestButton, UseItemButton } = display;
   const { tick } = state;
 
   const [sort, setSort] = useState<Sort>('index');
   const [collapsed, setCollapsed] = useState(false);
   const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
 
+  useEffect(() => {
+    if (kamis.length <= WHALE_LIMIT) setDisplayedKamis(kamis);
+  }, [kamis]);
+
   /////////////////
   // DISPLAY
-
-  // Choose and return the action button to display
-  const DisplayedAction = (account: Account, kami: Kami, node: Node) => {
-    let buttons = [];
-    let useIcon = FeedIcon;
-    if (isDead(kami)) useIcon = ReviveIcon;
-    else buttons.push(HarvestButton(account, kami, node));
-    buttons.push(UseItemButton(kami, account, useIcon));
-    return buttons;
-  };
 
   return (
     <Container>
       {kamis.length == 0 && (
         <EmptyText text={['Need Kamis?', 'Some have been seen in the Vending Machine.']} />
       )}
-      {kamis.length > 6 && (
+      {kamis.length > WHALE_LIMIT && (
         <Toolbar
           data={data}
           state={{ sort, setSort, collapsed, setCollapsed, setDisplayedKamis }}

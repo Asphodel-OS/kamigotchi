@@ -10,6 +10,7 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 import { SortIcons } from './constants';
+import { WHALE_LIMIT } from './KamiList';
 import { Sort } from './types';
 
 interface Props {
@@ -47,6 +48,7 @@ export const Toolbar = (props: Props) => {
   // sort kamis when sort is changed
   // sorts in place so the seDisplayedKamis is just to triggere an update
   useEffect(() => {
+    if (kamis.length <= WHALE_LIMIT) return; // only shown for whales
     let sorted = kamis;
     if (sort === 'index') {
       sorted = kamis.sort((a, b) => a.index - b.index);

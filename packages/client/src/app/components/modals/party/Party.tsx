@@ -10,7 +10,7 @@ import { KamiIcon } from 'assets/images/icons/menu';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
-import { KamiList } from './List';
+import { KamiList } from './KamiList';
 
 const REFRESH_INTERVAL = 2000;
 
