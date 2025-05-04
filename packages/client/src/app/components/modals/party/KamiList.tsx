@@ -38,7 +38,6 @@ interface Props {
 export const KamiList = (props: Props) => {
   const { actions, data, display, state } = props;
   const { kamis } = data;
-  const { HarvestButton, UseItemButton } = display;
   const { tick } = state;
 
   const [sort, setSort] = useState<Sort>('index');
@@ -71,6 +70,7 @@ export const KamiList = (props: Props) => {
         isVisible={!collapsed}
       />
       <KamiBars
+        actions={actions}
         data={data}
         display={display}
         state={{ displayedKamis, tick }}
