@@ -541,6 +541,19 @@
       "skipEnv": ["testing"]
     },
     {
+      "name": "KamiOnyxReviveSystem",
+      "writeAccess": [
+        "EntityType",
+        "IDOwnsInventory",
+        "IndexItem",
+        "Health",
+        "State",
+        "TimeLast",
+        "TokenAllowance",
+        "Value"
+      ]
+    },
+    {
       "name": "KamiUseItemSystem",
       "writeAccess": ["*"]
     },

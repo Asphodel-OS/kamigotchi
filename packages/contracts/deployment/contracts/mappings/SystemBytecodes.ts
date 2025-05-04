@@ -51,6 +51,7 @@ import KamiGachaRerollSystem from "../../../out/KamiGachaRerollSystem.sol/KamiGa
 import KamiGachaRevealSystem from "../../../out/KamiGachaRevealSystem.sol/KamiGachaRevealSystem.json";
 import KamiLevelSystem from "../../../out/KamiLevelSystem.sol/KamiLevelSystem.json";
 import KamiNameSystem from "../../../out/KamiNameSystem.sol/KamiNameSystem.json";
+import KamiOnyxReviveSystem from "../../../out/KamiOnyxReviveSystem.sol/KamiOnyxReviveSystem.json";
 import KamiUseItemSystem from "../../../out/KamiUseItemSystem.sol/KamiUseItemSystem.json";
 import ListingBuySystem from "../../../out/ListingBuySystem.sol/ListingBuySystem.json";
 import ListingSellSystem from "../../../out/ListingSellSystem.sol/ListingSellSystem.json";
@@ -119,6 +120,7 @@ export const SystemBytecodes = {
   "system.kami.gacha.reveal": KamiGachaRevealSystem,
   "system.kami.level": KamiLevelSystem,
   "system.kami.name": KamiNameSystem,
+  "system.kami.onyx.revive": KamiOnyxReviveSystem,
   "system.kami.use.item": KamiUseItemSystem,
   "system.listing.buy": ListingBuySystem,
   "system.listing.sell": ListingSellSystem,

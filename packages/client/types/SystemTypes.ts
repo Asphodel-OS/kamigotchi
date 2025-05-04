@@ -51,6 +51,7 @@ import { KamiGachaRerollSystem } from "./ethers-contracts/KamiGachaRerollSystem"
 import { KamiGachaRevealSystem } from "./ethers-contracts/KamiGachaRevealSystem";
 import { KamiLevelSystem } from "./ethers-contracts/KamiLevelSystem";
 import { KamiNameSystem } from "./ethers-contracts/KamiNameSystem";
+import { KamiOnyxReviveSystem } from "./ethers-contracts/KamiOnyxReviveSystem";
 import { KamiUseItemSystem } from "./ethers-contracts/KamiUseItemSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
 import { ListingSellSystem } from "./ethers-contracts/ListingSellSystem";
@@ -119,6 +120,7 @@ export type SystemTypes = {
   "system.kami.gacha.reveal": KamiGachaRevealSystem;
   "system.kami.level": KamiLevelSystem;
   "system.kami.name": KamiNameSystem;
+  "system.kami.onyx.revive": KamiOnyxReviveSystem;
   "system.kami.use.item": KamiUseItemSystem;
   "system.listing.buy": ListingBuySystem;
   "system.listing.sell": ListingSellSystem;
