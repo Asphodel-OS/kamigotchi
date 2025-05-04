@@ -115,7 +115,7 @@ export function registerPartyModal() {
           truncate
           noPadding
         >
-          <KamiList data={{ account, kamis, node }} display={display} utils={utils} />
+          <KamiList data={{ account, kamis, node }} display={display} state={{ tick }} />
         </ModalWrapper>
       );
     }

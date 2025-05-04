@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { isDead, KamiRefreshOptions } from 'app/cache/kami';
+import { isDead } from 'app/cache/kami';
 import { EmptyText } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
+import { KamiBars } from './KamiBars';
 import { Kards } from './Kards';
 import { Toolbar } from './Toolbar';
 import { Sort } from './types';
@@ -22,19 +22,16 @@ interface Props {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
-  utils: {
-    getAccount: () => Account;
-    getKamis: (options?: KamiRefreshOptions) => Kami[];
-    getNode: (index: number) => Node;
+  state: {
+    tick: number;
   };
 }
 
 export const KamiList = (props: Props) => {
-  const { data, display, utils } = props;
+  const { data, display, state } = props;
   const { account, kamis, node } = data;
   const { HarvestButton, UseItemButton } = display;
-  const { modals, setModals } = useVisibility();
-  const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
+  const { tick } = state;
 
   const [sort, setSort] = useState<Sort>('index');
   const [collapsed, setCollapsed] = useState(false);
@@ -69,6 +66,12 @@ export const KamiList = (props: Props) => {
         display={display}
         state={{ displayedKamis }}
         isVisible={!collapsed}
+      />
+      <KamiBars
+        data={{ account, kamis, node }}
+        display={display}
+        state={{ displayedKamis, tick }}
+        isVisible={collapsed}
       />
     </Container>
   );

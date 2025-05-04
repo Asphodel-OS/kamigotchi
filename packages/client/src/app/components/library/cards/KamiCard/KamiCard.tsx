@@ -170,7 +170,7 @@ const ContentActions = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
-  gap: 0.4vw;
+  gap: 0.3vw;
 `;
 
 const TextBig = styled.p`

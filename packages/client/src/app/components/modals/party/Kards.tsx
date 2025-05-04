@@ -121,7 +121,7 @@ export const Kards = (props: Props) => {
   // DISPLAY
 
   // Choose and return the action button to display
-  const DisplayedAction = (account: Account, kami: Kami, node: Node) => {
+  const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
     let buttons = [];
     let useIcon = FeedIcon;
     if (isDead(kami)) useIcon = ReviveIcon;
@@ -140,7 +140,7 @@ export const Kards = (props: Props) => {
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
           // contentTooltip={getTooltip(kami)}
-          actions={DisplayedAction(account, kami, node)}
+          actions={DisplayedActions(account, kami, node)}
           showBattery
           showCooldown
         />
