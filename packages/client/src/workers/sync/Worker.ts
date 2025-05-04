@@ -286,7 +286,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         if (await isRateLimited(snapshotUrl, e)) {
           errorMessage = "You're refreshing too much! Try again in a minute or two";
         } else {
-          errorMessage = `Unknown error: ${e.code}. Can you drop this in the discord?`;
+          errorMessage = `Unknown error: ${e.code}. Can you drop this in the discord if it persists?`;
         }
         console.error('failed to retrieve state', e);
         this.setLoadingState({
