@@ -1,6 +1,7 @@
 import { BigNumberish } from 'ethers';
 import { harvestsAPI } from './harvests';
 import { itemsAPI } from './items';
+import { onyxAPI } from './onyx';
 import { skillsAPI } from './skills';
 
 export const kamisAPI = (systems: any) => {
@@ -17,6 +18,7 @@ export const kamisAPI = (systems: any) => {
   return {
     level,
     name,
+    onyx: onyxAPI(systems),
     harvest: harvestsAPI(systems),
     item: itemsAPI(systems),
     skill: skillsAPI(systems),
