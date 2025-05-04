@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import { cleanInventories, Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton, Tooltip } from 'app/components/library';
-import { ButtonListOption } from 'app/components/library/base/buttons';
-import { Option } from 'app/components/library/base/buttons/IconListButton';
+import { ButtonListOption } from 'app/components/library/buttons';
+import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Item } from 'network/shapes/Item';

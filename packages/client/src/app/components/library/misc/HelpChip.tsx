@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { HelpIcon } from 'assets/images/icons/menu';
-import { Tooltip } from './base';
+import { Tooltip } from '..';
 
 interface Props {
   tooltip: string[];

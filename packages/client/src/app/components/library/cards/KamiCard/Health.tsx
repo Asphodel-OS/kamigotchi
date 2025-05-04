@@ -1,4 +1,4 @@
-import { Battery, Tooltip } from '../base';
+import { Battery, Tooltip } from '../..';
 
 interface Props {
   current: number;

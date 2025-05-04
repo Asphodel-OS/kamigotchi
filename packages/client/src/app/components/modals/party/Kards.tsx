@@ -189,7 +189,7 @@ export const Kards = (props: Props) => {
             description={getDescription(kami)}
             descriptionOnClick={getDescriptionOnClick(kami)}
             subtext={getSubtext(kami)}
-            contentTooltip={getTooltip(kami)}
+            // contentTooltip={getTooltip(kami)}
             actions={DisplayedAction(account, kami, node)}
             showBattery
             showCooldown
@@ -231,7 +231,11 @@ const StickyRow = styled.div`
   user-select: none;
 `;
 
-const Text = styled.div<{ size: number }>`
+interface TextProps {
+  size: number;
+}
+
+const Text = styled.div<TextProps>`
   font-size: ${(props) => props.size}vw;
   line-height: ${(props) => props.size * 1.5}vw;
 `;

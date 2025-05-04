@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { ActionButton } from './buttons';
-import { Tooltip } from './poppers/Tooltip';
+import { ActionButton } from '../buttons';
+import { Tooltip } from '../poppers/Tooltip';
 
 export interface Props {
   color?: string;

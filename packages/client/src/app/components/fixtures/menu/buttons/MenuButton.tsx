@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library/base/poppers/Tooltip';
+import { Tooltip } from 'app/components/library/poppers/Tooltip';
 import { Modals, useVisibility } from 'app/stores';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';

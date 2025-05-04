@@ -2,11 +2,12 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 
-import { GasGauge, IconButton, Tooltip } from 'app/components/library';
+import { IconButton, Tooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
 import { triggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { parseTokenBalance } from 'utils/numbers';
+import { GasGauge } from './GasGauge';
 
 // NOTE: ACTUAL GAS EXPONENT HANDLED IN constants/gas.ts
 // the precision to represent gas numbers at readable scale (e.g. mETH)

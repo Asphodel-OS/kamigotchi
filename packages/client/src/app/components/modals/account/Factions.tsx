@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ProgressBar, Tooltip } from 'app/components/library/base';
+import { ProgressBar, Tooltip } from 'app/components/library';
 import { FactionIcons } from 'assets/images/icons/factions';
 import { Account } from 'network/shapes/Account';
 

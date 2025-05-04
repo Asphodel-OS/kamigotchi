@@ -1,7 +1,7 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton, InputSingleNumberForm } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Goal } from 'network/shapes/Goals';

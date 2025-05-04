@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { useNetwork } from 'app/stores';
 import { loadingScreens } from 'assets/images/loading';
-import { ProgressBar } from '../library/base';
+import { ProgressBar } from '../library';
 
 interface Props {
   status: string;

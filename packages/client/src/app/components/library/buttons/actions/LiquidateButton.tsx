@@ -10,7 +10,7 @@ import {
 import { IconListButton } from 'app/components/library';
 import { LiquidateIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
-import { Tooltip } from '../base';
+import { Tooltip } from '../..';
 
 // button for liquidating a harvest
 // TODO: clean this up

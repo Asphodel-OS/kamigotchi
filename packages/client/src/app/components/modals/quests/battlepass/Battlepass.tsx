@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ProgressBar } from 'app/components/library/base/measures/ProgressBar';
+import { ProgressBar } from 'app/components/library/measures/ProgressBar';
 import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { parseConditionalUnits } from 'network/shapes/Conditional/interpretation';

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from './poppers/Tooltip';
+import { Tooltip } from '../poppers/Tooltip';
 
 const SCALE_DEFAULT = 1.2;
 
@@ -13,6 +13,7 @@ interface Props {
   marginTop?: number;
 }
 
+// horizontal icon and text pairing
 export const Pairing = (props: Props) => {
   const { icon, text, tooltip, scale, reverse, marginTop } = props;
   const size = scale ?? SCALE_DEFAULT;

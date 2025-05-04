@@ -1,7 +1,7 @@
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
-import { Countdown, Tooltip } from '../base';
+import { Countdown, Tooltip } from '../..';
 
 interface Props {
   kami: Kami;

@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 
 import { calcHealth, calcOutput } from 'app/cache/kami';
-import { KamiCard } from 'app/components/library';
-import { CollectButton, StopButton } from 'app/components/library/actions';
+import { CollectButton, KamiCard, StopButton } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 

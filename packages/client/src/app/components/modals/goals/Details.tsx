@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
-import { HelpChip, ItemIconHorizontal } from 'app/components/library';
+import { HelpChip } from 'app/components/library';
 import { Goal, Tier } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
+import { ItemIconHorizontal } from './ItemIconHorizontal';
 
 interface Props {
   goal: Goal;

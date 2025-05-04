@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
 import { Tooltip } from 'app/components/library';
-import { getColor } from 'app/components/library/base/measures/Battery';
+import { getColor } from 'app/components/library/measures/Battery';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ClockIcons } from 'assets/images/icons/clock';

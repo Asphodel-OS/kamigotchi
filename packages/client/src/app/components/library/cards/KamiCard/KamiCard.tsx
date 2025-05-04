@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
-import { Card, Tooltip } from 'app/components/library/base/';
+import { Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
+import { Card } from '../';
 import { Cooldown } from './Cooldown';
 import { Health } from './Health';
 
@@ -79,11 +80,11 @@ export const KamiCard = (props: Props) => {
         </TitleBar>
       </Tooltip>
       <Content>
-        <Tooltip text={contentTooltip ?? []}>
-          <ContentColumn key='column-1'>
+        <ContentColumn key='column-1'>
+          <Tooltip text={contentTooltip ?? []}>
             <Description />
-          </ContentColumn>
-        </Tooltip>
+          </Tooltip>
+        </ContentColumn>
         <ContentColumn key='column-2'>
           <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
           <ContentActions>{actions}</ContentActions>

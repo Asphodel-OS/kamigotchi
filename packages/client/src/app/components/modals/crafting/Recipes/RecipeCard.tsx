@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Card, Stepper, Tooltip } from 'app/components/library';
-import { CraftButton } from 'app/components/library/actions';
+import { Card, CraftButton, Stepper, Tooltip } from 'app/components/library';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Account } from 'network/shapes/Account';
 import { NullItem } from 'network/shapes/Item';

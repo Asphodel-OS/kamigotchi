@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
-import { playClick } from 'utils/sounds';
-
 import { Account } from 'network/shapes/Account';
 import { Score } from 'network/shapes/Score';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   data: Score[];

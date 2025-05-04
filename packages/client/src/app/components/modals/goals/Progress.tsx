@@ -1,13 +1,13 @@
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
-import { ProgressBar } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Contribution, Goal } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
 import { parseQuantity } from 'network/shapes/utils/parse';
 import { ActionBar } from './ActionBar';
+import { ProgressBar } from './ProgressBar';
 
 interface Props {
   actions: {

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
+import { Tooltip } from '../poppers/Tooltip';
 import { Overlay } from '../styles';
-import { Tooltip } from './poppers/Tooltip';
 
 interface Props {
   children: React.ReactNode;

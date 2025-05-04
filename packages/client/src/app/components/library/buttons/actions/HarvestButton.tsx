@@ -4,7 +4,7 @@ import { HarvestIcon, StopIcon } from 'assets/images/icons/actions';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
 import { Node, passesNodeReqs } from 'network/shapes/Node';
-import { Tooltip } from '../base';
+import { Tooltip } from '../..';
 
 // if resting
 // - always display

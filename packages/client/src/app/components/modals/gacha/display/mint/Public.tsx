@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config/gacha';
-import { Overlay, Pairing, Tooltip } from 'app/components/library';
-import { ProgressBar } from 'app/components/library/base';
+import { Overlay, Pairing, ProgressBar, Tooltip } from 'app/components/library';
 import { depressFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { KamiImages } from 'assets/images/kamis';

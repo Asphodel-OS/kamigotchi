@@ -1,29 +1,24 @@
 import { calcCooldown, isHarvesting, isStarving } from 'app/cache/kami';
-import { StopIcon } from 'assets/images/icons/actions';
+import { CollectIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { IconButton, Tooltip } from '../base';
+import { IconButton, Tooltip } from '../..';
 
-// button for stopping a harvest
-export const StopButton = (kami: Kami, account: Account, triggerAction: Function) => {
+// button for collecting a harvest
+export const CollectButton = (kami: Kami, account: Account, triggerAction: Function) => {
   let tooltip = getDisabledTooltip(kami, account);
 
   const disabled = !!tooltip;
-  if (!disabled) tooltip = `Stop Harvest`;
+  if (!disabled) tooltip = `Collect Harvest`;
 
   return (
-    <Tooltip key='stop-tooltip' text={[tooltip]}>
-      <IconButton
-        key='stop-button'
-        img={StopIcon}
-        onClick={() => triggerAction(kami)}
-        disabled={disabled}
-      />
+    <Tooltip key='collect-tooltip' text={[tooltip]}>
+      <IconButton onClick={() => triggerAction(kami)} img={CollectIcon} disabled={disabled} />
     </Tooltip>
   );
 };
 
-// generate a tooltip for any reason the kami's harvest cannot be stopped
+// generate a tooltip for any reason the kami's harvest cannot be collected from
 const getDisabledTooltip = (kami: Kami, account: Account): string => {
   const cooldown = calcCooldown(kami);
   const inRoom = kami.harvest?.node?.roomIndex == account.roomIndex;

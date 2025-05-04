@@ -3,9 +3,7 @@ import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getNodeByIndex } from 'app/cache/node';
-import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
-import { UseItemButton } from 'app/components/library/actions';
-import { HarvestButton } from 'app/components/library/actions/HarvestButton';
+import { HarvestButton, ModalHeader, ModalWrapper, UseItemButton } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useVisibility } from 'app/stores';
 import { KamiIcon } from 'assets/images/icons/menu';
@@ -117,11 +115,7 @@ export function registerPartyModal() {
           truncate
           noPadding
         >
-          {!accountEntity ? (
-            <EmptyText text={['Failed to Connect Account']} size={1} />
-          ) : (
-            <Kards data={{ account, kamis, node }} display={display} utils={utils} />
-          )}
+          <Kards data={{ account, kamis, node }} display={display} utils={utils} />
         </ModalWrapper>
       );
     }

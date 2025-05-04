@@ -19,20 +19,22 @@ interface Props {
 }
 
 export const ItemIconHorizontal = (props: Props) => {
+  const { item, size, hoverText, balance, glow, onClick, disabled, styleOverride } = props;
+
   // layer on a sound effect
   const handleClick = async () => {
-    if (props.onClick) {
+    if (onClick) {
       playClick();
-      await props.onClick();
+      await onClick();
     }
   };
 
   const setBoxStyles = () => {
     let styles: any = {};
-    if (props.styleOverride?.box) styles = props.styleOverride.box;
+    if (styleOverride?.box) styles = styleOverride.box;
 
-    if (props.glow) {
-      styles.boxShadow = `0 0 0.75vw 0.75vw ${props.glow}`;
+    if (glow) {
+      styles.boxShadow = `0 0 0.75vw 0.75vw ${glow}`;
     }
 
     return styles;
@@ -40,23 +42,23 @@ export const ItemIconHorizontal = (props: Props) => {
 
   const setIconStyles = () => {
     let styles: any = {};
-    if (props.styleOverride?.icon) styles = props.styleOverride.icon;
+    if (styleOverride?.icon) styles = styleOverride.icon;
 
     return styles;
   };
 
   // text = x{balance} {item.name}
-  const text = `${props.balance ? `x${props.balance}` : ''} ${props.item.name}`;
+  const text = `${balance ? `x${balance}` : ''} ${item.name}`;
 
   const base = () => {
     return (
       <Box style={setBoxStyles()}>
-        {props.onClick ? (
+        {onClick ? (
           <ButtonWrapper onClick={handleClick}>
-            <Icon style={setIconStyles()} src={props.item.image} />
+            <Icon style={setIconStyles()} src={item.image} />
           </ButtonWrapper>
         ) : (
-          <Icon src={props.item.image} />
+          <Icon src={item.image} />
         )}
         <Text>{text}</Text>
       </Box>
@@ -65,19 +67,15 @@ export const ItemIconHorizontal = (props: Props) => {
 
   let result = base();
 
-  if (typeof props.hoverText === 'boolean' && props.hoverText)
+  if (typeof hoverText === 'boolean' && hoverText)
     result = (
-      <Tooltip
-        text={
-          props.item.description ? [props.item.name, '', props.item.description] : [props.item.name]
-        }
-      >
+      <Tooltip text={item.description ? [item.name, '', item.description] : [item.name]}>
         {result}
       </Tooltip>
     );
-  else if (typeof props.hoverText === 'object')
+  else if (typeof hoverText === 'object')
     // object = string array
-    result = <Tooltip text={props.hoverText}>{result}</Tooltip>;
+    result = <Tooltip text={hoverText}>{result}</Tooltip>;
 
   return result;
 };
