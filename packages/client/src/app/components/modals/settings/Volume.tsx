@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { triggerIcons } from 'assets/images/icons/triggers';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { playClick } from 'utils/sounds';
 
 // TODO: formally define the settings struct at some central roomIndex
@@ -28,7 +28,7 @@ export const Volume = () => {
   };
 
   const MusicRow = () => {
-    const icon = bgmVolume == 0 ? triggerIcons.soundOff : triggerIcons.soundOn;
+    const icon = bgmVolume == 0 ? TriggerIcons.soundOff : TriggerIcons.soundOn;
     return (
       <Row>
         <Text style={{ flexGrow: 2 }}>Music</Text>
@@ -46,7 +46,7 @@ export const Volume = () => {
   };
 
   const SoundEffectsRow = () => {
-    const icon = fxVolume == 0 ? triggerIcons.soundOff : triggerIcons.soundOn;
+    const icon = fxVolume == 0 ? TriggerIcons.soundOff : TriggerIcons.soundOn;
     return (
       <Row>
         <Text style={{ flexGrow: 2 }}>Sounds</Text>

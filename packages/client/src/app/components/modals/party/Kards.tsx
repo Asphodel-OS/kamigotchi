@@ -1,21 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getHarvestItem } from 'app/cache/harvest';
 import {
-  calcCooldown,
   calcHealth,
-  calcHealthPercent,
   calcOutput,
   isDead,
   isHarvesting,
   isOffWorld,
   isResting,
   isUnrevealed,
-  KamiRefreshOptions,
 } from 'app/cache/kami';
-import { compareTraits } from 'app/cache/trait';
-import { EmptyText, IconListButton, KamiCard } from 'app/components/library';
+import { KamiCard } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
@@ -23,8 +18,6 @@ import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
-import { SortIcons } from './constants';
-import { Sort } from './types';
 
 interface Props {
   data: {
@@ -36,54 +29,19 @@ interface Props {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
-  utils: {
-    getAccount: () => Account;
-    getKamis: (options?: KamiRefreshOptions) => Kami[];
-    getNode: (index: number) => Node;
+  state: {
+    displayedKamis: Kami[];
   };
+  isVisible: boolean;
 }
 
 export const Kards = (props: Props) => {
-  const { data, display } = props;
-  const { account, kamis, node } = data;
+  const { data, display, state, isVisible } = props;
+  const { account, node } = data;
+  const { displayedKamis } = state;
   const { HarvestButton, UseItemButton } = display;
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
-  const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
-
-  const [sort, setSort] = useState<Sort>('index');
-
-  // sort kamis when sort is changed
-  // sorts in place so the seDisplayedKamis is just to triggere an update
-  useEffect(() => {
-    let sorted = kamis;
-    if (sort === 'index') {
-      sorted = kamis.sort((a, b) => a.index - b.index);
-    } else if (sort === 'name') {
-      sorted = kamis.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sort === 'health') {
-      sorted = kamis.sort((a, b) => calcHealthPercent(a) - calcHealthPercent(b));
-    } else if (sort === 'cooldown') {
-      sorted = kamis.sort((a, b) => calcCooldown(a) - calcCooldown(b));
-    } else if (sort === 'body') {
-      sorted = kamis.sort((a, b) => compareTraits(a.traits?.body!, b.traits?.body!));
-    } else if (sort === 'hands') {
-      sorted = kamis.sort((a, b) => compareTraits(a.traits?.hand!, b.traits?.hand!));
-    }
-
-    setDisplayedKamis(kamis);
-  }, [modals.party, sort]);
-
-  // memoized sort options
-  const sortOptions = useMemo(
-    () =>
-      Object.entries(SortIcons).map(([key, image]) => ({
-        text: key,
-        image,
-        onClick: () => setSort(key as Sort),
-      })),
-    []
-  );
 
   /////////////////
   // INTERPRETATION
@@ -127,6 +85,8 @@ export const Kards = (props: Props) => {
     return `${calcOutput(kami)} ${item.name}`;
   };
 
+  // get the description tooltip on the kami card
+  // NOTE: unused atm, rerendering frequency causes issues with orphaned tooltips
   const getTooltip = (kami: Kami): string[] => {
     const tooltip: string[] = [];
     if (isHarvesting(kami) && kami.harvest) {
@@ -171,71 +131,27 @@ export const Kards = (props: Props) => {
   };
 
   return (
-    <Container>
-      {kamis.length == 0 && (
-        <EmptyText text={['Need Kamis?', 'Some have been seen in the Vending Machine.']} />
-      )}
-      {kamis.length > 6 && (
-        <StickyRow>
-          <Text size={1.2}>Whale Tools</Text>
-          <IconListButton img={SortIcons[sort]} text={sort} options={sortOptions} radius={0.6} />
-        </StickyRow>
-      )}
-      <KamiContainer>
-        {displayedKamis.map((kami) => (
-          <KamiCard
-            key={kami.entity}
-            kami={kami}
-            description={getDescription(kami)}
-            descriptionOnClick={getDescriptionOnClick(kami)}
-            subtext={getSubtext(kami)}
-            // contentTooltip={getTooltip(kami)}
-            actions={DisplayedAction(account, kami, node)}
-            showBattery
-            showCooldown
-          />
-        ))}
-      </KamiContainer>
+    <Container isVisible={isVisible}>
+      {displayedKamis.map((kami) => (
+        <KamiCard
+          key={kami.entity}
+          kami={kami}
+          description={getDescription(kami)}
+          descriptionOnClick={getDescriptionOnClick(kami)}
+          subtext={getSubtext(kami)}
+          // contentTooltip={getTooltip(kami)}
+          actions={DisplayedAction(account, kami, node)}
+          showBattery
+          showCooldown
+        />
+      ))}
     </Container>
   );
 };
 
-const Container = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-`;
-
-const KamiContainer = styled.div`
-  display: flex;
+const Container = styled.div<{ isVisible: boolean }>`
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
   gap: 0.45vw;
   padding: 0.6vw;
-  padding-top: 0vw;
-`;
-
-const StickyRow = styled.div`
-  position: sticky;
-  z-index: 1;
-  top: 0;
-
-  background-color: #eee;
-  opacity: 0.9;
-  width: 100%;
-
-  padding: 0.6vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-  user-select: none;
-`;
-
-interface TextProps {
-  size: number;
-}
-
-const Text = styled.div<TextProps>`
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
 `;

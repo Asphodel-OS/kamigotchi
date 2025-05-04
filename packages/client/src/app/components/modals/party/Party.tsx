@@ -10,7 +10,7 @@ import { KamiIcon } from 'assets/images/icons/menu';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
-import { Kards } from './Kards';
+import { KamiList } from './List';
 
 const REFRESH_INTERVAL = 2000;
 
@@ -115,7 +115,7 @@ export function registerPartyModal() {
           truncate
           noPadding
         >
-          <Kards data={{ account, kamis, node }} display={display} utils={utils} />
+          <KamiList data={{ account, kamis, node }} display={display} utils={utils} />
         </ModalWrapper>
       );
     }

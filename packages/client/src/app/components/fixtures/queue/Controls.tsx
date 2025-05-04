@@ -4,7 +4,7 @@ import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 
 import { IconButton, Tooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
-import { triggerIcons } from 'assets/images/icons/triggers';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { parseTokenBalance } from 'utils/numbers';
 import { GasGauge } from './GasGauge';
@@ -21,7 +21,7 @@ interface Props {
 export const Controls = (props: Props) => {
   const { mode, setMode } = props;
   const { account: kamiAccount } = useAccount();
-  const iconMapping = [triggerIcons.eyeClosed, triggerIcons.eyeHalf, triggerIcons.eyeOpen];
+  const iconMapping = [TriggerIcons.eyeClosed, TriggerIcons.eyeHalf, TriggerIcons.eyeOpen];
 
   const [operatorGas, setOperatorGas] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<bigint>(0n);

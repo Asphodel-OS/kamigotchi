@@ -5,7 +5,7 @@ import home from './home.png';
 import soundOff from './sound-off.png';
 import soundOn from './sound-on.png';
 
-export const triggerIcons = {
+export const TriggerIcons = {
   eyeClosed: eyeClosed,
   eyeHalf: eyeHalf,
   eyeOpen: eyeOpen,
