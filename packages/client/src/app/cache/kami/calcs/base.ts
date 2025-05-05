@@ -1,5 +1,6 @@
-import { calcHarvestIdleTime, calcHarvestNetBounty, updateHarvestRates } from 'app/cache/harvest';
+import { calcHarvestIdleTime } from 'app/cache/harvest';
 import { Kami } from 'network/shapes/Kami/types';
+import { calcHarvestingHealthRate } from './harvest';
 
 ////////////////
 // STATE CHECKS
@@ -113,14 +114,6 @@ export const calcHealthRate = (kami: Kami): number => {
   else return 0;
 };
 
-// calculate the rate of health drain while harvesting
-export const calcHarvestingHealthRate = (kami: Kami): number => {
-  if (!kami.harvest) return 0;
-  const avgHarvestRate = updateHarvestRate(kami);
-  const rate = calcStrainFromBalance(kami, avgHarvestRate, false);
-  return -1 * rate;
-};
-
 // calculate the rate of health regen while resting
 const calcRestingHealthRate = (kami: Kami): number => {
   const metabolismConfig = kami.config?.rest.metabolism;
@@ -139,36 +132,4 @@ export const updateHealthRate = (kami: Kami): number => {
   const rate = calcHealthRate(kami);
   kami.stats.health.rate = rate;
   return rate;
-};
-
-////////////////
-// HARVEST
-
-// calculate the expected output from a pet harvest based on start time
-export const calcOutput = (kami: Kami): number => {
-  if (!isHarvesting(kami) || !kami.harvest) return 0;
-  return kami.harvest.balance + calcHarvestNetBounty(kami.harvest);
-};
-
-// update the harvest rate on the kami's harvest. do nothing if no harvest
-export const updateHarvestRate = (kami: Kami): number => {
-  if (!kami.harvest || kami.harvest.state !== 'ACTIVE') return 0;
-  return updateHarvestRates(kami.harvest, kami);
-};
-
-////////////////////
-// UTILS
-
-// calculate a kami's strain from a musu balance, also works with rates
-export const calcStrainFromBalance = (kami: Kami, balance: number, roundUp = true): number => {
-  const strainConfig = kami.config?.harvest.strain;
-  if (!strainConfig) return 0;
-
-  const ratio = strainConfig.ratio.value;
-  const harmony = kami.stats?.harmony.total ?? 0;
-  const baseHarmony = strainConfig.nudge.value;
-  const boostBonus = kami.bonuses?.harvest.strain.boost ?? 0;
-  const boost = strainConfig.boost.value + boostBonus;
-  const strain = (balance * ratio * boost) / (harmony + baseHarmony);
-  return roundUp ? Math.ceil(strain) : strain;
 };

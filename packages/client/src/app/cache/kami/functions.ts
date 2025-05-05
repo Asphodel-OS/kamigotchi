@@ -4,7 +4,7 @@ import { Components } from 'network/';
 import { Kami } from 'network/shapes/Kami';
 import { getSourceID } from 'network/shapes/utils/component';
 import { getNode } from '../node';
-import { updateHarvestRate, updateHealthRate } from './calcs/base';
+import { updateHarvestRate, updateHealthRate } from './calcs';
 import { getKamiHarvest, getKamiTraits } from './getters';
 
 export const updateTraits = (world: World, components: Components, kami: Kami) => {

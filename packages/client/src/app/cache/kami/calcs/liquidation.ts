@@ -1,7 +1,8 @@
 import cdf from '@stdlib/stats-base-dists-normal-cdf';
 
 import { Kami } from 'network/shapes/Kami';
-import { calcHealth, calcOutput, calcStrainFromBalance, isStarving, onCooldown } from './base';
+import { calcHealth, isStarving, onCooldown } from './base';
+import { calcOutput, calcStrainFromBalance } from './harvest';
 
 // calculate the affinity multiplier for liquidation threshold
 const calcLiquidationEfficacy = (attacker: Kami, defender: Kami): number => {

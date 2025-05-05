@@ -1,5 +1,6 @@
 export { get as getHarvest } from './base';
 export {
+  calcAverageRate as calcHarvestAverageRate,
   calcBounty as calcHarvestBounty,
   calcFertility as calcHarvestFertiity,
   calcIdleTime as calcHarvestIdleTime,

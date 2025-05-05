@@ -67,6 +67,13 @@ export const updateRates = (harvest: Harvest, kami: Kami) => {
   return harvest.rates.total.average;
 };
 
+// calculate the average rate over the full duration of a harvest
+export const calcAverageRate = (harvest: Harvest): number => {
+  const bounty = calcNetBounty(harvest);
+  const time = calcLifeTime(harvest);
+  return bounty / time;
+};
+
 // // calculate the expected output rate from a harvest
 // export const calcRate = (harvest: Harvest, kami: Kami): number => {
 //   if (harvest.state !== 'ACTIVE') return 0;

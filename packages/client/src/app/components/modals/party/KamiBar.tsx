@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getHarvestItem } from 'app/cache/harvest';
+import { calcHarvestAverageRate, getHarvestItem } from 'app/cache/harvest';
 import { calcHealth, calcOutput, isDead, isHarvesting, isResting } from 'app/cache/kami';
 import { Text, Tooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
@@ -107,7 +107,7 @@ export const KamiBar = (props: Props) => {
     if (isHarvesting(kami) && kami.harvest) {
       const harvest = kami.harvest;
       const spotRate = getRateDisplay(harvest.rates.total.spot, 2);
-      const avgRate = getRateDisplay(harvest.rates.total.average, 2);
+      const avgRate = getRateDisplay(calcHarvestAverageRate(harvest), 2);
       const item = getHarvestItem(harvest);
       const node = harvest.node ?? NullNode;
 

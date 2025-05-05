@@ -2,11 +2,8 @@ export {
   calcCooldown,
   calcCooldownRequirement,
   calcHarvestTime,
-  calcHarvestingHealthRate,
   calcHealth,
   calcHealthPercent,
-  calcOutput,
-  calcStrainFromBalance,
   canHarvest,
   isDead,
   isFull,
@@ -16,9 +13,16 @@ export {
   isStarving,
   isUnrevealed,
   onCooldown,
-  updateHarvestRate,
   updateHealthRate,
 } from './base';
+
+export {
+  calcHarvestingHealthRate,
+  calcOutput,
+  calcStrainFromBalance,
+  updateHarvestRate,
+} from './harvest';
+
 export {
   calcKarma as calcLiqKarma,
   calcStrain as calcLiqStrain,
