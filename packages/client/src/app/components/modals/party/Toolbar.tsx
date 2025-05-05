@@ -1,7 +1,7 @@
 import { Dispatch, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { calcCooldown, calcHealthPercent } from 'app/cache/kami';
+import { calcHealthPercent } from 'app/cache/kami';
 import { compareTraits } from 'app/cache/trait';
 import { IconButton, IconListButton, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
@@ -54,14 +54,24 @@ export const Toolbar = (props: Props) => {
       sorted = kamis.sort((a, b) => a.index - b.index);
     } else if (sort === 'name') {
       sorted = kamis.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sort === 'health') {
-      sorted = kamis.sort((a, b) => calcHealthPercent(a) - calcHealthPercent(b));
-    } else if (sort === 'cooldown') {
-      sorted = kamis.sort((a, b) => calcCooldown(a) - calcCooldown(b));
+    } else if (sort === 'state') {
+      sorted = kamis.sort((a, b) => {
+        const stateDiff = a.state.localeCompare(b.state);
+        if (stateDiff != 0) return stateDiff;
+        return calcHealthPercent(a) - calcHealthPercent(b);
+      });
     } else if (sort === 'body') {
-      sorted = kamis.sort((a, b) => compareTraits(a.traits?.body!, b.traits?.body!));
+      sorted = kamis.sort((a, b) => {
+        const bodyDiff = compareTraits(a.traits?.body!, b.traits?.body!);
+        if (bodyDiff === 0) return compareTraits(a.traits?.hand!, b.traits?.hand!);
+        return bodyDiff;
+      });
     } else if (sort === 'hands') {
-      sorted = kamis.sort((a, b) => compareTraits(a.traits?.hand!, b.traits?.hand!));
+      sorted = kamis.sort((a, b) => {
+        const handDiff = compareTraits(a.traits?.hand!, b.traits?.hand!);
+        if (handDiff === 0) return compareTraits(a.traits?.body!, b.traits?.body!);
+        return handDiff;
+      });
     }
 
     setDisplayedKamis(kamis);

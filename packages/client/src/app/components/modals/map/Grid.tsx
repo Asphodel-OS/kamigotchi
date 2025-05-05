@@ -108,17 +108,21 @@ export const Grid = (props: Props) => {
 
   const getTooltip = (room: Room) => {
     if (room.index === 0) return [];
-    const isBlocked = isRoomBlocked(room);
-    const name = `${room.name} ${isBlocked ? '(blocked)' : ''}`;
     return [
-      name,
-      '',
       room.description,
       '\n',
       `${playerEntities.length} players on this tile`,
       `${kamiEntities.length} kamis harvesting`,
       getKamiString(room.index),
     ];
+  };
+
+  // get tooltip title. (room name and blocked status)
+  const getTooltipTitle = (room: Room) => {
+    if (room.index === 0) return '';
+    const isBlocked = isRoomBlocked(room);
+    const name = `${room.name} ${isBlocked ? '(blocked)' : ''}`;
+    return name;
   };
 
   const isRoomBlocked = (room: Room) => {
@@ -170,7 +174,13 @@ export const Grid = (props: Props) => {
               }
 
               return (
-                <Tooltip key={j} text={getTooltip(room)} title={true} maxWidth={24} grow>
+                <Tooltip
+                  key={j}
+                  text={getTooltip(room)}
+                  title={getTooltipTitle(room)}
+                  maxWidth={24}
+                  grow
+                >
                   <Tile
                     key={j}
                     backgroundColor={backgroundColor}

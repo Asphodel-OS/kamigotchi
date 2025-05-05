@@ -1,1 +1,1 @@
-export type Sort = 'index' | 'name' | 'health' | 'cooldown' | 'body' | 'hands';
+export type Sort = 'index' | 'name' | 'state' | 'body' | 'hands';

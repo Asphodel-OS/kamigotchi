@@ -50,7 +50,9 @@ export const KamiBars = (props: Props) => {
     if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
     buttons.push(UseItemButton(kami, account, useIcon));
     if (isDead(kami)) {
-      buttons.push(<OnyxReviveButton kami={kami} onyx={onyx} actions={actions} />);
+      buttons.push(
+        <OnyxReviveButton key='onyx-revive' kami={kami} onyx={onyx} actions={actions} />
+      );
     }
     return buttons;
   };

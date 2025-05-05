@@ -4,19 +4,19 @@ import styled from 'styled-components';
 
 interface Props {
   text: string[];
-  children: React.ReactNode;
+  title?: string;
 
   // parent container
+  children: React.ReactNode;
   grow?: boolean; // parent prop
   direction?: 'row' | 'column';
 
   // tooltip
-  title?: boolean;
+  delay?: number;
   maxWidth?: number;
   size?: number;
   alignText?: 'left' | 'right' | 'center';
   color?: string;
-  delay?: number;
 }
 
 export const Tooltip = (props: Props) => {
@@ -103,8 +103,8 @@ export const Tooltip = (props: Props) => {
             tooltipPosition={tooltipPosition}
             ref={tooltipRef}
           >
-            {title && <Text size={textSize * 1.35}>{text[0]}</Text>}
-            {text.slice(title ? 1 : 0).map((line, idx) => (
+            {title && <Text size={textSize * 1.35}>{title}</Text>}
+            {text.map((line, idx) => (
               <Text key={idx} size={textSize} align={alignText}>
                 {line}
               </Text>

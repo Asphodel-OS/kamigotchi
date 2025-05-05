@@ -18,7 +18,7 @@ import { Node, NullNode } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
 import { KamiList } from './KamiList';
 
-const REFRESH_INTERVAL = 2000;
+const REFRESH_INTERVAL = 1000;
 
 export function registerPartyModal() {
   registerUIComponent(

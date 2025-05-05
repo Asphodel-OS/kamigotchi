@@ -12,6 +12,7 @@ import { NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
+import { MoodLimits } from './constants';
 
 interface Props {
   kami: Kami;
@@ -29,6 +30,8 @@ export const KamiBar = (props: Props) => {
     setCurrentHealth(calcHealth(kami));
   }, [tick]);
 
+  /////////////////
+  // INTERACTION
   // toggle the kami modal settings depending on its current state
   const handleImageClick = () => {
     const sameKami = kamiIndex === kami.index;
@@ -38,6 +41,9 @@ export const KamiBar = (props: Props) => {
     else setModals({ kami: true });
     playClick();
   };
+
+  /////////////////
+  // GETTERS
 
   const getBodyAffinity = () => {
     const body = kami.traits?.body;
@@ -63,42 +69,72 @@ export const KamiBar = (props: Props) => {
     return AffinityIcons[affinityKey];
   };
 
+  const getMood = (percent: number) => {
+    let limit = 0;
+    const limits = Object.keys(MoodLimits);
+    for (let i = 0; i < limits.length; i++) {
+      limit = Number(limits[i]);
+      if (percent <= limit) return MoodLimits[limit];
+    }
+  };
+
   const calcHealthPercent = () => {
     const total = kami.stats?.health.total ?? 0;
     return (100 * currentHealth) / total;
   };
 
   const getTooltip = () => {
-    if (isDead(kami)) return ['Murdered', 'visit the waterfall or use a ribbon to revive'];
+    if (isDead(kami)) {
+      return [`There's blood on your hands.`, `${kami.name} has fallen..`];
+    }
 
+    // get general data for the tooltip
     const totalHealth = kami.stats?.health.total ?? 0;
     const healthRate = getRateDisplay(kami.stats!.health.rate, 2);
+    const healthPercent = calcHealthPercent();
+    const mood = getMood(healthPercent);
+    const duration = formatCountdown(tick / 1000 - (kami.time?.last ?? 0));
 
-    if (isResting(kami)) return [`${currentHealth}/${totalHealth}HP (${healthRate}/hr)`];
+    let tooltip: string[] = [
+      `${kami.name} is ${mood}`,
+      `\n`,
+      `HP: ${currentHealth}/${totalHealth} (${healthRate}/hr)`,
+      `${duration} since last action`,
+    ];
+
+    // if (isResting(kami)) return tooltip;
 
     if (isHarvesting(kami) && kami.harvest) {
-      const tooltip: string[] = [];
       const harvest = kami.harvest;
       const spotRate = getRateDisplay(harvest.rates.total.spot, 2);
       const avgRate = getRateDisplay(harvest.rates.total.average, 2);
       const item = getHarvestItem(harvest);
       const node = harvest.node ?? NullNode;
 
-      const duration = formatCountdown(tick / 1000 - harvest.time.last);
-      tooltip.push(`Averaging ${avgRate} ${item.name}/hr (${duration})`);
-      return [
+      tooltip = tooltip.concat([
+        `\n`,
         `Harvesting on ${node.name}`,
-        `${calcOutput(kami)} ${item.name} (${spotRate} ${item.name}/hr)`,
-        `Averaging ${avgRate} ${item.name}/hr (${duration})`,
-      ];
+        `${calcOutput(kami)} ${item.name} (${spotRate}/hr) `,
+        `[${avgRate}/hr avg]`,
+      ]);
     }
-    return [];
+
+    return tooltip;
+  };
+
+  const getStatusColor = (level: number) => {
+    if (isResting(kami)) return '#9CBCD2';
+    if (level <= 20) return '#BD4F6C';
+    if (level <= 50) return '#F9DB6D';
+    return '#16DB93';
   };
 
   return (
     <Container>
       <Left>
-        <Image src={kami.image} onClick={handleImageClick} />
+        <Tooltip text={[`${kami.name}`]}>
+          <Image src={kami.image} onClick={handleImageClick} />
+        </Tooltip>
         <Tooltip
           text={[`Body: ${getBodyAffinity()}`, `Hand: ${getHandAffinity()}`]}
           direction='row'
@@ -107,9 +143,10 @@ export const KamiBar = (props: Props) => {
           <Icon src={getHandIcon()} />
         </Tooltip>
       </Left>
-      <Middle percent={calcHealthPercent()} color={getHealthColor(calcHealthPercent())}>
-        <Tooltip text={getTooltip()}>
+      <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
+        <Tooltip text={getTooltip()} direction='row'>
           <Text size={0.9}>{kami.state}</Text>
+          <Text size={0.9}>({calcHealthPercent().toFixed(0)}%)</Text>
         </Tooltip>
       </Middle>
       <Actions>
@@ -168,6 +205,7 @@ const Middle = styled.div<MiddleProps>`
   border-right: solid black 0.15vw;
   border-left: solid black 0.15vw;
   margin: 0 0.3vw 0 0.3vw;
+  gap: 0.3vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -197,9 +235,3 @@ const Icon = styled.img`
   align-items: center;
   justify-content: space-between;
 `;
-
-export const getHealthColor = (level: number) => {
-  if (level <= 20) return '#FF6600';
-  if (level <= 50) return '#FFD000';
-  return '#23AD41';
-};
