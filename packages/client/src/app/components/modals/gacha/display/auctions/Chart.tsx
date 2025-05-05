@@ -148,7 +148,7 @@ export const Chart = (props: Props) => {
       time = times[i];
       if (time < auction.time.start) time = auction.time.start;
       const balance = balances[i];
-      prices[i] = calcAuctionPrice(auction, time, balance, 1);
+      prices[i] = calcAuctionPrice(auction, time, balance, 1) / 1000;
     }
     return prices;
   };
