@@ -12,11 +12,16 @@ export const SortIcons: Record<Sort, string> = {
   hands: TraitIcons.hand,
 };
 
-export const MoodLimits: Record<number, string> = {
-  10: 'Terrified',
-  20: 'Scared',
-  40: 'Exhausted',
+export const HarvestingMoods: Record<number, string> = {
+  30: 'Terrified',
   60: 'Scared',
   80: 'Wary',
+  100: 'Alert',
+};
+
+export const RestingMoods: Record<number, string> = {
+  30: 'Exhausted',
+  60: 'Tired',
+  80: 'Relieved',
   100: 'Rested',
 };

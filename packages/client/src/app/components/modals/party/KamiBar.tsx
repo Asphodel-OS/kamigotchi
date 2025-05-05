@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { calcHarvestAverageRate, getHarvestItem } from 'app/cache/harvest';
 import { calcHealth, calcOutput, isDead, isHarvesting, isResting } from 'app/cache/kami';
+import { calcIdleTime } from 'app/cache/kami/calcs/base';
 import { Text, Tooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
@@ -12,7 +13,7 @@ import { NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
-import { MoodLimits } from './constants';
+import { HarvestingMoods, RestingMoods } from './constants';
 
 interface Props {
   kami: Kami;
@@ -32,6 +33,7 @@ export const KamiBar = (props: Props) => {
 
   /////////////////
   // INTERACTION
+
   // toggle the kami modal settings depending on its current state
   const handleImageClick = () => {
     const sameKami = kamiIndex === kami.index;
@@ -69,12 +71,15 @@ export const KamiBar = (props: Props) => {
     return AffinityIcons[affinityKey];
   };
 
-  const getMood = (percent: number) => {
+  const getMood = (kami: Kami, percent: number) => {
     let limit = 0;
-    const limits = Object.keys(MoodLimits);
+    const limits = Object.keys(RestingMoods);
     for (let i = 0; i < limits.length; i++) {
       limit = Number(limits[i]);
-      if (percent <= limit) return MoodLimits[limit];
+      if (percent <= limit) {
+        if (isHarvesting(kami)) return HarvestingMoods[limit];
+        else if (isResting(kami)) return RestingMoods[limit];
+      }
     }
   };
 
@@ -83,7 +88,7 @@ export const KamiBar = (props: Props) => {
     return (100 * currentHealth) / total;
   };
 
-  const getTooltip = () => {
+  const getTooltip = (kami: Kami) => {
     if (isDead(kami)) {
       return [`There's blood on your hands.`, `${kami.name} has fallen..`];
     }
@@ -92,8 +97,8 @@ export const KamiBar = (props: Props) => {
     const totalHealth = kami.stats?.health.total ?? 0;
     const healthRate = getRateDisplay(kami.stats!.health.rate, 2);
     const healthPercent = calcHealthPercent();
-    const mood = getMood(healthPercent);
-    const duration = formatCountdown(tick / 1000 - (kami.time?.last ?? 0));
+    const mood = getMood(kami, healthPercent);
+    const duration = formatCountdown(calcIdleTime(kami));
 
     let tooltip: string[] = [
       `${kami.name} is ${mood}`,
@@ -124,8 +129,9 @@ export const KamiBar = (props: Props) => {
 
   const getStatusColor = (level: number) => {
     if (isResting(kami)) return '#9CBCD2';
-    if (level <= 20) return '#BD4F6C';
-    if (level <= 50) return '#F9DB6D';
+    if (level <= 25) return '#BD4F6C';
+    if (level <= 50) return '#F3752B';
+    if (level <= 75) return '#F9DB6D';
     return '#16DB93';
   };
 
@@ -144,7 +150,7 @@ export const KamiBar = (props: Props) => {
         </Tooltip>
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
-        <Tooltip text={getTooltip()} direction='row'>
+        <Tooltip text={getTooltip(kami)} direction='row'>
           <Text size={0.9}>{kami.state}</Text>
           <Text size={0.9}>({calcHealthPercent().toFixed(0)}%)</Text>
         </Tooltip>
