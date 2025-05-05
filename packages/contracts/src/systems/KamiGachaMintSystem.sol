@@ -19,7 +19,7 @@ contract KamiGachaMintSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 amount = abi.decode(arguments, (uint256));
-    require(amount <= 1, "too many mints"); // force 1 mint per tx at launch to reduce congestion
+    require(amount <= 5, "too many mints"); // force 1 mint per tx at launch to reduce congestion
     require(
       LibConfig.get(components, "MINT_START_PUBLIC") + 1 hours < block.timestamp,
       "public mint has not yet started"
