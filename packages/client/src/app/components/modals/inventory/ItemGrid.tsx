@@ -89,7 +89,7 @@ export const ItemGrid = (props: Props) => {
     const useItem = (amt: number) => actions.useForAccount(item, amt);
 
     const options: ButtonListOption[] = [];
-    const increments = [1, 3, 10, 33, 100, 333, 1000];
+    const increments = [1, 3, 10, 33, 100, 333, 1000, 3333];
     increments.forEach((i) => {
       if (bal >= i) options.push({ text: `Use ${i}`, onClick: () => useItem(i) });
     });

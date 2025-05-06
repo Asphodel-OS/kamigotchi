@@ -43,7 +43,10 @@ export function registerAccountModal() {
         pfp: 5,
         stats: 5,
       };
+
       const vipEpoch = getVIPEpoch(world, components);
+      const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
+
       // TODO: reduce update frequency
       return interval(3333).pipe(
         map(() => {
@@ -52,11 +55,7 @@ export function registerAccountModal() {
             data: {
               vip: {
                 epoch: vipEpoch,
-                total: getTotalScoreByFilter(world, components, {
-                  epoch: vipEpoch,
-                  index: 0,
-                  type: 'VIP_SCORE',
-                }),
+                total: getTotalScoreByFilter(world, components, vipFilter),
               },
             },
             utils: {
