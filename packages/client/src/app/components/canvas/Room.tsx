@@ -1,13 +1,14 @@
 import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLocalStorage } from 'usehooks-ts';
 
 import { useSelected, useVisibility } from 'app/stores';
 import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { rooms } from 'constants/rooms';
 import { RoomAsset } from 'constants/rooms/types';
-import { useLocalStorage } from 'usehooks-ts';
+
 import { getCurrPhase } from 'utils/time';
 
 interface Props {
@@ -15,27 +16,28 @@ interface Props {
 }
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
-
+// painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
   const { index } = props;
   const { modals, setModals } = useVisibility();
   const { setNode } = useSelected();
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
-
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
 
+  // Set the new room when the index changes. If the new room has new music,
+  // stop the old bgm and play the new one. Global howler audio is controlled
+  // in the Volume Settings modal. This recreates any new music from scratch,
+  // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
     if (index == room.index) return;
     const newRoom = rooms[index];
     const music = newRoom.music;
-
     if (!music) {
       bgm?.stop();
       return;
     }
-
     if (!RoomsBgm.has(music.path)) {
       RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
     }
@@ -50,6 +52,7 @@ export const Room = (props: Props) => {
     closeModals();
   }, [index]);
 
+  // manages volume changes from the variable stored in local storage
   useEffect(() => {
     if (bgm) {
       if (bgmVolume === 0) {
@@ -78,7 +81,9 @@ export const Room = (props: Props) => {
     });
   };
 
+  // return the background path for now
   const getBackground = () => {
+    // phases start at 1, make start at 0
     const phase = (getCurrPhase() - 1) % room.backgrounds.length;
     return room.backgrounds[phase];
   };
