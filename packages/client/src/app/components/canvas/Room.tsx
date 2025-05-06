@@ -7,6 +7,7 @@ import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { rooms } from 'constants/rooms';
 import { RoomAsset } from 'constants/rooms/types';
+import { useLocalStorage } from 'usehooks-ts';
 import { getCurrPhase } from 'utils/time';
 
 interface Props {
@@ -15,7 +16,6 @@ interface Props {
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 
-// painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
   const { index } = props;
   const { modals, setModals } = useVisibility();
@@ -23,30 +23,40 @@ export const Room = (props: Props) => {
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
 
-  // Set the new room when the index changes. If the new room has new music,
-  // stop the old bgm and play the new one. Global howler audio is controlled
-  // in the Volume Settings modal. This recreates any new music from scratch,
-  // but ideally we should keep all played tracks in a state map for reuse.
+  const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
+  const bgmVolume = settings.volume.bgm;
+
   useEffect(() => {
-    if (index == room.index) return;
+    // if (index == room.index) return;
     const newRoom = rooms[index];
     const music = newRoom.music;
-    if (!music) bgm?.stop();
-    else if (music.path !== room.music?.path) {
-      if (!RoomsBgm.has(music.path)) {
-        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true }));
-      }
-      const newBgm = RoomsBgm.get(music.path);
-      if (bgm) bgm.stop();
-      newBgm?.play();
-      setBgm(newBgm);
-      newBgm?.fade(0, 1, 3000);
+
+    // Stop music if volume is 0
+    if (bgmVolume === 0) {
+      bgm?.stop();
+      setRoom(newRoom);
+      setNode(index);
+      closeModals();
     }
+
+    if (!music) {
+      bgm?.stop();
+      return;
+    }
+
+    if (!RoomsBgm.has(music.path)) {
+      RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
+    }
+    const newBgm = RoomsBgm.get(music.path);
+    if (bgm) bgm.stop();
+    newBgm?.play();
+    newBgm?.fade(0, bgmVolume, 3000);
+    setBgm(newBgm);
 
     setRoom(newRoom);
     setNode(index);
     closeModals();
-  }, [index]);
+  }, [index, bgmVolume]);
 
   const closeModals = () => {
     setModals({
@@ -65,9 +75,7 @@ export const Room = (props: Props) => {
     });
   };
 
-  // return the background path for now
   const getBackground = () => {
-    // phases start at 1, make start at 0
     const phase = (getCurrPhase() - 1) % room.backgrounds.length;
     return room.backgrounds[phase];
   };
@@ -136,6 +144,7 @@ const Background = styled.img`
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 `;
+
 interface Coordinates {
   x1: number;
   y1: number;
