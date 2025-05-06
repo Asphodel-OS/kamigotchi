@@ -44,6 +44,12 @@ export const Chart = (props: Props) => {
   }, [auction, auction.supply.sold]);
 
   const retrieveBuys = async () => {
+    if (!kamidenClient) {
+      const itemName = auction.auctionItem?.name ?? 'unknown';
+      console.warn(`Auction Chart (${itemName}): Kamiden Client not initialized`);
+      return;
+    }
+
     const auctionItem = auction.auctionItem;
     if (auctionItem) {
       const response = await kamidenClient.getAuctionBuys({
