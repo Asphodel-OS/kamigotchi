@@ -11,7 +11,7 @@ export function getClient(): KamidenServiceClient | null {
 
   if (!Client) {
     const channel = createChannel(
-      'http://localhost:82', //import.meta.env.VITE_KAMIGAZE_URL, //
+      import.meta.env.VITE_KAMIGAZE_URL, //'http://localhost:82', //
       grpc.WebsocketTransport()
     );
     Client = createClient(KamidenServiceDefinition, channel);
