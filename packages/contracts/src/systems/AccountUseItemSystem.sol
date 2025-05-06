@@ -20,7 +20,7 @@ contract AccountUseItemSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // item checks
-    LibItem.verifyMaxPerUse(components, amt);
+    // LibItem.verifyMaxPerUse(components, amt);
     LibItem.verifyForShape(components, itemIndex, "ACCOUNT");
     LibItem.verifyRequirements(components, itemIndex, "USE", accID);
 
