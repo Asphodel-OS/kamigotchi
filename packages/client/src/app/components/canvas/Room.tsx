@@ -37,15 +37,16 @@ export const Room = (props: Props) => {
     if (!music) {
       bgm?.stop();
       return;
+    } else if (music.path !== room.music?.path) {
+      if (!RoomsBgm.has(music.path)) {
+        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
+      }
+      const newBgm = RoomsBgm.get(music.path);
+      if (bgm) bgm.stop();
+      newBgm?.play();
+      newBgm?.fade(0, bgmVolume, 3000);
+      setBgm(newBgm);
     }
-    if (!RoomsBgm.has(music.path)) {
-      RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
-    }
-    const newBgm = RoomsBgm.get(music.path);
-    if (bgm) bgm.stop();
-    newBgm?.play();
-    newBgm?.fade(0, bgmVolume, 3000);
-    setBgm(newBgm);
 
     setRoom(newRoom);
     setNode(index);
