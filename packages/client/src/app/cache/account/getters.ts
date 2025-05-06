@@ -43,6 +43,6 @@ export const getStats = (
   components: Components,
   entity: EntityIndex
 ): AccountStats => {
-  if (!entity) return { coin: 0, kills: 0 };
+  if (!entity) return { coin: 0, kills: 0, vip: 0 };
   return getAccountStats(world, components, entity);
 };

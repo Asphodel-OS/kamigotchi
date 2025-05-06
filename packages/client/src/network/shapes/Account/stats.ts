@@ -21,6 +21,6 @@ export const getStats = (world: World, comps: Components, entity: EntityIndex) =
   return {
     kills: getData(world, comps, id, 'LIQUIDATE_TOTAL', 0),
     coin: getData(world, comps, id, 'ITEM_TOTAL', MUSU_INDEX),
-    vip: getScoreFromHash(world, comps, id, stage, 0, 'VIP_SCORE').score,
+    vip: getScoreFromHash(world, comps, id, stage, 0, 'VIP_SCORE').value,
   };
 };

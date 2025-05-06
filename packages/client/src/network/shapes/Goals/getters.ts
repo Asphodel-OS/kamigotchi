@@ -12,16 +12,16 @@ import {
   Goal,
 } from './types';
 
-export const getAllGoals = (world: World, components: Components): Goal[] => {
-  const { EntityType } = components;
+export const getAllGoals = (world: World, comps: Components): Goal[] => {
+  const { EntityType } = comps;
 
   const queryFragments = [HasValue(EntityType, { value: 'GOAL' })];
   const raw = Array.from(runQuery(queryFragments));
 
-  return raw.map((index): Goal => getGoal(world, components, index));
+  return raw.map((index): Goal => getGoal(world, comps, index));
 };
 
-export const getGoalByIndex = (world: World, components: Components, index: number): Goal => {
+export const getGoalByIndex = (world: World, comps: Components, index: number): Goal => {
   const entity = getGoalEntityIndex(world, index);
   if (!entity)
     return {
@@ -37,26 +37,22 @@ export const getGoalByIndex = (world: World, components: Components, index: numb
       complete: false,
     };
 
-  return getGoal(world, components, entity);
+  return getGoal(world, comps, entity);
 };
 
-export const getContributions = (
-  world: World,
-  components: Components,
-  goalID: EntityID
-): Contribution[] => {
-  return getScoresByType(world, components, goalID);
+export const getContributions = (comps: Components, goalID: EntityID): Contribution[] => {
+  return getScoresByType(comps, goalID);
 };
 
 export const getContributionByHash = (
   world: World,
-  components: Components,
+  comps: Components,
   goal: Goal,
   account: Account
 ): Contribution => {
   const entity = getContributionEntityIndex(world, goal.id, account.id);
 
-  if (!entity) return { account: account, claimed: false, score: 0 };
+  if (!entity) return { holderID: account.id, claimed: false, value: 0 };
 
-  return getContribution(components, entity, account);
+  return getContribution(comps, entity, account);
 };

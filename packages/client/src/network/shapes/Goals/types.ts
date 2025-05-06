@@ -5,7 +5,7 @@ import { Account } from '../Account';
 import { Allo, getAllo } from '../Allo';
 import { Condition, getCondition } from '../Conditional';
 import { getConditionsOf } from '../Conditional/queries';
-import { Score } from '../Score';
+import { Score } from '../Score/types';
 import { getEntityByHash, hashArgs, queryChildrenOf, queryRefsWithParent } from '../utils';
 
 /////////////////

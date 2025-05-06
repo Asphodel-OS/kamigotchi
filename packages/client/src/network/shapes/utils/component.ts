@@ -259,6 +259,13 @@ export const getTokenAddress = (components: Components, entity: EntityIndex): Ad
 ////////////////
 // IDS
 
+export const getHolderID = (components: Components, entity: EntityIndex): EntityID => {
+  const { HolderID } = components;
+  const result = getComponentValue(HolderID, entity)?.value;
+  if (result === undefined) console.warn('getHolderID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
 export const getKamiOwnerID = (components: Components, entity: EntityIndex): EntityID => {
   const { OwnsKamiID } = components;
   const result = getComponentValue(OwnsKamiID, entity)?.value;
