@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { calcHarvestAverageRate, getHarvestItem } from 'app/cache/harvest';
 import { calcHealth, calcOutput, isDead, isHarvesting, isResting } from 'app/cache/kami';
-import { calcIdleTime } from 'app/cache/kami/calcs/base';
+import { calcHealTime, calcIdleTime } from 'app/cache/kami/calcs/base';
 import { Text, Tooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
@@ -94,20 +94,23 @@ export const KamiBar = (props: Props) => {
     }
 
     // get general data for the tooltip
+    // NOTE(jb): the underlying health calcs here are p inefficient ngl
     const totalHealth = kami.stats?.health.total ?? 0;
-    const healthRate = getRateDisplay(kami.stats!.health.rate, 2);
     const healthPercent = calcHealthPercent();
     const mood = getMood(kami, healthPercent);
     const duration = formatCountdown(calcIdleTime(kami));
+    const healthRate = kami.stats!.health.rate;
+    const healthRateStr = getRateDisplay(healthRate, 2);
 
     let tooltip: string[] = [
       `${kami.name} is ${mood}`,
-      `\n`,
-      `HP: ${currentHealth}/${totalHealth} (${healthRate}/hr)`,
-      `${duration} since last action`,
+      `HP: ${currentHealth}/${totalHealth} (${healthRateStr}/hr)`,
     ];
 
-    // if (isResting(kami)) return tooltip;
+    if (isResting(kami)) {
+      const timeToFullStr = formatCountdown(calcHealTime(kami));
+      tooltip = tooltip.concat([`${timeToFullStr} until full`]);
+    }
 
     if (isHarvesting(kami) && kami.harvest) {
       const harvest = kami.harvest;
@@ -123,6 +126,8 @@ export const KamiBar = (props: Props) => {
         `[${avgRate}/hr avg]`,
       ]);
     }
+
+    tooltip = tooltip.concat([`\n`, `${duration} since last action`]);
 
     return tooltip;
   };
@@ -193,13 +198,6 @@ const Actions = styled.div`
   justify-content: flex-end;
   padding-right: 0.3vw;
   gap: 0.3vw;
-`;
-
-const Column = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
 `;
 
 interface MiddleProps {

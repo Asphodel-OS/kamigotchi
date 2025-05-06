@@ -66,6 +66,20 @@ export const calcHarvestTime = (kami: Kami): number => {
   return calcHarvestIdleTime(kami.harvest);
 };
 
+// calculate the time until a resting kami is at full health
+export const calcHealTime = (kami: Kami): number => {
+  if (!isResting(kami)) return 0;
+  const idleTime = calcIdleTime(kami);
+
+  const healthStats = kami.stats?.health;
+  const lastHealth = healthStats?.sync ?? 0;
+  const healthRate = healthStats?.rate ?? 1;
+  const totalHealth = healthStats?.total ?? 1;
+
+  const healthDiff = totalHealth - lastHealth;
+  return healthDiff / healthRate - idleTime;
+};
+
 // calculate the cooldown remaining on kami standard actions
 export const calcCooldown = (kami: Kami): number => {
   const requirement = calcCooldownRequirement(kami);
