@@ -7,6 +7,7 @@ import { Condition, getCondition } from '../Conditional';
 import { getConditionsOf } from '../Conditional/queries';
 import { Score } from '../Score/types';
 import { getEntityByHash, hashArgs, queryChildrenOf, queryRefsWithParent } from '../utils';
+import { getValue } from '../utils/component';
 
 /////////////////
 // SHAPES
@@ -46,8 +47,8 @@ export interface GoalReward extends Allo {
 ///////////////////
 // SHAPES
 
-export const getGoal = (world: World, components: Components, entity: EntityIndex): Goal => {
-  const { Value, Description, Index, IsComplete, Name, RoomIndex } = components;
+export const getGoal = (world: World, comps: Components, entity: EntityIndex): Goal => {
+  const { Description, Index, IsComplete, Name, RoomIndex } = comps;
   const goalID = world.entities[entity];
   const goalIndex = getComponentValue(Index, entity)?.value || (0 as number);
 
@@ -56,58 +57,54 @@ export const getGoal = (world: World, components: Components, entity: EntityInde
     index: goalIndex,
     name: getComponentValue(Name, entity)?.value || ('' as string),
     description: getComponentValue(Description, entity)?.value || ('' as string),
-    currBalance: (getComponentValue(Value, entity)?.value || (0 as number)) * 1,
-    objective: getCondition(world, components, getObjEntityIndex(world, goalID)),
-    requirements: getGoalRequirements(world, components, goalIndex),
-    tiers: getGoalTiers(world, components, goalIndex),
+    currBalance: getValue(comps, entity),
+    objective: getCondition(world, comps, getObjEntityIndex(world, goalID)),
+    requirements: getGoalRequirements(world, comps, goalIndex),
+    tiers: getGoalTiers(world, comps, goalIndex),
     complete: hasComponent(IsComplete, entity) || (false as boolean),
     room: (getComponentValue(RoomIndex, entity)?.value || (0 as number)) * 1,
   };
 };
 
 export const getContribution = (
-  components: Components,
+  comps: Components,
   entity: EntityIndex,
   account: Account
 ): Contribution => {
-  const { Value, IsComplete } = components;
+  const { IsComplete } = comps;
 
   return {
-    account: account,
+    holderID: account.id,
     claimed: getComponentValue(IsComplete, entity)?.value || (false as boolean),
-    score: (getComponentValue(Value, entity)?.value || (0 as number)) * 1,
+    value: getValue(comps, entity),
   };
 };
 
-const getGoalTiers = (world: World, components: Components, goalIndex: number): Tier[] => {
-  const tiers = queryRefsWithParent(components, getTierAnchorID(goalIndex)).map(
-    (entity: EntityIndex) => getTier(world, components, entity)
+const getGoalTiers = (world: World, comps: Components, goalIndex: number): Tier[] => {
+  const tiers = queryRefsWithParent(comps, getTierAnchorID(goalIndex)).map((entity: EntityIndex) =>
+    getTier(world, comps, entity)
   );
   return tiers.sort((a, b) => a.cutoff - b.cutoff);
 };
 
-const getTier = (world: World, components: Components, entity: EntityIndex) => {
-  const { Name, Value } = components;
+const getTier = (world: World, comps: Components, entity: EntityIndex) => {
+  const { Name } = comps;
   const id = world.entities[entity];
   return {
     id: id,
     name: getComponentValue(Name, entity)?.value || ('' as string),
-    cutoff: (getComponentValue(Value, entity)?.value || (0 as number)) * 1,
-    rewards: getTierRewards(world, components, id),
+    cutoff: getValue(comps, entity),
+    rewards: getTierRewards(world, comps, id),
   };
 };
 
-const getGoalRequirements = (
-  world: World,
-  components: Components,
-  goalIndex: number
-): Condition[] => {
-  return getConditionsOf(world, components, 'goal.requirement', goalIndex);
+const getGoalRequirements = (world: World, comps: Components, goalIndex: number): Condition[] => {
+  return getConditionsOf(world, comps, 'goal.requirement', goalIndex);
 };
 
-const getTierRewards = (world: World, components: Components, tierID: EntityID): Allo[] => {
-  return queryChildrenOf(components, getRwdAnchorID(tierID)).map((index: EntityIndex) =>
-    getAllo(world, components, index)
+const getTierRewards = (world: World, comps: Components, tierID: EntityID): Allo[] => {
+  return queryChildrenOf(comps, getRwdAnchorID(tierID)).map((index: EntityIndex) =>
+    getAllo(world, comps, index)
   );
 };
 

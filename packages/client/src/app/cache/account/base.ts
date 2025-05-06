@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account, getAccount, getAccountConfigs, NullAccount } from 'network/shapes/Account';
@@ -22,6 +22,18 @@ export const FriendsUpdateTs = new Map<EntityIndex, number>();
 export const InventoriesUpdateTs = new Map<EntityIndex, number>();
 export const StatsUpdateTs = new Map<EntityIndex, number>();
 export const PfpURITs = new Map<EntityIndex, number>();
+
+// retrieve an acc's most recent data and update it on the cache
+export const process = (world: World, components: Components, entity: EntityIndex) => {
+  const acc = getAccount(world, components, entity);
+  if (acc.index != 0) {
+    AccountCache.set(entity, acc);
+    NameCache.set(acc.name, entity);
+    OperatorCache.set(acc.operatorAddress, entity);
+    OwnerCache.set(acc.ownerAddress, entity);
+  }
+  return acc || NullAccount;
+};
 
 export interface Options {
   live?: number;
@@ -116,14 +128,8 @@ export const get = (
   return acc;
 };
 
-// retrieve an acc's most recent data and update it on the cache
-export const process = (world: World, components: Components, entity: EntityIndex) => {
-  const acc = getAccount(world, components, entity);
-  if (acc.index != 0) {
-    AccountCache.set(entity, acc);
-    NameCache.set(acc.name, entity);
-    OperatorCache.set(acc.operatorAddress, entity);
-    OwnerCache.set(acc.ownerAddress, entity);
-  }
-  return acc || NullAccount;
+export const getByID = (world: World, components: Components, id: EntityID, options?: Options) => {
+  const entity = world.entityToIndex.get(id);
+  if (!entity) return NullAccount;
+  return get(world, components, entity, options);
 };

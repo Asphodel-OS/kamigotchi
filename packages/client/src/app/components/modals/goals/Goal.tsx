@@ -5,7 +5,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount } from 'app/cache/account';
+import { getAccount, getAccountByID } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
@@ -52,11 +52,12 @@ export function registerGoalModal() {
             utils: {
               canClaim: (goal: Goal, contribution: Contribution) => canClaim(goal, contribution),
               canContribute: (goal: Goal) => canContribute(world, components, goal, account),
+              getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
               getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
                 getBalance(world, components, holder, index, type),
               getContribution: (goal: Goal) =>
                 getContributionByHash(world, components, goal, account),
-              getContributions: (goal: Goal) => getContributions(world, components, goal.id),
+              getContributions: (goal: Goal) => getContributions(components, goal.id),
               getDescribedEntity: (type: string, index: number) =>
                 getDescribedEntity(world, components, type, index),
             },
@@ -162,7 +163,7 @@ export function registerGoalModal() {
         );
       };
 
-      const LeaderboardBox = <Leaderboard data={scores} />;
+      const LeaderboardBox = <Leaderboard scores={scores} utils={utils} />;
 
       return (
         <ModalWrapper

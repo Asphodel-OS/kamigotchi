@@ -1,3 +1,4 @@
+import { EntityID } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
@@ -6,10 +7,15 @@ import { Score } from 'network/shapes/Score';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  data: Score[];
+  scores: Score[];
+  utils: {
+    getAccountByID: (id: EntityID) => Account;
+  };
 }
 
 export const Leaderboard = (props: Props) => {
+  const { scores, utils } = props;
+  const { getAccountByID } = utils;
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
 
@@ -26,17 +32,20 @@ export const Leaderboard = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  const Rows = (data: Score[]) => {
-    return data.map((entry, index) => (
-      <Row key={index} onClick={() => handleClick(entry.account)}>
-        <SideText style={{ flexBasis: '10%' }}>{index + 1}</SideText>
-        <NameText style={{ flexBasis: '70%' }}>{entry.account.name}</NameText>
-        <SideText style={{ flexBasis: '20%' }}>{entry.score}</SideText>
-      </Row>
-    ));
+  const Rows = (scores: Score[]) => {
+    return scores.map((score, index) => {
+      const account = getAccountByID(score.holderID);
+      return (
+        <Row key={index} onClick={() => handleClick(account)}>
+          <SideText style={{ flexBasis: '10%' }}>{index + 1}</SideText>
+          <NameText style={{ flexBasis: '70%' }}>{account.name}</NameText>
+          <SideText style={{ flexBasis: '20%' }}>{score.value}</SideText>
+        </Row>
+      );
+    });
   };
 
-  return <Container>{Rows(props.data)}</Container>;
+  return <Container>{Rows(props.scores)}</Container>;
 };
 
 const Container = styled.div`

@@ -1,9 +1,9 @@
 export interface Details {
   title: string;
   type: string; // starting type. can be overwritten by filter selection
+  label?: string;
+  prefix?: string;
   showFilter?: boolean;
-  scoreTitle?: string;
-  scorePrefix?: string;
 }
 
 export type LeaderboardKey = keyof typeof LeaderboardsDetails;
@@ -17,8 +17,8 @@ export const LeaderboardsDetails = {
   minaSpent: {
     title: "Mina's fav customers <3",
     type: 'TOTAL_SPENT',
-    scoreTitle: 'Spent',
-    scorePrefix: '$',
+    label: 'Spent',
+    prefix: '$',
   },
   liquidate: {
     title: 'Liquidators',

@@ -29,5 +29,9 @@ export const getEntity = (
 };
 
 export const getType = (epoch: number, index: number, type: string): EntityID => {
-  return hashArgs(['score.type', epoch, index, type], ['uint256', 'uint32', 'string'], true);
+  return hashArgs(
+    ['score.type', epoch, index, type],
+    ['string', 'uint256', 'uint32', 'string'],
+    true
+  );
 };
