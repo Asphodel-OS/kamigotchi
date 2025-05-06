@@ -27,17 +27,9 @@ export const Room = (props: Props) => {
   const bgmVolume = settings.volume.bgm;
 
   useEffect(() => {
-    // if (index == room.index) return;
+    if (index == room.index) return;
     const newRoom = rooms[index];
     const music = newRoom.music;
-
-    // Stop music if volume is 0
-    if (bgmVolume === 0) {
-      bgm?.stop();
-      setRoom(newRoom);
-      setNode(index);
-      closeModals();
-    }
 
     if (!music) {
       bgm?.stop();
@@ -56,7 +48,18 @@ export const Room = (props: Props) => {
     setRoom(newRoom);
     setNode(index);
     closeModals();
-  }, [index, bgmVolume]);
+  }, [index]);
+
+  useEffect(() => {
+    if (bgm) {
+      if (bgmVolume === 0) {
+        bgm.stop();
+      } else {
+        if (!bgm.playing()) bgm.play();
+        bgm.fade(bgm.volume(), bgmVolume, 3000);
+      }
+    }
+  }, [bgmVolume]);
 
   const closeModals = () => {
     setModals({
