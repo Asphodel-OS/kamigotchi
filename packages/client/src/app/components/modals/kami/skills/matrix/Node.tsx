@@ -30,20 +30,22 @@ export const Node = (props: Props) => {
 
   const acquirable = upgradeError == undefined || upgradeError[0].startsWith('Maxed Out');
 
-  const currPoints = instance?.points ?? 0;
-  const maxPoints = skill.max;
-  const cost = skill.cost;
+  const getTooltip = () => {
+    const description = skill.description ?? '';
+    const bonus = skill.bonuses?.[0];
+    const bonusDesc = parseBonusText(bonus!);
+    return [description, '\n', bonusDesc];
+  };
 
-  const name = skill.name;
-  const description = skill.description ?? '';
-  const bonus = skill.bonuses?.[0];
-  const bonusText = bonus ? parseBonusText(bonus!) + ' per level' : '';
-
-  const titleText = [`${name} (${cost})`, '', description, '', bonusText];
+  const getPercentCompletion = () => {
+    const currPoints = instance?.points ?? 0;
+    const maxPoints = skill.max;
+    return currPoints / maxPoints;
+  };
 
   return (
-    <Tooltip text={titleText}>
-      <Container key={index} onClick={handleClick} percent={currPoints / maxPoints}>
+    <Tooltip title={skill.name} text={getTooltip()} maxWidth={24}>
+      <Container key={index} onClick={handleClick} percent={getPercentCompletion()}>
         <Image src={image} />
       </Container>
     </Tooltip>
