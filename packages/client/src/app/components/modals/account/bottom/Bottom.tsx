@@ -16,7 +16,10 @@ interface Props {
   setSubTab: (tab: string) => void;
   data: {
     account: Account;
-    getAllAccs: () => BaseAccount[];
+    vip: {
+      epoch: number; // current VIP epoch
+      total: number; // total of VIP scores this epoch
+    };
   };
   actions: {
     acceptFren: (friendship: Friendship) => void;
@@ -25,6 +28,7 @@ interface Props {
     requestFren: (account: BaseAccount) => void;
   };
   utils: {
+    getAllAccounts: () => BaseAccount[];
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }
@@ -50,7 +54,7 @@ export const Bottom = (props: Props) => {
         />
       </Tab>
       <Tab isVisible={tab === 'stats'}>
-        <StatsBottom key='statsbottom' data={{ account }} />
+        <StatsBottom key='statsbottom' data={data} />
       </Tab>
       <Tab isVisible={tab === 'party'}>
         <PartyBottom data={{ account }} utils={utils} key='partybottom' />

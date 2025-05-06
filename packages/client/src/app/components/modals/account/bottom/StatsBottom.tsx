@@ -1,6 +1,5 @@
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import TollIcon from '@mui/icons-material/Toll';
-import moment from 'moment';
 import styled from 'styled-components';
 
 import { ItemImages } from 'assets/images/items';
@@ -8,18 +7,27 @@ import { Account } from 'network/shapes/Account';
 import { Factions } from '../Factions';
 
 interface Props {
-  data: { account: Account };
+  data: {
+    account: Account;
+    vip: {
+      epoch: number; // current VIP epoch
+      total: number; // total VIP this epoch
+    };
+  };
 }
 
 export const StatsBottom = (props: Props) => {
   const { data } = props;
-  const { account } = data;
+  const { account, vip } = data;
 
   /////////////////
   // INTERPRETATION
 
-  const getLastSeenString = () => {
-    return `Last Seen: ${moment(1000 * account.time.last).fromNow()}`;
+  const getVIPText = () => {
+    const { epoch, total } = vip;
+    const playerScore = (account.stats?.vip ?? 0).toLocaleString();
+    const aggregateScore = total.toLocaleString();
+    return `${playerScore} VIP Score (epoch ${epoch}: ${aggregateScore} total)`;
   };
 
   /////////////////
@@ -44,7 +52,7 @@ export const StatsBottom = (props: Props) => {
           <IconWrapper>
             <VipIcon src={ItemImages.vipp} />
           </IconWrapper>
-          <Description>{(account.stats?.vip ?? 0).toLocaleString()} VIP score</Description>
+          <Description>{getVIPText()}</Description>
         </DetailRow>
       </Content>{' '}
       <Factions data={{ account }} />
@@ -66,6 +74,8 @@ const Container = styled.div`
 
   overflow-y: auto;
   align-items: flex-start;
+
+  user-select: none;
 `;
 
 const Content = styled.div`

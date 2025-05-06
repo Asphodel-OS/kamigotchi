@@ -17,6 +17,7 @@ import {
   queryAccountByIndex,
 } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
+import { getTotalScoreByFilter, getVIPEpoch } from 'network/shapes/Score';
 import { waitForActionCompletion } from 'network/utils';
 import { Bio } from './bio/Bio';
 import { Bottom } from './bottom/Bottom';
@@ -42,29 +43,43 @@ export function registerAccountModal() {
         pfp: 5,
         stats: 5,
       };
+      const vipEpoch = getVIPEpoch(world, components);
       // TODO: reduce update frequency
       return interval(3333).pipe(
         map(() => {
           return {
             network,
+            data: {
+              vip: {
+                epoch: vipEpoch,
+                total: getTotalScoreByFilter(world, components, {
+                  epoch: vipEpoch,
+                  index: 0,
+                  type: 'VIP_SCORE',
+                }),
+              },
+            },
             utils: {
               getAccount: (entity: EntityIndex) =>
                 getAccount(world, components, entity, accountOptions),
               getAccountKamis: (accEntity: EntityIndex) =>
                 getAccountKamis(world, components, accEntity),
+              getAllAccounts: () => getAllBaseAccounts(world, components),
             },
           };
         })
       );
     },
     // Render
-    ({ network, utils }) => {
+    ({ network, data, utils }) => {
       const { actions, api, components, world } = network;
+      const { vip } = data;
       const { getAccount } = utils;
       const { account: player } = useAccount();
       const { accountIndex } = useSelected();
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
+
       const [subTab, setSubTab] = useState('frens'); //  frens | requests | blocked
       const [tab, setTab] = useState('stats'); //  social | party | stats
       const [account, setAccount] = useState<Account>(NullAccount);
@@ -198,7 +213,7 @@ export function registerAccountModal() {
             subTab={subTab}
             isSelf={isSelf}
             setSubTab={setSubTab}
-            data={{ account, getAllAccs: () => getAllBaseAccounts(world, components) }}
+            data={{ account, vip }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
             utils={utils}
           />

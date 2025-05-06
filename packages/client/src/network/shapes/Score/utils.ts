@@ -35,3 +35,8 @@ export const getType = (epoch: number, index: number, type: string): EntityID =>
     true
   );
 };
+
+export const getTotalID = (epoch: number, index: number, type: string): EntityID => {
+  const typeID = getType(epoch, index, type);
+  return hashArgs(['score.total', typeID], ['string', 'uint256'], true);
+};

@@ -12,7 +12,6 @@ interface Props {
   subTab: string;
   data: {
     account: Account;
-    getAllAccs: () => BaseAccount[];
   };
   actions: {
     acceptFren: (friendship: Friendship) => void;
@@ -21,13 +20,14 @@ interface Props {
     requestFren: (account: BaseAccount) => void;
   };
   utils: {
+    getAllAccounts: () => BaseAccount[];
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }
 
 export const SocialBottom = (props: Props) => {
   const { subTab, data, actions, utils } = props;
-  const { account } = data;
+  const { getAllAccounts } = utils;
 
   // NOTE: any child components that maintain their own state need to be inlined below, to
   // re-render and persist their state, rather than remounting
@@ -47,7 +47,7 @@ export const SocialBottom = (props: Props) => {
         <Requests
           key='requests'
           account={data.account}
-          accounts={data.getAllAccs()}
+          accounts={getAllAccounts()}
           requests={{
             inbound: data.account.friends?.incomingReqs ?? [],
             outbound: data.account.friends?.outgoingReqs ?? [],

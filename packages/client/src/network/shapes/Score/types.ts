@@ -2,7 +2,7 @@ import { EntityID, EntityIndex, HasValue, QueryFragment, World, runQuery } from 
 
 import { Components } from 'network/';
 import { getHolderID, getValue } from '../utils/component';
-import { getEntity, getType } from './utils';
+import { getEntity, getTotalID, getType } from './utils';
 
 // standardized Object shape of a Score Entity
 export interface Score {
@@ -53,4 +53,17 @@ export const getByType = (comps: Components, typeID: EntityID): Score[] => {
 export const getByFilter = (comps: Components, filter: ScoresFilter): Score[] => {
   const typeID = getType(filter.epoch, filter.index, filter.type);
   return getByType(comps, typeID);
+};
+
+//////////////////
+// TOTALS
+
+// get the total score of a type based on a filter
+export const getTotalByFilter = (world: World, comps: Components, filter: ScoresFilter): number => {
+  const typeID = getTotalID(filter.epoch, filter.index, filter.type);
+  const entity = world.entityToIndex.get(typeID);
+  if (!entity) return 0;
+
+  const value = getValue(comps, entity);
+  return value;
 };
