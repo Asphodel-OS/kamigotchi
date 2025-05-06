@@ -9,6 +9,7 @@ import { ActionIcons } from 'assets/images/icons/actions';
 import { KAMI_BASE_URI } from 'constants/media';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
+import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 
 interface Props {
@@ -52,20 +53,6 @@ export const Bio = (props: Props) => {
 
   /////////////////
   // RENDERING
-
-  const AddressDisplay = () => {
-    if (!account.ownerAddress) return null;
-    const address = account.ownerAddress;
-    const addrPrefix = address.slice(0, 6);
-    const addrSuffix = address.slice(-4);
-    return (
-      <Tooltip text={[address]}>
-        <Subtitle onClick={() => copyText(address)}>
-          {addrPrefix}...{addrSuffix}
-        </Subtitle>
-      </Tooltip>
-    );
-  };
 
   const KamisDropDown = () => {
     let kamis = getAccountKamis(account.entity).map((kami) => (
@@ -112,18 +99,20 @@ export const Bio = (props: Props) => {
       ) : (
         Pfp()
       )}
-      <Content>
-        <Identifiers>
-          <TitleRow>
-            <Title>{account.name}</Title>
-          </TitleRow>
-          <AddressDisplay />
-          <DetailRow>
-            <CakeIcon style={{ height: '1.4vh' }} />
-            <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
-          </DetailRow>
-        </Identifiers>
-      </Content>
+      <Info>
+        <TitleSection>
+          <Text size={1.2}>{account.name}</Text>
+          <Tooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
+            <Subtitle onClick={() => copyText(account.ownerAddress)}>
+              {abbreviateAddress(account.ownerAddress)}
+            </Subtitle>
+          </Tooltip>
+        </TitleSection>
+        <DetailRow>
+          <CakeIcon style={{ height: '1.4vh' }} />
+          <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
+        </DetailRow>
+      </Info>
     </Container>
   );
 };
@@ -132,45 +121,34 @@ const Container = styled.div`
   padding: 0.75vw;
   display: flex;
   flex-flow: row nowrap;
+  gap: 0.9vw;
   align-items: center;
+  user-select: none;
 `;
 
-const Content = styled.div`
+const Info = styled.div`
   width: 100%;
-  padding: 1.5vw;
+  padding-bottom: 1.5vw;
+  gap: 0.3vw;
+
   display: flex;
-  flex-flow: column;
+  flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
 `;
 
-const Identifiers = styled.div`
-  padding-bottom: 0.6vw;
+const TitleSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  align-items: flex-start;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: flex-start;
-  gap: 0.5vw;
-`;
-
-const Title = styled.div`
-  padding-top: 0.15vw;
-  font-size: 1.2vw;
+  gap: 0.3vw;
+  margin-bottom: 0.6vw;
 `;
 
 const Subtitle = styled.div`
   color: #777;
-  padding: 0.5vw;
-  flex-grow: 1;
+  padding-left: 0.5vw;
 
-  font-family: Pixel;
   font-size: 0.7vw;
-
   cursor: copy;
 `;
 
@@ -179,15 +157,12 @@ const DetailRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3vw;
+  justify-content: center;
 `;
 
 const Description = styled.div`
   font-size: 0.7vw;
-  font-family: Pixel;
   line-height: 0.9vw;
-  text-align: left;
-  padding-top: 0.2vw;
 `;
 
 const PfpContainer = styled.div`
