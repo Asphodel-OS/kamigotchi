@@ -11,13 +11,16 @@ export interface Stats {
   vip: number;
 }
 
-export const getStats = (world: World, components: Components, entity: EntityIndex) => {
+export const getStats = (world: World, comps: Components, entity: EntityIndex) => {
   const id = world.entities[entity];
-  const stageInfo = getConfigFieldValueArray(world, components, 'VIP_STAGE');
-  const stage = Math.trunc((Date.now() - stageInfo[0]) / stageInfo[1] + 1);
+  const now = Date.now() / 1000;
+  const stageInfo = getConfigFieldValueArray(world, comps, 'VIP_STAGE');
+  const start = stageInfo[0];
+  const epochDuration = stageInfo[1];
+  const stage = Math.floor((now - start) / epochDuration + 1);
   return {
-    kills: getData(world, components, id, 'LIQUIDATE_TOTAL', 0),
-    coin: getData(world, components, id, 'ITEM_TOTAL', MUSU_INDEX),
-    vip: getScoreFromHash(world, components, id, stage, 0, 'VIP_SCORE').score,
+    kills: getData(world, comps, id, 'LIQUIDATE_TOTAL', 0),
+    coin: getData(world, comps, id, 'ITEM_TOTAL', MUSU_INDEX),
+    vip: getScoreFromHash(world, comps, id, stage, 0, 'VIP_SCORE').score,
   };
 };

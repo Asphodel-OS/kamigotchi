@@ -1,4 +1,5 @@
 export const MUSU_INDEX = 1;
+export const VIPP_INDEX = 2;
 export const GACHA_TICKET_INDEX = 10;
 export const REROLL_TICKET_INDEX = 11;
 export const ONYX_INDEX = 100;
