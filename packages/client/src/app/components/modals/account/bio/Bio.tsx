@@ -1,11 +1,10 @@
 import { EntityIndex } from '@mud-classic/recs';
 import CakeIcon from '@mui/icons-material/Cake';
-import TagIcon from '@mui/icons-material/Tag';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Popover, Tooltip } from 'app/components/library';
+import { Overlay, Popover, Text, Tooltip } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { KAMI_BASE_URI } from 'constants/media';
 import { Account } from 'network/shapes/Account';
@@ -103,6 +102,9 @@ export const Bio = (props: Props) => {
 
   return (
     <Container>
+      <Overlay top={0.75} right={0.75}>
+        <Text size={0.6}>#{account.index}</Text>
+      </Overlay>
       {isSelf ? (
         <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
           {Pfp()}
@@ -116,10 +118,6 @@ export const Bio = (props: Props) => {
             <Title>{account.name}</Title>
           </TitleRow>
           <AddressDisplay />
-          <DetailRow>
-            <TagIcon style={{ height: '1.4vh' }} />
-            <Description>Account Index: {account.index}</Description>
-          </DetailRow>
           <DetailRow>
             <CakeIcon style={{ height: '1.4vh' }} />
             <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
