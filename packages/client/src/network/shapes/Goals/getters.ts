@@ -51,8 +51,6 @@ export const getContributionByHash = (
   account: Account
 ): Contribution => {
   const entity = getContributionEntityIndex(world, goal.id, account.id);
-
   if (!entity) return { holderID: account.id, claimed: false, value: 0 };
-
   return getContribution(comps, entity, account);
 };

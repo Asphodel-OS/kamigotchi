@@ -40,7 +40,7 @@ export const Progress = (props: Props) => {
 
   const max = goal.objective.target.value ?? 0;
   const rightText = ` ${parseQuantity(objType, goal.currBalance)}/${parseQuantity(objType, max)}`;
-  const contributedAmtText = `You've contributed ${parseQuantity(objType, accContribution ? accContribution.score : 0)}`;
+  const contributedAmtText = `You've contributed ${parseQuantity(objType, accContribution ? accContribution.value : 0)}`;
 
   return (
     <Container>
