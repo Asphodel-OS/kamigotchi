@@ -1,6 +1,7 @@
 import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLocalStorage } from 'usehooks-ts';
 
 import { useSelected, useVisibility } from 'app/stores';
 import { radiateFx } from 'app/styles/effects';
@@ -22,6 +23,8 @@ export const Room = (props: Props) => {
   const { setNode } = useSelected();
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
+  const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
+  const bgmVolume = settings.volume.bgm;
 
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
@@ -31,22 +34,38 @@ export const Room = (props: Props) => {
     if (index == room.index) return;
     const newRoom = rooms[index];
     const music = newRoom.music;
-    if (!music) bgm?.stop();
-    else if (music.path !== room.music?.path) {
+    if (!music) {
+      bgm?.stop();
+      return;
+    }
+    if (music.path !== room.music?.path) {
       if (!RoomsBgm.has(music.path)) {
-        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true }));
+        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
       }
-      const newBgm = RoomsBgm.get(music.path);
       if (bgm) bgm.stop();
+
+      const newBgm = RoomsBgm.get(music.path);
       newBgm?.play();
+      newBgm?.fade(0, bgmVolume, 3000);
       setBgm(newBgm);
-      newBgm?.fade(0, 1, 3000);
     }
 
     setRoom(newRoom);
     setNode(index);
     closeModals();
   }, [index]);
+
+  // manages volume changes from the variable stored in local storage
+  useEffect(() => {
+    if (!bgm) return;
+
+    if (bgmVolume === 0) {
+      bgm.stop();
+    } else {
+      if (!bgm.playing()) bgm.play();
+      bgm.fade(bgm.volume(), bgmVolume, 3000);
+    }
+  }, [bgmVolume]);
 
   const closeModals = () => {
     setModals({
@@ -136,6 +155,7 @@ const Background = styled.img`
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 `;
+
 interface Coordinates {
   x1: number;
   y1: number;
