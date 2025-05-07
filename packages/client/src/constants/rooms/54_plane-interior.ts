@@ -4,15 +4,15 @@ import {
   bgPlaytestEvening,
   bgPlaytestNight,
 } from 'assets/images/rooms/54_plane_interior';
-import { cave } from 'assets/sound/ost';
+import { k2 } from 'assets/sound/ost';
 import { Room } from './types';
 
 export const room54: Room = {
   index: 54,
   backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
-    key: 'cave',
-    path: cave,
+    key: 'k2',
+    path: k2,
   },
   objects: [
     {

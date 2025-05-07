@@ -3,16 +3,15 @@ import {
   bgPlaytestEvening,
   bgPlaytestNight,
 } from 'assets/images/rooms/65_forest-hut';
-import { arrival } from 'assets/sound/ost';
-
+import { k3 } from 'assets/sound/ost';
 import { Room } from './types';
 
 export const room65: Room = {
   index: 65,
   backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
-    key: 'arrival',
-    path: arrival,
+    key: 'k3',
+    path: k3,
   },
   objects: [
     {

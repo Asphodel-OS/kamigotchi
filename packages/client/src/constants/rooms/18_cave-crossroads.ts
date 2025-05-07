@@ -1,14 +1,9 @@
 import { bgPlaytest } from 'assets/images/rooms/18_cave-crossroads';
-import { cave } from 'assets/sound/ost';
 import { Room } from './types';
 
 export const room18: Room = {
   index: 18,
   backgrounds: [bgPlaytest],
-  music: {
-    key: 'cave',
-    path: cave,
-  },
   objects: [
     // {
     //   // cavefloor

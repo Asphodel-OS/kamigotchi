@@ -4,15 +4,15 @@ import {
   bgPlaytestEvening,
   bgPlaytestNight,
 } from 'assets/images/rooms/34_deeper-into-scrap';
-import { cave } from 'assets/sound/ost';
+import { k1 } from 'assets/sound/ost';
 import { Room } from './types';
 
 export const room34: Room = {
   index: 34,
   backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
   music: {
-    key: 'cave',
-    path: cave,
+    key: 'k1',
+    path: k1,
   },
   objects: [
     {

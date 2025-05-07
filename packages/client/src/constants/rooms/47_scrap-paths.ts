@@ -3,10 +3,10 @@ import {
   bgPlaytestEvening,
   bgPlaytestNight,
 } from 'assets/images/rooms/47_scrap-paths';
-import { cave } from 'assets/sound/ost';
 import { Room } from './types';
 
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
+import { cave } from 'assets/sound/ost';
 
 export const room47: Room = {
   index: 47,
