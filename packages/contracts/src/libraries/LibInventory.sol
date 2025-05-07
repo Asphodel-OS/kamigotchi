@@ -182,8 +182,7 @@ library LibInventory {
 
       ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
       uint256 newBal = valComp.safeGet(id) - amt;
-      if (newBal == 0)
-        remove(components, id); // delete entity if zero
+      if (newBal == 0) remove(components, id);
       else valComp.set(id, newBal);
 
       LibData.dec(components, 0, itemIndex, "ITEM_COUNT", amt);
