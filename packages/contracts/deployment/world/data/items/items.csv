@@ -1,28 +1,27 @@
 ﻿.,Status,Name,Index,Type,For,Address,Flags,Effects,Requirements,Description
 ,In Game,MUSU,1,Misc,,,,,,Kamigotchi kurrency
-,To Deploy,VIPP,2,Consumable,Account,,,VIP1,VIP_ROOM,"Sacred paper which can be sacrificed for VIP status. "
+,In Game,VIPP,2,Consumable,Account,,,VIP1,VIP_ROOM,"Sacred paper which can be sacrificed for VIP status. "
 ,In Game,Gacha Ticket,10,Misc,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
 ,In Game,Kamigotchi World Passport (Yellow),20,NFT,,,,,,Your ticket to great fortunes. In yellow.
-,To Update,Kamigotchi World Passport (Orange),21,NFT,,,,,,Your ticket to great fortunes. In orange.
-,To Update,Kamigotchi World Passport (Pink),22,NFT,,,,,,Your ticket to great fortunes. In pink.
-,To Update,Kamigotchi World Passport (Red),23,NFT,,,,,,"Your ticket to great fortunes. In red. "
-,To Update,Kamigotchi World Passport (Blue),24,NFT,,,,,,"Your ticket to great fortunes. In blue. "
-,To Update,Kamigotchi World Passport (Green),25,NFT,,,,,,Your ticket to great fortunes. In green.
-,To Update,Kamigotchi World Passport (White),26,NFT,,,,,,Your ticket to great fortunes. In white.
-,To Update,Kamigotchi World Passport (Grey),27,NFT,,,,,,Your ticket to great fortunes. In grey.
-,To Update,Kamigotchi World Passport (Purple),28,NFT,,,,,,Your ticket to great fortunes. In purple.
-,To Update,Kamigotchi World Passport (Lime Green),29,NFT,,,,,,Your ticket to great fortunes. In lime green.
-,To Update,Kamigotchi World Passport (1-bit Red and White),30,NFT,,,,,,Your ticket to great fortunes. In 1-bit red.
-,To Update,Kamigotchi World Passport (1-bit Pink),31,NFT,,,,,,Your ticket to great fortunes. In 1-bit pink.
-,To Update,Kamigotchi World Passport (1-bit Green),32,NFT,,,,,,Your ticket to great fortunes. In 1-bit green.
-,To Update,Kamigotchi World Passport (1-bit Black and White),33,NFT,,,,,,Your ticket to great fortunes. In 1-bit black.
+,In Game,Kamigotchi World Passport (Orange),21,NFT,,,,,,Your ticket to great fortunes. In orange.
+,In Game,Kamigotchi World Passport (Pink),22,NFT,,,,,,Your ticket to great fortunes. In pink.
+,In Game,Kamigotchi World Passport (Red),23,NFT,,,,,,"Your ticket to great fortunes. In red. "
+,In Game,Kamigotchi World Passport (Blue),24,NFT,,,,,,"Your ticket to great fortunes. In blue. "
+,In Game,Kamigotchi World Passport (Green),25,NFT,,,,,,Your ticket to great fortunes. In green.
+,In Game,Kamigotchi World Passport (White),26,NFT,,,,,,Your ticket to great fortunes. In white.
+,In Game,Kamigotchi World Passport (Grey),27,NFT,,,,,,Your ticket to great fortunes. In grey.
+,In Game,Kamigotchi World Passport (Purple),28,NFT,,,,,,Your ticket to great fortunes. In purple.
+,In Game,Kamigotchi World Passport (Lime Green),29,NFT,,,,,,Your ticket to great fortunes. In lime green.
+,In Game,Kamigotchi World Passport (1-bit Red and White),30,NFT,,,,,,Your ticket to great fortunes. In 1-bit red.
+,In Game,Kamigotchi World Passport (1-bit Pink),31,NFT,,,,,,Your ticket to great fortunes. In 1-bit pink.
+,In Game,Kamigotchi World Passport (1-bit Green),32,NFT,,,,,,Your ticket to great fortunes. In 1-bit green.
+,In Game,Kamigotchi World Passport (1-bit Black and White),33,NFT,,,,,,Your ticket to great fortunes. In 1-bit black.
 ,In Game,ONYX,100,ERC20,,0x4BaDFb501Ab304fF11217C44702bb9E9732E7CF4,,,,"Asphodel’s premium game currency.
 
 You want this. You want this so bad."
 ,Test,INIT,101,ERC20,,0x0000000000000000000000000000000000000101,,,,Initia
-,To Deploy,ETH,103,ERC20,,0xE1Ff7038eAAAF027031688E1535a055B2Bac2546,,,,Ethereum
-,In Game,Screwdriver,201,Material,,,,,,For driving screws. May be of practical use….
+,In Game,ETH,103,ERC20,,0xE1Ff7038eAAAF027031688E1535a055B2Bac2546,,,,Ethereum
 ,In Game,Wooden Stick,1001,Material,,,,,,"Wood in its unprocessed form. Grows on trees. "
 ,In Game,Stone,1002,Material,,,,,,"It’s just a stone. Can be used to get Stone. "
 ,In Game,Plastic Bottle,1003,Material,,,,,,"Can be reprocessed into valuable raw Microplastics. "
@@ -44,7 +43,7 @@ Slightly sacred. "
 
 These ribbons are greatly prized…. "
 ,To Deploy,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Kami,,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
-,In Game,Holy Dust,11011,Consumable,Kami,,,F_NAMEABLE,,This sacred dust can be used to rename Kamigotchi… At the proper place.
+,To Update,Holy Dust,11011,Misc,Kami,,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,In Game,Gaokerena Mochi,11110,Food,Kami,,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
 ,In Game,Sunset Apple Mochi,11120,Food,Kami,,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
 ,In Game,Kami Mochi,11130,Food,Kami,,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
@@ -76,6 +75,7 @@ These ribbons are greatly prized…. "
 ,To Deploy,“Neith’s River of Life” Spell Card,21204,Food,Account,,NOT_TRADABLE,SP+80,,"The card depicts a flooding river beneath the night sky. The magical waters grant a bounty of stamina, and the reeds grow nearly as tall as the pyramids. Activating this Spell Card on an Operator will restore 80 Stamina."
 ,In Game,Spice Grinder,23100,Tool,,,,,,Can be used to break down ingredients.
 ,In Game,Portable Burner,23101,Tool,,,,,,"Can be used to make Potions at a riverside. "
+,To Update,Screwdriver,23102,Tool,,,,,,For driving screws. May be of practical use….
 ,In Game,Astrolabe Disk,100001,Key Item,,,,,,"A golden disk. It resembles the tympan of an astrolabe, but the engraving doesn’t look right."
 ,To Deploy,Ancient Machine Part,100002,Key Item,,,,,,A durable part of some kind of high-tech machinery. It has wear and corrosion like it’s been exposed to the elements for thousands of years.
 ,To Deploy,Disc-Shaped Map,100003,Key Item,,,,,,"A golden disk inlaid with other metals. It resembles an overhead map of a temple complex. Seems to depict roads, pyramids, and other structures."

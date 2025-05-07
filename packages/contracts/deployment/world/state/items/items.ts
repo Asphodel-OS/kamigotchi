@@ -82,6 +82,7 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
 }
 
 export async function deleteItems(api: AdminAPI, indices: number[]) {
+  console.log('\n==DELETING ITEMS==');
   for (let i = 0; i < indices.length; i++) {
     try {
       console.log(`Deleting item ${indices[i]}`);
