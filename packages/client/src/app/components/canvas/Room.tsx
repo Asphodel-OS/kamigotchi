@@ -37,7 +37,8 @@ export const Room = (props: Props) => {
     if (!music) {
       bgm?.stop();
       return;
-    } else if (music.path !== room.music?.path) {
+    }
+    if (music.path !== room.music?.path) {
       if (!RoomsBgm.has(music.path)) {
         RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
       }
