@@ -29,11 +29,12 @@ export const Header = (props: Props) => {
 };
 
 const Container = styled.div`
+  margin: 0 1.2vw 0 1.2vw;
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
 `;
 
 const ShopDetails = styled.div`

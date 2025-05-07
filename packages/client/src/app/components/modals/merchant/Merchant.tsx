@@ -42,7 +42,7 @@ export function registerMerchantModal() {
             data: { accountEntity },
             utils: {
               getAccount: () =>
-                getAccount(world, components, accountEntity, { live: 2, inventory: 10 }),
+                getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
               getNPC: (index: number) => getNPCByIndex(world, components, index, { listings: 60 }),
               cleanListings: (listings: Listing[], account: Account) =>
                 cleanNPCListings(world, components, listings, account),
@@ -121,7 +121,7 @@ export function registerMerchantModal() {
         <ModalWrapper id='merchant' canExit overlay>
           <Header merchant={merchant} player={account} balance={musuBalance} />
           <Body>
-            <Catalog listings={listings} cart={cart} setCart={setCart} />
+            <Catalog account={account} listings={listings} cart={cart} setCart={setCart} />
             <Cart account={account} cart={cart} setCart={setCart} buy={buy} />
           </Body>
         </ModalWrapper>
@@ -132,7 +132,7 @@ export function registerMerchantModal() {
 
 const Body = styled.div`
   border: solid black 0.15vw;
-  border-radius: 0.4vw;
+  border-radius: 0.45vw;
   margin: 0 1.2vw 1.2vw 1.2vw;
   min-height: 70%;
   user-select: none;

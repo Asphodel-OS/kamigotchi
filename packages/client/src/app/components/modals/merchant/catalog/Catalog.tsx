@@ -1,17 +1,19 @@
 import styled from 'styled-components';
 
+import { Account } from 'network/shapes/Account';
 import { Listing } from 'network/shapes/Listing';
 import { CartItem } from '../types';
 import { CatalogRow } from './CatalogRow';
 
 export interface Props {
+  account: Account;
   listings: Listing[];
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
 }
 
 export const Catalog = (props: Props) => {
-  const { listings, cart, setCart } = props;
+  const { account, listings, cart, setCart } = props;
 
   const toggleListing = (itemIndex: number) => {
     const newCart = [...cart];
@@ -30,6 +32,7 @@ export const Catalog = (props: Props) => {
         {listings.map((l) => (
           <CatalogRow
             key={l.entity}
+            account={account}
             listing={l}
             cart={cart}
             toggle={() => toggleListing(l.item.index)}
@@ -43,6 +46,7 @@ export const Catalog = (props: Props) => {
 const Container = styled.div`
   position: relative;
   border-right: solid black 0.15vw;
+  width: 65%;
 
   display: flex;
   flex-flow: column nowrap;
@@ -51,11 +55,10 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  background-color: #ddd;
+  background-color: rgba(92, 83, 86, 0.9);
   border-radius: 0.25vw 0 0 0;
   width: 100%;
   padding: 1.2vw;
-  opacity: 0.9;
 
   color: black;
   font-size: 1.2vw;
@@ -64,7 +67,7 @@ const Title = styled.div`
 `;
 
 const Items = styled.div`
-  padding: 0.6vw;
+  padding: 0.9vw;
   padding-top: 4.2vw;
   gap: 0.6vw;
 

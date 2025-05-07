@@ -14,13 +14,7 @@ export const Balance = (props: Props) => {
     <Container>
       <Title>Balance</Title>
       <Content>
-        <Pairing
-          icon={ItemImages.musu}
-          text={balance.toString()}
-          scale={0.9}
-          marginTop={0}
-          tooltip={[balance.toString()]}
-        />
+        <Pairing icon={ItemImages.musu} text={balance.toLocaleString()} scale={0.9} />
       </Content>
     </Container>
   );
@@ -30,46 +24,37 @@ const Container = styled.div`
   position: relative;
   border: solid black 0.15vw;
   border-radius: 0.4vw;
-  margin: 2vw 1.2vw 1.2vw 1.2vw;
+
+  margin: 2vw 0 1.2vw 0;
   height: 59%;
-  user-select: none;
+  width: 30%;
+
   overflow: hidden;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
   justify-content: stretch;
   align-items: stretch;
-  align-content: stretch;
-  width: 30%;
+
+  user-select: none;
 `;
 
 const Title = styled.div`
-  position: absolute;
   background-color: #ddd;
-  border-radius: 0 0.25vw 0 0;
   width: 100%;
   padding: 0.8vw;
   opacity: 0.9;
 
   color: black;
   font-size: 1vw;
-  text-align: left;
   z-index: 1;
 `;
 
 const Content = styled.div`
-  margin: 3.2vw 0.3vw 0.5vw 0.9vw;
-  gap: 0.6vw;
-
+  height: 100%;
+  padding-left: 0.6vw;
   display: flex;
   flex-flow: column nowrap;
-
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-gutter: stable;
-  scrollbar-color: transparent transparent;
-  align-items: center;
-  flex-direction: row;
-  font-size: 0.9vw;
-  inline-size: 80%;
+  align-items: flex-start;
+  justify-content: center;
 `;
