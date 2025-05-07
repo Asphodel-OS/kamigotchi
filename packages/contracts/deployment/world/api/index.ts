@@ -1,106 +1,81 @@
 import { BigNumberish } from 'ethers';
 
-import { SystemBytecodes } from '../../contracts/mappings/SystemBytecodes';
-import { createCall, toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
+import { toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
 import { goalsAPI } from './goals';
 import { listingAPI } from './listings';
+import { nodesAPI } from './nodes';
 import { questsAPI } from './quests';
+import { generateCallData } from './utils';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
 
-// i have become what i hate most, woe is jiraheron
-export type GenCall = (
-  systemID: keyof typeof SystemBytecodes,
-  args: any[],
-  func?: string,
-  encodedTypes?: any,
-  gasLimit?: BigNumberish
-) => void;
-
 export function createAdminAPI(compiledCalls: string[]) {
-  // @dev generates an entry in json for calling systems
-  // @param systemID system ID
-  // @param args arguments to pass to the system
-  // @param func optional, function name to call instead of executeTyped
-  // @param typed optional, if true, skip argument encoding
-  function genCall(
-    systemID: keyof typeof SystemBytecodes,
-    args: any[],
-    func?: string,
-    encodedTypes?: any[],
-    gasLimit?: BigNumberish
-  ) {
-    // if execute or has typed args, encode args
-    const encode = func === undefined || encodedTypes !== undefined;
-    const call = createCall(systemID, args, encode, encodedTypes);
-
-    const callData = `{
-"system": "${call.system}",
-"id": "${call.id}",
-"func": "${func ? func : 'execute'}",
-"args": "${call.args}"
-${gasLimit ? `, "gas": "${gasLimit}"` : ''}
-}`;
-
-    compiledCalls.push(callData);
-  }
-
   /////////////////
   // AUTH
 
   async function addRole(addr: string, role: string) {
-    genCall('system.auth.registry', [addr, role], 'addRole');
+    const callData = generateCallData('system.auth.registry', [addr, role], 'addRole');
+    compiledCalls.push(callData);
   }
 
   async function removeRole(addr: string, role: string) {
-    genCall('system.auth.registry', [addr, role], 'removeRole');
+    const callData = generateCallData('system.auth.registry', [addr, role], 'removeRole');
+    compiledCalls.push(callData);
   }
-
-  /////////////////
-  // ADMIN
 
   /////////////////
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
-    genCall('system.config.registry', [field, value]);
+    const callData = generateCallData('system.config.registry', [field, value]);
+    compiledCalls.push(callData);
   }
 
   async function setConfigAddress(field: string, value: string) {
-    genCall('system.config.registry', [field, value], 'setValueAddress');
+    const callData = generateCallData('system.config.registry', [field, value], 'setValueAddress');
+    compiledCalls.push(callData);
   }
 
   async function setConfigBool(field: string, value: boolean) {
-    genCall('system.config.registry', [field, value], 'setValueBool');
+    const callData = generateCallData('system.config.registry', [field, value], 'setValueBool');
+    compiledCalls.push(callData);
   }
 
   async function setConfigArray(field: string, value: number[]) {
     const arr = new Array(8);
     arr.fill(0);
     for (let i = 0; i < value.length; i++) arr[i] = value[i];
-    genCall('system.config.registry', [field, toUint32FixedArrayLiteral(arr)], 'setValueArray');
+    const callData = generateCallData(
+      'system.config.registry',
+      [field, toUint32FixedArrayLiteral(arr)],
+      'setValueArray'
+    );
+    compiledCalls.push(callData);
   }
 
   // values must be ≤ 32char
   async function setConfigString(field: string, value: string) {
-    genCall('system.config.registry', [field, value], 'setValueString');
+    const callData = generateCallData('system.config.registry', [field, value], 'setValueString');
+    compiledCalls.push(callData);
   }
 
   /////////////////
   // FACTIONS
 
   async function createFaction(index: number, name: string, description: string, image: string) {
-    genCall('system.faction.registry', [index, name, description, image], 'create', [
-      'uint32',
-      'string',
-      'string',
-      'string',
-    ]);
+    const callData = generateCallData(
+      'system.faction.registry',
+      [index, name, description, image],
+      'create',
+      ['uint32', 'string', 'string', 'string']
+    );
+    compiledCalls.push(callData);
   }
 
   async function deleteFaction(index: number) {
-    genCall('system.faction.registry', [index], 'remove');
+    const callData = generateCallData('system.faction.registry', [index], 'remove');
+    compiledCalls.push(callData);
   }
 
   /////////////////
@@ -111,112 +86,41 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
 
   // (creates an NPC with the name at the specified roomIndex
   async function createNPC(index: number, name: string, roomIndex: number) {
-    genCall('system.npc.registry', [index, name, roomIndex], 'create', [
+    const callData = generateCallData('system.npc.registry', [index, name, roomIndex], 'create', [
       'uint32',
       'string',
       'uint32',
     ]);
+    compiledCalls.push(callData);
   }
 
   async function setNPCRoom(index: number, roomIndex: number) {
-    genCall('system.npc.registry', [index, roomIndex], 'setRoom');
+    const callData = generateCallData('system.npc.registry', [index, roomIndex], 'setRoom');
+    compiledCalls.push(callData);
   }
 
   async function setNPCName(index: number, name: string) {
-    genCall('system.npc.registry', [index, name], 'setName');
+    const callData = generateCallData('system.npc.registry', [index, name], 'setName');
+    compiledCalls.push(callData);
   }
 
   /////////////////
   // MINT
 
   async function initBatchMinter() {
-    genCall('system.Kami721.BatchMint', [], 'setTraits');
+    const callData = generateCallData('system.Kami721.BatchMint', [], 'setTraits');
+    compiledCalls.push(callData);
   }
 
   async function batchMint(amount: number, gasLimit?: BigNumberish) {
-    genCall('system.Kami721.BatchMint', [amount], 'batchMint', undefined, gasLimit);
-  }
-
-  /////////////////
-  //  NODES
-
-  // @dev creates an emission node at the specified roomIndex
-  // @param index       the human-readable index of the node
-  // @param type        type of the node (e.g. HARVEST, HEAL, ARENA)
-  // @param roomIndex    index of the room roomIndex
-  // @param name        name of the node
-  // @param description description of the node, exposed on the UI
-  // @param affinity    affinity of the node [ NORMAL | EERIE | INSECT | SCRAP ]
-  async function createNode(
-    index: number,
-    type: string,
-    item: number,
-    room: number,
-    name: string,
-    description: string,
-    affinity: string
-  ) {
-    genCall(
-      'system.node.registry',
-      [index, type, item, room, name, description, affinity],
-      'create',
-      ['uint32', 'string', 'uint32', 'uint32', 'string', 'string', 'string']
+    const callData = generateCallData(
+      'system.Kami721.BatchMint',
+      [amount],
+      'batchMint',
+      undefined,
+      gasLimit
     );
-  }
-
-  async function createNodeRequirement(
-    index: number,
-    type: string,
-    logic: string,
-    index_: number,
-    value: number,
-    for_: string
-  ) {
-    genCall('system.node.registry', [index, type, logic, index_, value, for_], 'addRequirement', [
-      'uint32',
-      'string',
-      'string',
-      'uint32',
-      'uint256',
-      'string',
-    ]);
-  }
-
-  async function createNodeScav(index: number, tierCost: number) {
-    genCall('system.node.registry', [index, tierCost], 'addScavBar');
-  }
-
-  async function addNodeScavRewardBasic(
-    nodeIndex: number,
-    type: string,
-    index: number,
-    value: number
-  ) {
-    genCall('system.node.registry', [nodeIndex, type, index, value], 'addScavRewardBasic', [
-      'uint32',
-      'string',
-      'uint32',
-      'uint256',
-    ]);
-  }
-
-  async function addNodeScavRewardDT(
-    nodeIndex: number,
-    keys: number[],
-    weights: number[],
-    value: number
-  ) {
-    genCall('system.node.registry', [nodeIndex, keys, weights, value], 'addScavRewardDT', [
-      'uint32',
-      'uint32[]',
-      'uint256[]',
-      'uint256',
-    ]);
-  }
-
-  // @dev deletes node
-  async function deleteNode(index: number) {
-    genCall('system.node.registry', [index], 'remove');
+    compiledCalls.push(callData);
   }
 
   /////////////////
@@ -231,16 +135,18 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     xp: number,
     stamina: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.recipe.registry',
       [index, inputs, inputAmounts, outputs, outputAmounts, xp, stamina],
       'create',
       ['uint32', 'uint32[]', 'uint256[]', 'uint32[]', 'uint256[]', 'uint256', 'uint256']
     );
+    compiledCalls.push(callData);
   }
 
   async function addRecipeAssigner(index: number, assigner: string) {
-    genCall('system.recipe.registry', [index, assigner], 'addAssigner');
+    const callData = generateCallData('system.recipe.registry', [index, assigner], 'addAssigner');
+    compiledCalls.push(callData);
   }
 
   async function addRecipeRequirement(
@@ -251,11 +157,17 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     value: number,
     for_: string
   ) {
-    genCall('system.recipe.registry', [index, type, logic, index_, value, for_], 'addRequirement');
+    const callData = generateCallData(
+      'system.recipe.registry',
+      [index, type, logic, index_, value, for_],
+      'addRequirement'
+    );
+    compiledCalls.push(callData);
   }
 
   async function deleteRecipe(index: number) {
-    genCall('system.recipe.registry', [index], 'remove');
+    const callData = generateCallData('system.recipe.registry', [index], 'remove');
+    compiledCalls.push(callData);
   }
 
   /////////////////
@@ -271,12 +183,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     description: string,
     exits: number[]
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.room.registry',
       [x, y, z, roomIndex, name, description, exits.length == 0 ? [] : exits],
       'create',
       ['int32', 'int32', 'int32', 'uint32', 'string', 'string', 'uint32[]']
     );
+    compiledCalls.push(callData);
   }
 
   async function createRoomGate(
@@ -288,16 +201,18 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     logicType: string,
     for_: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.room.registry',
       [roomIndex, sourceIndex, conditionIndex, conditionValue, type, logicType, for_],
       'addGate',
       ['uint32', 'uint32', 'uint32', 'uint256', 'string', 'string', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   async function deleteRoom(roomIndex: number) {
-    genCall('system.room.registry', [roomIndex], 'remove');
+    const callData = generateCallData('system.room.registry', [roomIndex], 'remove');
+    compiledCalls.push(callData);
   }
 
   /////////////////
@@ -314,24 +229,27 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     treeTier: number,
     media: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.skill.registry',
       [index, for_, tree, name, description, cost, max, treeTier, media],
       'create',
       ['uint32', 'string', 'string', 'string', 'string', 'uint256', 'uint256', 'uint256', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   async function deleteSkill(index: number) {
-    genCall('system.skill.registry', [index], 'remove');
+    const callData = generateCallData('system.skill.registry', [index], 'remove');
   }
 
   async function addSkillBonus(skillIndex: number, type: string, value: number) {
-    genCall('system.skill.registry', [skillIndex, type, value], 'addBonus', [
-      'uint32',
-      'string',
-      'int256',
-    ]);
+    const callData = generateCallData(
+      'system.skill.registry',
+      [skillIndex, type, value],
+      'addBonus',
+      ['uint32', 'string', 'int256']
+    );
+    compiledCalls.push(callData);
   }
 
   async function addSkillRequirement(
@@ -342,12 +260,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     value: number,
     for_: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.skill.registry',
       [skillIndex, type, logicType, index, value, for_],
       'addRequirement',
       ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   /////////////////
@@ -360,13 +279,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     description: string,
     media: string
   ) {
-    genCall('system.item.registry', [index, for_, name, description, media], 'create', [
-      'uint32',
-      'string',
-      'string',
-      'string',
-      'string',
-    ]);
+    const callData = generateCallData(
+      'system.item.registry',
+      [index, for_, name, description, media],
+      'create',
+      ['uint32', 'string', 'string', 'string', 'string']
+    );
+    compiledCalls.push(callData);
   }
 
   // @dev add a misc item in registry entry
@@ -378,22 +297,25 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     type_: string,
     media: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.item.registry',
       [index, for_, name, description, type_, media],
       'createConsumable',
       ['uint32', 'string', 'string', 'string', 'string', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   //// ITEM FLAGS
 
   async function addItemFlag(index: number, flag: string) {
-    genCall('system.item.registry', [index, flag], 'addFlag');
+    const callData = generateCallData('system.item.registry', [index, flag], 'addFlag');
+    compiledCalls.push(callData);
   }
 
   async function addItemERC20(index: number, address: string) {
-    genCall('system.item.registry', [index, address], 'addERC20');
+    const callData = generateCallData('system.item.registry', [index, address], 'addERC20');
+    compiledCalls.push(callData);
   }
 
   //// ITEM REQUIREMENTS
@@ -407,12 +329,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     value: BigNumberish,
     for_: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.item.registry',
       [index, usecase, type_, logicType, index_, value, for_],
       'addRequirement',
       ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   //// ITEM ALLOS
@@ -424,13 +347,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     index_: number,
     value: number
   ) {
-    genCall('system.item.registry', [index, usecase, type, index_, value], 'addAlloBasic', [
-      'uint32',
-      'string',
-      'string',
-      'uint32',
-      'uint256',
-    ]);
+    const callData = generateCallData(
+      'system.item.registry',
+      [index, usecase, type, index_, value],
+      'addAlloBasic',
+      ['uint32', 'string', 'string', 'uint32', 'uint256']
+    );
+    compiledCalls.push(callData);
   }
 
   async function addItemBonus(
@@ -441,12 +364,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     duration: number,
     value: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.item.registry',
       [index, usecase, bonusType, endType, duration, value],
       'addAlloBonus',
       ['uint32', 'string', 'string', 'string', 'uint256', 'int256']
     );
+    compiledCalls.push(callData);
   }
 
   async function addItemDT(
@@ -456,13 +380,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     weights: number[],
     value: number
   ) {
-    genCall('system.item.registry', [index, usecase, keys, weights, value], 'addAlloDT', [
-      'uint32',
-      'string',
-      'uint32[]',
-      'uint256[]',
-      'uint256',
-    ]);
+    const callData = generateCallData(
+      'system.item.registry',
+      [index, usecase, keys, weights, value],
+      'addAlloDT',
+      ['uint32', 'string', 'uint32[]', 'uint256[]', 'uint256']
+    );
+    compiledCalls.push(callData);
   }
 
   async function addItemStat(
@@ -474,17 +398,18 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     boost: number,
     sync: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.item.registry',
       [index, usecase, statType, base, shift, boost, sync],
       'addAlloStat',
       ['uint32', 'string', 'string', 'int32', 'int32', 'int32', 'int32']
     );
+    compiledCalls.push(callData);
   }
 
   // @dev deletes an item registry
   async function deleteItem(index: number) {
-    genCall('system.item.registry', [index], 'remove');
+    const callData = generateCallData('system.item.registry', [index], 'remove');
   }
 
   // @dev adds a trait in registry
@@ -500,7 +425,7 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     name: string,
     type: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.trait.registry',
       [index, health, power, violence, harmony, slots, rarity, affinity, name, type],
       'create',
@@ -517,11 +442,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
         'string',
       ]
     );
+    compiledCalls.push(callData);
   }
 
   // @dev deletes trait
   async function deleteTrait(index: number, type: string) {
-    genCall('system.trait.registry', [index, type], 'remove');
+    const callData = generateCallData('system.trait.registry', [index, type], 'remove');
+    compiledCalls.push(callData);
   }
 
   //////////////////
@@ -534,12 +461,13 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     whitelist: number[],
     blacklist: number[]
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.relationship.registry',
       [indexNPC, indexRelationship, name, whitelist, blacklist],
       'create',
       ['uint32', 'uint32', 'string', 'uint32[]', 'uint32[]']
     );
+    compiledCalls.push(callData);
   }
 
   async function updateRelationship(
@@ -549,70 +477,95 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
     whitelist: number[],
     blacklist: number[]
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.relationship.registry',
       [indexNPC, indexRelationship, name, whitelist, blacklist],
       'update',
       ['uint32', 'uint32', 'string', 'uint32[]', 'uint32[]']
     );
+    compiledCalls.push(callData);
   }
 
   async function deleteRelationship(indexNPC: number, indexRelationship: number) {
-    genCall('system.relationship.registry', [indexNPC, indexRelationship], 'remove');
+    const callData = generateCallData(
+      'system.relationship.registry',
+      [indexNPC, indexRelationship],
+      'remove'
+    );
+    compiledCalls.push(callData);
   }
 
   function attachItemERC20(index: number) {
-    genCall('system.local.setup', [index], 'attachItemERC20');
+    const callData = generateCallData('system.local.setup', [index], 'attachItemERC20');
+    compiledCalls.push(callData);
   }
 
   ////////////////
   // SETUP
 
   function distributePassports(owners: string[], amts: number[]) {
-    genCall(
+    const callData = generateCallData(
       'system.setup.snapshot.t2',
       [owners, amts],
       'distributePassports',
       ['address[]', 'uint256[]'],
       '60000000'
     );
+    compiledCalls.push(callData);
   }
 
   function distributeGachaWhitelists(owners: string[]) {
-    genCall('system.setup.snapshot.t2', [owners], 'whitelistAccounts', ['address[]'], '60000000');
+    const callData = generateCallData(
+      'system.setup.snapshot.t2',
+      [owners],
+      'whitelistAccounts',
+      ['address[]'],
+      '60000000'
+    );
+    compiledCalls.push(callData);
   }
 
   ////////////////
   // SETUP (testing)
 
   function worldWhitelistAccount(accounts: string) {
-    genCall('system.world.whitelist.set', [accounts], 'whitelist', undefined, 400000);
+    const callData = generateCallData(
+      'system.world.whitelist.set',
+      [accounts],
+      'whitelist',
+      undefined,
+      400000
+    );
+    compiledCalls.push(callData);
   }
 
   ////////////////
   // SETUP (puter)
 
   function initAccounts() {
-    genCall('system.local.setup', [], 'initAccounts');
+    const callData = generateCallData('system.local.setup', [], 'initAccounts');
+    compiledCalls.push(callData);
   }
 
   function initPets() {
-    genCall('system.local.setup', [], 'initPets');
+    const callData = generateCallData('system.local.setup', [], 'initPets');
+    compiledCalls.push(callData);
   }
 
   function initHarvests() {
-    genCall('system.local.setup', [], 'initHarvests');
+    const callData = generateCallData('system.local.setup', [], 'initHarvests');
+    compiledCalls.push(callData);
   }
 
   return {
-    gen: genCall,
+    gen: generateCallData,
     auth: {
       roles: {
         add: addRole,
         remove: removeRole,
       },
     },
-    auction: auctionAPI(genCall),
+    auction: auctionAPI(generateCallData, compiledCalls),
     config: {
       set: {
         address: setConfigAddress,
@@ -626,20 +579,9 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
       create: createFaction,
       delete: deleteFaction,
     },
-    goal: goalsAPI(genCall),
-    listing: listingAPI(genCall),
-    node: {
-      create: createNode,
-      add: {
-        requirement: createNodeRequirement,
-        scav: createNodeScav,
-        scavReward: {
-          basic: addNodeScavRewardBasic,
-          droptable: addNodeScavRewardDT,
-        },
-      },
-      delete: deleteNode,
-    },
+    goal: goalsAPI(generateCallData, compiledCalls),
+    listing: listingAPI(generateCallData, compiledCalls),
+    node: nodesAPI(generateCallData, compiledCalls),
     npc: {
       create: createNPC,
       set: {
@@ -676,7 +618,7 @@ ${gasLimit ? `, "gas": "${gasLimit}"` : ''}
         create: registerTrait,
         delete: deleteTrait,
       },
-      quest: questsAPI(genCall),
+      quest: questsAPI(generateCallData, compiledCalls),
       recipe: {
         create: createRecipe,
         add: {

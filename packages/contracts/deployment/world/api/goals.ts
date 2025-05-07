@@ -1,6 +1,6 @@
-import { GenCall } from '.';
+import { GenerateCallData } from './types';
 
-export function goalsAPI(genCall: GenCall) {
+export function goalsAPI(generateCallData: GenerateCallData, compiledCalls: string[]) {
   async function create(
     goalIndex: number,
     name: string,
@@ -11,16 +11,18 @@ export function goalsAPI(genCall: GenCall) {
     conIndex: number,
     conValue: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.goal.registry',
       [goalIndex, name, description, roomIndex, type, logic, conIndex, conValue],
       'create',
       ['uint32', 'string', 'string', 'uint32', 'string', 'string', 'uint32', 'uint256']
     );
+    compiledCalls.push(callData);
   }
 
   async function enable(goalIndex: number) {
-    genCall('system.goal.registry', [goalIndex, false], 'setDisabled');
+    const callData = generateCallData('system.goal.registry', [goalIndex, false], 'setDisabled');
+    compiledCalls.push(callData);
   }
 
   async function createRequirement(
@@ -31,12 +33,13 @@ export function goalsAPI(genCall: GenCall) {
     conValue: number,
     conFor: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.goal.registry',
       [goalIndex, type, logic, conIndex, conValue, conFor],
       'addRequirement',
       ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   async function createRewardBasic(
@@ -47,16 +50,23 @@ export function goalsAPI(genCall: GenCall) {
     conIndex: number,
     conValue: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.goal.registry',
       [goalIndex, name, cutoff, type, conIndex, conValue],
       'addRewardBasic',
       ['uint32', 'string', 'uint256', 'string', 'uint32', 'uint256']
     );
+    compiledCalls.push(callData);
   }
 
   async function createRewardDisplay(goalIndex: number, name: string) {
-    genCall('system.goal.registry', [goalIndex, name], 'addRewardDisplay', ['uint32', 'string']);
+    const callData = generateCallData(
+      'system.goal.registry',
+      [goalIndex, name],
+      'addRewardDisplay',
+      ['uint32', 'string']
+    );
+    compiledCalls.push(callData);
   }
 
   async function createRewardDT(
@@ -65,12 +75,13 @@ export function goalsAPI(genCall: GenCall) {
     weights: number[],
     conValue: number
   ) {
-    genCall('system.goal.registry', [goalIndex, keys, weights, conValue], 'addRewardDT', [
-      'uint32',
-      'uint32[]',
-      'uint256[]',
-      'uint256',
-    ]);
+    const callData = generateCallData(
+      'system.goal.registry',
+      [goalIndex, keys, weights, conValue],
+      'addRewardDT',
+      ['uint32', 'uint32[]', 'uint256[]', 'uint256']
+    );
+    compiledCalls.push(callData);
   }
 
   async function createRewardStat(
@@ -81,16 +92,18 @@ export function goalsAPI(genCall: GenCall) {
     boost: number,
     sync: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.goal.registry',
       [goalIndex, statType, base, shift, boost, sync],
       'addRewardStat',
       ['uint32', 'string', 'int32', 'int32', 'int32', 'int32']
     );
+    compiledCalls.push(callData);
   }
 
   async function remove(goalIndex: number) {
-    genCall('system.goal.registry', [goalIndex], 'remove');
+    const callData = generateCallData('system.goal.registry', [goalIndex], 'remove');
+    compiledCalls.push(callData);
   }
 
   return {

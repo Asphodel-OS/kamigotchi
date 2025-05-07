@@ -1,7 +1,7 @@
 import { BigNumberish } from 'ethers';
-import { GenCall } from '.';
+import { GenerateCallData } from './types';
 
-export function questsAPI(genCall: GenCall) {
+export function questsAPI(generateCallData: GenerateCallData, compiledCalls: string[]) {
   // @dev creates an empty quest
   // @param index       the human-readable index of the quest
   // @param name        name of the quest
@@ -12,22 +12,24 @@ export function questsAPI(genCall: GenCall) {
     endText: string,
     repeatTime: number
   ) {
-    genCall('system.quest.registry', [index, name, description, endText, repeatTime], 'create', [
-      'uint32',
-      'string',
-      'string',
-      'string',
-      'uint256',
-    ]);
+    const callData = generateCallData(
+      'system.quest.registry',
+      [index, name, description, endText, repeatTime],
+      'create',
+      ['uint32', 'string', 'string', 'string', 'uint256']
+    );
+    compiledCalls.push(callData);
   }
 
   // delete a quest along with its objectives, requirements and rewards
   async function remove(index: number) {
-    genCall('system.quest.registry', [index], 'remove');
+    const callData = generateCallData('system.quest.registry', [index], 'remove');
+    compiledCalls.push(callData);
   }
 
   async function enable(index: number) {
-    genCall('system.quest.registry', [index, false], 'setDisabled');
+    const callData = generateCallData('system.quest.registry', [index, false], 'setDisabled');
+    compiledCalls.push(callData);
   }
 
   // creates a Objective for an existing Quest
@@ -40,12 +42,13 @@ export function questsAPI(genCall: GenCall) {
     value: BigNumberish,
     for_: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.quest.registry',
       [questIndex, name, logicType, type, index, value, for_],
       'addObjective',
       ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   // creates a Requirement for an existing Quest
@@ -57,12 +60,13 @@ export function questsAPI(genCall: GenCall) {
     value: BigNumberish,
     for_: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.quest.registry',
       [questIndex, logicType, type, index, value, for_],
       'addRequirement',
       ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
+    compiledCalls.push(callData);
   }
 
   // creates a Reward for an existing Quest
@@ -72,12 +76,13 @@ export function questsAPI(genCall: GenCall) {
     index: number,
     value: BigNumberish
   ) {
-    genCall('system.quest.registry', [questIndex, type, index, value], 'addRewardBasic', [
-      'uint32',
-      'string',
-      'uint32',
-      'uint256',
-    ]);
+    const callData = generateCallData(
+      'system.quest.registry',
+      [questIndex, type, index, value],
+      'addRewardBasic',
+      ['uint32', 'string', 'uint32', 'uint256']
+    );
+    compiledCalls.push(callData);
   }
 
   async function addRewardDT(
@@ -86,12 +91,13 @@ export function questsAPI(genCall: GenCall) {
     weights: number[],
     value: BigNumberish
   ) {
-    genCall('system.quest.registry', [questIndex, keys, weights, value], 'addRewardDT', [
-      'uint32',
-      'uint32[]',
-      'uint256[]',
-      'uint256',
-    ]);
+    const callData = generateCallData(
+      'system.quest.registry',
+      [questIndex, keys, weights, value],
+      'addRewardDT',
+      ['uint32', 'uint32[]', 'uint256[]', 'uint256']
+    );
+    compiledCalls.push(callData);
   }
 
   async function addRewardStat(
@@ -102,12 +108,13 @@ export function questsAPI(genCall: GenCall) {
     boost: number,
     sync: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.quest.registry',
       [questIndex, statType, base, shift, boost, sync],
       'addRewardStat',
       ['uint32', 'string', 'int32', 'int32', 'int32', 'int32']
     );
+    compiledCalls.push(callData);
   }
 
   return {

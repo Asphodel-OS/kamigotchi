@@ -1,6 +1,6 @@
-import { GenCall } from '.';
+import { GenerateCallData } from './types';
 
-export function auctionAPI(genCall: GenCall) {
+export function auctionAPI(generateCallData: GenerateCallData, compiledCalls: string[]) {
   // create a new auction
   async function create(
     itemIndex: number,
@@ -12,16 +12,18 @@ export function auctionAPI(genCall: GenCall) {
     max: number,
     startTs: number
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.auction.registry',
       [itemIndex, payItemIndex, priceTarget, period, decay, rate, max, startTs],
       'create'
     );
+    compiledCalls.push(callData);
   }
 
   // remove an existing auction
   async function remove(itemIndex: number) {
-    genCall('system.auction.registry', [itemIndex], 'remove');
+    const callData = generateCallData('system.auction.registry', [itemIndex], 'remove');
+    compiledCalls.push(callData);
   }
 
   // add a requirement for an auction
@@ -33,11 +35,12 @@ export function auctionAPI(genCall: GenCall) {
     value: number,
     for_: string
   ) {
-    genCall(
+    const callData = generateCallData(
       'system.auction.registry',
       [itemIndex, type, logic, index, value, for_],
       'addRequirement'
     );
+    compiledCalls.push(callData);
   }
 
   return {
