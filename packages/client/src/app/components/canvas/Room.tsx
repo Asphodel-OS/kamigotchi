@@ -55,6 +55,37 @@ export const Room = (props: Props) => {
     closeModals();
   }, [index]);
 
+  /* TODO: when the time comes to have multiple tracks per room, 
+  remember to turn each room music object into an array of objects,
+  also substitute existing useeffect by something like this .
+  useEffect(() => {
+    const newRoom = rooms[index];
+    const newRoomPhase = (getCurrPhase() - 1) % room.music.length;
+    const music = newRoom.music[newRoomPhase];
+    if (!music) {
+      bgm?.stop();
+      return;
+    }
+    if (music.path !== room.music?.path) {
+      if (!RoomsBgm.has(music.path)) {
+        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
+      }
+      if (bgm) bgm.stop();
+
+      const newBgm = RoomsBgm.get(music.path);
+      newBgm?.play();
+      newBgm?.fade(0, bgmVolume, 3000);
+      setBgm(newBgm);
+    }
+
+    setRoom(newRoom);
+    setNode(index);
+    closeModals();
+  }, [index,getCurrPhase()]);
+
+
+*/
+
   // manages volume changes from the variable stored in local storage
   useEffect(() => {
     if (!bgm) return;

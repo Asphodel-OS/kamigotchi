@@ -30,11 +30,7 @@ export default [stonelantern, smallshrine, waterfall];
 //   background: {
 //     key: 'bg_room011',
 //     path: backgroundDefault,
-//   },
-//   music: {
-//     key: 'glitter',
-//     path: glitter,
-//   },
+//   },//
 //   objects: [
 //     {
 //       key: 'emaboard',
