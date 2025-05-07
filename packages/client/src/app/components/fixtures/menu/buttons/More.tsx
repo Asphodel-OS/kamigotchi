@@ -22,7 +22,7 @@ export const MoreMenuButton = () => {
     if (ready && authenticated) logout();
   };
 
-  const handleHardRefresh = () => {
+  const handleResetState = () => {
     clearCookies();
     clearCache();
     clearStorage();
@@ -97,7 +97,7 @@ export const MoreMenuButton = () => {
         options={[
           { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
           { text: 'Help', image: HelpIcon, onClick: toggleHelp },
-          { text: 'Hard Refresh', image: ResetIcon, onClick: handleHardRefresh },
+          { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
           { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
         ]}
         scale={4.5}
