@@ -410,6 +410,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   // @dev deletes an item registry
   async function deleteItem(index: number) {
     const callData = generateCallData('system.item.registry', [index], 'remove');
+    compiledCalls.push(callData);
   }
 
   // @dev adds a trait in registry
