@@ -37,30 +37,6 @@
     },
     {
       "type": "function",
-      "name": "addScavBar",
-      "inputs": [
-        {
-          "name": "nodeIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "tierCost",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "addScavRewardBasic",
       "inputs": [
         {
@@ -99,12 +75,17 @@
     },
     {
       "type": "function",
-      "name": "addScavRewardStat",
+      "name": "addScavenge",
       "inputs": [
         {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
+          "name": "nodeIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "tierCost",
+          "type": "uint256",
+          "internalType": "uint256"
         }
       ],
       "outputs": [
@@ -228,6 +209,19 @@
     },
     {
       "type": "function",
+      "name": "removeScavenge",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "renounceOwnership",
       "inputs": [],
       "outputs": [],
@@ -332,10 +326,9 @@
   ],
   "methodIdentifiers": {
     "addRequirement(bytes)": "7e534103",
-    "addScavBar(uint32,uint256)": "7ddddb19",
     "addScavRewardBasic(bytes)": "cffc49de",
     "addScavRewardDT(bytes)": "080e18d5",
-    "addScavRewardStat(bytes)": "256ad62b",
+    "addScavenge(uint32,uint256)": "dea6f5e8",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "create(bytes)": "cf5ba53f",
@@ -344,6 +337,7 @@
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "remove(uint32)": "00d84fd8",
+    "removeScavenge(uint32)": "593cf789",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "transferOwnership(address)": "f2fde38b"

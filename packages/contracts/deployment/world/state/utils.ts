@@ -16,7 +16,8 @@ export const getSheet = async (category: string, name: string) => {
   const key = category + '-' + name;
   if (!DataSheets.has(key)) {
     const csv = await readFile(`${category}/${name}.csv`);
-    DataSheets.set(key, csv);
+    if (!csv) console.log(`No ${category}/${name}.csv found`);
+    else DataSheets.set(key, csv);
   }
   return DataSheets.get(key);
 };

@@ -1,5 +1,6 @@
 import { AdminAPI, createAdminAPI } from './api';
 import {
+  addNodeScavenges,
   deleteAuctions,
   deleteFactions,
   deleteGoals,
@@ -39,6 +40,7 @@ import {
   reviseItems,
   reviseListings,
   reviseNodes,
+  reviseNodeScavenges,
   reviseQuests,
   reviseRecipes,
   reviseRooms,
@@ -116,6 +118,9 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initNodes(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteNodes(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseNodes(api, indices)),
+      addScavenges: (indices?: number[]) => this.genCalls((api) => addNodeScavenges(api, indices)),
+      reviseScavenges: (indices?: number[]) =>
+        this.genCalls((api) => reviseNodeScavenges(api, indices)),
     } as SubFunc,
     mint: {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),

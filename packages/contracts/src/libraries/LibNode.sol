@@ -76,7 +76,10 @@ library LibNode {
     id = LibConditional.createFor(world, components, req, genReqAnchor(nodeIndex));
   }
 
-  function remove(IUintComp components, uint256 id, uint32 nodeIndex) internal {
+  function remove(IUintComp components, uint32 index) internal {
+    uint256 id = LibNode.getByIndex(components, index);
+    require(id != 0, "Node: does not exist");
+
     LibEntityType.remove(components, id);
     IndexNodeComponent(getAddrByID(components, IndexNodeCompID)).remove(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
@@ -85,10 +88,10 @@ library LibNode {
     DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
 
-    uint256[] memory reqs = getReqs(components, nodeIndex);
+    uint256[] memory reqs = getReqs(components, index);
     LibConditional.remove(components, reqs);
 
-    uint256 scavID = getScavBar(components, nodeIndex);
+    uint256 scavID = getScavBar(components, index);
     if (scavID != 0) LibScavenge.remove(components, scavID);
   }
 

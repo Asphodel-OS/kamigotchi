@@ -31,10 +31,9 @@ import type {
 export interface _NodeRegistrySystemInterface extends utils.Interface {
   functions: {
     "addRequirement(bytes)": FunctionFragment;
-    "addScavBar(uint32,uint256)": FunctionFragment;
     "addScavRewardBasic(bytes)": FunctionFragment;
     "addScavRewardDT(bytes)": FunctionFragment;
-    "addScavRewardStat(bytes)": FunctionFragment;
+    "addScavenge(uint32,uint256)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "create(bytes)": FunctionFragment;
@@ -43,6 +42,7 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "remove(uint32)": FunctionFragment;
+    "removeScavenge(uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -51,10 +51,9 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addRequirement"
-      | "addScavBar"
       | "addScavRewardBasic"
       | "addScavRewardDT"
-      | "addScavRewardStat"
+      | "addScavenge"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "create"
@@ -63,6 +62,7 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "remove"
+      | "removeScavenge"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "transferOwnership"
@@ -73,10 +73,6 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addScavBar",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "addScavRewardBasic",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -85,8 +81,8 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "addScavRewardStat",
-    values: [PromiseOrValue<BytesLike>]
+    functionFragment: "addScavenge",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
@@ -115,6 +111,10 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeScavenge",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -131,7 +131,6 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     functionFragment: "addRequirement",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addScavBar", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addScavRewardBasic",
     data: BytesLike
@@ -141,7 +140,7 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "addScavRewardStat",
+    functionFragment: "addScavenge",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -161,6 +160,10 @@ export interface _NodeRegistrySystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeScavenge",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -259,12 +262,6 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addScavBar(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      tierCost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     addScavRewardBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -275,8 +272,9 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addScavRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
+    addScavenge(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -315,6 +313,11 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeScavenge(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -334,12 +337,6 @@ export interface _NodeRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addScavBar(
-    nodeIndex: PromiseOrValue<BigNumberish>,
-    tierCost: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   addScavRewardBasic(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -350,8 +347,9 @@ export interface _NodeRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addScavRewardStat(
-    arguments: PromiseOrValue<BytesLike>,
+  addScavenge(
+    nodeIndex: PromiseOrValue<BigNumberish>,
+    tierCost: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -390,6 +388,11 @@ export interface _NodeRegistrySystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeScavenge(
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   renounceOwnership(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -409,12 +412,6 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addScavBar(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      tierCost: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addScavRewardBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -425,8 +422,9 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addScavRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
+    addScavenge(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -457,6 +455,11 @@ export interface _NodeRegistrySystem extends BaseContract {
     ): Promise<BigNumber>;
 
     remove(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeScavenge(
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -505,12 +508,6 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addScavBar(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      tierCost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     addScavRewardBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -521,8 +518,9 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addScavRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
+    addScavenge(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -561,6 +559,11 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    removeScavenge(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -581,12 +584,6 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addScavBar(
-      nodeIndex: PromiseOrValue<BigNumberish>,
-      tierCost: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     addScavRewardBasic(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -597,8 +594,9 @@ export interface _NodeRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    addScavRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
+    addScavenge(
+      nodeIndex: PromiseOrValue<BigNumberish>,
+      tierCost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -633,6 +631,11 @@ export interface _NodeRegistrySystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     remove(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeScavenge(
       index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

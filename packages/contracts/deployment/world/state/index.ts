@@ -106,7 +106,15 @@ export { initNpcs } from './npcs';
 export { deleteQuests, initQuests, reviseQuests } from './quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes';
 export { deleteRelationships, initRelationships } from './relationships';
-export { deleteNodes, initNodes, reviseNodes } from './rooms/nodes';
-export { deleteRooms, initRooms, reviseRooms } from './rooms/rooms';
+export {
+  addNodeScavenges,
+  deleteNodes,
+  deleteRooms,
+  initNodes,
+  initRooms,
+  reviseNodes,
+  reviseNodeScavenges,
+  reviseRooms,
+} from './rooms';
 export { deleteSkills, initSkills, reviseSkills } from './skills';
 export { initTraits } from './traits';

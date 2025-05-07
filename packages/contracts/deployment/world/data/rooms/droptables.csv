@@ -9,11 +9,11 @@
 ,Stick Stone Mint,"1001,1002,1012","9,9,4"
 ,Stick Stone Rename,"1001,1002,11011","9,9,4"
 ,Stick Stone Resin,"1001,1002,11311","9,9,6"
-,Stick Cone Rename,"1001,1004,11011","9,7,5"
+,Stick Cone Rename,"1001,1004,11011","9,7,4"
 ,Stone Scrap Burger,"1002,1005,11302","9,7,6"
 ,Stone Bottle Burger,"1002,1003,11302","9,7,6"
 ,Stone Only,1002,9
 ,Bottle Scrap Burger,"1003,1005,11302","9,9,7"
 ,Bottle Scrap Jar,"1003,1005,1006","9,9,6"
-,"Scrap Burger Rename Driver  ","1005,11302,11011,201","9,8,6,2"
+,Scrap Burger Rename Driver,"1005,11302,11011,201","9,8,6,2"
 ,Scrap Burger,"1005,11302","9,7"

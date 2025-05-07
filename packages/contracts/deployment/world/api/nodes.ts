@@ -26,8 +26,14 @@ export function nodesAPI(generateCallData: GenerateCallData, compiledCalls: stri
     compiledCalls.push(callData);
   }
 
-  async function createNodeRequirement(
-    index: number,
+  // @dev deletes node
+  async function deleteNode(index: number) {
+    const callData = generateCallData('system.node.registry', [index], 'remove');
+    compiledCalls.push(callData);
+  }
+
+  async function addRequirement(
+    nodeIndex: number,
     type: string,
     logic: string,
     index_: number,
@@ -36,24 +42,27 @@ export function nodesAPI(generateCallData: GenerateCallData, compiledCalls: stri
   ) {
     const callData = generateCallData(
       'system.node.registry',
-      [index, type, logic, index_, value, for_],
+      [nodeIndex, type, logic, index_, value, for_],
       'addRequirement',
       ['uint32', 'string', 'string', 'uint32', 'uint256', 'string']
     );
     compiledCalls.push(callData);
   }
 
-  async function createNodeScav(index: number, tierCost: number) {
-    const callData = generateCallData('system.node.registry', [index, tierCost], 'addScavBar');
+  //////////////////
+  // SCAVENGES
+
+  async function addScavenge(nodeIndex: number, cost: number) {
+    const callData = generateCallData('system.node.registry', [nodeIndex, cost], 'addScavenge');
     compiledCalls.push(callData);
   }
 
-  async function addNodeScavRewardBasic(
-    nodeIndex: number,
-    type: string,
-    index: number,
-    value: number
-  ) {
+  async function removeScavenge(nodeIndex: number) {
+    const callData = generateCallData('system.node.registry', [nodeIndex], 'removeScavenge');
+    compiledCalls.push(callData);
+  }
+
+  async function addScavRewardBasic(nodeIndex: number, type: string, index: number, value: number) {
     const callData = generateCallData(
       'system.node.registry',
       [nodeIndex, type, index, value],
@@ -63,7 +72,7 @@ export function nodesAPI(generateCallData: GenerateCallData, compiledCalls: stri
     compiledCalls.push(callData);
   }
 
-  async function addNodeScavRewardDT(
+  async function addScavRewardDT(
     nodeIndex: number,
     keys: number[],
     weights: number[],
@@ -78,22 +87,19 @@ export function nodesAPI(generateCallData: GenerateCallData, compiledCalls: stri
     compiledCalls.push(callData);
   }
 
-  // @dev deletes node
-  async function deleteNode(index: number) {
-    const callData = generateCallData('system.node.registry', [index], 'remove');
-    compiledCalls.push(callData);
-  }
-
   return {
     create: createNode,
-    add: {
-      requirement: createNodeRequirement,
-      scav: createNodeScav,
-      scavReward: {
-        basic: addNodeScavRewardBasic,
-        droptable: addNodeScavRewardDT,
+    delete: deleteNode,
+    requirement: {
+      add: addRequirement,
+    },
+    scavenge: {
+      add: addScavenge,
+      remove: removeScavenge,
+      reward: {
+        addBasic: addScavRewardBasic,
+        addDT: addScavRewardDT,
       },
     },
-    delete: deleteNode,
   };
 }

@@ -37,6 +37,14 @@ contract _NodeRegistrySystem is System, AuthRoles {
     );
   }
 
+  // removes the entire node and all associated entities
+  function remove(uint32 index) public onlyAdmin(components) {
+    LibNode.remove(components, index);
+  }
+
+  //////////////////
+  // REQUIREMENTS
+
   function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 nodeIndex,
@@ -60,7 +68,10 @@ contract _NodeRegistrySystem is System, AuthRoles {
       );
   }
 
-  function addScavBar(
+  ////////////////////
+  // SCAVENGES
+
+  function addScavenge(
     uint32 nodeIndex,
     uint256 tierCost
   ) public onlyAdmin(components) returns (uint256) {
@@ -101,31 +112,35 @@ contract _NodeRegistrySystem is System, AuthRoles {
     return LibAllo.createDT(components, anchorID, keys, weights, value);
   }
 
-  function addScavRewardStat(
-    bytes memory arguments
-  ) public onlyAdmin(components) returns (uint256) {
-    (
-      uint32 nodeIndex,
-      string memory statType,
-      int32 base,
-      int32 shift,
-      int32 boost,
-      int32 sync
-    ) = abi.decode(arguments, (uint32, string, int32, int32, int32, int32));
-    require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
+  // // NOTE(jb): unused atm. commented out to meet gas limits on the freelane
+  // function addScavRewardStat(
+  //   bytes memory arguments
+  // ) public onlyAdmin(components) returns (uint256) {
+  //   (
+  //     uint32 nodeIndex,
+  //     string memory statType,
+  //     int32 base,
+  //     int32 shift,
+  //     int32 boost,
+  //     int32 sync
+  //   ) = abi.decode(arguments, (uint32, string, int32, int32, int32, int32));
+  //   require(LibNode.getByIndex(components, nodeIndex) != 0, "Node: does not exist");
 
-    uint256 scavID = LibNode.getScavBar(components, nodeIndex);
-    require(scavID != 0, "Node: scav bar does not exist");
+  //   uint256 scavID = LibNode.getScavBar(components, nodeIndex);
+  //   require(scavID != 0, "Node: scav bar does not exist");
 
-    uint256 anchorID = LibScavenge.genAlloAnchor(scavID);
-    return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
-  }
+  //   uint256 anchorID = LibScavenge.genAlloAnchor(scavID);
+  //   return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
+  // }
 
-  function remove(uint32 index) public onlyAdmin(components) {
-    uint256 id = LibNode.getByIndex(components, index);
-    require(id != 0, "Node: does not exist");
+  // removes the scavenge bar associated with a node
+  function removeScavenge(uint32 index) public onlyAdmin(components) {
+    require(LibNode.getByIndex(components, index) != 0, "Node: does not exist");
 
-    LibNode.remove(components, id, index);
+    uint256 scavID = LibNode.getScavBar(components, index);
+    require(scavID != 0, "Node: no scavenge bar");
+
+    LibScavenge.remove(components, scavID);
   }
 
   function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
