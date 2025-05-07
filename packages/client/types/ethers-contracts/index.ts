@@ -99,6 +99,7 @@ export type { KamiGachaRerollSystem } from "./KamiGachaRerollSystem";
 export type { KamiGachaRevealSystem } from "./KamiGachaRevealSystem";
 export type { KamiLevelSystem } from "./KamiLevelSystem";
 export type { KamiNameSystem } from "./KamiNameSystem";
+export type { KamiOnyxRenameSystem } from "./KamiOnyxRenameSystem";
 export type { KamiOnyxReviveSystem } from "./KamiOnyxReviveSystem";
 export type { KamiUseItemSystem } from "./KamiUseItemSystem";
 export type { KeysComponent } from "./KeysComponent";
@@ -287,6 +288,7 @@ export { KamiGachaRerollSystem__factory } from "./factories/KamiGachaRerollSyste
 export { KamiGachaRevealSystem__factory } from "./factories/KamiGachaRevealSystem__factory";
 export { KamiLevelSystem__factory } from "./factories/KamiLevelSystem__factory";
 export { KamiNameSystem__factory } from "./factories/KamiNameSystem__factory";
+export { KamiOnyxRenameSystem__factory } from "./factories/KamiOnyxRenameSystem__factory";
 export { KamiOnyxReviveSystem__factory } from "./factories/KamiOnyxReviveSystem__factory";
 export { KamiUseItemSystem__factory } from "./factories/KamiUseItemSystem__factory";
 export { KeysComponent__factory } from "./factories/KeysComponent__factory";

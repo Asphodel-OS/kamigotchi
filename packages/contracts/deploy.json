@@ -537,8 +537,12 @@
     },
     {
       "name": "KamiNameSystem",
-      "writeAccess": ["HasFlag", "Name", "TimeLast", "Value"],
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "Name", "TimeLast", "Value"],
       "skipEnv": ["testing"]
+    },
+    {
+      "name": "KamiOnyxRenameSystem",
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "Name", "TimeLast", "TokenAllowance", "Value"]
     },
     {
       "name": "KamiOnyxReviveSystem",

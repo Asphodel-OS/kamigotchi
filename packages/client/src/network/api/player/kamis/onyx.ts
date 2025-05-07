@@ -1,12 +1,18 @@
 import { BigNumberish } from 'ethers';
 
 export const onyxAPI = (systems: any) => {
-  // revive a pet by spending onyx
+  // (Owner) rename a pet by spending onyx
+  const rename = (kamiID: BigNumberish, name: string) => {
+    return systems['system.kami.onyx.rename'].executeTyped(kamiID, name);
+  };
+
+  // (Owner) revive a pet by spending onyx
   const revive = (kamiID: BigNumberish) => {
     return systems['system.kami.onyx.revive'].executeTyped(kamiID);
   };
 
   return {
+    rename,
     revive,
   };
 };

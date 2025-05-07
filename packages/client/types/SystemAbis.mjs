@@ -51,6 +51,7 @@ import KamiGachaRerollSystem from "../abi/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../abi/KamiGachaRevealSystem.json";
 import KamiLevelSystem from "../abi/KamiLevelSystem.json";
 import KamiNameSystem from "../abi/KamiNameSystem.json";
+import KamiOnyxRenameSystem from "../abi/KamiOnyxRenameSystem.json";
 import KamiOnyxReviveSystem from "../abi/KamiOnyxReviveSystem.json";
 import KamiUseItemSystem from "../abi/KamiUseItemSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
@@ -120,6 +121,7 @@ export const SystemAbis = {
   "system.kami.gacha.reveal": KamiGachaRevealSystem.abi,
   "system.kami.level": KamiLevelSystem.abi,
   "system.kami.name": KamiNameSystem.abi,
+  "system.kami.onyx.rename": KamiOnyxRenameSystem.abi,
   "system.kami.onyx.revive": KamiOnyxReviveSystem.abi,
   "system.kami.use.item": KamiUseItemSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
