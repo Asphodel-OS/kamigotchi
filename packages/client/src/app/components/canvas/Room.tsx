@@ -8,7 +8,6 @@ import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { rooms } from 'constants/rooms';
 import { RoomAsset } from 'constants/rooms/types';
-
 import { getCurrPhase } from 'utils/time';
 
 interface Props {
@@ -16,6 +15,7 @@ interface Props {
 }
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
+
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
   const { index } = props;
@@ -41,8 +41,9 @@ export const Room = (props: Props) => {
       if (!RoomsBgm.has(music.path)) {
         RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
       }
-      const newBgm = RoomsBgm.get(music.path);
       if (bgm) bgm.stop();
+
+      const newBgm = RoomsBgm.get(music.path);
       newBgm?.play();
       newBgm?.fade(0, bgmVolume, 3000);
       setBgm(newBgm);
@@ -55,13 +56,13 @@ export const Room = (props: Props) => {
 
   // manages volume changes from the variable stored in local storage
   useEffect(() => {
-    if (bgm) {
-      if (bgmVolume === 0) {
-        bgm.stop();
-      } else {
-        if (!bgm.playing()) bgm.play();
-        bgm.fade(bgm.volume(), bgmVolume, 3000);
-      }
+    if (!bgm) return;
+
+    if (bgmVolume === 0) {
+      bgm.stop();
+    } else {
+      if (!bgm.playing()) bgm.play();
+      bgm.fade(bgm.volume(), bgmVolume, 3000);
     }
   }, [bgmVolume]);
 
