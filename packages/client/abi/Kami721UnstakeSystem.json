@@ -64,12 +64,31 @@
     },
     {
       "type": "function",
+      "name": "executeBatch",
+      "inputs": [
+        {
+          "name": "tokenIndices",
+          "type": "uint32[]",
+          "internalType": "uint32[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "executeTyped",
       "inputs": [
         {
           "name": "tokenIndex",
-          "type": "uint256",
-          "internalType": "uint256"
+          "type": "uint32",
+          "internalType": "uint32"
         }
       ],
       "outputs": [
@@ -217,7 +236,8 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256)": "3e991df3",
+    "executeBatch(uint32[])": "77445aed",
+    "executeTyped(uint32)": "09c90324",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",

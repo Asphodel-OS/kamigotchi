@@ -34,7 +34,8 @@ export interface Kami721StakeSystemInterface extends utils.Interface {
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256)": FunctionFragment;
+    "executeBatch(uint32[])": FunctionFragment;
+    "executeTyped(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -48,6 +49,7 @@ export interface Kami721StakeSystemInterface extends utils.Interface {
       | "completeOwnershipHandover"
       | "deprecate"
       | "execute"
+      | "executeBatch"
       | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
@@ -68,6 +70,10 @@ export interface Kami721StakeSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeBatch",
+    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
@@ -101,6 +107,10 @@ export interface Kami721StakeSystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "executeBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
     data: BytesLike
@@ -221,6 +231,11 @@ export interface Kami721StakeSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    executeBatch(
+      tokenIndices: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     executeTyped(
       tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -265,6 +280,11 @@ export interface Kami721StakeSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  executeBatch(
+    tokenIndices: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   executeTyped(
     tokenIndex: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -302,6 +322,11 @@ export interface Kami721StakeSystem extends BaseContract {
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    executeBatch(
+      tokenIndices: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -374,6 +399,11 @@ export interface Kami721StakeSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    executeBatch(
+      tokenIndices: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     executeTyped(
       tokenIndex: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -416,6 +446,11 @@ export interface Kami721StakeSystem extends BaseContract {
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    executeBatch(
+      tokenIndices: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

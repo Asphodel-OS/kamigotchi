@@ -26,8 +26,8 @@ contract Kami721StakeSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    uint256 tokenIndex = abi.decode(arguments, (uint256));
-    uint256 kamiID = LibKami.getByIndex(components, uint32(tokenIndex));
+    uint32 tokenIndex = abi.decode(arguments, (uint32));
+    uint256 kamiID = LibKami.getByIndex(components, tokenIndex);
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // account checks
@@ -47,7 +47,13 @@ contract Kami721StakeSystem is System {
     return "";
   }
 
-  function executeTyped(uint256 tokenIndex) public returns (bytes memory) {
+  function executeBatch(uint32[] memory tokenIndices) public returns (bytes memory) {
+    for (uint256 i; i < tokenIndices.length; i++) {
+      execute(abi.encode(tokenIndices[i]));
+    }
+  }
+
+  function executeTyped(uint32 tokenIndex) public returns (bytes memory) {
     return execute(abi.encode(tokenIndex));
   }
 }
