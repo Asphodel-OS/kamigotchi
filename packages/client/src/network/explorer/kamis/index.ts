@@ -1,0 +1,1 @@
+export { kamis } from './kamis';

@@ -8,6 +8,7 @@ import {
   getKamiByName,
   KamiOptions,
 } from 'network/shapes/Kami';
+import { calcKamiScores, calcRarityScores } from './functions';
 
 export const kamis = (world: World, components: Components) => {
   const { EntityType } = components;
@@ -21,5 +22,9 @@ export const kamis = (world: World, components: Components) => {
       getKamiByName(world, components, name, options),
     entities: () => Array.from(getEntitiesWithValue(EntityType, { value: 'KAMI' })),
     indices: () => Array.from(components.KamiIndex.values.value.values()),
+    scores: {
+      rarity: (indices: number[]) => calcRarityScores(world, components, indices),
+      overall: (indices: number[]) => calcKamiScores(world, components, indices),
+    },
   };
 };
