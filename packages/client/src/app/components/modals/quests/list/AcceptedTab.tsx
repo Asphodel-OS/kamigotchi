@@ -43,7 +43,7 @@ export const AcceptedTab = (props: Props) => {
         isVisible={isVisible}
       />
       <CollapseText onClick={() => setShowCompleted(!showCompleted)}>
-        {showCompleted ? '- Completed -' : '- Completed (collapsed) -'}
+        {showCompleted ? `- Completed (${completed.length}) -` : '- Completed (collapsed) -'}
       </CollapseText>
       <CompletedQuests
         quests={completed}
