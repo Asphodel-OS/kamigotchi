@@ -268,7 +268,7 @@ export const Footer = (props: Props) => {
         scale={6}
         disableInc={needsFunds() || exceedsMax()}
         disableDec={quantity <= 0}
-        isHidden={mode === 'DEFAULT'}
+        isHidden={mode === 'DEFAULT' && tab !== 'GACHA'}
       />
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
         <Tooltip text={getSubmitTooltip()} alignText='center' grow>
