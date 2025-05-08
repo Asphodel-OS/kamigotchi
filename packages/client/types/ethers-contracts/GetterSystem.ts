@@ -28,6 +28,20 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export type AccountShapeStruct = {
+  index: PromiseOrValue<BigNumberish>;
+  name: PromiseOrValue<string>;
+  currStamina: PromiseOrValue<BigNumberish>;
+  room: PromiseOrValue<BigNumberish>;
+};
+
+export type AccountShapeStructOutput = [number, string, number, number] & {
+  index: number;
+  name: string;
+  currStamina: number;
+  room: number;
+};
+
 export type StatStruct = {
   base: PromiseOrValue<BigNumberish>;
   shift: PromiseOrValue<BigNumberish>;
@@ -132,6 +146,7 @@ export interface GetterSystemInterface extends utils.Interface {
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
+    "getAccount(uint256)": FunctionFragment;
     "getKami(uint256)": FunctionFragment;
     "getKamiByIndex(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -147,6 +162,7 @@ export interface GetterSystemInterface extends utils.Interface {
       | "completeOwnershipHandover"
       | "deprecate"
       | "execute"
+      | "getAccount"
       | "getKami"
       | "getKamiByIndex"
       | "owner"
@@ -168,6 +184,10 @@ export interface GetterSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAccount",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getKami",
@@ -205,6 +225,7 @@ export interface GetterSystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getAccount", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getKami", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getKamiByIndex",
@@ -326,6 +347,11 @@ export interface GetterSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getAccount(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[AccountShapeStructOutput]>;
+
     getKami(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -375,6 +401,11 @@ export interface GetterSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getAccount(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<AccountShapeStructOutput>;
+
   getKami(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -419,6 +450,11 @@ export interface GetterSystem extends BaseContract {
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getAccount(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<AccountShapeStructOutput>;
 
     getKami(
       id: PromiseOrValue<BigNumberish>,
@@ -494,6 +530,11 @@ export interface GetterSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getAccount(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getKami(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -542,6 +583,11 @@ export interface GetterSystem extends BaseContract {
     execute(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getAccount(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getKami(

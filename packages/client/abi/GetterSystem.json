@@ -64,6 +64,47 @@
     },
     {
       "type": "function",
+      "name": "getAccount",
+      "inputs": [
+        {
+          "name": "id",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct AccountShape",
+          "components": [
+            {
+              "name": "index",
+              "type": "uint32",
+              "internalType": "uint32"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "currStamina",
+              "type": "int32",
+              "internalType": "int32"
+            },
+            {
+              "name": "room",
+              "type": "uint32",
+              "internalType": "uint32"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
       "name": "getKami",
       "inputs": [
         {
@@ -634,6 +675,7 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
+    "getAccount(uint256)": "ce88b145",
     "getKami(uint256)": "1b1e0fc0",
     "getKamiByIndex(uint32)": "83e8abdf",
     "owner()": "8da5cb5b",

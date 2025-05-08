@@ -85,10 +85,7 @@ library LibAccount {
 
   // syncs the stamina of an account. rounds down, ruthlessly
   function sync(IUintComp components, uint256 id) internal returns (int32) {
-    uint32[8] memory config = LibConfig.getArray(components, "ACCOUNT_STAMINA");
-    uint32 recoveryPeriod = config[1];
-    uint32 timePassed = uint32(block.timestamp - getLastActionTs(components, id));
-    int32 recoveredAmt = timePassed.toInt32() / recoveryPeriod.toInt32(); // rounds down
+    int32 recoveredAmt = calcStaminaRecovery(components, id);
     updateLastActionTs(components, id);
     return recoverStamina(components, id, recoveredAmt);
   }
@@ -118,6 +115,16 @@ library LibAccount {
 
   function updateLastTs(IUintComp components, uint256 id) internal {
     setLastTs(components, id, block.timestamp);
+  }
+
+  /////////////////
+  // CALCS
+
+  function calcStaminaRecovery(IUintComp components, uint256 id) internal view returns (int32) {
+    uint32[8] memory config = LibConfig.getArray(components, "ACCOUNT_STAMINA");
+    uint32 recoveryPeriod = config[1];
+    uint32 timePassed = uint32(block.timestamp - getLastActionTs(components, id));
+    return timePassed.toInt32() / recoveryPeriod.toInt32(); // rounds down
   }
 
   /////////////////
@@ -187,6 +194,11 @@ library LibAccount {
 
   /////////////////
   // GETTERS
+
+  function getCurrentStamina(IUintComp components, uint256 id) internal view returns (int32) {
+    int32 recoveredAmt = calcStaminaRecovery(components, id);
+    return LibStat.getCurrent(components, "STAMINA", id) + recoveredAmt;
+  }
 
   function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
     return TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).get(id);

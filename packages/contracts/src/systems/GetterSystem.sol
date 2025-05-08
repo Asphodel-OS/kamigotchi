@@ -22,12 +22,12 @@ import { LibStat, Stat } from "libraries/LibStat.sol";
 
 uint256 constant ID = uint256(keccak256("system.getter"));
 
-// struct Stat {
-//   int32 base; // original value
-//   int32 shift; // modifier, adds to original value
-//   int32 boost; // modifier, multiplies original value (no current use)
-//   int32 sync; // last synced value
-// }
+struct AccountShape {
+  uint32 index;
+  string name;
+  int32 currStamina;
+  uint32 room;
+}
 
 struct KamiShape {
   uint256 id;
@@ -66,6 +66,16 @@ struct KamiTraits {
 /// @notice an external system to get info about various entity shapes
 contract GetterSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
+
+  function getAccount(uint256 id) public view returns (AccountShape memory) {
+    return
+      AccountShape(
+        LibAccount.getIndex(components, id),
+        LibAccount.getName(components, id),
+        LibAccount.getCurrentStamina(components, id),
+        LibAccount.getRoom(components, id)
+      );
+  }
 
   function getKamiByIndex(uint32 index) public view returns (KamiShape memory) {
     uint256 id = LibKami.getByIndex(components, index);
