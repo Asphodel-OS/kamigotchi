@@ -16,9 +16,12 @@ interface Props {
     kami: Kami;
     owner: BaseAccount;
   };
-  index: number;
-  upgradeError: string[] | undefined;
   actions: { upgrade: (skill: Skill) => void };
+  state: {
+    skillIndex: number;
+    tick: number;
+    upgradeError: string[] | undefined;
+  };
   utils: {
     getSkill: (index: number) => Skill;
     getSkillImage: (skill: Skill) => string;
@@ -30,24 +33,25 @@ interface Props {
 
 // The leftside details panel of the Skills tab of the Kami Modal
 export const Details = (props: Props) => {
-  const { index, data, upgradeError, actions, utils } = props;
+  const { actions, data, state, utils } = props;
   const { account, kami, owner } = data;
+  const { skillIndex, tick, upgradeError } = state;
   const { getSkill, getSkillImage, parseSkillRequirement } = utils;
   const { getTreePoints, getTreeRequirement } = utils;
-  const [skill, setSkill] = useState<Skill | undefined>(getSkill(index)); // registry skill instance
+  const [skill, setSkill] = useState<Skill | undefined>(getSkill(skillIndex)); // registry skill instance
   const [investment, setInvestment] = useState<number>(0);
   const [disabledReason, setDisabledReason] = useState<string[] | undefined>(undefined);
 
-  // update registry/kami skill instances when index changes
+  // update registry/kami skill instances when skillIndex changes
   useEffect(() => {
-    const skill = getSkill(index);
+    const skill = getSkill(skillIndex);
     setSkill(skill);
 
-    const investment = getSkillInstance(kami, index);
+    const investment = getSkillInstance(kami, skillIndex);
     setInvestment(investment?.points ?? 0);
 
     setDisabledReason(owner.index !== account.index ? ['not ur kami'] : upgradeError);
-  }, [index, kami]);
+  }, [skillIndex, kami, tick]);
 
   ////////////////////
   // INTERACTION

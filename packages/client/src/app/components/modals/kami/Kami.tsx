@@ -51,9 +51,9 @@ export function registerKamiModal() {
             live: 2,
             battles: 30,
             flags: 10,
-            progress: 5,
+            progress: 2,
             skills: 2,
-            stats: 5,
+            stats: 2,
             traits: 3600,
           };
 
@@ -92,7 +92,7 @@ export function registerKamiModal() {
       const [tab, setTab] = useState<TabType>('TRAITS');
       const [kami, setKami] = useState<Kami>();
       const [owner, setOwner] = useState<BaseAccount>(NullAccount);
-      const [lastSync, setLastSync] = useState(Date.now());
+      const [tick, setTick] = useState(Date.now());
 
       // initialize skills on load
       // TODO: move this to a more appropriate place
@@ -105,7 +105,7 @@ export function registerKamiModal() {
 
       // time trigger to use for periodic refreshes
       useEffect(() => {
-        const updateSync = () => setLastSync(Date.now());
+        const updateSync = () => setTick(Date.now());
         const timerId = setInterval(updateSync, SYNC_TIME);
         return () => clearInterval(timerId);
       }, []);
@@ -119,7 +119,7 @@ export function registerKamiModal() {
 
         const newOwner = getOwner(kamiEntity);
         if (newOwner.index != owner.index) setOwner(newOwner);
-      }, [kamiIndex, lastSync]);
+      }, [kamiIndex, tick]);
 
       /////////////////
       // ACTION
@@ -182,6 +182,7 @@ export function registerKamiModal() {
             <Skills
               data={{ account, kami, owner }}
               actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill), reset: resetSkill }}
+              state={{ tick }}
               utils={{
                 ...utils,
                 getUpgradeError: (index: number) => getSkillUpgradeError(index, kami),

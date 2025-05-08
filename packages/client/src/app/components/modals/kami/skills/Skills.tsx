@@ -19,6 +19,7 @@ interface Props {
     upgrade: (skill: Skill) => void;
     reset: (kami: Kami) => void;
   };
+  state: { tick: number };
   utils: {
     getSkill: (index: number) => Skill;
     getUpgradeError: (index: number) => string[] | undefined;
@@ -29,8 +30,9 @@ interface Props {
 }
 
 export const Skills = (props: Props) => {
-  const { data, actions, utils } = props;
+  const { data, actions, state, utils } = props;
   const { kami } = data;
+  const { tick } = state;
   const { getSkill, getUpgradeError, getTreePoints } = utils;
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
@@ -50,9 +52,8 @@ export const Skills = (props: Props) => {
     <Wrapper>
       <Details
         data={data}
-        index={displayed}
+        state={{ tick, skillIndex: displayed, upgradeError: getUpgradeError(displayed) }}
         actions={{ upgrade: actions.upgrade }}
-        upgradeError={getUpgradeError(displayed)}
         utils={{ ...utils, getSkillImage }}
       />
       <Matrix
