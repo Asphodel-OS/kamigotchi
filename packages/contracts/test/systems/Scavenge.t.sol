@@ -51,7 +51,7 @@ contract ScavengeTest is SetupTemplate {
     vm.assume(scavCost > 0 && scavScore > 0);
     uint32 nodeIndex = 1;
     vm.prank(deployer);
-    uint256 scavBarID = __NodeRegistrySystem.addScavBar(nodeIndex, scavCost);
+    uint256 scavBarID = __NodeRegistrySystem.addScavenge(nodeIndex, scavCost);
 
     // setup kami on node
     uint256 kamiID = _mintKami(alice);

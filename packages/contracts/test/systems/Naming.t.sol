@@ -3,7 +3,7 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 
-import { ROOM as NAMING_ROOM } from "systems/KamiNameSystem.sol";
+// import { ROOM as NAMING_ROOM } from "systems/KamiNameSystem.sol";
 
 contract NamingTest is SetupTemplate {
   // function testNamePet(uint32 index) public {
