@@ -8,7 +8,7 @@ import {
   getKamiByName,
   KamiOptions,
 } from 'network/shapes/Kami';
-import { calcKamiScores, calcRarityScores } from './functions';
+import { calcKamiScores, calcRarityScores } from './scores';
 
 export const kamis = (world: World, components: Components) => {
   const { EntityType } = components;
