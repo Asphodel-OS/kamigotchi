@@ -42,10 +42,16 @@ export const QuestCard = (props: Props) => {
   const getFactionStamp = (quest: Quest) => {
     const reward = quest.rewards.find((r) => r.type === 'REPUTATION');
     if (!reward) return <></>;
+    const index = reward.index;
 
-    const key = `faction-${reward.type}-${reward.index}`;
+    let iconKey = '';
+    if (index === 1) iconKey = 'agency';
+    else if (index === 2) iconKey = 'mina';
+    else if (index === 3) iconKey = 'kami';
+
+    const key = `faction-${index}`;
     if (!imageCache.has(key)) {
-      const icon = getFactionImage('agency');
+      const icon = getFactionImage(iconKey ?? 'agency');
       const component = <Image src={icon} size={1.8} />;
       imageCache.set(key, component);
     }
