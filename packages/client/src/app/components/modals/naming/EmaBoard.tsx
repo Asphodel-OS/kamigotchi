@@ -3,10 +3,9 @@ import styled from 'styled-components';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
-import { ActionButton, IconButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
+import { ActionButton, KamiCard, ModalWrapper, Tooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { UseIcon } from 'assets/images/icons/actions';
 import { HOLY_DUST_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -20,7 +19,7 @@ export function registerEMABoardModal() {
     {
       colStart: 33,
       colEnd: 67,
-      rowStart: 13,
+      rowStart: 3,
       rowEnd: 99,
     },
 
@@ -84,18 +83,6 @@ export function registerEMABoardModal() {
         setModals({ emaBoard: false, nameKami: true });
       };
 
-      const useRenamePotion = (kami: Kami) => {
-        const itemIndex = HOLY_DUST_INDEX;
-        actions.add({
-          action: 'KamiFeed',
-          params: [kami.id, itemIndex],
-          description: `Using holy dust on ${kami.name}`,
-          execute: async () => {
-            return api.player.pet.item.use(kami.id, itemIndex);
-          },
-        });
-      };
-
       // check whether the kami is harvesting
       const isHarvesting = (kami: Kami): boolean => {
         return kami.state === 'HARVESTING';
@@ -105,52 +92,21 @@ export function registerEMABoardModal() {
         return kami.state === 'DEAD';
       };
 
-      const canName = (kami: Kami): boolean => {
-        return !!kami.flags?.namable;
+      const getTooltip = (kami: Kami) => {
+        let tooltip = '';
+        if (isHarvesting(kami)) tooltip = 'too far away';
+        else if (isDead(kami)) tooltip = 'the dead cannot hear you';
+        else if (dustAmt == 0) tooltip = 'you have no holy dust';
+        const disabled = !!tooltip;
+        if (!disabled) tooltip = `a holy pact..`;
+        return tooltip;
       };
 
-      // set the button based on whether
-      const RenameButton = (kami: Kami) => {
-        let tooltipText = '';
-        if (isHarvesting(kami)) tooltipText = 'too far away';
-        else if (isDead(kami)) tooltipText = 'the dead cannot hear you';
-        else if (!canName(kami)) tooltipText = 'cannot rename. use some holy dust!';
-
-        const disabled = !!tooltipText;
-        if (!disabled) tooltipText = `a holy pact..`;
-
-        const button = (
-          <ActionButton onClick={() => promptRename(kami)} text='Rename' disabled={disabled} />
-        );
-
-        return <Tooltip text={[tooltipText]}>{button}</Tooltip>;
-      };
-
-      // button to use holy dust (rename potion)
-      const UseDustButton = (kami: Kami) => {
-        let tooltipText = '';
-        if (canName(kami)) tooltipText = 'this kami can already be renamed';
-        else if (isHarvesting(kami)) tooltipText = 'too far away';
-        else if (isDead(kami)) tooltipText = 'the dead cannot hear you';
-        else if (dustAmt == 0) tooltipText = 'you have no holy dust';
-
-        const disabled = !!tooltipText;
-        if (!disabled) tooltipText = `use holy dust (${dustAmt})`;
-
-        const button = (
-          <IconButton img={UseIcon} onClick={() => useRenamePotion(kami)} disabled={disabled} />
-        );
-
-        return <Tooltip text={[tooltipText]}>{button}</Tooltip>;
-      };
-
-      const CombinedButton = (kami: Kami) => {
-        return (
-          <ButtonsContainer>
-            {UseDustButton(kami)}
-            {RenameButton(kami)}
-          </ButtonsContainer>
-        );
+      const canRename = (kami: Kami): boolean => {
+        if (isHarvesting(kami)) return false;
+        if (isDead(kami)) return false;
+        if (dustAmt == 0) return false;
+        return true;
       };
 
       // Rendering of Individual Kami Cards in the Name Modal
@@ -166,7 +122,15 @@ export function registerEMABoardModal() {
           <KamiCard
             key={kami.index}
             kami={kami}
-            actions={CombinedButton(kami)}
+            actions={
+              <Tooltip text={[getTooltip(kami)]}>
+                <ActionButton
+                  onClick={() => promptRename(kami)}
+                  text='Rename'
+                  disabled={!canRename(kami)}
+                />
+              </Tooltip>
+            }
             description={description}
           />
         );
