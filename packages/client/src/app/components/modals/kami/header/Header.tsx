@@ -4,12 +4,11 @@ import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { depressFx } from 'app/styles/effects';
-import { TraitIcons } from 'assets/images/icons/traits';
-import { AffinityColors } from 'constants/affinities';
 import { StatColors, StatDescriptions, StatIcons } from 'constants/stats';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
+import { AffinityBlock } from './AffinityBlock';
 import { KamiImage } from './KamiImage';
 
 const excludedStats = ['stamina', 'slots'];
@@ -39,39 +38,20 @@ export const Header = (props: Props) => {
   };
 
   const handleAccountClick = () => {
-    if (!isMine())
-      return () => {
-        setAccount(owner.index || 0);
-        setModals({
-          account: true,
-          kami: false,
-          party: false,
-          map: false,
-        });
-        playClick();
-      };
+    if (isMine()) return;
+
+    setAccount(owner.index || 0);
+    setModals({
+      account: true,
+      kami: false,
+      party: false,
+      map: false,
+    });
+    playClick();
   };
 
   ///////////////////
   // DISPLAY
-
-  interface AffinityProps {
-    trait: 'body' | 'hand';
-  }
-
-  const AffinityCard = (props: AffinityProps) => {
-    const { trait } = props;
-    const icon = TraitIcons[trait as keyof typeof TraitIcons];
-    const affinity = kami.traits?.[trait as keyof typeof kami.traits].affinity.toLowerCase();
-    const color = AffinityColors[affinity as keyof typeof AffinityColors];
-
-    return (
-      <AffinityPairing onMouseDown={playClick} color={color}>
-        <Icon size={2.4} src={icon} />
-        <Text size={1.4}>{affinity}</Text>
-      </AffinityPairing>
-    );
-  };
 
   return (
     <Container>
@@ -80,8 +60,8 @@ export const Header = (props: Props) => {
         <Title size={2.4}>{kami.name}</Title>
         <Row>
           <AffinityContainer>
-            <AffinityCard trait='body' />
-            <AffinityCard trait='hand' />
+            <AffinityBlock kami={kami} traitKey='body' />
+            <AffinityBlock kami={kami} traitKey='hand' />
           </AffinityContainer>
           <StatsContainer>
             {Object.entries(kami.stats ?? {})
@@ -158,33 +138,11 @@ const AffinityContainer = styled.div`
   justify-content: space-between;
 `;
 
-const AffinityPairing = styled.div<{ color?: string }>`
-  position: relative;
-  background-color: ${({ color }) => color ?? '#fff'};
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
-
-  width: 12vw;
-  padding: 0.9vw;
-  gap: 0.6vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
-
-  flex-grow: 1;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-
-  cursor: pointer;
-  user-select: none;
-  &:active {
-    animation: ${() => depressFx(0.1)} 0.2s;
-  }
-`;
-
 const StatsContainer = styled.div`
   background-color: #999;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
+  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
 
   height: 100%;
   width: 19.3vw;

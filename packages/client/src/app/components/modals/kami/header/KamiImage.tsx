@@ -3,9 +3,11 @@ import styled from 'styled-components';
 import { isResting } from 'app/cache/kami';
 import { Tooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
+import { useSelected, useVisibility } from 'app/stores';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
+import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 
 const LEVEL_UP_STRING = 'Level Up!!';
@@ -26,9 +28,18 @@ interface Props {
 
 export const KamiImage = (props: Props) => {
   const { actions, data, utils } = props;
+  const { levelUp } = actions;
   const { account, kami, owner } = data;
   const { calcExpRequirement } = utils;
-  const { levelUp } = actions;
+  const { setKami } = useSelected();
+  const { modals } = useVisibility();
+
+  const [isSearching, setIsSearching] = useState(false);
+  const [indexInput, setIndexInput] = useState(kami.index);
+
+  useEffect(() => {
+    if (modals.kami) setIsSearching(false);
+  }, [modals.kami]);
 
   const progress = kami.progress!;
   const expCurr = progress.experience;
@@ -42,23 +53,62 @@ export const KamiImage = (props: Props) => {
     return LEVEL_UP_STRING;
   };
 
+  /////////////////
+  // INTERACTION
+
   const handleLevelUp = () => {
     levelUp(kami);
     playClick();
   };
 
+  const handleIndexChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
+    const rawQuantity = parseInt(quantityStr || '0');
+    const quantity = Math.max(0, rawQuantity);
+    setIndexInput(quantity);
+  };
+
+  const handleIndexClick = () => {
+    setIndexInput(kami.index);
+    setIsSearching(true);
+    playClick();
+  };
+
+  const handleIndexSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setKami(indexInput);
+      setIsSearching(false);
+      playClick();
+    }
+  };
+
+  /////////////////
+  // RENDERING
+
   const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
   return (
     <Container>
       <Image src={kami.image} />
-      <Overlay top={0.9} left={0.7}>
+      <Overlay top={0.75} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
           <Text size={0.9}>{progress ? progress.level : '??'}</Text>
         </Grouping>
       </Overlay>
-      <Overlay top={0.9} right={0.7}>
-        <Text size={0.9}>{kami.index}</Text>
+      <Overlay top={0.75} right={0.7}>
+        {!isSearching && (
+          <Text size={0.9} onClick={handleIndexClick}>
+            {kami.index}
+          </Text>
+        )}
+        {isSearching && (
+          <IndexInput
+            type={'string'}
+            value={indexInput}
+            onChange={handleIndexChange}
+            onKeyDown={handleIndexSubmit}
+          />
+        )}
       </Overlay>
       <Overlay bottom={0} fullWidth>
         <Tooltip text={[`${expCurr}/${expLimit}`]} grow>
@@ -103,7 +153,25 @@ const Grouping = styled.div`
 const Text = styled.div<{ size: number }>`
   color: white;
   font-size: ${(props) => props.size}vw;
+  line-height: ${(props) => props.size * 1.5}vw;
   text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
+
+  &:hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
+`;
+
+const IndexInput = styled.input`
+  border: none;
+  background-color: #eee;
+  width: 4.5vw;
+  cursor: text;
+
+  color: black;
+  font-size: 0.9vw;
+  line-height: 1.35vw;
+  text-align: center;
 `;
 
 const Percentage = styled.div`
