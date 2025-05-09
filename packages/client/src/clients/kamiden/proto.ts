@@ -38,11 +38,18 @@ export interface HarvestEnd {
 }
 
 export interface Kill {
+  AccountID: string;
+  Timestamp: number;
   RoomIndex: number;
   KillerId: string;
+  KillerHealthSync: number;
+  KillerHealthTotal: number;
   VictimId: string;
+  VictimHealthSync: number;
+  VictimHealthTotal: number;
+  Bounty: string;
+  Salvage: string;
   Spoils: string;
-  Timestamp: string;
 }
 
 export interface Feed {
@@ -83,6 +90,7 @@ export interface AuctionBuysResponse {
 export interface KillsRequest {
   KillerId?: string | undefined;
   VictimId?: string | undefined;
+  Timestamp?: number | undefined;
 }
 
 export interface KillsResponse {
@@ -383,30 +391,58 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
 
 function createBaseKill(): Kill {
   return {
+    AccountID: '',
+    Timestamp: 0,
     RoomIndex: 0,
     KillerId: '',
+    KillerHealthSync: 0,
+    KillerHealthTotal: 0,
     VictimId: '',
+    VictimHealthSync: 0,
+    VictimHealthTotal: 0,
+    Bounty: '',
+    Salvage: '',
     Spoils: '',
-    Timestamp: '',
   };
 }
 
 export const Kill: MessageFns<Kill> = {
   encode(message: Kill, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.AccountID !== '') {
+      writer.uint32(10).string(message.AccountID);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(16).uint64(message.Timestamp);
+    }
     if (message.RoomIndex !== 0) {
-      writer.uint32(8).uint32(message.RoomIndex);
+      writer.uint32(24).uint32(message.RoomIndex);
     }
     if (message.KillerId !== '') {
-      writer.uint32(18).string(message.KillerId);
+      writer.uint32(34).string(message.KillerId);
+    }
+    if (message.KillerHealthSync !== 0) {
+      writer.uint32(40).int32(message.KillerHealthSync);
+    }
+    if (message.KillerHealthTotal !== 0) {
+      writer.uint32(48).int32(message.KillerHealthTotal);
     }
     if (message.VictimId !== '') {
-      writer.uint32(26).string(message.VictimId);
+      writer.uint32(58).string(message.VictimId);
+    }
+    if (message.VictimHealthSync !== 0) {
+      writer.uint32(64).int32(message.VictimHealthSync);
+    }
+    if (message.VictimHealthTotal !== 0) {
+      writer.uint32(72).int32(message.VictimHealthTotal);
+    }
+    if (message.Bounty !== '') {
+      writer.uint32(82).string(message.Bounty);
+    }
+    if (message.Salvage !== '') {
+      writer.uint32(90).string(message.Salvage);
     }
     if (message.Spoils !== '') {
-      writer.uint32(34).string(message.Spoils);
-    }
-    if (message.Timestamp !== '') {
-      writer.uint32(42).string(message.Timestamp);
+      writer.uint32(98).string(message.Spoils);
     }
     return writer;
   },
@@ -419,27 +455,27 @@ export const Kill: MessageFns<Kill> = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 8) {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.AccountID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
             break;
           }
 
           message.RoomIndex = reader.uint32();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.KillerId = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.VictimId = reader.string();
           continue;
         }
         case 4: {
@@ -447,15 +483,71 @@ export const Kill: MessageFns<Kill> = {
             break;
           }
 
-          message.Spoils = reader.string();
+          message.KillerId = reader.string();
           continue;
         }
         case 5: {
-          if (tag !== 42) {
+          if (tag !== 40) {
             break;
           }
 
-          message.Timestamp = reader.string();
+          message.KillerHealthSync = reader.int32();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.KillerHealthTotal = reader.int32();
+          continue;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.VictimId = reader.string();
+          continue;
+        }
+        case 8: {
+          if (tag !== 64) {
+            break;
+          }
+
+          message.VictimHealthSync = reader.int32();
+          continue;
+        }
+        case 9: {
+          if (tag !== 72) {
+            break;
+          }
+
+          message.VictimHealthTotal = reader.int32();
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.Bounty = reader.string();
+          continue;
+        }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          message.Salvage = reader.string();
+          continue;
+        }
+        case 12: {
+          if (tag !== 98) {
+            break;
+          }
+
+          message.Spoils = reader.string();
           continue;
         }
       }
@@ -472,11 +564,18 @@ export const Kill: MessageFns<Kill> = {
   },
   fromPartial(object: DeepPartial<Kill>): Kill {
     const message = createBaseKill();
+    message.AccountID = object.AccountID ?? '';
+    message.Timestamp = object.Timestamp ?? 0;
     message.RoomIndex = object.RoomIndex ?? 0;
     message.KillerId = object.KillerId ?? '';
+    message.KillerHealthSync = object.KillerHealthSync ?? 0;
+    message.KillerHealthTotal = object.KillerHealthTotal ?? 0;
     message.VictimId = object.VictimId ?? '';
+    message.VictimHealthSync = object.VictimHealthSync ?? 0;
+    message.VictimHealthTotal = object.VictimHealthTotal ?? 0;
+    message.Bounty = object.Bounty ?? '';
+    message.Salvage = object.Salvage ?? '';
     message.Spoils = object.Spoils ?? '';
-    message.Timestamp = object.Timestamp ?? '';
     return message;
   },
 };
@@ -703,14 +802,7 @@ export const StreamResponse: MessageFns<StreamResponse> = {
 };
 
 function createBaseAuctionBuy(): AuctionBuy {
-  return {
-    AccountIndex: '',
-    ItemIndex: 0,
-    Amount: 0,
-    Currency: 0,
-    Cost: 0,
-    Timestamp: 0,
-  };
+  return { AccountIndex: '', ItemIndex: 0, Amount: 0, Currency: 0, Cost: 0, Timestamp: 0 };
 }
 
 export const AuctionBuy: MessageFns<AuctionBuy> = {
@@ -908,7 +1000,7 @@ export const AuctionBuysResponse: MessageFns<AuctionBuysResponse> = {
 };
 
 function createBaseKillsRequest(): KillsRequest {
-  return { KillerId: undefined, VictimId: undefined };
+  return { KillerId: undefined, VictimId: undefined, Timestamp: undefined };
 }
 
 export const KillsRequest: MessageFns<KillsRequest> = {
@@ -918,6 +1010,9 @@ export const KillsRequest: MessageFns<KillsRequest> = {
     }
     if (message.VictimId !== undefined) {
       writer.uint32(18).string(message.VictimId);
+    }
+    if (message.Timestamp !== undefined) {
+      writer.uint32(24).uint64(message.Timestamp);
     }
     return writer;
   },
@@ -945,6 +1040,14 @@ export const KillsRequest: MessageFns<KillsRequest> = {
           message.VictimId = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -961,6 +1064,7 @@ export const KillsRequest: MessageFns<KillsRequest> = {
     const message = createBaseKillsRequest();
     message.KillerId = object.KillerId ?? undefined;
     message.VictimId = object.VictimId ?? undefined;
+    message.Timestamp = object.Timestamp ?? undefined;
     return message;
   },
 };
