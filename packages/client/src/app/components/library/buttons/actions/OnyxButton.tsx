@@ -8,6 +8,7 @@ const PRICE = 3;
 interface Props {
   kami: Kami;
   onyx: {
+    price: number;
     allowance: number;
     balance: number;
   };
@@ -15,12 +16,13 @@ interface Props {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
   };
+  tooltip?: string[];
 }
 
 export const OnyxReviveButton = (props: Props) => {
-  const { actions, kami, onyx } = props;
+  const { actions, kami, onyx, tooltip } = props;
   const { onyxApprove, onyxRevive } = actions;
-  const { allowance, balance } = onyx;
+  const { allowance, balance, price } = onyx;
 
   const onClick = () => {
     if (allowance < PRICE) onyxApprove(PRICE);
@@ -30,33 +32,29 @@ export const OnyxReviveButton = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  const getTooltip = () => {
-    let tooltip: string[] = [`the Fortunate may resurrect`, 'their kami in other ways..', `\n`];
+  // const getTooltip = () => {
+  //   let tooltip: string[] = [`the Fortunate may resurrect`, 'their kami in other ways..', `\n`];
 
-    if (balance < PRICE) {
-      tooltip = tooltip.concat([`you only have ${balance} $ONYX`, `you need ${PRICE} $ONYX`]);
-    } else if (allowance < PRICE) {
-      tooltip = tooltip.concat([`approve spend of ${PRICE} $ONYX`]);
-    } else {
-      tooltip = tooltip.concat([`save ${kami.name} with ${PRICE} onyx`]);
-    }
-    return tooltip;
-  };
-
-  const isDisabled = () => {
-    return balance < PRICE;
-  };
+  //   if (balance < PRICE) {
+  //     tooltip = tooltip.concat([`you only have ${balance} $ONYX`, `you need ${PRICE} $ONYX`]);
+  //   } else if (allowance < PRICE) {
+  //     tooltip = tooltip.concat([`approve spend of ${PRICE} $ONYX`]);
+  //   } else {
+  //     tooltip = tooltip.concat([`save ${kami.name} with ${PRICE} onyx`]);
+  //   }
+  //   return tooltip;
+  // };
 
   /////////////////
   // DISPLAY
 
   return (
-    <Tooltip key='onyx-revive-button' text={getTooltip()}>
+    <Tooltip text={tooltip ?? []}>
       <IconButton
-        key='onyx-revive-button'
+        key='onyx-button'
         img={ItemImages.onyx}
         onClick={onClick}
-        disabled={isDisabled()}
+        disabled={balance < price}
       />
     </Tooltip>
   );

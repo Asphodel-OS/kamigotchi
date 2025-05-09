@@ -11,7 +11,7 @@ import {
   isUnrevealed,
 } from 'app/cache/kami';
 import { KamiCard } from 'app/components/library';
-import { OnyxReviveButton } from 'app/components/library/buttons/actions/OnyxReviveButton';
+import { OnyxReviveButton } from 'app/components/library/buttons/actions/OnyxButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
@@ -20,6 +20,7 @@ import { Node, NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 
+const ONYX_REVIVE_PRICE = 3;
 interface Props {
   actions: {
     onyxApprove: (price: number) => void;
@@ -126,6 +127,22 @@ export const Kards = (props: Props) => {
     if (isHarvesting(kami)) return () => selectNode(kami.harvest?.node?.index!);
   };
 
+  const getOnyxTooltip = (kami: Kami) => {
+    let tooltip: string[] = [`the Fortunate may resurrect`, 'their kami in other ways..', `\n`];
+
+    if (onyx.balance < ONYX_REVIVE_PRICE) {
+      tooltip = tooltip.concat([
+        `you only have ${onyx.balance} $ONYX`,
+        `you need ${ONYX_REVIVE_PRICE} $ONYX`,
+      ]);
+    } else if (onyx.allowance < ONYX_REVIVE_PRICE) {
+      tooltip = tooltip.concat([`approve spend of ${ONYX_REVIVE_PRICE} $ONYX`]);
+    } else {
+      tooltip = tooltip.concat([`save ${kami.name} with ${ONYX_REVIVE_PRICE} onyx`]);
+    }
+    return tooltip;
+  };
+
   /////////////////
   // DISPLAY
 
@@ -138,7 +155,13 @@ export const Kards = (props: Props) => {
     buttons.push(UseItemButton(kami, account, useIcon));
     if (isDead(kami)) {
       buttons.push(
-        <OnyxReviveButton key='onyx-revive' kami={kami} onyx={onyx} actions={actions} />
+        <OnyxReviveButton
+          key='onyx-revive'
+          kami={kami}
+          onyx={{ ...onyx, price: 3000 }}
+          actions={actions}
+          tooltip={getOnyxTooltip(kami)}
+        />
       );
     }
     return buttons;
