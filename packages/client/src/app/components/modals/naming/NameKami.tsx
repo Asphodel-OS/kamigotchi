@@ -61,7 +61,7 @@ export function registerNameKamiModal() {
       // ACTIONS
 
       // queue the naming action up
-      const nameKami = (kami: Kami, name: string) => {
+      const nameKamiTx = (kami: Kami, name: string) => {
         actions.add({
           action: 'KamiName',
           params: [kami.id, name],
@@ -72,10 +72,21 @@ export function registerNameKamiModal() {
         });
       };
 
+      const onyxNameKamiTx = (kami: Kami, name: string) => {
+        actions.add({
+          action: 'Onyx Kami Rename',
+          params: [kami.id, name],
+          description: `Renaming ${kami.name} to ${name} with ONYX`,
+          execute: async () => {
+            return api.player.pet.onyx.rename(kami.id, name);
+          },
+        });
+      };
+
       // handle naming action response (need to modify for error handling)
       const handleNameTx = async (kami: Kami, name: string) => {
         try {
-          nameKami(kami, name);
+          nameKamiTx(kami, name);
           setModals({ nameKami: false });
         } catch (e) {}
       };
