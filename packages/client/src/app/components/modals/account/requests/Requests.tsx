@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
+import { Pagination } from 'app/components/library/misc/Pagination';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { Inbound } from './Inbound';
@@ -24,13 +25,12 @@ interface Props {
 }
 
 export const Requests = (props: Props) => {
-  const { account, requests, actions } = props;
+  const { account, requests, actions, accounts } = props;
   const [mode, setMode] = useState('inbound');
   const [search, setSearch] = useState('');
-  const [searchResults, setSearchResults] = useState([] as BaseAccount[]);
   const [knownAccIndices, setKnownAccIndices] = useState([] as number[]);
+  const [selectedLetter, setSelectedLetter] = useState('A');
 
-  // keep track of which accounts are already friends, requested or blocked
   useEffect(() => {
     const inboundIndices = requests.inbound.map((req) => req.account.index);
     const outboundIndices = requests.outbound.map((req) => req.target.index);
@@ -45,36 +45,36 @@ export const Requests = (props: Props) => {
     ]);
   }, [requests.inbound, requests.outbound, account]);
 
-  // update search results according to updated search string
+  // i've memoized this 3 func to reduce the lag and control when they should update withou introducing more usestates
+  const filteredAccounts = useMemo(() => {
+    return accounts.filter((account) => !knownAccIndices.includes(account.index));
+  }, [accounts, knownAccIndices]);
+
+  const filteredSearch = useMemo(() => {
+    if (search.length < 2) return [];
+    return filteredAccounts.filter(
+      (account) => account.name.toLowerCase().includes(search.toLowerCase())
+      // decided to comment this line because we are indexing by name and it feels confusing
+      // || account.ownerAddress.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [filteredAccounts, search]);
+
+  const filteredByLetter = useMemo(() => {
+    if (search.length >= 2) return filteredSearch;
+    return filteredAccounts.filter((account) => {
+      const firstChar = account.name?.[0]?.toUpperCase() ?? '';
+      if (selectedLetter === '#') return !/^[A-Z]$/.test(firstChar);
+      return firstChar === selectedLetter;
+    });
+  }, [search, selectedLetter, filteredAccounts, filteredSearch]);
+
   useEffect(() => {
-    if (search !== '') setMode('search');
-    setSearchResults(filterAccounts(search));
-  }, [search, knownAccIndices]);
+    if (search.length >= 2) setMode('search');
+  }, [search]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setSearch(value);
+    setSearch(event.target.value);
   };
-
-  //////////////////
-  // INTERPRETATION
-
-  // TODO:  implement a lazy query or something less compute heavy
-  // filters the list of accounts by whether their name/ownerAddress contains a substring
-  const filterAccounts = (value: string) => {
-    const accounts = props.accounts.filter((account) => !knownAccIndices.includes(account.index));
-
-    if (value.length < 2) accounts;
-
-    return accounts.filter(
-      (account) =>
-        account.name.toLowerCase().includes(value.toLowerCase()) ||
-        account.ownerAddress.toLowerCase().includes(value.toLowerCase())
-    );
-  };
-
-  //////////////////
-  // DISPLAY
 
   const ModeButton = (props: { mode: string; label: string }) => {
     return (
@@ -88,9 +88,6 @@ export const Requests = (props: Props) => {
     );
   };
 
-  //////////////////
-  // RENDER
-
   return (
     <Container>
       <ActionRow>
@@ -102,34 +99,40 @@ export const Requests = (props: Props) => {
         <Input
           key='search'
           type='text'
-          placeholder={'search'}
+          placeholder='search'
           value={search}
-          onChange={(e) => handleSearch(e)}
+          onChange={handleSearch}
         />
       </ActionRow>
-
-      {mode === 'inbound' && (
-        <Inbound
-          requests={requests.inbound}
-          actions={{
-            acceptFren: actions.acceptFren,
-            blockFren: actions.blockFren,
-            cancelFren: actions.cancelFren,
-          }}
+      <Inbound
+        isVisible={mode === 'inbound'}
+        requests={requests.inbound}
+        actions={{
+          acceptFren: actions.acceptFren,
+          blockFren: actions.blockFren,
+          cancelFren: actions.cancelFren,
+        }}
+      />
+      <Outbound
+        isVisible={mode === 'outbound'}
+        requests={requests.outbound}
+        actions={{ cancelFren: actions.cancelFren }}
+      />
+      <>
+        <Pagination
+          isVisible={mode === 'search' && search.length < 2}
+          selectedLetter={selectedLetter}
+          onSelect={setSelectedLetter}
         />
-      )}
-      {mode === 'outbound' && (
-        <Outbound requests={requests.outbound} actions={{ cancelFren: actions.cancelFren }} />
-      )}
-      {mode === 'search' && (
         <Searched
-          accounts={searchResults}
+          isVisible={mode === 'search'}
+          accounts={filteredByLetter}
           actions={{
             blockFren: actions.blockFren,
             requestFren: actions.requestFren,
           }}
         />
-      )}
+      </>
     </Container>
   );
 };
@@ -146,7 +149,6 @@ const ActionRow = styled.div`
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-
   margin-bottom: 1vw;
 `;
 
@@ -159,22 +161,14 @@ const ModeButtons = styled.div`
 `;
 
 const Input = styled.input`
-  width: 100%;
-  background-color: #ffffff;
-  border-color: black;
-  border-radius: 0.5vw;
-  border-style: solid;
-  border-width: 0.15vw;
-  color: black;
   width: 50%;
+  background-color: #ffffff;
+  border: 0.15vw solid black;
+  border-radius: 0.5vw;
+  color: black;
   margin: 0.3vw;
-
   padding: 0.6vw;
   cursor: pointer;
   font-family: Pixel;
   font-size: 0.8vw;
-  text-align: left;
-  text-decoration: none;
-  justify-content: center;
-  align-items: center;
 `;

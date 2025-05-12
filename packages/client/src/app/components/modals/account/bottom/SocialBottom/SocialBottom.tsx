@@ -11,6 +11,7 @@ import { Requests } from '../../requests/Requests';
 interface Props {
   subTab: string;
   data: {
+    accounts: Account[];
     account: Account;
   };
   actions: {
@@ -20,14 +21,13 @@ interface Props {
     requestFren: (account: BaseAccount) => void;
   };
   utils: {
-    getAllAccounts: () => BaseAccount[];
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }
 
 export const SocialBottom = (props: Props) => {
-  const { subTab, data, actions, utils } = props;
-  const { getAllAccounts } = utils;
+  const { subTab, data, actions } = props;
+  const { accounts } = data;
 
   // NOTE: any child components that maintain their own state need to be inlined below, to
   // re-render and persist their state, rather than remounting
@@ -47,7 +47,7 @@ export const SocialBottom = (props: Props) => {
         <Requests
           key='requests'
           account={data.account}
-          accounts={getAllAccounts()}
+          accounts={accounts}
           requests={{
             inbound: data.account.friends?.incomingReqs ?? [],
             outbound: data.account.friends?.outgoingReqs ?? [],

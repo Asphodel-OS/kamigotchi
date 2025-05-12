@@ -4,18 +4,13 @@ import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
-import { Account, getAccount, getAccountKamis } from 'app/cache/account';
+import { Account, getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
 import { Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
-import {
-  BaseAccount,
-  getAllBaseAccounts,
-  NullAccount,
-  queryAccountByIndex,
-} from 'network/shapes/Account';
+import { BaseAccount, NullAccount, queryAccountByIndex } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 import { getTotalScoreByFilter, getVIPEpoch } from 'network/shapes/Score';
 import { waitForActionCompletion } from 'network/utils';
@@ -63,7 +58,6 @@ export function registerAccountModal() {
                 getAccount(world, components, entity, accountOptions),
               getAccountKamis: (accEntity: EntityIndex) =>
                 getAccountKamis(world, components, accEntity),
-              getAllAccounts: () => getAllBaseAccounts(world, components),
             },
           };
         })
@@ -84,6 +78,10 @@ export function registerAccountModal() {
       const [account, setAccount] = useState<Account>(NullAccount);
       const [isSelf, setIsSelf] = useState(false);
       const [isLoading, setIsLoading] = useState(false);
+      const [accounts, setAccounts] = useState<Account[]>([]);
+      useEffect(() => {
+        setAccounts(getAllAccounts(world, components));
+      }, []);
 
       // update data of the selected account when account index or data changes
       useEffect(() => {
@@ -212,7 +210,7 @@ export function registerAccountModal() {
             subTab={subTab}
             isSelf={isSelf}
             setSubTab={setSubTab}
-            data={{ account, vip }}
+            data={{ accounts, account, vip }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
             utils={utils}
           />

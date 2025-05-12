@@ -4,6 +4,7 @@ import { AccountCard, ActionListButton } from 'app/components/library';
 import { BaseAccount } from 'network/shapes/Account';
 
 interface Props {
+  isVisible: boolean;
   accounts: BaseAccount[];
   actions: {
     blockFren: (account: BaseAccount) => void;
@@ -12,7 +13,7 @@ interface Props {
 }
 
 export const Searched = (props: Props) => {
-  const { accounts, actions } = props;
+  const { accounts, actions, isVisible } = props;
 
   const Actions = (account: BaseAccount) => {
     return (
@@ -28,10 +29,10 @@ export const Searched = (props: Props) => {
   };
 
   // inbound list of pending friend requests
-  if (accounts.length === 0) return <EmptyText>no matching results</EmptyText>;
+  if (accounts.length === 0 && isVisible) return <EmptyText>no matching results</EmptyText>;
 
   return (
-    <Container>
+    <Container isVisible={isVisible}>
       {accounts.map((account) => (
         <AccountCard
           key={account.index}
@@ -44,11 +45,11 @@ export const Searched = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
   width: 100%;
   gap: 0.6vw;
 
-  display: flex;
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useSelected, useVisibility } from 'app/stores';
+import { KAMI_BASE_URI } from 'constants/media';
 import { BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 import { Card } from '..';
@@ -75,7 +76,7 @@ export const AccountCard = (props: Props) => {
   return (
     <Card
       image={{
-        icon: account.pfpURI ?? 'https://miladymaker.net/milady/8365.png',
+        icon: `${KAMI_BASE_URI}${account.pfpURI}.gif`,
         scale: 6,
         onClick: handleClick,
       }}

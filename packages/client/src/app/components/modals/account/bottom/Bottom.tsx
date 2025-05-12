@@ -13,8 +13,10 @@ interface Props {
   tab: string;
   subTab: string;
   isSelf: boolean;
+
   setSubTab: (tab: string) => void;
   data: {
+    accounts: Account[];
     account: Account;
     vip: {
       epoch: number; // current VIP epoch
@@ -28,7 +30,6 @@ interface Props {
     requestFren: (account: BaseAccount) => void;
   };
   utils: {
-    getAllAccounts: () => BaseAccount[];
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }

@@ -4,6 +4,7 @@ import { AccountCard, ActionListButton } from 'app/components/library';
 import { Friendship } from 'network/shapes/Friendship';
 
 interface Props {
+  isVisible: boolean;
   requests: Friendship[];
   actions: {
     cancelFren: (friendship: Friendship) => void;
@@ -11,7 +12,7 @@ interface Props {
 }
 
 export const Outbound = (props: Props) => {
-  const { requests, actions } = props;
+  const { requests, actions, isVisible } = props;
 
   const Actions = (friendship: Friendship) => {
     return (
@@ -23,9 +24,9 @@ export const Outbound = (props: Props) => {
     );
   };
 
-  if (requests.length === 0) return <EmptyText>no outbound requests</EmptyText>;
+  if (requests.length === 0 && isVisible) return <EmptyText>no outbound requests</EmptyText>;
   return (
-    <Container>
+    <Container isVisible={isVisible}>
       {requests.map((friendship) => (
         <AccountCard
           key={friendship.target.index}
@@ -38,11 +39,11 @@ export const Outbound = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
   width: 100%;
   gap: 0.6vw;
 
-  display: flex;
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
