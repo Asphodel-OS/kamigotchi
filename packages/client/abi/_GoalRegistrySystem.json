@@ -223,6 +223,19 @@
     },
     {
       "type": "function",
+      "name": "removeRewards",
+      "inputs": [
+        {
+          "name": "goalIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "renounceOwnership",
       "inputs": [],
       "outputs": [],
@@ -357,6 +370,7 @@
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "remove(uint32)": "00d84fd8",
+    "removeRewards(uint32)": "629c5fe0",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "setDisabled(uint32,bool)": "564eb313",

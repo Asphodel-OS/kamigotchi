@@ -102,7 +102,14 @@ export function goalsAPI(generateCallData: GenerateCallData, compiledCalls: stri
   }
 
   async function remove(goalIndex: number) {
+    console.log(`removing goal ${goalIndex}`);
     const callData = generateCallData('system.goal.registry', [goalIndex], 'remove');
+    compiledCalls.push(callData);
+  }
+
+  async function removeRewards(goalIndex: number) {
+    console.log(`removing rewards from goal ${goalIndex}`);
+    const callData = generateCallData('system.goal.registry', [goalIndex], 'removeRewards');
     compiledCalls.push(callData);
   }
 
@@ -117,7 +124,10 @@ export function goalsAPI(generateCallData: GenerateCallData, compiledCalls: stri
         stat: createRewardStat,
       },
     },
-    delete: remove,
+    remove: {
+      full: remove,
+      rewards: removeRewards,
+    },
     enable: enable,
   };
 }

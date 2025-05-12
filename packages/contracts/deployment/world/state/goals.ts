@@ -1,26 +1,25 @@
 import { AdminAPI } from '../api';
-import { MUSU_INDEX } from './utils';
 
 export async function initGoals(api: AdminAPI) {
-  await api.goal.create(
-    1,
-    'A hole in reality?',
-    `The path beyond this point is blocked by some kind of…. glitched-out gate?
-        You won’t be able to pass without using MUSU to stabilize this hole in reality. Looks like this one is going to need to be a team effort…`,
-    47,
-    'ITEM',
-    'CURR_MIN',
-    MUSU_INDEX,
-    1000000
-  );
-  await api.goal.add.reward.display(1, 'Door unlock');
-  await api.goal.add.reward.basic(1, 'Bronze', 500, 'ITEM', 11211, 10);
-  await api.goal.add.reward.basic(1, 'Bronze', 500, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(1, 'Silver', 1000, 'ITEM', 11002, 10);
-  await api.goal.add.reward.basic(1, 'Silver', 1000, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(1, 'Gold', 3333, 'ITEM', 100001, 1);
-  await api.goal.add.reward.basic(1, 'Gold', 3333, 'REPUTATION', 1, 3);
-  await api.goal.enable(1);
+  // await api.goal.create(
+  //   1,
+  //   'A hole in reality?',
+  //   `The path beyond this point is blocked by some kind of…. glitched-out gate?
+  //       You won’t be able to pass without using MUSU to stabilize this hole in reality. Looks like this one is going to need to be a team effort…`,
+  //   47,
+  //   'ITEM',
+  //   'CURR_MIN',
+  //   MUSU_INDEX,
+  //   1000000
+  // );
+  // await api.goal.add.reward.display(1, 'Door unlock');
+  // await api.goal.add.reward.basic(1, 'Bronze', 500, 'ITEM', 11211, 10);
+  // await api.goal.add.reward.basic(1, 'Bronze', 500, 'REPUTATION', 1, 3);
+  // await api.goal.add.reward.basic(1, 'Silver', 1000, 'ITEM', 11002, 10);
+  // await api.goal.add.reward.basic(1, 'Silver', 1000, 'REPUTATION', 1, 3);
+  // await api.goal.add.reward.basic(1, 'Gold', 3333, 'ITEM', 100001, 1);
+  // await api.goal.add.reward.basic(1, 'Gold', 3333, 'REPUTATION', 1, 3);
+  // await api.goal.enable(1);
 
   // await api.goal.create(
   //   2,
@@ -39,45 +38,45 @@ export async function initGoals(api: AdminAPI) {
   // await api.goal.add.reward.basic(2, 'Gold', 5000, 'REPUTATION', 1, 10);
   // await api.goal.enable(2);
 
-  await api.goal.create(
-    3,
-    'Deep-Forest Ritual',
-    `The insect hive here has begun to take on a strange aura. Sacred sites like this demand tribute….
-      By contributing MUSU to the ritual, you will be rewarded. With enough MUSU, a new path will open for all of us.`,
-    10,
-    'ITEM',
-    'CURR_MIN',
-    MUSU_INDEX,
-    2000000
-  );
+  // await api.goal.create(
+  //   3,
+  //   'Deep-Forest Ritual',
+  //   `The insect hive here has begun to take on a strange aura. Sacred sites like this demand tribute….
+  //     By contributing MUSU to the ritual, you will be rewarded. With enough MUSU, a new path will open for all of us.`,
+  //   10,
+  //   'ITEM',
+  //   'CURR_MIN',
+  //   MUSU_INDEX,
+  //   2000000
+  // );
   await api.goal.add.reward.display(3, 'Door unlock');
   await api.goal.add.reward.basic(3, 'Bronze', 1000, 'REPUTATION', 1, 3);
   await api.goal.add.reward.basic(3, 'Bronze', 1000, 'ITEM', 11212, 10);
   await api.goal.add.reward.basic(3, 'Silver', 2000, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(3, 'Silver', 21204, 'ITEM', 11203, 20);
+  await api.goal.add.reward.basic(3, 'Silver', 2000, 'ITEM', 21204, 20);
   await api.goal.add.reward.basic(3, 'Gold', 6666, 'REPUTATION', 1, 3);
   await api.goal.add.reward.basic(3, 'Gold', 6666, 'ITEM', 100002, 1);
-  await api.goal.enable(3);
+  // await api.goal.enable(3);
 
-  await api.goal.create(
-    4,
-    'Shrine to Nature',
-    `It looks like some sort of idol has sprouted from the cockpit…
-  The idol needs tribute. Provide it with the resources it needs, and another way will open in the forest.`,
-    54,
-    'ITEM',
-    'CURR_MIN',
-    MUSU_INDEX,
-    3000000
-  );
-  await api.goal.add.reward.basic(4, 'Bronze', 1500, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(4, 'Bronze', 1500, 'ITEM', 11213, 10);
-  await api.goal.add.reward.basic(4, 'Silver', 3000, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(4, 'Silver', 3000, 'ITEM', 11002, 10);
-  await api.goal.add.reward.basic(4, 'Silver', 3000, 'ITEM', 21204, 20);
-  await api.goal.add.reward.basic(4, 'Gold', 9999, 'REPUTATION', 1, 3);
-  await api.goal.add.reward.basic(4, 'Gold', 9999, 'ITEM', 100003, 1);
-  await api.goal.enable(4);
+  // await api.goal.create(
+  //   4,
+  //   'Shrine to Nature',
+  //   `It looks like some sort of idol has sprouted from the cockpit…
+  // The idol needs tribute. Provide it with the resources it needs, and another way will open in the forest.`,
+  //   54,
+  //   'ITEM',
+  //   'CURR_MIN',
+  //   MUSU_INDEX,
+  //   3000000
+  // );
+  // await api.goal.add.reward.basic(4, 'Bronze', 1500, 'REPUTATION', 1, 3);
+  // await api.goal.add.reward.basic(4, 'Bronze', 1500, 'ITEM', 11213, 10);
+  // await api.goal.add.reward.basic(4, 'Silver', 3000, 'REPUTATION', 1, 3);
+  // await api.goal.add.reward.basic(4, 'Silver', 3000, 'ITEM', 11002, 10);
+  // await api.goal.add.reward.basic(4, 'Silver', 3000, 'ITEM', 21204, 20);
+  // await api.goal.add.reward.basic(4, 'Gold', 9999, 'REPUTATION', 1, 3);
+  // await api.goal.add.reward.basic(4, 'Gold', 9999, 'ITEM', 100003, 1);
+  // await api.goal.enable(4);
 
   // await api.goal.create(
   //   5,
@@ -149,6 +148,12 @@ export async function initGoals(api: AdminAPI) {
 
 export async function deleteGoals(api: AdminAPI, indices: number[]) {
   for (let i = 0; i < indices.length; i++) {
-    await api.goal.delete(indices[i]);
+    await api.goal.remove.full(indices[i]);
+  }
+}
+
+export async function deleteGoalRewards(api: AdminAPI, indices: number[]) {
+  for (let i = 0; i < indices.length; i++) {
+    await api.goal.remove.rewards(indices[i]);
   }
 }

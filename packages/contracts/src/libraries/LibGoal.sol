@@ -63,7 +63,7 @@ library LibGoal {
 
   /// @notice creates a goal
   function create(
-    IUintComp components,
+    IUintComp comps,
     uint32 index,
     string memory name,
     string memory description,
@@ -71,73 +71,74 @@ library LibGoal {
     Condition memory objective
   ) internal returns (uint256 id) {
     id = genGoalID(index);
-    LibEntityType.set(components, id, "GOAL");
-    IndexComponent(getAddrByID(components, IndexCompID)).set(id, index);
-    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-    DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
-    if (roomIndex != 0)
-      IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).set(id, roomIndex);
-    LibDisabled.set(components, id, true); // disabled initially
+    LibEntityType.set(comps, id, "GOAL");
+    IndexComponent(getAddrByID(comps, IndexCompID)).set(id, index);
+    NameComponent(getAddrByID(comps, NameCompID)).set(id, name);
+    DescriptionComponent(getAddrByID(comps, DescriptionCompID)).set(id, description);
+    if (roomIndex != 0) IndexRoomComponent(getAddrByID(comps, IndexRoomCompID)).set(id, roomIndex);
+    LibDisabled.set(comps, id, true); // disabled initially
 
     // adding the objective
     uint256 objID = genObjID(id);
-    LibConditional.create(components, objID, objective);
+    LibConditional.create(comps, objID, objective);
   }
 
   /// @notice creates a reward tier, if it doesn't yet exist
   function createTier(
-    IUintComp components,
+    IUintComp comps,
     uint32 goalIndex,
     string memory name,
     uint256 cutoff // cutoff 0 signifies display only tier; does not distribute rewards
   ) internal returns (uint256 id) {
-    id = LibReference.create(components, "goal.tier", cutoff, genTierAnchorID(goalIndex));
+    id = createTierRef(comps, goalIndex, cutoff);
 
-    NameComponent(getAddrByID(components, NameCompID)).set(id, name);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, cutoff);
+    NameComponent(getAddrByID(comps, NameCompID)).set(id, name);
+    ValueComponent(getAddrByID(comps, ValueCompID)).set(id, cutoff);
   }
 
   /// @notice adds a requirement to a goal
   function addRequirement(
     IWorld world,
-    IUintComp components,
+    IUintComp comps,
     uint32 goalIndex,
     Condition memory requirement
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, requirement, genReqAnchor(goalIndex));
+    id = LibConditional.createFor(world, comps, requirement, genReqAnchor(goalIndex));
   }
 
-  function remove(IUintComp components, uint32 index) internal {
+  function remove(IUintComp comps, uint32 index) public {
     uint256 goalID = genGoalID(index);
-    LibEntityType.remove(components, goalID);
-    IndexComponent(getAddrByID(components, IndexCompID)).remove(goalID);
-    NameComponent(getAddrByID(components, NameCompID)).remove(goalID);
-    DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(goalID);
-    IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(goalID);
-    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).remove(goalID);
-    LibDisabled.set(components, goalID, false);
+    LibEntityType.remove(comps, goalID);
+    IndexComponent(getAddrByID(comps, IndexCompID)).remove(goalID);
+    NameComponent(getAddrByID(comps, NameCompID)).remove(goalID);
+    DescriptionComponent(getAddrByID(comps, DescriptionCompID)).remove(goalID);
+    IndexRoomComponent(getAddrByID(comps, IndexRoomCompID)).remove(goalID);
+    IsCompleteComponent(getAddrByID(comps, IsCompleteCompID)).remove(goalID);
+    LibDisabled.set(comps, goalID, false);
 
     // remove objective
     uint256 objID = genObjID(goalID);
-    LibConditional.remove(components, objID);
+    LibConditional.remove(comps, objID);
 
     // remove requirements
-    uint256[] memory reqIDs = getRequirements(components, index);
-    LibConditional.remove(components, reqIDs);
+    uint256[] memory reqIDs = getRequirements(comps, index);
+    LibConditional.remove(comps, reqIDs);
 
-    // remove tiers
-    uint256[] memory tierIDs = getTiers(components, index);
-    removeTiers(components, tierIDs);
-
-    // remove rewards
-    uint256[] memory rewIDs = getRewards(components, tierIDs);
-    LibAllo.remove(components, rewIDs);
+    removeRewards(comps, index);
   }
 
-  function removeTiers(IUintComp components, uint256[] memory ids) internal {
-    LibReference.remove(components, ids);
-    NameComponent(getAddrByID(components, NameCompID)).remove(ids);
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
+  function removeRewards(IUintComp comps, uint32 index) public {
+    uint256[] memory tierIDs = getTiers(comps, index);
+    removeTiers(comps, tierIDs);
+
+    uint256[] memory rewIDs = getRewards(comps, tierIDs);
+    LibAllo.remove(comps, rewIDs);
+  }
+
+  function removeTiers(IUintComp comps, uint256[] memory ids) public {
+    LibReference.remove(comps, ids);
+    NameComponent(getAddrByID(comps, NameCompID)).remove(ids);
+    ValueComponent(getAddrByID(comps, ValueCompID)).remove(ids);
   }
 
   /////////////////
@@ -145,13 +146,13 @@ library LibGoal {
 
   /// @notice contributes to a goal
   function contribute(
-    IUintComp components,
+    IUintComp comps,
     uint256 accID,
     uint256 goalID,
     uint256 amt
   ) internal returns (uint256) {
     uint256 objID = genObjID(goalID);
-    IUintComp valComp = IUintComp(getAddrByID(components, ValueCompID));
+    IUintComp valComp = IUintComp(getAddrByID(comps, ValueCompID));
     uint256 currBal = valComp.safeGet(goalID);
     uint256 targetBal = valComp.safeGet(objID);
 
@@ -159,189 +160,171 @@ library LibGoal {
     if (currBal + amt >= targetBal) {
       // goal completed, set it so
       amt = targetBal - currBal;
-      setComplete(components, goalID);
+      setComplete(comps, goalID);
     }
 
     // dec account's balance
-    string memory type_ = TypeComponent(getAddrByID(components, TypeCompID)).get(objID);
-    uint32 index = IndexComponent(getAddrByID(components, IndexCompID)).safeGet(objID);
-    LibSetter.dec(components, type_, index, amt, accID);
+    string memory type_ = TypeComponent(getAddrByID(comps, TypeCompID)).get(objID);
+    uint32 index = IndexComponent(getAddrByID(comps, IndexCompID)).safeGet(objID);
+    LibSetter.dec(comps, type_, index, amt, accID);
 
     // inc goal's balance & inc account contribution
     valComp.set(goalID, currBal + amt);
-    incContribution(components, accID, goalID, amt);
+    incContribution(comps, accID, goalID, amt);
 
     return amt;
   }
 
   function distributeRewards(
     IWorld world,
-    IUintComp components,
+    IUintComp comps,
     uint32 goalIndex,
     uint256 goalID,
     uint256 accID
   ) internal {
-    uint256[] memory activeTiers = getClaimableTiers(components, goalIndex, goalID, accID);
-    uint256[] memory rwdIDs = getRewards(components, activeTiers);
-    LibAllo.distribute(world, components, rwdIDs, accID);
+    uint256[] memory activeTiers = getClaimableTiers(comps, goalIndex, goalID, accID);
+    uint256[] memory rwdIDs = getRewards(comps, activeTiers);
+    LibAllo.distribute(world, comps, rwdIDs, accID);
   }
 
   ////////////////////
   // CHECKERS
 
-  function verifyEnabled(IUintComp components, uint256 goalID) public view {
-    return LibDisabled.verifyEnabled(components, goalID);
+  function verifyEnabled(IUintComp comps, uint256 goalID) public view {
+    return LibDisabled.verifyEnabled(comps, goalID);
   }
 
-  function verifyClaimable(IUintComp components, uint256 goalID, uint256 accID) public view {
-    if (!canClaim(components, goalID, accID)) revert("cannot claim from this goal");
+  function verifyClaimable(IUintComp comps, uint256 goalID, uint256 accID) public view {
+    if (!canClaim(comps, goalID, accID)) revert("cannot claim from this goal");
   }
 
   function verifyContributable(
-    IUintComp components,
+    IUintComp comps,
     uint32 goalIndex,
     uint256 goalID,
     uint256 accID
   ) public view {
-    if (!canContribute(components, goalIndex, goalID, accID))
-      revert("cannot contribute to this goal");
+    if (!canContribute(comps, goalIndex, goalID, accID)) revert("cannot contribute to this goal");
   }
 
-  function canClaim(
-    IUintComp components,
-    uint256 goalID,
-    uint256 accID
-  ) internal view returns (bool) {
-    if (!checkRoom(components, goalID, accID)) return false; // wrong room
+  function canClaim(IUintComp comps, uint256 goalID, uint256 accID) internal view returns (bool) {
+    if (!checkRoom(comps, goalID, accID)) return false; // wrong room
 
     uint256 contributionID = genContributionID(goalID, accID);
-    IsCompleteComponent completeComp = IsCompleteComponent(
-      getAddrByID(components, IsCompleteCompID)
-    );
+    IsCompleteComponent completeComp = IsCompleteComponent(getAddrByID(comps, IsCompleteCompID));
     bool goalCompleted = completeComp.has(goalID);
     bool accClaimed = completeComp.has(contributionID);
 
-    bool accContributed = ValueComponent(getAddrByID(components, ValueCompID)).has(contributionID);
+    bool accContributed = ValueComponent(getAddrByID(comps, ValueCompID)).has(contributionID);
     // true if goal completed, account contributed, account hasnt claimed reward
     return goalCompleted && accContributed && !accClaimed;
   }
 
   function canContribute(
-    IUintComp components,
+    IUintComp comps,
     uint32 goalIndex,
     uint256 goalID,
     uint256 accID
   ) internal view returns (bool) {
-    uint256[] memory requirements = getRequirements(components, goalIndex);
-    if (!checkRequirements(components, accID, requirements)) return false;
+    uint256[] memory requirements = getRequirements(comps, goalIndex);
+    if (!checkRequirements(comps, accID, requirements)) return false;
 
-    if (!checkRoom(components, goalID, accID)) return false; // wrong room
-    if (isComplete(components, goalID)) return false; // goal already completed
+    if (!checkRoom(comps, goalID, accID)) return false; // wrong room
+    if (isComplete(comps, goalID)) return false; // goal already completed
 
     return true;
   }
 
   function checkRequirements(
-    IUintComp components,
+    IUintComp comps,
     uint256 accID,
     uint256[] memory requirements
   ) internal view returns (bool) {
-    return LibConditional.check(components, requirements, accID);
+    return LibConditional.check(comps, requirements, accID);
   }
 
-  function checkRoom(
-    IUintComp components,
-    uint256 goalID,
-    uint256 accID
-  ) internal view returns (bool) {
-    IndexRoomComponent comp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
+  function checkRoom(IUintComp comps, uint256 goalID, uint256 accID) internal view returns (bool) {
+    IndexRoomComponent comp = IndexRoomComponent(getAddrByID(comps, IndexRoomCompID));
     if (!comp.has(goalID)) return true; // global goal, no room needed
 
     return comp.get(goalID) == comp.get(accID);
   }
 
-  function isComplete(IUintComp components, uint256 id) internal view returns (bool) {
-    return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(id);
+  function isComplete(IUintComp comps, uint256 id) internal view returns (bool) {
+    return IsCompleteComponent(getAddrByID(comps, IsCompleteCompID)).has(id);
   }
 
   ///////////////////
   // SETTERS
 
   function incContribution(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint256 goalID,
     uint256 amt
   ) internal {
     uint256 id = genContributionID(goalID, holderID);
-    LibScore.incFor(components, id, holderID, goalID, amt);
+    LibScore.incFor(comps, id, holderID, goalID, amt);
   }
 
-  function setComplete(IUintComp components, uint256 id) internal {
-    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(id);
+  function setComplete(IUintComp comps, uint256 id) internal {
+    IsCompleteComponent(getAddrByID(comps, IsCompleteCompID)).set(id);
   }
 
-  function setClaimed(IUintComp components, uint256 goalID, uint256 accID) internal {
-    IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).set(
-      genContributionID(goalID, accID)
-    );
+  function setClaimed(IUintComp comps, uint256 goalID, uint256 accID) internal {
+    IsCompleteComponent(getAddrByID(comps, IsCompleteCompID)).set(genContributionID(goalID, accID));
   }
 
   ////////////////////
   // GETTERS
 
-  function getByIndex(IUintComp components, uint32 index) internal view returns (uint256) {
+  function getByIndex(IUintComp comps, uint32 index) internal view returns (uint256) {
     uint256 id = genGoalID(index);
-    return LibEntityType.isShape(components, id, "GOAL") ? id : 0;
+    return LibEntityType.isShape(comps, id, "GOAL") ? id : 0;
   }
 
   function getContributionAmt(
-    IUintComp components,
+    IUintComp comps,
     uint256 goalID,
     uint256 accID
   ) internal view returns (uint256) {
-    ValueComponent comp = ValueComponent(getAddrByID(components, ValueCompID));
+    ValueComponent comp = ValueComponent(getAddrByID(comps, ValueCompID));
     uint256 id = genContributionID(goalID, accID);
     return comp.has(id) ? comp.get(id) : 0;
   }
 
-  function getTiers(
-    IUintComp components,
-    uint32 goalIndex
-  ) internal view returns (uint256[] memory) {
-    return LibReference.queryByParent(components, genTierAnchorID(goalIndex));
+  function getTiers(IUintComp comps, uint32 goalIndex) internal view returns (uint256[] memory) {
+    return LibReference.queryByParent(comps, genTierAnchorID(goalIndex));
   }
 
   function getRequirements(
-    IUintComp components,
+    IUintComp comps,
     uint32 goalIndex
   ) internal view returns (uint256[] memory) {
-    return LibConditional.queryFor(components, genReqAnchor(goalIndex));
+    return LibConditional.queryFor(comps, genReqAnchor(goalIndex));
   }
 
   function getRewards(
-    IUintComp components,
+    IUintComp comps,
     uint256[] memory tierIDs
   ) internal view returns (uint256[] memory) {
     uint256[] memory anchorIDs = new uint256[](tierIDs.length);
     for (uint256 i; i < tierIDs.length; i++) anchorIDs[i] = genAlloAnchor(tierIDs[i]);
-    return LibAllo.queryFor(components, anchorIDs);
+    return LibAllo.queryFor(comps, anchorIDs);
   }
 
   /// @notice gets tiers that user qualifies for
   function getClaimableTiers(
-    IUintComp components,
+    IUintComp comps,
     uint32 goalIndex,
     uint256 goalID,
     uint256 accID
   ) internal view returns (uint256[] memory) {
-    uint256[] memory tierIDs = getTiers(components, goalIndex);
-    uint256[] memory cutoffs = ValueComponent(getAddrByID(components, ValueCompID)).safeGet(
-      tierIDs
-    );
+    uint256[] memory tierIDs = getTiers(comps, goalIndex);
+    uint256[] memory cutoffs = ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(tierIDs);
 
     // filter out unreached tiers and display only tiers that are reached
-    uint256 contribution = getContributionAmt(components, goalID, accID);
+    uint256 contribution = getContributionAmt(comps, goalID, accID);
     for (uint256 i; i < tierIDs.length; i++) {
       if (cutoffs[i] == 0 || contribution < cutoffs[i]) tierIDs[i] = 0;
     }
@@ -353,12 +336,21 @@ library LibGoal {
   // LOGGING
 
   /// @notice log overall goal contirbution, not specific goal
-  function logContribution(IUintComp components, uint256 accID, uint256 amt) public {
-    LibData.inc(components, accID, 0, "GOAL_CONTRIBUTION", amt);
+  function logContribution(IUintComp comps, uint256 accID, uint256 amt) public {
+    LibData.inc(comps, accID, 0, "GOAL_CONTRIBUTION", amt);
   }
 
   ///////////////////////
   // UTILS
+
+  /// @dev tier reference, a null entity that points to a tier with specific cutoff
+  function createTierRef(
+    IUintComp comps,
+    uint32 goalIndex,
+    uint256 cutoff
+  ) internal returns (uint256) {
+    return LibReference.create(comps, "goal.tier", cutoff, genTierAnchorID(goalIndex));
+  }
 
   function genGoalID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal", index)));

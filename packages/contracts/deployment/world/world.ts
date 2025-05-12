@@ -3,6 +3,7 @@ import {
   addNodeScavenges,
   deleteAuctions,
   deleteFactions,
+  deleteGoalRewards,
   deleteGoals,
   deleteItems,
   deleteListings,
@@ -100,7 +101,8 @@ export class WorldState {
     goals: {
       init: () => this.genCalls(initGoals),
       delete: (indices: number[]) => this.genCalls((api) => deleteGoals(api, indices)),
-    } as SubFunc,
+      deleteRewards: (indices: number[]) => this.genCalls((api) => deleteGoalRewards(api, indices)),
+    },
     items: {
       init: (indices?: number[]) => this.genCalls((api) => initItems(api, indices)),
       delete: (indices: number[]) => this.genCalls((api) => deleteItems(api, indices)),

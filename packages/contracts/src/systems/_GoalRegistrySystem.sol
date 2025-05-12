@@ -45,6 +45,9 @@ contract _GoalRegistrySystem is System, AuthRoles {
     LibDisabled.set(components, goalID, disabled);
   }
 
+  /////////////////
+  // REQUIREMENTS
+
   function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 goalIndex,
@@ -62,6 +65,9 @@ contract _GoalRegistrySystem is System, AuthRoles {
 
     return LibGoal.addRequirement(world, components, goalIndex, requirement);
   }
+
+  /////////////////
+  // ALLOS
 
   function addRewardBasic(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
@@ -130,9 +136,17 @@ contract _GoalRegistrySystem is System, AuthRoles {
     return id;
   }
 
+  /////////////////
+  // REMOVALS
+
   function remove(uint32 goalIndex) public onlyAdmin(components) {
     require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
     LibGoal.remove(components, goalIndex);
+  }
+
+  function removeRewards(uint32 goalIndex) public onlyAdmin(components) {
+    require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+    LibGoal.removeRewards(components, goalIndex);
   }
 
   function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
