@@ -4,7 +4,7 @@ import { ItemImages } from 'assets/images/items';
 
 const ONYX_ADDR = '0x4BaDFb501Ab304fF11217C44702bb9E9732E7CF4';
 
-export const PresaleMenuButton = () => {
+export const OnyxMenuButton = () => {
   const { balances } = useTokens();
 
   const onyxInfo = balances.get(ONYX_ADDR);
@@ -29,6 +29,8 @@ export const PresaleMenuButton = () => {
         onClick={openBaselineLink}
         scale={4.5}
         scaleOrientation='vh'
+        radius={0.9}
+        cornerAlt
       />
     </Tooltip>
   );

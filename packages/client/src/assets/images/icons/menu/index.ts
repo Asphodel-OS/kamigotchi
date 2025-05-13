@@ -9,6 +9,7 @@ import QuestsIcon from './quests.png';
 import ResetIcon from './reset.png';
 import SettingsIcon from './settings.png';
 import SocialIcon from './social.png';
+import SudoIcon from './sudo.png';
 
 export {
   ChatIcon,
@@ -22,6 +23,7 @@ export {
   ResetIcon,
   SettingsIcon,
   SocialIcon,
+  SudoIcon,
 };
 
 export const MenuIcons = {
@@ -36,4 +38,5 @@ export const MenuIcons = {
   reset: ResetIcon,
   settings: SettingsIcon,
   social: SocialIcon,
+  sudo: SudoIcon,
 };

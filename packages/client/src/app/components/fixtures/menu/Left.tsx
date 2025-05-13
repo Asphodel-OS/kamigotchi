@@ -8,8 +8,9 @@ import {
   AccountMenuButton,
   MapMenuButton,
   NodeMenuButton,
+  OnyxMenuButton,
   PartyMenuButton,
-  PresaleMenuButton,
+  SudoMenuButton,
 } from './buttons';
 
 export function registerMenuLeft() {
@@ -41,7 +42,8 @@ export function registerMenuLeft() {
           <PartyMenuButton />
           <MapMenuButton />
           <NodeMenuButton disabled={!nodeEntity} />
-          <PresaleMenuButton />
+          <SudoMenuButton />
+          <OnyxMenuButton />
         </Wrapper>
       );
     }

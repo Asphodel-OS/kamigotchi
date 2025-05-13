@@ -5,9 +5,10 @@ import { InventoryMenuButton } from './Inventory';
 import { MapMenuButton } from './Map';
 import { MoreMenuButton } from './More';
 import { NodeMenuButton } from './Node';
+import { OnyxMenuButton } from './Onyx';
 import { PartyMenuButton } from './Party';
-import { PresaleMenuButton } from './Presale';
 import { QuestMenuButton } from './Quests';
+import { SudoMenuButton } from './Sudo';
 
 export {
   AccountMenuButton,
@@ -17,7 +18,8 @@ export {
   MapMenuButton,
   MoreMenuButton,
   NodeMenuButton,
+  OnyxMenuButton,
   PartyMenuButton,
-  PresaleMenuButton,
   QuestMenuButton,
+  SudoMenuButton,
 };

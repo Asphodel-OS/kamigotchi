@@ -14,6 +14,7 @@ interface Props {
   pulse?: boolean;
   balance?: number;
   corner?: boolean;
+  cornerAlt?: boolean;
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
@@ -26,6 +27,7 @@ export const IconButton = forwardRef(function IconButton(
 ) {
   const { img, onClick, text, disabled, fullWidth, color, pulse } = props;
   const { balance, corner } = props; // IconListButton options
+  const { cornerAlt } = props; // open page in new tab indicator
   const scale = props.scale ?? 2.5;
   const scaleOrientation = props.scaleOrientation ?? 'vw';
   const radius = props.radius ?? 0.45;
@@ -56,6 +58,7 @@ export const IconButton = forwardRef(function IconButton(
       )}
       {balance && <Balance>{balance}</Balance>}
       {corner && <Corner radius={radius - 0.15} orientation={scaleOrientation} />}
+      {cornerAlt && <CornerAlt radius={radius - 0.15} orientation={scaleOrientation} />}
     </Button>
   );
 });
@@ -116,8 +119,19 @@ const Corner = styled.div<{ radius: number; orientation: string }>`
   border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
   border-radius: 0 0 ${({ radius }) => radius - 0.15}${({ orientation }) => orientation} 0;
   border-color: transparent black black transparent;
-  right: 0;
   bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+`;
+
+const CornerAlt = styled.div<{ radius: number; orientation: string }>`
+  position: absolute;
+  border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
+  border-radius: 0 ${({ radius }) => radius - 0.15}${({ orientation }) => orientation} 0 0;
+  border-color: black black transparent transparent;
+  top: 0;
+  right: 0;
   width: 0;
   height: 0;
 `;
