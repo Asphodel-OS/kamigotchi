@@ -2,7 +2,7 @@ import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
-import { Overlay, Pairing, Warning } from 'app/components/library';
+import { ActionButton, Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
@@ -56,8 +56,23 @@ interface Props {
 export const Controls = (props: Props) => {
   const { actions, controls, data, state } = props;
   const { reveal } = actions;
-  const { mode, tab } = controls;
+  const { mode, setMode, tab } = controls;
   const { commits, payItem, balance } = data;
+
+  // toggle between alt and default modes
+  const toggleMode = () => {
+    if (mode === 'DEFAULT') setMode('ALT');
+    else setMode('DEFAULT');
+  };
+
+  const getButtonText = () => {
+    if (mode === 'DEFAULT') return 'Get More';
+    else return 'Use Tickets';
+  };
+
+  const isButtonVisible = () => {
+    return tab === 'GACHA' || tab === 'REROLL';
+  };
 
   const getBalanceText = () => {
     let numDecimals = 0;
@@ -83,7 +98,10 @@ export const Controls = (props: Props) => {
       <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
       <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
-      <Overlay right={0.75} bottom={0.75} orientation='row'>
+      <Overlay bottom={0.75} left={0.75}>
+        {isButtonVisible() && <ActionButton text={getButtonText()} onClick={toggleMode} />}
+      </Overlay>
+      <Overlay right={0.75} bottom={0.75}>
         <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
       </Overlay>
     </Container>

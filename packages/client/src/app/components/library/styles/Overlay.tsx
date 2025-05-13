@@ -15,8 +15,8 @@ interface OverlayProps {
   zIndex?: number;
 
   orientation?: 'row' | 'column';
-  align?: 'flex-start' | 'center' | 'flex-end';
-  justify?: 'flex-start' | 'center' | 'flex-end';
+  align?: 'flex-start' | 'center' | 'flex-end' | 'space-between';
+  justify?: 'flex-start' | 'center' | 'flex-end' | 'space-between';
   gap?: number;
 }
 

@@ -42,5 +42,6 @@ const Container = styled.div<{ scale: number }>`
 
 const Icon = styled.img<{ scale: number }>`
   height: ${({ scale }) => scale * 1.5}vw;
+  margin-bottom: ${({ scale }) => scale * 0.12}vw;
   ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
 `;

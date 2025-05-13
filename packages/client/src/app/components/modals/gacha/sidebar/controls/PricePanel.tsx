@@ -13,22 +13,29 @@ interface Props {
   state: {
     price: number;
     quantity: number;
+    tick: number;
   };
 }
 
 export const PricePanel = (props: Props) => {
   const { data, state, isVisible } = props;
   const { payItem, saleItem } = data;
-  const { price, quantity } = state;
+  const { price, quantity, tick } = state;
+
+  const getText = () => {
+    if (saleItem.index === 10 && tick / 1000 < 1747400400) {
+      return [`Target 32000 ${payItem.name}`, `for 1 ${saleItem.name}`];
+    }
+
+    return [
+      `Total ${price} ${payItem.name}`,
+      `for ${quantity} ${saleItem.name}${quantity == 1 ? '' : 's'}`,
+    ];
+  };
 
   return (
     <Container isVisible={isVisible}>
-      <EmptyText
-        text={[
-          `Total ${price} ${payItem.name}`,
-          `for ${quantity} ${saleItem.name}${quantity == 1 ? '' : 's'}`,
-        ]}
-      />
+      <EmptyText text={getText()} />
     </Container>
   );
 };

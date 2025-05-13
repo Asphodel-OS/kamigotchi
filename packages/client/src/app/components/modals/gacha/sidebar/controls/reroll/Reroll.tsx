@@ -21,18 +21,19 @@ interface Props {
     price: number;
     quantity: number;
     selectedKamis: Kami[];
+    tick: number;
   };
   isVisible: boolean;
 }
 export const Reroll = (props: Props) => {
   const { controls, data, state, isVisible } = props;
   const { mode } = controls;
-  const { price, quantity, selectedKamis } = state;
+  const { selectedKamis } = state;
 
   return (
     <Container isVisible={isVisible}>
       <KamiPanel selectedKamis={selectedKamis} isVisible={isVisible && mode === 'DEFAULT'} />
-      <PricePanel data={data} state={{ price, quantity }} isVisible={isVisible && mode === 'ALT'} />
+      <PricePanel data={data} state={state} isVisible={isVisible && mode === 'ALT'} />
     </Container>
   );
 };

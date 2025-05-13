@@ -25,18 +25,18 @@ interface Props {
   state: {
     price: number;
     quantity: number;
+    tick: number;
   };
   isVisible: boolean;
 }
 export const Pool = (props: Props) => {
   const { controls, data, state, isVisible } = props;
   const { mode } = controls;
-  const { price, quantity } = state;
 
   return (
     <Container isVisible={isVisible}>
       <KamiPanel controls={controls} isVisible={mode === 'DEFAULT'} />
-      <PricePanel data={data} state={{ price, quantity }} isVisible={mode === 'ALT'} />
+      <PricePanel data={data} state={state} isVisible={mode === 'ALT'} />
     </Container>
   );
 };

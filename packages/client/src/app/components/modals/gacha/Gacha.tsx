@@ -91,7 +91,7 @@ export function registerGachaModal() {
       const { selectedAddress, apis } = useNetwork();
 
       // modal controls
-      const [tab, setTab] = useState<TabType>('MINT');
+      const [tab, setTab] = useState<TabType>('GACHA');
       const [mode, setMode] = useState<ViewMode>('DEFAULT');
       const [filters, setFilters] = useState<Filter[]>([]);
       const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
