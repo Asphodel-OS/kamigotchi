@@ -16,6 +16,7 @@ interface Props {
 }
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
+const defaultBgm = { key: 'cave', path: cave };
 
 // painting of the room alongside any clickable objects
 export const Room = (props: Props) => {
@@ -36,12 +37,10 @@ export const Room = (props: Props) => {
     const newRoom = rooms[index];
     let music = newRoom.music;
     if (!music) {
-      music = {
-        key: 'cave',
-        path: cave,
-      };
+      music = defaultBgm;
     }
-    if (music.path !== room.music?.path) {
+    // if prev music is the same, or starting new room with default music
+    if (music.path !== room.music?.path || !newRoom.music) {
       if (!RoomsBgm.has(music.path)) {
         RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
       }
