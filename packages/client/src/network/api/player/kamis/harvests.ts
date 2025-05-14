@@ -27,9 +27,7 @@ export const harvestsAPI = (systems: any) => {
    * @param nodeIndex nodeIndex
    */
   const start = (kamiIDs: BigNumberish[], nodeIndex: BigNumberish) => {
-    return systems['system.harvest.start'].executeBatched(kamiIDs, nodeIndex, 0, 0, {
-      gasLimit: 2200000,
-    });
+    return systems['system.harvest.start'].executeBatched(kamiIDs, nodeIndex, 0, 0);
   };
 
   /**

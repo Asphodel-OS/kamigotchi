@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { canHarvest, isResting, onCooldown } from 'app/cache/kami';
 import { IconListButton, Tooltip } from 'app/components/library';
+import { DropDownToggle } from 'app/components/library/base/buttons/DropDownToggle';
 import { useVisibility } from 'app/stores';
 import { HarvestIcon } from 'assets/images/icons/actions';
 import { rooms } from 'constants/rooms';
@@ -26,7 +27,7 @@ interface Props {
   };
   actions: {
     claim: (scavenge: ScavBar) => void;
-    addKami: (kami: Kami) => void;
+    addKami: (kamis: Kami[]) => void;
   };
   utils: {
     getAccountKamis: () => Kami[];
@@ -105,6 +106,12 @@ export const Header = (props: Props) => {
     return canHarvest(kami) && passesNodeReqs(kami);
   };
 
+  const checkList = kamis
+    .filter((kami) => canAdd(kami))
+    .map((kami) => ({
+      text: kami.name,
+      object: kami,
+    }));
   /////////////////
   // RENDERING
 
@@ -112,20 +119,36 @@ export const Header = (props: Props) => {
   const AddButton = (kamis: Kami[]) => {
     const options = kamis.filter((kami) => canAdd(kami));
     const actionOptions = options.map((kami) => {
-      return { text: `${kami.name}`, onClick: () => addKami(kami) };
+      return { text: `${kami.name}`, onClick: () => addKami(kamis) };
     });
 
     return (
-      <Tooltip text={[getDisabledReason(kamis)]} grow>
-        <IconListButton
-          key={`harvest-add`}
-          img={HarvestIcon}
-          options={actionOptions}
-          text='Add Kami to Node'
-          disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
-          fullWidth
-        />
-      </Tooltip>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: `100%`,
+        }}
+      >
+        <Tooltip text={[getDisabledReason(kamis)]} grow>
+          <IconListButton
+            key={`harvest-add`}
+            img={HarvestIcon}
+            options={actionOptions}
+            text='Add Kami to Node'
+            disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
+            fullWidth
+          />
+        </Tooltip>
+        <div style={{ marginTop: '0.6vw', width: '2vw' }}>
+          <DropDownToggle
+            img={HarvestIcon}
+            disabled={checkList.length == 0 || account.roomIndex !== node.roomIndex}
+            onClick={(selectedKamis: Kami[]) => addKami(selectedKamis)}
+            checkList={checkList}
+          />
+        </div>
+      </div>
     );
   };
 
