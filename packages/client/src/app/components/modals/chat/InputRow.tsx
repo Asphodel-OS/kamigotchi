@@ -5,7 +5,7 @@ import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
 import { ActionSystem } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
-import { playScribble } from 'utils/sounds';
+import { playMessage } from 'utils/sounds';
 
 interface Props {
   actionSystem: ActionSystem;
@@ -23,8 +23,8 @@ export const InputRow = (props: Props) => {
   // INTERACTION
 
   const onSubmit = (text: string) => {
-    playScribble();
-    // TODO: play success sound and update message in feed here (to succeeded)
+    playMessage();
+    // TODO: play success sound and update message in feed here
     const actionID = uuid() as EntityID;
     actionSystem!.add({
       id: actionID,

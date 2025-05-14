@@ -2,6 +2,7 @@ import click from './click.mp3';
 import dice from './dice.mp3';
 import echo from './echo.mp3';
 import fund from './fund.mp3';
+import message from './message.mp3';
 import phase from './phase.mp3';
 import scribble from './scribble.mp3';
 import signup from './signup.mp3';
@@ -22,4 +23,5 @@ export const InteractionFX = {
   teleport,
   trade,
   vend,
+  message,
 };
