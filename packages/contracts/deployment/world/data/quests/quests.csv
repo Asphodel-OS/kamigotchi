@@ -63,35 +63,35 @@ MSQ016,16,In Game,Identifying Materials: Metal,No,"I need to expand my capabilit
 The Scrap Metal you can find lying around might look like a bunch of tin cans, but don’t be fooled by appearances: Those cans can be made of all kinds of metal. Tin, steel, lithium, silicon, orichalcum. Could be anything.
 
 Get me 5 pieces of Scrap Metal please. Hopefully I luck out and get what I need!",Complete MSQ015,Give 5 Scrap Metal,4x Agency Reputation
-MIN001,2001,To Deploy,Grand Opening,No,"Hello, whoever you are. Is this how you receive your letters? Functional, though inelegant.
+MIN001,2001,In Game,Grand Opening,No,"Hello, whoever you are. Is this how you receive your letters? Functional, though inelegant.
 
 Are you hungry? Tired? $MUSU burning a hole in your pocket? Bring your wallet to the Tunnel of Trees and knock on the blue door. I sell treats for you and your Kami. If you need Stamina to keep moving, if your pets have gotten low on Health, or even if the poor things have fallen apart and need a Revive, my shop is open.
 
 — Mina",Complete MSQ007,Enter Mina's Shop,2 Elders Loyalty
-MIN002,2002,To Deploy,Customer Loyalty Program,No,"I want you to be a repeat customer. If you trade enough $MUSU with me, I’ll give you something special. I don’t care how you get it. Bring me more and I’ll be happy.
+MIN002,2002,In Game,Customer Loyalty Program,No,"I want you to be a repeat customer. If you trade enough $MUSU with me, I’ll give you something special. I don’t care how you get it. Bring me more and I’ll be happy.
 
 — Mina",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ""Neith’s River of Life"" Spell Card"
-MIN003,2003,To Deploy,Early Market Research - I,No,"Relics and mementos from the past are brought into this world with $MUSU. People grow attached to many things; the first coin they earned, a trowel used to plant food that fed their family, a transforming robot toy that made other children jealous. Those feelings linger.
+MIN003,2003,In Game,Early Market Research - I,No,"Relics and mementos from the past are brought into this world with $MUSU. People grow attached to many things; the first coin they earned, a trowel used to plant food that fed their family, a transforming robot toy that made other children jealous. Those feelings linger.
 
  Get me five pieces of Scrap Metal. I want to perform psychometry.
 
 — Mina",Complete MIN002,Give 5 Scrap Metal,"2 Elders Loyalty,1x “Cultivation II” Spell Card"
-MIN004,2004,To Deploy,Early Market Research - II,No,"Deep in the forest, there is a mound built over some ancient, stagnant defilement. The crawling insects thrive and grow more violent in filthy places like that. Whatever happened in the past to corrupt that place, those feelings linger.
+MIN004,2004,In Game,Early Market Research - II,No,"Deep in the forest, there is a mound built over some ancient, stagnant defilement. The crawling insects thrive and grow more violent in filthy places like that. Whatever happened in the past to corrupt that place, those feelings linger.
 
 Go harvest at the Insect Node until you get a feel for it.
 
 — Mina",Complete MIN003,Harvest for >720 minutes in Forest: Insect Node,"2 Elders Loyalty,2 “Cultivation I” Spell Card"
-MIN005,2005,To Deploy,Early Market Research - III,No,"The graves across this landscape are quite old and buried under heaps of garbage, yet their $MUSU has no scent of defilement. A strange phenomenon. Are they buried saints? Were they interred as some kind of builder’s rite for a stronger spiritual foundation? I suppose this is a mystery for later.
+MIN005,2005,In Game,Early Market Research - III,No,"The graves across this landscape are quite old and buried under heaps of garbage, yet their $MUSU has no scent of defilement. A strange phenomenon. Are they buried saints? Were they interred as some kind of builder’s rite for a stronger spiritual foundation? I suppose this is a mystery for later.
 
 Go get a sense of what I mean. Harvest at the graves until you understand.
 
 — Mina",Complete MIN004,Harvest for >720 minutes on Trash-Strewn Graves,"4x Elders Loyalty,2x “Neith’s River of Life” Spell Card"
-MIN006,2006,To Deploy,Community Outreach,No,"With all this garbage everywhere, I expected to see more humans. One was laying by the edge of the forest earlier, you know. It looked young, at least compared to the dusty old bodies in the local graves.
+MIN006,2006,In Game,Community Outreach,No,"With all this garbage everywhere, I expected to see more humans. One was laying by the edge of the forest earlier, you know. It looked young, at least compared to the dusty old bodies in the local graves.
 
 Go harvest $MUSU from its location. Maybe it will start to feel chatty.
 
-— Mina",Complete MIN005,"Harvest for >720 minutes at the Lost Skeleton,During Moonside","2 Elders Loyalty,1x “Cultivation II” Spell Card"
-MIN007,2007,To Deploy,Restocking,No,"I've had so many new customers these days. Help me restock my spiritual goods. The flowers of death can be made into delicious treats for Kami and other beings. Collect a few and give them to me. 
+— Mina",Complete MIN005,Harvest for >720 minutes at the Lost Skeleton During Moonside,"2 Elders Loyalty,1x “Cultivation II” Spell Card"
+MIN007,2007,In Game,Restocking,No,"I've had so many new customers these days. Help me restock my spiritual goods. The flowers of death can be made into delicious treats for Kami and other beings. Collect a few and give them to me. 
 
 Raw materials can be broken down into ingredients for hexerei. One can craft potions, poultices, and other things if one knows the methods. I’m selling something in my shop to help you along with this: a device to break down ingredients for yourself. I won’t be doing it for you again.
 
