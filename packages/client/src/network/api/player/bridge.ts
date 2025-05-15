@@ -1,34 +1,56 @@
-import { BigNumberish } from '@ethersproject/bignumber';
-
 /**
  * @dev A bridge is actually a staking mechanism for ERC721s or ERC20s
  * to use within the Game World.
  */
 export const bridgeAPI = (systems: any) => {
   /////////////////
-  //   ERC721
+  // KAMI
 
   /**
    * @dev deposits pet from outside -> game world
-   * @param tokenID  ERC721 token ID (equals IndexKami for Kamis)
+   * @param index  ERC721 token ID (equals IndexKami for Kamis)
    */
-  const depositERC721 = (tokenID: BigNumberish) => {
-    return systems['system.kami721.stake'].executeTyped(tokenID);
+  const stakeKami = (index: number) => {
+    return systems['system.kami721.stake'].executeTyped(index);
+  };
+
+  /**
+   * @dev deposits multiple pets from outside -> game world
+   * @param indices
+   * @returns
+   */
+  const batchStakeKami = (indices: number[]) => {
+    return systems['system.kami721.stake'].executeBatch(indices);
   };
 
   /**
    * @dev withdraws pet from game world -> outside
-   * @param tokenID  ERC721 token ID (equals IndexKami for Kamis)
+   * @param index  ERC721 token ID (equals IndexKami for Kamis)
    */
-  const withdrawERC721 = (tokenID: BigNumberish) => {
-    return systems['system.kami721.unstake'].executeTyped(tokenID);
+  const unstakeKami = (index: number) => {
+    return systems['system.kami721.unstake'].executeTyped(index);
+  };
+
+  /**
+   * @dev withdraws multiple pets from game world -> outside
+   * @param indices
+   * @returns
+   */
+  const batchUnstakeKami = (indices: number[]) => {
+    return systems['system.kami721.unstake'].executeBatch(indices);
   };
 
   return {
     ERC20: {},
     ERC721: {
-      deposit: depositERC721,
-      withdraw: withdrawERC721,
+      kami: {
+        stake: stakeKami,
+        unstake: unstakeKami,
+        batch: {
+          stake: batchStakeKami,
+          unstake: batchUnstakeKami,
+        },
+      },
     },
   };
 };

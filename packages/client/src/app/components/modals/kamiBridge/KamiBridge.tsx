@@ -82,7 +82,7 @@ export function registerKamiBridge() {
       }, [modals.bridgeERC721, mode]);
 
       useWatchBlockNumber({
-        onBlockNumber: (n) => {
+        onBlockNumber: (block: bigint) => {
           refetch();
         },
       });
@@ -122,7 +122,7 @@ export function registerKamiBridge() {
           params: [kamis[0].index],
           description: `Staking Kami ${kamis[0].index}`,
           execute: async () => {
-            return api.bridge.ERC721.deposit(kamis[0].index);
+            return api.bridge.ERC721.kami.stake(kamis[0].index);
           },
         });
       };
@@ -137,7 +137,7 @@ export function registerKamiBridge() {
           params: [kamis[0].index],
           description: `Unstaking Kami ${kamis[0].index}`,
           execute: async () => {
-            return api.bridge.ERC721.withdraw(kamis[0].index);
+            return api.bridge.ERC721.kami.unstake(kamis[0].index);
           },
         });
       };
