@@ -12,6 +12,8 @@ import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './components';
 import { Section } from './components/shared';
 
+const IS_LOCAL = import.meta.env.MODE === 'puter';
+
 interface Props {
   address: {
     selected: string;
@@ -49,6 +51,7 @@ export const Registration = (props: Props) => {
   };
 
   const hasEth = () => {
+    if (IS_LOCAL) return true; // skip eth balance check on local
     const ethBalances = tokenBalances.get(ethAddress);
     if (!ethBalances) return false;
     return ethBalances.balance > 0;
