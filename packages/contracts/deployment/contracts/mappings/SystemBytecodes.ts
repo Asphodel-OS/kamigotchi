@@ -62,7 +62,7 @@ import QuestCompleteSystem from "../../../out/QuestCompleteSystem.sol/QuestCompl
 import QuestDropSystem from "../../../out/QuestDropSystem.sol/QuestDropSystem.json";
 import RelationshipAdvanceSystem from "../../../out/RelationshipAdvanceSystem.sol/RelationshipAdvanceSystem.json";
 import ScavengeClaimSystem from "../../../out/ScavengeClaimSystem.sol/ScavengeClaimSystem.json";
-import SkillResetSystem from "../../../out/SkillResetSystem.sol/SkillResetSystem.json";
+import SkillRespecSystem from "../../../out/SkillRespecSystem.sol/SkillRespecSystem.json";
 import SkillUpgradeSystem from "../../../out/SkillUpgradeSystem.sol/SkillUpgradeSystem.json";
 import TradeCancelSystem from "../../../out/TradeCancelSystem.sol/TradeCancelSystem.json";
 import TradeCreateSystem from "../../../out/TradeCreateSystem.sol/TradeCreateSystem.json";
@@ -133,7 +133,7 @@ export const SystemBytecodes = {
   "system.quest.drop": QuestDropSystem,
   "system.relationship.advance": RelationshipAdvanceSystem,
   "system.scavenge.claim": ScavengeClaimSystem,
-  "system.skill.reset": SkillResetSystem,
+  "system.skill.respec": SkillRespecSystem,
   "system.skill.upgrade": SkillUpgradeSystem,
   "system.trade.cancel": TradeCancelSystem,
   "system.trade.create": TradeCreateSystem,

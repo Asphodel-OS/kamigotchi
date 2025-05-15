@@ -8,7 +8,7 @@ export const skillsAPI = (systems: any) => {
 
   // reset a pet's skill
   const reset = (kamiID: BigNumberish) => {
-    return systems['system.skill.reset'].executeTyped(kamiID);
+    return systems['system.skill.respec'].executeTyped(kamiID);
   };
 
   return {

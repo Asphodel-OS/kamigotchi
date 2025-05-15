@@ -12,9 +12,9 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
-uint256 constant ID = uint256(keccak256("system.skill.reset"));
+uint256 constant ID = uint256(keccak256("system.skill.respec"));
 
-contract SkillResetSystem is System {
+contract SkillRespecSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {

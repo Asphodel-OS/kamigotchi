@@ -62,7 +62,7 @@ import { QuestCompleteSystem } from "./ethers-contracts/QuestCompleteSystem";
 import { QuestDropSystem } from "./ethers-contracts/QuestDropSystem";
 import { RelationshipAdvanceSystem } from "./ethers-contracts/RelationshipAdvanceSystem";
 import { ScavengeClaimSystem } from "./ethers-contracts/ScavengeClaimSystem";
-import { SkillResetSystem } from "./ethers-contracts/SkillResetSystem";
+import { SkillRespecSystem } from "./ethers-contracts/SkillRespecSystem";
 import { SkillUpgradeSystem } from "./ethers-contracts/SkillUpgradeSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
 import { TradeCreateSystem } from "./ethers-contracts/TradeCreateSystem";
@@ -133,7 +133,7 @@ export type SystemTypes = {
   "system.quest.drop": QuestDropSystem;
   "system.relationship.advance": RelationshipAdvanceSystem;
   "system.scavenge.claim": ScavengeClaimSystem;
-  "system.skill.reset": SkillResetSystem;
+  "system.skill.respec": SkillRespecSystem;
   "system.skill.upgrade": SkillUpgradeSystem;
   "system.trade.cancel": TradeCancelSystem;
   "system.trade.create": TradeCreateSystem;

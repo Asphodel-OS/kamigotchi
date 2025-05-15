@@ -262,6 +262,6 @@ contract SkillTest is SetupTemplate {
     vm.stopPrank();
 
     vm.prank(acc.operator);
-    _SkillResetSystem.executeTyped(targetID);
+    _SkillRespecSystem.executeTyped(targetID);
   }
 }

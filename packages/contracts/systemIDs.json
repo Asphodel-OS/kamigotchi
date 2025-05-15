@@ -203,8 +203,8 @@
     "id": "system.scavenge.claim",
     "encodedID": "0x688e3fa170b8b4e4646c37eeea4c877c977d801ff735c03cec4eb263a8be10c5"
   },
-  "SkillResetSystem": {
-    "id": "system.skill.reset",
+  "SkillRespecSystem": {
+    "id": "system.skill.respec",
     "encodedID": "0x5ebda31a66d1c7f5af30bf0d2453f4ff34f83b1e7ed5e5e5438ae01ea678a254"
   },
   "SkillUpgradeSystem": {

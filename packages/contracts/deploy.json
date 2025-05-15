@@ -603,7 +603,7 @@
       "writeAccess": ["*"]
     },
     {
-      "name": "SkillResetSystem",
+      "name": "SkillRespecSystem",
       "writeAccess": [
         "EntityType",
         "Health",
