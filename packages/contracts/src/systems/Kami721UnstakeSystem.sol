@@ -44,6 +44,9 @@ contract Kami721UnstakeSystem is System {
     LibKami.unstake(components, kamiID);
     LibKami721.unstake(components, msg.sender, tokenIndex);
 
+    // trigger metadata update
+    LibKami721.updateEvent(components, kamiID);
+
     // standard logging and tracking
     LibData.inc(components, accID, 0, "KAMI721_UNSTAKE", 1);
     LibAccount.updateLastTs(components, accID);

@@ -198,15 +198,21 @@ library LibKami721 {
   }
 
   function _getAffinities(IUintComp comps, uint256 kamiID) internal view returns (string memory) {
-    string memory affinity = LibKami.getBodyAffinity(comps, kamiID);
+    string memory body = LibKami.getBodyAffinity(comps, kamiID);
     string memory bodyText = string(
-      abi.encodePacked('{"trait_type": "Body Affinity", "value": "', affinity, '"}, ')
+      abi.encodePacked('{"trait_type": "Body Affinity", "value": "', body, '"}, ')
     );
-    affinity = LibKami.getHandAffinity(comps, kamiID);
+    string memory hand = LibKami.getHandAffinity(comps, kamiID);
     string memory handText = string(
-      abi.encodePacked('{"trait_type": "Hand Affinity", "value": "', affinity, '"}, ')
+      abi.encodePacked('{"trait_type": "Hand Affinity", "value": "', hand, '"}, ')
     );
-    return string(abi.encodePacked(bodyText, handText));
+
+    string memory breed = body.eq(hand) ? "PURE" : "MIXED";
+    string memory breedText = string(
+      abi.encodePacked('{"trait_type": "Breed", "value": "', breed, '"}, ')
+    );
+
+    return string(abi.encodePacked(bodyText, handText, breedText));
   }
 
   /// @notice  appends trait and trait type to metadata format
