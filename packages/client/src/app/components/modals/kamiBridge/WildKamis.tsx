@@ -60,7 +60,11 @@ export const WildKamis = (props: Props) => {
       </Overlay>
       <Scrollable>
         {displayedKamis.map((kami) => (
-          <KamiBlock key={kami.index} kami={kami} select={{ onClick: () => handleSelect(kami) }} />
+          <KamiBlock
+            key={kami.index}
+            kami={kami}
+            select={{ isSelected: mode === 'EXPORT', onClick: () => handleSelect(kami) }}
+          />
         ))}
       </Scrollable>
       <Overlay fullWidth fullHeight passthrough>

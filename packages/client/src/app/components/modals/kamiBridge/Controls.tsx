@@ -36,7 +36,11 @@ export const Controls = (props: Props) => {
     <Container>
       <ActionButton onClick={handleToggle} text={'Filters'} disabled />
       <ActionButton onClick={handleToggle} text={mode === 'IMPORT' ? '↑' : '↓'} />
-      <ActionButton onClick={handleAction} text={mode === 'IMPORT' ? 'Import' : 'Export'} />
+      <ActionButton
+        onClick={handleAction}
+        text={mode === 'IMPORT' ? 'Import' : 'Export'}
+        disabled={selectedKamis.length == 0}
+      />
     </Container>
   );
 };

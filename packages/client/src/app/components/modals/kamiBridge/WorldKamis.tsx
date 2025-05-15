@@ -41,8 +41,12 @@ export const WorldKamis = (props: Props) => {
     }
   };
 
-  const isExportable = (kami: Kami) => {
-    return isResting(kami);
+  const isDisabled = (kami: Kami) => {
+    return mode === 'EXPORT' && !isResting(kami);
+  };
+
+  const isSelected = () => {
+    return mode === 'IMPORT';
   };
 
   const getEmptyText = () => {
@@ -60,7 +64,11 @@ export const WorldKamis = (props: Props) => {
           <KamiBlock
             key={kami.index}
             kami={kami}
-            select={{ isDisabled: !isExportable(kami), onClick: () => handleSelect(kami) }}
+            select={{
+              isDisabled: isDisabled(kami),
+              isSelected: isSelected(),
+              onClick: () => handleSelect(kami),
+            }}
           />
         ))}
       </Scrollable>

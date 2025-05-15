@@ -117,12 +117,13 @@ export function registerKamiBridge() {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
+        const indices = kamis.map((kami) => kami.index);
         actions.add({
           action: 'KamiDeposit',
           params: [kamis[0].index],
           description: `Staking Kami ${kamis[0].index}`,
           execute: async () => {
-            return api.bridge.ERC721.kami.stake(kamis[0].index);
+            return api.bridge.ERC721.kami.batch.stake(indices);
           },
         });
       };
@@ -132,12 +133,13 @@ export function registerKamiBridge() {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
+        const indices = kamis.map((kami) => kami.index);
         actions.add({
           action: 'KamiWithdraw',
           params: [kamis[0].index],
           description: `Unstaking Kami ${kamis[0].index}`,
           execute: async () => {
-            return api.bridge.ERC721.kami.unstake(kamis[0].index);
+            return api.bridge.ERC721.kami.batch.unstake(indices);
           },
         });
       };
