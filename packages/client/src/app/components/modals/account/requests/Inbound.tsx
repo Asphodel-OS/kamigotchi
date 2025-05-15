@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { AccountCard, ActionListButton } from 'app/components/library';
+import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 
@@ -34,17 +34,20 @@ export const Inbound = (props: Props) => {
     );
   };
 
-  if (requests.length === 0 && isVisible) return <EmptyText>no inbound requests</EmptyText>;
   return (
     <Container isVisible={isVisible}>
-      {requests.map((friendship) => (
-        <AccountCard
-          key={friendship.account.index}
-          account={friendship.account}
-          description={['inbound friend request']}
-          actions={Actions(friendship)}
-        />
-      ))}
+      {requests.length === 0 ? (
+        <EmptyText text={['no inbound requests']} size={0.9} />
+      ) : (
+        requests.map((friendship) => (
+          <AccountCard
+            key={friendship.account.index}
+            account={friendship.account}
+            description={['inbound friend request']}
+            actions={Actions(friendship)}
+          />
+        ))
+      )}
     </Container>
   );
 };
@@ -56,16 +59,4 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-`;
-
-const EmptyText = styled.div`
-  color: black;
-  margin: 1vw;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: 0.9vw;
-  font-family: Pixel;
 `;

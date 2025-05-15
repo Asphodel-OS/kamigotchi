@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { AccountCard, ActionListButton } from 'app/components/library';
+import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { BaseAccount } from 'network/shapes/Account';
 
 interface Props {
@@ -28,19 +28,20 @@ export const Searched = (props: Props) => {
     );
   };
 
-  // inbound list of pending friend requests
-  if (accounts.length === 0 && isVisible) return <EmptyText>no matching results</EmptyText>;
-
   return (
     <Container isVisible={isVisible}>
-      {accounts.map((account) => (
-        <AccountCard
-          key={account.index}
-          account={account}
-          description={[`free agent ${account.index}`]}
-          actions={Actions(account)}
-        />
-      ))}
+      {accounts.length === 0 ? (
+        <EmptyText text={['no matching results']} />
+      ) : (
+        accounts.map((account) => (
+          <AccountCard
+            key={account.index}
+            account={account}
+            description={[`free agent ${account.index}`]}
+            actions={Actions(account)}
+          />
+        ))
+      )}
     </Container>
   );
 };
@@ -53,16 +54,4 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-`;
-
-const EmptyText = styled.div`
-  color: black;
-  margin: 1vw;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: 0.9vw;
-  font-family: Pixel;
 `;
