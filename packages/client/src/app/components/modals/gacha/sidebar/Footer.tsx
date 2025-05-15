@@ -123,11 +123,11 @@ export const Footer = (props: Props) => {
         if (success) setSelectedKamis([]);
       } else if (mode === 'ALT') {
         if (needsApproval()) approve(payItem, price);
-        bid(saleItem, quantity);
+        else bid(saleItem, quantity);
       }
     } else if (tab === 'MINT') {
       if (needsApproval()) approve(payItem, price);
-      if (mode === 'DEFAULT') mintWL();
+      else if (mode === 'DEFAULT') mintWL();
       else if (mode === 'ALT') mintPublic(quantity);
       else bid(saleItem, quantity);
     }
