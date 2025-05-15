@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { isDead } from 'app/cache/kami';
-import { OnyxReviveButton } from 'app/components/library/buttons/actions/OnyxButton';
+import { OnyxButton } from 'app/components/library/buttons/actions/OnyxButton';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -69,11 +69,11 @@ export const KamiBars = (props: Props) => {
     let buttons = [];
     let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
 
-    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
     buttons.push(UseItemButton(kami, account, useIcon));
-    if (isDead(kami)) {
+    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
+    else {
       buttons.push(
-        <OnyxReviveButton
+        <OnyxButton
           key='onyx-revive'
           kami={kami}
           onyx={{ ...onyx, price: ONYX_REVIVE_PRICE }}

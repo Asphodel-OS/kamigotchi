@@ -17,7 +17,7 @@ interface Props {
   tooltip?: string[];
 }
 
-export const OnyxReviveButton = (props: Props) => {
+export const OnyxButton = (props: Props) => {
   const { actions, kami, onyx, tooltip } = props;
   const { onyxApprove, onyxUse } = actions;
   const { allowance, balance, price } = onyx;

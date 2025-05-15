@@ -11,7 +11,7 @@ import {
   isUnrevealed,
 } from 'app/cache/kami';
 import { KamiCard } from 'app/components/library';
-import { OnyxReviveButton } from 'app/components/library/buttons/actions/OnyxButton';
+import { OnyxButton } from 'app/components/library/buttons/actions/OnyxButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
@@ -152,14 +152,14 @@ export const Kards = (props: Props) => {
     let buttons = [];
     let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
 
-    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
     buttons.push(UseItemButton(kami, account, useIcon));
-    if (isDead(kami)) {
+    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
+    else {
       buttons.push(
-        <OnyxReviveButton
+        <OnyxButton
           key='onyx-revive'
           kami={kami}
-          onyx={{ ...onyx, price: 3000 }}
+          onyx={{ ...onyx, price: ONYX_REVIVE_PRICE }}
           actions={{ onyxApprove, onyxUse: onyxRevive }}
           tooltip={getOnyxTooltip(kami)}
         />
