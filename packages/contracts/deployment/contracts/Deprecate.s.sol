@@ -61,7 +61,7 @@ contract Deprecate is SystemCall {
 
   /// @notice deprecates a system
   function killSystem(address systemAddr, Component[] memory comps) internal {
-    ISystem(systemAddr).deprecate();
+    ISystem(systemAddr).deprecate{ gas: 400000 }();
     for (uint256 i; i < comps.length; i++) {
       if (comps[i].writeAccess(systemAddr)) comps[i].unauthorizeWriter{ gas: 400000 }(systemAddr);
     }
