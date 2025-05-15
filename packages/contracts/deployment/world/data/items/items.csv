@@ -42,7 +42,7 @@ Slightly sacred. "
 ,In Game,Red Gakki Ribbon,11001,Revive,Kami,,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. "
-,To Deploy,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Kami,,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
+,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Kami,,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
 ,In Game,Holy Dust,11011,Misc,Kami,,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,In Game,Gaokerena Mochi,11110,Food,Kami,,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
 ,In Game,Sunset Apple Mochi,11120,Food,Kami,,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
@@ -52,34 +52,34 @@ These ribbons are greatly prized…. "
 ,In Game,XP Candy (Medium),11202,Food,Kami,,NOT_TRADABLE,"XP+100,HP+10",,"Provides a decent amount of XP when fed to a Kami. "
 ,In Game,XP Candy (Large),11203,Food,Kami,,NOT_TRADABLE,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "
 ,In Game,XP Candy (Huge),11204,Food,Kami,,NOT_TRADABLE,"HP+50,XP+1000",,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.
-,To Deploy,“Cultivation I” Spell Card,11211,Food,Kami,,NOT_TRADABLE,"XP+100,HP+20",,"The card depicts a pale sprout emerging from rich, black soil. Activating this Spell Card on a Kamigotchi will restore 20 HP and grant 100 XP."
-,To Deploy,“Cultivation II” Spell Card,11212,Food,Kami,,NOT_TRADABLE,"XP+200,HP+50",,The card depicts a teardrop-shaped flowerbud growing out of light brown soil. Activating this Spell Card on a Kamigotchi will restore 50 HP and grant 200 XP.
-,To Deploy,“Cultivation III” Spell Card,11213,Food,Kami,,NOT_TRADABLE,"XP+1000,HP+100",,The card depicts a flower heartily blooming in pale and sandy earth. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 1000 XP.
+,In Game,“Cultivation I” Spell Card,11211,Food,Kami,,NOT_TRADABLE,"XP+100,HP+20",,"The card depicts a pale sprout emerging from rich, black soil. Activating this Spell Card on a Kamigotchi will restore 20 HP and grant 100 XP."
+,In Game,“Cultivation II” Spell Card,11212,Food,Kami,,NOT_TRADABLE,"XP+200,HP+50",,The card depicts a teardrop-shaped flowerbud growing out of light brown soil. Activating this Spell Card on a Kamigotchi will restore 50 HP and grant 200 XP.
+,In Game,“Cultivation III” Spell Card,11213,Food,Kami,,NOT_TRADABLE,"XP+1000,HP+100",,The card depicts a flower heartily blooming in pale and sandy earth. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 1000 XP.
 ,In Game,Maple-Flavor Ghost Gum,11301,Food,Kami,,,HP+25,,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. "
 ,In Game,Cheeseburger,11302,Food,Kami,,,HP+50,,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. "
 ,In Game,Pom-Pom Fruit Candy,11303,Food,Kami,,,HP+50,,These fruit candies contain a huge amount of energy. Restores 50 Health to a Kamigotchi.
 ,In Game,Gakki Cookie Sticks,11304,Food,Kami,,,HP+100,,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.
-,To Deploy,“Paeon's Field of Flowers” Spell Card,11305,Food,Kami,,NOT_TRADABLE,HP+100,,The card depicts a mortally wounded man lying in a field of flowers. Some flowers take root on his body and knit the wounds closed while others bloom from the spilled blood. Activating this Spell Card on a Kamigotchi will restore 100 Health.
+,In Game,“Paeon's Field of Flowers” Spell Card,11305,Food,Kami,,NOT_TRADABLE,HP+100,,The card depicts a mortally wounded man lying in a field of flowers. Some flowers take root on his body and knit the wounds closed while others bloom from the spilled blood. Activating this Spell Card on a Kamigotchi will restore 100 Health.
 ,In Game,Resin,11311,Food,Kami,,,HP+35,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…"
-,To Deploy,XP Potion,11401,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1003,XP+1000",,Give to a Kami to increase their XP by 1000.
-,To Deploy,Greater XP Potion,11402,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1006,XP+15000",,Give to a Kami to increase their XP by 15000.
-,To Deploy,Respec Potion,11403,Food,Kami,,BYPASS_BONUS_RESET,"F_SKILL_RESET,ITEM1003",,"Give to a Kami to reset their skill points. "
-,To Deploy,Grace Potion,11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
-,To Deploy,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
+,In Game,XP Potion,11401,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1003,XP+1000",,Give to a Kami to increase their XP by 1000.
+,In Game,Greater XP Potion,11402,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1006,XP+15000",,Give to a Kami to increase their XP by 15000.
+,To Update,Respec Potion,11403,Misc,Kami,,BYPASS_BONUS_RESET,ITEM1003,,"Give to a Kami to reset their skill points. "
+,In Game,Grace Potion,11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
+,In Game,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
 ,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
 ,In Game,Scroll of Shop Teleportation,21100,Consumable,Account,,,MOVE13,,"Instantly transports the user to Mina’s Shop. Fully insured. "
 ,In Game,Ice Cream,21201,Food,Account,,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Account,,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Account,,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
-,To Deploy,“Neith’s River of Life” Spell Card,21204,Food,Account,,NOT_TRADABLE,SP+80,,"The card depicts a flooding river beneath the night sky. The magical waters grant a bounty of stamina, and the reeds grow nearly as tall as the pyramids. Activating this Spell Card on an Operator will restore 80 Stamina."
+,In Game,“Neith’s River of Life” Spell Card,21204,Food,Account,,NOT_TRADABLE,SP+80,,"The card depicts a flooding river beneath the night sky. The magical waters grant a bounty of stamina, and the reeds grow nearly as tall as the pyramids. Activating this Spell Card on an Operator will restore 80 Stamina."
 ,In Game,Spice Grinder,23100,Tool,,,,,,Can be used to break down ingredients.
 ,In Game,Portable Burner,23101,Tool,,,,,,"Can be used to make Potions at a riverside. "
 ,In Game,Screwdriver,23102,Tool,,,,,,For driving screws. May be of practical use….
 ,In Game,Astrolabe Disk,100001,Key Item,,,,,,"A golden disk. It resembles the tympan of an astrolabe, but the engraving doesn’t look right."
-,To Deploy,Ancient Machine Part,100002,Key Item,,,,,,A durable part of some kind of high-tech machinery. It has wear and corrosion like it’s been exposed to the elements for thousands of years.
-,To Deploy,Disc-Shaped Map,100003,Key Item,,,,,,"A golden disk inlaid with other metals. It resembles an overhead map of a temple complex. Seems to depict roads, pyramids, and other structures."
-,To Deploy,Aetheric Sextant,100004,Key Item,,,,,,"Capable of divining some things beyond the perception of mortals. "
+,In Game,Ancient Machine Part,100002,Key Item,,,,,,A durable part of some kind of high-tech machinery. It has wear and corrosion like it’s been exposed to the elements for thousands of years.
+,In Game,Disc-Shaped Map,100003,Key Item,,,,,,"A golden disk inlaid with other metals. It resembles an overhead map of a temple complex. Seems to depict roads, pyramids, and other structures."
+,In Game,Aetheric Sextant,100004,Key Item,,,,,,"Capable of divining some things beyond the perception of mortals. "
 ,Test,Mistletoe,,Food,Kami,,BYPASS_BONUS_RESET,BOUNTY+25%,,"Sacred, at this time of year..... can be used on Kami to Bless them!"
 ,Test,Gingerbread Cookie,,Food,Kami,,,"XP+1000,HP+25",,A gingerbread cookie... feed this to a Kamigotchi for some extra experience.
 ,Test,Candle,,Material,,,,,,"A half-melted candle, somehow still burning. Perhaps this has some special use.…"

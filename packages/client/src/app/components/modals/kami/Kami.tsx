@@ -18,7 +18,7 @@ import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { ONYX_INDEX } from 'constants/items';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Condition } from 'network/shapes/Conditional';
-import { getItemByIndex } from 'network/shapes/Item';
+import { getItemBalance, getItemByIndex } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { getCompAddr } from 'network/shapes/utils';
@@ -69,6 +69,8 @@ export function registerKamiModal() {
             },
             utils: {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
+              getItemBalance: (index: number) =>
+                getItemBalance(world, components, account.id, index),
               getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
               getOwner: (entity: EntityIndex) => getKamiAccount(world, components, entity),
               getSkill: (index: number) => getSkillByIndex(world, components, index),

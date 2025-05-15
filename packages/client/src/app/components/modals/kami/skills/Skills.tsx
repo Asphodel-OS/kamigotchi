@@ -23,6 +23,7 @@ interface Props {
   };
   state: { tick: number };
   utils: {
+    getItemBalance: (index: number) => number;
     getSkill: (index: number) => Skill;
     getUpgradeError: (index: number) => string[] | undefined;
     getTreePoints: (tree: string) => number;
@@ -62,11 +63,7 @@ export const Skills = (props: Props) => {
         kami={kami}
         setDisplayed={(index: number) => setDisplayed(index)}
         actions={actions}
-        utils={{
-          getSkill,
-          getUpgradeError,
-          getTreePoints,
-        }}
+        utils={utils}
       />
     </Wrapper>
   );

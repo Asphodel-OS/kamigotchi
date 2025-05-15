@@ -118,6 +118,7 @@ library LibSkill {
   /////////////////
   // CHECKERS
 
+  /// @dev deprecated; no longer using flags
   function verifyResettable(IUintComp components, uint256 targetID) public view {
     if (!LibFlag.has(components, targetID, "CAN_RESET_SKILLS"))
       revert("cannot reset skills (no flag)");
@@ -195,6 +196,7 @@ library LibSkill {
     SkillPointComponent(getAddrByID(components, SPCompID)).set(id, value);
   }
 
+  /// @dev deprecated
   function useReset(IUintComp components, uint256 targetID) internal {
     LibFlag.set(components, targetID, "CAN_RESET_SKILLS", false);
   }

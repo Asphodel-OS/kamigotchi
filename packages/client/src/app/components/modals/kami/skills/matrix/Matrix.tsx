@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { IconButton, Tooltip } from 'app/components/library';
 import { OnyxButton } from 'app/components/library/buttons/actions';
 import { useTokens } from 'app/stores';
+import { ItemImages } from 'assets/images/items';
+import { RESPEC_POTION_INDEX } from 'constants/items';
 import { ONYX_RESPEC_PRICE } from 'constants/prices';
 import { SkillTrees, TierRequirements } from 'constants/skills/trees';
 import { Kami } from 'network/shapes/Kami';
@@ -20,6 +22,7 @@ interface Props {
     onyxRespec: (kami: Kami) => void;
   };
   utils: {
+    getItemBalance: (index: number) => number;
     getSkill: (index: number) => Skill;
     getUpgradeError: (index: number) => string[] | undefined;
     getTreePoints: (tree: string) => number;
@@ -30,7 +33,7 @@ interface Props {
 export const Matrix = (props: Props) => {
   const { kami, setDisplayed, actions, utils } = props;
   const { reset, onyxApprove, onyxRespec } = actions;
-  const { getSkill } = utils;
+  const { getItemBalance, getSkill } = utils;
 
   const [mode, setMode] = useState('Predator');
   const { onyx } = useTokens();
@@ -46,6 +49,10 @@ export const Matrix = (props: Props) => {
 
   const isResting = () => {
     return kami.state === 'RESTING';
+  };
+
+  const enoughBalance = () => {
+    return getItemBalance(RESPEC_POTION_INDEX) > 0;
   };
 
   const getOnyxTooltip = () => {
@@ -82,14 +89,19 @@ export const Matrix = (props: Props) => {
   // DISPLAY
 
   const RespecButton = () => {
-    if (!kami.flags?.skillReset) return <></>;
+    const tooltipText = ['Unindoctrinate your kamigotchi with a Skill Respec Potion'];
+    if (!isResting()) tooltipText.push('\nKami must be resting');
+    else if (!enoughBalance()) tooltipText.push('\nNo Respec Potions in inventory');
+
     return (
-      <ActionButton
-        text='Respec'
-        onClick={() => reset(kami)}
-        disabled={!isResting()}
-        tooltip={!isResting() ? ['Must be resting'] : undefined}
-      />
+      <Tooltip text={tooltipText}>
+        <IconButton
+          key='respec-button'
+          onClick={() => reset(kami)}
+          img={ItemImages.respec_potion}
+          disabled={!isResting() || !enoughBalance()}
+        />
+      </Tooltip>
     );
   };
 
@@ -114,7 +126,7 @@ export const Matrix = (props: Props) => {
 
   const FloatingBox = (
     <FloatBox>
-      <div style={{ flexFlow: 'row' }}>
+      <div style={{ display: 'flex', flexFlow: 'row', gap: '0.4vw' }}>
         {RespecButton()}
         {OnyxRespecButton()}
       </div>
@@ -122,31 +134,40 @@ export const Matrix = (props: Props) => {
     </FloatBox>
   );
 
+  const NodeBox = (index: number) => {
+    return (
+      <Node
+        key={index}
+        index={index}
+        kami={kami}
+        skill={getSkill(index)}
+        upgradeError={utils.getUpgradeError(index)}
+        setDisplayed={() => setDisplayed(index)}
+      />
+    );
+  };
+
+  const RowLabel = (tier: number) => {
+    return (
+      <RowPrefix>
+        <Tooltip text={[`unlock with ${TierRequirements[tier]} points`, `in ${mode} tree`]}>
+          <RowNumber>{tier}</RowNumber>
+        </Tooltip>
+      </RowPrefix>
+    );
+  };
+
   return (
     <Container>
       <Menu options={Array.from(SkillTrees.keys())} mode={mode} setMode={setMode} />
       <Content>
         {SkillTrees.get(mode)!.map((row, i) => {
           const tier = i + 1;
-          const tierRequirement = TierRequirements[tier];
-          const locked = utils.getTreePoints(mode) < tierRequirement;
+          const locked = utils.getTreePoints(mode) < TierRequirements[tier];
           return (
             <Row key={tier} locked={locked}>
-              <RowPrefix>
-                <Tooltip text={[`unlock with ${tierRequirement} points`, `in ${mode} tree`]}>
-                  <RowNumber>{tier}</RowNumber>
-                </Tooltip>
-              </RowPrefix>
-              {row.map((index) => (
-                <Node
-                  key={index}
-                  index={index}
-                  kami={kami}
-                  skill={getSkill(index)}
-                  upgradeError={utils.getUpgradeError(index)}
-                  setDisplayed={() => setDisplayed(index)}
-                />
-              ))}
+              {RowLabel(tier)}
+              {row.map((index) => NodeBox(index))}
             </Row>
           );
         })}

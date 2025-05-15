@@ -9,10 +9,14 @@ import { getAddrByID } from "solecs/utils.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibItem } from "libraries/LibItem.sol";
+import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibSkill } from "libraries/LibSkill.sol";
 
 uint256 constant ID = uint256(keccak256("system.skill.respec"));
+
+uint32 constant RESPEC_POTION_INDEX = 11403;
 
 contract SkillRespecSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -21,11 +25,10 @@ contract SkillRespecSystem is System {
     uint256 targetID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    // verify resettable
-    LibSkill.verifyResettable(components, targetID);
-
+    // LibSkill.verifyResettable(components, targetID);
     // state and ownership checks
-    bool isKami = LibEntityType.isShape(components, targetID, "KAMI");
+    string memory targetShape = LibEntityType.get(components, targetID);
+    bool isKami = LibString.eq(targetShape, "KAMI");
     if (isKami) {
       LibKami.verifyAccount(components, targetID, accID);
     } else {
@@ -34,13 +37,18 @@ contract SkillRespecSystem is System {
       LibKami.verifyState(components, targetID, "RESTING"); // kami must be resting
     }
 
+    // use respec potion
+    LibInventory.decFor(components, accID, RESPEC_POTION_INDEX, 1);
+    LibItem.applyAllos(world, components, RESPEC_POTION_INDEX, "USE", 1, targetID); // may change from USE to RESPEC in future
+
     // respec skills
-    LibSkill.useReset(components, targetID);
+    // LibSkill.useReset(components, targetID);
     LibSkill.resetAll(components, targetID);
     if (isKami) LibKami.sync(components, targetID);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);
+    LibItem.logUse(components, accID, RESPEC_POTION_INDEX, 1, targetShape);
 
     return "";
   }

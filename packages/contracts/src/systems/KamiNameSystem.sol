@@ -43,7 +43,7 @@ contract KamiNameSystem is System {
 
     // standard logging and tracking
     LibKami.logNameChange(components, accID);
-    LibItem.logUse(components, accID, HOLY_DUST_INDEX, 1, "ACCOUNT");
+    LibItem.logUse(components, accID, HOLY_DUST_INDEX, 1, "KAMI");
     LibAccount.updateLastTs(components, accID);
 
     return "";
