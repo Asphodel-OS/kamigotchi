@@ -170,8 +170,8 @@ export const Grid = (props: Props) => {
               else if (isBlocked && isExit) backgroundColor = 'rgba(0,0,0,0.3)';
               else if (isExit) {
                 backgroundColor = 'rgba(255,136,85,0.6)';
-                onClick = () => handleRoomMove(room?.index ?? 0);
               }
+              onClick = () => handleRoomMove(room?.index ?? 0);
 
               return (
                 <Tooltip

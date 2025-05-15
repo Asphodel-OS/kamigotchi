@@ -16,7 +16,7 @@ import { registerKamiBridge } from './modals/kamiBridge';
 import { registerLeaderboardModal } from './modals/leaderboard';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
-import { registerEMABoardModal, registerNameKamiModal } from './modals/naming';
+import { registerEMABoardModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
 import { registerPresaleModal } from './modals/presale';
@@ -70,7 +70,6 @@ export function registerModals() {
   registerLeaderboardModal();
   registerRevealModal();
   registerMerchantModal();
-  registerNameKamiModal();
   registerGoalModal();
 }
 
