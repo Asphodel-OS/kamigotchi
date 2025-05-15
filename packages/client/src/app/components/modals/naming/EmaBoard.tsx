@@ -1,10 +1,11 @@
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { EntityID } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
+import { getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
@@ -13,14 +14,13 @@ import { KamiIcon } from 'assets/images/icons/menu';
 import { HOLY_DUST_INDEX, ONYX_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
-import { Kami, NullKami } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
 import { Carousel } from './Carousel';
 import { Stage } from './Stage';
 
 const REFRESH_INTERVAL = 2000;
-const PRICE = 5;
 
 export function registerEMABoardModal() {
   registerUIComponent(
@@ -28,7 +28,7 @@ export function registerEMABoardModal() {
     {
       colStart: 33,
       colEnd: 67,
-      rowStart: 3,
+      rowStart: 15,
       rowEnd: 99,
     },
 
@@ -49,9 +49,10 @@ export function registerEMABoardModal() {
             utils: {
               getAccount: () =>
                 getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
+              getKami: (entity: EntityIndex) => getKami(world, components, entity, { live: 2 }),
               getKamis: () => getAccountKamis(world, components, accountEntity, { live: 2 }),
-              getDustBalance: (inventory: Inventory[]) =>
-                getInventoryBalance(inventory, HOLY_DUST_INDEX),
+              getItemBalance: (inventory: Inventory[], index: number) =>
+                getInventoryBalance(inventory, index),
               getItem: (index: number) => getItemByIndex(world, components, index),
             },
           };
@@ -62,15 +63,16 @@ export function registerEMABoardModal() {
     ({ network, data, utils }) => {
       const { accountEntity, spender } = data;
       const { actions, api } = network;
-      const { getKamis, getAccount, getItem, getDustBalance } = utils;
+      const { getAccount, getItem, getKami, getKamis } = utils;
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
       const { balances: tokenBals } = useTokens();
-      const { modals, setModals } = useVisibility();
+      const { modals } = useVisibility();
 
       const [tick, setTick] = useState(Date.now());
-      const [kamis, setKamis] = useState<any[]>([]);
+      const [kamis, setKamis] = useState<Kami[]>([]);
       const [account, setAccount] = useState<Account>(NullAccount);
-      const [selected, setSelected] = useState<Kami>(NullKami);
+      const [selected, setSelected] = useState<Kami>(getKami(0 as EntityIndex));
+      const [holyDustItem, setHolyDustItem] = useState<Item>(NullItem);
       const [onyxItem, setOnyxItem] = useState<Item>(NullItem);
       const [onyxInfo, setOnyxInfo] = useState<BalPair>({ allowance: 0, balance: 0 });
 
@@ -79,6 +81,7 @@ export function registerEMABoardModal() {
 
       useEffect(() => {
         setOnyxItem(getItem(ONYX_INDEX));
+        setHolyDustItem(getItem(HOLY_DUST_INDEX));
 
         const refreshClock = () => setTick(Date.now());
         const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
@@ -150,10 +153,13 @@ export function registerEMABoardModal() {
           header={<ModalHeader title='Ema Board' icon={KamiIcon} />}
           canExit
           noPadding
+          truncate
         >
           <Stage
             actions={{ onyxApprove: approveOnyxTx, rename: renameTx, onyxRename: onyxRenameTx }}
-            data={{ account, kami: selected }}
+            data={{ account, kami: selected, onyxItem, holyDustItem, onyxInfo }}
+            state={{ tick }}
+            utils={utils}
           />
           <Carousel kamis={kamis} state={{ setSelected }} />
         </ModalWrapper>

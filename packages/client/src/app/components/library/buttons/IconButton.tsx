@@ -18,6 +18,7 @@ interface Props {
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
+  shadow?: boolean;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -25,12 +26,14 @@ export const IconButton = forwardRef(function IconButton(
   props: Props,
   ref: ForwardedRef<HTMLButtonElement>
 ) {
-  const { img, onClick, text, disabled, fullWidth, color, pulse } = props;
+  const { img, onClick, text, disabled } = props;
+  const { color, fullWidth, pulse, shadow } = props; // general styling
   const { balance, corner } = props; // IconListButton options
   const { cornerAlt } = props; // open page in new tab indicator
+
+  const radius = props.radius ?? 0.45;
   const scale = props.scale ?? 2.5;
   const scaleOrientation = props.scaleOrientation ?? 'vw';
-  const radius = props.radius ?? 0.45;
 
   // layer on a sound effect
   const handleClick = async () => {
@@ -39,7 +42,7 @@ export const IconButton = forwardRef(function IconButton(
   };
 
   return (
-    <Button
+    <Container
       color={color ?? '#fff'}
       onClick={!disabled ? handleClick : () => {}}
       scale={scale}
@@ -48,6 +51,7 @@ export const IconButton = forwardRef(function IconButton(
       fullWidth={fullWidth}
       disabled={disabled}
       pulse={pulse}
+      shadow={shadow}
       ref={ref}
     >
       <Image src={img} scale={scale} orientation={scaleOrientation} />
@@ -59,11 +63,11 @@ export const IconButton = forwardRef(function IconButton(
       {balance && <Balance>{balance}</Balance>}
       {corner && <Corner radius={radius - 0.15} orientation={scaleOrientation} />}
       {cornerAlt && <CornerAlt radius={radius - 0.15} orientation={scaleOrientation} />}
-    </Button>
+    </Container>
   );
 });
 
-interface ButtonProps {
+interface ContainerProps {
   color: string;
   scale: number;
   orientation: string;
@@ -71,9 +75,10 @@ interface ButtonProps {
   fullWidth?: boolean;
   disabled?: boolean;
   pulse?: boolean;
+  shadow?: boolean;
 }
 
-const Button = styled.button<ButtonProps>`
+const Container = styled.button<ContainerProps>`
   position: relative;
   border: solid black 0.15vw;
   border-radius: ${({ radius }) => radius}${({ orientation }) => orientation};
@@ -89,6 +94,8 @@ const Button = styled.button<ButtonProps>`
   align-items: center;
 
   background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
+  box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
+
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   user-select: none;
@@ -100,7 +107,7 @@ const Button = styled.button<ButtonProps>`
     animation: ${() => clickFx()} 0.3s;
   }
 
-  animation: ${({ pulse }) => pulse && pulseFx} 3s ease-in-out infinite;
+  animation: ${({ pulse }) => pulse && pulseFx} 2.5s ease-in-out infinite;
 `;
 
 const Image = styled.img<{ scale: number; orientation: string }>`

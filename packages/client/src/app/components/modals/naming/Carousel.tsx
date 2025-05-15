@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { isDead, isHarvesting, isResting } from 'app/cache/kami';
-import { EmptyText, Overlay } from 'app/components/library';
+import { EmptyText, Overlay, Text } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiBlock } from '../../library/KamiBlock';
@@ -30,6 +30,9 @@ export const Carousel = (props: Props) => {
 
   return (
     <Container>
+      <Overlay top={0.75} left={0.75}>
+        <Text size={0.9}>Your Party</Text>
+      </Overlay>
       <Scrollable>
         {kamis.map((kami) => (
           <KamiBlock
@@ -44,7 +47,11 @@ export const Carousel = (props: Props) => {
         ))}
       </Scrollable>
       <Overlay fullWidth fullHeight passthrough>
-        <EmptyText text={['you have no kami']} size={1} isHidden={!!kamis.length} />
+        <EmptyText
+          text={['No Kami?', 'Step. Up. Your. Game.']}
+          size={1.5}
+          isHidden={!!kamis.length}
+        />
       </Overlay>
     </Container>
   );
@@ -52,22 +59,24 @@ export const Carousel = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-  border-top: solid black 0.15vw;
+  border: solid black;
+  border-width: 0.15vw 0.6vw 0 0.6vw;
   width: 100%;
   height: 15vw;
+
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Scrollable = styled.div`
   height: 100%;
+  width: 100%;
+  padding-left: 1.8vw;
+
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  overflow-x: scroll;
-`;
+  justify-content: center;
 
-const Text = styled.div<{ size: number }>`
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
+  overflow-x: scroll;
 `;
