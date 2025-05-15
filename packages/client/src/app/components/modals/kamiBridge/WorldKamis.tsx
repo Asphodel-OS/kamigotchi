@@ -5,7 +5,7 @@ import { isResting } from 'app/cache/kami';
 import { EmptyText, Overlay } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
-import { KamiBlock } from '../gacha/display/KamiBlock';
+import { KamiBlock } from '../../library/KamiBlock';
 import { Mode } from './types';
 
 interface Props {
@@ -20,6 +20,7 @@ interface Props {
 export const WorldKamis = (props: Props) => {
   const { kamis, state, mode } = props;
   const { selectedKamis, setSelectedKamis } = state;
+
   const [displayedKamis, setDisplayedKamis] = useState<Kami[]>([]);
 
   useEffect(() => {
@@ -31,7 +32,7 @@ export const WorldKamis = (props: Props) => {
     }
   }, [mode, selectedKamis]);
 
-  const handleClick = (kami: Kami) => {
+  const handleSelect = (kami: Kami) => {
     playClick();
     if (selectedKamis.includes(kami)) {
       setSelectedKamis(selectedKamis.filter((k) => k !== kami));
@@ -59,8 +60,7 @@ export const WorldKamis = (props: Props) => {
           <KamiBlock
             key={kami.index}
             kami={kami}
-            onClick={() => handleClick(kami)}
-            select={{ isDisabled: !isExportable(kami) }}
+            select={{ isDisabled: !isExportable(kami), onClick: () => handleSelect(kami) }}
           />
         ))}
       </Scrollable>

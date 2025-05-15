@@ -2,14 +2,12 @@ import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, Tooltip } from 'app/components/library';
+import { EmptyText, KamiBlock, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Auction } from 'network/shapes/Auction';
 import { KamiStats } from 'network/shapes/Kami';
-import { BaseKami, Kami } from 'network/shapes/Kami/types';
-import { playClick } from 'utils/sounds';
+import { Kami } from 'network/shapes/Kami/types';
 import { Filter, Sort } from '../../types';
-import { KamiBlock } from '../KamiBlock';
 import { EMPTY_TEXT, LOADING_TEXT } from './constants';
 
 const LOAD_CHUNK_SIZE = 200; // Adjust based on performance needs
@@ -85,14 +83,6 @@ export const KamiView = (props: Props) => {
     }
   };
 
-  const kamiOnClick = (kami: BaseKami) => {
-    const sameKami = kamiIndex === kami.index;
-    if (!sameKami) setKami(kami.index);
-    if (modals.kami && sameKami) setModals({ kami: false });
-    else setModals({ kami: true });
-    playClick();
-  };
-
   //////////////////
   // INTERPRETATION
 
@@ -122,7 +112,7 @@ export const KamiView = (props: Props) => {
       kamiBlocks.set(
         entity,
         <Tooltip key={kami.index} text={tooltip}>
-          <KamiBlock key={kami.index} kami={kami} onClick={() => kamiOnClick(kami)} />
+          <KamiBlock key={kami.index} kami={kami} />
         </Tooltip>
       );
     }

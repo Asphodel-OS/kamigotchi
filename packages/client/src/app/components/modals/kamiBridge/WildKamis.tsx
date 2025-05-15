@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { EmptyText, Overlay } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
-import { KamiBlock } from '../gacha/display/KamiBlock';
+import { KamiBlock } from '../../library/KamiBlock';
 import { Mode } from './types';
 
 interface Props {
@@ -30,7 +30,10 @@ export const WildKamis = (props: Props) => {
     }
   }, [mode, selectedKamis]);
 
-  const handleClick = (kami: Kami) => {
+  /////////////////
+  // HANDLERS
+
+  const handleSelect = (kami: Kami) => {
     playClick();
     if (selectedKamis.includes(kami)) {
       setSelectedKamis(selectedKamis.filter((k) => k !== kami));
@@ -39,10 +42,16 @@ export const WildKamis = (props: Props) => {
     }
   };
 
+  /////////////////
+  // INTERPRETATION
+
   const getEmptyText = () => {
     if (mode === 'IMPORT') return ['You have no Kami', 'in the wild'];
     else return ['You must select', 'some Kami'];
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container>
@@ -51,7 +60,7 @@ export const WildKamis = (props: Props) => {
       </Overlay>
       <Scrollable>
         {displayedKamis.map((kami) => (
-          <KamiBlock key={kami.index} kami={kami} onClick={() => handleClick(kami)} />
+          <KamiBlock key={kami.index} kami={kami} select={{ onClick: () => handleSelect(kami) }} />
         ))}
       </Scrollable>
       <Overlay fullWidth fullHeight passthrough>

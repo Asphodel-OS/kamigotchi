@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, Tooltip } from 'app/components/library';
+import { EmptyText, KamiBlock, Tooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { KamiBlock } from '../KamiBlock';
 
 interface Props {
   data: {
@@ -84,8 +83,11 @@ export const KamiView = (props: Props) => {
         <Tooltip key={kami.index} text={getKamiTooltip(kami)}>
           <KamiBlock
             kami={kami}
-            select={{ isDisabled: !canReroll(kami), isSelected: selectedKamis.includes(kami) }}
-            onClick={() => handleSelect(kami)}
+            select={{
+              isDisabled: !canReroll(kami),
+              isSelected: selectedKamis.includes(kami),
+              onClick: () => handleSelect(kami),
+            }}
           />
         </Tooltip>
       ))}

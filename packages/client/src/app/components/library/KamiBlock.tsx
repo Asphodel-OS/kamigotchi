@@ -1,24 +1,37 @@
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library';
+import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   kami: Kami;
-  onClick?: () => void;
   select?: {
+    onClick?: () => void;
     isDisabled?: boolean;
     isSelected?: boolean;
   };
 }
 
 export const KamiBlock = (props: Props) => {
-  const { kami, onClick, select } = props;
+  const { kami, select } = props;
   const { index, progress, name } = kami;
+  const { kamiIndex, setKami } = useSelected();
+  const { modals, setModals } = useVisibility();
+
+  // toggle the kami modal depending on its current state
+  const handleClick = () => {
+    const sameKami = kamiIndex === kami.index;
+    if (!sameKami) setKami(kami.index);
+    if (modals.kami && sameKami) setModals({ kami: false });
+    else setModals({ kami: true });
+    playClick();
+  };
 
   return (
     <Container>
-      <Image src={kami.image} onClick={onClick} />
+      <Image src={kami.image} onClick={handleClick} />
       <Overlay top={0.9} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
@@ -36,7 +49,7 @@ export const KamiBlock = (props: Props) => {
           <ClickBox
             isDisabled={!!select.isDisabled}
             isSelected={!!select.isSelected}
-            onClick={onClick}
+            onClick={select.onClick}
           />
         </Overlay>
       )}
