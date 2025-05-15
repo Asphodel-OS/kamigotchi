@@ -23,7 +23,6 @@ export function registerTokenChecker() {
     (layers) => {
       const { network } = layers;
       const { actions, components } = network;
-      const { LoadingState } = components;
 
       return merge(actions.Action.update$, interval(1500)).pipe(
         map(() => {
@@ -44,7 +43,7 @@ export function registerTokenChecker() {
     },
     ({ tokenAddresses, spender }) => {
       const { selectedAddress } = useNetwork();
-      const { balances, set } = useTokens();
+      const { balances, set, setOnyx } = useTokens();
 
       useWatchBlockNumber({
         onBlockNumber(block) {
@@ -107,7 +106,10 @@ export function registerTokenChecker() {
 
         const balanceMismatch = oldOnyxData?.balance !== balance;
         const allowanceMismatch = oldOnyxData?.allowance !== allowance;
-        if (balanceMismatch || allowanceMismatch) set(tokenAddresses.onyx, { balance, allowance });
+        if (balanceMismatch || allowanceMismatch) {
+          setOnyx({ balance, allowance });
+          set(tokenAddresses.onyx, { balance, allowance });
+        }
       }, [onyxData]);
 
       return <Wrapper style={{ display: 'block' }} />;

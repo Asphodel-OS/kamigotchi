@@ -108,7 +108,7 @@ export async function initLocalItems(api: AdminAPI) {
 
     // skip if not ready
     const status = row['Status'];
-    if (status !== 'Ready' && status !== 'Ingame') continue;
+    if (status !== 'Ready' && status !== 'In Game') continue;
 
     // deploys and attaches local erc20
     if (type === 'ERC20') await api.setup.local.attachItemERC20(Number(row['Index']));

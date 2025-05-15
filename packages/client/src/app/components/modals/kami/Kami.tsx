@@ -14,11 +14,14 @@ import {
 } from 'app/cache/skills';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useSelected, useVisibility } from 'app/stores';
+import { useNetwork, useSelected, useVisibility } from 'app/stores';
+import { ONYX_INDEX } from 'constants/items';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Condition } from 'network/shapes/Conditional';
+import { getItemByIndex } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
+import { getCompAddr } from 'network/shapes/utils';
 import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
@@ -59,7 +62,11 @@ export function registerKamiModal() {
 
           return {
             network,
-            data: { account },
+            data: {
+              account,
+              onyxItem: getItemByIndex(world, components, ONYX_INDEX),
+              spender: getCompAddr(world, components, 'component.token.allowance'),
+            },
             utils: {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
@@ -84,9 +91,10 @@ export function registerKamiModal() {
     // Render
     ({ data, network, utils }) => {
       const { actions, api } = network;
-      const { account } = data;
+      const { account, onyxItem, spender } = data;
       const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
       const { kamiIndex } = useSelected();
+      const { selectedAddress, apis: ownerAPIs } = useNetwork();
       const { modals } = useVisibility();
 
       const [tab, setTab] = useState<TabType>('TRAITS');
@@ -157,6 +165,34 @@ export function registerKamiModal() {
         });
       };
 
+      const onyxRespecSkill = (kami: Kami) => {
+        const api = ownerAPIs.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionIndex = actions.add({
+          action: 'SkillRespec',
+          params: [kami.id],
+          description: `Respecing skills for ${kami.name}`,
+          execute: async () => {
+            return api.pet.onyx.respec(kami.id);
+          },
+        });
+      };
+
+      const onyxApprove = (price: number) => {
+        const api = ownerAPIs.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        actions.add({
+          action: 'Approve token',
+          params: [onyxItem.address, spender, price],
+          description: `Approve ${price} ${onyxItem.name} to be spent`,
+          execute: async () => {
+            return api.erc20.approve(onyxItem.address!, spender, price);
+          },
+        });
+      };
+
       /////////////////
       // DISPLAY
 
@@ -181,7 +217,12 @@ export function registerKamiModal() {
           {tab === 'SKILLS' && (
             <Skills
               data={{ account, kami, owner }}
-              actions={{ upgrade: (skill: Skill) => upgradeSkill(kami, skill), reset: resetSkill }}
+              actions={{
+                upgrade: (skill: Skill) => upgradeSkill(kami, skill),
+                reset: resetSkill,
+                onyxApprove,
+                onyxRespec: onyxRespecSkill,
+              }}
               state={{ tick }}
               utils={{
                 ...utils,

@@ -559,6 +559,29 @@
       ]
     },
     {
+      "name": "KamiOnyxRespecSystem",
+      "writeAccess": [
+        "EntityType",
+        "Health",
+        "HasFlag",
+        "IdHolder",
+        "IDAnchor",
+        "IDType",
+        "IdSource",
+        "IDOwnsSkill",
+        "IndexSkill",
+        "Level",
+        "SkillPoint",
+        "Time",
+        "TimeLast",
+        "TimeStart",
+        "TimeReset",
+        "TokenAllowance",
+        "Type",
+        "Value"
+      ]
+    },
+    {
       "name": "KamiUseItemSystem",
       "writeAccess": ["*"]
     },

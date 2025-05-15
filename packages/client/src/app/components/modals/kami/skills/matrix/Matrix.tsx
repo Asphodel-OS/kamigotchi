@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, Tooltip } from 'app/components/library';
+import { OnyxButton } from 'app/components/library/buttons/actions';
+import { useTokens } from 'app/stores';
+import { ONYX_RESPEC_PRICE } from 'constants/prices';
 import { SkillTrees, TierRequirements } from 'constants/skills/trees';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
@@ -13,6 +16,8 @@ interface Props {
   setDisplayed: (skillIndex: number) => void;
   actions: {
     reset: (kami: Kami) => void;
+    onyxApprove: (price: number) => void;
+    onyxRespec: (kami: Kami) => void;
   };
   utils: {
     getSkill: (index: number) => Skill;
@@ -24,8 +29,11 @@ interface Props {
 // TODO: deprecate use of TierRequirements constant
 export const Matrix = (props: Props) => {
   const { kami, setDisplayed, actions, utils } = props;
+  const { reset, onyxApprove, onyxRespec } = actions;
   const { getSkill } = utils;
+
   const [mode, setMode] = useState('Predator');
+  const { onyx } = useTokens();
 
   // whenever the tree mode changes assign the skill at root node
   useEffect(() => {
@@ -33,19 +41,33 @@ export const Matrix = (props: Props) => {
     setDisplayed(rootNode);
   }, [mode]);
 
-  ////////////////////
-  // DISPLAY
+  /////////////////
+  // INTERPRETATION
 
-  const ResetButton = () => {
-    if (!kami.flags?.skillReset) return <></>;
-    return (
-      <ActionButton
-        text='Reset'
-        onClick={() => actions.reset(kami)}
-        disabled={kami.state !== 'RESTING'}
-        tooltip={kami.state !== 'RESTING' ? ['Must be resting'] : undefined}
-      />
-    );
+  const isResting = () => {
+    return kami.state === 'RESTING';
+  };
+
+  const getOnyxTooltip = () => {
+    let tooltip: string[] = [
+      `With some ONYX, even old Kamigotchis can learn new tricks.`,
+      `Use to respec a Kami's skills`,
+      `\n`,
+    ];
+
+    if (!isResting()) {
+      tooltip = tooltip.concat([`Kami must be resting`]);
+    } else if (onyx.balance < ONYX_RESPEC_PRICE) {
+      tooltip = tooltip.concat([
+        `you only have ${onyx.balance} $ONYX`,
+        `you need ${ONYX_RESPEC_PRICE} $ONYX`,
+      ]);
+    } else if (onyx.allowance < ONYX_RESPEC_PRICE) {
+      tooltip = tooltip.concat([`approve spend of ${ONYX_RESPEC_PRICE} $ONYX`]);
+    } else {
+      tooltip = tooltip.concat([`respec ${kami.name} with ${ONYX_RESPEC_PRICE} onyx`]);
+    }
+    return tooltip;
   };
 
   // get the text for the skill points display
@@ -55,6 +77,50 @@ export const Matrix = (props: Props) => {
     if (points == 1) return '1 point';
     else return `${points} points`;
   };
+
+  ////////////////////
+  // DISPLAY
+
+  const RespecButton = () => {
+    if (!kami.flags?.skillReset) return <></>;
+    return (
+      <ActionButton
+        text='Respec'
+        onClick={() => reset(kami)}
+        disabled={!isResting()}
+        tooltip={!isResting() ? ['Must be resting'] : undefined}
+      />
+    );
+  };
+
+  const OnyxRespecButton = () => {
+    return (
+      <OnyxButton
+        kami={kami}
+        onyx={{
+          price: ONYX_RESPEC_PRICE,
+          allowance: onyx.allowance,
+          balance: onyx.balance,
+        }}
+        actions={{
+          onyxApprove: () => onyxApprove(ONYX_RESPEC_PRICE),
+          onyxUse: () => onyxRespec(kami),
+        }}
+        tooltip={getOnyxTooltip()}
+        disabled={!isResting()}
+      />
+    );
+  };
+
+  const FloatingBox = (
+    <FloatBox>
+      <div style={{ flexFlow: 'row' }}>
+        {RespecButton()}
+        {OnyxRespecButton()}
+      </div>
+      <PointsText>{getPointsText()}</PointsText>
+    </FloatBox>
+  );
 
   return (
     <Container>
@@ -84,10 +150,7 @@ export const Matrix = (props: Props) => {
             </Row>
           );
         })}
-        <FloatBox>
-          {ResetButton()}
-          <PointsText>{getPointsText()}</PointsText>
-        </FloatBox>
+        {FloatingBox}
       </Content>
     </Container>
   );
@@ -141,8 +204,9 @@ const FloatBox = styled.div`
   right: 0.8vw;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
   justify-content: flex-end;
+  align-items: flex-end;
   gap: 0.4vw;
 `;
 

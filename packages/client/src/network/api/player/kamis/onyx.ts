@@ -11,8 +11,14 @@ export const onyxAPI = (systems: any) => {
     return systems['system.kami.onyx.revive'].executeTyped(kamiID);
   };
 
+  // (Owner) respec a pet by spending onyx
+  const respec = (kamiID: BigNumberish) => {
+    return systems['system.kami.onyx.respec'].executeTyped(kamiID);
+  };
+
   return {
     rename,
     revive,
+    respec,
   };
 };

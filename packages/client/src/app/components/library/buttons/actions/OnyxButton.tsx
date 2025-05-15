@@ -15,10 +15,11 @@ interface Props {
     onyxUse: (kami: Kami) => void;
   };
   tooltip?: string[];
+  disabled?: boolean;
 }
 
 export const OnyxButton = (props: Props) => {
-  const { actions, kami, onyx, tooltip } = props;
+  const { actions, kami, onyx, tooltip, disabled } = props;
   const { onyxApprove, onyxUse } = actions;
   const { allowance, balance, price } = onyx;
 
@@ -26,22 +27,6 @@ export const OnyxButton = (props: Props) => {
     if (allowance < price) onyxApprove(price);
     else onyxUse(kami);
   };
-
-  /////////////////
-  // INTERPRETATION
-
-  // const getTooltip = () => {
-  //   let tooltip: string[] = [`the Fortunate may resurrect`, 'their kami in other ways..', `\n`];
-
-  //   if (balance < PRICE) {
-  //     tooltip = tooltip.concat([`you only have ${balance} $ONYX`, `you need ${PRICE} $ONYX`]);
-  //   } else if (allowance < PRICE) {
-  //     tooltip = tooltip.concat([`approve spend of ${PRICE} $ONYX`]);
-  //   } else {
-  //     tooltip = tooltip.concat([`save ${kami.name} with ${PRICE} onyx`]);
-  //   }
-  //   return tooltip;
-  // };
 
   /////////////////
   // DISPLAY
@@ -52,7 +37,7 @@ export const OnyxButton = (props: Props) => {
         key='onyx-button'
         img={ItemImages.onyx}
         onClick={onClick}
-        disabled={balance < price}
+        disabled={balance < price || disabled}
       />
     </Tooltip>
   );

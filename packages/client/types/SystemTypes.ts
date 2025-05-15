@@ -53,6 +53,7 @@ import { KamiGachaRevealSystem } from "./ethers-contracts/KamiGachaRevealSystem"
 import { KamiLevelSystem } from "./ethers-contracts/KamiLevelSystem";
 import { KamiNameSystem } from "./ethers-contracts/KamiNameSystem";
 import { KamiOnyxRenameSystem } from "./ethers-contracts/KamiOnyxRenameSystem";
+import { KamiOnyxRespecSystem } from "./ethers-contracts/KamiOnyxRespecSystem";
 import { KamiOnyxReviveSystem } from "./ethers-contracts/KamiOnyxReviveSystem";
 import { KamiUseItemSystem } from "./ethers-contracts/KamiUseItemSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
@@ -124,6 +125,7 @@ export type SystemTypes = {
   "system.kami.level": KamiLevelSystem;
   "system.kami.name": KamiNameSystem;
   "system.kami.onyx.rename": KamiOnyxRenameSystem;
+  "system.kami.onyx.respec": KamiOnyxRespecSystem;
   "system.kami.onyx.revive": KamiOnyxReviveSystem;
   "system.kami.use.item": KamiUseItemSystem;
   "system.listing.buy": ListingBuySystem;

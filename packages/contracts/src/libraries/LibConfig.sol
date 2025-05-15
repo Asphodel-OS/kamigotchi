@@ -74,20 +74,20 @@ library LibConfig {
     return address(uint160(get(comps, field)));
   }
 
-  /// @notice Retrieves a batch of values (without precision). Assumes all exists
-  function get(IUintComp comps, string[] memory fields) internal view returns (uint256[] memory) {
-    uint256[] memory ids = new uint256[](fields.length);
-    for (uint256 i = 0; i < fields.length; i++) ids[i] = genID(fields[i]);
-    return ValueComponent(getAddrByID(comps, ValueCompID)).get(ids);
-  }
-
-  function getAddr(
+  function getAddresses(
     IUintComp comps,
     string[] memory fields
   ) internal view returns (address[] memory addrs) {
     uint256[] memory raws = get(comps, fields);
     addrs = new address[](raws.length);
     for (uint256 i = 0; i < raws.length; i++) addrs[i] = address(uint160(raws[i]));
+  }
+
+  /// @notice Retrieves a batch of values (without precision). Assumes all exists
+  function get(IUintComp comps, string[] memory fields) internal view returns (uint256[] memory) {
+    uint256[] memory ids = new uint256[](fields.length);
+    for (uint256 i = 0; i < fields.length; i++) ids[i] = genID(fields[i]);
+    return ValueComponent(getAddrByID(comps, ValueCompID)).get(ids);
   }
 
   /// @notice Retrieve an array of values. Assumes it exists

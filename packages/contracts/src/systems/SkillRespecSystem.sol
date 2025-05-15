@@ -34,7 +34,7 @@ contract SkillRespecSystem is System {
       LibKami.verifyState(components, targetID, "RESTING"); // kami must be resting
     }
 
-    // reset skills
+    // respec skills
     LibSkill.useReset(components, targetID);
     LibSkill.resetAll(components, targetID);
     if (isKami) LibKami.sync(components, targetID);
