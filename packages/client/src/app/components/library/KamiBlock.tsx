@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Overlay } from 'app/components/library';
+import { Overlay, Tooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -12,10 +12,11 @@ interface Props {
     isDisabled?: boolean;
     isSelected?: boolean;
   };
+  tooltip?: string[];
 }
 
 export const KamiBlock = (props: Props) => {
-  const { kami, select } = props;
+  const { kami, select, tooltip } = props;
   const { index, progress, name } = kami;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
@@ -31,28 +32,30 @@ export const KamiBlock = (props: Props) => {
 
   return (
     <Container>
-      <Image src={kami.image} onClick={handleClick} />
-      <Overlay top={0.9} left={0.7}>
-        <Grouping>
-          <Text size={0.6}>Lvl</Text>
-          <Text size={0.6}>{progress?.level ?? '???'}</Text>
-        </Grouping>
-      </Overlay>
-      <Overlay top={0.9} right={0.7}>
-        <Text size={0.6}>{index}</Text>
-      </Overlay>
-      <Overlay bottom={0.6} fullWidth>
-        <Text size={0.6}>{name}</Text>
-      </Overlay>
-      {select && (
-        <Overlay bottom={0.5} right={0.5}>
-          <ClickBox
-            isDisabled={!!select.isDisabled}
-            isSelected={!!select.isSelected}
-            onClick={select.onClick}
-          />
+      <Tooltip text={tooltip ?? []}>
+        <Image src={kami.image} onClick={handleClick} />
+        <Overlay top={0.9} left={0.7}>
+          <Grouping>
+            <Text size={0.6}>Lvl</Text>
+            <Text size={0.6}>{progress?.level ?? '???'}</Text>
+          </Grouping>
         </Overlay>
-      )}
+        <Overlay top={0.9} right={0.7}>
+          <Text size={0.6}>{index}</Text>
+        </Overlay>
+        <Overlay bottom={0.6} fullWidth>
+          <Text size={0.6}>{name}</Text>
+        </Overlay>
+        {select && (
+          <Overlay bottom={0.5} right={0.5}>
+            <ClickBox
+              isDisabled={!!select.isDisabled}
+              isSelected={!!select.isSelected}
+              onClick={select.onClick}
+            />
+          </Overlay>
+        )}
+      </Tooltip>
     </Container>
   );
 };

@@ -1,6 +1,7 @@
 export { getBattles as getKamiBattles } from './battle';
 export { getBonuses as getKamiBonuses } from './bonuses';
 export { getConfigs as getKamiConfigs } from './configs';
+export { NullKami } from './constants';
 export {
   getAll as getAllKamis,
   getByIndex as getKamiByIndex,

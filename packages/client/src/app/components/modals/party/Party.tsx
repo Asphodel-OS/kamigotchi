@@ -71,8 +71,8 @@ export function registerPartyModal() {
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
               getKamis: () =>
                 getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
-              getNode: (index: number) => getNodeByIndex(world, components, index),
               getItem: (index: number) => getItemByIndex(world, components, index),
+              getNode: (index: number) => getNodeByIndex(world, components, index),
             },
           };
         })
@@ -82,7 +82,7 @@ export function registerPartyModal() {
     ({ network, display, data, utils }) => {
       const { world, components, actions } = network;
       const { accountEntity, spender } = data;
-      const { getAccount, getKamis, getNode } = utils;
+      const { getAccount, getItem, getKamis, getNode } = utils;
       const { modals } = useVisibility();
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
       const { balances: tokenBals } = useTokens();
@@ -101,7 +101,7 @@ export function registerPartyModal() {
         const account = getAccount();
         setAccount(account);
         setKamis(getKamis());
-        setOnyxItem(getItemByIndex(world, components, ONYX_INDEX));
+        setOnyxItem(getItem(ONYX_INDEX));
 
         // set ticking
         const refreshClock = () => setTick(Date.now());

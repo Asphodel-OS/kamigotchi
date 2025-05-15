@@ -47,6 +47,7 @@ interface Props {
 
 export const Kards = (props: Props) => {
   const { actions, data, display, state, isVisible } = props;
+  const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis } = state;
   const { HarvestButton, UseItemButton } = display;
@@ -159,7 +160,7 @@ export const Kards = (props: Props) => {
           key='onyx-revive'
           kami={kami}
           onyx={{ ...onyx, price: 3000 }}
-          actions={actions}
+          actions={{ onyxApprove, onyxUse: onyxRevive }}
           tooltip={getOnyxTooltip(kami)}
         />
       );

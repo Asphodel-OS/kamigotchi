@@ -37,6 +37,7 @@ interface Props {
 
 export const KamiBars = (props: Props) => {
   const { actions, data, display, state, isVisible } = props;
+  const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis, tick } = state;
   const { HarvestButton, UseItemButton } = display;
@@ -76,7 +77,7 @@ export const KamiBars = (props: Props) => {
           key='onyx-revive'
           kami={kami}
           onyx={{ ...onyx, price: ONYX_REVIVE_PRICE }}
-          actions={actions}
+          actions={{ onyxApprove, onyxUse: onyxRevive }}
           tooltip={getOnyxTooltip(kami)}
         />
       );
