@@ -49,7 +49,8 @@ export function registerEMABoardModal() {
             utils: {
               getAccount: () =>
                 getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
-              getKami: (entity: EntityIndex) => getKami(world, components, entity, { live: 2 }),
+              getKami: (entity: EntityIndex) =>
+                getKami(world, components, entity, { base: 2, live: 2, progress: 3600 }),
               getKamis: () => getAccountKamis(world, components, accountEntity, { live: 2 }),
               getItemBalance: (inventory: Inventory[], index: number) =>
                 getInventoryBalance(inventory, index),
@@ -161,7 +162,7 @@ export function registerEMABoardModal() {
             state={{ tick }}
             utils={utils}
           />
-          <Carousel kamis={kamis} state={{ setSelected }} />
+          <Carousel kamis={kamis} state={{ selected, setSelected }} />
         </ModalWrapper>
       );
     }

@@ -1,6 +1,8 @@
 import { IconButton, Tooltip } from 'app/components/library';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { Recipe } from 'network/shapes/Recipe';
+import { useEffect } from 'react';
+import { playMessage } from 'utils/sounds';
 
 interface Props {
   data: {
@@ -20,11 +22,25 @@ interface Props {
 
 export const CraftButton = (props: Props) => {
   const { actions, data, utils } = props;
+  const { craft } = actions;
   const { quantity, recipe, stamina } = data;
   const { meetsRequirements, displayRequirements, getItemBalance } = utils;
 
+  useEffect(( ) => {
+    console.log(`quanity updated to ${quantity}`);
+      }, [quantity]);
+
+      const handleCraft = () => {
+        playMessage();
+        craft(recipe, quantity);
+      };
+
   /////////////////
   // VALIDATION
+
+  const isDisabled = () => {
+    return !meetsRequirements(recipe) || !meetsInputs() || !meetsStamina();
+  };
 
   // determine disabled tooltip from validations
   const getDisabledTooltip = () => {
@@ -32,7 +48,7 @@ export const CraftButton = (props: Props) => {
     if (!meetsRequirements(recipe)) tooltip = 'Requires: \n' + displayRequirements(recipe);
     else if (!meetsInputs()) tooltip = 'Not enough items';
     else if (!meetsStamina()) tooltip = 'Not enough stamina';
-    return tooltip;
+    return `Craft (${quantity})`;
   };
 
   // validate whether the player has sufficient item balances for the recipe
@@ -50,21 +66,16 @@ export const CraftButton = (props: Props) => {
     return stamina >= recipe.cost.stamina * quantity;
   };
 
-  // determine the tooltip / disabled status based on validations
-  // NOTE: a bit of an antipattern that we really shouldnt be encouraging
-  let tooltip = getDisabledTooltip();
-  const disabled = !!tooltip;
-  if (!disabled) tooltip = `Craft (${quantity})`;
 
   /////////////////
   // DISPLAY
 
   return (
-    <Tooltip key='craft-tooltip' text={[tooltip]}>
+    <Tooltip key='craft-tooltip' text={[getDisabledTooltip()]}>
       <IconButton
-        onClick={() => actions.craft(recipe, quantity)}
+        onClick={handleCraft}
         img={CraftIcon}
-        disabled={disabled}
+        disabled={isDisabled()}
       />
     </Tooltip>
   );

@@ -14,6 +14,7 @@ import { getHealth } from 'network/shapes/Kami/stats';
 import {
   getLastActionTime,
   getLastTime,
+  getName,
   getRerolls,
   getState,
 } from 'network/shapes/utils/component';
@@ -24,6 +25,7 @@ import { getKamiFlags, getKamiHarvest, getKamiSkills, getKamiTraits } from './ge
 export const KamiCache = new Map<EntityIndex, Kami>(); // kami entity -> kami
 
 const LiveUpdateTs = new Map<EntityIndex, number>(); // last update of the live sub-object (s)
+const BaseUpdateTs = new Map<EntityIndex, number>(); // last update of the base sub-object (s)
 // const BattlesUpdateTs = new Map<EntityIndex, number>(); // last update of the battles sub-object (s)
 const BonusesUpdateTs = new Map<EntityIndex, number>(); // last update of the bonuses sub-object (s)
 const ConfigsUpdateTs = new Map<EntityIndex, number>(); // last update of the config sub-object (s)
@@ -45,6 +47,7 @@ export const process = (world: World, components: Components, entity: EntityInde
 
 // stale limit to refresh data (seconds)
 export interface RefreshOptions {
+  base?: number;
   live?: number;
   // battles?: number;
   bonuses?: number;
@@ -90,6 +93,16 @@ export const get = (
       // populate health if it's defined
       if (kami.stats) kami.stats.health = getHealth(world, components, entity);
       LiveUpdateTs.set(entity, now);
+    }
+  }
+
+  if (options.base != undefined) {
+    const updateTs = BaseUpdateTs.get(entity) ?? 0;
+    const updateDelta = (now - updateTs) / 1000; // convert to seconds
+    if (updateDelta > options.base) {
+      if (debug) console.log(`  updating kami base`);
+      kami.name = getName(components, entity);
+      BaseUpdateTs.set(entity, now);
     }
   }
 

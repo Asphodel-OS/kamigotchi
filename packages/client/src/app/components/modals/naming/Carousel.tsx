@@ -9,13 +9,14 @@ import { KamiBlock } from '../../library/KamiBlock';
 interface Props {
   kamis: Kami[];
   state: {
+    selected: Kami;
     setSelected: (kami: Kami) => void;
   };
 }
 
 export const Carousel = (props: Props) => {
   const { kamis, state } = props;
-  const { setSelected } = state;
+  const { selected, setSelected } = state;
 
   const handleSelect = (kami: Kami) => {
     playClick();
@@ -31,7 +32,7 @@ export const Carousel = (props: Props) => {
   return (
     <Container>
       <Overlay top={0.75} left={0.75}>
-        <Text size={0.9}>Your Party</Text>
+        <Text size={0.9}>Your Party ({kamis.length})</Text>
       </Overlay>
       <Scrollable>
         {kamis.map((kami) => (
@@ -40,6 +41,7 @@ export const Carousel = (props: Props) => {
             kami={kami}
             select={{
               isDisabled: !isResting(kami),
+              isSelected: selected.index === kami.index,
               onClick: () => handleSelect(kami),
             }}
             tooltip={[getTooltip(kami)]}
@@ -61,7 +63,6 @@ const Container = styled.div`
   position: relative;
   border: solid black;
   border-width: 0.15vw 0.6vw 0 0.6vw;
-  width: 100%;
   height: 15vw;
 
   display: flex;
@@ -70,13 +71,10 @@ const Container = styled.div`
 
 const Scrollable = styled.div`
   height: 100%;
-  width: 100%;
-  padding-left: 1.8vw;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: center;
 
   overflow-x: scroll;
 `;
