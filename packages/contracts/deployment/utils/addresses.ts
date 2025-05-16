@@ -7,6 +7,8 @@ import { getProvider } from './chain';
 // object to store already comp/system addresses
 export class WorldAddresses {
   worldAddr: string;
+  compsAddr: string;
+  systemsAddr: string;
   components: any; // component registry
   systems: any; // system registry
   provider: Provider;
@@ -19,6 +21,13 @@ export class WorldAddresses {
     const world = new ethers.Contract(this.worldAddr, WorldABI, this.provider);
     this.components = world.components();
     this.systems = world.systems();
+    this.compsAddr = this.components.address;
+    this.systemsAddr = this.systems.address;
+  }
+
+  async init() {
+    this.components = await this.components;
+    this.systems = await this.systems;
   }
 
   async getCompAddr(strID: string) {

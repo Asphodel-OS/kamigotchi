@@ -26,6 +26,28 @@ export const getDeploySystems = (toMatch?: string) => {
   return result;
 };
 
+// filter out components/systems that are not to be deployed in this env
+export const filterDeployConfigByEnv = (config: any) => {
+  for (let i = 0; i < config.components.length; i++) {
+    const entry = config.components[i];
+    if (entry.skipEnv && entry.skipEnv.includes(process.env.NODE_ENV!)) {
+      config.components.splice(i, 1);
+      i--;
+    }
+  }
+  for (let i = 0; i < config.systems.length; i++) {
+    const entry = config.systems[i];
+    if (entry.skipEnv && entry.skipEnv.includes(process.env.NODE_ENV!)) {
+      config.systems.splice(i, 1);
+      i--;
+    }
+  }
+  return config;
+};
+
+///////////////
+// IDs
+
 export const getCompIDByName = (name: string) => {
   if (!name.endsWith('Component')) name += 'Component';
   return compToId[name as keyof typeof compToId];

@@ -2,6 +2,7 @@ import ejs from 'ejs';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import { DeployConfig, getDeployComponents, getDeploySystems } from '../../utils';
+import { filterDeployConfigByEnv } from '../../utils/deploy';
 import { deploymentDir } from '../../utils/paths';
 import { generateImports } from './imports';
 
@@ -17,7 +18,7 @@ export async function generateLibDeploy(out: string, components?: string, system
 
   // getting config
   let config = getConfig(components, systems);
-  config = filterConfigEnv(config); // filtering out skipped comps/systems specific to env
+  config = filterDeployConfigByEnv(config); // filtering out skipped comps/systems specific to env
 
   // generating LibDeploy
   console.log(`Deploy config: \n`, JSON.stringify(config, null, 2));
@@ -44,24 +45,6 @@ function getConfig(components?: string, systems?: string) {
     config = getDeploySystems(systems);
   } else {
     config = DeployConfig; // full
-  }
-  return config;
-}
-
-function filterConfigEnv(config: any) {
-  for (let i = 0; i < config.components.length; i++) {
-    const entry = config.components[i];
-    if (entry.skipEnv && entry.skipEnv.includes(process.env.NODE_ENV!)) {
-      config.components.splice(i, 1);
-      i--;
-    }
-  }
-  for (let i = 0; i < config.systems.length; i++) {
-    const entry = config.systems[i];
-    if (entry.skipEnv && entry.skipEnv.includes(process.env.NODE_ENV!)) {
-      config.systems.splice(i, 1);
-      i--;
-    }
   }
   return config;
 }

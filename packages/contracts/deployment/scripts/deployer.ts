@@ -1,6 +1,7 @@
 import { constants } from 'ethers';
 import { ignoreSolcErrors } from '../utils';
 import { findLog } from '../utils/findLog';
+import { verifyContracts } from '../utils/forge';
 import { deploymentDir } from '../utils/paths';
 import { generateLibDeploy } from './codegen';
 import execa = require('execa');
@@ -35,6 +36,7 @@ export async function deploy(
       'test',
       '--gas-limit',
       '10000000000',
+      ...(process.env.NODE_ENV === 'production' ? verifyContracts : []),
       ...ignoreSolcErrors,
       ...(forge?.toString().split(/,| /) || []),
     ],

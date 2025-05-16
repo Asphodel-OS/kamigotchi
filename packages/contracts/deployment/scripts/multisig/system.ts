@@ -16,6 +16,7 @@ import { writeBatchTx } from './utils/write';
 
 export async function genBatchTx(systems: string, rawAddrs: string) {
   const World = new WorldAddresses();
+  await World.init();
   const addrs = rawAddrs.split(',');
 
   // assume only 1 system for now !!
