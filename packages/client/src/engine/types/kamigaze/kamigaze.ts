@@ -67,6 +67,7 @@ export interface StreamResponse {
   blockTimestamp: number;
   transactionsConfirmed: string[];
   ecsEvents: ECSEvent[];
+  prevBlockNumber: number;
 }
 
 /** Requests */
@@ -682,6 +683,7 @@ function createBaseStreamResponse(): StreamResponse {
     blockTimestamp: 0,
     transactionsConfirmed: [],
     ecsEvents: [],
+    prevBlockNumber: 0,
   };
 }
 
@@ -701,6 +703,9 @@ export const StreamResponse: MessageFns<StreamResponse> = {
     }
     for (const v of message.ecsEvents) {
       ECSEvent.encode(v!, writer.uint32(42).fork()).join();
+    }
+    if (message.prevBlockNumber !== 0) {
+      writer.uint32(48).uint32(message.prevBlockNumber);
     }
     return writer;
   },
@@ -752,6 +757,14 @@ export const StreamResponse: MessageFns<StreamResponse> = {
           message.ecsEvents.push(ECSEvent.decode(reader, reader.uint32()));
           continue;
         }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.prevBlockNumber = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -771,6 +784,7 @@ export const StreamResponse: MessageFns<StreamResponse> = {
     message.blockTimestamp = object.blockTimestamp ?? 0;
     message.transactionsConfirmed = object.transactionsConfirmed?.map((e) => e) || [];
     message.ecsEvents = object.ecsEvents?.map((e) => ECSEvent.fromPartial(e)) || [];
+    message.prevBlockNumber = object.prevBlockNumber ?? 0;
     return message;
   },
 };

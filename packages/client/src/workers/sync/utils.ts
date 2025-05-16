@@ -168,7 +168,6 @@ export async function fetchEventsInBlockRangeChunked(
     const chunkEvents = await fetchWorldEvents(from, to);
 
     if (setPercentage) setPercentage(((i * interval) / delta) * 100);
-    debug(`initial sync fetched ${events.length} events from block range ${from} -> ${to}`);
 
     events.push(...chunkEvents);
   }

@@ -175,7 +175,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       fetchSystemCalls ? createFetchSystemCallsFromEvents(provider) : undefined
     );
     let currentSubscription: Subscription;
-
     // Setup Stream Service -> RPC event stream fallback
     const transformWorldEvents = createTransformWorldEvents(decode);
     let latestEvent$ = streamServiceUrl
@@ -183,7 +182,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           streamServiceUrl,
           worldContract.address,
           transformWorldEvents,
-          Boolean(fetchSystemCalls)
+          Boolean(fetchSystemCalls),
+          fetchWorldEvents
         )
       : latestEventRPC$;
 
@@ -195,7 +195,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
             streamServiceUrl,
             worldContract.address,
             transformWorldEvents,
-            Boolean(fetchSystemCalls)
+            Boolean(fetchSystemCalls),
+            fetchWorldEvents
           )
         : latestEventRPC$;
       if (currentSubscription) currentSubscription.unsubscribe();
@@ -223,7 +224,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
             count: 3,
             delay: (error, retryCount) => {
               console.log(`retrying kamigaze stream subscription... ${retryCount}`);
-              const delayMs = 2000;
+              const delayMs = 3000;
               return timer(delayMs);
             },
           })
@@ -235,7 +236,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
               if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
               return;
             }
-            this.output$.next(event as NetworkEvent<C>);
+            this.output$.next(event as NetworkEvent<C>); //this is the sync magic
           },
           error: (error) => {
             console.log(`[worker] error, attempting to re-subscribe to stream ${error}`, error);

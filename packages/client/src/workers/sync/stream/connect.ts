@@ -11,11 +11,18 @@ import {
   SystemCall,
   SystemCallTransaction,
 } from '../../types';
-import { groupByTxHash } from '../utils';
+import {
+  createFetchWorldEventsInBlockRange,
+  fetchEventsInBlockRangeChunked,
+  groupByTxHash,
+} from '../utils';
 import { create } from './create';
 import { TransformWorldEvents } from './utils';
 
 const debug = parentDebug.extend('syncUtils');
+const MAX_ALLOWED_BLOCK_GAP = 500; // number of blocks in gap from which we will force a reload
+const MIN_TIME_BETWEEN_RELOADS = 5 * 60 * 1000; //minimum time between forced client reloads
+var currentBlock = 0;
 
 /**
  * Create a RxJS stream of {@link NetworkComponentUpdate}s by subscribing to a
@@ -30,7 +37,8 @@ export function connect(
   streamServiceUrl: string,
   worldAddress: string,
   transformWorldEvents: TransformWorldEvents,
-  includeSystemCalls: boolean
+  includeSystemCalls: boolean,
+  fetchWorldEvents: ReturnType<typeof createFetchWorldEventsInBlockRange>
 ): Observable<NetworkEvent> {
   return new Observable((subscriber) => {
     const streamServiceClient = create(streamServiceUrl);
@@ -51,7 +59,50 @@ export function connect(
       .pipe(
         map(async (responseChunk) => {
           debug('[kamigaze] got events');
-          const events = await transformWorldEvents(responseChunk);
+          var events = await transformWorldEvents(responseChunk);
+          let responsePrevBlockNumber =
+            responseChunk.prevBlockNumber != 0
+              ? responseChunk.prevBlockNumber
+              : responseChunk.blockNumber - 1;
+
+          let prevCurrentBlock = currentBlock;
+          currentBlock = responseChunk.blockNumber;
+
+          if (
+            prevCurrentBlock != responsePrevBlockNumber &&
+            prevCurrentBlock != 0 // its zero when initiating the sync
+          ) {
+            let gap = Math.abs(responsePrevBlockNumber - prevCurrentBlock);
+
+            if (gap > MAX_ALLOWED_BLOCK_GAP) {
+              console.log(
+                `MAX_ALLOWED_BLOCK_GAP exceeded gap:${gap} currentBlock:${prevCurrentBlock} responsePrevBlockNumber:${responsePrevBlockNumber}`
+              );
+              self.postMessage({
+                type: 'RELOAD_REQUIRED',
+                minTimeBetweenReloads: MIN_TIME_BETWEEN_RELOADS,
+              });
+            }
+            debug(
+              `FILLING FROM ${prevCurrentBlock + 1} to ${
+                responsePrevBlockNumber == 0
+                  ? responseChunk.blockNumber - 1
+                  : responsePrevBlockNumber
+              }`
+            );
+            const gapStateEvents = await fetchEventsInBlockRangeChunked(
+              fetchWorldEvents,
+              prevCurrentBlock + 1,
+              responsePrevBlockNumber == 0
+                ? responseChunk.blockNumber - 1
+                : responsePrevBlockNumber,
+              50
+            );
+            debug(`Backfilled events: ${gapStateEvents.length}`);
+
+            events = [...gapStateEvents, ...events];
+          }
+
           if (events.length === 0) return [EmptyNetworkEvent];
           if (includeSystemCalls && events.length > 0) {
             const systemCalls = parseSystemCalls(events);
