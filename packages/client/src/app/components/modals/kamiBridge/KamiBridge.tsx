@@ -50,6 +50,8 @@ export function registerKamiBridge() {
               queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, kamiRefreshOptions),
+              getAccountKamis: (accountEntity: EntityIndex) =>
+                getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
             },
           };
         })
@@ -57,11 +59,12 @@ export function registerKamiBridge() {
     },
     ({ data, network, utils }) => {
       const { actions } = network;
-      const { kamiNFTAddress, account, worldKamis } = data;
-      const { getKami, queryKamiByIndex } = utils;
+      const { kamiNFTAddress, account } = data;
+      const { getAccountKamis, getKami, queryKamiByIndex } = utils;
       const { selectedAddress, apis } = useNetwork();
       const { modals } = useVisibility();
 
+      const [worldKamis, setWorldKamis] = useState<Kami[]>([]);
       const [wildKamis, setWildKamis] = useState<Kami[]>([]);
       const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
       const [tick, setTick] = useState(Date.now());
@@ -77,7 +80,15 @@ export function registerKamiBridge() {
         return () => clearInterval(timerID);
       }, []);
 
+      // refresh party kamis every tick
       useEffect(() => {
+        if (!modals.bridgeERC721) return;
+        setWorldKamis(getAccountKamis(account.entity));
+      }, [modals.bridgeERC721, tick]);
+
+      // clear out the selected kamis whenever the mode changes or the modal is opened
+      useEffect(() => {
+        if (!modals.bridgeERC721) return;
         setSelectedKamis([]);
       }, [modals.bridgeERC721, mode]);
 
