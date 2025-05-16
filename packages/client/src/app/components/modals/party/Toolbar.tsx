@@ -122,15 +122,13 @@ const Container = styled.div`
   position: sticky;
   z-index: 1;
   top: 0;
-
   background-color: #eee;
   opacity: 0.9;
   width: 100%;
-
   padding: 0.6vw;
-
   display: flex;
   flex-flow: row nowrap;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   user-select: none;
@@ -138,7 +136,7 @@ const Container = styled.div`
 
 const ButtonSection = styled.div`
   gap: 0.45vw;
-
+  margin-top: 0.3vw;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
