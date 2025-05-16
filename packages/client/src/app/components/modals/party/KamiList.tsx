@@ -16,6 +16,7 @@ interface Props {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
+    addKami: (kamis: Kami[]) => void;
   };
   data: {
     account: Account;
@@ -26,6 +27,8 @@ interface Props {
       balance: number;
     };
   };
+  utils: { passesNodeReqs: (kami: Kami) => boolean };
+
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
@@ -36,7 +39,8 @@ interface Props {
 }
 
 export const KamiList = (props: Props) => {
-  const { actions, data, display, state } = props;
+  const { actions, data, display, state, utils } = props;
+  const { addKami } = actions;
   const { kamis } = data;
   const { tick } = state;
 
@@ -58,6 +62,8 @@ export const KamiList = (props: Props) => {
       )}
       {kamis.length > WHALE_LIMIT && (
         <Toolbar
+          actions={{ addKami }}
+          utils={utils}
           data={data}
           state={{ sort, setSort, collapsed, setCollapsed, setDisplayedKamis }}
         />

@@ -7,10 +7,16 @@ interface Props {
   cursor?: string;
   mouseButton?: 0 | 2;
   closeOnClick?: boolean;
+  // pass the  function from the parent component to execute when the popover closes
+  onClose?: () => void;
+  // forceclose the popover from the parent component
+  forceClose?: boolean;
+  // disable the popover from the parent component
+  disabled?: boolean;
 }
 
 export const Popover = (props: Props) => {
-  const { children, content } = props;
+  const { children, content, onClose, disabled, forceClose } = props;
   const cursor = props.cursor ?? 'pointer';
   const mouseButton = props.mouseButton ?? 0;
   const closeOnClick = props.closeOnClick ?? true;
@@ -20,6 +26,12 @@ export const Popover = (props: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState({ x: 0, y: 0 });
   const [clickedScrollBar, setClickedScrollBar] = useState(true);
+
+  useEffect(() => {
+    if (props.forceClose) {
+      setIsVisible(false);
+    }
+  }, [props.forceClose]);
 
   // add interaction event listeners
   useEffect(() => {
@@ -45,7 +57,10 @@ export const Popover = (props: Props) => {
       const didSelect = closeOnClick && pRef.contains(event.target) && !clickedScrollBar;
       const didOffclick = !pRef.contains(event.target) && !tRef.contains(event.target);
       if (didSelect || didOffclick) {
-        setTimeout(() => setIsVisible(false), 100);
+        setTimeout(() => {
+          setIsVisible(false);
+          if (onClose) onClose();
+        }, 100);
       }
     };
 
@@ -68,6 +83,7 @@ export const Popover = (props: Props) => {
     else setClickedScrollBar(false);
 
     closeOnClick ? setIsVisible(false) : setIsVisible(true);
+    if (!isVisible && onClose) onClose();
   };
 
   const handlePosition = () => {
@@ -96,6 +112,7 @@ export const Popover = (props: Props) => {
         !triggerRef.current.contains(event.target)
       ) {
         setIsVisible(false);
+        if (onClose) onClose();
       }
     }
   };
@@ -106,10 +123,9 @@ export const Popover = (props: Props) => {
         cursor={cursor}
         ref={triggerRef}
         onMouseDown={(e) => {
-          if (content.length !== 0 && e.button === mouseButton) {
-            handlePosition();
-            setIsVisible(!isVisible);
-          }
+          if (disabled || content.length === 0 || e.button !== mouseButton) return;
+          handlePosition();
+          setIsVisible(!isVisible);
         }}
       >
         {children}
@@ -118,9 +134,14 @@ export const Popover = (props: Props) => {
         isVisible={isVisible}
         ref={popoverRef}
         popoverPosition={popoverPosition}
-        onClick={(e) => handleClick(e)}
+        onClick={(e) => {
+          if (disabled) return;
+          handleClick(e);
+        }}
       >
-        {content}
+        {Array.isArray(content)
+          ? content.map((item, index) => <div key={`popover-item-${index}`}>{item}</div>)
+          : content}
       </PopoverContent>
     </PopoverContainer>
   );

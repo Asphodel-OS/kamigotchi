@@ -1,10 +1,12 @@
 import { Dispatch, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { calcHealthPercent } from 'app/cache/kami';
+import { calcHealthPercent, canHarvest } from 'app/cache/kami';
 import { compareTraits } from 'app/cache/trait';
 import { IconButton, IconListButton, Text } from 'app/components/library';
+import { DropDownToggle } from 'app/components/library/buttons/DropDownToggle';
 import { useVisibility } from 'app/stores';
+import { HarvestIcon } from 'assets/images/icons/actions';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -14,6 +16,10 @@ import { WHALE_LIMIT } from './KamiList';
 import { Sort } from './types';
 
 interface Props {
+  actions: {
+    addKami: (kamis: Kami[]) => void;
+  };
+  utils: { passesNodeReqs: (kami: Kami) => boolean };
   data: {
     account: Account;
     kamis: Kami[];
@@ -29,10 +35,23 @@ interface Props {
 }
 
 export const Toolbar = (props: Props) => {
-  const { data, state } = props;
-  const { kamis } = data;
+  const { data, state, actions, utils } = props;
+  const { passesNodeReqs } = utils;
+  const { addKami } = actions;
+  const { kamis, node, account } = data;
   const { sort, setSort, collapsed, setCollapsed, setDisplayedKamis } = state;
   const { modals } = useVisibility();
+
+  const canAdd = (kami: Kami) => {
+    return canHarvest(kami) && passesNodeReqs(kami);
+  };
+
+  const checkList = kamis
+    .filter((kami) => canAdd(kami))
+    .map((kami) => ({
+      text: kami.name,
+      object: kami,
+    }));
 
   // memoized sort options
   const sortOptions = useMemo(
@@ -81,6 +100,14 @@ export const Toolbar = (props: Props) => {
     <Container>
       <Text size={1.2}>Whale Tools</Text>
       <ButtonSection>
+        {kamis.length > 6 && (
+          <DropDownToggle
+            img={HarvestIcon}
+            disabled={checkList.length == 0 || account.roomIndex !== node.index}
+            onClick={(selectedKamis: Kami[]) => addKami(selectedKamis)}
+            checkList={checkList}
+          />
+        )}
         <IconButton
           img={collapsed ? TriggerIcons.eyeHalf : TriggerIcons.eyeOpen}
           onClick={() => setCollapsed(!collapsed)}

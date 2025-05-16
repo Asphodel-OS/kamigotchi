@@ -1,3 +1,4 @@
+import { SvgIconComponent } from '@mui/icons-material';
 import { ForwardedRef, forwardRef } from 'react';
 import styled from 'styled-components';
 
@@ -5,9 +6,10 @@ import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  img: string;
+  img: string | SvgIconComponent;
   onClick: Function;
   text?: string;
+  width?: number;
   color?: string;
   disabled?: boolean;
   fullWidth?: boolean;
@@ -19,6 +21,7 @@ interface Props {
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
   shadow?: boolean;
+  dropDown?: `left` | `right`;
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -27,7 +30,7 @@ export const IconButton = forwardRef(function IconButton(
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const { img, onClick, text, disabled } = props;
-  const { color, fullWidth, pulse, shadow } = props; // general styling
+  const { color, fullWidth, pulse, shadow, width, dropDown } = props; // general styling
   const { balance, corner } = props; // IconListButton options
   const { cornerAlt } = props; // open page in new tab indicator
 
@@ -41,8 +44,18 @@ export const IconButton = forwardRef(function IconButton(
     await onClick();
   };
 
+  const MyImage = () => {
+    if (typeof img === 'string') {
+      return <Image src={img} scale={scale} orientation={scaleOrientation} />;
+    }
+
+    const Icon = img;
+    return <Icon />;
+  };
+
   return (
     <Container
+      width={width}
       color={color ?? '#fff'}
       onClick={!disabled ? handleClick : () => {}}
       scale={scale}
@@ -53,8 +66,9 @@ export const IconButton = forwardRef(function IconButton(
       pulse={pulse}
       shadow={shadow}
       ref={ref}
+      dropDown={dropDown}
     >
-      <Image src={img} scale={scale} orientation={scaleOrientation} />
+      {MyImage()}
       {text && (
         <Text scale={scale} orientation={scaleOrientation}>
           {text}
@@ -68,6 +82,7 @@ export const IconButton = forwardRef(function IconButton(
 });
 
 interface ContainerProps {
+  width?: number;
   color: string;
   scale: number;
   orientation: string;
@@ -75,30 +90,38 @@ interface ContainerProps {
   fullWidth?: boolean;
   disabled?: boolean;
   pulse?: boolean;
+  dropDown?: `left` | `right`;
   shadow?: boolean;
 }
 
 const Container = styled.button<ContainerProps>`
   position: relative;
   border: solid black 0.15vw;
-  border-radius: ${({ radius }) => radius}${({ orientation }) => orientation};
-  height: ${({ scale }) => scale}${({ orientation }) => orientation};
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-
-  padding: ${({ scale }) => scale * 0.1}${({ orientation }) => orientation};
-  gap: ${({ scale }) => scale * 0.1}${({ orientation }) => orientation};
-
+  border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
+  height: ${({ scale, orientation }) => `${scale}${orientation}`};
+  width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}vw` : 'auto')};
+  min-width: fit-content;
+  padding: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
+  gap: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-
   background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
   box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
 
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   user-select: none;
+  ${({ dropDown }) =>
+    dropDown === `left`
+      ? ` border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+  `
+      : dropDown === `right` &&
+        ` border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+  `}
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);

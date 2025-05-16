@@ -1,20 +1,20 @@
+import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { EntityID } from '@mud-classic/recs';
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getNodeByIndex } from 'app/cache/node';
 import { HarvestButton, ModalHeader, ModalWrapper, UseItemButton } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useAccount, useNetwork, useTokens, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useSelected, useTokens, useVisibility } from 'app/stores';
 import { BalPair } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { ONYX_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemByIndex, Item, NullItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { Node, NullNode } from 'network/shapes/Node';
+import { Node, NullNode, passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
 import { KamiList } from './KamiList';
 
@@ -37,6 +37,7 @@ export function registerPartyModal() {
           const { network } = layers;
           const { world, components } = network;
           const { debug } = useAccount.getState();
+          const { nodeIndex } = useSelected.getState();
 
           const accountEntity = queryAccountFromEmbedded(network);
           const accRefreshOptions = {
@@ -73,6 +74,7 @@ export function registerPartyModal() {
                 getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
               getItem: (index: number) => getItemByIndex(world, components, index),
               getNode: (index: number) => getNodeByIndex(world, components, index),
+              passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
             },
           };
         })
@@ -80,9 +82,10 @@ export function registerPartyModal() {
 
     // Render
     ({ network, display, data, utils }) => {
-      const { world, components, actions } = network;
+      const { world, components, actions, api } = network;
       const { accountEntity, spender } = data;
-      const { getAccount, getItem, getKamis, getNode } = utils;
+      const { getAccount, getItem, getKamis, getNode, passesNodeReqs } = utils;
+
       const { modals } = useVisibility();
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
       const { balances: tokenBals } = useTokens();
@@ -163,6 +166,22 @@ export function registerPartyModal() {
           },
         });
       };
+
+      // starts a harvest for the given pet and node
+      const start = (kamis: Kami[], node: Node) => {
+        const kamiIDs = kamis.map((kami) => kami.id);
+        actions.add({
+          action: 'HarvestStart',
+          params: [kamiIDs, node.id],
+          description:
+            kamiIDs.length > 1
+              ? `Placing ${kamis.length} kamis on ${node.name}`
+              : `Placing ${kamis[0].name}  on ${node.name}`,
+          execute: async () => {
+            return api.player.pet.harvest.start(kamiIDs, node.index);
+          },
+        });
+      };
       /////////////////
       // DISPLAY
 
@@ -178,6 +197,7 @@ export function registerPartyModal() {
             actions={{
               onyxApprove: approveOnyxTx,
               onyxRevive: onyxReviveTx,
+              addKami: (kamis: Kami[]) => start(kamis, node),
             }}
             data={{
               account,
@@ -185,6 +205,7 @@ export function registerPartyModal() {
               node,
               onyx: onyxInfo,
             }}
+            utils={{ passesNodeReqs: utils.passesNodeReqs }}
             display={display}
             state={{ tick }}
           />

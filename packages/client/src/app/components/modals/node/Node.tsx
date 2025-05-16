@@ -191,13 +191,17 @@ export function registerNodeModal() {
       };
 
       // starts a harvest for the given pet and node
-      const start = (kami: Kami, node: Node) => {
+      const start = (kamis: Kami[], node: Node) => {
+        const kamiIDs = kamis.map((kami) => kami.id);
         actions.add({
           action: 'HarvestStart',
-          params: [kami.id, node.id],
-          description: `Placing ${kami.name} on ${node.name}`,
+          params: [kamiIDs, node.id],
+          description:
+            kamiIDs.length > 1
+              ? `Placing ${kamis.length} kamis on ${node.name}`
+              : `Placing ${kamis[0].name}  on ${node.name}`,
           execute: async () => {
-            return api.player.pet.harvest.start([kami.id], node.index);
+            return api.player.pet.harvest.start(kamiIDs, node.index);
           },
         });
       };
@@ -244,7 +248,7 @@ export function registerNodeModal() {
             <Header
               key='banner'
               data={{ account, node, kamiEntities: kamiEntities.account }}
-              actions={{ claim, addKami: (kami) => start(kami, node) }}
+              actions={{ claim, addKami: (kamis: Kami[]) => start(kamis, node) }}
               utils={utils}
             />,
           ]}
