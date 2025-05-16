@@ -7,7 +7,7 @@ export const harvestsAPI = (systems: any) => {
    * @param harvestIDs array of harvestIDs
    */
   const collect = (harvestIDs: BigNumberish[]) => {
-    return systems['system.harvest.collect'].executeBatched(harvestIDs, { gasLimit: 2530000 });
+    return systems['system.harvest.collect'].executeBatched(harvestIDs, { gasLimit: 2700000 });
   };
 
   /**
@@ -28,7 +28,7 @@ export const harvestsAPI = (systems: any) => {
    */
   const start = (kamiIDs: BigNumberish[], nodeIndex: BigNumberish) => {
     return systems['system.harvest.start'].executeBatched(kamiIDs, nodeIndex, 0, 0, {
-      gasLimit: 2200000,
+      gasLimit: 2300000,
     });
   };
 
@@ -38,7 +38,7 @@ export const harvestsAPI = (systems: any) => {
    * @param harvestIDs array of harvestIDs
    */
   const stop = (harvestIDs: BigNumberish[]) => {
-    return systems['system.harvest.stop'].executeBatched(harvestIDs, { gasLimit: 2530000 });
+    return systems['system.harvest.stop'].executeBatched(harvestIDs, { gasLimit: 2700000 });
   };
 
   return {

@@ -312,12 +312,15 @@ library LibHarvest {
     uint32 nodeIndex,
     uint256 prodID
   ) public {
-    uint32[] memory indices = new uint32[](2);
-    indices[0] = 0;
+    uint32[] memory indices = new uint32[](4);
     indices[1] = nodeIndex;
-    string[] memory types = new string[](2);
+    indices[2] = 0;
+    indices[3] = nodeIndex;
+    string[] memory types = new string[](4);
     types[0] = "HARVEST_TIME";
     types[1] = "HARVEST_TIME";
+    types[2] = LibString.concat("HARVEST_TIME_", LibPhase.getName(block.timestamp));
+    types[3] = LibString.concat("HARVEST_TIME_", LibPhase.getName(block.timestamp));
     LibData.inc(
       components,
       accID,

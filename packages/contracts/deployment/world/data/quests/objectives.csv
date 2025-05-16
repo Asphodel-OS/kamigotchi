@@ -3,7 +3,7 @@
 ,Harvest for >720 minutes on Trash-Strewn Graves,MIN,INC,HARVEST_TIME,26,43200
 ,Harvest 1 minute,MIN,INC,HARVEST_TIME,,60
 ,Harvest for >5 minutes,MIN,INC,HARVEST_TIME,,300
-,Harvest for >720 minutes at the Lost Skeleton During Moonside,MIN,INC,HARVEST_WHEN_MOONSIDE,25,43200
+,Harvest for >720 minutes at the Lost Skeleton During Moonside,MIN,INC,HARVEST_TIME_MOONSIDE,25,43200
 ,Give 10 MUSU,MIN,INC,ITEM_BURN,1,10
 ,Give 5 Wooden Sticks,MIN,INC,ITEM_BURN,1001,5
 ,Give 5 Stone,MIN,INC,ITEM_BURN,1002,5

@@ -21,7 +21,7 @@
     "deploy:local:partial": "pnpm deploy:local --partial",
     "deploy:test": "NODE_ENV=testing pnpm deploy:script --forge='-g=300 --batch-size=5'",
     "deploy:test:partial": "pnpm deploy:test --partial",
-    "deploy:prod": "NODE_ENV=production pnpm deploy:script --forge='-g=300 --batch-size=5'",
+    "deploy:prod": "NODE_ENV=production pnpm deploy:script --forge='-g=200 --batch-size=5'",
     "deploy:prod:partial": "pnpm deploy:prod --partial",
     "deprecate:local": "NODE_ENV=puter pnpm deprecate:script ",
     "deprecate:test": "NODE_ENV=testing pnpm deprecate:script --forge='--batch-size=5'",
