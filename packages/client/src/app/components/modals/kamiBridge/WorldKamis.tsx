@@ -12,41 +12,41 @@ interface Props {
   mode: Mode;
   kamis: Kami[];
   state: {
-    selectedKamis: Kami[];
-    setSelectedKamis: (kamis: Kami[]) => void;
+    selected: Kami[];
+    setSelected: (kamis: Kami[]) => void;
   };
 }
 
 export const WorldKamis = (props: Props) => {
   const { kamis, state, mode } = props;
-  const { selectedKamis, setSelectedKamis } = state;
-
+  const { selected, setSelected } = state;
   const [displayedKamis, setDisplayedKamis] = useState<Kami[]>([]);
 
   useEffect(() => {
-    if (mode === 'EXPORT') {
-      const remainingKamis = kamis.filter((kami) => !selectedKamis.includes(kami));
+    if (mode === 'IMPORT') setDisplayedKamis(selected);
+    else {
+      const remainingKamis = kamis.filter((kami) => !selected.includes(kami));
       setDisplayedKamis(remainingKamis);
-    } else {
-      setDisplayedKamis(selectedKamis);
     }
-  }, [mode, selectedKamis]);
+  }, [mode, kamis, selected]);
+
+  /////////////////
+  // HANDLERS
 
   const handleSelect = (kami: Kami) => {
     playClick();
-    if (selectedKamis.includes(kami)) {
-      setSelectedKamis(selectedKamis.filter((k) => k !== kami));
+    if (selected.includes(kami)) {
+      setSelected(selected.filter((k) => k !== kami));
     } else {
-      setSelectedKamis([...selectedKamis, kami]);
+      setSelected([...selected, kami]);
     }
   };
 
+  /////////////////
+  // INTERPRETATION
+
   const isDisabled = (kami: Kami) => {
     return mode === 'EXPORT' && !isResting(kami);
-  };
-
-  const isSelected = () => {
-    return mode === 'IMPORT';
   };
 
   const getEmptyText = () => {
@@ -54,10 +54,18 @@ export const WorldKamis = (props: Props) => {
     else return ['You must select', 'some Kami'];
   };
 
+  const getCount = () => {
+    if (mode === 'EXPORT') return kamis.length - selected.length;
+    else return selected.length;
+  };
+
+  /////////////////
+  // RENDER
+
   return (
     <Container>
       <Overlay top={0.9} left={0.9}>
-        <Text size={0.9}>World</Text>
+        <Text size={0.9}>World({getCount()})</Text>
       </Overlay>
       <Scrollable>
         {displayedKamis.map((kami) => (
@@ -66,7 +74,7 @@ export const WorldKamis = (props: Props) => {
             kami={kami}
             select={{
               isDisabled: isDisabled(kami),
-              isSelected: isSelected(),
+              isSelected: mode === 'IMPORT',
               onClick: () => handleSelect(kami),
             }}
           />

@@ -35,7 +35,7 @@ export const Controls = (props: Props) => {
   return (
     <Container>
       <ActionButton onClick={handleToggle} text={'Filters'} disabled />
-      <ActionButton onClick={handleToggle} text={mode === 'IMPORT' ? '↑' : '↓'} />
+      <ActionButton onClick={handleToggle} text={mode === 'IMPORT' ? '↓' : '↑'} />
       <ActionButton
         onClick={handleAction}
         text={mode === 'IMPORT' ? 'Import' : 'Export'}

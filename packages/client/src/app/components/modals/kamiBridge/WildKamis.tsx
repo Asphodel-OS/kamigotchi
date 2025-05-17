@@ -11,34 +11,33 @@ interface Props {
   mode: Mode;
   kamis: Kami[];
   state: {
-    selectedKamis: Kami[];
-    setSelectedKamis: (kamis: Kami[]) => void;
+    selected: Kami[];
+    setSelected: (kamis: Kami[]) => void;
   };
 }
 
 export const WildKamis = (props: Props) => {
   const { kamis, state, mode } = props;
-  const { selectedKamis, setSelectedKamis } = state;
+  const { selected, setSelected } = state;
   const [displayedKamis, setDisplayedKamis] = useState<Kami[]>([]);
 
   useEffect(() => {
-    if (mode === 'IMPORT') {
-      const remainingKamis = kamis.filter((kami) => !selectedKamis.includes(kami));
+    if (mode === 'EXPORT') setDisplayedKamis(selected);
+    else {
+      const remainingKamis = kamis.filter((kami) => !selected.includes(kami));
       setDisplayedKamis(remainingKamis);
-    } else {
-      setDisplayedKamis(selectedKamis);
     }
-  }, [mode, selectedKamis]);
+  }, [mode, kamis, selected]);
 
   /////////////////
   // HANDLERS
 
   const handleSelect = (kami: Kami) => {
     playClick();
-    if (selectedKamis.includes(kami)) {
-      setSelectedKamis(selectedKamis.filter((k) => k !== kami));
+    if (selected.includes(kami)) {
+      setSelected(selected.filter((k) => k !== kami));
     } else {
-      setSelectedKamis([...selectedKamis, kami]);
+      setSelected([...selected, kami]);
     }
   };
 
@@ -50,13 +49,18 @@ export const WildKamis = (props: Props) => {
     else return ['You must select', 'some Kami'];
   };
 
+  const getCount = () => {
+    if (mode === 'IMPORT') return kamis.length - selected.length;
+    else return selected.length;
+  };
+
   /////////////////
   // RENDER
 
   return (
     <Container>
       <Overlay top={0.9} left={0.9}>
-        <Text size={0.9}>Wilderness</Text>
+        <Text size={0.9}>Wilderness({getCount()})</Text>
       </Overlay>
       <Scrollable>
         {displayedKamis.map((kami) => (
@@ -77,7 +81,7 @@ export const WildKamis = (props: Props) => {
 const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 18vw;
+  height: 15vw;
   display: flex;
   flex-flow: column nowrap;
 `;
