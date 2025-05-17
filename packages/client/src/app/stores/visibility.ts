@@ -54,7 +54,6 @@ export interface Modals {
   leaderboard: boolean;
   map: boolean;
   merchant: boolean;
-  nameKami: boolean;
   node: boolean;
   operatorFund: boolean;
   party: boolean;
@@ -82,7 +81,6 @@ export const toggleModals = (isOn: boolean): Modals => ({
   leaderboard: isOn,
   map: isOn,
   merchant: isOn,
-  nameKami: isOn,
   node: isOn,
   operatorFund: isOn,
   party: isOn,
@@ -131,7 +129,6 @@ export const useVisibility = create<State & Actions>((set) => {
       leaderboard: false,
       map: false,
       merchant: false,
-      nameKami: false,
       node: false,
       operatorFund: false,
       party: false,

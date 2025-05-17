@@ -9,6 +9,6 @@ export const NullKami: Kami = {
   id: '0' as EntityID,
   index: 0,
   image: `${KAMI_BASE_URI}blank.gif`,
-  name: 'NullKami',
+  name: 'MissingNo.',
   state: '',
 };

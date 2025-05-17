@@ -7,12 +7,10 @@ export const PartyMenuButton = () => {
     account: false,
     bridgeERC20: false,
     dialogue: false,
-    emaBoard: false,
     kami: false,
     leaderboard: false,
     map: false,
     merchant: false,
-    nameKami: false,
   };
 
   return (

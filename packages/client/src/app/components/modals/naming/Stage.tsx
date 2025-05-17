@@ -2,6 +2,7 @@ import { EntityID } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { IconButton, KamiBlock, Text, Tooltip } from 'app/components/library';
+import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item } from 'network/shapes/Item';
@@ -44,6 +45,7 @@ export const Stage = (props: Props) => {
   const { account, kami, onyxInfo, onyxItem, holyDustItem } = data;
   const { tick } = state;
   const { getItemBalance } = utils;
+  const { modals } = useVisibility();
 
   const [holyBalance, setHolyBalance] = useState(0);
   const [name, setName] = useState('');
@@ -54,22 +56,31 @@ export const Stage = (props: Props) => {
     setHolyBalance(holyBalance);
   }, [tick]);
 
+  useEffect(() => {
+    if (!modals.emaBoard) return;
+    if (kami.index === 0 || modals.emaBoard) setName('');
+  }, [kami.index, modals.emaBoard]);
+
   /////////////////
   // INTERPRETATION
 
   const isHolyDisabled = () => {
+    if (kami.index === 0) return true;
     if (holyBalance == 0) return true;
     if (name.length < MIN_LEN) return true;
     return false;
   };
 
   const isOnyxDisabled = () => {
+    if (kami.index === 0) return true;
     if (onyxInfo.balance < ONYX_PRICE) return true;
     if (name.length < MIN_LEN) return true;
     return false;
   };
 
   const getHolyTooltip = () => {
+    if (kami.index === 0) return ['you must select a kami'];
+
     const index = holyDustItem.index;
     const balance = getItemBalance(account.inventories ?? [], index);
     if (balance == 0) return ['you have no holy dust'];
@@ -78,6 +89,8 @@ export const Stage = (props: Props) => {
   };
 
   const getOnyxTooltip = () => {
+    if (kami.index === 0) return ['you must select a kami'];
+
     const balance = onyxInfo.balance;
     if (onyxInfo.balance < ONYX_PRICE) return [`you need more ${ONYX_PRICE - balance} $ONYX`];
     if (onyxInfo.allowance < ONYX_PRICE) return [`approve spend of ${ONYX_PRICE} $ONYX`];
