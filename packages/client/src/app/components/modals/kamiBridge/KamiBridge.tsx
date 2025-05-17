@@ -172,7 +172,7 @@ export function registerKamiBridge() {
         >
           <WildKamis
             mode={mode}
-            kamis={wildKamis}
+            kamis={{ world: worldKamis, wild: wildKamis }}
             state={{ selected: selectedKamis, setSelected: setSelectedKamis }}
           />
           <Controls
@@ -182,7 +182,7 @@ export function registerKamiBridge() {
           />
           <WorldKamis
             mode={mode}
-            kamis={worldKamis}
+            kamis={{ world: worldKamis, wild: wildKamis }}
             state={{ selected: selectedKamis, setSelected: setSelectedKamis }}
           />
         </ModalWrapper>

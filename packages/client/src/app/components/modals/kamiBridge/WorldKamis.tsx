@@ -10,7 +10,10 @@ import { Mode } from './types';
 
 interface Props {
   mode: Mode;
-  kamis: Kami[];
+  kamis: {
+    wild: Kami[];
+    world: Kami[];
+  };
   state: {
     selected: Kami[];
     setSelected: (kamis: Kami[]) => void;
@@ -19,16 +22,17 @@ interface Props {
 
 export const WorldKamis = (props: Props) => {
   const { kamis, state, mode } = props;
+  const { world, wild } = kamis;
   const { selected, setSelected } = state;
-  const [displayedKamis, setDisplayedKamis] = useState<Kami[]>([]);
+  const [displayed, setDisplayed] = useState<Kami[]>([]);
 
   useEffect(() => {
-    if (mode === 'IMPORT') setDisplayedKamis(selected);
+    if (mode === 'IMPORT') setDisplayed(selected);
     else {
-      const remainingKamis = kamis.filter((kami) => !selected.includes(kami));
-      setDisplayedKamis(remainingKamis);
+      const remaining = world.filter((kami) => !selected.includes(kami));
+      setDisplayed(remaining);
     }
-  }, [mode, kamis, selected]);
+  }, [mode, world, selected]);
 
   /////////////////
   // HANDLERS
@@ -55,8 +59,8 @@ export const WorldKamis = (props: Props) => {
   };
 
   const getCount = () => {
-    if (mode === 'EXPORT') return kamis.length - selected.length;
-    else return selected.length;
+    if (mode === 'EXPORT') return `${world.length}`;
+    else return `${world.length}+${selected.length}`;
   };
 
   /////////////////
@@ -68,7 +72,7 @@ export const WorldKamis = (props: Props) => {
         <Text size={0.9}>World({getCount()})</Text>
       </Overlay>
       <Scrollable>
-        {displayedKamis.map((kami) => (
+        {displayed.map((kami) => (
           <KamiBlock
             key={kami.index}
             kami={kami}
@@ -81,7 +85,7 @@ export const WorldKamis = (props: Props) => {
         ))}
       </Scrollable>
       <Overlay fullWidth fullHeight passthrough>
-        <EmptyText text={getEmptyText()} size={1} isHidden={!!displayedKamis.length} />
+        <EmptyText text={getEmptyText()} size={1} isHidden={!!displayed.length} />
       </Overlay>
     </Container>
   );
