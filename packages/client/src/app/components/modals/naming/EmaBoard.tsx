@@ -14,7 +14,7 @@ import { KamiIcon } from 'assets/images/icons/menu';
 import { HOLY_DUST_INDEX, ONYX_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
-import { Kami } from 'network/shapes/Kami';
+import { Kami, NullKami } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
 import { Carousel } from './Carousel';
@@ -72,7 +72,7 @@ export function registerEMABoardModal() {
       const [tick, setTick] = useState(Date.now());
       const [kamis, setKamis] = useState<Kami[]>([]);
       const [account, setAccount] = useState<Account>(NullAccount);
-      const [selected, setSelected] = useState<Kami>(getKami(0 as EntityIndex));
+      const [selected, setSelected] = useState<Kami>(NullKami);
       const [holyDustItem, setHolyDustItem] = useState<Item>(NullItem);
       const [onyxItem, setOnyxItem] = useState<Item>(NullItem);
       const [onyxInfo, setOnyxInfo] = useState<BalPair>({ allowance: 0, balance: 0 });
