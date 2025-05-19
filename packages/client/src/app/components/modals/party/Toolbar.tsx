@@ -127,7 +127,6 @@ const Container = styled.div`
   padding: 0.6vw;
   display: flex;
   flex-flow: row nowrap;
-  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   user-select: none;

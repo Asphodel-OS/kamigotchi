@@ -6,7 +6,7 @@ import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 interface Props {
-  img: string | SvgIconComponent;
+  img?: string | SvgIconComponent;
   onClick: Function;
   text?: string;
   width?: number;
@@ -45,12 +45,14 @@ export const IconButton = forwardRef(function IconButton(
   };
 
   const MyImage = () => {
-    if (typeof img === 'string') {
-      return <Image src={img} scale={scale} orientation={scaleOrientation} />;
-    }
+    if (img) {
+      if (typeof img === 'string') {
+        return <Image src={img} scale={scale} orientation={scaleOrientation} />;
+      }
 
-    const Icon = img;
-    return <Icon />;
+      const Icon = img;
+      return <Icon />;
+    }
   };
 
   return (

@@ -1,4 +1,3 @@
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -93,7 +92,6 @@ export function DropDownToggle(props: Props) {
   const DropDownButton = () => {
     return (
       <IconButton
-        img={ArrowDropDownIcon}
         text={`${checked.filter((val) => val === true).length} Selected`}
         width={10}
         onClick={() => {}}
