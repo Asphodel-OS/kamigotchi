@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHarvestAverageRate, getHarvestItem } from 'app/cache/harvest';
-import { calcHealth, calcOutput, isDead, isHarvesting, isResting } from 'app/cache/kami';
+import {
+  calcHealth,
+  calcOutput,
+  getKamiBodyAffinity,
+  getKamiHandAffinity,
+  isDead,
+  isHarvesting,
+  isResting,
+} from 'app/cache/kami';
 import { calcHealTime, calcIdleTime } from 'app/cache/kami/calcs/base';
 import { Text, Tooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
@@ -47,26 +55,14 @@ export const KamiBar = (props: Props) => {
   /////////////////
   // GETTERS
 
-  const getBodyAffinity = () => {
-    const body = kami.traits?.body;
-    if (!body || !body.affinity) return 'NORMAL';
-    return body.affinity;
-  };
-
-  const getHandAffinity = () => {
-    const hand = kami.traits?.hand;
-    if (!hand || !hand.affinity) return 'NORMAL';
-    return hand.affinity;
-  };
-
   const getBodyIcon = () => {
-    const affinity = getBodyAffinity();
+    const affinity = getKamiBodyAffinity(kami);
     const affinityKey = affinity.toLowerCase() as keyof typeof AffinityIcons;
     return AffinityIcons[affinityKey];
   };
 
   const getHandIcon = () => {
-    const affinity = getHandAffinity();
+    const affinity = getKamiHandAffinity(kami);
     const affinityKey = affinity.toLowerCase() as keyof typeof AffinityIcons;
     return AffinityIcons[affinityKey];
   };
@@ -108,14 +104,17 @@ export const KamiBar = (props: Props) => {
     ];
 
     if (isResting(kami)) {
-      const timeToFullStr = formatCountdown(calcHealTime(kami));
-      tooltip = tooltip.concat([`${timeToFullStr} until full`]);
+      const healTime = calcHealTime(kami);
+      if (healTime > 0) {
+        const timeToFullStr = formatCountdown(healTime);
+        tooltip = tooltip.concat([`${timeToFullStr} until full`]);
+      }
     }
 
     if (isHarvesting(kami) && kami.harvest) {
       const harvest = kami.harvest;
       const spotRate = getRateDisplay(harvest.rates.total.spot, 2);
-      const avgRate = getRateDisplay(calcHarvestAverageRate(harvest), 2);
+      const avgRate = getRateDisplay(calcHarvestAverageRate(harvest), 1);
       const item = getHarvestItem(harvest);
       const node = harvest.node ?? NullNode;
 
@@ -147,7 +146,7 @@ export const KamiBar = (props: Props) => {
           <Image src={kami.image} onClick={handleImageClick} />
         </Tooltip>
         <Tooltip
-          text={[`Body: ${getBodyAffinity()}`, `Hand: ${getHandAffinity()}`]}
+          text={[`Body: ${getKamiBodyAffinity(kami)}`, `Hand: ${getKamiHandAffinity(kami)}`]}
           direction='row'
         >
           <Icon src={getBodyIcon()} />
@@ -222,10 +221,13 @@ const Middle = styled.div<MiddleProps>`
 `;
 
 const Image = styled.img`
+  border-right: solid black 0.15vw;
   width: 3vw;
   height: 3vw;
+
   cursor: pointer;
-  border-right: solid black 0.15vw;
+  user-select: none;
+  user-drag: none;
   &:hover {
     opacity: 0.8;
   }
@@ -234,8 +236,12 @@ const Image = styled.img`
 const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
+
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
+
+  user-select: none;
+  user-drag: none;
 `;

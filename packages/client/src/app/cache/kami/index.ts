@@ -24,7 +24,11 @@ export {
   updateHarvestRate,
   updateHealthRate,
 } from './calcs';
-export { updateRates } from './functions';
+export {
+  getBodyAffinity as getKamiBodyAffinity,
+  getHandAffinity as getKamiHandAffinity,
+  updateRates,
+} from './functions';
 export { getKamiAccount, getKamiHarvest, getKamiTraits } from './getters';
 
 export type { Kami } from 'network/shapes/Kami';

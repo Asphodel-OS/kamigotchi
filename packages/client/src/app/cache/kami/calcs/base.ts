@@ -77,7 +77,8 @@ export const calcHealTime = (kami: Kami): number => {
   const totalHealth = healthStats?.total ?? 1;
 
   const healthDiff = totalHealth - lastHealth;
-  return healthDiff / healthRate - idleTime;
+  const idleRequirement = healthDiff / healthRate;
+  return Math.max(0, idleRequirement - idleTime);
 };
 
 // calculate the cooldown remaining on kami standard actions

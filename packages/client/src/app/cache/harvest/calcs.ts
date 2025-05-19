@@ -1,6 +1,7 @@
 import { Harvest, RateDetails } from 'network/shapes/Harvest/types';
 import { Kami } from 'network/shapes/Kami';
 import { Efficacy } from 'network/shapes/Kami/configs';
+import { getKamiBodyAffinity, getKamiHandAffinity } from '../kami';
 
 /////////////////
 // DURATION CALCS
@@ -67,25 +68,12 @@ export const updateRates = (harvest: Harvest, kami: Kami) => {
   return harvest.rates.total.average;
 };
 
-// calculate the average rate over the full duration of a harvest
+// calculate the average rate since the last snapshot of a harvest
 export const calcAverageRate = (harvest: Harvest): number => {
-  const bounty = calcNetBounty(harvest);
-  const time = calcLifeTime(harvest);
-  return bounty / time;
+  const netBounty = calcNetBounty(harvest);
+  const time = calcIdleTime(harvest);
+  return netBounty / time;
 };
-
-// // calculate the expected output rate from a harvest
-// export const calcRate = (harvest: Harvest, kami: Kami): number => {
-//   if (harvest.state !== 'ACTIVE') return 0;
-//   if (!kami.config) return 0;
-
-//   const config = kami.config?.harvest.bounty;
-//   const base = calcFertility(harvest, kami);
-//   const nudge = calcIntensity(harvest, kami);
-//   const boostBonus = kami.bonuses?.harvest.bounty.boost ?? 0;
-//   const boost = config.boost.value + boostBonus;
-//   return (base + nudge) * boost;
-// };
 
 // calculate the fertility rate of harvest (per hour)
 export const calcFertility = (harvest: Harvest, kami: Kami): number => {
@@ -98,10 +86,34 @@ export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   return Math.floor(fertility * 1e6) / 1e6;
 };
 
-// calculate the intensity rate of a harvest, measured in musu/s
-// NOTE: this is a calc of avg intensity through a harvest, rather than the spot rate
+// calculate the intensity rates of a harvest, measured in musu/s
 export const calcIntensity = (harvest: Harvest, kami: Kami): RateDetails => {
   if (!kami.config) return { spot: 0, average: 0 };
+
+  const now = Date.now() / 1000;
+  const lastTs = harvest.time?.last ?? now;
+  const resetTs = harvest.time?.reset ?? now;
+
+  const initial = calcSpotIntensity(kami, lastTs - resetTs);
+  const current = calcSpotIntensity(kami, now - resetTs);
+  const spot = initial + 2 * (current - initial);
+
+  return {
+    average: Math.floor(current * 1e6) / 1e6,
+    spot: Math.floor(spot * 1e6) / 1e6,
+  };
+};
+
+/**
+ * @dev calculate the spot intensity rate of a Kami's Harvest at a given time past
+ * its last reset time, measured in musu/s (1e6 precision)
+ *
+ * @param kami: Kami. should have configs and bonuses populated
+ * @param delta: seconds past last reset
+ * */
+
+const calcSpotIntensity = (kami: Kami, delta: number) => {
+  if (!kami.config) return 0;
   const config = kami.config.harvest.intensity;
   const bonus = kami.bonuses?.harvest.intensity;
 
@@ -112,21 +124,8 @@ export const calcIntensity = (harvest: Harvest, kami: Kami): RateDetails => {
   const violence = kami.stats?.violence.total ?? 0;
   const base = config.nudge.value * violence; // commandeering nudge field for this scaling
 
-  const now = Date.now() / 1000;
-  const lastTs = harvest.time?.last ?? now;
-  const resetTs = harvest.time?.reset ?? now;
-
-  const averageTime = Math.floor((now - resetTs) / 60);
-  const average = core * (base + averageTime);
-
-  // spot intensity. time factor is (tl-tr + 2(t-tl))
-  const spotTime = Math.floor((2 * now - lastTs - resetTs) / 60);
-  const spot = core * (base + spotTime);
-
-  return {
-    average: Math.floor(average * 1e6) / 1e6,
-    spot: Math.floor(spot * 1e6) / 1e6,
-  };
+  const deltaMinutes = Math.floor(delta / 60);
+  return core * (base + deltaMinutes);
 };
 
 /////////////////
@@ -149,13 +148,13 @@ export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
   const upShiftBonus = kami.bonuses?.harvest.fertility.boost ?? 0;
 
   // body
-  const bodyAffinity = kami.traits.body.affinity;
+  const bodyAffinity = getKamiBodyAffinity(kami);
   const bodyEffectiveness = getHarvestEffectiveness(nodeAffinity, bodyAffinity);
   const bodyConfig = kami.config.harvest.efficacy.body;
   shift += calcEfficacyShift(bodyEffectiveness, bodyConfig, upShiftBonus);
 
   // hand
-  const handAffinity = kami.traits.hand.affinity;
+  const handAffinity = getKamiHandAffinity(kami);
   const handEffectiveness = getHarvestEffectiveness(nodeAffinity, handAffinity);
   const handConfig = kami.config.harvest.efficacy.hand;
   shift += calcEfficacyShift(handEffectiveness, handConfig, upShiftBonus);
