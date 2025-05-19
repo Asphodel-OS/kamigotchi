@@ -26,8 +26,8 @@ export function registerMenuRight() {
       return (
         <>
           <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-            <InventoryMenuButton />
             <CraftMenuButton />
+            <InventoryMenuButton />
             <QuestMenuButton />
             <ChatMenuButton />
             <MoreMenuButton />
