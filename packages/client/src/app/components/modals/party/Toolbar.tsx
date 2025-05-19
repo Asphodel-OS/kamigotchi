@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest } from 'app/cache/kami';
 import { compareTraits } from 'app/cache/trait';
-import { IconButton, IconListButton, Text } from 'app/components/library';
+import { IconButton, IconListButton } from 'app/components/library';
 import { DropDownToggle } from 'app/components/library/buttons/DropDownToggle';
 import { useVisibility } from 'app/stores';
 import { HarvestIcon } from 'assets/images/icons/actions';
@@ -98,27 +98,26 @@ export const Toolbar = (props: Props) => {
 
   return (
     <Container>
-      <Text size={1.2}>Whale Tools</Text>
       <ButtonSection>
-        {kamis.length > 6 && (
-          <DropDownToggle
-            img={HarvestIcon}
-            disabled={checkList.length == 0 || account.roomIndex !== node.index}
-            onClick={(selectedKamis: Kami[]) => addKami(selectedKamis)}
-            checkList={checkList}
-          />
-        )}
         <IconButton
           img={collapsed ? TriggerIcons.eyeHalf : TriggerIcons.eyeOpen}
           onClick={() => setCollapsed(!collapsed)}
         />
-        <IconListButton img={SortIcons[sort]} text={sort} options={sortOptions} radius={0.6} />
-      </ButtonSection>
+        <IconListButton img={SortIcons[sort]} text={sort} options={sortOptions} radius={0.6} />{' '}
+      </ButtonSection>{' '}
+      <DropDownToggle
+        img={HarvestIcon}
+        disabled={checkList.length == 0 || account.roomIndex !== node.index}
+        onClick={(selectedKamis: Kami[]) => addKami(selectedKamis)}
+        checkList={checkList}
+      />
     </Container>
   );
 };
 
 const Container = styled.div`
+  display: flex;
+  flex-direction: row;
   position: sticky;
   z-index: 1;
   top: 0;
@@ -135,7 +134,7 @@ const Container = styled.div`
 `;
 
 const ButtonSection = styled.div`
-  gap: 0.45vw;
+  gap: 0.3vw;
   margin-top: 0.3vw;
   display: flex;
   flex-flow: row nowrap;
