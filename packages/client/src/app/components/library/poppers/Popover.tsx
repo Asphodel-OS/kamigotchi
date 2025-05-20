@@ -7,11 +7,11 @@ interface Props {
   cursor?: string;
   mouseButton?: 0 | 2;
   closeOnClick?: boolean;
-  // pass the  function from the parent component to execute when the popover closes
+  // execute a function when the popover closes
   onClose?: () => void;
-  // forceclose the popover from the parent component
+  // forceclose the popover
   forceClose?: boolean;
-  // disable the popover from the parent component
+  // disable the popover
   disabled?: boolean;
 }
 
@@ -28,10 +28,10 @@ export const Popover = (props: Props) => {
   const [clickedScrollBar, setClickedScrollBar] = useState(true);
 
   useEffect(() => {
-    if (props.forceClose) {
+    if (forceClose) {
       setIsVisible(false);
     }
-  }, [props.forceClose]);
+  }, [forceClose]);
 
   // add interaction event listeners
   useEffect(() => {

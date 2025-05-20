@@ -248,7 +248,7 @@ export function registerNodeModal() {
             <Header
               key='banner'
               data={{ account, node, kamiEntities: kamiEntities.account }}
-              actions={{ claim, addKami: (kamis: Kami[]) => start(kamis, node) }}
+              actions={{ claim, addKamis: (kamis: Kami[]) => start(kamis, node) }}
               utils={utils}
             />,
           ]}

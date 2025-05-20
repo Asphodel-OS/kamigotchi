@@ -12,32 +12,32 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 import { SortIcons } from './constants';
-import { WHALE_LIMIT } from './KamiList';
+
 import { Sort } from './types';
 
 interface Props {
   actions: {
-    addKami: (kamis: Kami[]) => void;
+    addKamis: (kamis: Kami[]) => void;
   };
-  utils: { passesNodeReqs: (kami: Kami) => boolean };
   data: {
     account: Account;
     kamis: Kami[];
     node: Node;
   };
+  utils: { passesNodeReqs: (kami: Kami) => boolean };
   state: {
-    sort: Sort;
-    setSort: Dispatch<Sort>;
     collapsed: boolean;
     setCollapsed: Dispatch<boolean>;
     setDisplayedKamis: Dispatch<Kami[]>;
+    setSort: Dispatch<Sort>;
+    sort: Sort;
   };
 }
 
 export const Toolbar = (props: Props) => {
   const { data, state, actions, utils } = props;
   const { passesNodeReqs } = utils;
-  const { addKami } = actions;
+  const { addKamis } = actions;
   const { kamis, node, account } = data;
   const { sort, setSort, collapsed, setCollapsed, setDisplayedKamis } = state;
   const { modals } = useVisibility();
@@ -45,8 +45,8 @@ export const Toolbar = (props: Props) => {
   const canAdd = (kami: Kami) => {
     return canHarvest(kami) && passesNodeReqs(kami);
   };
-
-  const checkList = kamis
+  //TODO:  be more explicit about when/how the deployOptions gets updated
+  const deployOptions = kamis
     .filter((kami) => canAdd(kami))
     .map((kami) => ({
       text: kami.name,
@@ -67,7 +67,6 @@ export const Toolbar = (props: Props) => {
   // sort kamis when sort is changed
   // sorts in place so the seDisplayedKamis is just to triggere an update
   useEffect(() => {
-    if (kamis.length <= WHALE_LIMIT) return; // only shown for whales
     let sorted = kamis;
     if (sort === 'index') {
       sorted = kamis.sort((a, b) => a.index - b.index);
@@ -107,9 +106,9 @@ export const Toolbar = (props: Props) => {
       </ButtonSection>{' '}
       <DropDownToggle
         img={HarvestIcon}
-        disabled={checkList.length == 0 || account.roomIndex !== node.index}
-        onClick={(selectedKamis: Kami[]) => addKami(selectedKamis)}
-        checkList={checkList}
+        disabled={deployOptions.length == 0 || account.roomIndex !== node.index}
+        onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
+        deployOptions={deployOptions}
       />
     </Container>
   );
@@ -134,7 +133,6 @@ const Container = styled.div`
 
 const ButtonSection = styled.div`
   gap: 0.3vw;
-  margin-top: 0.3vw;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;

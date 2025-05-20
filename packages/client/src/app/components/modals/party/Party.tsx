@@ -197,7 +197,7 @@ export function registerPartyModal() {
             actions={{
               onyxApprove: approveOnyxTx,
               onyxRevive: onyxReviveTx,
-              addKami: (kamis: Kami[]) => start(kamis, node),
+              addKamis: (kamis: Kami[]) => start(kamis, node),
             }}
             data={{
               account,

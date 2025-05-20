@@ -10,13 +10,11 @@ import { Kards } from './Kards';
 import { Toolbar } from './Toolbar';
 import { Sort } from './types';
 
-export const WHALE_LIMIT = 6;
-
 interface Props {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
-    addKami: (kamis: Kami[]) => void;
+    addKamis: (kamis: Kami[]) => void;
   };
   data: {
     account: Account;
@@ -40,7 +38,7 @@ interface Props {
 
 export const KamiList = (props: Props) => {
   const { actions, data, display, state, utils } = props;
-  const { addKami } = actions;
+  const { addKamis } = actions;
   const { kamis } = data;
   const { tick } = state;
 
@@ -49,7 +47,7 @@ export const KamiList = (props: Props) => {
   const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
 
   useEffect(() => {
-    if (kamis.length <= WHALE_LIMIT) setDisplayedKamis(kamis);
+    setDisplayedKamis(kamis);
   }, [kamis]);
 
   /////////////////
@@ -60,14 +58,14 @@ export const KamiList = (props: Props) => {
       {kamis.length == 0 && (
         <EmptyText text={['Need Kamis?', 'Some have been seen in the Vending Machine.']} />
       )}
-      {kamis.length > WHALE_LIMIT && (
-        <Toolbar
-          actions={{ addKami }}
-          utils={utils}
-          data={data}
-          state={{ sort, setSort, collapsed, setCollapsed, setDisplayedKamis }}
-        />
-      )}
+
+      <Toolbar
+        actions={{ addKamis }}
+        utils={utils}
+        data={data}
+        state={{ sort, setSort, collapsed, setCollapsed, setDisplayedKamis }}
+      />
+
       <Kards
         actions={actions}
         data={data}

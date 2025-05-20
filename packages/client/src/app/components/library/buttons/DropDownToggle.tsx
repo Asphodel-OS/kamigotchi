@@ -8,7 +8,7 @@ import { IconButton } from './IconButton';
 interface Props {
   onClick: (selected: any[]) => void;
   img: string;
-  checkList: Option[];
+  deployOptions: Option[];
   disabled?: boolean;
   balance?: number;
 }
@@ -21,48 +21,38 @@ interface Option {
 }
 
 export function DropDownToggle(props: Props) {
-  const { checkList, disabled, img, balance, onClick } = props;
+  const { deployOptions, disabled, img, balance, onClick } = props;
   const [checked, setChecked] = useState<boolean[]>([]);
   const [forceClose, setForceClose] = useState(false);
 
-  const resetCheckBoxes = () => setChecked(Array(checkList.length).fill(false));
+  // necessary to properly create the checked array, this way it waits for the deployOptions to be populated
+  useEffect(() => {
+    if (checked.length !== deployOptions.length) resetCheckBoxes();
+  }, [deployOptions, checked.length]);
 
-  const toggleCheckbox = (e: React.MouseEvent, index: number) => {
+  // force close the popover if there are no options left and the checklist is in the process of being emptied
+  useEffect(() => {
+    if (deployOptions.length === 0) setForceClose(true);
+    else setForceClose(false);
+  }, [deployOptions]);
+
+  const resetCheckBoxes = () => setChecked(Array(deployOptions.length).fill(false));
+
+  const toggleOption = (e: React.MouseEvent, index: number) => {
     e.stopPropagation(); // prevent popover from closing
     setChecked((prev) => prev.map((val, i) => (i === index ? !val : val)));
   };
 
-  const toggleSelect = (e: React.MouseEvent) => {
+  const toggleAll = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent popover from closing
     const allSelected = checked.every(Boolean);
     setChecked(checked.map(() => !allSelected));
   };
 
-  // necessary to properly create the checked array, this way it waits for the checkList to be populated
-  useEffect(() => {
-    if (checked.length !== checkList.length) resetCheckBoxes();
-  }, [checkList, checked.length]);
-
-  // force close the popover if there are no options left and the checklist is in the process of being emptied
-  useEffect(() => {
-    if (checkList.length === 0) setForceClose(true);
-    else setForceClose(false);
-  }, [checkList]);
-
-  const Trigger = () => {
-    const handleTriggerClick = () => {
-      const selected = checkList.filter((_, i) => checked[i]).map((opt) => opt.object);
-      playClick();
-      onClick(selected);
-    };
-    return (
-      <IconButton
-        img={img}
-        disabled={disabled || !checked.includes(true)}
-        onClick={handleTriggerClick}
-        dropDown={'right'}
-      />
-    );
+  const handleTriggerClick = () => {
+    const selected = deployOptions.filter((_, i) => checked[i]).map((opt) => opt.object);
+    playClick();
+    onClick(selected);
   };
 
   const MenuCheckListOption = (
@@ -89,36 +79,35 @@ export function DropDownToggle(props: Props) {
     );
   };
 
-  const DropDownButton = () => {
-    return (
-      <IconButton
-        text={`${checked.filter((val) => val === true).length} Selected`}
-        width={10}
-        onClick={() => {}}
-        disabled={disabled}
-        balance={balance}
-        corner={!balance}
-        dropDown={'left'}
-      />
-    );
-  };
-
   return (
     <Container>
       <Popover
         content={[
-          MenuCheckListOption({ text: 'Select All' }, null, (e) => toggleSelect(e), true),
-          ...checkList.map((option, i) =>
-            MenuCheckListOption(option, i, (e) => toggleCheckbox(e, i), false)
+          MenuCheckListOption({ text: 'Select All' }, null, (e) => toggleAll(e), true),
+          ...deployOptions.map((option, i) =>
+            MenuCheckListOption(option, i, (e) => toggleOption(e, i), false)
           ),
         ]}
         onClose={resetCheckBoxes}
         disabled={disabled}
         forceClose={forceClose}
       >
-        {DropDownButton()}
+        <IconButton
+          text={`${checked.filter((val) => val === true).length} Selected`}
+          width={10}
+          onClick={() => {}}
+          disabled={disabled}
+          balance={balance}
+          corner={!balance}
+          dropDown={'left'}
+        />
       </Popover>
-      {Trigger()}
+      <IconButton
+        img={img}
+        disabled={disabled || !checked.includes(true)}
+        onClick={handleTriggerClick}
+        dropDown={'right'}
+      />
     </Container>
   );
 }

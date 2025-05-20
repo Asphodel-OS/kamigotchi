@@ -26,7 +26,7 @@ interface Props {
   };
   actions: {
     claim: (scavenge: ScavBar) => void;
-    addKami: (kamis: Kami[]) => void;
+    addKamis: (kamis: Kami[]) => void;
   };
   utils: {
     getAccountKamis: () => Kami[];
@@ -42,7 +42,7 @@ interface Props {
 export const Header = (props: Props) => {
   const { data, utils, actions } = props;
   const { account, node } = data;
-  const { addKami } = actions;
+  const { addKamis } = actions;
   const { getAccountKamis, getRoom, getValue } = utils;
   const { queryScavInstance } = utils;
   const { parseConditionalText, passesNodeReqs } = utils;
@@ -112,7 +112,7 @@ export const Header = (props: Props) => {
   const AddButton = (kamis: Kami[]) => {
     const options = kamis.filter((kami) => canAdd(kami));
     const actionOptions = options.map((kami) => {
-      return { text: `${kami.name}`, onClick: () => addKami(kamis) };
+      return { text: `${kami.name}`, onClick: () => addKamis(kamis) };
     });
 
     return (
