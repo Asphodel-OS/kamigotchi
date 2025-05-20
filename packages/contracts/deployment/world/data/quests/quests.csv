@@ -63,11 +63,23 @@ MSQ016,16,In Game,Identifying Materials: Metal,No,"I need to expand my capabilit
 The Scrap Metal you can find lying around might look like a bunch of tin cans, but don’t be fooled by appearances: Those cans can be made of all kinds of metal. Tin, steel, lithium, silicon, orichalcum. Could be anything.
 
 Get me 5 pieces of Scrap Metal please. Hopefully I luck out and get what I need!",Complete MSQ015,Give 5 Scrap Metal,4x Agency Reputation
+MSQ017,17,To Deploy,Exploring Other Options,No,"Thank you for the help with that upgrade. I’ve gotten access to more information. Checking databases against each other has led me to discover this world is bigger than it seems! I know we’ll get into the labs one day, but there are even more sealed-off places to find here. Once I know where they are, I can help open them up.
+
+Please move around the world 100 times. I’ll collect data as you go. We’ll find these hidden paths together.",Complete MSQ016,Move 100 times,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MSQ018,18,To Deploy,Harvesting Data I,No,"I suspect something is buried behind all that scrap. Please hike to the deepest part of the scrapyard and dig through it for me. All that strange machinery piled up in the Scrap Confluence might be covering up something even more interesting.
+
+Harvest for at least 12 hours in the Scrap Confluence so I can run an extended analysis. If we find anything interesting, I’ll let you know through a future quest.",Complete MSQ017,Harvest for >720 minutes in Scrap Confluence,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card"
+MSQ019,19,To Deploy,Harvesting Data II,No,"Those labs should be open by now. I’m starting to believe a malicious actor is blocking our access! Get over there and plug into the Node so I can run some tests.
+
+Harvest for at least 12 hours at the Labs Entrance while I put my mind to this. Even if we can’t brute force the doors open right away, I’m sure we can find out where the event flag is hiding. If not… We need another plan. ",Complete MSQ018,Harvest for >720 minutes at Labs Entrance,"4x Agency Reputation,2x “Paeon’s Field of Flowers” Spell Card"
+MSQ020,20,To Deploy,Harvesting Data III,No,"It took a lot of work, but I finally found something! It looks like the Labs Entrance has an event flag hidden somewhere past the Temple by the Waterfall. How are we going to access it to open those doors? I don’t know yet. 
+
+Go the nearest Node by the temple on the Hollow Path and Harvest for at least 12 hours. I’ll run my tests from there. We’ll find some answers soon. ","Complete MSQ019,Complete SQ007",Harvest for >720 minutes at the Hollow Path,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card,1x “Melkarth’s Heroic Awakening” Spell Card"
 MIN001,2001,In Game,Grand Opening,No,"Hello, whoever you are. Is this how you receive your letters? Functional, though inelegant.
 
 Are you hungry? Tired? $MUSU burning a hole in your pocket? Bring your wallet to the Tunnel of Trees and knock on the blue door. I sell treats for you and your Kami. If you need Stamina to keep moving, if your pets have gotten low on Health, or even if the poor things have fallen apart and need a Revive, my shop is open.
 
-— Mina",Complete MSQ007,Enter Mina's Shop,2 Elders Loyalty
+— Mina",Complete MSQ007,Enter Mina's Shop,2x Elders Loyalty
 MIN002,2002,In Game,Customer Loyalty Program,No,"I want you to be a repeat customer. If you trade enough $MUSU with me, I’ll give you something special. I don’t care how you get it. Bring me more and I’ll be happy.
 
 — Mina",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ""Neith’s River of Life"" Spell Card"
@@ -75,12 +87,12 @@ MIN003,2003,In Game,Early Market Research - I,No,"Relics and mementos from the p
 
  Get me five pieces of Scrap Metal. I want to perform psychometry.
 
-— Mina",Complete MIN002,Give 5 Scrap Metal,"2 Elders Loyalty,1x “Cultivation II” Spell Card"
+— Mina",Complete MIN002,Give 5 Scrap Metal,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
 MIN004,2004,In Game,Early Market Research - II,No,"Deep in the forest, there is a mound built over some ancient, stagnant defilement. The crawling insects thrive and grow more violent in filthy places like that. Whatever happened in the past to corrupt that place, those feelings linger.
 
 Go harvest at the Insect Node until you get a feel for it.
 
-— Mina",Complete MIN003,Harvest for >720 minutes in Forest: Insect Node,"2 Elders Loyalty,2 “Cultivation I” Spell Card"
+— Mina",Complete MIN003,Harvest for >720 minutes in Forest: Insect Node,"2x Elders Loyalty,2 “Cultivation I” Spell Card"
 MIN005,2005,In Game,Early Market Research - III,No,"The graves across this landscape are quite old and buried under heaps of garbage, yet their $MUSU has no scent of defilement. A strange phenomenon. Are they buried saints? Were they interred as some kind of builder’s rite for a stronger spiritual foundation? I suppose this is a mystery for later.
 
 Go get a sense of what I mean. Harvest at the graves until you understand.
@@ -90,10 +102,42 @@ MIN006,2006,In Game,Community Outreach,No,"With all this garbage everywhere, I e
 
 Go harvest $MUSU from its location. Maybe it will start to feel chatty.
 
-— Mina",Complete MIN005,Harvest for >720 minutes at the Lost Skeleton During Moonside,"2 Elders Loyalty,1x “Cultivation II” Spell Card"
+— Mina",Complete MIN005,Harvest for >720 minutes at the Lost Skeleton During Moonside,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
 MIN007,2007,In Game,Restocking,No,"I've had so many new customers these days. Help me restock my spiritual goods. The flowers of death can be made into delicious treats for Kami and other beings. Collect a few and give them to me. 
 
 Raw materials can be broken down into ingredients for hexerei. One can craft potions, poultices, and other things if one knows the methods. I’m selling something in my shop to help you along with this: a device to break down ingredients for yourself. I won’t be doing it for you again.
 
-— Mina",Complete MIN006,"Give 5 Plastic Bottle,Give 5 Pine Cone","2 Elders Loyalty,2x “Cultivation III” Spell Card"
+— Mina",Complete MIN006,"Give 5 Plastic Bottle,Give 5 Pine Cone","2x Elders Loyalty,2x “Cultivation III” Spell Card"
+SQ001,3001,To Deploy,Rejecting Fate,No,"All Kamigotchi can succeed, from the Commons to the Epics. When raising a Kami, take advantage of their strengths. Build on the foundation of their initial stats. Choose skills that boost what your Kami is already best at before shoring up weaknesses.
+
+If you would prefer to raise a different Kami entirely, the option is available. It might be the case that you love robots and want a team of Scrap Kami. Maybe you’re a dark, edgy person, so you want Kami that are inclined to maximum violence. It could even be that you’re searching for one of the rumored Legendary Kami.
+
+If you have $ONYX, you can use the Vending Machine in the scrapyard to Reroll a Kamigotchi. After you purchase a Reroll Ticket, you can use it to return one Kami to the pool. In exchange, a new Kami will emerge to join you. ",Complete MSQ003,Reroll one Kamigotchi,2x Agency Reputation
+SQ002,3002,To Deploy,Health & Safety,No,"While Kami don’t see Harvesting as labor, they still get tired and lose Health. Kamigotchi hold their bodies together with spiritual energy. As they expend energy, it gets harder to maintain their form. Low Health doesn’t mean a Kami is physically hurt, but it’s still a problem you should take care of.
+
+When your Kami gets low on Health, return to the room where you left it, then use the Harvesting Menu to pick it up. A Kami will slowly regenerate Health on its own while being held. If you can’t wait, give your Kami a snack or use a Spell Card to restore health. Kamigotchi don’t need food to live, but they can draw energy from food to bolster their spirit.
+
+Use an item to heal a Kami and complete this quest. If you already used the Spell Card that I gave you, go buy some food or dig up a Cheeseburger. ",Complete MSQ004,Use an item to heal a Kamigotchi that has been reduced below 100% Health,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+SQ003,3003,To Deploy,There Are Levels to This,No,"Unlike humans, Kamigotchi have the potential to grow and change by using xenoplasticity, or “XP” for short. This means that they can assimilate many different things to form a new cohesive whole.
+
+Take a look at your roster. You can see a green progress bar with a percentage indicator beneath the portrait of each Kami. When one is ready to move to the next level, the bar will be full and read 100%. Just level up a Kami and you’ll be done. Take note of your new skill point and hold onto it for the next quest.
+
+When you complete this, I’ll give you a small reward to help encourage the process.",Complete MSQ005,Level up a Kami,"2x Agency Reputation,1x “Cultivation I” Spell Card"
+SQ004,3004,To Deploy,Skill Issue,No,"When you spend Skill Points to tell Kami what to focus on, you shape their personalities and temperaments. Think hard before you make a choice! You’ll only be able to respec with specific items that are difficult to acquire. This is a commitment.
+
+Click on a Kami that leveled up and gained a skill point recently and look over the skill tree. Remember, you can’t go wrong by improving what your Kami is already good at. Take your time, but don’t forget to pick something. ",Complete SQ003,Spend a point in any Skill Tree after levelling up,2x Agency Reputation
+SQ005,3005,To Deploy,Spring Rites,No,"I see one of your Kami got Liquidated. That sucks! Of course, that’s just a temporary condition. Usually in this world it’s possible to return to form no matter what happens. The essence of something remains unless it’s been totally erased from existence.
+
+Take this and use it on a Kami that has been Liquidated. Just read the incantation printed on the front, and presto! This powerful spell card brings your Kami back to action. 
+
+It’s the only freebie I’m allowed to give you. You’ll have to work for more spell cards like this one. Certain shopkeepers might sell different kinds of revival magic, but these cards are premium SSR.",Have one of your own Kami liquidated,,"2x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
+SQ006,3006,To Deploy,What’s In a Name?,No,"Southeast through the old forest you can find a small shrine by a mountain waterfall. That area was cultivated for spiritual power. With the rare Holy Dust item, you can perform a ritual there to grant your Kami a name.
+
+If you don’t have Holy Dust, a small donation of $ONYX to the shrine will suffice!",Complete MSQ008,Name a Kami,2x Agency Reputation
+SQ007,3007,To Deploy,Land Survey,No,"Your march helped find an interesting anomaly, but I’m positive something else is hidden around here. I’ve checked and re-checked more times than you’d care to hear about. Something still doesn’t line up! It’s going to take a lot of legwork to figure this one out.
+
+Move 500 times. I’ll be going over everything again with a fine-tooth comb. We’re bound to find something by the end.",Complete MSQ017,Move 500 times,"2x Agency Reputation,2x “Neith’s River of Life” Spell Card"
+SQ008,3008,To Deploy,Peregrination,No,"They say measure twice, cut once, but that still means taking a risk. Best to measure a thousand times for the most accurate data. Sometimes the numbers might have changed.
+
+Even if you’ve already found something interesting, please move 1000 times more. Cover every inch of this world. I’ll scan as you go. We need to be sure.",Complete SQ007,Move 1000 times,"4x Agency Reputation,3x “Neith’s River of Life” Spell Card"
 TempQ01,10001,Defunct,mina test drop,No,,Missed Mina,,"25 Gum,10 Revives"

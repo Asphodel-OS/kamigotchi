@@ -1,29 +1,40 @@
-﻿.,Description,Operator,DeltaType,Type,Index,Value
-,Harvest for >720 minutes in Forest: Insect Node,MIN,INC,HARVEST_TIME,10,43200
-,Harvest for >720 minutes on Trash-Strewn Graves,MIN,INC,HARVEST_TIME,26,43200
+﻿Quest(s),Description,Operator,DeltaType,Type,Index,Value
+Harvesting Data II (https://www.notion.so/Harvesting-Data-II-1f50220c3884807e899dc13dc4cc22bb?pvs=21),Harvest for >720 minutes at Labs Entrance,MIN,INC,HARVEST_TIME,6,43200
+Early Market Research - II (https://www.notion.so/Early-Market-Research-II-1ed0220c3884808aada0ec9deca674a1?pvs=21),Harvest for >720 minutes in Forest: Insect Node,MIN,INC,HARVEST_TIME,10,43200
+Harvesting Data I (https://www.notion.so/Harvesting-Data-I-1f50220c3884808b917def034ee3a757?pvs=21),Harvest for >720 minutes in Scrap Confluence,MIN,INC,HARVEST_TIME,12,43200
+Early Market Research - III (https://www.notion.so/Early-Market-Research-III-1ed0220c388480cf8084dc6ec09d3ff1?pvs=21),Harvest for >720 minutes on Trash-Strewn Graves,MIN,INC,HARVEST_TIME,26,43200
+Harvesting Data III (https://www.notion.so/Harvesting-Data-III-1f50220c388480b090addebaf6370457?pvs=21),Harvest for >720 minutes at the Hollow Path,MIN,INC,HARVEST_TIME,37,43200
 ,Harvest 1 minute,MIN,INC,HARVEST_TIME,,60
-,Harvest for >5 minutes,MIN,INC,HARVEST_TIME,,300
-,Harvest for >720 minutes at the Lost Skeleton During Moonside,MIN,INC,HARVEST_TIME_MOONSIDE,25,43200
+What Kami Do: Harvesting (https://www.notion.so/What-Kami-Do-Harvesting-1b40220c38848196bc50d7db31950f30?pvs=21),Harvest for >5 minutes,MIN,INC,HARVEST_TIME,,300
+Community Outreach (https://www.notion.so/Community-Outreach-1ed0220c388480feac27d32b388aafa2?pvs=21),Harvest for >720 minutes at the Lost Skeleton During Moonside,MIN,INC,HARVEST_TIME_MOONSIDE,25,43200
 ,Give 10 MUSU,MIN,INC,ITEM_BURN,1,10
-,Give 5 Wooden Sticks,MIN,INC,ITEM_BURN,1001,5
-,Give 5 Stone,MIN,INC,ITEM_BURN,1002,5
-,Give 5 Plastic Bottle,MIN,INC,ITEM_BURN,1003,5
-,Give 5 Pine Cone,MIN,INC,ITEM_BURN,1004,5
-,Give 3 Scrap Metal,MIN,INC,ITEM_BURN,1005,3
-,Give 5 Scrap Metal,MIN,INC,ITEM_BURN,1005,5
+Identifying Materials: Wood (https://www.notion.so/Identifying-Materials-Wood-1bd0220c388480b791b8f79a364c8b91?pvs=21),Give 5 Wooden Sticks,MIN,INC,ITEM_BURN,1001,5
+Identifying Materials: Stone (https://www.notion.so/Identifying-Materials-Stone-1bd0220c388480158ca5f637b0731548?pvs=21),Give 5 Stone,MIN,INC,ITEM_BURN,1002,5
+Restocking (https://www.notion.so/Restocking-1ed0220c3884807fb7acf9335fd0634b?pvs=21),Give 5 Plastic Bottle,MIN,INC,ITEM_BURN,1003,5
+Restocking (https://www.notion.so/Restocking-1ed0220c3884807fb7acf9335fd0634b?pvs=21),Give 5 Pine Cone,MIN,INC,ITEM_BURN,1004,5
+Building a Reputation (https://www.notion.so/Building-a-Reputation-1bd0220c388480fb93d9c96b8302ed18?pvs=21),Give 3 Scrap Metal,MIN,INC,ITEM_BURN,1005,3
+"Identifying Materials: Metal (https://www.notion.so/Identifying-Materials-Metal-1bd0220c388480b685def8340f765187?pvs=21), Early Market Research - I (https://www.notion.so/Early-Market-Research-I-1ed0220c3884809d8288ebbd0935f087?pvs=21)",Give 5 Scrap Metal,MIN,INC,ITEM_BURN,1005,5
 ,Give 1 Mint,MIN,INC,ITEM_BURN,1012,1
-,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
-,Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
-,Spend 1000 $MUSU at Mina’s Shop,MIN,INC,ITEM_SPEND,1,1000
-,Own 1 Kamigotchi,MIN,CURR,KAMI_NUM_OWNED,,1
-,Liquidate another Kamigotchi,MIN,INC,LIQUIDATE_TOTAL,,1
+Supporting Local Businesses (https://www.notion.so/Supporting-Local-Businesses-1bd0220c3884800d8158d46f3d74c51c?pvs=21),Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
+Making $MUSU (https://www.notion.so/Making-MUSU-1bd0220c38848022b6afe716badae382?pvs=21),Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
+Customer Loyalty Program (https://www.notion.so/Customer-Loyalty-Program-1ed0220c388480988b34f2c5511f752c?pvs=21),Spend 1000 $MUSU at Mina’s Shop,MIN,INC,ITEM_SPEND,1,1000
+Rejecting Fate (https://www.notion.so/Rejecting-Fate-1f50220c388480379704f774c3e507cc?pvs=21),Reroll one Kamigotchi,MIN,INC,KAMI_GACHA_REROLL,,1
+Health & Safety (https://www.notion.so/Health-Safety-1f50220c388480449bdac283c6011586?pvs=21),Use an item to heal a Kamigotchi that has been reduced below 100% Health,MIN,INC,KAMI_ITEM_USE,,1
+There Are Levels to This (https://www.notion.so/There-Are-Levels-to-This-1f50220c388480ada63eeaeaff7e0c2d?pvs=21),Level up a Kami,MIN,CURR,KAMI_LEVELS_TOTAL,,1
+What’s In a Name? (https://www.notion.so/What-s-In-a-Name-1f50220c3884807abd3eec92afcfdf27?pvs=21),Name a Kami,MIN,INC,KAMI_NAME,,1
+Your First Kami (https://www.notion.so/Your-First-Kami-1b40220c38848144a371c5d4b5def4a1?pvs=21),Own 1 Kamigotchi,MIN,CURR,KAMI_NUM_OWNED,,1
+What Kami Do: Liquidating (https://www.notion.so/What-Kami-Do-Liquidating-1b40220c38848193a971febbd619fd20?pvs=21),Liquidate another Kamigotchi,MIN,INC,LIQUIDATE_TOTAL,,1
 ,Have your Kami Liquidated,MIN,,LIQUIDATED_VICTIM,,1
-,Move 3 Times,MIN,INC,MOVE,,3
-,Move 7 Times,MIN,INC,MOVE,,
+Beginning Your Journey (https://www.notion.so/Beginning-Your-Journey-1b40220c388481fa87dec9dbc9ca7ef3?pvs=21),Move 3 Times,MIN,INC,MOVE,,3
+,Move 7 Times,MIN,INC,MOVE,,7
+Exploring Other Options (https://www.notion.so/Exploring-Other-Options-1f50220c38848019856ccf7e02c85199?pvs=21),Move 100 times,MIN,INC,MOVE,,100
+Land Survey (https://www.notion.so/Land-Survey-1f50220c38848014bab7e5256bb50151?pvs=21),Move 500 times,MIN,INC,MOVE,,500
+Peregrination (https://www.notion.so/Peregrination-1f50220c388480de8eabf8042b8fa71d?pvs=21),Move 1000 times,MIN,INC,MOVE,,1000
 ,During Moonside,IS,BOOL,PHASE,,
-,Enter Mina's Shop,IS,BOOL,ROOM,13,
-,Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
-,Make a Scavenging roll in 3 rooms of the Scrap type,MIN,INC,SCAV_CLAIM_AFFINITY_SCRAP,,3
-,Make a Scavenging roll in 3 rooms of the Insect type,MIN,INC,SCAV_CLAIM_AFFINITY_INSECT,,3
-,Make a Scavenging roll in 3 rooms of the Eerie type,MIN,INC,SCAV_CLAIM_AFFINITY_EERIE,,3
-,Make a Scavenging roll in 3 rooms of the Normal type,MIN,INC,SCAV_CLAIM_AFFINITY_NORMAL,,3
+Grand Opening (https://www.notion.so/Grand-Opening-1bd0220c3884808dad2cec1351b5f14b?pvs=21),Enter Mina's Shop,IS,BOOL,ROOM,13,
+What Kami Do: Scavenging (https://www.notion.so/What-Kami-Do-Scavenging-1b40220c388481ada107c40f82626ac6?pvs=21),Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
+Skill Issue (https://www.notion.so/Skill-Issue-1f50220c38848043abcff33d30dff382?pvs=21),Spend a point in any Skill Tree after levelling up,MIN,CURR,SKILL_POINTS_USE,,1
+Kamigotchi World and You: Tossed in the Scrap Heap (https://www.notion.so/Kamigotchi-World-and-You-Tossed-in-the-Scrap-Heap-1bd0220c388480188690c1c8fb55f64d?pvs=21),Make a Scavenging roll in 3 rooms of the Scrap type,MIN,INC,SCAV_CLAIM_AFFINITY_SCRAP,,3
+Kamigotchi World and You: Insects in the Miasma (https://www.notion.so/Kamigotchi-World-and-You-Insects-in-the-Miasma-1bd0220c3884806bb039dd3f8e2c4719?pvs=21),Make a Scavenging roll in 3 rooms of the Insect type,MIN,INC,SCAV_CLAIM_AFFINITY_INSECT,,3
+Kamigotchi World and You: That Eerie Feeling (https://www.notion.so/Kamigotchi-World-and-You-That-Eerie-Feeling-1bd0220c388480729a26cbde60ea46ed?pvs=21),Make a Scavenging roll in 3 rooms of the Eerie type,MIN,INC,SCAV_CLAIM_AFFINITY_EERIE,,3
+Kamigotchi World and You: Having a Normal One (https://www.notion.so/Kamigotchi-World-and-You-Having-a-Normal-One-1bd0220c3884800e8f2fcf58088ed906?pvs=21),Make a Scavenging roll in 3 rooms of the Normal type,MIN,INC,SCAV_CLAIM_AFFINITY_NORMAL,,3

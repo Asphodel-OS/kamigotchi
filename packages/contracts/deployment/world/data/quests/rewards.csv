@@ -1,17 +1,20 @@
 ﻿.,Description,Type,Index,Value
 ,10 Revives,ITEM,11001,10
+,1x “Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
 ,1x XP Candy (Small),ITEM,11201,1
-,1x Xp Candy (Medium),ITEM,11202,1
+,1x XP Candy (Medium),ITEM,11202,1
 ,1x “Cultivation I” Spell Card,ITEM,11211,1
 ,2 “Cultivation I” Spell Card,ITEM,11211,2
 ,1x “Cultivation II” Spell Card,ITEM,11212,1
 ,2x “Cultivation III” Spell Card,ITEM,11213,2
 ,25 Gum,ITEM,11301,25
 ,1x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,1
+,2x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,2
 ,"1x ""Neith’s River of Life"" Spell Card",ITEM,21204,1
 ,2x “Neith’s River of Life” Spell Card,ITEM,21204,2
+,3x “Neith’s River of Life” Spell Card,ITEM,21204,3
 ,2x Agency Reputation,REPUTATION,1,2
 ,4x Agency Reputation,REPUTATION,1,4
 ,6x Agency Reputation,REPUTATION,1,6
-,2 Elders Loyalty,REPUTATION,2,2
+,2x Elders Loyalty,REPUTATION,2,2
 ,4x Elders Loyalty,REPUTATION,2,4
