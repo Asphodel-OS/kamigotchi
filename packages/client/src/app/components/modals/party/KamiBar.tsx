@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { calcHarvestAverageRate, getHarvestItem } from 'app/cache/harvest';
+import { getHarvestItem } from 'app/cache/harvest';
 import {
   calcHealth,
   calcOutput,
@@ -12,7 +12,7 @@ import {
   isResting,
 } from 'app/cache/kami';
 import { calcHealTime, calcIdleTime } from 'app/cache/kami/calcs/base';
-import { Text, Tooltip } from 'app/components/library';
+import { Overlay, Text, Tooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
 import { AffinityIcons } from 'constants/affinities';
@@ -114,7 +114,7 @@ export const KamiBar = (props: Props) => {
     if (isHarvesting(kami) && kami.harvest) {
       const harvest = kami.harvest;
       const spotRate = getRateDisplay(harvest.rates.total.spot, 2);
-      const avgRate = getRateDisplay(calcHarvestAverageRate(harvest), 1);
+      const avgRate = getRateDisplay(harvest.rates.total.average, 2);
       const item = getHarvestItem(harvest);
       const node = harvest.node ?? NullNode;
 
@@ -154,10 +154,15 @@ export const KamiBar = (props: Props) => {
         </Tooltip>
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
+        <Overlay bottom={0.09} right={0.15} passthrough>
+          <Text size={0.6}>{calcHealthPercent().toFixed(0)}%</Text>
+        </Overlay>
         <Tooltip text={getTooltip(kami)} direction='row'>
           <Text size={0.9}>{kami.state}</Text>
-          <Text size={0.9}>({calcHealthPercent().toFixed(0)}%)</Text>
         </Tooltip>
+        <Overlay top={0.21} left={0.15} passthrough>
+          <Text size={0.6}>{calcOutput(kami)}</Text>
+        </Overlay>
       </Middle>
       <Actions>
         <Cooldown kami={kami} />
@@ -204,6 +209,7 @@ interface MiddleProps {
   color: string;
 }
 const Middle = styled.div<MiddleProps>`
+  position: relative;
   height: 3vw;
   border-right: solid black 0.15vw;
   border-left: solid black 0.15vw;

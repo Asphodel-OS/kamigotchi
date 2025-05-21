@@ -49,10 +49,10 @@ export function registerPartyModal() {
           const kamiRefreshOptions = {
             live: 0,
             bonuses: 5, // set this to 3600 once we get explicit triggers for updates
-            config: 3600,
-            flags: 10, // set this to 3600 once we get explicit triggers for updates
             harvest: 5, // set this to 60 once we get explicit triggers for updates
             skills: 5, // set this to 3600 once we get explicit triggers for updates
+            flags: 10, // set this to 3600 once we get explicit triggers for updates
+            config: 3600,
             stats: 3600,
             traits: 3600,
           };
@@ -95,7 +95,7 @@ export function registerPartyModal() {
       const [account, setAccount] = useState<Account>(NullAccount);
       const [kamis, setKamis] = useState<Kami[]>([]);
       const [node, setNode] = useState<Node>(NullNode); // node of the current room
-      const [sort, setSort] = useState<Sort>('index');
+      const [sort, setSort] = useState<Sort>('state');
       const [tick, setTick] = useState(Date.now());
       const [view, setView] = useState<View>('expanded');
 

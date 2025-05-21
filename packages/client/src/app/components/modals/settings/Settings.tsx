@@ -55,7 +55,7 @@ export function registerSettingsModal() {
           params: [],
           description: 'Syncing account kamis',
           execute: async () => {
-            return api.player.echo.kami();
+            return api.player.echo.kamis();
           },
         });
       };
