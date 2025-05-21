@@ -195,21 +195,19 @@ export function registerPartyModal() {
         <ModalWrapper
           id='party'
           header={<ModalHeader title='Party' icon={KamiIcon} />}
-          footer={
-            <Toolbar
-              actions={{
-                addKamis: (kamis: Kami[]) => start(kamis, node),
-              }}
-              controls={{ sort, setSort, view, setView }}
-              data={{ kamis }}
-              state={{ displayedKamis, setDisplayedKamis, tick }}
-              utils={utils}
-            />
-          }
           canExit
           truncate
           noPadding
         >
+          <Toolbar
+            actions={{
+              addKamis: (kamis: Kami[]) => start(kamis, node),
+            }}
+            controls={{ sort, setSort, view, setView }}
+            data={{ kamis }}
+            state={{ displayedKamis, setDisplayedKamis, tick }}
+            utils={utils}
+          />
           <KamiList
             actions={{
               onyxApprove: approveOnyxTx,

@@ -116,16 +116,16 @@ export const Toolbar = (props: Props) => {
 const Container = styled.div`
   padding: 0.6vw;
   z-index: 1;
-
+  position: sticky;
+  top: 0;
   opacity: 0.9;
   width: 100%;
-
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-
   user-select: none;
+  background-color: rgb(238, 238, 238);
 `;
 
 const Section = styled.div`
