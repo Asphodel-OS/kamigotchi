@@ -200,14 +200,9 @@ export function registerPartyModal() {
               actions={{
                 addKamis: (kamis: Kami[]) => start(kamis, node),
               }}
-              controls={{
-                sort,
-                setSort,
-                view,
-                setView,
-              }}
+              controls={{ sort, setSort, view, setView }}
               data={{ kamis }}
-              state={{ setDisplayedKamis, tick }}
+              state={{ displayedKamis, setDisplayedKamis, tick }}
               utils={utils}
             />
           }
@@ -221,10 +216,7 @@ export function registerPartyModal() {
               onyxRevive: onyxReviveTx,
               addKamis: (kamis: Kami[]) => start(kamis, node),
             }}
-            controls={{
-              sort,
-              view,
-            }}
+            controls={{ view }}
             data={{
               account,
               kamis,

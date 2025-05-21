@@ -26,6 +26,7 @@ interface Props {
     kamis: Kami[];
   };
   state: {
+    displayedKamis: Kami[];
     setDisplayedKamis: Dispatch<Kami[]>;
     tick: number;
   };
@@ -37,7 +38,7 @@ export const Toolbar = (props: Props) => {
   const { addKamis } = actions;
   const { sort, setSort, view, setView } = controls;
   const { kamis } = data;
-  const { tick, setDisplayedKamis } = state;
+  const { tick, displayedKamis, setDisplayedKamis } = state;
   const { passesNodeReqs } = utils;
   const { modals } = useVisibility();
 
@@ -46,7 +47,7 @@ export const Toolbar = (props: Props) => {
   };
 
   // TODO: be more explicit about when/how the deployOptions gets updated
-  const deployOptions = kamis
+  const DeployOptions = displayedKamis
     .filter((kami) => canAdd(kami))
     .map((kami) => ({
       text: kami.name,
@@ -54,7 +55,7 @@ export const Toolbar = (props: Props) => {
     }));
 
   // memoized sort options
-  const sortOptions = useMemo(
+  const SortOptions = useMemo(
     () =>
       Object.entries(SortIcons).map(([key, image]) => ({
         text: key,
@@ -99,13 +100,13 @@ export const Toolbar = (props: Props) => {
           onClick={() => setView(view === 'collapsed' ? 'expanded' : 'collapsed')}
           radius={0.6}
         />
-        <IconListButton img={SortIcons[sort]} text={sort} options={sortOptions} radius={0.6} />{' '}
+        <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
       <DropDownToggle
         img={HarvestIcon}
-        disabled={deployOptions.length == 0}
+        disabled={DeployOptions.length == 0}
         onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
-        deployOptions={deployOptions}
+        deployOptions={DeployOptions}
         radius={0.6}
       />
     </Container>

@@ -6,13 +6,16 @@ import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 import { KamiBars } from './KamiBars';
 import { Kards } from './Kards';
-import { Sort, View } from './types';
+import { View } from './types';
 
 interface Props {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
     addKamis: (kamis: Kami[]) => void;
+  };
+  controls: {
+    view: View;
   };
   data: {
     account: Account;
@@ -22,10 +25,6 @@ interface Props {
       allowance: number;
       balance: number;
     };
-  };
-  controls: {
-    sort: Sort;
-    view: View;
   };
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
@@ -40,7 +39,7 @@ interface Props {
 export const KamiList = (props: Props) => {
   const { actions, controls, data, display, state } = props;
   const { kamis } = data;
-  const { sort, view } = controls;
+  const { view } = controls;
   const { displayedKamis, tick } = state;
 
   /////////////////

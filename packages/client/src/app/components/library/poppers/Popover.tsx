@@ -7,12 +7,9 @@ interface Props {
   cursor?: string;
   mouseButton?: 0 | 2;
   closeOnClick?: boolean;
-  // execute a function when the popover closes
-  onClose?: () => void;
-  // forceclose the popover
-  forceClose?: boolean;
-  // disable the popover
-  disabled?: boolean;
+  onClose?: () => void; // execute a function when the popover closes
+  forceClose?: boolean; // forceclose the popover
+  disabled?: boolean; // disable the popover
 }
 
 export const Popover = (props: Props) => {

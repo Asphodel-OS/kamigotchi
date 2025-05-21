@@ -90,7 +90,6 @@ export function DropDownToggle(props: Props) {
             MenuCheckListOption(option, i, (e) => toggleOption(e, i), false)
           ),
         ]}
-        onClose={resetCheckBoxes}
         disabled={disabled}
         forceClose={forceClose}
       >
