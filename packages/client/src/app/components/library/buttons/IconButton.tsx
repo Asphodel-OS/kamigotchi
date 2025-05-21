@@ -21,7 +21,7 @@ interface Props {
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
   shadow?: boolean;
-  dropDown?: `left` | `right`;
+  flatten?: `left` | `right`; // flattens a side, for use with dropdowns
 }
 
 // ActionButton is a text button that triggers an Action when clicked
@@ -30,7 +30,7 @@ export const IconButton = forwardRef(function IconButton(
   ref: ForwardedRef<HTMLButtonElement>
 ) {
   const { img, onClick, text, disabled } = props;
-  const { color, fullWidth, pulse, shadow, width, dropDown } = props; // general styling
+  const { color, fullWidth, pulse, shadow, width, flatten } = props; // general styling
   const { balance, corner } = props; // IconListButton options
   const { cornerAlt } = props; // open page in new tab indicator
 
@@ -68,7 +68,7 @@ export const IconButton = forwardRef(function IconButton(
       pulse={pulse}
       shadow={shadow}
       ref={ref}
-      dropDown={dropDown}
+      flatten={flatten}
     >
       {MyImage()}
       {text && (
@@ -77,7 +77,7 @@ export const IconButton = forwardRef(function IconButton(
         </Text>
       )}
       {balance && <Balance>{balance}</Balance>}
-      {corner && <Corner radius={radius - 0.15} orientation={scaleOrientation} />}
+      {corner && <Corner radius={radius - 0.15} orientation={scaleOrientation} flatten={flatten} />}
       {cornerAlt && <CornerAlt radius={radius - 0.15} orientation={scaleOrientation} />}
     </Container>
   );
@@ -92,7 +92,7 @@ interface ContainerProps {
   fullWidth?: boolean;
   disabled?: boolean;
   pulse?: boolean;
-  dropDown?: `left` | `right`;
+  flatten?: `left` | `right`;
   shadow?: boolean;
 }
 
@@ -115,12 +115,12 @@ const Container = styled.button<ContainerProps>`
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   user-select: none;
-  ${({ dropDown }) =>
-    dropDown === `left`
+  ${({ flatten }) =>
+    flatten === `right`
       ? ` border-top-right-radius: 0;
       border-bottom-right-radius: 0;
   `
-      : dropDown === `right` &&
+      : flatten === `left` &&
         ` border-top-left-radius: 0;
       border-bottom-left-radius: 0;
   `}
@@ -132,7 +132,7 @@ const Container = styled.button<ContainerProps>`
     animation: ${() => clickFx()} 0.3s;
   }
 
-  animation: ${({ pulse }) => pulse && pulseFx} 2.5s ease-in-out infinite;
+  ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
 `;
 
 const Image = styled.img<{ scale: number; orientation: string }>`
@@ -146,10 +146,11 @@ const Text = styled.div<{ scale: number; orientation: string }>`
   font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
 `;
 
-const Corner = styled.div<{ radius: number; orientation: string }>`
+// TODO: get this scaling correctly with parent hover
+const Corner = styled.div<{ radius: number; orientation: string; flatten?: string }>`
   position: absolute;
   border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
-  border-radius: 0 0 ${({ radius }) => radius - 0.15}${({ orientation }) => orientation} 0;
+  border-bottom-right-radius: ${({ radius, flatten }) => (flatten === 'right' ? 0 : radius - 0.15)}${({ orientation }) => orientation};
   border-color: transparent black black transparent;
   bottom: 0;
   right: 0;
@@ -157,10 +158,11 @@ const Corner = styled.div<{ radius: number; orientation: string }>`
   height: 0;
 `;
 
+// TODO: get this scaling correctly with parent hover
 const CornerAlt = styled.div<{ radius: number; orientation: string }>`
   position: absolute;
   border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
-  border-radius: 0 ${({ radius }) => radius - 0.15}${({ orientation }) => orientation} 0 0;
+  border-top-right-radius: ${({ radius }) => radius - 0.15}${({ orientation }) => orientation};
   border-color: black black transparent transparent;
   top: 0;
   right: 0;

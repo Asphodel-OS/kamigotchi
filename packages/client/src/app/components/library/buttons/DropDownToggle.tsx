@@ -11,6 +11,7 @@ interface Props {
   deployOptions: Option[];
   disabled?: boolean;
   balance?: number;
+  radius?: number;
 }
 
 interface Option {
@@ -21,7 +22,8 @@ interface Option {
 }
 
 export function DropDownToggle(props: Props) {
-  const { deployOptions, disabled, img, balance, onClick } = props;
+  const { deployOptions, img, onClick } = props;
+  const { balance, disabled, radius } = props;
   const [checked, setChecked] = useState<boolean[]>([]);
   const [forceClose, setForceClose] = useState(false);
 
@@ -99,14 +101,16 @@ export function DropDownToggle(props: Props) {
           disabled={disabled}
           balance={balance}
           corner={!balance}
-          dropDown={'left'}
+          flatten={'right'}
+          radius={radius ?? 0.45}
         />
       </Popover>
       <IconButton
         img={img}
         disabled={disabled || !checked.includes(true)}
         onClick={handleTriggerClick}
-        dropDown={'right'}
+        flatten={'left'}
+        radius={radius ?? 0.45}
       />
     </Container>
   );
