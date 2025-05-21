@@ -17,6 +17,8 @@ import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
 import { KamiList } from './KamiList';
+import { Toolbar } from './Toolbar';
+import { Sort, View } from './types';
 
 const REFRESH_INTERVAL = 1000;
 
@@ -82,7 +84,7 @@ export function registerPartyModal() {
 
     // Render
     ({ network, display, data, utils }) => {
-      const { world, components, actions, api } = network;
+      const { actions, api } = network;
       const { accountEntity, spender } = data;
       const { getAccount, getItem, getKamis, getNode, passesNodeReqs } = utils;
 
@@ -93,8 +95,11 @@ export function registerPartyModal() {
       const [account, setAccount] = useState<Account>(NullAccount);
       const [kamis, setKamis] = useState<Kami[]>([]);
       const [node, setNode] = useState<Node>(NullNode); // node of the current room
+      const [sort, setSort] = useState<Sort>('index');
       const [tick, setTick] = useState(Date.now());
+      const [view, setView] = useState<View>('expanded');
 
+      const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
       const [onyxItem, setOnyxItem] = useState<Item>(NullItem);
       const [onyxInfo, setOnyxInfo] = useState<BalPair>({ allowance: 0, balance: 0 });
 
@@ -112,6 +117,7 @@ export function registerPartyModal() {
         return () => clearInterval(timerId);
       }, []);
 
+      // update onyx info every tick or if the connnected account changes
       useEffect(() => {
         const onyxInfo = tokenBals.get(onyxItem.address!);
         setOnyxInfo(onyxInfo ?? { allowance: 0, balance: 0 });
@@ -189,6 +195,22 @@ export function registerPartyModal() {
         <ModalWrapper
           id='party'
           header={<ModalHeader title='Party' icon={KamiIcon} />}
+          footer={
+            <Toolbar
+              actions={{
+                addKamis: (kamis: Kami[]) => start(kamis, node),
+              }}
+              controls={{
+                sort,
+                setSort,
+                view,
+                setView,
+              }}
+              data={{ kamis }}
+              state={{ setDisplayedKamis, tick }}
+              utils={utils}
+            />
+          }
           canExit
           truncate
           noPadding
@@ -199,15 +221,18 @@ export function registerPartyModal() {
               onyxRevive: onyxReviveTx,
               addKamis: (kamis: Kami[]) => start(kamis, node),
             }}
+            controls={{
+              sort,
+              view,
+            }}
             data={{
               account,
               kamis,
               node,
               onyx: onyxInfo,
             }}
-            utils={{ passesNodeReqs: utils.passesNodeReqs }}
             display={display}
-            state={{ tick }}
+            state={{ displayedKamis, tick }}
           />
         </ModalWrapper>
       );

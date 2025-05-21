@@ -7,45 +7,45 @@ import { IconButton, IconListButton } from 'app/components/library';
 import { DropDownToggle } from 'app/components/library/buttons/DropDownToggle';
 import { useVisibility } from 'app/stores';
 import { HarvestIcon } from 'assets/images/icons/actions';
-import { TriggerIcons } from 'assets/images/icons/triggers';
-import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { Node } from 'network/shapes/Node';
-import { SortIcons } from './constants';
+import { SortIcons, ViewIcons } from './constants';
 
-import { Sort } from './types';
+import { Sort, View } from './types';
 
 interface Props {
   actions: {
     addKamis: (kamis: Kami[]) => void;
   };
+  controls: {
+    sort: Sort;
+    view: View;
+    setSort: Dispatch<Sort>;
+    setView: Dispatch<View>;
+  };
   data: {
-    account: Account;
     kamis: Kami[];
-    node: Node;
+  };
+  state: {
+    setDisplayedKamis: Dispatch<Kami[]>;
+    tick: number;
   };
   utils: { passesNodeReqs: (kami: Kami) => boolean };
-  state: {
-    collapsed: boolean;
-    setCollapsed: Dispatch<boolean>;
-    setDisplayedKamis: Dispatch<Kami[]>;
-    setSort: Dispatch<Sort>;
-    sort: Sort;
-  };
 }
 
 export const Toolbar = (props: Props) => {
-  const { data, state, actions, utils } = props;
-  const { passesNodeReqs } = utils;
+  const { actions, controls, data, state, utils } = props;
   const { addKamis } = actions;
-  const { kamis, node, account } = data;
-  const { sort, setSort, collapsed, setCollapsed, setDisplayedKamis } = state;
+  const { sort, setSort, view, setView } = controls;
+  const { kamis } = data;
+  const { tick, setDisplayedKamis } = state;
+  const { passesNodeReqs } = utils;
   const { modals } = useVisibility();
 
   const canAdd = (kami: Kami) => {
     return canHarvest(kami) && passesNodeReqs(kami);
   };
-  //TODO:  be more explicit about when/how the deployOptions gets updated
+
+  // TODO: be more explicit about when/how the deployOptions gets updated
   const deployOptions = kamis
     .filter((kami) => canAdd(kami))
     .map((kami) => ({
@@ -67,6 +67,8 @@ export const Toolbar = (props: Props) => {
   // sort kamis when sort is changed
   // sorts in place so the seDisplayedKamis is just to triggere an update
   useEffect(() => {
+    if (!modals.party) return;
+
     let sorted = kamis;
     if (sort === 'index') {
       sorted = kamis.sort((a, b) => a.index - b.index);
@@ -78,17 +80,11 @@ export const Toolbar = (props: Props) => {
         if (stateDiff != 0) return stateDiff;
         return calcHealthPercent(a) - calcHealthPercent(b);
       });
-    } else if (sort === 'body') {
+    } else if (sort === 'traits') {
       sorted = kamis.sort((a, b) => {
         const bodyDiff = compareTraits(a.traits?.body!, b.traits?.body!);
         if (bodyDiff === 0) return compareTraits(a.traits?.hand!, b.traits?.hand!);
         return bodyDiff;
-      });
-    } else if (sort === 'hands') {
-      sorted = kamis.sort((a, b) => {
-        const handDiff = compareTraits(a.traits?.hand!, b.traits?.hand!);
-        if (handDiff === 0) return compareTraits(a.traits?.body!, b.traits?.body!);
-        return handDiff;
       });
     }
 
@@ -97,41 +93,41 @@ export const Toolbar = (props: Props) => {
 
   return (
     <Container>
-      <ButtonSection>
+      <Section>
         <IconButton
-          img={collapsed ? TriggerIcons.eyeHalf : TriggerIcons.eyeOpen}
-          onClick={() => setCollapsed(!collapsed)}
+          img={ViewIcons[view]}
+          onClick={() => setView(view === 'collapsed' ? 'expanded' : 'collapsed')}
+          radius={0.6}
         />
         <IconListButton img={SortIcons[sort]} text={sort} options={sortOptions} radius={0.6} />{' '}
-      </ButtonSection>{' '}
+      </Section>
       <DropDownToggle
         img={HarvestIcon}
-        disabled={deployOptions.length == 0 || account.roomIndex !== node.index}
+        disabled={deployOptions.length == 0}
         onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
         deployOptions={deployOptions}
+        radius={0.6}
       />
     </Container>
   );
 };
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-  position: sticky;
+  padding: 0.6vw;
   z-index: 1;
-  top: 0;
-  background-color: #eee;
+
   opacity: 0.9;
   width: 100%;
-  padding: 0.6vw;
+
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
+
   user-select: none;
 `;
 
-const ButtonSection = styled.div`
+const Section = styled.div`
   gap: 0.3vw;
   display: flex;
   flex-flow: row nowrap;
