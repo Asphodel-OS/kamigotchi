@@ -22,14 +22,11 @@ export function createSyncWorker<C extends Components>(ack$?: Observable<Ack>) {
   });
   const ecsEvents$ = new Subject<NetworkEvent<C>[]>();
 
-  // Handle worker messages
+  // Handle reloads from worker
   worker.addEventListener('message', (event) => {
     if (event.data.type === 'RELOAD_REQUIRED') {
-      event;
       const lastReload = localStorage.getItem('lastBlockGapReload');
       const now = Date.now();
-
-      const diff = lastReload ? now - parseInt(lastReload) : 0;
 
       if (!lastReload || now - parseInt(lastReload) > event.data.minTimeBetweenReloads) {
         console.log('Large block gap detected, reloadingpage...');
