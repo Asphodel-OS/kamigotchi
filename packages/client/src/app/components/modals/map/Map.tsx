@@ -1,9 +1,10 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { Account, getAccount } from 'app/cache/account';
 import { getKami } from 'app/cache/kami';
+import { getNodeByIndex } from 'app/cache/node';
 import { getRoom, getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -14,11 +15,13 @@ import {
   queryAccountKamis,
   queryRoomAccounts,
 } from 'network/shapes/Account';
+import { Allo, parseAllos } from 'network/shapes/Allo';
 import { Condition, passesConditions } from 'network/shapes/Conditional';
 import { getKamiLocation } from 'network/shapes/Kami';
 import { queryNodeByIndex, queryNodeKamis } from 'network/shapes/Node';
-import { queryRoomByIndex, queryRooms, Room } from 'network/shapes/Room';
-import { getRoomIndex } from 'network/shapes/utils/component';
+import { queryRooms, Room } from 'network/shapes/Room';
+import { queryScavInstance } from 'network/shapes/Scavenge';
+import { getValue } from 'network/shapes/utils/component';
 import { Grid } from './Grid';
 
 export function registerMapModal() {
@@ -51,19 +54,21 @@ export function registerMapModal() {
               getAccount: () => getAccount(world, components, accountEntity, accountOptions),
               getRoom: (entity: EntityIndex) => getRoom(world, components, entity, roomOptions),
               getRoomByIndex: (index: number) => getRoomByIndex(world, components, index),
-              getRoomIndex: () => getRoomIndex(components, accountEntity),
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, { live: 2, harvest: 10 }),
               getKamiLocation: (entity: EntityIndex) => getKamiLocation(world, components, entity),
               passesConditions: (account: Account, gates: Condition[]) =>
                 passesConditions(world, components, gates, account),
-              queryAccountKamis: () => queryAccountKamis(world, components, accountEntity),
               queryNodeByIndex: (index: number) => queryNodeByIndex(world, index),
               queryNodeKamis: (nodeEntity: EntityIndex) =>
                 queryNodeKamis(world, components, nodeEntity),
               queryAllRooms: () => queryRooms(components),
               queryRoomAccounts: (roomIndex: number) => queryRoomAccounts(components, roomIndex),
-              queryRoomByIndex: (index: number) => queryRoomByIndex(components, index),
+              getNode: (index: number) => getNodeByIndex(world, components, index),
+              parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
+              queryScavInstance: (index: number, holderID: EntityID) =>
+                queryScavInstance(world, 'NODE', index, holderID),
+              getValue: (entity: EntityIndex) => getValue(components, entity),
             },
           };
         })

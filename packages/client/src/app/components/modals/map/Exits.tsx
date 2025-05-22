@@ -27,7 +27,7 @@ export const Exits = (props: Props) => {
     <Container>
       <Title>Exits</Title>
       <Options>
-        {rooms.get(index)!.exits.map((exit) => {
+        {rooms.get(index)?.exits?.map((exit) => {
           const room = rooms.get(exit.toIndex)!;
           if (!room) return;
           else if (exit.blocked)

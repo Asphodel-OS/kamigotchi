@@ -1,19 +1,20 @@
-import { EntityIndex } from '@mud-classic/recs';
-import { MouseEventHandler, useEffect, useState } from 'react';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'app/cache/account';
 import { Tooltip } from 'app/components/library';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
+import { Allo } from 'network/shapes/Allo';
 import { Condition } from 'network/shapes/Conditional';
 import { BaseKami } from 'network/shapes/Kami/types';
+import { Node } from 'network/shapes/Node';
 import { NullRoom, Room } from 'network/shapes/Room';
+import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { FloatingMapKami } from './FloatingMapKami';
-
-const KamiNames: Map<number, string[]> = new Map<number, string[]>();
-
+import { GridTooltip } from './GridTooltip';
 interface Props {
   data: {
     account: Account;
@@ -29,10 +30,13 @@ interface Props {
     getKami: (entity: EntityIndex) => BaseKami;
     getKamiLocation: (entity: EntityIndex) => number | undefined;
     passesConditions: (account: Account, gates: Condition[]) => boolean;
-    queryAccountKamis: () => EntityIndex[];
     queryNodeByIndex: (index: number) => EntityIndex;
     queryNodeKamis: (nodeEntity: EntityIndex) => EntityIndex[];
     queryRoomAccounts: (roomIndex: number) => EntityIndex[];
+    getNode: (index: number) => Node;
+    parseAllos: (scavAllo: Allo[]) => DetailedEntity[];
+    queryScavInstance: (index: number, holderID: EntityID) => EntityIndex | undefined;
+    getValue: (entity: EntityIndex) => number;
   };
 }
 
@@ -46,88 +50,71 @@ export const Grid = (props: Props) => {
     queryNodeByIndex,
     queryNodeKamis,
     queryRoomAccounts,
+    getNode,
+    parseAllos,
+    queryScavInstance,
+    getValue,
   } = utils;
 
-  const [grid, setGrid] = useState<Room[][]>([]);
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
 
-  // set the grid whenever the room zone changes
-  useEffect(() => {
-    const dimensions = Zones[zone];
-    if (!dimensions) {
-      setGrid([]);
-      return;
-    }
-
-    // create each row
-    const grid = new Array<Room[]>();
-    for (let i = 0; i < dimensions.height; i++) {
-      grid[i] = new Array<Room>(dimensions.width);
-      grid[i].fill(NullRoom);
-    }
-
-    // push the rooms into their respective locations
-    const offset = dimensions.offset;
-    for (const [_, room] of rooms) {
-      grid[room.location.y - offset.y][room.location.x - offset.x] = room;
-    }
-
-    setGrid(grid);
-  }, [zone]);
-
-  // manages Kami harvest location and name
-  useEffect(() => {
-    KamiNames.forEach((value, key) => {
-      KamiNames.delete(key);
-    });
-    accountKamis.forEach((accountKami) => {
-      const kamiLocation = getKamiLocation(accountKami);
-      if (kamiLocation !== undefined) {
-        const kamiNames = KamiNames.get(kamiLocation) ?? [];
-        kamiNames.push(getKami(accountKami).name);
-        KamiNames.set(kamiLocation, kamiNames);
+  const rolls = useMemo(() => {
+    const map = new Map<number, number>();
+    rooms.forEach((room) => {
+      if (!room.index) return;
+      const instanceEntity = queryScavInstance(room.index, account.id);
+      const cost = getNode(room.index).scavenge?.cost ?? 0;
+      if (instanceEntity) {
+        const currPoints = getValue(instanceEntity);
+        map.set(room.index, Math.floor(currPoints / cost));
+      } else {
+        map.set(room.index, 0);
       }
     });
+    return map;
+  }, [rooms, account.id]);
+
+  // set the grid whenever the room zone changes
+  const grid = useMemo(() => {
+    const dimensions = Zones[zone];
+    if (!dimensions) return [];
+    // create each row
+    const grid = Array.from({ length: dimensions.height }, () =>
+      Array(dimensions.width).fill(NullRoom)
+    );
+    // push the rooms into their respective locations
+    const offset = dimensions.offset;
+    for (const room of rooms.values()) {
+      const { x, y } = room.location;
+      grid[y - offset.y][x - offset.x] = room;
+    }
+    return grid;
+  }, [zone, rooms]);
+
+  const kamiIconsMap = useMemo(() => {
+    const map = new Map<number, string[]>();
+    accountKamis.forEach((kami) => {
+      const location = getKamiLocation(kami);
+      if (!location) return;
+      if (!map.has(location)) map.set(location, []);
+      map.get(location)!.push(getKami(kami).image);
+    });
+    return map;
   }, [accountKamis]);
 
   /////////////////
   // INTERPRETATION
 
-  const getKamiString = (roomIndex: number) => {
-    const names = KamiNames.get(roomIndex);
-    let text = '';
-    if (names !== undefined) {
-      names.length > 1
-        ? (text = `${names.slice(0, -1).join(', ') + ' and ' + names.slice(-1)} are `)
-        : (text = `${names} is `);
-      text += 'Harvesting on this tile.';
-    }
-    return text;
+  const getTileColor = (room: Room) => {
+    if (!room.index) return;
+    if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
+    const currExit = rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
+    if (!currExit) return;
+    return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
   };
 
-  const getTooltip = (room: Room) => {
-    if (room.index === 0) return [];
-    return [
-      room.description,
-      '\n',
-      `${playerEntities.length} players on this tile`,
-      `${kamiEntities.length} kamis harvesting`,
-      getKamiString(room.index),
-    ];
-  };
-
-  // get tooltip title. (room name and blocked status)
-  const getTooltipTitle = (room: Room) => {
-    if (room.index === 0) return '';
-    const isBlocked = isRoomBlocked(room);
-    const name = `${room.name} ${isBlocked ? '(blocked)' : ''}`;
-    return name;
-  };
-
-  const isRoomBlocked = (room: Room) => {
-    return !passesConditions(account, room.gates);
-  };
+  const isRoomBlocked = (room: Room) => !passesConditions(account, room.gates);
 
   /////////////////
   // INTERACTION
@@ -139,11 +126,9 @@ export const Grid = (props: Props) => {
 
   // updates the stats for a room and set it as the hovered room
   const updateRoomStats = (roomIndex: number) => {
-    if (roomIndex != 0) {
-      setPlayerEntities(queryRoomAccounts(roomIndex));
-      const nodeEntity = queryNodeByIndex(roomIndex);
-      setKamiEntities(queryNodeKamis(nodeEntity));
-    }
+    if (!roomIndex) return;
+    setPlayerEntities(queryRoomAccounts(roomIndex));
+    setKamiEntities(queryNodeKamis(queryNodeByIndex(roomIndex)));
   };
 
   /////////////////
@@ -156,40 +141,39 @@ export const Grid = (props: Props) => {
         {grid.map((row, i) => (
           <Row key={i}>
             {row.map((room, j) => {
-              // TODO: move this logic elsewher for a bit of sanity
-              const isRoom = room.index != 0;
-              const isCurrRoom = room.index == roomIndex;
-              const currExit = rooms.get(roomIndex)?.exits?.find((e) => e.toIndex === room.index);
-              const isExit = !!currExit;
-
-              const isBlocked = isRoomBlocked(room); // blocked exit
-
-              let backgroundColor;
-              let onClick: MouseEventHandler | undefined;
-              if (isCurrRoom) backgroundColor = 'rgba(51,187,51,0.9)';
-              else if (isBlocked && isExit) backgroundColor = 'rgba(0,0,0,0.3)';
-              else if (isExit) {
-                backgroundColor = 'rgba(255,136,85,0.6)';
-              }
-              onClick = () => handleRoomMove(room?.index ?? 0);
-
+              const backgroundColor = getTileColor(room);
               return (
                 <Tooltip
                   key={j}
-                  text={getTooltip(room)}
-                  title={getTooltipTitle(room)}
-                  maxWidth={24}
+                  text={
+                    room.index
+                      ? [
+                          <GridTooltip
+                            room={room}
+                            rolls={rolls}
+                            kamiIconsMap={kamiIconsMap}
+                            getNode={getNode}
+                            parseAllos={parseAllos}
+                            playerEntitiesLength={playerEntities.length}
+                            kamiEntitiesLength={kamiEntities.length}
+                            friendsCount={account?.friends?.friends?.length ?? 0}
+                          />,
+                        ]
+                      : []
+                  }
+                  title={`${room.name}${isRoomBlocked(room) ? ' (blocked)' : ''}`}
+                  maxWidth={25}
                   grow
                 >
                   <Tile
                     key={j}
                     backgroundColor={backgroundColor}
-                    onClick={onClick}
-                    hasRoom={isRoom}
-                    isHighlighted={isCurrRoom || isExit}
+                    onClick={() => handleRoomMove(room.index)}
+                    hasRoom={room.index !== 0}
+                    isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
                   >
-                    {!!KamiNames.has(room.index) && <FloatingMapKami />}
+                    {kamiIconsMap.has(room.index) && <FloatingMapKami />}
                   </Tile>
                 </Tooltip>
               );
@@ -205,8 +189,7 @@ const Container = styled.div`
   position: relative;
   width: 100%;
   display: flex;
-  flex-flow: column nowrap;
-  align-items: stretch;
+  flex-direction: column;
   user-select: none;
 `;
 
@@ -218,62 +201,44 @@ const Background = styled.img`
 
 const Overlay = styled.div`
   position: absolute;
-  width: 100%;
-  height: 100%;
-
+  inset: 0;
   display: flex;
-  flex-flow: column nowrap;
-  align-items: stretch;
+  flex-direction: column;
 `;
 
 const Row = styled.div`
   width: 100%;
   display: flex;
-  flex-flow: row nowrap;
-  align-content: stretch;
-  align-items: stretch;
   flex-grow: 1;
 `;
 
-const Tile = styled.div<{
-  hasRoom: boolean;
-  isHighlighted: boolean;
-  backgroundColor: any;
-}>`
+const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundColor: any }>`
   border-left: 0.01vw solid rgba(0, 0, 0, 0.2);
   border-bottom: 0.01vw solid rgba(0, 0, 0, 0.2);
   background-color: ${({ backgroundColor }) => backgroundColor};
   display: flex;
-  align-content: stretch;
+  flex-grow: 1;
   align-items: stretch;
   justify-content: stretch;
-  flex-grow: 1;
-
   ${({ hasRoom }) =>
     hasRoom &&
-    `
-    &:hover {
+    ` &:hover {
       opacity: 0.9;
       cursor: help;
-      border-left: 0.01vw solid rgba(0, 0, 0, 1);
-      border-bottom: 0.01vw solid rgba(0, 0, 0, 1);
+      border-left-color: rgba(0, 0, 0, 1);
+      border-bottom-color: rgba(0, 0, 0, 1);
       background-color: rgba(255, 255, 255, 0.3);
     }
   `}
-
   ${({ isHighlighted }) =>
     isHighlighted &&
-    `
-    opacity: 0.9;
-    border-left: 0.01vw solid rgba(0, 0, 0, 1);
-    border-bottom: 0.01vw solid rgba(0, 0, 0, 1);
- 
+    `opacity: 0.9;
+    border-left-color: rgba(0, 0, 0, 1);
+    border-bottom-color: rgba(0, 0, 0, 1);
   `}
-
   ${({ onClick }) =>
     onClick &&
-    `
-    &:hover {
+    `&:hover {
       cursor: pointer;
     }
   `}
