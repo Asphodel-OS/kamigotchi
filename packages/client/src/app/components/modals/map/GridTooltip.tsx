@@ -67,7 +67,7 @@ export const GridTooltip = (props: Props) => {
           <Icon margin={'0 0.4vw 0 0'} src={KamiIcon} />
           Yours: {owned} Total: {kamiEntitiesLength}
           {owned > 0 && (
-            <OwnedIcons>
+            <OwnedIcons fullFirstRow={owned >= 6}>
               {icons.slice(0, 11).map((icon) => (
                 <OwnedIcon key={icon} src={icon} />
               ))}
@@ -93,12 +93,14 @@ const BottomSection = styled.div`
   padding: 0.5vw;
 `;
 
-const OwnedIcons = styled.div`
+const OwnedIcons = styled.div<{ fullFirstRow: boolean }>`
   display: flex;
   flex-flow: row wrap;
-  margin-left: 1.5vw;
+
   margin-top: 0.3vw;
   margin-bottom: 0.66vw;
+  ${({ fullFirstRow }) =>
+    fullFirstRow ? ` justify-content:flex-start;  margin-left: 1.5vw; ` : `justify-content:center;`}
 `;
 
 const OwnedIcon = styled.img`
