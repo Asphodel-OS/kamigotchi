@@ -38,7 +38,7 @@ export const Toolbar = (props: Props) => {
   const { addKamis } = actions;
   const { sort, setSort, view, setView } = controls;
   const { kamis } = data;
-  const { tick, displayedKamis, setDisplayedKamis } = state;
+  const { displayedKamis, setDisplayedKamis } = state;
   const { passesNodeReqs } = utils;
   const { modals } = useVisibility();
 
@@ -65,8 +65,9 @@ export const Toolbar = (props: Props) => {
     []
   );
 
-  // sort kamis when sort is changed
-  // sorts in place so the seDisplayedKamis is just to triggere an update
+  // sort kamis when changes are detected
+  // TODO: trigger updates after successful state updates
+  // NOTE: sorts in place (setDisplayedKamis is just used to trigger a rendering update)
   useEffect(() => {
     if (!modals.party) return;
 
@@ -95,7 +96,7 @@ export const Toolbar = (props: Props) => {
     }
 
     setDisplayedKamis(kamis);
-  }, [modals.party, sort]);
+  }, [modals.party, kamis.length, sort, view]);
 
   return (
     <Container>
