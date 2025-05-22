@@ -28,12 +28,14 @@ export async function deleteSkills(api: AdminAPI, overrideIndices?: number[]) {
   else {
     const skillsCSV = await readFile('skills/skills.csv');
     for (let i = 0; i < skillsCSV.length; i++) {
-      if (toDelete(skillsCSV[i])) indices.push(Number(skillsCSV[i]['Index']));
+      const row = skillsCSV[i];
+      if (toDelete(row)) indices.push(Number(row['Index']));
     }
   }
 
   for (let i = 0; i < indices.length; i++) {
     try {
+      console.log(`Deleting Skill (${indices[i]})`);
       await api.registry.skill.delete(indices[i]);
     } catch {
       console.error('Could not delete skill ' + indices[i]);
@@ -65,6 +67,8 @@ async function initSkill(api: AdminAPI, skill: any) {
   const cost = Number(skill['Cost']);
   const max = Number(skill['Max']);
   const tier = Number(skill['Tier']);
+
+  console.log(`Creating Skill (${index}): ${name}`);
 
   await api.registry.skill.create(
     index,

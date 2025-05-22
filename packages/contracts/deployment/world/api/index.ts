@@ -240,6 +240,7 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   async function deleteSkill(index: number) {
     const callData = generateCallData('system.skill.registry', [index], 'remove');
+    compiledCalls.push(callData);
   }
 
   async function addSkillBonus(skillIndex: number, type: string, value: number) {
