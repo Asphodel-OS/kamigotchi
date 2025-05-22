@@ -15,7 +15,7 @@ interface Props {
     stamina: number;
   };
   actions: {
-    craft: () => void;
+    craft: (amount: number) => void;
   };
   utils: {
     displayRequirements: (recipe: Recipe) => string;

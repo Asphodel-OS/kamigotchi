@@ -46,7 +46,7 @@ export const Recipes = (props: Props) => {
         <RecipeCard
           key={recipe.index}
           data={{ account, recipe, stamina }}
-          actions={{ craft: () => craft(recipe, 1) }}
+          actions={{ craft: (amt: number) => craft(recipe, amt) }}
           utils={utils}
         />
       ))}

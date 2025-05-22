@@ -1,7 +1,6 @@
 import { IconButton, Tooltip } from 'app/components/library';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { Recipe } from 'network/shapes/Recipe';
-import { useEffect } from 'react';
 import { playMessage } from 'utils/sounds';
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
     stamina: number; // the current stamina of player
   };
   actions: {
-    craft: (recipe: Recipe, amount: number) => void;
+    craft: (amount: number) => void;
   };
   utils: {
     meetsRequirements: (recipe: Recipe) => boolean;
@@ -26,14 +25,10 @@ export const CraftButton = (props: Props) => {
   const { quantity, recipe, stamina } = data;
   const { meetsRequirements, displayRequirements, getItemBalance } = utils;
 
-  useEffect(( ) => {
-    console.log(`quanity updated to ${quantity}`);
-      }, [quantity]);
-
-      const handleCraft = () => {
-        playMessage();
-        craft(recipe, quantity);
-      };
+  const handleCraft = () => {
+    playMessage();
+    craft(quantity);
+  };
 
   /////////////////
   // VALIDATION
@@ -66,17 +61,12 @@ export const CraftButton = (props: Props) => {
     return stamina >= recipe.cost.stamina * quantity;
   };
 
-
   /////////////////
   // DISPLAY
 
   return (
     <Tooltip key='craft-tooltip' text={[getDisabledTooltip()]}>
-      <IconButton
-        onClick={handleCraft}
-        img={CraftIcon}
-        disabled={isDisabled()}
-      />
+      <IconButton onClick={handleCraft} img={CraftIcon} disabled={isDisabled()} />
     </Tooltip>
   );
 };
