@@ -72,9 +72,7 @@ export const Toolbar = (props: Props) => {
     if (!modals.party) return;
 
     let sorted = kamis;
-    if (sort === 'index') {
-      sorted = kamis.sort((a, b) => a.index - b.index);
-    } else if (sort === 'name') {
+    if (sort === 'name') {
       sorted = kamis.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sort === 'state') {
       sorted = kamis.sort((a, b) => {
