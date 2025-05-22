@@ -2,7 +2,7 @@ import { Dispatch, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest } from 'app/cache/kami';
-import { compareTraits } from 'app/cache/trait';
+import { compareTraitAffinity, compareTraitName, compareTraitRarity } from 'app/cache/trait';
 import { IconButton, IconListButton } from 'app/components/library';
 import { DropDownToggle } from 'app/components/library/buttons/DropDownToggle';
 import { useVisibility } from 'app/stores';
@@ -83,9 +83,14 @@ export const Toolbar = (props: Props) => {
       });
     } else if (sort === 'traits') {
       sorted = kamis.sort((a, b) => {
-        const bodyDiff = compareTraits(a.traits?.body!, b.traits?.body!);
-        if (bodyDiff === 0) return compareTraits(a.traits?.hand!, b.traits?.hand!);
-        return bodyDiff;
+        let diff = 0;
+        if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
+        if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
+        if (diff === 0) diff = compareTraitRarity(a.traits?.body!, b.traits?.body!);
+        if (diff === 0) diff = compareTraitName(a.traits?.body!, b.traits?.body!);
+        if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
+        if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
+        return diff;
       });
     }
 
