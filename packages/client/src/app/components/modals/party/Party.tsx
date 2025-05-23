@@ -133,8 +133,8 @@ export function registerPartyModal() {
 
       // update node if the account or room changes
       useEffect(() => {
-        const room = account.roomIndex;
-        setNode(getNode(room));
+        const roomIndex = account.roomIndex;
+        setNode(getNode(roomIndex));
       }, [accountEntity, account.roomIndex]);
 
       /////////////////
@@ -178,11 +178,11 @@ export function registerPartyModal() {
         const kamiIDs = kamis.map((kami) => kami.id);
         actions.add({
           action: 'HarvestStart',
-          params: [kamiIDs, node.id],
+          params: [kamiIDs, node.index],
           description:
             kamiIDs.length > 1
               ? `Placing ${kamis.length} kamis on ${node.name}`
-              : `Placing ${kamis[0].name}  on ${node.name}`,
+              : `Placing ${kamis[0].name} on ${node.name}`,
           execute: async () => {
             return api.player.pet.harvest.start(kamiIDs, node.index);
           },

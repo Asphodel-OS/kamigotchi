@@ -15,19 +15,18 @@ interface Props {
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
-  width?: string;
 }
 
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
   const { id, children, header, footer } = props;
-  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor, width } = props;
+  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
   const { modals } = useVisibility();
 
   return (
     <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay}>
-      <Content truncate={truncate} width={width}>
+      <Content isOpen={modals[id]} truncate={truncate}>
         {canExit && (
           <ButtonRow>
             <ExitButton divName={id} />
@@ -43,16 +42,15 @@ export const ModalWrapper = (props: Props) => {
   );
 };
 
-interface Wrapper {
+interface WrapperProps {
   isOpen: boolean;
   overlay: boolean;
 }
 
 // Wrapper is an invisible animated wrapper around all modals sans any frills.
-const Wrapper = styled.div<Wrapper>`
+const Wrapper = styled.div<WrapperProps>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
-  pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
 
@@ -62,14 +60,20 @@ const Wrapper = styled.div<Wrapper>`
   height: 100%;
 `;
 
-const Content = styled.div<{ truncate?: boolean; width?: string }>`
+interface ContentProps {
+  isOpen: boolean;
+  truncate?: boolean;
+}
+
+const Content = styled.div<ContentProps>`
   position: relative;
   background-color: white;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
 
-  ${({ width }) => (width ? `width:${width};` : `width: 100%;`)}
+  width: 100%;
   ${({ truncate }) => (truncate ? `max-height: 100%;` : `height: 100%;`)}
+  pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
 
   display: flex;
   flex-flow: column nowrap;

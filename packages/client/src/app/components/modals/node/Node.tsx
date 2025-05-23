@@ -217,12 +217,14 @@ export function registerNodeModal() {
       // claim the scavenge at the given scavenge bar
       const claim = async (scavBar: ScavBar) => {
         DTRevealer.nameEntity('scavenge' as EntityID, scavBar.id);
+        const node = getNode(scavBar.index);
+
         const actionID = uuid() as EntityID;
         actions.add({
           id: actionID,
           action: 'ScavengeClaim',
           params: [scavBar.type, scavBar.index], // actual param: scavBar.id
-          description: `Claiming scavenge at node ${scavBar.index}`,
+          description: `Claiming scavenge at node ${node.name}`,
           execute: async () => {
             return api.player.scavenge.claim(scavBar.id);
           },

@@ -52,11 +52,12 @@ export function registerKamiModal() {
           const account = getAccount(world, components, accountEntity, { live: 2 });
           const kamiOptions = {
             live: 2,
-            battles: 30,
-            flags: 10,
             progress: 2,
             skills: 2,
             stats: 2,
+            base: 5,
+            flags: 10,
+            battles: 30,
             traits: 3600,
           };
 
