@@ -18,7 +18,6 @@ export const ChatMenuButton = () => {
     help: false,
     inventory: false,
     leaderboard: false,
-    nameKami: false,
     quests: false,
     settings: false,
     presale: false,

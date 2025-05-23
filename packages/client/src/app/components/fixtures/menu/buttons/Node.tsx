@@ -19,7 +19,6 @@ export const NodeMenuButton = (props: Props) => {
     kami: false,
     gacha: false,
     emaBoard: false,
-    nameKami: false,
     presale: false,
 
     trading: false,
