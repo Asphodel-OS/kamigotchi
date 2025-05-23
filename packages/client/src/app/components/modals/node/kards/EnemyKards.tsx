@@ -45,7 +45,7 @@ export const EnemyCards = (props: Props) => {
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount, nodeIndex } = useSelected();
 
-  const [isVisible, setIsVisible] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
@@ -96,7 +96,7 @@ export const EnemyCards = (props: Props) => {
     }
 
     // allot cycle time to add entities depending on whether the list is visible
-    const maxCycleTime = isVisible ? 100 : 50;
+    const maxCycleTime = isCollapsed ? 50 : 100;
     const timeStart = Date.now();
     const iterator = toAdd.values();
     let next = iterator.next();
@@ -107,22 +107,22 @@ export const EnemyCards = (props: Props) => {
     }
     setEnemies(newEnemies);
     setIsUpdating(false);
-  }, [isVisible, enemyEntities]);
+  }, [isCollapsed, enemyEntities]);
 
   // check to see whether we should refresh each kami's data as needed
   useEffect(() => {
-    if (!isVisible || isUpdating) return;
+    if (isCollapsed || isUpdating) return;
     let enemiesStale = false;
     const newEnemies = enemies.map((kami) => getKami(kami.entity));
     for (let i = 0; i < enemies.length; i++) {
       if (newEnemies[i] != enemies[i]) enemiesStale = true;
     }
     if (enemiesStale) setEnemies(newEnemies);
-  }, [isVisible, lastRefresh]);
+  }, [isCollapsed, lastRefresh]);
 
   // sort whenever the list of enemies changes or the sort changes
   useEffect(() => {
-    if (!isVisible) return;
+    if (isCollapsed) return;
     const sorted = [...enemies].sort((a, b) => {
       if (sort === 'name') return a.name.localeCompare(b.name);
       else if (sort === 'health') return calcHealth(a) - calcHealth(b);
@@ -146,9 +146,9 @@ export const EnemyCards = (props: Props) => {
   /////////////////
   // INTERACTION
 
-  const handleToggle = () => {
+  const handleCollapseToggle = () => {
     playClick();
-    setIsVisible(!isVisible);
+    setIsCollapsed(!isCollapsed);
   };
 
   /////////////////
@@ -183,13 +183,13 @@ export const EnemyCards = (props: Props) => {
 
   return (
     <Container style={{ display: enemyEntities.length > 0 ? 'flex' : 'none' }}>
-      <Row>
-        <Title
-          onClick={handleToggle}
-        >{`${isVisible ? '▼' : '▶'} Enemies(${enemyEntities.length})`}</Title>
+      <StickyRow>
+        <Title onClick={handleCollapseToggle}>
+          {`${isCollapsed ? '▶' : '▼'} Enemies(${enemyEntities.length})`}
+        </Title>
         <IconListButton img={SortMap[sort]} text={sort} options={sortOptions} radius={0.6} />
-      </Row>
-      {isVisible &&
+      </StickyRow>
+      {!isCollapsed &&
         sorted.slice(0, limit.val).map((kami: Kami) => {
           const owner = getOwner(kami.entity);
           return (
@@ -205,7 +205,7 @@ export const EnemyCards = (props: Props) => {
             />
           );
         })}
-      {limit.val < sorted.length && isVisible && (
+      {limit.val < sorted.length && !isCollapsed && (
         <EmptyText text={['loading more kamis', 'pls be patient..']} size={1} />
       )}
     </Container>
@@ -219,7 +219,7 @@ const Container = styled.div`
   flex-flow: column nowrap;
 `;
 
-const Row = styled.div`
+const StickyRow = styled.div`
   position: sticky;
   z-index: 1;
   top: 0;
@@ -228,19 +228,18 @@ const Row = styled.div`
   opacity: 0.9;
   width: 100%;
 
-  padding: 0.3vw 0 0.15vw 0;
+  padding: 0.3vw 0 0.3vw 0;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   user-select: none;
 `;
 
 const Title = styled.div`
   font-size: 1.2vw;
   color: #333;
-  padding: 0.2vw;
   cursor: pointer;
 
   &:hover {

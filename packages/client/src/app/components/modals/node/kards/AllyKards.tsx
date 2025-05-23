@@ -4,6 +4,8 @@ import { calcHealth, calcOutput } from 'app/cache/kami';
 import { CollectButton, KamiCard, StopButton } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
+import { useState } from 'react';
+import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account;
@@ -24,6 +26,13 @@ export const AllyKards = (props: Props) => {
   const { collect, stop } = actions;
   const { UseItemButton } = display;
 
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const handleCollapseToggle = () => {
+    playClick();
+    setIsCollapsed(!isCollapsed);
+  };
+
   /////////////////
   // INTERPRETATION
 
@@ -41,23 +50,28 @@ export const AllyKards = (props: Props) => {
 
   return (
     <Container style={{ display: kamis.length > 0 ? 'flex' : 'none' }}>
-      <Title>Allies</Title>
-      {kamis.map((kami: Kami, i: number) => (
-        <KamiCard
-          key={kami.index}
-          kami={kami}
-          description={getDescription(kami)}
-          titleTooltip={bonuses[i]}
-          subtext={`yours (\$${calcOutput(kami)})`}
-          actions={[
-            UseItemButton(kami, account),
-            CollectButton(kami, account, collect),
-            StopButton(kami, account, stop),
-          ]}
-          showBattery
-          showCooldown
-        />
-      ))}
+      <StickyRow>
+        <Title onClick={handleCollapseToggle}>
+          {`${isCollapsed ? '▶' : '▼'} Allies(${kamis.length})`}
+        </Title>
+      </StickyRow>
+      {!isCollapsed &&
+        kamis.map((kami: Kami, i: number) => (
+          <KamiCard
+            key={kami.index}
+            kami={kami}
+            description={getDescription(kami)}
+            titleTooltip={bonuses[i]}
+            subtext={`yours (\$${calcOutput(kami)})`}
+            actions={[
+              UseItemButton(kami, account),
+              CollectButton(kami, account, collect),
+              StopButton(kami, account, stop),
+            ]}
+            showBattery
+            showCooldown
+          />
+        ))}
     </Container>
   );
 };
@@ -69,10 +83,31 @@ const Container = styled.div`
   flex-flow: column nowrap;
 `;
 
+const StickyRow = styled.div`
+  position: sticky;
+  z-index: 1;
+  top: 0;
+
+  background-color: white;
+  opacity: 0.9;
+  width: 100%;
+
+  padding: 0.3vw 0 0.3vw 0;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+`;
+
 const Title = styled.div`
   font-size: 1.2vw;
+  line-height: 1.8vw;
   color: #333;
-  text-align: left;
-  padding: 0.2vw;
-  padding-top: 0.8vw;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
