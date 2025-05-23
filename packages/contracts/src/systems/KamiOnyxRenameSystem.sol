@@ -41,6 +41,7 @@ contract KamiOnyxRenameSystem is System {
     LibAccount.updateLastTs(components, accID);
     LibData.inc(components, accID, ONYX_INDEX, "TOKEN_SPEND", PRICE);
     LibData.inc(components, 0, ONYX_INDEX, "TOKEN_SPEND", PRICE);
+    LibData.inc(components, 0, ONYX_INDEX, "TOKEN_SPEND_RENAME", PRICE);
 
     return "";
   }
