@@ -1,10 +1,10 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealth, calcOutput } from 'app/cache/kami';
 import { CollectButton, KamiCard, StopButton } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { useState } from 'react';
 import { playClick } from 'utils/sounds';
 
 interface Props {
