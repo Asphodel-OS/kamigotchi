@@ -17,7 +17,7 @@ const ONYX_PRICE = 5; // rename price in onyx
 interface Props {
   actions: {
     onyxApprove: (price: number) => EntityID | void;
-    onyxRename: (kami: Kami, name: string) => EntityID;
+    onyxRename: (kami: Kami, name: string) => EntityID | void;
     rename: (kami: Kami, name: string) => EntityID;
   };
   data: {

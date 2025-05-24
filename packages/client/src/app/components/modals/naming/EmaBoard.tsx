@@ -1,11 +1,10 @@
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID } from '@mud-classic/recs';
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
-import { getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
@@ -49,9 +48,12 @@ export function registerEMABoardModal() {
             utils: {
               getAccount: () =>
                 getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
-              getKami: (entity: EntityIndex) =>
-                getKami(world, components, entity, { base: 2, live: 2, progress: 3600 }),
-              getKamis: () => getAccountKamis(world, components, accountEntity, { live: 2 }),
+              getKamis: () =>
+                getAccountKamis(world, components, accountEntity, {
+                  base: 2,
+                  live: 2,
+                  progress: 3600,
+                }),
               getItemBalance: (inventory: Inventory[], index: number) =>
                 getInventoryBalance(inventory, index),
               getItem: (index: number) => getItemByIndex(world, components, index),
@@ -64,7 +66,7 @@ export function registerEMABoardModal() {
     ({ network, data, utils }) => {
       const { accountEntity, spender } = data;
       const { actions, api } = network;
-      const { getAccount, getItem, getKami, getKamis } = utils;
+      const { getAccount, getItem, getKamis } = utils;
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
       const { balances: tokenBals } = useTokens();
       const { modals } = useVisibility();
@@ -136,13 +138,16 @@ export function registerEMABoardModal() {
       };
 
       const onyxRenameTx = (kami: Kami, name: string) => {
+        const api = ownerAPIs.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
         const actionID = uuid() as EntityID;
         actions.add({
           action: 'KamiOnyxRename',
           params: [kami.id, name],
           description: `Renaming ${kami.name} to ${name} with ONYX`,
           execute: async () => {
-            return api.player.pet.onyx.rename(kami.id, name);
+            return api.pet.onyx.rename(kami.id, name);
           },
         });
         return actionID;
