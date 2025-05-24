@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { SkillImages } from 'assets/images/skills';
@@ -36,10 +36,9 @@ export const Skills = (props: Props) => {
   const { data, actions, state, utils } = props;
   const { kami } = data;
   const { tick } = state;
-  const { getSkill, getUpgradeError, getTreePoints } = utils;
+  const { getUpgradeError } = utils;
   const [displayed, setDisplayed] = useState(0); // index of displayed skill
 
-  useEffect(() => {}, []);
   ////////////////////
   // INTERPRETATION
 

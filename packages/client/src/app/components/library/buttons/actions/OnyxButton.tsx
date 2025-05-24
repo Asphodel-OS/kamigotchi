@@ -32,7 +32,7 @@ export const OnyxButton = (props: Props) => {
   // DISPLAY
 
   return (
-    <Tooltip text={tooltip ?? []}>
+    <Tooltip text={tooltip ?? []} maxWidth={24}>
       <IconButton
         key='onyx-button'
         img={ItemImages.onyx}

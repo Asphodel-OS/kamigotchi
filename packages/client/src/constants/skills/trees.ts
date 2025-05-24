@@ -41,4 +41,9 @@ export const SkillTrees = new Map([
   ['Harvester', HarvesterTree],
 ]);
 
-export const TierRequirements = [0, 0, 5, 15, 20, 30, 40]; // no 0 tier
+export const TreeColors = {
+  predator: '#BD4F6C',
+  enlightened: '#D7BCE8',
+  guardian: '#9CBCD2',
+  harvester: '#F9DB6D',
+};
