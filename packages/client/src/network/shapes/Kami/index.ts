@@ -26,7 +26,7 @@ export { getBase as getBaseKami, getGachaKami, get as getKami } from './types';
 
 export type { Battles as KamiBattles } from './battle';
 export type { Bonuses as KamiBonuses } from './bonuses';
-export type { Configs as KamiConfigs } from './configs';
+export type { AsphoAST, Efficacy, Configs as KamiConfigs } from './configs';
 export type { QueryOptions } from './queries';
 export type { Skills as KamiSkills } from './skills';
 export type { Stats as KamiStats } from './stats';

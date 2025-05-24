@@ -1,4 +1,5 @@
 import { World } from '@mud-classic/recs';
+import { Address } from 'viem';
 
 import { Components } from 'network/components';
 import {
@@ -6,7 +7,6 @@ import {
   getConfigFieldValueAddress,
   getConfigFieldValueArray,
 } from 'network/shapes/Config';
-import { Address } from 'viem';
 
 export const ValueCache = new Map<string, number>();
 export const AddressCache = new Map<string, Address>();

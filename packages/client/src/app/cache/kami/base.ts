@@ -4,7 +4,6 @@ import { Components } from 'network/';
 import {
   getKami,
   getKamiBonuses,
-  getKamiConfigs,
   getKamiProgress,
   getKamiStats,
   getKamiTimes,
@@ -18,6 +17,7 @@ import {
   getRerolls,
   getState,
 } from 'network/shapes/utils/component';
+import { getKamiConfig } from '../config';
 import { updateHarvestRate, updateHealthRate } from './calcs';
 import { getKamiFlags, getKamiHarvest, getKamiSkills, getKamiTraits } from './getters';
 
@@ -134,7 +134,7 @@ export const get = (
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.config) {
       if (debug) console.log(`  updating kami config`);
-      kami.config = getKamiConfigs(world, components);
+      kami.config = getKamiConfig(world, components);
       ConfigsUpdateTs.set(entity, now);
     }
   }

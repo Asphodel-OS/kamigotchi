@@ -37,9 +37,10 @@ interface RestConfig {
 
 interface GeneralConfig {
   cooldown: number;
+  skills: number[];
 }
 
-interface AsphoAST {
+export interface AsphoAST {
   nudge: FixedPointValue;
   ratio: FixedPointValue;
   shift: FixedPointValue;
@@ -87,6 +88,7 @@ export const getConfigs = (world: World, components: Components): Configs => {
     },
     general: {
       cooldown: getConfigFieldValue(world, components, 'KAMI_STANDARD_COOLDOWN'),
+      skills: getConfigFieldValueArray(world, components, 'KAMI_TREE_REQ'),
     },
   };
 };
@@ -96,23 +98,23 @@ export const getASTNode = (world: World, components: Components, key: string): A
   const configArray = getConfigFieldValueArray(world, components, key);
   return {
     nudge: {
-      precision: configArray[1],
       raw: configArray[0],
+      precision: configArray[1],
       value: configArray[0] / 10 ** configArray[1],
     },
     ratio: {
-      precision: configArray[3],
       raw: configArray[2],
+      precision: configArray[3],
       value: configArray[2] / 10 ** configArray[3],
     },
     shift: {
-      precision: configArray[5],
       raw: configArray[4],
+      precision: configArray[5],
       value: configArray[4] / 10 ** configArray[5],
     },
     boost: {
-      precision: configArray[7],
       raw: configArray[6],
+      precision: configArray[7],
       value: configArray[6] / 10 ** configArray[7],
     },
   };

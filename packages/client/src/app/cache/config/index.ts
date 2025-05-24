@@ -5,7 +5,8 @@ export {
   processAddress as processConfigAddress,
   processArray as processConfigArray,
   processValue as processConfigValue,
-} from './config';
+} from './base';
 export { getMintConfig as getGachaMintConfig } from './gacha';
+export { getKamiConfig } from './kami';
 
 export type { GachaMintConfig } from './gacha';
