@@ -10,6 +10,6 @@ export const data = (world: World, components: Components) => {
       getData(world, components, id, type, index),
     getArray: (id: EntityID, type: string, index?: number) =>
       getDataArray(world, components, id, type, index),
-    onyx: onyx(world, components),
+    onyx: () => onyx(world, components),
   };
 };
