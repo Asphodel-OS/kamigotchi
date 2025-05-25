@@ -61,11 +61,11 @@ export const GridTooltip = (props: Props) => {
 
         <TextRow>
           <Icon margin={'0 0.4vw 0 0'} src={OperatorIcon} />
-          Friends: {friendsCount} Total: {playerEntitiesLength}
+          Players here: {playerEntitiesLength} Friends: {friendsCount}
         </TextRow>
         <TextRow>
           <Icon margin={'0 0.4vw 0 0'} src={KamiIcon} />
-          Yours: {owned} Total: {kamiEntitiesLength}
+          Kami here: {kamiEntitiesLength} Yours: {owned}
           {owned > 0 && (
             <OwnedIcons fullFirstRow={owned >= 6}>
               {icons.slice(0, 11).map((icon) => (
@@ -104,13 +104,14 @@ const OwnedIcons = styled.div<{ fullFirstRow: boolean }>`
 `;
 
 const OwnedIcon = styled.img`
-  height: 3vw;
+  width: 3vw;
   border-radius: 0.6vw;
   border: solid rgb(129, 128, 128) 0.15vw;
   margin: 0.05vw;
 `;
 
 const Icon = styled.img<{ margin?: string }>`
+  width: 1.4vw;
   margin: ${({ margin }) => margin ?? '0 0.1vw'};
 `;
 
@@ -126,5 +127,5 @@ const Ellipsis = styled.span`
   align-items: center;
   font-weight: bold;
   padding-left: 1.2vw;
-  height: 3vw;
+  width: 3vw;
 `;
