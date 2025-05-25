@@ -1,8 +1,7 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { unpackArray32 } from './utils';
-import { getEntityByHash } from './utils/IDs';
+import { getEntityByHash, unpackArray32 } from '../utils';
 
 // get a DataEntity for an account
 export const getData = (
