@@ -92,9 +92,9 @@ export const Requests = (props: Props) => {
     <Container>
       <ActionRow>
         <ModeButtons>
-          <ModeButton mode='inbound' label='↙' />
-          <ModeButton mode='outbound' label='↗' />
-          <ModeButton mode='search' label='🔍' />
+          {ModeButton({ mode: 'inbound', label: '↙' })}
+          {ModeButton({ mode: 'outbound', label: '↗' })}
+          {ModeButton({ mode: 'search', label: '🔍' })}
         </ModeButtons>
         <Input
           key='search'

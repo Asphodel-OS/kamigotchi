@@ -200,9 +200,9 @@ export function registerDialogueModal() {
           <Text npc={npc}>
             {npc.name.length > 0 ? typing : getText(dialogueNode.text[step])}
             <ButtonRow>
-              <BackButton />
-              <MiddleButton />
-              <NextButton />
+              {BackButton()}
+              {MiddleButton()}
+              {NextButton()}
             </ButtonRow>
           </Text>
         </ModalWrapper>
