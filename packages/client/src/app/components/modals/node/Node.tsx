@@ -63,6 +63,7 @@ export function registerNodeModal() {
           const accountRefreshOptions = {
             live: LIVE_UPDATE_LIMIT,
             inventories: LIVE_UPDATE_LIMIT,
+            friends: 60,
           };
 
           const nodeEntity = queryNodeByIndex(world, nodeIndex);
