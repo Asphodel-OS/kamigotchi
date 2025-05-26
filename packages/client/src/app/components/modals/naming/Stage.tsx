@@ -1,7 +1,7 @@
 import { EntityID } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { IconButton, KamiBlock, Text, Tooltip } from 'app/components/library';
+import { IconButton, KamiBlock, Text, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Inventory } from 'network/shapes/Inventory';
@@ -129,7 +129,7 @@ export const Stage = (props: Props) => {
       <Text size={1.5}>Rename {kami.name}</Text>
       <Text size={0.9}>Choose wisely.</Text>
       <Row>
-        <Tooltip text={getHolyTooltip()}>
+        <TextTooltip text={getHolyTooltip()}>
           <IconButton
             img={holyDustItem.image}
             scale={3.3}
@@ -137,9 +137,9 @@ export const Stage = (props: Props) => {
             disabled={isHolyDisabled()}
             shadow
           />
-        </Tooltip>
+        </TextTooltip>
         <KamiBlock kami={kami} />
-        <Tooltip text={getOnyxTooltip()}>
+        <TextTooltip text={getOnyxTooltip()}>
           <IconButton
             img={onyxItem.image}
             scale={3.3}
@@ -147,7 +147,7 @@ export const Stage = (props: Props) => {
             disabled={isOnyxDisabled()}
             shadow
           />
-        </Tooltip>
+        </TextTooltip>
       </Row>
       <Input
         type='text'

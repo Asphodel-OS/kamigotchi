@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Overlay, Popover, Text, Tooltip } from 'app/components/library';
+import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { KAMI_BASE_URI } from 'constants/media';
 import { Account } from 'network/shapes/Account';
@@ -80,9 +80,9 @@ export const Bio = (props: Props) => {
           draggable='false'
           src={`${KAMI_BASE_URI + account.pfpURI}.gif`}
         />
-        <Tooltip text={[getLastSeenString()]}>
+        <TextTooltip text={[getLastSeenString()]}>
           <PfpStatus isLoading={isLoading} timeDelta={tick / 1000 - account.time.last} />
-        </Tooltip>
+        </TextTooltip>
       </PfpContainer>
     );
   };
@@ -102,11 +102,11 @@ export const Bio = (props: Props) => {
       <Info>
         <TitleSection>
           <Text size={1.2}>{account.name}</Text>
-          <Tooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
+          <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
             <Subtitle onClick={() => copyText(account.ownerAddress)}>
               {abbreviateAddress(account.ownerAddress)}
             </Subtitle>
-          </Tooltip>
+          </TextTooltip>
         </TitleSection>
         <DetailRow>
           <CakeIcon style={{ height: '1.4vh' }} />

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { cleanInventories, Inventory } from 'app/cache/inventory';
-import { EmptyText, IconListButton, Tooltip } from 'app/components/library';
+import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
@@ -117,7 +117,7 @@ export const ItemGrid = (props: Props) => {
     const options = getItemActions(item, inv.balance);
 
     return (
-      <Tooltip key={item.index} text={[item.name, '', item.description ?? '']}>
+      <TextTooltip key={item.index} text={[item.name, '', item.description ?? '']}>
         <IconListButton
           key={item.index}
           img={item.image}
@@ -126,7 +126,7 @@ export const ItemGrid = (props: Props) => {
           options={options}
           disabled={options.length == 0}
         />
-      </Tooltip>
+      </TextTooltip>
     );
   };
 

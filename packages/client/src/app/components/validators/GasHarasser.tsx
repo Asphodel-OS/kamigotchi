@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
-import { ActionButton, Tooltip, ValidatorWrapper } from 'app/components/library';
+import { ActionButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
@@ -138,11 +138,11 @@ export function registerGasHarasser() {
           title='Embedded wallet is empty!'
           errorPrimary={`pls feed me pls a crumb of ETH ._.`}
         >
-          <Tooltip text={[account.operatorAddress, '(click to copy)']}>
+          <TextTooltip text={[account.operatorAddress, '(click to copy)']}>
             <Description onClick={() => copy(account.operatorAddress)}>
               Address: {abbreviateAddress(account.operatorAddress)}
             </Description>
-          </Tooltip>
+          </TextTooltip>
           <Row>
             <Input
               type='number'

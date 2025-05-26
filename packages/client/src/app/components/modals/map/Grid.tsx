@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'app/cache/account';
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
@@ -143,7 +143,7 @@ export const Grid = (props: Props) => {
             {row.map((room, j) => {
               const backgroundColor = getTileColor(room);
               return (
-                <Tooltip
+                <TextTooltip
                   key={j}
                   text={
                     room.index
@@ -175,7 +175,7 @@ export const Grid = (props: Props) => {
                   >
                     {kamiIconsMap.has(room.index) && <FloatingMapKami />}
                   </Tile>
-                </Tooltip>
+                </TextTooltip>
               );
             })}
           </Row>

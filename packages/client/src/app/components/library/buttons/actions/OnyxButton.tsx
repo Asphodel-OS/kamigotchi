@@ -1,6 +1,6 @@
 import { ItemImages } from 'assets/images/items';
 import { Kami } from 'network/shapes/Kami';
-import { Tooltip } from '../../poppers';
+import { TextTooltip } from '../../poppers';
 import { IconButton } from '../IconButton';
 
 interface Props {
@@ -32,13 +32,13 @@ export const OnyxButton = (props: Props) => {
   // DISPLAY
 
   return (
-    <Tooltip text={tooltip ?? []} maxWidth={24}>
+    <TextTooltip text={tooltip ?? []} maxWidth={24}>
       <IconButton
         key='onyx-button'
         img={ItemImages.onyx}
         onClick={onClick}
         disabled={balance < price || disabled}
       />
-    </Tooltip>
+    </TextTooltip>
   );
 };

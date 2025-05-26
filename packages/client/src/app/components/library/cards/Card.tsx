@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
-import { Tooltip } from '../poppers/Tooltip';
+import { TextTooltip } from '../poppers/TextTooltip';
 import { Overlay } from '../styles';
 
 interface Props {
@@ -32,14 +32,14 @@ export const Card = (props: Props) => {
 
   return (
     <Wrapper fullWidth={fullWidth}>
-      <Tooltip text={image?.tooltip ?? []}>
+      <TextTooltip text={image?.tooltip ?? []}>
         <ImageContainer scale={scale} padding={image?.padding}>
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
-      </Tooltip>
+      </TextTooltip>
       <Container>{children}</Container>
     </Wrapper>
   );

@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
@@ -16,7 +16,7 @@ export const OnyxMenuButton = () => {
   };
 
   return (
-    <Tooltip
+    <TextTooltip
       text={[
         'Acquire more $ONYX',
         `Balance: ${balance.toFixed(3)} `,
@@ -32,6 +32,6 @@ export const OnyxMenuButton = () => {
         radius={0.9}
         cornerAlt
       />
-    </Tooltip>
+    </TextTooltip>
   );
 };

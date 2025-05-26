@@ -4,7 +4,7 @@ import { HarvestIcon, StopIcon } from 'assets/images/icons/actions';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
 import { Node, passesNodeReqs } from 'network/shapes/Node';
-import { Tooltip } from '../..';
+import { TextTooltip } from '../..';
 
 // if resting
 // - always display
@@ -43,9 +43,9 @@ export const HarvestButton = (props: Props) => {
   }
 
   return (
-    <Tooltip key='harvest-tooltip' text={[tooltip]}>
+    <TextTooltip key='harvest-tooltip' text={[tooltip]}>
       <IconListButton img={HarvestIcon} options={options} disabled={disabled} />
-    </Tooltip>
+    </TextTooltip>
   );
 };
 

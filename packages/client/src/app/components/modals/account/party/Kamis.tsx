@@ -1,7 +1,7 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -42,11 +42,11 @@ export const Kamis = (props: Props) => {
   return (
     <Container key='grid'>
       {kamis.map((kami) => (
-        <Tooltip key={kami.index} text={[kami.name]}>
+        <TextTooltip key={kami.index} text={[kami.name]}>
           <CellContainer id={`grid-${kami.id}`}>
             <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
           </CellContainer>
-        </Tooltip>
+        </TextTooltip>
       ))}
     </Container>
   );

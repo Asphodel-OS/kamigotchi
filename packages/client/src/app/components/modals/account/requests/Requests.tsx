@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { ActionButton, TextTooltip } from 'app/components/library';
 import { Pagination } from 'app/components/library/misc/Pagination';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
@@ -78,13 +78,13 @@ export const Requests = (props: Props) => {
 
   const ModeButton = (props: { mode: string; label: string }) => {
     return (
-      <Tooltip text={[props.mode]}>
+      <TextTooltip text={[props.mode]}>
         <ActionButton
           text={props.label}
           onClick={() => setMode(props.mode)}
           disabled={mode === props.mode}
         />
-      </Tooltip>
+      </TextTooltip>
     );
   };
 

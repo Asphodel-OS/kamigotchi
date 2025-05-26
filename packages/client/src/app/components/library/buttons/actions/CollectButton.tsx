@@ -2,7 +2,7 @@ import { calcCooldown, isHarvesting, isStarving } from 'app/cache/kami';
 import { CollectIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { IconButton, Tooltip } from '../..';
+import { IconButton, TextTooltip } from '../..';
 
 // button for collecting a harvest
 export const CollectButton = (kami: Kami, account: Account, triggerAction: Function) => {
@@ -12,9 +12,9 @@ export const CollectButton = (kami: Kami, account: Account, triggerAction: Funct
   if (!disabled) tooltip = `Collect Harvest`;
 
   return (
-    <Tooltip key='collect-tooltip' text={[tooltip]}>
+    <TextTooltip key='collect-tooltip' text={[tooltip]}>
       <IconButton onClick={() => triggerAction(kami)} img={CollectIcon} disabled={disabled} />
-    </Tooltip>
+    </TextTooltip>
   );
 };
 

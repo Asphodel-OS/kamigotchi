@@ -8,7 +8,7 @@ import { useWatchBlockNumber } from 'wagmi';
 
 import { getConfigAddress } from 'app/cache/config';
 import { getItemByIndex } from 'app/cache/item';
-import { ModalWrapper, Tooltip } from 'app/components/library';
+import { ModalWrapper, TextTooltip } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
@@ -137,12 +137,12 @@ export function registerPresaleModal() {
             <Header time={{ now: tick, start: StartTime, end: EndTime }} />
             <Content>
               <OnyxColumn>
-                <Tooltip
+                <TextTooltip
                   text={['What is $ONYX?', '', "Wouldn't you like to know."]}
                   alignText='center'
                 >
                   <Image src={ItemImages.onyx} onClick={openOnyxDocs} />
-                </Tooltip>
+                </TextTooltip>
               </OnyxColumn>
               <Info
                 actions={{ approve: approveTx, buy: buyTx }}

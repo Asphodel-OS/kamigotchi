@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { StatDescriptions, StatIcons } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
 import { Stat } from 'network/shapes/Stats';
@@ -24,7 +24,7 @@ export const Stats = (Props: Props) => {
         const total = v.base + v.shift;
         const tooltipText = [key, '', description];
         return (
-          <Tooltip key={key} text={tooltipText}>
+          <TextTooltip key={key} text={tooltipText}>
             <Grouping>
               <Text size={0.75}>{total}</Text>
               <Icon size={1.3} src={icon} />
@@ -34,7 +34,7 @@ export const Stats = (Props: Props) => {
                 </Text>
               </Overlay> */}
             </Grouping>
-          </Tooltip>
+          </TextTooltip>
         );
       })}
     </Container>

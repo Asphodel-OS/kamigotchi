@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
-import { Tooltip } from '../poppers/Tooltip';
+import { TextTooltip } from '../poppers/TextTooltip';
 
 export interface ActionButtonProps {
   onClick: Function;
@@ -90,7 +90,7 @@ export const ActionButton = (props: ActionButtonProps) => {
       </Button>
     );
 
-  if (props.tooltip) result = <Tooltip text={props.tooltip}>{result}</Tooltip>;
+  if (props.tooltip) result = <TextTooltip text={props.tooltip}>{result}</TextTooltip>;
 
   return result;
 };

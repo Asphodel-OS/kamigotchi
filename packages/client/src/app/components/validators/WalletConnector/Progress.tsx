@@ -1,4 +1,4 @@
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import styled from 'styled-components';
 import { StatusCircle } from './StatusCircle';
 import { Step } from './types';
@@ -109,23 +109,23 @@ export const Progress = (props: Props) => {
   return (
     <Container>
       <Pairing>
-        <Tooltip text={getConnectionTooltip()} alignText='center'>
+        <TextTooltip text={getConnectionTooltip()} alignText='center'>
           <StatusCircle state={getConnectionStatus()} size={4.5} />
-        </Tooltip>
+        </TextTooltip>
         <Text>Connection</Text>
       </Pairing>
       <DottedLines left={10.5} top={3.3} />
       <Pairing>
-        <Tooltip text={getNetworkTooltip()} alignText='center'>
+        <TextTooltip text={getNetworkTooltip()} alignText='center'>
           <StatusCircle state={getNetworkStatus()} size={4.5} />
-        </Tooltip>
+        </TextTooltip>
         <Text>Network</Text>
       </Pairing>
       <DottedLines left={22.5} top={3.3} />
       <Pairing>
-        <Tooltip text={getAuthenticationTooltip()} alignText='center'>
+        <TextTooltip text={getAuthenticationTooltip()} alignText='center'>
           <StatusCircle state={getAuthenticationStatus()} size={4.5} />
-        </Tooltip>
+        </TextTooltip>
         <Text>Authentication</Text>
       </Pairing>
     </Container>

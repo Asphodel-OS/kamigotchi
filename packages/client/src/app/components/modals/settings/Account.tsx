@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import styled from 'styled-components';
 
-import { ActionButton, CopyButton, Tooltip } from 'app/components/library';
+import { ActionButton, CopyButton, TextTooltip } from 'app/components/library';
 import { useAccount, useVisibility } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 
@@ -15,12 +15,12 @@ export const Account = () => {
       <Row>
         <Text>{label}</Text>
         <RowContent>
-          <Tooltip text={[value]}>
+          <TextTooltip text={[value]}>
             <Text>{abbreviateAddress(value)}</Text>
-          </Tooltip>
-          <Tooltip text={['copy']}>
+          </TextTooltip>
+          <TextTooltip text={['copy']}>
             <CopyButton text={value} />
-          </Tooltip>
+          </TextTooltip>
         </RowContent>
       </Row>
     );
@@ -30,13 +30,13 @@ export const Account = () => {
     <Container>
       <HeaderRow>
         <Header>Account ({kamiAccount.name})</Header>
-        <Tooltip text={['fund account operator']}>
+        <TextTooltip text={['fund account operator']}>
           <ActionButton
             text='fund'
             onClick={() => setModals({ operatorFund: true })}
             size='small'
           />
-        </Tooltip>
+        </TextTooltip>
       </HeaderRow>
       <Section key='owner'>
         <SubHeader>Owner (Injected Wallet)</SubHeader>

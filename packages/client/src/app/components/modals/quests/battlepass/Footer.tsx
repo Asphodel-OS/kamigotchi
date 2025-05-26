@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
@@ -30,7 +30,7 @@ export const Footer = (props: Props) => {
 
   return (
     <Container>
-      <Tooltip
+      <TextTooltip
         text={[
           `REPUTATION represents your relationship with the Kamigotchi Tourism Agency.`,
           '',
@@ -38,7 +38,7 @@ export const Footer = (props: Props) => {
         ]}
       >
         <Icon src={getFactionImage('agency')} />
-      </Tooltip>
+      </TextTooltip>
       <Battlepass account={account} quests={quests} actions={actions} utils={utils} />
     </Container>
   );

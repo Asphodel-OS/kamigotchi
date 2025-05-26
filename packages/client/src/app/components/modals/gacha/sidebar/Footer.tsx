@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
-import { Stepper, Tooltip } from 'app/components/library';
+import { Stepper, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { GACHA_MAX_PER_TX } from 'constants/gacha';
 import { GachaMintData } from 'network/shapes/Gacha';
@@ -271,9 +271,9 @@ export const Footer = (props: Props) => {
         isHidden={mode === 'DEFAULT' && tab !== 'GACHA'}
       />
       <Submit onClick={isDisabled ? undefined : handleSubmit} disabled={isDisabled}>
-        <Tooltip text={getSubmitTooltip()} alignText='center' grow>
+        <TextTooltip text={getSubmitTooltip()} alignText='center' grow>
           {getButtonText()}
-        </Tooltip>
+        </TextTooltip>
       </Submit>
     </Container>
   );

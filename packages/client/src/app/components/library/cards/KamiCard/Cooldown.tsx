@@ -1,7 +1,7 @@
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
-import { Countdown, Tooltip } from '../..';
+import { Countdown, TextTooltip } from '../..';
 
 interface Props {
   kami: Kami;
@@ -30,8 +30,8 @@ export const Cooldown = (props: Props) => {
   }, [lastRefresh, total]);
 
   return (
-    <Tooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
+    <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
       <Countdown total={total} current={current} />
-    </Tooltip>
+    </TextTooltip>
   );
 };

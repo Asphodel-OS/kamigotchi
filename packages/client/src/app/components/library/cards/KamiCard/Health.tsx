@@ -1,4 +1,4 @@
-import { Battery, Tooltip } from '../..';
+import { Battery, TextTooltip } from '../..';
 
 interface Props {
   current: number;
@@ -9,8 +9,8 @@ export const Health = (props: Props) => {
   const { current, total } = props;
 
   return (
-    <Tooltip key='battery' text={[`Health: ${current}/${total}`]}>
+    <TextTooltip key='battery' text={[`Health: ${current}/${total}`]}>
       <Battery level={(100 * current) / total} scale={1.2} />
-    </Tooltip>
+    </TextTooltip>
   );
 };

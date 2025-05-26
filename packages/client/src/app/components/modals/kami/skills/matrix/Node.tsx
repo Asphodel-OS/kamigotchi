@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
 import { Skill, getSkillInstance } from 'app/cache/skills';
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { SkillImages } from 'assets/images/skills';
 import { parseBonusText } from 'network/shapes/Bonus/interpretation';
 import { Kami } from 'network/shapes/Kami';
@@ -44,11 +44,11 @@ export const Node = (props: Props) => {
   };
 
   return (
-    <Tooltip title={skill.name} text={getTooltip()} maxWidth={24}>
+    <TextTooltip title={skill.name} text={getTooltip()} maxWidth={24}>
       <Container key={index} onClick={handleClick} percent={getPercentCompletion()}>
         <Image src={image} />
       </Container>
-    </Tooltip>
+    </TextTooltip>
   );
 };
 

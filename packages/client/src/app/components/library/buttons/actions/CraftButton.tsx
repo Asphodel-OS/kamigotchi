@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { Recipe } from 'network/shapes/Recipe';
 import { playMessage } from 'utils/sounds';
@@ -65,8 +65,8 @@ export const CraftButton = (props: Props) => {
   // DISPLAY
 
   return (
-    <Tooltip key='craft-tooltip' text={[getDisabledTooltip()]}>
+    <TextTooltip key='craft-tooltip' text={[getDisabledTooltip()]}>
       <IconButton onClick={handleCraft} img={CraftIcon} disabled={isDisabled()} />
-    </Tooltip>
+    </TextTooltip>
   );
 };

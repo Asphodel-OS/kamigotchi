@@ -3,7 +3,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/measures/Battery';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
@@ -123,7 +123,7 @@ export function registerClock() {
       //Render
       return (
         <>
-          <Tooltip text={getClockTooltip()}>
+          <TextTooltip text={getClockTooltip()}>
             <Container
               style={{ display: fixtures.menu ? 'flex' : 'none' }}
               width={width}
@@ -143,8 +143,8 @@ export function registerClock() {
                 </Phases>
               </Circle>
             </Container>
-          </Tooltip>
-          <Tooltip text={getStaminaTooltip()}>
+          </TextTooltip>
+          <TextTooltip text={getStaminaTooltip()}>
             <Container
               style={{ display: fixtures.menu ? 'flex' : 'none' }}
               width={width}
@@ -158,7 +158,7 @@ export function registerClock() {
               </SmallCircle>
               <ClockOverlay />
             </Container>
-          </Tooltip>
+          </TextTooltip>
           <Container
             style={{ display: fixtures.menu ? 'flex' : 'none' }}
             width={width}

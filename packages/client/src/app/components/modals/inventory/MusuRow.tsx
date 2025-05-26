@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 
 interface Props {
@@ -13,9 +13,9 @@ export const MusuRow = (props: Props) => {
 
   return (
     <Container key='musu'>
-      <Tooltip text={['MUSU']}>
+      <TextTooltip text={['MUSU']}>
         <Icon src={ItemImages.musu} />
-      </Tooltip>
+      </TextTooltip>
       <Balance>{balance.toLocaleString()}</Balance>
     </Container>
   );

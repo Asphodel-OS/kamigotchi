@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { calcListingBuyPrice } from 'app/cache/npc';
-import { Stepper, Tooltip } from 'app/components/library';
+import { Stepper, TextTooltip } from 'app/components/library';
 import { Listing } from 'network/shapes/Listing';
 import { getItemImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
@@ -34,9 +34,9 @@ export const CartRow = (props: Props) => {
   return (
     <Container key={listing.item.index}>
       <ExitButton onClick={handleRemove}> x </ExitButton>
-      <Tooltip text={[listing.item.description ?? '']}>
+      <TextTooltip text={[listing.item.description ?? '']}>
         <Image src={listing.item.image} />
-      </Tooltip>
+      </TextTooltip>
       <Quantity type='string' value={quantity.toString()} onChange={(e) => handleChange(e)} />
       <Stepper value={quantity} set={setQuantity} scale={3} min={min} max={max} />
       <TotalPrice>

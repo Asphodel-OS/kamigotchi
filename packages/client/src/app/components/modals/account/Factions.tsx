@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ProgressBar, Tooltip } from 'app/components/library';
+import { ProgressBar, TextTooltip } from 'app/components/library';
 import { FactionIcons } from 'assets/images/icons/factions';
 import { Account } from 'network/shapes/Account';
 
@@ -41,9 +41,9 @@ export const Factions = (props: Props) => {
       {BarContent.map((faction, index) => {
         return (
           <Row key={index}>
-            <Tooltip key={index} text={[faction.text]}>
+            <TextTooltip key={index} text={[faction.text]}>
               {faction.name}{' '}
-            </Tooltip>
+            </TextTooltip>
             <ProgressBar
               width={15}
               total={300}

@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 
-import { IconListButton, Tooltip } from 'app/components/library';
+import { IconListButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
@@ -91,7 +91,7 @@ export const MoreMenuButton = () => {
   };
 
   return (
-    <Tooltip text={['More']}>
+    <TextTooltip text={['More']}>
       <IconListButton
         img={MoreIcon}
         options={[
@@ -104,6 +104,6 @@ export const MoreMenuButton = () => {
         scaleOrientation='vh'
         radius={0.9}
       />
-    </Tooltip>
+    </TextTooltip>
   );
 };

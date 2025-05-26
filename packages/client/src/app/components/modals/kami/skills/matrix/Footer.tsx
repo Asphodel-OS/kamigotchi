@@ -2,7 +2,7 @@ import { EntityID } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
-import { IconButton, Overlay, Tooltip } from 'app/components/library';
+import { IconButton, Overlay, TextTooltip } from 'app/components/library';
 import { OnyxButton } from 'app/components/library/buttons/actions';
 import { useTokens } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
@@ -81,14 +81,14 @@ export const Footer = (props: Props) => {
 
   return (
     <Overlay bottom={0.75} right={0.75} gap={0.3}>
-      <Tooltip text={getRespecTooltip()} maxWidth={24}>
+      <TextTooltip text={getRespecTooltip()} maxWidth={24}>
         <IconButton
           key='respec-button'
           onClick={() => reset(kami)}
           img={ItemImages.respec_potion}
           disabled={!isResting(kami) || !hasRespecs()}
         />
-      </Tooltip>
+      </TextTooltip>
       <OnyxButton
         kami={kami}
         onyx={{

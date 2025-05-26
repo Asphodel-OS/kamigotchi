@@ -1,4 +1,4 @@
-import { ActionButton, Tooltip } from 'app/components/library';
+import { ActionButton, TextTooltip } from 'app/components/library';
 import styled from 'styled-components';
 
 interface Props {
@@ -15,9 +15,9 @@ export const Menu = (props: Props) => {
         const name = treeName.toLowerCase();
         const label = mode === treeName ? name : name[0];
         return (
-          <Tooltip key={name} text={[`${name} tree`]}>
+          <TextTooltip key={name} text={[`${name} tree`]}>
             <ActionButton text={label} onClick={() => setMode(treeName)} />
-          </Tooltip>
+          </TextTooltip>
         );
       })}
     </Container>

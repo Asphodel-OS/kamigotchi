@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { depressFx } from 'app/styles/effects';
@@ -72,7 +72,7 @@ export const Header = (props: Props) => {
                 const icon = StatIcons[name as keyof typeof StatIcons];
 
                 return (
-                  <Tooltip
+                  <TextTooltip
                     key={name}
                     text={[`${name} (${value.base} + ${value.shift})`, '', description]}
                     grow
@@ -81,7 +81,7 @@ export const Header = (props: Props) => {
                       <Icon size={2.1} src={icon} />
                       <Text size={1.1}>{value.total}</Text>
                     </StatPairing>
-                  </Tooltip>
+                  </TextTooltip>
                 );
               })}
           </StatsContainer>

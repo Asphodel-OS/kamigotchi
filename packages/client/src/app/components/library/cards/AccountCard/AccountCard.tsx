@@ -6,7 +6,7 @@ import { KAMI_BASE_URI } from 'constants/media';
 import { BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 import { Card } from '..';
-import { Tooltip } from '../../poppers';
+import { TextTooltip } from '../../poppers';
 
 interface Props {
   account: BaseAccount;
@@ -65,11 +65,11 @@ export const AccountCard = (props: Props) => {
 
   const Title = () => {
     return (
-      <Tooltip text={[account.ownerAddress]}>
+      <TextTooltip text={[account.ownerAddress]}>
         <TitleText key='title' onClick={() => handleClick()}>
           {account.name}
         </TitleText>
-      </Tooltip>
+      </TextTooltip>
     );
   };
 

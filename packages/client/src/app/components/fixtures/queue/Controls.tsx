@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useBalance, useGasPrice, useWatchBlockNumber } from 'wagmi';
 
-import { IconButton, Tooltip } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { GasConstants, GasExponent } from 'constants/gas';
@@ -95,7 +95,7 @@ export const Controls = (props: Props) => {
   const PriceWarning = () => {
     if (gasPrice > 10n)
       return (
-        <Tooltip
+        <TextTooltip
           text={[
             // `Gas price: ${gasPrice / 10n ** 3n} Gwei`,
             // '',
@@ -106,7 +106,7 @@ export const Controls = (props: Props) => {
           ]}
         >
           <WarningEmoji>⚠️</WarningEmoji>
-        </Tooltip>
+        </TextTooltip>
       );
     else return <></>;
   };
@@ -117,12 +117,12 @@ export const Controls = (props: Props) => {
   return (
     <Row>
       <RowPrefix>
-        <Tooltip text={getGaugeTooltip()}>
+        <TextTooltip text={getGaugeTooltip()}>
           <GasGauge level={calcGaugeSetting()} />
-        </Tooltip>
-        <Tooltip text={getBalanceTooltip()}>
+        </TextTooltip>
+        <TextTooltip text={getBalanceTooltip()}>
           <Text>{getScaledBalance().toFixed(2)}mETH</Text>
-        </Tooltip>
+        </TextTooltip>
         {PriceWarning()}
       </RowPrefix>
       <IconButton onClick={() => toggleMode()} img={iconMapping[mode]} />

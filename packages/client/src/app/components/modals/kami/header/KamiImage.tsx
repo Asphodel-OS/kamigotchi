@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
@@ -111,16 +111,16 @@ export const KamiImage = (props: Props) => {
         )}
       </Overlay>
       <Overlay bottom={0} fullWidth>
-        <Tooltip text={[`${expCurr}/${expLimit}`]} grow>
+        <TextTooltip text={[`${expCurr}/${expLimit}`]} grow>
           <ExperienceBar percent={percentage}></ExperienceBar>
-        </Tooltip>
+        </TextTooltip>
         <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
         <Overlay bottom={0} right={0}>
-          <Tooltip text={[getLevelTooltip()]}>
+          <TextTooltip text={[getLevelTooltip()]}>
             <Button disabled={!canLevel} onClick={() => handleLevelUp()}>
               ↑{canLevel && <Shimmer />}
             </Button>
-          </Tooltip>
+          </TextTooltip>
         </Overlay>
       </Overlay>
     </Container>

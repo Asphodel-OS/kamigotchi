@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
@@ -64,9 +64,9 @@ export const Milestone = (props: Props) => {
 
   return (
     <Container>
-      <Tooltip text={tooltip}>
+      <TextTooltip text={tooltip}>
         <Node />
-      </Tooltip>
+      </TextTooltip>
     </Container>
   );
 };

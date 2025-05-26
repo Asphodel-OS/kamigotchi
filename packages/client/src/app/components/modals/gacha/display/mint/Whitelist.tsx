@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config/gacha';
-import { Overlay, Pairing, Tooltip } from 'app/components/library';
+import { Overlay, Pairing, TextTooltip } from 'app/components/library';
 import { depressFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { KamiImages } from 'assets/images/kamis';
@@ -97,9 +97,9 @@ export const Whitelist = (props: Props) => {
   return (
     <Container isSelected={mode === 'DEFAULT'} onClick={handleClick}>
       <Overlay top={0.9} right={0.9}>
-        <Tooltip text={getCountdownTooltip()}>
+        <TextTooltip text={getCountdownTooltip()}>
           <Text size={0.9}>{getCountdownText()}</Text>
-        </Tooltip>
+        </TextTooltip>
       </Overlay>
       <Section>
         <Text size={1.8}>Whitelist Mint</Text>

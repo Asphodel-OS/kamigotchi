@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { playClick } from 'utils/sounds';
 import { IconButton } from '../buttons';
-import { Tooltip } from '../poppers/Tooltip';
+import { TextTooltip } from '../poppers/TextTooltip';
 
 interface Props {
   fullWidth?: boolean; // whether the input should take up the full width of its container
@@ -62,13 +62,13 @@ export const InputSingleTextForm = (props: Props) => {
         />
       </InputGroup>
       {hasButton && (
-        <Tooltip text={isDisabled ? [] : ['submit']}>
+        <TextTooltip text={isDisabled ? [] : ['submit']}>
           <IconButton
             img={buttonIcon ?? ActionIcons.chat}
             onClick={() => handleSubmit()}
             disabled={isDisabled || value.length === 0}
           />
-        </Tooltip>
+        </TextTooltip>
       )}
     </Container>
   );

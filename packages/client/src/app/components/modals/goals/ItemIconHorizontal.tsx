@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 
@@ -69,13 +69,13 @@ export const ItemIconHorizontal = (props: Props) => {
 
   if (typeof hoverText === 'boolean' && hoverText)
     result = (
-      <Tooltip text={item.description ? [item.name, '', item.description] : [item.name]}>
+      <TextTooltip text={item.description ? [item.name, '', item.description] : [item.name]}>
         {result}
-      </Tooltip>
+      </TextTooltip>
     );
   else if (typeof hoverText === 'object')
     // object = string array
-    result = <Tooltip text={hoverText}>{result}</Tooltip>;
+    result = <TextTooltip text={hoverText}>{result}</TextTooltip>;
 
   return result;
 };

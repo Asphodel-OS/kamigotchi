@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { PresaleData } from 'network/chain';
 import { useState } from 'react';
 import { InputButton } from './InputButton';
@@ -82,7 +82,7 @@ export const Info = (props: Props) => {
     <Container>
       <TextSection>
         <Text size={1.5}>Your Allocation</Text>
-        <Tooltip
+        <TextTooltip
           text={[
             `Total: ${data.allo.toFixed(3)}ETH`,
             `Claimed: ${data.bought.toFixed(3)}ETH`,
@@ -99,7 +99,7 @@ export const Info = (props: Props) => {
           <Text size={0.9} shift={0.6}>
             Claimable: {((data.allo - data.bought) / data.price).toLocaleString()}
           </Text>
-        </Tooltip>
+        </TextTooltip>
       </TextSection>
       <ButtonSection>
         <InputButton

@@ -3,7 +3,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { ActionButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
@@ -99,14 +99,14 @@ export const Registration = (props: Props) => {
 
     return (
       <AddressRow>
-        <Tooltip text={[address.burner, '', '(click to copy)']} alignText='center'>
+        <TextTooltip text={[address.burner, '', '(click to copy)']} alignText='center'>
           <Description size={0.9} onClick={() => copy(address.burner)}>
             Operator: {abbreviateAddress(address.burner)}
           </Description>
-        </Tooltip>
-        <Tooltip text={infoText} alignText='center'>
+        </TextTooltip>
+        <TextTooltip text={infoText} alignText='center'>
           <InfoIcon fontSize='small' style={{ color: '#666', width: '1.2vw' }} />
-        </Tooltip>
+        </TextTooltip>
       </AddressRow>
     );
   };
@@ -114,11 +114,11 @@ export const Registration = (props: Props) => {
   const OwnerDisplay = () => {
     return (
       <AddressRow>
-        <Tooltip text={[address.selected, '', '(click to copy)']} alignText='center'>
+        <TextTooltip text={[address.selected, '', '(click to copy)']} alignText='center'>
           <Description size={0.9} onClick={() => copy(address.selected)}>
             Owner: {abbreviateAddress(address.selected)}
           </Description>
-        </Tooltip>
+        </TextTooltip>
       </AddressRow>
     );
   };
@@ -155,13 +155,13 @@ export const Registration = (props: Props) => {
       </Row>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />{' '}
-        <Tooltip text={getSubmitTooltip()} alignText='center'>
+        <TextTooltip text={getSubmitTooltip()} alignText='center'>
           <ActionButton
             text='Next ⟶'
             disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
             onClick={() => handleAccountCreation()}
           />
-        </Tooltip>
+        </TextTooltip>
       </Row>
     </Container>
   );

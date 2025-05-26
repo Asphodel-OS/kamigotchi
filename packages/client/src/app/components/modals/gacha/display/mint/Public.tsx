@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config/gacha';
-import { Overlay, Pairing, ProgressBar, Tooltip } from 'app/components/library';
+import { Overlay, Pairing, ProgressBar, TextTooltip } from 'app/components/library';
 import { depressFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { KamiImages } from 'assets/images/kamis';
@@ -78,16 +78,16 @@ export const Public = (props: Props) => {
   return (
     <Container isSelected={mode === 'ALT'} onClick={handleClick}>
       <Overlay top={0.9} right={0.9}>
-        <Tooltip text={getCountdownTooltip()}>
+        <TextTooltip text={getCountdownTooltip()}>
           <Text size={0.9}>{getCountdownText()}</Text>
-        </Tooltip>
+        </TextTooltip>
       </Overlay>
       <Section>
         <Text size={1.8}>Public Mint</Text>
         <Text size={0.9}>limit {config.public.max} per customer (⌐■_■) </Text>
       </Section>
       <Image src={KamiImages.happy} selected={mode === 'ALT'} />
-      <Tooltip text={[`You're probably hoping these`, `don't mint out :3`]}>
+      <TextTooltip text={[`You're probably hoping these`, `don't mint out :3`]}>
         <Section>
           <Pairing icon={GACHA_TICKET_IMAGE} text={getStatusText()} reverse />
           <ProgressBar
@@ -97,7 +97,7 @@ export const Public = (props: Props) => {
             colors={{ background: '#fff', progress: '#3DE167' }}
           />
         </Section>
-      </Tooltip>
+      </TextTooltip>
     </Container>
   );
 };

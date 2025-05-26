@@ -2,7 +2,7 @@ import { calcCooldown, isHarvesting, isStarving } from 'app/cache/kami';
 import { StopIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { IconButton, Tooltip } from '../..';
+import { IconButton, TextTooltip } from '../..';
 
 // button for stopping a harvest
 export const StopButton = (kami: Kami, account: Account, triggerAction: Function) => {
@@ -12,14 +12,14 @@ export const StopButton = (kami: Kami, account: Account, triggerAction: Function
   if (!disabled) tooltip = `Stop Harvest`;
 
   return (
-    <Tooltip key='stop-tooltip' text={[tooltip]}>
+    <TextTooltip key='stop-tooltip' text={[tooltip]}>
       <IconButton
         key='stop-button'
         img={StopIcon}
         onClick={() => triggerAction(kami)}
         disabled={disabled}
       />
-    </Tooltip>
+    </TextTooltip>
   );
 };
 

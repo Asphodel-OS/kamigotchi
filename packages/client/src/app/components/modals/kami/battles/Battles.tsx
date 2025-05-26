@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import styled from 'styled-components';
 
-import { EmptyText, Tooltip } from 'app/components/library';
+import { EmptyText, TextTooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
@@ -73,9 +73,9 @@ export const Battles = (props: Props) => {
     return (
       <TableCell sx={cellStyle}>
         <Cell>
-          <Tooltip text={[type]}>
+          <TextTooltip text={[type]}>
             <Icon src={isKill(log) ? KillIcon : DeathIcon} />
-          </Tooltip>
+          </TextTooltip>
           <Text color={isKill(log) ? 'green' : 'red'}>{getPnLString(log)}</Text>
         </Cell>
       </TableCell>
@@ -89,13 +89,13 @@ export const Battles = (props: Props) => {
     const kamiTime = getKamiTime(log.time, 0);
     return (
       <TableCell sx={cellStyle}>
-        <Tooltip text={[`${date}`, `on your plebeian calendar`]}>
+        <TextTooltip text={[`${date}`, `on your plebeian calendar`]}>
           <Cell>
             {kamiDate}
             <Icon src={getPhaseIcon(getPhaseOf(log.time, 0))} />
             {kamiTime}
           </Cell>
-        </Tooltip>
+        </TextTooltip>
       </TableCell>
     );
   };

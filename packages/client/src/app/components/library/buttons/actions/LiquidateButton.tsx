@@ -10,7 +10,7 @@ import {
 import { IconListButton } from 'app/components/library';
 import { LiquidateIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
-import { Tooltip } from '../..';
+import { TextTooltip } from '../..';
 
 // button for liquidating a harvest
 // TODO: clean this up
@@ -28,14 +28,14 @@ export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Fun
 
   let tooltipText = getLiquidateTooltip(target, allies);
   return (
-    <Tooltip key='liquidate-tooltip' text={[tooltipText]}>
+    <TextTooltip key='liquidate-tooltip' text={[tooltipText]}>
       <IconListButton
         key='liquidate-button'
         img={LiquidateIcon}
         options={actionOptions}
         disabled={actionOptions.length == 0}
       />
-    </Tooltip>
+    </TextTooltip>
   );
 };
 

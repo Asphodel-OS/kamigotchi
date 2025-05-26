@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library/poppers/Tooltip';
+import { TextTooltip } from 'app/components/library/poppers/TextTooltip';
 import { Modals, useVisibility } from 'app/stores';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
@@ -33,13 +33,13 @@ export const MenuButton = (props: Props) => {
   };
 
   return (
-    <Tooltip text={[tooltip]}>
+    <TextTooltip text={[tooltip]}>
       <div id={id}>
         <Button onClick={handleToggle} effectScale={0.1} disabled={disabled}>
           <Image src={image} alt={id} />
         </Button>
       </div>
-    </Tooltip>
+    </TextTooltip>
   );
 };
 

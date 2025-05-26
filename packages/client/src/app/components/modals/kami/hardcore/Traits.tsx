@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { Kami } from 'network/shapes/Kami';
 import { Stat } from 'network/shapes/Stats';
@@ -30,9 +30,9 @@ export const Traits = (Props: Props) => {
         ];
         return (
           <Column>
-            <Tooltip key={key} text={tooltipText}>
+            <TextTooltip key={key} text={tooltipText}>
               <Icon size={1.3} src={icon} />
-            </Tooltip>
+            </TextTooltip>
             <Grouping>
               {Object.entries(stats).map(([key, stat]: [string, Stat]) => {
                 if (key === 'stamina') return <></>;

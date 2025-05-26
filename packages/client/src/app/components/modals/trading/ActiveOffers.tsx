@@ -3,7 +3,7 @@ import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, Tooltip } from 'app/components/library';
+import { ActionButton, TextTooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { Trade, TradeOrder } from 'network/shapes/Trade/types';
 
@@ -76,31 +76,31 @@ export const ActiveOffers = (props: Props) => {
       return (
         <Card key={i} managementTab={managementTab}>
           <OuterSide>
-            <Tooltip text={[Number(itemMusu.Item?.amounts[0]).toString()]}>
+            <TextTooltip text={[Number(itemMusu.Item?.amounts[0]).toString()]}>
               <Icon src={itemMusu.Item?.items[0].image} />
               <TextCap cap={5} style={{ marginLeft: `1.5vw` }}>
                 {Number(itemMusu.Item?.amounts[0]).toString()}
               </TextCap>
-            </Tooltip>
+            </TextTooltip>
           </OuterSide>
           <RightSide>
             <TopRow>
-              <Tooltip text={[itemMusu.Item?.items[0].name!]}>
+              <TextTooltip text={[itemMusu.Item?.items[0].name!]}>
                 <TextCap fontSize={0.8} cap={15} style={{ marginRight: `1vw` }}>
                   {itemMusu.Item?.items[0].name!}
                 </TextCap>
-              </Tooltip>
+              </TextTooltip>
             </TopRow>
             <BottomRow>
               <InnerSide>
                 {!ownerCheck(trade) ? (
-                  <Tooltip text={[trade.seller?.name!]}>
+                  <TextTooltip text={[trade.seller?.name!]}>
                     <TextCap cap={21}>Player : {trade.seller?.name!}</TextCap>
-                  </Tooltip>
+                  </TextTooltip>
                 ) : (
                   <TextCap>Trade: {itemMusu.Order}</TextCap>
                 )}
-                <Tooltip text={[Number(itemMusu.Musu?.amounts[0]).toString()]}>
+                <TextTooltip text={[Number(itemMusu.Musu?.amounts[0]).toString()]}>
                   <div
                     style={{
                       display: `flex`,
@@ -114,7 +114,7 @@ export const ActiveOffers = (props: Props) => {
                     />
                     <TextCap cap={19}>{Number(itemMusu.Musu?.amounts[0])}</TextCap>
                   </div>
-                </Tooltip>
+                </TextTooltip>
               </InnerSide>
               <ActionButton
                 text={ownerCheck(trade) ? 'Cancel' : itemMusu.Order}

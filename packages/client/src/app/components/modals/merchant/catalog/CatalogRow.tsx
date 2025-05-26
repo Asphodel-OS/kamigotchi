@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { calcListingBuyPrice } from 'app/cache/npc';
-import { Overlay, Pairing, Tooltip } from 'app/components/library';
+import { Overlay, Pairing, TextTooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { PricingIcons } from 'assets/images/icons/pricing';
@@ -84,9 +84,9 @@ export const CatalogRow = (props: Props) => {
       isInCart={isInCart()}
       effectScale={0.02}
     >
-      <Tooltip text={getItemTooltip()}>
+      <TextTooltip text={getItemTooltip()}>
         <Image src={listing.item.image} isInCart={isInCart()} />
-      </Tooltip>
+      </TextTooltip>
       <Details>
         <Pairing
           icon={getPricingIcon(listing)}

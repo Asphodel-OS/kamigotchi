@@ -1,4 +1,4 @@
-import { Overlay, Tooltip } from 'app/components/library';
+import { Overlay, TextTooltip } from 'app/components/library';
 import { PresaleData } from 'network/chain';
 import styled from 'styled-components';
 
@@ -28,7 +28,7 @@ export const Footer = (props: Props) => {
   return (
     <Container>
       <Overlay left={0.75} top={-1.1}>
-        <Tooltip
+        <TextTooltip
           text={[
             '$ONYX is a bToken based on the Baseline Protocol.',
             '',
@@ -40,11 +40,11 @@ export const Footer = (props: Props) => {
           <Text size={0.6} onClick={openBaselineDocs}>
             Powered by Baseline
           </Text>
-        </Tooltip>
+        </TextTooltip>
       </Overlay>
-      <Tooltip text={[`${getSupplyMinted()} / ${getTotalSupply()} $ONYX claimed`]}>
+      <TextTooltip text={[`${getSupplyMinted()} / ${getTotalSupply()} $ONYX claimed`]}>
         <Bar percent={getPercent()} bgColor='#112535' fgColor='#d0fe41' />
-      </Tooltip>
+      </TextTooltip>
     </Container>
   );
 };

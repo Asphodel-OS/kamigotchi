@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -66,7 +66,7 @@ export const KamiCard = (props: Props) => {
 
   return (
     <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
-      <Tooltip text={titleTooltip ?? []}>
+      <TextTooltip text={titleTooltip ?? []}>
         <TitleBar>
           <TitleText key='title' onClick={() => handleKamiClick()}>
             {kami.name}
@@ -78,12 +78,12 @@ export const KamiCard = (props: Props) => {
             )}
           </TitleCorner>
         </TitleBar>
-      </Tooltip>
+      </TextTooltip>
       <Content>
         <ContentColumn key='column-1'>
-          <Tooltip text={contentTooltip ?? []}>
+          <TextTooltip text={contentTooltip ?? []}>
             <Description />
-          </Tooltip>
+          </TextTooltip>
         </ContentColumn>
         <ContentColumn key='column-2'>
           <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>

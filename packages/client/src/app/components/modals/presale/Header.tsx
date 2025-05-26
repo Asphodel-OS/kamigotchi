@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Overlay, Tooltip } from 'app/components/library';
+import { Overlay, TextTooltip } from 'app/components/library';
 import { formatCountdown, getDateString } from 'utils/time';
 
 interface Props {
@@ -39,9 +39,9 @@ export const Header = (props: Props) => {
         <Text size={0.9}>Mint is {getStatus()}</Text>
       </Overlay>
       <Overlay right={0.9} top={0.9}>
-        <Tooltip text={getCountdownTooltip()} alignText='center' grow>
+        <TextTooltip text={getCountdownTooltip()} alignText='center' grow>
           <Text size={0.9}>{getCountdown()}</Text>
-        </Tooltip>
+        </TextTooltip>
       </Overlay>
       <Title>$ONYX Presale</Title>
     </Container>

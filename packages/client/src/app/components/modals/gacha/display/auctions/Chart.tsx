@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcAuctionCost, calcAuctionPrice } from 'app/cache/auction';
-import { ActionListButton, Overlay, Tooltip } from 'app/components/library';
+import { ActionListButton, Overlay, TextTooltip } from 'app/components/library';
 import { AuctionBuy, getKamidenClient } from 'clients/kamiden';
 import { Auction } from 'network/shapes/Auction';
 import { ChartOptions, CrosshairPlugin } from './chartOptions';
@@ -182,9 +182,9 @@ export const Chart = (props: Props) => {
 
   return (
     <Container>
-      <Tooltip text={getTitleTooltip()}>
+      <TextTooltip text={getTitleTooltip()}>
         <Title onClick={onClick}>{name}</Title>
-      </Tooltip>
+      </TextTooltip>
       <Overlay left={1.2} top={4.2}>
         <ActionListButton
           id='dt'

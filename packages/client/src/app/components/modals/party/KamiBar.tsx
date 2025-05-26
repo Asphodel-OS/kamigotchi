@@ -12,7 +12,7 @@ import {
   isResting,
 } from 'app/cache/kami';
 import { calcHealTime, calcIdleTime } from 'app/cache/kami/calcs/base';
-import { Overlay, Text, Tooltip } from 'app/components/library';
+import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
 import { AffinityIcons } from 'constants/affinities';
@@ -142,25 +142,25 @@ export const KamiBar = (props: Props) => {
   return (
     <Container>
       <Left>
-        <Tooltip text={[`${kami.name}`]}>
+        <TextTooltip text={[`${kami.name}`]}>
           <Image src={kami.image} onClick={handleImageClick} />
-        </Tooltip>
-        <Tooltip
+        </TextTooltip>
+        <TextTooltip
           text={[`Body: ${getKamiBodyAffinity(kami)}`, `Hand: ${getKamiHandAffinity(kami)}`]}
           direction='row'
         >
           <Icon src={getBodyIcon()} />
           <Icon src={getHandIcon()} />
-        </Tooltip>
+        </TextTooltip>
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
         <Overlay top={0.18} left={0.15} passthrough>
           <Text size={0.45}>{calcOutput(kami)}</Text>
         </Overlay>
-        <Tooltip text={getTooltip(kami)} direction='row'>
+        <TextTooltip text={getTooltip(kami)} direction='row'>
           <Text size={0.9}>{kami.state}</Text>
           <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>
-        </Tooltip>
+        </TextTooltip>
       </Middle>
       <Actions>
         <Cooldown kami={kami} />

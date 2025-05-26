@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { getRarities } from 'constants/rarities';
 import { StatIcons } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
@@ -46,12 +46,12 @@ export const Traits = (props: Props) => {
             const details = statsDetails.get(name);
             const tooltipText = [details?.description ?? ''];
             return (
-              <Tooltip key={name} text={tooltipText}>
+              <TextTooltip key={name} text={tooltipText}>
                 <InfoBox color={getRarities(trait.rarity).color}>
                   <InfoIcon src={details?.image} />
                   <InfoNumber>{stat.base}</InfoNumber>
                 </InfoBox>
-              </Tooltip>
+              </TextTooltip>
             );
           })}
         </Content>

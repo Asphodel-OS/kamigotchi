@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Card, CraftButton, Stepper, Tooltip } from 'app/components/library';
+import { Card, CraftButton, Stepper, TextTooltip } from 'app/components/library';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Account } from 'network/shapes/Account';
 import { NullItem } from 'network/shapes/Item';
@@ -69,7 +69,7 @@ export const RecipeCard = (props: Props) => {
         </TitleCorner>
       </TitleBar>
       <Content>
-        <Tooltip text={getTooltipText()} direction='row' grow>
+        <TextTooltip text={getTooltipText()} direction='row' grow>
           <ContentRow key='column-1'>
             {inputs.map((input, i) => (
               <Input
@@ -81,7 +81,7 @@ export const RecipeCard = (props: Props) => {
             ))}
             <Input image={StaminaIcon} amt={recipe.cost.stamina * quantity} prepend='+' />
           </ContentRow>
-        </Tooltip>
+        </TextTooltip>
         <ContentColumn key='column-2'>
           <Actions>
             <CraftButton data={{ recipe, quantity, stamina }} actions={actions} utils={utils} />

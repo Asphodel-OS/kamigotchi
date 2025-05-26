@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { canHarvest, isResting, onCooldown } from 'app/cache/kami';
-import { IconListButton, Tooltip } from 'app/components/library';
+import { IconListButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { HarvestIcon } from 'assets/images/icons/actions';
 import { rooms } from 'constants/rooms';
@@ -116,7 +116,7 @@ export const Header = (props: Props) => {
     });
 
     return (
-      <Tooltip text={[getDisabledReason(kamis)]} grow>
+      <TextTooltip text={[getDisabledReason(kamis)]} grow>
         <IconListButton
           key={`harvest-add`}
           img={HarvestIcon}
@@ -125,7 +125,7 @@ export const Header = (props: Props) => {
           disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
           fullWidth
         />
-      </Tooltip>
+      </TextTooltip>
     );
   };
 
@@ -137,9 +137,9 @@ export const Header = (props: Props) => {
           <Name>{node.name}</Name>
           <Row>
             <Label>Type: </Label>
-            <Tooltip text={[node.affinity ?? '']}>
+            <TextTooltip text={[node.affinity ?? '']}>
               <Icon src={getAffinityImage(node.affinity)} />
-            </Tooltip>
+            </TextTooltip>
             <ItemDrops node={node} scavenge={scavenge} utils={utils} />
           </Row>
           <Description>{room.description}</Description>

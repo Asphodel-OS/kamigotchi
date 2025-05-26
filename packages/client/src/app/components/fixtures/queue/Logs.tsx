@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { OpenInNewIcon } from 'assets/images/icons/misc';
 import { DefaultChain } from 'constants/chains';
@@ -62,24 +62,24 @@ export const Logs = (props: Props) => {
     }
 
     const tooltip = status === 'Complete' ? [status] : [`${status} (${event})`, '', details];
-    return <Tooltip text={tooltip}>{icon}</Tooltip>;
+    return <TextTooltip text={tooltip}>{icon}</TextTooltip>;
   };
 
   // render the human readable description and detailed tooltip of a given action
   const Description = (action: any) => {
     const tooltip = [`Action: ${action.action}`, `Input(s): ${action.params.join(', ')}`];
     return (
-      <Tooltip text={tooltip}>
+      <TextTooltip text={tooltip}>
         <Text>{action.description}</Text>
-      </Tooltip>
+      </TextTooltip>
     );
   };
 
   const Time = (time: number) => {
     return (
-      <Tooltip text={[moment(time).format('Do MMMM, h:mm:ss a')]}>
+      <TextTooltip text={[moment(time).format('Do MMMM, h:mm:ss a')]}>
         <Text>{moment(time).fromNow()}</Text>
-      </Tooltip>
+      </TextTooltip>
     );
   };
 
@@ -88,12 +88,12 @@ export const Logs = (props: Props) => {
     if (!hash || !explorerUrl) return <></>;
 
     return (
-      <Tooltip text={[`View on block explorer`]}>
+      <TextTooltip text={[`View on block explorer`]}>
         <OpenIcon
           src={OpenInNewIcon}
           onClick={() => window.open(`${explorerUrl}/txs/${hash}`, '_blank')}
         />
-      </Tooltip>
+      </TextTooltip>
     );
   };
 

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from '../poppers/Tooltip';
+import { TextTooltip } from '../poppers/TextTooltip';
 import { Text } from '../text';
 
 const SCALE_DEFAULT = 1.2;
@@ -21,9 +21,9 @@ export const Pairing = (props: Props) => {
   return (
     <Container scale={size}>
       {reverse && <Text size={size}>{text}</Text>}
-      <Tooltip text={tooltip ?? []}>
+      <TextTooltip text={tooltip ?? []}>
         <Icon src={icon} scale={size} />
-      </Tooltip>
+      </TextTooltip>
       {!reverse && <Text size={size}>{text}</Text>}
     </Container>
   );

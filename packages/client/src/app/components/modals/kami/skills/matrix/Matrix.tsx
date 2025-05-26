@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { SkillTrees } from 'constants/skills/trees';
 import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
@@ -51,9 +51,9 @@ export const Matrix = (props: Props) => {
         {SkillTrees.get(mode)!.map((row, i) => (
           <Row key={i + 1} locked={getTreePoints(mode) < tierMins[i]}>
             <RowPrefix>
-              <Tooltip text={[`unlock with ${tierMins[i]} points`, `in ${mode} tree`]}>
+              <TextTooltip text={[`unlock with ${tierMins[i]} points`, `in ${mode} tree`]}>
                 <RowNumber>{i + 1}</RowNumber>
-              </Tooltip>
+              </TextTooltip>
             </RowPrefix>
             {row.map((index) => (
               <Node

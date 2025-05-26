@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getSkillInstance } from 'app/cache/skills';
-import { ActionButton, HelpChip, Tooltip } from 'app/components/library';
+import { ActionButton, HelpChip, TextTooltip } from 'app/components/library';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { parseBonusText } from 'network/shapes/Bonus';
 import { Condition } from 'network/shapes/Conditional';
@@ -116,13 +116,13 @@ export const Details = (props: Props) => {
       <ImageSection>
         <Image src={getSkillImage(skill)} />
         <div style={{ position: 'absolute', bottom: '.6vw', right: '.6vw' }}>
-          <Tooltip text={getUpgradeButtonTooltip()}>
+          <TextTooltip text={getUpgradeButtonTooltip()}>
             <ActionButton
               text={'Upgrade'}
               onClick={() => triggerUpgrade(skill)}
               disabled={!!disabledReason}
             />
-          </Tooltip>
+          </TextTooltip>
         </div>
         <div style={{ position: 'absolute', top: '.6vw', right: '.6vw' }}>
           <HelpChip

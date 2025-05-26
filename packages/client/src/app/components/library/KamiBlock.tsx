@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Overlay, Tooltip } from 'app/components/library';
+import { Overlay, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -32,7 +32,7 @@ export const KamiBlock = (props: Props) => {
 
   return (
     <Container>
-      <Tooltip text={tooltip ?? []}>
+      <TextTooltip text={tooltip ?? []}>
         <Image src={kami.image} onClick={handleClick} />
         <Overlay top={0.9} left={0.7}>
           <Grouping>
@@ -55,7 +55,7 @@ export const KamiBlock = (props: Props) => {
             />
           </Overlay>
         )}
-      </Tooltip>
+      </TextTooltip>
     </Container>
   );
 };

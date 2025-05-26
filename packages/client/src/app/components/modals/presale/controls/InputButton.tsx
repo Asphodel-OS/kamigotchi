@@ -1,4 +1,4 @@
-import { Overlay, Tooltip } from 'app/components/library';
+import { Overlay, TextTooltip } from 'app/components/library';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
@@ -69,17 +69,17 @@ export const InputButton = (props: Props) => {
         onChange={(e) => handleChange(e)}
       />
       <Overlay left={7} bottom={0.1}>
-        <Tooltip text={getMaxTooltip()} alignText='center' grow>
+        <TextTooltip text={getMaxTooltip()} alignText='center' grow>
           <ClickableText size={0.6} onClick={setValueToMax}>
             Max
           </ClickableText>
-        </Tooltip>
+        </TextTooltip>
       </Overlay>
-      <Tooltip text={button.tooltip} alignText='center' grow>
+      <TextTooltip text={button.tooltip} alignText='center' grow>
         <Button onClick={handleSubmit} disabled={button.disabled}>
           {button.text}
         </Button>
-      </Tooltip>
+      </TextTooltip>
     </Container>
   );
 };

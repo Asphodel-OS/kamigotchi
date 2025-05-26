@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ActionButton, ActionListButton, Tooltip } from 'app/components/library';
+import { ActionButton, ActionListButton, TextTooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { Allo } from 'network/shapes/Allo';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
@@ -67,9 +67,9 @@ export const QuestCard = (props: Props) => {
     if (!imageCache.has(key)) {
       const entity = describeEntity(reward.type, reward.index || 0);
       const component = (
-        <Tooltip key={key} text={[entity.name]} direction='row'>
+        <TextTooltip key={key} text={[entity.name]} direction='row'>
           <Image src={entity.image} size={1.5} />
-        </Tooltip>
+        </TextTooltip>
       );
       imageCache.set(key, component);
     }

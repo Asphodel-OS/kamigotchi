@@ -23,7 +23,7 @@ export { KamiBlock } from './KamiBlock';
 export { Battery, Countdown, ProgressBar } from './measures';
 export { HelpChip, Pairing } from './misc';
 export { ModalHeader, ModalWrapper } from './modals';
-export { Popover, Tooltip } from './poppers';
+export { Popover, TextTooltip } from './poppers';
 export { EmptyText, Text } from './text';
 export { ValidatorWrapper } from './validators';
 

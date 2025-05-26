@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { Allo } from 'network/shapes/Allo';
 import { Node } from 'network/shapes/Node';
 import { ScavBar } from 'network/shapes/Scavenge';
@@ -29,17 +29,17 @@ export const ItemDrops = (props: Props) => {
   return (
     <Container>
       <Label>Drops: </Label>
-      <Tooltip text={[nodeDrops[0]?.name ?? '']}>
+      <TextTooltip text={[nodeDrops[0]?.name ?? '']}>
         <Icon key={'node-' + nodeDrops[0]?.name} src={nodeDrops[0]?.image ?? ''} />
-      </Tooltip>
+      </TextTooltip>
 
-      <Tooltip text={drops.map((entry) => `${entry.name} [${entry.description}]`)}>
+      <TextTooltip text={drops.map((entry) => `${entry.name} [${entry.description}]`)}>
         <Row>
           {drops.map((entry) => (
             <Icon key={'scav-' + entry.name} src={entry.image} />
           ))}
         </Row>
-      </Tooltip>
+      </TextTooltip>
     </Container>
   );
 };

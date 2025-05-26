@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Tooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { calcPercentCompletion } from 'utils/numbers';
 
 interface Props {
@@ -28,7 +28,7 @@ export const ProgressBar = (props: Props) => {
 
   return (
     <Container width={props.width}>
-      <Tooltip text={[`${current}/${total}`]} grow>
+      <TextTooltip text={[`${current}/${total}`]} grow>
         <Bar
           percent={calcPercentCompletion(current, total)}
           height={height ?? 1.2}
@@ -37,7 +37,7 @@ export const ProgressBar = (props: Props) => {
         >
           {icon && <Icon src={icon} alt='icon' position={calcPercentCompletion(current, total)} />}
         </Bar>
-      </Tooltip>
+      </TextTooltip>
     </Container>
   );
 };
