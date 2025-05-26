@@ -28,17 +28,6 @@ export const TextTooltip = (props: Props) => {
   const { text, title, alignText, maxWidth, color, delay } = props;
   const textSize = props.size ?? 0.75;
 
-  const content = (
-    <>
-      {title && <Text size={textSize * 1.35}>{title}</Text>}
-      {text.map((line, idx) => (
-        <Text key={idx} size={textSize} align={alignText}>
-          {line}
-        </Text>
-      ))}
-    </>
-  );
-
   return (
     <Tooltip
       grow={grow}
@@ -47,7 +36,16 @@ export const TextTooltip = (props: Props) => {
       maxWidth={maxWidth}
       color={color}
       isDisabled={text.every((entry) => entry === '' || entry === null)}
-      content={content}
+      content={
+        <>
+          {title && <Text size={textSize * 1.35}>{title}</Text>}
+          {text.map((line, idx) => (
+            <Text key={idx} size={textSize} align={alignText}>
+              {line}
+            </Text>
+          ))}
+        </>
+      }
     >
       {children}
     </Tooltip>
