@@ -9,7 +9,7 @@ import { ActionIcons } from 'assets/images/icons/actions';
 import { CooldownIcon } from 'assets/images/icons/battles';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { HealthIcon } from 'assets/images/icons/stats';
-import { BaseAccount } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 
 type KamiSort = 'name' | 'health' | 'health %' | 'output' | 'cooldown';
@@ -23,6 +23,7 @@ const SortMap: Record<KamiSort, string> = {
 };
 
 interface Props {
+  account: Account;
   allies: Kami[];
   enemyEntities: EntityIndex[];
   limit: {
@@ -40,7 +41,7 @@ interface Props {
 
 // rendering of enermy kamis on this node
 export const EnemyCards = (props: Props) => {
-  const { allies, enemyEntities, limit, actions, utils } = props;
+  const { allies, enemyEntities, limit, actions, utils, account } = props;
   const { getOwner, getKami } = utils;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount, nodeIndex } = useSelected();
@@ -194,6 +195,7 @@ export const EnemyCards = (props: Props) => {
           const owner = getOwner(kami.entity);
           return (
             <KamiCard
+              isFriend={account.friends?.friends.some((fren) => fren.target.index === owner.index)}
               key={kami.index}
               kami={kami}
               subtext={`${owner.name} (\$${calcOutput(kami)})`}

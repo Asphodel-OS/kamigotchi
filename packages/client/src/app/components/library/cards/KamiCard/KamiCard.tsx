@@ -11,6 +11,7 @@ import { Cooldown } from './Cooldown';
 import { Health } from './Health';
 
 interface Props {
+  isFriend?: boolean;
   kami: Kami; // assumed to have a harvest attached
   description: string[];
   descriptionOnClick?: () => void;
@@ -26,7 +27,7 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, actions, showBattery, showCooldown } = props;
+  const { kami, actions, showBattery, showCooldown, isFriend } = props;
   const { description, descriptionOnClick } = props;
   const { titleTooltip, contentTooltip } = props;
   const { subtext, subtextOnClick } = props;
@@ -84,9 +85,11 @@ export const KamiCard = (props: Props) => {
           <TextTooltip text={contentTooltip ?? []}>
             <Description />
           </TextTooltip>
+          {isFriend && <Friend>Friend</Friend>}
         </ContentColumn>
         <ContentColumn key='column-2'>
           <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+
           <ContentActions>{actions}</ContentActions>
         </ContentColumn>
       </Content>
@@ -144,7 +147,7 @@ const ContentColumn = styled.div`
   display: flex;
   flex-flow: column nowrap;
   flex-grow: 1;
-
+  position: relative;
   margin: 0.2vw;
   padding-top: 0.2vw;
 `;
@@ -197,4 +200,18 @@ const TextMedium = styled.p`
   font-size: 0.6vw;
   line-height: 1vw;
   text-align: left;
+`;
+
+const Friend = styled.div`
+  width: 5vw;
+  padding: 0.2vw;
+  position: absolute;
+  bottom: 0;
+  background-color: rgb(192, 224, 139);
+  color: rgb(25, 39, 2);
+  clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6vw;
 `;

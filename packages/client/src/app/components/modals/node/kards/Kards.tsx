@@ -126,6 +126,7 @@ export const Kards = (props: Props) => {
         display={display}
       />
       <EnemyCards
+        account={account}
         allies={allies}
         enemyEntities={enemyEntities}
         actions={actions}
