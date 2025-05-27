@@ -1,46 +1,53 @@
-import { World, getComponentValue } from '@mud-classic/recs';
+import { World } from '@mud-classic/recs';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
-import { getAccountKamis } from 'network/shapes/Account';
-import { queryAll } from '../../shapes/Account/queries';
-import { getData } from '../../shapes/Data';
-import { getReputation } from '../../shapes/Faction';
-import { getItemBalance } from '../../shapes/Item';
+import { getAccountKamis, queryAllAccounts } from 'network/shapes/Account';
+import { getData } from 'network/shapes/Data';
+import { getReputation } from 'network/shapes/Faction';
+import { getItemBalance } from 'network/shapes/Item';
+import { getAccountIndex, getName } from 'network/shapes/utils/component';
 
-export const getKamiCounts = (world: World, components: Components, limit = 200) => {
-  const { AccountIndex, Name } = components;
-  const entities = queryAll(components);
-  const raw = entities.map((entity) => {
+export const getKamiCounts = (world: World, comps: Components, limit = 200, flatten = false) => {
+  const entities = queryAllAccounts(comps);
+  const raw = entities.map((entity, i) => {
     return {
-      index: getComponentValue(AccountIndex, entity)?.value as number,
-      name: getComponentValue(Name, entity)?.value as string,
-      kamis: getAccountKamis(world, components, entity),
+      rank: i + 1,
+      index: getAccountIndex(comps, entity),
+      name: getName(comps, entity),
+      count: getAccountKamis(world, comps, entity),
     };
   });
-  const ranked = raw.sort((a, b) => b.kamis.length - a.kamis.length);
+  const ranked = raw.sort((a, b) => b.count.length - a.count.length);
   const truncated = ranked.slice(0, limit);
+
+  // optionally flatten and return
+  if (flatten) {
+    return truncated.map((result, i) => `${i + 1}. ${result.name}: ${result.count}`);
+  }
   return truncated;
 };
 
 // return the total coin collected stats of all accounts
-export const getCoinStats = (world: World, components: Components, limit = 200, flatten = true) => {
-  const { AccountIndex, Name } = components;
-  const entities = queryAll(components);
-  const raw = entities.map((entity) => {
+export const getCoinStats = (world: World, comps: Components, limit = 200, flatten = false) => {
+  const entities = queryAllAccounts(comps);
+  const raw = entities.map((entity, i) => {
     const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entity)?.value as number,
-      name: getComponentValue(Name, entity)?.value as string,
-      coin: getData(world, components, id, 'ITEM_TOTAL', MUSU_INDEX),
+      rank: i + 1,
+      index: getAccountIndex(comps, entity),
+      name: getName(comps, entity),
+      coin: getData(world, comps, id, 'ITEM_TOTAL', MUSU_INDEX),
     };
   });
+
+  // sort and truncate
   const ranked = raw.sort((a, b) => b.coin - a.coin);
   const truncated = ranked.slice(0, limit);
 
   // optionally flatten and return
   if (flatten) {
-    return truncated.map((result, ranking) => `${ranking + 1}. ${result.name}: ${result.coin}`);
+    return truncated.map((result, i) => `${i + 1}. ${result.name}: ${result.coin}`);
   }
   return truncated;
 };
@@ -48,43 +55,41 @@ export const getCoinStats = (world: World, components: Components, limit = 200, 
 // return the ranked item balances of all accounts
 export const getItemStats = (
   world: World,
-  components: Components,
+  comps: Components,
   index = 1,
   limit = 200,
-  flatten = true
+  flatten = false
 ) => {
-  const { AccountIndex, Name } = components;
-  const entities = queryAll(components);
-  const raw = entities.map((entity) => {
+  const entities = queryAllAccounts(comps);
+  const raw = entities.map((entity, i) => {
     const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entity)?.value as number,
-      name: getComponentValue(Name, entity)?.value as string,
-      amt: getItemBalance(world, components, id, index),
+      index: getAccountIndex(comps, entity),
+      name: getName(comps, entity),
+      amt: getItemBalance(world, comps, id, index),
     };
   });
 
-  // sort and filter
+  // sort and truncate
   const ranked = raw.sort((a, b) => b.amt - a.amt);
   const truncated = ranked.slice(0, limit);
 
   // optionally flatten and return
   if (flatten) {
-    return truncated.map((result, ranking) => `${ranking + 1}. ${result.name}: ${result.amt}`);
+    return truncated.map((result, i) => `${i + 1}. ${result.name}: ${result.amt}`);
   }
   return truncated;
 };
 
 // return the kill stats of all accounts
-export const getKillStats = (world: World, components: Components, limit = 200, flatten = true) => {
-  const { AccountIndex, Name } = components;
-  const entities = queryAll(components);
+export const getKillStats = (world: World, comps: Components, limit = 200, flatten = true) => {
+  const entities = queryAllAccounts(comps);
   const raw = entities.map((entity) => {
     const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entity)?.value as number,
-      name: getComponentValue(Name, entity)?.value as string,
-      kills: getData(world, components, id, 'LIQUIDATE_TOTAL', 0),
+      index: getAccountIndex(comps, entity),
+      name: getName(comps, entity),
+      kills: getData(world, comps, id, 'LIQUIDATE_TOTAL', 0),
     };
   });
   const ranked = raw.sort((a, b) => b.kills - a.kills);
@@ -92,30 +97,29 @@ export const getKillStats = (world: World, components: Components, limit = 200, 
 
   // optionally flatten and return
   if (flatten) {
-    return truncated.map((result, ranking) => `${ranking + 1}. ${result.name}: ${result.kills}`);
+    return truncated.map((result, i) => `${i + 1}. ${result.name}: ${result.kills}`);
   }
   return truncated;
 };
 
 // arbitrary stats function
-export const getOverallStats = (world: World, components: Components, limit = 200) => {
-  const { AccountIndex, Name } = components;
-  const entities = queryAll(components);
+export const getOverallStats = (world: World, comps: Components, limit = 200) => {
+  const entities = queryAllAccounts(comps);
   const raw = entities
     .map((entity) => {
       const id = world.entities[entity];
       return {
-        index: getComponentValue(AccountIndex, entity)?.value as number,
-        name: getComponentValue(Name, entity)?.value as string,
-        rep: getReputation(world, components, id, 1),
-        musu: getItemBalance(world, components, id, 1),
-        stone: getItemBalance(world, components, id, 11002),
-        stick: getItemBalance(world, components, id, 11006),
+        index: getAccountIndex(comps, entity),
+        name: getName(comps, entity),
+        rep: getReputation(world, comps, id, 1),
+        musu: getItemBalance(world, comps, id, 1),
+        stone: getItemBalance(world, comps, id, 11002),
+        stick: getItemBalance(world, comps, id, 11006),
       };
     })
     .filter((result) => result.rep < 300);
 
-  // sort and filter
+  // sort and truncate
   const ranked = raw.sort((a, b) => b.rep - a.rep);
   const truncated = ranked.slice(0, limit);
   return truncated;
@@ -124,22 +128,21 @@ export const getOverallStats = (world: World, components: Components, limit = 20
 // return the ranked reputation values of all accounts
 export const getReputationStats = (
   world: World,
-  components: Components,
+  comps: Components,
   limit?: number,
   flatten = true
 ) => {
-  const { AccountIndex, Name } = components;
-  const entities = queryAll(components);
+  const entities = queryAllAccounts(comps);
   const raw = entities.map((entity) => {
     const id = world.entities[entity];
     return {
-      index: getComponentValue(AccountIndex, entity)?.value as number,
-      name: getComponentValue(Name, entity)?.value as string,
-      reputation: getReputation(world, components, id, 1), // get agency rep
+      index: getAccountIndex(comps, entity),
+      name: getName(comps, entity),
+      reputation: getReputation(world, comps, id, 1), // get agency rep
     };
   });
 
-  // sort and filter
+  // sort and truncate
   const ranked = raw.sort((a, b) => {
     const diff = b.reputation - a.reputation;
     return diff != 0 ? diff : a.name.localeCompare(b.name);
@@ -148,9 +151,7 @@ export const getReputationStats = (
 
   // optionally flatten and return
   if (flatten) {
-    return truncated.map(
-      (result, ranking) => `${ranking + 1}. ${result.name}: ${result.reputation}`
-    );
+    return truncated.map((result, i) => `${i + 1}. ${result.name}: ${result.reputation}`);
   }
   return truncated;
 };

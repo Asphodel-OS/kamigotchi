@@ -3,11 +3,13 @@ import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { Components } from 'network/';
 import { getItemByIndex, Item } from 'network/shapes/Item';
 import { Condition, getConditionsOfID } from '../Conditional';
+import { getNPCByIndex, NPC } from '../Npc';
 import { hashArgs } from '../utils';
 import {
   getBalance,
   getCurrencyIndex,
   getItemIndex,
+  getNPCIndex,
   getStartTime,
   getValue,
 } from '../utils/component';
@@ -24,10 +26,20 @@ export interface Listing {
   requirements: Condition[];
   buy?: Pricing;
   sell?: Pricing;
+  npc?: NPC;
+}
+
+export interface ListingOptions {
+  npc?: boolean;
 }
 
 // get an Listing from its EntityIndex
-export const get = (world: World, comps: Components, entity: EntityIndex): Listing => {
+export const get = (
+  world: World,
+  comps: Components,
+  entity: EntityIndex,
+  options?: ListingOptions
+): Listing => {
   const id = world.entities[entity];
   const itemIndex = getItemIndex(comps, entity);
   const currencyIndex = getCurrencyIndex(comps, entity);
@@ -49,6 +61,12 @@ export const get = (world: World, comps: Components, entity: EntityIndex): Listi
   if (buyEntity) listing.buy = getPricing(comps, buyEntity);
   if (sellEntity) listing.sell = getPricing(comps, sellEntity);
 
+  // populate optional fields
+  // TODO: make item and currency optional
+  if (options?.npc) {
+    const npcIndex = getNPCIndex(comps, entity);
+    listing.npc = getNPCByIndex(world, comps, npcIndex);
+  }
   return listing;
 };
 

@@ -5,7 +5,7 @@ import { accounts } from './accounts';
 import { addresses } from './addresses';
 import { auctions } from './auctions';
 import { configs } from './configs';
-import { data } from './data/data';
+import { data } from './data';
 import { factions } from './factions';
 import { goals } from './goals';
 import { items } from './items';
