@@ -4,6 +4,7 @@ import { interval, map } from 'rxjs';
 
 import { getAccount } from 'app/cache/account';
 import { getKami, getKamiAccount } from 'app/cache/kami';
+import { getNodeByIndex } from 'app/cache/node';
 import {
   getHolderSkillTreePoints,
   getSkillByIndex,
@@ -85,6 +86,8 @@ export function registerKamiModal() {
               queryKamiByIndex: (index: number) => queryKamis(components, { index })[0],
               parseSkillRequirement: (requirement: Condition) =>
                 parseSkillRequirementText(world, components, requirement),
+              getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
+              getNodeByIndex: (index: number) => getNodeByIndex(world, components, index),
             },
           };
         })
@@ -95,10 +98,18 @@ export function registerKamiModal() {
     ({ data, network, utils }) => {
       const { actions, api } = network;
       const { account, onyxItem, spender } = data;
-      const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
+      const {
+        getKami,
+        getOwner,
+        queryKamiByIndex,
+        getSkillUpgradeError,
+        getTreePoints,
+        getEntityIndex,
+        getNodeByIndex,
+      } = utils;
       const { kamiIndex } = useSelected();
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
-      const { modals } = useVisibility();
+      const { modals, setModals } = useVisibility();
 
       const [tab, setTab] = useState<TabType>('TRAITS');
       const [kami, setKami] = useState<Kami>();
@@ -124,6 +135,9 @@ export function registerKamiModal() {
       // update the Kami Object whenever the index changes or on each cycle
       useEffect(() => {
         if (!modals.kami) return;
+        if (modals.kami && !modals.account) {
+          setModals({ party: true });
+        }
         const kamiEntity = queryKamiByIndex(kamiIndex);
         const newKami = getKami(kamiEntity);
         setKami(newKami);
@@ -132,6 +146,16 @@ export function registerKamiModal() {
         if (newOwner.index != owner.index) setOwner(newOwner);
       }, [kamiIndex, tick]);
 
+      const positionOverride = () =>
+        modals.account
+          ? {
+              colStart: 32,
+              colEnd: 88,
+              rowStart: 7,
+              rowEnd: 98,
+              position: 'absolute' as const,
+            }
+          : undefined;
       /////////////////
       // ACTION
 
@@ -203,6 +227,7 @@ export function registerKamiModal() {
       return (
         <ModalWrapper
           id='kami'
+          positionOverride={positionOverride()}
           header={[
             <Header
               key='banner'
@@ -234,7 +259,14 @@ export function registerKamiModal() {
               }}
             />
           )}
-          {tab === 'BATTLES' && <Battles kami={kami} tab={tab} />}
+          {tab === 'BATTLES' && (
+            <Battles
+              kami={kami}
+              setKami={setKami}
+              tab={tab}
+              utils={{ getKami, getEntityIndex, getOwner, getNodeByIndex }}
+            />
+          )}
         </ModalWrapper>
       );
     }

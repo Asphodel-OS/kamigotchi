@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { Modals, useVisibility } from 'app/stores';
@@ -15,17 +15,42 @@ interface Props {
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
+  positionOverride?: {
+    colStart: number;
+    colEnd: number;
+    rowStart: number;
+    rowEnd: number;
+    position: 'fixed' | 'absolute';
+  };
 }
 
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
-  const { id, children, header, footer } = props;
+  const { id, children, header, footer, positionOverride } = props;
   const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
   const { modals } = useVisibility();
+  const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
+
+  useEffect(() => {
+    if (positionOverride) {
+      const { colStart, colEnd, rowStart, rowEnd, position } = positionOverride;
+      setGridStyle({
+        left: `${colStart}vw`,
+        right: `${colEnd}vw`,
+        top: `${rowStart}vh`,
+        bottom: `${rowEnd}vh`,
+        position,
+        width: `${colEnd - colStart}vw`,
+        height: `${rowEnd - rowStart}vh`,
+      });
+    } else {
+      setGridStyle({});
+    }
+  }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay}>
+    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay} style={gridStyle}>
       <Content isOpen={modals[id]} truncate={truncate}>
         {canExit && (
           <ButtonRow>
@@ -57,7 +82,8 @@ const Wrapper = styled.div<WrapperProps>`
   margin: 0.2vw;
   align-items: center;
   justify-content: center;
-  height: 100%;
+
+  ${({ overlay }) => overlay && 'height: 100%;'}
 `;
 
 interface ContentProps {

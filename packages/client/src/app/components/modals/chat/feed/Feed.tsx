@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'app/cache/account';
+import { pushBattles } from 'app/cache/battles';
 import { getChat, pushChat } from 'app/cache/chat';
 import { Kami } from 'app/cache/kami';
 import { useVisibility } from 'app/stores';
@@ -17,6 +18,7 @@ import {
 } from 'clients/kamiden';
 import { subscribeToFeed, subscribeToMessages } from 'clients/kamiden/subscriptions';
 import { formatEntityID } from 'engine/utils';
+import { BigNumber } from 'ethers';
 import { Room } from 'network/shapes/Room';
 import { ActionSystem } from 'network/systems';
 import { Message } from './Message';
@@ -103,13 +105,17 @@ export const Feed = (props: Props) => {
         );
       });
       feed.Kills.forEach((kill: Kill) => {
-        let killerName = getKami(getEntityIndex(formatEntityID(kill.KillerId))).name;
-        let victimName = getKami(getEntityIndex(formatEntityID(kill.VictimId))).name;
+        let killerName = getKami(
+          getEntityIndex(formatEntityID(BigNumber.from(kill.KillerId)))
+        ).name;
+        let victimName = getKami(
+          getEntityIndex(formatEntityID(BigNumber.from(kill.VictimId)))
+        ).name;
         let roomName = getRoomByIndex(kill.RoomIndex).name;
         let spoil = kill.Spoils;
-
+        pushBattles(kill);
         feedMessage.push(
-          `${moment(kill.Timestamp).format('MM/DD HH:mm')} : ${killerName} **liquidated** ${victimName} in ${roomName} for ${spoil} `
+          `${moment(kill.Timestamp * 1000).format('MM/DD HH:mm')} : ${killerName} **liquidated** ${victimName} in ${roomName} for ${spoil} `
         );
       });
       if (feedData.length >= 50) {

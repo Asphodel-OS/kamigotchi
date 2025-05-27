@@ -19,12 +19,6 @@ export interface Message {
   Timestamp: number;
 }
 
-export interface RoomRequest {
-  RoomIndex: number;
-  Timestamp: number;
-  Size?: number | undefined;
-}
-
 export interface Movement {
   RoomIndex: number;
   AccountId: string;
@@ -50,24 +44,19 @@ export interface Kill {
   Bounty: string;
   Salvage: string;
   Spoils: string;
+  IsDeath: boolean;
+}
+
+export interface BattleStats {
+  Kills: number;
+  Deaths: number;
+  PNL: number;
 }
 
 export interface Feed {
   Movements: Movement[];
   HarvestEnds: HarvestEnd[];
   Kills: Kill[];
-}
-
-export interface RoomResponse {
-  Messages: Message[];
-  Feeds: Feed[];
-}
-
-export interface StreamRequest {}
-
-export interface StreamResponse {
-  Messages: Message[];
-  Feed: Feed | undefined;
 }
 
 export interface AuctionBuy {
@@ -79,22 +68,49 @@ export interface AuctionBuy {
   Timestamp: number;
 }
 
+/** REQUESTS */
+export interface RoomRequest {
+  RoomIndex: number;
+  Timestamp: number;
+  Size?: number | undefined;
+}
+
+export interface StreamRequest {}
+
+export interface BattlesRequest {
+  KillerId?: string | undefined;
+  VictimId?: string | undefined;
+  Timestamp?: number | undefined;
+}
+
 export interface AuctionBuysRequest {
   ItemIndex?: number | undefined;
+}
+
+export interface BattleStatsRequest {
+  KamiId?: string | undefined;
+}
+
+export interface RoomResponse {
+  Messages: Message[];
+  Feeds: Feed[];
+}
+
+export interface StreamResponse {
+  Messages: Message[];
+  Feed: Feed | undefined;
 }
 
 export interface AuctionBuysResponse {
   AuctionBuys: AuctionBuy[];
 }
 
-export interface KillsRequest {
-  KillerId?: string | undefined;
-  VictimId?: string | undefined;
-  Timestamp?: number | undefined;
+export interface BattlesResponse {
+  Kills: Kill[];
 }
 
-export interface KillsResponse {
-  Kills: Kill[];
+export interface BattleStatsResponse {
+  BattleStats: BattleStats | undefined;
 }
 
 function createBaseMessage(): Message {
@@ -175,76 +191,6 @@ export const Message: MessageFns<Message> = {
     message.AccountId = object.AccountId ?? '';
     message.Message = object.Message ?? '';
     message.Timestamp = object.Timestamp ?? 0;
-    return message;
-  },
-};
-
-function createBaseRoomRequest(): RoomRequest {
-  return { RoomIndex: 0, Timestamp: 0, Size: undefined };
-}
-
-export const RoomRequest: MessageFns<RoomRequest> = {
-  encode(message: RoomRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.RoomIndex !== 0) {
-      writer.uint32(8).uint32(message.RoomIndex);
-    }
-    if (message.Timestamp !== 0) {
-      writer.uint32(16).uint64(message.Timestamp);
-    }
-    if (message.Size !== undefined) {
-      writer.uint32(24).uint32(message.Size);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): RoomRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRoomRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 8) {
-            break;
-          }
-
-          message.RoomIndex = reader.uint32();
-          continue;
-        }
-        case 2: {
-          if (tag !== 16) {
-            break;
-          }
-
-          message.Timestamp = longToNumber(reader.uint64());
-          continue;
-        }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.Size = reader.uint32();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  create(base?: DeepPartial<RoomRequest>): RoomRequest {
-    return RoomRequest.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<RoomRequest>): RoomRequest {
-    const message = createBaseRoomRequest();
-    message.RoomIndex = object.RoomIndex ?? 0;
-    message.Timestamp = object.Timestamp ?? 0;
-    message.Size = object.Size ?? undefined;
     return message;
   },
 };
@@ -403,6 +349,7 @@ function createBaseKill(): Kill {
     Bounty: '',
     Salvage: '',
     Spoils: '',
+    IsDeath: false,
   };
 }
 
@@ -443,6 +390,9 @@ export const Kill: MessageFns<Kill> = {
     }
     if (message.Spoils !== '') {
       writer.uint32(98).string(message.Spoils);
+    }
+    if (message.IsDeath !== false) {
+      writer.uint32(104).bool(message.IsDeath);
     }
     return writer;
   },
@@ -550,6 +500,14 @@ export const Kill: MessageFns<Kill> = {
           message.Spoils = reader.string();
           continue;
         }
+        case 13: {
+          if (tag !== 104) {
+            break;
+          }
+
+          message.IsDeath = reader.bool();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -566,8 +524,12 @@ export const Kill: MessageFns<Kill> = {
     const message = createBaseKill();
     message.AccountID = object.AccountID ?? '';
     message.Timestamp = object.Timestamp ?? 0;
+    message.AccountID = object.AccountID ?? '';
+    message.Timestamp = object.Timestamp ?? 0;
     message.RoomIndex = object.RoomIndex ?? 0;
     message.KillerId = object.KillerId ?? '';
+    message.KillerHealthSync = object.KillerHealthSync ?? 0;
+    message.KillerHealthTotal = object.KillerHealthTotal ?? 0;
     message.KillerHealthSync = object.KillerHealthSync ?? 0;
     message.KillerHealthTotal = object.KillerHealthTotal ?? 0;
     message.VictimId = object.VictimId ?? '';
@@ -575,7 +537,82 @@ export const Kill: MessageFns<Kill> = {
     message.VictimHealthTotal = object.VictimHealthTotal ?? 0;
     message.Bounty = object.Bounty ?? '';
     message.Salvage = object.Salvage ?? '';
+    message.VictimHealthSync = object.VictimHealthSync ?? 0;
+    message.VictimHealthTotal = object.VictimHealthTotal ?? 0;
+    message.Bounty = object.Bounty ?? '';
+    message.Salvage = object.Salvage ?? '';
     message.Spoils = object.Spoils ?? '';
+    message.IsDeath = object.IsDeath ?? false;
+    return message;
+  },
+};
+
+function createBaseBattleStats(): BattleStats {
+  return { Kills: 0, Deaths: 0, PNL: 0 };
+}
+
+export const BattleStats: MessageFns<BattleStats> = {
+  encode(message: BattleStats, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.Kills !== 0) {
+      writer.uint32(8).uint32(message.Kills);
+    }
+    if (message.Deaths !== 0) {
+      writer.uint32(16).uint32(message.Deaths);
+    }
+    if (message.PNL !== 0) {
+      writer.uint32(24).int64(message.PNL);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): BattleStats {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBattleStats();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.Kills = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.Deaths = reader.uint32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.PNL = longToNumber(reader.int64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<BattleStats>): BattleStats {
+    return BattleStats.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<BattleStats>): BattleStats {
+    const message = createBaseBattleStats();
+    message.Kills = object.Kills ?? 0;
+    message.Deaths = object.Deaths ?? 0;
+    message.PNL = object.PNL ?? 0;
     return message;
   },
 };
@@ -646,157 +683,6 @@ export const Feed: MessageFns<Feed> = {
     message.Movements = object.Movements?.map((e) => Movement.fromPartial(e)) || [];
     message.HarvestEnds = object.HarvestEnds?.map((e) => HarvestEnd.fromPartial(e)) || [];
     message.Kills = object.Kills?.map((e) => Kill.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseRoomResponse(): RoomResponse {
-  return { Messages: [], Feeds: [] };
-}
-
-export const RoomResponse: MessageFns<RoomResponse> = {
-  encode(message: RoomResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.Messages) {
-      Message.encode(v!, writer.uint32(10).fork()).join();
-    }
-    for (const v of message.Feeds) {
-      Feed.encode(v!, writer.uint32(18).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): RoomResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRoomResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.Messages.push(Message.decode(reader, reader.uint32()));
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.Feeds.push(Feed.decode(reader, reader.uint32()));
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  create(base?: DeepPartial<RoomResponse>): RoomResponse {
-    return RoomResponse.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<RoomResponse>): RoomResponse {
-    const message = createBaseRoomResponse();
-    message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
-    message.Feeds = object.Feeds?.map((e) => Feed.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseStreamRequest(): StreamRequest {
-  return {};
-}
-
-export const StreamRequest: MessageFns<StreamRequest> = {
-  encode(_: StreamRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): StreamRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStreamRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  create(base?: DeepPartial<StreamRequest>): StreamRequest {
-    return StreamRequest.fromPartial(base ?? {});
-  },
-  fromPartial(_: DeepPartial<StreamRequest>): StreamRequest {
-    const message = createBaseStreamRequest();
-    return message;
-  },
-};
-
-function createBaseStreamResponse(): StreamResponse {
-  return { Messages: [], Feed: undefined };
-}
-
-export const StreamResponse: MessageFns<StreamResponse> = {
-  encode(message: StreamResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.Messages) {
-      Message.encode(v!, writer.uint32(10).fork()).join();
-    }
-    if (message.Feed !== undefined) {
-      Feed.encode(message.Feed, writer.uint32(18).fork()).join();
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): StreamResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStreamResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.Messages.push(Message.decode(reader, reader.uint32()));
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.Feed = Feed.decode(reader, reader.uint32());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  create(base?: DeepPartial<StreamResponse>): StreamResponse {
-    return StreamResponse.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<StreamResponse>): StreamResponse {
-    const message = createBaseStreamResponse();
-    message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
-    message.Feed =
-      object.Feed !== undefined && object.Feed !== null ? Feed.fromPartial(object.Feed) : undefined;
     return message;
   },
 };
@@ -907,6 +793,180 @@ export const AuctionBuy: MessageFns<AuctionBuy> = {
   },
 };
 
+function createBaseRoomRequest(): RoomRequest {
+  return { RoomIndex: 0, Timestamp: 0, Size: undefined };
+}
+
+export const RoomRequest: MessageFns<RoomRequest> = {
+  encode(message: RoomRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.RoomIndex !== 0) {
+      writer.uint32(8).uint32(message.RoomIndex);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(16).uint64(message.Timestamp);
+    }
+    if (message.Size !== undefined) {
+      writer.uint32(24).uint32(message.Size);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RoomRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRoomRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.RoomIndex = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Size = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<RoomRequest>): RoomRequest {
+    return RoomRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<RoomRequest>): RoomRequest {
+    const message = createBaseRoomRequest();
+    message.RoomIndex = object.RoomIndex ?? 0;
+    message.Timestamp = object.Timestamp ?? 0;
+    message.Size = object.Size ?? undefined;
+    return message;
+  },
+};
+
+function createBaseStreamRequest(): StreamRequest {
+  return {};
+}
+
+export const StreamRequest: MessageFns<StreamRequest> = {
+  encode(_: StreamRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): StreamRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStreamRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<StreamRequest>): StreamRequest {
+    return StreamRequest.fromPartial(base ?? {});
+  },
+  fromPartial(_: DeepPartial<StreamRequest>): StreamRequest {
+    const message = createBaseStreamRequest();
+    return message;
+  },
+};
+
+function createBaseBattlesRequest(): BattlesRequest {
+  return { KillerId: undefined, VictimId: undefined, Timestamp: undefined };
+}
+
+export const BattlesRequest: MessageFns<BattlesRequest> = {
+  encode(message: BattlesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.KillerId !== undefined) {
+      writer.uint32(10).string(message.KillerId);
+    }
+    if (message.VictimId !== undefined) {
+      writer.uint32(18).string(message.VictimId);
+    }
+    if (message.Timestamp !== undefined) {
+      writer.uint32(24).uint64(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): BattlesRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBattlesRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.KillerId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.VictimId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<BattlesRequest>): BattlesRequest {
+    return BattlesRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<BattlesRequest>): BattlesRequest {
+    const message = createBaseBattlesRequest();
+    message.KillerId = object.KillerId ?? undefined;
+    message.VictimId = object.VictimId ?? undefined;
+    message.Timestamp = object.Timestamp ?? undefined;
+    return message;
+  },
+};
+
 function createBaseAuctionBuysRequest(): AuctionBuysRequest {
   return { ItemIndex: undefined };
 }
@@ -949,6 +1009,169 @@ export const AuctionBuysRequest: MessageFns<AuctionBuysRequest> = {
   fromPartial(object: DeepPartial<AuctionBuysRequest>): AuctionBuysRequest {
     const message = createBaseAuctionBuysRequest();
     message.ItemIndex = object.ItemIndex ?? undefined;
+    return message;
+  },
+};
+
+function createBaseBattleStatsRequest(): BattleStatsRequest {
+  return { KamiId: undefined };
+}
+
+export const BattleStatsRequest: MessageFns<BattleStatsRequest> = {
+  encode(message: BattleStatsRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.KamiId !== undefined) {
+      writer.uint32(10).string(message.KamiId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): BattleStatsRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBattleStatsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.KamiId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<BattleStatsRequest>): BattleStatsRequest {
+    return BattleStatsRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<BattleStatsRequest>): BattleStatsRequest {
+    const message = createBaseBattleStatsRequest();
+    message.KamiId = object.KamiId ?? undefined;
+    return message;
+  },
+};
+
+function createBaseRoomResponse(): RoomResponse {
+  return { Messages: [], Feeds: [] };
+}
+
+export const RoomResponse: MessageFns<RoomResponse> = {
+  encode(message: RoomResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Messages) {
+      Message.encode(v!, writer.uint32(10).fork()).join();
+    }
+    for (const v of message.Feeds) {
+      Feed.encode(v!, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RoomResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRoomResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Messages.push(Message.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.Feeds.push(Feed.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<RoomResponse>): RoomResponse {
+    return RoomResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<RoomResponse>): RoomResponse {
+    const message = createBaseRoomResponse();
+    message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
+    message.Feeds = object.Feeds?.map((e) => Feed.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseStreamResponse(): StreamResponse {
+  return { Messages: [], Feed: undefined };
+}
+
+export const StreamResponse: MessageFns<StreamResponse> = {
+  encode(message: StreamResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Messages) {
+      Message.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.Feed !== undefined) {
+      Feed.encode(message.Feed, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): StreamResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStreamResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Messages.push(Message.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.Feed = Feed.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<StreamResponse>): StreamResponse {
+    return StreamResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<StreamResponse>): StreamResponse {
+    const message = createBaseStreamResponse();
+    message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
+    message.Feed =
+      object.Feed !== undefined && object.Feed !== null ? Feed.fromPartial(object.Feed) : undefined;
     return message;
   },
 };
@@ -999,92 +1222,22 @@ export const AuctionBuysResponse: MessageFns<AuctionBuysResponse> = {
   },
 };
 
-function createBaseKillsRequest(): KillsRequest {
-  return { KillerId: undefined, VictimId: undefined, Timestamp: undefined };
-}
-
-export const KillsRequest: MessageFns<KillsRequest> = {
-  encode(message: KillsRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.KillerId !== undefined) {
-      writer.uint32(10).string(message.KillerId);
-    }
-    if (message.VictimId !== undefined) {
-      writer.uint32(18).string(message.VictimId);
-    }
-    if (message.Timestamp !== undefined) {
-      writer.uint32(24).uint64(message.Timestamp);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): KillsRequest {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseKillsRequest();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.KillerId = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.VictimId = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.Timestamp = longToNumber(reader.uint64());
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  create(base?: DeepPartial<KillsRequest>): KillsRequest {
-    return KillsRequest.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<KillsRequest>): KillsRequest {
-    const message = createBaseKillsRequest();
-    message.KillerId = object.KillerId ?? undefined;
-    message.VictimId = object.VictimId ?? undefined;
-    message.Timestamp = object.Timestamp ?? undefined;
-    return message;
-  },
-};
-
-function createBaseKillsResponse(): KillsResponse {
+function createBaseBattlesResponse(): BattlesResponse {
   return { Kills: [] };
 }
 
-export const KillsResponse: MessageFns<KillsResponse> = {
-  encode(message: KillsResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const BattlesResponse: MessageFns<BattlesResponse> = {
+  encode(message: BattlesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.Kills) {
       Kill.encode(v!, writer.uint32(10).fork()).join();
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): KillsResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): BattlesResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseKillsResponse();
+    const message = createBaseBattlesResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1105,12 +1258,61 @@ export const KillsResponse: MessageFns<KillsResponse> = {
     return message;
   },
 
-  create(base?: DeepPartial<KillsResponse>): KillsResponse {
-    return KillsResponse.fromPartial(base ?? {});
+  create(base?: DeepPartial<BattlesResponse>): BattlesResponse {
+    return BattlesResponse.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<KillsResponse>): KillsResponse {
-    const message = createBaseKillsResponse();
+  fromPartial(object: DeepPartial<BattlesResponse>): BattlesResponse {
+    const message = createBaseBattlesResponse();
     message.Kills = object.Kills?.map((e) => Kill.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseBattleStatsResponse(): BattleStatsResponse {
+  return { BattleStats: undefined };
+}
+
+export const BattleStatsResponse: MessageFns<BattleStatsResponse> = {
+  encode(message: BattleStatsResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.BattleStats !== undefined) {
+      BattleStats.encode(message.BattleStats, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): BattleStatsResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseBattleStatsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.BattleStats = BattleStats.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<BattleStatsResponse>): BattleStatsResponse {
+    return BattleStatsResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<BattleStatsResponse>): BattleStatsResponse {
+    const message = createBaseBattleStatsResponse();
+    message.BattleStats =
+      object.BattleStats !== undefined && object.BattleStats !== null
+        ? BattleStats.fromPartial(object.BattleStats)
+        : undefined;
     return message;
   },
 };
@@ -1138,11 +1340,19 @@ export const KamidenServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    getKills: {
-      name: 'GetKills',
-      requestType: KillsRequest,
+    getBattles: {
+      name: 'GetBattles',
+      requestType: BattlesRequest,
       requestStream: false,
-      responseType: KillsResponse,
+      responseType: BattlesResponse,
+      responseStream: false,
+      options: {},
+    },
+    getBattleStats: {
+      name: 'GetBattleStats',
+      requestType: BattleStatsRequest,
+      requestStream: false,
+      responseType: BattleStatsResponse,
       responseStream: false,
       options: {},
     },
@@ -1168,10 +1378,14 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
     request: AuctionBuysRequest,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<AuctionBuysResponse>>;
-  getKills(
-    request: KillsRequest,
+  getBattles(
+    request: BattlesRequest,
     context: CallContext & CallContextExt
-  ): Promise<DeepPartial<KillsResponse>>;
+  ): Promise<DeepPartial<BattlesResponse>>;
+  getBattleStats(
+    request: BattleStatsRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<BattleStatsResponse>>;
   /** Stream */
   subscribeToStream(
     request: StreamRequest,
@@ -1189,10 +1403,14 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<AuctionBuysRequest>,
     options?: CallOptions & CallOptionsExt
   ): Promise<AuctionBuysResponse>;
-  getKills(
-    request: DeepPartial<KillsRequest>,
+  getBattles(
+    request: DeepPartial<BattlesRequest>,
     options?: CallOptions & CallOptionsExt
-  ): Promise<KillsResponse>;
+  ): Promise<BattlesResponse>;
+  getBattleStats(
+    request: DeepPartial<BattleStatsRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<BattleStatsResponse>;
   /** Stream */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,
