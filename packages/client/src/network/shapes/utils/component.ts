@@ -14,10 +14,10 @@ export const getAffinity = (components: Components, entity: EntityIndex): Affini
   return (result ?? 'NORMAL') as Affinity;
 };
 
-export const getBalance = (components: Components, entity: EntityIndex): number => {
+export const getBalance = (components: Components, entity: EntityIndex, debug = true): number => {
   const { Balance } = components;
   const result = getComponentValue(Balance, entity)?.value;
-  if (result === undefined) console.warn('getBalance(): undefined for entity', entity);
+  if (debug && result === undefined) console.warn('getBalance(): undefined for entity', entity);
   return (result ?? 0) * 1;
 };
 

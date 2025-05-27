@@ -68,13 +68,6 @@ export const updateRates = (harvest: Harvest, kami: Kami) => {
   return harvest.rates.total.average;
 };
 
-// calculate the average rate since the last snapshot of a harvest
-export const calcAverageRate = (harvest: Harvest): number => {
-  const netBounty = calcNetBounty(harvest);
-  const time = calcIdleTime(harvest);
-  return netBounty / time;
-};
-
 // calculate the fertility rate of harvest (per hour)
 export const calcFertility = (harvest: Harvest, kami: Kami): number => {
   if (!kami.config) return 0;
@@ -88,14 +81,12 @@ export const calcFertility = (harvest: Harvest, kami: Kami): number => {
 
 // calculate the intensity rates of a harvest, measured in musu/s
 export const calcIntensity = (harvest: Harvest, kami: Kami): RateDetails => {
-  if (!kami.config) return { spot: 0, average: 0 };
-
   const now = Date.now() / 1000;
   const lastTs = harvest.time?.last ?? now;
   const resetTs = harvest.time?.reset ?? now;
 
-  const initial = calcSpotIntensity(kami, lastTs - resetTs);
-  const current = calcSpotIntensity(kami, now - resetTs);
+  const initial = calcIntensityAt(kami, lastTs - resetTs);
+  const current = calcIntensityAt(kami, now - resetTs);
   const spot = initial + 2 * (current - initial);
 
   return {
@@ -105,14 +96,14 @@ export const calcIntensity = (harvest: Harvest, kami: Kami): RateDetails => {
 };
 
 /**
- * @dev calculate the spot intensity rate of a Kami's Harvest at a given time past
- * its last reset time, measured in musu/s (1e6 precision)
+ * @dev calculate the intensity rate of a Kami's Harvest at a given time delta
+ * past its last reset time, measured in musu/s (1e6 precision)
  *
  * @param kami: Kami. should have configs and bonuses populated
  * @param delta: seconds past last reset
  * */
 
-const calcSpotIntensity = (kami: Kami, delta: number) => {
+const calcIntensityAt = (kami: Kami, delta: number) => {
   if (!kami.config) return 0;
   const config = kami.config.harvest.intensity;
   const bonus = kami.bonuses?.harvest.intensity;

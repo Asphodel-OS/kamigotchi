@@ -1,8 +1,9 @@
-import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { getKami, Kami } from '../Kami';
 import { Node } from '../Node';
+import { getBalance, getLastTime, getResetTime, getStartTime, getState } from '../utils/component';
 import { getNode } from './node';
 
 // standardized shape of an Harvest Entity
@@ -45,16 +46,15 @@ export const getHarvest = (
   entity: EntityIndex,
   options?: HarvestOptions
 ): Harvest => {
-  const { State, LastTime, ResetTime, StartTime, Value } = components;
   let harvest: Harvest = {
     id: world.entities[entity],
     entity,
-    state: getComponentValue(State, entity)?.value as string,
-    balance: ((getComponentValue(Value, entity)?.value as number) || 0) * 1,
+    state: getState(components, entity),
+    balance: getBalance(components, entity, false),
     time: {
-      last: (getComponentValue(LastTime, entity)?.value as number) * 1,
-      reset: (getComponentValue(ResetTime, entity)?.value as number) * 1,
-      start: (getComponentValue(StartTime, entity)?.value as number) * 1,
+      last: getLastTime(components, entity),
+      reset: getResetTime(components, entity),
+      start: getStartTime(components, entity),
     },
     // rates are interpreted from harvest/kami/node data
     rates: {

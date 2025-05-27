@@ -1,6 +1,6 @@
-import { calcHarvestIdleTime } from 'app/cache/harvest';
+import { calcHarvestIdleTime, calcHarvestNetBounty } from 'app/cache/harvest';
 import { Kami } from 'network/shapes/Kami/types';
-import { calcHarvestingHealthRate } from './harvest';
+import { calcHarvestingHealthRate, calcStrainFromBalance } from './harvest';
 
 ////////////////
 // STATE CHECKS
@@ -104,15 +104,21 @@ export const calcCooldownRequirement = (kami: Kami): number => {
 // calculate health based on the drain against last confirmed health
 // assumes that kami health rate has been updated
 export const calcHealth = (kami: Kami): number => {
-  let duration = 0;
-  if (isHarvesting(kami)) duration = calcHarvestTime(kami);
-  else if (isResting(kami)) duration = calcIdleTime(kami);
-
+  const totalHealth = kami.stats?.health.total ?? 0;
   let health = kami.stats?.health.sync ?? 0;
-  health += (calcHealthRate(kami) ?? 0) * duration;
-  health = Math.floor(Math.max(health, 0));
-  health = Math.min(health, kami.stats?.health.total ?? 0);
-  return health;
+
+  if (isHarvesting(kami) && kami.harvest) {
+    const netBounty = calcHarvestNetBounty(kami.harvest);
+    const strain = calcStrainFromBalance(kami, netBounty, true);
+    health -= strain;
+  } else if (isResting(kami)) {
+    const duration = calcIdleTime(kami);
+    health += calcRestingHealthRate(kami) * duration;
+  }
+
+  health = Math.max(health, 0);
+  health = Math.min(health, totalHealth);
+  return Math.floor(health);
 };
 
 // calculate a kami's health as a percentage of total health
