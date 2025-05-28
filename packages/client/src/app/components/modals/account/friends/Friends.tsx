@@ -5,29 +5,32 @@ import { Account } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 
 interface Props {
-  friendships: Friendship[];
   actions: {
     blockFren: (account: Account) => void;
     removeFren: (friendship: Friendship) => void;
   };
+  friendships: Friendship[];
+  isSelf: boolean;
 }
 
 export const Friends = (props: Props) => {
-  const { friendships, actions } = props;
+  const { friendships, actions, isSelf } = props;
 
   const Actions = (friendship: Friendship) => {
+    const options = [
+      {
+        text: 'Block',
+        onClick: () => actions.blockFren(friendship.target),
+      },
+    ];
+    if (isSelf) {
+      options.push({
+        text: 'Remove',
+        onClick: () => actions.removeFren(friendship),
+      });
+    }
     return (
-      <ActionListButton
-        id={`friendship-options-${friendship.entity}`}
-        text=''
-        options={[
-          {
-            text: 'Block',
-            onClick: () => actions.blockFren(friendship.target),
-          },
-          { text: 'Remove', onClick: () => actions.removeFren(friendship) },
-        ]}
-      />
+      <ActionListButton id={`friendship-options-${friendship.entity}`} text='' options={options} />
     );
   };
 

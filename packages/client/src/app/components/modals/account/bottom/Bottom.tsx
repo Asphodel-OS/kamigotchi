@@ -10,25 +10,24 @@ import { SubTabs } from './SocialBottom/SubTabs';
 import { StatsBottom } from './StatsBottom';
 
 interface Props {
-  tab: string;
-  subTab: string;
-  isSelf: boolean;
-
-  setSubTab: (tab: string) => void;
-  data: {
-    accounts: Account[];
-    account: Account;
-    vip: {
-      epoch: number; // current VIP epoch
-      total: number; // total of VIP scores this epoch
-    };
-  };
   actions: {
     acceptFren: (friendship: Friendship) => void;
     blockFren: (account: BaseAccount) => void;
     cancelFren: (friendship: Friendship) => void;
     requestFren: (account: BaseAccount) => void;
   };
+  data: {
+    account: Account;
+    accounts: Account[];
+    vip: {
+      epoch: number; // current VIP epoch
+      total: number; // total of VIP scores this epoch
+    };
+  };
+  isSelf: boolean;
+  setSubTab: (tab: string) => void;
+  subTab: string;
+  tab: string;
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
@@ -48,6 +47,7 @@ export const Bottom = (props: Props) => {
         <SubTabs subTab={subTab} setSubTab={setSubTab} isSelf={isSelf} />
         <SocialBottom
           key='bottom'
+          isSelf={isSelf}
           subTab={subTab}
           data={data}
           actions={{ acceptFren, blockFren, cancelFren, requestFren }}

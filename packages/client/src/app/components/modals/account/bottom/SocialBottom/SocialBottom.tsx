@@ -9,24 +9,25 @@ import { Friends } from '../../friends/Friends';
 import { Requests } from '../../requests/Requests';
 
 interface Props {
-  subTab: string;
-  data: {
-    accounts: Account[];
-    account: Account;
-  };
   actions: {
     acceptFren: (friendship: Friendship) => void;
     blockFren: (account: BaseAccount) => void;
     cancelFren: (friendship: Friendship) => void;
     requestFren: (account: BaseAccount) => void;
   };
+  data: {
+    accounts: Account[];
+    account: Account;
+  };
+  isSelf: boolean;
+  subTab: string;
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }
 
 export const SocialBottom = (props: Props) => {
-  const { subTab, data, actions } = props;
+  const { subTab, data, actions, isSelf } = props;
   const { accounts } = data;
 
   // NOTE: any child components that maintain their own state need to be inlined below, to
@@ -36,6 +37,7 @@ export const SocialBottom = (props: Props) => {
       {subTab === 'frens' && (
         <Friends
           key='friends'
+          isSelf={isSelf}
           friendships={data.account.friends?.friends ?? []}
           actions={{
             blockFren: actions.blockFren,
