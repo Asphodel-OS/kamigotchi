@@ -23,8 +23,8 @@ export const updateHarvestRate = (kami: Kami): number => {
 // calculate the rate of health drain while harvesting
 export const calcHarvestingHealthRate = (kami: Kami): number => {
   if (!kami.harvest) return 0;
-  const avgHarvestRate = updateHarvestRate(kami);
-  const rate = calcStrainFromBalance(kami, avgHarvestRate, false);
+  updateHarvestRate(kami);
+  const rate = calcStrainFromBalance(kami, kami.harvest.rates.total.spot, false);
   return -1 * rate;
 };
 
