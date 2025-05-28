@@ -8,10 +8,11 @@ import { IconButton } from './IconButton';
 interface Props {
   onClick: (selected: any[]) => void;
   img: string;
-  deployOptions: Option[];
+  options: Option[];
   disabled?: boolean;
   balance?: number;
   radius?: number;
+  limit?: number;
 }
 
 interface Option {
@@ -22,37 +23,42 @@ interface Option {
 }
 
 export function DropDownToggle(props: Props) {
-  const { deployOptions, img, onClick } = props;
+  const { options, img, onClick, limit } = props;
   const { balance, disabled, radius } = props;
   const [checked, setChecked] = useState<boolean[]>([]);
   const [forceClose, setForceClose] = useState(false);
 
-  // necessary to properly create the checked array, this way it waits for the deployOptions to be populated
+  // necessary to properly create the checked array, this way it waits for the options to be populated
   useEffect(() => {
-    if (checked.length !== deployOptions.length) resetCheckBoxes();
-  }, [deployOptions, checked.length]);
+    if (checked.length !== options.length) setChecked(Array(options.length).fill(false));
+  }, [options, checked.length]);
 
   // force close the popover if there are no options left and the checklist is in the process of being emptied
   useEffect(() => {
-    if (deployOptions.length === 0) setForceClose(true);
+    if (options.length === 0) setForceClose(true);
     else setForceClose(false);
-  }, [deployOptions]);
-
-  const resetCheckBoxes = () => setChecked(Array(deployOptions.length).fill(false));
+  }, [options]);
 
   const toggleOption = (e: React.MouseEvent, index: number) => {
     e.stopPropagation(); // prevent popover from closing
-    setChecked((prev) => prev.map((val, i) => (i === index ? !val : val)));
+    setChecked((prev) => {
+      const selected = prev.filter(Boolean).length;
+      // !prev[index] is neccesary so the player can decrease the number of selected options when the limit is reached
+      if (!prev[index] && limit && selected >= limit) return prev;
+      return prev.map((val, i) => (i === index ? !val : val));
+    });
   };
 
   const toggleAll = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent popover from closing
-    const allSelected = checked.every(Boolean);
-    setChecked(checked.map(() => !allSelected));
+    const anySelected = checked.some(Boolean);
+    setChecked(
+      anySelected ? checked.map(() => false) : checked.map((_, i) => i < (limit ?? options.length))
+    );
   };
 
   const handleTriggerClick = () => {
-    const selected = deployOptions.filter((_, i) => checked[i]).map((opt) => opt.object);
+    const selected = options.filter((_, i) => checked[i]).map((opt) => opt.object);
     playClick();
     onClick(selected);
   };
@@ -64,7 +70,13 @@ export function DropDownToggle(props: Props) {
     isSelectAll: boolean
   ) => {
     const imageSrc = img ?? object?.image;
-    const isChecked = isSelectAll ? checked.every(Boolean) : !!checked[i!];
+    const selected = checked.filter(Boolean).length;
+    const isChecked = isSelectAll
+      ? limit
+        ? selected >= Math.min(limit, options.length)
+        : checked.every(Boolean)
+      : !!checked[i!];
+
     return (
       <MenuOption
         key={isSelectAll ? 'SelectAll' : `toggle-${i}`}
@@ -74,7 +86,10 @@ export function DropDownToggle(props: Props) {
       >
         <Row>
           <input type='checkbox' checked={isChecked} readOnly />
-          <span>{text}</span>
+          <span>
+            {text}
+            {isSelectAll && limit && selected >= limit ? ` (max ${limit})` : ''}
+          </span>
         </Row>
         {imageSrc && <Image src={imageSrc} />}
       </MenuOption>
@@ -86,7 +101,7 @@ export function DropDownToggle(props: Props) {
       <Popover
         content={[
           MenuCheckListOption({ text: 'Select All' }, null, (e) => toggleAll(e), true),
-          ...deployOptions.map((option, i) =>
+          ...options.map((option, i) =>
             MenuCheckListOption(option, i, (e) => toggleOption(e, i), false)
           ),
         ]}
@@ -94,7 +109,7 @@ export function DropDownToggle(props: Props) {
         forceClose={forceClose}
       >
         <IconButton
-          text={`${checked.filter((val) => val === true).length} Selected`}
+          text={`${checked.filter(Boolean).length} Selected`}
           width={10}
           onClick={() => {}}
           disabled={disabled}

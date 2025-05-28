@@ -110,7 +110,7 @@ export const Toolbar = (props: Props) => {
         img={HarvestIcon}
         disabled={DeployOptions.length == 0}
         onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
-        deployOptions={DeployOptions}
+        options={DeployOptions}
         radius={0.6}
       />
     </Container>
