@@ -35,10 +35,10 @@ export const calcBounty = (harvest: Harvest): number => {
 };
 
 // Calculate the bounty since last sync.
+// NOTE: rates must be calculated with updateRates first
 export const calcNetBounty = (harvest: Harvest): number => {
   const duration = calcIdleTime(harvest);
-  const rates = harvest.rates;
-  const rate = rates.fertility + rates.intensity.average;
+  const rate = harvest.rates.total.average;
   return Math.floor(duration * rate);
 };
 
