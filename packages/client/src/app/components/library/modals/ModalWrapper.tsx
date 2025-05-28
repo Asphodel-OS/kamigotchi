@@ -82,8 +82,7 @@ const Wrapper = styled.div<WrapperProps>`
   margin: 0.2vw;
   align-items: center;
   justify-content: center;
-
-  ${({ overlay }) => overlay && 'height: 100%;'}
+  height: 100%;
 `;
 
 interface ContentProps {
