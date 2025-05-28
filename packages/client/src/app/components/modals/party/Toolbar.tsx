@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useMemo } from 'react';
+import { Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest } from 'app/cache/kami';
@@ -39,6 +39,7 @@ export const Toolbar = (props: Props) => {
   const { sort, setSort, view, setView } = controls;
   const { kamis } = data;
   const { displayedKamis, setDisplayedKamis } = state;
+  const [limit, setLimit] = useState<number>(50);
   const { passesNodeReqs } = utils;
   const { modals } = useVisibility();
 
@@ -106,13 +107,18 @@ export const Toolbar = (props: Props) => {
         />
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
-      <DropDownToggle
-        img={HarvestIcon}
-        disabled={DeployOptions.length == 0}
-        onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
-        options={DeployOptions}
-        radius={0.6}
-      />
+      <div>
+        Limit Selected:
+        <CenteredTextarea value={limit} onChange={(e) => setLimit(Number(e.target.value))} />
+        <DropDownToggle
+          limit={limit}
+          img={HarvestIcon}
+          disabled={DeployOptions.length == 0}
+          onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
+          options={DeployOptions}
+          radius={0.6}
+        />
+      </div>
     </Container>
   );
 };
@@ -138,4 +144,16 @@ const Section = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
+`;
+
+const CenteredTextarea = styled.textarea`
+  width: 100%;
+  padding: 0.6vw 0 0 0;
+  resize: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.6vw;
+  border-radius: 0.6vw;
 `;
