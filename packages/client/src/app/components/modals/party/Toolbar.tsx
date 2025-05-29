@@ -108,12 +108,8 @@ export const Toolbar = (props: Props) => {
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
       <div>
-        Limit Selected:
-        <CenteredInput
-          type='number'
-          value={limit}
-          onChange={(e) => setLimit(Number(e.target.value))}
-        />
+        Limit Selected:{limit}
+        <CenteredInput type='number' onChange={(e) => setLimit(Number(e.target.value))} />
         <DropDownToggle
           limit={limit}
           img={HarvestIcon}
