@@ -109,7 +109,11 @@ export const Toolbar = (props: Props) => {
       </Section>
       <div>
         Limit Selected:
-        <CenteredTextarea value={limit} onChange={(e) => setLimit(Number(e.target.value))} />
+        <CenteredInput
+          type='number'
+          value={limit}
+          onChange={(e) => setLimit(Number(e.target.value))}
+        />
         <DropDownToggle
           limit={limit}
           img={HarvestIcon}
@@ -146,14 +150,11 @@ const Section = styled.div`
   align-items: center;
 `;
 
-const CenteredTextarea = styled.textarea`
-  width: 100%;
-  padding: 0.6vw 0 0 0;
-  resize: none;
+const CenteredInput = styled.input`
+  width: 18vw;
+  height: 5vh;
   text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.6vw;
+  margin: 0 0.6vw;
   border-radius: 0.6vw;
+  border: 1px solid #ccc;
 `;
