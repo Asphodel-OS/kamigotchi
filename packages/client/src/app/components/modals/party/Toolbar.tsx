@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useMemo, useState } from 'react';
+import { Dispatch, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest } from 'app/cache/kami';
@@ -42,10 +42,11 @@ export const Toolbar = (props: Props) => {
   const { passesNodeReqs } = utils;
   const { modals } = useVisibility();
 
-  const [limit, setLimit] = useState(35); // Default to 35
+  const canAdd = (kami: Kami) => {
+    return canHarvest(kami) && passesNodeReqs(kami);
+  };
 
-  const canAdd = (kami: Kami) => canHarvest(kami) && passesNodeReqs(kami);
-
+  // TODO: be more explicit about when/how the deployOptions gets updated
   const DeployOptions = displayedKamis
     .filter((kami) => canAdd(kami))
     .map((kami) => ({
@@ -53,6 +54,7 @@ export const Toolbar = (props: Props) => {
       object: kami,
     }));
 
+  // memoized sort options
   const SortOptions = useMemo(
     () =>
       Object.entries(SortIcons).map(([key, image]) => ({
@@ -63,6 +65,9 @@ export const Toolbar = (props: Props) => {
     []
   );
 
+  // sort kamis when changes are detected
+  // TODO: trigger updates after successful state updates
+  // NOTE: sorts in place (setDisplayedKamis is just used to trigger a rendering update)
   useEffect(() => {
     if (!modals.party) return;
 
@@ -72,7 +77,7 @@ export const Toolbar = (props: Props) => {
     } else if (sort === 'state') {
       sorted = kamis.sort((a, b) => {
         const stateDiff = a.state.localeCompare(b.state);
-        if (stateDiff !== 0) return stateDiff;
+        if (stateDiff != 0) return stateDiff;
         return calcHealthPercent(a) - calcHealthPercent(b);
       });
     } else if (sort === 'traits') {
@@ -101,23 +106,14 @@ export const Toolbar = (props: Props) => {
         />
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
-      <div>
-        <LimitButtons>
-          {[55, 50, 45, 40, 35, 30, 25, 20, 15].map((val) => (
-            <LimitButton key={val} onClick={() => setLimit(val)} selected={limit === val}>
-              {val}
-            </LimitButton>
-          ))}
-        </LimitButtons>
-        <DropDownToggle
-          limit={limit}
-          img={HarvestIcon}
-          disabled={DeployOptions.length === 0}
-          onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
-          options={DeployOptions}
-          radius={0.6}
-        />
-      </div>
+      <DropDownToggle
+        limit={33}
+        img={HarvestIcon}
+        disabled={DeployOptions.length == 0}
+        onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
+        options={DeployOptions}
+        radius={0.6}
+      />
     </Container>
   );
 };
@@ -143,24 +139,4 @@ const Section = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-`;
-
-const LimitButtons = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 0.3vw;
-`;
-
-const LimitButton = styled.button<{ selected: boolean }>`
-  background-color: ${({ selected }) => (selected ? '#333' : '#ccc')};
-  color: ${({ selected }) => (selected ? 'white' : 'black')};
-  border: none;
-  border-radius: 0.3vw;
-  padding: 0.2vw 0.5vw;
-  font-size: 0.75vw;
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${({ selected }) => (selected ? '#444' : '#ddd')};
-  }
 `;
