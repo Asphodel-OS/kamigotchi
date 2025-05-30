@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
@@ -48,20 +48,6 @@ export function registerClock() {
       const [rotateClock, setRotateClock] = useState(0);
       const [rotateBand, setRotateBand] = useState(0);
       const [lastTick, setLastTick] = useState(Date.now());
-      const [width, height] = useWindowSize();
-
-      function useWindowSize() {
-        const [size, setSize] = useState([0, 0]);
-        useLayoutEffect(() => {
-          function updateSize() {
-            setSize([window.innerWidth, window.innerHeight]);
-          }
-          window.addEventListener('resize', updateSize);
-          updateSize();
-          return () => window.removeEventListener('resize', updateSize);
-        }, []);
-        return size;
-      }
 
       // ticking
       useEffect(() => {
@@ -69,13 +55,11 @@ export function registerClock() {
         const timerID = setInterval(tick, 1000);
         return () => clearInterval(timerID);
       }, []);
-
       // update the current stamina on each tick
       useEffect(() => {
         const staminaCurr = calcCurrentStamina(account);
         setStaminaCurr(staminaCurr);
       }, [account.stamina, lastTick]);
-
       /////////////////
       // INTERPRETATION
 
@@ -122,14 +106,10 @@ export function registerClock() {
 
       //Render
       return (
-        <>
-          <TextTooltip text={getClockTooltip()}>
-            <Container
-              style={{ display: fixtures.menu ? 'flex' : 'none' }}
-              width={width}
-              height={height}
-            >
-              <Circle rotation={rotateClock}>
+        <TextTooltip text={getClockTooltip()}>
+          <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+            <Circle rotation={rotateClock}>
+              <CircleContent>
                 <TicksPosition>{Ticks()}</TicksPosition>
                 <BandColor rotation={rotateBand} />
                 <Phases>
@@ -141,31 +121,25 @@ export function registerClock() {
                   />
                   <IconDay src={ClockIcons.day} iconColor={rotateBand} rotation={rotateClock} />
                 </Phases>
-              </Circle>
-            </Container>
-          </TextTooltip>
-          <TextTooltip text={getStaminaTooltip()}>
-            <Container
+                <CircleWrapper rotation={rotateClock}>
+                  <ClockOverlay />
+                  <TextTooltip text={getStaminaTooltip()}>
+                    <SmallCircle>
+                      <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
+                    </SmallCircle>
+                  </TextTooltip>
+                  <StaminaText rotation={0}>
+                    {staminaCurr}/{account.stamina.total}
+                  </StaminaText>
+                </CircleWrapper>
+              </CircleContent>
+            </Circle>
+            <Time
+              rotation={rotateClock}
+              viewBox='0 0 30 6'
               style={{ display: fixtures.menu ? 'flex' : 'none' }}
-              width={width}
-              height={height}
             >
-              <StaminaText position={staminaCurr.toString().length}>
-                {staminaCurr}/{account.stamina.total}
-              </StaminaText>
-              <SmallCircle>
-                <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
-              </SmallCircle>
-              <ClockOverlay />
-            </Container>
-          </TextTooltip>
-          <Container
-            style={{ display: fixtures.menu ? 'flex' : 'none' }}
-            width={width}
-            height={height}
-          >
-            <Time viewBox='0 0 30 4'>
-              <path id='MyPath' fill='none' d='M 2.5 3.7 Q 10.5 -4 25 1.8' pathLength='2' />
+              <path id='MyPath' fill='none' d='M 2.5 3.5 Q 13 -3.5 27 3.5' pathLength='2' />
               <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>
                 <textPath href='#MyPath' startOffset='0.9'>
                   {getKamiTime(Date.now())}
@@ -173,157 +147,72 @@ export function registerClock() {
               </text>
             </Time>
           </Container>
-        </>
+        </TextTooltip>
       );
     }
   );
 }
 
-const Container = styled.div<{ width: number; height: number }>`
+const Container = styled.div`
   pointer-events: auto;
-  position: absolute;
-  left: 0vh;
+  position: fixed;
+  left: 0;
+  bottom: 0;
   z-index: -1;
   height: fit-content;
-  ${({ width, height }) => {
-    const baseWidth = screen.width;
-    const baseHeight = screen.height;
-    const scaleX = width / baseWidth;
-    const scaleY = height / baseHeight;
-    let scale = Math.min(scaleX, scaleY);
-    const xToY = scaleX / scaleY;
-    if (scale < 0.8 && scaleY < 0.76) {
-      scale = 0.8 + (0.8 - scaleY);
-      if (xToY < 0.75) {
-        scale = scale - (0.85 - xToY);
-      }
-    }
-    return `transform: scale(${scale});bottom: ${scale * 22}vh;`;
-  }}
   user-select: none;
+  --clock-size: min(25vh, 25vw);
+  --base-unit: calc(var(--clock-size) / 25);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transform: translateY(10%);
 `;
 
 const Circle = styled.div<{ rotation: number }>`
+  position: relative;
+  height: var(--clock-size);
+  width: var(--clock-size);
+  border-radius: 50%;
+  background-image: url(${ClockIcons.clock_base});
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: calc(var(--clock-size) * 0.7);
+  z-index: -1;
+  transform-origin: center;
+  ${({ rotation }) => `transform: rotate(${rotation}deg);`}
+  overflow: visible;
+`;
+
+const CircleContent = styled.div`
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  border-radius: 50%;
-  height: 25vh;
-  width: 25vh;
-  position: absolute;
-  background-image: url(${ClockIcons.clock_base});
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 17.5vh;
-  z-index: -1;
-  transform-origin: center;
-  ${({ rotation }) => `transform: rotate(${rotation}deg) ;`}
-  overflow:hidden;
+  position: relative;
 `;
 
 const TicksPosition = styled.div`
   position: absolute;
-  left: 12.5vh;
-  bottom: 12.5vh;
+  bottom: calc(var(--clock-size) / 2);
+  left: calc(var(--clock-size) / 2);
   transform: rotate(16deg);
-`;
-
-const Tick = styled.div<{ rotationZ: number }>`
-  width: 0.1vh;
-  height: 0.5vh;
-  background-color: grey;
-  position: absolute;
-  transform-origin: 0px 7.5vh;
-  transform: ${({ rotationZ }) => `translateY(-7.5vh) rotateZ(calc(${rotationZ} * 360deg / 36))`};
-  z-index: 1;
-`;
-
-const Time = styled.svg`
-  text-shadow:
-    -1px 0 black,
-    0 1px black,
-    1px 0 black,
-    0 -1px black;
-  width: 14vh;
-  height: 4vh;
-  position: absolute;
-  top: 1.5vh;
-  left: 6vh;
-`;
-
-const StaminaText = styled.div<{ position: number }>`
-  position: absolute;
-  z-index: 1;
-  font-size: 1vh;
-  bottom: 3vh;
-  color: #dde390;
-  top: 14.5vh;
-  left: ${({ position }) => 12 - 0.85 * position}vh;
-  text-shadow:
-    -1px 0 black,
-    0 1px black,
-    1px 0 black,
-    0 -1px black;
-`;
-
-const ClockOverlay = styled.div`
-  background-image: url(${ClockIcons.overlay});
-  background-position: center;
-  background-size: 20vh;
-  background-repeat: no-repeat;
-  height: 18.5vh;
-  width: 20vh;
-  pointer-events: none;
-  position: absolute;
-  left: 1.5vh;
-  top: 2.5vh;
-`;
-
-const SmallCircle = styled.div`
-  border-radius: 50%;
-  height: 7vh;
-  width: 7vh;
-  border: 0.3vh solid black;
-  position: absolute;
-  top: 11.5vh;
-  left: 9vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-  background-image: url(${ClockIcons.stamina_base});
-  background-position: center;
-  background-size: 150vh;
-  background-repeat: no-repeat;
-  z-index: -1;
-  pointer-event: none;
-`;
-
-const SmallCircleFill = styled.div<{ height: number }>`
-  height: ${({ height }) => height}%;
-  position: relative;
-  background-color: ${({ height }) => getColor(Number(height))};
-  pointer-event: none;
-`;
-
-const Phases = styled.div`
-  position: absolute;
-  left: 6vh;
-  bottom: 6vh;
 `;
 
 const BandColor = styled.div<{ rotation: number }>`
   min-width: 60%;
   min-height: 60%;
-  top: 5vh;
   position: absolute;
-  border-width: 0.3vh;
+  top: calc(var(--clock-size) * 0.2);
+  border-width: calc(var(--base-unit) / 3);
   --a: 120deg;
   aspect-ratio: 1;
-  padding: 0.8vh;
+  padding: calc(var(--base-unit) / 1.5);
   box-sizing: border-box;
   border-radius: 50%;
+  z-index: -3;
   ${({ rotation }) => `transform: rotate(${rotation}deg);`}
   ${({ rotation }) =>
     rotation === 180
@@ -331,34 +220,132 @@ const BandColor = styled.div<{ rotation: number }>`
       : rotation === 60
         ? `background: rgb(191 180 27 / 42%);`
         : `background: rgb(174 18 191 / 42%);`}
-  mask:
-    linear-gradient(#0000 0 0) content-box intersect,
+  mask: linear-gradient(#0000 0 0) content-box intersect,
     conic-gradient(#000 var(--a), #0000 0);
+`;
+
+const Phases = styled.div`
+  position: absolute;
+  left: calc(var(--base-unit) * 6);
+  bottom: calc(var(--base-unit) * 6);
 `;
 
 const IconNight = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
-  left: -0.2vh;
-  bottom: 1.8vh;
-  width: 3.3vh;
-  ${({ iconColor }) => iconColor === 180 && `filter:opacity(0.75) drop-shadow(0 0 0 #4f22b7);`}
+  left: calc(var(--base-unit) * -0.2);
+  bottom: calc(var(--base-unit) * 1.8);
+  width: calc(var(--base-unit) * 3.3);
+  ${({ iconColor }) => iconColor === 180 && `filter: opacity(0.75) drop-shadow(0 0 0 #4f22b7);`}
   ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
 `;
 
 const IconTwilight = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
-  left: 1.5vh;
-  bottom: 10.8vh;
-  width: 3.3vh;
-  ${({ iconColor }) => iconColor === 300 && `filter:opacity(0.75) drop-shadow(0 0 0 #ae12bf);`}
+  left: calc(var(--base-unit) * 1.5);
+  bottom: calc(var(--base-unit) * 10.8);
+  width: calc(var(--base-unit) * 3.3);
+  ${({ iconColor }) => iconColor === 300 && `filter: opacity(0.75) drop-shadow(0 0 0 #ae12bf);`}
   ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
 `;
 
 const IconDay = styled.img<{ iconColor: number; rotation: number }>`
   position: relative;
-  left: 3.2vh;
-  bottom: 1.8vh;
-  width: 3.3vh;
-  ${({ iconColor }) => iconColor === 60 && `filter:opacity(0.75) drop-shadow(0 0 0 #bfb41b);`}
+  left: calc(var(--base-unit) * 3.2);
+  bottom: calc(var(--base-unit) * 1.8);
+  width: calc(var(--base-unit) * 3.3);
+  ${({ iconColor }) => iconColor === 60 && `filter: opacity(0.75) drop-shadow(0 0 0 #bfb41b);`}
   ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
+`;
+
+const ClockOverlay = styled.div`
+  background-image: url(${ClockIcons.overlay});
+  background-position: center center;
+  background-size: calc(var(--clock-size) * 0.8);
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 6%;
+  right: 4%;
+  width: 100%;
+  height: 80%;
+  pointer-events: none;
+  z-index: 3;
+  transform-origin: center center;
+`;
+const StaminaText = styled.div<{ rotation: number }>`
+  position: absolute;
+  z-index: 5;
+  font-size: calc(var(--base-unit) * 1);
+  top: 57%;
+  right: 38%;
+  color: rgb(252, 239, 124);
+  text-align: right;
+  direction: rtl;
+  text-shadow:
+    -1px 0 black,
+    0 1px black,
+    1px 0 black,
+    0 -1px black;
+  transform-origin: right center;
+  ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
+  pointer-events: none;
+  white-space: nowrap;
+  will-change: transform;
+`;
+
+const CircleWrapper = styled.div<{ rotation: number }>`
+  position: relative;
+  width: var(--clock-size);
+  height: var(--clock-size);
+  ${({ rotation }) => `transform: rotate(${-rotation}deg);`}
+`;
+
+const SmallCircle = styled.div`
+  border-radius: 50%;
+  height: calc(var(--base-unit) * 7.25);
+  width: calc(var(--base-unit) * 7.25);
+  border: calc(var(--base-unit) / 3.3) solid black;
+  position: absolute;
+  top: calc(var(--base-unit) * 11);
+  left: calc(var(--base-unit) * 9);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background-image: url(${ClockIcons.stamina_base});
+  background-position: center;
+  background-size: 6 * var(--clock-size);
+  background-repeat: no-repeat;
+  z-index: -1;
+  pointer-events: auto;
+`;
+
+const SmallCircleFill = styled.div<{ height: number }>`
+  height: ${({ height }) => height}%;
+  position: relative;
+  background-color: ${({ height }) => getColor(Number(height))};
+  pointer-events: none;
+`;
+
+const Time = styled.svg<{ rotation: number }>`
+  text-shadow:
+    black -1px 0px,
+    black 0px 1px,
+    black 1px 0px,
+    black 0px -1px;
+  position: absolute;
+  top: calc(var(--clock-size) * 0.04);
+  width: calc(var(--clock-size) * 0.56);
+  height: calc(var(--clock-size) * 0.22);
+  pointer-events: none;
+`;
+
+const Tick = styled.div<{ rotationZ: number }>`
+  width: calc(var(--base-unit) / 7);
+  height: calc(var(--base-unit) / 2);
+  background-color: grey;
+  position: absolute;
+  transform-origin: 0 calc(var(--clock-size) / 3.33);
+  transform: ${({ rotationZ }) =>
+    `translateY(calc(-1 * var(--clock-size) / 3.33)) rotateZ(calc(${rotationZ} * 360deg / 36))`};
+  z-index: 1;
 `;
