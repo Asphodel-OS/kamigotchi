@@ -103,7 +103,7 @@ export const Toolbar = (props: Props) => {
       </Section>
       <div>
         <LimitButtons>
-          {[35, 30, 25, 20, 15].map((val) => (
+          {[55, 50, 45, 40, 35, 30, 25, 20, 15].map((val) => (
             <LimitButton key={val} onClick={() => setLimit(val)} selected={limit === val}>
               {val}
             </LimitButton>
