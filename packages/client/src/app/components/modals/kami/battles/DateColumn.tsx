@@ -11,15 +11,22 @@ interface Props {
 export const DateColumn = (props: Props) => {
   const { kills } = props;
 
+  const getTooltipText = (kill: Kill) => {
+    const date = getDateString(kill.Timestamp, 0);
+    const kamiTime = getKamiTime(kill.Timestamp, 0);
+    const kamiDate = getKamiDate(kill.Timestamp, 0);
+
+    return [`${kamiDate} ${kamiTime}`, '...', `or ${date}`, 'on your plebeian calendar'];
+  };
+
   return (
     <Container>
       <Text size={1.2}>Date</Text>
       {kills.map((kill, index) => {
-        const date = getDateString(kill.Timestamp, 0);
         const kamiDate = getKamiDate(kill.Timestamp, 0);
-        const kamiTime = getKamiTime(kill.Timestamp, 0);
+
         return (
-          <TextTooltip key={index} text={[date, 'on your plebeian calendar']}>
+          <TextTooltip key={index} text={getTooltipText(kill)}>
             <Row>
               <Icon src={getPhaseIcon(getPhaseOf(kill.Timestamp, 0))} />
               <Text size={0.9}>{kamiDate}</Text>
