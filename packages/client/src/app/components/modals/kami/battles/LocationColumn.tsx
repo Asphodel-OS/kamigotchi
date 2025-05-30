@@ -1,6 +1,6 @@
+import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { Text, TextTooltip } from 'app/components/library';
 import { Kill } from 'clients/kamiden';
 import { Node } from 'network/shapes';

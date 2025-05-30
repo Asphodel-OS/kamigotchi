@@ -14,7 +14,6 @@ import { DateColumn } from './DateColumn';
 import { EventColumn } from './EventColumn';
 import { LocationColumn } from './LocationColumn';
 import { OwnerColumn } from './OwnerColumn';
-import { parseID } from './utils';
 
 const KamidenClient = getKamidenClient();
 
@@ -87,19 +86,8 @@ export const Battles = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // cleans the IDs in the kill data in-place
-  const cleanKills = (kills: Kill[]) => {
-    return kills.map((kill) => {
-      kill.AccountID = parseID(kill.AccountID);
-      kill.KillerId = parseID(kill.KillerId);
-      kill.VictimId = parseID(kill.VictimId);
-      return kill;
-    });
-  };
-
   async function pollBattles() {
     const kills = await getBattles(kami.id, false);
-    cleanKills(kills);
     setNoMoreKills(kills.length === kamidenKills.length);
     setKamidenKills(kills);
   }
@@ -109,7 +97,6 @@ export const Battles = (props: Props) => {
     if (!KamidenClient || currentKamiIdRef.current !== kami.id) return;
     const kills = await getBattles(kami.id, true);
     if (currentKamiIdRef.current !== kami.id) return;
-    cleanKills(kills);
     kills.length === kamidenKills.length ? setNoMoreKills(true) : setKamidenKills(kills);
   }
 

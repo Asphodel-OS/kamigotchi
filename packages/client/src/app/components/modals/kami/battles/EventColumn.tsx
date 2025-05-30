@@ -1,8 +1,9 @@
+import styled from 'styled-components';
+
 import { Text, TextTooltip } from 'app/components/library';
 import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kill } from 'clients/kamiden';
 import { Kami } from 'network/shapes';
-import styled from 'styled-components';
 
 interface Props {
   kami: Kami;
