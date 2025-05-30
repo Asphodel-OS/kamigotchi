@@ -26,7 +26,6 @@ export const KamiCache = new Map<EntityIndex, Kami>(); // kami entity -> kami
 
 const LiveUpdateTs = new Map<EntityIndex, number>(); // last update of the live sub-object (s)
 const BaseUpdateTs = new Map<EntityIndex, number>(); // last update of the base sub-object (s)
-// const BattlesUpdateTs = new Map<EntityIndex, number>(); // last update of the battles sub-object (s)
 const BonusesUpdateTs = new Map<EntityIndex, number>(); // last update of the bonuses sub-object (s)
 const ConfigsUpdateTs = new Map<EntityIndex, number>(); // last update of the config sub-object (s)
 const FlagsUpdateTs = new Map<EntityIndex, number>(); // last update of the flags sub-object (s)
@@ -49,7 +48,6 @@ export const process = (world: World, components: Components, entity: EntityInde
 export interface RefreshOptions {
   base?: number;
   live?: number;
-  // battles?: number;
   bonuses?: number;
   config?: number;
   flags?: number;

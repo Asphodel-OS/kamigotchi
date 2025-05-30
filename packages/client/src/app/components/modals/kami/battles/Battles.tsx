@@ -1,29 +1,21 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { BigNumber } from 'ethers';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { getBattles } from 'app/cache/battles';
-import { TextTooltip } from 'app/components/library';
-import { Account, useSelected, useVisibility } from 'app/stores';
-import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
+import { Text } from 'app/components/library';
 import { getKamidenClient, Kill } from 'clients/kamiden';
-import { formatEntityID } from 'engine/utils';
+import { Account } from 'network/shapes';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
-import { getAffinityImage } from 'network/shapes/utils';
-import { playClick } from 'utils/sounds';
-import { getDateString, getKamiDate, getKamiTime, getPhaseIcon, getPhaseOf } from 'utils/time';
 import { TabType } from '../Kami';
+import { AdversaryColumn } from './AdversaryColumn';
+import { DateColumn } from './DateColumn';
+import { EventColumn } from './EventColumn';
+import { LocationColumn } from './LocationColumn';
+import { OwnerColumn } from './OwnerColumn';
+import { parseID } from './utils';
 
-const cellStyle = {
-  fontFamily: 'Pixel',
-  fontSize: '.75vw',
-  padding: '0.5vw',
-  border: 0,
-};
-const headerStyle = { ...cellStyle, fontSize: '.9vw', fontWeight: `bold` };
 const KamidenClient = getKamidenClient();
 
 interface Props {
@@ -31,7 +23,9 @@ interface Props {
   setKami: Dispatch<SetStateAction<Kami | undefined>>;
   tab: TabType;
   utils: {
+    getAccountByID: (id: EntityID) => Account;
     getKami: (entity: EntityIndex) => Kami;
+    getKamiByID: (id: EntityID) => Kami;
     getEntityIndex: (entity: EntityID) => EntityIndex;
     getOwner: (entity: EntityIndex) => Account;
     getNodeByIndex: (index: number) => Node;
@@ -46,10 +40,6 @@ interface BattleStats {
 
 export const Battles = (props: Props) => {
   const { kami, utils } = props;
-  const { getKami, getEntityIndex, getOwner, getNodeByIndex } = utils;
-
-  const { setKami, setAccount, kamiIndex } = useSelected();
-  const { setModals } = useVisibility();
 
   const feedRef = useRef<HTMLDivElement>(null);
   const currentKamiIdRef = useRef(kami.id);
@@ -94,11 +84,22 @@ export const Battles = (props: Props) => {
     setScrollBottom(scrollHeight - scrollTop - clientHeight);
   };
 
-  const getPnLString = (kill: Kill) =>
-    kill.IsDeath ? `-${parseInt(kill.Bounty) - parseInt(kill.Salvage)}` : `+${kill.Spoils}`;
+  /////////////////
+  // INTERPRETATION
+
+  // cleans the IDs in the kill data in-place
+  const cleanKills = (kills: Kill[]) => {
+    return kills.map((kill) => {
+      kill.AccountID = parseID(kill.AccountID);
+      kill.KillerId = parseID(kill.KillerId);
+      kill.VictimId = parseID(kill.VictimId);
+      return kill;
+    });
+  };
 
   async function pollBattles() {
     const kills = await getBattles(kami.id, false);
+    cleanKills(kills);
     setNoMoreKills(kills.length === kamidenKills.length);
     setKamidenKills(kills);
   }
@@ -108,159 +109,65 @@ export const Battles = (props: Props) => {
     if (!KamidenClient || currentKamiIdRef.current !== kami.id) return;
     const kills = await getBattles(kami.id, true);
     if (currentKamiIdRef.current !== kami.id) return;
+    cleanKills(kills);
     kills.length === kamidenKills.length ? setNoMoreKills(true) : setKamidenKills(kills);
   }
 
-  const Head = () => (
-    <TableHead>
-      <TableRow key='header' sx={{ padding: '5vw' }}>
-        <TableCell sx={headerStyle}>Event</TableCell>
-        <TableCell sx={headerStyle}>Occurrence</TableCell>
-        <TableCell sx={headerStyle}>Adversary(Kami)</TableCell>
-        <TableCell sx={headerStyle}>Adversary(Owner)</TableCell>
-        <TableCell sx={headerStyle}>Location</TableCell>
-      </TableRow>
-    </TableHead>
-  );
-
-  const ResultCell = (kill: Kill) => (
-    <TableCell sx={cellStyle}>
-      <Cell>
-        <TextTooltip text={[kami.id === kill.KillerId ? 'kill' : 'death']}>
-          <Icon src={kill.IsDeath ? DeathIcon : KillIcon} />
-        </TextTooltip>
-        <Text color={kill.IsDeath ? 'red' : 'green'}>{getPnLString(kill)}</Text>
-      </Cell>
-    </TableCell>
-  );
-
-  const TimeCell = (kill: Kill) => {
-    const date = getDateString(kill.Timestamp, 0);
-    const kamiDate = getKamiDate(kill.Timestamp, 0);
-    const kamiTime = getKamiTime(kill.Timestamp, 0);
-    return (
-      <TableCell sx={cellStyle}>
-        <TextTooltip text={[date, 'on your plebeian calendar']}>
-          <Cell>
-            {kamiDate}
-            <Icon src={getPhaseIcon(getPhaseOf(kill.Timestamp, 0))} />
-            {kamiTime}
-          </Cell>
-        </TextTooltip>
-      </TableCell>
-    );
-  };
-
-  const AdversaryCell = (kill: Kill) => {
-    const adversaryId = kill.IsDeath ? kill.KillerId : kill.VictimId;
-    const adversaryKami = getKami(getEntityIndex(formatEntityID(BigNumber.from(adversaryId))));
-    const owner = getOwner(adversaryKami.entity);
-    return (
-      <>
-        <TableCell
-          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
-          onClick={() => {
-            setKami(adversaryKami.index);
-            setModals({ kami: kamiIndex !== adversaryKami.index });
-            playClick();
-          }}
-        >
-          {adversaryKami.name}
-        </TableCell>
-        <TableCell
-          sx={{ ...cellStyle, cursor: 'pointer', '&:hover': { color: 'grey' } }}
-          onClick={() => {
-            setAccount(owner.index);
-            setModals({ party: false, account: true });
-            playClick();
-          }}
-        >
-          {owner.name}
-        </TableCell>
-      </>
-    );
-  };
-
-  const NodeCell = (kill: Kill) => {
-    const node = getNodeByIndex(kill.RoomIndex as EntityIndex);
-    return (
-      <TableCell sx={{ ...cellStyle }}>
-        <Cell>
-          <Icon src={getAffinityImage(node.affinity)} />
-          {node.name}
-        </Cell>
-      </TableCell>
-    );
-  };
+  /////////////////
+  // DISPLAY
 
   return (
     <Container ref={feedRef} style={{ overflowY: 'auto' }}>
-      <Border
-        style={{
-          display: 'flex',
-          flexFlow: 'row nowrap',
-        }}
-      >
-        <Text>Kills: {battleStats?.Kills ?? 0}</Text>
-        <Text>Deaths: {battleStats?.Deaths ?? 0}</Text>
-        <Text color={battleStats?.PNL && battleStats?.PNL > 0 ? 'green' : 'red'}>
+      <Stats>
+        <Text size={0.8}>Kills: {battleStats?.Kills ?? 0}</Text>
+        <Text size={0.8}>Deaths: {battleStats?.Deaths ?? 0}</Text>
+        <Text size={0.8} color={battleStats?.PNL && battleStats?.PNL > 0 ? 'green' : 'red'}>
           PNL: {battleStats?.PNL ?? 0}
         </Text>
-      </Border>
-      <Border>
-        <TableContainer>
-          <Table>
-            <Head />
-            <TableBody>
-              {kamidenKills.map((kill, index) => (
-                <TableRow key={`${kill.Timestamp}-${kill.KillerId}-${kill.VictimId}-${index}`}>
-                  {ResultCell(kill)}
-                  {TimeCell(kill)}
-                  {AdversaryCell(kill)}
-                  {NodeCell(kill)}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Border>
+      </Stats>
+      <Table>
+        <EventColumn kami={kami} kills={kamidenKills} />
+        <DateColumn kills={kamidenKills} />
+        <AdversaryColumn kills={kamidenKills} utils={utils} />
+        <OwnerColumn kills={kamidenKills} utils={utils} />
+        <LocationColumn kills={kamidenKills} utils={utils} />
+      </Table>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  margin: 0.5vw;
-  width: fit-content;
+  width: 100%;
+
   display: flex;
   flex-flow: column nowrap;
   user-select: none;
 `;
 
-const Cell = styled.div`
+const Table = styled.div`
+  position: relative;
+  border: solid black 0.15vw;
+  border-radius: 0.6vw;
+
+  margin: 0 0.9vw;
+  padding: 0.6vw;
+  gap: 0.9vw;
+
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: flex-start;
-  gap: 0.3vw;
+  justify-content: space-between;
 `;
 
-const Text = styled.div<{ color?: string }>`
-  font-family: Pixel;
-  font-size: 0.8vw;
-  color: ${({ color }) => color ?? 'black'};
-  padding: 0.2vw;
-`;
-
-const Icon = styled.img`
-  height: 1.5vw;
-  width: 1.5vw;
-`;
-
-const Border = styled.div`
+const Stats = styled.div`
   width: fit-content;
   border: solid black 0.15vw;
-  border-radius: 0.5vw;
-  margin: 0.2vw 0;
-  padding: 0.2vw;
+  border-radius: 0.6vw;
+  margin: 0.9vw;
+  padding: 0.3vw;
+  gap: 0.6vw;
+
+  display: flex;
+  flex-flow: row nowrap;
 `;

@@ -73,7 +73,11 @@ export function registerKamiModal() {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getItemBalance: (index: number) =>
                 getItemBalance(world, components, account.id, index),
+              getAccountByID: (id: EntityID) =>
+                getAccount(world, components, world.entityToIndex.get(id) as EntityIndex),
               getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
+              getKamiByID: (id: EntityID) =>
+                getKami(world, components, world.entityToIndex.get(id) as EntityIndex, kamiOptions),
               getOwner: (entity: EntityIndex) => getKamiAccount(world, components, entity),
               getSkill: (index: number) => getSkillByIndex(world, components, index),
               getSkillUpgradeError: (index: number, kami: Kami) =>
@@ -259,14 +263,7 @@ export function registerKamiModal() {
               }}
             />
           )}
-          {tab === 'BATTLES' && (
-            <Battles
-              kami={kami}
-              setKami={setKami}
-              tab={tab}
-              utils={{ getKami, getEntityIndex, getOwner, getNodeByIndex }}
-            />
-          )}
+          {tab === 'BATTLES' && <Battles kami={kami} setKami={setKami} tab={tab} utils={utils} />}
         </ModalWrapper>
       );
     }
