@@ -107,6 +107,7 @@ export const Toolbar = (props: Props) => {
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
       <DropDownToggle
+        limit={33}
         img={HarvestIcon}
         disabled={DeployOptions.length == 0}
         onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
