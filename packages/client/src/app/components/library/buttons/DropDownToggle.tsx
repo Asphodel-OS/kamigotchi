@@ -31,7 +31,7 @@ export function DropDownToggle(props: Props) {
   // necessary to properly create the checked array, this way it waits for the options to be populated
   useEffect(() => {
     if (checked.length !== options.length) setChecked(Array(options.length).fill(false));
-  }, [options, checked.length]);
+  }, [options]);
 
   // force close the popover if there are no options left and the checklist is in the process of being emptied
   useEffect(() => {
