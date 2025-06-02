@@ -54,7 +54,7 @@ export function DropDownToggle(props: Props) {
     // currently selected
     const selected = checked.filter(Boolean).length;
     // limit
-    const selectLimit = limit ?? options.length;
+    const selectLimit = Math.min(limit ?? options.length, options.length);
     // check if all are selected
     const allSelected = selected >= selectLimit;
     // If all selected deselect all, else select up to the limit
