@@ -62,9 +62,10 @@ export function DropDownToggle(props: Props) {
   };
 
   const handleTriggerClick = () => {
-    const selected = options.filter((_, i) => checked[i]).map((opt) => opt.object);
+    const selected = options.filter((_, index) => checked[index]);
+    const selectedObjects = selected.map((option) => option.object);
     playClick();
-    onClick(selected);
+    onClick(selectedObjects);
   };
 
   const MenuCheckListOption = (
@@ -75,11 +76,10 @@ export function DropDownToggle(props: Props) {
   ) => {
     const imageSrc = img ?? object?.image;
     const selected = checked.filter(Boolean).length;
-    const isChecked = isSelectAll
-      ? limit
-        ? selected >= Math.min(limit, options.length)
-        : checked.every(Boolean)
-      : !!checked[i!];
+
+    const maxSelectable = Math.min(limit ?? options.length, options.length);
+    const allSelected = selected >= maxSelectable;
+    const isChecked = isSelectAll ? allSelected : !!checked[i!];
 
     return (
       <MenuOption
