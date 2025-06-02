@@ -24,18 +24,21 @@ interface Props {
       total: number; // total of VIP scores this epoch
     };
   };
-  isSelf: boolean;
-  setSubTab: (tab: string) => void;
-  subTab: string;
-  tab: string;
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
+  };
+  view: {
+    isSelf: boolean;
+    setSubTab: (tab: string) => void;
+    subTab: string;
+    tab: string;
   };
 }
 
 export const Bottom = (props: Props) => {
-  const { data, tab, subTab, setSubTab, utils, actions, isSelf } = props;
+  const { data, view, utils, actions } = props;
   const { acceptFren, blockFren, cancelFren, requestFren } = actions;
+  const { tab, subTab, setSubTab, isSelf } = view;
   const { account } = data;
 
   /////////////////
@@ -58,7 +61,7 @@ export const Bottom = (props: Props) => {
         <StatsBottom key='statsbottom' data={data} />
       </Tab>
       <Tab isVisible={tab === 'party'}>
-        <PartyBottom data={{ account }} utils={utils} key='partybottom' />
+        <PartyBottom key='partybottom' data={{ account }} utils={utils} />
       </Tab>
     </>
   );

@@ -206,13 +206,10 @@ export function registerAccountModal() {
           <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
           <Bottom
             key='bottom'
-            tab={tab}
-            subTab={subTab}
-            isSelf={isSelf}
-            setSubTab={setSubTab}
-            data={{ accounts, account, vip }}
             actions={{ acceptFren, blockFren, cancelFren, requestFren }}
+            data={{ accounts, account, vip }}
             utils={utils}
+            view={{ isSelf, setSubTab, subTab, tab }}
           />
         </ModalWrapper>
       );
