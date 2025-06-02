@@ -51,10 +51,14 @@ export function DropDownToggle(props: Props) {
 
   const toggleAll = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent popover from closing
-    const anySelected = checked.some(Boolean);
-    setChecked(
-      anySelected ? checked.map(() => false) : checked.map((_, i) => i < (limit ?? options.length))
-    );
+    // currently selected
+    const selected = checked.filter(Boolean).length;
+    // limit
+    const selectLimit = limit ?? options.length;
+    // check if all are selected
+    const allSelected = selected >= selectLimit;
+    // If all selected deselect all, else select up to the limit
+    setChecked(checked.map((_, i) => !allSelected && i < selectLimit));
   };
 
   const handleTriggerClick = () => {
