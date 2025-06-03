@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { getAccountInventories } from 'app/cache/account';
 import { getTrade } from 'app/cache/trade';
-import { ModalWrapper } from 'app/components/library';
+import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -24,9 +24,9 @@ export function registerTradingModal() {
     'TradingModal',
     // Grid Config
     {
-      colStart: 33,
-      colEnd: 66,
-      rowStart: 3,
+      colStart: 2,
+      colEnd: 67,
+      rowStart: 8,
       rowEnd: 99,
     },
     // Requirement
@@ -72,7 +72,6 @@ export function registerTradingModal() {
       useEffect(() => {
         if (!modals.trading) return;
         setTrades(queryTrades().map((entity: EntityIndex) => getTrade(entity)));
-        setModals({ node: false, crafting: false, chat: false });
       }, [modals.trading]);
 
       /////////////////
@@ -86,9 +85,9 @@ export function registerTradingModal() {
       ) => {
         const actionID = uuid() as EntityID;
         actions.add({
-          action: 'create trade',
+          action: 'Create Order',
           params: [],
-          description: `creating Trade `,
+          description: `Creating Order`,
           execute: async () => {
             return api.player.account.trade.create(
               [buyIndices],
@@ -105,9 +104,9 @@ export function registerTradingModal() {
       const executeTrade = (tradeId: BigNumberish) => {
         const actionID = uuid() as EntityID;
         actions.add({
-          action: 'create trade',
+          action: 'Executing Order',
           params: [tradeId],
-          description: `creating Trade `,
+          description: `Executing Order`,
           execute: async () => {
             return api.player.account.trade.execute(tradeId);
           },
@@ -118,9 +117,9 @@ export function registerTradingModal() {
       const cancelTrade = (tradeId: BigNumberish) => {
         const actionID = uuid() as EntityID;
         actions.add({
-          action: 'cancel trade',
+          action: 'Cancel Order',
           params: [tradeId],
-          description: `canceling Trade `,
+          description: `Canceling Order`,
           execute: async () => {
             return api.player.account.trade.cancel(tradeId);
           },
@@ -129,7 +128,7 @@ export function registerTradingModal() {
       };
 
       return (
-        <ModalWrapper id='trading' header={<Header style={{}}>Trade</Header>} canExit>
+        <ModalWrapper id='trading' header={<ModalHeader title='Trade' />} canExit noPadding>
           <Tabs tab={tab} setTab={setTab} />
           <Content>
             <OrderbookTab

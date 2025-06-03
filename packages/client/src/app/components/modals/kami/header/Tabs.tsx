@@ -56,7 +56,6 @@ const Button = styled.button`
   color: black;
   justify-content: center;
 
-  font-family: Pixel;
   font-size: 1vw;
   text-align: center;
 

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import { playClick } from 'utils/sounds';
 import { TabType } from './types';
 
 interface Props {
@@ -9,54 +10,55 @@ interface Props {
 
 export const Tabs = (props: Props) => {
   const { tab, setTab } = props;
+
+  const handleTabbing = (tab: TabType) => {
+    setTab(tab);
+    playClick();
+  };
+
   return (
-    <Buttons>
+    <Container>
       <Button
         disabled={tab === `Orderbook`}
-        onClick={() => {
-          setTab(`Orderbook`);
-        }}
+        onClick={() => handleTabbing(`Orderbook`)}
+        style={{ borderRight: 'solid black .15vw' }}
       >
-        {`Active Offers`}
+        {`View Orderbook`}
       </Button>
-      <Button
-        disabled={tab === `Management`}
-        onClick={() => {
-          setTab(`Management`);
-        }}
-      >
-        {`Management Tab`}
+      <Button disabled={tab === `Management`} onClick={() => handleTabbing(`Management`)}>
+        {`Manage Orders`}
       </Button>
-    </Buttons>
+    </Container>
   );
 };
 
-const Buttons = styled.div`
-  left: 0;
-  top: 0;
-  position: absolute;
+const Container = styled.div`
   width: 100%;
   display: flex;
-  margin-bottom: 1vw;
+  flex-flow: row nowrap;
 `;
 
 const Button = styled.button`
-  font-size: 1vw;
-  padding: 0.4vw;
-  padding-right: 2vw;
-  padding-left: 2vw;
-  border-radius: 0 0 0.8vw 0.8vw;
-  border-top: 0;
-  z-index: 1;
-  width: 50%;
-  background-color: #c5c5c5;
+  border: none;
+  border-bottom: solid black 0.15vw;
+  padding: 0.6vw;
+  color: black;
+
+  font-size: 1.2vw;
+  line-height: 1.8vw;
+  flex-grow: 1;
+
+  cursor: pointer;
+  pointer-events: auto;
   &:hover {
-    cursor: pointer;
+    background-color: #ddd;
   }
-  &: disabled {
-    background-color: rgb(255, 255, 255);
-    z-index: 2;
-    border-color: black;
+  &:active {
+    background-color: #bbb;
+  }
+  &:disabled {
+    background-color: #bbb;
     cursor: default;
+    pointer-events: none;
   }
 `;
