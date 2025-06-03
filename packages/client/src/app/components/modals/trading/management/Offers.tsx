@@ -1,4 +1,3 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -9,48 +8,44 @@ import { Trade, TradeOrder } from 'network/shapes/Trade/types';
 
 interface Props {
   actions: {
-    executeTrade: (tradeId: BigNumberish) => void;
     cancelTrade: (tradeId: BigNumberish) => void;
   };
   controls: {
     search: string;
     ascending: boolean;
   };
-  data: { accountEntity: EntityIndex; trades: Trade[] };
-  managementTab: boolean;
+  data: { trades: Trade[] };
 }
+
 export const Offers = (props: Props) => {
-  const { actions, controls, data, managementTab } = props;
-  const { executeTrade, cancelTrade } = actions;
+  const { actions, controls, data } = props;
+  const { cancelTrade } = actions;
   const { search, ascending } = controls;
   const { trades } = data;
 
   const [processedData, setProcessedData] = useState<Trade[]>([]);
 
+  // sort trades accordingly as new ones come in
   useEffect(() => {
-    trades &&
-      trades.sort(function (a, b) {
-        let aa = a.sellOrder?.items[0].name;
-        let bb = b.sellOrder?.items[0].name;
-        let compareA = Number(a.sellOrder?.amounts[0]);
-        let compareB = Number(b.sellOrder?.amounts[0]);
-        if (!aa?.includes('MUSU')) {
-          aa = a.buyOrder?.items[0].name;
-          compareA = Number(a.buyOrder?.amounts[0]);
-        }
-        if (!bb?.includes('MUSU')) {
-          bb = b.buyOrder?.items[0].name;
-          compareB = Number(b.buyOrder?.amounts[0]);
-        }
+    if (!trades) return;
+    trades.sort(function (a, b) {
+      let aa = a.sellOrder?.items[0].name;
+      let bb = b.sellOrder?.items[0].name;
+      let compareA = Number(a.sellOrder?.amounts[0]);
+      let compareB = Number(b.sellOrder?.amounts[0]);
+      if (!aa?.includes('MUSU')) {
+        aa = a.buyOrder?.items[0].name;
+        compareA = Number(a.buyOrder?.amounts[0]);
+      }
+      if (!bb?.includes('MUSU')) {
+        bb = b.buyOrder?.items[0].name;
+        compareB = Number(b.buyOrder?.amounts[0]);
+      }
 
-        return ascending ? compareA - compareB : compareB - compareA;
-      });
+      return ascending ? compareA - compareB : compareB - compareA;
+    });
     setProcessedData(trades);
   }, [ascending, trades]);
-
-  const ownerCheck = (trade: Trade) => {
-    return trade.seller?.entity === data.accountEntity;
-  };
 
   const searchCheck = (tradeOrder: TradeOrder) => {
     return tradeOrder?.items[0].name.toLowerCase().includes(search.toLowerCase());
@@ -62,19 +57,10 @@ export const Offers = (props: Props) => {
       const itemMusu = {
         Item: sellOrderHasMusu ? trade.buyOrder : trade.sellOrder,
         Musu: sellOrderHasMusu ? trade.sellOrder : trade.buyOrder,
-        Order:
-          (!managementTab && !sellOrderHasMusu) || (managementTab && sellOrderHasMusu)
-            ? 'Buy'
-            : 'Sell',
+        Order: sellOrderHasMusu ? 'Buy' : 'Sell',
       };
-      if (
-        !((managementTab && ownerCheck(trade)) || (!managementTab && !ownerCheck(trade))) ||
-        !(search === '' || searchCheck(trade.sellOrder!) || searchCheck(trade.buyOrder!))
-      ) {
-        return null;
-      }
       return (
-        <Card key={i} managementTab={managementTab}>
+        <Card key={i}>
           <OuterSide>
             <TextTooltip text={[Number(itemMusu.Item?.amounts[0]).toString()]}>
               <Icon src={itemMusu.Item?.items[0].image} />
@@ -93,13 +79,7 @@ export const Offers = (props: Props) => {
             </TopRow>
             <BottomRow>
               <InnerSide>
-                {!ownerCheck(trade) ? (
-                  <TextTooltip text={[trade.seller?.name!]}>
-                    <TextCap cap={21}>Player : {trade.seller?.name!}</TextCap>
-                  </TextTooltip>
-                ) : (
-                  <TextCap>Trade: {itemMusu.Order}</TextCap>
-                )}
+                <TextCap>Trade: {itemMusu.Order}</TextCap>
                 <TextTooltip text={[Number(itemMusu.Musu?.amounts[0]).toString()]}>
                   <div
                     style={{
@@ -116,12 +96,7 @@ export const Offers = (props: Props) => {
                   </div>
                 </TextTooltip>
               </InnerSide>
-              <ActionButton
-                text={ownerCheck(trade) ? 'Cancel' : itemMusu.Order}
-                onClick={() => {
-                  ownerCheck(trade) ? cancelTrade(trade.id) : executeTrade(trade.id);
-                }}
-              />
+              <ActionButton text='Cancel' onClick={() => cancelTrade(trade.id)} />
             </BottomRow>
           </RightSide>
         </Card>
@@ -132,24 +107,24 @@ export const Offers = (props: Props) => {
   const hasTrades = ActiveOfferCards().some((item) => item !== null);
 
   return (
-    <Container managementTab={managementTab}>
-      {managementTab && <Title>Your Active Offers </Title>}
-      {
-        <Cards managementTab={managementTab}>
-          {hasTrades ? ActiveOfferCards() : <EmptyText>No active trades</EmptyText>}
-        </Cards>
-      }
+    <Container>
+      <Title>Your Active Offers </Title>
+      <Cards>
+        {hasTrades ? ActiveOfferCards() : <EmptyText>You have no active trades</EmptyText>}
+      </Cards>
     </Container>
   );
 };
 
-const Container = styled.div<{ managementTab: boolean }>`
+const Container = styled.div`
   position: relative;
-  height: max-content;
+  height: 100%;
+  width: 66%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
+
   overflow: hidden scroll;
   scrollbar-color: transparent transparent;
 `;
@@ -168,7 +143,7 @@ const Title = styled.div`
   z-index: 2;
 `;
 
-const Cards = styled.div<{ managementTab: boolean }>`
+const Cards = styled.div`
   position: relative;
   height: max-content;
   width: 100%;
@@ -182,20 +157,20 @@ const Cards = styled.div<{ managementTab: boolean }>`
   flex-direction: row;
 
   flex-wrap: wrap;
-  ${({ managementTab }) => (managementTab ? '' : 'justify-content: space-between;')}
 `;
 
-const Card = styled.div<{ managementTab: boolean }>`
+const Card = styled.div`
+  position: relative;
+  border: 0.15vw solid black;
+  border-radius: 0.45vw;
+
+  margin-bottom: 0.3vw;
+  height: 7.5vw;
+  width: 100%;
+
   display: flex;
   flex-flow: row;
   align-items: flex-start;
-  position: relative;
-
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
-  margin-bottom: 0.2vw;
-  height: 7.5vw;
-  ${({ managementTab }) => (managementTab ? 'width: 100%;' : 'width: 49.5%; ')}
 `;
 
 const OuterSide = styled.div`

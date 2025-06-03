@@ -3,29 +3,24 @@ import { BigNumberish } from 'ethers';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { NetworkLayer } from 'network/create';
 import { Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
-import { CreateOffer } from './CreateOffer';
+import { Create } from './Create';
 import { Offers } from './Offers';
 
 interface Props {
   actions: {
     cancelTrade: (tradeId: BigNumberish) => void;
-    createTrade: (
-      buyIndices: Number,
-      buyAmts: BigNumberish,
-      sellIndices: Number,
-      sellAmts: BigNumberish
-    ) => EntityID;
+    createTrade: (buyItem: Item, buyAmt: number, sellItem: Item, sellAmt: number) => EntityID;
     executeTrade: (tradeId: BigNumberish) => void;
   };
   data: {
-    accountEntity: EntityIndex;
-    musuBalance: number;
+    currencies: Item[];
     inventories: Inventory[];
+    items: Item[];
+    musuBalance: number;
     trades: Trade[];
   };
   types: {
@@ -41,7 +36,6 @@ interface Props {
     }[];
     getAllItems: () => Item[];
   };
-  network: NetworkLayer;
   isVisible: boolean;
 }
 
@@ -54,9 +48,9 @@ export const Management = (props: Props) => {
 
   return (
     <Content isVisible={isVisible}>
-      <CreateOffer actions={actions} data={data} types={types} utils={utils} />
+      <Create actions={actions} data={data} types={types} utils={utils} />
       <Divider />
-      <Offers actions={actions} data={data} controls={{ ascending, search }} managementTab={true} />
+      <Offers actions={actions} data={data} controls={{ ascending, search }} />
     </Content>
   );
 };

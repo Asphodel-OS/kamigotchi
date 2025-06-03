@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -12,12 +12,6 @@ interface Props {
   actions: {
     executeTrade: (tradeId: BigNumberish) => void;
     cancelTrade: (tradeId: BigNumberish) => void;
-    createTrade: (
-      buyIndices: Number,
-      buyAmts: BigNumberish,
-      sellIndices: Number,
-      sellAmts: BigNumberish
-    ) => EntityID;
   };
   controls: {
     tab: string;

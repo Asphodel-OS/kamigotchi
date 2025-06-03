@@ -29,6 +29,7 @@ export const filter = (
   });
 };
 
+// get the balance of an item in a set of inventories
 export const getBalance = (inventories: Inventory[], itemIndex: number): number => {
   const filtered = inventories.find((inv) => inv.item?.index == itemIndex);
   return filtered?.balance ?? 0;

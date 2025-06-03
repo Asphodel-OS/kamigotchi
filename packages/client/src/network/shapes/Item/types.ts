@@ -2,6 +2,7 @@ import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
 import { Address } from 'viem';
+import { hasFlag } from '../Flag';
 import { DetailedEntity, getItemImage } from '../utils';
 import {
   getDescription,
@@ -25,6 +26,9 @@ export interface Item extends DetailedEntity {
   address?: Address;
   requirements: Requirements;
   effects: Effects;
+  is: {
+    tradeable: boolean;
+  };
 }
 
 export const getItemDetails = (comps: Components, entity: EntityIndex): DetailedEntity => {
@@ -57,6 +61,9 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
     for: getFor(comps, entity),
     requirements: getRequirements(world, comps, index),
     effects: getEffects(world, comps, index),
+    is: {
+      tradeable: !hasFlag(world, comps, entity, 'NOT_TRADEABLE'),
+    },
   };
 
   if (item.type === 'ERC20') item.address = getTokenAddress(comps, entity);
