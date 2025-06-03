@@ -11,6 +11,7 @@ export const PartyMenuButton = () => {
     leaderboard: false,
     map: false,
     merchant: false,
+    trading: false,
   };
 
   return (

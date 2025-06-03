@@ -13,8 +13,8 @@ export const MapMenuButton = () => {
     kami: false,
     leaderboard: false,
     merchant: false,
-    nameKami: false,
     party: false,
+    trading: false,
   };
 
   return (

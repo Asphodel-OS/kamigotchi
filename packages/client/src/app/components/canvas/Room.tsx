@@ -100,20 +100,17 @@ export const Room = (props: Props) => {
     }
   }, [bgmVolume]);
 
+  // close any room-specific modals as the user changes rooms
   const closeModals = () => {
     setModals({
-      accountOperator: false,
-      bridgeERC20: false,
-      bridgeERC721: false,
-      emaBoard: false,
-      gacha: false,
-      goal: false,
-      kami: false,
-      leaderboard: false,
-      merchant: false,
-      nameKami: false,
-      operatorFund: false,
-      dialogue: false,
+      bridgeERC721: false, // room specific
+      dialogue: false, // room specific
+      emaBoard: false, // room specific
+      gacha: false, // room specific
+      goal: false, // room specific
+      leaderboard: false, // room specific
+      merchant: false, // room specific
+      trading: false, // room specific
     });
   };
 

@@ -16,6 +16,7 @@ export const AccountMenuButton = () => {
     map: false,
     merchant: false,
     party: false,
+    trading: false,
   };
 
   return (

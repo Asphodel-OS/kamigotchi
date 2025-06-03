@@ -39,7 +39,6 @@ export const toggleFixtures = (isOn: boolean): Fixtures => ({
 
 export interface Modals {
   account: boolean;
-  accountOperator: boolean;
   bridgeERC20: boolean;
   bridgeERC721: boolean;
   chat: boolean;
@@ -66,7 +65,6 @@ export interface Modals {
 
 export const toggleModals = (isOn: boolean): Modals => ({
   account: isOn,
-  accountOperator: isOn,
   bridgeERC20: isOn,
   bridgeERC721: isOn,
   chat: isOn,
@@ -114,7 +112,6 @@ export const useVisibility = create<State & Actions>((set) => {
     },
     modals: {
       account: false,
-      accountOperator: false,
       bridgeERC20: false,
       bridgeERC721: false,
       chat: false,
