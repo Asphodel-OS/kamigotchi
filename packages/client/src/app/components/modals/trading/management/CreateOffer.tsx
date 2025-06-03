@@ -5,20 +5,30 @@ import styled from 'styled-components';
 
 import { ActionButton, Popover } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { NetworkLayer } from 'network/create';
+import { Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
+import { ActionComponent } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
 import { CreateOfferCards } from './CreateOfferCards';
 
 interface Props {
-  network: NetworkLayer;
-  createTrade: (
-    buyIndices: Number,
-    buyAmts: BigNumberish,
-    sellIndices: Number,
-    sellAmts: BigNumberish
-  ) => EntityID;
+  actions: {
+    createTrade: (
+      buyIndices: Number,
+      buyAmts: BigNumberish,
+      sellIndices: Number,
+      sellAmts: BigNumberish
+    ) => EntityID;
+  };
+  data: {
+    musuBalance: number;
+    inventories: Inventory[];
+  };
+  types: {
+    ActionComp: ActionComponent;
+  };
   utils: {
+    entityToIndex: (id: EntityID) => EntityIndex;
     getInventories: () => {
       id: EntityID;
       entity: EntityIndex;
@@ -26,14 +36,15 @@ interface Props {
       item: Item;
     }[];
     getAllItems: () => Item[];
-    getMusuBalance: () => number;
   };
 }
 
 export const CreateOffer = (props: Props) => {
-  const { network, utils, createTrade } = props;
-  const { actions, api, world } = network;
-  const { getInventories, getAllItems, getMusuBalance } = utils;
+  const { actions, data, types, utils } = props;
+  const { createTrade } = actions;
+  const { musuBalance, inventories } = data;
+  const { ActionComp } = types;
+  const { entityToIndex, getInventories, getAllItems } = utils;
 
   const [search, setSearch] = useState<string>('');
   const [item, setItem] = useState<any>(null);
@@ -86,10 +97,7 @@ export const CreateOffer = (props: Props) => {
       if (!tradeActionID) throw new Error('Trade action failed');
       // TODO: fix this, make reset only happen if trade is succesful
       await Promise.all([
-        waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(tradeActionID) as EntityIndex
-        ),
+        waitForActionCompletion(ActionComp, entityToIndex(tradeActionID) as EntityIndex),
         reset(),
       ]);
     } catch (e) {
@@ -146,7 +154,7 @@ export const CreateOffer = (props: Props) => {
             </Popover>
             {CreateOffers(false, max)}
             <Divider /> For:
-            {CreateOffers(true, sellToggle ? Infinity : getMusuBalance())}
+            {CreateOffers(true, sellToggle ? Infinity : musuBalance)}
           </Card>
         </Label>
       </Body>
@@ -172,19 +180,20 @@ export const CreateOffer = (props: Props) => {
 };
 
 const Content = styled.div`
-  width: 50%;
+  width: 33%;
   height: 100%;
   overflow: hidden hidden;
 `;
 
 const Body = styled.div`
   position: relative;
-  height: max-content;
+  height: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
-  overflow: hidden scroll;
+
+  overflow-y: scroll;
   scrollbar-color: transparent transparent;
 `;
 

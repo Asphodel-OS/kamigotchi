@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Popover } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { Trade } from 'network/shapes/Trade/types';
-import { ActiveOffers } from '../ActiveOffers';
+import { ActiveOffers } from './ActiveOffers';
 
 interface Props {
   actions: {

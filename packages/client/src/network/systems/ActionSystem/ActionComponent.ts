@@ -1,4 +1,6 @@
-import { defineComponent, World, Type, Component, Metadata, SchemaOf } from "@mud-classic/recs";
+import { Component, defineComponent, Metadata, SchemaOf, Type, World } from '@mud-classic/recs';
+
+export type ActionComponent = ReturnType<typeof defineActionComponent>;
 
 export function defineActionComponent<T = undefined>(world: World) {
   const Action = defineComponent(

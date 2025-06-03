@@ -42,7 +42,6 @@ const Button = styled.button`
   border: none;
   border-bottom: solid black 0.15vw;
   padding: 0.6vw;
-  color: black;
 
   font-size: 1.2vw;
   line-height: 1.8vw;

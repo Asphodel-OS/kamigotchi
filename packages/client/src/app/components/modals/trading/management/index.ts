@@ -1,1 +1,1 @@
-export { ManagementTab } from './ManagementTab';
+export { Management } from './Management';

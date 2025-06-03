@@ -4,14 +4,15 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { NetworkLayer } from 'network/create';
+import { Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
-import { ActiveOffers } from '../ActiveOffers';
+import { ActionComponent } from 'network/systems';
 import { CreateOffer } from './CreateOffer';
+import { Offers } from './Offers';
 
 interface Props {
   actions: {
-    executeTrade: (tradeId: BigNumberish) => void;
     cancelTrade: (tradeId: BigNumberish) => void;
     createTrade: (
       buyIndices: Number,
@@ -19,9 +20,19 @@ interface Props {
       sellIndices: Number,
       sellAmts: BigNumberish
     ) => EntityID;
+    executeTrade: (tradeId: BigNumberish) => void;
   };
-  data: { accountEntity: EntityIndex; trades: Trade[] };
+  data: {
+    accountEntity: EntityIndex;
+    musuBalance: number;
+    inventories: Inventory[];
+    trades: Trade[];
+  };
+  types: {
+    ActionComp: ActionComponent;
+  };
   utils: {
+    entityToIndex: (id: EntityID) => EntityIndex;
     getInventories: () => {
       id: EntityID;
       entity: EntityIndex;
@@ -29,15 +40,13 @@ interface Props {
       item: Item;
     }[];
     getAllItems: () => Item[];
-    getMusuBalance: () => number;
   };
   network: NetworkLayer;
   isVisible: boolean;
 }
 
-export const ManagementTab = (props: Props) => {
-  const { isVisible, actions, data, network, utils } = props;
-  const { createTrade } = actions;
+export const Management = (props: Props) => {
+  const { isVisible, actions, data, types, utils } = props;
 
   const [ascending, setAscending] = useState<boolean>(true);
   const [filter, setFilter] = useState<string>('Price \u0245');
@@ -45,14 +54,9 @@ export const ManagementTab = (props: Props) => {
 
   return (
     <Content isVisible={isVisible}>
-      <CreateOffer network={network} utils={utils} createTrade={createTrade} />
+      <CreateOffer actions={actions} data={data} types={types} utils={utils} />
       <Divider />
-      <ActiveOffers
-        actions={actions}
-        data={data}
-        controls={{ ascending, search }}
-        managementTab={true}
-      />
+      <Offers actions={actions} data={data} controls={{ ascending, search }} managementTab={true} />
     </Content>
   );
 };

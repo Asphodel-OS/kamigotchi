@@ -102,15 +102,7 @@ export function registerKamiModal() {
     ({ data, network, utils }) => {
       const { actions, api } = network;
       const { account, onyxItem, spender } = data;
-      const {
-        getKami,
-        getOwner,
-        queryKamiByIndex,
-        getSkillUpgradeError,
-        getTreePoints,
-        getEntityIndex,
-        getNodeByIndex,
-      } = utils;
+      const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
       const { kamiIndex } = useSelected();
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
       const { modals, setModals } = useVisibility();
@@ -160,8 +152,9 @@ export function registerKamiModal() {
               position: 'absolute' as const,
             }
           : undefined;
+
       /////////////////
-      // ACTION
+      // ACTIONS
 
       const levelUp = (kami: Kami) => {
         const actionIndex = actions.add({

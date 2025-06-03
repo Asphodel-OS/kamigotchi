@@ -1,4 +1,4 @@
-export type { ActionSystem } from './ActionSystem';
+export type { ActionComponent, ActionRequest, ActionSystem } from './ActionSystem';
 export type { NotificationSystem } from './NotificationSystem';
 
 export {
