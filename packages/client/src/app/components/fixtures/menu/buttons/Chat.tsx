@@ -7,27 +7,18 @@ import { ChatIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
 const LastClearTs = new Map<number, number>(); // roomIndex => ts last opened
+const ModalsToHide: Partial<Modals> = {
+  help: false,
+  inventory: false,
+  quests: false,
+  settings: false,
+};
 
 export const ChatMenuButton = () => {
   const { modals } = useVisibility();
-  const modalsToHide: Partial<Modals> = {
-    bridgeERC20: false,
-    bridgeERC721: false,
-    dialogue: false,
-    emaBoard: false,
-    help: false,
-    inventory: false,
-    leaderboard: false,
-    quests: false,
-    settings: false,
-    presale: false,
-    trading: false,
-  };
-
+  const { roomIndex } = useSelected();
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [notification, setNotification] = useState(false);
-
-  const { roomIndex } = useSelected();
 
   const handleNumMessages = () => {
     const numberNewMessages = numMessagesChatSince(roomIndex, LastClearTs.get(roomIndex) ?? 0);
@@ -68,7 +59,7 @@ export const ChatMenuButton = () => {
         image={ChatIcon}
         tooltip='Chat'
         targetModal='chat'
-        hideModals={modalsToHide}
+        hideModals={ModalsToHide}
       />
       <Status notification={notification}>
         <Number>{handleNumMessages()}</Number>

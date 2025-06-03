@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useSelected, useVisibility } from 'app/stores';
-import { triggerERC721BridgeModal } from 'app/triggers/triggerERC721BridgeModal';
-import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
+import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'app/triggers';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -91,7 +90,8 @@ export function registerDialogueModal() {
       const getAction = (type: string, input?: number) => {
         if (type === 'move') return move(input ?? 0);
         else if (type === 'goal') return triggerGoalModal([input ?? 0]);
-        else if (type === 'erc721Bridge') return triggerERC721BridgeModal();
+        else if (type === 'erc721Bridge') return triggerKamiBridgeModal();
+        else if (type === 'trading') return triggerTradingModal();
       };
 
       const move = (roomIndex: number) => {

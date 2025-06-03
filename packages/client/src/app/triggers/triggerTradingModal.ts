@@ -9,11 +9,12 @@ export const triggerTradingModal = () => {
     useVisibility.setState({
       modals: {
         ...modals,
+        trading: true,
+        crafting: false,
         dialogue: false,
         kami: false,
         leaderboard: false,
         node: false,
-        trading: true,
       },
     });
   }

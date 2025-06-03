@@ -69,7 +69,6 @@ export const MoreMenuButton = () => {
         inventory: false,
         quests: false,
         settings: true,
-        presale: false,
         trading: false,
       });
     }
@@ -84,7 +83,6 @@ export const MoreMenuButton = () => {
         inventory: false,
         quests: false,
         settings: false,
-        presale: false,
         trading: false,
       });
     }
