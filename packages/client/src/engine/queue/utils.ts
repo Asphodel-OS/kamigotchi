@@ -59,7 +59,9 @@ export function shouldIncNonce(error: any) {
 export function shouldResetNonce(error: any) {
   const isExpirationError = error?.code === 'NONCE_EXPIRED';
   const isRepeatError = error?.reason?.includes('transaction already imported');
-  return isExpirationError || isRepeatError;
+  // miniEVM currently returns "processing response error" instead of "NONCE_EXPIRED"
+  const isRepeatError2 = error?.reason?.includes('processing response error');
+  return isExpirationError || isRepeatError || isRepeatError2;
 }
 
 export function isOverrides(obj: any): obj is Overrides {

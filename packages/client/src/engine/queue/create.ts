@@ -185,8 +185,8 @@ export function create<C extends Contracts>(
         error = e;
       } finally {
         // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
-        if (shouldIncNonce(error)) incNonce();
-        else if (shouldResetNonce(error)) await resetNonce();
+        if (shouldResetNonce(error)) await resetNonce();
+        else if (shouldIncNonce(error)) incNonce();
         if (error) txRequest.cancel(error);
       }
     });
