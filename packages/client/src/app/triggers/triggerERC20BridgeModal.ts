@@ -15,7 +15,6 @@ export const triggerERC20BridgeModal = () => {
         kami: false,
         emaBoard: false,
         map: false,
-        nameKami: false,
         node: false,
         leaderboard: false,
       },

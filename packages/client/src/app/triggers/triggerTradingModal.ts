@@ -1,25 +1,20 @@
 import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
-export const triggerPetMintModal = () => {
+export const triggerTradingModal = () => {
   const { modals } = useVisibility.getState();
-  playClick();
 
-  if (!modals.gacha) {
+  if (!modals.trading) {
+    playClick();
     useVisibility.setState({
       modals: {
         ...modals,
-        gacha: true,
-        bridgeERC20: false,
-        bridgeERC721: false,
         dialogue: false,
         kami: false,
-        emaBoard: false,
-        map: false,
+        leaderboard: false,
         node: false,
+        trading: true,
       },
     });
-  } else {
-    useVisibility.setState({ modals: { ...modals, gacha: false } });
   }
 };

@@ -18,7 +18,6 @@ export const triggerNodeModal = (index: number) => {
         kami: false,
         gacha: false,
         emaBoard: false,
-        nameKami: false,
       },
     });
   }

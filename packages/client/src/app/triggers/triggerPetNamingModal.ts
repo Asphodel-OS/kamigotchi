@@ -16,7 +16,6 @@ export const triggerPetNamingModal = () => {
         kami: false,
         gacha: false,
         map: false,
-        nameKami: false,
         node: false,
       },
     });

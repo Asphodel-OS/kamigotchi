@@ -1,7 +1,7 @@
 import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
-export const triggerERC721BridgeModal = () => {
+export const triggerKamiBridgeModal = () => {
   const { modals } = useVisibility.getState();
 
   if (!modals.bridgeERC721 && !modals.node) {
@@ -15,7 +15,6 @@ export const triggerERC721BridgeModal = () => {
         kami: false,
         emaBoard: false,
         map: false,
-        nameKami: false,
         node: false,
         leaderboard: false,
       },
