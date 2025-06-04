@@ -11,7 +11,7 @@ import { getTrade } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useVisibility } from 'app/stores';
-import { MUSU_INDEX } from 'constants/items';
+import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
 import { Inventory } from 'network/shapes';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAllItems, getMusuBalance, Item } from 'network/shapes/Item';
@@ -23,6 +23,7 @@ import { Tabs } from './Tabs';
 import { TabType } from './types';
 
 const SYNC_TIME = 3333;
+const CurrencyIndices = [MUSU_INDEX, ETH_INDEX, ONYX_INDEX];
 
 export function registerTradingModal() {
   registerUIComponent(
@@ -98,7 +99,9 @@ export function registerTradingModal() {
       // pull all items from the registry and save the tradable ones
       const refreshItems = () => {
         const all = getAllItems();
-        const tradable = all.filter((item) => !!item.is.tradeable);
+        const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
+        const tradable = nonCurrencies.filter((item) => !!item.is.tradeable);
+
         tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
         setItems(tradable);
         setCurrencies([all.find((item) => item.index === 1)!]);

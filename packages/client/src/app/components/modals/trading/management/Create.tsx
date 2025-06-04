@@ -18,10 +18,13 @@ import { Item, NullItem } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
 import { abbreviateString } from 'utils/strings';
+import { CreateMode } from '../types';
+
+const STONE_INDEX = 1002;
 
 interface Props {
   actions: {
-    createTrade: (item: Item, itemAmt: number, currency: Item, currencyAmt: number) => EntityID;
+    createTrade: (item: Item, iAmt: number, currency: Item, cAmt: number) => EntityID;
   };
   data: {
     currencies: Item[];
@@ -49,11 +52,24 @@ export const Create = (props: Props) => {
   const [itemAmt, setItemAmt] = useState<number>(1);
   const [currency, setCurrency] = useState<Item>(NullItem);
   const [currencyAmt, setCurrencyAmt] = useState<number>(1);
-  const [isSelling, setIsSelling] = useState<boolean>(true);
+  const [mode, setMode] = useState<CreateMode>(CreateMode.BUY);
 
   useEffect(() => {
     if (modals.trading) reset();
   }, [modals.trading]);
+
+  // reset the form when the mode is toggled
+  useEffect(() => {
+    console.log('mode changed');
+    if (mode === CreateMode.BUY) {
+      const stone = items.find((item) => item.index === STONE_INDEX);
+      setItem(stone ?? NullItem);
+      setItemAmt(0);
+    } else if (mode === CreateMode.SELL) {
+      setItem(inventories[0].item ?? NullItem);
+      setItemAmt(1);
+    }
+  }, [mode]);
 
   const reset = () => {
     setItem(items[0]);
@@ -70,7 +86,7 @@ export const Create = (props: Props) => {
   const handleCurrencyAmtChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const min = 1;
     let max = Infinity;
-    if (!isSelling) max = musuBalance;
+    if (mode === CreateMode.BUY) max = musuBalance;
 
     const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
@@ -82,7 +98,7 @@ export const Create = (props: Props) => {
   const handleItemAmtChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const min = 1;
     let max = Infinity;
-    if (isSelling) max = getInventoryBalance(inventories, item.index);
+    if (mode === CreateMode.SELL) max = getInventoryBalance(inventories, item.index);
 
     const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
@@ -93,10 +109,10 @@ export const Create = (props: Props) => {
   // organize the form data for trade offer creation
   // TODO: make reset only happen if trade is succesful
   const handleTrade = async (item: Item, itemAmt: number, currency: Item, currencyAmt: number) => {
-    const buyItem = isSelling ? item : currency;
-    const buyAmt = isSelling ? itemAmt : currencyAmt;
-    const sellItem = isSelling ? currency : item;
-    const sellAmt = isSelling ? currencyAmt : itemAmt;
+    const buyItem = mode === CreateMode.SELL ? item : currency;
+    const buyAmt = mode === CreateMode.SELL ? itemAmt : currencyAmt;
+    const sellItem = mode === CreateMode.SELL ? currency : item;
+    const sellAmt = mode === CreateMode.SELL ? currencyAmt : itemAmt;
 
     try {
       const tradeActionID = createTrade(buyItem, buyAmt, sellItem, sellAmt);
@@ -127,7 +143,8 @@ export const Create = (props: Props) => {
   };
 
   const getItemOptions = (): IconListButtonOption[] => {
-    if (!isSelling) {
+    // if buying, show all tradable items
+    if (mode === CreateMode.BUY) {
       return items.map((item: Item) => {
         return {
           text: item.name,
@@ -140,6 +157,7 @@ export const Create = (props: Props) => {
       });
     }
 
+    // if selling, show only tradable items in inventory
     return inventories.map((inv: Inventory) => {
       return {
         text: inv.item.name,
@@ -162,12 +180,9 @@ export const Create = (props: Props) => {
         <Row>
           <Text size={1.2}>I want to</Text>
           <IconButton
-            text={isSelling ? 'Sell' : 'Buy'}
+            text={mode}
             scale={2.7}
-            onClick={() => {
-              if (!isSelling) reset();
-              setIsSelling(!isSelling);
-            }}
+            onClick={() => setMode(mode === CreateMode.BUY ? CreateMode.SELL : CreateMode.BUY)}
           />
         </Row>
         <Row>
@@ -222,6 +237,8 @@ const Container = styled.div`
   width: 40%;
   height: 100%;
   padding: 1.2vw 0.6vw;
+
+  user-select: none;
 
   overflow: hidden hidden;
 `;
