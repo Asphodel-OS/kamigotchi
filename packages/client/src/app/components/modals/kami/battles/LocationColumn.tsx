@@ -5,7 +5,7 @@ import { Text, TextTooltip } from 'app/components/library';
 import { Kill } from 'clients/kamiden';
 import { Node } from 'network/shapes';
 import { getAffinityImage } from 'network/shapes/utils';
-import { abbreviateString } from './utils';
+import { abbreviateString } from 'utils/strings';
 
 interface Props {
   kills: Kill[];

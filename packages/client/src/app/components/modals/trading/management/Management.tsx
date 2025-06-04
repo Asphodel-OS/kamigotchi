@@ -49,7 +49,6 @@ export const Management = (props: Props) => {
   return (
     <Content isVisible={isVisible}>
       <Create actions={actions} data={data} types={types} utils={utils} />
-      <Divider />
       <Offers actions={actions} data={data} controls={{ ascending, search }} />
     </Content>
   );
@@ -61,10 +60,4 @@ const Content = styled.div<{ isVisible: boolean }>`
   align-items: flex-start;
   height: 100%;
   justify-content: space-between;
-`;
-
-const Divider = styled.div`
-  border: 0.1vw solid black;
-  height: 100%;
-  margin: 0 0.8vw 0 0;
 `;

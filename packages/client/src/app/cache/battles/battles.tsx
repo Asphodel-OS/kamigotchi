@@ -1,7 +1,7 @@
 import { EntityID } from '@mud-classic/recs';
+
 import { getKamidenClient, Kill } from 'clients/kamiden';
-import { formatEntityID } from 'engine/utils';
-import { BigNumber } from 'ethers';
+import { parseID } from 'utils/strings';
 
 export const BattleCache = new Map<EntityID, Kill[]>();
 const BattleClient = getKamidenClient();
@@ -28,7 +28,6 @@ export const process = async (kamiId: EntityID) => {
 
   // clean the IDs to match MUD's entity ID format
   response.Kills.forEach((kill) => {
-    const parseID = (id: string) => formatEntityID(BigNumber.from(id));
     kill.AccountID = parseID(kill.AccountID);
     kill.KillerId = parseID(kill.KillerId);
     kill.VictimId = parseID(kill.VictimId);

@@ -98,7 +98,7 @@ export function registerTradingModal() {
       // pull all items from the registry and save the tradable ones
       const refreshItems = () => {
         const all = getAllItems();
-        const tradable = all.filter((item) => item.is.tradeable);
+        const tradable = all.filter((item) => !!item.is.tradeable);
         tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
         setItems(tradable);
         setCurrencies([all.find((item) => item.index === 1)!]);
@@ -204,22 +204,13 @@ export function registerTradingModal() {
 }
 
 const Content = styled.div`
-  display: flex;
-  flex-flow: wrap;
-  -webkit-box-pack: start;
-  justify-content: flex-start;
-  gap: 0.6vw;
-  padding: 0.5vw;
-
   height: 100%;
-  flex-wrap: nowrap;
-  flex-direction: column;
+  gap: 0.6vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+
   overflow-x: hidden;
   overflow-y: auto;
-  margin-top: 2vw;
-`;
-
-const Header = styled.div`
-  padding: 2vw;
-  font-size: 1.3vw;
 `;
