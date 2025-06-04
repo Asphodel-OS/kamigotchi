@@ -24,7 +24,7 @@ const STONE_INDEX = 1002;
 
 interface Props {
   actions: {
-    createTrade: (item: Item, iAmt: number, currency: Item, cAmt: number) => EntityID;
+    createTrade: (item: Item, iAmt: number, currency: Item, cAmt: number) => EntityID | void;
   };
   data: {
     currencies: Item[];
@@ -60,7 +60,10 @@ export const Create = (props: Props) => {
 
   // reset the form when the mode is toggled
   useEffect(() => {
-    console.log('mode changed');
+    reset();
+  }, [mode]);
+
+  const reset = () => {
     if (mode === CreateMode.BUY) {
       const stone = items.find((item) => item.index === STONE_INDEX);
       setItem(stone ?? NullItem);
@@ -69,13 +72,6 @@ export const Create = (props: Props) => {
       setItem(inventories[0].item ?? NullItem);
       setItemAmt(1);
     }
-  }, [mode]);
-
-  const reset = () => {
-    setItem(items[0]);
-    setItemAmt(0);
-    setCurrency(currencies[0]);
-    setCurrencyAmt(1);
   };
 
   /////////////////
@@ -107,20 +103,17 @@ export const Create = (props: Props) => {
   };
 
   // organize the form data for trade offer creation
-  // TODO: make reset only happen if trade is succesful
+  // TODO: detect successful trade creation and reset form
   const handleTrade = async (item: Item, itemAmt: number, currency: Item, currencyAmt: number) => {
-    const buyItem = mode === CreateMode.SELL ? item : currency;
-    const buyAmt = mode === CreateMode.SELL ? itemAmt : currencyAmt;
-    const sellItem = mode === CreateMode.SELL ? currency : item;
-    const sellAmt = mode === CreateMode.SELL ? currencyAmt : itemAmt;
+    const buyItem = mode === CreateMode.BUY ? item : currency;
+    const buyAmt = mode === CreateMode.BUY ? itemAmt : currencyAmt;
+    const sellItem = mode === CreateMode.BUY ? currency : item;
+    const sellAmt = mode === CreateMode.BUY ? currencyAmt : itemAmt;
 
     try {
       const tradeActionID = createTrade(buyItem, buyAmt, sellItem, sellAmt);
       if (!tradeActionID) throw new Error('Trade action failed');
-      await Promise.all([
-        waitForActionCompletion(ActionComp, entityToIndex(tradeActionID) as EntityIndex),
-        reset(),
-      ]);
+      await waitForActionCompletion(ActionComp, entityToIndex(tradeActionID) as EntityIndex);
     } catch (e) {
       console.log('handleTrade() failed', e);
     }
@@ -239,13 +232,11 @@ const Container = styled.div`
   padding: 1.2vw 0.6vw;
 
   user-select: none;
-
-  overflow: hidden hidden;
 `;
 
 const Body = styled.div`
   position: relative;
-  height: 100%;
+  height: 50%;
   margin: 1.8vw 0.6vw;
   gap: 1.2vw;
 
@@ -253,7 +244,6 @@ const Body = styled.div`
   flex-direction: column;
   align-items: center;
 
-  overflow-y: scroll;
   scrollbar-color: transparent transparent;
 `;
 

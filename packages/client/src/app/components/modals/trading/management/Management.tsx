@@ -13,7 +13,12 @@ import { Offers } from './Offers';
 interface Props {
   actions: {
     cancelTrade: (tradeId: BigNumberish) => void;
-    createTrade: (buyItem: Item, buyAmt: number, sellItem: Item, sellAmt: number) => EntityID;
+    createTrade: (
+      buyItem: Item,
+      buyAmt: number,
+      sellItem: Item,
+      sellAmt: number
+    ) => EntityID | void;
     executeTrade: (tradeId: BigNumberish) => void;
   };
   data: {
@@ -41,7 +46,7 @@ interface Props {
 
 export const Management = (props: Props) => {
   const { isVisible, actions, data, types, utils } = props;
-
+  const { items, inventories, currencies } = data;
   const [ascending, setAscending] = useState<boolean>(true);
   const [filter, setFilter] = useState<string>('Price \u0245');
   const [search, setSearch] = useState<string>('');
@@ -50,6 +55,11 @@ export const Management = (props: Props) => {
     <Content isVisible={isVisible}>
       <Create actions={actions} data={data} types={types} utils={utils} />
       <Offers actions={actions} data={data} controls={{ ascending, search }} />
+      {/* <Offers
+        actions={actions}
+        data={{ ...data, trades: sampleTrades }}
+        controls={{ ascending, search }}
+      /> */}
     </Content>
   );
 };

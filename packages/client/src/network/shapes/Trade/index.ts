@@ -1,2 +1,4 @@
 export { query as queryTrades } from './queries';
-export { getTrade } from './types';
+export { getBuyAnchor, getBuyOrder, getSellAnchor, getSellOrder, getTrade } from './types';
+
+export type { Trade, TradeOrder } from './types';

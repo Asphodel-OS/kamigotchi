@@ -10,7 +10,7 @@ import { cleanInventories, getInventoryBalance } from 'app/cache/inventory';
 import { getTrade } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
-import { useVisibility } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
 import { Inventory } from 'network/shapes';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -64,8 +64,10 @@ export function registerTradingModal() {
     // Render
     ({ network, data, types, utils }) => {
       const { actions, api } = network;
+      const { accountEntity } = data;
       const { getAllItems, getInventories, getTrade, queryTrades } = utils;
       const { modals } = useVisibility();
+      const { selectedAddress, apis } = useNetwork();
 
       const [trades, setTrades] = useState<Trade[]>([]);
       const [myTrades, setMyTrades] = useState<Trade[]>([]);
@@ -118,18 +120,11 @@ export function registerTradingModal() {
       };
 
       // pull all open trades and partition them based on whether created by the player
+      // NOTE: filtering by Taker not yet implemented
       const refreshTrades = () => {
         const allTrades = queryTrades().map((entity: EntityIndex) => getTrade(entity));
-        const myTrades = allTrades.filter(
-          (trade) =>
-            trade.seller?.entity === data.accountEntity ||
-            trade.buyer?.entity === data.accountEntity
-        );
-        const trades = allTrades.filter(
-          (trade) =>
-            trade.seller?.entity !== data.accountEntity &&
-            trade.buyer?.entity !== data.accountEntity
-        );
+        const myTrades = allTrades.filter((trade) => trade.maker?.entity === accountEntity);
+        const trades = allTrades.filter((trade) => trade.maker?.entity !== accountEntity);
         setMyTrades(myTrades);
         setTrades(trades);
       };
@@ -138,13 +133,16 @@ export function registerTradingModal() {
       // ACTIONS
 
       const createTrade = (buyItem: Item, buyAmt: number, sellItem: Item, sellAmt: number) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
         const actionID = uuid() as EntityID;
         actions.add({
           action: 'Create Order',
           params: [],
           description: `Creating Order`,
           execute: async () => {
-            return api.player.account.trade.create(
+            return api.account.trade.create(
               [buyItem.index],
               [buyAmt],
               [sellItem.index],
@@ -157,26 +155,32 @@ export function registerTradingModal() {
       };
 
       const executeTrade = (tradeId: BigNumberish) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
         const actionID = uuid() as EntityID;
         actions.add({
           action: 'Executing Order',
           params: [tradeId],
           description: `Executing Order`,
           execute: async () => {
-            return api.player.account.trade.execute(tradeId);
+            return api.account.trade.execute(tradeId);
           },
         });
         return actionID;
       };
 
       const cancelTrade = (tradeId: BigNumberish) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
         const actionID = uuid() as EntityID;
         actions.add({
           action: 'Cancel Order',
           params: [tradeId],
           description: `Canceling Order`,
           execute: async () => {
-            return api.player.account.trade.cancel(tradeId);
+            return api.account.trade.cancel(tradeId);
           },
         });
         return actionID;

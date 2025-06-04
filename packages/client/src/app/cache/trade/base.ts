@@ -1,37 +1,36 @@
-import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
+import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getBuyAnchor, getSellAnchor, getTrade, Trade } from 'network/shapes/Trade/types';
-
+import { getBuyAnchor, getSellAnchor, getTrade, Trade } from 'network/shapes/Trade';
+import { getOwnsTradeID } from 'network/shapes/utils/component';
 import { getAccount } from '../account';
 import { getOrder } from './functions';
 
 export const TradeCache = new Map<EntityIndex, Trade>();
 
-export const get = (world: World, components: Components, entity: EntityIndex) => {
-  const { OwnsTradeID, TargetID } = components;
+export const get = (world: World, comps: Components, entity: EntityIndex): Trade => {
   if (!TradeCache.has(entity)) {
-    const trade = getTrade(world, components, entity, {
+    const trade = getTrade(world, comps, entity, {
       buyOrder: false,
       sellOrder: false,
-      seller: false,
-      buyer: false,
+      maker: false,
+      taker: false,
     });
     TradeCache.set(entity, trade);
   }
 
   const trade = TradeCache.get(entity);
-  const sellerID = (getComponentValue(OwnsTradeID, entity)?.value || '') as EntityID;
-  const buyerID = getComponentValue(TargetID, entity)?.value as EntityID;
-  const buyOrder = getOrder(world, components, getBuyAnchor(world, trade?.id!));
-  const sellOrder = getOrder(world, components, getSellAnchor(world, trade?.id!));
+  const makerID = getOwnsTradeID(comps, entity);
+  // const takerID = getTargetID(comps, entity);
+  const buyOrder = getOrder(world, comps, getBuyAnchor(world, trade?.id!));
+  const sellOrder = getOrder(world, comps, getSellAnchor(world, trade?.id!));
 
   return {
     id: trade?.id!,
     entity,
     buyOrder: buyOrder,
     sellOrder: sellOrder,
-    seller: getAccount(world, components, world.entityToIndex.get(sellerID!)!),
-    buyer: getAccount(world, components, world.entityToIndex.get(buyerID!)!),
+    maker: getAccount(world, comps, world.entityToIndex.get(makerID!)!),
+    // taker: getAccount(world, comps, world.entityToIndex.get(takerID!)!),
   };
 };

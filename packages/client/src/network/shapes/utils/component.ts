@@ -287,6 +287,13 @@ export const getTargetID = (components: Components, entity: EntityIndex): Entity
   return formatEntityID(result ?? '');
 };
 
+export const getOwnsTradeID = (components: Components, entity: EntityIndex): EntityID => {
+  const { OwnsTradeID } = components;
+  const result = getComponentValue(OwnsTradeID, entity)?.value;
+  if (result === undefined) console.warn('getOwnsTradeID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
 /////////////////
 // INDICES
 

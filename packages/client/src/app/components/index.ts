@@ -20,7 +20,6 @@ import { registerEMABoardModal } from './modals/naming';
 import { registerNodeModal } from './modals/node';
 import { registerPartyModal } from './modals/party';
 import { registerPresaleModal } from './modals/presale';
-import { registerQuestsModal } from './modals/quests';
 import { registerRevealModal } from './modals/reveal/Reveal';
 import { registerSettingsModal } from './modals/settings';
 import { registerTradingModal } from './modals/trading';
@@ -55,7 +54,7 @@ export function registerModals() {
   registerMapModal();
   registerNodeModal();
   registerPartyModal();
-  registerQuestsModal();
+  // registerQuestsModal();
   registerSettingsModal();
   registerTradingModal();
   registerPresaleModal();
