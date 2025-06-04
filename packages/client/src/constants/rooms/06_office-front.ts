@@ -1,14 +1,10 @@
-import {
-  bgPlaytestDay,
-  bgPlaytestEvening,
-  bgPlaytestNight,
-} from 'assets/images/rooms/6_office-front';
+import { bgRoom6a, bgRoom6b, bgRoom6c } from 'assets/images/rooms/6_office-front';
 import { amusement } from 'assets/sound/ost';
 import { Room } from './types';
 
 export const room06: Room = {
   index: 6,
-  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
+  backgrounds: [bgRoom6a, bgRoom6b, bgRoom6c],
   music: {
     key: 'amusement',
     path: amusement,
