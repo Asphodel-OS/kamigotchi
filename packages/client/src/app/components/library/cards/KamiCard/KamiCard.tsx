@@ -11,11 +11,10 @@ import { Cooldown } from './Cooldown';
 import { Health } from './Health';
 
 interface Props {
-  isFriend?: boolean;
   kami: Kami; // assumed to have a harvest attached
   description: string[];
   descriptionOnClick?: () => void;
-  titleTooltip?: string[];
+  isFriend?: boolean;
   contentTooltip?: string[];
   subtext?: string;
   subtextOnClick?: () => void;
@@ -29,7 +28,7 @@ interface Props {
 export const KamiCard = (props: Props) => {
   const { kami, actions, showBattery, showCooldown, isFriend } = props;
   const { description, descriptionOnClick } = props;
-  const { titleTooltip, contentTooltip } = props;
+  const { contentTooltip } = props;
   const { subtext, subtextOnClick } = props;
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
@@ -67,19 +66,17 @@ export const KamiCard = (props: Props) => {
 
   return (
     <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
-      <TextTooltip text={titleTooltip ?? []}>
-        <TitleBar>
-          <TitleText key='title' onClick={() => handleKamiClick()}>
-            {kami.name}
-          </TitleText>
-          <TitleCorner key='corner'>
-            {showCooldown && <Cooldown kami={kami} />}
-            {showBattery && (
-              <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
-            )}
-          </TitleCorner>
-        </TitleBar>
-      </TextTooltip>
+      <TitleBar>
+        <TitleText key='title' onClick={() => handleKamiClick()}>
+          {kami.name}
+        </TitleText>
+        <TitleCorner key='corner'>
+          {showCooldown && <Cooldown kami={kami} />}
+          {showBattery && (
+            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
+          )}
+        </TitleCorner>
+      </TitleBar>
       <Content>
         <ContentColumn key='column-1'>
           <TextTooltip text={contentTooltip ?? []}>

@@ -62,7 +62,7 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
     requirements: getRequirements(world, comps, index),
     effects: getEffects(world, comps, index),
     is: {
-      tradeable: !hasFlag(world, comps, entity, 'NOT_TRADEABLE'),
+      tradeable: !hasFlag(world, comps, entity, 'NOT_TRADABLE'),
     },
   };
 

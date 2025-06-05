@@ -10,7 +10,6 @@ import { Trade, TradeOrder } from 'network/shapes/Trade/types';
 interface Props {
   actions: {
     executeTrade: (tradeId: BigNumberish) => void;
-    cancelTrade: (tradeId: BigNumberish) => void;
   };
   controls: {
     search: string;
@@ -21,7 +20,7 @@ interface Props {
 }
 export const ActiveOffers = (props: Props) => {
   const { actions, controls, data, managementTab } = props;
-  const { executeTrade, cancelTrade } = actions;
+  const { executeTrade } = actions;
   const { search, ascending } = controls;
   const { trades } = data;
 
@@ -49,7 +48,7 @@ export const ActiveOffers = (props: Props) => {
   }, [ascending, trades]);
 
   const ownerCheck = (trade: Trade) => {
-    return trade.seller?.entity === data.accountEntity;
+    return trade.maker?.entity === data.accountEntity;
   };
 
   const searchCheck = (tradeOrder: TradeOrder) => {
@@ -94,8 +93,8 @@ export const ActiveOffers = (props: Props) => {
             <BottomRow>
               <InnerSide>
                 {!ownerCheck(trade) ? (
-                  <TextTooltip text={[trade.seller?.name!]}>
-                    <TextCap cap={21}>Player : {trade.seller?.name!}</TextCap>
+                  <TextTooltip text={[trade.maker?.name!]}>
+                    <TextCap cap={21}>Player : {trade.maker?.name!}</TextCap>
                   </TextTooltip>
                 ) : (
                   <TextCap>Trade: {itemMusu.Order}</TextCap>
@@ -118,9 +117,7 @@ export const ActiveOffers = (props: Props) => {
               </InnerSide>
               <ActionButton
                 text={ownerCheck(trade) ? 'Cancel' : itemMusu.Order}
-                onClick={() => {
-                  ownerCheck(trade) ? cancelTrade(trade.id) : executeTrade(trade.id);
-                }}
+                onClick={() => executeTrade(trade.id)}
               />
             </BottomRow>
           </RightSide>

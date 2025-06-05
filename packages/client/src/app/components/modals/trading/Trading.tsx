@@ -132,6 +132,7 @@ export function registerTradingModal() {
       /////////////////
       // ACTIONS
 
+      // create a trade offer based on any two sets of items and amounts
       const createTrade = (buyItem: Item, buyAmt: number, sellItem: Item, sellAmt: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -154,6 +155,7 @@ export function registerTradingModal() {
         return actionID;
       };
 
+      // fulfuill and existing trade offer
       const executeTrade = (tradeId: BigNumberish) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -170,17 +172,18 @@ export function registerTradingModal() {
         return actionID;
       };
 
-      const cancelTrade = (tradeId: BigNumberish) => {
+      // cancel an existing trade offer
+      const cancelTrade = (trade: Trade) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         const actionID = uuid() as EntityID;
         actions.add({
           action: 'Cancel Order',
-          params: [tradeId],
+          params: [trade.id],
           description: `Canceling Order`,
           execute: async () => {
-            return api.account.trade.cancel(tradeId);
+            return api.account.trade.cancel(trade.id);
           },
         });
         return actionID;
@@ -192,7 +195,7 @@ export function registerTradingModal() {
           <Content>
             <OrderbookTab
               isVisible={tab === `Orderbook`}
-              actions={{ cancelTrade, executeTrade }}
+              actions={{ executeTrade }}
               controls={{ tab }}
               data={{ ...data, trades }}
             />

@@ -13,6 +13,7 @@ import {
   TextTooltip,
 } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { STONE_INDEX } from 'constants/items';
 import { Inventory } from 'network/shapes';
 import { Item, NullItem } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
@@ -20,11 +21,14 @@ import { waitForActionCompletion } from 'network/utils';
 import { abbreviateString } from 'utils/strings';
 import { CreateMode } from '../types';
 
-const STONE_INDEX = 1002;
-
 interface Props {
   actions: {
-    createTrade: (item: Item, iAmt: number, currency: Item, cAmt: number) => EntityID | void;
+    createTrade: (
+      buyItem: Item,
+      buyAmt: number,
+      sellItem: Item,
+      sellAmt: number
+    ) => EntityID | void;
   };
   data: {
     currencies: Item[];
@@ -72,6 +76,8 @@ export const Create = (props: Props) => {
       setItem(inventories[0].item ?? NullItem);
       setItemAmt(1);
     }
+
+    if (currencies.length > 0) setCurrency(currencies[0]);
   };
 
   /////////////////

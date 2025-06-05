@@ -1,6 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { BigNumberish } from 'ethers';
-import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Inventory } from 'network/shapes';
@@ -12,7 +11,7 @@ import { Offers } from './Offers';
 
 interface Props {
   actions: {
-    cancelTrade: (tradeId: BigNumberish) => void;
+    cancelTrade: (trade: Trade) => void;
     createTrade: (
       buyItem: Item,
       buyAmt: number,
@@ -46,20 +45,11 @@ interface Props {
 
 export const Management = (props: Props) => {
   const { isVisible, actions, data, types, utils } = props;
-  const { items, inventories, currencies } = data;
-  const [ascending, setAscending] = useState<boolean>(true);
-  const [filter, setFilter] = useState<string>('Price \u0245');
-  const [search, setSearch] = useState<string>('');
 
   return (
     <Content isVisible={isVisible}>
       <Create actions={actions} data={data} types={types} utils={utils} />
-      <Offers actions={actions} data={data} controls={{ ascending, search }} />
-      {/* <Offers
-        actions={actions}
-        data={{ ...data, trades: sampleTrades }}
-        controls={{ ascending, search }}
-      /> */}
+      <Offers actions={actions} data={data} />
     </Content>
   );
 };

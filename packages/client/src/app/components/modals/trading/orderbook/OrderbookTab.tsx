@@ -11,7 +11,6 @@ import { ActiveOffers } from './ActiveOffers';
 interface Props {
   actions: {
     executeTrade: (tradeId: BigNumberish) => void;
-    cancelTrade: (tradeId: BigNumberish) => void;
   };
   controls: {
     tab: string;
@@ -25,7 +24,7 @@ interface Props {
 
 export const OrderbookTab = (props: Props) => {
   const { actions, controls, data } = props;
-  const { executeTrade, cancelTrade } = actions;
+  const { executeTrade } = actions;
   const { tab } = controls;
 
   const [ascending, setAscending] = useState<boolean>(true);
@@ -72,7 +71,6 @@ export const OrderbookTab = (props: Props) => {
       <ActiveOffers
         actions={{
           executeTrade,
-          cancelTrade,
         }}
         data={data}
         controls={{ ascending, search }}
