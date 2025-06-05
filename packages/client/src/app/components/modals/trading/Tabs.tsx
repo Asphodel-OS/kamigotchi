@@ -36,6 +36,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
+  user-select: none;
 `;
 
 const Button = styled.button`

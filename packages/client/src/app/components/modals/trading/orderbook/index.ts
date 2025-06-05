@@ -1,1 +1,1 @@
-export { OrderbookTab } from './OrderbookTab';
+export { Orderbook } from './Orderbook';

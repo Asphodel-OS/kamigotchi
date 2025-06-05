@@ -18,7 +18,7 @@ import { getAllItems, getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
 import { Management } from './management';
-import { OrderbookTab } from './orderbook';
+import { Orderbook } from './orderbook';
 import { Tabs } from './Tabs';
 import { TabType } from './types';
 
@@ -193,11 +193,11 @@ export function registerTradingModal() {
         <ModalWrapper id='trading' header={<ModalHeader title='Trade' />} canExit noPadding>
           <Tabs tab={tab} setTab={setTab} />
           <Content>
-            <OrderbookTab
+            <Orderbook
               isVisible={tab === `Orderbook`}
               actions={{ executeTrade }}
               controls={{ tab }}
-              data={{ ...data, trades }}
+              data={{ accountEntity, items, trades }}
             />
             <Management
               isVisible={tab === `Management`}

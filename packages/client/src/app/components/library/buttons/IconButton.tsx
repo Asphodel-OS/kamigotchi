@@ -100,11 +100,13 @@ const Container = styled.button<ContainerProps>`
   position: relative;
   border: solid black 0.15vw;
   border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
+
   height: ${({ scale, orientation }) => `${scale}${orientation}`};
   width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}vw` : 'auto')};
   min-width: fit-content;
   padding: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
   gap: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
+
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;

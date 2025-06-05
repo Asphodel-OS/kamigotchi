@@ -55,9 +55,12 @@ export const Management = (props: Props) => {
 };
 
 const Content = styled.div<{ isVisible: boolean }>`
+  height: 100%;
+
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: row;
   align-items: flex-start;
-  height: 100%;
   justify-content: space-between;
+
+  user-select: none;
 `;

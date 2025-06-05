@@ -71,7 +71,7 @@ export const Create = (props: Props) => {
     if (mode === CreateMode.BUY) {
       const stone = items.find((item) => item.index === STONE_INDEX);
       setItem(stone ?? NullItem);
-      setItemAmt(0);
+      setItemAmt(1);
     } else if (mode === CreateMode.SELL) {
       setItem(inventories[0].item ?? NullItem);
       setItemAmt(1);
@@ -174,13 +174,12 @@ export const Create = (props: Props) => {
 
   return (
     <Container>
-      <Text size={1.8}>Create Offer</Text>
+      <Title>Create Offer</Title>
       <Body>
         <Row>
           <Text size={1.2}>I want to</Text>
-          <IconButton
-            text={mode}
-            scale={2.7}
+          <ActionButton
+            text={`< ${mode} >`}
             onClick={() => setMode(mode === CreateMode.BUY ? CreateMode.SELL : CreateMode.BUY)}
           />
         </Row>
@@ -217,7 +216,7 @@ export const Create = (props: Props) => {
         </Row>
       </Body>
       <Overlay bottom={0.75} right={0.75}>
-        <ActionButton
+        <IconButton
           text='Create'
           onClick={() => {
             handleTrade(item, itemAmt, currency, currencyAmt);
@@ -235,9 +234,22 @@ const Container = styled.div`
 
   width: 40%;
   height: 100%;
-  padding: 1.2vw 0.6vw;
 
   user-select: none;
+`;
+
+const Title = styled.div`
+  position: sticky;
+  top: 0;
+  background-color: rgb(221, 221, 221);
+  width: 100%;
+
+  padding: 1.8vw;
+  opacity: 0.9;
+  color: black;
+  font-size: 1.2vw;
+  text-align: left;
+  z-index: 1;
 `;
 
 const Body = styled.div`

@@ -129,7 +129,7 @@ export const ActiveOffers = (props: Props) => {
   const hasTrades = ActiveOfferCards().some((item) => item !== null);
 
   return (
-    <Container managementTab={managementTab}>
+    <Container>
       {managementTab && <Title>Your Active Offers </Title>}
       {
         <Cards managementTab={managementTab}>
@@ -140,10 +140,11 @@ export const ActiveOffers = (props: Props) => {
   );
 };
 
-const Container = styled.div<{ managementTab: boolean }>`
+const Container = styled.div`
   position: relative;
+
+  width: 60%;
   height: max-content;
-  ${({ managementTab }) => (managementTab ? 'width: 52%;' : 'width: 100%;')}
   display: flex;
   flex-direction: column;
   align-items: center;

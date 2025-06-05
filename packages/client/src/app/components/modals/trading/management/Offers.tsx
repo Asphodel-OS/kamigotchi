@@ -31,7 +31,7 @@ export const Offers = (props: Props) => {
 const Container = styled.div`
   position: relative;
   height: 100%;
-  width: 66%;
+  width: 60%;
 
   display: flex;
   flex-direction: column;
