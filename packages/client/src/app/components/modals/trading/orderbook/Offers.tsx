@@ -56,6 +56,10 @@ export const Offers = (props: Props) => {
       }
 
       if (sort === 'Price') {
+        const aPrice = getTradePrice(a);
+        const bPrice = getTradePrice(b);
+        if (ascending) return aPrice - bPrice;
+        return bPrice - aPrice;
       }
 
       return 0;
@@ -79,6 +83,19 @@ export const Offers = (props: Props) => {
     if (!buyHasMusu && !sellHasMusu) return 'Barter';
     return '???';
   };
+
+  // determine the per unit item price of a trade
+  const getTradePrice = (trade: Trade) => {
+    const type = getTradeType(trade);
+    const buyAmt = trade.buyOrder?.amounts[0] ?? 1;
+    const sellAmt = trade.sellOrder?.amounts[0] ?? 1;
+    if (type === 'Buy') return buyAmt / sellAmt;
+    else if (type === 'Sell') return sellAmt / buyAmt;
+    return 0;
+  };
+
+  /////////////////
+  // DISPLAY
 
   return (
     <Container>
