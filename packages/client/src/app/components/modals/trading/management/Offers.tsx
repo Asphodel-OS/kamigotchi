@@ -17,7 +17,7 @@ export const Offers = (props: Props) => {
 
   return (
     <Container>
-      <Title>Your Active Offers </Title>
+      <Title>Your Open Offers</Title>
       <Body>
         {trades.map((trade, i) => (
           <Offer key={i} actions={actions} data={{ trade }} />

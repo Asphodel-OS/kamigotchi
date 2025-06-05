@@ -8,15 +8,14 @@ import {
   Text,
   TextTooltip,
 } from 'app/components/library';
-import { ActionIcons } from 'assets/images/icons/actions';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { Item } from 'network/shapes';
 import { OrderType } from '../types';
 
 interface Props {
   controls: {
-    type: OrderType;
-    setType: Dispatch<OrderType>;
+    typeFilter: OrderType;
+    setTypeFilter: Dispatch<OrderType>;
     sort: string;
     setSort: Dispatch<string>;
     ascending: boolean;
@@ -31,8 +30,16 @@ interface Props {
 
 export const Controls = (props: Props) => {
   const { controls, data } = props;
-  const { type, setType, sort, setSort, ascending, setAscending, itemFilter, setItemFilter } =
-    controls;
+  const {
+    typeFilter,
+    setTypeFilter,
+    sort,
+    setSort,
+    ascending,
+    setAscending,
+    itemFilter,
+    setItemFilter,
+  } = controls;
   const { items } = data;
 
   const getItemOptions = (): IconListButtonOption[] => {
@@ -48,23 +55,19 @@ export const Controls = (props: Props) => {
 
   return (
     <Container>
-      <Title>Controls</Title>
+      <Title>Search</Title>
       <Body>
         <Row>
           <Text size={1.2}>Type:</Text>
           <IconListButton
             img={KamiIcon}
-            text={type}
+            text={typeFilter}
             options={[
-              { text: 'Buy', onClick: () => setType('Buy') },
-              { text: 'Sell', onClick: () => setType('Sell') },
+              { text: 'Buy', onClick: () => setTypeFilter('Buy') },
+              { text: 'Sell', onClick: () => setTypeFilter('Sell') },
             ]}
           />
         </Row>
-        {/* <Row>
-          <Text size={1.2}>Search:</Text>
-          <Search onChange={(e) => setSearch(e.target.value)} placeholder='Search an item...' />
-        </Row> */}
         <Row>
           <Text size={1.2}>Sort:</Text>
           <IconListButton
@@ -138,58 +141,4 @@ const Row = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
-`;
-
-const Label = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 1vw;
-  position: relative;
-  width: 49%;
-`;
-
-const Search = styled.input`
-  border-radius: 0.6vw;
-  border: 0.15vw solid black;
-  height: 3vw;
-  background: url(${ActionIcons.search}) no-repeat left center;
-  background-origin: content-box;
-  padding: 0.5vw 1vw;
-  background-size: contain;
-  text-align: center;
-  font-size: 0.8vw;
-  &::placeholder {
-    position: absolute;
-    left: 20%;
-    background-color: white;
-  }
-`;
-
-const Sort = styled.button`
-  display: flex;
-  border-radius: 0.6vw;
-  border: 0.15vw solid black;
-
-  margin: 4% 0 0 0;
-  min-height: 3vw;
-  width: 100%;
-  font-size: 1vw;
-  align-items: center;
-  padding-left: 1vw;
-  background-color: white;
-`;
-
-const PopOverButton = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0.4vw;
-  font-size: 1vw;
-  width: 19vw;
-  border-color: transparent;
-  background-color: white;
-  &:hover {
-    sort: brightness(0.8);
-    cursor: pointer;
-  }
 `;

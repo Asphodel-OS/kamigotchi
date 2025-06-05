@@ -1,6 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
-import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
@@ -22,7 +21,7 @@ import { Orderbook } from './orderbook';
 import { Tabs } from './Tabs';
 import { TabType } from './types';
 
-const SYNC_TIME = 3333;
+const SYNC_TIME = 1000;
 const CurrencyIndices = [MUSU_INDEX, ETH_INDEX, ONYX_INDEX];
 
 export function registerTradingModal() {
@@ -156,17 +155,17 @@ export function registerTradingModal() {
       };
 
       // fulfuill and existing trade offer
-      const executeTrade = (tradeId: BigNumberish) => {
+      const executeTrade = (trade: Trade) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
         const actionID = uuid() as EntityID;
         actions.add({
           action: 'Executing Order',
-          params: [tradeId],
+          params: [trade.id],
           description: `Executing Order`,
           execute: async () => {
-            return api.account.trade.execute(tradeId);
+            return api.account.trade.execute(trade.id);
           },
         });
         return actionID;
@@ -201,7 +200,7 @@ export function registerTradingModal() {
             />
             <Management
               isVisible={tab === `Management`}
-              actions={{ cancelTrade, createTrade, executeTrade }}
+              actions={{ cancelTrade, createTrade }}
               data={{ currencies, inventories, items, musuBalance, trades: myTrades }}
               types={types}
               utils={utils}

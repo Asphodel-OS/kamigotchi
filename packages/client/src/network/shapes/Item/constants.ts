@@ -9,7 +9,10 @@ export const NullItem: Item = {
   type: '',
   for: '',
   image: '',
-  name: '',
+  name: 'None',
   requirements: { use: [] },
   effects: { use: [] },
+  is: {
+    tradeable: false,
+  },
 };

@@ -1,17 +1,16 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { BigNumberish } from 'ethers';
 import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Item, NullItem } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
 import { OrderType } from '../types';
-import { ActiveOffers } from './ActiveOffers';
 import { Controls } from './Controls';
+import { Offers } from './Offers';
 
 interface Props {
   actions: {
-    executeTrade: (tradeId: BigNumberish) => void;
+    executeTrade: (trade: Trade) => void;
   };
   controls: {
     tab: string;
@@ -29,19 +28,17 @@ export const Orderbook = (props: Props) => {
   const { executeTrade } = actions;
   const { tab } = controls;
 
+  const [sort, setSort] = useState<string>('Price'); // Price, Owner
   const [ascending, setAscending] = useState<boolean>(true);
-  const [sort, setSort] = useState<string>('Price'); // None, Price, Owner
-  const [search, setSearch] = useState<string>('');
-
   const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
-  const [type, setType] = useState<OrderType>('Buy');
+  const [typeFilter, setTypeFilter] = useState<OrderType>('Buy');
 
   return (
     <Container isVisible={tab === `Orderbook`}>
       <Controls
         controls={{
-          type,
-          setType,
+          typeFilter,
+          setTypeFilter,
           sort,
           setSort,
           ascending,
@@ -51,13 +48,10 @@ export const Orderbook = (props: Props) => {
         }}
         data={data}
       />
-      <ActiveOffers
-        actions={{
-          executeTrade,
-        }}
+      <Offers
+        actions={{ executeTrade }}
+        controls={{ typeFilter, sort, ascending, itemFilter }}
         data={data}
-        controls={{ ascending, search }}
-        managementTab={false}
       />
     </Container>
   );

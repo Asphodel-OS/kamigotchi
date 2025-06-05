@@ -1,5 +1,4 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { BigNumberish } from 'ethers';
 import styled from 'styled-components';
 
 import { Inventory } from 'network/shapes';
@@ -18,7 +17,6 @@ interface Props {
       sellItem: Item,
       sellAmt: number
     ) => EntityID | void;
-    executeTrade: (tradeId: BigNumberish) => void;
   };
   data: {
     currencies: Item[];
