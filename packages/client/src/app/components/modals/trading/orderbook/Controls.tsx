@@ -9,7 +9,8 @@ import {
   TextTooltip,
 } from 'app/components/library';
 import { KamiIcon } from 'assets/images/icons/menu';
-import { Item } from 'network/shapes';
+import { Item, NullItem } from 'network/shapes';
+import { Trade } from 'network/shapes/Trade';
 import { OrderType } from '../types';
 
 interface Props {
@@ -25,6 +26,7 @@ interface Props {
   };
   data: {
     items: Item[];
+    trades: Trade[];
   };
 }
 
@@ -44,13 +46,19 @@ export const Controls = (props: Props) => {
 
   const getItemOptions = (): IconListButtonOption[] => {
     // if buying, show all tradable items
-    return items.map((item: Item) => {
+    const itemOptions = items.map((item: Item): IconListButtonOption => {
       return {
         text: item.name,
         image: item.image,
         onClick: () => setItemFilter(item),
       };
     });
+
+    itemOptions.unshift({
+      text: 'None',
+      onClick: () => setItemFilter(NullItem),
+    });
+    return itemOptions;
   };
 
   return (

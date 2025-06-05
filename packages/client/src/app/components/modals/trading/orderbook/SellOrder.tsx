@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Card, IconButton, Pairing } from 'app/components/library';
+import { Card, IconButton, Pairing, Text } from 'app/components/library';
 import { Item, NullItem } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
-import { OrderType } from '../types';
 
 interface Props {
   actions: {
@@ -58,7 +57,8 @@ export const SellOrder = (props: Props) => {
       </TitleBar>
       <Content>
         <ColumnLeft>
-          <TypeTag type='Sell'>Sell</TypeTag>
+          <TypeTag>Sell</TypeTag>
+          <Text size={0.75}>player: {trade.maker?.name}</Text>
         </ColumnLeft>
         <ColumnRight key='column-2'>
           <Pairing
@@ -101,7 +101,7 @@ const Content = styled.div`
   flex-flow: row nowrap;
   align-items: stretch;
 
-  padding: 0.2vw;
+  padding: 0.15vw;
   user-select: none;
 `;
 
@@ -109,11 +109,12 @@ const ColumnLeft = styled.div`
   position: relative;
   margin: 0.3vw;
   flex-grow: 1;
+  height: 100%;
 
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: space-between;
 `;
 
 const ColumnRight = styled.div`
@@ -134,13 +135,12 @@ const ContentActions = styled.div`
   gap: 0.3vw;
 `;
 
-const TypeTag = styled.div<{ type: OrderType }>`
-  position: absolute;
+const TypeTag = styled.div`
   width: 5vw;
   padding: 0.2vw;
 
   color: rgb(25, 39, 2);
-  background-color: ${({ type }) => (type === 'Buy' ? 'rgb(192, 224, 139)' : 'rgb(222, 90, 120)')};
+  background-color: rgb(222, 90, 120);
   clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
 
   display: flex;
