@@ -140,47 +140,75 @@ library LibTrade {
   /// @notice transfers items and delete trade order
   /// @dev trade tax is processed and logged here
   function execute(IWorld world, IUintComp comps, uint256 tradeID, uint256 takerID) internal {
-    KeysComponent keysComp = KeysComponent(getAddrByID(comps, KeysCompID));
-    ValuesComponent valuesComp = ValuesComponent(getAddrByID(comps, ValuesCompID));
-    uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).extract(tradeID);
-    uint256 tax;
-
-    // adjust and data-log tax on the trade order's sell side
-    uint256 sellAnchor = genSellAnchor(tradeID);
-    uint32[] memory sIndices = keysComp.extract(sellAnchor);
-    uint256[] memory sAmts = valuesComp.extract(sellAnchor);
-    for (uint256 i; i < sIndices.length; i++) {
-      tax = calcTax(sIndices[i], sAmts[i]);
-      if (tax > 0) {
-        sAmts[i] -= tax;
-        LibData.inc(comps, takerID, sIndices[i], "TRADE_TAX", tax);
-      }
-    }
-
-    // adjust and data-log tax on the trade order's buy side
-    uint256 buyAnchor = genBuyAnchor(tradeID);
-    uint32[] memory bIndices = keysComp.extract(buyAnchor);
-    uint256[] memory bAmts = valuesComp.extract(buyAnchor);
-    for (uint256 i; i < bIndices.length; i++) {
-      tax = calcTax(bIndices[i], bAmts[i]);
-      if (tax > 0) {
-        bAmts[i] -= tax;
-        LibData.inc(comps, makerID, bIndices[i], "TRADE_TAX", tax);
-      }
-    }
-
-    // execute the trade
-    LibInventory.decFor(comps, takerID, bIndices, bAmts); // take from taker
-    LibInventory.incFor(comps, makerID, bIndices, bAmts); // give to maker
-    LibInventory.decFor(comps, sellAnchor, sIndices, sAmts); // take from sellOrder
-    LibInventory.incFor(comps, takerID, sIndices, sAmts); // give to taker
+    executeBuyOrder(world, comps, tradeID, takerID);
+    executeSellOrder(world, comps, tradeID, takerID);
 
     // removing the rest
     LibEntityType.remove(comps, tradeID);
     IdTargetComponent(getAddrByID(comps, IdTargetCompID)).remove(tradeID);
+  }
 
-    // emit event
-    emitTrade(world, Order(bIndices, bAmts), Order(sIndices, sAmts), takerID, makerID);
+  /// @notice execute a Buy Order (transfers items between Maker and Taker)
+  /// @dev handles data logging and event emission
+  function executeBuyOrder(
+    IWorld world,
+    IUintComp comps,
+    uint256 tradeID,
+    uint256 takerID
+  ) internal {
+    uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
+    uint256 buyAnchor = genBuyAnchor(tradeID);
+    uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).extract(buyAnchor);
+    uint256[] memory amts = ValuesComponent(getAddrByID(comps, ValuesCompID)).extract(buyAnchor);
+
+    // log and emit amounts pre-tax
+    logCompleteOrder(comps, makerID, Order(indices, amts));
+    emitTradeOrder(world, tradeID, makerID, Order(indices, amts));
+
+    // adjust and data-log tax on the trade order's buy side
+    uint256 tax;
+    for (uint256 i; i < indices.length; i++) {
+      tax = calcTax(indices[i], amts[i]);
+      if (tax > 0) {
+        amts[i] -= tax;
+        LibData.inc(comps, makerID, indices[i], "TRADE_TAX", tax);
+      }
+    }
+
+    // execute the order
+    LibInventory.decFor(comps, takerID, indices, amts); // take from taker
+    LibInventory.incFor(comps, makerID, indices, amts); // give to maker
+  }
+
+  /// @notice execute a Sell Order (transfers items between Sell Order and Taker)
+  /// @dev handles data logging and event emission
+  function executeSellOrder(
+    IWorld world,
+    IUintComp comps,
+    uint256 tradeID,
+    uint256 takerID
+  ) internal {
+    uint256 sellAnchor = genSellAnchor(tradeID);
+    uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).extract(sellAnchor);
+    uint256[] memory amts = ValuesComponent(getAddrByID(comps, ValuesCompID)).extract(sellAnchor);
+
+    // log and emit amounts pre-tax
+    logCompleteOrder(comps, takerID, Order(indices, amts));
+    emitTradeOrder(world, tradeID, takerID, Order(indices, amts));
+
+    // adjust and data-log tax on the trade order's sell side
+    uint256 tax;
+    for (uint256 i; i < indices.length; i++) {
+      tax = calcTax(indices[i], amts[i]);
+      if (tax > 0) {
+        amts[i] -= tax;
+        LibData.inc(comps, takerID, indices[i], "TRADE_TAX", tax);
+      }
+    }
+
+    // execute the order
+    LibInventory.decFor(comps, sellAnchor, indices, amts); // take from sellOrder
+    LibInventory.incFor(comps, takerID, indices, amts); // give to taker
   }
 
   /////////////////
@@ -274,6 +302,12 @@ library LibTrade {
     // log items received and sent on both sides
   }
 
+  /// @notice log the receipt of an Order from a Trade to an Account
+  function logCompleteOrder(IUintComp comps, uint256 accID, Order memory order) public {
+    LibData.inc(comps, accID, 0, "TRADE_COMPLETE", 1);
+    LibData.inc(comps, accID, order.indices, "TRADE_COMPLETE", order.amounts);
+  }
+
   function logCancel(IUintComp comps, uint256 tradeID, uint256 makerID) public {
     LibData.inc(comps, makerID, 0, "TRADE_CANCEL", 1);
   }
@@ -305,6 +339,22 @@ library LibTrade {
         takerID,
         makerID
       )
+    );
+  }
+
+  /// @notice emit the receipt of an Order from a Trade to an Account
+  function emitTradeOrder(IWorld world, uint256 tradeID, uint256 accID, Order memory order) public {
+    uint8[] memory _schema = new uint8[](4);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // Trade ID
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256); //  Account ID
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32_ARRAY); // item indices of order
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // item amounts of order
+
+    LibEmitter.emitEvent(
+      world,
+      "TRADE_RECEIPT",
+      _schema,
+      abi.encode(tradeID, accID, order.indices, order.amounts)
     );
   }
 }
