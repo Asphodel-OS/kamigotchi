@@ -135,6 +135,7 @@ async function initTokens(api: AdminAPI) {
 }
 
 async function initTrade(api: AdminAPI) {
+  await api.config.set.number('TRADE_CREATION_FEE', 3);
   await api.config.set.number('MAX_TRADES_PER_ACCOUNT', 10);
 }
 

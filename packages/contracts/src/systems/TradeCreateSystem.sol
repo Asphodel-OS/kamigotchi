@@ -7,6 +7,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibConfig } from "libraries/LibConfig.sol";
+import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
 uint256 constant ID = uint256(keccak256("system.trade.create"));
@@ -27,6 +29,10 @@ contract TradeCreateSystem is System {
     LibTrade.verifyRoom(components, accID);
     LibTrade.verifyTradable(components, buyIndices, sellIndices);
     LibTrade.verifyMaxOrders(components, accID);
+
+    // take the trade creation fee. implicitly checks if enough MUSU
+    uint256 createFee = LibConfig.get(components, "TRADE_CREATION_FEE");
+    LibInventory.decFor(components, accID, MUSU_INDEX, createFee);
 
     // create trade order
     uint256 id = LibTrade.create(

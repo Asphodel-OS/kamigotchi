@@ -27,7 +27,7 @@ contract TradeModifySystem is System {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyRoom(components, accID);
     LibTrade.verifyTradable(components, buyIndices, sellIndices);
-    LibTrade.verifySeller(components, tradeID, accID);
+    LibTrade.verifyMaker(components, tradeID, accID);
 
     // modify trade order
     LibTrade.modify(

@@ -19,7 +19,7 @@ contract TradeExecuteSystem is System {
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyRoom(components, accID);
-    LibTrade.verifyTarget(components, tradeID, accID);
+    LibTrade.verifyTaker(components, tradeID, accID);
 
     // logging (before trade deletes)
     LibTrade.logComplete(components, tradeID, accID);
