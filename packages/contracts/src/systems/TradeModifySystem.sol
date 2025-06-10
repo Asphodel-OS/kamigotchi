@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
-import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
@@ -16,7 +14,7 @@ contract TradeModifySystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (
-      uint256 tradeID,
+      uint256 id,
       uint32[] memory buyIndices,
       uint256[] memory buyAmts,
       uint32[] memory sellIndices,
@@ -26,13 +24,14 @@ contract TradeModifySystem is System {
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyRoom(components, accID);
+    LibTrade.verifyIsTrade(components, id);
     LibTrade.verifyTradable(components, buyIndices, sellIndices);
-    LibTrade.verifyMaker(components, tradeID, accID);
+    LibTrade.verifyMaker(components, id, accID);
 
     // modify trade order
     LibTrade.modify(
       components,
-      tradeID,
+      id,
       targetID,
       LibTrade.Order(buyIndices, buyAmts),
       LibTrade.Order(sellIndices, sellAmts)
@@ -44,14 +43,20 @@ contract TradeModifySystem is System {
     return "";
   }
 
+  /// @param id Trade ID
+  /// @param buyIndices Item indices to buy
+  /// @param buyAmts Amounts to buy
+  /// @param sellIndices Item indices to sell
+  /// @param sellAmts Amounts to sell
+  /// @param targetID Target Taker Account id
   function executeTyped(
-    uint256 tradeID,
+    uint256 id,
     uint32[] memory buyIndices,
     uint256[] memory buyAmts,
     uint32[] memory sellIndices,
     uint256[] memory sellAmts,
     uint256 targetID
   ) public returns (bytes memory) {
-    return execute(abi.encode(tradeID, buyIndices, buyAmts, sellIndices, sellAmts, targetID));
+    return execute(abi.encode(id, buyIndices, buyAmts, sellIndices, sellAmts, targetID));
   }
 }

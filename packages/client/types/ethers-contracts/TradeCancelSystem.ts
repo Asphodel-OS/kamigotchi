@@ -222,7 +222,7 @@ export interface TradeCancelSystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -266,7 +266,7 @@ export interface TradeCancelSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    tradeID: PromiseOrValue<BigNumberish>,
+    id: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -306,7 +306,7 @@ export interface TradeCancelSystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -375,7 +375,7 @@ export interface TradeCancelSystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -420,7 +420,7 @@ export interface TradeCancelSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

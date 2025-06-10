@@ -51,6 +51,11 @@ contract TradeCreateSystem is System {
     return abi.encode(id);
   }
 
+  /// @param buyIndices Item indices to buy
+  /// @param buyAmts Amounts to buy
+  /// @param sellIndices Item indices to sell
+  /// @param sellAmts Amounts to sell
+  /// @param targetID Target Taker Account id
   function executeTyped(
     uint32[] memory buyIndices,
     uint256[] memory buyAmts,

@@ -229,7 +229,7 @@ export interface TradeModifySystem extends BaseContract {
     ): Promise<ContractTransaction>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       buyIndices: PromiseOrValue<BigNumberish>[],
       buyAmts: PromiseOrValue<BigNumberish>[],
       sellIndices: PromiseOrValue<BigNumberish>[],
@@ -278,7 +278,7 @@ export interface TradeModifySystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   executeTyped(
-    tradeID: PromiseOrValue<BigNumberish>,
+    id: PromiseOrValue<BigNumberish>,
     buyIndices: PromiseOrValue<BigNumberish>[],
     buyAmts: PromiseOrValue<BigNumberish>[],
     sellIndices: PromiseOrValue<BigNumberish>[],
@@ -323,7 +323,7 @@ export interface TradeModifySystem extends BaseContract {
     ): Promise<string>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       buyIndices: PromiseOrValue<BigNumberish>[],
       buyAmts: PromiseOrValue<BigNumberish>[],
       sellIndices: PromiseOrValue<BigNumberish>[],
@@ -397,7 +397,7 @@ export interface TradeModifySystem extends BaseContract {
     ): Promise<BigNumber>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       buyIndices: PromiseOrValue<BigNumberish>[],
       buyAmts: PromiseOrValue<BigNumberish>[],
       sellIndices: PromiseOrValue<BigNumberish>[],
@@ -447,7 +447,7 @@ export interface TradeModifySystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     executeTyped(
-      tradeID: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       buyIndices: PromiseOrValue<BigNumberish>[],
       buyAmts: PromiseOrValue<BigNumberish>[],
       sellIndices: PromiseOrValue<BigNumberish>[],

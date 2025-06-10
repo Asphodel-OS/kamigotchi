@@ -28,7 +28,7 @@ uint256 constant TRADE_ROOM = 66;
  * @author Kore, Acheron
  * @notice Trade X item for Y item. Maker creates and taker fulfills.
  * @dev A target Taker can be specified at Trade creation.
- *
+ * @dev
  * Shape: ID = new entity ID
  *  - EntityType: TRADE
  *  - IDOwnsTrade: AccountID of trade requester (seller)
@@ -83,13 +83,15 @@ library LibTrade {
     addSellOrder(comps, id, toSell);
   }
 
+  /// @notice add a Buy Order to a Trade offer
   function addBuyOrder(IUintComp comps, uint256 tradeID, Order memory toBuy) internal {
     uint256 id = genBuyAnchor(tradeID);
     KeysComponent(getAddrByID(comps, KeysCompID)).set(id, toBuy.indices);
     ValuesComponent(getAddrByID(comps, ValuesCompID)).set(id, toBuy.amounts);
   }
 
-  /// @dev transfers items from seller to tradeEntity
+  /// @notice add a Sell Order to a Trade offer
+  /// @dev transfer specified items from seller to the Trade Entity
   function addSellOrder(IUintComp comps, uint256 tradeID, Order memory toSell) internal {
     uint256 id = genSellAnchor(tradeID);
     KeysComponent(getAddrByID(comps, KeysCompID)).set(id, toSell.indices);
@@ -101,7 +103,7 @@ library LibTrade {
     LibInventory.incFor(comps, id, toSell.indices, toSell.amounts); // store items at sell anchor
   }
 
-  /// @notice can, and all associated data
+  /// @notice revert an order and remove all all associated data
   function cancel(IUintComp comps, uint256 id) internal {
     // removing order data first
     cancelBuyOrder(comps, id);
@@ -113,12 +115,14 @@ library LibTrade {
     IdTargetComponent(getAddrByID(comps, IdTargetCompID)).remove(id);
   }
 
+  /// @notice revert a Buy Order
   function cancelBuyOrder(IUintComp comps, uint256 tradeID) internal {
     uint256 id = genBuyAnchor(tradeID);
     KeysComponent(getAddrByID(comps, KeysCompID)).remove(id);
     ValuesComponent(getAddrByID(comps, ValuesCompID)).remove(id);
   }
 
+  /// @notice revert a Sell Order
   function cancelSellOrder(IUintComp comps, uint256 tradeID) internal {
     uint256 id = genSellAnchor(tradeID);
     uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).extract(id);
@@ -182,6 +186,11 @@ library LibTrade {
   /////////////////
   // CHECKERS
 
+  /// @notice verify that the entity is a Trade entity
+  function verifyIsTrade(IUintComp comps, uint256 id) public view {
+    if (!LibEntityType.isShape(comps, id, "TRADE")) revert("not a trade");
+  }
+
   /// @notice verify that an Account is a Trade's Maker
   function verifyMaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
@@ -200,6 +209,11 @@ library LibTrade {
     if (getNumOrders(comps, accID) >= max) revert("trade order limit reached");
   }
 
+  /// @notice verify that the trade operation is occurring in a valid room
+  function verifyRoom(IUintComp comps, uint256 accID) public view {
+    if (LibRoom.get(comps, accID) != TRADE_ROOM) revert("trade room mismatch");
+  }
+
   /// @notice verify that the included items are all tradable
   function verifyTradable(
     IUintComp comps,
@@ -208,11 +222,6 @@ library LibTrade {
   ) public view {
     uint32[] memory indices = LibArray.concat(buyIndices, sellIndices);
     if (!LibItem.checkFlag(comps, indices, "NOT_TRADEABLE", false)) revert("tradeable item");
-  }
-
-  /// @notice verify that the trade operation is occurring in a valid room
-  function verifyRoom(IUintComp comps, uint256 accID) public view {
-    if (LibRoom.get(comps, accID) != TRADE_ROOM) revert("trade room mismatch");
   }
 
   /////////////////

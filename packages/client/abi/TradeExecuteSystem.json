@@ -67,7 +67,7 @@
       "name": "executeTyped",
       "inputs": [
         {
-          "name": "tradeID",
+          "name": "id",
           "type": "uint256",
           "internalType": "uint256"
         }
