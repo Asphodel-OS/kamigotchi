@@ -17,6 +17,7 @@ import { AddressOperatorComponent, ID as AddrOperatorCompID } from "components/A
 import { CacheOperatorComponent as CacheOpComponent, ID as CacheOpCompID } from "components/CacheOperatorComponent.sol";
 import { IndexRoomComponent, ID as RoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { StaminaComponent, ID as StaminaCompID } from "components/StaminaComponent.sol";
 import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
@@ -149,6 +150,9 @@ library LibAccount {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
   }
 
+  function setBio(IUintComp components, uint256 id, string memory bio) internal {
+    DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, bio);
+  }
   /// @notice for closed worlds, addresses must be whitelisted to create an account
   function setWorldWL(IUintComp components, address owner, bool wl) internal {
     LibFlag.set(components, uint256(uint160(owner)), "WORLD_WHITELIST", wl);

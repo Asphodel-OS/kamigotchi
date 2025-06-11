@@ -20,6 +20,7 @@ import _TraitRegistrySystem from "../abi/_TraitRegistrySystem.json";
 import _WorldWhitelistSystem from "../abi/_WorldWhitelistSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
+import AccountSetBioSystem from "../abi/AccountSetBioSystem.json";
 import AccountSetNameSystem from "../abi/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../abi/AccountSetOperatorSystem.json";
 import AccountSetPFPSystem from "../abi/AccountSetPFPSystem.json";
@@ -92,6 +93,7 @@ export const SystemAbis = {
   "system.world.whitelist.set": _WorldWhitelistSystem.abi,
   "system.account.move": AccountMoveSystem.abi,
   "system.account.register": AccountRegisterSystem.abi,
+  "system.account.set.bio": AccountSetBioSystem.abi,
   "system.account.set.name": AccountSetNameSystem.abi,
   "system.account.set.operator": AccountSetOperatorSystem.abi,
   "system.account.set.pfp": AccountSetPFPSystem.abi,

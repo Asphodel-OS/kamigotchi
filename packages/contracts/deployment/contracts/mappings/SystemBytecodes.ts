@@ -20,6 +20,7 @@ import _TraitRegistrySystem from "../../../out/_TraitRegistrySystem.sol/_TraitRe
 import _WorldWhitelistSystem from "../../../out/_WorldWhitelistSystem.sol/_WorldWhitelistSystem.json";
 import AccountMoveSystem from "../../../out/AccountMoveSystem.sol/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../out/AccountRegisterSystem.sol/AccountRegisterSystem.json";
+import AccountSetBioSystem from "../../../out/AccountSetBioSystem.sol/AccountSetBioSystem.json";
 import AccountSetNameSystem from "../../../out/AccountSetNameSystem.sol/AccountSetNameSystem.json";
 import AccountSetOperatorSystem from "../../../out/AccountSetOperatorSystem.sol/AccountSetOperatorSystem.json";
 import AccountSetPFPSystem from "../../../out/AccountSetPFPSystem.sol/AccountSetPFPSystem.json";
@@ -92,6 +93,7 @@ export const SystemBytecodes = {
   "system.world.whitelist.set": _WorldWhitelistSystem,
   "system.account.move": AccountMoveSystem,
   "system.account.register": AccountRegisterSystem,
+  "system.account.set.bio": AccountSetBioSystem,
   "system.account.set.name": AccountSetNameSystem,
   "system.account.set.operator": AccountSetOperatorSystem,
   "system.account.set.pfp": AccountSetPFPSystem,

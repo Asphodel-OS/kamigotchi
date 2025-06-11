@@ -20,6 +20,7 @@ import { _TraitRegistrySystem } from "./ethers-contracts/_TraitRegistrySystem";
 import { _WorldWhitelistSystem } from "./ethers-contracts/_WorldWhitelistSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem";
+import { AccountSetBioSystem } from "./ethers-contracts/AccountSetBioSystem";
 import { AccountSetNameSystem } from "./ethers-contracts/AccountSetNameSystem";
 import { AccountSetOperatorSystem } from "./ethers-contracts/AccountSetOperatorSystem";
 import { AccountSetPFPSystem } from "./ethers-contracts/AccountSetPFPSystem";
@@ -92,6 +93,7 @@ export type SystemTypes = {
   "system.world.whitelist.set": _WorldWhitelistSystem;
   "system.account.move": AccountMoveSystem;
   "system.account.register": AccountRegisterSystem;
+  "system.account.set.bio": AccountSetBioSystem;
   "system.account.set.name": AccountSetNameSystem;
   "system.account.set.operator": AccountSetOperatorSystem;
   "system.account.set.pfp": AccountSetPFPSystem;
