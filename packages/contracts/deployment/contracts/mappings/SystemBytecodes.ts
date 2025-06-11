@@ -66,9 +66,9 @@ import ScavengeClaimSystem from "../../../out/ScavengeClaimSystem.sol/ScavengeCl
 import SkillRespecSystem from "../../../out/SkillRespecSystem.sol/SkillRespecSystem.json";
 import SkillUpgradeSystem from "../../../out/SkillUpgradeSystem.sol/SkillUpgradeSystem.json";
 import TradeCancelSystem from "../../../out/TradeCancelSystem.sol/TradeCancelSystem.json";
+import TradeCompleteSystem from "../../../out/TradeCompleteSystem.sol/TradeCompleteSystem.json";
 import TradeCreateSystem from "../../../out/TradeCreateSystem.sol/TradeCreateSystem.json";
 import TradeExecuteSystem from "../../../out/TradeExecuteSystem.sol/TradeExecuteSystem.json";
-import TradeModifySystem from "../../../out/TradeModifySystem.sol/TradeModifySystem.json";
 
 export const SystemBytecodes = {
   "system.local.setup": __LocalSetupSystem,
@@ -138,7 +138,7 @@ export const SystemBytecodes = {
   "system.skill.respec": SkillRespecSystem,
   "system.skill.upgrade": SkillUpgradeSystem,
   "system.trade.cancel": TradeCancelSystem,
+  "system.trade.complete": TradeCompleteSystem,
   "system.trade.create": TradeCreateSystem,
   "system.trade.execute": TradeExecuteSystem,
-  "system.trade.modify": TradeModifySystem,
 };

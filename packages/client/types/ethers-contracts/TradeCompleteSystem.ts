@@ -28,13 +28,13 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface TradeModifySystemInterface extends utils.Interface {
+export interface TradeCompleteSystemInterface extends utils.Interface {
   functions: {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "executeTyped(uint256,uint32[],uint256[],uint32[],uint256[],uint256)": FunctionFragment;
+    "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -71,14 +71,7 @@ export interface TradeModifySystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -183,12 +176,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface TradeModifySystem extends BaseContract {
+export interface TradeCompleteSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TradeModifySystemInterface;
+  interface: TradeCompleteSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -230,11 +223,6 @@ export interface TradeModifySystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      buyIndices: PromiseOrValue<BigNumberish>[],
-      buyAmts: PromiseOrValue<BigNumberish>[],
-      sellIndices: PromiseOrValue<BigNumberish>[],
-      sellAmts: PromiseOrValue<BigNumberish>[],
-      targetID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -279,11 +267,6 @@ export interface TradeModifySystem extends BaseContract {
 
   executeTyped(
     id: PromiseOrValue<BigNumberish>,
-    buyIndices: PromiseOrValue<BigNumberish>[],
-    buyAmts: PromiseOrValue<BigNumberish>[],
-    sellIndices: PromiseOrValue<BigNumberish>[],
-    sellAmts: PromiseOrValue<BigNumberish>[],
-    targetID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -324,11 +307,6 @@ export interface TradeModifySystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      buyIndices: PromiseOrValue<BigNumberish>[],
-      buyAmts: PromiseOrValue<BigNumberish>[],
-      sellIndices: PromiseOrValue<BigNumberish>[],
-      sellAmts: PromiseOrValue<BigNumberish>[],
-      targetID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -398,11 +376,6 @@ export interface TradeModifySystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      buyIndices: PromiseOrValue<BigNumberish>[],
-      buyAmts: PromiseOrValue<BigNumberish>[],
-      sellIndices: PromiseOrValue<BigNumberish>[],
-      sellAmts: PromiseOrValue<BigNumberish>[],
-      targetID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -448,11 +421,6 @@ export interface TradeModifySystem extends BaseContract {
 
     executeTyped(
       id: PromiseOrValue<BigNumberish>,
-      buyIndices: PromiseOrValue<BigNumberish>[],
-      buyAmts: PromiseOrValue<BigNumberish>[],
-      sellIndices: PromiseOrValue<BigNumberish>[],
-      sellAmts: PromiseOrValue<BigNumberish>[],
-      targetID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

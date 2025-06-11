@@ -66,9 +66,9 @@ import { ScavengeClaimSystem } from "./ethers-contracts/ScavengeClaimSystem";
 import { SkillRespecSystem } from "./ethers-contracts/SkillRespecSystem";
 import { SkillUpgradeSystem } from "./ethers-contracts/SkillUpgradeSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
+import { TradeCompleteSystem } from "./ethers-contracts/TradeCompleteSystem";
 import { TradeCreateSystem } from "./ethers-contracts/TradeCreateSystem";
 import { TradeExecuteSystem } from "./ethers-contracts/TradeExecuteSystem";
-import { TradeModifySystem } from "./ethers-contracts/TradeModifySystem";
 
 export type SystemTypes = {
   "system.local.setup": __LocalSetupSystem;
@@ -138,7 +138,7 @@ export type SystemTypes = {
   "system.skill.respec": SkillRespecSystem;
   "system.skill.upgrade": SkillUpgradeSystem;
   "system.trade.cancel": TradeCancelSystem;
+  "system.trade.complete": TradeCompleteSystem;
   "system.trade.create": TradeCreateSystem;
   "system.trade.execute": TradeExecuteSystem;
-  "system.trade.modify": TradeModifySystem;
 };

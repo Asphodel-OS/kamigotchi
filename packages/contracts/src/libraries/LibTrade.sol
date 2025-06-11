@@ -93,8 +93,8 @@ library LibTrade {
     ValuesComponent(getAddrByID(comps, ValuesCompID)).set(id, toSell.amounts);
 
     // transferring items
-    uint256 accID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    LibInventory.decFor(comps, accID, toSell.indices, toSell.amounts); // implicit balance check
+    uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
+    LibInventory.decFor(comps, makerID, toSell.indices, toSell.amounts); // implicit balance check
     LibInventory.incFor(comps, tradeID, toSell.indices, toSell.amounts); // store items at sell anchor
   }
 
@@ -417,7 +417,7 @@ library LibTrade {
 
   /// @notice emit the Execution event of a Trade
   function emitTradeExecute(IWorld world, uint256 tradeID, uint256 takerID) public {
-    uint8[] memory _schema = new uint8[](3);
+    uint8[] memory _schema = new uint8[](2);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // Trade ID
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // Taker's Account ID
     LibEmitter.emitEvent(world, "TRADE_EXECUTE", _schema, abi.encode(tradeID, takerID));
@@ -437,21 +437,5 @@ library LibTrade {
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // Trade ID
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // Maker's Account ID
     LibEmitter.emitEvent(world, "TRADE_CANCEL", _schema, abi.encode(tradeID, makerID));
-  }
-
-  /// @notice emit the receipt of an Order from a Trade to an Account
-  function emitTradeOrder(IWorld world, uint256 tradeID, uint256 accID, Order memory order) public {
-    uint8[] memory _schema = new uint8[](4);
-    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // Trade ID
-    _schema[1] = uint8(LibTypes.SchemaValue.UINT256); //  Account ID
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT32_ARRAY); // item indices of order
-    _schema[3] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // item amounts of order
-
-    LibEmitter.emitEvent(
-      world,
-      "TRADE_RECEIPT",
-      _schema,
-      abi.encode(tradeID, accID, order.indices, order.amounts)
-    );
   }
 }

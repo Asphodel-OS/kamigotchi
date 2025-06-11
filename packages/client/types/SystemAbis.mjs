@@ -66,9 +66,9 @@ import ScavengeClaimSystem from "../abi/ScavengeClaimSystem.json";
 import SkillRespecSystem from "../abi/SkillRespecSystem.json";
 import SkillUpgradeSystem from "../abi/SkillUpgradeSystem.json";
 import TradeCancelSystem from "../abi/TradeCancelSystem.json";
+import TradeCompleteSystem from "../abi/TradeCompleteSystem.json";
 import TradeCreateSystem from "../abi/TradeCreateSystem.json";
 import TradeExecuteSystem from "../abi/TradeExecuteSystem.json";
-import TradeModifySystem from "../abi/TradeModifySystem.json";
 
 export const SystemAbis = {
   "system.local.setup": __LocalSetupSystem.abi,
@@ -138,7 +138,7 @@ export const SystemAbis = {
   "system.skill.respec": SkillRespecSystem.abi,
   "system.skill.upgrade": SkillUpgradeSystem.abi,
   "system.trade.cancel": TradeCancelSystem.abi,
+  "system.trade.complete": TradeCompleteSystem.abi,
   "system.trade.create": TradeCreateSystem.abi,
   "system.trade.execute": TradeExecuteSystem.abi,
-  "system.trade.modify": TradeModifySystem.abi,
 };

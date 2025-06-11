@@ -67,9 +67,9 @@
   SkillRespecSystem: "system.skill.respec",
   SkillUpgradeSystem: "system.skill.upgrade",
   TradeCancelSystem: "system.trade.cancel",
+  TradeCompleteSystem: "system.trade.complete",
   TradeCreateSystem: "system.trade.create",
   TradeExecuteSystem: "system.trade.execute",
-  TradeModifySystem: "system.trade.modify",
   };
   
   export const idToSystem = {
@@ -140,8 +140,8 @@
   "system.skill.respec": "SkillRespecSystem",
   "system.skill.upgrade": "SkillUpgradeSystem",
   "system.trade.cancel": "TradeCancelSystem",
+  "system.trade.complete": "TradeCompleteSystem",
   "system.trade.create": "TradeCreateSystem",
   "system.trade.execute": "TradeExecuteSystem",
-  "system.trade.modify": "TradeModifySystem",
   };
     

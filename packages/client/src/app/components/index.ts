@@ -26,6 +26,7 @@ import { registerTradingModal } from './modals/trading';
 // unused
 import { registerFundOperatorModal } from './modals/FundOperator';
 
+import { registerQuestsModal } from './modals/quests';
 import {
   registerAccountRegistrar,
   registerGasHarasser,
@@ -54,7 +55,7 @@ export function registerModals() {
   registerMapModal();
   registerNodeModal();
   registerPartyModal();
-  // registerQuestsModal();
+  registerQuestsModal();
   registerSettingsModal();
   registerTradingModal();
   registerPresaleModal();
