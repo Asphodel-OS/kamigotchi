@@ -75,6 +75,10 @@
     "id": "system.account.set.name",
     "encodedID": "0x93677c34c7dd974fe23e0f36ff741599f16a73b51e6d50fc3527179131f5b9ea"
   },
+  "AccountSetBioSystem": {
+    "id": "system.account.set.bio",
+    "encodedID": "0x4d5ec0c739cfb57d7b017b17a2b1900113b36b49bc71eaf16651cb25b29cd651"
+  },
   "AccountSetOperatorSystem": {
     "id": "system.account.set.operator",
     "encodedID": "0x30e8932dc8e2362f4722824362c3a0895f6dbaa7f643b37560c1b38ea682d667"

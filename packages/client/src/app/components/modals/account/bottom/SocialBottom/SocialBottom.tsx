@@ -1,7 +1,9 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { Account as PlayerAccount } from 'app/stores';
 import { Account, BaseAccount } from 'network/shapes/Account';
+import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
 import { Blocked } from '../../blocked/Blocked';
@@ -18,17 +20,21 @@ interface Props {
   data: {
     accounts: Account[];
     account: Account;
+    isSelf: boolean;
+    player: PlayerAccount;
   };
-  isSelf: boolean;
+
   subTab: string;
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
+    getFriends: (accEntity: EntityIndex) => FriendsType;
   };
 }
 
 export const SocialBottom = (props: Props) => {
-  const { subTab, data, actions, isSelf } = props;
-  const { accounts } = data;
+  const { subTab, data, actions, utils } = props;
+  const { accounts, player, isSelf } = data;
+  const { getFriends } = utils;
 
   // NOTE: any child components that maintain their own state need to be inlined below, to
   // re-render and persist their state, rather than remounting
@@ -37,12 +43,16 @@ export const SocialBottom = (props: Props) => {
       {subTab === 'frens' && (
         <Friends
           key='friends'
-          isSelf={isSelf}
           friendships={data.account.friends?.friends ?? []}
           actions={{
+            acceptFren: actions.acceptFren,
+            cancelFren: actions.cancelFren,
             blockFren: actions.blockFren,
+            requestFren: actions.requestFren,
             removeFren: actions.cancelFren,
           }}
+          data={{ player, isSelf }}
+          utils={{ getFriends }}
         />
       )}
       {subTab === 'requests' && (

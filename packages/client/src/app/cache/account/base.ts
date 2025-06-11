@@ -2,6 +2,7 @@ import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account, getAccount, getAccountConfigs, NullAccount } from 'network/shapes/Account';
+import { getBio } from 'network/shapes/Account/bio';
 import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account/queries';
 import { getMusuBalance } from 'network/shapes/Item';
 import { getStamina } from 'network/shapes/Stats';
@@ -22,6 +23,7 @@ export const FriendsUpdateTs = new Map<EntityIndex, number>();
 export const InventoriesUpdateTs = new Map<EntityIndex, number>();
 export const StatsUpdateTs = new Map<EntityIndex, number>();
 export const PfpURITs = new Map<EntityIndex, number>();
+export const BioUpdateTs = new Map<EntityIndex, number>();
 
 // retrieve an acc's most recent data and update it on the cache
 export const process = (world: World, components: Components, entity: EntityIndex) => {
@@ -36,12 +38,14 @@ export const process = (world: World, components: Components, entity: EntityInde
 };
 
 export interface Options {
+  bio?: number;
   live?: number;
   config?: number;
   friends?: number;
   inventory?: number;
   stats?: number;
   pfp?: number;
+
   // quests?: number; // TODO
   // kamis?: number; // TODO: figure out how best to populate subobjects
 }
@@ -125,6 +129,14 @@ export const get = (
     }
   }
 
+  if (options.bio !== undefined) {
+    const updateTs = BioUpdateTs.get(entity) ?? 0;
+    const updateDelta = (now - updateTs) / 1000; // convert to seconds
+    if (updateDelta > options.bio) {
+      acc.bio = getBio(components, entity);
+      BioUpdateTs.set(entity, now);
+    }
+  }
   return acc;
 };
 

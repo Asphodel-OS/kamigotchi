@@ -238,6 +238,10 @@
       "writeAccess": ["Name", "TimeLast"]
     },
     {
+      "name": "AccountSetBioSystem",
+      "writeAccess": ["Description", "TimeLast"]
+    },
+    {
       "name": "AuctionBuySystem",
       "writeAccess": [
         "EntityType",

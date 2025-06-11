@@ -20,7 +20,7 @@ export const Blocked = (props: Props) => {
         <AccountCard
           key={friendship.target.index}
           account={friendship.target}
-          description={['hate crime enthusiast']}
+          description={[friendship.target.bio || 'hate crime enthusiast']}
           actions={
             <ActionListButton
               id={`friendship-options-${friendship.entity}`}

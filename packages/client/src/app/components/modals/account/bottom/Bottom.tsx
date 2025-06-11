@@ -1,7 +1,9 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { Account as PlayerAccount } from 'app/stores';
 import { Account, BaseAccount } from 'network/shapes/Account';
+import { Friends } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
 import { PartyBottom } from './PartyBottom';
@@ -19,6 +21,8 @@ interface Props {
   data: {
     account: Account;
     accounts: Account[];
+    isSelf: boolean;
+    player: PlayerAccount;
     vip: {
       epoch: number; // current VIP epoch
       total: number; // total of VIP scores this epoch
@@ -26,6 +30,7 @@ interface Props {
   };
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
+    getFriends: (accEntity: EntityIndex) => Friends;
   };
   view: {
     isSelf: boolean;
@@ -50,7 +55,6 @@ export const Bottom = (props: Props) => {
         <SubTabs subTab={subTab} setSubTab={setSubTab} isSelf={isSelf} />
         <SocialBottom
           key='bottom'
-          isSelf={isSelf}
           subTab={subTab}
           data={data}
           actions={{ acceptFren, blockFren, cancelFren, requestFren }}

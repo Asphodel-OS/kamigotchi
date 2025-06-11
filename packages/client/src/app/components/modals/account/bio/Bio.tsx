@@ -11,21 +11,23 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
+import { BioSetter } from './BioSetter';
 
 interface Props {
-  isLoading: boolean;
-  handlePfpChange: (kami: Kami) => void;
   account: Account; // account selected for viewing
+  actions: { setBio: (bio: string) => void };
+  handlePfpChange: (kami: Kami) => void;
+  isLoading: boolean;
   isSelf: boolean;
-
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }
 
 export const Bio = (props: Props) => {
-  const { isLoading, account, utils, isSelf, handlePfpChange } = props;
+  const { isLoading, account, utils, isSelf, handlePfpChange, actions } = props;
   const { getAccountKamis } = utils;
+  const { setBio } = actions;
 
   const [tick, setTick] = useState(Date.now());
 
@@ -112,6 +114,7 @@ export const Bio = (props: Props) => {
           <CakeIcon style={{ height: '1.4vh' }} />
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
         </DetailRow>
+        <BioSetter account={account} isSelf={isSelf} actions={{ setBio }} />
       </Info>
     </Container>
   );
@@ -122,47 +125,8 @@ const Container = styled.div`
   display: flex;
   flex-flow: row nowrap;
   gap: 0.9vw;
-  align-items: center;
-  user-select: none;
-`;
-
-const Info = styled.div`
-  width: 100%;
-  padding-bottom: 1.5vw;
-  gap: 0.3vw;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
   align-items: flex-start;
-`;
-
-const TitleSection = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 0.3vw;
-  margin-bottom: 0.6vw;
-`;
-
-const Subtitle = styled.div`
-  color: #777;
-  padding-left: 0.5vw;
-
-  font-size: 0.7vw;
-  cursor: copy;
-`;
-
-const DetailRow = styled.div`
-  padding: 0.15vw 0;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Description = styled.div`
-  font-size: 0.7vw;
-  line-height: 0.9vw;
+  user-select: none;
 `;
 
 const PfpContainer = styled.div`
@@ -179,7 +143,6 @@ const PfpImage = styled.img<{ isLoading: boolean }>`
   object-fit: cover;
   object-position: 100% 0;
   opacity: 1;
-
   ${({ isLoading }) =>
     isLoading &&
     `animation: fade 3s linear infinite;
@@ -222,6 +185,44 @@ const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
         opacity: 1;
       }
     }`}
+`;
+
+const Info = styled.div`
+  width: 100%;
+  padding-bottom: 1.5vw;
+  gap: 0.3vw;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const TitleSection = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.3vw;
+  margin-bottom: 0.6vw;
+`;
+
+const Subtitle = styled.div`
+  color: #777;
+  padding-left: 0.5vw;
+  font-size: 0.7vw;
+  cursor: copy;
+`;
+
+const DetailRow = styled.div<{ edit?: boolean }>`
+  padding: 0.15vw 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  ${({ edit }) => edit && `cursor: pointer`}
+`;
+
+const Description = styled.div`
+  font-size: 0.7vw;
+  line-height: 0.9vw;
 `;
 
 const KamiDropDown = styled.button`

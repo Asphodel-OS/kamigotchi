@@ -16,6 +16,7 @@ import {
   getRoomIndex,
   getStartTime,
 } from '../utils/component';
+import { getBio } from './bio';
 import { Configs, getConfigs } from './configs';
 import { Friends, getFriends } from './friends';
 import { getInventories } from './inventories';
@@ -51,6 +52,7 @@ export interface Account extends BaseAccount {
   };
 
   config?: Configs;
+  bio?: string;
   kamis?: Kami[];
   friends?: Friends;
   inventories?: Inventory[];
@@ -58,6 +60,7 @@ export interface Account extends BaseAccount {
 }
 
 export interface Options {
+  bio?: boolean;
   config?: boolean;
   friends?: boolean;
   inventory?: boolean;
@@ -120,6 +123,7 @@ export const getAccount = (
 
   if (options?.config) account.config = getConfigs(world, components);
   if (options?.friends) account.friends = getFriends(world, components, entity);
+  if (options?.bio) account.bio = getBio(world, components, entity);
   if (options?.inventory) account.inventories = getInventories(world, components, entity);
   if (options?.kamis) {
     const kamiOptions = typeof options.kamis === 'boolean' ? {} : options.kamis;
