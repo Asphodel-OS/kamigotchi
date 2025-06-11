@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
-import { LibString } from "solady/utils/LibString.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -44,7 +42,15 @@ contract TradeCreateSystem is System {
       LibTrade.Order(sellIndices, sellAmts)
     );
 
-    // standard logging and tracking
+    // data logging and event emission
+    LibTrade.emitTradeCreate(
+      world,
+      id,
+      accID,
+      targetID,
+      LibTrade.Order(buyIndices, buyAmts),
+      LibTrade.Order(sellIndices, sellAmts)
+    );
     LibTrade.logCreate(components, accID);
     LibAccount.updateLastTs(components, accID);
 

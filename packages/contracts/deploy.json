@@ -676,6 +676,23 @@
         "IDOwnsTrade",
         "IndexItem",
         "Keys",
+        "State",
+        "TimeLast",
+        "Value",
+        "Values"
+      ],
+      "skipEnv": ["production"]
+    },
+    {
+      "name": "TradeCompleteSystem",
+      "writeAccess": [
+        "EntityType",
+        "IdTarget",
+        "IDOwnsInventory",
+        "IDOwnsTrade",
+        "IndexItem",
+        "Keys",
+        "State",
         "TimeLast",
         "Value",
         "Values"
@@ -691,6 +708,7 @@
         "IDOwnsTrade",
         "IndexItem",
         "Keys",
+        "State",
         "TimeLast",
         "Value",
         "Values"
@@ -700,27 +718,12 @@
     {
       "name": "TradeExecuteSystem",
       "writeAccess": [
-        "EntityType",
         "IdTarget",
         "IDOwnsInventory",
         "IDOwnsTrade",
         "IndexItem",
         "Keys",
-        "TimeLast",
-        "Value",
-        "Values"
-      ],
-      "skipEnv": ["production"]
-    },
-    {
-      "name": "TradeModifySystem",
-      "writeAccess": [
-        "EntityType",
-        "IdTarget",
-        "IDOwnsInventory",
-        "IDOwnsTrade",
-        "IndexItem",
-        "Keys",
+        "State",
         "TimeLast",
         "Value",
         "Values"

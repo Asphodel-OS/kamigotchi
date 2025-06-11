@@ -18,15 +18,15 @@ contract TradeExecuteSystem is System {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyRoom(components, accID);
     LibTrade.verifyIsTrade(components, id);
+    LibTrade.verifyState(components, id, "OPEN");
     LibTrade.verifyTaker(components, id, accID);
-
-    // logging (before trade deletes)
-    LibTrade.logComplete(components, id, accID);
 
     // execute and remove trade
     LibTrade.execute(world, components, id, accID);
 
-    // standard logging and tracking
+    // data logging and event emission
+    LibTrade.emitTradeExecute(world, id, accID);
+    LibTrade.logExecute(components, accID);
     LibAccount.updateLastTs(components, accID);
 
     return "";
