@@ -66,15 +66,18 @@ export const getKamiTime = (epochTime?: number, precision = 3): string => {
   return `${hourString}:${minuteString}:${secondString}`;
 };
 
+// days are 36 hours long. months are 40 days long. 12 months in a year with 7 holy days (487)
 export const getKamiDate = (epochTime?: number, precision = 3): string => {
   let time = (epochTime ?? Date.now()) / 10 ** precision;
-  time = Math.floor(time / 60 / 60 / 44);
-  const days = (time % 44) + 1;
-  time = Math.floor(time / 18);
-  const months = (time % 18) + 1;
+  const dayDuration = 60 * 60 * 36;
+  time = Math.floor(time / dayDuration); // complete days since epoch
+  const day = (time % 40) + 1;
+  time = Math.floor(time / 40); // complete months since epoch
+  const month = (time % 12) + 1;
+  time = Math.floor(time / 12); // complete years since epoch
 
-  const monthString = months.toString().padStart(2, '0');
-  const dayString = days.toString().padStart(2, '0');
+  const monthString = month.toString().padStart(2, '0');
+  const dayString = day.toString().padStart(2, '0');
   return `${monthString}å${dayString}`;
 };
 
