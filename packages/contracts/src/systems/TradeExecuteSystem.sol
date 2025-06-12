@@ -20,6 +20,7 @@ contract TradeExecuteSystem is System {
     LibTrade.verifyIsTrade(components, id);
     LibTrade.verifyState(components, id, "OPEN");
     LibTrade.verifyTaker(components, id, accID);
+    LibTrade.verifyNotMaker(components, id, accID);
 
     // execute and remove trade
     LibTrade.execute(world, components, id, accID);

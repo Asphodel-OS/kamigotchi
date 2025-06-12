@@ -244,29 +244,35 @@ library LibTrade {
   /// @notice verify that an Account is a Trade's Maker
   function verifyMaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    if (makerID != accID) revert("trade owner mismatch");
+    if (makerID != accID) revert("Trade owner mismatch");
+  }
+
+  /// @notice verify that an Account is a Trade's Maker
+  function verifyNotMaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
+    uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
+    if (makerID == accID) revert("Trade cannot be executed by Maker");
   }
 
   /// @notice verify that an Account is a Trade's Taker, if specified
   function verifyTaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
     uint256 takerID = IdTargetComponent(getAddrByID(comps, IdTargetCompID)).safeGet(tradeID);
-    if (takerID != 0 && takerID != accID) revert("trade target mismatch");
+    if (takerID != 0 && takerID != accID) revert("Trade target mismatch");
   }
 
   /// @notice verify an Account has not exceeded the maximum allowable open Trade orders
   function verifyMaxOrders(IUintComp comps, uint256 accID) public view {
     uint256 max = LibConfig.get(comps, "MAX_TRADES_PER_ACCOUNT");
-    if (getNumOrders(comps, accID) >= max) revert("trade order limit reached");
+    if (getNumOrders(comps, accID) >= max) revert("Trade order limit reached");
   }
 
   /// @notice verify that the trade operation is occurring in a valid room
   function verifyRoom(IUintComp comps, uint256 accID) public view {
-    if (LibRoom.get(comps, accID) != TRADE_ROOM) revert("trade room mismatch");
+    if (LibRoom.get(comps, accID) != TRADE_ROOM) revert("Trade room mismatch");
   }
 
   function verifyState(IUintComp comps, uint256 id, string memory state) public view {
     bool stateMatches = getCompByID(comps, StateCompID).eqString(id, state);
-    if (!stateMatches) revert(LibString.concat("Trade is ", state));
+    if (!stateMatches) revert(LibString.concat("Trade is not ", state));
   }
 
   /// @notice verify that the included items are all tradable
