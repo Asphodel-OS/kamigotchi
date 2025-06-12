@@ -15,8 +15,8 @@ import { Sort, View } from './types';
 interface Props {
   actions: {
     addKami: (kamis: Kami[]) => void;
-    stopKami: (kamis: Kami[]) => void;
     collect: (kamis: Kami[]) => void;
+    stopKami: (kamis: Kami[]) => void;
   };
   controls: {
     sort: Sort;
@@ -40,35 +40,25 @@ export const Toolbar = (props: Props) => {
   const { addKami, stopKami, collect } = actions;
   const { sort, setSort, view, setView } = controls;
   const { kamis } = data;
-  const { displayedKamis, setDisplayedKamis } = state;
   const { passesNodeReqs } = utils;
+
+  const { displayedKamis, setDisplayedKamis } = state;
+
   const { modals } = useVisibility();
 
-  const canAdd = (kami: Kami) => {
-    return canHarvest(kami) && passesNodeReqs(kami);
-  };
+  // TODO: be more explicit about when/how the options get updated
+  const addOptions = displayedKamis
+    .filter((kami) => canHarvest(kami) && passesNodeReqs(kami))
+    .map((kami) => ({ text: kami.name, object: kami }));
 
-  // TODO: be more explicit about when/how the deployOptions gets updated
-  const deployOptions = displayedKamis
-    .filter((kami) => canAdd(kami))
-    .map((kami) => ({
-      text: kami.name,
-      object: kami,
-    }));
-
-  const harvestOptions = displayedKamis
+  const collectOptions = displayedKamis
     .filter((kami) => isHarvesting(kami) && kami.harvest && !onCooldown(kami))
-    .map((kami) => ({
-      text: kami.name,
-      object: kami,
-    }));
+    .map((kami) => ({ text: kami.name, object: kami }));
 
   const stopOptions = displayedKamis
     .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
-    .map((kami) => ({
-      text: kami.name,
-      object: kami,
-    }));
+    .map((kami) => ({ text: kami.name, object: kami }));
+
   // memoized sort options
   const SortOptions = useMemo(
     () =>
@@ -124,13 +114,9 @@ export const Toolbar = (props: Props) => {
       <DropDownToggle
         limit={33}
         img={[HarvestIcon, CollectIcon, StopIcon]}
-        disabled={[deployOptions.length == 0, harvestOptions.length == 0, stopOptions.length == 0]}
-        onClick={[
-          (selectedKamis: Kami[]) => addKami(selectedKamis),
-          (selectedKamis: Kami[]) => collect(selectedKamis),
-          (selectedKamis: Kami[]) => stopKami(selectedKamis),
-        ]}
-        options={[deployOptions, harvestOptions, stopOptions]}
+        disabled={[addOptions.length == 0, collectOptions.length == 0, stopOptions.length == 0]}
+        onClick={[addKami, collect, stopKami]}
+        options={[addOptions, collectOptions, stopOptions]}
         radius={0.6}
       />
     </Container>
