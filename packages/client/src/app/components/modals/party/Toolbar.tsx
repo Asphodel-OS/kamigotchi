@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
 import { compareTraitAffinity, compareTraitName, compareTraitRarity } from 'app/cache/trait';
 import { IconButton, IconListButton } from 'app/components/library';
-import { DropDownToggle } from 'app/components/library/buttons/DropDownToggle';
+import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { useVisibility } from 'app/stores';
 import { CollectIcon, HarvestIcon, StopIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
@@ -111,7 +111,7 @@ export const Toolbar = (props: Props) => {
         />
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
-      <DropDownToggle
+      <DropdownToggle
         limit={33}
         img={[HarvestIcon, CollectIcon, StopIcon]}
         disabled={[addOptions.length == 0, collectOptions.length == 0, stopOptions.length == 0]}
