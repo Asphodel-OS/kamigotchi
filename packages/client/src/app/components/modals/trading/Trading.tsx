@@ -213,9 +213,10 @@ export function registerTradingModal() {
 }
 
 const Content = styled.div`
-  height: 100%;
+  position: relative;
   gap: 0.6vw;
 
+  flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;

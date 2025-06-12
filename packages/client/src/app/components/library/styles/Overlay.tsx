@@ -20,6 +20,7 @@ interface OverlayProps {
   align?: 'flex-start' | 'center' | 'flex-end' | 'space-between';
   justify?: 'flex-start' | 'center' | 'flex-end' | 'space-between';
   gap?: number;
+  isHidden?: boolean;
 }
 
 export const Overlay = styled.div<OverlayProps>`
@@ -41,7 +42,7 @@ export const Overlay = styled.div<OverlayProps>`
   ${({ gap }) => gap && `gap: ${gap}vw;`}
   ${({ opacity }) => opacity !== undefined && `opacity: ${opacity};`}
 
-  display: flex;
+  display: ${({ isHidden }) => (isHidden ? 'none' : 'flex')};
   flex-flow: ${({ orientation }) => orientation ?? 'row'} nowrap;
   align-items: ${({ align }) => align ?? 'center'};
   justify-content: ${({ justify }) => justify ?? 'center'};

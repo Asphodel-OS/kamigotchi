@@ -1,10 +1,13 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
+import { Overlay } from 'app/components/library';
 import { Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
+import { useState } from 'react';
+import { Confirmation } from './Confirmation';
 import { Create } from './Create';
 import { Offers } from './Offers';
 
@@ -21,7 +24,7 @@ interface Props {
   data: {
     currencies: Item[];
     inventories: Inventory[];
-    items: Item[];
+    items: Item[]; // all tradable items
     musuBalance: number;
     trades: Trade[];
   };
@@ -43,16 +46,42 @@ interface Props {
 
 export const Management = (props: Props) => {
   const { isVisible, actions, data, types, utils } = props;
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmContent, setConfirmContent] = useState<React.ReactNode>(<></>);
+  const [confirmAction, setConfirmAction] = useState<() => void>(() => null);
+  const [confirmTitle, setConfirmTitle] = useState<string>('');
 
   return (
     <Content isVisible={isVisible}>
-      <Create actions={actions} data={data} types={types} utils={utils} />
+      <Overlay fullHeight fullWidth>
+        <Confirmation
+          title={confirmTitle}
+          controls={{ isOpen: isConfirming, close: () => setIsConfirming(false) }}
+          onConfirm={confirmAction}
+        >
+          {confirmContent}
+        </Confirmation>
+      </Overlay>
+      <Create
+        actions={actions}
+        controls={{
+          isConfirming,
+          setIsConfirming,
+          setConfirmTitle,
+          setConfirmContent,
+          setConfirmAction,
+        }}
+        data={data}
+        types={types}
+        utils={utils}
+      />
       <Offers actions={actions} data={data} />
     </Content>
   );
 };
 
 const Content = styled.div<{ isVisible: boolean }>`
+  position: relative;
   height: 100%;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};

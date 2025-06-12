@@ -2,14 +2,13 @@ import { BigNumberish } from '@ethersproject/bignumber';
 
 /*******************
  *  TRADES
- *
- * @dev A trade is a transaction between two accounts.
- * It can be used to buy or sell items. with other players.
+ * @title Trade interaction API for Players
+ * @notice A Trade represents an exchange of items between two Accounts.
  */
 export const tradesAPI = (systems: any) => {
   /**
-   * @dev create a trade.
-   *
+   * @notice create a Trade.
+   * @dev transfers SellOrder items from the caller (Maker) to the Trade entity
    * @param buyIndices indices of items to buy
    * @param buyAmts amounts of items to buy
    * @param sellIndices indices of items to sell
@@ -33,9 +32,9 @@ export const tradesAPI = (systems: any) => {
   };
 
   /**
-   * @dev execute a trade. A trade is a transaction between two accounts.
-   * It can be used to buy or sell items. with other players.
-   *
+   * @notice execute a Trade.
+   * @dev exchanges items between the caller and the Trade entity
+   * @dev cannot be called by the Maker. must be called by listed Taker if one is specified
    * @param tradeID entityID of the trade
    */
   const execute = (tradeID: BigNumberish) => {
@@ -43,18 +42,32 @@ export const tradesAPI = (systems: any) => {
   };
 
   /**
-   * @dev cancel a trade. A trade is a transaction between two accounts.
-   * It can be used to buy or sell items. with other players.
-   *
+   * @notice complete a Trade.
+   * @dev transfers BuyOrder items to the Maker
+   * @dev can only be called by the Maker. Trade must be in EXECUTED state
+   * @param tradeID entityID of the trade
+   */
+  const complete = (tradeID: BigNumberish) => {
+    return systems['system.trade.complete'].executeTyped(tradeID);
+  };
+
+  /**
+   * @notice cancel a Trade.
+   * @dev returns SellOrder items to the Maker
+   * @dev can only be called by the Maker. Trade must be in OPEN state
    * @param tradeID entityID of the trade
    */
   const cancel = (tradeID: BigNumberish) => {
     return systems['system.trade.cancel'].executeTyped(tradeID);
   };
 
+  /////////////////
+  // RETURN
+
   return {
     create,
     execute,
+    complete,
     cancel,
   };
 };
