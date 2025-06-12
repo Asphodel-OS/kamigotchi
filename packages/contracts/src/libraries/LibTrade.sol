@@ -286,21 +286,6 @@ library LibTrade {
   }
 
   /////////////////
-  // HELPERS
-
-  /// @notice calculate the tax for a given item and amount
-  /// @dev this structure is inefficient but necessary when we support more currencies
-  function calcTax(
-    IUintComp comps,
-    uint32 itemIndex,
-    uint256 amount
-  ) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(comps, "TRADE_TAX_RATE");
-    if (itemIndex == MUSU_INDEX) return (amount * config[1]) / 10 ** config[0];
-    return 0;
-  }
-
-  /////////////////
   // GETTERS
 
   function getBuyOrder(IUintComp comps, uint256 tradeID) internal view returns (Order memory) {
@@ -316,7 +301,19 @@ library LibTrade {
   }
 
   /////////////////
-  // IDs
+  // HELPERS
+
+  /// @notice calculate the tax for a given item and amount
+  /// @dev this structure is inefficient but necessary when we support more currencies
+  function calcTax(
+    IUintComp comps,
+    uint32 itemIndex,
+    uint256 amount
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(comps, "TRADE_TAX_RATE");
+    if (itemIndex == MUSU_INDEX) return (amount * config[1]) / 10 ** config[0];
+    return 0;
+  }
 
   function genBuyAnchor(uint256 tradeID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("trade.buy", tradeID)));
@@ -372,6 +369,9 @@ library LibTrade {
   ) public {
     LibData.inc(comps, accID, itemIndices, "TRADE_SPEND", amts);
   }
+
+  /////////////////
+  // EVENT EMISSION
 
   function emitTradeCreate(
     IWorld world,

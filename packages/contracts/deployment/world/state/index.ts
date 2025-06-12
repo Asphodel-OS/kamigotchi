@@ -96,6 +96,7 @@ export {
   initLiquidation as initLiquidationConfigs,
   initLocalConfigs,
   initMint as initMintConfigs,
+  initTrade as initTradeConfigs,
 } from './configs';
 export { deleteFactions, initFactions, reviseFactions } from './factions';
 export { initGachaPool, mintToGachaPool } from './gacha';

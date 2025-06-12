@@ -134,7 +134,7 @@ async function initTokens(api: AdminAPI) {
   await api.config.set.address('ONYX_BURNER_ADDRESS', '0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec');
 }
 
-async function initTrade(api: AdminAPI) {
+export async function initTrade(api: AdminAPI) {
   await api.config.set.number('TRADE_CREATION_FEE', 3);
   await api.config.set.array('TRADE_TAX_RATE', [3, 10]);
   await api.config.set.number('MAX_TRADES_PER_ACCOUNT', 10);

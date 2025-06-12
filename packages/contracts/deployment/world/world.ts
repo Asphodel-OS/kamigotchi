@@ -34,6 +34,7 @@ import {
   initRelationships,
   initRooms,
   initSkills,
+  initTradeConfigs,
   initTraits,
   mintToGachaPool,
   reviseAuctions,
@@ -92,6 +93,7 @@ export class WorldState {
       initMint: () => this.genCalls(initMintConfigs),
       initHarvest: () => this.genCalls(initHarvestConfigs),
       initLiquidation: () => this.genCalls(initLiquidationConfigs),
+      initTrade: () => this.genCalls(initTradeConfigs),
     } as SubFunc,
     factions: {
       init: () => this.genCalls(initFactions),
