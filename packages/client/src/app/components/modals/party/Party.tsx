@@ -213,8 +213,8 @@ export function registerPartyModal() {
           params: [kamiHarvestIDs],
           description:
             kamiHarvestIDs.length > 1
-              ? `Removing ${kamis.length} kami from ${kamis[0].harvest?.node}`
-              : `Removing ${kamis[0].name} from nodes}`,
+              ? `Removing ${kamis.length} kami from nodes`
+              : `Removing ${kamis[0].name} from ${kamis[0].harvest?.node}`,
           execute: async () => {
             return api.player.pet.harvest.stop(kamiHarvestIDs);
           },
