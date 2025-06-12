@@ -1,12 +1,12 @@
 import { Dispatch, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { calcHealthPercent, canHarvest } from 'app/cache/kami';
+import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
 import { compareTraitAffinity, compareTraitName, compareTraitRarity } from 'app/cache/trait';
 import { IconButton, IconListButton } from 'app/components/library';
 import { DropDownToggle } from 'app/components/library/buttons/DropDownToggle';
 import { useVisibility } from 'app/stores';
-import { HarvestIcon } from 'assets/images/icons/actions';
+import { CollectIcon, HarvestIcon, StopIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
 import { SortIcons, ViewIcons } from './constants';
 
@@ -14,7 +14,9 @@ import { Sort, View } from './types';
 
 interface Props {
   actions: {
-    addKamis: (kamis: Kami[]) => void;
+    addKami: (kamis: Kami[]) => void;
+    stopKami: (kamis: Kami[]) => void;
+    collect: (kamis: Kami[]) => void;
   };
   controls: {
     sort: Sort;
@@ -35,7 +37,7 @@ interface Props {
 
 export const Toolbar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
-  const { addKamis } = actions;
+  const { addKami, stopKami, collect } = actions;
   const { sort, setSort, view, setView } = controls;
   const { kamis } = data;
   const { displayedKamis, setDisplayedKamis } = state;
@@ -47,13 +49,26 @@ export const Toolbar = (props: Props) => {
   };
 
   // TODO: be more explicit about when/how the deployOptions gets updated
-  const DeployOptions = displayedKamis
+  const deployOptions = displayedKamis
     .filter((kami) => canAdd(kami))
     .map((kami) => ({
       text: kami.name,
       object: kami,
     }));
 
+  const harvestOptions = displayedKamis
+    .filter((kami) => isHarvesting(kami) && kami.harvest && !onCooldown(kami))
+    .map((kami) => ({
+      text: kami.name,
+      object: kami,
+    }));
+
+  const stopOptions = displayedKamis
+    .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
+    .map((kami) => ({
+      text: kami.name,
+      object: kami,
+    }));
   // memoized sort options
   const SortOptions = useMemo(
     () =>
@@ -108,10 +123,14 @@ export const Toolbar = (props: Props) => {
       </Section>
       <DropDownToggle
         limit={33}
-        img={HarvestIcon}
-        disabled={DeployOptions.length == 0}
-        onClick={(selectedKamis: Kami[]) => addKamis(selectedKamis)}
-        options={DeployOptions}
+        img={[HarvestIcon, CollectIcon, StopIcon]}
+        disabled={[deployOptions.length == 0, harvestOptions.length == 0, stopOptions.length == 0]}
+        onClick={[
+          (selectedKamis: Kami[]) => addKami(selectedKamis),
+          (selectedKamis: Kami[]) => collect(selectedKamis),
+          (selectedKamis: Kami[]) => stopKami(selectedKamis),
+        ]}
+        options={[deployOptions, harvestOptions, stopOptions]}
         radius={0.6}
       />
     </Container>

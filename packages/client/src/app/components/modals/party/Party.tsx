@@ -181,10 +181,42 @@ export function registerPartyModal() {
           params: [kamiIDs, node.index],
           description:
             kamiIDs.length > 1
-              ? `Placing ${kamis.length} kamis on ${node.name}`
+              ? `Placing ${kamis.length} kami on ${node.name}`
               : `Placing ${kamis[0].name} on ${node.name}`,
           execute: async () => {
             return api.player.pet.harvest.start(kamiIDs, node.index);
+          },
+        });
+      };
+
+      // collects on an existing harvest
+      const collect = (kamis: Kami[]) => {
+        const kamiHarvestIDs = kamis.map((kami) => kami.harvest!.id);
+        actions.add({
+          action: 'HarvestCollect',
+          params: [kamiHarvestIDs],
+          description:
+            kamiHarvestIDs.length > 1
+              ? `Collecting ${kamis.length} kami Harvest`
+              : `Collecting ${kamis[0].name}'s Harvest`,
+          execute: async () => {
+            return api.player.pet.harvest.collect(kamiHarvestIDs);
+          },
+        });
+      };
+
+      // stops a harvest
+      const stop = (kamis: Kami[]) => {
+        const kamiHarvestIDs = kamis.map((kami) => kami.harvest!.id);
+        actions.add({
+          action: 'HarvestStop',
+          params: [kamiHarvestIDs],
+          description:
+            kamiHarvestIDs.length > 1
+              ? `Removing ${kamis.length} kami from ${kamis[0].harvest?.node}`
+              : `Removing ${kamis[0].name} from nodes}`,
+          execute: async () => {
+            return api.player.pet.harvest.stop(kamiHarvestIDs);
           },
         });
       };
@@ -201,7 +233,9 @@ export function registerPartyModal() {
         >
           <Toolbar
             actions={{
-              addKamis: (kamis: Kami[]) => start(kamis, node),
+              addKami: (kamis: Kami[]) => start(kamis, node),
+              stopKami: (kamis: Kami[]) => stop(kamis),
+              collect: (kamis: Kami[]) => collect(kamis),
             }}
             controls={{ sort, setSort, view, setView }}
             data={{ kamis }}

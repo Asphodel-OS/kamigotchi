@@ -7,7 +7,7 @@ export const harvestsAPI = (systems: any) => {
    * @param harvestIDs array of harvestIDs
    */
   const collect = (harvestIDs: BigNumberish[]) => {
-    return systems['system.harvest.collect'].executeBatched(harvestIDs, { gasLimit: 2700000 });
+    return systems['system.harvest.collect'].executeBatched(harvestIDs);
   };
 
   /**
@@ -36,7 +36,7 @@ export const harvestsAPI = (systems: any) => {
    * @param harvestIDs array of harvestIDs
    */
   const stop = (harvestIDs: BigNumberish[]) => {
-    return systems['system.harvest.stop'].executeBatched(harvestIDs, { gasLimit: 2700000 });
+    return systems['system.harvest.stop'].executeBatched(harvestIDs);
   };
 
   return {
