@@ -718,6 +718,7 @@
     {
       "name": "TradeExecuteSystem",
       "writeAccess": [
+        "EntityType",
         "IdTarget",
         "IDOwnsInventory",
         "IDOwnsTrade",

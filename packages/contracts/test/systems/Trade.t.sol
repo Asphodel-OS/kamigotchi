@@ -3,11 +3,17 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 
+/// @notice tests for Trade system
+/// @dev TODO: test fees, taxation, data logging and max trades per account
 contract TradeTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
     vm.roll(_currBlock++);
+
+    uint32[8] memory tradeTaxConfig;
+    _setConfig("TRADE_CREATION_FEE", 0);
+    _setConfig("TRADE_TAX_RATE", tradeTaxConfig);
 
     vm.startPrank(deployer);
     _IndexRoomComponent.set(alice.id, 66);
@@ -16,59 +22,56 @@ contract TradeTest is SetupTemplate {
     vm.stopPrank();
   }
 
-  /// @notice creates and cancels
-  function testTradeShape() public {
+  /// @notice create a trade and confirms its structure, alongside any inventory changes
+  function testTradeCreate() public {
     // create
     uint32 buyIndex = 1;
     uint256 buyAmt = 3;
     uint32 sellIndex = 2;
     uint256 sellAmt = 5;
-    _giveItem(alice, MUSU_INDEX, 100);
     _giveItem(alice, sellIndex, sellAmt);
-    uint256 tradeID = _createTrade(alice, buyIndex, buyAmt, sellIndex, sellAmt, 0);
-    uint256 buyAnchor = LibTrade.genBuyAnchor(tradeID);
-    uint256 sellAnchor = LibTrade.genSellAnchor(tradeID);
 
-    // checking buy/sell anchors and balances
-    assertEq(_getItemBal(tradeID, sellIndex), sellAmt);
-    assertEq(_getItemBal(alice, sellIndex), 0);
-    assertEq(_getItemBal(alice, MUSU_INDEX), 97);
-    assertEq(_KeysComponent.get(buyAnchor)[0], buyIndex);
-    assertEq(_ValuesComponent.get(buyAnchor)[0], buyAmt);
-    assertEq(_KeysComponent.get(sellAnchor)[0], sellIndex);
-    assertEq(_ValuesComponent.get(sellAnchor)[0], sellAmt);
-
-    // cancel the trade
-    _cancelTrade(alice, tradeID);
-
-    // checking buy and sell anchor settings
-    assertEq(_getItemBal(tradeID, sellIndex), 0);
+    // check initial inventory
+    assertEq(_getItemBal(alice, buyIndex), 0);
     assertEq(_getItemBal(alice, sellIndex), sellAmt);
-    assertEq(_getItemBal(alice, MUSU_INDEX), 97);
-    assertFalse(_KeysComponent.has(buyAnchor));
-    assertFalse(_ValuesComponent.has(buyAnchor));
-    assertFalse(_KeysComponent.has(sellAnchor));
-    assertFalse(_ValuesComponent.has(sellAnchor));
-  }
 
-  function testTradeBasic() public {
-    // create
-    uint32 buyIndex = 3;
-    uint256 buyAmt = 3;
-    uint32 sellIndex = 2;
-    uint256 sellAmt = 5;
-    _giveItem(alice, sellIndex, sellAmt);
-    _giveItem(alice, MUSU_INDEX, 100);
-    _giveItem(bob, buyIndex, buyAmt);
-
-    // create
+    // create trade
     uint256 tradeID = _createTrade(alice, buyIndex, buyAmt, sellIndex, sellAmt, 0);
+
+    // check inventory changes
     assertEq(_getItemBal(alice, buyIndex), 0);
     assertEq(_getItemBal(alice, sellIndex), 0);
     assertEq(_getItemBal(tradeID, buyIndex), 0);
     assertEq(_getItemBal(tradeID, sellIndex), sellAmt);
+
+    // checking buy anchors
+    uint256 buyAnchor = LibTrade.genBuyAnchor(tradeID);
+    assertEq(_KeysComponent.get(buyAnchor)[0], buyIndex);
+    assertEq(_ValuesComponent.get(buyAnchor)[0], buyAmt);
+
+    // check sell anchor
+    uint256 sellAnchor = LibTrade.genSellAnchor(tradeID);
+    assertEq(_KeysComponent.get(sellAnchor)[0], sellIndex);
+    assertEq(_ValuesComponent.get(sellAnchor)[0], sellAmt);
+  }
+
+  function testTradeExecute() public {
+    // create
+    uint32 buyIndex = 1;
+    uint256 buyAmt = 100;
+    uint32 sellIndex = 2;
+    uint256 sellAmt = 5;
+    _giveItem(alice, sellIndex, sellAmt);
+    _giveItem(bob, buyIndex, buyAmt);
+
+    // check initial state
+    assertEq(_getItemBal(alice, buyIndex), 0);
+    assertEq(_getItemBal(alice, sellIndex), sellAmt);
     assertEq(_getItemBal(bob, buyIndex), buyAmt);
     assertEq(_getItemBal(bob, sellIndex), 0);
+
+    // create
+    uint256 tradeID = _createTrade(alice, buyIndex, buyAmt, sellIndex, sellAmt, 0);
 
     // execute
     _executeTrade(bob, tradeID);
@@ -79,7 +82,7 @@ contract TradeTest is SetupTemplate {
     assertEq(_getItemBal(bob, buyIndex), 0);
     assertEq(_getItemBal(bob, sellIndex), sellAmt);
 
-    // completing
+    // complete
     _completeTrade(alice, tradeID);
     assertEq(_getItemBal(alice, buyIndex), buyAmt);
     assertEq(_getItemBal(alice, sellIndex), 0);
@@ -95,13 +98,22 @@ contract TradeTest is SetupTemplate {
     uint32 sellIndex = 2;
     uint256 sellAmt = 5;
     _giveItem(alice, sellIndex, sellAmt);
-    _giveItem(alice, MUSU_INDEX, 100);
-    _giveItem(bob, buyIndex, buyAmt);
     uint256 tradeID = _createTrade(alice, buyIndex, buyAmt, sellIndex, sellAmt, 0);
 
-    // wrong account
+    // attempt and fail to cancel as Bob
     vm.expectRevert();
     _cancelTrade(bob, tradeID);
+
+    // attempt and fail to cancel as Charlie
+    vm.expectRevert();
+    _cancelTrade(charlie, tradeID);
+
+    // successfully cancel as Alice
+    _cancelTrade(alice, tradeID);
+    assertEq(_getItemBal(alice, buyIndex), 0);
+    assertEq(_getItemBal(alice, sellIndex), sellAmt);
+    assertEq(_getItemBal(tradeID, buyIndex), 0);
+    assertEq(_getItemBal(tradeID, sellIndex), 0);
   }
 
   function testTradeTargeted() public {
@@ -110,13 +122,24 @@ contract TradeTest is SetupTemplate {
     uint32 sellIndex = 2;
     uint256 sellAmt = 5;
     _giveItem(alice, sellIndex, sellAmt);
-    _giveItem(alice, MUSU_INDEX, 100);
     _giveItem(bob, buyIndex, buyAmt);
+    _giveItem(charlie, buyIndex, buyAmt);
+
+    // create trade with Bob specified as target
     uint256 tradeID = _createTrade(alice, buyIndex, buyAmt, sellIndex, sellAmt, bob.id);
 
-    // wrong target
+    // attempt to execute as Charlie and fail
     vm.expectRevert();
     _executeTrade(charlie, tradeID);
+
+    // successfully execute as Bob
+    _executeTrade(bob, tradeID);
+    assertEq(_getItemBal(alice, buyIndex), 0);
+    assertEq(_getItemBal(alice, sellIndex), 0);
+    assertEq(_getItemBal(tradeID, buyIndex), buyAmt);
+    assertEq(_getItemBal(tradeID, sellIndex), 0);
+    assertEq(_getItemBal(bob, buyIndex), 0);
+    assertEq(_getItemBal(bob, sellIndex), sellAmt);
   }
 
   /////////////////

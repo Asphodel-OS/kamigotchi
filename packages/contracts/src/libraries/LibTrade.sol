@@ -103,19 +103,14 @@ library LibTrade {
 
   /// @notice execute a Trade
   function execute(IWorld world, IUintComp comps, uint256 id, uint256 takerID) internal {
-    executeBuyOrder(world, comps, id, takerID);
-    executeSellOrder(world, comps, id, takerID);
+    executeBuyOrder(comps, id, takerID);
+    executeSellOrder(comps, id, takerID);
     StateComponent(getAddrByID(comps, StateCompID)).set(id, string("EXECUTED"));
   }
 
   /// @notice execute a Buy Order (transfers items between Maker and Taker)
   /// @dev handles data logging
-  function executeBuyOrder(
-    IWorld world,
-    IUintComp comps,
-    uint256 tradeID,
-    uint256 takerID
-  ) internal {
+  function executeBuyOrder(IUintComp comps, uint256 tradeID, uint256 takerID) internal {
     uint256 id = genBuyAnchor(tradeID);
     uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).get(id);
     uint256[] memory amts = ValuesComponent(getAddrByID(comps, ValuesCompID)).get(id);
@@ -133,12 +128,7 @@ library LibTrade {
   /// @notice execute a Sell Order (transfers items between Sell Order and Taker)
   /// @dev trade tax is processed and logged here
   /// @dev handles data logging
-  function executeSellOrder(
-    IWorld world,
-    IUintComp comps,
-    uint256 tradeID,
-    uint256 takerID
-  ) internal {
+  function executeSellOrder(IUintComp comps, uint256 tradeID, uint256 takerID) internal {
     uint256 id = genSellAnchor(tradeID);
     uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).get(id);
     uint256[] memory amts = ValuesComponent(getAddrByID(comps, ValuesCompID)).get(id);
@@ -151,7 +141,7 @@ library LibTrade {
     // adjust for tax
     uint256 tax;
     for (uint256 i; i < indices.length; i++) {
-      tax = calcTax(indices[i], amts[i]);
+      tax = calcTax(comps, indices[i], amts[i]);
       if (tax > 0) {
         amts[i] -= tax;
         LibData.inc(comps, takerID, indices[i], "TRADE_TAX", tax);
@@ -169,8 +159,8 @@ library LibTrade {
   /// @notice complete a Trade
   function complete(IWorld world, IUintComp comps, uint256 id, uint256 makerID) internal {
     // process orders
-    completeBuyOrder(world, comps, id, makerID);
-    completeSellOrder(world, comps, id, makerID);
+    completeBuyOrder(comps, id, makerID);
+    completeSellOrder(comps, id, makerID);
 
     // strip the rest of the data
     LibEntityType.remove(comps, id);
@@ -181,12 +171,7 @@ library LibTrade {
 
   /// @notice complete a Buy Order (transfers items from Trade to Maker, cleanup)
   /// @dev trade tax is processed and logged here
-  function completeBuyOrder(
-    IWorld world,
-    IUintComp comps,
-    uint256 tradeID,
-    uint256 makerID
-  ) internal {
+  function completeBuyOrder(IUintComp comps, uint256 tradeID, uint256 makerID) internal {
     uint256 id = genBuyAnchor(tradeID);
     uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).extract(id);
     uint256[] memory amts = ValuesComponent(getAddrByID(comps, ValuesCompID)).extract(id);
@@ -194,7 +179,7 @@ library LibTrade {
     // adjust and data-log tax on the trade order's buy side
     uint256 tax;
     for (uint256 i; i < indices.length; i++) {
-      tax = calcTax(indices[i], amts[i]);
+      tax = calcTax(comps, indices[i], amts[i]);
       if (tax > 0) {
         amts[i] -= tax;
         LibData.inc(comps, makerID, indices[i], "TRADE_TAX", tax);
@@ -207,12 +192,7 @@ library LibTrade {
   }
 
   /// @notice complete a Sell Order (cleanup, sell side should already be fulfilled)
-  function completeSellOrder(
-    IWorld world,
-    IUintComp comps,
-    uint256 tradeID,
-    uint256 makerID
-  ) internal {
+  function completeSellOrder(IUintComp comps, uint256 tradeID, uint256 makerID) internal {
     uint256 id = genSellAnchor(tradeID);
     KeysComponent(getAddrByID(comps, KeysCompID)).remove(id);
     ValuesComponent(getAddrByID(comps, ValuesCompID)).remove(id);
@@ -303,9 +283,14 @@ library LibTrade {
   // HELPERS
 
   /// @notice calculate the tax for a given item and amount
-  /// @dev hardcoded for now. proper shapes can be determined before more currencies are supported
-  function calcTax(uint32 itemIndex, uint256 amount) internal view returns (uint256) {
-    if (itemIndex == MUSU_INDEX) return amount / 100;
+  /// @dev this structure is inefficient but necessary when we support more currencies
+  function calcTax(
+    IUintComp comps,
+    uint32 itemIndex,
+    uint256 amount
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(comps, "TRADE_TAX_RATE");
+    if (itemIndex == MUSU_INDEX) return (amount * config[1]) / 10 ** config[0];
     return 0;
   }
 
