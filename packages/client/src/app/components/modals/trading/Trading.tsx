@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { getAccountInventories } from 'app/cache/account';
-import { cleanInventories, getInventoryBalance } from 'app/cache/inventory';
+import { getAccount } from 'app/cache/account';
+import { cleanInventories } from 'app/cache/inventory';
 import { getTrade } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -41,18 +41,21 @@ export function registerTradingModal() {
           const { network } = layers;
           const { world, components: comps, actions } = network;
           const accountEntity = queryAccountFromEmbedded(network);
+          const accountOptions = { live: 1, config: 3600 };
 
           return {
             network,
-            data: { accountEntity },
+            data: {
+              account: getAccount(world, comps, accountEntity, accountOptions),
+            },
             types: {
               ActionComp: actions.Action,
             },
             utils: {
               entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
               getAllItems: () => getAllItems(world, comps),
-              getInventories: () => getAccountInventories(world, comps, accountEntity),
-              getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, { state: 3333 }),
+              getAccount: () => getAccount(world, comps, accountEntity, accountOptions),
+              getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, { state: 2 }),
               queryTrades: () => queryTrades(comps),
               getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
             },
@@ -62,9 +65,9 @@ export function registerTradingModal() {
 
     // Render
     ({ network, data, types, utils }) => {
-      const { actions, api } = network;
-      const { accountEntity } = data;
-      const { getAllItems, getInventories, getTrade, queryTrades } = utils;
+      const { actions } = network;
+      const { account } = data;
+      const { getAllItems, getTrade, queryTrades } = utils;
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
@@ -73,7 +76,6 @@ export function registerTradingModal() {
       const [currencies, setCurrencies] = useState<Item[]>([]);
       const [inventories, setInventories] = useState<Inventory[]>([]);
       const [items, setItems] = useState<Item[]>([]);
-      const [musuBalance, setMusuBalance] = useState<number>(0);
 
       const [tab, setTab] = useState<TabType>('Orderbook');
       const [tick, setTick] = useState(Date.now());
@@ -90,8 +92,8 @@ export function registerTradingModal() {
       // sets trades upon opening modal
       useEffect(() => {
         if (!modals.trading) return;
-        refreshTrades();
         refreshInventories();
+        refreshTrades();
       }, [modals.trading, tick]);
 
       /////////////////
@@ -110,8 +112,7 @@ export function registerTradingModal() {
 
       // pull all inventories from the player. filter out MUSU and untradable items
       const refreshInventories = () => {
-        const all = getInventories();
-        setMusuBalance(getInventoryBalance(all, MUSU_INDEX));
+        const all = account.inventories ?? [];
         const filtered = cleanInventories(all);
         const tradable = filtered.filter((inv) => inv.item.is.tradeable);
         const sorted = tradable.sort((a, b) => (a.item.name > b.item.name ? 1 : -1));
@@ -122,8 +123,8 @@ export function registerTradingModal() {
       // NOTE: filtering by Taker not yet implemented
       const refreshTrades = () => {
         const allTrades = queryTrades().map((entity: EntityIndex) => getTrade(entity));
-        const myTrades = allTrades.filter((trade) => trade.maker?.entity === accountEntity);
-        const trades = allTrades.filter((trade) => trade.maker?.entity !== accountEntity);
+        const myTrades = allTrades.filter((trade) => trade.maker?.entity === account.entity);
+        const trades = allTrades.filter((trade) => trade.maker?.entity !== account.entity);
         setMyTrades(myTrades);
         setTrades(trades);
       };
@@ -213,12 +214,17 @@ export function registerTradingModal() {
               isVisible={tab === `Orderbook`}
               actions={{ executeTrade }}
               controls={{ tab }}
-              data={{ accountEntity, items, trades }}
+              data={{ account, items, trades }}
             />
             <Management
               isVisible={tab === `Management`}
               actions={{ cancelTrade, completeTrade, createTrade }}
-              data={{ currencies, inventories, items, musuBalance, trades: myTrades }}
+              data={{
+                account,
+                currencies,
+                items,
+                trades: myTrades,
+              }}
               types={types}
               utils={utils}
             />

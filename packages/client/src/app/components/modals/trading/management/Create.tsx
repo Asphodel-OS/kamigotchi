@@ -14,8 +14,8 @@ import {
   TextTooltip,
 } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { STONE_INDEX } from 'constants/items';
-import { Inventory } from 'network/shapes';
+import { MUSU_INDEX, STONE_INDEX } from 'constants/items';
+import { Account, Inventory } from 'network/shapes';
 import { Item, NullItem } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
@@ -39,10 +39,9 @@ interface Props {
     setConfirmAction: Dispatch<(params: any) => any>;
   };
   data: {
+    account: Account;
     currencies: Item[];
-    inventories: Inventory[];
     items: Item[];
-    musuBalance: number;
   };
   types: {
     ActionComp: ActionComponent;
@@ -57,7 +56,7 @@ export const Create = (props: Props) => {
   const { createTrade } = actions;
   const { isConfirming, setIsConfirming } = controls;
   const { setConfirmTitle, setConfirmContent, setConfirmAction } = controls;
-  const { musuBalance, currencies, items, inventories } = data;
+  const { account, currencies, items } = data;
   const { ActionComp } = types;
   const { entityToIndex } = utils;
   const { modals } = useVisibility();
@@ -83,7 +82,8 @@ export const Create = (props: Props) => {
       setItem(stone ?? NullItem);
       setItemAmt(1);
     } else if (mode === CreateMode.SELL) {
-      setItem(inventories[0].item ?? NullItem);
+      if (!account.inventories) return;
+      setItem(account.inventories[0].item ?? NullItem);
       setItemAmt(1);
     }
 
@@ -98,7 +98,9 @@ export const Create = (props: Props) => {
   const handleCurrencyAmtChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const min = 0;
     let max = Infinity;
-    if (mode === CreateMode.BUY) max = musuBalance;
+    if (mode === CreateMode.BUY) {
+      max = getInventoryBalance(account.inventories ?? [], MUSU_INDEX);
+    }
 
     const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
@@ -110,7 +112,9 @@ export const Create = (props: Props) => {
   const handleItemAmtChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const min = 0;
     let max = Infinity;
-    if (mode === CreateMode.SELL) max = getInventoryBalance(inventories, item.index);
+    if (mode === CreateMode.SELL) {
+      max = getInventoryBalance(account.inventories ?? [], item.index);
+    }
 
     const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
@@ -176,7 +180,8 @@ export const Create = (props: Props) => {
     }
 
     // if selling, show only tradable items in inventory
-    return inventories.map((inv: Inventory) => {
+    if (!account.inventories) return [];
+    return account.inventories?.map((inv: Inventory) => {
       return {
         text: inv.item.name,
         image: inv.item.image,
@@ -196,6 +201,15 @@ export const Create = (props: Props) => {
     const sellItem = mode === CreateMode.BUY ? currency : item;
     const sellAmt = mode === CreateMode.BUY ? currencyAmt : itemAmt;
     const tradeFee = 3;
+
+    let tax = 0;
+    let taxTooltip: string[] = [];
+    const taxConfig = account.config?.trade.tax;
+    if (taxConfig && mode === CreateMode.SELL) {
+      tax = Math.floor(buyAmt * taxConfig.value);
+      const taxPercent = Math.floor(taxConfig.value * 100).toFixed(2);
+      taxTooltip = [`${buyAmt.toLocaleString()} MUSU`, `less ${taxPercent}% tax (${tax} MUSU)`];
+    }
 
     return (
       <Paragraph>
@@ -219,7 +233,11 @@ export const Create = (props: Props) => {
         </Row>
         <Row>
           <Text size={1.2}>{'You will receive ('}</Text>
-          <Pairing text={buyAmt.toLocaleString()} icon={buyItem.image} />
+          <Pairing
+            text={(buyAmt - tax).toLocaleString()}
+            icon={buyItem.image}
+            tooltip={taxTooltip}
+          />
           <Text size={1.2}>{`) upon Completion.`}</Text>
         </Row>
       </Paragraph>

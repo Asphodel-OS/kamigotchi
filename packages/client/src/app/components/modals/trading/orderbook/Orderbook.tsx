@@ -1,8 +1,7 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Item, NullItem } from 'network/shapes';
+import { Account, Item, NullItem } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
 import { OrderType } from '../types';
 import { Controls } from './Controls';
@@ -16,7 +15,7 @@ interface Props {
     tab: string;
   };
   data: {
-    accountEntity: EntityIndex;
+    account: Account;
     items: Item[];
     trades: Trade[];
   };

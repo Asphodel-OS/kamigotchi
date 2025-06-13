@@ -74,7 +74,7 @@ export function connect(
           ) {
             let gap = Math.abs(responsePrevBlockNumber - prevCurrentBlock);
 
-            if (gap > MAX_ALLOWED_BLOCK_GAP) {
+            if (import.meta.env.MODE !== 'testing' && gap > MAX_ALLOWED_BLOCK_GAP) {
               console.log(
                 `MAX_ALLOWED_BLOCK_GAP exceeded gap:${gap} currentBlock:${prevCurrentBlock} responsePrevBlockNumber:${responsePrevBlockNumber}`
               );

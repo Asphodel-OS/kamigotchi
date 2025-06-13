@@ -2,7 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { Overlay } from 'app/components/library';
-import { Inventory } from 'network/shapes';
+import { Account } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
@@ -23,10 +23,9 @@ interface Props {
     cancelTrade: (trade: Trade) => void;
   };
   data: {
+    account: Account;
     currencies: Item[];
-    inventories: Inventory[];
     items: Item[]; // all tradable items
-    musuBalance: number;
     trades: Trade[];
   };
   types: {
@@ -34,12 +33,6 @@ interface Props {
   };
   utils: {
     entityToIndex: (id: EntityID) => EntityIndex;
-    getInventories: () => {
-      id: EntityID;
-      entity: EntityIndex;
-      balance: number;
-      item: Item;
-    }[];
     getAllItems: () => Item[];
   };
   isVisible: boolean;
