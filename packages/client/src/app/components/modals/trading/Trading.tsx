@@ -230,6 +230,7 @@ export function registerTradingModal() {
               controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
               data={{ account, items, trades }}
               isVisible={tab === `Orderbook`}
+              utils={utils}
             />
             <Management
               actions={{ cancelTrade, completeTrade, createTrade, executeTrade }}

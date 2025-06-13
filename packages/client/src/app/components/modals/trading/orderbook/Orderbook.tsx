@@ -24,11 +24,14 @@ interface Props {
     items: Item[];
     trades: Trade[];
   };
+  utils: {
+    getItemByIndex: (index: number) => Item;
+  };
   isVisible: boolean;
 }
 
 export const Orderbook = (props: Props) => {
-  const { actions, controls, data } = props;
+  const { actions, controls, data, utils, isVisible } = props;
   const { tab } = controls;
 
   const [sort, setSort] = useState<string>('Price'); // Price, Owner
@@ -37,7 +40,7 @@ export const Orderbook = (props: Props) => {
   const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
 
   return (
-    <Container isVisible={tab === `Orderbook`}>
+    <Container isVisible={isVisible}>
       <Controls
         controls={{
           typeFilter,
@@ -50,6 +53,7 @@ export const Orderbook = (props: Props) => {
           setItemFilter,
         }}
         data={data}
+        utils={utils}
       />
       <Offers
         actions={actions}

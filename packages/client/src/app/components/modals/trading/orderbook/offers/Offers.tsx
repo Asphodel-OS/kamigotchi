@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getTradeType, Trade } from 'app/cache/trade';
+import { getPerUnitPrice } from 'app/cache/trade/functions';
 import { EmptyText } from 'app/components/library';
 import { Item } from 'network/shapes';
 import { BuyOrder } from './BuyOrder';
@@ -30,7 +31,7 @@ export const Offers = (props: Props) => {
   useEffect(() => {
     // filter by type
     let cleaned = trades.filter((trade) => {
-      const type = getTradeType(trade);
+      const type = getTradeType(trade, false);
       return type === typeFilter;
     });
 
@@ -54,8 +55,10 @@ export const Offers = (props: Props) => {
       }
 
       if (sort === 'Price') {
-        const aPrice = getTradePrice(a);
-        const bPrice = getTradePrice(b);
+        const aType = getTradeType(a, false);
+        const bType = getTradeType(b, false);
+        const aPrice = getPerUnitPrice(a, aType);
+        const bPrice = getPerUnitPrice(b, bType);
         if (ascending) return aPrice - bPrice;
         return bPrice - aPrice;
       }
@@ -64,16 +67,6 @@ export const Offers = (props: Props) => {
     });
     setDisplayed(sorted);
   }, [trades, typeFilter, sort, ascending, itemFilter]);
-
-  // determine the per unit item price of a trade. 0 if unclear
-  const getTradePrice = (trade: Trade) => {
-    const type = getTradeType(trade);
-    const buyAmt = trade.buyOrder?.amounts[0] ?? 1;
-    const sellAmt = trade.sellOrder?.amounts[0] ?? 1;
-    if (type === 'Buy') return buyAmt / sellAmt;
-    else if (type === 'Sell') return sellAmt / buyAmt;
-    return 0;
-  };
 
   /////////////////
   // DISPLAY

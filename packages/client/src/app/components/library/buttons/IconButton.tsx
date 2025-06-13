@@ -104,8 +104,8 @@ const Container = styled.button<ContainerProps>`
   height: ${({ scale, orientation }) => `${scale}${orientation}`};
   width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}vw` : 'auto')};
   min-width: fit-content;
-  padding: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
-  gap: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
+  padding: ${({ scale, orientation }) => `${scale * 0.18}${orientation}`};
+  gap: ${({ scale, orientation }) => `${scale * 0.15}${orientation}`};
 
   display: flex;
   flex-flow: row nowrap;

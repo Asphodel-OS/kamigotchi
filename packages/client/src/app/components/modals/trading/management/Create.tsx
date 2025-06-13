@@ -206,7 +206,8 @@ export const Create = (props: Props) => {
     const buyAmt = mode === CreateMode.BUY ? itemAmt : currencyAmt;
     const sellItem = mode === CreateMode.BUY ? currency : item;
     const sellAmt = mode === CreateMode.BUY ? currencyAmt : itemAmt;
-    const tradeFee = 3;
+    const tradeConfig = account.config?.trade;
+    const tradeFee = tradeConfig?.fee ?? 0;
 
     let tax = 0;
     let taxTooltip: string[] = [];
