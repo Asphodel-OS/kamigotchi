@@ -57,8 +57,9 @@ export const Orderbook = (props: Props) => {
       />
       <Offers
         actions={actions}
-        controls={{ typeFilter, sort, ascending, itemFilter }}
+        controls={{ ...controls, typeFilter, sort, ascending, itemFilter }}
         data={data}
+        utils={utils}
       />
     </Container>
   );
@@ -69,4 +70,6 @@ const Container = styled.div<{ isVisible: boolean }>`
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: row nowrap;
+
+  user-select: none;
 `;

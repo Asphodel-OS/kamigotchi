@@ -1,6 +1,7 @@
 import { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { getInventoryBalance } from 'app/cache/inventory';
 import { TradeType } from 'app/cache/trade';
 import { Overlay, Pairing, Text, TextTooltip } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
@@ -12,7 +13,6 @@ import { getTypeColor } from '../../helpers';
 
 interface Props {
   actions: {
-    cancelTrade: (trade: Trade) => void;
     executeTrade: (trade: Trade) => void;
   };
   controls: {
@@ -30,12 +30,11 @@ interface Props {
   };
 }
 
-// represents the player's Buy/Sell Orders that are in PENDING state
+// represents other Buy/Sell Orders that are in PENDING state
 // NOTE: only supports simple (single item) trades against musu atm
-// TODO: add support for Trades you're the assigned Taker for (make executable)
 export const PendingOffer = (props: Props) => {
   const { actions, controls, data, utils } = props;
-  const { cancelTrade } = actions;
+  const { executeTrade } = actions;
   const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;
   const { getItemByIndex } = utils;
@@ -61,9 +60,9 @@ export const PendingOffer = (props: Props) => {
   // HANDLERS
 
   const handleCancel = () => {
-    const confirmAction = () => cancelTrade(trade);
+    const confirmAction = () => executeTrade(trade);
     setConfirmData({
-      title: 'Confirm Cancellation',
+      title: 'Confirm Execution',
       content: getConfirmContent(),
       onConfirm: confirmAction,
     });
@@ -74,11 +73,26 @@ export const PendingOffer = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // determine the name to display for an Account
-  const getNameDisplay = (trader?: Account): string => {
-    if (!trader || !trader.name) return '???';
-    if (trader.entity === account.entity) return 'You';
-    return trader.name;
+  // check whether the player can fill the specified order
+  // NOTE: this doesnt account for multiples of the same item in a single order
+  const canFillOrder = (order?: TradeOrder): boolean => {
+    if (!order) return false;
+    for (let i = 0; i < order.items.length; i++) {
+      const item = order.items[i];
+      const amt = order.amounts[i];
+
+      const balance = getInventoryBalance(account.inventories ?? [], item.index);
+      if (balance < amt) return false;
+    }
+    return true;
+  };
+
+  // get the tooltip of the action button
+  const getActionTooltip = () => {
+    if (!canFillOrder(trade.buyOrder)) {
+      return ['Too poore', 'get more items to fulfill this Trade Offer'];
+    }
+    return ['Execute this trade'];
   };
 
   // tooltip for list of order items/amts
@@ -94,6 +108,13 @@ export const PendingOffer = (props: Props) => {
     return tooltip;
   };
 
+  // determine the name to display for an Account
+  const getNameDisplay = (trader?: Account): string => {
+    if (!trader || !trader.name) return '???';
+    if (trader.entity === account.entity) return 'You';
+    return trader.name;
+  };
+
   /////////////////
   // DISPLAY
 
@@ -102,29 +123,44 @@ export const PendingOffer = (props: Props) => {
   const getConfirmContent = () => {
     const musuItem = getItemByIndex(MUSU_INDEX);
     const tradeConfig = account.config?.trade;
-    const tradeFee = tradeConfig?.fee ?? 0;
+    const taxRate = tradeConfig?.tax.value ?? 0;
+    const tax = Math.floor(sellAmt * taxRate);
 
     return (
       <Paragraph>
         <Row>
-          <Text size={1.2}>{'('}</Text>
+          <Text size={1.2}>{'You will send ('}</Text>
           <Pairing
-            text={sellAmt.toLocaleString()}
+            text={(buyAmt - tax).toLocaleString()}
+            icon={buyItem.image}
+            tooltip={getOrderTooltip(trade.sellOrder)}
+          />
+          <Text size={1.2}>{`)`}</Text>
+        </Row>
+        <Row>
+          <Text size={1.2}>{'and receive ('}</Text>
+          <Pairing
+            text={(sellAmt - tax).toLocaleString()}
             icon={sellItem.image}
             tooltip={getOrderTooltip(trade.sellOrder)}
           />
-          <Text size={1.2}>{`) will be returned to your Inventory.`}</Text>
+          <Text size={1.2}>{`)`}</Text>
         </Row>
-        <Row>
-          <Text size={0.9}>{`Listing fee (`}</Text>
-          <Pairing
-            text={tradeFee.toLocaleString()}
-            icon={musuItem.image}
-            scale={0.9}
-            tooltip={[`Lol RIP Bozo`, `mr. i-know-what-i-got`, `L pricing`, `Ratio`]}
-          />
-          <Text size={0.9}>{`) will not be refunded.`}</Text>
-        </Row>
+        {tax > 0 && (
+          <Row>
+            <Text size={0.9}>{`Trade Tax: (`}</Text>
+            <Pairing
+              text={tax.toLocaleString()}
+              icon={musuItem.image}
+              scale={0.9}
+              tooltip={[
+                `There is no income tax in Kamigotchi World.`,
+                `Thank you for your patronage`,
+              ]}
+            />
+            <Text size={0.9}>{`)`}</Text>
+          </Row>
+        )}
       </Paragraph>
     );
   };
@@ -136,33 +172,7 @@ export const PendingOffer = (props: Props) => {
     <Container>
       <ImageContainer borderRight>
         <TextTooltip
-          title='you are offering..'
-          text={getOrderTooltip(trade.sellOrder)}
-          alignText='left'
-        >
-          <Image src={sellItem.image} />
-        </TextTooltip>
-        <Overlay bottom={0.15} fullWidth>
-          <Text size={0.6}>{sellAmt.toLocaleString()}</Text>
-        </Overlay>
-      </ImageContainer>
-      <Controls>
-        <TagContainer>
-          <Overlay top={0.21} left={0.21}>
-            <Text size={0.6}>{getNameDisplay(trade.maker)}</Text>
-          </Overlay>
-          <Overlay top={0.21} right={0.21}>
-            <Text size={0.6}>{getNameDisplay(trade.taker)}</Text>
-          </Overlay>
-          <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
-        </TagContainer>
-        <Button onClick={handleCancel} disabled={isConfirming}>
-          Cancel
-        </Button>
-      </Controls>
-      <ImageContainer borderLeft>
-        <TextTooltip
-          title='you may receive..'
+          title='you will send..'
           text={getOrderTooltip(trade.buyOrder)}
           alignText='left'
         >
@@ -170,6 +180,34 @@ export const PendingOffer = (props: Props) => {
         </TextTooltip>
         <Overlay bottom={0.15} fullWidth>
           <Text size={0.6}>{buyAmt.toLocaleString()}</Text>
+        </Overlay>
+      </ImageContainer>
+      <Controls>
+        <TagContainer>
+          <Overlay top={0.21} left={0.21}>
+            <Text size={0.6}>{getNameDisplay(trade.taker)}</Text>
+          </Overlay>
+          <Overlay top={0.21} right={0.21}>
+            <Text size={0.6}>{getNameDisplay(trade.maker)}</Text>
+          </Overlay>
+          <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
+        </TagContainer>
+        <TextTooltip text={getActionTooltip()} fullWidth>
+          <Button onClick={handleCancel} disabled={isConfirming || !canFillOrder(trade.buyOrder)}>
+            Execute
+          </Button>
+        </TextTooltip>
+      </Controls>
+      <ImageContainer borderLeft>
+        <TextTooltip
+          title='you will receive..'
+          text={getOrderTooltip(trade.sellOrder)}
+          alignText='left'
+        >
+          <Image src={sellItem.image} />
+        </TextTooltip>
+        <Overlay bottom={0.15} fullWidth>
+          <Text size={0.6}>{sellAmt.toLocaleString()}</Text>
         </Overlay>
       </ImageContainer>
     </Container>
@@ -233,6 +271,7 @@ const Button = styled.button`
 
   &:hover {
     background-color: #ddd;
+    cursor: pointer;
   }
   &:active {
     background-color: #bbb;
