@@ -1,12 +1,21 @@
+import { Dispatch } from 'react';
+
 import { isItemCurrency } from 'app/cache/item';
 import { Trade } from 'network/shapes/Trade';
-import { OrderType } from '../types';
-import { StandardOfferCard } from './StandardOfferCard';
+import { OrderType } from '../../types';
+import { StandardOfferCard } from '../StandardOfferCard';
 
 interface Props {
   actions: {
     completeTrade: (trade: Trade) => void;
     cancelTrade: (trade: Trade) => void;
+  };
+  controls: {
+    isConfirming: boolean;
+    setIsConfirming: Dispatch<boolean>;
+    setConfirmTitle: Dispatch<string>;
+    setConfirmContent: Dispatch<React.ReactNode>;
+    setConfirmAction: Dispatch<(params: any) => any>;
   };
   data: {
     trade: Trade;

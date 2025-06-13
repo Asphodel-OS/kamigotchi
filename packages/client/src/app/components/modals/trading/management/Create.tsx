@@ -142,8 +142,8 @@ export const Create = (props: Props) => {
   // handle prompting for confirmation with trade creation
   const handleCreatePrompt = () => {
     setIsConfirming(true);
-    setConfirmTitle('Confirm Trade Creation');
-    setConfirmContent(getTradeConfirmation());
+    setConfirmTitle('Confirm Creation');
+    setConfirmContent(getConfirmation());
     const confirmAction = () => handleTrade(item, itemAmt, currency, currencyAmt);
     setConfirmAction(() => confirmAction); // strange syntax..
   };
@@ -193,9 +193,12 @@ export const Create = (props: Props) => {
     });
   };
 
+  /////////////////
+  // DISPLAY
+
   // create the trade confirmation window content
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getTradeConfirmation = () => {
+  const getConfirmation = () => {
     const buyItem = mode === CreateMode.BUY ? item : currency;
     const buyAmt = mode === CreateMode.BUY ? itemAmt : currencyAmt;
     const sellItem = mode === CreateMode.BUY ? currency : item;
@@ -214,15 +217,6 @@ export const Create = (props: Props) => {
     return (
       <Paragraph>
         <Row>
-          <Text size={1.2}>{`This trade will cost (`}</Text>
-          <Pairing
-            text={tradeFee.toLocaleString()}
-            icon={currency.image}
-            tooltip={[`Listing Fee: ${tradeFee} MUSU`]}
-          />
-          <Text size={1.2}>{`) to Create.`}</Text>
-        </Row>
-        <Row>
           <Text size={1.2}>{'('}</Text>
           <Pairing
             text={sellAmt.toLocaleString()}
@@ -240,12 +234,22 @@ export const Create = (props: Props) => {
           />
           <Text size={1.2}>{`) upon Completion.`}</Text>
         </Row>
+        <Row>
+          <Text size={0.9}>{`Listing Fee: (`}</Text>
+          <Pairing
+            text={tradeFee.toLocaleString()}
+            icon={currency.image}
+            scale={0.9}
+            tooltip={[`Non-refundable (price wisely)`, `Deducted from your inventory at creation.`]}
+          />
+          <Text size={0.9}>{`)`}</Text>
+        </Row>
       </Paragraph>
     );
   };
 
   /////////////////
-  // DISPLAY
+  // RENDER
 
   return (
     <Container>

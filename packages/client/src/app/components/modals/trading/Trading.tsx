@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import { getAccount } from 'app/cache/account';
 import { cleanInventories } from 'app/cache/inventory';
+import { getItemByIndex } from 'app/cache/item';
 import { getTrade } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
@@ -57,6 +58,7 @@ export function registerTradingModal() {
               getAccount: () => getAccount(world, comps, accountEntity, accountOptions),
               getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, { state: 2 }),
               queryTrades: () => queryTrades(comps),
+              getItemByIndex: (index: number) => getItemByIndex(world, comps, index),
               getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
             },
           };

@@ -7,9 +7,9 @@ import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
 import { useState } from 'react';
-import { Confirmation } from './Confirmation';
+import { Confirmation } from '../Confirmation';
 import { Create } from './Create';
-import { Offers } from './Offers';
+import { Offers } from './offers/Offers';
 
 interface Props {
   actions: {
@@ -34,6 +34,7 @@ interface Props {
   utils: {
     entityToIndex: (id: EntityID) => EntityIndex;
     getAllItems: () => Item[];
+    getItemByIndex: (index: number) => Item;
   };
   isVisible: boolean;
 }
@@ -69,7 +70,18 @@ export const Management = (props: Props) => {
         types={types}
         utils={utils}
       />
-      <Offers actions={actions} data={data} />
+      <Offers
+        actions={actions}
+        controls={{
+          isConfirming,
+          setIsConfirming,
+          setConfirmTitle,
+          setConfirmContent,
+          setConfirmAction,
+        }}
+        data={data}
+        utils={utils}
+      />
     </Content>
   );
 };
