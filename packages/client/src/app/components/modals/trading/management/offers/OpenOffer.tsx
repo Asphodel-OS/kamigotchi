@@ -151,7 +151,9 @@ export const OpenOffer = (props: Props) => {
         <TagContainer>
           <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
         </TagContainer>
-        <Button onClick={handleCancel}>Cancel</Button>
+        <Button onClick={handleCancel} disabled={isConfirming}>
+          Cancel
+        </Button>
       </Controls>
       <ImageContainer borderLeft>
         <TextTooltip title='you will receive' text={getBuyTooltip()} alignText='left'>
@@ -223,9 +225,12 @@ const Button = styled.button`
   &:hover {
     background-color: #ddd;
   }
-
   &:active {
     background-color: #bbb;
+  }
+  &:disabled {
+    background-color: #bbb;
+    cursor: default;
   }
 `;
 

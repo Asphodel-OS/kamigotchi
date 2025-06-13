@@ -90,14 +90,16 @@ export const Offers = (props: Props) => {
         ))}
         {executedTrades.length > 0 && (
           <Text size={1.5} padding={{ top: 2.4, bottom: 0.6 }}>
-            Completed Offers
+            Executed Offers
           </Text>
         )}
         {executedTrades.map((trade, i) => (
           <ExecutedOffer
             key={i}
             actions={actions}
+            controls={controls}
             data={{ account, trade, type: getTradeType(trade) }}
+            utils={utils}
           />
         ))}
       </Body>
