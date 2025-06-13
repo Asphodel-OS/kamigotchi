@@ -7,7 +7,7 @@ import { useVisibility } from 'app/stores';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
 import { ConfirmationData } from '../../Confirmation';
-import { OrderType } from '../../types';
+import { OrderType, TabType } from '../../types';
 import { ExecutedOffer } from './ExecutedOffer';
 import { OpenOffer } from './OpenOffer';
 
@@ -21,6 +21,7 @@ interface Props {
     isConfirming: boolean;
     setIsConfirming: Dispatch<boolean>;
     setConfirmData: Dispatch<ConfirmationData>;
+    tab: TabType;
   };
   data: {
     account: Account;
@@ -35,6 +36,7 @@ interface Props {
 // TODO: display the 'Executable' offers (where the player is the Taker) as well
 export const Offers = (props: Props) => {
   const { actions, controls, data, utils } = props;
+  const { tab } = controls;
   const { account, trades } = data;
   const { modals } = useVisibility();
 
@@ -43,12 +45,12 @@ export const Offers = (props: Props) => {
 
   // keep the list of open and executed trades updated'
   useEffect(() => {
-    if (!modals.trading) return;
+    if (!modals.trading || tab !== `Management`) return;
     const openTrades = trades.filter((trade) => trade.state === 'OPEN');
     const executedTrades = trades.filter((trade) => trade.state === 'EXECUTED');
     setOpenTrades(openTrades);
     setExecutedTrades(executedTrades);
-  }, [trades.length, modals.trading]);
+  }, [trades, modals.trading, tab]);
 
   // determine what kind of trade this is to the player
   // TODO: check is simple atm. refine it over time

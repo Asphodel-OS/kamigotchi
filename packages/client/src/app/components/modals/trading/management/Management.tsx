@@ -8,6 +8,7 @@ import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
 import { useState } from 'react';
 import { Confirmation, ConfirmationData } from '../Confirmation';
+import { TabType } from '../types';
 import { Create } from './Create';
 import { Offers } from './offers/Offers';
 
@@ -22,6 +23,9 @@ interface Props {
     executeTrade: (trade: Trade) => void;
     completeTrade: (trade: Trade) => void;
     cancelTrade: (trade: Trade) => void;
+  };
+  controls: {
+    tab: TabType;
   };
   data: {
     account: Account;
@@ -41,7 +45,7 @@ interface Props {
 }
 
 export const Management = (props: Props) => {
-  const { isVisible, actions, data, types, utils } = props;
+  const { isVisible, actions, controls, data, types, utils } = props;
   const [isConfirming, setIsConfirming] = useState(false);
   const [confirmData, setConfirmData] = useState<ConfirmationData>({
     content: <></>,
@@ -74,6 +78,7 @@ export const Management = (props: Props) => {
       <Offers
         actions={actions}
         controls={{
+          ...controls,
           isConfirming,
           setIsConfirming,
           setConfirmData,

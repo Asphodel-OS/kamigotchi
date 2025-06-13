@@ -210,14 +210,14 @@ export function registerTradingModal() {
           <Tabs tab={tab} setTab={setTab} />
           <Content>
             <Orderbook
-              isVisible={tab === `Orderbook`}
               actions={{ executeTrade }}
               controls={{ tab }}
               data={{ account, items, trades }}
+              isVisible={tab === `Orderbook`}
             />
             <Management
-              isVisible={tab === `Management`}
               actions={{ cancelTrade, completeTrade, createTrade, executeTrade }}
+              controls={{ tab }}
               data={{
                 account,
                 currencies,
@@ -226,6 +226,7 @@ export function registerTradingModal() {
               }}
               types={types}
               utils={utils}
+              isVisible={tab === `Management`}
             />
           </Content>
         </ModalWrapper>
