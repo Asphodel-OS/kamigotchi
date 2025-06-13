@@ -131,7 +131,7 @@ export const PendingOffer = (props: Props) => {
         <Row>
           <Text size={1.2}>{'You will send ('}</Text>
           <Pairing
-            text={(buyAmt - tax).toLocaleString()}
+            text={buyAmt.toLocaleString()}
             icon={buyItem.image}
             tooltip={getOrderTooltip(trade.sellOrder)}
           />
