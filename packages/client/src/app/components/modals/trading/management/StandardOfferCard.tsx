@@ -4,11 +4,13 @@ import styled from 'styled-components';
 import { Card, IconButton, Pairing } from 'app/components/library';
 import { Item, NullItem } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
+import { StateColors, TypeColors } from '../constatnts';
 import { OrderType } from '../types';
 
 interface Props {
   actions: {
     cancelTrade: (trade: Trade) => void;
+    completeTrade: (trade: Trade) => void;
   };
   data: {
     trade: Trade;
@@ -20,7 +22,7 @@ interface Props {
 // NOTE: only supports simple (single item) trades against musu atm
 export const StandardOfferCard = (props: Props) => {
   const { actions, data } = props;
-  const { cancelTrade } = actions;
+  const { completeTrade, cancelTrade } = actions;
   const { trade, type } = data;
 
   const [item, setItem] = useState<Item>(NullItem);
@@ -48,6 +50,35 @@ export const StandardOfferCard = (props: Props) => {
   }, [trade, type]);
 
   /////////////////
+  // INTERPRETATION
+
+  const getTypeColor = (): string => {
+    if (type === 'Buy') return TypeColors.Buy;
+    if (type === 'Sell') return TypeColors.Sell;
+    if (type === 'Barter') return TypeColors.Barter;
+    if (type === 'Forex') return TypeColors.Forex;
+    return '';
+  };
+
+  const getStateColor = (): string => {
+    if (trade.state === 'OPEN') return StateColors.OPEN;
+    if (trade.state === 'EXECUTED') return StateColors.EXECUTED;
+    return '';
+  };
+
+  const getActionText = (): string => {
+    if (trade.state === 'OPEN') return 'Cancel';
+    if (trade.state === 'EXECUTED') return 'Complete';
+    return '';
+  };
+
+  const getAction = () => {
+    if (trade.state === 'OPEN') return () => cancelTrade(trade);
+    if (trade.state === 'EXECUTED') return () => completeTrade(trade);
+    return () => null;
+  };
+
+  /////////////////
   // DISPLAY
 
   return (
@@ -66,7 +97,8 @@ export const StandardOfferCard = (props: Props) => {
       </TitleBar>
       <Content>
         <ColumnLeft>
-          <TypeTag type={type}>{type}</TypeTag>
+          <TypeTag color={getTypeColor()}>{type}</TypeTag>
+          <StateTag color={getStateColor()}>{trade.state}</StateTag>
         </ColumnLeft>
         <ColumnRight key='column-2'>
           <Pairing
@@ -76,7 +108,7 @@ export const StandardOfferCard = (props: Props) => {
             scale={1}
           />
           <ContentActions>
-            <IconButton text='Cancel' onClick={() => cancelTrade(trade)} />
+            <IconButton text={getActionText()} onClick={getAction()} />
           </ContentActions>
         </ColumnRight>
       </Content>
@@ -116,12 +148,43 @@ const Content = styled.div`
 const ColumnLeft = styled.div`
   position: relative;
   margin: 0.3vw;
+  gap: 0.3vw;
   flex-grow: 1;
 
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: space-between;
+`;
+
+const TypeTag = styled.div<{ color: string }>`
+  width: 5vw;
+  padding: 0.2vw;
+
+  color: rgb(25, 39, 2);
+  background-color: ${({ color }) => color};
+  clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.9vw;
+`;
+
+const StateTag = styled.div<{ color: string }>`
+  width: 9vw;
+  padding: 0.2vw;
+
+  color: rgb(25, 39, 2);
+  background-color: ${({ color }) => color};
+  clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 0.9vw;
 `;
 
 const ColumnRight = styled.div`
@@ -140,20 +203,4 @@ const ContentActions = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   gap: 0.3vw;
-`;
-
-const TypeTag = styled.div<{ type: OrderType }>`
-  position: absolute;
-  width: 5vw;
-  padding: 0.2vw;
-
-  color: rgb(25, 39, 2);
-  background-color: ${({ type }) => (type === 'Buy' ? 'rgb(192, 224, 139)' : 'rgb(222, 90, 120)')};
-  clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 0.9vw;
 `;

@@ -5,6 +5,7 @@ import { StandardOfferCard } from './StandardOfferCard';
 
 interface Props {
   actions: {
+    completeTrade: (trade: Trade) => void;
     cancelTrade: (trade: Trade) => void;
   };
   data: {

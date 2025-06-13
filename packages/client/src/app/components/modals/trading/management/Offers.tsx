@@ -6,6 +6,7 @@ import { Offer } from './Offer';
 
 interface Props {
   actions: {
+    completeTrade: (trade: Trade) => void;
     cancelTrade: (trade: Trade) => void;
   };
   data: { trades: Trade[] };

@@ -154,7 +154,7 @@ export function registerTradingModal() {
         return actionID;
       };
 
-      // fulfuill and existing trade offer
+      // execute an open trade offer
       const executeTrade = (trade: Trade) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -166,6 +166,23 @@ export function registerTradingModal() {
           description: `Executing Order`,
           execute: async () => {
             return api.account.trade.execute(trade.id);
+          },
+        });
+        return actionID;
+      };
+
+      // complete an executed trade offer
+      const completeTrade = (trade: Trade) => {
+        const api = apis.get(selectedAddress);
+        if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const actionID = uuid() as EntityID;
+        actions.add({
+          action: 'Complete Order',
+          params: [trade.id],
+          description: `Completing Order`,
+          execute: async () => {
+            return api.account.trade.complete(trade.id);
           },
         });
         return actionID;
@@ -200,7 +217,7 @@ export function registerTradingModal() {
             />
             <Management
               isVisible={tab === `Management`}
-              actions={{ cancelTrade, createTrade }}
+              actions={{ cancelTrade, completeTrade, createTrade }}
               data={{ currencies, inventories, items, musuBalance, trades: myTrades }}
               types={types}
               utils={utils}
