@@ -6,6 +6,7 @@ import { MUSU_INDEX } from 'constants/items';
 import { Account, Item, NullItem } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
+import { ConfirmationData } from '../../Confirmation';
 import { getTypeColor } from '../../helpers';
 import { OrderType } from '../../types';
 
@@ -16,9 +17,7 @@ interface Props {
   controls: {
     isConfirming: boolean;
     setIsConfirming: Dispatch<boolean>;
-    setConfirmTitle: Dispatch<string>;
-    setConfirmContent: Dispatch<React.ReactNode>;
-    setConfirmAction: Dispatch<(params: any) => any>;
+    setConfirmData: Dispatch<ConfirmationData>;
   };
   data: {
     account: Account;
@@ -35,8 +34,7 @@ interface Props {
 export const OpenOffer = (props: Props) => {
   const { actions, controls, data, utils } = props;
   const { cancelTrade } = actions;
-  const { isConfirming, setIsConfirming } = controls;
-  const { setConfirmTitle, setConfirmContent, setConfirmAction } = controls;
+  const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;
   const { getItemByIndex } = utils;
 
@@ -61,11 +59,13 @@ export const OpenOffer = (props: Props) => {
   // HANDLERS
 
   const handleCancel = () => {
-    setIsConfirming(true);
-    setConfirmTitle('Confirm Cancellation');
-    setConfirmContent(getConfirmation());
     const confirmAction = () => cancelTrade(trade);
-    setConfirmAction(() => confirmAction); // strange syntax..
+    setConfirmData({
+      title: 'Confirm Cancellation',
+      content: getConfirmContent(),
+      onConfirm: confirmAction,
+    });
+    setIsConfirming(true);
     playClick();
   };
 
@@ -104,7 +104,7 @@ export const OpenOffer = (props: Props) => {
 
   // create the trade confirmation window content for Canceling an order
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getConfirmation = () => {
+  const getConfirmContent = () => {
     const musuItem = getItemByIndex(MUSU_INDEX);
     const tradeConfig = account.config?.trade;
     const tradeFee = tradeConfig?.fee ?? 0;
@@ -149,6 +149,12 @@ export const OpenOffer = (props: Props) => {
       </ImageContainer>
       <Controls>
         <TagContainer>
+          <Overlay top={0.21} left={0.21}>
+            <Text size={0.6}>You</Text>
+          </Overlay>
+          <Overlay top={0.21} right={0.21}>
+            <Text size={0.6}>{trade.taker?.name ?? '???'}</Text>
+          </Overlay>
           <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
         </TagContainer>
         <Button onClick={handleCancel} disabled={isConfirming}>
@@ -156,7 +162,7 @@ export const OpenOffer = (props: Props) => {
         </Button>
       </Controls>
       <ImageContainer borderLeft>
-        <TextTooltip title='you will receive' text={getBuyTooltip()} alignText='left'>
+        <TextTooltip title='you may receive' text={getBuyTooltip()} alignText='left'>
           <Image src={buyItem.image} />
         </TextTooltip>
         <Overlay bottom={0.15} fullWidth>
@@ -235,6 +241,7 @@ const Button = styled.button`
 `;
 
 const TagContainer = styled.div`
+  position: relative;
   width: 100%;
   flex-grow: 1;
 

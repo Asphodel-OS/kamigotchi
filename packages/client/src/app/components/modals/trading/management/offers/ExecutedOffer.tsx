@@ -6,6 +6,7 @@ import { MUSU_INDEX } from 'constants/items';
 import { Account, Item, NullItem } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
+import { ConfirmationData } from '../../Confirmation';
 import { getTypeColor } from '../../helpers';
 import { OrderType } from '../../types';
 
@@ -16,9 +17,7 @@ interface Props {
   controls: {
     isConfirming: boolean;
     setIsConfirming: Dispatch<boolean>;
-    setConfirmTitle: Dispatch<string>;
-    setConfirmContent: Dispatch<React.ReactNode>;
-    setConfirmAction: Dispatch<(params: any) => any>;
+    setConfirmData: Dispatch<ConfirmationData>;
   };
   data: {
     account: Account;
@@ -35,8 +34,7 @@ interface Props {
 export const ExecutedOffer = (props: Props) => {
   const { actions, controls, data, utils } = props;
   const { completeTrade } = actions;
-  const { isConfirming, setIsConfirming } = controls;
-  const { setConfirmTitle, setConfirmContent, setConfirmAction } = controls;
+  const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;
   const { getItemByIndex } = utils;
 
@@ -61,11 +59,14 @@ export const ExecutedOffer = (props: Props) => {
   // HANDLERS
 
   const handleComplete = () => {
-    setIsConfirming(true);
-    setConfirmTitle('Confirm Completion');
-    setConfirmContent(getConfirmation());
     const confirmAction = () => completeTrade(trade);
-    setConfirmAction(() => confirmAction); // strange syntax..
+    setConfirmData({
+      title: 'Confirm Completion',
+      subTitle: 'congrats on a deal made',
+      content: getConfirmContent(),
+      onConfirm: confirmAction,
+    });
+    setIsConfirming(true);
     playClick();
   };
 
@@ -104,7 +105,7 @@ export const ExecutedOffer = (props: Props) => {
 
   // create the trade confirmation window content for Canceling an order
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getConfirmation = () => {
+  const getConfirmContent = () => {
     const musuItem = getItemByIndex(MUSU_INDEX);
     const tradeConfig = account.config?.trade;
     const taxRate = tradeConfig?.tax.value ?? 0;
@@ -112,8 +113,6 @@ export const ExecutedOffer = (props: Props) => {
 
     return (
       <Paragraph>
-        <Text size={1.2}>{'Congratulations on a deal made.'}</Text>
-
         <Row>
           <Text size={1.2}>{'You will receive ('}</Text>
           <Pairing
@@ -148,7 +147,7 @@ export const ExecutedOffer = (props: Props) => {
   return (
     <Container>
       <ImageContainer borderRight>
-        <TextTooltip title='you are offering' text={getSellTooltip()} alignText='left'>
+        <TextTooltip title='you have offered' text={getSellTooltip()} alignText='left'>
           <Image src={sellItem.image} />
         </TextTooltip>
         <Overlay bottom={0.15} fullWidth>
@@ -157,6 +156,12 @@ export const ExecutedOffer = (props: Props) => {
       </ImageContainer>
       <Controls>
         <TagContainer>
+          <Overlay top={0.21} left={0.21}>
+            <Text size={0.6}>You</Text>
+          </Overlay>
+          <Overlay top={0.21} right={0.21}>
+            <Text size={0.6}>{trade.taker?.name ?? '???'}</Text>
+          </Overlay>
           <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
         </TagContainer>
         <Button onClick={handleComplete} disabled={isConfirming}>
@@ -243,6 +248,7 @@ const Button = styled.button`
 `;
 
 const TagContainer = styled.div`
+  position: relative;
   width: 100%;
   flex-grow: 1;
 

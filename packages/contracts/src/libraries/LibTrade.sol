@@ -105,6 +105,7 @@ library LibTrade {
   function execute(IWorld world, IUintComp comps, uint256 id, uint256 takerID) internal {
     executeBuyOrder(comps, id, takerID);
     executeSellOrder(comps, id, takerID);
+    IdTargetComponent(getAddrByID(comps, IdTargetCompID)).set(id, takerID);
     StateComponent(getAddrByID(comps, StateCompID)).set(id, string("EXECUTED"));
   }
 

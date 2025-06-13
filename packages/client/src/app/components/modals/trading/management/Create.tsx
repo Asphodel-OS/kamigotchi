@@ -19,7 +19,9 @@ import { Account, Inventory } from 'network/shapes';
 import { Item, NullItem } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
+import { playClick } from 'utils/sounds';
 import { abbreviateString } from 'utils/strings';
+import { ConfirmationData } from '../Confirmation';
 import { CreateMode } from '../types';
 
 interface Props {
@@ -34,9 +36,7 @@ interface Props {
   controls: {
     isConfirming: boolean;
     setIsConfirming: Dispatch<boolean>;
-    setConfirmTitle: Dispatch<string>;
-    setConfirmContent: Dispatch<React.ReactNode>;
-    setConfirmAction: Dispatch<(params: any) => any>;
+    setConfirmData: Dispatch<ConfirmationData>;
   };
   data: {
     account: Account;
@@ -55,7 +55,7 @@ export const Create = (props: Props) => {
   const { actions, controls, data, types, utils } = props;
   const { createTrade } = actions;
   const { isConfirming, setIsConfirming } = controls;
-  const { setConfirmTitle, setConfirmContent, setConfirmAction } = controls;
+  const { setConfirmData } = controls;
   const { account, currencies, items } = data;
   const { ActionComp } = types;
   const { entityToIndex } = utils;
@@ -141,11 +141,14 @@ export const Create = (props: Props) => {
 
   // handle prompting for confirmation with trade creation
   const handleCreatePrompt = () => {
-    setIsConfirming(true);
-    setConfirmTitle('Confirm Creation');
-    setConfirmContent(getConfirmation());
     const confirmAction = () => handleTrade(item, itemAmt, currency, currencyAmt);
-    setConfirmAction(() => confirmAction); // strange syntax..
+    setConfirmData({
+      title: 'Confirm Creation',
+      content: getConfirmContent(),
+      onConfirm: confirmAction,
+    });
+    setIsConfirming(true); // TODO: this is a hack to get the confirmation to show
+    playClick();
   };
 
   /////////////////
@@ -198,7 +201,7 @@ export const Create = (props: Props) => {
 
   // create the trade confirmation window content
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getConfirmation = () => {
+  const getConfirmContent = () => {
     const buyItem = mode === CreateMode.BUY ? item : currency;
     const buyAmt = mode === CreateMode.BUY ? itemAmt : currencyAmt;
     const sellItem = mode === CreateMode.BUY ? currency : item;
@@ -240,7 +243,10 @@ export const Create = (props: Props) => {
             text={tradeFee.toLocaleString()}
             icon={currency.image}
             scale={0.9}
-            tooltip={[`Non-refundable (price wisely)`, `Deducted from your inventory at creation.`]}
+            tooltip={[
+              `Non-refundable (trade responsibly)`,
+              `Deducted from your inventory upon creation.`,
+            ]}
           />
           <Text size={0.9}>{`)`}</Text>
         </Row>

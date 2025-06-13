@@ -6,6 +6,7 @@ import { EmptyText, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
+import { ConfirmationData } from '../../Confirmation';
 import { OrderType } from '../../types';
 import { ExecutedOffer } from './ExecutedOffer';
 import { OpenOffer } from './OpenOffer';
@@ -18,9 +19,7 @@ interface Props {
   controls: {
     isConfirming: boolean;
     setIsConfirming: Dispatch<boolean>;
-    setConfirmTitle: Dispatch<string>;
-    setConfirmContent: Dispatch<React.ReactNode>;
-    setConfirmAction: Dispatch<(params: any) => any>;
+    setConfirmData: Dispatch<ConfirmationData>;
   };
   data: {
     account: Account;
@@ -31,6 +30,8 @@ interface Props {
   };
 }
 
+// displays the player's open and executed trade offers
+// TODO: display the 'Executable' offers (where the player is the Taker) as well
 export const Offers = (props: Props) => {
   const { actions, controls, data, utils } = props;
   const { account, trades } = data;

@@ -1,4 +1,4 @@
-import { StateColors, TypeColors } from './constatnts';
+import { StateColors, TypeColors } from './constants';
 import { OrderState, OrderType } from './types';
 
 export const getTypeColor = (type: OrderType): string => {

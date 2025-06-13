@@ -2,8 +2,17 @@ import styled from 'styled-components';
 
 import { IconButton, Overlay, Text } from 'app/components/library';
 
+// for defining state variables
+export interface ConfirmationData {
+  title?: string;
+  subTitle?: string;
+  content: React.ReactNode; // content to be displayed
+  onConfirm: () => void;
+}
+
 interface Props {
   title?: string;
+  subTitle?: string;
   children: React.ReactNode; // content to be displayed
   onConfirm: () => void;
   controls: {
@@ -12,9 +21,8 @@ interface Props {
   };
 }
 
-//
 export const Confirmation = (props: Props) => {
-  const { title, children, onConfirm, controls } = props;
+  const { title, subTitle, children, onConfirm, controls } = props;
   const { isOpen, close } = controls;
 
   const handleConfirm = () => {
@@ -26,6 +34,7 @@ export const Confirmation = (props: Props) => {
     <Overlay fullHeight fullWidth isHidden={!isOpen}>
       <Container>
         <Text size={1.8}>{title ?? 'Pls Confirm'}</Text>
+        <Text size={1.2}>{subTitle}</Text>
         {children}
         <Row>
           <IconButton text='Cancel' onClick={close} scale={3} />

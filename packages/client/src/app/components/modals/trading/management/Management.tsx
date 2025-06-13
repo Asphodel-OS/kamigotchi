@@ -7,7 +7,7 @@ import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
 import { useState } from 'react';
-import { Confirmation } from '../Confirmation';
+import { Confirmation, ConfirmationData } from '../Confirmation';
 import { Create } from './Create';
 import { Offers } from './offers/Offers';
 
@@ -42,19 +42,21 @@ interface Props {
 export const Management = (props: Props) => {
   const { isVisible, actions, data, types, utils } = props;
   const [isConfirming, setIsConfirming] = useState(false);
-  const [confirmContent, setConfirmContent] = useState<React.ReactNode>(<></>);
-  const [confirmAction, setConfirmAction] = useState<() => void>(() => null);
-  const [confirmTitle, setConfirmTitle] = useState<string>('');
+  const [confirmData, setConfirmData] = useState<ConfirmationData>({
+    content: <></>,
+    onConfirm: () => null,
+  });
 
   return (
     <Content isVisible={isVisible}>
       <Overlay fullHeight fullWidth>
         <Confirmation
-          title={confirmTitle}
+          title={confirmData.title}
+          subTitle={confirmData.subTitle}
           controls={{ isOpen: isConfirming, close: () => setIsConfirming(false) }}
-          onConfirm={confirmAction}
+          onConfirm={confirmData.onConfirm}
         >
-          {confirmContent}
+          {confirmData.content}
         </Confirmation>
       </Overlay>
       <Create
@@ -62,9 +64,7 @@ export const Management = (props: Props) => {
         controls={{
           isConfirming,
           setIsConfirming,
-          setConfirmTitle,
-          setConfirmContent,
-          setConfirmAction,
+          setConfirmData,
         }}
         data={data}
         types={types}
@@ -75,9 +75,7 @@ export const Management = (props: Props) => {
         controls={{
           isConfirming,
           setIsConfirming,
-          setConfirmTitle,
-          setConfirmContent,
-          setConfirmAction,
+          setConfirmData,
         }}
         data={data}
         utils={utils}

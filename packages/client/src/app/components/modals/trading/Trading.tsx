@@ -43,6 +43,7 @@ export function registerTradingModal() {
           const { world, components: comps, actions } = network;
           const accountEntity = queryAccountFromEmbedded(network);
           const accountOptions = { live: 1, config: 3600 };
+          const tradeOptions = { state: 2, taker: 2 };
 
           return {
             network,
@@ -56,7 +57,7 @@ export function registerTradingModal() {
               entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
               getAllItems: () => getAllItems(world, comps),
               getAccount: () => getAccount(world, comps, accountEntity, accountOptions),
-              getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, { state: 2 }),
+              getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, tradeOptions),
               queryTrades: () => queryTrades(comps),
               getItemByIndex: (index: number) => getItemByIndex(world, comps, index),
               getMusuBalance: () => getMusuBalance(world, comps, accountEntity),

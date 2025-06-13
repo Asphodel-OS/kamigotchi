@@ -8,6 +8,7 @@ import { getOrder } from './functions';
 
 export const TradeCache = new Map<EntityIndex, Trade>();
 const StateUpdateTs = new Map<EntityIndex, number>();
+const TakerUpdateTs = new Map<EntityIndex, number>();
 
 /// process all static data on for a Trade
 export const process = (world: World, comps: Components, entity: EntityIndex) => {
@@ -29,6 +30,7 @@ export const process = (world: World, comps: Components, entity: EntityIndex) =>
 
 export interface RefreshOptions {
   state?: number;
+  taker?: number;
 }
 
 // get a Trade from the cache and optionally update any changing data
@@ -51,6 +53,16 @@ export const get = (
     if (updateDelta > options.state) {
       trade.state = getState(comps, entity);
       StateUpdateTs.set(entity, now);
+    }
+  }
+
+  if (options.taker != undefined) {
+    const updateTs = TakerUpdateTs.get(entity) ?? 0;
+    const updateDelta = (now - updateTs) / 1000; // convert to seconds
+    if (updateDelta > options.taker) {
+      const takerID = getTargetID(comps, entity, false);
+      if (takerID) trade.taker = getAccount(world, comps, world.entityToIndex.get(takerID)!);
+      TakerUpdateTs.set(entity, now);
     }
   }
 
