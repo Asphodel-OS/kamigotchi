@@ -10,12 +10,3 @@ export const TypeColors = {
   Barter: BARTER_COLOR,
   Forex: FOREX_COLOR,
 };
-
-// state colors
-const OPEN_COLOR = 'rgb(150, 150, 222)';
-const EXECUTED_COLOR = 'rgb(139, 244, 192)';
-
-export const StateColors = {
-  OPEN: OPEN_COLOR,
-  EXECUTED: EXECUTED_COLOR,
-};

@@ -30,10 +30,10 @@ interface Props {
   };
 }
 
-// represents the player's Buy/Sell Orders that are in OPEN state
+// represents the player's Buy/Sell Orders that are in PENDING state
 // NOTE: only supports simple (single item) trades against musu atm
 // TODO: add support for Trades you're the assigned Taker for (make executable)
-export const OpenOffer = (props: Props) => {
+export const PendingOffer = (props: Props) => {
   const { actions, controls, data, utils } = props;
   const { cancelTrade } = actions;
   const { isConfirming, setIsConfirming, setConfirmData } = controls;

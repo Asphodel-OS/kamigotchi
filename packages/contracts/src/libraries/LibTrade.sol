@@ -70,7 +70,7 @@ library LibTrade {
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
     LibEntityType.set(comps, id, "TRADE");
-    StateComponent(getAddrByID(comps, StateCompID)).set(id, string("OPEN"));
+    StateComponent(getAddrByID(comps, StateCompID)).set(id, string("PENDING"));
     IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).set(id, accID);
     if (targetID != 0) IdTargetComponent(getAddrByID(comps, IdTargetCompID)).set(id, targetID);
 

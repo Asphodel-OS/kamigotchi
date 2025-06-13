@@ -18,7 +18,7 @@ contract TradeExecuteSystem is System {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyRoom(components, accID);
     LibTrade.verifyIsTrade(components, id);
-    LibTrade.verifyState(components, id, "OPEN");
+    LibTrade.verifyState(components, id, "PENDING");
     LibTrade.verifyTaker(components, id, accID);
     LibTrade.verifyNotMaker(components, id, accID);
 

@@ -9,7 +9,7 @@ import { Trade } from 'network/shapes/Trade/types';
 import { ConfirmationData } from '../../Confirmation';
 import { OrderType, TabType } from '../../types';
 import { ExecutedOffer } from './ExecutedOffer';
-import { OpenOffer } from './OpenOffer';
+import { PendingOffer } from './PendingOffer';
 
 interface Props {
   actions: {
@@ -46,7 +46,7 @@ export const Offers = (props: Props) => {
   // keep the list of open and executed trades updated'
   useEffect(() => {
     if (!modals.trading || tab !== `Management`) return;
-    const openTrades = trades.filter((trade) => trade.state === 'OPEN');
+    const openTrades = trades.filter((trade) => trade.state === 'PENDING');
     const executedTrades = trades.filter((trade) => trade.state === 'EXECUTED');
     setOpenTrades(openTrades);
     setExecutedTrades(executedTrades);
@@ -84,7 +84,7 @@ export const Offers = (props: Props) => {
           </Text>
         )}
         {openTrades.map((trade, i) => (
-          <OpenOffer
+          <PendingOffer
             key={i}
             actions={actions}
             controls={controls}

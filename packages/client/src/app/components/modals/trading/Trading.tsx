@@ -121,7 +121,7 @@ export function registerTradingModal() {
         const trades = allTrades.filter((trade) => {
           const isNotMaker = trade.maker?.entity !== account.entity;
           const isNotTaker = trade.taker?.entity !== account.entity;
-          const isOpen = trade.state === 'OPEN';
+          const isOpen = trade.state === 'PENDING';
           return isNotMaker && isNotTaker && isOpen;
         });
         setMyTrades(myTrades);

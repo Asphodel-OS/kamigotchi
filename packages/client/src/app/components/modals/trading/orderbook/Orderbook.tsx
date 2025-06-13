@@ -5,7 +5,7 @@ import { Account, Item, NullItem } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
 import { OrderType } from '../types';
 import { Controls } from './Controls';
-import { Offers } from './Offers';
+import { Offers } from './offers/Offers';
 
 interface Props {
   actions: {

@@ -1,7 +1,7 @@
 import { EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getBuyAnchor, getSellAnchor, getTrade, Trade } from 'network/shapes/Trade';
+import { getBuyAnchor, getSellAnchor, getTrade, Trade, TradeState } from 'network/shapes/Trade';
 import { getOwnsTradeID, getState, getTargetID } from 'network/shapes/utils/component';
 import { getAccount } from '../account';
 import { getOrder } from './functions';
@@ -51,7 +51,7 @@ export const get = (
     const updateTs = StateUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.state) {
-      trade.state = getState(comps, entity);
+      trade.state = getState(comps, entity) as TradeState;
       StateUpdateTs.set(entity, now);
     }
   }

@@ -5,7 +5,7 @@ import { EmptyText } from 'app/components/library';
 import { Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
 import { useEffect, useState } from 'react';
-import { OrderType } from '../types';
+import { OrderType } from '../../types';
 import { BuyOrder } from './BuyOrder';
 import { SellOrder } from './SellOrder';
 

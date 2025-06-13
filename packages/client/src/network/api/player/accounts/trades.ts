@@ -35,6 +35,7 @@ export const tradesAPI = (systems: any) => {
    * @notice execute a Trade.
    * @dev exchanges items between the caller and the Trade entity
    * @dev cannot be called by the Maker. must be called by listed Taker if one is specified
+   * @dev Trade must be in PENDING state
    * @param tradeID entityID of the trade
    */
   const execute = (tradeID: BigNumberish) => {
@@ -54,7 +55,7 @@ export const tradesAPI = (systems: any) => {
   /**
    * @notice cancel a Trade.
    * @dev returns SellOrder items to the Maker
-   * @dev can only be called by the Maker. Trade must be in OPEN state
+   * @dev can only be called by the Maker. Trade must be in PENDING state
    * @param tradeID entityID of the trade
    */
   const cancel = (tradeID: BigNumberish) => {
