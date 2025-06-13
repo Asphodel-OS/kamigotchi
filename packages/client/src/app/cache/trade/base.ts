@@ -4,7 +4,7 @@ import { Components } from 'network/';
 import { getBuyAnchor, getSellAnchor, getTrade, Trade, TradeState } from 'network/shapes/Trade';
 import { getOwnsTradeID, getState, getTargetID } from 'network/shapes/utils/component';
 import { getAccount } from '../account';
-import { getOrder } from './functions';
+import { getOrder } from './helpers';
 
 export const TradeCache = new Map<EntityIndex, Trade>();
 const StateUpdateTs = new Map<EntityIndex, number>();

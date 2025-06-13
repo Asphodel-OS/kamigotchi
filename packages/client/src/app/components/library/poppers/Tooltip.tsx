@@ -11,11 +11,12 @@ interface Props {
   color?: string;
   content: React.ReactNode;
   isDisabled: boolean;
+  fullWidth?: boolean;
 }
 
 export const Tooltip = (props: Props) => {
-  const { children, grow, direction, delay, maxWidth, color, content, isDisabled } = props;
-
+  const { children, grow, direction, delay, color, content, isDisabled } = props;
+  const { fullWidth, maxWidth } = props;
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -70,6 +71,7 @@ export const Tooltip = (props: Props) => {
     <Container
       flexGrow={grow ? '1' : '0'}
       direction={direction}
+      fullWidth={fullWidth}
       disabled={isDisabled}
       onMouseEnter={(e) => handleMouseEnter(e)}
       onMouseLeave={() => {
@@ -102,11 +104,13 @@ const Container = styled.div<{
   disabled?: boolean;
   direction?: string;
   ref?: any;
+  fullWidth?: boolean;
 }>`
   display: flex;
   flex-direction: ${({ direction }) => direction ?? 'column'};
   flex-grow: ${({ flexGrow }) => flexGrow};
   cursor: ${({ disabled }) => (disabled ? 'cursor' : 'help')};
+  ${({ fullWidth }) => fullWidth && 'width: 100%;'}
 `;
 
 interface PopOverProps {

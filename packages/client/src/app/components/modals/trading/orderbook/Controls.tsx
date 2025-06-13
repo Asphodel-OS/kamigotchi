@@ -1,6 +1,7 @@
 import { Dispatch } from 'react';
 import styled from 'styled-components';
 
+import { Trade, TradeType } from 'app/cache/trade';
 import {
   IconButton,
   IconListButton,
@@ -10,13 +11,11 @@ import {
 } from 'app/components/library';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { Item, NullItem } from 'network/shapes';
-import { Trade } from 'network/shapes/Trade';
-import { OrderType } from '../types';
 
 interface Props {
   controls: {
-    typeFilter: OrderType;
-    setTypeFilter: Dispatch<OrderType>;
+    typeFilter: TradeType;
+    setTypeFilter: Dispatch<TradeType>;
     sort: string;
     setSort: Dispatch<string>;
     ascending: boolean;
@@ -73,6 +72,8 @@ export const Controls = (props: Props) => {
             options={[
               { text: 'Buy', onClick: () => setTypeFilter('Buy') },
               { text: 'Sell', onClick: () => setTypeFilter('Sell') },
+              { text: 'Barter', onClick: () => setTypeFilter('Barter') },
+              { text: 'Forex', onClick: () => setTypeFilter('Forex') },
             ]}
           />
         </Row>

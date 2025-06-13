@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { Trade, TradeType } from 'app/cache/trade';
 import { Account, Item, NullItem } from 'network/shapes';
-import { Trade } from 'network/shapes/Trade/types';
-import { OrderType } from '../types';
+import { ConfirmationData } from '../Confirmation';
 import { Controls } from './Controls';
 import { Offers } from './offers/Offers';
 
 interface Props {
   actions: {
+    cancelTrade: (trade: Trade) => void;
     executeTrade: (trade: Trade) => void;
   };
   controls: {
@@ -30,7 +31,11 @@ export const Orderbook = (props: Props) => {
   const [sort, setSort] = useState<string>('Price'); // Price, Owner
   const [ascending, setAscending] = useState<boolean>(true);
   const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
-  const [typeFilter, setTypeFilter] = useState<OrderType>('Buy');
+  const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
+  const [confirmData, setConfirmData] = useState<ConfirmationData>({
+    content: <></>,
+    onConfirm: () => null,
+  });
 
   return (
     <Container isVisible={tab === `Orderbook`}>
@@ -48,7 +53,7 @@ export const Orderbook = (props: Props) => {
         data={data}
       />
       <Offers
-        actions={{ executeTrade }}
+        actions={actions}
         controls={{ typeFilter, sort, ascending, itemFilter }}
         data={data}
       />

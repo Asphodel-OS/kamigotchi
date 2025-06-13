@@ -1,6 +1,7 @@
 import { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { TradeType } from 'app/cache/trade';
 import { Overlay, Pairing, Text, TextTooltip } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item, NullItem } from 'network/shapes';
@@ -8,7 +9,6 @@ import { Trade, TradeOrder } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
 import { ConfirmationData } from '../../Confirmation';
 import { getTypeColor } from '../../helpers';
-import { OrderType } from '../../types';
 
 interface Props {
   actions: {
@@ -22,7 +22,7 @@ interface Props {
   data: {
     account: Account;
     trade: Trade;
-    type: OrderType;
+    type: TradeType;
   };
   utils: {
     getItemByIndex: (index: number) => Item;
@@ -94,6 +94,19 @@ export const ExecutedOffer = (props: Props) => {
     return tooltip;
   };
 
+  const getActionTooltip = () => {
+    if (isMaker()) return ['Complete this trade'];
+    return [
+      'You Executed this Trade as the Taker',
+      'No further action is required on your part',
+      `It'll disappear when ${trade.taker?.name ?? '???'} completes it`,
+    ];
+  };
+
+  const isMaker = () => {
+    return trade.maker?.entity === account.entity;
+  };
+
   /////////////////
   // DISPLAY
 
@@ -162,9 +175,11 @@ export const ExecutedOffer = (props: Props) => {
           </Overlay>
           <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
         </TagContainer>
-        <Button onClick={handleComplete} disabled={isConfirming}>
-          Complete
-        </Button>
+        <TextTooltip text={getActionTooltip()} fullWidth>
+          <Button onClick={handleComplete} disabled={isConfirming || !isMaker()}>
+            {isMaker() ? 'Complete' : '.'}
+          </Button>
+        </TextTooltip>
       </Controls>
       <ImageContainer borderLeft>
         <TextTooltip

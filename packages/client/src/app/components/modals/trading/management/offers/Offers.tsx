@@ -1,13 +1,12 @@
 import { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { isItemCurrency } from 'app/cache/item';
+import { getTradeType, Trade } from 'app/cache/trade';
 import { EmptyText, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Account, Item } from 'network/shapes';
-import { Trade } from 'network/shapes/Trade/types';
 import { ConfirmationData } from '../../Confirmation';
-import { OrderType, TabType } from '../../types';
+import { TabType } from '../../types';
 import { ExecutedOffer } from './ExecutedOffer';
 import { PendingOffer } from './PendingOffer';
 
@@ -51,25 +50,6 @@ export const Offers = (props: Props) => {
     setOpenTrades(openTrades);
     setExecutedTrades(executedTrades);
   }, [trades, modals.trading, tab]);
-
-  // determine what kind of trade this is to the player
-  // TODO: check is simple atm. refine it over time
-  const getTradeType = (trade: Trade): OrderType => {
-    const buyOrder = trade.buyOrder;
-    const sellOrder = trade.sellOrder;
-    if (!buyOrder || !sellOrder) return '???';
-
-    const buyOnlyMusu = buyOrder.items.every((item) => isItemCurrency(item));
-    const sellOnlyMusu = sellOrder.items.every((item) => isItemCurrency(item));
-    const buyHasMusu = buyOrder.items.some((item) => isItemCurrency(item));
-    const sellHasMusu = sellOrder.items.some((item) => isItemCurrency(item));
-
-    if (!buyHasMusu && sellOnlyMusu) return 'Buy';
-    if (!sellHasMusu && buyOnlyMusu) return 'Sell';
-    if (buyOnlyMusu && sellOnlyMusu) return 'Forex';
-    if (!buyHasMusu && !sellHasMusu) return 'Barter';
-    return '???';
-  };
 
   /////////////////
   // DISPLAY

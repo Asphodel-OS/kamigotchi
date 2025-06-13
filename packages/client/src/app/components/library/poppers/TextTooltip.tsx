@@ -14,6 +14,7 @@ interface Props {
   size?: number;
   alignText?: 'left' | 'right' | 'center';
   color?: string;
+  fullWidth?: boolean;
 }
 
 // example how of to pass icons to the tooltip:
@@ -25,7 +26,8 @@ interface Props {
 
 export const TextTooltip = (props: Props) => {
   const { children, grow, direction } = props;
-  const { text, title, alignText, maxWidth, color, delay } = props;
+  const { text, title, alignText, color, delay } = props;
+  const { maxWidth, fullWidth } = props;
   const textSize = props.size ?? 0.75;
 
   return (
@@ -34,6 +36,7 @@ export const TextTooltip = (props: Props) => {
       direction={direction}
       delay={delay}
       maxWidth={maxWidth}
+      fullWidth={fullWidth}
       color={color}
       isDisabled={text.every((entry) => entry === '' || entry === null)}
       content={
