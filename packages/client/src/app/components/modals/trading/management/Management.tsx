@@ -1,13 +1,12 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { Overlay } from 'app/components/library';
 import { Account } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
-import { useState } from 'react';
-import { Confirmation, ConfirmationData } from '../Confirmation';
+import { Dispatch } from 'react';
+import { ConfirmationData } from '../Confirmation';
 import { TabType } from '../types';
 import { Create } from './Create';
 import { Offers } from './offers/Offers';
@@ -26,6 +25,9 @@ interface Props {
   };
   controls: {
     tab: TabType;
+    isConfirming: boolean;
+    setIsConfirming: Dispatch<boolean>;
+    setConfirmData: Dispatch<ConfirmationData>;
   };
   data: {
     account: Account;
@@ -46,46 +48,11 @@ interface Props {
 
 export const Management = (props: Props) => {
   const { isVisible, actions, controls, data, types, utils } = props;
-  const [isConfirming, setIsConfirming] = useState(false);
-  const [confirmData, setConfirmData] = useState<ConfirmationData>({
-    content: <></>,
-    onConfirm: () => null,
-  });
 
   return (
     <Content isVisible={isVisible}>
-      <Overlay fullHeight fullWidth>
-        <Confirmation
-          title={confirmData.title}
-          subTitle={confirmData.subTitle}
-          controls={{ isOpen: isConfirming, close: () => setIsConfirming(false) }}
-          onConfirm={confirmData.onConfirm}
-        >
-          {confirmData.content}
-        </Confirmation>
-      </Overlay>
-      <Create
-        actions={actions}
-        controls={{
-          isConfirming,
-          setIsConfirming,
-          setConfirmData,
-        }}
-        data={data}
-        types={types}
-        utils={utils}
-      />
-      <Offers
-        actions={actions}
-        controls={{
-          ...controls,
-          isConfirming,
-          setIsConfirming,
-          setConfirmData,
-        }}
-        data={data}
-        utils={utils}
-      />
+      <Create actions={actions} controls={controls} data={data} types={types} utils={utils} />
+      <Offers actions={actions} controls={controls} data={data} utils={utils} />
     </Content>
   );
 };

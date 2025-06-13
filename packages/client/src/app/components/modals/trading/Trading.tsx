@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { getAccount } from 'app/cache/account';
 import { getItemByIndex } from 'app/cache/item';
 import { getTrade } from 'app/cache/trade';
-import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
@@ -15,6 +15,7 @@ import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAllItems, getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
+import { Confirmation, ConfirmationData } from './Confirmation';
 import { Management } from './management';
 import { Orderbook } from './orderbook';
 import { Tabs } from './Tabs';
@@ -79,6 +80,11 @@ export function registerTradingModal() {
 
       const [tab, setTab] = useState<TabType>('Orderbook');
       const [tick, setTick] = useState(Date.now());
+      const [isConfirming, setIsConfirming] = useState(false);
+      const [confirmData, setConfirmData] = useState<ConfirmationData>({
+        content: <></>,
+        onConfirm: () => null,
+      });
 
       // time trigger to use for periodic refreshes
       useEffect(() => {
@@ -207,17 +213,27 @@ export function registerTradingModal() {
 
       return (
         <ModalWrapper id='trading' header={<ModalHeader title='Trade' />} canExit noPadding>
+          <Overlay fullHeight fullWidth passthrough>
+            <Confirmation
+              title={confirmData.title}
+              subTitle={confirmData.subTitle}
+              controls={{ isOpen: isConfirming, close: () => setIsConfirming(false) }}
+              onConfirm={confirmData.onConfirm}
+            >
+              {confirmData.content}
+            </Confirmation>
+          </Overlay>
           <Tabs tab={tab} setTab={setTab} />
           <Content>
             <Orderbook
               actions={{ cancelTrade, executeTrade }}
-              controls={{ tab }}
+              controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
               data={{ account, items, trades }}
               isVisible={tab === `Orderbook`}
             />
             <Management
               actions={{ cancelTrade, completeTrade, createTrade, executeTrade }}
-              controls={{ tab }}
+              controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
               data={{
                 account,
                 currencies,

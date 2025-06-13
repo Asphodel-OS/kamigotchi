@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { Dispatch, useState } from 'react';
 import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
 import { Account, Item, NullItem } from 'network/shapes';
 import { ConfirmationData } from '../Confirmation';
+import { TabType } from '../types';
 import { Controls } from './Controls';
 import { Offers } from './offers/Offers';
 
@@ -13,7 +14,10 @@ interface Props {
     executeTrade: (trade: Trade) => void;
   };
   controls: {
-    tab: string;
+    tab: TabType;
+    isConfirming: boolean;
+    setIsConfirming: Dispatch<boolean>;
+    setConfirmData: Dispatch<ConfirmationData>;
   };
   data: {
     account: Account;
@@ -25,17 +29,12 @@ interface Props {
 
 export const Orderbook = (props: Props) => {
   const { actions, controls, data } = props;
-  const { executeTrade } = actions;
   const { tab } = controls;
 
   const [sort, setSort] = useState<string>('Price'); // Price, Owner
   const [ascending, setAscending] = useState<boolean>(true);
   const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
   const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
-  const [confirmData, setConfirmData] = useState<ConfirmationData>({
-    content: <></>,
-    onConfirm: () => null,
-  });
 
   return (
     <Container isVisible={tab === `Orderbook`}>
