@@ -4,11 +4,12 @@ import { Components } from 'network/components';
 import { Account, getAccountByID } from '../Account';
 import { getItemByIndex, Item } from '../Item';
 import { getEntityByHash } from '../utils';
-import { getOwnsTradeID, getState, getTargetID } from '../utils/component';
+import { getEntityType, getOwnsTradeID, getState, getTargetID } from '../utils/component';
 
 export interface Trade {
   id: EntityID;
   entity: EntityIndex;
+  ObjectType: string;
   state: string;
   maker?: Account; // trade creator
   taker?: Account; // optional (only if designated taker defined)
@@ -27,6 +28,7 @@ interface Options {
   taker: boolean;
 }
 
+// get a Trade Object
 export const getTrade = (
   world: World,
   comps: Components,
@@ -37,6 +39,7 @@ export const getTrade = (
   const trade: Trade = {
     id,
     entity,
+    ObjectType: getEntityType(comps, entity),
     state: getState(comps, entity),
   };
 
@@ -54,14 +57,17 @@ export const getTrade = (
   return trade;
 };
 
+// get a Buy Order Object, identified through the Trade ID
 export const getBuyOrder = (world: World, comps: Components, tradeID: EntityID): TradeOrder => {
   return getOrder(world, comps, getBuyAnchor(world, tradeID));
 };
 
+// get a Sell Order Object, identified through the Trade ID
 export const getSellOrder = (world: World, comps: Components, tradeID: EntityID): TradeOrder => {
   return getOrder(world, comps, getSellAnchor(world, tradeID));
 };
 
+// get an Order Object
 const getOrder = (world: World, comps: Components, entity: EntityIndex | undefined): TradeOrder => {
   if (!entity) return { items: [], amounts: [] };
 

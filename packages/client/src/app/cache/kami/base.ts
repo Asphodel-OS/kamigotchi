@@ -104,16 +104,6 @@ export const get = (
     }
   }
 
-  // if (options.battles != undefined) {
-  //   const updateTs = BattlesUpdateTs.get(entity) ?? 0;
-  //   const updateDelta = (now - updateTs) / 1000; // convert to seconds
-  //   if (updateDelta > options.battles) {
-  //     if (debug) console.log(`  updating kami battles`);
-  //     kami.battles = getKamiBattles(world, components, entity);
-  //     BattlesUpdateTs.set(entity, now);
-  //   }
-  // }
-
   // requires keccak id and trad querying, followed by component updates
   if (options.bonuses != undefined) {
     const updateTs = BonusesUpdateTs.get(entity) ?? 0;

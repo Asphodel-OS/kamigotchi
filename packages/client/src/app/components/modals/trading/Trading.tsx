@@ -39,8 +39,9 @@ export function registerTradingModal() {
       interval(1000).pipe(
         map(() => {
           const { network } = layers;
-          const { world, components, actions } = network;
+          const { world, components: comps, actions } = network;
           const accountEntity = queryAccountFromEmbedded(network);
+
           return {
             network,
             data: { accountEntity },
@@ -49,12 +50,11 @@ export function registerTradingModal() {
             },
             utils: {
               entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
-              getAllItems: () => getAllItems(world, components),
-              getInventories: () => getAccountInventories(world, components, accountEntity),
-              getTrade: (entity: EntityIndex) => getTrade(world, components, entity),
-              queryTrades: () => queryTrades(components),
-
-              getMusuBalance: () => getMusuBalance(world, components, accountEntity),
+              getAllItems: () => getAllItems(world, comps),
+              getInventories: () => getAccountInventories(world, comps, accountEntity),
+              getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, { state: 3333 }),
+              queryTrades: () => queryTrades(comps),
+              getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
             },
           };
         })
