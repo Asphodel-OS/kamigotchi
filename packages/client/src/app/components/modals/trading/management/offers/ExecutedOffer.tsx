@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Overlay, Pairing, Text, TextTooltip } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item, NullItem } from 'network/shapes';
-import { Trade } from 'network/shapes/Trade';
+import { Trade, TradeOrder } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
 import { ConfirmationData } from '../../Confirmation';
 import { getTypeColor } from '../../helpers';
@@ -31,6 +31,7 @@ interface Props {
 
 // represents the player's Buy/Sell Orders that are in EXECUTED state
 // NOTE: only supports simple (single item) trades against musu atm
+// TODO: add support for Trades you're the Taker for (disable action)
 export const ExecutedOffer = (props: Props) => {
   const { actions, controls, data, utils } = props;
   const { completeTrade } = actions;
@@ -73,29 +74,22 @@ export const ExecutedOffer = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // you intend to receive...
-  const getBuyTooltip = (): string[] => {
-    const tooltip = [];
-    const order = trade.buyOrder;
-    if (!order) return [];
-
-    for (let i = 0; i < order.items.length; i++) {
-      const item = order.items[i];
-      const amt = order.amounts[i];
-      tooltip.push(`• ${amt.toLocaleString()}x ${item.name}`);
-    }
-    return tooltip;
+  // determine the name to display for an Account
+  const getNameDisplay = (trader?: Account): string => {
+    if (!trader || !trader.name) return '???';
+    if (trader.entity === account.entity) return 'You';
+    return trader.name;
   };
 
-  const getSellTooltip = (): string[] => {
+  // tooltip for list of order items/amts
+  const getOrderTooltip = (order?: TradeOrder): string[] => {
     const tooltip = [];
-    const order = trade.sellOrder;
     if (!order) return [];
 
     for (let i = 0; i < order.items.length; i++) {
       const item = order.items[i];
       const amt = order.amounts[i];
-      tooltip.push(`• ${amt.toLocaleString()}x ${item.name}`);
+      tooltip.push(`• ${amt.toLocaleString()} x ${item.name}`);
     }
     return tooltip;
   };
@@ -118,7 +112,7 @@ export const ExecutedOffer = (props: Props) => {
           <Pairing
             text={(buyAmt - tax).toLocaleString()}
             icon={buyItem.image}
-            tooltip={getSellTooltip()}
+            tooltip={getOrderTooltip(trade.buyOrder)}
           />
           <Text size={1.2}>{`).`}</Text>
         </Row>
@@ -147,7 +141,11 @@ export const ExecutedOffer = (props: Props) => {
   return (
     <Container>
       <ImageContainer borderRight>
-        <TextTooltip title='you have offered' text={getSellTooltip()} alignText='left'>
+        <TextTooltip
+          title='you have offered..'
+          text={getOrderTooltip(trade.sellOrder)}
+          alignText='left'
+        >
           <Image src={sellItem.image} />
         </TextTooltip>
         <Overlay bottom={0.15} fullWidth>
@@ -157,10 +155,10 @@ export const ExecutedOffer = (props: Props) => {
       <Controls>
         <TagContainer>
           <Overlay top={0.21} left={0.21}>
-            <Text size={0.6}>You</Text>
+            <Text size={0.6}>{getNameDisplay(trade.maker)}</Text>
           </Overlay>
           <Overlay top={0.21} right={0.21}>
-            <Text size={0.6}>{trade.taker?.name ?? '???'}</Text>
+            <Text size={0.6}>{getNameDisplay(trade.taker)}</Text>
           </Overlay>
           <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
         </TagContainer>
@@ -169,7 +167,11 @@ export const ExecutedOffer = (props: Props) => {
         </Button>
       </Controls>
       <ImageContainer borderLeft>
-        <TextTooltip title='you will receive' text={getBuyTooltip()} alignText='left'>
+        <TextTooltip
+          title='you can claim..'
+          text={getOrderTooltip(trade.buyOrder)}
+          alignText='left'
+        >
           <Image src={buyItem.image} />
         </TextTooltip>
         <Overlay bottom={0.15} fullWidth>

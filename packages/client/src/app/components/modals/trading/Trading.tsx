@@ -5,14 +5,12 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount } from 'app/cache/account';
-import { cleanInventories } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { getTrade } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
-import { Inventory } from 'network/shapes';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAllItems, getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades } from 'network/shapes/Trade';
@@ -74,18 +72,17 @@ export function registerTradingModal() {
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
+      const [items, setItems] = useState<Item[]>([]);
+      const [currencies, setCurrencies] = useState<Item[]>([]);
       const [trades, setTrades] = useState<Trade[]>([]);
       const [myTrades, setMyTrades] = useState<Trade[]>([]);
-      const [currencies, setCurrencies] = useState<Item[]>([]);
-      const [inventories, setInventories] = useState<Inventory[]>([]);
-      const [items, setItems] = useState<Item[]>([]);
 
       const [tab, setTab] = useState<TabType>('Orderbook');
       const [tick, setTick] = useState(Date.now());
 
       // time trigger to use for periodic refreshes
       useEffect(() => {
-        refreshItems();
+        refreshItemRegistry();
 
         const updateSync = () => setTick(Date.now());
         const timerId = setInterval(updateSync, SYNC_TIME);
@@ -95,7 +92,6 @@ export function registerTradingModal() {
       // sets trades upon opening modal
       useEffect(() => {
         if (!modals.trading) return;
-        refreshInventories();
         refreshTrades();
       }, [modals.trading, tick]);
 
@@ -103,7 +99,7 @@ export function registerTradingModal() {
       // GETTERS
 
       // pull all items from the registry and save the tradable ones
-      const refreshItems = () => {
+      const refreshItemRegistry = () => {
         const all = getAllItems();
         const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
         const tradable = nonCurrencies.filter((item) => !!item.is.tradeable);
@@ -113,21 +109,21 @@ export function registerTradingModal() {
         setCurrencies([all.find((item) => item.index === 1)!]);
       };
 
-      // pull all inventories from the player. filter out MUSU and untradable items
-      const refreshInventories = () => {
-        const all = account.inventories ?? [];
-        const filtered = cleanInventories(all);
-        const tradable = filtered.filter((inv) => inv.item.is.tradeable);
-        const sorted = tradable.sort((a, b) => (a.item.name > b.item.name ? 1 : -1));
-        setInventories(sorted);
-      };
-
       // pull all open trades and partition them based on whether created by the player
       // NOTE: filtering by Taker not yet implemented
       const refreshTrades = () => {
         const allTrades = queryTrades().map((entity: EntityIndex) => getTrade(entity));
-        const myTrades = allTrades.filter((trade) => trade.maker?.entity === account.entity);
-        const trades = allTrades.filter((trade) => trade.maker?.entity !== account.entity);
+        const myTrades = allTrades.filter((trade) => {
+          const isMaker = trade.maker?.entity === account.entity;
+          const isTaker = trade.taker?.entity === account.entity;
+          return isMaker || isTaker;
+        });
+        const trades = allTrades.filter((trade) => {
+          const isNotMaker = trade.maker?.entity !== account.entity;
+          const isNotTaker = trade.taker?.entity !== account.entity;
+          const isOpen = trade.state === 'OPEN';
+          return isNotMaker && isNotTaker && isOpen;
+        });
         setMyTrades(myTrades);
         setTrades(trades);
       };
@@ -221,7 +217,7 @@ export function registerTradingModal() {
             />
             <Management
               isVisible={tab === `Management`}
-              actions={{ cancelTrade, completeTrade, createTrade }}
+              actions={{ cancelTrade, completeTrade, createTrade, executeTrade }}
               data={{
                 account,
                 currencies,

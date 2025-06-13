@@ -15,6 +15,7 @@ interface Props {
   actions: {
     completeTrade: (trade: Trade) => void;
     cancelTrade: (trade: Trade) => void;
+    executeTrade: (trade: Trade) => void;
   };
   controls: {
     isConfirming: boolean;

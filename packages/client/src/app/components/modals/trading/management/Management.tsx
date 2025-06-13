@@ -19,6 +19,7 @@ interface Props {
       sellItem: Item,
       sellAmt: number
     ) => EntityID | void;
+    executeTrade: (trade: Trade) => void;
     completeTrade: (trade: Trade) => void;
     cancelTrade: (trade: Trade) => void;
   };
