@@ -116,7 +116,7 @@ export const ExecutedOffer = (props: Props) => {
     const musuItem = getItemByIndex(MUSU_INDEX);
     const tradeConfig = account.config?.trade;
     const taxRate = tradeConfig?.tax.value ?? 0;
-    const tax = taxRate * buyAmt;
+    const tax = Math.floor(buyAmt * taxRate);
 
     return (
       <Paragraph>
