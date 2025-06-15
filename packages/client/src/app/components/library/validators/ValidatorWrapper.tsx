@@ -1,9 +1,11 @@
 import { useVisibility, Validators } from 'app/stores';
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { ExitButton } from '../modals/ExitButton';
 
 interface Props {
   id: string;
+  canExit?: boolean;
   divName: keyof Validators;
   title: string;
   children: React.ReactNode;
@@ -16,7 +18,7 @@ interface Props {
 // It includes and exit button with a click sound as well as Content formatting.
 export const ValidatorWrapper = (props: Props) => {
   const { validators } = useVisibility();
-  const { id, divName, title, subtitle, children, errorPrimary, errorSecondary } = props;
+  const { id, divName, title, subtitle, children, errorPrimary, errorSecondary, canExit } = props;
 
   // update modal visibility according to store settings
   useEffect(() => {
@@ -29,6 +31,11 @@ export const ValidatorWrapper = (props: Props) => {
 
   return (
     <Wrapper id={id} isOpen={validators[divName]}>
+      {canExit && (
+        <ButtonRow>
+          <ExitButton divName={id} isValidator />
+        </ButtonRow>
+      )}
       <Content>
         <Header>
           <Title>{title}</Title>
@@ -135,5 +142,10 @@ const fadeOut = keyframes`
   from { opacity: 1; }
   to { opacity: 0; }
 `;
-
+const ButtonRow = styled.div`
+  position: absolute;
+  padding: 0.7vw;
+  right: 0;
+  display: inline-flex;
+`;
 export { Wrapper as ValidatorWrapperLite };

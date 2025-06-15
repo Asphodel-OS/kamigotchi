@@ -6,16 +6,19 @@ import { playClick } from 'utils/sounds';
 interface Props {
   divName: string;
   position?: string;
+  isValidator?: boolean;
 }
 
 // ExitButton is a rendering o fan exit button, which closes the modal it's on
 export const ExitButton = (props: Props) => {
-  const { modals, setModals } = useVisibility();
+  const { setModals, setValidators } = useVisibility();
 
   // closes the modal this exit button is on
   const handleClose = () => {
     playClick();
-    setModals({ [props.divName]: false });
+    props.isValidator
+      ? setValidators({ [props.divName]: false })
+      : setModals({ [props.divName]: false });
   };
 
   return <Button onClick={handleClose}>X</Button>;

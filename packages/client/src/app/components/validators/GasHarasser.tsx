@@ -133,7 +133,8 @@ export function registerGasHarasser() {
 
       return (
         <ValidatorWrapper
-          id='gas-harasser'
+          id='gasHarasser'
+          canExit
           divName='gasHarasser'
           title='Embedded wallet is empty!'
           errorPrimary={`pls feed me pls a crumb of ETH ._.`}
@@ -193,20 +194,4 @@ const Input = styled.input`
 
   cursor: text;
   justify-content: center;
-`;
-
-const Link = styled.div`
-  color: #11f;
-  padding-top: 1.2vh;
-  cursor: pointer;
-  pointer-events: auto;
-
-  font-size: 1.2vh;
-  text-decoration: underline;
-  text-align: center;
-
-  &:hover {
-    color: #71f;
-    opacity: 0.7;
-  }
 `;
