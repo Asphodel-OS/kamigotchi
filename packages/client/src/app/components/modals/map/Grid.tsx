@@ -105,16 +105,17 @@ export const Grid = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
+  const isRoomBlocked = (room: Room) => !passesConditions(account, room.gates);
+
+  const currExit = (room: Room) =>
+    rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
 
   const getTileColor = (room: Room) => {
     if (!room.index) return;
     if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
-    const currExit = rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
-    if (!currExit) return;
+    if (!currExit(room)) return;
     return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
   };
-
-  const isRoomBlocked = (room: Room) => !passesConditions(account, room.gates);
 
   /////////////////
   // INTERACTION
@@ -168,7 +169,9 @@ export const Grid = (props: Props) => {
                   <Tile
                     key={j}
                     backgroundColor={backgroundColor}
-                    onClick={() => handleRoomMove(room.index)}
+                    onClick={() =>
+                      currExit(room) && !isRoomBlocked(room) && handleRoomMove(room.index)
+                    }
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
@@ -224,7 +227,7 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundCo
     hasRoom &&
     ` &:hover {
       opacity: 0.9;
-      cursor: help;
+      cursor: pointer;
       border-left-color: rgba(0, 0, 0, 1);
       border-bottom-color: rgba(0, 0, 0, 1);
       background-color: rgba(255, 255, 255, 0.3);
@@ -235,11 +238,5 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundCo
     `opacity: 0.9;
     border-left-color: rgba(0, 0, 0, 1);
     border-bottom-color: rgba(0, 0, 0, 1);
-  `}
-  ${({ onClick }) =>
-    onClick &&
-    `&:hover {
-      cursor: pointer;
-    }
   `}
 `;
