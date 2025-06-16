@@ -2,7 +2,7 @@ import { DialogueNode } from '.';
 
 const tradingPanel: DialogueNode = {
   index: 661,
-  text: [`This machine is still not online. Perhaps it'll be active soon?`],
+  text: [`The screen is now dancing with life. \n\nThe marketplace is open.`],
   action: {
     type: 'trading',
     label: 'Trade',

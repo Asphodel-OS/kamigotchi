@@ -225,9 +225,9 @@ const Text = styled.div<{ npc?: { name: string; background: string } }>`
   flex-flow: column nowrap;
   justify-content: center;
 
-  font-family: Pixel;
-  font-size: 1.1vw;
+  font-size: 1.2vw;
   line-height: 1.8vw;
+  white-space: pre-line;
 `;
 
 const Header = styled.div`
