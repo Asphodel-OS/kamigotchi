@@ -202,6 +202,7 @@ library LibItem {
     return LibFlag.has(components, genID(index), "BYPASS_BONUS_RESET");
   }
 
+  /// @notice check if an item has a given state for a flag
   function checkFlag(
     IUintComp components,
     uint32 index,
@@ -211,7 +212,8 @@ library LibItem {
     return LibFlag.has(components, genID(index), flag) == state;
   }
 
-  function checkFlag(
+  /// @notice check that All specified items have a given state for a flag
+  function checkFlagAll(
     IUintComp components,
     uint32[] memory indices,
     string memory flag,
@@ -220,6 +222,18 @@ library LibItem {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     return LibFlag.checkAll(components, ids, flag, state);
+  }
+
+  /// @notice check that Any specified items have a given state for a flag
+  function checkFlagAny(
+    IUintComp components,
+    uint32[] memory indices,
+    string memory flag,
+    bool state
+  ) internal view returns (bool) {
+    uint256[] memory ids = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
+    return LibFlag.checkAny(components, ids, flag, state);
   }
 
   /// @dev to prevent potential overflows, somehow

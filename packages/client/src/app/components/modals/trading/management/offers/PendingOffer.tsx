@@ -121,7 +121,7 @@ export const PendingOffer = (props: Props) => {
             text={tradeFee.toLocaleString()}
             icon={musuItem.image}
             scale={0.9}
-            tooltip={[`Lol RIP Bozo`, `mr. i-know-what-i-got`, `L pricing`, `Ratio`]}
+            tooltip={[`LoL RIP Bozo`, `mr. i-know-what-i-got`, `L pricing`, `\nRatio`]}
           />
           <Text size={0.9}>{`) will not be refunded.`}</Text>
         </Row>

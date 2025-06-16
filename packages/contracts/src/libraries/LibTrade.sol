@@ -283,7 +283,9 @@ library LibTrade {
     uint32[] memory sellIndices
   ) public view {
     uint32[] memory indices = LibArray.concat(buyIndices, sellIndices);
-    if (!LibItem.checkFlag(comps, indices, "NOT_TRADEABLE", false)) revert("tradeable item");
+    if (LibItem.checkFlagAny(comps, indices, "NOT_TRADABLE", true)) {
+      revert("Trade includes untradeable item");
+    }
   }
 
   /////////////////

@@ -18,10 +18,20 @@ library LibComp {
   /////////////////
   // CHECKS
 
+  /// @notice check whether All entities has|not an entry for a component
+  /// @dev mainly used for flags
   function allHave(IComp component, uint256[] memory ids, bool has) internal view returns (bool) {
     bool[] memory results = hasBatch(component, ids);
     for (uint256 i; i < ids.length; i++) if (results[i] == !has) return false;
     return true;
+  }
+
+  /// @notice check whether Any entities has|not an entry for a component
+  /// @dev mainly used for flags
+  function anyHave(IComp component, uint256[] memory ids, bool has) internal view returns (bool) {
+    bool[] memory results = hasBatch(component, ids);
+    for (uint256 i; i < ids.length; i++) if (results[i] == has) return true;
+    return false;
   }
 
   function eqString(IComp component, uint256 id, string memory str) internal view returns (bool) {
@@ -39,6 +49,7 @@ library LibComp {
   /////////////////
   // GETS
 
+  /// @notice determines whether a list of entities has a value for a component
   function hasBatch(
     IComp component,
     uint256[] memory entities

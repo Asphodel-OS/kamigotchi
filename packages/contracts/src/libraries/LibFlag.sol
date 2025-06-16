@@ -126,30 +126,38 @@ library LibFlag {
     return HasFlagComponent(getAddrByID(components, HasFlagCompID)).has(id);
   }
 
-  /// @notice checks if all entities have/doesn't have a flag
-  /// @param state if true, checks if all entites have flag. opposite if false
+  /// @notice checks if All entities [have|not have] a flag
+  /// @param anchorIDs entities to check for flags on
+  /// @param flag flag to check for
+  /// @param state toggle
+  /// @dev if state=true, return true if all entities have flag
+  /// @dev if state=false, return true if all entities do not have the flag
   function checkAll(
     IUintComp components,
     uint256[] memory anchorIDs,
-    string memory flagType,
+    string memory flag,
     bool state
   ) internal view returns (bool) {
     uint256[] memory ids = new uint256[](anchorIDs.length);
-    for (uint256 i; i < anchorIDs.length; i++) ids[i] = genID(anchorIDs[i], flagType);
+    for (uint256 i; i < ids.length; i++) ids[i] = genID(anchorIDs[i], flag);
     return getCompByID(components, HasFlagCompID).allHave(ids, state);
   }
 
-  /// @notice checks if all entities have/doesn't have a flag
-  /// @param state if true, checks if all entites have flag. opposite if false
-  function checkAll(
+  /// @notice checks if Any entity [has|not has] a flag
+  /// @param anchorIDs entities to check for flags on
+  /// @param flag flag to check for
+  /// @param state toggle
+  /// @dev if state=true, return true if any entity has flag
+  /// @dev if state=false, return true if any entities do not have the flag
+  function checkAny(
     IUintComp components,
     uint256[] memory anchorIDs,
-    string[] memory flagTypes,
+    string memory flag,
     bool state
   ) internal view returns (bool) {
     uint256[] memory ids = new uint256[](anchorIDs.length);
-    for (uint256 i; i < anchorIDs.length; i++) ids[i] = genID(anchorIDs[i], flagTypes[i]);
-    return getCompByID(components, HasFlagCompID).allHave(ids, state);
+    for (uint256 i; i < ids.length; i++) ids[i] = genID(anchorIDs[i], flag);
+    return getCompByID(components, HasFlagCompID).anyHave(ids, state);
   }
 
   //////////////////

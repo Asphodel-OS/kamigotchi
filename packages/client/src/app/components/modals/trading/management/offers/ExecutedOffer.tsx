@@ -99,7 +99,7 @@ export const ExecutedOffer = (props: Props) => {
     return [
       'You Executed this Trade as the Taker',
       'No further action is required on your part',
-      `It'll disappear when ${trade.taker?.name ?? '???'} completes it`,
+      `It'll disappear when ${trade.maker?.name ?? '???'} completes it`,
     ];
   };
 
@@ -138,7 +138,7 @@ export const ExecutedOffer = (props: Props) => {
               scale={0.9}
               tooltip={[
                 `There is no income tax in Kamigotchi World.`,
-                `Thank you for your patronage`,
+                `Thank you for your patronage.`,
               ]}
             />
             <Text size={0.9}>{`)`}</Text>

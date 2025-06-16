@@ -4,7 +4,7 @@ import { isItemCurrency } from '../item';
 export type Type = 'Buy' | 'Sell' | 'Barter' | 'Forex' | '???';
 
 // Determine the type of trade from the items in the Buy/Sell Orders
-export const getType = (trade: Trade, isMaker = true): Type => {
+export const getTradeType = (trade: Trade, isMaker = true): Type => {
   const buyOrder = trade.buyOrder;
   const sellOrder = trade.sellOrder;
   if (!buyOrder || !sellOrder) return '???';

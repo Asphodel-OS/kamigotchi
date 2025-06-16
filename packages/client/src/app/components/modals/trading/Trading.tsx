@@ -109,9 +109,9 @@ export function registerTradingModal() {
         const all = getAllItems();
         const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
         const tradable = nonCurrencies.filter((item) => !!item.is.tradeable);
-
         tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
         setItems(tradable);
+
         setCurrencies([all.find((item) => item.index === 1)!]);
       };
 
