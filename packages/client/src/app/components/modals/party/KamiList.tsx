@@ -48,7 +48,7 @@ export const KamiList = (props: Props) => {
   return (
     <Container>
       {kamis.length == 0 && (
-        <EmptyText text={['Need Kamis?', 'Some have been seen in the Vending Machine.']} />
+        <EmptyText text={['You are Kamiless.', 'Go to Sudoswap to get a Kami!']} />
       )}
       <Kards
         actions={actions}
