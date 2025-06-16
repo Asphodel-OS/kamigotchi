@@ -680,8 +680,7 @@
         "TimeLast",
         "Value",
         "Values"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "TradeCompleteSystem",
@@ -696,8 +695,7 @@
         "TimeLast",
         "Value",
         "Values"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "TradeCreateSystem",
@@ -712,8 +710,7 @@
         "TimeLast",
         "Value",
         "Values"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "TradeExecuteSystem",
@@ -728,8 +725,7 @@
         "TimeLast",
         "Value",
         "Values"
-      ],
-      "skipEnv": ["production"]
+      ]
     },
     {
       "name": "_721BatchMinterSystem",

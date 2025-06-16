@@ -248,7 +248,7 @@ library LibTrade {
     if (makerID != accID) revert("Trade owner mismatch");
   }
 
-  /// @notice verify that an Account is a Trade's Maker
+  /// @notice verify that an Account is not a Trade's Maker
   function verifyNotMaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
     if (makerID == accID) revert("Trade cannot be executed by Maker");
