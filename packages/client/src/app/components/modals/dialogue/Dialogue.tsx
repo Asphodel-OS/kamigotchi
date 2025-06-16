@@ -226,7 +226,7 @@ const Text = styled.div<{ npc?: { name: string; background: string } }>`
   justify-content: center;
 
   font-size: 1.2vw;
-  line-height: 1.8vw;
+  line-height: 2.4vw;
   white-space: pre-line;
 `;
 
