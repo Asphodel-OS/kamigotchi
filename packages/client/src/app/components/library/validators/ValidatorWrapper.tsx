@@ -142,10 +142,12 @@ const fadeOut = keyframes`
   from { opacity: 1; }
   to { opacity: 0; }
 `;
+
 const ButtonRow = styled.div`
   position: absolute;
   padding: 0.7vw;
   right: 0;
   display: inline-flex;
 `;
+
 export { Wrapper as ValidatorWrapperLite };
