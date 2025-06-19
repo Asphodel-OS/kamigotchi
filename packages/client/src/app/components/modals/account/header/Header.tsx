@@ -11,7 +11,7 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
-import { BioSetter } from './BioSetter';
+import { Bio } from './Bio';
 
 interface Props {
   account: Account; // account selected for viewing
@@ -23,7 +23,7 @@ interface Props {
   };
 }
 
-export const Bio = (props: Props) => {
+export const Header = (props: Props) => {
   const { isLoading, account, utils, isSelf, actions } = props;
   const { getAccountKamis } = utils;
   const { handlePfpChange, setBio } = actions;
@@ -113,7 +113,7 @@ export const Bio = (props: Props) => {
           <CakeIcon style={{ height: '1.4vh' }} />
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
         </DetailRow>
-        <BioSetter account={account} isSelf={isSelf} actions={{ setBio }} />
+        <Bio account={account} isSelf={isSelf} actions={{ setBio }} />
       </Info>
     </Container>
   );

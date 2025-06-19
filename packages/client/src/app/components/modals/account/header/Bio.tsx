@@ -11,7 +11,7 @@ interface Props {
   isSelf: boolean;
 }
 
-export const BioSetter = (props: Props) => {
+export const Bio = (props: Props) => {
   const { account, actions, isSelf } = props;
   const { setBio } = actions;
 

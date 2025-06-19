@@ -64,12 +64,7 @@ export const SocialBottom = (props: Props) => {
             inbound: data.account.friends?.incomingReqs ?? [],
             outbound: data.account.friends?.outgoingReqs ?? [],
           }}
-          actions={{
-            acceptFren: actions.acceptFren,
-            blockFren: actions.blockFren,
-            cancelFren: actions.cancelFren,
-            requestFren: actions.requestFren,
-          }}
+          actions={actions}
         />
       )}
       {subTab === 'blocked' && (

@@ -15,8 +15,8 @@ import { BaseAccount, NullAccount, queryAccountByIndex } from 'network/shapes/Ac
 import { Friendship } from 'network/shapes/Friendship';
 import { getTotalScoreByFilter, getVIPEpoch } from 'network/shapes/Score';
 import { waitForActionCompletion } from 'network/utils';
-import { Bio } from './bio/Bio';
 import { Bottom } from './bottom/Bottom';
+import { Header } from './header/Header';
 import { Tabs } from './tabs/Tabs';
 
 export function registerAccountModal() {
@@ -209,8 +209,8 @@ export function registerAccountModal() {
           canExit
           truncate
         >
-          <Bio
-            key='bio'
+          <Header
+            key='header'
             account={account} // account selected for viewing
             actions={{ handlePfpChange, setBio }}
             isLoading={isLoading}
