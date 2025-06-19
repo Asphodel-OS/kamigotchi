@@ -41,11 +41,17 @@ export const Bio = (props: Props) => {
   // adjusts the textarea height when the bio changes/ window resizes
   useEffect(() => {
     const handleResize = () => {
-      if (bioTextAreaRef.current) {
-        bioTextAreaRef.current.style.height = 'auto';
-        bioTextAreaRef.current.style.height = bioTextAreaRef.current.scrollHeight + 'px';
+      const textarea = bioTextAreaRef.current;
+      if (textarea) {
+        textarea.style.height = 'auto';
+        const scrollHeight = textarea.scrollHeight;
+        //  update height if it's different (to avoid rerenders)
+        if (textarea.style.height !== scrollHeight + 'px') {
+          textarea.style.height = scrollHeight + 'px';
+        }
       }
     };
+
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
