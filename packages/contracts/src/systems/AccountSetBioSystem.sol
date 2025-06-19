@@ -15,7 +15,7 @@ contract AccountSetBioSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     string memory bio = abi.decode(arguments, (string));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
-    if (bytes(bio).length > 140) revert("Account: bio must be 140chars");
+    if (bytes(bio).length > 140) revert("Account: bio cannot exceed 140chars");
     LibAccount.setBio(components, accID, bio);
 
     // standard logging and tracking

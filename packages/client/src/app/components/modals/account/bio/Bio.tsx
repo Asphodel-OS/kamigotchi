@@ -15,8 +15,7 @@ import { BioSetter } from './BioSetter';
 
 interface Props {
   account: Account; // account selected for viewing
-  actions: { setBio: (bio: string) => void };
-  handlePfpChange: (kami: Kami) => void;
+  actions: { setBio: (bio: string) => void; handlePfpChange: (kami: Kami) => void };
   isLoading: boolean;
   isSelf: boolean;
   utils: {
@@ -25,9 +24,9 @@ interface Props {
 }
 
 export const Bio = (props: Props) => {
-  const { isLoading, account, utils, isSelf, handlePfpChange, actions } = props;
+  const { isLoading, account, utils, isSelf, actions } = props;
   const { getAccountKamis } = utils;
-  const { setBio } = actions;
+  const { handlePfpChange, setBio } = actions;
 
   const [tick, setTick] = useState(Date.now());
 

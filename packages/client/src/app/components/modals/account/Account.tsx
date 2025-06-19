@@ -212,8 +212,7 @@ export function registerAccountModal() {
           <Bio
             key='bio'
             account={account} // account selected for viewing
-            actions={{ setBio }}
-            handlePfpChange={handlePfpChange}
+            actions={{ handlePfpChange, setBio }}
             isLoading={isLoading}
             isSelf={isSelf}
             utils={utils}
