@@ -1,7 +1,9 @@
-import { ActionIcons } from 'assets/images/icons/actions';
-import { Account } from 'network/shapes';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+
+import { ActionIcons } from 'assets/images/icons/actions';
+import { Account } from 'network/shapes';
+import { playScribble } from 'utils/sounds';
 
 interface Props {
   account: Account;
@@ -58,6 +60,7 @@ export const BioSetter = (props: Props) => {
 
   const handleSetBio = () => {
     setBio(bioText);
+    playScribble();
     setIsEditingBio(false);
   };
 
