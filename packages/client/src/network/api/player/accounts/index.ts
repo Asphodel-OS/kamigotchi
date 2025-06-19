@@ -1,6 +1,5 @@
 import { BigNumberish } from 'ethers';
 
-import { bioAPI } from './bio';
 import { chatAPI } from './chat';
 import { friendsAPI } from './friends';
 import { itemsAPI } from './items';
@@ -42,7 +41,6 @@ export function accountsAPI(systems: any) {
   return {
     move,
     register,
-    bio: bioAPI(systems),
     chat: chatAPI(systems),
     friend: friendsAPI(systems),
     item: itemsAPI(systems),

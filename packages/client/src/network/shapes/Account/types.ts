@@ -123,7 +123,7 @@ export const getAccount = (
 
   if (options?.config) account.config = getConfigs(world, components);
   if (options?.friends) account.friends = getFriends(world, components, entity);
-  if (options?.bio) account.bio = getBio(world, components, entity);
+  if (options?.bio) account.bio = getBio(components, entity);
   if (options?.inventory) account.inventories = getInventories(world, components, entity);
   if (options?.kamis) {
     const kamiOptions = typeof options.kamis === 'boolean' ? {} : options.kamis;

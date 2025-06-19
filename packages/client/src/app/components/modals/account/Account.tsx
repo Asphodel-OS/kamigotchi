@@ -192,7 +192,7 @@ export function registerAccountModal() {
           params: [bio],
           description: `Setting account bio`,
           execute: async () => {
-            return api.player.account.bio.set(bio);
+            return api.player.account.set.bio(bio);
           },
         });
       };
