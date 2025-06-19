@@ -105,10 +105,13 @@ export const Grid = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
-  const isRoomBlocked = (room: Room) => !passesConditions(account, room.gates);
+  const isRoomBlocked = (room: Room) => {
+    return !passesConditions(account, room.gates);
+  };
 
-  const currExit = (room: Room) =>
-    rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
+  const currExit = (room: Room) => {
+    return rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
+  };
 
   const getTileColor = (room: Room) => {
     if (!room.index) return;
@@ -170,7 +173,7 @@ export const Grid = (props: Props) => {
                     key={j}
                     backgroundColor={backgroundColor}
                     onClick={() =>
-                      currExit(room) && !isRoomBlocked(room) && handleRoomMove(room.index)
+                      room.index !== 0 && !isRoomBlocked(room) && handleRoomMove(room.index)
                     }
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
