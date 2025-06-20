@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
+import { Tooltip } from '../poppers';
 import { Popover } from '../poppers/Popover';
 import { IconButton } from './IconButton';
 import { VerticalToggle } from './VerticalToggle';
 
 interface Props {
   onClick: ((selected: any[]) => void)[];
-  img: string[];
+  button: {
+    images: string[];
+    tooltips?: string[];
+  };
   options: Option[][];
   disabled?: boolean[];
   balance?: number;
@@ -24,7 +28,8 @@ interface Option {
 }
 
 export function DropdownToggle(props: Props) {
-  const { options, img, onClick, limit } = props;
+  const { options, button, onClick, limit } = props;
+  const { images, tooltips } = button;
   const { balance, disabled, radius } = props;
   const [checked, setChecked] = useState<boolean[]>([]);
   const [modeSelected, setModeSelected] = useState<number>(0);
@@ -134,13 +139,15 @@ export function DropdownToggle(props: Props) {
         />
       </Popover>
       {options.length > 1 && <VerticalToggle setModeSelected={setModeSelected} />}
-      <IconButton
-        img={img[currentMode]}
-        disabled={modeDisabled || !checked.includes(true)}
-        onClick={handleTriggerClick}
-        flatten={'left'}
-        radius={radius ?? 0.45}
-      />
+      <Tooltip content={tooltips?.[currentMode]} isDisabled={!tooltips?.[currentMode]}>
+        <IconButton
+          img={images[currentMode]}
+          disabled={modeDisabled || !checked.includes(true)}
+          onClick={handleTriggerClick}
+          flatten={'left'}
+          radius={radius ?? 0.45}
+        />
+      </Tooltip>
     </Container>
   );
 }

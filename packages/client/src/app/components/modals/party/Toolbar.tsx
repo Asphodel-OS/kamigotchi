@@ -125,7 +125,10 @@ export const Toolbar = (props: Props) => {
       </Section>
       <DropdownToggle
         limit={33}
-        img={[HarvestIcon, CollectIcon, StopIcon]}
+        button={{
+          images: [HarvestIcon, CollectIcon, StopIcon],
+          tooltips: ['Add Kami to Node', 'Collect Harvest', 'Stop Harvest'],
+        }}
         disabled={[addOptions.length == 0, collectOptions.length == 0, stopOptions.length == 0]}
         onClick={[addKami, collect, stopKami]}
         options={[addOptions, collectOptions, stopOptions]}
