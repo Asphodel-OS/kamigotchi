@@ -48,7 +48,22 @@ export const KamiList = (props: Props) => {
   return (
     <Container>
       {kamis.length == 0 && (
-        <EmptyText text={['You are Kamiless.', 'Go to Sudoswap to get a Kami!']} />
+        <EmptyText
+          linkColor='#d44c79'
+          text={[
+            [
+              'You are Kamiless. ',
+              '\n',
+              ' Go to ',
+              {
+                text: 'Sudoswap',
+                href: 'https://sudoswap.xyz/#/browse/yominet/buy/0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677',
+              },
+              ' to get a Kami!',
+            ],
+            ['If you already have Kami, go to Scrap Confluence to bridge them in.'],
+          ]}
+        />
       )}
       <Kards
         actions={actions}
