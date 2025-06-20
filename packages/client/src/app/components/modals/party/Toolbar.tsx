@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useMemo } from 'react';
+import { Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
@@ -9,8 +9,12 @@ import { useVisibility } from 'app/stores';
 import { CollectIcon, HarvestIcon, StopIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
 import { SortIcons, ViewIcons } from './constants';
-
 import { Sort, View } from './types';
+
+interface DropdownOption {
+  text: string;
+  object?: any;
+}
 
 interface Props {
   actions: {
@@ -41,24 +45,32 @@ export const Toolbar = (props: Props) => {
   const { sort, setSort, view, setView } = controls;
   const { kamis } = data;
   const { passesNodeReqs } = utils;
-
-  const { displayedKamis, setDisplayedKamis } = state;
+  const { displayedKamis, setDisplayedKamis, tick } = state;
+  const [addOptions, setAddOptions] = useState<DropdownOption[]>([]);
+  const [collectOptions, setCollectOptions] = useState<DropdownOption[]>([]);
+  const [stopOptions, setStopOptions] = useState<DropdownOption[]>([]);
 
   const { modals } = useVisibility();
 
-  // TODO: be more explicit about when/how the options get updated
-  const addOptions = displayedKamis
-    .filter((kami) => canHarvest(kami) && passesNodeReqs(kami))
-    .map((kami) => ({ text: kami.name, object: kami }));
+  useEffect(() => {
+    if (!modals.party) return;
 
-  const collectOptions = displayedKamis
-    .filter((kami) => isHarvesting(kami) && kami.harvest && !onCooldown(kami))
-    .map((kami) => ({ text: kami.name, object: kami }));
+    const addOptions = displayedKamis
+      .filter((kami) => canHarvest(kami) && passesNodeReqs(kami))
+      .map((kami) => ({ text: kami.name, object: kami }));
 
-  const stopOptions = displayedKamis
-    .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
-    .map((kami) => ({ text: kami.name, object: kami }));
+    const collectOptions = displayedKamis
+      .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
+      .map((kami) => ({ text: kami.name, object: kami }));
 
+    const stopOptions = displayedKamis
+      .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
+      .map((kami) => ({ text: kami.name, object: kami }));
+
+    setAddOptions(addOptions);
+    setCollectOptions(collectOptions);
+    setStopOptions(stopOptions);
+  }, [displayedKamis, tick, modals.party]);
   // memoized sort options
   const SortOptions = useMemo(
     () =>

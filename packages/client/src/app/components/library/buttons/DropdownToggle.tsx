@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { Popover } from '../poppers/Popover';
 import { IconButton } from './IconButton';
-import { ToggleButton } from './ToggleButton';
+import { VerticalToggle } from './VerticalToggle';
 
 interface Props {
   onClick: ((selected: any[]) => void)[];
@@ -133,7 +133,7 @@ export function DropdownToggle(props: Props) {
           radius={radius ?? 0.45}
         />
       </Popover>
-      {options.length > 1 && <ToggleButton setModeSelected={setModeSelected} />}
+      {options.length > 1 && <VerticalToggle setModeSelected={setModeSelected} />}
       <IconButton
         img={img[currentMode]}
         disabled={modeDisabled || !checked.includes(true)}

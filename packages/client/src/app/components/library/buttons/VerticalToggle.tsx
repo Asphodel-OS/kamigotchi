@@ -6,7 +6,7 @@ interface Props {
   setModeSelected: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const ToggleButton = (props: Props) => {
+export const VerticalToggle = (props: Props) => {
   const { setModeSelected } = props;
   const [position, setPosition] = useState(0); // top to bottom
 
