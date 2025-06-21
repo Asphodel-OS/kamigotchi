@@ -14,6 +14,7 @@ import { InitWorld } from "deployment/InitWorld.s.sol";
 import { LibDeployTokens } from "deployment/LibDeployTokens.s.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibERC20 } from "libraries/utils/LibERC20.sol";
 import { LibGetter } from "libraries/utils/LibGetter.sol";
 
 abstract contract SetupTemplate is TestSetupImports {

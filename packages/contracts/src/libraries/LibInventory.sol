@@ -15,7 +15,7 @@ import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibData } from "libraries/LibData.sol";
-import { LibERC20 } from "libraries/LibERC20.sol";
+import { LibERC20 } from "libraries/utils/LibERC20.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
