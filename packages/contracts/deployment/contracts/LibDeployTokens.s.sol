@@ -27,7 +27,7 @@ library LibDeployTokens {
     require(!LibConfig.has(components, "ONYX_ADDRESS"), "onyx already deployed");
 
     OpenMintable onyx = new OpenMintable("Onyx", "ONYX");
-    LibConfig.setAddress(components, "ONYX_ADDRESS", address(onyx));
+    LibConfig.setAddress(components, "ONYX_ADDRESS", address(onyx)); // for local; onyx item index not fixed
 
     // minting onyx to deployer
     onyx.mint(deployer, 1000 ether);
@@ -57,5 +57,13 @@ library LibDeployTokens {
 
     console.log("VIP_SCORE_ADDRESS: ", address(vipScore));
     return address(vipScore);
+  }
+
+  /////////////////
+  // LOCAL GETTERS
+
+  /// @dev used for testing and local setup
+  function getOnyxAddr(IUint256Component components) internal view returns (address) {
+    return LibConfig.getAddress(components, "ONYX_ADDRESS");
   }
 }

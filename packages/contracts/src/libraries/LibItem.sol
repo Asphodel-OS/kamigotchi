@@ -16,6 +16,7 @@ import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomC
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { TokenAddressComponent, ID as TokenAddressCompID } from "components/TokenAddressComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
@@ -27,7 +28,6 @@ import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
-import { LibERC20 } from "libraries/LibERC20.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibStat } from "libraries/LibStat.sol";
 import { LibScore } from "libraries/LibScore.sol";
@@ -106,7 +106,10 @@ library LibItem {
 
   /// @notice adds an optional token address to represent an ERC20 token
   function addERC20(IUintComp components, uint32 index, address tokenAddress) internal {
-    LibERC20.setAddress(components, genID(index), tokenAddress);
+    TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).set(
+      genID(index),
+      tokenAddress
+    );
   }
 
   function addRequirement(
@@ -142,7 +145,7 @@ library LibItem {
     LibDroptable.remove(components, id);
     LibFor.remove(components, id);
     IndexRoomComponent(getAddrByID(components, IndexRoomCompID)).remove(id);
-    LibERC20.remove(components, id);
+    TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).remove(id);
 
     LibFlag.removeFull(components, LibFlag.queryFor(components, id));
     LibConditional.remove(components, getAllRequirements(components, index));
@@ -295,7 +298,7 @@ library LibItem {
   }
 
   function getTokenAddr(IUintComp components, uint32 index) internal view returns (address) {
-    return LibERC20.getAddress(components, genID(index));
+    return TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).safeGet(genID(index));
   }
 
   function getType(IUintComp components, uint256 id) internal view returns (string memory) {

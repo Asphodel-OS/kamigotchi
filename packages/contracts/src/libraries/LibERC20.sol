@@ -15,22 +15,9 @@ import { LibConfig } from "libraries/LibConfig.sol";
 uint constant UNIT_SHIFT = 3;
 
 /** @notice
- * LibERC20 handles all interactions involving ERC20 tokens, including onyx as a special case.
- *
- * TokenAddressComponent can be attached to any shape for spendFor()
+ * LibERC20 handles all interactions involving ERC20 tokens, including bridges.
  */
 library LibERC20 {
-  //////////////
-  // SHAPES
-
-  function setAddress(IUintComp components, uint256 id, address addr) internal {
-    TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).set(id, addr);
-  }
-
-  function remove(IUintComp components, uint256 id) internal {
-    TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).remove(id);
-  }
-
   //////////////
   // INTERACTIONS
 
@@ -38,25 +25,6 @@ library LibERC20 {
     address to = LibConfig.getAddress(components, "ERC20_RECEIVER_ADDRESS");
     amount = toTokenUnits(amount); // convert from mToken to wei
     return transfer(components, token, LibAccount.getOwner(components, spenderID), to, amount);
-  }
-
-  /// @dev specific for onyx
-  function spendOnyx(
-    IUintComp components,
-    address onyx,
-    uint256 amount,
-    uint256 spenderID
-  ) internal {
-    address burner = LibConfig.getAddress(components, "ONYX_BURNER_ADDRESS"); // 0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec
-    amount = toTokenUnits(amount); // convert from mToken to wei
-    return transfer(components, onyx, LibAccount.getOwner(components, spenderID), burner, amount);
-  }
-
-  /// @notice spends using TokenAddressComponent
-  function spendFor(IUintComp components, uint256 id, uint256 amount, uint256 spenderID) internal {
-    address token = TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).safeGet(id);
-    if (token == address(0)) revert("LibERC20: token not found");
-    return spend(components, token, amount, spenderID);
   }
 
   function transfer(
@@ -74,17 +42,6 @@ library LibERC20 {
     );
   }
 
-  ////////////
-  // GETTERS
-
-  function getAddress(IUintComp components, uint256 id) internal view returns (address) {
-    return TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).safeGet(id);
-  }
-
-  function getOnyxAddr(IUintComp components) internal view returns (address) {
-    return address(uint160(LibConfig.get(components, "ONYX_ADDRESS")));
-  }
-
   ///////////
   // UTILS
 
@@ -96,5 +53,20 @@ library LibERC20 {
   /// @notice converts from token units (wei, 18dp) to game units (mTokens, 3dp)
   function toGameUnits(uint256 amt) internal pure returns (uint256) {
     return amt * 10 ** UNIT_SHIFT;
+  }
+
+  /////////////////
+  // DEPRECATED (pre-bridge)
+
+  /// @dev specific for onyx
+  function spendOnyx(
+    IUintComp components,
+    address onyx,
+    uint256 amount,
+    uint256 spenderID
+  ) internal {
+    address burner = LibConfig.getAddress(components, "ONYX_BURNER_ADDRESS"); // 0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec
+    amount = toTokenUnits(amount); // convert from mToken to wei
+    return transfer(components, onyx, LibAccount.getOwner(components, spenderID), burner, amount);
   }
 }

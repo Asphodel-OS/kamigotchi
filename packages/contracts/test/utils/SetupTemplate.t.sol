@@ -198,11 +198,11 @@ abstract contract SetupTemplate is TestSetupImports {
   }
 
   function _mintOnyx(uint256 amount, address to) internal {
-    return _mintERC20(LibERC20.getOnyxAddr(components), amount, to);
+    return _mintERC20(LibDeployTokens.getOnyxAddr(components), amount, to);
   }
 
   function _approveOnyx(address owner, address spender) internal {
-    return _approveERC20(LibERC20.getOnyxAddr(components), owner, spender);
+    return _approveERC20(LibDeployTokens.getOnyxAddr(components), owner, spender);
   }
 
   /////////////////
