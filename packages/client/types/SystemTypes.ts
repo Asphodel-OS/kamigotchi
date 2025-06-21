@@ -68,6 +68,7 @@ import { RelationshipAdvanceSystem } from "./ethers-contracts/RelationshipAdvanc
 import { ScavengeClaimSystem } from "./ethers-contracts/ScavengeClaimSystem";
 import { SkillRespecSystem } from "./ethers-contracts/SkillRespecSystem";
 import { SkillUpgradeSystem } from "./ethers-contracts/SkillUpgradeSystem";
+import { TokenBridgeSystem } from "./ethers-contracts/TokenBridgeSystem";
 import { TradeCancelSystem } from "./ethers-contracts/TradeCancelSystem";
 import { TradeCompleteSystem } from "./ethers-contracts/TradeCompleteSystem";
 import { TradeCreateSystem } from "./ethers-contracts/TradeCreateSystem";
@@ -143,6 +144,7 @@ export type SystemTypes = {
   "system.scavenge.claim": ScavengeClaimSystem;
   "system.skill.respec": SkillRespecSystem;
   "system.skill.upgrade": SkillUpgradeSystem;
+  "system.erc20.bridge": TokenBridgeSystem;
   "system.trade.cancel": TradeCancelSystem;
   "system.trade.complete": TradeCompleteSystem;
   "system.trade.create": TradeCreateSystem;

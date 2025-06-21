@@ -28,6 +28,7 @@
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTax", "name": "OwnsTaxID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsWithdrawal", "name": "OwnsWithdrawalID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDAnchor", "name": "AnchorID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IdSource", "name": "SourceID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDType", "name": "TypeID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -75,6 +76,7 @@
     { "comp": "State", "name": "State", "type": "string", "indexed": true },
     { "comp": "Subtype", "name": "Subtype", "type": "string" },
     { "comp": "Time", "name": "Time", "type": "uint256" },
+    { "comp": "TimeEnd", "name": "TimeEnd", "type": "uint256" },
     { "comp": "TimeLastAction", "name": "LastActionTime", "type": "uint256" },
     { "comp": "TimeNext", "name": "NextTime", "type": "uint256" },
     { "comp": "TimeLast", "name": "LastTime", "type": "uint256" },
@@ -83,13 +85,14 @@
     { "comp": "Type", "name": "Type", "type": "string", "indexed": true },
     { "comp": "TokenAddress", "name": "TokenAddress", "type": "address" },
     { "comp": "TokenAllowance", "name": "TokenAllowance", "type": "bool" },
+    { "comp": "TokenHolder", "name": "TokenHolder", "type": "bool" },
     { "comp": "Value", "name": "Value", "type": "uint256" },
     { "comp": "Values", "name": "Values", "type": "uint256[]" },
     { "comp": "Violence", "name": "Violence", "type": "Stat" },
     { "comp": "Weights", "name": "Weights", "type": "uint256[]" },
     { "comp": "Whitelist", "name": "Whitelist", "type": "uint32[]" }
   ],
-  "protectedComponents": ["ProxyPermissionsERC721", "TokenAllowance"],
+  "protectedComponents": ["ProxyPermissionsERC721", "TokenAllowance", "TokenHolder"],
   "systems": [
     { "name": "__LocalSetupSystem", "writeAccess": ["*"], "skipEnv": ["testing", "production"] },
     { "name": "_SnapshotT2System", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "Value"] },
@@ -678,6 +681,21 @@
       ]
     },
     {
+      "name": "TokenBridgeSystem",
+      "writeAccess": [
+        "EntityType",
+        "IDOwnsInventory",
+        "IDOwnsWithdrawal",
+        "IndexItem",
+        "TimeEnd",
+        "TimeLast",
+        "TokenAddress",
+        "TokenAllowance",
+        "TokenHolder",
+        "Value"
+      ]
+    },
+    {
       "name": "TradeCancelSystem",
       "writeAccess": [
         "EntityType",
@@ -779,6 +797,7 @@
     "LibSkillRegistry",
     "LibSkill",
     "LibStat",
+    "LibTokenBridge",
     "LibTrade",
     "LibTraitRegistry",
     "LibVIP"

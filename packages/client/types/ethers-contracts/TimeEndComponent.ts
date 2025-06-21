@@ -28,45 +28,43 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export type TimelockOpStruct = {
-  target: PromiseOrValue<string>;
-  value: PromiseOrValue<BigNumberish>;
-  salt: PromiseOrValue<BigNumberish>;
-};
-
-export type TimelockOpStructOutput = [string, BigNumber, BigNumber] & {
-  target: string;
-  value: BigNumber;
-  salt: BigNumber;
-};
-
-export interface TimelockComponentInterface extends utils.Interface {
+export interface TimeEndComponentInterface extends utils.Interface {
   functions: {
     "authorizeWriter(address)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
+    "dec(uint256,uint256)": FunctionFragment;
+    "dec(uint256[],uint256)": FunctionFragment;
+    "dec(uint256[],uint256[])": FunctionFragment;
     "equal(uint256[],bytes)": FunctionFragment;
     "equal(uint256,bytes)": FunctionFragment;
+    "extract(uint256[])": FunctionFragment;
+    "extract(uint256)": FunctionFragment;
     "extractRaw(uint256[])": FunctionFragment;
     "extractRaw(uint256)": FunctionFragment;
+    "get(uint256[])": FunctionFragment;
     "get(uint256)": FunctionFragment;
-    "getAt(bytes,uint256)": FunctionFragment;
-    "getEntitiesWithValue((address,uint256,uint256))": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getEntitiesWithValue(uint256)": FunctionFragment;
     "getRaw(uint256[])": FunctionFragment;
     "getRaw(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "id()": FunctionFragment;
+    "inc(uint256[],uint256)": FunctionFragment;
+    "inc(uint256[],uint256[])": FunctionFragment;
+    "inc(uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "remove(uint256[])": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
-    "set(uint256,(address,uint256,uint256))": FunctionFragment;
+    "safeGet(uint256)": FunctionFragment;
+    "safeGet(uint256[])": FunctionFragment;
+    "set(uint256,uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
     "set(uint256[],bytes[])": FunctionFragment;
-    "size(bytes)": FunctionFragment;
+    "set(uint256[],uint256[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unauthorizeWriter(address)": FunctionFragment;
     "writeAccess(address)": FunctionFragment;
@@ -77,28 +75,38 @@ export interface TimelockComponentInterface extends utils.Interface {
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
+      | "dec(uint256,uint256)"
+      | "dec(uint256[],uint256)"
+      | "dec(uint256[],uint256[])"
       | "equal(uint256[],bytes)"
       | "equal(uint256,bytes)"
+      | "extract(uint256[])"
+      | "extract(uint256)"
       | "extractRaw(uint256[])"
       | "extractRaw(uint256)"
-      | "get"
-      | "getAt"
-      | "getEntitiesWithValue((address,uint256,uint256))"
+      | "get(uint256[])"
+      | "get(uint256)"
       | "getEntitiesWithValue(bytes)"
+      | "getEntitiesWithValue(uint256)"
       | "getRaw(uint256[])"
       | "getRaw(uint256)"
       | "has"
       | "id"
+      | "inc(uint256[],uint256)"
+      | "inc(uint256[],uint256[])"
+      | "inc(uint256,uint256)"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "remove(uint256[])"
       | "remove(uint256)"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "set(uint256,(address,uint256,uint256))"
+      | "safeGet(uint256)"
+      | "safeGet(uint256[])"
+      | "set(uint256,uint256)"
       | "set(uint256,bytes)"
       | "set(uint256[],bytes[])"
-      | "size"
+      | "set(uint256[],uint256[])"
       | "transferOwnership"
       | "unauthorizeWriter"
       | "writeAccess"
@@ -117,12 +125,32 @@ export interface TimelockComponentInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "dec(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "dec(uint256[],uint256)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "dec(uint256[],uint256[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "equal(uint256[],bytes)",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "equal(uint256,bytes)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extract(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "extract(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "extractRaw(uint256[])",
@@ -133,20 +161,20 @@ export interface TimelockComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "get",
+    functionFragment: "get(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "get(uint256)",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAt",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntitiesWithValue((address,uint256,uint256))",
-    values: [TimelockOpStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue(bytes)",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesWithValue(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRaw(uint256[])",
@@ -161,6 +189,18 @@ export interface TimelockComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "inc(uint256[],uint256)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "inc(uint256[],uint256[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "inc(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -183,8 +223,16 @@ export interface TimelockComponentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "set(uint256,(address,uint256,uint256))",
-    values: [PromiseOrValue<BigNumberish>, TimelockOpStruct]
+    functionFragment: "safeGet(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeGet(uint256[])",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "set(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
@@ -195,8 +243,8 @@ export interface TimelockComponentInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "size",
-    values: [PromiseOrValue<BytesLike>]
+    functionFragment: "set(uint256[],uint256[])",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -224,11 +272,31 @@ export interface TimelockComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "dec(uint256,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "dec(uint256[],uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "dec(uint256[],uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "equal(uint256[],bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "equal(uint256,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "extract(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "extract(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -239,14 +307,20 @@ export interface TimelockComponentInterface extends utils.Interface {
     functionFragment: "extractRaw(uint256)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "get", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getAt", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue((address,uint256,uint256))",
+    functionFragment: "get(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "get(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getEntitiesWithValue(bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesWithValue(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -259,6 +333,18 @@ export interface TimelockComponentInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "inc(uint256[],uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "inc(uint256[],uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "inc(uint256,uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -281,7 +367,15 @@ export interface TimelockComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "set(uint256,(address,uint256,uint256))",
+    functionFragment: "safeGet(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeGet(uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "set(uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -292,7 +386,10 @@ export interface TimelockComponentInterface extends utils.Interface {
     functionFragment: "set(uint256[],bytes[])",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "set(uint256[],uint256[])",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -377,12 +474,12 @@ export type UnauthorizedWriterEvent = TypedEvent<
 export type UnauthorizedWriterEventFilter =
   TypedEventFilter<UnauthorizedWriterEvent>;
 
-export interface TimelockComponent extends BaseContract {
+export interface TimeEndComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TimelockComponentInterface;
+  interface: TimeEndComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -418,6 +515,24 @@ export interface TimelockComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -430,6 +545,16 @@ export interface TimelockComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    "extract(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "extract(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -440,24 +565,23 @@ export interface TimelockComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    get(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[TimelockOpStructOutput]>;
-
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "getEntitiesWithValue((address,uint256,uint256))"(
-      value: TimelockOpStruct,
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    "get(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -477,6 +601,24 @@ export interface TimelockComponent extends BaseContract {
     ): Promise<[boolean]>;
 
     id(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
 
@@ -503,9 +645,19 @@ export interface TimelockComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "set(uint256,(address,uint256,uint256))"(
+    "safeGet(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: TimelockOpStruct,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "set(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -521,10 +673,11 @@ export interface TimelockComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "set(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -556,6 +709,24 @@ export interface TimelockComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  "dec(uint256,uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "dec(uint256[],uint256)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "dec(uint256[],uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   "equal(uint256[],bytes)"(
     entities: PromiseOrValue<BigNumberish>[],
     value: PromiseOrValue<BytesLike>,
@@ -568,6 +739,16 @@ export interface TimelockComponent extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  "extract(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "extract(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   "extractRaw(uint256[])"(
     entities: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -578,24 +759,23 @@ export interface TimelockComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  get(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<TimelockOpStructOutput>;
-
-  getAt(
-    value: PromiseOrValue<BytesLike>,
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getEntitiesWithValue((address,uint256,uint256))"(
-    value: TimelockOpStruct,
+  "get(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  "get(uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   "getEntitiesWithValue(bytes)"(
-    value: PromiseOrValue<BytesLike>,
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "getEntitiesWithValue(uint256)"(
+    value: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -615,6 +795,24 @@ export interface TimelockComponent extends BaseContract {
   ): Promise<boolean>;
 
   id(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "inc(uint256[],uint256)"(
+    entities: PromiseOrValue<BigNumberish>[],
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "inc(uint256[],uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "inc(uint256,uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -641,9 +839,19 @@ export interface TimelockComponent extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "set(uint256,(address,uint256,uint256))"(
+  "safeGet(uint256)"(
     entity: PromiseOrValue<BigNumberish>,
-    value: TimelockOpStruct,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "safeGet(uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "set(uint256,uint256)"(
+    entity: PromiseOrValue<BigNumberish>,
+    value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -659,10 +867,11 @@ export interface TimelockComponent extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  size(
-    value: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  "set(uint256[],uint256[])"(
+    entities: PromiseOrValue<BigNumberish>[],
+    values: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -692,6 +901,24 @@ export interface TimelockComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -704,6 +931,16 @@ export interface TimelockComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    "extract(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "extract(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
@@ -714,24 +951,23 @@ export interface TimelockComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    get(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<TimelockOpStructOutput>;
-
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue((address,uint256,uint256))"(
-      value: TimelockOpStruct,
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    "get(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -751,6 +987,24 @@ export interface TimelockComponent extends BaseContract {
     ): Promise<boolean>;
 
     id(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -773,9 +1027,19 @@ export interface TimelockComponent extends BaseContract {
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
-    "set(uint256,(address,uint256,uint256))"(
+    "safeGet(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: TimelockOpStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "set(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -791,10 +1055,11 @@ export interface TimelockComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    size(
-      value: PromiseOrValue<BytesLike>,
+    "set(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -866,6 +1131,24 @@ export interface TimelockComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -878,6 +1161,16 @@ export interface TimelockComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    "extract(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "extract(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -888,24 +1181,23 @@ export interface TimelockComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    get(
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEntitiesWithValue((address,uint256,uint256))"(
-      value: TimelockOpStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -925,6 +1217,24 @@ export interface TimelockComponent extends BaseContract {
     ): Promise<BigNumber>;
 
     id(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -951,9 +1261,19 @@ export interface TimelockComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "set(uint256,(address,uint256,uint256))"(
+    "safeGet(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: TimelockOpStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "set(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -969,9 +1289,10 @@ export interface TimelockComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+    "set(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -1005,6 +1326,24 @@ export interface TimelockComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    "dec(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "dec(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "dec(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     "equal(uint256[],bytes)"(
       entities: PromiseOrValue<BigNumberish>[],
       value: PromiseOrValue<BytesLike>,
@@ -1017,6 +1356,16 @@ export interface TimelockComponent extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    "extract(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "extract(uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     "extractRaw(uint256[])"(
       entities: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1027,24 +1376,23 @@ export interface TimelockComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    get(
+    "get(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "get(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getAt(
-      value: PromiseOrValue<BytesLike>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEntitiesWithValue((address,uint256,uint256))"(
-      value: TimelockOpStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     "getEntitiesWithValue(bytes)"(
-      value: PromiseOrValue<BytesLike>,
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getEntitiesWithValue(uint256)"(
+      value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1064,6 +1412,24 @@ export interface TimelockComponent extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     id(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "inc(uint256[],uint256)"(
+      entities: PromiseOrValue<BigNumberish>[],
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "inc(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "inc(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1090,9 +1456,19 @@ export interface TimelockComponent extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "set(uint256,(address,uint256,uint256))"(
+    "safeGet(uint256)"(
       entity: PromiseOrValue<BigNumberish>,
-      value: TimelockOpStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "safeGet(uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "set(uint256,uint256)"(
+      entity: PromiseOrValue<BigNumberish>,
+      value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1108,9 +1484,10 @@ export interface TimelockComponent extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    size(
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
+    "set(uint256[],uint256[])"(
+      entities: PromiseOrValue<BigNumberish>[],
+      values: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

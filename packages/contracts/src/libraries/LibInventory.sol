@@ -186,6 +186,17 @@ library LibInventory {
       ids[i] = incFor(comps, holderIDs[i], itemIndex, amts[i]);
   }
 
+  function incFor(
+    IUintComp components,
+    uint256[] memory holderIDs,
+    uint32[] memory itemIndices,
+    uint256[] memory amts
+  ) internal returns (uint256[] memory ids) {
+    ids = new uint256[](holderIDs.length);
+    for (uint256 i; i < holderIDs.length; i++)
+      ids[i] = incFor(components, holderIDs[i], itemIndices[i], amts[i]);
+  }
+
   /// @notice decrease, and creates new inventory if needed
   /// @dev used for burning items. ERC20 items are sent to multisig. Meant for Account->NPC or NPC->NPC
   function decFor(IUintComp comps, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
@@ -270,6 +281,16 @@ library LibInventory {
       _decFor(comps, fromIDs[i], itemIndices[i], amts[i]); // implicit balance check
       _incFor(comps, toIDs[i], itemIndices[i], amts[i]);
     }
+  }
+
+  function decFor(
+    IUintComp components,
+    uint256[] memory holderIDs,
+    uint32[] memory itemIndices,
+    uint256[] memory amts
+  ) internal {
+    for (uint256 i; i < holderIDs.length; i++)
+      decFor(components, holderIDs[i], itemIndices[i], amts[i]);
   }
 
   /////////////////
