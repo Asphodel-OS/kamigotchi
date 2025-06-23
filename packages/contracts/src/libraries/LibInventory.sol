@@ -43,39 +43,34 @@ library LibInventory {
    * @dev fields like affinity, type and name not saved; refer to registry
    *      assumes no other instance of type exists - (would be overwritten)
    */
-  function create(
-    IUintComp components,
-    uint256 id,
-    uint256 holderID,
-    uint32 itemIndex
-  ) internal returns (uint256) {
-    LibEntityType.set(components, id, "INVENTORY");
-    IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
-    OwnerComponent(getAddrByID(components, OwnerCompID)).set(id, holderID);
-    ValueComponent(getAddrByID(components, ValueCompID)).set(id, 0);
+  function create(IUintComp comps, uint256 id, uint256 holderID, uint32 itemIndex) internal {
+    LibEntityType.set(comps, id, "INVENTORY");
+    IndexItemComponent(getAddrByID(comps, IndexItemCompID)).set(id, itemIndex);
+    OwnerComponent(getAddrByID(comps, OwnerCompID)).set(id, holderID);
+    ValueComponent(getAddrByID(comps, ValueCompID)).set(id, 0);
   }
 
   function create(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint32 itemIndex
   ) internal returns (uint256 id) {
     id = genID(holderID, itemIndex);
-    create(components, id, holderID, itemIndex);
+    create(comps, id, holderID, itemIndex);
   }
 
-  function remove(IUintComp components, uint256 id) internal {
-    LibEntityType.remove(components, id);
-    IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
-    OwnerComponent(getAddrByID(components, OwnerCompID)).remove(id);
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(id);
+  function remove(IUintComp comps, uint256 id) internal {
+    LibEntityType.remove(comps, id);
+    IndexItemComponent(getAddrByID(comps, IndexItemCompID)).remove(id);
+    OwnerComponent(getAddrByID(comps, OwnerCompID)).remove(id);
+    ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
   }
 
-  function remove(IUintComp components, uint256[] memory ids) internal {
-    LibEntityType.remove(components, ids);
-    IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(ids);
-    OwnerComponent(getAddrByID(components, OwnerCompID)).remove(ids);
-    ValueComponent(getAddrByID(components, ValueCompID)).remove(ids);
+  function remove(IUintComp comps, uint256[] memory ids) internal {
+    LibEntityType.remove(comps, ids);
+    IndexItemComponent(getAddrByID(comps, IndexItemCompID)).remove(ids);
+    OwnerComponent(getAddrByID(comps, OwnerCompID)).remove(ids);
+    ValueComponent(getAddrByID(comps, ValueCompID)).remove(ids);
   }
 
   /// @notice checks if inventory exists, creates otherwise
@@ -84,20 +79,20 @@ library LibInventory {
    *   - reduces 2 reads and 1 hash
    */
   function createFor(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint32 itemIndex
   ) internal returns (uint256 id) {
     id = genID(holderID, itemIndex);
-    bool has = LibEntityType.checkAndSet(components, id, "INVENTORY");
+    bool has = LibEntityType.checkAndSet(comps, id, "INVENTORY");
     if (!has) {
-      IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
-      OwnerComponent(getAddrByID(components, OwnerCompID)).set(id, holderID);
+      IndexItemComponent(getAddrByID(comps, IndexItemCompID)).set(id, itemIndex);
+      OwnerComponent(getAddrByID(comps, OwnerCompID)).set(id, holderID);
     }
   }
 
   function createFor(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint32[] memory itemIndices
   ) internal returns (uint256[] memory) {
@@ -105,19 +100,19 @@ library LibInventory {
     for (uint256 i; i < itemIndices.length; i++) ids[i] = genID(holderID, itemIndices[i]);
 
     (bool[] memory haveIDs, bool allExist) = LibEntityType.isShapeBatchWithAggregate(
-      components,
+      comps,
       ids,
       "INVENTORY"
     );
     if (allExist) return ids; // all exist, nothing to create
 
     // create new instances
-    IndexItemComponent indexComp = IndexItemComponent(getAddrByID(components, IndexItemCompID));
-    OwnerComponent ownerComp = OwnerComponent(getAddrByID(components, OwnerCompID));
+    IndexItemComponent indexComp = IndexItemComponent(getAddrByID(comps, IndexItemCompID));
+    OwnerComponent ownerComp = OwnerComponent(getAddrByID(comps, OwnerCompID));
     for (uint256 i; i < itemIndices.length; i++) {
       uint256 id = ids[i];
       if (!haveIDs[i]) {
-        LibEntityType.set(components, id, "INVENTORY"); // optimise?
+        LibEntityType.set(comps, id, "INVENTORY"); // optimise?
         indexComp.set(id, itemIndices[i]);
         ownerComp.set(id, holderID);
       }
@@ -128,107 +123,161 @@ library LibInventory {
   /////////////////
   // INTERACTIONS
 
-  /// @notice increase, and creates new inventory if needed
-  function incFor(
-    IUintComp components,
+  function _incFor(
+    IUintComp comps,
     uint256 holderID,
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256 id) {
-    // check if item is symbolink to ERC20
-    address tokenAddr = LibItem.getTokenAddr(components, itemIndex);
-    if (tokenAddr != address(0)) {
-      // is a symbolink ERC20, cannot increase
-      revert("LibInv: cannot increase ERC20");
-    } else {
-      // regular inventory
-      id = createFor(components, holderID, itemIndex);
-      ValueComponent(getAddrByID(components, ValueCompID)).inc(id, amt);
-      logItemTotal(components, holderID, itemIndex, amt);
-    }
+    id = createFor(comps, holderID, itemIndex);
+    ValueComponent(getAddrByID(comps, ValueCompID)).inc(id, amt);
+    logItemTotal(comps, holderID, itemIndex, amt);
+  }
+
+  /// @dev ignores ERC20 items
+  function _decFor(
+    IUintComp comps,
+    uint256 holderID,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal returns (uint256 id) {
+    id = genID(holderID, itemIndex); // inventory must be alr created
+
+    // delete inventory by default to prevent state bloat
+    ValueComponent valComp = ValueComponent(getAddrByID(comps, ValueCompID));
+    uint256 newBal = valComp.safeGet(id) - amt;
+    if (newBal == 0) remove(comps, id);
+    else valComp.set(id, newBal);
+
+    LibData.dec(comps, 0, itemIndex, "ITEM_COUNT", amt); // log global item count
+  }
+
+  /// @notice increase, and creates new inventory if needed
+  /// @dev does not allow for ERC20 items increases
+  function incFor(
+    IUintComp comps,
+    uint256 holderID,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal returns (uint256 id) {
+    LibItem.verifyNotToken(comps, itemIndex);
+    id = _incFor(comps, holderID, itemIndex, amt);
   }
 
   function incFor(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](itemIndices.length);
     for (uint256 i; i < itemIndices.length; i++)
-      ids[i] = incFor(components, holderID, itemIndices[i], amts[i]);
+      ids[i] = incFor(comps, holderID, itemIndices[i], amts[i]);
   }
 
   function incFor(
-    IUintComp components,
+    IUintComp comps,
     uint256[] memory holderIDs,
     uint32 itemIndex,
     uint256[] memory amts
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](holderIDs.length);
     for (uint256 i; i < holderIDs.length; i++)
-      ids[i] = incFor(components, holderIDs[i], itemIndex, amts[i]);
+      ids[i] = incFor(comps, holderIDs[i], itemIndex, amts[i]);
   }
 
   /// @notice decrease, and creates new inventory if needed
-  function decFor(IUintComp components, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
+  /// @dev used for burning items. ERC20 items are sent to multisig. Meant for Account->NPC or NPC->NPC
+  function decFor(IUintComp comps, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
     // check if item is symbolink to ERC20
-    address tokenAddr = LibItem.getTokenAddr(components, itemIndex);
+    address tokenAddr = LibItem.getTokenAddr(comps, itemIndex);
     if (tokenAddr != address(0)) {
       // is a symbolink ERC20, spend it
       if (itemIndex == ONYX_INDEX)
-        LibERC20.spendOnyx(components, tokenAddr, amt, holderID); // special onyx case
-      else LibERC20.spend(components, tokenAddr, amt, holderID);
+        LibERC20.spendOnyx(comps, tokenAddr, amt, holderID); // special onyx case
+      else LibERC20.spend(comps, tokenAddr, amt, holderID);
     } else {
       // regular inventory
-      uint256 id = genID(holderID, itemIndex);
-
-      ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
-      uint256 newBal = valComp.safeGet(id) - amt;
-      if (newBal == 0) remove(components, id);
-      else valComp.set(id, newBal);
-
-      LibData.dec(components, 0, itemIndex, "ITEM_COUNT", amt);
+      _decFor(comps, holderID, itemIndex, amt);
     }
   }
 
   function decFor(
-    IUintComp components,
+    IUintComp comps,
     uint256[] memory holderIDs,
     uint32 itemIndex,
     uint256[] memory amts
   ) internal {
-    for (uint256 i; i < holderIDs.length; i++) decFor(components, holderIDs[i], itemIndex, amts[i]);
+    for (uint256 i; i < holderIDs.length; i++) decFor(comps, holderIDs[i], itemIndex, amts[i]);
   }
 
   function decFor(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal {
-    for (uint256 i; i < itemIndices.length; i++)
-      decFor(components, holderID, itemIndices[i], amts[i]);
+    for (uint256 i; i < itemIndices.length; i++) decFor(comps, holderID, itemIndices[i], amts[i]);
   }
 
-  // note: this has to be updated post ERC20 bridge
+  /// @notice transfer items between entities
+  /// @dev allows for ERC20 item transfers. meant for Account->Account
   function transferFor(
-    IUintComp components,
-    uint256 holderID,
-    uint256 targetID,
-    uint32[] memory indices,
+    IUintComp comps,
+    uint256 fromID,
+    uint256 toID,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal {
+    _decFor(comps, fromID, itemIndex, amt); // implicit balance check
+    _incFor(comps, toID, itemIndex, amt);
+  }
+
+  function transferFor(
+    IUintComp comps,
+    uint256 fromID,
+    uint256 toID,
+    uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal {
-    decFor(components, holderID, indices, amts);
-    incFor(components, targetID, indices, amts);
+    for (uint256 i = 0; i < itemIndices.length; i++) {
+      _decFor(comps, fromID, itemIndices[i], amts[i]); // implicit balance check
+      _incFor(comps, toID, itemIndices[i], amts[i]);
+    }
+  }
+
+  function transferFor(
+    IUintComp comps,
+    uint256[] memory fromIDs,
+    uint256[] memory toIDs,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal {
+    for (uint256 i = 0; i < fromIDs.length; i++) {
+      _decFor(comps, fromIDs[i], itemIndex, amt); // implicit balance check
+      _incFor(comps, toIDs[i], itemIndex, amt);
+    }
+  }
+
+  function transferFor(
+    IUintComp comps,
+    uint256[] memory fromIDs,
+    uint256[] memory toIDs,
+    uint32[] memory itemIndices,
+    uint256[] memory amts
+  ) internal {
+    for (uint256 i = 0; i < fromIDs.length; i++) {
+      _decFor(comps, fromIDs[i], itemIndices[i], amts[i]); // implicit balance check
+      _incFor(comps, toIDs[i], itemIndices[i], amts[i]);
+    }
   }
 
   /////////////////
   // CHECKERS
 
   /// @dev only tradable items can be transferred
-  function verifyTransferable(IUintComp components, uint32[] memory indices) internal view {
-    if (LibItem.checkFlagAny(components, indices, "NOT_TRADABLE", true)) {
+  function verifyTransferable(IUintComp comps, uint32[] memory indices) internal view {
+    if (LibItem.checkFlagAny(comps, indices, "NOT_TRADABLE", true)) {
       revert("Transfer includes untradeable item");
     }
   }
@@ -237,38 +286,35 @@ library LibInventory {
   // GETTERS
 
   function getBalanceOf(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint32 itemIndex
   ) internal view returns (uint256) {
     uint256 id = genID(holderID, itemIndex);
-    return IUintComp(getAddrByID(components, ValueCompID)).safeGet(id);
+    return IUintComp(getAddrByID(comps, ValueCompID)).safeGet(id);
   }
 
-  function getBalance(IUintComp components, uint256 id) internal view returns (uint256 balance) {
-    return ValueComponent(getAddrByID(components, ValueCompID)).get(id);
+  function getBalance(IUintComp comps, uint256 id) internal view returns (uint256 balance) {
+    return ValueComponent(getAddrByID(comps, ValueCompID)).get(id);
   }
 
-  function getOwner(IUintComp components, uint256 id) internal view returns (uint256) {
-    return OwnerComponent(getAddrByID(components, OwnerCompID)).get(id);
+  function getOwner(IUintComp comps, uint256 id) internal view returns (uint256) {
+    return OwnerComponent(getAddrByID(comps, OwnerCompID)).get(id);
   }
 
-  function getItemIndex(IUintComp components, uint256 id) internal view returns (uint32) {
-    return IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(id);
+  function getItemIndex(IUintComp comps, uint256 id) internal view returns (uint32) {
+    return IndexItemComponent(getAddrByID(comps, IndexItemCompID)).get(id);
   }
 
-  function getType(IUintComp components, uint256 id) internal view returns (string memory v) {
-    uint256 registryID = LibItem.getByInstance(components, id);
-    return LibItem.getType(components, registryID);
+  function getType(IUintComp comps, uint256 id) internal view returns (string memory v) {
+    uint256 registryID = LibItem.getByInstance(comps, id);
+    return LibItem.getType(comps, registryID);
   }
 
-  function getTypeByIndex(
-    IUintComp components,
-    uint32 itemIndex
-  ) internal view returns (string memory) {
+  function getTypeByIndex(IUintComp comps, uint32 itemIndex) internal view returns (string memory) {
     // skips registry existence check - its implicitly checked when getting type
     uint256 registryID = LibItem.genID(itemIndex);
-    return LibItem.getType(components, registryID);
+    return LibItem.getType(comps, registryID);
   }
 
   /////////////////
@@ -276,20 +322,20 @@ library LibInventory {
 
   /// @notice Get the specified inventory instance.
   function get(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint32 itemIndex
   ) internal view returns (uint256 result) {
     uint256 id = genID(holderID, itemIndex);
-    return LibEntityType.isShape(components, id, "INVENTORY") ? id : 0;
+    return LibEntityType.isShape(comps, id, "INVENTORY") ? id : 0;
   }
 
   /// @notice Get all the inventories belonging to a holder
   function getAllForHolder(
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID
   ) internal view returns (uint256[] memory) {
-    return OwnerComponent(getAddrByID(components, OwnerCompID)).getEntitiesWithValue(holderID);
+    return OwnerComponent(getAddrByID(comps, OwnerCompID)).getEntitiesWithValue(holderID);
   }
 
   /////////////////
@@ -312,25 +358,20 @@ library LibInventory {
   // LOGGING
 
   /// @notice log increase for item total
-  function logItemTotal(
-    IUintComp components,
-    uint256 accID,
-    uint32 itemIndex,
-    uint256 amt
-  ) internal {
+  function logItemTotal(IUintComp comps, uint256 accID, uint32 itemIndex, uint256 amt) internal {
     uint256[] memory holderIDs = new uint256[](2);
     holderIDs[1] = accID;
     string[] memory types = new string[](2);
     types[0] = "ITEM_COUNT";
     types[1] = "ITEM_TOTAL";
 
-    LibData.inc(components, holderIDs, itemIndex, types, amt);
+    LibData.inc(comps, holderIDs, itemIndex, types, amt);
   }
 
   /// @notice Log transfer for each index/amount pair individually using a for loop
   function logTransfer(
     IWorld world,
-    IUintComp components,
+    IUintComp comps,
     uint256 holderID,
     uint256 targetID,
     uint32[] memory indices,

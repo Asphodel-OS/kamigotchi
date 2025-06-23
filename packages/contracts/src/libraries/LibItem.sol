@@ -209,6 +209,17 @@ library LibItem {
     return LibFlag.has(components, genID(index), "BYPASS_BONUS_RESET");
   }
 
+  function verifyBurnable(IUintComp components, uint32[] memory indices) public view {
+    uint256[] memory ids = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
+    if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
+  }
+
+  function verifyForShape(IUintComp components, uint32 index, string memory shape) public view {
+    if (!LibFor.get(components, genID(index)).eq(shape))
+      revert(LibString.concat("not for ", shape));
+  }
+
   /// @notice check if an item has a given state for a flag
   function checkFlag(
     IUintComp components,
@@ -248,6 +259,13 @@ library LibItem {
     if (amt > 100) revert("max 100 item use at once");
   }
 
+  /// @notice ensure item does not have a token attached
+  function verifyNotToken(IUintComp components, uint32 index) public view {
+    if (TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).has(genID(index))) {
+      revert("item is a token");
+    }
+  }
+
   /// @dev requirements looks at conditions outside of the item itself, e.g. kami/account
   function verifyRequirements(
     IUintComp components,
@@ -277,17 +295,6 @@ library LibItem {
     if (!LibEntityType.isShape(components, ids, "ITEM")) revert("thats not an item");
     if (!getCompByID(components, TypeCompID).eqString(ids, type_))
       revert(LibString.concat("thats not item type ", type_));
-  }
-
-  function verifyBurnable(IUintComp components, uint32[] memory indices) public view {
-    uint256[] memory ids = new uint256[](indices.length);
-    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
-    if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
-  }
-
-  function verifyForShape(IUintComp components, uint32 index, string memory shape) public view {
-    if (!LibFor.get(components, genID(index)).eq(shape))
-      revert(LibString.concat("not for ", shape));
   }
 
   /////////////////
