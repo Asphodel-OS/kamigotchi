@@ -1,6 +1,6 @@
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { animate, createScope, createSpring, Scope } from 'animejs';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
@@ -25,7 +25,7 @@ export const Card = (props: Props) => {
   const { image, children, fullWidth } = props;
   const scale = image?.scale ?? 9;
   const scope = useRef<Scope | null>(null);
-  const ArrowRefs = new Array(5).fill(null).map(() => useRef<SVGSVGElement>(null));
+  const ArrowRefs = new Array(7).fill(null).map(() => useRef<SVGSVGElement>(null));
 
   useEffect(() => {
     scope.current = createScope().add(() => {
@@ -36,12 +36,13 @@ export const Card = (props: Props) => {
               { to: '-30%', duration: 50, easing: 'easeInOutSine' },
               { to: '30%', duration: 50, easing: 'easeInOutSine' },
             ],*/
-            translateY: ['100%', '-500%'],
+            translateY: ['150%', '-500%'],
             scale: [
               { to: 1.25, ease: 'inOut(3)', duration: 200 },
               { to: 1, ease: createSpring({ stiffness: 300 }) },
             ],
             loop: true,
+            delay: 250 * (index + 0.01),
             loopDelay: 250 * (index + 0.01),
             direction: 'alternate',
             duration: 1000,
@@ -61,21 +62,14 @@ export const Card = (props: Props) => {
     }
   };
   const Arrows = () => {
-    // using this + the loopDelay so that the arrow positions are randomized
-    const randomX = useMemo(
-      () =>
-        Array(5)
-          .fill(0)
-          .map(() => Math.floor(Math.random() * 70)),
-      []
-    );
+    const positions = [80, 0, 60, 20, 10, 30, 50];
     return ArrowRefs.map((ref, i) => {
       return (
         <ArrowUpwardIcon
           key={`arrow-${i}`}
           style={{
             position: 'absolute',
-            left: randomX[i] + `%`,
+            left: positions[i] + `%`,
             bottom: `10%`,
             width: '20%',
             height: '20%',
