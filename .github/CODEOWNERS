@@ -1,0 +1,12 @@
+# Global
+*       @chlwys @jiracheron
+
+# By Language
+*.js    @jiracheron
+*.sol   @chlwys
+*.ts    @jiracheron 
+*.tsx   @jiracheron
+
+# By Domain
+packages/client/ @jiracheron
+packages/contracts/ @chlwys
