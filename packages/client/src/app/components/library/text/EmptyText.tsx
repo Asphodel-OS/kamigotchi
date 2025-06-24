@@ -31,9 +31,9 @@ export const EmptyText = (props: Props) => {
             isMultiParagraph={isMultiParagraph}
           >
             {parts.map((part, j) => {
-              // \n and plain text
+              //  plain text
               if (typeof part === 'string') {
-                return part === '\n' ? <br key={j} /> : <span key={j}>{part}</span>;
+                return <span key={j}>{part}</span>;
               }
               //  hyperlinks
               return (
@@ -70,6 +70,8 @@ const Text = styled.div<{
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size, gapScale }) => gapScale * size * 0.8}vw;
   text-align: center;
+  white-space: pre-line;
+
   margin-bottom: ${({ gapScale, isMultiParagraph, size }) =>
     isMultiParagraph ? gapScale * size * 0.3 : 0}vw; // manages space between paragraphs
 
