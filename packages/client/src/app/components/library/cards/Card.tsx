@@ -32,6 +32,10 @@ export const Card = (props: Props) => {
       ArrowRefs.forEach((ref, index) => {
         if (ref.current) {
           animate(ref.current, {
+            /*    translateX: [
+              { to: '-30%', duration: 50, easing: 'easeInOutSine' },
+              { to: '30%', duration: 50, easing: 'easeInOutSine' },
+            ],*/
             translateY: ['100%', '-500%'],
             scale: [
               { to: 1.25, ease: 'inOut(3)', duration: 200 },
