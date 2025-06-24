@@ -32,10 +32,11 @@ export const Card = (props: Props) => {
       ArrowRefs.forEach((ref, index) => {
         if (ref.current) {
           animate(ref.current, {
-            /*    translateX: [
+            translateX: [
               { to: '-30%', duration: 50, easing: 'easeInOutSine' },
               { to: '30%', duration: 50, easing: 'easeInOutSine' },
-            ],*/
+              { to: '-30%', duration: 50, easing: 'easeInOutSine' },
+            ],
             translateY: ['150%', '-500%'],
             scale: [
               { to: 1.25, ease: 'inOut(3)', duration: 200 },
@@ -62,7 +63,7 @@ export const Card = (props: Props) => {
     }
   };
   const Arrows = () => {
-    const positions = [80, 0, 60, 20, 10, 30, 50];
+    const positions = [70, 7, 60, 20, 10, 30, 50];
     return ArrowRefs.map((ref, i) => {
       return (
         <ArrowUpwardIcon
