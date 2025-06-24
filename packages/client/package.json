@@ -68,6 +68,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "@wagmi/connectors": "^5.0.6",
     "@wagmi/core": "^2.10.4",
+    "animejs": "^4.0.2",
     "antd": "^5.4.3",
     "async-mutex": "^0.3.2",
     "axios": "^1.6.8",
