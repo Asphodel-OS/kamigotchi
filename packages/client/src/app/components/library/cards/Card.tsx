@@ -1,5 +1,8 @@
-import React from 'react';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import { animate, createScope, createSpring, Scope } from 'animejs';
+import React, { useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
+
 import { playClick } from 'utils/sounds';
 import { TextTooltip } from '../poppers/TextTooltip';
 import { Overlay } from '../styles';
@@ -21,6 +24,30 @@ interface Props {
 export const Card = (props: Props) => {
   const { image, children, fullWidth } = props;
   const scale = image?.scale ?? 9;
+  const scope = useRef<Scope | null>(null);
+  const ArrowRefs = new Array(5).fill(null).map(() => useRef<SVGSVGElement>(null));
+
+  useEffect(() => {
+    scope.current = createScope().add(() => {
+      ArrowRefs.forEach((ref, index) => {
+        if (ref.current) {
+          animate(ref.current, {
+            translateY: ['100%', '-500%'],
+            scale: [
+              { to: 1.25, ease: 'inOut(3)', duration: 200 },
+              { to: 1, ease: createSpring({ stiffness: 300 }) },
+            ],
+            loop: true,
+            loopDelay: 250 * (index + 0.01),
+            direction: 'alternate',
+            duration: 1000,
+          });
+        }
+      });
+    });
+
+    return () => scope.current?.revert();
+  }, []);
 
   // handle image click if there is one
   const handleImageClick = () => {
@@ -28,6 +55,31 @@ export const Card = (props: Props) => {
       image.onClick();
       playClick();
     }
+  };
+  const Arrows = () => {
+    // using this + the loopDelay so that the arrow positions are randomized
+    const randomX = useMemo(
+      () =>
+        Array(5)
+          .fill(0)
+          .map(() => Math.floor(Math.random() * 70)),
+      []
+    );
+    return ArrowRefs.map((ref, i) => {
+      return (
+        <ArrowUpwardIcon
+          key={`arrow-${i}`}
+          style={{
+            position: 'absolute',
+            left: randomX[i] + `%`,
+            bottom: `10%`,
+            width: '20%',
+            height: '20%',
+          }}
+          ref={ref}
+        />
+      );
+    });
   };
 
   return (
@@ -37,6 +89,7 @@ export const Card = (props: Props) => {
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
+          {Arrows()}
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
       </TextTooltip>
