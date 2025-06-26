@@ -7,10 +7,7 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import { getSigner, getSystemAddr } from '../utils';
 
 // deprecated
-const argv = yargs(hideBin(process.argv))
-  .usage('Usage: $0 -mode <mode> -world <address>')
-  .demandOption(['mode'])
-  .parse();
+const argv = yargs(hideBin(process.argv)).usage('Usage: $0 -mode <mode> -world <address>').parse();
 
 /// CONSTANTS
 const abi = [
@@ -44,7 +41,7 @@ const run = async () => {
   const increment = 10;
   for (let i = 0; i < toMint; i += increment) {
     try {
-      const tx = await minterSystem.batchMint(increment, { gasLimit: 30000000 });
+      const tx = await minterSystem.batchMint(increment, { gasLimit: 15000000 });
       console.log(tx.hash);
       console.log('total minted: ' + i);
     } catch (e) {

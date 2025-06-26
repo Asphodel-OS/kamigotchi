@@ -28,7 +28,13 @@ export function createAdminAPI(compiledCalls: string[]) {
   //  CONFIG
 
   async function setConfig(field: string, value: BigNumberish) {
-    const callData = generateCallData('system.config.registry', [field, value]);
+    const callData = generateCallData(
+      'system.config.registry',
+      [field, value],
+      undefined,
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 

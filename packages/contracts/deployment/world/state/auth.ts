@@ -4,6 +4,9 @@ import { readFile } from './utils';
 export async function initAuth(api: AdminAPI) {
   const rolesCSV = await readFile('auth/roles.csv');
   for (let i = 0; i < rolesCSV.length; i++) {
+    // only add roles specific to the environment
+    if (!rolesCSV[i]['Environment'].includes(process.env.NODE_ENV)) continue;
+
     const entry = rolesCSV[i];
     const roles = entry['Roles']
       .split(',')

@@ -1,2 +1,3 @@
-﻿Name,Address,Roles
-Deployer (Hot wallet),0x8C1a8745E9847027442f8B9C9070Ea6d6d7636A6,"Admin, Community Manager"
+﻿Name,Address,Roles,Environment
+Deployer (Hot wallet),0x8C1a8745E9847027442f8B9C9070Ea6d6d7636A6,"Admin, Community Manager",production
+Test world deployer,0x491742643c987974E338BF0Cf29ec2Fa2A456241,"Admin, Community Manager",testing

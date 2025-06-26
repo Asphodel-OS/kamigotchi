@@ -21,7 +21,13 @@ export function goalsAPI(generateCallData: GenerateCallData, compiledCalls: stri
   }
 
   async function enable(goalIndex: number) {
-    const callData = generateCallData('system.goal.registry', [goalIndex, false], 'setDisabled');
+    const callData = generateCallData(
+      'system.goal.registry',
+      [goalIndex, false],
+      'setDisabled',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
@@ -54,7 +60,8 @@ export function goalsAPI(generateCallData: GenerateCallData, compiledCalls: stri
       'system.goal.registry',
       [goalIndex, name, cutoff, type, conIndex, conValue],
       'addRewardBasic',
-      ['uint32', 'string', 'uint256', 'string', 'uint32', 'uint256']
+      ['uint32', 'string', 'uint256', 'string', 'uint32', 'uint256'],
+      '800000'
     );
     compiledCalls.push(callData);
   }

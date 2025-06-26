@@ -60,7 +60,8 @@ export async function initAll(api: AdminAPI) {
     await initAllLocal(api);
   } else if (process.env.NODE_ENV === 'testing') {
     await initAllTesting(api);
-    await initGachaPool(api, 100);
+    // ignore batchMinter - deployment unreliable. gacha autocreates upon mint
+    // await initGachaPool(api, 100);
   } else if (process.env.NODE_ENV === 'production') {
     await initAllProd(api);
     await initSnapshot(api);
