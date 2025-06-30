@@ -1,4 +1,11 @@
 ﻿.,Description,Type,Index,Value
+,10000x MUSU (Test),ITEM,1,10000
+,20x Gacha Tickets (Test),ITEM,10,20
+,100x Stick,ITEM,1001,100
+,100x Stone,ITEM,1002,100
+,50x Plastic Bottle,ITEM,1003,50
+,100x Pine Cones,ITEM,1004,100
+,10x Glass Jar,ITEM,1006,10
 ,10 Revives,ITEM,11001,10
 ,1x “Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
 ,1x XP Candy (Small),ITEM,11201,1
@@ -8,6 +15,7 @@
 ,1x “Cultivation II” Spell Card,ITEM,11212,1
 ,2x “Cultivation III” Spell Card,ITEM,11213,2
 ,25 Gum,ITEM,11301,25
+,100x Burgers,ITEM,11302,100
 ,1x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,1
 ,2x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,2
 ,"1x ""Neith’s River of Life"" Spell Card",ITEM,21204,1
