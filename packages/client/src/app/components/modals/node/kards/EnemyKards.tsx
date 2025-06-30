@@ -7,19 +7,17 @@ import { EmptyText, IconListButton, KamiCard, LiquidateButton } from 'app/compon
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { CooldownIcon } from 'assets/images/icons/battles';
-import { KamiIcon } from 'assets/images/icons/menu';
-import { HealthIcon } from 'assets/images/icons/stats';
+import { StatIcons } from 'constants/stats';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 
-type KamiSort = 'name' | 'health' | 'health %' | 'output' | 'cooldown';
+type KamiSort = 'violence' | 'health' | 'output' | 'cooldown';
 const REFRESH_INTERVAL = 1000;
 const SortMap: Record<KamiSort, string> = {
-  name: KamiIcon,
-  health: HealthIcon,
-  'health %': ActionIcons.liquidate,
-  output: ActionIcons.collect,
   cooldown: CooldownIcon,
+  health: ActionIcons.liquidate,
+  output: ActionIcons.collect,
+  violence: StatIcons.violence,
 };
 
 interface Props {
@@ -125,11 +123,13 @@ export const EnemyCards = (props: Props) => {
   useEffect(() => {
     if (isCollapsed) return;
     const sorted = [...enemies].sort((a, b) => {
-      if (sort === 'name') return a.name.localeCompare(b.name);
-      else if (sort === 'health') return calcHealth(a) - calcHealth(b);
-      else if (sort === 'health %') return calcHealthPercent(a) - calcHealthPercent(b);
+      if (sort === 'health') return calcHealthPercent(a) - calcHealthPercent(b);
       else if (sort === 'output') return calcOutput(b) - calcOutput(a);
-      else if (sort === 'cooldown') {
+      else if (sort === 'violence') {
+        const aViolence = a.stats?.violence.total ?? 0;
+        const bViolence = b.stats?.violence.total ?? 0;
+        return bViolence - aViolence;
+      } else if (sort === 'cooldown') {
         const aCooldown = a.time?.cooldown ?? 0;
         const bCooldown = b.time?.cooldown ?? 0;
         return bCooldown - aCooldown;
