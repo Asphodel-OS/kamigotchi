@@ -103,8 +103,8 @@ export const Create = (props: Props) => {
       max = getInventoryBalance(account.inventories ?? [], MUSU_INDEX);
     }
 
-    const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
-    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
+    const rawQuantity = parseInt(quantityStr.replace(',', '') || '0');
     const amt = Math.max(min, Math.min(max, rawQuantity));
     setCurrencyAmt(amt);
   };
@@ -116,13 +116,11 @@ export const Create = (props: Props) => {
     if (mode === CreateMode.SELL) {
       max = getInventoryBalance(account.inventories ?? [], item.index);
     }
-
-    const quantityStr = event.target.value.replaceAll('[^\\d.]', '');
-    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
+    const rawQuantity = parseInt(quantityStr.replace(',', '') || '0');
     const amt = Math.max(min, Math.min(max, rawQuantity));
     setItemAmt(amt);
   };
-
   // organize the form data for trade offer creation
   // TODO: detect successful trade creation and reset form
   const handleTrade = async (item: Item, itemAmt: number, currency: Item, currencyAmt: number) => {
