@@ -1,6 +1,7 @@
 import { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { isItemCurrency } from 'app/cache/item';
 import { TradeType } from 'app/cache/trade';
 import { Overlay, Pairing, Text, TextTooltip } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
@@ -110,13 +111,18 @@ export const ExecutedOffer = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  // create the trade confirmation window content for Canceling an order
+  // create the trade confirmation window content for Completing an Executed order
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
   const getConfirmContent = () => {
     const musuItem = getItemByIndex(MUSU_INDEX);
-    const tradeConfig = account.config?.trade;
-    const taxRate = tradeConfig?.tax.value ?? 0;
-    const tax = Math.floor(buyAmt * taxRate);
+
+    // determine taxxed amount
+    let tax = 0;
+    if (isItemCurrency(buyItem)) {
+      const tradeConfig = account.config?.trade;
+      const taxRate = tradeConfig?.tax.value ?? 0;
+      tax = Math.floor(buyAmt * taxRate);
+    }
 
     return (
       <Paragraph>
