@@ -22,6 +22,7 @@ import { waitForActionCompletion } from 'network/utils';
 import { playClick } from 'utils/sounds';
 import { abbreviateString } from 'utils/strings';
 import { ConfirmationData } from '../Confirmation';
+import { TRADE_ROOM_INDEX } from '../constants';
 import { CreateMode } from '../types';
 
 interface Props {
@@ -317,7 +318,8 @@ export const Create = (props: Props) => {
             item.index === 0 ||
             itemAmt === 0 ||
             currency.index === 0 ||
-            currencyAmt === 0
+            currencyAmt === 0 ||
+            account.roomIndex !== TRADE_ROOM_INDEX // dtl check this based on room flags
           }
         />
       </Overlay>

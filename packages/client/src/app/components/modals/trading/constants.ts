@@ -10,3 +10,5 @@ export const TypeColors = {
   Barter: BARTER_COLOR,
   Forex: FOREX_COLOR,
 };
+
+export const TRADE_ROOM_INDEX = 66;

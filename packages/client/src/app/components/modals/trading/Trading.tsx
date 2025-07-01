@@ -212,7 +212,7 @@ export function registerTradingModal() {
       };
 
       return (
-        <ModalWrapper id='trading' header={<ModalHeader title='Trade' />} canExit noPadding>
+        <ModalWrapper id='trading' header={<ModalHeader title='Trade' />} canExit noPadding overlay>
           <Overlay fullHeight fullWidth passthrough>
             <Confirmation
               title={confirmData.title}

@@ -62,7 +62,7 @@ export const Controls = (props: Props) => {
     });
 
     itemOptions.unshift({
-      text: 'None',
+      text: 'Any',
       onClick: () => setItemFilter(NullItem),
     });
     return itemOptions;
