@@ -15,7 +15,14 @@ export const MusuRow = (props: Props) => {
 
   return (
     <Container key='musu'>
-      <TextTooltip text={['Open Trading Modal']} direction='row'>
+      <TextTooltip
+        text={[
+          'View the Kamigtochi World Orderbook\n\n',
+          'You must be in a designated Trade room',
+          'to interact with outstanding Orders.',
+        ]}
+        direction='row'
+      >
         <IconButton
           img={ItemImages.musu}
           text='Trades'
