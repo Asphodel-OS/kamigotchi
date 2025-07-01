@@ -107,10 +107,10 @@ export function registerTradingModal() {
       // pull all items from the registry and save the tradable ones
       const refreshItemRegistry = () => {
         const all = getAllItems();
-        const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
-        const tradable = nonCurrencies.filter((item) => !!item.is.tradeable);
+        // const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
+        const tradable = all.filter((item) => !!item.is.tradeable);
         tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
-        setItems(tradable);
+        if (tradable.length !== items.length) setItems(tradable);
 
         setCurrencies([all.find((item) => item.index === 1)!]);
       };
@@ -138,9 +138,17 @@ export function registerTradingModal() {
       // ACTIONS
 
       // create a trade offer based on any two sets of items and amounts
-      const createTrade = (buyItem: Item, buyAmt: number, sellItem: Item, sellAmt: number) => {
+      const createTrade = (
+        wantItems: Item[],
+        wantAmts: number[],
+        haveItems: Item[],
+        haveAmts: number[]
+      ) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+        const wantIndices = wantItems.map((item) => item.index);
+        const haveIndices = haveItems.map((item) => item.index);
 
         const actionID = uuid() as EntityID;
         actions.add({
@@ -148,13 +156,7 @@ export function registerTradingModal() {
           params: [],
           description: `Creating Order`,
           execute: async () => {
-            return api.account.trade.create(
-              [buyItem.index],
-              [buyAmt],
-              [sellItem.index],
-              [sellAmt],
-              0
-            );
+            return api.account.trade.create(wantIndices, wantAmts, haveIndices, haveAmts, 0);
           },
         });
         return actionID;

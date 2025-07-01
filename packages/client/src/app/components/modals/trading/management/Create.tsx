@@ -1,37 +1,27 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { Dispatch, useEffect, useState } from 'react';
+import { ChangeEvent, Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
-import {
-  ActionButton,
-  IconButton,
-  IconListButton,
-  IconListButtonOption,
-  Overlay,
-  Pairing,
-  Text,
-  TextTooltip,
-} from 'app/components/library';
+import { IconButton, IconListButtonOption, Overlay, Pairing, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { MUSU_INDEX, STONE_INDEX } from 'constants/items';
+import { MUSU_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
-import { Item, NullItem } from 'network/shapes/Item';
+import { Item } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
 import { playClick } from 'utils/sounds';
-import { abbreviateString } from 'utils/strings';
 import { ConfirmationData } from '../Confirmation';
 import { TRADE_ROOM_INDEX } from '../constants';
-import { CreateMode } from '../types';
+import { LineItem } from './LineItem';
 
 interface Props {
   actions: {
     createTrade: (
-      buyItem: Item,
-      buyAmt: number,
-      sellItem: Item,
-      sellAmt: number
+      wantItems: Item[],
+      wantAmts: number[],
+      haveItems: Item[],
+      haveAmts: number[]
     ) => EntityID | void;
   };
   controls: {
@@ -59,80 +49,36 @@ export const Create = (props: Props) => {
   const { createTrade } = actions;
   const { isConfirming, setIsConfirming, itemSearch, setItemSearch } = controls;
   const { setConfirmData } = controls;
-  const { account, currencies, items } = data;
+  const { account, items } = data;
   const { ActionComp } = types;
   const { entityToIndex } = utils;
   const { modals } = useVisibility();
 
-  const [item, setItem] = useState<Item>(NullItem);
-  const [itemAmt, setItemAmt] = useState<number>(1);
-  const [currency, setCurrency] = useState<Item>(NullItem);
-  const [currencyAmt, setCurrencyAmt] = useState<number>(1);
-  const [mode, setMode] = useState<CreateMode>(CreateMode.BUY);
+  const [want, setWant] = useState<Item[]>([]);
+  const [wantAmt, setWantAmt] = useState<number[]>([]);
+  const [have, setHave] = useState<Item[]>([]);
+  const [haveAmt, setHaveAmt] = useState<number[]>([]);
 
   useEffect(() => {
     if (modals.trading) reset();
   }, [modals.trading]);
 
-  // reset the form when the mode is toggled
-  useEffect(() => {
-    reset();
-  }, [mode]);
-
   const reset = () => {
-    if (mode === CreateMode.BUY) {
-      const stone = items.find((item) => item.index === STONE_INDEX);
-      setItem(stone ?? NullItem);
-      setItemAmt(1);
-    } else if (mode === CreateMode.SELL) {
-      if (!account.inventories) return;
-      setItem(NullItem);
-      setItemAmt(0);
-    }
-
-    if (currencies.length > 0) setCurrency(currencies[0]);
+    const musu = items.find((item) => item.index === MUSU_INDEX)!;
+    setWant([musu]);
+    setWantAmt([1]);
+    setHave([musu]);
+    setHaveAmt([1]);
   };
 
   /////////////////
   // HANDLERS
 
-  // adjust and clean the currency amount in the trade offer in respoonse to a form change
-  // TODO: update this to support other currencies
-  const handleCurrencyAmtChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const min = 0;
-    let max = Infinity;
-    if (mode === CreateMode.BUY) {
-      max = getInventoryBalance(account.inventories ?? [], MUSU_INDEX);
-    }
-
-    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
-    const rawQuantity = parseInt(quantityStr.replace(',', '') || '0');
-    const amt = Math.max(min, Math.min(max, rawQuantity));
-    setCurrencyAmt(amt);
-  };
-
-  // adjust and clean the item amount in the trade offer in respoonse to a form change
-  const handleItemAmtChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const min = 0;
-    let max = Infinity;
-    if (mode === CreateMode.SELL) {
-      max = getInventoryBalance(account.inventories ?? [], item.index);
-    }
-    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
-    const rawQuantity = parseInt(quantityStr.replace(',', '') || '0');
-    const amt = Math.max(min, Math.min(max, rawQuantity));
-    setItemAmt(amt);
-  };
   // organize the form data for trade offer creation
   // TODO: detect successful trade creation and reset form
-  const handleTrade = async (item: Item, itemAmt: number, currency: Item, currencyAmt: number) => {
-    const buyItem = mode === CreateMode.BUY ? item : currency;
-    const buyAmt = mode === CreateMode.BUY ? itemAmt : currencyAmt;
-    const sellItem = mode === CreateMode.BUY ? currency : item;
-    const sellAmt = mode === CreateMode.BUY ? currencyAmt : itemAmt;
-
+  const handleTrade = async (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => {
     try {
-      const tradeActionID = createTrade(buyItem, buyAmt, sellItem, sellAmt);
+      const tradeActionID = createTrade(want, wantAmt, have, haveAmt);
       if (!tradeActionID) throw new Error('Trade action failed');
       await waitForActionCompletion(ActionComp, entityToIndex(tradeActionID) as EntityIndex);
     } catch (e) {
@@ -142,7 +88,7 @@ export const Create = (props: Props) => {
 
   // handle prompting for confirmation with trade creation
   const handleCreatePrompt = () => {
-    const confirmAction = () => handleTrade(item, itemAmt, currency, currencyAmt);
+    const confirmAction = () => handleTrade(want, wantAmt, have, haveAmt);
     setConfirmData({
       title: 'Confirm Creation',
       content: getConfirmContent(),
@@ -153,57 +99,159 @@ export const Create = (props: Props) => {
   };
 
   /////////////////
+  // INTERACTION
+
+  // add an item to the list of Wants (BuyOrder Items)
+  const addWant = () => {
+    const lastItem = want[want.length - 1];
+    const lastAmt = wantAmt[wantAmt.length - 1];
+    setWant((prev) => [...prev, lastItem]);
+    setWantAmt((prev) => [...prev, lastAmt]);
+  };
+
+  // delete an Item from the list of Wants (BuyOrder Items)
+  const deleteWant = (index: number) => {
+    if (want.length === 1) return;
+
+    setWant((prev) => {
+      const next = [...prev];
+      next.splice(index, 1);
+      return next;
+    });
+    setWantAmt((prev) => {
+      const next = [...prev];
+      next.splice(index, 1);
+      return next;
+    });
+  };
+
+  // adjust and clean the Want amounts in the trade offer in respoonse to a form change
+  const updateWantAmt = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+    const min = 0;
+    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
+    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const amt = Math.max(min, rawQuantity);
+
+    setWantAmt((prev) => {
+      const next = [...prev];
+      next[index] = amt;
+      return next;
+    });
+  };
+
+  // add an Item to the list of Haves (SellOrder Items)
+  const addHave = () => {
+    const lastItem = have[have.length - 1];
+    const lastAmt = haveAmt[haveAmt.length - 1];
+    setHave((prev) => [...prev, lastItem]);
+    setHaveAmt((prev) => [...prev, lastAmt]);
+  };
+
+  // delete an Item from the list of Haves (SellOrder Items)
+  const deleteHave = (index: number) => {
+    if (have.length === 1) return;
+
+    setHave((prev) => {
+      const next = [...prev];
+      next.splice(index, 1);
+      return next;
+    });
+    setHaveAmt((prev) => {
+      const next = [...prev];
+      next.splice(index, 1);
+      return next;
+    });
+  };
+
+  // adjust and clean the Have amounts in the trade offer in respoonse to a form change
+  const updateHaveAmt = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+    const item = have[index];
+    const min = 0;
+    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
+    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const max = getInventoryBalance(account.inventories ?? [], item.index);
+    const amt = Math.max(min, Math.min(max, rawQuantity));
+
+    setHaveAmt((prev) => {
+      const next = [...prev];
+      next[index] = amt;
+      return next;
+    });
+  };
+
+  /////////////////
   // INTERPRETATION
 
-  const getCurrencyOptions = (): IconListButtonOption[] => {
-    return currencies.map((item: Item) => {
-      return {
-        text: item.name,
-        image: item.image,
-        onClick: () => {
-          setCurrency(item);
-          setCurrencyAmt(1);
-        },
-      };
-    });
-  };
+  /**
+   * @notice get the options for what a player could request in a trade
+   * @param index the index of the selected item in the want state array
+   */
+  const getWantOptions = useMemo(
+    () =>
+      (index: number): IconListButtonOption[] => {
+        const filtered = items.filter((item) => {
+          const unused = want.every((wantItem) => wantItem.index !== item.index);
+          return unused;
+        });
 
-  const getItemOptions = (): IconListButtonOption[] => {
-    // if buying, show all tradable items
-    if (mode === CreateMode.BUY) {
-      return items.map((item: Item) => {
-        return {
-          text: item.name,
-          image: item.image,
-          onClick: () => {
-            setItemSearch('');
-            setItem(item);
-            setItemAmt(1);
-          },
-        };
-      });
-    }
+        return filtered.map((item: Item) => {
+          return {
+            text: item.name,
+            image: item.image,
+            onClick: () => {
+              setWant((prev) => {
+                const next = [...prev];
+                next[index] = item;
+                return next;
+              });
+              setWantAmt((prev) => {
+                const next = [...prev];
+                next[index] = 1;
+                return next;
+              });
+            },
+          };
+        });
+      },
+    [want]
+  );
 
-    // if selling, show only tradable items in inventory
-    if (!account.inventories) return [];
-    const filtered = account.inventories.filter((inv: Inventory) => {
-      const isTradeable = inv.item.is.tradeable;
-      const hasBalance = inv.balance > 0;
-      const isNotCurrency = inv.item.index !== MUSU_INDEX;
-      return isTradeable && hasBalance && isNotCurrency;
-    });
+  /**
+   * @notice get the options for what a player could offer in a trade
+   * @param index the index of the selected item in the have state array
+   */
+  const getHaveOptions = useMemo(
+    () =>
+      (index: number): IconListButtonOption[] => {
+        if (!account.inventories) return [];
+        const filtered = account.inventories.filter((inv: Inventory) => {
+          const isTradeable = inv.item.is.tradeable;
+          const hasBalance = inv.balance > 0;
+          const unused = have.every((item) => item.index !== inv.item.index);
+          return isTradeable && hasBalance && unused;
+        });
 
-    return filtered.map((inv: Inventory) => {
-      return {
-        text: inv.item.name,
-        image: inv.item.image,
-        onClick: () => {
-          setItem(inv.item);
-          setItemAmt(1);
-        },
-      };
-    });
-  };
+        return filtered.map((inv: Inventory) => {
+          return {
+            text: inv.item.name,
+            image: inv.item.image,
+            onClick: () => {
+              setHave((prev) => {
+                const next = [...prev];
+                next[index] = inv.item;
+                return next;
+              });
+              setHaveAmt((prev) => {
+                const next = [...prev];
+                next[index] = 1;
+                return next;
+              });
+            },
+          };
+        });
+      },
+    [have]
+  );
 
   /////////////////
   // DISPLAY
@@ -211,20 +259,16 @@ export const Create = (props: Props) => {
   // create the trade confirmation window content
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
   const getConfirmContent = () => {
-    const buyItem = mode === CreateMode.BUY ? item : currency;
-    const buyAmt = mode === CreateMode.BUY ? itemAmt : currencyAmt;
-    const sellItem = mode === CreateMode.BUY ? currency : item;
-    const sellAmt = mode === CreateMode.BUY ? currencyAmt : itemAmt;
     const tradeConfig = account.config?.trade;
+    const taxConfig = tradeConfig?.tax;
     const tradeFee = tradeConfig?.fee ?? 0;
 
     let tax = 0;
     let taxTooltip: string[] = [];
-    const taxConfig = account.config?.trade.tax;
-    if (taxConfig && mode === CreateMode.SELL) {
-      tax = Math.floor(buyAmt * taxConfig.value);
+    if (taxConfig) {
+      tax = Math.floor(wantAmt[0] * taxConfig.value);
       const taxPercent = Math.floor(taxConfig.value * 100).toFixed(2);
-      taxTooltip = [`${buyAmt.toLocaleString()} MUSU`, `less ${taxPercent}% tax (${tax} MUSU)`];
+      taxTooltip = [`${wantAmt[0].toLocaleString()} MUSU`, `less ${taxPercent}% tax (${tax} MUSU)`];
     }
 
     return (
@@ -232,22 +276,22 @@ export const Create = (props: Props) => {
         <Row>
           <Text size={1.2}>{'('}</Text>
           <Pairing
-            text={sellAmt.toLocaleString()}
-            icon={sellItem.image}
-            tooltip={[`${sellAmt.toLocaleString()} ${sellItem.name}`]}
+            text={haveAmt[0].toLocaleString()}
+            icon={have[0].image}
+            tooltip={[`${haveAmt[0].toLocaleString()} ${have[0].name}`]}
           />
           <Text size={1.2}>{`) will be transferred to the Trade.`}</Text>
         </Row>
         <Row>
           <Text size={1.2}>{'You will receive ('}</Text>
           <Pairing
-            text={(buyAmt - tax).toLocaleString()}
-            icon={buyItem.image}
+            text={(wantAmt[0] - tax).toLocaleString()}
+            icon={want[0].image}
             tooltip={taxTooltip}
           />
           <Text size={1.2}>{`) upon Completion.`}</Text>
         </Row>
-        <Row>
+        {/* <Row>
           <Text size={0.9}>{`Listing Fee: (`}</Text>
           <Pairing
             text={tradeFee.toLocaleString()}
@@ -259,63 +303,68 @@ export const Create = (props: Props) => {
             ]}
           />
           <Text size={0.9}>{`)`}</Text>
-        </Row>
+        </Row> */}
       </Paragraph>
     );
   };
+
+  // memoized Want-side order creation
+  const WantSection = useMemo(
+    () => (
+      <Section>
+        {want.map((_, i) => (
+          <LineItem
+            key={i}
+            options={getWantOptions(i)}
+            selected={want[i]}
+            amt={wantAmt[i]}
+            setAmt={(e) => updateWantAmt(i, e)}
+            remove={() => deleteWant(i)}
+          />
+        ))}
+        <Row>
+          <IconButton text='+' onClick={addWant} width={2.4} />
+        </Row>
+      </Section>
+    ),
+    [want, wantAmt]
+  );
+
+  // memoized Have-side order creation
+  const HaveSection = useMemo(
+    () => (
+      <Section>
+        {have.map((_, i) => (
+          <LineItem
+            key={i}
+            options={getHaveOptions(i)}
+            selected={have[i]}
+            amt={haveAmt[i]}
+            setAmt={(e) => updateHaveAmt(i, e)}
+            remove={() => deleteHave(i)}
+          />
+        ))}
+        <Row>
+          <IconButton text='+' onClick={addHave} width={2.4} />
+        </Row>
+      </Section>
+    ),
+    [have, haveAmt]
+  );
 
   /////////////////
   // RENDER
 
   return (
     <Container>
-      <Title>Create Offer</Title>
+      <Overlay top={0} fullWidth>
+        <Title>Create Offer</Title>
+      </Overlay>
       <Body>
-        <Row>
-          <Text size={1.2}>I want to</Text>
-          <ActionButton
-            text={`< ${mode} >`}
-            onClick={() => setMode(mode === CreateMode.BUY ? CreateMode.SELL : CreateMode.BUY)}
-          />
-        </Row>
-        <Row>
-          <Quantity
-            width={7.5}
-            type='string'
-            value={itemAmt.toLocaleString()}
-            onChange={(e) => handleItemAmtChange(e)}
-          />
-          <TextTooltip title={item.name} text={[item.description]}>
-            <IconListButton
-              img={item.image}
-              scale={2.7}
-              text={abbreviateString(item.name, 16)}
-              options={getItemOptions()}
-              search={{
-                value: itemSearch,
-                onChange: (e) => {
-                  setItemSearch(e.target.value);
-                },
-                placeholder: 'Search items...',
-              }}
-            />
-          </TextTooltip>
-        </Row>
-        <Row>
-          <Text size={1.2}>for</Text>
-          <Quantity
-            width={9}
-            type='string'
-            value={currencyAmt.toLocaleString()}
-            onChange={(e) => handleCurrencyAmtChange(e)}
-          />
-          <IconListButton
-            img={currency.image}
-            scale={2.7}
-            text={abbreviateString(currency.name, 16)}
-            options={getCurrencyOptions()}
-          />
-        </Row>
+        <Text size={1.2}>I want</Text>
+        {WantSection}
+        <Text size={1.2}>for</Text>
+        {HaveSection}
       </Body>
       <Overlay bottom={0.75} right={0.75}>
         <IconButton
@@ -323,10 +372,8 @@ export const Create = (props: Props) => {
           onClick={handleCreatePrompt}
           disabled={
             isConfirming ||
-            item.index === 0 ||
-            itemAmt === 0 ||
-            currency.index === 0 ||
-            currencyAmt === 0 ||
+            want.length === 0 ||
+            have.length === 0 ||
             account.roomIndex !== TRADE_ROOM_INDEX // dtl check this based on room flags
           }
         />
@@ -347,29 +394,44 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: sticky;
-  top: 0;
   background-color: rgb(221, 221, 221);
-  width: 100%;
-
-  padding: 1.8vw;
   opacity: 0.9;
+
+  width: 100%;
+  top: 0;
+  z-index: 1;
+  padding: 1.8vw;
+
   color: black;
   font-size: 1.2vw;
   text-align: left;
-  z-index: 1;
 `;
 
 const Body = styled.div`
   position: relative;
-  height: 50%;
-  margin: 1.8vw 0.6vw;
+  height: 100%;
+  padding: 6vw 0.6vw 1.8vw 0.6vw;
   gap: 1.2vw;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
+  overflow-y: scroll;
   scrollbar-color: transparent transparent;
+`;
+
+const Section = styled.div`
+  background-color: rgb(221, 221, 221);
+  border-radius: 0.6vw;
+  border: 0.15vw solid black;
+  padding: 0.6vw;
+  gap: 0.6vw;
+  width: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
 `;
 
 const Row = styled.div`
@@ -389,20 +451,4 @@ const Paragraph = styled.div`
   flex-flow: column nowrap;
   justify-content: space-evenly;
   align-items: center;
-`;
-
-const Quantity = styled.input<{ width?: number }>`
-  border: none;
-  background-color: #eee;
-  border: 0.15vw solid black;
-  border-radius: 0.45vw;
-  width: ${({ width }) => width ?? 6}vw;
-  height: 100%;
-  padding: 0.3vw;
-  margin: 0w;
-  cursor: text;
-
-  color: black;
-  font-size: 1.2vw;
-  text-align: center;
 `;

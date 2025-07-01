@@ -14,10 +14,10 @@ import { Offers } from './offers/Offers';
 interface Props {
   actions: {
     createTrade: (
-      buyItem: Item,
-      buyAmt: number,
-      sellItem: Item,
-      sellAmt: number
+      wantItems: Item[],
+      wantAmts: number[],
+      haveItems: Item[],
+      haveAmts: number[]
     ) => EntityID | void;
     executeTrade: (trade: Trade) => void;
     completeTrade: (trade: Trade) => void;

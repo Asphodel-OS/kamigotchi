@@ -12,6 +12,7 @@ interface Props {
   text?: string;
   balance?: number;
   disabled?: boolean;
+  width?: number;
   fullWidth?: boolean;
   radius?: number;
   scale?: number;
@@ -35,7 +36,7 @@ interface Search {
 export function IconListButton(props: Props) {
   const { img, options, text, balance } = props;
   const { radius, scale, scaleOrientation, search } = props;
-  const { disabled, fullWidth } = props;
+  const { disabled, width, fullWidth } = props;
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -93,6 +94,7 @@ export function IconListButton(props: Props) {
         radius={radius ?? 0.45}
         scale={scale ?? 2.5}
         scaleOrientation={scaleOrientation ?? 'vw'}
+        width={width}
         fullWidth={fullWidth}
         balance={balance}
         corner={!balance}
