@@ -52,7 +52,7 @@ const Container = styled.div`
   border-radius: 1.2vw;
   box-shadow: 0 0 0.3vw black;
 
-  height: 54%;
+  height: 30vw;
   width: 75%;
   gap: 0.3vw;
   padding: 3.3vw 0 1.2vw 0;

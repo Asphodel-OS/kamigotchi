@@ -129,7 +129,7 @@ const Title = styled.div`
   color: black;
   font-size: 1.2vw;
   text-align: left;
-  z-index: 2;
+  z-index: 1;
 `;
 
 const Body = styled.div`

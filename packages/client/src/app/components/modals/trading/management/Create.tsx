@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { IconButton, IconListButtonOption, Overlay, Pairing, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
@@ -130,7 +131,8 @@ export const Create = (props: Props) => {
     const min = 0;
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
-    const amt = Math.max(min, rawQuantity);
+    const max = Number.MAX_SAFE_INTEGER;
+    const amt = Math.max(min, Math.min(max, rawQuantity));
 
     setWantAmt((prev) => {
       const next = [...prev];
@@ -275,27 +277,37 @@ export const Create = (props: Props) => {
       <Paragraph>
         <Row>
           <Text size={1.2}>{'('}</Text>
-          <Pairing
-            text={haveAmt[0].toLocaleString()}
-            icon={have[0].image}
-            tooltip={[`${haveAmt[0].toLocaleString()} ${have[0].name}`]}
-          />
-          <Text size={1.2}>{`) will be transferred to the Trade.`}</Text>
+          {haveAmt.map((amt, i) => (
+            <Pairing
+              key={i}
+              text={amt.toLocaleString()}
+              icon={have[i].image}
+              tooltip={[`${amt.toLocaleString()} ${have[i].name}`]}
+            />
+          ))}
+          <Text size={1.2}>{`) `}</Text>
+          <Text size={1.2}>{`will be transferred to the Trade.`}</Text>
         </Row>
         <Row>
-          <Text size={1.2}>{'You will receive ('}</Text>
-          <Pairing
-            text={(wantAmt[0] - tax).toLocaleString()}
-            icon={want[0].image}
-            tooltip={taxTooltip}
-          />
-          <Text size={1.2}>{`) upon Completion.`}</Text>
+          <Text size={1.2}>{'Upon completion, you will receive'}</Text>
         </Row>
-        {/* <Row>
+        <Row>
+          <Text size={1.2}>{'('}</Text>
+          {wantAmt.map((amt, i) => (
+            <Pairing
+              key={i}
+              text={(amt - tax).toLocaleString()}
+              icon={want[i].image}
+              tooltip={taxTooltip}
+            />
+          ))}
+          <Text size={1.2}>{`)`}</Text>
+        </Row>
+        <Row>
           <Text size={0.9}>{`Listing Fee: (`}</Text>
           <Pairing
             text={tradeFee.toLocaleString()}
-            icon={currency.image}
+            icon={ItemImages.musu}
             scale={0.9}
             tooltip={[
               `Non-refundable (trade responsibly)`,
@@ -303,7 +315,7 @@ export const Create = (props: Props) => {
             ]}
           />
           <Text size={0.9}>{`)`}</Text>
-        </Row> */}
+        </Row>
       </Paragraph>
     );
   };
@@ -436,8 +448,10 @@ const Section = styled.div`
 
 const Row = styled.div`
   width: 100%;
+  padding: 0.6vw;
 
   display: flex;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: center;
   gap: 0.6vw;

@@ -107,16 +107,17 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: sticky;
-  top: 0;
   background-color: rgb(221, 221, 221);
-  width: 100%;
-
-  padding: 1.8vw;
   opacity: 0.9;
+
+  width: 100%;
+  top: 0;
+  z-index: 1;
+  padding: 1.8vw;
+
   color: black;
   font-size: 1.2vw;
   text-align: left;
-  z-index: 2;
 `;
 
 const Body = styled.div`
