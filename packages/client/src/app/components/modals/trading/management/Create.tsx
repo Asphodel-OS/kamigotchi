@@ -38,6 +38,8 @@ interface Props {
     isConfirming: boolean;
     setIsConfirming: Dispatch<boolean>;
     setConfirmData: Dispatch<ConfirmationData>;
+    itemSearch: string;
+    setItemSearch: Dispatch<string>;
   };
   data: {
     account: Account;
@@ -55,7 +57,7 @@ interface Props {
 export const Create = (props: Props) => {
   const { actions, controls, data, types, utils } = props;
   const { createTrade } = actions;
-  const { isConfirming, setIsConfirming } = controls;
+  const { isConfirming, setIsConfirming, itemSearch, setItemSearch } = controls;
   const { setConfirmData } = controls;
   const { account, currencies, items } = data;
   const { ActionComp } = types;
@@ -84,8 +86,8 @@ export const Create = (props: Props) => {
       setItemAmt(1);
     } else if (mode === CreateMode.SELL) {
       if (!account.inventories) return;
-      setItem(account.inventories[0].item ?? NullItem);
-      setItemAmt(1);
+      setItem(NullItem);
+      setItemAmt(0);
     }
 
     if (currencies.length > 0) setCurrency(currencies[0]);
@@ -176,6 +178,7 @@ export const Create = (props: Props) => {
           text: item.name,
           image: item.image,
           onClick: () => {
+            setItemSearch('');
             setItem(item);
             setItemAmt(1);
           },
@@ -290,6 +293,13 @@ export const Create = (props: Props) => {
               scale={2.7}
               text={abbreviateString(item.name, 16)}
               options={getItemOptions()}
+              search={{
+                value: itemSearch,
+                onChange: (e) => {
+                  setItemSearch(e.target.value);
+                },
+                placeholder: 'Search items...',
+              }}
             />
           </TextTooltip>
         </Row>

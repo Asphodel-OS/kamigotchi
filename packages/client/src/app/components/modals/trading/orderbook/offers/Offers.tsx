@@ -18,6 +18,7 @@ interface Props {
     itemFilter: Item;
     typeFilter: string;
     isConfirming: boolean;
+    itemSearch: string;
     setIsConfirming: Dispatch<boolean>;
     setConfirmData: Dispatch<ConfirmationData>;
   };
@@ -29,7 +30,7 @@ interface Props {
 
 export const Offers = (props: Props) => {
   const { actions, controls, data, utils } = props;
-  const { typeFilter, sort, ascending, itemFilter } = controls;
+  const { typeFilter, sort, ascending, itemFilter, itemSearch } = controls;
   const { account, trades } = data;
 
   const [displayed, setDisplayed] = useState<Trade[]>([]);
@@ -72,7 +73,7 @@ export const Offers = (props: Props) => {
       return 0;
     });
     setDisplayed(sorted);
-  }, [trades, typeFilter, sort, ascending, itemFilter]);
+  }, [trades, typeFilter, sort, ascending, itemFilter, itemSearch]);
 
   /////////////////
   // DISPLAY

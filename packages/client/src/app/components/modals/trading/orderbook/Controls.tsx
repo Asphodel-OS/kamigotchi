@@ -23,6 +23,8 @@ interface Props {
     setAscending: Dispatch<boolean>;
     itemFilter: Item;
     setItemFilter: Dispatch<Item>;
+    itemSearch: string;
+    setItemSearch: Dispatch<string>;
   };
   data: {
     items: Item[];
@@ -44,6 +46,8 @@ export const Controls = (props: Props) => {
     setAscending,
     itemFilter,
     setItemFilter,
+    itemSearch,
+    setItemSearch,
   } = controls;
   const { items } = data;
   const { getItemByIndex } = utils;
@@ -52,18 +56,23 @@ export const Controls = (props: Props) => {
   // INTERPRETATION
 
   const getItemOptions = (): IconListButtonOption[] => {
-    // if buying, show all tradable items
-    const itemOptions = items.map((item: Item): IconListButtonOption => {
-      return {
+    // if buying  show all tradable items
+    const itemOptions = items.map(
+      (item): IconListButtonOption => ({
         text: item.name,
         image: item.image,
-        onClick: () => setItemFilter(item),
-      };
-    });
-
+        onClick: () => {
+          setItemSearch('');
+          setItemFilter(item);
+        },
+      })
+    );
     itemOptions.unshift({
       text: 'Any',
-      onClick: () => setItemFilter(NullItem),
+      onClick: () => {
+        setItemFilter(NullItem);
+        setItemSearch('');
+      },
     });
     return itemOptions;
   };
@@ -110,6 +119,13 @@ export const Controls = (props: Props) => {
             img={itemFilter.image}
             text={itemFilter.name}
             options={getItemOptions()}
+            search={{
+              value: itemSearch,
+              onChange: (e) => {
+                setItemSearch(e.target.value);
+              },
+              placeholder: 'Search items...',
+            }}
           />
         </Row>
       </Body>

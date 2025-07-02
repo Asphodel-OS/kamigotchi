@@ -37,6 +37,7 @@ export const Orderbook = (props: Props) => {
   const [sort, setSort] = useState<string>('Price'); // Price, Owner
   const [ascending, setAscending] = useState<boolean>(true);
   const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
+  const [itemSearch, setItemSearch] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
 
   return (
@@ -51,13 +52,15 @@ export const Orderbook = (props: Props) => {
           setAscending,
           itemFilter,
           setItemFilter,
+          itemSearch,
+          setItemSearch,
         }}
         data={data}
         utils={utils}
       />
       <Offers
         actions={actions}
-        controls={{ ...controls, typeFilter, sort, ascending, itemFilter }}
+        controls={{ ...controls, typeFilter, sort, ascending, itemFilter, itemSearch }}
         data={data}
         utils={utils}
       />

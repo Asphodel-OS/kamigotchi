@@ -5,7 +5,7 @@ import { Account } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
-import { Dispatch } from 'react';
+import { Dispatch, useState } from 'react';
 import { ConfirmationData } from '../Confirmation';
 import { TabType } from '../types';
 import { Create } from './Create';
@@ -48,10 +48,17 @@ interface Props {
 
 export const Management = (props: Props) => {
   const { isVisible, actions, controls, data, types, utils } = props;
+  const [itemSearch, setItemSearch] = useState<string>('');
 
   return (
     <Content isVisible={isVisible}>
-      <Create actions={actions} controls={controls} data={data} types={types} utils={utils} />
+      <Create
+        actions={actions}
+        controls={{ ...controls, itemSearch, setItemSearch }}
+        data={data}
+        types={types}
+        utils={utils}
+      />
       <Offers actions={actions} controls={controls} data={data} utils={utils} />
     </Content>
   );

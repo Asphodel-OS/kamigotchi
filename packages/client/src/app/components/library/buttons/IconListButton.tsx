@@ -8,6 +8,7 @@ import { IconButton } from './IconButton';
 interface Props {
   img: string;
   options: Option[];
+
   text?: string;
   balance?: number;
   disabled?: boolean;
@@ -15,6 +16,7 @@ interface Props {
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
+  search?: Search;
 }
 
 export interface Option {
@@ -24,9 +26,15 @@ export interface Option {
   disabled?: boolean;
 }
 
+interface Search {
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+}
+
 export function IconListButton(props: Props) {
   const { img, options, text, balance } = props;
-  const { radius, scale, scaleOrientation } = props;
+  const { radius, scale, scaleOrientation, search } = props;
   const { disabled, fullWidth } = props;
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -53,12 +61,26 @@ export function IconListButton(props: Props) {
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
   const OptionsMap = () => {
-    return options.map((option, i) => (
-      <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
-        {option.image && <MenuIcon src={option.image} />}
-        {option.text}
-      </MenuOption>
-    ));
+    return (
+      <MenuWrapper search={!!props.search}>
+        {props.search && (
+          <MenuInput
+            {...props.search}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          />
+        )}
+        {options
+          .filter((option) => (!search ? true : option.text.toLowerCase().includes(search.value)))
+          .map((option, i) => (
+            <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
+              {option.image && <MenuIcon src={option.image} />}
+              {option.text}
+            </MenuOption>
+          ))}
+      </MenuWrapper>
+    );
   };
 
   return (
@@ -104,4 +126,19 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 const MenuIcon = styled.img`
   height: 1.4vw;
   user-drag: none;
+`;
+
+const MenuInput = styled.input`
+  height: 2.5vw;
+  width: 100%;
+  box-sizing: border-box;
+  border: 0.15vw solid black;
+  border-radius: 0.45vw;
+  font-size: 0.75vw;
+  padding: 0vw 0.5vw;
+  margin-bottom: 0.6vw;
+`;
+
+const MenuWrapper = styled.div<{ search?: boolean }>`
+  padding: ${({ search }) => (search ? '1vw' : '0vw')};
 `;
