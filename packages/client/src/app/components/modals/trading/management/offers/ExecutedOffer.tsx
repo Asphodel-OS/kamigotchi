@@ -3,13 +3,12 @@ import styled from 'styled-components';
 
 import { isItemCurrency } from 'app/cache/item';
 import { TradeType } from 'app/cache/trade';
-import { Overlay, Pairing, Text, TextTooltip } from 'app/components/library';
+import { Pairing, Text } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item, NullItem } from 'network/shapes';
 import { Trade, TradeOrder } from 'network/shapes/Trade';
-import { playClick } from 'utils/sounds';
 import { ConfirmationData } from '../../Confirmation';
-import { getTypeColor } from '../../helpers';
+import { OfferCard } from './OfferCard';
 
 interface Props {
   actions: {
@@ -69,18 +68,10 @@ export const ExecutedOffer = (props: Props) => {
       onConfirm: confirmAction,
     });
     setIsConfirming(true);
-    playClick();
   };
 
   /////////////////
   // INTERPRETATION
-
-  // determine the name to display for an Account
-  const getNameDisplay = (trader?: Account): string => {
-    if (!trader || !trader.name) return '???';
-    if (trader.entity === account.entity) return 'You';
-    return trader.name;
-  };
 
   // tooltip for list of order items/amts
   const getOrderTooltip = (order?: TradeOrder): string[] => {
@@ -158,143 +149,18 @@ export const ExecutedOffer = (props: Props) => {
   // RENDER
 
   return (
-    <Container>
-      <ImageContainer borderRight>
-        <TextTooltip
-          title='you have offered..'
-          text={getOrderTooltip(trade.sellOrder)}
-          alignText='left'
-        >
-          <Image src={sellItem.image} />
-        </TextTooltip>
-        <Overlay bottom={0.15} fullWidth>
-          <Text size={0.6}>{sellAmt.toLocaleString()}</Text>
-        </Overlay>
-      </ImageContainer>
-      <Controls>
-        <TagContainer>
-          <Overlay top={0.21} left={0.21}>
-            <Text size={0.6}>{getNameDisplay(trade.maker)}</Text>
-          </Overlay>
-          <Overlay top={0.21} right={0.21}>
-            <Text size={0.6}>{getNameDisplay(trade.taker)}</Text>
-          </Overlay>
-          <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
-        </TagContainer>
-        <TextTooltip text={getActionTooltip()} fullWidth>
-          <Button onClick={handleComplete} disabled={isConfirming || !isMaker()}>
-            {isMaker() ? 'Complete' : '.'}
-          </Button>
-        </TextTooltip>
-      </Controls>
-      <ImageContainer borderLeft>
-        <TextTooltip
-          title='you can claim..'
-          text={getOrderTooltip(trade.buyOrder)}
-          alignText='left'
-        >
-          <Image src={buyItem.image} />
-        </TextTooltip>
-        <Overlay bottom={0.15} fullWidth>
-          <Text size={0.6}>{buyAmt.toLocaleString()}</Text>
-        </Overlay>
-      </ImageContainer>
-    </Container>
+    <OfferCard
+      button={{
+        onClick: handleComplete,
+        text: 'Complete',
+        tooltip: getActionTooltip(),
+        disabled: isConfirming,
+      }}
+      data={{ account, trade, type }}
+      reverse
+    />
   );
 };
-
-const Container = styled.div`
-  position: relative;
-  border: 0.15vw solid black;
-  border-radius: 1.2vw;
-
-  width: 24vw;
-  height: 6vw;
-
-  user-select: none;
-
-  display: flex;
-  flex-flow: row nowrap;
-`;
-
-const ImageContainer = styled.div<{ borderRight?: boolean; borderLeft?: boolean }>`
-  position: relative;
-  ${({ borderRight }) => borderRight && `border-right: 0.15vw solid black;`}
-  ${({ borderLeft }) => borderLeft && `border-left: 0.15vw solid black;`}
-  height: 100%;
-  padding: 0.6vw;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Image = styled.img`
-  height: 3.3vw;
-
-  image-rendering: pixelated;
-  user-drag: none;
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-`;
-
-const Controls = styled.div`
-  display: flex;
-  flex-grow: 1;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Button = styled.button`
-  background-color: #eee;
-  border: none;
-  border-top: 0.15vw solid black;
-  width: 100%;
-
-  font-size: 0.9vw;
-  line-height: 1.8vw;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
-  &:disabled {
-    background-color: #bbb;
-    cursor: default;
-  }
-`;
-
-const TagContainer = styled.div`
-  position: relative;
-  width: 100%;
-  flex-grow: 1;
-
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-`;
-
-const TypeTag = styled.div<{ color: string }>`
-  width: 5vw;
-  padding: 0.2vw;
-
-  color: rgb(25, 39, 2);
-  background-color: ${({ color }) => color};
-  clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 0.9vw;
-`;
 
 const Paragraph = styled.div`
   color: #333;
