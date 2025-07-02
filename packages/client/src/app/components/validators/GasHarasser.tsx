@@ -140,7 +140,7 @@ export function registerGasHarasser() {
           errorPrimary={`pls feed me pls a crumb of ETH ._.`}
         >
           <GasLink
-            key={'gas'}
+            key='gas'
             href={`https://www.gas.zip/`}
             target='_blank'
             rel='noopener noreferrer'
