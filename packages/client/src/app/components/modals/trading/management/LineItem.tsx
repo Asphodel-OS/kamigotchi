@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -19,11 +19,22 @@ interface Props {
 
 export const LineItem = (props: Props) => {
   const { options, selected, amt, setAmt, remove } = props;
+  const [search, setSearch] = useState<string>('');
 
   return (
     <Container>
       <TextTooltip title={selected.name} text={[selected.description]}>
-        <IconListButton img={selected.image} scale={2.7} options={options} />
+        <IconListButton
+          img={selected.image}
+          scale={2.7}
+          options={options}
+          search={{
+            value: search,
+            onChange: (e) => {
+              setSearch(e.target.value);
+            },
+          }}
+        />
       </TextTooltip>
       <Quantity
         width={16.2}

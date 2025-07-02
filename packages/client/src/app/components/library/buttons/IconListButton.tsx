@@ -63,7 +63,7 @@ export function IconListButton(props: Props) {
   const id = open ? 'simple-popover' : undefined;
   const OptionsMap = () => {
     return (
-      <MenuWrapper search={!!props.search}>
+      <MenuWrapper>
         {props.search && (
           <MenuInput
             {...props.search}
@@ -131,16 +131,22 @@ const MenuIcon = styled.img`
 `;
 
 const MenuInput = styled.input`
-  height: 2.5vw;
-  width: 100%;
-  box-sizing: border-box;
+  position: sticky;
   border: 0.15vw solid black;
   border-radius: 0.45vw;
+
+  width: 90%;
+  height: 2.5vw;
+  box-sizing: border-box;
+  top: 0.6vw;
+
+  padding: 0vw 0.6vw;
+  margin: 0.6vw;
+  flex-grow: 1;
+
   font-size: 0.75vw;
-  padding: 0vw 0.5vw;
-  margin-bottom: 0.6vw;
 `;
 
-const MenuWrapper = styled.div<{ search?: boolean }>`
-  padding: ${({ search }) => (search ? '1vw' : '0vw')};
+const MenuWrapper = styled.div`
+  position: relative;
 `;
