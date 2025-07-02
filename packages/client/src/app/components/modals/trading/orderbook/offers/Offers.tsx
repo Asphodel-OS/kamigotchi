@@ -82,11 +82,6 @@ export const Offers = (props: Props) => {
     <Container>
       <Title>Open Offers</Title>
       <Body>
-        {/* {displayed.map((trade, i) => {
-          const type = getTradeType(trade, false);
-          if (type === 'Sell') return <SellOrder key={i} actions={actions} data={{ trade }} />;
-          return <BuyOrder key={i} actions={actions} data={{ trade }} />;
-        })} */}
         {displayed.map((trade, i) => {
           const type = getTradeType(trade, false);
           return (
