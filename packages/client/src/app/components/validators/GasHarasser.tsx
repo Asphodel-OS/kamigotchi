@@ -139,6 +139,15 @@ export function registerGasHarasser() {
           title='Embedded wallet is empty!'
           errorPrimary={`pls feed me pls a crumb of ETH ._.`}
         >
+          <GasLink
+            key={'gas'}
+            href={`https://www.gas.zip/`}
+            target='_blank'
+            rel='noopener noreferrer'
+            linkColor='#d44c79'
+          >
+            Not enough gas? Get some here!
+          </GasLink>
           <TextTooltip text={[account.operatorAddress, '(click to copy)']}>
             <Description onClick={() => copy(account.operatorAddress)}>
               Address: {abbreviateAddress(account.operatorAddress)}
@@ -194,4 +203,12 @@ const Input = styled.input`
 
   cursor: text;
   justify-content: center;
+`;
+
+const GasLink = styled.a<{ linkColor?: string }>`
+  color: ${({ linkColor }) => linkColor ?? '#0077cc'};
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
 `;
