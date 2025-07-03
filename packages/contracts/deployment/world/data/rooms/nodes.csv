@@ -15,11 +15,11 @@
 ,Road To Labs,32,Normal,,1,100,Sticks & Stones
 ,Forest Entrance,33,Normal,,1,200,Sticks & Cones
 ,Deeper Into Scrap,34,Scrap,,1,300,Scrap Burger
-,Forest Road 1,35,Normal,,1,200,Stick Cone Poppy
-,Forest Road 2,36,Insect,,1,200,Stick Cone Poppy
-,Forest Road 3,37,Normal,,1,200,Sticks & Cones
+,Elder Path,35,Normal,,1,200,Stick Cone Poppy
+,Parting Path,36,Insect,,1,200,Stick Cone Poppy
+,Hollow Path,37,Normal,,1,200,Sticks & Cones
 ,Scrap Paths,47,Scrap,,1,100,Stone Scrap Burger
-,Forest Road 4,48,Insect,,1,200,Stick Cone Poppy
+,Murky Forest Path,48,Insect,,1,200,Stick Cone Poppy
 ,Clearing,49,Normal,,1,300,Stick Stone Mint
 ,Ancient Forest Entrance,50,Insect,,1,200,Sticks & Cones
 ,Scrap-Littered Undergrowth,51,Insect,,1,300,Bottle Scrap Burger
@@ -28,7 +28,9 @@
 ,Shady Path,55,Normal,,1,200,Stick Stone Daffodil
 ,Butterfly Forest,56,Insect,,1,200,Stick Stone Resin
 ,River Crossing,57,Normal,,1,200,Stick Stone Cone
-,Scrap Trees,60,Scrap,,2,,
-,Centipedes,62,Insect,,2,,
-,Deeper Forest Path,63,Normal,,2,,
-,Forest Hut,65,Eerie,,2,,
+,Scrap Trees,60,Scrap,,2,500,Scrap Daffodil Driver
+,Musty Forest Path,61,Normal,,2,200,Stick Cone Rename
+,Centipedes,62,Insect,,2,300,Stone Resin Mint
+,Deeper Forest Path,63,Normal,,2,300,Stone Daffodil Pinecone Poppy
+,Forest Hut,65,Eerie,,2,200,Bottle Stick Burger
+,,,,,,,
