@@ -24,7 +24,7 @@ contract CraftingTest is SetupTemplate {
     // base shape
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(1, inputIndices, inputAmts, outputIndices, outputAmts, 1, 1)
+      abi.encode(1, "Special", inputIndices, inputAmts, outputIndices, outputAmts, 1, 1)
     );
 
     // requirement
@@ -49,7 +49,7 @@ contract CraftingTest is SetupTemplate {
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 1, 10)
+      abi.encode(recipeIndex, "Special", inputIndices, inputAmts, outputIndices, outputAmts, 1, 10)
     );
 
     // not enough ingredients
@@ -96,7 +96,7 @@ contract CraftingTest is SetupTemplate {
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
+      abi.encode(recipeIndex, "Special", inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
     );
 
     // not enough ingredients (all missing)
@@ -136,7 +136,7 @@ contract CraftingTest is SetupTemplate {
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
+      abi.encode(recipeIndex, "Special", inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
     );
 
     // not enough ingredients
@@ -175,7 +175,7 @@ contract CraftingTest is SetupTemplate {
 
     vm.prank(deployer);
     __RecipeRegistrySystem.create(
-      abi.encode(recipeIndex, inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
+      abi.encode(recipeIndex, "Special", inputIndices, inputAmts, outputIndices, outputAmts, 0, 0)
     );
 
     // give ingredients
@@ -222,6 +222,7 @@ contract CraftingTest is SetupTemplate {
     __RecipeRegistrySystem.create(
       abi.encode(
         recipeIndex,
+        "Special",
         inputIndices,
         inputAmts,
         outputIndices,

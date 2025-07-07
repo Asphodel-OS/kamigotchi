@@ -12,16 +12,15 @@ import { IndexRecipeComponent, ID as IndexRecipeCompID } from "components/IndexR
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
 import { StaminaComponent, ID as StamCompID } from "components/StaminaComponent.sol";
+import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibArray } from "libraries/utils/LibArray.sol";
-import { LibComp } from "libraries/utils/LibComp.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
-import { LibStat } from "libraries/LibStat.sol";
 
 struct Table {
   uint32[] indices;
@@ -52,7 +51,8 @@ library LibRecipe {
 
   function create(
     IUintComp components,
-    uint32 recipeIndex,
+    uint32 index,
+    string memory type_,
     uint32[] memory inputIndices,
     uint256[] memory inputAmts,
     uint32[] memory outputIndices,
@@ -60,23 +60,25 @@ library LibRecipe {
     uint256 experience,
     int32 staminaCost
   ) internal returns (uint256 id) {
-    id = genID(recipeIndex);
+    id = genID(index);
     LibEntityType.set(components, id, "RECIPE");
 
-    KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
-    ValuesComponent valsComp = ValuesComponent(getAddrByID(components, ValuesCompID));
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
-    IndexRecipeComponent(getAddrByID(components, IndexRecipeCompID)).set(id, recipeIndex);
+    IndexRecipeComponent(getAddrByID(components, IndexRecipeCompID)).set(id, index);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
     ExperienceComponent(getAddrByID(components, ExpCompID)).set(id, experience);
     StaminaComponent(getAddrByID(components, StamCompID)).set(id, Stat(0, 0, 0, staminaCost));
 
+    KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
+    ValuesComponent valsComp = ValuesComponent(getAddrByID(components, ValuesCompID));
+
     // set inputs
-    uint256 inputID = genInputID(recipeIndex);
+    uint256 inputID = genInputID(index);
     keysComp.set(inputID, inputIndices);
     valsComp.set(inputID, inputAmts);
 
     // set outputs
-    uint256 outputID = genOutputID(recipeIndex);
+    uint256 outputID = genOutputID(index);
     keysComp.set(outputID, outputIndices);
     valsComp.set(outputID, outputAmts);
   }
@@ -84,33 +86,35 @@ library LibRecipe {
   function createRequirement(
     IWorld world,
     IUintComp components,
-    uint32 recipeIndex,
+    uint32 index,
     Condition memory data
   ) internal returns (uint256 id) {
-    id = LibConditional.createFor(world, components, data, genReqAnchor(recipeIndex));
+    id = LibConditional.createFor(world, components, data, genReqAnchor(index));
   }
 
-  function remove(IUintComp components, uint32 recipeIndex, uint256 id) internal {
+  function remove(IUintComp components, uint32 index) internal {
+    uint256 id = genID(index);
     LibEntityType.remove(components, id);
+    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
+    IndexRecipeComponent(getAddrByID(components, IndexRecipeCompID)).remove(id);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
+    ExperienceComponent(getAddrByID(components, ExpCompID)).remove(id);
+    StaminaComponent(getAddrByID(components, StamCompID)).remove(id);
 
-    IndexRecipeComponent indexComp = IndexRecipeComponent(
-      getAddrByID(components, IndexRecipeCompID)
-    );
+    // remove inputs and outputs
     KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
     ValuesComponent valsComp = ValuesComponent(getAddrByID(components, ValuesCompID));
 
-    IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(id);
-    indexComp.remove(id);
-
-    uint256 inputID = genInputID(recipeIndex);
+    uint256 inputID = genInputID(index);
     keysComp.remove(inputID);
     valsComp.remove(inputID);
 
-    uint256 outputID = genOutputID(recipeIndex);
+    uint256 outputID = genOutputID(index);
     keysComp.remove(outputID);
     valsComp.remove(outputID);
 
-    uint256[] memory requirements = getRequirements(components, recipeIndex);
+    // remove requirements
+    uint256[] memory requirements = getRequirements(components, index);
     for (uint256 i; i < requirements.length; i++)
       LibConditional.remove(components, requirements[i]);
   }
@@ -164,11 +168,11 @@ library LibRecipe {
   /////////////////
   // GETTERS
 
-  function get(IUintComp components, uint32 recipeIndex) internal view returns (uint256) {
+  function get(IUintComp components, uint32 index) internal view returns (uint256) {
     IndexRecipeComponent indexComp = IndexRecipeComponent(
       getAddrByID(components, IndexRecipeCompID)
     );
-    uint256 id = genID(recipeIndex);
+    uint256 id = genID(index);
     return indexComp.has(id) ? id : 0;
   }
 
