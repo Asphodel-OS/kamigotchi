@@ -152,12 +152,12 @@ export const ExecutedOffer = (props: Props) => {
     <OfferCard
       button={{
         onClick: handleComplete,
-        text: 'Complete',
+        text: isMaker() ? 'Complete' : '.',
         tooltip: getActionTooltip(),
-        disabled: isConfirming,
+        disabled: isConfirming || !isMaker(),
       }}
       data={{ account, trade, type }}
-      reverse
+      reverse={trade.maker?.entity === account.entity}
     />
   );
 };

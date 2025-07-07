@@ -121,7 +121,9 @@ export const OfferCard = (props: Props) => {
           <Overlay top={0.21} right={0.21}>
             <Text size={0.6}>{getNameDisplay(rightAcc)}</Text>
           </Overlay>
-          <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
+          <TypeTag color={getTypeColor(type)} reverse={reverse}>
+            {type}
+          </TypeTag>
         </TagContainer>
         <TextTooltip text={button.tooltip} fullWidth>
           <Button onClick={handleClick} disabled={button.disabled}>
@@ -238,13 +240,16 @@ const TagContainer = styled.div`
   justify-content: center;
 `;
 
-const TypeTag = styled.div<{ color: string }>`
+const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
   width: 5vw;
   padding: 0.2vw;
 
   color: rgb(25, 39, 2);
   background-color: ${({ color }) => color};
-  clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
+  clip-path: ${({ reverse }) =>
+    reverse
+      ? `polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%)`
+      : `polygon(100% 100%, 10% 100%, 0% 50%, 10% 0%, 100% 0%, 90% 50%)`};
 
   display: flex;
   align-items: center;

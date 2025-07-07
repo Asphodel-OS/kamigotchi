@@ -115,7 +115,7 @@ export const PendingOffer = (props: Props) => {
         disabled: isConfirming,
       }}
       data={{ account, trade, type }}
-      reverse
+      reverse={trade.maker?.entity === account.entity}
     />
   );
 };

@@ -3,13 +3,13 @@ import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
 import { TradeType } from 'app/cache/trade';
-import { Overlay, Pairing, Text, TextTooltip } from 'app/components/library';
+import { Pairing, Text } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item, NullItem } from 'network/shapes';
 import { Trade, TradeOrder } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
 import { ConfirmationData } from '../../Confirmation';
-import { getTypeColor } from '../../helpers';
+import { OfferCard } from '../../management/offers/OfferCard';
 
 interface Props {
   actions: {
@@ -59,7 +59,7 @@ export const PendingOffer = (props: Props) => {
   /////////////////
   // HANDLERS
 
-  const handleCancel = () => {
+  const handleExecute = () => {
     const confirmAction = () => executeTrade(trade);
     setConfirmData({
       title: 'Confirm Execution',
@@ -106,13 +106,6 @@ export const PendingOffer = (props: Props) => {
       tooltip.push(`• ${amt.toLocaleString()} x ${item.name}`);
     }
     return tooltip;
-  };
-
-  // determine the name to display for an Account
-  const getNameDisplay = (trader?: Account): string => {
-    if (!trader || !trader.name) return '???';
-    if (trader.entity === account.entity) return 'You';
-    return trader.name;
   };
 
   /////////////////
@@ -169,48 +162,15 @@ export const PendingOffer = (props: Props) => {
   // RENDER
 
   return (
-    <Container>
-      <ImageContainer borderRight>
-        <TextTooltip
-          title='you will send..'
-          text={getOrderTooltip(trade.buyOrder)}
-          alignText='left'
-        >
-          <Image src={buyItem.image} />
-        </TextTooltip>
-        <Overlay bottom={0.15} fullWidth>
-          <Text size={0.6}>{buyAmt.toLocaleString()}</Text>
-        </Overlay>
-      </ImageContainer>
-      <Controls>
-        <TagContainer>
-          <Overlay top={0.21} left={0.21}>
-            <Text size={0.6}>{getNameDisplay(trade.taker)}</Text>
-          </Overlay>
-          <Overlay top={0.21} right={0.21}>
-            <Text size={0.6}>{getNameDisplay(trade.maker)}</Text>
-          </Overlay>
-          <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
-        </TagContainer>
-        <TextTooltip text={getActionTooltip()} fullWidth>
-          <Button onClick={handleCancel} disabled={isConfirming || !canFillOrder(trade.buyOrder)}>
-            Execute
-          </Button>
-        </TextTooltip>
-      </Controls>
-      <ImageContainer borderLeft>
-        <TextTooltip
-          title='you will receive..'
-          text={getOrderTooltip(trade.sellOrder)}
-          alignText='left'
-        >
-          <Image src={sellItem.image} />
-        </TextTooltip>
-        <Overlay bottom={0.15} fullWidth>
-          <Text size={0.6}>{sellAmt.toLocaleString()}</Text>
-        </Overlay>
-      </ImageContainer>
-    </Container>
+    <OfferCard
+      button={{
+        onClick: handleExecute,
+        text: 'Execute',
+        tooltip: ['Execute Order?'],
+        disabled: isConfirming,
+      }}
+      data={{ account, trade, type }}
+    />
   );
 };
 
