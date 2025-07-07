@@ -95,6 +95,7 @@ export const ExecutedOffer = (props: Props) => {
     ];
   };
 
+  // simple check for whether the player is the maker of the Trade Offer
   const isMaker = () => {
     return trade.maker?.entity === account.entity;
   };

@@ -1,5 +1,5 @@
 import { Trade } from 'network/shapes/Trade/types';
-import { isItemCurrency } from '../item';
+import { isItemCurrency, Item } from '../item';
 
 export type Type = 'Buy' | 'Sell' | 'Barter' | 'Forex' | '???';
 
@@ -31,4 +31,11 @@ export const getPerUnitPrice = (trade: Trade, type: Type): number => {
   if (type === 'Buy') return buyOrder.amounts[0] / sellOrder.amounts[0];
   else if (type === 'Sell') return sellOrder.amounts[0] / buyOrder.amounts[0];
   return 0;
+};
+
+// really stupid tax calc function. we'll do something about it later
+export const calcTax = (item: Item, amt: number, taxRate: number): number => {
+  const isCurrency = isItemCurrency(item);
+  if (!isCurrency) return 0;
+  return Math.floor(amt * taxRate);
 };

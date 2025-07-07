@@ -1,11 +1,11 @@
 import { Dispatch } from 'react';
 import styled from 'styled-components';
 
-import { TradeType } from 'app/cache/trade';
+import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item } from 'network/shapes';
-import { Trade, TradeOrder } from 'network/shapes/Trade';
+import { Trade } from 'network/shapes/Trade';
 import { ConfirmationData } from '../../Confirmation';
 import { OfferCard } from './OfferCard';
 
@@ -34,7 +34,7 @@ interface Props {
 // TODO: add support for Trades you're the assigned Taker for (make executable)
 export const PendingOffer = (props: Props) => {
   const { actions, controls, data, utils } = props;
-  const { cancelTrade } = actions;
+  const { cancelTrade, executeTrade } = actions;
   const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;
   const { getItemByIndex } = utils;
@@ -46,7 +46,17 @@ export const PendingOffer = (props: Props) => {
     const confirmAction = () => cancelTrade(trade);
     setConfirmData({
       title: 'Confirm Cancellation',
-      content: getConfirmContent(),
+      content: getCancelConfirmation(),
+      onConfirm: confirmAction,
+    });
+    setIsConfirming(true);
+  };
+
+  const handleExecute = () => {
+    const confirmAction = () => executeTrade(trade);
+    setConfirmData({
+      title: 'Confirm Execution',
+      content: getExecuteConfirmation(),
       onConfirm: confirmAction,
     });
     setIsConfirming(true);
@@ -55,17 +65,18 @@ export const PendingOffer = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
-  // tooltip for list of order items/amts
-  const getOrderTooltip = (order?: TradeOrder): string[] => {
-    const tooltip = [];
-    if (!order) return [];
+  const getActionTooltip = () => {
+    if (isMaker()) return ['Cancel this trade?'];
+    return [
+      'You have been specified as the Taker for this trade',
+      `Either by a loved one or a scammer (${trade.maker?.name ?? '???'})`,
+      `Feel free to claim it.`,
+    ];
+  };
 
-    for (let i = 0; i < order.items.length; i++) {
-      const item = order.items[i];
-      const amt = order.amounts[i];
-      tooltip.push(`• ${amt.toLocaleString()} x ${item.name}`);
-    }
-    return tooltip;
+  // simple check for whether the player is the maker of the Trade Offer
+  const isMaker = () => {
+    return trade.maker?.entity === account.entity;
   };
 
   /////////////////
@@ -73,22 +84,82 @@ export const PendingOffer = (props: Props) => {
 
   // create the trade confirmation window content for Canceling an order
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getConfirmContent = () => {
-    const musuItem = getItemByIndex(MUSU_INDEX);
+  const getExecuteConfirmation = () => {
+    const buyItems = trade.buyOrder?.items ?? [];
+    const buyAmts = trade.buyOrder?.amounts ?? [];
+    const sellItems = trade.sellOrder?.items ?? [];
+    const sellAmts = trade.sellOrder?.amounts ?? [];
     const tradeConfig = account.config?.trade;
-    const tradeFee = tradeConfig?.fee ?? 0;
+    const taxRate = tradeConfig?.tax.value ?? 0;
 
     return (
       <Paragraph>
-        {/* <Row>
+        <Row>
           <Text size={1.2}>{'('}</Text>
-          <Pairing
-            text={sellAmt.toLocaleString()}
-            icon={sellItem.image}
-            tooltip={getOrderTooltip(trade.sellOrder)}
-          />
-          <Text size={1.2}>{`) will be returned to your Inventory.`}</Text>
-        </Row> */}
+          {buyAmts.map((amt, i) => {
+            const amtStr = amt.toLocaleString();
+            const buyItem = buyItems[i];
+            return (
+              <Pairing
+                key={i}
+                text={amtStr}
+                icon={buyItem.image}
+                tooltip={[`${amtStr} ${buyItem.name}`]}
+              />
+            );
+          })}
+          <Text size={1.2}>{`) `}</Text>
+          <Text size={1.2}>{`will be transferred to the Trade.`}</Text>
+        </Row>
+        <Row>
+          <Text size={1.2}>{'You will receive'}</Text>
+          <Text size={1.2}>{'('}</Text>
+          {sellAmts.map((amt, i) => {
+            const sellItem = sellItems[i];
+            const tax = calcTradeTax(sellItem, amt, taxRate);
+            return (
+              <Pairing
+                key={i}
+                text={(amt - tax).toLocaleString()}
+                icon={sellItem.image}
+                tooltip={[`${amt.toLocaleString()} ${sellItem.name}`]}
+              />
+            );
+          })}
+          <Text size={1.2}>{`)`}</Text>
+        </Row>
+      </Paragraph>
+    );
+  };
+
+  // create the trade confirmation window content for Canceling a self-made order
+  // get the Confirmation content for a cancellation of a self-made Trade Offer
+  const getCancelConfirmation = () => {
+    const musuItem = getItemByIndex(MUSU_INDEX);
+    const tradeConfig = account.config?.trade;
+    const tradeFee = tradeConfig?.fee ?? 0;
+    const sellItems = trade.sellOrder?.items ?? [];
+    const sellAmts = trade.sellOrder?.amounts ?? [];
+
+    return (
+      <Paragraph>
+        <Row>
+          <Text size={1.2}>{'('}</Text>
+          {sellAmts.map((amt, i) => {
+            const amtStr = amt.toLocaleString();
+            const sellItem = sellItems[i];
+            return (
+              <Pairing
+                key={i}
+                text={amtStr}
+                icon={sellItem.image}
+                tooltip={[`${amtStr} ${sellItem.name}`]}
+              />
+            );
+          })}
+          <Text size={1.2}>{`) `}</Text>
+          <Text size={1.2}>{`will be returned to your Inventory.`}</Text>
+        </Row>
         <Row>
           <Text size={0.9}>{`Listing fee (`}</Text>
           <Pairing
@@ -109,9 +180,9 @@ export const PendingOffer = (props: Props) => {
   return (
     <OfferCard
       button={{
-        onClick: handleCancel,
-        text: 'Cancel',
-        tooltip: ['Cancel Order?'],
+        onClick: isMaker() ? handleCancel : handleExecute,
+        text: isMaker() ? 'Cancel' : 'Execute',
+        tooltip: getActionTooltip(),
         disabled: isConfirming,
       }}
       data={{ account, trade, type }}
@@ -134,6 +205,7 @@ const Row = styled.div`
   width: 100%;
 
   display: flex;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: center;
   gap: 0.6vw;
