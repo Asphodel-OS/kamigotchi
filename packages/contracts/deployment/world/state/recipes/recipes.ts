@@ -1,10 +1,11 @@
 import { AdminAPI } from '../../api';
-import { getSheet, readFile, stringToNumberArray, toDelete, toRevise } from '../utils';
+import { getSheet, stringToNumberArray, toDelete, toRevise } from '../utils';
 import { addToolRequirement } from './requirements';
 
 // initialize a single recipe from a csv entry. this does not include requirements
 export async function initRecipe(api: AdminAPI, entry: any) {
   const index = Number(entry['Index']);
+  const type = entry['Type'];
   const iIndices = stringToNumberArray(entry['Input Indices']);
   const iAmts = stringToNumberArray(entry['Input Amounts']);
   const oIndex = Number(entry['Output Index']);
@@ -20,7 +21,16 @@ export async function initRecipe(api: AdminAPI, entry: any) {
       `\n  with inputs ${iIndices.join(', ')} and amounts ${iAmts.join(', ')}`,
       `\n  costs ${staminaCost} stamina and outputs ${oXP} XP`
     );
-    await api.registry.recipe.create(index, iIndices, iAmts, [oIndex], [oAmt], oXP, staminaCost);
+    await api.registry.recipe.create(
+      index,
+      type,
+      iIndices,
+      iAmts,
+      [oIndex],
+      [oAmt],
+      oXP,
+      staminaCost
+    );
   } catch (e) {
     console.error(`Error: Failed to create recipe ${index}`);
     console.error(e);
@@ -87,12 +97,14 @@ export async function deleteRecipes(api: AdminAPI, overrideIndices?: number[]) {
 
 // revise specified or sheet-marked recipes
 export async function reviseRecipes(api: AdminAPI, overrideIndices?: number[]) {
+  const csv = await getSheet('crafting', 'recipes');
+  if (!csv) return console.log('No crafting/recipes.csv found');
+
   let indices: number[] = [];
   if (overrideIndices) indices = overrideIndices;
   else {
-    const recipesCSV = await readFile('crafting/recipes.csv');
-    for (let i = 0; i < recipesCSV.length; i++) {
-      if (toRevise(recipesCSV[i])) indices.push(Number(recipesCSV[i]['Index']));
+    for (let i = 0; i < csv.length; i++) {
+      if (toRevise(csv[i])) indices.push(Number(csv[i]['Index']));
     }
   }
   await deleteRecipes(api, indices);

@@ -1,12 +1,12 @@
-﻿Name,Status,Index,Output Index,Output Amount,Input Indices,Input Amounts,Cost (Stamina),XP Output,Tool Index,Min Level
-Brew XP Potion,In Game,1,11401,1,"1003,1104","1, 250",20,50,23101,1
-Brew Greater XP Potion,In Game,2,11402,1,"1006,1104","1, 2500",50,1000,23101,1
-Brew Respec Potion,In Game,3,11403,1,"1003,1112","1, 500",50,200,23101,1
-"Brew Grace Potion ",In Game,4,11404,1,"1003,1111,1110","1, 100, 50",25,150,23101,1
-Brew Bounty Potion,In Game,5,11405,1,"1003,1111","1, 100",15,50,23101,1
-Extract Pine Pollen,In Game,6,1104,500,1004,1,10,25,23100,1
-Extract Microplastics,In Game,7,1103,500,1003,1,30,100,23100,1
-Extract Daffodil,In Game,8,1111,500,1011,1,10,25,23100,1
-Extract Mint,In Game,9,1112,500,1012,1,20,100,23100,1
-Extract Black Poppy,In Game,10,1110,500,1010,1,20,250,23100,1
-Assemble Aetheric Sextant,To Deploy,11,100004,1,"100003,100001,100002","1, 1, 1",100,5000,,1
+﻿Name,Status,Index,Type,Output Index,Output Amount,Input Indices,Input Amounts,Cost (Stamina),XP Output,Tool Index,Min Level
+Brew XP Potion,In Game,1,CONSUMABLE,11401,1,"1003,1104","1, 250",20,50,23101,1
+Brew Greater XP Potion,In Game,2,CONSUMABLE,11402,1,"1006,1104","1, 2500",50,1000,23101,1
+Brew Respec Potion,In Game,3,CONSUMABLE,11403,1,"1003,1112","1, 500",50,200,23101,1
+Brew Grace Potion,In Game,4,CONSUMABLE,11404,1,"1003,1111,1110","1, 100, 50",25,150,23101,1
+Brew Bless Potion,In Game,5,CONSUMABLE,11405,1,"1003,1111","1, 100",15,50,23101,1
+Extract Pine Pollen,In Game,6,REAGENT,1104,500,1004,1,10,25,23100,1
+Extract Microplastics,In Game,7,REAGENT,1103,500,1003,1,30,100,23100,1
+Extract Daffodil,In Game,8,REAGENT,1111,500,1011,1,10,25,23100,1
+Extract Mint,In Game,9,REAGENT,1112,500,1012,1,20,100,23100,1
+Extract Black Poppy,In Game,10,REAGENT,1110,500,1010,1,20,250,23100,1
+Assemble Aetheric Sextant,In Game,11,SPECIAL,100004,1,"100003,100001,100002","1, 1, 1",100,5000,,1

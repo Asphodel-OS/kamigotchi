@@ -33,24 +33,19 @@ export async function readFile(file: string) {
 // GENERAL
 
 export const toCreate = (entry: any): boolean => {
-  return (
-    entry['Status'] === 'Revise Deployment' ||
-    entry['Status'] === 'Ingame' ||
-    entry['Status'] === 'For Implementation'
-  );
+  const status = entry['Status'];
+  return status === 'Revise Deployment' || status === 'In Game' || status === 'For Implementation';
 };
 
 export const toDelete = (entry: any): boolean => {
-  return entry['Status'] === 'Revise Deployment' || entry['Status'] === 'Ingame';
+  const status = entry['Status'];
+  return status === 'Revise Deployment' || status === 'In Game';
 };
 
 /// @dev check if entry should be revised. assume all entries that are valid should be revised
 export const toRevise = (entry: any): boolean => {
-  return (
-    entry['Status'] === 'Revise Deployment' ||
-    entry['Status'] === 'Ingame' ||
-    entry['Status'] === 'For Implementation'
-  );
+  const status = entry['Status'];
+  return status === 'Revise Deployment' || status === 'Ingame' || status === 'For Implementation';
 };
 
 export const getCreationStatuses = (env: string): string[] => {
