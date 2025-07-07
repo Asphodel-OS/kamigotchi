@@ -1,12 +1,10 @@
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch } from 'react';
 import styled from 'styled-components';
 
-import { isItemCurrency } from 'app/cache/item';
-import { TradeType } from 'app/cache/trade';
+import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
-import { MUSU_INDEX } from 'constants/items';
-import { Account, Item, NullItem } from 'network/shapes';
-import { Trade, TradeOrder } from 'network/shapes/Trade';
+import { Account, Item } from 'network/shapes';
+import { Trade } from 'network/shapes/Trade';
 import { ConfirmationData } from '../../Confirmation';
 import { OfferCard } from './OfferCard';
 
@@ -33,28 +31,10 @@ interface Props {
 // NOTE: only supports simple (single item) trades against musu atm
 // TODO: add support for Trades you're the Taker for (disable action)
 export const ExecutedOffer = (props: Props) => {
-  const { actions, controls, data, utils } = props;
+  const { actions, controls, data } = props;
   const { completeTrade } = actions;
   const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;
-  const { getItemByIndex } = utils;
-
-  const [buyItem, setBuyItem] = useState<Item>(NullItem);
-  const [buyAmt, setBuyAmt] = useState<number>(1);
-  const [sellItem, setSellItem] = useState<Item>(NullItem);
-  const [sellAmt, setSellAmt] = useState<number>(1);
-
-  // set either side of a standard order based on the type
-  useEffect(() => {
-    const buyOrder = trade.buyOrder;
-    const sellOrder = trade.sellOrder;
-    if (!buyOrder || !sellOrder) return;
-
-    setBuyItem(buyOrder.items[0]);
-    setBuyAmt(buyOrder.amounts[0]);
-    setSellItem(sellOrder.items[0]);
-    setSellAmt(sellOrder.amounts[0]);
-  }, [trade, type]);
 
   /////////////////
   // HANDLERS
@@ -64,7 +44,7 @@ export const ExecutedOffer = (props: Props) => {
     setConfirmData({
       title: 'Confirm Completion',
       subTitle: 'congrats on a deal made',
-      content: getConfirmContent(),
+      content: getCompleteConfirmation(),
       onConfirm: confirmAction,
     });
     setIsConfirming(true);
@@ -72,19 +52,6 @@ export const ExecutedOffer = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
-
-  // tooltip for list of order items/amts
-  const getOrderTooltip = (order?: TradeOrder): string[] => {
-    const tooltip = [];
-    if (!order) return [];
-
-    for (let i = 0; i < order.items.length; i++) {
-      const item = order.items[i];
-      const amt = order.amounts[i];
-      tooltip.push(`• ${amt.toLocaleString()} x ${item.name}`);
-    }
-    return tooltip;
-  };
 
   const getActionTooltip = () => {
     if (isMaker()) return ['Complete this trade'];
@@ -105,40 +72,48 @@ export const ExecutedOffer = (props: Props) => {
 
   // create the trade confirmation window content for Completing an Executed order
   // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getConfirmContent = () => {
-    const musuItem = getItemByIndex(MUSU_INDEX);
-
-    // determine taxxed amount
-    let tax = 0;
-    if (isItemCurrency(buyItem)) {
-      const tradeConfig = account.config?.trade;
-      const taxRate = tradeConfig?.tax.value ?? 0;
-      tax = Math.floor(buyAmt * taxRate);
-    }
+  const getCompleteConfirmation = () => {
+    const buyItems = trade.buyOrder?.items ?? [];
+    const buyAmts = trade.buyOrder?.amounts ?? [];
+    const tradeConfig = account.config?.trade;
+    const taxRate = tradeConfig?.tax.value ?? 0;
+    const taxAmts = buyAmts.map((amt, i) => calcTradeTax(buyItems[i], amt, taxRate));
 
     return (
       <Paragraph>
         <Row>
           <Text size={1.2}>{'You will receive ('}</Text>
-          <Pairing
-            text={(buyAmt - tax).toLocaleString()}
-            icon={buyItem.image}
-            tooltip={getOrderTooltip(trade.buyOrder)}
-          />
+          {buyAmts.map((amt, i) => {
+            const buyItem = buyItems[i];
+            const tax = taxAmts[i];
+            return (
+              <Pairing
+                key={i}
+                text={(amt - tax).toLocaleString()}
+                icon={buyItem.image}
+                tooltip={[`${amt.toLocaleString()} (-${tax.toLocaleString()}) ${buyItem.name}`]}
+              />
+            );
+          })}
           <Text size={1.2}>{`).`}</Text>
         </Row>
-        {tax > 0 && (
+        {taxAmts.some((tax) => tax > 0) && (
           <Row>
             <Text size={0.9}>{`Trade Tax: (`}</Text>
-            <Pairing
-              text={tax.toLocaleString()}
-              icon={musuItem.image}
-              scale={0.9}
-              tooltip={[
-                `There is no income tax in Kamigotchi World.`,
-                `Thank you for your patronage.`,
-              ]}
-            />
+            {taxAmts.map((tax, i) => {
+              if (tax <= 0) return null;
+              return (
+                <Pairing
+                  text={tax.toLocaleString()}
+                  icon={buyItems[i].image}
+                  scale={0.9}
+                  tooltip={[
+                    `There is no income tax in Kamigotchi World.`,
+                    `Thank you for your patronage.`,
+                  ]}
+                />
+              );
+            })}
             <Text size={0.9}>{`)`}</Text>
           </Row>
         )}
@@ -177,6 +152,7 @@ const Row = styled.div`
   width: 100%;
 
   display: flex;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: center;
   gap: 0.6vw;
