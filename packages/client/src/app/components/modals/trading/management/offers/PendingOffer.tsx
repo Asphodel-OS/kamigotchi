@@ -1,6 +1,7 @@
 import { Dispatch } from 'react';
 import styled from 'styled-components';
 
+import { getInventoryBalance } from 'app/cache/inventory';
 import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
 import { MUSU_INDEX } from 'constants/items';
@@ -65,6 +66,25 @@ export const PendingOffer = (props: Props) => {
   /////////////////
   // INTERPRETATION
 
+  // check whether the player can fill the specified order
+  // skip check if the player is the maker
+  // NOTE: this doesnt account for multiples of the same item in a single order
+  const canFillOrder = (): boolean => {
+    if (isMaker()) return true;
+    const order = trade.buyOrder;
+    if (!order) return false;
+
+    for (let i = 0; i < order.items.length; i++) {
+      const item = order.items[i];
+      const amt = order.amounts[i];
+
+      const balance = getInventoryBalance(account.inventories ?? [], item.index);
+      if (balance < amt) return false;
+    }
+    return true;
+  };
+
+  // get the tooltip of the action button
   const getActionTooltip = () => {
     if (isMaker()) return ['Cancel this trade?'];
     return [
@@ -82,8 +102,7 @@ export const PendingOffer = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  // create the trade confirmation window content for Canceling an order
-  // TODO: adjust Buy amounts for tax and display breakdown in tooltip
+  // create the trade confirmation window content for Executing an order
   const getExecuteConfirmation = () => {
     const buyItems = trade.buyOrder?.items ?? [];
     const buyAmts = trade.buyOrder?.amounts ?? [];
@@ -122,7 +141,7 @@ export const PendingOffer = (props: Props) => {
                 key={i}
                 text={(amt - tax).toLocaleString()}
                 icon={sellItem.image}
-                tooltip={[`${amt.toLocaleString()} ${sellItem.name}`]}
+                tooltip={[`${amt.toLocaleString()} (-${tax.toLocaleString()}) ${sellItem.name}`]}
               />
             );
           })}
@@ -183,7 +202,7 @@ export const PendingOffer = (props: Props) => {
         onClick: isMaker() ? handleCancel : handleExecute,
         text: isMaker() ? 'Cancel' : 'Execute',
         tooltip: getActionTooltip(),
-        disabled: isConfirming,
+        disabled: isConfirming || !canFillOrder(),
       }}
       data={{ account, trade, type }}
       reverse={trade.maker?.entity === account.entity}

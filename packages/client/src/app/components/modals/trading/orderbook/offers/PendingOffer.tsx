@@ -1,12 +1,11 @@
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
-import { TradeType } from 'app/cache/trade';
+import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
-import { MUSU_INDEX } from 'constants/items';
-import { Account, Item, NullItem } from 'network/shapes';
-import { Trade, TradeOrder } from 'network/shapes/Trade';
+import { Account, Item } from 'network/shapes';
+import { Trade } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
 import { ConfirmationData } from '../../Confirmation';
 import { OfferCard } from '../../management/offers/OfferCard';
@@ -33,28 +32,10 @@ interface Props {
 // represents other Buy/Sell Orders that are in PENDING state
 // NOTE: only supports simple (single item) trades against musu atm
 export const PendingOffer = (props: Props) => {
-  const { actions, controls, data, utils } = props;
+  const { actions, controls, data } = props;
   const { executeTrade } = actions;
   const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;
-  const { getItemByIndex } = utils;
-
-  const [buyItem, setBuyItem] = useState<Item>(NullItem);
-  const [buyAmt, setBuyAmt] = useState<number>(1);
-  const [sellItem, setSellItem] = useState<Item>(NullItem);
-  const [sellAmt, setSellAmt] = useState<number>(1);
-
-  // set either side of a standard order based on the type
-  useEffect(() => {
-    const buyOrder = trade.buyOrder;
-    const sellOrder = trade.sellOrder;
-    if (!buyOrder || !sellOrder) return;
-
-    setBuyItem(buyOrder.items[0]);
-    setBuyAmt(buyOrder.amounts[0]);
-    setSellItem(sellOrder.items[0]);
-    setSellAmt(sellOrder.amounts[0]);
-  }, [trade, type]);
 
   /////////////////
   // HANDLERS
@@ -63,7 +44,7 @@ export const PendingOffer = (props: Props) => {
     const confirmAction = () => executeTrade(trade);
     setConfirmData({
       title: 'Confirm Execution',
-      content: getConfirmContent(),
+      content: getExecuteConfirmation(),
       onConfirm: confirmAction,
     });
     setIsConfirming(true);
@@ -75,8 +56,10 @@ export const PendingOffer = (props: Props) => {
 
   // check whether the player can fill the specified order
   // NOTE: this doesnt account for multiples of the same item in a single order
-  const canFillOrder = (order?: TradeOrder): boolean => {
+  const canFillOrder = (): boolean => {
+    const order = trade.buyOrder;
     if (!order) return false;
+
     for (let i = 0; i < order.items.length; i++) {
       const item = order.items[i];
       const amt = order.amounts[i];
@@ -89,68 +72,77 @@ export const PendingOffer = (props: Props) => {
 
   // get the tooltip of the action button
   const getActionTooltip = () => {
-    if (!canFillOrder(trade.buyOrder)) {
+    if (!canFillOrder()) {
       return ['Too poore', 'get more items to fulfill this Trade Offer'];
     }
     return ['Execute this trade'];
   };
 
-  // tooltip for list of order items/amts
-  const getOrderTooltip = (order?: TradeOrder): string[] => {
-    const tooltip = [];
-    if (!order) return [];
-
-    for (let i = 0; i < order.items.length; i++) {
-      const item = order.items[i];
-      const amt = order.amounts[i];
-      tooltip.push(`• ${amt.toLocaleString()} x ${item.name}`);
-    }
-    return tooltip;
-  };
-
   /////////////////
   // DISPLAY
 
-  // create the trade confirmation window content for Canceling an order
-  // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getConfirmContent = () => {
-    const musuItem = getItemByIndex(MUSU_INDEX);
+  // create the trade confirmation window content for Executing an order
+  const getExecuteConfirmation = () => {
+    const buyItems = trade.buyOrder?.items ?? [];
+    const buyAmts = trade.buyOrder?.amounts ?? [];
+    const sellItems = trade.sellOrder?.items ?? [];
+    const sellAmts = trade.sellOrder?.amounts ?? [];
     const tradeConfig = account.config?.trade;
     const taxRate = tradeConfig?.tax.value ?? 0;
-    const tax = Math.floor(sellAmt * taxRate);
+    const taxAmts = sellAmts.map((amt, i) => calcTradeTax(sellItems[i], amt, taxRate));
 
     return (
       <Paragraph>
         <Row>
-          <Text size={1.2}>{'You will send ('}</Text>
-          <Pairing
-            text={buyAmt.toLocaleString()}
-            icon={buyItem.image}
-            tooltip={getOrderTooltip(trade.sellOrder)}
-          />
-          <Text size={1.2}>{`)`}</Text>
+          <Text size={1.2}>{'('}</Text>
+          {buyAmts.map((amt, i) => {
+            const amtStr = amt.toLocaleString();
+            const buyItem = buyItems[i];
+            return (
+              <Pairing
+                key={i}
+                text={amtStr}
+                icon={buyItem.image}
+                tooltip={[`${amtStr} ${buyItem.name}`]}
+              />
+            );
+          })}
+          <Text size={1.2}>{`) `}</Text>
+          <Text size={1.2}>{`will be transferred to the Trade.`}</Text>
         </Row>
         <Row>
-          <Text size={1.2}>{'and receive ('}</Text>
-          <Pairing
-            text={(sellAmt - tax).toLocaleString()}
-            icon={sellItem.image}
-            tooltip={getOrderTooltip(trade.sellOrder)}
-          />
+          <Text size={1.2}>{'You will receive ('}</Text>
+          {sellAmts.map((amt, i) => {
+            const sellItem = sellItems[i];
+            const tax = taxAmts[i];
+            return (
+              <Pairing
+                key={i}
+                text={(amt - tax).toLocaleString()}
+                icon={sellItem.image}
+                tooltip={[`${amt.toLocaleString()} (-${tax.toLocaleString()}) ${sellItem.name}`]}
+              />
+            );
+          })}
           <Text size={1.2}>{`)`}</Text>
         </Row>
-        {tax > 0 && (
+        {taxAmts.some((tax) => tax > 0) && (
           <Row>
             <Text size={0.9}>{`Trade Tax: (`}</Text>
-            <Pairing
-              text={tax.toLocaleString()}
-              icon={musuItem.image}
-              scale={0.9}
-              tooltip={[
-                `There is no income tax in Kamigotchi World.`,
-                `Thank you for your patronage`,
-              ]}
-            />
+            {taxAmts.map((tax, i) => {
+              if (tax <= 0) return null;
+              return (
+                <Pairing
+                  text={tax.toLocaleString()}
+                  icon={sellItems[i].image}
+                  scale={0.9}
+                  tooltip={[
+                    `There is no income tax in Kamigotchi World.`,
+                    `Thank you for your patronage.`,
+                  ]}
+                />
+              );
+            })}
             <Text size={0.9}>{`)`}</Text>
           </Row>
         )}
@@ -166,107 +158,13 @@ export const PendingOffer = (props: Props) => {
       button={{
         onClick: handleExecute,
         text: 'Execute',
-        tooltip: ['Execute Order?'],
-        disabled: isConfirming,
+        tooltip: getActionTooltip(),
+        disabled: isConfirming || !canFillOrder(),
       }}
       data={{ account, trade, type }}
     />
   );
 };
-
-const Container = styled.div`
-  position: relative;
-  border: 0.15vw solid black;
-  border-radius: 1.2vw;
-
-  width: 24vw;
-  height: 6vw;
-
-  user-select: none;
-
-  display: flex;
-  flex-flow: row nowrap;
-`;
-
-const ImageContainer = styled.div<{ borderRight?: boolean; borderLeft?: boolean }>`
-  position: relative;
-  ${({ borderRight }) => borderRight && `border-right: 0.15vw solid black;`}
-  ${({ borderLeft }) => borderLeft && `border-left: 0.15vw solid black;`}
-  height: 100%;
-  padding: 0.6vw;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Image = styled.img`
-  height: 3.3vw;
-
-  image-rendering: pixelated;
-  user-drag: none;
-
-  &:hover {
-    filter: brightness(1.2);
-  }
-`;
-
-const Controls = styled.div`
-  display: flex;
-  flex-grow: 1;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Button = styled.button`
-  background-color: #eee;
-  border: none;
-  border-top: 0.15vw solid black;
-  width: 100%;
-
-  font-size: 0.9vw;
-  line-height: 1.8vw;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #ddd;
-    cursor: pointer;
-  }
-  &:active {
-    background-color: #bbb;
-  }
-  &:disabled {
-    background-color: #bbb;
-    cursor: default;
-  }
-`;
-
-const TagContainer = styled.div`
-  position: relative;
-  width: 100%;
-  flex-grow: 1;
-
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-`;
-
-const TypeTag = styled.div<{ color: string }>`
-  width: 5vw;
-  padding: 0.2vw;
-
-  color: rgb(25, 39, 2);
-  background-color: ${({ color }) => color};
-  clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 0.9vw;
-`;
 
 const Paragraph = styled.div`
   color: #333;

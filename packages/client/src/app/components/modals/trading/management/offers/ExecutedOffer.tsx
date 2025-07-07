@@ -95,7 +95,7 @@ export const ExecutedOffer = (props: Props) => {
               />
             );
           })}
-          <Text size={1.2}>{`).`}</Text>
+          <Text size={1.2}>{`)`}</Text>
         </Row>
         {taxAmts.some((tax) => tax > 0) && (
           <Row>
