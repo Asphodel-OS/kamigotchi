@@ -10,7 +10,7 @@ import { initItems, initLocalItems } from './items';
 import { initListings } from './listings';
 import { initNpcs } from './npcs';
 import { initQuests } from './quests/quests';
-import { initRecipes } from './recipes';
+import { initRecipes } from './recipes/recipes';
 import { initRelationships } from './relationships';
 import { initNodes, initRooms } from './rooms';
 import { initSkills } from './skills';
@@ -106,7 +106,7 @@ export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
 export { initNpcs } from './npcs';
 export { deleteQuests, initQuests, reviseQuests } from './quests';
-export { deleteRecipes, initRecipes, reviseRecipes } from './recipes';
+export { deleteRecipes, initRecipes, reviseRecipes } from './recipes/recipes';
 export { deleteRelationships, initRelationships } from './relationships';
 export {
   addNodeScavenges,

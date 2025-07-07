@@ -22,12 +22,21 @@ contract _RecipeRegistrySystem is System, AuthRoles {
       uint32[] memory oIndices,
       uint256[] memory oAmts,
       uint256 xp,
-      int32 stCost
+      int32 staminaCost
     ) = abi.decode(arguments, (uint32, uint32[], uint256[], uint32[], uint256[], uint256, int32));
 
     require(LibRecipe.get(components, index) == 0, "Recipe: index already exists");
 
-    uint256 id = LibRecipe.create(components, index, iIndices, iAmts, oIndices, oAmts, xp, stCost);
+    uint256 id = LibRecipe.create(
+      components,
+      index,
+      iIndices,
+      iAmts,
+      oIndices,
+      oAmts,
+      xp,
+      staminaCost
+    );
     return id;
   }
 
@@ -35,8 +44,8 @@ contract _RecipeRegistrySystem is System, AuthRoles {
     uint32 recipeIndex,
     string memory logicType,
     string memory type_,
-    uint32 index, // can be empty
-    uint32 value, // can be empty
+    uint32 index, // optional field
+    uint32 value, // optional field
     string memory condFor
   ) public onlyAdmin(components) returns (uint256) {
     return

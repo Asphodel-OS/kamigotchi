@@ -6,16 +6,17 @@ import { addRewards } from './rewards';
 
 // STATE SCRIPTS SHOULD BE MODELED AFTER THIS DIRECTORY
 
+// initialize a single quest
 export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => {
   const index = Number(entry['Index']);
   const name = entry['Title'];
   const description = entry['Description'] ?? '';
   const altDescription = entry['Resolution text'] ?? '';
   const isDaily = entry['Daily'] === 'Yes';
-  console.log(`Creating ${isDaily ? 'Daily' : ''} Quest: ${index} (${name})`);
 
   let success = true;
   try {
+    console.log(`Creating ${isDaily ? 'Daily' : ''} Quest: ${index} (${name})`);
     await api.registry.quest.create(index, name, description, altDescription, isDaily ? 64800 : 0);
   } catch (e) {
     console.log(`Error: Failed to create Quest ${index}`);
@@ -29,6 +30,7 @@ export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => 
 /////////////////
 // SCRIPTS
 
+// initialize a specificified set of Quests or those with a valid status (if unspecified)
 export async function initQuests(api: AdminAPI, indices?: number[], all?: boolean) {
   const csv = await getSheet('quests', 'quests');
   if (!csv) return console.log('No quests/quests.csv found');
