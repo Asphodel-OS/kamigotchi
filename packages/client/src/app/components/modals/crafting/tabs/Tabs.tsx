@@ -25,7 +25,11 @@ export const Tabs = (props: Props) => {
       <Button onClick={() => setTab('materials')} disabled={props.tab === 'materials'}>
         Materials
       </Button>
-      <Button onClick={() => setTab('specialTools')} disabled={props.tab === 'specialTools'}>
+      <Button
+        onClick={() => setTab('specialTools')}
+        disabled={props.tab === 'specialTools'}
+        style={{ borderRight: 'none' }}
+      >
         Special Tools
       </Button>
     </Container>
