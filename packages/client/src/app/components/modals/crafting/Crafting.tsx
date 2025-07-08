@@ -12,6 +12,7 @@ import { parseConditionalText, passesConditions } from 'network/shapes/Condition
 import { getItemBalance } from 'network/shapes/Item';
 import { hasIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
 import { Recipes } from './Recipes/Recipes';
+import { Tabs } from './tabs/Tabs';
 
 export function registerCraftingModal() {
   registerUIComponent(
@@ -59,6 +60,7 @@ export function registerCraftingModal() {
       const { hasIngredients } = utils;
       const [recipes, setRecipes] = useState<Recipe[]>([]);
       const [showAll, setShowAll] = useState<boolean>(true);
+      const [tab, setTab] = useState('reagents'); //  social | party | stats
 
       // update the list of recipes depending on the filter
       useEffect(() => {
@@ -103,6 +105,7 @@ export function registerCraftingModal() {
           header={<ModalHeader title='Crafting' icon={CraftIcon} />}
           canExit
         >
+          <Tabs tab={tab} setTab={setTab} />
           <ActionButton onClick={() => setShowAll(!showAll)} text='Filter by Available' />
           {recipes.length == 0 ? (
             <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
