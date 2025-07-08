@@ -78,7 +78,7 @@ library LibKill {
   /////////////////
   // CALCULATIONS
 
-  // Calculate the base liquidation threshold % for target pet when attacked by source pet.
+  /// @notice Calculate the base liquidation threshold % for target pet when attacked by source pet.
   // H = Φ(ln(v_s / h_t)) * ratio  as proportion of total health (1e6 precision).
   function calcAnimosity(
     IUintComp comps,
@@ -98,7 +98,7 @@ library LibKill {
     return (base * ratio) / precision;
   }
 
-  // Calculate the affinity multiplier for attacks between two kamis.
+  /// @notice Calculate the affinity multiplier for attacks between two kamis.
   function calcEfficacy(
     IUintComp comps,
     uint256 sourceID,
@@ -127,7 +127,40 @@ library LibKill {
     return (efficacy > 0) ? uint(efficacy) : 0;
   }
 
-  // Calculate the liquidation HP threshold for target pet, attacked by the source pet.
+  /// @notice Calculate the resulting negative karma (HP loss) from two kamis duking it out. Rounds down.
+  function calcKarma(
+    IUintComp comps,
+    uint256 sourceID,
+    uint256 targetID
+  ) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_KARMA");
+    int32 v2 = LibStat.getTotal(comps, "VIOLENCE", targetID);
+    int32 h1 = LibStat.getTotal(comps, "HARMONY", sourceID);
+    if (v2 - h1 < 0) return 0;
+
+    uint256 ratio = uint(config[2]);
+    uint256 precision = 10 ** uint(config[3]);
+    return (uint32(v2 - h1) * ratio) / precision;
+  }
+
+  /// @notice Calculate the murderer's health drained
+  function calcRecoil(
+    IUintComp comps,
+    uint256 sourceID,
+    uint256 strain,
+    uint256 karma
+  ) internal view returns (int32) {
+    uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_STRAIN");
+    int256 bonusBoost = LibBonus.getFor(comps, "ATK_RECOIL", sourceID);
+    uint256 base = strain + karma;
+    uint256 core = config[2];
+    uint256 boost = (config[6].toInt256() + bonusBoost).toUint256();
+
+    uint256 precision = 10 ** uint(config[3] + config[7]);
+    return ((base * core * boost) / precision).toInt32();
+  }
+
+  /// @notice Calculate the liquidation HP threshold for target pet, attacked by the source pet.
   // This is measured as an absolute health value (1e0 precision).
   function calcThreshold(
     IUintComp comps,
@@ -152,23 +185,7 @@ library LibKill {
     return (uint(postShiftVal) * totalHealth) / precision;
   }
 
-  // Calculate the resulting negative karma (HP loss) from two kamis duking it out. Rounds down.
-  function calcKarma(
-    IUintComp comps,
-    uint256 sourceID,
-    uint256 targetID
-  ) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_KARMA");
-    int32 v2 = LibStat.getTotal(comps, "VIOLENCE", targetID);
-    int32 h1 = LibStat.getTotal(comps, "HARMONY", sourceID);
-    if (v2 - h1 < 0) return 0;
-
-    uint256 ratio = uint(config[2]);
-    uint256 precision = 10 ** uint(config[3]);
-    return (uint32(v2 - h1) * ratio) / precision;
-  }
-
-  // Calculate the amount of MUSU salvaged by a target from a given balance. Round down.
+  /// @notice Calculate the amount of MUSU salvaged by a target from a given balance. Round down.
   // ASSUME: config[3] >= config[1]
   function calcSalvage(
     IUintComp comps,
@@ -184,7 +201,7 @@ library LibKill {
     return (amt * ratio) / precision;
   }
 
-  // Calculate the reward for liquidating a specified Coin balance. Round down.
+  /// @notice Calculate the reward for liquidating a specified Coin balance. Round down.
   // ASSUME: config[3] >= config[1]
   function calcSpoils(
     IUintComp comps,

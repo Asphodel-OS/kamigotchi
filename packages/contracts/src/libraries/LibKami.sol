@@ -160,7 +160,7 @@ library LibKami {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_STRAIN");
     int256 bonusBoost = LibBonus.getFor(components, "STND_STRAIN_BOOST", id);
     uint256 core = config[2];
-    uint256 boost = uint(config[6].toInt256() + bonusBoost);
+    uint256 boost = (config[6].toInt256() + bonusBoost).toUint256();
 
     uint256 harmony = LibStat.getTotal(components, "HARMONY", id).toUint256(); // prec 0
     uint256 precision = 10 ** uint(config[3] + config[7]);

@@ -3,7 +3,6 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
@@ -17,8 +16,6 @@ uint256 constant ID = uint256(keccak256("system.harvest.liquidate"));
 
 // liquidates a target harvest using a player's pet.
 contract HarvestLiquidateSystem is System {
-  using SafeCastLib for uint256;
-
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -72,7 +69,7 @@ contract HarvestLiquidateSystem is System {
     );
 
     // drain the killer
-    LibKami.drain(components, killerID, (strain + karma).toInt32());
+    LibKami.drain(components, killerID, LibKill.calcRecoil(components, killerID, strain, karma));
 
     // kill the target and shut off the harvest
     LibKami.kill(components, victimID);
