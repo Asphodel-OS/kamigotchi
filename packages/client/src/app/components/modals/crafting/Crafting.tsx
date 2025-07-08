@@ -60,7 +60,7 @@ export function registerCraftingModal() {
       const { hasIngredients } = utils;
       const [recipes, setRecipes] = useState<Recipe[]>([]);
       const [showAll, setShowAll] = useState<boolean>(true);
-      const [tab, setTab] = useState('consumable'); //  social | party | stats
+      const [tab, setTab] = useState('consumable'); //  consumable | material | reagent | special
 
       // update the list of recipes depending on the filter
       useEffect(() => {
