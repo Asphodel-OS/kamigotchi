@@ -17,13 +17,13 @@ export const Tabs = (props: Props) => {
   return (
     <Container>
       {' '}
-      <Button onClick={() => setTab('consumables')} disabled={props.tab === 'consumables'}>
+      <Button onClick={() => setTab('consumable')} disabled={props.tab === 'consumable'}>
         Consumables
       </Button>{' '}
-      <Button onClick={() => setTab('materials')} disabled={props.tab === 'materials'}>
+      <Button onClick={() => setTab('material')} disabled={props.tab === 'material'}>
         Materials
       </Button>
-      <Button onClick={() => setTab('reagents')} disabled={props.tab === 'reagents'}>
+      <Button onClick={() => setTab('reagent')} disabled={props.tab === 'reagent'}>
         Reagents
       </Button>
       <Button

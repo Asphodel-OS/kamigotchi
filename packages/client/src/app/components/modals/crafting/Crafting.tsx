@@ -60,7 +60,7 @@ export function registerCraftingModal() {
       const { hasIngredients } = utils;
       const [recipes, setRecipes] = useState<Recipe[]>([]);
       const [showAll, setShowAll] = useState<boolean>(true);
-      const [tab, setTab] = useState('consumables'); //  social | party | stats
+      const [tab, setTab] = useState('consumable'); //  social | party | stats
 
       // update the list of recipes depending on the filter
       useEffect(() => {
@@ -110,7 +110,7 @@ export function registerCraftingModal() {
           {recipes.length == 0 ? (
             <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
           ) : (
-            <Recipes data={{ account, recipes }} actions={{ craft }} utils={utils} />
+            <Recipes data={{ account, recipes, tab }} actions={{ craft }} utils={utils} />
           )}
         </ModalWrapper>
       );

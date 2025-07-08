@@ -9,6 +9,7 @@ interface Props {
   data: {
     account: Account;
     recipes: Recipe[];
+    tab: string;
   };
   actions: {
     craft: (recipe: Recipe, amount: number) => void;
@@ -22,7 +23,7 @@ interface Props {
 
 export const Recipes = (props: Props) => {
   const { actions, data, utils } = props;
-  const { account, recipes } = data;
+  const { account, recipes, tab } = data;
   const { craft } = actions;
 
   const [stamina, setStamina] = useState(0);
@@ -42,14 +43,19 @@ export const Recipes = (props: Props) => {
 
   return (
     <Container>
-      {recipes.map((recipe) => (
-        <RecipeCard
-          key={recipe.index}
-          data={{ account, recipe, stamina }}
-          actions={{ craft: (amt: number) => craft(recipe, amt) }}
-          utils={utils}
-        />
-      ))}
+      {recipes.map((recipe) => {
+        const recipeTab = recipe.type.toLowerCase();
+        return (
+          <Tab key={recipe.index} isVisible={tab === recipeTab}>
+            <RecipeCard
+              key={recipe.index}
+              data={{ account, recipe, stamina }}
+              actions={{ craft: (amt: number) => craft(recipe, amt) }}
+              utils={utils}
+            />
+          </Tab>
+        );
+      })}
     </Container>
   );
 };
@@ -59,6 +65,10 @@ const Container = styled.div`
   flex-flow: row wrap;
   margin-top: 0.6vw;
   gap: 0.6vw;
-
   user-select: none;
+`;
+
+const Tab = styled.div<{ isVisible: boolean }>`
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+  flex-direction: column;
 `;
