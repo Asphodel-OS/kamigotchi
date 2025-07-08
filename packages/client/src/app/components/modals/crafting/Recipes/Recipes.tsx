@@ -42,7 +42,7 @@ export const Recipes = (props: Props) => {
   }, [account.stamina.sync, tick]);
 
   return (
-    <Container>
+    <>
       {recipes.map((recipe) => {
         const recipeTab = recipe.type.toLowerCase();
         return (
@@ -56,19 +56,14 @@ export const Recipes = (props: Props) => {
           </Tab>
         );
       })}
-    </Container>
+    </>
   );
 };
 
-const Container = styled.div`
-  display: flex;
+const Tab = styled.div<{ isVisible: boolean }>`
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: row wrap;
   margin-top: 0.6vw;
   gap: 0.6vw;
   user-select: none;
-`;
-
-const Tab = styled.div<{ isVisible: boolean }>`
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  flex-direction: column;
 `;
