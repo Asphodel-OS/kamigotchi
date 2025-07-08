@@ -240,6 +240,7 @@ export function registerTradingModal() {
               data={{
                 account,
                 currencies,
+                inventory: account.inventories ?? [],
                 items,
                 trades: myTrades,
               }}

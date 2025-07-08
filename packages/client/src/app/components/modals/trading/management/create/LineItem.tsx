@@ -14,15 +14,24 @@ interface Props {
   selected: Item;
   amt: number;
   setAmt: (e: ChangeEvent<HTMLInputElement>) => void;
-  remove: () => void;
+  remove?: () => void;
+  reverse?: boolean;
 }
 
 export const LineItem = (props: Props) => {
-  const { options, selected, amt, setAmt, remove } = props;
+  const { options, selected, amt, setAmt, remove, reverse } = props;
   const [search, setSearch] = useState<string>('');
 
   return (
     <Container>
+      {reverse && (
+        <Quantity
+          width={16.2}
+          type='string'
+          value={amt.toLocaleString()}
+          onChange={(e) => setAmt(e)}
+        />
+      )}
       <TextTooltip title={selected.name} text={[selected.description]}>
         <IconListButton
           img={selected.image}
@@ -36,26 +45,31 @@ export const LineItem = (props: Props) => {
           }}
         />
       </TextTooltip>
-      <Quantity
-        width={16.2}
-        type='string'
-        value={amt.toLocaleString()}
-        onChange={(e) => setAmt(e)}
-      />
-      <ExitContainer>
-        <IconButton text='x' onClick={remove} scale={1.8} width={1.8} />
-      </ExitContainer>
+      {!reverse && (
+        <Quantity
+          width={16.2}
+          type='string'
+          value={amt.toLocaleString()}
+          onChange={(e) => setAmt(e)}
+        />
+      )}
+      {remove && (
+        <ExitContainer>
+          <IconButton text='x' onClick={remove} scale={1.8} width={1.8} />
+        </ExitContainer>
+      )}
     </Container>
   );
 };
 
 const Container = styled.div`
   width: 100%;
+  height: 2.4vw;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 0.6vw;
 `;
 

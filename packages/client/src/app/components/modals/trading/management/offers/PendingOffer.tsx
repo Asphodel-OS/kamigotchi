@@ -136,6 +136,9 @@ export const PendingOffer = (props: Props) => {
           {sellAmts.map((amt, i) => {
             const sellItem = sellItems[i];
             const tax = calcTradeTax(sellItem, amt, taxRate);
+            const taxPercent = Math.floor(taxRate * 100).toFixed(2);
+            const taxTooltip = [`${amt.toLocaleString()} ${sellItem.name}`];
+            if (tax > 0) taxTooltip.push(`less ${taxPercent}% tax (${tax} ${sellItem.name})`);
             return (
               <Pairing
                 key={i}

@@ -3,21 +3,19 @@ import { ChangeEvent, Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
-import { IconButton, IconListButtonOption, Overlay, Pairing, Text } from 'app/components/library';
+import { IconButton, IconListButtonOption, Overlay, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
-import { waitForActionCompletion } from 'network/utils';
-import { playClick } from 'utils/sounds';
-import { ConfirmationData } from '../Confirmation';
-import { TRADE_ROOM_INDEX } from '../constants';
+import { ConfirmationData } from '../../Confirmation';
+import { TRADE_ROOM_INDEX } from '../../constants';
 import { LineItem } from './LineItem';
 
 interface Props {
   actions: {
+    handleCreatePrompt: (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => void;
     createTrade: (
       wantItems: Item[],
       wantAmts: number[],
@@ -29,12 +27,17 @@ interface Props {
     isConfirming: boolean;
     setIsConfirming: Dispatch<boolean>;
     setConfirmData: Dispatch<ConfirmationData>;
-    itemSearch: string;
-    setItemSearch: Dispatch<string>;
+    getCreateConfirmation: (
+      want: Item[],
+      wantAmt: number[],
+      have: Item[],
+      haveAmt: number[]
+    ) => JSX.Element;
   };
   data: {
     account: Account;
     currencies: Item[];
+    inventory: Inventory[];
     items: Item[];
   };
   types: {
@@ -43,14 +46,15 @@ interface Props {
   utils: {
     entityToIndex: (id: EntityID) => EntityIndex;
   };
+  isVisible: boolean;
 }
 
-export const Create = (props: Props) => {
-  const { actions, controls, data, types, utils } = props;
-  const { createTrade } = actions;
-  const { isConfirming, setIsConfirming, itemSearch, setItemSearch } = controls;
-  const { setConfirmData } = controls;
-  const { account, items } = data;
+// a GUI for creating Generalized Trade Offers
+export const MultiCreate = (props: Props) => {
+  const { actions, controls, data, types, utils, isVisible } = props;
+  const { createTrade, handleCreatePrompt } = actions;
+  const { isConfirming, setIsConfirming, setConfirmData, getCreateConfirmation } = controls;
+  const { account, inventory, items } = data;
   const { ActionComp } = types;
   const { entityToIndex } = utils;
   const { modals } = useVisibility();
@@ -70,33 +74,6 @@ export const Create = (props: Props) => {
     setWantAmt([1]);
     setHave([musu]);
     setHaveAmt([1]);
-  };
-
-  /////////////////
-  // HANDLERS
-
-  // organize the form data for trade offer creation
-  // TODO: detect successful trade creation and reset form
-  const handleTrade = async (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => {
-    try {
-      const tradeActionID = createTrade(want, wantAmt, have, haveAmt);
-      if (!tradeActionID) throw new Error('Trade action failed');
-      await waitForActionCompletion(ActionComp, entityToIndex(tradeActionID) as EntityIndex);
-    } catch (e) {
-      console.log('handleTrade() failed', e);
-    }
-  };
-
-  // handle prompting for confirmation with trade creation
-  const handleCreatePrompt = () => {
-    const confirmAction = () => handleTrade(want, wantAmt, have, haveAmt);
-    setConfirmData({
-      title: 'Confirm Creation',
-      content: getConfirmContent(),
-      onConfirm: confirmAction,
-    });
-    setIsConfirming(true); // TODO: this is a hack to get the confirmation to show
-    playClick();
   };
 
   /////////////////
@@ -171,7 +148,7 @@ export const Create = (props: Props) => {
     const min = 0;
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
-    const max = getInventoryBalance(account.inventories ?? [], item.index);
+    const max = getInventoryBalance(inventory, item.index);
     const amt = Math.max(min, Math.min(max, rawQuantity));
 
     setHaveAmt((prev) => {
@@ -225,8 +202,7 @@ export const Create = (props: Props) => {
   const getHaveOptions = useMemo(
     () =>
       (index: number): IconListButtonOption[] => {
-        if (!account.inventories) return [];
-        const filtered = account.inventories.filter((inv: Inventory) => {
+        const filtered = inventory.filter((inv: Inventory) => {
           const isTradeable = inv.item.is.tradeable;
           const hasBalance = inv.balance > 0;
           const unused = have.every((item) => item.index !== inv.item.index);
@@ -257,68 +233,6 @@ export const Create = (props: Props) => {
 
   /////////////////
   // DISPLAY
-
-  // create the trade confirmation window content
-  // TODO: adjust Buy amounts for tax and display breakdown in tooltip
-  const getConfirmContent = () => {
-    const tradeConfig = account.config?.trade;
-    const taxConfig = tradeConfig?.tax;
-    const tradeFee = tradeConfig?.fee ?? 0;
-
-    let tax = 0;
-    let taxTooltip: string[] = [];
-    if (taxConfig) {
-      tax = Math.floor(wantAmt[0] * taxConfig.value);
-      const taxPercent = Math.floor(taxConfig.value * 100).toFixed(2);
-      taxTooltip = [`${wantAmt[0].toLocaleString()} MUSU`, `less ${taxPercent}% tax (${tax} MUSU)`];
-    }
-
-    return (
-      <Paragraph>
-        <Row>
-          <Text size={1.2}>{'('}</Text>
-          {haveAmt.map((amt, i) => (
-            <Pairing
-              key={i}
-              text={amt.toLocaleString()}
-              icon={have[i].image}
-              tooltip={[`${amt.toLocaleString()} ${have[i].name}`]}
-            />
-          ))}
-          <Text size={1.2}>{`) `}</Text>
-          <Text size={1.2}>{`will be transferred to the Trade.`}</Text>
-        </Row>
-        <Row>
-          <Text size={1.2}>{'Upon completion, you will receive'}</Text>
-        </Row>
-        <Row>
-          <Text size={1.2}>{'('}</Text>
-          {wantAmt.map((amt, i) => (
-            <Pairing
-              key={i}
-              text={(amt - tax).toLocaleString()}
-              icon={want[i].image}
-              tooltip={taxTooltip}
-            />
-          ))}
-          <Text size={1.2}>{`)`}</Text>
-        </Row>
-        <Row>
-          <Text size={0.9}>{`Listing Fee: (`}</Text>
-          <Pairing
-            text={tradeFee.toLocaleString()}
-            icon={ItemImages.musu}
-            scale={0.9}
-            tooltip={[
-              `Non-refundable (trade responsibly)`,
-              `Deducted from your inventory upon creation.`,
-            ]}
-          />
-          <Text size={0.9}>{`)`}</Text>
-        </Row>
-      </Paragraph>
-    );
-  };
 
   // memoized Want-side order creation
   const WantSection = useMemo(
@@ -368,10 +282,7 @@ export const Create = (props: Props) => {
   // RENDER
 
   return (
-    <Container>
-      <Overlay top={0} fullWidth>
-        <Title>Create Offer</Title>
-      </Overlay>
+    <Container isVisible={isVisible}>
       <Body>
         <Text size={1.2}>I want</Text>
         {WantSection}
@@ -381,12 +292,12 @@ export const Create = (props: Props) => {
       <Overlay bottom={0.75} right={0.75}>
         <IconButton
           text='Create'
-          onClick={handleCreatePrompt}
+          onClick={() => handleCreatePrompt(want, wantAmt, have, haveAmt)}
           disabled={
             isConfirming ||
             want.length === 0 ||
             have.length === 0 ||
-            account.roomIndex !== TRADE_ROOM_INDEX // dtl check this based on room flags
+            account.roomIndex !== TRADE_ROOM_INDEX // TODO: check this based on room flags
           }
         />
       </Overlay>
@@ -394,35 +305,17 @@ export const Create = (props: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ isVisible: boolean }>`
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   position: relative;
-  border-right: 0.15vw solid black;
-
-  width: 40%;
-  height: 100%;
-
-  user-select: none;
-`;
-
-const Title = styled.div`
-  position: sticky;
-  background-color: rgb(221, 221, 221);
-  opacity: 0.9;
-
   width: 100%;
-  top: 0;
-  z-index: 1;
-  padding: 1.8vw;
-
-  color: black;
-  font-size: 1.2vw;
-  text-align: left;
+  height: 100%;
 `;
 
 const Body = styled.div`
   position: relative;
   height: 100%;
-  padding: 6vw 0.6vw 1.8vw 0.6vw;
+  padding: 6vw 0.6vw 0.6vw 0.6vw;
   gap: 1.2vw;
 
   display: flex;

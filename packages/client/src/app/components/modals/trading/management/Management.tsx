@@ -1,14 +1,14 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { Dispatch } from 'react';
 import styled from 'styled-components';
 
-import { Account } from 'network/shapes';
+import { Account, Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
-import { Dispatch, useState } from 'react';
 import { ConfirmationData } from '../Confirmation';
 import { TabType } from '../types';
-import { Create } from './Create';
+import { Create } from './create/Create';
 import { Offers } from './offers/Offers';
 
 interface Props {
@@ -32,6 +32,7 @@ interface Props {
   data: {
     account: Account;
     currencies: Item[];
+    inventory: Inventory[];
     items: Item[]; // all tradable items
     trades: Trade[];
   };
@@ -48,17 +49,10 @@ interface Props {
 
 export const Management = (props: Props) => {
   const { isVisible, actions, controls, data, types, utils } = props;
-  const [itemSearch, setItemSearch] = useState<string>('');
 
   return (
     <Content isVisible={isVisible}>
-      <Create
-        actions={actions}
-        controls={{ ...controls, itemSearch, setItemSearch }}
-        data={data}
-        types={types}
-        utils={utils}
-      />
+      <Create actions={actions} controls={controls} data={data} types={types} utils={utils} />
       <Offers actions={actions} controls={controls} data={data} utils={utils} />
     </Content>
   );
