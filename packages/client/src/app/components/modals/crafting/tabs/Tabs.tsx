@@ -27,11 +27,11 @@ export const Tabs = (props: Props) => {
         Reagents
       </Button>
       <Button
-        onClick={() => setTab('specialTools')}
-        disabled={props.tab === 'specialTools'}
+        onClick={() => setTab('special')}
+        disabled={props.tab === 'special'}
         style={{ borderRight: 'none' }}
       >
-        Special Tools
+        Special
       </Button>
     </Container>
   );
