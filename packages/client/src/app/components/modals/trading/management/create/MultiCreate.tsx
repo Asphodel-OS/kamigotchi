@@ -1,5 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { ChangeEvent, Dispatch, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
@@ -8,31 +7,15 @@ import { useVisibility } from 'app/stores';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
-import { ActionComponent } from 'network/systems';
-import { ConfirmationData } from '../../Confirmation';
 import { TRADE_ROOM_INDEX } from '../../constants';
 import { LineItem } from './LineItem';
 
 interface Props {
   actions: {
     handleCreatePrompt: (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => void;
-    createTrade: (
-      wantItems: Item[],
-      wantAmts: number[],
-      haveItems: Item[],
-      haveAmts: number[]
-    ) => EntityID | void;
   };
   controls: {
     isConfirming: boolean;
-    setIsConfirming: Dispatch<boolean>;
-    setConfirmData: Dispatch<ConfirmationData>;
-    getCreateConfirmation: (
-      want: Item[],
-      wantAmt: number[],
-      have: Item[],
-      haveAmt: number[]
-    ) => JSX.Element;
   };
   data: {
     account: Account;
@@ -40,23 +23,15 @@ interface Props {
     inventory: Inventory[];
     items: Item[];
   };
-  types: {
-    ActionComp: ActionComponent;
-  };
-  utils: {
-    entityToIndex: (id: EntityID) => EntityIndex;
-  };
   isVisible: boolean;
 }
 
 // a GUI for creating Generalized Trade Offers
 export const MultiCreate = (props: Props) => {
-  const { actions, controls, data, types, utils, isVisible } = props;
-  const { createTrade, handleCreatePrompt } = actions;
-  const { isConfirming, setIsConfirming, setConfirmData, getCreateConfirmation } = controls;
+  const { actions, controls, data, isVisible } = props;
+  const { handleCreatePrompt } = actions;
+  const { isConfirming } = controls;
   const { account, inventory, items } = data;
-  const { ActionComp } = types;
-  const { entityToIndex } = utils;
   const { modals } = useVisibility();
 
   const [want, setWant] = useState<Item[]>([]);
@@ -348,14 +323,4 @@ const Row = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.6vw;
-`;
-
-const Paragraph = styled.div`
-  color: #333;
-  flex-grow: 1;
-  padding: 1.8vw;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-evenly;
-  align-items: center;
 `;

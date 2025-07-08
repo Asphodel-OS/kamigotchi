@@ -172,18 +172,14 @@ export const Create = (props: Props) => {
       </Overlay>
       <MultiCreate
         actions={{ ...actions, handleCreatePrompt }}
-        controls={{ ...controls, getCreateConfirmation }}
+        controls={{ ...controls }}
         data={data}
-        types={types}
-        utils={utils}
         isVisible={mode === 'Multi'}
       />
       <SingleCreate
         actions={{ ...actions, handleCreatePrompt }}
-        controls={{ ...controls, getCreateConfirmation }}
+        controls={{ ...controls }}
         data={data}
-        types={types}
-        utils={utils}
         isVisible={mode === 'Single'}
       />
       <Overlay bottom={0.75} left={0.75}>

@@ -1,5 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { ChangeEvent, Dispatch, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
@@ -9,8 +8,6 @@ import { useVisibility } from 'app/stores';
 import { MUSU_INDEX, STONE_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
 import { Item, NullItem } from 'network/shapes/Item';
-import { ActionComponent } from 'network/systems';
-import { ConfirmationData } from '../../Confirmation';
 import { TRADE_ROOM_INDEX } from '../../constants';
 import { LineItem } from './LineItem';
 
@@ -19,23 +16,9 @@ type Mode = 'Buy' | 'Sell';
 interface Props {
   actions: {
     handleCreatePrompt: (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => void;
-    createTrade: (
-      wantItems: Item[],
-      wantAmts: number[],
-      haveItems: Item[],
-      haveAmts: number[]
-    ) => EntityID | void;
   };
   controls: {
     isConfirming: boolean;
-    setIsConfirming: Dispatch<boolean>;
-    setConfirmData: Dispatch<ConfirmationData>;
-    getCreateConfirmation: (
-      want: Item[],
-      wantAmt: number[],
-      have: Item[],
-      haveAmt: number[]
-    ) => JSX.Element;
   };
   data: {
     account: Account;
@@ -43,23 +26,15 @@ interface Props {
     inventory: Inventory[];
     items: Item[];
   };
-  types: {
-    ActionComp: ActionComponent;
-  };
-  utils: {
-    entityToIndex: (id: EntityID) => EntityIndex;
-  };
   isVisible: boolean;
 }
 
 // a GUI for creating Simple Trade Offers (single buy/sell)
 export const SingleCreate = (props: Props) => {
-  const { actions, controls, data, types, utils, isVisible } = props;
-  const { createTrade, handleCreatePrompt } = actions;
-  const { isConfirming, setIsConfirming, setConfirmData, getCreateConfirmation } = controls;
+  const { actions, controls, data, isVisible } = props;
+  const { handleCreatePrompt } = actions;
+  const { isConfirming } = controls;
   const { account, currencies, inventory, items } = data;
-  const { ActionComp } = types;
-  const { entityToIndex } = utils;
   const { modals } = useVisibility();
 
   const [mode, setMode] = useState<Mode>('Buy');
