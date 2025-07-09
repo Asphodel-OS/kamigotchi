@@ -1,21 +1,28 @@
 import aetheric_sextant from './aetheric_sextant.png';
 import agency_giftbox from './agency_giftbox.png';
 import ancient_machine_part from './ancient_machine_part.png';
+import apology_letter from './apology_letter.png';
 import astrolabe_disk from './astrolabe_disk.png';
+import berry_chalk from './berry_chalk.png';
 import best_ice_cream from './best_ice_cream.png';
 import better_ice_cream from './better_ice_cream.png';
 import black_poppy from './black_poppy.png';
 import black_poppy_extract from './black_poppy_extract.png';
 import bless_potion from './bless_potion.png';
+import bruised_mushroom from './bruised_mushroom.png';
 import candle from './candle.png';
+import chalkberry from './chalkberry.png';
 import cheeseburger from './cheeseburger.png';
 import cultivation_i_spell_card from './cultivation_i_spell_card.png';
 import cultivation_ii_spell_card from './cultivation_ii_spell_card.png';
 import cultivation_iii_spell_card from './cultivation_iii_spell_card.png';
 import daffodil from './daffodil.png';
 import disc_shaped_map from './disc_shaped_map.png';
+import empty_cup from './empty_cup.png';
+import energy_drink from './energy_drink.png';
 import essence_of_daffodil from './essence_of_daffodil.png';
 import eth from './eth.png';
+import festival_chime from './festival_chime.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
 import gaokerena_mochi from './gaokerena_mochi.png';
@@ -24,6 +31,8 @@ import glass_jar from './glass_jar.png';
 import grace_potion from './grace_potion.png';
 import greater_xp_potion from './greater_xp_potion.png';
 import holy_dust from './holy_dust.png';
+import holy_syrup from './holy_syrup.png';
+import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
 import initia_icon from './initia_icon.png';
 import kami_mochi from './kami_mochi.png';
@@ -50,6 +59,7 @@ import microplastics from './microplastics.png';
 import mint from './mint.png';
 import mistletoe from './mistletoe.png';
 import musu from './musu.png';
+import musu_magnet from './musu_magnet.png';
 import neiths_river_of_life_spell_card from './neiths_river_of_life_spell_card.png';
 import onyx from './onyx.png';
 import paeons_field_of_flowers_spell_card from './paeons_field_of_flowers_spell_card.png';
@@ -59,13 +69,16 @@ import plastic_bottle from './plastic_bottle.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import pomegranate from './pomegranate.png';
 import portable_burner from './portable_burner.png';
+import powdered_red_amber from './powdered_red_amber.png';
 import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
 import reroll_ticket from './reroll_ticket.png';
 import resin from './resin.png';
+import resin_tincture from './resin_tincture.png';
 import respec_potion from './respec_potion.png';
 import ring_of_spirits from './ring_of_spirits.png';
 import ring_of_water_breathing from './ring_of_water_breathing.png';
+import sanguineous_powder from './sanguineous_powder.png';
 import scrap_metal from './scrap_metal.png';
 import screwdriver from './screwdriver.png';
 import scroll_of_shop_teleportation from './scroll_of_shop_teleportation.png';
@@ -82,6 +95,19 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
+  musu_magnet: musu_magnet,
+  powdered_red_amber: powdered_red_amber,
+  resin_tincture: resin_tincture,
+  sanguineous_powder: sanguineous_powder,
+  empty_cup: empty_cup,
+  energy_drink: energy_drink,
+  festival_chime: festival_chime,
+  holy_syrup: holy_syrup,
+  hostility_potion: hostility_potion,
+  apology_letter: apology_letter,
+  berry_chalk: berry_chalk,
+  bruised_mushroom: bruised_mushroom,
+  chalkberry: chalkberry,
   aetheric_sextant: aetheric_sextant,
   ancient_machine_part: ancient_machine_part,
   astrolabe_disk: astrolabe_disk,
