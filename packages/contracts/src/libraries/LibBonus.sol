@@ -289,6 +289,16 @@ library LibBonus {
     unassignBy(components, "UPON_HARVEST_ACTION", holderID);
   }
 
+  /// @notice resets upon kami death
+  function resetUponDeath(IUintComp components, uint256 holderID) public {
+    unassignBy(components, "UPON_DEATH", holderID);
+  }
+
+  /// @notice resets upon liquidation
+  function resetUponLiquidation(IUintComp components, uint256 holderID) public {
+    unassignBy(components, "UPON_LIQUIDATION", holderID);
+  }
+
   //////////////
   // IDs
 

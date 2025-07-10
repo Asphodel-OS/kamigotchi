@@ -79,6 +79,10 @@ contract HarvestLiquidateSystem is System {
     LibHarvest.stop(components, victimHarvID);
     LibKami.setLastActionTs(components, killerID, block.timestamp);
 
+    // resetting bonuses
+    LibBonus.resetUponLiquidation(components, killerID);
+    LibBonus.resetUponLiquidation(components, victimID);
+
     // standard logging and tracking
     LibScore.incFor(components, accID, 0, "LIQUIDATE", 1);
     LibAccount.updateLastTs(components, accID);
