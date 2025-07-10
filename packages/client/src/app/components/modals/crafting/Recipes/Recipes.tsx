@@ -23,7 +23,7 @@ interface Props {
 
 export const Recipes = (props: Props) => {
   const { actions, data, utils } = props;
-  const { account, recipes, tab } = data;
+  const { account, recipes } = data;
   const { craft } = actions;
 
   const [stamina, setStamina] = useState(0);
@@ -42,28 +42,24 @@ export const Recipes = (props: Props) => {
   }, [account.stamina.sync, tick]);
 
   return (
-    <>
-      {recipes.map((recipe) => {
-        const recipeTab = recipe.type.toLowerCase();
-        return (
-          <Tab key={recipe.index} isVisible={tab === recipeTab}>
-            <RecipeCard
-              key={recipe.index}
-              data={{ account, recipe, stamina }}
-              actions={{ craft: (amt: number) => craft(recipe, amt) }}
-              utils={utils}
-            />
-          </Tab>
-        );
-      })}
-    </>
+    <Container>
+      {recipes.map((recipe) => (
+        <RecipeCard
+          key={recipe.index}
+          data={{ account, recipe, stamina }}
+          actions={{ craft: (amt: number) => craft(recipe, amt) }}
+          utils={utils}
+        />
+      ))}
+    </Container>
   );
 };
 
-const Tab = styled.div<{ isVisible: boolean }>`
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+const Container = styled.div`
+  display: flex;
   flex-flow: row wrap;
   margin-top: 0.6vw;
   gap: 0.6vw;
+
   user-select: none;
 `;

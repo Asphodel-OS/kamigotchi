@@ -65,9 +65,10 @@ export function registerCraftingModal() {
       // update the list of recipes depending on the filter
       useEffect(() => {
         const recipes = getAllRecipes(world, components);
-        if (showAll) setRecipes(recipes);
-        else setRecipes(recipes.filter((recipe) => hasIngredients(recipe)));
-      }, [showAll]);
+        const currentTabRecipes = recipes.filter((recipe) => recipe.type === tab.toUpperCase());
+        if (showAll) setRecipes(currentTabRecipes);
+        else setRecipes(currentTabRecipes.filter((recipe) => hasIngredients(recipe)));
+      }, [showAll, tab]);
 
       /////////////////
       // INTERPRETATION
