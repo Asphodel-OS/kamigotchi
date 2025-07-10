@@ -17,13 +17,17 @@
 ,In Game,Kamigotchi World Passport (1-bit Pink),31,NFT,,,,,,Your ticket to great fortunes. In 1-bit pink.
 ,In Game,Kamigotchi World Passport (1-bit Green),32,NFT,,,,,,Your ticket to great fortunes. In 1-bit green.
 ,In Game,Kamigotchi World Passport (1-bit Black and White),33,NFT,,,,,,Your ticket to great fortunes. In 1-bit black.
-,In Game,ONYX,100,ERC20,,0x4BaDFb501Ab304fF11217C44702bb9E9732E7CF4,,,,"Asphodel’s premium game currency. You want this. You want this so bad."
+,In Game,ONYX,100,ERC20,,0x4BaDFb501Ab304fF11217C44702bb9E9732E7CF4,,,,"Asphodel’s premium game currency.
+
+You want this. You want this so bad."
 ,Test,INIT,101,ERC20,,0x0000000000000000000000000000000000000101,,,,Initia
 ,In Game,ETH,103,ERC20,,0xE1Ff7038eAAAF027031688E1535a055B2Bac2546,,,,Ethereum
 ,In Game,Wooden Stick,1001,Material,,,,,,"Wood in its unprocessed form. Grows on trees. "
 ,In Game,Stone,1002,Material,,,,,,"It’s just a stone. Can be used to get Stone. "
 ,In Game,Plastic Bottle,1003,Material,,,,,,"Can be reprocessed into valuable raw Microplastics. "
-,In Game,Pine Cone,1004,Material,,,,,,"It’s a pine cone. Slightly sacred. "
+,In Game,Pine Cone,1004,Material,,,,,,"It’s a pine cone. 
+
+Slightly sacred. "
 ,In Game,Scrap Metal,1005,Material,,,,,,A small chunk of scrap metal. Maybe useful if processed.
 ,In Game,Glass Jar,1006,Material,,,,,,"A somehow-unbroken jar of clear glass. "
 ,In Game,Red Amber Crystal,1007,Material,,,,,,"A crystal of pure red amber, formed deep in the forest."
@@ -35,15 +39,9 @@
 ,In Game,Black Poppy Extract,1110,Material,,,,,,Useful alkaloids in a sticky black goo. One of the most ancient ingredients.
 ,In Game,Essence of Daffodil,1111,Material,,,,,,"Poisonous to living things, but useful when making medicines and potions."
 ,In Game,Shredded Mint,1112,Material,,,,,,Makes a cooling and relaxing tea. Also used in various magical applications.
-,To Deploy,Sanguine Shroom,1013,Material,,,,,,"A mushroom that bruises and bleeds like flesh. Some individuals hold a colorful belief that they feed on decaying spirits."
-,To Deploy,Chalkberry,1014,Material,,,,,,"A dry and extremely bitter berry coated with chalky white fungus. The berry itself is inedible; useless except as a medium for a unique wild yeast."
-,To Deploy,Powdered Red Amber,1107,Material,,,,,,"Fine powder made from crushing a red amber crystal. Can be used to sand and polish metals."
-,To Deploy,Holy Syrup,1201,Material,,,,,,"Holy Dust diluted into a quantity of water. Forms a thin syrup that can be measured out for crafting."
-,To Deploy,Berry Chalk,1114,Material,,,,,,"A chalky fungus scraped from a rare berry. Can ferment certain materials to produce a rejuvenating beverage."
-,To Deploy,Sanguineous Powder,1113,Material,,,,,,"A dark, reddish powder that resembles dried blood, or maybe just coffee. Edible, but can also be used as an ink or dye."
-,To Deploy,Resin Tincture,1202,Material,,,,,,"A sweet, spicy syrup made from the natural resin found in the trees of Kamigotchi World. Useful for a number of recipes."
-,To Deploy,Empty Cup,1102,Material,,,,,,"A small reusable cup crafted from stone. Useful for drinking potions or other beverages."
-,In Game,Red Gakki Ribbon,11001,Revive,Kami,,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. These ribbons are greatly prized…. "
+,In Game,Red Gakki Ribbon,11001,Revive,Kami,,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
+
+These ribbons are greatly prized…. "
 ,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Kami,,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
 ,In Game,Holy Dust,11011,Misc,Kami,,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,In Game,Gaokerena Mochi,11110,Food,Kami,,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
@@ -68,11 +66,6 @@
 ,To Update,Respec Potion,11403,Misc,Kami,,BYPASS_BONUS_RESET,ITEM1003,,"Give to a Kami to reset their skill points. "
 ,In Game,Grace Potion,11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
 ,In Game,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
-,To Deploy,Apology Letter,11406,Food,Kami,,,RECOIL-50%,,"A letter written by a Kami with sincere remorse for its actions. Lowers Recoil when liquidating other Kami."
-,To Deploy,MUSU Magnet,11407,Food,Kami,,,SALVAGE+50%,,"This shiny purple rock attracts grains of $MUSU. It dramatically increases the proportion of $MUSU a kami retains when it’s liquidated."
-,To Deploy,Festival Chime,11408,Food,Kami,,,INTENSITY+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks."
-,To Deploy,Energy Drink,11409,Food,Kami,,,COOLDOWN-30s,,"A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action."
-,To Deploy,Hostility Potion,11410,Food,Kami,,,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
 ,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
 ,In Game,Scroll of Shop Teleportation,21100,Consumable,Account,,,MOVE13,,"Instantly transports the user to Mina’s Shop. Fully insured. "
