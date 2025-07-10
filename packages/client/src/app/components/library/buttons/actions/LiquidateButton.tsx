@@ -14,7 +14,7 @@ export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Fun
     const recoil = calcLiqRecoil(myKami, target);
 
     return {
-      text: `${myKami.name} (+${spoils}MUSU -${recoil} HP)`,
+      text: `${myKami.name} (+${spoils}MUSU; -${recoil}HP)`,
       onClick: () => triggerAction(myKami, target),
     };
   });

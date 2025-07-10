@@ -130,12 +130,14 @@ export const calcRecoil = (attacker: Kami, defender: Kami): number => {
   if (!config) return 0;
 
   const recoilConfig = config.liquidation.recoil;
+  const ratio = recoilConfig.ratio.value;
   const boostBonus = attacker.bonuses?.attack.recoil.boost ?? 0;
   const boost = recoilConfig.boost.value + boostBonus;
+
   const karma = calcKarma(attacker, defender);
   const strain = calcStrain(attacker, defender);
-  const recoil = strain * recoilConfig.ratio.value + karma;
-  return Math.floor(recoil * boost);
+  const recoil = (strain * ratio + karma) * boost;
+  return Math.floor(recoil);
 };
 
 // determine whether a kami can liquidate another kami based on all requirements
