@@ -5,9 +5,13 @@
 ,100x Stone,ITEM,1002,100
 ,50x Plastic Bottle,ITEM,1003,50
 ,100x Pine Cones,ITEM,1004,100
+,100x Scrap Metals,ITEM,1005,100
 ,10x Glass Jar,ITEM,1006,10
+,100x Shroom,ITEM,1013,100
+,100x Chalkberry,ITEM,1014,100
 ,10 Revives,ITEM,11001,10
 ,1x “Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
+,100x Holy Dust,ITEM,11011,100
 ,1x XP Candy (Small),ITEM,11201,1
 ,1x XP Candy (Medium),ITEM,11202,1
 ,1x “Cultivation I” Spell Card,ITEM,11211,1
@@ -18,9 +22,13 @@
 ,100x Burgers,ITEM,11302,100
 ,1x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,1
 ,2x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,2
+,100x Resin,ITEM,11311,100
 ,"1x ""Neith’s River of Life"" Spell Card",ITEM,21204,1
 ,2x “Neith’s River of Life” Spell Card,ITEM,21204,2
 ,3x “Neith’s River of Life” Spell Card,ITEM,21204,3
+,1x Grinder,ITEM,23100,1
+,1x Burner,ITEM,23101,1
+,1x Screwdriver,ITEM,23102,1
 ,2x Agency Reputation,REPUTATION,1,2
 ,4x Agency Reputation,REPUTATION,1,4
 ,6x Agency Reputation,REPUTATION,1,6

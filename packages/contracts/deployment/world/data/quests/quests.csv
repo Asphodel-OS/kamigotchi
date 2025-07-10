@@ -144,3 +144,5 @@ TempQ01,10001,Defunct,mina test drop,No,,Missed Mina,,"25 Gum,10 Revives"
 test-0,1000000,Test,Daily Test Quest,Yes,Beg for your MUSU.,,,"10000x MUSU (Test),2x Agency Reputation"
 test-1,1000001,Test,Crafting Materials,No,Let there be Craft,,Move 3 Times,"100x Stone,100x Stick,50x Plastic Bottle,10x Glass Jar,100x Pine Cones,100x Burgers"
 test-2,1000002,Test,Lottery Loving,No,Stop being Kamiless,,,20x Gacha Tickets (Test)
+test-3,1000003,Test,Crafting Materials II,No,More crafting materials,Complete test-1,Give 5 Wooden Sticks,"100x Chalkberry,100x Shroom,100x Resin,100x Holy Dust,100x Scrap Metals"
+test-4,1000004,Test,Crafting Toolkit,No,You need equipment to make new items.,Complete test-1,,"1x Screwdriver,1x Grinder,1x Burner"
