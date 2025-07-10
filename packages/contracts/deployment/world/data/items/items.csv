@@ -74,10 +74,10 @@ These ribbons are greatly prized…. "
 ,In Game,Respec Potion,11403,Misc,Kami,,,ITEM1003,,"Give to a Kami to reset their skill points. "
 ,In Game,Grace Potion,11404,Food,Kami,,,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
 ,In Game,Bless Potion,11405,Food,Kami,,,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
-,To Deploy,Apology Letter,11406,Food,Kami,,,Recoil-50%,,A letter written by a Kami with sincere remorse for its actions. Lowers Recoil when liquidating other Kami.
-,To Deploy,MUSU Magnet,11407,Food,Kami,,,Salvage+50%,,This shiny purple rock attracts grains of $MUSU. It dramatically increases the proportion of $MUSU a kami retains when it’s liquidated.
-,To Deploy,Festival Chime,11408,Food,Kami,,,Intensity+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
-,To Deploy,Energy Drink,11409,Food,Kami,,,Cooldown-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
+,To Deploy,Apology Letter,11406,Food,Kami,,,ARB-50%,,A letter written by a Kami with sincere remorse for its actions. Lowers Recoil when liquidating other Kami.
+,To Deploy,MUSU Magnet,11407,Food,Kami,,,DSR+50%,,This shiny purple rock attracts grains of $MUSU. It dramatically increases the proportion of $MUSU a kami retains when it’s liquidated.
+,To Deploy,Festival Chime,11408,Food,Kami,,,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
+,To Deploy,Energy Drink,11409,Food,Kami,,,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
 ,To Deploy,Hostility Potion,11410,Food,Kami,,,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
 ,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
