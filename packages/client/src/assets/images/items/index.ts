@@ -9,7 +9,6 @@ import better_ice_cream from './better_ice_cream.png';
 import black_poppy from './black_poppy.png';
 import black_poppy_extract from './black_poppy_extract.png';
 import bless_potion from './bless_potion.png';
-import bruised_mushroom from './bruised_mushroom.png';
 import candle from './candle.png';
 import chalkberry from './chalkberry.png';
 import cheeseburger from './cheeseburger.png';
@@ -78,6 +77,7 @@ import resin_tincture from './resin_tincture.png';
 import respec_potion from './respec_potion.png';
 import ring_of_spirits from './ring_of_spirits.png';
 import ring_of_water_breathing from './ring_of_water_breathing.png';
+import sanguine_shroom from './sanguine_shroom.png';
 import sanguineous_powder from './sanguineous_powder.png';
 import scrap_metal from './scrap_metal.png';
 import screwdriver from './screwdriver.png';
@@ -106,7 +106,7 @@ export const ItemImages = {
   hostility_potion: hostility_potion,
   apology_letter: apology_letter,
   berry_chalk: berry_chalk,
-  bruised_mushroom: bruised_mushroom,
+  sanguine_shroom: sanguine_shroom,
   chalkberry: chalkberry,
   aetheric_sextant: aetheric_sextant,
   ancient_machine_part: ancient_machine_part,
