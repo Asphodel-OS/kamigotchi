@@ -8,7 +8,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibKami } from "libraries/LibKami.sol";
-import { LibKill, KillBalance } from "libraries/LibKill.sol";
+import { LibKill, KillLog } from "libraries/LibKill.sol";
 import { LibRoom } from "libraries/LibRoom.sol";
 import { LibScore } from "libraries/LibScore.sol";
 
@@ -56,8 +56,10 @@ contract HarvestLiquidateSystem is System {
     // calculate health impact on killer
     uint256 strain = LibKami.calcStrain(components, killerID, spoils);
     uint256 karma = LibKill.calcKarma(components, killerID, victimID);
+    int32 recoil = LibKill.calcRecoil(components, killerID, strain, karma);
 
     // log kill (before health changes)
+    // TODO: update how we log values. maybe drop strain/karma for final recoil
     LibKill.log(
       world,
       components,
@@ -65,11 +67,11 @@ contract HarvestLiquidateSystem is System {
       killerID,
       victimID,
       nodeID,
-      KillBalance(bounty, salvage, spoils, strain, karma)
+      KillLog(bounty, salvage, spoils, strain, karma)
     );
 
     // drain the killer
-    LibKami.drain(components, killerID, LibKill.calcRecoil(components, killerID, strain, karma));
+    LibKami.drain(components, killerID, recoil);
 
     // kill the target and shut off the harvest
     LibKami.kill(components, victimID);
