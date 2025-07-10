@@ -34,4 +34,4 @@ export const DefaultChain = chainConfigs.get(import.meta.env.MODE ?? '')!;
 
 // yominet runs with a flat fee, hardcoded fee
 // maybe we should try and bake this into the config
-export const baseGasPrice = 5e6;
+export const baseGasPrice = 25e5;
