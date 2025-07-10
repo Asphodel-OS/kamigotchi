@@ -42,7 +42,7 @@ export const Factions = (props: Props) => {
         return (
           <Row key={index}>
             <TextTooltip key={index} text={[faction.text]}>
-              {faction.name}{' '}
+              {faction.name}
             </TextTooltip>
             <ProgressBar
               width={15}

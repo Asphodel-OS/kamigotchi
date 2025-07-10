@@ -154,7 +154,7 @@ export const Registration = (props: Props) => {
         />
       </Row>
       <Row>
-        <BackButton step={2} setStep={utils.setStep} />{' '}
+        <BackButton step={2} setStep={utils.setStep} />
         <TextTooltip text={getSubmitTooltip()} alignText='center'>
           <ActionButton
             text='Next ⟶'

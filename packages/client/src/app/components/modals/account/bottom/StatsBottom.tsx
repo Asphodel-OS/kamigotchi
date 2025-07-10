@@ -54,7 +54,7 @@ export const StatsBottom = (props: Props) => {
           </IconWrapper>
           <Description>{getVIPText()}</Description>
         </DetailRow>
-      </Content>{' '}
+      </Content>
       <Factions data={{ account }} />
     </Container>
   );

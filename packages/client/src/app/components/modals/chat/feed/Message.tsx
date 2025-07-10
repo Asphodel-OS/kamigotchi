@@ -123,9 +123,8 @@ export const Message = (props: Props) => {
                     />
                   </Popover>
                   <Body previousEqual={previousEqual} yours={yours}>
-                    {' '}
                     <Time>
-                      <Name>{getAccountFunc().name}</Name>{' '}
+                      <Name>{getAccountFunc().name}</Name>
                       {moment(message.Timestamp).format('MM/DD HH:mm')}
                     </Time>
                     {message.Message}
@@ -135,10 +134,9 @@ export const Message = (props: Props) => {
             ) : (
               <>
                 <PfpAuthor>
-                  {' '}
                   <Body previousEqual={previousEqual} yours={yours}>
                     <Time>
-                      <Name>{getAccountFunc().name}</Name>{' '}
+                      <Name>{getAccountFunc().name}</Name>
                       {moment(message.Timestamp).format('MM/DD HH:mm')}
                     </Time>
                     {message.Message}

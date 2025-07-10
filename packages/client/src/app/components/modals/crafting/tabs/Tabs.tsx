@@ -8,6 +8,7 @@ interface Props {
 }
 
 export const Tabs = (props: Props) => {
+  const { tab } = props;
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
@@ -16,19 +17,18 @@ export const Tabs = (props: Props) => {
 
   return (
     <Container>
-      {' '}
-      <Button onClick={() => setTab('consumable')} disabled={props.tab === 'consumable'}>
+      <Button onClick={() => setTab('consumable')} disabled={tab === 'consumable'}>
         Consumables
-      </Button>{' '}
-      <Button onClick={() => setTab('material')} disabled={props.tab === 'material'}>
+      </Button>
+      <Button onClick={() => setTab('material')} disabled={tab === 'material'}>
         Materials
       </Button>
-      <Button onClick={() => setTab('reagent')} disabled={props.tab === 'reagent'}>
+      <Button onClick={() => setTab('reagent')} disabled={tab === 'reagent'}>
         Reagents
       </Button>
       <Button
         onClick={() => setTab('special')}
-        disabled={props.tab === 'special'}
+        disabled={tab === 'special'}
         style={{ borderRight: 'none' }}
       >
         Special
