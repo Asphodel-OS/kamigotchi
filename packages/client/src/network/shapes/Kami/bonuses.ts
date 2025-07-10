@@ -14,6 +14,7 @@ export interface Bonuses {
 interface Attack {
   threshold: AsphoAST;
   spoils: AsphoAST;
+  recoil: AsphoAST;
 }
 
 interface Defense {
@@ -69,6 +70,12 @@ export const getBonuses = (
         ratio: getBonus('ATK_SPOILS_RATIO', 3),
         shift: 0,
         boost: 0,
+      },
+      recoil: {
+        nudge: 0,
+        ratio: 0,
+        shift: 0,
+        boost: getBonus('ATK_RECOIL_BOOST', 3),
       },
     },
     defense: {

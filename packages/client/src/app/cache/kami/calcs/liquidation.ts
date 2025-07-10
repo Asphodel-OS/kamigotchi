@@ -85,7 +85,7 @@ const calcSalvage = (kami: Kami, balance?: number): number => {
 };
 
 // calculate the spoils of one kami from liquidating another kami
-const calcSpoils = (attacker: Kami, defender: Kami): number => {
+export const calcSpoils = (attacker: Kami, defender: Kami): number => {
   if (!defender.harvest) return 0;
   if (!attacker.config) return 0;
 
@@ -107,10 +107,11 @@ export const calcStrain = (attacker: Kami, defender: Kami): number => {
   if (!harvest) return 0;
 
   const spoils = calcSpoils(attacker, defender);
-  return calcStrainFromBalance(attacker, spoils);
+  return calcStrainFromBalance(attacker, spoils, true);
 };
 
-// calculate liquidation hp recoil due to violence
+// calculate Karma, the liquidation hp recoil due to violence
+// NOTE: one of the few intermediary results that don't round up
 export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const config = attacker.config ?? defender.config;
   if (!config) return 0;
@@ -118,9 +119,23 @@ export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const karmaConfig = config.liquidation.karma;
   const v2 = defender.stats?.violence.total ?? 0;
   const h1 = attacker.stats?.harmony.total ?? 0;
-  const diff = Math.max(0, v2 - h1);
-  const karma = diff * karmaConfig.ratio.value;
+  const core = Math.max(0, v2 - h1 + karmaConfig.nudge.value);
+  const karma = core * karmaConfig.boost.value;
   return Math.floor(karma);
+};
+
+// calculate total liquidation hp recoil
+export const calcRecoil = (attacker: Kami, defender: Kami): number => {
+  const config = attacker.config ?? defender.config;
+  if (!config) return 0;
+
+  const recoilConfig = config.liquidation.recoil;
+  const boostBonus = attacker.bonuses?.attack.recoil.boost ?? 0;
+  const boost = recoilConfig.boost.value + boostBonus;
+  const karma = calcKarma(attacker, defender);
+  const strain = calcStrain(attacker, defender);
+  const recoil = strain * recoilConfig.ratio.value + karma;
+  return Math.floor(recoil * boost);
 };
 
 // determine whether a kami can liquidate another kami based on all requirements

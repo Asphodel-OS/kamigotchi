@@ -1,12 +1,5 @@
-import {
-  calcLiqKarma,
-  calcLiqStrain,
-  calcLiqThreshold,
-  canLiquidate,
-  canMog,
-  isStarving,
-  onCooldown,
-} from 'app/cache/kami';
+import { calcLiqThreshold, canLiquidate, canMog, isStarving, onCooldown } from 'app/cache/kami';
+import { calcLiqRecoil, calcLiqSpoils } from 'app/cache/kami/calcs';
 import { IconListButton } from 'app/components/library';
 import { LiquidateIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
@@ -17,11 +10,11 @@ import { TextTooltip } from '../..';
 export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Function) => {
   const options = allies.filter((ally) => canLiquidate(ally, target));
   const actionOptions = options.map((myKami) => {
-    const karma = calcLiqKarma(myKami, target);
-    const strain = calcLiqStrain(myKami, target);
+    const spoils = calcLiqSpoils(myKami, target);
+    const recoil = calcLiqRecoil(myKami, target);
 
     return {
-      text: `${myKami.name} (recoil: ${karma} + ${strain})`,
+      text: `${myKami.name} (+${spoils}MUSU -${recoil} HP)`,
       onClick: () => triggerAction(myKami, target),
     };
   });
