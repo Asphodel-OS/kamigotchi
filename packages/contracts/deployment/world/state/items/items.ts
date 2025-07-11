@@ -60,7 +60,7 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
 
     const effects = effectsRaw.split(',');
     for (let i = 0; i < effects.length; i++) {
-      const alloName = effects[i];
+      const alloName = effects[i].toUpperCase();
       const alloRow = alloMap.get(alloName);
       if (!alloRow) console.warn(`  Could not find allo ${alloName} for item ${index}`);
       else await addAllo(api, index, alloRow);
@@ -72,7 +72,7 @@ export async function initItems(api: AdminAPI, indices?: number[], all?: boolean
 
     const requirements = requirementsRaw.split(',');
     for (let i = 0; i < requirements.length; i++) {
-      const requirementName = requirements[i];
+      const requirementName = requirements[i].toUpperCase();
       const requirementRow = requirementMap.get(requirementName);
       if (!requirementRow)
         console.warn(`  Could not find requirement ${requirementName} for item ${index}`);
