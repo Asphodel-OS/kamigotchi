@@ -1,9 +1,9 @@
-import { animate, createScope, createSpring, Scope } from 'animejs';
-import React, { useEffect, useRef } from 'react';
+import { Scope } from 'animejs';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 
-import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { playClick } from 'utils/sounds';
+import { LevelUpArrows } from '../animations/LevelUp';
 import { TextTooltip } from '../poppers/TextTooltip';
 import { Overlay } from '../styles';
 
@@ -28,59 +28,12 @@ export const Card = (props: Props) => {
   const scope = useRef<Scope | null>(null);
   const ArrowRefs = new Array(7).fill(null).map(() => useRef<HTMLImageElement>(null));
 
-  useEffect(() => {
-    scope.current = createScope().add(() => {
-      ArrowRefs.forEach((ref, index) => {
-        if (ref.current) {
-          animate(ref.current, {
-            translateX: [
-              { to: '-30%', duration: 50, easing: 'easeInOutSine' },
-              { to: '30%', duration: 50, easing: 'easeInOutSine' },
-              { to: '-30%', duration: 50, easing: 'easeInOutSine' },
-            ],
-            translateY: ['150%', '-500%'],
-            scale: [
-              { to: 1.25, ease: 'inOut(3)', duration: 200 },
-              { to: 1, ease: createSpring({ stiffness: 300 }) },
-            ],
-            loop: true,
-            delay: 250 * (index + 0.01),
-            loopDelay: 250 * (index + 0.01),
-            direction: 'alternate',
-            duration: 1000,
-          });
-        }
-      });
-    });
-
-    return () => scope.current?.revert();
-  }, [image?.levelUp]);
-
   // handle image click if there is one
   const handleImageClick = () => {
     if (image?.onClick) {
       image.onClick();
       playClick();
     }
-  };
-  const Arrows = () => {
-    const positions = [70, 7, 60, 20, 10, 30, 50];
-    return ArrowRefs.map((ref, i) => {
-      return (
-        <img
-          src={IndicatorIcons.level_up}
-          key={`arrow-${i}`}
-          style={{
-            position: 'absolute',
-            left: positions[i] + `%`,
-            bottom: `10%`,
-            width: '20%',
-            height: '20%',
-          }}
-          ref={ref}
-        />
-      );
-    });
   };
 
   return (
@@ -90,7 +43,7 @@ export const Card = (props: Props) => {
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
-          {!!image?.levelUp && Arrows()}
+          {!!image?.levelUp && <LevelUpArrows />}
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
       </TextTooltip>
