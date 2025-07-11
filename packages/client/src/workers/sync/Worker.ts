@@ -330,6 +330,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     /*
      * INITIALIZE STATE
      * - Initialize the app state from the list of network events
+     * bip
      */
     performance.mark('init');
     const stateCacheSize = stateCache.current.state.size;
