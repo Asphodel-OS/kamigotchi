@@ -53,6 +53,7 @@ export function registerPartyModal() {
             harvest: 5, // set this to 60 once we get explicit triggers for updates
             skills: 5, // set this to 3600 once we get explicit triggers for updates
             flags: 10, // set this to 3600 once we get explicit triggers for updates
+            progress: 3600,
             config: 3600,
             stats: 3600,
             traits: 3600,
