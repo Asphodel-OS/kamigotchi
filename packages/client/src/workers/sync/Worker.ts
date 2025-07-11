@@ -71,6 +71,25 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   private input$ = new Subject<Input>();
   private output$ = new Subject<NetworkEvent<C>>();
   private syncState: SyncStatus = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
+  private config?: SyncWorkerConfig;
+
+  private retryCount = 0;
+  private retryDelays = [5000, 15000]; // ms
+  private maxRetries = 2;
+
+  /**
+   * Returns the delay (in ms) for the current retry attempt.
+   */
+  private getRetryDelay(): number {
+    return this.retryDelays[this.retryCount - 1] || this.retryDelays[this.retryDelays.length - 1];
+  }
+
+  /**
+   * Returns true if the retry count has exceeded the maximum allowed retries.
+   */
+  private hasExceededMaxRetries(): boolean {
+    return this.retryCount > this.maxRetries;
+  }
 
   constructor() {
     debug('creating SyncWorker');
@@ -116,14 +135,21 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     performance.mark('connecting');
     this.setLoadingState({ state: SyncState.CONNECTING, msg: 'Connecting..', percentage: 0 });
 
-    // listen on input for the provided a config
-    const computedConfig = await streamToDefinedComputed(
-      this.input$.pipe(
-        map((e) => (e.type === InputType.Config ? e.data : undefined)),
-        filterNullish()
-      )
-    );
-    const config = computedConfig.get();
+    // Only fetch config if we don't have it already
+    let config: SyncWorkerConfig;
+    if (!this.config) {
+      const computedConfig = await streamToDefinedComputed(
+        this.input$.pipe(
+          map((e) => (e.type === InputType.Config ? e.data : undefined)),
+          filterNullish()
+        )
+      );
+      config = computedConfig.get();
+      this.config = config; // cache for future retries
+    } else {
+      config = this.config;
+    }
+
     const {
       snapshotServiceUrl: snapshotUrl,
       streamServiceUrl,
@@ -132,7 +158,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       provider: { options: providerOptions },
       fetchSystemCalls,
     } = config;
-
     // Set up shared primitives
     performance.mark('setup');
     this.setLoadingState({
@@ -140,9 +165,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       msg: 'Starting State Sync',
       percentage: 0,
     });
-    const { providers } = await createReconnectingProvider(
-      computed(() => computedConfig.get().provider)
-    );
+    const { providers } = await createReconnectingProvider(computed(() => config.provider));
     const provider = providers.get().json;
     const indexedDB = await getStateStore(chainId, worldContract.address, IDB_VERSION);
     const decode = createDecode();
@@ -340,15 +363,34 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     });
 
     // Pass current stateCache to output and start passing live events
-    let i = 0;
-    for (const update of getStateCacheEntries(stateCache.current)) {
-      this.output$.next(update as NetworkEvent<C>);
-      if (i++ % 5e4 === 0) {
-        const percentage = Math.floor((i / stateCacheSize) * 100);
-        this.setLoadingState({ percentage });
+    try {
+      let i = 0;
+      for (const update of getStateCacheEntries(stateCache.current)) {
+        this.output$.next(update as NetworkEvent<C>);
+        if (i++ % 5e4 === 0) {
+          const percentage = Math.floor((i / stateCacheSize) * 100);
+          this.setLoadingState({ percentage });
+        }
       }
+      saveStateCacheToStore(indexedDB, stateCache.current);
+    } catch (e) {
+      this.retryCount++;
+      if (this.hasExceededMaxRetries()) {
+        this.setLoadingState({
+          state: SyncState.FAILED,
+          msg: `Error initializing state. Maxretries reached. Can you drop this in the discord?`,
+        });
+        console.error('Error during stateCache output, maximum retries reached:', e);
+        return;
+      }
+      const delay = this.getRetryDelay();
+      this.setLoadingState({
+        state: SyncState.FAILED,
+        msg: `Error initializing state, retrying in ${(delay / 1000).toFixed(1)}s... (attempt ${this.retryCount}/${this.maxRetries})`,
+      });
+      setTimeout(() => this.init(), delay);
+      return;
     }
-    saveStateCacheToStore(indexedDB, stateCache.current);
 
     /*
      * FINISH
