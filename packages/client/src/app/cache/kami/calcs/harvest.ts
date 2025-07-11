@@ -42,14 +42,14 @@ export const calcOutput = (kami: Kami): number => {
 
 // calculate a kami's strain from a musu balance, also works with rates
 export const calcStrainFromBalance = (kami: Kami, balance: number, roundUp = true): number => {
-  const strainConfig = kami.config?.harvest.strain;
-  if (!strainConfig) return 0;
+  const config = kami.config?.harvest.strain;
+  if (!config) return 0;
 
-  const ratio = strainConfig.ratio.value;
+  const ratio = config.ratio.value;
   const harmony = kami.stats?.harmony.total ?? 0;
-  const baseHarmony = strainConfig.nudge.value;
+  const baseHarmony = config.nudge.value;
   const boostBonus = kami.bonuses?.harvest.strain.boost ?? 0;
-  const boost = strainConfig.boost.value + boostBonus;
+  const boost = config.boost.value + boostBonus;
   const strain = (balance * ratio * boost) / (harmony + baseHarmony);
   return roundUp ? Math.ceil(strain) : strain;
 };

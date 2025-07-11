@@ -137,12 +137,12 @@ export const calcHealthRate = (kami: Kami): number => {
 
 // calculate the rate of health regen while resting
 const calcRestingHealthRate = (kami: Kami): number => {
-  const metabolismConfig = kami.config?.rest.metabolism;
-  if (!metabolismConfig) return 0;
+  const config = kami.config?.rest.metabolism;
+  if (!config) return 0;
 
-  const ratio = metabolismConfig.ratio.value;
+  const ratio = config.ratio.value;
   const boostBonus = kami.bonuses?.rest.metabolism.boost ?? 0;
-  const boost = metabolismConfig.boost.value + boostBonus;
+  const boost = config.boost.value + boostBonus;
   const harmony = kami.stats?.harmony.total ?? 0;
   return (harmony * ratio * boost) / 3600;
 };

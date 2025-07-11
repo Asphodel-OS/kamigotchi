@@ -9,12 +9,12 @@ const calcLiquidationEfficacy = (attacker: Kami, defender: Kami): number => {
   const config = attacker.config ?? defender.config;
   if (!config) return 0;
 
-  const thresholdConfig = config.liquidation.threshold;
+  const threshConfig = config.liquidation.threshold;
   const effConfig = config.liquidation.efficacy;
   const attBonus = attacker.bonuses?.attack.threshold.ratio ?? 0;
   const defBonus = defender.bonuses?.defense.threshold.ratio ?? 0;
 
-  const base = thresholdConfig.ratio.value;
+  const base = threshConfig.ratio.value;
   const shiftNeut = effConfig.base + attBonus + defBonus;
   const shiftUp = effConfig.up + attBonus + defBonus;
   const shiftDown = effConfig.down + attBonus + defBonus;
