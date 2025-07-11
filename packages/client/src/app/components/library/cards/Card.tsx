@@ -1,5 +1,4 @@
-import { Scope } from 'animejs';
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
@@ -25,8 +24,6 @@ interface Props {
 export const Card = (props: Props) => {
   const { image, children, fullWidth } = props;
   const scale = image?.scale ?? 9;
-  const scope = useRef<Scope | null>(null);
-  const ArrowRefs = new Array(7).fill(null).map(() => useRef<HTMLImageElement>(null));
 
   // handle image click if there is one
   const handleImageClick = () => {
