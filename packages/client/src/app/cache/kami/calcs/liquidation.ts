@@ -98,7 +98,7 @@ export const calcSpoils = (attacker: Kami, defender: Kami): number => {
   const powerTuning = power / 100 + config.nudge.value;
   const ratio = config.ratio.value + powerTuning + ratioBonus;
   const spoils = (balance - salvage) * Math.min(1, ratio);
-  return spoils;
+  return Math.floor(spoils);
 };
 
 // calculate the strain of one kami from liquidating another kami
@@ -126,14 +126,14 @@ export const calcKarma = (attacker: Kami, defender: Kami): number => {
 
 // calculate total liquidation hp recoil
 export const calcRecoil = (attacker: Kami, defender: Kami): number => {
-  const config = attacker.config ?? defender.config;
-  if (!config) return 0;
+  const baseConfig = attacker.config ?? defender.config;
+  if (!baseConfig || !baseConfig.liquidation.recoil) return 0;
 
-  const recoilConfig = config.liquidation.recoil;
-  const ratio = recoilConfig.ratio.value;
-  const boostBonus = attacker.bonuses?.attack.recoil.boost ?? 0;
-  const boost = recoilConfig.boost.value + boostBonus;
+  const bonus = attacker.bonuses?.attack.recoil;
+  const config = baseConfig.liquidation.recoil;
 
+  const ratio = config.ratio.value;
+  const boost = config.boost.value + (bonus?.boost ?? 0);
   const karma = calcKarma(attacker, defender);
   const strain = calcStrain(attacker, defender);
   const recoil = (strain * ratio + karma) * boost;

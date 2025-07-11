@@ -25,6 +25,7 @@ export const getKamiConfig = (world: World, comps: Components): KamiConfigs => {
       salvage: getASTNode(world, comps, 'KAMI_LIQ_SALVAGE'),
       spoils: getASTNode(world, comps, 'KAMI_LIQ_SPOILS'),
       karma: getASTNode(world, comps, 'KAMI_LIQ_KARMA'),
+      recoil: getASTNode(world, comps, 'KAMI_LIQ_RECOIL'),
     },
     rest: {
       metabolism: getASTNode(world, comps, 'KAMI_REST_METABOLISM'),
