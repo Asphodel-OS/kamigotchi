@@ -5,3 +5,4 @@
 3. Generate multisig batch txs with `npm run multisig:systems:test` `--systems <system name>` `--addresses <new addresses>`
 4. Copy `./batchTx.json` to Safe create tx site
    Note: only 1 system at a time is supported for now when generating batch txs
+   yada yada yada

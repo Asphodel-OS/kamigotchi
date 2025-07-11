@@ -10,7 +10,9 @@
 8 8888   `Y8.    .888888888. `88888.   ,8'       `8        `8.`8888.   8 8888     8888     ,88'   ` 8888     ,88'         8 8888          8888     ,88'  8 8888        8  8 8888
 8 8888     `Y8. .8'       `8. `88888. ,8'         `         `8.`8888.  8 8888      `8888888P'        `8888888P'           8 8888           `8888888P'    8 8888        8  8 8888
 ```
+
 ![Screen Shot 2023-10-06 at 6 22 13 PM (2)](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/a2fc7839-5ded-48df-8c15-248374b19ff1)
+
 ```
 8 8888     ,88'          .8.                   ,8.       ,8.           8 8888      ,o888888o.        ,o888888o.     8888888 8888888888     ,o888888o.    8 8888        8  8 8888
 8 8888    ,88'          .888.                 ,888.     ,888.          8 8888     8888     `88.   . 8888     `88.         8 8888          8888     `88.  8 8888        8  8 8888
@@ -46,11 +48,11 @@ _built with love, powered by \[redacted\]_
 <br>
 <br>
 
-*baby steps*
+_baby steps_
 
-*but let's at least assume*
+_but let's at least assume_
 
-*you know how to clone a repo*
+_you know how to clone a repo_
 
 <br>
 
@@ -66,9 +68,9 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*wait. 80 blocks. patience is a virtue*
+_wait. 80 blocks. patience is a virtue_
 
-*do you see it ?*
+_do you see it ?_
 
 <br>
 
@@ -84,7 +86,7 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 <br>
-<br>
+<br>for
 <br>
 <br>
 <br>
@@ -93,12 +95,12 @@ kamigotchi/packages/client/$ yarn start
   
 *the void greets you*
 
-*respond in kind*
+_respond in kind_
 
 <br>
 
 - open the developer console (`Option + ⌘ + J` || `Shift + CTRL + J`)
-- `layers.network.api.world.init()` \**`\*Enter`\**
+- `layers.network.api.world.init()` \*\*`\*Enter`\*\*
 - wait for the world to be populated ~230tx (yes)
 
 <br>
@@ -121,9 +123,9 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*the voices*
+_the voices_
 
-*they urge you to switch the chain*
+_they urge you to switch the chain_
 
 <br>
 <br>
@@ -173,7 +175,7 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*what was all that?*
+_what was all that?_
 
 <br>
 <br>
@@ -256,8 +258,8 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*huh?*
- 
+_huh?_
+
 <br>
 <br>
 <br>
@@ -345,7 +347,7 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*???*
+_???_
 
 <br>
 <br>
@@ -442,7 +444,7 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*now, for the fun part*
+_now, for the fun part_
 <br>
 
 - choose a name for your account
@@ -528,7 +530,7 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*the voices are right*
+_the voices are right_
 
 <br>
 <br>
@@ -605,7 +607,7 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 
-*the intrusive thoughts should win*
+_the intrusive thoughts should win_
 
 <br>
 <br>
@@ -639,7 +641,6 @@ kamigotchi/packages/client/$ yarn start
 <br>
 <br>
 <br>
-
 
 ```
 8 8888     ,88'          .8.                   ,8.       ,8.           8 8888      ,o888888o.        ,o888888o.     8888888 8888888888     ,o888888o.    8 8888        8  8 8888
@@ -741,4 +742,5 @@ kamigotchi/packages/client/$ yarn start
 8 8888   `Y8.    .888888888. `88888.   ,8'       `8        `8.`8888.   8 8888     8888     ,88'   ` 8888     ,88'         8 8888          8888     ,88'  8 8888        8  8 8888
 8 8888     `Y8. .8'       `8. `88888. ,8'         `         `8.`8888.  8 8888      `8888888P'        `8888888P'           8 8888           `8888888P'    8 8888        8  8 8888
 ```
-*may they spare your soul*
+
+_may they spare your soul_
