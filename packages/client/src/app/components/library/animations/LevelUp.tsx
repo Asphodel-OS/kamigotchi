@@ -25,7 +25,6 @@ export const LevelUpArrows = () => {
             loop: true,
             delay: 250 * (index + 0.01),
             loopDelay: 250 * (index + 0.01),
-            direction: 'alternate',
             duration: 1000,
           });
         }

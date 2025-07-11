@@ -83,15 +83,16 @@ export const KamiImage = (props: Props) => {
     }
   };
 
+  const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
+
   /////////////////
   // RENDERING
 
-  const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
-
+  // used expCurr >= expLimit and not canLevel because we want to show the level up arrow even when resting
   return (
     <Container>
       <Image src={kami.image} />
-      {canLevel && <LevelUpArrows />}
+      {expCurr >= expLimit && <LevelUpArrows />}
       <Overlay top={0.75} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
