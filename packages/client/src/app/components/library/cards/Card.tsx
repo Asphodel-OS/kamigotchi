@@ -1,8 +1,8 @@
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { animate, createScope, createSpring, Scope } from 'animejs';
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
+import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { playClick } from 'utils/sounds';
 import { TextTooltip } from '../poppers/TextTooltip';
 import { Overlay } from '../styles';
@@ -26,7 +26,7 @@ export const Card = (props: Props) => {
   const { image, children, fullWidth } = props;
   const scale = image?.scale ?? 9;
   const scope = useRef<Scope | null>(null);
-  const ArrowRefs = new Array(7).fill(null).map(() => useRef<SVGSVGElement>(null));
+  const ArrowRefs = new Array(7).fill(null).map(() => useRef<HTMLImageElement>(null));
 
   useEffect(() => {
     scope.current = createScope().add(() => {
@@ -67,7 +67,8 @@ export const Card = (props: Props) => {
     const positions = [70, 7, 60, 20, 10, 30, 50];
     return ArrowRefs.map((ref, i) => {
       return (
-        <ArrowUpwardIcon
+        <img
+          src={IndicatorIcons.level_up}
           key={`arrow-${i}`}
           style={{
             position: 'absolute',
