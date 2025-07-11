@@ -42,6 +42,18 @@ export const KamiImage = (props: Props) => {
     if (modals.kami) setIsSearching(false);
   }, [modals.kami]);
 
+  const progress = kami.progress!;
+  const expCurr = progress.experience;
+  const expLimit = progress ? calcExpRequirement(progress.level) : 40;
+  const percentage = Math.floor((expCurr / expLimit) * 1000) / 10;
+
+  const getLevelTooltip = () => {
+    if (owner.index != account.index) return 'not ur kami';
+    if (expCurr < expLimit) return 'not enough experience';
+    if (!isResting(kami)) return 'kami must be resting';
+    return LEVEL_UP_STRING;
+  };
+
   /////////////////
   // INTERACTION
 
@@ -71,21 +83,10 @@ export const KamiImage = (props: Props) => {
     }
   };
 
-  const progress = kami.progress!;
-  const expCurr = progress.experience;
-  const expLimit = progress ? calcExpRequirement(progress.level) : 40;
-  const percentage = Math.floor((expCurr / expLimit) * 1000) / 10;
-
-  const getLevelTooltip = () => {
-    if (owner.index != account.index) return 'not ur kami';
-    if (expCurr < expLimit) return 'not enough experience';
-    if (!isResting(kami)) return 'kami must be resting';
-    return LEVEL_UP_STRING;
-  };
-  const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
-
   /////////////////
   // RENDERING
+
+  const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
 
   return (
     <Container>
