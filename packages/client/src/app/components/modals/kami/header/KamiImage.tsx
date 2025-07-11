@@ -1,13 +1,15 @@
 import styled from 'styled-components';
 
+import { animate, createScope, createSpring, Scope } from 'animejs';
 import { isResting } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
+import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { playClick } from 'utils/sounds';
 
 const LEVEL_UP_STRING = 'Level Up!!';
@@ -36,10 +38,8 @@ export const KamiImage = (props: Props) => {
 
   const [isSearching, setIsSearching] = useState(false);
   const [indexInput, setIndexInput] = useState(kami.index);
-
-  useEffect(() => {
-    if (modals.kami) setIsSearching(false);
-  }, [modals.kami]);
+  const scope = useRef<Scope | null>(null);
+  const ArrowRefs = new Array(7).fill(null).map(() => useRef<HTMLImageElement>(null));
 
   const progress = kami.progress!;
   const expCurr = progress.experience;
@@ -52,6 +52,39 @@ export const KamiImage = (props: Props) => {
     if (!isResting(kami)) return 'kami must be resting';
     return LEVEL_UP_STRING;
   };
+  const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
+
+  useEffect(() => {
+    scope.current = createScope().add(() => {
+      ArrowRefs.forEach((ref, index) => {
+        if (ref.current) {
+          animate(ref.current, {
+            translateX: [
+              { to: '-30%', duration: 50, easing: 'easeInOutSine' },
+              { to: '30%', duration: 50, easing: 'easeInOutSine' },
+              { to: '-30%', duration: 50, easing: 'easeInOutSine' },
+            ],
+            translateY: ['150%', '-500%'],
+            scale: [
+              { to: 1.25, ease: 'inOut(3)', duration: 200 },
+              { to: 1, ease: createSpring({ stiffness: 300 }) },
+            ],
+            loop: true,
+            delay: 250 * (index + 0.01),
+            loopDelay: 250 * (index + 0.01),
+            direction: 'alternate',
+            duration: 1000,
+          });
+        }
+      });
+    });
+
+    return () => scope.current?.revert();
+  }, [canLevel]);
+
+  useEffect(() => {
+    if (modals.kami) setIsSearching(false);
+  }, [modals.kami]);
 
   /////////////////
   // INTERACTION
@@ -82,13 +115,32 @@ export const KamiImage = (props: Props) => {
     }
   };
 
+  const Arrows = () => {
+    const positions = [70, 7, 60, 20, 10, 30, 50];
+    return ArrowRefs.map((ref, i) => {
+      return (
+        <img
+          src={IndicatorIcons.level_up}
+          key={`arrow-${i}`}
+          style={{
+            position: 'absolute',
+            left: positions[i] + `%`,
+            bottom: `10%`,
+            width: '20%',
+            height: '20%',
+          }}
+          ref={ref}
+        />
+      );
+    });
+  };
+
   /////////////////
   // RENDERING
 
-  const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
   return (
     <Container>
-      <Image src={kami.image} />
+      <Image src={kami.image} /> {Arrows()}
       <Overlay top={0.75} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
@@ -131,6 +183,7 @@ const Container = styled.div`
   position: relative;
   height: 18vw;
   margin: 0.6vw 0 0.6vw 0.6vw;
+  overflow: hidden;
 `;
 
 const Image = styled.img`
