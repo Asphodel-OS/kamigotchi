@@ -43,8 +43,10 @@ interface Props {
     displayedKamis: Kami[];
   };
   utils: {
+    calcExpRequirement: (lvl: number) => number;
     getBonusesByItems: (kami: Kami) => Bonus[];
   };
+
   isVisible: boolean;
 }
 
@@ -53,6 +55,7 @@ export const Kards = (props: Props) => {
   const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis } = state;
+  const { calcExpRequirement } = utils;
   const { HarvestButton, UseItemButton } = display;
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user

@@ -13,6 +13,7 @@ interface Props {
     icon?: string;
     onClick?: () => void;
     overlay?: string;
+    levelUp?: boolean;
     padding?: number;
     scale?: number;
     tooltip?: string[];
@@ -53,7 +54,7 @@ export const Card = (props: Props) => {
     });
 
     return () => scope.current?.revert();
-  }, []);
+  }, [image?.levelUp]);
 
   // handle image click if there is one
   const handleImageClick = () => {
@@ -88,7 +89,7 @@ export const Card = (props: Props) => {
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
-          {Arrows()}
+          {!!image?.levelUp && Arrows()}
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
       </TextTooltip>

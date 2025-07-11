@@ -14,7 +14,7 @@ import { KamiIcon } from 'assets/images/icons/menu';
 import { ONYX_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemByIndex, Item, NullItem } from 'network/shapes/Item';
-import { Kami } from 'network/shapes/Kami';
+import { calcKamiExpRequirement, Kami } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
 import { KamiList } from './KamiList';
@@ -72,6 +72,7 @@ export function registerPartyModal() {
                 UseItemButton(network, kami, account, icon),
             },
             utils: {
+              calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
               getBonusesByItems: (kami: Kami) =>
                 getBonusesByItems(world, components, kami.entity, kamiRefreshOptions.bonuses),
@@ -89,7 +90,7 @@ export function registerPartyModal() {
     ({ network, display, data, utils }) => {
       const { actions, api } = network;
       const { accountEntity, spender } = data;
-      const { getAccount, getItem, getKamis, getNode, passesNodeReqs } = utils;
+      const { getAccount, getItem, getKamis, getNode, passesNodeReqs, calcExpRequirement } = utils;
 
       const { modals } = useVisibility();
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
@@ -259,6 +260,7 @@ export function registerPartyModal() {
               onyx: onyxInfo,
             }}
             display={display}
+            utils={{ calcExpRequirement }}
             state={{ displayedKamis, tick }}
             utils={utils}
           />

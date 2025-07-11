@@ -21,7 +21,7 @@ import {
 import { Allo, parseAllos } from 'network/shapes/Allo';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { queryDTCommits } from 'network/shapes/Droptable';
-import { Kami } from 'network/shapes/Kami';
+import { calcKamiExpRequirement, Kami } from 'network/shapes/Kami';
 import {
   Node,
   NullNode,
@@ -93,6 +93,7 @@ export function registerNodeModal() {
                 UseItemButton(network, kami, account, FeedIcon),
             },
             utils: {
+              calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getAccount: () => getAccount(world, components, accountEntity, accountRefreshOptions),
               getAccountKamis: () =>
                 getAccountKamis(world, components, accountEntity, kamiRefreshOptions),

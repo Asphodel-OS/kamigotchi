@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
@@ -24,6 +24,7 @@ interface Props {
   showBattery?: boolean;
   showCooldown?: boolean;
   utils?: {
+    calcExpRequirement: (lvl: number) => number;
     getBonusesByItems: (kami: Kami) => Bonus[];
   };
 }
@@ -33,14 +34,25 @@ interface Props {
 export const KamiCard = (props: Props) => {
   const { kami, actions, showBattery, showCooldown, isFriend, utils } = props;
   const getBonusesByItems = utils?.getBonusesByItems;
+  const { calcExpRequirement } = utils ?? {};
   const { description, descriptionOnClick } = props;
   const { contentTooltip } = props;
   const { subtext, subtextOnClick } = props;
+
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
+  const [levelUp, setlevelUp] = useState(false);
 
   /////////////////
   // INTERACTION
+
+  // check if a kami can level up
+  useEffect(() => {
+    if (!kami.progress || !calcExpRequirement) return;
+    const expCurr = kami.progress.experience;
+    const expLimit = calcExpRequirement(kami.progress.level);
+    setlevelUp(expCurr >= expLimit);
+  }, [kami, calcExpRequirement]);
 
   // toggle the kami modal settings depending on its current state
   const handleKamiClick = () => {
@@ -76,7 +88,7 @@ export const KamiCard = (props: Props) => {
   };
 
   return (
-    <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
+    <Card image={{ icon: kami.image, levelUp, onClick: handleKamiClick }}>
       <TitleBar>
         <TitleText key='title' onClick={() => handleKamiClick()}>
           {kami.name}
