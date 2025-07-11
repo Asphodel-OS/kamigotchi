@@ -91,7 +91,7 @@ export const KamiImage = (props: Props) => {
   return (
     <Container>
       <Image src={kami.image} />
-      {expCurr >= expLimit && <LevelUpArrows />}
+      {canLevel && <LevelUpArrows />}
       <Overlay top={0.75} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
