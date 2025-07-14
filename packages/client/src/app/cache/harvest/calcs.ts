@@ -126,6 +126,7 @@ enum Effectiveness {
   NEUTRAL,
   UP,
   DOWN,
+  SPECIAL,
 }
 
 // calculate the shift in harvest Efficacy (Fertility Boost)
@@ -159,14 +160,16 @@ export const calcEfficacyShift = (
   config: Efficacy,
   upShiftBonus: number
 ): number => {
+  if (eff === Effectiveness.UP) return config.up + upShiftBonus;
   if (eff === Effectiveness.NEUTRAL) return config.base;
-  else if (eff === Effectiveness.UP) return config.up + upShiftBonus;
-  else return config.down;
+  if (eff === Effectiveness.DOWN) return config.down;
+  return config.special;
 };
 
 // determine how effective a trait matchup is for a harvest
 export const getHarvestEffectiveness = (nodeAff: string, traitAff: string): Effectiveness => {
-  if (traitAff === 'NORMAL') return Effectiveness.NEUTRAL;
-  else if (nodeAff === traitAff) return Effectiveness.UP;
-  else return Effectiveness.DOWN;
+  if (nodeAff === 'NORMAL' && traitAff === 'NORMAL') return Effectiveness.SPECIAL;
+  if (nodeAff === 'NORMAL' || traitAff === 'NORMAL') return Effectiveness.NEUTRAL;
+  if (nodeAff === traitAff) return Effectiveness.UP;
+  return Effectiveness.DOWN;
 };

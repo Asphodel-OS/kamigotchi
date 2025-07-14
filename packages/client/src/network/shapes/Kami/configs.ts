@@ -58,6 +58,7 @@ export interface Efficacy {
   base: number;
   up: number;
   down: number;
+  special: number;
 }
 
 // get the full config of a Kami
@@ -131,5 +132,6 @@ export const getEfficacyNode = (world: World, comps: Components, key: string): E
     base: configArray[1] / precision,
     up: configArray[2] / precision,
     down: -configArray[3] / precision,
+    special: configArray[4] / precision,
   };
 };

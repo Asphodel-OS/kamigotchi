@@ -5,7 +5,7 @@ import { calcHealth, isStarving, onCooldown } from './base';
 import { calcOutput, calcStrainFromBalance } from './harvest';
 
 // calculate the affinity multiplier for liquidation threshold
-const calcLiquidationEfficacy = (attacker: Kami, defender: Kami): number => {
+const calcEfficacy = (attacker: Kami, defender: Kami): number => {
   const config = attacker.config ?? defender.config;
   if (!config) return 0;
 
@@ -15,14 +15,16 @@ const calcLiquidationEfficacy = (attacker: Kami, defender: Kami): number => {
   const defBonus = defender.bonuses?.defense.threshold.ratio ?? 0;
 
   const base = threshConfig.ratio.value;
-  const shiftNeut = effConfig.base + attBonus + defBonus;
+  const shiftNeut = effConfig.base;
   const shiftUp = effConfig.up + attBonus + defBonus;
-  const shiftDown = effConfig.down + attBonus + defBonus;
+  const shiftDown = effConfig.down;
+  const shiftSpec = effConfig.special + attBonus + defBonus;
 
   let shift = shiftNeut;
   if (attacker.traits && defender.traits) {
     const attAffinity = attacker.traits.hand.affinity;
     const defAffinity = defender.traits.body.affinity;
+
     if (attAffinity === 'EERIE') {
       if (defAffinity === 'SCRAP') shift = shiftUp;
       else if (defAffinity === 'INSECT') shift = shiftDown;
@@ -32,6 +34,8 @@ const calcLiquidationEfficacy = (attacker: Kami, defender: Kami): number => {
     } else if (attAffinity === 'INSECT') {
       if (defAffinity === 'EERIE') shift = shiftUp;
       else if (defAffinity === 'SCRAP') shift = shiftDown;
+    } else if (attAffinity === 'NORMAL') {
+      if (defAffinity === 'NORMAL') shift = shiftSpec;
     }
   }
 
@@ -61,7 +65,7 @@ export const calcThreshold = (attacker: Kami, defender: Kami): number => {
   const defShift = defender.bonuses?.defense.threshold.shift ?? 0;
 
   const base = calcAnimosity(attacker, defender);
-  const ratio = calcLiquidationEfficacy(attacker, defender);
+  const ratio = calcEfficacy(attacker, defender);
   const shift = thresholdConfig.shift.value + attShift + defShift;
   const boost = defender.stats?.health.total ?? 0;
   const threshold = (base * ratio + shift) * boost;
@@ -120,7 +124,8 @@ export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const v2 = defender.stats?.violence.total ?? 0;
   const h1 = attacker.stats?.harmony.total ?? 0;
   const core = Math.max(0, v2 - h1 + karmaConfig.nudge.value);
-  const karma = core * karmaConfig.boost.value;
+  const efficacy = calcEfficacy(defender, attacker);
+  const karma = core * efficacy * karmaConfig.boost.value;
   return Math.floor(karma);
 };
 
