@@ -74,5 +74,6 @@ const getEfficacyNode = (world: World, comps: Components, key: string): Efficacy
     base: configArray[1] / precision,
     up: configArray[2] / precision,
     down: -configArray[3] / precision,
+    special: configArray[4] / precision,
   };
 };
