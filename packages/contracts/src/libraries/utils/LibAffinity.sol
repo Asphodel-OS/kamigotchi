@@ -10,13 +10,15 @@ import { LibConfig } from "libraries/LibConfig.sol";
 enum Effectiveness {
   Strong,
   Netural,
-  Weak
+  Weak,
+  Special
 }
 
 struct Shifts {
   int256 base;
   int256 up;
   int256 down;
+  int256 special;
 }
 
 /*
@@ -38,7 +40,8 @@ library LibAffinity {
       Shifts({
         base: config[1].toInt256(),
         up: config[2].toInt256(),
-        down: -1 * config[3].toInt256()
+        down: -1 * config[3].toInt256(),
+        special: config[4].toInt256()
       });
   }
 
@@ -50,6 +53,7 @@ library LibAffinity {
   ) internal pure returns (int256) {
     if (effectiveness == Effectiveness.Strong) return configs.up + bonuses.up;
     if (effectiveness == Effectiveness.Weak) return configs.down + bonuses.down;
+    if (effectiveness == Effectiveness.Special) return configs.special + bonuses.special;
     return configs.base + bonuses.base;
   }
 
@@ -58,16 +62,19 @@ library LibAffinity {
     string memory sourceAff,
     string memory targetAff
   ) public pure returns (Effectiveness) {
-    if (LibString.eq(sourceAff, "EERIE")) {
-      if (LibString.eq(targetAff, "SCRAP")) return Effectiveness.Strong;
-      if (LibString.eq(targetAff, "INSECT")) return Effectiveness.Weak;
-    } else if (LibString.eq(sourceAff, "SCRAP")) {
-      if (LibString.eq(targetAff, "INSECT")) return Effectiveness.Strong;
-      if (LibString.eq(targetAff, "EERIE")) return Effectiveness.Weak;
-    } else if (LibString.eq(sourceAff, "INSECT")) {
-      if (LibString.eq(targetAff, "EERIE")) return Effectiveness.Strong;
-      if (LibString.eq(targetAff, "SCRAP")) return Effectiveness.Weak;
+    if (sourceAff.eq("NORMAL") && targetAff.eq("NORMAL")) return Effectiveness.Special;
+
+    if (sourceAff.eq("EERIE")) {
+      if (targetAff.eq("SCRAP")) return Effectiveness.Strong;
+      if (targetAff.eq("INSECT")) return Effectiveness.Weak;
+    } else if (sourceAff.eq("SCRAP")) {
+      if (targetAff.eq("INSECT")) return Effectiveness.Strong;
+      if (targetAff.eq("EERIE")) return Effectiveness.Weak;
+    } else if (sourceAff.eq("INSECT")) {
+      if (targetAff.eq("EERIE")) return Effectiveness.Strong;
+      if (targetAff.eq("SCRAP")) return Effectiveness.Weak;
     }
+
     return Effectiveness.Netural; // Normal or no Affinity means 1x multiplier
   }
 
@@ -76,10 +83,9 @@ library LibAffinity {
     string memory sourceAff,
     string memory targetAff
   ) public pure returns (Effectiveness) {
-    if (LibString.eq(sourceAff, "NORMAL")) return Effectiveness.Netural;
-    if (LibString.eq(targetAff, "NORMAL")) return Effectiveness.Netural;
-    if (LibString.eq(targetAff, "")) return Effectiveness.Netural;
-    if (LibString.eq(sourceAff, targetAff)) return Effectiveness.Strong;
+    if (sourceAff.eq("") || targetAff.eq("")) return Effectiveness.Netural;
+    if (sourceAff.eq("NORMAL") || targetAff.eq("NORMAL")) return Effectiveness.Netural;
+    if (sourceAff.eq(targetAff)) return Effectiveness.Strong;
     return Effectiveness.Weak;
   }
 }

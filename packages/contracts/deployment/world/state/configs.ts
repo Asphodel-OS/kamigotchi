@@ -104,9 +104,9 @@ async function initStats(api: AdminAPI) {
 }
 
 export async function initHarvest(api: AdminAPI) {
-  // efficacy configs [prec, neut, +, -]
-  await api.config.set.array('KAMI_HARV_EFFICACY_BODY', [3, 0, 650, 250]);
-  await api.config.set.array('KAMI_HARV_EFFICACY_HAND', [3, 0, 350, 100]);
+  // efficacy configs [prec, neut, +, -, n-n]
+  await api.config.set.array('KAMI_HARV_EFFICACY_BODY', [3, 0, 650, 250, 0]);
+  await api.config.set.array('KAMI_HARV_EFFICACY_HAND', [3, 0, 350, 100, 0]);
 
   // standard configs [nudge, n_prec, ratio, r_prec, shift, s_prec, boost, b_prec]
   await api.config.set.array('KAMI_HARV_FERTILITY', [0, 0, 1500, 3, 0, 0, 1000, 3]);
@@ -116,14 +116,15 @@ export async function initHarvest(api: AdminAPI) {
 }
 
 export async function initLiquidation(api: AdminAPI) {
-  await api.config.set.array('KAMI_LIQ_EFFICACY', [3, 0, 500, 500]); // [prec, neut, +, -]
+  // [prec, neut, +, -, n-n]
+  await api.config.set.array('KAMI_LIQ_EFFICACY', [3, 0, 500, 500, 200]);
   await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // ratio applies to iCDF
 
   // standard configs [nudge, n_prec, ratio, r_prec, shift, s_prec, boost, b_prec]
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_SPOILS', [45, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
-  await api.config.set.array('KAMI_LIQ_KARMA', [10, 0, 0, 0, 0, 0, 2000, 3]);
+  await api.config.set.array('KAMI_LIQ_KARMA', [10, 0, 1000, 3, 0, 0, 2000, 3]);
   await api.config.set.array('KAMI_LIQ_RECOIL', [0, 0, 600, 3, 0, 0, 1000, 3]);
 }
 

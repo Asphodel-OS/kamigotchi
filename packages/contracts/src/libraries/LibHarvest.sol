@@ -175,9 +175,10 @@ library LibHarvest {
   ) internal view returns (uint256) {
     // retrieve the bonus efficacy shifts from the pet
     Shifts memory bonusShifts = Shifts({
-      base: int(0),
+      base: int256(0),
       up: LibBonus.getFor(comps, "HARV_FERTILITY_BOOST", kamiID),
-      down: int(0)
+      down: int256(0),
+      special: int256(0)
     });
 
     int256 efficacy = base.toInt256();

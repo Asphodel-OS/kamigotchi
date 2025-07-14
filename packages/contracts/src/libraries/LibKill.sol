@@ -109,9 +109,10 @@ library LibKill {
     int256 atkBonus = LibBonus.getFor(comps, "ATK_THRESHOLD_RATIO", sourceID);
     int256 defBonus = LibBonus.getFor(comps, "DEF_THRESHOLD_RATIO", targetID);
     Shifts memory bonusEfficacyShifts = Shifts({
-      base: atkBonus + defBonus,
+      base: int256(0),
       up: atkBonus + defBonus,
-      down: atkBonus + defBonus
+      down: int256(0),
+      special: atkBonus + defBonus
     });
 
     // sum the applied shift with the base efficacy value to get the final value
@@ -152,7 +153,7 @@ library LibKill {
     return (uint(postShiftVal) * totalHealth) / precision;
   }
 
-  /// @notice Calculate the resulting negative karma (HP loss) from two kamis duking it out. Rounds down.
+  /// @notice Calculate the resulting Karma (HP loss) from two kamis duking it out. Round down.
   function calcKarma(
     IUintComp comps,
     uint256 sourceID,
@@ -164,9 +165,10 @@ library LibKill {
     int32 nudge = config[0].toInt32(); // assumed 0 precision
     if (nudge + v2 - h1 < 0) return 0;
 
+    uint256 ratio = calcEfficacy(comps, targetID, sourceID, config[2]);
     uint256 boost = uint256(config[6]);
-    uint256 precision = 10 ** uint256(config[7]);
-    return (uint32(nudge + v2 - h1) * boost) / precision;
+    uint256 precision = 10 ** uint256(config[3] + config[7]);
+    return (uint32(nudge + v2 - h1) * ratio * boost) / precision;
   }
 
   /// @notice Calculate the total resulting HP damage from a liquidation

@@ -16,4 +16,4 @@ prb-math/=node_modules/@prb/math/src/
 solady/=node_modules/solady/src/
 solmate/=node_modules/solmate/src/
 std-contracts/=node_modules/@mud-classic/std-contracts/src/
-initia-vip/=node_modules/vip-evm/contracts/
+initia-vip/=node_modules/vip-evm/src/
