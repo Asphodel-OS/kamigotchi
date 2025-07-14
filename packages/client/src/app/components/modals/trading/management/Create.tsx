@@ -185,6 +185,7 @@ export const Create = (props: Props) => {
     // if selling, show only tradable items in inventory
     if (!account.inventories) return [];
     const filtered = account.inventories.filter((inv: Inventory) => {
+      if (!inv || !inv.item) return false;
       const isTradeable = inv.item.is.tradeable;
       const hasBalance = inv.balance > 0;
       const isNotCurrency = inv.item.index !== MUSU_INDEX;
