@@ -378,7 +378,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       if (this.hasExceededMaxRetries()) {
         this.setLoadingState({
           state: SyncState.FAILED,
-          msg: `Error initializing state. Maxretries reached. Can you drop this in the discord?`,
+          msg: `Max retries reached. Can you drop this in the discord if it persists?`,
         });
         console.error('Error during stateCache output, maximum retries reached:', e);
         return;

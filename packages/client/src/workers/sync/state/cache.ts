@@ -56,6 +56,7 @@ export const getEntries = <C extends Components>(
     const component = components[componentIndex];
     const entity = entities[entityIndex];
 
+    throw new Error(`Unknown component / entity: ${component}, ${entity}`);
     if (component == null || entity == null) {
       console.warn(`KEY: ${key}`);
       console.warn(`Indexes component / entity: ${componentIndex}, ${entityIndex}`);
