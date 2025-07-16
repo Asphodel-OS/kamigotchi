@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
 import { ProxyVIPScoreComponent as VIPComponent, ID as VIPCompID } from "components/ProxyVIPScoreComponent.sol";
-import { VipScore } from "initia-vip/VipScore.sol";
+import { VipScore } from "utils/VipScore.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
