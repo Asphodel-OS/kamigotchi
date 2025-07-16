@@ -150,6 +150,7 @@ export const SingleCreate = (props: Props) => {
 
       /// for sells we have to check the inventory
       const filtered = inventory.filter((inv: Inventory) => {
+        if (!inv || !inv.item) return false;
         const isTradeable = inv.item.is.tradeable;
         const hasBalance = inv.balance > 0;
         const unused = item !== inv.item;

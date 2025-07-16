@@ -3,7 +3,7 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 
-import { VipScore } from "initia-vip/VipScore.sol";
+import { VipScore } from "utils/VipScore.sol";
 
 contract VIPTest is SetupTemplate {
   uint256 epochDuration = 1 days;

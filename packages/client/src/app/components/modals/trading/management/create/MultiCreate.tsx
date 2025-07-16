@@ -184,6 +184,7 @@ export const MultiCreate = (props: Props) => {
     () =>
       (index: number): IconListButtonOption[] => {
         const filtered = inventory.filter((inv: Inventory) => {
+          if (!inv || !inv.item) return false;
           const isTradeable = inv.item.is.tradeable;
           const hasBalance = inv.balance > 0;
           const unused = have.every((item) => item.index !== inv.item.index);

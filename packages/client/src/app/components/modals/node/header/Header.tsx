@@ -130,11 +130,11 @@ export const Header = (props: Props) => {
   };
 
   return (
-    <Container key={node.name}>
+    <Container>
       <Content>
         <Image src={getNodeImage()} />
         <Details>
-          <Name>{node.name}</Name>
+          <Name>{room.name}</Name>
           <Row>
             <Label>Type: </Label>
             <TextTooltip text={[node.affinity ?? '']}>
