@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "license": "AGPL-3.0-only",
-  "packageManager": "pnpm@8.14.1",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@10.13.1",
   "scripts": {
     "dev": "run-pty % pnpm contracts:node % pnpm client:dev % pnpm contracts:dev",
     "nuke": "pnpm -r nuke && rimraf node_modules pnpm-lock* yarn.lock",
-    "build": "pnpm -r build",
+    "build": "pnpm --filter contracts build && pnpm --filter client build",
     "client:dev": "pnpm -F client dev",
     "contracts:dev": "pnpm -F contracts dev",
     "contracts:node": "pnpm -F contracts devnode"

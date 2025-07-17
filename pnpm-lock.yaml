@@ -390,9 +390,6 @@ importers:
       typescript:
         specifier: ^4.6.2
         version: 4.9.5
-      vip-evm:
-        specifier: github:initia-labs/vip-score-evm#main
-        version: github.com/initia-labs/vip-score-evm/f8d454fc21b57f8ed09dd38a432ef19d549adbc5
       wait-on:
         specifier: ^6.0.1
         version: 6.0.1
@@ -1931,7 +1928,7 @@ packages:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       jest-mock: 29.7.0
     dev: false
 
@@ -1941,7 +1938,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -1984,7 +1981,7 @@ packages:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       '@types/yargs': 17.0.33
       chalk: 4.1.2
     dev: false
@@ -3313,7 +3310,7 @@ packages:
       '@babel/core': '*'
     dependencies:
       '@babel/core': 7.26.10
-      glob: 7.2.3
+      glob: 7.2.0
       hermes-parser: 0.25.1
       invariant: 2.2.4
       nullthrows: 1.1.1
@@ -5207,7 +5204,7 @@ packages:
   /@types/connect@3.4.38:
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
     dependencies:
-      '@types/node': 12.20.55
+      '@types/node': 18.19.42
     dev: false
 
   /@types/d3-dsv@3.0.7:
@@ -5240,7 +5237,7 @@ packages:
   /@types/graceful-fs@4.1.9:
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
     dependencies:
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
     dev: false
 
   /@types/hoist-non-react-statics@3.3.5:
@@ -5301,12 +5298,6 @@ packages:
     resolution: {integrity: sha512-d2ZFc/3lnK2YCYhos8iaNIYu9Vfhr92nHiyJHRltXWjXUBjEE+A4I58Tdbnw4VhggSW+2j5y5gTrLs4biNnubg==}
     dependencies:
       undici-types: 5.26.5
-    dev: false
-
-  /@types/node@22.14.1:
-    resolution: {integrity: sha512-u0HuPQwe/dHrItgHHpmw3N2fYCR6x4ivMNbPHRkBVP4CvN+kiRrKHWk3i8tXiO/joPwXLMYvF9TTF0eqgHIuOw==}
-    dependencies:
-      undici-types: 6.21.0
     dev: false
 
   /@types/parse-json@4.0.2:
@@ -5387,13 +5378,13 @@ packages:
   /@types/ws@7.4.7:
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
     dependencies:
-      '@types/node': 12.20.55
+      '@types/node': 18.19.42
     dev: false
 
   /@types/ws@8.18.1:
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
     dependencies:
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
     dev: false
 
   /@types/yargs-parser@21.0.3:
@@ -7293,7 +7284,7 @@ packages:
     engines: {node: '>=12.13.0'}
     hasBin: true
     dependencies:
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -7304,7 +7295,7 @@ packages:
   /chromium-edge-launcher@0.2.0:
     resolution: {integrity: sha512-JfJjUnq25y9yg4FABRRVPmBGWPZZi+AQXT4mxupb67766/0UlhG8PAZCz6xzEMXTbW3CsSoE8PcCWA49n35mKg==}
     dependencies:
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -9798,7 +9789,7 @@ packages:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       jest-mock: 29.7.0
       jest-util: 29.7.0
     dev: false
@@ -9814,7 +9805,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -9847,7 +9838,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       jest-util: 29.7.0
     dev: false
 
@@ -9861,7 +9852,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -9884,7 +9875,7 @@ packages:
     resolution: {integrity: sha512-eIz2msL/EzL9UFTFFx7jBTkeZfku0yUAyZZZmJ93H2TYEiroIx2PQjEXcwYtYl8zXCxb+PAmA2hLIt/6ZEkPHw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@types/node': 22.14.1
+      '@types/node': 18.19.42
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -12462,7 +12453,7 @@ packages:
       commander: 12.1.0
       event-target-shim: 5.0.1
       flow-enums-runtime: 0.0.6
-      glob: 7.2.3
+      glob: 7.2.0
       invariant: 2.2.4
       jest-environment-node: 29.7.0
       memoize-one: 5.2.1
@@ -13578,7 +13569,7 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       '@istanbuljs/schema': 0.1.3
-      glob: 7.2.3
+      glob: 7.2.0
       minimatch: 3.1.2
     dev: false
 
@@ -13974,10 +13965,6 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
-
-  /undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-    dev: false
 
   /unenv@1.9.0:
     resolution: {integrity: sha512-QKnFNznRxmbOF1hDgzpqrlIf6NC5sbZ2OJ+5Wl3OX8uM+LUJXbj4TXvLJCtwbPTmbMHCLIz6JLKNinNsMShK9g==}
@@ -15002,12 +14989,6 @@ packages:
     resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/bf909b22fa55e244796dfa920c9639fdffa1c545}
     name: forge-std
     version: 1.9.6
-    dev: true
-
-  github.com/initia-labs/vip-score-evm/f8d454fc21b57f8ed09dd38a432ef19d549adbc5:
-    resolution: {tarball: https://codeload.github.com/initia-labs/vip-score-evm/tar.gz/f8d454fc21b57f8ed09dd38a432ef19d549adbc5}
-    name: vip-evm
-    version: 0.0.1
     dev: true
 
   github.com/transmissions11/solmate/c892309933b25c03d32b1b0d674df7ae292ba925:

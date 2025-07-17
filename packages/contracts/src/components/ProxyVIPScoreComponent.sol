@@ -2,7 +2,7 @@
 pragma solidity >=0.8.28;
 import "solecs/components/ProxyComponent.sol";
 
-import { VipScore } from "initia-vip/VipScore.sol";
+import { VipScore } from "utils/VipScore.sol";
 
 uint256 constant ID = uint256(keccak256("component.proxy.vip.score"));
 
