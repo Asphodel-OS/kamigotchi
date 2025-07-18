@@ -189,7 +189,16 @@ export function registerFundOperatorModal() {
                 onChange={(e) => handleChange(e)}
               ></Input>
               <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
-            </div>
+            </div>{' '}
+            <GasLink
+              key='gas'
+              href={`https://www.gas.zip/`}
+              target='_blank'
+              rel='noopener noreferrer'
+              linkColor='#d44c79'
+            >
+              Not enough gas? Get some here!
+            </GasLink>
             <Column>{TxButton()}</Column>
           </Grid>
         </ModalWrapper>
@@ -298,4 +307,14 @@ const WarnText = styled.div`
   cursor: pointer;
   border-width: 0px;
   background-color: #ffffff;
+`;
+
+const GasLink = styled.a<{ linkColor?: string }>`
+  color: ${({ linkColor }) => linkColor ?? '#0077cc'};
+  font-size: 0.8vw;
+  margin-bottom: 1vw;
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
 `;

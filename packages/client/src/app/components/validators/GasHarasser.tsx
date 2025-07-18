@@ -207,6 +207,7 @@ const Input = styled.input`
 
 const GasLink = styled.a<{ linkColor?: string }>`
   color: ${({ linkColor }) => linkColor ?? '#0077cc'};
+  font-size: 0.8vw;
   text-decoration: underline;
   &:hover {
     text-decoration: none;
