@@ -138,7 +138,7 @@ export const Chart = (props: Props) => {
     let sum = 0;
     for (let i = 0; i < buys.length; i++) {
       const buy = buys[i];
-if(buy.Timestamp < startTs) continue;
+      if(buy.Timestamp < startTs) continue;
       while (times[j] < buy.Timestamp) balances[j++] = sum;
       sum += buy.Amount;
       sales[j] += buy.Amount;
