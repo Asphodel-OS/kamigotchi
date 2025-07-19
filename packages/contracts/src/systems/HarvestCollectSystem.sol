@@ -26,6 +26,7 @@ contract HarvestCollectSystem is System {
     uint256 kamiID = LibHarvest.getKami(components, id);
 
     // standard checks (ownership, cooldown, state)
+    LibHarvest.verifyIsHarvest(components, id);
     LibKami.verifyAccount(components, kamiID, accID);
     LibKami.verifyState(components, kamiID, "HARVESTING");
     LibKami.verifyCooldown(components, kamiID);

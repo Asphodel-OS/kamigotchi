@@ -18,7 +18,8 @@ contract ScavengeClaimSystem is System {
     uint256 scavBarID = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
-    // implicit existence check
+    // checks
+    LibScavenge.verifyIsScavenge(components, scavBarID);
     LibScavenge.Base memory scavData = LibScavenge.getBase(components, scavBarID);
 
     // get amt of rewards and distribute

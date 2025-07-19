@@ -123,6 +123,13 @@ library LibScavenge {
   }
 
   /////////////////
+  // CHECKERS
+
+  function verifyIsScavenge(IUintComp components, uint256 id) internal view {
+    if (!LibEntityType.isShape(components, id, "SCAVENGE")) revert("not a scav");
+  }
+
+  /////////////////
   // GETTERS
 
   /// @notice gets fe

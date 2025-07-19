@@ -17,9 +17,9 @@ contract QuestDropSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint32 index = LibQuest.getIndex(components, questID);
 
+    LibQuest.verifyIsQuest(components, questID);
     LibQuest.verifyEnabled(components, index);
     LibQuest.verifyOwner(components, questID, accID);
-    LibQuest.verifyIsQuest(components, questID);
     LibQuest.verifyNotCompleted(components, questID);
 
     LibQuest.drop(components, questID);

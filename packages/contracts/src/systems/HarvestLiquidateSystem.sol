@@ -23,6 +23,7 @@ contract HarvestLiquidateSystem is System {
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // standard checks (ownership, cooldown, state)
+    LibHarvest.verifyIsHarvest(components, victimHarvID);
     LibKami.verifyAccount(components, killerID, accID);
     LibKami.verifyState(components, killerID, "HARVESTING");
     LibKami.verifyCooldown(components, killerID);
