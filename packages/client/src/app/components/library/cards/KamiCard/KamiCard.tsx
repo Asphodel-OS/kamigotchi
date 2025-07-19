@@ -74,7 +74,7 @@ export const KamiCard = (props: Props) => {
         </TitleText>
         <TitleCorner key='corner'>
           <TextTooltip text={[bonuses]}>
-            {bonuses && <Buff src={IndicatorIcons.buff} />}
+            {bonuses && bonuses?.length > 0 && <Buff src={IndicatorIcons.buff} />}
           </TextTooltip>
           {showCooldown && <Cooldown kami={kami} />}
           {showBattery && (
