@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { calcHealth } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
@@ -63,34 +64,35 @@ export const KamiCard = (props: Props) => {
   };
 
   return (
-    <TextTooltip text={[description[2]]}>
-      <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
-        <TitleBar>
-          <TitleText key='title' onClick={() => handleKamiClick()}>
-            {kami.name}
-          </TitleText>
-          <TitleCorner key='corner'>
-            {showCooldown && <Cooldown kami={kami} />}
-            {showBattery && (
-              <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
-            )}
-          </TitleCorner>
-        </TitleBar>
-        <Content>
-          <ContentColumn key='column-1'>
-            <TextTooltip text={contentTooltip ?? []}>
-              <Description />
-            </TextTooltip>
-            {isFriend && <Friend>Friend</Friend>}
-          </ContentColumn>
-          <ContentColumn key='column-2'>
-            <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
-
-            <ContentActions>{actions}</ContentActions>
-          </ContentColumn>
-        </Content>
-      </Card>
-    </TextTooltip>
+    <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
+      <TitleBar>
+        <TitleText key='title' onClick={() => handleKamiClick()}>
+          {kami.name}
+        </TitleText>
+        <TitleCorner key='corner'>
+          {' '}
+          <TextTooltip text={[description[2]]}>
+            {description[2] && <Buff src={IndicatorIcons.buff} />}{' '}
+          </TextTooltip>
+          {showCooldown && <Cooldown kami={kami} />}
+          {showBattery && (
+            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
+          )}
+        </TitleCorner>
+      </TitleBar>
+      <Content>
+        <ContentColumn key='column-1'>
+          <TextTooltip text={contentTooltip ?? []}>
+            <Description />
+          </TextTooltip>
+          {isFriend && <Friend>Friend</Friend>}
+        </ContentColumn>
+        <ContentColumn key='column-2'>
+          <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+          <ContentActions>{actions}</ContentActions>
+        </ContentColumn>
+      </Content>
+    </Card>
   );
 };
 
@@ -128,6 +130,12 @@ const TitleCorner = styled.div`
 
   font-size: 1vw;
   text-align: right;
+  height: 1.2vw;
+`;
+
+const Buff = styled.img`
+  height: 1.6vw;
+  margin-bottom: 0.2vw;
 `;
 
 const Content = styled.div`
