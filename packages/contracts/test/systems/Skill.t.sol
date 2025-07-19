@@ -4,13 +4,13 @@ pragma solidity >=0.8.28;
 import "tests/utils/SetupTemplate.t.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 
-contract SkillTest is SetupTemplate {
-  uint32 resetItemIndex = 7;
+import { RESPEC_POTION_INDEX } from "systems/SkillRespecSystem.sol";
 
+contract SkillTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _createConsumable(resetItemIndex, "SKILL_RESET");
+    _createConsumable(RESPEC_POTION_INDEX, "SKILL_RESET");
   }
 
   function setUpConfigs() public override {
@@ -257,9 +257,7 @@ contract SkillTest is SetupTemplate {
   // UTILS
 
   function _resetSkills(PlayerAccount memory acc, uint256 targetID) internal {
-    vm.startPrank(deployer);
-    LibFlag.set(components, targetID, "CAN_RESET_SKILLS", true);
-    vm.stopPrank();
+    _giveItem(acc, RESPEC_POTION_INDEX, 1);
 
     vm.prank(acc.operator);
     _SkillRespecSystem.executeTyped(targetID);

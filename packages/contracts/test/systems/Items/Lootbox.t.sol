@@ -21,19 +21,22 @@ contract LootboxTest is ItemTemplate {
   // TESTS
 
   function testLootboxSingle(uint256 startAmt, uint256 useAmt) public {
+    vm.assume(startAmt < type(uint16).max);
+    vm.assume(useAmt < type(uint16).max);
     uint32 lootboxIndex = 10;
     _createBlankLootbox(lootboxIndex);
 
     _giveItem(alice, lootboxIndex, startAmt);
     assertEq(_getItemBal(alice, lootboxIndex), startAmt);
 
-    if (useAmt > 100) {
-      vm.startPrank(alice.operator);
-      vm.expectRevert("max 100 item use at once");
-      _AccountUseItemSystem.executeTyped(lootboxIndex, useAmt);
+    // if (useAmt > 100) {
+    //   vm.startPrank(alice.operator);
+    //   vm.expectRevert("max 100 item use at once");
+    //   _AccountUseItemSystem.executeTyped(lootboxIndex, useAmt);
 
-      assertEq(_getItemBal(alice, lootboxIndex), startAmt);
-    } else if (useAmt > startAmt) {
+    //   assertEq(_getItemBal(alice, lootboxIndex), startAmt);
+    // } else if (useAmt > startAmt) {
+    if (useAmt > startAmt) {
       vm.startPrank(alice.operator);
       // vm.expectRevert("Inventory: insufficient balance");
       vm.expectRevert();

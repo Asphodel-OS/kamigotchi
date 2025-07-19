@@ -12,7 +12,7 @@
     "start": "pnpm run-p -l node:local deploy:local",
     "format": "prettier --write 'src/**/*.sol'",
     "lint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
-    "test": "pnpm codegen && FOUNDRY_PROFILE=build forge test --contracts test --gas-limit=10000000000000",
+    "test": "pnpm build:codegen && FOUNDRY_PROFILE=build forge test --contracts test --gas-limit=10000000000000",
     "nuke": "rimraf abi types out node_modules",
     "----- SPECIFIC COMMANDS -----": "---------------------------",
     "deploy:local": "NODE_ENV=puter pnpm deploy:script ",

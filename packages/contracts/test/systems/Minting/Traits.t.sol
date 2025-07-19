@@ -20,12 +20,15 @@ contract TraitsTest is MintTemplate {
     _initStockTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
+    vm.roll(++_currBlock);
+    // Set the blockhash for the current block to a random value using Foundry's cheatcodes
+    vm.setBlockhash(_currBlock, bytes32(_random() + 1));
     __721BatchMinterSystem.batchMint(100);
     vm.stopPrank();
 
     uint numPets = 5;
     vm.roll(++_currBlock);
-    vm.setBlockhash(_currBlock, bytes32(_random()));
+    vm.setBlockhash(_currBlock, bytes32(_random() + 1));
     uint[] memory kamiIDs = _mintKamis(0, numPets);
 
     uint kamiID;
@@ -49,6 +52,7 @@ contract TraitsTest is MintTemplate {
     _initEmptyTraits();
     vm.startPrank(deployer);
     __721BatchMinterSystem.setTraits();
+    vm.roll(++_currBlock);
     uint[] memory kamiIDs = __721BatchMinterSystem.batchMint(numPets);
     vm.stopPrank();
 
