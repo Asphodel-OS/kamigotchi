@@ -13,6 +13,7 @@ import { Health } from './Health';
 
 interface Props {
   kami: Kami; // assumed to have a harvest attached
+  bonuses?: string[];
   description: string[];
   descriptionOnClick?: () => void;
   isFriend?: boolean;
@@ -27,7 +28,7 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, actions, showBattery, showCooldown, isFriend } = props;
+  const { kami, actions, showBattery, showCooldown, isFriend, bonuses } = props;
   const { description, descriptionOnClick } = props;
   const { contentTooltip } = props;
   const { subtext, subtextOnClick } = props;
@@ -58,9 +59,11 @@ export const KamiCard = (props: Props) => {
       </TextBig>
     );
 
-    const details = <TextMedium key={`desc`}>{description[1]}</TextMedium>;
+    const details = description
+      .slice(1)
+      .map((text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>);
 
-    return <>{[header, details]}</>;
+    return <>{[header, ...details]}</>;
   };
 
   return (
@@ -70,9 +73,8 @@ export const KamiCard = (props: Props) => {
           {kami.name}
         </TitleText>
         <TitleCorner key='corner'>
-          {' '}
-          <TextTooltip text={[description[2]]}>
-            {description[2] && <Buff src={IndicatorIcons.buff} />}{' '}
+          <TextTooltip text={[bonuses]}>
+            {bonuses && <Buff src={IndicatorIcons.buff} />}
           </TextTooltip>
           {showCooldown && <Cooldown kami={kami} />}
           {showBattery && (

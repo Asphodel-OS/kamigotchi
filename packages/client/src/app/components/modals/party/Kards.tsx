@@ -88,9 +88,6 @@ export const Kards = (props: Props) => {
     }
 
     // add bonuses from items to description
-    if (getItemBonusesDescription(kami).length > 0) {
-      description = description.concat(getItemBonusesDescription(kami));
-    }
 
     return description;
   };
@@ -188,6 +185,7 @@ export const Kards = (props: Props) => {
           key={kami.entity}
           kami={kami}
           description={getDescription(kami)}
+          bonuses={getItemBonusesDescription(kami)}
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
           // contentTooltip={getTooltip(kami)}
