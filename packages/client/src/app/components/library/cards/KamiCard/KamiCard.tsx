@@ -57,40 +57,40 @@ export const KamiCard = (props: Props) => {
       </TextBig>
     );
 
-    const details = description
-      .slice(1)
-      .map((text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>);
+    const details = <TextMedium key={`desc`}>{description[1]}</TextMedium>;
 
-    return <>{[header, ...details]}</>;
+    return <>{[header, details]}</>;
   };
 
   return (
-    <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
-      <TitleBar>
-        <TitleText key='title' onClick={() => handleKamiClick()}>
-          {kami.name}
-        </TitleText>
-        <TitleCorner key='corner'>
-          {showCooldown && <Cooldown kami={kami} />}
-          {showBattery && (
-            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
-          )}
-        </TitleCorner>
-      </TitleBar>
-      <Content>
-        <ContentColumn key='column-1'>
-          <TextTooltip text={contentTooltip ?? []}>
-            <Description />
-          </TextTooltip>
-          {isFriend && <Friend>Friend</Friend>}
-        </ContentColumn>
-        <ContentColumn key='column-2'>
-          <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+    <TextTooltip text={[description[2]]}>
+      <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
+        <TitleBar>
+          <TitleText key='title' onClick={() => handleKamiClick()}>
+            {kami.name}
+          </TitleText>
+          <TitleCorner key='corner'>
+            {showCooldown && <Cooldown kami={kami} />}
+            {showBattery && (
+              <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
+            )}
+          </TitleCorner>
+        </TitleBar>
+        <Content>
+          <ContentColumn key='column-1'>
+            <TextTooltip text={contentTooltip ?? []}>
+              <Description />
+            </TextTooltip>
+            {isFriend && <Friend>Friend</Friend>}
+          </ContentColumn>
+          <ContentColumn key='column-2'>
+            <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
 
-          <ContentActions>{actions}</ContentActions>
-        </ContentColumn>
-      </Content>
-    </Card>
+            <ContentActions>{actions}</ContentActions>
+          </ContentColumn>
+        </Content>
+      </Card>
+    </TextTooltip>
   );
 };
 
