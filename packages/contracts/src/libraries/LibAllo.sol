@@ -23,6 +23,8 @@ import { Stat, LibStat } from "libraries/LibStat.sol";
 /**
  * @notice
  * Allos are shapes that indicate some sort of a one time distribution of other shapes
+ * note: Allos are strictly no takebacksies - ensure reverse mapping is not required post distribution
+ *    (entities created must be able to be deleted by other systems (e.g. temp bonuses) or is a balance (e.g. inventory))
  * - similar to Conditionals in that it matches a DescribedEntity (type + index)
  * - Can give
  *   - bonuses (unimplemented)
@@ -218,7 +220,7 @@ library LibAllo {
     uint256 mult,
     uint256 targetID
   ) internal {
-    LibBonus.incByTemporary(components, alloID, targetID, mult);
+    LibBonus.assignTemporary(components, alloID, targetID);
   }
 
   /// @notice distributes droptable rewards by creating a commit

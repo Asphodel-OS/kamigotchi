@@ -34,19 +34,19 @@ Slightly sacred. "
 ,In Game,Black Poppy,1010,Material,,,,,,"You can’t tell whether it’s a very dark purple or actually black. A rare flower. "
 ,In Game,Daffodil,1011,Material,,,,,,"A reflection of fallen Narcissus… Has its own uses and applications. "
 ,In Game,Mint,1012,Material,,,,,,A herb with many applications. Not often found here….
-,To Deploy,Sanguine Shroom,1013,Material,,,,,,A mushroom that bruises and bleeds like flesh. Some individuals hold a colorful belief that they feed on decaying spirits.
-,To Deploy,Chalkberry,1014,Material,,,,,,A dry and extremely bitter berry coated with chalky white fungus. The berry itself is inedible; useless except as a medium for a unique wild yeast.
-,To Deploy,Empty Cup,1102,Material,,,,,,A small reusable cup crafted from stone. Useful for drinking potions or other beverages.
+,In Game,Sanguine Shroom,1013,Material,,,,,,A mushroom that bruises and bleeds like flesh. Some individuals hold a colorful belief that they feed on decaying spirits.
+,In Game,Chalkberry,1014,Material,,,,,,A dry and extremely bitter berry coated with chalky white fungus. The berry itself is inedible; useless except as a medium for a unique wild yeast.
+,In Game,Empty Cup,1102,Material,,,,,,A small reusable cup crafted from stone. Useful for drinking potions or other beverages.
 ,In Game,Microplastics,1103,Material,,,,,,"Fine translucent powder. A promising new substance in hexerei. "
 ,In Game,Pine Pollen,1104,Material,,,,,,"Some people think this is very good for you. "
-,To Deploy,Powdered Red Amber,1107,Material,,,,,,Fine powder made from crushing a red amber crystal. Can be used to sand and polish metals.
+,In Game,Powdered Red Amber,1107,Material,,,,,,Fine powder made from crushing a red amber crystal. Can be used to sand and polish metals.
 ,In Game,Black Poppy Extract,1110,Material,,,,,,Useful alkaloids in a sticky black goo. One of the most ancient ingredients.
 ,In Game,Essence of Daffodil,1111,Material,,,,,,"Poisonous to living things, but useful when making medicines and potions."
 ,In Game,Shredded Mint,1112,Material,,,,,,Makes a cooling and relaxing tea. Also used in various magical applications.
-,To Deploy,Sanguineous Powder,1113,Material,,,,,,"A dark, reddish powder that resembles dried blood, or maybe just coffee. Edible, but can also be used as an ink or dye."
-,To Deploy,Berry Chalk,1114,Material,,,,,,A chalky fungus scraped from a rare berry. Can ferment certain materials to produce a rejuvenating beverage.
-,To Deploy,Holy Syrup,1201,Material,,,,,,Holy Dust diluted into a quantity of water. Forms a thin syrup that can be measured out for crafting.
-,To Deploy,Resin Tincture,1202,Material,,,,,,"A sweet, spicy syrup made from the natural resin found in the trees of Kamigotchi World. Useful for a number of recipes."
+,In Game,Sanguineous Powder,1113,Material,,,,,,"A dark, reddish powder that resembles dried blood, or maybe just coffee. Edible, but can also be used as an ink or dye."
+,In Game,Berry Chalk,1114,Material,,,,,,A chalky fungus scraped from a rare berry. Can ferment certain materials to produce a rejuvenating beverage.
+,In Game,Holy Syrup,1201,Material,,,,,,Holy Dust diluted into a quantity of water. Forms a thin syrup that can be measured out for crafting.
+,In Game,Resin Tincture,1202,Material,,,,,,"A sweet, spicy syrup made from the natural resin found in the trees of Kamigotchi World. Useful for a number of recipes."
 ,In Game,Red Gakki Ribbon,11001,Revive,Kami,,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. "
@@ -69,16 +69,16 @@ These ribbons are greatly prized…. "
 ,In Game,Gakki Cookie Sticks,11304,Food,Kami,,,HP+100,,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.
 ,In Game,“Paeon's Field of Flowers” Spell Card,11305,Food,Kami,,NOT_TRADABLE,HP+100,,The card depicts a mortally wounded man lying in a field of flowers. Some flowers take root on his body and knit the wounds closed while others bloom from the spilled blood. Activating this Spell Card on a Kamigotchi will restore 100 Health.
 ,In Game,Resin,11311,Food,Kami,,,HP+35,,"Sticky, with a refreshing taste. Could be used to make Amber or in other forms of crafting…"
-,In Game,XP Potion,11401,Food,Kami,,,"ITEM1003,XP+1000",,Give to a Kami to increase their XP by 1000.
-,In Game,Greater XP Potion,11402,Food,Kami,,,"ITEM1006,XP+15000",,Give to a Kami to increase their XP by 15000.
-,In Game,Respec Potion,11403,Misc,Kami,,,ITEM1003,,"Give to a Kami to reset their skill points. "
-,In Game,Grace Potion,11404,Food,Kami,,,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
-,In Game,Bless Potion,11405,Food,Kami,,,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
-,To Deploy,Apology Letter,11406,Food,Kami,,,ARB-50%,,A letter written by a Kami with sincere remorse for its actions. Lowers Recoil when liquidating other Kami.
-,To Deploy,MUSU Magnet,11407,Food,Kami,,,DSR+50%,,This shiny purple rock attracts grains of $MUSU. It dramatically increases the proportion of $MUSU a kami retains when it’s liquidated.
-,To Deploy,Festival Chime,11408,Food,Kami,,,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
-,To Deploy,Energy Drink,11409,Food,Kami,,,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
-,To Deploy,Hostility Potion,11410,Food,Kami,,,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
+,To Update,XP Potion,11401,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1003,XP+1000",,Give to a Kami to increase their XP by 1000.
+,To Update,Greater XP Potion,11402,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1006,XP+15000",,Give to a Kami to increase their XP by 15000.
+,To Update,Respec Potion,11403,Misc,Kami,,BYPASS_BONUS_RESET,ITEM1003,,"Give to a Kami to reset their skill points. "
+,To Update,Grace Potion,11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
+,To Update,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
+,To Update,Apology Letter,11406,Food,Kami,,BYPASS_BONUS_RESET,ARB-50%,,A letter written by a Kami with sincere remorse for its actions. Lowers Recoil when liquidating other Kami.
+,To Update,MUSU Magnet,11407,Food,Kami,,BYPASS_BONUS_RESET,DSR+50%,,This shiny purple rock attracts grains of $MUSU. It dramatically increases the proportion of $MUSU a kami retains when it’s liquidated.
+,To Update,Festival Chime,11408,Food,Kami,,BYPASS_BONUS_RESET,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
+,To Update,Energy Drink,11409,Food,Kami,,BYPASS_BONUS_RESET,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
+,To Update,Hostility Potion,11410,Food,Kami,,BYPASS_BONUS_RESET,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
 ,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
 ,In Game,Scroll of Shop Teleportation,21100,Consumable,Account,,,MOVE13,,"Instantly transports the user to Mina’s Shop. Fully insured. "

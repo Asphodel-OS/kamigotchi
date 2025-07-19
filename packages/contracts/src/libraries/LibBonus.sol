@@ -45,6 +45,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  * - IDAnchor: for querying perm bonuses (eg. skill instance), or temp bonuses (e.g. UPON_HARVEST_ACTION)
  * - IDType: type, used to query all bonuses of type [hash("bonus.type", type, holderID)]
  * - Level: bonus level, acts as a multiplier
+ *    (only for permanent bonuses, temp bonuses do not stack - upon_action temps dont stack, timed uses a new entity for each instance)
  *
  *  QUERIES: To get a bonus value for a given entity (acc/pet),
  *   1. query all relevant bonus instances
@@ -111,6 +112,7 @@ library LibBonus {
     SubtypeComponent endTypeComp = SubtypeComponent(getAddrByID(components, SubtypeCompID));
     if (endTypeComp.has(regID)) {
       // temporary bonus (registry has endtype)
+      if (anchorID != 0) revert("Bonus: anchorID not needed for temp bonus");
       uint256 endAnchor = genEndAnchor(endTypeComp.get(regID), holderID);
       IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, endAnchor);
     } else {
@@ -178,14 +180,20 @@ library LibBonus {
     LevelComponent(getAddrByID(components, LevelCompID)).inc(instanceIDs, amt);
   }
 
-  /// @dev incBy, but only for temporary bonuses. implicitly checked by assign()
-  function incByTemporary(
+  /// @dev temporary bonuses cannot be stacked (if same source, same end type). will never level up
+  function assignTemporary(
     IUintComp components,
     uint256 regAnchorID,
-    uint256 holderID,
-    uint256 amt
+    uint256 holderID
   ) internal returns (uint256[] memory instanceIDs) {
-    return incBy(components, regAnchorID, 0, holderID, amt);
+    uint256[] memory regIDs = queryByParent(components, regAnchorID);
+    instanceIDs = new uint256[](regIDs.length);
+    uint256[] memory levels = new uint256[](regIDs.length); // all 1
+    for (uint256 i; i < regIDs.length; i++) {
+      instanceIDs[i] = assign(components, regIDs[i], 0, holderID);
+      levels[i] = 1;
+    }
+    LevelComponent(getAddrByID(components, LevelCompID)).set(instanceIDs, levels);
   }
 
   /// @notice unassigns non-timed bonuses with given anchor

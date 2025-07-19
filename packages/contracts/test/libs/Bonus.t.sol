@@ -45,17 +45,48 @@ contract BonusTest is SetupTemplate {
 
   function testBonusTempActionShape() public {
     uint256 tempRegID = _createRegistry(regParentEntity, "TEMP_BONUS", "UPON_HARVEST_ACTION", 0, 3);
-    uint256 permRegID = _createRegistry(regParentEntity, "FULL_BONUS", "", 0, 2);
 
     // assigning to holder
-    _incBy(regParentEntity, holderAnchor, holderEntity, 1);
+    _incTemp(regParentEntity, holderEntity);
     assertEq(LibBonus.getFor(components, "TEMP_BONUS", holderEntity), 3);
-    assertEq(LibBonus.getFor(components, "FULL_BONUS", holderEntity), 2);
+
+    // assigning again, temp bonus should not stack
+    _incTemp(regParentEntity, holderEntity);
+    assertEq(LibBonus.getFor(components, "TEMP_BONUS", holderEntity), 3);
 
     // do action, remove temporary bonus
     LibBonus.unassignBy(components, "UPON_HARVEST_ACTION", holderEntity);
     assertEq(LibBonus.getFor(components, "TEMP_BONUS", holderEntity), 0);
-    assertEq(LibBonus.getFor(components, "FULL_BONUS", holderEntity), 2);
+  }
+
+  function testBonusTempInteractions() public {
+    uint256 regParentTemp = uint256(keccak256(abi.encodePacked("temp")));
+    uint256 regParentPerm = uint256(keccak256(abi.encodePacked("perm")));
+    _createRegistry(regParentTemp, "BONUS_TYPE", "UPON_HARVEST_ACTION", 0, 3);
+    _createRegistry(regParentPerm, "BONUS_TYPE", "", 0, 2);
+
+    // assigning temp once
+    _incTemp(regParentTemp, holderEntity);
+    assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 3);
+
+    // assigning again, temp bonus should not stack
+    _incTemp(regParentTemp, holderEntity);
+    assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 3);
+
+    // removing temp, reset to 0
+    LibBonus.unassignBy(components, "UPON_HARVEST_ACTION", holderEntity);
+    assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 0);
+
+    // assigning temp and perm, then temp again
+    _incTemp(regParentTemp, holderEntity);
+    _incBy(regParentPerm, holderAnchor, holderEntity, 1);
+    assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 5);
+    _incTemp(regParentTemp, holderEntity);
+    assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 5); // temp does not stack, stays the same
+
+    // removing temp, reset to 2 (perm)
+    LibBonus.unassignBy(components, "UPON_HARVEST_ACTION", holderEntity);
+    assertEq(LibBonus.getFor(components, "BONUS_TYPE", holderEntity), 2);
   }
 
   /////////////////
@@ -239,6 +270,10 @@ contract BonusTest is SetupTemplate {
     // vm.startPrank(deployer);
     LibBonus.incBy(components, regAnchorID, anchorID, holderID, amt);
     // vm.stopPrank();
+  }
+
+  function _incTemp(uint256 regAnchorID, uint256 holderID) internal {
+    LibBonus.assignTemporary(components, regAnchorID, holderID);
   }
 
   function _genParentEntity() internal returns (uint256) {

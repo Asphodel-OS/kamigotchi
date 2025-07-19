@@ -30,10 +30,9 @@ contract KamiUseItemSystem is System {
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // reset action bonuses
-    // if (!LibItem.bypassBonusReset(components, itemIndex)) // enables bonus stacking
-    LibBonus.resetUponHarvestAction(components, kamiID);
-    LibBonus.resetUponDeath(components, kamiID);
-    LibBonus.resetUponLiquidation(components, kamiID);
+    if (!LibItem.bypassBonusReset(components, itemIndex)) {
+      LibBonus.resetUponHarvestAction(components, kamiID);
+    }
 
     // use item
     LibKami.sync(components, kamiID);
