@@ -23,6 +23,7 @@
     "path-browserify": "^1.0.0",
     "prettier": "^3.1.0",
     "prettier-plugin-organize-imports": "^3.2.4",
+    "prettier-plugin-solidity": "^1.0.0-beta.19",
     "punycode": "^1.4.1",
     "querystring-es3": "^0.2.1",
     "rimraf": "^5.0.5",

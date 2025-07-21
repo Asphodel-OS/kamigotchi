@@ -11,7 +11,7 @@
   },
   "html.format.templating": true,
   "prettier.configPath": "./.prettierrc",
-  "prettier.documentSelectors": ["**/*.sol"],
+  "prettier.documentSelectors": ["**/*.sol", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
   "search.exclude": {
     "**/node_modules": true,
     "**/bower_components": true,
