@@ -1,143 +1,143 @@
 ﻿Key,Index,Status,Title,Daily,Description,Requirements,Objectives,Rewards
-MSQ001,1,In Game,Welcome to Kamigotchi World,No,"Hi there, Player! Welcome to Kamigotchi World! You can call me Menu. I’ll always be here to give you tips, track your items, quests, and companions, and I even have a map of the area! You can navigate by clicking on the map to pilot your Operator.
+MSQ001,1,To Update,Welcome to Kamigotchi World,No,"Hi there, Player! Welcome to Kamigotchi World! You can call me Menu. I’ll always be here to give you tips, track your items, quests, and companions, and I even have a map of the area! You can navigate by clicking on the map to pilot your Operator.
 
 Start by exploring my options and clicking around the screen. When you’ve seen the basics, we can move on - just complete this quest. ",,,2x Agency Reputation
-MSQ002,2,In Game,Beginning Your Journey,No,"Feel like you’re getting the hang of my interface? Great! Now that you’re oriented, you can start exploring your surroundings. You move around by using the Map Menu at the top left of your screen. Navigate over to the scrapyard and check it out.
+MSQ002,2,To Update,Beginning Your Journey,No,"Feel like you’re getting the hang of my interface? Great! Now that you’re oriented, you can start exploring your surroundings. You move around by using the Map Menu at the top left of your screen. Navigate over to the scrapyard and check it out.
 
 Explore the world a little, then check back in with me. I’ll give you a Spell Card. These work even if you don’t believe in magic. Using this card will restore your Stamina so you can move around more! ",Complete MSQ001,Move 3 Times,"1x ""Neith’s River of Life"" Spell Card"
-MSQ003,3,In Game,Your First Kami,No,"Now you’re oriented and on your feet. Ready to find out why this place is the Kamigotchi World? I bet! Now all you need to do is make friends with a Kami yourself!
+MSQ003,3,To Update,Your First Kami,No,"Now you’re oriented and on your feet. Ready to find out why this place is the Kamigotchi World? I bet! Now all you need to do is make friends with a Kami yourself!
 
 Have you seen the Vending Machine out in the junkyard? Believe it or not, we’ve got it powered on, fully stocked, and plugged in… but not to an electrical outlet! I’ll explain more later, but for now, just get yourself a Kami.",Complete MSQ002,Own 1 Kamigotchi,6x Agency Reputation
-MSQ004,4,In Game,What Kami Do: Harvesting,No,"Kamigotchi remain at rest when being held, but when you let them out to run around, they really get busy!
+MSQ004,4,To Update,What Kami Do: Harvesting,No,"Kamigotchi remain at rest when being held, but when you let them out to run around, they really get busy!
 
 We call it “Harvesting”, but they harvest passively, not through labor. When a Kami is placed down in the world, they draw a kind of energy out of the environment and into themselves. We call this energy $MUSU. I’ll explain it in more detail later.
 
 You can wander to other Rooms while your Kami are Harvesting, but don’t forget where you left them! Tired Kami are vulnerable to predators. 
 
 When you’re done, I’ll give you an XP Candy - you can use this to help level up your Kamigotchi! ",Complete MSQ003,Harvest for >5 minutes,1x XP Candy (Small)
-MSQ005,5,In Game,What Kami Do: Scavenging,No,"$MUSU isn’t the only thing the Kamigotchi collect. Over time, the Harvesting action generates a force that draws objects and items to the Kami, like a kind of gravity that only seems to affect specific things.
+MSQ005,5,To Update,What Kami Do: Scavenging,No,"$MUSU isn’t the only thing the Kamigotchi collect. Over time, the Harvesting action generates a force that draws objects and items to the Kami, like a kind of gravity that only seems to affect specific things.
 
 Which things? It’s not clear. The selection changes based on your Kami’s location. Some are simply fallen sticks and old stones, but other items are more interesting. We call this action “Scavenging”.
 
 Try this out for yourself. See what kind of present the Kami brings you!",Complete MSQ004,Scavenge 1 Item,4x Agency Reputation
-MSQ006,6,In Game,What Kami Do: Liquidating,No,"If your Kami isn’t really enjoying Harvesting, it may not be built for such a relaxed existence. A Kami with a high Violence may find it lucrative to conflict with its peers. 
+MSQ006,6,To Update,What Kami Do: Liquidating,No,"If your Kami isn’t really enjoying Harvesting, it may not be built for such a relaxed existence. A Kami with a high Violence may find it lucrative to conflict with its peers. 
 
 Predatory Kami may use their violent nature to Liquidate other Kami and gain large amounts of $MUSU in the process. This may be antisocial, but there’s no harm done. Just like a Kami isn’t really hurt when it’s low on Health, a Kami isn’t really dead when it’s Liquidated. It may not be able to hold its body in shape, but it can always come back!",Complete MSQ005,Liquidate another Kamigotchi,4x Agency Reputation
-MSQ007,7,In Game,Making $MUSU,No,"$MUSU is a form of energy that exists everywhere in the universe. This Kamigotchi World has a particularly high concentration. $MUSU is what keeps everything here tied together like the knots in a big rope net. 
+MSQ007,7,To Update,Making $MUSU,No,"$MUSU is a form of energy that exists everywhere in the universe. This Kamigotchi World has a particularly high concentration. $MUSU is what keeps everything here tied together like the knots in a big rope net. 
 
 Collect a moderate amount of $MUSU, then I’ll explain more.",Complete MSQ004,Collect 500 $MUSU,"4x Agency Reputation,1x “Cultivation I” Spell Card"
-MSQ008,8,In Game,Supporting Local Businesses,No,"In this world and the places that surround it, $MUSU is also a kind of currency. If you need a specific item, someone might sell just what you need, for the right price. You might even get the itch to start trading goods yourself!
+MSQ008,8,To Update,Supporting Local Businesses,No,"In this world and the places that surround it, $MUSU is also a kind of currency. If you need a specific item, someone might sell just what you need, for the right price. You might even get the itch to start trading goods yourself!
 
 Go spend some $MUSU just to get the hang of it. If you need directions, there’s a shop through the door a little north of the vending machine. I’ve heard it trades some interesting things! When you’re done shopping, I’ll give you something extra. It’s on the house. ",Complete MSQ007,Buy something from any vendor using $MUSU,2x Agency Reputation
-MSQ009,9,In Game,Building a Reputation,No,"You can gain a number of different rewards by completing Quests, from new items to new game mechanics. One type of quest reward might not seem useful immediately, but over time it will really pay off! I’m talking about Reputation. That number represents your status in the eyes of another: Me.
+MSQ009,9,To Update,Building a Reputation,No,"You can gain a number of different rewards by completing Quests, from new items to new game mechanics. One type of quest reward might not seem useful immediately, but over time it will really pay off! I’m talking about Reputation. That number represents your status in the eyes of another: Me.
 
 As the Menu, I’m the interface that you the Player uses to pilot your Operator around the Kamigotchi World. Straightforward, right? I’m as friendly as it gets, so raising your Reputation with me is easy. Usually I’ll always give between 2 to 6 Reputation for completing quests, but sometimes if it’s super difficult or I think it’s important, I’ll give out more.
 
 For example: I want to build new circuitry. If you give me the raw materials, I can fabricate it for myself. Please give me some Scrap Metal. I’d really appreciate it!",Complete MSQ008,Give 3 Scrap Metal,"6x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card"
-MSQ010,10,In Game,Kamigotchi World and You: Having a Normal One,No,"Almost every area in the Kamigotchi World has a Type just like your Kami. The “Normal” type is self-explanatory. Something with the Normal Type represents the essence of this world in its purest form. 
+MSQ010,10,To Update,Kamigotchi World and You: Having a Normal One,No,"Almost every area in the Kamigotchi World has a Type just like your Kami. The “Normal” type is self-explanatory. Something with the Normal Type represents the essence of this world in its purest form. 
 
 Scavenge three items in rooms with the Normal Type. When you’re done, I’ll give you a Spell Card to restore lost Stamina to your Operator.",Complete MSQ009,Make a Scavenging roll in 3 rooms of the Normal type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
-MSQ011,11,In Game,Kamigotchi World and You: That Eerie Feeling,No,"A Kami or Room with the “Eerie” type comes into being when the natural state of things gets changed by something supernatural. Like when humans have a bad day from a horrible nightmare, or witness a miracle, or celebrate an old holiday!
+MSQ011,11,To Update,Kamigotchi World and You: That Eerie Feeling,No,"A Kami or Room with the “Eerie” type comes into being when the natural state of things gets changed by something supernatural. Like when humans have a bad day from a horrible nightmare, or witness a miracle, or celebrate an old holiday!
 
 To understand more about this, scavenge three items in rooms with the Eerie type.",Complete MSQ010,Make a Scavenging roll in 3 rooms of the Eerie type,4x Agency Reputation
-MSQ012,12,In Game,Kamigotchi World and You: Insects in the Miasma,No,"The Insect type might make your skin crawl. It’s not always about seeing the bugs, you know? An Insect-Type Room is the kind of place that makes you feel defiled. But not always because of actual filth, either. It’s more of a vibe. 
+MSQ012,12,To Update,Kamigotchi World and You: Insects in the Miasma,No,"The Insect type might make your skin crawl. It’s not always about seeing the bugs, you know? An Insect-Type Room is the kind of place that makes you feel defiled. But not always because of actual filth, either. It’s more of a vibe. 
 
 If you want to really feel what I mean, scavenge three items in rooms with the Insect type.",Complete MSQ011,Make a Scavenging roll in 3 rooms of the Insect type,4x Agency Reputation
-MSQ013,13,In Game,Kamigotchi World and You: Tossed in the Scrap Heap,No,"Like they say, one person’s trash is another person’s treasure! I shouldn’t call it trash, though. A Scrap Type isn’t defined as waste material that has been discarded, but as a small part of a greater whole.
+MSQ013,13,To Update,Kamigotchi World and You: Tossed in the Scrap Heap,No,"Like they say, one person’s trash is another person’s treasure! I shouldn’t call it trash, though. A Scrap Type isn’t defined as waste material that has been discarded, but as a small part of a greater whole.
 
 People have the power to make tangible change by expressing their will, creating attachments with desire, leaving behind memories, and more. The remnants of those material attachments can end up as Scrap.
 
 Scavenge three items in rooms with the Scrap type and see what you find.",Complete MSQ012,Make a Scavenging roll in 3 rooms of the Scrap type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
-MSQ014,14,In Game,Identifying Materials: Wood,No,"Everything in the Kamigotchi World has a story, even the rocks and trees. You might have picked up some Wooden Sticks while Harvesting. There are trees all over, that’s nothing special, right?
+MSQ014,14,To Update,Identifying Materials: Wood,No,"Everything in the Kamigotchi World has a story, even the rocks and trees. You might have picked up some Wooden Sticks while Harvesting. There are trees all over, that’s nothing special, right?
 
 Well, here’s a rumor: Those trees are all branches of one huge tree, connected by the roots! That’s why all the Wooden Sticks you’ll find are pretty much the same, no matter where you pick them up.
 
 I’d like to analyze the wood’s structure in detail. Collect 5 Wooden Sticks for me, and I’ll give you a reward. ",Complete MSQ013,Give 5 Wooden Sticks,4x Agency Reputation
-MSQ015,15,In Game,Identifying Materials: Stone,No,"Nothing more basic than a rock, right? Well, sometimes a rock isn’t just a rock. Sometimes it really “rocks”!
+MSQ015,15,To Update,Identifying Materials: Stone,No,"Nothing more basic than a rock, right? Well, sometimes a rock isn’t just a rock. Sometimes it really “rocks”!
 
 …I’m sorry. What I mean is: The structure of these rocks doesn’t always make geological sense. It’s natural for them to look a little different, because the Kamigotchi World doesn’t follow the same rules as the physical world. But some of these rocks look more like pieces of bone!
 
 I don’t know what it means, but I’d like to take a closer look. Collect 5 Rocks for me, and I’ll give you a reward. ",Complete MSQ014,Give 5 Stone,4x Agency Reputation
-MSQ016,16,In Game,Identifying Materials: Metal,No,"I need to expand my capabilities, so I’d like to build myself some new processors.
+MSQ016,16,To Update,Identifying Materials: Metal,No,"I need to expand my capabilities, so I’d like to build myself some new processors.
 
 The Scrap Metal you can find lying around might look like a bunch of tin cans, but don’t be fooled by appearances: Those cans can be made of all kinds of metal. Tin, steel, lithium, silicon, orichalcum. Could be anything.
 
 Get me 5 pieces of Scrap Metal please. Hopefully I luck out and get what I need!",Complete MSQ015,Give 5 Scrap Metal,4x Agency Reputation
-MSQ017,17,In Game,Exploring Other Options,No,"Thank you for the help with that upgrade. I’ve gotten access to more information. Checking databases against each other has led me to discover this world is bigger than it seems! I know we’ll get into the labs one day, but there are even more sealed-off places to find here. Once I know where they are, I can help open them up.
+MSQ017,17,To Update,Exploring Other Options,No,"Thank you for the help with that upgrade. I’ve gotten access to more information. Checking databases against each other has led me to discover this world is bigger than it seems! I know we’ll get into the labs one day, but there are even more sealed-off places to find here. Once I know where they are, I can help open them up.
 
 Please move around the world 100 times. I’ll collect data as you go. We’ll find these hidden paths together.",Complete MSQ016,Move 100 times,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
-MSQ018,18,In Game,Harvesting Data I,No,"I suspect something is buried behind all that scrap. Please hike to the deepest part of the scrapyard and dig through it for me. All that strange machinery piled up in the Scrap Confluence might be covering up something even more interesting.
+MSQ018,18,To Update,Harvesting Data I,No,"I suspect something is buried behind all that scrap. Please hike to the deepest part of the scrapyard and dig through it for me. All that strange machinery piled up in the Scrap Confluence might be covering up something even more interesting.
 
 Harvest for at least 12 hours in the Scrap Confluence so I can run an extended analysis. If we find anything interesting, I’ll let you know through a future quest.",Complete MSQ017,Harvest for >720 minutes in Scrap Confluence,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card"
-MSQ019,19,In Game,Harvesting Data II,No,"Those labs should be open by now. I’m starting to believe a malicious actor is blocking our access! Get over there and plug into the Node so I can run some tests.
+MSQ019,19,To Update,Harvesting Data II,No,"Those labs should be open by now. I’m starting to believe a malicious actor is blocking our access! Get over there and plug into the Node so I can run some tests.
 
 Harvest for at least 12 hours at the Labs Entrance while I put my mind to this. Even if we can’t brute force the doors open right away, I’m sure we can find out where the event flag is hiding. If not… We need another plan. ",Complete MSQ018,Harvest for >720 minutes at Labs Entrance,"4x Agency Reputation,2x “Paeon’s Field of Flowers” Spell Card"
-MSQ020,20,In Game,Harvesting Data III,No,"It took a lot of work, but I finally found something! It looks like the Labs Entrance has an event flag hidden somewhere past the Temple by the Waterfall. How are we going to access it to open those doors? I don’t know yet. 
+MSQ020,20,To Update,Harvesting Data III,No,"It took a lot of work, but I finally found something! It looks like the Labs Entrance has an event flag hidden somewhere past the Temple by the Waterfall. How are we going to access it to open those doors? I don’t know yet. 
 
 Go the nearest Node by the temple on the Hollow Path and Harvest for at least 12 hours. I’ll run my tests from there. We’ll find some answers soon. ","Complete MSQ019,Complete SQ007",Harvest for >720 minutes at the Hollow Path,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card,1x “Melkarth’s Heroic Awakening” Spell Card"
-MIN001,2001,In Game,Grand Opening,No,"Hello, whoever you are. Is this how you receive your letters? Functional, though inelegant.
+MIN001,2001,To Update,Grand Opening,No,"Hello, whoever you are. Is this how you receive your letters? Functional, though inelegant.
 
 Are you hungry? Tired? $MUSU burning a hole in your pocket? Bring your wallet to the Tunnel of Trees and knock on the blue door. I sell treats for you and your Kami. If you need Stamina to keep moving, if your pets have gotten low on Health, or even if the poor things have fallen apart and need a Revive, my shop is open.
 
 — Mina",Complete MSQ007,Enter Mina's Shop,2x Elders Loyalty
-MIN002,2002,In Game,Customer Loyalty Program,No,"I want you to be a repeat customer. If you trade enough $MUSU with me, I’ll give you something special. I don’t care how you get it. Bring me more and I’ll be happy.
+MIN002,2002,To Update,Customer Loyalty Program,No,"I want you to be a repeat customer. If you trade enough $MUSU with me, I’ll give you something special. I don’t care how you get it. Bring me more and I’ll be happy.
 
 — Mina",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ""Neith’s River of Life"" Spell Card"
-MIN003,2003,In Game,Early Market Research - I,No,"Relics and mementos from the past are brought into this world with $MUSU. People grow attached to many things; the first coin they earned, a trowel used to plant food that fed their family, a transforming robot toy that made other children jealous. Those feelings linger.
+MIN003,2003,To Update,Early Market Research - I,No,"Relics and mementos from the past are brought into this world with $MUSU. People grow attached to many things; the first coin they earned, a trowel used to plant food that fed their family, a transforming robot toy that made other children jealous. Those feelings linger.
 
  Get me five pieces of Scrap Metal. I want to perform psychometry.
 
 — Mina",Complete MIN002,Give 5 Scrap Metal,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
-MIN004,2004,In Game,Early Market Research - II,No,"Deep in the forest, there is a mound built over some ancient, stagnant defilement. The crawling insects thrive and grow more violent in filthy places like that. Whatever happened in the past to corrupt that place, those feelings linger.
+MIN004,2004,To Update,Early Market Research - II,No,"Deep in the forest, there is a mound built over some ancient, stagnant defilement. The crawling insects thrive and grow more violent in filthy places like that. Whatever happened in the past to corrupt that place, those feelings linger.
 
 Go harvest at the Insect Node until you get a feel for it.
 
 — Mina",Complete MIN003,Harvest for >720 minutes in Forest: Insect Node,"2x Elders Loyalty,2 “Cultivation I” Spell Card"
-MIN005,2005,In Game,Early Market Research - III,No,"The graves across this landscape are quite old and buried under heaps of garbage, yet their $MUSU has no scent of defilement. A strange phenomenon. Are they buried saints? Were they interred as some kind of builder’s rite for a stronger spiritual foundation? I suppose this is a mystery for later.
+MIN005,2005,To Update,Early Market Research - III,No,"The graves across this landscape are quite old and buried under heaps of garbage, yet their $MUSU has no scent of defilement. A strange phenomenon. Are they buried saints? Were they interred as some kind of builder’s rite for a stronger spiritual foundation? I suppose this is a mystery for later.
 
 Go get a sense of what I mean. Harvest at the graves until you understand.
 
 — Mina",Complete MIN004,Harvest for >720 minutes on Trash-Strewn Graves,"4x Elders Loyalty,2x “Neith’s River of Life” Spell Card"
-MIN006,2006,In Game,Community Outreach,No,"With all this garbage everywhere, I expected to see more humans. One was laying by the edge of the forest earlier, you know. It looked young, at least compared to the dusty old bodies in the local graves.
+MIN006,2006,To Update,Community Outreach,No,"With all this garbage everywhere, I expected to see more humans. One was laying by the edge of the forest earlier, you know. It looked young, at least compared to the dusty old bodies in the local graves.
 
 Go harvest $MUSU from its location. Maybe it will start to feel chatty.
 
 — Mina",Complete MIN005,Harvest for >720 minutes at the Lost Skeleton During Moonside,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
-MIN007,2007,In Game,Restocking,No,"I've had so many new customers these days. Help me restock my spiritual goods. The flowers of death can be made into delicious treats for Kami and other beings. Collect a few and give them to me. 
+MIN007,2007,To Update,Restocking,No,"I've had so many new customers these days. Help me restock my spiritual goods. The flowers of death can be made into delicious treats for Kami and other beings. Collect a few and give them to me. 
 
 Raw materials can be broken down into ingredients for hexerei. One can craft potions, poultices, and other things if one knows the methods. I’m selling something in my shop to help you along with this: a device to break down ingredients for yourself. I won’t be doing it for you again.
 
 — Mina",Complete MIN006,"Give 5 Plastic Bottle,Give 5 Pine Cone","2x Elders Loyalty,2x “Cultivation III” Spell Card"
-SQ001,3001,In Game,Rejecting Fate,No,"All Kamigotchi can succeed, from the Commons to the Epics. When raising a Kami, take advantage of their strengths. Build on the foundation of their initial stats. Choose skills that boost what your Kami is already best at before shoring up weaknesses.
+SQ001,3001,To Update,Rejecting Fate,No,"All Kamigotchi can succeed, from the Commons to the Epics. When raising a Kami, take advantage of their strengths. Build on the foundation of their initial stats. Choose skills that boost what your Kami is already best at before shoring up weaknesses.
 
 If you would prefer to raise a different Kami entirely, the option is available. It might be the case that you love robots and want a team of Scrap Kami. Maybe you’re a dark, edgy person, so you want Kami that are inclined to maximum violence. It could even be that you’re searching for one of the rumored Legendary Kami.
 
 If you have $ONYX, you can use the Vending Machine in the scrapyard to Reroll a Kamigotchi. After you purchase a Reroll Ticket, you can use it to return one Kami to the pool. In exchange, a new Kami will emerge to join you. ",Complete MSQ003,Reroll one Kamigotchi,2x Agency Reputation
-SQ002,3002,In Game,Health & Safety,No,"While Kami don’t see Harvesting as labor, they still get tired and lose Health. Kamigotchi hold their bodies together with spiritual energy. As they expend energy, it gets harder to maintain their form. Low Health doesn’t mean a Kami is physically hurt, but it’s still a problem you should take care of.
+SQ002,3002,To Update,Health & Safety,No,"While Kami don’t see Harvesting as labor, they still get tired and lose Health. Kamigotchi hold their bodies together with spiritual energy. As they expend energy, it gets harder to maintain their form. Low Health doesn’t mean a Kami is physically hurt, but it’s still a problem you should take care of.
 
 When your Kami gets low on Health, return to the room where you left it, then use the Harvesting Menu to pick it up. A Kami will slowly regenerate Health on its own while being held. If you can’t wait, give your Kami a snack or use a Spell Card to restore health. Kamigotchi don’t need food to live, but they can draw energy from food to bolster their spirit.
 
 Use an item to heal a Kami and complete this quest. If you already used the Spell Card that I gave you, go buy some food or dig up a Cheeseburger. ",Complete MSQ004,Use an item to heal a Kamigotchi that has been reduced below 100% Health,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
-SQ003,3003,In Game,There Are Levels to This,No,"Unlike humans, Kamigotchi have the potential to grow and change by using xenoplasticity, or “XP” for short. This means that they can assimilate many different things to form a new cohesive whole.
+SQ003,3003,To Update,There Are Levels to This,No,"Unlike humans, Kamigotchi have the potential to grow and change by using xenoplasticity, or “XP” for short. This means that they can assimilate many different things to form a new cohesive whole.
 
 Take a look at your roster. You can see a green progress bar with a percentage indicator beneath the portrait of each Kami. When one is ready to move to the next level, the bar will be full and read 100%. Just level up a Kami and you’ll be done. Take note of your new skill point and hold onto it for the next quest.
 
 When you complete this, I’ll give you a small reward to help encourage the process.",Complete MSQ005,Level up a Kami,"2x Agency Reputation,1x “Cultivation I” Spell Card"
-SQ004,3004,In Game,Skill Issue,No,"When you spend Skill Points to tell Kami what to focus on, you shape their personalities and temperaments. Think hard before you make a choice! You’ll only be able to respec with specific items that are difficult to acquire. This is a commitment.
+SQ004,3004,To Update,Skill Issue,No,"When you spend Skill Points to tell Kami what to focus on, you shape their personalities and temperaments. Think hard before you make a choice! You’ll only be able to respec with specific items that are difficult to acquire. This is a commitment.
 
 Click on a Kami that leveled up and gained a skill point recently and look over the skill tree. Remember, you can’t go wrong by improving what your Kami is already good at. Take your time, but don’t forget to pick something. ",Complete SQ003,Spend a point in any Skill Tree after levelling up,2x Agency Reputation
-SQ005,3005,In Game,Spring Rites,No,"I see one of your Kami got Liquidated. That sucks! Of course, that’s just a temporary condition. Usually in this world it’s possible to return to form no matter what happens. The essence of something remains unless it’s been totally erased from existence.
+SQ005,3005,To Update,Spring Rites,No,"I see one of your Kami got Liquidated. That sucks! Of course, that’s just a temporary condition. Usually in this world it’s possible to return to form no matter what happens. The essence of something remains unless it’s been totally erased from existence.
 
 Take this and use it on a Kami that has been Liquidated. Just read the incantation printed on the front, and presto! This powerful spell card brings your Kami back to action. 
 
 It’s the only freebie I’m allowed to give you. You’ll have to work for more spell cards like this one. Certain shopkeepers might sell different kinds of revival magic, but these cards are premium SSR.",Have one of your own Kami liquidated,,"2x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
-SQ006,3006,In Game,What’s In a Name?,No,"Southeast through the old forest you can find a small shrine by a mountain waterfall. That area was cultivated for spiritual power. With the rare Holy Dust item, you can perform a ritual there to grant your Kami a name.
+SQ006,3006,To Update,What’s In a Name?,No,"Southeast through the old forest you can find a small shrine by a mountain waterfall. That area was cultivated for spiritual power. With the rare Holy Dust item, you can perform a ritual there to grant your Kami a name.
 
 If you don’t have Holy Dust, a small donation of $ONYX to the shrine will suffice!",Complete MSQ008,Name a Kami,2x Agency Reputation
-SQ007,3007,In Game,Land Survey,No,"Your march helped find an interesting anomaly, but I’m positive something else is hidden around here. I’ve checked and re-checked more times than you’d care to hear about. Something still doesn’t line up! It’s going to take a lot of legwork to figure this one out.
+SQ007,3007,To Update,Land Survey,No,"Your march helped find an interesting anomaly, but I’m positive something else is hidden around here. I’ve checked and re-checked more times than you’d care to hear about. Something still doesn’t line up! It’s going to take a lot of legwork to figure this one out.
 
 Move 500 times. I’ll be going over everything again with a fine-tooth comb. We’re bound to find something by the end.",Complete MSQ017,Move 500 times,"2x Agency Reputation,2x “Neith’s River of Life” Spell Card"
-SQ008,3008,In Game,Peregrination,No,"They say measure twice, cut once, but that still means taking a risk. Best to measure a thousand times for the most accurate data. Sometimes the numbers might have changed.
+SQ008,3008,To Update,Peregrination,No,"They say measure twice, cut once, but that still means taking a risk. Best to measure a thousand times for the most accurate data. Sometimes the numbers might have changed.
 
 Even if you’ve already found something interesting, please move 1000 times more. Cover every inch of this world. I’ll scan as you go. We need to be sure.",Complete SQ007,Move 1000 times,"4x Agency Reputation,3x “Neith’s River of Life” Spell Card"
 TempQ01,10001,Defunct,mina test drop,No,,Missed Mina,,"25 Gum,10 Revives"

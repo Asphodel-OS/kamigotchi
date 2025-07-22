@@ -131,7 +131,7 @@ contract ScavengeTest is SetupTemplate {
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
     uint256 anchorID = LibScavenge.genAlloAnchor(scavBarID);
-    id = LibAllo.createBasic(components, anchorID, type_, rwdIndex, value);
+    id = LibAllo.createBasic(components, scavBarID, anchorID, type_, rwdIndex, value);
     vm.stopPrank();
   }
 
@@ -143,7 +143,7 @@ contract ScavengeTest is SetupTemplate {
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
     uint256 anchorID = LibScavenge.genAlloAnchor(scavBarID);
-    id = LibAllo.createDT(components, anchorID, keys, weights, value);
+    id = LibAllo.createDT(components, scavBarID, anchorID, keys, weights, value);
     vm.stopPrank();
   }
 

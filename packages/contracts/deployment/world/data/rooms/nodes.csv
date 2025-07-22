@@ -1,36 +1,35 @@
-﻿.,Name,Index,Affinity,Level Limit,YieldIndex,Scav Cost,Drops
-,Misty Riverside,1,Eerie,15,1,100,Stones & Bottle
-,Tunnel of Trees,2,Normal,15,1,100,Sticks & Stones
-,Torii Gate,3,Normal,15,1,100,Stick Stone Rename
-,Restricted Area,5,Normal,,1,100,Sticks & Stones
-,Labs Entrance,6,Eerie,,1,100,Stone Only
-,Forest: Old Growth,9,Insect,,1,200,Stick Cone Poppy
-,Forest: Insect Node,10,Insect,,1,200,Stick Cone Rename
-,Scrap Confluence,12,Scrap,,1,500,Scrap Burger Rename Driver
-,Lost Skeleton,25,Eerie,,1,200,Stick Cone Berry
-,Trash-Strewn Graves,26,Eerie,,1,100,Stone Bottle Burger
-,Misty Forest Path,29,Insect,15,1,100,Stick Stone Resin
-,Scrapyard Entrance,30,Scrap,15,1,100,Stone Scrap Burger
-,Scrapyard Exit,31,Scrap,,1,100,Stone Scrap Burger
-,Road To Labs,32,Normal,,1,100,Sticks & Stones
-,Forest Entrance,33,Normal,,1,200,Sticks & Cones
-,Deeper Into Scrap,34,Scrap,,1,300,Scrap Burger
-,Elder Path,35,Normal,,1,200,Stick Cone Poppy
-,Parting Path,36,Insect,,1,200,Stick Resin Poppy
-,Hollow Path,37,Normal,,1,200,Sticks & Cones
-,Scrap Paths,47,Scrap,,1,100,Stone Scrap Burger
-,Murky Forest Path,48,Insect,,1,200,Stick Resin Poppy
-,Clearing,49,Normal,,1,300,Stick Stone Mint
-,Ancient Forest Entrance,50,Insect,,1,200,Stone Shroom
-,Scrap-Littered Undergrowth,51,Insect,,1,300,"Bottle Scrap Resin "
-,Airplane Crash,52,Eerie,,1,300,Bottle Scrap Jar
-,Blooming Tree,53,Eerie,,1,300,Stick Cone Amber
-,Shady Path,55,Normal,,1,200,Stick Stone Daffodil
-,Butterfly Forest,56,Insect,,1,200,Stick Stone Resin
-,River Crossing,57,Normal,,1,200,Stick Stone Cone
-,Scrap Trees,60,Scrap,,2,500,Scrap Daffodil Driver
-,Musty Forest Path,61,Normal,,2,200,Stick Cone Rename
-,Centipedes,62,Insect,,2,300,Stone Resin Mint
-,Deeper Forest Path,63,Normal,,2,300,Stone Daffodil Pinecone Poppy
-,Forest Hut,65,Eerie,,2,200,Bottle Stick Burger
-,,,,,,,
+﻿.,Status,Name,Index,Affinity,Level Limit,YieldIndex,Scav Cost,Drops
+,To Update,Misty Riverside,1,Eerie,15,1,100,Stones & Bottle
+,To Update,Tunnel of Trees,2,Normal,15,1,100,Sticks & Stones
+,To Update,Torii Gate,3,Normal,15,1,100,Stick Stone Rename
+,To Update,Restricted Area,5,Normal,,1,100,Sticks & Stones
+,To Update,Labs Entrance,6,Eerie,,1,100,Stone Only
+,To Update,Forest: Old Growth,9,Insect,,1,200,Stick Cone Poppy
+,To Update,Forest: Insect Node,10,Insect,,1,200,Stick Cone Rename
+,To Update,Scrap Confluence,12,Scrap,,1,500,Scrap Burger Rename Driver
+,To Update,Lost Skeleton,25,Eerie,,1,200,Stick Cone Berry
+,To Update,Trash-Strewn Graves,26,Eerie,,1,100,Stone Bottle Burger
+,To Update,Misty Forest Path,29,Insect,15,1,100,Stick Stone Resin
+,To Update,Scrapyard Entrance,30,Scrap,15,1,100,Stone Scrap Burger
+,To Update,Scrapyard Exit,31,Scrap,,1,100,Stone Scrap Burger
+,To Update,Road To Labs,32,Normal,,1,100,Sticks & Stones
+,To Update,Forest Entrance,33,Normal,,1,200,Sticks & Cones
+,To Update,Deeper Into Scrap,34,Scrap,,1,300,Scrap Burger
+,To Update,Elder Path,35,Normal,,1,200,Stick Cone Poppy
+,To Update,Parting Path,36,Insect,,1,200,Stick Resin Poppy
+,To Update,Hollow Path,37,Normal,,1,200,Sticks & Cones
+,To Update,Scrap Paths,47,Scrap,,1,100,Stone Scrap Burger
+,To Update,Murky Forest Path,48,Insect,,1,200,Stick Resin Poppy
+,To Update,Clearing,49,Normal,,1,300,Stick Stone Mint
+,To Update,Ancient Forest Entrance,50,Insect,,1,200,Stone Shroom
+,To Update,Scrap-Littered Undergrowth,51,Insect,,1,300,"Bottle Scrap Resin "
+,To Update,Airplane Crash,52,Eerie,,1,300,Bottle Scrap Jar
+,To Update,Blooming Tree,53,Eerie,,1,300,Stick Cone Amber
+,To Update,Shady Path,55,Normal,,1,200,Stick Stone Daffodil
+,To Update,Butterfly Forest,56,Insect,,1,200,Stick Stone Resin
+,To Update,River Crossing,57,Normal,,1,200,Stick Stone Cone
+,To Update,Scrap Trees,60,Scrap,,2,500,Scrap Daffodil Driver
+,To Update,Musty Forest Path,61,Normal,,2,200,Stick Cone Rename
+,To Update,Centipedes,62,Insect,,2,300,Stone Resin Mint
+,To Update,Deeper Forest Path,63,Normal,,2,300,Stone Daffodil Pinecone Poppy
+,To Update,Forest Hut,65,Eerie,,2,200,Bottle Stick Burger

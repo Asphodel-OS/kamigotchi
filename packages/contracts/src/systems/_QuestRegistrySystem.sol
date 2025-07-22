@@ -94,7 +94,7 @@ contract _QuestRegistrySystem is System, AuthRoles {
 
     // create an empty Quest Reward and set any non-zero fields
     uint256 anchorID = LibQuestRegistry.genAlloAnchor(questIndex);
-    return LibAllo.createBasic(components, anchorID, type_, index, value);
+    return LibAllo.createBasic(components, questID, anchorID, type_, index, value);
   }
 
   function addRewardDT(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
@@ -109,7 +109,7 @@ contract _QuestRegistrySystem is System, AuthRoles {
 
     // create an empty Quest Reward and set any non-zero fields
     uint256 anchorID = LibQuestRegistry.genAlloAnchor(questIndex);
-    return LibAllo.createDT(components, anchorID, keys, weights, value);
+    return LibAllo.createDT(components, questID, anchorID, keys, weights, value);
   }
 
   function addRewardStat(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
@@ -128,7 +128,7 @@ contract _QuestRegistrySystem is System, AuthRoles {
 
     // create an empty Quest Reward and set any non-zero fields
     uint256 anchorID = LibQuestRegistry.genAlloAnchor(questIndex);
-    return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
+    return LibAllo.createStat(components, questID, anchorID, statType, base, shift, boost, sync);
   }
 
   function setDisabled(uint32 index, bool disabled) public onlyAdmin(components) {

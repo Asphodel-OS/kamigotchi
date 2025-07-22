@@ -84,11 +84,12 @@ contract _ItemRegistrySystem is System, AuthRoles {
       uint32 alloIndex,
       uint256 alloValue
     ) = abi.decode(arguments, (uint32, string, string, uint32, uint256));
-    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+    uint256 regID = LibItem.getByIndex(components, index);
+    require(regID != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
     uint256 anchorID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createBasic(components, anchorID, alloType, alloIndex, alloValue);
+    return LibAllo.createBasic(components, regID, anchorID, alloType, alloIndex, alloValue);
   }
 
   function addAlloBonus(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
@@ -100,11 +101,13 @@ contract _ItemRegistrySystem is System, AuthRoles {
       uint256 duration,
       int256 bonusValue
     ) = abi.decode(arguments, (uint32, string, string, string, uint256, int256));
-    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+    uint256 regID = LibItem.getByIndex(components, index);
+    require(regID != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
     uint256 anchorID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createBonus(components, anchorID, bonusType, endType, duration, bonusValue);
+    return
+      LibAllo.createBonus(components, regID, anchorID, bonusType, endType, duration, bonusValue);
   }
 
   function addAlloDT(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
@@ -115,11 +118,12 @@ contract _ItemRegistrySystem is System, AuthRoles {
       uint256[] memory weights,
       uint256 value
     ) = abi.decode(arguments, (uint32, string, uint32[], uint256[], uint256));
-    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+    uint256 regID = LibItem.getByIndex(components, index);
+    require(regID != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
     uint256 anchorID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createDT(components, anchorID, keys, weights, value);
+    return LibAllo.createDT(components, regID, anchorID, keys, weights, value);
   }
 
   function addAlloStat(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
@@ -132,11 +136,12 @@ contract _ItemRegistrySystem is System, AuthRoles {
       int32 boost,
       int32 sync
     ) = abi.decode(arguments, (uint32, string, string, int32, int32, int32, int32));
-    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+    uint256 regID = LibItem.getByIndex(components, index);
+    require(regID != 0, "ItemReg: item does not exist");
 
     uint256 refID = LibItem.createUseCase(components, index, useCase);
     uint256 anchorID = LibItem.genAlloAnchor(refID);
-    return LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
+    return LibAllo.createStat(components, regID, anchorID, statType, base, shift, boost, sync);
   }
 
   function remove(uint32 index) public onlyAdmin(components) {

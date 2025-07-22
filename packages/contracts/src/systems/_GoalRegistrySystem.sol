@@ -79,11 +79,12 @@ contract _GoalRegistrySystem is System, AuthRoles {
       uint256 value
     ) = abi.decode(arguments, (uint32, string, uint256, string, uint32, uint256));
 
-    require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+    uint256 goalID = LibGoal.getByIndex(components, goalIndex);
+    require(goalID != 0, "Goal does not exist");
 
     uint256 tierID = LibGoal.createTier(components, goalIndex, name, cutoff);
     uint256 anchorID = LibGoal.genAlloAnchor(tierID);
-    uint256 id = LibAllo.createBasic(components, anchorID, type_, index, value);
+    uint256 id = LibAllo.createBasic(components, goalID, anchorID, type_, index, value);
     return id;
   }
 
@@ -97,11 +98,12 @@ contract _GoalRegistrySystem is System, AuthRoles {
       uint256 value
     ) = abi.decode(arguments, (uint32, string, uint256, uint32[], uint256[], uint256));
 
-    require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+    uint256 goalID = LibGoal.getByIndex(components, goalIndex);
+    require(goalID != 0, "Goal does not exist");
 
     uint256 tierID = LibGoal.createTier(components, goalIndex, name, cutoff);
     uint256 anchorID = LibGoal.genAlloAnchor(tierID);
-    uint256 id = LibAllo.createDT(components, anchorID, keys, weights, value);
+    uint256 id = LibAllo.createDT(components, goalID, anchorID, keys, weights, value);
     return id;
   }
 
@@ -117,22 +119,33 @@ contract _GoalRegistrySystem is System, AuthRoles {
       int32 sync
     ) = abi.decode(arguments, (uint32, string, uint256, string, int32, int32, int32, int32));
 
-    require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+    uint256 goalID = LibGoal.getByIndex(components, goalIndex);
+    require(goalID != 0, "Goal does not exist");
 
     uint256 tierID = LibGoal.createTier(components, goalIndex, name, cutoff);
     uint256 anchorID = LibGoal.genAlloAnchor(tierID);
-    uint256 id = LibAllo.createStat(components, anchorID, statType, base, shift, boost, sync);
+    uint256 id = LibAllo.createStat(
+      components,
+      goalID,
+      anchorID,
+      statType,
+      base,
+      shift,
+      boost,
+      sync
+    );
     return id;
   }
 
   function addRewardDisplay(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (uint32 goalIndex, string memory name) = abi.decode(arguments, (uint32, string));
 
-    require(LibGoal.getByIndex(components, goalIndex) != 0, "Goal does not exist");
+    uint256 goalID = LibGoal.getByIndex(components, goalIndex);
+    require(goalID != 0, "Goal does not exist");
 
     uint256 tierID = LibGoal.createTier(components, goalIndex, name, 0);
     uint256 anchorID = LibGoal.genAlloAnchor(tierID);
-    uint256 id = LibAllo.createEmpty(components, anchorID, "Community");
+    uint256 id = LibAllo.createEmpty(components, goalID, anchorID, "Community");
     return id;
   }
 

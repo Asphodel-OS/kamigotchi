@@ -95,7 +95,7 @@ contract _NodeRegistrySystem is System, AuthRoles {
     require(scavID != 0, "Node: scav bar does not exist");
 
     uint256 anchorID = LibScavenge.genAlloAnchor(scavID);
-    return LibAllo.createBasic(components, anchorID, rwdType, rwdIndex, value);
+    return LibAllo.createBasic(components, scavID, anchorID, rwdType, rwdIndex, value);
   }
 
   function addScavRewardDT(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
@@ -109,7 +109,7 @@ contract _NodeRegistrySystem is System, AuthRoles {
     require(scavID != 0, "Node: scav bar does not exist");
 
     uint256 anchorID = LibScavenge.genAlloAnchor(scavID);
-    return LibAllo.createDT(components, anchorID, keys, weights, value);
+    return LibAllo.createDT(components, scavID, anchorID, keys, weights, value);
   }
 
   // // NOTE(jb): unused atm. commented out to meet gas limits on the freelane

@@ -297,6 +297,7 @@ contract AlloTest is SetupTemplate {
   // UTILS
 
   // basic reward
+  // skips sourceID (not really relevant for contracts)
   function _createAllo(
     uint256 anchorID,
     string memory type_,
@@ -304,11 +305,12 @@ contract AlloTest is SetupTemplate {
     uint256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibAllo.createBasic(components, anchorID, type_, index, value);
+    id = LibAllo.createBasic(components, 0, anchorID, type_, index, value);
     vm.stopPrank();
   }
 
   // droptable reward
+  // skips sourceID (not really relevant for contracts)
   function _createAllo(
     uint256 anchorID,
     uint32[] memory keys,
@@ -316,10 +318,11 @@ contract AlloTest is SetupTemplate {
     uint256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibAllo.createDT(components, anchorID, keys, weights, value);
+    id = LibAllo.createDT(components, 0, anchorID, keys, weights, value);
     vm.stopPrank();
   }
 
+  // skips sourceID (not really relevant for contracts)
   function _createAlloStat(
     uint256 anchorID,
     string memory statType,
@@ -328,6 +331,7 @@ contract AlloTest is SetupTemplate {
     vm.startPrank(deployer);
     id = LibAllo.createStat(
       components,
+      0,
       anchorID,
       statType,
       value.base,
@@ -338,6 +342,7 @@ contract AlloTest is SetupTemplate {
     vm.stopPrank();
   }
 
+  // skips sourceID (not really relevant for contracts)
   function _createAlloBonus(
     uint256 anchorID,
     string memory bonusType,
@@ -346,7 +351,7 @@ contract AlloTest is SetupTemplate {
     int256 value
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibAllo.createBonus(components, anchorID, bonusType, endType, duration, value);
+    id = LibAllo.createBonus(components, 0, anchorID, bonusType, endType, duration, value);
     vm.stopPrank();
   }
 
