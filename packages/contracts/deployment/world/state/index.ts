@@ -26,7 +26,7 @@ export async function initAll(api: AdminAPI) {
   console.log('\n---------------------------------------------\n');
   await initFactions(api);
   console.log('\n---------------------------------------------\n');
-  await initItems(api, [], true);
+  await initItems(api, undefined, true);
   console.log('\n---------------------------------------------\n');
   await initNpcs(api);
   console.log('\n---------------------------------------------\n');
@@ -42,13 +42,13 @@ export async function initAll(api: AdminAPI) {
   console.log('\n---------------------------------------------\n');
   await initListings(api, undefined, true);
   console.log('\n---------------------------------------------\n');
-  await initNodes(api);
+  await initNodes(api, undefined, true);
   console.log('\n---------------------------------------------\n');
   await initGoals(api);
   console.log('\n---------------------------------------------\n');
   await initQuests(api, undefined, true);
   console.log('\n---------------------------------------------\n');
-  await initRecipes(api, [], true);
+  await initRecipes(api, undefined, true);
   console.log('\n---------------------------------------------\n');
   await initRelationships(api);
   console.log('\n---------------------------------------------\n');

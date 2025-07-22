@@ -22,19 +22,24 @@ async function initNode(api: AdminAPI, entry: any) {
 // SCRIPTS
 
 // TODO: properly gate this based on status and room existence
-export async function initNodes(api: AdminAPI, indices?: number[]) {
+export async function initNodes(api: AdminAPI, indices?: number[], all?: boolean) {
   const nodesCSV = await getSheet('rooms', 'nodes');
   if (!nodesCSV) return console.log('No rooms/nodes.csv found');
+  if (indices && indices.length == 0) return console.log('No nodes given to initialize');
   console.log('\n==INITIALIZING NODES==');
+
+  const validStatuses = ['To Deploy'];
+  if (all || indices !== undefined) validStatuses.push('Ready', 'In Game', 'To Update');
 
   for (let i = 0; i < nodesCSV.length; i++) {
     const entry = nodesCSV[i];
     const index = Number(entry['Index']);
+    const status = entry['Status'];
 
-    // if indices are overriden, skip if index isn't included
+    // if indices are overridden skip any not included, otherwise check status
     if (indices && indices.length > 0) {
       if (!indices.includes(index)) continue;
-    }
+    } else if (!validStatuses.includes(status)) continue;
 
     try {
       await initNode(api, entry);
@@ -55,17 +60,13 @@ export async function deleteNodes(api: AdminAPI, overrideIndices?: number[]) {
   if (overrideIndices) indices = overrideIndices;
   else {
     for (let i = 0; i < nodesCSV.length; i++) {
-      if (
-        toDelete(nodesCSV[i]) &&
-        nodesCSV[i]['Enabled'] === 'true' &&
-        nodesCSV[i]['Node'] !== 'NONE'
-      )
-        indices.push(Number(nodesCSV[i]['Index']));
+      if (toDelete(nodesCSV[i])) indices.push(Number(nodesCSV[i]['Index']));
     }
   }
 
   for (let i = 0; i < indices.length; i++) {
     try {
+      console.log(`Deleting node ${indices[i]}`);
       await api.node.delete(indices[i]);
     } catch {
       console.error('Could not delete node ' + indices[i]);
@@ -73,7 +74,6 @@ export async function deleteNodes(api: AdminAPI, overrideIndices?: number[]) {
   }
 }
 
-// NOTE: should always use override indices for the time being
 export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
   const nodesCSV = await getSheet('rooms', 'nodes');
   if (!nodesCSV) return console.log('No rooms/nodes.csv found');
@@ -82,12 +82,7 @@ export async function reviseNodes(api: AdminAPI, overrideIndices?: number[]) {
   if (overrideIndices) indices = overrideIndices;
   else {
     for (let i = 0; i < nodesCSV.length; i++) {
-      if (
-        toRevise(nodesCSV[i]) &&
-        nodesCSV[i]['Enabled'] === 'true' &&
-        nodesCSV[i]['Node'] !== 'NONE'
-      )
-        indices.push(Number(nodesCSV[i]['Index']));
+      if (toRevise(nodesCSV[i])) indices.push(Number(nodesCSV[i]['Index']));
     }
   }
 

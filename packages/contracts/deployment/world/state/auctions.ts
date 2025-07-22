@@ -28,6 +28,7 @@ export async function createAuction(api: AdminAPI, row: any) {
 export async function initAuctions(api: AdminAPI, indices?: number[]) {
   const csv = await getSheet('auctions', 'auctions');
   if (!csv) return console.log('No auctions/auctions.csv found');
+  if (indices && indices.length == 0) return console.log('No auctions given to initialize');
   console.log('\n==INITIALIZING AUCTIONS==');
 
   for (let i = 0; i < csv.length; i++) {

@@ -26,6 +26,7 @@ async function initFaction(api: AdminAPI, entry: any) {
 export async function initFactions(api: AdminAPI, indices?: number[]) {
   const csv = await getSheet('factions', 'factions');
   if (!csv) return console.log('No factions/factions.csv found');
+  if (indices && indices.length == 0) return console.log('No factions given to initialize');
   console.log('\n==INITIALIZING FACTIONS==');
 
   // process factions

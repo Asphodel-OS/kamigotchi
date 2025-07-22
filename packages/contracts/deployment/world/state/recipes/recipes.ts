@@ -47,12 +47,13 @@ export async function initRecipe(api: AdminAPI, entry: any) {
 export async function initRecipes(api: AdminAPI, indices?: number[], all?: boolean) {
   const csv = await getSheet('crafting', 'recipes');
   if (!csv) return console.log('No crafting/recipes.csv found');
+  if (indices && indices.length == 0) return console.log('No recipes given to initialize');
   console.log('\n==INITIALIZING RECIPES==');
 
   // TODO: support test world status
   const validStatuses = ['To Deploy'];
   if (process.env.NODE_ENV !== 'production') validStatuses.push('Test');
-  if (all || indices !== undefined) validStatuses.push('In Game');
+  if (all || indices !== undefined) validStatuses.push('In Game', 'To Update');
 
   // process recipes
   for (let i = 0; i < csv.length; i++) {

@@ -39,13 +39,13 @@ export const toCreate = (entry: any): boolean => {
 
 export const toDelete = (entry: any): boolean => {
   const status = entry['Status'];
-  return status === 'Revise Deployment' || status === 'In Game';
+  return status === 'To Remove';
 };
 
 /// @dev check if entry should be revised. assume all entries that are valid should be revised
 export const toRevise = (entry: any): boolean => {
   const status = entry['Status'];
-  return status === 'Revise Deployment' || status === 'Ingame' || status === 'For Implementation';
+  return status === 'Revise Deployment' || status === 'To Update';
 };
 
 export const getCreationStatuses = (env: string): string[] => {

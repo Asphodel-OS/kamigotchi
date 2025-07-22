@@ -34,6 +34,7 @@ export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => 
 export async function initQuests(api: AdminAPI, indices?: number[], all?: boolean) {
   const csv = await getSheet('quests', 'quests');
   if (!csv) return console.log('No quests/quests.csv found');
+  if (indices && indices.length == 0) return console.log('No quests given to initialize');
   console.log('\n==INITIALIZING QUESTS==');
 
   // TODO: support test environment statuses
@@ -49,7 +50,7 @@ export async function initQuests(api: AdminAPI, indices?: number[], all?: boolea
     const status = row['Status'];
 
     // skip if quest isnt included in overridden indices
-    // if indices arent overriden, skip if status isnt valid
+    // if indices arent overridden, skip if status isnt valid
     if (indices && indices.length > 0) {
       if (!indices.includes(index)) continue;
     } else if (!validStatuses.includes(status)) continue;

@@ -5,6 +5,9 @@ import { readFile, toDelete, toRevise } from './utils';
 export async function initSkills(api: AdminAPI, indices?: number[]) {
   const skillsCSV = await readFile('skills/skills.csv');
   const effectsCSV = await readFile('skills/effects.csv');
+  if (indices && indices.length == 0) return console.log('No skills given to initialize');
+  console.log('\n==INITIALIZING SKILLS==');
+
   for (let i = 0; i < skillsCSV.length; i++) {
     const skill = skillsCSV[i];
     const index = Number(skill['Index']);

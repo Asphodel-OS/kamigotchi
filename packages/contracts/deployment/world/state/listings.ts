@@ -10,6 +10,7 @@ export async function initListings(api: AdminAPI, indices?: number[], all?: bool
   if (!pricingCSV) return console.log('No listings/pricing.csv found');
   const requirementCSV = await getSheet('listings', 'requirements');
   if (!requirementCSV) return console.log('No listings/requirements.csv found');
+  if (indices && indices.length == 0) return console.log('No listings given to initialize');
   console.log('\n==INITIALIZING LISTINGS==');
 
   const setBuy = api.listing.set.price.buy;

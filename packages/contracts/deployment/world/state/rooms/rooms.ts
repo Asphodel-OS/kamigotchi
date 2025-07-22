@@ -5,6 +5,7 @@ import { createGates } from './gates';
 export async function initRooms(api: AdminAPI, indices?: number[], all?: boolean) {
   const roomsCSV = await getSheet('rooms', 'rooms');
   if (!roomsCSV) return console.log('No rooms/rooms.csv found');
+  if (indices && indices.length == 0) return console.log('No rooms given to initialize');
   console.log('\n==INITIALIZING ROOMS==');
 
   // Status-based processing
@@ -14,7 +15,7 @@ export async function initRooms(api: AdminAPI, indices?: number[], all?: boolean
   // - Prod: To Deploy
   let validStatuses = ['To Deploy'];
   if (all || indices !== undefined) {
-    validStatuses.push('In Game');
+    validStatuses.push('In Game', 'To Update');
     validStatuses.push('Ready');
   }
 
