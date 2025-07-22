@@ -16,6 +16,7 @@ import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
 import { AffinityIcons } from 'constants/affinities';
+import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
@@ -26,11 +27,14 @@ import { HarvestingMoods, RestingMoods } from './constants';
 interface Props {
   kami: Kami;
   actions?: React.ReactNode;
+  utils: {
+    getBonusesByItems: (kami: Kami) => Bonus[];
+  };
   tick: number;
 }
 
 export const KamiBar = (props: Props) => {
-  const { kami, actions, tick } = props;
+  const { kami, actions, utils, tick } = props;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const [currentHealth, setCurrentHealth] = useState(0);
@@ -126,9 +130,19 @@ export const KamiBar = (props: Props) => {
       ]);
     }
 
+    const bonuses = getBonusesDescription(kami);
+    if (bonuses.length > 0) {
+      tooltip = tooltip.concat([`\n`, `${bonuses.join('\n')}`]);
+    }
+
     tooltip = tooltip.concat([`\n`, `${duration} since last action`]);
 
     return tooltip;
+  };
+
+  const getBonusesDescription = (kami: Kami) => {
+    const bonuses = utils.getBonusesByItems(kami);
+    return bonuses.map((bonus) => parseBonusText(bonus));
   };
 
   const getStatusColor = (level: number) => {

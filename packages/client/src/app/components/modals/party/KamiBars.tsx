@@ -4,6 +4,7 @@ import { isDead } from 'app/cache/kami';
 import { OnyxButton } from 'app/components/library/buttons/actions/OnyxButton';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
+import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 import { KamiBar } from './KamiBar';
@@ -33,10 +34,13 @@ interface Props {
     tick: number;
   };
   isVisible: boolean;
+  utils: {
+    getBonusesByItems: (kami: Kami) => Bonus[];
+  };
 }
 
 export const KamiBars = (props: Props) => {
-  const { actions, data, display, state, isVisible } = props;
+  const { actions, data, display, state, isVisible, utils } = props;
   const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis, tick } = state;
@@ -92,6 +96,7 @@ export const KamiBars = (props: Props) => {
           key={kami.entity}
           kami={kami}
           actions={DisplayedActions(account, kami, node)}
+          utils={utils}
           tick={tick}
         />
       ))}

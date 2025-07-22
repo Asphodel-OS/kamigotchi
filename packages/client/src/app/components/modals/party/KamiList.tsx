@@ -82,6 +82,7 @@ export const KamiList = (props: Props) => {
         data={data}
         display={display}
         state={{ displayedKamis, tick }}
+        utils={utils}
         isVisible={view === 'collapsed'}
       />
     </Container>
