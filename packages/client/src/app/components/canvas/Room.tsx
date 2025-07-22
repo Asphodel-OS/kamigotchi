@@ -110,7 +110,6 @@ export const Room = (props: Props) => {
       goal: false, // room specific
       leaderboard: false, // room specific
       merchant: false, // room specific
-      trading: false, // room specific
     });
   };
 
