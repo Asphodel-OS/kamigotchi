@@ -13,6 +13,7 @@ contract TradeTest is SetupTemplate {
 
     uint32[8] memory tradeTaxConfig;
     _setConfig("TRADE_CREATION_FEE", 0);
+    _setConfig("TRADE_DELIVERY_FEE", 0);
     _setConfig("TRADE_TAX_RATE", tradeTaxConfig);
 
     vm.startPrank(deployer);
