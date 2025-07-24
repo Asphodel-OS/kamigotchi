@@ -189,7 +189,7 @@ export function registerFundOperatorModal() {
                 onChange={(e) => handleChange(e)}
               ></Input>
               <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
-            </div>{' '}
+            </div>
             <GasLink
               key='gas'
               href={`https://www.gas.zip/`}
