@@ -5,7 +5,7 @@ import { getTradeType, Trade } from 'app/cache/trade';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
 import { EmptyText } from 'app/components/library';
 import { Account, Item } from 'network/shapes';
-import { ConfirmationData } from '../../Confirmation';
+import { ConfirmationData } from '../../library/Confirmation';
 import { PendingOffer } from './PendingOffer';
 
 interface Props {

@@ -6,7 +6,7 @@ import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { Account, Item, NullAccount } from 'network/shapes';
 import { Trade, TradeOrder } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
-import { getTypeColor } from '../../helpers';
+import { getTypeColor } from '../helpers';
 
 interface Props {
   button: {

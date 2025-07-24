@@ -15,10 +15,10 @@ import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAllItems, getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
-import { Confirmation, ConfirmationData } from './Confirmation';
+import { Confirmation, ConfirmationData } from './library/Confirmation';
+import { Tabs } from './library/Tabs';
 import { Management } from './management';
 import { Orderbook } from './orderbook';
-import { Tabs } from './Tabs';
 import { TabType } from './types';
 
 const SYNC_TIME = 1000;

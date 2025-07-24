@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
-import { TabType } from './types';
+import { TabType } from '../types';
 
 interface Props {
   tab: TabType;

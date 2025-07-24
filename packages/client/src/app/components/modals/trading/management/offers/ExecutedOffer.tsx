@@ -5,8 +5,7 @@ import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
-import { ConfirmationData } from '../../Confirmation';
-import { OfferCard } from './OfferCard';
+import { ConfirmationData, OfferCard } from '../../library';
 
 interface Props {
   actions: {

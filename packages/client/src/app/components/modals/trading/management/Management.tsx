@@ -6,7 +6,7 @@ import { Account, Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
-import { ConfirmationData } from '../Confirmation';
+import { ConfirmationData } from '../library/Confirmation';
 import { TabType } from '../types';
 import { Create } from './create/Create';
 import { Offers } from './offers/Offers';

@@ -5,7 +5,7 @@ import { getTradeType, Trade } from 'app/cache/trade';
 import { EmptyText, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Account, Item } from 'network/shapes';
-import { ConfirmationData } from '../../Confirmation';
+import { ConfirmationData } from '../../library/Confirmation';
 import { TabType } from '../../types';
 import { ExecutedOffer } from './ExecutedOffer';
 import { PendingOffer } from './PendingOffer';

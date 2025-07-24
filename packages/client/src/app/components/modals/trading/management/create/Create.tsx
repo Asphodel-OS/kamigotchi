@@ -11,8 +11,8 @@ import { ActionComponent } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
-import { ConfirmationData } from '../../Confirmation';
 import { TRADE_ROOM_INDEX } from '../../constants';
+import { ConfirmationData } from '../../library';
 import { MultiCreate } from './MultiCreate';
 import { SingleCreate } from './SingleCreate';
 
