@@ -14,7 +14,6 @@ import { Health } from './Health';
 
 interface Props {
   kami: Kami; // assumed to have a harvest attached
-
   description: string[];
   descriptionOnClick?: () => void;
   isFriend?: boolean;
@@ -23,9 +22,8 @@ interface Props {
   subtextOnClick?: () => void;
   actions?: React.ReactNode;
   showBattery?: boolean;
-  showBonuses?: boolean;
   showCooldown?: boolean;
-  utils: {
+  utils?: {
     getBonusesByItems: (kami: Kami) => Bonus[];
   };
 }
@@ -33,8 +31,8 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, actions, showBattery, showCooldown, isFriend, showBonuses, utils } = props;
-  const { getBonusesByItems } = utils;
+  const { kami, actions, showBattery, showCooldown, isFriend, utils } = props;
+  const getBonusesByItems = utils?.getBonusesByItems;
   const { description, descriptionOnClick } = props;
   const { contentTooltip } = props;
   const { subtext, subtextOnClick } = props;
@@ -73,8 +71,8 @@ export const KamiCard = (props: Props) => {
   };
 
   const getItemBonusesDescription = (kami: Kami) => {
-    const showBonuses = utils.getBonusesByItems(kami);
-    return showBonuses.map((bonus) => parseBonusText(bonus));
+    if (!getBonusesByItems) return [];
+    return getBonusesByItems(kami).map((bonus) => parseBonusText(bonus));
   };
 
   return (
@@ -85,9 +83,7 @@ export const KamiCard = (props: Props) => {
         </TitleText>
         <TitleCorner key='corner'>
           <TextTooltip text={[getItemBonusesDescription(kami)]}>
-            {showBonuses && getItemBonusesDescription(kami)?.length > 0 && (
-              <Buff src={IndicatorIcons.buff} />
-            )}
+            {getItemBonusesDescription(kami).length > 0 && <Buff src={IndicatorIcons.buff} />}
           </TextTooltip>
           {showCooldown && <Cooldown kami={kami} />}
           {showBattery && (

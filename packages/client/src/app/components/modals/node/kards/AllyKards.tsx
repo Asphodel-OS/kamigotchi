@@ -79,7 +79,6 @@ export const AllyKards = (props: Props) => {
               StopButton(kami, account, stop),
             ]}
             showBattery
-            showBonuses
             showCooldown
             utils={utils}
           />

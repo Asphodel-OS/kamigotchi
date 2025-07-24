@@ -185,7 +185,6 @@ export const Kards = (props: Props) => {
           // contentTooltip={getTooltip(kami)}
           actions={DisplayedActions(account, kami, node)}
           showBattery
-          showBonuses
           showCooldown
           utils={utils}
         />
