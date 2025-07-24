@@ -261,7 +261,6 @@ export function registerPartyModal() {
               onyx: onyxInfo,
             }}
             display={display}
-            utils={{ calcExpRequirement }}
             state={{ displayedKamis, tick }}
             utils={utils}
           />
