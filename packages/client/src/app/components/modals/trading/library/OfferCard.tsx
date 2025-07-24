@@ -103,7 +103,11 @@ export const OfferCard = (props: Props) => {
   return (
     <Container>
       <Side span={getSpan()} borderRight>
-        <TextTooltip text={getOrderTooltip(trade.sellOrder)} alignText='left' direction='row'>
+        <TextTooltip
+          text={getOrderTooltip(reverse ? trade.sellOrder : trade.buyOrder)}
+          alignText='left'
+          direction='row'
+        >
           {want.map((_, i) => (
             <ImagesWrapper key={i}>
               <Image src={want[i].image} />
@@ -133,7 +137,11 @@ export const OfferCard = (props: Props) => {
       </Controls>
 
       <Side span={getSpan()} borderLeft>
-        <TextTooltip text={getOrderTooltip(trade.buyOrder)} alignText='left' direction='row'>
+        <TextTooltip
+          text={getOrderTooltip(reverse ? trade.buyOrder : trade.sellOrder)}
+          alignText='left'
+          direction='row'
+        >
           {have.map((_, i) => (
             <ImagesWrapper key={i}>
               <Image src={have[i].image} />
