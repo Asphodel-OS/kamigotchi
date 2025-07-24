@@ -17,7 +17,7 @@ export const MusuRow = (props: Props) => {
     <Container key='musu'>
       <TextTooltip
         text={[
-          'View the Kamigtochi World Orderbook\n\n',
+          'View the Kamigotchi World Orderbook\n\n',
           'You must be in a designated Trade room',
           'to interact with outstanding Orders.',
         ]}
