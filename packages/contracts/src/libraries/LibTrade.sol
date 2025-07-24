@@ -237,6 +237,11 @@ library LibTrade {
   /////////////////
   // CHECKERS
 
+  // check whether the Account is in a designated Trade room
+  function isInTradeRoom(IUintComp comps, uint256 accID) public view returns (bool) {
+    return LibRoom.get(comps, accID) == TRADE_ROOM;
+  }
+
   /// @notice verify that the entity is a Trade entity
   function verifyIsTrade(IUintComp comps, uint256 id) public view {
     if (!LibEntityType.isShape(comps, id, "TRADE")) revert("not a trade");
@@ -264,11 +269,6 @@ library LibTrade {
   function verifyMaxOrders(IUintComp comps, uint256 accID) public view {
     uint256 max = LibConfig.get(comps, "MAX_TRADES_PER_ACCOUNT");
     if (getNumOrders(comps, accID) >= max) revert("Trade order limit reached");
-  }
-
-  /// @notice verify that the trade operation is occurring in a valid room
-  function verifyRoom(IUintComp comps, uint256 accID) public view {
-    if (LibRoom.get(comps, accID) != TRADE_ROOM) revert("Trade room mismatch");
   }
 
   function verifyState(IUintComp comps, uint256 id, string memory state) public view {
@@ -324,6 +324,20 @@ library LibTrade {
 
   function genSellAnchor(uint256 tradeID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("trade.sell", tradeID)));
+  }
+
+  // process the flat creation fee
+  function processCreateFee(IUintComp comps, uint256 accID) internal {
+    uint256 createFee = LibConfig.get(comps, "TRADE_CREATION_FEE");
+    LibInventory.decFor(comps, accID, MUSU_INDEX, createFee);
+  }
+
+  // decrement the delivery fee if not in designated trade room
+  function processDeliveryFee(IUintComp comps, uint256 accID) internal {
+    if (!isInTradeRoom(comps, accID)) {
+      uint256 deliveryFee = LibConfig.get(comps, "TRADE_DELIVERY_FEE");
+      LibInventory.decFor(comps, accID, MUSU_INDEX, deliveryFee);
+    }
   }
 
   /////////////////

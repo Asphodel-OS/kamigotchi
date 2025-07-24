@@ -17,11 +17,11 @@ contract TradeCancelSystem is System {
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyIsTrade(components, id);
-    LibTrade.verifyRoom(components, accID);
     LibTrade.verifyState(components, id, "PENDING");
     LibTrade.verifyMaker(components, id, accID);
 
-    // cancel trade
+    // cancel the Trade
+    LibTrade.processDeliveryFee(components, accID);
     LibTrade.cancel(components, id);
 
     // data logging and event emission

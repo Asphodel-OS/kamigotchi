@@ -17,12 +17,12 @@ contract TradeExecuteSystem is System {
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyIsTrade(components, id);
-    LibTrade.verifyRoom(components, accID);
     LibTrade.verifyState(components, id, "PENDING");
     LibTrade.verifyTaker(components, id, accID);
     LibTrade.verifyNotMaker(components, id, accID);
 
-    // execute and remove trade
+    // execute the Trade
+    LibTrade.processDeliveryFee(components, accID);
     LibTrade.execute(world, components, id, accID);
 
     // data logging and event emission

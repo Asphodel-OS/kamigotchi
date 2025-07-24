@@ -17,11 +17,11 @@ contract TradeCompleteSystem is System {
 
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTrade.verifyIsTrade(components, id);
-    LibTrade.verifyRoom(components, accID);
     LibTrade.verifyState(components, id, "EXECUTED");
     LibTrade.verifyMaker(components, id, accID);
 
     // complete the Trade
+    LibTrade.processDeliveryFee(components, accID);
     LibTrade.complete(world, components, id, accID);
 
     // data logging and event emission
