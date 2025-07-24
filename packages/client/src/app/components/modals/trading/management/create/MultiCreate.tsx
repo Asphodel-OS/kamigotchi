@@ -5,9 +5,8 @@ import { getInventoryBalance } from 'app/cache/inventory';
 import { IconButton, IconListButtonOption, Overlay, Text } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { MUSU_INDEX } from 'constants/items';
-import { Account, Inventory } from 'network/shapes';
+import { Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
-import { TRADE_ROOM_INDEX } from '../../constants';
 import { LineItem } from './LineItem';
 
 interface Props {
@@ -18,7 +17,6 @@ interface Props {
     isConfirming: boolean;
   };
   data: {
-    account: Account;
     currencies: Item[];
     inventory: Inventory[];
     items: Item[];
@@ -31,7 +29,7 @@ export const MultiCreate = (props: Props) => {
   const { actions, controls, data, isVisible } = props;
   const { handleCreatePrompt } = actions;
   const { isConfirming } = controls;
-  const { account, inventory, items } = data;
+  const { inventory, items } = data;
   const { modals } = useVisibility();
 
   const [want, setWant] = useState<Item[]>([]);
@@ -275,12 +273,7 @@ export const MultiCreate = (props: Props) => {
         <IconButton
           text='Create'
           onClick={() => handleCreatePrompt(want, wantAmt, have, haveAmt)}
-          disabled={
-            isConfirming ||
-            want.length === 0 ||
-            have.length === 0 ||
-            account.roomIndex !== TRADE_ROOM_INDEX // TODO: check this based on room flags
-          }
+          disabled={isConfirming || want.length === 0 || have.length === 0}
         />
       </Overlay>
     </Container>

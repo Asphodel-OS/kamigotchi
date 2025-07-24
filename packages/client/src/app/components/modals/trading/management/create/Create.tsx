@@ -11,6 +11,7 @@ import { waitForActionCompletion } from 'network/utils';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { ConfirmationData } from '../../Confirmation';
+import { TRADE_ROOM_INDEX } from '../../constants';
 import { MultiCreate } from './MultiCreate';
 import { SingleCreate } from './SingleCreate';
 
@@ -49,10 +50,11 @@ export const Create = (props: Props) => {
   const { actions, controls, data, types, utils } = props;
   const { createTrade } = actions;
   const { setIsConfirming, setConfirmData } = controls;
+  const { account } = data;
   const { ActionComp } = types;
   const { entityToIndex } = utils;
 
-  const [mode, setMode] = useState<Mode>('Multi');
+  const [mode, setMode] = useState<Mode>('Single');
 
   // toggle between multi and single Create modes
   const toggleMode = () => {
@@ -96,7 +98,8 @@ export const Create = (props: Props) => {
     haveAmt: number[]
   ) => {
     const tradeConfig = data.account.config?.trade;
-    const tradeFee = tradeConfig?.fee ?? 0;
+    const createFee = tradeConfig?.fees.creation ?? 0;
+    const deliveryFee = tradeConfig?.fees.delivery ?? 0;
     const taxConfig = tradeConfig?.tax;
     const taxRate = taxConfig?.value ?? 0;
 
@@ -148,7 +151,7 @@ export const Create = (props: Props) => {
         <Row>
           <Text size={0.9}>{`Listing Fee: (`}</Text>
           <Pairing
-            text={tradeFee.toLocaleString()}
+            text={createFee.toLocaleString()}
             icon={ItemImages.musu}
             scale={0.9}
             tooltip={[
@@ -158,6 +161,18 @@ export const Create = (props: Props) => {
           />
           <Text size={0.9}>{`)`}</Text>
         </Row>
+        {account.roomIndex !== TRADE_ROOM_INDEX && (
+          <Row>
+            <Text size={0.9}>{`Delivery Fee: (`}</Text>
+            <Pairing
+              text={deliveryFee.toLocaleString()}
+              icon={ItemImages.musu}
+              scale={0.9}
+              tooltip={[`Trading outside of designated rooms`, `incurs a flat delivery fee.`]}
+            />
+            <Text size={0.9}>{`)`}</Text>
+          </Row>
+        )}
       </Paragraph>
     );
   };
@@ -183,7 +198,7 @@ export const Create = (props: Props) => {
         isVisible={mode === 'Single'}
       />
       <Overlay bottom={0.75} left={0.75}>
-        <IconButton text={mode} onClick={toggleMode} />
+        <IconButton text={`<${mode}>`} onClick={toggleMode} />
       </Overlay>
     </Container>
   );

@@ -8,7 +8,6 @@ import { useVisibility } from 'app/stores';
 import { MUSU_INDEX, STONE_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
 import { Item, NullItem } from 'network/shapes/Item';
-import { TRADE_ROOM_INDEX } from '../../constants';
 import { LineItem } from './LineItem';
 
 type Mode = 'Buy' | 'Sell';
@@ -110,11 +109,6 @@ export const SingleCreate = (props: Props) => {
 
     // already confirming constraint
     if (isConfirming) tooltip.push('• you must address your current trade first');
-
-    // location constraint
-    if (account.roomIndex !== TRADE_ROOM_INDEX) {
-      tooltip.push('• you cannot manipulate Trades outside of designated Trade Rooms');
-    }
 
     // sell-side inventory balance constraint
     if (mode === 'Sell') {
@@ -227,9 +221,7 @@ export const SingleCreate = (props: Props) => {
           <IconButton
             text='Create'
             onClick={triggerConfirmation}
-            disabled={
-              isConfirming || cost === 0 || amt === 0 || account.roomIndex !== TRADE_ROOM_INDEX // TODO: check this based on room flags
-            }
+            disabled={isConfirming || cost === 0 || amt === 0}
           />
         </TextTooltip>
       </Overlay>

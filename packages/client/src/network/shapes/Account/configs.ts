@@ -50,7 +50,10 @@ export const getStaminaConfig = (world: World, components: Components): StaminaC
 };
 
 interface TradeConfig {
-  fee: number;
+  fees: {
+    creation: number;
+    delivery: number;
+  };
   tax: FixedPointValue;
 }
 
@@ -58,7 +61,10 @@ interface TradeConfig {
 export const getTradeConfig = (world: World, components: Components): TradeConfig => {
   const value = getConfigArray(world, components, 'TRADE_TAX_RATE');
   return {
-    fee: getConfigValue(world, components, 'TRADE_CREATION_FEE'),
+    fees: {
+      creation: getConfigValue(world, components, 'TRADE_CREATION_FEE'),
+      delivery: getConfigValue(world, components, 'TRADE_DELIVERY_FEE'),
+    },
     tax: {
       precision: value[0],
       raw: value[1],
