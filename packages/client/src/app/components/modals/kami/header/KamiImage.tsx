@@ -242,6 +242,7 @@ const Button = styled.div<ButtonProps>`
   text-align: center;
   user-select: none;
 `;
+
 const Arrow = styled.img`
   width: 1.2vw;
   height: 1.2vw;

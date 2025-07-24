@@ -41,7 +41,7 @@ export const KamiCard = (props: Props) => {
 
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
-  const [levelUp, setlevelUp] = useState(false);
+  const [canLevel, setCanLevel] = useState(false);
 
   /////////////////
   // INTERACTION
@@ -51,7 +51,7 @@ export const KamiCard = (props: Props) => {
     if (!kami.progress || !calcExpRequirement) return;
     const expCurr = kami.progress.experience;
     const expLimit = calcExpRequirement(kami.progress.level);
-    setlevelUp(expCurr >= expLimit);
+    setCanLevel(expCurr >= expLimit);
   }, [kami, calcExpRequirement]);
 
   // toggle the kami modal settings depending on its current state
@@ -88,7 +88,7 @@ export const KamiCard = (props: Props) => {
   };
 
   return (
-    <Card image={{ icon: kami.image, levelUp, onClick: handleKamiClick }}>
+    <Card image={{ icon: kami.image, canLevel, onClick: handleKamiClick }}>
       <TitleBar>
         <TitleText key='title' onClick={() => handleKamiClick()}>
           {kami.name}

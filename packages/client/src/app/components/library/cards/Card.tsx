@@ -12,7 +12,7 @@ interface Props {
     icon?: string;
     onClick?: () => void;
     overlay?: string;
-    levelUp?: boolean;
+    canLevel?: boolean;
     padding?: number;
     scale?: number;
     tooltip?: string[];
@@ -40,7 +40,7 @@ export const Card = (props: Props) => {
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
-          {!!image?.levelUp && <LevelUpArrows />}
+          {!!image?.canLevel && <LevelUpArrows />}
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
       </TextTooltip>
