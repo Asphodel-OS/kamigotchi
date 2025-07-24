@@ -4,6 +4,7 @@ import { Dispatch, useState } from 'react';
 import { calcTradeTax } from 'app/cache/trade';
 import { IconButton, Overlay, Pairing, Text } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
+import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
@@ -16,6 +17,7 @@ import { MultiCreate } from './MultiCreate';
 import { SingleCreate } from './SingleCreate';
 
 type Mode = 'Single' | 'Multi';
+const DisabledItems = [ONYX_INDEX, ETH_INDEX];
 
 interface Props {
   actions: {
@@ -35,7 +37,6 @@ interface Props {
     account: Account;
     currencies: Item[];
     inventory: Inventory[];
-
     items: Item[];
   };
   types: {
@@ -188,13 +189,13 @@ export const Create = (props: Props) => {
       <MultiCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
-        data={data}
+        data={{ ...data, items: data.items.filter((item) => !DisabledItems.includes(item.index)) }}
         isVisible={mode === 'Multi'}
       />
       <SingleCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
-        data={data}
+        data={{ ...data, items: data.items.filter((item) => !DisabledItems.includes(item.index)) }}
         isVisible={mode === 'Single'}
       />
       <Overlay bottom={0.75} left={0.75}>
