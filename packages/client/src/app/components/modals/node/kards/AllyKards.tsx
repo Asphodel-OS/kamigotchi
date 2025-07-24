@@ -4,13 +4,14 @@ import styled from 'styled-components';
 import { calcHealth, calcOutput } from 'app/cache/kami';
 import { CollectButton, KamiCard, StopButton } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
+import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 interface Props {
   account: Account;
   kamis: Kami[]; // ally kami entities
-  bonuses: string[][];
+
   actions: {
     collect: (kami: Kami) => void;
     stop: (kami: Kami) => void;
@@ -18,11 +19,15 @@ interface Props {
   display: {
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
   };
+  utils: {
+    getBonusesByItems: (kami: Kami) => Bonus[];
+  };
 }
 
 // rendering of an ally kami on this node
 export const AllyKards = (props: Props) => {
-  const { actions, display, account, kamis, bonuses } = props;
+  const { actions, display, account, kamis, utils } = props;
+  const { getBonusesByItems } = utils;
   const { collect, stop } = actions;
   const { UseItemButton } = display;
 
@@ -48,6 +53,11 @@ export const AllyKards = (props: Props) => {
     return description;
   };
 
+  const getItemBonusesDescription = (kami: Kami) => {
+    const bonuses = getBonusesByItems(kami);
+    return bonuses.map((bonus) => parseBonusText(bonus));
+  };
+
   return (
     <Container style={{ display: kamis.length > 0 ? 'flex' : 'none' }}>
       <StickyRow>
@@ -61,7 +71,7 @@ export const AllyKards = (props: Props) => {
             key={kami.index}
             kami={kami}
             description={getDescription(kami)}
-            titleTooltip={bonuses[i]}
+            //titleTooltip={bonuses[i]}
             subtext={`yours (\$${calcOutput(kami)})`}
             actions={[
               UseItemButton(kami, account),
@@ -69,7 +79,9 @@ export const AllyKards = (props: Props) => {
               StopButton(kami, account, stop),
             ]}
             showBattery
+            showBonuses
             showCooldown
+            utils={utils}
           />
         ))}
     </Container>

@@ -4,7 +4,7 @@ import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
-import { getBonusesForEndType } from 'app/cache/bonus';
+import { getBonusesByItems, getBonusesForEndType } from 'app/cache/bonus';
 import { getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoomByIndex } from 'app/cache/room';
@@ -121,6 +121,8 @@ export function registerNodeModal() {
               passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
               parseConditionalText: (condition: Condition, tracking?: boolean) =>
                 parseConditionalText(world, components, condition, tracking),
+              getBonusesByItems: (kami: Kami) =>
+                getBonusesByItems(world, components, kami.entity, kamiRefreshOptions.bonuses),
             },
           };
         })

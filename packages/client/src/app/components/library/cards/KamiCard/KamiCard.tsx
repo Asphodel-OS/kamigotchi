@@ -5,6 +5,7 @@ import { calcHealth } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
@@ -13,7 +14,7 @@ import { Health } from './Health';
 
 interface Props {
   kami: Kami; // assumed to have a harvest attached
-  bonuses?: string[];
+
   description: string[];
   descriptionOnClick?: () => void;
   isFriend?: boolean;
@@ -22,13 +23,18 @@ interface Props {
   subtextOnClick?: () => void;
   actions?: React.ReactNode;
   showBattery?: boolean;
+  showBonuses?: boolean;
   showCooldown?: boolean;
+  utils: {
+    getBonusesByItems: (kami: Kami) => Bonus[];
+  };
 }
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, actions, showBattery, showCooldown, isFriend, bonuses } = props;
+  const { kami, actions, showBattery, showCooldown, isFriend, showBonuses, utils } = props;
+  const { getBonusesByItems } = utils;
   const { description, descriptionOnClick } = props;
   const { contentTooltip } = props;
   const { subtext, subtextOnClick } = props;
@@ -66,6 +72,11 @@ export const KamiCard = (props: Props) => {
     return <>{[header, ...details]}</>;
   };
 
+  const getItemBonusesDescription = (kami: Kami) => {
+    const showBonuses = utils.getBonusesByItems(kami);
+    return showBonuses.map((bonus) => parseBonusText(bonus));
+  };
+
   return (
     <Card image={{ icon: kami.image, onClick: handleKamiClick }}>
       <TitleBar>
@@ -73,8 +84,10 @@ export const KamiCard = (props: Props) => {
           {kami.name}
         </TitleText>
         <TitleCorner key='corner'>
-          <TextTooltip text={[bonuses]}>
-            {bonuses && bonuses?.length > 0 && <Buff src={IndicatorIcons.buff} />}
+          <TextTooltip text={[getItemBonusesDescription(kami)]}>
+            {showBonuses && getItemBonusesDescription(kami)?.length > 0 && (
+              <Buff src={IndicatorIcons.buff} />
+            )}
           </TextTooltip>
           {showCooldown && <Cooldown kami={kami} />}
           {showBattery && (

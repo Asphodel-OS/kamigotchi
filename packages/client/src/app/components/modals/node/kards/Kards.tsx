@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { useVisibility } from 'app/stores';
 import { Account, BaseAccount } from 'network/shapes/Account';
-import { BonusInstance, parseBonusText } from 'network/shapes/Bonus';
+import { Bonus, BonusInstance } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { AllyKards } from './AllyKards';
 import { EnemyCards } from './EnemyKards';
@@ -27,17 +27,18 @@ interface Props {
     getBonuses: (entity: EntityIndex) => BonusInstance[];
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
+    getBonusesByItems: (kami: Kami) => Bonus[];
   };
 }
 
 export const Kards = (props: Props) => {
   const { actions, kamiEntities, account, display, utils } = props;
-  const { getKami, getBonuses } = utils;
+  const { getKami, getBonusesByItems } = utils;
   const { modals } = useVisibility();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [allies, setAllies] = useState<Kami[]>([]);
-  const [allyBonuses, setAllyBonuses] = useState<string[][]>([]);
+  const [allyBonuses, setAllyBonuses] = useState<Bonus[][]>([]);
   const [allyEntities, setAllyEntities] = useState<EntityIndex[]>([]);
   const [alliesUpdating, setAlliesUpdating] = useState(false);
   const [enemyEntities, setEnemyEntities] = useState<EntityIndex[]>([]);
@@ -68,7 +69,7 @@ export const Kards = (props: Props) => {
     if (!modals.node) return;
     setAlliesUpdating(true);
     setAllies(allyEntities.map((entity) => getKami(entity, true)));
-    setAllyBonuses(allyEntities.map((entity) => getBonuses(entity).map(parseBonusText)));
+
     setAlliesUpdating(false);
   }, [modals.node, allyEntities]);
 
@@ -121,9 +122,9 @@ export const Kards = (props: Props) => {
       <AllyKards
         account={account}
         kamis={allies}
-        bonuses={allyBonuses}
         actions={actions}
         display={display}
+        utils={utils}
       />
       <EnemyCards
         account={account}

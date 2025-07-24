@@ -14,7 +14,7 @@ import { OnyxButton } from 'app/components/library/buttons/actions/OnyxButton';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
-import { Bonus, parseBonusText } from 'network/shapes/Bonus';
+import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
@@ -90,11 +90,6 @@ export const Kards = (props: Props) => {
     // add bonuses from items to description
 
     return description;
-  };
-
-  const getItemBonusesDescription = (kami: Kami) => {
-    const bonuses = utils.getBonusesByItems(kami);
-    return bonuses.map((bonus) => parseBonusText(bonus));
   };
 
   // get the balance subtext for a kami
@@ -185,13 +180,14 @@ export const Kards = (props: Props) => {
           key={kami.entity}
           kami={kami}
           description={getDescription(kami)}
-          bonuses={getItemBonusesDescription(kami)}
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
           // contentTooltip={getTooltip(kami)}
           actions={DisplayedActions(account, kami, node)}
           showBattery
+          showBonuses
           showCooldown
+          utils={utils}
         />
       ))}
     </Container>
