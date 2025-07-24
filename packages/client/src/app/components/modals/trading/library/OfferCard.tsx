@@ -161,10 +161,11 @@ const Container = styled.div`
 
   height: 6vw;
 
-  user-select: none;
-
   display: flex;
   flex-flow: row nowrap;
+
+  overflow: hidden;
+  user-select: none;
 `;
 
 const Side = styled.div<{ span: number; borderRight?: boolean; borderLeft?: boolean }>`
@@ -249,7 +250,7 @@ const TagContainer = styled.div`
 `;
 
 const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
-  width: 5vw;
+  width: 6vw;
   padding: 0.2vw;
 
   color: rgb(25, 39, 2);
@@ -264,4 +265,5 @@ const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
   justify-content: center;
 
   font-size: 0.9vw;
+  line-height: 1.2vw;
 `;

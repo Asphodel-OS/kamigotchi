@@ -1,7 +1,7 @@
 // order type colors
 const BUY_COLOR = 'rgb(192, 224, 139)';
 const SELL_COLOR = 'rgb(222, 90, 120)';
-const BARTER_COLOR = 'rgb(2, 122, 25)';
+const BARTER_COLOR = 'rgb(180, 50, 180)';
 const FOREX_COLOR = 'rgb(2, 255, 255)';
 
 export const TypeColors = {
