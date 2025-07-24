@@ -3,8 +3,10 @@ import styled from 'styled-components';
 
 import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
+import { ItemImages } from 'assets/images/items';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
+import { TRADE_ROOM_INDEX } from '../../constants';
 import { ConfirmationData, OfferCard } from '../../library';
 
 interface Props {
@@ -75,6 +77,7 @@ export const ExecutedOffer = (props: Props) => {
     const buyItems = trade.buyOrder?.items ?? [];
     const buyAmts = trade.buyOrder?.amounts ?? [];
     const tradeConfig = account.config?.trade;
+    const deliveryFee = tradeConfig?.fees.delivery ?? 0;
     const taxRate = tradeConfig?.tax.value ?? 0;
     const taxAmts = buyAmts.map((amt, i) => calcTradeTax(buyItems[i], amt, taxRate));
 
@@ -113,6 +116,18 @@ export const ExecutedOffer = (props: Props) => {
                 />
               );
             })}
+            <Text size={0.9}>{`)`}</Text>
+          </Row>
+        )}
+        {account.roomIndex !== TRADE_ROOM_INDEX && (
+          <Row>
+            <Text size={0.9}>{`Delivery Fee: (`}</Text>
+            <Pairing
+              text={deliveryFee.toLocaleString()}
+              icon={ItemImages.musu}
+              scale={0.9}
+              tooltip={[`Trading outside of designated rooms`, `incurs a flat delivery fee.`]}
+            />
             <Text size={0.9}>{`)`}</Text>
           </Row>
         )}

@@ -4,11 +4,12 @@ import styled from 'styled-components';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
+import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
-import { ConfirmationData } from '../../Confirmation';
-import { OfferCard } from './OfferCard';
+import { TRADE_ROOM_INDEX } from '../../constants';
+import { ConfirmationData, OfferCard } from '../../library';
 
 interface Props {
   actions: {
@@ -159,7 +160,8 @@ export const PendingOffer = (props: Props) => {
   const getCancelConfirmation = () => {
     const musuItem = getItemByIndex(MUSU_INDEX);
     const tradeConfig = account.config?.trade;
-    const tradeFee = tradeConfig?.fee ?? 0;
+    const createFee = tradeConfig?.fees.creation ?? 0;
+    const deliveryFee = tradeConfig?.fees.delivery ?? 0;
     const sellItems = trade.sellOrder?.items ?? [];
     const sellAmts = trade.sellOrder?.amounts ?? [];
 
@@ -182,15 +184,27 @@ export const PendingOffer = (props: Props) => {
           <Text size={1.2}>{`) `}</Text>
           <Text size={1.2}>{`will be returned to your Inventory.`}</Text>
         </Row>
+        {account.roomIndex !== TRADE_ROOM_INDEX && (
+          <Row>
+            <Text size={0.9}>{`Delivery Fee: (`}</Text>
+            <Pairing
+              text={deliveryFee.toLocaleString()}
+              icon={ItemImages.musu}
+              scale={0.9}
+              tooltip={[`Trading outside of designated rooms`, `incurs a flat delivery fee.`]}
+            />
+            <Text size={0.9}>{`)`}</Text>
+          </Row>
+        )}
         <Row>
-          <Text size={0.9}>{`Listing fee (`}</Text>
+          <Text size={0.9}>{`<Listing fee (`}</Text>
           <Pairing
-            text={tradeFee.toLocaleString()}
+            text={createFee.toLocaleString()}
             icon={musuItem.image}
             scale={0.9}
             tooltip={[`LoL RIP Bozo`, `mr. i-know-what-i-got`, `L pricing`, `\nRatio`]}
           />
-          <Text size={0.9}>{`) will not be refunded.`}</Text>
+          <Text size={0.9}>{`) will not be refunded>`}</Text>
         </Row>
       </Paragraph>
     );
