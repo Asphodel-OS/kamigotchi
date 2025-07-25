@@ -73,8 +73,6 @@ export const AllyKards = (props: Props) => {
             key={kami.index}
             kami={kami}
             description={getDescription(kami)}
-            // //titleTooltip={bonuses[i]}
-
             subtext={`yours (\$${calcOutput(kami)})`}
             actions={[
               UseItemButton(kami, account),
