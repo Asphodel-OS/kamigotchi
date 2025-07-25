@@ -108,5 +108,6 @@ const Sp = styled.div`
   position: absolute;
   right: 4%;
   top: 4%;
-  font-size: 1.3vw;
+  font-size: 1.2vw;
+  font-weight: bold;
 `;
