@@ -88,7 +88,14 @@ export const KamiCard = (props: Props) => {
   };
 
   return (
-    <Card image={{ icon: kami.image, canLevel, onClick: handleKamiClick }}>
+    <Card
+      image={{
+        icon: kami.image,
+        canLevel,
+        skillPoints: (kami.skills?.points ?? 0) > 0,
+        onClick: handleKamiClick,
+      }}
+    >
       <TitleBar>
         <TitleText key='title' onClick={() => handleKamiClick()}>
           {kami.name}

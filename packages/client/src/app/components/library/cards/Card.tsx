@@ -16,6 +16,7 @@ interface Props {
     padding?: number;
     scale?: number;
     tooltip?: string[];
+    skillPoints?: boolean;
   };
   fullWidth?: boolean;
 }
@@ -41,6 +42,7 @@ export const Card = (props: Props) => {
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
           {!!image?.canLevel && <LevelUpArrows />}
+          {!!image?.skillPoints && <Sp>SP</Sp>}
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
       </TextTooltip>
@@ -100,4 +102,11 @@ const Container = styled.div`
 const Text = styled.div<{ size: number }>`
   color: black;
   font-size: ${(props) => props.size}vw;
+`;
+
+const Sp = styled.div`
+  position: absolute;
+  right: 4%;
+  top: 4%;
+  font-size: 1.3vw;
 `;
