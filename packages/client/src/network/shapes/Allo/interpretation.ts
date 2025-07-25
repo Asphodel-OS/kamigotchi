@@ -61,7 +61,7 @@ const parseBonus = (world: World, components: Components, allo: Allo): DetailedE
   const bonuses = getBonusesByParent(world, components, allo.id);
   return bonuses.map((bonus) => ({
     ObjectType: 'BONUS',
-    name: parseBonusText(bonus),
+    name: bonus.source.name,
     description: parseBonusText(bonus),
     image: placeholder,
   }));
