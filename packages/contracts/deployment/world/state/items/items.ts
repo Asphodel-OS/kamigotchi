@@ -1,5 +1,5 @@
 import { AdminAPI } from '../../api';
-import { getItemImage, getSheet, readFile } from '../utils';
+import { getItemImage, getSheet, readFile, toRevise } from '../utils';
 import { addAllo } from './allos';
 import { addRequirement, addTypeRequirement } from './requirements';
 
@@ -94,7 +94,20 @@ export async function deleteItems(api: AdminAPI, indices: number[]) {
   }
 }
 
-export async function reviseItems(api: AdminAPI, indices: number[]) {
+export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
+  const itemsCSV = await getSheet('items', 'items');
+  if (!itemsCSV) return console.log('No items/items.csv found');
+
+  let indices: number[] = [];
+  if (overrideIndices) indices = overrideIndices;
+  else {
+    for (let i = 0; i < itemsCSV.length; i++) {
+      const row = itemsCSV[i];
+      const index = Number(row['Index']);
+      if (toRevise(row)) indices.push(index);
+    }
+  }
+
   await deleteItems(api, indices);
   await initItems(api, indices);
 }
