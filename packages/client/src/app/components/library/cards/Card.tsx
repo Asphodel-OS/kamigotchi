@@ -110,4 +110,7 @@ const Sp = styled.div`
   top: 4%;
   font-size: 1.2vw;
   font-weight: bold;
+  background: linear-gradient(to right, #0b0d0eff, #ee0979);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
