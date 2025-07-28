@@ -63,15 +63,22 @@ export const queryByName = (comps: Components, name: string) => {
 
 // query for an account entity by its attached operator address
 // NOTE: we format to match MUD's abbreviated style. fix, eventually
-export const queryByOperator = (comps: Components, operator: string) => {
+export const queryByOperator = (comps: Components, operator: string, debug = false) => {
   if (!OperatorCache.has(operator)) {
     const formatted = BigNumber.from(operator).toHexString();
     const results = query(comps, { operator: formatted });
+
+    // report on multiple matches if in debug mode
+    // NOTE: there has to be a better way to do this..
     const length = results.length;
-    if (length != 1) console.warn(`found ${length} entities for account operator: ${operator}`);
+    if (debug && length != 1) {
+      console.warn(`found ${length} entities for account operator: ${operator}`);
+    }
+
     const result = results[0];
     if (length > 0 && result != 0) OperatorCache.set(operator, result);
   }
+
   return OperatorCache.get(operator);
 };
 

@@ -10,6 +10,7 @@ import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { of } from 'rxjs';
 import styled from 'styled-components';
+import { Address } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
@@ -19,7 +20,6 @@ import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
 import { abbreviateAddress } from 'utils/address';
-import { Address } from 'viem';
 import { Progress } from './Progress';
 
 // Detects network changes and populates network clients for inidividual addresses.
@@ -168,6 +168,7 @@ export function registerWalletConnecter() {
         }
       };
 
+      // NOTE: connect() fails silently if user has no connectors (connector[0] == null)
       const handleClick = () => {
         if (state === 'disconnected') connect({ connector: connectors[0] });
         else if (state === 'wrongChain') switchChain(wagmiConfig, { chainId: DefaultChain.id });
