@@ -72,9 +72,7 @@ export function registerKamiBridge() {
       // BLOCK WATCHERS
 
       useWatchBlockNumber({
-        onBlockNumber: (block: bigint) => {
-          refetchNFTs();
-        },
+        onBlockNumber: () => refetchNFTs(),
       });
 
       const { refetch: refetchNFTs, data: nftData } = useReadContracts({
@@ -105,7 +103,7 @@ export function registerKamiBridge() {
         setSelectedKamis([]);
       }, [modals.bridgeERC721, mode]);
 
-      // refresh world/wild kamis every tick
+      // refresh world kamis every tick
       useEffect(() => {
         if (!modals.bridgeERC721) return;
         const accountKamis = getAccountKamis(account.entity);
@@ -117,8 +115,8 @@ export function registerKamiBridge() {
       useEffect(() => {
         const result = (nftData?.[0]?.result ?? []) as number[];
         const entities = result?.map((index: number) => queryKamiByIndex(index));
-        const filtered = entities?.filter((en: EntityIndex | undefined) => !!en) as EntityIndex[];
-        const externalKamis = filtered?.map((en: EntityIndex) => getKami(en));
+        const filtered = entities?.filter((entity) => !!entity) as EntityIndex[];
+        const externalKamis = filtered?.map((entity: EntityIndex) => getKami(entity));
         setWildKamis(externalKamis);
       }, [nftData]);
 
