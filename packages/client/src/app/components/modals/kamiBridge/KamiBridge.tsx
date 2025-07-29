@@ -114,9 +114,9 @@ export function registerKamiBridge() {
       // TOTO: properly typecast the result of the abi call
       useEffect(() => {
         const result = (nftData?.[0]?.result ?? []) as number[];
-        const entities = result?.map((index: number) => queryKamiByIndex(index));
-        const filtered = entities?.filter((entity) => !!entity) as EntityIndex[];
-        const externalKamis = filtered?.map((entity: EntityIndex) => getKami(entity));
+        const entities = result.map((index: number) => queryKamiByIndex(index));
+        const filtered = entities.filter((entity) => !!entity) as EntityIndex[];
+        const externalKamis = filtered.map((entity: EntityIndex) => getKami(entity));
         setWildKamis(externalKamis);
       }, [nftData]);
 
