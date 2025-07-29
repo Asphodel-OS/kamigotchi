@@ -6,15 +6,15 @@ import { Account } from 'network/shapes/Account';
 import { Score } from 'network/shapes/Score';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const Leaderboard = ({
+  scores,
+  utils,
+}: {
   scores: Score[];
   utils: {
     getAccountByID: (id: EntityID) => Account;
   };
-}
-
-export const Leaderboard = (props: Props) => {
-  const { scores, utils } = props;
+}) => {
   const { getAccountByID } = utils;
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
@@ -45,7 +45,7 @@ export const Leaderboard = (props: Props) => {
     });
   };
 
-  return <Container>{Rows(props.scores)}</Container>;
+  return <Container>{Rows(scores)}</Container>;
 };
 
 const Container = styled.div`

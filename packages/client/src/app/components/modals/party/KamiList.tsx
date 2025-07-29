@@ -9,7 +9,14 @@ import { KamiBars } from './KamiBars';
 import { Kards } from './Kards';
 import { View } from './types';
 
-interface Props {
+export const KamiList = ({
+  actions,
+  controls,
+  data,
+  display,
+  utils,
+  state,
+}: {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
@@ -39,10 +46,7 @@ interface Props {
     displayedKamis: Kami[];
     tick: number;
   };
-}
-
-export const KamiList = (props: Props) => {
-  const { actions, controls, data, display, state, utils } = props;
+}) => {
   const { kamis } = data;
   const { view } = controls;
   const { displayedKamis, tick } = state;

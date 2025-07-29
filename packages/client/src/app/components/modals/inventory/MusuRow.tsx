@@ -4,13 +4,12 @@ import { IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
-interface Props {
-  balance: number;
-}
-
 // get the row of consumable items to display in the player inventory
-export const MusuRow = (props: Props) => {
-  const { balance } = props;
+export const MusuRow = ({
+  balance,
+}: {
+  balance: number;
+}) => {
   const { modals, setModals } = useVisibility();
 
   return (

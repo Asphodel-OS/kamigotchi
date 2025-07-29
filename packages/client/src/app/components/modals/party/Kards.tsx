@@ -21,7 +21,14 @@ import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 
 const ONYX_REVIVE_PRICE = 3;
-interface Props {
+export const Kards = ({
+  actions,
+  data,
+  display,
+  state,
+  utils,
+  isVisible,
+}: {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
@@ -48,10 +55,7 @@ interface Props {
   };
 
   isVisible: boolean;
-}
-
-export const Kards = (props: Props) => {
-  const { actions, data, display, state, utils, isVisible } = props;
+}) => {
   const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis } = state;

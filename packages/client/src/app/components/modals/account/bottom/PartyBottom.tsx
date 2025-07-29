@@ -5,15 +5,15 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Kamis } from '../party/Kamis';
 
-interface Props {
+export const PartyBottom = ({
+  data,
+  utils,
+}: {
   data: { account: Account };
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
-}
-
-export const PartyBottom = (props: Props) => {
-  const { data, utils } = props;
+}) => {
   const { account } = data;
 
   /////////////////

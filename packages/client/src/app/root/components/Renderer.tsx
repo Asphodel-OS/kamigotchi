@@ -8,8 +8,13 @@ import { Layers } from 'network/';
 import { useStream } from 'network/utils';
 import { Cell } from './Cell';
 
-const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> = React.memo(
-  ({ children, gridConfig }) => {
+const UIComponentContainer = React.memo(({
+  children,
+  gridConfig,
+}: {
+  children: React.ReactNode;
+  gridConfig: GridConfiguration;
+}) => {
     const { colStart, colEnd, rowStart, rowEnd } = gridConfig;
 
     return (
@@ -27,11 +32,19 @@ const UIComponentContainer: React.FC<{ gridConfig: GridConfiguration }> = React.
   }
 );
 
-export const UIComponentRenderer: React.FC<{
+export const UIComponentRenderer = React.memo(({
+  layers,
+  id,
+  uiComponent: {
+    requirement,
+    Render,
+    gridConfig,
+  },
+}: {
   layers: Layers;
   id: string;
   uiComponent: UIComponent;
-}> = React.memo(({ layers, id, uiComponent: { requirement, Render, gridConfig } }) => {
+}) => {
   const req = useMemo(() => requirement(layers), [requirement, layers]);
   const state = useStream(req);
   if (!state) return null;

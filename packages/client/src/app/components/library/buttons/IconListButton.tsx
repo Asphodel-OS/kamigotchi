@@ -5,19 +5,10 @@ import { playClick } from 'utils/sounds';
 import { Popover } from '../poppers/Popover';
 import { IconButton } from './IconButton';
 
-interface Props {
-  img: string;
-  options: Option[];
-
-  text?: string;
-  balance?: number;
-  disabled?: boolean;
-  width?: number;
-  fullWidth?: boolean;
-  radius?: number;
-  scale?: number;
-  scaleOrientation?: 'vw' | 'vh';
-  search?: Search;
+interface Search {
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
 }
 
 export interface Option {
@@ -27,17 +18,35 @@ export interface Option {
   disabled?: boolean;
 }
 
-interface Search {
-  value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-}
+export const IconListButton = ({
+  img,
+  options,
+  text,
+  balance,
 
-export function IconListButton(props: Props) {
-  const { img, options, text, balance } = props;
-  const { radius, scale, scaleOrientation, search } = props;
-  const { disabled, width, fullWidth } = props;
+  disabled,
+  width,
+  fullWidth,
 
+  radius = 0.45,
+  scale = 2.5,
+  scaleOrientation = 'vw',
+  search,
+}: {
+  img: string;
+  options: Option[];
+  text?: string;
+  balance?: number;
+
+  disabled?: boolean;
+  width?: number;
+  fullWidth?: boolean;
+
+  radius?: number;
+  scale?: number;
+  scaleOrientation?: 'vw' | 'vh';
+  search?: Search;
+}) => {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -64,9 +73,9 @@ export function IconListButton(props: Props) {
   const OptionsMap = () => {
     return (
       <MenuWrapper>
-        {props.search && (
+        {search && (
           <MenuInput
-            {...props.search}
+            {...search}
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -91,9 +100,9 @@ export function IconListButton(props: Props) {
         text={text}
         onClick={handleOpen}
         disabled={disabled}
-        radius={radius ?? 0.45}
-        scale={scale ?? 2.5}
-        scaleOrientation={scaleOrientation ?? 'vw'}
+        radius={radius}
+        scale={scale}
+        scaleOrientation={scaleOrientation}
         width={width}
         fullWidth={fullWidth}
         balance={balance}

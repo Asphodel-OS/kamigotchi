@@ -8,15 +8,15 @@ import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const Kamis = ({
+  data,
+  utils,
+}: {
   data: { account: Account };
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
-}
-
-export const Kamis = (props: Props) => {
-  const { data, utils } = props;
+}) => {
   const { account } = data;
   const { getAccountKamis } = utils;
 

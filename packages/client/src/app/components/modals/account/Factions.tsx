@@ -4,14 +4,11 @@ import { ProgressBar, TextTooltip } from 'app/components/library';
 import { FactionIcons } from 'assets/images/icons/factions';
 import { Account } from 'network/shapes/Account';
 
-interface Props {
+export const Factions = ({
+  data: { account },
+}: {
   data: { account: Account };
-}
-
-export const Factions = (props: Props) => {
-  const { data } = props;
-  const { account } = data;
-
+}) => {
   const BarContent = [
     {
       name: 'Reputation',

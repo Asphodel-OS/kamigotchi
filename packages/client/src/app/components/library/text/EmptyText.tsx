@@ -7,15 +7,19 @@ interface LinkPart {
 
 type TextPart = string | LinkPart;
 
-interface Props {
+export const EmptyText = ({
+  text,
+  size = 1.2,
+  gapScale = 3,
+  isHidden,
+  linkColor,
+}: {
   gapScale?: number; // lineheight proportion to font size
   isHidden?: boolean;
   linkColor?: string;
   size?: number; // font size
   text: TextPart[] | TextPart[][]; //supports single and multiple paragraphs
-}
-export const EmptyText = (props: Props) => {
-  const { text, size, gapScale, isHidden, linkColor } = props;
+}) => {
   // checks if there are multiple paragraphs
   const isMultiParagraph = Array.isArray(text[0]);
   return (
@@ -25,8 +29,8 @@ export const EmptyText = (props: Props) => {
         return (
           <Text
             key={i}
-            size={size ?? 1.2}
-            gapScale={gapScale ?? 3}
+            size={size}
+            gapScale={gapScale}
             linkColor={linkColor}
             isMultiParagraph={isMultiParagraph}
           >

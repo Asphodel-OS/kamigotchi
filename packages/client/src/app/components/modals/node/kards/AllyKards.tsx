@@ -8,7 +8,14 @@ import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+// rendering of an ally kami on this node
+export const AllyKards = ({
+  account,
+  kamis,
+  actions,
+  display,
+  utils,
+}: {
   account: Account;
   kamis: Kami[]; // ally kami entities
 
@@ -23,11 +30,7 @@ interface Props {
     calcExpRequirement: (lvl: number) => number;
     getBonusesByItems: (kami: Kami) => Bonus[];
   };
-}
-
-// rendering of an ally kami on this node
-export const AllyKards = (props: Props) => {
-  const { actions, display, account, kamis, utils } = props;
+}) => {
   const { getBonusesByItems } = utils;
   const { calcExpRequirement } = utils;
   const { collect, stop } = actions;

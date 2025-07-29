@@ -5,7 +5,11 @@ import { useSelected, useVisibility } from 'app/stores';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const KamiBlock = ({
+  kami,
+  select,
+  tooltip = [],
+}: {
   kami: Kami;
   select?: {
     onClick?: () => void;
@@ -13,10 +17,7 @@ interface Props {
     isSelected?: boolean;
   };
   tooltip?: string[];
-}
-
-export const KamiBlock = (props: Props) => {
-  const { kami, select, tooltip } = props;
+}) => {
   const { index, progress, name } = kami;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
@@ -32,7 +33,7 @@ export const KamiBlock = (props: Props) => {
 
   return (
     <Container>
-      <TextTooltip text={tooltip ?? []}>
+      <TextTooltip text={tooltip}>
         <Image src={kami.image} onClick={handleClick} />
         <Overlay top={0.9} left={0.7}>
           <Grouping>
@@ -92,8 +93,8 @@ const Grouping = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: white;
-  font-size: ${(props) => props.size}vw;
-  text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
+  font-size: ${({ size }) => size}vw;
+  text-shadow: ${({ size }) => `0 0 ${size * 0.5}vw black`};
 `;
 
 const ClickBox = styled.button<{ isDisabled: boolean; isSelected: boolean }>`

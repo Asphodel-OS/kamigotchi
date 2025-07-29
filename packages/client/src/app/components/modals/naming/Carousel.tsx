@@ -6,16 +6,16 @@ import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiBlock } from '../../library/KamiBlock';
 
-interface Props {
+export const Carousel = ({
+  kamis,
+  state,
+}: {
   kamis: Kami[];
   state: {
     selected: Kami;
     setSelected: (kami: Kami) => void;
   };
-}
-
-export const Carousel = (props: Props) => {
-  const { kamis, state } = props;
+}) => {
   const { selected, setSelected } = state;
 
   const handleSelect = (kami: Kami) => {

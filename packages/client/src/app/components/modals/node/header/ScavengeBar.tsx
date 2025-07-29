@@ -8,7 +8,11 @@ import { useEffect, useState } from 'react';
 
 const SYNC_TIME = 1500;
 
-interface Props {
+export const ScavengeBar = ({
+  scavenge,
+  actions,
+  utils,
+}: {
   scavenge: ScavBar;
   actions: {
     claim: (scavenge: ScavBar) => void;
@@ -17,10 +21,7 @@ interface Props {
     getPoints: (entity: EntityIndex) => number;
     queryScavInstance: () => EntityIndex | undefined;
   };
-}
-
-export const ScavengeBar = (props: Props) => {
-  const { scavenge, actions, utils } = props;
+}) => {
   const { getPoints, queryScavInstance } = utils;
   const { modals } = useVisibility();
 

@@ -4,7 +4,13 @@ import styled from 'styled-components';
 
 const WINDOW_CLASSNAME = 'react-ui-window';
 
-export const Cell: React.FC<{ style: React.CSSProperties }> = observer(({ children, style }) => {
+export const Cell = observer(({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style: React.CSSProperties;
+}) => {
   return (
     <Container style={style} className={WINDOW_CLASSNAME}>
       {children}

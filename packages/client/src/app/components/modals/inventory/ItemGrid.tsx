@@ -14,7 +14,12 @@ import { Kami } from 'network/shapes/Kami';
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
 
-interface Props {
+// get the row of consumable items to display in the player inventory
+export const ItemGrid = ({
+  accountEntity,
+  actions,
+  utils,
+}: {
   accountEntity: EntityIndex;
   actions: {
     useForAccount: (item: Item, amount: number) => void;
@@ -26,11 +31,7 @@ interface Props {
     getInventories: () => Inventory[];
     getKamis: () => Kami[];
   };
-}
-
-// get the row of consumable items to display in the player inventory
-export const ItemGrid = (props: Props) => {
-  const { actions, utils, accountEntity } = props;
+}) => {
   const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
   const { modals } = useVisibility();
 

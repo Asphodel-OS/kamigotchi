@@ -11,7 +11,14 @@ import { KamiBar } from './KamiBar';
 
 const ONYX_REVIVE_PRICE = 3;
 
-interface Props {
+export const KamiBars = ({
+  actions,
+  data,
+  display,
+  state,
+  isVisible,
+  utils,
+}: {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
@@ -37,10 +44,7 @@ interface Props {
   utils: {
     getBonusesByItems: (kami: Kami) => Bonus[];
   };
-}
-
-export const KamiBars = (props: Props) => {
-  const { actions, data, display, state, isVisible, utils } = props;
+}) => {
   const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis, tick } = state;

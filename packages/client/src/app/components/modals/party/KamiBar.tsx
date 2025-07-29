@@ -24,17 +24,19 @@ import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
 import { HarvestingMoods, RestingMoods } from './constants';
 
-interface Props {
+export const KamiBar = ({
+  kami,
+  actions,
+  utils,
+  tick,
+}: {
   kami: Kami;
   actions?: React.ReactNode;
   utils: {
     getBonusesByItems: (kami: Kami) => Bonus[];
   };
   tick: number;
-}
-
-export const KamiBar = (props: Props) => {
-  const { kami, actions, utils, tick } = props;
+}) => {
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const [currentHealth, setCurrentHealth] = useState(0);
@@ -216,11 +218,10 @@ const Actions = styled.div`
   gap: 0.3vw;
 `;
 
-interface MiddleProps {
+const Middle = styled.div<{
   percent: number;
   color: string;
-}
-const Middle = styled.div<MiddleProps>`
+}>`
   position: relative;
   height: 3vw;
   border-right: solid black 0.15vw;

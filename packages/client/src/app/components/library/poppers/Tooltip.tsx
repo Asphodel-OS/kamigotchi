@@ -2,7 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
-interface Props {
+export const Tooltip = ({
+  children,
+  grow,
+  direction,
+  delay = 350,
+  maxWidth,
+  color,
+  content,
+  isDisabled,
+  fullWidth,
+}: {
   children: React.ReactNode;
   grow?: boolean;
   direction?: 'row' | 'column';
@@ -12,11 +22,7 @@ interface Props {
   content: React.ReactNode;
   isDisabled: boolean;
   fullWidth?: boolean;
-}
-
-export const Tooltip = (props: Props) => {
-  const { children, grow, direction, delay, color, content, isDisabled } = props;
-  const { fullWidth, maxWidth } = props;
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -59,7 +65,7 @@ export const Tooltip = (props: Props) => {
     if (isActive) {
       timeoutId = setTimeout(() => {
         if (!isDisabled) setIsVisible(true);
-      }, delay ?? 350);
+      }, delay);
     }
     return () => clearTimeout(timeoutId);
   }, [isActive, delay, isDisabled]);
@@ -113,22 +119,25 @@ const Container = styled.div<{
   ${({ fullWidth }) => fullWidth && 'width: 100%;'}
 `;
 
-interface PopOverProps {
+const PopoverContainer = styled.div.attrs<{
   isVisible: boolean;
   color?: string;
   tooltipPosition?: any;
   maxWidth?: number;
-}
-
-const PopoverContainer = styled.div.attrs<PopOverProps>((props) => ({
+}>(({
+  isVisible,
+  color,
+  tooltipPosition,
+  maxWidth,
+}) => ({
   style: {
-    backgroundColor: props.color ?? '#fff',
-    opacity: props.isVisible ? 1 : 0,
-    top: props.tooltipPosition.y,
-    left: props.tooltipPosition.x,
-    maxWidth: props.maxWidth ? `${props.maxWidth}vw` : '36vw',
+    backgroundColor: color ?? '#fff',
+    opacity: isVisible ? 1 : 0,
+    top: tooltipPosition.y,
+    left: tooltipPosition.x,
+    maxWidth: maxWidth ? `${maxWidth}vw` : '36vw',
   },
-}))<PopOverProps>`
+}))`
   position: fixed;
   flex-direction: column;
   border: solid black 0.15vw;
