@@ -54,7 +54,7 @@ export const WorldKamis = (props: Props) => {
   };
 
   const getEmptyText = () => {
-    if (mode === 'EXPORT') return ['You have no Kami', '\nin the world'];
+    if (mode === 'EXPORT') return ['You have no Kami', 'in the world'];
     else return ['You must select', 'some Kami'];
   };
 
