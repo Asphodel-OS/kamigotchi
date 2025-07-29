@@ -106,8 +106,6 @@ export const Battles = (props: Props) => {
   return (
     <Container ref={feedRef} style={{ overflowY: 'auto' }}>
       <Stats>
-        {/* <Pairing icon={KillIcon} text={(battleStats?.Kills ?? 0).toLocaleString()} /> */}
-        {/* <Pairing icon={DeathIcon} text={(battleStats?.Deaths ?? 0).toLocaleString()} /> */}
         <Text size={0.8}>Kills: {(battleStats?.Kills ?? 0).toLocaleString()}</Text>
         <Text size={0.8}>Deaths: {battleStats?.Deaths ?? 0}</Text>
         <Text size={0.8} color={battleStats?.PNL && battleStats?.PNL > 0 ? 'green' : 'red'}>

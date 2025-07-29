@@ -2,9 +2,11 @@ import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { Text, TextTooltip } from 'app/components/library';
+import { useSelected, useVisibility } from 'app/stores';
 import { Kill } from 'clients/kamiden';
 import { Node } from 'network/shapes';
 import { getAffinityImage } from 'network/shapes/utils';
+import { playClick } from 'utils/sounds';
 import { abbreviateString } from 'utils/strings';
 
 interface Props {
@@ -17,6 +19,14 @@ interface Props {
 export const LocationColumn = (props: Props) => {
   const { kills, utils } = props;
   const { getNodeByIndex } = utils;
+  const { setNode } = useSelected();
+  const { setModals } = useVisibility();
+
+  const showNode = (node: Node) => {
+    setNode(node.index);
+    setModals({ node: true, kami: false });
+    playClick();
+  };
 
   return (
     <Container>
@@ -25,7 +35,7 @@ export const LocationColumn = (props: Props) => {
         const node = getNodeByIndex(kill.RoomIndex as EntityIndex);
         return (
           <TextTooltip key={index} text={[node.name]}>
-            <Row key={index}>
+            <Row key={index} onClick={() => showNode(node)}>
               <Icon src={getAffinityImage(node.affinity)} />
               <Text size={0.9}> {abbreviateString(node.name)}</Text>
             </Row>
@@ -53,6 +63,11 @@ const Row = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 0.45vw;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgb(221, 221, 221);
+  }
 `;
 
 const Icon = styled.img`
