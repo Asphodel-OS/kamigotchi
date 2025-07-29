@@ -24,7 +24,7 @@ export const LocationColumn = (props: Props) => {
 
   const showNode = (node: Node) => {
     setNode(node.index);
-    setModals({ node: true, kami: false });
+    setModals({ node: true, crafting: false, kami: false });
     playClick();
   };
 
