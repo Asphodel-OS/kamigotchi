@@ -72,6 +72,7 @@ const Image = styled.img<{ onClick?: () => void }>`
   border-radius: 0.6vw;
   width: 10vw;
   image-rendering: pixelated;
+  user-drag: none;
 
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'inherit')};
   pointer-events: ${({ onClick }) => (onClick ? 'auto' : 'none')};
