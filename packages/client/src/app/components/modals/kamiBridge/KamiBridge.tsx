@@ -28,16 +28,16 @@ export function registerKamiBridge() {
       rowEnd: 99,
     },
     (layers) => {
-      const { network } = layers;
-      const { world, components } = network;
-      const accountEntity = queryAccountFromEmbedded(network);
-      const kamiRefreshOptions = {
-        live: 2,
-        progress: 3600,
-      };
-
       return interval(1000).pipe(
         map(() => {
+          const { network } = layers;
+          const { world, components } = network;
+          const accountEntity = queryAccountFromEmbedded(network);
+          const kamiRefreshOptions = {
+            live: 2,
+            progress: 3600,
+          };
+
           return {
             network,
             data: {
@@ -110,7 +110,6 @@ export function registerKamiBridge() {
         if (!modals.bridgeERC721) return;
         const accountKamis = getAccountKamis(account.entity);
         setWorldKamis(accountKamis);
-        refetchNFTs();
       }, [modals.bridgeERC721, tick]);
 
       // update list of wild kamis
