@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, KamiBar, TextTooltip } from 'app/components/library';
+import { IconButton, IconListButton, KamiBar, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account } from 'network/shapes/Account';
@@ -40,8 +40,13 @@ export const KamisExternal = (props: Props) => {
   const { account } = data;
   const { displayedKamis, tick } = state;
   const { getAllAccounts } = utils;
+
   const { modals } = useVisibility();
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accountSearch, setAccountSearch] = useState<string>('');
+
+  /////////////////
+  // SUBSCRIPTIONS
 
   useEffect(() => {
     if (!modals.party || view !== 'external') return;
@@ -69,10 +74,13 @@ export const KamisExternal = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  // Choose and return the action button to display
+  // get the actions to display for the kami bar
+  // Q: what's the right way to prevent recomputes here?
   const DisplayedActions = (account: Account, kami: Kami) => {
+    if (!isVisible) return <></>;
     const buttons = [];
 
+    // create the stake action element
     buttons.push(
       <TextTooltip key='stake-tooltip' text={getStakeTooltip(kami)}>
         <IconButton
@@ -84,12 +92,25 @@ export const KamisExternal = (props: Props) => {
       </TextTooltip>
     );
 
+    // create the send action element
+    const accountsSorted = accounts.sort((a, b) => a.name.localeCompare(b.name));
+    const options = accountsSorted.map((targetAcc) => ({
+      text: `${targetAcc.name} (#${targetAcc.index})`,
+      onClick: () => sendKamis(kami, targetAcc),
+    }));
+
     buttons.push(
       <TextTooltip key='send-tooltip' text={getSendTooltip(kami)}>
-        <IconButton
+        <IconListButton
           key='send-kami'
           img={ArrowIcons.right}
-          onClick={() => sendKamis(kami, account)}
+          options={options}
+          search={{
+            value: accountSearch,
+            onChange: (e) => {
+              setAccountSearch(e.target.value);
+            },
+          }}
         />
       </TextTooltip>
     );
@@ -104,7 +125,7 @@ export const KamisExternal = (props: Props) => {
           kami={kami}
           actions={DisplayedActions(account, kami)}
           utils={utils}
-          tick={tick}
+          tick={0}
         />
       ))}
     </Container>

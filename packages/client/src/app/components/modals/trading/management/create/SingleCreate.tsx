@@ -33,7 +33,7 @@ export const SingleCreate = (props: Props) => {
   const { actions, controls, data, isVisible } = props;
   const { handleCreatePrompt } = actions;
   const { isConfirming } = controls;
-  const { account, currencies, inventory, items } = data;
+  const { currencies, inventory, items } = data;
   const { modals } = useVisibility();
 
   const [mode, setMode] = useState<Mode>('Buy');

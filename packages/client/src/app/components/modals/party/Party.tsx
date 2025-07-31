@@ -2,7 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
-import { useReadContracts, useWatchBlockNumber } from 'wagmi';
+import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
 
 import { getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
 import { getTempBonuses } from 'app/cache/bonus';
@@ -21,6 +21,7 @@ import { getItemByIndex, Item, NullItem } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamiByIndex } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
+import { erc721Abi } from 'viem';
 import { KamiList } from './KamiList';
 import { Toolbar } from './Toolbar';
 import { Sort, View } from './types';
@@ -106,6 +107,7 @@ export function registerPartyModal() {
       const { modals } = useVisibility();
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
       const { balances: tokenBals } = useTokens();
+      const { writeContract } = useWriteContract();
 
       const [account, setAccount] = useState<Account>(NullAccount);
       const [kamis, setKamis] = useState<Kami[]>([]);
@@ -222,8 +224,13 @@ export function registerPartyModal() {
       };
 
       // send a kami NFT to another player
-      const sendKamiTx = (kami: Kami, account: Account) => {
-        return;
+      const sendKamiTx = (kami: Kami, to: Account) => {
+        writeContract({
+          abi: erc721Abi,
+          address: kamiNFTAddress,
+          functionName: 'safeTransferFrom',
+          args: [account.ownerAddress, to.ownerAddress, BigInt(kami.index)],
+        });
       };
 
       // import a kami from the wild to the world

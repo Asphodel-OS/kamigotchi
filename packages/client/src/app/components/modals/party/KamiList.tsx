@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { EmptyText } from 'app/components/library';
+import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
@@ -51,6 +52,7 @@ export const KamiList = (props: Props) => {
   const { kamis } = data;
   const { view } = controls;
   const { displayedKamis, tick } = state;
+  const { modals } = useVisibility();
 
   /////////////////
   // DISPLAY
@@ -81,7 +83,7 @@ export const KamiList = (props: Props) => {
         display={display}
         state={{ displayedKamis }}
         utils={utils}
-        isVisible={view === 'expanded'}
+        isVisible={modals.party && view === 'expanded'}
       />
       <KamisCollapsed
         actions={actions}
@@ -89,7 +91,7 @@ export const KamiList = (props: Props) => {
         display={display}
         state={{ displayedKamis, tick }}
         utils={utils}
-        isVisible={view === 'collapsed'}
+        isVisible={modals.party && view === 'collapsed'}
       />
       <KamisExternal
         actions={actions}
@@ -97,7 +99,7 @@ export const KamiList = (props: Props) => {
         data={data}
         state={{ displayedKamis: data.wildKamis, tick }}
         utils={utils}
-        isVisible={view === 'external'}
+        isVisible={modals.party && view === 'external'}
       />
     </Container>
   );

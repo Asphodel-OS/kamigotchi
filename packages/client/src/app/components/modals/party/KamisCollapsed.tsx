@@ -69,10 +69,12 @@ export const KamisCollapsed = (props: Props) => {
   // DISPLAY
 
   // Choose and return the action button to display
+  // Q: what's the right way to prevent recomputes here?
   const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
+    if (!isVisible) return <></>;
     let buttons = [];
-    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
 
+    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
     buttons.push(UseItemButton(kami, account, useIcon));
     if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
     else {

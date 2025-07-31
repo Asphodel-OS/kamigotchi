@@ -156,9 +156,10 @@ export const KamisExpanded = (props: Props) => {
 
   // Choose and return the action button to display
   const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
+    if (!isVisible) return <></>;
     let buttons = [];
-    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
 
+    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
     buttons.push(UseItemButton(kami, account, useIcon));
     if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
     else {
