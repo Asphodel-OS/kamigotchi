@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 
 import { isDead } from 'app/cache/kami';
-import { OnyxButton } from 'app/components/library/buttons/actions/OnyxButton';
+import { KamiBar, OnyxButton } from 'app/components/library';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
-import { KamiBar } from './KamiBar';
 
 const ONYX_REVIVE_PRICE = 3;
 

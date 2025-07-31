@@ -16,13 +16,13 @@ import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
 import { AffinityIcons } from 'constants/affinities';
+import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
-import { HarvestingMoods, RestingMoods } from './constants';
 
 interface Props {
   kami: Kami;
@@ -63,7 +63,7 @@ export const KamiBar = (props: Props) => {
   };
 
   /////////////////
-  // GETTERS
+  // INTERPRETATION
 
   const getBodyIcon = () => {
     const affinity = getKamiBodyAffinity(kami);
@@ -169,6 +169,9 @@ export const KamiBar = (props: Props) => {
     if (level <= 75) return '#F9DB6D';
     return '#16DB93';
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container>
