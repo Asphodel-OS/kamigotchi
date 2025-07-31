@@ -1,7 +1,7 @@
 import { animate, createScope, createSpring, Scope } from 'animejs';
 import { useEffect, useRef } from 'react';
 
-import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 
 export const LevelUpArrows = () => {
   const scope = useRef<Scope | null>(null);
@@ -41,7 +41,7 @@ export const LevelUpArrows = () => {
       {positions.map((pos, i) => (
         <img
           key={`arrow-${i}`}
-          src={IndicatorIcons.level_up}
+          src={ArrowIcons.up}
           ref={(el) => (ArrowRefs.current[i] = el)}
           style={{
             position: 'absolute',
