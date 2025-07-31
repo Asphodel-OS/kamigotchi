@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
 import { compareTraitAffinity, compareTraitName, compareTraitRarity } from 'app/cache/trait';
-import { IconButton, IconListButton } from 'app/components/library';
+import { IconButton, IconListButton, TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { useVisibility } from 'app/stores';
 import { CollectIcon, HarvestIcon, StopIcon } from 'assets/images/icons/actions';
@@ -46,11 +46,14 @@ export const Toolbar = (props: Props) => {
   const { kamis } = data;
   const { passesNodeReqs } = utils;
   const { displayedKamis, setDisplayedKamis, tick } = state;
+  const { modals } = useVisibility();
+
   const [addOptions, setAddOptions] = useState<DropdownOption[]>([]);
   const [collectOptions, setCollectOptions] = useState<DropdownOption[]>([]);
   const [stopOptions, setStopOptions] = useState<DropdownOption[]>([]);
 
-  const { modals } = useVisibility();
+  /////////////////
+  // SUBSCRIPTIONS
 
   useEffect(() => {
     if (!modals.party) return;
@@ -71,16 +74,6 @@ export const Toolbar = (props: Props) => {
     setCollectOptions(collectOptions);
     setStopOptions(stopOptions);
   }, [displayedKamis, tick, modals.party]);
-  // memoized sort options
-  const SortOptions = useMemo(
-    () =>
-      Object.entries(SortIcons).map(([key, image]) => ({
-        text: key,
-        image,
-        onClick: () => setSort(key as Sort),
-      })),
-    []
-  );
 
   // sort kamis when changes are detected
   // TODO: trigger updates after successful state updates
@@ -113,14 +106,33 @@ export const Toolbar = (props: Props) => {
     setDisplayedKamis(kamis);
   }, [modals.party, kamis.length, sort, view]);
 
+  /////////////////
+  // INTERACTION
+
+  // toggle between views
+  const toggleView = () => {
+    if (view === 'external') setView('expanded');
+    if (view === 'expanded') setView('collapsed');
+    if (view === 'collapsed') setView('external');
+  };
+
+  // memoized sort options
+  const SortOptions = useMemo(
+    () =>
+      Object.entries(SortIcons).map(([key, image]) => ({
+        text: key,
+        image,
+        onClick: () => setSort(key as Sort),
+      })),
+    []
+  );
+
   return (
     <Container>
       <Section>
-        <IconButton
-          img={ViewIcons[view]}
-          onClick={() => setView(view === 'collapsed' ? 'expanded' : 'collapsed')}
-          radius={0.6}
-        />
+        <TextTooltip text={[`${view}`]}>
+          <IconButton img={ViewIcons[view]} onClick={() => toggleView()} radius={0.6} />
+        </TextTooltip>
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
       <DropdownToggle

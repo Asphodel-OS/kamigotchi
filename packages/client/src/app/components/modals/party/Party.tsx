@@ -68,7 +68,6 @@ export function registerPartyModal() {
             data: {
               accountEntity,
               kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
-
               spender: getCompAddr(world, components, 'component.token.allowance'),
             },
 
@@ -154,13 +153,6 @@ export function registerPartyModal() {
         return () => clearInterval(timerId);
       }, []);
 
-      // update onyx info every tick or if the connnected account changes
-      useEffect(() => {
-        if (!onyxItem.address) return;
-        const onyxInfo = tokenBals.get(onyxItem.address);
-        setOnyxInfo(onyxInfo ?? { allowance: 0, balance: 0 });
-      }, [onyxItem, spender, tick]);
-
       // update account and kamis every tick or if the connnected account changes
       useEffect(() => {
         if (!modals.party) return;
@@ -174,6 +166,13 @@ export function registerPartyModal() {
         const roomIndex = account.roomIndex;
         setNode(getNode(roomIndex));
       }, [accountEntity, account.roomIndex]);
+
+      // update onyx info every tick or if the connnected account changes
+      useEffect(() => {
+        if (!onyxItem.address) return;
+        const onyxInfo = tokenBals.get(onyxItem.address);
+        setOnyxInfo(onyxInfo ?? { allowance: 0, balance: 0 });
+      }, [onyxItem, spender, tick]);
 
       // update list of wild kamis whenever that changes
       // TOTO: properly typecast the result of the abi call
@@ -316,11 +315,14 @@ export function registerPartyModal() {
               onyxApprove: approveOnyxTx,
               onyxRevive: onyxReviveTx,
               addKamis: (kamis: Kami[]) => start(kamis, node),
+              stakeKamis: stakeKamiTx,
+              sendKamis: sendKamiTx,
             }}
             controls={{ view }}
             data={{
               account,
               kamis,
+              wildKamis,
               node,
               onyx: onyxInfo,
             }}

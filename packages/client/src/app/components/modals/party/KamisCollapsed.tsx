@@ -39,7 +39,7 @@ interface Props {
   };
 }
 
-export const KamiBars = (props: Props) => {
+export const KamisCollapsed = (props: Props) => {
   const { actions, data, display, state, isVisible, utils } = props;
   const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;

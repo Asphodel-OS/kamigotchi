@@ -50,12 +50,11 @@ interface Props {
   isVisible: boolean;
 }
 
-export const Kards = (props: Props) => {
+export const KamisExpanded = (props: Props) => {
   const { actions, data, display, state, utils, isVisible } = props;
   const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis } = state;
-  const { calcExpRequirement } = utils;
   const { HarvestButton, UseItemButton } = display;
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user

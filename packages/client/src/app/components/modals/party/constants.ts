@@ -13,6 +13,7 @@ export const SortIcons: Record<Sort, string> = {
 export const ViewIcons: Record<View, string> = {
   collapsed: TriggerIcons.eyeHalf,
   expanded: TriggerIcons.eyeOpen,
+  external: TriggerIcons.eyeClosed,
 };
 
 export const HarvestingMoods: Record<number, string> = {

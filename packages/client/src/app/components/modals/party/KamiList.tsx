@@ -5,8 +5,9 @@ import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
-import { KamiBars } from './KamiBars';
-import { Kards } from './Kards';
+import { KamisCollapsed } from './KamisCollapsed';
+import { KamisExpanded } from './KamisExpanded';
+import { KamisExternal } from './KamisExternal';
 import { View } from './types';
 
 interface Props {
@@ -14,6 +15,8 @@ interface Props {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
     addKamis: (kamis: Kami[]) => void;
+    stakeKamis: (kamis: Kami[]) => void;
+    sendKamis: (kami: Kami, account: Account) => void;
   };
   controls: {
     view: View;
@@ -21,6 +24,7 @@ interface Props {
   data: {
     account: Account;
     kamis: Kami[];
+    wildKamis: Kami[];
     node: Node;
     onyx: {
       allowance: number;
@@ -46,7 +50,6 @@ export const KamiList = (props: Props) => {
   const { kamis } = data;
   const { view } = controls;
   const { displayedKamis, tick } = state;
-  const { calcExpRequirement } = utils;
 
   /////////////////
   // DISPLAY
@@ -71,7 +74,7 @@ export const KamiList = (props: Props) => {
           ]}
         />
       )}
-      <Kards
+      <KamisExpanded
         actions={actions}
         data={data}
         display={display}
@@ -79,13 +82,21 @@ export const KamiList = (props: Props) => {
         utils={utils}
         isVisible={view === 'expanded'}
       />
-      <KamiBars
+      <KamisCollapsed
         actions={actions}
         data={data}
         display={display}
         state={{ displayedKamis, tick }}
         utils={utils}
         isVisible={view === 'collapsed'}
+      />
+      <KamisExternal
+        actions={actions}
+        data={data}
+        display={display}
+        state={{ displayedKamis: data.wildKamis, tick }}
+        utils={utils}
+        isVisible={view === 'external'}
       />
     </Container>
   );
