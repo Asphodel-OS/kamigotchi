@@ -1,32 +1,26 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { isDead } from 'app/cache/kami';
-import { KamiBar, OnyxButton } from 'app/components/library';
-import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
+import { IconButton, KamiBar, TextTooltip } from 'app/components/library';
+import { useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
-import { Node } from 'network/shapes/Node';
+import { View } from './types';
 
-const ONYX_REVIVE_PRICE = 3;
+const PORTAL_ROOM_INDEX = 12;
 
 interface Props {
   actions: {
-    onyxApprove: (price: number) => void;
-    onyxRevive: (kami: Kami) => void;
+    sendKamis: (kami: Kami, account: Account) => void;
+    stakeKamis: (kamis: Kami[]) => void;
+  };
+  controls: {
+    view: View;
   };
   data: {
     account: Account;
-    kamis: Kami[];
-    node: Node;
-    onyx: {
-      allowance: number;
-      balance: number;
-    };
-  };
-  display: {
-    HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
-    UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
   state: {
     displayedKamis: Kami[];
@@ -35,31 +29,39 @@ interface Props {
   isVisible: boolean;
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
+    getAllAccounts: () => Account[];
   };
 }
 
 export const KamisExternal = (props: Props) => {
-  const { actions, data, display, state, isVisible, utils } = props;
-  const { onyxApprove, onyxRevive } = actions;
-  const { account, node, onyx } = data;
+  const { actions, controls, data, state, isVisible, utils } = props;
+  const { sendKamis, stakeKamis } = actions;
+  const { view } = controls;
+  const { account } = data;
   const { displayedKamis, tick } = state;
-  const { HarvestButton, UseItemButton } = display;
+  const { getAllAccounts } = utils;
+  const { modals } = useVisibility();
+  const [accounts, setAccounts] = useState<Account[]>([]);
+
+  useEffect(() => {
+    if (!modals.party || view !== 'external') return;
+    setAccounts(getAllAccounts());
+  }, [modals.party, view]);
 
   /////////////////
   // INTERPRETATION
 
-  const getOnyxTooltip = (kami: Kami) => {
-    let tooltip: string[] = [`the Fortunate may resurrect`, 'their kami in other ways..', `\n`];
+  // get the tooltip for a send action
+  const getSendTooltip = (kami: Kami) => {
+    const tooltip = [`Send ${kami.name} to another account.`];
+    return tooltip;
+  };
 
-    if (onyx.balance < ONYX_REVIVE_PRICE) {
-      tooltip = tooltip.concat([
-        `you only have ${onyx.balance} $ONYX`,
-        `you need ${ONYX_REVIVE_PRICE} $ONYX`,
-      ]);
-    } else if (onyx.allowance < ONYX_REVIVE_PRICE) {
-      tooltip = tooltip.concat([`approve spend of ${ONYX_REVIVE_PRICE} $ONYX`]);
-    } else {
-      tooltip = tooltip.concat([`save ${kami.name} with ${ONYX_REVIVE_PRICE} onyx`]);
+  // get the tooltip for a stake action
+  const getStakeTooltip = (kami: Kami) => {
+    const tooltip = [`Import ${kami.name} `, `through the Scrap Confluence.`];
+    if (account.roomIndex !== PORTAL_ROOM_INDEX) {
+      tooltip.push(`\nYou must first navigate there`, `(search West of the Vending Machine)`);
     }
     return tooltip;
   };
@@ -68,23 +70,29 @@ export const KamisExternal = (props: Props) => {
   // DISPLAY
 
   // Choose and return the action button to display
-  const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
-    let buttons = [];
-    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
+  const DisplayedActions = (account: Account, kami: Kami) => {
+    const buttons = [];
 
-    buttons.push(UseItemButton(kami, account, useIcon));
-    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
-    else {
-      buttons.push(
-        <OnyxButton
-          key='onyx-revive'
-          kami={kami}
-          onyx={{ ...onyx, price: ONYX_REVIVE_PRICE }}
-          actions={{ onyxApprove, onyxUse: onyxRevive }}
-          tooltip={getOnyxTooltip(kami)}
+    buttons.push(
+      <TextTooltip key='stake-tooltip' text={getStakeTooltip(kami)}>
+        <IconButton
+          key='stake-kami'
+          img={ArrowIcons.down}
+          onClick={() => stakeKamis([kami])}
+          disabled={account.roomIndex !== PORTAL_ROOM_INDEX}
         />
-      );
-    }
+      </TextTooltip>
+    );
+
+    buttons.push(
+      <TextTooltip key='send-tooltip' text={getSendTooltip(kami)}>
+        <IconButton
+          key='send-kami'
+          img={ArrowIcons.right}
+          onClick={() => sendKamis(kami, account)}
+        />
+      </TextTooltip>
+    );
     return buttons;
   };
 
@@ -94,7 +102,7 @@ export const KamisExternal = (props: Props) => {
         <KamiBar
           key={kami.entity}
           kami={kami}
-          actions={DisplayedActions(account, kami, node)}
+          actions={DisplayedActions(account, kami)}
           utils={utils}
           tick={tick}
         />

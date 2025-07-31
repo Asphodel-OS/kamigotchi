@@ -135,17 +135,19 @@ export const Toolbar = (props: Props) => {
         </TextTooltip>
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
-      <DropdownToggle
-        limit={33}
-        button={{
-          images: [HarvestIcon, CollectIcon, StopIcon],
-          tooltips: ['Add Kami to Node', 'Collect Harvest', 'Stop Harvest'],
-        }}
-        disabled={[addOptions.length == 0, collectOptions.length == 0, stopOptions.length == 0]}
-        onClick={[addKami, collect, stopKami]}
-        options={[addOptions, collectOptions, stopOptions]}
-        radius={0.6}
-      />
+      {view !== 'external' && (
+        <DropdownToggle
+          limit={33}
+          button={{
+            images: [HarvestIcon, CollectIcon, StopIcon],
+            tooltips: ['Add Kami to Node', 'Collect Harvest', 'Stop Harvest'],
+          }}
+          disabled={[addOptions.length == 0, collectOptions.length == 0, stopOptions.length == 0]}
+          onClick={[addKami, collect, stopKami]}
+          options={[addOptions, collectOptions, stopOptions]}
+          radius={0.6}
+        />
+      )}
     </Container>
   );
 };

@@ -1,11 +1,12 @@
 import { World } from '@mud-classic/recs';
+
 import { isDead, isOffWorld, isResting, isUnrevealed } from 'app/cache/kami';
 import { Components } from 'network/components';
 import { Account } from 'network/shapes/Account';
 import { queryAll } from 'network/shapes/Account/queries';
 import { Inventory } from 'network/shapes/Inventory';
 import { Kami } from 'network/shapes/Kami';
-import { get } from './base';
+import { get, Options } from './base';
 
 //////////////////
 // INVENTORIES
@@ -33,7 +34,7 @@ export const getAccessibleKamis = (account: Account, kamis: Kami[]): Kami[] => {
 //////////////////
 // GET ALL ACCOUNTS
 
-export const getAll = (world: World, components: Components) => {
-  const entities = queryAll(components);
-  return entities.map((entity) => get(world, components, entity));
+export const getAll = (world: World, comps: Components, options?: Options) => {
+  const entities = queryAll(comps);
+  return entities.map((entity) => get(world, comps, entity, options));
 };

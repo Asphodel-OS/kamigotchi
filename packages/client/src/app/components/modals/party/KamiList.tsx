@@ -15,8 +15,8 @@ interface Props {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
     addKamis: (kamis: Kami[]) => void;
-    stakeKamis: (kamis: Kami[]) => void;
     sendKamis: (kami: Kami, account: Account) => void;
+    stakeKamis: (kamis: Kami[]) => void;
   };
   controls: {
     view: View;
@@ -35,13 +35,14 @@ interface Props {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
-  utils: {
-    calcExpRequirement: (lvl: number) => number;
-    getTempBonuses: (kami: Kami) => Bonus[];
-  };
   state: {
     displayedKamis: Kami[];
     tick: number;
+  };
+  utils: {
+    calcExpRequirement: (lvl: number) => number;
+    getTempBonuses: (kami: Kami) => Bonus[];
+    getAllAccounts: () => Account[];
   };
 }
 
@@ -92,8 +93,8 @@ export const KamiList = (props: Props) => {
       />
       <KamisExternal
         actions={actions}
+        controls={controls}
         data={data}
-        display={display}
         state={{ displayedKamis: data.wildKamis, tick }}
         utils={utils}
         isVisible={view === 'external'}

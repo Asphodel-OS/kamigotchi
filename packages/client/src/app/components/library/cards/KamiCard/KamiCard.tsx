@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { calcHealth } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { StatusIcons } from 'assets/images/icons/statuses';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -95,7 +95,7 @@ export const KamiCard = (props: Props) => {
         </TitleText>
         <TitleCorner key='corner'>
           <TextTooltip text={[getItemBonusesDescription(kami)]}>
-            {getItemBonusesDescription(kami).length > 0 && <Buff src={IndicatorIcons.buff} />}
+            {getItemBonusesDescription(kami).length > 0 && <Buff src={StatusIcons.buff} />}
           </TextTooltip>
           {showCooldown && <Cooldown kami={kami} />}
           {showBattery && (

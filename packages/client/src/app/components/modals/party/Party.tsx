@@ -4,7 +4,7 @@ import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
-import { getAccount, getAccountKamis } from 'app/cache/account';
+import { getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
 import { getTempBonuses } from 'app/cache/bonus';
 import { getConfigAddress } from 'app/cache/config';
 import { getKami } from 'app/cache/kami';
@@ -80,6 +80,7 @@ export function registerPartyModal() {
             utils: {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
+              getAllAccounts: () => getAllAccounts(world, components),
               getTempBonuses: (kami: Kami) =>
                 getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
               getItem: (index: number) => getItemByIndex(world, components, index),
