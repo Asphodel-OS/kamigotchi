@@ -65,8 +65,8 @@ export function registerKamiBridge() {
       const [worldKamis, setWorldKamis] = useState<Kami[]>([]);
       const [wildKamis, setWildKamis] = useState<Kami[]>([]);
       const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
-      const [tick, setTick] = useState(Date.now());
       const [mode, setMode] = useState<Mode>('IMPORT');
+      const [tick, setTick] = useState(Date.now());
 
       /////////////////
       // BLOCK WATCHERS
