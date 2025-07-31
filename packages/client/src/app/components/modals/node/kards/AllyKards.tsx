@@ -21,14 +21,14 @@ interface Props {
   };
   utils: {
     calcExpRequirement: (lvl: number) => number;
-    getBonusesByItems: (kami: Kami) => Bonus[];
+    getTempBonuses: (kami: Kami) => Bonus[];
   };
 }
 
 // rendering of an ally kami on this node
 export const AllyKards = (props: Props) => {
   const { actions, display, account, kamis, utils } = props;
-  const { getBonusesByItems } = utils;
+  const { getTempBonuses } = utils;
   const { calcExpRequirement } = utils;
   const { collect, stop } = actions;
   const { UseItemButton } = display;
@@ -56,7 +56,7 @@ export const AllyKards = (props: Props) => {
   };
 
   const getItemBonusesDescription = (kami: Kami) => {
-    const bonuses = getBonusesByItems(kami);
+    const bonuses = getTempBonuses(kami);
     return bonuses.map((bonus) => parseBonusText(bonus));
   };
 

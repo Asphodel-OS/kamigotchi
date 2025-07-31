@@ -25,7 +25,7 @@ interface Props {
   showCooldown?: boolean;
   utils?: {
     calcExpRequirement: (lvl: number) => number;
-    getBonusesByItems: (kami: Kami) => Bonus[];
+    getTempBonuses: (kami: Kami) => Bonus[];
   };
 }
 
@@ -33,7 +33,7 @@ interface Props {
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
   const { kami, actions, showBattery, showCooldown, isFriend, utils } = props;
-  const getBonusesByItems = utils?.getBonusesByItems;
+  const getTempBonuses = utils?.getTempBonuses;
   const { calcExpRequirement } = utils ?? {};
   const { description, descriptionOnClick } = props;
   const { contentTooltip } = props;
@@ -83,8 +83,8 @@ export const KamiCard = (props: Props) => {
   };
 
   const getItemBonusesDescription = (kami: Kami) => {
-    if (!getBonusesByItems) return [];
-    return getBonusesByItems(kami).map((bonus) => parseBonusText(bonus));
+    if (!getTempBonuses) return [];
+    return getTempBonuses(kami).map((bonus) => parseBonusText(bonus));
   };
 
   return (

@@ -35,7 +35,7 @@ interface Props {
   };
   isVisible: boolean;
   utils: {
-    getBonusesByItems: (kami: Kami) => Bonus[];
+    getTempBonuses: (kami: Kami) => Bonus[];
   };
 }
 

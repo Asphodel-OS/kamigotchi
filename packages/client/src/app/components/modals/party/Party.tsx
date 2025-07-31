@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
-import { getBonusesByItems } from 'app/cache/bonus';
+import { getTempBonuses } from 'app/cache/bonus';
 import { getConfigAddress } from 'app/cache/config';
 import { getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
@@ -55,9 +55,9 @@ export function registerPartyModal() {
             live: 0,
             bonuses: 5, // set this to 3600 once we get explicit triggers for updates
             harvest: 5, // set this to 60 once we get explicit triggers for updates
+            progress: 5,
             skills: 5, // set this to 3600 once we get explicit triggers for updates
             flags: 10, // set this to 3600 once we get explicit triggers for updates
-            progress: 3600,
             config: 3600,
             stats: 3600,
             traits: 3600,
@@ -80,8 +80,8 @@ export function registerPartyModal() {
             utils: {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
               getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
-              getBonusesByItems: (kami: Kami) =>
-                getBonusesByItems(world, components, kami.entity, kamiRefreshOptions.bonuses),
+              getTempBonuses: (kami: Kami) =>
+                getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
               getItem: (index: number) => getItemByIndex(world, components, index),
               getKami: (entity: EntityIndex) =>
                 getKami(world, components, entity, kamiRefreshOptions),

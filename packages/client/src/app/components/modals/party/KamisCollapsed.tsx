@@ -35,7 +35,7 @@ interface Props {
   };
   isVisible: boolean;
   utils: {
-    getBonusesByItems: (kami: Kami) => Bonus[];
+    getTempBonuses: (kami: Kami) => Bonus[];
   };
 }
 
@@ -96,6 +96,7 @@ export const KamisCollapsed = (props: Props) => {
           key={kami.entity}
           kami={kami}
           actions={DisplayedActions(account, kami, node)}
+          options={{ showCooldown: true }}
           utils={utils}
           tick={tick}
         />

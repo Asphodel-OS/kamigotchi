@@ -8,7 +8,7 @@ const AnchorToInstances = new Map<EntityID, EntityIndex[]>();
 
 const QueryUpdateTs = new Map<EntityID, number>();
 
-export const getByItems = (
+export const getTemp = (
   world: World,
   components: Components,
   holder: EntityIndex,

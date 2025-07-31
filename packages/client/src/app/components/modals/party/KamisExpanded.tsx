@@ -44,7 +44,7 @@ interface Props {
   };
   utils: {
     calcExpRequirement: (lvl: number) => number;
-    getBonusesByItems: (kami: Kami) => Bonus[];
+    getTempBonuses: (kami: Kami) => Bonus[];
   };
 
   isVisible: boolean;

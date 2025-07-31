@@ -3,6 +3,6 @@ export {
   getRegistry as getBonusRegistry,
   process as processBonus,
 } from './base';
-export { getByItems as getBonusesByItems, getForEndType as getBonusesForEndType } from './getters';
+export { getForEndType as getBonusesForEndType, getTemp as getTempBonuses } from './getters';
 
 export type { Bonus, BonusInstance } from 'network/shapes/Bonus';
