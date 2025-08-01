@@ -29,6 +29,7 @@ interface Props {
   actions?: React.ReactNode;
   options?: {
     showCooldown?: boolean;
+    showTooltip?: boolean;
   };
   tick: number;
 
@@ -40,7 +41,7 @@ interface Props {
 
 export const KamiBar = (props: Props) => {
   const { kami, actions, options, utils, tick } = props;
-  const { showCooldown } = options ?? {};
+  const { showCooldown, showTooltip } = options ?? {};
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const [currentHealth, setCurrentHealth] = useState(0);
@@ -92,6 +93,7 @@ export const KamiBar = (props: Props) => {
 
   // get the percent health the kami has remaining
   const calcHealthPercent = () => {
+    if (!showTooltip) return 100;
     const total = kami.stats?.health.total ?? 0;
     return (100 * currentHealth) / total;
   };

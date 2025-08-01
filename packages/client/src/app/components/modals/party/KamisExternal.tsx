@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiBar, TextTooltip } from 'app/components/library';
@@ -11,6 +11,10 @@ import { View } from './types';
 
 const PORTAL_ROOM_INDEX = 12;
 
+// resorting to this pattern as useMemo and useCallback don't seem to be effective
+const StakeButtons = new Map<number, React.ReactNode>();
+const SendButtons = new Map<number, React.ReactNode>();
+
 interface Props {
   actions: {
     sendKamis: (kami: Kami, account: Account) => void;
@@ -21,37 +25,47 @@ interface Props {
   };
   data: {
     account: Account;
+    accounts: Account[];
+    kamis: Kami[];
   };
-  state: {
-    displayedKamis: Kami[];
-    tick: number;
-  };
-  isVisible: boolean;
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
-    getAllAccounts: () => Account[];
   };
+  isVisible: boolean;
 }
 
 export const KamisExternal = (props: Props) => {
-  const { actions, controls, data, state, isVisible, utils } = props;
+  const { actions, controls, data, isVisible, utils } = props;
   const { sendKamis, stakeKamis } = actions;
   const { view } = controls;
-  const { account } = data;
-  const { displayedKamis, tick } = state;
-  const { getAllAccounts } = utils;
+  const { account, accounts, kamis } = data;
 
   const { modals } = useVisibility();
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [accountSearch, setAccountSearch] = useState<string>('');
 
   /////////////////
   // SUBSCRIPTIONS
 
+  // when a new kami is added, add both buttons
   useEffect(() => {
-    if (!modals.party || view !== 'external') return;
-    setAccounts(getAllAccounts());
-  }, [modals.party, view]);
+    kamis.forEach((kami) => {
+      if (!StakeButtons.has(kami.index)) StakeButtons.set(kami.index, StakeButton(kami));
+      if (!SendButtons.has(kami.index)) SendButtons.set(kami.index, SendButton(kami));
+    });
+  }, [kamis.length]);
+
+  // when the room changes update all stake buttons
+  useEffect(() => {
+    kamis.forEach((kami) => {
+      StakeButtons.set(kami.index, StakeButton(kami));
+    });
+  }, [account.roomIndex]);
+
+  // when the list of accounts changes update all send buttons
+  useEffect(() => {
+    kamis.forEach((kami) => {
+      SendButtons.set(kami.index, SendButton(kami));
+    });
+  }, [accounts.length]);
 
   /////////////////
   // INTERPRETATION
@@ -74,56 +88,43 @@ export const KamisExternal = (props: Props) => {
   /////////////////
   // DISPLAY
 
-  // get the actions to display for the kami bar
-  // Q: what's the right way to prevent recomputes here?
-  const DisplayedActions = (account: Account, kami: Kami) => {
-    if (!isVisible) return <></>;
-    const buttons = [];
+  // compute the send button for a kami
+  const SendButton = (kami: Kami) => {
+    const options = accounts.map((targetAcc) => ({
+      text: `${targetAcc.name} (#${targetAcc.index})`,
+      onClick: () => sendKamis(kami, targetAcc),
+    }));
 
-    // create the stake action element
-    buttons.push(
+    return (
+      <TextTooltip key='send-tooltip' text={getSendTooltip(kami)}>
+        <IconListButton img={ArrowIcons.right} options={options} searchable />
+      </TextTooltip>
+    );
+  };
+
+  // compute the stake button for a kami
+  const StakeButton = (kami: Kami) => {
+    return (
       <TextTooltip key='stake-tooltip' text={getStakeTooltip(kami)}>
         <IconButton
-          key='stake-kami'
           img={ArrowIcons.down}
           onClick={() => stakeKamis([kami])}
           disabled={account.roomIndex !== PORTAL_ROOM_INDEX}
         />
       </TextTooltip>
     );
-
-    // create the send action element
-    const accountsSorted = accounts.sort((a, b) => a.name.localeCompare(b.name));
-    const options = accountsSorted.map((targetAcc) => ({
-      text: `${targetAcc.name} (#${targetAcc.index})`,
-      onClick: () => sendKamis(kami, targetAcc),
-    }));
-
-    buttons.push(
-      <TextTooltip key='send-tooltip' text={getSendTooltip(kami)}>
-        <IconListButton
-          key='send-kami'
-          img={ArrowIcons.right}
-          options={options}
-          search={{
-            value: accountSearch,
-            onChange: (e) => {
-              setAccountSearch(e.target.value);
-            },
-          }}
-        />
-      </TextTooltip>
-    );
-    return buttons;
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container isVisible={isVisible}>
-      {displayedKamis.map((kami) => (
+      {kamis.map((kami) => (
         <KamiBar
           key={kami.entity}
           kami={kami}
-          actions={DisplayedActions(account, kami)}
+          actions={[StakeButtons.get(kami.index), SendButtons.get(kami.index)]}
           utils={utils}
           tick={0}
         />

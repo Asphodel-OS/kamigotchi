@@ -24,6 +24,7 @@ interface Props {
   };
   data: {
     account: Account;
+    accounts: Account[];
     kamis: Kami[];
     wildKamis: Kami[];
     node: Node;
@@ -96,8 +97,7 @@ export const KamiList = (props: Props) => {
       <KamisExternal
         actions={actions}
         controls={controls}
-        data={data}
-        state={{ displayedKamis: data.wildKamis, tick }}
+        data={{ ...data, kamis: data.wildKamis }}
         utils={utils}
         isVisible={modals.party && view === 'external'}
       />

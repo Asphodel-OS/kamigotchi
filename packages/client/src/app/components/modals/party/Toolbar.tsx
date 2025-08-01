@@ -57,6 +57,7 @@ export const Toolbar = (props: Props) => {
 
   useEffect(() => {
     if (!modals.party) return;
+    if (view === 'external') return;
 
     const addOptions = displayedKamis
       .filter((kami) => canHarvest(kami) && passesNodeReqs(kami))

@@ -2,9 +2,10 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+import { erc721Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
 
-import { getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
+import { AccountOptions, getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
 import { getTempBonuses } from 'app/cache/bonus';
 import { getConfigAddress } from 'app/cache/config';
 import { getKami } from 'app/cache/kami';
@@ -16,12 +17,16 @@ import { BalPair } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { ONYX_INDEX } from 'constants/items';
 import { erc721ABI } from 'network/chain/ERC721';
-import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import {
+  Account,
+  NullAccount,
+  queryAccountFromEmbedded,
+  queryAllAccounts,
+} from 'network/shapes/Account';
 import { getItemByIndex, Item, NullItem } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamiByIndex } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
-import { erc721Abi } from 'viem';
 import { KamiList } from './KamiList';
 import { Toolbar } from './Toolbar';
 import { Sort, View } from './types';
@@ -80,7 +85,8 @@ export function registerPartyModal() {
             },
             utils: {
               calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
-              getAccount: () => getAccount(world, components, accountEntity, accRefreshOptions),
+              getAccount: (entity: EntityIndex, options?: AccountOptions) =>
+                getAccount(world, components, entity, options),
               getAllAccounts: () => getAllAccounts(world, components),
               getTempBonuses: (kami: Kami) =>
                 getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
@@ -92,6 +98,7 @@ export function registerPartyModal() {
                 getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
               passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
               queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
+              queryAllAccounts: () => queryAllAccounts(components),
             },
           };
         })
@@ -102,7 +109,7 @@ export function registerPartyModal() {
       const { actions, api } = network;
       const { accountEntity, kamiNFTAddress, spender } = data;
       const { getAccount, getItem, getNode } = utils;
-      const { getKami, getWorldKamis, queryKamiByIndex } = utils;
+      const { getKami, getWorldKamis, queryKamiByIndex, queryAllAccounts } = utils;
 
       const { modals } = useVisibility();
       const { selectedAddress, apis: ownerAPIs } = useNetwork();
@@ -110,6 +117,7 @@ export function registerPartyModal() {
       const { writeContract } = useWriteContract();
 
       const [account, setAccount] = useState<Account>(NullAccount);
+      const [accounts, setAccounts] = useState<Account[]>([]);
       const [kamis, setKamis] = useState<Kami[]>([]);
       const [node, setNode] = useState<Node>(NullNode); // node of the current room
       const [sort, setSort] = useState<Sort>('state');
@@ -145,8 +153,7 @@ export function registerPartyModal() {
       // mounting
       useEffect(() => {
         // populate initial data
-        const account = getAccount();
-        setAccount(account);
+        setAccount(getAccount(accountEntity));
         setKamis(getWorldKamis());
         setOnyxItem(getItem(ONYX_INDEX));
 
@@ -159,9 +166,23 @@ export function registerPartyModal() {
       // update account and kamis every tick or if the connnected account changes
       useEffect(() => {
         if (!modals.party) return;
-        const account = getAccount();
-        setAccount(account);
+
+        // update the connected account if it changes
+        if (accountEntity != account.entity) {
+          setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
+        }
+
+        // update the list of the
         setKamis(getWorldKamis());
+
+        // check if we need to update the list of accounts
+        const accountEntities = queryAllAccounts();
+        if (accountEntities.length > accounts.length) {
+          const filtered = accountEntities.filter((entity) => entity != accountEntity);
+          const newAccounts = filtered.map((entity) => getAccount(entity));
+          const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
+          setAccounts(accountsSorted);
+        }
       }, [modals.party, accountEntity, tick]);
 
       // update node if the account or room changes
@@ -181,10 +202,12 @@ export function registerPartyModal() {
       // TOTO: properly typecast the result of the abi call
       useEffect(() => {
         const result = (nftData?.[0]?.result ?? []) as number[];
-        const entities = result.map((index: number) => queryKamiByIndex(index));
-        const filtered = entities.filter((entity) => !!entity) as EntityIndex[];
-        const externalKamis = filtered.map((entity: EntityIndex) => getKami(entity));
-        setWildKamis(externalKamis);
+        if (result.length != wildKamis.length) {
+          const entities = result.map((index: number) => queryKamiByIndex(index));
+          const filtered = entities.filter((entity) => !!entity) as EntityIndex[];
+          const externalKamis = filtered.map((entity: EntityIndex) => getKami(entity));
+          setWildKamis(externalKamis);
+        }
       }, [nftData]);
 
       /////////////////
@@ -296,6 +319,7 @@ export function registerPartyModal() {
           },
         });
       };
+
       /////////////////
       // DISPLAY
 
@@ -329,6 +353,7 @@ export function registerPartyModal() {
             controls={{ view }}
             data={{
               account,
+              accounts,
               kamis,
               wildKamis,
               node,
