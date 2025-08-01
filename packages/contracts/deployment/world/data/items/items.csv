@@ -52,10 +52,6 @@ Slightly sacred. "
 These ribbons are greatly prized…. "
 ,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Kami,,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
 ,In Game,Holy Dust,11011,Misc,Kami,,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
-,In Game,Gaokerena Mochi,11110,Food,Kami,,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
-,In Game,Sunset Apple Mochi,11120,Food,Kami,,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
-,In Game,Kami Mochi,11130,Food,Kami,,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
-,In Game,Mana Mochi,11140,Food,Kami,,,HARMONY+1,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
 ,In Game,XP Candy (Small),11201,Food,Kami,,NOT_TRADABLE,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
 ,In Game,XP Candy (Medium),11202,Food,Kami,,NOT_TRADABLE,"XP+100,HP+10",,"Provides a decent amount of XP when fed to a Kami. "
 ,In Game,XP Candy (Large),11203,Food,Kami,,NOT_TRADABLE,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "
@@ -81,7 +77,6 @@ These ribbons are greatly prized…. "
 ,To Update,Hostility Potion,11410,Food,Kami,,BYPASS_BONUS_RESET,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
 ,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
-,In Game,Scroll of Shop Teleportation,21100,Consumable,Account,,,MOVE13,,"Instantly transports the user to Mina’s Shop. Fully insured. "
 ,In Game,Ice Cream,21201,Food,Account,,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Account,,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Account,,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
