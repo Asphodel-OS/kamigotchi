@@ -17,7 +17,8 @@ interface Props {
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
-  search?: Search;
+
+  searchable?: boolean;
 }
 
 export interface Option {
@@ -27,19 +28,14 @@ export interface Option {
   disabled?: boolean;
 }
 
-interface Search {
-  value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-}
-
 export function IconListButton(props: Props) {
   const { img, options, text, balance } = props;
-  const { radius, scale, scaleOrientation, search } = props;
+  const { radius, scale, scaleOrientation, searchable } = props;
   const { disabled, width, fullWidth } = props;
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [search, setSearch] = useState<string>('');
 
   const handleOpen = () => {
     if (!disabled && toggleRef.current) {
@@ -59,21 +55,21 @@ export function IconListButton(props: Props) {
     handleClose();
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
   const OptionsMap = () => {
     return (
       <MenuWrapper>
-        {props.search && (
+        {searchable && (
           <MenuInput
-            {...props.search}
             onClick={(e) => {
               e.stopPropagation();
+            }}
+            onChange={(e) => {
+              setSearch(e.target.value);
             }}
           />
         )}
         {options
-          .filter((option) => (!search ? true : option.text.toLowerCase().includes(search.value)))
+          .filter((option) => !searchable || option.text.toLowerCase().includes(search))
           .map((option, i) => (
             <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
               {option.image && <MenuIcon src={option.image} />}

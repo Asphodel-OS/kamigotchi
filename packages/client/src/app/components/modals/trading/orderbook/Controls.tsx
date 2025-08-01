@@ -119,13 +119,7 @@ export const Controls = (props: Props) => {
             img={itemFilter.image}
             text={itemFilter.name}
             options={getItemOptions()}
-            search={{
-              value: itemSearch,
-              onChange: (e) => {
-                setItemSearch(e.target.value);
-              },
-              placeholder: 'Search items...',
-            }}
+            searchable
           />
         </Row>
       </Body>
