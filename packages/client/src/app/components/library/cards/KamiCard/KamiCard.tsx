@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { StatusIcons } from 'assets/images/icons/statuses';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
+import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
 import { Cooldown } from './Cooldown';
@@ -82,10 +82,13 @@ export const KamiCard = (props: Props) => {
     return <>{[header, ...details]}</>;
   };
 
-  const getItemBonusesDescription = (kami: Kami) => {
+  const itemBonuses = useMemo(() => {
     if (!getTempBonuses) return [];
-    return getTempBonuses(kami).map((bonus) => parseBonusText(bonus));
-  };
+    return getTempBonuses(kami).map((bonus) => ({
+      image: getItemImage(bonus.source?.name || ''),
+      text: parseBonusText(bonus),
+    }));
+  }, [getTempBonuses, kami]);
 
   return (
     <Card image={{ icon: kami.image, canLevel, onClick: handleKamiClick }}>
@@ -94,9 +97,6 @@ export const KamiCard = (props: Props) => {
           {kami.name}
         </TitleText>
         <TitleCorner key='corner'>
-          <TextTooltip text={[getItemBonusesDescription(kami)]}>
-            {getItemBonusesDescription(kami).length > 0 && <Buff src={StatusIcons.buff} />}
-          </TextTooltip>
           {showCooldown && <Cooldown kami={kami} />}
           {showBattery && (
             <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
@@ -114,6 +114,15 @@ export const KamiCard = (props: Props) => {
           <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
           <ContentActions>{actions}</ContentActions>
         </ContentColumn>
+        {itemBonuses.length > 0 && (
+          <Buffs>
+            {itemBonuses.map((bonus, i) => (
+              <TextTooltip key={i} text={[bonus.text]} direction='row'>
+                <Buff src={bonus.image} />
+              </TextTooltip>
+            ))}
+          </Buffs>
+        )}
       </Content>
     </Card>
   );
@@ -127,6 +136,7 @@ const TitleBar = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
 const TitleText = styled.div`
@@ -156,9 +166,29 @@ const TitleCorner = styled.div`
   height: 1.2vw;
 `;
 
+const Buffs = styled.div`
+  position: absolute;
+  bottom: 0.2vw;
+  left: 0.6vw;
+  display: flex;
+  gap: 0.2vw;
+  z-index: 1;
+  background-color: rgba(238, 237, 237, 0.5);
+  border-radius: 0.5vw;
+  width: max-content;
+  height: 35%;
+  align-items: center;
+  margin-bottom: 0.2vw;
+  justify-content: flex-end;
+  padding: 0.2vw;
+`;
+
 const Buff = styled.img`
   height: 1.6vw;
-  margin-bottom: 0.2vw;
+
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 `;
 
 const Content = styled.div`
@@ -166,6 +196,7 @@ const Content = styled.div`
   flex-grow: 1;
   flex-flow: row nowrap;
   align-items: stretch;
+  position: relative;
 
   padding: 0.2vw;
   user-select: none;
