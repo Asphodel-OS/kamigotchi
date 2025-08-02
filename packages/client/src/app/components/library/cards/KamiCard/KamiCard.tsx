@@ -104,25 +104,29 @@ export const KamiCard = (props: Props) => {
         </TitleCorner>
       </TitleBar>
       <Content>
-        <ContentColumn key='column-1'>
-          <TextTooltip text={contentTooltip ?? []}>
-            <Description />
-          </TextTooltip>
-          {isFriend && <Friend>Friend</Friend>}
-        </ContentColumn>
-        <ContentColumn key='column-2'>
-          <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+        <ContentRow>
+          <ContentColumn key='column-1'>
+            <TextTooltip text={contentTooltip ?? []}>
+              <Description />
+            </TextTooltip>
+            {isFriend && <Friend>Friend</Friend>}
+          </ContentColumn>
+          <ContentColumn key='column-2'>
+            <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+          </ContentColumn>
+        </ContentRow>
+        <ContentBottom>
+          {itemBonuses.length > 0 && (
+            <Buffs>
+              {itemBonuses.map((bonus, i) => (
+                <TextTooltip key={i} text={[bonus.text]} direction='row'>
+                  <Buff src={bonus.image} />
+                </TextTooltip>
+              ))}
+            </Buffs>
+          )}
           <ContentActions>{actions}</ContentActions>
-        </ContentColumn>
-        {itemBonuses.length > 0 && (
-          <Buffs>
-            {itemBonuses.map((bonus, i) => (
-              <TextTooltip key={i} text={[bonus.text]} direction='row'>
-                <Buff src={bonus.image} />
-              </TextTooltip>
-            ))}
-          </Buffs>
-        )}
+        </ContentBottom>
       </Content>
     </Card>
   );
@@ -167,20 +171,15 @@ const TitleCorner = styled.div`
 `;
 
 const Buffs = styled.div`
-  position: absolute;
-  bottom: 0.2vw;
-  left: 0.6vw;
   display: flex;
   gap: 0.2vw;
-  z-index: 1;
   background-color: rgba(238, 237, 237, 0.5);
   border-radius: 0.5vw;
   width: max-content;
-  height: 35%;
   align-items: center;
-  margin-bottom: 0.2vw;
-  justify-content: flex-end;
+  justify-content: flex-start;
   padding: 0.2vw;
+  margin: 0 0 0 0.4vw;
 `;
 
 const Buff = styled.img`
@@ -193,13 +192,22 @@ const Buff = styled.img`
 
 const Content = styled.div`
   display: flex;
+  flex-direction: column;
   flex-grow: 1;
-  flex-flow: row nowrap;
-  align-items: stretch;
   position: relative;
-
   padding: 0.2vw;
   user-select: none;
+`;
+
+const ContentRow = styled.div`
+  display: flex;
+  flex-grow: 1;
+`;
+
+const ContentBottom = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 `;
 
 const ContentColumn = styled.div`
