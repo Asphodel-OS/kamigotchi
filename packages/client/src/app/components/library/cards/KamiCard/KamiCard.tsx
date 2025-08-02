@@ -177,14 +177,12 @@ const Buffs = styled.div`
   border-radius: 0.5vw;
   width: max-content;
   align-items: center;
-  justify-content: flex-start;
   padding: 0.2vw;
   margin: 0 0 0 0.4vw;
 `;
 
 const Buff = styled.img`
   height: 1.6vw;
-
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -205,6 +203,7 @@ const ContentRow = styled.div`
 `;
 
 const ContentBottom = styled.div`
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -237,6 +236,9 @@ const ContentSubtext = styled.div`
 `;
 
 const ContentActions = styled.div`
+  position: absolute;
+  right: 0.2vw;
+  bottom: 0.1vw;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
