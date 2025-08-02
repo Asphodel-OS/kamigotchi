@@ -1,5 +1,4 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
-
 import moment from 'moment';
 
 import { HelpIcon, QuestsIcon } from 'assets/images/icons/menu';
@@ -12,7 +11,6 @@ import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
 import { Stat } from '../Stats';
 import { getDescription, getMediaURI, getName, getType } from './component';
-
 import { capitalize } from './strings';
 
 // base shape of an entity with basic details
