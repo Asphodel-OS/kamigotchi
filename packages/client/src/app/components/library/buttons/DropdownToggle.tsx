@@ -48,12 +48,15 @@ export function DropdownToggle(props: Props) {
   useEffect(() => {
     if (checked.length !== modeOptions.length) {
       const initialChecked = Array(modeOptions.length).fill(false);
+      setChecked(initialChecked);
       // if simplified,  first option is selected by default
       if (simplified) {
-        initialChecked[0] = true;
-        onClick[currentMode]?.([modeOptions[0].object]);
+        setTimeout(() => {
+          initialChecked[0] = true;
+          setChecked(initialChecked);
+          // onClick[currentMode]?.([modeOptions[0].object]);
+        }, 0);
       }
-      setChecked(initialChecked);
     }
   }, [modeOptions]);
 
@@ -222,7 +225,7 @@ const Row = styled.span<{ simplified?: boolean }>`
     width: 1vw;
     height: 1vw;
     cursor: pointer;
-    accent-color: ${({ simplified }) => simplified && 'rgb(203, 186, 61)'};
+    accent-color: rgb(203, 186, 61);
   }
 `;
 
