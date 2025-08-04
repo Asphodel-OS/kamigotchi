@@ -37,14 +37,9 @@ export const accounts = (world: World, components: Components) => {
     getByID: (id: EntityID, options?: AccountOptions) =>
       getAccountByID(world, components, id, options ?? FullAccountOptions),
     getByOwner: (owner: string, options?: AccountOptions) =>
-      getAccountByOwner(world, components, owner.toLowerCase(), options ?? FullAccountOptions),
+      getAccountByOwner(world, components, owner, options ?? FullAccountOptions),
     getByOperator: (operator: string, options?: AccountOptions) =>
-      getAccountByOperator(
-        world,
-        components,
-        operator.toLowerCase(),
-        options ?? FullAccountOptions
-      ),
+      getAccountByOperator(world, components, operator, options ?? FullAccountOptions),
     getByName: (name: string, options?: AccountOptions) =>
       getAccountByName(world, components, name, options ?? FullAccountOptions),
     indices: () => Array.from(components.AccountIndex.values.value.values()),

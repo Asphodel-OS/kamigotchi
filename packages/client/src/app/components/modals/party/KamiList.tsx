@@ -50,7 +50,7 @@ interface Props {
 
 export const KamiList = (props: Props) => {
   const { actions, controls, data, display, state, utils } = props;
-  const { kamis } = data;
+  const { kamis, wildKamis } = data;
   const { view } = controls;
   const { displayedKamis, tick } = state;
   const { modals } = useVisibility();
@@ -60,7 +60,7 @@ export const KamiList = (props: Props) => {
 
   return (
     <Container>
-      {kamis.length == 0 && (
+      {kamis.length == 0 && view !== 'external' && (
         <EmptyText
           linkColor='#d44c79'
           text={[
@@ -97,7 +97,7 @@ export const KamiList = (props: Props) => {
       <KamisExternal
         actions={actions}
         controls={controls}
-        data={{ ...data, kamis: data.wildKamis }}
+        data={{ ...data, kamis: wildKamis }}
         utils={utils}
         isVisible={modals.party && view === 'external'}
       />

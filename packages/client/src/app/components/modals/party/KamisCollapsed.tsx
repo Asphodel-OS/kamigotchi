@@ -98,7 +98,7 @@ export const KamisCollapsed = (props: Props) => {
           key={kami.entity}
           kami={kami}
           actions={DisplayedActions(account, kami, node)}
-          options={{ showCooldown: true, showTooltip: true }}
+          options={{ showCooldown: true, showPercent: true, showTooltip: true }}
           utils={utils}
           tick={tick}
         />

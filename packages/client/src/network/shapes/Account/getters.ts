@@ -26,6 +26,7 @@ export const getFromBurner = (network: NetworkLayer, options?: Options) => {
 };
 
 // get an Account by its entityID
+// NOTE: may want to introduce a preemptive toLower() operation on the id input
 export const getByID = (world: World, components: Components, id: EntityID, options?: Options) => {
   const entity = world.entityToIndex.get(id);
   if (!entity) return NullAccount;

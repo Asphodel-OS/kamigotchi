@@ -29,6 +29,7 @@ interface Props {
   actions?: React.ReactNode;
   options?: {
     showCooldown?: boolean;
+    showPercent?: boolean; // whether to show the percent health
     showTooltip?: boolean;
   };
   tick: number;
@@ -41,7 +42,7 @@ interface Props {
 
 export const KamiBar = (props: Props) => {
   const { kami, actions, options, utils, tick } = props;
-  const { showCooldown, showTooltip } = options ?? {};
+  const { showCooldown, showPercent, showTooltip } = options ?? {};
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const [currentHealth, setCurrentHealth] = useState(0);
@@ -200,7 +201,7 @@ export const KamiBar = (props: Props) => {
         </Overlay>
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <Text size={0.9}>{getKamiState(kami)}</Text>
-          <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>
+          {showPercent && <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>}
         </TextTooltip>
       </Middle>
       <Right>

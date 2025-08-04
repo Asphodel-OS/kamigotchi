@@ -338,7 +338,7 @@ export function registerPartyModal() {
               collect: (kamis: Kami[]) => collect(kamis),
             }}
             controls={{ sort, setSort, view, setView }}
-            data={{ kamis }}
+            data={{ kamis, wildKamis }}
             state={{ displayedKamis, setDisplayedKamis, tick }}
             utils={utils}
           />

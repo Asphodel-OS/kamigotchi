@@ -30,6 +30,7 @@ interface Props {
   };
   data: {
     kamis: Kami[];
+    wildKamis: Kami[];
   };
   state: {
     displayedKamis: Kami[];
@@ -43,7 +44,7 @@ export const Toolbar = (props: Props) => {
   const { actions, controls, data, state, utils } = props;
   const { addKami, stopKami, collect } = actions;
   const { sort, setSort, view, setView } = controls;
-  const { kamis } = data;
+  const { kamis, wildKamis } = data;
   const { passesNodeReqs } = utils;
   const { displayedKamis, setDisplayedKamis, tick } = state;
   const { modals } = useVisibility();
@@ -82,17 +83,17 @@ export const Toolbar = (props: Props) => {
   useEffect(() => {
     if (!modals.party) return;
 
-    let sorted = kamis;
+    let sorted = view === 'external' ? wildKamis : kamis;
     if (sort === 'name') {
-      sorted = kamis.sort((a, b) => a.name.localeCompare(b.name));
+      sorted = sorted.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sort === 'state') {
-      sorted = kamis.sort((a, b) => {
+      sorted = sorted.sort((a, b) => {
         const stateDiff = a.state.localeCompare(b.state);
         if (stateDiff != 0) return stateDiff;
         return calcHealthPercent(a) - calcHealthPercent(b);
       });
     } else if (sort === 'traits') {
-      sorted = kamis.sort((a, b) => {
+      sorted = sorted.sort((a, b) => {
         let diff = 0;
         if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
         if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
@@ -104,7 +105,7 @@ export const Toolbar = (props: Props) => {
       });
     }
 
-    setDisplayedKamis(kamis);
+    setDisplayedKamis(sorted);
   }, [modals.party, kamis.length, sort, view]);
 
   /////////////////

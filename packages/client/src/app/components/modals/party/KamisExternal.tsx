@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiBar, TextTooltip } from 'app/components/library';
-import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
@@ -35,12 +34,9 @@ interface Props {
 }
 
 export const KamisExternal = (props: Props) => {
-  const { actions, controls, data, isVisible, utils } = props;
+  const { actions, data, isVisible, utils } = props;
   const { sendKamis, stakeKamis } = actions;
-  const { view } = controls;
   const { account, accounts, kamis } = data;
-
-  const { modals } = useVisibility();
 
   /////////////////
   // SUBSCRIPTIONS
@@ -48,8 +44,14 @@ export const KamisExternal = (props: Props) => {
   // when a new kami is added, add both buttons
   useEffect(() => {
     kamis.forEach((kami) => {
-      if (!StakeButtons.has(kami.index)) StakeButtons.set(kami.index, StakeButton(kami));
-      if (!SendButtons.has(kami.index)) SendButtons.set(kami.index, SendButton(kami));
+      if (!StakeButtons.has(kami.index)) {
+        // console.log(`adding stake button for ${kami.name}`);
+        StakeButtons.set(kami.index, StakeButton(kami));
+      }
+      if (!SendButtons.has(kami.index)) {
+        // console.log(`adding send button for ${kami.name}`);
+        SendButtons.set(kami.index, SendButton(kami));
+      }
     });
   }, [kamis.length]);
 
@@ -78,7 +80,7 @@ export const KamisExternal = (props: Props) => {
 
   // get the tooltip for a stake action
   const getStakeTooltip = (kami: Kami) => {
-    const tooltip = [`Import ${kami.name} `, `through the Scrap Confluence.`];
+    const tooltip = [`Import ${kami.name}`, `through the Scrap Confluence.`];
     if (account.roomIndex !== PORTAL_ROOM_INDEX) {
       tooltip.push(`\nYou must first navigate there`, `(search West of the Vending Machine)`);
     }

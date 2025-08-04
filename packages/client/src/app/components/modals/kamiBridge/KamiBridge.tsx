@@ -129,11 +129,19 @@ export function registerKamiBridge() {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
+        const numKamis = kamis.length;
         const indices = kamis.map((kami) => kami.index);
+
+        // determine the description based on number of kamis
+        let description = '';
+        if (numKamis == 1) description = `Staking ${kamis[0].name}`;
+        else description = `Staking ${numKamis} Kami`;
+
+        // add the transaction to the queue
         actions.add({
           action: 'KamiDeposit',
-          params: [kamis[0].index],
-          description: `Staking Kami ${kamis[0].index}`,
+          params: indices,
+          description,
           execute: async () => {
             return api.bridge.ERC721.kami.batch.stake(indices);
           },
@@ -145,11 +153,19 @@ export function registerKamiBridge() {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
 
+        const numKamis = kamis.length;
         const indices = kamis.map((kami) => kami.index);
+
+        // determine the description based on number of kamis
+        let description = '';
+        if (numKamis == 1) description = `Unstaking ${kamis[0].name}`;
+        else description = `Unstaking ${numKamis} Kami`;
+
+        // add the transaction to the queue
         actions.add({
           action: 'KamiWithdraw',
-          params: [kamis[0].index],
-          description: `Unstaking Kami ${kamis[0].index}`,
+          params: indices,
+          description,
           execute: async () => {
             return api.bridge.ERC721.kami.batch.unstake(indices);
           },
