@@ -220,14 +220,19 @@ export const Grid = (props: Props) => {
                     onMouseEnter={() => updateRoomStats(room.index)}
                   >
                     <GridFilter
-                      optionSelected={mode[0]}
-                      rooms={rooms}
-                      roomIndex={room.index}
-                      yourKamiIconsMap={yourKamiIconsMap}
-                      getNode={getNode}
-                      queryNodeByIndex={queryNodeByIndex}
-                      queryNodeKamis={queryNodeKamis}
-                      queryRoomAccounts={queryRoomAccounts}
+                      data={{
+                        optionSelected: mode[0],
+                        roomIndex: room.index,
+                        yourKamiIconsMap,
+                        rooms,
+                      }}
+                      state={{ tick }}
+                      utils={{
+                        getNode,
+                        queryNodeByIndex,
+                        queryNodeKamis,
+                        queryRoomAccounts,
+                      }}
                     />
                   </Tile>
                 </TextTooltip>

@@ -2,45 +2,41 @@ import { HelpMenuIcons } from 'assets/images/help';
 import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { Room } from 'network/shapes/Room';
 import { getAffinityImage } from 'network/shapes/utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FloatingOnMap } from './FloatingOnMap';
 
 type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
 
 interface Props {
-  optionSelected: Mode;
-  roomIndex: number;
-  yourKamiIconsMap: Map<number, string[]>;
-  getNode: (index: number) => { affinity: string };
-  rooms: Map<number, Room>;
-  tick?: number;
-  queryNodeByIndex: (index: number) => any;
-  queryNodeKamis: (nodeEntity: any) => any;
-  queryRoomAccounts: (roomIndex: number) => any;
+  data: {
+    optionSelected: Mode;
+    roomIndex: number;
+    yourKamiIconsMap: Map<number, string[]>;
+    rooms: Map<number, Room>;
+  };
+  state: { tick: number };
+  utils: {
+    getNode: (index: number) => { affinity: string };
+    queryNodeByIndex: (index: number) => any;
+    queryNodeKamis: (nodeEntity: any) => any;
+    queryRoomAccounts: (roomIndex: number) => any;
+  };
 }
 
 export const GridFilter = (props: Props) => {
-  const {
-    optionSelected,
-    roomIndex,
-    yourKamiIconsMap,
-    getNode,
-    rooms,
-    tick,
-    queryNodeByIndex,
-    queryNodeKamis,
-    queryRoomAccounts,
-  } = props;
+  const { data, state, utils } = props;
+  const { queryNodeByIndex, queryNodeKamis, queryRoomAccounts, getNode } = utils;
+  const { optionSelected, roomIndex, yourKamiIconsMap, rooms } = data;
+  const { tick } = state;
 
   const [kamiAverage, setKamiAverage] = useState(0);
   const [operatorAverage, setOperatorAverage] = useState(0);
 
-  useEffect(() => {
-    calculateAverages();
-  }, [rooms, tick]);
+  const [kamiCountMap, setKamiCountMap] = useState<Map<number, number>>(new Map());
+  const [operatorCountMap, setOperatorCountMap] = useState<Map<number, number>>(new Map());
 
-  // used rooms so it executes quick the first time
-  const kamiCountMap = useMemo(() => {
+  // Calculate kamiCountMap when rooms or tick change
+  useEffect(() => {
     const map = new Map<number, number>();
     rooms.forEach((room) => {
       if (!room.index) return;
@@ -48,21 +44,22 @@ export const GridFilter = (props: Props) => {
       const kamisInNode = queryNodeKamis(nodeEntity);
       map.set(room.index, kamisInNode.length);
     });
-    return map;
-  }, [tick, rooms]);
+    setKamiCountMap(map);
+  }, [rooms, tick]);
 
-  const operatorCountMap = useMemo(() => {
+  // used rooms so it executes quick the first time
+  useEffect(() => {
     const map = new Map<number, number>();
     rooms.forEach((room) => {
       if (!room.index) return;
       const playersInRoom = queryRoomAccounts(room.index);
       map.set(room.index, playersInRoom.length);
     });
-    return map;
-  }, [tick, rooms]);
+    setOperatorCountMap(map);
+  }, [rooms, tick]);
 
   // calculates averages to use for the coloring of the icons (kami and operator)
-  const calculateAverages = () => {
+  useEffect(() => {
     let totalKamis = 0;
     let roomsWithKamis = 0;
     let totalPlayers = 0;
@@ -84,15 +81,14 @@ export const GridFilter = (props: Props) => {
       }
     });
 
-    setKamiAverage(totalKamis / roomsWithKamis);
-    setOperatorAverage(totalPlayers / roomsWithPlayers);
-  };
+    setKamiAverage(roomsWithKamis > 0 ? totalKamis / roomsWithKamis : 0);
+    setOperatorAverage(roomsWithPlayers > 0 ? totalPlayers / roomsWithPlayers : 0);
+  }, [kamiCountMap, operatorCountMap]);
 
   const getColor = (value: number, average: number) => {
     if (value > 4 * average) return -40; // red, high count;
-    if (value >= 1.5 * average)
-      return 10; // yellow, equal or above average but not high count
-    else return 0; // no color, below average
+    if (value >= 1.5 * average) return 10; // yellow, equal or above average but not high count
+    return 0; // no color, below average
   };
 
   let color = 0;
