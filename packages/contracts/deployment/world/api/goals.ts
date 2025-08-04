@@ -60,8 +60,7 @@ export function goalsAPI(generateCallData: GenerateCallData, compiledCalls: stri
       'system.goal.registry',
       [goalIndex, name, cutoff, type, conIndex, conValue],
       'addRewardBasic',
-      ['uint32', 'string', 'uint256', 'string', 'uint32', 'uint256'],
-      '800000'
+      ['uint32', 'string', 'uint256', 'string', 'uint32', 'uint256']
     );
     compiledCalls.push(callData);
   }

@@ -14,7 +14,7 @@
     "test": "pnpm build:codegen && FOUNDRY_PROFILE=build forge test --contracts test --gas-limit=10000000000000",
     "nuke": "rimraf abi types out node_modules",
     "----- SPECIFIC COMMANDS -----": "---------------------------",
-    "deploy:local": "NODE_ENV=puter pnpm deploy:script ",
+    "deploy:local": "NODE_ENV=puter pnpm deploy:script  --forge='--code-size-limit 9999999'",
     "deploy:local:partial": "pnpm deploy:local --partial",
     "deploy:test": "NODE_ENV=testing pnpm deploy:script --forge='-g=215 --batch-size=5'",
     "deploy:test:partial": "pnpm deploy:test --partial",

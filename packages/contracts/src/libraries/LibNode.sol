@@ -96,7 +96,7 @@ library LibNode {
     id = LibConditional.createFor(world, components, req, genReqAnchor(nodeIndex));
   }
 
-  function remove(IUintComp components, uint32 index) internal {
+  function remove(IUintComp components, uint32 index) public {
     uint256 id = LibNode.getByIndex(components, index);
     require(id != 0, "Node: does not exist");
 
