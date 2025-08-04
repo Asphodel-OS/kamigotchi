@@ -1,5 +1,6 @@
 import { EntityID, World } from '@mud-classic/recs';
 
+import { formatEntityID } from 'engine/utils';
 import { Components, NetworkLayer } from 'network/';
 import { NullAccount } from './constants';
 import { queryAll, queryByIndex, queryByName, queryByOperator, queryByOwner } from './queries';
@@ -26,9 +27,9 @@ export const getFromBurner = (network: NetworkLayer, options?: Options) => {
 };
 
 // get an Account by its entityID
-// NOTE: may want to introduce a preemptive toLower() operation on the id input
 export const getByID = (world: World, components: Components, id: EntityID, options?: Options) => {
-  const entity = world.entityToIndex.get(id);
+  const formattedID = formatEntityID(id.toLowerCase());
+  const entity = world.entityToIndex.get(formattedID);
   if (!entity) return NullAccount;
   return getAccount(world, components, entity, options);
 };
