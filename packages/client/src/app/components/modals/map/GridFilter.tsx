@@ -85,27 +85,34 @@ export const GridFilter = (props: Props) => {
     setOperatorAverage(roomsWithPlayers > 0 ? totalPlayers / roomsWithPlayers : 0);
   }, [kamiCountMap, operatorCountMap]);
 
-  const getColor = (value: number, average: number) => {
-    if (value > 4 * average) return -40; // red, high count;
-    if (value >= 1.5 * average) return 10; // yellow, equal or above average but not high count
-    return 0; // no color, below average
+  const getColorForOption = (): number => {
+    const getColor = (value: number, average: number) => {
+      if (value > 4 * average) return -40; // red, high count;
+      if (value >= 1.5 * average) return 10; // yellow, equal or above average but not high count
+      return 0; // no color, below average
+    };
+
+    if (optionSelected === 'KamiCount') {
+      return getColor(kamiCountMap.get(roomIndex) ?? 0, kamiAverage);
+    }
+    if (optionSelected === 'OperatorCount') {
+      return getColor(operatorCountMap.get(roomIndex) ?? 0, operatorAverage);
+    }
+    return 0;
   };
 
-  let color = 0;
-  if (optionSelected === 'KamiCount') {
-    color = getColor(kamiCountMap.get(roomIndex) ?? 0, kamiAverage);
-  } else if (optionSelected === 'OperatorCount') {
-    color = getColor(operatorCountMap.get(roomIndex) ?? 0, operatorAverage);
-  }
+  const getIcon = (): string | null => {
+    const map: Record<Mode, string | null> = {
+      MyKamis: yourKamiIconsMap.has(roomIndex) && KamiIcon,
+      RoomType: getAffinityImage(getNode(roomIndex).affinity),
+      KamiCount: (kamiCountMap.get(roomIndex) ?? 0) > 0 && HelpMenuIcons.kamis,
+      OperatorCount: (operatorCountMap.get(roomIndex) ?? 0) > 0 && OperatorIcon,
+    };
 
-  const iconMap: Record<Mode, string | null> = {
-    MyKamis: yourKamiIconsMap.has(roomIndex) && KamiIcon,
-    RoomType: getAffinityImage(getNode(roomIndex).affinity),
-    KamiCount: (kamiCountMap.get(roomIndex) ?? 0) > 0 && HelpMenuIcons.kamis,
-    OperatorCount: (operatorCountMap.get(roomIndex) ?? 0) > 0 && OperatorIcon,
+    return roomIndex !== 0 ? map[optionSelected] : null;
   };
 
-  let icon = roomIndex !== 0 && iconMap[optionSelected];
+  const icon = getIcon();
 
-  return icon ? <FloatingOnMap icon={icon} color={color} /> : null;
+  return icon ? <FloatingOnMap icon={icon} color={getColorForOption()} /> : null;
 };
