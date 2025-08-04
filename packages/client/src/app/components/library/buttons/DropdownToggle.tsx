@@ -55,7 +55,7 @@ export function DropdownToggle(props: Props) {
           initialChecked[0] = true;
           setChecked(initialChecked);
           // onClick[currentMode]?.([modeOptions[0].object]);
-        }, 0);
+        }, 1000);
       }
     }
   }, [modeOptions]);
