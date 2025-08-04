@@ -106,7 +106,6 @@ export const GridFilter = (props: Props) => {
   };
 
   let icon = roomIndex !== 0 && iconMap[optionSelected];
-  if (!icon) return null;
 
-  return <FloatingOnMap icon={icon} color={color} />;
+  return icon ? <FloatingOnMap icon={icon} color={color} /> : null;
 };
