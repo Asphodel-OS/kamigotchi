@@ -1,15 +1,17 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
-
 import { cleanInventories, Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
 import { Account, NullAccount } from 'network/shapes/Account';
+import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
+import { DetailedEntity } from 'network/shapes/utils';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
@@ -25,6 +27,8 @@ interface Props {
     getAccount: () => Account;
     getInventories: () => Inventory[];
     getKamis: () => Kami[];
+    displayRequirements: (item: Item) => string;
+    parseAllos: (allo: Allo[]) => DetailedEntity[];
   };
 }
 
@@ -117,7 +121,11 @@ export const ItemGrid = (props: Props) => {
     const options = getItemActions(item, inv.balance);
 
     return (
-      <TextTooltip key={item.index} text={[item.name, '', item.description ?? '']}>
+      <TextTooltip
+        key={item.index}
+        text={item.index ? [<ItemGridTooltip item={item} utils={utils} />] : []}
+        maxWidth={25}
+      >
         <IconListButton
           key={item.index}
           img={item.image}

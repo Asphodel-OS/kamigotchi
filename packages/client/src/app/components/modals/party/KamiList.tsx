@@ -18,6 +18,8 @@ interface Props {
     addKamis: (kamis: Kami[]) => void;
     sendKamis: (kami: Kami, account: Account) => void;
     stakeKamis: (kamis: Kami[]) => void;
+    sendKamis: (kami: Kami, account: Account) => void;
+    stakeKamis: (kamis: Kami[]) => void;
   };
   controls: {
     view: View;
@@ -25,7 +27,9 @@ interface Props {
   data: {
     account: Account;
     accounts: Account[];
+    accounts: Account[];
     kamis: Kami[];
+    wildKamis: Kami[];
     wildKamis: Kami[];
     node: Node;
     onyx: {
@@ -46,6 +50,11 @@ interface Props {
     getTempBonuses: (kami: Kami) => Bonus[];
     getAllAccounts: () => Account[];
   };
+  utils: {
+    calcExpRequirement: (lvl: number) => number;
+    getTempBonuses: (kami: Kami) => Bonus[];
+    getAllAccounts: () => Account[];
+  };
 }
 
 export const KamiList = (props: Props) => {
@@ -53,6 +62,7 @@ export const KamiList = (props: Props) => {
   const { kamis, wildKamis } = data;
   const { view } = controls;
   const { displayedKamis, tick } = state;
+  const { modals } = useVisibility();
   const { modals } = useVisibility();
 
   /////////////////
@@ -77,13 +87,16 @@ export const KamiList = (props: Props) => {
         />
       )}
       <KamisExpanded
+      <KamisExpanded
         actions={actions}
         data={data}
         display={display}
         state={{ displayedKamis }}
         utils={utils}
         isVisible={modals.party && view === 'expanded'}
+        isVisible={modals.party && view === 'expanded'}
       />
+      <KamisCollapsed
       <KamisCollapsed
         actions={actions}
         data={data}
@@ -95,7 +108,7 @@ export const KamiList = (props: Props) => {
       <KamisExternal
         actions={actions}
         controls={controls}
-        data={{ ...data, kamis: wildKamis }}
+        data={{ ...data, kamis: data.wildKamis }}
         utils={utils}
         isVisible={modals.party && view === 'external'}
       />
