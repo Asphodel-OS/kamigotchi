@@ -101,3 +101,4 @@ const Text = styled.div<{ size: number }>`
   color: black;
   font-size: ${(props) => props.size}vw;
 `;
+////
