@@ -12,9 +12,10 @@ import {
   isResting,
 } from 'app/cache/kami';
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
-import { Overlay, Text, TextTooltip } from 'app/components/library';
+import { Text, TextTooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
+import { ItemImages } from 'assets/images/items';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
@@ -194,9 +195,6 @@ export const KamiBar = (props: Props) => {
         </TextTooltip>
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
-        <Overlay bottom={0.18} left={0.15} passthrough>
-          <Text size={0.45}>{calcOutput(kami)}</Text>
-        </Overlay>
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <Text size={0.9}>{getKamiState(kami)}</Text>
           <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>
@@ -212,7 +210,13 @@ export const KamiBar = (props: Props) => {
         )}
       </Middle>
       <Right>
-        {showCooldown && <Cooldown kami={kami} />}
+        <MusuCooldown>
+          <TextTooltip text={[calcOutput(kami)]} direction='row'>
+            <img style={{ width: `1.2vw` }} src={ItemImages.musu} alt='Musu' />
+          </TextTooltip>{' '}
+          {showCooldown && <Cooldown kami={kami} />}
+        </MusuCooldown>
+
         {actions}
       </Right>
     </Container>
@@ -243,6 +247,7 @@ const Left = styled.div`
 `;
 
 const Right = styled.div`
+  position: relative;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -309,4 +314,10 @@ const Buff = styled.img`
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+`;
+const MusuCooldown = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.2vw;
+  flex-flow: column nowrap;
 `;
