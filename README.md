@@ -38,10 +38,15 @@ _built with love, powered by \[redacted\]_
 
 ![the river calls](https://github.com/Asphodel-OS/kamigotchi/assets/109483360/d52011c7-5d7b-432c-ac26-3abb064fe343)
 
+<br>
+<br>
+
 _baby steps_
 
-_first we clone the repo_
+<br>
+<br>
 
+first we clone the repo
 ```sh
 # with github cli
 gh repo clone Asphodel-OS/kamigotchi
@@ -49,29 +54,27 @@ gh repo clone Asphodel-OS/kamigotchi
 # rawdogging ssh with git
 git clone git@github.com:Asphodel-OS/kamigotchi.git
 ```
+<br>
 
-_then we install dependencies using [pnpm](https://pnpm.io/)_
-
+then we install dependencies using [pnpm](https://pnpm.io/)
 ```sh
 kamigotchi/$ pnpm i
 ```
+<br>
 
 ## 🚀 Local Client (pointing to mainnet)
 
-_you can spin up a local game client with_
-
+you can spin up a local game client with
 ```sh
 kamigotchi/packages/client/$ pnpm start:dev
 ```
+<br>
 
-_underneath this will run vite on port 3000 in production mode_
+which will run a vite development server on localhost:3000 in _production_ mode
 
-```sh
-vite --force --port 3000 --mode production
-```
+<br>
 
-_you'll want a `client/.env.production` file populated like so_
-
+you'll also want a `client/.env.production` file populated like so
 ```sh
 # Network
 VITE_CHAIN_ID=428962654539583
@@ -83,13 +86,13 @@ VITE_KAMIGAZE_URL='https://api.prod.kamigotchi.io'
 VITE_WORLD_ADDRESS='0x2729174c265dbBd8416C6449E0E813E88f43D0E7'
 VITE_INITIAL_BLOCK_NUMBER=44577
 ```
+<br>
 
 ## 🚀 Local Deployment
 
 _first you'll need to have [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) and [foundry](https://getfoundry.sh/introduction/installation) installed_
 
-_you'll also want the following files_
-
+you'll also want the following environment files
 ```sh
 # packages/contracts/.env.puter
 RPC="http://127.0.0.1:8545"
@@ -104,17 +107,16 @@ VITE_RPC_TRANSPORT_URL='localhost:8545'
 VITE_WORLD_ADDRESS='0x379FA7857b8722d2719f16f78753995BafEb4B9b'
 PRIV_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 ```
+<br>
+<br>
+<br>
 
-_once you have everything, run the following script in a dedicated terminal window_
-
+once you have everything, run the following script in a dedicated terminal window
 ```sh
 kamigotchi/packages/contracts/$ pnpm start
 ```
 
-<br>
-<br>
-<br>
-<br>
+
 <br>
 <br>
 <br>
