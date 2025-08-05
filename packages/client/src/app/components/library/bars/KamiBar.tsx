@@ -194,7 +194,7 @@ export const KamiBar = (props: Props) => {
         </TextTooltip>
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
-        <Overlay top={0.18} left={0.15} passthrough>
+        <Overlay bottom={0.18} left={0.15} passthrough>
           <Text size={0.45}>{calcOutput(kami)}</Text>
         </Overlay>
         <TextTooltip text={getTooltip(kami)} direction='row'>
