@@ -252,9 +252,6 @@ const Arrow = styled.img`
 `;
 
 const Sp = styled.div`
-  position: absolute;
-  right: 4%;
-  top: 4%;
   font-size: 2vw;
   font-weight: bold;
   background: linear-gradient(to right, #0b0d0eff, #ee0979);

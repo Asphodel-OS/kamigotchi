@@ -42,7 +42,9 @@ export const Card = (props: Props) => {
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
           {!!image?.canLevel && <LevelUpArrows />}
-          {!!image?.skillPoints && <Sp>SP</Sp>}
+          <Overlay top={0.5} right={0.5}>
+            {!!image?.skillPoints && <Sp>SP</Sp>}
+          </Overlay>
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
       </TextTooltip>
@@ -105,9 +107,6 @@ const Text = styled.div<{ size: number }>`
 `;
 
 const Sp = styled.div`
-  position: absolute;
-  right: 4%;
-  top: 4%;
   font-size: 1.2vw;
   font-weight: bold;
   background: linear-gradient(to right, #0b0d0eff, #ee0979);
