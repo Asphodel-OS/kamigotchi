@@ -41,7 +41,7 @@ _baby steps_
 
 <br>
 
-<img width="100%" alt="Screenshot" src="https://github.com/user-attachments/assets/d52011c7-5d7b-432c-ac26-3abb064fe343" />
+<img width="100%" alt="Screenshot" imageRendering="pixelated" src="https://github.com/user-attachments/assets/d52011c7-5d7b-432c-ac26-3abb064fe343" />
 
 <br>
 <br>
@@ -258,7 +258,7 @@ _the intrusive thoughts should win_
 8 8888     `Y8. .8'       `8. `88888. ,8'         `         `8.`8888.  8 8888      `8888888P'        `8888888P'           8 8888           `8888888P'    8 8888        8  8 8888
 ```
 
-<img width="100%" alt="Screenshot" src="https://github.com/user-attachments/assets/b100ee16-d178-40ea-a2ea-5f98b06da13f" />
+<img width="100%" alt="Screenshot" imageRendering="pixelated" src="https://github.com/user-attachments/assets/b100ee16-d178-40ea-a2ea-5f98b06da13f" />
 
 ```
 8 8888     ,88'          .8.                   ,8.       ,8.           8 8888      ,o888888o.        ,o888888o.     8888888 8888888888     ,o888888o.    8 8888        8  8 8888
