@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getHarvestItem } from 'app/cache/harvest';
@@ -20,6 +20,7 @@ import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { NullNode } from 'network/shapes/Node';
+import { getItemImage } from 'network/shapes/utils';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
@@ -32,7 +33,6 @@ interface Props {
     showTooltip?: boolean;
   };
   tick: number;
-
   // NOTE: this is really messy, we should embed temp bonuses onto the kami object
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
@@ -42,6 +42,7 @@ interface Props {
 export const KamiBar = (props: Props) => {
   const { kami, actions, options, utils, tick } = props;
   const { showCooldown, showTooltip } = options ?? {};
+  const { getTempBonuses } = utils;
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const [currentHealth, setCurrentHealth] = useState(0);
@@ -147,21 +148,19 @@ export const KamiBar = (props: Props) => {
       ]);
     }
 
-    const bonuses = getBonusesDescription(kami);
-    if (bonuses.length > 0) {
-      tooltip = tooltip.concat([`\n`, `${bonuses.join('\n')}`]);
-    }
-
     tooltip = tooltip.concat([`\n`, `${duration} since last action`]);
 
     return tooltip;
   };
 
   // get the description of temp bonuses currently applied to the kami
-  const getBonusesDescription = (kami: Kami) => {
-    const bonuses = utils.getTempBonuses(kami);
-    return bonuses.map((bonus) => parseBonusText(bonus));
-  };
+  const itemBonuses = useMemo(() => {
+    if (!getTempBonuses) return [];
+    return getTempBonuses(kami).map((bonus) => ({
+      image: getItemImage(bonus.source?.name || ''),
+      text: parseBonusText(bonus),
+    }));
+  }, [getTempBonuses, kami]);
 
   const getKamiState = (kami: Kami) => {
     if (kami.state === '721_EXTERNAL') return 'WANDERING';
@@ -202,6 +201,15 @@ export const KamiBar = (props: Props) => {
           <Text size={0.9}>{getKamiState(kami)}</Text>
           <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>
         </TextTooltip>
+        {itemBonuses.length > 0 && (
+          <Buffs>
+            {itemBonuses.map((bonus, i) => (
+              <TextTooltip key={i} text={[bonus.text]} direction='row'>
+                <Buff src={bonus.image} />
+              </TextTooltip>
+            ))}
+          </Buffs>
+        )}
       </Middle>
       <Right>
         {showCooldown && <Cooldown kami={kami} />}
@@ -250,15 +258,14 @@ interface MiddleProps {
 const Middle = styled.div<MiddleProps>`
   position: relative;
   height: 3vw;
-  border-right: solid black 0.15vw;
-  border-left: solid black 0.15vw;
-  margin: 0 0.3vw 0 0.3vw;
-  gap: 0.3vw;
-
+  border-right: 0.15vw solid black;
+  border-left: 0.15vw solid black;
+  margin: 0 0.3vw;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column;
   align-items: center;
   justify-content: center;
+
   flex-grow: 1;
 
   background: ${({ percent, color }) =>
@@ -289,4 +296,17 @@ const Icon = styled.img`
 
   user-select: none;
   user-drag: none;
+`;
+
+const Buffs = styled.div`
+  display: flex;
+  gap: 0.2vw;
+  align-items: center;
+`;
+
+const Buff = styled.img`
+  height: 1.4vw;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 `;

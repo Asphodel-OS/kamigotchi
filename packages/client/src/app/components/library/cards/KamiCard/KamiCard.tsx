@@ -168,8 +168,6 @@ const TitleCorner = styled.div`
 const Buffs = styled.div`
   display: flex;
   gap: 0.2vw;
-  background-color: rgba(238, 237, 237, 0.5);
-  border-radius: 0.5vw;
   width: max-content;
   align-items: center;
   padding: 0.2vw;
