@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getHarvestItem } from 'app/cache/harvest';
@@ -12,16 +12,14 @@ import {
   isResting,
 } from 'app/cache/kami';
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
-import { Text, TextTooltip } from 'app/components/library';
+import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
-import { ItemImages } from 'assets/images/items';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { NullNode } from 'network/shapes/Node';
-import { getItemImage } from 'network/shapes/utils';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
@@ -31,9 +29,11 @@ interface Props {
   actions?: React.ReactNode;
   options?: {
     showCooldown?: boolean;
+    showPercent?: boolean; // whether to show the percent health
     showTooltip?: boolean;
   };
   tick: number;
+
   // NOTE: this is really messy, we should embed temp bonuses onto the kami object
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
@@ -42,8 +42,7 @@ interface Props {
 
 export const KamiBar = (props: Props) => {
   const { kami, actions, options, utils, tick } = props;
-  const { showCooldown, showTooltip } = options ?? {};
-  const { getTempBonuses } = utils;
+  const { showCooldown, showPercent, showTooltip } = options ?? {};
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const [currentHealth, setCurrentHealth] = useState(0);
@@ -149,19 +148,21 @@ export const KamiBar = (props: Props) => {
       ]);
     }
 
+    const bonuses = getBonusesDescription(kami);
+    if (bonuses.length > 0) {
+      tooltip = tooltip.concat([`\n`, `${bonuses.join('\n')}`]);
+    }
+
     tooltip = tooltip.concat([`\n`, `${duration} since last action`]);
 
     return tooltip;
   };
 
   // get the description of temp bonuses currently applied to the kami
-  const itemBonuses = useMemo(() => {
-    if (!getTempBonuses) return [];
-    return getTempBonuses(kami).map((bonus) => ({
-      image: getItemImage(bonus.source?.name || ''),
-      text: parseBonusText(bonus),
-    }));
-  }, [getTempBonuses, kami]);
+  const getBonusesDescription = (kami: Kami) => {
+    const bonuses = utils.getTempBonuses(kami);
+    return bonuses.map((bonus) => parseBonusText(bonus));
+  };
 
   const getKamiState = (kami: Kami) => {
     if (kami.state === '721_EXTERNAL') return 'WANDERING';
@@ -195,28 +196,16 @@ export const KamiBar = (props: Props) => {
         </TextTooltip>
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
+        <Overlay top={0.18} left={0.15} passthrough>
+          <Text size={0.45}>{calcOutput(kami)}</Text>
+        </Overlay>
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <Text size={0.9}>{getKamiState(kami)}</Text>
-          <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>
+          {showPercent && <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>}
         </TextTooltip>
-        {itemBonuses.length > 0 && (
-          <Buffs>
-            {itemBonuses.map((bonus, i) => (
-              <TextTooltip key={i} text={[bonus.text]} direction='row'>
-                <Buff src={bonus.image} />
-              </TextTooltip>
-            ))}
-          </Buffs>
-        )}
       </Middle>
       <Right>
-        <MusuCooldown>
-          <TextTooltip text={[calcOutput(kami)]} direction='row'>
-            <img style={{ width: `1.2vw` }} src={ItemImages.musu} alt='Musu' />
-          </TextTooltip>{' '}
-          {showCooldown && <Cooldown kami={kami} />}
-        </MusuCooldown>
-
+        {showCooldown && <Cooldown kami={kami} />}
         {actions}
       </Right>
     </Container>
@@ -247,7 +236,6 @@ const Left = styled.div`
 `;
 
 const Right = styled.div`
-  position: relative;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -263,14 +251,15 @@ interface MiddleProps {
 const Middle = styled.div<MiddleProps>`
   position: relative;
   height: 3vw;
-  border-right: 0.15vw solid black;
-  border-left: 0.15vw solid black;
-  margin: 0 0.3vw;
+  border-right: solid black 0.15vw;
+  border-left: solid black 0.15vw;
+  margin: 0 0.3vw 0 0.3vw;
+  gap: 0.3vw;
+
   display: flex;
-  flex-flow: column;
+  flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-
   flex-grow: 1;
 
   background: ${({ percent, color }) =>
@@ -301,23 +290,4 @@ const Icon = styled.img`
 
   user-select: none;
   user-drag: none;
-`;
-
-const Buffs = styled.div`
-  display: flex;
-  gap: 0.2vw;
-  align-items: center;
-`;
-
-const Buff = styled.img`
-  height: 1.4vw;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-`;
-const MusuCooldown = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.2vw;
-  flex-flow: column nowrap;
 `;
