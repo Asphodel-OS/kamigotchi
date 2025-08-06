@@ -46,7 +46,7 @@ library LibERC20 {
 
   /// @notice converts from token units (wei, 18dp) to game units (mTokens, 3dp)
   function toGameUnits(uint256 amt) internal pure returns (uint256) {
-    return amt * 10 ** UNIT_SHIFT;
+    return amt / (10 ** (18 - UNIT_SHIFT));
   }
 
   /////////////////
