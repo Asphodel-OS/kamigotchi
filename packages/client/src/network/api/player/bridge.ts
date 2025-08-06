@@ -4,6 +4,25 @@
  */
 export const bridgeAPI = (systems: any) => {
   /////////////////
+  // ERC20
+
+  const depositERC20 = (itemIndex: number, itemAmt: number) => {
+    return systems['system.token.bridge.deposit'].deposit(itemIndex, itemAmt);
+  };
+
+  const initiateWithdrawERC20 = (itemIndex: number, itemAmt: number) => {
+    return systems['system.token.bridge.withdraw'].initiateWithdraw(itemIndex, itemAmt);
+  };
+
+  const claimERC20 = (receiptID: number) => {
+    return systems['system.token.bridge.withdraw'].claim(receiptID);
+  };
+
+  const cancelERC20 = (receiptID: number) => {
+    return systems['system.token.bridge.withdraw'].cancel(receiptID);
+  };
+
+  /////////////////
   // KAMI
 
   /**
@@ -41,7 +60,12 @@ export const bridgeAPI = (systems: any) => {
   };
 
   return {
-    ERC20: {},
+    ERC20: {
+      deposit: depositERC20,
+      withdraw: initiateWithdrawERC20,
+      claim: claimERC20,
+      cancel: cancelERC20,
+    },
     ERC721: {
       kami: {
         stake: stakeKami,
