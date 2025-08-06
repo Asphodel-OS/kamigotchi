@@ -1,62 +1,49 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, Overlay } from 'app/components/library';
+import { EmptyText, IconButton, Overlay } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiBlock } from '../../library/KamiBlock';
-import { Mode } from './types';
 
 export const WildKamis = ({
   kamis,
   state,
-  mode,
 }: {
-  mode: Mode;
   kamis: {
     wild: Kami[];
     world: Kami[];
   };
   state: {
-    selected: Kami[];
-    setSelected: (kamis: Kami[]) => void;
+    selectedWild: Kami[];
+    setSelectedWild: React.Dispatch<React.SetStateAction<Kami[]>>;
+    selectedWorld?: Kami[];
   };
 }) => {
   const { world, wild } = kamis;
-  const { selected, setSelected } = state;
+  const { selectedWild, setSelectedWild, selectedWorld } = state;
   const [displayed, setDisplayed] = useState<Kami[]>([]);
 
   useEffect(() => {
-    if (mode === 'EXPORT') setDisplayed(selected);
-    else {
-      const remainingKamis = wild.filter((kami) => !selected.includes(kami));
-      setDisplayed(remainingKamis);
-    }
-  }, [mode, wild, selected]);
+    setDisplayed(wild);
+  }, [wild, selectedWild]);
 
   /////////////////
   // HANDLERS
 
   const handleSelect = (kami: Kami) => {
     playClick();
-    if (selected.includes(kami)) {
-      setSelected(selected.filter((k) => k !== kami));
-    } else {
-      setSelected([...selected, kami]);
-    }
+    setSelectedWild((prev: Kami[]): Kami[] => {
+      const exists = prev.some((k) => k.index === kami.index);
+      return exists ? prev.filter((k) => k.index !== kami.index) : [...prev, kami];
+    });
   };
 
   /////////////////
   // INTERPRETATION
 
-  const getEmptyText = () => {
-    if (mode === 'IMPORT') return ['You have no Kami', 'in the wild'];
-    else return ['You must select', 'some Kami'];
-  };
-
   const getCount = () => {
-    if (mode === 'IMPORT') return `${wild.length}`;
-    else return `${wild.length}+${selected.length}`;
+    return `${wild.length}`;
   };
 
   /////////////////
@@ -64,20 +51,36 @@ export const WildKamis = ({
 
   return (
     <Container>
-      <Overlay top={0.9} left={0.9}>
+      <Overlay top={0.9} fullWidth orientation='column' gap={0.4}>
         <Text size={0.9}>Wilderness({getCount()})</Text>
+        <IconButton
+          onClick={() => {
+            setSelectedWild(wild);
+          }}
+          text={'Select All'}
+          disabled={(selectedWorld?.length ?? 0) > 0 || selectedWild.length === wild.length}
+        />
       </Overlay>
       <Scrollable>
         {displayed.map((kami) => (
           <KamiBlock
             key={kami.index}
             kami={kami}
-            select={{ isSelected: mode === 'EXPORT', onClick: () => handleSelect(kami) }}
+            tooltip={(selectedWorld?.length ?? 0) > 0 ? ['Only imports or exports at a time'] : []}
+            select={{
+              isSelected: selectedWild.some((k) => k.index === kami.index),
+              isDisabled: (selectedWorld?.length ?? 0) > 0,
+              onClick: () => handleSelect(kami),
+            }}
           />
         ))}
       </Scrollable>
       <Overlay fullWidth fullHeight passthrough>
-        <EmptyText text={getEmptyText()} size={1} isHidden={!!displayed.length} />
+        <EmptyText
+          text={['You have no Kami', 'in the wild']}
+          size={1}
+          isHidden={!!displayed.length}
+        />
       </Overlay>
     </Container>
   );
@@ -85,18 +88,25 @@ export const WildKamis = ({
 
 const Container = styled.div`
   position: relative;
-  width: 100%;
-  height: 15vw;
+  width: 40%;
+  height: 100%;
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Scrollable = styled.div`
-  height: 100%;
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  overflow-x: scroll;
+  flex-flow: row;
+  overflow-y: scroll;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 5vw;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Text = styled.div<{ size: number }>`
