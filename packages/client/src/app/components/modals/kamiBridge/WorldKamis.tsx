@@ -15,34 +15,31 @@ interface Props {
     world: Kami[];
   };
   state: {
-    selected: Kami[];
-    setSelected: (kamis: Kami[]) => void;
+    selectedWorld: Kami[];
+    setSelectedWorld: (kamis: Kami[]) => void;
+    selectedWild?: Kami[];
   };
 }
 
 export const WorldKamis = (props: Props) => {
   const { kamis, state, mode } = props;
   const { world, wild } = kamis;
-  const { selected, setSelected } = state;
+  const { selectedWorld, setSelectedWorld, selectedWild } = state;
   const [displayed, setDisplayed] = useState<Kami[]>([]);
 
   useEffect(() => {
-    if (mode === 'IMPORT') setDisplayed(selected);
-    else {
-      const remaining = world.filter((kami) => !selected.includes(kami));
-      setDisplayed(remaining);
-    }
-  }, [mode, world, selected]);
+    setDisplayed(world);
+  }, [mode, world, selectedWorld]);
 
   /////////////////
   // HANDLERS
 
   const handleSelect = (kami: Kami) => {
     playClick();
-    if (selected.includes(kami)) {
-      setSelected(selected.filter((k) => k !== kami));
+    if (selectedWorld.includes(kami)) {
+      setSelectedWorld(selectedWorld.filter((k) => k !== kami));
     } else {
-      setSelected([...selected, kami]);
+      setSelectedWorld([...selectedWorld, kami]);
     }
   };
 
@@ -50,7 +47,7 @@ export const WorldKamis = (props: Props) => {
   // INTERPRETATION
 
   const isDisabled = (kami: Kami) => {
-    return mode === 'EXPORT' && !isResting(kami);
+    return (selectedWild?.length ?? 0) > 0 || !isResting(kami);
   };
 
   const getEmptyText = () => {
@@ -59,8 +56,8 @@ export const WorldKamis = (props: Props) => {
   };
 
   const getCount = () => {
-    if (mode === 'EXPORT') return `${world.length}`;
-    else return `${world.length}+${selected.length}`;
+    return `${world.length}`;
+    //return `${world.length}+${selected.length}`;
   };
 
   /////////////////
@@ -68,7 +65,7 @@ export const WorldKamis = (props: Props) => {
 
   return (
     <Container>
-      <Overlay top={0.9} left={0.9}>
+      <Overlay top={0.9} fullWidth>
         <Text size={0.9}>World({getCount()})</Text>
       </Overlay>
       <Scrollable>
@@ -78,7 +75,7 @@ export const WorldKamis = (props: Props) => {
             kami={kami}
             select={{
               isDisabled: isDisabled(kami),
-              isSelected: mode === 'IMPORT',
+              // isSelected: mode === 'IMPORT',
               onClick: () => handleSelect(kami),
             }}
           />
@@ -93,8 +90,8 @@ export const WorldKamis = (props: Props) => {
 
 const Container = styled.div`
   position: relative;
-  width: 100%;
-  height: 15vw;
+  width: 40%;
+  height: 100%;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -102,9 +99,17 @@ const Container = styled.div`
 const Scrollable = styled.div`
   height: 100%;
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  overflow-x: scroll;
+  flex-flow: row;
+  overflow-y: scroll;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 2.5vw;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Text = styled.div<{ size: number }>`

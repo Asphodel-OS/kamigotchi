@@ -10,7 +10,6 @@ interface Props {
   select?: {
     onClick?: () => void;
     isDisabled?: boolean;
-    isSelected?: boolean;
   };
   tooltip?: string[];
 }
@@ -48,11 +47,7 @@ export const KamiBlock = (props: Props) => {
         </Overlay>
         {select && (
           <Overlay bottom={0.5} right={0.5}>
-            <ClickBox
-              isDisabled={!!select.isDisabled}
-              isSelected={!!select.isSelected}
-              onClick={select.onClick}
-            />
+            <ClickBox type='checkbox' disabled={!!select.isDisabled} onClick={select.onClick} />
           </Overlay>
         )}
       </TextTooltip>
@@ -96,20 +91,13 @@ const Text = styled.div<{ size: number }>`
   text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
 `;
 
-const ClickBox = styled.button<{ isDisabled: boolean; isSelected: boolean }>`
-  border: ${({ isSelected }) => (isSelected ? 'solid .15vw #fff' : 'solid .15vw #333')};
+const ClickBox = styled.input`
+  border: 'solid .15vw #333';
   border-radius: 0.4vw;
-  width: 2vw;
-  height: 2vw;
+  width: 1.8vw;
+  height: 1.8vw;
 
   opacity: 0.9;
-  cursor: ${({ isDisabled }) => (isDisabled ? 'disabled' : 'pointer')};
-  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
-  user-select: none;
 
-  background-color: ${({ isSelected }) => (isSelected ? '#3498DB' : '#ddd')};
-  ${({ isDisabled }) => (isDisabled ? 'background-color: #333' : '')};
-  &:hover {
-    background-color: ${({ isSelected }) => (isSelected ? '#0468aB' : '#aaa')};
-  }
+  user-select: none;
 `;
