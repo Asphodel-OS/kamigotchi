@@ -2,6 +2,7 @@ import { AdminAPI } from '../api';
 import { initAuctions } from './auctions';
 
 import { initAuth, initLocalAuth } from './auth';
+import { initBridge, initLocalBridge } from './bridge';
 import { initConfigs, initLocalConfigs, initProdConfigs, initTestingConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
@@ -39,6 +40,8 @@ export async function initAll(api: AdminAPI) {
 
   // dependent
   await initAuctions(api);
+  console.log('\n---------------------------------------------\n');
+  await initBridge(api);
   console.log('\n---------------------------------------------\n');
   await initListings(api, undefined, true);
   console.log('\n---------------------------------------------\n');
@@ -78,6 +81,7 @@ export async function initAllLocal(api: AdminAPI) {
   await api.setup.local.initAccounts();
   await api.setup.local.initPets();
   await api.setup.local.initHarvests();
+  await initLocalBridge(api);
 }
 
 export async function initAllTesting(api: AdminAPI) {
@@ -91,6 +95,7 @@ export async function initAllProd(api: AdminAPI) {
 
 export { deleteAuctions, initAuctions, reviseAuctions } from './auctions';
 export { initAuth } from './auth';
+export { addToken, deleteToken, initBridge } from './bridge';
 export {
   initConfigs,
   initHarvest as initHarvestConfigs,

@@ -34,6 +34,10 @@ export const encodeArgs = (
 
 export const parseArgs = (args: any[]) => {
   return args.map((arg) => {
+    if (typeof arg === 'string' && arg.startsWith('INJECT:')) {
+      // allow for injections, when solidity logic is needed to derive an argument
+      return arg.replace('INJECT: ', '');
+    }
     if (typeof arg === 'string' && !arg.includes('[') && !arg.startsWith('0x'))
       // if string, and not array or starts with 0x
       return `\\"${arg}\\"`; // converting to string literal

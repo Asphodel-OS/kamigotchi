@@ -2,6 +2,7 @@ import { BigNumberish } from 'ethers';
 
 import { toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
+import { bridgeAPI } from './bridge';
 import { goalsAPI } from './goals';
 import { itemsAPI } from './items';
 import { listingAPI } from './listings';
@@ -448,6 +449,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
     },
     auction: auctionAPI(generateCallData, compiledCalls),
+    bridge: bridgeAPI(generateCallData, compiledCalls),
     config: {
       set: {
         address: setConfigAddress,

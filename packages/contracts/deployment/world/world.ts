@@ -13,11 +13,13 @@ import {
   deleteRelationships,
   deleteRooms,
   deleteSkills,
+  deleteToken,
   initAll,
   initAllLocal,
   initAllTesting,
   initAuctions,
   initAuth,
+  initBridge,
   initConfigs,
   initFactions,
   initGachaPool,
@@ -88,6 +90,10 @@ export class WorldState {
     },
     auth: {
       init: () => this.genCalls(initAuth),
+    },
+    bridge: {
+      init: () => this.genCalls(initBridge),
+      delete: (index: number) => this.genCalls((api) => deleteToken(api, index)),
     },
     config: {
       init: () => this.genCalls(initConfigs),
