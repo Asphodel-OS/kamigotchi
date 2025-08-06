@@ -83,6 +83,15 @@ VITE_KAMIGAZE_URL='https://api.prod.kamigotchi.io'
 # World
 VITE_WORLD_ADDRESS='0x2729174c265dbBd8416C6449E0E813E88f43D0E7'
 VITE_INITIAL_BLOCK_NUMBER=44577
+
+# RPCs
+VITE_RPC_TRANSPORT_URL='https://jsonrpc-yominet-1.anvil.asia-southeast.initia.xyz'
+VITE_RPC_WS_URL='wss://jsonrpc-ws-yominet-1.anvil.asia-southeast.initia.xyz'
+
+# PRIVY
+VITE_PRIVY_APP_ID='cltxr4rvw082u129anv6cq7wr'
+VITE_PRIVY_CLIENT_ID='client-WY2ijNSw1URbqeLQm1SPC4cRkHr3pLpcYWjQxaEvrs3wc'
+VITE_PRIVY_APP_LOGO='https://i.imgur.com/lYdPt9I.png'
 ```
 <br>
 
