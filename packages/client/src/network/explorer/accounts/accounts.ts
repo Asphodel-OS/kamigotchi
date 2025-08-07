@@ -18,6 +18,7 @@ import {
   getKillStats,
   getOverallStats,
   getReputationStats,
+  getVipStats,
 } from './stats';
 
 const FullAccountOptions: AccountOptions = {
@@ -55,6 +56,7 @@ export const accounts = (world: World, components: Components) => {
       kill: (limit?: number) => getKillStats(world, components, limit),
       musu: (limit?: number) => getItemStats(world, components, 1, limit),
       rep: (limit?: number) => getReputationStats(world, components, limit),
+      vip: (epoch?: number, limit?: number) => getVipStats(world, components, epoch, limit),
       overall: (limit?: number) => getOverallStats(world, components, limit),
     },
   };
