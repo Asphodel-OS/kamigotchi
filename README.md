@@ -94,7 +94,7 @@ VITE_PRIVY_APP_LOGO='https://i.imgur.com/lYdPt9I.png'
 
 # RPCs
 VITE_RPC_TRANSPORT_URL='https://jsonrpc-yominet-1.anvil.asia-southeast.initia.xyz'
-VITE_RPC_WS_URL='wss://jsonrpc-ws-yominet-1.anvil.asia-southeast.initia.xyz'
+VITE_RPC_WS_URL='wss://jsonrpc-ws-yominet-1.anvil.asia-southeast.initia.xyz' 
 ```
 <br>
 
