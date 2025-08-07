@@ -8,6 +8,7 @@ import { getItemByIndex } from 'app/cache/item';
 import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
+import { SkillImages } from 'assets/images/skills';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAllItems } from 'network/shapes/Item';
@@ -23,7 +24,7 @@ export function registerLootBoxModal() {
       colStart: 36,
       colEnd: 68,
       rowStart: 3,
-      rowEnd: 80,
+      rowEnd: 63,
     },
     // Requirement
     (layers) =>
@@ -87,6 +88,10 @@ export function registerLootBoxModal() {
         );
       }, []);
 
+      const FooterRenderer = useMemo(() => {
+        return <Footer>'FOOTER' </Footer>;
+      }, []);
+
       /////////////////
       // GETTERS
 
@@ -94,8 +99,22 @@ export function registerLootBoxModal() {
       // ACTIONS
 
       return (
-        <ModalWrapper id='lootBox' header={HeaderRenderer} noPadding overlay>
-          <Content>'meh'</Content>
+        <ModalWrapper
+          id='lootBox'
+          header={HeaderRenderer}
+          footer={FooterRenderer}
+          noPadding
+          overlay
+        >
+          <Content>
+            Demon Egg
+            <Img src={SkillImages.self_care} />
+            <Text> X Obols</Text>
+            <ButtonsRow>
+              <Button onClick={() => {}}>I accept.</Button>
+              <Button onClick={() => {}}>I refuse.</Button>
+            </ButtonsRow>
+          </Content>
         </ModalWrapper>
       );
     }
@@ -113,6 +132,9 @@ const Content = styled.div`
   overflow-y: auto;
   background-color: black;
   color: white;
+  border: 0.3vw solid white;
+  align-items: center;
+  padding: 2vw;
 `;
 
 const Header = styled.div`
@@ -124,8 +146,12 @@ const Header = styled.div`
   align-items: center;
   gap: 0.5vw;
   padding: 1vw;
+  padding-bottom: 0;
   flex-direction: column;
   line-height: 1vw;
+  border: 0.3vw solid white;
+  border-bottom: none;
+  border-radius: 1vw 1vw 0 0;
 `;
 const HeaderPart = styled.div<{ size: number; weight?: string; spacing?: number }>`
   position: relative;
@@ -134,4 +160,44 @@ const HeaderPart = styled.div<{ size: number; weight?: string; spacing?: number 
   letter-spacing: ${({ spacing }) => spacing || -0.25}vw;
   font-size: ${({ size }) => size}vw;
   font-weight: ${({ weight }) => weight || 'normal'};
+`;
+
+const Footer = styled.div`
+  position: relative;
+  background-color: black;
+  color: white;
+  border: 0.3vw solid white;
+  border-top: none;
+  border-radius: 0 0 1vw 1vw;
+  height: 4vw;
+`;
+
+const ButtonsRow = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 0.5vw;
+`;
+
+const Button = styled.button`
+  border: 0.2vw solid white;
+  background-color: black;
+  color: white;
+  padding: 0.5vw;
+`;
+
+const Img = styled.img`
+  width: 6vw;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  padding: 0.5vw;
+`;
+
+const Text = styled.text`
+  color: white;
 `;
