@@ -61,6 +61,7 @@ export interface Modals {
   settings: boolean;
   presale: boolean;
   trading: boolean;
+  lootBox: boolean;
 }
 
 export const toggleModals = (isOn: boolean): Modals => ({
@@ -87,6 +88,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   settings: isOn,
   presale: isOn,
   trading: isOn,
+  lootBox: isOn,
 });
 
 ////////////////
@@ -134,6 +136,7 @@ export const useVisibility = create<State & Actions>((set) => {
       settings: false,
       presale: false,
       trading: false,
+      lootBox: false,
     },
     validators: {
       accountRegistrar: false,
