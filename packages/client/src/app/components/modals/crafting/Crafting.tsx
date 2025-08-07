@@ -6,6 +6,7 @@ import { getAccount } from 'app/cache/account';
 import { getAllRecipes } from 'app/cache/recipes';
 import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useVisibility } from 'app/stores';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
@@ -32,73 +33,84 @@ export const CraftingModal: UIComponent = {
             meetsRequirements: (recipe: Recipe) =>
               passesConditions(world, components, recipe.requirements, account),
             displayRequirements: (recipe: Recipe) =>
-              recipe.requirements.map((req) => parseConditionalText(world, components, req)).join(', '),
+              recipe.requirements
+                .map((req) => parseConditionalText(world, components, req))
+                .join(', '),
             getItemBalance: (index: number) => getItemBalance(world, components, account.id, index),
-            hasIngredients: (recipe: Recipe) => hasIngredients(world, components, recipe, account.id),
+            hasIngredients: (recipe: Recipe) =>
+              hasIngredients(world, components, recipe, account.id),
           },
         };
       })
     ),
   Render: ({ data, network, utils }) => {
-      const { account } = data;
-      const { actions, api, components, world } = network;
-      const { hasIngredients } = utils;
-      const [recipes, setRecipes] = useState<Recipe[]>([]);
-      const [showAll, setShowAll] = useState<boolean>(true);
-      const [tab, setTab] = useState('consumable'); //  consumable | material | reagent | special
+    const { account } = data;
+    const { actions, api, components, world } = network;
+    const { hasIngredients } = utils;
+    const { modals, setModals } = useVisibility();
+    const [recipes, setRecipes] = useState<Recipe[]>([]);
+    const [showAll, setShowAll] = useState<boolean>(true);
+    const [tab, setTab] = useState('consumable'); //  consumable | material | reagent | special
 
-      // update the list of recipes depending on the filter
-      useEffect(() => {
-        const recipes = getAllRecipes(world, components);
-        const currentTabRecipes = recipes.filter((recipe) => recipe.type === tab.toUpperCase());
-        if (showAll) setRecipes(currentTabRecipes);
-        else setRecipes(currentTabRecipes.filter((recipe) => hasIngredients(recipe)));
-      }, [showAll, tab]);
+    /////////////////
+    useEffect(() => {
+      if (!modals.crafting) return;
+      // close lootbox modal
+      setModals({ lootBox: false });
+    }, [modals.crafting]);
 
-      /////////////////
-      // INTERPRETATION
+    // update the list of recipes depending on the filter
+    useEffect(() => {
+      const recipes = getAllRecipes(world, components);
+      const currentTabRecipes = recipes.filter((recipe) => recipe.type === tab.toUpperCase());
+      if (showAll) setRecipes(currentTabRecipes);
+      else setRecipes(currentTabRecipes.filter((recipe) => hasIngredients(recipe)));
+    }, [showAll, tab]);
 
-      const getIngredientsText = (ingredients: Ingredient[], multiplier: number) => {
-        let text = '';
-        ingredients.forEach((ingredient) => {
-          const amount = ingredient.amount * multiplier;
-          const name = ingredient.item?.name ?? 'Unknown';
-          text += pluralize(name, amount, true) + ' ';
-        });
-        return text;
-      };
+    /////////////////
+    // INTERPRETATION
 
-      /////////////////
-      // ACTIONS
+    const getIngredientsText = (ingredients: Ingredient[], multiplier: number) => {
+      let text = '';
+      ingredients.forEach((ingredient) => {
+        const amount = ingredient.amount * multiplier;
+        const name = ingredient.item?.name ?? 'Unknown';
+        text += pluralize(name, amount, true) + ' ';
+      });
+      return text;
+    };
 
-      const craft = (recipe: Recipe, amount: number) => {
-        actions.add({
-          action: 'Craft',
-          params: [recipe.id, amount],
-          description: `Crafting ${getIngredientsText(recipe.outputs, amount)}`,
-          execute: async () => {
-            return api.player.account.item.craft(recipe.index, amount);
-          },
-        });
-      };
+    /////////////////
+    // ACTIONS
 
-      /////////////////
-      // DISPLAY
+    const craft = (recipe: Recipe, amount: number) => {
+      actions.add({
+        action: 'Craft',
+        params: [recipe.id, amount],
+        description: `Crafting ${getIngredientsText(recipe.outputs, amount)}`,
+        execute: async () => {
+          return api.player.account.item.craft(recipe.index, amount);
+        },
+      });
+    };
 
-      return (
-        <ModalWrapper
-          id='crafting'
-          header={<ModalHeader title='Crafting' icon={CraftIcon} />}
-          canExit
-        >
-          <Tabs tab={tab} setTab={setTab} />
-          <ActionButton onClick={() => setShowAll(!showAll)} text='Filter by Available' />
-          {recipes.length == 0 ? (
-            <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
-          ) : (
-            <Recipes data={{ account, recipes, tab }} actions={{ craft }} utils={utils} />
-          )}
-        </ModalWrapper>
-      );
+    /////////////////
+    // DISPLAY
+
+    return (
+      <ModalWrapper
+        id='crafting'
+        header={<ModalHeader title='Crafting' icon={CraftIcon} />}
+        canExit
+      >
+        <Tabs tab={tab} setTab={setTab} />
+        <ActionButton onClick={() => setShowAll(!showAll)} text='Filter by Available' />
+        {recipes.length == 0 ? (
+          <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
+        ) : (
+          <Recipes data={{ account, recipes, tab }} actions={{ craft }} utils={utils} />
+        )}
+      </ModalWrapper>
+    );
   },
 };

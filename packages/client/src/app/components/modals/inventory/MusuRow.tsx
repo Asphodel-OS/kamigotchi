@@ -5,35 +5,48 @@ import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 
 interface Props {
-  balance: number;
+  data: {
+    musu: number;
+    obols: number;
+  };
 }
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = (props: Props) => {
-  const { balance } = props;
+  const { musu, obols } = props.data;
   const { modals, setModals } = useVisibility();
 
   return (
     <Container key='musu'>
-      <TextTooltip
-        text={[
-          'View the Kamigotchi World Orderbook\n\n',
-          'You must be in a designated Trade room',
-          'to interact with outstanding Orders.',
-        ]}
-        direction='row'
-      >
-        <IconButton
-          img={ItemImages.musu}
-          text='Trades'
-          onClick={() => setModals({ ...modals, trading: !modals.trading })}
-          radius={0.9}
-        />
-      </TextTooltip>
+      <Icons>
+        <TextTooltip
+          text={[
+            'View the Kamigotchi World Orderbook\n\n',
+            'You must be in a designated Trade room',
+            'to interact with outstanding Orders.',
+          ]}
+          direction='row'
+        >
+          <IconButton
+            img={ItemImages.musu}
+            text='Trades'
+            onClick={() => setModals({ ...modals, trading: !modals.trading })}
+            radius={0.9}
+          />
+        </TextTooltip>
+        {obols > 1 && (
+          <IconButton
+            img={ItemImages.obol}
+            text='Shop'
+            onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
+            radius={0.9}
+          />
+        )}
+      </Icons>
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
           <Icon src={ItemImages.musu} onClick={() => null} />
-          <Balance>{balance.toLocaleString()}</Balance>
+          <Balance>{musu}</Balance>
         </MusuSection>
       </TextTooltip>
     </Container>
@@ -62,6 +75,11 @@ const MusuSection = styled.div`
   gap: 0.3vw;
 `;
 
+const Icons = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.3vw;
+`;
 const Icon = styled.img`
   width: 1.8vw;
   height: 1.8vw;

@@ -5,10 +5,11 @@ import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useAccount } from 'app/stores';
 import { InventoryIcon } from 'assets/images/icons/menu';
+import { OBOL_INDEX } from 'constants/items';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Allo, parseAllos } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
-import { getMusuBalance, Item } from 'network/shapes/Item';
+import { getItemBalance, getMusuBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
@@ -46,6 +47,8 @@ export const InventoryModal: UIComponent = {
             meetsRequirements: (holder: Kami | Account, item: Item) =>
               passesConditions(world, components, item.requirements.use, holder),
             getMusuBalance: () => getMusuBalance(world, components, accountEntity),
+            getObolsBalance: () =>
+              getItemBalance(world, components, world.entities[accountEntity], OBOL_INDEX),
             displayRequirements: (recipe: Item) =>
               recipe.requirements.use
                 .map((req) => parseConditionalText(world, components, req))
@@ -57,62 +60,61 @@ export const InventoryModal: UIComponent = {
     );
   },
   Render: ({ network, data, utils }) => {
-      const { actions, api } = network;
-      const { accountEntity } = data;
-      const { getMusuBalance } = utils;
+    const { actions, api } = network;
+    const { accountEntity } = data;
+    const { getMusuBalance, getObolsBalance } = utils;
 
-      /////////////////
-      // ACTIONS
+    /////////////////
+    // ACTIONS
 
-      const useForKami = (kami: Kami, item: Item) => {
-        actions.add({
-          action: 'KamiFeed',
-          params: [kami.id, item.index],
-          description: `Using ${item.name} on ${kami.name}`,
-          execute: async () => {
-            return api.player.pet.item.use(kami.id, item.index);
-          },
-        });
-      };
+    const useForKami = (kami: Kami, item: Item) => {
+      actions.add({
+        action: 'KamiFeed',
+        params: [kami.id, item.index],
+        description: `Using ${item.name} on ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.item.use(kami.id, item.index);
+        },
+      });
+    };
 
-      const useForAccount = (item: Item, amount: number) => {
-        // really hacky way to determine if we're using a giftbox
-        let actionKey = 'Using';
-        if (item.name === 'Giftbox') actionKey = 'Opening';
+    const useForAccount = (item: Item, amount: number) => {
+      let actionKey = 'Using';
+      if (item.type === 'LOOTBOX') actionKey = 'Opening';
 
-        actions.add({
-          action: 'AccountFeed',
-          params: [item.index],
-          description: `${actionKey} ${item.name}`,
-          execute: async () => {
-            return api.player.account.item.use(item.index, amount);
-          },
-        });
-      };
+      actions.add({
+        action: 'AccountFeed',
+        params: [item.index],
+        description: `${actionKey} ${item.name}`,
+        execute: async () => {
+          return api.player.account.item.use(item.index, amount);
+        },
+      });
+    };
 
-      /////////////////
-      // DISPLAY
+    /////////////////
+    // DISPLAY
 
-      return (
-        <ModalWrapper
-          id='inventory'
-          header={<ModalHeader title='Inventory' icon={InventoryIcon} />}
-          footer={<MusuRow key='musu' balance={getMusuBalance()} />}
-          canExit
-          overlay
-          truncate
-        >
-          {!accountEntity ? (
-            <EmptyText text={['Failed to Connect Account']} size={1} />
-          ) : (
-            <ItemGrid
-              key='grid'
-              accountEntity={accountEntity}
-              actions={{ useForAccount, useForKami }}
-              utils={utils}
-            />
-          )}
-        </ModalWrapper>
-      );
+    return (
+      <ModalWrapper
+        id='inventory'
+        header={<ModalHeader title='Inventory' icon={InventoryIcon} />}
+        footer={<MusuRow key='musu' data={{ musu: getMusuBalance(), obols: getObolsBalance() }} />}
+        canExit
+        overlay
+        truncate
+      >
+        {!accountEntity ? (
+          <EmptyText text={['Failed to Connect Account']} size={1} />
+        ) : (
+          <ItemGrid
+            key='grid'
+            accountEntity={accountEntity}
+            actions={{ useForAccount, useForKami }}
+            utils={utils}
+          />
+        )}
+      </ModalWrapper>
+    );
   },
 };
