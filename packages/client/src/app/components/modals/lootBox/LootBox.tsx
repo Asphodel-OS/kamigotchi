@@ -1,20 +1,16 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
-import { useEffect, useState } from 'react';
+import { EntityID } from '@mud-classic/recs';
+import { useEffect, useMemo, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { getAccount } from 'app/cache/account';
 import { getItemByIndex } from 'app/cache/item';
-import { getTrade } from 'app/cache/trade';
-import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { ModalWrapper } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getAllItems, getMusuBalance, Item } from 'network/shapes/Item';
-import { queryTrades } from 'network/shapes/Trade';
-import { Trade } from 'network/shapes/Trade/types';
+import { getAllItems } from 'network/shapes/Item';
 
 const SYNC_TIME = 1000;
 const CurrencyIndices = [MUSU_INDEX, ETH_INDEX, ONYX_INDEX];
@@ -24,10 +20,10 @@ export function registerLootBoxModal() {
     'LootBox',
     // Grid Config
     {
-      colStart: 33,
-      colEnd: 67,
+      colStart: 36,
+      colEnd: 68,
       rowStart: 3,
-      rowEnd: 99,
+      rowEnd: 80,
     },
     // Requirement
     (layers) =>
@@ -51,10 +47,7 @@ export function registerLootBoxModal() {
               entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
               getAllItems: () => getAllItems(world, comps),
               getAccount: () => getAccount(world, comps, accountEntity, accountOptions),
-              getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, tradeOptions),
-              queryTrades: () => queryTrades(comps),
               getItemByIndex: (index: number) => getItemByIndex(world, comps, index),
-              getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
             },
           };
         })
@@ -64,21 +57,14 @@ export function registerLootBoxModal() {
     ({ network, data, types, utils }) => {
       const { actions } = network;
       const { account } = data;
-      const { getAllItems, getTrade, queryTrades } = utils;
+      const { getAllItems } = utils;
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
-
-      const [items, setItems] = useState<Item[]>([]);
-      const [currencies, setCurrencies] = useState<Item[]>([]);
-      const [trades, setTrades] = useState<Trade[]>([]);
-      const [myTrades, setMyTrades] = useState<Trade[]>([]);
 
       const [tick, setTick] = useState(Date.now());
 
       // time trigger to use for periodic refreshes
       useEffect(() => {
-        refreshItemRegistry();
-
         const updateSync = () => setTick(Date.now());
         const timerId = setInterval(updateSync, SYNC_TIME);
         return () => clearInterval(timerId);
@@ -87,129 +73,28 @@ export function registerLootBoxModal() {
       // sets trades upon opening modal
       useEffect(() => {
         if (!modals.trading) return;
-        refreshTrades();
       }, [modals.trading, tick]);
+
+      const HeaderRenderer = useMemo(() => {
+        return (
+          <Header>
+            <HeaderPart size={1.2}>EVERYTHING MUST GO!!! "Normal!" - Leonard</HeaderPart>
+            <HeaderPart size={3.4} weight={'bolder'} spacing={-0.55}>
+              Pop-Up Shop
+            </HeaderPart>
+            <HeaderPart size={1.2}>"Five stars!!" - Amy WE ACCEPT OBOLS</HeaderPart>
+          </Header>
+        );
+      }, []);
 
       /////////////////
       // GETTERS
 
-      // pull all items from the registry and save the tradable ones
-      const refreshItemRegistry = () => {
-        const all = getAllItems();
-        // const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
-        const tradable = all.filter((item) => item.is.tradeable);
-        tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
-        if (tradable.length !== items.length) setItems(tradable);
-
-        setCurrencies([all.find((item) => item.index === 1)!]);
-      };
-
-      // pull all open trades and partition them based on whether created by the player
-      // NOTE: filtering by Taker not yet implemented
-      const refreshTrades = () => {
-        const allTrades = queryTrades().map((entity: EntityIndex) => getTrade(entity));
-        const myTrades = allTrades.filter((trade) => {
-          const isMaker = trade.maker?.entity === account.entity;
-          const isTaker = trade.taker?.entity === account.entity;
-          return isMaker || isTaker;
-        });
-        const trades = allTrades.filter((trade) => {
-          const isNotMaker = trade.maker?.entity !== account.entity;
-          const isNotTaker = trade.taker?.entity !== account.entity;
-          const isOpen = trade.state === 'PENDING';
-          return isNotMaker && isNotTaker && isOpen;
-        });
-        setMyTrades(myTrades);
-        setTrades(trades);
-      };
-
       /////////////////
       // ACTIONS
 
-      // create a trade offer based on any two sets of items and amounts
-      const createTrade = (
-        wantItems: Item[],
-        wantAmts: number[],
-        haveItems: Item[],
-        haveAmts: number[]
-      ) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const wantIndices = wantItems.map((item) => item.index);
-        const haveIndices = haveItems.map((item) => item.index);
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          action: 'Create Order',
-          params: [],
-          description: `Creating Order`,
-          execute: async () => {
-            return api.account.trade.create(wantIndices, wantAmts, haveIndices, haveAmts, 0);
-          },
-        });
-        return actionID;
-      };
-
-      // execute an open trade offer
-      const executeTrade = (trade: Trade) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          action: 'Executing Order',
-          params: [trade.id],
-          description: `Executing Order`,
-          execute: async () => {
-            return api.account.trade.execute(trade.id);
-          },
-        });
-        return actionID;
-      };
-
-      // complete an executed trade offer
-      const completeTrade = (trade: Trade) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          action: 'Complete Order',
-          params: [trade.id],
-          description: `Completing Order`,
-          execute: async () => {
-            return api.account.trade.complete(trade.id);
-          },
-        });
-        return actionID;
-      };
-
-      // cancel an existing trade offer
-      const cancelTrade = (trade: Trade) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          action: 'Cancel Order',
-          params: [trade.id],
-          description: `Canceling Order`,
-          execute: async () => {
-            return api.account.trade.cancel(trade.id);
-          },
-        });
-        return actionID;
-      };
-
       return (
-        <ModalWrapper
-          id='lootBox'
-          header={<ModalHeader title='Loot Box' />}
-          canExit
-          noPadding
-          overlay
-        >
+        <ModalWrapper id='lootBox' header={HeaderRenderer} noPadding overlay>
           <Content>'meh'</Content>
         </ModalWrapper>
       );
@@ -220,12 +105,33 @@ export function registerLootBoxModal() {
 const Content = styled.div`
   position: relative;
   gap: 0.6vw;
-
   flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  background-color: black;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: black;
+  color: white;
+`;
+
+const Header = styled.div`
+  position: relative;
+  background-color: black;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 1vw;
+  flex-direction: column;
+  line-height: 1vw;
+`;
+const HeaderPart = styled.div<{ size: number; weight?: string; spacing?: number }>`
+  position: relative;
+  color: white;
+  padding: 0.5vw;
+  letter-spacing: ${({ spacing }) => spacing || -0.25}vw;
+  font-size: ${({ size }) => size}vw;
+  font-weight: ${({ weight }) => weight || 'normal'};
 `;
