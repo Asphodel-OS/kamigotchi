@@ -141,8 +141,9 @@ export const getSkillPoints = (components: Components, entity: EntityIndex): num
 
 export const getState = (components: Components, entity: EntityIndex): string => {
   const { State } = components;
-  const value = getComponentValue(State, entity)?.value ?? '';
-  return value;
+  const result = getComponentValue(State, entity)?.value;
+  if (result === undefined) console.warn('getState(): undefined for entity', entity);
+  return result ?? '';
 };
 
 export const getType = (components: Components, entity: EntityIndex): string => {

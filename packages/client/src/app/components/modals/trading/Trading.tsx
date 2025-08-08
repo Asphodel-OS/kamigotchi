@@ -108,7 +108,7 @@ export function registerTradingModal() {
       useEffect(() => {
         if (!modals.trading) return;
         refreshTrades();
-        getTradeHistoryKamiden(BigInt(account.id).toString());
+        getTradeHistoryKamiden(account.id);
       }, [modals.trading, tick]);
 
       /////////////////
@@ -145,9 +145,10 @@ export function registerTradingModal() {
       };
 
       async function getTradeHistoryKamiden(accountId: string) {
+        const parsedAccountId = BigInt(accountId).toString();
         try {
           const request: TradesRequest = {
-            AccountId: accountId,
+            AccountId: parsedAccountId,
             Timestamp: '0',
           };
           const response = await KamidenClient?.getTradeHistory(request);

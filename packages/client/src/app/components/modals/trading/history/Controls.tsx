@@ -25,8 +25,6 @@ export const Controls = (props: Props) => {
     if (typeFilter === 'Sell') setTypeFilter('Barter');
     if (typeFilter === 'Barter') setTypeFilter('Buy');
   };
-  /////////////////
-  // INTERPRETATION
 
   return (
     <Container>

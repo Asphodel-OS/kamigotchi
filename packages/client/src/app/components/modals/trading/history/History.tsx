@@ -1,11 +1,11 @@
+import { EntityID } from '@mud-classic/recs';
+import { useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityID } from '@mud-classic/recs';
 import { TradeType } from 'app/cache/trade';
 import { Trade as TradeHistoryType } from 'clients/kamiden/proto';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
-import { useState } from 'react';
 import { Controls } from './Controls';
 import { TradeHistory } from './TradeHistory';
 
@@ -25,7 +25,6 @@ interface Props {
 
 export const History = (props: Props) => {
   const { isVisible, data, utils } = props;
-
   const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
   return (
     <Content isVisible={isVisible}>

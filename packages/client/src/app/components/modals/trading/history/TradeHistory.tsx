@@ -29,7 +29,7 @@ export const TradeHistory = (props: Props) => {
   const { account, tradeHistory } = data;
   const { getTradeHistory, getItemByIndex } = utils;
   const [displayed, setDisplayed] = useState<Trade[]>([]);
-  //fix this
+
   useEffect(() => {
     const history = tradeHistory.map((tradeHistory) => {
       return getTradeHistory(tradeHistory);

@@ -1,10 +1,10 @@
+import moment from 'moment';
 import { Dispatch } from 'react';
 import styled from 'styled-components';
 
 import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
-import moment from 'moment';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
 import { TRADE_ROOM_INDEX } from '../../constants';

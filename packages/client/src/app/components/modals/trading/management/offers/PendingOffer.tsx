@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { Dispatch } from 'react';
 import styled from 'styled-components';
 
@@ -6,7 +7,6 @@ import { calcTradeTax, TradeType } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
-import moment from 'moment';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade';
 import { TRADE_ROOM_INDEX } from '../../constants';
@@ -67,12 +67,15 @@ export const PendingOffer = (props: Props) => {
 
   /////////////////
   // INTERPRETATION
+
+  // gets last trade state
   const getStateTooltip = () => {
     const timestamp =
       trade.timestamps &&
       `: ${moment(Number(trade.timestamps[trade.state]) * 1000).format('MM/DD HH:mm')}`;
     return [`${trade.state.toLowerCase()}${timestamp ?? ''}`];
   };
+
   // check whether the player can fill the specified order
   // skip check if the player is the maker
   // NOTE: this doesnt account for multiples of the same item in a single order
