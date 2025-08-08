@@ -137,6 +137,12 @@ export const parseKamiStateFromIndex = (index: number): string => {
   else return '';
 };
 
+export const parseKamiCanEatFromIndex = (index: number): string => {
+  if (index === 1) return 'RESTING';
+  else if (index === 2) return 'HARVESTING';
+  else return 'None';
+};
+
 ////////////////////////
 // INTERNAL
 

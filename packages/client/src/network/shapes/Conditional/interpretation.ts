@@ -8,6 +8,7 @@ import { getPhaseName } from 'utils/time';
 import { Condition } from '../Conditional';
 import { getQuestByIndex } from '../Quest';
 import { getFromDescription, parseKamiStateFromIndex } from '../utils';
+import { parseKamiCanEatFromIndex } from '../utils/parse';
 
 export const parseConditionalUnits = (con: Condition): [string, string] => {
   let tar = ((con.target.value ?? 0) * 1).toString();
@@ -19,11 +20,12 @@ export const parseConditionalUnits = (con: Condition): [string, string] => {
   } else if (con.target.type.includes('ITEM') && con.target.index === MUSU_INDEX) {
     tar = tar + ' MUSU';
     curr = curr + ' MUSU';
-  } else if (con.target.type === 'STATE' || con.target.type === 'KAMI_CAN_EAT') {
-    const targetIndex = con.target.index ?? 0;
-    const currentIndex = con.status?.current ?? 0;
-    tar = parseKamiStateFromIndex(targetIndex) ?? `State ${targetIndex}`;
-    curr = parseKamiStateFromIndex(currentIndex) ?? `State ${currentIndex}`;
+  } else if (con.target.type === 'STATE') {
+    tar = parseKamiStateFromIndex(con.target.index ?? 0);
+    curr = parseKamiStateFromIndex(con.status?.current ?? 0);
+  } else if (con.target.type === 'KAMI_CAN_EAT') {
+    tar = parseKamiCanEatFromIndex(con.target?.index ?? 0);
+    curr = parseKamiCanEatFromIndex(con.status?.current ?? 0);
   }
 
   return [tar, curr];
@@ -72,7 +74,7 @@ export const parseConditionalText = (
     text = `Have ${deltaText} ${targetVal} Reputation Points`;
   else if (con.target.type == 'PHASE') text = `During ${getPhaseName(con.target.index!)}`;
   else if (con.target.type == 'LEVEL') text = `Be ${deltaText} level ${targetVal}`;
-  else if (con.target.type === 'KAMI_CAN_EAT') text = `${deltaText} ${targetVal}`;
+  else if (con.target.type === 'KAMI_CAN_EAT') text = `${targetVal}`;
   else if (con.target.type === 'STATE') text = `Is ${deltaText} ${targetVal} `;
   else text = '???';
 
