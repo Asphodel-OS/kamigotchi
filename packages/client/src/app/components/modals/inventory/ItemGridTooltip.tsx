@@ -25,7 +25,6 @@ export const ItemGridTooltip = (props: Props) => {
 
   const display = (item: Item) => {
     const disp = displayRequirements(item);
-    // console.log(`display ${disp} for item ${JSON.stringify(item)}`);
     if (disp === '???') return 'None';
     else return disp;
   };
@@ -35,7 +34,7 @@ export const ItemGridTooltip = (props: Props) => {
       <Header>
         <Image src={image} />
         <SubSection>
-          <Title style={{ fontSize: '1.2vw', fontWeight: 'bold' }}>{title}</Title>
+          <Title>{title}</Title>
           Type: {type}
         </SubSection>
       </Header>
