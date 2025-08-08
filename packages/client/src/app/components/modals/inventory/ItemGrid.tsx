@@ -1,4 +1,7 @@
 import { EntityIndex } from '@mud-classic/recs';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
 import { cleanInventories, Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
@@ -9,8 +12,6 @@ import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];

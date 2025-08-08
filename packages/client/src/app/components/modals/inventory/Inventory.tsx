@@ -58,7 +58,7 @@ export function registerInventoryModal() {
               displayRequirements: (recipe: Item) =>
                 recipe.requirements.use
                   .map((req) => parseConditionalText(world, components, req))
-                  .join(', '),
+                  .join('\n '),
               parseAllos: (allo: Allo[]) => parseAllos(world, components, allo),
             },
           };

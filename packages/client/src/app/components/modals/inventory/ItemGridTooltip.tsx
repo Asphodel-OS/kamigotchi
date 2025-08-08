@@ -32,20 +32,20 @@ export const ItemGridTooltip = (props: Props) => {
 
   return (
     <Container>
-      <Section style={{ display: 'flex', alignItems: 'stretch', backgroundColor: `transparent` }}>
+      <Header>
         <Image src={image} />
         <SubSection>
           <Title style={{ fontSize: '1.2vw', fontWeight: 'bold' }}>{title}</Title>
           Type: {type}
         </SubSection>
-      </Section>
+      </Header>
 
       <Description>{description}</Description>
       <BottomSection>
-        <Section style={{ width: '100%' }}>
+        <Section>
           Requirements: <p>{requirements?.use?.length > 0 ? display(item) : 'None'}</p>
         </Section>
-        <Section style={{ width: '100%' }}>
+        <Section>
           Effects:
           <p>{effects?.use?.length > 0 ? parseAllos(effects.use)[0].description : 'None'}</p>
         </Section>
@@ -59,12 +59,13 @@ const Container = styled.div`
   min-width: 20vw;
 `;
 
-const BottomSection = styled.div`
+const Header = styled.span`
   display: flex;
-  flex-direction: row;
-  aling-items: center;
-  gap: 0.5vw;
-  padding: 0.5vw;
+  align-items: stretch;
+  background-color: transparent;
+  color: #666;
+  border-radius: 0.4vw;
+  padding: 0 0.3vw;
 `;
 
 const Section = styled.span`
@@ -72,6 +73,7 @@ const Section = styled.span`
   background: #f0f0f0;
   border-radius: 0.4vw;
   padding: 0 0.3vw;
+  width: 100%;
 `;
 
 const SubSection = styled.span`
@@ -82,6 +84,15 @@ const SubSection = styled.span`
   text-align: left;
   margin-top: 0.5vw;
 `;
+
+const BottomSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  aling-items: center;
+  gap: 0.5vw;
+  padding: 0.5vw;
+`;
+
 const Image = styled.img`
   width: 4.5vw;
   height: 4.5vw;

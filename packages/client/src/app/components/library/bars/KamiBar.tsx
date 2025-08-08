@@ -203,7 +203,6 @@ export const KamiBar = (props: Props) => {
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <Text size={0.9}>{getKamiState(kami)}</Text>
           {showPercent && <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>}
-          <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>
         </TextTooltip>
       </Middle>
       <Right>
