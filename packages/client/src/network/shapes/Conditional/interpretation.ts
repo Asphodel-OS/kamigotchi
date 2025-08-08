@@ -72,8 +72,8 @@ export const parseConditionalText = (
     text = `Have ${deltaText} ${targetVal} Reputation Points`;
   else if (con.target.type == 'PHASE') text = `During ${getPhaseName(con.target.index!)}`;
   else if (con.target.type == 'LEVEL') text = `Be ${deltaText} level ${targetVal}`;
-  else if (con.target.type === 'STATE' || con.target.type === 'KAMI_CAN_EAT')
-    text = `Be in ${deltaText} ${targetVal} state`;
+  else if (con.target.type === 'KAMI_CAN_EAT') text = `${deltaText} ${targetVal}`;
+  else if (con.target.type === 'STATE') text = `Is ${deltaText} ${targetVal} `;
   else text = '???';
 
   // kami specific text
