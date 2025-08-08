@@ -181,6 +181,12 @@ export const getIsComplete = (components: Components, entity: EntityIndex): bool
   return result ?? false;
 };
 
+export const getIsRegistry = (components: Components, entity: EntityIndex): boolean => {
+  const { IsRegistry } = components;
+  const result = getComponentValue(IsRegistry, entity)?.value;
+  return result ?? false;
+};
+
 /////////////////
 // ARRAYS
 
