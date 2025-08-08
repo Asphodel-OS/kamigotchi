@@ -52,11 +52,7 @@ export const TradeHistory = (props: Props) => {
           const type = getTradeType(trade);
 
           return (
-            <ExecutedOffer
-              key={i}
-              data={{ account, isHistory: true, trade, type }}
-              utils={{ getItemByIndex }}
-            />
+            <ExecutedOffer key={i} data={{ account, trade, type }} utils={{ getItemByIndex }} />
           );
         })}
       </Body>

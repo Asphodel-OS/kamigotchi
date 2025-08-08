@@ -21,7 +21,6 @@ interface Props {
   };
   data: {
     account: Account;
-    isHistory?: boolean;
     trade: Trade;
     type: TradeType;
   };
@@ -37,7 +36,7 @@ export const ExecutedOffer = (props: Props) => {
   const { actions, controls, data } = props;
   const { completeTrade } = actions ?? {};
   const { isConfirming, setIsConfirming, setConfirmData } = controls ?? {};
-  const { account, isHistory, trade, type } = data;
+  const { account, trade, type } = data;
 
   /////////////////
   // HANDLERS
@@ -153,9 +152,9 @@ export const ExecutedOffer = (props: Props) => {
     <OfferCard
       button={{
         onClick: handleComplete,
-        text: isMaker() && !isHistory ? 'Complete' : '.',
+        text: isMaker() && trade.state === 'EXECUTED' ? 'Complete' : '.',
         tooltip: getActionTooltip(),
-        disabled: isConfirming || !isMaker() || isHistory,
+        disabled: isConfirming || !isMaker() || trade.state !== 'EXECUTED',
       }}
       data={{ account, trade, type }}
       reverse={trade.maker?.entity === account.entity}
