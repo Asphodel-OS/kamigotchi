@@ -3,7 +3,13 @@ import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/re
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { DetailedEntity, hashArgs } from '../utils';
-import { getLevel, getSourceID, getType, getValue as getValueComp } from '../utils/component';
+import {
+  getIsRegistry,
+  getLevel,
+  getSourceID,
+  getType,
+  getValue as getValueComp,
+} from '../utils/component';
 import { getDetailedEntityByID } from '../utils/parse';
 
 export interface Bonus {
@@ -57,22 +63,16 @@ export const getValue = (
 
 // NOTE: this feels like a bit of a codesmell. we probably want to know in
 // advance whether we're calling a registry vs an instance and route through
-// different retrieval functions on the getBonuslevel
+// different retrieval function on the getBonus level
 const getRegistryEntity = (world: World, comps: Components, entity: EntityIndex): EntityIndex => {
-  const { IsRegistry, SourceID } = comps;
+  if (getIsRegistry(comps, entity)) return entity;
 
-  let regEntity: EntityIndex;
-  if (IsRegistry.values.value.has(entity)) {
-    // is registry entry, take values from here
-    regEntity = entity;
-  } else {
-    // not registry entry, get registry entry
-    const regID = getComponentValue(SourceID, entity)?.value as EntityID;
-    const rawRegID = world.entityToIndex.get(formatEntityID(regID));
-    if (!rawRegID) throw new Error('Bonus: invalid registry entity');
-    regEntity = rawRegID;
-  }
-  return regEntity;
+  // if it's not a registry entity, get its registry Entity based on SourceID
+  const rawRegID = getSourceID(comps, entity);
+  if (!rawRegID) return 0 as EntityIndex;
+
+  const regEntity = world.entityToIndex.get(formatEntityID(rawRegID));
+  return regEntity ?? (0 as EntityIndex);
 };
 
 export const genTypeID = (type: string, holderID: EntityID): EntityID => {
