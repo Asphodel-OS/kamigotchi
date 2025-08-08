@@ -20,6 +20,9 @@ interface Props {
     trade: Trade;
     type: TradeType;
   };
+  utils?: {
+    getStateTooltip: () => string[];
+  };
   reverse?: boolean;
 }
 
@@ -27,7 +30,7 @@ interface Props {
 // NOTE: only supports simple (single item) trades against musu atm
 // TODO: add support for Trades you're the Taker for (disable action)
 export const OfferCard = (props: Props) => {
-  const { button, data, reverse } = props;
+  const { button, data, utils, reverse } = props;
   const { account, trade, type } = data;
 
   const [want, setWant] = useState<Item[]>([]);
@@ -117,24 +120,25 @@ export const OfferCard = (props: Props) => {
         </TextTooltip>
       </Side>
 
-      <Controls>
-        <TagContainer>
-          <Overlay top={0.21} left={0.21}>
-            <Text size={0.6}>{getNameDisplay(leftAcc)}</Text>
-          </Overlay>
-          <Overlay top={0.21} right={0.21}>
-            <Text size={0.6}>{getNameDisplay(rightAcc)}</Text>
-          </Overlay>
-          <TypeTag color={getTypeColor(type)} reverse={reverse}>
-            {type}
-          </TypeTag>
-        </TagContainer>
-        <TextTooltip text={button.tooltip} fullWidth>
-          <Button onClick={handleClick} disabled={button.disabled}>
-            {button.text}
-          </Button>
-        </TextTooltip>
-      </Controls>
+      <TextTooltip title='status' text={utils?.getStateTooltip() || []} alignText='left'>
+        <Controls>
+          {trade.state === 'CANCELLED' && <CancelOverlay>Cancelled</CancelOverlay>}
+          <TagContainer>
+            <Overlay top={0.21} left={0.21}>
+              <Text size={0.6}>{getNameDisplay(leftAcc)}</Text>
+            </Overlay>
+            <Overlay top={0.21} right={0.21}>
+              <Text size={0.6}>{getNameDisplay(rightAcc)}</Text>
+            </Overlay>
+            <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
+          </TagContainer>
+          <TextTooltip text={button.tooltip} fullWidth>
+            <Button onClick={handleClick} disabled={button.disabled}>
+              {button.text}
+            </Button>
+          </TextTooltip>
+        </Controls>
+      </TextTooltip>
 
       <Side span={getSpan()} borderLeft>
         <TextTooltip
@@ -181,7 +185,7 @@ const Side = styled.div<{ span: number; borderRight?: boolean; borderLeft?: bool
   justify-content: flex-start;
   align-items: center;
 
-  overflow-x: scroll;
+  overflow: scroll hidden;
 `;
 
 const ImagesWrapper = styled.div`
@@ -266,4 +270,22 @@ const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
 
   font-size: 0.9vw;
   line-height: 1.2vw;
+`;
+
+const CancelOverlay = styled.div`
+  position: absolute;
+  top: 24%;
+  left: 25%;
+  width: 50%;
+  height: 52%;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2vw;
+  color: rgb(128, 4, 4);
+  border: 0.19vw solid rgb(128, 4, 4);
+  transform: rotate(-22deg);
+  z-index: 1;
+  clip-path: polygon(0.5% 1%, 80% 0%, 100% 25%, 100% 90%, 90% 100%, 0% 100%, 15% 100%, 0% 70%);
 `;

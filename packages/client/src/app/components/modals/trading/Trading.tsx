@@ -4,17 +4,20 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { getAccount } from 'app/cache/account';
-import { getItemByIndex } from 'app/cache/item';
-import { getTrade } from 'app/cache/trade';
+import { getAccount, getAccountByID } from 'app/cache/account';
+import { getItem, getItemByIndex } from 'app/cache/item';
+import { getTrade, getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { registerUIComponent } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
+import { getKamidenClient } from 'clients/kamiden';
+import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAllItems, getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
+import { History } from './history/History';
 import { Confirmation, ConfirmationData } from './library/Confirmation';
 import { Tabs } from './library/Tabs';
 import { Management } from './management';
@@ -23,6 +26,7 @@ import { TabType } from './types';
 
 const SYNC_TIME = 1000;
 const CurrencyIndices = [MUSU_INDEX, ETH_INDEX, ONYX_INDEX];
+const KamidenClient = getKamidenClient();
 
 export function registerTradingModal() {
   registerUIComponent(
@@ -60,6 +64,10 @@ export function registerTradingModal() {
               queryTrades: () => queryTrades(comps),
               getItemByIndex: (index: number) => getItemByIndex(world, comps, index),
               getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
+              getItem: (entity: EntityIndex) => getItem(world, comps, entity),
+              getAccountByID: (id: EntityID) => getAccountByID(world, comps, id, accountOptions),
+              getTradeHistory: (tradeHistory: TradeHistory) =>
+                getTradeHistory(world, comps, tradeHistory),
             },
           };
         })
@@ -85,6 +93,7 @@ export function registerTradingModal() {
         content: <></>,
         onConfirm: () => null,
       });
+      const [tradeHistory, setTradeHistory] = useState<TradeHistory[]>([]);
 
       // time trigger to use for periodic refreshes
       useEffect(() => {
@@ -99,6 +108,7 @@ export function registerTradingModal() {
       useEffect(() => {
         if (!modals.trading) return;
         refreshTrades();
+        getTradeHistoryKamiden(account.id);
       }, [modals.trading, tick]);
 
       /////////////////
@@ -133,6 +143,21 @@ export function registerTradingModal() {
         setMyTrades(myTrades);
         setTrades(trades);
       };
+
+      async function getTradeHistoryKamiden(accountId: string) {
+        const parsedAccountId = BigInt(accountId).toString();
+        try {
+          const request: TradesRequest = {
+            AccountId: parsedAccountId,
+            Timestamp: '0',
+          };
+          const response = await KamidenClient?.getTradeHistory(request);
+          setTradeHistory(response?.Trades || []);
+        } catch (error) {
+          console.error('Error getting trade history :', error);
+          throw error;
+        }
+      }
 
       /////////////////
       // ACTIONS
@@ -247,6 +272,15 @@ export function registerTradingModal() {
               types={types}
               utils={utils}
               isVisible={tab === `Management`}
+            />
+            <History
+              data={{
+                account,
+                currencies,
+                tradeHistory,
+              }}
+              utils={utils}
+              isVisible={tab === `History`}
             />
           </Content>
         </ModalWrapper>
