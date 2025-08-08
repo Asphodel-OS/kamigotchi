@@ -1,7 +1,7 @@
+import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EntityID } from '@mud-classic/recs';
 import { getTradeType, Trade, TradeType } from 'app/cache/trade';
 import { EmptyText } from 'app/components/library';
 import { Trade as TradeHistoryType } from 'clients/kamiden/proto';
