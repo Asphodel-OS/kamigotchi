@@ -124,7 +124,7 @@ export const ItemGrid = (props: Props) => {
     return (
       <TextTooltip
         key={item.index}
-        text={item.index ? [<ItemGridTooltip item={item} utils={utils} />] : []}
+        text={item.index ? [<ItemGridTooltip key={item.index} item={item} utils={utils} />] : []}
         maxWidth={25}
       >
         <IconListButton

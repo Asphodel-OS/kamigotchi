@@ -88,7 +88,7 @@ const SubSection = styled.span`
 const BottomSection = styled.div`
   display: flex;
   flex-direction: row;
-  aling-items: center;
+  aligg-items: center;
   gap: 0.5vw;
   padding: 0.5vw;
 `;
