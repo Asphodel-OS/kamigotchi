@@ -43,6 +43,7 @@ interface Props {
 export const KamiBar = (props: Props) => {
   const { kami, actions, options, utils, tick } = props;
   const { showCooldown, showPercent, showTooltip } = options ?? {};
+
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
   const [currentHealth, setCurrentHealth] = useState(0);

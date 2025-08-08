@@ -76,6 +76,7 @@ export const KamiList = (props: Props) => {
           ]}
         />
       )}
+
       <KamisExpanded
         actions={actions}
         data={data}
@@ -84,6 +85,7 @@ export const KamiList = (props: Props) => {
         utils={utils}
         isVisible={modals.party && view === 'expanded'}
       />
+
       <KamisCollapsed
         actions={actions}
         data={data}
@@ -95,7 +97,7 @@ export const KamiList = (props: Props) => {
       <KamisExternal
         actions={actions}
         controls={controls}
-        data={{ ...data, kamis: wildKamis }}
+        data={{ ...data, kamis: data.wildKamis }}
         utils={utils}
         isVisible={modals.party && view === 'external'}
       />
