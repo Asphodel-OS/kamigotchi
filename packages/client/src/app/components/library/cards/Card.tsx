@@ -68,6 +68,7 @@ const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   position: relative;
   border-right: solid black 0.15vw;
   border-radius: 0.45vw 0vw 0vw 0.45vw;
+  min-height: 100%;
   height: ${({ scale }) => scale}vw;
   width: ${({ scale }) => scale}vw;
   padding: ${({ padding }) => padding ?? 0}vw;
