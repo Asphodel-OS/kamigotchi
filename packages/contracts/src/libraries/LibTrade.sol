@@ -94,8 +94,7 @@ library LibTrade {
 
     // transferring items
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    LibInventory.decFor(comps, makerID, toSell.indices, toSell.amounts); // implicit balance check
-    LibInventory.incFor(comps, tradeID, toSell.indices, toSell.amounts); // store items at sell anchor
+    LibInventory.transferFor(comps, makerID, tradeID, toSell.indices, toSell.amounts);
   }
 
   /////////////////
@@ -122,8 +121,7 @@ library LibTrade {
     logSpend(comps, takerID, indices, amts);
 
     // transfer Buy Order items from Taker to Trade
-    LibInventory.decFor(comps, takerID, indices, amts);
-    LibInventory.incFor(comps, tradeID, indices, amts);
+    LibInventory.transferFor(comps, takerID, tradeID, indices, amts);
   }
 
   /// @notice execute a Sell Order (transfers items between Sell Order and Taker)
@@ -150,8 +148,7 @@ library LibTrade {
     }
 
     // transfer Sell Order items from Trade to Taker
-    LibInventory.decFor(comps, tradeID, indices, amts);
-    LibInventory.incFor(comps, takerID, indices, amts);
+    LibInventory.transferFor(comps, tradeID, takerID, indices, amts);
   }
 
   /////////////////
@@ -188,8 +185,7 @@ library LibTrade {
     }
 
     // transfer Buy Order items from Trade to Maker
-    LibInventory.decFor(comps, tradeID, indices, amts);
-    LibInventory.incFor(comps, makerID, indices, amts);
+    LibInventory.transferFor(comps, tradeID, makerID, indices, amts);
   }
 
   /// @notice complete a Sell Order (cleanup, sell side should already be fulfilled)
@@ -230,8 +226,7 @@ library LibTrade {
 
     // transfer items back from Trade to Maker
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    LibInventory.decFor(comps, tradeID, indices, amounts); // sets to 0
-    LibInventory.incFor(comps, makerID, indices, amounts); // sends back to Maker
+    LibInventory.transferFor(comps, tradeID, makerID, indices, amounts);
   }
 
   /////////////////
