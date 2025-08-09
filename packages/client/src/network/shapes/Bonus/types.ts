@@ -67,11 +67,13 @@ export const getValue = (
 const getRegistryEntity = (world: World, comps: Components, entity: EntityIndex): EntityIndex => {
   if (getIsRegistry(comps, entity)) return entity;
 
-  // if it's not a registry entity, get its registry Entity based on SourceID
+  // get its Registry EntityID by its SourceID
   const rawRegID = getSourceID(comps, entity);
   if (!rawRegID) return 0 as EntityIndex;
 
-  const regEntity = world.entityToIndex.get(formatEntityID(rawRegID));
+  // return the registry entity based on ID
+  const regID = formatEntityID(rawRegID);
+  const regEntity = world.entityToIndex.get(regID);
   return regEntity ?? (0 as EntityIndex);
 };
 
