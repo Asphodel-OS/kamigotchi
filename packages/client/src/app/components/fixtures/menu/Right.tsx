@@ -10,6 +10,7 @@ import {
   MoreMenuButton,
   QuestMenuButton,
 } from './buttons';
+import { LootBoxButton } from './buttons/LootBox';
 
 export function registerMenuRight() {
   registerUIComponent(
@@ -27,6 +28,7 @@ export function registerMenuRight() {
         <>
           <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
             <CraftMenuButton />
+            <LootBoxButton />
             <InventoryMenuButton />
             <QuestMenuButton />
             <ChatMenuButton />
