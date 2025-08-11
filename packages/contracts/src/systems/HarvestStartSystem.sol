@@ -51,7 +51,7 @@ contract HarvestStartSystem is System {
     // start the harvest, create if none exists
     uint256 id = LibHarvest.startFor(components, nodeID, kamiID, taxerID, taxAmt);
     LibKami.setState(components, kamiID, "HARVESTING");
-    LibKami.setLastActionTs(components, kamiID, block.timestamp);
+    LibKami.resetCooldown(components, kamiID);
 
     // standard logging and tracking
     LibAccount.updateLastTs(components, accID);

@@ -91,6 +91,7 @@ export function createComponents(world: World) {
     Subtype: defineStringComponent(world, 'Subtype', 'component.subtype'),
     Time: defineNumberComponent(world, 'Time', 'component.Time'),
     LastActionTime: defineNumberComponent(world, 'LastActionTime', 'component.Time.LastAction'),
+    NextTime: defineNumberComponent(world, 'NextTime', 'component.Time.Next'),
     LastTime: defineNumberComponent(world, 'LastTime', 'component.Time.Last'),
     ResetTime: defineNumberComponent(world, 'ResetTime', 'component.Time.Reset'),
     StartTime: defineNumberComponent(world, 'StartTime', 'component.Time.Start'),

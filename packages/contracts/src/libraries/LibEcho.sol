@@ -26,7 +26,6 @@ import { PowerComponent, ID as PowerCompID } from "components/PowerComponent.sol
 import { SlotsComponent, ID as SlotsCompID } from "components/SlotsComponent.sol";
 import { SkillPointComponent, ID as SkillPointCompID } from "components/SkillPointComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ViolenceComponent, ID as ViolenceCompID } from "components/ViolenceComponent.sol";
@@ -69,7 +68,6 @@ library LibEcho {
     ids[15] = SlotsCompID;
     ids[16] = SkillPointCompID;
     ids[17] = StateCompID;
-    // ids[18] = TimeLastActCompID;
     ids[18] = TimeLastCompID;
     ids[19] = TimeStartCompID;
     ids[20] = ViolenceCompID;

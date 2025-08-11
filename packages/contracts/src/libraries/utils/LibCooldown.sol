@@ -6,7 +6,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
+import { TimeNextComponent, ID as TimeNextCompID } from "components/TimeNextComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 
@@ -21,40 +21,51 @@ library LibCooldown {
   /////////////////
   // INTERACTIONS
 
-  function start(IUintComp components, uint256 id) internal {
-    IUintComp(getAddrByID(components, TimeLastActCompID)).set(id, block.timestamp);
+  /// @notice set the next time for an entity to be available
+  function set(IUintComp components, uint256 id) internal returns (uint256 endTime) {
+    // get entity's cooldown (including bonuses)
+    uint256 cooldown = getCooldown(components, id).toUint256(); // cooldown is always positive
+
+    endTime = block.timestamp + cooldown;
+    IUintComp(getAddrByID(components, TimeNextCompID)).set(id, endTime);
   }
 
   // if delta positive, increase cooldown. vice versa
-  function modify(IUintComp components, uint256 id, int256 delta) internal {
-    TimeLastActionComponent lastComp = TimeLastActionComponent(
-      getAddrByID(components, TimeLastActCompID)
-    );
-    int256 idleTime = _getIdleTime(lastComp, id);
-    int256 cooldown = getCooldown(components, id);
+  function modify(
+    IUintComp components,
+    uint256 id,
+    int256 delta
+  ) internal returns (uint256 newEnd) {
+    TimeNextComponent nextComp = TimeNextComponent(getAddrByID(components, TimeNextCompID));
+    uint256 prevTime = nextComp.safeGet(id);
 
-    int256 newStart = delta + block.timestamp.toInt256();
-    if (idleTime <= cooldown) newStart -= idleTime;
-    else newStart -= cooldown;
+    int256 base;
+    if (prevTime > block.timestamp) {
+      // CD has not ended, modify from end time
+      base = prevTime.toInt256();
+    } else {
+      // CD has ended, modify from current time
+      base = block.timestamp.toInt256();
+    }
 
-    lastComp.set(id, newStart.toUint256());
+    newEnd = (base + delta).toUint256();
+    nextComp.set(id, newEnd);
   }
 
   /////////////////
   // CHECKERS
 
   function isActive(IUintComp components, uint256 id) internal view returns (bool) {
-    int256 idleTime = getIdleTime(components, id);
-    int256 idleRequirement = getCooldown(components, id);
-    return idleTime <= idleRequirement;
+    return block.timestamp < IUintComp(getAddrByID(components, TimeNextCompID)).safeGet(id);
   }
 
   /// @dev returns true if a single entity is active
   function isActive(IUintComp components, uint256[] memory ids) internal view returns (bool) {
-    int256[] memory idleTimes = getIdleTime(components, ids);
-    int256[] memory cooldowns = getCooldown(components, ids);
+    uint256[] memory nextTimes = TimeNextComponent(getAddrByID(components, TimeNextCompID)).safeGet(
+      ids
+    );
     for (uint256 i; i < ids.length; i++) {
-      if (idleTimes[i] <= cooldowns[i]) return true;
+      if (block.timestamp < nextTimes[i]) return true;
     }
     return false;
   }
@@ -89,34 +100,5 @@ library LibCooldown {
     int256 shift = LibBonus.getFor(components, "STND_COOLDOWN_SHIFT", id);
     int256 cooldown = base + shift;
     return cooldown < int256(0) ? int256(0) : cooldown;
-  }
-
-  function getIdleTime(IUintComp components, uint256 id) internal view returns (int256) {
-    return _getIdleTime(TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)), id);
-  }
-
-  function getIdleTime(
-    IUintComp components,
-    uint256[] memory ids
-  ) internal view returns (int256[] memory) {
-    return _getIdleTime(TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)), ids);
-  }
-
-  function _getIdleTime(TimeLastActionComponent tsComp, uint256 id) internal view returns (int256) {
-    // time safely remains in int256 bounds
-    return block.timestamp.toInt256() - tsComp.safeGet(id).toInt256();
-  }
-
-  function _getIdleTime(
-    TimeLastActionComponent tsComp,
-    uint256[] memory ids
-  ) internal view returns (int256[] memory) {
-    uint256[] memory rawTimes = tsComp.safeGet(ids);
-
-    int256[] memory idleTimes = new int256[](ids.length);
-    for (uint256 i; i < ids.length; i++) {
-      idleTimes[i] = block.timestamp.toInt256() - rawTimes[i].toInt256();
-    }
-    return idleTimes;
   }
 }
