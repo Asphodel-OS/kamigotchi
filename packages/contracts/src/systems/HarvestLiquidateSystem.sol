@@ -74,6 +74,9 @@ contract HarvestLiquidateSystem is System {
     // drain the killer
     LibKami.drain(components, killerID, recoil);
 
+    // reward killer
+    LibKill.rewardKiller(components, accID);
+
     // kill the target and shut off the harvest
     LibKami.kill(components, victimID);
     LibBonus.resetUponHarvestAction(components, victimID);
