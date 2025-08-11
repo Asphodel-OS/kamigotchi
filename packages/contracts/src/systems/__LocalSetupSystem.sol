@@ -77,7 +77,7 @@ contract __LocalSetupSystem is System, Script {
       uint256 prodID = LibHarvest.create(components, nodeID, kamiIDs[i]);
       LibHarvest.start(components, prodID);
       LibKami.setState(components, kamiIDs[i], "HARVESTING");
-      LibKami.setLastActionTs(components, kamiIDs[i], block.timestamp);
+      LibKami.resetCooldown(components, kamiIDs[i]);
     }
   }
 

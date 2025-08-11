@@ -275,17 +275,12 @@ library LibKami {
   /////////////////
   // SETTERS
 
+  function resetCooldown(IUintComp components, uint256 id) internal {
+    LibCooldown.set(components, id);
+  }
+
   function setOwner(IUintComp components, uint256 id, uint256 accID) internal {
     IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).set(id, accID);
-  }
-
-  // Update the TimeLastAction of a kami. to inform cooldown constraints on Standard Actions
-  function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).set(id, ts);
-  }
-
-  function setLastActionTs(IUintComp components, uint256[] memory ids, uint256 ts) internal {
-    getCompByID(components, TimeLastActCompID).setAll(ids, ts);
   }
 
   // Update the TimeLast of a kami. used as anchor point for updating Health
