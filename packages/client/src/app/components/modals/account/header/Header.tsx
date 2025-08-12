@@ -4,29 +4,42 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
+import { Overlay, Popover, Text, TextTooltip, ActionButton, ActionListButton } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { KAMI_BASE_URI } from 'constants/media';
-import { Account } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
+import { Friends as FriendsType } from 'network/shapes/Account/friends';
+import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
+import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
+import { getFriendshipStatus } from 'utils/friendship';
 import { Bio } from './Bio';
 
 interface Props {
   account: Account; // account selected for viewing
-  actions: { setBio: (bio: string) => void; handlePfpChange: (kami: Kami) => void };
+  actions: {
+    setBio: (bio: string) => void;
+    handlePfpChange: (kami: Kami) => void;
+    requestFren: (account: BaseAccount) => void;
+    cancelFren: (friendship: Friendship) => void;
+    blockFren: (account: BaseAccount) => void;
+    acceptFren: (friendship: Friendship) => void;
+  };
   isLoading: boolean;
   isSelf: boolean;
+  player: PlayerAccount;
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
+    getFriends: (accEntity: EntityIndex) => FriendsType;
   };
 }
 
 export const Header = (props: Props) => {
-  const { isLoading, account, utils, isSelf, actions } = props;
-  const { getAccountKamis } = utils;
-  const { handlePfpChange, setBio } = actions;
+  const { isLoading, account, utils, isSelf, actions, player } = props;
+  const { getAccountKamis, getFriends } = utils;
+  const { handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren } = actions;
 
   const [tick, setTick] = useState(Date.now());
 
@@ -51,6 +64,19 @@ export const Header = (props: Props) => {
   const getLastSeenString = () => {
     return `Last Seen: ${moment(1000 * account.time.last).fromNow()}`;
   };
+
+  const friendshipStatus = getFriendshipStatus(player.entity, account.entity, getFriends);
+  const {
+    isOther,
+    isIncoming,
+    isOutgoing,
+    isFriend,
+    isBlocked,
+    incomingRequest,
+    outgoingRequest,
+    friendFriendship,
+    blockedFriendship,
+  } = friendshipStatus;
 
   /////////////////
   // RENDERING
@@ -108,6 +134,75 @@ export const Header = (props: Props) => {
               {abbreviateAddress(account.ownerAddress)}
             </Subtitle>
           </TextTooltip>
+          {!isSelf && isOther && (
+            <FriendActions>
+
+              {/* pending inbound request */}   
+              {isIncoming && incomingRequest && (
+                <>
+                  <ActionButton size='small' text='Requested You' disabled onClick={() => {}} />
+                  <ActionListButton
+                    id={`friendship-options-${account.entity}-header`}
+                    text=''
+                    size='small' 
+                    options={[
+                      { text: 'Accept', onClick: () => acceptFren(incomingRequest) },
+                      { text: 'Block', onClick: () => blockFren(account) },
+                      { text: 'Decline', onClick: () => cancelFren(incomingRequest) },
+                    ]}
+                  />
+                </>
+              )}
+
+              {/* friends */}
+              {isFriend && friendFriendship && (
+                <>
+                  <ActionButton size='small' text='Friends' disabled onClick={() => {}} />
+                  <ActionListButton
+                    id={`friendship-options-${account.entity}-friend-header`}
+                    text=''
+                    size='small'
+                    options={[
+                      { text: 'Remove', onClick: () => cancelFren(friendFriendship) },
+                      { text: 'Block', onClick: () => blockFren(account) },
+                    ]}
+                  />
+                </>
+              )}
+
+              {/* pending outbound request */}
+              {isOutgoing && outgoingRequest && (
+                <>
+                  <ActionButton size='small' text='Request Sent' disabled onClick={() => {}} />
+                  <ActionListButton
+                    id={`friendship-options-${account.entity}-outgoing-header`}
+                    text=''
+                    size='small'
+                    options={[
+                      { text: 'Cancel', onClick: () => cancelFren(outgoingRequest) },
+                      { text: 'Block', onClick: () => blockFren(account) },
+                    ]}
+                  />
+                </>
+              )}
+
+              {/* blocked */}
+              {isBlocked && blockedFriendship && (
+                <>
+                  <ActionButton size='small' text='Blocked' disabled onClick={() => {}} />
+                  <ActionButton size='small' text='Unblock' onClick={() => cancelFren(blockedFriendship)} />
+                </>
+              )}
+
+              {/* not friends */}
+              {!isFriend && !isIncoming && !isOutgoing && !isBlocked && (
+                <>
+                  <ActionButton size='small' text='Add Friend' onClick={() => requestFren(account)} />
+                  <ActionButton size='small' text='Block' onClick={() => blockFren(account)} />
+                </>
+              )}
+            </FriendActions>
+          )}
         </TitleSection>
         <DetailRow>
           <CakeIcon style={{ height: '1.4vh' }} />
@@ -201,6 +296,13 @@ const TitleSection = styled.div`
   flex-flow: column nowrap;
   gap: 0.3vw;
   margin-bottom: 0.6vw;
+`;
+
+const FriendActions = styled.div`
+  display: flex;
+  gap: 0.24vw;
+  align-items: center;
+  margin-top: 0.3vw;
 `;
 
 const Subtitle = styled.div`
