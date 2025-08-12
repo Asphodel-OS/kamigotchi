@@ -11,7 +11,7 @@ import { getConfigAddress } from 'app/cache/config';
 import { getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { HarvestButton, ModalHeader, ModalWrapper, UseItemButton } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useSelected, useTokens, useVisibility } from 'app/stores';
 import { BalPair } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
@@ -33,79 +33,68 @@ import { Sort, View } from './types';
 
 const REFRESH_INTERVAL = 1000;
 
-export function registerPartyModal() {
-  registerUIComponent(
-    'PartyModal',
-    {
-      colStart: 2,
-      colEnd: 33,
-      rowStart: 8,
-      rowEnd: 99,
-    },
+export const PartyModal: UIComponent = {
+  id: 'PartyModal',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const { debug } = useAccount.getState();
+        const { nodeIndex } = useSelected.getState();
+        const accountEntity = queryAccountFromEmbedded(network);
+        const accRefreshOptions = {
+          live: 0,
+          inventory: 2,
+        };
+        const kamiRefreshOptions = {
+          live: 0,
+          bonuses: 5, // set this to 3600 once we get explicit triggers for updates
+          harvest: 5, // set this to 60 once we get explicit triggers for updates
+          progress: 5,
+          skills: 5, // set this to 3600 once we get explicit triggers for updates
+          flags: 10, // set this to 3600 once we get explicit triggers for updates
+          config: 3600,
+          stats: 3600,
+          traits: 3600,
+        };
 
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const { debug } = useAccount.getState();
-          const { nodeIndex } = useSelected.getState();
+        return {
+          network,
+          data: {
+            accountEntity,
+            kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+            spender: getCompAddr(world, components, 'component.token.allowance'),
+          },
 
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accRefreshOptions = {
-            live: 0,
-            inventory: 2,
-          };
-          const kamiRefreshOptions = {
-            live: 0,
-            bonuses: 5, // set this to 3600 once we get explicit triggers for updates
-            harvest: 5, // set this to 60 once we get explicit triggers for updates
-            progress: 5,
-            skills: 5, // set this to 3600 once we get explicit triggers for updates
-            flags: 10, // set this to 3600 once we get explicit triggers for updates
-            config: 3600,
-            stats: 3600,
-            traits: 3600,
-          };
+          display: {
+            HarvestButton: (account: Account, kami: Kami, node: Node) =>
+              HarvestButton({ network, account, kami, node }),
+            UseItemButton: (kami: Kami, account: Account, icon: string) =>
+              UseItemButton(network, kami, account, icon),
+          },
+          utils: {
+            calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
+            getAccount: (entity: EntityIndex, options?: AccountOptions) =>
+              getAccount(world, components, entity, options),
+            getAllAccounts: () => getAllAccounts(world, components),
+            getTempBonuses: (kami: Kami) =>
+              getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
+            getItem: (index: number) => getItemByIndex(world, components, index),
+            getKami: (entity: EntityIndex) =>
+              getKami(world, components, entity, kamiRefreshOptions),
+            getNode: (index: number) => getNodeByIndex(world, components, index),
+            getWorldKamis: () =>
+              getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
+            passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
+            queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
+            queryAllAccounts: () => queryAllAccounts(components),
+          },
+        };
+      })
+    ),
 
-          return {
-            network,
-            data: {
-              accountEntity,
-              kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
-              spender: getCompAddr(world, components, 'component.token.allowance'),
-            },
-
-            display: {
-              HarvestButton: (account: Account, kami: Kami, node: Node) =>
-                HarvestButton({ network, account, kami, node }),
-              UseItemButton: (kami: Kami, account: Account, icon: string) =>
-                UseItemButton(network, kami, account, icon),
-            },
-            utils: {
-              calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
-              getAccount: (entity: EntityIndex, options?: AccountOptions) =>
-                getAccount(world, components, entity, options),
-              getAllAccounts: () => getAllAccounts(world, components),
-              getTempBonuses: (kami: Kami) =>
-                getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
-              getItem: (index: number) => getItemByIndex(world, components, index),
-              getKami: (entity: EntityIndex) =>
-                getKami(world, components, entity, kamiRefreshOptions),
-              getNode: (index: number) => getNodeByIndex(world, components, index),
-              getWorldKamis: () =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
-              passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
-              queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
-              queryAllAccounts: () => queryAllAccounts(components),
-            },
-          };
-        })
-      ),
-
-    // Render
-    ({ network, display, data, utils }) => {
+  Render: ({ network, display, data, utils }) => {
       const { actions, api } = network;
       const { accountEntity, kamiNFTAddress, spender } = data;
       const { getAccount, getItem, getNode } = utils;
@@ -365,6 +354,5 @@ export function registerPartyModal() {
           />
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};

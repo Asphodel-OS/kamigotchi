@@ -2,19 +2,12 @@ import { EntityIndex, getComponentEntities, getComponentValue } from '@mud-class
 import { map, merge } from 'rxjs';
 import styled, { keyframes } from 'styled-components';
 
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { Modals, useVisibility } from 'app/stores';
 
-export function registerNotificationFixture() {
-  registerUIComponent(
-    'NotificationFixture',
-    {
-      colStart: 72,
-      colEnd: 100,
-      rowStart: 8,
-      rowEnd: 30,
-    },
-    (layers) => {
+export const NotificationFixture: UIComponent = {
+  id: 'NotificationFixture',
+  requirement: (layers) => {
       const {
         network: { notifications },
       } = layers;
@@ -28,9 +21,8 @@ export function registerNotificationFixture() {
           };
         })
       );
-    },
-
-    ({ notifications, list }) => {
+  },
+  Render: ({ notifications, list }) => {
       const { fixtures, modals, setModals } = useVisibility();
 
       /////////////////
@@ -58,7 +50,7 @@ export function registerNotificationFixture() {
         return (
           <Card key={entity.toString()}>
             <ExitButton onClick={() => dismiss(entity)}>X</ExitButton>
-            <div onClick={() => handleClick(notification.modal, entity)}>
+            <div onClick={() => handleClick(notification.modal as string | undefined, entity)}>
               <Title>{notification.title}</Title>
               <Description>{notification.description}</Description>
             </div>
@@ -75,12 +67,11 @@ export function registerNotificationFixture() {
 
       return (
         <Wrapper style={{ display: isVisible() ? 'block' : 'none' }}>
-          <Contents>{list.map((id) => SingleNotif(id))}</Contents>
+          <Contents>{list.map((id: EntityIndex) => SingleNotif(id))}</Contents>
         </Wrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Wrapper = styled.div`
   margin: 0.2vw;

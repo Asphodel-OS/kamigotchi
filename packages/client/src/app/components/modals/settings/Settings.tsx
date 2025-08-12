@@ -2,7 +2,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { SettingsIcon } from 'assets/images/icons/menu';
 
 import { getAccountFromEmbedded } from 'network/shapes/Account';
@@ -10,29 +10,21 @@ import { Account } from './Account';
 import { Debugging } from './Debugging';
 import { Volume } from './Volume';
 
-export function registerSettingsModal() {
-  registerUIComponent(
-    'Settings',
-    {
-      colStart: 67,
-      colEnd: 100,
-      rowStart: 8,
-      rowEnd: 75,
-    },
+export const Settings: UIComponent = {
+  id: 'Settings',
+  requirement: (layers) =>
+    interval(5000).pipe(
+      map(() => {
+        const { network } = layers;
+        const account = getAccountFromEmbedded(network);
 
-    (layers) =>
-      interval(5000).pipe(
-        map(() => {
-          const { network } = layers;
-          const account = getAccountFromEmbedded(network);
-
-          return {
-            network: network,
-            account: account,
-          };
-        })
-      ),
-    ({ network, account }) => {
+        return {
+          network: network,
+          account: account,
+        };
+      })
+    ),
+  Render: ({ network, account }) => {
       const { actions, api } = network;
 
       /////////////////
@@ -74,9 +66,8 @@ export function registerSettingsModal() {
           <Debugging actions={{ echoRoom, echoKamis }} />
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Divider = styled.hr`
   color: #333;

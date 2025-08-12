@@ -6,7 +6,7 @@ import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { BalPair, useTokens } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
@@ -21,49 +21,37 @@ import { Stage } from './Stage';
 
 const REFRESH_INTERVAL = 2000;
 
-export function registerEMABoardModal() {
-  registerUIComponent(
-    'EmaBoard',
-    {
-      colStart: 33,
-      colEnd: 67,
-      rowStart: 15,
-      rowEnd: 99,
-    },
+export const EmaBoard: UIComponent = {
+  id: 'EmaBoard',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
 
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-
-          return {
-            network,
-            data: {
-              accountEntity,
-              spender: getCompAddr(world, components, 'component.token.allowance'),
-            },
-            utils: {
-              getAccount: () =>
-                getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
-              getKamis: () =>
-                getAccountKamis(world, components, accountEntity, {
-                  base: 2,
-                  live: 2,
-                  progress: 3600,
-                }),
-              getItemBalance: (inventory: Inventory[], index: number) =>
-                getInventoryBalance(inventory, index),
-              getItem: (index: number) => getItemByIndex(world, components, index),
-            },
-          };
-        })
-      ),
-
-    // Render
-    ({ network, data, utils }) => {
+        return {
+          network,
+          data: {
+            accountEntity,
+            spender: getCompAddr(world, components, 'component.token.allowance'),
+          },
+          utils: {
+            getAccount: () =>
+              getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
+            getKamis: () =>
+              getAccountKamis(world, components, accountEntity, {
+                base: 2,
+                live: 2,
+                progress: 3600,
+              }),
+            getItemBalance: (inventory: Inventory[], index: number) => getInventoryBalance(inventory, index),
+            getItem: (index: number) => getItemByIndex(world, components, index),
+          },
+        };
+      })
+    ),
+  Render: ({ network, data, utils }) => {
       const { accountEntity, spender } = data;
       const { actions, api } = network;
       const { getAccount, getItem, getKamis } = utils;
@@ -170,6 +158,5 @@ export function registerEMABoardModal() {
           <Carousel kamis={kamis} state={{ selected, setSelected }} />
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};

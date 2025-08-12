@@ -1,2 +1,2 @@
 export { BootScreen } from './BootScreen';
-export { registerLoadingState } from './LoadingState';
+export { LoadingState } from './LoadingState';

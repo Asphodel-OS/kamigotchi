@@ -8,7 +8,7 @@ import { Account, getAccount, getAccountKamis, getAllAccounts } from 'app/cache/
 import { getFriends } from 'app/cache/account/getters';
 import { Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { BaseAccount, NullAccount, queryAccountByIndex } from 'network/shapes/Account';
@@ -19,55 +19,44 @@ import { Bottom } from './bottom/Bottom';
 import { Header } from './header/Header';
 import { Tabs } from './tabs/Tabs';
 
-export function registerAccountModal() {
-  registerUIComponent(
-    'AccountModal',
-    {
-      colStart: 2,
-      colEnd: 33,
-      rowStart: 8,
-      rowEnd: 99,
-    },
+export const AccountModal: UIComponent = {
+  id: 'AccountModal',
+  requirement: (layers) => {
+    const { network } = layers;
+    const { world, components } = network;
 
-    // Requirement
-    (layers) => {
-      const { network } = layers;
-      const { world, components } = network;
+    const accountOptions = {
+      friends: 5,
+      pfp: 5,
+      stats: 5,
+      bio: 5,
+    };
 
-      const accountOptions = {
-        friends: 5,
-        pfp: 5,
-        stats: 5,
-        bio: 5,
-      };
+    const vipEpoch = getVIPEpoch(world, components);
+    const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
 
-      const vipEpoch = getVIPEpoch(world, components);
-      const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
-
-      // TODO: reduce update frequency
-      return interval(3333).pipe(
-        map(() => {
-          return {
-            network,
-            data: {
-              vip: {
-                epoch: vipEpoch,
-                total: getTotalScoreByFilter(world, components, vipFilter),
-              },
+    return interval(3333).pipe(
+      map(() => {
+        return {
+          network,
+          data: {
+            vip: {
+              epoch: vipEpoch,
+              total: getTotalScoreByFilter(world, components, vipFilter),
             },
-            utils: {
-              getAccount: (entity: EntityIndex) =>
-                getAccount(world, components, entity, accountOptions),
-              getAccountKamis: (accEntity: EntityIndex) =>
-                getAccountKamis(world, components, accEntity),
-              getFriends: (accEntity: EntityIndex) => getFriends(world, components, accEntity),
-            },
-          };
-        })
-      );
-    },
-    // Render
-    ({ network, data, utils }) => {
+          },
+          utils: {
+            getAccount: (entity: EntityIndex) =>
+              getAccount(world, components, entity, accountOptions),
+            getAccountKamis: (accEntity: EntityIndex) =>
+              getAccountKamis(world, components, accEntity),
+            getFriends: (accEntity: EntityIndex) => getFriends(world, components, accEntity),
+          },
+        };
+      })
+    );
+  },
+  Render: ({ network, data, utils }) => {
       const { actions, api, components, world } = network;
       const { vip } = data;
       const { getAccount } = utils;
@@ -227,6 +216,5 @@ export function registerAccountModal() {
           />
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};

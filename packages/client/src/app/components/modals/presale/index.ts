@@ -1,1 +1,1 @@
-export { registerPresaleModal } from './Presale';
+export { Presale } from './Presale';

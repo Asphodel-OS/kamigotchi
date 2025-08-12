@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { EntityIndex } from '@mud-classic/recs';
 import { getAccount } from 'app/cache/account';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useSelected } from 'app/stores';
 import { backgrounds } from 'assets/images/backgrounds';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -15,16 +15,9 @@ import { Room } from './Room';
 // The Scene paints the wallpaper and the room. It updates the selected room
 // index in the Selected store whenever the player switches rooms or changes
 // the connected account.
-export function registerScene() {
-  registerUIComponent(
-    'Scene',
-    {
-      colStart: 1,
-      colEnd: 100,
-      rowStart: 1,
-      rowEnd: 100,
-    },
-    (layers) => {
+export const Scene: UIComponent = {
+  id: 'Scene',
+  requirement: (layers) => {
       const { network } = layers;
       const { world, components } = network;
 
@@ -44,9 +37,8 @@ export function registerScene() {
           };
         })
       );
-    },
-
-    ({ data, utils }) => {
+  },
+  Render: ({ data, utils }) => {
       const { accountEntity } = data;
       const { getRoomIndex } = utils;
       const { roomIndex, setRoom } = useSelected();
@@ -78,9 +70,8 @@ export function registerScene() {
           </Container>
         </Wrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Wrapper = styled.div`
   display: block;

@@ -1,1 +1,1 @@
-export { registerScene } from './Scene';
+export { Scene } from './Scene';

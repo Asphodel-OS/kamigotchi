@@ -5,23 +5,16 @@ import styled from 'styled-components';
 import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/measures/Battery';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { ClockIcons } from 'assets/images/icons/clock';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { calcPercent } from 'utils/numbers';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
 
-export function registerClock() {
-  registerUIComponent(
-    'ClockFixture',
-    {
-      colStart: 33,
-      colEnd: 67,
-      rowStart: 78,
-      rowEnd: 99,
-    },
-    (layers) => {
+export const ClockFixture: UIComponent = {
+  id: 'ClockFixture',
+  requirement: (layers) => {
       return interval(1000).pipe(
         map(() => {
           const { network } = layers;
@@ -39,8 +32,8 @@ export function registerClock() {
           };
         })
       );
-    },
-    ({ data, utils }) => {
+  },
+  Render: ({ data, utils }) => {
       const { account } = data;
       const { calcCurrentStamina } = utils;
       const { fixtures } = useVisibility();
@@ -149,9 +142,8 @@ export function registerClock() {
           </Container>
         </TextTooltip>
       );
-    }
-  );
-}
+  },
+};
 
 const Container = styled.div`
   pointer-events: auto;

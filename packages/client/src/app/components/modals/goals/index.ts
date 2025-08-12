@@ -1,3 +1,1 @@
-import { registerGoalModal } from './Goal';
-
-export { registerGoalModal };
+export { GoalModal } from './Goal';

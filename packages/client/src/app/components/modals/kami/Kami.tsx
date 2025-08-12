@@ -14,7 +14,7 @@ import {
   parseSkillRequirementText,
 } from 'app/cache/skills';
 import { ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { ONYX_INDEX } from 'constants/items';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -32,74 +32,62 @@ import { Traits } from './traits/Traits';
 const SYNC_TIME = 1000;
 export type TabType = 'TRAITS' | 'SKILLS' | 'BATTLES';
 
-export function registerKamiModal() {
-  registerUIComponent(
-    'KamiDetails',
-    {
-      colStart: 11,
-      colEnd: 67,
-      rowStart: 8,
-      rowEnd: 99,
-    },
+export const KamiDetails: UIComponent = {
+  id: 'KamiDetails',
+  requirement: (layers) => {
+    const { network } = layers;
+    const { world, components } = network;
 
-    // Requirement
-    (layers) => {
-      const { network } = layers;
-      const { world, components } = network;
+    return interval(SYNC_TIME).pipe(
+      map(() => {
+        const accountEntity = queryAccountFromEmbedded(network);
+        const account = getAccount(world, components, accountEntity, { live: 2 });
+        const kamiOptions = {
+          live: 2,
+          progress: 2,
+          skills: 2,
+          stats: 2,
+          base: 5,
+          flags: 10,
+          battles: 30,
+          traits: 3600,
+        };
 
-      return interval(SYNC_TIME).pipe(
-        map(() => {
-          const accountEntity = queryAccountFromEmbedded(network);
-          const account = getAccount(world, components, accountEntity, { live: 2 });
-          const kamiOptions = {
-            live: 2,
-            progress: 2,
-            skills: 2,
-            stats: 2,
-            base: 5,
-            flags: 10,
-            battles: 30,
-            traits: 3600,
-          };
-
-          return {
-            network,
-            data: {
-              account,
-              onyxItem: getItemByIndex(world, components, ONYX_INDEX),
-              spender: getCompAddr(world, components, 'component.token.allowance'),
-            },
-            utils: {
-              calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
-              getItemBalance: (index: number) =>
-                getItemBalance(world, components, account.id, index),
-              getAccountByID: (id: EntityID) =>
-                getAccount(world, components, world.entityToIndex.get(id) as EntityIndex),
-              getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
-              getKamiByID: (id: EntityID) =>
-                getKami(world, components, world.entityToIndex.get(id) as EntityIndex, kamiOptions),
-              getOwner: (entity: EntityIndex) => getKamiAccount(world, components, entity),
-              getSkill: (index: number) => getSkillByIndex(world, components, index),
-              getSkillUpgradeError: (index: number, kami: Kami) =>
-                getSkillUpgradeError(world, components, index, kami),
-              getTreePoints: (tree: string, holderID: EntityID) =>
-                getHolderSkillTreePoints(world, components, tree, holderID),
-              getTreeRequirement: (skill: Skill) =>
-                getSkillTreePointsRequirement(world, components, skill),
-              initializeSkills: () => initializeSkills(world, components),
-              queryKamiByIndex: (index: number) => queryKamis(components, { index })[0],
-              parseSkillRequirement: (requirement: Condition) =>
-                parseSkillRequirementText(world, components, requirement),
-              getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
-              getNodeByIndex: (index: number) => getNodeByIndex(world, components, index),
-            },
-          };
-        })
-      );
-    },
-
-    // Render
-    ({ data, network, utils }) => {
+        return {
+          network,
+          data: {
+            account,
+            onyxItem: getItemByIndex(world, components, ONYX_INDEX),
+            spender: getCompAddr(world, components, 'component.token.allowance'),
+          },
+          utils: {
+            calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
+            getItemBalance: (index: number) => getItemBalance(world, components, account.id, index),
+            getAccountByID: (id: EntityID) =>
+              getAccount(world, components, world.entityToIndex.get(id) as EntityIndex),
+            getKami: (entity: EntityIndex) => getKami(world, components, entity, kamiOptions),
+            getKamiByID: (id: EntityID) =>
+              getKami(world, components, world.entityToIndex.get(id) as EntityIndex, kamiOptions),
+            getOwner: (entity: EntityIndex) => getKamiAccount(world, components, entity),
+            getSkill: (index: number) => getSkillByIndex(world, components, index),
+            getSkillUpgradeError: (index: number, kami: Kami) =>
+              getSkillUpgradeError(world, components, index, kami),
+            getTreePoints: (tree: string, holderID: EntityID) =>
+              getHolderSkillTreePoints(world, components, tree, holderID),
+            getTreeRequirement: (skill: Skill) =>
+              getSkillTreePointsRequirement(world, components, skill),
+            initializeSkills: () => initializeSkills(world, components),
+            queryKamiByIndex: (index: number) => queryKamis(components, { index })[0],
+            parseSkillRequirement: (requirement: Condition) =>
+              parseSkillRequirementText(world, components, requirement),
+            getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
+            getNodeByIndex: (index: number) => getNodeByIndex(world, components, index),
+          },
+        };
+      })
+    );
+  },
+  Render: ({ data, network, utils }) => {
       const { actions, api } = network;
       const { account, onyxItem, spender } = data;
       const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
@@ -256,6 +244,5 @@ export function registerKamiModal() {
           {tab === 'BATTLES' && <Battles kami={kami} setKami={setKami} tab={tab} utils={utils} />}
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};

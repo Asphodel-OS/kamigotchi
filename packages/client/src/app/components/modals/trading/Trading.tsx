@@ -8,7 +8,7 @@ import { getAccount, getAccountByID } from 'app/cache/account';
 import { getItem, getItemByIndex } from 'app/cache/item';
 import { getTrade, getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
@@ -28,53 +28,43 @@ const SYNC_TIME = 1000;
 const CurrencyIndices = [MUSU_INDEX, ETH_INDEX, ONYX_INDEX];
 const KamidenClient = getKamidenClient();
 
-export function registerTradingModal() {
-  registerUIComponent(
-    'TradingModal',
-    // Grid Config
-    {
-      colStart: 2,
-      colEnd: 67,
-      rowStart: 8,
-      rowEnd: 99,
-    },
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components: comps, actions } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountOptions = { live: 1, config: 3600 };
-          const tradeOptions = { state: 2, taker: 2 };
+export const TradingModal: UIComponent = {
+  id: 'TradingModal',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components: comps, actions } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
+        const accountOptions = { live: 1, config: 3600 };
+        const tradeOptions = { state: 2, taker: 2 };
 
-          return {
-            network,
-            data: {
-              account: getAccount(world, comps, accountEntity, accountOptions),
-            },
-            types: {
-              ActionComp: actions.Action,
-            },
-            utils: {
-              entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
-              getAllItems: () => getAllItems(world, comps),
-              getAccount: () => getAccount(world, comps, accountEntity, accountOptions),
-              getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, tradeOptions),
-              queryTrades: () => queryTrades(comps),
-              getItemByIndex: (index: number) => getItemByIndex(world, comps, index),
-              getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
-              getItem: (entity: EntityIndex) => getItem(world, comps, entity),
-              getAccountByID: (id: EntityID) => getAccountByID(world, comps, id, accountOptions),
-              getTradeHistory: (tradeHistory: TradeHistory) =>
-                getTradeHistory(world, comps, tradeHistory),
-            },
-          };
-        })
-      ),
+        return {
+          network,
+          data: {
+            account: getAccount(world, comps, accountEntity, accountOptions),
+          },
+          types: {
+            ActionComp: actions.Action,
+          },
+          utils: {
+            entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
+            getAllItems: () => getAllItems(world, comps),
+            getAccount: () => getAccount(world, comps, accountEntity, accountOptions),
+            getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, tradeOptions),
+            queryTrades: () => queryTrades(comps),
+            getItemByIndex: (index: number) => getItemByIndex(world, comps, index),
+            getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
+            getItem: (entity: EntityIndex) => getItem(world, comps, entity),
+            getAccountByID: (id: EntityID) => getAccountByID(world, comps, id, accountOptions),
+            getTradeHistory: (tradeHistory: TradeHistory) =>
+              getTradeHistory(world, comps, tradeHistory),
+          },
+        };
+      })
+    ),
 
-    // Render
-    ({ network, data, types, utils }) => {
+  Render: ({ network, data, types, utils }) => {
       const { actions } = network;
       const { account } = data;
       const { getAllItems, getTrade, queryTrades } = utils;
@@ -116,13 +106,16 @@ export function registerTradingModal() {
 
       // pull all items from the registry and save the tradable ones
       const refreshItemRegistry = () => {
-        const all = getAllItems();
+        const all: Item[] = getAllItems();
         // const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
         const tradable = all.filter((item) => item.is.tradeable);
         tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
         if (tradable.length !== items.length) setItems(tradable);
 
-        setCurrencies([all.find((item) => item.index === 1)!]);
+        const currencyIndices = new Set(CurrencyIndices);
+        setCurrencies(
+          all.filter((item) => currencyIndices.has(item.index))
+        );
       };
 
       // pull all open trades and partition them based on whether created by the player
@@ -285,9 +278,8 @@ export function registerTradingModal() {
           </Content>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Content = styled.div`
   position: relative;

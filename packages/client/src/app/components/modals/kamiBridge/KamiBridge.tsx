@@ -7,7 +7,7 @@ import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
 import { getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
@@ -18,44 +18,37 @@ import { Mode } from './types';
 import { WildKamis } from './WildKamis';
 import { WorldKamis } from './WorldKamis';
 
-export function registerKamiBridge() {
-  registerUIComponent(
-    'KamiBridge',
-    {
-      colStart: 33,
-      colEnd: 67,
-      rowStart: 15,
-      rowEnd: 99,
-    },
-    (layers) => {
-      return interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const kamiRefreshOptions = {
-            live: 2,
-            progress: 3600,
-          };
+export const KamiBridge: UIComponent = {
+  id: 'KamiBridge',
+  requirement: (layers) => {
+    return interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
+        const kamiRefreshOptions = {
+          live: 2,
+          progress: 3600,
+        };
 
-          return {
-            network,
-            data: {
-              account: getAccount(world, components, accountEntity),
-              kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
-            },
-            utils: {
-              queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
-              getKami: (entity: EntityIndex) =>
-                getKami(world, components, entity, kamiRefreshOptions),
-              getAccountKamis: (accountEntity: EntityIndex) =>
-                getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
-            },
-          };
-        })
-      );
-    },
-    ({ data, network, utils }) => {
+        return {
+          network,
+          data: {
+            account: getAccount(world, components, accountEntity),
+            kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+          },
+          utils: {
+            queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
+            getKami: (entity: EntityIndex) =>
+              getKami(world, components, entity, kamiRefreshOptions),
+            getAccountKamis: (accountEntity: EntityIndex) =>
+              getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
+          },
+        };
+      })
+    );
+  },
+  Render: ({ data, network, utils }) => {
       const { actions } = network;
       const { kamiNFTAddress, account } = data;
       const { getAccountKamis, getKami, queryKamiByIndex } = utils;
@@ -200,6 +193,5 @@ export function registerKamiBridge() {
           />
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};

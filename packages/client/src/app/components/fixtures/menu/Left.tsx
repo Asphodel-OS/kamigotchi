@@ -1,7 +1,7 @@
 import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
 import {
@@ -13,42 +13,33 @@ import {
   SudoMenuButton,
 } from './buttons';
 
-export function registerMenuLeft() {
-  registerUIComponent(
-    'LeftMenuFixture',
-    {
-      colStart: 2,
-      colEnd: 33,
-      rowStart: 3,
-      rowEnd: 6,
-    },
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world } = network;
-          const { roomIndex } = useSelected.getState();
-          let nodeEntity = queryNodeByIndex(world, roomIndex);
-          return { nodeEntity };
-        })
-      ),
-    ({ nodeEntity }) => {
-      const { fixtures } = useVisibility();
+export const LeftMenuFixture: UIComponent = {
+  id: 'LeftMenuFixture',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world } = network;
+        const { roomIndex } = useSelected.getState();
+        let nodeEntity = queryNodeByIndex(world, roomIndex);
+        return { nodeEntity };
+      })
+    ),
+  Render: ({ nodeEntity }) => {
+    const { fixtures } = useVisibility();
 
-      return (
-        <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-          <AccountMenuButton />
-          <PartyMenuButton />
-          <MapMenuButton />
-          <NodeMenuButton disabled={!nodeEntity} />
-          <SudoMenuButton />
-          <OnyxMenuButton />
-        </Wrapper>
-      );
-    }
-  );
-}
+    return (
+      <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+        <AccountMenuButton />
+        <PartyMenuButton />
+        <MapMenuButton />
+        <NodeMenuButton disabled={!nodeEntity} />
+        <SudoMenuButton />
+        <OnyxMenuButton />
+      </Wrapper>
+    );
+  },
+};
 
 const Wrapper = styled.div`
   flex-direction: row;

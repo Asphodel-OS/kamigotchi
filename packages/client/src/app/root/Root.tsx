@@ -7,17 +7,15 @@ import { WagmiProvider } from 'wagmi';
 import { BootScreen } from 'app/components/boot';
 import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
 import { Layers } from 'network/';
-import { MainWindow } from './components';
-import { NetworkContext, RootContext } from './context';
-import { RootStore } from './store';
+import { MainWindow } from './components/MainWindow';
+import { NetworkContext } from './context';
 
-interface Props {
+export const Root = observer(({
+  setLayers, mountReact,
+}: {
   setLayers: { current: (layers: Layers) => void };
   mountReact: { current: (mount: boolean) => void };
-}
-
-export const Root = observer((props: Props) => {
-  const { setLayers, mountReact } = props;
+}) => {
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
 
@@ -39,9 +37,7 @@ export const Root = observer((props: Props) => {
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={tanstackClient}>
           <NetworkContext.Provider value={layers}>
-            <RootContext.Provider value={RootStore}>
-              <MainWindow />
-            </RootContext.Provider>
+            <MainWindow />
           </NetworkContext.Provider>
         </QueryClientProvider>
       </WagmiProvider>

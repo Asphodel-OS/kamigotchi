@@ -1,1 +1,1 @@
-export { registerEMABoardModal } from './EmaBoard';
+export { EmaBoard } from './EmaBoard';

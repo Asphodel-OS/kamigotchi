@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
@@ -12,34 +12,23 @@ import { queryDTCommits } from 'network/shapes/Droptable';
 import { useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
 
-export function registerRevealModal() {
-  registerUIComponent(
-    'Reveal',
-    {
-      colStart: 30,
-      colEnd: 70,
-      rowStart: 30,
-      rowEnd: 75,
-    },
+export const Reveal: UIComponent = {
+  id: 'Reveal',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const account = getAccountFromEmbedded(network);
+        const commits = queryDTCommits(world, components, account.id);
 
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const account = getAccountFromEmbedded(network);
-          const commits = queryDTCommits(world, components, account.id);
-
-          return {
-            network: layers.network,
-            data: { commits },
-          };
-        })
-      ),
-
-    // Render
-    ({ network, data }) => {
+        return {
+          network: layers.network,
+          data: { commits },
+        };
+      })
+    ),
+  Render: ({ network, data }) => {
       const { commits } = data;
       const {
         actions,
@@ -126,9 +115,8 @@ export function registerRevealModal() {
           </Container>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Container = styled.div`
   position: relative;

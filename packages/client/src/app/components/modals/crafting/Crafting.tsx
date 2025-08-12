@@ -5,7 +5,7 @@ import { interval, map } from 'rxjs';
 import { getAccount } from 'app/cache/account';
 import { getAllRecipes } from 'app/cache/recipes';
 import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
@@ -14,47 +14,32 @@ import { hasIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
 import { Recipes } from './Recipes/Recipes';
 import { Tabs } from './tabs/Tabs';
 
-export function registerCraftingModal() {
-  registerUIComponent(
-    'CraftingModal',
-    {
-      colStart: 33,
-      colEnd: 67,
-      rowStart: 3,
-      rowEnd: 99,
-    },
+export const CraftingModal: UIComponent = {
+  id: 'CraftingModal',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
 
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
+        const account = getAccount(world, components, accountEntity, { live: 2, config: 3600 });
 
-          const accountEntity = queryAccountFromEmbedded(network);
-          const account = getAccount(world, components, accountEntity, { live: 2, config: 3600 });
-
-          return {
-            network,
-            data: { account },
-            utils: {
-              meetsRequirements: (recipe: Recipe) =>
-                passesConditions(world, components, recipe.requirements, account),
-              displayRequirements: (recipe: Recipe) =>
-                recipe.requirements
-                  .map((req) => parseConditionalText(world, components, req))
-                  .join(', '),
-              getItemBalance: (index: number) =>
-                getItemBalance(world, components, account.id, index),
-              hasIngredients: (recipe: Recipe) =>
-                hasIngredients(world, components, recipe, account.id),
-            },
-          };
-        })
-      ),
-
-    // Render
-    ({ data, network, utils }) => {
+        return {
+          network,
+          data: { account },
+          utils: {
+            meetsRequirements: (recipe: Recipe) =>
+              passesConditions(world, components, recipe.requirements, account),
+            displayRequirements: (recipe: Recipe) =>
+              recipe.requirements.map((req) => parseConditionalText(world, components, req)).join(', '),
+            getItemBalance: (index: number) => getItemBalance(world, components, account.id, index),
+            hasIngredients: (recipe: Recipe) => hasIngredients(world, components, recipe, account.id),
+          },
+        };
+      })
+    ),
+  Render: ({ data, network, utils }) => {
       const { account } = data;
       const { actions, api, components, world } = network;
       const { hasIngredients } = utils;
@@ -115,6 +100,5 @@ export function registerCraftingModal() {
           )}
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
