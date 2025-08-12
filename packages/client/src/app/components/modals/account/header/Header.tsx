@@ -335,7 +335,7 @@ const FriendActionLabel = styled.div<{ size?: 'small' | 'medium'; tone?: 'neutra
     font-size: .8vw;
     padding: .35vw .7vw;
     border-radius: .4vw;
-    margin: 0 .16vw; /* match ActionListButton medium margin */
+    margin: 0 .16vw; 
     line-height: 1.1;
   `}
 `;
