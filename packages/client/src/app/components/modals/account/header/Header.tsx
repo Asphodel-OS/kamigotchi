@@ -140,7 +140,7 @@ export const Header = (props: Props) => {
               {/* pending inbound request */}   
               {isIncoming && incomingRequest && (
                 <>
-                  <ActionButton size='small' text='Requested You' disabled onClick={() => {}} />
+                  <FriendActionLabel size='small' tone='warning'>Requested You</FriendActionLabel>
                   <ActionListButton
                     id={`friendship-options-${account.entity}-header`}
                     text=''
@@ -157,7 +157,7 @@ export const Header = (props: Props) => {
               {/* friends */}
               {isFriend && friendFriendship && (
                 <>
-                  <ActionButton size='small' text='Friends' disabled onClick={() => {}} />
+                  <FriendActionLabel size='small' tone='success'>Friends</FriendActionLabel>
                   <ActionListButton
                     id={`friendship-options-${account.entity}-friend-header`}
                     text=''
@@ -173,7 +173,7 @@ export const Header = (props: Props) => {
               {/* pending outbound request */}
               {isOutgoing && outgoingRequest && (
                 <>
-                  <ActionButton size='small' text='Request Sent' disabled onClick={() => {}} />
+                  <FriendActionLabel size='small' tone='warning'>Request Sent</FriendActionLabel>
                   <ActionListButton
                     id={`friendship-options-${account.entity}-outgoing-header`}
                     text=''
@@ -189,7 +189,7 @@ export const Header = (props: Props) => {
               {/* blocked */}
               {isBlocked && blockedFriendship && (
                 <>
-                  <ActionButton size='small' text='Blocked' disabled onClick={() => {}} />
+                  <FriendActionLabel size='small' tone='danger'>Blocked</FriendActionLabel>
                   <ActionButton size='small' text='Unblock' onClick={() => cancelFren(blockedFriendship)} />
                 </>
               )}
@@ -303,6 +303,41 @@ const FriendActions = styled.div`
   gap: 0.24vw;
   align-items: center;
   margin-top: 0.3vw;
+`;
+
+const FriendActionLabel = styled.div<{ size?: 'small' | 'medium'; tone?: 'neutral' | 'success' | 'warning' | 'danger' }>`
+  background-color: ${({ tone }) =>
+    tone === 'success' ? '#eaf7ea' : tone === 'warning' ? '#fff7da' : tone === 'danger' ? '#fdeaea' : '#f0f0f0'};
+  color: ${({ tone }) =>
+    tone === 'success' ? '#2f6f2f' : tone === 'warning' ? '#6b5a00' : tone === 'danger' ? '#7a2f2f' : '#555'};
+  user-select: none;
+  font-family: Pixel;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+  cursor: default;
+  border: solid
+    ${({ tone }) =>
+      tone === 'success' ? '#bfe5bf' : tone === 'warning' ? '#f0dda1' : tone === 'danger' ? '#f2bcbc' : '#bcbcbc'}
+    0.15vw;
+  ${({ size }) =>
+    (size ?? 'medium') === 'small'
+      ? `
+    font-size: .6vw;
+    padding: .2vw .5vw;
+    border-radius: .3vw;
+    margin: 0 .12vw;
+    line-height: 1;
+  `
+      : `
+    font-size: .8vw;
+    padding: .35vw .7vw;
+    border-radius: .4vw;
+    margin: 0 .16vw; /* match ActionListButton medium margin */
+    line-height: 1.1;
+  `}
 `;
 
 const Subtitle = styled.div`
