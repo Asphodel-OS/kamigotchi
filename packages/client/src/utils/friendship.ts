@@ -45,21 +45,17 @@ export function getFriendshipStatus(
   const isSelf = playerEntity === accountEntity
   const isOther = !isSelf
 
-  const incomingEntities = data?.incomingReqs?.map((req) => req.account.entity)
-  const isIncoming = !!incomingEntities?.includes(accountEntity)
   const incomingRequest = data?.incomingReqs?.find((req) => req.account.entity === accountEntity)
+  const isIncoming = !!incomingRequest
 
-  const outgoingEntities = data?.outgoingReqs?.map((req) => req.target.entity)
-  const isOutgoing = !!outgoingEntities?.includes(accountEntity)
   const outgoingRequest = data?.outgoingReqs?.find((req) => req.target.entity === accountEntity)
+  const isOutgoing = !!outgoingRequest
 
-  const friendEntities = data?.friends?.map((f) => f.target.entity)
-  const isFriend = !!friendEntities?.includes(accountEntity)
   const friendFriendship = data?.friends?.find((f) => f.target.entity === accountEntity)
+  const isFriend = !!friendFriendship
 
-  const blockedEntities = data?.blocked?.map((b) => b.target.entity)
-  const isBlocked = !!blockedEntities?.includes(accountEntity)
   const blockedFriendship = data?.blocked?.find((b) => b.target.entity === accountEntity)
+  const isBlocked = !!blockedFriendship
 
   return {
     isSelf,
