@@ -42,6 +42,10 @@ export const Friends = (props: Props) => {
       isSelf && { text: 'Remove', onClick: () => actions.removeFren(friendship) },
     ].filter((o) => !!o);
 
+    // Hide the action button if no actions are available.
+    // This prevents showing the button on our own profile card when viewing on a friend's list.
+    if (options.length === 0) return null;
+
     return (
       <ActionListButton id={`friendship-options-${friendship.entity}`} text='' options={options} />
     );
