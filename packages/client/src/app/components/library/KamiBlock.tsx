@@ -49,9 +49,10 @@ export const KamiBlock = (props: Props) => {
         {select && (
           <Overlay bottom={0.5} right={0.5}>
             <ClickBox
-              isDisabled={!!select.isDisabled}
-              isSelected={!!select.isSelected}
-              onClick={select.onClick}
+              type='checkbox'
+              disabled={!!select.isDisabled}
+              checked={!!select.isSelected}
+              onChange={select.onClick}
             />
           </Overlay>
         )}
@@ -96,20 +97,9 @@ const Text = styled.div<{ size: number }>`
   text-shadow: ${(props) => `0 0 ${props.size * 0.5}vw black`};
 `;
 
-const ClickBox = styled.button<{ isDisabled: boolean; isSelected: boolean }>`
-  border: ${({ isSelected }) => (isSelected ? 'solid .15vw #fff' : 'solid .15vw #333')};
-  border-radius: 0.4vw;
-  width: 2vw;
-  height: 2vw;
-
+const ClickBox = styled.input`
+  width: 1.8vw;
+  height: 1.8vw;
   opacity: 0.9;
-  cursor: ${({ isDisabled }) => (isDisabled ? 'disabled' : 'pointer')};
-  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
   user-select: none;
-
-  background-color: ${({ isSelected }) => (isSelected ? '#3498DB' : '#ddd')};
-  ${({ isDisabled }) => (isDisabled ? 'background-color: #333' : '')};
-  &:hover {
-    background-color: ${({ isSelected }) => (isSelected ? '#0468aB' : '#aaa')};
-  }
 `;
