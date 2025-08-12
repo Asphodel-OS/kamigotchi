@@ -19,7 +19,13 @@ import { SingleCreate } from './SingleCreate';
 type Mode = 'Single' | 'Multi';
 const DisabledItems = [ONYX_INDEX, ETH_INDEX];
 
-interface Props {
+export const Create = ({
+  actions,
+  controls,
+  data,
+  types,
+  utils,
+}: {
   actions: {
     createTrade: (
       wantItems: Item[],
@@ -45,10 +51,7 @@ interface Props {
   utils: {
     entityToIndex: (id: EntityID) => EntityIndex;
   };
-}
-
-export const Create = (props: Props) => {
-  const { actions, controls, data, types, utils } = props;
+}) => {
   const { createTrade } = actions;
   const { setIsConfirming, setConfirmData } = controls;
   const { account } = data;

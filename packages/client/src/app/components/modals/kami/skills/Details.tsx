@@ -10,7 +10,13 @@ import { Kami } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+// The leftside details panel of the Skills tab of the Kami Modal
+export const Details = ({
+  actions,
+  data,
+  state,
+  utils,
+}: {
   data: {
     account: Account;
     kami: Kami;
@@ -29,11 +35,7 @@ interface Props {
     getTreeRequirement: (skill: Skill) => number;
     parseSkillRequirement: (requirement: Condition) => string;
   };
-}
-
-// The leftside details panel of the Skills tab of the Kami Modal
-export const Details = (props: Props) => {
-  const { actions, data, state, utils } = props;
+}) => {
   const { account, kami, owner } = data;
   const { skillIndex, tick, upgradeError } = state;
   const { getSkill, getSkillImage, parseSkillRequirement } = utils;
@@ -95,12 +97,18 @@ export const Details = (props: Props) => {
   // DISPLAY
 
   // render a list of values with a label (for Bonuses/Requirements)
-  const LabeledList = (props: { label: string; values?: string[] }) => {
-    if (!props.values || props.values.length <= 0 || props.values[0] == '') return <></>;
+  const LabeledList = ({
+    label,
+    values,
+  }: {
+    label: string;
+    values?: string[];
+  }) => {
+    if (!values || values.length <= 0 || values[0] == '') return <></>;
     return (
       <DetailSection>
-        <DetailLabel>{props.label}:</DetailLabel>
-        {props.values.map((value, i) => (
+        <DetailLabel>{label}:</DetailLabel>
+        {values.map((value, i) => (
           <DetailDescription key={i}>• {value}</DetailDescription>
         ))}
       </DetailSection>

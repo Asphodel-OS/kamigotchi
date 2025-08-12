@@ -1,15 +1,16 @@
 import styled from 'styled-components';
 
-interface Props {
+export const Input = ({
+  image,
+  amt,
+  prepend,
+  scale = 1,
+}: {
   image: string;
   amt: number;
   prepend?: string;
   scale?: number;
-}
-
-export const Input = (props: Props) => {
-  const { image, amt, prepend } = props;
-  const scale = props.scale ?? 1;
+}) => {
 
   return (
     <Container>

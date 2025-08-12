@@ -9,17 +9,17 @@ interface DropdownOption {
   object?: any;
 }
 
-interface Props {
+export const Controls = ({
+  controls: {
+    typeFilter,
+    setTypeFilter,
+  },
+}: {
   controls: {
     typeFilter: TradeType;
     setTypeFilter: Dispatch<TradeType>;
   };
-}
-
-export const Controls = (props: Props) => {
-  const { controls } = props;
-  const { typeFilter, setTypeFilter } = controls;
-
+}) => {
   const toggleTypeFilter = () => {
     if (typeFilter === 'Buy') setTypeFilter('Sell');
     if (typeFilter === 'Sell') setTypeFilter('Barter');

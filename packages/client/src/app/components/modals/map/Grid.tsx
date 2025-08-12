@@ -15,7 +15,11 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { FloatingMapKami } from './FloatingMapKami';
 import { GridTooltip } from './GridTooltip';
-interface Props {
+export const Grid = ({
+  data,
+  actions,
+  utils,
+}: {
   data: {
     account: Account;
     accountKamis: EntityIndex[];
@@ -38,10 +42,7 @@ interface Props {
     queryScavInstance: (index: number, holderID: EntityID) => EntityIndex | undefined;
     getValue: (entity: EntityIndex) => number;
   };
-}
-
-export const Grid = (props: Props) => {
-  const { data, actions, utils } = props;
+}) => {
   const { account, roomIndex, zone, rooms, accountKamis } = data;
   const {
     getKamiLocation,

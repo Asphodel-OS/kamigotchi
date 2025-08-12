@@ -11,13 +11,12 @@ import { MainWindow } from './components';
 import { NetworkContext, RootContext } from './context';
 import { RootStore } from './store';
 
-interface Props {
+export const Root = observer(({
+  setLayers, mountReact,
+}: {
   setLayers: { current: (layers: Layers) => void };
   mountReact: { current: (mount: boolean) => void };
-}
-
-export const Root = observer((props: Props) => {
-  const { setLayers, mountReact } = props;
+}) => {
   const [mounted, setMounted] = useState(true);
   const [layers, _setLayers] = useState<Layers | undefined>();
 

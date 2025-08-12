@@ -4,7 +4,11 @@ import { AccountCard, ActionListButton, EmptyText } from 'app/components/library
 import { BaseAccount } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
 
-interface Props {
+export const Inbound = ({
+  isVisible,
+  requests,
+  actions,
+}: {
   isVisible: boolean;
   requests: Friendship[];
   actions: {
@@ -12,11 +16,7 @@ interface Props {
     blockFren: (account: BaseAccount) => void;
     cancelFren: (friendship: Friendship) => void;
   };
-}
-
-export const Inbound = (props: Props) => {
-  const { requests, actions, isVisible } = props;
-
+}) => {
   const Actions = (friendship: Friendship) => {
     return (
       <ActionListButton

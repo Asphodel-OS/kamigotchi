@@ -2,12 +2,11 @@ import { hoverFx } from 'app/styles/effects';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-interface Props {
+export const VerticalToggle = ({
+  setModeSelected,
+}: {
   setModeSelected: React.Dispatch<React.SetStateAction<number>>;
-}
-
-export const VerticalToggle = (props: Props) => {
-  const { setModeSelected } = props;
+}) => {
   const [position, setPosition] = useState(0); // top to bottom
 
   const handleClick = () => {

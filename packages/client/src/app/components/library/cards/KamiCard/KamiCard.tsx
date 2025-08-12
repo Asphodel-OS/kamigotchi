@@ -12,7 +12,24 @@ import { Card } from '../';
 import { Cooldown } from './Cooldown';
 import { Health } from './Health';
 
-interface Props {
+// KamiCard is a card that displays information about a Kami. It is designed to display
+// information ranging from current harvest or death as well as support common actions.
+export const KamiCard = ({
+  kami,
+  description,
+  descriptionOnClick,
+  isFriend,
+  contentTooltip,
+  subtext,
+  subtextOnClick,
+  actions,
+  showBattery,
+  showCooldown,
+  utils: {
+    calcExpRequirement,
+    getTempBonuses,
+  } = {},
+}: {
   kami: Kami; // assumed to have a harvest attached
   description: string[];
   descriptionOnClick?: () => void;
@@ -27,18 +44,7 @@ interface Props {
     calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
-}
-
-// KamiCard is a card that displays information about a Kami. It is designed to display
-// information ranging from current harvest or death as well as support common actions.
-export const KamiCard = (props: Props) => {
-  const { kami, actions, showBattery, showCooldown, isFriend, utils } = props;
-  const getTempBonuses = utils?.getTempBonuses;
-  const { calcExpRequirement } = utils ?? {};
-  const { description, descriptionOnClick } = props;
-  const { contentTooltip } = props;
-  const { subtext, subtextOnClick } = props;
-
+}) => {
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
   const [canLevel, setCanLevel] = useState(false);

@@ -3,18 +3,19 @@ import styled from 'styled-components';
 import { Overlay, TextTooltip } from 'app/components/library';
 import { formatCountdown, getDateString } from 'utils/time';
 
-interface Props {
+export const Header = ({
+  time: {
+    now,
+    start,
+    end,
+  },
+}: {
   time: {
     now: number;
     start: number;
     end: number;
   };
-}
-
-export const Header = (props: Props) => {
-  const { time } = props;
-  const { now, start, end } = time;
-
+}) => {
   const getStatus = () => {
     if (now < start) return 'Soon';
     if (now < end) return 'Live';
@@ -67,8 +68,8 @@ const Title = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: #d0fe41;
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
+  font-size: ${({ size }) => size}vw;
+  line-height: ${({ size }) => size * 1.5}vw;
 
   user-select: none;
 `;

@@ -1,11 +1,11 @@
 import { ActionButton } from 'app/components/library';
 
-interface Props {
-  step: number;
-  setStep: (step: number) => void;
-}
-
-export const BackButton = (props: Props) => {
-  const { step, setStep } = props;
+export const BackButton = ({
+  step,
+  setStep,
+}: {
+  step: number
+  setStep: (step: number) => void
+}) => {
   return <ActionButton text='Back' disabled={step === 0} onClick={() => setStep(step - 1)} />;
 };

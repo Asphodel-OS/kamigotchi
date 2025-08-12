@@ -11,7 +11,12 @@ import { Kami } from 'network/shapes/Kami';
 import { playClick, playSuccess } from 'utils/sounds';
 import { TabType, ViewMode } from '../types';
 
-interface Props {
+export const Footer = ({
+  actions,
+  controls,
+  data,
+  state,
+}: {
   actions: {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
@@ -46,10 +51,7 @@ interface Props {
     setSelectedKamis: (kamis: Kami[]) => void;
     tick: number;
   };
-}
-
-export const Footer = (props: Props) => {
-  const { actions, controls, data, state } = props;
+}) => {
   const { approve, bid, mintPublic, mintWL, pull, reroll } = actions;
   const { mode, tab } = controls;
   const { payItem, saleItem, balance, mint } = data;

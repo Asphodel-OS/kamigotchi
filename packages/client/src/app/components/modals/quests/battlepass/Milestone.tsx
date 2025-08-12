@@ -4,7 +4,16 @@ import { TextTooltip } from 'app/components/library';
 import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+// ActionButton is a text button that triggers an Action when clicked
+export const Milestone = ({
+  size,
+  position,
+  colors,
+  onClick,
+  tooltip,
+  pulse,
+  is,
+}: {
   position: number; // as 0-100% from the left of the bar it's placed on
   onClick: Function | undefined;
   tooltip: string[];
@@ -19,11 +28,7 @@ interface Props {
   };
   size?: number; // vw of diameter
   pulse?: boolean;
-}
-
-// ActionButton is a text button that triggers an Action when clicked
-export const Milestone = (props: Props) => {
-  const { size, position, colors, onClick, tooltip, pulse, is } = props;
+}) => {
 
   // layer on a sound effect
   const handleClick = async () => {
@@ -77,16 +82,14 @@ const Container = styled.div`
   pointer-events: none;
 `;
 
-interface ButtonProps {
+const BaseButton = styled.div<{
   size: number; // vw of diameter
   position: number; // 0-100%
   scale: number;
   shift: number;
   color: string;
   pulse?: boolean;
-}
-
-const BaseButton = styled.div<ButtonProps>`
+}>`
   position: relative;
   left: ${({ position }) => position}%;
   transform: translateX(${({ shift }) => 100 * shift}%);

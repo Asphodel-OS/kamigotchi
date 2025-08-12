@@ -13,7 +13,11 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { MUSU_INDEX } from 'constants/items';
 import { Item, NullItem } from 'network/shapes';
 
-interface Props {
+export const Controls = ({
+  controls,
+  data,
+  utils,
+}: {
   controls: {
     typeFilter: TradeType;
     setTypeFilter: Dispatch<TradeType>;
@@ -33,10 +37,7 @@ interface Props {
   utils: {
     getItemByIndex: (index: number) => Item;
   };
-}
-
-export const Controls = (props: Props) => {
-  const { controls, data, utils } = props;
+}) => {
   const {
     typeFilter,
     setTypeFilter,

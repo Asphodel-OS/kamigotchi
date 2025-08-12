@@ -7,7 +7,22 @@ import { Popover } from '../poppers/Popover';
 import { IconButton } from './IconButton';
 import { VerticalToggle } from './VerticalToggle';
 
-interface Props {
+interface Option {
+  text: string;
+  img?: string;
+  object?: any;
+  disabled?: boolean;
+}
+
+export const DropdownToggle = ({
+  onClick,
+  button,
+  options,
+  disabled = [],
+  balance,
+  radius = 0.45,
+  limit,
+}: {
   onClick: ((selected: any[]) => void)[];
   button: {
     images: string[];
@@ -18,19 +33,8 @@ interface Props {
   balance?: number;
   radius?: number;
   limit?: number;
-}
-
-interface Option {
-  text: string;
-  img?: string;
-  object?: any;
-  disabled?: boolean;
-}
-
-export function DropdownToggle(props: Props) {
-  const { options, button, onClick, limit } = props;
+}) => {
   const { images, tooltips } = button;
-  const { balance, disabled, radius } = props;
   const [checked, setChecked] = useState<boolean[]>([]);
   const [modeSelected, setModeSelected] = useState<number>(0);
   const [forceClose, setForceClose] = useState(false);
@@ -135,7 +139,7 @@ export function DropdownToggle(props: Props) {
           balance={balance}
           corner={!balance}
           flatten={'right'}
-          radius={radius ?? 0.45}
+          radius={radius}
         />
       </Popover>
       {options.length > 1 && <VerticalToggle setModeSelected={setModeSelected} />}
@@ -145,7 +149,7 @@ export function DropdownToggle(props: Props) {
           disabled={modeDisabled || !checked.includes(true)}
           onClick={handleTriggerClick}
           flatten={'left'}
-          radius={radius ?? 0.45}
+          radius={radius}
         />
       </Tooltip>
     </Container>

@@ -13,7 +13,13 @@ import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
 
-interface Props {
+export const Header = ({
+  account,
+  actions,
+  isLoading,
+  isSelf,
+  utils,
+}: {
   account: Account; // account selected for viewing
   actions: { setBio: (bio: string) => void; handlePfpChange: (kami: Kami) => void };
   isLoading: boolean;
@@ -21,10 +27,7 @@ interface Props {
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
-}
-
-export const Header = (props: Props) => {
-  const { isLoading, account, utils, isSelf, actions } = props;
+}) => {
   const { getAccountKamis } = utils;
   const { handlePfpChange, setBio } = actions;
 
@@ -166,9 +169,9 @@ const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
   height: 1.2vw;
   border-radius: 3vw;
   z-index: 1;
-  background-color: ${(props) => {
-    if (props.timeDelta < 300) return '#6f3';
-    else if (props.timeDelta < 1800) return '#fd3';
+  background-color: ${({ timeDelta }) => {
+    if (timeDelta < 300) return '#6f3';
+    else if (timeDelta < 1800) return '#fd3';
     else return '#f33';
   }};
   ${({ isLoading }) =>

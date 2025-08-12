@@ -6,11 +6,11 @@ import { StatIcons } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
 import { Trait } from 'network/shapes/Trait';
 
-interface Props {
+export const Traits = ({
+  kami,
+}: {
   kami: Kami;
-}
-
-export const Traits = (props: Props) => {
+}) => {
   const statsDetails = new Map(
     Object.entries({
       health: {
@@ -61,11 +61,11 @@ export const Traits = (props: Props) => {
 
   return (
     <>
-      {TraitBox('Body', props.kami.traits?.body!)}
-      {TraitBox('Hands', props.kami.traits?.hand!)}
-      {TraitBox('Face', props.kami.traits?.face!)}
-      {TraitBox('Color', props.kami.traits?.color!)}
-      {TraitBox('Background', props.kami.traits?.background!)}
+      {TraitBox('Body', kami.traits?.body!)}
+      {TraitBox('Hands', kami.traits?.hand!)}
+      {TraitBox('Face', kami.traits?.face!)}
+      {TraitBox('Color', kami.traits?.color!)}
+      {TraitBox('Background', kami.traits?.background!)}
     </>
   );
 };

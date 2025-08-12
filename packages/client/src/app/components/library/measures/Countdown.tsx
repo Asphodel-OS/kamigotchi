@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
-interface Props {
-  total: number;
-  current: number;
-}
-
 // 0% means countdown is finished
-export const Countdown = (props: Props) => {
-  const { total, current } = props;
+export const Countdown = ({
+  total,
+  current,
+}: {
+  total: number
+  current: number
+}) => {
   const percent = (current / total) * 100;
 
   let color = '#29ABE9'; // blue;
@@ -31,19 +31,21 @@ const CountdownWrapper = styled.div`
   height: 1.1vw;
 `;
 
-interface CountdownCircleProps {
+const CountdownCircle = styled.div.attrs<{
   percent: number;
   color: string;
-}
-const CountdownCircle = styled.div.attrs<CountdownCircleProps>((props) => ({
+}>(({
+  percent,
+  color,
+}) => ({
   style: {
     background: `conic-gradient(
-   #aaa ${props.percent}%,
-    #aaa ${props.percent}% ${props.percent}%,
-    ${props.color} ${props.percent}%
-      )`,
+      #aaa ${percent}%,
+      #aaa ${percent}% ${percent}%,
+      ${color} ${percent}%
+    )`,
   },
-}))<CountdownCircleProps>`
+}))`
   position: absolute;
   top: 0;
   left: 0;

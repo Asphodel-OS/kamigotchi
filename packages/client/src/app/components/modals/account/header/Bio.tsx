@@ -5,14 +5,15 @@ import { ActionIcons } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes';
 import { playScribble } from 'utils/sounds';
 
-interface Props {
+export const Bio = ({
+  account,
+  actions,
+  isSelf,
+}: {
   account: Account;
   actions: { setBio: (bio: string) => void };
   isSelf: boolean;
-}
-
-export const Bio = (props: Props) => {
-  const { account, actions, isSelf } = props;
+}) => {
   const { setBio } = actions;
 
   const [isEditingBio, setIsEditingBio] = useState(false);

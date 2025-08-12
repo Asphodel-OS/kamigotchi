@@ -2,33 +2,35 @@ import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const Tabs = ({
+  tab,
+  isSelf,
+  setTab: _setTab,
+}: {
   tab: string;
   isSelf: boolean;
   setTab: (tab: string) => void;
-}
-
-export const Tabs = (props: Props) => {
+}) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
-    props.setTab(tab);
+    _setTab(tab);
   };
 
   const Tabs = () => {
     return (
       <>
-        <Button onClick={() => setTab('stats')} disabled={props.tab === 'stats'}>
+        <Button onClick={() => setTab('stats')} disabled={tab === 'stats'}>
           Stats
         </Button>
         <Button
           onClick={() => setTab('social')}
-          disabled={props.tab === 'social'}
+          disabled={tab === 'social'}
           style={{ borderLeft: 'solid black 0.15vw', borderRight: 'solid black 0.15vw' }}
         >
           Social
         </Button>
-        <Button onClick={() => setTab('party')} disabled={props.tab === 'party'}>
+        <Button onClick={() => setTab('party')} disabled={tab === 'party'}>
           Party
         </Button>
       </>

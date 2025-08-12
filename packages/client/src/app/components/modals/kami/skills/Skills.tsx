@@ -9,7 +9,12 @@ import { Skill } from 'network/shapes/Skill';
 import { Details } from './Details';
 import { Matrix } from './matrix/Matrix';
 
-interface Props {
+export const Skills = ({
+  data,
+  actions,
+  state,
+  utils,
+}: {
   data: {
     account: Account;
     kami: Kami;
@@ -30,10 +35,7 @@ interface Props {
     getTreeRequirement: (skill: Skill) => number;
     parseSkillRequirement: (requirement: Condition) => string;
   };
-}
-
-export const Skills = (props: Props) => {
-  const { data, actions, state, utils } = props;
+}) => {
   const { kami } = data;
   const { tick } = state;
   const { getUpgradeError } = utils;

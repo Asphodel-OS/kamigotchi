@@ -4,7 +4,11 @@ import { ActionButton } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { Mode } from './types';
 
-interface Props {
+export const Controls = ({
+  actions,
+  controls,
+  state,
+}: {
   actions: {
     import: (kamis: Kami[]) => void;
     export: (kamis: Kami[]) => void;
@@ -16,10 +20,7 @@ interface Props {
   state: {
     selectedKamis: Kami[];
   };
-}
-
-export const Controls = (props: Props) => {
-  const { actions, controls, state } = props;
+}) => {
   const { mode, setMode } = controls;
   const { selectedKamis } = state;
 

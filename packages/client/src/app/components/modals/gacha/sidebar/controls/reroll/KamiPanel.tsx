@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import { EmptyText } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 
-interface Props {
+export const KamiPanel = ({
+  selectedKamis,
+  isVisible,
+}: {
   selectedKamis: Kami[];
   isVisible: boolean;
-}
-export const KamiPanel = (props: Props) => {
-  const { selectedKamis, isVisible } = props;
-
+}) => {
   return (
     <Container isVisible={isVisible}>
       {selectedKamis.length > 0 && <Title>Selected Victims</Title>}

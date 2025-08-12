@@ -12,7 +12,15 @@ import { Trade } from 'network/shapes/Trade';
 import { TRADE_ROOM_INDEX } from '../../constants';
 import { ConfirmationData, OfferCard } from '../../library';
 
-interface Props {
+// represents the player's Buy/Sell Orders that are in PENDING state
+// NOTE: only supports simple (single item) trades against musu atm
+// TODO: add support for Trades you're the assigned Taker for (make executable)
+export const PendingOffer = ({
+  actions,
+  controls,
+  data,
+  utils,
+}: {
   actions: {
     cancelTrade: (trade: Trade) => void;
     executeTrade: (trade: Trade) => void;
@@ -30,13 +38,7 @@ interface Props {
   utils: {
     getItemByIndex: (index: number) => Item;
   };
-}
-
-// represents the player's Buy/Sell Orders that are in PENDING state
-// NOTE: only supports simple (single item) trades against musu atm
-// TODO: add support for Trades you're the assigned Taker for (make executable)
-export const PendingOffer = (props: Props) => {
-  const { actions, controls, data, utils } = props;
+}) => {
   const { cancelTrade, executeTrade } = actions;
   const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;

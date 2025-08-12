@@ -24,7 +24,17 @@ import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
 
-interface Props {
+export const KamiBar = ({
+  kami,
+  actions,
+  options: {
+    showCooldown,
+    showPercent,
+    showTooltip,
+  } = {},
+  utils,
+  tick,
+}: {
   kami: Kami;
   actions?: React.ReactNode;
   options?: {
@@ -38,11 +48,7 @@ interface Props {
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
   };
-}
-
-export const KamiBar = (props: Props) => {
-  const { kami, actions, options, utils, tick } = props;
-  const { showCooldown, showPercent, showTooltip } = options ?? {};
+}) => {
 
   const { kamiIndex, setKami } = useSelected();
   const { modals, setModals } = useVisibility();
