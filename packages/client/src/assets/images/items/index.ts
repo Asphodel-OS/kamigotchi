@@ -15,6 +15,7 @@ import cultivation_i_spell_card from './cultivation_i_spell_card.png';
 import cultivation_ii_spell_card from './cultivation_ii_spell_card.png';
 import cultivation_iii_spell_card from './cultivation_iii_spell_card.png';
 import daffodil from './daffodil.png';
+import demon_egg from './demon_egg.png';
 import disc_shaped_map from './disc_shaped_map.png';
 import empty_cup from './empty_cup.png';
 import energy_drink from './energy_drink.png';
@@ -54,6 +55,7 @@ import mint from './mint.png';
 import musu from './musu.png';
 import musu_magnet from './musu_magnet.png';
 import neiths_river_of_life_spell_card from './neiths_river_of_life_spell_card.png';
+import obol from './obol.png';
 import onyx from './onyx.png';
 import paeons_field_of_flowers_spell_card from './paeons_field_of_flowers_spell_card.png';
 import pine_cone from './pine_cone.png';
@@ -84,6 +86,8 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
+  obol: obol,
+  demon_egg: demon_egg,
   musu_magnet: musu_magnet,
   powdered_red_amber: powdered_red_amber,
   resin_tincture: resin_tincture,

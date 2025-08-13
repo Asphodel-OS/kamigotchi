@@ -14,6 +14,7 @@ import { registerInventoryModal } from './modals/inventory';
 import { registerKamiModal } from './modals/kami';
 import { registerKamiBridge } from './modals/kamiBridge';
 import { registerLeaderboardModal } from './modals/leaderboard';
+import { registerLootBoxModal } from './modals/lootBox/LootBox';
 import { registerMapModal } from './modals/map';
 import { registerMerchantModal } from './modals/merchant';
 import { registerEMABoardModal } from './modals/naming';
@@ -59,6 +60,7 @@ export function registerModals() {
   registerSettingsModal();
   registerTradingModal();
   registerPresaleModal();
+  registerLootBoxModal();
 
   // scene modals
   registerDialogueModal();

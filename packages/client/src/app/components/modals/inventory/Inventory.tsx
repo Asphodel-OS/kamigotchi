@@ -89,7 +89,7 @@ export function registerInventoryModal() {
       const useForAccount = (item: Item, amount: number) => {
         // really hacky way to determine if we're using a giftbox
         let actionKey = 'Using';
-        if (item.name === 'Giftbox') actionKey = 'Opening';
+        if (item.name === 'Giftbox' || item.name === 'Demon Egg') actionKey = 'Opening';
 
         actions.add({
           action: 'AccountFeed',
