@@ -55,6 +55,7 @@ export const KamisExpanded = (props: Props) => {
   const { onyxApprove, onyxRevive } = actions;
   const { account, node, onyx } = data;
   const { displayedKamis } = state;
+  const { calcExpRequirement } = utils;
   const { HarvestButton, UseItemButton } = display;
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
@@ -185,10 +186,11 @@ export const KamisExpanded = (props: Props) => {
           description={getDescription(kami)}
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
-          // contentTooltip={getTooltip(kami)}
           actions={DisplayedActions(account, kami, node)}
           showBattery
           showCooldown
+          showLevelUp
+          showSkillPoints
           utils={utils}
         />
       ))}
