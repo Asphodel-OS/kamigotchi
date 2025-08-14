@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Overlay, Popover, Text, TextTooltip, ActionButton, ActionListButton } from 'app/components/library';
+import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { KAMI_BASE_URI } from 'constants/media';
 import { Account, BaseAccount } from 'network/shapes/Account';
@@ -14,8 +14,8 @@ import { Kami } from 'network/shapes/Kami';
 import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
-import { getFriendshipStatus } from 'utils/friendship';
 import { Bio } from './Bio';
+import { Friend as FriendActions } from './Friend';
 
 interface Props {
   account: Account; // account selected for viewing
@@ -65,19 +65,6 @@ export const Header = (props: Props) => {
     return `Last Seen: ${moment(1000 * account.time.last).fromNow()}`;
   };
 
-  const friendshipStatus = getFriendshipStatus(player.entity, account.entity, getFriends);
-  const {
-    isOther,
-    isIncoming,
-    isOutgoing,
-    isFriend,
-    isBlocked,
-    incomingRequest,
-    outgoingRequest,
-    friendFriendship,
-    blockedFriendship,
-  } = friendshipStatus;
-
   /////////////////
   // RENDERING
 
@@ -114,6 +101,17 @@ export const Header = (props: Props) => {
     );
   };
 
+  const Friend = () => {
+    return (
+        <FriendActions
+          account={account}
+          player={player}
+          utils={{ getFriends }}
+          actions={{ requestFren, acceptFren, cancelFren, blockFren }}
+        />
+    );
+  };
+
   return (
     <Container>
       <Overlay top={0.75} right={0.75}>
@@ -134,76 +132,10 @@ export const Header = (props: Props) => {
               {abbreviateAddress(account.ownerAddress)}
             </Subtitle>
           </TextTooltip>
-          {!isSelf && isOther && (
-            <FriendActions>
-
-              {/* pending inbound request */}   
-              {isIncoming && incomingRequest && (
-                <>
-                  <FriendActionLabel size='small' tone='warning'>Requested You</FriendActionLabel>
-                  <ActionListButton
-                    id={`friendship-options-${account.entity}-header`}
-                    text=''
-                    size='small' 
-                    options={[
-                      { text: 'Accept', onClick: () => acceptFren(incomingRequest) },
-                      { text: 'Block', onClick: () => blockFren(account) },
-                      { text: 'Decline', onClick: () => cancelFren(incomingRequest) },
-                    ]}
-                  />
-                </>
-              )}
-
-              {/* friends */}
-              {isFriend && friendFriendship && (
-                <>
-                  <FriendActionLabel size='small' tone='success'>Friends</FriendActionLabel>
-                  <ActionListButton
-                    id={`friendship-options-${account.entity}-friend-header`}
-                    text=''
-                    size='small'
-                    options={[
-                      { text: 'Remove', onClick: () => cancelFren(friendFriendship) },
-                      { text: 'Block', onClick: () => blockFren(account) },
-                    ]}
-                  />
-                </>
-              )}
-
-              {/* pending outbound request */}
-              {isOutgoing && outgoingRequest && (
-                <>
-                  <FriendActionLabel size='small' tone='warning'>Request Sent</FriendActionLabel>
-                  <ActionListButton
-                    id={`friendship-options-${account.entity}-outgoing-header`}
-                    text=''
-                    size='small'
-                    options={[
-                      { text: 'Cancel', onClick: () => cancelFren(outgoingRequest) },
-                      { text: 'Block', onClick: () => blockFren(account) },
-                    ]}
-                  />
-                </>
-              )}
-
-              {/* blocked */}
-              {isBlocked && blockedFriendship && (
-                <>
-                  <FriendActionLabel size='small' tone='danger'>Blocked</FriendActionLabel>
-                  <ActionButton size='small' text='Unblock' onClick={() => cancelFren(blockedFriendship)} />
-                </>
-              )}
-
-              {/* not friends */}
-              {!isFriend && !isIncoming && !isOutgoing && !isBlocked && (
-                <>
-                  <ActionButton size='small' text='Add Friend' onClick={() => requestFren(account)} />
-                  <ActionButton size='small' text='Block' onClick={() => blockFren(account)} />
-                </>
-              )}
-            </FriendActions>
-          )}
         </TitleSection>
+        {!isSelf && (
+          Friend()
+        )}
         <DetailRow>
           <CakeIcon style={{ height: '1.4vh' }} />
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
@@ -296,48 +228,6 @@ const TitleSection = styled.div`
   flex-flow: column nowrap;
   gap: 0.3vw;
   margin-bottom: 0.6vw;
-`;
-
-const FriendActions = styled.div`
-  display: flex;
-  gap: 0.24vw;
-  align-items: center;
-  margin-top: 0.3vw;
-`;
-
-const FriendActionLabel = styled.div<{ size?: 'small' | 'medium'; tone?: 'neutral' | 'success' | 'warning' | 'danger' }>`
-  background-color: ${({ tone }) =>
-    tone === 'success' ? '#eaf7ea' : tone === 'warning' ? '#fff7da' : tone === 'danger' ? '#fdeaea' : '#f0f0f0'};
-  color: ${({ tone }) =>
-    tone === 'success' ? '#2f6f2f' : tone === 'warning' ? '#6b5a00' : tone === 'danger' ? '#7a2f2f' : '#555'};
-  user-select: none;
-  font-family: Pixel;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-  box-sizing: border-box;
-  cursor: default;
-  border: solid
-    ${({ tone }) =>
-      tone === 'success' ? '#bfe5bf' : tone === 'warning' ? '#f0dda1' : tone === 'danger' ? '#f2bcbc' : '#bcbcbc'}
-    0.15vw;
-  ${({ size }) =>
-    (size ?? 'medium') === 'small'
-      ? `
-    font-size: .6vw;
-    padding: .2vw .5vw;
-    border-radius: .3vw;
-    margin: 0 .12vw;
-    line-height: 1;
-  `
-      : `
-    font-size: .8vw;
-    padding: .35vw .7vw;
-    border-radius: .4vw;
-    margin: 0 .16vw; 
-    line-height: 1.1;
-  `}
 `;
 
 const Subtitle = styled.div`
