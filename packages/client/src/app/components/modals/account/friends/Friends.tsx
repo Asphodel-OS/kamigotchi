@@ -6,7 +6,6 @@ import { Account as PlayerAccount } from 'app/stores';
 import { Account } from 'network/shapes';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
-import { getFriendshipStatus } from 'utils/friendship';
 
 interface Props {
   data: { isSelf: boolean; player: PlayerAccount };
@@ -30,8 +29,18 @@ export const Friends = (props: Props) => {
   const { player, isSelf } = data;
 
   const Actions = (friendship: Friendship) => {
-    const friendshipStatus = getFriendshipStatus(player.entity, friendship.target.entity, getFriends);
-    const { isFriend, isOther, isIncoming, isOutgoing } = friendshipStatus;
+    const playerGetFriends = getFriends(player.entity);
+
+    const incomingEntities = playerGetFriends?.incomingReqs?.map((req) => req.account.entity);
+    const isIncoming = incomingEntities?.includes(friendship.target.entity);
+
+    const outgoingEntities = playerGetFriends?.outgoingReqs?.map((req) => req.target.entity);
+    const isOutgoing = outgoingEntities?.includes(friendship.target.entity);
+
+    const playerFriends = playerGetFriends?.friends?.map((fren) => fren.target.entity);
+    const isFriend = playerFriends?.includes(friendship.target.entity);
+
+    const isOther = player.entity !== friendship.target.entity;
 
     // if user is not already friend, is not the player, has not sent/recieved a friend request to/from the player we can add them
     const showAdd = !isFriend && isOther && !isIncoming && !isOutgoing;
