@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-
 import { EntityIndex } from '@mud-classic/recs';
+
 import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { Account as PlayerAccount } from 'app/stores';
 import { Account } from 'network/shapes';
