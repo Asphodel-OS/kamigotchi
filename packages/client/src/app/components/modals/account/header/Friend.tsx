@@ -29,10 +29,10 @@ export const Friend = (props: Props) => {
 
   const friends = getFriends(player.entity);
 
-  const incoming = friends?.incomingReqs?.find(r => r.account.entity === account.entity);
-  const outgoing = friends?.outgoingReqs?.find(r => r.target.entity === account.entity);
-  const friendship = friends?.friends?.find(f => f.target.entity === account.entity);
-  const blocked = friends?.blocked?.find(b => b.target.entity === account.entity);
+  const incoming = friends?.incomingReqs?.find(r => r.account.entity === account.entity) ?? null;
+  const outgoing = friends?.outgoingReqs?.find(r => r.target.entity === account.entity) ?? null;
+  const friendship = friends?.friends?.find(f => f.target.entity === account.entity) ?? null;
+  const blocked = friends?.blocked?.find(b => b.target.entity === account.entity) ?? null;
 
   const isIncoming = !!incoming;
   const isOutgoing = !!outgoing;
