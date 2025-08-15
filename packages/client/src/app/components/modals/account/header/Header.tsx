@@ -101,16 +101,6 @@ export const Header = (props: Props) => {
     );
   };
 
-  const Friend = () => {
-    return (
-        <FriendActions
-          account={account}
-          player={player}
-          utils={{ getFriends }}
-          actions={{ requestFren, acceptFren, cancelFren, blockFren }}
-        />
-    );
-  };
 
   return (
     <Container>
@@ -134,7 +124,12 @@ export const Header = (props: Props) => {
           </TextTooltip>
         </TitleSection>
         {!isSelf && (
-          Friend()
+          <FriendActions
+            account={account}
+            player={player}
+            utils={{ getFriends }}
+            actions={{ requestFren, acceptFren, cancelFren, blockFren }}
+          />
         )}
         <DetailRow>
           <CakeIcon style={{ height: '1.4vh' }} />
