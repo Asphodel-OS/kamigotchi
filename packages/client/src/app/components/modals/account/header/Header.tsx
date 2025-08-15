@@ -7,26 +7,39 @@ import styled from 'styled-components';
 import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { KAMI_BASE_URI } from 'constants/media';
-import { Account } from 'network/shapes/Account';
+import { Account, BaseAccount } from 'network/shapes/Account';
+import { Friends as FriendsType } from 'network/shapes/Account/friends';
+import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
+import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
+import { Friend as FriendActions } from './Friend';
 
 interface Props {
   account: Account; // account selected for viewing
-  actions: { setBio: (bio: string) => void; handlePfpChange: (kami: Kami) => void };
+  actions: {
+    setBio: (bio: string) => void;
+    handlePfpChange: (kami: Kami) => void;
+    requestFren: (account: BaseAccount) => void;
+    cancelFren: (friendship: Friendship) => void;
+    blockFren: (account: BaseAccount) => void;
+    acceptFren: (friendship: Friendship) => void;
+  };
   isLoading: boolean;
   isSelf: boolean;
+  player: PlayerAccount;
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
+    getFriends: (accEntity: EntityIndex) => FriendsType;
   };
 }
 
 export const Header = (props: Props) => {
-  const { isLoading, account, utils, isSelf, actions } = props;
-  const { getAccountKamis } = utils;
-  const { handlePfpChange, setBio } = actions;
+  const { isLoading, account, utils, isSelf, actions, player } = props;
+  const { getAccountKamis, getFriends } = utils;
+  const { handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren } = actions;
 
   const [tick, setTick] = useState(Date.now());
 
@@ -88,6 +101,7 @@ export const Header = (props: Props) => {
     );
   };
 
+
   return (
     <Container>
       <Overlay top={0.75} right={0.75}>
@@ -109,6 +123,14 @@ export const Header = (props: Props) => {
             </Subtitle>
           </TextTooltip>
         </TitleSection>
+        {!isSelf && (
+          <FriendActions
+            account={account}
+            player={player}
+            utils={{ getFriends }}
+            actions={{ requestFren, acceptFren, cancelFren, blockFren }}
+          />
+        )}
         <DetailRow>
           <CakeIcon style={{ height: '1.4vh' }} />
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>

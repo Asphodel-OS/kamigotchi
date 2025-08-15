@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-
 import { EntityIndex } from '@mud-classic/recs';
+
 import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { Account as PlayerAccount } from 'app/stores';
 import { Account } from 'network/shapes';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
+
 interface Props {
   data: { isSelf: boolean; player: PlayerAccount };
   actions: {
@@ -49,6 +50,10 @@ export const Friends = (props: Props) => {
       isOther && { text: 'Block', onClick: () => actions.blockFren(friendship.target) },
       isSelf && { text: 'Remove', onClick: () => actions.removeFren(friendship) },
     ].filter((o) => !!o);
+
+    // Hide the action button if no actions are available.
+    // This prevents showing the button on our own profile card when viewing on a friend's list.
+    if (options.length === 0) return null;
 
     return (
       <ActionListButton id={`friendship-options-${friendship.entity}`} text='' options={options} />

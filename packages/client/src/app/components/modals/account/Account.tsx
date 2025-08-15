@@ -212,9 +212,10 @@ export function registerAccountModal() {
           <Header
             key='header'
             account={account} // account selected for viewing
-            actions={{ handlePfpChange, setBio }}
+            actions={{ handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren }}
             isLoading={isLoading}
             isSelf={isSelf}
+            player={player}
             utils={utils}
           />
           <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
