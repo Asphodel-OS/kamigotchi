@@ -83,7 +83,7 @@ export async function initMint(api: AdminAPI) {
 
   // public
   // TODO: update price and start time
-  await api.config.set.number('MINT_START_PUBLIC', 1746172800); // Thursday, May 2, 2025 8:00:00 AM UTC
+  await api.config.set.number('MINT_START_PUBLIC', 0);
   await api.config.set.number('MINT_PRICE_PUBLIC', 100); // 0.1 ETH, 100 mETH
   await api.config.set.number('MINT_MAX_PUBLIC', 222);
 }
