@@ -53,17 +53,18 @@ export const Kamis = (props: Props) => {
 };
 
 const Container = styled.div`
-  display: flex;
-  flex-flow: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
   align-items: flex-start;
+  gap: 0.6vw;
 `;
 
 const CellContainer = styled.div`
   border: solid 0.15vw black;
   border-radius: 0.25vw;
 
-  margin: 0.3vh 0.4vw;
+  margin: 0;
   position: relative;
 `;
 
