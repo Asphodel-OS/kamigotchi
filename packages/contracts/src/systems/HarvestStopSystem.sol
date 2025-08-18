@@ -54,7 +54,7 @@ contract HarvestStopSystem is System {
     LibNode.scavenge(components, nodeIndex, output, accID); // implicit existence check
 
     // reset action bonuses
-    LibBonus.resetUponHarvestAction(components, kamiID);
+    LibBonus.resetUponHarvestStop(components, kamiID);
 
     // standard logging and tracking
     LibScore.incFor(components, accID, MUSU_INDEX, "COLLECT", output);
