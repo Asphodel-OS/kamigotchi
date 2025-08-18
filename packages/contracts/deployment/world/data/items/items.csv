@@ -36,6 +36,7 @@ Slightly sacred. "
 ,In Game,Mint,1012,Material,,,,,,A herb with many applications. Not often found here….
 ,In Game,Sanguine Shroom,1013,Material,,,,,,A mushroom that bruises and bleeds like flesh. Some believe that they feed on decaying spirits.
 ,In Game,Chalkberry,1014,Material,,,,,,A dry and bitter berry coated with chalky white fungus. The berry itself is inedible; useless except as a medium for a unique wild yeast.
+,To Deploy,Obol,1015,Misc,,,,,,"An ancient coin. Despite a worn and dull finish, it still glitters in the light. Valuable to certain individuals. "
 ,In Game,Empty Cup,1102,Material,,,,,,A small reusable cup crafted from stone. Useful for drinking potions or other beverages.
 ,In Game,Microplastics,1103,Material,,,,,,"Fine translucent powder. A promising new substance in hexerei. "
 ,In Game,Pine Pollen,1104,Material,,,,,,"Some people think this is very good for you. "
@@ -47,6 +48,7 @@ Slightly sacred. "
 ,In Game,Berry Chalk,1114,Material,,,,,,A chalky fungus scraped from a rare berry. Can ferment certain materials to produce a rejuvenating beverage.
 ,In Game,Holy Syrup,1201,Material,,,,,,Holy Dust diluted into a quantity of water. Forms a thin syrup that can be measured out for crafting.
 ,In Game,Resin Tincture,1202,Material,,,,,,"A sweet, spicy syrup made from the natural resin found in the trees of Kamigotchi World. Useful for a number of recipes."
+,To Deploy,Fuliginous Ooze,1203,Material,,,,,,Like crude oil with the texture of clay. It seems to absorb the light around it. Could be an ingredient in powerful magic.
 ,In Game,Red Gakki Ribbon,11001,Revive,Kami,,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. "
@@ -59,6 +61,13 @@ These ribbons are greatly prized…. "
 ,In Game,“Cultivation I” Spell Card,11211,Food,Kami,,NOT_TRADABLE,"XP+100,HP+20",,"The card depicts a pale sprout emerging from rich, black soil. Activating this Spell Card on a Kamigotchi will restore 20 HP and grant 100 XP."
 ,In Game,“Cultivation II” Spell Card,11212,Food,Kami,,NOT_TRADABLE,"XP+200,HP+50",,The card depicts a teardrop-shaped flowerbud growing out of light brown soil. Activating this Spell Card on a Kamigotchi will restore 50 HP and grant 200 XP.
 ,In Game,“Cultivation III” Spell Card,11213,Food,Kami,,NOT_TRADABLE,"XP+1000,HP+100",,The card depicts a flower heartily blooming in pale and sandy earth. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 1000 XP.
+,To Deploy,Full Heart Crystal,11221,Food,Kami,,,XP+5000,,"It pulses with warmth. Give this to your Kami to grant it a large amount of XP. "
+,To Deploy,Half Heart Crystal,11222,Food,Kami,,,XP+1000,,It feels slightly warm in your hand. Give this to your Kami to grant it a moderate amount of XP.
+,To Deploy,Great Heart Crystal,11223,Food,Kami,,,XP+15000,,"The crystal beats like a real heart. It radiates with heat enough to warm your surroundings. Give this to your kami to grant it a very large amount of XP. "
+,To Deploy,Inverted Teardrop Jewel,11224,Food,Kami,,,ATR+10,,"A rare gem with an incandescent color. Some say the stone has a wild spirit and will leap out of your pack if unattended. "
+,To Deploy,Teardrop Jewel,11225,Food,Kami,,,HFB+10,,"A rare gem with a tranquil color. Some say that if you drop it into water, it won’t disturb the surface. This jewel boosts a kami’s Fertility, enhancing its type advantages when harvesting. "
+,To Deploy,Ash Pearl,11226,Food,Kami,,,"TEMP1HARMONY,TEMP1VIOLENCE",,"The Wonder Egg was filled with soot and ash, but also a large blue pearl. Give this pearl to your Kami to grant it a temporary +1 to Harmony and Violence. If your Kami is liquidated, the pearl breaks and the power is lost. "
+,To Deploy,Fetid Egg,11227,Food,Kami,,,HP+35,,"This egg seems fresh, and refuses to spoil even out of the shell. Still, it reeks of sulfur. Your Kami can eat this to restore HP. "
 ,In Game,Maple-Flavor Ghost Gum,11301,Food,Kami,,,HP+25,,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. "
 ,In Game,Cheeseburger,11302,Food,Kami,,,HP+50,,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. "
 ,In Game,Pom-Pom Fruit Candy,11303,Food,Kami,,,HP+50,,These fruit candies contain a huge amount of energy. Restores 50 Health to a Kamigotchi.
@@ -68,15 +77,16 @@ These ribbons are greatly prized…. "
 ,In Game,XP Potion,11401,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1003,XP+1000",,Give to a Kami to increase their XP by 1000.
 ,In Game,Greater XP Potion,11402,Food,Kami,,BYPASS_BONUS_RESET,"ITEM1006,XP+15000",,Give to a Kami to increase their XP by 15000.
 ,In Game,Respec Potion,11403,Misc,Kami,,BYPASS_BONUS_RESET,ITEM1003,,"Give to a Kami to reset their skill points. "
-,To Update,Grace Potion,11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
-,To Update,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
-,To Update,Apology Letter,11406,Food,Kami,,BYPASS_BONUS_RESET,ARB-50%,,A letter written by a Kami with sincere remorse for its actions. Lowers Recoil when liquidating other Kami.
-,To Update,MUSU Magnet,11407,Food,Kami,,BYPASS_BONUS_RESET,DSR+25%,,This shiny purple rock attracts grains of $MUSU. It dramatically increases the proportion of $MUSU a kami retains when it’s liquidated.
-,To Update,Festival Chime,11408,Food,Kami,,BYPASS_BONUS_RESET,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
-,To Update,Energy Drink,11409,Food,Kami,,BYPASS_BONUS_RESET,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
-,To Update,Hostility Potion,11410,Food,Kami,,BYPASS_BONUS_RESET,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
+,In Game,Grace Potion,11404,Food,Kami,,BYPASS_BONUS_RESET,"STRAIN-25%,ITEM1003",,"Give to a Kami to decrease loss of health during the next Harvest by 25%. "
+,In Game,Bless Potion,11405,Food,Kami,,BYPASS_BONUS_RESET,"BOUNTY+25%,ITEM1003",,Give to a Kami to increase the MUSU gained from the next Harvest by 25%.
+,In Game,Apology Letter,11406,Food,Kami,,BYPASS_BONUS_RESET,ARB-50%,,A letter written by a Kami with sincere remorse for its actions. Lowers Recoil when liquidating other Kami.
+,In Game,MUSU Magnet,11407,Food,Kami,,BYPASS_BONUS_RESET,DSR+50%,,This shiny purple rock attracts grains of $MUSU. It dramatically increases the proportion of $MUSU a kami retains when it’s liquidated.
+,In Game,Festival Chime,11408,Food,Kami,,BYPASS_BONUS_RESET,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
+,In Game,Energy Drink,11409,Food,Kami,,BYPASS_BONUS_RESET,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
+,In Game,Hostility Potion,11410,Food,Kami,,BYPASS_BONUS_RESET,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
 ,In Game,Giftbox,21001,Lootbox,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
+,To Deploy,Wonder Egg,21003,Lootbox,Account,,,DT3,,"A cracked egg held together by blood-red wax. The contents are a surprise. "
 ,In Game,Ice Cream,21201,Food,Account,,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Account,,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Account,,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
