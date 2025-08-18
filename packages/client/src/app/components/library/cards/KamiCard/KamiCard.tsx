@@ -89,6 +89,28 @@ export const KamiCard = (props: Props) => {
     }));
   }, [getTempBonuses, kami]);
 
+  const Title = (
+    <TitleBar>
+      <TitleText key='title' onClick={() => handleKamiClick()}>
+        {kami.name}
+      </TitleText>
+      <TitleCorner key='corner'>
+        {showCooldown && <Cooldown kami={kami} />}
+        {showBattery && <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />}
+      </TitleCorner>
+    </TitleBar>
+  );
+
+  const Bonuses = itemBonuses.length > 0 && (
+    <Buffs>
+      {itemBonuses.map((bonus, i) => (
+        <TextTooltip key={i} text={[bonus.text]} direction='row'>
+          <Buff src={bonus.image} />
+        </TextTooltip>
+      ))}
+    </Buffs>
+  );
+
   return (
     <Card
       image={{
@@ -98,17 +120,7 @@ export const KamiCard = (props: Props) => {
         onClick: handleKamiClick,
       }}
     >
-      <TitleBar>
-        <TitleText key='title' onClick={() => handleKamiClick()}>
-          {kami.name}
-        </TitleText>
-        <TitleCorner key='corner'>
-          {showCooldown && <Cooldown kami={kami} />}
-          {showBattery && (
-            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
-          )}
-        </TitleCorner>
-      </TitleBar>
+      {Title}
       <Content>
         <ContentRow>
           <ContentColumn key='column-1'>
@@ -122,15 +134,7 @@ export const KamiCard = (props: Props) => {
           </ContentColumn>
         </ContentRow>
         <ContentBottom>
-          {itemBonuses.length > 0 && (
-            <Buffs>
-              {itemBonuses.map((bonus, i) => (
-                <TextTooltip key={i} text={[bonus.text]} direction='row'>
-                  <Buff src={bonus.image} />
-                </TextTooltip>
-              ))}
-            </Buffs>
-          )}
+          {Bonuses}
           <ContentActions>{actions}</ContentActions>
         </ContentBottom>
       </Content>
