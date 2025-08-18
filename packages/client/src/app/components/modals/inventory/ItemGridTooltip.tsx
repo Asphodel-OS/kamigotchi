@@ -23,6 +23,8 @@ export const ItemGridTooltip = (props: Props) => {
   const requirements = item.requirements;
   const effects = item.effects;
 
+  const isLootbox = type === 'LOOTBOX';
+
   const display = (item: Item) => {
     const disp = displayRequirements(item);
     if (disp === '???') return 'None';
@@ -45,9 +47,9 @@ export const ItemGridTooltip = (props: Props) => {
           Requirements: <p>{requirements?.use?.length > 0 ? display(item) : 'None'}</p>
         </Section>
         <Section>
-          {item.type === 'LOOTBOX' ? 'Drops:' : 'Effects:'}
+          Effects:
           <p>
-            {effects?.use?.length > 0
+            {!isLootbox && effects?.use?.length > 0
               ? parseAllos(effects.use)
                   .map((entry) => entry.description)
                   .join('\n')
