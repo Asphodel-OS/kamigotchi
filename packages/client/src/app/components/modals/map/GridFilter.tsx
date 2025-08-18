@@ -51,12 +51,11 @@ export const GridFilter = (props: Props) => {
 
   const getIcon = (): string | null => {
     const map: Record<Mode, string | null> = {
-      MyKamis: yourKamiIconsMap.has(roomIndex) && KamiIcon,
+      MyKamis: yourKamiIconsMap.has(roomIndex) ? KamiIcon : null,
       RoomType: getAffinityImage(getNode(roomIndex).affinity),
-      KamiCount: (kamiCountMap.get(roomIndex) ?? 0) > 0 && HelpMenuIcons.kamis,
-      OperatorCount: (operatorCountMap.get(roomIndex) ?? 0) > 0 && OperatorIcon,
+      KamiCount: (kamiCountMap.get(roomIndex) ?? 0) > 0 ? HelpMenuIcons.kamis : null,
+      OperatorCount: (operatorCountMap.get(roomIndex) ?? 0) > 0 ? OperatorIcon : null,
     };
-
     return roomIndex !== 0 ? map[optionSelected] : null;
   };
 
