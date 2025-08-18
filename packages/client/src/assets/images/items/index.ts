@@ -2,6 +2,7 @@ import aetheric_sextant from './aetheric_sextant.png';
 import agency_giftbox from './agency_giftbox.png';
 import ancient_machine_part from './ancient_machine_part.png';
 import apology_letter from './apology_letter.png';
+import ash_pearl from './ash_pearl.png';
 import astrolabe_disk from './astrolabe_disk.png';
 import berry_chalk from './berry_chalk.png';
 import best_ice_cream from './best_ice_cream.png';
@@ -21,16 +22,21 @@ import energy_drink from './energy_drink.png';
 import essence_of_daffodil from './essence_of_daffodil.png';
 import eth from './eth.png';
 import festival_chime from './festival_chime.png';
+import fetid_egg from './fetid_egg.png';
+import full_heart_crystal from './full_heart_crystal.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
 import glass_jar from './glass_jar.png';
 import grace_potion from './grace_potion.png';
+import great_heart_crystal from './great_heart_crystal.png';
 import greater_xp_potion from './greater_xp_potion.png';
+import half_heart_crystal from './half_heart_crystal.png';
 import holy_dust from './holy_dust.png';
 import holy_syrup from './holy_syrup.png';
 import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
 import initia_icon from './initia_icon.png';
+import inverted_teardrop_jewel from './inverted_teardrop_jewel.png';
 import kamigotchi_world_citizen_giftbox from './kamigotchi_world_citizen_giftbox.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
 import kamigotchi_world_passport_1_bit_black_and_white from './kamigotchi_world_passport_1_bit_black_and_white.png';
@@ -54,6 +60,7 @@ import mint from './mint.png';
 import musu from './musu.png';
 import musu_magnet from './musu_magnet.png';
 import neiths_river_of_life_spell_card from './neiths_river_of_life_spell_card.png';
+import obol from './obol.png';
 import onyx from './onyx.png';
 import paeons_field_of_flowers_spell_card from './paeons_field_of_flowers_spell_card.png';
 import pine_cone from './pine_cone.png';
@@ -75,7 +82,9 @@ import screwdriver from './screwdriver.png';
 import shredded_mint from './shredded_mint.png';
 import spice_grinder from './spice_grinder.png';
 import stone from './stone.png';
+import teardrop_jewel from './teardrop_jewel.png';
 import vipp from './vipp.png';
+import wonder_egg from './wonder_egg.png';
 import wooden_stick from './wooden_stick.png';
 import xp_candy_huge from './xp_candy_huge.png';
 import xp_candy_large from './xp_candy_large.png';
@@ -84,6 +93,15 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
+  great_heart_crystal: great_heart_crystal,
+  teardrop_jewel: teardrop_jewel,
+  inverted_teardrop_jewel: inverted_teardrop_jewel,
+  obol: obol,
+  wonder_egg: wonder_egg,
+  fetid_egg: fetid_egg,
+  ash_pearl: ash_pearl,
+  half_heart_crystal: half_heart_crystal,
+  full_heart_crystal: full_heart_crystal,
   musu_magnet: musu_magnet,
   powdered_red_amber: powdered_red_amber,
   resin_tincture: resin_tincture,
