@@ -1,11 +1,11 @@
-import { observer } from 'mobx-react-lite';
-import React, { useMemo } from 'react';
-import styled from 'styled-components';
 import { allComponents } from 'app/components';
 import { useLayers } from 'app/root/hooks';
-import { useStream } from 'network/utils';
 import type { UIComponentWithGrid } from 'app/root/types';
+import { observer } from 'mobx-react-lite';
 import { Layers } from 'network/index';
+import { useStream } from 'network/utils';
+import { useMemo } from 'react';
+import styled from 'styled-components';
 
 export const MainWindow = observer(() => {
   const layers = useLayers();
@@ -58,7 +58,6 @@ const UIGrid = styled.div`
   top: 0;
   height: 100vh;
   width: 100vw;
-  pointer-events: none;
   z-index: 10;
   overflow: hidden;
 `;
