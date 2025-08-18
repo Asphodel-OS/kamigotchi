@@ -1,4 +1,4 @@
-import { EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
@@ -13,8 +13,7 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
-import { ActionState, defineActionComponent } from 'network/systems';
-import { waitForActionCompletion } from 'network/utils';
+import { checkActionState } from 'network/utils';
 import styled from 'styled-components';
 import { Controls } from './Controls';
 import { WildKamis } from './WildKamis';
@@ -129,17 +128,6 @@ export function registerKamiBridge() {
       /////////////////
       // TRANSACTIONS
 
-      // if action completed successfully
-      // signal the stage area to be cleaned
-      const checkState = async (
-        action: ReturnType<typeof defineActionComponent>,
-        transaction: EntityIndex
-      ) => {
-        await waitForActionCompletion(action, transaction);
-        const finalState = getComponentValue(action, transaction);
-        return finalState?.state === ActionState.Complete;
-      };
-
       // import a kami from the wild to the world
       // TODO: pets without accounts are linked to EOA, no account. link EOA
       const depositTx = async (kamis: Kami[]) => {
@@ -164,7 +152,7 @@ export function registerKamiBridge() {
           },
         });
 
-        const completed = await checkState(actions.Action, transaction);
+        const completed = await checkActionState(actions.Action, transaction);
         if (completed) {
           setSelectedWild([]);
         }
@@ -192,7 +180,7 @@ export function registerKamiBridge() {
             return api.bridge.ERC721.kami.batch.unstake(indices);
           },
         });
-        const completed = await checkState(actions.Action, transaction);
+        const completed = await checkActionState(actions.Action, transaction);
         if (completed) {
           setSelectedWorld([]);
         }
