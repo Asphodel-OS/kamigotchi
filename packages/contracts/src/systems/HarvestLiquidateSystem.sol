@@ -71,21 +71,17 @@ contract HarvestLiquidateSystem is System {
       KillLog(bounty, salvage, spoils, strain, karma)
     );
 
-    // drain the killer
-    LibKami.drain(components, killerID, recoil);
+    // killer post-death actions
+    LibKami.drain(components, killerID, recoil); // killer takes recoil
+    LibKill.rewardKiller(components, accID); // killer gets reward
+    LibBonus.resetUponLiquidation(components, killerID); // resets killer's liquidation bonus
+    LibKami.setLastActionTs(components, killerID, block.timestamp); // resets killer's cooldown
 
-    // reward killer
-    LibKill.rewardKiller(components, accID);
-
-    // kill the target and shut off the harvest
-    LibKami.kill(components, victimID);
-    LibBonus.resetUponHarvestAction(components, victimID);
-    LibHarvest.stop(components, victimHarvID, victimID);
-    LibKami.setLastActionTs(components, killerID, block.timestamp);
-
-    // resetting bonuses
-    LibBonus.resetUponLiquidation(components, killerID);
-    LibBonus.resetUponLiquidation(components, victimID);
+    // victim post-death actions
+    LibKami.kill(components, victimID); // kills victim
+    LibHarvest.stop(components, victimHarvID, victimID); // stops victim's harvest
+    LibBonus.resetUponHarvestStop(components, victimID); // resets victim's bonuses
+    LibBonus.resetUponDeath(components, victimID);
 
     // standard logging and tracking
     LibScore.incFor(components, accID, 0, "LIQUIDATE", 1);

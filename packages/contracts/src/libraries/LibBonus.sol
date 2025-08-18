@@ -309,6 +309,7 @@ library LibBonus {
 
   /// @notice resets upon harvest stop (stop, liquidated)
   function resetUponHarvestStop(IUintComp components, uint256 holderID) public {
+    unassignBy(components, "UPON_HARVEST_ACTION", holderID); // included, stop is a harvest action
     unassignBy(components, "UPON_HARVEST_STOP", holderID);
   }
 
