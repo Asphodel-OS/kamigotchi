@@ -24,8 +24,8 @@ export const Controls = (props: Props) => {
 
   // this allows importing and exporting at the same time
   const handleAction = () => {
-    const kamisToImport = selectedWild.filter((kami) => selectedWild.includes(kami));
-    const kamisToExport = selectedWorld.filter((kami) => selectedWorld.includes(kami));
+    const kamisToImport = selectedWild;
+    const kamisToExport = selectedWorld;
     if (kamisToImport.length > 0) {
       actions.import(kamisToImport);
     }
@@ -51,9 +51,9 @@ export const Controls = (props: Props) => {
       </Overlay>
       <Scrollable>
         {selectedWild.length > 0 &&
-          selectedWild.map((kami) => <KamiBlock key={kami.index} kami={kami} />)}
+          selectedWild.map((kami) => <KamiBlock key={`wild-${kami.index}`} kami={kami} />)}
         {selectedWorld.length > 0 &&
-          selectedWorld.map((kami) => <KamiBlock key={kami.index} kami={kami} />)}
+          selectedWorld.map((kami) => <KamiBlock key={`world-${kami.index}`} kami={kami} />)}
       </Scrollable>
       <Overlay top={30} fullWidth>
         <IconButton

@@ -15,7 +15,7 @@ interface Props {
   };
   state: {
     selectedWild: Kami[];
-    setSelectedWild: (kamis: Kami[]) => void;
+    setSelectedWild: React.Dispatch<React.SetStateAction<Kami[]>>;
     selectedWorld?: Kami[];
   };
 }
@@ -35,11 +35,10 @@ export const WildKamis = (props: Props) => {
 
   const handleSelect = (kami: Kami) => {
     playClick();
-    if (selectedWild.includes(kami)) {
-      setSelectedWild(selectedWild.filter((k) => k !== kami));
-    } else {
-      setSelectedWild([...selectedWild, kami]);
-    }
+    setSelectedWild((prev: Kami[]): Kami[] => {
+      const exists = prev.some((k) => k.index === kami.index);
+      return exists ? prev.filter((k) => k.index !== kami.index) : [...prev, kami];
+    });
   };
 
   /////////////////
@@ -75,7 +74,7 @@ export const WildKamis = (props: Props) => {
             kami={kami}
             tooltip={(selectedWorld?.length ?? 0) > 0 ? ['Only imports or exports at a time'] : []}
             select={{
-              isSelected: selectedWild.includes(kami),
+              isSelected: selectedWild.some((k) => k.index === kami.index),
               isDisabled: (selectedWorld?.length ?? 0) > 0,
               onClick: () => handleSelect(kami),
             }}
