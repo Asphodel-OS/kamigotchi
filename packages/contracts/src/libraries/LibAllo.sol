@@ -141,6 +141,7 @@ library LibAllo {
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
   }
 
+  // todo: refactor this into something more explicit - only used for sync  (e.g. increasing current health)
   function createStat(
     IUintComp components,
     uint256 sourceID,
