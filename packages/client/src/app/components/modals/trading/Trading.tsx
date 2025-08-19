@@ -107,7 +107,6 @@ export const TradingModal: UIComponent = {
     // pull all items from the registry and save the tradable ones
     const refreshItemRegistry = () => {
       const all: Item[] = getAllItems();
-      console.log('all items', all);
 
       // const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
       const tradable = all.filter((item) => item.is.tradeable);

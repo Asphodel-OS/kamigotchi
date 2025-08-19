@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -20,7 +20,6 @@ interface Props {
 
 export const LineItem = (props: Props) => {
   const { options, selected, amt, setAmt, remove, reverse } = props;
-  const [search, setSearch] = useState<string>('');
 
   return (
     <Container>
