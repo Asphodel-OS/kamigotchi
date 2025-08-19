@@ -9,27 +9,27 @@ import { getArray, getValue, processArray, processValue } from './base';
 export const getConfig = (world: World, comps: Components): KamiConfigs => {
   return {
     harvest: {
-      bounty: getASTNode(world, comps, 'KAMI_HARV_BOUNTY'),
+      bounty: getAST(world, comps, 'KAMI_HARV_BOUNTY'),
       efficacy: {
-        body: getEfficacyNode(world, comps, 'KAMI_HARV_EFFICACY_BODY'),
-        hand: getEfficacyNode(world, comps, 'KAMI_HARV_EFFICACY_HAND'),
+        body: getEfficacy(world, comps, 'KAMI_HARV_EFFICACY_BODY'),
+        hand: getEfficacy(world, comps, 'KAMI_HARV_EFFICACY_HAND'),
       },
-      fertility: getASTNode(world, comps, 'KAMI_HARV_FERTILITY'),
-      intensity: getASTNode(world, comps, 'KAMI_HARV_INTENSITY'),
-      strain: getASTNode(world, comps, 'KAMI_HARV_STRAIN'),
+      fertility: getAST(world, comps, 'KAMI_HARV_FERTILITY'),
+      intensity: getAST(world, comps, 'KAMI_HARV_INTENSITY'),
+      strain: getAST(world, comps, 'KAMI_HARV_STRAIN'),
     },
     liquidation: {
-      animosity: getASTNode(world, comps, 'KAMI_LIQ_ANIMOSITY'),
-      efficacy: getEfficacyNode(world, comps, 'KAMI_LIQ_EFFICACY'),
-      threshold: getASTNode(world, comps, 'KAMI_LIQ_THRESHOLD'),
-      salvage: getASTNode(world, comps, 'KAMI_LIQ_SALVAGE'),
-      spoils: getASTNode(world, comps, 'KAMI_LIQ_SPOILS'),
-      karma: getASTNode(world, comps, 'KAMI_LIQ_KARMA'),
-      recoil: getASTNode(world, comps, 'KAMI_LIQ_RECOIL'),
+      animosity: getAST(world, comps, 'KAMI_LIQ_ANIMOSITY'),
+      efficacy: getEfficacy(world, comps, 'KAMI_LIQ_EFFICACY'),
+      threshold: getAST(world, comps, 'KAMI_LIQ_THRESHOLD'),
+      salvage: getAST(world, comps, 'KAMI_LIQ_SALVAGE'),
+      spoils: getAST(world, comps, 'KAMI_LIQ_SPOILS'),
+      karma: getAST(world, comps, 'KAMI_LIQ_KARMA'),
+      recoil: getAST(world, comps, 'KAMI_LIQ_RECOIL'),
     },
     rest: {
-      metabolism: getASTNode(world, comps, 'KAMI_REST_METABOLISM'),
-      recovery: getASTNode(world, comps, 'KAMI_REST_RECOVERY'),
+      metabolism: getAST(world, comps, 'KAMI_REST_METABOLISM'),
+      recovery: getAST(world, comps, 'KAMI_REST_RECOVERY'),
     },
     general: {
       cooldown: getValue(world, comps, 'KAMI_STANDARD_COOLDOWN'),
@@ -42,27 +42,27 @@ export const getConfig = (world: World, comps: Components): KamiConfigs => {
 export const processConfig = (world: World, comps: Components): KamiConfigs => {
   return {
     harvest: {
-      bounty: processASTNode(world, comps, 'KAMI_HARV_BOUNTY'),
+      bounty: processAST(world, comps, 'KAMI_HARV_BOUNTY'),
       efficacy: {
-        body: processEfficacyNode(world, comps, 'KAMI_HARV_EFFICACY_BODY'),
-        hand: processEfficacyNode(world, comps, 'KAMI_HARV_EFFICACY_HAND'),
+        body: processEfficacy(world, comps, 'KAMI_HARV_EFFICACY_BODY'),
+        hand: processEfficacy(world, comps, 'KAMI_HARV_EFFICACY_HAND'),
       },
-      fertility: processASTNode(world, comps, 'KAMI_HARV_FERTILITY'),
-      intensity: processASTNode(world, comps, 'KAMI_HARV_INTENSITY'),
-      strain: processASTNode(world, comps, 'KAMI_HARV_STRAIN'),
+      fertility: processAST(world, comps, 'KAMI_HARV_FERTILITY'),
+      intensity: processAST(world, comps, 'KAMI_HARV_INTENSITY'),
+      strain: processAST(world, comps, 'KAMI_HARV_STRAIN'),
     },
     liquidation: {
-      animosity: processASTNode(world, comps, 'KAMI_LIQ_ANIMOSITY'),
-      efficacy: processEfficacyNode(world, comps, 'KAMI_LIQ_EFFICACY'),
-      threshold: processASTNode(world, comps, 'KAMI_LIQ_THRESHOLD'),
-      salvage: processASTNode(world, comps, 'KAMI_LIQ_SALVAGE'),
-      spoils: processASTNode(world, comps, 'KAMI_LIQ_SPOILS'),
-      karma: processASTNode(world, comps, 'KAMI_LIQ_KARMA'),
-      recoil: processASTNode(world, comps, 'KAMI_LIQ_RECOIL'),
+      animosity: processAST(world, comps, 'KAMI_LIQ_ANIMOSITY'),
+      efficacy: processEfficacy(world, comps, 'KAMI_LIQ_EFFICACY'),
+      threshold: processAST(world, comps, 'KAMI_LIQ_THRESHOLD'),
+      salvage: processAST(world, comps, 'KAMI_LIQ_SALVAGE'),
+      spoils: processAST(world, comps, 'KAMI_LIQ_SPOILS'),
+      karma: processAST(world, comps, 'KAMI_LIQ_KARMA'),
+      recoil: processAST(world, comps, 'KAMI_LIQ_RECOIL'),
     },
     rest: {
-      metabolism: processASTNode(world, comps, 'KAMI_REST_METABOLISM'),
-      recovery: processASTNode(world, comps, 'KAMI_REST_RECOVERY'),
+      metabolism: processAST(world, comps, 'KAMI_REST_METABOLISM'),
+      recovery: processAST(world, comps, 'KAMI_REST_RECOVERY'),
     },
     general: {
       cooldown: processValue(world, comps, 'KAMI_STANDARD_COOLDOWN'),
@@ -71,22 +71,43 @@ export const processConfig = (world: World, comps: Components): KamiConfigs => {
   };
 };
 
+// check if any field of the KamiConfig is falsey
+export const isFalsey = (configs: KamiConfigs) => {
+  return (
+    isFalseyAST(configs.harvest.bounty) ||
+    isFalseyEfficacy(configs.harvest.efficacy.body) ||
+    isFalseyEfficacy(configs.harvest.efficacy.hand) ||
+    isFalseyAST(configs.harvest.fertility) ||
+    isFalseyAST(configs.harvest.intensity) ||
+    isFalseyAST(configs.harvest.strain) ||
+    isFalseyAST(configs.liquidation.animosity) ||
+    isFalseyEfficacy(configs.liquidation.efficacy) ||
+    isFalseyAST(configs.liquidation.threshold) ||
+    isFalseyAST(configs.liquidation.salvage) ||
+    isFalseyAST(configs.liquidation.spoils) ||
+    isFalseyAST(configs.liquidation.karma) ||
+    isFalseyAST(configs.liquidation.recoil) ||
+    isFalseyAST(configs.rest.metabolism) ||
+    isFalseyAST(configs.rest.recovery)
+  );
+};
+
 /////////////////
 // AST NODES
 
 // retrieve a full AsphoAST config from its key
-const getASTNode = (world: World, comps: Components, key: string): AsphoAST => {
+const getAST = (world: World, comps: Components, key: string): AsphoAST => {
   const configArray = getArray(world, comps, key);
-  return structureASTNode(configArray);
+  return structureAST(configArray);
 };
 
 // process a full AsphoAST config from its key
-const processASTNode = (world: World, comps: Components, key: string): AsphoAST => {
+const processAST = (world: World, comps: Components, key: string): AsphoAST => {
   const configArray = processArray(world, comps, key);
-  return structureASTNode(configArray);
+  return structureAST(configArray);
 };
 
-const structureASTNode = (config: number[]): AsphoAST => {
+const structureAST = (config: number[]): AsphoAST => {
   return {
     nudge: {
       raw: config[0],
@@ -111,22 +132,31 @@ const structureASTNode = (config: number[]): AsphoAST => {
   };
 };
 
+const isFalseyAST = (node: AsphoAST) => {
+  return (
+    node.nudge.value === 0 &&
+    node.ratio.value === 0 &&
+    node.shift.value === 0 &&
+    node.boost.value === 0
+  );
+};
+
 /////////////////
 // EFFICACY NODES
 
 // get an efficacy config node for liquidation
-const getEfficacyNode = (world: World, comps: Components, key: string): Efficacy => {
+const getEfficacy = (world: World, comps: Components, key: string): Efficacy => {
   const configArray = getArray(world, comps, key);
-  return structureEfficacyNode(configArray);
+  return structureEfficacy(configArray);
 };
 
 // process an efficacy config node for liquidation
-const processEfficacyNode = (world: World, comps: Components, key: string): Efficacy => {
+const processEfficacy = (world: World, comps: Components, key: string): Efficacy => {
   const configArray = processArray(world, comps, key);
-  return structureEfficacyNode(configArray);
+  return structureEfficacy(configArray);
 };
 
-const structureEfficacyNode = (config: number[]): Efficacy => {
+const structureEfficacy = (config: number[]): Efficacy => {
   const precision = 10 ** config[0];
   return {
     base: config[1] / precision,
@@ -134,4 +164,8 @@ const structureEfficacyNode = (config: number[]): Efficacy => {
     down: -config[3] / precision,
     special: config[4] / precision,
   };
+};
+
+const isFalseyEfficacy = (efficacy: Efficacy) => {
+  return efficacy.base === 0 && efficacy.up === 0 && efficacy.down === 0 && efficacy.special === 0;
 };

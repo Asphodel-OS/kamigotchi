@@ -18,6 +18,7 @@ import {
   getState,
 } from 'network/shapes/utils/component';
 import { getKamiConfig } from '../config';
+import { isFalsey } from '../config/kami';
 import { updateHarvestRate, updateHealthRate } from './calcs';
 import { getKamiFlags, getKamiHarvest, getKamiSkills, getKamiTraits } from './getters';
 
@@ -123,7 +124,7 @@ export const get = (
     if (updateDelta > options.config) {
       if (debug) console.log(`  updating kami config`);
       kami.config = getKamiConfig(world, components);
-      ConfigsUpdateTs.set(entity, now);
+      if (!isFalsey(kami.config)) ConfigsUpdateTs.set(entity, now);
     }
   }
 
