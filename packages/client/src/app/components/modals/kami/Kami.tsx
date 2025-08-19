@@ -88,161 +88,161 @@ export const KamiDetails: UIComponent = {
     );
   },
   Render: ({ data, network, utils }) => {
-      const { actions, api } = network;
-      const { account, onyxItem, spender } = data;
-      const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
-      const { kamiIndex } = useSelected();
-      const { selectedAddress, apis: ownerAPIs } = useNetwork();
-      const { modals, setModals } = useVisibility();
+    const { actions, api } = network;
+    const { account, onyxItem, spender } = data;
+    const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
+    const { kamiIndex } = useSelected();
+    const { selectedAddress, apis: ownerAPIs } = useNetwork();
+    const { modals } = useVisibility();
 
-      const [tab, setTab] = useState<TabType>('TRAITS');
-      const [kami, setKami] = useState<Kami>();
-      const [owner, setOwner] = useState<BaseAccount>(NullAccount);
-      const [tick, setTick] = useState(Date.now());
+    const [tab, setTab] = useState<TabType>('TRAITS');
+    const [kami, setKami] = useState<Kami>();
+    const [owner, setOwner] = useState<BaseAccount>(NullAccount);
+    const [tick, setTick] = useState(Date.now());
 
-      // initialize skills on load
-      // TODO: move this to a more appropriate place
-      useEffect(() => {
-        utils.initializeSkills();
-      }, []);
+    // initialize skills on load
+    // TODO: move this to a more appropriate place
+    useEffect(() => {
+      utils.initializeSkills();
+    }, [modals.kami]);
 
-      /////////////////
-      // SUBSCRIPTIONS
+    /////////////////
+    // SUBSCRIPTIONS
 
-      // time trigger to use for periodic refreshes
-      useEffect(() => {
-        const updateSync = () => setTick(Date.now());
-        const timerId = setInterval(updateSync, SYNC_TIME);
-        return () => clearInterval(timerId);
-      }, []);
+    // time trigger to use for periodic refreshes
+    useEffect(() => {
+      const updateSync = () => setTick(Date.now());
+      const timerId = setInterval(updateSync, SYNC_TIME);
+      return () => clearInterval(timerId);
+    }, []);
 
-      // update the Kami Object whenever the index changes or on each cycle
-      useEffect(() => {
-        if (!modals.kami) return;
-        const kamiEntity = queryKamiByIndex(kamiIndex);
-        const newKami = getKami(kamiEntity);
-        setKami(newKami);
+    // update the Kami Object whenever the index changes or on each cycle
+    useEffect(() => {
+      if (!modals.kami) return;
+      const kamiEntity = queryKamiByIndex(kamiIndex);
+      const newKami = getKami(kamiEntity);
+      setKami(newKami);
 
-        const newOwner = getOwner(kamiEntity);
-        if (newOwner.index != owner.index) setOwner(newOwner);
-      }, [kamiIndex, tick]);
+      const newOwner = getOwner(kamiEntity);
+      if (newOwner.index != owner.index) setOwner(newOwner);
+    }, [kamiIndex, tick]);
 
-      const positionOverride = () =>
-        modals.account
-          ? {
-              colStart: 32,
-              colEnd: 88,
-              rowStart: 7,
-              rowEnd: 98,
-              position: 'absolute' as const,
-            }
-          : undefined;
+    const positionOverride = () =>
+      modals.account
+        ? {
+            colStart: 32,
+            colEnd: 88,
+            rowStart: 7,
+            rowEnd: 98,
+            position: 'absolute' as const,
+          }
+        : undefined;
 
-      /////////////////
-      // ACTIONS
+    /////////////////
+    // ACTIONS
 
-      const levelUp = (kami: Kami) => {
-        const actionIndex = actions.add({
-          action: 'KamiLevel',
-          params: [kami.id],
-          description: `Leveling up ${kami.name}`,
-          execute: async () => {
-            return api.player.pet.level(kami.id);
-          },
-        });
-      };
+    const levelUp = (kami: Kami) => {
+      const actionIndex = actions.add({
+        action: 'KamiLevel',
+        params: [kami.id],
+        description: `Leveling up ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.level(kami.id);
+        },
+      });
+    };
 
-      const upgradeSkill = (kami: Kami, skill: Skill) => {
-        const actionIndex = actions.add({
-          action: 'SkillUpgrade',
-          params: [kami.id, skill.index],
-          description: `Upgrading ${skill.name} for ${kami.name}`,
-          execute: async () => {
-            return api.player.pet.skill.upgrade(kami.id, skill.index);
-          },
-        });
-      };
+    const upgradeSkill = (kami: Kami, skill: Skill) => {
+      const actionIndex = actions.add({
+        action: 'SkillUpgrade',
+        params: [kami.id, skill.index],
+        description: `Upgrading ${skill.name} for ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.skill.upgrade(kami.id, skill.index);
+        },
+      });
+    };
 
-      const resetSkill = (kami: Kami) => {
-        const actionIndex = actions.add({
-          action: 'SkillReset',
-          params: [kami.id],
-          description: `Resetting skills for ${kami.name}`,
-          execute: async () => {
-            return api.player.pet.skill.reset(kami.id);
-          },
-        });
-      };
+    const resetSkill = (kami: Kami) => {
+      const actionIndex = actions.add({
+        action: 'SkillReset',
+        params: [kami.id],
+        description: `Resetting skills for ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.skill.reset(kami.id);
+        },
+      });
+    };
 
-      const onyxRespecSkill = (kami: Kami) => {
-        const api = ownerAPIs.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
+    const onyxRespecSkill = (kami: Kami) => {
+      const api = ownerAPIs.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-        const actionIndex = actions.add({
-          action: 'SkillRespec',
-          params: [kami.id],
-          description: `Respecing skills for ${kami.name}`,
-          execute: async () => {
-            return api.pet.onyx.respec(kami.id);
-          },
-        });
-      };
+      const actionIndex = actions.add({
+        action: 'SkillRespec',
+        params: [kami.id],
+        description: `Respecing skills for ${kami.name}`,
+        execute: async () => {
+          return api.pet.onyx.respec(kami.id);
+        },
+      });
+    };
 
-      const onyxApprove = (price: number) => {
-        const api = ownerAPIs.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
+    const onyxApprove = (price: number) => {
+      const api = ownerAPIs.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
 
-        actions.add({
-          action: 'Approve token',
-          params: [onyxItem.address, spender, price],
-          description: `Approve ${price} ${onyxItem.name} to be spent`,
-          execute: async () => {
-            return api.erc20.approve(onyxItem.address!, spender, price);
-          },
-        });
-      };
+      actions.add({
+        action: 'Approve token',
+        params: [onyxItem.address, spender, price],
+        description: `Approve ${price} ${onyxItem.name} to be spent`,
+        execute: async () => {
+          return api.erc20.approve(onyxItem.address!, spender, price);
+        },
+      });
+    };
 
-      /////////////////
-      // DISPLAY
+    /////////////////
+    // DISPLAY
 
-      if (!kami) return <></>;
-      return (
-        <ModalWrapper
-          id='kami'
-          positionOverride={positionOverride()}
-          header={[
-            <Header
-              key='banner'
-              data={{ account, kami, owner }}
-              actions={{ levelUp }}
-              utils={utils}
-            />,
-            <Tabs key='tabs' tab={tab} setTab={setTab} />,
-          ]}
-          canExit
-          overlay
-          noPadding
-        >
-          {tab === 'TRAITS' && <Traits kami={kami} />}
-          {tab === 'SKILLS' && (
-            <Skills
-              data={{ account, kami, owner }}
-              actions={{
-                upgrade: (skill: Skill) => upgradeSkill(kami, skill),
-                reset: resetSkill,
-                onyxApprove,
-                onyxRespec: onyxRespecSkill,
-              }}
-              state={{ tick }}
-              utils={{
-                ...utils,
-                getUpgradeError: (index: number) => getSkillUpgradeError(index, kami),
-                getTreePoints: (tree: string) => getTreePoints(tree, kami.id),
-              }}
-            />
-          )}
-          {tab === 'BATTLES' && <Battles kami={kami} setKami={setKami} tab={tab} utils={utils} />}
-        </ModalWrapper>
-      );
+    if (!kami) return <></>;
+    return (
+      <ModalWrapper
+        id='kami'
+        positionOverride={positionOverride()}
+        header={[
+          <Header
+            key='banner'
+            data={{ account, kami, owner }}
+            actions={{ levelUp }}
+            utils={utils}
+          />,
+          <Tabs key='tabs' tab={tab} setTab={setTab} />,
+        ]}
+        canExit
+        overlay
+        noPadding
+      >
+        {tab === 'TRAITS' && <Traits kami={kami} />}
+        {tab === 'SKILLS' && (
+          <Skills
+            data={{ account, kami, owner }}
+            actions={{
+              upgrade: (skill: Skill) => upgradeSkill(kami, skill),
+              reset: resetSkill,
+              onyxApprove,
+              onyxRespec: onyxRespecSkill,
+            }}
+            state={{ tick }}
+            utils={{
+              ...utils,
+              getUpgradeError: (index: number) => getSkillUpgradeError(index, kami),
+              getTreePoints: (tree: string) => getTreePoints(tree, kami.id),
+            }}
+          />
+        )}
+        {tab === 'BATTLES' && <Battles kami={kami} setKami={setKami} tab={tab} utils={utils} />}
+      </ModalWrapper>
+    );
   },
 };
