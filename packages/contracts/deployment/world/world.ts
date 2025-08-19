@@ -34,6 +34,7 @@ import {
   initRelationships,
   initRooms,
   initSkills,
+  initSnapshot,
   initTradeConfigs,
   initTraits,
   mintToGachaPool,
@@ -153,6 +154,9 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initSkills(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteSkills(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseSkills(api, indices)),
+    } as SubFunc,
+    snapshot: {
+      init: () => this.genCalls(initSnapshot),
     } as SubFunc,
     traits: {
       init: () => this.genCalls(initTraits),

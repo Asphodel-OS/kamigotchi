@@ -512,27 +512,40 @@ export function createAdminAPI(compiledCalls: string[]) {
   ////////////////
   // SETUP
 
-  function distributePassports(owners: string[], amts: number[]) {
+  function dropKillRewards(owners: string[], amts: number[]) {
     const callData = generateCallData(
       'system.setup.snapshot.t2',
       [owners, amts],
-      'distributePassports',
+      'dropKillRewards',
       ['address[]', 'uint256[]'],
-      '60000000'
+      '12000000'
     );
     compiledCalls.push(callData);
   }
 
-  function distributeGachaWhitelists(owners: string[]) {
-    const callData = generateCallData(
-      'system.setup.snapshot.t2',
-      [owners],
-      'whitelistAccounts',
-      ['address[]'],
-      '60000000'
-    );
-    compiledCalls.push(callData);
-  }
+  // used for initial setup
+  // function distributePassports(owners: string[], amts: number[]) {
+  //   const callData = generateCallData(
+  //     'system.setup.snapshot.t2',
+  //     [owners, amts],
+  //     'distributePassports',
+  //     ['address[]', 'uint256[]'],
+  //     '60000000'
+  //   );
+  //   compiledCalls.push(callData);
+  // }
+
+  // used for initial setup
+  // function distributeGachaWhitelists(owners: string[]) {
+  //   const callData = generateCallData(
+  //     'system.setup.snapshot.t2',
+  //     [owners],
+  //     'whitelistAccounts',
+  //     ['address[]'],
+  //     '60000000'
+  //   );
+  //   compiledCalls.push(callData);
+  // }
 
   ////////////////
   // SETUP (testing)
@@ -668,8 +681,9 @@ export function createAdminAPI(compiledCalls: string[]) {
         },
       },
       live: {
-        passports: distributePassports,
-        whitelists: distributeGachaWhitelists,
+        obols: dropKillRewards,
+        // passports: distributePassports,
+        // whitelists: distributeGachaWhitelists,
       },
     },
   };

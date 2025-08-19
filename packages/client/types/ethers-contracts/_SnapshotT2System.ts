@@ -32,14 +32,13 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
-    "distributePassports(bytes)": FunctionFragment;
+    "dropKillRewards(bytes)": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "whitelistAccounts(bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -47,14 +46,13 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "deprecate"
-      | "distributePassports"
+      | "dropKillRewards"
       | "execute"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "transferOwnership"
-      | "whitelistAccounts"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -67,7 +65,7 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "distributePassports",
+    functionFragment: "dropKillRewards",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -91,10 +89,6 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "whitelistAccounts",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
@@ -106,7 +100,7 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "distributePassports",
+    functionFragment: "dropKillRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
@@ -125,10 +119,6 @@ export interface _SnapshotT2SystemInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "whitelistAccounts",
     data: BytesLike
   ): Result;
 
@@ -225,7 +215,7 @@ export interface _SnapshotT2System extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    distributePassports(
+    dropKillRewards(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -254,11 +244,6 @@ export interface _SnapshotT2System extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    whitelistAccounts(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
   cancelOwnershipHandover(
@@ -274,7 +259,7 @@ export interface _SnapshotT2System extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  distributePassports(
+  dropKillRewards(
     arguments: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -304,11 +289,6 @@ export interface _SnapshotT2System extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  whitelistAccounts(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
@@ -319,7 +299,7 @@ export interface _SnapshotT2System extends BaseContract {
 
     deprecate(overrides?: CallOverrides): Promise<void>;
 
-    distributePassports(
+    dropKillRewards(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -342,11 +322,6 @@ export interface _SnapshotT2System extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    whitelistAccounts(
-      arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -393,7 +368,7 @@ export interface _SnapshotT2System extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    distributePassports(
+    dropKillRewards(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -422,11 +397,6 @@ export interface _SnapshotT2System extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    whitelistAccounts(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -443,7 +413,7 @@ export interface _SnapshotT2System extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    distributePassports(
+    dropKillRewards(
       arguments: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -471,11 +441,6 @@ export interface _SnapshotT2System extends BaseContract {
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    whitelistAccounts(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
