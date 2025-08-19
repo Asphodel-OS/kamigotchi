@@ -95,264 +95,264 @@ export const PartyModal: UIComponent = {
     ),
 
   Render: ({ network, display, data, utils }) => {
-      const { actions, api } = network;
-      const { accountEntity, kamiNFTAddress, spender } = data;
-      const { getAccount, getItem, getNode } = utils;
-      const { getKami, getWorldKamis, queryKamiByIndex, queryAllAccounts } = utils;
+    const { actions, api } = network;
+    const { accountEntity, kamiNFTAddress, spender } = data;
+    const { getAccount, getItem, getNode } = utils;
+    const { getKami, getWorldKamis, queryKamiByIndex, queryAllAccounts } = utils;
 
-      const { modals } = useVisibility();
-      const { selectedAddress, apis: ownerAPIs } = useNetwork();
-      const { balances: tokenBals } = useTokens();
-      const { writeContract } = useWriteContract();
+    const { modals } = useVisibility();
+    const { selectedAddress, apis: ownerAPIs } = useNetwork();
+    const { balances: tokenBals } = useTokens();
+    const { writeContract } = useWriteContract();
 
-      const [account, setAccount] = useState<Account>(NullAccount);
-      const [accounts, setAccounts] = useState<Account[]>([]);
-      const [kamis, setKamis] = useState<Kami[]>([]);
-      const [node, setNode] = useState<Node>(NullNode); // node of the current room
-      const [sort, setSort] = useState<Sort>('state');
-      const [tick, setTick] = useState(Date.now());
-      const [view, setView] = useState<View>('expanded');
+    const [account, setAccount] = useState<Account>(NullAccount);
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [kamis, setKamis] = useState<Kami[]>([]);
+    const [node, setNode] = useState<Node>(NullNode); // node of the current room
+    const [sort, setSort] = useState<Sort>('state');
+    const [tick, setTick] = useState(Date.now());
+    const [view, setView] = useState<View>('expanded');
 
-      const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
-      const [wildKamis, setWildKamis] = useState<Kami[]>([]);
-      const [onyxItem, setOnyxItem] = useState<Item>(NullItem);
-      const [onyxInfo, setOnyxInfo] = useState<BalPair>({ allowance: 0, balance: 0 });
+    const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
+    const [wildKamis, setWildKamis] = useState<Kami[]>([]);
+    const [onyxItem, setOnyxItem] = useState<Item>(NullItem);
+    const [onyxInfo, setOnyxInfo] = useState<BalPair>({ allowance: 0, balance: 0 });
 
-      /////////////////
-      // BLOCK WATCHERS
+    /////////////////
+    // BLOCK WATCHERS
 
-      useWatchBlockNumber({
-        onBlockNumber: () => refetchNFTs(),
-      });
+    useWatchBlockNumber({
+      onBlockNumber: () => refetchNFTs(),
+    });
 
-      const { refetch: refetchNFTs, data: nftData } = useReadContracts({
-        contracts: [
-          {
-            address: kamiNFTAddress,
-            abi: erc721ABI,
-            functionName: 'getAllTokens',
-            args: [account.ownerAddress],
-          },
-        ],
-      });
-
-      /////////////////
-      // SUBSCRIPTIONS
-
-      // mounting
-      useEffect(() => {
-        // populate initial data
-        setAccount(getAccount(accountEntity));
-        setKamis(getWorldKamis());
-        setOnyxItem(getItem(ONYX_INDEX));
-
-        // set ticking
-        const refreshClock = () => setTick(Date.now());
-        const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-        return () => clearInterval(timerId);
-      }, []);
-
-      // update account and kamis every tick or if the connnected account changes
-      useEffect(() => {
-        if (!modals.party) return;
-
-        // update the connected account if it changes
-        if (accountEntity != account.entity) {
-          setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
-        }
-
-        // update the list of the
-        setKamis(getWorldKamis());
-
-        // check if we need to update the list of accounts
-        const accountEntities = queryAllAccounts();
-        if (accountEntities.length > accounts.length) {
-          const filtered = accountEntities.filter((entity) => entity != accountEntity);
-          const newAccounts = filtered.map((entity) => getAccount(entity));
-          const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
-          setAccounts(accountsSorted);
-        }
-      }, [modals.party, accountEntity, tick]);
-
-      // update node if the account or room changes
-      useEffect(() => {
-        const roomIndex = account.roomIndex;
-        setNode(getNode(roomIndex));
-      }, [accountEntity, account.roomIndex]);
-
-      // update onyx info every tick or if the connnected account changes
-      useEffect(() => {
-        if (!onyxItem.address) return;
-        const onyxInfo = tokenBals.get(onyxItem.address);
-        setOnyxInfo(onyxInfo ?? { allowance: 0, balance: 0 });
-      }, [onyxItem, spender, tick]);
-
-      // update list of wild kamis whenever that changes
-      // TOTO: properly typecast the result of the abi call
-      useEffect(() => {
-        const result = (nftData?.[0]?.result ?? []) as number[];
-        if (result.length != wildKamis.length) {
-          const entities = result.map((index: number) => queryKamiByIndex(index));
-          const filtered = entities.filter((entity) => !!entity) as EntityIndex[];
-          const externalKamis = filtered.map((entity: EntityIndex) => getKami(entity));
-          setWildKamis(externalKamis);
-        }
-      }, [nftData]);
-
-      /////////////////
-      // ACTIONS
-
-      // approve the spend of an ERC20 token
-      const approveOnyxTx = async (price: number) => {
-        const api = ownerAPIs.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'Approve token',
-          params: [onyxItem.address, spender, price],
-          description: `Approve ${price} ${onyxItem.name} to be spent`,
-          execute: async () => {
-            return api.erc20.approve(onyxItem.address!, spender, price);
-          },
-        });
-      };
-
-      const onyxReviveTx = async (kami: Kami) => {
-        const api = ownerAPIs.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'Onyx revive',
-          params: [kami.id],
-          description: `Reviving ${kami.name} with ONYX`,
-          execute: async () => {
-            return api.pet.onyx.revive(kami.id);
-          },
-        });
-      };
-
-      // send a kami NFT to another player
-      const sendKamiTx = (kami: Kami, to: Account) => {
-        writeContract({
-          abi: erc721Abi,
+    const { refetch: refetchNFTs, data: nftData } = useReadContracts({
+      contracts: [
+        {
           address: kamiNFTAddress,
-          functionName: 'safeTransferFrom',
-          args: [account.ownerAddress, to.ownerAddress, BigInt(kami.index)],
-        });
-      };
+          abi: erc721ABI,
+          functionName: 'getAllTokens',
+          args: [account.ownerAddress],
+        },
+      ],
+    });
 
-      // import a kami from the wild to the world
-      const stakeKamiTx = (kamis: Kami[]) => {
-        const api = ownerAPIs.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
+    /////////////////
+    // SUBSCRIPTIONS
 
-        const indices = kamis.map((kami) => kami.index);
-        actions.add({
-          action: 'KamiDeposit',
-          params: [kamis[0].index],
-          description: `Staking Kami ${kamis[0].index}`,
-          execute: async () => {
-            return api.bridge.ERC721.kami.batch.stake(indices);
-          },
-        });
-      };
+    // mounting
+    useEffect(() => {
+      // populate initial data
+      setAccount(getAccount(accountEntity));
+      setKamis(getWorldKamis());
+      setOnyxItem(getItem(ONYX_INDEX));
 
-      // starts a harvest for the given pet and node
-      const start = (kamis: Kami[], node: Node) => {
-        const kamiIDs = kamis.map((kami) => kami.id);
-        actions.add({
-          action: 'HarvestStart',
-          params: [kamiIDs, node.index],
-          description:
-            kamiIDs.length > 1
-              ? `Placing ${kamis.length} kami on ${node.name}`
-              : `Placing ${kamis[0].name} on ${node.name}`,
-          execute: async () => {
-            return api.player.pet.harvest.start(kamiIDs, node.index);
-          },
-        });
-      };
+      // set ticking
+      const refreshClock = () => setTick(Date.now());
+      const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+      return () => clearInterval(timerId);
+    }, []);
 
-      // collects on an existing harvest
-      const collect = (kamis: Kami[]) => {
-        const kamiHarvestIDs = kamis.map((kami) => kami.harvest!.id);
-        actions.add({
-          action: 'HarvestCollect',
-          params: [kamiHarvestIDs],
-          description:
-            kamiHarvestIDs.length > 1
-              ? `Collecting ${kamis.length} kami Harvest`
-              : `Collecting ${kamis[0].name}'s Harvest`,
-          execute: async () => {
-            return api.player.pet.harvest.collect(kamiHarvestIDs);
-          },
-        });
-      };
+    // update account and kamis every tick or if the connnected account changes
+    useEffect(() => {
+      if (!modals.party) return;
 
-      // stops a harvest
-      const stop = (kamis: Kami[]) => {
-        const kamiHarvestIDs = kamis.map((kami) => kami.harvest!.id);
-        actions.add({
-          action: 'HarvestStop',
-          params: [kamiHarvestIDs],
-          description:
-            kamiHarvestIDs.length > 1
-              ? `Removing ${kamis.length} kami from nodes`
-              : `Removing ${kamis[0].name} from ${kamis[0].harvest?.node}`,
-          execute: async () => {
-            return api.player.pet.harvest.stop(kamiHarvestIDs);
-          },
-        });
-      };
+      // update the connected account if it changes
+      if (accountEntity != account.entity) {
+        setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
+      }
 
-      /////////////////
-      // DISPLAY
+      // update the list of the
+      setKamis(getWorldKamis());
 
-      return (
-        <ModalWrapper
-          id='party'
-          header={<ModalHeader title='Party' icon={KamiIcon} />}
-          canExit
-          truncate
-          noPadding
-        >
-          <Toolbar
-            actions={{
-              addKami: (kamis: Kami[]) => start(kamis, node),
-              stopKami: (kamis: Kami[]) => stop(kamis),
-              collect: (kamis: Kami[]) => collect(kamis),
-            }}
-            controls={{ sort, setSort, view, setView }}
-            data={{ kamis, wildKamis }}
-            state={{ displayedKamis, setDisplayedKamis, tick }}
-            utils={utils}
-          />
-          <KamiList
-            actions={{
-              onyxApprove: approveOnyxTx,
-              onyxRevive: onyxReviveTx,
-              addKamis: (kamis: Kami[]) => start(kamis, node),
-              stakeKamis: stakeKamiTx,
-              sendKamis: sendKamiTx,
-            }}
-            controls={{ view }}
-            data={{
-              account,
-              accounts,
-              kamis,
-              wildKamis,
-              node,
-              onyx: onyxInfo,
-            }}
-            display={display}
-            state={{ displayedKamis, tick }}
-            utils={utils}
-          />
-        </ModalWrapper>
-      );
+      // check if we need to update the list of accounts
+      const accountEntities = queryAllAccounts() as EntityIndex[];
+      if (accountEntities.length > accounts.length) {
+        const filtered = accountEntities.filter((entity) => entity != accountEntity);
+        const newAccounts = filtered.map((entity) => getAccount(entity));
+        const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
+        setAccounts(accountsSorted);
+      }
+    }, [modals.party, accountEntity, tick]);
+
+    // update node if the account or room changes
+    useEffect(() => {
+      const roomIndex = account.roomIndex;
+      setNode(getNode(roomIndex));
+    }, [accountEntity, account.roomIndex]);
+
+    // update onyx info every tick or if the connnected account changes
+    useEffect(() => {
+      if (!onyxItem.address) return;
+      const onyxInfo = tokenBals.get(onyxItem.address);
+      setOnyxInfo(onyxInfo ?? { allowance: 0, balance: 0 });
+    }, [onyxItem, spender, tick]);
+
+    // update list of wild kamis whenever that changes
+    // TOTO: properly typecast the result of the abi call
+    useEffect(() => {
+      const result = (nftData?.[0]?.result ?? []) as number[];
+      if (result.length != wildKamis.length) {
+        const entities = result.map((index: number) => queryKamiByIndex(index));
+        const filtered = entities.filter((entity) => !!entity) as EntityIndex[];
+        const externalKamis = filtered.map((entity: EntityIndex) => getKami(entity));
+        setWildKamis(externalKamis);
+      }
+    }, [nftData]);
+
+    /////////////////
+    // ACTIONS
+
+    // approve the spend of an ERC20 token
+    const approveOnyxTx = async (price: number) => {
+      const api = ownerAPIs.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'Approve token',
+        params: [onyxItem.address, spender, price],
+        description: `Approve ${price} ${onyxItem.name} to be spent`,
+        execute: async () => {
+          return api.erc20.approve(onyxItem.address!, spender, price);
+        },
+      });
+    };
+
+    const onyxReviveTx = async (kami: Kami) => {
+      const api = ownerAPIs.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'Onyx revive',
+        params: [kami.id],
+        description: `Reviving ${kami.name} with ONYX`,
+        execute: async () => {
+          return api.pet.onyx.revive(kami.id);
+        },
+      });
+    };
+
+    // send a kami NFT to another player
+    const sendKamiTx = (kami: Kami, to: Account) => {
+      writeContract({
+        abi: erc721Abi,
+        address: kamiNFTAddress,
+        functionName: 'safeTransferFrom',
+        args: [account.ownerAddress, to.ownerAddress, BigInt(kami.index)],
+      });
+    };
+
+    // import a kami from the wild to the world
+    const stakeKamiTx = (kamis: Kami[]) => {
+      const api = ownerAPIs.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const indices = kamis.map((kami) => kami.index);
+      actions.add({
+        action: 'KamiDeposit',
+        params: [kamis[0].index],
+        description: `Staking Kami ${kamis[0].index}`,
+        execute: async () => {
+          return api.bridge.ERC721.kami.batch.stake(indices);
+        },
+      });
+    };
+
+    // starts a harvest for the given pet and node
+    const start = (kamis: Kami[], node: Node) => {
+      const kamiIDs = kamis.map((kami) => kami.id);
+      actions.add({
+        action: 'HarvestStart',
+        params: [kamiIDs, node.index],
+        description:
+          kamiIDs.length > 1
+            ? `Placing ${kamis.length} kami on ${node.name}`
+            : `Placing ${kamis[0].name} on ${node.name}`,
+        execute: async () => {
+          return api.player.pet.harvest.start(kamiIDs, node.index);
+        },
+      });
+    };
+
+    // collects on an existing harvest
+    const collect = (kamis: Kami[]) => {
+      const kamiHarvestIDs = kamis.map((kami) => kami.harvest!.id);
+      actions.add({
+        action: 'HarvestCollect',
+        params: [kamiHarvestIDs],
+        description:
+          kamiHarvestIDs.length > 1
+            ? `Collecting ${kamis.length} kami Harvest`
+            : `Collecting ${kamis[0].name}'s Harvest`,
+        execute: async () => {
+          return api.player.pet.harvest.collect(kamiHarvestIDs);
+        },
+      });
+    };
+
+    // stops a harvest
+    const stop = (kamis: Kami[]) => {
+      const kamiHarvestIDs = kamis.map((kami) => kami.harvest!.id);
+      actions.add({
+        action: 'HarvestStop',
+        params: [kamiHarvestIDs],
+        description:
+          kamiHarvestIDs.length > 1
+            ? `Removing ${kamis.length} kami from nodes`
+            : `Removing ${kamis[0].name} from ${kamis[0].harvest?.node}`,
+        execute: async () => {
+          return api.player.pet.harvest.stop(kamiHarvestIDs);
+        },
+      });
+    };
+
+    /////////////////
+    // DISPLAY
+
+    return (
+      <ModalWrapper
+        id='party'
+        header={<ModalHeader title='Party' icon={KamiIcon} />}
+        canExit
+        truncate
+        noPadding
+      >
+        <Toolbar
+          actions={{
+            addKami: (kamis: Kami[]) => start(kamis, node),
+            stopKami: (kamis: Kami[]) => stop(kamis),
+            collect: (kamis: Kami[]) => collect(kamis),
+          }}
+          controls={{ sort, setSort, view, setView }}
+          data={{ kamis, wildKamis }}
+          state={{ displayedKamis, setDisplayedKamis, tick }}
+          utils={utils}
+        />
+        <KamiList
+          actions={{
+            onyxApprove: approveOnyxTx,
+            onyxRevive: onyxReviveTx,
+            addKamis: (kamis: Kami[]) => start(kamis, node),
+            stakeKamis: stakeKamiTx,
+            sendKamis: sendKamiTx,
+          }}
+          controls={{ view }}
+          data={{
+            account,
+            accounts,
+            kamis,
+            wildKamis,
+            node,
+            onyx: onyxInfo,
+          }}
+          display={display}
+          state={{ displayedKamis, tick }}
+          utils={utils}
+        />
+      </ModalWrapper>
+    );
   },
 };

@@ -10,7 +10,6 @@ import {
   getSkillByIndex,
   getSkillTreePointsRequirement,
   getSkillUpgradeError,
-  initializeSkills,
   parseSkillRequirementText,
 } from 'app/cache/skills';
 import { ModalWrapper } from 'app/components/library';
@@ -76,7 +75,6 @@ export const KamiDetails: UIComponent = {
               getHolderSkillTreePoints(world, components, tree, holderID),
             getTreeRequirement: (skill: Skill) =>
               getSkillTreePointsRequirement(world, components, skill),
-            initializeSkills: () => initializeSkills(world, components),
             queryKamiByIndex: (index: number) => queryKamis(components, { index })[0],
             parseSkillRequirement: (requirement: Condition) =>
               parseSkillRequirementText(world, components, requirement),
@@ -99,12 +97,6 @@ export const KamiDetails: UIComponent = {
     const [kami, setKami] = useState<Kami>();
     const [owner, setOwner] = useState<BaseAccount>(NullAccount);
     const [tick, setTick] = useState(Date.now());
-
-    // initialize skills on load
-    // TODO: move this to a more appropriate place
-    useEffect(() => {
-      utils.initializeSkills();
-    }, [modals.kami]);
 
     /////////////////
     // SUBSCRIPTIONS

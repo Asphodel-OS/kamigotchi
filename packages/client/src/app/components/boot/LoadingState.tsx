@@ -2,6 +2,8 @@ import { getComponentValue } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { concat, map } from 'rxjs';
 
+import { initializeItems } from 'app/cache/item';
+import { initializeSkills } from 'app/cache/skills';
 import { UIComponent } from 'app/root/types';
 import { GodID, SyncState } from 'engine/constants';
 import { BootScreen } from './BootScreen';
@@ -11,10 +13,8 @@ const FE_DISABLED = import.meta.env.VITE_STATE === 'DISABLED';
 export const LoadingState: UIComponent = {
   id: 'LoadingState',
   requirement: (layers) => {
-    const {
-      components: { LoadingState },
-      world,
-    } = layers.network;
+    const { components, world } = layers.network;
+    const { LoadingState } = components;
 
     return concat([], LoadingState.update$).pipe(
       map(() => {
@@ -29,19 +29,28 @@ export const LoadingState: UIComponent = {
           msg: 'Connecting to Yominet',
           percentage: 0,
         };
-        return { loadingState };
+        return {
+          loadingState,
+          utils: {
+            initializeSkills: () => initializeSkills(world, components),
+            initializeItems: () => initializeItems(world, components),
+          },
+        };
       })
     );
   },
-  Render: ({ loadingState }) => {
+  Render: ({ loadingState, utils }) => {
     const [isVisible, setIsVisible] = useState(true);
     const { state, msg, percentage } = loadingState;
+    const { initializeItems, initializeSkills } = utils;
 
     useEffect(() => {
       if (FE_DISABLED) return;
 
       if (state === SyncState.LIVE) {
-        setTimeout(() => setIsVisible(false), 3333);
+        setTimeout(() => setIsVisible(false), 1000);
+        initializeSkills();
+        initializeItems();
       }
     }, [state]);
 
@@ -69,5 +78,5 @@ export const LoadingState: UIComponent = {
         isHidden={!FE_DISABLED && !isVisible}
       />
     );
-  }
+  },
 };
