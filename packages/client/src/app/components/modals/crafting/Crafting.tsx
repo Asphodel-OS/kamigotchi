@@ -65,7 +65,7 @@ export const CraftingModal: UIComponent = {
       const currentTabRecipes = recipes.filter((recipe) => recipe.type === tab.toUpperCase());
       if (showAll) setRecipes(currentTabRecipes);
       else setRecipes(currentTabRecipes.filter((recipe) => hasIngredients(recipe)));
-    }, [showAll, tab]);
+    }, [showAll, tab, modals.crafting]);
 
     /////////////////
     // INTERPRETATION
