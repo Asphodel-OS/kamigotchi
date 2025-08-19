@@ -43,10 +43,6 @@ export const PartyModal: UIComponent = {
         const { debug } = useAccount.getState();
         const { nodeIndex } = useSelected.getState();
         const accountEntity = queryAccountFromEmbedded(network);
-        const accRefreshOptions = {
-          live: 0,
-          inventory: 2,
-        };
         const kamiRefreshOptions = {
           live: 0,
           bonuses: 5, // set this to 3600 once we get explicit triggers for updates
@@ -142,7 +138,7 @@ export const PartyModal: UIComponent = {
     // mounting
     useEffect(() => {
       // populate initial data
-      setAccount(getAccount(accountEntity));
+      setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
       setKamis(getWorldKamis());
       setOnyxItem(getItem(ONYX_INDEX));
 

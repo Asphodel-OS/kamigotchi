@@ -7,6 +7,6 @@ export {
   processValue as processConfigValue,
 } from './base';
 export { getMintConfig as getGachaMintConfig } from './gacha';
-export { getKamiConfig } from './kami';
+export { getConfig as getKamiConfig, processConfig as processKamiConfig } from './kami';
 
 export type { GachaMintConfig } from './gacha';
