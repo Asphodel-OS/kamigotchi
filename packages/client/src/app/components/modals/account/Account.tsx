@@ -72,7 +72,7 @@ export function registerAccountModal() {
       const { vip } = data;
       const { getAccount } = utils;
       const { account: player } = useAccount();
-      const { accountIndex } = useSelected();
+      const accountIndex = useSelected((s) => s.accountIndex);
       const { modals } = useVisibility();
       const { selectedAddress, apis } = useNetwork();
 
