@@ -23,6 +23,7 @@ import essence_of_daffodil from './essence_of_daffodil.png';
 import eth from './eth.png';
 import festival_chime from './festival_chime.png';
 import fetid_egg from './fetid_egg.png';
+import fuliginous_ooze from './fuliginous_ooze.png';
 import full_heart_crystal from './full_heart_crystal.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
@@ -93,6 +94,7 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
+  fuliginous_ooze: fuliginous_ooze,
   great_heart_crystal: great_heart_crystal,
   teardrop_jewel: teardrop_jewel,
   inverted_teardrop_jewel: inverted_teardrop_jewel,
