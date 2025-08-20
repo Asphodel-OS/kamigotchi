@@ -48,7 +48,7 @@ export const LoadingState: UIComponent = {
       if (FE_DISABLED) return;
 
       if (state === SyncState.LIVE) {
-        setTimeout(() => setIsVisible(false), 1000);
+        setTimeout(() => setIsVisible(false), 1500);
         initializeSkills();
         initializeItems();
       }
