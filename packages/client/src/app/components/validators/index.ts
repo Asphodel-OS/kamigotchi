@@ -1,6 +1,5 @@
-import { AccountRegistrar } from './AccountRegistrar/AccountRegistrar';
-import { GasHarasser } from './GasHarasser';
-import { OperatorUpdater } from './OperatorUpdater';
-import { WalletConnecter } from './WalletConnector/WalletConnector';
-
-export { AccountRegistrar, GasHarasser, OperatorUpdater, WalletConnecter };
+export { AccountRegistrar } from './AccountRegistrar/AccountRegistrar';
+export { GasHarasser } from './GasHarasser';
+export { OperatorUpdater } from './OperatorUpdater';
+export { TokenChecker } from './TokenChecker';
+export { WalletConnecter } from './WalletConnector/WalletConnector';

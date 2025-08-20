@@ -8,8 +8,8 @@ import { Account } from './Account';
 import { Debugging } from './Debugging';
 import { Volume } from './Volume';
 
-export const Settings: UIComponent = {
-  id: 'Settings',
+export const SettingsModal: UIComponent = {
+  id: 'SettingsModal',
   requirement: (layers) =>
     interval(5000).pipe(
       map(() => {

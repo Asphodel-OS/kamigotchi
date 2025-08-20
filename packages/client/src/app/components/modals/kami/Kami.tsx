@@ -31,8 +31,8 @@ import { Traits } from './traits/Traits';
 const SYNC_TIME = 1000;
 export type TabType = 'TRAITS' | 'SKILLS' | 'BATTLES';
 
-export const KamiDetails: UIComponent = {
-  id: 'KamiDetails',
+export const KamiModal: UIComponent = {
+  id: 'KamiModal',
   requirement: (layers) => {
     const { network } = layers;
     const { world, components } = network;

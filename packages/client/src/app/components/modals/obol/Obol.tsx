@@ -20,8 +20,8 @@ const arrowButtons = [
   { label: '-5', value: -5, symbol: '\u25BC' },
 ];
 
-export const LootBoxModal: UIComponent = {
-  id: 'LootBox',
+export const ObolModal: UIComponent = {
+  id: 'ObolModal',
   requirement: (layers) => {
     return interval(1000).pipe(
       map(() => {

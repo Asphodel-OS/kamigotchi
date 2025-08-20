@@ -1,1 +1,1 @@
-export { EmaBoard } from './EmaBoard';
+export { EmaBoardModal } from './EmaBoard';

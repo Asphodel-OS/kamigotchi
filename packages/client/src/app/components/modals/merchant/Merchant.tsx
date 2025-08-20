@@ -18,8 +18,8 @@ import { Header } from './header';
 import { CartItem } from './types';
 
 // merchant window with listings. assumes at most 1 merchant per room
-export const MerchantWindow: UIComponent = {
-  id: 'MerchantWindow',
+export const MerchantModal: UIComponent = {
+  id: 'MerchantModal',
   requirement: (layers) =>
     interval(1000).pipe(
       map(() => {
@@ -44,75 +44,75 @@ export const MerchantWindow: UIComponent = {
       })
     ),
   Render: ({ data, utils, network }) => {
-      const { accountEntity } = data;
-      const { getAccount, getNPC, cleanListings, refreshListings, getMusuBalance } = utils;
-      const { actions, api } = network;
-      const { npcIndex } = useSelected();
-      const { modals } = useVisibility();
+    const { accountEntity } = data;
+    const { getAccount, getNPC, cleanListings, refreshListings, getMusuBalance } = utils;
+    const { actions, api } = network;
+    const { npcIndex } = useSelected();
+    const { modals } = useVisibility();
 
-      const [account, setAccount] = useState<Account>(NullAccount);
-      const [merchant, setMerchant] = useState<NPC>(NullNPC);
-      const [listings, setListings] = useState<Listing[]>([]);
-      const [cart, setCart] = useState<CartItem[]>([]);
-      const [lastTick, setLastTick] = useState(Date.now());
-      const [musuBalance, setMusuBalance] = useState<number>(0);
+    const [account, setAccount] = useState<Account>(NullAccount);
+    const [merchant, setMerchant] = useState<NPC>(NullNPC);
+    const [listings, setListings] = useState<Listing[]>([]);
+    const [cart, setCart] = useState<CartItem[]>([]);
+    const [lastTick, setLastTick] = useState(Date.now());
+    const [musuBalance, setMusuBalance] = useState<number>(0);
 
-      // ticking
-      useEffect(() => {
-        const refreshClock = () => setLastTick(Date.now());
-        const timerID = setInterval(refreshClock, 1000);
-        return () => clearInterval(timerID);
-      }, []);
+    // ticking
+    useEffect(() => {
+      const refreshClock = () => setLastTick(Date.now());
+      const timerID = setInterval(refreshClock, 1000);
+      return () => clearInterval(timerID);
+    }, []);
 
-      // update the listings on each tick
-      useEffect(() => {
-        if (!modals.merchant) return;
-        if (!merchant || npcIndex != merchant.index) return;
-        setMusuBalance(getMusuBalance(account.inventories ?? []));
-        refreshListings(merchant);
-      }, [lastTick]);
+    // update the listings on each tick
+    useEffect(() => {
+      if (!modals.merchant) return;
+      if (!merchant || npcIndex != merchant.index) return;
+      setMusuBalance(getMusuBalance(account.inventories ?? []));
+      refreshListings(merchant);
+    }, [lastTick]);
 
-      // update the account whenever the entity cahnges
-      useEffect(() => {
-        const account = getAccount();
-        setAccount(account);
-      }, [accountEntity]);
+    // update the account whenever the entity cahnges
+    useEffect(() => {
+      const account = getAccount();
+      setAccount(account);
+    }, [accountEntity]);
 
-      // updates from selected Merchant updates
-      useEffect(() => {
-        if (!modals.merchant || npcIndex == merchant.index) return;
-        const newMerchant = getNPC(npcIndex) ?? NullNPC;
-        setMerchant(newMerchant);
-        setListings(cleanListings(newMerchant.listings, account));
-      }, [modals.merchant, npcIndex, account]);
+    // updates from selected Merchant updates
+    useEffect(() => {
+      if (!modals.merchant || npcIndex == merchant.index) return;
+      const newMerchant = getNPC(npcIndex) ?? NullNPC;
+      setMerchant(newMerchant);
+      setListings(cleanListings(newMerchant.listings, account));
+    }, [modals.merchant, npcIndex, account]);
 
-      // buy from a listing
-      const buy = (cart: CartItem[]) => {
-        const indices = cart.map((c) => c.listing.item.index);
-        const amts = cart.map((c) => c.quantity);
+    // buy from a listing
+    const buy = (cart: CartItem[]) => {
+      const indices = cart.map((c) => c.listing.item.index);
+      const amts = cart.map((c) => c.quantity);
 
-        actions.add({
-          action: 'ListingBuy',
-          params: [npcIndex, indices, amts],
-          description: `Purchasing from ${merchant.name}`,
-          execute: async () => {
-            return api.player.npc.listing.buy(npcIndex, indices, amts);
-          },
-        });
-      };
+      actions.add({
+        action: 'ListingBuy',
+        params: [npcIndex, indices, amts],
+        description: `Purchasing from ${merchant.name}`,
+        execute: async () => {
+          return api.player.npc.listing.buy(npcIndex, indices, amts);
+        },
+      });
+    };
 
-      /////////////////
-      // DISPLAY
+    /////////////////
+    // DISPLAY
 
-      return (
-        <ModalWrapper id='merchant' canExit overlay>
-          <Header merchant={merchant} player={account} balance={musuBalance} />
-          <Body>
-            <Catalog account={account} listings={listings} cart={cart} setCart={setCart} />
-            <Cart account={account} cart={cart} setCart={setCart} buy={buy} />
-          </Body>
-        </ModalWrapper>
-      );
+    return (
+      <ModalWrapper id='merchant' canExit overlay>
+        <Header merchant={merchant} player={account} balance={musuBalance} />
+        <Body>
+          <Catalog account={account} listings={listings} cart={cart} setCart={setCart} />
+          <Cart account={account} cart={cart} setCart={setCart} buy={buy} />
+        </Body>
+      </ModalWrapper>
+    );
   },
 };
 

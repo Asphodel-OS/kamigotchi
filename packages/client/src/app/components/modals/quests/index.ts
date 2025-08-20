@@ -1,1 +1,1 @@
-export { Quests } from './Quests';
+export { QuestModal } from './Quests';
