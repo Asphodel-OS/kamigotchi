@@ -1,3 +1,1 @@
-import { registerNodeModal } from './Node';
-
-export { registerNodeModal };
+export { NodeModal } from './Node';

@@ -1,1 +1,1 @@
-export { registerNotificationFixture } from './Notifications';
+export { NotificationFixture } from './Notifications';

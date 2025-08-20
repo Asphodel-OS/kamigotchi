@@ -1,3 +1,1 @@
-import { registerLeaderboardModal } from './Leaderboard';
-
-export { registerLeaderboardModal };
+export { LeaderboardModal } from './Leaderboard';

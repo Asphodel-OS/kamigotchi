@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { StatusIcons } from 'assets/images/icons/statuses';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
+import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
 import { Cooldown } from './Cooldown';
@@ -22,9 +22,11 @@ interface Props {
   subtextOnClick?: () => void;
   actions?: React.ReactNode;
   showBattery?: boolean;
+  showLevelUp?: boolean;
+  showSkillPoints?: boolean;
   showCooldown?: boolean;
   utils?: {
-    calcExpRequirement: (lvl: number) => number;
+    calcExpRequirement?: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }
@@ -32,7 +34,17 @@ interface Props {
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = (props: Props) => {
-  const { kami, actions, showBattery, showCooldown, isFriend, utils } = props;
+  const {
+    kami,
+    actions,
+    showLevelUp,
+    showSkillPoints,
+    showBattery,
+    showCooldown,
+    isFriend,
+    utils,
+  } = props;
+
   const getTempBonuses = utils?.getTempBonuses;
   const { calcExpRequirement } = utils ?? {};
   const { description, descriptionOnClick } = props;
@@ -78,71 +90,86 @@ export const KamiCard = (props: Props) => {
     const details = description
       .slice(1)
       .map((text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>);
-
     return <>{[header, ...details]}</>;
   };
 
-  const getItemBonusesDescription = (kami: Kami) => {
+  const itemBonuses = useMemo(() => {
     if (!getTempBonuses) return [];
-    return getTempBonuses(kami).map((bonus) => parseBonusText(bonus));
-  };
+    return getTempBonuses(kami).map((bonus) => ({
+      image: getItemImage(bonus.source?.name || ''),
+      text: parseBonusText(bonus),
+    }));
+  }, [getTempBonuses, kami]);
+
+  const Title = (
+    <TitleBar>
+      <TitleText key='title' onClick={() => handleKamiClick()}>
+        {kami.name}
+      </TitleText>
+      <TitleCorner key='corner'>
+        {showCooldown && <Cooldown kami={kami} />}
+        {showBattery && <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />}
+      </TitleCorner>
+    </TitleBar>
+  );
+
+  const Bonuses = itemBonuses.length > 0 && (
+    <Buffs>
+      {itemBonuses.map((bonus, i) => (
+        <TextTooltip key={i} text={[bonus.text]} direction='row'>
+          <Buff src={bonus.image} />
+        </TextTooltip>
+      ))}
+    </Buffs>
+  );
 
   return (
     <Card
       image={{
         icon: kami.image,
-        canLevel,
-        skillPoints: (kami.skills?.points ?? 0) > 0,
+        showLevelUp: showLevelUp && canLevel,
+        showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
         onClick: handleKamiClick,
       }}
     >
-      <TitleBar>
-        <TitleText key='title' onClick={() => handleKamiClick()}>
-          {kami.name}
-        </TitleText>
-        <TitleCorner key='corner'>
-          <TextTooltip text={[getItemBonusesDescription(kami)]}>
-            {getItemBonusesDescription(kami).length > 0 && <Buff src={StatusIcons.buff} />}
-          </TextTooltip>
-          {showCooldown && <Cooldown kami={kami} />}
-          {showBattery && (
-            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
-          )}
-        </TitleCorner>
-      </TitleBar>
+      {Title}
       <Content>
-        <ContentColumn key='column-1'>
-          <TextTooltip text={contentTooltip ?? []}>
-            <Description />
-          </TextTooltip>
-          {isFriend && <Friend>Friend</Friend>}
-        </ContentColumn>
-        <ContentColumn key='column-2'>
-          <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+        <ContentRow>
+          <ContentColumn key='column-1'>
+            <TextTooltip text={contentTooltip ?? []}>
+              <Description />
+            </TextTooltip>
+            {isFriend && <Friend>Friend</Friend>}
+          </ContentColumn>
+          <ContentColumn key='column-2'>
+            <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+          </ContentColumn>
+        </ContentRow>
+        <ContentBottom>
+          {Bonuses}
           <ContentActions>{actions}</ContentActions>
-        </ContentColumn>
+        </ContentBottom>
       </Content>
     </Card>
   );
 };
 
 const TitleBar = styled.div`
+  display: flex;
+
   border-bottom: solid black 0.15vw;
   padding: 0.45vw;
-
-  display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
 const TitleText = styled.div`
   display: flex;
   justify-content: flex-start;
-
   font-size: 1vw;
   text-align: left;
-
   cursor: pointer;
   &:hover {
     opacity: 0.6;
@@ -155,27 +182,48 @@ const TitleCorner = styled.div`
   flex-grow: 1;
   align-items: center;
   justify-content: flex-end;
-
   gap: 0.3vw;
-
   font-size: 1vw;
   text-align: right;
   height: 1.2vw;
 `;
 
+const Buffs = styled.div`
+  display: flex;
+  gap: 0.2vw;
+  width: max-content;
+  align-items: center;
+  padding: 0.2vw;
+  margin: 0 0 0 0.4vw;
+`;
+
 const Buff = styled.img`
   height: 1.6vw;
-  margin-bottom: 0.2vw;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 `;
 
 const Content = styled.div`
   display: flex;
+  flex-direction: column;
   flex-grow: 1;
-  flex-flow: row nowrap;
-  align-items: stretch;
-
+  position: relative;
   padding: 0.2vw;
   user-select: none;
+`;
+
+const ContentRow = styled.div`
+  display: flex;
+  flex-grow: 1;
+`;
+
+const ContentBottom = styled.div`
+  display: flex;
+  position: relative;
+
+  justify-content: space-between;
+  align-items: flex-end;
 `;
 
 const ContentColumn = styled.div`
@@ -189,7 +237,6 @@ const ContentColumn = styled.div`
 
 const ContentSubtext = styled.div`
   flex-grow: 1;
-
   text-align: right;
   font-size: 0.7vw;
 
@@ -206,6 +253,10 @@ const ContentSubtext = styled.div`
 
 const ContentActions = styled.div`
   display: flex;
+  position: absolute;
+  right: 0.2vw;
+  bottom: 0.1vw;
+
   flex-flow: row nowrap;
   justify-content: flex-end;
   gap: 0.3vw;
@@ -238,6 +289,7 @@ const TextMedium = styled.p`
 `;
 
 const Friend = styled.div`
+  display: flex;
   width: 5vw;
   padding: 0.2vw;
   position: absolute;
@@ -245,7 +297,7 @@ const Friend = styled.div`
   background-color: rgb(192, 224, 139);
   color: rgb(25, 39, 2);
   clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
-  display: flex;
+
   align-items: center;
   justify-content: center;
   font-size: 0.6vw;

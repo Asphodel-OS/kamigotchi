@@ -1,1 +1,1 @@
-export { registerMerchantModal } from './Merchant';
+export { MerchantModal } from './Merchant';

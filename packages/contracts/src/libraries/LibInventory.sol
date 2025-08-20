@@ -29,8 +29,9 @@ uint32 constant MUSU_INDEX = 1;
 uint32 constant GACHA_TICKET_INDEX = 10;
 uint32 constant REROLL_TICKET_INDEX = 11;
 uint32 constant ONYX_INDEX = 100;
+uint32 constant OBOL_INDEX = 1015;
 
-// handles nonfungible inventory instances
+// handles fungible inventory instances
 library LibInventory {
   using LibComp for IUintComp;
 

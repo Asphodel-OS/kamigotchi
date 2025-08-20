@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 import { AccountCache, getAccount } from 'app/cache/account';
 import { ValidatorWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { emptyAccountDetails, useAccount, useNetwork, useVisibility } from 'app/stores';
 import { ETH_INDEX } from 'constants/items';
 import { GodID, SyncState } from 'engine/constants';
@@ -15,17 +15,9 @@ import { waitForActionCompletion } from 'network/utils';
 import { IntroStep1, IntroStep2 } from './IntroSteps';
 import { Registration } from './Registration';
 
-export function registerAccountRegistrar() {
-  registerUIComponent(
-    'AccountRegistrar',
-    {
-      // positioning controlled by validator wrapper
-      colStart: 0,
-      colEnd: 0,
-      rowStart: 0,
-      rowEnd: 0,
-    },
-    (layers) => {
+export const AccountRegistrar: UIComponent = {
+  id: 'AccountRegistrar',
+  requirement: (layers) => {
       const { network } = layers;
       const { world, components } = network;
       const { LoadingState } = components;
@@ -66,9 +58,8 @@ export function registerAccountRegistrar() {
           };
         })
       );
-    },
-
-    ({ data, network, utils }) => {
+  },
+  Render: ({ data, network, utils }) => {
       const { accountEntity } = data;
       const { getBaseAccount } = utils;
       const { actions } = network;
@@ -179,6 +170,5 @@ export function registerAccountRegistrar() {
           {GetSteps()[step]}
         </ValidatorWrapper>
       );
-    }
-  );
-}
+  },
+};

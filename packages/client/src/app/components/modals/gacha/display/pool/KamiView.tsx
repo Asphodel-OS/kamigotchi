@@ -52,10 +52,10 @@ export const KamiView = (props: Props) => {
 
   // filter (and implicitly populate) the pool of kamis on initial lod
   useEffect(() => {
-    if (isLoaded || isLoading) return;
+    if (isLoaded || isLoading || !modals.gacha) return;
     setIsLoading(true);
     loadKamis();
-  }, []);
+  }, [modals.gacha]);
 
   // when the entities or filters change, update the list of filtered kamis
   useEffect(() => {

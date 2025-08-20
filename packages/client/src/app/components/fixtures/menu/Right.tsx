@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
 import {
@@ -11,35 +11,27 @@ import {
   QuestMenuButton,
 } from './buttons';
 
-export function registerMenuRight() {
-  registerUIComponent(
-    'RightMenuFixture',
-    {
-      colStart: 67,
-      colEnd: 100,
-      rowStart: 3,
-      rowEnd: 6,
-    },
-    (layers) => of(layers),
-    () => {
-      const { fixtures } = useVisibility();
-      return (
-        <>
-          <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
-            <CraftMenuButton />
-            <InventoryMenuButton />
-            <QuestMenuButton />
-            <ChatMenuButton />
-            <MoreMenuButton />
-          </Wrapper>
-          <Wrapper style={{ display: fixtures.menu ? 'none' : 'flex' }}>
-            <MoreMenuButton />
-          </Wrapper>
-        </>
-      );
-    }
-  );
-}
+export const RightMenuFixture: UIComponent = {
+  id: 'RightMenuFixture',
+  requirement: (layers) => of(layers),
+  Render: () => {
+    const { fixtures } = useVisibility();
+    return (
+      <>
+        <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+          <CraftMenuButton />
+          <InventoryMenuButton />
+          <QuestMenuButton />
+          <ChatMenuButton />
+          <MoreMenuButton />
+        </Wrapper>
+        <Wrapper style={{ display: fixtures.menu ? 'none' : 'flex' }}>
+          <MoreMenuButton />
+        </Wrapper>
+      </>
+    );
+  },
+};
 
 const Wrapper = styled.div`
   flex-direction: row;

@@ -6,7 +6,7 @@ import { IconButton, IconListButtonOption, Overlay, Text } from 'app/components/
 import { useVisibility } from 'app/stores';
 import { MUSU_INDEX } from 'constants/items';
 import { Inventory } from 'network/shapes';
-import { Item } from 'network/shapes/Item';
+import { Item, NullItem } from 'network/shapes/Item';
 import { LineItem } from './LineItem';
 
 interface Props {
@@ -39,19 +39,20 @@ export const MultiCreate = (props: Props) => {
   const [thousandsSeparator, setThousandsSeparator] = useState<string>(',');
 
   // tests number formatting
+  // TODO: make this available globally through a util function
   useEffect(() => {
     setThousandsSeparator((4.56).toLocaleString().includes(',') ? '.' : ',');
   }, []);
 
   useEffect(() => {
-    if (modals.trading) reset();
-  }, [modals.trading]);
+    reset();
+  }, [items.length]);
 
   const reset = () => {
-    const musu = items.find((item) => item.index === MUSU_INDEX)!;
-    setWant([musu]);
+    const fillerItem = items.find((item) => item.index === MUSU_INDEX) ?? NullItem;
+    setWant([fillerItem]);
     setWantAmt([1]);
-    setHave([musu]);
+    setHave([fillerItem]);
     setHaveAmt([1]);
   };
 
@@ -265,9 +266,9 @@ export const MultiCreate = (props: Props) => {
     <Container isVisible={isVisible}>
       <Body>
         <Text size={1.2}>I want</Text>
-        {WantSection}
+        {want.length > 0 && WantSection}
         <Text size={1.2}>for</Text>
-        {HaveSection}
+        {have.length > 0 && HaveSection}
       </Body>
       <Overlay bottom={0.75} right={0.75}>
         <IconButton

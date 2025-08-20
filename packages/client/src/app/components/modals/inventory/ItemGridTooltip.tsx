@@ -23,6 +23,8 @@ export const ItemGridTooltip = (props: Props) => {
   const requirements = item.requirements;
   const effects = item.effects;
 
+  const isLootbox = type === 'LOOTBOX';
+
   const display = (item: Item) => {
     const disp = displayRequirements(item);
     if (disp === '???') return 'None';
@@ -46,7 +48,13 @@ export const ItemGridTooltip = (props: Props) => {
         </Section>
         <Section>
           Effects:
-          <p>{effects?.use?.length > 0 ? parseAllos(effects.use)[0].description : 'None'}</p>
+          <p>
+            {!isLootbox && effects?.use?.length > 0
+              ? parseAllos(effects.use)
+                  .map((entry) => entry.description)
+                  .join('\n')
+              : 'None'}
+          </p>
         </Section>
       </BottomSection>
     </Container>
@@ -87,7 +95,7 @@ const SubSection = styled.span`
 const BottomSection = styled.div`
   display: flex;
   flex-direction: row;
-  aligg-items: center;
+  align-items: center;
   gap: 0.5vw;
   padding: 0.5vw;
 `;

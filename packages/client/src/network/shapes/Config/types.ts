@@ -39,7 +39,7 @@ export const getConfigFieldValueArray = (
 ): number[] => {
   const { Value } = components;
   const entity = query(world, field);
-  if (!entity) return [0];
+  if (!entity) return new Array(8).fill(0);
 
   const raw = getComponentValue(Value, entity)?.value;
   if (!raw) return [];

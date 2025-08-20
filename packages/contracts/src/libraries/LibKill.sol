@@ -16,7 +16,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
-import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
+import { LibInventory, MUSU_INDEX, OBOL_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibPhase } from "libraries/utils/LibPhase.sol";
@@ -57,6 +57,12 @@ library LibKill {
   function sendSpoils(IUintComp comps, uint256 killerProdID, uint256 amt) internal {
     if (amt == 0) return;
     LibHarvest.incBounty(comps, killerProdID, amt);
+  }
+
+  /// @notice gives out rewards for killing a kami
+  function rewardKiller(IUintComp comps, uint256 killerAccID) internal {
+    // killer gets an obol
+    LibInventory.incFor(comps, killerAccID, OBOL_INDEX, 1);
   }
 
   /////////////////

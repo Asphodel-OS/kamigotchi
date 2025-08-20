@@ -8,7 +8,7 @@ import { Account } from '../account';
 // assume that Account Stamina and Config are populated
 export const calcCurrentStamina = (account: Account): number => {
   if (!account.config) return 0;
-  const recoveryPeriod = account.config.stamina.recovery ?? 300;
+  const recoveryPeriod = account.config.stamina.recovery ?? 60;
   const timeDelta = Date.now() / 1000 - account.time.action;
   const recovered = Math.floor(timeDelta / recoveryPeriod);
   return sync(account.stamina, recovered);

@@ -5,22 +5,15 @@ import { erc20Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getItemByIndex } from 'app/cache/item';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useTokens } from 'app/stores';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { getCompAddr } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/numbers';
 
-export function registerTokenChecker() {
-  registerUIComponent(
-    'TokenBalances',
-    {
-      colStart: 0,
-      colEnd: 0,
-      rowStart: 0,
-      rowEnd: 0,
-    },
-    (layers) => {
+export const TokenChecker: UIComponent = {
+  id: 'TokenBalances',
+  requirement: (layers) => {
       const { network } = layers;
       const { actions, components } = network;
 
@@ -40,8 +33,8 @@ export function registerTokenChecker() {
           };
         })
       );
-    },
-    ({ tokenAddresses, spender }) => {
+  },
+  Render: ({ tokenAddresses, spender }) => {
       const { selectedAddress } = useNetwork();
       const { balances, set, setOnyx } = useTokens();
 
@@ -113,9 +106,8 @@ export function registerTokenChecker() {
       }, [onyxData]);
 
       return <Wrapper style={{ display: 'block' }} />;
-    }
-  );
-}
+  },
+};
 
 const Wrapper = styled.div`
   align-items: left;

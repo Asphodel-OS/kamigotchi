@@ -20,7 +20,6 @@ interface Props {
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
   };
   utils: {
-    calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }
@@ -29,7 +28,6 @@ interface Props {
 export const AllyKards = (props: Props) => {
   const { actions, display, account, kamis, utils } = props;
   const { getTempBonuses } = utils;
-  const { calcExpRequirement } = utils;
   const { collect, stop } = actions;
   const { UseItemButton } = display;
 

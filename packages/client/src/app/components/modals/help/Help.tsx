@@ -3,24 +3,17 @@ import { of } from 'rxjs';
 import styled from 'styled-components';
 
 import { ActionButton, ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { HelpIcon } from 'assets/images/icons/menu';
 import { Books } from './Books';
 import { Page } from './Page';
 import { CopyInfo } from './copy';
 import { HelpTabs } from './types';
 
-export function registerHelpModal() {
-  registerUIComponent(
-    'HelpModal',
-    {
-      colStart: 67,
-      colEnd: 100,
-      rowStart: 8,
-      rowEnd: 75,
-    },
-    (layers) => of(layers),
-    () => {
+export const HelpModal: UIComponent = {
+  id: 'HelpModal',
+  requirement: (layers) => of(layers),
+  Render: () => {
       const [tab, setTab] = useState<HelpTabs>(HelpTabs.HOME);
 
       const BackButton = () => (
@@ -51,9 +44,8 @@ export function registerHelpModal() {
           {tab === HelpTabs.HOME ? <Books setTab={setTab} /> : <Page body={CopyInfo[tab].body} />}
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Row = styled.div`
   width: 100%;
