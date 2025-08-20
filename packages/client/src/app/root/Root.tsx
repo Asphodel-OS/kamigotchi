@@ -7,7 +7,7 @@ import { WagmiProvider } from 'wagmi';
 
 import { BootScreen } from 'app/components/boot';
 import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
-import { GodID, SyncState, SyncStatus } from 'engine/constants';
+import { GodID, SyncState } from 'engine/constants';
 import { Layers } from 'network/';
 import { MainWindow } from './components/MainWindow';
 import { NetworkContext } from './context';
@@ -23,7 +23,6 @@ export const Root = observer(
     const [mounted, setMounted] = useState(true);
     const [layers, _setLayers] = useState<Layers | undefined>();
     const [ready, setReady] = useState(false);
-    const [loadingState, setLoadingState] = useState<SyncStatus | undefined>();
 
     // mount root and layers used for app context
     useEffect(() => {
@@ -35,25 +34,21 @@ export const Root = observer(
     // show boot screen until network is loaded
     useEffect(() => {
       if (!layers) return;
-      const {
-        components: { LoadingState },
-        world,
-      } = layers.network;
+      const { world, components } = layers.network;
+      const { LoadingState } = components;
+
       const liveStateWatcher = LoadingState.update$.subscribe(() => {
         const GodEntityIndex = world.entityToIndex.get(GodID);
-        const loadingState =
-          GodEntityIndex != null ? getComponentValue(LoadingState, GodEntityIndex) : undefined;
-        if (loadingState?.state === SyncState.LIVE) {
-          setReady(true);
-        }
+        const loadingState = getComponentValue(LoadingState, GodEntityIndex!);
+        if (loadingState?.state === SyncState.LIVE) setReady(true);
       });
+
       return () => {
         liveStateWatcher.unsubscribe();
       };
     }, [layers]);
 
     const showBootScreen = !mounted || !layers;
-
     return showBootScreen ? (
       <BootScreen status='' />
     ) : (
