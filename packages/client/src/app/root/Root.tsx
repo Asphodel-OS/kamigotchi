@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 
-import { BootScreen, LoadingState as LoadingStateComponent } from 'app/components/boot';
+import { BootScreen } from 'app/components/boot';
 import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
 import { GodID, SyncState, SyncStatus } from 'engine/constants';
 import { Layers } from 'network/';
@@ -43,28 +43,19 @@ export const Root = observer(
         const GodEntityIndex = world.entityToIndex.get(GodID);
         const loadingState =
           GodEntityIndex != null ? getComponentValue(LoadingState, GodEntityIndex) : undefined;
-
         if (loadingState?.state === SyncState.LIVE) {
           setReady(true);
         }
       });
-      const LoadingStateComponentWatcher = LoadingStateComponent.requirement(layers).subscribe(
-        ({ loadingState }) => {
-          setLoadingState(loadingState);
-        }
-      );
       return () => {
         liveStateWatcher.unsubscribe();
-        LoadingStateComponentWatcher.unsubscribe();
       };
     }, [layers]);
 
     const showBootScreen = !mounted || !layers;
-    const status = loadingState?.msg || 'Connecting...';
-    const percentage = loadingState?.percentage || 0;
 
     return showBootScreen ? (
-      <BootScreen status={status} progress={percentage} />
+      <BootScreen status='' />
     ) : (
       <PrivyProvider
         appId={import.meta.env.VITE_PRIVY_APP_ID}
