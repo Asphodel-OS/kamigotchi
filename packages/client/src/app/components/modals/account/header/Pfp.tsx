@@ -81,7 +81,7 @@ const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
     if (props.timeDelta < 300) return '#6f3';
     else if (props.timeDelta < 1800) return '#fd3';
     else return '#f33';
-  }}};
+  }};
   ${({ isLoading }) =>
     isLoading &&
     `animation: fade 3s linear infinite;
