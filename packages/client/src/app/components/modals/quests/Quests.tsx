@@ -26,8 +26,8 @@ import { getFromDescription } from 'network/shapes/utils/parse';
 import { List } from './list/List';
 import { Tabs } from './Tabs';
 
-export const Quests: UIComponent = {
-  id: 'Quests',
+export const QuestModal: UIComponent = {
+  id: 'QuestModal',
   requirement: (layers) =>
     interval(2000).pipe(
       map(() => {
@@ -65,14 +65,12 @@ export const Quests: UIComponent = {
               getFromDescription(world, components, type, index),
             getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
             getItem: (index: number) => getItemByIndex(world, components, index),
-            getItemBalance: (index: number) =>
-              getItemBalance(world, components, account.id, index),
+            getItemBalance: (index: number) => getItemBalance(world, components, account.id, index),
             filterByAvailable: (
               registry: BaseQuest[],
               ongoing: BaseQuest[],
               completed: BaseQuest[]
-            ) =>
-              filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
+            ) => filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
             parseObjectives: (quest: Quest) =>
               parseQuestObjectives(world, components, account, quest),
             parseRequirements: (quest: Quest) =>
@@ -85,129 +83,129 @@ export const Quests: UIComponent = {
     ),
 
   Render: ({ network, data, utils }) => {
-      const { actions, api, notifications } = network;
-      const { ongoing, completed, registry } = data.quests;
-      const { getItem, populate, filterByAvailable } = utils;
-      const { modals } = useVisibility();
+    const { actions, api, notifications } = network;
+    const { ongoing, completed, registry } = data.quests;
+    const { getItem, populate, filterByAvailable } = utils;
+    const { modals } = useVisibility();
 
-      const isUpdating = useRef(false);
-      const [tab, setTab] = useState<TabType>('ONGOING');
-      const [available, setAvailable] = useState<Quest[]>([]);
+    const isUpdating = useRef(false);
+    const [tab, setTab] = useState<TabType>('ONGOING');
+    const [available, setAvailable] = useState<Quest[]>([]);
 
-      /////////////////
-      // SUBSCRIPTIONS
+    /////////////////
+    // SUBSCRIPTIONS
 
-      // update Available Quests whenever quests change state
-      // TODO: figure out a trigger for repeatable quests
-      useEffect(() => {
-        if (isUpdating.current) return;
-        isUpdating.current = true;
+    // update Available Quests whenever quests change state
+    // TODO: figure out a trigger for repeatable quests
+    useEffect(() => {
+      if (isUpdating.current) return;
+      isUpdating.current = true;
 
-        const raw = filterByAvailable(registry, ongoing, completed);
-        const populated = raw.map((q) => populate(q));
+      const raw = filterByAvailable(registry, ongoing, completed);
+      const populated = raw.map((q) => populate(q));
 
-        setAvailable(populated);
-        if (populated.length > available.length) setTab('AVAILABLE');
+      setAvailable(populated);
+      if (populated.length > available.length) setTab('AVAILABLE');
 
-        isUpdating.current = false;
-      }, [modals.quests, registry.length, completed.length, ongoing.length]);
+      isUpdating.current = false;
+    }, [modals.quests, registry.length, completed.length, ongoing.length]);
 
-      // update the Notifications when the number of available quests changes
-      useEffect(() => {
-        updateNotifications();
-      }, [available.length]);
+    // update the Notifications when the number of available quests changes
+    useEffect(() => {
+      updateNotifications();
+    }, [available.length]);
 
-      /////////////////
-      // HELPERS
+    /////////////////
+    // HELPERS
 
-      // Q(jb): do we want this in a react component or on an independent hook?
-      const updateNotifications = async () => {
-        const id = 'Available Quests' as EntityID;
-        const n = available.length;
-        const auxVerb = n == 1 ? 'is' : 'are';
-        const questWord = n == 1 ? 'quest' : 'quests';
-        const description = `There ${auxVerb} ${n} ${questWord} you can accept.`;
+    // Q(jb): do we want this in a react component or on an independent hook?
+    const updateNotifications = async () => {
+      const id = 'Available Quests' as EntityID;
+      const n = available.length;
+      const auxVerb = n == 1 ? 'is' : 'are';
+      const questWord = n == 1 ? 'quest' : 'quests';
+      const description = `There ${auxVerb} ${n} ${questWord} you can accept.`;
 
-        if (notifications.has(id)) {
-          if (n == 0) notifications.remove(id as EntityID);
-          else notifications.update(id as EntityID, { description });
-        } else if (n > 0) {
-          notifications.add({
-            id,
-            title: `Available Quests!`,
-            description,
-            time: Date.now().toString(),
-            modal: 'quests',
-          });
-        }
-      };
-
-      /////////////////
-      // ACTIONS
-
-      const acceptQuest = async (quest: BaseQuest) => {
-        actions.add({
-          action: 'QuestAccept',
-          params: [quest.index * 1],
-          description: `Accepting Quest: ${quest.name}`,
-          execute: async () => {
-            return api.player.account.quest.accept(quest.index);
-          },
-        });
-      };
-
-      const completeQuest = async (quest: BaseQuest) => {
-        actions.add({
-          action: 'QuestComplete',
-          params: [quest.id],
-          description: `Completing Quest: ${quest.name}`,
-          execute: async () => {
-            return api.player.account.quest.complete(quest.id);
-          },
-        });
-      };
-
-      const burnQuestItems = async (indices: number[], amts: number[]) => {
-        let description = 'Giving';
-        for (let i = 0; i < indices.length; i++) {
-          const item = getItem(indices[i]);
-          description += ` ${amts[i]} ${item.name}`;
-        }
-
-        actions.add({
-          action: 'ItemBurn',
-          params: [indices, amts],
+      if (notifications.has(id)) {
+        if (n == 0) notifications.remove(id as EntityID);
+        else notifications.update(id as EntityID, { description });
+      } else if (n > 0) {
+        notifications.add({
+          id,
+          title: `Available Quests!`,
           description,
-          execute: async () => {
-            return api.player.account.item.burn(indices, amts);
-          },
+          time: Date.now().toString(),
+          modal: 'quests',
         });
-      };
+      }
+    };
 
-      const transactions: QuestModalActions = {
-        accept: acceptQuest,
-        complete: completeQuest,
-        burnItems: burnQuestItems,
-      };
+    /////////////////
+    // ACTIONS
 
-      return (
-        <ModalWrapper
-          id='quests'
-          header={[
-            <ModalHeader key='header' title='Quests' icon={QuestsIcon} />,
-            <Tabs key='tabs' tab={tab} setTab={setTab} />,
-          ]}
-          canExit
-          truncate
-          noPadding
-        >
-          <List
-            quests={{ available, ongoing, completed }}
-            mode={tab}
-            actions={transactions}
-            utils={utils}
-          />
-        </ModalWrapper>
-      );
+    const acceptQuest = async (quest: BaseQuest) => {
+      actions.add({
+        action: 'QuestAccept',
+        params: [quest.index * 1],
+        description: `Accepting Quest: ${quest.name}`,
+        execute: async () => {
+          return api.player.account.quest.accept(quest.index);
+        },
+      });
+    };
+
+    const completeQuest = async (quest: BaseQuest) => {
+      actions.add({
+        action: 'QuestComplete',
+        params: [quest.id],
+        description: `Completing Quest: ${quest.name}`,
+        execute: async () => {
+          return api.player.account.quest.complete(quest.id);
+        },
+      });
+    };
+
+    const burnQuestItems = async (indices: number[], amts: number[]) => {
+      let description = 'Giving';
+      for (let i = 0; i < indices.length; i++) {
+        const item = getItem(indices[i]);
+        description += ` ${amts[i]} ${item.name}`;
+      }
+
+      actions.add({
+        action: 'ItemBurn',
+        params: [indices, amts],
+        description,
+        execute: async () => {
+          return api.player.account.item.burn(indices, amts);
+        },
+      });
+    };
+
+    const transactions: QuestModalActions = {
+      accept: acceptQuest,
+      complete: completeQuest,
+      burnItems: burnQuestItems,
+    };
+
+    return (
+      <ModalWrapper
+        id='quests'
+        header={[
+          <ModalHeader key='header' title='Quests' icon={QuestsIcon} />,
+          <Tabs key='tabs' tab={tab} setTab={setTab} />,
+        ]}
+        canExit
+        truncate
+        noPadding
+      >
+        <List
+          quests={{ available, ongoing, completed }}
+          mode={tab}
+          actions={transactions}
+          utils={utils}
+        />
+      </ModalWrapper>
+    );
   },
 };

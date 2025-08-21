@@ -1,1 +1,1 @@
-export { KamiDetails } from './Kami';
+export { KamiModal } from './Kami';

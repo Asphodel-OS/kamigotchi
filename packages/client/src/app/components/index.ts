@@ -1,3 +1,7 @@
+import type { UIComponentWithGrid } from 'app/root/types';
+import { LoadingState } from './boot';
+import { Scene } from './canvas';
+
 import { ClockFixture } from './fixtures/clock';
 import { LeftMenuFixture, RightMenuFixture } from './fixtures/menu';
 import { NotificationFixture } from './fixtures/notifications';
@@ -7,34 +11,36 @@ import { AccountModal } from './modals/account';
 import { ChatModal } from './modals/chat';
 import { CraftingModal } from './modals/crafting';
 import { DialogueModal } from './modals/dialogue';
+import { FundOperator } from './modals/FundOperator';
 import { GachaModal } from './modals/gacha';
 import { GoalModal } from './modals/goals';
 import { HelpModal } from './modals/help';
 import { InventoryModal } from './modals/inventory';
-import { KamiDetails } from './modals/kami';
-import { KamiBridge } from './modals/kamiBridge';
+import { KamiModal } from './modals/kami';
+import { KamiPortalModal } from './modals/kamiPortal';
 import { LeaderboardModal } from './modals/leaderboard';
-import { LootBoxModal } from './modals/lootBox/LootBox';
 import { MapModal } from './modals/map';
-import { MerchantWindow } from './modals/merchant';
-import { EmaBoard } from './modals/naming';
+import { MerchantModal } from './modals/merchant';
+import { EmaBoardModal } from './modals/naming';
 import { NodeModal } from './modals/node';
+import { ObolModal } from './modals/obol';
 import { PartyModal } from './modals/party';
-import { Presale } from './modals/presale';
-import { Reveal } from './modals/reveal/Reveal';
-import { Settings } from './modals/settings';
+import { QuestModal } from './modals/quests';
+import { RevealModal } from './modals/reveal';
+import { SettingsModal } from './modals/settings';
 import { TradingModal } from './modals/trading';
 import { AnimationStudio } from './modals/studio/AnimationStudio';
 // unused
 import { FundOperator } from './modals/FundOperator';
 
-import type { UIComponentWithGrid } from 'app/root/types';
-import { Quests } from './modals/quests';
-import { AccountRegistrar, GasHarasser, OperatorUpdater, WalletConnecter } from './validators';
-import { TokenChecker } from './validators/TokenChecker';
 
-import { LoadingState } from './boot';
-import { Scene } from './canvas';
+import {
+  AccountRegistrar,
+  GasHarasser,
+  OperatorUpdater,
+  TokenChecker,
+  WalletConnecter,
+} from './validators';
 
 export const allComponents: UIComponentWithGrid[] = [
   // boot
@@ -127,11 +133,11 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 99 },
   },
   {
-    uiComponent: Quests,
+    uiComponent: QuestModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {
-    uiComponent: Settings,
+    uiComponent: SettingsModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {
@@ -142,10 +148,6 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: TradingModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
-  {
-    uiComponent: Presale,
-    gridConfig: { colStart: 25, colEnd: 75, rowStart: 25, rowEnd: 75 },
-  },
 
   // scene modals
   {
@@ -153,11 +155,7 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 75, rowEnd: 99 },
   },
   {
-    uiComponent: KamiBridge,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
-  },
-  {
-    uiComponent: EmaBoard,
+    uiComponent: EmaBoardModal,
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
   },
   {
@@ -169,7 +167,15 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 11, colEnd: 89, rowStart: 8, rowEnd: 85 },
   },
   {
-    uiComponent: KamiDetails,
+    uiComponent: GoalModal,
+    gridConfig: { colStart: 20, colEnd: 80, rowStart: 24, rowEnd: 78 },
+  },
+  {
+    uiComponent: KamiPortalModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
+  },
+  {
+    uiComponent: KamiModal,
     gridConfig: { colStart: 11, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
   {
@@ -177,19 +183,15 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 32, colEnd: 70, rowStart: 20, rowEnd: 78 },
   },
   {
-    uiComponent: LootBoxModal,
+    uiComponent: ObolModal,
     gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
   },
   {
-    uiComponent: Reveal,
+    uiComponent: RevealModal,
     gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 75 },
   },
   {
-    uiComponent: MerchantWindow,
+    uiComponent: MerchantModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
-  },
-  {
-    uiComponent: GoalModal,
-    gridConfig: { colStart: 20, colEnd: 80, rowStart: 24, rowEnd: 78 },
   },
 ];

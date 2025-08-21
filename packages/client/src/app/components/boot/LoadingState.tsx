@@ -2,6 +2,7 @@ import { getComponentValue } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { concat, map } from 'rxjs';
 
+import { processKamiConfig } from 'app/cache/config';
 import { initializeItems } from 'app/cache/item';
 import { initializeSkills } from 'app/cache/skills';
 import { UIComponent } from 'app/root/types';
@@ -32,8 +33,9 @@ export const LoadingState: UIComponent = {
         return {
           loadingState,
           utils: {
-            initializeSkills: () => initializeSkills(world, components),
+            initializeKamiConfig: () => processKamiConfig(world, components),
             initializeItems: () => initializeItems(world, components),
+            initializeSkills: () => initializeSkills(world, components),
           },
         };
       })
@@ -42,15 +44,16 @@ export const LoadingState: UIComponent = {
   Render: ({ loadingState, utils }) => {
     const [isVisible, setIsVisible] = useState(true);
     const { state, msg, percentage } = loadingState;
-    const { initializeItems, initializeSkills } = utils;
+    const { initializeItems, initializeKamiConfig, initializeSkills } = utils;
 
     useEffect(() => {
       if (FE_DISABLED) return;
 
       if (state === SyncState.LIVE) {
-        setTimeout(() => setIsVisible(false), 1000);
-        initializeSkills();
+        setTimeout(() => setIsVisible(false), 1500);
         initializeItems();
+        initializeKamiConfig();
+        initializeSkills();
       }
     }, [state]);
 

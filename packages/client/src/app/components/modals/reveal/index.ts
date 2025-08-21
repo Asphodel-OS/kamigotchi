@@ -1,1 +1,1 @@
-export { Reveal } from './Reveal';
+export { RevealModal } from './Reveal';

@@ -17,4 +17,4 @@ export type UIComponent = {
   id: string;
   requirement: (layers: Layers) => Observable<any>;
   Render: React.FC<any>;
-}
+};

@@ -8,13 +8,12 @@ import type { UIComponentWithGrid } from 'app/root/types';
 import { Layers } from 'network/index';
 import { useStream } from 'network/utils';
 
-export const MainWindow = observer(() => {
+export const MainWindow = observer(({ ready }: { ready: boolean }) => {
   const layers = useLayers();
-  if (!layers) return null;
 
   return (
     <UIGrid>
-      {allComponents.map((componentWithGrid) => (
+      {(ready ? allComponents : allComponents.slice(0, 1)).map((componentWithGrid) => (
         <UIComponentRenderer
           key={componentWithGrid.uiComponent.id}
           layers={layers}

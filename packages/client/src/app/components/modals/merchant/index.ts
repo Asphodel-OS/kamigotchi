@@ -1,1 +1,1 @@
-export { MerchantWindow } from './Merchant';
+export { MerchantModal } from './Merchant';
