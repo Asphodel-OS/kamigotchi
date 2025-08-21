@@ -218,5 +218,4 @@ export const AccountModal: UIComponent = {
         </ModalWrapper>
       );
     }
-  },
 };

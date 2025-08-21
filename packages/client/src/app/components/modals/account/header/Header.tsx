@@ -1,12 +1,10 @@
 import { EntityIndex } from '@mud-classic/recs';
 import CakeIcon from '@mui/icons-material/Cake';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { KAMI_BASE_URI } from 'constants/media';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
@@ -15,7 +13,8 @@ import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
-import { Friend as FriendActions } from './Friend';
+import { FriendActions } from './FriendActions';
+import { Pfp } from './Pfp';
 
 interface Props {
   account: Account; // account selected for viewing
@@ -41,28 +40,9 @@ export const Header = (props: Props) => {
   const { getAccountKamis, getFriends } = utils;
   const { handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren } = actions;
 
-  const [tick, setTick] = useState(Date.now());
-
-  /////////////////
-  // TRACKING
-
-  // ticking
-  useEffect(() => {
-    const refreshClock = () => setTick(Date.now());
-    const timerId = setInterval(refreshClock, 3333);
-    return () => clearInterval(timerId);
-  }, []);
-
   const copyText = (text: string) => {
     playClick();
     navigator.clipboard.writeText(text);
-  };
-
-  /////////////////
-  // INTERPRETATION
-
-  const getLastSeenString = () => {
-    return `Last Seen: ${moment(1000 * account.time.last).fromNow()}`;
   };
 
   /////////////////
@@ -86,22 +66,6 @@ export const Header = (props: Props) => {
     return kamis;
   };
 
-  const Pfp = () => {
-    return (
-      <PfpContainer>
-        <PfpImage
-          isLoading={isLoading}
-          draggable='false'
-          src={`${KAMI_BASE_URI + account.pfpURI}.gif`}
-        />
-        <TextTooltip text={[getLastSeenString()]}>
-          <PfpStatus isLoading={isLoading} timeDelta={tick / 1000 - account.time.last} />
-        </TextTooltip>
-      </PfpContainer>
-    );
-  };
-
-
   return (
     <Container>
       <Overlay top={0.75} right={0.75}>
@@ -109,10 +73,10 @@ export const Header = (props: Props) => {
       </Overlay>
       {isSelf ? (
         <Popover cursor={`url(${ActionIcons.edit}), auto`} key='profile' content={KamisDropDown()}>
-          {Pfp()}
+          <Pfp account={account} isLoading={isLoading} />
         </Popover>
       ) : (
-        Pfp()
+        <Pfp account={account} isLoading={isLoading} />
       )}
       <Info>
         <TitleSection>
@@ -148,64 +112,6 @@ const Container = styled.div`
   gap: 0.9vw;
   align-items: flex-start;
   user-select: none;
-`;
-
-const PfpContainer = styled.div`
-  position: relative;
-  width: 10vw;
-  height: 10vw;
-`;
-
-const PfpImage = styled.img<{ isLoading: boolean }>`
-  border: solid black 0.15vw;
-  border-radius: 10vw;
-  width: 10vw;
-  height: 10vw;
-  object-fit: cover;
-  object-position: 100% 0;
-  opacity: 1;
-  ${({ isLoading }) =>
-    isLoading &&
-    `animation: fade 3s linear infinite;
-    z-index: 1;
-    @keyframes fade {
-      0%,
-      100% {
-        opacity: 0.4;
-      }
-      50% {
-        opacity: 1;
-      }
-    }`}
-`;
-
-const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
-  border: solid 0.2vw white;
-  position: absolute;
-  bottom: 0.9vw;
-  right: 0.9vw;
-  width: 1.2vw;
-  height: 1.2vw;
-  border-radius: 3vw;
-  z-index: 1;
-  background-color: ${(props) => {
-    if (props.timeDelta < 300) return '#6f3';
-    else if (props.timeDelta < 1800) return '#fd3';
-    else return '#f33';
-  }};
-  ${({ isLoading }) =>
-    isLoading &&
-    `animation: fade 3s linear infinite;
-    z-index: 1;
-    @keyframes fade {
-      0%,
-      100% {
-        opacity: 0.4;
-      }
-      50% {
-        opacity: 1;
-      }
-    }`}
 `;
 
 const Info = styled.div`

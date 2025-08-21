@@ -22,7 +22,7 @@ interface Props {
   };
 }
 
-export const Friend = (props: Props) => {
+export const FriendActions = (props: Props) => {
   const { account, player, utils, actions } = props;
   const { getFriends } = utils;
   const { requestFren, acceptFren, cancelFren, blockFren } = actions;
@@ -114,6 +114,7 @@ export const Friend = (props: Props) => {
 
 const Container = styled.div`
   display: flex;
+  align-items: center;
   gap: 0.45vw;
 `;
 
