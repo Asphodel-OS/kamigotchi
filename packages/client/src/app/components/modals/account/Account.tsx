@@ -198,24 +198,24 @@ export const AccountModal: UIComponent = {
         canExit
         truncate
         >
-          <Header
-            key='header'
-            account={account} // account selected for viewing
-            actions={{ handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren }}
-            isLoading={isLoading}
-            isSelf={isSelf}
-            player={player}
-            utils={utils}
-          />
-          <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
-          <Bottom
-            key='bottom'
-            actions={{ acceptFren, blockFren, cancelFren, requestFren }}
-            data={{ accounts, account, vip, player, isSelf }}
-            utils={utils}
-            view={{ isSelf, setSubTab, subTab, tab }}
-          />
-        </ModalWrapper>
-      );
-    }
+        <Header
+          key='header'
+          account={account} // account selected for viewing
+          actions={{ handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren }}
+          isLoading={isLoading}
+          isSelf={isSelf}
+          player={player}
+          utils={utils}
+        />
+        <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
+        <Bottom
+          key='bottom'
+          actions={{ acceptFren, blockFren, cancelFren, requestFren }}
+          data={{ accounts, account, vip, player, isSelf }}
+          utils={utils}
+          view={{ isSelf, setSubTab, subTab, tab }}
+        />
+      </ModalWrapper>
+    );
+  },
 };
