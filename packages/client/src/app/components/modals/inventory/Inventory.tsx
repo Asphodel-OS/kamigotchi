@@ -92,6 +92,21 @@ export const InventoryModal: UIComponent = {
       });
     };
 
+    // send a list of items to another account
+    const sendItemsTx = (items: Item[], amts: number[], account: Account) => {
+      const itemsIndexes = items.map((item) => item.index);
+      const itemsNames = items.map((item) => item.name);
+      const itemamts = items.map((item) => item.index);
+      actions.add({
+        action: 'ItemTransfer',
+        params: [itemsIndexes, amts, account.id],
+        description: `Sending ${itemamts} ${itemsNames} to ${account.name}`,
+        execute: async () => {
+          return api.player.account.item.transfer(itemsIndexes, amts, account.id);
+        },
+      });
+    };
+
     /////////////////
     // DISPLAY
 
@@ -110,7 +125,7 @@ export const InventoryModal: UIComponent = {
           <ItemGrid
             key='grid'
             accountEntity={accountEntity}
-            actions={{ useForAccount, useForKami }}
+            actions={{ useForAccount, useForKami, sendItemsTx }}
             utils={utils}
           />
         )}
