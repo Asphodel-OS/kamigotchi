@@ -17,6 +17,7 @@ import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
+const SendButtons = new Map<number, React.ReactNode>();
 
 interface Props {
   accounts: Account[];
@@ -48,13 +49,14 @@ export const ItemGrid = (props: Props) => {
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [kamis, setKamis] = useState<Kami[]>([]);
 
-  // set timer
   useEffect(() => {
-    updateData();
-    const refreshClock = () => setLastRefresh(Date.now());
-    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-    return () => clearInterval(timerId);
-  }, []);
+    inventories.forEach((inventory) => {
+      if (!SendButtons.has(inventory.item.index)) {
+        // console.log(`adding send button for ${kami.name}`);
+        SendButtons.set(inventory.item.index, SendButton([inventory.item], [inventory.balance]));
+      }
+    });
+  }, [inventories.length]);
 
   // refresh data whenever the modal is opened
   useEffect(() => {
@@ -160,7 +162,7 @@ export const ItemGrid = (props: Props) => {
             disabled={options.length == 0}
           />
         </TextTooltip>
-        <SendButtonStyled>{sendButton}</SendButtonStyled>
+        <SendButtonStyled>{SendButtons.get(item.index)}</SendButtonStyled>
       </ItemWrapper>
     );
   };
