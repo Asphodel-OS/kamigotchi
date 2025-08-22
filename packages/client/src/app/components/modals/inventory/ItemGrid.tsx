@@ -7,6 +7,7 @@ import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
@@ -20,10 +21,12 @@ const REFRESH_INTERVAL = 2000;
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = ({
   accountEntity,
+  accounts,
   actions,
   utils,
 }: {
   accountEntity: EntityIndex;
+  accounts: Account[];
   actions: {
     useForAccount: (item: Item, amount: number) => void;
     useForKami: (kami: Kami, item: Item) => void;
@@ -39,8 +42,9 @@ export const ItemGrid = ({
   };
 }) => {
   const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
-  const { modals } = useVisibility();
+  const { sendItemsTx } = actions;
 
+  const { modals } = useVisibility();
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [account, setAccount] = useState<Account>(NullAccount);
   const [inventories, setInventories] = useState<Inventory[]>([]);
@@ -104,6 +108,24 @@ export const ItemGrid = ({
     if (bal > 1) options.push({ text: 'Use All', onClick: () => useItem(bal) });
 
     return options;
+  };
+
+  const getSendTooltip = (kami: Kami) => {
+    const tooltip = [`Send ${kami.name} to another account.`];
+    return tooltip;
+  };
+
+  const SendButton = (item: Item[], amts: number[], kami: Kami, account: Account) => {
+    const options = accounts.map((targetAcc) => ({
+      text: `${targetAcc.name} (#${targetAcc.index})`,
+      onClick: () => sendItemsTx(item, amts, targetAcc),
+    }));
+
+    return (
+      <TextTooltip key='send-tooltip' text={getSendTooltip(kami)}>
+        <IconListButton img={ArrowIcons.right} options={options} searchable />
+      </TextTooltip>
+    );
   };
 
   // // get the list of kamis that a specific item can be used on
