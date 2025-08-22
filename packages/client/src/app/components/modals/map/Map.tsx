@@ -71,6 +71,14 @@ export const MapModal: UIComponent = {
 
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
+      const [tick, setTick] = useState(Date.now());
+
+      // ticking
+      useEffect(() => {
+        const timer = () => setTick(Date.now());
+        const timerID = setInterval(timer, 10000);
+        return () => clearInterval(timerID);
+      }, []);
 
       // query the set of rooms whenever the zone changes
       // NOTE: roomIndex is controlled by canvas/Scene.tsx
@@ -117,13 +125,14 @@ export const MapModal: UIComponent = {
           scrollBarColor='#cbba3d #e1e1b5'
         >
           <Grid
+            actions={{ move }}
             data={{
               ...data,
               roomIndex,
               zone,
               rooms: roomMap,
             }}
-            actions={{ move }}
+            state={{ tick }}
             utils={utils}
           />
         </ModalWrapper>

@@ -7,7 +7,7 @@ import { getAffinityImage } from 'network/shapes/utils';
 interface Props {
   room: Room;
   rolls: Map<number, number>;
-  kamiIconsMap: Map<number, string[]>;
+  yourKamiIconsMap: Map<number, string[]>;
   getNode: (index: number) => any;
   parseAllos: (scavAllo: any[]) => any[];
   playerEntitiesLength: number;
@@ -19,7 +19,7 @@ export const GridTooltip = (props: Props) => {
   const {
     room,
     rolls,
-    kamiIconsMap,
+    yourKamiIconsMap,
     getNode,
     parseAllos,
     playerEntitiesLength,
@@ -34,7 +34,7 @@ export const GridTooltip = (props: Props) => {
   const rewards = parseAllos(node.scavenge?.rewards ?? []);
   const rollsCount = rolls.get(room.index) ?? 0;
 
-  const icons = kamiIconsMap.get(room.index) ?? [];
+  const icons = yourKamiIconsMap.get(room.index) ?? [];
   const owned = icons.length;
 
   return (

@@ -61,7 +61,7 @@ export const AccountModal: UIComponent = {
     const { vip } = data;
     const { getAccount } = utils;
     const { account: player } = useAccount();
-    const { accountIndex } = useSelected();
+    const accountIndex = useSelected((s) => s.accountIndex);
     const { modals } = useVisibility();
     const { selectedAddress, apis } = useNetwork();
 
@@ -197,13 +197,14 @@ export const AccountModal: UIComponent = {
         header={<ModalHeader key='header' title='Account' icon={OperatorIcon} />}
         canExit
         truncate
-      >
+        >
         <Header
           key='header'
           account={account} // account selected for viewing
-          actions={{ handlePfpChange, setBio }}
+          actions={{ handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren }}
           isLoading={isLoading}
           isSelf={isSelf}
+          player={player}
           utils={utils}
         />
         <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
