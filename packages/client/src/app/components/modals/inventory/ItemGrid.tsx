@@ -110,20 +110,20 @@ export const ItemGrid = ({
     return options;
   };
 
-  const getSendTooltip = (kami: Kami) => {
-    const tooltip = [`Send ${kami.name} to another account.`];
+  const getSendTooltip = (item: Item) => {
+    const tooltip = [`Send ${item.name} to another account.`];
     return tooltip;
   };
 
-  const SendButton = (item: Item[], amts: number[], kami: Kami, account: Account) => {
+  const SendButton = (item: Item[], amts: number[]) => {
     const options = accounts.map((targetAcc) => ({
       text: `${targetAcc.name} (#${targetAcc.index})`,
       onClick: () => sendItemsTx(item, amts, targetAcc),
     }));
 
     return (
-      <TextTooltip key='send-tooltip' text={getSendTooltip(kami)}>
-        <IconListButton img={ArrowIcons.right} options={options} searchable />
+      <TextTooltip key='send-tooltip' text={getSendTooltip(item[0])}>
+        <IconListButton img={ArrowIcons.right} options={options} searchable scale={1.5} />
       </TextTooltip>
     );
   };
@@ -144,22 +144,26 @@ export const ItemGrid = ({
   const ItemIcon = (inv: Inventory) => {
     const item = inv.item;
     const options = getItemActions(item, inv.balance);
+    const sendButton = SendButton([item], [inv.balance]);
 
     return (
-      <TextTooltip
-        key={item.index}
-        text={item.index ? [<ItemGridTooltip key={item.index} item={item} utils={utils} />] : []}
-        maxWidth={25}
-      >
-        <IconListButton
+      <ItemWrapper key={item.index}>
+        <TextTooltip
           key={item.index}
-          img={item.image}
-          scale={4.8}
-          balance={inv.balance}
-          options={options}
-          disabled={options.length == 0}
-        />
-      </TextTooltip>
+          text={item.index ? [<ItemGridTooltip key={item.index} item={item} utils={utils} />] : []}
+          maxWidth={25}
+        >
+          <IconListButton
+            key={item.index}
+            img={item.image}
+            scale={4.8}
+            balance={inv.balance}
+            options={options}
+            disabled={options.length == 0}
+          />
+        </TextTooltip>
+        <SendButtonStyled>{sendButton}</SendButtonStyled>
+      </ItemWrapper>
     );
   };
 
@@ -176,4 +180,14 @@ const Container = styled.div`
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
+`;
+
+const ItemWrapper = styled.div`
+  position: relative;
+`;
+
+const SendButtonStyled = styled.div`
+  position: absolute;
+  bottom: 1%;
+  left: 1%;
 `;
