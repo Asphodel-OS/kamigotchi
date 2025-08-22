@@ -28,7 +28,7 @@ export const PricePanel = (props: Props) => {
     }
 
     return [
-      `Total ${price} ${payItem.name}`,
+      `Total ${price.toLocaleString()} ${payItem.name}`,
       `for ${quantity} ${saleItem.name}${quantity == 1 ? '' : 's'}`,
     ];
   };

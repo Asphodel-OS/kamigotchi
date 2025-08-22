@@ -46,7 +46,7 @@ export const MusuRow = (props: Props) => {
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
           <Icon src={ItemImages.musu} onClick={() => null} />
-          <Balance>{musu}</Balance>
+          <Balance>{musu.toLocaleString()}</Balance>
         </MusuSection>
       </TextTooltip>
     </Container>
