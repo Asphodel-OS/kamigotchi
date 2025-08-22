@@ -95,7 +95,7 @@ const SubSection = styled.span`
 const BottomSection = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   gap: 0.5vw;
   padding: 0.5vw;
 `;
