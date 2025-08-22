@@ -49,7 +49,7 @@ export const InventoryModal: UIComponent = {
             accountEntity,
           },
           utils: {
-            getAccount: () => getAccount(world, components, accountEntity),
+            getAccount: (entity: EntityIndex) => getAccount(world, components, entity),
             getInventories: () => getAccountInventories(world, components, accountEntity),
             getKamis: () =>
               getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
@@ -147,7 +147,7 @@ export const InventoryModal: UIComponent = {
         params: [itemsIndexes, amts, account.id],
         description: `Sending ${itemamts} ${itemsNames} to ${account.name}`,
         execute: async () => {
-          return api.player.account.item.transfer(itemsIndexes, amts, account.id);
+          return api.player.account.item.transfer(itemsIndexes, [1], account.id);
         },
       });
     };
