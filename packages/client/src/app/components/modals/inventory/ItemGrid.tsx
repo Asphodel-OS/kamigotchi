@@ -27,6 +27,7 @@ export const ItemGrid = ({
   actions: {
     useForAccount: (item: Item, amount: number) => void;
     useForKami: (kami: Kami, item: Item) => void;
+    sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
   };
   utils: {
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
