@@ -110,9 +110,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpConfigs() public virtual {
     InitWorld initer = new InitWorld();
     initer.initTests(deployer, address(world));
-
-    // temp value for whitelist timer
-    _setConfig("MINT_START_PUBLIC", 0);
   }
 
   // sets up mint to a default state. override to change/remove behaviour if needed
