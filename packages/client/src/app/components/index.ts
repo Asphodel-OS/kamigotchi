@@ -44,6 +44,10 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: LoadingState,
     gridConfig: { colStart: 1, colEnd: 13, rowStart: 1, rowEnd: 13 },
   },
+  {
+    uiComponent: ActionQueue,
+    gridConfig: { colStart: 66, colEnd: 99, rowStart: 90, rowEnd: 100 },
+  },
 
   // validators
   {
@@ -83,10 +87,6 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: NotificationFixture,
     gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
-  },
-  {
-    uiComponent: ActionQueue,
-    gridConfig: { colStart: 66, colEnd: 99, rowStart: 90, rowEnd: 100 },
   },
 
   // canvas
