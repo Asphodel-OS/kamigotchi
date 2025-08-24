@@ -3,6 +3,7 @@ import { BigNumberish } from 'ethers';
 import { toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
 import { goalsAPI } from './goals';
+import { itemsAPI } from './items';
 import { listingAPI } from './listings';
 import { nodesAPI } from './nodes';
 import { questsAPI } from './quests';
@@ -278,148 +279,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
-  //  ITEMS
-
-  async function registerBaseItem(
-    index: number,
-    for_: string,
-    name: string,
-    description: string,
-    media: string
-  ) {
-    const callData = generateCallData(
-      'system.item.registry',
-      [index, for_, name, description, media],
-      'create',
-      ['uint32', 'string', 'string', 'string', 'string']
-    );
-    compiledCalls.push(callData);
-  }
-
-  // @dev add a misc item in registry entry
-  async function registerConsumable(
-    index: number,
-    for_: string,
-    name: string,
-    description: string,
-    type_: string,
-    media: string
-  ) {
-    const callData = generateCallData(
-      'system.item.registry',
-      [index, for_, name, description, type_, media],
-      'createConsumable',
-      ['uint32', 'string', 'string', 'string', 'string', 'string']
-    );
-    compiledCalls.push(callData);
-  }
-
-  //// ITEM FLAGS
-
-  async function addItemFlag(index: number, flag: string) {
-    const callData = generateCallData('system.item.registry', [index, flag], 'addFlag');
-    compiledCalls.push(callData);
-  }
-
-  async function addItemERC20(index: number, address: string) {
-    const callData = generateCallData('system.item.registry', [index, address], 'addERC20');
-    compiledCalls.push(callData);
-  }
-
-  //// ITEM REQUIREMENTS
-
-  async function addItemRequirement(
-    index: number,
-    usecase: string,
-    type_: string,
-    logicType: string,
-    index_: number,
-    value: BigNumberish,
-    for_: string
-  ) {
-    const callData = generateCallData(
-      'system.item.registry',
-      [index, usecase, type_, logicType, index_, value, for_],
-      'addRequirement',
-      ['uint32', 'string', 'string', 'string', 'uint32', 'uint256', 'string']
-    );
-    compiledCalls.push(callData);
-  }
-
-  //// ITEM ALLOS
-
-  async function addItemBasic(
-    index: number,
-    usecase: string,
-    type: string,
-    index_: number,
-    value: number
-  ) {
-    const callData = generateCallData(
-      'system.item.registry',
-      [index, usecase, type, index_, value],
-      'addAlloBasic',
-      ['uint32', 'string', 'string', 'uint32', 'uint256']
-    );
-    compiledCalls.push(callData);
-  }
-
-  async function addItemBonus(
-    index: number,
-    usecase: string,
-    bonusType: string,
-    endType: string,
-    duration: number,
-    value: number
-  ) {
-    const callData = generateCallData(
-      'system.item.registry',
-      [index, usecase, bonusType, endType, duration, value],
-      'addAlloBonus',
-      ['uint32', 'string', 'string', 'string', 'uint256', 'int256']
-    );
-    compiledCalls.push(callData);
-  }
-
-  async function addItemDT(
-    index: number,
-    usecase: string,
-    keys: number[],
-    weights: number[],
-    value: number
-  ) {
-    const callData = generateCallData(
-      'system.item.registry',
-      [index, usecase, keys, weights, value],
-      'addAlloDT',
-      ['uint32', 'string', 'uint32[]', 'uint256[]', 'uint256']
-    );
-    compiledCalls.push(callData);
-  }
-
-  async function addItemStat(
-    index: number,
-    usecase: string,
-    statType: string,
-    base: number,
-    shift: number,
-    boost: number,
-    sync: number
-  ) {
-    const callData = generateCallData(
-      'system.item.registry',
-      [index, usecase, statType, base, shift, boost, sync],
-      'addAlloStat',
-      ['uint32', 'string', 'string', 'int32', 'int32', 'int32', 'int32']
-    );
-    compiledCalls.push(callData);
-  }
-
-  // @dev deletes an item registry
-  async function deleteItem(index: number) {
-    const callData = generateCallData('system.item.registry', [index], 'remove');
-    compiledCalls.push(callData);
-  }
+  // TRAITS
 
   // @dev adds a trait in registry
   async function registerTrait(
@@ -618,24 +478,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
     },
     registry: {
-      item: {
-        create: {
-          base: registerBaseItem,
-          consumable: registerConsumable,
-        },
-        add: {
-          erc20: addItemERC20,
-          flag: addItemFlag,
-          requirement: addItemRequirement,
-          allo: {
-            basic: addItemBasic,
-            bonus: addItemBonus,
-            droptable: addItemDT,
-            stat: addItemStat,
-          },
-        },
-        delete: deleteItem,
-      },
+      item: itemsAPI(generateCallData, compiledCalls),
       trait: {
         create: registerTrait,
         delete: deleteTrait,
