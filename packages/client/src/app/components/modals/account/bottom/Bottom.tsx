@@ -11,7 +11,17 @@ import { SocialBottom } from './SocialBottom/SocialBottom';
 import { SubTabs } from './SocialBottom/SubTabs';
 import { StatsBottom } from './StatsBottom';
 
-interface Props {
+export const Bottom = ({
+  actions,
+  data,
+  utils,
+  view: {
+    tab,
+    subTab,
+    setSubTab,
+    isSelf,
+  },
+}: {
   actions: {
     acceptFren: (friendship: Friendship) => void;
     blockFren: (account: BaseAccount) => void;
@@ -38,12 +48,8 @@ interface Props {
     subTab: string;
     tab: string;
   };
-}
-
-export const Bottom = (props: Props) => {
-  const { data, view, utils, actions } = props;
+}) => {
   const { acceptFren, blockFren, cancelFren, requestFren } = actions;
-  const { tab, subTab, setSubTab, isSelf } = view;
   const { account } = data;
 
   /////////////////

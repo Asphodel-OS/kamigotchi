@@ -9,7 +9,13 @@ import { Inventory } from 'network/shapes';
 import { Item, NullItem } from 'network/shapes/Item';
 import { LineItem } from './LineItem';
 
-interface Props {
+// a GUI for creating Generalized Trade Offers
+export const MultiCreate = ({
+  actions,
+  controls,
+  data,
+  isVisible,
+}: {
   actions: {
     handleCreatePrompt: (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => void;
   };
@@ -22,11 +28,7 @@ interface Props {
     items: Item[];
   };
   isVisible: boolean;
-}
-
-// a GUI for creating Generalized Trade Offers
-export const MultiCreate = (props: Props) => {
-  const { actions, controls, data, isVisible } = props;
+}) => {
   const { handleCreatePrompt } = actions;
   const { isConfirming } = controls;
   const { inventory, items } = data;

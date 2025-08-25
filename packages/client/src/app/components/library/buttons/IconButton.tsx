@@ -5,39 +5,59 @@ import styled from 'styled-components';
 import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
-interface Props {
-  img?: string | SvgIconComponent;
-  onClick: Function;
-  text?: string;
-  width?: number;
-  color?: string;
-  disabled?: boolean;
-  fullWidth?: boolean;
-  pulse?: boolean;
-  balance?: number;
-  corner?: boolean;
-  cornerAlt?: boolean;
-  radius?: number;
-  scale?: number;
-  scaleOrientation?: 'vw' | 'vh';
-  shadow?: boolean;
-  flatten?: `left` | `right`; // flattens a side, for use with dropdowns
-}
-
 // ActionButton is a text button that triggers an Action when clicked
 export const IconButton = forwardRef(function IconButton(
-  props: Props,
+  {
+    img,
+    onClick,
+    text,
+    disabled,
+
+    // general styling
+    color,
+    fullWidth,
+    pulse,
+    shadow,
+    width,
+    flatten,
+
+    // IconListButton options
+    balance,
+    corner,
+
+    // open page in new tab indicator
+    cornerAlt,
+
+    radius = 0.45,
+    scale = 2.5,
+    scaleOrientation = 'vw',
+  }: {
+    img?: string | SvgIconComponent;
+    onClick: Function;
+    text?: string;
+    width?: number;
+
+    // general styling
+    color?: string;
+    disabled?: boolean;
+    fullWidth?: boolean;
+    pulse?: boolean;
+
+    // IconListButton options
+    balance?: number;
+    corner?: boolean;
+
+    // open page in new tab indicator
+    cornerAlt?: boolean;
+
+    radius?: number;
+    scale?: number;
+    scaleOrientation?: 'vw' | 'vh';
+    shadow?: boolean;
+    flatten?: `left` | `right`; // flattens a side, for use with dropdowns
+  },
   ref: ForwardedRef<HTMLButtonElement>
 ) {
-  const { img, onClick, text, disabled } = props;
-  const { color, fullWidth, pulse, shadow, width, flatten } = props; // general styling
-  const { balance, corner } = props; // IconListButton options
-  const { cornerAlt } = props; // open page in new tab indicator
-
-  const radius = props.radius ?? 0.45;
-  const scale = props.scale ?? 2.5;
-  const scaleOrientation = props.scaleOrientation ?? 'vw';
-
   // layer on a sound effect
   const handleClick = async () => {
     playClick();
@@ -83,7 +103,7 @@ export const IconButton = forwardRef(function IconButton(
   );
 });
 
-interface ContainerProps {
+const Container = styled.button<{
   width?: number;
   color: string;
   scale: number;
@@ -94,9 +114,7 @@ interface ContainerProps {
   pulse?: boolean;
   flatten?: `left` | `right`;
   shadow?: boolean;
-}
-
-const Container = styled.button<ContainerProps>`
+}>`
   position: relative;
   border: solid black 0.15vw;
   border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};

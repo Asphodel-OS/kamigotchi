@@ -6,7 +6,18 @@ import { playClick } from 'utils/sounds';
 import { IconButton } from '../buttons';
 import { TextTooltip } from '../poppers/TextTooltip';
 
-interface Props {
+// InputSingleTextForm is a styled input field with some additional frills
+export const InputSingleTextForm = ({
+  maxLen,
+  fullWidth,
+  label,
+  placeholder,
+  onSubmit,
+  hasButton,
+  buttonIcon = ActionIcons.chat,
+  disabled,
+  initialValue = '',
+}: {
   fullWidth?: boolean; // whether the input should take up the full width of its container
   label?: string; // the label for the input
   maxLen?: number; // the maximum length of the input
@@ -16,15 +27,10 @@ interface Props {
   hasButton?: boolean; // whether the input has a submit button
   buttonIcon?: string; // the icon to display on the button
   disabled?: boolean; // whether the input is disabled
-}
+}) => {
+  const isDisabled = !!disabled;
 
-// InputSingleTextForm is a styled input field with some additional frills
-export const InputSingleTextForm = (props: Props) => {
-  const { maxLen, fullWidth, label, placeholder, onSubmit } = props;
-  const { hasButton, buttonIcon } = props;
-  const isDisabled = !!props.disabled;
-
-  const [value, setValue] = useState(props.initialValue || '');
+  const [value, setValue] = useState(initialValue);
 
   /////////////////
   // INTERACTION
@@ -64,7 +70,7 @@ export const InputSingleTextForm = (props: Props) => {
       {hasButton && (
         <TextTooltip text={isDisabled ? [] : ['submit']}>
           <IconButton
-            img={buttonIcon ?? ActionIcons.chat}
+            img={buttonIcon}
             onClick={() => handleSubmit()}
             disabled={isDisabled || value.length === 0}
           />

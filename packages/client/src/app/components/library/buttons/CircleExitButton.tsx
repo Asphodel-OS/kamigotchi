@@ -1,22 +1,22 @@
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const CircleExitButton = ({
+  scale = 1.2,
+  onClick,
+  circle = false,
+}: {
   scale?: number;
   onClick?: () => void;
   circle?: boolean;
-}
-
-export const CircleExitButton = (props: Props) => {
-  const { scale, onClick, circle } = props;
-
+}) => {
   const handleClick = () => {
     playClick();
     onClick?.();
   };
 
   return (
-    <Container scale={scale ?? 1.2} onClick={handleClick} circle={circle}>
+    <Container scale={scale} onClick={handleClick} circle={circle}>
       X
     </Container>
   );

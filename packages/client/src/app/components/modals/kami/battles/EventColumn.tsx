@@ -5,14 +5,13 @@ import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kill } from 'clients/kamiden';
 import { Kami } from 'network/shapes';
 
-interface Props {
+export const EventColumn = ({
+  kami,
+  kills,
+}: {
   kami: Kami;
   kills: Kill[];
-}
-
-export const EventColumn = (props: Props) => {
-  const { kami, kills } = props;
-
+}) => {
   const getPnLString = (kill: Kill) => {
     if (kill.IsDeath) {
       const bounty = parseInt(kill.Bounty);

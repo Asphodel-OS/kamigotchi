@@ -7,14 +7,15 @@ import { ActionSystem } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
 import { playMessage } from 'utils/sounds';
 
-interface Props {
+export const InputRow = ({
+  actionSystem,
+  api,
+  world,
+}: {
   actionSystem: ActionSystem;
   api: any;
   world: World;
-}
-
-export const InputRow = (props: Props) => {
-  const { actionSystem, api, world } = props;
+}) => {
   const [text, setText] = useState('');
   const [textLength, setTextLength] = useState(0);
   const [sending, setSending] = useState(false);

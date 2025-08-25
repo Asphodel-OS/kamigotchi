@@ -10,17 +10,22 @@ import { Item } from 'network/shapes/Item';
 import { getCompAddr } from 'network/shapes/utils';
 import { ActionButton } from './ActionButton';
 
-interface Props {
+// ActionButton wrapper for token approval/spend flows
+// Overrides onClick with approval flow if approval needed
+export const TokenButton = ({
+  network: {
+    actions,
+    world,
+    components,
+  },
+  token,
+  amount,
+  ...props
+}: {
   network: NetworkLayer;
   token: Item; // use token item registry
   amount: number;
-}
-
-// ActionButton wrapper for token approval/spend flows
-// Overrides onClick with approval flow if approval needed
-export const TokenButton = (props: Props) => {
-  const { amount, network, token } = props;
-  const { actions, world, components } = network;
+}) => {
   const { balances } = useTokens();
   const { selectedAddress, apis } = useNetwork();
 

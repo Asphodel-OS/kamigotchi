@@ -11,7 +11,14 @@ import { playClick } from 'utils/sounds';
 import { TRADE_ROOM_INDEX } from '../../constants';
 import { ConfirmationData, OfferCard } from '../../library';
 
-interface Props {
+// represents other Buy/Sell Orders that are in PENDING state
+// NOTE: only supports simple (single item) trades against musu atm
+export const PendingOffer = ({
+  actions,
+  controls,
+  data,
+  utils,
+}: {
   actions: {
     executeTrade: (trade: Trade) => void;
   };
@@ -28,12 +35,7 @@ interface Props {
   utils: {
     getItemByIndex: (index: number) => Item;
   };
-}
-
-// represents other Buy/Sell Orders that are in PENDING state
-// NOTE: only supports simple (single item) trades against musu atm
-export const PendingOffer = (props: Props) => {
-  const { actions, controls, data } = props;
+}) => {
   const { executeTrade } = actions;
   const { isConfirming, setIsConfirming, setConfirmData } = controls;
   const { account, trade, type } = data;

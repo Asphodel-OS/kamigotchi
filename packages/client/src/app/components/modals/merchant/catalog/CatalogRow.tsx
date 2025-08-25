@@ -11,16 +11,18 @@ import { getItemImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { CartItem } from '../types';
 
-export interface Props {
+// TODO: support multiple buys
+export const CatalogRow = ({
+  account,
+  cart,
+  listing,
+  toggle,
+}: {
   account: Account;
   cart: CartItem[];
   listing: Listing;
   toggle: () => void;
-}
-
-// TODO: support multiple buys
-export const CatalogRow = (props: Props) => {
-  const { account, cart, listing, toggle } = props;
+}) => {
   const { item, payItem, buy } = listing;
 
   const handleClick = () => {
@@ -116,12 +118,10 @@ export const CatalogRow = (props: Props) => {
   );
 };
 
-interface ContainerProps {
+const Container = styled.div<{
   isInCart: boolean;
   effectScale: number;
-}
-
-const Container = styled.div<ContainerProps>`
+}>`
   position: relative;
   border: 0.15vw solid black;
   border-radius: 0.4vw;

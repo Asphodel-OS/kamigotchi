@@ -9,15 +9,15 @@ import { getAffinityImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { abbreviateString } from 'utils/strings';
 
-interface Props {
+export const LocationColumn = ({
+  kills,
+  utils,
+}: {
   kills: Kill[];
   utils: {
     getNodeByIndex: (index: number) => Node;
   };
-}
-
-export const LocationColumn = (props: Props) => {
-  const { kills, utils } = props;
+}) => {
   const { getNodeByIndex } = utils;
   const { setNode } = useSelected();
   const { setModals } = useVisibility();

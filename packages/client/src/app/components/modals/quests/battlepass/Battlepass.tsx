@@ -17,7 +17,15 @@ const Colors = {
   accent: '#dc241a',
 };
 
-interface Props {
+// TODO: organize list of quests
+// QUEST STATES: Unaccepted, Ongoing, Completed (explicitly detected)
+// TRANSITION STATES: available, completable (implicitly detected)
+export const Battlepass = ({
+  account,
+  quests,
+  actions,
+  utils,
+}: {
   account: Account;
   quests: {
     registry: BaseQuest[];
@@ -32,13 +40,7 @@ interface Props {
     parseObjectives: (quest: Quest) => Quest;
     parseRequirements: (quest: Quest) => Quest;
   };
-}
-
-// TODO: organize list of quests
-// QUEST STATES: Unaccepted, Ongoing, Completed (explicitly detected)
-// TRANSITION STATES: available, completable (implicitly detected)
-export const Battlepass = (props: Props) => {
-  const { account, quests, actions, utils } = props;
+}) => {
   const { describeEntity, populate, filterForBattlePass, parseRequirements } = utils;
   const { modals } = useVisibility();
   // const [maxRep, setMaxRep] = useState(1);

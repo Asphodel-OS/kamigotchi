@@ -20,7 +20,15 @@ const SortMap: Record<KamiSort, string> = {
   violence: StatIcons.violence,
 };
 
-interface Props {
+// rendering of enermy kamis on this node
+export const EnemyCards = ({
+  account,
+  allies,
+  enemyEntities,
+  limit,
+  actions,
+  utils,
+}: {
   account: Account;
   allies: Kami[];
   enemyEntities: EntityIndex[];
@@ -35,11 +43,7 @@ interface Props {
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
   };
-}
-
-// rendering of enermy kamis on this node
-export const EnemyCards = (props: Props) => {
-  const { allies, enemyEntities, limit, actions, utils, account } = props;
+}) => {
   const { getOwner, getKami } = utils;
   const { modals, setModals } = useVisibility();
   const { accountIndex, setAccount, nodeIndex } = useSelected();

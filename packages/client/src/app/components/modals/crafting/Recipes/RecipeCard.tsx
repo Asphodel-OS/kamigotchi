@@ -8,7 +8,11 @@ import { NullItem } from 'network/shapes/Item';
 import { Recipe } from 'network/shapes/Recipe';
 import { Input } from './Input';
 
-interface Props {
+export const RecipeCard = ({
+  data,
+  actions,
+  utils,
+}: {
   data: {
     account: Account;
     recipe: Recipe;
@@ -22,10 +26,7 @@ interface Props {
     getItemBalance: (index: number) => number;
     meetsRequirements: (recipe: Recipe) => boolean;
   };
-}
-
-export const RecipeCard = (props: Props) => {
-  const { actions, data, utils } = props;
+}) => {
   const { recipe, stamina } = data;
   const [quantity, setQuantity] = useState(1);
 

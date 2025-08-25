@@ -13,7 +13,11 @@ import { KamiImage } from './KamiImage';
 
 const excludedStats = ['stamina', 'slots'];
 
-interface Props {
+export const Header = ({
+  data,
+  utils,
+  actions,
+}: {
   actions: {
     levelUp: (kami: Kami) => void;
   };
@@ -25,10 +29,7 @@ interface Props {
   utils: {
     calcExpRequirement: (level: number) => number;
   };
-}
-
-export const Header = (props: Props) => {
-  const { data, utils } = props;
+}) => {
   const { account, kami, owner } = data;
   const { setAccount } = useSelected();
   const { setModals } = useVisibility();
@@ -55,7 +56,7 @@ export const Header = (props: Props) => {
 
   return (
     <Container>
-      <KamiImage data={data} actions={props.actions} utils={utils} />
+      <KamiImage data={data} actions={actions} utils={utils} />
       <Content>
         <Title size={2.4}>{kami.name}</Title>
         <Row>
@@ -112,8 +113,8 @@ const Content = styled.div`
 `;
 
 const Title = styled.div<{ size: number }>`
-  font-size: ${(props) => props.size}vw;
-  padding: ${(props) => `${props.size * 0.75}vw ${props.size * 0.45}vw`};
+  font-size: ${({ size }) => size}vw;
+  padding: ${({ size }) => `${size * 0.75}vw ${size * 0.45}vw`};
 
   align-self: flex-start;
   user-select: none;
@@ -182,14 +183,14 @@ const StatPairing = styled.div<{ color?: string }>`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${(props) => props.size}vw;
-  text-shadow: ${(props) => `0 0 ${props.size * 0.4}vw white`};
+  font-size: ${({ size }) => size}vw;
+  text-shadow: ${({ size }) => `0 0 ${size * 0.4}vw white`};
   pointer-events: none;
 `;
 
 const Icon = styled.img<{ size: number }>`
-  height: ${(props) => props.size}vw;
-  width: ${(props) => props.size}vw;
+  height: ${({ size }) => size}vw;
+  width: ${({ size }) => size}vw;
   filter: drop-shadow(0 0 0.2vw #bbb);
   user-drag: none;
 `;

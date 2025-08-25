@@ -2,12 +2,11 @@ import { Modals, useSelected } from 'app/stores';
 import { HarvestIcon } from 'assets/images/icons/actions';
 import { MenuButton } from './MenuButton';
 
-interface Props {
-  disabled?: boolean;
-}
-
-export const NodeMenuButton = (props: Props) => {
-  const { disabled } = props;
+export const NodeMenuButton = ({
+  disabled,
+}: {
+  disabled?: boolean
+}) => {
   const { roomIndex, setNode } = useSelected(); // roomIndex == nodeIndex
 
   const modalsToHide: Partial<Modals> = {

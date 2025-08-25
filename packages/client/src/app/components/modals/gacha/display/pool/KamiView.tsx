@@ -12,7 +12,14 @@ import { EMPTY_TEXT, LOADING_TEXT } from './constants';
 
 const LOAD_CHUNK_SIZE = 200; // Adjust based on performance needs
 
-interface Props {
+export const KamiView = ({
+  controls,
+  caches,
+  data,
+  state,
+  utils,
+  isVisible,
+}: {
   controls: {
     sorts: Sort[];
     filters: Filter[];
@@ -31,10 +38,7 @@ interface Props {
     getKami: (entity: EntityIndex) => Kami;
   };
   isVisible: boolean;
-}
-
-export const KamiView = (props: Props) => {
-  const { controls, caches, data, state, utils, isVisible } = props;
+}) => {
   const { filters, sorts } = controls;
   const { kamiBlocks } = caches;
   const { entities } = data;

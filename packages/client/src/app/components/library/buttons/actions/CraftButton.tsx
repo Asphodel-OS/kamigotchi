@@ -3,7 +3,11 @@ import { CraftIcon } from 'assets/images/icons/actions';
 import { Recipe } from 'network/shapes/Recipe';
 import { playMessage } from 'utils/sounds';
 
-interface Props {
+export const CraftButton = ({
+  data,
+  actions,
+  utils,
+}: {
   data: {
     quantity: number; // quantity to craft
     recipe: Recipe; // the recipe to craft
@@ -17,10 +21,7 @@ interface Props {
     displayRequirements: (recipe: Recipe) => string;
     getItemBalance: (index: number) => number;
   };
-}
-
-export const CraftButton = (props: Props) => {
-  const { actions, data, utils } = props;
+}) => {
   const { craft } = actions;
   const { quantity, recipe, stamina } = data;
   const { meetsRequirements, displayRequirements, getItemBalance } = utils;
