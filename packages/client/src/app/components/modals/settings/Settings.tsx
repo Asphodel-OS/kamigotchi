@@ -1,8 +1,8 @@
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { SettingsIcon } from 'assets/images/icons/menu';
 import { Account } from './Account';
 import { Debugging } from './Debugging';
@@ -10,17 +10,10 @@ import { Volume } from './Volume';
 
 export const SettingsModal: UIComponent = {
   id: 'SettingsModal',
-  requirement: (layers) =>
-    interval(5000).pipe(
-      map(() => {
-        const { network } = layers;
-
-        return {
-          network,
-        };
-      })
-    ),
-  Render: ({ network }) => {
+  Render: () => {
+    const layers = useLayers();
+    
+    const { network } = layers;
     const { actions, api } = network;
 
     /////////////////

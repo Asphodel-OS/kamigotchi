@@ -1,14 +1,14 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
 import { BigNumberish } from 'ethers';
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import { useEffect, useState, useMemo } from 'react';
 
-import { Account, getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
-import { getFriends } from 'app/cache/account/getters';
+import { Account, getAccount as _getAccount, getAccountKamis as _getAccountKamis, getAllAccounts } from 'app/cache/account';
+import { getFriends as _getFriends } from 'app/cache/account/getters';
 import { Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { BaseAccount, NullAccount, queryAccountByIndex } from 'network/shapes/Account';
@@ -21,45 +21,46 @@ import { Tabs } from './tabs/Tabs';
 
 export const AccountModal: UIComponent = {
   id: 'AccountModal',
-  requirement: (layers) => {
-    const { network } = layers;
-    const { world, components } = network;
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      network,
+      data: { vip },
+      utils: { getAccount, getAccountKamis, getFriends }
+    } = useMemo(() => {
+      const { network } = layers;
+      const { world, components } = network;
 
-    const accountOptions = {
-      friends: 5,
-      pfp: 5,
-      stats: 5,
-      bio: 5,
-    };
+      const accountOptions = {
+        friends: 5,
+        pfp: 5,
+        stats: 5,
+        bio: 5,
+      };
 
-    const vipEpoch = getVIPEpoch(world, components);
-    const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
+      const vipEpoch = getVIPEpoch(world, components);
+      const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
 
-    return interval(3333).pipe(
-      map(() => {
-        return {
-          network,
-          data: {
-            vip: {
-              epoch: vipEpoch,
-              total: getTotalScoreByFilter(world, components, vipFilter),
-            },
+      return {
+        network,
+        data: {
+          vip: {
+            epoch: vipEpoch,
+            total: getTotalScoreByFilter(world, components, vipFilter),
           },
-          utils: {
-            getAccount: (entity: EntityIndex) =>
-              getAccount(world, components, entity, accountOptions),
-            getAccountKamis: (accEntity: EntityIndex) =>
-              getAccountKamis(world, components, accEntity),
-            getFriends: (accEntity: EntityIndex) => getFriends(world, components, accEntity),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ network, data, utils }) => {
+        },
+        utils: {
+          getAccount: (entity: EntityIndex) =>
+            _getAccount(world, components, entity, accountOptions),
+          getAccountKamis: (accEntity: EntityIndex) =>
+            _getAccountKamis(world, components, accEntity),
+          getFriends: (accEntity: EntityIndex) => _getFriends(world, components, accEntity),
+        },
+      };
+    }, [layers]);
+
     const { actions, api, components, world } = network;
-    const { vip } = data;
-    const { getAccount } = utils;
     const { account: player } = useAccount();
     const accountIndex = useSelected((s) => s.accountIndex);
     const { modals } = useVisibility();
@@ -205,15 +206,37 @@ export const AccountModal: UIComponent = {
           isLoading={isLoading}
           isSelf={isSelf}
           player={player}
-          utils={utils}
+          utils={{
+            getAccountKamis,
+            getFriends,
+          }}
         />
         <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
         <Bottom
           key='bottom'
-          actions={{ acceptFren, blockFren, cancelFren, requestFren }}
-          data={{ accounts, account, vip, player, isSelf }}
-          utils={utils}
-          view={{ isSelf, setSubTab, subTab, tab }}
+          actions={{
+            acceptFren,
+            blockFren,
+            cancelFren,
+            requestFren,
+          }}
+          data={{
+            accounts,
+            account,
+            vip,
+            player,
+            isSelf,
+          }}
+          utils={{
+            getAccountKamis,
+            getFriends,
+          }}
+          view={{
+            isSelf,
+            setSubTab,
+            subTab,
+            tab,
+          }}
         />
       </ModalWrapper>
     );

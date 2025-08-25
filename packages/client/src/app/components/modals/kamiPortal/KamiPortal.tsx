@@ -1,18 +1,18 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import { useEffect, useState, useMemo } from 'react';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
-import { getAccount, getAccountKamis } from 'app/cache/account';
+import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
-import { getKami } from 'app/cache/kami';
+import { getKami as _getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useNetwork, useVisibility } from 'app/stores';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
+import { Kami, queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
 import { Controls } from './Controls';
 import { Mode } from './types';
 import { WildKamis } from './WildKamis';
@@ -20,38 +20,47 @@ import { WorldKamis } from './WorldKamis';
 
 export const KamiPortalModal: UIComponent = {
   id: 'KamiPortalModal',
-  requirement: (layers) => {
-    return interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const kamiRefreshOptions = {
-          live: 2,
-          progress: 3600,
-        };
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          data: {
-            account: getAccount(world, components, accountEntity),
-            kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
-          },
-          utils: {
-            queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
-            getKami: (entity: EntityIndex) =>
-              getKami(world, components, entity, kamiRefreshOptions),
-            getAccountKamis: (accountEntity: EntityIndex) =>
-              getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ data, network, utils }) => {
-    const { actions } = network;
-    const { kamiNFTAddress, account } = data;
-    const { getAccountKamis, getKami, queryKamiByIndex } = utils;
+    const {
+      network: {
+        actions,
+      },
+      data: {
+        kamiNFTAddress,
+        account
+      },
+      utils: {
+        getAccountKamis,
+        getKami,
+        queryKamiByIndex
+      }
+    } = useMemo(() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const kamiRefreshOptions = {
+        live: 2,
+        progress: 3600,
+      };
+
+      return {
+        network,
+        data: {
+          account: _getAccount(world, components, accountEntity),
+          kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+        },
+        utils: {
+          queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
+          getKami: (entity: EntityIndex) =>
+            _getKami(world, components, entity, kamiRefreshOptions),
+          getAccountKamis: (accountEntity: EntityIndex) =>
+            _getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
+        },
+      };
+    }, [layers]);
+
     const { selectedAddress, apis } = useNetwork();
     const { modals } = useVisibility();
 

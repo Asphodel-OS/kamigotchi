@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { interval, map } from 'rxjs';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'app/triggers';
 import { DialogueNode, dialogues } from 'constants/dialogue';
@@ -14,19 +14,22 @@ import { getBalance } from 'network/shapes/utils';
 
 export const DialogueModal: UIComponent = {
   id: 'DialogueModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const accountEntity = queryAccountFromEmbedded(network);
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      network,
+      data: { accEntity }
+    } = useMemo(() => {
+      const { network } = layers;
+      const accountEntity = queryAccountFromEmbedded(network);
 
-        return {
-          network: layers.network,
-          data: { accEntity: accountEntity },
-        };
-      })
-    ),
-  Render: ({ data, network }) => {
+      return {
+        network: layers.network,
+        data: { accEntity: accountEntity },
+      };
+    }, [layers]);
+
       const { actions, components, world } = network;
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();
@@ -67,7 +70,7 @@ export const DialogueModal: UIComponent = {
 
         const result: any[] = [];
         dialogueNode.args.forEach((param) => {
-          result.push(getBalance(world, components, data.accEntity, param.index, param.type));
+          result.push(getBalance(world, components, accEntity, param.index, param.type));
         });
 
         return result;

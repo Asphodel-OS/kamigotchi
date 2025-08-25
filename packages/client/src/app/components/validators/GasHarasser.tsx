@@ -1,6 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import React, { useEffect, useState } from 'react';
-import { of } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
@@ -8,6 +7,7 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { ActionButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
 import { GasConstants, GasExponent } from 'constants/gas';
@@ -17,8 +17,8 @@ import { playFund, playSuccess } from 'utils/sounds';
 
 export const GasHarasser: UIComponent = {
   id: 'GasHarasser',
-  requirement: (layers) => of(layers),
-  Render: (layers) => {
+  Render: () => {
+      const layers = useLayers();
       const { network } = layers;
       const { actions, world } = network;
 

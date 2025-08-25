@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import { useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { getAccount } from 'app/cache/account';
+import { getAccount as _getAccount } from 'app/cache/account';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { cleanNPCListings, getNPCByIndex, NPC, NullNPC, refreshNPCListings } from 'app/cache/npc';
 import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -20,33 +20,42 @@ import { CartItem } from './types';
 // merchant window with listings. assumes at most 1 merchant per room
 export const MerchantModal: UIComponent = {
   id: 'MerchantModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { components, world } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          data: { accountEntity },
-          utils: {
-            getAccount: () =>
-              getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
-            getNPC: (index: number) => getNPCByIndex(world, components, index, { listings: 60 }),
-            cleanListings: (listings: Listing[], account: Account) =>
-              cleanNPCListings(world, components, listings, account),
-            refreshListings: (npc: NPC) => refreshNPCListings(components, npc),
-            getMusuBalance: (inventories: Inventory[]) =>
-              getInventoryBalance(inventories, MUSU_INDEX),
-          },
-          network,
-        };
-      })
-    ),
-  Render: ({ data, utils, network }) => {
-    const { accountEntity } = data;
-    const { getAccount, getNPC, cleanListings, refreshListings, getMusuBalance } = utils;
-    const { actions, api } = network;
+    const {
+      data: { accountEntity },
+      utils: {
+        getAccount,
+        getNPC,
+        cleanListings,
+        refreshListings,
+        getMusuBalance
+      },
+      network: {
+        actions,
+        api,
+      }
+    } = useMemo(() => {
+      const { network } = layers;
+      const { components, world } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+
+      return {
+        data: { accountEntity },
+        utils: {
+          getAccount: () =>
+            _getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
+          getNPC: (index: number) => getNPCByIndex(world, components, index, { listings: 60 }),
+          cleanListings: (listings: Listing[], account: Account) =>
+            cleanNPCListings(world, components, listings, account),
+          refreshListings: (npc: NPC) => refreshNPCListings(components, npc),
+          getMusuBalance: (inventories: Inventory[]) =>
+            getInventoryBalance(inventories, MUSU_INDEX),
+        },
+        network,
+      };
+    }, [layers]);
     const { npcIndex } = useSelected();
     const { modals } = useVisibility();
 

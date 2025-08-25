@@ -1,28 +1,30 @@
 import { EntityIndex, getComponentEntities, getComponentValue } from '@mud-classic/recs';
-import { map, merge } from 'rxjs';
+import { useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { Modals, useVisibility } from 'app/stores';
 
 export const NotificationFixture: UIComponent = {
   id: 'NotificationFixture',
-  requirement: (layers) => {
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      notifications,
+      list,
+    } = useMemo(() => {
       const {
         network: { notifications },
       } = layers;
+      const list = Array.from(getComponentEntities(notifications.Notification));
+      return {
+        notifications: notifications,
+        list: list,
+      };
+    }, [layers]);
 
-      return merge(notifications.Notification.update$).pipe(
-        map(() => {
-          const list = Array.from(getComponentEntities(notifications.Notification));
-          return {
-            notifications: notifications,
-            list: list,
-          };
-        })
-      );
-  },
-  Render: ({ notifications, list }) => {
       const { fixtures, modals, setModals } = useVisibility();
 
       /////////////////

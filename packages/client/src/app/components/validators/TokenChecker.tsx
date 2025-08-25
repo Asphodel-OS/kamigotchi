@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { interval, map, merge } from 'rxjs';
+import { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { erc20Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getItemByIndex } from 'app/cache/item';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useNetwork, useTokens } from 'app/stores';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { getCompAddr } from 'network/shapes/utils';
@@ -13,28 +13,31 @@ import { parseTokenBalance } from 'utils/numbers';
 
 export const TokenChecker: UIComponent = {
   id: 'TokenBalances',
-  requirement: (layers) => {
-      const { network } = layers;
-      const { actions, components } = network;
+  Render: () => {
+      const layers = useLayers();
 
-      return merge(actions.Action.update$, interval(1500)).pipe(
-        map(() => {
-          const { world, components } = network;
-          return {
-            tokenAddresses: {
-              // todo: dynamically query based on items with address?
-              onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
-              eth: getItemByIndex(world, components, ETH_INDEX).address!,
-            },
-            spender: getCompAddr(world, components, 'component.token.allowance'),
-            utils: {
-              getItem: (index: number) => getItemByIndex(world, components, index),
-            },
-          };
-        })
-      );
-  },
-  Render: ({ tokenAddresses, spender }) => {
+      const {
+        tokenAddresses,
+        spender,
+        utils: {
+          getItem,
+        }
+      } = useMemo(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        return {
+          tokenAddresses: {
+            // todo: dynamically query based on items with address?
+            onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
+            eth: getItemByIndex(world, components, ETH_INDEX).address!,
+          },
+          spender: getCompAddr(world, components, 'component.token.allowance'),
+          utils: {
+            getItem: (index: number) => getItemByIndex(world, components, index),
+          },
+        };
+      }, [layers]);
+
       const { selectedAddress } = useNetwork();
       const { balances, set, setOnyx } = useTokens();
 

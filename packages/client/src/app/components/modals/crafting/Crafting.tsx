@@ -1,52 +1,63 @@
 import pluralize from 'pluralize';
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import { useEffect, useState, useMemo } from 'react';
 
 import { getAccount } from 'app/cache/account';
 import { getAllRecipes } from 'app/cache/recipes';
 import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useVisibility } from 'app/stores';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
-import { getItemBalance } from 'network/shapes/Item';
-import { hasIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
+import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
+import { hasIngredients as _hasIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
 import { Recipes } from './Recipes/Recipes';
 import { Tabs } from './tabs/Tabs';
 
 export const CraftingModal: UIComponent = {
   id: 'CraftingModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      network: {
+        actions,
+        api,
+        components,
+        world,
+      },
+      data: { account },
+      utils: {
+        meetsRequirements,
+        displayRequirements,
+        getItemBalance,
+        hasIngredients
+      }
+    } = useMemo(() => {
+      const { network } = layers;
+      const { world, components } = network;
 
-        const accountEntity = queryAccountFromEmbedded(network);
-        const account = getAccount(world, components, accountEntity, { live: 2, config: 3600 });
+      const accountEntity = queryAccountFromEmbedded(network);
+      const account = getAccount(world, components, accountEntity, { live: 2, config: 3600 });
 
-        return {
-          network,
-          data: { account },
-          utils: {
-            meetsRequirements: (recipe: Recipe) =>
-              passesConditions(world, components, recipe.requirements, account),
-            displayRequirements: (recipe: Recipe) =>
-              recipe.requirements
-                .map((req) => parseConditionalText(world, components, req))
-                .join(', '),
-            getItemBalance: (index: number) => getItemBalance(world, components, account.id, index),
-            hasIngredients: (recipe: Recipe) =>
-              hasIngredients(world, components, recipe, account.id),
-          },
-        };
-      })
-    ),
-  Render: ({ data, network, utils }) => {
-    const { account } = data;
-    const { actions, api, components, world } = network;
-    const { hasIngredients } = utils;
+      return {
+        network,
+        data: { account },
+        utils: {
+          meetsRequirements: (recipe: Recipe) =>
+            passesConditions(world, components, recipe.requirements, account),
+          displayRequirements: (recipe: Recipe) =>
+            recipe.requirements
+              .map((req) => parseConditionalText(world, components, req))
+              .join(', '),
+          getItemBalance: (index: number) => _getItemBalance(world, components, account.id, index),
+          hasIngredients: (recipe: Recipe) =>
+            _hasIngredients(world, components, recipe, account.id),
+        },
+      };
+    }, [layers]);
+
     const { modals, setModals } = useVisibility();
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [showAll, setShowAll] = useState<boolean>(true);
@@ -108,7 +119,21 @@ export const CraftingModal: UIComponent = {
         {recipes.length == 0 ? (
           <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
         ) : (
-          <Recipes data={{ account, recipes, tab }} actions={{ craft }} utils={utils} />
+          <Recipes
+            data={{
+              account,
+              recipes,
+              tab
+            }}
+            actions={{
+              craft,
+            }}
+            utils={{
+              meetsRequirements,
+              displayRequirements,
+              getItemBalance,
+            }}
+          />
         )}
       </ModalWrapper>
     );

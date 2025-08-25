@@ -1,22 +1,22 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { QuestsIcon } from 'assets/images/icons/menu';
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import { useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount, getAccountByID } from 'app/cache/account';
+import { getAccount, getAccountByID as _getAccountByID } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
   Contribution,
   Goal,
   canClaim,
-  canContribute,
+  canContribute as _canContribute,
   getContributionByHash,
-  getContributions,
+  getContributions as _getContributions,
   getGoalByIndex,
 } from 'network/shapes/Goals';
 import { Score } from 'network/shapes/Score';
@@ -29,34 +29,37 @@ import { Tabs } from './Tabs';
 
 export const GoalModal: UIComponent = {
   id: 'GoalModal',
-  requirement: (layers) => {
-    return interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const account = getAccount(world, components, accountEntity, { inventory: 5 });
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          data: { account },
-          utils: {
-            canClaim: (goal: Goal, contribution: Contribution) => canClaim(goal, contribution),
-            canContribute: (goal: Goal) => canContribute(world, components, goal, account),
-            getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
-            getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
-              getBalance(world, components, holder, index, type),
-            getContribution: (goal: Goal) =>
-              getContributionByHash(world, components, goal, account),
-            getContributions: (goal: Goal) => getContributions(components, goal.id),
-            getFromDescription: (type: string, index: number) =>
-              getFromDescription(world, components, type, index),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ network, data, utils }) => {
+    const {
+      network,
+      data,
+      utils,
+    } = useMemo(() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const account = getAccount(world, components, accountEntity, { inventory: 5 });
+
+      return {
+        network,
+        data: { account },
+        utils: {
+          canClaim: (goal: Goal, contribution: Contribution) => canClaim(goal, contribution),
+          canContribute: (goal: Goal) => _canContribute(world, components, goal, account),
+          getAccountByID: (id: EntityID) => _getAccountByID(world, components, id),
+          getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
+            getBalance(world, components, holder, index, type),
+          getContribution: (goal: Goal) =>
+            getContributionByHash(world, components, goal, account),
+          getContributions: (goal: Goal) => _getContributions(components, goal.id),
+          getFromDescription: (type: string, index: number) =>
+            getFromDescription(world, components, type, index),
+        },
+      };
+    }, [layers]);
+
       const { actions, api, world, components } = network;
       const { account } = data;
       const { canContribute, getContribution, getContributions } = utils;

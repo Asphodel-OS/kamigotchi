@@ -1,15 +1,15 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import { useEffect, useState, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { AccountCache, getAccount } from 'app/cache/account';
 import { ValidatorWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { emptyAccountDetails, useAccount, useNetwork, useVisibility } from 'app/stores';
 import { ETH_INDEX } from 'constants/items';
 import { GodID, SyncState } from 'engine/constants';
-import { getBaseAccount, queryAccountFromEmbedded, queryAllAccounts } from 'network/shapes/Account';
+import { getBaseAccount as _getBaseAccount, queryAccountFromEmbedded, queryAllAccounts } from 'network/shapes/Account';
 import { getItemByIndex } from 'network/shapes/Item';
 import { waitForActionCompletion } from 'network/utils';
 import { IntroStep1, IntroStep2 } from './IntroSteps';
@@ -17,49 +17,46 @@ import { Registration } from './Registration';
 
 export const AccountRegistrar: UIComponent = {
   id: 'AccountRegistrar',
-  requirement: (layers) => {
-      const { network } = layers;
-      const { world, components } = network;
-      const { LoadingState } = components;
+  Render: () => {
+      const layers = useLayers();
+      
+      const { data, network, utils } = useMemo(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const { LoadingState } = components;
+        const accountEntity = queryAccountFromEmbedded(network);
 
-      // race condition present when updating by components, updates every second instead
-      return interval(1000).pipe(
-        map(() => {
-          const accountEntity = queryAccountFromEmbedded(network);
+        // load accounts after the data has loaded
+        const GodEntityIndex = world.entityToIndex.get(GodID) as EntityIndex;
+        const loadingState = getComponentValue(LoadingState, GodEntityIndex);
+        if (loadingState?.state === SyncState.LIVE) {
+          const accountEntities = queryAllAccounts(components);
 
-          // load accounts after the data has loaded
-          const GodEntityIndex = world.entityToIndex.get(GodID) as EntityIndex;
-          const loadingState = getComponentValue(LoadingState, GodEntityIndex);
-          if (loadingState?.state === SyncState.LIVE) {
-            const accountEntities = queryAllAccounts(components);
-
-            // NOTE: this is meant to get the accounts only once after loading
-            // the game. an off by one error here likely indicates we attempt to
-            // load the account prematurely elsewhere
-            if (accountEntities.length > AccountCache.size) {
-              accountEntities.map((entity) => getAccount(world, components, entity));
-            }
+          // NOTE: this is meant to get the accounts only once after loading
+          // the game. an off by one error here likely indicates we attempt to
+          // load the account prematurely elsewhere
+          if (accountEntities.length > AccountCache.size) {
+            accountEntities.map((entity) => getAccount(world, components, entity));
           }
+        }
 
-          return {
-            data: {
-              accountEntity,
-              ethAddress: getItemByIndex(world, components, ETH_INDEX).address!,
-            },
-            network,
-            utils: {
-              getBaseAccount: (entity: EntityIndex) => getBaseAccount(world, components, entity),
-              waitForActionCompletion: (action: EntityID) =>
-                waitForActionCompletion(
-                  network.actions.Action,
-                  world.entityToIndex.get(action) as EntityIndex
-                ),
-            },
-          };
-        })
-      );
-  },
-  Render: ({ data, network, utils }) => {
+        return {
+          data: {
+            accountEntity,
+            ethAddress: getItemByIndex(world, components, ETH_INDEX).address!,
+          },
+          network,
+          utils: {
+            getBaseAccount: (entity: EntityIndex) => _getBaseAccount(world, components, entity),
+            waitForActionCompletion: (action: EntityID) =>
+              waitForActionCompletion(
+                network.actions.Action,
+                world.entityToIndex.get(action) as EntityIndex
+              ),
+          },
+        };
+      }, [layers]);
+
       const { accountEntity } = data;
       const { getBaseAccount } = utils;
       const { actions } = network;

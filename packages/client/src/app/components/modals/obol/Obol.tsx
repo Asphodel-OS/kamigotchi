@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalWrapper, Overlay } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useVisibility } from 'app/stores';
 import { hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
@@ -22,26 +22,27 @@ const arrowButtons = [
 
 export const ObolModal: UIComponent = {
   id: 'ObolModal',
-  requirement: (layers) => {
-    return interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const account = world.entities[accountEntity];
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          utils: {
-            getObolsBalance: () => getItemBalance(world, components, account, OBOL_INDEX),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ network, utils }) => {
+    const {
+      network,
+      utils: { getObolsBalance }
+    } = useMemo(() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const account = world.entities[accountEntity];
+
+      return {
+        network,
+        utils: {
+          getObolsBalance: () => getItemBalance(world, components, account, OBOL_INDEX),
+        },
+      };
+    }, [layers]);
+
     const { actions, api } = network;
-    const { getObolsBalance } = utils;
 
     const { modals, setModals } = useVisibility();
     const [eggsQuantity, setEggsQuantity] = useState(1);

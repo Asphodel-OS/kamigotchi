@@ -1,12 +1,13 @@
-import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+import { useMemo } from 'react';
 
 import { EntityID } from '@mud-classic/recs';
-import { getAccount, getAccountKamis } from 'app/cache/account';
+import { getAccount as _getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useNetwork, useVisibility } from 'app/stores';
 import { BalPair, useTokens } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
@@ -23,11 +24,24 @@ const REFRESH_INTERVAL = 2000;
 
 export const EmaBoardModal: UIComponent = {
   id: 'EmaBoardModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
+  Render: () => {
+    const layers = useLayers();
+
+    const {
+      network,
+      data: {
+        accountEntity,
+        spender
+      },
+      utils: {
+        getAccount,
+        getKamis,
+        getItemBalance,
+        getItem,
+      }
+    } = useMemo(() => {
+      const { network } = layers;
+      const { world, components } = network;
         const accountEntity = queryAccountFromEmbedded(network);
 
         return {
@@ -38,7 +52,7 @@ export const EmaBoardModal: UIComponent = {
           },
           utils: {
             getAccount: () =>
-              getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
+              _getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
             getKamis: () =>
               getAccountKamis(world, components, accountEntity, {
                 base: 2,
@@ -49,13 +63,10 @@ export const EmaBoardModal: UIComponent = {
               getInventoryBalance(inventory, index),
             getItem: (index: number) => getItemByIndex(world, components, index),
           },
-        };
-      })
-    ),
-  Render: ({ network, data, utils }) => {
-    const { accountEntity, spender } = data;
+      };
+    }, [layers]);
+
     const { actions, api } = network;
-    const { getAccount, getItem, getKamis } = utils;
     const { selectedAddress, apis: ownerAPIs } = useNetwork();
     const { balances: tokenBals } = useTokens();
     const { modals } = useVisibility();
@@ -154,7 +165,9 @@ export const EmaBoardModal: UIComponent = {
           actions={{ onyxApprove: approveOnyxTx, rename: renameTx, onyxRename: onyxRenameTx }}
           data={{ account, kami: selected, onyxItem, holyDustItem, onyxInfo }}
           state={{ tick }}
-          utils={utils}
+          utils={{
+            getItemBalance,
+          }}
         />
         <Carousel kamis={kamis} state={{ selected, setSelected }} />
       </ModalWrapper>

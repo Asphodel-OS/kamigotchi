@@ -1,37 +1,40 @@
 import { EntityID } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import { useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { Details, LeaderboardKey, LeaderboardsDetails } from 'constants/leaderboards/leaderboards';
-import { getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountByID as _getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
 import { Score, ScoresFilter, getScoresByFilter } from 'network/shapes/Score';
 import { Filters } from './Filters';
 import { Table } from './Table';
 
 export const LeaderboardModal: UIComponent = {
   id: 'LeaderboardModal',
-  requirement: (layers) => {
-    return interval(3000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const account = getAccountFromEmbedded(network);
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          data: { account },
-          utils: {
-            getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ network, data, utils }) => {
+    const {
+      network,
+      data,
+      utils,
+    } = useMemo(() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const account = getAccountFromEmbedded(network);
+
+      return {
+        network,
+        data: { account },
+        utils: {
+          getAccountByID: (id: EntityID) => _getAccountByID(world, components, id),
+        },
+      };
+    }, [layers]);
+
       const { components } = network;
       const { modals } = useVisibility();
       const { leaderboardKey } = useSelected();
