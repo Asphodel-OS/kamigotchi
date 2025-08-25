@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount, getAccountByID } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
@@ -27,47 +27,36 @@ import { Leaderboard } from './Leaderboard';
 import { Progress } from './Progress';
 import { Tabs } from './Tabs';
 
-export function registerGoalModal() {
-  registerUIComponent(
-    'GoalModal',
-    {
-      colStart: 20,
-      colEnd: 80,
-      rowStart: 24,
-      rowEnd: 78,
-    },
+export const GoalModal: UIComponent = {
+  id: 'GoalModal',
+  requirement: (layers) => {
+    return interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
+        const account = getAccount(world, components, accountEntity, { inventory: 5 });
 
-    // Requirement
-    (layers) => {
-      return interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const account = getAccount(world, components, accountEntity, { inventory: 5 });
-
-          return {
-            network,
-            data: { account },
-            utils: {
-              canClaim: (goal: Goal, contribution: Contribution) => canClaim(goal, contribution),
-              canContribute: (goal: Goal) => canContribute(world, components, goal, account),
-              getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
-              getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
-                getBalance(world, components, holder, index, type),
-              getContribution: (goal: Goal) =>
-                getContributionByHash(world, components, goal, account),
-              getContributions: (goal: Goal) => getContributions(components, goal.id),
-              getFromDescription: (type: string, index: number) =>
-                getFromDescription(world, components, type, index),
-            },
-          };
-        })
-      );
-    },
-
-    // Render
-    ({ network, data, utils }) => {
+        return {
+          network,
+          data: { account },
+          utils: {
+            canClaim: (goal: Goal, contribution: Contribution) => canClaim(goal, contribution),
+            canContribute: (goal: Goal) => canContribute(world, components, goal, account),
+            getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
+            getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
+              getBalance(world, components, holder, index, type),
+            getContribution: (goal: Goal) =>
+              getContributionByHash(world, components, goal, account),
+            getContributions: (goal: Goal) => getContributions(components, goal.id),
+            getFromDescription: (type: string, index: number) =>
+              getFromDescription(world, components, type, index),
+          },
+        };
+      })
+    );
+  },
+  Render: ({ network, data, utils }) => {
       const { actions, api, world, components } = network;
       const { account } = data;
       const { canContribute, getContribution, getContributions } = utils;
@@ -176,9 +165,8 @@ export function registerGoalModal() {
           <Content>{tab === 'GOAL' ? MainBox() : LeaderboardBox}</Content>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Header = styled.div`
   font-family: Pixel;

@@ -1,3 +1,1 @@
-import { registerSettingsModal } from './Settings';
-
-export { registerSettingsModal };
+export { SettingsModal } from './Settings';

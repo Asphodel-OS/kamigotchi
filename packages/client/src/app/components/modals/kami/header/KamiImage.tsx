@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
-import { LevelUpArrows } from 'app/components/library/animations/LevelUp';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
@@ -94,14 +93,13 @@ export const KamiImage = ({
   return (
     <Container>
       <Image src={kami.image} />
-      {expCurr >= expLimit && <LevelUpArrows />}
       <Overlay top={0.75} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
           <Text size={0.9}>{progress ? progress.level : '??'}</Text>
         </Grouping>
       </Overlay>
-      <Overlay top={1.95} left={0.7}>
+      <Overlay top={0.75} right={0.7}>
         {!isSearching && (
           <Text size={0.9} onClick={handleIndexClick}>
             {kami.index}
@@ -115,9 +113,6 @@ export const KamiImage = ({
             onKeyDown={handleIndexSubmit}
           />
         )}
-      </Overlay>
-      <Overlay top={1} right={1}>
-        {(kami.skills?.points ?? 0) > 0 && <Sp>SP</Sp>}
       </Overlay>
       <Overlay bottom={0} fullWidth>
         <TextTooltip text={[`${expCurr}/${expLimit}`]} grow>
@@ -248,12 +243,4 @@ const Button = styled.div<{
 const Arrow = styled.img`
   width: 1.2vw;
   height: 1.2vw;
-`;
-
-const Sp = styled.div`
-  font-size: 2vw;
-  font-weight: bold;
-  background: linear-gradient(to right, #0b0d0eff, #ee0979);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 `;

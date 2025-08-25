@@ -1,3 +1,1 @@
-import { registerCraftingModal } from './Crafting';
-
-export { registerCraftingModal };
+export { CraftingModal } from './Crafting';

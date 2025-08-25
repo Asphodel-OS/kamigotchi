@@ -1,1 +1,1 @@
-export { registerPartyModal } from './Party';
+export { PartyModal } from './Party';

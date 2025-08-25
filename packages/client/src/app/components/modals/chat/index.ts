@@ -1,1 +1,1 @@
-export { registerChatModal } from './Chat';
+export { ChatModal } from './Chat';

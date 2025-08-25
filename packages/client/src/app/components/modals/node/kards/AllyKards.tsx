@@ -21,7 +21,6 @@ export const AllyKards = ({
   },
   utils: {
     getTempBonuses,
-    calcExpRequirement,
   },
 }: {
   account: Account;
@@ -35,7 +34,6 @@ export const AllyKards = ({
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
   };
   utils: {
-    calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {

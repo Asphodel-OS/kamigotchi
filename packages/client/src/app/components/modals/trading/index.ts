@@ -1,1 +1,1 @@
-export { registerTradingModal } from './Trading';
+export { TradingModal } from './Trading';

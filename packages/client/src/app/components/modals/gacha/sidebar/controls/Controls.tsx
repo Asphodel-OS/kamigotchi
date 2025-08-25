@@ -76,14 +76,6 @@ export const Controls = ({
     return tab === 'GACHA' || tab === 'REROLL';
   };
 
-  const getBalanceText = () => {
-    let numDecimals = 0;
-    if (tab === 'REROLL' && mode === 'ALT')
-      numDecimals = 3; // onyx
-    else if (tab === 'MINT') numDecimals = 4; // eth
-    return balance.toFixed(numDecimals);
-  };
-
   return (
     <Container>
       {commits.length > 0 && (
@@ -104,7 +96,12 @@ export const Controls = ({
         {isButtonVisible() && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>
       <Overlay right={0.75} bottom={0.75}>
-        <Pairing icon={payItem.image} text={getBalanceText()} tooltip={[payItem.name]} reverse />
+        <Pairing
+          icon={payItem.image}
+          text={balance.toLocaleString()}
+          tooltip={[payItem.name]}
+          reverse
+        />
       </Overlay>
     </Container>
   );

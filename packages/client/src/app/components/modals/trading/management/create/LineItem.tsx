@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -24,8 +24,6 @@ export const LineItem = ({
   remove?: () => void;
   reverse?: boolean;
 }) => {
-  const [search, setSearch] = useState<string>('');
-
   return (
     <Container>
       {reverse && (

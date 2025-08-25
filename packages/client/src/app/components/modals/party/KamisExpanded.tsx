@@ -185,10 +185,11 @@ export const KamisExpanded = ({
           description={getDescription(kami)}
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
-          // contentTooltip={getTooltip(kami)}
           actions={DisplayedActions(account, kami, node)}
           showBattery
           showCooldown
+          showLevelUp
+          showSkillPoints
           utils={utils}
         />
       ))}

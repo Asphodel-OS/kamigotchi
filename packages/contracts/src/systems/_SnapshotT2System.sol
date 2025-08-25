@@ -7,7 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
-import { LibInventory, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
+import { LibInventory, GACHA_TICKET_INDEX, OBOL_INDEX } from "libraries/LibInventory.sol";
 
 uint256 constant ID = uint256(keccak256("system.setup.snapshot.t2"));
 
@@ -16,23 +16,35 @@ uint32 constant PASSPORT_BOX = 21002;
 contract _SnapshotT2System is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function distributePassports(bytes memory arguments) public onlyAdmin(components) {
+  function dropKillRewards(bytes memory arguments) public onlyAdmin(components) {
     (address[] memory owners, uint256[] memory amts) = abi.decode(
       arguments,
       (address[], uint256[])
     );
     require(owners.length == amts.length, "array length mismatch");
     for (uint256 i; i < owners.length; i++) {
-      distributePassport(owners[i], amts[i]);
+      uint256 accID = uint256(uint160(owners[i]));
+      LibInventory.incFor(components, accID, OBOL_INDEX, amts[i]);
     }
   }
 
-  function whitelistAccounts(bytes memory arguments) public onlyAdmin(components) {
-    address[] memory owners = abi.decode(arguments, (address[]));
-    for (uint256 i; i < owners.length; i++) {
-      whitelist(owners[i]);
-    }
-  }
+  // function distributePassports(bytes memory arguments) public onlyAdmin(components) {
+  //   (address[] memory owners, uint256[] memory amts) = abi.decode(
+  //     arguments,
+  //     (address[], uint256[])
+  //   );
+  //   require(owners.length == amts.length, "array length mismatch");
+  //   for (uint256 i; i < owners.length; i++) {
+  //     distributePassport(owners[i], amts[i]);
+  //   }
+  // }
+
+  // function whitelistAccounts(bytes memory arguments) public onlyAdmin(components) {
+  //   address[] memory owners = abi.decode(arguments, (address[]));
+  //   for (uint256 i; i < owners.length; i++) {
+  //     whitelist(owners[i]);
+  //   }
+  // }
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     require(false, "not implemented");
@@ -42,17 +54,17 @@ contract _SnapshotT2System is System, AuthRoles {
   //////////////////
   // INTERNAL
 
-  function distributePassport(address owner, uint256 amt) internal {
-    uint256 accID = uint256(uint160(owner));
-    LibInventory.incFor(components, accID, PASSPORT_BOX, amt);
-    LibInventory.incFor(components, accID, GACHA_TICKET_INDEX, amt);
+  // function distributePassport(address owner, uint256 amt) internal {
+  //   uint256 accID = uint256(uint160(owner));
+  //   LibInventory.incFor(components, accID, PASSPORT_BOX, amt);
+  //   LibInventory.incFor(components, accID, GACHA_TICKET_INDEX, amt);
 
-    // also whitelist account for private world
-    LibAccount.setWorldWL(components, owner, true);
-  }
+  //   // also whitelist account for private world
+  //   LibAccount.setWorldWL(components, owner, true);
+  // }
 
-  function whitelist(address owner) internal {
-    uint256 accID = uint256(uint160(owner));
-    LibFlag.set(components, accID, "MINT_WHITELISTED", true);
-  }
+  // function whitelist(address owner) internal {
+  //   uint256 accID = uint256(uint160(owner));
+  //   LibFlag.set(components, accID, "MINT_WHITELISTED", true);
+  // }
 }

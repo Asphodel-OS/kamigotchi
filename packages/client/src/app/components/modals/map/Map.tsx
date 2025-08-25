@@ -7,7 +7,7 @@ import { getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoom, getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { MapIcon } from 'assets/images/icons/menu';
 import {
@@ -24,58 +24,46 @@ import { queryScavInstance } from 'network/shapes/Scavenge';
 import { getValue } from 'network/shapes/utils/component';
 import { Grid } from './Grid';
 
-export function registerMapModal() {
-  registerUIComponent(
-    'MapModal',
-    {
-      colStart: 2,
-      colEnd: 33,
-      rowStart: 8,
-      rowEnd: 79,
-    },
+export const MapModal: UIComponent = {
+  id: 'MapModal',
+  requirement: (layers) =>
+    interval(2000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
+        const accountOptions = { live: 2 };
+        const roomOptions = { exits: 3600 };
 
-    // Requirement
-    (layers) =>
-      interval(2000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountOptions = { live: 2 }; // what other options do we need here?
-          const roomOptions = { exits: 3600 };
-
-          return {
-            network,
-            data: {
-              account: getAccount(world, components, accountEntity, accountOptions),
-              accountKamis: queryAccountKamis(world, components, accountEntity),
-            },
-            utils: {
-              getAccount: () => getAccount(world, components, accountEntity, accountOptions),
-              getRoom: (entity: EntityIndex) => getRoom(world, components, entity, roomOptions),
-              getRoomByIndex: (index: number) => getRoomByIndex(world, components, index),
-              getKami: (entity: EntityIndex) =>
-                getKami(world, components, entity, { live: 2, harvest: 10 }),
-              getKamiLocation: (entity: EntityIndex) => getKamiLocation(world, components, entity),
-              passesConditions: (account: Account, gates: Condition[]) =>
-                passesConditions(world, components, gates, account),
-              queryNodeByIndex: (index: number) => queryNodeByIndex(world, index),
-              queryNodeKamis: (nodeEntity: EntityIndex) =>
-                queryNodeKamis(world, components, nodeEntity),
-              queryAllRooms: () => queryRooms(components),
-              queryRoomAccounts: (roomIndex: number) => queryRoomAccounts(components, roomIndex),
-              getNode: (index: number) => getNodeByIndex(world, components, index),
-              parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
-              queryScavInstance: (index: number, holderID: EntityID) =>
-                queryScavInstance(world, 'NODE', index, holderID),
-              getValue: (entity: EntityIndex) => getValue(components, entity),
-            },
-          };
-        })
-      ),
-
-    // Render
-    ({ network, data, utils }) => {
+        return {
+          network,
+          data: {
+            account: getAccount(world, components, accountEntity, accountOptions),
+            accountKamis: queryAccountKamis(world, components, accountEntity),
+          },
+          utils: {
+            getAccount: () => getAccount(world, components, accountEntity, accountOptions),
+            getRoom: (entity: EntityIndex) => getRoom(world, components, entity, roomOptions),
+            getRoomByIndex: (index: number) => getRoomByIndex(world, components, index),
+            getKami: (entity: EntityIndex) =>
+              getKami(world, components, entity, { live: 2, harvest: 10 }),
+            getKamiLocation: (entity: EntityIndex) => getKamiLocation(world, components, entity),
+            passesConditions: (account: Account, gates: Condition[]) =>
+              passesConditions(world, components, gates, account),
+            queryNodeByIndex: (index: number) => queryNodeByIndex(world, index),
+            queryNodeKamis: (nodeEntity: EntityIndex) => queryNodeKamis(world, components, nodeEntity),
+            queryAllRooms: () => queryRooms(components),
+            queryRoomAccounts: (roomIndex: number) => queryRoomAccounts(components, roomIndex),
+            getNode: (index: number) => getNodeByIndex(world, components, index),
+            parseAllos: (allos: Allo[]) => parseAllos(world, components, allos, true),
+            queryScavInstance: (index: number, holderID: EntityID) =>
+              queryScavInstance(world, 'NODE', index, holderID),
+            getValue: (entity: EntityIndex) => getValue(components, entity),
+          },
+        };
+      })
+    ),
+  Render: ({ network, data, utils }) => {
       const { getRoom, getRoomByIndex, queryAllRooms } = utils;
       const { actions, api } = network;
       const { roomIndex } = useSelected();
@@ -83,6 +71,14 @@ export function registerMapModal() {
 
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
+      const [tick, setTick] = useState(Date.now());
+
+      // ticking
+      useEffect(() => {
+        const timer = () => setTick(Date.now());
+        const timerID = setInterval(timer, 10000);
+        return () => clearInterval(timerID);
+      }, []);
 
       // query the set of rooms whenever the zone changes
       // NOTE: roomIndex is controlled by canvas/Scene.tsx
@@ -129,17 +125,17 @@ export function registerMapModal() {
           scrollBarColor='#cbba3d #e1e1b5'
         >
           <Grid
+            actions={{ move }}
             data={{
               ...data,
               roomIndex,
               zone,
               rooms: roomMap,
             }}
-            actions={{ move }}
+            state={{ tick }}
             utils={utils}
           />
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};

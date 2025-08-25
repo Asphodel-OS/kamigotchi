@@ -33,7 +33,6 @@ export const Kards = ({
     getBonuses: (entity: EntityIndex) => BonusInstance[];
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
-    calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {

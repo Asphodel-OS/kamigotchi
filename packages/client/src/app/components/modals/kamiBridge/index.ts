@@ -1,1 +1,0 @@
-export { registerKamiBridge } from './KamiBridge';

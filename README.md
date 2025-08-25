@@ -34,7 +34,18 @@ _built with love, powered by \[redacted\]_
 <br>
 <br>
 
-# Quick Start
+# Vercel Quick Start
+
+# Vercel Client Quick Start
+Note: If you run the client remotely you will have to configure your own privy instance, and it will not support connecting to the Kamigotchi production servers. We have included this vercel option for those looking to build their own projects.
+
+Build from the project root using 
+```sh
+pnpm i
+``` 
+Make sure you specify that the build outputs in the current folder, '.'
+
+# Local Quick Start
 <br>
 
 _baby steps_

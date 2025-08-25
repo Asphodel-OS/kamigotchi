@@ -3,7 +3,7 @@ import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'app/triggers';
 import { DialogueNode, dialogues } from 'constants/dialogue';
@@ -12,32 +12,21 @@ import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getRoomByIndex } from 'network/shapes/Room';
 import { getBalance } from 'network/shapes/utils';
 
-export function registerDialogueModal() {
-  registerUIComponent(
-    'DialogueModal',
-    {
-      colStart: 2,
-      colEnd: 67,
-      rowStart: 75,
-      rowEnd: 99,
-    },
+export const DialogueModal: UIComponent = {
+  id: 'DialogueModal',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const accountEntity = queryAccountFromEmbedded(network);
 
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const accountEntity = queryAccountFromEmbedded(network);
-
-          return {
-            network: layers.network,
-            data: { accEntity: accountEntity },
-          };
-        })
-      ),
-
-    // Render
-    ({ data, network }) => {
+        return {
+          network: layers.network,
+          data: { accEntity: accountEntity },
+        };
+      })
+    ),
+  Render: ({ data, network }) => {
       const { actions, components, world } = network;
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();
@@ -207,9 +196,8 @@ export function registerDialogueModal() {
           </Text>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Text = styled.div<{ npc?: { name: string; background: string } }>`
   background-color: rgb(255, 255, 204);

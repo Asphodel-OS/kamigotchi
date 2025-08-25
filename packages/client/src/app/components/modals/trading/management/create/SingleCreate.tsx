@@ -45,12 +45,12 @@ export const SingleCreate = ({
   const [cost, setCost] = useState<number>(0);
 
   useEffect(() => {
-    if (modals.trading) reset();
-  }, [modals.trading]);
+    reset();
+  }, [items.length]);
 
   const reset = () => {
-    const musu = items.find((item) => item.index === MUSU_INDEX)!;
-    const stone = items.find((item) => item.index === STONE_INDEX)!;
+    const musu = items.find((item) => item.index === MUSU_INDEX) ?? NullItem;
+    const stone = items.find((item) => item.index === STONE_INDEX) ?? NullItem;
     setItem(stone);
     setAmt(1);
     setCurrency(musu);
@@ -215,7 +215,7 @@ export const SingleCreate = ({
       </Row>
       <Overlay bottom={0.75} right={0.75}>
         <TextTooltip
-          title={`${mode} for ${amt} ${item.name} for ${cost} MUSU`}
+          title={`${mode} for ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
           text={getCreateError()}
           alignText='left'
           maxWidth={24}

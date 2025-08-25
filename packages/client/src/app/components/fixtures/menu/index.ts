@@ -1,2 +1,2 @@
-export { registerMenuLeft } from './Left';
-export { registerMenuRight } from './Right';
+export { LeftMenuFixture } from './Left';
+export { RightMenuFixture } from './Right';

@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
@@ -31,56 +31,48 @@ import { DefaultSorts, Filter, MYSTERY_KAMI_GIF, Sort, TabType, ViewMode } from 
 // TODO: rely on cache for these instead
 const KamiBlockCache = new Map<EntityIndex, JSX.Element>();
 
-export function registerGachaModal() {
-  registerUIComponent(
-    'Gacha',
-    {
-      colStart: 11,
-      colEnd: 89,
-      rowStart: 8,
-      rowEnd: 85,
-    },
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountID = world.entities[accountEntity];
-          const accountOptions = { inventories: 2, live: 2 };
-          const auctionOptions = { items: 3600, balance: 1 };
-          const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
+export const GachaModal: UIComponent = {
+  id: 'Gacha',
+  requirement: (layers) =>
+    interval(1000).pipe(
+      map(() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
+        const accountID = world.entities[accountEntity];
+        const accountOptions = { inventories: 2, live: 2 };
+        const auctionOptions = { items: 3600, balance: 1 };
+        const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
 
-          // TODO: boot the poolKamis query to MainDisplay once we consolidate tab views under it
-          return {
-            network,
-            data: {
-              accountEntity,
-              commits: getGachaCommits(world, components, accountID),
-              poolKamis: queryKamis(components, { account: GACHA_ID }),
-            },
-            tokens: {
-              spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
-            },
-            utils: {
-              getAccount: () => getAccount(world, components, accountEntity, accountOptions),
-              getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
-              getAuction: (itemIndex: number) =>
-                getAuctionByIndex(world, components, itemIndex, auctionOptions),
-              getItem: (index: number) => getItemByIndex(world, components, index),
-              getItemBalance: (inventories: Inventory[], index: number) =>
-                getInventoryBalance(inventories, index),
-              getKami: (entity: EntityIndex) =>
-                getKami(world, components, entity, kamiOptions, false),
-              getMintConfig: () => getGachaMintConfig(world, components),
-              getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
-              isWhitelisted: (entity: EntityIndex) =>
-                hasFlag(world, components, entity, 'MINT_WHITELISTED'),
-            },
-          };
-        })
-      ),
-    ({ network, data, tokens, utils }) => {
+        return {
+          network,
+          data: {
+            accountEntity,
+            commits: getGachaCommits(world, components, accountID),
+            poolKamis: queryKamis(components, { account: GACHA_ID }),
+          },
+          tokens: {
+            spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
+          },
+          utils: {
+            getAccount: () => getAccount(world, components, accountEntity, accountOptions),
+            getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
+            getAuction: (itemIndex: number) =>
+              getAuctionByIndex(world, components, itemIndex, auctionOptions),
+            getItem: (index: number) => getItemByIndex(world, components, index),
+            getItemBalance: (inventories: Inventory[], index: number) =>
+              getInventoryBalance(inventories, index),
+            getKami: (entity: EntityIndex) =>
+              getKami(world, components, entity, kamiOptions, false),
+            getMintConfig: () => getGachaMintConfig(world, components),
+            getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
+            isWhitelisted: (entity: EntityIndex) =>
+              hasFlag(world, components, entity, 'MINT_WHITELISTED'),
+          },
+        };
+      })
+    ),
+  Render: ({ network, data, tokens, utils }) => {
       const { actions, world, api } = network;
       const { accountEntity, commits, poolKamis } = data;
       const { spenderAddr } = tokens;
@@ -445,9 +437,8 @@ export function registerGachaModal() {
           </Container>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Container = styled.div`
   position: relative;

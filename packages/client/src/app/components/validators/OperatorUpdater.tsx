@@ -6,24 +6,16 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { addressesMatch } from 'utils/address';
 import { playScribble, playSuccess } from 'utils/sounds';
 
 // TODO: check for whether an account with the burner address already exists
-export function registerOperatorUpdater() {
-  registerUIComponent(
-    'OperatorUpdater',
-    {
-      // positioning controlled by validator wrapper
-      colStart: 0,
-      colEnd: 0,
-      rowStart: 0,
-      rowEnd: 0,
-    },
-    (layers) => of(layers),
-    (layers) => {
+export const OperatorUpdater: UIComponent = {
+  id: 'OperatorUpdater',
+  requirement: (layers) => of(layers),
+  Render: (layers) => {
       const { network } = layers;
       const { actions, world } = network;
 
@@ -108,9 +100,8 @@ export function registerOperatorUpdater() {
           </Row>
         </ValidatorWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Description = styled.div`
   color: #333;

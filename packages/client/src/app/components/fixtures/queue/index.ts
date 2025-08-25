@@ -1,1 +1,1 @@
-export { registerActionQueue } from './ActionQueue';
+export { ActionQueue } from './ActionQueue';

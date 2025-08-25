@@ -17,11 +17,11 @@ export const Card = ({
     icon?: string;
     onClick?: () => void;
     overlay?: string;
-    canLevel?: boolean;
     padding?: number;
     scale?: number;
+    showLevelUp?: boolean;
+    showSkillPoints?: boolean;
     tooltip?: string[];
-    skillPoints?: boolean;
   };
   fullWidth?: boolean;
 }) => {
@@ -42,9 +42,9 @@ export const Card = ({
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
-          {!!image?.canLevel && <LevelUpArrows />}
+          {!!image?.showLevelUp && <LevelUpArrows />}
           <Overlay top={0.5} right={0.5}>
-            {!!image?.skillPoints && <Sp>SP</Sp>}
+            {!!image?.showSkillPoints && <Sp>SP</Sp>}
           </Overlay>
           <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
@@ -69,6 +69,7 @@ const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   position: relative;
   border-right: solid black 0.15vw;
   border-radius: 0.45vw 0vw 0vw 0.45vw;
+  min-height: 100%;
   height: ${({ scale }) => scale}vw;
   width: ${({ scale }) => scale}vw;
   padding: ${({ padding }) => padding ?? 0}vw;

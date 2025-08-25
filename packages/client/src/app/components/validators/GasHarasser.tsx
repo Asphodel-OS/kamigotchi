@@ -7,7 +7,7 @@ import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { ActionButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
 import { GasConstants, GasExponent } from 'constants/gas';
@@ -15,18 +15,10 @@ import { waitForActionCompletion } from 'network/utils';
 import { abbreviateAddress } from 'utils/address';
 import { playFund, playSuccess } from 'utils/sounds';
 
-export function registerGasHarasser() {
-  registerUIComponent(
-    'GasHarasser',
-    {
-      // positioning controlled by validator wrapper
-      colStart: 0,
-      colEnd: 0,
-      rowStart: 0,
-      rowEnd: 0,
-    },
-    (layers) => of(layers),
-    (layers) => {
+export const GasHarasser: UIComponent = {
+  id: 'GasHarasser',
+  requirement: (layers) => of(layers),
+  Render: (layers) => {
       const { network } = layers;
       const { actions, world } = network;
 
@@ -166,9 +158,8 @@ export function registerGasHarasser() {
           </Row>
         </ValidatorWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Description = styled.div`
   color: #333;

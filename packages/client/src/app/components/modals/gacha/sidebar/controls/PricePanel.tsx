@@ -29,7 +29,7 @@ export const PricePanel = ({
     }
 
     return [
-      `Total ${price} ${payItem.name}`,
+      `Total ${price.toLocaleString()} ${payItem.name}`,
       `for ${quantity} ${saleItem.name}${quantity == 1 ? '' : 's'}`,
     ];
   };
