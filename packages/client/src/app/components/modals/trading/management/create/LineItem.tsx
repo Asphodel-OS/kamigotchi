@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -24,8 +24,6 @@ export const LineItem = ({
   remove?: () => void;
   reverse?: boolean;
 }) => {
-  const [search, setSearch] = useState<string>('');
-
   return (
     <Container>
       {reverse && (
@@ -37,17 +35,7 @@ export const LineItem = ({
         />
       )}
       <TextTooltip title={selected.name} text={[selected.description]}>
-        <IconListButton
-          img={selected.image}
-          scale={2.7}
-          options={options}
-          search={{
-            value: search,
-            onChange: (e) => {
-              setSearch(e.target.value);
-            },
-          }}
-        />
+        <IconListButton img={selected.image} scale={2.7} options={options} searchable />
       </TextTooltip>
       {!reverse && (
         <Quantity

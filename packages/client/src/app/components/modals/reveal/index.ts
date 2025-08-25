@@ -1,3 +1,1 @@
-import { registerRevealModal } from './Reveal';
-
-export { registerRevealModal };
+export { RevealModal } from './Reveal';

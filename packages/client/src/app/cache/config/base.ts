@@ -8,21 +8,10 @@ import {
   getConfigFieldValueArray,
 } from 'network/shapes/Config';
 
-export const ValueCache = new Map<string, number>();
 export const AddressCache = new Map<string, Address>();
 export const ArrayCache = new Map<string, number[]>();
+export const ValueCache = new Map<string, number>();
 export const UpdateTs = new Map<string, number>(); // last update ts of config field
-
-export const getValue = (world: World, components: Components, field: string): number => {
-  if (!ValueCache.has(field)) processValue(world, components, field);
-  return ValueCache.get(field)!;
-};
-
-export const processValue = (world: World, components: Components, field: string): number => {
-  const value = getConfigFieldValue(world, components, field);
-  ValueCache.set(field, value);
-  return value;
-};
 
 export const getAddress = (world: World, components: Components, field: string): Address => {
   if (!AddressCache.has(field)) processAddress(world, components, field);
@@ -46,4 +35,15 @@ export const processArray = (world: World, components: Components, field: string
   const values = getConfigFieldValueArray(world, components, field);
   ArrayCache.set(field, values);
   return values;
+};
+
+export const getValue = (world: World, components: Components, field: string): number => {
+  if (!ValueCache.has(field)) processValue(world, components, field);
+  return ValueCache.get(field)!;
+};
+
+export const processValue = (world: World, components: Components, field: string): number => {
+  const value = getConfigFieldValue(world, components, field);
+  ValueCache.set(field, value);
+  return value;
 };

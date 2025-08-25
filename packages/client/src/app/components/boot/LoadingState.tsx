@@ -1,102 +1,96 @@
 import { getComponentValue } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { concat, map } from 'rxjs';
 
-import { registerUIComponent } from 'app/root';
+import { processKamiConfig } from 'app/cache/config';
+import { initializeItems as _initializeItems } from 'app/cache/item';
+import { initializeSkills as _initializeSkills } from 'app/cache/skills';
+import { UIComponent } from 'app/root/types';
 import { GodID, SyncState } from 'engine/constants';
-import { registerFixtures, registerModals, registerScene, registerValidators } from '..';
 import { BootScreen } from './BootScreen';
+import { useLayers } from 'app/root/hooks';
 
 const FE_DISABLED = import.meta.env.VITE_STATE === 'DISABLED';
 
-export function registerLoadingState() {
-  registerUIComponent(
-    'LoadingState',
-    {
-      rowStart: 1,
-      rowEnd: 13,
-      colStart: 1,
-      colEnd: 13,
-    },
-    (layers) => {
+export const LoadingState: UIComponent = {
+  id: 'LoadingState',
+  Render: () => {
+    const layers = useLayers();
+
+    const {
+      loadingState,
+      utils: {
+        initializeItems,
+        initializeKamiConfig,
+        initializeSkills,
+      }
+    } = (() => {
       const {
-        components: { LoadingState },
-        world,
-      } = layers.network;
+        network: {
+          components,
+          world,
+        },
+      } = layers;
 
-      return concat([], LoadingState.update$).pipe(
-        map(() => {
-          let loadingState;
-          const GodEntityIndex = world.entityToIndex.get(GodID);
-          if (GodEntityIndex != null) {
-            loadingState = getComponentValue(LoadingState, GodEntityIndex);
-          }
+      const { LoadingState } = components;
 
-          loadingState = loadingState ?? {
-            state: SyncState.CONNECTING,
-            msg: 'Connecting to Yominet',
-            percentage: 0,
-          };
-          return { loadingState };
-        })
-      );
-    },
+      let loadingState;
+      const GodEntityIndex = world.entityToIndex.get(GodID);
+      if (GodEntityIndex != null) {
+        loadingState = getComponentValue(LoadingState, GodEntityIndex);
+      }
 
-    ({ loadingState }) => {
-      const [isVisible, setIsVisible] = useState(true);
-      const { state, msg, percentage } = loadingState;
-
-      useEffect(() => {
-        if (FE_DISABLED) return;
-
-        if (state === SyncState.LIVE) {
-          console.log('State Live');
-          setTimeout(() => setIsVisible(false), 3333);
-
-          // TODO: this is really hacky. move this logic elsewhere on SyncState sub
-          setTimeout(() => {
-            console.log('Registering Validators');
-            registerValidators();
-          }, 250);
-          setTimeout(() => {
-            console.log('Registering Fixtures');
-            registerFixtures();
-          }, 500);
-          setTimeout(() => {
-            console.log('Registering Scene');
-            registerScene();
-          }, 1000);
-          setTimeout(() => {
-            console.log('Registering Modals');
-            registerModals();
-          }, 1500);
-        }
-      }, [state]);
-
-      const getStatus = () => {
-        if (FE_DISABLED) return `Playtest is over 🎉 we'll see you again soon ^^`;
-
-        if (state !== SyncState.LIVE) return msg;
-        const rand = Math.random();
-        const eEggOdds = 1 / 1e3;
-
-        if (rand < eEggOdds) return 'good luck o7';
-        else if (rand < 2 * eEggOdds) return 'play nice now :3';
-        else if (rand < 3 * eEggOdds) return 'we are always ._. watching';
-        else if (rand < 4 * eEggOdds) return 'behind you..';
-        else if (rand < 5 * eEggOdds) return 'enjoy your visit ^^';
-        else if (rand < 6 * eEggOdds) return 'S> Fame @@@@@@@ @ @@@@@@@';
-        else if (rand < 7 * eEggOdds) return 'kms';
-        else return 'transporting you shortly~';
+      loadingState = loadingState ?? {
+        state: SyncState.CONNECTING,
+        msg: 'Connecting to Yominet',
+        percentage: 0,
       };
+      return {
+        loadingState,
+        utils: {
+          initializeKamiConfig: () => processKamiConfig(world, components),
+          initializeItems: () => _initializeItems(world, components),
+          initializeSkills: () => _initializeSkills(world, components),
+        },
+      };
+    })();
 
-      return (
-        <BootScreen
-          status={getStatus()}
-          progress={percentage}
-          isHidden={!FE_DISABLED && !isVisible}
-        />
-      );
-    }
-  );
-}
+    const [isVisible, setIsVisible] = useState(true);
+    const { state, msg, percentage } = loadingState;
+
+    useEffect(() => {
+      if (FE_DISABLED) return;
+
+      if (state === SyncState.LIVE) {
+        setTimeout(() => setIsVisible(false), 1500);
+        initializeItems();
+        initializeKamiConfig();
+        initializeSkills();
+      }
+    }, [state]);
+
+    const getStatus = () => {
+      if (FE_DISABLED) return `Playtest is over 🎉 we'll see you again soon ^^`;
+
+      if (state !== SyncState.LIVE) return msg;
+      const rand = Math.random();
+      const eEggOdds = 1 / 1e3;
+
+      if (rand < eEggOdds) return 'good luck o7';
+      else if (rand < 2 * eEggOdds) return 'play nice now :3';
+      else if (rand < 3 * eEggOdds) return 'we are always ._. watching';
+      else if (rand < 4 * eEggOdds) return 'behind you..';
+      else if (rand < 5 * eEggOdds) return 'enjoy your visit ^^';
+      else if (rand < 6 * eEggOdds) return 'S> Fame @@@@@@@ @ @@@@@@@';
+      else if (rand < 7 * eEggOdds) return 'kms';
+      else return 'transporting you shortly~';
+    };
+
+    return (
+      <BootScreen
+        status={getStatus()}
+        progress={percentage}
+        isHidden={!FE_DISABLED && !isVisible}
+      />
+    );
+  },
+};

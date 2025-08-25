@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
-export const CircleExitButton = ({ scale = 1.2, onClick, circle = false }: {
+export const CircleExitButton = ({
+  scale = 1.2,
+  onClick,
+  circle = false,
+}: {
   scale?: number;
   onClick?: () => void;
   circle?: boolean;

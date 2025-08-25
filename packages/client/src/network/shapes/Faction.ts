@@ -16,7 +16,6 @@ import { getFactionImage } from './utils/images';
 // standardized Object shape of a Score Entity
 export interface Faction extends DetailedEntity {
   id: EntityID;
-  entity: EntityIndex;
   index: number;
 }
 

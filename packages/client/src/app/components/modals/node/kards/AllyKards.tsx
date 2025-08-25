@@ -12,9 +12,16 @@ import { playClick } from 'utils/sounds';
 export const AllyKards = ({
   account,
   kamis,
-  actions,
-  display,
-  utils,
+  actions: {
+    collect,
+    stop,
+  },
+  display: {
+    UseItemButton,
+  },
+  utils: {
+    getTempBonuses,
+  },
 }: {
   account: Account;
   kamis: Kami[]; // ally kami entities
@@ -27,15 +34,9 @@ export const AllyKards = ({
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
   };
   utils: {
-    calcExpRequirement: (lvl: number) => number;
-    getBonusesByItems: (kami: Kami) => Bonus[];
+    getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
-  const { getBonusesByItems } = utils;
-  const { calcExpRequirement } = utils;
-  const { collect, stop } = actions;
-  const { UseItemButton } = display;
-
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCollapseToggle = () => {
@@ -59,7 +60,7 @@ export const AllyKards = ({
   };
 
   const getItemBonusesDescription = (kami: Kami) => {
-    const bonuses = getBonusesByItems(kami);
+    const bonuses = getTempBonuses(kami);
     return bonuses.map((bonus) => parseBonusText(bonus));
   };
 
@@ -84,7 +85,7 @@ export const AllyKards = ({
             ]}
             showBattery
             showCooldown
-            utils={utils}
+            utils={{ getTempBonuses, calcExpRequirement }}
           />
         ))}
     </Container>

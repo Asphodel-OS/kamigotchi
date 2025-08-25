@@ -23,6 +23,7 @@ import { LibNode } from "libraries/LibNode.sol";
 import { OpenMintable } from "tokens/OpenMintable.sol";
 
 uint256 constant ID = uint256(keccak256("system.local.setup"));
+address constant dummyAccAddr = address(0x000000000000000000000000000000000000000DeaD);
 
 /// @notice only for local development! not intended for production
 contract __LocalSetupSystem is System, Script {
@@ -37,15 +38,17 @@ contract __LocalSetupSystem is System, Script {
 
   /// @notice dummy account(s)
   function initAccounts() public onlyLocal onlyOwner {
-    uint256 accID = LibAccount.create(components, msg.sender, msg.sender);
+    uint256 accID = LibAccount.create(components, dummyAccAddr, dummyAccAddr);
     LibAccount.setName(components, accID, "victim bot");
+    // accID = LibAccount.create(components, msg.sender, msg.sender);
+    // LibAccount.setName(components, accID, "admin");
   }
 
   /// @notice give accounts pets
   /// @dev assumes at least X pets in gacha
   function initPets() public onlyLocal onlyOwner {
     uint256 numPets = 10;
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accID = LibAccount.getByOwner(components, dummyAccAddr);
     require(accID != 0, "no account detected");
 
     uint256[] memory allGachaPets = LibGacha.getAllInGacha(components);
@@ -65,7 +68,7 @@ contract __LocalSetupSystem is System, Script {
   /// @notice enslave pets into harvesting on node 1
   /// @dev pets will be starving by block.timestamp syncs lol
   function initHarvests() public onlyLocal onlyOwner {
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accID = LibAccount.getByOwner(components, dummyAccAddr);
     uint256[] memory kamiIDs = LibAccount.getKamis(components, accID);
     uint256 nodeID = LibNode.getByIndex(components, 30);
 

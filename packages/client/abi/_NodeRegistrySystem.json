@@ -18,6 +18,25 @@
     },
     {
       "type": "function",
+      "name": "addBonus",
+      "inputs": [
+        {
+          "name": "arguments",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "addRequirement",
       "inputs": [
         {
@@ -325,6 +344,7 @@
     }
   ],
   "methodIdentifiers": {
+    "addBonus(bytes)": "2029afd6",
     "addRequirement(bytes)": "7e534103",
     "addScavRewardBasic(bytes)": "cffc49de",
     "addScavRewardDT(bytes)": "080e18d5",

@@ -262,7 +262,7 @@ contract BonusTest is SetupTemplate {
     int256 value
   ) internal returns (uint256 id) {
     // vm.startPrank(deployer);
-    id = LibBonus.regCreate(components, anchorID, type_, endAnchor, duration, value);
+    id = LibBonus.regCreate(components, 0, anchorID, type_, endAnchor, duration, value);
     // vm.stopPrank();
   }
 

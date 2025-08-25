@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'app/triggers';
 import { DialogueNode, dialogues } from 'constants/dialogue';
@@ -12,32 +12,24 @@ import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getRoomByIndex } from 'network/shapes/Room';
 import { getBalance } from 'network/shapes/utils';
 
-export function registerDialogueModal() {
-  registerUIComponent(
-    'DialogueModal',
-    {
-      colStart: 2,
-      colEnd: 67,
-      rowStart: 75,
-      rowEnd: 99,
-    },
+export const DialogueModal: UIComponent = {
+  id: 'DialogueModal',
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      network,
+      data: { accEntity }
+    } = (() => {
+      const { network } = layers;
+      const accountEntity = queryAccountFromEmbedded(network);
 
-    // Requirement
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const accountEntity = queryAccountFromEmbedded(network);
+      return {
+        network: layers.network,
+        data: { accEntity: accountEntity },
+      };
+    })();
 
-          return {
-            network: layers.network,
-            data: { accEntity: accountEntity },
-          };
-        })
-      ),
-
-    // Render
-    ({ data, network }) => {
       const { actions, components, world } = network;
       const { modals } = useVisibility();
       const { dialogueIndex } = useSelected();
@@ -78,7 +70,7 @@ export function registerDialogueModal() {
 
         const result: any[] = [];
         dialogueNode.args.forEach((param) => {
-          result.push(getBalance(world, components, data.accEntity, param.index, param.type));
+          result.push(getBalance(world, components, accEntity, param.index, param.type));
         });
 
         return result;
@@ -207,9 +199,8 @@ export function registerDialogueModal() {
           </Text>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Text = styled.div<{ npc?: { name: string; background: string } }>`
   background-color: rgb(255, 255, 204);

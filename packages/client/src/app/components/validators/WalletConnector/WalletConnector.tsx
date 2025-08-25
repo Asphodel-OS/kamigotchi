@@ -8,18 +8,18 @@ import {
 import { switchChain } from '@wagmi/core';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
-import { of } from 'rxjs';
 import styled from 'styled-components';
+import { Address } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
+import { useLayers } from 'app/root/hooks';
 import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
 import { abbreviateAddress } from 'utils/address';
-import { Address } from 'viem';
 import { Progress } from './Progress';
 
 // Detects network changes and populates network clients for inidividual addresses.
@@ -28,19 +28,11 @@ import { Progress } from './Progress';
 // TERMINOLOGY:
 //    injectedAddress (privy) = ownerAddress (kamiworld)
 //    embeddedAddress (privy) = operatorAddress (kamiworld)
-export function registerWalletConnecter() {
-  registerUIComponent(
-    'WalletConnecter',
-    {
-      // positioning controlled by validator wrapper
-      colStart: 0,
-      colEnd: 0,
-      rowStart: 0,
-      rowEnd: 0,
-    },
-    (layers) => of(layers),
-    (layers) => {
-      const { network } = layers;
+export const WalletConnecter: UIComponent = {
+  id: 'WalletConnecter',
+  // positioning controlled by validator wrapper
+  Render: () => {
+      const { network } = useLayers();
       const { address: wagmiAddress, chain, isConnected } = useAccount();
       const { connectors, connect } = useConnect();
       const { ready, authenticated, login, logout } = usePrivy();
@@ -168,6 +160,7 @@ export function registerWalletConnecter() {
         }
       };
 
+      // NOTE: connect() fails silently if user has no connectors (connector[0] == null)
       const handleClick = () => {
         if (state === 'disconnected') connect({ connector: connectors[0] });
         else if (state === 'wrongChain') switchChain(wagmiConfig, { chainId: DefaultChain.id });
@@ -230,9 +223,8 @@ export function registerWalletConnecter() {
           </Container>
         </ValidatorWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Container = styled.div`
   height: 15vw;

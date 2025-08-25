@@ -69,9 +69,9 @@ export const IconButton = forwardRef(function IconButton(
       if (typeof img === 'string') {
         return <Image src={img} scale={scale} orientation={scaleOrientation} />;
       }
-
+      // This allows the use of MUI icons, we want this to use placeholders until Lux has the icons ready
       const Icon = img;
-      return <Icon />;
+      return <Icon sx={{ fontSize: `${scale * 0.75}${scaleOrientation}` }} />;
     }
   };
 

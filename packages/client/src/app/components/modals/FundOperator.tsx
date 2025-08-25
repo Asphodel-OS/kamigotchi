@@ -1,36 +1,25 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 // import converter from 'bech32-converting';
 import { waitForActionCompletion } from 'network/utils';
-import React, { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
+import React, { useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useAccount, useNetwork } from 'app/stores';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { playFund } from 'utils/sounds';
 
-export function registerFundOperatorModal() {
-  registerUIComponent(
-    'FundOperator',
-    {
-      colStart: 30,
-      colEnd: 70,
-      rowStart: 30,
-      rowEnd: 74,
-    },
-    (layers) =>
-      interval(1000).pipe(
-        map(() => {
-          return { network: layers.network };
-        })
-      ),
+export const FundOperator: UIComponent = {
+  id: 'FundOperator',
+  Render: () => {
+      const layers = useLayers();
 
-    ({ network }) => {
+      const { network } = layers;
       const { actions, world } = network;
       const { account: kamiAccount } = useAccount();
       const { selectedAddress, apis } = useNetwork();
@@ -203,9 +192,8 @@ export function registerFundOperatorModal() {
           </Grid>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const BoxButton = styled.button`
   display: flex;

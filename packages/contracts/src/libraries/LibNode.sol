@@ -16,6 +16,7 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
+import { LibBonus } from "libraries/LibBonus.sol";
 import { LibData } from "libraries/LibData.sol";
 import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibScavenge } from "libraries/LibScavenge.sol";
@@ -65,6 +66,25 @@ library LibNode {
       AffinityComponent(getAddrByID(components, AffCompID)).set(id, node.affinity.upper());
   }
 
+  /// @notice add bonuses that kamis get when entering node
+  /// @dev node bonuses have a fix end type (UPON_HARVEST_STOP)
+  function addBonus(
+    IUintComp components,
+    uint32 nodeIndex,
+    string memory bonusType,
+    int256 value
+  ) internal returns (uint256 id) {
+    id = LibBonus.regCreate(
+      components,
+      genID(nodeIndex),
+      genBonusAnchor(nodeIndex),
+      bonusType,
+      "UPON_HARVEST_STOP",
+      0,
+      value
+    );
+  }
+
   /// @notice requirements for kamis to be put on a node
   /// @dev can use either kami or acc as target
   function addRequirement(
@@ -76,7 +96,7 @@ library LibNode {
     id = LibConditional.createFor(world, components, req, genReqAnchor(nodeIndex));
   }
 
-  function remove(IUintComp components, uint32 index) internal {
+  function remove(IUintComp components, uint32 index) public {
     uint256 id = LibNode.getByIndex(components, index);
     require(id != 0, "Node: does not exist");
 
@@ -87,6 +107,8 @@ library LibNode {
     AffinityComponent(getAddrByID(components, AffCompID)).remove(id);
     DescriptionComponent(getAddrByID(components, DescCompID)).remove(id);
     NameComponent(getAddrByID(components, NameCompID)).remove(id);
+
+    LibBonus.regRemoveByAnchor(components, genBonusAnchor(index));
 
     uint256[] memory reqs = getReqs(components, index);
     LibConditional.remove(components, reqs);
@@ -106,6 +128,10 @@ library LibNode {
   ) internal {
     uint256 scavID = getScavBar(components, nodeIndex);
     if (scavID != 0) LibScavenge.incFor(components, "NODE", nodeIndex, amt, targetID);
+  }
+
+  function assignBonuses(IUintComp components, uint32 nodeIndex, uint256 kamiID) internal {
+    LibBonus.assignTemporary(components, genBonusAnchor(nodeIndex), kamiID);
   }
 
   //////////////
@@ -178,6 +204,10 @@ library LibNode {
 
   function genID(uint32 index) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("node", index)));
+  }
+
+  function genBonusAnchor(uint32 index) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("node.bonus", index)));
   }
 
   function genReqAnchor(uint32 index) internal pure returns (uint256) {

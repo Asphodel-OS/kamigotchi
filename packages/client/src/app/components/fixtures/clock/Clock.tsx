@@ -1,48 +1,38 @@
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/measures/Battery';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { ClockIcons } from 'assets/images/icons/clock';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { calcPercent } from 'utils/numbers';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
+import { useLayers } from 'app/root/hooks';
 
-export function registerClock() {
-  registerUIComponent(
-    'ClockFixture',
-    {
-      colStart: 33,
-      colEnd: 67,
-      rowStart: 78,
-      rowEnd: 99,
-    },
-    (layers) => {
-      return interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountOptions = { config: 3600, live: 2 };
+export const ClockFixture: UIComponent = {
+  id: 'ClockFixture',
+  Render: () => {
+      const layers = useLayers();
 
-          return {
-            data: {
-              account: getAccount(world, components, accountEntity, accountOptions),
-            },
-            utils: {
-              calcCurrentStamina: (account: Account) => calcCurrentStamina(account),
-            },
-          };
-        })
-      );
-    },
-    ({ data, utils }) => {
-      const { account } = data;
-      const { calcCurrentStamina } = utils;
+      const {
+        data: {
+          account,
+        }
+      } = (() => {
+        const { network } = layers;
+        const { world, components } = network;
+        const accountEntity = queryAccountFromEmbedded(network);
+        const accountOptions = { config: 3600, live: 2 };
+
+        return {
+          data: {
+            account: getAccount(world, components, accountEntity, accountOptions),
+          },
+        };
+      })();
       const { fixtures } = useVisibility();
       const [staminaCurr, setStaminaCurr] = useState(0);
       const [rotateClock, setRotateClock] = useState(0);
@@ -149,9 +139,8 @@ export function registerClock() {
           </Container>
         </TextTooltip>
       );
-    }
-  );
-}
+  },
+};
 
 const Container = styled.div`
   pointer-events: auto;

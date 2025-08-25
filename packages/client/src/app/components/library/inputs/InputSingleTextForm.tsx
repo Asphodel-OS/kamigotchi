@@ -16,7 +16,7 @@ export const InputSingleTextForm = ({
   hasButton,
   buttonIcon = ActionIcons.chat,
   disabled,
-  initialValue = ''
+  initialValue = '',
 }: {
   fullWidth?: boolean; // whether the input should take up the full width of its container
   label?: string; // the label for the input

@@ -35,6 +35,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
  * - IsRegistry
  * - EntityType: BONUS
  * - IDAnchor: Parent registry's ID (e.g. SkillRegistryID)
+ * - IdSource: for client. ensure value is literal source's ID, not hashed anchorID
  * - Time [temporary only] - Duration of bonus, for timed bonuses only
  * - Type
  * - Subtype [temporary only] - EndAnchor (e.g. UPON_HARVEST_ACTION, TIMED)
@@ -65,6 +66,7 @@ library LibBonus {
   /// @notice creates a registry entry
   function regCreate(
     IUintComp components,
+    uint256 sourceID, // for client, ensure not hashed anchorID
     uint256 anchorID,
     string memory type_,
     string memory endAnchor, // leave blank if permanent
@@ -76,6 +78,7 @@ library LibBonus {
     LibEntityType.set(components, id, "BONUS");
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).set(id);
 
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, sourceID);
     IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, anchorID);
     TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, uint256(value));
@@ -122,11 +125,13 @@ library LibBonus {
     }
   }
 
+  // registry anchor
   function regRemoveByAnchor(IUintComp components, uint256[] memory anchorIDs) internal {
     uint256[] memory ids = queryByParent(components, anchorIDs);
     return regRemove(components, ids);
   }
 
+  // registry anchor
   function regRemoveByAnchor(IUintComp components, uint256 anchorID) internal {
     uint256[] memory ids = queryByParent(components, anchorID);
     regRemove(components, ids);
@@ -136,6 +141,7 @@ library LibBonus {
   function regRemove(IUintComp components, uint256[] memory ids) internal {
     LibEntityType.remove(components, ids);
     IsRegistryComponent(getAddrByID(components, IsRegCompID)).remove(ids);
+    IdSourceComponent(getAddrByID(components, IdSourceCompID)).remove(ids);
     IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).remove(ids);
     TimeComponent(getAddrByID(components, TimeCompID)).remove(ids);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(ids);
@@ -167,12 +173,14 @@ library LibBonus {
   /// @notice increases bonus based on registry entry (eg skill)
   function incBy(
     IUintComp components,
-    uint256 regAnchorID,
-    uint256 anchorID,
+    uint256 regAnchorID, // registry anchor, holds all bonuses from same registry entry
+    uint256 anchorID, // instance anchor, holds bonuses of (holder + source/type)
     uint256 holderID,
     uint256 amt
   ) internal returns (uint256[] memory instanceIDs) {
     uint256[] memory regIDs = queryByParent(components, regAnchorID);
+    if (regIDs.length == 0) return new uint256[](0);
+
     instanceIDs = new uint256[](regIDs.length);
     for (uint256 i; i < regIDs.length; i++) {
       instanceIDs[i] = assign(components, regIDs[i], anchorID, holderID);
@@ -183,10 +191,12 @@ library LibBonus {
   /// @dev temporary bonuses cannot be stacked (if same source, same end type). will never level up
   function assignTemporary(
     IUintComp components,
-    uint256 regAnchorID,
+    uint256 regAnchorID, // registry anchor, holds all bonuses from same registry entry
     uint256 holderID
   ) internal returns (uint256[] memory instanceIDs) {
     uint256[] memory regIDs = queryByParent(components, regAnchorID);
+    if (regIDs.length == 0) return new uint256[](0);
+
     instanceIDs = new uint256[](regIDs.length);
     uint256[] memory levels = new uint256[](regIDs.length); // all 1
     for (uint256 i; i < regIDs.length; i++) {
@@ -295,6 +305,12 @@ library LibBonus {
   /// @notice resets upon harvest action (collect, feed, stop)
   function resetUponHarvestAction(IUintComp components, uint256 holderID) public {
     unassignBy(components, "UPON_HARVEST_ACTION", holderID);
+  }
+
+  /// @notice resets upon harvest stop (stop, liquidated)
+  function resetUponHarvestStop(IUintComp components, uint256 holderID) public {
+    unassignBy(components, "UPON_HARVEST_ACTION", holderID); // included, stop is a harvest action
+    unassignBy(components, "UPON_HARVEST_STOP", holderID);
   }
 
   /// @notice resets upon kami death

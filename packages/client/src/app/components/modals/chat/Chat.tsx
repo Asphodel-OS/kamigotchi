@@ -1,12 +1,12 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 
-import { getAccount } from 'app/cache/account';
-import { getKami } from 'app/cache/kami';
-import { getRoomByIndex } from 'app/cache/room';
+import { getAccount as _getAccount } from 'app/cache/account';
+import { getKami as _getKami } from 'app/cache/kami';
+import { getRoomByIndex as _getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { Message as KamiMessage } from 'clients/kamiden/proto';
@@ -16,47 +16,44 @@ import { Feed } from './feed/Feed';
 
 // make sure to set your NEYNAR_API_KEY .env
 
-export function registerChatModal() {
-  registerUIComponent(
-    'ChatModal',
-    {
-      colStart: 67,
-      colEnd: 100,
-      rowStart: 8,
-      rowEnd: 75,
-    },
-
-    // Requirement
-    (layers) => {
+export const ChatModal: UIComponent = {
+  id: 'ChatModal',
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      data: { accountEntity, world, components },
+      utils: {
+        getAccount,
+        getRoomByIndex,
+        getEntityIndex,
+        getKami
+      },
+      network
+    } = (() => {
       const { network } = layers;
-      return interval(3333).pipe(
-        map(() => {
-          const accountEntity = queryAccountFromEmbedded(network);
-          const accountOptions = {
-            friends: 6,
-            live: 1,
-          };
+      const accountEntity = queryAccountFromEmbedded(network);
+      const accountOptions = {
+        friends: 6,
+        live: 1,
+      };
 
-          const { world, components } = network;
-          return {
-            data: { accountEntity, world, components },
-            utils: {
-              getAccount: (entity: EntityIndex) =>
-                getAccount(world, components, entity, accountOptions),
-              getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
-              getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
-              getKami: (entity: EntityIndex) => getKami(world, components, entity),
-            },
-            network,
-            world,
-          };
-        })
-      );
-    },
-    ({ data, network, utils, world }) => {
-      const { accountEntity } = data;
+      const { world, components } = network;
+      return {
+        data: { accountEntity, world, components },
+        utils: {
+          getAccount: (entity: EntityIndex) =>
+            _getAccount(world, components, entity, accountOptions),
+          getRoomByIndex: (nodeIndex: number) => _getRoomByIndex(world, components, nodeIndex),
+          getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity),
+        },
+        network,
+        world,
+      };
+    })();
+
       const { actions, api } = network;
-      const { getAccount } = utils;
       const { modals } = useVisibility();
 
       const [messages, setMessages] = useState<KamiMessage[]>([]);
@@ -98,12 +95,16 @@ export function registerChatModal() {
             api={api}
             actionSystem={actions}
             blocked={blocked}
-            utils={utils}
+            utils={{
+              getAccount,
+              getRoomByIndex,
+              getEntityIndex,
+              getKami,
+            }}
             player={account}
             actions={{ setMessages }}
           />
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};

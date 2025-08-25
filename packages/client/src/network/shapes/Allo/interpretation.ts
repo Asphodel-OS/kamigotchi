@@ -8,7 +8,7 @@ import { NullStat } from '../Stats';
 import {
   capitalize,
   DetailedEntity,
-  getDescribedEntity,
+  getFromDescription,
   getStatImage,
   parseQuantity,
   parseQuantityStat,
@@ -44,7 +44,7 @@ export const parseAllo = (
 // INTERNAL
 
 const parseBasic = (world: World, components: Components, allo: Allo): DetailedEntity => {
-  const details = getDescribedEntity(world, components, allo.type, allo.index);
+  const details = getFromDescription(world, components, allo.type, allo.index);
   let description = '';
   if (allo.type === 'STATE') description = parseState(details);
   else if (allo.type.includes('FLAG_')) {

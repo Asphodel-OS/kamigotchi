@@ -35,6 +35,7 @@ export const getItemDetails = (comps: Components, entity: EntityIndex): Detailed
   const name = getName(comps, entity) ?? 'Unknown Item';
   return {
     ObjectType: 'ITEM',
+    entity,
     name,
     description: getDescription(comps, entity),
     image: getItemImage(name),

@@ -5,7 +5,11 @@ export {
   getByIndex as getItemByIndex,
   getDetailsByIndex as getItemDetailsByIndex,
 } from './getters';
-export { queryByIndex as queryItemByIndex } from './queries';
+export {
+  queryByIndex as queryItemByIndex,
+  queryRegistry as queryItemRegistry,
+  query as queryItems,
+} from './queries';
 export { getItem, getItemDetails } from './types';
 
 export type { Item } from './types';

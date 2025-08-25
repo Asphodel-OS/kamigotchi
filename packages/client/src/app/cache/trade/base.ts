@@ -1,20 +1,22 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/';
-import { getBuyAnchor, getSellAnchor, getTrade, Trade, TradeState } from 'network/shapes/Trade';
+import { getBuyAnchor, getSellAnchor, getTrade, State, Trade } from 'network/shapes/Trade';
 import { getOwnsTradeID, getState, getTargetID } from 'network/shapes/utils/component';
 import { getAccount } from '../account';
 import { getOrder } from './helpers';
 
-export const TradeCache = new Map<EntityIndex, Trade>();
+export const TradeCache = new Map<EntityID, Trade>();
+export const HistoryUpdated = new Set<EntityID>();
+
 const StateUpdateTs = new Map<EntityIndex, number>();
 const TakerUpdateTs = new Map<EntityIndex, number>();
 
 /// process all static data on for a Trade
-export const process = (world: World, comps: Components, entity: EntityIndex) => {
+export const process = (world: World, comps: Components, entity: EntityIndex, id: EntityID) => {
   const trade = getTrade(world, comps, entity);
 
-  //set maker
+  // set maker
   const makerID = getOwnsTradeID(comps, entity);
   trade.maker = getAccount(world, comps, world.entityToIndex.get(makerID)!);
 
@@ -25,7 +27,8 @@ export const process = (world: World, comps: Components, entity: EntityIndex) =>
   // set order data
   trade.buyOrder = getOrder(world, comps, getBuyAnchor(world, trade.id));
   trade.sellOrder = getOrder(world, comps, getSellAnchor(world, trade.id));
-  TradeCache.set(entity, trade);
+
+  TradeCache.set(id, trade);
 };
 
 export interface RefreshOptions {
@@ -40,22 +43,21 @@ export const get = (
   entity: EntityIndex,
   options?: RefreshOptions
 ): Trade => {
-  if (!TradeCache.has(entity)) process(world, comps, entity);
-  const trade = TradeCache.get(entity)!;
+  const id = world.entities[entity];
+  if (!TradeCache.has(id)) process(world, comps, entity, id);
+  const trade = TradeCache.get(id)!;
   if (!options) return trade;
 
   const now = Date.now();
-
   // set participants
   if (options.state != undefined) {
     const updateTs = StateUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.state) {
-      trade.state = getState(comps, entity) as TradeState;
+      trade.state = getState(comps, entity) as State;
       StateUpdateTs.set(entity, now);
     }
   }
-
   if (options.taker != undefined) {
     const updateTs = TakerUpdateTs.get(entity) ?? 0;
     const updateDelta = (now - updateTs) / 1000; // convert to seconds

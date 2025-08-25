@@ -44,6 +44,7 @@ import HarvestLiquidateSystem from "../../../out/HarvestLiquidateSystem.sol/Harv
 import HarvestStartSystem from "../../../out/HarvestStartSystem.sol/HarvestStartSystem.json";
 import HarvestStopSystem from "../../../out/HarvestStopSystem.sol/HarvestStopSystem.json";
 import ItemBurnSystem from "../../../out/ItemBurnSystem.sol/ItemBurnSystem.json";
+import ItemTransferSystem from "../../../out/ItemTransferSystem.sol/ItemTransferSystem.json";
 import Kami721IsInWorldSystem from "../../../out/Kami721IsInWorldSystem.sol/Kami721IsInWorldSystem.json";
 import Kami721MetadataSystem from "../../../out/Kami721MetadataSystem.sol/Kami721MetadataSystem.json";
 import Kami721StakeSystem from "../../../out/Kami721StakeSystem.sol/Kami721StakeSystem.json";
@@ -117,6 +118,7 @@ export const SystemBytecodes = {
   "system.harvest.start": HarvestStartSystem,
   "system.harvest.stop": HarvestStopSystem,
   "system.item.burn": ItemBurnSystem,
+  "system.item.transfer": ItemTransferSystem,
   "system.Kami721.IsInWorld": Kami721IsInWorldSystem,
   "system.Kami721.Metadata": Kami721MetadataSystem,
   "system.kami721.stake": Kami721StakeSystem,

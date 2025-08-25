@@ -103,7 +103,15 @@ library LibAllo {
     id = createBase(components, sourceID, anchorID, "BONUS", 1, true);
 
     require(!endType.eq(""), "Allo: bonus must be temporary");
-    uint256 bonusID = LibBonus.regCreate(components, id, bonusType, endType, duration, value);
+    uint256 bonusID = LibBonus.regCreate(
+      components,
+      sourceID,
+      id,
+      bonusType,
+      endType,
+      duration,
+      value
+    );
   }
 
   /// @notice this reward type does nothing. its for display.
@@ -133,6 +141,7 @@ library LibAllo {
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, value);
   }
 
+  // todo: refactor this into something more explicit - only used for sync  (e.g. increasing current health)
   function createStat(
     IUintComp components,
     uint256 sourceID,

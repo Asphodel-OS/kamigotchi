@@ -32,6 +32,15 @@ export function nodesAPI(generateCallData: GenerateCallData, compiledCalls: stri
     compiledCalls.push(callData);
   }
 
+  async function addBonus(nodeIndex: number, bonusType: string, value: number) {
+    const callData = generateCallData(
+      'system.node.registry',
+      [nodeIndex, bonusType, value],
+      'addBonus'
+    );
+    compiledCalls.push(callData);
+  }
+
   async function addRequirement(
     nodeIndex: number,
     type: string,
@@ -90,6 +99,9 @@ export function nodesAPI(generateCallData: GenerateCallData, compiledCalls: stri
   return {
     create: createNode,
     delete: deleteNode,
+    bonus: {
+      add: addBonus,
+    },
     requirement: {
       add: addRequirement,
     },

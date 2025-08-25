@@ -6,6 +6,7 @@ import { getAccountKamis, queryAllAccounts } from 'network/shapes/Account';
 import { getData } from 'network/shapes/Data';
 import { getReputation } from 'network/shapes/Faction';
 import { getItemBalance } from 'network/shapes/Item';
+import { getScoreFromHash, getVIPEpoch } from 'network/shapes/Score';
 import { getAccountIndex, getName } from 'network/shapes/utils/component';
 
 export const getKamiCounts = (world: World, comps: Components, limit = 200, flatten = false) => {
@@ -153,5 +154,22 @@ export const getReputationStats = (
   if (flatten) {
     return truncated.map((result, i) => `${i + 1}. ${result.name}: ${result.reputation}`);
   }
+  return truncated;
+};
+
+export const getVipStats = (world: World, comps: Components, epoch?: number, limit?: number) => {
+  if (!epoch) epoch = getVIPEpoch(world, comps);
+
+  const entities = queryAllAccounts(comps);
+  const raw = entities.map((entity) => {
+    const id = world.entities[entity];
+    return {
+      index: getAccountIndex(comps, entity),
+      name: getName(comps, entity),
+      vip: getScoreFromHash(world, comps, id, epoch, 0, 'VIP_SCORE').value,
+    };
+  });
+  const ranked = raw.sort((a, b) => b.vip - a.vip);
+  const truncated = ranked.slice(0, limit ?? 200);
   return truncated;
 };

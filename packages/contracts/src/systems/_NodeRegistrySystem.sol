@@ -43,6 +43,17 @@ contract _NodeRegistrySystem is System, AuthRoles {
   }
 
   //////////////////
+  // BONUSES
+
+  function addBonus(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
+    (uint32 nodeIndex, string memory bonusType, int256 value) = abi.decode(
+      arguments,
+      (uint32, string, int256)
+    );
+    return LibNode.addBonus(components, nodeIndex, bonusType, value);
+  }
+
+  //////////////////
   // REQUIREMENTS
 
   function addRequirement(bytes memory arguments) public onlyAdmin(components) returns (uint256) {

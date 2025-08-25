@@ -1,82 +1,189 @@
-import { registerClock } from './fixtures/clock';
-import { registerMenuLeft, registerMenuRight } from './fixtures/menu';
-import { registerNotificationFixture } from './fixtures/notifications';
-import { registerActionQueue } from './fixtures/queue';
+import type { UIComponentWithGrid } from 'app/root/types';
+import { LoadingState } from './boot';
+import { Scene } from './canvas';
 
-import { registerAccountModal } from './modals/account';
-import { registerChatModal } from './modals/chat';
-import { registerCraftingModal } from './modals/crafting';
-import { registerDialogueModal } from './modals/dialogue';
-import { registerGachaModal } from './modals/gacha';
-import { registerGoalModal } from './modals/goals';
-import { registerHelpModal } from './modals/help';
-import { registerInventoryModal } from './modals/inventory';
-import { registerKamiModal } from './modals/kami';
-import { registerKamiBridge } from './modals/kamiBridge';
-import { registerLeaderboardModal } from './modals/leaderboard';
-import { registerMapModal } from './modals/map';
-import { registerMerchantModal } from './modals/merchant';
-import { registerEMABoardModal } from './modals/naming';
-import { registerNodeModal } from './modals/node';
-import { registerPartyModal } from './modals/party';
-import { registerPresaleModal } from './modals/presale';
-import { registerRevealModal } from './modals/reveal/Reveal';
-import { registerSettingsModal } from './modals/settings';
-import { registerTradingModal } from './modals/trading';
-// unused
-import { registerFundOperatorModal } from './modals/FundOperator';
+import { ClockFixture } from './fixtures/clock';
+import { LeftMenuFixture, RightMenuFixture } from './fixtures/menu';
+import { NotificationFixture } from './fixtures/notifications';
+import { ActionQueue } from './fixtures/queue';
 
-import { registerQuestsModal } from './modals/quests';
+import { AccountModal } from './modals/account';
+import { ChatModal } from './modals/chat';
+import { CraftingModal } from './modals/crafting';
+import { DialogueModal } from './modals/dialogue';
+import { FundOperator } from './modals/FundOperator';
+import { GachaModal } from './modals/gacha';
+import { GoalModal } from './modals/goals';
+import { HelpModal } from './modals/help';
+import { InventoryModal } from './modals/inventory';
+import { KamiModal } from './modals/kami';
+import { KamiPortalModal } from './modals/kamiPortal';
+import { LeaderboardModal } from './modals/leaderboard';
+import { MapModal } from './modals/map';
+import { MerchantModal } from './modals/merchant';
+import { EmaBoardModal } from './modals/naming';
+import { NodeModal } from './modals/node';
+import { ObolModal } from './modals/obol';
+import { PartyModal } from './modals/party';
+import { QuestModal } from './modals/quests';
+import { RevealModal } from './modals/reveal';
+import { SettingsModal } from './modals/settings';
+import { TradingModal } from './modals/trading';
+
 import {
-  registerAccountRegistrar,
-  registerGasHarasser,
-  registerOperatorUpdater,
-  registerWalletConnecter,
+  AccountRegistrar,
+  GasHarasser,
+  OperatorUpdater,
+  TokenChecker,
+  WalletConnecter,
 } from './validators';
 
-export { registerLoadingState } from './boot';
-export { registerScene } from './canvas';
-export { registerActionQueue };
+export const allComponents: UIComponentWithGrid[] = [
+  // boot
+  {
+    uiComponent: LoadingState,
+    gridConfig: { colStart: 1, colEnd: 13, rowStart: 1, rowEnd: 13 },
+  },
 
-export function registerFixtures() {
-  registerClock();
-  registerMenuLeft();
-  registerMenuRight();
-  registerNotificationFixture();
-}
+  // validators
+  {
+    uiComponent: WalletConnecter,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
+  {
+    uiComponent: AccountRegistrar,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
+  {
+    uiComponent: OperatorUpdater,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
+  {
+    uiComponent: GasHarasser,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
+  {
+    uiComponent: TokenChecker,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
 
-export function registerModals() {
+  // fixtures
+  {
+    uiComponent: ClockFixture,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 78, rowEnd: 99 },
+  },
+  {
+    uiComponent: LeftMenuFixture,
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 3, rowEnd: 6 },
+  },
+  {
+    uiComponent: RightMenuFixture,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 3, rowEnd: 6 },
+  },
+  {
+    uiComponent: NotificationFixture,
+    gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
+  },
+  {
+    uiComponent: ActionQueue,
+    gridConfig: { colStart: 66, colEnd: 99, rowStart: 90, rowEnd: 100 },
+  },
+
+  // canvas
+  {
+    uiComponent: Scene,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
+
   // menu modals
-  registerAccountModal();
-  registerChatModal();
-  registerCraftingModal();
-  registerHelpModal();
-  registerInventoryModal();
-  registerMapModal();
-  registerNodeModal();
-  registerPartyModal();
-  registerQuestsModal();
-  registerSettingsModal();
-  registerTradingModal();
-  registerPresaleModal();
+  {
+    uiComponent: AccountModal,
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: ChatModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: CraftingModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
+    uiComponent: HelpModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: InventoryModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: MapModal,
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 79 },
+  },
+  {
+    uiComponent: NodeModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
+    uiComponent: PartyModal,
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: QuestModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: SettingsModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: TradingModal,
+    gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
 
   // scene modals
-  registerDialogueModal();
-  registerKamiBridge();
-  registerEMABoardModal();
-  registerFundOperatorModal();
-  registerGachaModal();
-  registerKamiModal();
-  registerLeaderboardModal();
-  registerRevealModal();
-  registerMerchantModal();
-  registerGoalModal();
-}
-
-export function registerValidators() {
-  registerWalletConnecter();
-  registerAccountRegistrar();
-  registerOperatorUpdater();
-  registerGasHarasser();
-  // registerTokenChecker();
-}
+  {
+    uiComponent: DialogueModal,
+    gridConfig: { colStart: 2, colEnd: 67, rowStart: 75, rowEnd: 99 },
+  },
+  {
+    uiComponent: EmaBoardModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
+  },
+  {
+    uiComponent: FundOperator,
+    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 74 },
+  },
+  {
+    uiComponent: GachaModal,
+    gridConfig: { colStart: 11, colEnd: 89, rowStart: 8, rowEnd: 85 },
+  },
+  {
+    uiComponent: GoalModal,
+    gridConfig: { colStart: 20, colEnd: 80, rowStart: 24, rowEnd: 78 },
+  },
+  {
+    uiComponent: KamiPortalModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
+  },
+  {
+    uiComponent: KamiModal,
+    gridConfig: { colStart: 11, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: LeaderboardModal,
+    gridConfig: { colStart: 32, colEnd: 70, rowStart: 20, rowEnd: 78 },
+  },
+  {
+    uiComponent: ObolModal,
+    gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
+  },
+  {
+    uiComponent: RevealModal,
+    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 75 },
+  },
+  {
+    uiComponent: MerchantModal,
+    gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+];

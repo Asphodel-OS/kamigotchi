@@ -45,7 +45,7 @@
     },
     {
       "type": "function",
-      "name": "distributePassports",
+      "name": "dropKillRewards",
       "inputs": [
         {
           "name": "arguments",
@@ -135,19 +135,6 @@
       "stateMutability": "payable"
     },
     {
-      "type": "function",
-      "name": "whitelistAccounts",
-      "inputs": [
-        {
-          "name": "arguments",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
       "type": "event",
       "name": "OwnershipHandoverCanceled",
       "inputs": [
@@ -223,13 +210,12 @@
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
-    "distributePassports(bytes)": "baed4ce5",
+    "dropKillRewards(bytes)": "97f2d0bb",
     "execute(bytes)": "09c5eabe",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "transferOwnership(address)": "f2fde38b",
-    "whitelistAccounts(bytes)": "dd289f52"
+    "transferOwnership(address)": "f2fde38b"
   }
 }

@@ -68,6 +68,27 @@ export interface AuctionBuy {
   Timestamp: number;
 }
 
+export interface RankRow {
+  KamiName: string;
+  OwnerName: string;
+  OwnerAddress: string;
+  Amount: number;
+}
+
+export interface Trade {
+  TradeId: string;
+  MakerId: string;
+  TakerId: string;
+  BuyOrderIndices: number[];
+  BuyOrderAmounts: string[];
+  SellOrderIndices: number[];
+  SellOrderAmounts: string[];
+  CreateTimestamp: string;
+  CancelTimestamp: string;
+  ExecuteTimestamp: string;
+  CompleteTimestamp: string;
+}
+
 /** REQUESTS */
 export interface RoomRequest {
   RoomIndex: number;
@@ -91,6 +112,19 @@ export interface BattleStatsRequest {
   KamiId?: string | undefined;
 }
 
+export interface RankingRequest {
+  StartBlock: number;
+  EndBlock: number;
+  ApiKey: string;
+  IsVip: boolean;
+}
+
+export interface TradesRequest {
+  AccountId: string;
+  Timestamp: string;
+}
+
+/** RESPONSE */
 export interface RoomResponse {
   Messages: Message[];
   Feeds: Feed[];
@@ -111,6 +145,14 @@ export interface BattlesResponse {
 
 export interface BattleStatsResponse {
   BattleStats: BattleStats | undefined;
+}
+
+export interface RankingResponse {
+  Ranking: RankRow[];
+}
+
+export interface TradesResponse {
+  Trades: Trade[];
 }
 
 function createBaseMessage(): Message {
@@ -524,19 +566,11 @@ export const Kill: MessageFns<Kill> = {
     const message = createBaseKill();
     message.AccountID = object.AccountID ?? '';
     message.Timestamp = object.Timestamp ?? 0;
-    message.AccountID = object.AccountID ?? '';
-    message.Timestamp = object.Timestamp ?? 0;
     message.RoomIndex = object.RoomIndex ?? 0;
     message.KillerId = object.KillerId ?? '';
     message.KillerHealthSync = object.KillerHealthSync ?? 0;
     message.KillerHealthTotal = object.KillerHealthTotal ?? 0;
-    message.KillerHealthSync = object.KillerHealthSync ?? 0;
-    message.KillerHealthTotal = object.KillerHealthTotal ?? 0;
     message.VictimId = object.VictimId ?? '';
-    message.VictimHealthSync = object.VictimHealthSync ?? 0;
-    message.VictimHealthTotal = object.VictimHealthTotal ?? 0;
-    message.Bounty = object.Bounty ?? '';
-    message.Salvage = object.Salvage ?? '';
     message.VictimHealthSync = object.VictimHealthSync ?? 0;
     message.VictimHealthTotal = object.VictimHealthTotal ?? 0;
     message.Bounty = object.Bounty ?? '';
@@ -789,6 +823,290 @@ export const AuctionBuy: MessageFns<AuctionBuy> = {
     message.Currency = object.Currency ?? 0;
     message.Cost = object.Cost ?? 0;
     message.Timestamp = object.Timestamp ?? 0;
+    return message;
+  },
+};
+
+function createBaseRankRow(): RankRow {
+  return { KamiName: '', OwnerName: '', OwnerAddress: '', Amount: 0 };
+}
+
+export const RankRow: MessageFns<RankRow> = {
+  encode(message: RankRow, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.KamiName !== '') {
+      writer.uint32(10).string(message.KamiName);
+    }
+    if (message.OwnerName !== '') {
+      writer.uint32(18).string(message.OwnerName);
+    }
+    if (message.OwnerAddress !== '') {
+      writer.uint32(26).string(message.OwnerAddress);
+    }
+    if (message.Amount !== 0) {
+      writer.uint32(32).uint64(message.Amount);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RankRow {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRankRow();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.KamiName = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.OwnerName = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.OwnerAddress = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.Amount = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<RankRow>): RankRow {
+    return RankRow.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<RankRow>): RankRow {
+    const message = createBaseRankRow();
+    message.KamiName = object.KamiName ?? '';
+    message.OwnerName = object.OwnerName ?? '';
+    message.OwnerAddress = object.OwnerAddress ?? '';
+    message.Amount = object.Amount ?? 0;
+    return message;
+  },
+};
+
+function createBaseTrade(): Trade {
+  return {
+    TradeId: '',
+    MakerId: '',
+    TakerId: '',
+    BuyOrderIndices: [],
+    BuyOrderAmounts: [],
+    SellOrderIndices: [],
+    SellOrderAmounts: [],
+    CreateTimestamp: '',
+    CancelTimestamp: '',
+    ExecuteTimestamp: '',
+    CompleteTimestamp: '',
+  };
+}
+
+export const Trade: MessageFns<Trade> = {
+  encode(message: Trade, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.TradeId !== '') {
+      writer.uint32(10).string(message.TradeId);
+    }
+    if (message.MakerId !== '') {
+      writer.uint32(18).string(message.MakerId);
+    }
+    if (message.TakerId !== '') {
+      writer.uint32(26).string(message.TakerId);
+    }
+    writer.uint32(34).fork();
+    for (const v of message.BuyOrderIndices) {
+      writer.uint32(v);
+    }
+    writer.join();
+    for (const v of message.BuyOrderAmounts) {
+      writer.uint32(42).string(v!);
+    }
+    writer.uint32(50).fork();
+    for (const v of message.SellOrderIndices) {
+      writer.uint32(v);
+    }
+    writer.join();
+    for (const v of message.SellOrderAmounts) {
+      writer.uint32(58).string(v!);
+    }
+    if (message.CreateTimestamp !== '') {
+      writer.uint32(66).string(message.CreateTimestamp);
+    }
+    if (message.CancelTimestamp !== '') {
+      writer.uint32(74).string(message.CancelTimestamp);
+    }
+    if (message.ExecuteTimestamp !== '') {
+      writer.uint32(82).string(message.ExecuteTimestamp);
+    }
+    if (message.CompleteTimestamp !== '') {
+      writer.uint32(90).string(message.CompleteTimestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Trade {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTrade();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.TradeId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.MakerId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.TakerId = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag === 32) {
+            message.BuyOrderIndices.push(reader.uint32());
+
+            continue;
+          }
+
+          if (tag === 34) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.BuyOrderIndices.push(reader.uint32());
+            }
+
+            continue;
+          }
+
+          break;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.BuyOrderAmounts.push(reader.string());
+          continue;
+        }
+        case 6: {
+          if (tag === 48) {
+            message.SellOrderIndices.push(reader.uint32());
+
+            continue;
+          }
+
+          if (tag === 50) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.SellOrderIndices.push(reader.uint32());
+            }
+
+            continue;
+          }
+
+          break;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.SellOrderAmounts.push(reader.string());
+          continue;
+        }
+        case 8: {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.CreateTimestamp = reader.string();
+          continue;
+        }
+        case 9: {
+          if (tag !== 74) {
+            break;
+          }
+
+          message.CancelTimestamp = reader.string();
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.ExecuteTimestamp = reader.string();
+          continue;
+        }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          message.CompleteTimestamp = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<Trade>): Trade {
+    return Trade.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<Trade>): Trade {
+    const message = createBaseTrade();
+    message.TradeId = object.TradeId ?? '';
+    message.MakerId = object.MakerId ?? '';
+    message.TakerId = object.TakerId ?? '';
+    message.BuyOrderIndices = object.BuyOrderIndices?.map((e) => e) || [];
+    message.BuyOrderAmounts = object.BuyOrderAmounts?.map((e) => e) || [];
+    message.SellOrderIndices = object.SellOrderIndices?.map((e) => e) || [];
+    message.SellOrderAmounts = object.SellOrderAmounts?.map((e) => e) || [];
+    message.CreateTimestamp = object.CreateTimestamp ?? '';
+    message.CancelTimestamp = object.CancelTimestamp ?? '';
+    message.ExecuteTimestamp = object.ExecuteTimestamp ?? '';
+    message.CompleteTimestamp = object.CompleteTimestamp ?? '';
     return message;
   },
 };
@@ -1059,6 +1377,146 @@ export const BattleStatsRequest: MessageFns<BattleStatsRequest> = {
   },
 };
 
+function createBaseRankingRequest(): RankingRequest {
+  return { StartBlock: 0, EndBlock: 0, ApiKey: '', IsVip: false };
+}
+
+export const RankingRequest: MessageFns<RankingRequest> = {
+  encode(message: RankingRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.StartBlock !== 0) {
+      writer.uint32(8).uint64(message.StartBlock);
+    }
+    if (message.EndBlock !== 0) {
+      writer.uint32(16).uint64(message.EndBlock);
+    }
+    if (message.ApiKey !== '') {
+      writer.uint32(26).string(message.ApiKey);
+    }
+    if (message.IsVip !== false) {
+      writer.uint32(32).bool(message.IsVip);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RankingRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRankingRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.StartBlock = longToNumber(reader.uint64());
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.EndBlock = longToNumber(reader.uint64());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.ApiKey = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.IsVip = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<RankingRequest>): RankingRequest {
+    return RankingRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<RankingRequest>): RankingRequest {
+    const message = createBaseRankingRequest();
+    message.StartBlock = object.StartBlock ?? 0;
+    message.EndBlock = object.EndBlock ?? 0;
+    message.ApiKey = object.ApiKey ?? '';
+    message.IsVip = object.IsVip ?? false;
+    return message;
+  },
+};
+
+function createBaseTradesRequest(): TradesRequest {
+  return { AccountId: '', Timestamp: '' };
+}
+
+export const TradesRequest: MessageFns<TradesRequest> = {
+  encode(message: TradesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.AccountId !== '') {
+      writer.uint32(10).string(message.AccountId);
+    }
+    if (message.Timestamp !== '') {
+      writer.uint32(18).string(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): TradesRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTradesRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.AccountId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.Timestamp = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<TradesRequest>): TradesRequest {
+    return TradesRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<TradesRequest>): TradesRequest {
+    const message = createBaseTradesRequest();
+    message.AccountId = object.AccountId ?? '';
+    message.Timestamp = object.Timestamp ?? '';
+    return message;
+  },
+};
+
 function createBaseRoomResponse(): RoomResponse {
   return { Messages: [], Feeds: [] };
 }
@@ -1317,6 +1775,98 @@ export const BattleStatsResponse: MessageFns<BattleStatsResponse> = {
   },
 };
 
+function createBaseRankingResponse(): RankingResponse {
+  return { Ranking: [] };
+}
+
+export const RankingResponse: MessageFns<RankingResponse> = {
+  encode(message: RankingResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Ranking) {
+      RankRow.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RankingResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRankingResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Ranking.push(RankRow.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<RankingResponse>): RankingResponse {
+    return RankingResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<RankingResponse>): RankingResponse {
+    const message = createBaseRankingResponse();
+    message.Ranking = object.Ranking?.map((e) => RankRow.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseTradesResponse(): TradesResponse {
+  return { Trades: [] };
+}
+
+export const TradesResponse: MessageFns<TradesResponse> = {
+  encode(message: TradesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Trades) {
+      Trade.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): TradesResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTradesResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Trades.push(Trade.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<TradesResponse>): TradesResponse {
+    return TradesResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<TradesResponse>): TradesResponse {
+    const message = createBaseTradesResponse();
+    message.Trades = object.Trades?.map((e) => Trade.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 /** Replies */
 export type KamidenServiceDefinition = typeof KamidenServiceDefinition;
 export const KamidenServiceDefinition = {
@@ -1356,6 +1906,30 @@ export const KamidenServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getRanking: {
+      name: 'GetRanking',
+      requestType: RankingRequest,
+      requestStream: false,
+      responseType: RankingResponse,
+      responseStream: false,
+      options: {},
+    },
+    getTradeHistory: {
+      name: 'GetTradeHistory',
+      requestType: TradesRequest,
+      requestStream: false,
+      responseType: TradesResponse,
+      responseStream: false,
+      options: {},
+    },
+    getOpenOffers: {
+      name: 'GetOpenOffers',
+      requestType: TradesRequest,
+      requestStream: false,
+      responseType: TradesResponse,
+      responseStream: false,
+      options: {},
+    },
     /** Stream */
     subscribeToStream: {
       name: 'SubscribeToStream',
@@ -1386,6 +1960,18 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
     request: BattleStatsRequest,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<BattleStatsResponse>>;
+  getRanking(
+    request: RankingRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<RankingResponse>>;
+  getTradeHistory(
+    request: TradesRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<TradesResponse>>;
+  getOpenOffers(
+    request: TradesRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<TradesResponse>>;
   /** Stream */
   subscribeToStream(
     request: StreamRequest,
@@ -1411,6 +1997,18 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<BattleStatsRequest>,
     options?: CallOptions & CallOptionsExt
   ): Promise<BattleStatsResponse>;
+  getRanking(
+    request: DeepPartial<RankingRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<RankingResponse>;
+  getTradeHistory(
+    request: DeepPartial<TradesRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<TradesResponse>;
+  getOpenOffers(
+    request: DeepPartial<TradesRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<TradesResponse>;
   /** Stream */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,

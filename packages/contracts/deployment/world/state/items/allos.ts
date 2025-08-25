@@ -5,8 +5,8 @@ export async function addAllo(api: AdminAPI, itemIndex: number, entry: any) {
   const type = entry['Type'].toUpperCase();
   const alloAPI = api.registry.item.add.allo;
 
-  if (type === 'STAT') addStat(alloAPI, itemIndex, entry);
-  else if (type === 'BONUS') addBonus(alloAPI, itemIndex, entry);
+  if (type === 'BONUS') addBonus(alloAPI, itemIndex, entry);
+  else if (type === 'STAT') addStat(alloAPI, itemIndex, entry);
   else if (type === 'FLAG') addFlag(alloAPI, itemIndex, entry);
   else if (type === 'STATE') addState(alloAPI, itemIndex, entry);
   else if (type === 'ITEM_DROPTABLE') addDroptable(alloAPI, itemIndex, entry);

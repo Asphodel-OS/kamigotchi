@@ -4,4 +4,4 @@ export {
   waitForComponentValueIn,
   waitForComponentValueUpdate,
 } from './utils';
-export { waitForActionCompletion } from './waitForActionCompletion';
+export { checkActionState, waitForActionCompletion } from './waitForActionCompletion';

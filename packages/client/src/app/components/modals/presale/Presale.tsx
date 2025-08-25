@@ -1,6 +1,5 @@
 import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { Address, getAddress } from 'viem';
@@ -9,7 +8,8 @@ import { useWatchBlockNumber } from 'wagmi';
 import { getConfigAddress } from 'app/cache/config';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalWrapper, TextTooltip } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useNetwork, useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { ETH_INDEX } from 'constants/items';
@@ -21,33 +21,21 @@ import { Header } from './Header';
 const StartTime = 1745845200; // April 28th, 2025 – 1pm GMT
 const EndTime = StartTime + 3600 * 24 * 2;
 
-export function registerPresaleModal() {
-  registerUIComponent(
-    'Presale',
-    {
-      colStart: 25,
-      colEnd: 75,
-      rowStart: 25,
-      rowEnd: 75,
-    },
+export const Presale: UIComponent = {
+  id: 'Presale',
+  Render: () => {
+    const layers = useLayers();
+    
+    const { network, presaleAddress, currency } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      return {
+        network,
+        presaleAddress: getAddress(getConfigAddress(world, components, 'ONYX_PRESALE_ADDRESS')),
+        currency: getItemByIndex(world, components, ETH_INDEX),
+      };
+    })();
 
-    // Requirement
-    (layers) => {
-      return interval(1000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          return {
-            network,
-            presaleAddress: getAddress(getConfigAddress(world, components, 'ONYX_PRESALE_ADDRESS')),
-            currency: getItemByIndex(world, components, ETH_INDEX),
-          };
-        })
-      );
-    },
-
-    // Render
-    ({ network, presaleAddress, currency }) => {
       const { selectedAddress, apis } = useNetwork();
       const { actions } = network;
 
@@ -154,9 +142,8 @@ export function registerPresaleModal() {
           </Container>
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Container = styled.div`
   background-color: #1d3441;

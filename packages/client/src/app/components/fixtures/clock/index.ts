@@ -1,1 +1,1 @@
-export { registerClock } from './Clock';
+export { ClockFixture } from './Clock';

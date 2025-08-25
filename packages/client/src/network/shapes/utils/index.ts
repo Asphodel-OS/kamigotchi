@@ -11,7 +11,7 @@ export {
 } from './images';
 export { unpackArray32 } from './packing';
 export {
-  getDescribedEntity,
+  getFromDescription,
   parseKamiStateFromIndex,
   parseKamiStateToIndex,
   parseQuantity,

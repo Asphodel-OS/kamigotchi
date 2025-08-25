@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { Dispatch } from 'react';
 import styled from 'styled-components';
 
@@ -68,6 +69,14 @@ export const PendingOffer = ({
 
   /////////////////
   // INTERPRETATION
+
+  // gets last trade state
+  const getStateTooltip = () => {
+    const timestamp =
+      trade.timestamps &&
+      `: ${moment(Number(trade.timestamps[trade.state]) * 1000).format('MM/DD HH:mm')}`;
+    return [`${trade.state.toLowerCase()}${timestamp ?? ''}`];
+  };
 
   // check whether the player can fill the specified order
   // skip check if the player is the maker
@@ -224,6 +233,7 @@ export const PendingOffer = ({
         disabled: isConfirming || !canFillOrder(),
       }}
       data={{ account, trade, type }}
+      utils={{ getStateTooltip }}
       reverse={trade.maker?.entity === account.entity}
     />
   );

@@ -4,6 +4,11 @@ import styled from 'styled-components';
 
 import { Account } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
+import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
+import { HelpMenuIcons } from 'assets/images/help';
+import { ActionIcons } from 'assets/images/icons/actions';
+import { insectIcon } from 'assets/images/icons/affinities';
+import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
@@ -13,13 +18,37 @@ import { Node } from 'network/shapes/Node';
 import { NullRoom, Room } from 'network/shapes/Room';
 import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
-import { FloatingMapKami } from './FloatingMapKami';
+import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
+
+type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
+
+const options = [
+  { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
+  { text: 'Room Type', img: insectIcon, object: 'RoomType' },
+  { text: 'Kami Count', img: HelpMenuIcons.kamis, object: 'KamiCount' },
+  { text: 'Operator Count', img: OperatorIcon, object: 'OperatorCount' },
+];
+
 export const Grid = ({
-  data,
-  actions,
+  data: {
+    account,
+    accountKamis,
+    rooms,
+    roomIndex,
+    zone,
+  },
+  actions: {
+    move,
+  },
+  state: {
+    tick,
+  },
   utils,
 }: {
+  actions: {
+    move: (roomIndex: number) => void;
+  };
   data: {
     account: Account;
     accountKamis: EntityIndex[];
@@ -27,9 +56,7 @@ export const Grid = ({
     roomIndex: number; // index of current room
     zone: number;
   };
-  actions: {
-    move: (roomIndex: number) => void;
-  };
+  state: { tick: number };
   utils: {
     getKami: (entity: EntityIndex) => BaseKami;
     getKamiLocation: (entity: EntityIndex) => number | undefined;
@@ -43,7 +70,6 @@ export const Grid = ({
     getValue: (entity: EntityIndex) => number;
   };
 }) => {
-  const { account, roomIndex, zone, rooms, accountKamis } = data;
   const {
     getKamiLocation,
     getKami,
@@ -59,6 +85,7 @@ export const Grid = ({
 
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
+  const [mode, setMode] = useState<Mode[]>(['MyKamis']);
 
   const rolls = useMemo(() => {
     const map = new Map<number, number>();
@@ -93,7 +120,10 @@ export const Grid = ({
     return grid;
   }, [zone, rooms]);
 
-  const kamiIconsMap = useMemo(() => {
+  // creates a map of the player kami on tiles
+  // this is used to display the kami icons in the grid tooltip
+  // and to filter the grid by kami count
+  const yourKamiIconsMap = useMemo(() => {
     const map = new Map<number, string[]>();
     accountKamis.forEach((kami) => {
       const location = getKamiLocation(kami);
@@ -106,6 +136,7 @@ export const Grid = ({
 
   /////////////////
   // INTERPRETATION
+
   const isRoomBlocked = (room: Room) => {
     return !passesConditions(account, room.gates);
   };
@@ -126,7 +157,7 @@ export const Grid = ({
 
   const handleRoomMove = (roomIndex: number) => {
     playClick();
-    actions.move(roomIndex);
+    move(roomIndex);
   };
 
   // updates the stats for a room and set it as the hovered room
@@ -136,6 +167,48 @@ export const Grid = ({
     setKamiEntities(queryNodeKamis(queryNodeByIndex(roomIndex)));
   };
 
+  const setType = (option: Mode[]) => {
+    setMode(option);
+  };
+
+  // used for the GrdiFilter, calculates averages to use
+  // for the floating icons coloring
+  // and maps to check if there are any kami
+  // or players on a tile
+  const { kamiCountMap, operatorCountMap, kamiAverage, operatorAverage } = useMemo(() => {
+    const kamiCountMap = new Map<number, number>();
+    const operatorCountMap = new Map<number, number>();
+
+    let totalKamis = 0;
+    let roomsWithKamis = 0;
+    let totalPlayers = 0;
+    let roomsWithPlayers = 0;
+
+    rooms.forEach((room) => {
+      if (!room.index) return;
+
+      const kamis = queryNodeKamis(queryNodeByIndex(room.index));
+      kamiCountMap.set(room.index, kamis.length);
+      if (kamis.length > 0) {
+        totalKamis += kamis.length;
+        roomsWithKamis++;
+      }
+
+      const players = queryRoomAccounts(room.index);
+      operatorCountMap.set(room.index, players.length);
+      if (players.length > 0) {
+        totalPlayers += players.length;
+        roomsWithPlayers++;
+      }
+    });
+    return {
+      kamiCountMap,
+      operatorCountMap,
+      kamiAverage: roomsWithKamis && totalKamis / roomsWithKamis,
+      operatorAverage: roomsWithPlayers && totalPlayers / roomsWithPlayers,
+    };
+  }, [rooms, tick, queryNodeByIndex, queryNodeKamis, queryRoomAccounts]);
+
   /////////////////
   // RENDER
 
@@ -143,6 +216,19 @@ export const Grid = ({
     <Container>
       <Background src={mapBackgrounds[zone]} />
       <Overlay>
+        <DropdownWrapper>
+          <DropdownToggle
+            limit={33}
+            button={{
+              images: [ActionIcons.search],
+              tooltips: ['Filter tile by Type'],
+            }}
+            onClick={[setType]}
+            options={[options]}
+            simplified
+            radius={0.6}
+          />
+        </DropdownWrapper>
         {grid.map((row, i) => (
           <Row key={i}>
             {row.map((room, j) => {
@@ -156,7 +242,7 @@ export const Grid = ({
                           <GridTooltip
                             room={room}
                             rolls={rolls}
-                            kamiIconsMap={kamiIconsMap}
+                            yourKamiIconsMap={yourKamiIconsMap}
                             getNode={getNode}
                             parseAllos={parseAllos}
                             playerEntitiesLength={playerEntities.length}
@@ -180,7 +266,18 @@ export const Grid = ({
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
                   >
-                    {kamiIconsMap.has(room.index) && <FloatingMapKami />}
+                    <GridFilter
+                      data={{
+                        optionSelected: mode[0],
+                        roomIndex: room.index,
+                        yourKamiIconsMap,
+                        kamiCountMap,
+                        operatorCountMap,
+                        kamiAverage,
+                        operatorAverage,
+                      }}
+                      utils={{ getNode }}
+                    />
                   </Tile>
                 </TextTooltip>
               );
@@ -243,4 +340,12 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundCo
     border-left-color: rgba(0, 0, 0, 1);
     border-bottom-color: rgba(0, 0, 0, 1);
   `}
+`;
+
+const DropdownWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  pointer-events: none;
 `;

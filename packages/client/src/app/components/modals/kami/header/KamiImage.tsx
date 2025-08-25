@@ -2,11 +2,10 @@ import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
-import { LevelUpArrows } from 'app/components/library/animations/LevelUp';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
-import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
@@ -94,7 +93,6 @@ export const KamiImage = ({
   return (
     <Container>
       <Image src={kami.image} />
-      {expCurr >= expLimit && <LevelUpArrows />}
       <Overlay top={0.75} left={0.7}>
         <Grouping>
           <Text size={0.6}>Lvl</Text>
@@ -124,7 +122,7 @@ export const KamiImage = ({
         <Overlay bottom={0} right={0}>
           <TextTooltip text={[getLevelTooltip()]}>
             <Button disabled={!canLevel} onClick={() => handleLevelUp()}>
-              <Arrow src={IndicatorIcons.level_up} />
+              <Arrow src={ArrowIcons.up} />
               {canLevel && <Shimmer />}
             </Button>
           </TextTooltip>

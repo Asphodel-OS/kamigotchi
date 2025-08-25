@@ -27,13 +27,13 @@ export const Progress = ({
     canContribute: () => [boolean, string];
     canClaim: () => [boolean, string];
     getBalance: (holder: EntityIndex, index: number | undefined, type: string) => number;
-    getDescribedEntity: (type: string, index: number) => DetailedEntity;
+    getFromDescription: (type: string, index: number) => DetailedEntity;
   };
 }) => {
   const [objType, setObjType] = useState<DetailedEntity>({ ObjectType: '', image: '', name: '' });
 
   useEffect(() => {
-    const type = utils.getDescribedEntity(
+    const type = utils.getFromDescription(
       goal.objective.target.type,
       goal.objective.target.index ?? 0
     );

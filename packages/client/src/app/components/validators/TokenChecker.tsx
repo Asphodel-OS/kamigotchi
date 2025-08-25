@@ -1,47 +1,43 @@
 import { useEffect } from 'react';
-import { interval, map, merge } from 'rxjs';
 import styled from 'styled-components';
 import { erc20Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getItemByIndex } from 'app/cache/item';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useNetwork, useTokens } from 'app/stores';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { getCompAddr } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/numbers';
 
-export function registerTokenChecker() {
-  registerUIComponent(
-    'TokenBalances',
-    {
-      colStart: 0,
-      colEnd: 0,
-      rowStart: 0,
-      rowEnd: 0,
-    },
-    (layers) => {
-      const { network } = layers;
-      const { actions, components } = network;
+export const TokenChecker: UIComponent = {
+  id: 'TokenBalances',
+  Render: () => {
+      const layers = useLayers();
 
-      return merge(actions.Action.update$, interval(1500)).pipe(
-        map(() => {
-          const { world, components } = network;
-          return {
-            tokenAddresses: {
-              // todo: dynamically query based on items with address?
-              onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
-              eth: getItemByIndex(world, components, ETH_INDEX).address!,
-            },
-            spender: getCompAddr(world, components, 'component.token.allowance'),
-            utils: {
-              getItem: (index: number) => getItemByIndex(world, components, index),
-            },
-          };
-        })
-      );
-    },
-    ({ tokenAddresses, spender }) => {
+      const {
+        tokenAddresses,
+        spender,
+        utils: {
+          getItem,
+        }
+      } = (() => {
+        const { network } = layers;
+        const { world, components } = network;
+        return {
+          tokenAddresses: {
+            // todo: dynamically query based on items with address?
+            onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
+            eth: getItemByIndex(world, components, ETH_INDEX).address!,
+          },
+          spender: getCompAddr(world, components, 'component.token.allowance'),
+          utils: {
+            getItem: (index: number) => getItemByIndex(world, components, index),
+          },
+        };
+      })();
+
       const { selectedAddress } = useNetwork();
       const { balances, set, setOnyx } = useTokens();
 
@@ -113,9 +109,8 @@ export function registerTokenChecker() {
       }, [onyxData]);
 
       return <Wrapper style={{ display: 'block' }} />;
-    }
-  );
-}
+  },
+};
 
 const Wrapper = styled.div`
   align-items: left;

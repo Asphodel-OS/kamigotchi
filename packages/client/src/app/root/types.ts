@@ -3,15 +3,17 @@ import { Observable } from 'rxjs';
 
 import { Layers } from 'network/';
 
-export type GridConfiguration = {
-  colStart: number;
-  colEnd: number;
-  rowStart: number;
-  rowEnd: number;
+export type UIComponentWithGrid = {
+  uiComponent: UIComponent;
+  gridConfig: {
+    colStart: number;
+    colEnd: number;
+    rowStart: number;
+    rowEnd: number;
+  };
 };
 
-export interface UIComponent<T = unknown> {
-  gridConfig: GridConfiguration;
-  requirement(layers: Layers): Observable<T>;
-  Render: React.FC<NonNullable<T>>;
-}
+export type UIComponent = {
+  id: string;
+  Render: React.FC;
+};

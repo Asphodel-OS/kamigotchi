@@ -1,7 +1,7 @@
+import type { ComponentProps } from 'react';
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
-import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { Kamis } from '../party/Kamis';
 
@@ -9,19 +9,17 @@ export const PartyBottom = ({
   data,
   utils,
 }: {
-  data: { account: Account };
+  data: ComponentProps<typeof Kamis>['data'];
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
 }) => {
-  const { account } = data;
-
   /////////////////
   // RENDERING
 
   return (
     <Container>
-      <Kamis data={{ account }} utils={utils} />
+      <Kamis data={data} utils={utils} />
     </Container>
   );
 };

@@ -44,8 +44,8 @@ interface StaminaConfig {
 export const getStaminaConfig = (world: World, components: Components): StaminaConfig => {
   const value = getConfigArray(world, components, 'ACCOUNT_STAMINA');
   return {
-    base: value[0],
-    recovery: value[1],
+    base: value[0] === 0 ? 100 : value[0], // will not be 0, hardcoded to fix race condition loads
+    recovery: value[1] === 0 ? 60 : value[1],
   };
 };
 

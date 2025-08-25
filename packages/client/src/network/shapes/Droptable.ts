@@ -1,6 +1,5 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
-import { getRarities } from 'constants/rarities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { Commit, getHolderCommits } from './Commit';
@@ -76,10 +75,12 @@ export const getDTDetails = (
   droptable: Droptable
 ): DetailedEntity[] => {
   const details: DetailedEntity[] = [];
+  const processed = droptable.weights.map((w) => (w === 0 ? 0 : 1 << (w - 1)));
+  const total = processed.reduce((a, b) => a + b, 0) || 1;
   for (let i = 0; i < droptable.keys.length; i++)
     details.push({
       ...getItemDetailsByIndex(world, components, droptable.keys[i]),
-      description: getRarities(droptable.weights[i]).title,
+      description: `${((processed[i] / total) * 100).toFixed(1)}%`,
     });
   return details;
 };

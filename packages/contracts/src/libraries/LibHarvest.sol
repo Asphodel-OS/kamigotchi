@@ -104,7 +104,7 @@ library LibHarvest {
     TimeResetComponent(getAddrByID(components, TimeResetCompID)).set(id, block.timestamp);
   }
 
-  // Starts an _existing_ harvest if not already started.
+  /// @notice Starts an _existing_ harvest if not already started.
   function start(IUintComp components, uint256 id) internal {
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("ACTIVE"));
     TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
@@ -112,8 +112,13 @@ library LibHarvest {
     TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(id, block.timestamp);
   }
 
-  // Stops an _existing_ harvest. All potential proceeds will be lost after this point.
-  function stop(IUintComp components, uint256 id) internal {
+  /// @notice Stops an _existing_ harvest
+  /// @dev bounty should be transferred before calling this; All proceeds will be lost after this point
+  function stop(IUintComp components, uint256 id, uint256 kamiID) internal {
+    // reset bonuses
+    LibBonus.resetUponHarvestStop(components, kamiID);
+
+    // stop harvest
     StateComponent(getAddrByID(components, StateCompID)).set(id, string("INACTIVE"));
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, 0);
   }

@@ -1,17 +1,17 @@
 import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { Bonus, getBonusesByParent } from '../Bonus';
 import { Condition } from '../Conditional';
 import { Item, getItemByIndex } from '../Item';
 import { ScavBar, getScavenge, queryScavRegistry } from '../Scavenge';
-import { DetailedEntity } from '../utils';
+import { DetailedEntity, hashArgs } from '../utils';
 import { NullNode } from './constants';
 import { getRequirements } from './getters';
 
 export interface BaseNode extends DetailedEntity {
   ObjectType: 'NODE';
   id: EntityID;
-  entity: EntityIndex;
   affinity: string;
   index: number;
 }
@@ -23,6 +23,7 @@ export interface Node extends BaseNode {
   drops: Item[];
   requirements: Condition[];
   scavenge?: ScavBar;
+  bonuses?: Bonus[];
 }
 
 export const getBaseNode = (
@@ -63,7 +64,15 @@ export const getNode = (world: World, components: Components, entity: EntityInde
     ],
     requirements: getRequirements(world, components, nodeIndex),
     scavenge: scavEntity ? getScavenge(world, components, scavEntity) : undefined,
+    bonuses: getBonusesByParent(world, components, getBonusAnchor(nodeIndex)),
   };
 
   return node;
+};
+
+////////////////
+// IDs
+
+export const getBonusAnchor = (nodeIndex: number): EntityID => {
+  return hashArgs(['node.bonus', nodeIndex], ['string', 'uint32']);
 };

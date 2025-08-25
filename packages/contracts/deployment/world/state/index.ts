@@ -119,4 +119,5 @@ export {
   reviseRooms,
 } from './rooms';
 export { deleteSkills, initSkills, reviseSkills } from './skills';
+export { initSnapshot } from './snapshot';
 export { initTraits } from './traits';

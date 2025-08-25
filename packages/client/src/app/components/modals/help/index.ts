@@ -1,1 +1,1 @@
-export { registerHelpModal } from './Help';
+export { HelpModal } from './Help';

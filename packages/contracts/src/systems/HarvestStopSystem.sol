@@ -43,7 +43,7 @@ contract HarvestStopSystem is System {
 
     // process collection and harvest stop
     uint256 output = LibHarvest.claim(components, id, accID);
-    LibHarvest.stop(components, id);
+    LibHarvest.stop(components, id, kamiID);
     LibKami.setState(components, kamiID, "RESTING");
     LibExperience.inc(components, kamiID, output);
     LibKami.setLastActionTs(components, kamiID, block.timestamp);
@@ -51,10 +51,10 @@ contract HarvestStopSystem is System {
     // scavenge
     uint256 nodeID = LibHarvest.getNode(components, id);
     uint32 nodeIndex = LibNode.getIndex(components, nodeID);
-    LibNode.scavenge(components, nodeIndex, output, accID); // implicit existance check
+    LibNode.scavenge(components, nodeIndex, output, accID); // implicit existence check
 
     // reset action bonuses
-    LibBonus.resetUponHarvestAction(components, kamiID);
+    LibBonus.resetUponHarvestStop(components, kamiID);
 
     // standard logging and tracking
     LibScore.incFor(components, accID, MUSU_INDEX, "COLLECT", output);

@@ -28,6 +28,13 @@ export const Tabs = ({
       <Button disabled={tab === `Management`} onClick={() => handleTabbing(`Management`)}>
         {`Manage Orders`}
       </Button>
+      <Button
+        disabled={tab === `History`}
+        onClick={() => handleTabbing(`History`)}
+        style={{ borderLeft: 'solid black .15vw' }}
+      >
+        {`History`}
+      </Button>
     </Container>
   );
 };

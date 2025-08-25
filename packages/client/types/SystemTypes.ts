@@ -44,6 +44,7 @@ import { HarvestLiquidateSystem } from "./ethers-contracts/HarvestLiquidateSyste
 import { HarvestStartSystem } from "./ethers-contracts/HarvestStartSystem";
 import { HarvestStopSystem } from "./ethers-contracts/HarvestStopSystem";
 import { ItemBurnSystem } from "./ethers-contracts/ItemBurnSystem";
+import { ItemTransferSystem } from "./ethers-contracts/ItemTransferSystem";
 import { Kami721IsInWorldSystem } from "./ethers-contracts/Kami721IsInWorldSystem";
 import { Kami721MetadataSystem } from "./ethers-contracts/Kami721MetadataSystem";
 import { Kami721StakeSystem } from "./ethers-contracts/Kami721StakeSystem";
@@ -117,6 +118,7 @@ export type SystemTypes = {
   "system.harvest.start": HarvestStartSystem;
   "system.harvest.stop": HarvestStopSystem;
   "system.item.burn": ItemBurnSystem;
+  "system.item.transfer": ItemTransferSystem;
   "system.Kami721.IsInWorld": Kami721IsInWorldSystem;
   "system.Kami721.Metadata": Kami721MetadataSystem;
   "system.kami721.stake": Kami721StakeSystem;

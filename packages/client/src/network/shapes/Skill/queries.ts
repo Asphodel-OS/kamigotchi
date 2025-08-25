@@ -23,7 +23,6 @@ export const query = (components: Components, filters: Filters): EntityIndex[] =
 
   const toQuery: QueryFragment[] = [];
   if (filters?.holder) toQuery.push(HasValue(OwnsSkillID, { value: filters.holder }));
-  if (filters?.registry) toQuery.push(Has(IsRegistry));
   if (filters?.index) toQuery.push(HasValue(SkillIndex, { value: filters.index }));
   if (filters?.registry) toQuery.push(Has(IsRegistry));
   toQuery.push(HasValue(EntityType, { value: 'SKILL' }));

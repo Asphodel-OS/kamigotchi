@@ -1,4 +1,4 @@
-import { World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import moment from 'moment';
 
 import { HelpIcon, QuestsIcon } from 'assets/images/icons/menu';
@@ -10,10 +10,12 @@ import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
 import { Stat } from '../Stats';
+import { getDescription, getMediaURI, getName, getType } from './component';
 import { capitalize } from './strings';
 
 // base shape of an entity with basic details
 export interface DetailedEntity {
+  entity: EntityIndex;
   ObjectType: string;
   image: string;
   name: string;
@@ -31,14 +33,32 @@ interface getArgs {
   type?: string;
   options?: any;
 }
-// const descriptionMap = new Map<string, (args: getArgs) => DetailedEntity>();
-// descriptionMap.set('ITEM', getItem);
-// descriptionMap.set('FACTION', getFaction);
-// descriptionMap.set('QUEST', getQuest);
-// descriptionMap.set('REPUTATION', getReputation);
-// descriptionMap.set('SKILL', getSkill);
-// descriptionMap.set('STATE', getState);
-export const getDescribedEntity = (
+
+export const getDetailedEntityByID = (
+  world: World,
+  components: Components,
+  id: EntityID
+): DetailedEntity => {
+  const entity = world.entityToIndex.get(id);
+  if (entity === undefined) {
+    return { entity: 0 as EntityIndex, ObjectType: 'UNKNOWN', image: HelpIcon, name: 'Unknown' };
+  }
+  return getDetailedEntity(world, components, entity);
+};
+
+export const getDetailedEntity = (
+  world: World,
+  components: Components,
+  entity: EntityIndex
+): DetailedEntity => {
+  const shape = getType(components, entity);
+  const image = getImage(components, shape, entity);
+  const name = getName(components, entity);
+  const description = getDescription(components, entity);
+  return { entity, ObjectType: shape, image, name, description };
+};
+
+export const getFromDescription = (
   world: World,
   components: Components,
   type: string,
@@ -54,7 +74,7 @@ export const getDescribedEntity = (
   else if (type === 'REPUTATION') return getReputation(args);
   else if (type === 'SKILL') return getSkill(args);
   else if (type === 'STATE') return getState(args);
-  else return { ObjectType: type, image: HelpIcon, name: type };
+  else return { entity: 0 as EntityIndex, ObjectType: type, image: HelpIcon, name: type };
 };
 
 // parses and returns QuantityString from a DetailedEntity
@@ -117,8 +137,21 @@ export const parseKamiStateFromIndex = (index: number): string => {
   else return '';
 };
 
+export const parseKamiCanEatFromIndex = (index: number): string => {
+  if (index === 1) return 'RESTING';
+  else if (index === 2) return 'HARVESTING';
+  else return 'None';
+};
+
 ////////////////////////
 // INTERNAL
+
+const getImage = (components: Components, shape: string, entity: EntityIndex): string => {
+  const raw = getMediaURI(components, entity);
+  if (raw !== '') return raw;
+  else if (shape === 'QUEST') return QuestsIcon;
+  else return placeholderIcon;
+};
 
 function getItem(args: getArgs): DetailedEntity {
   return getItemByIndex(args.world, args.components, args.index);
@@ -129,10 +162,12 @@ function getFaction(args: getArgs): DetailedEntity {
 }
 
 function getQuest(args: getArgs): DetailedEntity {
+  const quest = getQuestByIndex(args.world, args.components, args.index);
   return {
     ObjectType: 'QUEST',
+    entity: quest?.entity ?? (0 as EntityIndex),
     image: QuestsIcon,
-    name: getQuestByIndex(args.world, args.components, args.index)?.name ?? `Quest ${args.index}`,
+    name: quest?.name ?? `Quest ${args.index}`,
   };
 }
 
@@ -148,6 +183,7 @@ function getState(args: getArgs): DetailedEntity {
   const state = parseKamiStateFromIndex(args.index);
   return {
     ObjectType: 'STATE',
+    entity: 0 as EntityIndex,
     image: placeholderIcon,
     name: capitalize(state),
   };

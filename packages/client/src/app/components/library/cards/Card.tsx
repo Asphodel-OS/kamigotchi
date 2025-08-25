@@ -8,16 +8,8 @@ import { Overlay } from '../styles';
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
 export const Card = ({
+  image,
   children,
-  image: {
-    icon,
-    onClick,
-    overlay,
-    canLevel,
-    padding = 0,
-    scale = 9,
-    tooltip = [],
-  } = {},
   fullWidth,
 }: {
   children: React.ReactNode;
@@ -25,30 +17,36 @@ export const Card = ({
     icon?: string;
     onClick?: () => void;
     overlay?: string;
-    canLevel?: boolean;
     padding?: number;
     scale?: number;
+    showLevelUp?: boolean;
+    showSkillPoints?: boolean;
     tooltip?: string[];
   };
   fullWidth?: boolean;
 }) => {
+  const scale = image?.scale ?? 9;
+
   // handle image click if there is one
   const handleImageClick = () => {
-    if (onClick) {
-      onClick();
+    if (image?.onClick) {
+      image.onClick();
       playClick();
     }
   };
 
   return (
     <Wrapper fullWidth={fullWidth}>
-      <TextTooltip text={tooltip}>
-        <ImageContainer scale={scale} padding={padding}>
+      <TextTooltip text={image?.tooltip ?? []}>
+        <ImageContainer scale={scale} padding={image?.padding}>
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
-            <Text size={scale * 0.075}>{overlay}</Text>
+            <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
-          {!!canLevel && <LevelUpArrows />}
-          <Image src={icon} onClick={handleImageClick} />
+          {!!image?.showLevelUp && <LevelUpArrows />}
+          <Overlay top={0.5} right={0.5}>
+            {!!image?.showSkillPoints && <Sp>SP</Sp>}
+          </Overlay>
+          <Image src={image?.icon} onClick={handleImageClick} />
         </ImageContainer>
       </TextTooltip>
       <Container>{children}</Container>
@@ -67,13 +65,14 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
   flex-flow: row nowrap;
 `;
 
-const ImageContainer = styled.div<{ scale: number; padding: number }>`
+const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   position: relative;
   border-right: solid black 0.15vw;
   border-radius: 0.45vw 0vw 0vw 0.45vw;
+  min-height: 100%;
   height: ${({ scale }) => scale}vw;
   width: ${({ scale }) => scale}vw;
-  padding: ${({ padding }) => padding}vw;
+  padding: ${({ padding }) => padding ?? 0}vw;
   ${({ scale }) => scale > 4 && `image-rendering: pixelated;`}
   user-select: none;
   overflow: hidden;
@@ -106,5 +105,13 @@ const Container = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: black;
-  font-size: ${({ size }) => size}vw;
+  font-size: ${(props) => props.size}vw;
+`;
+
+const Sp = styled.div`
+  font-size: 1.2vw;
+  font-weight: bold;
+  background: linear-gradient(to right, #0b0d0eff, #ee0979);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;

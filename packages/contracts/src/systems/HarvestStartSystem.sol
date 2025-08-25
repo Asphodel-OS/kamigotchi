@@ -36,13 +36,17 @@ contract HarvestStartSystem is System {
     LibKami.verifyState(components, kamiID, "RESTING");
     LibKami.verifyCooldown(components, kamiID);
 
-    // sync the pet's health and ensure the Pet is able to harvest on this Node
-    LibKami.sync(components, kamiID);
+    // sync the pet's health
+    LibKami.sync(components, kamiID); // sync pre-node bonus to process off-harvest data
+
+    // checks
     LibKami.verifyHealthy(components, kamiID);
     LibRoom.verifySharedRoom(components, accID, nodeID);
-
-    // check node requirements (if any)
     LibNode.verifyRequirements(components, nodeIndex, kamiID);
+
+    // assign node bonuses
+    LibNode.assignBonuses(components, nodeIndex, kamiID);
+    LibKami.sync(components, kamiID); // process bonuses
 
     // start the harvest, create if none exists
     uint256 id = LibHarvest.startFor(components, nodeID, kamiID, taxerID, taxAmt);

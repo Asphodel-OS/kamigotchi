@@ -297,6 +297,10 @@
       "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "TimeLast", "Value"]
     },
     {
+      "name": "ItemTransferSystem",
+      "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "TimeLast", "Value"]
+    },
+    {
       "name": "FriendAcceptSystem",
       "writeAccess": ["EntityType", "IdSource", "IDAnchor", "IdTarget", "State", "TimeLast"]
     },
@@ -414,13 +418,16 @@
       "name": "HarvestStartSystem",
       "writeAccess": [
         "EntityType",
+        "IDAnchor",
         "IDOwnsInventory",
         "IDOwnsTax",
         "IdHolder",
         "IdTarget",
+        "IDType",
         "IdSource",
         "IndexItem",
         "Health",
+        "Level",
         "Rate",
         "State",
         "TimeLastAction",

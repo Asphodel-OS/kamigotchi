@@ -5,12 +5,6 @@ import { playClick } from 'utils/sounds';
 import { Popover } from '../poppers/Popover';
 import { IconButton } from './IconButton';
 
-interface Search {
-  value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-}
-
 export interface Option {
   text: string;
   onClick: Function;
@@ -18,37 +12,36 @@ export interface Option {
   disabled?: boolean;
 }
 
-export const IconListButton = ({
+export function IconListButton({
   img,
   options,
   text,
   balance,
-
   disabled,
   width,
   fullWidth,
-
-  radius = 0.45,
-  scale = 2.5,
-  scaleOrientation = 'vw',
-  search,
+  radius,
+  scale,
+  scaleOrientation,
+  searchable,
 }: {
   img: string;
   options: Option[];
+
   text?: string;
   balance?: number;
-
   disabled?: boolean;
   width?: number;
   fullWidth?: boolean;
-
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
-  search?: Search;
-}) => {
+
+  searchable?: boolean;
+}) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [search, setSearch] = useState<string>('');
 
   const handleOpen = () => {
     if (!disabled && toggleRef.current) {
@@ -68,21 +61,21 @@ export const IconListButton = ({
     handleClose();
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
   const OptionsMap = () => {
     return (
       <MenuWrapper>
-        {search && (
+        {searchable && (
           <MenuInput
-            {...search}
             onClick={(e) => {
               e.stopPropagation();
+            }}
+            onChange={(e) => {
+              setSearch(e.target.value);
             }}
           />
         )}
         {options
-          .filter((option) => (!search ? true : option.text.toLowerCase().includes(search.value)))
+          .filter((option) => !searchable || option.text.toLowerCase().includes(search))
           .map((option, i) => (
             <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
               {option.image && <MenuIcon src={option.image} />}
@@ -100,9 +93,9 @@ export const IconListButton = ({
         text={text}
         onClick={handleOpen}
         disabled={disabled}
-        radius={radius}
-        scale={scale}
-        scaleOrientation={scaleOrientation}
+        radius={radius ?? 0.45}
+        scale={scale ?? 2.5}
+        scaleOrientation={scaleOrientation ?? 'vw'}
         width={width}
         fullWidth={fullWidth}
         balance={balance}

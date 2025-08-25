@@ -25,7 +25,6 @@ import { Traits, getTraits } from './traits';
 export interface BaseKami extends DetailedEntity {
   id: EntityID;
   index: number;
-  entity: EntityIndex;
 }
 
 // minimal gacha kami. reduced querying for performance
@@ -105,7 +104,7 @@ export const get = (
   if (options?.progress) kami.progress = getProgress(comps, entity);
   if (options?.rerolls) kami.rerolls = getRerolls(comps, entity);
   if (options?.skills) kami.skills = getSkills(world, comps, entity);
-  if (options?.stats) kami.stats = getStats(world, comps, entity);
+  if (options?.stats) kami.stats = getStats(world, comps, entity, true);
   if (options?.time) kami.time = getTimes(comps, entity);
   if (options?.traits) kami.traits = getTraits(world, comps, entity);
 

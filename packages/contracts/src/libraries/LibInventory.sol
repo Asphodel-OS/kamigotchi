@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IDOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsInventoryComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
@@ -13,9 +14,10 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
+import { LibERC20 } from "libraries/utils/LibERC20.sol";
 
 import { LibData } from "libraries/LibData.sol";
-import { LibERC20 } from "libraries/utils/LibERC20.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
@@ -27,8 +29,9 @@ uint32 constant MUSU_INDEX = 1;
 uint32 constant GACHA_TICKET_INDEX = 10;
 uint32 constant REROLL_TICKET_INDEX = 11;
 uint32 constant ONYX_INDEX = 100;
+uint32 constant OBOL_INDEX = 1015;
 
-// handles nonfungible inventory instances
+// handles fungible inventory instances
 library LibInventory {
   using LibComp for IUintComp;
 
@@ -208,6 +211,28 @@ library LibInventory {
       decFor(components, holderID, itemIndices[i], amts[i]);
   }
 
+  // note: this has to be updated post ERC20 bridge
+  function transferFor(
+    IUintComp components,
+    uint256 holderID,
+    uint256 targetID,
+    uint32[] memory indices,
+    uint256[] memory amts
+  ) internal {
+    decFor(components, holderID, indices, amts);
+    incFor(components, targetID, indices, amts);
+  }
+
+  /////////////////
+  // CHECKERS
+
+  /// @dev only tradable items can be transferred
+  function verifyTransferable(IUintComp components, uint32[] memory indices) internal view {
+    if (LibItem.checkFlagAny(components, indices, "NOT_TRADABLE", true)) {
+      revert("Transfer includes untradeable item");
+    }
+  }
+
   /////////////////
   // GETTERS
 
@@ -300,5 +325,32 @@ library LibInventory {
     types[1] = "ITEM_TOTAL";
 
     LibData.inc(components, holderIDs, itemIndex, types, amt);
+  }
+
+  /// @notice Log transfer for each index/amount pair individually using a for loop
+  function logTransfer(
+    IWorld world,
+    IUintComp components,
+    uint256 holderID,
+    uint256 targetID,
+    uint32[] memory indices,
+    uint256[] memory amts
+  ) internal {
+    // event schema
+    uint8[] memory _schema = new uint8[](4);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // holderID
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // targetID
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // itemIndex
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256); // amount
+
+    // emit event for each index/amount pair
+    for (uint256 i = 0; i < indices.length; i++) {
+      LibEmitter.emitEvent(
+        world,
+        "ITEM_TRANSFER",
+        _schema,
+        abi.encode(holderID, targetID, indices[i], amts[i])
+      );
+    }
   }
 }

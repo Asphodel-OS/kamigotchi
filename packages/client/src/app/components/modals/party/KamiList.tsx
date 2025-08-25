@@ -1,33 +1,44 @@
 import styled from 'styled-components';
 
 import { EmptyText } from 'app/components/library';
+import { useVisibility } from 'app/stores';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
-import { KamiBars } from './KamiBars';
-import { Kards } from './Kards';
+import { KamisCollapsed } from './KamisCollapsed';
+import { KamisExpanded } from './KamisExpanded';
+import { KamisExternal } from './KamisExternal';
 import { View } from './types';
 
 export const KamiList = ({
   actions,
-  controls,
+  controls: {
+    view,
+  },
   data,
   display,
+  state: {
+    displayedKamis,
+    tick,
+  },
   utils,
-  state,
 }: {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
     addKamis: (kamis: Kami[]) => void;
+    sendKamis: (kami: Kami, account: Account) => void;
+    stakeKamis: (kamis: Kami[]) => void;
   };
   controls: {
     view: View;
   };
   data: {
     account: Account;
+    accounts: Account[];
     kamis: Kami[];
+    wildKamis: Kami[];
     node: Node;
     onyx: {
       allowance: number;
@@ -38,58 +49,63 @@ export const KamiList = ({
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
   };
-  utils: {
-    calcExpRequirement: (lvl: number) => number;
-    getBonusesByItems: (kami: Kami) => Bonus[];
-  };
   state: {
     displayedKamis: Kami[];
     tick: number;
   };
+  utils: {
+    calcExpRequirement: (lvl: number) => number;
+    getTempBonuses: (kami: Kami) => Bonus[];
+    getAllAccounts: () => Account[];
+  };
 }) => {
-  const { kamis } = data;
-  const { view } = controls;
-  const { displayedKamis, tick } = state;
-  const { calcExpRequirement } = utils;
+  const { modals } = useVisibility();
 
   /////////////////
   // DISPLAY
 
   return (
     <Container>
-      {kamis.length == 0 && (
+      {data.kamis.length == 0 && view !== 'external' && (
         <EmptyText
           linkColor='#d44c79'
           text={[
-            [
-              'You are Kamiless. ',
-              '\n',
-              ' Go to ',
-              {
-                text: 'Sudoswap',
-                href: 'https://sudoswap.xyz/#/browse/yominet/buy/0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677',
-              },
-              ' to get a Kami!',
-            ],
-            ['If you already have Kami, go to Scrap Confluence to bridge them in.'],
+            'You are Kamiless.',
+            '\n',
+            {
+              before: 'Go to ',
+              linkText: 'Sudoswap',
+              href: 'https://sudoswap.xyz/#/browse/yominet/buy/0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677',
+              after: ' to get a Kami! ',
+            },
+            'If you already have Kami, go to Scrap Confluence to bridge them in.',
           ]}
         />
       )}
-      <Kards
+
+      <KamisExpanded
         actions={actions}
         data={data}
         display={display}
         state={{ displayedKamis }}
         utils={utils}
-        isVisible={view === 'expanded'}
+        isVisible={modals.party && view === 'expanded'}
       />
-      <KamiBars
+
+      <KamisCollapsed
         actions={actions}
         data={data}
         display={display}
         state={{ displayedKamis, tick }}
         utils={utils}
-        isVisible={view === 'collapsed'}
+        isVisible={modals.party && view === 'collapsed'}
+      />
+      <KamisExternal
+        actions={actions}
+        controls={{ view }}
+        data={{ ...data, kamis: data.wildKamis }}
+        utils={utils}
+        isVisible={modals.party && view === 'external'}
       />
     </Container>
   );

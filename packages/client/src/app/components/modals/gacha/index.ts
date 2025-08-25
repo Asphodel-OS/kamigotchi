@@ -1,3 +1,1 @@
-import { registerGachaModal } from './Gacha';
-
-export { registerGachaModal };
+export { GachaModal } from './Gacha';

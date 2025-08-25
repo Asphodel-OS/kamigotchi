@@ -86,14 +86,15 @@ library LibSkillRegistry {
     LibFor.set(components, id, for_);
   }
 
+  /// @dev skill bonuses are permanent, linked to skill instance
   function addBonus(
     IUintComp components,
     uint32 skillIndex,
     string memory type_,
     int256 value
   ) internal returns (uint256) {
-    // skill bonuses are permanent, linked to skill instance
-    return LibBonus.regCreate(components, genBonusAnchor(skillIndex), type_, "", 0, value);
+    uint256 id = genID(skillIndex); // registry entry
+    return LibBonus.regCreate(components, id, genBonusAnchor(skillIndex), type_, "", 0, value);
   }
 
   function addRequirement(

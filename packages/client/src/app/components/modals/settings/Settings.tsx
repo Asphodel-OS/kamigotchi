@@ -1,82 +1,62 @@
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { SettingsIcon } from 'assets/images/icons/menu';
-
-import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { Account } from './Account';
 import { Debugging } from './Debugging';
 import { Volume } from './Volume';
 
-export function registerSettingsModal() {
-  registerUIComponent(
-    'Settings',
-    {
-      colStart: 67,
-      colEnd: 100,
-      rowStart: 8,
-      rowEnd: 75,
-    },
+export const SettingsModal: UIComponent = {
+  id: 'SettingsModal',
+  Render: () => {
+    const layers = useLayers();
+    
+    const { network } = layers;
+    const { actions, api } = network;
 
-    (layers) =>
-      interval(5000).pipe(
-        map(() => {
-          const { network } = layers;
-          const account = getAccountFromEmbedded(network);
+    /////////////////
+    // ACTIONS
 
-          return {
-            network: network,
-            account: account,
-          };
-        })
-      ),
-    ({ network, account }) => {
-      const { actions, api } = network;
+    const echoRoom = () => {
+      actions.add({
+        action: 'Sync location',
+        params: [],
+        description: 'Syncing account location',
+        execute: async () => {
+          return api.player.echo.room();
+        },
+      });
+    };
 
-      /////////////////
-      // ACTIONS
+    const echoKamis = () => {
+      actions.add({
+        action: 'Sync kamis',
+        params: [],
+        description: 'Syncing account kamis',
+        execute: async () => {
+          return api.player.echo.kamis();
+        },
+      });
+    };
 
-      const echoRoom = () => {
-        actions.add({
-          action: 'Sync location',
-          params: [],
-          description: 'Syncing account location',
-          execute: async () => {
-            return api.player.echo.room();
-          },
-        });
-      };
-
-      const echoKamis = () => {
-        actions.add({
-          action: 'Sync kamis',
-          params: [],
-          description: 'Syncing account kamis',
-          execute: async () => {
-            return api.player.echo.kamis();
-          },
-        });
-      };
-
-      return (
-        <ModalWrapper
-          id='settings'
-          header={<ModalHeader title='Settings' icon={SettingsIcon} />}
-          canExit
-          truncate
-        >
-          <Volume />
-          <Divider />
-          <Account />
-          <Divider />
-          <Debugging actions={{ echoRoom, echoKamis }} />
-        </ModalWrapper>
-      );
-    }
-  );
-}
+    return (
+      <ModalWrapper
+        id='settings'
+        header={<ModalHeader title='Settings' icon={SettingsIcon} />}
+        canExit
+        truncate
+      >
+        <Volume />
+        <Divider />
+        <Account />
+        <Divider />
+        <Debugging actions={{ echoRoom, echoKamis }} />
+      </ModalWrapper>
+    );
+  },
+};
 
 const Divider = styled.hr`
   color: #333;

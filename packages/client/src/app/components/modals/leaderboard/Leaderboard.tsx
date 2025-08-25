@@ -1,48 +1,40 @@
 import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalWrapper } from 'app/components/library';
-import { registerUIComponent } from 'app/root';
+import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { Details, LeaderboardKey, LeaderboardsDetails } from 'constants/leaderboards/leaderboards';
-import { getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountByID as _getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
 import { Score, ScoresFilter, getScoresByFilter } from 'network/shapes/Score';
 import { Filters } from './Filters';
 import { Table } from './Table';
 
-export function registerLeaderboardModal() {
-  registerUIComponent(
-    'LeaderboardModal',
-    {
-      colStart: 32,
-      colEnd: 70,
-      rowStart: 20,
-      rowEnd: 78,
-    },
+export const LeaderboardModal: UIComponent = {
+  id: 'LeaderboardModal',
+  Render: () => {
+    const layers = useLayers();
 
-    // Requirement
-    (layers) => {
-      return interval(3000).pipe(
-        map(() => {
-          const { network } = layers;
-          const { world, components } = network;
-          const account = getAccountFromEmbedded(network);
+    const {
+      network,
+      data,
+      utils,
+    } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const account = getAccountFromEmbedded(network);
 
-          return {
-            network,
-            data: { account },
-            utils: {
-              getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
-            },
-          };
-        })
-      );
-    },
+      return {
+        network,
+        data: { account },
+        utils: {
+          getAccountByID: (id: EntityID) => _getAccountByID(world, components, id),
+        },
+      };
+    })();
 
-    // Render
-    ({ network, data, utils }) => {
       const { components } = network;
       const { modals } = useVisibility();
       const { leaderboardKey } = useSelected();
@@ -91,9 +83,8 @@ export function registerLeaderboardModal() {
           )}
         </ModalWrapper>
       );
-    }
-  );
-}
+  },
+};
 
 const Header = styled.div`
   font-family: Pixel;

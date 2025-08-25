@@ -5,5 +5,6 @@ export const REROLL_TICKET_INDEX = 11;
 export const ONYX_INDEX = 100;
 export const ETH_INDEX = 103;
 export const STONE_INDEX = 1002;
+export const OBOL_INDEX = 1015;
 export const HOLY_DUST_INDEX = 11011;
 export const RESPEC_POTION_INDEX = 11403;

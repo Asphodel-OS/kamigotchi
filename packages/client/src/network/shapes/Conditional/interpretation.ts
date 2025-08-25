@@ -1,13 +1,14 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { World } from '@mud-classic/recs';
 import moment from 'moment';
 
+import { getRoomByIndex } from 'app/cache/room';
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
 import { getPhaseName } from 'utils/time';
 import { Condition } from '../Conditional';
 import { getQuestByIndex } from '../Quest';
-import { getRoom } from '../Room';
-import { getDescribedEntity } from '../utils';
+import { getFromDescription, parseKamiStateFromIndex } from '../utils';
+import { parseKamiCanEatFromIndex } from '../utils/parse';
 
 export const parseConditionalUnits = (con: Condition): [string, string] => {
   let tar = ((con.target.value ?? 0) * 1).toString();
@@ -19,11 +20,16 @@ export const parseConditionalUnits = (con: Condition): [string, string] => {
   } else if (con.target.type.includes('ITEM') && con.target.index === MUSU_INDEX) {
     tar = tar + ' MUSU';
     curr = curr + ' MUSU';
+  } else if (con.target.type === 'STATE') {
+    tar = parseKamiStateFromIndex(con.target.index ?? 0);
+    curr = parseKamiStateFromIndex(con.status?.current ?? 0);
+  } else if (con.target.type === 'KAMI_CAN_EAT') {
+    tar = parseKamiCanEatFromIndex(con.target?.index ?? 0);
+    curr = parseKamiCanEatFromIndex(con.status?.current ?? 0);
   }
 
   return [tar, curr];
 };
-
 const HIDE_PROGRESS_TYPES = ['QUEST', 'ROOM', 'ITEM_BURN'];
 export const parseConditionalTracking = (con: any): string => {
   const [tar, curr] = parseConditionalUnits(con);
@@ -48,7 +54,7 @@ export const parseConditionalText = (
 
   // account and general text
   if (con.target.type == 'ITEM')
-    text = `${targetVal} ${getDescribedEntity(world, components, con.target.type, con.target.index!).name}`;
+    text = `${targetVal} ${getFromDescription(world, components, con.target.type, con.target.index!).name}`;
   else if (con.target.type == 'HARVEST_TIME') text = `Harvest for ${deltaText} ${targetVal}`;
   else if (con.target.type == 'LIQUIDATE_TOTAL') text = `Liquidate ${deltaText} ${targetVal} Kami`;
   else if (con.target.type == 'LIQUIDATED_VICTIM')
@@ -61,13 +67,15 @@ export const parseConditionalText = (
   else if (con.target.type == 'QUEST_REPEATABLE_COMPLETE')
     text = `Complete ${deltaText} ${targetVal} daily quests`;
   else if (con.target.type == 'ROOM')
-    text = `At ${getRoom(world, components, con.target.index! as EntityIndex)?.name || `Room ${targetVal}`}`;
+    text = `At ${getRoomByIndex(world, components, con.target.index!)?.name || `Room ${targetVal}`}`;
   else if (con.target.type == 'COMPLETE_COMP')
     text = 'Gate at Scrap Paths unlocked'; // hardcoded - only goals use this. change in future
   else if (con.target.type == 'REPUTATION')
     text = `Have ${deltaText} ${targetVal} Reputation Points`;
   else if (con.target.type == 'PHASE') text = `During ${getPhaseName(con.target.index!)}`;
   else if (con.target.type == 'LEVEL') text = `Be ${deltaText} level ${targetVal}`;
+  else if (con.target.type === 'KAMI_CAN_EAT') text = `${targetVal}`;
+  else if (con.target.type === 'STATE') text = `Is ${deltaText} ${targetVal} `;
   else text = '???';
 
   // kami specific text

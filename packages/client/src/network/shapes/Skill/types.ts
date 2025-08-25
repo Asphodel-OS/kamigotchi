@@ -22,7 +22,7 @@ export interface Skill extends DetailedEntity {
   index: number;
   type: string; // which skill tree this skill belongs to
   tier: number; // the tier of the skill
-  cost: number; // the skillpoing cost of the skill (always 1 now)
+  cost: number; // the skillpoint cost of the skill (always 1 now)
   max: number; // max points that can be spent on this skill
   bonuses: Bonus[];
   requirements: Condition[];
@@ -37,6 +37,7 @@ export const get = (world: World, components: Components, entity: EntityIndex): 
   return {
     ObjectType: 'SKILL',
     id: world.entities[entity],
+    entity,
     index: skillIndex,
     name: name,
     description: getDescription(components, entity),

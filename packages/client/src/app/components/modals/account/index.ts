@@ -1,1 +1,1 @@
-export { registerAccountModal } from './Account';
+export { AccountModal } from './Account';

@@ -48,7 +48,9 @@ export const Offers = ({
   useEffect(() => {
     if (!modals.trading || tab !== `Management`) return;
     const openTrades = trades.filter((trade) => trade.state === 'PENDING');
-    const executedTrades = trades.filter((trade) => trade.state === 'EXECUTED');
+    const executedTrades = trades.filter(
+      (trade) => trade.state === 'EXECUTED' && trade.maker?.entity === account.entity
+    );
     setOpenTrades(openTrades);
     setExecutedTrades(executedTrades);
   }, [trades, modals.trading, tab]);

@@ -44,6 +44,7 @@ import HarvestLiquidateSystem from "../abi/HarvestLiquidateSystem.json";
 import HarvestStartSystem from "../abi/HarvestStartSystem.json";
 import HarvestStopSystem from "../abi/HarvestStopSystem.json";
 import ItemBurnSystem from "../abi/ItemBurnSystem.json";
+import ItemTransferSystem from "../abi/ItemTransferSystem.json";
 import Kami721IsInWorldSystem from "../abi/Kami721IsInWorldSystem.json";
 import Kami721MetadataSystem from "../abi/Kami721MetadataSystem.json";
 import Kami721StakeSystem from "../abi/Kami721StakeSystem.json";
@@ -117,6 +118,7 @@ export const SystemAbis = {
   "system.harvest.start": HarvestStartSystem.abi,
   "system.harvest.stop": HarvestStopSystem.abi,
   "system.item.burn": ItemBurnSystem.abi,
+  "system.item.transfer": ItemTransferSystem.abi,
   "system.Kami721.IsInWorld": Kami721IsInWorldSystem.abi,
   "system.Kami721.Metadata": Kami721MetadataSystem.abi,
   "system.kami721.stake": Kami721StakeSystem.abi,
