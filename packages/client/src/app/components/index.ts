@@ -29,7 +29,7 @@ import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
 import { TradingModal } from './modals/trading';
-
+import { AnimationStudio } from './modals/studio/AnimationStudio';
 import {
   AccountRegistrar,
   GasHarasser,
@@ -136,6 +136,15 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: SettingsModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
+  ...(
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? [{
+          uiComponent: AnimationStudio,
+          gridConfig: { colStart: 20, colEnd: 80, rowStart: 20, rowEnd: 80 },
+        }]
+      : []
+  ),
   {
     uiComponent: TradingModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
@@ -151,9 +160,13 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
   },
   {
+export const components = [
+  {
     uiComponent: FundOperator,
     gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 74 },
   },
+  // …other entries…
+];
   {
     uiComponent: GachaModal,
     gridConfig: { colStart: 11, colEnd: 89, rowStart: 8, rowEnd: 85 },

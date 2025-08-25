@@ -11,6 +11,12 @@ import { playClick } from 'utils/sounds';
 import { Card } from '../';
 import { Cooldown } from './Cooldown';
 import { Health } from './Health';
+import { calcCooldown, calcCooldownRequirement, onCooldown } from 'app/cache/kami/calcs/base';
+import { SteamShader } from 'app/components/shaders/SteamShader';
+import { LightningShader } from 'app/components/shaders/LightningShader';
+import { ShaderStack } from 'app/components/shaders/ShaderStack';
+import { makeStaticLayer } from 'app/components/shaders/StaticShader';
+import { CRTShader } from 'app/components/shaders/CRTShader';
 
 interface Props {
   kami: Kami; // assumed to have a harvest attached
@@ -101,7 +107,32 @@ export const KamiCard = (props: Props) => {
     }));
   }, [getTempBonuses, kami]);
 
-  const Title = (
+  // compute cooldown progress
+  const totalCooldown = calcCooldownRequirement(kami);
+  const remaining = calcCooldown(kami);
+  const progress = totalCooldown > 0 ? Math.min(1, Math.max(0, remaining / totalCooldown)) : 0;
+  const shaped = Math.pow(progress, 1.25); // slightly eased fade
+
+  // grayscale amount should go from 1 -> 0 over cooldown
+  const grayAmount = shaped; // 1 at start, 0 at end
+
+  // Drive periodic re-render while on cooldown so CSS filter progresses
+  const isOnCooldown = onCooldown(kami);
+  const [cooldownTick, setCooldownTick] = useState(0);
+  useEffect(() => {
+    if (!isOnCooldown) return;
+    const id = setInterval(() => setCooldownTick((t) => (t + 1) % 1000000), 200);
+    return () => clearInterval(id);
+  }, [isOnCooldown]);
+
+  // Final-second uniform static wipe (wait 0.5s, then 0.5s wipe)
+  const lastSecond = remaining <= 1.0;
+  const timeIntoLast = lastSecond ? Math.max(0, 1.0 - remaining) : 0;
+  const wipeWait = 0.5;
+  const wipeDur = 0.5;
+  const wipeProgress = lastSecond ? Math.max(0, Math.min(1, (timeIntoLast - wipeWait) / wipeDur)) : 0;
+
+  const TitleSection = (
     <TitleBar>
       <TitleText key='title' onClick={() => handleKamiClick()}>
         {kami.name}
@@ -113,16 +144,6 @@ export const KamiCard = (props: Props) => {
     </TitleBar>
   );
 
-  const Bonuses = itemBonuses.length > 0 && (
-    <Buffs>
-      {itemBonuses.map((bonus, i) => (
-        <TextTooltip key={i} text={[bonus.text]} direction='row'>
-          <Buff src={bonus.image} />
-        </TextTooltip>
-      ))}
-    </Buffs>
-  );
-
   return (
     <Card
       image={{
@@ -130,9 +151,66 @@ export const KamiCard = (props: Props) => {
         showLevelUp: showLevelUp && canLevel,
         showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
         onClick: handleKamiClick,
+        filter:
+          showCooldown && onCooldown(kami)
+            ? (grayAmount > 0 ? `grayscale(${grayAmount}) contrast(1.05)` : undefined)
+            : undefined,
+        background: undefined,
+        foreground:
+          showCooldown && onCooldown(kami)
+            ? (() => {
+                // Static grain and wipe are updated per-frame via onBeforeFrame
+                const staticLayer: any = makeStaticLayer({ brightness: 1.6, alpha: 0.96, vertical: true });
+                staticLayer.onBeforeFrame = (uniforms: any) => {
+                  const tot = calcCooldownRequirement(kami);
+                  const rem = calcCooldown(kami);
+                  const prog = tot > 0 ? Math.min(1, Math.max(0, rem / tot)) : 0;
+                  const eased = Math.pow(prog, 1.25);
+                  const alpha = 0.96 * eased;
+                  if (uniforms.uAlpha) uniforms.uAlpha.value = alpha;
+                };
+
+                // Final-second uniform static wipe: wait 0.5s, then 0.5s fade
+                const wipeLayer: any = makeStaticLayer({
+                  brightness: 1.7,
+                  alpha: 0.0,
+                  vertical: true,
+                  topFeather: 0.0,
+                  maskRadius: 0.0,
+                  maskHeight: 0.0,
+                });
+                wipeLayer.onBeforeFrame = (uniforms: any) => {
+                  const tot = calcCooldownRequirement(kami);
+                  const rem = calcCooldown(kami);
+                  const lastSecond = rem <= 1.0 && rem > 0; // only show while > 0 and <= 1s
+                  if (!lastSecond) {
+                    if (uniforms.uAlpha) uniforms.uAlpha.value = 0.0;
+                    return;
+                  }
+                  const timeIntoLast = Math.max(0, 1.0 - rem);
+                  const wait = 0.5;
+                  const dur = 0.5;
+                  const wp = Math.max(0, Math.min(1, (timeIntoLast - wait) / dur));
+                  const a = 0.9 * (1 - wp);
+                  if (uniforms.uTopSplit) uniforms.uTopSplit.value = 2.0; // uniform
+                  if (uniforms.uAlpha) uniforms.uAlpha.value = a;
+                };
+
+                return (
+                  <>
+                    {/* Subtle CRT layer remains constant */}
+                    <CRTShader brightness={1.6} alpha={0.96} />
+                    {/* Static grain fades over full cooldown */}
+                    <ShaderStack layers={[staticLayer]} animateWhenOffscreen />
+                    {/* Final-second wipe */}
+                    <ShaderStack layers={[wipeLayer]} animateWhenOffscreen />
+                  </>
+                );
+              })()
+            : undefined,
       }}
     >
-      {Title}
+      {TitleSection}
       <Content>
         <ContentRow>
           <ContentColumn key='column-1'>
@@ -146,7 +224,15 @@ export const KamiCard = (props: Props) => {
           </ContentColumn>
         </ContentRow>
         <ContentBottom>
-          {Bonuses}
+          {itemBonuses.length > 0 && (
+            <Buffs>
+              {itemBonuses.map((bonus, i) => (
+                <TextTooltip key={i} text={[bonus.text]} direction='row'>
+                  <Buff src={bonus.image} />
+                </TextTooltip>
+              ))}
+            </Buffs>
+          )}
           <ContentActions>{actions}</ContentActions>
         </ContentBottom>
       </Content>
