@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAccount as _getAccount, getAccountByID as _getAccountByID } from 'app/cache/account';
@@ -48,7 +48,7 @@ export const TradingModal: UIComponent = {
         getAccountByID,
         getTradeHistory
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components: comps, actions } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -75,7 +75,7 @@ export const TradingModal: UIComponent = {
           getTradeHistory: (history: TradeHistory) => _getTradeHistory(world, comps, history),
         },
       };
-    }, [layers]);
+    })();
 
     const { actions } = network;
     const { modals } = useVisibility();

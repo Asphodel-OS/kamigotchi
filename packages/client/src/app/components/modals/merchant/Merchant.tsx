@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAccount as _getAccount } from 'app/cache/account';
@@ -36,7 +36,7 @@ export const MerchantModal: UIComponent = {
         actions,
         api,
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { components, world } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -55,7 +55,7 @@ export const MerchantModal: UIComponent = {
         },
         network,
       };
-    }, [layers]);
+    })();
     const { npcIndex } = useSelected();
     const { modals } = useVisibility();
 

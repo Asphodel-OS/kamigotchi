@@ -1,5 +1,4 @@
 import { EntityIndex, getComponentEntities, getComponentValue } from '@mud-classic/recs';
-import { useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { UIComponent } from 'app/root/types';
@@ -14,7 +13,7 @@ export const NotificationFixture: UIComponent = {
     const {
       notifications,
       list,
-    } = useMemo(() => {
+    } = (() => {
       const {
         network: { notifications },
       } = layers;
@@ -23,7 +22,7 @@ export const NotificationFixture: UIComponent = {
         notifications: notifications,
         list: list,
       };
-    }, [layers]);
+    })();
 
       const { fixtures, modals, setModals } = useVisibility();
 

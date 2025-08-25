@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
@@ -21,7 +21,7 @@ export const ClockFixture: UIComponent = {
         data: {
           account,
         }
-      } = useMemo(() => {
+      } = (() => {
         const { network } = layers;
         const { world, components } = network;
         const accountEntity = queryAccountFromEmbedded(network);
@@ -32,7 +32,7 @@ export const ClockFixture: UIComponent = {
             account: getAccount(world, components, accountEntity, accountOptions),
           },
         };
-      }, [layers]);
+      })();
       const { fixtures } = useVisibility();
       const [staminaCurr, setStaminaCurr] = useState(0);
       const [rotateClock, setRotateClock] = useState(0);

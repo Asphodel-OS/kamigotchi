@@ -1,5 +1,5 @@
 import { EntityID } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { Address, getAddress } from 'viem';
@@ -26,7 +26,7 @@ export const Presale: UIComponent = {
   Render: () => {
     const layers = useLayers();
     
-    const { network, presaleAddress, currency } = useMemo(() => {
+    const { network, presaleAddress, currency } = (() => {
       const { network } = layers;
       const { world, components } = network;
       return {
@@ -34,7 +34,7 @@ export const Presale: UIComponent = {
         presaleAddress: getAddress(getConfigAddress(world, components, 'ONYX_PRESALE_ADDRESS')),
         currency: getItemByIndex(world, components, ETH_INDEX),
       };
-    }, [layers]);
+    })();
 
       const { selectedAddress, apis } = useNetwork();
       const { actions } = network;

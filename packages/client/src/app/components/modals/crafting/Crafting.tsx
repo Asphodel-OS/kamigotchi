@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
 import { getAllRecipes } from 'app/cache/recipes';
@@ -34,7 +34,7 @@ export const CraftingModal: UIComponent = {
         getItemBalance,
         hasIngredients
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
 
@@ -56,7 +56,7 @@ export const CraftingModal: UIComponent = {
             _hasIngredients(world, components, recipe, account.id),
         },
       };
-    }, [layers]);
+    })();
 
     const { modals, setModals } = useVisibility();
     const [recipes, setRecipes] = useState<Recipe[]>([]);

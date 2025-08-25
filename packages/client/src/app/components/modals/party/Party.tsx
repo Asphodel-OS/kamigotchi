@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { erc721Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
@@ -62,7 +62,7 @@ export const PartyModal: UIComponent = {
         queryKamiByIndex,
         queryAllAccounts
       }
-    } = useMemo(() => {
+    } = (() => {
         const { network } = layers;
         const { world, components } = network;
         const { debug } = useAccount.getState();
@@ -112,7 +112,7 @@ export const PartyModal: UIComponent = {
           queryAllAccounts: () => _queryAllAccounts(components),
         },
       };
-    }, [layers]);
+    })();
 
     const { actions, api } = network;
 

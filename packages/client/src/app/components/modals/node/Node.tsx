@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -69,7 +69,7 @@ export const NodeModal: UIComponent = {
         parseConditionalText,
         getTempBonuses
       }
-    } = useMemo(() => {
+    } = (() => {
         const { network } = layers;
         const { world, components } = network;
         const { nodeIndex } = useSelected.getState();
@@ -138,9 +138,9 @@ export const NodeModal: UIComponent = {
               _parseConditionalText(world, components, condition, tracking),
             getTempBonuses: (kami: Kami) =>
               _getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
-        },
-      };
-    }, [layers]);
+          },
+        };
+      })();
 
       const {
         actions,

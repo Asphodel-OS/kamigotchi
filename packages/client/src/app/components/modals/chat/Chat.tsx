@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { getAccount as _getAccount } from 'app/cache/account';
 import { getKami as _getKami } from 'app/cache/kami';
@@ -30,7 +30,7 @@ export const ChatModal: UIComponent = {
         getKami
       },
       network
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const accountEntity = queryAccountFromEmbedded(network);
       const accountOptions = {
@@ -51,7 +51,7 @@ export const ChatModal: UIComponent = {
         network,
         world,
       };
-    }, [layers]);
+    })();
 
       const { actions, api } = network;
       const { modals } = useVisibility();

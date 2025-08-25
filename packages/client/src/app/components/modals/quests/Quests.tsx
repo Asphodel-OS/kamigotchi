@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -53,7 +53,7 @@ export const QuestModal: UIComponent = {
         parseStatus,
         populate
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -102,7 +102,7 @@ export const QuestModal: UIComponent = {
           populate: (base: BaseQuest) => populateQuest(world, components, base),
         },
       };
-    }, [layers]);
+    })();
 
     const { actions, api, notifications } = network;
     const { modals } = useVisibility();

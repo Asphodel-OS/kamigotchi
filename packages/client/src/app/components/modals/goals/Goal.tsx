@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { QuestsIcon } from 'assets/images/icons/menu';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
@@ -36,7 +36,7 @@ export const GoalModal: UIComponent = {
       network,
       data,
       utils,
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -58,7 +58,7 @@ export const GoalModal: UIComponent = {
             getFromDescription(world, components, type, index),
         },
       };
-    }, [layers]);
+    })();
 
       const { actions, api, world, components } = network;
       const { account } = data;

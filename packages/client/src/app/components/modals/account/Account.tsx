@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
 import { BigNumberish } from 'ethers';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Account, getAccount as _getAccount, getAccountKamis as _getAccountKamis, getAllAccounts } from 'app/cache/account';
 import { getFriends as _getFriends } from 'app/cache/account/getters';
@@ -28,7 +28,7 @@ export const AccountModal: UIComponent = {
       network,
       data: { vip },
       utils: { getAccount, getAccountKamis, getFriends }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
 
@@ -58,7 +58,7 @@ export const AccountModal: UIComponent = {
           getFriends: (accEntity: EntityIndex) => _getFriends(world, components, accEntity),
         },
       };
-    }, [layers]);
+    })();
 
     const { actions, api, components, world } = network;
     const { account: player } = useAccount();

@@ -1,5 +1,5 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAccount as _getAccount } from 'app/cache/account';
@@ -29,7 +29,7 @@ export const Scene: UIComponent = {
         getGoalByIndex,
         getRoomIndex,
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
 
@@ -44,7 +44,7 @@ export const Scene: UIComponent = {
           getRoomIndex: (entity: EntityIndex) => _getRoomIndex(components, entity),
         },
       };
-    }, [layers]);
+    })();
 
     const { roomIndex, setRoom } = useSelected();
     const [lastRefresh, setLastRefresh] = useState(Date.now());

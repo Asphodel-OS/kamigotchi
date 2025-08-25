@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { UIComponent } from 'app/root/types';
 import { waitForActionCompletion } from 'network/utils';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { useLayers } from 'app/root/hooks';
@@ -57,7 +57,7 @@ export const GachaModal: UIComponent = {
           getMintData,
           isWhitelisted
         }
-      } = useMemo(() => {
+      } = (() => {
         const { network } = layers;
         const { world, components } = network;
         const accountEntity = queryAccountFromEmbedded(network);
@@ -92,7 +92,7 @@ export const GachaModal: UIComponent = {
               hasFlag(world, components, entity, 'MINT_WHITELISTED'),
           },
         };
-      }, [layers]);
+      })();
 
       const { actions, world, api } = network;
 

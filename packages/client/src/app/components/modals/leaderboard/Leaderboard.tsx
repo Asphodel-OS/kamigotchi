@@ -1,5 +1,5 @@
 import { EntityID } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ModalWrapper } from 'app/components/library';
@@ -21,7 +21,7 @@ export const LeaderboardModal: UIComponent = {
       network,
       data,
       utils,
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const account = getAccountFromEmbedded(network);
@@ -33,7 +33,7 @@ export const LeaderboardModal: UIComponent = {
           getAccountByID: (id: EntityID) => _getAccountByID(world, components, id),
         },
       };
-    }, [layers]);
+    })();
 
       const { components } = network;
       const { modals } = useVisibility();

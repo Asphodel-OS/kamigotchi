@@ -2,7 +2,7 @@ import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
 import { waitForActionCompletion } from 'network/utils';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -20,7 +20,7 @@ export const RevealModal: UIComponent = {
     const {
       network,
       data: { commits }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const account = getAccountFromEmbedded(network);
@@ -30,7 +30,7 @@ export const RevealModal: UIComponent = {
         network: layers.network,
         data: { commits },
       };
-    }, [layers]);
+    })();
 
     const {
       actions,

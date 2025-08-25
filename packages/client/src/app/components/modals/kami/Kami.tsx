@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useLayers } from 'app/root/hooks';
 
 import { getAccount } from 'app/cache/account';
@@ -59,7 +59,7 @@ export const KamiModal: UIComponent = {
         getEntityIndex,
         getNodeByIndex
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -105,7 +105,7 @@ export const KamiModal: UIComponent = {
           getNodeByIndex: (index: number) => _getNodeByIndex(world, components, index),
         },
       };
-    }, [layers]);
+    })();
 
     const { actions, api } = network;
     const { kamiIndex } = useSelected();

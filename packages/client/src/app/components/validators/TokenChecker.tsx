@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { erc20Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
@@ -22,7 +22,7 @@ export const TokenChecker: UIComponent = {
         utils: {
           getItem,
         }
-      } = useMemo(() => {
+      } = (() => {
         const { network } = layers;
         const { world, components } = network;
         return {
@@ -36,7 +36,7 @@ export const TokenChecker: UIComponent = {
             getItem: (index: number) => getItemByIndex(world, components, index),
           },
         };
-      }, [layers]);
+      })();
 
       const { selectedAddress } = useNetwork();
       const { balances, set, setOnyx } = useTokens();

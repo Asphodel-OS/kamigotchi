@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { UIComponent } from 'app/root/types';
@@ -18,14 +17,14 @@ export const LeftMenuFixture: UIComponent = {
   id: 'LeftMenuFixture',
   Render: () => {
     const layers = useLayers();
-  
-    const { nodeEntity } = useMemo(() => {
+
+    const { nodeEntity } = (() => {
       const { network } = layers;
       const { world } = network;
       const { roomIndex } = useSelected.getState();
       let nodeEntity = queryNodeByIndex(world, roomIndex);
       return { nodeEntity };
-    }, [layers]);
+    })();
 
     const { fixtures } = useVisibility();
 

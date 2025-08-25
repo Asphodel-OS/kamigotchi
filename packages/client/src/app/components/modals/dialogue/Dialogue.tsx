@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, ModalWrapper } from 'app/components/library';
@@ -20,7 +20,7 @@ export const DialogueModal: UIComponent = {
     const {
       network,
       data: { accEntity }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const accountEntity = queryAccountFromEmbedded(network);
 
@@ -28,7 +28,7 @@ export const DialogueModal: UIComponent = {
         network: layers.network,
         data: { accEntity: accountEntity },
       };
-    }, [layers]);
+    })();
 
       const { actions, components, world } = network;
       const { modals } = useVisibility();

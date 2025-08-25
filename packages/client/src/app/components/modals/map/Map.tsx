@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Account, getAccount as _getAccount } from 'app/cache/account';
 import { getKami as _getKami } from 'app/cache/kami';
@@ -51,7 +51,7 @@ export const MapModal: UIComponent = {
         queryScavInstance,
         getValue
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -84,7 +84,7 @@ export const MapModal: UIComponent = {
           getValue: (entity: EntityIndex) => _getValue(components, entity),
         },
       };
-    }, [layers]);
+    })();
 
       const { actions, api } = network;
       const { roomIndex } = useSelected();

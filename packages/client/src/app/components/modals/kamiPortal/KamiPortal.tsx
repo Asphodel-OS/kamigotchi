@@ -1,5 +1,5 @@
 import { EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -36,7 +36,7 @@ export const KamiPortalModal: UIComponent = {
         getKami,
         queryKamiByIndex
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -59,7 +59,7 @@ export const KamiPortalModal: UIComponent = {
             _getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
         },
       };
-    }, [layers]);
+    })();
 
     const { selectedAddress, apis } = useNetwork();
     const { modals } = useVisibility();

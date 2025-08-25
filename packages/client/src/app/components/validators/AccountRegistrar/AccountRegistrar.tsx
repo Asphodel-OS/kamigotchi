@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { AccountCache, getAccount } from 'app/cache/account';
@@ -20,7 +20,7 @@ export const AccountRegistrar: UIComponent = {
   Render: () => {
       const layers = useLayers();
       
-      const { data, network, utils } = useMemo(() => {
+      const { data, network, utils } = (() => {
         const { network } = layers;
         const { world, components } = network;
         const { LoadingState } = components;
@@ -55,7 +55,7 @@ export const AccountRegistrar: UIComponent = {
               ),
           },
         };
-      }, [layers]);
+      })();
 
       const { accountEntity } = data;
       const { getBaseAccount } = utils;

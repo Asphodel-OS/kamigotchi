@@ -28,7 +28,7 @@ export const ObolModal: UIComponent = {
     const {
       network,
       utils: { getObolsBalance }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -40,7 +40,7 @@ export const ObolModal: UIComponent = {
           getObolsBalance: () => getItemBalance(world, components, account, OBOL_INDEX),
         },
       };
-    }, [layers]);
+    })();
 
     const { actions, api } = network;
 

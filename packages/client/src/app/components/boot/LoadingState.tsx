@@ -1,5 +1,5 @@
 import { getComponentValue } from '@mud-classic/recs';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { processKamiConfig } from 'app/cache/config';
 import { initializeItems as _initializeItems } from 'app/cache/item';
@@ -23,7 +23,7 @@ export const LoadingState: UIComponent = {
         initializeKamiConfig,
         initializeSkills,
       }
-    } = useMemo(() => {
+    } = (() => {
       const {
         network: {
           components,
@@ -52,7 +52,7 @@ export const LoadingState: UIComponent = {
           initializeSkills: () => _initializeSkills(world, components),
         },
       };
-    }, [layers]);
+    })();
 
     const [isVisible, setIsVisible] = useState(true);
     const { state, msg, percentage } = loadingState;

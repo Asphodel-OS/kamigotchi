@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 import { EntityID } from '@mud-classic/recs';
 import { getAccount as _getAccount, getAccountKamis } from 'app/cache/account';
@@ -16,7 +16,6 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami, NullKami } from 'network/shapes/Kami';
 import { getCompAddr } from 'network/shapes/utils';
-import { useEffect, useState } from 'react';
 import { Carousel } from './Carousel';
 import { Stage } from './Stage';
 
@@ -39,7 +38,7 @@ export const EmaBoardModal: UIComponent = {
         getItemBalance,
         getItem,
       }
-    } = useMemo(() => {
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
         const accountEntity = queryAccountFromEmbedded(network);
@@ -64,7 +63,7 @@ export const EmaBoardModal: UIComponent = {
             getItem: (index: number) => getItemByIndex(world, components, index),
           },
       };
-    }, [layers]);
+    })();
 
     const { actions, api } = network;
     const { selectedAddress, apis: ownerAPIs } = useNetwork();
