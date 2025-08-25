@@ -7,6 +7,7 @@ import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
@@ -16,12 +17,15 @@ import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
+const SendButtons = new Map<number, React.ReactNode>();
 
 interface Props {
+  accounts: Account[];
   accountEntity: EntityIndex;
   actions: {
     useForAccount: (item: Item, amount: number) => void;
     useForKami: (kami: Kami, item: Item) => void;
+    sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
   };
   utils: {
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
@@ -35,22 +39,24 @@ interface Props {
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
-  const { actions, utils, accountEntity } = props;
+  const { actions, utils, accountEntity, accounts } = props;
   const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
-  const { modals } = useVisibility();
+  const { sendItemsTx } = actions;
 
+  const { modals } = useVisibility();
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [account, setAccount] = useState<Account>(NullAccount);
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [kamis, setKamis] = useState<Kami[]>([]);
 
-  // set timer
   useEffect(() => {
-    updateData();
-    const refreshClock = () => setLastRefresh(Date.now());
-    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-    return () => clearInterval(timerId);
-  }, []);
+    inventories.forEach((inventory) => {
+      if (!SendButtons.has(inventory.item.index)) {
+        // console.log(`adding send button for ${kami.name}`);
+        SendButtons.set(inventory.item.index, SendButton([inventory.item], [inventory.balance]));
+      }
+    });
+  }, [inventories.length]);
 
   // refresh data whenever the modal is opened
   useEffect(() => {
@@ -104,6 +110,24 @@ export const ItemGrid = (props: Props) => {
     return options;
   };
 
+  const getSendTooltip = (item: Item) => {
+    const tooltip = [`Send ${item.name} to another account.`];
+    return tooltip;
+  };
+
+  const SendButton = (item: Item[], amts: number[]) => {
+    const options = accounts.map((targetAcc) => ({
+      text: `${targetAcc.name} (#${targetAcc.index})`,
+      onClick: () => sendItemsTx(item, amts, targetAcc),
+    }));
+
+    return (
+      <TextTooltip key='send-tooltip' text={getSendTooltip(item[0])}>
+        <IconListButton img={ArrowIcons.right} options={options} searchable scale={1.5} />
+      </TextTooltip>
+    );
+  };
+
   // // get the list of kamis that a specific item can be used on
   // const getAvailableKamis = (item: Item): Kami[] => {
   //   let kamis2 = getAccessibleKamis(account, kamis);
@@ -120,22 +144,26 @@ export const ItemGrid = (props: Props) => {
   const ItemIcon = (inv: Inventory) => {
     const item = inv.item;
     const options = getItemActions(item, inv.balance);
+    const sendButton = SendButton([item], [inv.balance]);
 
     return (
-      <TextTooltip
-        key={item.index}
-        text={item.index ? [<ItemGridTooltip key={item.index} item={item} utils={utils} />] : []}
-        maxWidth={25}
-      >
-        <IconListButton
+      <ItemWrapper key={item.index}>
+        <TextTooltip
           key={item.index}
-          img={item.image}
-          scale={4.8}
-          balance={inv.balance}
-          options={options}
-          disabled={options.length == 0}
-        />
-      </TextTooltip>
+          text={item.index ? [<ItemGridTooltip key={item.index} item={item} utils={utils} />] : []}
+          maxWidth={25}
+        >
+          <IconListButton
+            key={item.index}
+            img={item.image}
+            scale={4.8}
+            balance={inv.balance}
+            options={options}
+            disabled={options.length == 0}
+          />
+        </TextTooltip>
+        <SendButtonStyled>{SendButtons.get(item.index)}</SendButtonStyled>
+      </ItemWrapper>
     );
   };
 
@@ -152,4 +180,14 @@ const Container = styled.div`
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
+`;
+
+const ItemWrapper = styled.div`
+  position: relative;
+`;
+
+const SendButtonStyled = styled.div`
+  position: absolute;
+  bottom: 1%;
+  left: 1%;
 `;

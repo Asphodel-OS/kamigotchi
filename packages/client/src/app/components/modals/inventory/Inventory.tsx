@@ -1,18 +1,27 @@
 import { interval, map } from 'rxjs';
 
+import { EntityIndex } from '@mud-classic/recs';
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useAccount } from 'app/stores';
+import { useAccount, useVisibility } from 'app/stores';
 import { InventoryIcon } from 'assets/images/icons/menu';
 import { OBOL_INDEX } from 'constants/items';
-import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
+import {
+  Account,
+  NullAccount,
+  queryAccountFromEmbedded,
+  queryAllAccounts,
+} from 'network/shapes/Account';
 import { Allo, parseAllos } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance, getMusuBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
+import { useEffect, useState } from 'react';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
+
+const REFRESH_INTERVAL = 1000;
 
 export const InventoryModal: UIComponent = {
   id: 'Inventory',
@@ -40,7 +49,7 @@ export const InventoryModal: UIComponent = {
             accountEntity,
           },
           utils: {
-            getAccount: () => getAccount(world, components, accountEntity),
+            getAccount: (entity: EntityIndex) => getAccount(world, components, entity),
             getInventories: () => getAccountInventories(world, components, accountEntity),
             getKamis: () =>
               getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
@@ -54,6 +63,7 @@ export const InventoryModal: UIComponent = {
                 .map((req) => parseConditionalText(world, components, req))
                 .join('\n '),
             parseAllos: (allo: Allo[]) => parseAllos(world, components, allo),
+            queryAllAccounts: () => queryAllAccounts(components),
           },
         };
       })
@@ -63,6 +73,41 @@ export const InventoryModal: UIComponent = {
     const { actions, api } = network;
     const { accountEntity } = data;
     const { getMusuBalance, getObolsBalance } = utils;
+    const { getAccount, getInventories, getKamis, meetsRequirements, queryAllAccounts } = utils;
+
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [account, setAccount] = useState<Account>(NullAccount);
+    const [tick, setTick] = useState(Date.now());
+    const { modals } = useVisibility();
+
+    // mounting
+    useEffect(() => {
+      // populate initial data
+      setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
+      // set ticking
+      const refreshClock = () => setTick(Date.now());
+      const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+      return () => clearInterval(timerId);
+    }, []);
+
+    // update account and kamis every tick or if the connnected account changes
+    useEffect(() => {
+      if (!modals.inventory) return;
+
+      // update the connected account if it changes
+      if (accountEntity != account.entity) {
+        setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
+      }
+
+      // check if we need to update the list of accounts
+      const accountEntities = queryAllAccounts() as EntityIndex[];
+      if (accountEntities.length > accounts.length) {
+        const filtered = accountEntities.filter((entity) => entity != accountEntity);
+        const newAccounts = filtered.map((entity) => getAccount(entity));
+        const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
+        setAccounts(accountsSorted);
+      }
+    }, [modals.inventory, tick]);
 
     /////////////////
     // ACTIONS
@@ -92,6 +137,21 @@ export const InventoryModal: UIComponent = {
       });
     };
 
+    // send a list of items to another account
+    const sendItemsTx = (items: Item[], amts: number[], account: Account) => {
+      const itemsIndexes = items.map((item) => item.index);
+      const itemsNames = items.map((item) => item.name);
+      const itemamts = items.map((item) => item.index);
+      actions.add({
+        action: 'ItemTransfer',
+        params: [itemsIndexes, amts, account.id],
+        description: `Sending ${itemamts} ${itemsNames} to ${account.name}`,
+        execute: async () => {
+          return api.player.account.item.transfer(itemsIndexes, [1], account.id);
+        },
+      });
+    };
+
     /////////////////
     // DISPLAY
 
@@ -109,8 +169,9 @@ export const InventoryModal: UIComponent = {
         ) : (
           <ItemGrid
             key='grid'
+            accounts={accounts}
             accountEntity={accountEntity}
-            actions={{ useForAccount, useForKami }}
+            actions={{ useForAccount, useForKami, sendItemsTx }}
             utils={utils}
           />
         )}
