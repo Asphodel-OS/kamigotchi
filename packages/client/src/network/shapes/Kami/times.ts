@@ -10,10 +10,10 @@ export interface Times {
 
 // populate the time-tracking fields of a kami
 export const getTimes = (components: Components, entity: EntityIndex): Times => {
-  const { LastActionTime, LastTime, StartTime } = components;
+  const { NextTime, LastTime, StartTime } = components;
 
   return {
-    cooldown: (getComponentValue(LastActionTime, entity)?.value as number) * 1,
+    cooldown: (getComponentValue(NextTime, entity)?.value as number) * 1,
     last: (getComponentValue(LastTime, entity)?.value as number) * 1,
     start: (getComponentValue(StartTime, entity)?.value as number) * 1,
   };

@@ -10,13 +10,7 @@ import {
   Kami,
 } from 'network/shapes/Kami';
 import { getHealth } from 'network/shapes/Kami/stats';
-import {
-  getLastActionTime,
-  getLastTime,
-  getName,
-  getRerolls,
-  getState,
-} from 'network/shapes/utils/component';
+import { getName, getRerolls, getState } from 'network/shapes/utils/component';
 import { getKamiConfig } from '../config';
 import { isFalsey } from '../config/kami';
 import { updateHarvestRate, updateHealthRate } from './calcs';
@@ -83,11 +77,7 @@ export const get = (
     if (updateDelta > options.live) {
       if (debug) console.log(`  updating live kami state`);
       kami.state = getState(components, entity);
-      kami.time = {
-        start: kami.time?.start ?? 0,
-        last: getLastTime(components, entity, debug),
-        cooldown: getLastActionTime(components, entity, debug),
-      };
+      kami.time = getKamiTimes(components, entity);
 
       // populate health if it's defined
       if (kami.stats) kami.stats.health = getHealth(world, components, entity);
