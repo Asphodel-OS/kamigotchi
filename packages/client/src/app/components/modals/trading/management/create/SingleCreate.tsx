@@ -24,6 +24,7 @@ interface Props {
     currencies: Item[];
     inventory: Inventory[];
     items: Item[];
+    thousandsSeparator: string;
   };
   isVisible: boolean;
 }
@@ -33,7 +34,7 @@ export const SingleCreate = (props: Props) => {
   const { actions, controls, data, isVisible } = props;
   const { handleCreatePrompt } = actions;
   const { isConfirming } = controls;
-  const { currencies, inventory, items } = data;
+  const { currencies, inventory, items, thousandsSeparator } = data;
   const { modals } = useVisibility();
 
   const [mode, setMode] = useState<Mode>('Buy');
@@ -76,7 +77,7 @@ export const SingleCreate = (props: Props) => {
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change
   const updateItemAmt = (event: ChangeEvent<HTMLInputElement>) => {
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
-    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const rawQuantity = parseInt(quantityStr.replaceAll(thousandsSeparator, '') || '0');
 
     const min = 0;
     let max = Number.MAX_SAFE_INTEGER;
@@ -89,7 +90,7 @@ export const SingleCreate = (props: Props) => {
   const updateCost = (event: ChangeEvent<HTMLInputElement>) => {
     const min = 0;
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
-    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const rawQuantity = parseInt(quantityStr.replaceAll(thousandsSeparator, '') || '0');
 
     let max = Number.MAX_SAFE_INTEGER;
     if (mode === 'Buy') max = getInventoryBalance(inventory, MUSU_INDEX);

@@ -20,6 +20,7 @@ interface Props {
     currencies: Item[];
     inventory: Inventory[];
     items: Item[];
+    thousandsSeparator: string;
   };
   isVisible: boolean;
 }
@@ -29,20 +30,13 @@ export const MultiCreate = (props: Props) => {
   const { actions, controls, data, isVisible } = props;
   const { handleCreatePrompt } = actions;
   const { isConfirming } = controls;
-  const { inventory, items } = data;
+  const { inventory, items, thousandsSeparator } = data;
   const { modals } = useVisibility();
 
   const [want, setWant] = useState<Item[]>([]);
   const [wantAmt, setWantAmt] = useState<number[]>([]);
   const [have, setHave] = useState<Item[]>([]);
   const [haveAmt, setHaveAmt] = useState<number[]>([]);
-  const [thousandsSeparator, setThousandsSeparator] = useState<string>(',');
-
-  // tests number formatting
-  // TODO: make this available globally through a util function
-  useEffect(() => {
-    setThousandsSeparator((4.56).toLocaleString().includes(',') ? '.' : ',');
-  }, []);
 
   useEffect(() => {
     reset();
