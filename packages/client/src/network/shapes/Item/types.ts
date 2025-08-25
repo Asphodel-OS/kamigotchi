@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { Address } from 'viem';
 
 import { Components } from 'network/components';
-import { Address } from 'viem';
 import { hasFlag } from '../Flag';
 import { DetailedEntity, getItemImage } from '../utils';
 import {
@@ -9,6 +9,7 @@ import {
   getFor,
   getItemIndex,
   getName,
+  getRarity,
   getTokenAddress,
   getType,
 } from '../utils/component';
@@ -22,6 +23,7 @@ export interface Item extends DetailedEntity {
   entity: EntityIndex;
   index: number;
   type: string;
+  rarity: number;
   for: string;
   address?: Address;
   requirements: Requirements;
@@ -59,6 +61,7 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
     id: world.entities[entity],
     index,
     type: getType(comps, entity),
+    rarity: getRarity(comps, entity),
     for: getFor(comps, entity),
     requirements: getRequirements(world, comps, index),
     effects: getEffects(world, comps, index),

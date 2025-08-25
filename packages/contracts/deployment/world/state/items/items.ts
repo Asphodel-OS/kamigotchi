@@ -162,6 +162,8 @@ async function addERC20(api: AdminAPI, entry: any) {
 ////////////////
 // SUB-SHAPES
 
+const Rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
+
 // create a basic item
 async function createBasic(api: AdminAPI, entry: any) {
   const createEP = api.registry.item.create;
@@ -169,10 +171,13 @@ async function createBasic(api: AdminAPI, entry: any) {
   const type = entry['Type'].toUpperCase();
   const name = entry['Name'].trim();
   const description = entry['Description'];
+  const rarityKey = entry['Rarity'];
+  const rarity = 5 - Rarities.indexOf(rarityKey);
+
   const image = getItemImage(name);
   console.log(`creating ${type} item ${name} (${index})`);
 
-  await createEP.base(index, type, name, description, image);
+  await createEP.base(index, type, name, description, image, rarity);
 }
 
 // create a consumable item
@@ -183,10 +188,13 @@ async function createConsumable(api: AdminAPI, entry: any) {
   const type = entry['Type'].toUpperCase();
   const name = entry['Name'].trim();
   const description = entry['Description'];
+  const rarityKey = entry['Rarity'];
+  const rarity = 5 - Rarities.indexOf(rarityKey);
+
   const image = getItemImage(name);
   const for_ = (entry['For'] ?? 'KAMI').toUpperCase();
   console.log(`creating ${type} item ${name} (${index}) for ${for_}`);
 
-  await createEP.consumable(index, for_, name, description, type, image);
+  await createEP.consumable(index, for_, name, description, type, image, rarity);
   await addTypeRequirement(api, entry); // hardcoded based on item types
 }
