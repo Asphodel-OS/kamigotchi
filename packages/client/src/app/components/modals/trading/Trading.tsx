@@ -82,7 +82,7 @@ export const TradingModal: UIComponent = {
       onConfirm: () => null,
     });
     const [tradeHistory, setTradeHistory] = useState<TradeHistory[]>([]);
-
+    // testing grahpite stack
     // time trigger to use for periodic refreshes
     useEffect(() => {
       const updateSync = () => setTick(Date.now());
