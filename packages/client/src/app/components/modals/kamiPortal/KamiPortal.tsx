@@ -14,7 +14,7 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
-import { checkActionState } from 'network/utils';
+import { didActionComplete } from 'network/utils';
 import { Controls } from './Controls';
 import { WildKamis } from './WildKamis';
 import { WorldKamis } from './WorldKamis';
@@ -144,7 +144,9 @@ export const KamiPortalModal: UIComponent = {
           return api.bridge.ERC721.kami.batch.stake(indices);
         },
       });
-      const completed = await checkActionState(actions.Action, tx);
+
+      // reset array if successful
+      const completed = await didActionComplete(actions.Action, tx);
       if (completed) {
         setSelectedWild([]);
       }
@@ -172,7 +174,9 @@ export const KamiPortalModal: UIComponent = {
           return api.bridge.ERC721.kami.batch.unstake(indices);
         },
       });
-      const completed = await checkActionState(actions.Action, tx);
+
+      // reset array if successful
+      const completed = await didActionComplete(actions.Action, tx);
       if (completed) {
         setSelectedWorld([]);
       }
@@ -189,7 +193,7 @@ export const KamiPortalModal: UIComponent = {
         truncate
         noPadding
       >
-        <HorizontalContainer>
+        <Container>
           <WorldKamis
             kamis={worldKamis}
             state={{ selectedWild, selectedWorld, setSelectedWorld }}
@@ -199,13 +203,13 @@ export const KamiPortalModal: UIComponent = {
             state={{ selectedWild, setSelectedWild, selectedWorld, setSelectedWorld }}
           />
           <WildKamis kamis={wildKamis} state={{ selectedWild, setSelectedWild, selectedWorld }} />
-        </HorizontalContainer>
+        </Container>
       </ModalWrapper>
     );
   },
 };
 
-const HorizontalContainer = styled.div`
+const Container = styled.div`
   display: flex;
   width: 100%;
   height: 33vw;
