@@ -1,11 +1,12 @@
 import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
+import styled from 'styled-components';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
-import { getKami } from 'app/cache/kami';
+import { getKami, isDead, isHarvesting, onCooldown } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
@@ -13,8 +14,8 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
+import { didActionComplete } from 'network/utils';
 import { Controls } from './Controls';
-import { Mode } from './types';
 import { WildKamis } from './WildKamis';
 import { WorldKamis } from './WorldKamis';
 
@@ -57,8 +58,8 @@ export const KamiPortalModal: UIComponent = {
 
     const [worldKamis, setWorldKamis] = useState<Kami[]>([]);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
-    const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
-    const [mode, setMode] = useState<Mode>('IMPORT');
+    const [selectedWild, setSelectedWild] = useState<Kami[]>([]);
+    const [selectedWorld, setSelectedWorld] = useState<Kami[]>([]);
     const [tick, setTick] = useState(Date.now());
 
     /////////////////
@@ -93,14 +94,18 @@ export const KamiPortalModal: UIComponent = {
     // clear out the selected kamis whenever the mode changes or the modal is opened
     useEffect(() => {
       if (!modals.bridgeERC721) return;
-      setSelectedKamis([]);
-    }, [modals.bridgeERC721, mode]);
+      setSelectedWild([]);
+      setSelectedWorld([]);
+    }, [modals.bridgeERC721]);
 
     // refresh world kamis every tick
     useEffect(() => {
       if (!modals.bridgeERC721) return;
-      const accountKamis = getAccountKamis(account.entity);
-      setWorldKamis(accountKamis);
+      const accountKamis = getAccountKamis(account.entity) as Kami[];
+      const filteredKamis = accountKamis.filter(
+        (kami) => !onCooldown(kami) && !isHarvesting(kami) && !isDead(kami)
+      );
+      setWorldKamis(filteredKamis);
     }, [modals.bridgeERC721, tick]);
 
     // update list of wild kamis
@@ -118,7 +123,7 @@ export const KamiPortalModal: UIComponent = {
 
     // import a kami from the wild to the world
     // TODO: pets without accounts are linked to EOA, no account. link EOA
-    const depositTx = (kamis: Kami[]) => {
+    const depositTx = async (kamis: Kami[]) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -131,7 +136,7 @@ export const KamiPortalModal: UIComponent = {
       else description = `Staking ${numKamis} Kami`;
 
       // add the transaction to the queue
-      actions.add({
+      const tx = actions.add({
         action: 'KamiDeposit',
         params: indices,
         description,
@@ -139,10 +144,16 @@ export const KamiPortalModal: UIComponent = {
           return api.bridge.ERC721.kami.batch.stake(indices);
         },
       });
+
+      // reset array if successful
+      const completed = await didActionComplete(actions.Action, tx);
+      if (completed) {
+        setSelectedWild([]);
+      }
     };
 
     // export a kami from the world to the wild
-    const withdrawTx = (kamis: Kami[]) => {
+    const withdrawTx = async (kamis: Kami[]) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -155,7 +166,7 @@ export const KamiPortalModal: UIComponent = {
       else description = `Unstaking ${numKamis} Kami`;
 
       // add the transaction to the queue
-      actions.add({
+      const tx = actions.add({
         action: 'KamiWithdraw',
         params: indices,
         description,
@@ -163,6 +174,12 @@ export const KamiPortalModal: UIComponent = {
           return api.bridge.ERC721.kami.batch.unstake(indices);
         },
       });
+
+      // reset array if successful
+      const completed = await didActionComplete(actions.Action, tx);
+      if (completed) {
+        setSelectedWorld([]);
+      }
     };
 
     /////////////////
@@ -176,22 +193,26 @@ export const KamiPortalModal: UIComponent = {
         truncate
         noPadding
       >
-        <WildKamis
-          mode={mode}
-          kamis={{ world: worldKamis, wild: wildKamis }}
-          state={{ selected: selectedKamis, setSelected: setSelectedKamis }}
-        />
-        <Controls
-          actions={{ import: depositTx, export: withdrawTx }}
-          controls={{ mode, setMode }}
-          state={{ selectedKamis }}
-        />
-        <WorldKamis
-          mode={mode}
-          kamis={{ world: worldKamis, wild: wildKamis }}
-          state={{ selected: selectedKamis, setSelected: setSelectedKamis }}
-        />
+        <Container>
+          <WorldKamis
+            kamis={worldKamis}
+            state={{ selectedWild, selectedWorld, setSelectedWorld }}
+          />
+          <Controls
+            actions={{ import: depositTx, export: withdrawTx }}
+            state={{ selectedWild, setSelectedWild, selectedWorld, setSelectedWorld }}
+          />
+          <WildKamis kamis={wildKamis} state={{ selectedWild, setSelectedWild, selectedWorld }} />
+        </Container>
       </ModalWrapper>
     );
   },
 };
+
+const Container = styled.div`
+  display: flex;
+  width: 100%;
+  height: 33vw;
+  align-items: stretch;
+  justify-content: space-between;
+`;

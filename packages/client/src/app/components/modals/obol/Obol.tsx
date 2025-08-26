@@ -10,7 +10,7 @@ import { ItemImages } from 'assets/images/items';
 import { OBOL_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance } from 'network/shapes/Item';
-import { checkActionState } from 'network/utils';
+import { didActionComplete } from 'network/utils';
 
 const obolsPerEgg = 5;
 const arrowButtons = [
@@ -78,7 +78,7 @@ export const ObolModal: UIComponent = {
           return api.player.account.item.craft(index, amount);
         },
       });
-      const completed = await checkActionState(actions.Action, transaction);
+      const completed = await didActionComplete(actions.Action, transaction);
       if (completed) {
         setEggsQuantity(1);
       }
