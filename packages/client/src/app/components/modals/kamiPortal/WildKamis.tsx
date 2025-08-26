@@ -10,23 +10,19 @@ export const WildKamis = ({
   kamis,
   state,
 }: {
-  kamis: {
-    wild: Kami[];
-    world: Kami[];
-  };
+  kamis: Kami[];
   state: {
     selectedWild: Kami[];
     setSelectedWild: React.Dispatch<React.SetStateAction<Kami[]>>;
     selectedWorld?: Kami[];
   };
 }) => {
-  const { world, wild } = kamis;
   const { selectedWild, setSelectedWild, selectedWorld } = state;
   const [displayed, setDisplayed] = useState<Kami[]>([]);
 
   useEffect(() => {
-    setDisplayed(wild);
-  }, [wild, selectedWild]);
+    setDisplayed(kamis);
+  }, [kamis, selectedWild]);
 
   /////////////////
   // HANDLERS
@@ -43,7 +39,7 @@ export const WildKamis = ({
   // INTERPRETATION
 
   const getCount = () => {
-    return `${wild.length}`;
+    return `${kamis.length}`;
   };
 
   /////////////////
@@ -55,10 +51,10 @@ export const WildKamis = ({
         <Text size={0.9}>Wilderness({getCount()})</Text>
         <IconButton
           onClick={() => {
-            setSelectedWild(wild);
+            setSelectedWild(kamis);
           }}
           text={'Select All'}
-          disabled={(selectedWorld?.length ?? 0) > 0 || selectedWild.length === wild.length}
+          disabled={(selectedWorld?.length ?? 0) > 0 || selectedWild.length === kamis.length}
         />
       </Overlay>
       <Scrollable>

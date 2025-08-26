@@ -14,6 +14,7 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, queryKamiByIndex } from 'network/shapes/Kami';
+import { checkActionState } from 'network/utils';
 import { Controls } from './Controls';
 import { WildKamis } from './WildKamis';
 import { WorldKamis } from './WorldKamis';
@@ -122,7 +123,7 @@ export const KamiPortalModal: UIComponent = {
 
     // import a kami from the wild to the world
     // TODO: pets without accounts are linked to EOA, no account. link EOA
-    const depositTx = (kamis: Kami[]) => {
+    const depositTx = async (kamis: Kami[]) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -135,7 +136,7 @@ export const KamiPortalModal: UIComponent = {
       else description = `Staking ${numKamis} Kami`;
 
       // add the transaction to the queue
-      actions.add({
+      const tx = actions.add({
         action: 'KamiDeposit',
         params: indices,
         description,
@@ -143,10 +144,14 @@ export const KamiPortalModal: UIComponent = {
           return api.bridge.ERC721.kami.batch.stake(indices);
         },
       });
+      const completed = await checkActionState(actions.Action, tx);
+      if (completed) {
+        setSelectedWild([]);
+      }
     };
 
     // export a kami from the world to the wild
-    const withdrawTx = (kamis: Kami[]) => {
+    const withdrawTx = async (kamis: Kami[]) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -159,7 +164,7 @@ export const KamiPortalModal: UIComponent = {
       else description = `Unstaking ${numKamis} Kami`;
 
       // add the transaction to the queue
-      actions.add({
+      const tx = actions.add({
         action: 'KamiWithdraw',
         params: indices,
         description,
@@ -167,6 +172,10 @@ export const KamiPortalModal: UIComponent = {
           return api.bridge.ERC721.kami.batch.unstake(indices);
         },
       });
+      const completed = await checkActionState(actions.Action, tx);
+      if (completed) {
+        setSelectedWorld([]);
+      }
     };
 
     /////////////////
@@ -182,17 +191,14 @@ export const KamiPortalModal: UIComponent = {
       >
         <HorizontalContainer>
           <WorldKamis
-            kamis={{ world: worldKamis, wild: wildKamis }}
+            kamis={worldKamis}
             state={{ selectedWild, selectedWorld, setSelectedWorld }}
           />
           <Controls
             actions={{ import: depositTx, export: withdrawTx }}
             state={{ selectedWild, setSelectedWild, selectedWorld, setSelectedWorld }}
           />
-          <WildKamis
-            kamis={{ world: worldKamis, wild: wildKamis }}
-            state={{ selectedWild, setSelectedWild, selectedWorld }}
-          />
+          <WildKamis kamis={wildKamis} state={{ selectedWild, setSelectedWild, selectedWorld }} />
         </HorizontalContainer>
       </ModalWrapper>
     );

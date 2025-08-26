@@ -10,23 +10,19 @@ export const WorldKamis = ({
   kamis,
   state,
 }: {
-  kamis: {
-    wild: Kami[];
-    world: Kami[];
-  };
+  kamis: Kami[];
   state: {
     selectedWorld: Kami[];
     setSelectedWorld: (kamis: Kami[]) => void;
     selectedWild?: Kami[];
   };
 }) => {
-  const { world, wild } = kamis;
   const { selectedWorld, setSelectedWorld, selectedWild } = state;
   const [displayed, setDisplayed] = useState<Kami[]>([]);
 
   useEffect(() => {
-    setDisplayed(world);
-  }, [world, selectedWorld]);
+    setDisplayed(kamis);
+  }, [kamis, selectedWorld]);
 
   /////////////////
   // HANDLERS
@@ -48,7 +44,7 @@ export const WorldKamis = ({
   };
 
   const getCount = () => {
-    return `${world.length}`;
+    return `${kamis.length}`;
   };
 
   /////////////////
@@ -60,10 +56,10 @@ export const WorldKamis = ({
         <Text size={0.9}>World({getCount()})</Text>
         <IconButton
           onClick={() => {
-            setSelectedWorld(world);
+            setSelectedWorld(kamis);
           }}
           text={'Select All'}
-          disabled={(selectedWild?.length ?? 0) > 0 || selectedWorld.length === world.length}
+          disabled={(selectedWild?.length ?? 0) > 0 || selectedWorld.length === kamis.length}
         />
       </Overlay>
       <Scrollable>
