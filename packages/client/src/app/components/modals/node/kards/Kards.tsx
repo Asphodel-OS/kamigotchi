@@ -28,6 +28,7 @@ export const Kards = ({
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => JSX.Element;
+    EnemyUseItemButton: (kami: Kami, account: Account, width?: number) => JSX.Element;
   };
   utils: {
     getBonuses: (entity: EntityIndex) => BonusInstance[];
@@ -133,6 +134,7 @@ export const Kards = ({
         account={account}
         allies={allies}
         enemyEntities={enemyEntities}
+        display={display}
         actions={actions}
         utils={utils}
         limit={{ val: visibleEnemies, set: setVisibleEnemies }}

@@ -80,6 +80,17 @@ export const NodeModal: UIComponent = {
           display: {
             UseItemButton: (kami: Kami, account: Account) =>
               UseItemButton(network, kami, account, FeedIcon),
+            EnemyUseItemButton: (kami: Kami, account: Account, width?: number) =>
+              UseItemButton(
+                network,
+                kami,
+                account,
+                // blank icon (base64 1x1 transparent PNG)
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO0Y8Q0AAAAASUVORK5CYII=',
+                width,
+                6,
+                0
+              ),
           },
           utils: {
             getAccount: () => getAccount(world, components, accountEntity, accountRefreshOptions),

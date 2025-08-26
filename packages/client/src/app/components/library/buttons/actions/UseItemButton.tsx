@@ -10,16 +10,15 @@ import { passesConditions } from 'network/shapes/Conditional';
 import { Item } from 'network/shapes/Item';
 import { ButtonListOption, IconListButton } from '..';
 
-// Transparent 1x1 PNG for a temporary blank icon (placeholder until art is ready)
-const BLANK_ICON =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO5z7iUAAAAASUVORK5CYII=';
-
 // button for feeding a kami
 export const UseItemButton = (
   network: NetworkLayer,
   kami: Kami,
   account: Account,
-  icon: string
+  icon: string,
+  width?: number,
+  iconInsetXpx?: number,
+  iconInsetYpx?: number
 ) => {
   const { actions, api, components, world } = network;
 
@@ -48,14 +47,16 @@ export const UseItemButton = (
   }
 
   return (
-    <>
-      <TextTooltip key='feed-tooltip' text={[tooltip]}>
-        <IconListButton img={icon} options={options} disabled={disabled} />
-      </TextTooltip>
-      <TextTooltip key='feed-blank-tooltip' text={[tooltip]}>
-        <IconListButton img={BLANK_ICON} options={options} disabled={disabled} />
-      </TextTooltip>
-    </>
+    <TextTooltip key='feed-tooltip' text={[tooltip]}>
+      <IconListButton
+        img={icon}
+        options={options}
+        disabled={disabled}
+        width={width}
+        iconInsetXpx={iconInsetXpx}
+        iconInsetYpx={iconInsetYpx}
+      />
+    </TextTooltip>
   );
 };
 
