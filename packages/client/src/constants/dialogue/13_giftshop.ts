@@ -14,7 +14,7 @@ export const clock: DialogueNode = {
 
 export const mina: DialogueNode = {
   index: 132,
-  text: [LoyaltyText, `I need your help. Interested in supporting new product development?`],
+  text: [LoyaltyText, `Welcome to the gift shop.`],
   npc: {
     name: 'Mina',
     background: `   
@@ -29,17 +29,6 @@ export const mina: DialogueNode = {
     background-position: 0 0, 15px 15px;
  `,
   },
-  action: {
-    type: 'goal',
-    label: 'Support Mina',
-    input: 5,
-  },
-  args: [
-    {
-      type: 'REPUTATION',
-      index: 2,
-    },
-  ],
 };
 
 const exit: DialogueNode = {
