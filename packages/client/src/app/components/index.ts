@@ -164,7 +164,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: KamiPortalModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
+    gridConfig: { colStart: 25, colEnd: 75, rowStart: 15, rowEnd: 99 },
   },
   {
     uiComponent: KamiModal,
