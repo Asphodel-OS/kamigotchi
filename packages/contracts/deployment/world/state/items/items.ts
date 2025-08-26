@@ -172,7 +172,7 @@ async function createBasic(api: AdminAPI, entry: any) {
   const name = entry['Name'].trim();
   const description = entry['Description'];
   const rarityKey = entry['Rarity'];
-  const rarity = 5 - Rarities.indexOf(rarityKey);
+  const rarity = Rarities.indexOf(rarityKey) + 1;
 
   const image = getItemImage(name);
   console.log(`creating ${type} item ${name} (${index})`);
