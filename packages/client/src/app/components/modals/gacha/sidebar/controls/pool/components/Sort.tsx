@@ -2,17 +2,19 @@ import styled from 'styled-components';
 
 import { IconButton } from 'app/components/library';
 
-interface Props {
+export const Sort = ({
+  name,
+  icon,
+  ascending,
+  actions,
+}: {
   name: string;
   icon: string;
   ascending: boolean;
   actions: {
     flip: () => void;
   };
-}
-
-export const Sort = (props: Props) => {
-  const { name, icon, ascending, actions } = props;
+}) => {
   const { flip } = actions;
 
   const getLabel = () => {

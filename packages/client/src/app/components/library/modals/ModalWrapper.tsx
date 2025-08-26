@@ -4,7 +4,21 @@ import styled, { keyframes } from 'styled-components';
 import { Modals, useVisibility } from 'app/stores';
 import { ExitButton } from './ExitButton';
 
-interface Props {
+// ModalWrapper is an animated wrapper around all modals.
+// It includes and exit button with a click sound as well as Content formatting.
+export const ModalWrapper = ({
+  id,
+  children,
+  header,
+  footer,
+  canExit,
+  overlay,
+  noInternalBorder,
+  noPadding,
+  truncate,
+  scrollBarColor,
+  positionOverride,
+}: {
   id: keyof Modals;
   children: React.ReactNode;
   header?: React.ReactNode;
@@ -22,13 +36,7 @@ interface Props {
     rowEnd: number;
     position: 'fixed' | 'absolute';
   };
-}
-
-// ModalWrapper is an animated wrapper around all modals.
-// It includes and exit button with a click sound as well as Content formatting.
-export const ModalWrapper = (props: Props) => {
-  const { id, children, header, footer, positionOverride } = props;
-  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
+}) => {
   const { modals } = useVisibility();
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
 
@@ -67,13 +75,11 @@ export const ModalWrapper = (props: Props) => {
   );
 };
 
-interface WrapperProps {
+// Wrapper is an invisible animated wrapper around all modals sans any frills.
+const Wrapper = styled.div<{
   isOpen: boolean;
   overlay: boolean;
-}
-
-// Wrapper is an invisible animated wrapper around all modals sans any frills.
-const Wrapper = styled.div<WrapperProps>`
+}>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
@@ -85,12 +91,10 @@ const Wrapper = styled.div<WrapperProps>`
   height: 100%;
 `;
 
-interface ContentProps {
+const Content = styled.div<{
   isOpen: boolean;
   truncate?: boolean;
-}
-
-const Content = styled.div<ContentProps>`
+}>`
   position: relative;
   background-color: white;
   border: solid black 0.15vw;

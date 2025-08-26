@@ -2,28 +2,29 @@ import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const Tabs = ({
+  tab,
+  setTab: _setTab,
+}: {
   tab: string;
   setTab: (tab: string) => void;
-}
-
-export const Tabs = (props: Props) => {
+}) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
-    props.setTab(tab);
+    _setTab(tab);
   };
 
   return (
     <Container>
       <Button
         onClick={() => setTab('allies')}
-        disabled={props.tab === 'allies'}
+        disabled={tab === 'allies'}
         style={{ borderRight: 'solid black .15vw' }}
       >
         Allies
       </Button>
-      <Button onClick={() => setTab('enemies')} disabled={props.tab === 'enemies'}>
+      <Button onClick={() => setTab('enemies')} disabled={tab === 'enemies'}>
         Enemies
       </Button>
     </Container>

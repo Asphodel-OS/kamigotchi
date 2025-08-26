@@ -28,6 +28,7 @@ import { PartyModal } from './modals/party';
 import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
+import { AnimationStudio } from './modals/studio/AnimationStudio';
 import { TradingModal } from './modals/trading';
 import { AnimationStudio } from './modals/studio/AnimationStudio';
 import {
@@ -43,6 +44,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: LoadingState,
     gridConfig: { colStart: 1, colEnd: 13, rowStart: 1, rowEnd: 13 },
+  },
+  {
+    uiComponent: ActionQueue,
+    gridConfig: { colStart: 66, colEnd: 99, rowStart: 90, rowEnd: 100 },
   },
 
   // validators
@@ -83,10 +88,6 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: NotificationFixture,
     gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
-  },
-  {
-    uiComponent: ActionQueue,
-    gridConfig: { colStart: 66, colEnd: 99, rowStart: 90, rowEnd: 100 },
   },
 
   // canvas
@@ -199,4 +200,15 @@ export const components = [
     uiComponent: MerchantModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
+
+  // dev-only
+  ...(typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? [
+        {
+          uiComponent: AnimationStudio,
+          gridConfig: { colStart: 20, colEnd: 80, rowStart: 20, rowEnd: 80 },
+        },
+      ]
+    : []),
 ];

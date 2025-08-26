@@ -7,17 +7,17 @@ import { Kill } from 'clients/kamiden';
 import { Account, Kami } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const OwnerColumn = ({
+  kills,
+  utils,
+}: {
   kills: Kill[];
   utils: {
     getKamiByID: (id: EntityID) => Kami;
     getAccountByID: (id: EntityID) => Account;
     getOwner: (entity: EntityIndex) => Account;
   };
-}
-
-export const OwnerColumn = (props: Props) => {
-  const { kills, utils } = props;
+}) => {
   const { getAccountByID, getKamiByID, getOwner } = utils;
   const { accountIndex, setAccount } = useSelected();
   const { modals, setModals } = useVisibility();

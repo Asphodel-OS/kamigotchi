@@ -3,18 +3,18 @@ import styled from 'styled-components';
 import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { BaseAccount } from 'network/shapes/Account';
 
-interface Props {
+export const Searched = ({
+  isVisible,
+  accounts,
+  actions,
+}: {
   isVisible: boolean;
   accounts: BaseAccount[];
   actions: {
     blockFren: (account: BaseAccount) => void;
     requestFren: (account: BaseAccount) => void;
   };
-}
-
-export const Searched = (props: Props) => {
-  const { accounts, actions, isVisible } = props;
-
+}) => {
   const Actions = (account: BaseAccount) => {
     return (
       <ActionListButton

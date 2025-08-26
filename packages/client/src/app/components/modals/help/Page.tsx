@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 
-interface Props {
-  body: string[];
-}
-
-export const Page = (props: Props) => {
-  const { body } = props;
+export const Page = ({
+  body,
+}: {
+  body: string[]
+}) => {
   return (
     <Container>
       {body.map((line: string, i: number) => {

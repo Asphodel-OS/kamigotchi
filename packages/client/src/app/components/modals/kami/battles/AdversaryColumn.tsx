@@ -7,15 +7,15 @@ import { Kill } from 'clients/kamiden';
 import { Kami } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+export const AdversaryColumn = ({
+  kills,
+  utils,
+}: {
   kills: Kill[];
   utils: {
     getKamiByID: (id: EntityID) => Kami;
   };
-}
-
-export const AdversaryColumn = (props: Props) => {
-  const { kills, utils } = props;
+}) => {
   const { getKamiByID } = utils;
   const { setKami } = useSelected();
 

@@ -2,12 +2,11 @@ import { Overlay, TextTooltip } from 'app/components/library';
 import { PresaleData } from 'network/chain';
 import styled from 'styled-components';
 
-interface Props {
-  data: PresaleData;
-}
-
-export const Footer = (props: Props) => {
-  const { data } = props;
+export const Footer = ({
+  data,
+}: {
+  data: PresaleData
+}) => {
 
   const openBaselineDocs = () => {
     window.open('https://www.baseline.markets/', '_blank');
@@ -57,8 +56,8 @@ const Container = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: #d0fe41;
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
+  font-size: ${({ size }) => size}vw;
+  line-height: ${({ size }) => size * 1.5}vw;
   cursor: pointer;
   &:hover {
     opacity: 0.8;
@@ -68,13 +67,11 @@ const Text = styled.div<{ size: number }>`
   }
 `;
 
-interface BarProps {
+const Bar = styled.div<{
   percent: number;
   bgColor: string;
   fgColor: string;
-}
-
-const Bar = styled.div<BarProps>`
+}>`
   border-radius: 0 0 1.05vw 1.2vw;
   height: 4.2vh;
 

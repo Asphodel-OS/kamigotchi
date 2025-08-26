@@ -21,7 +21,31 @@ import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
 
-interface Props {
+type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
+
+const options = [
+  { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
+  { text: 'Room Type', img: insectIcon, object: 'RoomType' },
+  { text: 'Kami Count', img: HelpMenuIcons.kamis, object: 'KamiCount' },
+  { text: 'Operator Count', img: OperatorIcon, object: 'OperatorCount' },
+];
+
+export const Grid = ({
+  data: {
+    account,
+    accountKamis,
+    rooms,
+    roomIndex,
+    zone,
+  },
+  actions: {
+    move,
+  },
+  state: {
+    tick,
+  },
+  utils,
+}: {
   actions: {
     move: (roomIndex: number) => void;
   };
@@ -45,21 +69,7 @@ interface Props {
     queryScavInstance: (index: number, holderID: EntityID) => EntityIndex | undefined;
     getValue: (entity: EntityIndex) => number;
   };
-}
-
-type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
-
-const options = [
-  { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
-  { text: 'Room Type', img: insectIcon, object: 'RoomType' },
-  { text: 'Kami Count', img: HelpMenuIcons.kamis, object: 'KamiCount' },
-  { text: 'Operator Count', img: OperatorIcon, object: 'OperatorCount' },
-];
-
-export const Grid = (props: Props) => {
-  const { data, actions, utils, state } = props;
-  const { account, roomIndex, zone, rooms, accountKamis } = data;
-  const { tick } = state;
+}) => {
   const {
     getKamiLocation,
     getKami,
@@ -147,7 +157,7 @@ export const Grid = (props: Props) => {
 
   const handleRoomMove = (roomIndex: number) => {
     playClick();
-    actions.move(roomIndex);
+    move(roomIndex);
   };
 
   // updates the stats for a room and set it as the hovered room

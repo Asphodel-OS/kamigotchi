@@ -20,11 +20,12 @@ contract _ItemRegistrySystem is System, AuthRoles {
       string memory type_,
       string memory name,
       string memory description,
-      string memory media
-    ) = abi.decode(arguments, (uint32, string, string, string, string));
+      string memory media,
+      uint32 rarity
+    ) = abi.decode(arguments, (uint32, string, string, string, string, uint32));
     require(LibItem.getByIndex(components, index) == 0, "item reg: index used");
 
-    uint256 id = LibItem.createItem(components, index, type_, name, description, media);
+    uint256 id = LibItem.createItem(components, index, type_, name, description, media, rarity);
     return id;
   }
 
@@ -35,11 +36,12 @@ contract _ItemRegistrySystem is System, AuthRoles {
       string memory name,
       string memory description,
       string memory type_,
-      string memory media
-    ) = abi.decode(arguments, (uint32, string, string, string, string, string));
+      string memory media,
+      uint32 rarity
+    ) = abi.decode(arguments, (uint32, string, string, string, string, string, uint32));
     require(LibItem.getByIndex(components, index) == 0, "item reg: index used");
 
-    uint256 id = LibItem.createItem(components, index, type_, name, description, media);
+    uint256 id = LibItem.createItem(components, index, type_, name, description, media, rarity);
     LibItem.setFor(components, id, for_);
     return id;
   }

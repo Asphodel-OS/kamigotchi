@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import { Pairing } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 
-export interface Props {
+export const Balance = ({
+  balance,
+}: {
   balance: number;
-}
-
-export const Balance = (props: Props) => {
-  const { balance } = props;
+}) => {
 
   return (
     <Container>

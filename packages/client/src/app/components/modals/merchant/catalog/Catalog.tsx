@@ -5,15 +5,17 @@ import { Listing } from 'network/shapes/Listing';
 import { CartItem } from '../types';
 import { CatalogRow } from './CatalogRow';
 
-export interface Props {
+export const Catalog = ({
+  account,
+  listings,
+  cart,
+  setCart,
+}: {
   account: Account;
   listings: Listing[];
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
-}
-
-export const Catalog = (props: Props) => {
-  const { account, listings, cart, setCart } = props;
+}) => {
 
   const toggleListing = (itemIndex: number) => {
     const newCart = [...cart];

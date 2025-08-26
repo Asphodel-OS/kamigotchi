@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { TabType } from '../types';
 
-interface Props {
+export const Tabs = ({
+  tab,
+  setTab,
+}: {
   tab: TabType;
   setTab: (tab: TabType) => void;
-}
-
-export const Tabs = (props: Props) => {
-  const { tab, setTab } = props;
+}) => {
 
   const handleTabbing = (tab: TabType) => {
     setTab(tab);

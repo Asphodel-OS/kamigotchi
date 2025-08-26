@@ -1,6 +1,14 @@
 import styled from 'styled-components';
 
-type Props = {
+export const ProgressBar = ({
+  max,
+  current,
+  color,
+  indicator,
+  leftText,
+  rightText,
+  width,
+}: {
   max: number;
   current: number;
   color?: string;
@@ -8,34 +16,32 @@ type Props = {
   leftText?: string;
   rightText?: string;
   width?: number; // a percentage
-};
-
-export const ProgressBar = (props: Props) => {
-  const progress = ((props.current / props.max) * 100).toFixed(1) + '%';
+}) => {
+  const progress = ((current / max) * 100).toFixed(1) + '%';
   const innerStyles = {
-    backgroundColor: props.color ? props.color : '#3DE167',
+    backgroundColor: color ? color : '#3DE167',
     width: progress,
   };
-  const indicatorPos = (props.current / props.max) * 100 < 2.5 ? '2.5%' : progress;
+  const indicatorPos = (current / max) * 100 < 2.5 ? '2.5%' : progress;
 
   const bar = (
-    <OuterBar style={{ width: props.width ? props.width + '%' : '100%' }}>
+    <OuterBar style={{ width: width ? width + '%' : '100%' }}>
       <InnerBar style={innerStyles} />
     </OuterBar>
   );
 
   return (
-    <Container style={{ width: props.width ? props.width + '%' : '100%' }}>
-      {props.indicator && (
-        <Row style={{ width: props.width ? props.width + '%' : '100%' }}>
+    <Container style={{ width: width ? width + '%' : '100%' }}>
+      {indicator && (
+        <Row style={{ width: width ? width + '%' : '100%' }}>
           <>-</>
           <IndicatorText style={{ left: indicatorPos }}>{progress}</IndicatorText>
         </Row>
       )}
       {bar}
       <Row>
-        <EdgeText>{props.leftText}</EdgeText>
-        <EdgeText>{props.rightText}</EdgeText>
+        <EdgeText>{leftText}</EdgeText>
+        <EdgeText>{rightText}</EdgeText>
       </Row>
     </Container>
   );

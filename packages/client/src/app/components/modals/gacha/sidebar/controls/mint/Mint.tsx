@@ -8,7 +8,14 @@ import { ViewMode } from '../../../types';
 import { Public } from './Public';
 import { Whitelist } from './Whitelist';
 
-interface Props {
+export const Mint = ({
+  controls: {
+    mode,
+  },
+  data,
+  state,
+  isVisible,
+}: {
   isVisible: boolean;
   controls: {
     mode: ViewMode;
@@ -31,11 +38,7 @@ interface Props {
     price: number;
     tick: number;
   };
-}
-export const Mint = (props: Props) => {
-  const { controls, data, state, isVisible } = props;
-  const { mode } = controls;
-
+}) => {
   return (
     <Container isVisible={isVisible}>
       <Whitelist isVisible={mode === 'DEFAULT'} data={data} state={state} />

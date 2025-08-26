@@ -11,7 +11,19 @@ import { KamisExpanded } from './KamisExpanded';
 import { KamisExternal } from './KamisExternal';
 import { View } from './types';
 
-interface Props {
+export const KamiList = ({
+  actions,
+  controls: {
+    view,
+  },
+  data,
+  display,
+  state: {
+    displayedKamis,
+    tick,
+  },
+  utils,
+}: {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
@@ -46,13 +58,7 @@ interface Props {
     getTempBonuses: (kami: Kami) => Bonus[];
     getAllAccounts: () => Account[];
   };
-}
-
-export const KamiList = (props: Props) => {
-  const { actions, controls, data, display, state, utils } = props;
-  const { kamis, wildKamis } = data;
-  const { view } = controls;
-  const { displayedKamis, tick } = state;
+}) => {
   const { modals } = useVisibility();
 
   /////////////////
@@ -60,7 +66,7 @@ export const KamiList = (props: Props) => {
 
   return (
     <Container>
-      {kamis.length == 0 && view !== 'external' && (
+      {data.kamis.length == 0 && view !== 'external' && (
         <EmptyText
           linkColor='#d44c79'
           text={[
@@ -96,7 +102,7 @@ export const KamiList = (props: Props) => {
       />
       <KamisExternal
         actions={actions}
-        controls={controls}
+        controls={{ view }}
         data={{ ...data, kamis: data.wildKamis }}
         utils={utils}
         isVisible={modals.party && view === 'external'}

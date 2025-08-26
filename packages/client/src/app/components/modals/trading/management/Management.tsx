@@ -11,7 +11,14 @@ import { TabType } from '../types';
 import { Create } from './create/Create';
 import { Offers } from './offers/Offers';
 
-interface Props {
+export const Management = ({
+  actions,
+  controls,
+  data,
+  types,
+  utils,
+  isVisible,
+}: {
   actions: {
     createTrade: (
       wantItems: Item[],
@@ -45,10 +52,7 @@ interface Props {
     getItemByIndex: (index: number) => Item;
   };
   isVisible: boolean;
-}
-
-export const Management = (props: Props) => {
-  const { isVisible, actions, controls, data, types, utils } = props;
+}) => {
 
   return (
     <Content isVisible={isVisible}>

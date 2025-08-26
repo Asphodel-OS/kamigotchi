@@ -13,13 +13,13 @@ import { GasGauge } from './GasGauge';
 // the precision to represent gas numbers at readable scale (e.g. mETH)
 const READABILITY_PRECISION = 3;
 
-interface Props {
+export const Controls = ({
+  mode,
+  setMode,
+}: {
   mode: number;
   setMode: Function;
-}
-
-export const Controls = (props: Props) => {
-  const { mode, setMode } = props;
+}) => {
   const { account: kamiAccount } = useAccount();
   const iconMapping = [TriggerIcons.eyeClosed, TriggerIcons.eyeHalf, TriggerIcons.eyeOpen];
 

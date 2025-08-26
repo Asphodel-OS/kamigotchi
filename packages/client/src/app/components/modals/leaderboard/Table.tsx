@@ -6,17 +6,18 @@ import { Account } from 'network/shapes/Account';
 import { Score } from 'network/shapes/Score';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+// the table rendering of the leaderboard modal
+export const Table = ({
+  scores,
+  prefix,
+  utils,
+}: {
   scores: Score[];
   prefix: string;
   utils: {
     getAccountByID: (id: EntityID) => Account;
   };
-}
-
-// the table rendering of the leaderboard modal
-export const Table = (props: Props) => {
-  const { scores, prefix, utils } = props;
+}) => {
   const { getAccountByID } = utils;
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();

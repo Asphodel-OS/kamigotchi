@@ -11,7 +11,14 @@ import { Filter, Sort, TabType, ViewMode } from '../../types';
 import { AuctionView } from '../auctions/AuctionView';
 import { KamiView } from './KamiView';
 
-interface Props {
+export const Pool = ({
+  controls,
+  caches,
+  data,
+  state,
+  utils,
+  isVisible,
+}: {
   controls: {
     tab: TabType;
     mode: ViewMode;
@@ -35,10 +42,7 @@ interface Props {
     getKami: (entity: EntityIndex) => Kami;
   };
   isVisible: boolean;
-}
-
-export const Pool = (props: Props) => {
-  const { controls, caches, data, state, utils, isVisible } = props;
+}) => {
   const { mode } = controls;
   const { auction, mintConfig } = data;
   const { tick } = state;
@@ -81,6 +85,6 @@ const Container = styled.div<{ isVisible: boolean }>`
 
 const Text = styled.div<{ size: number }>`
   color: black;
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
+  font-size: ${({ size }) => size}vw;
+  line-height: ${({ size }) => size * 1.5}vw;
 `;

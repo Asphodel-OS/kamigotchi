@@ -11,9 +11,12 @@ import { useStream } from 'network/utils';
 export const MainWindow = observer(({ ready }: { ready: boolean }) => {
   const layers = useLayers();
 
+  // this includes the LoadingState and ActionQueue components when not ready
+  const toRender = ready ? allComponents : allComponents.slice(0, 2);
+
   return (
     <UIGrid>
-      {(ready ? allComponents : allComponents.slice(0, 1)).map((componentWithGrid) => (
+      {toRender.map((componentWithGrid) => (
         <UIComponentRenderer
           key={componentWithGrid.uiComponent.id}
           layers={layers}

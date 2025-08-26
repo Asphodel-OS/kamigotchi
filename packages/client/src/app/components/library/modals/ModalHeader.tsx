@@ -1,14 +1,13 @@
 import styled from 'styled-components';
 
-interface Props {
+// ModalHeader renders a standard modal header with Title and optional icon.
+export const ModalHeader = ({
+  icon,
+  title,
+}: {
   title: string;
   icon?: string;
-}
-
-// ModalHeader renders a standard modal header with Title and optional icon.
-export const ModalHeader = (props: Props) => {
-  const { icon, title } = props;
-
+}) => {
   return (
     <Container>
       {icon && <Image src={icon} alt={title} />}

@@ -1,14 +1,15 @@
 import { ActionButton, TextTooltip } from 'app/components/library';
 import styled from 'styled-components';
 
-interface Props {
+export const Menu = ({
+  options,
+  mode,
+  setMode,
+}: {
   options: string[];
   mode: string;
   setMode: (mode: string) => void;
-}
-
-export const Menu = (props: Props) => {
-  const { options, mode, setMode } = props;
+}) => {
   return (
     <Container>
       {options.map((treeName) => {

@@ -3,15 +3,15 @@ import styled from 'styled-components';
 import { AccountCard, ActionListButton } from 'app/components/library';
 import { Friendship } from 'network/shapes/Friendship';
 
-interface Props {
+export const Blocked = ({
+  blocked,
+  actions,
+}: {
   blocked: Friendship[];
   actions: {
     cancelFren: (friendship: Friendship) => void;
   };
-}
-
-export const Blocked = (props: Props) => {
-  const { blocked, actions } = props;
+}) => {
   if (blocked.length === 0) return <EmptyText>no blocked accounts</EmptyText>;
 
   return (

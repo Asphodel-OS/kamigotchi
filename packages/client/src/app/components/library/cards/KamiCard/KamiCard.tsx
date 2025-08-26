@@ -18,7 +18,26 @@ import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
 import { CRTShader } from 'app/components/shaders/CRTShader';
 
-interface Props {
+// KamiCard is a card that displays information about a Kami. It is designed to display
+// information ranging from current harvest or death as well as support common actions.
+export const KamiCard = ({
+  kami,
+  description,
+  descriptionOnClick,
+  isFriend,
+  contentTooltip,
+  subtext,
+  subtextOnClick,
+  actions,
+  showBattery,
+  showLevelUp,
+  showSkillPoints,
+  showCooldown,
+  utils: {
+    calcExpRequirement,
+    getTempBonuses,
+  } = {},
+}: {
   kami: Kami; // assumed to have a harvest attached
   description: string[];
   descriptionOnClick?: () => void;
@@ -33,30 +52,9 @@ interface Props {
   showCooldown?: boolean;
   utils?: {
     calcExpRequirement?: (lvl: number) => number;
-    getTempBonuses: (kami: Kami) => Bonus[];
+    getTempBonuses?: (kami: Kami) => Bonus[];
   };
-}
-
-// KamiCard is a card that displays information about a Kami. It is designed to display
-// information ranging from current harvest or death as well as support common actions.
-export const KamiCard = (props: Props) => {
-  const {
-    kami,
-    actions,
-    showLevelUp,
-    showSkillPoints,
-    showBattery,
-    showCooldown,
-    isFriend,
-    utils,
-  } = props;
-
-  const getTempBonuses = utils?.getTempBonuses;
-  const { calcExpRequirement } = utils ?? {};
-  const { description, descriptionOnClick } = props;
-  const { contentTooltip } = props;
-  const { subtext, subtextOnClick } = props;
-
+}) => {
   const { modals, setModals } = useVisibility();
   const { kamiIndex, setKami } = useSelected();
   const [canLevel, setCanLevel] = useState(false);

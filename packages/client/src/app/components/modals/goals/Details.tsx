@@ -5,14 +5,13 @@ import { Goal, Tier } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
 import { ItemIconHorizontal } from './ItemIconHorizontal';
 
-interface Props {
+export const Details = ({
+  goal,
+  getFromDescription,
+}: {
   goal: Goal;
   getFromDescription: (type: string, index: number) => DetailedEntity;
-}
-
-export const Details = (props: Props) => {
-  const { goal, getFromDescription } = props;
-
+}) => {
   ////////////////
   // SMALL DISPLAYS
 
@@ -48,8 +47,8 @@ export const Details = (props: Props) => {
 
   const DescriptionBox = (
     <Box style={{ marginTop: '0' }}>
-      <TitleText>{props.goal.name}</TitleText>
-      <DescriptionText>{props.goal.description}</DescriptionText>
+      <TitleText>{goal.name}</TitleText>
+      <DescriptionText>{goal.description}</DescriptionText>
     </Box>
   );
 

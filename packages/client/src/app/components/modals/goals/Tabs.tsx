@@ -3,16 +3,17 @@ import { playClick } from 'utils/sounds';
 
 import { ActionButton } from 'app/components/library';
 
-interface Props {
+export const Tabs = ({
+  tab,
+  setTab: _setTab,
+}: {
   tab: string;
   setTab: (tab: string) => void;
-}
-
-export const Tabs = (props: Props) => {
+}) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
-    props.setTab(tab);
+    _setTab(tab);
   };
 
   return (
@@ -21,13 +22,13 @@ export const Tabs = (props: Props) => {
         onClick={() => setTab('GOAL')}
         text='Goal'
         size='medium'
-        disabled={props.tab === 'GOAL'}
+        disabled={tab === 'GOAL'}
       />
       <ActionButton
         onClick={() => setTab('LEADERBOARD')}
         text='Leaderboard'
         size='medium'
-        disabled={props.tab === 'LEADERBOARD'}
+        disabled={tab === 'LEADERBOARD'}
       />
     </Container>
   );

@@ -9,18 +9,21 @@ import {
 } from 'app/components/library';
 import { Item } from 'network/shapes';
 
-interface Props {
+export const LineItem = ({
+  options,
+  selected,
+  amt,
+  setAmt,
+  remove,
+  reverse,
+}: {
   options: IconListButtonOption[];
   selected: Item;
   amt: number;
   setAmt: (e: ChangeEvent<HTMLInputElement>) => void;
   remove?: () => void;
   reverse?: boolean;
-}
-
-export const LineItem = (props: Props) => {
-  const { options, selected, amt, setAmt, remove, reverse } = props;
-
+}) => {
   return (
     <Container>
       {reverse && (

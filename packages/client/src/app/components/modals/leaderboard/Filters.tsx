@@ -4,20 +4,22 @@ import { MUSU_INDEX } from 'constants/items';
 import { ScoresFilter } from 'network/shapes/Score';
 import { ActionListButton } from '../../library';
 
-interface Props {
+export const Filters = ({
+  filter,
+  epochOptions,
+  setFilter,
+}: {
   filter: ScoresFilter;
   epochOptions: number[];
   setFilter: Function;
-}
-
-export const Filters = (props: Props) => {
+}) => {
   const TypeFilter = () => {
-    const text = !!props.filter.type ? `Type: ${props.filter.type}` : 'Type';
+    const text = !!filter.type ? `Type: ${filter.type}` : 'Type';
     const types = ['FEED', 'COLLECT', 'LIQUIDATE'];
     const options = types.map((type) => {
       return {
         text: type,
-        onClick: () => props.setFilter({ ...props.filter, type, index: MUSU_INDEX }),
+        onClick: () => setFilter({ ...filter, type, index: MUSU_INDEX }),
       };
     });
 

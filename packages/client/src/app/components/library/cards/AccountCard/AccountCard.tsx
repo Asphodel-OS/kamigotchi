@@ -8,18 +8,22 @@ import { playClick } from 'utils/sounds';
 import { Card } from '..';
 import { TextTooltip } from '../../poppers';
 
-interface Props {
+// AccountCard is a Card that displays information about an Account
+export const AccountCard = ({
+  account,
+  description,
+  descriptionOnClick,
+  subtext,
+  subtextOnClick,
+  actions,
+}: {
   account: BaseAccount;
   description: string[];
   descriptionOnClick?: () => void;
   subtext?: string;
   subtextOnClick?: () => void;
   actions?: React.ReactNode;
-}
-
-// AccountCard is a Card that displays information about an Account
-export const AccountCard = (props: Props) => {
-  const { account, description, subtext, actions } = props;
+}) => {
   const { modals, setModals } = useVisibility();
   const { setAccount } = useSelected();
 
@@ -51,7 +55,7 @@ export const AccountCard = (props: Props) => {
   // generate the styled text divs for the description
   const Description = () => {
     const header = (
-      <TextBig key='header' onClick={props.descriptionOnClick}>
+      <TextBig key='header' onClick={descriptionOnClick}>
         {description[0]}
       </TextBig>
     );
@@ -90,7 +94,7 @@ export const AccountCard = (props: Props) => {
           <Description />
         </ContentColumn>
         <ContentColumn key='col-2'>
-          <ContentSubtext key='subtext' onClick={props.subtextOnClick}>
+          <ContentSubtext key='subtext' onClick={subtextOnClick}>
             {subtext}
           </ContentSubtext>
           <ContentActions key='actions'>{actions}</ContentActions>

@@ -4,12 +4,11 @@ import { useVisibility } from 'app/stores';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
-type GaugeProps = {
+export const GasGauge = ({
+  level,
+}: {
   level: number; // [0, 1]
-};
-
-export const GasGauge = (props: GaugeProps) => {
-  const { level } = props;
+}) => {
   const { modals, setModals } = useVisibility();
 
   const handleClick = () => {
@@ -67,7 +66,7 @@ const Arrow = styled.div<{ angle: number }>`
   left: 50%;
 
   height: 75%;
-  transform: translateX(-50%) rotate(${(props) => props.angle}deg);
+  transform: translateX(-50%) rotate(${({ angle }) => angle}deg);
   transform-origin: bottom center;
   display: flex;
   align-items: center;

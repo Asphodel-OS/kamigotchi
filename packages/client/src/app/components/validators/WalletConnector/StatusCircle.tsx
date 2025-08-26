@@ -9,13 +9,13 @@ const IconMap = {
   FIXED: IndicatorIcons.success,
 };
 
-interface Props {
+export const StatusCircle = ({
+  state,
+  size,
+}: {
   state: Status;
   size?: number;
-}
-
-export const StatusCircle = (props: Props) => {
-  const { state, size } = props;
+}) => {
 
   return (
     <Container size={size ?? 3}>

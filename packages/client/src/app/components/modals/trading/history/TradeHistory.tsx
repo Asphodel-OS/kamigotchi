@@ -8,7 +8,19 @@ import { Trade as TradeHistoryType } from 'clients/kamiden/proto';
 import { Account, Item } from 'network/shapes';
 import { ExecutedOffer } from '../management/offers/ExecutedOffer';
 
-interface Props {
+export const TradeHistory = ({
+  controls: {
+    typeFilter,
+  },
+  data: {
+    account,
+    tradeHistory,
+  },
+  utils: {
+    getTradeHistory,
+    getItemByIndex,
+  },
+}: {
   controls: {
     typeFilter: TradeType;
   };
@@ -21,13 +33,7 @@ interface Props {
     getAccountByID: (id: EntityID) => Account;
     getTradeHistory: (tradeHistory: TradeHistoryType) => Trade;
   };
-}
-
-export const TradeHistory = (props: Props) => {
-  const { controls, data, utils } = props;
-  const { typeFilter } = controls;
-  const { account, tradeHistory } = data;
-  const { getTradeHistory, getItemByIndex } = utils;
+}) => {
   const [displayed, setDisplayed] = useState<Trade[]>([]);
 
   useEffect(() => {

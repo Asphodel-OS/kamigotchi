@@ -3,20 +3,20 @@ import styled from 'styled-components';
 
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
+import type { ComponentProps } from 'react';
 
-interface Props {
-  data: { account: Account };
+export const Kamis = ({
+  data,
+  utils,
+}: {
+  data: ComponentProps<typeof Kamis>['data'];
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
   };
-}
-
-export const Kamis = (props: Props) => {
-  const { data, utils } = props;
+}) => {
   const { account } = data;
   const { getAccountKamis } = utils;
 

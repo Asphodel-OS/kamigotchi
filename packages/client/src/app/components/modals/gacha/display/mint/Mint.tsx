@@ -8,7 +8,12 @@ import { TabType, ViewMode } from '../../types';
 import { Public } from './Public';
 import { Whitelist } from './Whitelist';
 
-interface Props {
+export const Mint = ({
+  isVisible,
+  controls,
+  data,
+  state,
+}: {
   isVisible: boolean;
   controls: {
     mode: ViewMode;
@@ -29,11 +34,7 @@ interface Props {
   state: {
     tick: number;
   };
-}
-
-export const Mint = (props: Props) => {
-  const { isVisible, controls, data, state } = props;
-
+}) => {
   return (
     <Container isVisible={isVisible}>
       <Whitelist controls={controls} state={state} data={data} />
@@ -58,7 +59,7 @@ const Container = styled.div<{ isVisible: boolean }>`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 2}vw;
+  font-size: ${({ size }) => size}vw;
+  line-height: ${({ size }) => size * 2}vw;
   color: #b9e9b9;
 `;

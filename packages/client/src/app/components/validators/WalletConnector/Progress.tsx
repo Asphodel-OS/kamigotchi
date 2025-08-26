@@ -3,17 +3,17 @@ import styled from 'styled-components';
 import { StatusCircle } from './StatusCircle';
 import { Step } from './types';
 
-interface Props {
+export const Progress = ({
+  statuses,
+  step,
+}: {
   statuses: {
     connected: boolean; // whether the wallet manager is connected
     networked: boolean; // whether manager is connected to the correct network
     authenticated: boolean; // whether logged in with privy
   };
   step: Step;
-}
-
-export const Progress = (props: Props) => {
-  const { statuses, step } = props;
+}) => {
 
   /////////////////
   // WALLET CONNECTION

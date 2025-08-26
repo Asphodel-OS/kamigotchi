@@ -16,7 +16,24 @@ import { Bio } from './Bio';
 import { FriendActions } from './FriendActions';
 import { Pfp } from './Pfp';
 
-interface Props {
+export const Header = ({
+  account,
+  actions: {
+    setBio,
+    handlePfpChange,
+    requestFren,
+    cancelFren,
+    blockFren,
+    acceptFren,
+  },
+  isLoading,
+  isSelf,
+  player,
+  utils: {
+    getAccountKamis,
+    getFriends,
+  },
+}: {
   account: Account; // account selected for viewing
   actions: {
     setBio: (bio: string) => void;
@@ -33,13 +50,7 @@ interface Props {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
     getFriends: (accEntity: EntityIndex) => FriendsType;
   };
-}
-
-export const Header = (props: Props) => {
-  const { isLoading, account, utils, isSelf, actions, player } = props;
-  const { getAccountKamis, getFriends } = utils;
-  const { handlePfpChange, setBio, requestFren, cancelFren, blockFren, acceptFren } = actions;
-
+}) => {
   const copyText = (text: string) => {
     playClick();
     navigator.clipboard.writeText(text);

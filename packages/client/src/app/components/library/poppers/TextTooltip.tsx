@@ -3,7 +3,26 @@ import styled from 'styled-components';
 
 import { Tooltip } from './Tooltip';
 
-interface Props {
+// example how of to pass icons to the tooltip:
+//  [
+//       <>
+//         {playerEntities.length} <img src={OperatorIcon} /> players on this tile
+//       </>,
+//     ];
+
+export const TextTooltip = ({
+  text,
+  title,
+  children,
+  grow,
+  direction,
+  delay,
+  maxWidth,
+  size: textSize = 0.75,
+  alignText = 'center',
+  color,
+  fullWidth,
+}: {
   text: string[] | React.ReactNode[];
   title?: string;
   children: React.ReactNode;
@@ -15,21 +34,7 @@ interface Props {
   alignText?: 'left' | 'right' | 'center';
   color?: string;
   fullWidth?: boolean;
-}
-
-// example how of to pass icons to the tooltip:
-//  [
-//       <>
-//         {playerEntities.length} <img src={OperatorIcon} /> players on this tile
-//       </>,
-//     ];
-
-export const TextTooltip = (props: Props) => {
-  const { children, grow, direction } = props;
-  const { text, title, alignText, color, delay } = props;
-  const { maxWidth, fullWidth } = props;
-  const textSize = props.size ?? 0.75;
-
+}) => {
   return (
     <Tooltip
       grow={grow}
@@ -55,10 +60,10 @@ export const TextTooltip = (props: Props) => {
   );
 };
 
-const Text = styled.div<{ size: number; align?: string }>`
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.8}vw;
-  text-align: ${(props) => props.align ?? 'center'};
+const Text = styled.div<{ size: number; align: string }>`
+  font-size: ${({ size }) => size}vw;
+  line-height: ${({ size }) => size * 1.8}vw;
+  text-align: ${({ align }) => align};
   white-space: pre-line;
   img {
     vertical-align: middle;

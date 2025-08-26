@@ -8,7 +8,7 @@ export const getDeployComponents = (toMatch?: string) => {
   let result = config;
   result.systems = [];
   if (!toMatch) return result;
-  const componentsArray = toMatch.split(',').map((comp: string) => comp.trim());
+  const componentsArray = toMatch.split(',').map((comp: string) => parseCompName(comp));
   result.components = result.components.filter((component: any) =>
     componentsArray.includes(component.comp)
   );
@@ -55,4 +55,13 @@ export const getCompIDByName = (name: string) => {
 
 export const getSystemIDByName = (name: string) => {
   return systemToId[name as keyof typeof systemToId];
+};
+
+////////////////
+// UTILS
+
+const parseCompName = (name: string) => {
+  name = name.trim();
+  if (name.endsWith('Component')) return name.slice(0, -9);
+  return name;
 };

@@ -13,7 +13,13 @@ import { Mint } from './mint/Mint';
 import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
-interface Props {
+//
+export const Controls = ({
+  actions,
+  controls,
+  data,
+  state,
+}: {
   actions: {
     reveal: (commits: Commit[]) => Promise<void>;
   };
@@ -50,11 +56,7 @@ interface Props {
   utils: {
     isWhitelisted: (entity: EntityIndex) => boolean;
   };
-}
-
-//
-export const Controls = (props: Props) => {
-  const { actions, controls, data, state } = props;
+}) => {
   const { reveal } = actions;
   const { mode, setMode, tab } = controls;
   const { commits, payItem, balance } = data;

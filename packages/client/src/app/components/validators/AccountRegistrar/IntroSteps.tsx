@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import { BackButton, Description, NextButton, Row } from './components';
 import { Section } from './components/shared';
 
-export interface Props {
+export const IntroStep1 = ({
+  step,
+  setStep,
+}: {
   step: number;
   setStep: (step: number) => void;
-}
-
-export const IntroStep1 = (props: Props) => {
-  const { step, setStep } = props;
+}) => {
 
   return (
     <Container>
@@ -23,8 +23,13 @@ export const IntroStep1 = (props: Props) => {
   );
 };
 
-export const IntroStep2 = (props: Props) => {
-  const { step, setStep } = props;
+export const IntroStep2 = ({
+  step,
+  setStep,
+}: {
+  step: number;
+  setStep: (step: number) => void;
+}) => {
 
   return (
     <Container>

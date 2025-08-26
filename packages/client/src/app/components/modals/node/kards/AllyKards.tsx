@@ -8,7 +8,21 @@ import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
-interface Props {
+// rendering of an ally kami on this node
+export const AllyKards = ({
+  account,
+  kamis,
+  actions: {
+    collect,
+    stop,
+  },
+  display: {
+    UseItemButton,
+  },
+  utils: {
+    getTempBonuses,
+  },
+}: {
   account: Account;
   kamis: Kami[]; // ally kami entities
 
@@ -22,15 +36,7 @@ interface Props {
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
   };
-}
-
-// rendering of an ally kami on this node
-export const AllyKards = (props: Props) => {
-  const { actions, display, account, kamis, utils } = props;
-  const { getTempBonuses } = utils;
-  const { collect, stop } = actions;
-  const { UseItemButton } = display;
-
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCollapseToggle = () => {
@@ -79,7 +85,7 @@ export const AllyKards = (props: Props) => {
             ]}
             showBattery
             showCooldown
-            utils={utils}
+            utils={{ getTempBonuses, calcExpRequirement }}
           />
         ))}
     </Container>

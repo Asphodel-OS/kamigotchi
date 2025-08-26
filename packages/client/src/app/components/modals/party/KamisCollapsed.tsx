@@ -11,7 +11,14 @@ import { Node } from 'network/shapes/Node';
 
 const ONYX_REVIVE_PRICE = 3;
 
-interface Props {
+export const KamisCollapsed = ({
+  actions: { onyxApprove, onyxRevive },
+  data: { account, node, onyx },
+  display: { HarvestButton, UseItemButton },
+  state: { displayedKamis, tick },
+  isVisible,
+  utils,
+}: {
   actions: {
     onyxApprove: (price: number) => void;
     onyxRevive: (kami: Kami) => void;
@@ -37,14 +44,7 @@ interface Props {
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
   };
-}
-
-export const KamisCollapsed = (props: Props) => {
-  const { actions, data, display, state, isVisible, utils } = props;
-  const { onyxApprove, onyxRevive } = actions;
-  const { account, node, onyx } = data;
-  const { displayedKamis, tick } = state;
-  const { HarvestButton, UseItemButton } = display;
+}) => {
 
   /////////////////
   // INTERPRETATION

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-interface TextProps {
+export const Text = styled.div<{
   size: number;
   color?: string;
   padding?: {
@@ -9,9 +9,7 @@ interface TextProps {
     left?: number;
     right?: number;
   };
-}
-
-export const Text = styled.div<TextProps>`
+}>`
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size }) => size * 1.5}vw;
   color: ${({ color }) => color ?? '#333'};

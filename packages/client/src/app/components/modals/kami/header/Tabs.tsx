@@ -3,18 +3,17 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { TabType } from '../Kami';
 
-interface Props {
+export const Tabs = ({
+  tab,
+  setTab: setTabProp,
+}: {
   tab: TabType;
   setTab: (tab: TabType) => void;
-}
-
-export const Tabs = (props: Props) => {
-  const { tab } = props;
-
+}) => {
   // layer on a sound effect
   const setTab = async (tab: TabType) => {
     playClick();
-    props.setTab(tab);
+    setTabProp(tab);
   };
 
   return (

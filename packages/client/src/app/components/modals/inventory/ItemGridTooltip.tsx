@@ -4,17 +4,19 @@ import { Item } from 'app/cache/item';
 import { Allo } from 'network/shapes/Allo';
 import { DetailedEntity } from 'network/shapes/utils';
 
-interface Props {
+export const ItemGridTooltip = ({
+  item,
+  utils: {
+    displayRequirements,
+    parseAllos,
+  },
+}: {
   item: Item;
   utils: {
     displayRequirements: (recipe: Item) => string;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
   };
-}
-
-export const ItemGridTooltip = (props: Props) => {
-  const { item, utils } = props;
-  const { displayRequirements, parseAllos } = utils;
+}) => {
 
   const image = item.image;
   const title = item.name;
@@ -95,7 +97,7 @@ const SubSection = styled.span`
 const BottomSection = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   gap: 0.5vw;
   padding: 0.5vw;
 `;

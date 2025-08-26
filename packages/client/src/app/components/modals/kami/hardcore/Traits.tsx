@@ -6,12 +6,11 @@ import { Kami } from 'network/shapes/Kami';
 import { Stat } from 'network/shapes/Stats';
 import { Trait } from 'network/shapes/Trait';
 
-interface Props {
+export const Traits = ({
+  kami,
+}: {
   kami: Kami;
-}
-
-export const Traits = (Props: Props) => {
-  const { kami } = Props;
+}) => {
   const traits = ['body', 'hand', 'face', 'color', 'background'];
 
   return (
@@ -96,7 +95,7 @@ const Title = styled.div<{ size: number }>`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${(props) => props.size}vw;
+  font-size: ${({ size }) => size}vw;
   margin: auto;
 `;
 

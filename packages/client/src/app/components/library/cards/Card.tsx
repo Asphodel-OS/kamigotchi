@@ -6,7 +6,12 @@ import { LevelUpArrows } from '../animations/LevelUp';
 import { TextTooltip } from '../poppers/TextTooltip';
 import { Overlay } from '../styles';
 
-interface Props {
+// Card is a card that displays a visually encapsulated image (left) and text-based content (right)
+export const Card = ({
+  image,
+  children,
+  fullWidth,
+}: {
   children: React.ReactNode;
   image?: {
     icon?: string;
@@ -23,11 +28,7 @@ interface Props {
     filter?: string; // CSS filter applied to base image only
   };
   fullWidth?: boolean;
-}
-
-// Card is a card that displays a visually encapsulated image (left) and text-based content (right)
-export const Card = (props: Props) => {
-  const { image, children, fullWidth } = props;
+}) => {
   const scale = image?.scale ?? 9;
 
   // handle image click if there is one

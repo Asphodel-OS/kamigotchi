@@ -6,16 +6,18 @@ import { Listing } from 'network/shapes/Listing';
 import { getItemImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 
-export interface Props {
+// TODO: support multiple buys
+export const CartRow = ({
+  listing,
+  quantity,
+  setQuantity,
+  remove,
+}: {
   listing: Listing;
   quantity: number;
   setQuantity: (quantity: number) => void;
   remove: () => void;
-}
-
-// TODO: support multiple buys
-export const CartRow = (props: Props) => {
-  const { listing, quantity, setQuantity, remove } = props;
+}) => {
   const max = 100;
   const min = 1;
 

@@ -7,7 +7,12 @@ import { Account } from 'network/shapes/Account';
 import { Goal } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
 
-interface Props {
+export const ActionBar = ({
+  actions,
+  account,
+  goal,
+  utils,
+}: {
   actions: {
     contributeTx: (goal: Goal, amount: number) => void;
     claimTx: (goal: Goal) => void;
@@ -20,11 +25,7 @@ interface Props {
     getBalance: (holder: EntityIndex, index: number | undefined, type: string) => number;
     getFromDescription: (type: string, index: number) => DetailedEntity;
   };
-}
-
-export const ActionBar = (props: Props) => {
-  const { actions, account, goal, utils } = props;
-
+}) => {
   const [contributeAmount, setContributeAmount] = useState(0);
 
   const accBalance = () => {

@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { Dispatch, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 
 import { calcTradeTax } from 'app/cache/trade';
 import { IconButton, Overlay, Pairing, Text } from 'app/components/library';
@@ -19,7 +19,13 @@ import { SingleCreate } from './SingleCreate';
 type Mode = 'Single' | 'Multi';
 const DisabledItems = [ONYX_INDEX, ETH_INDEX];
 
-interface Props {
+export const Create = ({
+  actions,
+  controls,
+  data,
+  types,
+  utils,
+}: {
   actions: {
     createTrade: (
       wantItems: Item[],
@@ -45,10 +51,7 @@ interface Props {
   utils: {
     entityToIndex: (id: EntityID) => EntityIndex;
   };
-}
-
-export const Create = (props: Props) => {
-  const { actions, controls, data, types, utils } = props;
+}) => {
   const { createTrade } = actions;
   const { setIsConfirming, setConfirmData } = controls;
   const { account } = data;
@@ -56,6 +59,12 @@ export const Create = (props: Props) => {
   const { entityToIndex } = utils;
 
   const [mode, setMode] = useState<Mode>('Single');
+  const [thousandsSeparator, setThousandsSeparator] = useState<string>(',');
+
+  // tests number formatting
+  useEffect(() => {
+    setThousandsSeparator((4.56).toLocaleString().includes(',') ? '.' : ',');
+  }, []);
 
   // toggle between multi and single Create modes
   const toggleMode = () => {
@@ -189,13 +198,21 @@ export const Create = (props: Props) => {
       <MultiCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
-        data={{ ...data, items: data.items.filter((item) => !DisabledItems.includes(item.index)) }}
+        data={{
+          ...data,
+          items: data.items.filter((item) => !DisabledItems.includes(item.index)),
+          thousandsSeparator,
+        }}
         isVisible={mode === 'Multi'}
       />
       <SingleCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
-        data={{ ...data, items: data.items.filter((item) => !DisabledItems.includes(item.index)) }}
+        data={{
+          ...data,
+          items: data.items.filter((item) => !DisabledItems.includes(item.index)),
+          thousandsSeparator,
+        }}
         isVisible={mode === 'Single'}
       />
       <Overlay bottom={0.75} left={0.75}>
