@@ -1,15 +1,18 @@
 import styled from 'styled-components';
 
+import { Inventory } from 'app/cache/inventory';
 import { IconListButton, TextTooltip } from 'app/components/library';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account } from 'network/shapes/Account';
 import { Item } from 'network/shapes/Item';
+import { ChangeEvent, useState } from 'react';
 
 interface Props {
   actions: { sendItemsTx: (items: Item[], amts: number[], account: Account) => void };
   data: {
     showSend: boolean;
     accounts: Account[];
+    inventories: Inventory[];
   };
   utils: {
     setShowSend: (show: boolean) => void;
@@ -22,9 +25,22 @@ export const Send = (props: Props) => {
   const { setShowSend } = utils;
   const { sendItemsTx } = actions;
 
+  const [amt, setAmt] = useState<number>(1);
+
   const getSendTooltip = (item: Item) => {
     const tooltip = [`Send ${item.name} to another account.`];
     return tooltip;
+  };
+
+  // adjust and clean the Want amounts in the trade offer in respoonse to a form change
+  const updateItemAmt = (event: ChangeEvent<HTMLInputElement>, inventory: Inventory) => {
+    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
+    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const min = 0;
+    const max = inventory.balance;
+    const amt = Math.max(min, Math.min(max, rawQuantity));
+
+    setAmt(amt);
   };
 
   const SendButton = (item: Item[], amts: number[]) => {
