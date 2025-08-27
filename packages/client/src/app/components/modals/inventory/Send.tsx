@@ -43,7 +43,7 @@ export const Send = (props: Props) => {
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
     const min = 0;
-    const max = getInventoryBalance(inventory, MUSU_INDEX);
+    const max = getInventoryBalance(inventory, item.index);
     const amt = Math.max(min, Math.min(max, rawQuantity));
 
     setAmt(amt);
