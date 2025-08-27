@@ -32,25 +32,18 @@ export const MusuRow = ({
         >
           <IconButton
             img={ItemImages.musu}
-            text='Trades'
             onClick={() => setModals({ ...modals, trading: !modals.trading })}
             radius={0.9}
           />
-        </TextTooltip>
-        <IconButton
-          img={ArrowIcons.right}
-          text='Send'
-          onClick={() => setShowSend(!showSend)}
-          radius={0.9}
-        />
+        </TextTooltip>{' '}
         {obols > 1 && (
           <IconButton
             img={ItemImages.obol}
-            text='Shop'
             onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
             radius={0.9}
           />
         )}
+        <IconButton img={ArrowIcons.right} onClick={() => setShowSend(!showSend)} radius={0.9} />
       </Icons>
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
