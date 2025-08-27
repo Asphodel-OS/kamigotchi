@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { Inventory } from 'app/cache/inventory';
 import { IconListButton, IconListButtonOption, TextTooltip } from 'app/components/library';
-import { ArrowIcons } from 'assets/images/icons/arrows';
+import { MenuIcons } from 'assets/images/icons/menu';
 import { MUSU_INDEX } from 'constants/items';
 import { items } from 'network/explorer/items';
 import { Account } from 'network/shapes/Account';
@@ -82,22 +82,28 @@ export const Send = (props: Props) => {
 
     return (
       <TextTooltip key='send-tooltip' text={getSendTooltip(item[0])}>
-        <IconListButton img={ArrowIcons.right} options={options} searchable scale={1.5} />
+        <IconListButton img={MenuIcons.operator} options={options} searchable scale={2.8} />
       </TextTooltip>
     );
   };
 
   return (
     <Container isVisible={showSend} key='send'>
-      <Row>
-        <LineItem
-          options={getItemOptions()}
-          selected={item}
-          amt={amt}
-          setAmt={(e) => updateItemAmt(e)}
-          reverse
-        />
-      </Row>
+      <Column>
+        <div>Send</div>
+        <Row>
+          <LineItem
+            options={getItemOptions()}
+            selected={item}
+            amt={amt}
+            setAmt={(e) => updateItemAmt(e)}
+            reverse
+          />
+        </Row>
+        <div>to</div>
+        {SendButton([item], [amt])}
+      </Column>
+      <Column>HISTORY</Column>
     </Container>
   );
 };
@@ -119,4 +125,15 @@ const Row = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.6vw;
+`;
+
+const Column = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  gap: 0.3vw;
+
+  align-items: center;
+  align-content: center;
+  flex-direction: column;
 `;
