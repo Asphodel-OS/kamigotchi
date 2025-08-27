@@ -29,6 +29,7 @@ export const ModalWrapper = ({
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
+  shuffle: boolean;
   positionOverride?: {
     colStart: number;
     colEnd: number;
@@ -58,7 +59,7 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay} style={gridStyle}>
+    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
       <Content isOpen={modals[id]} truncate={truncate}>
         {canExit && (
           <ButtonRow>
@@ -80,11 +81,28 @@ const Wrapper = styled.div<{
   isOpen: boolean;
   overlay: boolean;
 }>`
+  shuffle: boolean;
+}
+
+const Shuffle = keyframes`
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+`;
+
+// Wrapper is an invisible animated wrapper around all modals sans any frills.
+const Wrapper = styled.div<WrapperProps>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
-
+  animation: ${({ shuffle }) => (shuffle ? Shuffle : '')} 0.5s ease-in-out;
   margin: 0.2vw;
   align-items: center;
   justify-content: center;
