@@ -82,6 +82,7 @@ export const InventoryModal: UIComponent = {
     const [account, setAccount] = useState<Account>(NullAccount);
     const [tick, setTick] = useState(Date.now());
     const [showSend, setShowSend] = useState(false);
+    const [shuffle, setShuffle] = useState(false);
     const { modals } = useVisibility();
 
     // mounting
@@ -112,6 +113,23 @@ export const InventoryModal: UIComponent = {
         setAccounts(accountsSorted);
       }
     }, [modals.inventory, tick]);
+
+    // Shuffle effect
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setShuffle(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }, [showSend]);
+
+    useEffect(() => {
+      if (shuffle) {
+        const timer = setTimeout(() => {
+          setShuffle(false);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }, [shuffle]);
 
     /////////////////
     // ACTIONS
@@ -173,6 +191,7 @@ export const InventoryModal: UIComponent = {
         canExit
         overlay
         truncate
+        shuffle={shuffle}
       >
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />

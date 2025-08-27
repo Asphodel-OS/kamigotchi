@@ -15,6 +15,7 @@ interface Props {
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
+  shuffle: boolean;
   positionOverride?: {
     colStart: number;
     colEnd: number;
@@ -27,7 +28,7 @@ interface Props {
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
-  const { id, children, header, footer, positionOverride } = props;
+  const { id, children, header, footer, positionOverride, shuffle } = props;
   const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
   const { modals } = useVisibility();
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
@@ -50,7 +51,7 @@ export const ModalWrapper = (props: Props) => {
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay} style={gridStyle}>
+    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
       <Content isOpen={modals[id]} truncate={truncate}>
         {canExit && (
           <ButtonRow>
@@ -70,7 +71,20 @@ export const ModalWrapper = (props: Props) => {
 interface WrapperProps {
   isOpen: boolean;
   overlay: boolean;
+  shuffle: boolean;
 }
+
+const Shuffle = keyframes`
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+`;
 
 // Wrapper is an invisible animated wrapper around all modals sans any frills.
 const Wrapper = styled.div<WrapperProps>`
@@ -78,7 +92,7 @@ const Wrapper = styled.div<WrapperProps>`
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
-
+  animation: ${({ shuffle }) => (shuffle ? Shuffle : '')} 0.5s ease-in-out;
   margin: 0.2vw;
   align-items: center;
   justify-content: center;
