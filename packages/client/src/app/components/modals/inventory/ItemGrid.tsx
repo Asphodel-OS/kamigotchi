@@ -44,6 +44,7 @@ export const ItemGrid = ({
     displayRequirements: (item: Item) => string;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
     setShowSend: (show: boolean) => void;
+    getInventoryBalance: (inventories: Inventory[], index: number) => number;
   };
 }) => {
   const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
@@ -181,8 +182,8 @@ export const ItemGrid = ({
       </Container>
       <Send
         actions={{ sendItemsTx }}
-        data={{ showSend, accounts, inventories }}
-        utils={{ setShowSend }}
+        data={{ showSend, accounts, inventory: inventories }}
+        utils={{ setShowSend, getInventoryBalance }}
       />
     </>
   );
