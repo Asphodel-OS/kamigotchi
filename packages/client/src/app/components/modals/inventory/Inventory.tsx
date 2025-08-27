@@ -20,7 +20,6 @@ import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
-import { Send } from './Send';
 
 const REFRESH_INTERVAL = 1000;
 
@@ -184,7 +183,6 @@ export const InventoryModal: UIComponent = {
               data={{ showSend }}
               utils={{ ...utils, setShowSend }}
             />
-            <Send actions={{ sendItemsTx }} data={{ showSend, accounts }} utils={{ setShowSend }} />
           </>
         )}
       </ModalWrapper>

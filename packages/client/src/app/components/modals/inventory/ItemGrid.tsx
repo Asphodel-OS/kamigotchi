@@ -14,6 +14,7 @@ import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
 import { ItemGridTooltip } from './ItemGridTooltip';
+import { Send } from './Send';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
@@ -173,10 +174,17 @@ export const ItemGrid = ({
   };
 
   return (
-    <Container isVisible={!showSend} key='grid'>
-      {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
-      {inventories.map((inv) => ItemIcon(inv))}
-    </Container>
+    <>
+      <Container isVisible={!showSend} key='grid'>
+        {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
+        {inventories.map((inv) => ItemIcon(inv))}
+      </Container>
+      <Send
+        actions={{ sendItemsTx }}
+        data={{ showSend, accounts, inventories }}
+        utils={{ setShowSend }}
+      />
+    </>
   );
 };
 
