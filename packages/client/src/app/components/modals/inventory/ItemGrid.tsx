@@ -7,7 +7,6 @@ import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
-import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
@@ -18,7 +17,6 @@ import { Send } from './Send';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
-const SendButtons = new Map<number, React.ReactNode>();
 
 interface Props {
   accounts: Account[];
@@ -60,15 +58,6 @@ export const ItemGrid = (props: Props) => {
   const [account, setAccount] = useState<Account>(NullAccount);
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [kamis, setKamis] = useState<Kami[]>([]);
-
-  useEffect(() => {
-    inventories.forEach((inventory) => {
-      if (!SendButtons.has(inventory.item.index)) {
-        // console.log(`adding send button for ${kami.name}`);
-        SendButtons.set(inventory.item.index, SendButton([inventory.item], [inventory.balance]));
-      }
-    });
-  }, [inventories.length]);
 
   // refresh data whenever the modal is opened
   useEffect(() => {
@@ -122,24 +111,6 @@ export const ItemGrid = (props: Props) => {
     return options;
   };
 
-  const getSendTooltip = (item: Item) => {
-    const tooltip = [`Send ${item.name} to another account.`];
-    return tooltip;
-  };
-
-  const SendButton = (item: Item[], amts: number[]) => {
-    const options = accounts.map((targetAcc) => ({
-      text: `${targetAcc.name} (#${targetAcc.index})`,
-      onClick: () => sendItemsTx(item, amts, targetAcc),
-    }));
-
-    return (
-      <TextTooltip key='send-tooltip' text={getSendTooltip(item[0])}>
-        <IconListButton img={ArrowIcons.right} options={options} searchable scale={1.5} />
-      </TextTooltip>
-    );
-  };
-
   // // get the list of kamis that a specific item can be used on
   // const getAvailableKamis = (item: Item): Kami[] => {
   //   let kamis2 = getAccessibleKamis(account, kamis);
@@ -156,7 +127,6 @@ export const ItemGrid = (props: Props) => {
   const ItemIcon = (inv: Inventory) => {
     const item = inv.item;
     const options = getItemActions(item, inv.balance);
-    const sendButton = SendButton([item], [inv.balance]);
 
     return (
       <ItemWrapper key={item.index}>
