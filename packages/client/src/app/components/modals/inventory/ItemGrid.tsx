@@ -27,6 +27,7 @@ interface Props {
     useForKami: (kami: Kami, item: Item) => void;
     sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
   };
+  data: { showSend: boolean };
   utils: {
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
     getAccount: () => Account;
@@ -34,13 +35,15 @@ interface Props {
     getKamis: () => Kami[];
     displayRequirements: (item: Item) => string;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
+    setShowSend: (show: boolean) => void;
   };
 }
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
-  const { actions, utils, accountEntity, accounts } = props;
+  const { actions, utils, accountEntity, accounts, data } = props;
   const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
+  const { showSend } = data;
   const { sendItemsTx } = actions;
 
   const { modals } = useVisibility();
@@ -140,7 +143,7 @@ export const ItemGrid = (props: Props) => {
 
   /////////////////
   // DISPLAY
-
+  // <SendButtonStyled>{SendButtons.get(item.index)}</SendButtonStyled>
   const ItemIcon = (inv: Inventory) => {
     const item = inv.item;
     const options = getItemActions(item, inv.balance);
@@ -162,21 +165,20 @@ export const ItemGrid = (props: Props) => {
             disabled={options.length == 0}
           />
         </TextTooltip>
-        <SendButtonStyled>{SendButtons.get(item.index)}</SendButtonStyled>
       </ItemWrapper>
     );
   };
 
   return (
-    <Container key='grid'>
+    <Container isVisible={!showSend} key='grid'>
       {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
       {inventories.map((inv) => ItemIcon(inv))}
     </Container>
   );
 };
 
-const Container = styled.div`
-  display: flex;
+const Container = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
@@ -184,10 +186,4 @@ const Container = styled.div`
 
 const ItemWrapper = styled.div`
   position: relative;
-`;
-
-const SendButtonStyled = styled.div`
-  position: absolute;
-  bottom: 1%;
-  left: 1%;
 `;
