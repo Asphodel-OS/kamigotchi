@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import { Inventory } from 'app/cache/inventory';
 import { IconListButton, IconListButtonOption, TextTooltip } from 'app/components/library';
 import { MenuIcons } from 'assets/images/icons/menu';
-import { MUSU_INDEX } from 'constants/items';
+import { MUSU_INDEX, STONE_INDEX } from 'constants/items';
 import { items } from 'network/explorer/items';
 import { Account } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { mode } from 'viem/chains';
 import { LineItem } from '../trading/management/create/LineItem';
 
@@ -32,6 +32,13 @@ export const Send = (props: Props) => {
 
   const [amt, setAmt] = useState<number>(1);
   const [item, setItem] = useState<Item>(NullItem);
+
+  useEffect(() => {
+    const stone =
+      inventory.find((inventory) => inventory.item.index === STONE_INDEX)?.item ?? NullItem;
+    console.log(`inventory ${JSON.stringify(inventory)}`);
+    setItem(stone);
+  }, [inventory.length]);
 
   const getSendTooltip = (item: Item) => {
     const tooltip = [`Send ${item.name} to another account.`];
@@ -89,7 +96,7 @@ export const Send = (props: Props) => {
 
   return (
     <Container isVisible={showSend} key='send'>
-      <Column>
+      <Column side={`left`}>
         <div>Send</div>
         <Row>
           <LineItem
@@ -103,7 +110,7 @@ export const Send = (props: Props) => {
         <div>to</div>
         {SendButton([item], [amt])}
       </Column>
-      <Column>HISTORY</Column>
+      <Column side={`right`}>HISTORY</Column>
     </Container>
   );
 };
@@ -127,7 +134,7 @@ const Row = styled.div`
   gap: 0.6vw;
 `;
 
-const Column = styled.div`
+const Column = styled.div<{ side: 'left' | 'right' }>`
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -136,4 +143,6 @@ const Column = styled.div`
   align-items: center;
   align-content: center;
   flex-direction: column;
+  flex: 1;
+  ${({ side }) => (side === 'left' ? `border-right: 0.15vw solid black;` : ``)}
 `;
