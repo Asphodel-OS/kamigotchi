@@ -76,19 +76,13 @@ interface WrapperProps {
 
 const Shuffle = keyframes`
   0% {
-    transform: rotateY(0deg);
-  }
-  25% {
-    transform: rotateY(90deg); 
+    transform: translateY(0);
   }
   50% {
-    transform: rotateY(180deg);
-  }
-  75% {
-    transform: rotateY(270deg); 
+    transform: translateY(-200%);
   }
   100% {
-    transform: rotateY(360deg);
+    transform: translateY(0);
   }
 `;
 

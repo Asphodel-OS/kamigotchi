@@ -49,7 +49,7 @@ export const Send = (props: Props) => {
   useEffect(() => {
     setTimeout(() => {
       setVisible(showSend);
-    }, 500);
+    }, 400);
   }, [showSend]);
 
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change
@@ -126,7 +126,8 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
-  height: 30vh;
+  min-height: 30vh;
+  font-size: 0.75vw;
 `;
 
 const Row = styled.div`
