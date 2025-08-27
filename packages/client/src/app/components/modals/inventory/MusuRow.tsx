@@ -2,19 +2,20 @@ import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { ItemImages } from 'assets/images/items';
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = ({
-  data: {
-    musu,
-    obols,
-  },
+  data: { musu, obols, showSend, utils },
 }: {
   data: {
     musu: number;
     obols: number;
-  }
+    showSend: boolean;
+
+    utils: { setShowSend: (show: boolean) => void };
+  };
 }) => {
   const { modals, setModals } = useVisibility();
 
@@ -36,6 +37,12 @@ export const MusuRow = ({
             radius={0.9}
           />
         </TextTooltip>
+        <IconButton
+          img={ArrowIcons.right}
+          text='Send'
+          onClick={() => setShowSend(!showSend)}
+          radius={0.9}
+        />
         {obols > 1 && (
           <IconButton
             img={ItemImages.obol}

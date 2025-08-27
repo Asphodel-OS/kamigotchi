@@ -20,6 +20,7 @@ import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
+import { Send } from './Send';
 
 const REFRESH_INTERVAL = 1000;
 
@@ -78,6 +79,7 @@ export const InventoryModal: UIComponent = {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
     const [tick, setTick] = useState(Date.now());
+    const [showSend, setShowSend] = useState(false);
     const { modals } = useVisibility();
 
     // mounting
@@ -159,7 +161,13 @@ export const InventoryModal: UIComponent = {
       <ModalWrapper
         id='inventory'
         header={<ModalHeader title='Inventory' icon={InventoryIcon} />}
-        footer={<MusuRow key='musu' data={{ musu: getMusuBalance(), obols: getObolsBalance() }} />}
+        footer={
+          <MusuRow
+            key='musu'
+            data={{ musu: getMusuBalance(), obols: getObolsBalance(), showSend }}
+            utils={{ setShowSend }}
+          />
+        }
         canExit
         overlay
         truncate
@@ -167,13 +175,17 @@ export const InventoryModal: UIComponent = {
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
         ) : (
-          <ItemGrid
-            key='grid'
-            accounts={accounts}
-            accountEntity={accountEntity}
-            actions={{ useForAccount, useForKami, sendItemsTx }}
-            utils={utils}
-          />
+          <>
+            <ItemGrid
+              key='grid'
+              accounts={accounts}
+              accountEntity={accountEntity}
+              actions={{ useForAccount, useForKami, sendItemsTx }}
+              data={{ showSend }}
+              utils={{ ...utils, setShowSend }}
+            />
+            <Send actions={{ sendItemsTx }} data={{ showSend, accounts }} utils={{ setShowSend }} />
+          </>
         )}
       </ModalWrapper>
     );
