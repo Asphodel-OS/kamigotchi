@@ -32,6 +32,7 @@ export const Send = (props: Props) => {
 
   const [amt, setAmt] = useState<number>(1);
   const [item, setItem] = useState<Item>(NullItem);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const stone =
@@ -44,6 +45,12 @@ export const Send = (props: Props) => {
     const tooltip = [`Send ${item.name} to another account.`];
     return tooltip;
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setVisible(showSend);
+    }, 500);
+  }, [showSend]);
 
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change
   const updateItemAmt = (event: ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +102,7 @@ export const Send = (props: Props) => {
   };
 
   return (
-    <Container isVisible={showSend} key='send'>
+    <Container isVisible={visible} key='send'>
       <Column side={`left`}>
         <div>Send</div>
         <Row>

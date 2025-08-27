@@ -86,13 +86,19 @@ const Wrapper = styled.div<{
 
 const Shuffle = keyframes`
   0% {
-    transform: translateX(0);
+    transform: rotateY(0deg);
+  }
+  25% {
+    transform: rotateY(90deg); 
   }
   50% {
-    transform: translateX(100%);
+    transform: rotateY(180deg);
+  }
+  75% {
+    transform: rotateY(270deg); 
   }
   100% {
-    transform: translateX(0);
+    transform: rotateY(360deg);
   }
 `;
 

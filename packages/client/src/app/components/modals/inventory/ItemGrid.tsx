@@ -54,6 +54,7 @@ export const ItemGrid = ({
   const [account, setAccount] = useState<Account>(NullAccount);
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [kamis, setKamis] = useState<Kami[]>([]);
+  const [visible, setVisible] = useState(false);
 
   // refresh data whenever the modal is opened
   useEffect(() => {
@@ -75,6 +76,11 @@ export const ItemGrid = ({
     setKamis(getKamis());
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      setVisible(!showSend);
+    }, 500);
+  }, [showSend]);
   /////////////////
   // INTERPRETATION
 
@@ -146,7 +152,7 @@ export const ItemGrid = ({
 
   return (
     <>
-      <Container isVisible={!showSend} key='grid'>
+      <Container isVisible={visible} key='grid'>
         {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
         {inventories.map((inv) => ItemIcon(inv))}
       </Container>
