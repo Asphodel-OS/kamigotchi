@@ -2,6 +2,7 @@ import { interval, map } from 'rxjs';
 
 import { EntityIndex } from '@mud-classic/recs';
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
+import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useVisibility } from 'app/stores';
@@ -64,6 +65,8 @@ export const InventoryModal: UIComponent = {
                 .join('\n '),
             parseAllos: (allo: Allo[]) => parseAllos(world, components, allo),
             queryAllAccounts: () => queryAllAccounts(components),
+            getInventoryBalance: (inventories: Inventory[], index: number) =>
+              getInventoryBalance(inventories, index),
           },
         };
       })

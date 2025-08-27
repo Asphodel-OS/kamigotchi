@@ -37,13 +37,21 @@ interface Props {
     displayRequirements: (item: Item) => string;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
     setShowSend: (show: boolean) => void;
+    getInventoryBalance: (inventories: Inventory[], index: number) => number;
   };
 }
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = (props: Props) => {
   const { actions, utils, accountEntity, accounts, data } = props;
-  const { getAccount, getInventories, getKamis, meetsRequirements, setShowSend } = utils;
+  const {
+    getAccount,
+    getInventories,
+    getKamis,
+    meetsRequirements,
+    setShowSend,
+    getInventoryBalance,
+  } = utils;
   const { showSend } = data;
   const { sendItemsTx } = actions;
 
@@ -178,8 +186,8 @@ export const ItemGrid = (props: Props) => {
       </Container>
       <Send
         actions={{ sendItemsTx }}
-        data={{ showSend, accounts, inventories }}
-        utils={{ setShowSend }}
+        data={{ showSend, accounts, inventory: inventories }}
+        utils={{ setShowSend, getInventoryBalance }}
       />
     </>
   );
