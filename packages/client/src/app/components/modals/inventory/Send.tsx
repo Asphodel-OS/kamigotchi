@@ -107,8 +107,7 @@ export const Send = (props: Props) => {
             reverse
           />
         </Row>
-        <div>to</div>
-        {SendButton([item], [amt])}
+        <Row>to {SendButton([item], [amt])}</Row>
       </Column>
       <Column side={`right`}>HISTORY</Column>
     </Container>
