@@ -124,11 +124,7 @@ export const Popover = ({
   };
 
   return (
-    <PopoverContainer
-      onContextMenu={(
-        e // prevents right click from opening the contextMenu
-      ) => mouseBttnClicked(e)}
-    >
+    <PopoverContainer>
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}

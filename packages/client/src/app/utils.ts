@@ -14,7 +14,9 @@ export const mouseBttnClicked = (e: React.MouseEvent<HTMLDivElement>): string =>
     case 1:
       return 'middle';
     case 2:
-      e.preventDefault();
+      document.addEventListener('contextmenu', (contextEvent) => contextEvent.preventDefault(), {
+        once: true,
+      });
       return 'right';
     case 3:
       return 'back';
