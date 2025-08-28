@@ -18,6 +18,7 @@ export const LiquidateButton = (
     const recoil = calcLiqRecoil(myKami, target);
 
     return {
+      image: myKami.image,
       text: `${myKami.name} (+${spoils}MUSU; -${recoil}HP)`,
       onClick: () => triggerAction(myKami, target),
     };
