@@ -57,6 +57,7 @@ import KamiNameSystem from "../../../out/KamiNameSystem.sol/KamiNameSystem.json"
 import KamiOnyxRenameSystem from "../../../out/KamiOnyxRenameSystem.sol/KamiOnyxRenameSystem.json";
 import KamiOnyxRespecSystem from "../../../out/KamiOnyxRespecSystem.sol/KamiOnyxRespecSystem.json";
 import KamiOnyxReviveSystem from "../../../out/KamiOnyxReviveSystem.sol/KamiOnyxReviveSystem.json";
+import KamiUseEnemyItemSystem from "../../../out/KamiUseEnemyItemSystem.sol/KamiUseEnemyItemSystem.json";
 import KamiUseItemSystem from "../../../out/KamiUseItemSystem.sol/KamiUseItemSystem.json";
 import ListingBuySystem from "../../../out/ListingBuySystem.sol/ListingBuySystem.json";
 import ListingSellSystem from "../../../out/ListingSellSystem.sol/ListingSellSystem.json";
@@ -131,6 +132,7 @@ export const SystemBytecodes = {
   "system.kami.onyx.rename": KamiOnyxRenameSystem,
   "system.kami.onyx.respec": KamiOnyxRespecSystem,
   "system.kami.onyx.revive": KamiOnyxReviveSystem,
+  "system.kami.use.item.enemy": KamiUseEnemyItemSystem,
   "system.kami.use.item": KamiUseItemSystem,
   "system.listing.buy": ListingBuySystem,
   "system.listing.sell": ListingSellSystem,
