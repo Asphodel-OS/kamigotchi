@@ -28,9 +28,22 @@ export const Cooldown = ({
     return () => clearInterval(timerId);
   }, [kami]);
 
+  // Helper: remaining time with fallback to last+requirement (visuals-only)
+  const calcRemainingForVisuals = () => {
+    const now = Date.now() / 1000;
+    let end = Number((kami as any).time?.cooldown);
+    if (!isFinite(end) || end <= 0) {
+      const last = Number((kami as any).time?.last);
+      const req = Number(calcCooldownRequirement(kami));
+      if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
+      else end = now;
+    }
+    return Math.max(0, end - now);
+  };
+
   // update the remaining time on the cooldown
   useEffect(() => {
-    setCurrent(calcCooldown(kami));
+    setCurrent(calcRemainingForVisuals());
   }, [lastRefresh, total, kami]);
 
   return (
@@ -45,8 +58,21 @@ export const useCooldownVisuals = (
   kami: Kami,
   enabled: boolean,
 ): { filter?: string; foreground?: React.ReactNode } => {
-  const isOnCooldown = onCooldown(kami);
-  const shouldAnimate = enabled && isOnCooldown;
+  // visuals-only remaining time with fallback to last+requirement
+  const calcRemainingForVisuals = () => {
+    const now = Date.now() / 1000;
+    let end = Number((kami as any).time?.cooldown);
+    if (!isFinite(end) || end <= 0) {
+      const last = Number((kami as any).time?.last);
+      const req = Number(calcCooldownRequirement(kami));
+      if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
+      else end = now;
+    }
+    return Math.max(0, end - now);
+  };
+
+  const isOnCooldownVisual = calcRemainingForVisuals() > 0;
+  const shouldAnimate = enabled && isOnCooldownVisual;
   const [tick, setTick] = useState(0);
   useEffect(() => {
     if (!shouldAnimate) return;
@@ -58,7 +84,7 @@ export const useCooldownVisuals = (
   const filter = useMemo(() => {
     if (!shouldAnimate) return undefined;
     const total = calcCooldownRequirement(kami);
-    const rem = calcCooldown(kami);
+    const rem = calcRemainingForVisuals();
     const progress = total > 0 ? Math.min(1, Math.max(0, rem / total)) : 0;
     const eased = Math.pow(progress, 1.25);
     const grayAmount = eased;
@@ -73,7 +99,7 @@ export const useCooldownVisuals = (
     const staticLayer: any = makeStaticLayer({ brightness: 1.6, alpha: 0.96, vertical: true });
     staticLayer.onBeforeFrame = (uniforms: any) => {
       const tot = calcCooldownRequirement(kami);
-      const rem = calcCooldown(kami);
+      const rem = calcRemainingForVisuals();
       const prog = tot > 0 ? Math.min(1, Math.max(0, rem / tot)) : 0;
       const eased = Math.pow(prog, 1.25);
       const alpha = 0.96 * eased;
@@ -90,7 +116,7 @@ export const useCooldownVisuals = (
     });
     wipeLayer.onBeforeFrame = (uniforms: any) => {
       const tot = calcCooldownRequirement(kami);
-      const rem = calcCooldown(kami);
+      const rem = calcRemainingForVisuals();
       const lastSecond = rem <= 1.0 && rem > 0; // only show while > 0 and <= 1s
       if (!lastSecond) {
         if (uniforms.uAlpha) uniforms.uAlpha.value = 0.0;
