@@ -85,7 +85,7 @@ export const AllyKards = ({
             ]}
             showBattery
             showCooldown
-            utils={{ getTempBonuses, calcExpRequirement }}
+            utils={{ getTempBonuses }}
           />
         ))}
     </Container>

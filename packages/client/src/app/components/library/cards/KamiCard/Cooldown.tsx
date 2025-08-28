@@ -111,7 +111,7 @@ export const useCooldownVisuals = (
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldAnimate, tick, kami]);
+  }, [shouldAnimate, kami]);
 
   return { filter, foreground };
 };
