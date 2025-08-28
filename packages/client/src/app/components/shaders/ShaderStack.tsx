@@ -56,6 +56,28 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     rendererRef.current = renderer;
     container.appendChild(renderer.domElement);
 
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+    };
+    const handleContextRestored = () => {
+      if (resizeObserverRef.current && containerRef.current) {
+        const r = rendererRef.current;
+        if (r) {
+          const dpr = Math.min(window.devicePixelRatio || 1, capDevicePixelRatio);
+          const width = containerRef.current.clientWidth || 1;
+          const height = containerRef.current.clientHeight || 1;
+          r.setPixelRatio(dpr);
+          r.setSize(width, height, false);
+          for (const mat of materialsRef.current) {
+            const u = mat.uniforms;
+            if (u.iResolution) u.iResolution.value.set(width, height, dpr);
+          }
+        }
+      }
+    };
+    renderer.domElement.addEventListener('webglcontextlost', handleContextLost as EventListener, false);
+    renderer.domElement.addEventListener('webglcontextrestored', handleContextRestored as EventListener, false);
+
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
@@ -166,6 +188,24 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
       if (paused || (!isVisible && !animateWhenOffscreen)) return;
       const now = performance.now();
       const t = (now - startTimeRef.current) / 1000;
+
+      // Defensive: ensure canvas size/uniforms match container each frame for early mounts
+      const container = containerRef.current;
+      if (container) {
+        const dpr = Math.min(window.devicePixelRatio || 1, capDevicePixelRatio);
+        const cw = container.clientWidth || 1;
+        const ch = container.clientHeight || 1;
+        const rw = Math.round((renderer.domElement.width || 1) / dpr);
+        const rh = Math.round((renderer.domElement.height || 1) / dpr);
+        if (rw !== cw || rh !== ch) {
+          renderer.setPixelRatio(dpr);
+          renderer.setSize(cw, ch, false);
+          for (const mat of materialsRef.current) {
+            const u = mat.uniforms;
+            if (u.iResolution) u.iResolution.value.set(cw, ch, dpr);
+          }
+        }
+      }
 
       renderer.clear();
       const width = renderer.domElement.width;
