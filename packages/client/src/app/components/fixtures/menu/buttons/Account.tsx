@@ -3,8 +3,8 @@ import { OperatorIcon } from 'assets/images/icons/menu';
 import { MenuButton } from './MenuButton';
 
 export const AccountMenuButton = () => {
-  const { setAccount } = useSelected();
-  const { account } = useAccount();
+  const setAccount = useSelected((s) => s.setAccount);
+  const accountIndex = useAccount((s) => s.account.index);
 
   const modalsToHide: Partial<Modals> = {
     bridgeERC20: false,
@@ -26,7 +26,7 @@ export const AccountMenuButton = () => {
       tooltip={`Account`}
       targetModal='account'
       hideModals={modalsToHide}
-      onClick={() => setAccount(account.index)}
+      onClick={() => setAccount(accountIndex)}
     />
   );
 };

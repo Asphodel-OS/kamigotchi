@@ -89,7 +89,7 @@ export const KamiModal: UIComponent = {
     const { actions, api } = network;
     const { account, onyxItem, spender } = data;
     const { getKami, getOwner, queryKamiByIndex, getSkillUpgradeError, getTreePoints } = utils;
-    const { kamiIndex } = useSelected();
+    const kamiIndex = useSelected((s) => s.kamiIndex);
     const { selectedAddress, apis: ownerAPIs } = useNetwork();
     const { modals } = useVisibility();
 

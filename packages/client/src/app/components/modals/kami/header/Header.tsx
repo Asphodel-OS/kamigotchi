@@ -31,7 +31,7 @@ export const Header = ({
   };
 }) => {
   const { account, kami, owner } = data;
-  const { setAccount } = useSelected();
+  const setAccount = useSelected((s) => s.setAccount);
   const { setModals } = useVisibility();
 
   const isMine = () => {

@@ -21,7 +21,8 @@ export const Kamis = ({
   const { getAccountKamis } = utils;
 
   const { modals, setModals } = useVisibility();
-  const { kamiIndex, setKami } = useSelected();
+  const kamiIndex = useSelected((s) => s.kamiIndex);
+  const setKami = useSelected((s) => s.setKami);
   const [kamis, setKamis] = useState<Kami[]>([]);
 
   useEffect(() => {

@@ -19,7 +19,7 @@ export const LocationColumn = ({
   };
 }) => {
   const { getNodeByIndex } = utils;
-  const { setNode } = useSelected();
+  const setNode = useSelected((s) => s.setNode);
   const { setModals } = useVisibility();
 
   const showNode = (node: Node) => {
