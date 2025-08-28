@@ -136,6 +136,7 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: SettingsModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
+  
   {
     uiComponent: TradingModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
