@@ -50,6 +50,7 @@ import { Kami721IsInWorldSystem } from "./ethers-contracts/Kami721IsInWorldSyste
 import { Kami721MetadataSystem } from "./ethers-contracts/Kami721MetadataSystem";
 import { Kami721StakeSystem } from "./ethers-contracts/Kami721StakeSystem";
 import { Kami721UnstakeSystem } from "./ethers-contracts/Kami721UnstakeSystem";
+import { KamiCastItemSystem } from "./ethers-contracts/KamiCastItemSystem";
 import { KamiGachaMintSystem } from "./ethers-contracts/KamiGachaMintSystem";
 import { KamiGachaRerollSystem } from "./ethers-contracts/KamiGachaRerollSystem";
 import { KamiGachaRevealSystem } from "./ethers-contracts/KamiGachaRevealSystem";
@@ -125,6 +126,7 @@ export type SystemTypes = {
   "system.Kami721.Metadata": Kami721MetadataSystem;
   "system.kami721.stake": Kami721StakeSystem;
   "system.kami721.unstake": Kami721UnstakeSystem;
+  "system.kami.cast.item": KamiCastItemSystem;
   "system.kami.gacha.mint": KamiGachaMintSystem;
   "system.kami.gacha.reroll": KamiGachaRerollSystem;
   "system.kami.gacha.reveal": KamiGachaRevealSystem;

@@ -50,6 +50,7 @@ import Kami721IsInWorldSystem from "../abi/Kami721IsInWorldSystem.json";
 import Kami721MetadataSystem from "../abi/Kami721MetadataSystem.json";
 import Kami721StakeSystem from "../abi/Kami721StakeSystem.json";
 import Kami721UnstakeSystem from "../abi/Kami721UnstakeSystem.json";
+import KamiCastItemSystem from "../abi/KamiCastItemSystem.json";
 import KamiGachaMintSystem from "../abi/KamiGachaMintSystem.json";
 import KamiGachaRerollSystem from "../abi/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../abi/KamiGachaRevealSystem.json";
@@ -125,6 +126,7 @@ export const SystemAbis = {
   "system.Kami721.Metadata": Kami721MetadataSystem.abi,
   "system.kami721.stake": Kami721StakeSystem.abi,
   "system.kami721.unstake": Kami721UnstakeSystem.abi,
+  "system.kami.cast.item": KamiCastItemSystem.abi,
   "system.kami.gacha.mint": KamiGachaMintSystem.abi,
   "system.kami.gacha.reroll": KamiGachaRerollSystem.abi,
   "system.kami.gacha.reveal": KamiGachaRevealSystem.abi,

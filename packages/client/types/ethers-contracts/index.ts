@@ -97,6 +97,7 @@ export type { Kami721IsInWorldSystem } from "./Kami721IsInWorldSystem";
 export type { Kami721MetadataSystem } from "./Kami721MetadataSystem";
 export type { Kami721StakeSystem } from "./Kami721StakeSystem";
 export type { Kami721UnstakeSystem } from "./Kami721UnstakeSystem";
+export type { KamiCastItemSystem } from "./KamiCastItemSystem";
 export type { KamiGachaMintSystem } from "./KamiGachaMintSystem";
 export type { KamiGachaRerollSystem } from "./KamiGachaRerollSystem";
 export type { KamiGachaRevealSystem } from "./KamiGachaRevealSystem";
@@ -312,6 +313,7 @@ export { Kami721IsInWorldSystem__factory } from "./factories/Kami721IsInWorldSys
 export { Kami721MetadataSystem__factory } from "./factories/Kami721MetadataSystem__factory";
 export { Kami721StakeSystem__factory } from "./factories/Kami721StakeSystem__factory";
 export { Kami721UnstakeSystem__factory } from "./factories/Kami721UnstakeSystem__factory";
+export { KamiCastItemSystem__factory } from "./factories/KamiCastItemSystem__factory";
 export { KamiGachaMintSystem__factory } from "./factories/KamiGachaMintSystem__factory";
 export { KamiGachaRerollSystem__factory } from "./factories/KamiGachaRerollSystem__factory";
 export { KamiGachaRevealSystem__factory } from "./factories/KamiGachaRevealSystem__factory";
