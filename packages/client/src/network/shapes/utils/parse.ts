@@ -84,6 +84,7 @@ export const parseQuantity = (entity: DetailedEntity, quantity?: number): string
     if (quantity && quantity > 0) return `level ${quantity * 1} ${entity.name}`;
     else return `cannot have ${entity.name}`;
   } else if (entity.ObjectType === 'LEVEL') return `level ${(quantity ?? 0) * 1}`;
+  else if (entity.ObjectType === 'COOLDOWN') return `${(quantity ?? 0) * 1}s cooldown`;
   if (entity.ObjectType === 'ITEM') {
     // filter out musu from pluralization
     if (entity.name.toLowerCase().includes('musu')) return `${(quantity ?? 0) * 1} ${entity.name}`;
