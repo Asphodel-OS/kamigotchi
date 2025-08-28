@@ -8,7 +8,9 @@ import { getBonusesForEndType, getTempBonuses } from 'app/cache/bonus';
 import { getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoomByIndex } from 'app/cache/room';
-import { EmptyText, ModalWrapper, UseItemButton } from 'app/components/library';
+import { EmptyText, ModalWrapper, UseItemButton, ActionButton, TextTooltip } from 'app/components/library';
+import { TravelConfirm } from '../travel/Confirm';
+import { findPathAndCost } from 'network/shapes/Room/path';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { FeedIcon } from 'assets/images/icons/actions';
@@ -131,6 +133,15 @@ export const NodeModal: UIComponent = {
       const [account, setAccount] = useState<Account>(NullAccount);
       const [node, setNode] = useState<Node>(NullNode);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
+      const [travelTarget, setTravelTarget] = useState<number | null>(null);
+      const [travelAccount, setTravelAccount] = useState<Account | null>(null);
+      const { components } = network;
+
+      const getTravelStats = () => {
+        const acc = getAccount();
+        const { moves, staminaCost } = findPathAndCost(world, components, acc.roomIndex, node.index);
+        return { moves, staminaCost };
+      };
 
       // ticking
       useEffect(() => {
@@ -229,6 +240,9 @@ export const NodeModal: UIComponent = {
       /////////////////
       // DISPLAY
 
+      const travelStats = getTravelStats();
+      const hasYourKamiHere = kamiEntities.node.some((e: number) => kamiEntities.account.includes(e));
+
       return (
         <ModalWrapper
           id='node'
@@ -244,6 +258,33 @@ export const NodeModal: UIComponent = {
           truncate
           noPadding
         >
+          {node.index !== 0 && hasYourKamiHere && (
+            <div style={{ padding: '0.6vw', display: 'flex', justifyContent: 'flex-end' }}>
+              <TextTooltip
+                text={[`${travelStats.moves} moves`, `${travelStats.staminaCost} stamina`]}
+                direction='row'
+              >
+                <ActionButton
+                  text='Travel to your Kami'
+                  onClick={() => {
+                    const fresh = getAccount();
+                    const { path } = findPathAndCost(world, components, fresh.roomIndex, node.index);
+                    if (path.length <= 1) return;
+                    for (let i = 1; i < path.length; i++) {
+                      const step = path[i];
+                      const room = utils.getRoom(step);
+                      actions.add({
+                        action: 'AccountMove',
+                        params: [step],
+                        description: `Moving to ${room.name}`,
+                        execute: async () => api.player.account.move(step),
+                      });
+                    }
+                  }}
+                />
+              </TextTooltip>
+            </div>
+          )}
           {kamiEntities.node.length + kamiEntities.account.length === 0 && (
             <EmptyText
               text={['There are no Kamis on this node.', "Maybe that's an opportunity.."]}
@@ -257,6 +298,17 @@ export const NodeModal: UIComponent = {
             display={display}
             utils={utils}
           />
+          {travelTarget !== null && travelAccount && (
+            <TravelConfirm
+              network={network}
+              account={travelAccount}
+              targetRoomIndex={travelTarget}
+              onClose={() => {
+                setTravelTarget(null);
+                setTravelAccount(null);
+              }}
+            />
+          )}
         </ModalWrapper>
         );
   },

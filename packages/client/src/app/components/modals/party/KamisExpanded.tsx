@@ -19,6 +19,9 @@ import { Kami } from 'network/shapes/Kami';
 import { Node, NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
+import { useState } from 'react';
+import { TravelConfirm } from '../travel/Confirm';
+import { useLayers } from 'app/root/hooks/useLayers';
 
 const ONYX_REVIVE_PRICE = 3;
 export const KamisExpanded = ({
@@ -58,6 +61,19 @@ export const KamisExpanded = ({
 }) => {
   const { modals, setModals } = useVisibility();
   const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
+  const { network } = useLayers();
+
+  const [travelTarget, setTravelTarget] = useState<number | null>(null);
+
+  const openTravelConfirm = (roomIndex: number) => {
+    setTravelTarget(roomIndex);
+    setModals({ travelConfirm: true });
+  };
+
+  const closeTravelConfirm = () => {
+    setTravelTarget(null);
+    setModals({ travelConfirm: false });
+  };
 
   /////////////////
   // INTERPRETATION
@@ -99,8 +115,8 @@ export const KamisExpanded = ({
   const getSubtext = (kami: Kami): string => {
     const harvest = kami.harvest;
     if (!harvest || harvest.state != 'ACTIVE') return '';
-    const item = getHarvestItem(harvest);
-    return `${calcOutput(kami)} ${item.name}`;
+    // Left-side description already shows "on [node]" and is clickable; suppress right-side duplicate.
+    return '';
   };
 
   // get the description tooltip on the kami card
@@ -132,7 +148,10 @@ export const KamisExpanded = ({
 
   // returns the onClick function for the description
   const getDescriptionOnClick = (kami: Kami) => {
-    if (isHarvesting(kami)) return () => selectNode(kami.harvest?.node?.index!);
+    if (isHarvesting(kami)) {
+      const idx = kami.harvest?.node?.index;
+      if (idx !== undefined) return () => openTravelConfirm(idx);
+    }
   };
 
   const getOnyxTooltip = (kami: Kami) => {
@@ -157,12 +176,13 @@ export const KamisExpanded = ({
   // Choose and return the action button to display
   const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
     if (!isVisible) return <></>;
-    let buttons = [];
+    const buttons: JSX.Element[] = [];
 
-    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
+    const useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
     buttons.push(UseItemButton(kami, account, useIcon));
-    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
-    else {
+    if (!isDead(kami)) {
+      buttons.push(HarvestButton(account, kami, node));
+    } else {
       buttons.push(
         <OnyxButton
           key='onyx-revive'
@@ -185,6 +205,11 @@ export const KamisExpanded = ({
           description={getDescription(kami)}
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
+          subtextOnClick={() =>
+            isHarvesting(kami) && kami.harvest?.node?.index !== undefined
+              ? openTravelConfirm(kami.harvest.node.index)
+              : undefined
+          }
           actions={DisplayedActions(account, kami, node)}
           showBattery
           showCooldown
@@ -193,6 +218,14 @@ export const KamisExpanded = ({
           utils={utils}
         />
       ))}
+      {travelTarget !== null && network && (
+        <TravelConfirm
+          network={network}
+          account={account}
+          targetRoomIndex={travelTarget}
+          onClose={closeTravelConfirm}
+        />
+      )}
     </Container>
   );
 };
