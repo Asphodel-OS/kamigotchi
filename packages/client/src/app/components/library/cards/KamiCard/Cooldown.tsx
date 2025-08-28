@@ -1,19 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Kami } from 'network/shapes/Kami';
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
-import { onCooldown } from 'app/cache/kami/calcs/base';
 import { CRTShader } from 'app/components/shaders/CRTShader';
 import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
+import { Kami } from 'network/shapes/Kami';
 
 import { Countdown, TextTooltip } from '../..';
 
-export const Cooldown = ({
-  kami,
-}: {
-  kami: Kami;
-}) => {
+export const Cooldown = ({ kami }: { kami: Kami }) => {
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);
@@ -30,15 +25,16 @@ export const Cooldown = ({
 
   // Helper: remaining time with fallback to last+requirement (visuals-only)
   const calcRemainingForVisuals = () => {
-    const now = Date.now() / 1000;
-    let end = Number((kami as any).time?.cooldown);
-    if (!isFinite(end) || end <= 0) {
-      const last = Number((kami as any).time?.last);
-      const req = Number(calcCooldownRequirement(kami));
-      if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
-      else end = now;
-    }
-    return Math.max(0, end - now);
+    // const now = Date.now() / 1000;
+    // let end = Number((kami as any).time?.cooldown);
+    // if (!isFinite(end) || end <= 0) {
+    //   const last = Number((kami as any).time?.last);
+    //   const req = Number(calcCooldownRequirement(kami));
+    //   if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
+    //   else end = now;
+    // }
+    // return Math.max(0, end - now);
+    return calcCooldown(kami);
   };
 
   // update the remaining time on the cooldown
@@ -56,19 +52,20 @@ export const Cooldown = ({
 // Hook to provide image filter and foreground shaders for cooldown visuals
 export const useCooldownVisuals = (
   kami: Kami,
-  enabled: boolean,
+  enabled: boolean
 ): { filter?: string; foreground?: React.ReactNode } => {
   // visuals-only remaining time with fallback to last+requirement
   const calcRemainingForVisuals = () => {
-    const now = Date.now() / 1000;
-    let end = Number((kami as any).time?.cooldown);
-    if (!isFinite(end) || end <= 0) {
-      const last = Number((kami as any).time?.last);
-      const req = Number(calcCooldownRequirement(kami));
-      if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
-      else end = now;
-    }
-    return Math.max(0, end - now);
+    // const now = Date.now() / 1000;
+    // let end = Number((kami as any).time?.cooldown);
+    // if (!isFinite(end) || end <= 0) {
+    //   const last = Number((kami as any).time?.last);
+    //   const req = Number(calcCooldownRequirement(kami));
+    //   if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
+    //   else end = now;
+    // }
+    // return Math.max(0, end - now);
+    return calcCooldown(kami);
   };
 
   const isOnCooldownVisual = calcRemainingForVisuals() > 0;
