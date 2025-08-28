@@ -152,6 +152,10 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
   },
   {
+    uiComponent: FundOperator,
+    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 74 },
+  },
+  {
     uiComponent: GachaModal,
     gridConfig: { colStart: 11, colEnd: 89, rowStart: 8, rowEnd: 85 },
   },

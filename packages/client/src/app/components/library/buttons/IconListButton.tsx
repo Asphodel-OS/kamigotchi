@@ -24,9 +24,7 @@ export function IconListButton({
   scale,
   scaleOrientation,
   searchable,
-  iconInsetPx,
-  iconInsetXpx,
-  iconInsetYpx,
+  icon,
 }: {
   img: string;
   options: Option[];
@@ -41,9 +39,7 @@ export function IconListButton({
   scaleOrientation?: 'vw' | 'vh';
 
   searchable?: boolean;
-  iconInsetPx?: number;
-  iconInsetXpx?: number;
-  iconInsetYpx?: number;
+  icon?: { inset?: { px?: number; x?: number; y?: number } };
 }) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -106,9 +102,7 @@ export function IconListButton({
         fullWidth={fullWidth}
         balance={balance}
         corner={!balance}
-        iconInsetPx={iconInsetPx}
-        iconInsetXpx={iconInsetXpx}
-        iconInsetYpx={iconInsetYpx}
+        icon={icon}
       />
     </Popover>
   );

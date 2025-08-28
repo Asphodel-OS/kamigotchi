@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
+
+import { Kami } from 'network/shapes/Kami';
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { onCooldown } from 'app/cache/kami/calcs/base';
-import { Kami } from 'network/shapes/Kami';
-import { Countdown, TextTooltip } from '../..';
+import { CRTShader } from 'app/components/shaders/CRTShader';
 import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
-import { CRTShader } from 'app/components/shaders/CRTShader';
+
+import { Countdown, TextTooltip } from '../..';
 
 export const Cooldown = ({
   kami,

@@ -31,9 +31,7 @@ export const IconButton = forwardRef(function IconButton(
     radius = 0.45,
     scale = 2.5,
     scaleOrientation = 'vw',
-    iconInsetPx = 0,
-    iconInsetXpx,
-    iconInsetYpx,
+    icon,
   }: {
     img?: string | SvgIconComponent;
     onClick: Function;
@@ -58,9 +56,12 @@ export const IconButton = forwardRef(function IconButton(
     scaleOrientation?: 'vw' | 'vh';
     shadow?: boolean;
     flatten?: `left` | `right`; // flattens a side, for use with dropdowns
-    iconInsetPx?: number; // subtract px from icon size (both width/height)
-    iconInsetXpx?: number; // subtract px from icon width
-    iconInsetYpx?: number; // subtract px from icon height
+    icon?: {
+      size?: number;
+      inset?: { px?: number; x?: number; y?: number };
+      color?: string;
+      position?: 'left' | 'right';
+    };
   },
   ref: ForwardedRef<HTMLButtonElement>
 ) {
@@ -70,6 +71,10 @@ export const IconButton = forwardRef(function IconButton(
     await onClick();
   };
 
+  const resolvedIconInsetPx = icon?.inset?.px ?? 0;
+  const resolvedIconInsetXpx = icon?.inset?.x ?? undefined;
+  const resolvedIconInsetYpx = icon?.inset?.y ?? undefined;
+
   const MyImage = () => {
     if (img) {
       if (typeof img === 'string') {
@@ -78,9 +83,9 @@ export const IconButton = forwardRef(function IconButton(
             src={img}
             scale={scale}
             orientation={scaleOrientation}
-            iconInsetPx={iconInsetPx}
-            iconInsetXpx={iconInsetXpx}
-            iconInsetYpx={iconInsetYpx}
+            iconInsetPx={resolvedIconInsetPx}
+            iconInsetXpx={resolvedIconInsetXpx}
+            iconInsetYpx={resolvedIconInsetYpx}
           />
         );
       }
