@@ -73,6 +73,7 @@ export const Controls = ({
   };
 
   const isButtonVisible = () => {
+    return tab === 'GACHA';
     return tab === 'GACHA' || tab === 'REROLL';
   };
 

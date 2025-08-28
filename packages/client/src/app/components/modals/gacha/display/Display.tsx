@@ -2,7 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
-import { ActionButton, Overlay } from 'app/components/library';
+import { ActionButton, Overlay, TextTooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
 import { GachaMintData } from 'network/shapes/Gacha';
@@ -83,17 +83,14 @@ export const Display = ({
   // determine whether the mode toggle button should be visible
   const isButtonVisible = () => {
     return tab === 'GACHA' || tab === 'REROLL';
-    // if (tab === 'GACHA' && mode === 'DEFAULT') {
-    //   const startTime = auctions.gacha.time.start;
-    //   return startTime > Date.now();
-    // }
+  };
 
-    // if (tab === 'REROLL' && mode == 'DEFAULT') {
-    //   const startTime = auctions.reroll.time.start;
-    //   return startTime > Date.now();
-    // }
-
-    // return false;
+  const getButtonTooltip = () => {
+    let tooltip: string[] = [];
+    if (tab === 'REROLL') {
+      tooltip = ['Onyx features are temporarily disabled', 'in anticipation of things to come.'];
+    }
+    return tooltip;
   };
 
   return (
@@ -121,7 +118,11 @@ export const Display = ({
       />
       <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Overlay top={0.9} right={0.6}>
-        {isButtonVisible() && <ActionButton text={getButtonText()} onClick={toggleMode} />}
+        {isButtonVisible() && (
+          <TextTooltip text={getButtonTooltip()}>
+            <ActionButton text={getButtonText()} onClick={toggleMode} disabled={tab === 'REROLL'} />
+          </TextTooltip>
+        )}
       </Overlay>
     </Container>
   );

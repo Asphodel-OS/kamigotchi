@@ -141,12 +141,14 @@ export const Stage = ({
           />
         </TextTooltip>
         <KamiBlock kami={kami} />
-        <TextTooltip text={getOnyxTooltip()}>
+        <TextTooltip
+          text={['Onyx features are temporarily disabled', 'in anticipation of things to come.']}
+        >
           <IconButton
             img={onyxItem.image}
             scale={3.3}
             onClick={handleOnyxClick}
-            disabled={isOnyxDisabled()}
+            disabled={true}
             shadow
           />
         </TextTooltip>
