@@ -7,13 +7,14 @@ export const copy = (str: string) => {
 };
 
 // returns which mouse button was clicked
-export const mouseBttnClicked = (e: MouseEvent): string => {
+export const mouseBttnClicked = (e: React.MouseEvent<HTMLDivElement>): string => {
   switch (e.button) {
     case 0:
       return 'left';
     case 1:
       return 'middle';
     case 2:
+      e.preventDefault();
       return 'right';
     case 3:
       return 'back';
