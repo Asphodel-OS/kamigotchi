@@ -149,6 +149,10 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 
 const OptionIcon = styled.img`
   height: 2.4vw;
+  padding: 0.2vw;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
   user-drag: none;
 `;
 

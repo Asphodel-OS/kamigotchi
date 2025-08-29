@@ -186,7 +186,6 @@ const PopoverContent = styled.div<{
   left: ${({ popoverPosition }) => popoverPosition.x};
   white-space: normal;
   overflow-wrap: break-word;
-  word-break: break-word;
   ::-webkit-scrollbar {
     background: transparent;
     width: 0.9vw;
