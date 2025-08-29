@@ -3,9 +3,7 @@ pragma solidity >=0.8.28;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { IComponent } from "solecs/interfaces/IComponent.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
-import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IDOwnsInventoryComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsInventoryComponent.sol";
@@ -15,11 +13,9 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
-import { LibERC20 } from "libraries/utils/LibERC20.sol";
 
 import { LibData } from "libraries/LibData.sol";
 import { LibItem } from "libraries/LibItem.sol";
-import { LibStat } from "libraries/LibStat.sol";
 
 ////////////////////
 // CONSTANTS
@@ -134,24 +130,6 @@ library LibInventory {
     logItemTotal(comps, holderID, itemIndex, amt);
   }
 
-  /// @dev ignores ERC20 items
-  function _decFor(
-    IUintComp comps,
-    uint256 holderID,
-    uint32 itemIndex,
-    uint256 amt
-  ) internal returns (uint256 id) {
-    id = genID(holderID, itemIndex); // inventory must be alr created
-
-    // delete inventory by default to prevent state bloat
-    ValueComponent valComp = ValueComponent(getAddrByID(comps, ValueCompID));
-    uint256 newBal = valComp.safeGet(id) - amt;
-    if (newBal == 0) remove(comps, id);
-    else valComp.set(id, newBal);
-
-    LibData.dec(comps, 0, itemIndex, "ITEM_COUNT", amt); // log global item count
-  }
-
   /// @notice increase, and creates new inventory if needed
   /// @dev does not allow for ERC20 items increases
   function incFor(
@@ -171,8 +149,9 @@ library LibInventory {
     uint256[] memory amts
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](itemIndices.length);
-    for (uint256 i; i < itemIndices.length; i++)
+    for (uint256 i; i < ids.length; i++) {
       ids[i] = incFor(comps, holderID, itemIndices[i], amts[i]);
+    }
   }
 
   function incFor(
@@ -182,35 +161,45 @@ library LibInventory {
     uint256[] memory amts
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](holderIDs.length);
-    for (uint256 i; i < holderIDs.length; i++)
+    for (uint256 i; i < ids.length; i++) {
       ids[i] = incFor(comps, holderIDs[i], itemIndex, amts[i]);
+    }
   }
 
   function incFor(
-    IUintComp components,
+    IUintComp comps,
     uint256[] memory holderIDs,
     uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal returns (uint256[] memory ids) {
     ids = new uint256[](holderIDs.length);
-    for (uint256 i; i < holderIDs.length; i++)
-      ids[i] = incFor(components, holderIDs[i], itemIndices[i], amts[i]);
+    for (uint256 i; i < ids.length; i++) {
+      ids[i] = incFor(comps, holderIDs[i], itemIndices[i], amts[i]);
+    }
   }
 
-  /// @notice decrease, and creates new inventory if needed
-  /// @dev used for burning items. ERC20 items are sent to multisig. Meant for Account->NPC or NPC->NPC
+  /// @dev ignores ERC20 items
+  function _decFor(
+    IUintComp comps,
+    uint256 holderID,
+    uint32 itemIndex,
+    uint256 amt
+  ) internal returns (uint256 id) {
+    id = genID(holderID, itemIndex); // inventory must be alr created
+
+    // delete inventory by default to prevent state bloat
+    ValueComponent valComp = ValueComponent(getAddrByID(comps, ValueCompID));
+    uint256 newBal = valComp.safeGet(id) - amt;
+    if (newBal == 0) remove(comps, id);
+    else valComp.set(id, newBal);
+
+    LibData.dec(comps, 0, itemIndex, "ITEM_COUNT", amt); // log global item count
+  }
+
+  /// @notice decrease inventory
+  /// @dev just here in case we need to differentiate logic from a raw _decFor() call
   function decFor(IUintComp comps, uint256 holderID, uint32 itemIndex, uint256 amt) internal {
-    // check if item is symbolink to ERC20
-    address tokenAddr = LibItem.getTokenAddr(comps, itemIndex);
-    if (tokenAddr != address(0)) {
-      // is a symbolink ERC20, spend it
-      if (itemIndex == ONYX_INDEX)
-        LibERC20.spendOnyx(comps, tokenAddr, amt, holderID); // special onyx case
-      else LibERC20.spend(comps, tokenAddr, amt, holderID);
-    } else {
-      // regular inventory
-      _decFor(comps, holderID, itemIndex, amt);
-    }
+    _decFor(comps, holderID, itemIndex, amt);
   }
 
   function decFor(
@@ -219,7 +208,9 @@ library LibInventory {
     uint32 itemIndex,
     uint256[] memory amts
   ) internal {
-    for (uint256 i; i < holderIDs.length; i++) decFor(comps, holderIDs[i], itemIndex, amts[i]);
+    for (uint256 i; i < holderIDs.length; i++) {
+      decFor(comps, holderIDs[i], itemIndex, amts[i]);
+    }
   }
 
   function decFor(
@@ -228,7 +219,20 @@ library LibInventory {
     uint32[] memory itemIndices,
     uint256[] memory amts
   ) internal {
-    for (uint256 i; i < itemIndices.length; i++) decFor(comps, holderID, itemIndices[i], amts[i]);
+    for (uint256 i; i < itemIndices.length; i++) {
+      decFor(comps, holderID, itemIndices[i], amts[i]);
+    }
+  }
+
+  function decFor(
+    IUintComp comps,
+    uint256[] memory holderIDs,
+    uint32[] memory itemIndices,
+    uint256[] memory amts
+  ) internal {
+    for (uint256 i; i < holderIDs.length; i++) {
+      decFor(comps, holderIDs[i], itemIndices[i], amts[i]);
+    }
   }
 
   /// @notice transfer items between entities
@@ -281,16 +285,6 @@ library LibInventory {
       _decFor(comps, fromIDs[i], itemIndices[i], amts[i]); // implicit balance check
       _incFor(comps, toIDs[i], itemIndices[i], amts[i]);
     }
-  }
-
-  function decFor(
-    IUintComp components,
-    uint256[] memory holderIDs,
-    uint32[] memory itemIndices,
-    uint256[] memory amts
-  ) internal {
-    for (uint256 i; i < holderIDs.length; i++)
-      decFor(components, holderIDs[i], itemIndices[i], amts[i]);
   }
 
   /////////////////

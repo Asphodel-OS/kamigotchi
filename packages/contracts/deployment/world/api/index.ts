@@ -2,11 +2,11 @@ import { BigNumberish } from 'ethers';
 
 import { toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
-import { bridgeAPI } from './bridge';
 import { goalsAPI } from './goals';
 import { itemsAPI } from './items';
 import { listingAPI } from './listings';
 import { nodesAPI } from './nodes';
+import { portalAPI } from './portal';
 import { questsAPI } from './quests';
 import { generateCallData } from './utils';
 
@@ -280,7 +280,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
-  // TRAITS
+  //  TRAITS
 
   // @dev adds a trait in registry
   async function registerTrait(
@@ -449,7 +449,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
     },
     auction: auctionAPI(generateCallData, compiledCalls),
-    bridge: bridgeAPI(generateCallData, compiledCalls),
+    portal: portalAPI(generateCallData, compiledCalls),
     config: {
       set: {
         address: setConfigAddress,

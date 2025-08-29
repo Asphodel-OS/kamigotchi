@@ -34,7 +34,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     "addAlloBonus(bytes)": FunctionFragment;
     "addAlloDT(bytes)": FunctionFragment;
     "addAlloStat(bytes)": FunctionFragment;
-    "addERC20(uint32,address)": FunctionFragment;
     "addFlag(uint32,string)": FunctionFragment;
     "addRequirement(bytes)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
@@ -57,7 +56,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
       | "addAlloBonus"
       | "addAlloDT"
       | "addAlloStat"
-      | "addERC20"
       | "addFlag"
       | "addRequirement"
       | "cancelOwnershipHandover"
@@ -89,10 +87,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "addAlloStat",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addERC20",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "addFlag",
@@ -158,7 +152,6 @@ export interface _ItemRegistrySystemInterface extends utils.Interface {
     functionFragment: "addAlloStat",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addERC20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addFlag", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addRequirement",
@@ -298,12 +291,6 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addERC20(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     addFlag(
       index: PromiseOrValue<BigNumberish>,
       flag: PromiseOrValue<string>,
@@ -386,12 +373,6 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   addAlloStat(
     arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  addERC20(
-    index: PromiseOrValue<BigNumberish>,
-    tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -479,12 +460,6 @@ export interface _ItemRegistrySystem extends BaseContract {
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    addERC20(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     addFlag(
       index: PromiseOrValue<BigNumberish>,
@@ -592,12 +567,6 @@ export interface _ItemRegistrySystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addERC20(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     addFlag(
       index: PromiseOrValue<BigNumberish>,
       flag: PromiseOrValue<string>,
@@ -681,12 +650,6 @@ export interface _ItemRegistrySystem extends BaseContract {
 
     addAlloStat(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addERC20(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

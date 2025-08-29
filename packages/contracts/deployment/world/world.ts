@@ -19,7 +19,6 @@ import {
   initAllTesting,
   initAuctions,
   initAuth,
-  initBridge,
   initConfigs,
   initFactions,
   initGachaPool,
@@ -31,6 +30,7 @@ import {
   initMintConfigs,
   initNodes,
   initNpcs,
+  initPortal,
   initQuests,
   initRecipes,
   initRelationships,
@@ -92,7 +92,7 @@ export class WorldState {
       init: () => this.genCalls(initAuth),
     },
     bridge: {
-      init: () => this.genCalls(initBridge),
+      init: () => this.genCalls(initPortal),
       delete: (index: number) => this.genCalls((api) => deleteToken(api, index)),
     },
     config: {

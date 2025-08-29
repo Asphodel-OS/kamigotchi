@@ -7,19 +7,19 @@ export const bridgeAPI = (systems: any) => {
   // ERC20
 
   const depositERC20 = (itemIndex: number, itemAmt: number) => {
-    return systems['system.token.bridge.deposit'].deposit(itemIndex, itemAmt);
+    return systems['system.erc20.portal'].deposit(itemIndex, itemAmt);
   };
 
   const initiateWithdrawERC20 = (itemIndex: number, itemAmt: number) => {
-    return systems['system.token.bridge.withdraw'].initiateWithdraw(itemIndex, itemAmt);
+    return systems['system.erc20.portal'].initWithdraw(itemIndex, itemAmt);
   };
 
   const claimERC20 = (receiptID: number) => {
-    return systems['system.token.bridge.withdraw'].claim(receiptID);
+    return systems['system.erc20.portal'].claim(receiptID);
   };
 
   const cancelERC20 = (receiptID: number) => {
-    return systems['system.token.bridge.withdraw'].cancel(receiptID);
+    return systems['system.erc20.portal'].cancel(receiptID);
   };
 
   /////////////////

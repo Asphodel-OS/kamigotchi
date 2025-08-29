@@ -12,7 +12,7 @@ import { getAddrByID } from "solecs/utils.sol";
 
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 
-import { TokenBridgeSystem, ID as TokenBridgeSystemID } from "systems/TokenBridgeSystem.sol";
+import { TokenPortalSystem, ID as TokenPortalSystemID } from "systems/TokenPortalSystem.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
@@ -92,7 +92,7 @@ contract __LocalSetupSystem is System, Script {
     require(addr != address(0), "item no token attached");
     string memory name = LibItem.getName(components, itemIndex);
     addr = address(new OpenMintable(name, name));
-    LibItem.addERC20(components, itemIndex, addr);
+    LibItem.setERC20(components, itemIndex, addr, 3); // not sure if we want to hardcode like this
     OpenMintable(addr).mint(msg.sender, 9999e18); // give deployer some tokens
 
     // writing config address if onyx

@@ -68,7 +68,7 @@ import RelationshipAdvanceSystem from "../abi/RelationshipAdvanceSystem.json";
 import ScavengeClaimSystem from "../abi/ScavengeClaimSystem.json";
 import SkillRespecSystem from "../abi/SkillRespecSystem.json";
 import SkillUpgradeSystem from "../abi/SkillUpgradeSystem.json";
-import TokenBridgeSystem from "../abi/TokenBridgeSystem.json";
+import TokenPortalSystem from "../abi/TokenPortalSystem.json";
 import TradeCancelSystem from "../abi/TradeCancelSystem.json";
 import TradeCompleteSystem from "../abi/TradeCompleteSystem.json";
 import TradeCreateSystem from "../abi/TradeCreateSystem.json";
@@ -144,7 +144,7 @@ export const SystemAbis = {
   "system.scavenge.claim": ScavengeClaimSystem.abi,
   "system.skill.respec": SkillRespecSystem.abi,
   "system.skill.upgrade": SkillUpgradeSystem.abi,
-  "system.erc20.bridge": TokenBridgeSystem.abi,
+  "system.erc20.portal": TokenPortalSystem.abi,
   "system.trade.cancel": TradeCancelSystem.abi,
   "system.trade.complete": TradeCompleteSystem.abi,
   "system.trade.create": TradeCreateSystem.abi,

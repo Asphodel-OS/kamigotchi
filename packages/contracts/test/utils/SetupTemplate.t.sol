@@ -753,9 +753,9 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
-  function _addItemERC20(uint32 index, address tokenAddress) public {
+  function _addItemERC20(uint32 index, address tokenAddress, int32 scale) public {
     vm.startPrank(deployer);
-    LibItem.addERC20(components, index, tokenAddress);
+    LibItem.setERC20(components, index, tokenAddress, scale);
     vm.stopPrank();
   }
 
