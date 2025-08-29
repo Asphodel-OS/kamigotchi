@@ -33,7 +33,7 @@ export const KamiImage = ({
   const { levelUp } = actions;
   const { account, kami, owner } = data;
   const { calcExpRequirement } = utils;
-  const { setKami } = useSelected();
+  const setKami = useSelected((s) => s.setKami);
   const { modals } = useVisibility();
 
   const [isSearching, setIsSearching] = useState(false);

@@ -19,7 +19,8 @@ export const OwnerColumn = ({
   };
 }) => {
   const { getAccountByID, getKamiByID, getOwner } = utils;
-  const { accountIndex, setAccount } = useSelected();
+  const accountIndex = useSelected((s) => s.accountIndex);
+  const setAccount = useSelected((s) => s.setAccount);
   const { modals, setModals } = useVisibility();
 
   const selectAccount = (index: number) => {

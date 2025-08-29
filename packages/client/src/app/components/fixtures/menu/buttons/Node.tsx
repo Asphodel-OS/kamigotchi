@@ -7,7 +7,8 @@ export const NodeMenuButton = ({
 }: {
   disabled?: boolean
 }) => {
-  const { roomIndex, setNode } = useSelected(); // roomIndex == nodeIndex
+  const roomIndex = useSelected((s) => s.roomIndex); // roomIndex == nodeIndex
+  const setNode = useSelected((s) => s.setNode);
 
   const modalsToHide: Partial<Modals> = {
     goal: false,
