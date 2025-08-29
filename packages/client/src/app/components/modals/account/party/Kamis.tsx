@@ -20,7 +20,8 @@ export const Kamis = ({
   const { account } = data;
   const { getAccountKamis } = utils;
 
-  const { modals, setModals } = useVisibility();
+  const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const setModals = useVisibility((s) => s.setModals);
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const setKami = useSelected((s) => s.setKami);
   const [kamis, setKamis] = useState<Kami[]>([]);
@@ -28,13 +29,13 @@ export const Kamis = ({
   useEffect(() => {
     const kamis = getAccountKamis(account?.entity);
     setKamis(kamis);
-  }, [account.entity]);
+  }, [account?.entity]);
 
   const kamiOnClick = (kami: Kami) => {
     const sameKami = kamiIndex === kami.index;
     setKami(kami.index);
 
-    if (modals.kami && sameKami) setModals({ kami: false });
+    if (kamiModalOpen && sameKami) setModals({ kami: false });
     else setModals({ kami: true });
     playClick();
   };

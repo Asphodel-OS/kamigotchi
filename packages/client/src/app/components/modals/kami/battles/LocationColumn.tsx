@@ -20,8 +20,8 @@ export const LocationColumn = ({
 }) => {
   const { getNodeByIndex } = utils;
   const setNode = useSelected((s) => s.setNode);
-  const { setModals } = useVisibility();
-
+  const setModals = useVisibility((s) => s.setModals);
+  
   const showNode = (node: Node) => {
     setNode(node.index);
     setModals({ node: true, crafting: false, kami: false });
