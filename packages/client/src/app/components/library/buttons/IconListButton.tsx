@@ -161,5 +161,4 @@ const OptionText = styled.div`
 
   font-size: 0.9vw;
   line-height: 1.5vw;
-  overflow-x: scroll;
 `;
