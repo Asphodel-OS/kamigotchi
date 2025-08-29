@@ -2,10 +2,10 @@ import { BigNumberish } from 'ethers';
 
 import { toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
-import { bridgeAPI } from './bridge';
 import { goalsAPI } from './goals';
 import { listingAPI } from './listings';
 import { nodesAPI } from './nodes';
+import { portalAPI } from './portal';
 import { questsAPI } from './quests';
 import { generateCallData } from './utils';
 
@@ -322,11 +322,6 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
-  async function addItemERC20(index: number, address: string) {
-    const callData = generateCallData('system.item.registry', [index, address], 'addERC20');
-    compiledCalls.push(callData);
-  }
-
   //// ITEM REQUIREMENTS
 
   async function addItemRequirement(
@@ -576,7 +571,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
     },
     auction: auctionAPI(generateCallData, compiledCalls),
-    bridge: bridgeAPI(generateCallData, compiledCalls),
+    portal: portalAPI(generateCallData, compiledCalls),
     config: {
       set: {
         address: setConfigAddress,
@@ -613,7 +608,6 @@ export function createAdminAPI(compiledCalls: string[]) {
           consumable: registerConsumable,
         },
         add: {
-          erc20: addItemERC20,
           flag: addItemFlag,
           requirement: addItemRequirement,
           allo: {
