@@ -7,8 +7,6 @@ import { getAddrByID } from "solecs/utils.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibData } from "libraries/LibData.sol";
-import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibTokenBridge } from "libraries/LibTokenBridge.sol";
 
