@@ -71,14 +71,26 @@ export const useCooldownVisuals = (
     return Math.max(0, end - now);
   };
 
-  const isOnCooldownVisual = calcRemainingForVisuals() > 0;
+  const remNow = calcRemainingForVisuals();
+  const isOnCooldownVisual = remNow > 0;
   const shouldAnimate = enabled && isOnCooldownVisual;
   const [tick, setTick] = useState(0);
+  const lastRemRef = React.useRef(remNow);
+  const endAtRef = React.useRef<number | null>(null);
   useEffect(() => {
     if (!shouldAnimate) return;
     const id = setInterval(() => setTick((t) => (t + 1) % 1000000), 200);
     return () => clearInterval(id);
   }, [shouldAnimate]);
+
+  // Track cooldown end to ensure a final wipe even if last-second window was missed
+  useEffect(() => {
+    const rem = calcRemainingForVisuals();
+    const prev = lastRemRef.current;
+    if (prev > 0 && rem === 0) endAtRef.current = performance.now() / 1000;
+    lastRemRef.current = rem;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick, kami]);
 
   // Compute grayscale filter amount based on remaining/total cooldown
   const filter = useMemo(() => {
@@ -114,21 +126,31 @@ export const useCooldownVisuals = (
       maskRadius: 0.0,
       maskHeight: 0.0,
     });
-    wipeLayer.onBeforeFrame = (uniforms: any) => {
+    wipeLayer.onBeforeFrame = (uniforms: any, t: number) => {
       const tot = calcCooldownRequirement(kami);
       const rem = calcRemainingForVisuals();
-      const lastSecond = rem <= 1.0 && rem > 0; // only show while > 0 and <= 1s
-      if (!lastSecond) {
-        if (uniforms.uAlpha) uniforms.uAlpha.value = 0.0;
-        return;
+      const lastSecond = rem <= 1.0 && rem > 0; // while in final second
+
+      let alpha = 0.0;
+      if (lastSecond) {
+        const timeIntoLast = Math.max(0, 1.0 - rem);
+        const wait = 0.5;
+        const dur = 0.5;
+        const wp = Math.max(0, Math.min(1, (timeIntoLast - wait) / dur));
+        alpha = 0.9 * (1 - wp);
+      } else if (endAtRef.current != null) {
+        // one-shot wipe for 0.5s after cooldown reaches 0
+        const elapsed = t - endAtRef.current;
+        if (elapsed >= 0 && elapsed <= 0.5) {
+          const wp = elapsed / 0.5;
+          alpha = 0.9 * (1 - wp);
+        } else {
+          endAtRef.current = null;
+        }
       }
-      const timeIntoLast = Math.max(0, 1.0 - rem);
-      const wait = 0.5;
-      const dur = 0.5;
-      const wp = Math.max(0, Math.min(1, (timeIntoLast - wait) / dur));
-      const a = 0.9 * (1 - wp);
+
       if (uniforms.uTopSplit) uniforms.uTopSplit.value = 2.0;
-      if (uniforms.uAlpha) uniforms.uAlpha.value = a;
+      if (uniforms.uAlpha) uniforms.uAlpha.value = alpha;
     };
 
     return (
