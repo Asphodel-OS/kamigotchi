@@ -71,12 +71,19 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
           for (const mat of materialsRef.current) {
             const u = mat.uniforms;
             if (u.iResolution) u.iResolution.value.set(width, height, dpr);
+            (mat as any).needsUpdate = true;
           }
         }
       }
     };
     renderer.domElement.addEventListener('webglcontextlost', handleContextLost as EventListener, false);
     renderer.domElement.addEventListener('webglcontextrestored', handleContextRestored as EventListener, false);
+    // Stash handlers for cleanup
+    (renderer as any).userData ??= {};
+    (renderer as any).userData.__ctxHandlers = {
+      lost: handleContextLost as EventListener,
+      restored: handleContextRestored as EventListener,
+    };
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -145,6 +152,13 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     for (const m of materialsRef.current) m.dispose();
     materialsRef.current = [];
     if (renderer) {
+      const el = renderer.domElement;
+      const ctx = (renderer as any).userData?.__ctxHandlers;
+      if (el && ctx) {
+        if (ctx.lost) el.removeEventListener('webglcontextlost', ctx.lost);
+        if (ctx.restored) el.removeEventListener('webglcontextrestored', ctx.restored);
+        (renderer as any).userData.__ctxHandlers = undefined;
+      }
       renderer.dispose();
       if (renderer.domElement && container && renderer.domElement.parentElement === container) container.removeChild(renderer.domElement);
     }

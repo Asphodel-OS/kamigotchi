@@ -9,8 +9,25 @@ import { makeStaticLayer } from 'app/components/shaders/StaticShader';
 
 import { Countdown, TextTooltip } from '../..';
 
-// In-memory cooldown-end cache to avoid using time.last (which includes feeding)
 const cooldownEndCache: Map<number | string, number> = new Map();
+
+const getKamiCacheKey = (k: Kami) =>
+  typeof (k as any).index === 'number'
+    ? (k as any).index
+    : ((k as any).id ?? `name:${(k as any).name || 'unknown'}`);
+
+const calcRemainingFromCooldownOrCache = (k: Kami): number => {
+  const now = Date.now() / 1000;
+  const key = getKamiCacheKey(k);
+  let end = Number((k as any).time?.cooldown);
+  if (isFinite(end) && end > now) {
+    cooldownEndCache.set(key, end);
+  } else {
+    const cached = cooldownEndCache.get(key);
+    if (cached && cached > now) end = cached; else end = now;
+  }
+  return Math.max(0, end - now);
+};
 
 export const Cooldown = ({
   kami,
@@ -31,22 +48,7 @@ export const Cooldown = ({
     return () => clearInterval(timerId);
   }, [kami]);
 
-  // Cache last known cooldown end per kami to avoid using time.last (which includes feeding)
-  const getCacheKey = () => (typeof kami.index === 'number' ? kami.index : (kami as any).id ?? 0);
-  const cacheKey = getCacheKey();
-
-  // Helper: remaining time that prefers on-chain end timestamp, then cache
-  const calcRemainingForVisuals = () => {
-    const now = Date.now() / 1000;
-    let end = Number((kami as any).time?.cooldown);
-    if (isFinite(end) && end > now) {
-      cooldownEndCache.set(cacheKey, end);
-    } else {
-      const cached = cooldownEndCache.get(cacheKey);
-      if (cached && cached > now) end = cached; else end = now;
-    }
-    return Math.max(0, end - now);
-  };
+  const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
 
   // update the remaining time on the cooldown
   useEffect(() => {
@@ -66,19 +68,7 @@ export const useCooldownVisuals = (
   enabled: boolean,
 ): { filter?: string; foreground?: React.ReactNode } => {
   // visuals-only remaining time that prefers on-chain end timestamp, then cache
-  const getCacheKey = () => (typeof kami.index === 'number' ? kami.index : (kami as any).id ?? 0);
-  const cacheKey = getCacheKey();
-  const calcRemainingForVisuals = () => {
-    const now = Date.now() / 1000;
-    let end = Number((kami as any).time?.cooldown);
-    if (isFinite(end) && end > now) {
-      cooldownEndCache.set(cacheKey, end);
-    } else {
-      const cached = cooldownEndCache.get(cacheKey);
-      if (cached && cached > now) end = cached; else end = now;
-    }
-    return Math.max(0, end - now);
-  };
+  const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
 
   const remNow = calcRemainingForVisuals();
   const isOnCooldownVisual = remNow > 0;
@@ -135,7 +125,7 @@ export const useCooldownVisuals = (
       maskRadius: 0.0,
       maskHeight: 0.0,
     });
-    wipeLayer.onBeforeFrame = (uniforms: any, t: number) => {
+    wipeLayer.onBeforeFrame = (uniforms: any) => {
       const tot = calcCooldownRequirement(kami);
       const rem = calcRemainingForVisuals();
       const lastSecond = rem <= 1.0 && rem > 0; // while in final second
@@ -149,7 +139,7 @@ export const useCooldownVisuals = (
         alpha = 0.9 * (1 - wp);
       } else if (endAtRef.current != null) {
         // one-shot wipe for 0.5s after cooldown reaches 0
-        const elapsed = t - endAtRef.current;
+        const elapsed = performance.now() / 1000 - endAtRef.current;
         if (elapsed >= 0 && elapsed <= 0.5) {
           const wp = elapsed / 0.5;
           alpha = 0.9 * (1 - wp);
