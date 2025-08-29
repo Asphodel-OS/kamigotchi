@@ -101,7 +101,7 @@ export function IconListButton({
   };
 
   return (
-    <Popover content={OptionsMap()}>
+    <Popover fullWidth={fullWidth} content={OptionsMap()}>
       <TextTooltip {...tooltipProps} text={tooltipProps?.text ?? ['']}>
         <IconButton
           img={img}
