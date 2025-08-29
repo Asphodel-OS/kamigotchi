@@ -3,11 +3,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Kami } from 'network/shapes/Kami';
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { onCooldown } from 'app/cache/kami/calcs/base';
-import { CRTShader } from 'app/components/shaders/CRTShader';
+import { makeCRTLayer } from 'app/components/shaders/CRTShader';
 import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
 
 import { Countdown, TextTooltip } from '../..';
+
+// In-memory cooldown-end cache to avoid using time.last (which includes feeding)
+const cooldownEndCache: Map<number | string, number> = new Map();
 
 export const Cooldown = ({
   kami,
@@ -28,15 +31,19 @@ export const Cooldown = ({
     return () => clearInterval(timerId);
   }, [kami]);
 
-  // Helper: remaining time with fallback to last+requirement (visuals-only)
+  // Cache last known cooldown end per kami to avoid using time.last (which includes feeding)
+  const getCacheKey = () => (typeof kami.index === 'number' ? kami.index : (kami as any).id ?? 0);
+  const cacheKey = getCacheKey();
+
+  // Helper: remaining time that prefers on-chain end timestamp, then cache
   const calcRemainingForVisuals = () => {
     const now = Date.now() / 1000;
     let end = Number((kami as any).time?.cooldown);
-    if (!isFinite(end) || end <= 0) {
-      const last = Number((kami as any).time?.last);
-      const req = Number(calcCooldownRequirement(kami));
-      if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
-      else end = now;
+    if (isFinite(end) && end > now) {
+      cooldownEndCache.set(cacheKey, end);
+    } else {
+      const cached = cooldownEndCache.get(cacheKey);
+      if (cached && cached > now) end = cached; else end = now;
     }
     return Math.max(0, end - now);
   };
@@ -58,15 +65,17 @@ export const useCooldownVisuals = (
   kami: Kami,
   enabled: boolean,
 ): { filter?: string; foreground?: React.ReactNode } => {
-  // visuals-only remaining time with fallback to last+requirement
+  // visuals-only remaining time that prefers on-chain end timestamp, then cache
+  const getCacheKey = () => (typeof kami.index === 'number' ? kami.index : (kami as any).id ?? 0);
+  const cacheKey = getCacheKey();
   const calcRemainingForVisuals = () => {
     const now = Date.now() / 1000;
     let end = Number((kami as any).time?.cooldown);
-    if (!isFinite(end) || end <= 0) {
-      const last = Number((kami as any).time?.last);
-      const req = Number(calcCooldownRequirement(kami));
-      if (isFinite(last) && last > 0 && isFinite(req) && req > 0) end = last + req;
-      else end = now;
+    if (isFinite(end) && end > now) {
+      cooldownEndCache.set(cacheKey, end);
+    } else {
+      const cached = cooldownEndCache.get(cacheKey);
+      if (cached && cached > now) end = cached; else end = now;
     }
     return Math.max(0, end - now);
   };
@@ -153,13 +162,9 @@ export const useCooldownVisuals = (
       if (uniforms.uAlpha) uniforms.uAlpha.value = alpha;
     };
 
-    return (
-      <>
-        <CRTShader brightness={1.6} alpha={0.96} />
-        <ShaderStack layers={[staticLayer]} animateWhenOffscreen />
-        <ShaderStack layers={[wipeLayer]} animateWhenOffscreen />
-      </>
-    );
+    // Single WebGL context: CRT + static grain + final-second wipe
+    const crtLayer = makeCRTLayer({ brightness: 1.6, alpha: 0.96 });
+    return <ShaderStack layers={[crtLayer, staticLayer, wipeLayer]} animateWhenOffscreen />;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldAnimate, kami]);
 
