@@ -1,7 +1,6 @@
 import { World } from '@mud-classic/recs';
 import { cleanInventories, filterInventories, Inventory } from 'app/cache/inventory';
 import { calcCooldown, isHarvesting, Kami } from 'app/cache/kami';
-import { TextTooltip } from 'app/components/library';
 import { Components } from 'network/components';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
@@ -44,9 +43,12 @@ export const UseItemButton = (
   }
 
   return (
-    <TextTooltip key='feed-tooltip' text={[tooltip]}>
-      <IconListButton img={icon} options={options} disabled={disabled} />
-    </TextTooltip>
+    <IconListButton
+      img={icon}
+      options={options}
+      disabled={disabled}
+      tooltipProps={{ text: [tooltip] }}
+    />
   );
 };
 

@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
+import { TextTooltip } from '../poppers';
 import { Popover } from '../poppers/Popover';
 import { IconButton } from './IconButton';
 
@@ -24,6 +25,7 @@ export function IconListButton({
   scale,
   scaleOrientation,
   searchable,
+  tooltipProps,
 }: {
   img: string;
   options: Option[];
@@ -36,8 +38,20 @@ export function IconListButton({
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
-
   searchable?: boolean;
+  tooltipProps?: {
+    text: string[] | React.ReactNode[];
+    title?: string;
+    children?: React.ReactNode;
+    grow?: boolean;
+    direction?: 'row' | 'column';
+    delay?: number;
+    maxWidth?: number;
+    size?: number;
+    alignText?: 'left' | 'right' | 'center';
+    color?: string;
+    fullWidth?: boolean;
+  };
 }) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -88,19 +102,21 @@ export function IconListButton({
 
   return (
     <Popover content={OptionsMap()}>
-      <IconButton
-        img={img}
-        text={text}
-        onClick={handleOpen}
-        disabled={disabled}
-        radius={radius ?? 0.45}
-        scale={scale ?? 2.5}
-        scaleOrientation={scaleOrientation ?? 'vw'}
-        width={width}
-        fullWidth={fullWidth}
-        balance={balance}
-        corner={!balance}
-      />
+      <TextTooltip key='tooltip-IconListButton' {...tooltipProps} text={tooltipProps?.text ?? ['']}>
+        <IconButton
+          img={img}
+          text={text}
+          onClick={handleOpen}
+          disabled={disabled}
+          radius={radius ?? 0.45}
+          scale={scale ?? 2.5}
+          scaleOrientation={scaleOrientation ?? 'vw'}
+          width={width}
+          fullWidth={fullWidth}
+          balance={balance}
+          corner={!balance}
+        />
+      </TextTooltip>
     </Popover>
   );
 }
