@@ -86,6 +86,7 @@ export const ItemGrid = ({
     const available = kamis.filter((kami) => meetsRequirements(kami, item));
     return available.map((kami) => ({
       text: kami.name,
+      image: kami.image,
       onClick: () => actions.useForKami(kami, item),
     }));
   };

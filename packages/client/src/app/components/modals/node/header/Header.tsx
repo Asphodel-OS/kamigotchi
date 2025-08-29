@@ -113,7 +113,7 @@ export const Header = ({
   const AddButton = (kamis: Kami[]) => {
     const options = kamis.filter((kami) => canAdd(kami));
     const actionOptions = options.map((kami) => {
-      return { text: `${kami.name}`, onClick: () => addKami(kami) };
+      return { text: `${kami.name}`, image: kami.image, onClick: () => addKami(kami) };
     });
 
     return (
