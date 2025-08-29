@@ -98,6 +98,7 @@ export const KamisExternal = ({
 
     return (
       <IconListButton
+        key='send-tooltip'
         img={ArrowIcons.right}
         options={options}
         searchable

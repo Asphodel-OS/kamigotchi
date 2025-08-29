@@ -44,6 +44,7 @@ export const UseItemButton = (
 
   return (
     <IconListButton
+      key='feed-tooltip'
       img={icon}
       options={options}
       disabled={disabled}

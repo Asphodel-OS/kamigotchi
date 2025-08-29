@@ -44,6 +44,7 @@ export const HarvestButton = ({
 
   return (
     <IconListButton
+      key='harvest-tooltip'
       img={HarvestIcon}
       options={options}
       disabled={disabled}
