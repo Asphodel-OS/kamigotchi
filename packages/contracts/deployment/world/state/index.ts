@@ -2,7 +2,6 @@ import { AdminAPI } from '../api';
 import { initAuctions } from './auctions';
 
 import { initAuth, initLocalAuth } from './auth';
-import { initBridge, initLocalBridge } from './bridge';
 import { initConfigs, initLocalConfigs, initProdConfigs, initTestingConfigs } from './configs';
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
@@ -10,6 +9,7 @@ import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
 import { initListings } from './listings';
 import { initNpcs } from './npcs';
+import { initLocalPortal, initPortal } from './portal';
 import { initQuests } from './quests/quests';
 import { initRecipes } from './recipes/recipes';
 import { initRelationships } from './relationships';
@@ -41,7 +41,7 @@ export async function initAll(api: AdminAPI) {
   // dependent
   await initAuctions(api);
   console.log('\n---------------------------------------------\n');
-  await initBridge(api);
+  await initPortal(api);
   console.log('\n---------------------------------------------\n');
   await initListings(api, undefined, true);
   console.log('\n---------------------------------------------\n');
@@ -81,7 +81,7 @@ export async function initAllLocal(api: AdminAPI) {
   await api.setup.local.initAccounts();
   await api.setup.local.initPets();
   await api.setup.local.initHarvests();
-  await initLocalBridge(api);
+  await initLocalPortal(api);
 }
 
 export async function initAllTesting(api: AdminAPI) {
@@ -95,7 +95,6 @@ export async function initAllProd(api: AdminAPI) {
 
 export { deleteAuctions, initAuctions, reviseAuctions } from './auctions';
 export { initAuth } from './auth';
-export { addToken, deleteToken, initBridge } from './bridge';
 export {
   initConfigs,
   initHarvest as initHarvestConfigs,
@@ -110,6 +109,7 @@ export { deleteGoalRewards, deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
 export { initNpcs } from './npcs';
+export { addToken, deleteToken, initPortal } from './portal';
 export { deleteQuests, initQuests, reviseQuests } from './quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes/recipes';
 export { deleteRelationships, initRelationships } from './relationships';
