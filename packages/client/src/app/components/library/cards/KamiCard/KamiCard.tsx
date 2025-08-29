@@ -88,7 +88,14 @@ export const KamiCard = ({
 
     const details = description
       .slice(1)
-      .map((text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>);
+      .map((text, i) => (
+        <TextMedium
+          key={`desc-${i}`}
+          onClick={text.toLowerCase().startsWith('on ') ? subtextOnClick : undefined}
+        >
+          {text}
+        </TextMedium>
+      ));
     return <>{[header, ...details]}</>;
   };
 
@@ -139,7 +146,9 @@ export const KamiCard = ({
             {isFriend && <Friend>Friend</Friend>}
           </ContentColumn>
           <ContentColumn key='column-2'>
-            <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+            {subtext ? (
+              <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
+            ) : null}
           </ContentColumn>
         </ContentRow>
         <ContentBottom>
@@ -291,6 +300,17 @@ const TextMedium = styled.p`
   font-size: 0.6vw;
   line-height: 1vw;
   text-align: left;
+
+  ${({ onClick }) =>
+    onClick &&
+    `
+    color: #2b6cb0;
+    cursor: pointer;
+    &:hover {
+      opacity: 0.7;
+      text-decoration: underline;
+    }
+  `}
 `;
 
 const Friend = styled.div`
