@@ -688,6 +688,7 @@
         "IDOwnsInventory",
         "IDOwnsWithdrawal",
         "IndexItem",
+        "Scale",
         "TimeEnd",
         "TimeLast",
         "TokenAddress",

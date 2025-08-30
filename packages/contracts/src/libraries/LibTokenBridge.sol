@@ -8,6 +8,7 @@ import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IndexItemComponent, ID as ItemIndexCompID } from "components/IndexItemComponent.sol";
 import { IDOwnsWithdrawalComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsWithdrawalComponent.sol";
+import { ScaleComponent, ID as ScaleCompID } from "components/ScaleComponent.sol";
 import { TokenAddressComponent, ID as TokenAddressCompID } from "components/TokenAddressComponent.sol";
 import { TokenHolderComponent, ID as TokenHolderCompID } from "components/TokenHolderComponent.sol";
 import { TimeEndComponent, ID as TimeEndCompID } from "components/TimeEndComponent.sol";
@@ -62,6 +63,7 @@ library LibTokenBridge {
     uint32 itemIndex,
     address tokenAddr,
     uint256 amount,
+    int32 scale,
     uint256 endTime
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
@@ -70,6 +72,7 @@ library LibTokenBridge {
     OwnerComponent(getAddrByID(comps, OwnerCompID)).set(id, holderID);
     IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).set(id, itemIndex);
     TokenAddressComponent(getAddrByID(comps, TokenAddressCompID)).set(id, tokenAddr);
+    ScaleComponent(getAddrByID(comps, ScaleCompID)).set(id, scale);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, amount);
     TimeEndComponent(getAddrByID(comps, TimeEndCompID)).set(id, endTime);
   }
@@ -79,6 +82,7 @@ library LibTokenBridge {
     OwnerComponent(getAddrByID(comps, OwnerCompID)).remove(id);
     IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).remove(id);
     TokenAddressComponent(getAddrByID(comps, TokenAddressCompID)).remove(id);
+    ScaleComponent(getAddrByID(comps, ScaleCompID)).remove(id);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
     TimeEndComponent(getAddrByID(comps, TimeEndCompID)).remove(id);
   }
@@ -90,12 +94,13 @@ library LibTokenBridge {
     IUintComp comps,
     uint256 accID,
     address tokenAddr,
-    uint256 itemAmt
+    uint256 itemAmt,
+    int32 scale
   ) internal {
     address accAddr = LibAccount.getOwner(comps, accID);
 
     // pulling token
-    uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt); // converting to 18dp
+    uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt, scale); // scaling accordingly
     LibERC20.transfer(comps, tokenAddr, accAddr, getAddrByID(comps, TokenHolderCompID), tokenAmt);
   }
 
@@ -105,13 +110,14 @@ library LibTokenBridge {
     uint256 accID,
     uint32 itemIndex,
     address tokenAddr,
-    uint256 itemAmt
+    uint256 itemAmt,
+    int32 scale
   ) internal returns (uint256 receiptID) {
-    uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt); // converting to 18dp
+    uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt, scale); // scaling accordingly
     uint256 endTime = block.timestamp + getWithdrawDelay(comps);
 
     // creating receipt and withdrawal receipt
-    receiptID = createReceipt(world, comps, accID, itemIndex, tokenAddr, tokenAmt, endTime);
+    receiptID = createReceipt(world, comps, accID, itemIndex, tokenAddr, tokenAmt, scale, endTime);
 
     // sending items to receipt (tokens are considered not-in-world past this point)
     LibInventory._decFor(comps, accID, itemIndex, itemAmt);
@@ -122,6 +128,7 @@ library LibTokenBridge {
     uint32 item = IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).get(receiptID);
     address token = TokenAddressComponent(getAddrByID(comps, TokenAddressCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
+    int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(receiptID);
 
     // send tokens to owner
     TokenHolderComponent walletComp = TokenHolderComponent(getAddrByID(comps, TokenHolderCompID));
@@ -131,8 +138,8 @@ library LibTokenBridge {
     removeReceipt(comps, receiptID);
 
     // logging
-    uint256 itemAmt = LibERC20.toGameUnits(tokenAmt);
-    logWithdraw(world, comps, LogData(accID, item, token, itemAmt));
+    uint256 itemAmt = LibERC20.toGameUnits(tokenAmt, scale);
+    logWithdraw(world, comps, LogData(accID, item, token, itemAmt, scale));
   }
 
   /// @dev can be initiated by admin or original user
@@ -142,16 +149,17 @@ library LibTokenBridge {
     uint32 item = IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).get(receiptID);
     address token = TokenAddressComponent(getAddrByID(comps, TokenAddressCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
+    int32 scale = ScaleComponent(getAddrByID(comps, ScaleCompID)).get(receiptID);
 
     // put tokens back in world
-    uint256 itemAmt = LibERC20.toGameUnits(tokenAmt);
+    uint256 itemAmt = LibERC20.toGameUnits(tokenAmt, scale);
     LibInventory._incFor(comps, accID, item, itemAmt);
 
     // clear receipt
     removeReceipt(comps, receiptID);
 
     // logging
-    logCancelWithdraw(world, comps, LogData(accID, item, token, itemAmt));
+    logCancelWithdraw(world, comps, LogData(accID, item, token, itemAmt, scale));
   }
 
   ////////////////
@@ -189,6 +197,7 @@ library LibTokenBridge {
     uint32 item;
     address token;
     uint256 itemAmt;
+    int32 scale;
   }
 
   function _eventSchema() internal pure returns (uint8[] memory _schema) {
@@ -207,7 +216,7 @@ library LibTokenBridge {
     LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_DEPOSIT_TOTAL", data.itemAmt);
 
     // logging world token totals
-    uint256 amt = LibERC20.toTokenUnits(data.itemAmt);
+    uint256 amt = LibERC20.toTokenUnits(data.itemAmt, data.scale);
     LibData.inc(comps, uint256(uint160(data.token)), 0, "BRIDGE_TOKEN_DEPOSIT_TOTAL", amt);
 
     // emit event
@@ -222,7 +231,7 @@ library LibTokenBridge {
     LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_PENDING_WITHDRAW_TOTAL", data.itemAmt);
 
     // logging world token totals
-    uint256 amt = LibERC20.toTokenUnits(data.itemAmt);
+    uint256 amt = LibERC20.toTokenUnits(data.itemAmt, data.scale);
     LibData.inc(comps, uint256(uint160(data.token)), 0, "BRIDGE_TOKEN_PENDING_WITHDRAW_TOTAL", amt);
 
     // emit event
@@ -237,7 +246,7 @@ library LibTokenBridge {
     LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_CANCEL_WITHDRAW_TOTAL", data.itemAmt);
 
     // logging world token totals
-    uint256 amt = LibERC20.toTokenUnits(data.itemAmt);
+    uint256 amt = LibERC20.toTokenUnits(data.itemAmt, data.scale);
     LibData.inc(comps, uint256(uint160(data.token)), 0, "BRIDGE_TOKEN_CANCEL_WITHDRAW_TOTAL", amt);
 
     // emit event
@@ -252,7 +261,7 @@ library LibTokenBridge {
     LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_WITHDRAW_TOTAL", data.itemAmt);
 
     // logging world token totals
-    uint256 amt = LibERC20.toTokenUnits(data.itemAmt);
+    uint256 amt = LibERC20.toTokenUnits(data.itemAmt, data.scale);
     LibData.inc(comps, uint256(uint160(data.token)), 0, "BRIDGE_TOKEN_WITHDRAW_TOTAL", amt);
 
     // emit event

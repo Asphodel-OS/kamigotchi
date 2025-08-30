@@ -17,7 +17,7 @@ contract TokenBridgeTest is SetupTemplate {
     super.setUp();
 
     _createGenericItem(tokenItem);
-    _addItemERC20(tokenItem, address(token));
+    _addItemERC20(tokenItem, address(token), 3);
     vm.startPrank(deployer);
     _TokenPortalSystem.addItem(tokenItem, address(token));
     __ItemRegistrySystem.addFlag(tokenItem, "ERC20_BRIDGEABLE");
@@ -29,18 +29,18 @@ contract TokenBridgeTest is SetupTemplate {
     // alice deposits 11 tokens
     token.mint(alice.owner, 11 ether);
     _approveERC20(address(token), alice.owner);
-    _deposit(alice, tokenItem, LibERC20.toGameUnits(11 ether));
+    _deposit(alice, tokenItem, LibERC20.toGameUnits(11 ether, 3));
 
     assertEq(token.balanceOf(alice.owner), 0); // no tokens in wallet
-    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(11 ether));
+    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(11 ether, 3));
 
     ////////////
     // alice withdraws
 
     // initiate withdraw, receipt
-    uint256 receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(5 ether));
+    uint256 receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(5 ether, 3));
     assertEq(token.balanceOf(alice.owner), 0);
-    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(6 ether));
+    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(6 ether, 3));
 
     // try to withdraw before time end
     vm.startPrank(alice.owner);
@@ -54,13 +54,13 @@ contract TokenBridgeTest is SetupTemplate {
     _TokenPortalSystem.claim(receiptID);
     vm.stopPrank();
     assertEq(token.balanceOf(alice.owner), 5 ether);
-    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(6 ether));
+    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(6 ether, 3));
 
     ////////////
     // alice withdraws, and cancels
 
     // initiate withdraw
-    receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(3 ether));
+    receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(3 ether, 3));
 
     // cancel withdraw
     vm.startPrank(alice.owner);
@@ -69,34 +69,34 @@ contract TokenBridgeTest is SetupTemplate {
 
     // checking balances
     assertEq(token.balanceOf(alice.owner), 5 ether);
-    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(6 ether));
+    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(6 ether, 3));
   }
 
   function testBridgeWithdrawCancel() public {
     // setup (deposit)
     token.mint(alice.owner, 11 ether);
     _approveERC20(address(token), alice.owner);
-    _deposit(alice, tokenItem, LibERC20.toGameUnits(11 ether));
+    _deposit(alice, tokenItem, LibERC20.toGameUnits(11 ether, 3));
 
     // cancelling
-    uint256 receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(5 ether));
+    uint256 receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(5 ether, 3));
     vm.startPrank(alice.owner);
     _TokenPortalSystem.cancel(receiptID);
     vm.stopPrank();
     assertEq(token.balanceOf(alice.owner), 0);
-    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(11 ether));
+    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(11 ether, 3));
     vm.startPrank(alice.owner);
     vm.expectRevert();
     _TokenPortalSystem.claim(receiptID);
     vm.stopPrank();
 
     // getting admin blocked
-    receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(5 ether));
+    receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(5 ether, 3));
     vm.startPrank(deployer);
     _TokenPortalSystem.adminBlock(receiptID);
     vm.stopPrank();
     assertEq(token.balanceOf(alice.owner), 0);
-    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(11 ether));
+    assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(11 ether, 3));
     vm.startPrank(alice.owner);
     vm.expectRevert();
     _TokenPortalSystem.claim(receiptID);

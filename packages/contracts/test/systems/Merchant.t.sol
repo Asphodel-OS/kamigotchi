@@ -270,7 +270,7 @@ contract NPCTest is SetupTemplate {
     uint32 currency = 7; // item currency
     _createGenericItem(item);
     _createGenericItem(currency);
-    _addItemERC20(currency, tokenAddr);
+    _addItemERC20(currency, tokenAddr, 3);
     uint256 price = 100;
     _createNPC(1, 1, "npc1");
     _createListing(1, item, currency, price);
@@ -280,7 +280,7 @@ contract NPCTest is SetupTemplate {
 
     // pre-buy
     assertEq(_getItemBal(alice, item), 0);
-    assertEq(_getTokenBal(tokenAddr, alice.owner), LibERC20.toTokenUnits(100));
+    assertEq(_getTokenBal(tokenAddr, alice.owner), LibERC20.toTokenUnits(100, 3));
 
     // buy
     _buy(alice, 1, item, 1);
@@ -320,7 +320,7 @@ contract NPCTest is SetupTemplate {
 
   // function testGDABounds(
   //   uint256 basePrice,
-  //   uint32 scale, // 1e9 (lim infinite items)- 2e9 (1 item)
+  //   int32 scale, // 1e9 (lim infinite items)- 2e9 (1 item)
   //   uint32 decay //  1 (max time)- 69314718 (1s)
   // ) public {
   //   if (scale > 0) scale = (scale % 1e9) + 1e9; // prevent too many rejects

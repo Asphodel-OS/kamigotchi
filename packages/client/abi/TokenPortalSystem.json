@@ -18,24 +18,6 @@
     },
     {
       "type": "function",
-      "name": "addItem",
-      "inputs": [
-        {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "tokenAddr",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "adminBlock",
       "inputs": [
         {
@@ -163,7 +145,7 @@
     },
     {
       "type": "function",
-      "name": "itemRegistry",
+      "name": "itemAddrs",
       "inputs": [
         {
           "name": "",
@@ -176,6 +158,25 @@
           "name": "",
           "type": "address",
           "internalType": "address"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "itemScales",
+      "inputs": [
+        {
+          "name": "",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "int32",
+          "internalType": "int32"
         }
       ],
       "stateMutability": "view"
@@ -214,19 +215,6 @@
     },
     {
       "type": "function",
-      "name": "removeItem",
-      "inputs": [
-        {
-          "name": "index",
-          "type": "uint32",
-          "internalType": "uint32"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
       "name": "renounceOwnership",
       "inputs": [],
       "outputs": [],
@@ -241,6 +229,29 @@
     },
     {
       "type": "function",
+      "name": "setItem",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "tokenAddr",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "scale",
+          "type": "int32",
+          "internalType": "int32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -251,6 +262,19 @@
       ],
       "outputs": [],
       "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "unsetItem",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "event",
@@ -325,7 +349,6 @@
     }
   ],
   "methodIdentifiers": {
-    "addItem(uint32,address)": "e5c98361",
     "adminBlock(uint256)": "e65920c4",
     "cancel(uint256)": "40e58ee5",
     "cancelOwnershipHandover()": "54d1f13d",
@@ -335,12 +358,14 @@
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
     "initiateWithdraw(uint32,uint256)": "d95af4e9",
-    "itemRegistry(uint32)": "bd558606",
+    "itemAddrs(uint32)": "c122aef3",
+    "itemScales(uint32)": "7d7b397a",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
-    "removeItem(uint32)": "e6e334aa",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "transferOwnership(address)": "f2fde38b"
+    "setItem(uint32,address,int32)": "21321390",
+    "transferOwnership(address)": "f2fde38b",
+    "unsetItem(uint32)": "7f17d8f5"
   }
 }

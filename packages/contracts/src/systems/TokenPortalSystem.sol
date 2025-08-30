@@ -7,7 +7,10 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibTokenBridge } from "libraries/LibTokenBridge.sol";
+
+// handle logging and verification
 
 uint256 constant ID = uint256(keccak256("system.erc20.portal"));
 
@@ -18,7 +21,8 @@ uint256 constant ID = uint256(keccak256("system.erc20.portal"));
  */
 contract TokenPortalSystem is System, AuthRoles {
   // stores item's token address locally, no dependence on item registries
-  mapping(uint32 => address) public itemRegistry;
+  mapping(uint32 => address) public itemAddrs;
+  mapping(uint32 => int32) public itemScales;
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -27,12 +31,13 @@ contract TokenPortalSystem is System, AuthRoles {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // checks before action
-    address tokenAddr = itemRegistry[itemIndex];
+    address tokenAddr = itemAddrs[itemIndex];
     require(tokenAddr != address(0), "item not registered");
     LibTokenBridge.verifyBridgeable(components, itemIndex);
 
     // pull tokens and increase itemIndex balance (balance check is intrinsic)
-    LibTokenBridge.depositERC20(components, accID, tokenAddr, itemAmt);
+    int32 scale = itemScales[itemIndex];
+    LibTokenBridge.depositERC20(components, accID, tokenAddr, itemAmt, scale);
     LibInventory._incFor(components, accID, itemIndex, itemAmt);
 
     // logging
@@ -40,7 +45,8 @@ contract TokenPortalSystem is System, AuthRoles {
       accID,
       itemIndex,
       tokenAddr,
-      itemAmt
+      itemAmt,
+      scale
     );
     LibTokenBridge.logDeposit(world, components, logData);
     LibAccount.updateLastTs(components, accID);
@@ -51,18 +57,20 @@ contract TokenPortalSystem is System, AuthRoles {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // checks
-    address tokenAddr = itemRegistry[itemIndex];
+    address tokenAddr = itemAddrs[itemIndex];
     require(tokenAddr != address(0), "item not registered");
     LibTokenBridge.verifyBridgeable(components, itemIndex);
 
     // reduces items, creates withdrawal receipt
+    int32 scale = itemScales[itemIndex];
     receiptID = LibTokenBridge.initiateWithdraw(
       world,
       components,
       accID,
       itemIndex,
       tokenAddr,
-      itemAmt
+      itemAmt,
+      scale
     );
 
     // logging
@@ -70,14 +78,15 @@ contract TokenPortalSystem is System, AuthRoles {
       accID,
       itemIndex,
       tokenAddr,
-      itemAmt
+      itemAmt,
+      scale
     );
     LibTokenBridge.logPendingWithdraw(world, components, logData);
     LibAccount.updateLastTs(components, accID);
   }
 
   /// @notice executes withdraw if min time has passed
-  /// @dev can be executed by anyone
+  /// @dev can be executed by anyone. do we want logging here?
   function claim(uint256 receiptID) public {
     LibTokenBridge.verifyTimeEnd(components, receiptID);
     LibTokenBridge.executeWithdraw(world, components, receiptID);
@@ -86,15 +95,9 @@ contract TokenPortalSystem is System, AuthRoles {
   /// @dev only can be cancelled by receipt owner
   function cancel(uint256 receiptID) public {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-
-    // checks
-    LibTokenBridge.verifyReceiptOwner(components, accID, receiptID);
-
-    // cancel withdrawal
+    LibTokenBridge.verifyReceiptOwner(components, accID, receiptID); // checks
     LibTokenBridge.cancelWithdraw(world, components, receiptID); // also logs cancellation
-
-    // logging
-    LibAccount.updateLastTs(components, accID);
+    LibAccount.updateLastTs(components, accID); // account logging
   }
 
   function adminBlock(uint256 receiptID) public onlyAdmin(components) {
@@ -104,12 +107,23 @@ contract TokenPortalSystem is System, AuthRoles {
   //////////////////
   // REGISTRY
 
-  function addItem(uint32 index, address tokenAddr) public onlyOwner {
-    itemRegistry[index] = tokenAddr;
+  // add an item to the token portal by populating its address and conversion scale
+  // NOTE: item needs to be added through the ItemRegistrySystem first
+  // Q: should we revert if address/scale already set?
+  function setItem(uint32 index, address tokenAddr, int32 scale) public onlyOwner {
+    require(LibItem.getByIndex(components, index) != 0, "TokenPortal: item does not exist");
+    require(scale < 18, "TokenPortal: scale > 18 not supported");
+    LibItem.addERC20(components, index, tokenAddr, scale);
+    itemAddrs[index] = tokenAddr;
+    itemScales[index] = scale;
   }
 
-  function removeItem(uint32 index) public onlyOwner {
-    delete itemRegistry[index];
+  // remove an item from the token portal
+  function unsetItem(uint32 index) public onlyOwner {
+    require(LibItem.getByIndex(components, index) != 0, "TokenPortal: item does not exist");
+    LibItem.removeERC20(components, index);
+    delete itemAddrs[index];
+    delete itemScales[index];
   }
 
   //////////////////

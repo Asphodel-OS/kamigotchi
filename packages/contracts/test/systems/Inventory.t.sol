@@ -148,7 +148,7 @@ contract InventoryTest is SetupTemplate {
     uint32 itemIndex = 1;
     _createGenericItem(itemIndex);
     address tokenAddr = _createERC20("TestToken", "TT");
-    _addItemERC20(itemIndex, tokenAddr);
+    _addItemERC20(itemIndex, tokenAddr, 3);
 
     // trying to increase erc20 balance (fail)
     vm.expectRevert();
@@ -160,7 +160,7 @@ contract InventoryTest is SetupTemplate {
     // spending
     _approveERC20(tokenAddr, alice.owner);
     _decItem(alice, itemIndex, 1);
-    assertEq(_getTokenBal(tokenAddr, alice.owner), LibERC20.toTokenUnits(99));
+    assertEq(_getTokenBal(tokenAddr, alice.owner), LibERC20.toTokenUnits(99, 3));
     _decItem(alice, itemIndex, 99);
     assertEq(_getTokenBal(tokenAddr, alice.owner), 0);
   }

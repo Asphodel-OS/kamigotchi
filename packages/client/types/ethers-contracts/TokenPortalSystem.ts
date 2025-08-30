@@ -30,7 +30,6 @@ import type {
 
 export interface TokenPortalSystemInterface extends utils.Interface {
   functions: {
-    "addItem(uint32,address)": FunctionFragment;
     "adminBlock(uint256)": FunctionFragment;
     "cancel(uint256)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
@@ -40,18 +39,19 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
     "initiateWithdraw(uint32,uint256)": FunctionFragment;
-    "itemRegistry(uint32)": FunctionFragment;
+    "itemAddrs(uint32)": FunctionFragment;
+    "itemScales(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "removeItem(uint32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
+    "setItem(uint32,address,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unsetItem(uint32)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addItem"
       | "adminBlock"
       | "cancel"
       | "cancelOwnershipHandover"
@@ -61,19 +61,17 @@ export interface TokenPortalSystemInterface extends utils.Interface {
       | "deprecate"
       | "execute"
       | "initiateWithdraw"
-      | "itemRegistry"
+      | "itemAddrs"
+      | "itemScales"
       | "owner"
       | "ownershipHandoverExpiresAt"
-      | "removeItem"
       | "renounceOwnership"
       | "requestOwnershipHandover"
+      | "setItem"
       | "transferOwnership"
+      | "unsetItem"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "addItem",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(
     functionFragment: "adminBlock",
     values: [PromiseOrValue<BigNumberish>]
@@ -108,17 +106,17 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "itemRegistry",
+    functionFragment: "itemAddrs",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "itemScales",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeItem",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -129,11 +127,22 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setItem",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "unsetItem",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "addItem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "adminBlock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(
@@ -152,16 +161,13 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     functionFragment: "initiateWithdraw",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "itemRegistry",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "itemAddrs", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "itemScales", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "removeItem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -170,10 +176,12 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     functionFragment: "requestOwnershipHandover",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setItem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unsetItem", data: BytesLike): Result;
 
   events: {
     "OwnershipHandoverCanceled(address)": EventFragment;
@@ -255,12 +263,6 @@ export interface TokenPortalSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addItem(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddr: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     adminBlock(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -306,10 +308,15 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    itemRegistry(
+    itemAddrs(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    itemScales(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
 
@@ -317,11 +324,6 @@ export interface TokenPortalSystem extends BaseContract {
       pendingOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { result: BigNumber }>;
-
-    removeItem(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -331,17 +333,23 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setItem(
+      index: PromiseOrValue<BigNumberish>,
+      tokenAddr: PromiseOrValue<string>,
+      scale: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-  };
 
-  addItem(
-    index: PromiseOrValue<BigNumberish>,
-    tokenAddr: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    unsetItem(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+  };
 
   adminBlock(
     receiptID: PromiseOrValue<BigNumberish>,
@@ -388,10 +396,15 @@ export interface TokenPortalSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  itemRegistry(
+  itemAddrs(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  itemScales(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -399,11 +412,6 @@ export interface TokenPortalSystem extends BaseContract {
     pendingOwner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  removeItem(
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   renounceOwnership(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -413,18 +421,24 @@ export interface TokenPortalSystem extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setItem(
+    index: PromiseOrValue<BigNumberish>,
+    tokenAddr: PromiseOrValue<string>,
+    scale: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  callStatic: {
-    addItem(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  unsetItem(
+    index: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
+  callStatic: {
     adminBlock(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -466,10 +480,15 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    itemRegistry(
+    itemAddrs(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    itemScales(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -478,17 +497,24 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    removeItem(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
+    setItem(
+      index: PromiseOrValue<BigNumberish>,
+      tokenAddr: PromiseOrValue<string>,
+      scale: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unsetItem(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -522,12 +548,6 @@ export interface TokenPortalSystem extends BaseContract {
   };
 
   estimateGas: {
-    addItem(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddr: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     adminBlock(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -573,7 +593,12 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    itemRegistry(
+    itemAddrs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    itemScales(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -585,11 +610,6 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    removeItem(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -598,19 +618,25 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setItem(
+      index: PromiseOrValue<BigNumberish>,
+      tokenAddr: PromiseOrValue<string>,
+      scale: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    unsetItem(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    addItem(
-      index: PromiseOrValue<BigNumberish>,
-      tokenAddr: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     adminBlock(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -656,7 +682,12 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    itemRegistry(
+    itemAddrs(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    itemScales(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -668,11 +699,6 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    removeItem(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -681,9 +707,21 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setItem(
+      index: PromiseOrValue<BigNumberish>,
+      tokenAddr: PromiseOrValue<string>,
+      scale: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unsetItem(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
