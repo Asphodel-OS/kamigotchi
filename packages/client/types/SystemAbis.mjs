@@ -57,6 +57,7 @@ import KamiNameSystem from "../abi/KamiNameSystem.json";
 import KamiOnyxRenameSystem from "../abi/KamiOnyxRenameSystem.json";
 import KamiOnyxRespecSystem from "../abi/KamiOnyxRespecSystem.json";
 import KamiOnyxReviveSystem from "../abi/KamiOnyxReviveSystem.json";
+import KamiUseEnemyItemSystem from "../abi/KamiUseEnemyItemSystem.json";
 import KamiUseItemSystem from "../abi/KamiUseItemSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
@@ -131,6 +132,7 @@ export const SystemAbis = {
   "system.kami.onyx.rename": KamiOnyxRenameSystem.abi,
   "system.kami.onyx.respec": KamiOnyxRespecSystem.abi,
   "system.kami.onyx.revive": KamiOnyxReviveSystem.abi,
+  "system.kami.use.item.enemy": KamiUseEnemyItemSystem.abi,
   "system.kami.use.item": KamiUseItemSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
   "system.listing.sell": ListingSellSystem.abi,

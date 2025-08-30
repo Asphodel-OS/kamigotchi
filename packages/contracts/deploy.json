@@ -597,6 +597,10 @@
       "writeAccess": ["*"]
     },
     {
+      "name": "KamiUseEnemyItemSystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "QuestAcceptSystem",
       "writeAccess": [
         "EntityType",
