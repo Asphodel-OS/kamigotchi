@@ -20,7 +20,7 @@ contract LibGetterTest is SetupTemplate {
   function testGetCooldown() public {
     uint256 entityID = uint256(keccak256(abi.encodePacked("test.entity")));
     vm.startPrank(deployer);
-    LibCooldown.start(components, entityID);
+    LibCooldown.set(components, entityID);
     vm.stopPrank();
 
     // on cooldown

@@ -26,4 +26,18 @@ contract LibSetterTest is SetupTemplate {
     assertEq(score.amount, 1);
     assertEq(score.addr, alice.owner);
   }
+
+  function testSetCooldown() public {
+    uint256 kamiID = _mintKami(alice);
+    _fastForward(_idleRequirement);
+
+    // starting harvest, set cooldown
+    uint256 ogEndTime = _idleRequirement + block.timestamp - 1;
+    _startHarvest(kamiID, 1);
+    assertEq(uint256(LibCooldown.getEnd(components, kamiID)), ogEndTime);
+
+    // adding cooldown
+    ExternalCaller.setterUpdate("COOLDOWN", 0, 555, kamiID);
+    assertEq(uint256(LibCooldown.getEnd(components, kamiID)), 555 + ogEndTime);
+  }
 }

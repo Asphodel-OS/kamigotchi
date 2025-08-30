@@ -1,5 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { Dispatch, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 
 import { calcTradeTax } from 'app/cache/trade';
 import { IconButton, Overlay, Pairing, Text } from 'app/components/library';
@@ -59,6 +59,12 @@ export const Create = ({
   const { entityToIndex } = utils;
 
   const [mode, setMode] = useState<Mode>('Single');
+  const [thousandsSeparator, setThousandsSeparator] = useState<string>(',');
+
+  // tests number formatting
+  useEffect(() => {
+    setThousandsSeparator((4.56).toLocaleString().includes(',') ? '.' : ',');
+  }, []);
 
   // toggle between multi and single Create modes
   const toggleMode = () => {
@@ -192,13 +198,21 @@ export const Create = ({
       <MultiCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
-        data={{ ...data, items: data.items.filter((item) => !DisabledItems.includes(item.index)) }}
+        data={{
+          ...data,
+          items: data.items.filter((item) => !DisabledItems.includes(item.index)),
+          thousandsSeparator,
+        }}
         isVisible={mode === 'Multi'}
       />
       <SingleCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
-        data={{ ...data, items: data.items.filter((item) => !DisabledItems.includes(item.index)) }}
+        data={{
+          ...data,
+          items: data.items.filter((item) => !DisabledItems.includes(item.index)),
+          thousandsSeparator,
+        }}
         isVisible={mode === 'Single'}
       />
       <Overlay bottom={0.75} left={0.75}>

@@ -22,6 +22,10 @@ export const Card = ({
     showLevelUp?: boolean;
     showSkillPoints?: boolean;
     tooltip?: string[];
+    skillPoints?: boolean;
+    background?: React.ReactNode;
+    foreground?: React.ReactNode; // rendered above image
+    filter?: string; // CSS filter applied to base image only
   };
   fullWidth?: boolean;
 }) => {
@@ -39,6 +43,7 @@ export const Card = ({
     <Wrapper fullWidth={fullWidth}>
       <TextTooltip text={image?.tooltip ?? []}>
         <ImageContainer scale={scale} padding={image?.padding}>
+          {!!image?.background && <BackgroundSlot>{image.background}</BackgroundSlot>}
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
             <Text size={scale * 0.075}>{image?.overlay}</Text>
           </Overlay>
@@ -46,7 +51,8 @@ export const Card = ({
           <Overlay top={0.5} right={0.5}>
             {!!image?.showSkillPoints && <Sp>SP</Sp>}
           </Overlay>
-          <Image src={image?.icon} onClick={handleImageClick} />
+          <Image src={image?.icon} onClick={handleImageClick} style={{ filter: image?.filter }} />
+          {!!image?.foreground && <ForegroundSlot>{image.foreground}</ForegroundSlot>}
         </ImageContainer>
       </TextTooltip>
       <Container>{children}</Container>
@@ -101,6 +107,18 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: stretch;
+`;
+
+const BackgroundSlot = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+`;
+
+const ForegroundSlot = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 `;
 
 const Text = styled.div<{ size: number }>`

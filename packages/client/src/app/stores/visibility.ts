@@ -45,6 +45,7 @@ export interface Modals {
   crafting: boolean;
   dialogue: boolean;
   emaBoard: boolean;
+  animationStudio: boolean;
   gacha: boolean;
   goal: boolean;
   help: boolean;
@@ -72,6 +73,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   crafting: isOn,
   dialogue: isOn,
   emaBoard: isOn,
+  animationStudio: isOn,
   gacha: isOn,
   goal: isOn,
   help: isOn,
@@ -120,6 +122,7 @@ export const useVisibility = create<State & Actions>((set) => {
       crafting: false,
       dialogue: false,
       emaBoard: false,
+      animationStudio: false,
       gacha: false,
       goal: false,
       help: false,

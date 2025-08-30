@@ -14,7 +14,6 @@ import { IndexKamiComponent, ID as IndexKamiCompID } from "components/IndexKamiC
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
-import { TimeLastActionComponent, ID as TimeLastActCompID } from "components/TimeLastActionComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
@@ -275,17 +274,12 @@ library LibKami {
   /////////////////
   // SETTERS
 
+  function resetCooldown(IUintComp components, uint256 id) internal {
+    LibCooldown.set(components, id);
+  }
+
   function setOwner(IUintComp components, uint256 id, uint256 accID) internal {
     IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).set(id, accID);
-  }
-
-  // Update the TimeLastAction of a kami. to inform cooldown constraints on Standard Actions
-  function setLastActionTs(IUintComp components, uint256 id, uint256 ts) internal {
-    TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).set(id, ts);
-  }
-
-  function setLastActionTs(IUintComp components, uint256[] memory ids, uint256 ts) internal {
-    getCompByID(components, TimeLastActCompID).setAll(ids, ts);
   }
 
   // Update the TimeLast of a kami. used as anchor point for updating Health
@@ -324,11 +318,6 @@ library LibKami {
   // get the entity ID of the kami account
   function getAccount(IUintComp components, uint256 id) internal view returns (uint256) {
     return IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).safeGet(id);
-  }
-
-  // get the last time a kami commited a Standard Action
-  function getLastActionTs(IUintComp components, uint256 id) internal view returns (uint256) {
-    return TimeLastActionComponent(getAddrByID(components, TimeLastActCompID)).safeGet(id);
   }
 
   // get the last time a kami commited a syncing Action

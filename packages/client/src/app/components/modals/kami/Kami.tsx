@@ -108,9 +108,10 @@ export const KamiModal: UIComponent = {
     })();
 
     const { actions, api } = network;
-    const { kamiIndex } = useSelected();
+    const kamiIndex = useSelected((s) => s.kamiIndex);
     const { selectedAddress, apis: ownerAPIs } = useNetwork();
-    const { modals } = useVisibility();
+    const kamiModalOpen = useVisibility((s) => s.modals.kami);
+    const accountModalOpen = useVisibility((s) => s.modals.account);
 
     const [tab, setTab] = useState<TabType>('TRAITS');
     const [kami, setKami] = useState<Kami>();
@@ -129,7 +130,7 @@ export const KamiModal: UIComponent = {
 
     // update the Kami Object whenever the index changes or on each cycle
     useEffect(() => {
-      if (!modals.kami) return;
+      if (!kamiModalOpen) return;
       const kamiEntity = queryKamiByIndex(kamiIndex);
       const newKami = getKami(kamiEntity);
       setKami(newKami);
@@ -139,7 +140,7 @@ export const KamiModal: UIComponent = {
     }, [kamiIndex, tick]);
 
     const positionOverride = () =>
-      modals.account
+      accountModalOpen
         ? {
             colStart: 32,
             colEnd: 88,

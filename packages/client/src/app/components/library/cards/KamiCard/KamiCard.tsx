@@ -9,8 +9,9 @@ import { Kami } from 'network/shapes/Kami';
 import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
-import { Cooldown } from './Cooldown';
+import { Cooldown, useCooldownVisuals } from './Cooldown';
 import { Health } from './Health';
+import { onCooldown } from 'app/cache/kami/calcs/base';
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
@@ -99,7 +100,12 @@ export const KamiCard = ({
     }));
   }, [getTempBonuses, kami]);
 
-  const Title = (
+  const { filter: cooldownFilter, foreground: cooldownForeground } = useCooldownVisuals(
+    kami,
+    !!showCooldown,
+  );
+
+  const TitleSection = (
     <TitleBar>
       <TitleText key='title' onClick={() => handleKamiClick()}>
         {kami.name}
@@ -111,16 +117,6 @@ export const KamiCard = ({
     </TitleBar>
   );
 
-  const Bonuses = itemBonuses.length > 0 && (
-    <Buffs>
-      {itemBonuses.map((bonus, i) => (
-        <TextTooltip key={i} text={[bonus.text]} direction='row'>
-          <Buff src={bonus.image} />
-        </TextTooltip>
-      ))}
-    </Buffs>
-  );
-
   return (
     <Card
       image={{
@@ -128,9 +124,12 @@ export const KamiCard = ({
         showLevelUp: showLevelUp && canLevel,
         showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
         onClick: handleKamiClick,
+        filter: cooldownFilter,
+        background: undefined,
+        foreground: cooldownForeground,
       }}
     >
-      {Title}
+      {TitleSection}
       <Content>
         <ContentRow>
           <ContentColumn key='column-1'>
@@ -144,7 +143,15 @@ export const KamiCard = ({
           </ContentColumn>
         </ContentRow>
         <ContentBottom>
-          {Bonuses}
+          {itemBonuses.length > 0 && (
+            <Buffs>
+              {itemBonuses.map((bonus, i) => (
+                <TextTooltip key={i} text={[bonus.text]} direction='row'>
+                  <Buff src={bonus.image} />
+                </TextTooltip>
+              ))}
+            </Buffs>
+          )}
           <ContentActions>{actions}</ContentActions>
         </ContentBottom>
       </Content>

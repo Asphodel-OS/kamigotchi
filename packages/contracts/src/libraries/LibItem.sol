@@ -16,6 +16,7 @@ import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomC
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { MediaURIComponent, ID as MediaURICompID } from "components/MediaURIComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
+import { RarityComponent, ID as RarityCompID } from "components/RarityComponent.sol";
 import { TokenAddressComponent, ID as TokenAddressCompID } from "components/TokenAddressComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
@@ -77,7 +78,8 @@ library LibItem {
     string memory type_,
     string memory name,
     string memory description,
-    string memory mediaURI
+    string memory mediaURI,
+    uint32 rarity
   ) internal returns (uint256 id) {
     id = genID(index);
     LibEntityType.set(components, id, "ITEM");
@@ -88,6 +90,7 @@ library LibItem {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).set(id, description);
     MediaURIComponent(getAddrByID(components, MediaURICompID)).set(id, mediaURI);
+    RarityComponent(getAddrByID(components, RarityCompID)).set(id, rarity);
 
     addFlag(components, index, type_); // additionally store type as flag, for reverse query
   }
@@ -138,6 +141,7 @@ library LibItem {
     DescriptionComponent(getAddrByID(components, DescriptionCompID)).remove(id);
     TypeComponent(getAddrByID(components, TypeCompID)).remove(id);
     MediaURIComponent(getAddrByID(components, MediaURICompID)).remove(id);
+    RarityComponent(getAddrByID(components, RarityCompID)).remove(id);
 
     LibStat.removeAll(components, id);
     ExperienceComponent(getAddrByID(components, ExpCompID)).remove(id);

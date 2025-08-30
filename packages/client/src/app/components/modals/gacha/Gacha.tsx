@@ -12,6 +12,7 @@ import { GachaMintConfig, getGachaMintConfig } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { getKami as _getKami } from 'app/cache/kami';
+import { useDevControls } from 'app/stores/devControls';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
 import { GACHA_ID } from 'constants/gacha';
@@ -124,6 +125,33 @@ export const GachaModal: UIComponent = {
       const [tick, setTick] = useState(Date.now());
       const [triedReveal, setTriedReveal] = useState(true);
       const [waitingToReveal, setWaitingToReveal] = useState(false);
+
+      /////////////////
+      // DEV CONTROL LISTENER
+      const { lastEvent } = useDevControls();
+      useEffect(() => {
+        try {
+          if (!lastEvent) return;
+          if (lastEvent.target !== 'gacha' && lastEvent.target !== 'global') return;
+          if (lastEvent.type === 'set') {
+            const p = lastEvent.payload || {};
+            if (p.tab) setTab(p.tab as TabType);
+            if (p.mode) setMode(p.mode as ViewMode);
+            if (typeof p.quantity === 'number') setQuantity(p.quantity);
+          } else if (lastEvent.type === 'tab' && lastEvent.payload) {
+            setTab(lastEvent.payload as TabType);
+          } else if (lastEvent.type === 'mode' && lastEvent.payload) {
+            setMode(lastEvent.payload as ViewMode);
+          } else if (lastEvent.type === 'quantity' && typeof lastEvent.payload === 'number') {
+            setQuantity(lastEvent.payload);
+          } else if (lastEvent.type === 'toggle') {
+            // simple toggle between DEFAULT/ALT for quick testing
+            setMode((m) => (m === 'DEFAULT' ? 'ALT' : 'DEFAULT'));
+          }
+        } catch (e) {
+          console.warn('[GachaModal] dev control failed', e);
+        }
+      }, [lastEvent?.token]);
 
       /////////////////
       // SUBSCRIPTIONS

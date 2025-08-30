@@ -97,9 +97,13 @@ export function createSystemCallStreams<
         systemCallStreams[name] = new Subject<DecodedSystemCall<SystemTypes>>();
       }
 
+      const rawUpdates = Array.isArray((systemCall as any).updates)
+        ? ((systemCall as any).updates as NetworkComponentUpdate[])
+        : [];
+
       systemCallStreams[name].next({
         ...systemCall,
-        updates: compact(systemCall.updates.map(decodeNetworkComponentUpdate)),
+        updates: compact(rawUpdates.map(decodeNetworkComponentUpdate)),
         systemId: name,
         args: decodedTx.args,
       });

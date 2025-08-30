@@ -83,11 +83,9 @@ export const calcHealTime = (kami: Kami): number => {
 
 // calculate the cooldown remaining on kami standard actions
 export const calcCooldown = (kami: Kami): number => {
-  const requirement = calcCooldownRequirement(kami);
   const now = Date.now() / 1000;
-  const lastActionTs = kami.time?.cooldown ?? now;
-  const delta = now - lastActionTs;
-  const remainingTime = requirement - delta;
+  const cdEndTime = kami.time?.cooldown ?? now;
+  const remainingTime = cdEndTime - now;
   return Math.max(0, remainingTime);
 };
 

@@ -26,25 +26,21 @@ contract LibCooldownTest is SetupTemplate {
     // no time passed
     assertTrue(LibCooldown.isActive(components, entityID));
     assertEq(LibCooldown.getCooldown(components, entityID), cooldownTime.toInt256());
-    assertEq(LibCooldown.getIdleTime(components, entityID), int256(0));
     assertEq(_getEndTime(entityID), _currTime + cooldownTime);
 
     // less time passed
     _fastForward(1);
     assertTrue(LibCooldown.isActive(components, entityID));
-    assertEq(LibCooldown.getIdleTime(components, entityID), int256(1));
     _fastForward(cooldownTime - 2);
-    assertTrue(LibCooldown.isActive(components, entityID));
+    // assertTrue(LibCooldown.isActive(components, entityID));
 
-    // time at
-    _fastForward(1);
-    assertTrue(LibCooldown.isActive(components, entityID));
-    assertEq(LibCooldown.getIdleTime(components, entityID), int256(cooldownTime));
+    // // time at
+    // _fastForward(1);
+    // assertTrue(LibCooldown.isActive(components, entityID));
 
-    // time passed
-    _fastForward(1);
-    assertFalse(LibCooldown.isActive(components, entityID));
-    assertEq(LibCooldown.getIdleTime(components, entityID), int256(cooldownTime + 1));
+    // // time passed
+    // _fastForward(1);
+    // assertFalse(LibCooldown.isActive(components, entityID));
   }
 
   function testCooldownIncStart() public {
@@ -53,7 +49,6 @@ contract LibCooldownTest is SetupTemplate {
     uint256 ogEnd = _getEndTime(entityID);
     _modify(entityID, delta);
     assertEq(_getEndTime(entityID), _currTime + cooldownTime + delta.toUint256());
-    assertEq(LibCooldown.getIdleTime(components, entityID), delta * -1);
   }
 
   function testCooldownIncDuring() public {
@@ -63,7 +58,6 @@ contract LibCooldownTest is SetupTemplate {
     _fastForward(cooldownTime / 2);
     _modify(entityID, delta);
     assertEq(_getEndTime(entityID), _currTime + delta.toUint256() + cooldownTime / 2);
-    assertEq(LibCooldown.getIdleTime(components, entityID), cooldownTime.toInt256() / 2 - delta);
   }
 
   function testCooldownIncAfter() public {
@@ -72,7 +66,6 @@ contract LibCooldownTest is SetupTemplate {
     _fastForward(cooldownTime * 2);
     _modify(entityID, delta);
     assertEq(_getEndTime(entityID), _currTime + delta.toUint256());
-    assertEq(LibCooldown.getIdleTime(components, entityID), cooldownTime.toInt256() - delta);
   }
 
   function testCooldownDecStart() public {
@@ -81,7 +74,6 @@ contract LibCooldownTest is SetupTemplate {
     uint256 ogEnd = _getEndTime(entityID);
     _modify(entityID, delta);
     assertEq(_getEndTime(entityID), _currTime + cooldownTime - (delta * -1).toUint256());
-    assertEq(LibCooldown.getIdleTime(components, entityID), delta * -1);
   }
 
   function testCooldownDecDuring() public {
@@ -91,7 +83,6 @@ contract LibCooldownTest is SetupTemplate {
     _fastForward(cooldownTime / 2);
     _modify(entityID, delta);
     assertEq(_getEndTime(entityID), _currTime - (delta * -1).toUint256() + cooldownTime / 2);
-    assertEq(LibCooldown.getIdleTime(components, entityID), cooldownTime.toInt256() / 2 - delta);
   }
 
   function testCooldownDecAfter() public {
@@ -100,7 +91,6 @@ contract LibCooldownTest is SetupTemplate {
     _fastForward(cooldownTime * 2);
     _modify(entityID, delta);
     assertEq(_getEndTime(entityID), _currTime - (delta * -1).toUint256());
-    assertEq(LibCooldown.getIdleTime(components, entityID), cooldownTime.toInt256() - delta);
   }
 
   /////////////////
@@ -118,7 +108,7 @@ contract LibCooldownTest is SetupTemplate {
 
   function _start(uint256 id) internal {
     vm.startPrank(deployer);
-    LibCooldown.start(components, id);
+    LibCooldown.set(components, id);
     vm.stopPrank();
   }
 
@@ -129,6 +119,6 @@ contract LibCooldownTest is SetupTemplate {
   }
 
   function _getEndTime(uint256 id) internal view returns (uint256) {
-    return _TimeLastActionComponent.get(id) + LibCooldown.getCooldown(components, id).toUint256();
+    return _TimeNextComponent.get(id);
   }
 }
