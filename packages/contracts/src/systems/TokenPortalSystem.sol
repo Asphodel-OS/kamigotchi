@@ -8,7 +8,7 @@ import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
-import { LibTokenBridge } from "libraries/LibTokenBridge.sol";
+import { LibTokenPortal } from "libraries/LibTokenPortal.sol";
 
 // handle logging and verification
 
@@ -33,22 +33,22 @@ contract TokenPortalSystem is System, AuthRoles {
     // checks before action
     address tokenAddr = itemAddrs[itemIndex];
     require(tokenAddr != address(0), "item not registered");
-    LibTokenBridge.verifyBridgeable(components, itemIndex);
+    LibTokenPortal.verifyBridgeable(components, itemIndex);
 
     // pull tokens and increase itemIndex balance (balance check is intrinsic)
     int32 scale = itemScales[itemIndex];
-    LibTokenBridge.depositERC20(components, accID, tokenAddr, itemAmt, scale);
+    LibTokenPortal.depositERC20(components, accID, tokenAddr, itemAmt, scale);
     LibInventory._incFor(components, accID, itemIndex, itemAmt);
 
     // logging
-    LibTokenBridge.LogData memory logData = LibTokenBridge.LogData(
+    LibTokenPortal.LogData memory logData = LibTokenPortal.LogData(
       accID,
       itemIndex,
       tokenAddr,
       itemAmt,
       scale
     );
-    LibTokenBridge.logDeposit(world, components, logData);
+    LibTokenPortal.logDeposit(world, components, logData);
     LibAccount.updateLastTs(components, accID);
   }
 
@@ -59,11 +59,11 @@ contract TokenPortalSystem is System, AuthRoles {
     // checks
     address tokenAddr = itemAddrs[itemIndex];
     require(tokenAddr != address(0), "item not registered");
-    LibTokenBridge.verifyBridgeable(components, itemIndex);
+    LibTokenPortal.verifyBridgeable(components, itemIndex);
 
     // reduces items, creates withdrawal receipt
     int32 scale = itemScales[itemIndex];
-    receiptID = LibTokenBridge.initiateWithdraw(
+    receiptID = LibTokenPortal.initiateWithdraw(
       world,
       components,
       accID,
@@ -74,34 +74,34 @@ contract TokenPortalSystem is System, AuthRoles {
     );
 
     // logging
-    LibTokenBridge.LogData memory logData = LibTokenBridge.LogData(
+    LibTokenPortal.LogData memory logData = LibTokenPortal.LogData(
       accID,
       itemIndex,
       tokenAddr,
       itemAmt,
       scale
     );
-    LibTokenBridge.logPendingWithdraw(world, components, logData);
+    LibTokenPortal.logPendingWithdraw(world, components, logData);
     LibAccount.updateLastTs(components, accID);
   }
 
   /// @notice executes withdraw if min time has passed
   /// @dev can be executed by anyone. do we want logging here?
   function claim(uint256 receiptID) public {
-    LibTokenBridge.verifyTimeEnd(components, receiptID);
-    LibTokenBridge.executeWithdraw(world, components, receiptID);
+    LibTokenPortal.verifyTimeEnd(components, receiptID);
+    LibTokenPortal.executeWithdraw(world, components, receiptID);
   }
 
   /// @dev only can be cancelled by receipt owner
   function cancel(uint256 receiptID) public {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    LibTokenBridge.verifyReceiptOwner(components, accID, receiptID); // checks
-    LibTokenBridge.cancelWithdraw(world, components, receiptID); // also logs cancellation
+    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID); // checks
+    LibTokenPortal.cancelWithdraw(world, components, receiptID); // also logs cancellation
     LibAccount.updateLastTs(components, accID); // account logging
   }
 
   function adminBlock(uint256 receiptID) public onlyAdmin(components) {
-    LibTokenBridge.cancelWithdraw(world, components, receiptID);
+    LibTokenPortal.cancelWithdraw(world, components, receiptID);
   }
 
   //////////////////

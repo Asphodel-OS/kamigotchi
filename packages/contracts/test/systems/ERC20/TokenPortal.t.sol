@@ -9,7 +9,7 @@ import "tests/utils/SetupTemplate.t.sol";
  * uses the default setup template setup (uses template functions when possible)
  * this is to check for the basic world state and ensure no operational errors
  */
-contract TokenBridgeTest is SetupTemplate {
+contract TokenPortalTest is SetupTemplate {
   uint32 tokenItem = 11;
   OpenMintable token = new OpenMintable("test", "test");
 
@@ -49,7 +49,7 @@ contract TokenBridgeTest is SetupTemplate {
     vm.stopPrank();
 
     // withdraw after time end
-    _setTime(block.timestamp + LibTokenBridge.getWithdrawDelay(components));
+    _setTime(block.timestamp + LibTokenPortal.getWithdrawDelay(components));
     vm.startPrank(alice.owner);
     _TokenPortalSystem.claim(receiptID);
     vm.stopPrank();

@@ -52,7 +52,7 @@ import { LibInventory } from "libraries/LibInventory.sol";
  *   - Value (tokenAmt of)
  *   - endTime
  */
-library LibTokenBridge {
+library LibTokenPortal {
   ///////////////
   // SHAPES
 
