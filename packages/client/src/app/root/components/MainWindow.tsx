@@ -38,66 +38,66 @@ import {
   WalletConnecter,
 } from 'app/components/validators';
 
-// Unique grid area constants
+// Grid areas using named grid lines
 const areas = {
   // Full screen areas
-  fullScreen: '1 / 1 / 100 / 100',
+  fullScreen: 'start / start / end / end',
   
   // Loading area (top-left corner)
-  loading: '1 / 1 / 13 / 13',
+  loading: 'start / start / loading-end / loading-end',
   
   // Action queue (bottom-right corner)
-  actionQueue: '90 / 66 / 100 / 99',
+  actionQueue: 'action-queue-start / action-queue-start-col / end / action-queue-end-col',
   
   // Clock area (bottom center)
-  clockBottom: '78 / 33 / 99 / 67',
+  clockBottom: 'medium-centered-end / center-start / modal-right-end / center-end',
   
   // Menu areas (top)
-  leftMenuTop: '3 / 2 / 6 / 33',
-  rightMenuTop: '3 / 67 / 6 / 100',
+  leftMenuTop: 'menu-start / menu-left-start / menu-end / center-start',
+  rightMenuTop: 'menu-start / center-end / menu-end / end',
   
   // Notifications (top-right)
-  notifications: '8 / 72 / 30 / 100',
+  notifications: 'modal-start / notifications-start-col / centered-square-start / end',
   
   // Modal areas - left column
-  leftColumnModal: '8 / 2 / 99 / 33',
-  leftColumnModalShort: '8 / 2 / 79 / 33',
+  leftColumnModal: 'modal-start / menu-left-start / modal-right-end / center-start',
+  leftColumnModalShort: 'modal-start / menu-left-start / modal-short-end / center-start',
   
   // Modal areas - right column
-  rightColumnModal: '8 / 67 / 75 / 100',
+  rightColumnModal: 'modal-start / center-end / centered-square-small-end / end',
   
   // Modal areas - center column
-  centerColumnModal: '3 / 33 / 99 / 67',
+  centerColumnModal: 'menu-start / center-start / modal-right-end / center-end',
   
   // Modal areas - wide center
-  wideCenterModal: '8 / 2 / 99 / 67',
+  wideCenterModal: 'modal-start / menu-left-start / modal-right-end / center-end',
   
   // Modal areas - bottom center
-  bottomCenterModal: '75 / 2 / 99 / 67',
+  bottomCenterModal: 'centered-square-small-end / menu-left-start / modal-right-end / center-end',
   
   // Modal areas - center with top margin
-  centerTopMargin: '15 / 33 / 99 / 67',
-  centerTopMarginWide: '15 / 25 / 99 / 75',
+  centerTopMargin: 'center-top-start / center-start / modal-right-end / center-end',
+  centerTopMarginWide: 'center-top-start / center-wide-start / modal-right-end / center-wide-end',
   
   // Modal areas - centered squares
-  centeredSquare: '30 / 30 / 74 / 70',
-  centeredSquareSmall: '30 / 30 / 75 / 70',
+  centeredSquare: 'centered-square-start / centered-square-start-col / centered-square-end / centered-square-end-col',
+  centeredSquareSmall: 'centered-square-start / centered-square-start-col / centered-square-small-end / centered-square-end-col',
   
   // Modal areas - wide centered
-  wideCentered: '8 / 11 / 85 / 89',
-  wideCenteredTall: '8 / 11 / 99 / 67',
+  wideCentered: 'modal-start / wide-centered-start / wide-centered-end / wide-centered-end-col',
+  wideCenteredTall: 'modal-start / wide-centered-start / modal-right-end / center-end',
   
   // Modal areas - medium centered
-  mediumCentered: '24 / 20 / 78 / 80',
+  mediumCentered: 'medium-centered-start / animation-studio-start-col / medium-centered-end / medium-centered-end-col',
   
   // Modal areas - leaderboard
-  leaderboard: '20 / 32 / 78 / 70',
+  leaderboard: 'leaderboard-start / leaderboard-start-col / medium-centered-end / centered-square-end-col',
   
   // Modal areas - obol
-  obol: '20 / 36 / 80 / 65',
+  obol: 'leaderboard-start / obol-start-col / animation-studio-end / obol-end-col',
   
   // Modal areas - animation studio
-  animationStudio: '20 / 20 / 80 / 80',
+  animationStudio: 'leaderboard-start / animation-studio-start-col / animation-studio-end / medium-centered-end-col',
 } as const;
 
 export const MainWindow = observer(({
@@ -266,8 +266,46 @@ export const MainWindow = observer(({
 
 const UIGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(100, 1%);
-  grid-template-rows: repeat(100, 1%);
+  grid-template: 
+    [start] 2%
+    [menu-start] 3%
+    [menu-end] 2%
+    [modal-start] 5%
+    [loading-end] 2%
+    [center-top-start] 5%
+    [leaderboard-start] 4%
+    [medium-centered-start] 6%
+    [centered-square-start] 44%
+    [centered-square-end] 1%
+    [centered-square-small-end] 3%
+    [medium-centered-end] 1%
+    [modal-short-end] 1%
+    [animation-studio-end] 5%
+    [wide-centered-end] 5%
+    [action-queue-start] 9%
+    [modal-right-end] 1%
+    [end] 1%
+    /
+    [start] 1%
+    [menu-left-start] 9%
+    [wide-centered-start] 2%
+    [loading-end] 7%
+    [animation-studio-start-col] 5%
+    [center-wide-start] 5%
+    [centered-square-start-col] 2%
+    [leaderboard-start-col] 1%
+    [center-start] 3%
+    [obol-start-col] 29%
+    [obol-end-col] 1%
+    [action-queue-start-col] 1%
+    [center-end] 3%
+    [centered-square-end-col] 2%
+    [notifications-start-col] 3%
+    [center-wide-end] 5%
+    [medium-centered-end-col] 9%
+    [wide-centered-end-col] 10%
+    [action-queue-end-col] 1%
+    [end] 1%;
   position: absolute;
   left: 0;
   top: 0;
