@@ -37,7 +37,7 @@ contract MintTicketTest is SetupTemplate {
     // creating items
     _createGenericItem(CURRENCY);
     currency20 = ERC20(_createERC20("currency", "CURRENCY"));
-    _addItemERC20(CURRENCY, address(currency20));
+    _addItemERC20(CURRENCY, address(currency20), 3);
     _createGenericItem(GACHA_TICKET_INDEX);
 
     // pre-approving erc20

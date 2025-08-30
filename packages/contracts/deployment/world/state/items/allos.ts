@@ -1,6 +1,39 @@
 import { AdminAPI } from '../../api';
-import { parseKamiStateToIndex, readFile, stringToNumberArray } from '../utils';
+import { getSheet, parseKamiStateToIndex, readFile, stringToNumberArray } from '../utils';
 
+export const Allos = new Map<string, any>();
+
+// retrieve the singleton Map of all Allos
+// if it hasn't been instantiated, populate it with the item requirements sheet
+export const getAlloMap = async () => {
+  if (Allos.size > 0) return Allos;
+
+  const csv = await getSheet('items', 'allos');
+  for (let i = 0; i < csv.length; i++) {
+    const row = csv[i];
+    const key = row['Name'];
+    if (!Allos.has(key)) Allos.set(key, row);
+  }
+  return Allos;
+};
+
+// add all all of an item's allos
+export const addAllos = async (api: AdminAPI, itemRow: any) => {
+  const index = Number(itemRow['Index']);
+
+  const map = await getAlloMap();
+  const keys = itemRow['Effects'].split(',');
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (!key) continue;
+
+    const allo = map.get(key);
+    if (allo) await addAllo(api, index, allo);
+    else console.log(`Error: Could not find Allo ${key} for item ${index}`);
+  }
+};
+
+// add a single allo to an item
 export async function addAllo(api: AdminAPI, itemIndex: number, entry: any) {
   const type = entry['Type'].toUpperCase();
   const alloAPI = api.registry.item.add.allo;

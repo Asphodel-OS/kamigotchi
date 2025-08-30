@@ -1,23 +1,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
-import { ERC20 } from "solmate/tokens/ERC20.sol";
 
-import { TokenAddressComponent, ID as TokenAddressCompID } from "components/TokenAddressComponent.sol";
 import { TokenAllowanceComponent, ID as TokenAllowanceCompID } from "components/TokenAllowanceComponent.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 
-uint constant UNIT_SHIFT = 3;
-
 /** @notice
  * LibERC20 handles all interactions involving ERC20 tokens.
  */
 library LibERC20 {
+  using SafeCastLib for int32;
+
   //////////////
   // INTERACTIONS
 
@@ -39,14 +37,18 @@ library LibERC20 {
   ///////////
   // UTILS
 
-  /// @notice converts from game units (mTokens, 3dp) to token units (wei, 18dp)
-  function toTokenUnits(uint256 amt) internal pure returns (uint256) {
-    return amt * 10 ** (18 - UNIT_SHIFT);
+  /// @notice converts from base game units to token units (wei, 18dp)
+  /// @dev this does not handle portal scale conversion
+  function toTokenUnits(uint256 amt, int32 scale) internal pure returns (uint256) {
+    if (scale > 18) revert("LibERC20: scale > 18 not supported");
+    return amt * (10 ** (18 - scale).toUint256());
   }
 
   /// @notice converts from token units (wei, 18dp) to game units (mTokens, 3dp)
-  function toGameUnits(uint256 amt) internal pure returns (uint256) {
-    return amt / (10 ** (18 - UNIT_SHIFT));
+  /// @dev this does not handle portal scale conversion
+  function toGameUnits(uint256 amt, int32 scale) internal pure returns (uint256) {
+    if (scale > 18) revert("LibERC20: scale > 18 not supported");
+    return amt / (10 ** (18 - scale).toUint256());
   }
 
   /////////////////
@@ -55,14 +57,14 @@ library LibERC20 {
   /// @dev deprecated. pre-bridge, to be replaced burn and direct use of transfer()
   function spend(IUintComp comps, address token, uint256 amount, uint256 spenderID) internal {
     address to = LibConfig.getAddress(comps, "ERC20_RECEIVER_ADDRESS");
-    amount = toTokenUnits(amount); // convert from mToken to wei
+    amount = toTokenUnits(amount, 3); // convert from mToken to wei
     return transfer(comps, token, LibAccount.getOwner(comps, spenderID), to, amount);
   }
 
   /// @dev specific for onyx
   function spendOnyx(IUintComp comps, address onyx, uint256 amount, uint256 spenderID) internal {
     address burner = LibConfig.getAddress(comps, "ONYX_BURNER_ADDRESS"); // 0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec
-    amount = toTokenUnits(amount); // convert from mToken to wei
+    amount = toTokenUnits(amount, 3); // convert from mToken to wei
     return transfer(comps, onyx, LibAccount.getOwner(comps, spenderID), burner, amount);
   }
 }

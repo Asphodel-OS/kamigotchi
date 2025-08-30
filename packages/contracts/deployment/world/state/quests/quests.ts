@@ -7,7 +7,7 @@ import { addRewards } from './rewards';
 // STATE SCRIPTS SHOULD BE MODELED AFTER THIS DIRECTORY
 
 // initialize a single quest
-export const initQuest = async (api: AdminAPI, entry: any): Promise<boolean> => {
+export const init = async (api: AdminAPI, entry: any): Promise<boolean> => {
   const index = Number(entry['Index']);
   const name = entry['Title'];
   const description = entry['Description'] ?? '';
@@ -56,7 +56,7 @@ export async function initQuests(api: AdminAPI, indices?: number[], all?: boolea
     } else if (!validStatuses.includes(status)) continue;
 
     // attempt to create the base quest entity
-    const success = await initQuest(api, row);
+    const success = await init(api, row);
 
     if (!success) continue;
     await addRequirements(api, row);

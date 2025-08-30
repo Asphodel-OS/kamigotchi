@@ -1,23 +1,23 @@
 import { GenerateCallData } from './types';
 
-export function bridgeAPI(generateCallData: GenerateCallData, compiledCalls: string[]) {
+export function portalAPI(generateCallData: GenerateCallData, compiledCalls: string[]) {
   // create a new auction
-  async function addItem(index: number, tokenAddr: string) {
+  async function setItem(index: number, tokenAddr: string, scale: number) {
     const callData = generateCallData(
-      'system.erc20.bridge',
-      [index, tokenAddr],
-      'addItem',
+      'system.erc20.portal',
+      [index, tokenAddr, scale],
+      'setItem',
       undefined,
       '800000'
     );
     compiledCalls.push(callData);
   }
 
-  async function removeItem(index: number) {
+  async function unsetItem(index: number) {
     const callData = generateCallData(
-      'system.erc20.bridge',
+      'system.erc20.portal',
       [index],
-      'remove',
+      'unsetItem',
       undefined,
       '800000'
     );
@@ -25,9 +25,9 @@ export function bridgeAPI(generateCallData: GenerateCallData, compiledCalls: str
   }
 
   // a override for erc20s that are deployed locally. only for local deployments
-  async function localAddItem(index: number) {
+  async function localSetItem(index: number) {
     const callData = generateCallData(
-      'system.erc20.bridge',
+      'system.erc20.portal',
       [index, `INJECT: LibItem.getTokenAddr(components, ${index})`],
       'addItem',
       undefined,
@@ -38,9 +38,9 @@ export function bridgeAPI(generateCallData: GenerateCallData, compiledCalls: str
 
   return {
     token: {
-      add: addItem,
-      remove: removeItem,
-      localAdd: localAddItem,
+      set: setItem,
+      unset: unsetItem,
+      localAdd: localSetItem,
     },
   };
 }
