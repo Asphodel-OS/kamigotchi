@@ -12,7 +12,7 @@ import { getAddrByID } from "solecs/utils.sol";
 
 import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 
-import { TokenBridgeSystem, ID as TokenBridgeSystemID } from "systems/TokenBridgeSystem.sol";
+import { TokenPortalSystem, ID as TokenPortalSystemID } from "systems/TokenPortalSystem.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";

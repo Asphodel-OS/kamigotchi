@@ -9,14 +9,14 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibTokenBridge } from "libraries/LibTokenBridge.sol";
 
-uint256 constant ID = uint256(keccak256("system.erc20.bridge"));
+uint256 constant ID = uint256(keccak256("system.erc20.portal"));
 
 /// @notice System for bridging in ERC20 tokens into the game world (as an item).
 /** @dev
  * A special system, uses local storage to avoid depending on item registries.
  * Not meant to be upgraded, but can be if needed.
  */
-contract TokenBridgeSystem is System, AuthRoles {
+contract TokenPortalSystem is System, AuthRoles {
   // stores item's token address locally, no dependence on item registries
   mapping(uint32 => address) public itemRegistry;
 

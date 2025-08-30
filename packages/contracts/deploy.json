@@ -682,7 +682,7 @@
       ]
     },
     {
-      "name": "TokenBridgeSystem",
+      "name": "TokenPortalSystem",
       "writeAccess": [
         "EntityType",
         "IDOwnsInventory",

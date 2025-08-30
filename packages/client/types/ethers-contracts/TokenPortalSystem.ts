@@ -28,7 +28,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface TokenBridgeSystemInterface extends utils.Interface {
+export interface TokenPortalSystemInterface extends utils.Interface {
   functions: {
     "addItem(uint32,address)": FunctionFragment;
     "adminBlock(uint256)": FunctionFragment;
@@ -228,12 +228,12 @@ export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
 export type SystemDeprecatedEventFilter =
   TypedEventFilter<SystemDeprecatedEvent>;
 
-export interface TokenBridgeSystem extends BaseContract {
+export interface TokenPortalSystem extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TokenBridgeSystemInterface;
+  interface: TokenPortalSystemInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
