@@ -3,7 +3,6 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID } from "solecs/utils.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
