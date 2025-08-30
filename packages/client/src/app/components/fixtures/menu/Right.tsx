@@ -1,5 +1,3 @@
-import { of } from 'rxjs';
-
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
@@ -13,7 +11,6 @@ import {
 
 export const RightMenuFixture: UIComponent = {
   id: 'RightMenuFixture',
-  requirement: (layers) => of(layers),
   Render: () => {
     const { fixtures } = useVisibility();
     return (

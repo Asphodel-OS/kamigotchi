@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { of } from 'rxjs';
 import styled from 'styled-components';
 
 import { ActionButton, ModalHeader, ModalWrapper } from 'app/components/library';
@@ -12,7 +11,6 @@ import { HelpTabs } from './types';
 
 export const HelpModal: UIComponent = {
   id: 'HelpModal',
-  requirement: (layers) => of(layers),
   Render: () => {
       const [tab, setTab] = useState<HelpTabs>(HelpTabs.HOME);
 

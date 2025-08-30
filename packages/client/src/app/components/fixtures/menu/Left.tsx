@@ -1,7 +1,7 @@
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
 import {
@@ -16,17 +16,17 @@ import {
 
 export const LeftMenuFixture: UIComponent = {
   id: 'LeftMenuFixture',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world } = network;
-        const { roomIndex } = useSelected.getState();
-        let nodeEntity = queryNodeByIndex(world, roomIndex);
-        return { nodeEntity };
-      })
-    ),
-  Render: ({ nodeEntity }) => {
+  Render: () => {
+    const layers = useLayers();
+
+    const { nodeEntity } = (() => {
+      const { network } = layers;
+      const { world } = network;
+      const { roomIndex } = useSelected.getState();
+      let nodeEntity = queryNodeByIndex(world, roomIndex);
+      return { nodeEntity };
+    })();
+
     const { fixtures } = useVisibility();
 
     return (

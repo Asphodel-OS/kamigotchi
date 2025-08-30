@@ -8,15 +8,14 @@ import {
 import { switchChain } from '@wagmi/core';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
-import { of } from 'rxjs';
 import styled from 'styled-components';
 import { Address } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import type { Layers } from 'network/';
 import { useNetwork, useVisibility } from 'app/stores';
+import { useLayers } from 'app/root/hooks';
 import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
@@ -32,9 +31,8 @@ import { Progress } from './Progress';
 export const WalletConnecter: UIComponent = {
   id: 'WalletConnecter',
   // positioning controlled by validator wrapper
-  requirement: (layers) => of(layers),
-  Render: (layers) => {
-      const { network } = layers as Layers;
+  Render: () => {
+      const { network } = useLayers();
       const { address: wagmiAddress, chain, isConnected } = useAccount();
       const { connectors, connect } = useConnect();
       const { ready, authenticated, login, logout } = usePrivy();
