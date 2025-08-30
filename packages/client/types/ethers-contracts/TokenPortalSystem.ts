@@ -38,7 +38,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     "deposit(uint32,uint256)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "initiateWithdraw(uint32,uint256)": FunctionFragment;
+    "initWithdraw(uint32,uint256)": FunctionFragment;
     "itemAddrs(uint32)": FunctionFragment;
     "itemScales(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -60,7 +60,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
       | "deposit"
       | "deprecate"
       | "execute"
-      | "initiateWithdraw"
+      | "initWithdraw"
       | "itemAddrs"
       | "itemScales"
       | "owner"
@@ -102,7 +102,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "initiateWithdraw",
+    functionFragment: "initWithdraw",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -158,7 +158,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "initiateWithdraw",
+    functionFragment: "initWithdraw",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "itemAddrs", data: BytesLike): Result;
@@ -302,7 +302,7 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    initiateWithdraw(
+    initWithdraw(
       itemIndex: PromiseOrValue<BigNumberish>,
       itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -390,7 +390,7 @@ export interface TokenPortalSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  initiateWithdraw(
+  initWithdraw(
     itemIndex: PromiseOrValue<BigNumberish>,
     itemAmt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -474,7 +474,7 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    initiateWithdraw(
+    initWithdraw(
       itemIndex: PromiseOrValue<BigNumberish>,
       itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -587,7 +587,7 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    initiateWithdraw(
+    initWithdraw(
       itemIndex: PromiseOrValue<BigNumberish>,
       itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -676,7 +676,7 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    initiateWithdraw(
+    initWithdraw(
       itemIndex: PromiseOrValue<BigNumberish>,
       itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

@@ -6,11 +6,8 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibTokenPortal } from "libraries/LibTokenPortal.sol";
-
-// handle logging and verification
 
 uint256 constant ID = uint256(keccak256("system.erc20.portal"));
 
@@ -20,50 +17,39 @@ uint256 constant ID = uint256(keccak256("system.erc20.portal"));
  * Not meant to be upgraded, but can be if needed.
  */
 contract TokenPortalSystem is System, AuthRoles {
-  // stores item's token address locally, no dependence on item registries
+  // store item's token address/conversion rate locally, no dependence on registries
   mapping(uint32 => address) public itemAddrs;
   mapping(uint32 => int32) public itemScales;
 
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  /// @dev uses itemAmt, where 1000 inGame = 1^18 ERC20 (with 18 decimals)
+  /// @notice deposit ERC20 tokens into the game world through the token portal
+  /// @dev conversion scale is determined by itemScales
   function deposit(uint32 itemIndex, uint256 itemAmt) public {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // checks before action
     address tokenAddr = itemAddrs[itemIndex];
     require(tokenAddr != address(0), "item not registered");
-    LibTokenPortal.verifyBridgeable(components, itemIndex);
 
     // pull tokens and increase itemIndex balance (balance check is intrinsic)
     int32 scale = itemScales[itemIndex];
-    LibTokenPortal.depositERC20(components, accID, tokenAddr, itemAmt, scale);
-    LibInventory._incFor(components, accID, itemIndex, itemAmt);
-
-    // logging
-    LibTokenPortal.LogData memory logData = LibTokenPortal.LogData(
-      accID,
-      itemIndex,
-      tokenAddr,
-      itemAmt,
-      scale
-    );
-    LibTokenPortal.logDeposit(world, components, logData);
+    LibTokenPortal.deposit(world, components, accID, itemIndex, tokenAddr, itemAmt, scale);
     LibAccount.updateLastTs(components, accID);
   }
 
-  /// @dev uses itemAmt, where 1000 inGame = 1^18 ERC20 (with 18 decimals)
-  function initiateWithdraw(uint32 itemIndex, uint256 itemAmt) public returns (uint256 receiptID) {
+  /// @notice withdraw ERC20 tokens out of the game world through the token portal
+  /// @dev creates a Withdrawal Receipt entity to delay settlement
+  function initWithdraw(uint32 itemIndex, uint256 itemAmt) public returns (uint256 receiptID) {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // checks
     address tokenAddr = itemAddrs[itemIndex];
     require(tokenAddr != address(0), "item not registered");
-    LibTokenPortal.verifyBridgeable(components, itemIndex);
 
     // reduces items, creates withdrawal receipt
     int32 scale = itemScales[itemIndex];
-    receiptID = LibTokenPortal.initiateWithdraw(
+    receiptID = LibTokenPortal.initWithdraw(
       world,
       components,
       accID,
@@ -72,21 +58,11 @@ contract TokenPortalSystem is System, AuthRoles {
       itemAmt,
       scale
     );
-
-    // logging
-    LibTokenPortal.LogData memory logData = LibTokenPortal.LogData(
-      accID,
-      itemIndex,
-      tokenAddr,
-      itemAmt,
-      scale
-    );
-    LibTokenPortal.logPendingWithdraw(world, components, logData);
     LibAccount.updateLastTs(components, accID);
   }
 
   /// @notice executes withdraw if min time has passed
-  /// @dev can be executed by anyone. do we want logging here?
+  /// @dev can be executed by anyone. do we actually want this behavior?
   function claim(uint256 receiptID) public {
     LibTokenPortal.verifyTimeEnd(components, receiptID);
     LibTokenPortal.executeWithdraw(world, components, receiptID);

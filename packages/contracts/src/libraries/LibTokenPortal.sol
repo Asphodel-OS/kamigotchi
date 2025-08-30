@@ -21,7 +21,6 @@ import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
-import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
 /** @notice lib for ERC20 bridging and timelocks
@@ -47,8 +46,9 @@ import { LibInventory } from "libraries/LibInventory.sol";
  * Shapes:
  *  Receipt: ID = new entity ID
  *   - IDOwnsWithdrawal (owner address)
- *   - itemIndex
- *   - tokenAddress (must match itemIndex upon inventory increase actions)
+ *   - ItemIndex
+ *   - TokenAddress (must match itemIndex upon inventory increase actions)
+ *   - Scale (conversion scale token->item)
  *   - Value (tokenAmt of)
  *   - endTime
  */
@@ -90,21 +90,28 @@ library LibTokenPortal {
   /////////////////
   // INTERACTIONS
 
-  function depositERC20(
+  // deposit ERC20 tokens into the game world through the token portal
+  function deposit(
+    IWorld world,
     IUintComp comps,
     uint256 accID,
+    uint32 itemIndex,
     address tokenAddr,
     uint256 itemAmt,
     int32 scale
   ) internal {
     address accAddr = LibAccount.getOwner(comps, accID);
 
-    // pulling token
+    // transfer tokens and increase inventory
     uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt, scale); // scaling accordingly
     LibERC20.transfer(comps, tokenAddr, accAddr, getAddrByID(comps, TokenHolderCompID), tokenAmt);
+    LibInventory._incFor(comps, accID, itemIndex, itemAmt);
+
+    // logging
+    logDeposit(world, comps, LogData(accID, itemIndex, tokenAddr, itemAmt, scale));
   }
 
-  function initiateWithdraw(
+  function initWithdraw(
     IWorld world,
     IUintComp comps,
     uint256 accID,
@@ -116,11 +123,12 @@ library LibTokenPortal {
     uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt, scale); // scaling accordingly
     uint256 endTime = block.timestamp + getWithdrawDelay(comps);
 
-    // creating receipt and withdrawal receipt
+    // create receipt and decrease inventory
     receiptID = createReceipt(world, comps, accID, itemIndex, tokenAddr, tokenAmt, scale, endTime);
-
-    // sending items to receipt (tokens are considered not-in-world past this point)
     LibInventory._decFor(comps, accID, itemIndex, itemAmt);
+
+    // logging
+    logPendingWithdraw(world, comps, LogData(accID, itemIndex, tokenAddr, itemAmt, scale));
   }
 
   function executeWithdraw(IWorld world, IUintComp comps, uint256 receiptID) internal {
@@ -164,13 +172,6 @@ library LibTokenPortal {
 
   ////////////////
   // CHECKERS
-
-  function verifyBridgeable(IUintComp comps, uint32 itemIndex) internal view {
-    // in practice uses the system's local mapping, check left here because it still should be correct
-    if (LibItem.getTokenAddr(comps, itemIndex) == address(0)) revert("item has no linked token");
-    if (LibItem.checkFlag(comps, itemIndex, "ERC20_BRIDGEABLE", false))
-      revert("item cannot be bridged");
-  }
 
   function verifyReceiptOwner(IUintComp comps, uint256 accID, uint256 receiptID) internal view {
     if (OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID) != accID)

@@ -10,17 +10,15 @@ import "tests/utils/SetupTemplate.t.sol";
  * this is to check for the basic world state and ensure no operational errors
  */
 contract TokenPortalTest is SetupTemplate {
-  uint32 tokenItem = 11;
-  OpenMintable token = new OpenMintable("test", "test");
+  uint32 private tokenItem = 11;
+  OpenMintable private token = new OpenMintable("test", "test");
 
   function setUp() public override {
     super.setUp();
 
     _createGenericItem(tokenItem);
-    _addItemERC20(tokenItem, address(token), 3);
     vm.startPrank(deployer);
-    _TokenPortalSystem.addItem(tokenItem, address(token));
-    __ItemRegistrySystem.addFlag(tokenItem, "ERC20_BRIDGEABLE");
+    _TokenPortalSystem.setItem(tokenItem, address(token), 3);
     vm.stopPrank();
   }
 
@@ -118,7 +116,7 @@ contract TokenPortalTest is SetupTemplate {
     uint256 itemAmt
   ) internal returns (uint256 receiptID) {
     vm.startPrank(acc.owner);
-    receiptID = _TokenPortalSystem.initiateWithdraw(itemIndex, itemAmt);
+    receiptID = _TokenPortalSystem.initWithdraw(itemIndex, itemAmt);
     vm.stopPrank();
   }
 }

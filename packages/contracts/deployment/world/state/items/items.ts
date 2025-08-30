@@ -3,8 +3,8 @@ import { getItemImage, getSheet, readFile, toRevise } from '../utils';
 import { addAllos } from './allos';
 import { addRequirements, addTypeRequirement } from './requirements';
 
-const IGNORE_TYPES = ['OTHER', 'ERC20'];
-const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL'];
+const IGNORE_TYPES = ['OTHER'];
+const BASIC_TYPES = ['ERC20', 'MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL'];
 const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
 
 // initialize a single item
