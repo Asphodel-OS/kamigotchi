@@ -85,11 +85,11 @@ contract TokenPortalSystem is System, AuthRoles {
 
   // add an item to the token portal by populating its address and conversion scale
   // NOTE: item needs to be added through the ItemRegistrySystem first
-  // Q: should we revert if address/scale already set?
   function setItem(uint32 index, address tokenAddr, int32 scale) public onlyOwner {
     require(LibItem.getByIndex(components, index) != 0, "TokenPortal: item does not exist");
     require(scale < 18, "TokenPortal: scale > 18 not supported");
-    LibItem.addERC20(components, index, tokenAddr, scale);
+    require(scale > 0, "TokenPortal: negative scale not supported");
+    LibItem.setERC20(components, index, tokenAddr, scale);
     itemAddrs[index] = tokenAddr;
     itemScales[index] = scale;
   }
@@ -97,7 +97,7 @@ contract TokenPortalSystem is System, AuthRoles {
   // remove an item from the token portal
   function unsetItem(uint32 index) public onlyOwner {
     require(LibItem.getByIndex(components, index) != 0, "TokenPortal: item does not exist");
-    LibItem.removeERC20(components, index);
+    LibItem.unsetERC20(components, index);
     delete itemAddrs[index];
     delete itemScales[index];
   }

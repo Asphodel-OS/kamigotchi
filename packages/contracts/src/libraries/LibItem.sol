@@ -103,19 +103,33 @@ library LibItem {
     return LibReference.create(components, useCase, genRefAnchor(index));
   }
 
-  /// @notice add optional ERC20 token address and its conversion scale to registry instance
+  /// @notice set optional ERC20 fields (token address + conversion scale) to a registry instance
   /// @dev actual address/scale is determined by TokenPortal. this is for FE legibility
   /// @dev do not call anywhere outside of TokenPortal
-  function addERC20(IUintComp components, uint32 index, address tokenAddr, int32 scale) internal {
+  function setERC20(IUintComp components, uint32 index, address tokenAddr, int32 scale) internal {
     uint256 id = genID(index);
+    string memory type_ = TypeComponent(getAddrByID(components, TypeCompID)).get(id);
+    require(LibString.eq(type_, "ERC20"), "LibItem: not an ERC20 item");
+
+    TokenAddressComponent tokenAddrComp = TokenAddressComponent(
+      getAddrByID(components, TokenAddressCompID)
+    );
+    require(!tokenAddrComp.has(id), "LibItem: ERC20 address already set");
     TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).set(id, tokenAddr);
     ScaleComponent(getAddrByID(components, ScaleCompID)).set(id, scale);
   }
 
-  /// @notice delete ERC20 token address and its conversion scale from registry instance
+  /// @notice unset options ERC20 token fields address from a registry instance
   /// @dev do not call anywhere outside of TokenPortal
-  function removeERC20(IUintComp components, uint32 index) internal {
+  function unsetERC20(IUintComp components, uint32 index) internal {
     uint256 id = genID(index);
+    string memory type_ = TypeComponent(getAddrByID(components, TypeCompID)).get(id);
+    require(LibString.eq(type_, "ERC20"), "LibItem: not an ERC20 item");
+
+    TokenAddressComponent tokenAddrComp = TokenAddressComponent(
+      getAddrByID(components, TokenAddressCompID)
+    );
+    require(tokenAddrComp.has(id), "LibItem: ERC20 address not set");
     TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).remove(id);
     ScaleComponent(getAddrByID(components, ScaleCompID)).remove(id);
   }

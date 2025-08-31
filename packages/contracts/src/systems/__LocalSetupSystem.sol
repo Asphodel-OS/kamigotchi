@@ -92,7 +92,7 @@ contract __LocalSetupSystem is System, Script {
     require(addr != address(0), "item no token attached");
     string memory name = LibItem.getName(components, itemIndex);
     addr = address(new OpenMintable(name, name));
-    LibItem.addERC20(components, itemIndex, addr, 3); // not sure if we want to hardcode like this
+    LibItem.setERC20(components, itemIndex, addr, 3); // not sure if we want to hardcode like this
     OpenMintable(addr).mint(msg.sender, 9999e18); // give deployer some tokens
 
     // writing config address if onyx
