@@ -1,11 +1,13 @@
+import { BigNumber } from 'ethers';
 import { interval, map } from 'rxjs';
 
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { uuid } from '@mud-classic/utils';
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { InventoryIcon } from 'assets/images/icons/menu';
 import { OBOL_INDEX } from 'constants/items';
 import {
@@ -77,6 +79,12 @@ export const InventoryModal: UIComponent = {
     const { accountEntity } = data;
     const { getMusuBalance, getObolsBalance } = utils;
     const { getAccount, getInventories, getKamis, meetsRequirements, queryAllAccounts } = utils;
+    const {
+      burnerAddress, // embedded
+      selectedAddress, // injected
+      apis,
+      validations: networkValidations,
+    } = useNetwork();
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
@@ -161,17 +169,27 @@ export const InventoryModal: UIComponent = {
 
     // send a list of items to another account
     const sendItemsTx = (items: Item[], amts: number[], account: Account) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+      const actionID = uuid() as EntityID;
       const itemsIndexes = items.map((item) => item.index);
       const itemsNames = items.map((item) => item.name);
       const itemamts = items.map((item) => item.index);
+      console.log(`accountid selected: ${account.id}`);
       actions.add({
+        id: actionID,
         action: 'ItemTransfer',
         params: [itemsIndexes, amts, account.id],
         description: `Sending ${itemamts} ${itemsNames} to ${account.name}`,
         execute: async () => {
-          return api.player.account.item.transfer(itemsIndexes, [1], account.id);
+          return api.account.item.transfer(
+            itemsIndexes,
+            amts,
+            BigNumber.from(account.id).toNumber()
+          );
         },
       });
+      return actionID;
     };
 
     /////////////////
