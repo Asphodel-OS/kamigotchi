@@ -37,7 +37,6 @@ export const Send = (props: Props) => {
   useEffect(() => {
     const stone =
       inventory.find((inventory) => inventory.item.index === STONE_INDEX)?.item ?? NullItem;
-    console.log(`inventory ${JSON.stringify(inventory)}`);
     setItem(stone);
   }, [inventory.length]);
 
@@ -49,7 +48,7 @@ export const Send = (props: Props) => {
   useEffect(() => {
     setTimeout(() => {
       setVisible(showSend);
-    }, 400);
+    }, 300);
   }, [showSend]);
 
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change

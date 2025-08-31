@@ -82,7 +82,7 @@ const Shuffle = keyframes`
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-200%);
+    transform: translateY(-100%);
   }
   100% {
     transform: translateY(0);

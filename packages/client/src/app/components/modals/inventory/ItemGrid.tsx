@@ -86,7 +86,7 @@ export const ItemGrid = ({
   useEffect(() => {
     setTimeout(() => {
       setVisible(!showSend);
-    }, 400);
+    }, 300);
   }, [showSend]);
   /////////////////
   // INTERPRETATION
