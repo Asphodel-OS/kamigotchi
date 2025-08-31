@@ -23,7 +23,15 @@ interface ShaderStackProps {
 }
 
 // A single WebGL canvas rendering multiple full-screen shader layers in order.
-// This avoids spinning up multiple WebGL contexts for stacked effects.
+let ACTIVE_CONTEXTS = 0;
+const MAX_CONTEXTS = 8; // conservative; tune as needed
+const tryAcquireContext = () => {
+  if (ACTIVE_CONTEXTS >= MAX_CONTEXTS) return false;
+  ACTIVE_CONTEXTS += 1;
+  return true;
+};
+const releaseContext = () => { if (ACTIVE_CONTEXTS > 0) ACTIVE_CONTEXTS -= 1; };
+
 export const ShaderStack: React.FC<ShaderStackProps> = ({
   layers,
   className,
@@ -45,10 +53,14 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const ioRef = useRef<IntersectionObserver | null>(null);
+  const contextAcquiredRef = useRef<boolean>(false);
 
   const init = () => {
     const container = containerRef.current;
     if (!container || rendererRef.current) return;
+
+    if (!tryAcquireContext()) return;
+    contextAcquiredRef.current = true;
 
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: transparent, powerPreference: 'high-performance' });
     renderer.autoClear = false;
@@ -167,6 +179,7 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     cameraRef.current = null;
     meshRef.current = null;
     geometryRef.current = null;
+    if (contextAcquiredRef.current) { releaseContext(); contextAcquiredRef.current = false; }
   };
 
   useEffect(() => {
@@ -175,9 +188,11 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     if (!animateWhenOffscreen && 'IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         for (const entry of entries) setIsVisible(entry.isIntersecting);
-      });
+      }, { root: null, threshold: 0 });
       io.observe(container);
       ioRef.current = io;
+    } else if (animateWhenOffscreen) {
+      setIsVisible(true);
     }
     return () => { if (ioRef.current) { ioRef.current.disconnect(); ioRef.current = null; } };
   }, [animateWhenOffscreen]);
