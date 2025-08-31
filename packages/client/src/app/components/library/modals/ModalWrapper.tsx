@@ -99,7 +99,7 @@ const Wrapper = styled.div<{
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
-  animation: ${({ shuffle }) => (shuffle ? Shuffle : '')} 0.5s ease-in-out;
+  animation: ${({ shuffle }) => (shuffle ? Shuffle : '')} 0.4s ease-in-out;
   margin: 0.2vw;
   align-items: center;
   justify-content: center;
