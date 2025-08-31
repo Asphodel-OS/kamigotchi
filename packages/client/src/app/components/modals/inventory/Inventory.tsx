@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { interval, map } from 'rxjs';
 
 import { EntityID, EntityIndex } from '@mud-classic/recs';
@@ -175,18 +174,14 @@ export const InventoryModal: UIComponent = {
       const itemsIndexes = items.map((item) => item.index);
       const itemsNames = items.map((item) => item.name);
       const itemamts = items.map((item) => item.index);
-      console.log(`accountid selected: ${account.id}`);
-      actions.add({
+      //  console.log(`accountid selected: ${account.id} BigNumber ${Number(account.id)}`);
+      actions!.add({
         id: actionID,
         action: 'ItemTransfer',
         params: [itemsIndexes, amts, account.id],
         description: `Sending ${itemamts} ${itemsNames} to ${account.name}`,
         execute: async () => {
-          return api.account.item.transfer(
-            itemsIndexes,
-            amts,
-            BigNumber.from(account.id).toNumber()
-          );
+          return api.account.item.transfer(itemsIndexes, amts, account.id);
         },
       });
       return actionID;

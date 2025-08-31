@@ -38,7 +38,7 @@ export const itemsAPI = (systems: any) => {
    * @param amt amount of the item thats going to be transferred
    * @param accountID index of the account that will receive the item
    */
-  const transfer = (itemIndex: number[], amt: number[], accountID: number) => {
+  const transfer = (itemIndex: number[], amt: number[], accountID: BigNumberish) => {
     return systems['system.item.transfer'].executeTyped(itemIndex, amt, accountID);
   };
 
