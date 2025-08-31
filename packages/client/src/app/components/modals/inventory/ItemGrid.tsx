@@ -45,7 +45,14 @@ export const ItemGrid = ({
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
   };
 }) => {
-  const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
+  const {
+    getAccount,
+    getInventories,
+    getKamis,
+    meetsRequirements,
+    setShowSend,
+    getInventoryBalance,
+  } = utils;
   const { showSend } = data;
   const { sendItemsTx } = actions;
 

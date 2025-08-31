@@ -175,7 +175,7 @@ export const InventoryModal: UIComponent = {
       const itemsIndexes = items.map((item) => item.index);
       const itemsNames = items.map((item) => item.name);
       const itemamts = items.map((item) => item.index);
-      console.log(`accountid selected: ${account.id}`);
+      // console.log(`accountid selected: ${account.id}`);
       actions.add({
         id: actionID,
         action: 'ItemTransfer',

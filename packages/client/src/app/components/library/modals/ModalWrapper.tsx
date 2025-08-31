@@ -18,6 +18,7 @@ export const ModalWrapper = ({
   truncate,
   scrollBarColor,
   positionOverride,
+  shuffle = false,
 }: {
   id: keyof Modals;
   children: React.ReactNode;
@@ -76,14 +77,6 @@ export const ModalWrapper = ({
   );
 };
 
-// Wrapper is an invisible animated wrapper around all modals sans any frills.
-const Wrapper = styled.div<{
-  isOpen: boolean;
-  overlay: boolean;
-}>`
-  shuffle: boolean;
-}
-
 const Shuffle = keyframes`
   0% {
     transform: translateY(0);
@@ -97,7 +90,11 @@ const Shuffle = keyframes`
 `;
 
 // Wrapper is an invisible animated wrapper around all modals sans any frills.
-const Wrapper = styled.div<WrapperProps>`
+const Wrapper = styled.div<{
+  isOpen: boolean;
+  overlay: boolean;
+  shuffle: boolean;
+}>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};

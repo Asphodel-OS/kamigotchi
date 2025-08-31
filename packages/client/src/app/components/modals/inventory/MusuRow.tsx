@@ -7,15 +7,15 @@ import { ItemImages } from 'assets/images/items';
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = ({
-  data: { musu, obols, showSend, utils },
+  data: { musu, obols, showSend },
+  utils: { setShowSend },
 }: {
   data: {
     musu: number;
     obols: number;
     showSend: boolean;
-
-    utils: { setShowSend: (show: boolean) => void };
   };
+  utils: { setShowSend: (show: boolean) => void };
 }) => {
   const { modals, setModals } = useVisibility();
 
