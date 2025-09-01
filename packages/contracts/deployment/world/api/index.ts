@@ -449,7 +449,6 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
     },
     auction: auctionAPI(generateCallData, compiledCalls),
-    portal: portalAPI(generateCallData, compiledCalls),
     config: {
       set: {
         address: setConfigAddress,
@@ -465,6 +464,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     },
     goal: goalsAPI(generateCallData, compiledCalls),
     listing: listingAPI(generateCallData, compiledCalls),
+    mint: {
+      batchMinter: {
+        init: initBatchMinter,
+        mint: batchMint,
+      },
+    },
     node: nodesAPI(generateCallData, compiledCalls),
     npc: {
       create: createNPC,
@@ -473,12 +478,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         name: setNPCName,
       },
     },
-    mint: {
-      batchMinter: {
-        init: initBatchMinter,
-        mint: batchMint,
-      },
-    },
+    portal: portalAPI(generateCallData, compiledCalls),
     registry: {
       item: itemsAPI(generateCallData, compiledCalls),
       trait: {

@@ -13,7 +13,7 @@ import {
   deleteRelationships,
   deleteRooms,
   deleteSkills,
-  deleteToken,
+  deleteTokens,
   initAll,
   initAllLocal,
   initAllTesting,
@@ -30,13 +30,13 @@ import {
   initMintConfigs,
   initNodes,
   initNpcs,
-  initPortal,
   initQuests,
   initRecipes,
   initRelationships,
   initRooms,
   initSkills,
   initSnapshot,
+  initTokens,
   initTradeConfigs,
   initTraits,
   mintToGachaPool,
@@ -51,6 +51,9 @@ import {
   reviseRooms,
   reviseSkills,
 } from './state';
+
+// TODO: rename this file to something that makes more sense
+// ('api.ts' would conflict with api/)
 
 export type WorldAPI = typeof WorldState.prototype.api;
 
@@ -90,10 +93,6 @@ export class WorldState {
     },
     auth: {
       init: () => this.genCalls(initAuth),
-    },
-    bridge: {
-      init: () => this.genCalls(initPortal),
-      delete: (index: number) => this.genCalls((api) => deleteToken(api, index)),
     },
     config: {
       init: () => this.genCalls(initConfigs),
@@ -135,6 +134,10 @@ export class WorldState {
     } as SubFunc,
     mint: {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),
+    } as SubFunc,
+    portal: {
+      init: (indices: number[]) => this.genCalls((api) => initTokens(api, indices)),
+      delete: (indices: number[]) => this.genCalls((api) => deleteTokens(api, indices)),
     } as SubFunc,
     quests: {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),
