@@ -17,6 +17,7 @@ import { _RoomRegistrySystem } from "./ethers-contracts/_RoomRegistrySystem";
 import { _SkillRegistrySystem } from "./ethers-contracts/_SkillRegistrySystem";
 import { _SnapshotT2System } from "./ethers-contracts/_SnapshotT2System";
 import { _TraitRegistrySystem } from "./ethers-contracts/_TraitRegistrySystem";
+import { _TriggerCompEventSystem } from "./ethers-contracts/_TriggerCompEventSystem";
 import { _WorldWhitelistSystem } from "./ethers-contracts/_WorldWhitelistSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem";
@@ -91,6 +92,7 @@ export type SystemTypes = {
   "system.skill.registry": _SkillRegistrySystem;
   "system.setup.snapshot.t2": _SnapshotT2System;
   "system.trait.registry": _TraitRegistrySystem;
+  "system.test.comp.event": _TriggerCompEventSystem;
   "system.world.whitelist.set": _WorldWhitelistSystem;
   "system.account.move": AccountMoveSystem;
   "system.account.register": AccountRegisterSystem;
