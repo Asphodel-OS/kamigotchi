@@ -28,8 +28,8 @@ export function portalAPI(generateCallData: GenerateCallData, compiledCalls: str
   async function localSetItem(index: number) {
     const callData = generateCallData(
       'system.erc20.portal',
-      [index, `INJECT: LibItem.getTokenAddr(components, ${index})`],
-      'addItem',
+      [index, `INJECT: LibItem.getTokenAddr(components, ${index})`, 2],
+      'setItem',
       undefined,
       '800000'
     );
@@ -40,7 +40,7 @@ export function portalAPI(generateCallData: GenerateCallData, compiledCalls: str
     token: {
       set: setItem,
       unset: unsetItem,
-      localAdd: localSetItem,
+      setLocal: localSetItem,
     },
   };
 }
