@@ -12,7 +12,7 @@ export const MainWindow = observer(({ ready }: { ready: boolean }) => {
   const layers = useLayers();
 
   // this includes the LoadingState and ActionQueue components when not ready
-  const toRender = ready ? allComponents : allComponents.slice(0, 2);
+  const toRender = ready ? allComponents : allComponents.slice(0, 4);
 
   return (
     <UIGrid>
