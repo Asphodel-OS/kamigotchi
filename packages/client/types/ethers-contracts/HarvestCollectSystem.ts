@@ -34,7 +34,9 @@ export interface HarvestCollectSystemInterface extends utils.Interface {
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
+    "executeAllowFailure(bytes)": FunctionFragment;
     "executeBatched(uint256[])": FunctionFragment;
+    "executeBatchedAllowFailure(uint256[])": FunctionFragment;
     "executeTyped(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
@@ -49,7 +51,9 @@ export interface HarvestCollectSystemInterface extends utils.Interface {
       | "completeOwnershipHandover"
       | "deprecate"
       | "execute"
+      | "executeAllowFailure"
       | "executeBatched"
+      | "executeBatchedAllowFailure"
       | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
@@ -72,7 +76,15 @@ export interface HarvestCollectSystemInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "executeAllowFailure",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "executeBatched",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeBatchedAllowFailure",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
@@ -108,7 +120,15 @@ export interface HarvestCollectSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "executeAllowFailure",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "executeBatched",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "executeBatchedAllowFailure",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -231,7 +251,17 @@ export interface HarvestCollectSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    executeAllowFailure(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    executeBatchedAllowFailure(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -280,7 +310,17 @@ export interface HarvestCollectSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  executeAllowFailure(
+    arguments: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   executeBatched(
+    ids: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  executeBatchedAllowFailure(
     ids: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -325,7 +365,17 @@ export interface HarvestCollectSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    executeAllowFailure(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    executeBatchedAllowFailure(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<string[]>;
@@ -399,7 +449,17 @@ export interface HarvestCollectSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    executeAllowFailure(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    executeBatchedAllowFailure(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -449,7 +509,17 @@ export interface HarvestCollectSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    executeAllowFailure(
+      arguments: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     executeBatched(
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    executeBatchedAllowFailure(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

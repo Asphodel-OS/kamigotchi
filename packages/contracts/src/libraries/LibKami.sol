@@ -171,11 +171,74 @@ library LibKami {
   /////////////////
   // CHECKERS
 
+  /// @dev implicit isKami check - only kamis are mapped to IDOwnsKamiComponent
+  function checkAccount(
+    IUintComp components,
+    uint256 id,
+    uint256 accID
+  ) internal view returns (bool) {
+    return IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(id) == accID;
+  }
+
+  /// @notice check if a kami is in the same room as an account
+  function checkRoom(IUintComp components, uint256 id, uint256 accID) internal view returns (bool) {
+    // could optimize this, but left alone for modularity
+    return getRoom(components, id) == LibAccount.getRoom(components, accID);
+  }
+
+  function checkRoom(
+    IUintComp components,
+    uint256[] memory ids,
+    uint256 accID
+  ) internal view returns (bool) {
+    for (uint256 i; i < ids.length; i++) {
+      if (getRoom(components, ids[i]) != LibAccount.getRoom(components, accID)) return false;
+    }
+    return true;
+  }
+
+  // Check whether the current health of a kami is greater than 0. Assume health synced this block.
+  function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibStat.get(components, "HEALTH", id).sync > 0;
+  }
+
+  function isHealthy(IUintComp components, uint256[] memory ids) internal view returns (bool) {
+    Stat[] memory stats = LibStat.get(components, "HEALTH", ids);
+    for (uint256 i; i < ids.length; i++) {
+      if (stats[i].sync <= 0) return false;
+    }
+    return true;
+  }
+
+  // Check whether a kami's ERC721 token is in the game world
+  function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
+    return !getCompByID(components, StateCompID).eqString(id, "721_EXTERNAL");
+  }
+
+  function isState(
+    IUintComp components,
+    uint256 id,
+    string memory state
+  ) internal view returns (bool) {
+    return getCompByID(components, StateCompID).eqString(id, state);
+  }
+
+  function isState(
+    IUintComp components,
+    uint256[] memory ids,
+    string memory state
+  ) internal view returns (bool) {
+    return getCompByID(components, StateCompID).eqString(ids, state);
+  }
+
+  function onCooldown(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibCooldown.isActive(components, id);
+  }
+
   /// @notice revert if  a kami is not owned by an account
   /// @dev implicit isKami check - only kamis are mapped to IDOwnsKamiComponent
   function verifyAccount(IUintComp components, uint256 id, uint256 accID) public view {
-    if (IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).get(id) != accID)
-      revert("kami not urs");
+    if (!checkAccount(components, id, accID)) revert("kami not urs");
   }
 
   function verifyAccount(IUintComp components, uint256[] memory ids, uint256 accID) public view {
@@ -200,31 +263,11 @@ library LibKami {
   }
 
   function verifyRoom(IUintComp components, uint256 kamiID, uint256 accID) public view {
-    return _verifyRoom(components, getState(components, kamiID), kamiID, accID);
+    if (!checkRoom(components, kamiID, accID)) revert("kami too far");
   }
 
   function verifyRoom(IUintComp components, uint256[] memory kamiIDs, uint256 accID) public view {
-    string[] memory states = StateComponent(getAddrByID(components, StateCompID)).get(kamiIDs);
-    for (uint256 i; i < kamiIDs.length; i++) _verifyRoom(components, states[i], kamiIDs[i], accID);
-  }
-
-  /// @notice revert if kami is not in same room as account
-  function _verifyRoom(
-    IUintComp components,
-    string memory state,
-    uint256 kamiID,
-    uint256 accID
-  ) public view {
-    bool sameRoom;
-    if (state.eq("HARVESTING")) {
-      uint256 nodeID = LibHarvest.getNode(components, getHarvest(components, kamiID));
-      IndexRoomComponent roomComp = IndexRoomComponent(getAddrByID(components, IndexRoomCompID));
-      sameRoom = roomComp.safeGet(nodeID) == roomComp.safeGet(accID);
-    } else if (state.eq("721_EXTERNAL")) {
-      sameRoom = false; // outside
-    } else sameRoom = true;
-
-    if (!sameRoom) revert("kami too far");
+    if (!checkRoom(components, kamiIDs, accID)) revert("kami too far");
   }
 
   function verifyRoom(IUintComp components, uint256 kamiID) public view {
@@ -232,8 +275,7 @@ library LibKami {
   }
 
   function verifyState(IUintComp components, uint256 id, string memory state) public view {
-    if (!getCompByID(components, StateCompID).eqString(id, state))
-      revert(LibString.concat("kami not ", state));
+    if (!isState(components, id, state)) revert(LibString.concat("kami not ", state));
   }
 
   function verifyState(
@@ -241,34 +283,7 @@ library LibKami {
     uint256[] memory ids,
     string memory state
   ) public view {
-    if (!getCompByID(components, StateCompID).eqString(ids, state))
-      revert(LibString.concat("kami not ", state));
-  }
-
-  function isState(
-    IUintComp components,
-    uint256 id,
-    string memory state
-  ) internal view returns (bool) {
-    return getCompByID(components, StateCompID).eqString(id, state);
-  }
-
-  // Check whether the current health of a kami is greater than 0. Assume health synced this block.
-  function isHealthy(IUintComp components, uint256 id) internal view returns (bool) {
-    return LibStat.get(components, "HEALTH", id).sync > 0;
-  }
-
-  function isHealthy(IUintComp components, uint256[] memory ids) internal view returns (bool) {
-    Stat[] memory stats = LibStat.get(components, "HEALTH", ids);
-    for (uint256 i; i < ids.length; i++) {
-      if (stats[i].sync <= 0) return false;
-    }
-    return true;
-  }
-
-  // Check whether a kami's ERC721 token is in the game world
-  function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
-    return !getCompByID(components, StateCompID).eqString(id, "721_EXTERNAL");
+    if (!isState(components, ids, state)) revert(LibString.concat("kami not ", state));
   }
 
   /////////////////
