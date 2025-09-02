@@ -18,6 +18,8 @@ contract KamiOnyxReviveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
+    revert("Onyx Features are temporarily disabled.");
+
     uint256 id = abi.decode(arguments, (uint256));
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 

@@ -192,6 +192,7 @@ export type { _RoomRegistrySystem } from "./_RoomRegistrySystem";
 export type { _SkillRegistrySystem } from "./_SkillRegistrySystem";
 export type { _SnapshotT2System } from "./_SnapshotT2System";
 export type { _TraitRegistrySystem } from "./_TraitRegistrySystem";
+export type { _TriggerCompEventSystem } from "./_TriggerCompEventSystem";
 export type { _WorldWhitelistSystem } from "./_WorldWhitelistSystem";
 export type { __LocalSetupSystem } from "./__LocalSetupSystem";
 export * as factories from "./factories";
@@ -213,6 +214,7 @@ export { _RoomRegistrySystem__factory } from "./factories/_RoomRegistrySystem__f
 export { _SkillRegistrySystem__factory } from "./factories/_SkillRegistrySystem__factory";
 export { _SnapshotT2System__factory } from "./factories/_SnapshotT2System__factory";
 export { _TraitRegistrySystem__factory } from "./factories/_TraitRegistrySystem__factory";
+export { _TriggerCompEventSystem__factory } from "./factories/_TriggerCompEventSystem__factory";
 export { _WorldWhitelistSystem__factory } from "./factories/_WorldWhitelistSystem__factory";
 export { AccountMoveSystem__factory } from "./factories/AccountMoveSystem__factory";
 export { AccountRegisterSystem__factory } from "./factories/AccountRegisterSystem__factory";

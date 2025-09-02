@@ -47,6 +47,8 @@ library LibSetter {
       incInv(components, targetID, index, amt);
     } else if (_type.eq("XP")) {
       LibExperience.inc(components, targetID, amt);
+    } else if (_type.eq("COOLDOWN")) {
+      LibCooldown.modify(components, targetID, int256(amt)); // amt is int stored as uint, force type
     } else if (_type.eq("REPUTATION")) {
       LibFaction.incRep(components, targetID, index, amt);
     } else if (_type.eq("ROOM")) {

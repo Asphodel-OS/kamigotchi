@@ -25,7 +25,7 @@ export const AccountCard = ({
   actions?: React.ReactNode;
 }) => {
   const { modals, setModals } = useVisibility();
-  const { setAccount } = useSelected();
+  const setAccount = useSelected((s) => s.setAccount);
 
   // ticking
   const [_, setLastRefresh] = useState(Date.now());

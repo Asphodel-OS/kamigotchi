@@ -169,7 +169,8 @@ export const KamisExpanded = ({
           kami={kami}
           onyx={{ ...onyx, price: ONYX_REVIVE_PRICE }}
           actions={{ onyxApprove, onyxUse: onyxRevive }}
-          tooltip={getOnyxTooltip(kami)}
+          tooltip={['Onyx features are temporarily disabled', 'in anticipation of things to come.']}
+          disabled={true}
         />
       );
     }

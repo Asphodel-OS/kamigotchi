@@ -1,19 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Kami } from 'network/shapes/Kami';
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { onCooldown } from 'app/cache/kami/calcs/base';
 import { CRTShader } from 'app/components/shaders/CRTShader';
 import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
-
+import { Kami } from 'network/shapes/Kami';
 import { Countdown, TextTooltip } from '../..';
 
-export const Cooldown = ({
-  kami,
-}: {
-  kami: Kami;
-}) => {
+export const Cooldown = ({ kami }: { kami: Kami }) => {
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);
@@ -30,7 +25,7 @@ export const Cooldown = ({
 
   // update the remaining time on the cooldown
   useEffect(() => {
-    setCurrent(calcCooldown(kami));
+    setCurrent(calcRemainingForVisuals());
   }, [lastRefresh, total, kami]);
 
   return (
@@ -47,6 +42,7 @@ export const useCooldownVisuals = (
 ): { filter?: string; foreground?: React.ReactNode } => {
   const isOnCooldown = onCooldown(kami);
   const shouldAnimate = enabled && isOnCooldown;
+
   const [tick, setTick] = useState(0);
   useEffect(() => {
     if (!shouldAnimate) return;

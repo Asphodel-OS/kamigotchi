@@ -73,6 +73,11 @@ library LibCooldown {
   /////////////////
   // GETTERS
 
+  /// @notice gets the timestamp when cooldown ends
+  function getEnd(IUintComp components, uint256 id) internal view returns (uint256) {
+    return IUintComp(getAddrByID(components, TimeNextCompID)).safeGet(id);
+  }
+
   /// @notice get cooldown for entity, including bonus
   function getCooldown(IUintComp components, uint256 id) internal view returns (int256) {
     uint256 base = LibConfig.get(components, "KAMI_STANDARD_COOLDOWN");

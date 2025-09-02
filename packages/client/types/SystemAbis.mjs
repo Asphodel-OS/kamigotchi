@@ -17,6 +17,7 @@ import _RoomRegistrySystem from "../abi/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../abi/_SkillRegistrySystem.json";
 import _SnapshotT2System from "../abi/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../abi/_TraitRegistrySystem.json";
+import _TriggerCompEventSystem from "../abi/_TriggerCompEventSystem.json";
 import _WorldWhitelistSystem from "../abi/_WorldWhitelistSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
@@ -91,6 +92,7 @@ export const SystemAbis = {
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.setup.snapshot.t2": _SnapshotT2System.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
+  "system.test.comp.event": _TriggerCompEventSystem.abi,
   "system.world.whitelist.set": _WorldWhitelistSystem.abi,
   "system.account.move": AccountMoveSystem.abi,
   "system.account.register": AccountRegisterSystem.abi,

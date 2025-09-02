@@ -17,7 +17,7 @@ export const AdversaryColumn = ({
   };
 }) => {
   const { getKamiByID } = utils;
-  const { setKami } = useSelected();
+  const setKami = useSelected((s) => s.setKami);
 
   const selectKami = (index: number) => {
     setKami(index);

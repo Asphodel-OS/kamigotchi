@@ -101,8 +101,8 @@ export const Footer = ({
           onyxApprove: () => onyxApprove(ONYX_RESPEC_PRICE),
           onyxUse: () => onyxRespec(kami),
         }}
-        tooltip={getOnyxTooltip()}
-        disabled={!isResting(kami) || !hasOnyx()}
+        tooltip={['Onyx features are temporarily disabled', 'in anticipation of things to come.']}
+        disabled={true}
       />
       <Points>{getPointsText()}</Points>
     </Overlay>
