@@ -27,7 +27,7 @@ interface Props {
   utils: {
     setShowSend: (show: boolean) => void;
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
-    getSendHistory: JSX.Element[];
+    getSendHistory: JSX.Element[] | JSX.Element;
   };
 }
 

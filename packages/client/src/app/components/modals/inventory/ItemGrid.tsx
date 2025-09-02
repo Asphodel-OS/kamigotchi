@@ -154,7 +154,11 @@ export const ItemGrid = ({
         );
       }
     });
-    return transfers.reverse();
+    if (transfers.length === 0) {
+      return <EmptyText text={['No transfers to show.']} />;
+    } else {
+      return transfers.reverse();
+    }
   }, [sendHistory, account]);
 
   // // get the list of kamis that a specific item can be used on
