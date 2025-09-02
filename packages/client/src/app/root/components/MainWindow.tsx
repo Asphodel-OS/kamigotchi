@@ -137,25 +137,55 @@ export const MainWindow = observer(({
 
     {ready && <>
       {/* Scene modals */}
-      <DialogueModal.Render />
-      <EmaBoardModal.Render />
-      <FundOperator.Render />
-      <GachaModal.Render />
-      <GoalModal.Render />
-      <KamiPortalModal.Render />
-      <LeaderboardModal.Render />
-      <ObolModal.Render />
-      <RevealModal.Render />
-      <MerchantModal.Render />
+      <div style={{ margin: '75vh 2vw 1vh 33vw' }}>
+        <DialogueModal.Render />
+      </div>
 
-      {/* Dev-only */}
+      <div style={{ margin: '15vw 33vw 1vh 33vw' }}>
+        <EmaBoardModal.Render />
+      </div>
+
+      <div style={{ margin: 'auto', width: '40vw', height: '40vh' }}>
+        <FundOperator.Render />
+      </div>
+
+      <div style={{ margin: '8vh 11vw 15vh 11vw' }}>
+        <GachaModal.Render />
+      </div>
+
+      <div style={{ margin: 'auto', width: '60vw', height: '54vh' }}>
+        <GoalModal.Render />
+      </div>
+
+      <div style={{ margin: '15vh 25vw 1vh 25vw' }}>
+        <KamiPortalModal.Render />
+      </div>
+
+      <div style={{ margin: 'auto', width: '58vw', height: '54vh' }}>
+        <LeaderboardModal.Render />
+      </div>
+
+      <div style={{ margin: 'auto', width: '60vw', height: '29vh' }}>
+        <ObolModal.Render />
+      </div>
+
+      <div style={{ margin: 'auto', width: '40vw', height: '35vh' }}>
+        <RevealModal.Render />
+      </div>
+
+      <div style={{ margin: '8vh 2vw 1vh 33vw' }}>
+        <MerchantModal.Render />
+      </div>
+
       {([
           'localhost',
           '127.0.0.1',
           ''
         ].includes(globalThis?.location?.hostname)
       ) && (
-        <AnimationStudio.Render />
+        <div style={{ margin: 'auto', width: '60vh', height: '60vh' }}>
+          <AnimationStudio.Render />
+        </div>
       )}
     </>}
   </Stack>
