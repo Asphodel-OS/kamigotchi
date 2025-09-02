@@ -184,6 +184,7 @@
       "name": "_TraitRegistrySystem",
       "writeAccess": ["*"]
     },
+    { "name": "_TriggerCompEventSystem", "writeAccess": ["TimeStart"], "skipEnv": ["puter", "production"] },
     { "name": "_WorldWhitelistSystem", "writeAccess": ["HasFlag"] },
     {
       "name": "AccountUseItemSystem",

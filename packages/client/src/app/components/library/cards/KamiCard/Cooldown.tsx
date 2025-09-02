@@ -155,7 +155,6 @@ export const useCooldownVisuals = (
     // Single WebGL context: CRT + static grain + final-second wipe
     const crtLayer = makeCRTLayer({ brightness: 1.6, alpha: 0.96 });
     return <ShaderStack layers={[crtLayer, staticLayer, wipeLayer]} animateWhenOffscreen />;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldAnimate, kami]);
 
   return { filter, foreground };
