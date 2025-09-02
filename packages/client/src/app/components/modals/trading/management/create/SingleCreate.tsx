@@ -239,16 +239,16 @@ const Container = styled.div<{ isVisible: boolean }>`
   height: 100%;
 
   flex-flow: column nowrap;
-  padding: 6vw 0.6vw 0.6vw 0.6vw;
+  padding: 6em 0.6em 0.6em 0.6em;
 `;
 
 const Row = styled.div`
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: flex;
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;

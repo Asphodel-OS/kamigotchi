@@ -162,8 +162,8 @@ export const KamiCard = ({
 const TitleBar = styled.div`
   display: flex;
 
-  border-bottom: solid black 0.15vw;
-  padding: 0.45vw;
+  border-bottom: solid black 0.15em;
+  padding: 0.45em;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
@@ -173,7 +173,7 @@ const TitleBar = styled.div`
 const TitleText = styled.div`
   display: flex;
   justify-content: flex-start;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: left;
   cursor: pointer;
   &:hover {
@@ -187,23 +187,23 @@ const TitleCorner = styled.div`
   flex-grow: 1;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.3vw;
-  font-size: 1vw;
+  gap: 0.3em;
+  font-size: 1em;
   text-align: right;
-  height: 1.2vw;
+  height: 1.2em;
 `;
 
 const Buffs = styled.div`
   display: flex;
-  gap: 0.2vw;
+  gap: 0.2em;
   width: max-content;
   align-items: center;
-  padding: 0.2vw;
-  margin: 0 0 0 0.4vw;
+  padding: 0.2em;
+  margin: 0 0 0 0.4em;
 `;
 
 const Buff = styled.img`
-  height: 1.6vw;
+  height: 1.6em;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -214,7 +214,7 @@ const Content = styled.div`
   flex-direction: column;
   flex-grow: 1;
   position: relative;
-  padding: 0.2vw;
+  padding: 0.2em;
   user-select: none;
 `;
 
@@ -236,14 +236,14 @@ const ContentColumn = styled.div`
   flex-flow: column nowrap;
   flex-grow: 1;
   position: relative;
-  margin: 0.2vw;
-  padding-top: 0.2vw;
+  margin: 0.2em;
+  padding-top: 0.2em;
 `;
 
 const ContentSubtext = styled.div`
   flex-grow: 1;
   text-align: right;
-  font-size: 0.7vw;
+  font-size: 0.7em;
 
   ${({ onClick }) =>
     onClick &&
@@ -259,19 +259,19 @@ const ContentSubtext = styled.div`
 const ContentActions = styled.div`
   display: flex;
   position: absolute;
-  right: 0.2vw;
-  bottom: 0.1vw;
+  right: 0.2em;
+  bottom: 0.1em;
 
   flex-flow: row nowrap;
   justify-content: flex-end;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const TextBig = styled.p`
-  padding: 0.2vw;
+  padding: 0.2em;
 
-  font-size: 0.75vw;
-  line-height: 0.9vw;
+  font-size: 0.75em;
+  line-height: 0.9em;
   text-align: left;
 
   ${({ onClick }) =>
@@ -286,17 +286,17 @@ const TextBig = styled.p`
 `;
 
 const TextMedium = styled.p`
-  padding-left: 0.5vw;
+  padding-left: 0.5em;
 
-  font-size: 0.6vw;
-  line-height: 1vw;
+  font-size: 0.6em;
+  line-height: 1em;
   text-align: left;
 `;
 
 const Friend = styled.div`
   display: flex;
-  width: 5vw;
-  padding: 0.2vw;
+  width: 5em;
+  padding: 0.2em;
   position: absolute;
   bottom: 0;
   background-color: rgb(192, 224, 139);
@@ -305,5 +305,5 @@ const Friend = styled.div`
 
   align-items: center;
   justify-content: center;
-  font-size: 0.6vw;
+  font-size: 0.6em;
 `;

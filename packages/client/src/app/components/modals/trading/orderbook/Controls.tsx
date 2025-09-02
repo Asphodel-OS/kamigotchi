@@ -129,10 +129,10 @@ export const Controls = ({
 };
 
 const Container = styled.div`
-  border-right: 0.15vw solid black;
+  border-right: 0.15em solid black;
   height: 100%;
   width: 40%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -145,10 +145,10 @@ const Title = styled.div`
   background-color: rgb(221, 221, 221);
   width: 100%;
 
-  padding: 1.8vw;
+  padding: 1.8em;
   opacity: 0.9;
   color: black;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: left;
   z-index: 1;
 `;
@@ -156,8 +156,8 @@ const Title = styled.div`
 const Body = styled.div`
   position: relative;
   height: 50%;
-  margin: 1.8vw 0.6vw;
-  gap: 1.2vw;
+  margin: 1.8em 0.6em;
+  gap: 1.2em;
 
   display: flex;
   flex-direction: column;
@@ -168,7 +168,7 @@ const Body = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row nowrap;

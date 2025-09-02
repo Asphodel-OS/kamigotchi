@@ -18,26 +18,26 @@ export const HelpChip = ({
 };
 
 const Icon = styled.img<{ size: string }>`
-  margin: 0.1vh 0.5vw;
+  margin: 0.1em 0.5em;
   user-drag: none;
 
   ${({ size }) => {
     if (size === 'small')
       return `
-      width: 1vw;
-      height: 1vw;
+      width: 1em;
+      height: 1em;
     `;
 
     if (size === 'medium')
       return `
-      width: 1.5vw;
-      height: 1.5vw;
+      width: 1.5em;
+      height: 1.5em;
     `;
 
     if (size === 'large')
       return `
-      width: 2vw;
-      height: 2vw;
+      width: 2em;
+      height: 2em;
     `;
   }}
 `;

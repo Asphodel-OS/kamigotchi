@@ -53,15 +53,15 @@ export const ActionListButton = ({
     if (disabled) styles.backgroundColor = '#bbb';
 
     if (size === 'small') {
-      styles.fontSize = '.6vw';
-      styles.margin = '0vw .12vw';
-      styles.padding = '.2vw .5vw';
-      styles.borderRadius = '.3vw';
+      styles.fontSize = '.6em';
+      styles.margin = '0em .12em';
+      styles.padding = '.2em .5em';
+      styles.borderRadius = '.3em';
     } else if (size === 'medium') {
-      styles.fontSize = '.8vw';
-      styles.margin = '0vw .16vw';
-      styles.padding = '.35vw .7vw';
-      styles.borderRadius = '.4vw';
+      styles.fontSize = '.8em';
+      styles.margin = '0em .16em';
+      styles.padding = '.35em .7em';
+      styles.borderRadius = '.4em';
     }
 
     return styles;
@@ -87,7 +87,7 @@ export const ActionListButton = ({
 
 const Button = styled.button`
   background-color: #fff;
-  border: solid black 0.15vw;
+  border: solid black 0.15em;
   color: black;
   display: flex;
 
@@ -109,9 +109,9 @@ const Button = styled.button`
 
 const Entry = styled.div<{ disabled?: boolean }>`
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  border-radius: 0.6vw;
-  padding: 0.6vw;
-  gap: 0.3vw;
+  border-radius: 0.6em;
+  padding: 0.6em;
+  gap: 0.3em;
 
   display: flex;
   justify-content: flex-start;
@@ -128,6 +128,6 @@ const Entry = styled.div<{ disabled?: boolean }>`
 `;
 
 const Icon = styled.img`
-  width: 1.4vw;
+  width: 1.4em;
   user-drag: none;
 `;

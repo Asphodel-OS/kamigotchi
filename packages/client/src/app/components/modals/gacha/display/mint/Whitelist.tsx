@@ -116,12 +116,12 @@ export const Whitelist = ({
 };
 
 const Container = styled.div<{ isSelected: boolean }>`
-  border-radius: 1.2vw;
+  border-radius: 1.2em;
   background-color: ${({ isSelected }) => (isSelected ? '#9c9' : 'white')};
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
-  width: 24vw;
-  padding: 2.1vw;
-  gap: 0.6vw;
+  filter: drop-shadow(0.3em 0.3em 0.15em black);
+  width: 24em;
+  padding: 2.1em;
+  gap: 0.6em;
   z-index: 5;
 
   display: flex;
@@ -144,18 +144,18 @@ const Section = styled.div`
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 1.5}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
 `;
 
 const Image = styled.img<{ selected: boolean }>`
-  border-radius: 0.6vw;
-  height: 10vw;
-  width: 10vw;
+  border-radius: 0.6em;
+  height: 10em;
+  width: 10em;
   image-rendering: pixelated;
   opacity: ${({ selected }) => (selected ? 1 : 0.6)};
 `;

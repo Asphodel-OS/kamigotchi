@@ -68,10 +68,10 @@ const Wrapper = styled.div<Wrapper>`
   pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
   z-index: 20;
 
-  width: 50vw;
-  height: 50vh;
-  left: 25vw;
-  top: 25vh;
+  width: 50em;
+  height: 50em;
+  left: 25em;
+  top: 25em;
 
   user-select: none;
 `;
@@ -79,10 +79,10 @@ const Wrapper = styled.div<Wrapper>`
 const Content = styled.div`
   position: relative;
   background-color: white;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
 
-  padding: 2vw 4vw;
+  padding: 2em 4em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -95,37 +95,37 @@ const Header = styled.div`
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3vw;
+  padding: 0.3em;
   width: 100%;
 `;
 
 const Title = styled.div`
   color: #333;
-  padding: 0.6vw;
-  font-size: 2.1vw;
+  padding: 0.6em;
+  font-size: 2.1em;
   text-align: center;
 `;
 
 const Subtitle = styled.div`
   color: #666;
-  padding: 0.6vw;
-  font-size: 1.2vw;
+  padding: 0.6em;
+  font-size: 1.2em;
   text-align: center;
 `;
 
 const ErrorPrimary = styled.div`
   color: #922;
-  padding: 0.45vw;
-  font-size: 1.2vw;
-  line-height: 2.1vw;
+  padding: 0.45em;
+  font-size: 1.2em;
+  line-height: 2.1em;
   text-align: center;
 `;
 
 const ErrorSecondary = styled.div`
   color: #922;
-  padding: 0.45vw;
-  font-size: 0.9vw;
-  line-height: 1.2vw;
+  padding: 0.45em;
+  font-size: 0.9em;
+  line-height: 1.2em;
   text-align: center;
 `;
 
@@ -151,7 +151,7 @@ const fadeOut = keyframes`
 
 const ButtonRow = styled.div`
   position: absolute;
-  padding: 0.7vw;
+  padding: 0.7em;
   right: 0;
   display: inline-flex;
 `;

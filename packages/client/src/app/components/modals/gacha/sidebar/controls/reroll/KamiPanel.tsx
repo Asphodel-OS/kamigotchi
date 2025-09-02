@@ -25,7 +25,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;
@@ -33,12 +33,12 @@ const Container = styled.div<{ isVisible: boolean }>`
 `;
 
 const Title = styled.div`
-  margin: 0.9vw;
-  font-size: 1.2vw;
+  margin: 0.9em;
+  font-size: 1.2em;
 `;
 
 const Text = styled.div`
-  margin-left: 1.2vw;
-  font-size: 0.9vw;
-  line-height: 1.6vw;
+  margin-left: 1.2em;
+  font-size: 0.9em;
+  line-height: 1.6em;
 `;

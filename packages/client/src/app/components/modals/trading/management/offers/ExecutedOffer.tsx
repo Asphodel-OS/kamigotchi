@@ -173,7 +173,7 @@ export const ExecutedOffer = ({
 const Paragraph = styled.div`
   color: #333;
   flex-grow: 1;
-  padding: 1.8vw;
+  padding: 1.8em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-evenly;
@@ -187,7 +187,7 @@ const Row = styled.div`
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const Cancelled = styled.div`
@@ -200,9 +200,9 @@ const Cancelled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   color: rgb(128, 4, 4);
-  border: 0.19vw solid rgb(128, 4, 4);
+  border: 0.19em solid rgb(128, 4, 4);
   transform: rotate(-22deg);
   z-index: 2;
   clip-path: polygon(0.5% 1%, 80% 0%, 100% 25%, 100% 90%, 90% 100%, 0% 100%, 15% 100%, 0% 70%);

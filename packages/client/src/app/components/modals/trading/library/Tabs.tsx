@@ -21,7 +21,7 @@ export const Tabs = ({
       <Button
         disabled={tab === `Orderbook`}
         onClick={() => handleTabbing(`Orderbook`)}
-        style={{ borderRight: 'solid black .15vw' }}
+        style={{ borderRight: 'solid black .15em' }}
       >
         {`View Orderbook`}
       </Button>
@@ -31,7 +31,7 @@ export const Tabs = ({
       <Button
         disabled={tab === `History`}
         onClick={() => handleTabbing(`History`)}
-        style={{ borderLeft: 'solid black .15vw' }}
+        style={{ borderLeft: 'solid black .15em' }}
       >
         {`History`}
       </Button>
@@ -48,11 +48,11 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  border-bottom: solid black 0.15vw;
-  padding: 0.6vw;
+  border-bottom: solid black 0.15em;
+  padding: 0.6em;
 
-  font-size: 1.2vw;
-  line-height: 1.8vw;
+  font-size: 1.2em;
+  line-height: 1.8em;
   flex-grow: 1;
 
   cursor: pointer;

@@ -96,7 +96,7 @@ export const Header = ({
 };
 
 const Container = styled.div`
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid black 0.15em;
   display: flex;
   flex-flow: row nowrap;
   user-select: none;
@@ -105,7 +105,7 @@ const Container = styled.div`
 const Content = styled.div`
   position: relative;
   height: 100%;
-  padding: 0.75vw 0vw;
+  padding: 0.75em 0em;
 
   flex-grow: 1;
   display: flex;
@@ -113,16 +113,16 @@ const Content = styled.div`
 `;
 
 const Title = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  padding: ${({ size }) => `${size * 0.75}vw ${size * 0.45}vw`};
+  font-size: ${({ size }) => size}em;
+  padding: ${({ size }) => `${size * 0.75}em ${size * 0.45}em`};
 
   align-self: flex-start;
   user-select: none;
 `;
 
 const Row = styled.div`
-  height: 10vw;
-  gap: 0.9vw;
+  height: 10em;
+  gap: 0.9em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -132,7 +132,7 @@ const Row = styled.div`
 
 const AffinityContainer = styled.div`
   height: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -141,14 +141,14 @@ const AffinityContainer = styled.div`
 
 const StatsContainer = styled.div`
   background-color: #999;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
+  border: solid black 0.15em;
+  border-radius: 1.2em;
+  filter: drop-shadow(0.3em 0.3em 0.15em black);
 
   height: 100%;
-  width: 19.3vw;
-  padding: 0.6vw;
-  gap: 0.6vw;
+  width: 19.3em;
+  padding: 0.6em;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row wrap;
@@ -158,14 +158,14 @@ const StatsContainer = styled.div`
 
 const StatPairing = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? '#fff'};
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
+  border: solid black 0.15em;
+  border-radius: 0.6em;
+  filter: drop-shadow(0.3em 0.3em 0.15em black);
 
-  padding: 0.75vw;
-  gap: 0.45vw;
-  min-width: 7.5vw;
-  min-height: 4vw;
+  padding: 0.75em;
+  gap: 0.45em;
+  min-width: 7.5em;
+  min-height: 4em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -183,20 +183,20 @@ const StatPairing = styled.div<{ color?: string }>`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  text-shadow: ${({ size }) => `0 0 ${size * 0.4}vw white`};
+  font-size: ${({ size }) => size}em;
+  text-shadow: ${({ size }) => `0 0 ${size * 0.4}em white`};
   pointer-events: none;
 `;
 
 const Icon = styled.img<{ size: number }>`
-  height: ${({ size }) => size}vw;
-  width: ${({ size }) => size}vw;
-  filter: drop-shadow(0 0 0.2vw #bbb);
+  height: ${({ size }) => size}em;
+  width: ${({ size }) => size}em;
+  filter: drop-shadow(0 0 0.2em #bbb);
   user-drag: none;
 `;
 
 const Footer = styled.div`
-  font-size: 0.6vw;
+  font-size: 0.6em;
   text-align: right;
   color: #666;
 

@@ -221,7 +221,7 @@ export const KamiPortalModal: UIComponent = {
 const Container = styled.div`
   display: flex;
   width: 100%;
-  height: 33vw;
+  height: 33em;
   align-items: stretch;
   justify-content: space-between;
 `;

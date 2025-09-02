@@ -173,12 +173,12 @@ export const GoalModal: UIComponent = {
 
 const Header = styled.div`
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: flex-start;
   color: black;
-  padding: 0 1.5vw;
+  padding: 0 1.5em;
 `;
 
 const Content = styled.div`
-  padding: 1vh 0.1vw;
+  padding: 1em 0.1em;
 `;

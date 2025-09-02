@@ -45,7 +45,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;

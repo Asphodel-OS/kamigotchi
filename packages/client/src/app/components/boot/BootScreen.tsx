@@ -71,7 +71,7 @@ const Image = styled.img`
 const StatusContainer = styled.div`
   position: absolute;
   bottom: 25vh;
-  gap: 5vh;
+  gap: 5em;
 
   width: 100%;
   display: flex;
@@ -85,7 +85,7 @@ const Status = styled.div`
   width: 100%;
 
   text-align: center;
-  font-size: 2.4vh;
+  font-size: 2.4em;
 `;
 
 const BarContainer = styled.div`
@@ -102,6 +102,6 @@ const TagContainer = styled.div`
 const Tag = styled.div`
   color: #fff;
   text-align: left;
-  font-size: 1.8vh;
-  line-height: 2.4vh;
+  font-size: 1.8em;
+  line-height: 2.4em;
 `;

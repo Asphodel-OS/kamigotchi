@@ -38,10 +38,10 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15vw black;
-  border-radius: 0.3vw 0.3vw 0 0;
+  border: solid 0.15em black;
+  border-radius: 0.3em 0.3em 0 0;
 
-  margin-bottom: 0.6vw;
+  margin-bottom: 0.6em;
   width: 100%;
   background-color: white;
   display: flex;
@@ -51,14 +51,14 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5vw;
+  padding: 0.5em;
 
   flex-grow: 1;
   color: black;
   justify-content: center;
-  border-right: solid black 0.15vw;
+  border-right: solid black 0.15em;
 
-  font-size: 0.9vw;
+  font-size: 0.9em;
   text-align: center;
 
   cursor: pointer;

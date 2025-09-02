@@ -219,7 +219,7 @@ export const AnimationStudio: UIComponent = {
                           setSelectedSet(next);
                         }}
                       />
-                      <span style={{ marginLeft: '0.4vw' }}>{key}</span>
+                      <span style={{ marginLeft: '0.4em' }}>{key}</span>
                     </label>
                   </li>
                 ))}
@@ -253,7 +253,7 @@ export const AnimationStudio: UIComponent = {
                     checked={v as boolean}
                     onChange={(e) => setFixtures({ [k]: e.target.checked } as any)}
                   />
-                  <span style={{ marginLeft: '0.4vw' }}>{k}</span>
+                  <span style={{ marginLeft: '0.4em' }}>{k}</span>
                 </label>
               ))}
             </Toggles>
@@ -267,7 +267,7 @@ export const AnimationStudio: UIComponent = {
                     checked={v as boolean}
                     onChange={(e) => setValidators({ [k]: e.target.checked } as any)}
                   />
-                  <span style={{ marginLeft: '0.4vw' }}>{k}</span>
+                  <span style={{ marginLeft: '0.4em' }}>{k}</span>
                 </label>
               ))}
             </Toggles>
@@ -366,15 +366,15 @@ const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
-  gap: 1.2vw;
-  padding: 0.8vh 1.2vw;
-  min-height: 40vh;
+  gap: 1.2em;
+  padding: 0.8em 1.2em;
+  min-height: 40em;
 `;
 
 const Preview = styled.div`
   position: relative;
-  width: 48vw;
-  min-height: 36vh;
+  width: 48em;
+  min-height: 36em;
   border: 2px solid #222;
   border-radius: 10px;
   overflow: hidden;
@@ -385,14 +385,14 @@ const Preview = styled.div`
 const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.6vh;
-  width: 24vw;
+  gap: 0.6em;
+  width: 24em;
 `;
 
 const Row = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const Divider = styled.hr`
@@ -402,39 +402,39 @@ const Divider = styled.hr`
 
 const Select = styled.select`
   font-family: Pixel;
-  font-size: 0.9vw;
-  padding: 0.2vw 0.4vw;
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
 `;
 
 const OpenButton = styled.button`
   font-family: Pixel;
-  font-size: 0.9vw;
-  padding: 0.2vw 0.6vw;
+  font-size: 0.9em;
+  padding: 0.2em 0.6em;
   cursor: pointer;
 `;
 
 const ErrorMsg = styled.div`
   color: #b00020;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
 `;
 
 const Toggles = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.4vh 0.8vw;
+  gap: 0.4em 0.8em;
 `;
 
 const Input = styled.input`
   font-family: Pixel;
-  font-size: 0.9vw;
-  padding: 0.2vw 0.4vw;
+  font-size: 0.9em;
+  padding: 0.2em 0.4em;
 `;
 
 const TextArea = styled.textarea`
   font-family: Pixel;
-  font-size: 0.9vw;
-  min-height: 8vh;
+  font-size: 0.9em;
+  min-height: 8em;
 `;
 
 const KV = styled.div`
@@ -445,33 +445,33 @@ const KV = styled.div`
 const KamiPreview = styled.div`
   position: relative;
   z-index: 1;
-  padding: 1vw;
+  padding: 1em;
   display: flex;
   flex-direction: column;
-  gap: 0.4vw;
+  gap: 0.4em;
   pointer-events: auto;
 `;
 
 const KamiPreviewHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 0.9vw;
+  font-size: 0.9em;
   color: #ddd;
 `;
 
 const KamiControls = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4vw;
-  margin-top: 0.8vh;
+  gap: 0.4em;
+  margin-top: 0.8em;
   width: 100%;
-  max-width: 48vw;
+  max-width: 48em;
 `;
 
 const StateButton = styled.button`
   font-family: Pixel;
-  font-size: 0.9vw;
-  padding: 0.3vw 0.6vw;
+  font-size: 0.9em;
+  padding: 0.3em 0.6em;
   cursor: pointer;
   background: #333;
   color: white;
@@ -479,7 +479,7 @@ const StateButton = styled.button`
   border-radius: 3px;
   flex: 0 1 auto;
   white-space: nowrap;
-  margin-bottom: 0.3vh;
+  margin-bottom: 0.3em;
   &:hover {
     background: #444;
   }
@@ -487,8 +487,8 @@ const StateButton = styled.button`
 
 const RefreshButton = styled.button`
   font-family: Pixel;
-  font-size: 0.8vw;
-  padding: 0.1vw 0.4vw;
+  font-size: 0.8em;
+  padding: 0.1em 0.4em;
   cursor: pointer;
   background: transparent;
   color: #aaa;

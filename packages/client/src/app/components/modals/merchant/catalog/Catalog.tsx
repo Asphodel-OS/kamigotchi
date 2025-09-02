@@ -47,7 +47,7 @@ export const Catalog = ({
 
 const Container = styled.div`
   position: relative;
-  border-right: solid black 0.15vw;
+  border-right: solid black 0.15em;
   width: 65%;
 
   display: flex;
@@ -58,20 +58,20 @@ const Container = styled.div`
 const Title = styled.div`
   position: absolute;
   background-color: rgba(92, 83, 86, 0.9);
-  border-radius: 0.25vw 0 0 0;
+  border-radius: 0.25em 0 0 0;
   width: 100%;
-  padding: 1.2vw;
+  padding: 1.2em;
 
   color: black;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: left;
   z-index: 1;
 `;
 
 const Items = styled.div`
-  padding: 0.9vw;
-  padding-top: 4.2vw;
-  gap: 0.6vw;
+  padding: 0.9em;
+  padding-top: 4.2em;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;

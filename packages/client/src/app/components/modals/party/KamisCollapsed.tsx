@@ -109,6 +109,6 @@ export const KamisCollapsed = ({
 const Container = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
-  gap: 0.45vw;
-  padding: 0.6vw;
+  gap: 0.45em;
+  padding: 0.6em;
 `;

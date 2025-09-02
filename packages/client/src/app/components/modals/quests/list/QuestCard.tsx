@@ -186,10 +186,10 @@ export const QuestCard = ({
 
 const Container = styled.div<{ completed?: boolean }>`
   position: relative;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
-  padding: 1.2vw;
-  margin: 0.9vw;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
+  padding: 1.2em;
+  margin: 0.9em;
   background-color: #fff;
 
   display: flex;
@@ -201,14 +201,14 @@ const Container = styled.div<{ completed?: boolean }>`
 `;
 
 const Title = styled.div`
-  font-size: 0.9vw;
-  line-height: 1.2vw;
+  font-size: 0.9em;
+  line-height: 1.2em;
 `;
 
 const Description = styled.div`
-  font-size: 0.6vw;
-  line-height: 1.4vw;
-  padding: 0.3vw 0.6vw;
+  font-size: 0.6em;
+  line-height: 1.4em;
+  padding: 0.3em 0.6em;
 `;
 
 const Section = styled.div`
@@ -216,12 +216,12 @@ const Section = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin: 0.3vw 0.3vw;
+  margin: 0.3em 0.3em;
 `;
 
 const SubTitle = styled.div`
-  font-size: 0.8vw;
-  line-height: 1.5vw;
+  font-size: 0.8em;
+  line-height: 1.5em;
   text-align: left;
   justify-content: flex-start;
 `;
@@ -234,9 +234,9 @@ const Row = styled.div`
 `;
 
 const ConditionText = styled.div`
-  font-size: 0.7vw;
-  padding: 0.3vw;
-  padding-left: 0.3vw;
+  font-size: 0.7em;
+  padding: 0.3em;
+  padding-left: 0.3em;
 
   display: flex;
   flex-direction: row;
@@ -245,8 +245,8 @@ const ConditionText = styled.div`
 `;
 
 const Image = styled.img<{ size: number }>`
-  height: ${({ size }) => size}vw;
-  width: ${({ size }) => size}vw;
-  margin-right: ${({ size }) => size * 0.2}vw;
+  height: ${({ size }) => size}em;
+  width: ${({ size }) => size}em;
+  margin-right: ${({ size }) => size * 0.2}em;
   user-drag: none;
 `;

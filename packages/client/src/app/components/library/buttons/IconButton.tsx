@@ -30,7 +30,7 @@ export const IconButton = forwardRef(function IconButton(
 
     radius = 0.45,
     scale = 2.5,
-    scaleOrientation = 'vw',
+    scaleOrientation = 'em',
   }: {
     img?: string | SvgIconComponent;
     onClick: Function;
@@ -52,7 +52,7 @@ export const IconButton = forwardRef(function IconButton(
 
     radius?: number;
     scale?: number;
-    scaleOrientation?: 'em' | 'vw' | 'vh';
+    scaleOrientation?: 'em' | 'em' | 'em';
     shadow?: boolean;
     flatten?: `left` | `right`; // flattens a side, for use with dropdowns
   },
@@ -116,11 +116,11 @@ const Container = styled.button<{
   shadow?: boolean;
 }>`
   position: relative;
-  border: solid black 0.15vw;
+  border: solid black 0.15em;
   border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
 
   height: ${({ scale, orientation }) => `${scale}${orientation}`};
-  width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}vw` : 'auto')};
+  width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}em` : 'auto')};
   min-width: fit-content;
   padding: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
   gap: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
@@ -130,7 +130,7 @@ const Container = styled.button<{
   justify-content: center;
   align-items: center;
   background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
-  box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
+  box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}em black`};
 
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
@@ -193,14 +193,14 @@ const CornerAlt = styled.div<{ radius: number; orientation: string }>`
 const Balance = styled.div`
   position: absolute;
   background-color: white;
-  border-top: solid black 0.15vw;
-  border-left: solid black 0.15vw;
-  border-radius: 0.3vw 0 0.3vw 0;
+  border-top: solid black 0.15em;
+  border-left: solid black 0.15em;
+  border-radius: 0.3em 0 0.3em 0;
   bottom: 0;
   right: 0;
 
-  font-size: 0.75vw;
+  font-size: 0.75em;
   align-items: center;
   justify-content: center;
-  padding: 0.2vw;
+  padding: 0.2em;
 `;

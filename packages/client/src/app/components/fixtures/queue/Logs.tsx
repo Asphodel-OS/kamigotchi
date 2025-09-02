@@ -128,12 +128,12 @@ export const Logs = ({
 };
 
 const Content = styled.div`
-  border: solid grey 0.14vw;
-  border-radius: 0.4vw;
+  border: solid grey 0.14em;
+  border-radius: 0.4em;
 
   background-color: #ddd;
-  margin: 0.2vw;
-  padding: 0.2vw;
+  margin: 0.2em;
+  padding: 0.2em;
   overflow-y: auto;
 
   display: flex;
@@ -142,7 +142,7 @@ const Content = styled.div`
 `;
 
 const Row = styled.div`
-  padding: 0.2vw;
+  padding: 0.2em;
   height: 100%;
 
   display: flex;
@@ -155,30 +155,30 @@ const RowSegment = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.2vw;
+  gap: 0.2em;
 `;
 
 const Bar = styled.div`
-  border-top: 0.1vw solid #888;
+  border-top: 0.1em solid #888;
   width: 40%;
-  padding: 0.1vw;
+  padding: 0.1em;
 `;
 
 const Text = styled.div`
   color: #333;
-  margin: 0.2vw;
+  margin: 0.2em;
 
   font-family: Pixel;
-  font-size: 0.6vw;
-  line-height: 0.9vw;
+  font-size: 0.6em;
+  line-height: 0.9em;
   text-align: left;
 `;
 
 const OpenIcon = styled.img`
   cursor: pointer;
 
-  width: 1.5vw;
-  margin-right: 0.4vw;
+  width: 1.5em;
+  margin-right: 0.4em;
 
   &:hover {
     opacity: 0.8;
@@ -186,8 +186,8 @@ const OpenIcon = styled.img`
 `;
 
 const Icon = styled.img`
-  width: 1.5vw;
-  margin: 0.3vw;
+  width: 1.5em;
+  margin: 0.3em;
   align-self: center;
 `;
 

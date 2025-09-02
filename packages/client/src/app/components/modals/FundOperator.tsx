@@ -202,12 +202,12 @@ const BoxButton = styled.button`
   align-items: center;
   width: 90%;
   min-width: 100px;
-  padding: 0.5vh 0;
-  margin: 0 0.5vw;
+  padding: 0.5em 0;
+  margin: 0 0.5em;
 
   background-color: #fff;
   border-style: solid;
-  border-width: 0.15vw;
+  border-width: 0.15em;
   border-color: black;
   color: black;
 
@@ -216,10 +216,10 @@ const BoxButton = styled.button`
 
 const Header = styled.p`
   color: black;
-  padding: 0.75vw;
+  padding: 0.75em;
 
   font-family: Pixel;
-  font-size: 1.5vw;
+  font-size: 1.5em;
   text-align: center;
 `;
 
@@ -230,8 +230,8 @@ const Grid = styled.div`
   align-items: center;
   height: 100%;
 
-  padding: 1vh 1vw;
-  margin: 2vh 0;
+  padding: 1em 1em;
+  margin: 2em 0;
 `;
 
 const Row = styled.div`
@@ -245,14 +245,14 @@ const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2vh;
+  gap: 2em;
 `;
 
 const Description = styled.p`
-  font-size: 1vw;
+  font-size: 1em;
   color: black;
   text-align: center;
-  padding: 0.5vw;
+  padding: 0.5em;
   font-family: Pixel;
   width: 100%;
 `;
@@ -263,13 +263,13 @@ const Input = styled.input`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 1.5vw;
+  font-size: 1.5em;
   cursor: pointer;
   justify-content: center;
   font-family: Pixel;
 
   border-width: 0px;
-  padding: 1vh 1vw;
+  padding: 1em 1em;
 
   &:focus {
     outline: none;
@@ -277,19 +277,19 @@ const Input = styled.input`
 `;
 
 const SubDescription = styled.p`
-  font-size: 0.8vw;
+  font-size: 0.8em;
   color: grey;
   text-align: center;
-  padding: 0.1vw;
+  padding: 0.1em;
   font-family: Pixel;
   width: 100%;
 `;
 
 const WarnText = styled.div`
-  font-size: 0.8vw;
+  font-size: 0.8em;
   color: #ff785b;
   text-align: center;
-  padding: 0.75vw;
+  padding: 0.75em;
   font-family: Pixel;
 
   cursor: pointer;
@@ -299,8 +299,8 @@ const WarnText = styled.div`
 
 const GasLink = styled.a<{ linkColor?: string }>`
   color: ${({ linkColor }) => linkColor ?? '#0077cc'};
-  font-size: 0.8vw;
-  margin-bottom: 1vw;
+  font-size: 0.8em;
+  margin-bottom: 1em;
   text-decoration: underline;
   &:hover {
     text-decoration: none;

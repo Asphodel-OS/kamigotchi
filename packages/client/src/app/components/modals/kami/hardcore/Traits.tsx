@@ -78,10 +78,10 @@ const Grouping = styled.div`
 `;
 
 const Cell = styled.div`
-  border-bottom: solid black 0.15vw;
-  border-right: solid black 0.15vw;
-  width: 1.9vw;
-  height: 1.9vw;
+  border-bottom: solid black 0.15em;
+  border-right: solid black 0.15em;
+  width: 1.9em;
+  height: 1.9em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -90,16 +90,16 @@ const Cell = styled.div`
 `;
 
 const Title = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  padding: ${({ size }) => `${size * 0.4}vw ${size * 0}vw`};
+  font-size: ${({ size }) => size}em;
+  padding: ${({ size }) => `${size * 0.4}em ${size * 0}em`};
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
+  font-size: ${({ size }) => size}em;
   margin: auto;
 `;
 
 const Icon = styled.img<{ size: number }>`
-  height: ${({ size }) => size}vw;
-  margin: 0 0.3vw;
+  height: ${({ size }) => size}em;
+  margin: 0 0.3em;
 `;

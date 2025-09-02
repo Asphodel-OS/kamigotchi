@@ -74,19 +74,19 @@ const Container = styled.div`
 
 const Status = styled.div<{ notification: boolean }>`
   display: ${({ notification }) => (notification ? 'block' : 'none')};
-  border: solid 0.1vw white;
+  border: solid 0.1em white;
   position: absolute;
   bottom: 0.9%;
   right: 0%;
 
   height: fit-content;
-  padding: 0.2vw;
-  border-radius: 33vw;
+  padding: 0.2em;
+  border-radius: 33em;
   z-index: 1;
   background-color: green;
 `;
 
 const Number = styled.p`
   color: white;
-  font-size: 0.8vh;
+  font-size: 0.8em;
 `;

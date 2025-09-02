@@ -117,10 +117,10 @@ const Title = styled.div`
   width: 100%;
   top: 0;
   z-index: 1;
-  padding: 1.8vw;
+  padding: 1.8em;
 
   color: black;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: left;
 `;
 
@@ -129,8 +129,8 @@ const Body = styled.div`
   height: max-content;
   width: 100%;
 
-  padding: 0.9vw;
-  gap: 0.9vw;
+  padding: 0.9em;
+  gap: 0.9em;
 
   display: flex;
   flex-flow: column nowrap;

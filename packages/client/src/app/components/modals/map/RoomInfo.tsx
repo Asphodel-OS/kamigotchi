@@ -36,25 +36,25 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  padding: 0.7vw;
+  padding: 0.7em;
   width: 100%;
   background-color: #eee;
 
   color: #333;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
   text-align: left;
 `;
 
 const Description = styled.div`
   color: #333;
   width: 100%;
-  padding: 1.5vw;
-  margin-top: 1.5vw;
+  padding: 1.5em;
+  margin-top: 1.5em;
 
   font-family: Pixel;
-  font-size: 0.6vw;
+  font-size: 0.6em;
   text-align: left;
-  line-height: 1.2vw;
+  line-height: 1.2em;
   overflow-y: scroll;
 `;

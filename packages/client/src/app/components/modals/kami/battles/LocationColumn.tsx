@@ -51,18 +51,18 @@ const Container = styled.div`
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const Row = styled.div`
   width: 100%;
-  height: 2.1vw;
+  height: 2.1em;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.45vw;
+  gap: 0.45em;
 
   &:hover {
     cursor: pointer;
@@ -71,6 +71,6 @@ const Row = styled.div`
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
-  width: 1.2vw;
+  height: 1.2em;
+  width: 1.2em;
 `;

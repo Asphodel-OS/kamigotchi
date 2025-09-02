@@ -220,8 +220,8 @@ export const KamiBar = ({
 };
 
 const Container = styled.div`
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
 
   height: 100%;
   display: flex;
@@ -234,7 +234,7 @@ const Container = styled.div`
 `;
 
 const Left = styled.div`
-  gap: 0.3vw;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -247,8 +247,8 @@ const Right = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 0.3vw;
-  gap: 0.3vw;
+  padding-right: 0.3em;
+  gap: 0.3em;
 `;
 
 interface MiddleProps {
@@ -257,11 +257,11 @@ interface MiddleProps {
 }
 const Middle = styled.div<MiddleProps>`
   position: relative;
-  height: 3vw;
-  border-right: solid black 0.15vw;
-  border-left: solid black 0.15vw;
-  margin: 0 0.3vw 0 0.3vw;
-  gap: 0.3vw;
+  height: 3em;
+  border-right: solid black 0.15em;
+  border-left: solid black 0.15em;
+  margin: 0 0.3em 0 0.3em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -274,9 +274,9 @@ const Middle = styled.div<MiddleProps>`
 `;
 
 const Image = styled.img`
-  border-right: solid black 0.15vw;
-  width: 3vw;
-  height: 3vw;
+  border-right: solid black 0.15em;
+  width: 3em;
+  height: 3em;
 
   cursor: pointer;
   user-select: none;
@@ -287,8 +287,8 @@ const Image = styled.img`
 `;
 
 const Icon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 1.5em;
+  height: 1.5em;
 
   display: flex;
   flex-flow: row nowrap;

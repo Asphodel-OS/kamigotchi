@@ -51,7 +51,7 @@ export const OwnerColumn = ({
 };
 
 const Container = styled.div`
-  gap: 0.3vw;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -63,8 +63,8 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  height: 2.1vw;
-  gap: 0.45vw;
+  height: 2.1em;
+  gap: 0.45em;
 
   display: flex;
   flex-flow: row nowrap;

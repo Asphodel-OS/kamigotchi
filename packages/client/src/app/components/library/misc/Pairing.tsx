@@ -31,7 +31,7 @@ export const Pairing = ({
 };
 
 const Container = styled.div<{ scale: number }>`
-  gap: ${({ scale }) => scale * 0.5}vw;
+  gap: ${({ scale }) => scale * 0.5}em;
 
   display: flex;
   flex-direction: row;
@@ -42,7 +42,7 @@ const Container = styled.div<{ scale: number }>`
 `;
 
 const Icon = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 1.5}vw;
-  margin-bottom: ${({ scale }) => scale * 0.12}vw;
+  height: ${({ scale }) => scale * 1.5}em;
+  margin-bottom: ${({ scale }) => scale * 0.12}em;
   ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
 `;

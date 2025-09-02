@@ -72,7 +72,7 @@ export const Header = ({
       </KamiDropDown>
     ));
     if (kamis.length === 0) {
-      kamis = [<div style={{ padding: `0.5vw` }}>No Kamis</div>];
+      kamis = [<div style={{ padding: `0.5em` }}>No Kamis</div>];
     }
     return kamis;
   };
@@ -107,7 +107,7 @@ export const Header = ({
           />
         )}
         <DetailRow>
-          <CakeIcon style={{ height: '1.4vh' }} />
+          <CakeIcon style={{ height: '1.4em' }} />
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
         </DetailRow>
         <Bio account={account} isSelf={isSelf} actions={{ setBio }} />
@@ -117,18 +117,18 @@ export const Header = ({
 };
 
 const Container = styled.div`
-  padding: 0.75vw;
+  padding: 0.75em;
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.9vw;
+  gap: 0.9em;
   align-items: flex-start;
   user-select: none;
 `;
 
 const Info = styled.div`
   width: 100%;
-  padding-bottom: 1.5vw;
-  gap: 0.3vw;
+  padding-bottom: 1.5em;
+  gap: 0.3em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -138,19 +138,19 @@ const Info = styled.div`
 const TitleSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  gap: 0.3vw;
-  margin-bottom: 0.6vw;
+  gap: 0.3em;
+  margin-bottom: 0.6em;
 `;
 
 const Subtitle = styled.div`
   color: #777;
-  padding-left: 0.5vw;
-  font-size: 0.7vw;
+  padding-left: 0.5em;
+  font-size: 0.7em;
   cursor: copy;
 `;
 
 const DetailRow = styled.div<{ edit?: boolean }>`
-  padding: 0.15vw 0;
+  padding: 0.15em 0;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -159,12 +159,12 @@ const DetailRow = styled.div<{ edit?: boolean }>`
 `;
 
 const Description = styled.div`
-  font-size: 0.7vw;
-  line-height: 0.9vw;
+  font-size: 0.7em;
+  line-height: 0.9em;
 `;
 
 const KamiDropDown = styled.button`
-  padding: 0.5vw;
+  padding: 0.5em;
   display: flex;
   flex-direction: column;
   width: 100%;

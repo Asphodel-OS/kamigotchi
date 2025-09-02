@@ -25,12 +25,12 @@ export const PartyBottom = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15vw black;
-  border-radius: 0 0 0.6vw 0.6vw;
+  border: solid 0.15em black;
+  border-radius: 0 0 0.6em 0.6em;
   width: 100%;
   height: 100%;
   background-color: white;
-  padding: 0.45vw;
+  padding: 0.45em;
 
   display: flex;
   flex-flow: column nowrap;

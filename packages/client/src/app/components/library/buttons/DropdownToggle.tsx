@@ -195,8 +195,8 @@ export const DropdownToggle = ({
 
 const Container = styled.div`
   display: flex;
-  width: 14vw;
-  height: 2.5vw;
+  width: 14em;
+  height: 2.5em;
 `;
 
 const MenuOption = styled.div<{
@@ -206,13 +206,13 @@ const MenuOption = styled.div<{
   display: flex;
   align-items: center;
   justify-content: left;
-  gap: 0.4vw;
-  border-radius: 0.4vw;
-  font-size: 0.8vw;
+  gap: 0.4em;
+  border-radius: 0.4em;
+  font-size: 0.8em;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  padding: ${({ isSelectAll }) => (isSelectAll ? '1vw 0.6vw 0.4vw 0.9vw ' : '0 0.2vw 0.1vw 2.2vw')};
+  padding: ${({ isSelectAll }) => (isSelectAll ? '1em 0.6em 0.4em 0.9em ' : '0 0.2em 0.1em 2.2em')};
 
   &:hover {
     background-color: #ddd;
@@ -223,22 +223,22 @@ const MenuOption = styled.div<{
 const Row = styled.span<{ simplified?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   input[type='checkbox'],
   input[type='radio'] {
-    width: 1vw;
-    height: 1vw;
+    width: 1em;
+    height: 1em;
     cursor: pointer;
     accent-color: rgb(203, 186, 61);
   }
 `;
 
 const Image = styled.img`
-  height: 2vw;
-  width: 2vw;
+  height: 2em;
+  width: 2em;
   object-fit: cover;
   margin-left: auto;
-  border-radius: 0.3vw;
-  border: solid black 0.05vw;
+  border-radius: 0.3em;
+  border: solid black 0.05em;
 `;

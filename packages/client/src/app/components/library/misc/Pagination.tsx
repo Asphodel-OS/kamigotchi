@@ -30,16 +30,16 @@ const LetterIndex = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.5vw;
-  margin: 1vw 0;
+  gap: 0.5em;
+  margin: 1em 0;
 `;
 
 const Letter = styled.div<{ isSelected: boolean }>`
-  padding: 0.3vw 0.6vw;
-  border-radius: 0.3vw;
+  padding: 0.3em 0.6em;
+  border-radius: 0.3em;
   color: black;
   cursor: pointer;
-  font-size: 0.8vw;
+  font-size: 0.8em;
   background-color: ${({ isSelected }) => (isSelected ? '#b2b2b2' : '#efefef')};
   display: flex;
   &:hover {

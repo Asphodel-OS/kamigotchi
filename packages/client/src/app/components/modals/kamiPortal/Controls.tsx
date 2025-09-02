@@ -73,11 +73,11 @@ const Container = styled.div<{ expand: boolean }>`
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  border-left: solid black 0.15vw;
-  border-right: solid black 0.15vw;
+  border-left: solid black 0.15em;
+  border-right: solid black 0.15em;
   ${({ expand }) => (expand ? 'width: 40%; justify-content: flex-start;' : 'width: 23%;')}
   transition: width 0.8s ease-in-out;
-  padding-top: 6vw;
+  padding-top: 6em;
   will-change: width;
   overflow: hidden;
 `;
@@ -97,7 +97,7 @@ const Scrollable = styled.div`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${(props) => props.size}vw;
-  line-height: ${(props) => props.size * 1.5}vw;
-  margin-bottom: 1vw;
+  font-size: ${(props) => props.size}em;
+  line-height: ${(props) => props.size * 1.5}em;
+  margin-bottom: 1em;
 `;

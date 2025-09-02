@@ -164,10 +164,10 @@ export const OfferCard = ({
 
 const Container = styled.div`
   position: relative;
-  border: 0.15vw solid black;
-  border-radius: 1.2vw;
+  border: 0.15em solid black;
+  border-radius: 1.2em;
 
-  height: 6vw;
+  height: 6em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -178,12 +178,12 @@ const Container = styled.div`
 
 const Side = styled.div<{ span: number; borderRight?: boolean; borderLeft?: boolean }>`
   position: relative;
-  ${({ borderRight }) => borderRight && `border-right: 0.15vw solid black;`}
-  ${({ borderLeft }) => borderLeft && `border-left: 0.15vw solid black;`}
+  ${({ borderRight }) => borderRight && `border-right: 0.15em solid black;`}
+  ${({ borderLeft }) => borderLeft && `border-left: 0.15em solid black;`}
   height: 100%;
-  width: ${({ span }) => 4 * span + 1}vw;
-  padding: 0 0.6vw;
-  gap: 0.6vw;
+  width: ${({ span }) => 4 * span + 1}em;
+  padding: 0 0.6em;
+  gap: 0.6em;
 
   display: flex;
   justify-content: flex-start;
@@ -193,10 +193,10 @@ const Side = styled.div<{ span: number; borderRight?: boolean; borderLeft?: bool
 `;
 
 const ImagesWrapper = styled.div`
-  padding-top: 0.6vw;
+  padding-top: 0.6em;
 
-  gap: 0.1vw;
-  margin: 0 0.3vw;
+  gap: 0.1em;
+  margin: 0 0.3em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -205,7 +205,7 @@ const ImagesWrapper = styled.div`
 `;
 
 const Image = styled.img`
-  height: 3.3vw;
+  height: 3.3em;
 
   image-rendering: pixelated;
   user-drag: none;
@@ -216,7 +216,7 @@ const Image = styled.img`
 `;
 
 const Controls = styled.div`
-  width: 15vw;
+  width: 15em;
   flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
@@ -227,11 +227,11 @@ const Controls = styled.div`
 const Button = styled.button`
   background-color: #eee;
   border: none;
-  border-top: 0.15vw solid black;
+  border-top: 0.15em solid black;
   width: 100%;
 
-  font-size: 0.9vw;
-  line-height: 1.8vw;
+  font-size: 0.9em;
+  line-height: 1.8em;
   cursor: pointer;
 
   &:hover {
@@ -258,8 +258,8 @@ const TagContainer = styled.div`
 `;
 
 const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
-  width: 6vw;
-  padding: 0.2vw;
+  width: 6em;
+  padding: 0.2em;
 
   color: rgb(25, 39, 2);
   background-color: ${({ color }) => color};
@@ -272,8 +272,8 @@ const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
   align-items: center;
   justify-content: center;
 
-  font-size: 0.9vw;
-  line-height: 1.2vw;
+  font-size: 0.9em;
+  line-height: 1.2em;
 `;
 
 const CancelOverlay = styled.div`
@@ -286,9 +286,9 @@ const CancelOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   color: rgb(128, 4, 4);
-  border: 0.19vw solid rgb(128, 4, 4);
+  border: 0.19em solid rgb(128, 4, 4);
   transform: rotate(-22deg);
   z-index: 1;
   clip-path: polygon(0.5% 1%, 80% 0%, 100% 25%, 100% 90%, 90% 100%, 0% 100%, 15% 100%, 0% 70%);

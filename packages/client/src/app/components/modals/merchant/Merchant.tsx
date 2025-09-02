@@ -126,9 +126,9 @@ export const MerchantModal: UIComponent = {
 };
 
 const Body = styled.div`
-  border: solid black 0.15vw;
-  border-radius: 0.45vw;
-  margin: 0 1.2vw 1.2vw 1.2vw;
+  border: solid black 0.15em;
+  border-radius: 0.45em;
+  margin: 0 1.2em 1.2em 1.2em;
   min-height: 70%;
   user-select: none;
   overflow: hidden;

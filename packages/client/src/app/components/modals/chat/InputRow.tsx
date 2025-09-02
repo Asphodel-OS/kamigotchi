@@ -101,39 +101,39 @@ export const InputRow = ({
 };
 
 const Container = styled.div`
-  padding: 0.6vw 0.6vw;
+  padding: 0.6em 0.6em;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  gap: 0.6vw;
-  min-height: 6vh;
+  gap: 0.6em;
+  min-height: 6em;
 `;
 
 const InputBox = styled.textarea`
   resize: none;
-  padding: 0.6vw 0.6vw;
-  line-height: 1.5vh;
+  padding: 0.6em 0.6em;
+  line-height: 1.5em;
   width: 100%;
-  min-height: 6vh;
-  border-radius: 0.6vw;
+  min-height: 6em;
+  border-radius: 0.6em;
   &:disabled {
     background-color: rgb(236, 233, 233);
   }
 `;
 
 const SendButton = styled.button`
-  padding: 0.5vw;
+  padding: 0.5em;
   position: absolute;
-  right: 0.8vw;
-  bottom: 0.8vw;
-  border-radius: 0.6vw;
+  right: 0.8em;
+  bottom: 0.8em;
+  border-radius: 0.6em;
 `;
 
 const LetterCount = styled.div`
   position: absolute;
-  left: 1.3vw;
-  bottom: 0.9vw;
+  left: 1.3em;
+  bottom: 0.9em;
   color: grey;
-  font-size: 0.5vw;
+  font-size: 0.5em;
 `;

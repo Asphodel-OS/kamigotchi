@@ -51,14 +51,14 @@ export const Confirmation = ({
 const Container = styled.div`
   background-color: white;
   position: relative;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
-  box-shadow: 0 0 0.3vw black;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
+  box-shadow: 0 0 0.3em black;
 
-  height: 30vw;
+  height: 30em;
   width: 75%;
-  gap: 0.3vw;
-  padding: 3.3vw 0 1.2vw 0;
+  gap: 0.3em;
+  padding: 3.3em 0 1.2em 0;
   z-index: 2;
 
   display: flex;
@@ -75,5 +75,5 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;

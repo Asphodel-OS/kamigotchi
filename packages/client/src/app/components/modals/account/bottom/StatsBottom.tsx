@@ -61,12 +61,12 @@ export const StatsBottom = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15vw black;
-  border-radius: 0 0 0.6vw 0.6vw;
+  border: solid 0.15em black;
+  border-radius: 0 0 0.6em 0.6em;
   width: 100%;
   height: 100%;
   background-color: white;
-  padding: 0.45vw;
+  padding: 0.45em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -80,7 +80,7 @@ const Container = styled.div`
 
 const Content = styled.div`
   width: 100%;
-  padding: 0.5vw;
+  padding: 0.5em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -88,28 +88,28 @@ const Content = styled.div`
 `;
 
 const DetailRow = styled.div`
-  padding: 0.15vw 0;
+  padding: 0.15em 0;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 // needed to have the vip icon align with the mui icons
 const IconWrapper = styled.div`
-  height: 1.4vw;
-  width: 1.4vw;
+  height: 1.4em;
+  width: 1.4em;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const Description = styled.div`
-  font-size: 0.7vw;
+  font-size: 0.7em;
   font-family: Pixel;
-  line-height: 0.9vw;
+  line-height: 0.9em;
   text-align: left;
-  padding-top: 0.2vw;
+  padding-top: 0.2em;
 `;
 
 const VipIcon = styled.img`

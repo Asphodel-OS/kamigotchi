@@ -123,8 +123,8 @@ const Container = styled.div<{
   effectScale: number;
 }>`
   position: relative;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
+  border: 0.15em solid black;
+  border-radius: 0.4em;
   background-color: ${({ isInCart }) => (isInCart ? '#bbb' : '#fff')};
 
   display: flex;
@@ -142,10 +142,10 @@ const Container = styled.div<{
 `;
 
 const Image = styled.img<{ isInCart: boolean }>`
-  border-right: 0.15vw solid black;
-  border-radius: 0.25vw 0 0 0.25vw;
-  width: 4.5vw;
-  padding: 0.45vw;
+  border-right: 0.15em solid black;
+  border-radius: 0.25em 0 0 0.25em;
+  width: 4.5em;
+  padding: 0.45em;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
 `;
@@ -156,5 +156,5 @@ const Details = styled.div`
   justify-content: space-around;
   align-items: flex-start;
   height: 100%;
-  padding: 0.5vw;
+  padding: 0.5em;
 `;

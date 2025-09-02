@@ -37,7 +37,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-around;
   cursor: pointer;
-  border-block: 0.12vw solid black;
+  border-block: 0.12em solid black;
   align-items: center;
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
@@ -53,7 +53,7 @@ const KnobWrapper = styled.div`
   align-items: flex-start;
   justify-content: center;
   background-color: #ccc;
-  border-radius: 1vw;
+  border-radius: 1em;
 `;
 
 const Knob = styled.div<{ position: string }>`

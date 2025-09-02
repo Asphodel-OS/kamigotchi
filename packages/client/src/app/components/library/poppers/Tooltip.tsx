@@ -135,19 +135,19 @@ const PopoverContainer = styled.div.attrs<{
     opacity: isVisible ? 1 : 0,
     top: tooltipPosition.y,
     left: tooltipPosition.x,
-    maxWidth: maxWidth ? `${maxWidth}vw` : '36vw',
+    maxWidth: maxWidth ? `${maxWidth}em` : '36em',
   },
 }))`
   position: fixed;
   flex-direction: column;
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  padding: 0.9vw;
+  border: solid black 0.15em;
+  border-radius: 0.6em;
+  padding: 0.9em;
   display: flex;
   overflow-wrap: anywhere;
   color: black;
-  font-size: 0.7vw;
-  line-height: 1.25vw;
+  font-size: 0.7em;
+  line-height: 1.25em;
   white-space: normal;
   z-index: 10;
   pointer-events: none;

@@ -20,7 +20,7 @@ export const Tabs = ({
       <Button
         onClick={() => setTab('AVAILABLE')}
         disabled={tab === 'AVAILABLE'}
-        style={{ borderRight: 'solid black .15vw' }}
+        style={{ borderRight: 'solid black .15em' }}
       >
         Available
       </Button>
@@ -33,7 +33,7 @@ export const Tabs = ({
 
 const Container = styled.div`
   width: 100%;
-  border-top: solid black 0.15vw;
+  border-top: solid black 0.15em;
   background-color: white;
   display: flex;
   flex-flow: row nowrap;
@@ -42,13 +42,13 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5vw;
+  padding: 0.5em;
   flex-grow: 1;
   color: black;
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: center;
 
   cursor: pointer;

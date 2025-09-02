@@ -27,14 +27,14 @@ export const Menu = ({
 
 const Container = styled.div`
   position: absolute;
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid black 0.15em;
   background-color: #999;
   opacity: 0.9;
   z-index: 1;
 
   width: 100%;
-  padding: 0.6vw 0.6vw;
-  gap: 1vw;
+  padding: 0.6em 0.6em;
+  gap: 1em;
 
   display: flex;
   flex-flow: row;

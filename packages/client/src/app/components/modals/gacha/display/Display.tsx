@@ -133,7 +133,7 @@ const Container = styled.div`
   background-color: #beb;
   max-height: 100%;
   width: 100%;
-  border-radius: 0 0 0 1.2vw;
+  border-radius: 0 0 0 1.2em;
 
   display: flex;
 `;

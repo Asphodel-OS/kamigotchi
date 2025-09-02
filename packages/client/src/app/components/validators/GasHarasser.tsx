@@ -163,9 +163,9 @@ export const GasHarasser: UIComponent = {
 
 const Description = styled.div`
   color: #333;
-  padding: 0.9vw 0 0 0;
-  font-size: 0.9vw;
-  line-height: 1.5vw;
+  padding: 0.9em 0 0 0;
+  font-size: 0.9em;
+  line-height: 1.5em;
   text-align: center;
 `;
 
@@ -174,21 +174,21 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 0.75vw;
-  gap: 0.15vw;
+  margin: 0.75em;
+  gap: 0.15em;
 `;
 
 const Input = styled.input`
   background-color: #ffffff;
-  border: solid black 0.15vw;
-  border-radius: 0.45vw;
+  border: solid black 0.15em;
+  border-radius: 0.45em;
 
   color: black;
-  width: 9vw;
-  height: 1.8vw;
-  padding: 0.6vw;
+  width: 9em;
+  height: 1.8em;
+  padding: 0.6em;
 
-  font-size: 0.75vw;
+  font-size: 0.75em;
   text-align: left;
   text-decoration: none;
 
@@ -198,7 +198,7 @@ const Input = styled.input`
 
 const GasLink = styled.a<{ linkColor?: string }>`
   color: ${({ linkColor }) => linkColor ?? '#0077cc'};
-  font-size: 0.8vw;
+  font-size: 0.8em;
   text-decoration: underline;
   &:hover {
     text-decoration: none;

@@ -307,7 +307,7 @@ export const TradingModal: UIComponent = {
 
 const Content = styled.div`
   position: relative;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   flex-grow: 1;
   display: flex;

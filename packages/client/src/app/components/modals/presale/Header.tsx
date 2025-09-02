@@ -60,16 +60,16 @@ const Container = styled.div`
 
 const Title = styled.div`
   color: #d0fe41;
-  font-size: 2.4vw;
-  margin-top: 4.8vh;
+  font-size: 2.4em;
+  margin-top: 4.8em;
 
   user-select: none;
 `;
 
 const Text = styled.div<{ size: number }>`
   color: #d0fe41;
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 1.5}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
 
   user-select: none;
 `;

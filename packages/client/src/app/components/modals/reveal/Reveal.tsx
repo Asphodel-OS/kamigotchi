@@ -126,5 +126,5 @@ const Container = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 0.4vh 1.2vw;
+  padding: 0.4em 1.2em;
 `;

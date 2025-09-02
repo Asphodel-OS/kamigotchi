@@ -62,8 +62,8 @@ export const Carousel = ({
 const Container = styled.div`
   position: relative;
   border: solid black;
-  border-width: 0.15vw 0.6vw 0 0.6vw;
-  height: 15vw;
+  border-width: 0.15em 0.6em 0 0.6em;
+  height: 15em;
 
   display: flex;
   flex-flow: column nowrap;

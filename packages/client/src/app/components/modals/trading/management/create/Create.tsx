@@ -224,7 +224,7 @@ export const Create = ({
 
 const Container = styled.div`
   position: relative;
-  border-right: 0.15vw solid black;
+  border-right: 0.15em solid black;
 
   width: 40%;
   height: 100%;
@@ -240,17 +240,17 @@ const Title = styled.div`
   width: 100%;
   top: 0;
   z-index: 1;
-  padding: 1.8vw;
+  padding: 1.8em;
 
   color: black;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: left;
 `;
 
 const Paragraph = styled.div`
   color: #333;
   flex-grow: 1;
-  padding: 1.8vw;
+  padding: 1.8em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-evenly;
@@ -259,11 +259,11 @@ const Paragraph = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: flex;
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
