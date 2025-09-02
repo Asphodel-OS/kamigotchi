@@ -223,8 +223,9 @@ const UIGrid = styled.div`
       "LeftTop RightTop" auto
       [LeftWide-start LeftTall-start Right-start RightWide-start]
       "Left Center" minmax(0, 1fr)
+      [Right-end]
       "LeftBottom RightBottom" auto
-      [LeftWide-end LeftTall-end Right-end RightWide-end]
+      [LeftWide-end LeftTall-end RightWide-end]
       / [LeftWide-start LeftTall-start] minmax(0, 1fr) [LeftTall-end LeftWide-end Right-start RightWide-start] minmax(0, 1fr) [Right-end RightWide-end]
     ;
   }
