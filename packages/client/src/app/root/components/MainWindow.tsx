@@ -230,7 +230,7 @@ const UIGrid = styled.div`
     ;
   }
 
-  /* 1 column. Rows: "LeftTop", "Left" "Center" "Right" overlapping, "RightTop" */
+  /* 1 column. Rows: "LeftTop", "Left" "Center" "Right" overlapping, "RightTop", "LeftBottom" / "RightBottom" */
   @media (max-aspect-ratio: 11/16) {
     grid:
       "LeftTop LeftTop" auto
@@ -239,6 +239,19 @@ const UIGrid = styled.div`
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
       "RightTop RightTop" auto
       "LeftBottom RightBottom" auto
+      / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr) [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
+    ;
+  }
+
+  /* 1 column (alternative) */
+  @media (max-aspect-ratio: 11/16) {
+    grid:
+      "LeftBottom RightTop" auto
+      [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
+      "Center Center" minmax(0, 1fr)
+      [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
+      "RightBottom RightBottom" 25vmin
+      "LeftTop LeftTop" auto
       / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr) [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
     ;
   }

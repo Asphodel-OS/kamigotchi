@@ -82,10 +82,6 @@ const Container = styled.div`
   display: grid;
   place-items: center;
 
-  @media (max-aspect-ratio: 11/16) {
-    padding-bottom: max(0px, 25vmin);
-  }
-
   pointer-events: auto;
   user-select: none;
 `;

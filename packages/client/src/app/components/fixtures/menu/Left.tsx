@@ -49,7 +49,20 @@ const Wrapper = styled.div`
   justify-self: start;
 
   @media (max-aspect-ratio: 11/16) {
-    justify-self: center;
+    justify-self: stretch;
+
+    > * {
+      flex: 1;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    > :nth-child(5),
+    > :nth-child(6) {
+      display: none;
+    }
   }
 
   font-size: clamp(0.5rem, 1vmax, 0.66rem);
