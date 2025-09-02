@@ -1,50 +1,61 @@
 import { getComponentValue } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { concat, map } from 'rxjs';
 
 import { processKamiConfig } from 'app/cache/config';
-import { initializeItems } from 'app/cache/item';
-import { initializeSkills } from 'app/cache/skills';
+import { initializeItems as _initializeItems } from 'app/cache/item';
+import { initializeSkills as _initializeSkills } from 'app/cache/skills';
 import { UIComponent } from 'app/root/types';
 import { GodID, SyncState } from 'engine/constants';
 import { BootScreen } from './BootScreen';
+import { useLayers } from 'app/root/hooks';
 
 const FE_DISABLED = import.meta.env.VITE_STATE === 'DISABLED';
 
 export const LoadingState: UIComponent = {
   id: 'LoadingState',
-  requirement: (layers) => {
-    const { components, world } = layers.network;
-    const { LoadingState } = components;
+  Render: () => {
+    const layers = useLayers();
 
-    return concat([], LoadingState.update$).pipe(
-      map(() => {
-        let loadingState;
-        const GodEntityIndex = world.entityToIndex.get(GodID);
-        if (GodEntityIndex != null) {
-          loadingState = getComponentValue(LoadingState, GodEntityIndex);
-        }
+    const {
+      loadingState,
+      utils: {
+        initializeItems,
+        initializeKamiConfig,
+        initializeSkills,
+      }
+    } = (() => {
+      const {
+        network: {
+          components,
+          world,
+        },
+      } = layers;
 
-        loadingState = loadingState ?? {
-          state: SyncState.CONNECTING,
-          msg: 'Connecting to Yominet',
-          percentage: 0,
-        };
-        return {
-          loadingState,
-          utils: {
-            initializeKamiConfig: () => processKamiConfig(world, components),
-            initializeItems: () => initializeItems(world, components),
-            initializeSkills: () => initializeSkills(world, components),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ loadingState, utils }) => {
+      const { LoadingState } = components;
+
+      let loadingState;
+      const GodEntityIndex = world.entityToIndex.get(GodID);
+      if (GodEntityIndex != null) {
+        loadingState = getComponentValue(LoadingState, GodEntityIndex);
+      }
+
+      loadingState = loadingState ?? {
+        state: SyncState.CONNECTING,
+        msg: 'Connecting to Yominet',
+        percentage: 0,
+      };
+      return {
+        loadingState,
+        utils: {
+          initializeKamiConfig: () => processKamiConfig(world, components),
+          initializeItems: () => _initializeItems(world, components),
+          initializeSkills: () => _initializeSkills(world, components),
+        },
+      };
+    })();
+
     const [isVisible, setIsVisible] = useState(true);
     const { state, msg, percentage } = loadingState;
-    const { initializeItems, initializeKamiConfig, initializeSkills } = utils;
 
     useEffect(() => {
       if (FE_DISABLED) return;

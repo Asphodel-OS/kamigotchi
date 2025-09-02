@@ -8,7 +8,11 @@ import { Kami } from 'network/shapes/Kami';
 
 import { Countdown, TextTooltip } from '../..';
 
-export const Cooldown = ({ kami }: { kami: Kami }) => {
+export const Cooldown = ({
+  kami,
+}: {
+  kami: Kami;
+}) => {
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);

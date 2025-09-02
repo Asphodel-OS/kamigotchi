@@ -1,14 +1,14 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useRef, useState } from 'react';
-import { interval, map } from 'rxjs';
 
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useVisibility } from 'app/stores';
 import { QuestsIcon } from 'assets/images/icons/menu';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getItemBalance } from 'network/shapes/Item';
+import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
   filterQuestsByAvailable,
@@ -28,64 +28,83 @@ import { Tabs } from './Tabs';
 
 export const QuestModal: UIComponent = {
   id: 'QuestModal',
-  requirement: (layers) =>
-    interval(2000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const account = getAccount(world, components, accountEntity, {
-          kamis: true,
-          inventory: true,
-        });
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      network,
+      data: {
+        accountEntity,
+        account,
+        quests: {
+          registry,
+          ongoing,
+          completed
+        }
+      },
+      utils: {
+        describeEntity,
+        getBase,
+        getItem,
+        getItemBalance,
+        filterByAvailable,
+        parseObjectives,
+        parseRequirements,
+        parseStatus,
+        populate
+      }
+    } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const account = getAccount(world, components, accountEntity, {
+        kamis: true,
+        inventory: true,
+      });
 
-        const registry = queryRegistryQuests(components).map((entity) =>
-          getBaseQuest(world, components, entity)
-        );
-        const completed = queryCompletedQuests(components, account.id).map((entity) =>
-          getBaseQuest(world, components, entity)
-        );
-        const ongoing = queryOngoingQuests(components, account.id).map((entity) =>
-          getBaseQuest(world, components, entity)
-        );
+      const registry = queryRegistryQuests(components).map((entity) =>
+        getBaseQuest(world, components, entity)
+      );
+      const completed = queryCompletedQuests(components, account.id).map((entity) =>
+        getBaseQuest(world, components, entity)
+      );
+      const ongoing = queryOngoingQuests(components, account.id).map((entity) =>
+        getBaseQuest(world, components, entity)
+      );
 
-        return {
-          network,
-          data: {
-            accountEntity,
-            account,
-            quests: {
-              registry,
-              ongoing,
-              completed,
-            },
+      return {
+        network,
+        data: {
+          accountEntity,
+          account,
+          quests: {
+            registry,
+            ongoing,
+            completed,
           },
-          utils: {
-            describeEntity: (type: string, index: number) =>
-              getFromDescription(world, components, type, index),
-            getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
-            getItem: (index: number) => getItemByIndex(world, components, index),
-            getItemBalance: (index: number) => getItemBalance(world, components, account.id, index),
-            filterByAvailable: (
-              registry: BaseQuest[],
-              ongoing: BaseQuest[],
-              completed: BaseQuest[]
-            ) => filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
-            parseObjectives: (quest: Quest) =>
-              parseQuestObjectives(world, components, account, quest),
-            parseRequirements: (quest: Quest) =>
-              parseQuestRequirements(world, components, account, quest),
-            parseStatus: (quest: Quest) => parseQuestStatus(world, components, account, quest),
-            populate: (base: BaseQuest) => populateQuest(world, components, base),
-          },
-        };
-      })
-    ),
+        },
+        utils: {
+          describeEntity: (type: string, index: number) =>
+            getFromDescription(world, components, type, index),
+          getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
+          getItem: (index: number) => getItemByIndex(world, components, index),
+          getItemBalance: (index: number) => _getItemBalance(world, components, account.id, index),
+          filterByAvailable: (
+            registry: BaseQuest[],
+            ongoing: BaseQuest[],
+            completed: BaseQuest[]
+          ) => filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
+          parseObjectives: (quest: Quest) =>
+            parseQuestObjectives(world, components, account, quest),
+          parseRequirements: (quest: Quest) =>
+            parseQuestRequirements(world, components, account, quest),
+          parseStatus: (quest: Quest) => parseQuestStatus(world, components, account, quest),
+          populate: (base: BaseQuest) => populateQuest(world, components, base),
+        },
+      };
+    })();
 
-  Render: ({ network, data, utils }) => {
     const { actions, api, notifications } = network;
-    const { ongoing, completed, registry } = data.quests;
-    const { getItem, populate, filterByAvailable } = utils;
     const { modals } = useVisibility();
 
     const isUpdating = useRef(false);
@@ -203,7 +222,14 @@ export const QuestModal: UIComponent = {
           quests={{ available, ongoing, completed }}
           mode={tab}
           actions={transactions}
-          utils={utils}
+          utils={{
+            describeEntity,
+            getItemBalance,
+            parseObjectives,
+            parseRequirements,
+            parseStatus,
+            populate,
+          }}
         />
       </ModalWrapper>
     );

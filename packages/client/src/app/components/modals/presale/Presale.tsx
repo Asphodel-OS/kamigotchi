@@ -1,6 +1,5 @@
 import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { Address, getAddress } from 'viem';
@@ -10,6 +9,7 @@ import { getConfigAddress } from 'app/cache/config';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalWrapper, TextTooltip } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useNetwork, useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { ETH_INDEX } from 'constants/items';
@@ -23,20 +23,19 @@ const EndTime = StartTime + 3600 * 24 * 2;
 
 export const Presale: UIComponent = {
   id: 'Presale',
-  requirement: (layers) => {
-    return interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        return {
-          network,
-          presaleAddress: getAddress(getConfigAddress(world, components, 'ONYX_PRESALE_ADDRESS')),
-          currency: getItemByIndex(world, components, ETH_INDEX),
-        };
-      })
-    );
-  },
-  Render: ({ network, presaleAddress, currency }) => {
+  Render: () => {
+    const layers = useLayers();
+    
+    const { network, presaleAddress, currency } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      return {
+        network,
+        presaleAddress: getAddress(getConfigAddress(world, components, 'ONYX_PRESALE_ADDRESS')),
+        currency: getItemByIndex(world, components, ETH_INDEX),
+      };
+    })();
+
       const { selectedAddress, apis } = useNetwork();
       const { actions } = network;
 

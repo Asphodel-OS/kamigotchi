@@ -1,17 +1,17 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { erc721Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
 
-import { AccountOptions, getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
-import { getTempBonuses } from 'app/cache/bonus';
+import { AccountOptions, getAccount as _getAccount, getAccountKamis, getAllAccounts as _getAllAccounts } from 'app/cache/account';
+import { getTempBonuses as _getTempBonuses } from 'app/cache/bonus';
 import { getConfigAddress } from 'app/cache/config';
-import { getKami } from 'app/cache/kami';
+import { getKami as _getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
-import { HarvestButton, ModalHeader, ModalWrapper, UseItemButton } from 'app/components/library';
+import { HarvestButton as _HarvestButton, ModalHeader, ModalWrapper, UseItemButton as _UseItemButton } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useAccount, useNetwork, useSelected, useTokens, useVisibility } from 'app/stores';
 import { BalPair } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
@@ -21,11 +21,11 @@ import {
   Account,
   NullAccount,
   queryAccountFromEmbedded,
-  queryAllAccounts,
+  queryAllAccounts as _queryAllAccounts,
 } from 'network/shapes/Account';
 import { getItemByIndex, Item, NullItem } from 'network/shapes/Item';
-import { calcKamiExpRequirement, Kami, queryKamiByIndex } from 'network/shapes/Kami';
-import { Node, NullNode, passesNodeReqs } from 'network/shapes/Node';
+import { calcKamiExpRequirement, Kami, queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
+import { Node, NullNode, passesNodeReqs as _passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
 import { KamiList } from './KamiList';
 import { Toolbar } from './Toolbar';
@@ -35,9 +35,34 @@ const REFRESH_INTERVAL = 1000;
 
 export const PartyModal: UIComponent = {
   id: 'PartyModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      network,
+      data: {
+        accountEntity,
+        kamiNFTAddress,
+        spender
+      },
+      display: {
+        HarvestButton,
+        UseItemButton
+      },
+      utils: {
+        calcExpRequirement,
+        getAccount,
+        getAllAccounts,
+        getTempBonuses,
+        getItem,
+        getKami,
+        getNode,
+        getWorldKamis,
+        passesNodeReqs,
+        queryKamiByIndex,
+        queryAllAccounts
+      }
+    } = (() => {
         const { network } = layers;
         const { world, components } = network;
         const { debug } = useAccount.getState();
@@ -55,46 +80,41 @@ export const PartyModal: UIComponent = {
           traits: 3600,
         };
 
-        return {
-          network,
-          data: {
-            accountEntity,
-            kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
-            spender: getCompAddr(world, components, 'component.token.allowance'),
-          },
+      return {
+        network,
+        data: {
+          accountEntity,
+          kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+          spender: getCompAddr(world, components, 'component.token.allowance'),
+        },
 
-          display: {
-            HarvestButton: (account: Account, kami: Kami, node: Node) =>
-              HarvestButton({ network, account, kami, node }),
-            UseItemButton: (kami: Kami, account: Account, icon: string) =>
-              UseItemButton(network, kami, account, icon),
-          },
-          utils: {
-            calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
-            getAccount: (entity: EntityIndex, options?: AccountOptions) =>
-              getAccount(world, components, entity, options),
-            getAllAccounts: () => getAllAccounts(world, components),
-            getTempBonuses: (kami: Kami) =>
-              getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
-            getItem: (index: number) => getItemByIndex(world, components, index),
-            getKami: (entity: EntityIndex) =>
-              getKami(world, components, entity, kamiRefreshOptions),
-            getNode: (index: number) => getNodeByIndex(world, components, index),
-            getWorldKamis: () =>
-              getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
-            passesNodeReqs: (kami: Kami) => passesNodeReqs(world, components, nodeIndex, kami),
-            queryKamiByIndex: (index: number) => queryKamiByIndex(world, components, index),
-            queryAllAccounts: () => queryAllAccounts(components),
-          },
-        };
-      })
-    ),
+        display: {
+          HarvestButton: (account: Account, kami: Kami, node: Node) =>
+            _HarvestButton({ network, account, kami, node }),
+          UseItemButton: (kami: Kami, account: Account, icon: string) =>
+            _UseItemButton(network, kami, account, icon),
+        },
+        utils: {
+          calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
+          getAccount: (entity: EntityIndex, options?: AccountOptions) =>
+            _getAccount(world, components, entity, options),
+          getAllAccounts: () => _getAllAccounts(world, components),
+          getTempBonuses: (kami: Kami) =>
+            _getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
+          getItem: (index: number) => getItemByIndex(world, components, index),
+          getKami: (entity: EntityIndex) =>
+            _getKami(world, components, entity, kamiRefreshOptions),
+          getNode: (index: number) => getNodeByIndex(world, components, index),
+          getWorldKamis: () =>
+            getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
+          passesNodeReqs: (kami: Kami) => _passesNodeReqs(world, components, nodeIndex, kami),
+          queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
+          queryAllAccounts: () => _queryAllAccounts(components),
+        },
+      };
+    })();
 
-  Render: ({ network, display, data, utils }) => {
     const { actions, api } = network;
-    const { accountEntity, kamiNFTAddress, spender } = data;
-    const { getAccount, getItem, getNode } = utils;
-    const { getKami, getWorldKamis, queryKamiByIndex, queryAllAccounts } = utils;
 
     const { modals } = useVisibility();
     const { selectedAddress, apis: ownerAPIs } = useNetwork();
@@ -325,7 +345,7 @@ export const PartyModal: UIComponent = {
           controls={{ sort, setSort, view, setView }}
           data={{ kamis, wildKamis }}
           state={{ displayedKamis, setDisplayedKamis, tick }}
-          utils={utils}
+          utils={{ passesNodeReqs }}
         />
         <KamiList
           actions={{
@@ -344,9 +364,19 @@ export const PartyModal: UIComponent = {
             node,
             onyx: onyxInfo,
           }}
-          display={display}
-          state={{ displayedKamis, tick }}
-          utils={utils}
+          display={{
+            HarvestButton,
+            UseItemButton,
+          }}
+          state={{
+            displayedKamis,
+            tick,
+          }}
+          utils={{
+            calcExpRequirement,
+            getTempBonuses,
+            getAllAccounts
+          }}
         />
       </ModalWrapper>
     );
