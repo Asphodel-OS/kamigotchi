@@ -48,6 +48,10 @@ export const LeftMenuFixture: UIComponent = {
 const Wrapper = styled.div`
   justify-self: start;
 
+  @media (max-aspect-ratio: 11/16) {
+    justify-self: center;
+  }
+
   font-size: clamp(0.5rem, 1vmax, 0.66rem);
 
   display: flex;
