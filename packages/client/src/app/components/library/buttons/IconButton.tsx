@@ -52,7 +52,7 @@ export const IconButton = forwardRef(function IconButton(
 
     radius?: number;
     scale?: number;
-    scaleOrientation?: 'vw' | 'vh';
+    scaleOrientation?: 'em' | 'vw' | 'vh';
     shadow?: boolean;
     flatten?: `left` | `right`; // flattens a side, for use with dropdowns
   },

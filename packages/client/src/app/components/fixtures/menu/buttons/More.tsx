@@ -99,7 +99,7 @@ export const MoreMenuButton = () => {
           { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
         ]}
         scale={4.5}
-        scaleOrientation='vh'
+        scaleOrientation='em'
         radius={0.9}
       />
     </TextTooltip>

@@ -24,9 +24,11 @@ export const ActionQueue: UIComponent = {
       setActionIndices([...getComponentEntities(ActionComponent)]);
     }, [[...getComponentEntities(ActionComponent)].length]);
 
-    const sizes = ['none', '23vh', '90vh'];
+    if(!fixtures.actionQueue) return null;
+
+    const sizes = ['none', '100%', '90vh'];
     return (
-      <Wrapper style={{ display: fixtures.actionQueue ? 'block' : 'none' }}>
+      <Wrapper>
         <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
           {mode !== 0 && <Logs actionIndices={actionIndices} network={network} />}
           <Controls mode={mode} setMode={setMode} />
@@ -37,26 +39,22 @@ export const ActionQueue: UIComponent = {
 };
 
 const Wrapper = styled.div`
-  align-items: left;
+  height: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+
   user-select: none;
 `;
 
 // cancer. just absolute cancer
 const Content = styled.div`
-  position: absolute;
+  display: grid;
   padding: 0.2vw;
-
-  right: 1.33vw;
-  width: 32.66vw;
-  max-width: 32.66vw;
-
-  bottom: 1.7vh;
-  max-height: 23vh;
 
   border: solid black 0.15vw;
   border-radius: 0.6vw;
 
   background-color: white;
-  display: flex;
-  flex-flow: column nowrap;
 `;

@@ -75,8 +75,11 @@ export const NotificationFixture: UIComponent = {
 };
 
 const Wrapper = styled.div`
-  margin: 0.2vw;
+  justify-self: end;
+  min-width: 30rem;
+
   display: block;
+  height: 100%;
   overflow-y: auto;
 `;
 
@@ -84,11 +87,8 @@ const Contents = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  padding: 0.6vw;
 
   gap: 0.4vh 0.2vw;
-
-  overflow: show;
 `;
 
 const Card = styled.div`

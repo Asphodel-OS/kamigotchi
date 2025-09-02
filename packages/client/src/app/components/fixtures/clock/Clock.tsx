@@ -94,10 +94,12 @@ export const ClockFixture: UIComponent = {
         return tickList;
       };
 
+      if (!fixtures.menu) return null;
+
       //Render
       return (
         <TextTooltip text={getClockTooltip()}>
-          <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+          <Container>
             <Circle rotation={rotateClock}>
               <CircleContent>
                 <TicksPosition>{Ticks()}</TicksPosition>
@@ -127,10 +129,9 @@ export const ClockFixture: UIComponent = {
             <Time
               rotation={rotateClock}
               viewBox='0 0 30 6'
-              style={{ display: fixtures.menu ? 'flex' : 'none' }}
             >
               <path id='MyPath' fill='none' d='M 2.5 3.5 Q 13 -3.5 27 3.5' pathLength='2' />
-              <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>
+              <text fill='white' dominantBaseline='hanging' textAnchor='middle'>
                 <textPath href='#MyPath' startOffset='0.9'>
                   {getKamiTime(Date.now())}
                 </textPath>
@@ -143,19 +144,15 @@ export const ClockFixture: UIComponent = {
 };
 
 const Container = styled.div`
-  pointer-events: auto;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  z-index: -1;
-  height: fit-content;
-  user-select: none;
-  --clock-size: min(25vh, 25vw);
+  --clock-size: 25vmin;
   --base-unit: calc(var(--clock-size) / 25);
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  transform: translateY(10%);
+
+  align-self: start;
+  position: relative;
+  margin: -1em;
+
+  pointer-events: auto;
+  user-select: none;
 `;
 
 const Circle = styled.div<{ rotation: number }>`
@@ -171,6 +168,7 @@ const Circle = styled.div<{ rotation: number }>`
   transform-origin: center;
   ${({ rotation }) => `transform: rotate(${rotation}deg);`}
   overflow: visible;
+  margin-bottom: -10%;
 `;
 
 const CircleContent = styled.div`
@@ -322,10 +320,12 @@ const Time = styled.svg<{ rotation: number }>`
     black 1px 0px,
     black 0px -1px;
   position: absolute;
+  left: calc(var(--clock-size) * 0.22);
   top: calc(var(--clock-size) * 0.04);
   width: calc(var(--clock-size) * 0.56);
   height: calc(var(--clock-size) * 0.22);
   pointer-events: none;
+  font-size: 3px;
 `;
 
 const Tick = styled.div<{ rotationZ: number }>`

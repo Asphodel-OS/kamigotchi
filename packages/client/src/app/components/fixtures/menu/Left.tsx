@@ -29,8 +29,10 @@ export const LeftMenuFixture: UIComponent = {
 
     const { fixtures } = useVisibility();
 
+    if (!fixtures.menu) return null;
+
     return (
-      <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+      <Wrapper>
         <AccountMenuButton />
         <PartyMenuButton />
         <MapMenuButton />
@@ -44,8 +46,10 @@ export const LeftMenuFixture: UIComponent = {
 };
 
 const Wrapper = styled.div`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.6vh;
+  justify-self: start;
+
+  font-size: clamp(0.5rem, 1vmax, 0.66rem);
+
+  display: flex;
+  gap: 0.6em;
 `;

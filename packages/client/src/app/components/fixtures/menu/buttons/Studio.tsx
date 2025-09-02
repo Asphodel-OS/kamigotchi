@@ -24,7 +24,7 @@ export const StudioMenuButton = () => {
         img={MenuIcons.settings}
         onClick={handleClick}
         scale={4.5}
-        scaleOrientation='vh'
+        scaleOrientation='em'
         radius={0.9}
         cornerAlt
       />

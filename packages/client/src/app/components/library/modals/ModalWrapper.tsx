@@ -85,7 +85,6 @@ const Wrapper = styled.div<{
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
 
-  margin: 0.2vw;
   align-items: center;
   justify-content: center;
   height: 100%;

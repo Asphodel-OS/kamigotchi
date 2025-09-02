@@ -14,7 +14,7 @@ export const SudoMenuButton = () => {
         img={MenuIcons.sudo}
         onClick={openSudoLink}
         scale={4.5}
-        scaleOrientation='vh'
+        scaleOrientation='em'
         radius={0.9}
         cornerAlt
       />

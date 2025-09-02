@@ -13,27 +13,27 @@ export const RightMenuFixture: UIComponent = {
   id: 'RightMenuFixture',
   Render: () => {
     const { fixtures } = useVisibility();
+
     return (
-      <>
-        <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+      <Wrapper>
+        {fixtures.menu ? <>
           <CraftMenuButton />
           <InventoryMenuButton />
           <QuestMenuButton />
           <ChatMenuButton />
+        </> : <>
           <MoreMenuButton />
-        </Wrapper>
-        <Wrapper style={{ display: fixtures.menu ? 'none' : 'flex' }}>
-          <MoreMenuButton />
-        </Wrapper>
-      </>
+        </>}
+      </Wrapper>
     );
   },
 };
 
 const Wrapper = styled.div`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 0.32vw;
-  gap: 0.6vh;
+  justify-self: end;
+
+  font-size: clamp(0.5rem, 1vmax, 0.66rem);
+
+  display: flex;
+  gap: 0.6em;
 `;

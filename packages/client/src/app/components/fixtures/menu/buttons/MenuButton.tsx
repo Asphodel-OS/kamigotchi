@@ -52,9 +52,9 @@ const Button = styled.button<{
   effectScale: number;
   disabled?: boolean;
 }>`
-  height: 4.5vh;
-  border-radius: 0.9vh;
-  border: solid black 0.15vw;
+  height: 4.5em;
+  border-radius: 0.9em;
+  border: solid black 0.15em;
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
@@ -70,6 +70,6 @@ const Button = styled.button<{
 const Image = styled.img`
   height: 100%;
   width: auto;
-  padding: 0.15vh;
+  padding: 0.15em;
   user-drag: none;
 `;

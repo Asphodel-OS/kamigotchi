@@ -28,7 +28,7 @@ export const OnyxMenuButton = () => {
         text={balance?.toFixed(3)}
         onClick={openBaselineLink}
         scale={4.5}
-        scaleOrientation='vh'
+        scaleOrientation='em'
         radius={0.9}
         cornerAlt
       />
