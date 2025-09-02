@@ -128,9 +128,9 @@ export const ItemGrid = ({
   };
 
   const getSendHistory = useMemo(() => {
-    const transfers = [];
+    const transfers: JSX.Element[] = [];
 
-    for (const send of sendHistory) {
+    sendHistory.forEach((send, index) => {
       const sender = getAccount(
         getEntityIndex(formatEntityID(BigNumber.from(send.SenderAccountID)))
       );
@@ -140,21 +140,21 @@ export const ItemGrid = ({
       const item = getItem(send.ItemIndex as EntityIndex);
       if (receiver.id === account.id) {
         transfers.push(
-          <div>
-            You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name} from{' '}
+          <div key={`receiver-${index}`}>
+            * You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name} from{' '}
             {sender?.name}
           </div>
         );
       } else if (sender.id === account.id) {
         transfers.push(
-          <div>
-            You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
+          <div key={`sender-${index}`}>
+            * You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
             {receiver?.name}
           </div>
         );
       }
-    }
-    return transfers;
+    });
+    return transfers.reverse();
   }, [sendHistory, account]);
 
   // // get the list of kamis that a specific item can be used on

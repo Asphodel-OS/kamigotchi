@@ -135,11 +135,10 @@ export const Send = (props: Props) => {
 
 const Container = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
-  width:100%;
-  flex-flow: row wrap;
-  justify-content: center;
-  gap: 0.3vw;
+  flex-direction: column;
+  width: 100%;
   min-height: 30vh;
+  height: 100%;
   font-size: 0.75vw;
 `;
 
@@ -155,15 +154,18 @@ const Row = styled.div`
 `;
 
 const Column = styled.div<{ side: 'top' | 'bottom' }>`
+  width: 100%;
   display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
+  flex-direction: column;
   gap: 0.3vw;
 
-  align-items: center;
-  align-content: center;
-  flex-direction: column;
-  width: 100%;
   ${({ side }) =>
-    side === 'bottom' ? `border-top: 0.15vw solid black; align-items: flex-start;` : ``}
+    side === 'bottom' &&
+    `    
+        border-top: 0.15vw solid black;
+        padding-top: 0.6vw;
+        overflow-y: auto; 
+        align-items: flex-start;
+        justify-content: flex-start;
+      `}
 `;
