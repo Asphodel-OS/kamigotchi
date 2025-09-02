@@ -31,6 +31,7 @@ export const IconButton = forwardRef(function IconButton(
     radius = 0.45,
     scale = 2.5,
     scaleOrientation = 'vw',
+    icon,
   }: {
     img?: string | SvgIconComponent;
     onClick: Function;
@@ -55,6 +56,12 @@ export const IconButton = forwardRef(function IconButton(
     scaleOrientation?: 'vw' | 'vh';
     shadow?: boolean;
     flatten?: `left` | `right`; // flattens a side, for use with dropdowns
+    icon?: {
+      size?: number;
+      inset?: { px?: number; x?: number; y?: number };
+      color?: string;
+      position?: 'left' | 'right';
+    };
   },
   ref: ForwardedRef<HTMLButtonElement>
 ) {
@@ -64,10 +71,23 @@ export const IconButton = forwardRef(function IconButton(
     await onClick();
   };
 
+  const resolvedIconInsetPx = icon?.inset?.px ?? 0;
+  const resolvedIconInsetXpx = icon?.inset?.x ?? undefined;
+  const resolvedIconInsetYpx = icon?.inset?.y ?? undefined;
+
   const MyImage = () => {
     if (img) {
       if (typeof img === 'string') {
-        return <Image src={img} scale={scale} orientation={scaleOrientation} />;
+        return (
+          <Image
+            src={img}
+            scale={scale}
+            orientation={scaleOrientation}
+            iconInsetPx={resolvedIconInsetPx}
+            iconInsetXpx={resolvedIconInsetXpx}
+            iconInsetYpx={resolvedIconInsetYpx}
+          />
+        );
       }
       // This allows the use of MUI icons, we want this to use placeholders until Lux has the icons ready
       const Icon = img;
@@ -155,9 +175,17 @@ const Container = styled.button<{
   ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
 `;
 
-const Image = styled.img<{ scale: number; orientation: string }>`
-  width: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
-  height: ${({ scale }) => scale * 0.75}${({ orientation }) => orientation};
+const Image = styled.img<{
+  scale: number;
+  orientation: string;
+  iconInsetPx?: number;
+  iconInsetXpx?: number;
+  iconInsetYpx?: number;
+}>`
+  width: ${({ scale, orientation, iconInsetPx, iconInsetXpx }) =>
+    `calc(${scale * 0.75}${orientation} - ${iconInsetXpx ?? iconInsetPx ?? 0}px)`};
+  height: ${({ scale, orientation, iconInsetPx, iconInsetYpx }) =>
+    `calc(${scale * 0.75}${orientation} - ${iconInsetYpx ?? iconInsetPx ?? 0}px)`};
   ${({ scale }) => (scale > 4.5 ? 'image-rendering: pixelated;' : '')}
   user-drag: none;
 `;

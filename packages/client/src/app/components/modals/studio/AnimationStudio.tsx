@@ -26,10 +26,9 @@ export const AnimationStudio: UIComponent = {
     ),
   Render: ({ network }) => {
     // Only allow in development mode (localhost:3000)
-    const isDev = window.location.hostname === 'localhost' && 
+    const isDev = window.location.hostname === 'localhost' &&
                   window.location.port === '3000';
-    
-    if (!isDev) return null;
+    // Hooks must be called unconditionally
     const { modals, setModals, toggleModals, fixtures, setFixtures, validators, setValidators } = useVisibility();
     const { send } = useDevControls();
     const [selectedModal, setSelectedModal] = useState<keyof Modals>('map');
@@ -37,6 +36,8 @@ export const AnimationStudio: UIComponent = {
     const [kamiState, setKamiState] = useState<'idle' | 'cooldown' | 'murdered' | 'harvesting' | 'healing'>('idle');
     const [cooldownSec, setCooldownSec] = useState<number | undefined>(undefined);
     const [tick, setTick] = useState<number>(0);
+
+    if (!isDev) return null;
 
     const [realKami, setRealKami] = useState<Kami | undefined>(undefined);
     
