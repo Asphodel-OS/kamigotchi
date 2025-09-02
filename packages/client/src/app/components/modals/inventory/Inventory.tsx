@@ -4,6 +4,7 @@ import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
+import { getItemByIndex } from 'app/cache/item';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
@@ -72,6 +73,7 @@ export const InventoryModal: UIComponent = {
             getInventoryBalance: (inventories: Inventory[], index: number) =>
               getInventoryBalance(inventories, index),
             getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
+            getItem: (index: EntityIndex) => getItemByIndex(world, components, index),
           },
         };
       })

@@ -1,6 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { cleanInventories, Inventory } from 'app/cache/inventory';
@@ -47,6 +47,7 @@ export const ItemGrid = ({
     setShowSend: (show: boolean) => void;
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
     getEntityIndex: (entity: EntityID) => EntityIndex;
+    getItem: (index: EntityIndex) => Item;
   };
 }) => {
   const {
@@ -57,6 +58,7 @@ export const ItemGrid = ({
     setShowSend,
     getInventoryBalance,
     getEntityIndex,
+    getItem,
   } = utils;
   const { showSend, sendHistory } = data;
   const { sendItemsTx } = actions;
@@ -125,24 +127,35 @@ export const ItemGrid = ({
     return options;
   };
 
-  const getSendHistory = () => {
+  const getSendHistory = useMemo(() => {
     const transfers = [];
 
     for (const send of sendHistory) {
-      const senderId = getAccount(
+      const sender = getAccount(
         getEntityIndex(formatEntityID(BigNumber.from(send.SenderAccountID)))
-      ).id;
-      const receiverId = getAccount(
+      );
+      const receiver = getAccount(
         getEntityIndex(formatEntityID(BigNumber.from(send.RecvAccountID)))
-      ).id;
-      if (receiverId === account.id) {
-        transfers.push(`You received ${send.Amount} ${send.ItemIndex} from ${senderId}`);
-      } else if (senderId === account.id) {
-        transfers.push(`You sent ${send.Amount} ${send.ItemIndex} to ${receiverId}`);
+      );
+      const item = getItem(send.ItemIndex as EntityIndex);
+      if (receiver.id === account.id) {
+        transfers.push(
+          <div>
+            You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name} from{' '}
+            {sender?.name}
+          </div>
+        );
+      } else if (sender.id === account.id) {
+        transfers.push(
+          <div>
+            You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
+            {receiver?.name}
+          </div>
+        );
       }
     }
     return transfers;
-  };
+  }, [sendHistory, account]);
 
   // // get the list of kamis that a specific item can be used on
   // const getAvailableKamis = (item: Item): Kami[] => {

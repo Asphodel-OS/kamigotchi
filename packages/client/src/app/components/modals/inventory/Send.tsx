@@ -27,7 +27,7 @@ interface Props {
   utils: {
     setShowSend: (show: boolean) => void;
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
-    getSendHistory: () => string[];
+    getSendHistory: JSX.Element[];
   };
 }
 
@@ -128,7 +128,7 @@ export const Send = (props: Props) => {
           {SendButton([item], [amt])}
         </Row>
       </Column>
-      <Column side={`bottom`}>{getSendHistory()}</Column>
+      <Column side={`bottom`}>{getSendHistory}</Column>
     </Container>
   );
 };
@@ -163,6 +163,7 @@ const Column = styled.div<{ side: 'top' | 'bottom' }>`
   align-items: center;
   align-content: center;
   flex-direction: column;
-
-  ${({ side }) => (side === 'bottom' ? `border-top: 0.15vw solid black;` : ``)}
+  width: 100%;
+  ${({ side }) =>
+    side === 'bottom' ? `border-top: 0.15vw solid black; align-items: flex-start;` : ``}
 `;
