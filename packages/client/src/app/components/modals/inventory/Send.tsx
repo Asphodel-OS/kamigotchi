@@ -128,7 +128,12 @@ export const Send = (props: Props) => {
           {SendButton([item], [amt])}
         </Row>
       </Column>
-      <Column side={`bottom`}>{getSendHistory}</Column>
+
+      <Column side={`bottom`}>
+        {' '}
+        <Title>Your Transfer History</Title>
+        {getSendHistory}
+      </Column>
     </Container>
   );
 };
@@ -161,10 +166,24 @@ const Column = styled.div<{ side: 'top' | 'bottom' }>`
 
   ${({ side }) =>
     side === 'bottom' &&
-    `    border-top: 0.15vw solid black;
-        padding-top: 0.6vw;
+    `    border-top: 0.15vw solid black;    
         overflow-y: auto; 
         align-items: flex-start;
         justify-content: flex-start;
       `}
+`;
+
+const Title = styled.div`
+  position: sticky;
+  top: 0;
+  background-color: rgb(221, 221, 221);
+  width: 100%;
+  margin-bottom: 0.2vw;
+  padding: 1vw;
+  opacity: 0.9;
+  color: black;
+  font-size: 0.8vw;
+  text-align: left;
+  z-index: 2;
+  height: 3vw;
 `;
