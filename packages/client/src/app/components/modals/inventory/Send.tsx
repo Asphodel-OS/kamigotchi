@@ -138,7 +138,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-direction: column;
   width: 100%;
   min-height: 30vh;
-  height: 100%;
+  max-height: 40vh;
   font-size: 0.75vw;
 `;
 
@@ -161,8 +161,7 @@ const Column = styled.div<{ side: 'top' | 'bottom' }>`
 
   ${({ side }) =>
     side === 'bottom' &&
-    `    
-        border-top: 0.15vw solid black;
+    `    border-top: 0.15vw solid black;
         padding-top: 0.6vw;
         overflow-y: auto; 
         align-items: flex-start;
