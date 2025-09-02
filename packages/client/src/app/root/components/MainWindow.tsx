@@ -3,28 +3,22 @@ import styled from 'styled-components';
 
 import { allComponents } from 'app/components';
 
-export const MainWindow = observer(({
-  ready,
-}: {
-  ready: boolean;
-}) => {
+export const MainWindow = observer(({ ready }: { ready: boolean }) => {
   // this includes the LoadingState and ActionQueue components when not ready
   const renderedComponents = ready ? allComponents : allComponents.slice(0, 2);
 
   return (
     <UIGrid>
-      {
-        renderedComponents
-          .map(({ uiComponent, gridConfig }) => (
-            <div
-              style={{
-                gridArea: `${gridConfig.rowStart} / ${gridConfig.colStart} / ${gridConfig.rowEnd} / ${gridConfig.colEnd}`,
-              }}
-            >
-              {<uiComponent.Render />}
-            </div>
-          ))
-      }
+      {renderedComponents.map(({ uiComponent, gridConfig }) => (
+        <div
+          key={uiComponent.id}
+          style={{
+            gridArea: `${gridConfig.rowStart} / ${gridConfig.colStart} / ${gridConfig.rowEnd} / ${gridConfig.colEnd}`,
+          }}
+        >
+          {<uiComponent.Render />}
+        </div>
+      ))}
     </UIGrid>
   );
 });

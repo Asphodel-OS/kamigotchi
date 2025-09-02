@@ -1,16 +1,18 @@
-import { useMemo } from 'react';
-
-import { getAccount as _getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
+import {
+  getAccount as _getAccount,
+  getAccountInventories,
+  getAccountKamis,
+} from 'app/cache/account';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount } from 'app/stores';
-import { useLayers } from 'app/root/hooks';
 import { InventoryIcon } from 'assets/images/icons/menu';
 import { OBOL_INDEX } from 'constants/items';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { Allo, parseAllos as _parseAllos } from 'network/shapes/Allo';
+import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
-import { getItemBalance, getMusuBalance as _getMusuBalance, Item } from 'network/shapes/Item';
+import { getMusuBalance as _getMusuBalance, getItemBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
@@ -32,9 +34,9 @@ export const InventoryModal: UIComponent = {
         getMusuBalance,
         getObolsBalance,
         displayRequirements,
-        parseAllos
-      }
-    } = useMemo(() => {
+        parseAllos,
+      },
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -71,7 +73,7 @@ export const InventoryModal: UIComponent = {
           parseAllos: (allo: Allo[]) => _parseAllos(world, components, allo),
         },
       };
-    }, [layers, debug.cache]);
+    })();
 
     const { actions, api } = network;
 
