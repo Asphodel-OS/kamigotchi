@@ -152,27 +152,16 @@ export const Room = ({
   // RENDER
 
   return (
-    <Wrapper>
-      <Container>
-        <Background draggable='false' src={getBackground()} />
-        {room.objects.map((object) => getClickbox(object))}
-      </Container>
-    </Wrapper>
+    <Container>
+      <Background draggable='false' src={getBackground()} />
+      {room.objects.map((object) => getClickbox(object))}
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
-  position: absolute;
-  width: auto;
-  height: 100%;
-  z-index: -2;
-`;
-
 const Container = styled.div`
   position: relative;
-  width: auto;
-  height: auto;
-  height: 100%;
+  aspect-ratio: 1;
 `;
 
 const Background = styled.img`
