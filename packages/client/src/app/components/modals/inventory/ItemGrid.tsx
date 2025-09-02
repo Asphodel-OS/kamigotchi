@@ -1,4 +1,5 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -7,6 +8,8 @@ import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
+import { ItemTransfer } from 'clients/kamiden/proto';
+import { formatEntityID } from 'engine/utils';
 import { Account, NullAccount } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
@@ -33,16 +36,17 @@ export const ItemGrid = ({
     useForKami: (kami: Kami, item: Item) => void;
     sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
   };
-  data: { showSend: boolean };
+  data: { showSend: boolean; sendHistory: ItemTransfer[] };
   utils: {
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
-    getAccount: () => Account;
+    getAccount: (entityIndex: EntityIndex) => Account;
     getInventories: () => Inventory[];
     getKamis: () => Kami[];
     displayRequirements: (item: Item) => string;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
     setShowSend: (show: boolean) => void;
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
+    getEntityIndex: (entity: EntityID) => EntityIndex;
   };
 }) => {
   const {
@@ -52,8 +56,9 @@ export const ItemGrid = ({
     meetsRequirements,
     setShowSend,
     getInventoryBalance,
+    getEntityIndex,
   } = utils;
-  const { showSend } = data;
+  const { showSend, sendHistory } = data;
   const { sendItemsTx } = actions;
 
   const { modals } = useVisibility();
@@ -71,7 +76,7 @@ export const ItemGrid = ({
 
   // update the inventory, account and kami data
   const updateData = () => {
-    const account = getAccount();
+    const account = getAccount(accountEntity);
     setAccount(account);
 
     // get, clean, and set account inventories
@@ -120,6 +125,25 @@ export const ItemGrid = ({
     return options;
   };
 
+  const getSendHistory = () => {
+    const transfers = [];
+
+    for (const send of sendHistory) {
+      const senderId = getAccount(
+        getEntityIndex(formatEntityID(BigNumber.from(send.SenderAccountID)))
+      ).id;
+      const receiverId = getAccount(
+        getEntityIndex(formatEntityID(BigNumber.from(send.RecvAccountID)))
+      ).id;
+      if (receiverId === account.id) {
+        transfers.push(`You received ${send.Amount} ${send.ItemIndex} from ${senderId}`);
+      } else if (senderId === account.id) {
+        transfers.push(`You sent ${send.Amount} ${send.ItemIndex} to ${receiverId}`);
+      }
+    }
+    return transfers;
+  };
+
   // // get the list of kamis that a specific item can be used on
   // const getAvailableKamis = (item: Item): Kami[] => {
   //   let kamis2 = getAccessibleKamis(account, kamis);
@@ -132,7 +156,7 @@ export const ItemGrid = ({
 
   /////////////////
   // DISPLAY
-  // <SendButtonStyled>{SendButtons.get(item.index)}</SendButtonStyled>
+
   const ItemIcon = (inv: Inventory) => {
     const item = inv.item;
     const options = getItemActions(item, inv.balance);
@@ -166,7 +190,7 @@ export const ItemGrid = ({
       <Send
         actions={{ sendItemsTx }}
         data={{ showSend, accounts, inventory: inventories }}
-        utils={{ setShowSend, getInventoryBalance }}
+        utils={{ setShowSend, getInventoryBalance, getSendHistory }}
       />
     </>
   );

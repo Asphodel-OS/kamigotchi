@@ -1,7 +1,13 @@
 import styled from 'styled-components';
 
 import { Inventory } from 'app/cache/inventory';
-import { IconListButton, IconListButtonOption, TextTooltip } from 'app/components/library';
+import {
+  IconButton,
+  IconListButton,
+  IconListButtonOption,
+  TextTooltip,
+} from 'app/components/library';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { MUSU_INDEX, STONE_INDEX } from 'constants/items';
 import { items } from 'network/explorer/items';
@@ -21,18 +27,20 @@ interface Props {
   utils: {
     setShowSend: (show: boolean) => void;
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
+    getSendHistory: () => string[];
   };
 }
 
 export const Send = (props: Props) => {
   const { actions, data, utils } = props;
   const { showSend, accounts, inventory } = data;
-  const { setShowSend, getInventoryBalance } = utils;
+  const { setShowSend, getInventoryBalance, getSendHistory } = utils;
   const { sendItemsTx } = actions;
 
   const [amt, setAmt] = useState<number>(1);
   const [item, setItem] = useState<Item>(NullItem);
   const [visible, setVisible] = useState(false);
+  const [targetAcc, setTargetAcc] = useState<Account | null>(null);
 
   useEffect(() => {
     const stone =
@@ -90,7 +98,7 @@ export const Send = (props: Props) => {
   const SendButton = (item: Item[], amts: number[]) => {
     const options = accounts.map((targetAcc) => ({
       text: `${targetAcc.name} (#${targetAcc.index})`,
-      onClick: () => sendItemsTx(item, amts, targetAcc),
+      onClick: () => setTargetAcc(targetAcc),
     }));
 
     return (
@@ -102,8 +110,7 @@ export const Send = (props: Props) => {
 
   return (
     <Container isVisible={visible} key='send'>
-      <Column side={`left`}>
-        <div>Send</div>
+      <Column side={`top`}>
         <Row>
           <LineItem
             options={getItemOptions()}
@@ -112,16 +119,23 @@ export const Send = (props: Props) => {
             setAmt={(e) => updateItemAmt(e)}
             reverse
           />
+          <IconButton
+            img={ArrowIcons.right}
+            scale={2}
+            onClick={() => targetAcc && sendItemsTx([item], [amt], targetAcc)}
+            disabled={!targetAcc || !amt || !item}
+          />
+          {SendButton([item], [amt])}
         </Row>
-        <Row>to {SendButton([item], [amt])}</Row>
       </Column>
-      <Column side={`right`}>HISTORY</Column>
+      <Column side={`bottom`}>{getSendHistory()}</Column>
     </Container>
   );
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
+  width:100%;
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
@@ -134,13 +148,13 @@ const Row = styled.div`
   padding: 0.6vw;
 
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 2vw;
 `;
 
-const Column = styled.div<{ side: 'left' | 'right' }>`
+const Column = styled.div<{ side: 'top' | 'bottom' }>`
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
@@ -149,6 +163,6 @@ const Column = styled.div<{ side: 'left' | 'right' }>`
   align-items: center;
   align-content: center;
   flex-direction: column;
-  flex: 1;
-  ${({ side }) => (side === 'left' ? `border-right: 0.15vw solid black;` : ``)}
+
+  ${({ side }) => (side === 'bottom' ? `border-top: 0.15vw solid black;` : ``)}
 `;

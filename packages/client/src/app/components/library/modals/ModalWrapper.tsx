@@ -30,7 +30,7 @@ export const ModalWrapper = ({
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
-  shuffle: boolean;
+  shuffle?: boolean;
   positionOverride?: {
     colStart: number;
     colEnd: number;

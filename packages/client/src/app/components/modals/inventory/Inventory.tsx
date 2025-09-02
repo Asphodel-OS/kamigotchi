@@ -1,13 +1,15 @@
-import { interval, map } from 'rxjs';
-
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { interval, map } from 'rxjs';
+
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { InventoryIcon } from 'assets/images/icons/menu';
+import { getKamidenClient } from 'clients/kamiden';
+import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { OBOL_INDEX } from 'constants/items';
 import {
   Account,
@@ -24,6 +26,7 @@ import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 
 const REFRESH_INTERVAL = 1000;
+const KamidenClient = getKamidenClient();
 
 export const InventoryModal: UIComponent = {
   id: 'Inventory',
@@ -51,7 +54,7 @@ export const InventoryModal: UIComponent = {
             accountEntity,
           },
           utils: {
-            getAccount: (entity: EntityIndex) => getAccount(world, components, entity),
+            getAccount: (entity: EntityIndex) => getAccount(world, components, entity, { live: 1 }),
             getInventories: () => getAccountInventories(world, components, accountEntity),
             getKamis: () =>
               getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
@@ -68,6 +71,7 @@ export const InventoryModal: UIComponent = {
             queryAllAccounts: () => queryAllAccounts(components),
             getInventoryBalance: (inventories: Inventory[], index: number) =>
               getInventoryBalance(inventories, index),
+            getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
           },
         };
       })
@@ -90,6 +94,7 @@ export const InventoryModal: UIComponent = {
     const [tick, setTick] = useState(Date.now());
     const [showSend, setShowSend] = useState(false);
     const [shuffle, setShuffle] = useState(false);
+    const [sendHistory, setSendHistory] = useState<ItemTransfer[]>([]);
     const { modals } = useVisibility();
 
     // mounting
@@ -119,6 +124,7 @@ export const InventoryModal: UIComponent = {
         const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
         setAccounts(accountsSorted);
       }
+      getSendHistoryKamiden(account.id);
     }, [modals.inventory, tick]);
 
     // Shuffle effect
@@ -187,6 +193,20 @@ export const InventoryModal: UIComponent = {
       return actionID;
     };
 
+    async function getSendHistoryKamiden(accountId: string) {
+      const parsedAccountId = BigInt(accountId).toString();
+      try {
+        const request: ItemTransferRequest = {
+          AccountID: parsedAccountId,
+          //  Timestamp: '0',
+        };
+        const response = await KamidenClient?.getItemTransfers(request);
+        setSendHistory(response?.Transfers || []);
+      } catch (error) {
+        console.error('Error getting send history :', error);
+        throw error;
+      }
+    }
     /////////////////
     // DISPLAY
 
@@ -215,7 +235,7 @@ export const InventoryModal: UIComponent = {
               accounts={accounts}
               accountEntity={accountEntity}
               actions={{ useForAccount, useForKami, sendItemsTx }}
-              data={{ showSend }}
+              data={{ showSend, sendHistory }}
               utils={{ ...utils, setShowSend }}
             />
           </>
