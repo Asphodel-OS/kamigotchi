@@ -101,12 +101,13 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Wallpaper = styled.img`
+const Wallpaper = styled.div<{ src: string }>`
   position: absolute;
   width: 100%;
-  max-height: 100%;
-  object-fit: cover;
-
+  height: 100%;
+  background-image: url(${props => props.src});
+  background-repeat: repeat;
+  background-size: contain;
   z-index: -3;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
