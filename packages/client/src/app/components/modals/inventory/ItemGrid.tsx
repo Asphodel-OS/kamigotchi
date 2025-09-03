@@ -1,42 +1,46 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { BigNumber } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
-import { cleanInventories, Inventory } from 'app/cache/inventory';
+import { Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
 import { useVisibility } from 'app/stores';
 import { ItemTransfer } from 'clients/kamiden/proto';
-import { formatEntityID } from 'engine/utils';
-import { Account, NullAccount } from 'network/shapes/Account';
+import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
 import { ItemGridTooltip } from './ItemGridTooltip';
-import { Send } from './Send';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = ({
+  account,
   accountEntity,
   accounts,
   actions,
+  inventories,
+  kamis,
   data,
   utils,
 }: {
+  account: Account;
   accountEntity: EntityIndex;
   accounts: Account[];
   actions: {
     useForAccount: (item: Item, amount: number) => void;
     useForKami: (kami: Kami, item: Item) => void;
     sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
+    setVisible: (visible: boolean) => void;
   };
-  data: { showSend: boolean; sendHistory: ItemTransfer[] };
+  data: { showSend: boolean; sendHistory: ItemTransfer[]; visible: boolean };
+  kamis: Kami[];
+  inventories: Inventory[];
   utils: {
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
     getAccount: (entityIndex: EntityIndex) => Account;
@@ -54,41 +58,17 @@ export const ItemGrid = ({
     getAccount,
     getInventories,
     getKamis,
+
     meetsRequirements,
     setShowSend,
     getInventoryBalance,
     getEntityIndex,
     getItem,
   } = utils;
-  const { showSend, sendHistory } = data;
-  const { sendItemsTx } = actions;
+  const { showSend, sendHistory, visible } = data;
+  const { sendItemsTx, setVisible } = actions;
 
   const { modals } = useVisibility();
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-  const [account, setAccount] = useState<Account>(NullAccount);
-  const [inventories, setInventories] = useState<Inventory[]>([]);
-  const [kamis, setKamis] = useState<Kami[]>([]);
-  const [visible, setVisible] = useState(false);
-
-  // refresh data whenever the modal is opened
-  useEffect(() => {
-    if (!modals.inventory) return;
-    updateData();
-  }, [modals.inventory, lastRefresh, accountEntity]);
-
-  // update the inventory, account and kami data
-  const updateData = () => {
-    const account = getAccount(accountEntity);
-    setAccount(account);
-
-    // get, clean, and set account inventories
-    const rawInventories = getInventories() ?? [];
-    const inventories = cleanInventories(rawInventories);
-    setInventories(inventories);
-
-    // get, and set account kamis
-    setKamis(getKamis());
-  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -126,40 +106,6 @@ export const ItemGrid = ({
 
     return options;
   };
-
-  const getSendHistory = useMemo(() => {
-    const transfers: JSX.Element[] = [];
-
-    sendHistory.forEach((send, index) => {
-      const sender = getAccount(
-        getEntityIndex(formatEntityID(BigNumber.from(send.SenderAccountID)))
-      );
-      const receiver = getAccount(
-        getEntityIndex(formatEntityID(BigNumber.from(send.RecvAccountID)))
-      );
-      const item = getItem(send.ItemIndex as EntityIndex);
-      if (receiver.id === account.id) {
-        transfers.push(
-          <div key={`receiver-${index}`}>
-            * You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name} from{' '}
-            {sender?.name}
-          </div>
-        );
-      } else if (sender.id === account.id) {
-        transfers.push(
-          <div key={`sender-${index}`}>
-            * You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
-            {receiver?.name}
-          </div>
-        );
-      }
-    });
-    if (transfers.length === 0) {
-      return <EmptyText text={['No transfers to show.']} />;
-    } else {
-      return transfers.reverse();
-    }
-  }, [sendHistory, account]);
 
   // // get the list of kamis that a specific item can be used on
   // const getAvailableKamis = (item: Item): Kami[] => {
@@ -204,11 +150,6 @@ export const ItemGrid = ({
         {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
         {inventories.map((inv) => ItemIcon(inv))}
       </Container>
-      <Send
-        actions={{ sendItemsTx }}
-        data={{ showSend, accounts, inventory: inventories }}
-        utils={{ setShowSend, getInventoryBalance, getSendHistory }}
-      />
     </>
   );
 };

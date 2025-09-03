@@ -1,9 +1,10 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { BigNumber } from 'ethers';
 import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
-import { getInventoryBalance, Inventory } from 'app/cache/inventory';
+import { cleanInventories, getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
@@ -12,6 +13,7 @@ import { InventoryIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { OBOL_INDEX } from 'constants/items';
+import { formatEntityID } from 'engine/utils';
 import {
   Account,
   NullAccount,
@@ -22,9 +24,10 @@ import { Allo, parseAllos } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance, getMusuBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
+import { Send } from './Send';
 
 const REFRESH_INTERVAL = 1000;
 const KamidenClient = getKamidenClient();
@@ -82,7 +85,7 @@ export const InventoryModal: UIComponent = {
   Render: ({ network, data, utils }) => {
     const { actions, api } = network;
     const { accountEntity } = data;
-    const { getMusuBalance, getObolsBalance } = utils;
+    const { getMusuBalance, getObolsBalance, getEntityIndex, getItem } = utils;
     const { getAccount, getInventories, getKamis, meetsRequirements, queryAllAccounts } = utils;
     const {
       burnerAddress, // embedded
@@ -97,6 +100,11 @@ export const InventoryModal: UIComponent = {
     const [showSend, setShowSend] = useState(false);
     const [shuffle, setShuffle] = useState(false);
     const [sendHistory, setSendHistory] = useState<ItemTransfer[]>([]);
+    const [visible, setVisible] = useState(false);
+    const [inventories, setInventories] = useState<Inventory[]>([]);
+    const [kamis, setKamis] = useState<Kami[]>([]);
+    const [lastRefresh, setLastRefresh] = useState(Date.now());
+
     const { modals } = useVisibility();
 
     // mounting
@@ -145,6 +153,12 @@ export const InventoryModal: UIComponent = {
         return () => clearTimeout(timer);
       }
     }, [shuffle]);
+
+    // refresh data whenever the modal is opened
+    useEffect(() => {
+      if (!modals.inventory) return;
+      updateData();
+    }, [modals.inventory, lastRefresh, accountEntity]);
 
     /////////////////
     // ACTIONS
@@ -209,6 +223,54 @@ export const InventoryModal: UIComponent = {
         throw error;
       }
     }
+
+    // update the inventory, account and kami data
+    const updateData = () => {
+      const account = getAccount(accountEntity);
+      setAccount(account);
+
+      // get, clean, and set account inventories
+      const rawInventories = getInventories() ?? [];
+      const inventories = cleanInventories(rawInventories);
+      setInventories(inventories);
+
+      // get, and set account kamis
+      setKamis(getKamis());
+    };
+
+    const getSendHistory = useMemo(() => {
+      const transfers: JSX.Element[] = [];
+
+      sendHistory.forEach((send, index) => {
+        const sender = getAccount(
+          getEntityIndex(formatEntityID(BigNumber.from(send.SenderAccountID)))
+        );
+        const receiver = getAccount(
+          getEntityIndex(formatEntityID(BigNumber.from(send.RecvAccountID)))
+        );
+        const item = getItem(send.ItemIndex as EntityIndex);
+        if (receiver.id === account.id) {
+          transfers.push(
+            <div key={`receiver-${index}`}>
+              * You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name}{' '}
+              from {sender?.name}
+            </div>
+          );
+        } else if (sender.id === account.id) {
+          transfers.push(
+            <div key={`sender-${index}`}>
+              * You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
+              {receiver?.name}
+            </div>
+          );
+        }
+      });
+      if (transfers.length === 0) {
+        return <EmptyText text={['No transfers to show.']} />;
+      } else {
+        return transfers.reverse();
+      }
+    }, [sendHistory, account]);
     /////////////////
     // DISPLAY
 
@@ -234,11 +296,19 @@ export const InventoryModal: UIComponent = {
           <>
             <ItemGrid
               key='grid'
+              kamis={kamis}
+              inventories={inventories}
+              account={account}
               accounts={accounts}
               accountEntity={accountEntity}
-              actions={{ useForAccount, useForKami, sendItemsTx }}
-              data={{ showSend, sendHistory }}
+              actions={{ useForAccount, useForKami, sendItemsTx, setVisible }}
+              data={{ showSend, sendHistory, visible }}
               utils={{ ...utils, setShowSend }}
+            />{' '}
+            <Send
+              actions={{ sendItemsTx }}
+              data={{ showSend, accounts, inventory: inventories }}
+              utils={{ setShowSend, getInventoryBalance, getSendHistory }}
             />
           </>
         )}
