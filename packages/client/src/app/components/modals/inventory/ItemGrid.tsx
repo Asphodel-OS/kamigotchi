@@ -18,25 +18,27 @@ const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = ({
-  account,
   actions,
-  inventories,
-  kamis,
   data,
   utils,
 }: {
-  account: Account;
-  accountEntity: EntityIndex;
-  accounts: Account[];
   actions: {
     useForAccount: (item: Item, amount: number) => void;
     useForKami: (kami: Kami, item: Item) => void;
     sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
-    setVisible: (visible: boolean) => void;
   };
-  data: { sendView: boolean; sendHistory: ItemTransfer[]; visible: boolean };
-  kamis: Kami[];
-  inventories: Inventory[];
+  data: {
+    sendView: boolean;
+    sendHistory: ItemTransfer[];
+    visible: boolean;
+    setVisible: (visible: boolean) => void;
+    account: Account;
+    accounts: Account[];
+    accountEntity: EntityIndex;
+    inventories: Inventory[];
+    kamis: Kami[];
+    setSendView: (show: boolean) => void;
+  };
   utils: {
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
     getAccount: (entityIndex: EntityIndex) => Account;
@@ -50,10 +52,10 @@ export const ItemGrid = ({
     getItem: (index: EntityIndex) => Item;
   };
 }) => {
+  const { sendView, visible, setVisible, account, inventories, kamis } = data;
   const { meetsRequirements } = utils;
-  const { sendView, visible } = data;
-  const { setVisible } = actions;
 
+  // hide ItemGrid when sendView is true
   useEffect(() => {
     setTimeout(() => {
       setVisible(!sendView);

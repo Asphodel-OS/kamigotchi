@@ -1,6 +1,5 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
-import { BigNumber } from 'ethers';
 import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
@@ -13,7 +12,6 @@ import { InventoryIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { OBOL_INDEX } from 'constants/items';
-import { formatEntityID } from 'engine/utils';
 import {
   Account,
   NullAccount,
@@ -22,14 +20,15 @@ import {
 } from 'network/shapes/Account';
 import { Allo, parseAllos } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
-import { getItemBalance, getMusuBalance, Item } from 'network/shapes/Item';
+import { getItemBalance, getMusuBalance, Item, NullItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ItemGrid } from './ItemGrid';
 import { MusuRow } from './MusuRow';
 import { Send } from './Send';
 
 const REFRESH_INTERVAL = 1000;
+const REFRESH_INTERVAL_GRID = 2000;
 const KamidenClient = getKamidenClient();
 
 export const InventoryModal: UIComponent = {
@@ -86,7 +85,7 @@ export const InventoryModal: UIComponent = {
     const { actions, api } = network;
     const { accountEntity } = data;
     const { getMusuBalance, getObolsBalance, getEntityIndex, getItem } = utils;
-    const { getAccount, getInventories, getKamis, meetsRequirements, queryAllAccounts } = utils;
+    const { getAccount, getInventories, getKamis, queryAllAccounts } = utils;
     const {
       burnerAddress, // embedded
       selectedAddress, // injected
@@ -103,6 +102,9 @@ export const InventoryModal: UIComponent = {
     const [visible, setVisible] = useState(false);
     const [inventories, setInventories] = useState<Inventory[]>([]);
     const [kamis, setKamis] = useState<Kami[]>([]);
+    const [targetAcc, setTargetAcc] = useState<Account | null>(null);
+    const [amt, setAmt] = useState<number>(1);
+    const [item, setItem] = useState<Item>(NullItem);
 
     const { modals } = useVisibility();
 
@@ -110,12 +112,20 @@ export const InventoryModal: UIComponent = {
     useEffect(() => {
       // populate initial data
       setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
-      updateData();
       // set ticking
       const refreshClock = () => setTick(Date.now());
       const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
       return () => clearInterval(timerId);
     }, []);
+
+    useEffect(() => {
+      if (!modals.inventory) return;
+      updateData();
+      const timerId = setInterval(() => {
+        updateData();
+      }, REFRESH_INTERVAL_GRID);
+      return () => clearInterval(timerId);
+    }, [modals.inventory, accountEntity]);
 
     // update account and kamis every tick or if the connnected account changes
     useEffect(() => {
@@ -125,7 +135,6 @@ export const InventoryModal: UIComponent = {
         setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
       }
 
-      updateData();
       // check if we need to update the list of accounts
       const accountEntities = queryAllAccounts() as EntityIndex[];
       if (accountEntities.length > accounts.length) {
@@ -221,39 +230,6 @@ export const InventoryModal: UIComponent = {
       setKamis(getKamis());
     };
 
-    const getSendHistory = useMemo(() => {
-      const transfers: JSX.Element[] = [];
-
-      sendHistory.forEach((send, index) => {
-        const sender = getAccount(
-          getEntityIndex(formatEntityID(BigNumber.from(send.SenderAccountID)))
-        );
-        const receiver = getAccount(
-          getEntityIndex(formatEntityID(BigNumber.from(send.RecvAccountID)))
-        );
-        const item = getItem(send.ItemIndex as EntityIndex);
-        if (receiver.id === account.id) {
-          transfers.push(
-            <div key={`receiver-${index}`}>
-              * You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name}{' '}
-              from {sender?.name}
-            </div>
-          );
-        } else if (sender.id === account.id) {
-          transfers.push(
-            <div key={`sender-${index}`}>
-              * You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
-              {receiver?.name}
-            </div>
-          );
-        }
-      });
-      if (transfers.length === 0) {
-        return <EmptyText text={['No transfers to show.']} />;
-      } else {
-        return transfers.reverse();
-      }
-    }, [sendHistory, account]);
     /////////////////
     // DISPLAY
 
@@ -279,19 +255,25 @@ export const InventoryModal: UIComponent = {
           <>
             <ItemGrid
               key='grid'
-              kamis={kamis}
-              inventories={inventories}
-              account={account}
-              accounts={accounts}
-              accountEntity={accountEntity}
-              actions={{ useForAccount, useForKami, sendItemsTx, setVisible }}
-              data={{ sendView, sendHistory, visible }}
-              utils={{ ...utils, setSendView }}
-            />
+              actions={{ useForAccount, useForKami, sendItemsTx }}
+              data={{
+                sendView,
+                sendHistory,
+                visible,
+                setVisible,
+                account,
+                accounts,
+                accountEntity,
+                inventories,
+                kamis,
+                setSendView,
+              }}
+              utils={utils}
+            />{' '}
             <Send
               actions={{ sendItemsTx }}
-              data={{ sendView, accounts, inventory: inventories }}
-              utils={{ setSendView, getInventoryBalance, getSendHistory }}
+              data={{ sendView, accounts, inventory: inventories, sendHistory, account }}
+              utils={{ setSendView, getInventoryBalance, getEntityIndex, getItem, getAccount }}
             />
           </>
         )}
