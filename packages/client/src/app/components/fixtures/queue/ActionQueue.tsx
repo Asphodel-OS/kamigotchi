@@ -23,7 +23,7 @@ export const ActionQueue: UIComponent = {
   },
   Render: ({ network }) => {
     const ActionComponent = network.actions.Action;
-    const { fixtures } = useVisibility();
+    const actionQueueVisible = useVisibility((s) => s.fixtures.actionQueue);
     const [mode, setMode] = useState<number>(1);
     const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
 
@@ -34,7 +34,7 @@ export const ActionQueue: UIComponent = {
 
     const sizes = ['none', '23vh', '90vh'];
     return (
-      <Wrapper style={{ display: fixtures.actionQueue ? 'block' : 'none' }}>
+      <Wrapper style={{ display: actionQueueVisible ? 'block' : 'none' }}>
         <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
           {mode !== 0 && <Logs actionIndices={actionIndices} network={network} />}
           <Controls mode={mode} setMode={setMode} />

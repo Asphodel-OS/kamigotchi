@@ -42,7 +42,8 @@ export const Scene: UIComponent = {
   Render: ({ data, utils }) => {
     const { accountEntity } = data;
     const { getRoomIndex } = utils;
-    const { roomIndex, setRoom } = useSelected();
+    const roomIndex = useSelected((s) => s.roomIndex);
+    const setRoom = useSelected((s) => s.setRoom);
     const [lastRefresh, setLastRefresh] = useState(Date.now());
 
     // ticking

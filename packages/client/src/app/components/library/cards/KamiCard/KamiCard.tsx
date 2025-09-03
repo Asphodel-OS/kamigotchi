@@ -50,8 +50,10 @@ export const KamiCard = ({
     getTempBonuses?: (kami: Kami) => Bonus[];
   };
 }) => {
-  const { modals, setModals } = useVisibility();
-  const { kamiIndex, setKami } = useSelected();
+  const setModals = useVisibility((s) => s.setModals);
+  const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const setKami = useSelected((s) => s.setKami);
+  const kamiIndex = useSelected((s) => s.kamiIndex);
   const [canLevel, setCanLevel] = useState(false);
 
   /////////////////
@@ -70,7 +72,7 @@ export const KamiCard = ({
     const sameKami = kamiIndex === kami.index;
     setKami(kami.index);
 
-    if (modals.kami && sameKami) setModals({ kami: false });
+    if (kamiModalOpen && sameKami) setModals({ kami: false });
     else setModals({ kami: true });
     playClick();
   };

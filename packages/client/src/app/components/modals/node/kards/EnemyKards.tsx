@@ -49,8 +49,11 @@ export const EnemyCards = ({
   };
 }) => {
   const { getOwner, getKami } = utils;
-  const { modals, setModals } = useVisibility();
-  const { accountIndex, setAccount, nodeIndex } = useSelected();
+  const accountModalOpen = useVisibility((s) => s.modals.account);
+  const setModals = useVisibility((s) => s.setModals);
+  const accountIndex = useSelected((s) => s.accountIndex);
+  const setAccount = useSelected((s) => s.setAccount);
+  const nodeIndex = useSelected((s) => s.nodeIndex);
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -188,7 +191,7 @@ export const EnemyCards = ({
 
   // toggle the node modal to the selected one
   const selectAccount = (index: number) => {
-    if (!modals.account) setModals({ account: true, party: false, map: false });
+    if (!accountModalOpen) setModals({ account: true, party: false, map: false });
     if (accountIndex !== index) setAccount(index);
     playClick();
   };

@@ -13,8 +13,8 @@ export const Players = ({
 }) => {
   const room = rooms.get(index)!;
 
-  const { setAccount } = useSelected();
-  const { modals, setModals } = useVisibility();
+  const setAccount = useSelected((s) => s.setAccount);
+  const setModals = useVisibility((s) => s.setModals);
 
   ///////////////////
   // INTERACTION

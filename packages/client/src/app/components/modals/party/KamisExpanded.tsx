@@ -56,8 +56,10 @@ export const KamisExpanded = ({
 
   isVisible: boolean;
 }) => {
-  const { modals, setModals } = useVisibility();
-  const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
+  const nodeModalOpen = useVisibility((s) => s.modals.node);
+  const setModals = useVisibility((s) => s.setModals);
+  const nodeIndex = useSelected((s) => s.nodeIndex);
+  const setSelectedNode = useSelected((s) => s.setNode);
 
   /////////////////
   // INTERPRETATION
@@ -125,7 +127,7 @@ export const KamisExpanded = ({
   // toggle the node modal to the selected one
   const selectNode = (index: number) => {
     if (nodeIndex !== index) setSelectedNode(index);
-    if (!modals.node) setModals({ node: true });
+    if (!nodeModalOpen) setModals({ node: true });
     else if (nodeIndex == index) setModals({ node: false });
     playClick();
   };

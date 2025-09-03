@@ -15,8 +15,8 @@ const ModalsToHide: Partial<Modals> = {
 };
 
 export const ChatMenuButton = () => {
-  const { modals } = useVisibility();
-  const { roomIndex } = useSelected();
+  const chatModalOpen = useVisibility((s) => s.modals.chat);
+  const roomIndex = useSelected((s) => s.roomIndex);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [notification, setNotification] = useState(false);
 
@@ -34,18 +34,18 @@ export const ChatMenuButton = () => {
   }, []);
 
   useEffect(() => {
-    if (modals.chat) {
+    if (chatModalOpen) {
       setNotification(false);
     } else {
       const lastChatTs = getChatLastTimestamp(roomIndex);
       const lastClearTs = LastClearTs.get(roomIndex) ?? 0;
       setNotification(lastChatTs > lastClearTs);
     }
-  }, [lastRefresh, modals.chat, roomIndex]);
+  }, [lastRefresh, chatModalOpen, roomIndex]);
 
   useEffect(() => {
     LastClearTs.set(roomIndex, Date.now());
-  }, [modals.chat]);
+  }, [chatModalOpen]);
 
   // added (!LastClearTs.has(roomIndex)) to not overwrite the last clear timestamp each time an already visited room is visited again
   useEffect(() => {

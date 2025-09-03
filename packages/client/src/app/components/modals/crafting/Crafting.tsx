@@ -47,17 +47,18 @@ export const CraftingModal: UIComponent = {
     const { account } = data;
     const { actions, api, components, world } = network;
     const { hasIngredients } = utils;
-    const { modals, setModals } = useVisibility();
+    const setModals = useVisibility((s) => s.setModals);
+    const craftingModalVisible = useVisibility((s) => s.modals.crafting);
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [showAll, setShowAll] = useState<boolean>(true);
     const [tab, setTab] = useState('consumable'); //  consumable | material | reagent | special
 
     /////////////////
     useEffect(() => {
-      if (!modals.crafting) return;
+      if (!craftingModalVisible) return;
       // close lootbox modal
       setModals({ lootBox: false });
-    }, [modals.crafting]);
+    }, [craftingModalVisible]);
 
     // update the list of recipes depending on the filter
     useEffect(() => {
@@ -65,7 +66,7 @@ export const CraftingModal: UIComponent = {
       const currentTabRecipes = recipes.filter((recipe) => recipe.type === tab.toUpperCase());
       if (showAll) setRecipes(currentTabRecipes);
       else setRecipes(currentTabRecipes.filter((recipe) => hasIngredients(recipe)));
-    }, [showAll, tab, modals.crafting]);
+    }, [showAll, tab, craftingModalVisible]);
 
     /////////////////
     // INTERPRETATION

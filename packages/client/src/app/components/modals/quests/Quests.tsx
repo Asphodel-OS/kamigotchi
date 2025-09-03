@@ -86,7 +86,7 @@ export const QuestModal: UIComponent = {
     const { actions, api, notifications } = network;
     const { ongoing, completed, registry } = data.quests;
     const { getItem, populate, filterByAvailable } = utils;
-    const { modals } = useVisibility();
+    const questsModalVisible = useVisibility((s) => s.modals.quests);
 
     const isUpdating = useRef(false);
     const [tab, setTab] = useState<TabType>('ONGOING');
@@ -108,7 +108,7 @@ export const QuestModal: UIComponent = {
       if (populated.length > available.length) setTab('AVAILABLE');
 
       isUpdating.current = false;
-    }, [modals.quests, registry.length, completed.length, ongoing.length]);
+    }, [questsModalVisible, registry.length, completed.length, ongoing.length]);
 
     // update the Notifications when the number of available quests changes
     useEffect(() => {

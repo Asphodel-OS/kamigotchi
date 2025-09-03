@@ -59,7 +59,7 @@ export const KamiList = ({
     getAllAccounts: () => Account[];
   };
 }) => {
-  const { modals } = useVisibility();
+  const partyModalVisible = useVisibility((s) => s.modals.party);
 
   /////////////////
   // DISPLAY
@@ -89,7 +89,7 @@ export const KamiList = ({
         display={display}
         state={{ displayedKamis }}
         utils={utils}
-        isVisible={modals.party && view === 'expanded'}
+        isVisible={partyModalVisible && view === 'expanded'}
       />
 
       <KamisCollapsed
@@ -98,14 +98,14 @@ export const KamiList = ({
         display={display}
         state={{ displayedKamis, tick }}
         utils={utils}
-        isVisible={modals.party && view === 'collapsed'}
+        isVisible={partyModalVisible && view === 'collapsed'}
       />
       <KamisExternal
         actions={actions}
         controls={{ view }}
         data={{ ...data, kamis: data.wildKamis }}
         utils={utils}
-        isVisible={modals.party && view === 'external'}
+        isVisible={partyModalVisible && view === 'external'}
       />
     </Container>
   );

@@ -66,8 +66,8 @@ export const MapModal: UIComponent = {
   Render: ({ network, data, utils }) => {
       const { getRoom, getRoomByIndex, queryAllRooms } = utils;
       const { actions, api } = network;
-      const { roomIndex } = useSelected();
-      const { modals } = useVisibility();
+      const roomIndex = useSelected((s) => s.roomIndex);
+      const mapModalOpen = useVisibility((s) => s.modals.map);
 
       const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
       const [zone, setZone] = useState(0);
@@ -83,7 +83,7 @@ export const MapModal: UIComponent = {
       // query the set of rooms whenever the zone changes
       // NOTE: roomIndex is controlled by canvas/Scene.tsx
       useEffect(() => {
-        if (!modals.map) return;
+        if (!mapModalOpen) return;
         const newRoom = getRoomByIndex(roomIndex);
         const newZone = newRoom.location.z;
         if (zone == newZone) return;
@@ -96,7 +96,7 @@ export const MapModal: UIComponent = {
 
         setZone(newZone);
         setRoomMap(roomMap);
-      }, [modals.map, roomIndex]);
+      }, [mapModalOpen, roomIndex]);
 
       ///////////////////
       // ACTIONS

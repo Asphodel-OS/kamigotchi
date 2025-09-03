@@ -136,8 +136,9 @@ export const NodeModal: UIComponent = {
         localSystems: { DTRevealer },
       } = network;
       const { getAccount, getNode } = utils;
-      const { nodeIndex } = useSelected();
-      const { modals, setModals } = useVisibility();
+      const nodeIndex = useSelected((s) => s.nodeIndex);
+      const nodeModalOpen = useVisibility((s) => s.modals.node);
+      const setModals = useVisibility((s) => s.setModals);
 
       const [account, setAccount] = useState<Account>(NullAccount);
       const [node, setNode] = useState<Node>(NullNode);
@@ -152,9 +153,9 @@ export const NodeModal: UIComponent = {
 
       // refresh account data whenever the modal is opened
       useEffect(() => {
-        if (!modals.node) return;
+        if (!nodeModalOpen) return;
         setAccount(getAccount());
-      }, [modals.node, lastRefresh]);
+      }, [nodeModalOpen, lastRefresh]);
 
       // updates from selected Node updates
       useEffect(() => {

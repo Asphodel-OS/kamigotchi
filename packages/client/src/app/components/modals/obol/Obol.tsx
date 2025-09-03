@@ -43,18 +43,19 @@ export const ObolModal: UIComponent = {
     const { actions, api } = network;
     const { getObolsBalance } = utils;
 
-    const { modals, setModals } = useVisibility();
+    const lootBoxModalVisible = useVisibility((s) => s.modals.lootBox);
+    const setModals = useVisibility((s) => s.setModals);
     const [eggsQuantity, setEggsQuantity] = useState(1);
     const [isDisabled, setIsDisabled] = useState(false);
 
     /////////////////
     useEffect(() => {
-      if (!modals.lootBox) return;
+      if (!lootBoxModalVisible) return;
       // reset eggsQuantity on modal close
       setEggsQuantity(1);
       // close crafting modal
       setModals({ crafting: false });
-    }, [modals.lootBox]);
+    }, [lootBoxModalVisible, setModals]);
 
     /////////////////
     // HELPERS

@@ -37,7 +37,7 @@ export const ModalWrapper = ({
     position: 'fixed' | 'absolute';
   };
 }) => {
-  const { modals } = useVisibility();
+  const isVisible = useVisibility((s) => s.modals[id]);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
 
   useEffect(() => {
@@ -58,8 +58,8 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay} style={gridStyle}>
-      <Content isOpen={modals[id]} truncate={truncate}>
+    <Wrapper id={id} isOpen={isVisible} overlay={!!overlay} style={gridStyle}>
+      <Content isOpen={isVisible} truncate={truncate}>
         {canExit && (
           <ButtonRow>
             <ExitButton divName={id} />

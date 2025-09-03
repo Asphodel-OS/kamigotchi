@@ -38,7 +38,7 @@ export const Kards = ({
   };
 }) => {
   const { getKami } = utils;
-  const { modals } = useVisibility();
+  const nodeModalVisible = useVisibility((s) => s.modals.node);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [allies, setAllies] = useState<Kami[]>([]);
@@ -70,19 +70,19 @@ export const Kards = ({
 
   // populate the ally kami data as new ones come in
   useEffect(() => {
-    if (!modals.node) return;
+    if (!nodeModalVisible) return;
     setAlliesUpdating(true);
     setAllies(allyEntities.map((entity) => getKami(entity, true)));
 
     setAlliesUpdating(false);
-  }, [modals.node, allyEntities]);
+  }, [nodeModalVisible, allyEntities]);
 
   // check to refresh ally data at each interval
   useEffect(() => {
-    if (!modals.node || alliesUpdating) return;
+    if (!nodeModalVisible || alliesUpdating) return;
     const newAllies = allies.map((ally) => getKami(ally.entity));
     setAllies(newAllies);
-  }, [modals.node, lastRefresh]);
+  }, [nodeModalVisible, lastRefresh]);
 
   // scrolling effects for enemy kards
   useEffect(() => {

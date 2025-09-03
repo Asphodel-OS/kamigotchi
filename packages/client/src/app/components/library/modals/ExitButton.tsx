@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
-// ExitButton is a rendering o fan exit button, which closes the modal it's on
+// ExitButton is a rendering of an exit button, which closes the modal it's on
 export const ExitButton = ({
   divName,
   position,
@@ -13,7 +13,8 @@ export const ExitButton = ({
   position?: string;
   isValidator?: boolean;
 }) => {
-  const { setModals, setValidators } = useVisibility();
+  const setModals = useVisibility((s) => s.setModals);
+  const setValidators = useVisibility((s) => s.setValidators);
 
   // closes the modal this exit button is on
   const handleClose = () => {

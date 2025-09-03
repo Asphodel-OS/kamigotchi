@@ -23,7 +23,8 @@ export const MenuButton = ({
   onClick?: () => void;
   disabled?: boolean;
 }) => {
-  const { modals, setModals } = useVisibility();
+  const setModals = useVisibility((s) => s.setModals);
+  const isModalOpen = useVisibility((s) => (targetModal ? s.modals[targetModal] : false));
 
   // toggles the target modal open and closed
   const handleToggle = () => {
@@ -31,7 +32,6 @@ export const MenuButton = ({
     if (onClick) onClick();
     if (!targetModal) return;
 
-    const isModalOpen = modals[targetModal];
     let nextModals = { [targetModal]: !isModalOpen };
     if (!isModalOpen) nextModals = { ...nextModals, ...hideModals };
     setModals(nextModals);

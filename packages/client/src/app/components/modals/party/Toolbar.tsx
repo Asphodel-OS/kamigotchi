@@ -50,7 +50,7 @@ export const Toolbar = ({
   const { kamis, wildKamis } = data;
   const { passesNodeReqs } = utils;
   const { displayedKamis, setDisplayedKamis, tick } = state;
-  const { modals } = useVisibility();
+  const partyModalVisible = useVisibility((s) => s.modals.party);
 
   const [addOptions, setAddOptions] = useState<DropdownOption[]>([]);
   const [collectOptions, setCollectOptions] = useState<DropdownOption[]>([]);
@@ -60,7 +60,7 @@ export const Toolbar = ({
   // SUBSCRIPTIONS
 
   useEffect(() => {
-    if (!modals.party) return;
+    if (!partyModalVisible) return;
     if (view === 'external') return;
 
     const addOptions = displayedKamis
@@ -78,13 +78,13 @@ export const Toolbar = ({
     setAddOptions(addOptions);
     setCollectOptions(collectOptions);
     setStopOptions(stopOptions);
-  }, [displayedKamis, tick, modals.party]);
+  }, [displayedKamis, tick, partyModalVisible]);
 
   // sort kamis when changes are detected
   // TODO: trigger updates after successful state updates
   // NOTE: sorts in place (setDisplayedKamis is just used to trigger a rendering update)
   useEffect(() => {
-    if (!modals.party) return;
+    if (!partyModalVisible) return;
 
     let sorted = view === 'external' ? wildKamis : kamis;
     if (sort === 'name') {
@@ -109,7 +109,7 @@ export const Toolbar = ({
     }
 
     setDisplayedKamis(sorted);
-  }, [modals.party, kamis.length, sort, view]);
+  }, [partyModalVisible, kamis.length, sort, view]);
 
   /////////////////
   // INTERACTION

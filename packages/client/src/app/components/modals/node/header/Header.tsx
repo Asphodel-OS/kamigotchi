@@ -48,7 +48,7 @@ export const Header = ({
   const { queryScavInstance } = utils;
   const { parseConditionalText, passesNodeReqs } = utils;
 
-  const { modals } = useVisibility();
+  const nodeModalVisible = useVisibility((s) => s.modals.node);
   const [kamis, setKamis] = useState<Kami[]>([]);
   const [room, setRoom] = useState<Room>(NullRoom);
   const [scavenge, setScavenge] = useState<ScavBar>(NullScavenge);
@@ -63,17 +63,17 @@ export const Header = ({
 
   // update the scavenge whenever the node changes
   useEffect(() => {
-    if (!modals.node) return;
+    if (!nodeModalVisible) return;
 
     const scavenge = node.scavenge;
     if (scavenge) setScavenge(scavenge);
     if (node.roomIndex !== room.index) setRoom(getRoom(node.roomIndex));
-  }, [node.index, modals.node]);
+  }, [node.index, nodeModalVisible]);
 
   // keep the account kamis up to date whenever the modal is open
   useEffect(() => {
-    if (modals.node) setKamis(getAccountKamis());
-  }, [modals.node, lastRefresh]);
+    if (nodeModalVisible) setKamis(getAccountKamis());
+  }, [nodeModalVisible, lastRefresh]);
 
   /////////////////
   // INTERPRETATION
