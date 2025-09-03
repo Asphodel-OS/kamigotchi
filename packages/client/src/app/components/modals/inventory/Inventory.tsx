@@ -97,13 +97,12 @@ export const InventoryModal: UIComponent = {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
     const [tick, setTick] = useState(Date.now());
-    const [showSend, setShowSend] = useState(false);
+    const [sendView, setSendView] = useState(false);
     const [shuffle, setShuffle] = useState(false);
     const [sendHistory, setSendHistory] = useState<ItemTransfer[]>([]);
     const [visible, setVisible] = useState(false);
     const [inventories, setInventories] = useState<Inventory[]>([]);
     const [kamis, setKamis] = useState<Kami[]>([]);
-    const [lastRefresh, setLastRefresh] = useState(Date.now());
 
     const { modals } = useVisibility();
 
@@ -111,6 +110,7 @@ export const InventoryModal: UIComponent = {
     useEffect(() => {
       // populate initial data
       setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
+      updateData();
       // set ticking
       const refreshClock = () => setTick(Date.now());
       const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
@@ -120,12 +120,12 @@ export const InventoryModal: UIComponent = {
     // update account and kamis every tick or if the connnected account changes
     useEffect(() => {
       if (!modals.inventory) return;
-
       // update the connected account if it changes
       if (accountEntity != account.entity) {
         setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
       }
 
+      updateData();
       // check if we need to update the list of accounts
       const accountEntities = queryAllAccounts() as EntityIndex[];
       if (accountEntities.length > accounts.length) {
@@ -135,31 +135,14 @@ export const InventoryModal: UIComponent = {
         setAccounts(accountsSorted);
       }
       getSendHistoryKamiden(account.id);
-    }, [modals.inventory, tick]);
+    }, [modals.inventory, tick, accountEntity]);
 
-    // Shuffle effect
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setShuffle(true);
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [showSend]);
-
-    useEffect(() => {
-      if (shuffle) {
-        const timer = setTimeout(() => {
-          setShuffle(false);
-        }, 500);
-        return () => clearTimeout(timer);
-      }
-    }, [shuffle]);
-
-    // refresh data whenever the modal is opened
-    useEffect(() => {
-      if (!modals.inventory) return;
-      updateData();
-    }, [modals.inventory, lastRefresh, accountEntity]);
-
+    // for the shuffle animation
+    const triggerShuffle = () => {
+      setSendView(!sendView);
+      setTimeout(() => setShuffle(true), 100);
+      setTimeout(() => setShuffle(false), 500);
+    };
     /////////////////
     // ACTIONS
 
@@ -281,8 +264,8 @@ export const InventoryModal: UIComponent = {
         footer={
           <MusuRow
             key='musu'
-            data={{ musu: getMusuBalance(), obols: getObolsBalance(), showSend }}
-            utils={{ setShowSend }}
+            data={{ musu: getMusuBalance(), obols: getObolsBalance(), sendView }}
+            utils={{ triggerShuffle }}
           />
         }
         canExit
@@ -302,13 +285,13 @@ export const InventoryModal: UIComponent = {
               accounts={accounts}
               accountEntity={accountEntity}
               actions={{ useForAccount, useForKami, sendItemsTx, setVisible }}
-              data={{ showSend, sendHistory, visible }}
-              utils={{ ...utils, setShowSend }}
-            />{' '}
+              data={{ sendView, sendHistory, visible }}
+              utils={{ ...utils, setSendView }}
+            />
             <Send
               actions={{ sendItemsTx }}
-              data={{ showSend, accounts, inventory: inventories }}
-              utils={{ setShowSend, getInventoryBalance, getSendHistory }}
+              data={{ sendView, accounts, inventory: inventories }}
+              utils={{ setSendView, getInventoryBalance, getSendHistory }}
             />
           </>
         )}

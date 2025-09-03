@@ -6,7 +6,6 @@ import { Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
-import { useVisibility } from 'app/stores';
 import { ItemTransfer } from 'clients/kamiden/proto';
 import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
@@ -16,13 +15,10 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
-const REFRESH_INTERVAL = 2000;
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = ({
   account,
-  accountEntity,
-  accounts,
   actions,
   inventories,
   kamis,
@@ -38,7 +34,7 @@ export const ItemGrid = ({
     sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
     setVisible: (visible: boolean) => void;
   };
-  data: { showSend: boolean; sendHistory: ItemTransfer[]; visible: boolean };
+  data: { sendView: boolean; sendHistory: ItemTransfer[]; visible: boolean };
   kamis: Kami[];
   inventories: Inventory[];
   utils: {
@@ -48,33 +44,22 @@ export const ItemGrid = ({
     getKamis: () => Kami[];
     displayRequirements: (item: Item) => string;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
-    setShowSend: (show: boolean) => void;
+    setSendView: (show: boolean) => void;
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
     getEntityIndex: (entity: EntityID) => EntityIndex;
     getItem: (index: EntityIndex) => Item;
   };
 }) => {
-  const {
-    getAccount,
-    getInventories,
-    getKamis,
-
-    meetsRequirements,
-    setShowSend,
-    getInventoryBalance,
-    getEntityIndex,
-    getItem,
-  } = utils;
-  const { showSend, sendHistory, visible } = data;
-  const { sendItemsTx, setVisible } = actions;
-
-  const { modals } = useVisibility();
+  const { meetsRequirements } = utils;
+  const { sendView, visible } = data;
+  const { setVisible } = actions;
 
   useEffect(() => {
     setTimeout(() => {
-      setVisible(!showSend);
+      setVisible(!sendView);
     }, 300);
-  }, [showSend]);
+  }, [sendView]);
+
   /////////////////
   // INTERPRETATION
 
@@ -145,12 +130,10 @@ export const ItemGrid = ({
   };
 
   return (
-    <>
-      <Container isVisible={visible} key='grid'>
-        {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
-        {inventories.map((inv) => ItemIcon(inv))}
-      </Container>
-    </>
+    <Container isVisible={visible} key='grid'>
+      {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
+      {inventories.map((inv) => ItemIcon(inv))}
+    </Container>
   );
 };
 

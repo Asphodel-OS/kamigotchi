@@ -7,15 +7,15 @@ import { ItemImages } from 'assets/images/items';
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = ({
-  data: { musu, obols, showSend },
-  utils: { setShowSend },
+  data: { musu, obols, sendView },
+  utils: { triggerShuffle },
 }: {
   data: {
     musu: number;
     obols: number;
-    showSend: boolean;
+    sendView: boolean;
   };
-  utils: { setShowSend: (show: boolean) => void };
+  utils: { triggerShuffle: () => void };
 }) => {
   const { modals, setModals } = useVisibility();
 
@@ -35,7 +35,7 @@ export const MusuRow = ({
             onClick={() => setModals({ ...modals, trading: !modals.trading })}
             radius={0.9}
           />
-        </TextTooltip>{' '}
+        </TextTooltip>
         {obols > 1 && (
           <IconButton
             img={ItemImages.obol}
@@ -43,7 +43,16 @@ export const MusuRow = ({
             radius={0.9}
           />
         )}
-        <IconButton img={ArrowIcons.right} onClick={() => setShowSend(!showSend)} radius={0.9} />
+        <TextTooltip
+          text={sendView === true ? ['Back to Inventory'] : ['Send Item']}
+          direction='row'
+        >
+          <IconButton
+            img={sendView === true ? ArrowIcons.left : ArrowIcons.right}
+            onClick={() => triggerShuffle()}
+            radius={0.9}
+          />
+        </TextTooltip>
       </Icons>
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
@@ -82,6 +91,7 @@ const Icons = styled.div`
   flex-flow: row nowrap;
   gap: 0.3vw;
 `;
+
 const Icon = styled.img`
   width: 1.8vw;
   height: 1.8vw;

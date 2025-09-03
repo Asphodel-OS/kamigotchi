@@ -20,12 +20,12 @@ import { LineItem } from '../trading/management/create/LineItem';
 interface Props {
   actions: { sendItemsTx: (items: Item[], amts: number[], account: Account) => void };
   data: {
-    showSend: boolean;
+    sendView: boolean;
     accounts: Account[];
     inventory: Inventory[];
   };
   utils: {
-    setShowSend: (show: boolean) => void;
+    setSendView: (show: boolean) => void;
     getInventoryBalance: (inventories: Inventory[], index: number) => number;
     getSendHistory: JSX.Element[] | JSX.Element;
   };
@@ -33,8 +33,8 @@ interface Props {
 
 export const Send = (props: Props) => {
   const { actions, data, utils } = props;
-  const { showSend, accounts, inventory } = data;
-  const { setShowSend, getInventoryBalance, getSendHistory } = utils;
+  const { sendView, accounts, inventory } = data;
+  const { getInventoryBalance, getSendHistory } = utils;
   const { sendItemsTx } = actions;
 
   const [amt, setAmt] = useState<number>(1);
@@ -55,9 +55,9 @@ export const Send = (props: Props) => {
 
   useEffect(() => {
     setTimeout(() => {
-      setVisible(showSend);
+      setVisible(sendView);
     }, 300);
-  }, [showSend]);
+  }, [sendView]);
 
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change
   const updateItemAmt = (event: ChangeEvent<HTMLInputElement>) => {
@@ -128,9 +128,7 @@ export const Send = (props: Props) => {
           {SendButton([item], [amt])}
         </Row>
       </Column>
-
       <Column side={`bottom`}>
-        {' '}
         <Title>Your Transfer History</Title>
         {getSendHistory}
       </Column>
