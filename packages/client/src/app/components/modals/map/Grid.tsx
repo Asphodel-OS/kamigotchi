@@ -74,7 +74,7 @@ export const Grid = ({
   };
 }) => {
   const { network } = useLayers();
-  const { setModals } = useVisibility();
+  const { modals, setModals } = useVisibility();
   const {
     getKamiLocation,
     getKami,
@@ -92,14 +92,6 @@ export const Grid = ({
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
   const [mode, setMode] = useState<Mode[]>(['MyKamis']);
   const [travelTarget, setTravelTarget] = useState<number | null>(null);
-  const openTravelConfirm = (idx: number) => {
-    setTravelTarget(idx);
-    setModals({ travelConfirm: true });
-  };
-  const closeTravelConfirm = () => {
-    setTravelTarget(null);
-    setModals({ travelConfirm: false });
-  };
 
   const rolls = useMemo(() => {
     const map = new Map<number, number>();
@@ -177,11 +169,15 @@ export const Grid = ({
   const handleRoomRightClick = (room: Room, e: React.MouseEvent) => {
     e.preventDefault();
     if (!room.index) return;
-    const color = getTileColor(room);
-    // only enable on highlighted reachable (yellow) tiles
-    if (color === 'rgba(255,136,85,0.6)') {
+    if (!isRoomBlocked(room)) {
       setTravelTarget(room.index);
+      setModals({ ...modals, travelConfirm: true });
     }
+  };
+
+  const closeTravelConfirm = () => {
+    setTravelTarget(null);
+    setModals({ ...modals, travelConfirm: false });
   };
 
   // updates the stats for a room and set it as the hovered room
@@ -288,7 +284,7 @@ export const Grid = ({
                     }
                     onContextMenu={(e) => {
                       e.preventDefault();
-                      if (room.index !== 0 && !isRoomBlocked(room)) openTravelConfirm(room.index);
+                      if (room.index !== 0) handleRoomRightClick(room, e);
                     }}
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
@@ -313,10 +309,10 @@ export const Grid = ({
           </Row>
         ))}
       </Overlay>
-      {travelTarget !== null && network && (
+      {travelTarget && modals.travelConfirm && network && (
         <TravelConfirm
           network={network}
-          account={account as any}
+          account={account}
           targetRoomIndex={travelTarget}
           onClose={closeTravelConfirm}
         />

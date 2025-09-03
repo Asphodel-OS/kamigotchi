@@ -150,7 +150,7 @@ export const KamisExpanded = ({
   const getDescriptionOnClick = (kami: Kami) => {
     if (isHarvesting(kami)) {
       const idx = kami.harvest?.node?.index;
-      if (idx !== undefined) return () => openTravelConfirm(idx);
+      if (idx) return () => openTravelConfirm(idx);
     }
   };
 
@@ -206,7 +206,7 @@ export const KamisExpanded = ({
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
           subtextOnClick={() =>
-            isHarvesting(kami) && kami.harvest?.node?.index !== undefined
+            isHarvesting(kami) && kami.harvest?.node?.index
               ? openTravelConfirm(kami.harvest.node.index)
               : undefined
           }
@@ -218,7 +218,7 @@ export const KamisExpanded = ({
           utils={utils}
         />
       ))}
-      {travelTarget !== null && network && (
+      {travelTarget && network && (
         <TravelConfirm
           network={network}
           account={account}

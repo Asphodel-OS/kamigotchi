@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useEffect } from 'react';
 
 import { ActionButton, ModalHeader, ModalWrapper } from 'app/components/library';
 import { findPathAndCost } from 'network/shapes/Room/path';
@@ -37,14 +38,25 @@ export const TravelConfirm = ({
         action: 'AccountMove',
         params: [step],
         description: `Moving to ${getRoomByIndex(world, components, step).name}`,
-        execute: async () => api.player.account.move(step),
+        execute: async () => {
+          try {
+            await api.player.account.move(step);
+          } catch (err) {
+            console.error('AccountMove failed for step', step, err);
+            throw err;
+          }
+        },
       });
     }
     onQueued?.();
     onClose();
   };
 
-  if (path.length === 0) return null;
+  useEffect(() => {
+    if (path.length === 0) onClose();
+  }, [path.length, onClose]);
+
+  if (path.length === 0) return null; // still avoid rendering; effect will close
 
   const toRoom = getRoomByIndex(world, components, targetRoomIndex);
   const previewSrc = rooms?.[targetRoomIndex]?.backgrounds?.[0];
@@ -54,7 +66,6 @@ export const TravelConfirm = ({
   let thumbSize = 30 / perRow;
   if (rows > 1) thumbSize = Math.min(thumbSize, 24 / perRow);
   if (rows > 2) thumbSize = Math.min(thumbSize, 20 / perRow);
-  // safety margin to avoid bottom clipping when wrapping
   if (rows > 1) thumbSize *= 0.94;
   thumbSize = Math.max(2.1, Math.min(3.9, thumbSize));
 

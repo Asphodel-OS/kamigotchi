@@ -83,8 +83,8 @@ export const KamiCard = ({
   /////////////////
   // DISPLAY
 
-  // generate the styled text divs for the description
-  const Description = () => {
+  // memoize the description content to avoid rerenders
+  const Description = useMemo(() => {
     const header = (
       <TextBig key='header' onClick={descriptionOnClick}>
         {description[0]}
@@ -102,7 +102,7 @@ export const KamiCard = ({
         </TextMedium>
       ));
     return <>{[header, ...details]}</>;
-  };
+  }, [description, descriptionOnClick, subtextOnClick]);
 
   const itemBonuses = useMemo(() => {
     if (!getTempBonuses) return [];
@@ -220,14 +220,12 @@ export const KamiCard = ({
         <ContentRow>
           <ContentColumn key='column-1'>
             <TextTooltip text={contentTooltip ?? []}>
-              <Description />
+              {Description}
             </TextTooltip>
             {isFriend && <Friend>Friend</Friend>}
           </ContentColumn>
           <ContentColumn key='column-2'>
-            {subtext ? (
-              <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
-            ) : null}
+            {subtext && <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>}
           </ContentColumn>
         </ContentRow>
         <ContentBottom>

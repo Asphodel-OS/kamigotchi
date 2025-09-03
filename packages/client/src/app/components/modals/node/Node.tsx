@@ -266,20 +266,12 @@ export const NodeModal: UIComponent = {
               >
                 <ActionButton
                   text='Travel to your Kami'
+                  disabled={travelStats.moves === 0}
                   onClick={() => {
                     const fresh = getAccount();
-                    const { path } = findPathAndCost(world, components, fresh.roomIndex, node.index);
-                    if (path.length <= 1) return;
-                    for (let i = 1; i < path.length; i++) {
-                      const step = path[i];
-                      const room = utils.getRoom(step);
-                      actions.add({
-                        action: 'AccountMove',
-                        params: [step],
-                        description: `Moving to ${room.name}`,
-                        execute: async () => api.player.account.move(step),
-                      });
-                    }
+                    setTravelAccount(fresh);
+                    setTravelTarget(node.index);
+                    setModals({ ...modals, travelConfirm: true });
                   }}
                 />
               </TextTooltip>
@@ -298,7 +290,7 @@ export const NodeModal: UIComponent = {
             display={display}
             utils={utils}
           />
-          {travelTarget !== null && travelAccount && (
+          {travelTarget !== null && travelAccount && modals.travelConfirm && (
             <TravelConfirm
               network={network}
               account={travelAccount}
@@ -306,6 +298,7 @@ export const NodeModal: UIComponent = {
               onClose={() => {
                 setTravelTarget(null);
                 setTravelAccount(null);
+                setModals({ ...modals, travelConfirm: false });
               }}
             />
           )}
