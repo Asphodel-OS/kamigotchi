@@ -77,7 +77,7 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
   if (item.type === 'ERC20') {
     item.token = {
       address: getTokenAddress(comps, entity),
-      scale: getScale(comps, entity, 0),
+      scale: getScale(comps, entity, 0, false),
     };
   }
 
