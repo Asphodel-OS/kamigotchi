@@ -63,7 +63,16 @@ export const Orderbook = ({
       />
       <Offers
         actions={actions}
-        controls={{ ...controls, typeFilter, sort, ascending, itemFilter, itemSearch }}
+        controls={{
+          ...controls,
+          typeFilter,
+          sort,
+          setSort,
+          ascending,
+          setAscending,
+          itemFilter,
+          itemSearch,
+        }}
         data={data}
         utils={utils}
       />

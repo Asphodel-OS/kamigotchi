@@ -1,0 +1,186 @@
+import { Dispatch, useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import { Text } from 'app/components/library';
+import { Item } from 'network/shapes';
+import { ItemCard } from './ItemCard';
+
+export type CategoryKey = 'All' | 'Consumables' | 'Materials' | 'Currencies' | 'Other';
+
+export const ItemBrowser = ({
+  items,
+  selected,
+  setSelected,
+  category: controlledCategory,
+  onCategoryChange,
+}: {
+  items: Item[];
+  selected: Item;
+  setSelected: Dispatch<Item>;
+  category?: CategoryKey;
+  onCategoryChange?: Dispatch<CategoryKey>;
+}) => {
+  const [internalCategory, setInternalCategory] = useState<CategoryKey>('All');
+  const category = controlledCategory ?? internalCategory;
+  const setCategory = (c: CategoryKey) => {
+    if (onCategoryChange) onCategoryChange(c);
+    setInternalCategory(c);
+  };
+  const categories: { key: CategoryKey; label: string }[] = [
+    { key: 'All', label: 'Show All' },
+    { key: 'Consumables', label: 'Consumables' },
+    { key: 'Materials', label: 'Materials' },
+    { key: 'Currencies', label: 'Currencies' },
+    { key: 'Other', label: 'Other' },
+  ];
+
+  const categorized = useMemo(() => {
+    const byCat = new Map<CategoryKey, Item[]>([
+      ['All', []],
+      ['Consumables', []],
+      ['Materials', []],
+      ['Currencies', []],
+      ['Other', []],
+    ]);
+
+    for (const item of items) {
+      const type = item.type.toUpperCase();
+      let key: CategoryKey = 'Other';
+      if (['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX'].includes(type)) key = 'Consumables';
+      else if (['MATERIAL'].includes(type)) key = 'Materials';
+      else if (['ERC20'].includes(type)) key = 'Currencies';
+      byCat.get(key)!.push(item);
+      byCat.get('All')!.push(item);
+    }
+
+    for (const key of byCat.keys()) byCat.get(key)!.sort((a, b) => a.name.localeCompare(b.name));
+    return byCat;
+  }, [items]);
+
+  const list = categorized.get(category) ?? [];
+
+  return (
+    <Container>
+      <Sidebar>
+        <Text size={1.1} padding={{ bottom: 0.6 }}>
+          Categories
+        </Text>
+        {categories.map((c) => (
+          <CategoryButton key={c.key} onClick={() => setCategory(c.key)} disabled={category === c.key}>
+            {c.label}
+          </CategoryButton>
+        ))}
+      </Sidebar>
+      <Right>
+        <DetailsBar>
+          <SelectedWrap>
+            <Thumb src={selected?.image} alt={selected?.name} />
+            <SelectedName>{selected?.name || 'None'}</SelectedName>
+          </SelectedWrap>
+          <ClearButton onClick={() => setSelected({ ...selected, index: 0 } as Item)} disabled={selected.index === 0}>
+            Clear
+          </ClearButton>
+        </DetailsBar>
+        <Grid>
+          {list.map((item) => (
+            <ItemCard key={item.index} item={item} selected={item.index === selected.index} onClick={() => setSelected(item)} />
+          ))}
+        </Grid>
+      </Right>
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.6vw;
+  min-height: 0;
+`;
+
+const Sidebar = styled.div`
+  width: 40%;
+  padding: 0.6vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vw;
+  border-right: 0.15vw solid black;
+  flex: 0 0 auto;
+`;
+
+const CategoryButton = styled.button`
+  border: 0.12vw solid black;
+  background: #efefef;
+  padding: 0.45vw 0.6vw;
+  text-align: left;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  &:disabled {
+    background: #dcdcdc;
+    cursor: default;
+  }
+`;
+
+const Right = styled.div`
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+`;
+
+const DetailsBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6vw;
+`;
+
+const SelectedWrap = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const Thumb = styled.img`
+  width: 1.8vw;
+  height: 1.8vw;
+  image-rendering: pixelated;
+`;
+
+const SelectedName = styled.div`
+  max-width: 18vw;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 1vw;
+`;
+
+const ClearButton = styled.button`
+  border: 0.12vw solid black;
+  background: #f5f5f5;
+  padding: 0.45vw 0.9vw;
+  cursor: pointer;
+  &:disabled {
+    background: #e5e5e5;
+    cursor: default;
+  }
+`;
+
+const Grid = styled.div`
+  width: 100%;
+  padding: 0.6vw;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.6vw, 1fr));
+  gap: 0.6vw;
+  align-content: start;
+  overflow: auto;
+`;
+
+

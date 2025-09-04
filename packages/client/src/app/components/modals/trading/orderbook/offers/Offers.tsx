@@ -2,11 +2,13 @@ import { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getTradeType, Trade } from 'app/cache/trade';
+import { getInventoryBalance } from 'app/cache/inventory';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
 import { EmptyText } from 'app/components/library';
 import { Account, Item } from 'network/shapes';
 import { ConfirmationData } from '../../library/Confirmation';
-import { PendingOffer } from './PendingOffer';
+// removed bulky PendingOffer card; render compact table rows instead
+import { animate } from 'animejs';
 
 export const Offers = ({
   actions,
@@ -32,7 +34,7 @@ export const Offers = ({
     getItemByIndex: (index: number) => Item;
   };
 }) => {
-  const { typeFilter, sort, ascending, itemFilter, itemSearch } = controls;
+  const { typeFilter, sort, setSort, ascending, setAscending, itemFilter, itemSearch } = controls;
   const { account, trades } = data;
 
   const [displayed, setDisplayed] = useState<Trade[]>([]);
@@ -74,29 +76,109 @@ export const Offers = ({
 
       return 0;
     });
-    setDisplayed(sorted);
+    // only update state if something actually changed to avoid flicker
+    const changed =
+      sorted.length !== displayed.length ||
+      sorted.some((t, i) => t.id !== displayed[i]?.id || t.state !== displayed[i]?.state);
+    if (changed) {
+      setDisplayed(sorted);
+      // animate only when data changes
+      requestAnimationFrame(() => {
+        animate('tbody tr', {
+          translateY: [6, 0],
+          opacity: [0, 1],
+          delay: (_el, i) => 20 * i,
+          duration: 140,
+          easing: 'easeOutSine',
+        });
+      });
+    }
   }, [trades, typeFilter, sort, ascending, itemFilter, itemSearch]);
 
   /////////////////
   // DISPLAY
 
+  const handleExecute = (trade: Trade) => {
+    const { setConfirmData, setIsConfirming } = controls;
+    setConfirmData({
+      title: 'Execute Trade',
+      subTitle: undefined,
+      content: <div style={{ padding: '0.6vw', fontSize: '0.9vw' }}>Confirm execution?</div>,
+      onConfirm: () => actions.executeTrade(trade),
+    });
+    controls.setIsConfirming(true);
+  };
+
+  const canFillOrder = (account: Account, trade: Trade): boolean => {
+    const order = trade.buyOrder;
+    if (!order) return false;
+    const inv = account.inventories ?? [];
+    for (let i = 0; i < (order.items?.length || 0); i++) {
+      const item = order.items[i];
+      const amt = order.amounts[i];
+      const bal = getInventoryBalance(inv, item.index);
+      if (bal < amt) return false;
+    }
+    return true;
+  };
+
+  const pickDisplayItem = (trade: Trade, utils: { getItemByIndex: (index: number) => Item }): Item => {
+    // Prefer the non-currency item if present; otherwise first item in sell or buy
+    const sellItems = trade.sellOrder?.items ?? [];
+    const buyItems = trade.buyOrder?.items ?? [];
+    const pool = [...sellItems, ...buyItems];
+    return (pool[0] as Item) ?? utils.getItemByIndex(0);
+  };
+
   return (
     <Container>
       <Title>Open Offers</Title>
-      <Body>
-        {displayed.map((trade, i) => {
-          const type = getTradeType(trade, false);
-          return (
-            <PendingOffer
-              key={i}
-              actions={actions}
-              controls={controls}
-              data={{ account, trade, type }}
-              utils={utils}
-            />
-          );
-        })}
-      </Body>
+      <Table>
+        <thead>
+          <HeaderRow>
+            <th>Item</th>
+            <th>Qty</th>
+            <SortableTh onClick={() => {
+              if (sort === 'Price') setAscending(!ascending);
+              setSort('Price');
+            }}>
+              Total {sort === 'Price' ? (ascending ? '↑' : '↓') : ''}
+            </SortableTh>
+            <SortableTh onClick={() => setSort('Owner')}>
+              Owner {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
+            </SortableTh>
+            <th>Action</th>
+          </HeaderRow>
+        </thead>
+        <tbody>
+          {displayed.map((trade, i) => {
+            const type = getTradeType(trade, false);
+            const perUnit = getPerUnitPrice(trade, type);
+            const qty = (trade?.sellOrder?.amounts?.[0] || 1);
+            const total = perUnit * qty;
+            const item = pickDisplayItem(trade, utils);
+            const disabled = !canFillOrder(account, trade);
+            return (
+              <Row key={i}>
+                <td>
+                  <ItemCell>
+                    <Icon src={item.image} />
+                    <Name title={item.name}>{item.name}</Name>
+                  </ItemCell>
+                </td>
+                <td>{qty.toLocaleString()}</td>
+                <td>{total.toLocaleString()}</td>
+                <td>{trade.maker?.name ?? '???'}</td>
+                <td>
+                  <ActionButton disabled={disabled} onClick={() => handleExecute(trade)}>
+                    Execute
+                  </ActionButton>
+                </td>
+              </Row>
+            );
+          })}
+        </tbody>
+      </Table>
       {displayed.length === 0 && <EmptyText text={['No active trades to show']} />}
     </Container>
   );
@@ -129,15 +211,68 @@ const Title = styled.div`
   z-index: 1;
 `;
 
-const Body = styled.div`
-  position: relative;
-  height: max-content;
+const Table = styled.table`
   width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  overflow: auto;
+  display: block;
+  max-height: 60vh;
+`;
 
-  padding: 0.9vw;
-  gap: 0.9vw;
+const HeaderRow = styled.tr`
+  position: sticky;
+  top: 0;
+  background: #e6e6e6;
+  z-index: 1;
+  & > th {
+    text-align: left;
+    padding: 0.6vw 0.9vw;
+    border-bottom: 0.12vw solid black;
+  }
+`;
 
+const SortableTh = styled.th`
+  cursor: pointer;
+  user-select: none;
+`;
+
+const Row = styled.tr`
+  & > td {
+    padding: 0.45vw 0.6vw;
+    border-bottom: 0.06vw solid #ccc;
+    font-size: 0.9vw;
+  }
+`;
+
+const ItemCell = styled.div`
   display: flex;
-  flex-flow: column nowrap;
   align-items: center;
+  gap: 0.6vw;
+`;
+
+const Icon = styled.img`
+  width: 1.5vw;
+  height: 1.5vw;
+  image-rendering: pixelated;
+`;
+
+const Name = styled.div`
+  max-width: 14vw;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+const ActionButton = styled.button`
+  border: 0.12vw solid black;
+  background: #e6ffd6;
+  padding: 0.3vw 0.6vw;
+  font-size: 0.85vw;
+  cursor: pointer;
+  &:disabled {
+    background: #eee;
+    cursor: default;
+    opacity: 0.7;
+  }
 `;
