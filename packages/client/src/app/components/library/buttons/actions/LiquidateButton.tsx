@@ -33,7 +33,7 @@ export const LiquidateButton = (
         options={actionOptions}
         disabled={actionOptions.length == 0}
         width={width}
-        iconInsetPx={2}
+        icon={{ inset: { x: 2 } }}
       />
     </TextTooltip>
   );

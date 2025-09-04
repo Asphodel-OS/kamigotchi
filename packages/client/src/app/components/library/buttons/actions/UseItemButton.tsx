@@ -53,8 +53,7 @@ export const UseItemButton = (
         options={options}
         disabled={disabled}
         width={width}
-        iconInsetXpx={iconInsetXpx}
-        iconInsetYpx={iconInsetYpx}
+        icon={{ inset: { x: iconInsetXpx, y: iconInsetYpx } }}
       />
     </TextTooltip>
   );
