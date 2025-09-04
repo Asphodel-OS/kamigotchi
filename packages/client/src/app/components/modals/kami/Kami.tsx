@@ -15,13 +15,11 @@ import {
 import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useSelected, useVisibility } from 'app/stores';
-import { ONYX_INDEX } from 'constants/items';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Condition } from 'network/shapes/Conditional';
-import { getItemBalance, getItemByIndex } from 'network/shapes/Item';
+import { getItemBalance } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
-import { getCompAddr } from 'network/shapes/utils';
 import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
@@ -54,11 +52,7 @@ export const KamiModal: UIComponent = {
 
         return {
           network,
-          data: {
-            account,
-            onyxItem: getItemByIndex(world, components, ONYX_INDEX),
-            spender: getCompAddr(world, components, 'component.token.allowance'),
-          },
+          data: { account },
           utils: {
             calcExpRequirement: (lvl: number) => calcKamiExpRequirement(world, components, lvl),
             getItemBalance: (index: number) => getItemBalance(world, components, account.id, index),
@@ -167,34 +161,6 @@ export const KamiModal: UIComponent = {
       });
     };
 
-    const onyxRespecSkill = (kami: Kami) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      const actionIndex = actions.add({
-        action: 'SkillRespec',
-        params: [kami.id],
-        description: `Respecing skills for ${kami.name}`,
-        execute: async () => {
-          return api.pet.onyx.respec(kami.id);
-        },
-      });
-    };
-
-    const onyxApprove = (price: number) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      actions.add({
-        action: 'Approve token',
-        params: [onyxItem.address, spender, price],
-        description: `Approve ${price} ${onyxItem.name} to be spent`,
-        execute: async () => {
-          return api.erc20.approve(onyxItem.address!, spender, price);
-        },
-      });
-    };
-
     /////////////////
     // DISPLAY
 
@@ -223,8 +189,6 @@ export const KamiModal: UIComponent = {
             actions={{
               upgrade: (skill: Skill) => upgradeSkill(kami, skill),
               reset: resetSkill,
-              onyxApprove,
-              onyxRespec: onyxRespecSkill,
             }}
             state={{ tick }}
             utils={{

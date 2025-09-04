@@ -1,13 +1,9 @@
-import { EntityID } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
 import { IconButton, Overlay, TextTooltip } from 'app/components/library';
-import { OnyxButton } from 'app/components/library/buttons/actions';
-import { useTokens } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { RESPEC_POTION_INDEX } from 'constants/items';
-import { ONYX_RESPEC_PRICE } from 'constants/prices';
 import { Kami } from 'network/shapes';
 
 export const Footer = ({
@@ -18,8 +14,6 @@ export const Footer = ({
   kami: Kami;
   actions: {
     reset: (kami: Kami) => void;
-    onyxApprove: (price: number) => EntityID | void;
-    onyxRespec: (kami: Kami) => EntityID | void;
   };
   utils: {
     getItemBalance: (index: number) => number;
@@ -27,20 +21,14 @@ export const Footer = ({
     getTreePoints: (tree: string) => number;
   };
 }) => {
-  const { reset, onyxApprove, onyxRespec } = actions;
+  const { reset } = actions;
   const { getItemBalance } = utils;
-
-  const { onyx } = useTokens();
 
   /////////////////
   // CHECKERS
 
   const hasRespecs = () => {
     return getItemBalance(RESPEC_POTION_INDEX) > 0;
-  };
-
-  const hasOnyx = () => {
-    return onyx.balance >= ONYX_RESPEC_PRICE;
   };
 
   /////////////////
@@ -50,22 +38,6 @@ export const Footer = ({
     const tooltip = ['Unindoctrinate your kamigotchi with a Skill Respec Potion'];
     if (!hasRespecs()) tooltip.push('\nNo Respec Potions in inventory');
     if (!isResting(kami)) tooltip.push('\nKami must be resting');
-    return tooltip;
-  };
-
-  const getOnyxTooltip = () => {
-    const tooltip: string[] = [
-      `With the power of ONYX,`,
-      `even old Kamis can learn new tricks.`,
-      ` (Cost: ${ONYX_RESPEC_PRICE} ONYX)`,
-      `\n`,
-    ];
-
-    if (!isResting(kami)) tooltip.push(`Kami must be resting`);
-    else if (!hasOnyx()) tooltip.push(`you only have ${onyx.balance} ONYX`);
-    else if (onyx.allowance < ONYX_RESPEC_PRICE) tooltip.push(`approve spend of ONYX`);
-    else tooltip.push(`respec ${kami.name} with $ONYX`);
-
     return tooltip;
   };
 
@@ -90,20 +62,6 @@ export const Footer = ({
           disabled={!isResting(kami) || !hasRespecs()}
         />
       </TextTooltip>
-      <OnyxButton
-        kami={kami}
-        onyx={{
-          price: ONYX_RESPEC_PRICE,
-          allowance: onyx.allowance,
-          balance: onyx.balance,
-        }}
-        actions={{
-          onyxApprove: () => onyxApprove(ONYX_RESPEC_PRICE),
-          onyxUse: () => onyxRespec(kami),
-        }}
-        tooltip={['Onyx features are temporarily disabled', 'in anticipation of things to come.']}
-        disabled={true}
-      />
       <Points>{getPointsText()}</Points>
     </Overlay>
   );

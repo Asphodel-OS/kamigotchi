@@ -19,8 +19,6 @@ export const Matrix = ({
   setDisplayed: (skillIndex: number) => void;
   actions: {
     reset: (kami: Kami) => void;
-    onyxApprove: (price: number) => void;
-    onyxRespec: (kami: Kami) => void;
   };
   utils: {
     getItemBalance: (index: number) => number;
