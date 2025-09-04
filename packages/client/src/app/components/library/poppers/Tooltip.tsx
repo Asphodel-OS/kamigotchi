@@ -81,7 +81,7 @@ export const Tooltip = ({
       disabled={isDisabled}
       onMouseEnter={(e) => handleMouseEnter(e)}
       onMouseLeave={() => {
-        setIsActive(false), setIsVisible(false);
+        (setIsActive(false), setIsVisible(false));
       }}
       onMouseMove={(e) => {
         handleMouseMove(e);
@@ -124,12 +124,7 @@ const PopoverContainer = styled.div.attrs<{
   color?: string;
   tooltipPosition?: any;
   maxWidth?: number;
-}>(({
-  isVisible,
-  color,
-  tooltipPosition,
-  maxWidth,
-}) => ({
+}>(({ isVisible, color, tooltipPosition, maxWidth }) => ({
   style: {
     backgroundColor: color ?? '#fff',
     opacity: isVisible ? 1 : 0,
@@ -137,7 +132,12 @@ const PopoverContainer = styled.div.attrs<{
     left: tooltipPosition.x,
     maxWidth: maxWidth ? `${maxWidth}vw` : '36vw',
   },
-}))`
+}))<{
+  isVisible: boolean;
+  color?: string;
+  tooltipPosition?: any;
+  maxWidth?: number;
+}>`
   position: fixed;
   flex-direction: column;
   border: solid black 0.15vw;

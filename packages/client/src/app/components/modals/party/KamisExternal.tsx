@@ -15,15 +15,8 @@ const StakeButtons = new Map<number, React.ReactNode>();
 const SendButtons = new Map<number, React.ReactNode>();
 
 export const KamisExternal = ({
-  actions: {
-    sendKamis,
-    stakeKamis,
-  },
-  data: {
-    account,
-    accounts,
-    kamis,
-  },
+  actions: { sendKamis, stakeKamis },
+  data: { account, accounts, kamis },
   isVisible,
   utils,
 }: {
@@ -104,9 +97,13 @@ export const KamisExternal = ({
     }));
 
     return (
-      <TextTooltip key='send-tooltip' text={getSendTooltip(kami)}>
-        <IconListButton img={ArrowIcons.right} options={options} searchable />
-      </TextTooltip>
+      <IconListButton
+        key='send-tooltip'
+        img={ArrowIcons.right}
+        options={options}
+        searchable
+        tooltipProps={{ text: getSendTooltip(kami) }}
+      />
     );
   };
 
