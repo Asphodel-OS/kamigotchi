@@ -35,6 +35,9 @@ const Image = styled.img`
   width: 3.6vw;
   height: 3.6vw;
   image-rendering: pixelated;
+  background: #ddd;
+  object-fit: contain;
+  &:not([src]), &:where([src=""]) { opacity: 0.5; }
 `;
 
 const Name = styled.div`

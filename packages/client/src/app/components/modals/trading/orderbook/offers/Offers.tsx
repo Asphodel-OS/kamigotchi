@@ -133,10 +133,12 @@ export const Offers = ({
   return (
     <Container>
       <Title>Open Offers</Title>
+      <TableWrap>
       <Table>
         <thead>
           <HeaderRow>
             <th>Item</th>
+            <th>Type</th>
             <th>Qty</th>
             <SortableTh onClick={() => {
               if (sort === 'Price') setAscending(!ascending);
@@ -158,6 +160,7 @@ export const Offers = ({
             const total = perUnit * qty;
             const item = pickDisplayItem(trade, utils);
             const disabled = !canFillOrder(account, trade);
+            const typeName = item.type;
             return (
               <Row key={i}>
                 <td>
@@ -166,9 +169,34 @@ export const Offers = ({
                     <Name title={item.name}>{item.name}</Name>
                   </ItemCell>
                 </td>
+                <td>
+                  <TypeLink
+                    onClick={() => {
+                      const t = (typeName || '').toUpperCase();
+                      let key = 'Other';
+                      if (['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX'].includes(t)) key = 'Consumables';
+                      else if (['MATERIAL'].includes(t)) key = 'Materials';
+                      else if (['ERC20'].includes(t)) key = 'Currencies';
+                      window.dispatchEvent(new CustomEvent('trading:setCategory', { detail: key }));
+                    }}
+                    title={`View ${typeName} items`}
+                  >
+                    {typeName}
+                  </TypeLink>
+                </td>
                 <td>{qty.toLocaleString()}</td>
                 <td>{total.toLocaleString()}</td>
-                <td>{trade.maker?.name ?? '???'}</td>
+                <td>
+                  <OwnerLink
+                    onClick={() => {
+                      const name = trade.maker?.name ?? '';
+                      window.dispatchEvent(new CustomEvent('trading:viewProfile', { detail: name }));
+                    }}
+                    title='View profile'
+                  >
+                    {trade.maker?.name ?? '???'}
+                  </OwnerLink>
+                </td>
                 <td>
                   <ActionButton disabled={disabled} onClick={() => handleExecute(trade)}>
                     Execute
@@ -179,6 +207,7 @@ export const Offers = ({
           })}
         </tbody>
       </Table>
+      </TableWrap>
       {displayed.length === 0 && <EmptyText text={['No active trades to show']} />}
     </Container>
   );
@@ -187,13 +216,13 @@ export const Offers = ({
 const Container = styled.div`
   position: relative;
   height: 100%;
-  width: 60%;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 
-  overflow: hidden scroll;
+  overflow: hidden;
   scrollbar-color: transparent transparent;
 `;
 
@@ -211,13 +240,20 @@ const Title = styled.div`
   z-index: 1;
 `;
 
+const TableWrap = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+`;
+
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  overflow: auto;
-  display: block;
-  max-height: 60vh;
+  display: table;
 `;
 
 const HeaderRow = styled.tr`
@@ -242,6 +278,8 @@ const Row = styled.tr`
     padding: 0.45vw 0.6vw;
     border-bottom: 0.06vw solid #ccc;
     font-size: 0.9vw;
+    vertical-align: middle;
+    white-space: nowrap;
   }
 `;
 
@@ -264,6 +302,13 @@ const Name = styled.div`
   text-overflow: ellipsis;
 `;
 
+const TypeLink = styled.span`
+  color: #336;
+  text-decoration: underline;
+  cursor: pointer;
+  &:hover { opacity: 0.85; }
+`;
+
 const ActionButton = styled.button`
   border: 0.12vw solid black;
   background: #e6ffd6;
@@ -275,4 +320,14 @@ const ActionButton = styled.button`
     cursor: default;
     opacity: 0.7;
   }
+`;
+
+const OwnerLink = styled.span`
+  display: inline-block;
+  max-width: 12vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #336;
+  text-decoration: underline;
+  cursor: pointer;
 `;

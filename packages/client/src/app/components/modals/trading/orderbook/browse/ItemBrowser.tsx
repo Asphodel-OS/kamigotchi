@@ -72,20 +72,29 @@ export const ItemBrowser = ({
         ))}
       </Sidebar>
       <Right>
-        <DetailsBar>
-          <SelectedWrap>
-            <Thumb src={selected?.image} alt={selected?.name} />
-            <SelectedName>{selected?.name || 'None'}</SelectedName>
-          </SelectedWrap>
-          <ClearButton onClick={() => setSelected({ ...selected, index: 0 } as Item)} disabled={selected.index === 0}>
-            Clear
-          </ClearButton>
-        </DetailsBar>
-        <Grid>
-          {list.map((item) => (
-            <ItemCard key={item.index} item={item} selected={item.index === selected.index} onClick={() => setSelected(item)} />
-          ))}
-        </Grid>
+        <TableWrap>
+          <ListTable>
+            <thead>
+              <HeaderRow>
+                <th>Item</th>
+                <th>Type</th>
+              </HeaderRow>
+            </thead>
+            <tbody>
+              {list.map((item) => (
+                <DataRow key={item.index} selected={item.index === selected.index} onClick={() => setSelected(item)}>
+                  <td>
+                    <RowItem>
+                      <Thumb src={item.image} alt={item.name} />
+                      <RowName title={item.name}>{item.name}</RowName>
+                    </RowItem>
+                  </td>
+                  <td>{item.type}</td>
+                </DataRow>
+              ))}
+            </tbody>
+          </ListTable>
+        </TableWrap>
       </Right>
     </Container>
   );
@@ -105,7 +114,7 @@ const Sidebar = styled.div`
   padding: 0.6vw;
   display: flex;
   flex-direction: column;
-  gap: 0.6vw;
+  gap: 0.3vw;
   border-right: 0.15vw solid black;
   flex: 0 0 auto;
 `;
@@ -113,12 +122,13 @@ const Sidebar = styled.div`
 const CategoryButton = styled.button`
   border: 0.12vw solid black;
   background: #efefef;
-  padding: 0.45vw 0.6vw;
+  padding: 0.24vw 0.45vw;
   text-align: left;
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 0.85vw;
   cursor: pointer;
   &:disabled {
     background: #dcdcdc;
@@ -173,14 +183,51 @@ const ClearButton = styled.button`
   }
 `;
 
-const Grid = styled.div`
+const TableWrap = styled.div`
   width: 100%;
   padding: 0.6vw;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(6.6vw, 1fr));
-  gap: 0.6vw;
-  align-content: start;
   overflow: auto;
+`;
+
+const ListTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+`;
+
+const HeaderRow = styled.tr`
+  position: sticky;
+  top: 0;
+  background: #e6e6e6;
+  & > th {
+    text-align: left;
+    padding: 0.45vw 0.6vw;
+    border-bottom: 0.12vw solid black;
+    font-size: 0.9vw;
+  }
+`;
+
+const DataRow = styled.tr<{ selected: boolean }>`
+  cursor: pointer;
+  background: ${({ selected }) => (selected ? '#e9ffe9' : 'transparent')};
+  & > td {
+    padding: 0.45vw 0.6vw;
+    border-bottom: 0.06vw solid #ccc;
+    font-size: 0.9vw;
+  }
+`;
+
+const RowItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const RowName = styled.div`
+  max-width: 18vw;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 

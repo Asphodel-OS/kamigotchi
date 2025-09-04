@@ -1,4 +1,4 @@
-import { Dispatch, useMemo, useState } from 'react';
+import { Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
@@ -90,6 +90,17 @@ export const Controls = ({
   // smart search across items and categories
   const [query, setQuery] = useState<string>('');
   const [category, setCategory] = useState<'All' | 'Consumables' | 'Materials' | 'Currencies' | 'Other'>('All');
+  const [searchOpen, setSearchOpen] = useState<boolean>(true);
+
+  // respond to external category change events
+  useEffect(() => {
+    const handler = (e: any) => {
+      const key = e.detail as any;
+      setCategory(key);
+    };
+    window.addEventListener('trading:setCategory', handler as any);
+    return () => window.removeEventListener('trading:setCategory', handler as any);
+  }, []);
   const suggestions = useMemo(() => {
     const lower = query.toLowerCase();
     if (!lower) return [] as { label: string; onPick: () => void }[];
@@ -105,9 +116,13 @@ export const Controls = ({
 
   return (
     <Container>
-      <Title>Search</Title>
+      <TitleRow>
+        <Title>Search</Title>
+        <Toggle onClick={() => setSearchOpen((v) => !v)}>{searchOpen ? 'Hide' : 'Show'}</Toggle>
+      </TitleRow>
+      {searchOpen && (
       <Body>
-        <Row compact>
+        <SearchRow>
           <IconButton text={`< ${typeFilter} >`} onClick={toggleTypeFilter} />
           <IconListButton
             img={getSortIcon(sort)}
@@ -120,8 +135,6 @@ export const Controls = ({
           <TextTooltip text={[ascending ? 'sorting by ascending' : 'sorting by descending']}>
             <IconButton text={ascending ? '↑' : '↓'} onClick={() => setAscending(!ascending)} />
           </TextTooltip>
-        </Row>
-        <SearchRow>
           <SearchInput
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -138,6 +151,7 @@ export const Controls = ({
           )}
         </SearchRow>
       </Body>
+      )}
       <SectionTitle>Browse</SectionTitle>
       <BrowserSection>
         <ItemBrowser items={items} selected={itemFilter} setSelected={setItemFilter} category={category as any} onCategoryChange={setCategory as any} />
@@ -149,7 +163,7 @@ export const Controls = ({
 const Container = styled.div`
   border-right: 0.15vw solid black;
   height: 100%;
-  width: 40%;
+  width: 100%;
   min-height: 0;
   gap: 0.6vw;
 
@@ -171,6 +185,20 @@ const Title = styled.div`
   font-size: 1vw;
   text-align: left;
   z-index: 1;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Toggle = styled.button`
+  border: 0.12vw solid black;
+  padding: 0.15vw 0.45vw;
+  font-size: 0.8vw;
+  background: #eee;
+  cursor: pointer;
 `;
 
 const Body = styled.div`
@@ -214,13 +242,29 @@ const BrowserSection = styled.div`
   overflow: auto;
 `;
 
+// Listen for external category changes (from Offer table TypeLink)
+if (typeof window !== 'undefined') {
+  window.addEventListener('trading:setCategory', (e: any) => {
+    const key = e.detail as any;
+    try {
+      // best-effort: update the control store if mounted
+      // no-op here; state handled in component via onCategoryChange
+    } catch {}
+  });
+}
+
 const SearchRow = styled.div`
   position: relative;
   width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.6vw;
 `;
 
 const SearchInput = styled.input`
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 0.45vw 0.6vw;
   font-size: 0.9vw;
   border: 0.12vw solid black;
@@ -228,7 +272,7 @@ const SearchInput = styled.input`
 
 const SuggestBox = styled.div`
   position: absolute;
-  top: 2.1vw;
+  top: calc(100% + 0.3vw);
   left: 0;
   right: 0;
   background: #fff;
