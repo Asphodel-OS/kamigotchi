@@ -1,7 +1,6 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
-import { v4 as uuid } from 'uuid';
 import { erc721Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
 
@@ -13,9 +12,7 @@ import { getNodeByIndex } from 'app/cache/node';
 import { HarvestButton, ModalHeader, ModalWrapper, UseItemButton } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useSelected, useTokens, useVisibility } from 'app/stores';
-import { BalPair } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
-import { ONYX_INDEX } from 'constants/items';
 import { erc721ABI } from 'network/chain/ERC721';
 import {
   Account,
@@ -23,7 +20,7 @@ import {
   queryAccountFromEmbedded,
   queryAllAccounts,
 } from 'network/shapes/Account';
-import { getItemByIndex, Item, NullItem } from 'network/shapes/Item';
+import { getItemByIndex } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamiByIndex } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
@@ -112,8 +109,6 @@ export const PartyModal: UIComponent = {
 
     const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
-    const [onyxItem, setOnyxItem] = useState<Item>(NullItem);
-    const [onyxInfo, setOnyxInfo] = useState<BalPair>({ allowance: 0, balance: 0 });
 
     /////////////////
     // BLOCK WATCHERS
@@ -141,7 +136,6 @@ export const PartyModal: UIComponent = {
       // populate initial data
       setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
       setKamis(getWorldKamis());
-      setOnyxItem(getItem(ONYX_INDEX));
 
       // set ticking
       const refreshClock = () => setTick(Date.now());
@@ -191,27 +185,6 @@ export const PartyModal: UIComponent = {
 
     /////////////////
     // ACTIONS
-
-    // approve the spend of an ERC20 token
-    const approveOnyxTx = async (price: number) => {
-      return;
-    };
-
-    const onyxReviveTx = async (kami: Kami) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      const actionID = uuid() as EntityID;
-      actions.add({
-        id: actionID,
-        action: 'Onyx revive',
-        params: [kami.id],
-        description: `Reviving ${kami.name} with ONYX`,
-        execute: async () => {
-          return api.pet.onyx.revive(kami.id);
-        },
-      });
-    };
 
     // send a kami NFT to another player
     const sendKamiTx = (kami: Kami, to: Account) => {
@@ -311,8 +284,6 @@ export const PartyModal: UIComponent = {
         />
         <KamiList
           actions={{
-            onyxApprove: approveOnyxTx,
-            onyxRevive: onyxReviveTx,
             addKamis: (kamis: Kami[]) => start(kamis, node),
             stakeKamis: stakeKamiTx,
             sendKamis: sendKamiTx,
@@ -324,7 +295,6 @@ export const PartyModal: UIComponent = {
             kamis,
             wildKamis,
             node,
-            onyx: onyxInfo,
           }}
           display={display}
           state={{ displayedKamis, tick }}

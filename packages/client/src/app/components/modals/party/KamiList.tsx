@@ -13,20 +13,13 @@ import { View } from './types';
 
 export const KamiList = ({
   actions,
-  controls: {
-    view,
-  },
+  controls: { view },
   data,
   display,
-  state: {
-    displayedKamis,
-    tick,
-  },
+  state: { displayedKamis, tick },
   utils,
 }: {
   actions: {
-    onyxApprove: (price: number) => void;
-    onyxRevive: (kami: Kami) => void;
     addKamis: (kamis: Kami[]) => void;
     sendKamis: (kami: Kami, account: Account) => void;
     stakeKamis: (kamis: Kami[]) => void;
@@ -40,10 +33,6 @@ export const KamiList = ({
     kamis: Kami[];
     wildKamis: Kami[];
     node: Node;
-    onyx: {
-      allowance: number;
-      balance: number;
-    };
   };
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
@@ -84,16 +73,13 @@ export const KamiList = ({
       )}
 
       <KamisExpanded
-        actions={actions}
         data={data}
         display={display}
         state={{ displayedKamis }}
         utils={utils}
         isVisible={partyModalVisible && view === 'expanded'}
       />
-
       <KamisCollapsed
-        actions={actions}
         data={data}
         display={display}
         state={{ displayedKamis, tick }}

@@ -2,35 +2,23 @@ import styled from 'styled-components';
 
 import { isDead } from 'app/cache/kami';
 import { KamiBar } from 'app/components/library/bars';
-import { OnyxButton } from 'app/components/library/buttons';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 
-const ONYX_REVIVE_PRICE = 3;
-
 export const KamisCollapsed = ({
-  actions: { onyxApprove, onyxRevive },
-  data: { account, node, onyx },
+  data: { account, node },
   display: { HarvestButton, UseItemButton },
   state: { displayedKamis, tick },
   isVisible,
   utils,
 }: {
-  actions: {
-    onyxApprove: (price: number) => void;
-    onyxRevive: (kami: Kami) => void;
-  };
   data: {
     account: Account;
     kamis: Kami[];
     node: Node;
-    onyx: {
-      allowance: number;
-      balance: number;
-    };
   };
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
@@ -46,25 +34,6 @@ export const KamisCollapsed = ({
   };
 }) => {
   /////////////////
-  // INTERPRETATION
-
-  const getOnyxTooltip = (kami: Kami) => {
-    let tooltip: string[] = [`the Fortunate may resurrect`, 'their kami in other ways..', `\n`];
-
-    if (onyx.balance < ONYX_REVIVE_PRICE) {
-      tooltip = tooltip.concat([
-        `you only have ${onyx.balance} $ONYX`,
-        `you need ${ONYX_REVIVE_PRICE} $ONYX`,
-      ]);
-    } else if (onyx.allowance < ONYX_REVIVE_PRICE) {
-      tooltip = tooltip.concat([`approve spend of ${ONYX_REVIVE_PRICE} $ONYX`]);
-    } else {
-      tooltip = tooltip.concat([`save ${kami.name} with ${ONYX_REVIVE_PRICE} onyx`]);
-    }
-    return tooltip;
-  };
-
-  /////////////////
   // DISPLAY
 
   // Choose and return the action button to display
@@ -76,17 +45,6 @@ export const KamisCollapsed = ({
     let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
     buttons.push(UseItemButton(kami, account, useIcon));
     if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
-    else {
-      buttons.push(
-        <OnyxButton
-          key='onyx-revive'
-          kami={kami}
-          onyx={{ ...onyx, price: ONYX_REVIVE_PRICE }}
-          actions={{ onyxApprove, onyxUse: onyxRevive }}
-          tooltip={['Onyx features are temporarily disabled', 'in anticipation of things to come.']}
-        />
-      );
-    }
     return buttons;
   };
 
