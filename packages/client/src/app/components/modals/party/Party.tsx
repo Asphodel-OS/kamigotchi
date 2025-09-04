@@ -177,13 +177,6 @@ export const PartyModal: UIComponent = {
       setNode(getNode(roomIndex));
     }, [accountEntity, account.roomIndex]);
 
-    // update onyx info every tick or if the connnected account changes
-    useEffect(() => {
-      if (!onyxItem.address) return;
-      const onyxInfo = tokenBals.get(onyxItem.address);
-      setOnyxInfo(onyxInfo ?? { allowance: 0, balance: 0 });
-    }, [onyxItem, spender, tick]);
-
     // update list of wild kamis whenever that changes
     // TOTO: properly typecast the result of the abi call
     useEffect(() => {
@@ -201,19 +194,7 @@ export const PartyModal: UIComponent = {
 
     // approve the spend of an ERC20 token
     const approveOnyxTx = async (price: number) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      const actionID = uuid() as EntityID;
-      actions.add({
-        id: actionID,
-        action: 'Approve token',
-        params: [onyxItem.address, spender, price],
-        description: `Approve ${price} ${onyxItem.name} to be spent`,
-        execute: async () => {
-          return api.erc20.approve(onyxItem.address!, spender, price);
-        },
-      });
+      return;
     };
 
     const onyxReviveTx = async (kami: Kami) => {

@@ -10,6 +10,7 @@ import {
   getItemIndex,
   getName,
   getRarity,
+  getScale,
   getTokenAddress,
   getType,
 } from '../utils/component';
@@ -25,11 +26,14 @@ export interface Item extends DetailedEntity {
   type: string;
   rarity: number;
   for: string;
-  address?: Address;
   requirements: Requirements;
   effects: Effects;
   is: {
     tradeable: boolean;
+  };
+  token?: {
+    scale: number;
+    address: Address;
   };
 }
 
@@ -70,7 +74,12 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
     },
   };
 
-  if (item.type === 'ERC20') item.address = getTokenAddress(comps, entity);
+  if (item.type === 'ERC20') {
+    item.token = {
+      address: getTokenAddress(comps, entity),
+      scale: getScale(comps, entity, 0),
+    };
+  }
 
   return item;
 };

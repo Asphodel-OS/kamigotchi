@@ -86,30 +86,12 @@ export const EmaBoardModal: UIComponent = {
       setKamis(getKamis());
     }, [emaBoardVisible, accountEntity, tick]);
 
-    useEffect(() => {
-      const onyxInfo = tokenBals.get(onyxItem.address!);
-      setOnyxInfo(onyxInfo ?? { allowance: 0, balance: 0 });
-    }, [onyxItem, spender, tick]);
-
     /////////////////
     // ACTIONS
 
     // approve the spend of an ERC20 token
     const approveOnyxTx = (amt: number) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      const actionID = uuid() as EntityID;
-      actions.add({
-        id: actionID,
-        action: 'Approve token',
-        params: [onyxItem.address, spender, amt],
-        description: `Approve ${amt} ${onyxItem.name} to be spent`,
-        execute: async () => {
-          return api.erc20.approve(onyxItem.address!, spender, amt);
-        },
-      });
-      return actionID;
+      return;
     };
 
     const renameTx = (kami: Kami, name: string) => {

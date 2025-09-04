@@ -139,7 +139,7 @@ export const Chart = ({
     let sum = 0;
     for (let i = 0; i < buys.length; i++) {
       const buy = buys[i];
-      if(buy.Timestamp < startTs) continue;
+      if (buy.Timestamp < startTs) continue;
       while (times[j] < buy.Timestamp) balances[j++] = sum;
       sum += buy.Amount;
       sales[j] += buy.Amount;
@@ -156,9 +156,7 @@ export const Chart = ({
       time = times[i];
       if (time < auction.time.start) time = auction.time.start;
       const balance = balances[i];
-      let price = calcAuctionPrice(auction, time, balance, 1);
-      if (auction.paymentItem?.address) price /= 1000;
-      prices[i] = price;
+      prices[i] = calcAuctionPrice(auction, time, balance, 1);
     }
     return prices;
   };

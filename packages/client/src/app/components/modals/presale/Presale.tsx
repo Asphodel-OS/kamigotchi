@@ -72,7 +72,7 @@ export const Presale: UIComponent = {
 
       const { balances: currencyBal, refetch: refetchToken } = useERC20Balance(
         selectedAddress as Address,
-        getAddress(currency.address || '0x0000000000000000000000000000000000000000'),
+        getAddress(currency.token?.address || '0x0000000000000000000000000000000000000000'),
         presaleAddress
       );
 
@@ -82,7 +82,7 @@ export const Presale: UIComponent = {
       const approveTx = async (quantity: number) => {
         const api = apis.get(selectedAddress);
         if (!api) return console.error(`API not established for ${selectedAddress}`);
-        const checksumAddr = getAddress(currency.address!);
+        const checksumAddr = getAddress(currency.token?.address!);
         const checksumSpender = getAddress(presaleAddress);
 
         const actionID = uuid() as EntityID;
