@@ -201,17 +201,7 @@ export function registerKamiModal() {
       };
 
       const onyxApprove = (price: number) => {
-        const api = ownerAPIs.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        actions.add({
-          action: 'Approve token',
-          params: [onyxItem.address, spender, price],
-          description: `Approve ${price} ${onyxItem.name} to be spent`,
-          execute: async () => {
-            return api.erc20.approve(onyxItem.address!, spender, price);
-          },
-        });
+        return;
       };
 
       /////////////////

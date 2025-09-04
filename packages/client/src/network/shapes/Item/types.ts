@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { Address } from 'viem';
 
 import { Components } from 'network/components';
-import { Address } from 'viem';
 import { hasFlag } from '../Flag';
 import { DetailedEntity, getItemImage } from '../utils';
 import {
@@ -9,6 +9,7 @@ import {
   getFor,
   getItemIndex,
   getName,
+  getScale,
   getTokenAddress,
   getType,
 } from '../utils/component';
@@ -23,11 +24,14 @@ export interface Item extends DetailedEntity {
   index: number;
   type: string;
   for: string;
-  address?: Address;
   requirements: Requirements;
   effects: Effects;
   is: {
     tradeable: boolean;
+  };
+  token?: {
+    scale: number;
+    address: Address;
   };
 }
 
@@ -67,7 +71,12 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
     },
   };
 
-  if (item.type === 'ERC20') item.address = getTokenAddress(comps, entity);
+  if (item.type === 'ERC20') {
+    item.token = {
+      address: getTokenAddress(comps, entity),
+      scale: getScale(comps, entity, 0),
+    };
+  }
 
   return item;
 };
