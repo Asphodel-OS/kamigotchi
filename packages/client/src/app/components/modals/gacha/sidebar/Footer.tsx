@@ -98,9 +98,7 @@ export const Footer = (props: Props) => {
 
   // check if a user needs further spend approval for a token
   const needsApproval = () => {
-    if (!payItem.address) return false;
-    const allowance = tokenBal.get(payItem.address!)?.allowance || 0;
-    return allowance < price;
+    return false;
   };
 
   // check if a user has enough balance of a token to purchase

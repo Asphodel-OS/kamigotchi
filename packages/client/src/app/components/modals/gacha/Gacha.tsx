@@ -208,10 +208,10 @@ export function registerGachaModal() {
         actions.add({
           id: actionID,
           action: 'Approve token',
-          params: [payItem.address, spenderAddr, price],
+          params: [payItem.token?.address, spenderAddr, price],
           description: `Approve ${price} ${payItem.name} to be spent`,
           execute: async () => {
-            return api.erc20.approve(payItem.address!, spenderAddr, price);
+            return api.erc20.approve(payItem.token?.address!, spenderAddr, price);
           },
         });
       };
