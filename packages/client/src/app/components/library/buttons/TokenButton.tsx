@@ -38,7 +38,7 @@ export const TokenButton = ({
   }, [network]);
 
   useEffect(() => {
-    const needsApproval = amount > (balances.get(token.address || '')?.allowance || 0);
+    const needsApproval = amount > (balances.get(token.token?.address || '')?.allowance || 0);
     setApproved(!needsApproval);
   }, [balances]);
 
@@ -48,7 +48,7 @@ export const TokenButton = ({
   const approveTx = async () => {
     const api = apis.get(selectedAddress);
     if (!api) return console.error(`API not established for ${selectedAddress}`);
-    const checksumAddr = getAddress(token.address!);
+    const checksumAddr = getAddress(token.token?.address!);
     const checksumSpender = getAddress(spender);
 
     const actionID = uuid() as EntityID;

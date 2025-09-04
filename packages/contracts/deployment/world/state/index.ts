@@ -9,6 +9,7 @@ import { initGoals } from './goals';
 import { initItems, initLocalItems } from './items';
 import { initListings } from './listings';
 import { initNpcs } from './npcs';
+import { initLocalTokens, initTokens } from './portal';
 import { initQuests } from './quests/quests';
 import { initRecipes } from './recipes/recipes';
 import { initRelationships } from './relationships';
@@ -39,6 +40,8 @@ export async function initAll(api: AdminAPI) {
 
   // dependent
   await initAuctions(api);
+  console.log('\n---------------------------------------------\n');
+  await initTokens(api, [100]);
   console.log('\n---------------------------------------------\n');
   await initListings(api, undefined, true);
   console.log('\n---------------------------------------------\n');
@@ -78,6 +81,7 @@ export async function initAllLocal(api: AdminAPI) {
   await api.setup.local.initAccounts();
   await api.setup.local.initPets();
   await api.setup.local.initHarvests();
+  await initLocalTokens(api);
 }
 
 export async function initAllTesting(api: AdminAPI) {
@@ -105,6 +109,7 @@ export { deleteGoalRewards, deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
 export { initNpcs } from './npcs';
+export { deleteTokens, initTokens } from './portal';
 export { deleteQuests, initQuests, reviseQuests } from './quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes/recipes';
 export { deleteRelationships, initRelationships } from './relationships';

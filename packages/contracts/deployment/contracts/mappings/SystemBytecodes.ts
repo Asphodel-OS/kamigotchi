@@ -68,6 +68,7 @@ import RelationshipAdvanceSystem from "../../../out/RelationshipAdvanceSystem.so
 import ScavengeClaimSystem from "../../../out/ScavengeClaimSystem.sol/ScavengeClaimSystem.json";
 import SkillRespecSystem from "../../../out/SkillRespecSystem.sol/SkillRespecSystem.json";
 import SkillUpgradeSystem from "../../../out/SkillUpgradeSystem.sol/SkillUpgradeSystem.json";
+import TokenPortalSystem from "../../../out/TokenPortalSystem.sol/TokenPortalSystem.json";
 import TradeCancelSystem from "../../../out/TradeCancelSystem.sol/TradeCancelSystem.json";
 import TradeCompleteSystem from "../../../out/TradeCompleteSystem.sol/TradeCompleteSystem.json";
 import TradeCreateSystem from "../../../out/TradeCreateSystem.sol/TradeCreateSystem.json";
@@ -143,6 +144,7 @@ export const SystemBytecodes = {
   "system.scavenge.claim": ScavengeClaimSystem,
   "system.skill.respec": SkillRespecSystem,
   "system.skill.upgrade": SkillUpgradeSystem,
+  "system.erc20.portal": TokenPortalSystem,
   "system.trade.cancel": TradeCancelSystem,
   "system.trade.complete": TradeCompleteSystem,
   "system.trade.create": TradeCreateSystem,

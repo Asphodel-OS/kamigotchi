@@ -110,9 +110,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpConfigs() public virtual {
     InitWorld initer = new InitWorld();
     initer.initTests(deployer, address(world));
-
-    // temp value for whitelist timer
-    _setConfig("MINT_START_PUBLIC", 0);
   }
 
   // sets up mint to a default state. override to change/remove behaviour if needed
@@ -756,9 +753,9 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.stopPrank();
   }
 
-  function _addItemERC20(uint32 index, address tokenAddress) public {
+  function _addItemERC20(uint32 index, address tokenAddress, int32 scale) public {
     vm.startPrank(deployer);
-    LibItem.addERC20(components, index, tokenAddress);
+    LibItem.setERC20(components, index, tokenAddress, scale);
     vm.stopPrank();
   }
 

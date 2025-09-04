@@ -6,6 +6,7 @@ import { goalsAPI } from './goals';
 import { itemsAPI } from './items';
 import { listingAPI } from './listings';
 import { nodesAPI } from './nodes';
+import { portalAPI } from './portal';
 import { questsAPI } from './quests';
 import { generateCallData } from './utils';
 
@@ -279,7 +280,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
-  // TRAITS
+  //  TRAITS
 
   // @dev adds a trait in registry
   async function registerTrait(
@@ -463,6 +464,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     },
     goal: goalsAPI(generateCallData, compiledCalls),
     listing: listingAPI(generateCallData, compiledCalls),
+    mint: {
+      batchMinter: {
+        init: initBatchMinter,
+        mint: batchMint,
+      },
+    },
     node: nodesAPI(generateCallData, compiledCalls),
     npc: {
       create: createNPC,
@@ -471,12 +478,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         name: setNPCName,
       },
     },
-    mint: {
-      batchMinter: {
-        init: initBatchMinter,
-        mint: batchMint,
-      },
-    },
+    portal: portalAPI(generateCallData, compiledCalls),
     registry: {
       item: itemsAPI(generateCallData, compiledCalls),
       trait: {

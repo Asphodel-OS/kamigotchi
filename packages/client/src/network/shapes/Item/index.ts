@@ -1,5 +1,5 @@
 export { NullItem } from './constants';
-export { formatItemBalance, getItemBalance, getMusuBalance } from './functions';
+export { getItemBalance, getMusuBalance } from './functions';
 export {
   getAll as getAllItems,
   getByIndex as getItemByIndex,

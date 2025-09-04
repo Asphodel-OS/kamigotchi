@@ -124,7 +124,9 @@ export const getRerolls = (comps: Components, entity: EntityIndex): number => {
   return (result ?? 0) * 1;
 };
 
-// assume scale is always defined with 3 decimals
+// NOTE: this is interpreted in two different ways
+// 1. the actual conversion rate, with some assumption on decimals. [default case, handle onsite]
+// 2. the scale represents a magnitude (e.g. token portal, 2 => 1e2). [handle elsewhere]
 export const getScale = (comps: Components, entity: EntityIndex, precision = 3): number => {
   const { Scale } = comps;
   const result = getComponentValue(Scale, entity)?.value;

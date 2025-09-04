@@ -143,9 +143,8 @@ export const Sidebar = ({
       else if (mode === 'ALT') newBalance = getItemBalance(MUSU_INDEX);
     } else if (tab === 'REROLL') {
       if (mode === 'DEFAULT') newBalance = getItemBalance(REROLL_TICKET_INDEX);
-      else if (mode === 'ALT') newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
     } else if (tab === 'MINT') {
-      newBalance = tokenBal.get(payItem.address || '')?.balance || 0;
+      newBalance = 0;
     }
 
     if (newBalance !== balance) setBalance(newBalance);

@@ -7,7 +7,7 @@ import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 import { getItemByIndex } from 'app/cache/item';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useTokens } from 'app/stores';
-import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
+import { TOKENS } from 'constants/tokens';
 import { getCompAddr } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/numbers';
 
@@ -15,7 +15,7 @@ export const TokenChecker: UIComponent = {
   id: 'TokenBalances',
   requirement: (layers) => {
       const { network } = layers;
-      const { actions, components } = network;
+      const { actions } = network;
 
       return merge(actions.Action.update$, interval(1500)).pipe(
         map(() => {
@@ -23,8 +23,8 @@ export const TokenChecker: UIComponent = {
           return {
             tokenAddresses: {
               // todo: dynamically query based on items with address?
-              onyx: getItemByIndex(world, components, ONYX_INDEX).address!,
-              eth: getItemByIndex(world, components, ETH_INDEX).address!,
+              onyx: TOKENS.ONYX.address,
+              eth: TOKENS.ETH.address,
             },
             spender: getCompAddr(world, components, 'component.token.allowance'),
             utils: {

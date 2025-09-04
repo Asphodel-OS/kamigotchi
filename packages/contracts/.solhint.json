@@ -13,6 +13,8 @@
     "no-console": "off",
     "no-empty-blocks": "off",
     "no-inline-assembly": "off",
-    "not-rely-on-time": "off"
+    "not-rely-on-time": "off",
+    "reason-string": "off",
+    "custom-errors": "off"
   }
 }
