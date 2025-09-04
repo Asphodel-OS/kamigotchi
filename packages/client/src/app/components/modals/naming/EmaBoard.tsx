@@ -1,21 +1,19 @@
+import { EntityID } from '@mud-classic/recs';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { EntityID } from '@mud-classic/recs';
 import { getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility } from 'app/stores';
-import { BalPair, useTokens } from 'app/stores/tokens';
+import { useVisibility } from 'app/stores';
 import { KamiIcon } from 'assets/images/icons/menu';
-import { HOLY_DUST_INDEX, ONYX_INDEX } from 'constants/items';
+import { HOLY_DUST_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami, NullKami } from 'network/shapes/Kami';
-import { getCompAddr } from 'network/shapes/utils';
-import { useEffect, useState } from 'react';
 import { Carousel } from './Carousel';
 import { Stage } from './Stage';
 
@@ -34,7 +32,6 @@ export const EmaBoardModal: UIComponent = {
           network,
           data: {
             accountEntity,
-            spender: getCompAddr(world, components, 'component.token.allowance'),
           },
           utils: {
             getAccount: () =>
@@ -53,11 +50,9 @@ export const EmaBoardModal: UIComponent = {
       })
     ),
   Render: ({ network, data, utils }) => {
-    const { accountEntity, spender } = data;
+    const { accountEntity } = data;
     const { actions, api } = network;
     const { getAccount, getItem, getKamis } = utils;
-    const { selectedAddress, apis: ownerAPIs } = useNetwork();
-    const { balances: tokenBals } = useTokens();
     const emaBoardVisible = useVisibility((s) => s.modals.emaBoard);
 
     const [tick, setTick] = useState(Date.now());
@@ -65,14 +60,11 @@ export const EmaBoardModal: UIComponent = {
     const [account, setAccount] = useState<Account>(NullAccount);
     const [selected, setSelected] = useState<Kami>(NullKami);
     const [holyDustItem, setHolyDustItem] = useState<Item>(NullItem);
-    const [onyxItem, setOnyxItem] = useState<Item>(NullItem);
-    const [onyxInfo, setOnyxInfo] = useState<BalPair>({ allowance: 0, balance: 0 });
 
     /////////////////
     // SUBSCRIPTIONS
 
     useEffect(() => {
-      setOnyxItem(getItem(ONYX_INDEX));
       setHolyDustItem(getItem(HOLY_DUST_INDEX));
 
       const refreshClock = () => setTick(Date.now());
@@ -89,11 +81,6 @@ export const EmaBoardModal: UIComponent = {
     /////////////////
     // ACTIONS
 
-    // approve the spend of an ERC20 token
-    const approveOnyxTx = (amt: number) => {
-      return;
-    };
-
     const renameTx = (kami: Kami, name: string) => {
       const actionID = uuid() as EntityID;
       actions.add({
@@ -108,22 +95,6 @@ export const EmaBoardModal: UIComponent = {
       return actionID;
     };
 
-    const onyxRenameTx = (kami: Kami, name: string) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      const actionID = uuid() as EntityID;
-      actions.add({
-        action: 'KamiOnyxRename',
-        params: [kami.id, name],
-        description: `Renaming ${kami.name} to ${name} with ONYX`,
-        execute: async () => {
-          return api.pet.onyx.rename(kami.id, name);
-        },
-      });
-      return actionID;
-    };
-
     return (
       <ModalWrapper
         id='emaBoard'
@@ -133,8 +104,8 @@ export const EmaBoardModal: UIComponent = {
         truncate
       >
         <Stage
-          actions={{ onyxApprove: approveOnyxTx, rename: renameTx, onyxRename: onyxRenameTx }}
-          data={{ account, kami: selected, onyxItem, holyDustItem, onyxInfo }}
+          actions={{ rename: renameTx }}
+          data={{ account, kami: selected, holyDustItem }}
           state={{ tick }}
           utils={utils}
         />
