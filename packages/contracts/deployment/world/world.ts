@@ -51,6 +51,9 @@ import {
   reviseSkills,
 } from './state';
 
+// TODO: rename this file to something that makes more sense
+// ('api.ts' would conflict with api/)
+
 export type WorldAPI = typeof WorldState.prototype.api;
 
 export type SubFunc = {
@@ -132,9 +135,9 @@ export class WorldState {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),
     } as SubFunc,
     portal: {
-      init: (indices?: number[]) => this.genCalls((api) => initTokens(api, indices)),
+      init: (indices: number[]) => this.genCalls((api) => initTokens(api, indices)),
       delete: (indices: number[]) => this.genCalls((api) => deleteTokens(api, indices)),
-    },
+    } as SubFunc,
     quests: {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices)),

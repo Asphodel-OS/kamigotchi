@@ -12,24 +12,24 @@ async function init(api: AdminAPI, entry: any) {
 }
 
 // register some items on the registry as token items
-export async function initTokens(api: AdminAPI, indices?: number[], all?: boolean) {
+// NOTE: this is defined this way because the scripts can handle single number inputs..
+export async function initTokens(api: AdminAPI, indices: number[]) {
   const tokensCSV = await getSheet('portal', 'tokens');
   if (!tokensCSV) return console.log('No portal/tokens.csv found');
-  if (indices && indices.length == 0) return console.log('No tokens given to initialize');
+
+  if (indices.length == 0) return console.log('No tokens given to initialize');
+  else if (indices.length > 1) return console.log(`More than one token provided`);
+  const index = indices[0];
+
   console.log('\n==INITIALIZING TOKENS==');
 
   // iterate through rows of items
   for (let i = 0; i < tokensCSV.length; i++) {
     const row = tokensCSV[i];
-    const index = Number(row['Index']);
+    if (Number(row['Item Index']) != index) continue;
 
-    // if indices are overridden skip any not included, otherwise check status
-    if (indices && indices.length > 0) {
-      if (!indices.includes(index)) continue;
-    }
-
-    // attempt item creation
     try {
+      console.log(`initializing item ${index} as token`);
       await init(api, row);
     } catch {
       console.error('Could not register token', index);

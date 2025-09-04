@@ -41,7 +41,7 @@ export async function initAll(api: AdminAPI) {
   // dependent
   await initAuctions(api);
   console.log('\n---------------------------------------------\n');
-  await initTokens(api);
+  await initTokens(api, [100]);
   console.log('\n---------------------------------------------\n');
   await initListings(api, undefined, true);
   console.log('\n---------------------------------------------\n');
