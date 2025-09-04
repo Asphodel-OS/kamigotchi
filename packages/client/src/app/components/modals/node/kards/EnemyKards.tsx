@@ -41,7 +41,7 @@ export const EnemyCards = ({
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
   };
   display: {
-    EnemyUseItemButton: (kami: Kami, account: Account, width?: number) => JSX.Element;
+    CastItemButton: (kami: Kami, account: Account, width?: number) => JSX.Element;
   };
   utils: {
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
@@ -181,7 +181,7 @@ export const EnemyCards = ({
   const getActions = (kami: Kami) => {
     const sharedWidth = 2.0;
     return [
-      display.EnemyUseItemButton(kami, account, sharedWidth),
+      display.CastItemButton(kami, account, sharedWidth),
       LiquidateButton(kami, allies, actions.liquidate, sharedWidth),
     ];
   };

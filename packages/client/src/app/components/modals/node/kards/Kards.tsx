@@ -28,7 +28,7 @@ export const Kards = ({
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => JSX.Element;
-    EnemyUseItemButton: (kami: Kami, account: Account, width?: number) => JSX.Element;
+    CastItemButton: (kami: Kami, account: Account) => JSX.Element;
   };
   utils: {
     getBonuses: (entity: EntityIndex) => BonusInstance[];
