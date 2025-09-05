@@ -1,4 +1,5 @@
 import { World } from '@mud-classic/recs';
+
 import { getConfigArray } from 'app/cache/config';
 import { Components } from 'network/components';
 import { getRoomByIndex, getAdjacentRoomIndices } from './functions';
@@ -40,6 +41,7 @@ const bfs = (
   const visited = new Set<number>([fromIndex]);
   const parent = new Map<number, number>();
 
+  // TODO: Consider gating logic for blocked rooms (Gates) in neighbor expansion.
   while (queue.length > 0) {
     const curr = queue.shift()!;
     const currRoom = getRoomByIndex(world, components, curr);
