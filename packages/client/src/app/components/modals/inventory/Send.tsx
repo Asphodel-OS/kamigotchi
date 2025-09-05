@@ -83,7 +83,7 @@ export const Send = ({
   }, [sendView]);
 
   useEffect(() => {
-    const id = setTimeout(() => setVisible(sendView), 300);
+    const id = setTimeout(() => setVisible(sendView), 200);
     return () => clearTimeout(id);
   }, [sendView]);
 
