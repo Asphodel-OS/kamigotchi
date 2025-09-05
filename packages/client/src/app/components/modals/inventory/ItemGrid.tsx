@@ -54,7 +54,7 @@ export const ItemGrid = ({
 
   // hide ItemGrid when sendView is true
   useEffect(() => {
-    const id = setTimeout(() => setVisible(!sendView), 300);
+    const id = setTimeout(() => setVisible(!sendView), 200);
     return () => clearTimeout(id);
   }, [sendView]);
 
