@@ -2,21 +2,30 @@ import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { ItemImages } from 'assets/images/items';
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = ({
-  data: {
-    musu,
-    obols,
-  },
+  data: { musu, obols, sendView, setSendView, setShuffle },
 }: {
   data: {
     musu: number;
     obols: number;
-  }
+    sendView: boolean;
+    setSendView: (view: boolean) => void;
+    setShuffle: (suffle: boolean) => void;
+  };
 }) => {
   const { modals, setModals } = useVisibility();
+
+  //toggles  views and activates
+  // and reactivates the shuffle animation
+  const triggerShuffle = () => {
+    setSendView(!sendView);
+    setTimeout(() => setShuffle(true), 100);
+    setTimeout(() => setShuffle(false), 500);
+  };
 
   return (
     <Container key='musu'>
@@ -31,7 +40,6 @@ export const MusuRow = ({
         >
           <IconButton
             img={ItemImages.musu}
-            text='Trades'
             onClick={() => setModals({ ...modals, trading: !modals.trading })}
             radius={0.9}
           />
@@ -39,11 +47,20 @@ export const MusuRow = ({
         {obols > 1 && (
           <IconButton
             img={ItemImages.obol}
-            text='Shop'
             onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
             radius={0.9}
           />
         )}
+        <TextTooltip
+          text={sendView === true ? ['Back to Inventory'] : ['Send Item']}
+          direction='row'
+        >
+          <IconButton
+            img={sendView === true ? ArrowIcons.left : ArrowIcons.right}
+            onClick={() => triggerShuffle()}
+            radius={0.9}
+          />
+        </TextTooltip>
       </Icons>
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
@@ -82,6 +99,7 @@ const Icons = styled.div`
   flex-flow: row nowrap;
   gap: 0.3vw;
 `;
+
 const Icon = styled.img`
   width: 1.8vw;
   height: 1.8vw;
