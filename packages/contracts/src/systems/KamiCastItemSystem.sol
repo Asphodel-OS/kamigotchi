@@ -35,6 +35,7 @@ contract KamiCastItemSystem is System {
 
     // standard logging and tracking
     LibItem.logUse(components, accID, itemIndex, 1, "ENEMY_KAMI");
+    LibItem.emitCastEvent(world, components, accID, kamiID, itemIndex);
     LibAccount.updateLastTs(components, accID);
 
     return "";
