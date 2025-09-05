@@ -6,13 +6,13 @@ const ONYX_ADDRESS = '0x4BaDFb501Ab304fF11217C44702bb9E9732E7CF4' as Address;
 export const TOKENS = {
   ETH: {
     address: ETH_ADDRESS,
-    name: 'Ethereum',
+    name: 'Ether',
     symbol: 'ETH',
     decimals: 18,
   },
   ONYX: {
     address: ONYX_ADDRESS,
-    name: 'ONYX',
+    name: 'Onyx',
     symbol: 'ONYX',
     decimals: 18,
   },

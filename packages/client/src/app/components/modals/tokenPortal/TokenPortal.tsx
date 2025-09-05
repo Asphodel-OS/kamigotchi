@@ -1,18 +1,20 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
-import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
 import { getAccount } from 'app/cache/account';
 import { getItem } from 'app/cache/item';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useTokens } from 'app/stores';
+import { useNetwork } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import { ONYX_INDEX } from 'constants/items';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { Receipt } from 'network/shapes/Portal';
-import { useEffect, useState } from 'react';
+import { getCompAddr } from 'network/shapes/utils';
+import { Controls } from './Controls';
 
 export const TokenPortalModal: UIComponent = {
   id: 'TokenPortal',
@@ -27,6 +29,7 @@ export const TokenPortalModal: UIComponent = {
           network,
           data: {
             accountEntity,
+            spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
           },
           utils: {
             getAccount: () => getAccount(world, components, accountEntity, { inventory: 2 }),
@@ -38,15 +41,15 @@ export const TokenPortalModal: UIComponent = {
     );
   },
   Render: ({ network, data, utils }) => {
-    const { actions, api } = network;
-    const { accountEntity } = data;
-    const { getItem, queryTokenItems } = utils;
+    const { actions } = network;
+    const { accountEntity, spenderAddr } = data;
+    const { getAccount, getItem, queryTokenItems } = utils;
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
-    const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
 
     const [options, setOptions] = useState<Item[]>([]);
     const [selected, setSelected] = useState<Item>(NullItem);
+    const [account, setAccount] = useState<Account>(NullAccount);
 
     useEffect(() => {
       const itemEntites = queryTokenItems();
@@ -58,8 +61,32 @@ export const TokenPortalModal: UIComponent = {
       else console.warn('no onyx item found');
     }, []);
 
+    useEffect(() => {
+      if (!accountEntity) return;
+      const account = getAccount(accountEntity);
+      setAccount(account);
+    }, [accountEntity]);
+
     /////////////////
     // ACTIONS
+
+    // approve the spend of an ERC20 token
+    // amt is in human readable units (e.g. 1eth = 1)
+    const approveTx = async (item: Item, amt: number) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'Approve token',
+        params: [item.token?.address, spenderAddr, amt],
+        description: `Approve ${amt} ${item.name} to be spent`,
+        execute: async () => {
+          return api.erc20.approve(item.token?.address!, spenderAddr, amt);
+        },
+      });
+    };
 
     const depositTx = async (item: Item, amt: number) => {
       const api = apis.get(selectedAddress);
@@ -72,7 +99,7 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenDeposit',
         params: [item.index, amt],
-        description: `Depositing ${tokenAmt.toFixed(scale)} $ONYX for ${amt} item`,
+        description: `Depositing ${tokenAmt.toFixed(scale)} $ONYX for ${amt} ${item.name}`,
         execute: async () => api.portal.ERC20.deposit(item.index, amt),
       });
     };
@@ -89,7 +116,7 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenWithdraw',
         params: [item.index, amt],
-        description: `Withdrawing ${amt} item for ${tokenAmt.toFixed(scale)} $ONYX`,
+        description: `Withdrawing ${amt} ${item.name} for ${tokenAmt.toFixed(scale)} $ONYX`,
         execute: async () => api.portal.ERC20.withdraw(item.index, amt),
       });
     };
@@ -136,19 +163,19 @@ export const TokenPortalModal: UIComponent = {
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
         ) : (
-          <div>
-            {onyxAllowance}
-            <div>{onyxBalance}</div>
-          </div>
+          <Controls
+            actions={{
+              approve: approveTx,
+              deposit: depositTx,
+              withdraw: withdrawTx,
+              claim: claimTx,
+              cancel: cancelTx,
+            }}
+            data={{ account, inventory: account.inventories ?? [] }}
+            state={{ selected, setSelected, options, setOptions }}
+          />
         )}
       </ModalWrapper>
     );
   },
 };
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 0.4vw;
-  padding: 0.6vw;
-`;

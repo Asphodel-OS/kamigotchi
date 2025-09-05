@@ -4,6 +4,7 @@ export type { Inventory } from './Inventory';
 export type { Item } from './Item';
 export type { Kami } from './Kami';
 export type { Node } from './Node';
+export type { Receipt } from './Portal';
 export type { Room } from './Room';
 export type { Trade } from './Trade';
 
