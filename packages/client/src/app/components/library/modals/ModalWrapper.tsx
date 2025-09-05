@@ -113,8 +113,7 @@ const Wrapper = styled.div<{
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
-  will-change: transform;
-  transform: translateY(0);
+
   ${({ isOpen, shuffle }) => css`
     animation: ${isOpen
         ? css`

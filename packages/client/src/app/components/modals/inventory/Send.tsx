@@ -196,7 +196,7 @@ export const Send = ({
 
   const handleSend = ([item]: Item[], [amt]: number[], targetAcc: Account | null) => {
     if (!targetAcc || !amt || !item) return;
-    const sendAction = sendItemsTx([item], [amt], targetAcc);
+    sendItemsTx([item], [amt], targetAcc);
   };
 
   /////////////////
