@@ -252,8 +252,12 @@ library LibHarvest {
     return getCompByID(components, StateCompID).eqString(id, "ACTIVE");
   }
 
+  function isHarvest(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibEntityType.isShape(components, id, "HARVEST");
+  }
+
   function verifyIsHarvest(IUintComp components, uint256 id) internal view {
-    if (!LibEntityType.isShape(components, id, "HARVEST")) revert("not a harvest");
+    if (!isHarvest(components, id)) revert("not a harvest");
   }
 
   /////////////////
