@@ -29,6 +29,7 @@ import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
 import { AnimationStudio } from './modals/studio/AnimationStudio';
+import { TokenPortalModal } from './modals/tokenPortal';
 import { TradingModal } from './modals/trading';
 import {
   AccountRegistrar,
@@ -136,7 +137,10 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: SettingsModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
-  
+  {
+    uiComponent: TokenPortalModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 20, rowEnd: 80 },
+  },
   {
     uiComponent: TradingModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },

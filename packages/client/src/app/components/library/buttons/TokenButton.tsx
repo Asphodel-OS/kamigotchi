@@ -13,11 +13,7 @@ import { ActionButton } from './ActionButton';
 // ActionButton wrapper for token approval/spend flows
 // Overrides onClick with approval flow if approval needed
 export const TokenButton = ({
-  network: {
-    actions,
-    world,
-    components,
-  },
+  network: { actions, world, components },
   token,
   amount,
   ...props
@@ -35,7 +31,7 @@ export const TokenButton = ({
   useEffect(() => {
     const allowAddress = getCompAddr(world, components, 'component.token.allowance');
     setSpender(utils.hexZeroPad(allowAddress, 20));
-  }, [network]);
+  }, [world, components]);
 
   useEffect(() => {
     const needsApproval = amount > (balances.get(token.token?.address || '')?.allowance || 0);

@@ -207,7 +207,7 @@ export const PartyModal: UIComponent = {
         params: [kamis[0].index],
         description: `Staking Kami ${kamis[0].index}`,
         execute: async () => {
-          return api.bridge.ERC721.kami.batch.stake(indices);
+          return api.portal.ERC721.kami.batch.stake(indices);
         },
       });
     };

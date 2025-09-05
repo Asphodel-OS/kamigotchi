@@ -53,8 +53,9 @@ export const KamiPortalModal: UIComponent = {
     const { actions } = network;
     const { kamiNFTAddress, account } = data;
     const { getAccountKamis, getKami, queryKamiByIndex } = utils;
-    const { selectedAddress, apis } = useNetwork();
-    const { modals } = useVisibility();
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const modals = useVisibility((s) => s.modals);
 
     const [worldKamis, setWorldKamis] = useState<Kami[]>([]);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
@@ -141,7 +142,7 @@ export const KamiPortalModal: UIComponent = {
         params: indices,
         description,
         execute: async () => {
-          return api.bridge.ERC721.kami.batch.stake(indices);
+          return api.portal.ERC721.kami.batch.stake(indices);
         },
       });
 
@@ -171,7 +172,7 @@ export const KamiPortalModal: UIComponent = {
         params: indices,
         description,
         execute: async () => {
-          return api.bridge.ERC721.kami.batch.unstake(indices);
+          return api.portal.ERC721.kami.batch.unstake(indices);
         },
       });
 
