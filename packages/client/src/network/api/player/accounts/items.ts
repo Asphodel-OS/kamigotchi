@@ -1,4 +1,4 @@
-import { BigNumberish } from '@ethersproject/bignumber';
+import type { BigNumberish } from '@ethersproject/bignumber';
 
 export const itemsAPI = (systems: any) => {
   /**
@@ -31,9 +31,21 @@ export const itemsAPI = (systems: any) => {
     return systems['system.account.use.item'].executeTyped(itemIndex, amt);
   };
 
+  /**
+   * @dev transfer  item(s)  from the player's inventory to another account
+   *
+   * @param itemIndex index of the item thats going to be transferred
+   * @param amt amount of the item thats going to be transferred
+   * @param accountID index of the account that will receive the item
+   */
+  const transfer = (itemIndex: number[], amt: number[], accountID: BigNumberish) => {
+    return systems['system.item.transfer'].executeTyped(itemIndex, amt, accountID);
+  };
+
   return {
     burn,
     craft,
     use,
+    transfer,
   };
 };

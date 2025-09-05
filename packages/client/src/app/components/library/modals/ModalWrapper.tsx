@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 import { Modals, useVisibility } from 'app/stores';
 import { ExitButton } from './ExitButton';
@@ -7,28 +7,29 @@ import { ExitButton } from './ExitButton';
 // ModalWrapper is an animated wrapper around all modals.
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = ({
-  id,
-  children,
-  header,
-  footer,
   canExit,
-  overlay,
+  children,
+  footer,
+  header,
+  id,
   noInternalBorder,
   noPadding,
-  truncate,
-  scrollBarColor,
+  onClose,
+  overlay,
   positionOverride,
+  scrollBarColor,
+  shuffle = false,
+  truncate,
 }: {
-  id: keyof Modals;
-  children: React.ReactNode;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
   canExit?: boolean;
-  overlay?: boolean;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  header?: React.ReactNode;
+  id: keyof Modals;
   noInternalBorder?: boolean;
   noPadding?: boolean;
-  truncate?: boolean;
-  scrollBarColor?: string;
+  onClose?: () => void;
+  overlay?: boolean;
   positionOverride?: {
     colStart: number;
     colEnd: number;
@@ -36,9 +37,25 @@ export const ModalWrapper = ({
     rowEnd: number;
     position: 'fixed' | 'absolute';
   };
+  scrollBarColor?: string;
+  shuffle?: boolean;
+  truncate?: boolean;
 }) => {
   const isVisible = useVisibility((s) => s.modals[id]);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
+  const [shouldDisplay, setShouldDisplay] = useState(false);
+
+  // execute cleaning func when modal closes
+  useEffect(() => {
+    if (isVisible) {
+      setShouldDisplay(true);
+    } else {
+      if (onClose) {
+        onClose();
+      }
+      setShouldDisplay(false);
+    }
+  }, [isVisible]);
 
   useEffect(() => {
     if (positionOverride) {
@@ -58,8 +75,8 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={isVisible} overlay={!!overlay} style={gridStyle}>
-      <Content isOpen={isVisible} truncate={truncate}>
+    <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
+      <Content isOpen={shouldDisplay} truncate={truncate}>
         {canExit && (
           <ButtonRow>
             <ExitButton divName={id} />
@@ -75,16 +92,38 @@ export const ModalWrapper = ({
   );
 };
 
+const Shuffle = keyframes`
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-200%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+`;
+
 // Wrapper is an invisible animated wrapper around all modals sans any frills.
 const Wrapper = styled.div<{
   isOpen: boolean;
   overlay: boolean;
+  shuffle: boolean;
 }>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
-  animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
   z-index: ${({ overlay }) => (overlay ? 2 : 0)};
 
+  ${({ isOpen, shuffle }) => css`
+    animation: ${isOpen
+        ? css`
+            ${fadeIn} 0.5s ease-in-out
+          `
+        : css`
+            ${fadeOut} 0.5s ease-in-out
+          `}
+      ${shuffle && css`, ${Shuffle} 0.4s ease-in-out`};
+  `}
   margin: 0.2vw;
   align-items: center;
   justify-content: center;
