@@ -37,6 +37,7 @@ import {
   TokenChecker,
   WalletConnecter,
 } from './validators';
+import { TravelModal } from './modals/travel';
 
 export const allComponents: UIComponentWithGrid[] = [
   // boot
@@ -114,87 +115,66 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: InventoryModal,
-    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: KamiModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
+    uiComponent: KamiPortalModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
+    uiComponent: LeaderboardModal,
+    gridConfig: { colStart: 40, colEnd: 60, rowStart: 20, rowEnd: 80 },
   },
   {
     uiComponent: MapModal,
-    gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 79 },
+    gridConfig: { colStart: 25, colEnd: 75, rowStart: 20, rowEnd: 80 },
+  },
+  {
+    uiComponent: MerchantModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
+    uiComponent: EmaBoardModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
   },
   {
     uiComponent: NodeModal,
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
   },
   {
+    uiComponent: ObolModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
     uiComponent: PartyModal,
-    gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 99 },
+    gridConfig: { colStart: 20, colEnd: 80, rowStart: 15, rowEnd: 85 },
   },
   {
     uiComponent: QuestModal,
-    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
-  },
-  {
-    uiComponent: SettingsModal,
-    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
-  },
-  {
-    uiComponent: TradingModal,
-    gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
-  },
-
-  // scene modals
-  {
-    uiComponent: DialogueModal,
-    gridConfig: { colStart: 2, colEnd: 67, rowStart: 75, rowEnd: 99 },
-  },
-  {
-    uiComponent: EmaBoardModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
-  },
-  {
-    uiComponent: FundOperator,
-    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 74 },
-  },
-  {
-    uiComponent: GachaModal,
-    gridConfig: { colStart: 11, colEnd: 89, rowStart: 8, rowEnd: 85 },
-  },
-  {
-    uiComponent: GoalModal,
-    gridConfig: { colStart: 20, colEnd: 80, rowStart: 24, rowEnd: 78 },
-  },
-  {
-    uiComponent: KamiPortalModal,
-    gridConfig: { colStart: 25, colEnd: 75, rowStart: 15, rowEnd: 99 },
-  },
-  {
-    uiComponent: KamiModal,
-    gridConfig: { colStart: 11, colEnd: 67, rowStart: 8, rowEnd: 99 },
-  },
-  {
-    uiComponent: LeaderboardModal,
-    gridConfig: { colStart: 32, colEnd: 70, rowStart: 20, rowEnd: 78 },
-  },
-  {
-    uiComponent: ObolModal,
-    gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
   },
   {
     uiComponent: RevealModal,
-    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 75 },
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 8, rowEnd: 99 },
   },
   {
-    uiComponent: MerchantModal,
-    gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+    uiComponent: SettingsModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
   },
-
-  // dev-only
-  ...(typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? [
-        {
-          uiComponent: AnimationStudio,
-          gridConfig: { colStart: 20, colEnd: 80, rowStart: 20, rowEnd: 80 },
-        },
-      ]
-    : []),
+  {
+    uiComponent: AnimationStudio,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
+    uiComponent: TradingModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+  },
+  {
+    uiComponent: TravelModal,
+    gridConfig: { colStart: 25, colEnd: 75, rowStart: 20, rowEnd: 80 },
+  },
 ];

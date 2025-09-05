@@ -10,6 +10,7 @@ import { getNodeByIndex } from 'app/cache/node';
 import { getRoomByIndex } from 'app/cache/room';
 import { EmptyText, ModalWrapper, UseItemButton, ActionButton, TextTooltip } from 'app/components/library';
 import { TravelConfirm } from '../travel/Confirm';
+import { useTravel } from 'app/stores/travel';
 import { findPathAndCost } from 'network/shapes/Room/path';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
@@ -124,18 +125,18 @@ export const NodeModal: UIComponent = {
         actions,
         api,
         world,
+        components,
         localSystems: { DTRevealer },
       } = network;
       const { getAccount, getNode } = utils;
       const { nodeIndex } = useSelected();
       const { modals, setModals } = useVisibility();
+      const { setTravel } = useTravel();
 
       const [account, setAccount] = useState<Account>(NullAccount);
       const [node, setNode] = useState<Node>(NullNode);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-      const [travelTarget, setTravelTarget] = useState<number | null>(null);
-      const [travelAccount, setTravelAccount] = useState<Account | null>(null);
-      const { components } = network;
+
 
       const getTravelStats = () => {
         const acc = getAccount();
@@ -269,9 +270,8 @@ export const NodeModal: UIComponent = {
                   disabled={travelStats.moves === 0}
                   onClick={() => {
                     const fresh = getAccount();
-                    setTravelAccount(fresh);
-                    setTravelTarget(node.index);
-                    setModals({ ...modals, travelConfirm: true });
+                    setTravel({ account: fresh, targetRoomIndex: node.index });
+                    setModals({ travelConfirm: true });
                   }}
                 />
               </TextTooltip>
@@ -290,18 +290,7 @@ export const NodeModal: UIComponent = {
             display={display}
             utils={utils}
           />
-          {travelTarget !== null && travelAccount && modals.travelConfirm && (
-            <TravelConfirm
-              network={network}
-              account={travelAccount}
-              targetRoomIndex={travelTarget}
-              onClose={() => {
-                setTravelTarget(null);
-                setTravelAccount(null);
-                setModals({ ...modals, travelConfirm: false });
-              }}
-            />
-          )}
+          {/* TravelConfirm is now rendered via top-level TravelModal */}
         </ModalWrapper>
         );
   },

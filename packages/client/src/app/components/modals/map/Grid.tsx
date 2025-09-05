@@ -20,8 +20,8 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
-import { TravelConfirm } from '../travel/Confirm';
-import { useLayers } from 'app/root/hooks/useLayers';
+import { useTravel } from 'app/stores/travel';
+// useLayers no longer needed after moving TravelConfirm to top-level
 import { useVisibility } from 'app/stores';
 
 type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
@@ -73,7 +73,6 @@ export const Grid = ({
     getValue: (entity: EntityIndex) => number;
   };
 }) => {
-  const { network } = useLayers();
   const { modals, setModals } = useVisibility();
   const {
     getKamiLocation,
@@ -88,10 +87,11 @@ export const Grid = ({
     getValue,
   } = utils;
 
+  const { setTravel } = useTravel();
+
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
   const [mode, setMode] = useState<Mode[]>(['MyKamis']);
-  const [travelTarget, setTravelTarget] = useState<number | null>(null);
 
   const rolls = useMemo(() => {
     const map = new Map<number, number>();
@@ -170,15 +170,13 @@ export const Grid = ({
     e.preventDefault();
     if (!room.index) return;
     if (!isRoomBlocked(room)) {
-      setTravelTarget(room.index);
-      setModals({ ...modals, travelConfirm: true });
+      setTravel({ targetRoomIndex: room.index, account });
+      setModals({ travelConfirm: true });
     }
   };
 
-  const closeTravelConfirm = () => {
-    setTravelTarget(null);
-    setModals({ ...modals, travelConfirm: false });
-  };
+
+  // close handled by top-level TravelModal
 
   // updates the stats for a room and set it as the hovered room
   const updateRoomStats = (roomIndex: number) => {
@@ -309,14 +307,7 @@ export const Grid = ({
           </Row>
         ))}
       </Overlay>
-      {travelTarget && modals.travelConfirm && network && (
-        <TravelConfirm
-          network={network}
-          account={account}
-          targetRoomIndex={travelTarget}
-          onClose={closeTravelConfirm}
-        />
-      )}
+      {/* TravelConfirm is now rendered via top-level TravelModal */}
     </Container>
   );
 };
