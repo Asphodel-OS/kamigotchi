@@ -1,3 +1,4 @@
+import CastIcon from './cast.png';
 import ChatIcon from './chat.png';
 import CollectIcon from './collect.png';
 import CraftIcon from './crafting.png';
@@ -12,6 +13,7 @@ import StopIcon from './stop.png';
 import UseIcon from './use.png';
 
 export {
+  CastIcon,
   ChatIcon,
   CollectIcon,
   CraftIcon,
@@ -27,6 +29,7 @@ export {
 };
 
 export const ActionIcons = {
+  cast: CastIcon,
   chat: ChatIcon,
   collect: CollectIcon,
   craft: CraftIcon,

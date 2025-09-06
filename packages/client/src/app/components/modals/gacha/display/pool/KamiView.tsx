@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, KamiBlock, TextTooltip } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/stores';
+import { useVisibility } from 'app/stores';
 import { Auction } from 'network/shapes/Auction';
 import { KamiStats } from 'network/shapes/Kami';
 import { Kami } from 'network/shapes/Kami/types';
@@ -45,8 +45,7 @@ export const KamiView = ({
   const { tick } = state;
   const { getKami } = utils;
 
-  const { kamiIndex, setKami } = useSelected();
-  const { modals, setModals } = useVisibility();
+  const gachaModalOpen = useVisibility((s) => s.modals.gacha);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [filtered, setFiltered] = useState<Kami[]>([]);
@@ -56,14 +55,14 @@ export const KamiView = ({
 
   // filter (and implicitly populate) the pool of kamis on initial lod
   useEffect(() => {
-    if (isLoaded || isLoading || !modals.gacha) return;
+    if (isLoaded || isLoading || !gachaModalOpen) return;
     setIsLoading(true);
     loadKamis();
-  }, [modals.gacha]);
+  }, [gachaModalOpen]);
 
   // when the entities or filters change, update the list of filtered kamis
   useEffect(() => {
-    const isOpen = modals.gacha && isVisible;
+    const isOpen = gachaModalOpen && isVisible;
     if (isOpen) filterKamis();
   }, [filters, entities.length]);
 
@@ -74,7 +73,7 @@ export const KamiView = ({
       container.addEventListener('scroll', handleScroll);
       return () => container.removeEventListener('scroll', handleScroll);
     }
-  }, [filtered.length, limit, modals.gacha]);
+  }, [filtered.length, limit, gachaModalOpen]);
 
   //////////////////
   // INTERACTION

@@ -59,7 +59,7 @@ export const Feed = ({
   };
 }) => {
   const { getAccount, getEntityIndex, getKami, getRoomByIndex } = utils;
-  const { modals } = useVisibility();
+  const chatModalVisible = useVisibility((s) => s.modals.chat);
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
   const [feedData, setFeedData] = useState<String[]>([]);
   const [isPolling, setIsPolling] = useState(false);
@@ -221,7 +221,7 @@ export const Feed = ({
 
     node.scrollTop = scrollHeight;
     setScrollDown(false);
-  }, [scrollDown, player.roomIndex, activeTab, modals.chat]);
+  }, [scrollDown, player.roomIndex, activeTab, chatModalVisible]);
 
   /////////////////
   // RENDER

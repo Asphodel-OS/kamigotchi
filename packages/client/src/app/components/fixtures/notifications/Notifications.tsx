@@ -23,7 +23,8 @@ export const NotificationFixture: UIComponent = {
       );
   },
   Render: ({ notifications, list }) => {
-      const { fixtures, modals, setModals } = useVisibility();
+      const notificationsVisible = useVisibility((s) => s.fixtures.notifications);
+      const setModals = useVisibility((s) => s.setModals);
 
       /////////////////
       // INTERACTION
@@ -59,7 +60,7 @@ export const NotificationFixture: UIComponent = {
       };
 
       const isVisible = () => {
-        return fixtures.notifications && list.length > 0;
+        return notificationsVisible && list.length > 0;
       };
 
       /////////////////

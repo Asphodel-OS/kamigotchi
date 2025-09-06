@@ -62,7 +62,7 @@ export const AccountModal: UIComponent = {
     const { getAccount } = utils;
     const { account: player } = useAccount();
     const accountIndex = useSelected((s) => s.accountIndex);
-    const { modals } = useVisibility();
+    const accountModalVisible = useVisibility((s) => s.modals.account);
     const { selectedAddress, apis } = useNetwork();
 
     const [subTab, setSubTab] = useState('frens'); //  frens | requests | blocked
@@ -77,7 +77,7 @@ export const AccountModal: UIComponent = {
 
     // update data of the selected account when account index or data changes
     useEffect(() => {
-      if (!modals.account) return;
+      if (!accountModalVisible) return;
       const accountEntity = queryAccountByIndex(components, accountIndex);
       const account = getAccount(accountEntity ?? (0 as EntityIndex));
       setAccount(account);
@@ -89,7 +89,7 @@ export const AccountModal: UIComponent = {
       setIsSelf(isSelf);
       if (isSelf) setSubTab('frens');
       setTab('stats');
-    }, [accountIndex, modals.account]);
+    }, [accountIndex, accountModalVisible]);
 
     /////////////////
     // INTERACTION

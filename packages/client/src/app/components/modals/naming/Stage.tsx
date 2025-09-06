@@ -47,7 +47,7 @@ export const Stage = ({
   const { account, kami, onyxInfo, onyxItem, holyDustItem } = data;
   const { tick } = state;
   const { getItemBalance } = utils;
-  const { modals } = useVisibility();
+  const emaBoardVisible = useVisibility((s) => s.modals.emaBoard);
 
   const [holyBalance, setHolyBalance] = useState(0);
   const [name, setName] = useState('');
@@ -59,9 +59,9 @@ export const Stage = ({
   }, [tick]);
 
   useEffect(() => {
-    if (!modals.emaBoard) return;
-    if (kami.index === 0 || modals.emaBoard) setName('');
-  }, [kami.index, modals.emaBoard]);
+    if (!emaBoardVisible) return;
+    if (kami.index === 0 || emaBoardVisible) setName('');
+  }, [kami.index, emaBoardVisible]);
 
   /////////////////
   // INTERPRETATION
@@ -141,12 +141,14 @@ export const Stage = ({
           />
         </TextTooltip>
         <KamiBlock kami={kami} />
-        <TextTooltip text={getOnyxTooltip()}>
+        <TextTooltip
+          text={['Onyx features are temporarily disabled', 'in anticipation of things to come.']}
+        >
           <IconButton
             img={onyxItem.image}
             scale={3.3}
             onClick={handleOnyxClick}
-            disabled={isOnyxDisabled()}
+            disabled={true}
             shadow
           />
         </TextTooltip>

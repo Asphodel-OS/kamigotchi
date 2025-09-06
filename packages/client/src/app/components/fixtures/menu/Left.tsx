@@ -27,10 +27,10 @@ export const LeftMenuFixture: UIComponent = {
       })
     ),
   Render: ({ nodeEntity }) => {
-    const { fixtures } = useVisibility();
+    const menuVisible = useVisibility((s) => s.fixtures.menu);
 
     return (
-      <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+      <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
         <AccountMenuButton />
         <PartyMenuButton />
         <MapMenuButton />

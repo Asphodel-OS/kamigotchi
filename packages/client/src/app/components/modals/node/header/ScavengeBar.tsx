@@ -23,7 +23,7 @@ export const ScavengeBar = ({
   };
 }) => {
   const { getPoints, queryScavInstance } = utils;
-  const { modals } = useVisibility();
+  const nodeModalVisible = useVisibility((s) => s.modals.node);
 
   const [lastSync, setLastSync] = useState(Date.now());
   const [points, setPoints] = useState(0);
@@ -42,9 +42,9 @@ export const ScavengeBar = ({
 
   // periodically update the number of rolls and points if modal is open
   useEffect(() => {
-    if (!modals.node || !scavenge) return;
+    if (!nodeModalVisible || !scavenge) return;
     update();
-  }, [lastSync, scavenge.index]);
+  }, [lastSync, scavenge.index, nodeModalVisible]);
 
   const update = () => {
     const instanceEntity = queryScavInstance();

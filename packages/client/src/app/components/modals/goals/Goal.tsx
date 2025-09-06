@@ -60,8 +60,8 @@ export const GoalModal: UIComponent = {
       const { actions, api, world, components } = network;
       const { account } = data;
       const { canContribute, getContribution, getContributions } = utils;
-      const { modals } = useVisibility();
-      const { goalIndex } = useSelected(); // only support 1 goal type for now
+      const goalModalOpen = useVisibility((s) => s.modals.goal);
+      const goalIndex = useSelected((s) => s.goalIndex); // only support 1 goal type for now
 
       const [tab, setTab] = useState('GOAL');
       const [step, setStep] = useState(0);
@@ -71,7 +71,7 @@ export const GoalModal: UIComponent = {
 
       // update details based on selected
       useEffect(() => {
-        if (!modals.goal) return;
+        if (!goalModalOpen) return;
         const goal = getGoalByIndex(world, components, goalIndex[0]);
         setGoal(goal);
 
@@ -80,7 +80,7 @@ export const GoalModal: UIComponent = {
 
         const contributions = getContributions(goal);
         setScores(contributions);
-      }, [goalIndex, modals.goal, step, account.coin]);
+      }, [goalIndex, goalModalOpen, step, account.coin]);
 
       /////////////////
       // INTERACTIONS

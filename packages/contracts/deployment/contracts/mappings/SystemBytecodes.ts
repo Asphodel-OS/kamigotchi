@@ -17,6 +17,7 @@ import _RoomRegistrySystem from "../../../out/_RoomRegistrySystem.sol/_RoomRegis
 import _SkillRegistrySystem from "../../../out/_SkillRegistrySystem.sol/_SkillRegistrySystem.json";
 import _SnapshotT2System from "../../../out/_SnapshotT2System.sol/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../../../out/_TraitRegistrySystem.sol/_TraitRegistrySystem.json";
+import _TriggerCompEventSystem from "../../../out/_TriggerCompEventSystem.sol/_TriggerCompEventSystem.json";
 import _WorldWhitelistSystem from "../../../out/_WorldWhitelistSystem.sol/_WorldWhitelistSystem.json";
 import AccountMoveSystem from "../../../out/AccountMoveSystem.sol/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../out/AccountRegisterSystem.sol/AccountRegisterSystem.json";
@@ -49,6 +50,7 @@ import Kami721IsInWorldSystem from "../../../out/Kami721IsInWorldSystem.sol/Kami
 import Kami721MetadataSystem from "../../../out/Kami721MetadataSystem.sol/Kami721MetadataSystem.json";
 import Kami721StakeSystem from "../../../out/Kami721StakeSystem.sol/Kami721StakeSystem.json";
 import Kami721UnstakeSystem from "../../../out/Kami721UnstakeSystem.sol/Kami721UnstakeSystem.json";
+import KamiCastItemSystem from "../../../out/KamiCastItemSystem.sol/KamiCastItemSystem.json";
 import KamiGachaMintSystem from "../../../out/KamiGachaMintSystem.sol/KamiGachaMintSystem.json";
 import KamiGachaRerollSystem from "../../../out/KamiGachaRerollSystem.sol/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../../../out/KamiGachaRevealSystem.sol/KamiGachaRevealSystem.json";
@@ -91,6 +93,7 @@ export const SystemBytecodes = {
   "system.skill.registry": _SkillRegistrySystem,
   "system.setup.snapshot.t2": _SnapshotT2System,
   "system.trait.registry": _TraitRegistrySystem,
+  "system.test.comp.event": _TriggerCompEventSystem,
   "system.world.whitelist.set": _WorldWhitelistSystem,
   "system.account.move": AccountMoveSystem,
   "system.account.register": AccountRegisterSystem,
@@ -123,6 +126,7 @@ export const SystemBytecodes = {
   "system.Kami721.Metadata": Kami721MetadataSystem,
   "system.kami721.stake": Kami721StakeSystem,
   "system.kami721.unstake": Kami721UnstakeSystem,
+  "system.kami.cast.item": KamiCastItemSystem,
   "system.kami.gacha.mint": KamiGachaMintSystem,
   "system.kami.gacha.reroll": KamiGachaRerollSystem,
   "system.kami.gacha.reveal": KamiGachaRevealSystem,

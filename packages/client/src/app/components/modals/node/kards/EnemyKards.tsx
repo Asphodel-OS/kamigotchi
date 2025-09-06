@@ -27,6 +27,7 @@ export const EnemyCards = ({
   enemyEntities,
   limit,
   actions,
+  display,
   utils,
 }: {
   account: Account;
@@ -39,14 +40,20 @@ export const EnemyCards = ({
   actions: {
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
   };
+  display: {
+    CastItemButton: (kami: Kami, account: Account, width?: number) => JSX.Element;
+  };
   utils: {
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
   };
 }) => {
   const { getOwner, getKami } = utils;
-  const { modals, setModals } = useVisibility();
-  const { accountIndex, setAccount, nodeIndex } = useSelected();
+  const accountModalOpen = useVisibility((s) => s.modals.account);
+  const setModals = useVisibility((s) => s.setModals);
+  const accountIndex = useSelected((s) => s.accountIndex);
+  const setAccount = useSelected((s) => s.setAccount);
+  const nodeIndex = useSelected((s) => s.nodeIndex);
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -171,9 +178,12 @@ export const EnemyCards = ({
     return description;
   };
 
-  // doing this for a bit of testing sanity
   const getActions = (kami: Kami) => {
-    return [LiquidateButton(kami, allies, actions.liquidate)];
+    const sharedWidth = 2.0;
+    return [
+      display.CastItemButton(kami, account, sharedWidth),
+      LiquidateButton(kami, allies, actions.liquidate, sharedWidth),
+    ];
   };
 
   /////////////////
@@ -181,7 +191,7 @@ export const EnemyCards = ({
 
   // toggle the node modal to the selected one
   const selectAccount = (index: number) => {
-    if (!modals.account) setModals({ account: true, party: false, map: false });
+    if (!accountModalOpen) setModals({ account: true, party: false, map: false });
     if (accountIndex !== index) setAccount(index);
     playClick();
   };

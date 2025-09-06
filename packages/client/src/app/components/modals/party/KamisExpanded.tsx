@@ -20,8 +20,7 @@ import { Node, NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { useState } from 'react';
-import { TravelConfirm } from '../travel/Confirm';
-import { useLayers } from 'app/root/hooks/useLayers';
+import { useTravel } from 'app/stores/travel';
 
 const ONYX_REVIVE_PRICE = 3;
 export const KamisExpanded = ({
@@ -59,21 +58,11 @@ export const KamisExpanded = ({
 
   isVisible: boolean;
 }) => {
-  const { modals, setModals } = useVisibility();
-  const { nodeIndex, setNode: setSelectedNode } = useSelected(); // node selected by user
-  const { network } = useLayers();
-
-  const [travelTarget, setTravelTarget] = useState<number | null>(null);
-
-  const openTravelConfirm = (roomIndex: number) => {
-    setTravelTarget(roomIndex);
-    setModals({ travelConfirm: true });
-  };
-
-  const closeTravelConfirm = () => {
-    setTravelTarget(null);
-    setModals({ travelConfirm: false });
-  };
+  const nodeModalOpen = useVisibility((s) => s.modals.node);
+  const setModals = useVisibility((s) => s.setModals);
+  const nodeIndex = useSelected((s) => s.nodeIndex);
+  const setSelectedNode = useSelected((s) => s.setNode);
+  const { setTravel } = useTravel();
 
   /////////////////
   // INTERPRETATION
@@ -141,7 +130,7 @@ export const KamisExpanded = ({
   // toggle the node modal to the selected one
   const selectNode = (index: number) => {
     if (nodeIndex !== index) setSelectedNode(index);
-    if (!modals.node) setModals({ node: true });
+    if (!nodeModalOpen) setModals({ node: true });
     else if (nodeIndex == index) setModals({ node: false });
     playClick();
   };
@@ -150,7 +139,12 @@ export const KamisExpanded = ({
   const getDescriptionOnClick = (kami: Kami) => {
     if (isHarvesting(kami)) {
       const idx = kami.harvest?.node?.index;
-      if (idx) return () => openTravelConfirm(idx);
+      if (idx) {
+        return () => {
+          setTravel({ account, targetRoomIndex: idx });
+          setModals({ travelConfirm: true });
+        };
+      }
     }
   };
 
@@ -189,7 +183,8 @@ export const KamisExpanded = ({
           kami={kami}
           onyx={{ ...onyx, price: ONYX_REVIVE_PRICE }}
           actions={{ onyxApprove, onyxUse: onyxRevive }}
-          tooltip={getOnyxTooltip(kami)}
+          tooltip={['Onyx features are temporarily disabled', 'in anticipation of things to come.']}
+          disabled={true}
         />
       );
     }
@@ -205,11 +200,13 @@ export const KamisExpanded = ({
           description={getDescription(kami)}
           descriptionOnClick={getDescriptionOnClick(kami)}
           subtext={getSubtext(kami)}
-          subtextOnClick={() =>
-            isHarvesting(kami) && kami.harvest?.node?.index
-              ? openTravelConfirm(kami.harvest.node.index)
-              : undefined
-          }
+          subtextOnClick={() => {
+            const idx = kami.harvest?.node?.index;
+            if (isHarvesting(kami) && idx) {
+              setTravel({ account, targetRoomIndex: idx });
+              setModals({ travelConfirm: true });
+            }
+          }}
           actions={DisplayedActions(account, kami, node)}
           showBattery
           showCooldown
@@ -218,14 +215,6 @@ export const KamisExpanded = ({
           utils={utils}
         />
       ))}
-      {travelTarget && network && (
-        <TravelConfirm
-          network={network}
-          account={account}
-          targetRoomIndex={travelTarget}
-          onClose={closeTravelConfirm}
-        />
-      )}
     </Container>
   );
 };

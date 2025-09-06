@@ -84,7 +84,7 @@ export const Sidebar = ({
   const { tick, quantity, setQuantity } = state;
   const { getItem, getItemBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
-  const { modals } = useVisibility();
+  const gachaModalVisible = useVisibility((s) => s.modals.gacha);
 
   const [payItem, setPayItem] = useState<Item>(NullItem);
   const [saleItem, setSaleItem] = useState<Item>(NullItem);
@@ -96,22 +96,22 @@ export const Sidebar = ({
 
   // update context when changed
   useEffect(() => {
-    if (!modals.gacha) return;
+    if (!gachaModalVisible) return;
     updatePayItem();
     updateSaleItem();
     setQuantity(1); // default to 1 on context switch
-  }, [modals.gacha, tab, mode]);
+  }, [gachaModalVisible, tab, mode]);
 
   // maybe consider controlling this hook and the one below with a dedicated payItem vs buyItem
   useEffect(() => {
-    if (!modals.gacha) return;
+    if (!gachaModalVisible) return;
     updatePrice();
-  }, [tab, mode, quantity, tick]);
+  }, [gachaModalVisible, tab, mode, quantity, tick]);
 
   useEffect(() => {
-    if (!modals.gacha) return;
+    if (!gachaModalVisible) return;
     updateBalance();
-  }, [payItem, tick]);
+  }, [gachaModalVisible, payItem, tick]);
 
   /////////////////
   // STATE

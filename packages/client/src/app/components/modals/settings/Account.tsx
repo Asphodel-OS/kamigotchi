@@ -7,7 +7,7 @@ import { abbreviateAddress } from 'utils/address';
 
 export const Account = () => {
   const { account: kamiAccount } = useAccount();
-  const { modals, setModals } = useVisibility();
+  const setModals = useVisibility((s) => s.setModals);
   const { exportWallet } = usePrivy();
 
   const FieldRow = (label: string, value: string) => {

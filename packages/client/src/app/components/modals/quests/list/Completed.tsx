@@ -26,7 +26,7 @@ export const CompletedQuests = ({
   isVisible: boolean;
 }) => {
   const { describeEntity, populate, getItemBalance } = utils;
-  const { modals } = useVisibility();
+  const questsModalVisible = useVisibility((s) => s.modals.quests);
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [lastUpdate, setLastUpdate] = useState(0);
 
@@ -38,8 +38,8 @@ export const CompletedQuests = ({
   // update when this tab is opened or data changes if stale
   useEffect(() => {
     const isStale = Date.now() - lastUpdate > STALE_TIME;
-    if (modals.quests && isVisible && isStale) update();
-  }, [modals.quests, isVisible]);
+    if (questsModalVisible && isVisible && isStale) update();
+  }, [questsModalVisible, isVisible]);
 
   const update = async () => {
     const fullQuests = quests.map((q) => populate(q));

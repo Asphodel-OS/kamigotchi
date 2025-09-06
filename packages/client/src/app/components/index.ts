@@ -129,6 +129,7 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: LeaderboardModal,
     gridConfig: { colStart: 40, colEnd: 60, rowStart: 20, rowEnd: 80 },
   },
+  
   {
     uiComponent: MapModal,
     gridConfig: { colStart: 25, colEnd: 75, rowStart: 20, rowEnd: 80 },

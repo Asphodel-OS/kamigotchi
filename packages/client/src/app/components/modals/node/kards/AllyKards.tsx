@@ -12,16 +12,9 @@ import { playClick } from 'utils/sounds';
 export const AllyKards = ({
   account,
   kamis,
-  actions: {
-    collect,
-    stop,
-  },
-  display: {
-    UseItemButton,
-  },
-  utils: {
-    getTempBonuses,
-  },
+  actions: { collect, stop },
+  display: { UseItemButton },
+  utils: { getTempBonuses },
 }: {
   account: Account;
   kamis: Kami[]; // ally kami entities
@@ -85,7 +78,7 @@ export const AllyKards = ({
             ]}
             showBattery
             showCooldown
-            utils={{ getTempBonuses, calcExpRequirement }}
+            utils={{ getTempBonuses }}
           />
         ))}
     </Container>

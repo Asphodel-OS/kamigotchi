@@ -9,12 +9,12 @@ import { getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoomByIndex } from 'app/cache/room';
 import { EmptyText, ModalWrapper, UseItemButton, ActionButton, TextTooltip } from 'app/components/library';
-import { TravelConfirm } from '../travel/Confirm';
+import { CastItemButton } from 'app/components/library/buttons/actions';
 import { useTravel } from 'app/stores/travel';
 import { findPathAndCost } from 'network/shapes/Room/path';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
-import { FeedIcon } from 'assets/images/icons/actions';
+import { CastIcon, FeedIcon } from 'assets/images/icons/actions';
 import {
   Account,
   NullAccount,
@@ -83,6 +83,8 @@ export const NodeModal: UIComponent = {
           display: {
             UseItemButton: (kami: Kami, account: Account) =>
               UseItemButton(network, kami, account, FeedIcon),
+            CastItemButton: (kami: Kami, account: Account) =>
+              CastItemButton(network, kami, account, CastIcon),
           },
           utils: {
             getAccount: () => getAccount(world, components, accountEntity, accountRefreshOptions),
@@ -129,14 +131,18 @@ export const NodeModal: UIComponent = {
         localSystems: { DTRevealer },
       } = network;
       const { getAccount, getNode } = utils;
-      const { nodeIndex } = useSelected();
-      const { modals, setModals } = useVisibility();
+
+      // perf selectors from dev
+      const nodeIndex = useSelected((s) => s.nodeIndex);
+      const nodeModalOpen = useVisibility((s) => s.modals.node);
+      const setModals = useVisibility((s) => s.setModals);
+
+      // travel store
       const { setTravel } = useTravel();
 
       const [account, setAccount] = useState<Account>(NullAccount);
       const [node, setNode] = useState<Node>(NullNode);
       const [lastRefresh, setLastRefresh] = useState(Date.now());
-
 
       const getTravelStats = () => {
         const acc = getAccount();
@@ -153,9 +159,9 @@ export const NodeModal: UIComponent = {
 
       // refresh account data whenever the modal is opened
       useEffect(() => {
-        if (!modals.node) return;
+        if (!nodeModalOpen) return;
         setAccount(getAccount());
-      }, [modals.node, lastRefresh]);
+      }, [nodeModalOpen, lastRefresh]);
 
       // updates from selected Node updates
       useEffect(() => {
@@ -290,7 +296,6 @@ export const NodeModal: UIComponent = {
             display={display}
             utils={utils}
           />
-          {/* TravelConfirm is now rendered via top-level TravelModal */}
         </ModalWrapper>
         );
   },

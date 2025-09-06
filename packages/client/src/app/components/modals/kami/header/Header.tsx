@@ -31,8 +31,8 @@ export const Header = ({
   };
 }) => {
   const { account, kami, owner } = data;
-  const { setAccount } = useSelected();
-  const { setModals } = useVisibility();
+  const setAccount = useSelected((s) => s.setAccount);
+  const setModals = useVisibility((s) => s.setModals);
 
   const isMine = () => {
     return owner.index == account.index;

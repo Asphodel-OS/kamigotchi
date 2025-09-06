@@ -15,7 +15,10 @@ export const UseItemButton = (
   network: NetworkLayer,
   kami: Kami,
   account: Account,
-  icon: string
+  icon: string,
+  width?: number,
+  iconInsetXpx?: number,
+  iconInsetYpx?: number
 ) => {
   const { actions, api, components, world } = network;
 
@@ -45,7 +48,13 @@ export const UseItemButton = (
 
   return (
     <TextTooltip key='feed-tooltip' text={[tooltip]}>
-      <IconListButton img={icon} options={options} disabled={disabled} />
+      <IconListButton
+        img={icon}
+        options={options}
+        disabled={disabled}
+        width={width}
+        icon={{ inset: { x: iconInsetXpx, y: iconInsetYpx } }}
+      />
     </TextTooltip>
   );
 };

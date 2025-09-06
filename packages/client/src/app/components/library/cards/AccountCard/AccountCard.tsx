@@ -24,8 +24,9 @@ export const AccountCard = ({
   subtextOnClick?: () => void;
   actions?: React.ReactNode;
 }) => {
-  const { modals, setModals } = useVisibility();
-  const { setAccount } = useSelected();
+  const accountModalOpen = useVisibility((s) => s.modals.account);
+  const setModals = useVisibility((s) => s.setModals);
+  const setAccount = useSelected((s) => s.setAccount);
 
   // ticking
   const [_, setLastRefresh] = useState(Date.now());
@@ -45,7 +46,7 @@ export const AccountCard = ({
   // toggle the kami modal settings depending on its current state
   const handleClick = () => {
     setAccount(account.index);
-    if (!modals.account) setModals({ account: true });
+    if (!accountModalOpen) setModals({ account: true });
     playClick();
   };
 

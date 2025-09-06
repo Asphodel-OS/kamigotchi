@@ -70,8 +70,11 @@ export const AccountRegistrar: UIComponent = {
         apis,
         validations: networkValidations,
       } = useNetwork();
-      const { toggleModals, toggleFixtures } = useVisibility();
-      const { validators, setValidators } = useVisibility();
+      const toggleModals = useVisibility((s) => s.toggleModals);
+      const toggleFixtures = useVisibility((s) => s.toggleFixtures);
+      const accountRegistrarVisible = useVisibility((s) => s.validators.accountRegistrar);
+      const walletConnectorVisible = useVisibility((s) => s.validators.walletConnector);
+      const setValidators = useVisibility((s) => s.setValidators);
       const { validations, setValidations } = useAccount();
       const { setAccount } = useAccount();
 
@@ -102,7 +105,7 @@ export const AccountRegistrar: UIComponent = {
           toggleFixtures(true);
         }
 
-        if (isVisible != validators.accountRegistrar) {
+        if (isVisible != accountRegistrarVisible) {
           setValidators({
             walletConnector: false,
             accountRegistrar: isVisible,
@@ -110,7 +113,7 @@ export const AccountRegistrar: UIComponent = {
             gasHarasser: false,
           });
         }
-      }, [networkValidations, validations.accountExists, validators.walletConnector]);
+      }, [networkValidations, validations.accountExists, walletConnectorVisible]);
 
       /////////////////
       // ACTION

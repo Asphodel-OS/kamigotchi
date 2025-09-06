@@ -23,7 +23,15 @@ interface ShaderStackProps {
 }
 
 // A single WebGL canvas rendering multiple full-screen shader layers in order.
-// This avoids spinning up multiple WebGL contexts for stacked effects.
+let ACTIVE_CONTEXTS = 0;
+const MAX_CONTEXTS = 8; // conservative; tune as needed
+const tryAcquireContext = () => {
+  if (ACTIVE_CONTEXTS >= MAX_CONTEXTS) return false;
+  ACTIVE_CONTEXTS += 1;
+  return true;
+};
+const releaseContext = () => { if (ACTIVE_CONTEXTS > 0) ACTIVE_CONTEXTS -= 1; };
+
 export const ShaderStack: React.FC<ShaderStackProps> = ({
   layers,
   className,
@@ -41,20 +49,54 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
   const materialsRef = useRef<THREE.ShaderMaterial[]>([]);
   const meshRef = useRef<THREE.Mesh | null>(null);
   const frameRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number>(performance.now());
+  // Set lazily in the render loop to avoid SSR "performance is undefined"
+  const startTimeRef = useRef<number>(0);
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const ioRef = useRef<IntersectionObserver | null>(null);
+  const contextAcquiredRef = useRef<boolean>(false);
 
   const init = () => {
     const container = containerRef.current;
     if (!container || rendererRef.current) return;
+
+    if (!tryAcquireContext()) return;
+    contextAcquiredRef.current = true;
 
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: transparent, powerPreference: 'high-performance' });
     renderer.autoClear = false;
     renderer.setClearColor(0x000000, transparent ? 0 : 1);
     rendererRef.current = renderer;
     container.appendChild(renderer.domElement);
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+    };
+    const handleContextRestored = () => {
+      if (resizeObserverRef.current && containerRef.current) {
+        const r = rendererRef.current;
+        if (r) {
+          const dpr = Math.min(window.devicePixelRatio || 1, capDevicePixelRatio);
+          const width = containerRef.current.clientWidth || 1;
+          const height = containerRef.current.clientHeight || 1;
+          r.setPixelRatio(dpr);
+          r.setSize(width, height, false);
+          for (const mat of materialsRef.current) {
+            const u = mat.uniforms;
+            if (u.iResolution) u.iResolution.value.set(width, height, dpr);
+            (mat as any).needsUpdate = true;
+          }
+        }
+      }
+    };
+    renderer.domElement.addEventListener('webglcontextlost', handleContextLost as EventListener, false);
+    renderer.domElement.addEventListener('webglcontextrestored', handleContextRestored as EventListener, false);
+    // Stash handlers for cleanup
+    (renderer as any).userData ??= {};
+    (renderer as any).userData.__ctxHandlers = {
+      lost: handleContextLost as EventListener,
+      restored: handleContextRestored as EventListener,
+    };
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -123,6 +165,13 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     for (const m of materialsRef.current) m.dispose();
     materialsRef.current = [];
     if (renderer) {
+      const el = renderer.domElement;
+      const ctx = (renderer as any).userData?.__ctxHandlers;
+      if (el && ctx) {
+        if (ctx.lost) el.removeEventListener('webglcontextlost', ctx.lost);
+        if (ctx.restored) el.removeEventListener('webglcontextrestored', ctx.restored);
+        (renderer as any).userData.__ctxHandlers = undefined;
+      }
       renderer.dispose();
       if (renderer.domElement && container && renderer.domElement.parentElement === container) container.removeChild(renderer.domElement);
     }
@@ -131,6 +180,7 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     cameraRef.current = null;
     meshRef.current = null;
     geometryRef.current = null;
+    if (contextAcquiredRef.current) { releaseContext(); contextAcquiredRef.current = false; }
   };
 
   useEffect(() => {
@@ -139,9 +189,11 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     if (!animateWhenOffscreen && 'IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         for (const entry of entries) setIsVisible(entry.isIntersecting);
-      });
+      }, { root: null, threshold: 0 });
       io.observe(container);
       ioRef.current = io;
+    } else if (animateWhenOffscreen) {
+      setIsVisible(true);
     }
     return () => { if (ioRef.current) { ioRef.current.disconnect(); ioRef.current = null; } };
   }, [animateWhenOffscreen]);
@@ -164,8 +216,30 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
       const mesh = meshRef.current;
       if (!renderer || !scene || !camera || !mesh) return;
       if (paused || (!isVisible && !animateWhenOffscreen)) return;
+      // Initialize startTimeRef on first client-side frame
+      if (startTimeRef.current === 0 && typeof performance !== 'undefined') {
+        startTimeRef.current = performance.now();
+      }
       const now = performance.now();
       const t = (now - startTimeRef.current) / 1000;
+
+      // Defensive: ensure canvas size/uniforms match container each frame for early mounts
+      const container = containerRef.current;
+      if (container) {
+        const dpr = Math.min(window.devicePixelRatio || 1, capDevicePixelRatio);
+        const cw = container.clientWidth || 1;
+        const ch = container.clientHeight || 1;
+        const rw = Math.round((renderer.domElement.width || 1) / dpr);
+        const rh = Math.round((renderer.domElement.height || 1) / dpr);
+        if (rw !== cw || rh !== ch) {
+          renderer.setPixelRatio(dpr);
+          renderer.setSize(cw, ch, false);
+          for (const mat of materialsRef.current) {
+            const u = mat.uniforms;
+            if (u.iResolution) u.iResolution.value.set(cw, ch, dpr);
+          }
+        }
+      }
 
       renderer.clear();
       const width = renderer.domElement.width;
@@ -195,5 +269,3 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
 };
 
 export default ShaderStack;
-
-

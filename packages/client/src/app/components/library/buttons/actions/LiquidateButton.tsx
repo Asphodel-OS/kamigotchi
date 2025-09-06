@@ -7,7 +7,12 @@ import { TextTooltip } from '../..';
 
 // button for liquidating a harvest
 // TODO: clean this up
-export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Function) => {
+export const LiquidateButton = (
+  target: Kami,
+  allies: Kami[],
+  triggerAction: Function,
+  width?: number
+) => {
   const options = allies.filter((ally) => canLiquidate(ally, target));
   const actionOptions = options.map((myKami) => {
     const spoils = calcLiqSpoils(myKami, target);
@@ -27,6 +32,8 @@ export const LiquidateButton = (target: Kami, allies: Kami[], triggerAction: Fun
         img={LiquidateIcon}
         options={actionOptions}
         disabled={actionOptions.length == 0}
+        width={width}
+        icon={{ inset: { x: 2 } }}
       />
     </TextTooltip>
   );

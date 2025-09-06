@@ -1,6 +1,7 @@
-import { EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 
 import { Components } from 'network/';
+import { getLastTime, getNextTime, getStartTime } from '../utils/component';
 
 export interface Times {
   cooldown: number;
@@ -9,12 +10,10 @@ export interface Times {
 }
 
 // populate the time-tracking fields of a kami
-export const getTimes = (components: Components, entity: EntityIndex): Times => {
-  const { NextTime, LastTime, StartTime } = components;
-
+export const getTimes = (comps: Components, entity: EntityIndex): Times => {
   return {
-    cooldown: (getComponentValue(NextTime, entity)?.value as number) * 1,
-    last: (getComponentValue(LastTime, entity)?.value as number) * 1,
-    start: (getComponentValue(StartTime, entity)?.value as number) * 1,
+    cooldown: getNextTime(comps, entity),
+    last: getLastTime(comps, entity),
+    start: getStartTime(comps, entity),
   };
 };

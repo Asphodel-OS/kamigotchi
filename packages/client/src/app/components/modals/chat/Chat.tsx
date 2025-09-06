@@ -48,7 +48,7 @@ export const ChatModal: UIComponent = {
       const { accountEntity } = data;
       const { actions, api } = network;
       const { getAccount } = utils;
-      const { modals } = useVisibility();
+      const chatModalVisible = useVisibility((s) => s.modals.chat);
 
       const [messages, setMessages] = useState<KamiMessage[]>([]);
       const [blocked, setBlocked] = useState<EntityID[]>([]);
@@ -59,11 +59,11 @@ export const ChatModal: UIComponent = {
 
       // update data of the selected account when account index or data changes
       useEffect(() => {
-        if (!modals.chat) return;
+        if (!chatModalVisible) return;
         // const accountEntity = queryAccountByIndex(components, accountIndex);
         const account = getAccount(accountEntity ?? (0 as EntityIndex));
         setAccount(account);
-      }, [accountEntity, modals.chat]);
+      }, [accountEntity, chatModalVisible]);
       //TODO
       useEffect(() => {
         if (account.friends?.blocked) {

@@ -39,21 +39,21 @@ export const Offers = ({
 }) => {
   const { tab } = controls;
   const { account, trades } = data;
-  const { modals } = useVisibility();
+  const tradingModalVisible = useVisibility((s) => s.modals.trading);
 
   const [openTrades, setOpenTrades] = useState<Trade[]>([]);
   const [executedTrades, setExecutedTrades] = useState<Trade[]>([]);
 
   // keep the list of open and executed trades updated'
   useEffect(() => {
-    if (!modals.trading || tab !== `Management`) return;
+    if (!tradingModalVisible || tab !== `Management`) return;
     const openTrades = trades.filter((trade) => trade.state === 'PENDING');
     const executedTrades = trades.filter(
       (trade) => trade.state === 'EXECUTED' && trade.maker?.entity === account.entity
     );
     setOpenTrades(openTrades);
     setExecutedTrades(executedTrades);
-  }, [trades, modals.trading, tab]);
+  }, [trades, tradingModalVisible, tab]);
 
   /////////////////
   // DISPLAY
