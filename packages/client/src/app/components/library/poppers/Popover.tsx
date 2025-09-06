@@ -10,6 +10,7 @@ export const Popover = ({
   onClose,
   forceClose,
   disabled,
+  fullWidth,
 }: {
   children: React.ReactNode;
   content: any;
@@ -19,6 +20,7 @@ export const Popover = ({
   onClose?: () => void; // execute a function when the popover closes
   forceClose?: boolean; // forceclose the popover
   disabled?: boolean; // disable the popover
+  fullWidth?: boolean;
 }) => {
   const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -122,7 +124,10 @@ export const Popover = ({
   };
 
   return (
-    <PopoverContainer onContextMenu={(e) => mouseButton === 2 && e.preventDefault()}>
+    <PopoverContainer
+      $fullwidth={fullWidth}
+      onContextMenu={(e) => mouseButton === 2 && e.preventDefault()}
+    >
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}
@@ -151,9 +156,10 @@ export const Popover = ({
   );
 };
 
-const PopoverContainer = styled.div`
+const PopoverContainer = styled.div<{ $fullwidth?: boolean }>`
   display: flex;
   position: relative;
+  ${({ $fullwidth }) => $fullwidth && 'width: 100%;'}
 `;
 
 const PopoverTrigger = styled.div<{ cursor: string }>`
