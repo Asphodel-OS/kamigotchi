@@ -7,6 +7,7 @@ import { getPerUnitPrice } from 'app/cache/trade/functions';
 import { EmptyText, TextTooltip } from 'app/components/library';
 import { ItemGridTooltip } from 'app/components/modals/inventory/ItemGridTooltip';
 import { Account, Item } from 'network/shapes';
+import { MUSU_INDEX } from 'constants/items';
 import { ConfirmationData } from '../../library/Confirmation';
 import { animate } from 'animejs';
 
@@ -17,9 +18,13 @@ export const Offers = ({
   utils,
   extraFilter,
   filtersEnabled = true,
+  showMakerOffer = false,
+  deleteEnabled = false,
+  onDelete,
 }: {
   actions: {
     executeTrade: (trade: Trade) => void;
+    cancelTrade?: (trade: Trade) => void;
   };
   controls: {
     sort: string;
@@ -39,6 +44,9 @@ export const Offers = ({
   };
   extraFilter?: (t: Trade) => boolean;
   filtersEnabled?: boolean;
+  showMakerOffer?: boolean;
+  deleteEnabled?: boolean;
+  onDelete?: (trade: Trade) => void;
 }) => {
   const { typeFilter, sort, setSort, ascending, setAscending, itemFilter, itemSearch } = controls;
   const { account, trades } = data;
@@ -243,6 +251,14 @@ export const Offers = ({
     return true;
   };
 
+  const getActionLabel = (trade: Trade): string => {
+    const t = getTradeType(trade, false) as string;
+    if (t === 'Buy') return 'Buy';
+    if (t === 'Sell') return 'Sell';
+    if (t === 'Barter') return 'Barter';
+    return 'Execute';
+  };
+
   const pickDisplayItem = (trade: Trade, utils: { getItemByIndex: (index: number) => Item }): Item => {
     const mapItems = (arr: any[] | undefined): Item[] =>
       (arr ?? [])
@@ -255,7 +271,15 @@ export const Offers = ({
     const fromBuy = mapItems(trade.buyOrder?.items);
     const fromSell = mapItems(trade.sellOrder?.items);
 
-    const preferNonCurrency = (list: Item[]) => list.find((i) => (i?.type || '').toUpperCase() !== 'ERC20') ?? list[0];
+    const preferNonCurrency = (list: Item[]) => list.find((i) => (i && i.index !== MUSU_INDEX && (i?.type || '').toUpperCase() !== 'ERC20')) ?? list[0];
+
+    // For management, optionally force show maker's offered side (sellOrder)
+    if (showMakerOffer) {
+      // In our data model, the maker's intended item often lives in buyOrder for Sell listings
+      return (
+        preferNonCurrency(fromBuy) ?? preferNonCurrency(fromSell) ?? utils.getItemByIndex(0)
+      );
+    }
 
     // When viewing Buy offers, show what sellers are offering (sellOrder)
     if ((typeFilter as any) === 'Buy') {
@@ -302,6 +326,7 @@ export const Offers = ({
           <col className='total' />
           <col />
           <col />
+          {deleteEnabled ? <col /> : null}
         </colgroup>
         <thead>
           <HeaderRow>
@@ -321,6 +346,7 @@ export const Offers = ({
               Owner {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
             </SortableTh>
             <th>Action</th>
+            {deleteEnabled ? <th></th> : null}
           </HeaderRow>
         </thead>
         <tbody>
@@ -391,9 +417,18 @@ export const Offers = ({
                 </td>
                 <td>
                   <ActionButton disabled={disabled} onClick={() => handleExecute(trade)}>
-                    Execute
+                    {getActionLabel(trade)}
                   </ActionButton>
                 </td>
+                {deleteEnabled ? (
+                  <td>
+                    <TextTooltip text={['delete order']}>
+                      <ActionButton onClick={() => (onDelete ? onDelete(trade) : actions.cancelTrade?.(trade))}>
+                        x
+                      </ActionButton>
+                    </TextTooltip>
+                  </td>
+                ) : null}
               </Row>
             );
           })}

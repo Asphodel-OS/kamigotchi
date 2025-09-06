@@ -63,17 +63,26 @@ export const SingleCreate = ({
 
   // toggle between buy and sell modes
   const toggleMode = () => {
-    if (mode === 'Buy') setMode('Sell');
-    else setMode('Buy');
+    setMode((m) => (m === 'Buy' ? 'Sell' : 'Buy'));
   };
 
   const triggerConfirmation = () => {
     const musu = items.find((item) => item.index === MUSU_INDEX)!;
-    const want = mode === 'Buy' ? [item] : [musu];
-    const wantAmt = mode === 'Buy' ? [amt] : [cost];
-    const have = mode === 'Buy' ? [musu] : [item];
-    const haveAmt = mode === 'Buy' ? [cost] : [amt];
-    handleCreatePrompt(want, wantAmt, have, haveAmt);
+    if (mode === 'Sell') {
+      // Selling item for MUSU
+      const want = [musu];
+      const wantAmt = [cost];
+      const have = [item];
+      const haveAmt = [amt];
+      handleCreatePrompt(want, wantAmt, have, haveAmt);
+    } else {
+      // Buying item with MUSU
+      const want = [item];
+      const wantAmt = [amt];
+      const have = [musu];
+      const haveAmt = [cost];
+      handleCreatePrompt(want, wantAmt, have, haveAmt);
+    }
   };
 
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change
@@ -173,13 +182,17 @@ export const SingleCreate = ({
    */
   const getCurrencyOptions = useMemo(
     () => (): IconListButtonOption[] => {
-      return currencies.map((item: Item) => {
-        return {
-          text: item.name,
-          image: item.image,
-          onClick: () => setCurrency(item),
-        };
-      });
+      // Only MUSU is allowed
+      const musu = currencies.find((it) => it.index === MUSU_INDEX);
+      return musu
+        ? [
+            {
+              text: musu.name,
+              image: musu.image,
+              onClick: () => setCurrency(musu),
+            },
+          ]
+        : [];
     },
     [currencies.length]
   );
@@ -197,15 +210,14 @@ export const SingleCreate = ({
         </InlineGrow>
         <ForWrap>
           <Text size={1.2}>for</Text>
-          <IconButton text='Swap' onClick={() => { setItem(currency); setCurrency(item); }} />
         </ForWrap>
         <InlineGrow>
-          <LineItem options={getCurrencyOptions()} selected={currency} amt={cost} setAmt={(e) => updateCost(e)} reverse />
+          <LineItem options={getCurrencyOptions()} selected={currency} amt={cost} setAmt={(e) => updateCost(e)} reverse iconOnly />
         </InlineGrow>
       </Inline>
       <ButtonRow>
         <TextTooltip
-          title={`${mode} for ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
+          title={`${mode} ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
           text={getCreateError()}
           alignText='left'
           maxWidth={24}

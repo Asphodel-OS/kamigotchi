@@ -89,8 +89,7 @@ export const Controls = ({
 
   const toggleTypeFilter = () => {
     if (typeFilter === 'Buy') setTypeFilter('Sell');
-    if (typeFilter === 'Sell') setTypeFilter('Barter');
-    if (typeFilter === 'Barter') setTypeFilter('Buy');
+    else setTypeFilter('Buy');
   };
 
   // smart search across items and categories

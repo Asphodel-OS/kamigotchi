@@ -61,12 +61,14 @@ export const Management = ({
       </Top>
       <Bottom>
         <OffersTable
-          actions={{ executeTrade: actions.executeTrade }}
+          actions={{ executeTrade: actions.executeTrade, cancelTrade: actions.cancelTrade as any }}
           controls={{ sort: 'Total', setSort: () => {}, ascending: true, setAscending: () => {}, itemFilter: { index: 0 } as any, typeFilter: 'All' as any, isConfirming: false, itemSearch: '', setIsConfirming: () => {}, setConfirmData: controls.setConfirmData }}
           data={{ account: data.account, trades: data.trades }}
           utils={{ getItemByIndex: utils.getItemByIndex }}
           extraFilter={(t) => t.maker?.entity === data.account.entity}
           filtersEnabled={false}
+          showMakerOffer
+          deleteEnabled
         />
       </Bottom>
     </Content>
