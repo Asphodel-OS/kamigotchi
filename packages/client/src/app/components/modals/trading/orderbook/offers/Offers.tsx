@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { getTradeType, Trade } from 'app/cache/trade';
@@ -38,6 +38,8 @@ export const Offers = ({
   const { account, trades } = data;
 
   const [displayed, setDisplayed] = useState<Trade[]>([]);
+  const [offersOpen, setOffersOpen] = useState<boolean>(true);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     // filter by type
@@ -95,6 +97,12 @@ export const Offers = ({
     }
   }, [trades, typeFilter, sort, ascending, itemFilter, itemSearch]);
 
+  useEffect(() => {
+    if (!wrapRef.current) return;
+    const to = offersOpen ? wrapRef.current.scrollHeight : 0;
+    animate(wrapRef.current, { maxHeight: to, duration: 220, easing: 'easeOutSine' });
+  }, [offersOpen]);
+
   /////////////////
   // DISPLAY
 
@@ -132,8 +140,11 @@ export const Offers = ({
 
   return (
     <Container>
-      <Title>Open Offers</Title>
-      <TableWrap>
+      <TitleBar>
+        <Title>Open Offers</Title>
+        <Toggle onClick={() => setOffersOpen((v) => !v)}>{offersOpen ? '-' : 'v'}</Toggle>
+      </TitleBar>
+      <TableWrap ref={wrapRef} style={{ maxHeight: offersOpen ? 'none' : 0 }}>
       <Table>
         <thead>
           <HeaderRow>
@@ -232,12 +243,31 @@ const Title = styled.div`
   background-color: rgb(221, 221, 221);
   width: 100%;
 
-  padding: 1.8vw;
+  height: 2.4vw;
+  line-height: 2.0vw; /* move text down a bit while preserving container height */
+  padding: 0.4vw 1.2vw 0 1.2vw;
   opacity: 0.9;
   color: black;
   font-size: 1.2vw;
   text-align: left;
   z-index: 1;
+`;
+
+const TitleBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgb(221, 221, 221);
+`;
+
+const Toggle = styled.button`
+  border: 0.12vw solid black;
+  height: 2.4vw;
+  line-height: 2.4vw;
+  padding: 0 0.45vw;
+  font-size: 0.9vw;
+  background: rgb(221, 221, 221);
+  cursor: pointer;
 `;
 
 const TableWrap = styled.div`
@@ -247,6 +277,8 @@ const TableWrap = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0;
+  z-index: 0;
+  scrollbar-color: auto;
 `;
 
 const Table = styled.table`

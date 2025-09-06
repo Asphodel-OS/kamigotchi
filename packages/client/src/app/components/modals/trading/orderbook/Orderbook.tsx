@@ -124,17 +124,22 @@ const RightPane = styled.div`
   width: 100%;
   height: 100%;
   min-height: 0;
+  z-index: 0;
 `;
 
 const CollapseToggle = styled.button`
   position: absolute;
-  left: 50%;
-  top: calc(var(--top, 40%) - 0.9vw);
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  top: var(--top, 40%);
   z-index: 2;
   border: 0.12vw solid black;
-  padding: 0.15vw 0.45vw;
+  border-left: 0;
+  border-right: 0;
+  height: 1.8vw;
+  line-height: 1.8vw;
+  padding: 0;
   font-size: 0.9vw;
-  background: #eee;
+  background: rgb(221, 221, 221);
   cursor: pointer;
 `;

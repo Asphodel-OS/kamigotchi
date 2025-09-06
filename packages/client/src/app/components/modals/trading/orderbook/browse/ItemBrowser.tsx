@@ -117,6 +117,8 @@ const Sidebar = styled.div`
   gap: 0.3vw;
   border-right: 0.15vw solid black;
   flex: 0 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const CategoryButton = styled.button`
@@ -187,6 +189,7 @@ const TableWrap = styled.div`
   width: 100%;
   padding: 0.6vw;
   overflow: auto;
+  scrollbar-color: auto;
 `;
 
 const ListTable = styled.table`

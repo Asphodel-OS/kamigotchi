@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useMemo, useState } from 'react';
+import { Dispatch, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
@@ -7,6 +7,7 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { MUSU_INDEX } from 'constants/items';
 import { Item, NullItem } from 'network/shapes';
 import { ItemBrowser } from './browse/ItemBrowser';
+import { animate } from 'animejs';
 
 export const Controls = ({
   controls,
@@ -91,6 +92,30 @@ export const Controls = ({
   const [query, setQuery] = useState<string>('');
   const [category, setCategory] = useState<'All' | 'Consumables' | 'Materials' | 'Currencies' | 'Other'>('All');
   const [searchOpen, setSearchOpen] = useState<boolean>(true);
+  const [browseOpen, setBrowseOpen] = useState<boolean>(true);
+
+  const searchWrapRef = useRef<HTMLDivElement | null>(null);
+  const searchInnerRef = useRef<HTMLDivElement | null>(null);
+  const browseWrapRef = useRef<HTMLDivElement | null>(null);
+  const browseInnerRef = useRef<HTMLDivElement | null>(null);
+
+  const animateSection = (wrap: HTMLDivElement | null, inner: HTMLDivElement | null, open: boolean) => {
+    if (!wrap || !inner) return;
+    if (open) {
+      const target = inner.scrollHeight;
+      wrap.style.maxHeight = `${Math.max(target, 1)}px`;
+      animate(wrap, {
+        maxHeight: target,
+        duration: 220,
+        easing: 'easeOutSine',
+        complete: () => (wrap.style.maxHeight = 'none'),
+      });
+    } else {
+      const current = wrap.scrollHeight;
+      wrap.style.maxHeight = `${current}px`;
+      animate(wrap, { maxHeight: 0, duration: 220, easing: 'easeOutSine' });
+    }
+  };
 
   // respond to external category change events
   useEffect(() => {
@@ -100,6 +125,26 @@ export const Controls = ({
     };
     window.addEventListener('trading:setCategory', handler as any);
     return () => window.removeEventListener('trading:setCategory', handler as any);
+  }, []);
+
+  // run animations on state change
+  useEffect(() => animateSection(searchWrapRef.current, searchInnerRef.current, searchOpen), [searchOpen]);
+  useEffect(() => animateSection(browseWrapRef.current, browseInnerRef.current, browseOpen), [browseOpen]);
+
+  // initialize measured heights so sections don't overlap
+  useEffect(() => {
+    const initHeights = () => {
+      if (searchWrapRef.current && searchInnerRef.current) {
+        searchWrapRef.current.style.maxHeight = 'none';
+      }
+      if (browseWrapRef.current && browseInnerRef.current) {
+        browseWrapRef.current.style.maxHeight = 'none';
+      }
+    };
+    initHeights();
+    // Recalculate after layout in case modal opens from hidden state
+    setTimeout(initHeights, 0);
+    setTimeout(initHeights, 120);
   }, []);
   const suggestions = useMemo(() => {
     const lower = query.toLowerCase();
@@ -118,10 +163,10 @@ export const Controls = ({
     <Container>
       <TitleRow>
         <Title>Search</Title>
-        <Toggle onClick={() => setSearchOpen((v) => !v)}>{searchOpen ? 'Hide' : 'Show'}</Toggle>
+        <Toggle onClick={() => setSearchOpen((v) => !v)}>{searchOpen ? '-' : 'v'}</Toggle>
       </TitleRow>
-      {searchOpen && (
-      <Body>
+      <CollapsibleWrap ref={searchWrapRef} style={{ minHeight: '9%' }}>
+        <div ref={searchInnerRef}>
         <SearchRow>
           <IconButton text={`< ${typeFilter} >`} onClick={toggleTypeFilter} />
           <IconListButton
@@ -150,12 +195,19 @@ export const Controls = ({
             </SuggestBox>
           )}
         </SearchRow>
-      </Body>
-      )}
-      <SectionTitle>Browse</SectionTitle>
-      <BrowserSection>
-        <ItemBrowser items={items} selected={itemFilter} setSelected={setItemFilter} category={category as any} onCategoryChange={setCategory as any} />
-      </BrowserSection>
+        </div>
+      </CollapsibleWrap>
+      <TitleRow>
+        <SectionTitle>Browse</SectionTitle>
+        <Toggle onClick={() => setBrowseOpen((v) => !v)}>{browseOpen ? '-' : 'v'}</Toggle>
+      </TitleRow>
+      <CollapsibleWrap ref={browseWrapRef} style={{ flex: '1 1 auto', minHeight: '7%' }}>
+        <div ref={browseInnerRef}>
+          <BrowserSection>
+            <ItemBrowser items={items} selected={itemFilter} setSelected={setItemFilter} category={category as any} onCategoryChange={setCategory as any} />
+          </BrowserSection>
+        </div>
+      </CollapsibleWrap>
     </Container>
   );
 };
@@ -179,7 +231,9 @@ const Title = styled.div`
   background-color: rgb(221, 221, 221);
   width: 100%;
 
-  padding: 0.9vw 1.2vw;
+  height: 2.4vw;
+  line-height: 2.4vw;
+  padding: 0 1.2vw;
   opacity: 0.9;
   color: black;
   font-size: 1vw;
@@ -191,26 +245,29 @@ const TitleRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: rgb(221, 221, 221);
 `;
 
 const Toggle = styled.button`
   border: 0.12vw solid black;
-  padding: 0.15vw 0.45vw;
+  height: 2.4vw;
+  line-height: 2.4vw;
+  padding: 0 0.45vw;
   font-size: 0.8vw;
-  background: #eee;
+  background: rgb(221, 221, 221);
   cursor: pointer;
 `;
 
 const Body = styled.div`
   position: relative;
-  margin: 0.9vw 0.6vw;
+  margin: 1.1vw 0.6vw;
   gap: 0.6vw;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  scrollbar-color: transparent transparent;
+  /* allow visible scrollbars in nested content */
+  scrollbar-color: auto;
 `;
 
 const Row = styled.div<{ compact?: boolean }>`
@@ -226,10 +283,12 @@ const Row = styled.div<{ compact?: boolean }>`
 const SectionTitle = styled.div`
   background-color: rgb(221, 221, 221);
   width: 100%;
-  padding: 0.6vw 1.2vw;
+  height: 2.4vw;
+  line-height: 2.4vw;
+  padding: 0 1.2vw;
   opacity: 0.9;
   color: black;
-  font-size: 0.95vw;
+  font-size: 1vw;
   text-align: left;
 `;
 
@@ -240,6 +299,14 @@ const BrowserSection = styled.div`
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
+`;
+
+const CollapsibleWrap = styled.div`
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: max-height 0.2s ease-out;
+  max-height: none;
+  min-height: 7%;
 `;
 
 // Listen for external category changes (from Offer table TypeLink)
