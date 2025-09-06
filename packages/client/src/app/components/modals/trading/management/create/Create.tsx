@@ -67,10 +67,7 @@ export const Create = ({
   }, []);
 
   // toggle between multi and single Create modes
-  const toggleMode = () => {
-    if (mode === 'Multi') setMode('Single');
-    else setMode('Multi');
-  };
+  const toggleMode = () => {};
 
   // organize the form data for trade offer creation
   // TODO: detect successful trade creation and reset form
@@ -195,16 +192,7 @@ export const Create = ({
       <Overlay top={0} fullWidth>
         <Title>Create Offer</Title>
       </Overlay>
-      <MultiCreate
-        actions={{ ...actions, handleCreatePrompt }}
-        controls={{ ...controls }}
-        data={{
-          ...data,
-          items: data.items.filter((item) => !DisabledItems.includes(item.index)),
-          thousandsSeparator,
-        }}
-        isVisible={mode === 'Multi'}
-      />
+      {/* MultiCreate phased out */}
       <SingleCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
@@ -215,20 +203,15 @@ export const Create = ({
         }}
         isVisible={mode === 'Single'}
       />
-      <Overlay bottom={0.75} left={0.75}>
-        <IconButton text={`<${mode}>`} onClick={toggleMode} />
-      </Overlay>
+      {/* Mode toggle phased out */}
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  border-right: 0.15vw solid black;
-
-  width: 40%;
+  width: 100%;
   height: 100%;
-
   user-select: none;
 `;
 

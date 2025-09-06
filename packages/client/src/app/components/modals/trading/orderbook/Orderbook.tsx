@@ -72,6 +72,11 @@ export const Orderbook = ({
           utils={utils}
         />
       </LeftPane>
+      <ToggleRow>
+        <CollapseToggle onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? '∨' : '∧'}
+        </CollapseToggle>
+      </ToggleRow>
       <RightPane>
         <Offers
         actions={actions}
@@ -89,9 +94,6 @@ export const Orderbook = ({
         utils={utils}
         />
       </RightPane>
-      <CollapseToggle onClick={() => setCollapsed(!collapsed)}>
-        {collapsed ? '∨' : '∧'}
-      </CollapseToggle>
     </Container>
   );
 };
@@ -99,7 +101,7 @@ export const Orderbook = ({
 const Container = styled.div<{ isVisible: boolean }>`
   height: 100%;
   display: ${({ isVisible }) => (isVisible ? 'grid' : 'none')};
-  grid-template-rows: var(--top, 40%) 1fr;
+  grid-template-rows: var(--top, 40%) min-content 1fr;
   grid-template-columns: 1fr;
   position: relative;
   width: 100%;
@@ -119,7 +121,7 @@ const LeftPane = styled.div<{ collapsed: boolean }>`
 
 const RightPane = styled.div`
   position: relative;
-  grid-row: 2;
+  grid-row: 3;
   display: flex;
   width: 100%;
   height: 100%;
@@ -127,17 +129,22 @@ const RightPane = styled.div`
   z-index: 0;
 `;
 
+const ToggleRow = styled.div`
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+`;
+
 const CollapseToggle = styled.button`
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: var(--top, 40%);
-  z-index: 2;
   border: 0.12vw solid black;
   border-left: 0;
   border-right: 0;
-  height: 1.8vw;
-  line-height: 1.8vw;
+  width: 100%;
+  height: 1.2vw;
+  line-height: 1.2vw;
   padding: 0;
   font-size: 0.9vw;
   background: rgb(221, 221, 221);

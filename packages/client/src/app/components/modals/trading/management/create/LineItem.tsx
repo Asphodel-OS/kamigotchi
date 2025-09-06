@@ -28,7 +28,7 @@ export const LineItem = ({
     <Container>
       {reverse && (
         <Quantity
-          width={16.2}
+          width={8.1}
           type='string'
           value={amt.toLocaleString()}
           onChange={(e) => setAmt(e)}
@@ -39,7 +39,7 @@ export const LineItem = ({
       </TextTooltip>
       {!reverse && (
         <Quantity
-          width={16.2}
+          width={8.1}
           type='string'
           value={amt.toLocaleString()}
           onChange={(e) => setAmt(e)}
@@ -79,6 +79,8 @@ const Quantity = styled.input<{ width?: number }>`
   color: black;
   font-size: 0.9vw;
   text-align: center;
+  overflow: hidden;
+  text-overflow: clip;
 `;
 
 const ExitContainer = styled.div`

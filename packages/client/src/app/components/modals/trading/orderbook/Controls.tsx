@@ -6,8 +6,9 @@ import { IconButton, IconListButton, IconListButtonOption, Text, TextTooltip } f
 import { MenuIcons } from 'assets/images/icons/menu';
 import { MUSU_INDEX } from 'constants/items';
 import { Item, NullItem } from 'network/shapes';
+import { playClick } from 'utils/sounds';
 import { ItemBrowser } from './browse/ItemBrowser';
-import { animate } from 'animejs';
+ 
 
 export const Controls = ({
   controls,
@@ -75,7 +76,11 @@ export const Controls = ({
   };
 
   const getSortIcon = (sort: string) => {
-    if (sort === 'Price') return getItemByIndex(MUSU_INDEX).image;
+    if (sort === 'Price' || sort === 'Total') return getItemByIndex(MUSU_INDEX).image;
+    if (sort === 'Owner') return MenuIcons.social;
+    if (sort === 'Item') return MenuIcons.inventory;
+    if (sort === 'Type') return MenuIcons.more; // generic categories icon
+    if (sort === 'Qty') return MenuIcons.inventory; // stack-like inventory icon for quantity
     return MenuIcons.operator;
   };
 
@@ -90,32 +95,7 @@ export const Controls = ({
 
   // smart search across items and categories
   const [query, setQuery] = useState<string>('');
-  const [category, setCategory] = useState<'All' | 'Consumables' | 'Materials' | 'Currencies' | 'Other'>('All');
-  const [searchOpen, setSearchOpen] = useState<boolean>(true);
-  const [browseOpen, setBrowseOpen] = useState<boolean>(true);
-
-  const searchWrapRef = useRef<HTMLDivElement | null>(null);
-  const searchInnerRef = useRef<HTMLDivElement | null>(null);
-  const browseWrapRef = useRef<HTMLDivElement | null>(null);
-  const browseInnerRef = useRef<HTMLDivElement | null>(null);
-
-  const animateSection = (wrap: HTMLDivElement | null, inner: HTMLDivElement | null, open: boolean) => {
-    if (!wrap || !inner) return;
-    if (open) {
-      const target = inner.scrollHeight;
-      wrap.style.maxHeight = `${Math.max(target, 1)}px`;
-      animate(wrap, {
-        maxHeight: target,
-        duration: 220,
-        easing: 'easeOutSine',
-        complete: () => (wrap.style.maxHeight = 'none'),
-      });
-    } else {
-      const current = wrap.scrollHeight;
-      wrap.style.maxHeight = `${current}px`;
-      animate(wrap, { maxHeight: 0, duration: 220, easing: 'easeOutSine' });
-    }
-  };
+  const [category, setCategory] = useState<string>('All');
 
   // respond to external category change events
   useEffect(() => {
@@ -124,28 +104,16 @@ export const Controls = ({
       setCategory(key);
     };
     window.addEventListener('trading:setCategory', handler as any);
+    const clearHandler = () => {
+      setItemFilter(NullItem);
+      setCategory('All' as any);
+      setQuery('');
+    };
+    window.addEventListener('trading:clearFilters', clearHandler as any);
     return () => window.removeEventListener('trading:setCategory', handler as any);
   }, []);
 
-  // run animations on state change
-  useEffect(() => animateSection(searchWrapRef.current, searchInnerRef.current, searchOpen), [searchOpen]);
-  useEffect(() => animateSection(browseWrapRef.current, browseInnerRef.current, browseOpen), [browseOpen]);
-
-  // initialize measured heights so sections don't overlap
-  useEffect(() => {
-    const initHeights = () => {
-      if (searchWrapRef.current && searchInnerRef.current) {
-        searchWrapRef.current.style.maxHeight = 'none';
-      }
-      if (browseWrapRef.current && browseInnerRef.current) {
-        browseWrapRef.current.style.maxHeight = 'none';
-      }
-    };
-    initHeights();
-    // Recalculate after layout in case modal opens from hidden state
-    setTimeout(initHeights, 0);
-    setTimeout(initHeights, 120);
-  }, []);
+  // always open by default; no per-section collapse state
   const suggestions = useMemo(() => {
     const lower = query.toLowerCase();
     if (!lower) return [] as { label: string; onPick: () => void }[];
@@ -155,7 +123,15 @@ export const Controls = ({
     const itemMatches = items
       .filter((it) => it.name.toLowerCase().includes(lower))
       .slice(0, 6)
-      .map((it) => ({ label: it.name, onPick: () => setItemFilter(it) }));
+      .map((it) => ({
+        label: it.name,
+        onPick: () => {
+          setItemFilter(it);
+          try {
+            window.dispatchEvent(new CustomEvent('trading:filterOffersByItem', { detail: it.index }));
+          } catch {}
+        },
+      }));
     return [...catMatches, ...itemMatches];
   }, [query, items]);
 
@@ -163,22 +139,24 @@ export const Controls = ({
     <Container>
       <TitleRow>
         <Title>Search</Title>
-        <Toggle onClick={() => setSearchOpen((v) => !v)}>{searchOpen ? '-' : 'v'}</Toggle>
       </TitleRow>
-      <CollapsibleWrap ref={searchWrapRef} style={{ minHeight: '9%' }}>
-        <div ref={searchInnerRef}>
+      <CollapsibleWrap style={{ minHeight: '12%', overflow: 'visible' }}>
         <SearchRow>
-          <IconButton text={`< ${typeFilter} >`} onClick={toggleTypeFilter} />
+          <IconButton text={`< ${typeFilter} >`} onClick={() => { playClick(); toggleTypeFilter(); }} />
           <IconListButton
             img={getSortIcon(sort)}
             text={sort}
             options={[
-              { text: 'Price', image: getSortIcon('Price'), onClick: () => setSort('Price') },
-              { text: 'Owner', image: getSortIcon('Owner'), onClick: () => setSort('Owner') },
+              { text: 'Item', image: getSortIcon('Item'), onClick: () => { playClick(); setSort('Item'); } },
+              { text: 'Type', image: getSortIcon('Type'), onClick: () => { playClick(); setSort('Type'); } },
+              { text: 'Qty', image: getSortIcon('Qty'), onClick: () => { playClick(); setSort('Qty'); } },
+              { text: 'Total', image: getSortIcon('Total'), onClick: () => { playClick(); setSort('Total'); } },
+              { text: 'Owner', image: getSortIcon('Owner'), onClick: () => { playClick(); setSort('Owner'); } },
+              { text: 'Price', image: getSortIcon('Price'), onClick: () => { playClick(); setSort('Price'); } },
             ]}
           />
           <TextTooltip text={[ascending ? 'sorting by ascending' : 'sorting by descending']}>
-            <IconButton text={ascending ? '↑' : '↓'} onClick={() => setAscending(!ascending)} />
+            <IconButton text={ascending ? '↑' : '↓'} onClick={() => { playClick(); setAscending(!ascending); }} />
           </TextTooltip>
           <SearchInput
             value={query}
@@ -195,18 +173,14 @@ export const Controls = ({
             </SuggestBox>
           )}
         </SearchRow>
-        </div>
       </CollapsibleWrap>
       <TitleRow>
         <SectionTitle>Browse</SectionTitle>
-        <Toggle onClick={() => setBrowseOpen((v) => !v)}>{browseOpen ? '-' : 'v'}</Toggle>
       </TitleRow>
-      <CollapsibleWrap ref={browseWrapRef} style={{ flex: '1 1 auto', minHeight: '7%' }}>
-        <div ref={browseInnerRef}>
-          <BrowserSection>
-            <ItemBrowser items={items} selected={itemFilter} setSelected={setItemFilter} category={category as any} onCategoryChange={setCategory as any} />
-          </BrowserSection>
-        </div>
+      <CollapsibleWrap style={{ flex: '1 1 auto', minHeight: '7%' }}>
+        <BrowserSection>
+          <ItemBrowser items={items} selected={itemFilter} setSelected={setItemFilter} category={category as any} onCategoryChange={setCategory as any} />
+        </BrowserSection>
       </CollapsibleWrap>
     </Container>
   );
@@ -217,7 +191,6 @@ const Container = styled.div`
   height: 100%;
   width: 100%;
   min-height: 0;
-  gap: 0.6vw;
 
   display: flex;
   flex-flow: column nowrap;
@@ -231,8 +204,8 @@ const Title = styled.div`
   background-color: rgb(221, 221, 221);
   width: 100%;
 
-  height: 2.4vw;
-  line-height: 2.4vw;
+  height: 2vw;
+  line-height: 2vw;
   padding: 0 1.2vw;
   opacity: 0.9;
   color: black;
@@ -248,15 +221,7 @@ const TitleRow = styled.div`
   background-color: rgb(221, 221, 221);
 `;
 
-const Toggle = styled.button`
-  border: 0.12vw solid black;
-  height: 2.4vw;
-  line-height: 2.4vw;
-  padding: 0 0.45vw;
-  font-size: 0.8vw;
-  background: rgb(221, 221, 221);
-  cursor: pointer;
-`;
+/* corner minimize toggle removed */
 
 const Body = styled.div`
   position: relative;
@@ -283,8 +248,8 @@ const Row = styled.div<{ compact?: boolean }>`
 const SectionTitle = styled.div`
   background-color: rgb(221, 221, 221);
   width: 100%;
-  height: 2.4vw;
-  line-height: 2.4vw;
+  height: 2vw;
+  line-height: 2vw;
   padding: 0 1.2vw;
   opacity: 0.9;
   color: black;
@@ -295,7 +260,7 @@ const SectionTitle = styled.div`
 const BrowserSection = styled.div`
   position: relative;
   width: 100%;
-  padding: 0.6vw 0.6vw 1.2vw 0.6vw;
+  padding: 0;
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
@@ -307,6 +272,12 @@ const CollapsibleWrap = styled.div`
   transition: max-height 0.2s ease-out;
   max-height: none;
   min-height: 7%;
+  @media (min-width: 1400px) {
+    min-height: 10%;
+  }
+  @media (min-width: 1600px) {
+    min-height: 12%;
+  }
 `;
 
 // Listen for external category changes (from Offer table TypeLink)
@@ -327,12 +298,28 @@ const SearchRow = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   gap: 0.6vw;
+  /* Keep search controls comfortably smaller than their container */
+  & button {
+    height: 1.8vw;
+    line-height: 1.8vw;
+    padding: 0 0.6vw;
+    font-size: 0.9vw;
+    max-height: 100%;
+  }
+  @media (min-width: 1400px) {
+    & button { height: 1.6vw; line-height: 1.6vw; }
+  }
+  @media (min-width: 1800px) {
+    & button { height: 1.5vw; line-height: 1.5vw; }
+  }
 `;
 
 const SearchInput = styled.input`
   flex: 1 1 auto;
   min-width: 0;
-  padding: 0.45vw 0.6vw;
+  padding: 0 0.6vw;
+  height: 1.8vw;
+  line-height: 1.8vw;
   font-size: 0.9vw;
   border: 0.12vw solid black;
 `;
@@ -346,7 +333,7 @@ const SuggestBox = styled.div`
   border: 0.12vw solid black;
   max-height: 12vw;
   overflow: auto;
-  z-index: 2;
+  z-index: 9999;
 `;
 
 const Suggest = styled.div`

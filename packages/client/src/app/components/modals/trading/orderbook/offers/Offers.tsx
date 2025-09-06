@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { getTradeType, Trade } from 'app/cache/trade';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
-import { EmptyText } from 'app/components/library';
+import { EmptyText, TextTooltip } from 'app/components/library';
+import { ItemGridTooltip } from 'app/components/modals/inventory/ItemGridTooltip';
 import { Account, Item } from 'network/shapes';
 import { ConfirmationData } from '../../library/Confirmation';
 // removed bulky PendingOffer card; render compact table rows instead
@@ -15,13 +16,16 @@ export const Offers = ({
   controls,
   data,
   utils,
+  extraFilter,
 }: {
   actions: {
     executeTrade: (trade: Trade) => void;
   };
   controls: {
     sort: string;
+    setSort: Dispatch<string>;
     ascending: boolean;
+    setAscending: Dispatch<boolean>;
     itemFilter: Item;
     typeFilter: string;
     isConfirming: boolean;
@@ -33,6 +37,7 @@ export const Offers = ({
   utils: {
     getItemByIndex: (index: number) => Item;
   };
+  extraFilter?: (t: Trade) => boolean;
 }) => {
   const { typeFilter, sort, setSort, ascending, setAscending, itemFilter, itemSearch } = controls;
   const { account, trades } = data;
@@ -42,9 +47,10 @@ export const Offers = ({
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // filter by type
+    // filter by type (if provided and not 'All')
     let cleaned = trades.filter((trade) => {
       const type = getTradeType(trade, false);
+      if (!typeFilter || (typeFilter as any) === 'All') return true;
       return type === typeFilter;
     });
 
@@ -58,25 +64,75 @@ export const Offers = ({
     }
 
     // sorting
+    // apply category filter if any
+    const matchesCategory = (trade: Trade): boolean => {
+      const key = (categoryFilter || 'All').toUpperCase();
+      if (key === 'ALL') return true;
+      const consumableTypes = new Set(['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX']);
+      const sellItems = trade.sellOrder?.items ?? [];
+      const buyItems = trade.buyOrder?.items ?? [];
+      const combined = [...sellItems, ...buyItems];
+      for (const it of combined) {
+        const idx = (it as any)?.index ?? 0;
+        const full = utils.getItemByIndex(idx);
+        const t = (full?.type || '').toUpperCase();
+        if (key === 'CONSUMABLES' && consumableTypes.has(t)) return true;
+        if (key === 'MATERIALS' && t === 'MATERIAL') return true;
+        if (key === 'CURRENCIES' && t === 'ERC20') return true;
+        if (t === key) return true;
+      }
+      return false;
+    };
+    cleaned = cleaned.filter(matchesCategory);
+
+    if (extraFilter) {
+      cleaned = cleaned.filter(extraFilter);
+    }
+
+    // apply item filter if any (from this panel's clicks)
+    if (itemFilterIndexLocal && itemFilterIndexLocal !== 0) {
+      cleaned = cleaned.filter((trade) => {
+        const sellItems = trade.sellOrder?.items ?? [];
+        const buyItems = trade.buyOrder?.items ?? [];
+        return [...sellItems, ...buyItems].some((it) => (it as any)?.index === itemFilterIndexLocal);
+      });
+    }
+
+    const getNumeric = (v: any): number => (typeof v === 'number' ? v : Number.NaN);
+    const sortValue = (t: Trade): string | number => {
+      const tType = getTradeType(t, false);
+      const price = getPerUnitPrice(t, tType);
+      const qty = (t?.sellOrder?.amounts?.[0] || 1) as number;
+      const total = price * qty;
+      const item = pickDisplayItem(t, utils);
+      const owner = (t.maker?.name || '').toLowerCase();
+      switch (sort) {
+        case 'Owner':
+          return owner;
+        case 'Price':
+        case 'Total':
+          return total;
+        case 'Qty':
+          return qty;
+        case 'Item':
+          return (item?.name || '').toLowerCase();
+        case 'Type':
+          return (item?.type || '').toLowerCase();
+        default:
+          return total;
+      }
+    };
+
     const sorted = cleaned.toSorted((a: Trade, b: Trade) => {
-      if (sort === 'Owner') {
-        const aName = a.maker?.name.toLowerCase() || '';
-        const bName = b.maker?.name.toLowerCase() || '';
-
-        if (ascending) return aName.localeCompare(bName);
-        return bName.localeCompare(aName);
+      const av = sortValue(a);
+      const bv = sortValue(b);
+      if (typeof av === 'string' && typeof bv === 'string') {
+        return ascending ? av.localeCompare(bv) : bv.localeCompare(av);
       }
-
-      if (sort === 'Price') {
-        const aType = getTradeType(a, false);
-        const bType = getTradeType(b, false);
-        const aPrice = getPerUnitPrice(a, aType);
-        const bPrice = getPerUnitPrice(b, bType);
-        if (ascending) return aPrice - bPrice;
-        return bPrice - aPrice;
-      }
-
-      return 0;
+      const an = getNumeric(av);
+      const bn = getNumeric(bv);
+      if (Number.isNaN(an) || Number.isNaN(bn)) return 0;
+      return ascending ? an - bn : bn - an;
     });
     // only update state if something actually changed to avoid flicker
     const changed =
@@ -96,6 +152,33 @@ export const Offers = ({
       });
     }
   }, [trades, typeFilter, sort, ascending, itemFilter, itemSearch]);
+
+  // Listen to category filters from the browser and filter rows accordingly
+  const [categoryFilter, setCategoryFilter] = useState<string>('All');
+  useEffect(() => {
+    const handler = (e: any) => {
+      setCategoryFilter((e?.detail || 'All') as string);
+      setOffersOpen(true);
+    };
+    window.addEventListener('trading:filterOffersByCategory', handler as any);
+    window.addEventListener('trading:setCategory', handler as any);
+    return () => {
+      window.removeEventListener('trading:filterOffersByCategory', handler as any);
+      window.removeEventListener('trading:setCategory', handler as any);
+    };
+  }, []);
+
+  // Listen for explicit item filter requests (from clicking item in offers)
+  const [itemFilterIndexLocal, setItemFilterIndexLocal] = useState<number | null>(null);
+  useEffect(() => {
+    const handler = (e: any) => {
+      const idx = Number(e?.detail);
+      setItemFilterIndexLocal(Number.isFinite(idx) ? idx : null);
+      setOffersOpen(true);
+    };
+    window.addEventListener('trading:filterOffersByItem', handler as any);
+    return () => window.removeEventListener('trading:filterOffersByItem', handler as any);
+  }, []);
 
   useEffect(() => {
     if (!wrapRef.current) return;
@@ -138,26 +221,49 @@ export const Offers = ({
     return (pool[0] as Item) ?? utils.getItemByIndex(0);
   };
 
+  const clearFilters = () => {
+    setItemFilterIndexLocal(null);
+    try {
+      window.dispatchEvent(new CustomEvent('trading:filterOffersByCategory', { detail: 'All' }));
+      window.dispatchEvent(new CustomEvent('trading:clearFilters'));
+    } catch {}
+  };
+
+  const hasAnyFilter = (categoryFilter && categoryFilter !== 'All') || (itemFilterIndexLocal && itemFilterIndexLocal !== 0);
+
   return (
     <Container>
-      <TitleBar>
-        <Title>Open Offers</Title>
-        <Toggle onClick={() => setOffersOpen((v) => !v)}>{offersOpen ? '-' : 'v'}</Toggle>
-      </TitleBar>
+      {hasAnyFilter && (
+        <FilterBar>
+          <span>Filtered {itemFilterIndexLocal ? '(Item)' : ''} {categoryFilter && categoryFilter !== 'All' ? `(Category: ${categoryFilter})` : ''}</span>
+          <ClearButton onClick={clearFilters}>Clear</ClearButton>
+        </FilterBar>
+      )}
       <TableWrap ref={wrapRef} style={{ maxHeight: offersOpen ? 'none' : 0 }}>
       <Table>
+        <colgroup>
+          <col className='item' />
+          <col className='type' />
+          <col className='qty' />
+          <col className='total' />
+          <col />
+          <col />
+        </colgroup>
         <thead>
           <HeaderRow>
-            <th>Item</th>
-            <th>Type</th>
-            <th>Qty</th>
-            <SortableTh onClick={() => {
-              if (sort === 'Price') setAscending(!ascending);
-              setSort('Price');
-            }}>
-              Total {sort === 'Price' ? (ascending ? '↑' : '↓') : ''}
+            <SortableTh onClick={() => { setAscending(sort === 'Item' ? !ascending : true); setSort('Item'); }}>
+              Item {sort === 'Item' ? (ascending ? '↑' : '↓') : ''}
             </SortableTh>
-            <SortableTh onClick={() => setSort('Owner')}>
+            <SortableTh onClick={() => { setAscending(sort === 'Type' ? !ascending : true); setSort('Type'); }}>
+              Type {sort === 'Type' ? (ascending ? '↑' : '↓') : ''}
+            </SortableTh>
+            <SortableTh onClick={() => { setAscending(sort === 'Qty' ? !ascending : true); setSort('Qty'); }}>
+              Qty {sort === 'Qty' ? (ascending ? '↑' : '↓') : ''}
+            </SortableTh>
+            <SortableTh onClick={() => { setAscending(sort === 'Total' ? !ascending : true); setSort('Total'); }}>
+              Total {sort === 'Total' ? (ascending ? '↑' : '↓') : ''}
+            </SortableTh>
+            <SortableTh onClick={() => { setAscending(sort === 'Owner' ? !ascending : true); setSort('Owner'); }}>
               Owner {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
             </SortableTh>
             <th>Action</th>
@@ -176,8 +282,29 @@ export const Offers = ({
               <Row key={i}>
                 <td>
                   <ItemCell>
-                    <Icon src={item.image} />
-                    <Name title={item.name}>{item.name}</Name>
+                    <TextTooltip
+                      text={[<ItemGridTooltip key={`img-${item.index}`} item={item as any} utils={{ displayRequirements: () => '', parseAllos: () => [] }} />]}
+                      maxWidth={25}
+                    >
+                      <Icon
+                        src={item.image}
+                        onClick={() =>
+                          window.dispatchEvent(new CustomEvent('trading:filterOffersByItem', { detail: item.index }))
+                        }
+                      />
+                    </TextTooltip>
+                    <TextTooltip
+                      text={[<ItemGridTooltip key={`name-${item.index}`} item={item as any} utils={{ displayRequirements: () => '', parseAllos: () => [] }} />]}
+                      maxWidth={25}
+                    >
+                      <Name
+                        onClick={() =>
+                          window.dispatchEvent(new CustomEvent('trading:filterOffersByItem', { detail: item.index }))
+                        }
+                      >
+                        {item.name}
+                      </Name>
+                    </TextTooltip>
                   </ItemCell>
                 </td>
                 <td>
@@ -202,6 +329,13 @@ export const Offers = ({
                     onClick={() => {
                       const name = trade.maker?.name ?? '';
                       window.dispatchEvent(new CustomEvent('trading:viewProfile', { detail: name }));
+                      try {
+                        const account = (trade.maker as any);
+                        if (typeof window !== 'undefined' && account?.index != null) {
+                          window.dispatchEvent(new CustomEvent('account:setIndex', { detail: account.index }));
+                          window.dispatchEvent(new CustomEvent('modal:openAccount'));
+                        }
+                      } catch {}
                     }}
                     title='View profile'
                   >
@@ -237,38 +371,25 @@ const Container = styled.div`
   scrollbar-color: transparent transparent;
 `;
 
-const Title = styled.div`
-  position: sticky;
-  top: 0;
-  background-color: rgb(221, 221, 221);
-  width: 100%;
-
-  height: 2.4vw;
-  line-height: 2.0vw; /* move text down a bit while preserving container height */
-  padding: 0.4vw 1.2vw 0 1.2vw;
-  opacity: 0.9;
-  color: black;
-  font-size: 1.2vw;
-  text-align: left;
-  z-index: 1;
-`;
-
-const TitleBar = styled.div`
+const FilterBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: rgb(221, 221, 221);
+  gap: 0.6vw;
+  padding: 0.3vw 0.6vw;
+  background: #f0f0f0;
+  border-bottom: 0.12vw solid black;
 `;
 
-const Toggle = styled.button`
+const ClearButton = styled.button`
   border: 0.12vw solid black;
-  height: 2.4vw;
-  line-height: 2.4vw;
-  padding: 0 0.45vw;
-  font-size: 0.9vw;
-  background: rgb(221, 221, 221);
+  padding: 0.15vw 0.6vw;
+  font-size: 0.85vw;
   cursor: pointer;
+  background: #eee;
 `;
+
+/* corner minimize toggle removed */
 
 const TableWrap = styled.div`
   flex: 1 1 auto;
@@ -286,6 +407,10 @@ const Table = styled.table`
   border-collapse: collapse;
   table-layout: fixed;
   display: table;
+  colgroup col.item { width: 38%; }
+  colgroup col.type { width: 14%; }
+  colgroup col.qty { width: 10%; }
+  colgroup col.total { width: 14%; }
 `;
 
 const HeaderRow = styled.tr`
@@ -321,6 +446,11 @@ const ItemCell = styled.div`
   gap: 0.6vw;
 `;
 
+const TooltipWrap = styled.div`
+  position: relative;
+  display: inline-flex;
+`;
+
 const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
@@ -328,10 +458,10 @@ const Icon = styled.img`
 `;
 
 const Name = styled.div`
-  max-width: 14vw;
+  max-width: 20vw;
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 `;
 
 const TypeLink = styled.span`
@@ -359,6 +489,8 @@ const OwnerLink = styled.span`
   max-width: 12vw;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
   color: #336;
   text-decoration: underline;
   cursor: pointer;

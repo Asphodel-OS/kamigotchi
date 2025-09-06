@@ -189,32 +189,21 @@ export const SingleCreate = ({
 
   return (
     <Container isVisible={isVisible}>
-      <Row>
+      <Inline>
         <Text size={1.2}>I want to</Text>
         <IconButton text={`<${mode}>`} onClick={toggleMode} />
-      </Row>
-      <Row>
-        <LineItem
-          options={getItemOptions()}
-          selected={item}
-          amt={amt}
-          setAmt={(e) => updateItemAmt(e)}
-          reverse
-        />
-      </Row>
-      <Row>
-        <Text size={1.2}>for</Text>
-      </Row>
-      <Row>
-        <LineItem
-          options={getCurrencyOptions()}
-          selected={currency}
-          amt={cost}
-          setAmt={(e) => updateCost(e)}
-          reverse
-        />
-      </Row>
-      <Overlay bottom={0.75} right={0.75}>
+        <InlineGrow>
+          <LineItem options={getItemOptions()} selected={item} amt={amt} setAmt={(e) => updateItemAmt(e)} reverse />
+        </InlineGrow>
+        <ForWrap>
+          <Text size={1.2}>for</Text>
+          <IconButton text='Swap' onClick={() => { setItem(currency); setCurrency(item); }} />
+        </ForWrap>
+        <InlineGrow>
+          <LineItem options={getCurrencyOptions()} selected={currency} amt={cost} setAmt={(e) => updateCost(e)} reverse />
+        </InlineGrow>
+      </Inline>
+      <ButtonRow>
         <TextTooltip
           title={`${mode} for ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
           text={getCreateError()}
@@ -227,7 +216,7 @@ export const SingleCreate = ({
             disabled={isConfirming || cost === 0 || amt === 0}
           />
         </TextTooltip>
-      </Overlay>
+      </ButtonRow>
     </Container>
   );
 };
@@ -251,4 +240,31 @@ const Row = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.6vw;
+`;
+
+const Inline = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const InlineGrow = styled.div`
+  flex: 1 1 auto;
+  min-width: 0;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.6vw;
+  justify-content: flex-end;
+`;
+
+const ForWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3vw;
 `;

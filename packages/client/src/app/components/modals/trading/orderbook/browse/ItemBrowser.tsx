@@ -2,10 +2,10 @@ import { Dispatch, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Text } from 'app/components/library';
-import { Item } from 'network/shapes';
+import { Item, NullItem } from 'network/shapes';
 import { ItemCard } from './ItemCard';
 
-export type CategoryKey = 'All' | 'Consumables' | 'Materials' | 'Currencies' | 'Other';
+export type CategoryKey = string; // dynamic categories plus grouped: 'All' | 'Consumables' | 'Materials' | 'Currencies'
 
 export const ItemBrowser = ({
   items,
@@ -25,30 +25,53 @@ export const ItemBrowser = ({
   const setCategory = (c: CategoryKey) => {
     if (onCategoryChange) onCategoryChange(c);
     setInternalCategory(c);
+    // Notify offers pane to filter by category (including 'All')
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(new CustomEvent('trading:filterOffersByCategory', { detail: c }));
+      } catch {}
+    }
+    // Clear item selection when switching to 'All'
+    if ((c as string) === 'All') {
+      try { setSelected(NullItem); } catch {}
+    }
   };
-  const categories: { key: CategoryKey; label: string }[] = [
-    { key: 'All', label: 'Show All' },
-    { key: 'Consumables', label: 'Consumables' },
-    { key: 'Materials', label: 'Materials' },
-    { key: 'Currencies', label: 'Currencies' },
-    { key: 'Other', label: 'Other' },
-  ];
+  // Build category list dynamically: reserved groups + all remaining item.type values
+  const categories: { key: CategoryKey; label: string }[] = useMemo(() => {
+    const reserved = [
+      { key: 'All', label: 'Show All' },
+      { key: 'Consumables', label: 'Consumables' },
+      { key: 'Materials', label: 'Materials' },
+      { key: 'Currencies', label: 'Currencies' },
+    ];
+    const consumableTypes = new Set(['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX']);
+    const dynamic = new Set<string>();
+    for (const item of items) {
+      const t = (item.type || '').toUpperCase();
+      if (consumableTypes.has(t) || t === 'MATERIAL' || t === 'ERC20') continue;
+      dynamic.add(t);
+    }
+    const dynamicList = Array.from(dynamic).sort().map((t) => ({ key: t, label: t }));
+    return [...reserved, ...dynamicList];
+  }, [items]);
 
   const categorized = useMemo(() => {
-    const byCat = new Map<CategoryKey, Item[]>([
-      ['All', []],
-      ['Consumables', []],
-      ['Materials', []],
-      ['Currencies', []],
-      ['Other', []],
-    ]);
+    const byCat = new Map<CategoryKey, Item[]>();
+    byCat.set('All', []);
+    byCat.set('Consumables', []);
+    byCat.set('Materials', []);
+    byCat.set('Currencies', []);
+
+    const consumableTypes = new Set(['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX']);
 
     for (const item of items) {
-      const type = item.type.toUpperCase();
-      let key: CategoryKey = 'Other';
-      if (['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX'].includes(type)) key = 'Consumables';
-      else if (['MATERIAL'].includes(type)) key = 'Materials';
-      else if (['ERC20'].includes(type)) key = 'Currencies';
+      const type = (item.type || '').toUpperCase();
+      let key: CategoryKey = type;
+      if (consumableTypes.has(type)) key = 'Consumables';
+      else if (type === 'MATERIAL') key = 'Materials';
+      else if (type === 'ERC20') key = 'Currencies';
+
+      if (!byCat.has(key)) byCat.set(key, []);
       byCat.get(key)!.push(item);
       byCat.get('All')!.push(item);
     }
