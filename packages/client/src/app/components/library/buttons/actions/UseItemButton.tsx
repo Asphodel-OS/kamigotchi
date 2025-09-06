@@ -39,7 +39,7 @@ export const UseItemButton = (
   let disabled = !!tooltip;
   if (!disabled) {
     tooltip = `Feed Kami`;
-    options = getOptions(world, components, kami, account, triggerAction);
+    options = getOptions(world, components, kami, account, triggerAction, false);
     if (options.length === 0) {
       tooltip = `No items to feed`;
       disabled = true;
@@ -77,7 +77,8 @@ const getOptions = (
   components: Components,
   kami: Kami,
   account: Account,
-  triggerAction: Function
+  triggerAction: Function,
+  showEffects?: boolean
 ) => {
   let inventories = account.inventories ?? [];
   inventories = cleanInventories(inventories);
@@ -87,7 +88,7 @@ const getOptions = (
   );
 
   const options = inventories.map((inv: Inventory) => {
-    return getOption(world, components, kami, inv, triggerAction);
+    return getOption(world, components, kami, inv, triggerAction, showEffects);
   });
 
   return options.filter((option) => !!option.text);
@@ -100,13 +101,17 @@ const getOption = (
   components: Components,
   kami: Kami,
   inv: Inventory,
-  triggerAction: Function
+  triggerAction: Function,
+  showEffects?: boolean
 ) => {
+  let text = `${inv.item.name} `;
   // its not querying use correctly!
-  const effectsText = parseAllos(world, components, inv.item.effects.use)
-    .map((entry) => `${entry.description}`)
-    .join(', ');
-  const text = `${inv.item.name} (${effectsText})`;
+  if (!!showEffects) {
+    const effectsText = parseAllos(world, components, inv.item.effects.use)
+      .map((entry) => `${entry.description}`)
+      .join(', ');
+    text = `${text} (${effectsText})`;
+  }
 
   // const canEat = () => passesConditions(world, components, inv.item.requirements.use, kami);
 

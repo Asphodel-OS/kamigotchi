@@ -28,7 +28,6 @@ export function IconListButton({
 }: {
   img: string;
   options: Option[];
-
   text?: string;
   balance?: number;
   disabled?: boolean;
@@ -37,7 +36,6 @@ export function IconListButton({
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
-
   searchable?: boolean;
   icon?: { inset?: { px?: number; x?: number; y?: number } };
 }) {
@@ -80,8 +78,8 @@ export function IconListButton({
           .filter((option) => !searchable || option.text.toLowerCase().includes(search))
           .map((option, i) => (
             <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
-              {option.image && <MenuIcon src={option.image} />}
-              {option.text}
+              {option.image && <OptionIcon src={option.image} />}
+              {option.text && <OptionText>{option.text}</OptionText>}
             </MenuOption>
           ))}
       </MenuWrapper>
@@ -108,31 +106,9 @@ export function IconListButton({
   );
 }
 
-const MenuOption = styled.div<{ disabled?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 0.4vw;
-
-  border-radius: 0.4vw;
-  padding: 0.6vw;
-  justify-content: left;
-  font-size: 0.8vw;
-
-  cursor: ${({ disabled }) => (disabled ? 'none' : 'pointer')};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-
-  &:hover {
-    background-color: #ddd;
-  }
-  &:active {
-    background-color: #bbb;
-  }
-`;
-
-const MenuIcon = styled.img`
-  height: 1.4vw;
-  user-drag: none;
+const MenuWrapper = styled.div`
+  position: relative;
+  max-width: 30vw;
 `;
 
 const MenuInput = styled.input`
@@ -152,6 +128,44 @@ const MenuInput = styled.input`
   font-size: 0.75vw;
 `;
 
-const MenuWrapper = styled.div`
+const MenuOption = styled.div<{ disabled?: boolean }>`
   position: relative;
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  border-radius: 0.45vw;
+  width: 100%;
+  padding: 0.3vw;
+
+  display: flex;
+  align-items: center;
+  gap: 0.45vw;
+
+  cursor: ${({ disabled }) => (disabled ? 'none' : 'pointer')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+
+  &:hover {
+    background-color: #ddd;
+  }
+  &:active {
+    background-color: #bbb;
+  }
+`;
+
+const OptionIcon = styled.img`
+  height: 2.4vw;
+  padding: 0.2vw;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  user-drag: none;
+`;
+
+const OptionText = styled.div`
+  height: 100%;
+
+  display: flex;
+  justify-content: left;
+  align-items: center;
+
+  font-size: 0.9vw;
+  line-height: 1.5vw;
 `;
