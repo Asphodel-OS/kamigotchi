@@ -55,7 +55,7 @@ const Container = styled.div<{ isHidden: boolean }>`
   justify-items: center;
   transition: all 2s ease;
   pointer-events: all;
-  z-index: 10;
+  z-index: 2;
   overflow: hidden;
   user-select: none;
 `;
