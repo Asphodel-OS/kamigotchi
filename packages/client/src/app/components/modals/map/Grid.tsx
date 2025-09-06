@@ -20,6 +20,9 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
+import { useTravel } from 'app/stores/travel';
+// useLayers no longer needed after moving TravelConfirm to top-level
+import { useVisibility } from 'app/stores';
 
 type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
 
@@ -70,6 +73,7 @@ export const Grid = ({
     getValue: (entity: EntityIndex) => number;
   };
 }) => {
+  const { modals, setModals } = useVisibility();
   const {
     getKamiLocation,
     getKami,
@@ -82,6 +86,8 @@ export const Grid = ({
     queryScavInstance,
     getValue,
   } = utils;
+
+  const { setTravel } = useTravel();
 
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
@@ -159,6 +165,18 @@ export const Grid = ({
     playClick();
     move(roomIndex);
   };
+
+  const handleRoomRightClick = (room: Room, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!room.index) return;
+    if (!isRoomBlocked(room)) {
+      setTravel({ targetRoomIndex: room.index, account });
+      setModals({ travelConfirm: true });
+    }
+  };
+
+
+  // close handled by top-level TravelModal
 
   // updates the stats for a room and set it as the hovered room
   const updateRoomStats = (roomIndex: number) => {
@@ -262,6 +280,10 @@ export const Grid = ({
                     onClick={() =>
                       room.index !== 0 && !isRoomBlocked(room) && handleRoomMove(room.index)
                     }
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      if (room.index !== 0) handleRoomRightClick(room, e);
+                    }}
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
@@ -285,6 +307,7 @@ export const Grid = ({
           </Row>
         ))}
       </Overlay>
+      {/* TravelConfirm is now rendered via top-level TravelModal */}
     </Container>
   );
 };
