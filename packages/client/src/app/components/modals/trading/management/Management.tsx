@@ -66,6 +66,7 @@ export const Management = ({
           data={{ account: data.account, trades: data.trades }}
           utils={{ getItemByIndex: utils.getItemByIndex }}
           extraFilter={(t) => t.maker?.entity === data.account.entity}
+          filtersEnabled={false}
         />
       </Bottom>
     </Content>

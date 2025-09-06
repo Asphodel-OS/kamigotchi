@@ -8,7 +8,6 @@ import { EmptyText, TextTooltip } from 'app/components/library';
 import { ItemGridTooltip } from 'app/components/modals/inventory/ItemGridTooltip';
 import { Account, Item } from 'network/shapes';
 import { ConfirmationData } from '../../library/Confirmation';
-// removed bulky PendingOffer card; render compact table rows instead
 import { animate } from 'animejs';
 
 export const Offers = ({
@@ -17,6 +16,7 @@ export const Offers = ({
   data,
   utils,
   extraFilter,
+  filtersEnabled = true,
 }: {
   actions: {
     executeTrade: (trade: Trade) => void;
@@ -38,6 +38,7 @@ export const Offers = ({
     getItemByIndex: (index: number) => Item;
   };
   extraFilter?: (t: Trade) => boolean;
+  filtersEnabled?: boolean;
 }) => {
   const { typeFilter, sort, setSort, ascending, setAscending, itemFilter, itemSearch } = controls;
   const { account, trades } = data;
@@ -63,7 +64,6 @@ export const Offers = ({
       });
     }
 
-    // sorting
     // apply category filter if any
     const matchesCategory = (trade: Trade): boolean => {
       const key = (categoryFilter || 'All').toUpperCase();
@@ -84,6 +84,20 @@ export const Offers = ({
       return false;
     };
     cleaned = cleaned.filter(matchesCategory);
+
+    // apply item filter if any (from this panel's clicks)
+    if (itemFilterIndexLocal && itemFilterIndexLocal !== 0) {
+      cleaned = cleaned.filter((trade) => {
+        const sellItems = trade.sellOrder?.items ?? [];
+        const buyItems = trade.buyOrder?.items ?? [];
+        return [...sellItems, ...buyItems].some((it) => (it as any)?.index === itemFilterIndexLocal);
+      });
+    }
+
+    // apply owner filter if any
+    if (ownerFilter) {
+      cleaned = cleaned.filter((t) => (t.maker?.name || '') === ownerFilter);
+    }
 
     if (extraFilter) {
       cleaned = cleaned.filter(extraFilter);
@@ -156,6 +170,7 @@ export const Offers = ({
   // Listen to category filters from the browser and filter rows accordingly
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
   useEffect(() => {
+    if (!filtersEnabled) return;
     const handler = (e: any) => {
       setCategoryFilter((e?.detail || 'All') as string);
       setOffersOpen(true);
@@ -166,11 +181,12 @@ export const Offers = ({
       window.removeEventListener('trading:filterOffersByCategory', handler as any);
       window.removeEventListener('trading:setCategory', handler as any);
     };
-  }, []);
+  }, [filtersEnabled]);
 
   // Listen for explicit item filter requests (from clicking item in offers)
   const [itemFilterIndexLocal, setItemFilterIndexLocal] = useState<number | null>(null);
   useEffect(() => {
+    if (!filtersEnabled) return;
     const handler = (e: any) => {
       const idx = Number(e?.detail);
       setItemFilterIndexLocal(Number.isFinite(idx) ? idx : null);
@@ -178,7 +194,21 @@ export const Offers = ({
     };
     window.addEventListener('trading:filterOffersByItem', handler as any);
     return () => window.removeEventListener('trading:filterOffersByItem', handler as any);
-  }, []);
+  }, [filtersEnabled]);
+
+  // Listen for owner filter requests
+  const [ownerFilter, setOwnerFilter] = useState<string>('');
+  useEffect(() => {
+    if (!filtersEnabled) return;
+    const handler = (e: any) => {
+      const name = (e?.detail || '').toString();
+      setOwnerFilter(name);
+      setOffersOpen(true);
+    };
+    window.addEventListener('trading:filterOffersByOwner', handler as any);
+    return () => window.removeEventListener('trading:filterOffersByOwner', handler as any);
+  }, [filtersEnabled]);
+
 
   useEffect(() => {
     if (!wrapRef.current) return;
@@ -214,22 +244,46 @@ export const Offers = ({
   };
 
   const pickDisplayItem = (trade: Trade, utils: { getItemByIndex: (index: number) => Item }): Item => {
-    // Prefer the non-currency item if present; otherwise first item in sell or buy
-    const sellItems = trade.sellOrder?.items ?? [];
-    const buyItems = trade.buyOrder?.items ?? [];
-    const pool = [...sellItems, ...buyItems];
-    return (pool[0] as Item) ?? utils.getItemByIndex(0);
+    const mapItems = (arr: any[] | undefined): Item[] =>
+      (arr ?? [])
+        .map((it: any) => {
+          const idx = (it?.index ?? it?.item?.index ?? 0) as number;
+          return (it as Item)?.name ? (it as Item) : utils.getItemByIndex(idx);
+        })
+        .filter(Boolean) as Item[];
+
+    const fromBuy = mapItems(trade.buyOrder?.items);
+    const fromSell = mapItems(trade.sellOrder?.items);
+
+    const preferNonCurrency = (list: Item[]) => list.find((i) => (i?.type || '').toUpperCase() !== 'ERC20') ?? list[0];
+
+    // When viewing Buy offers, show what sellers are offering (sellOrder)
+    if ((typeFilter as any) === 'Buy') {
+      return (
+        preferNonCurrency(fromSell) ?? preferNonCurrency(fromBuy) ?? utils.getItemByIndex(0)
+      );
+    }
+    // When viewing Sell offers, show what buyers are seeking (buyOrder)
+    if ((typeFilter as any) === 'Sell') {
+      return (
+        preferNonCurrency(fromBuy) ?? preferNonCurrency(fromSell) ?? utils.getItemByIndex(0)
+      );
+    }
+    // Barter/All: prefer non-currency from any side
+    const combined = [...fromSell, ...fromBuy];
+    return preferNonCurrency(combined) ?? utils.getItemByIndex(0);
   };
 
   const clearFilters = () => {
     setItemFilterIndexLocal(null);
+    setOwnerFilter('');
     try {
       window.dispatchEvent(new CustomEvent('trading:filterOffersByCategory', { detail: 'All' }));
       window.dispatchEvent(new CustomEvent('trading:clearFilters'));
     } catch {}
   };
 
-  const hasAnyFilter = (categoryFilter && categoryFilter !== 'All') || (itemFilterIndexLocal && itemFilterIndexLocal !== 0);
+  const hasAnyFilter = (categoryFilter && categoryFilter !== 'All') || (itemFilterIndexLocal && itemFilterIndexLocal !== 0) || !!ownerFilter;
 
   return (
     <Container>
@@ -328,16 +382,9 @@ export const Offers = ({
                   <OwnerLink
                     onClick={() => {
                       const name = trade.maker?.name ?? '';
-                      window.dispatchEvent(new CustomEvent('trading:viewProfile', { detail: name }));
-                      try {
-                        const account = (trade.maker as any);
-                        if (typeof window !== 'undefined' && account?.index != null) {
-                          window.dispatchEvent(new CustomEvent('account:setIndex', { detail: account.index }));
-                          window.dispatchEvent(new CustomEvent('modal:openAccount'));
-                        }
-                      } catch {}
+                      window.dispatchEvent(new CustomEvent('trading:filterOffersByOwner', { detail: name }));
                     }}
-                    title='View profile'
+                    title='View items by owner'
                   >
                     {trade.maker?.name ?? '???'}
                   </OwnerLink>

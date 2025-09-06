@@ -48,6 +48,7 @@ export const History = ({
         }}
         utils={{ getItemByIndex: utils.getItemByIndex }}
         extraFilter={(t) => t.state !== 'PENDING' && (t.maker?.entity === data.account.entity || t.taker?.entity === data.account.entity)}
+        filtersEnabled={false}
       />
     </Content>
   );

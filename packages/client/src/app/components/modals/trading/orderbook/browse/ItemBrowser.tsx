@@ -51,7 +51,8 @@ export const ItemBrowser = ({
       if (consumableTypes.has(t) || t === 'MATERIAL' || t === 'ERC20') continue;
       dynamic.add(t);
     }
-    const dynamicList = Array.from(dynamic).sort().map((t) => ({ key: t, label: t }));
+    const toTitle = (s: string) => s.toLowerCase().replace(/(^|[_\-\s])([a-z])/g, (_, p1, p2) => `${p1 ? ' ' : ''}${p2.toUpperCase()}`).trim();
+    const dynamicList = Array.from(dynamic).sort().map((t) => ({ key: t, label: toTitle(t) }));
     return [...reserved, ...dynamicList];
   }, [items]);
 
