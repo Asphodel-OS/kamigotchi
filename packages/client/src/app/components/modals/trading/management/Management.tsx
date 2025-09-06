@@ -109,6 +109,8 @@ const Container = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;
   user-select: none;
+  /* Allow inner panes to shrink and enable children to scroll */
+  min-height: 0;
 `;
 
 const Top = styled.div`
@@ -119,6 +121,8 @@ const Bottom = styled.div`
   flex: 1 1 auto;
   display: flex;
   height: 100%;
+  /* Critical for child scroll containers (tables) */
+  min-height: 0;
   & > div {
     width: 100% !important;
   }

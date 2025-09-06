@@ -26,15 +26,18 @@ export const History = ({
   };
 }) => {
   const [typeFilter, setTypeFilter] = useState<TradeType>('All' as any);
+  // enable header click sorting in History view
+  const [sort, setSort] = useState<string>('Total');
+  const [ascending, setAscending] = useState<boolean>(true);
   return (
     <Content isVisible={isVisible}>
       <OffersTable
         actions={{ executeTrade: (() => {}) as any }}
         controls={{
-          sort: 'Total' as any,
-          setSort: (() => {}) as any,
-          ascending: true,
-          setAscending: (() => {}) as any,
+          sort: sort as any,
+          setSort: setSort as any,
+          ascending: ascending,
+          setAscending: setAscending as any,
           itemFilter: { index: 0 } as unknown as any,
           typeFilter: typeFilter as unknown as any,
           isConfirming: false,

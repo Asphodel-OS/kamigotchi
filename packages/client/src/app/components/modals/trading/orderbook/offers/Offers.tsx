@@ -141,6 +141,7 @@ export const Offers = ({
         case 'Owner':
           return owner;
         case 'Price':
+          return price;
         case 'Total':
           return total;
         case 'Qty':
