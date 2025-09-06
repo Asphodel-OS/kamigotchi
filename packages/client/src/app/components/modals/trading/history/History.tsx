@@ -6,8 +6,7 @@ import { TradeType } from 'app/cache/trade';
 import { Trade as TradeHistoryType } from 'clients/kamiden/proto';
 import { Account, Item } from 'network/shapes';
 import { Trade } from 'network/shapes/Trade/types';
-import { Controls } from './Controls';
-import { TradeHistory } from './TradeHistory';
+import { Offers as OffersTable } from '../orderbook/offers/Offers';
 
 export const History = ({
   isVisible,
@@ -26,11 +25,31 @@ export const History = ({
     getTradeHistory: (tradeHistory: TradeHistoryType) => Trade;
   };
 }) => {
-  const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
+  const [typeFilter, setTypeFilter] = useState<TradeType>('All' as any);
   return (
     <Content isVisible={isVisible}>
-      <Controls controls={{ typeFilter, setTypeFilter }} />
-      <TradeHistory controls={{ typeFilter }} data={data} utils={utils} />
+      <OffersTable
+        actions={{ executeTrade: (() => {}) as any }}
+        controls={{
+          sort: 'Total' as any,
+          setSort: (() => {}) as any,
+          ascending: true,
+          setAscending: (() => {}) as any,
+          itemFilter: ({ index: 0 } as unknown) as any,
+          typeFilter: (typeFilter as unknown) as any,
+          isConfirming: false,
+          itemSearch: '',
+          setIsConfirming: (() => {}) as any,
+          setConfirmData: (() => {}) as any,
+        }}
+        data={{
+          account: (data.account as unknown) as any,
+          trades: data.tradeHistory.map((th) => utils.getTradeHistory(th)),
+        }}
+        utils={{ getItemByIndex: utils.getItemByIndex }}
+        extraFilter={(t) => t.state !== 'PENDING' && (t.maker?.entity === data.account.entity || t.taker?.entity === data.account.entity)}
+        filtersEnabled={false}
+      />
     </Content>
   );
 };

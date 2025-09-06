@@ -16,6 +16,7 @@ export const LineItem = ({
   setAmt,
   remove,
   reverse,
+  iconOnly,
 }: {
   options: IconListButtonOption[];
   selected: Item;
@@ -23,23 +24,28 @@ export const LineItem = ({
   setAmt: (e: ChangeEvent<HTMLInputElement>) => void;
   remove?: () => void;
   reverse?: boolean;
+  iconOnly?: boolean;
 }) => {
   return (
     <Container>
       {reverse && (
         <Quantity
-          width={16.2}
+          width={8.1}
           type='string'
           value={amt.toLocaleString()}
           onChange={(e) => setAmt(e)}
         />
       )}
       <TextTooltip title={selected.name} text={[selected.description]}>
-        <IconListButton img={selected.image} scale={2.7} options={options} searchable />
+        {iconOnly ? (
+          <IconImage src={selected.image} />
+        ) : (
+          <IconListButton img={selected.image} scale={2.7} options={options} searchable />
+        )}
       </TextTooltip>
       {!reverse && (
         <Quantity
-          width={16.2}
+          width={8.1}
           type='string'
           value={amt.toLocaleString()}
           onChange={(e) => setAmt(e)}
@@ -79,6 +85,8 @@ const Quantity = styled.input<{ width?: number }>`
   color: black;
   font-size: 0.9vw;
   text-align: center;
+  overflow: hidden;
+  text-overflow: clip;
 `;
 
 const ExitContainer = styled.div`
@@ -88,4 +96,10 @@ const ExitContainer = styled.div`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
+`;
+
+const IconImage = styled.img`
+  width: 2.7vw;
+  height: 2.7vw;
+  image-rendering: pixelated;
 `;

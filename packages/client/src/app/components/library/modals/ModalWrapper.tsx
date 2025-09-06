@@ -59,7 +59,7 @@ export const ModalWrapper = ({
 
   return (
     <Wrapper id={id} isOpen={isVisible} overlay={!!overlay} style={gridStyle}>
-      <Content isOpen={isVisible} truncate={truncate}>
+      <Content isOpen={isVisible} truncate={truncate} data-resizable={id === 'trading'}>
         {canExit && (
           <ButtonRow>
             <ExitButton divName={id} />
@@ -107,6 +107,17 @@ const Content = styled.div<{
   display: flex;
   flex-flow: column nowrap;
   overflow: hidden;
+  &[data-resizable='true'] {
+    resize: both;
+    overflow: auto;
+    box-sizing: border-box;
+    /* Keep within the viewport */
+    max-width: calc(100vw - 1vw);
+    max-height: calc(100vh - 1vh);
+    /* Sensible minimums to avoid text overlap */
+    min-width: 48vw;
+    min-height: 42vh;
+  }
 `;
 
 const ButtonRow = styled.div`

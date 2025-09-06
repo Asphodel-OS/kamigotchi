@@ -49,10 +49,11 @@ const Container = styled.div`
 const Button = styled.button`
   border: none;
   border-bottom: solid black 0.15vw;
-  padding: 0.6vw;
+  padding: 0 0.6vw;
 
-  font-size: 1.2vw;
-  line-height: 1.8vw;
+  height: 2.4vw;
+  line-height: 2.4vw;
+  font-size: 1vw;
   flex-grow: 1;
 
   cursor: pointer;

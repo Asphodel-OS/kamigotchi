@@ -9,7 +9,7 @@ import { getAllItems, getItem, getItemByIndex } from 'app/cache/item';
 import { getTrade, getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility } from 'app/stores';
+import { useNetwork, useVisibility, useSelected } from 'app/stores';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
@@ -96,6 +96,26 @@ export const TradingModal: UIComponent = {
       refreshTrades();
       getTradeHistoryKamiden(account.id);
     }, [tradingModalVisible, tick]);
+
+    // open account modal on events from offers
+    useEffect(() => {
+      const open = () => {
+        const { modals } = useVisibility.getState();
+        useVisibility.setState({ modals: { ...modals, account: true } });
+      };
+      const setIndex = (e: any) => {
+        const idx = Number(e?.detail ?? 0);
+        try {
+          useSelected.getState().setAccount(idx);
+        } catch {}
+      };
+      window.addEventListener('modal:openAccount', open as any);
+      window.addEventListener('account:setIndex', setIndex as any);
+      return () => {
+        window.removeEventListener('modal:openAccount', open as any);
+        window.removeEventListener('account:setIndex', setIndex as any);
+      };
+    }, []);
 
     useEffect(() => {
       refreshItemRegistry();
@@ -244,7 +264,7 @@ export const TradingModal: UIComponent = {
           </Confirmation>
         </Overlay>
         <Tabs tab={tab} setTab={setTab} />
-        <Content>
+        <Content className='trading-modal-content'>
           <Orderbook
             actions={{ cancelTrade, executeTrade }}
             controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
@@ -283,7 +303,6 @@ export const TradingModal: UIComponent = {
 
 const Content = styled.div`
   position: relative;
-  gap: 0.6vw;
 
   flex-grow: 1;
   display: flex;
@@ -292,4 +311,5 @@ const Content = styled.div`
 
   overflow-x: hidden;
   overflow-y: auto;
+  font-size: 0.9vw;
 `;
