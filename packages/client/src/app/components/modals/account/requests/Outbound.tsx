@@ -33,7 +33,7 @@ export const Outbound = ({
           <AccountCard
             key={friendship.target.index}
             account={friendship.target}
-            description={[friendship.account.bio ?? 'outbound friend request']}
+            description={[friendship.target.bio || 'outbound friend request']}
             actions={Actions(friendship)}
           />
         ))

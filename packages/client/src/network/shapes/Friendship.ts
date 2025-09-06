@@ -67,19 +67,21 @@ export const getAccFriends = (
 export const getAccIncomingRequests = (
   world: World,
   components: Components,
-  entity: EntityIndex
+  entity: EntityIndex,
+  accountOptions?: any
 ): Friendship[] => {
   const id = world.entities[entity];
-  return queryFriendshipX(world, components, { target: id, state: 'REQUEST' });
+  return queryFriendshipX(world, components, { target: id, state: 'REQUEST' }, accountOptions);
 };
 
 export const getAccOutgoingRequests = (
   world: World,
   components: Components,
-  entity: EntityIndex
+  entity: EntityIndex,
+  accountOptions?: any
 ): Friendship[] => {
   const id = world.entities[entity];
-  return queryFriendshipX(world, components, { account: id, state: 'REQUEST' });
+  return queryFriendshipX(world, components, { account: id, state: 'REQUEST' }, accountOptions);
 };
 
 export const getAccBlocked = (

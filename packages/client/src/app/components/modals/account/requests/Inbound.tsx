@@ -43,7 +43,7 @@ export const Inbound = ({
           <AccountCard
             key={friendship.account.index}
             account={friendship.account}
-            description={[friendship.account.bio ?? 'inbound friend request']}
+            description={[friendship.account.bio || 'inbound friend request']}
             actions={Actions(friendship)}
           />
         ))
