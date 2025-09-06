@@ -229,10 +229,23 @@ export const Offers = ({
 
   const handleExecute = (trade: Trade) => {
     const { setConfirmData, setIsConfirming } = controls;
+    const t = getTradeType(trade, false) as string;
+    const item = pickDisplayItem(trade, utils);
+    let qty = 1;
+    if (t === 'Buy') qty = (trade?.sellOrder?.amounts?.[0] || 1) as number;
+    else if (t === 'Sell') qty = (trade?.buyOrder?.amounts?.[0] || 1) as number;
+    else qty = (trade?.sellOrder?.amounts?.[0] || trade?.buyOrder?.amounts?.[0] || 1) as number;
+    const per = getPerUnitPrice(trade, t as any);
+    const total = per * qty;
+    const verb = t === 'Buy' ? 'Buy' : t === 'Sell' ? 'Sell' : 'Trade';
     setConfirmData({
-      title: 'Execute Trade',
+      title: 'Confirm Order',
       subTitle: undefined,
-      content: <div style={{ padding: '0.6vw', fontSize: '0.9vw' }}>Confirm execution?</div>,
+      content: (
+        <div style={{ padding: '0.6vw', fontSize: '0.9vw' }}>
+          {verb} {qty.toLocaleString()} {item?.name ?? 'Item'} for {total.toLocaleString()} MUSU?
+        </div>
+      ),
       onConfirm: () => actions.executeTrade(trade),
     });
     controls.setIsConfirming(true);
