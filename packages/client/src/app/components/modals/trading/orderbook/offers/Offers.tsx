@@ -242,8 +242,13 @@ export const Offers = ({
       title: 'Confirm Order',
       subTitle: undefined,
       content: (
-        <div style={{ padding: '0.6vw', fontSize: '0.9vw' }}>
-          {verb} {qty.toLocaleString()} {item?.name ?? 'Item'} for {total.toLocaleString()} MUSU?
+        <div style={{ padding: '0.6vw', fontSize: '0.9vw', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6vw' }}>
+          <TextTooltip text={[<ItemGridTooltip key={item?.index || 0} item={item as any} utils={{ displayRequirements: () => '', parseAllos: () => [] }} />]} maxWidth={26}>
+            <img src={item?.image} style={{ width: '3vw', height: '3vw', imageRendering: 'pixelated' }} />
+          </TextTooltip>
+          <span>
+            {verb} {qty.toLocaleString()} {item?.name ?? 'Item'} for {total.toLocaleString()} MUSU?
+          </span>
         </div>
       ),
       onConfirm: () => actions.executeTrade(trade),
@@ -337,9 +342,8 @@ export const Offers = ({
           <col className='type' />
           <col className='qty' />
           <col className='total' />
+          <col className='maker' />
           <col />
-          <col />
-          {deleteEnabled ? <col /> : null}
         </colgroup>
         <thead>
           <HeaderRow>
@@ -356,10 +360,9 @@ export const Offers = ({
               Total {sort === 'Total' ? (ascending ? '↑' : '↓') : ''}
             </SortableTh>
             <SortableTh onClick={() => { setAscending(sort === 'Owner' ? !ascending : true); setSort('Owner'); }}>
-              Owner {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
+              Maker {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
             </SortableTh>
             <th>Action</th>
-            {deleteEnabled ? <th></th> : null}
           </HeaderRow>
         </thead>
         <tbody>
@@ -416,7 +419,7 @@ export const Offers = ({
                   </TypeLink>
                 </td>
                 <td>{qty.toLocaleString()}</td>
-                <td>{total.toLocaleString()}</td>
+                <TotalCell>{total.toLocaleString()}</TotalCell>
                 <td>
                   <OwnerLink
                     onClick={() => {
@@ -429,19 +432,19 @@ export const Offers = ({
                   </OwnerLink>
                 </td>
                 <td>
+                  <ActionCell>
                   <ActionButton disabled={disabled} onClick={() => handleExecute(trade)}>
-                    {getActionLabel(trade)}
+                      {getActionLabel(trade)}
+                    </ActionButton>
+                    {deleteEnabled ? (
+                      <TextTooltip text={['delete order']}>
+                        <ActionButton onClick={() => (onDelete ? onDelete(trade) : actions.cancelTrade?.(trade))}>
+                          x
                   </ActionButton>
+                      </TextTooltip>
+                    ) : null}
+                  </ActionCell>
                 </td>
-                {deleteEnabled ? (
-                  <td>
-                    <TextTooltip text={['delete order']}>
-                      <ActionButton onClick={() => (onDelete ? onDelete(trade) : actions.cancelTrade?.(trade))}>
-                        x
-                      </ActionButton>
-                    </TextTooltip>
-                  </td>
-                ) : null}
               </Row>
             );
           })}
@@ -502,10 +505,11 @@ const Table = styled.table`
   border-collapse: collapse;
   table-layout: fixed;
   display: table;
-  colgroup col.item { width: 38%; }
+  colgroup col.item { width: 34%; }
   colgroup col.type { width: 14%; }
   colgroup col.qty { width: 10%; }
-  colgroup col.total { width: 14%; }
+  colgroup col.total { width: 12%; }
+  colgroup col.maker { width: 20%; }
 `;
 
 const HeaderRow = styled.tr`
@@ -579,9 +583,16 @@ const ActionButton = styled.button`
   }
 `;
 
+const ActionCell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3vw;
+  align-items: flex-start;
+`;
+
 const OwnerLink = styled.span`
   display: inline-block;
-  max-width: 12vw;
+  max-width: 16ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
@@ -589,4 +600,8 @@ const OwnerLink = styled.span`
   color: #336;
   text-decoration: underline;
   cursor: pointer;
+`;
+
+const TotalCell = styled.td`
+  word-break: break-word;
 `;
