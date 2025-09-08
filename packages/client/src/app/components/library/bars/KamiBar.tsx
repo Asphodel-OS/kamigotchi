@@ -233,6 +233,8 @@ const Container = styled.div`
   overflow: hidden;
 
   user-select: none;
+  content-visibility: auto;
+  contain-intrinsic-size: 4vw 24vw;
 `;
 
 const Left = styled.div`
@@ -275,7 +277,7 @@ const Middle = styled.div<MiddleProps>`
     `linear-gradient(90deg, ${color}, 0%, ${color}, ${percent}%, #fff, ${Math.min(percent * 1.05, 100)}%, #fff 100%)`};
 `;
 
-const Image = styled.img`
+const Image = styled.img.attrs({ loading: 'lazy', decoding: 'async' })`
   border-right: solid black 0.15vw;
   width: 3vw;
   height: 3vw;

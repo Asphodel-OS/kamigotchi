@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiBar, TextTooltip } from 'app/components/library';
@@ -44,6 +44,8 @@ export const KamisExternal = ({
   };
   isVisible: boolean;
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(50);
   /////////////////
   // SUBSCRIPTIONS
 
@@ -127,8 +129,8 @@ export const KamisExternal = ({
   // RENDER
 
   return (
-    <Container isVisible={isVisible}>
-      {kamis.map((kami) => (
+    <Container ref={containerRef} isVisible={isVisible}>
+      {kamis.slice(0, visibleCount).map((kami) => (
         <KamiBar
           key={kami.entity}
           kami={kami}
@@ -137,6 +139,9 @@ export const KamisExternal = ({
           tick={0}
         />
       ))}
+      {visibleCount < kamis.length && (
+        <Loading>Loading more Kami…</Loading>
+      )}
     </Container>
   );
 };
@@ -146,4 +151,11 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: column nowrap;
   gap: 0.45vw;
   padding: 0.6vw;
+  overflow-y: auto;
+`;
+
+const Loading = styled.div`
+  text-align: center;
+  color: #666;
+  padding: 0.6vw 0;
 `;

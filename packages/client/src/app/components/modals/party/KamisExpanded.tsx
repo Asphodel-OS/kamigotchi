@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { getHarvestItem } from 'app/cache/harvest';
@@ -56,6 +57,9 @@ export const KamisExpanded = ({
 
   isVisible: boolean;
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(30);
+
   const nodeModalOpen = useVisibility((s) => s.modals.node);
   const setModals = useVisibility((s) => s.setModals);
   const nodeIndex = useSelected((s) => s.nodeIndex);
@@ -179,9 +183,27 @@ export const KamisExpanded = ({
     return buttons;
   };
 
+  useEffect(() => {
+    if (!isVisible) return;
+    setVisibleCount(30);
+  }, [isVisible, displayedKamis.length]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const threshold = 20; // px
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - threshold) {
+        setVisibleCount((c) => Math.min(c + 30, displayedKamis.length));
+      }
+    };
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [displayedKamis.length, isVisible]);
+
   return (
-    <Container isVisible={isVisible}>
-      {displayedKamis.map((kami) => (
+    <Container ref={containerRef} isVisible={isVisible}>
+      {displayedKamis.slice(0, visibleCount).map((kami) => (
         <KamiCard
           key={kami.entity}
           kami={kami}
@@ -196,6 +218,9 @@ export const KamisExpanded = ({
           utils={utils}
         />
       ))}
+      {visibleCount < displayedKamis.length && (
+        <Loading>Loading more Kami…</Loading>
+      )}
     </Container>
   );
 };
@@ -205,4 +230,11 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: column nowrap;
   gap: 0.45vw;
   padding: 0.6vw;
+  overflow-y: auto;
+`;
+
+const Loading = styled.div`
+  text-align: center;
+  color: #666;
+  padding: 0.6vw 0;
 `;

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { isDead } from 'app/cache/kami';
@@ -45,6 +46,8 @@ export const KamisCollapsed = ({
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(40);
   /////////////////
   // INTERPRETATION
 
@@ -90,9 +93,27 @@ export const KamisCollapsed = ({
     return buttons;
   };
 
+  useEffect(() => {
+    if (!isVisible) return;
+    setVisibleCount(40);
+  }, [isVisible, displayedKamis.length]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const threshold = 20;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - threshold) {
+        setVisibleCount((c) => Math.min(c + 40, displayedKamis.length));
+      }
+    };
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [displayedKamis.length, isVisible]);
+
   return (
-    <Container isVisible={isVisible}>
-      {displayedKamis.map((kami) => (
+    <Container ref={containerRef} isVisible={isVisible}>
+      {displayedKamis.slice(0, visibleCount).map((kami) => (
         <KamiBar
           key={kami.entity}
           kami={kami}
@@ -102,6 +123,9 @@ export const KamisCollapsed = ({
           tick={tick}
         />
       ))}
+      {visibleCount < displayedKamis.length && (
+        <Loading>Loading more Kami…</Loading>
+      )}
     </Container>
   );
 };
@@ -111,4 +135,11 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: column nowrap;
   gap: 0.45vw;
   padding: 0.6vw;
+  overflow-y: auto;
+`;
+
+const Loading = styled.div`
+  text-align: center;
+  color: #666;
+  padding: 0.6vw 0;
 `;

@@ -10,6 +10,8 @@ interface ShaderCanvasProps {
   capDevicePixelRatio?: number; // caps DPR for perf; default 2
   transparent?: boolean; // true for overlay effects
   animateWhenOffscreen?: boolean; // default false
+  maxFps?: number; // optional FPS cap; default 60
+  pauseWhenHidden?: boolean; // pause when document is hidden; default true
   onBeforeFrame?: (uniforms: Record<string, THREE.IUniform>, timeSeconds: number, size: { width: number; height: number }) => void;
 }
 
@@ -23,6 +25,8 @@ export const ShaderCanvas: React.FC<ShaderCanvasProps> = (props) => {
     capDevicePixelRatio = 2,
     transparent = true,
     animateWhenOffscreen = false,
+    maxFps = 60,
+    pauseWhenHidden = true,
     onBeforeFrame,
   } = props;
 
@@ -33,7 +37,9 @@ export const ShaderCanvas: React.FC<ShaderCanvasProps> = (props) => {
   const meshRef = useRef<THREE.Mesh | null>(null);
   const frameRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(performance.now());
-  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const isVisibleRef = useRef<boolean>(true);
+  const pageVisibleRef = useRef<boolean>(typeof document !== 'undefined' ? document.visibilityState !== 'hidden' : true);
+  const lastFrameTimeRef = useRef<number>(0);
 
 	useEffect(() => {
     const container = containerRef.current;
@@ -91,16 +97,40 @@ export const ShaderCanvas: React.FC<ShaderCanvasProps> = (props) => {
     let io: IntersectionObserver | null = null;
     if (!animateWhenOffscreen && 'IntersectionObserver' in window) {
       io = new IntersectionObserver((entries) => {
-        for (const entry of entries) setIsVisible(entry.isIntersecting);
+        for (const entry of entries) isVisibleRef.current = entry.isIntersecting;
       });
       io.observe(container);
     }
 
+    const handleVisibility = () => {
+      if (!pauseWhenHidden) return;
+      pageVisibleRef.current = document.visibilityState !== 'hidden';
+      if (!pageVisibleRef.current && frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      } else if (pageVisibleRef.current && !frameRef.current) {
+        frameRef.current = requestAnimationFrame(animate);
+      }
+    };
+    if (pauseWhenHidden && typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', handleVisibility);
+    }
+
     const animate = () => {
       frameRef.current = null; // mark frame processed
-      if (paused || (!isVisible && !animateWhenOffscreen)) return;
-      const now = performance.now();
-      const t = (now - startTimeRef.current) / 1000;
+      if (paused) return;
+      if (!animateWhenOffscreen && !isVisibleRef.current) return;
+      if (pauseWhenHidden && !pageVisibleRef.current) return;
+      const nowMs = performance.now();
+      if (maxFps > 0) {
+        const minDelta = 1000 / Math.max(1, maxFps);
+        if (nowMs - lastFrameTimeRef.current < minDelta) {
+          frameRef.current = requestAnimationFrame(animate);
+          return;
+        }
+        lastFrameTimeRef.current = nowMs;
+      }
+      const t = (nowMs - startTimeRef.current) / 1000;
       const mat = mesh.material as THREE.ShaderMaterial;
       if (mat.uniforms.iTime) mat.uniforms.iTime.value = t;
       if (onBeforeFrame) {
@@ -117,6 +147,9 @@ export const ShaderCanvas: React.FC<ShaderCanvasProps> = (props) => {
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       if (io) io.disconnect();
+      if (pauseWhenHidden && typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', handleVisibility);
+      }
       obs.disconnect();
       scene.remove(mesh);
       geometry.dispose();

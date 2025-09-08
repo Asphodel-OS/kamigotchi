@@ -1,6 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
+/**
+ * ShaderStack
+ *
+ * Renders a single full-screen quad and swaps a stack of ShaderMaterials each frame.
+ * This gives us layering without multiple canvases/contexts. It also:
+ * - Caps device pixel ratio to avoid overdraw on high-DPR screens
+ * - Pauses rendering when the canvas is offscreen (IntersectionObserver)
+ * - Optionally pauses when the document is hidden and/or caps FPS
+ * - Limits the number of concurrent WebGL contexts to reduce GPU pressure
+ */
 export interface ShaderLayer {
   fragmentShader: string;
   uniforms?: Record<string, THREE.IUniform>;
@@ -20,6 +30,8 @@ interface ShaderStackProps {
   capDevicePixelRatio?: number; // default 2
   transparent?: boolean; // true for overlay effects
   animateWhenOffscreen?: boolean; // default false
+  maxFps?: number; // optional FPS cap, default 60
+  pauseWhenHidden?: boolean; // pause when tab hidden, default true
 }
 
 // A single WebGL canvas rendering multiple full-screen shader layers in order.
@@ -40,6 +52,8 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
   capDevicePixelRatio = 2,
   transparent = true,
   animateWhenOffscreen = false,
+  maxFps = 60,
+  pauseWhenHidden = true,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -55,6 +69,35 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const ioRef = useRef<IntersectionObserver | null>(null);
   const contextAcquiredRef = useRef<boolean>(false);
+  const pageVisibleRef = useRef<boolean>(typeof document !== 'undefined' ? document.visibilityState !== 'hidden' : true);
+  const lastFrameTimeRef = useRef<number>(0);
+  const loopRef = useRef<() => void>(() => {});
+
+  // Small helpers to keep the render loop simple and readable
+  const shouldRender = () => {
+    if (paused) return false;
+    if (!animateWhenOffscreen && !isVisible) return false;
+    if (pauseWhenHidden && !pageVisibleRef.current) return false;
+    return true;
+  };
+
+  const updateSizeIfNeeded = (renderer: THREE.WebGLRenderer) => {
+    const container = containerRef.current;
+    if (!container) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, capDevicePixelRatio);
+    const cw = container.clientWidth || 1;
+    const ch = container.clientHeight || 1;
+    const rw = Math.round((renderer.domElement.width || 1) / dpr);
+    const rh = Math.round((renderer.domElement.height || 1) / dpr);
+    if (rw !== cw || rh !== ch) {
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(cw, ch, false);
+      for (const mat of materialsRef.current) {
+        const u = mat.uniforms;
+        if (u.iResolution) u.iResolution.value.set(cw, ch, dpr);
+      }
+    }
+  };
 
   const init = () => {
     const container = containerRef.current;
@@ -195,6 +238,19 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     } else if (animateWhenOffscreen) {
       setIsVisible(true);
     }
+    const handleVisibility = () => {
+      if (!pauseWhenHidden) return;
+      pageVisibleRef.current = document.visibilityState !== 'hidden';
+      if (!pageVisibleRef.current && frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      } else if (pageVisibleRef.current && !frameRef.current && rendererRef.current) {
+        frameRef.current = requestAnimationFrame(loopRef.current);
+      }
+    };
+    if (pauseWhenHidden && typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', handleVisibility);
+    }
     return () => { if (ioRef.current) { ioRef.current.disconnect(); ioRef.current = null; } };
   }, [animateWhenOffscreen]);
 
@@ -215,31 +271,24 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
       const camera = cameraRef.current;
       const mesh = meshRef.current;
       if (!renderer || !scene || !camera || !mesh) return;
-      if (paused || (!isVisible && !animateWhenOffscreen)) return;
+      if (!shouldRender()) return;
+      const nowMs = performance.now();
+      if (maxFps > 0) {
+        const minDelta = 1000 / Math.max(1, maxFps);
+        if (nowMs - lastFrameTimeRef.current < minDelta) {
+          frameRef.current = requestAnimationFrame(loop);
+          return;
+        }
+        lastFrameTimeRef.current = nowMs;
+      }
       // Initialize startTimeRef on first client-side frame
       if (startTimeRef.current === 0 && typeof performance !== 'undefined') {
         startTimeRef.current = performance.now();
       }
-      const now = performance.now();
-      const t = (now - startTimeRef.current) / 1000;
+      const t = (nowMs - startTimeRef.current) / 1000;
 
-      // Defensive: ensure canvas size/uniforms match container each frame for early mounts
-      const container = containerRef.current;
-      if (container) {
-        const dpr = Math.min(window.devicePixelRatio || 1, capDevicePixelRatio);
-        const cw = container.clientWidth || 1;
-        const ch = container.clientHeight || 1;
-        const rw = Math.round((renderer.domElement.width || 1) / dpr);
-        const rh = Math.round((renderer.domElement.height || 1) / dpr);
-        if (rw !== cw || rh !== ch) {
-          renderer.setPixelRatio(dpr);
-          renderer.setSize(cw, ch, false);
-          for (const mat of materialsRef.current) {
-            const u = mat.uniforms;
-            if (u.iResolution) u.iResolution.value.set(cw, ch, dpr);
-          }
-        }
-      }
+      // Ensure the renderer matches the container size and update iResolution
+      updateSizeIfNeeded(renderer);
 
       renderer.clear();
       const width = renderer.domElement.width;
@@ -254,6 +303,7 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
       }
       frameRef.current = requestAnimationFrame(loop);
     };
+    loopRef.current = loop;
     if (rendererRef.current) frameRef.current = requestAnimationFrame(loop);
     return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
   }, [layers, paused, isVisible, animateWhenOffscreen]);

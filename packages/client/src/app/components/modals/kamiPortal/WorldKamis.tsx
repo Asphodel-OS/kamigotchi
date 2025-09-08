@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, IconButton, Overlay } from 'app/components/library';
@@ -19,10 +19,29 @@ export const WorldKamis = ({
 }) => {
   const { selectedWorld, setSelectedWorld, selectedWild } = state;
   const [displayed, setDisplayed] = useState<Kami[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [visibleCount, setVisibleCount] = useState<number>(50);
 
   useEffect(() => {
     setDisplayed(kamis);
   }, [kamis, selectedWorld]);
+
+  useEffect(() => {
+    setVisibleCount(50);
+  }, [kamis.length]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const threshold = 20;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - threshold) {
+        setVisibleCount((c) => Math.min(c + 50, displayed.length));
+      }
+    };
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [displayed.length]);
 
   /////////////////
   // HANDLERS
@@ -62,8 +81,8 @@ export const WorldKamis = ({
           disabled={(selectedWild?.length ?? 0) > 0 || selectedWorld.length === kamis.length}
         />
       </Overlay>
-      <Scrollable>
-        {displayed.map((kami) => (
+      <Scrollable ref={containerRef}>
+        {displayed.slice(0, visibleCount).map((kami) => (
           <KamiBlock
             key={kami.index}
             tooltip={(selectedWild?.length ?? 0) > 0 ? ['Only imports or exports at a time'] : []}
@@ -76,6 +95,9 @@ export const WorldKamis = ({
           />
         ))}
       </Scrollable>
+      {visibleCount < displayed.length && (
+        <Loading>Loading more Kami…</Loading>
+      )}
       <Overlay fullWidth fullHeight passthrough>
         <EmptyText
           size={1}
@@ -108,6 +130,12 @@ const Scrollable = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+`;
+
+const Loading = styled.div`
+  text-align: center;
+  color: #666;
+  padding: 0.6vw 0;
 `;
 
 const Text = styled.div<{ size: number }>`

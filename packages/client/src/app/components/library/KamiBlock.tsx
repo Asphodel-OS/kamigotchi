@@ -69,9 +69,11 @@ const Container = styled.div`
   border-radius: 0.6vw;
   margin: 0.9vw;
   filter: drop-shadow(0.2vw 0.2vw 0.1vw black);
+  content-visibility: auto;
+  contain-intrinsic-size: 12vw 12vw;
 `;
 
-const Image = styled.img<{ onClick?: () => void }>`
+const Image = styled.img.attrs({ loading: 'lazy', decoding: 'async' })<{ onClick?: () => void }>`
   border: solid black 0.15vw;
   border-radius: 0.6vw;
   width: 10vw;
