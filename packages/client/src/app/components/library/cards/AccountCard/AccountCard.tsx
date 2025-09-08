@@ -73,9 +73,7 @@ export const AccountCard = ({
 };
 
 const TitleBar = styled.div`
-  border-style: solid;
-  border-width: 0vw 0vw 0.15vw 0vw;
-  border-color: black;
+  border-bottom: solid black 0.15vw;
   padding: 0.45vw;
 
   display: flex;
@@ -85,19 +83,16 @@ const TitleBar = styled.div`
 `;
 
 const TitleText = styled.div`
-  font-family: Pixel;
-  font-size: 1vw;
+  font-size: 0.9vw;
   text-align: left;
-  justify-content: flex-start;
-  cursor: pointer;
 
+  cursor: pointer;
   &:hover {
     opacity: 0.6;
   }
 `;
 
 const Content = styled.div`
-  flex-grow: 1;
   padding: 0.2vw;
 
   display: flex;
@@ -115,7 +110,6 @@ const ContentSubtext = styled.div`
   color: #333;
   flex-grow: 1;
 
-  font-family: Pixel;
   text-align: right;
   font-size: 0.7vw;
 
