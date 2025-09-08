@@ -134,11 +134,11 @@ export const Feed = ({
           <>
             {moment(kill.Timestamp * 1000).format('MM/DD HH:mm')} : {killerName}
             <Bold color='#ff6161'> liquidated</Bold> {victimName} in {roomName} for {spoil}
-            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <TooltipWrapper>
               <TextTooltip text={['Musu']}>
                 <Icon src={ItemImages.musu} />
               </TextTooltip>
-            </span>
+            </TooltipWrapper>
             .
           </>
         );
@@ -156,11 +156,11 @@ export const Feed = ({
           <>
             {moment(cast.Timestamp * 1000).format('MM/DD HH:mm')} : {casterName}
             <Bold color='#33a58fff'> used </Bold>
-            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <TooltipWrapper>
               <TextTooltip text={[item?.name]}>
                 <Icon style={{ marginRight: '0.3vw' }} src={item?.image} />
               </TextTooltip>
-            </span>
+            </TooltipWrapper>
             on {victimName} in {roomName}.
           </>
         );
@@ -416,4 +416,9 @@ const Icon = styled.img`
 const Bold = styled.span<{ color: string }>`
   font-weight: bold;
   color: ${({ color }) => color};
+`;
+
+const TooltipWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
 `;
