@@ -81,7 +81,7 @@ export const Tooltip = ({
       disabled={isDisabled}
       onMouseEnter={(e) => handleMouseEnter(e)}
       onMouseLeave={() => {
-        setIsActive(false), setIsVisible(false);
+        (setIsActive(false), setIsVisible(false));
       }}
       onMouseMove={(e) => {
         handleMouseMove(e);
@@ -105,7 +105,7 @@ export const Tooltip = ({
   );
 };
 
-const Container = styled.div<{
+const Container = styled.span<{
   flexGrow: string;
   disabled?: boolean;
   direction?: string;
@@ -119,17 +119,12 @@ const Container = styled.div<{
   ${({ fullWidth }) => fullWidth && 'width: 100%;'}
 `;
 
-const PopoverContainer = styled.div.attrs<{
+const PopoverContainer = styled.span.attrs<{
   isVisible: boolean;
   color?: string;
   tooltipPosition?: any;
   maxWidth?: number;
-}>(({
-  isVisible,
-  color,
-  tooltipPosition,
-  maxWidth,
-}) => ({
+}>(({ isVisible, color, tooltipPosition, maxWidth }) => ({
   style: {
     backgroundColor: color ?? '#fff',
     opacity: isVisible ? 1 : 0,

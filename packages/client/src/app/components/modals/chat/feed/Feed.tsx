@@ -8,6 +8,7 @@ import { pushBattles } from 'app/cache/battles';
 import { getChat, pushChat } from 'app/cache/chat';
 import { Item } from 'app/cache/item';
 import { Kami } from 'app/cache/kami';
+import { TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import {
@@ -133,7 +134,12 @@ export const Feed = ({
           <>
             {moment(kill.Timestamp * 1000).format('MM/DD HH:mm')} : {killerName}
             <Bold color='#ff6161'> liquidated</Bold> {victimName} in {roomName} for {spoil}
-            <Icon src={ItemImages.musu} />.
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <TextTooltip text={['Musu']}>
+                <Icon src={ItemImages.musu} />
+              </TextTooltip>
+            </span>
+            .
           </>
         );
       });
@@ -150,7 +156,12 @@ export const Feed = ({
           <>
             {moment(cast.Timestamp * 1000).format('MM/DD HH:mm')} : {casterName}
             <Bold color='#33a58fff'> used </Bold>
-            <Icon src={item?.image} /> on {victimName} in {roomName}.
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <TextTooltip text={[item?.name]}>
+                <Icon style={{ marginRight: '0.3vw' }} src={item?.image} />
+              </TextTooltip>
+            </span>
+            on {victimName} in {roomName}.
           </>
         );
       });
