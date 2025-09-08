@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { getAccount } from 'app/cache/account';
+import { getItemByIndex } from 'app/cache/item';
 import { getKami } from 'app/cache/kami';
 import { getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -34,6 +35,7 @@ export const ChatModal: UIComponent = {
           utils: {
             getAccount: (entity: EntityIndex) =>
               getAccount(world, components, entity, accountOptions),
+            getItemByIndex: (itemIndex: number) => getItemByIndex(world, components, itemIndex),
             getRoomByIndex: (nodeIndex: number) => getRoomByIndex(world, components, nodeIndex),
             getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
             getKami: (entity: EntityIndex) => getKami(world, components, entity),
@@ -45,55 +47,55 @@ export const ChatModal: UIComponent = {
     );
   },
   Render: ({ data, network, utils, world }) => {
-      const { accountEntity } = data;
-      const { actions, api } = network;
-      const { getAccount } = utils;
-      const chatModalVisible = useVisibility((s) => s.modals.chat);
+    const { accountEntity } = data;
+    const { actions, api } = network;
+    const { getAccount } = utils;
+    const chatModalVisible = useVisibility((s) => s.modals.chat);
 
-      const [messages, setMessages] = useState<KamiMessage[]>([]);
-      const [blocked, setBlocked] = useState<EntityID[]>([]);
-      const BlockedList: EntityID[] = [];
-      const [account, setAccount] = useState<Account>(NullAccount); //0 Node
-      //1 Feed
-      const [activeTab, setActiveTab] = useState(0);
+    const [messages, setMessages] = useState<KamiMessage[]>([]);
+    const [blocked, setBlocked] = useState<EntityID[]>([]);
+    const BlockedList: EntityID[] = [];
+    const [account, setAccount] = useState<Account>(NullAccount); //0 Node
+    //1 Feed
+    const [activeTab, setActiveTab] = useState(0);
 
-      // update data of the selected account when account index or data changes
-      useEffect(() => {
-        if (!chatModalVisible) return;
-        // const accountEntity = queryAccountByIndex(components, accountIndex);
-        const account = getAccount(accountEntity ?? (0 as EntityIndex));
-        setAccount(account);
-      }, [accountEntity, chatModalVisible]);
-      //TODO
-      useEffect(() => {
-        if (account.friends?.blocked) {
-          account.friends?.blocked.forEach((blockedFren) => {
-            BlockedList.push(blockedFren.target.id);
-          });
-          setBlocked(BlockedList);
-        } else {
-          setBlocked([]);
-        }
-      }, [account.friends?.blocked]);
+    // update data of the selected account when account index or data changes
+    useEffect(() => {
+      if (!chatModalVisible) return;
+      // const accountEntity = queryAccountByIndex(components, accountIndex);
+      const account = getAccount(accountEntity ?? (0 as EntityIndex));
+      setAccount(account);
+    }, [accountEntity, chatModalVisible]);
+    //TODO
+    useEffect(() => {
+      if (account.friends?.blocked) {
+        account.friends?.blocked.forEach((blockedFren) => {
+          BlockedList.push(blockedFren.target.id);
+        });
+        setBlocked(BlockedList);
+      } else {
+        setBlocked([]);
+      }
+    }, [account.friends?.blocked]);
 
-      return (
-        <ModalWrapper
-          id='chat'
-          header={<ModalHeader title={`Chat`} icon={ChatIcon} />}
-          footer={activeTab === 0 && <InputRow actionSystem={actions} api={api} world={world} />}
-          canExit
-        >
-          <Feed
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            api={api}
-            actionSystem={actions}
-            blocked={blocked}
-            utils={utils}
-            player={account}
-            actions={{ setMessages }}
-          />
-        </ModalWrapper>
-      );
+    return (
+      <ModalWrapper
+        id='chat'
+        header={<ModalHeader title={`Chat`} icon={ChatIcon} />}
+        footer={activeTab === 0 && <InputRow actionSystem={actions} api={api} world={world} />}
+        canExit
+      >
+        <Feed
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          api={api}
+          actionSystem={actions}
+          blocked={blocked}
+          utils={utils}
+          player={account}
+          actions={{ setMessages }}
+        />
+      </ModalWrapper>
+    );
   },
 };
