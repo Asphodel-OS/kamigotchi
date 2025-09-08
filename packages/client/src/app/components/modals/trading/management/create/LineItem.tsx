@@ -31,7 +31,9 @@ export const LineItem = ({
       {reverse && (
         <Quantity
           width={8.1}
-          type='string'
+          type='text'
+          inputMode='numeric'
+          pattern='[0-9]*'
           value={amt.toLocaleString()}
           onChange={(e) => setAmt(e)}
         />
@@ -46,7 +48,9 @@ export const LineItem = ({
       {!reverse && (
         <Quantity
           width={8.1}
-          type='string'
+          type='text'
+          inputMode='numeric'
+          pattern='[0-9]*'
           value={amt.toLocaleString()}
           onChange={(e) => setAmt(e)}
         />

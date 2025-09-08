@@ -48,6 +48,7 @@ export const ItemBrowser = ({
     const dynamic = new Set<string>();
     for (const item of items) {
       const t = (item.type || '').toUpperCase();
+      if (!t) continue;
       if (consumableTypes.has(t) || t === 'MATERIAL' || t === 'ERC20') continue;
       dynamic.add(t);
     }
@@ -67,6 +68,10 @@ export const ItemBrowser = ({
 
     for (const item of items) {
       const type = (item.type || '').toUpperCase();
+      if (!type) {
+        byCat.get('All')!.push(item);
+        continue;
+      }
       let key: CategoryKey = type;
       if (consumableTypes.has(type)) key = 'Consumables';
       else if (type === 'MATERIAL') key = 'Materials';

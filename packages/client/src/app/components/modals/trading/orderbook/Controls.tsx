@@ -102,14 +102,21 @@ export const Controls = ({
       const key = e.detail as any;
       setCategory(key);
     };
-    window.addEventListener('trading:setCategory', handler as any);
     const clearHandler = () => {
       setItemFilter(NullItem);
       setCategory('All' as any);
       setQuery('');
     };
-    window.addEventListener('trading:clearFilters', clearHandler as any);
-    return () => window.removeEventListener('trading:setCategory', handler as any);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('trading:setCategory', handler as any);
+      window.addEventListener('trading:clearFilters', clearHandler as any);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('trading:setCategory', handler as any);
+        window.removeEventListener('trading:clearFilters', clearHandler as any);
+      }
+    };
   }, []);
 
   // always open by default; no per-section collapse state
@@ -279,16 +286,7 @@ const CollapsibleWrap = styled.div`
   }
 `;
 
-// Listen for external category changes (from Offer table TypeLink)
-if (typeof window !== 'undefined') {
-  window.addEventListener('trading:setCategory', (e: any) => {
-    const key = e.detail as any;
-    try {
-      // best-effort: update the control store if mounted
-      // no-op here; state handled in component via onCategoryChange
-    } catch {}
-  });
-}
+ 
 
 const SearchRow = styled.div`
   position: relative;

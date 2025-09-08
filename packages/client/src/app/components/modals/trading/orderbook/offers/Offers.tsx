@@ -87,20 +87,17 @@ export const Offers = ({
         if (key === 'CONSUMABLES' && consumableTypes.has(t)) return true;
         if (key === 'MATERIALS' && t === 'MATERIAL') return true;
         if (key === 'CURRENCIES' && t === 'ERC20') return true;
+        if (key === 'OTHER') {
+          const isKnown = consumableTypes.has(t) || t === 'MATERIAL' || t === 'ERC20';
+          if (!isKnown) return true;
+        }
         if (t === key) return true;
       }
       return false;
     };
     cleaned = cleaned.filter(matchesCategory);
 
-    // apply item filter if any (from this panel's clicks)
-    if (itemFilterIndexLocal && itemFilterIndexLocal !== 0) {
-      cleaned = cleaned.filter((trade) => {
-        const sellItems = trade.sellOrder?.items ?? [];
-        const buyItems = trade.buyOrder?.items ?? [];
-        return [...sellItems, ...buyItems].some((it) => (it as any)?.index === itemFilterIndexLocal);
-      });
-    }
+    
 
     // apply owner filter if any
     if (ownerFilter) {
@@ -369,7 +366,10 @@ export const Offers = ({
           {displayed.map((trade, i) => {
             const type = getTradeType(trade, false);
             const perUnit = getPerUnitPrice(trade, type);
-            const qty = (trade?.sellOrder?.amounts?.[0] || 1);
+            let qty = 1 as number;
+            if (type === 'Buy') qty = (trade?.sellOrder?.amounts?.[0] || 1) as number;
+            else if (type === 'Sell') qty = (trade?.buyOrder?.amounts?.[0] || 1) as number;
+            else qty = ((trade?.sellOrder?.amounts?.[0] || trade?.buyOrder?.amounts?.[0]) || 1) as number;
             const total = perUnit * qty;
             const item = pickDisplayItem(trade, utils);
             const disabled = !canFillOrder(account, trade);

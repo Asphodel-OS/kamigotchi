@@ -99,21 +99,47 @@ export const TradingModal: UIComponent = {
 
     // open account modal on events from offers
     useEffect(() => {
-      const open = () => {
-        const { modals } = useVisibility.getState();
-        useVisibility.setState({ modals: { ...modals, account: true } });
-      };
-      const setIndex = (e: any) => {
-        const idx = Number(e?.detail ?? 0);
+      const handleOpenAccountModal = (_event: Event) => {
         try {
-          useSelected.getState().setAccount(idx);
-        } catch {}
+          const { setModals } = useVisibility.getState();
+          setModals({ account: true });
+        } catch (error) {
+          console.error('Failed to open account modal from event', error);
+        }
       };
-      window.addEventListener('modal:openAccount', open as any);
-      window.addEventListener('account:setIndex', setIndex as any);
+
+      const handleSetAccountIndex = (event: Event) => {
+        try {
+          if (!event) return;
+          const detail = (event as CustomEvent).detail;
+
+          let index: number | null = null;
+          if (typeof detail === 'number') {
+            index = detail;
+          } else {
+            const parsed = Number(detail);
+            if (Number.isFinite(parsed)) index = parsed;
+          }
+
+          if (index === null || index < 0) return;
+
+          const state = useSelected.getState();
+          const setAccount = (state as any).setAccount;
+          if (typeof setAccount === 'function') {
+            setAccount(index);
+          } else {
+            console.error('useSelected.setAccount is not a function');
+          }
+        } catch (error) {
+          console.error('Error handling account:setIndex event', error);
+        }
+      };
+
+      window.addEventListener('modal:openAccount', handleOpenAccountModal);
+      window.addEventListener('account:setIndex', handleSetAccountIndex);
       return () => {
-        window.removeEventListener('modal:openAccount', open as any);
-        window.removeEventListener('account:setIndex', setIndex as any);
+        window.removeEventListener('modal:openAccount', handleOpenAccountModal);
+        window.removeEventListener('account:setIndex', handleSetAccountIndex);
       };
     }, []);
 

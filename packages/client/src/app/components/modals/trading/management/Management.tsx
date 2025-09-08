@@ -1,9 +1,9 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { Dispatch } from 'react';
+import { Dispatch, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account, Inventory } from 'network/shapes';
-import { Item } from 'network/shapes/Item';
+import { Item, NullItem } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
 import { ConfirmationData } from '../library/Confirmation';
@@ -53,6 +53,15 @@ export const Management = ({
   };
   isVisible: boolean;
 }) => {
+  const [sort, setSort] = useState<string>('Total');
+  const [ascending, setAscending] = useState<boolean>(true);
+  const [itemFilter] = useState<Item>(NullItem);
+  const [typeFilter] = useState<string>('All');
+  const [itemSearch] = useState<string>('');
+
+  const setSortCb = useCallback((value: string) => setSort(value), []);
+  const setAscendingCb = useCallback((value: boolean) => setAscending(value), []);
+  const makerFilter = useCallback((t: Trade) => t.maker?.entity === data.account.entity, [data.account.entity]);
 
   return (
     <Content isVisible={isVisible}>
@@ -61,11 +70,22 @@ export const Management = ({
       </Top>
       <Bottom>
         <OffersTable
-          actions={{ executeTrade: actions.executeTrade, cancelTrade: actions.cancelTrade as any }}
-          controls={{ sort: 'Total', setSort: () => {}, ascending: true, setAscending: () => {}, itemFilter: { index: 0 } as any, typeFilter: 'All' as any, isConfirming: false, itemSearch: '', setIsConfirming: () => {}, setConfirmData: controls.setConfirmData }}
+          actions={{ executeTrade: actions.executeTrade, cancelTrade: actions.cancelTrade }}
+          controls={{
+            sort,
+            setSort: setSortCb,
+            ascending,
+            setAscending: setAscendingCb,
+            itemFilter,
+            typeFilter,
+            isConfirming: controls.isConfirming,
+            itemSearch,
+            setIsConfirming: controls.setIsConfirming,
+            setConfirmData: controls.setConfirmData,
+          }}
           data={{ account: data.account, trades: data.trades }}
           utils={{ getItemByIndex: utils.getItemByIndex }}
-          extraFilter={(t) => t.maker?.entity === data.account.entity}
+          extraFilter={makerFilter}
           filtersEnabled={false}
           showMakerOffer
           deleteEnabled

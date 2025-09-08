@@ -4,8 +4,17 @@ import { Item } from 'network/shapes';
 
 export const ItemCard = ({ item, selected, onClick }: { item: Item; selected: boolean; onClick: () => void }) => {
   return (
-    <Card onClick={onClick} selected={selected} title={item.name}>
-      <Image src={item.image} alt={item.name} />
+    <Card
+      onClick={onClick}
+      selected={selected}
+      title={item.name}
+      role='button'
+      tabIndex={0}
+      aria-pressed={selected}
+    >
+      {item.image ? (
+        <Image src={item.image} alt={item.name} loading='lazy' />
+      ) : null}
       <Name>{item.name}</Name>
     </Card>
   );
@@ -28,6 +37,10 @@ const Card = styled.button<{ selected: boolean }>`
   user-select: none;
   &:hover {
     background: ${({ selected }) => (selected ? '#c6f5c6' : '#eaeaea')};
+  }
+  &:focus-visible {
+    outline: 0.18vw solid #66a3ff;
+    outline-offset: 0.12vw;
   }
 `;
 
