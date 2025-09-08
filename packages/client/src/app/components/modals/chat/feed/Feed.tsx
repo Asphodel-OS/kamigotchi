@@ -132,7 +132,7 @@ export const Feed = ({
         feedMessage.push(
           <>
             {moment(kill.Timestamp * 1000).format('MM/DD HH:mm')} : {killerName}
-            <Bold color='#ff6161'> liquidated</Bold> {victimName} in {roomName} for {spoil}{' '}
+            <Bold color='#ff6161'> liquidated</Bold> {victimName} in {roomName} for {spoil}
             <Icon src={ItemImages.musu} />.
           </>
         );
