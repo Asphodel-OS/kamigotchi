@@ -27,9 +27,9 @@ export const LeftMenuFixture: UIComponent = {
       return { nodeEntity };
     })();
 
-    const { fixtures } = useVisibility();
+    const menuVisible = useVisibility((s) => s.fixtures.menu);
 
-    if (!fixtures.menu) return null;
+    if (!menuVisible) return null;
 
     return (
       <Wrapper>

@@ -36,8 +36,8 @@ export const LeaderboardModal: UIComponent = {
     })();
 
       const { components } = network;
-      const { modals } = useVisibility();
-      const { leaderboardKey } = useSelected();
+      const leaderboardModalOpen = useVisibility((s) => s.modals.leaderboard);
+      const leaderboardKey = useSelected((s) => s.leaderboardKey);
       const [filter, setFilter] = useState<ScoresFilter>({
         epoch: 1,
         index: 1,
@@ -60,10 +60,10 @@ export const LeaderboardModal: UIComponent = {
 
       // table data update
       useEffect(() => {
-        if (!modals.leaderboard) return;
+        if (!leaderboardModalOpen) return;
         const tableData = getScoresByFilter(components, filter);
         setTableData(tableData);
-      }, [filter, modals.leaderboard]);
+      }, [filter, leaderboardModalOpen]);
 
       return (
         <ModalWrapper id='leaderboard' canExit overlay>

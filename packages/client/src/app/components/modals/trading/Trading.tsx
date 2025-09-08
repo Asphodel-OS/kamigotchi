@@ -78,7 +78,7 @@ export const TradingModal: UIComponent = {
     })();
 
     const { actions } = network;
-    const { modals } = useVisibility();
+    const tradingModalVisible = useVisibility((s) => s.modals.trading);
     const { selectedAddress, apis } = useNetwork();
 
     const [items, setItems] = useState<Item[]>([]);
@@ -104,14 +104,14 @@ export const TradingModal: UIComponent = {
 
     // sets trades upon opening modal
     useEffect(() => {
-      if (!modals.trading) return;
+      if (!tradingModalVisible) return;
       refreshTrades();
       getTradeHistoryKamiden(account.id);
-    }, [modals.trading, tick]);
+    }, [tradingModalVisible, tick]);
 
     useEffect(() => {
       refreshItemRegistry();
-    }, [modals.trading]);
+    }, [tradingModalVisible]);
 
     /////////////////
     // GETTERS

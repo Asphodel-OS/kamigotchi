@@ -20,8 +20,9 @@ export const Room = ({
 }: {
   index: number
 }) => {
-  const { modals, setModals } = useVisibility();
-  const { setNode } = useSelected();
+  const tradingModalOpen = useVisibility((s) => s.modals.trading);
+  const setModals = useVisibility((s) => s.setModals);
+  const setNode = useSelected((s) => s.setNode);
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
@@ -142,7 +143,7 @@ export const Room = ({
         x2={x2}
         y2={y2}
         onClick={() => {
-          setModals({ trading: !modals.trading });
+          setModals({ trading: !tradingModalOpen });
         }}
       />
     );

@@ -1,4 +1,3 @@
-import { getComponentValue } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 
 import { processKamiConfig } from 'app/cache/config';
@@ -8,6 +7,7 @@ import { UIComponent } from 'app/root/types';
 import { GodID, SyncState } from 'engine/constants';
 import { BootScreen } from './BootScreen';
 import { useLayers } from 'app/root/hooks';
+import { useComponentValueStream } from 'network/utils/hooks';
 
 const FE_DISABLED = import.meta.env.VITE_STATE === 'DISABLED';
 
@@ -33,17 +33,13 @@ export const LoadingState: UIComponent = {
 
       const { LoadingState } = components;
 
-      let loadingState;
       const GodEntityIndex = world.entityToIndex.get(GodID);
-      if (GodEntityIndex != null) {
-        loadingState = getComponentValue(LoadingState, GodEntityIndex);
-      }
-
-      loadingState = loadingState ?? {
+      const loadingState = useComponentValueStream(LoadingState, GodEntityIndex) ?? {
         state: SyncState.CONNECTING,
         msg: 'Connecting to Yominet',
         percentage: 0,
       };
+
       return {
         loadingState,
         utils: {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
+import { Account, calcCurrentStamina as _calcCurrentStamina, getAccount } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/measures/Battery';
 import { UIComponent } from 'app/root/types';
@@ -20,7 +20,10 @@ export const ClockFixture: UIComponent = {
       const {
         data: {
           account,
-        }
+        },
+        utils: {
+          calcCurrentStamina,
+        },
       } = (() => {
         const { network } = layers;
         const { world, components } = network;
@@ -31,9 +34,13 @@ export const ClockFixture: UIComponent = {
           data: {
             account: getAccount(world, components, accountEntity, accountOptions),
           },
+          utils: {
+            calcCurrentStamina: (account: Account) => _calcCurrentStamina(account),
+          },
         };
       })();
-      const { fixtures } = useVisibility();
+
+      const menuVisible = useVisibility((s) => s.fixtures.menu);
       const [staminaCurr, setStaminaCurr] = useState(0);
       const [rotateClock, setRotateClock] = useState(0);
       const [rotateBand, setRotateBand] = useState(0);
@@ -93,8 +100,6 @@ export const ClockFixture: UIComponent = {
         }
         return tickList;
       };
-
-      if (!fixtures.menu) return null;
 
       //Render
       return (

@@ -82,6 +82,7 @@ import scrap_metal from './scrap_metal.png';
 import screwdriver from './screwdriver.png';
 import shredded_mint from './shredded_mint.png';
 import spice_grinder from './spice_grinder.png';
+import spirit_glue from './spirit_glue.png';
 import stone from './stone.png';
 import teardrop_jewel from './teardrop_jewel.png';
 import vipp from './vipp.png';
@@ -178,6 +179,7 @@ export const ItemImages = {
   screwdriver: screwdriver,
   shredded_mint: shredded_mint,
   spice_grinder: spice_grinder,
+  spirit_glue: spirit_glue,
   stone: stone,
   teardrop_jewel: teardrop_jewel,
   vipp: vipp,

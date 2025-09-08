@@ -9,11 +9,12 @@ export const GasGauge = ({
 }: {
   level: number; // [0, 1]
 }) => {
-  const { modals, setModals } = useVisibility();
+  const setModals = useVisibility((s) => s.setModals);
+  const operatorFundVisible = useVisibility((s) => s.modals.operatorFund);
 
   const handleClick = () => {
     playClick();
-    setModals({ operatorFund: !modals.operatorFund });
+    setModals({ operatorFund: !operatorFundVisible });
   };
 
   const levelToAngle = (level: number) => {

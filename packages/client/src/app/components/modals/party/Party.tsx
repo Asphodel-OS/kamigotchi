@@ -116,9 +116,10 @@ export const PartyModal: UIComponent = {
 
     const { actions, api } = network;
 
-    const { modals } = useVisibility();
-    const { selectedAddress, apis: ownerAPIs } = useNetwork();
-    const { balances: tokenBals } = useTokens();
+    const partyModalVisible = useVisibility((s) => s.modals.party);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const ownerAPIs = useNetwork((s) => s.apis);
+    const tokenBals = useTokens((s) => s.balances);
     const { writeContract } = useWriteContract();
 
     const [account, setAccount] = useState<Account>(NullAccount);
@@ -170,7 +171,7 @@ export const PartyModal: UIComponent = {
 
     // update account and kamis every tick or if the connnected account changes
     useEffect(() => {
-      if (!modals.party) return;
+      if (!partyModalVisible) return;
 
       // update the connected account if it changes
       if (accountEntity != account.entity) {
@@ -188,7 +189,7 @@ export const PartyModal: UIComponent = {
         const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
         setAccounts(accountsSorted);
       }
-    }, [modals.party, accountEntity, tick]);
+    }, [partyModalVisible, accountEntity, tick]);
 
     // update node if the account or room changes
     useEffect(() => {

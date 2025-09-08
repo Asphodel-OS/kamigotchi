@@ -97,7 +97,8 @@ export const GachaModal: UIComponent = {
 
       const { actions, world, api } = network;
 
-      const { modals, setModals } = useVisibility();
+      const setModals = useVisibility((s) => s.setModals);
+      const gachaModalVisible = useVisibility((s) => s.modals.gacha);
       const { selectedAddress, apis } = useNetwork();
 
       // modal controls
@@ -167,7 +168,7 @@ export const GachaModal: UIComponent = {
 
       // update the data when the modal is open
       useEffect(() => {
-        if (!modals.gacha) return;
+        if (!gachaModalVisible) return;
         const account = getAccount();
         setAccount(account);
 
@@ -182,7 +183,7 @@ export const GachaModal: UIComponent = {
           setGachaMintData(getMintData('0' as EntityID));
           setWhitelisted(isWhitelisted(account.entity));
         }
-      }, [modals.gacha, tab, mode, accountEntity, tick]);
+      }, [gachaModalVisible, tab, mode, accountEntity, tick]);
 
       // open the party modal when the reveal is triggered
       useEffect(() => {

@@ -31,8 +31,8 @@ export const DialogueModal: UIComponent = {
     })();
 
       const { actions, components, world } = network;
-      const { modals } = useVisibility();
-      const { dialogueIndex } = useSelected();
+      const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
+      const dialogueIndex = useSelected((s) => s.dialogueIndex);
       const [dialogueNode, setDialogueNode] = React.useState({
         text: [''],
       } as DialogueNode);
@@ -46,7 +46,7 @@ export const DialogueModal: UIComponent = {
       }, [dialogueNode.text[step]]);
 
       // reset the step to 0 whenever the dialogue modal is toggled
-      useEffect(() => setStep(0), [modals.dialogue]);
+      useEffect(() => setStep(0), [dialogueModalOpen]);
 
       // set the current dialogue node when the dialogue index changes
       useEffect(() => {

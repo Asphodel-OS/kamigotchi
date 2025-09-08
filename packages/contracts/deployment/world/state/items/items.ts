@@ -7,7 +7,7 @@ import { addRequirement, addTypeRequirement } from './requirements';
 
 const IGNORE_TYPES = ['OTHER'];
 const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL', 'ERC20'];
-const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
+const USE_TYPES = ['FOOD', 'LOOTBOX', 'POTION', 'REVIVE', 'CONSUMABLE'];
 
 export async function initItems(api: AdminAPI, indices?: number[], all?: boolean) {
   const itemsCSV = await getSheet('items', 'items');

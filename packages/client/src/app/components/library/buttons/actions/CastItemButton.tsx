@@ -10,8 +10,8 @@ import { passesConditions } from 'network/shapes/Conditional';
 import { Item } from 'network/shapes/Item';
 import { ButtonListOption, IconListButton } from '..';
 
-// button for feeding a kami
-export const UseItemButton = (
+// button for casting an item on an enemy kami
+export const CastItemButton = (
   network: NetworkLayer,
   kami: Kami,
   account: Account,
@@ -27,27 +27,27 @@ export const UseItemButton = (
 
   const triggerAction = (kami: Kami, item: Item) => {
     actions.add({
-      action: 'Use item on kami',
+      action: 'Use item on enemy kami',
       params: [kami.id, item.index],
       description: `Using ${item.name} on ${kami.name}`,
       execute: async () => {
-        return api.player.pet.item.use(kami.id, item.index);
+        return api.player.pet.item.cast(kami.id, item.index);
       },
     });
   };
 
   let disabled = !!tooltip;
   if (!disabled) {
-    tooltip = `Feed Kami`;
+    tooltip = `Use on Kami`;
     options = getOptions(world, components, kami, account, triggerAction);
     if (options.length === 0) {
-      tooltip = `No items to feed`;
+      tooltip = `No items to use`;
       disabled = true;
     }
   }
 
   return (
-    <TextTooltip key='feed-tooltip' text={[tooltip]}>
+    <TextTooltip key='cast-tooltip' text={[tooltip]}>
       <IconListButton
         img={icon}
         options={options}
@@ -59,7 +59,7 @@ export const UseItemButton = (
   );
 };
 
-// generate a tooltip for any reason the kami cannot be fed
+// generate a tooltip for any reason the kami cannot be cast on
 const getDisabledTooltip = (kami: Kami, account: Account): string => {
   const cooldown = calcCooldown(kami);
   const inRoom = kami.harvest?.node?.roomIndex == account.roomIndex;
@@ -81,7 +81,7 @@ const getOptions = (
 ) => {
   let inventories = account.inventories ?? [];
   inventories = cleanInventories(inventories);
-  inventories = filterInventories(inventories, undefined, 'KAMI');
+  inventories = filterInventories(inventories, undefined, 'ENEMY_KAMI');
   inventories = inventories.filter(
     (inv) => !!inv.item && passesConditions(world, components, inv.item.requirements.use, kami)
   );

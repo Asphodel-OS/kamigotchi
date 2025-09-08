@@ -12,11 +12,11 @@ import {
 export const RightMenuFixture: UIComponent = {
   id: 'RightMenuFixture',
   Render: () => {
-    const { fixtures } = useVisibility();
+    const menuVisible = useVisibility((s) => s.fixtures.menu);
 
     return (
       <Wrapper>
-        {fixtures.menu ? <>
+        {menuVisible ? <>
           <CraftMenuButton />
           <InventoryMenuButton />
           <QuestMenuButton />
