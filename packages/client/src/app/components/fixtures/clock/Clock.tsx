@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Account, calcCurrentStamina, getAccount } from 'app/cache/account';
+import { Account, calcCurrentStamina as _calcCurrentStamina, getAccount } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/measures/Battery';
 import { UIComponent } from 'app/root/types';
@@ -35,7 +35,7 @@ export const ClockFixture: UIComponent = {
             account: getAccount(world, components, accountEntity, accountOptions),
           },
           utils: {
-            calcCurrentStamina: (account: Account) => calcCurrentStamina(account),
+            calcCurrentStamina: (account: Account) => _calcCurrentStamina(account),
           },
         };
       })();
