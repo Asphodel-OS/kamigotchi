@@ -201,6 +201,8 @@ const Stack = styled.div`
 
   > * {
     grid-area: Stack;
+
+    container-type: inline-size;
   }
 `;
 
@@ -261,4 +263,8 @@ const UIGrid = styled.div`
 
   pointer-events: none;
   z-index: 10;
+
+  > * {
+    container-type: inline-size;
+  }
 `;
