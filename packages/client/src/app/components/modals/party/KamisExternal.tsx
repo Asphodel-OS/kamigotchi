@@ -46,6 +46,8 @@ export const KamisExternal = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState<number>(50);
+  const tickingRef = useRef<boolean>(false);
+  const PAGE_SIZE = 50;
   /////////////////
   // SUBSCRIPTIONS
 
@@ -76,6 +78,38 @@ export const KamisExternal = ({
       SendButtons.set(kami.index, SendButton(kami));
     });
   }, [accounts.length]);
+
+  /////////////////
+  // INFINITE SCROLL
+
+  // Reset visible count when the modal visibility or list changes
+  useEffect(() => {
+    if (!isVisible) return;
+    setVisibleCount((_) => Math.min(PAGE_SIZE, kamis.length));
+  }, [isVisible, kamis.length]);
+
+  // Attach a throttled scroll listener that loads more when near bottom
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !isVisible) return;
+
+    const onScroll = () => {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+      requestAnimationFrame(() => {
+        const threshold = 20; // px from bottom
+        if (el.scrollTop + el.clientHeight >= el.scrollHeight - threshold) {
+          setVisibleCount((count) => Math.min(count + PAGE_SIZE, kamis.length));
+        }
+        tickingRef.current = false;
+      });
+    };
+    el.addEventListener('scroll', onScroll);
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      tickingRef.current = false;
+    };
+  }, [isVisible, kamis.length]);
 
   /////////////////
   // INTERPRETATION

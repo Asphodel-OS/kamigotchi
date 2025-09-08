@@ -251,8 +251,14 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     if (pauseWhenHidden && typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', handleVisibility);
     }
-    return () => { if (ioRef.current) { ioRef.current.disconnect(); ioRef.current = null; } };
-  }, [animateWhenOffscreen]);
+    return () => {
+      if (ioRef.current) { ioRef.current.disconnect(); ioRef.current = null; }
+      if (pauseWhenHidden && typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', handleVisibility);
+      }
+      if (frameRef.current) { cancelAnimationFrame(frameRef.current); frameRef.current = null; }
+    };
+  }, [animateWhenOffscreen, pauseWhenHidden]);
 
   useEffect(() => {
     if (!paused && (isVisible || animateWhenOffscreen)) {
