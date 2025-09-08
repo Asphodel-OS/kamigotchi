@@ -19,14 +19,16 @@ export const KamiBlock = ({
   tooltip?: string[];
 }) => {
   const { index, progress, name } = kami;
-  const { kamiIndex, setKami } = useSelected();
-  const { modals, setModals } = useVisibility();
+  const kamiIndex = useSelected((s) => s.kamiIndex);
+  const setKami = useSelected((s) => s.setKami);
+  const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const setModals = useVisibility((s) => s.setModals);
 
   // toggle the kami modal depending on its current state
   const handleClick = () => {
     const sameKami = kamiIndex === kami.index;
     if (!sameKami) setKami(kami.index);
-    if (modals.kami && sameKami) setModals({ kami: false });
+    if (kamiModalOpen && sameKami) setModals({ kami: false });
     else setModals({ kami: true });
     playClick();
   };

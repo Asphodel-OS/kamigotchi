@@ -39,7 +39,7 @@ export const Presale: UIComponent = {
       const { selectedAddress, apis } = useNetwork();
       const { actions } = network;
 
-      const { modals } = useVisibility();
+      const presaleModalVisible = useVisibility((s) => s.modals.presale);
       const [tick, setTick] = useState(Date.now());
 
       // ticking
@@ -51,7 +51,7 @@ export const Presale: UIComponent = {
 
       useWatchBlockNumber({
         onBlockNumber: () => {
-          if (modals.presale) {
+          if (presaleModalVisible) {
             refetchInfo();
             refetchToken();
           }

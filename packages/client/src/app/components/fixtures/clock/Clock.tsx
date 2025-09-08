@@ -20,7 +20,10 @@ export const ClockFixture: UIComponent = {
       const {
         data: {
           account,
-        }
+        },
+        utils: {
+          calcCurrentStamina,
+        },
       } = (() => {
         const { network } = layers;
         const { world, components } = network;
@@ -31,9 +34,13 @@ export const ClockFixture: UIComponent = {
           data: {
             account: getAccount(world, components, accountEntity, accountOptions),
           },
+          utils: {
+            calcCurrentStamina: (account: Account) => calcCurrentStamina(account),
+          },
         };
       })();
-      const { fixtures } = useVisibility();
+
+      const menuVisible = useVisibility((s) => s.fixtures.menu);
       const [staminaCurr, setStaminaCurr] = useState(0);
       const [rotateClock, setRotateClock] = useState(0);
       const [rotateBand, setRotateBand] = useState(0);
@@ -97,7 +104,7 @@ export const ClockFixture: UIComponent = {
       //Render
       return (
         <TextTooltip text={getClockTooltip()}>
-          <Container style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+          <Container style={{ display: menuVisible ? 'flex' : 'none' }}>
             <Circle rotation={rotateClock}>
               <CircleContent>
                 <TicksPosition>{Ticks()}</TicksPosition>
@@ -127,7 +134,7 @@ export const ClockFixture: UIComponent = {
             <Time
               rotation={rotateClock}
               viewBox='0 0 30 6'
-              style={{ display: fixtures.menu ? 'flex' : 'none' }}
+              style={{ display: menuVisible ? 'flex' : 'none' }}
             >
               <path id='MyPath' fill='none' d='M 2.5 3.5 Q 13 -3.5 27 3.5' pathLength='2' />
               <text fill='white' fontSize='3' dominantBaseline='hanging' textAnchor='middle'>

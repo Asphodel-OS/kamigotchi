@@ -44,8 +44,9 @@ export const Message = ({
   };
 }) => {
   const [yours, setYours] = useState(false);
-  const { modals, setModals } = useVisibility();
-  const { setAccount } = useSelected();
+  const accountModalOpen = useVisibility((s) => s.modals.account);
+  const setModals = useVisibility((s) => s.setModals);
+  const setAccount = useSelected((s) => s.setAccount);
   const pfpRef = useRef<HTMLDivElement>(null);
 
   /////////////////
@@ -61,7 +62,7 @@ export const Message = ({
 
   const showUser = () => {
     setAccount(getAccountFunc().index);
-    if (!modals.account) setModals({ account: true, party: false, map: false });
+    if (!accountModalOpen) setModals({ account: true, party: false, map: false });
   };
 
   const blockFren = (account: BaseAccount) => {

@@ -7,7 +7,7 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { Stat } from "solecs/components/types/Stat.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { DescriptionComponent, ID as DescriptionCompID } from "components/DescriptionComponent.sol";
 import { ExperienceComponent, ID as ExpCompID } from "components/ExperienceComponent.sol";
@@ -21,6 +21,7 @@ import { TokenAddressComponent, ID as TokenAddressCompID } from "components/Toke
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
 import { LibReference } from "libraries/utils/LibReference.sol";
@@ -30,8 +31,9 @@ import { Condition, LibConditional } from "libraries/LibConditional.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibDroptable } from "libraries/LibDroptable.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
+import { LibHarvest } from "libraries/LibHarvest.sol";
+import { LibNode } from "libraries/LibNode.sol";
 import { LibStat } from "libraries/LibStat.sol";
-import { LibScore } from "libraries/LibScore.sol";
 
 /** @notice
  * Items are shapes that can be held by inventories. They are fungible.
@@ -418,5 +420,52 @@ library LibItem {
     LibData.inc(components, accID, indices, "ITEM_USE", amt);
     // log ACCOUNT_ITEM_USE or KAMI_ITEM_USE
     LibData.inc(components, accID, 0, targetShape.concat("_ITEM_USE"), amt);
+  }
+
+  ////////////////
+  // EVENTS
+
+  function emitCastEvent(
+    IWorld world,
+    IUintComp comps,
+    uint256 accID,
+    uint256 targetID,
+    uint32 itemIndex
+  ) internal {
+    CastEventData memory eventData;
+    eventData.accID = accID;
+    eventData.timestamp = block.timestamp;
+    eventData.targetID = targetID;
+    eventData.itemIndex = itemIndex;
+
+    // derive node index
+    uint256 harvestID = LibHarvest.getForKami(comps, targetID);
+    uint256 nodeID = LibHarvest.getNode(comps, harvestID);
+    eventData.nodeIndex = LibNode.getIndex(comps, nodeID);
+
+    bytes memory encoded = _encodeCastEvent(eventData);
+    LibEmitter.emitEvent(world, "KAMI_CAST", _castEventSchema(), encoded);
+  }
+
+  struct CastEventData {
+    uint256 accID;
+    uint256 timestamp;
+    uint256 targetID;
+    uint32 itemIndex;
+    uint32 nodeIndex;
+  }
+
+  function _encodeCastEvent(CastEventData memory data) internal view returns (bytes memory) {
+    return abi.encode(data.accID, data.timestamp, data.targetID, data.itemIndex, data.nodeIndex);
+  }
+
+  function _castEventSchema() internal pure returns (uint8[] memory) {
+    uint8[] memory schema = new uint8[](5);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[3] = uint8(LibTypes.SchemaValue.UINT32);
+    schema[4] = uint8(LibTypes.SchemaValue.UINT32);
+    return schema;
   }
 }

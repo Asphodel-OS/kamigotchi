@@ -24,6 +24,7 @@ export function IconListButton({
   scale,
   scaleOrientation,
   searchable,
+  icon,
 }: {
   img: string;
   options: Option[];
@@ -38,6 +39,7 @@ export function IconListButton({
   scaleOrientation?: 'vw' | 'vh';
 
   searchable?: boolean;
+  icon?: { inset?: { px?: number; x?: number; y?: number } };
 }) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -100,6 +102,7 @@ export function IconListButton({
         fullWidth={fullWidth}
         balance={balance}
         corner={!balance}
+        icon={icon}
       />
     </Popover>
   );

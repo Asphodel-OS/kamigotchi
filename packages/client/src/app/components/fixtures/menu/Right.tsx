@@ -12,17 +12,17 @@ import {
 export const RightMenuFixture: UIComponent = {
   id: 'RightMenuFixture',
   Render: () => {
-    const { fixtures } = useVisibility();
+    const menuVisible = useVisibility((s) => s.fixtures.menu);
     return (
       <>
-        <Wrapper style={{ display: fixtures.menu ? 'flex' : 'none' }}>
+        <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
           <CraftMenuButton />
           <InventoryMenuButton />
           <QuestMenuButton />
           <ChatMenuButton />
           <MoreMenuButton />
         </Wrapper>
-        <Wrapper style={{ display: fixtures.menu ? 'none' : 'flex' }}>
+        <Wrapper style={{ display: menuVisible ? 'none' : 'flex' }}>
           <MoreMenuButton />
         </Wrapper>
       </>

@@ -30,7 +30,7 @@ export const OngoingQuests = ({
   isVisible: boolean;
 }) => {
   const { populate, parseObjectives } = utils;
-  const { modals } = useVisibility();
+  const questsModalVisible = useVisibility((s) => s.modals.quests);
   const [cleaned, setCleaned] = useState<Quest[]>([]);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [lastUpdate, setLastUpdate] = useState(0);
@@ -49,13 +49,13 @@ export const OngoingQuests = ({
   // update when this tab is opened or data changes if stale
   useEffect(() => {
     const isStale = Date.now() - lastUpdate > STALE_TIME;
-    if (modals.quests && isVisible && isStale) update();
-  }, [modals.quests, isVisible]);
+    if (questsModalVisible && isVisible && isStale) update();
+  }, [questsModalVisible, isVisible]);
 
   // update data every cycle when this list is visible
   useEffect(() => {
-    if (modals.quests && isVisible) update();
-  }, [lastRefresh]);
+    if (questsModalVisible && isVisible) update();
+  }, [lastRefresh, questsModalVisible, isVisible]);
 
   const update = async () => {
     const fullQuests = quests.map((q) => populate(q));

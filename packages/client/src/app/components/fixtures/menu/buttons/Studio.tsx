@@ -3,7 +3,8 @@ import { IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 
 export const StudioMenuButton = () => {
-  const { modals, setModals } = useVisibility();
+  const setModals = useVisibility((s) => s.setModals);
+  const isStudioOpen = useVisibility((s) => s.modals.animationStudio);
   
   // Only show in development mode (localhost:3000); SSR-safe
   const isDev =
@@ -14,8 +15,7 @@ export const StudioMenuButton = () => {
   if (!isDev) return null;
 
   const handleClick = () => {
-    const isOpen = modals.animationStudio;
-    setModals({ animationStudio: !isOpen });
+    setModals({ animationStudio: !isStudioOpen });
   };
 
   return (
@@ -31,5 +31,3 @@ export const StudioMenuButton = () => {
     </TextTooltip>
   );
 };
-
-

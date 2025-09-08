@@ -68,7 +68,7 @@ export const EmaBoardModal: UIComponent = {
     const { actions, api } = network;
     const { selectedAddress, apis: ownerAPIs } = useNetwork();
     const { balances: tokenBals } = useTokens();
-    const { modals } = useVisibility();
+    const emaBoardVisible = useVisibility((s) => s.modals.emaBoard);
 
     const [tick, setTick] = useState(Date.now());
     const [kamis, setKamis] = useState<Kami[]>([]);
@@ -91,10 +91,10 @@ export const EmaBoardModal: UIComponent = {
     }, []);
 
     useEffect(() => {
-      if (!modals.emaBoard) return;
+      if (!emaBoardVisible) return;
       setAccount(getAccount());
       setKamis(getKamis());
-    }, [modals.emaBoard, accountEntity, tick]);
+    }, [emaBoardVisible, accountEntity, tick]);
 
     useEffect(() => {
       const onyxInfo = tokenBals.get(onyxItem.address!);

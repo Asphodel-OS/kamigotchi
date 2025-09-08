@@ -17,6 +17,7 @@ import _RoomRegistrySystem from "../abi/_RoomRegistrySystem.json";
 import _SkillRegistrySystem from "../abi/_SkillRegistrySystem.json";
 import _SnapshotT2System from "../abi/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../abi/_TraitRegistrySystem.json";
+import _TriggerCompEventSystem from "../abi/_TriggerCompEventSystem.json";
 import _WorldWhitelistSystem from "../abi/_WorldWhitelistSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
@@ -49,6 +50,7 @@ import Kami721IsInWorldSystem from "../abi/Kami721IsInWorldSystem.json";
 import Kami721MetadataSystem from "../abi/Kami721MetadataSystem.json";
 import Kami721StakeSystem from "../abi/Kami721StakeSystem.json";
 import Kami721UnstakeSystem from "../abi/Kami721UnstakeSystem.json";
+import KamiCastItemSystem from "../abi/KamiCastItemSystem.json";
 import KamiGachaMintSystem from "../abi/KamiGachaMintSystem.json";
 import KamiGachaRerollSystem from "../abi/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../abi/KamiGachaRevealSystem.json";
@@ -91,6 +93,7 @@ export const SystemAbis = {
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.setup.snapshot.t2": _SnapshotT2System.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
+  "system.test.comp.event": _TriggerCompEventSystem.abi,
   "system.world.whitelist.set": _WorldWhitelistSystem.abi,
   "system.account.move": AccountMoveSystem.abi,
   "system.account.register": AccountRegisterSystem.abi,
@@ -123,6 +126,7 @@ export const SystemAbis = {
   "system.Kami721.Metadata": Kami721MetadataSystem.abi,
   "system.kami721.stake": Kami721StakeSystem.abi,
   "system.kami721.unstake": Kami721UnstakeSystem.abi,
+  "system.kami.cast.item": KamiCastItemSystem.abi,
   "system.kami.gacha.mint": KamiGachaMintSystem.abi,
   "system.kami.gacha.reroll": KamiGachaRerollSystem.abi,
   "system.kami.gacha.reveal": KamiGachaRevealSystem.abi,

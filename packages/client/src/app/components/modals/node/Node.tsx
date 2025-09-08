@@ -8,10 +8,11 @@ import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoomByIndex } from 'app/cache/room';
 import { EmptyText, ModalWrapper, UseItemButton as _UseItemButton } from 'app/components/library';
+import { CastItemButton as _CastItemButton } from 'app/components/library/buttons/actions';
 import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
-import { FeedIcon } from 'assets/images/icons/actions';
+import { CastIcon, FeedIcon } from 'assets/images/icons/actions';
 import {
   Account,
   NullAccount,
@@ -107,6 +108,8 @@ export const NodeModal: UIComponent = {
           display: {
             UseItemButton: (kami: Kami, account: Account) =>
               _UseItemButton(network, kami, account, FeedIcon),
+            CastItemButton: (kami: Kami, account: Account) =>
+              _CastItemButton(network, kami, account, CastIcon),
           },
           utils: {
             getAccount: () => _getAccount(world, components, accountEntity, accountRefreshOptions),
@@ -148,158 +151,159 @@ export const NodeModal: UIComponent = {
         world,
         localSystems: { DTRevealer },
       } = network;
-      const { nodeIndex } = useSelected();
-      const { modals, setModals } = useVisibility();
+      const nodeIndex = useSelected((s) => s.nodeIndex);
+      const nodeModalOpen = useVisibility((s) => s.modals.node);
+      const setModals = useVisibility((s) => s.setModals);
 
-      const [account, setAccount] = useState<Account>(NullAccount);
-      const [node, setNode] = useState<Node>(NullNode);
-      const [lastRefresh, setLastRefresh] = useState(Date.now());
+    const [account, setAccount] = useState<Account>(NullAccount);
+    const [node, setNode] = useState<Node>(NullNode);
+    const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-      // ticking
-      useEffect(() => {
-        const refreshClock = () => setLastRefresh(Date.now());
-        const timerId = setInterval(refreshClock, 1000);
-        return () => clearInterval(timerId);
-      }, []);
+    // ticking
+    useEffect(() => {
+      const refreshClock = () => setLastRefresh(Date.now());
+      const timerId = setInterval(refreshClock, 1000);
+      return () => clearInterval(timerId);
+    }, []);
 
-      // refresh account data whenever the modal is opened
-      useEffect(() => {
-        if (!modals.node) return;
-        setAccount(getAccount());
-      }, [modals.node, lastRefresh]);
+    // refresh account data whenever the modal is opened
+    useEffect(() => {
+      if (!nodeModalOpen) return;
+      setAccount(getAccount());
+    }, [nodeModalOpen, lastRefresh]);
 
-      // updates from selected Node updates
-      useEffect(() => {
-        const node = getNode(nodeIndex);
-        if (!node.index) setModals({ node: false }); // NullNode
-        setNode(node);
-      }, [nodeIndex]);
+    // updates from selected Node updates
+    useEffect(() => {
+      const node = getNode(nodeIndex);
+      if (!node.index) setModals({ node: false }); // NullNode
+      setNode(node);
+    }, [nodeIndex]);
 
-      /////////////////
-      // ACTIONS
+    /////////////////
+    // ACTIONS
 
-      // collects on an existing harvest
-      const collect = (kami: Kami) => {
-        actions.add({
-          action: 'HarvestCollect',
-          params: [kami.id],
-          description: `Collecting ${kami.name}'s Harvest`,
-          execute: async () => {
-            return api.player.pet.harvest.collect([kami.harvest!.id]);
-          },
-        });
-      };
+    // collects on an existing harvest
+    const collect = (kami: Kami) => {
+      actions.add({
+        action: 'HarvestCollect',
+        params: [kami.id],
+        description: `Collecting ${kami.name}'s Harvest`,
+        execute: async () => {
+          return api.player.pet.harvest.collect([kami.harvest!.id]);
+        },
+      });
+    };
 
-      // liquidate a harvest
-      // assume this function is only called with two kamis that have harvests
-      const liquidate = (myKami: Kami, enemyKami: Kami) => {
-        actions.add({
-          action: 'HarvestLiquidate',
-          params: [enemyKami.harvest!.id, myKami.id],
-          description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
-          execute: async () => {
-            return api.player.pet.harvest.liquidate(enemyKami.harvest!.id, myKami.id);
-          },
-        });
-      };
+    // liquidate a harvest
+    // assume this function is only called with two kamis that have harvests
+    const liquidate = (myKami: Kami, enemyKami: Kami) => {
+      actions.add({
+        action: 'HarvestLiquidate',
+        params: [enemyKami.harvest!.id, myKami.id],
+        description: `Liquidating ${enemyKami.name} with ${myKami.name}`,
+        execute: async () => {
+          return api.player.pet.harvest.liquidate(enemyKami.harvest!.id, myKami.id);
+        },
+      });
+    };
 
-      // starts a harvest for the given pet and node
-      const start = (kami: Kami, node: Node) => {
-        actions.add({
-          action: 'HarvestStart',
-          params: [kami.id, node.id],
-          description: `Placing ${kami.name}  on ${node.name}`,
-          execute: async () => {
-            return api.player.pet.harvest.start([kami.id], node.index);
-          },
-        });
-      };
+    // starts a harvest for the given pet and node
+    const start = (kami: Kami, node: Node) => {
+      actions.add({
+        action: 'HarvestStart',
+        params: [kami.id, node.id],
+        description: `Placing ${kami.name}  on ${node.name}`,
+        execute: async () => {
+          return api.player.pet.harvest.start([kami.id], node.index);
+        },
+      });
+    };
 
-      // stops a harvest
-      const stop = (kami: Kami) => {
-        actions.add({
-          action: 'HarvestStop',
-          params: [kami.harvest!.id],
-          description: `Removing ${kami.name} from ${kami.harvest!.node?.name}`,
-          execute: async () => {
-            return api.player.pet.harvest.stop([kami.harvest!.id]);
-          },
-        });
-      };
+    // stops a harvest
+    const stop = (kami: Kami) => {
+      actions.add({
+        action: 'HarvestStop',
+        params: [kami.harvest!.id],
+        description: `Removing ${kami.name} from ${kami.harvest!.node?.name}`,
+        execute: async () => {
+          return api.player.pet.harvest.stop([kami.harvest!.id]);
+        },
+      });
+    };
 
-      // claim the scavenge at the given scavenge bar
-      const claim = async (scavBar: ScavBar) => {
-        DTRevealer.nameEntity('scavenge' as EntityID, scavBar.id);
-        const node = getNode(scavBar.index);
+    // claim the scavenge at the given scavenge bar
+    const claim = async (scavBar: ScavBar) => {
+      DTRevealer.nameEntity('scavenge' as EntityID, scavBar.id);
+      const node = getNode(scavBar.index);
 
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'ScavengeClaim',
-          params: [scavBar.type, scavBar.index], // actual param: scavBar.id
-          description: `Claiming scavenge at node ${node.name}`,
-          execute: async () => {
-            return api.player.scavenge.claim(scavBar.id);
-          },
-        });
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
-        return actionID;
-      };
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'ScavengeClaim',
+        params: [scavBar.type, scavBar.index], // actual param: scavBar.id
+        description: `Claiming scavenge at node ${node.name}`,
+        execute: async () => {
+          return api.player.scavenge.claim(scavBar.id);
+        },
+      });
+      await waitForActionCompletion(
+        actions!.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
+      );
+      return actionID;
+    };
 
-      /////////////////
-      // DISPLAY
+    /////////////////
+    // DISPLAY
 
-      return (
-        <ModalWrapper
-          id='node'
-          header={[
-            <Header
-              key='banner'
-              data={{ account, node, kamiEntities: kamiEntities.account }}
-              actions={{ claim, addKami: (kami: Kami) => start(kami, node) }}
-              utils={{
-                getAccountKamis,
-                getRoom,
-                getValue,
-                parseAllos,
-                queryScavInstance,
-                passesNodeReqs,
-                parseConditionalText,
-              }}
-            />,
-          ]}
-          canExit
-          truncate
-          noPadding
-        >
-          {kamiEntities.node.length + kamiEntities.account.length === 0 && (
-            <EmptyText
-              text={['There are no Kamis on this node.', "Maybe that's an opportunity.."]}
-              size={1}
-            />
-          )}
-          <Kards
-            account={account}
-            kamiEntities={kamiEntities}
-            actions={{
-              collect,
-              liquidate,
-              stop,
-            }}
-            display={{
-              UseItemButton,
-            }}
+    return (
+      <ModalWrapper
+        id='node'
+        header={[
+          <Header
+            key='banner'
+            data={{ account, node, kamiEntities: kamiEntities.account }}
+            actions={{ claim, addKami: (kami: Kami) => start(kami, node) }}
             utils={{
-              getBonuses,
-              getKami,
-              getOwner,
-              getTempBonuses,
+              getAccountKamis,
+              getRoom,
+              getValue,
+              parseAllos,
+              queryScavInstance,
+              passesNodeReqs,
+              parseConditionalText,
             }}
+          />,
+        ]}
+        canExit
+        truncate
+        noPadding
+      >
+        {kamiEntities.node.length + kamiEntities.account.length === 0 && (
+          <EmptyText
+            text={['There are no Kamis on this node.', "Maybe that's an opportunity.."]}
+            size={1}
           />
-        </ModalWrapper>
-        );
+        )}
+        <Kards
+          account={account}
+          kamiEntities={kamiEntities}
+          actions={{
+            collect,
+            liquidate,
+            stop,
+          }}
+          display={{
+            UseItemButton,
+          }}
+          utils={{
+            getBonuses,
+            getKami,
+            getOwner,
+            getTempBonuses,
+          }}
+        />
+      </ModalWrapper>
+    );
   },
 };

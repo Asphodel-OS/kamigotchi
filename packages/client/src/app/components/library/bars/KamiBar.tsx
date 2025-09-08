@@ -50,8 +50,10 @@ export const KamiBar = ({
   };
 }) => {
 
-  const { kamiIndex, setKami } = useSelected();
-  const { modals, setModals } = useVisibility();
+  const kamiIndex = useSelected((s) => s.kamiIndex);
+  const setKami = useSelected((s) => s.setKami);
+  const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const setModals = useVisibility((s) => s.setModals);
   const [currentHealth, setCurrentHealth] = useState(0);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ export const KamiBar = ({
     const sameKami = kamiIndex === kami.index;
     setKami(kami.index);
 
-    if (modals.kami && sameKami) setModals({ kami: false });
+    if (kamiModalOpen && sameKami) setModals({ kami: false });
     else setModals({ kami: true });
     playClick();
   };

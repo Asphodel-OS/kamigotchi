@@ -56,8 +56,8 @@ export const MerchantModal: UIComponent = {
         network,
       };
     })();
-    const { npcIndex } = useSelected();
-    const { modals } = useVisibility();
+    const npcIndex = useSelected((s) => s.npcIndex);
+    const merchantModalOpen = useVisibility((s) => s.modals.merchant);
 
     const [account, setAccount] = useState<Account>(NullAccount);
     const [merchant, setMerchant] = useState<NPC>(NullNPC);
@@ -75,7 +75,7 @@ export const MerchantModal: UIComponent = {
 
     // update the listings on each tick
     useEffect(() => {
-      if (!modals.merchant) return;
+      if (!merchantModalOpen) return;
       if (!merchant || npcIndex != merchant.index) return;
       setMusuBalance(getMusuBalance(account.inventories ?? []));
       refreshListings(merchant);
@@ -89,11 +89,11 @@ export const MerchantModal: UIComponent = {
 
     // updates from selected Merchant updates
     useEffect(() => {
-      if (!modals.merchant || npcIndex == merchant.index) return;
+      if (!merchantModalOpen || npcIndex == merchant.index) return;
       const newMerchant = getNPC(npcIndex) ?? NullNPC;
       setMerchant(newMerchant);
       setListings(cleanListings(newMerchant.listings, account));
-    }, [modals.merchant, npcIndex, account]);
+    }, [merchantModalOpen, npcIndex, account]);
 
     // buy from a listing
     const buy = (cart: CartItem[]) => {

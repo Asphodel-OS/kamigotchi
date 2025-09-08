@@ -37,15 +37,19 @@ _built with love, powered by \[redacted\]_
 # Vercel Quick Start
 
 # Vercel Client Quick Start
+
 Note: If you run the client remotely you will have to configure your own privy instance, and it will not support connecting to the Kamigotchi production servers. We have included this vercel option for those looking to build their own projects.
 
-Build from the project root using 
+Build from the project root using
+
 ```sh
 pnpm i
-``` 
+```
+
 Make sure you specify that the build outputs in the current folder, '.'
 
 # Local Quick Start
+
 <br>
 
 _baby steps_
@@ -58,6 +62,7 @@ _baby steps_
 <br>
 
 first we clone the repo
+
 ```sh
 # with github cli
 gh repo clone Asphodel-OS/kamigotchi
@@ -65,25 +70,40 @@ gh repo clone Asphodel-OS/kamigotchi
 # rawdogging ssh with git
 git clone git@github.com:Asphodel-OS/kamigotchi.git
 ```
+
 <br>
 
 then we install dependencies using [pnpm](https://pnpm.io/)
+
 ```sh
 kamigotchi/$ pnpm i
 ```
+
 <br>
+
+## 🧪 Test World
+
+kamigotchis do not enjoy being on different networks and have refused a testnet. they agreed, however, to participate in a test world on yominet.
+
+kamigotchis spawn freely in the test world (even if the gacha pool is empty!). Unfortunately, lab-grown meat cannot become real NFTs.
+
+To access this nightmarish place, replace the world address in `.env.testing` with `0x322cd8ed0d3f1ae4e46c570a300f045553ef4b33`
+(note: there arent many events in test, and the indexer may be quite behind. use `pnpm world:refresh:test` with an appropriate private key to gently kick the indexer)
 
 ## 🚀 Local Client (pointing to mainnet)
 
 you can spin up a local game client with the following command
 
 which will run a vite development server on localhost:3000 in _production_ mode
+
 ```sh
 kamigotchi/packages/client/$ pnpm start:dev
 ```
+
 <br>
 
 you'll also want a `client/.env.production` file populated like so
+
 ```sh
 # Network
 VITE_CHAIN_ID=428962654539583
@@ -97,6 +117,7 @@ VITE_INITIAL_BLOCK_NUMBER=44577
 ```
 
 and also a `client/.env` for fields shared across environments
+
 ```sh
 # PRIVY
 VITE_PRIVY_APP_ID='cltxr4rvw082u129anv6cq7wr'
@@ -105,8 +126,9 @@ VITE_PRIVY_APP_LOGO='https://i.imgur.com/lYdPt9I.png'
 
 # RPCs
 VITE_RPC_TRANSPORT_URL='https://jsonrpc-yominet-1.anvil.asia-southeast.initia.xyz'
-VITE_RPC_WS_URL='wss://jsonrpc-ws-yominet-1.anvil.asia-southeast.initia.xyz' 
+VITE_RPC_WS_URL='wss://jsonrpc-ws-yominet-1.anvil.asia-southeast.initia.xyz'
 ```
+
 <br>
 
 ## 🚀 Local Deployment
@@ -114,6 +136,7 @@ VITE_RPC_WS_URL='wss://jsonrpc-ws-yominet-1.anvil.asia-southeast.initia.xyz'
 _first you'll need to have [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) and [foundry](https://getfoundry.sh/introduction/installation) installed_
 
 you'll also want the following environment files
+
 ```sh
 # packages/contracts/.env.puter
 RPC="http://127.0.0.1:8545"
@@ -128,19 +151,21 @@ VITE_RPC_TRANSPORT_URL='localhost:8545'
 VITE_WORLD_ADDRESS='0x379FA7857b8722d2719f16f78753995BafEb4B9b'
 PRIV_KEY="0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 ```
+
 <br>
 <br>
 <br>
 
 once you have everything, run the following script in a dedicated terminal window
+
 ```sh
 kamigotchi/packages/contracts/$ pnpm start
 ```
+
 <br>
 
 you should see something like the below
 <img width="100%" alt="Screenshot" src="https://github.com/user-attachments/assets/f8ea7545-b50c-477f-931c-fac6a5e75f0f" />
-
 
 <br>
 <br>
@@ -153,6 +178,7 @@ followed by ~1200 transactions (this is normal)
 <br>
 
 _do you see it ?_
+
 - a local EVM Node generated in the `contracts/` window
 - [MUD](https://mud.dev/) `Components` and `Systems` automagically deployed
 - lots of transactions (data deployments)
@@ -198,12 +224,14 @@ _we can continue to setup_
 <br>
 
 _the game should now run so long as you_
+
 - have a supported wallet manager installed (e.g. metamask, rabby)
 - have exactly one wallet manager active
 
 <br>
 
 _you may need to use or transfer ETH from one of the pre-loaded wallets_
+
 ```
 [node:local  ] Private Keys
 [node:local  ] ==================
@@ -223,7 +251,7 @@ _you may need to use or transfer ETH from one of the pre-loaded wallets_
 <br>
 
 _now, for the fun part: choose a name for your account_
-  
+
 <img width="100%" alt="Screenshot" src="https://github.com/user-attachments/assets/56cec91b-5a2c-44a6-9ac0-ffd87cb6e30a" />
 
 <br>
@@ -253,7 +281,6 @@ _the intrusive thoughts should win_
 - local [`.env.puter`]
 - testing [`.env.testing`]
 - production [`.env.production`]
-
 
 ```
 8 8888     ,88'          .8.                   ,8.       ,8.           8 8888      ,o888888o.        ,o888888o.     8888888 8888888888     ,o888888o.    8 8888        8  8 8888

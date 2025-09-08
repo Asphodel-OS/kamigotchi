@@ -24,19 +24,18 @@ export const ValidatorWrapper = ({
   errorPrimary?: string;
   errorSecondary?: string;
 }) => {
-  const { validators } = useVisibility();
+  const isVisible = useVisibility((s) => s.validators[divName]);
 
   // update modal visibility according to store settings
   useEffect(() => {
     const element = document.getElementById(id);
     if (element) {
-      const isVisible = validators[divName];
       element.style.display = isVisible ? 'block' : 'none';
     }
-  }, [validators[divName]]);
+  }, [isVisible]);
 
   return (
-    <Wrapper id={id} isOpen={validators[divName]}>
+    <Wrapper id={id} isOpen={isVisible}>
       {canExit && (
         <ButtonRow>
           <ExitButton divName={id} isValidator />
