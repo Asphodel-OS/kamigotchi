@@ -17,7 +17,7 @@ export const SudoMenuButton = () => {
       img={ExternalIcon}
       options={[
         { text: 'Sudoswap', image: SudoIcon, onClick: openSudoLink },
-        { text: 'KamiBots', image: placeholder, onClick: openKamibotsLink },
+        { text: 'KamiBots', image: placeholder.default, onClick: openKamibotsLink },
       ]}
       scale={4.5}
       scaleOrientation='vh'
