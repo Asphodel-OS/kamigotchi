@@ -28,7 +28,7 @@ export function IconListButton({
   icon,
   tooltipProps,
 }: {
-  img: string;
+  img?: string;
   options: Option[];
 
   text?: string;
