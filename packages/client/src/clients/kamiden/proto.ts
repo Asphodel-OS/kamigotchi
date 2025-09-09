@@ -710,6 +710,7 @@ export const Feed: MessageFns<Feed> = {
     for (const v of message.Trades) {
       Trade.encode(v!, writer.uint32(34).fork()).join();
     }
+
     for (const v of message.KamiCasts) {
       KamiCast.encode(v!, writer.uint32(42).fork()).join();
     }
@@ -755,6 +756,7 @@ export const Feed: MessageFns<Feed> = {
           message.Trades.push(Trade.decode(reader, reader.uint32()));
           continue;
         }
+
         case 5: {
           if (tag !== 42) {
             break;
@@ -787,7 +789,14 @@ export const Feed: MessageFns<Feed> = {
 };
 
 function createBaseAuctionBuy(): AuctionBuy {
-  return { AccountIndex: '', ItemIndex: 0, Amount: 0, Currency: 0, Cost: 0, Timestamp: 0 };
+  return {
+    AccountIndex: '',
+    ItemIndex: 0,
+    Amount: 0,
+    Currency: 0,
+    Cost: 0,
+    Timestamp: 0,
+  };
 }
 
 export const AuctionBuy: MessageFns<AuctionBuy> = {
@@ -1270,6 +1279,7 @@ export const ItemTransfer: MessageFns<ItemTransfer> = {
   },
 };
 
+
 function createBaseKamiCast(): KamiCast {
   return { AccountID: '', Timestamp: 0, TargetID: '', itemIndex: 0, nodeIndex: 0 };
 }
@@ -1363,6 +1373,7 @@ export const KamiCast: MessageFns<KamiCast> = {
     return message;
   },
 };
+
 
 function createBaseRoomRequest(): RoomRequest {
   return { RoomIndex: 0, Timestamp: 0, Size: undefined };

@@ -132,7 +132,12 @@ const PopoverContainer = styled.span.attrs<{
     left: tooltipPosition.x,
     maxWidth: maxWidth ? `${maxWidth}vw` : '36vw',
   },
-}))`
+}))<{
+  isVisible: boolean;
+  color?: string;
+  tooltipPosition?: any;
+  maxWidth?: number;
+}>`
   position: fixed;
   flex-direction: column;
   border: solid black 0.15vw;
