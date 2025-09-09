@@ -133,7 +133,6 @@ export const ItemGrid = ({
         tooltipProps={{
           text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
           maxWidth: 25,
-          title: 'Item Info',
         }}
       />
     );
