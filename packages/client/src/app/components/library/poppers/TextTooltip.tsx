@@ -46,7 +46,11 @@ export const TextTooltip = ({
       isDisabled={text.every((entry) => entry === '' || entry === null)}
       content={
         <>
-          {title && <Text size={textSize * 1.35}>{title}</Text>}
+          {title && (
+            <Text size={textSize * 1.35} align={alignText}>
+              {title}
+            </Text>
+          )}
           {text.map((line, idx) => (
             <Text key={idx} size={textSize} align={alignText}>
               {line}
@@ -63,7 +67,7 @@ export const TextTooltip = ({
 const Text = styled.div<{ size: number; align?: string }>`
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size }) => size * 1.8}vw;
-  text-align: ${({ align }) => align};
+  text-align: ${({ align }) => align ?? 'center'};
   white-space: pre-line;
   img {
     vertical-align: middle;
