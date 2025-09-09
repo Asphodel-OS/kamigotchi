@@ -4,6 +4,7 @@ import { DefaultChain } from 'constants/chains';
 export const config: PrivyClientConfig = {
   supportedChains: [DefaultChain],
   defaultChain: DefaultChain,
+  loginMethods: ['wallet'],
   embeddedWallets: {
     createOnLogin: 'all-users',
     noPromptOnSignature: true,
