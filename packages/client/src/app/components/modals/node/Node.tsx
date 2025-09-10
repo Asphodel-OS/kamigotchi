@@ -53,6 +53,7 @@ export const NodeModal: UIComponent = {
         const accountRefreshOptions = {
           live: LIVE_UPDATE_LIMIT,
           inventories: LIVE_UPDATE_LIMIT,
+          config: 3600,
           friends: 60,
         };
 

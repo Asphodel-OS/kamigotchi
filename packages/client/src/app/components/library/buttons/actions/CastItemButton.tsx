@@ -1,4 +1,5 @@
 import { World } from '@mud-classic/recs';
+import { calcCurrentStamina } from 'app/cache/account';
 import { cleanInventories, filterInventories, Inventory } from 'app/cache/inventory';
 import { isHarvesting, Kami } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
@@ -61,12 +62,12 @@ export const CastItemButton = (
 
 // generate a tooltip for any reason the kami cannot be cast on
 const getDisabledTooltip = (kami: Kami, account: Account): string => {
-  const stamina = account.stamina;
   const inRoom = kami.harvest?.node?.roomIndex == account.roomIndex;
+  const stamina = calcCurrentStamina(account);
 
   let tooltip = '';
   if (isHarvesting(kami) && !inRoom) tooltip = `too far away`;
-  else if (stamina.sync < 10) tooltip = `insufficient stamina`; // costs 10 stamina to cast
+  else if (stamina < 10) tooltip = `insufficient stamina`; // costs 10 stamina to cast
 
   return tooltip;
 };
