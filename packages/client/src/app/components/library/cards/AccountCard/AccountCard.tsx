@@ -56,17 +56,17 @@ export const AccountCard = ({
         </TextTooltip>
       </TitleBar>
       <Content>
-        <ContentColumn key='col-1'>
+        <BioColumn key='col-1'>
           {description.map((text, i) => (
             <TextMedium key={`desc-${i}`}>{text}</TextMedium>
           ))}
-        </ContentColumn>
-        <ContentColumn key='col-2'>
+        </BioColumn>
+        <ActionsColumn key='col-2'>
           <ContentSubtext key='subtext' onClick={subtextOnClick}>
             {subtext}
           </ContentSubtext>
           <ContentActions key='actions'>{actions}</ContentActions>
-        </ContentColumn>
+        </ActionsColumn>
       </Content>
     </Card>
   );
@@ -94,14 +94,37 @@ const TitleText = styled.div`
 
 const Content = styled.div`
   padding: 0.2vw;
+  min-height: 4vw;
 
-  display: flex;
-  flex-flow: row nowrap;
+  display: grid;
+  grid-template-columns: 9fr 1fr; 
   align-items: stretch;
 `;
 
-const ContentColumn = styled.div`
-  flex-grow: 1;
+const BioColumn = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  max-height: 3.5vw;
+  overflow-y: auto;
+  overflow-wrap: break-word; 
+  
+  /* Hide scrollbar by default and show on hover */
+  &::-webkit-scrollbar {
+    width: 1vw;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 8px;
+  }
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+  }
+`;
+
+const ActionsColumn = styled.div`
   display: flex;
   flex-flow: column nowrap;
 `;
