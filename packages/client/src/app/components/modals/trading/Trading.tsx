@@ -336,6 +336,6 @@ const Content = styled.div`
   justify-content: flex-start;
 
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
   font-size: 0.9vw;
 `;

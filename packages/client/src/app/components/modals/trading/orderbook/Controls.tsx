@@ -143,9 +143,6 @@ export const Controls = ({
 
   return (
     <Container>
-      <TitleRow>
-        <Title>Search</Title>
-      </TitleRow>
       <CollapsibleWrap style={{ minHeight: '12%', overflow: 'visible' }}>
         <SearchRow>
           <IconButton text={`< ${typeFilter} >`} onClick={() => { playClick(); toggleTypeFilter(); }} />
@@ -180,9 +177,7 @@ export const Controls = ({
           )}
         </SearchRow>
       </CollapsibleWrap>
-      <TitleRow>
-        <SectionTitle>Browse</SectionTitle>
-      </TitleRow>
+      <Padding />
       <CollapsibleWrap style={{ flex: '1 1 auto', minHeight: '7%' }}>
         <BrowserSection>
           <ItemBrowser items={items} selected={itemFilter} setSelected={setItemFilter} category={category as any} onCategoryChange={setCategory as any} />
@@ -204,27 +199,8 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const Title = styled.div`
-  position: sticky;
-  top: 0;
-  background-color: rgb(221, 221, 221);
-  width: 100%;
-
-  height: 2vw;
-  line-height: 2vw;
-  padding: 0 1.2vw;
-  opacity: 0.9;
-  color: black;
-  font-size: 1vw;
-  text-align: left;
-  z-index: 1;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: rgb(221, 221, 221);
+const Padding = styled.div`
+  height: 0.6vw;
 `;
 
 /* corner minimize toggle removed */
@@ -251,17 +227,7 @@ const Row = styled.div<{ compact?: boolean }>`
   align-items: center;
 `;
 
-const SectionTitle = styled.div`
-  background-color: rgb(221, 221, 221);
-  width: 100%;
-  height: 2vw;
-  line-height: 2vw;
-  padding: 0 1.2vw;
-  opacity: 0.9;
-  color: black;
-  font-size: 1vw;
-  text-align: left;
-`;
+const SectionTitle = styled.div``;
 
 const BrowserSection = styled.div`
   position: relative;

@@ -1,15 +1,15 @@
 import { Dispatch, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { getTradeType, Trade } from 'app/cache/trade';
+import { animate } from 'animejs';
 import { getInventoryBalance } from 'app/cache/inventory';
+import { getTradeType, Trade } from 'app/cache/trade';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
 import { EmptyText, TextTooltip } from 'app/components/library';
 import { ItemGridTooltip } from 'app/components/modals/inventory/ItemGridTooltip';
-import { Account, Item } from 'network/shapes';
 import { MUSU_INDEX } from 'constants/items';
+import { Account, Item } from 'network/shapes';
 import { ConfirmationData } from '../../library/Confirmation';
-import { animate } from 'animejs';
 
 export const Offers = ({
   actions,
@@ -21,10 +21,13 @@ export const Offers = ({
   showMakerOffer = false,
   deleteEnabled = false,
   onDelete,
+  showStatus = false,
+  statusAsIcons = true,
 }: {
   actions: {
     executeTrade: (trade: Trade) => void;
     cancelTrade?: (trade: Trade) => void;
+    completeTrade?: (trade: Trade) => void;
   };
   controls: {
     sort: string;
@@ -47,6 +50,8 @@ export const Offers = ({
   showMakerOffer?: boolean;
   deleteEnabled?: boolean;
   onDelete?: (trade: Trade) => void;
+  showStatus?: boolean;
+  statusAsIcons?: boolean;
 }) => {
   const { typeFilter, sort, setSort, ascending, setAscending, itemFilter, itemSearch } = controls;
   const { account, trades } = data;
@@ -97,8 +102,6 @@ export const Offers = ({
     };
     cleaned = cleaned.filter(matchesCategory);
 
-    
-
     // apply owner filter if any
     if (ownerFilter) {
       cleaned = cleaned.filter((t) => (t.maker?.name || '') === ownerFilter);
@@ -113,7 +116,9 @@ export const Offers = ({
       cleaned = cleaned.filter((trade) => {
         const sellItems = trade.sellOrder?.items ?? [];
         const buyItems = trade.buyOrder?.items ?? [];
-        return [...sellItems, ...buyItems].some((it) => (it as any)?.index === itemFilterIndexLocal);
+        return [...sellItems, ...buyItems].some(
+          (it) => (it as any)?.index === itemFilterIndexLocal
+        );
       });
     }
 
@@ -214,7 +219,6 @@ export const Offers = ({
     return () => window.removeEventListener('trading:filterOffersByOwner', handler as any);
   }, [filtersEnabled]);
 
-
   useEffect(() => {
     if (!wrapRef.current) return;
     const to = offersOpen ? wrapRef.current.scrollHeight : 0;
@@ -239,9 +243,30 @@ export const Offers = ({
       title: 'Confirm Order',
       subTitle: undefined,
       content: (
-        <div style={{ padding: '0.6vw', fontSize: '0.9vw', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6vw' }}>
-          <TextTooltip text={[<ItemGridTooltip key={item?.index || 0} item={item as any} utils={{ displayRequirements: () => '', parseAllos: () => [] }} />]} maxWidth={26}>
-            <img src={item?.image} style={{ width: '3vw', height: '3vw', imageRendering: 'pixelated' }} />
+        <div
+          style={{
+            padding: '0.6vw',
+            fontSize: '0.9vw',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.6vw',
+          }}
+        >
+          <TextTooltip
+            text={[
+              <ItemGridTooltip
+                key={item?.index || 0}
+                item={item as any}
+                utils={{ displayRequirements: () => '', parseAllos: () => [] }}
+              />,
+            ]}
+            maxWidth={26}
+          >
+            <img
+              src={item?.image}
+              style={{ width: '3vw', height: '3vw', imageRendering: 'pixelated' }}
+            />
           </TextTooltip>
           <span>
             {verb} {qty.toLocaleString()} {item?.name ?? 'Item'} for {total.toLocaleString()} MUSU?
@@ -266,7 +291,14 @@ export const Offers = ({
     return true;
   };
 
+  const isMaker = (trade: Trade) => (trade.maker?.entity || 0) === (account.entity || 0);
+  const isManageMode = !!showMakerOffer || !filtersEnabled || !!deleteEnabled;
   const getActionLabel = (trade: Trade): string => {
+    if (isManageMode) {
+      if (trade.state === 'PENDING' && isMaker(trade)) return 'Cancel';
+      if (trade.state === 'EXECUTED' && isMaker(trade)) return 'Complete';
+      return '-';
+    }
     const t = getTradeType(trade, false) as string;
     if (t === 'Buy') return 'Buy';
     if (t === 'Sell') return 'Sell';
@@ -274,7 +306,10 @@ export const Offers = ({
     return 'Execute';
   };
 
-  const pickDisplayItem = (trade: Trade, utils: { getItemByIndex: (index: number) => Item }): Item => {
+  const pickDisplayItem = (
+    trade: Trade,
+    utils: { getItemByIndex: (index: number) => Item }
+  ): Item => {
     const mapItems = (arr: any[] | undefined): Item[] =>
       (arr ?? [])
         .map((it: any) => {
@@ -286,31 +321,73 @@ export const Offers = ({
     const fromBuy = mapItems(trade.buyOrder?.items);
     const fromSell = mapItems(trade.sellOrder?.items);
 
-    const preferNonCurrency = (list: Item[]) => list.find((i) => (i && i.index !== MUSU_INDEX && (i?.type || '').toUpperCase() !== 'ERC20')) ?? list[0];
+    const preferNonCurrency = (list: Item[]) =>
+      list.find((i) => i && i.index !== MUSU_INDEX && (i?.type || '').toUpperCase() !== 'ERC20') ??
+      list[0];
 
-    // For management, optionally force show maker's offered side (sellOrder)
+    // For management, show the meaningful side by maker's trade type
     if (showMakerOffer) {
-      // In our data model, the maker's intended item often lives in buyOrder for Sell listings
-      return (
-        preferNonCurrency(fromBuy) ?? preferNonCurrency(fromSell) ?? utils.getItemByIndex(0)
-      );
+      const makerType = getTradeType(trade, true) as string;
+      if (makerType === 'Buy') {
+        // Maker is offering currency and seeking an item → show sought item
+        return preferNonCurrency(fromBuy) ?? preferNonCurrency(fromSell) ?? utils.getItemByIndex(0);
+      }
+      if (makerType === 'Sell') {
+        // Maker is selling an item for currency → show offered item
+        return preferNonCurrency(fromSell) ?? preferNonCurrency(fromBuy) ?? utils.getItemByIndex(0);
+      }
+      // Fallback
+      return preferNonCurrency([...fromSell, ...fromBuy]) ?? utils.getItemByIndex(0);
     }
 
     // When viewing Buy offers, show what sellers are offering (sellOrder)
     if ((typeFilter as any) === 'Buy') {
-      return (
-        preferNonCurrency(fromSell) ?? preferNonCurrency(fromBuy) ?? utils.getItemByIndex(0)
-      );
+      return preferNonCurrency(fromSell) ?? preferNonCurrency(fromBuy) ?? utils.getItemByIndex(0);
     }
-    // When viewing Sell offers, show what buyers are seeking (buyOrder)
+    // When viewing Sell offers, show what the maker is seeking (buyOrder)
     if ((typeFilter as any) === 'Sell') {
-      return (
-        preferNonCurrency(fromBuy) ?? preferNonCurrency(fromSell) ?? utils.getItemByIndex(0)
-      );
+      return preferNonCurrency(fromBuy) ?? preferNonCurrency(fromSell) ?? utils.getItemByIndex(0);
     }
     // Barter/All: prefer non-currency from any side
     const combined = [...fromSell, ...fromBuy];
     return preferNonCurrency(combined) ?? utils.getItemByIndex(0);
+  };
+
+  const renderStatus = (state: string) => {
+    if (!statusAsIcons) return state;
+    const s = (state || '').toUpperCase();
+    const map: Record<string, string> = {
+      PENDING: '⏳',
+      EXECUTED: '➡',
+      CANCELLED: '✖',
+      COMPLETED: '✔',
+    };
+    return map[s] || '·';
+  };
+
+  const getTypeGlyph = (t: string): string => {
+    const key = (t || '').toUpperCase();
+    if (key === 'BUY') return '↑';
+    if (key === 'SELL') return '↓';
+    if (key === 'BARTER') return '⇄';
+    return '·';
+  };
+
+  type BadgeVariant = 'offer' | 'seek' | 'neutral';
+  const getTxnVariant = (makerType: string): BadgeVariant => {
+    const key = (makerType || '').toUpperCase();
+    if (key === 'BUY') return 'seek';
+    if (key === 'SELL') return 'offer';
+    if (key === 'BARTER') return 'offer';
+    return 'neutral';
+  };
+
+  const getTxnLabel = (makerType: string): string => {
+    const key = (makerType || '').toUpperCase();
+    if (key === 'BUY') return 'seek';
+    if (key === 'SELL') return 'offer';
+    if (key === 'BARTER') return 'barter';
+    return '';
   };
 
   const clearFilters = () => {
@@ -322,134 +399,227 @@ export const Offers = ({
     } catch {}
   };
 
-  const hasAnyFilter = (categoryFilter && categoryFilter !== 'All') || (itemFilterIndexLocal && itemFilterIndexLocal !== 0) || !!ownerFilter;
+  const hasAnyFilter =
+    (categoryFilter && categoryFilter !== 'All') ||
+    (itemFilterIndexLocal && itemFilterIndexLocal !== 0) ||
+    !!ownerFilter;
 
   return (
     <Container>
       {hasAnyFilter && (
         <FilterBar>
-          <span>Filtered {itemFilterIndexLocal ? '(Item)' : ''} {categoryFilter && categoryFilter !== 'All' ? `(Category: ${categoryFilter})` : ''}</span>
+          <span>
+            Filtered {itemFilterIndexLocal ? '(Item)' : ''}{' '}
+            {categoryFilter && categoryFilter !== 'All' ? `(Category: ${categoryFilter})` : ''}
+          </span>
           <ClearButton onClick={clearFilters}>Clear</ClearButton>
         </FilterBar>
       )}
       <TableWrap ref={wrapRef} style={{ maxHeight: offersOpen ? 'none' : 0 }}>
-      <Table>
-        <colgroup>
-          <col className='item' />
-          <col className='type' />
-          <col className='qty' />
-          <col className='total' />
-          <col className='maker' />
-          <col />
-        </colgroup>
-        <thead>
-          <HeaderRow>
-            <SortableTh onClick={() => { setAscending(sort === 'Item' ? !ascending : true); setSort('Item'); }}>
-              Item {sort === 'Item' ? (ascending ? '↑' : '↓') : ''}
-            </SortableTh>
-            <SortableTh onClick={() => { setAscending(sort === 'Type' ? !ascending : true); setSort('Type'); }}>
-              Type {sort === 'Type' ? (ascending ? '↑' : '↓') : ''}
-            </SortableTh>
-            <SortableTh onClick={() => { setAscending(sort === 'Qty' ? !ascending : true); setSort('Qty'); }}>
-              Qty {sort === 'Qty' ? (ascending ? '↑' : '↓') : ''}
-            </SortableTh>
-            <SortableTh onClick={() => { setAscending(sort === 'Total' ? !ascending : true); setSort('Total'); }}>
-              Total {sort === 'Total' ? (ascending ? '↑' : '↓') : ''}
-            </SortableTh>
-            <SortableTh onClick={() => { setAscending(sort === 'Owner' ? !ascending : true); setSort('Owner'); }}>
-              Maker {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
-            </SortableTh>
-            <th>Action</th>
-          </HeaderRow>
-        </thead>
-        <tbody>
-          {displayed.map((trade, i) => {
-            const type = getTradeType(trade, false);
-            const perUnit = getPerUnitPrice(trade, type);
-            let qty = 1 as number;
-            if (type === 'Buy') qty = (trade?.sellOrder?.amounts?.[0] || 1) as number;
-            else if (type === 'Sell') qty = (trade?.buyOrder?.amounts?.[0] || 1) as number;
-            else qty = ((trade?.sellOrder?.amounts?.[0] || trade?.buyOrder?.amounts?.[0]) || 1) as number;
-            const total = perUnit * qty;
-            const item = pickDisplayItem(trade, utils);
-            const disabled = !canFillOrder(account, trade);
-            const typeName = item.type;
-            return (
-              <Row key={i}>
-                <td>
-                  <ItemCell>
-                    <TextTooltip
-                      text={[<ItemGridTooltip key={`img-${item.index}`} item={item as any} utils={{ displayRequirements: () => '', parseAllos: () => [] }} />]}
-                      maxWidth={25}
-                    >
-                      <Icon
-                        src={item.image}
-                        onClick={() =>
-                          window.dispatchEvent(new CustomEvent('trading:filterOffersByItem', { detail: item.index }))
-                        }
-                      />
-                    </TextTooltip>
-                    <TextTooltip
-                      text={[<ItemGridTooltip key={`name-${item.index}`} item={item as any} utils={{ displayRequirements: () => '', parseAllos: () => [] }} />]}
-                      maxWidth={25}
-                    >
-                      <Name
-                        onClick={() =>
-                          window.dispatchEvent(new CustomEvent('trading:filterOffersByItem', { detail: item.index }))
-                        }
+        <Table $withStatus={!!showStatus} $manageMode={isManageMode}>
+          <colgroup>
+            {isManageMode ? <col className='otype' /> : null}
+            <col className='item' />
+            <col className='type' />
+            <col className='qty' />
+            <col className='total' />
+            <col className='maker' />
+            {showStatus ? <col className='status' /> : null}
+            <col className='action' />
+          </colgroup>
+          <thead>
+            <HeaderRow>
+              {isManageMode ? <th title='transaction type'>txn</th> : null}
+              <SortableTh
+                onClick={() => {
+                  setAscending(sort === 'Item' ? !ascending : true);
+                  setSort('Item');
+                }}
+              >
+                Item {sort === 'Item' ? (ascending ? '↑' : '↓') : ''}
+              </SortableTh>
+              <SortableTh
+                onClick={() => {
+                  setAscending(sort === 'Type' ? !ascending : true);
+                  setSort('Type');
+                }}
+              >
+                Type {sort === 'Type' ? (ascending ? '↑' : '↓') : ''}
+              </SortableTh>
+              <SortableTh
+                onClick={() => {
+                  setAscending(sort === 'Qty' ? !ascending : true);
+                  setSort('Qty');
+                }}
+              >
+                Qty {sort === 'Qty' ? (ascending ? '↑' : '↓') : ''}
+              </SortableTh>
+              <SortableTh
+                onClick={() => {
+                  setAscending(sort === 'Total' ? !ascending : true);
+                  setSort('Total');
+                }}
+              >
+                Total {sort === 'Total' ? (ascending ? '↑' : '↓') : ''}
+              </SortableTh>
+              <SortableTh
+                onClick={() => {
+                  setAscending(sort === 'Owner' ? !ascending : true);
+                  setSort('Owner');
+                }}
+              >
+                Maker {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
+              </SortableTh>
+              {showStatus ? <th>Status</th> : null}
+              <th>Action</th>
+            </HeaderRow>
+          </thead>
+          <tbody>
+            {displayed.map((trade, i) => {
+              const type = getTradeType(trade, false);
+              const makerType = getTradeType(trade, true) as string;
+              const perUnit = getPerUnitPrice(trade, type);
+              let qty = 1 as number;
+              if (type === 'Buy') qty = (trade?.sellOrder?.amounts?.[0] || 1) as number;
+              else if (type === 'Sell') qty = (trade?.buyOrder?.amounts?.[0] || 1) as number;
+              else
+                qty = (trade?.sellOrder?.amounts?.[0] ||
+                  trade?.buyOrder?.amounts?.[0] ||
+                  1) as number;
+              const total = perUnit * qty;
+              const item = pickDisplayItem(trade, utils);
+              const disabled = isManageMode
+                ? !(
+                    (trade.state === 'PENDING' && isMaker(trade) && !!actions.cancelTrade) ||
+                    (trade.state === 'EXECUTED' && isMaker(trade) && !!actions.completeTrade)
+                  )
+                : !canFillOrder(account, trade);
+              const typeName = item.type;
+              return (
+                <Row key={i}>
+                  {isManageMode ? (
+                    <td>
+                      <OrderTypeCell title={makerType}>
+                        <Badge $variant={getTxnVariant(makerType)}>{getTxnLabel(makerType)}</Badge>
+                      </OrderTypeCell>
+                    </td>
+                  ) : null}
+                  <td>
+                    <ItemCell>
+                      <TextTooltip
+                        text={[
+                          <ItemGridTooltip
+                            key={`img-${item.index}`}
+                            item={item as any}
+                            utils={{ displayRequirements: () => '', parseAllos: () => [] }}
+                          />,
+                        ]}
+                        maxWidth={25}
                       >
-                        {item.name}
-                      </Name>
-                    </TextTooltip>
-                  </ItemCell>
-                </td>
-                <td>
-                  <TypeLink
-                    onClick={() => {
-                      const t = (typeName || '').toUpperCase();
-                      let key = 'Other';
-                      if (['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX'].includes(t)) key = 'Consumables';
-                      else if (['MATERIAL'].includes(t)) key = 'Materials';
-                      else if (['ERC20'].includes(t)) key = 'Currencies';
-                      window.dispatchEvent(new CustomEvent('trading:setCategory', { detail: key }));
-                    }}
-                    title={`View ${typeName} items`}
-                  >
-                    {typeName}
-                  </TypeLink>
-                </td>
-                <td>{qty.toLocaleString()}</td>
-                <TotalCell>{total.toLocaleString()}</TotalCell>
-                <td>
-                  <OwnerLink
-                    onClick={() => {
-                      const name = trade.maker?.name ?? '';
-                      window.dispatchEvent(new CustomEvent('trading:filterOffersByOwner', { detail: name }));
-                    }}
-                    title='View items by owner'
-                  >
-                    {trade.maker?.name ?? '???'}
-                  </OwnerLink>
-                </td>
-                <td>
-                  <ActionCell>
-                  <ActionButton disabled={disabled} onClick={() => handleExecute(trade)}>
-                      {getActionLabel(trade)}
-                    </ActionButton>
-                    {deleteEnabled ? (
-                      <TextTooltip text={['delete order']}>
-                        <ActionButton onClick={() => (onDelete ? onDelete(trade) : actions.cancelTrade?.(trade))}>
-                          x
-                  </ActionButton>
+                        <Icon
+                          src={item.image}
+                          onClick={() =>
+                            window.dispatchEvent(
+                              new CustomEvent('trading:filterOffersByItem', { detail: item.index })
+                            )
+                          }
+                        />
                       </TextTooltip>
-                    ) : null}
-                  </ActionCell>
-                </td>
-              </Row>
-            );
-          })}
-        </tbody>
-      </Table>
+                      <TextTooltip
+                        text={[
+                          <ItemGridTooltip
+                            key={`name-${item.index}`}
+                            item={item as any}
+                            utils={{ displayRequirements: () => '', parseAllos: () => [] }}
+                          />,
+                        ]}
+                        maxWidth={25}
+                      >
+                        <Name
+                          onClick={() =>
+                            window.dispatchEvent(
+                              new CustomEvent('trading:filterOffersByItem', { detail: item.index })
+                            )
+                          }
+                        >
+                          {item.name}
+                        </Name>
+                      </TextTooltip>
+                    </ItemCell>
+                  </td>
+                  <td>
+                    <TypeLink
+                      onClick={() => {
+                        const t = (typeName || '').toUpperCase();
+                        let key = 'Other';
+                        if (['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX'].includes(t))
+                          key = 'Consumables';
+                        else if (['MATERIAL'].includes(t)) key = 'Materials';
+                        else if (['ERC20'].includes(t)) key = 'Currencies';
+                        window.dispatchEvent(
+                          new CustomEvent('trading:setCategory', { detail: key })
+                        );
+                      }}
+                      title={`View ${typeName} items`}
+                    >
+                      {typeName}
+                    </TypeLink>
+                  </td>
+                  <td>{qty.toLocaleString()}</td>
+                  <TotalCell>{total.toLocaleString()}</TotalCell>
+                  <td>
+                    <OwnerLink
+                      onClick={() => {
+                        const name = trade.maker?.name ?? '';
+                        window.dispatchEvent(
+                          new CustomEvent('trading:filterOffersByOwner', { detail: name })
+                        );
+                      }}
+                      title='View items by owner'
+                    >
+                      {trade.maker?.name ?? '???'}
+                    </OwnerLink>
+                  </td>
+                  {showStatus ? <td title={trade.state}>{renderStatus(trade.state)}</td> : null}
+                  <td>
+                    <ActionCell>
+                      <ActionButton
+                        disabled={disabled}
+                        onClick={() => {
+                          if (isManageMode) {
+                            if (trade.state === 'PENDING' && isMaker(trade) && actions.cancelTrade)
+                              return actions.cancelTrade(trade);
+                            if (
+                              trade.state === 'EXECUTED' &&
+                              isMaker(trade) &&
+                              actions.completeTrade
+                            )
+                              return actions.completeTrade(trade);
+                            return;
+                          }
+                          return handleExecute(trade);
+                        }}
+                      >
+                        {getActionLabel(trade)}
+                      </ActionButton>
+                      {deleteEnabled ? (
+                        <TextTooltip text={['delete order']}>
+                          <ActionButton
+                            onClick={() =>
+                              onDelete ? onDelete(trade) : actions.cancelTrade?.(trade)
+                            }
+                          >
+                            x
+                          </ActionButton>
+                        </TextTooltip>
+                      ) : null}
+                    </ActionCell>
+                  </td>
+                </Row>
+              );
+            })}
+          </tbody>
+        </Table>
       </TableWrap>
       {displayed.length === 0 && <EmptyText text={['No active trades to show']} />}
     </Container>
@@ -500,16 +670,35 @@ const TableWrap = styled.div`
   scrollbar-color: auto;
 `;
 
-const Table = styled.table`
+const Table = styled.table<{ $withStatus?: boolean; $manageMode?: boolean }>`
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
   display: table;
-  colgroup col.item { width: 34%; }
-  colgroup col.type { width: 14%; }
-  colgroup col.qty { width: 10%; }
-  colgroup col.total { width: 12%; }
-  colgroup col.maker { width: 20%; }
+  colgroup col.otype {
+    width: 7%;
+  }
+  colgroup col.item {
+    width: ${({ $manageMode }) => ($manageMode ? '30%' : '34%')};
+  }
+  colgroup col.type {
+    width: ${({ $manageMode }) => ($manageMode ? '13%' : '14%')};
+  }
+  colgroup col.qty {
+    width: ${({ $manageMode }) => ($manageMode ? '9%' : '10%')};
+  }
+  colgroup col.total {
+    width: ${({ $manageMode }) => ($manageMode ? '11%' : '12%')};
+  }
+  colgroup col.maker {
+    width: ${({ $withStatus, $manageMode }) => ($manageMode ? '18%' : $withStatus ? '18%' : '20%')};
+  }
+  colgroup col.status {
+    width: ${({ $withStatus }) => ($withStatus ? '10%' : '8%')};
+  }
+  colgroup col.action {
+    width: ${({ $withStatus, $manageMode }) => ($manageMode ? '12%' : $withStatus ? '12%' : '10%')};
+  }
 `;
 
 const HeaderRow = styled.tr`
@@ -567,7 +756,42 @@ const TypeLink = styled.span`
   color: #336;
   text-decoration: underline;
   cursor: pointer;
-  &:hover { opacity: 0.85; }
+  &:hover {
+    opacity: 0.85;
+  }
+`;
+
+const OrderTypeHeader = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2vw;
+`;
+
+const OrderTypeCell = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2vw;
+`;
+
+const Slash = styled.span`
+  opacity: 0.6;
+`;
+
+const Badge = styled.span<{ $variant: 'offer' | 'seek' | 'neutral' }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.8vw;
+  height: 1.2vw;
+  padding: 0 0.3vw;
+  border: 0.09vw solid black;
+  border-radius: 0.2vw;
+  font-size: 0.75vw;
+  line-height: 1;
+  color: #192702;
+  background: ${({ $variant }) =>
+    $variant === 'offer' ? '#e6ffd6' : $variant === 'seek' ? '#d6e6ff' : '#eee'};
 `;
 
 const ActionButton = styled.button`

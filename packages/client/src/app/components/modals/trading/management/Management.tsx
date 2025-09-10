@@ -70,7 +70,7 @@ export const Management = ({
       </Top>
       <Bottom>
         <OffersTable
-          actions={{ executeTrade: actions.executeTrade, cancelTrade: actions.cancelTrade }}
+          actions={{ executeTrade: actions.executeTrade, cancelTrade: actions.cancelTrade, completeTrade: actions.completeTrade }}
           controls={{
             sort,
             setSort: setSortCb,

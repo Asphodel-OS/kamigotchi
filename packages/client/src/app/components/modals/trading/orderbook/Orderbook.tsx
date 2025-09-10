@@ -111,7 +111,7 @@ const Container = styled.div<{ isVisible: boolean }>`
 const LeftPane = styled.div<{ collapsed: boolean }>`
   position: relative;
   grid-row: 1;
-  overflow: hidden;
+  overflow: hidden auto;
   height: 100%;
   width: 100%;
   pointer-events: ${({ collapsed }) => (collapsed ? 'none' : 'auto')};
@@ -126,6 +126,7 @@ const RightPane = styled.div`
   width: 100%;
   height: 100%;
   min-height: 0;
+  overflow: hidden auto;
   z-index: 0;
 `;
 

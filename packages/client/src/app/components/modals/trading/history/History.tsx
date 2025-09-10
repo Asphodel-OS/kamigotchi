@@ -35,20 +35,25 @@ export const History = ({
           setSort: (() => {}) as any,
           ascending: true,
           setAscending: (() => {}) as any,
-          itemFilter: ({ index: 0 } as unknown) as any,
-          typeFilter: (typeFilter as unknown) as any,
+          itemFilter: { index: 0 } as unknown as any,
+          typeFilter: typeFilter as unknown as any,
           isConfirming: false,
           itemSearch: '',
           setIsConfirming: (() => {}) as any,
           setConfirmData: (() => {}) as any,
         }}
         data={{
-          account: (data.account as unknown) as any,
+          account: data.account as unknown as any,
           trades: data.tradeHistory.map((th) => utils.getTradeHistory(th)),
         }}
         utils={{ getItemByIndex: utils.getItemByIndex }}
-        extraFilter={(t) => t.state !== 'PENDING' && (t.maker?.entity === data.account.entity || t.taker?.entity === data.account.entity)}
+        extraFilter={(t) =>
+          t.state !== 'PENDING' &&
+          (t.maker?.entity === data.account.entity || t.taker?.entity === data.account.entity)
+        }
         filtersEnabled={false}
+        showStatus
+        statusAsIcons
       />
     </Content>
   );
