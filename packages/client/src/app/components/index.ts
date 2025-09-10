@@ -29,6 +29,7 @@ import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
 import { TradingModal } from './modals/trading';
+import { TravelModal } from './modals/travel';
 
 import {
   AccountRegistrar,
@@ -139,6 +140,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: TradingModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: TravelModal,
+    gridConfig: { colStart: 25, colEnd: 75, rowStart: 20, rowEnd: 80 },
   },
 
   // scene modals

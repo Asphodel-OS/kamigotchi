@@ -15,6 +15,8 @@ interface Props {
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
+  transparent?: boolean;
+  compact?: boolean;
   positionOverride?: {
     colStart: number;
     colEnd: number;
@@ -28,7 +30,7 @@ interface Props {
 // It includes and exit button with a click sound as well as Content formatting.
 export const ModalWrapper = (props: Props) => {
   const { id, children, header, footer, positionOverride } = props;
-  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor } = props;
+  const { canExit, noInternalBorder, noPadding, overlay, truncate, scrollBarColor, transparent, compact } = props;
   const { modals } = useVisibility();
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
 
@@ -51,14 +53,14 @@ export const ModalWrapper = (props: Props) => {
 
   return (
     <Wrapper id={id} isOpen={modals[id]} overlay={!!overlay} style={gridStyle}>
-      <Content isOpen={modals[id]} truncate={truncate}>
+      <Content isOpen={modals[id]} truncate={truncate} $transparent={!!transparent}>
         {canExit && (
           <ButtonRow>
             <ExitButton divName={id} />
           </ButtonRow>
         )}
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
-        <Children scrollBarColor={scrollBarColor} noPadding={noPadding}>
+        <Children scrollBarColor={scrollBarColor} noPadding={noPadding} $compact={!!compact}>
           {children}
         </Children>
         {footer && <Footer noBorder={noInternalBorder}>{footer}</Footer>}
@@ -88,13 +90,14 @@ const Wrapper = styled.div<WrapperProps>`
 interface ContentProps {
   isOpen: boolean;
   truncate?: boolean;
+  $transparent?: boolean;
 }
 
 const Content = styled.div<ContentProps>`
   position: relative;
-  background-color: white;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
+  background-color: ${({ $transparent }) => ($transparent ? 'transparent' : 'white')};
+  border: ${({ $transparent }) => ($transparent ? 'none' : 'solid black 0.15vw')};
+  border-radius: ${({ $transparent }) => ($transparent ? '0' : '1.2vw')};
 
   width: 100%;
   ${({ truncate }) => (truncate ? `max-height: 100%;` : `height: 100%;`)}
@@ -132,11 +135,13 @@ const Footer = styled.div<{ noBorder?: boolean }>`
 const Children = styled.div<{
   noPadding?: boolean;
   scrollBarColor?: string;
+  $compact?: boolean;
 }>`
   position: relative;
   overflow-y: auto;
   max-height: 100%;
-  height: 100%;
+  height: ${({ $compact }) => ($compact ? 'auto' : '100%')};
+  flex: ${({ $compact }) => ($compact ? '0 0 auto' : '1 1 auto')};
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
   flex-flow: column nowrap;

@@ -20,6 +20,8 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
+import { useVisibility } from 'app/stores';
+import { useTravel } from 'app/stores/travel';
 
 interface Props {
   actions: {
@@ -72,6 +74,9 @@ export const Grid = (props: Props) => {
     queryScavInstance,
     getValue,
   } = utils;
+
+  const { setModals } = useVisibility();
+  const { setTravel } = useTravel();
 
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
@@ -252,6 +257,13 @@ export const Grid = (props: Props) => {
                     onClick={() =>
                       room.index !== 0 && !isRoomBlocked(room) && handleRoomMove(room.index)
                     }
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      if (room.index !== 0 && !isRoomBlocked(room)) {
+                        setTravel({ targetRoomIndex: room.index, account });
+                        setModals({ map: false, travelConfirm: true });
+                      }
+                    }}
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
