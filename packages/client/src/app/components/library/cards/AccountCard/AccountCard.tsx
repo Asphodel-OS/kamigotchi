@@ -56,7 +56,7 @@ export const AccountCard = ({
         </TextTooltip>
       </TitleBar>
       <Content>
-        <BioColumn key='col-1'>
+        <BioColumn key='col-1' tabIndex={0} role="region" aria-label="Account bio">
           {description.map((text, i) => (
             <TextMedium key={`desc-${i}`}>{text}</TextMedium>
           ))}
