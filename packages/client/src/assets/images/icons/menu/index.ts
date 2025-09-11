@@ -11,6 +11,7 @@ import ResetIcon from './reset.png';
 import SettingsIcon from './settings.png';
 import SocialIcon from './social.png';
 import SudoIcon from './sudo.png';
+import Whispo from './whispo.png';
 
 export {
   ChatIcon,
@@ -26,9 +27,11 @@ export {
   SettingsIcon,
   SocialIcon,
   SudoIcon,
+  Whispo,
 };
 
 export const MenuIcons = {
+  whispo: Whispo,
   link_to_external_apps: ExternalIcon,
   chat: ChatIcon,
   help: HelpIcon,

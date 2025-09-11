@@ -1,6 +1,5 @@
 import { IconListButton } from 'app/components/library';
-import { ExternalIcon, SudoIcon } from 'assets/images/icons/menu';
-import * as placeholder from 'assets/images/icons/placeholder.png';
+import { ExternalIcon, SudoIcon, Whispo } from 'assets/images/icons/menu';
 
 const KAMI_ADDR = '0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677';
 
@@ -17,7 +16,7 @@ export const SudoMenuButton = () => {
       img={ExternalIcon}
       options={[
         { text: 'Sudoswap', image: SudoIcon, onClick: openSudoLink },
-        { text: 'KamiBots', image: placeholder.default, onClick: openKamibotsLink },
+        { text: 'KamiBots', image: Whispo, onClick: openKamibotsLink },
       ]}
       scale={4.5}
       scaleOrientation='vh'
