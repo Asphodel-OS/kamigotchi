@@ -52,7 +52,7 @@ export const TwitterPrivyAccountLink = () => {
           >
             <IconButton
               img={SocialIcon}
-              onClick={async () => await handleTwitterUnlink()}
+              onClick={handleTwitterUnlink}
               disabled={!(ready && authenticated)}
               color='transparent'
               noBorder
