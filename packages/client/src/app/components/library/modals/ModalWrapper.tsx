@@ -17,6 +17,7 @@ export const ModalWrapper = ({
   noPadding,
   truncate,
   scrollBarColor,
+  compact,
   positionOverride,
 }: {
   id: keyof Modals;
@@ -29,6 +30,7 @@ export const ModalWrapper = ({
   noPadding?: boolean;
   truncate?: boolean;
   scrollBarColor?: string;
+  compact?: boolean;
   positionOverride?: {
     colStart: number;
     colEnd: number;
@@ -66,7 +68,7 @@ export const ModalWrapper = ({
           </ButtonRow>
         )}
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
-        <Children scrollBarColor={scrollBarColor} noPadding={noPadding}>
+        <Children scrollBarColor={scrollBarColor} noPadding={noPadding} $compact={!!compact}>
           {children}
         </Children>
         {footer && <Footer noBorder={noInternalBorder}>{footer}</Footer>}
@@ -136,14 +138,16 @@ const Footer = styled.div<{ noBorder?: boolean }>`
 const Children = styled.div<{
   noPadding?: boolean;
   scrollBarColor?: string;
+  $compact?: boolean;
 }>`
   position: relative;
   overflow-y: auto;
   max-height: 100%;
-  height: 100%;
+  height: ${({ $compact }) => ($compact ? 'auto' : '100%')};
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
   flex-flow: column nowrap;
+  flex: ${({ $compact }) => ($compact ? '0 0 auto' : '1 1 auto')};
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
 `;
 

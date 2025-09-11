@@ -30,6 +30,7 @@ import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
 import { AnimationStudio } from './modals/studio/AnimationStudio';
 import { TradingModal } from './modals/trading';
+import { TravelModal } from './modals/travel';
 import {
   AccountRegistrar,
   GasHarasser,
@@ -187,6 +188,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: MerchantModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+  {
+    uiComponent: TravelModal,
+    gridConfig: { colStart: 25, colEnd: 75, rowStart: 20, rowEnd: 80 },
   },
 
   // dev-only

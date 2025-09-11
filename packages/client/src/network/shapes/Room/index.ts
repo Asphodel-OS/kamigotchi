@@ -2,6 +2,7 @@ export { NullRoom } from './constants';
 export { getExitsFor as getExitsForRoom } from './exit';
 export { getAllRooms, getRoomByIndex } from './functions';
 export { getGates } from './gate';
+export { findPathAndCost } from './path';
 export { getRoomsX } from './getters';
 export { queryByIndex as queryRoomByIndex, query as queryRooms } from './queries';
 export { getRoom } from './types';

@@ -1,7 +1,7 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
@@ -20,6 +20,8 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
+import { useVisibility } from 'app/stores';
+import { useTravel } from 'app/stores/travel';
 
 type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
 
@@ -160,6 +162,20 @@ export const Grid = ({
     move(roomIndex);
   };
 
+  // open fast travel confirmation on right-click
+  const { setModals } = useVisibility();
+  const { setTravel } = useTravel();
+
+  const handleRoomRightClick = (roomIndex: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!roomIndex) return;
+    const room = rooms.get(roomIndex);
+    if (!room || isRoomBlocked(room)) return;
+    // store target and open modal (close map for exclusivity)
+    setTravel({ account, targetRoomIndex: roomIndex });
+    setModals({ map: false, travelConfirm: true });
+  };
+
   // updates the stats for a room and set it as the hovered room
   const updateRoomStats = (roomIndex: number) => {
     if (!roomIndex) return;
@@ -261,6 +277,9 @@ export const Grid = ({
                     backgroundColor={backgroundColor}
                     onClick={() =>
                       room.index !== 0 && !isRoomBlocked(room) && handleRoomMove(room.index)
+                    }
+                    onContextMenu={(e) =>
+                      room.index !== 0 && handleRoomRightClick(room.index, e)
                     }
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
