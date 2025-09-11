@@ -24,9 +24,9 @@ export const TwitterPrivyAccountLink = () => {
         <>
           <TextTooltip
             text={[
-              <>
+              <span key="unlinked-text">
                 Link <XIcon style={{ fontSize: '1.2vw', verticalAlign: 'middle' }} /> Account
-              </>,
+              </span>
             ]}
           >
             <IconButton
@@ -43,7 +43,7 @@ export const TwitterPrivyAccountLink = () => {
         <>
           <TextTooltip
             text={[
-              <XIcon style={{ fontSize: '1.2vw', marginBottom: '0.7vw' }} />,
+              <XIcon key="x-icon" style={{ fontSize: '1.2vw', marginBottom: '0.7vw' }} />,
               `${user?.twitter?.username}`,
               `Linked ${moment(twitterAccount?.firstVerifiedAt).fromNow()}`,
               `\n`,
