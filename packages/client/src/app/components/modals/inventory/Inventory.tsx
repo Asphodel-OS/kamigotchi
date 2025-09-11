@@ -91,7 +91,7 @@ export const InventoryModal: UIComponent = {
     const [kamis, setKamis] = useState<Kami[]>([]);
     const [resetSend, setResetSend] = useState(false);
 
-    const { modals } = useVisibility();
+    const inventoryModalOpen = useVisibility((s) => s.modals.trading);
     const {
       selectedAddress, // injected
       apis,
@@ -109,9 +109,9 @@ export const InventoryModal: UIComponent = {
 
     // refresh data whenever the modal is opened
     useEffect(() => {
-      if (!modals.inventory) return;
+      if (!inventoryModalOpen) return;
       updateData();
-    }, [modals.inventory, lastRefresh, accountEntity]);
+    }, [inventoryModalOpen, lastRefresh, accountEntity]);
 
     /////////////////
     // ACTIONS

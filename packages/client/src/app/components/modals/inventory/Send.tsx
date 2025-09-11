@@ -164,7 +164,9 @@ export const Send = ({
   // gets filtered item options
   const getItemOptions = useMemo(
     () => (): IconListButtonOption[] => {
-      const sorted = [...inventories].sort((a, b) => a.item.name.localeCompare(b.item.name));
+      const sorted = [...inventories]
+        .filter((inven) => inven.item.is.tradeable)
+        .sort((a, b) => a.item.name.localeCompare(b.item.name));
       return sorted.map((inv: Inventory) => {
         return {
           text: inv.item.name,

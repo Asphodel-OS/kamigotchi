@@ -21,7 +21,7 @@ export const MusuRow = ({
 
   //toggles  views and activates
   // and reactivates the shuffle animation
-  const triggerShuffle = () => {
+  const triggerModalShuffle = () => {
     setSendView(!sendView);
     setTimeout(() => setShuffle(true), 100);
     setTimeout(() => setShuffle(false), 500);
@@ -57,7 +57,7 @@ export const MusuRow = ({
         >
           <IconButton
             img={sendView === true ? ArrowIcons.left : ArrowIcons.right}
-            onClick={() => triggerShuffle()}
+            onClick={() => triggerModalShuffle()}
             radius={0.9}
           />
         </TextTooltip>
