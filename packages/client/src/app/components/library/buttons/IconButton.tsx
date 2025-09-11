@@ -32,6 +32,8 @@ export const IconButton = forwardRef(function IconButton(
     scale = 2.5,
     scaleOrientation = 'vw',
     icon,
+    filter,
+    noBorder,
   }: {
     img?: string | SvgIconComponent;
     onClick: Function;
@@ -56,12 +58,14 @@ export const IconButton = forwardRef(function IconButton(
     scaleOrientation?: 'vw' | 'vh';
     shadow?: boolean;
     flatten?: `left` | `right`; // flattens a side, for use with dropdowns
+    noBorder?: boolean;
     icon?: {
       size?: number;
       inset?: { px?: number; x?: number; y?: number };
       color?: string;
       position?: 'left' | 'right';
     };
+    filter?: string;
   },
   ref: ForwardedRef<HTMLButtonElement>
 ) {
@@ -109,6 +113,8 @@ export const IconButton = forwardRef(function IconButton(
       shadow={shadow}
       ref={ref}
       flatten={flatten}
+      noBorder={noBorder}
+      filter={filter}
     >
       {MyImage()}
       {text && (
@@ -134,9 +140,11 @@ const Container = styled.button<{
   pulse?: boolean;
   flatten?: `left` | `right`;
   shadow?: boolean;
+  noBorder?: boolean;
+  filter?: string;
 }>`
   position: relative;
-  border: solid black 0.15vw;
+  border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15vw')};
   border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
 
   height: ${({ scale, orientation }) => `${scale}${orientation}`};
@@ -173,6 +181,7 @@ const Container = styled.button<{
   }
 
   ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
+  ${({ filter }) => filter && `filter: ${filter};`}
 `;
 
 const Image = styled.img<{
