@@ -8,7 +8,6 @@ import {
   IconButton,
   IconListButton,
   IconListButtonOption,
-  TextTooltip,
 } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
@@ -210,9 +209,13 @@ export const Send = ({
     }));
 
     return (
-      <TextTooltip key='send-tooltip' text={[`Send ${item[0].name} to another account.`]}>
-        <IconListButton img={MenuIcons.operator} options={options} searchable scale={2.8} />
-      </TextTooltip>
+      <IconListButton
+        img={MenuIcons.operator}
+        options={options}
+        searchable
+        scale={2.8}
+        tooltipProps={{ text: [`Send ${item[0].name} to another account.`] }}
+      />
     );
   };
 

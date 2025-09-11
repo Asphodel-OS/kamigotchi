@@ -1,12 +1,7 @@
 import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
-import {
-  IconButton,
-  IconListButton,
-  IconListButtonOption,
-  TextTooltip,
-} from 'app/components/library';
+import { IconButton, IconListButton, IconListButtonOption } from 'app/components/library';
 import { Item } from 'network/shapes';
 
 export const LineItem = ({
@@ -34,9 +29,15 @@ export const LineItem = ({
           onChange={(e) => setAmt(e)}
         />
       )}
-      <TextTooltip title={selected.name} text={[selected.description]}>
-        <IconListButton img={selected.image} scale={2.7} options={options} searchable />
-      </TextTooltip>
+
+      <IconListButton
+        img={selected.image}
+        scale={2.7}
+        options={options}
+        searchable
+        tooltipProps={{ text: [selected.description] }}
+      />
+
       {!reverse && (
         <Quantity
           width={16.2}
