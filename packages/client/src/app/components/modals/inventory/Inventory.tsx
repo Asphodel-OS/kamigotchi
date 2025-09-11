@@ -179,13 +179,13 @@ export const InventoryModal: UIComponent = {
       const rawInventories = getInventories() ?? [];
       const inventories = cleanInventories(rawInventories);
       setInventories(inventories);
-
       // get, and set account kamis
       setKamis(getKamis());
     };
 
     /////////////////
     // DISPLAY
+
     return (
       <ModalWrapper
         id='inventory'
