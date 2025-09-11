@@ -28,6 +28,7 @@ contract KamiCastItemSystem is System {
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // use stamina from caster
+    LibAccount.sync(components, accID);
     LibAccount.depleteStamina(components, accID, 10); // implicit stamina check
 
     // use item
