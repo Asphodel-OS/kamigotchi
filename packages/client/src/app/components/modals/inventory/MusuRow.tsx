@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
@@ -25,6 +26,46 @@ export const MusuRow = ({
   const { modals, setModals } = useVisibility();
   const { musu, obols } = data;
   const { mode, setMode, setShuffle } = state;
+
+  const [displayMusu, setDisplayMusu] = useState<number>(musu);
+  const animationRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
+  const prevPropRef = useRef<number>(musu);
+
+  useEffect(() => {
+    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    startRef.current = null;
+
+    const from = prevPropRef.current;
+    const to = musu;
+    const durationMs = 600;
+
+    // animation step
+    const step = (t: number) => {
+      if (startRef.current == null) startRef.current = t;
+      const elapsed = t - startRef.current;
+      const progress = Math.min(1, elapsed / durationMs);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(from + (to - from) * eased);
+      setDisplayMusu(value);
+      if (progress < 1) animationRef.current = requestAnimationFrame(step);
+    };
+
+    if (Math.abs(to - from) < 1) {
+      setDisplayMusu(to);
+      return;
+    }
+
+    animationRef.current = requestAnimationFrame(step);
+
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, [musu]);
+
+  useEffect(() => {
+    prevPropRef.current = musu;
+  }, [musu]);
 
   // toggles views and activates the shuffle animation
   const triggerModalShuffle = () => {
@@ -74,7 +115,7 @@ export const MusuRow = ({
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
           <Icon src={ItemImages.musu} onClick={() => null} />
-          <Balance>{musu.toLocaleString()}</Balance>
+          <Balance>{displayMusu.toLocaleString()}</Balance>
         </MusuSection>
       </TextTooltip>
     </Container>
