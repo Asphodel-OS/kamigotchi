@@ -10,6 +10,7 @@ import ResetIcon from './reset.png';
 import SettingsIcon from './settings.png';
 import SocialIcon from './social.png';
 import SudoIcon from './sudo.png';
+import TradeIcon from './trade.png';
 
 export {
   ChatIcon,
@@ -24,9 +25,11 @@ export {
   SettingsIcon,
   SocialIcon,
   SudoIcon,
+  TradeIcon,
 };
 
 export const MenuIcons = {
+  trade: TradeIcon,
   chat: ChatIcon,
   help: HelpIcon,
   inventory: InventoryIcon,

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
+import { TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
 
 // get the row of consumable items to display in the player inventory
@@ -39,7 +40,7 @@ export const MusuRow = ({
           direction='row'
         >
           <IconButton
-            img={ItemImages.musu}
+            img={TradeIcon}
             onClick={() => setModals({ ...modals, trading: !modals.trading })}
             radius={0.9}
           />

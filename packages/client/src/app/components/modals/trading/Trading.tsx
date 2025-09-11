@@ -10,6 +10,7 @@ import { getTrade, getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
+import { TradeIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
@@ -232,7 +233,13 @@ export const TradingModal: UIComponent = {
     };
 
     return (
-      <ModalWrapper id='trading' header={<ModalHeader title='Trade' />} canExit noPadding overlay>
+      <ModalWrapper
+        id='trading'
+        header={<ModalHeader title='Trade' icon={TradeIcon} />}
+        canExit
+        noPadding
+        overlay
+      >
         <Overlay fullHeight fullWidth passthrough>
           <Confirmation
             title={confirmData.title}
