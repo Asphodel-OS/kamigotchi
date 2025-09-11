@@ -61,7 +61,7 @@ export const Send = ({
   const [sendHistory, setSendHistory] = useState<ItemTransfer[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
-  const { modals } = useVisibility();
+  const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
 
   const stone = () =>
     inventories.find((inventory) => inventory.item.index === STONE_INDEX)?.item ?? NullItem;
@@ -96,7 +96,7 @@ export const Send = ({
   // show list of account to send items
   // and get send history
   useEffect(() => {
-    if (!modals.inventory) return;
+    if (!inventoryModalOpen) return;
     // check if we need to update the list of accounts
     const accountEntities = queryAllAccounts() as EntityIndex[];
     if (accountEntities.length > accounts.length) {
@@ -106,7 +106,7 @@ export const Send = ({
       setAccounts(accountsSorted);
     }
     getSendHistoryKamiden(account.id);
-  }, [modals.inventory, lastRefresh, accountEntity]);
+  }, [inventoryModalOpen, lastRefresh, accountEntity]);
 
   /////////////////
   // GETTERS

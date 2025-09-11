@@ -91,7 +91,7 @@ export const InventoryModal: UIComponent = {
     const [kamis, setKamis] = useState<Kami[]>([]);
     const [resetSend, setResetSend] = useState(false);
 
-    const inventoryModalOpen = useVisibility((s) => s.modals.trading);
+    const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
     const {
       selectedAddress, // injected
       apis,
