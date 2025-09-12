@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
@@ -6,7 +6,8 @@ import { IconListButton, IconListButtonOption, Text } from 'app/components/libra
 import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
-import { Account, Inventory, Item, Receipt } from 'network/shapes';
+import { ONYX_INDEX } from 'constants/items';
+import { Account, Inventory, Item, NullItem } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import { Mode } from './types';
 
@@ -19,29 +20,31 @@ export const Controls = ({
     approve: (item: Item, amt: number) => Promise<void>;
     deposit: (item: Item, amt: number) => Promise<void>;
     withdraw: (item: Item, amt: number) => Promise<void>;
-    claim: (receiptID: Receipt) => Promise<void>;
-    cancel: (receiptID: Receipt) => Promise<void>;
   };
   data: {
     account: Account;
     inventory: Inventory[];
   };
   state: {
-    selected: Item;
-    setSelected: (item: Item) => void;
     options: Item[];
-    setOptions: (items: Item[]) => void;
   };
 }) => {
   const { approve, deposit, withdraw } = actions;
   const { account, inventory } = data;
-  const { selected, setSelected, options, setOptions } = state;
-
+  const { options } = state;
   // hardcoded for now to just onyx
   const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
 
+  const [selected, setSelected] = useState<Item>(NullItem);
   const [mode, setMode] = useState<Mode>('DEPOSIT');
   const [amt, setAmt] = useState<number>(0);
+
+  // default the selected option to ONYX whenever the list of item options change
+  useEffect(() => {
+    const onyxItem = options.find((item: Item) => item.index == ONYX_INDEX);
+    if (onyxItem) setSelected(onyxItem);
+    else console.warn('no onyx item found');
+  }, [options.length]);
 
   /////////////////
   // INTERACTION
@@ -134,7 +137,6 @@ export const Controls = ({
           <Input type='text' value={amt} onChange={handleInputChange} />
         </Column>
         <Column style={{ width: '6vw' }}>
-          <Text size={0.9}>{mode}</Text>
           <IconButton img={getModeIcon(mode)} onClick={toggleMode} />
           <Text size={0.6}>{`(${getConversionRate(selected)}:1)`}</Text>
         </Column>
@@ -156,7 +158,7 @@ export const Controls = ({
 const Container = styled.div`
   width: 100%;
   gap: 1.2vw;
-  padding: 3vw 0.6vw 1.2vw 0.6vw;
+  padding: 3.6vw 0.6vw 1.8vw 0.6vw;
 
   display: flex;
   flex-flow: column nowrap;

@@ -5,16 +5,17 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount } from 'app/cache/account';
 import { getItem } from 'app/cache/item';
-import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
+import { EmptyText, IconButton, ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { ItemImages } from 'assets/images/items';
-import { ONYX_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
-import { Receipt } from 'network/shapes/Portal';
+import { getReceipt, queryReceipts, Receipt } from 'network/shapes/Portal';
 import { getCompAddr } from 'network/shapes/utils';
 import { Controls } from './Controls';
+import { Queue } from './queue/Queue';
 
 export const TokenPortalModal: UIComponent = {
   id: 'TokenPortal',
@@ -34,6 +35,9 @@ export const TokenPortalModal: UIComponent = {
           utils: {
             getAccount: () => getAccount(world, components, accountEntity, { inventory: 2 }),
             getItem: (entity: EntityIndex) => getItem(world, components, entity),
+            getReceipt: (entity: EntityIndex) =>
+              getReceipt(world, components, entity, { account: true, item: true }),
+            queryReceipts: () => queryReceipts(components),
             queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
           },
         };
@@ -43,29 +47,45 @@ export const TokenPortalModal: UIComponent = {
   Render: ({ network, data, utils }) => {
     const { actions } = network;
     const { accountEntity, spenderAddr } = data;
-    const { getAccount, getItem, queryTokenItems } = utils;
+    const { getAccount, getItem, getReceipt, queryTokenItems, queryReceipts } = utils;
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const isOpen = useVisibility((s) => s.modals.tokenPortal);
 
-    const [options, setOptions] = useState<Item[]>([]);
-    const [selected, setSelected] = useState<Item>(NullItem);
     const [account, setAccount] = useState<Account>(NullAccount);
+    const [options, setOptions] = useState<Item[]>([]);
+    const [receipts, setReceipts] = useState<Receipt[]>([]);
+    const [selected, setSelected] = useState<Item>(NullItem); // selected item for import/export
+    const [showQueue, setShowQueue] = useState<boolean>(false);
+    const [tick, setTick] = useState(Date.now());
 
+    // on mount, retrieve the list of ERC20 items and default to ONYX
     useEffect(() => {
       const itemEntites = queryTokenItems();
       const items = itemEntites.map((item: Item) => getItem(item)) as Item[];
       setOptions(items);
 
-      const onyxItem = items.find((item: Item) => item.index == ONYX_INDEX);
-      if (onyxItem) setSelected(onyxItem);
-      else console.warn('no onyx item found');
+      // set up ticking
+      const refreshClock = () => setTick(Date.now());
+      const timerId = setInterval(refreshClock, 1000);
+      return () => clearInterval(timerId);
     }, []);
 
+    // set the account if the connected entity changes
     useEffect(() => {
       if (!accountEntity) return;
       const account = getAccount(accountEntity);
       setAccount(account);
     }, [accountEntity]);
+
+    // query for the list of Receipts
+    // TODO: set up a caching for receipts
+    useEffect(() => {
+      if (!isOpen) return;
+      const receiptEntities = queryReceipts();
+      const receipts = receiptEntities.map((receipt: Receipt) => getReceipt(receipt));
+      setReceipts(receipts);
+    }, [isOpen, tick]);
 
     /////////////////
     // ACTIONS
@@ -81,7 +101,7 @@ export const TokenPortalModal: UIComponent = {
         id: actionID,
         action: 'Approve token',
         params: [item.token?.address, spenderAddr, amt],
-        description: `Approve ${amt} ${item.name} to be spent`,
+        description: `Approve ${amt} $ONYX to be spent`,
         execute: async () => {
           return api.erc20.approve(item.token?.address!, spenderAddr, amt);
         },
@@ -130,7 +150,7 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenReceiptClaim',
         params: [receipt.id],
-        description: `Claiming withdrawal of ${receipt.amount} $ONYX`,
+        description: `Claiming withdrawal of ${receipt.amt / 10 ** 18} $ONYX`,
         execute: async () => api.portal.ERC20.claim(receipt.id),
       });
     };
@@ -144,7 +164,7 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenReceiptCancel',
         params: [receipt.id],
-        description: `Canceling withdrawal of ${receipt.amount} $ONYX`,
+        description: `Canceling withdrawal of ${receipt.amt / 10 ** 18} $ONYX`,
         execute: async () => api.portal.ERC20.cancel(receipt.id),
       });
     };
@@ -155,9 +175,10 @@ export const TokenPortalModal: UIComponent = {
     return (
       <ModalWrapper
         id='tokenPortal'
-        header={<ModalHeader title='Onyx Portal' icon={ItemImages.onyx} />}
+        header={<ModalHeader title='Token Portal' icon={ItemImages.onyx} />}
         canExit
         overlay
+        noPadding
         truncate
       >
         {!accountEntity ? (
@@ -168,13 +189,26 @@ export const TokenPortalModal: UIComponent = {
               approve: approveTx,
               deposit: depositTx,
               withdraw: withdrawTx,
-              claim: claimTx,
-              cancel: cancelTx,
             }}
             data={{ account, inventory: account.inventories ?? [] }}
-            state={{ selected, setSelected, options, setOptions }}
+            state={{ options }}
           />
         )}
+        <Overlay right={0.6} top={12.5}>
+          <IconButton
+            img={showQueue ? TriggerIcons.eyeOpen : TriggerIcons.eyeClosed}
+            onClick={() => setShowQueue(!showQueue)}
+          />
+        </Overlay>
+        <Queue
+          actions={{
+            claim: claimTx,
+            cancel: cancelTx,
+          }}
+          data={{ account, receipts }}
+          state={{ options, setOptions }}
+          isVisible={showQueue}
+        />
       </ModalWrapper>
     );
   },
