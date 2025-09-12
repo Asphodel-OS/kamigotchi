@@ -11,7 +11,6 @@ import { playClick } from 'utils/sounds';
 import { Card } from '../';
 import { Cooldown, useCooldownVisuals } from './Cooldown';
 import { Health } from './Health';
-import { onCooldown } from 'app/cache/kami/calcs/base';
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
@@ -28,10 +27,7 @@ export const KamiCard = ({
   showLevelUp,
   showSkillPoints,
   showCooldown,
-  utils: {
-    calcExpRequirement,
-    getTempBonuses,
-  } = {},
+  utils: { calcExpRequirement, getTempBonuses } = {},
 }: {
   kami: Kami; // assumed to have a harvest attached
   description: string[];
@@ -104,7 +100,7 @@ export const KamiCard = ({
 
   const { filter: cooldownFilter, foreground: cooldownForeground } = useCooldownVisuals(
     kami,
-    !!showCooldown,
+    !!showCooldown
   );
 
   const TitleSection = (
@@ -170,6 +166,7 @@ const TitleBar = styled.div`
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+  font-size: 0.7em;
 `;
 
 const TitleText = styled.div`

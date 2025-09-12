@@ -9,14 +9,7 @@ const IconMap = {
   FIXED: IndicatorIcons.success,
 };
 
-export const StatusCircle = ({
-  state,
-  size,
-}: {
-  state: Status;
-  size?: number;
-}) => {
-
+export const StatusCircle = ({ state, size }: { state: Status; size?: number }) => {
   return (
     <Container size={size ?? 3}>
       <Icon src={IconMap[state]} />

@@ -196,6 +196,7 @@ const Container = styled.div<{ completed?: boolean }>`
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
+  font-size: 0.9em;
 
   ${({ completed }) => completed && 'opacity: 0.3;'}
 `;

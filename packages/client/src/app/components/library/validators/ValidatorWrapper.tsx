@@ -60,33 +60,50 @@ interface Wrapper {
 }
 const Wrapper = styled.div<Wrapper>`
   display: none;
-  position: fixed;
+  position: relative;
   opacity: ${({ isOpen }) => (isOpen ? '1' : '0')};
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
   pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
   z-index: 20;
-
-  width: 50em;
-  height: 50em;
-  left: 25em;
-  top: 25em;
+  // adapt to grid area
+  width: 100%;
+  height: 100%;
 
   user-select: none;
+  overflow: hidden;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
 `;
 
 const Content = styled.div`
   position: relative;
   background-color: white;
-  border: solid black 0.15em;
-  border-radius: 1.2em;
 
   padding: 2em 4em;
+  // adapt to grid area
+  width: 100%;
+  height: 100%;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-around;
   align-items: center;
+
+  overflow: auto;
+  ::-webkit-scrollbar {
+    background: transparent;
+    width: 0.9em;
+  }
+  ::-webkit-scrollbar-thumb {
+    border: 0.2em solid transparent;
+    background-clip: padding-box;
+    border-radius: 1.2em;
+    background-color: rgba(0, 0, 0, 0.15);
+    &:hover {
+      cursor: auto;
+    }
+  }
 `;
 
 const Header = styled.div`
@@ -101,7 +118,7 @@ const Header = styled.div`
 const Title = styled.div`
   color: #333;
   padding: 0.6em;
-  font-size: 2.1em;
+  font-size: 1.5em;
   text-align: center;
 `;
 
@@ -115,7 +132,7 @@ const Subtitle = styled.div`
 const ErrorPrimary = styled.div`
   color: #922;
   padding: 0.45em;
-  font-size: 1.2em;
+  font-size: 1em;
   line-height: 2.1em;
   text-align: center;
 `;

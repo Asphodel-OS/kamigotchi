@@ -14,13 +14,8 @@ import { ActionSystem } from 'network/systems';
 
 export const Message = ({
   previousEqual,
-  utils: {
-    getAccount,
-    getEntityIndex
-  },
-  data: {
-    message,
-  },
+  utils: { getAccount, getEntityIndex },
+  data: { message },
   player,
   actionSystem,
   api,
@@ -174,6 +169,7 @@ const Container = styled.div`
   align-items: flex-start;
   gap: 0.4em;
   caret-color: transparent;
+  font-size: 1.5em;
 `;
 
 const Content = styled.div`

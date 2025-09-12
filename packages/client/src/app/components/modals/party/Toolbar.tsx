@@ -165,7 +165,7 @@ const Container = styled.div`
   opacity: 0.9;
   width: 100%;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
   align-items: center;
   user-select: none;

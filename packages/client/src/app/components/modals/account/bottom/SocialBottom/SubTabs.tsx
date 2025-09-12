@@ -69,7 +69,7 @@ const Container = styled.div`
   width: 100%;
   background-color: white;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
 `;
 

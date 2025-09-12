@@ -318,7 +318,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
-  font-size: 0.6em;
+  font-size: 0.8em;
 `;
 
 const Buttons = styled.div`
@@ -330,6 +330,7 @@ const Buttons = styled.div`
 
 const Messages = styled.div`
   width: 100%;
+  font-size: 0.7em;
 `;
 
 // disabled { z-index: 2;

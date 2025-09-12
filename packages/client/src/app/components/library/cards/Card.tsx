@@ -69,6 +69,7 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 
   display: flex;
   flex-flow: row nowrap;
+  min-width: fit-content;
 `;
 
 const ImageContainer = styled.div<{ scale: number; padding?: number }>`
@@ -85,7 +86,7 @@ const ImageContainer = styled.div<{ scale: number; padding?: number }>`
 `;
 
 const Image = styled.img<{ onClick?: () => void }>`
-  object-fit: cover;
+  object-fit: contain;
   height: 100%;
   width: 100%;
 

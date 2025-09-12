@@ -54,7 +54,7 @@ export const RecipeCard = ({
       key={recipe.index}
       image={{
         icon: item.image,
-        scale: 7.5,
+        scale: 6,
         padding: 1,
         overlay: `${amt * quantity}`,
         tooltip: [item.description ?? ''],
@@ -101,6 +101,7 @@ const TitleBar = styled.div`
   align-items: center;
   justify-content: space-between;
   user-select: none;
+  width: 100%;
 `;
 
 const TitleText = styled.div`
@@ -142,7 +143,7 @@ const Content = styled.div`
 
 const ContentRow = styled.div`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
 `;

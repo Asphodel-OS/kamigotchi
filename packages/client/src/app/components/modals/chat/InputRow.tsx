@@ -108,6 +108,7 @@ const Container = styled.div`
   align-items: center;
   gap: 0.6em;
   min-height: 6em;
+  font-size: 0.7em;
 `;
 
 const InputBox = styled.textarea`
@@ -115,7 +116,7 @@ const InputBox = styled.textarea`
   padding: 0.6em 0.6em;
   line-height: 1.5em;
   width: 100%;
-  min-height: 6em;
+  height: 6em;
   border-radius: 0.6em;
   &:disabled {
     background-color: rgb(236, 233, 233);
@@ -127,7 +128,7 @@ const SendButton = styled.button`
   position: absolute;
   right: 0.8em;
   bottom: 0.8em;
-  border-radius: 0.6em;
+  border-radius: 0.5em;
 `;
 
 const LetterCount = styled.div`

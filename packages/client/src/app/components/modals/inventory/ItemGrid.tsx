@@ -126,12 +126,13 @@ export const ItemGrid = ({
       <TextTooltip
         key={item.index}
         text={item.index ? [<ItemGridTooltip key={item.index} item={item} utils={utils} />] : []}
-        maxWidth={25}
+        maxWidth={55}
+        size={1}
       >
         <IconListButton
           key={item.index}
           img={item.image}
-          scale={4.8}
+          scale={4.6}
           balance={inv.balance}
           options={options}
           disabled={options.length == 0}
@@ -153,4 +154,5 @@ const Container = styled.div`
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3em;
+  font-size: 0.8em;
 `;

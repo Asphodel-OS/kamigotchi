@@ -178,26 +178,27 @@ const Container = styled.div`
 const Content = styled.div`
   position: relative;
   display: flex;
-  flex-flow: row nowrap;
+  flex-wrap: wrap;
   justify-content: flex-start;
 `;
 
 const Image = styled.img`
   border-radius: 0.6em;
   border: solid black 0.15em;
-  height: 11em;
-  width: 11em;
+  height: 10em;
+  width: 10em;
   user-drag: none;
 `;
 
 const Details = styled.div`
+  flex: 1;
   padding: 0.6em;
   display: flex;
-  flex-flow: column nowrap;
+  flex-direction: column;
 `;
 
 const Name = styled.div`
-  font-size: 1.2em;
+  font-size: 1.1em;
   padding: 0.5em 0;
 `;
 
@@ -207,7 +208,7 @@ const Row = styled.div`
   gap: 0.3em;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
 `;

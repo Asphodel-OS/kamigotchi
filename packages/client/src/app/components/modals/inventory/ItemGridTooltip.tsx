@@ -6,10 +6,7 @@ import { DetailedEntity } from 'network/shapes/utils';
 
 export const ItemGridTooltip = ({
   item,
-  utils: {
-    displayRequirements,
-    parseAllos,
-  },
+  utils: { displayRequirements, parseAllos },
 }: {
   item: Item;
   utils: {
@@ -17,7 +14,6 @@ export const ItemGridTooltip = ({
     parseAllos: (allo: Allo[]) => DetailedEntity[];
   };
 }) => {
-
   const image = item.image;
   const title = item.name;
   const type = item.type;

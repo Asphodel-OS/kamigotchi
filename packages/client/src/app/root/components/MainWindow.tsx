@@ -38,169 +38,136 @@ import {
   WalletConnecter,
 } from 'app/components/validators';
 
-export const MainWindow = observer(({
-  ready,
-}: {
-  ready: boolean;
-}) => (
+export const MainWindow = observer(({ ready }: { ready: boolean }) => (
   <Stack>
-    {!ready && <>
-      {/* Boot components */}
-      {<LoadingState.Render />}
-    </>}
+    {!ready && (
+      <>
+        {/* Boot components */}
+        {<LoadingState.Render />}
+      </>
+    )}
 
     {/* Validators */}
-    {<WalletConnecter.Render />}
-    {<AccountRegistrar.Render />}
-    {<OperatorUpdater.Render />}
-    {<GasHarasser.Render />}
-    {<TokenChecker.Render />}
+    <CenterCenter>{<WalletConnecter.Render />}</CenterCenter>
+    <CenterCenter>{<AccountRegistrar.Render />}</CenterCenter>
+    <CenterCenter>{<OperatorUpdater.Render />}</CenterCenter>
+    <CenterCenter>{<GasHarasser.Render />}</CenterCenter>
+    <CenterCenter> {<TokenChecker.Render />}</CenterCenter>
 
-    {ready && <>
-      {/* Canvas */}
-      {<Scene.Render />}
-    </>}
+    {ready && (
+      <>
+        {/* Canvas */}
+        {<Scene.Render />}
+      </>
+    )}
 
     <UIGrid>
-      <div style={{ gridArea: "RightBottom" }}>
-        {<ActionQueue.Render />}
-      </div>
+      <div style={{ gridArea: 'RightBottom' }}>{<ActionQueue.Render />}</div>
 
-      {ready && <>
-        {/* Fixtures */}
-        <div style={{ gridArea: "LeftBottom" }}>
-          {<ClockFixture.Render />}
-        </div>
+      {ready && (
+        <>
+          {/* Fixtures */}
+          <div style={{ gridArea: 'LeftBottom' }}>{<ClockFixture.Render />}</div>
 
-        <div style={{ gridArea: "LeftTop" }}>
-          {<LeftMenuFixture.Render />}
-        </div>
+          <div style={{ gridArea: 'LeftTop' }}>{<LeftMenuFixture.Render />}</div>
 
-        <div style={{ gridArea: "RightTop" }}>
-          {<RightMenuFixture.Render />}
-        </div>
+          <div style={{ gridArea: 'RightTop' }}>{<RightMenuFixture.Render />}</div>
 
-        <div style={{ gridArea: "Right" }}>
-          {<NotificationFixture.Render />}
-        </div>
+          <div style={{ gridArea: 'Right' }}>{<NotificationFixture.Render />}</div>
 
-        {/* Menu modals */}
-        <div style={{ gridArea: "LeftTall" }}>
-          {<AccountModal.Render />}
-        </div>
+          {/* Menu modals */}
+          <div style={{ gridArea: 'LeftTall' }}>{<AccountModal.Render />}</div>
 
-        <div style={{ gridArea: "Right" }}>
-          {<ChatModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Right' }}>{<ChatModal.Render />}</div>
 
-        <div style={{ gridArea: "Center" }}>
-          {<CraftingModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Center' }}>{<CraftingModal.Render />}</div>
 
-        <div style={{ gridArea: "Right" }}>
-          {<HelpModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Right' }}>{<HelpModal.Render />}</div>
 
-        <div style={{ gridArea: "Right" }}>
-          {<InventoryModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Right' }}>{<InventoryModal.Render />}</div>
 
-        <div style={{ gridArea: "Left" }}>
-          {<MapModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Left' }}>{<MapModal.Render />}</div>
 
-        <div style={{ gridArea: "Center" }}>
-          {<NodeModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Center' }}>{<NodeModal.Render />}</div>
 
-        <div style={{ gridArea: "LeftTall" }}>
-          {<PartyModal.Render />}
-        </div>
+          <div style={{ gridArea: 'LeftTall' }}>{<PartyModal.Render />}</div>
 
-        <div style={{ gridArea: "Right" }}>
-          {<QuestModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Right' }}>{<QuestModal.Render />}</div>
 
-        <div style={{ gridArea: "Right" }}>
-          {<SettingsModal.Render />}
-        </div>
+          <div style={{ gridArea: 'Right' }}>{<SettingsModal.Render />}</div>
 
-        <div style={{ gridArea: "LeftWide" }}>
-          {<TradingModal.Render />}
-        </div>
+          <div style={{ gridArea: 'LeftWide' }}>{<TradingModal.Render />}</div>
 
-        <div style={{ gridArea: "RightWide" }}>
-          {<KamiModal.Render />}
-        </div>
-      </>}
+          <div style={{ gridArea: 'RightWide' }}>{<KamiModal.Render />}</div>
+        </>
+      )}
     </UIGrid>
 
-    {ready && <>
-      {/* Scene modals */}
-      <div style={{ margin: '75vh 2vw 1vh 33vw' }}>
-        <DialogueModal.Render />
-      </div>
-
-      <div style={{ margin: '15vw 33vw 1vh 33vw' }}>
-        <EmaBoardModal.Render />
-      </div>
-
-      <div style={{ margin: 'auto', width: '40vw', height: '40vh' }}>
-        <FundOperator.Render />
-      </div>
-
-      <div style={{ margin: '8vh 11vw 15vh 11vw' }}>
-        <GachaModal.Render />
-      </div>
-
-      <div style={{ margin: 'auto', width: '60vw', height: '54vh' }}>
-        <GoalModal.Render />
-      </div>
-
-      <div style={{ margin: '15vh 25vw 1vh 25vw' }}>
-        <KamiPortalModal.Render />
-      </div>
-
-      <div style={{ margin: 'auto', width: '58vw', height: '54vh' }}>
-        <LeaderboardModal.Render />
-      </div>
-
-      <div style={{ margin: 'auto', width: '60vw', height: '29vh' }}>
-        <ObolModal.Render />
-      </div>
-
-      <div style={{ margin: 'auto', width: '40vw', height: '35vh' }}>
-        <RevealModal.Render />
-      </div>
-
-      <div style={{ margin: '8vh 2vw 1vh 33vw' }}>
-        <MerchantModal.Render />
-      </div>
-
-      {([
-          'localhost',
-          '127.0.0.1',
-          ''
-        ].includes(globalThis?.location?.hostname)
-      ) && (
-        <div style={{ margin: 'auto', width: '60vh', height: '60vh' }}>
-          <AnimationStudio.Render />
+    {ready && (
+      <>
+        {/* Scene modals */}
+        <div style={{ margin: '75vh 2vw 1vh 33vw' }}>
+          <DialogueModal.Render />
         </div>
-      )}
-    </>}
+
+        <div style={{ margin: '15vw 33vw 1vh 33vw' }}>
+          <EmaBoardModal.Render />
+        </div>
+
+        <div style={{ margin: 'auto', width: '40vw', height: '40vh' }}>
+          <FundOperator.Render />
+        </div>
+
+        <div style={{ margin: '8vh 11vw 15vh 11vw' }}>
+          <GachaModal.Render />
+        </div>
+
+        <div style={{ margin: 'auto', width: '60vw', height: '54vh' }}>
+          <GoalModal.Render />
+        </div>
+
+        <div style={{ margin: '15vh 25vw 1vh 25vw' }}>
+          <KamiPortalModal.Render />
+        </div>
+
+        <div style={{ margin: 'auto', width: '58vw', height: '54vh' }}>
+          <LeaderboardModal.Render />
+        </div>
+
+        <div style={{ margin: 'auto', width: '60vw', height: '29vh' }}>
+          <ObolModal.Render />
+        </div>
+
+        <div style={{ margin: 'auto', width: '40vw', height: '35vh' }}>
+          <RevealModal.Render />
+        </div>
+
+        <div style={{ margin: '8vh 2vw 1vh 33vw' }}>
+          <MerchantModal.Render />
+        </div>
+
+        {['localhost', '127.0.0.1', ''].includes(globalThis?.location?.hostname) && (
+          <div style={{ margin: 'auto', width: '60vh', height: '60vh' }}>
+            <AnimationStudio.Render />
+          </div>
+        )}
+      </>
+    )}
   </Stack>
 ));
 
 const Stack = styled.div`
   display: grid;
+  font-size: clamp(1em, 0.8em + 0.6vw, 3em);
   grid:
     'Stack' minmax(0, 100vh)
-    / 100vw
-  ;
+    / 100vw;
   align-items: stretch;
 
   > * {
     grid-area: Stack;
+
+    container-type: inline-size;
   }
 `;
 
@@ -209,51 +176,52 @@ const UIGrid = styled.div`
 
   /* 3 columns: "Left", "Center", "Right" */
   grid:
-    "LeftTop Center RightTop" auto
+    'LeftTop Center RightTop' auto
     [LeftWide-start LeftTall-start RightWide-start]
-    "Left Center Right" minmax(0, 1fr)
-    "LeftBottom Center RightBottom" auto
+    'Left Center Right' minmax(0, 1fr)
+    'LeftBottom Center RightBottom' auto
     [LeftWide-end LeftTall-end RightWide-end]
-    / [LeftWide-start LeftTall-start] minmax(0, 1fr) [LeftTall-end RightWide-start] minmax(0, 1fr) [LeftWide-end] minmax(0, 1fr) [RightWide-end]
-  ;
+    / [LeftWide-start LeftTall-start] minmax(0, 1fr) [LeftTall-end RightWide-start] minmax(0, 1fr)
+    [LeftWide-end] minmax(0, 1fr) [RightWide-end];
 
   /* 2 columns: "Left", and "Center" (overlapped with "Right") */
   @media (orientation: portrait) {
     grid:
-      "LeftTop RightTop" auto
+      'LeftTop RightTop' auto
       [LeftWide-start LeftTall-start Right-start RightWide-start]
-      "Left Center" minmax(0, 1fr)
+      'Left Center' minmax(0, 1fr)
       [Right-end]
-      "LeftBottom RightBottom" auto
+      'LeftBottom RightBottom' auto
       [LeftWide-end LeftTall-end RightWide-end]
-      / [LeftWide-start LeftTall-start] minmax(0, 1fr) [LeftTall-end LeftWide-end Right-start RightWide-start] minmax(0, 1fr) [Right-end RightWide-end]
-    ;
+      / [LeftWide-start LeftTall-start] minmax(0, 1fr)
+      [LeftTall-end LeftWide-end Right-start RightWide-start] minmax(0, 1fr)
+      [Right-end RightWide-end];
   }
 
   /* 1 column. Rows: "LeftTop", "Left" "Center" "Right" overlapping, "RightTop", "LeftBottom" / "RightBottom" */
   @media (max-aspect-ratio: 11/16) {
     grid:
-      "LeftTop LeftTop" auto
+      'LeftTop LeftTop' auto
       [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
-      "Center Center" minmax(0, 1fr)
+      'Center Center' minmax(0, 1fr)
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
-      "RightTop RightTop" auto
-      "LeftBottom RightBottom" auto
-      / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr) [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
-    ;
+      'RightTop RightTop' auto
+      'LeftBottom RightBottom' auto
+      / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr)
+      [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
   }
 
   /* 1 column (alternative) */
   @media (max-aspect-ratio: 11/16) {
     grid:
-      "LeftBottom RightTop" auto
+      'LeftBottom RightTop' auto
       [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
-      "Center Center" minmax(0, 1fr)
+      'Center Center' minmax(0, 1fr)
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
-      "RightBottom RightBottom" 25vmin
-      "LeftTop LeftTop" auto
-      / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr) [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
-    ;
+      'RightBottom RightBottom' 25vmin
+      'LeftTop LeftTop' auto
+      / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr)
+      [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
   }
 
   gap: 1.5em 1em;
@@ -261,4 +229,19 @@ const UIGrid = styled.div`
 
   pointer-events: none;
   z-index: 10;
+
+  > * {
+    container-type: inline-size;
+  }
+`;
+
+const CenterCenter = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max(50vw, 50vh);
+  height: min(50vw, 50vh);
+  z-index: 15;
+  pointer-events: none;
 `;

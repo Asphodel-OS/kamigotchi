@@ -13,15 +13,10 @@ import { View } from './types';
 
 export const KamiList = ({
   actions,
-  controls: {
-    view,
-  },
+  controls: { view },
   data,
   display,
-  state: {
-    displayedKamis,
-    tick,
-  },
+  state: { displayedKamis, tick },
   utils,
 }: {
   actions: {
@@ -114,4 +109,5 @@ export const KamiList = ({
 const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
+  min-width: fit-content;
 `;
