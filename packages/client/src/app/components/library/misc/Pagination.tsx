@@ -3,10 +3,12 @@ import styled from 'styled-components';
 const alphabet = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'];
 
 export const Pagination = ({
+  setSearch,
   selectedLetter,
   onSelect,
   isVisible,
 }: {
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
   selectedLetter: string;
   onSelect: React.Dispatch<React.SetStateAction<string>>;
   isVisible: boolean;
@@ -17,7 +19,10 @@ export const Pagination = ({
         <Letter
           key={letter}
           isSelected={letter === selectedLetter}
-          onClick={() => onSelect(letter)}
+          onClick={() => {
+            setSearch('');
+            onSelect(letter);
+          }}
         >
           {letter}
         </Letter>
