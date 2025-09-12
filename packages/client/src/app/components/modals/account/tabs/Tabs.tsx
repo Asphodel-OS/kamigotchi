@@ -41,19 +41,16 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15em black;
-  border-radius: 0.3em 0.3em 0 0;
-  border-bottom: none;
-
   width: 100%;
   background-color: white;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
 `;
 
 const Button = styled.button`
-  border: none;
+  border: solid 0.1em black;
+  border-radius: 0.3em 0.3em 0 0;
   padding: 0.5em;
   flex-grow: 1;
   color: black;

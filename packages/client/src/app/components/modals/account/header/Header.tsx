@@ -4,12 +4,12 @@ import moment from 'moment';
 import styled from 'styled-components';
 
 import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
+import { Account as PlayerAccount } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
@@ -18,21 +18,11 @@ import { Pfp } from './Pfp';
 
 export const Header = ({
   account,
-  actions: {
-    setBio,
-    handlePfpChange,
-    requestFren,
-    cancelFren,
-    blockFren,
-    acceptFren,
-  },
+  actions: { setBio, handlePfpChange, requestFren, cancelFren, blockFren, acceptFren },
   isLoading,
   isSelf,
   player,
-  utils: {
-    getAccountKamis,
-    getFriends,
-  },
+  utils: { getAccountKamis, getFriends },
 }: {
   account: Account; // account selected for viewing
   actions: {
@@ -119,13 +109,14 @@ export const Header = ({
 const Container = styled.div`
   padding: 0.75em;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   gap: 0.9em;
   align-items: flex-start;
   user-select: none;
 `;
 
 const Info = styled.div`
+  flex: 1;
   width: 100%;
   padding-bottom: 1.5em;
   gap: 0.3em;
