@@ -7,9 +7,9 @@ import { Item, NullItem } from 'network/shapes/Item';
 import { Trade } from 'network/shapes/Trade/types';
 import { ActionComponent } from 'network/systems';
 import { ConfirmationData } from '../library/Confirmation';
+import { Offers as OffersTable } from '../orderbook/offers/Offers';
 import { TabType } from '../types';
 import { Create } from './create/Create';
-import { Offers as OffersTable } from '../orderbook/offers/Offers';
 
 export const Management = ({
   actions,
@@ -40,7 +40,7 @@ export const Management = ({
     account: Account;
     currencies: Item[];
     inventory: Inventory[];
-    items: Item[]; // all tradable items
+    items: Item[];
     trades: Trade[];
   };
   types: {
@@ -61,7 +61,10 @@ export const Management = ({
 
   const setSortCb = useCallback((value: string) => setSort(value), []);
   const setAscendingCb = useCallback((value: boolean) => setAscending(value), []);
-  const makerFilter = useCallback((t: Trade) => t.maker?.entity === data.account.entity, [data.account.entity]);
+  const makerFilter = useCallback(
+    (t: Trade) => t.maker?.entity === data.account.entity,
+    [data.account.entity]
+  );
 
   return (
     <Content isVisible={isVisible}>
@@ -70,7 +73,11 @@ export const Management = ({
       </Top>
       <Bottom>
         <OffersTable
-          actions={{ executeTrade: actions.executeTrade, cancelTrade: actions.cancelTrade, completeTrade: actions.completeTrade }}
+          actions={{
+            executeTrade: actions.executeTrade,
+            cancelTrade: actions.cancelTrade,
+            completeTrade: actions.completeTrade,
+          }}
           controls={{
             sort,
             setSort: setSortCb,
@@ -98,22 +105,21 @@ export const Management = ({
 const Content = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
-  display: ${({ isVisible }) => (isVisible ? 'grid' : 'none')};
-  grid-template-rows: min-content 1fr;
-  grid-template-columns: 1fr;
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+  flex-direction: column;
   user-select: none;
 `;
 
 const Top = styled.div`
-  grid-row: 1;
+  flex: 0 0 auto;
 `;
 
 const Bottom = styled.div`
-  grid-row: 2;
+  flex: 1 1 auto;
   display: flex;
   height: 100%;
-  & > div { /* OffersTable Container */
+  & > div {
     width: 100% !important;
   }
-  padding: 0; /* ensure table fits container without extra padding */
+  padding: 0;
 `;

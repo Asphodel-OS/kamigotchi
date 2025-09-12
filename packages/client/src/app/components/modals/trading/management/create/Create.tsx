@@ -61,16 +61,16 @@ export const Create = ({
   const [mode, setMode] = useState<Mode>('Single');
   const [thousandsSeparator, setThousandsSeparator] = useState<string>(',');
 
-  // tests number formatting
+  // Detect locale-specific number formatting
   useEffect(() => {
     setThousandsSeparator((4.56).toLocaleString().includes(',') ? '.' : ',');
   }, []);
 
-  // toggle between multi and single Create modes
-  const toggleMode = () => {};
+  const toggleMode = () => {
+    if (mode === 'Multi') setMode('Single');
+    else setMode('Multi');
+  };
 
-  // organize the form data for trade offer creation
-  // TODO: detect successful trade creation and reset form
   const handleTrade = async (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => {
     try {
       const tradeActionID = createTrade(want, wantAmt, have, haveAmt);
@@ -81,7 +81,6 @@ export const Create = ({
     }
   };
 
-  // handle prompting for confirmation with trade creation
   const handleCreatePrompt = (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => {
     const confirmAction = () => handleTrade(want, wantAmt, have, haveAmt);
     setConfirmData({
@@ -89,15 +88,13 @@ export const Create = ({
       content: getCreateConfirmation(want, wantAmt, have, haveAmt),
       onConfirm: confirmAction,
     });
-    setIsConfirming(true); // TODO: this is a hack to get the confirmation to show
+    setIsConfirming(true);
     playClick();
   };
 
   /////////////////
   // DISPLAY
 
-  // create the trade confirmation window content
-  // TODO: adjust Buy amounts for tax and display breakdown in tooltip
   const getCreateConfirmation = (
     want: Item[],
     wantAmt: number[],
@@ -192,7 +189,16 @@ export const Create = ({
       <Overlay top={0} fullWidth>
         <Title>Create Offer</Title>
       </Overlay>
-      {/* MultiCreate phased out */}
+      <MultiCreate
+        actions={{ ...actions, handleCreatePrompt }}
+        controls={{ ...controls }}
+        data={{
+          ...data,
+          items: data.items.filter((item) => !DisabledItems.includes(item.index)),
+          thousandsSeparator,
+        }}
+        isVisible={mode === 'Multi'}
+      />
       <SingleCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
@@ -203,15 +209,20 @@ export const Create = ({
         }}
         isVisible={mode === 'Single'}
       />
-      {/* Mode toggle phased out */}
+      <Overlay bottom={0.75} left={0.75}>
+        <IconButton text={`<${mode}>`} onClick={toggleMode} />
+      </Overlay>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  width: 100%;
+  border-right: 0.15vw solid black;
+
+  width: 40%;
   height: 100%;
+
   user-select: none;
 `;
 

@@ -2,7 +2,15 @@ import styled from 'styled-components';
 
 import { Item } from 'network/shapes';
 
-export const ItemCard = ({ item, selected, onClick }: { item: Item; selected: boolean; onClick: () => void }) => {
+export const ItemCard = ({
+  item,
+  selected,
+  onClick,
+}: {
+  item: Item;
+  selected: boolean;
+  onClick: () => void;
+}) => {
   return (
     <Card
       onClick={onClick}
@@ -12,9 +20,7 @@ export const ItemCard = ({ item, selected, onClick }: { item: Item; selected: bo
       tabIndex={0}
       aria-pressed={selected}
     >
-      {item.image ? (
-        <Image src={item.image} alt={item.name} loading='lazy' />
-      ) : null}
+      {item.image ? <Image src={item.image} alt={item.name} loading='lazy' /> : null}
       <Name>{item.name}</Name>
     </Card>
   );
@@ -50,7 +56,10 @@ const Image = styled.img`
   image-rendering: pixelated;
   background: #ddd;
   object-fit: contain;
-  &:not([src]), &:where([src=""]) { opacity: 0.5; }
+  &:not([src]),
+  &:where([src='']) {
+    opacity: 0.5;
+  }
 `;
 
 const Name = styled.div`
@@ -63,5 +72,3 @@ const Name = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-
-

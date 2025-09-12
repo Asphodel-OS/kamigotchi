@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Text } from 'app/components/library';
 import { Item, NullItem } from 'network/shapes';
-import { ItemCard } from './ItemCard';
+import { toTitle } from 'utils/strings';
 
 export type CategoryKey = string; // dynamic categories plus grouped: 'All' | 'Consumables' | 'Materials' | 'Currencies'
 
@@ -25,7 +25,7 @@ export const ItemBrowser = ({
   const setCategory = (c: CategoryKey) => {
     if (onCategoryChange) onCategoryChange(c);
     setInternalCategory(c);
-    // Notify offers pane to filter by category (including 'All')
+    // Notify offers pane to filter by category
     if (typeof window !== 'undefined') {
       try {
         window.dispatchEvent(new CustomEvent('trading:filterOffersByCategory', { detail: c }));
@@ -33,10 +33,12 @@ export const ItemBrowser = ({
     }
     // Clear item selection when switching to 'All'
     if ((c as string) === 'All') {
-      try { setSelected(NullItem); } catch {}
+      try {
+        setSelected(NullItem);
+      } catch {}
     }
   };
-  // Build category list dynamically: reserved groups + all remaining item.type values
+  // Build category list dynamically from item types
   const categories: { key: CategoryKey; label: string }[] = useMemo(() => {
     const reserved = [
       { key: 'All', label: 'Show All' },
@@ -44,19 +46,25 @@ export const ItemBrowser = ({
       { key: 'Materials', label: 'Materials' },
       { key: 'Currencies', label: 'Currencies' },
     ];
+
     const consumableTypes = new Set(['FOOD', 'REVIVE', 'CONSUMABLE', 'LOOTBOX']);
     const dynamic = new Set<string>();
+
+    // Collect unique item types that aren't already categorized
     for (const item of items) {
       const t = (item.type || '').toUpperCase();
       if (!t) continue;
       if (consumableTypes.has(t) || t === 'MATERIAL' || t === 'ERC20') continue;
       dynamic.add(t);
     }
-    const toTitle = (s: string) => s.toLowerCase().replace(/(^|[_\-\s])([a-z])/g, (_, p1, p2) => `${p1 ? ' ' : ''}${p2.toUpperCase()}`).trim();
-    const dynamicList = Array.from(dynamic).sort().map((t) => ({ key: t, label: toTitle(t) }));
+
+    const dynamicList = Array.from(dynamic)
+      .sort()
+      .map((t) => ({ key: t, label: toTitle(t) }));
     return [...reserved, ...dynamicList];
   }, [items]);
 
+  // Categorize items by type and create lookup maps
   const categorized = useMemo(() => {
     const byCat = new Map<CategoryKey, Item[]>();
     byCat.set('All', []);
@@ -95,7 +103,11 @@ export const ItemBrowser = ({
           Categories
         </Text>
         {categories.map((c) => (
-          <CategoryButton key={c.key} onClick={() => setCategory(c.key)} disabled={category === c.key}>
+          <CategoryButton
+            key={c.key}
+            onClick={() => setCategory(c.key)}
+            disabled={category === c.key}
+          >
             {c.label}
           </CategoryButton>
         ))}
@@ -111,7 +123,11 @@ export const ItemBrowser = ({
             </thead>
             <tbody>
               {list.map((item) => (
-                <DataRow key={item.index} selected={item.index === selected.index} onClick={() => setSelected(item)}>
+                <DataRow
+                  key={item.index}
+                  selected={item.index === selected.index}
+                  onClick={() => setSelected(item)}
+                >
                   <td>
                     <RowItem>
                       <Thumb src={item.image} alt={item.name} />
@@ -261,5 +277,3 @@ const RowName = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
-
-
