@@ -30,54 +30,79 @@ contract TokenPortalSystem is System, AuthRoles {
 
     // checks before action
     address tokenAddr = itemAddrs[itemIndex];
-    require(tokenAddr != address(0), "item not registered");
+    require(tokenAddr != address(0), "Token Portal: item not registered");
 
     // pull tokens and increase itemIndex balance (balance check is intrinsic)
     int32 scale = itemScales[itemIndex];
-    LibTokenPortal.deposit(world, components, accID, itemIndex, tokenAddr, itemAmt, scale);
+    LibTokenPortal.deposit(world, components, accID, itemIndex, itemAmt, tokenAddr, scale);
     LibAccount.updateLastTs(components, accID);
   }
 
-  /// @notice withdraw ERC20 tokens out of the game world through the token portal
-  /// @dev creates a Withdrawal Receipt entity to delay settlement
-  function initWithdraw(uint32 itemIndex, uint256 itemAmt) public returns (uint256 receiptID) {
+  /// @notice initialize a (ERC20) token withdrawal from the game world
+  /// @dev creates a Withdrawal Receipt entity with delayed settlement
+  function withdraw(uint32 itemIndex, uint256 itemAmt) public returns (uint256 receiptID) {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     // checks
     address tokenAddr = itemAddrs[itemIndex];
-    require(tokenAddr != address(0), "item not registered");
+    require(tokenAddr != address(0), "Token Portal: item not registered");
 
     // reduces items, creates withdrawal receipt
     int32 scale = itemScales[itemIndex];
-    receiptID = LibTokenPortal.initWithdraw(
+    receiptID = LibTokenPortal.withdraw(
       world,
       components,
       accID,
       itemIndex,
-      tokenAddr,
       itemAmt,
+      tokenAddr,
       scale
     );
     LibAccount.updateLastTs(components, accID);
   }
 
-  /// @notice executes withdraw if min time has passed
-  /// @dev can be executed by anyone. do we actually want this behavior?
+  /// @notice execute a pending Withdrawal Receipt; must be owner
+  /// @dev data logging may be wrong if itemScales entry is deleted,
+  /// but token amounts and claim flow should resolve correctly
   function claim(uint256 receiptID) public {
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
     LibTokenPortal.verifyTimeEnd(components, receiptID);
-    LibTokenPortal.executeWithdraw(world, components, receiptID);
+
+    uint32 itemIndex = LibItem.getIndex(components, receiptID);
+    require(itemIndex != 0, "Item Registry: item not registered");
+
+    int32 scale = itemScales[itemIndex];
+    LibTokenPortal.claim(world, components, receiptID, scale);
+    LibAccount.updateLastTs(components, accID);
   }
 
-  /// @dev only can be cancelled by receipt owner
+  /// @notice cancel a pending Withdrawal Receipt; must be owner
+  /// @dev data logging may be wrong if itemScales entry is deleted,
+  /// but token amounts and claim flow should resolve correctly
   function cancel(uint256 receiptID) public {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
-    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID); // checks
-    LibTokenPortal.cancelWithdraw(world, components, receiptID); // also logs cancellation
-    LibAccount.updateLastTs(components, accID); // account logging
+    LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
+
+    uint32 itemIndex = LibItem.getIndex(components, receiptID);
+    require(itemIndex != 0, "Item Registry: item not registered");
+
+    int32 scale = itemScales[itemIndex];
+    LibTokenPortal.cancel(world, components, receiptID, scale);
+    LibAccount.updateLastTs(components, accID);
   }
 
-  function adminBlock(uint256 receiptID) public onlyAdmin(components) {
-    LibTokenPortal.cancelWithdraw(world, components, receiptID);
+  //////////////////
+  // ADMIN CONTROLS
+
+  /// @notice pauses a Withdrawal Receipt
+  function adminPause(uint256 receiptID) public onlyAdmin(components) {}
+
+  /// @notice cancels a Withdrawal Receipt
+  function adminCancel(uint256 receiptID) public onlyAdmin(components) {
+    uint32 itemIndex = LibItem.getIndex(components, receiptID);
+    int32 scale = itemScales[itemIndex];
+    LibTokenPortal.cancel(world, components, receiptID, scale);
   }
 
   //////////////////

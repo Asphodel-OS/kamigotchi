@@ -128,14 +128,14 @@ export async function initLiquidation(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_RECOIL', [0, 0, 600, 3, 0, 0, 1000, 3]);
 }
 
-async function initTokens(api: AdminAPI) {
+export async function initTokens(api: AdminAPI) {
   await api.config.set.address(
     'ERC20_RECEIVER_ADDRESS',
     '0x6a2350be9eA194cB67df934Df24bFA939A1aAd40'
   );
   await api.config.set.address('ONYX_BURNER_ADDRESS', '0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec');
 
-  await api.config.set.number('ERC20_WITHDRAWAL_DELAY', 604800); // 1 week
+  await api.config.set.number('ERC20_WITHDRAWAL_DELAY', 60); // 1 week
 }
 
 export async function initTrade(api: AdminAPI) {

@@ -307,6 +307,13 @@ export const getOwnsTradeID = (comps: Components, entity: EntityIndex): EntityID
   return formatEntityID(result ?? '');
 };
 
+export const getOwnsWithdwalID = (comps: Components, entity: EntityIndex): EntityID => {
+  const { OwnsWithdrawalID } = comps;
+  const result = getComponentValue(OwnsWithdrawalID, entity)?.value;
+  if (result === undefined) console.warn('getOwnsWithdwalID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
 /////////////////
 // INDICES
 
@@ -369,7 +376,15 @@ export const getSkillIndex = (comps: Components, entity: EntityIndex): number =>
 /////////////////
 // TIME
 
-// get the last action time of an entity (cooldown reset)
+// get the end time of an entity (e.g. cooldown reset)
+export const getEndTime = (comps: Components, entity: EntityIndex, debug = false): number => {
+  const { TimeEnd } = comps;
+  const result = getComponentValue(TimeEnd, entity)?.value;
+  if (debug && result === undefined) console.warn('getEndTime(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+// get the last action time of an entity
 export const getLastActionTime = (
   comps: Components,
   entity: EntityIndex,

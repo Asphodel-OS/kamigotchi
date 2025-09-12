@@ -18,7 +18,20 @@
     },
     {
       "type": "function",
-      "name": "adminBlock",
+      "name": "adminCancel",
+      "inputs": [
+        {
+          "name": "receiptID",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "adminPause",
       "inputs": [
         {
           "name": "receiptID",
@@ -115,30 +128,6 @@
           "name": "",
           "type": "bytes",
           "internalType": "bytes"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "initWithdraw",
-      "inputs": [
-        {
-          "name": "itemIndex",
-          "type": "uint32",
-          "internalType": "uint32"
-        },
-        {
-          "name": "itemAmt",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "receiptID",
-          "type": "uint256",
-          "internalType": "uint256"
         }
       ],
       "stateMutability": "nonpayable"
@@ -277,6 +266,30 @@
       "stateMutability": "nonpayable"
     },
     {
+      "type": "function",
+      "name": "withdraw",
+      "inputs": [
+        {
+          "name": "itemIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "itemAmt",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "receiptID",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
       "type": "event",
       "name": "OwnershipHandoverCanceled",
       "inputs": [
@@ -349,7 +362,8 @@
     }
   ],
   "methodIdentifiers": {
-    "adminBlock(uint256)": "e65920c4",
+    "adminCancel(uint256)": "2a628e83",
+    "adminPause(uint256)": "2692c59f",
     "cancel(uint256)": "40e58ee5",
     "cancelOwnershipHandover()": "54d1f13d",
     "claim(uint256)": "379607f5",
@@ -357,7 +371,6 @@
     "deposit(uint32,uint256)": "aaf10398",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "initWithdraw(uint32,uint256)": "af668787",
     "itemAddrs(uint32)": "c122aef3",
     "itemScales(uint32)": "7d7b397a",
     "owner()": "8da5cb5b",
@@ -366,6 +379,7 @@
     "requestOwnershipHandover()": "25692962",
     "setItem(uint32,address,int32)": "21321390",
     "transferOwnership(address)": "f2fde38b",
-    "unsetItem(uint32)": "7f17d8f5"
+    "unsetItem(uint32)": "7f17d8f5",
+    "withdraw(uint32,uint256)": "0e19dc3a"
   }
 }

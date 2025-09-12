@@ -101,6 +101,7 @@ export {
   initLiquidation as initLiquidationConfigs,
   initLocalConfigs,
   initMint as initMintConfigs,
+  initTokens as initTokenConfigs,
   initTrade as initTradeConfigs,
 } from './configs';
 export { deleteFactions, initFactions, reviseFactions } from './factions';

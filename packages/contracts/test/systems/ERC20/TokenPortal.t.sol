@@ -116,7 +116,7 @@ contract TokenPortalTest is SetupTemplate {
     uint256 itemAmt
   ) internal returns (uint256 receiptID) {
     vm.startPrank(acc.owner);
-    receiptID = _TokenPortalSystem.initWithdraw(itemIndex, itemAmt);
+    receiptID = _TokenPortalSystem.withdraw(itemIndex, itemAmt);
     vm.stopPrank();
   }
 }

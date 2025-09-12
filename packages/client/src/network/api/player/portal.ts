@@ -12,8 +12,8 @@ export const portalAPI = (systems: any) => {
     return systems['system.erc20.portal'].deposit(itemIndex, itemAmt);
   };
 
-  const initWithdrawERC20 = (itemIndex: number, itemAmt: number) => {
-    return systems['system.erc20.portal'].initWithdraw(itemIndex, itemAmt);
+  const withdrawERC20 = (itemIndex: number, itemAmt: number) => {
+    return systems['system.erc20.portal'].withdraw(itemIndex, itemAmt);
   };
 
   const claimERC20 = (receiptID: BigNumberish) => {
@@ -64,7 +64,7 @@ export const portalAPI = (systems: any) => {
   return {
     ERC20: {
       deposit: depositERC20,
-      withdraw: initWithdrawERC20,
+      withdraw: withdrawERC20,
       claim: claimERC20,
       cancel: cancelERC20,
     },

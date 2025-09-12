@@ -1,43 +1,64 @@
-import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 
 import { Components } from 'network/components';
+import { Account, getAccountByID } from '../Account';
 import { getItemByIndex, Item } from '../Item';
-import { getEntityByHash } from '../utils';
-import { getItemIndex, getValue } from '../utils/component';
+import {
+  getEndTime,
+  getItemIndex,
+  getOwnsWithdwalID,
+  getStartTime,
+  getValue,
+} from '../utils/component';
 
 export interface Receipt {
   id: EntityID;
   entity: EntityIndex;
   ObjectType: string;
-  item: Item;
-  amount: number;
-  endTime: number;
+  amt: number; // token amount
+  time: {
+    start: number;
+    end: number;
+  };
+  account?: Account;
+  item?: Item;
 }
 
-// get a Receipt Object
-export const getReceipt = (world: World, comps: Components, entity: EntityIndex): Receipt => {
-  const { TimeEnd } = comps;
+export interface Options {
+  account?: boolean;
+  item?: boolean;
+}
 
+// get a Receipt Object results from a Token Portal Withdraw request
+export const getReceipt = (
+  world: World,
+  comps: Components,
+  entity: EntityIndex,
+  options?: Options
+): Receipt => {
   const id = world.entities[entity];
   const receipt: Receipt = {
     id,
     entity,
     ObjectType: 'TOKEN_RECEIPT',
-    item: getItemByIndex(world, comps, getItemIndex(comps, entity)),
-    amount: getValue(comps, entity),
-    endTime: (getComponentValue(TimeEnd, entity)?.value ?? 0) * 1,
+    amt: getValue(comps, entity), // token amount
+    time: {
+      start: getStartTime(comps, entity),
+      end: getEndTime(comps, entity),
+    },
   };
 
+  if (options === undefined) return receipt;
+
+  if (options.account) {
+    const accID = getOwnsWithdwalID(comps, entity);
+    receipt.account = getAccountByID(world, comps, accID);
+  }
+
+  if (options.item) {
+    const itemIndex = getItemIndex(comps, entity);
+    receipt.item = getItemByIndex(world, comps, itemIndex);
+  }
+
   return receipt;
-};
-
-//////////////////
-// IDs
-
-export const getBuyAnchor = (world: World, tradeID: string) => {
-  return getEntityByHash(world, ['trade.buy', tradeID], ['string', 'uint256']);
-};
-
-export const getSellAnchor = (world: World, tradeID: string) => {
-  return getEntityByHash(world, ['trade.sell', tradeID], ['string', 'uint256']);
 };

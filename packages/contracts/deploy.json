@@ -690,6 +690,7 @@
         "Scale",
         "TimeEnd",
         "TimeLast",
+        "TimeStart",
         "TokenAddress",
         "TokenAllowance",
         "TokenHolder",

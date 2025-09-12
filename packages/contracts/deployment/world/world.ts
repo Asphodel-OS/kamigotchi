@@ -36,6 +36,7 @@ import {
   initRooms,
   initSkills,
   initSnapshot,
+  initTokenConfigs,
   initTokens,
   initTradeConfigs,
   initTraits,
@@ -100,6 +101,7 @@ export class WorldState {
       initHarvest: () => this.genCalls(initHarvestConfigs),
       initLiquidation: () => this.genCalls(initLiquidationConfigs),
       initTrade: () => this.genCalls(initTradeConfigs),
+      initTokens: () => this.genCalls(initTokenConfigs),
     } as SubFunc,
     factions: {
       init: () => this.genCalls(initFactions),

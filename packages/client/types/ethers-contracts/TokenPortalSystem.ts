@@ -30,7 +30,8 @@ import type {
 
 export interface TokenPortalSystemInterface extends utils.Interface {
   functions: {
-    "adminBlock(uint256)": FunctionFragment;
+    "adminCancel(uint256)": FunctionFragment;
+    "adminPause(uint256)": FunctionFragment;
     "cancel(uint256)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "claim(uint256)": FunctionFragment;
@@ -38,7 +39,6 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     "deposit(uint32,uint256)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "initWithdraw(uint32,uint256)": FunctionFragment;
     "itemAddrs(uint32)": FunctionFragment;
     "itemScales(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -48,11 +48,13 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     "setItem(uint32,address,int32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unsetItem(uint32)": FunctionFragment;
+    "withdraw(uint32,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "adminBlock"
+      | "adminCancel"
+      | "adminPause"
       | "cancel"
       | "cancelOwnershipHandover"
       | "claim"
@@ -60,7 +62,6 @@ export interface TokenPortalSystemInterface extends utils.Interface {
       | "deposit"
       | "deprecate"
       | "execute"
-      | "initWithdraw"
       | "itemAddrs"
       | "itemScales"
       | "owner"
@@ -70,10 +71,15 @@ export interface TokenPortalSystemInterface extends utils.Interface {
       | "setItem"
       | "transferOwnership"
       | "unsetItem"
+      | "withdraw"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "adminBlock",
+    functionFragment: "adminCancel",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adminPause",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -100,10 +106,6 @@ export interface TokenPortalSystemInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initWithdraw",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "itemAddrs",
@@ -142,8 +144,16 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     functionFragment: "unsetItem",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "adminBlock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "adminCancel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "adminPause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
@@ -157,10 +167,6 @@ export interface TokenPortalSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "initWithdraw",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "itemAddrs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "itemScales", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -182,6 +188,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unsetItem", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
     "OwnershipHandoverCanceled(address)": EventFragment;
@@ -263,7 +270,12 @@ export interface TokenPortalSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    adminBlock(
+    adminCancel(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    adminPause(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -299,12 +311,6 @@ export interface TokenPortalSystem extends BaseContract {
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    initWithdraw(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -349,9 +355,20 @@ export interface TokenPortalSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    withdraw(
+      itemIndex: PromiseOrValue<BigNumberish>,
+      itemAmt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  adminBlock(
+  adminCancel(
+    receiptID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  adminPause(
     receiptID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -387,12 +404,6 @@ export interface TokenPortalSystem extends BaseContract {
 
   execute(
     arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  initWithdraw(
-    itemIndex: PromiseOrValue<BigNumberish>,
-    itemAmt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -438,8 +449,19 @@ export interface TokenPortalSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  withdraw(
+    itemIndex: PromiseOrValue<BigNumberish>,
+    itemAmt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
-    adminBlock(
+    adminCancel(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    adminPause(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -473,12 +495,6 @@ export interface TokenPortalSystem extends BaseContract {
       arguments: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    initWithdraw(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      itemAmt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     itemAddrs(
       arg0: PromiseOrValue<BigNumberish>,
@@ -517,6 +533,12 @@ export interface TokenPortalSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    withdraw(
+      itemIndex: PromiseOrValue<BigNumberish>,
+      itemAmt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -548,7 +570,12 @@ export interface TokenPortalSystem extends BaseContract {
   };
 
   estimateGas: {
-    adminBlock(
+    adminCancel(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    adminPause(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -584,12 +611,6 @@ export interface TokenPortalSystem extends BaseContract {
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    initWithdraw(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -634,10 +655,21 @@ export interface TokenPortalSystem extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    withdraw(
+      itemIndex: PromiseOrValue<BigNumberish>,
+      itemAmt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    adminBlock(
+    adminCancel(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adminPause(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -673,12 +705,6 @@ export interface TokenPortalSystem extends BaseContract {
 
     execute(
       arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initWithdraw(
-      itemIndex: PromiseOrValue<BigNumberish>,
-      itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -721,6 +747,12 @@ export interface TokenPortalSystem extends BaseContract {
 
     unsetItem(
       index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
+      itemIndex: PromiseOrValue<BigNumberish>,
+      itemAmt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
