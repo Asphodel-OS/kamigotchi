@@ -265,6 +265,18 @@ library LibTrade {
     if (takerID != 0 && takerID != accID) revert("Trade target mismatch");
   }
 
+  /// @notice verify that a Trade has exactly one buy and one sell order
+  /// @dev this constraint will be enforced for new trades to prepare for shape
+  /// and functionality upgrades
+  function verifySingle(
+    IUintComp comps,
+    uint32[] memory buyIndices,
+    uint32[] memory sellIndices
+  ) public view {
+    if (buyIndices.length != 1) revert("Trade must have exactly one buy order");
+    if (sellIndices.length != 1) revert("Trade must have exactly one sell order");
+  }
+
   /// @notice verify an Account has not exceeded the maximum allowable open Trade orders
   function verifyMaxOrders(IUintComp comps, uint256 accID) public view {
     uint256 max = LibConfig.get(comps, "MAX_TRADES_PER_ACCOUNT");
