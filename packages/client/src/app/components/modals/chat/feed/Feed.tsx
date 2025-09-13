@@ -11,12 +11,12 @@ import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import {
+  KamiCast as CastEvent,
   getKamidenClient,
-  HarvestEnd,
-  KamiCast,
+  HarvestEnd as HarvestEndEvent,
   Message as KamiMessage,
-  Kill,
-  Movement,
+  Kill as KillEvent,
+  Movement as MovementEvent,
 } from 'clients/kamiden';
 import { subscribeToFeed, subscribeToMessages } from 'clients/kamiden/subscriptions';
 import { rooms } from 'constants/rooms';
@@ -35,7 +35,6 @@ export const Feed = ({
   activeTab,
   setActiveTab,
   utils,
-  actions,
   player,
   blocked,
   actionSystem,
@@ -49,9 +48,6 @@ export const Feed = ({
     getEntityIndex: (entity: EntityID) => EntityIndex;
     getRoomByIndex: (nodeIndex: number) => Room;
     getItemByIndex: (itemIndex: number) => Item;
-  };
-  actions: {
-    setMessages: (messages: KamiMessage[]) => void;
   };
   player: Account;
   blocked: EntityID[];
@@ -113,41 +109,49 @@ export const Feed = ({
       let feedMessage: React.ReactNode[] = [];
 
       // process Movement events
-      feed.Movements.forEach((movement: Movement) => {
+      feed.Movements.forEach((movement: MovementEvent) => {
         if (movement.RoomIndex !== player.roomIndex) return;
-        if (movement.AccountId === player.id) return;
+        const room = getRoomByIndex(movement.RoomIndex);
         const account = getAccount(getEntityIndex(formatEntityID(movement.AccountId)));
+        const accountName = movement.AccountId === player.id ? 'You' : account.name;
 
         feedMessage.push(
           <Row>
-            <Bold color='#000'>{getDateString(movement.Timestamp)}</Bold>
-            <Text size={3} onClick={() => openAccountModal(account)}>
-              {account.name}
+            <Bold color='#333'>{getDateString(movement.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {accountName}
             </Text>
-            {<Bold color='#eda910'> entered</Bold>} the room.
+            <Bold color='#eda910'> entered</Bold>
+            <TextTooltip text={[room.name]}>
+              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
+            </TextTooltip>
           </Row>
         );
       });
 
       // process Harvest Stop events
-      feed.HarvestEnds.forEach((harvest: HarvestEnd) => {
+      feed.HarvestEnds.forEach((harvest: HarvestEndEvent) => {
         if (harvest.RoomIndex !== player.roomIndex) return;
         const kami = getKami(getEntityIndex(formatEntityID(harvest.KamiId)));
+        const room = getRoomByIndex(harvest.RoomIndex);
 
         feedMessage.push(
           <Row>
-            <Bold color='#000'>{getDateString(harvest.Timestamp)}</Bold>
+            <Bold color='#333'>{getDateString(harvest.Timestamp, 3)}:</Bold>
             <TextTooltip text={[kami.name]}>
               <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
             </TextTooltip>
-            <Bold color='#b176f1'> stopped </Bold>
-            harvesting.
+            <Bold color='#b176f1'>stopped</Bold>
+            harvesting in
+            <TextTooltip text={[room.name]}>
+              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
+            </TextTooltip>
           </Row>
         );
       });
 
       // process Harvest Liquidate events
-      feed.Kills.forEach((kill: Kill) => {
+      feed.Kills.forEach((kill: KillEvent) => {
         pushBattles(kill);
         const killer = getKami(getEntityIndex(formatEntityID(BigNumber.from(kill.KillerId))));
         const victim = getKami(getEntityIndex(formatEntityID(BigNumber.from(kill.VictimId))));
@@ -155,7 +159,7 @@ export const Feed = ({
 
         feedMessage.push(
           <Row>
-            <Bold color='#000'>{getDateString(kill.Timestamp * 1000)}</Bold>
+            <Bold color='#333'>{getDateString(kill.Timestamp, 0)}:</Bold>
             <TextTooltip text={[killer.name]}>
               <KamiIcon src={killer.image} onClick={() => openKamiModal(killer)} />
             </TextTooltip>
@@ -163,21 +167,20 @@ export const Feed = ({
             <TextTooltip text={[victim.name]}>
               <KamiIcon src={victim.image} onClick={() => openKamiModal(victim)} />
             </TextTooltip>
-            in
-            <TextTooltip text={[room.name]}>
-              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
-            </TextTooltip>
             for {kill.Spoils}
             <TextTooltip text={['Musu']}>
               <Icon src={ItemImages.musu} />
             </TextTooltip>
-            .
+            in
+            <TextTooltip text={[room.name]}>
+              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
+            </TextTooltip>
           </Row>
         );
       });
 
       // process Item Cast events
-      feed.KamiCasts.forEach((cast: KamiCast) => {
+      feed.KamiCasts.forEach((cast: CastEvent) => {
         const caster = getAccount(getEntityIndex(formatEntityID(BigNumber.from(cast.AccountID))));
         const victim = getKami(getEntityIndex(formatEntityID(BigNumber.from(cast.TargetID))));
         const item = getItemByIndex(cast.itemIndex);
@@ -185,7 +188,7 @@ export const Feed = ({
 
         feedMessage.push(
           <Row>
-            <Bold color='#000'>{getDateString(cast.Timestamp * 1000)}</Bold>
+            <Bold color='#333'>{getDateString(cast.Timestamp, 0)}:</Bold>
             {caster.name}
             <Bold color='#33a58fff'> used </Bold>
             <TextTooltip text={[item?.name]}>
@@ -293,7 +296,7 @@ export const Feed = ({
       else selectAccount(account.index);
     } else {
       if (!isAccountSelected) selectAccount(account.index);
-      setModals({ account: true });
+      setModals({ account: true, map: false, party: false });
     }
 
     playClick();
