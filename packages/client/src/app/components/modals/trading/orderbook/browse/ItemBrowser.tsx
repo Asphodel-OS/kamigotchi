@@ -58,6 +58,7 @@ export const ItemBrowser = ({
       dynamic.add(t);
     }
 
+    // Transform dynamic types into sorted list of category options
     const dynamicList = Array.from(dynamic)
       .sort()
       .map((t) => ({ key: t, label: toTitle(t) }));
