@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { IconButton, Text } from 'app/components/library';
+import { IconButton, Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { Account, Item, Receipt } from 'network/shapes';
@@ -65,31 +65,43 @@ export const Body = ({
     return name;
   };
 
+  const isClaimable = (receipt: Receipt) => {
+    return Date.now() / 1000 > receipt.time.end;
+  };
+
   /////////////////
   // DISPLAY
 
   return (
     <Container>
-      {receipts.map((receipt: Receipt, i: number) => {
+      {receipts.map((r: Receipt, i: number) => {
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
-            <Column>
-              <Text size={0.75} onClick={() => onClickAccount(receipt.account!)}>
-                {getNameDisplay(receipt.account!)}
+            <Column width={7.5}>
+              <Text size={0.75} onClick={() => onClickAccount(r.account!)}>
+                {getNameDisplay(r.account!)}
               </Text>
             </Column>
-            <Column>
-              <Icon src={receipt.item?.image ?? PlaceholderIcon} />
+            <Column width={4.5}>
+              <Icon src={r.item?.image ?? PlaceholderIcon} />
             </Column>
-            <Column>{convertAmt(receipt.item!, receipt.amt)}</Column>
-            <Column>
-              {Date.now() / 1000 > receipt.time.end ? (
-                <IconButton text='Claim' onClick={() => claim(receipt)} />
-              ) : (
-                getCountdown(receipt.time.end)
-              )}
+            <Column width={6}>{convertAmt(r.item!, r.amt)}</Column>
+            <Column width={6}>{getCountdown(r.time.end)}</Column>
+            <Column width={6}>
+              <IconGroup>
+                <TextTooltip text={isClaimable(r) ? ['Claim'] : ['Not yet claimable']}>
+                  <IconButton
+                    img={PlaceholderIcon}
+                    scale={1.5}
+                    onClick={() => claim(r)}
+                    disabled={!isClaimable(r)}
+                  />
+                </TextTooltip>
+                <TextTooltip text={['Cancel']}>
+                  <IconButton img={PlaceholderIcon} scale={1.5} onClick={() => cancel(r)} />
+                </TextTooltip>
+              </IconGroup>
             </Column>
-            <IconButton img={PlaceholderIcon} scale={1.5} onClick={() => cancel(receipt)} />
           </Row>
         );
       })}
@@ -113,7 +125,7 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 96%;
-  height: 3vw;
+  height: 2.4vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -121,13 +133,22 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const Column = styled.div`
+const Column = styled.div<{ width: number }>`
   gap: 0.6vw;
+  width: ${({ width }) => width}vw;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+`;
+
+const IconGroup = styled.div`
+  gap: 0.3vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
 `;
 
 const Icon = styled.img`

@@ -55,7 +55,16 @@ export const Table = ({
 
   return (
     <Container>
-      <Header state={{ sort, setSort }} />
+      <Header
+        columns={{
+          Account: 7.5,
+          Item: 4.5,
+          Amount: 6,
+          Status: 6,
+          Actions: 6,
+        }}
+        state={{ sort, setSort }}
+      />
       <Body actions={actions} data={{ account, receipts: sorted }} state={state} />
     </Container>
   );

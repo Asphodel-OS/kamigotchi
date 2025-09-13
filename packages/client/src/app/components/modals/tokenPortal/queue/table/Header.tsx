@@ -2,11 +2,13 @@ import styled from 'styled-components';
 
 import { Text } from 'app/components/library';
 import { playClick } from 'utils/sounds';
-import { Column, COLUMNS, Sort, Sortable, SORTABLE } from './constants';
+import { Column, ColumnWidths, Sort, Sortable, SORTABLE } from './constants';
 
 export const Header = ({
   state,
+  columns,
 }: {
+  columns: ColumnWidths;
   state: {
     sort: Sort;
     setSort: (sort: Sort) => void;
@@ -30,10 +32,10 @@ export const Header = ({
 
   return (
     <Container>
-      {COLUMNS.map((col, i) => {
+      {Object.entries(columns).map(([col, width]) => {
         return (
-          <Label key={i}>
-            <Text size={0.9} onClick={() => labelOnClick(col)}>
+          <Label key={col} width={width}>
+            <Text size={0.9} onClick={() => labelOnClick(col as Column)}>
               {col}
             </Text>
             {sort.key === col && <Text size={0.9}>{sort.reverse ? '↑' : '↓'}</Text>}
@@ -49,7 +51,7 @@ const Container = styled.div`
   top: 0;
   background-color: rgb(221, 221, 221);
   width: 100%;
-  height: 2.4vw;
+  height: 3vw;
 
   padding: 0.6vw;
   display: flex;
@@ -65,12 +67,13 @@ const Container = styled.div`
   z-index: 1;
 `;
 
-const Label = styled.div`
-  width: 100%;
+const Label = styled.div<{ width: number }>`
+  position: relative;
   padding: 0.6vw;
+  width: ${({ width }) => width}vw;
 
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
 `;

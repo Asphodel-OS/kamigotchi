@@ -1,7 +1,16 @@
 // table header columns
-export type Column = 'Account' | 'Item' | 'Amount' | 'Status' | 'Actions';
 
-export const COLUMNS = ['Account', 'Item', 'Amount', 'Status', 'Actions'] as Column[];
+export const COLUMN_WIDTHS = {
+  Account: 0,
+  Item: 0,
+  Amount: 0,
+  Status: 0,
+  Actions: 0,
+};
+export type Column = keyof typeof COLUMN_WIDTHS;
+export type ColumnWidths = {
+  [key in Column]: number;
+};
 
 // sortable table header columns
 export type Sortable = 'Account' | 'Amount' | 'Status';

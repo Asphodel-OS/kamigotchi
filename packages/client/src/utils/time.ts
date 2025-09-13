@@ -15,6 +15,7 @@ export const getCountdown = (endTs: number) => {
 
 // formats seconds into a countdown string
 export const formatCountdown = (secs: number) => {
+  if (secs < 0) return '00:00:00';
   const pad = (n: number) => (n < 10 ? `0${n}` : n);
 
   const h = Math.floor(secs / 3600);
