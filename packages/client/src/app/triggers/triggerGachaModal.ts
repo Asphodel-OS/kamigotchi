@@ -1,7 +1,7 @@
 import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
-export const triggerPetMintModal = () => {
+export const triggerGachaModal = () => {
   const { modals } = useVisibility.getState();
   playClick();
 
@@ -12,6 +12,7 @@ export const triggerPetMintModal = () => {
         gacha: true,
         bridgeERC20: false,
         bridgeERC721: false,
+        crafting: false,
         dialogue: false,
         kami: false,
         emaBoard: false,

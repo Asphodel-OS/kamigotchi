@@ -138,10 +138,6 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {
-    uiComponent: TokenPortalModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 20, rowEnd: 80 },
-  },
-  {
     uiComponent: TradingModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
@@ -186,6 +182,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: RevealModal,
     gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 75 },
+  },
+  {
+    uiComponent: TokenPortalModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 20, rowEnd: 90 },
   },
   {
     uiComponent: MerchantModal,

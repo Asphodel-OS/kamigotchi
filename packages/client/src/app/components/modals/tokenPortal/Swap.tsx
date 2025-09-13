@@ -11,7 +11,7 @@ import { Account, Inventory, Item, NullItem } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import { Mode } from './types';
 
-export const Controls = ({
+export const Swap = ({
   actions,
   data,
   state,
@@ -137,6 +137,7 @@ export const Controls = ({
           <Input type='text' value={amt} onChange={handleInputChange} />
         </Column>
         <Column style={{ width: '6vw' }}>
+          <Text size={0.9}>{mode}</Text>
           <IconButton img={getModeIcon(mode)} onClick={toggleMode} />
           <Text size={0.6}>{`(${getConversionRate(selected)}:1)`}</Text>
         </Column>

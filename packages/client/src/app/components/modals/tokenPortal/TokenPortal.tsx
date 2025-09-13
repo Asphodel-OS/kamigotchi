@@ -14,7 +14,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { getReceipt, queryReceipts, Receipt } from 'network/shapes/Portal';
 import { getCompAddr } from 'network/shapes/utils';
-import { Controls } from './Controls';
+import { Swap } from './Swap';
 import { Queue } from './queue/Queue';
 
 export const TokenPortalModal: UIComponent = {
@@ -184,7 +184,7 @@ export const TokenPortalModal: UIComponent = {
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
         ) : (
-          <Controls
+          <Swap
             actions={{
               approve: approveTx,
               deposit: depositTx,
