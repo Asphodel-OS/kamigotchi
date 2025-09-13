@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
@@ -64,6 +64,14 @@ export const Swap = ({
     setAmt(amt);
   };
 
+  // trigger the action when the user presses enter
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && !isDisabled()) {
+      triggerAction();
+      playClick();
+    }
+  };
+
   // get the action to perform based on the mode
   const triggerAction = () => {
     if (mode === 'DEPOSIT') {
@@ -121,6 +129,10 @@ export const Swap = ({
     } else return 'Withdraw';
   };
 
+  const isDisabled = () => {
+    if (amt === 0) return true;
+  };
+
   /////////////////
   // DISPLAY
 
@@ -134,7 +146,7 @@ export const Swap = ({
             options={getItemOptions()}
             balance={getInventoryBalance(inventory, selected.index)}
           />
-          <Input type='text' value={amt} onChange={handleInputChange} />
+          <Input type='text' value={amt} onChange={handleInputChange} onKeyDown={handleKeyDown} />
         </Column>
         <Column style={{ width: '6vw' }}>
           <Text size={0.9}>{mode}</Text>
@@ -151,7 +163,12 @@ export const Swap = ({
           <Input type='text' value={amt / getConversionRate(selected)} disabled />
         </Column>
       </Row>
-      <IconButton text={getActionText()} onClick={triggerAction} />
+      <IconButton
+        text={getActionText()}
+        scale={3}
+        onClick={triggerAction}
+        disabled={isDisabled()}
+      />
     </Container>
   );
 };
@@ -159,7 +176,7 @@ export const Swap = ({
 const Container = styled.div`
   width: 100%;
   gap: 1.2vw;
-  padding: 3.6vw 0.6vw 1.8vw 0.6vw;
+  padding: 3.6vw 0.6vw 1.2vw 0.6vw;
 
   display: flex;
   flex-flow: column nowrap;

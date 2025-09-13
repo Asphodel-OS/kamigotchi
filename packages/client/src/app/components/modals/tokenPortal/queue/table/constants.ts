@@ -1,5 +1,6 @@
-// table header columns
+export type Mode = 'MINE' | 'ALL';
 
+// table header columns
 export const COLUMN_WIDTHS = {
   Account: 0,
   Item: 0,

@@ -5,8 +5,8 @@ import { playClick } from 'utils/sounds';
 import { Column, ColumnWidths, Sort, Sortable, SORTABLE } from './constants';
 
 export const Header = ({
-  state,
   columns,
+  state,
 }: {
   columns: ColumnWidths;
   state: {
@@ -35,7 +35,7 @@ export const Header = ({
       {Object.entries(columns).map(([col, width]) => {
         return (
           <Label key={col} width={width}>
-            <Text size={0.9} onClick={() => labelOnClick(col as Column)}>
+            <Text size={0.75} onClick={() => labelOnClick(col as Column)}>
               {col}
             </Text>
             {sort.key === col && <Text size={0.9}>{sort.reverse ? '↑' : '↓'}</Text>}
@@ -51,7 +51,7 @@ const Container = styled.div`
   top: 0;
   background-color: rgb(221, 221, 221);
   width: 100%;
-  height: 3vw;
+  height: 2.7vw;
 
   padding: 0.6vw;
   display: flex;

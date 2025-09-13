@@ -3,13 +3,7 @@ import styled from 'styled-components';
 import { HelpIcon } from 'assets/images/icons/menu';
 import { TextTooltip } from '..';
 
-export const HelpChip = ({
-  tooltip,
-  size = 'medium',
-}: {
-  tooltip: string[];
-  size?: string;
-}) => {
+export const HelpChip = ({ tooltip, size = 1.5 }: { tooltip: string[]; size?: number }) => {
   return (
     <TextTooltip text={tooltip}>
       <Icon size={size} src={HelpIcon} />
@@ -17,27 +11,9 @@ export const HelpChip = ({
   );
 };
 
-const Icon = styled.img<{ size: string }>`
+const Icon = styled.img<{ size: number }>`
+  width: ${({ size }) => size}vw;
+  height: ${({ size }) => size}vw;
   margin: 0.1vh 0.5vw;
   user-drag: none;
-
-  ${({ size }) => {
-    if (size === 'small')
-      return `
-      width: 1vw;
-      height: 1vw;
-    `;
-
-    if (size === 'medium')
-      return `
-      width: 1.5vw;
-      height: 1.5vw;
-    `;
-
-    if (size === 'large')
-      return `
-      width: 2vw;
-      height: 2vw;
-    `;
-  }}
 `;

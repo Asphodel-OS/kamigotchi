@@ -5,7 +5,14 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount } from 'app/cache/account';
 import { getItem } from 'app/cache/item';
-import { EmptyText, IconButton, ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
+import {
+  EmptyText,
+  HelpChip,
+  IconButton,
+  ModalHeader,
+  ModalWrapper,
+  Overlay,
+} from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
@@ -14,8 +21,9 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { getReceipt, queryReceipts, Receipt } from 'network/shapes/Portal';
 import { getCompAddr } from 'network/shapes/utils';
-import { Swap } from './Swap';
-import { Queue } from './queue/Queue';
+import { HELP_TEXT } from './constants';
+import { Queue } from './queue';
+import { Swap } from './swap';
 
 export const TokenPortalModal: UIComponent = {
   id: 'TokenPortal',
@@ -101,13 +109,14 @@ export const TokenPortalModal: UIComponent = {
         id: actionID,
         action: 'Approve token',
         params: [item.token?.address, spenderAddr, amt],
-        description: `Approve ${amt} $ONYX to be spent`,
+        description: `Approving ${amt} $ONYX to be spent`,
         execute: async () => {
           return api.erc20.approve(item.token?.address!, spenderAddr, amt);
         },
       });
     };
 
+    // deposit ERC20 tokens into the game world
     const depositTx = async (item: Item, amt: number) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
@@ -181,6 +190,9 @@ export const TokenPortalModal: UIComponent = {
         noPadding
         truncate
       >
+        <Overlay left={0.6} top={0.6}>
+          <HelpChip tooltip={HELP_TEXT} size={1.2} />
+        </Overlay>
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
         ) : (

@@ -3,7 +3,8 @@ import styled from 'styled-components';
 
 import { Account, Item, Receipt } from 'network/shapes';
 import { Body } from './Body';
-import { Sort } from './constants';
+import { Mode, Sort } from './constants';
+import { Footer } from './Footer';
 import { Header } from './Header';
 
 export const Table = ({
@@ -26,8 +27,20 @@ export const Table = ({
 }) => {
   const { account, receipts } = data;
 
-  const [sorted, setSorted] = useState<Receipt[]>([]);
+  const [mode, setMode] = useState<Mode>('MINE');
+  const [filtered, setFiltered] = useState<Receipt[]>([]);
   const [sort, setSort] = useState<Sort>({ key: 'Status', reverse: false });
+  const [sorted, setSorted] = useState<Receipt[]>([]);
+
+  // determine which receipts get passed in based on the
+  useEffect(() => {
+    if (mode === 'MINE') {
+      const myReceipts = receipts.filter((r) => r.account?.index === account.index);
+      setFiltered(myReceipts);
+    } else {
+      setFiltered([...receipts]);
+    }
+  }, [receipts.length, mode]);
 
   // sort the receipts if the list of receipts changes
   useEffect(() => {
@@ -65,7 +78,8 @@ export const Table = ({
         }}
         state={{ sort, setSort }}
       />
-      <Body actions={actions} data={{ account, receipts: sorted }} state={state} />
+      <Body actions={actions} data={{ account, receipts: sorted }} />
+      <Footer state={{ mode, setMode }} />
     </Container>
   );
 };
@@ -78,5 +92,5 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 
-  overflow-y: hidden;
+  overflow-y: auto;
 `;

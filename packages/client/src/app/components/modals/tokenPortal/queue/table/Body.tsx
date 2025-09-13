@@ -10,7 +10,6 @@ import { getCountdown } from 'utils/time';
 export const Body = ({
   actions,
   data,
-  state,
 }: {
   actions: {
     claim: (receiptID: Receipt) => Promise<void>;
@@ -19,10 +18,6 @@ export const Body = ({
   data: {
     account: Account;
     receipts: Receipt[];
-  };
-  state: {
-    options: Item[];
-    setOptions: (items: Item[]) => void;
   };
 }) => {
   const { cancel, claim } = actions;
@@ -51,22 +46,48 @@ export const Body = ({
   /////////////////
   // INTERPRETATION
 
+  // convert an amount from a Receipt to a game unit
   const convertAmt = (item: Item, amt: number) => {
     const scale = item.token?.scale ?? 0;
     return amt * 10 ** (scale - 18);
   };
 
+  // get the display name for an Account
   const getNameDisplay = (owner: Account) => {
     if (owner.index === 0) return 'Unknown';
     if (owner.index === account.index) return 'You';
 
     const name = owner.name.toLowerCase();
-    if (name.length > 12) return `${owner.name.slice(0, 12)}...`;
+    if (name.length > 12) return `${name.slice(0, 9)}...`;
     return name;
   };
 
+  // check whether a Receipt is cancelable
+  const isCancelable = (receipt: Receipt) => {
+    const isYours = receipt.account?.index === account.index;
+    return isYours;
+  };
+
+  // get the tooltip for a Receipt Cancel
+  const getCancelTooltip = (receipt: Receipt) => {
+    if (!isCancelable(receipt)) return ['Not yours'];
+    else return ['Cancel'];
+  };
+
+  // check whether a Receipt is claimable
   const isClaimable = (receipt: Receipt) => {
-    return Date.now() / 1000 > receipt.time.end;
+    const isRipe = Date.now() / 1000 > receipt.time.end;
+    const isYours = receipt.account?.index === account.index;
+    return isRipe && isYours;
+  };
+
+  // get the tooltip for a Receipt Claim
+  const getClaimTooltip = (receipt: Receipt) => {
+    const isYours = receipt.account?.index === account.index;
+    if (!isYours) return ['Not your Receipt'];
+    const isRipe = Date.now() / 1000 > receipt.time.end;
+    if (!isRipe) return ['Not yet claimable'];
+    else return ['Claim'];
   };
 
   /////////////////
@@ -77,19 +98,21 @@ export const Body = ({
       {receipts.map((r: Receipt, i: number) => {
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
-            <Column width={7.5}>
-              <Text size={0.75} onClick={() => onClickAccount(r.account!)}>
-                {getNameDisplay(r.account!)}
-              </Text>
-            </Column>
-            <Column width={4.5}>
+            <Field width={7.5}>
+              <TextTooltip text={[r.account?.name]}>
+                <Text size={0.6} onClick={() => onClickAccount(r.account!)}>
+                  {getNameDisplay(r.account!)}
+                </Text>
+              </TextTooltip>
+            </Field>
+            <Field width={4.5}>
               <Icon src={r.item?.image ?? PlaceholderIcon} />
-            </Column>
-            <Column width={6}>{convertAmt(r.item!, r.amt)}</Column>
-            <Column width={6}>{getCountdown(r.time.end)}</Column>
-            <Column width={6}>
+            </Field>
+            <Field width={6}>{convertAmt(r.item!, r.amt)}</Field>
+            <Field width={6}>{getCountdown(r.time.end)}</Field>
+            <Field width={6}>
               <IconGroup>
-                <TextTooltip text={isClaimable(r) ? ['Claim'] : ['Not yet claimable']}>
+                <TextTooltip text={getClaimTooltip(r)}>
                   <IconButton
                     img={PlaceholderIcon}
                     scale={1.5}
@@ -97,11 +120,11 @@ export const Body = ({
                     disabled={!isClaimable(r)}
                   />
                 </TextTooltip>
-                <TextTooltip text={['Cancel']}>
+                <TextTooltip text={getCancelTooltip(r)}>
                   <IconButton img={PlaceholderIcon} scale={1.5} onClick={() => cancel(r)} />
                 </TextTooltip>
               </IconGroup>
-            </Column>
+            </Field>
           </Row>
         );
       })}
@@ -124,6 +147,7 @@ const Container = styled.div`
 `;
 
 const Row = styled.div`
+  position: relative;
   width: 96%;
   height: 2.4vw;
 
@@ -133,14 +157,19 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const Column = styled.div<{ width: number }>`
+const Field = styled.div<{ width: number }>`
   gap: 0.6vw;
   width: ${({ width }) => width}vw;
+  height: 100%;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+
+  font-size: 0.6vw;
+  user-select: none;
+  overflow-x: scroll;
 `;
 
 const IconGroup = styled.div`
