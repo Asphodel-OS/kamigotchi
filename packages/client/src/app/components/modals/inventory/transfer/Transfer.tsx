@@ -9,6 +9,7 @@ import {
   IconButton,
   IconListButton,
   IconListButtonOption,
+  Text,
 } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
@@ -79,10 +80,12 @@ export const Transfer = ({
     if (item === NullItem) setItem(stone());
   }, [inventories, item]);
 
-  // Reset the values when the send view is closed
+  // reset form values when a reset update is triggered
   useEffect(() => {
     if (resetSend) {
-      resetSelections();
+      setItem(stone());
+      setAmt(1);
+      setTargetAcc(null);
       setResetSend(false);
     }
   }, [resetSend]);
@@ -93,7 +96,7 @@ export const Transfer = ({
     return () => clearTimeout(id);
   }, [mode]);
 
-  // retrieve the list of Account options and get send history
+  // retrieve the list of Account options and set the send history
   useEffect(() => {
     if (!inventoryModalOpen) return;
     const accountEntities = queryAllAccounts() as EntityIndex[];
@@ -103,15 +106,15 @@ export const Transfer = ({
       const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
       setAccounts(accountsSorted);
     }
-    setSendEvents(account.id);
+    setTransferEvents(account.id);
   }, [inventoryModalOpen, lastRefresh, accountEntity]);
 
   /////////////////
   // GETTERS
 
   // get the send history from Kamiden
-  async function setSendEvents(accountId: string) {
-    const parsedAccountId = BigInt(accountId).toString();
+  async function setTransferEvents(accID: string) {
+    const parsedAccountId = BigInt(accID).toString();
     try {
       const request: ItemTransferRequest = {
         AccountID: parsedAccountId,
@@ -125,8 +128,30 @@ export const Transfer = ({
     }
   }
 
+  ///////////////////
+  // HANDLERS
+
+  // validate and clean the amount of items to send
+  const handleAmtChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
+    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const max = getInventoryBalance(inventories, item.index);
+    const amt = Math.max(0, Math.min(max, rawQuantity));
+    setAmt(amt);
+  };
+
+  // send the selected item to the target account
+  const handleSend = (item: Item, amt: number, targetAcc: Account) => {
+    if (!targetAcc || !amt || !item) return;
+    sendItemsTx([item], [amt], targetAcc);
+  };
+
+  /////////////////
+  // DISPLAY
+
   // get the history of items sent
-  const getSendHistory = useMemo(() => {
+  // TODO: consider moving this to its own component
+  const TransferHistory = useMemo(() => {
     const transfers: JSX.Element[] = [];
     sendHistory.forEach((send, index) => {
       const senderID = formatEntityID(BigNumber.from(send.SenderAccountID));
@@ -159,89 +184,55 @@ export const Transfer = ({
   }, [sendHistory, account.id, getAccount, getEntityIndex, getItem]);
 
   // gets filtered item options
-  const getItemOptions = useMemo(
-    () => (): IconListButtonOption[] => {
-      const sorted = [...inventories]
-        .filter((inven) => inven.item.is.tradeable)
-        .sort((a, b) => a.item.name.localeCompare(b.item.name));
-      return sorted.map((inv: Inventory) => {
-        return {
-          text: inv.item.name,
-          image: inv.item.image,
-          onClick: () => setItem(inv.item),
-        };
-      });
-    },
-    [inventories, item]
-  );
-
-  const updateItemAmt = (event: ChangeEvent<HTMLInputElement>) => {
-    const quantityStr = event.target.value.replace(/[^\d.]/g, '');
-    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
-    const min = 0;
-    const max = getInventoryBalance(inventories, item.index);
-    const amt = Math.max(min, Math.min(max, rawQuantity));
-
-    setAmt(amt);
-  };
-
-  ///////////////////
-  // HANDLERS
-
-  // reset the inputs
-  const resetSelections = () => {
-    setItem(stone());
-    setAmt(1);
-    setTargetAcc(null);
-  };
-
-  // send the selected item to the target account
-  const handleSend = ([item]: Item[], [amt]: number[], targetAcc: Account | null) => {
-    if (!targetAcc || !amt || !item) return;
-    sendItemsTx([item], [amt], targetAcc);
-  };
+  const ItemOptions = useMemo(() => {
+    const sorted = [...inventories]
+      .filter((inven) => inven.item.is.tradeable)
+      .sort((a, b) => a.item.name.localeCompare(b.item.name));
+    return sorted.map((inv: Inventory) => {
+      return {
+        text: inv.item.name,
+        image: inv.item.image,
+        onClick: () => setItem(inv.item),
+      } as IconListButtonOption;
+    });
+  }, [inventories, item]);
 
   /////////////////
-  // DISPLAY
-
-  const SendButton = (item: Item[]) => {
-    const options = accounts.map((targetAcc) => ({
-      text: `${targetAcc.name} (#${targetAcc.index})`,
-      onClick: () => setTargetAcc(targetAcc),
-    }));
-
-    return (
-      <IconListButton
-        img={MenuIcons.operator}
-        options={options}
-        searchable
-        scale={2.8}
-        tooltipProps={{ text: [`Send ${item[0].name} to another account.`] }}
-      />
-    );
-  };
+  // RENDER
 
   return (
     <Container isVisible={visible} key='send'>
       <Top>
         <LineItem
-          options={getItemOptions()}
+          options={ItemOptions}
           selected={item}
           amt={amt}
-          setAmt={(e) => updateItemAmt(e)}
+          setAmt={(e) => handleAmtChange(e)}
           reverse
         />
         <IconButton
           img={ArrowIcons.right}
           scale={2}
-          onClick={() => targetAcc && handleSend([item], [amt], targetAcc)}
+          onClick={() => targetAcc && handleSend(item, amt, targetAcc)}
           disabled={!targetAcc || !amt || !item}
         />
-        {SendButton([item])}
+        <IconListButton
+          img={MenuIcons.operator}
+          options={accounts.map((targetAcc) => ({
+            text: `${targetAcc.name} (#${targetAcc.index})`,
+            onClick: () => setTargetAcc(targetAcc),
+          }))}
+          searchable
+          scale={2.8}
+          tooltipProps={{ text: [`Send ${item.name} to another account.`] }}
+        />
       </Top>
       <Bottom>
-        <Title>Your Transfer History</Title>
-        {getSendHistory}
+        <TitleBar>
+          <Text size={0.9}>Your Transfer History</Text>
+          <Text size={0.75}>Fee: 15 MUSU</Text>
+        </TitleBar>
+        {TransferHistory}
       </Bottom>
     </Container>
   );
@@ -280,17 +271,19 @@ const Bottom = styled.div`
   overflow-y: auto;
 `;
 
-const Title = styled.div`
+const TitleBar = styled.div`
+  background-color: rgb(221, 221, 221);
   position: sticky;
   top: 0;
-  background-color: rgb(221, 221, 221);
   width: 100%;
   margin-bottom: 0.2vw;
   padding: 1vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+
   opacity: 0.9;
-  color: black;
-  font-size: 0.8vw;
-  text-align: left;
-  z-index: 2;
   height: 3vw;
 `;
