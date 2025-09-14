@@ -31,7 +31,7 @@ export const LiquidateButton = (
       img={LiquidateIcon}
       options={actionOptions}
       disabled={actionOptions.length == 0}
-      tooltipProps={{ text: [tooltipText] }}
+      tooltip={{ text: [tooltipText] }}
       width={width}
       icon={{ inset: { x: 2 } }}
     />

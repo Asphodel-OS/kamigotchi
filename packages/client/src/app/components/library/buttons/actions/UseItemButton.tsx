@@ -51,7 +51,7 @@ export const UseItemButton = (
       img={icon}
       options={options}
       disabled={disabled}
-      tooltipProps={{ text: [tooltip] }}
+      tooltip={{ text: [tooltip] }}
       width={width}
       icon={{ inset: { x: iconInsetXpx, y: iconInsetYpx } }}
     />

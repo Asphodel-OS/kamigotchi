@@ -224,7 +224,7 @@ export const Transfer = ({
           }))}
           searchable
           scale={2.8}
-          tooltipProps={{ text: [`Send ${item.name} to another account.`] }}
+          tooltip={{ text: [`Send ${item.name} to another account.`] }}
         />
       </Top>
       <Bottom>

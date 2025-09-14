@@ -124,7 +124,7 @@ export const Header = ({
         text='Add Kami to Node'
         disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
         fullWidth
-        tooltipProps={{ text: [getDisabledReason(kamis)], grow: true }}
+        tooltip={{ text: [getDisabledReason(kamis)], grow: true }}
       />
     );
   };

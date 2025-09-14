@@ -18,7 +18,6 @@ export function IconListButton({
   options,
   text,
   balance,
-  disabled,
   width,
   fullWidth,
   radius,
@@ -26,21 +25,25 @@ export function IconListButton({
   scaleOrientation,
   searchable,
   icon,
-  tooltipProps,
+  tooltip,
+  disabled,
 }: {
-  img?: string;
   options: Option[];
+  searchable?: boolean;
+
+  // button
+  img?: string;
   text?: string;
-  balance?: number;
-  disabled?: boolean;
-  width?: number;
-  fullWidth?: boolean;
+  icon?: { inset?: { px?: number; x?: number; y?: number } };
   radius?: number;
   scale?: number;
   scaleOrientation?: 'vw' | 'vh';
-  searchable?: boolean;
-  icon?: { inset?: { px?: number; x?: number; y?: number } };
-  tooltipProps?: {
+  width?: number;
+  fullWidth?: boolean;
+  balance?: number;
+
+  // tooltip
+  tooltip?: {
     text: string[] | React.ReactNode[];
     title?: string;
     children?: React.ReactNode;
@@ -53,6 +56,8 @@ export function IconListButton({
     color?: string;
     fullWidth?: boolean;
   };
+
+  disabled?: boolean;
 }) {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -102,8 +107,8 @@ export function IconListButton({
   };
 
   return (
-    <Popover fullWidth={fullWidth} content={OptionsMap()} disabled={disabled}>
-      <TextTooltip {...tooltipProps} text={tooltipProps?.text ?? ['']}>
+    <Popover content={OptionsMap()} maxHeight={33} fullWidth={fullWidth} disabled={disabled}>
+      <TextTooltip {...tooltip} text={tooltip?.text ?? ['']}>
         <IconButton
           img={img}
           text={text}
@@ -168,11 +173,9 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 `;
 
 const OptionIcon = styled.img`
-  height: 2.4vw;
-  padding: 0.2vw;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  border-radius: 0.3vw;
+  height: 1.8vw;
+  margin: 0.3vw;
   user-drag: none;
 `;
 

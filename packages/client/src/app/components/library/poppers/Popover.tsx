@@ -13,6 +13,7 @@ export const Popover = ({
   forceClose,
   disabled,
   fullWidth,
+  maxHeight,
 }: {
   children: React.ReactNode;
   content: any;
@@ -23,6 +24,7 @@ export const Popover = ({
   forceClose?: boolean; // forceclose the popover
   disabled?: boolean; // disable the popover
   fullWidth?: boolean;
+  maxHeight?: number;
 }) => {
   const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -142,6 +144,7 @@ export const Popover = ({
         isVisible={isVisible}
         ref={popoverRef}
         popoverPosition={popoverPosition}
+        maxHeight={maxHeight}
         onClick={(e) => {
           if (disabled) return;
           handleClick(e);
@@ -170,11 +173,11 @@ const PopoverTrigger = styled.div<{ cursor: string }>`
 
 const PopoverContent = styled.div<{
   position?: string[];
-  dimensions?: any;
   isVisible?: boolean;
   popoverPosition: any;
+  maxHeight?: number;
 }>`
-  max-height: 22vh;
+  max-height: ${({ maxHeight }) => maxHeight ?? 22}vh;
   overflow-y: auto;
   overflow-x: hidden;
   visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};

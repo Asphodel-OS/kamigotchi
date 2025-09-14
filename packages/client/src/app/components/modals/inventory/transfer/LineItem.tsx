@@ -35,7 +35,7 @@ export const LineItem = ({
         scale={2.7}
         options={options}
         searchable
-        tooltipProps={{ text: [selected.description] }}
+        tooltip={{ text: [selected.description] }}
       />
 
       {!reverse && (
