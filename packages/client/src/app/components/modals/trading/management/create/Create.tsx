@@ -2,7 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Dispatch, useEffect, useState } from 'react';
 
 import { calcTradeTax } from 'app/cache/trade';
-import { IconButton, Overlay, Pairing, Text } from 'app/components/library';
+import { Pairing, Text } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';
@@ -13,7 +13,6 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { TRADE_ROOM_INDEX } from '../../constants';
 import { ConfirmationData } from '../../library';
-import { MultiCreate } from './MultiCreate';
 import { SingleCreate } from './SingleCreate';
 
 type Mode = 'Single' | 'Multi';
@@ -66,11 +65,16 @@ export const Create = ({
     setThousandsSeparator((4.56).toLocaleString().includes(',') ? '.' : ',');
   }, []);
 
+  /////////////////
+  // INTERACTION
+
+  // toggle between Single and Multi mode
   const toggleMode = () => {
     if (mode === 'Multi') setMode('Single');
     else setMode('Multi');
   };
 
+  // create a Trade
   const handleTrade = async (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => {
     try {
       const tradeActionID = createTrade(want, wantAmt, have, haveAmt);
@@ -81,6 +85,7 @@ export const Create = ({
     }
   };
 
+  // trigger the confirmation prompt to create a Trade
   const handleCreatePrompt = (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => {
     const confirmAction = () => handleTrade(want, wantAmt, have, haveAmt);
     setConfirmData({
@@ -95,6 +100,7 @@ export const Create = ({
   /////////////////
   // DISPLAY
 
+  // generate the DOM for the confirmation prompt
   const getCreateConfirmation = (
     want: Item[],
     wantAmt: number[],
@@ -186,19 +192,6 @@ export const Create = ({
 
   return (
     <Container>
-      <Overlay top={0} fullWidth>
-        <Title>Create Offer</Title>
-      </Overlay>
-      <MultiCreate
-        actions={{ ...actions, handleCreatePrompt }}
-        controls={{ ...controls }}
-        data={{
-          ...data,
-          items: data.items.filter((item) => !DisabledItems.includes(item.index)),
-          thousandsSeparator,
-        }}
-        isVisible={mode === 'Multi'}
-      />
       <SingleCreate
         actions={{ ...actions, handleCreatePrompt }}
         controls={{ ...controls }}
@@ -207,38 +200,17 @@ export const Create = ({
           items: data.items.filter((item) => !DisabledItems.includes(item.index)),
           thousandsSeparator,
         }}
-        isVisible={mode === 'Single'}
       />
-      <Overlay bottom={0.75} left={0.75}>
-        <IconButton text={`<${mode}>`} onClick={toggleMode} />
-      </Overlay>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  border-right: 0.15vw solid black;
 
-  width: 40%;
   height: 100%;
 
   user-select: none;
-`;
-
-const Title = styled.div`
-  position: sticky;
-  background-color: rgb(221, 221, 221);
-  opacity: 0.9;
-
-  width: 100%;
-  top: 0;
-  z-index: 1;
-  padding: 1.8vw;
-
-  color: black;
-  font-size: 1.2vw;
-  text-align: left;
 `;
 
 const Paragraph = styled.div`

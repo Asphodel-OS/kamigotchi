@@ -17,7 +17,6 @@ export const SingleCreate = ({
   actions,
   controls,
   data,
-  isVisible,
 }: {
   actions: {
     handleCreatePrompt: (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => void;
@@ -32,7 +31,6 @@ export const SingleCreate = ({
     items: Item[];
     thousandsSeparator: string;
   };
-  isVisible: boolean;
 }) => {
   const { handleCreatePrompt } = actions;
   const { isConfirming } = controls;
@@ -201,21 +199,34 @@ export const SingleCreate = ({
   // RENDER
 
   return (
-    <Container isVisible={isVisible}>
+    <Container>
       <Inline>
         <Text size={1.2}>I want to</Text>
         <IconButton text={`<${mode}>`} onClick={toggleMode} />
         <InlineGrow>
-          <LineItem options={getItemOptions()} selected={item} amt={amt} setAmt={(e) => updateItemAmt(e)} reverse />
+          <LineItem
+            options={getItemOptions()}
+            selected={item}
+            amt={amt}
+            setAmt={(e) => updateItemAmt(e)}
+            reverse
+          />
         </InlineGrow>
         <ForWrap>
           <Text size={1.2}>for</Text>
         </ForWrap>
         <InlineGrow>
-          <LineItem options={getCurrencyOptions()} selected={currency} amt={cost} setAmt={(e) => updateCost(e)} reverse iconOnly />
+          <LineItem
+            options={getCurrencyOptions()}
+            selected={currency}
+            amt={cost}
+            setAmt={(e) => updateCost(e)}
+            reverse
+            iconOnly
+          />
         </InlineGrow>
       </Inline>
-      <ButtonRow>
+      <Overlay bottom={0.75} right={0.75}>
         <TextTooltip
           title={`${mode} ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
           text={getCreateError()}
@@ -228,30 +239,20 @@ export const SingleCreate = ({
             disabled={isConfirming || cost === 0 || amt === 0}
           />
         </TextTooltip>
-      </ButtonRow>
+      </Overlay>
     </Container>
   );
 };
 
-const Container = styled.div<{ isVisible: boolean }>`
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
-
-  flex-flow: column nowrap;
-  padding: 6vw 0.6vw 0.6vw 0.6vw;
-`;
-
-const Row = styled.div`
-  width: 100%;
-  padding: 0.6vw;
+  height: 7.5vw;
 
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
 `;
 
 const Inline = styled.div`
@@ -259,19 +260,12 @@ const Inline = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  justify-content: center;
   gap: 0.6vw;
 `;
 
 const InlineGrow = styled.div`
-  flex: 1 1 auto;
   min-width: 0;
-`;
-
-const ButtonRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 0.6vw;
-  justify-content: flex-end;
 `;
 
 const ForWrap = styled.div`

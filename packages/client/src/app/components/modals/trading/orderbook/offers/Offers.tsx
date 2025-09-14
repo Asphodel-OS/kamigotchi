@@ -749,11 +749,6 @@ const ItemCell = styled.div`
   gap: 0.6vw;
 `;
 
-const TooltipWrap = styled.div`
-  position: relative;
-  display: inline-flex;
-`;
-
 const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
@@ -776,21 +771,11 @@ const TypeLink = styled.span`
   }
 `;
 
-const OrderTypeHeader = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2vw;
-`;
-
 const OrderTypeCell = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.2vw;
-`;
-
-const Slash = styled.span`
-  opacity: 0.6;
 `;
 
 const Badge = styled.span<{ $variant: 'offer' | 'seek' | 'neutral' }>`

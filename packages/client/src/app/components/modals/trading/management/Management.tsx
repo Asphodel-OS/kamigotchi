@@ -67,7 +67,7 @@ export const Management = ({
   );
 
   return (
-    <Content isVisible={isVisible}>
+    <Container isVisible={isVisible}>
       <Top>
         <Create actions={actions} controls={controls} data={data} types={types} utils={utils} />
       </Top>
@@ -98,13 +98,14 @@ export const Management = ({
           deleteEnabled
         />
       </Bottom>
-    </Content>
+    </Container>
   );
 };
 
-const Content = styled.div<{ isVisible: boolean }>`
+const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
+
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;
   user-select: none;
