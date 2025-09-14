@@ -6,12 +6,15 @@ import styled from 'styled-components';
 import { Account } from 'app/cache/account';
 import { pushBattles } from 'app/cache/battles';
 import { getChat, pushChat } from 'app/cache/chat';
+import { Item } from 'app/cache/item';
 import { Kami } from 'app/cache/kami';
+import { TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import {
   getKamidenClient,
   HarvestEnd,
+  KamiCast,
   Message as KamiMessage,
   Kill,
   Movement,
@@ -43,6 +46,7 @@ export const Feed = ({
     getKami: (entityIndex: EntityIndex) => Kami;
     getEntityIndex: (entity: EntityID) => EntityIndex;
     getRoomByIndex: (nodeIndex: number) => Room;
+    getItemByIndex: (itemIndex: number) => Item;
   };
   actions: {
     setMessages: (messages: KamiMessage[]) => void;
@@ -58,10 +62,10 @@ export const Feed = ({
     };
   };
 }) => {
-  const { getAccount, getEntityIndex, getKami, getRoomByIndex } = utils;
+  const { getAccount, getEntityIndex, getKami, getRoomByIndex, getItemByIndex } = utils;
   const chatModalVisible = useVisibility((s) => s.modals.chat);
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
-  const [feedData, setFeedData] = useState<String[]>([]);
+  const [feedData, setFeedData] = useState<React.ReactNode[]>([]);
   const [isPolling, setIsPolling] = useState(false);
   const [scrollDown, setScrollDown] = useState(false);
   const feedRef = useRef<HTMLDivElement>(null);
@@ -93,21 +97,27 @@ export const Feed = ({
     });
 
     const unsubscribeFeed = subscribeToFeed((feed) => {
-      let feedMessage: string[] = [];
+      let feedMessage: React.ReactNode[] = [];
 
       feed.Movements.forEach((movement: Movement) => {
         if (movement.RoomIndex !== player.roomIndex) return;
         if (movement.AccountId === player.id) return;
         let accountName = getAccount(getEntityIndex(formatEntityID(movement.AccountId))).name;
         feedMessage.push(
-          `${moment(movement.Timestamp).format('MM/DD HH:mm')} : ${accountName} **entered** the room.`
+          <>
+            {moment(movement.Timestamp).format('MM/DD HH:mm')} : {accountName}
+            {<Bold color='#eda910'> entered</Bold>} the room.
+          </>
         );
       });
       feed.HarvestEnds.forEach((harvest: HarvestEnd) => {
         if (harvest.RoomIndex !== player.roomIndex) return;
         let kamiName = getKami(getEntityIndex(formatEntityID(harvest.KamiId))).name;
         feedMessage.push(
-          `${moment(harvest.Timestamp).format('MM/DD HH:mm')} : ${kamiName} finished **harvesting**.`
+          <>
+            {moment(harvest.Timestamp).format('MM/DD HH:mm')} : {kamiName} finished
+            <Bold color='#b176f1'> harvesting.</Bold>
+          </>
         );
       });
       feed.Kills.forEach((kill: Kill) => {
@@ -121,7 +131,38 @@ export const Feed = ({
         let spoil = kill.Spoils;
         pushBattles(kill);
         feedMessage.push(
-          `${moment(kill.Timestamp * 1000).format('MM/DD HH:mm')} : ${killerName} **liquidated** ${victimName} in ${roomName} for ${spoil} `
+          <>
+            {moment(kill.Timestamp * 1000).format('MM/DD HH:mm')} : {killerName}
+            <Bold color='#ff6161'> liquidated</Bold> {victimName} in {roomName} for {spoil}
+            <TooltipWrapper>
+              <TextTooltip text={['Musu']}>
+                <Icon src={ItemImages.musu} />
+              </TextTooltip>
+            </TooltipWrapper>
+            .
+          </>
+        );
+      });
+      feed.KamiCasts.forEach((cast: KamiCast) => {
+        let casterName = getAccount(
+          getEntityIndex(formatEntityID(BigNumber.from(cast.AccountID)))
+        ).name;
+        let victimName = getKami(
+          getEntityIndex(formatEntityID(BigNumber.from(cast.TargetID)))
+        ).name;
+        let item = getItemByIndex(cast.itemIndex);
+        let roomName = getRoomByIndex(cast.nodeIndex).name;
+        feedMessage.push(
+          <>
+            {moment(cast.Timestamp * 1000).format('MM/DD HH:mm')} : {casterName}
+            <Bold color='#33a58fff'> used </Bold>
+            <TooltipWrapper>
+              <TextTooltip text={[item?.name]}>
+                <Icon style={{ marginRight: '0.3vw' }} src={item?.image} />
+              </TextTooltip>
+            </TooltipWrapper>
+            on {victimName} in {roomName}.
+          </>
         );
       });
       if (feedData.length >= 50) {
@@ -285,23 +326,9 @@ export const Feed = ({
         </Messages>
       ) : (
         <FeedTab>
-          {feedData?.map((message, index, arr) => {
-            let liquidated = message.includes('liquidated');
-            let entered = message.includes('entered');
-            return (
-              <FeedTabMessage
-                color={liquidated ? '#ff6161' : entered ? '#eda910' : '#b176f1'}
-                key={index}
-              >
-                &#x2022;
-                {message
-                  .split('**')
-                  .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part))}
-                {liquidated ? <Musu src={ItemImages.musu} /> : null}
-                {liquidated && `.`}
-              </FeedTabMessage>
-            );
-          })}
+          {feedData.map((message, index) => (
+            <FeedTabMessage key={index}>&#x2022; {message}</FeedTabMessage>
+          ))}
         </FeedTab>
       )}
     </Wrapper>
@@ -370,19 +397,28 @@ const FeedTab = styled.div`
   width: 100%;
 `;
 
-const FeedTabMessage = styled.div<{ color: string }>`
+const FeedTabMessage = styled.div`
+  display: block;
+  gap: 0.3vw;
   color: black;
   width: 100%;
   font-size: 0.6vw;
-  strong {
-    font-weight: bold;
-    ${({ color }) => `color: ${color} `};
-  }
 `;
 
-const Musu = styled.img`
+const Icon = styled.img`
   bottom: -0.1vw;
   position: relative;
   width: 0.8vw;
   height: 0.8vw;
+  margin-left: 0.3vw;
+`;
+
+const Bold = styled.span<{ color: string }>`
+  font-weight: bold;
+  color: ${({ color }) => color};
+`;
+
+const TooltipWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
 `;

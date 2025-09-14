@@ -1,24 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+
+import { mouseBttnClicked } from 'app/utils';
 
 export const Popover = ({
   children,
   content,
   cursor = 'pointer',
-  mouseButton = 0,
+  mouseButton = 'left',
   closeOnClick = true,
   onClose,
   forceClose,
   disabled,
+  fullWidth,
 }: {
   children: React.ReactNode;
   content: any;
   cursor?: string;
-  mouseButton?: 0 | 2;
+  mouseButton?: 'left' | 'right';
   closeOnClick?: boolean;
   onClose?: () => void; // execute a function when the popover closes
   forceClose?: boolean; // forceclose the popover
   disabled?: boolean; // disable the popover
+  fullWidth?: boolean;
 }) => {
   const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -122,12 +126,12 @@ export const Popover = ({
   };
 
   return (
-    <PopoverContainer onContextMenu={(e) => mouseButton === 2 && e.preventDefault()}>
+    <PopoverContainer $fullwidth={fullWidth}>
       <PopoverTrigger
         cursor={cursor}
         ref={triggerRef}
         onMouseDown={(e) => {
-          if (disabled || content.length === 0 || e.button !== mouseButton) return;
+          if (disabled || content.length === 0 || mouseBttnClicked(e) !== mouseButton) return;
           handlePosition();
           setIsVisible(!isVisible);
         }}
@@ -151,9 +155,10 @@ export const Popover = ({
   );
 };
 
-const PopoverContainer = styled.div`
+const PopoverContainer = styled.div<{ $fullwidth?: boolean }>`
   display: flex;
   position: relative;
+  ${({ $fullwidth }) => $fullwidth && 'width: 100%;'}
 `;
 
 const PopoverTrigger = styled.div<{ cursor: string }>`

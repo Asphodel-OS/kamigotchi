@@ -16,6 +16,7 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibCommit } from "libraries/LibCommit.sol";
+import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibRandom } from "libraries/utils/LibRandom.sol";
 
@@ -62,7 +63,7 @@ library LibDroptable {
 
       uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
       _distribute(components, keysComp, dtID, amts, holderID);
-      log(timeComp, logComp, holderID, dtID, amts);
+      logLatest(timeComp, logComp, holderID, dtID, amts); // latest result, to show on FE
     }
   }
 
@@ -92,20 +93,24 @@ library LibDroptable {
     uint256 holderID
   ) internal {
     uint32[] memory indices = keysComp.get(dtID);
-    for (uint256 i; i < indices.length; i++)
-      if (amts[i] > 0) LibInventory.incFor(components, holderID, indices[i], amts[i]);
+    for (uint256 i; i < indices.length; i++) {
+      if (amts[i] > 0) {
+        LibInventory.incFor(components, holderID, indices[i], amts[i]);
+        logTotal(components, holderID, indices[i], amts[i]); // log total items received
+      }
+    }
   }
 
   /// @notice logs the latest reveal result, overwriting previous values
   /// @dev only one exists per account+droptable. a crutch for FE to show latest result
-  function log(
+  function logLatest(
     TimeComponent timeComp,
     ValuesComponent valuesComp,
     uint256 holderID,
     uint256 dtID,
     uint256[] memory amts
   ) internal {
-    uint256 logID = genLogID(holderID, dtID);
+    uint256 logID = genLatestLogID(holderID, dtID);
     timeComp.set(logID, block.timestamp);
     valuesComp.set(logID, amts);
   }
@@ -143,9 +148,16 @@ library LibDroptable {
   }
 
   /////////////////
-  // UTILS
+  // LOGGING
 
-  function genLogID(uint256 holderID, uint256 dtID) internal pure returns (uint256) {
+  function logTotal(IUintComp components, uint256 holderID, uint32 index, uint256 amt) internal {
+    LibData.inc(components, holderID, index, "DROPTABLE_ITEM_TOTAL", amt);
+  }
+
+  /////////////////
+  // IDs
+
+  function genLatestLogID(uint256 holderID, uint256 dtID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("droptable.item.log", holderID, dtID)));
   }
 }

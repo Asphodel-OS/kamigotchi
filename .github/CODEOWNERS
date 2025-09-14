@@ -9,4 +9,6 @@
 
 # By Domain
 packages/client/ @jiracheron
+packages/client/src/components/modals/chat/ @Xenofluxx
+
 packages/contracts/ @chlwys

@@ -83,7 +83,7 @@ const Wrapper = styled.div<{
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   animation: ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)} 0.5s ease-in-out;
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
-  z-index: ${({ overlay }) => (overlay ? 2 : 0)};
+  z-index: ${({ overlay }) => (overlay ? 3 : 0)};
 
   margin: 0.2vw;
   align-items: center;

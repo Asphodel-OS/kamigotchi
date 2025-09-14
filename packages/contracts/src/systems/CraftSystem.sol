@@ -34,7 +34,7 @@ contract CraftSystem is System {
     LibRecipe.afterCraft(components, regID, amt, accID);
 
     // standard logging and tracking
-    LibRecipe.logCraft(components, accID, index, amt);
+    LibRecipe.logCraft(components, accID, index, amt, itemIndices, amts);
     LibAccount.updateLastTs(components, accID);
     return abi.encode(0);
   }

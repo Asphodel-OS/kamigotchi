@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 
-import { IconListButton, TextTooltip } from 'app/components/library';
+import { IconListButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
@@ -91,19 +91,18 @@ export const MoreMenuButton = () => {
   };
 
   return (
-    <TextTooltip text={['More']}>
-      <IconListButton
-        img={MoreIcon}
-        options={[
-          { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
-          { text: 'Help', image: HelpIcon, onClick: toggleHelp },
-          { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
-          { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
-        ]}
-        scale={4.5}
-        scaleOrientation='vh'
-        radius={0.9}
-      />
-    </TextTooltip>
+    <IconListButton
+      img={MoreIcon}
+      options={[
+        { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
+        { text: 'Help', image: HelpIcon, onClick: toggleHelp },
+        { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
+        { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
+      ]}
+      scale={4.5}
+      scaleOrientation='vh'
+      radius={0.9}
+      tooltipProps={{ text: ['More'] }}
+    />
   );
 };
