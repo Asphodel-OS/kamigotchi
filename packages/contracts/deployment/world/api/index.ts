@@ -369,6 +369,15 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
+  //////////////////
+  // KWOB
+
+  // cancel a set of trades, as an admin
+  function cancelTrades(ids: number[]) {
+    const callData = generateCallData('system.trade.cancel', [ids], 'executeAdmin');
+    compiledCalls.push(callData);
+  }
+
   ////////////////
   // SETUP
 
@@ -510,6 +519,9 @@ export function createAdminAPI(compiledCalls: string[]) {
       create: createRoom,
       createGate: createRoomGate,
       delete: deleteRoom,
+    },
+    trade: {
+      cancel: cancelTrades,
     },
     setup: {
       local: {

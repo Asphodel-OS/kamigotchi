@@ -5,11 +5,12 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
 
 uint256 constant ID = uint256(keccak256("system.trade.cancel"));
 
-contract TradeCancelSystem is System {
+contract TradeCancelSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -30,6 +31,16 @@ contract TradeCancelSystem is System {
     LibAccount.updateLastTs(components, accID);
 
     return "";
+  }
+
+  // admin function for canceling a Trade
+  function executeAdmin(uint256[] memory ids) public onlyAdmin(components) {
+    uint256 id;
+    for (uint256 i; i < ids.length; i++) {
+      id = ids[i];
+      LibTrade.cancel(components, id); // cancel the Trade
+      LibTrade.emitTradeCancel(world, id, 0); // emit Cancel event as admin
+    }
   }
 
   /// @param id Trade ID
