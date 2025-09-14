@@ -93,7 +93,6 @@ export const ChatModal: UIComponent = {
           blocked={blocked}
           utils={utils}
           player={account}
-          actions={{ setMessages }}
         />
       </ModalWrapper>
     );
