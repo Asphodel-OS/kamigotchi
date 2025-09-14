@@ -166,8 +166,9 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
+    background-color: #7d7;
     background-color: #ddd;
-    outline: 0.15vw solid black;
+    outline: 0.15vw solid #444;
     z-index: 1;
   }
   &:active {
