@@ -154,18 +154,21 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
   position: relative;
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
   border-radius: 0.45vw;
+
   width: 100%;
-  padding: 0.3vw;
+  padding: 0.45vw;
+  gap: 0.6vw;
 
   display: flex;
   align-items: center;
-  gap: 0.45vw;
 
   cursor: ${({ disabled }) => (disabled ? 'none' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
     background-color: #ddd;
+    outline: 0.15vw solid black;
+    z-index: 1;
   }
   &:active {
     background-color: #bbb;
@@ -175,7 +178,6 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 const OptionIcon = styled.img`
   border-radius: 0.3vw;
   height: 1.8vw;
-  margin: 0.3vw;
   user-drag: none;
 `;
 
@@ -183,7 +185,7 @@ const OptionText = styled.div`
   height: 100%;
 
   display: flex;
-  justify-content: left;
+  justify-content: flex-start;
   align-items: center;
 
   font-size: 0.9vw;

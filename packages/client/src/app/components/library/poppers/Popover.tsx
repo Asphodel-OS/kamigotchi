@@ -185,7 +185,7 @@ const PopoverContent = styled.div<{
 
   background-color: white;
   border: 0.15vw solid black;
-  border-radius: 0.45vw;
+  border-radius: 0.75vw;
   z-index: 10;
   white-space: nowrap;
   max-width: fit-content;
