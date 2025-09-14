@@ -5,28 +5,36 @@ import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
+import { Mode } from './types';
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = ({
-  data: { musu, obols, sendView, setSendView, setShuffle },
+  data,
+  state,
 }: {
   data: {
     musu: number;
     obols: number;
-    sendView: boolean;
-    setSendView: (view: boolean) => void;
+  };
+  state: {
+    mode: Mode;
+    setMode: (mode: Mode) => void;
     setShuffle: (suffle: boolean) => void;
   };
 }) => {
   const { modals, setModals } = useVisibility();
+  const { musu, obols } = data;
+  const { mode, setMode, setShuffle } = state;
 
-  //toggles  views and activates
-  // and reactivates the shuffle animation
+  // toggles views and activates the shuffle animation
   const triggerModalShuffle = () => {
-    setSendView(!sendView);
+    setMode(mode === 'STOCK' ? 'TRANSFER' : 'STOCK');
     setTimeout(() => setShuffle(true), 100);
     setTimeout(() => setShuffle(false), 500);
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container key='musu'>
@@ -53,11 +61,11 @@ export const MusuRow = ({
           />
         )}
         <TextTooltip
-          text={sendView === true ? ['Back to Inventory'] : ['Send Item']}
+          text={mode === 'TRANSFER' ? ['Back to Inventory'] : ['Send Item']}
           direction='row'
         >
           <IconButton
-            img={sendView === true ? ArrowIcons.left : ArrowIcons.right}
+            img={mode === 'TRANSFER' ? ArrowIcons.left : ArrowIcons.right}
             onClick={() => triggerModalShuffle()}
             radius={0.9}
           />

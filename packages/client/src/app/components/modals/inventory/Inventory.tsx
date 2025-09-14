@@ -1,5 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { useEffect, useState } from 'react';
 import { interval, map } from 'rxjs';
 
 import { getAccount, getAccountInventories, getAccountKamis } from 'app/cache/account';
@@ -21,12 +22,10 @@ import { parseConditionalText, passesConditions } from 'network/shapes/Condition
 import { getItemBalance, getMusuBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { didActionComplete } from 'network/utils';
-import { useEffect, useState } from 'react';
-import { ItemGrid } from './ItemGrid';
+import { ItemGrid } from './items/ItemGrid';
 import { MusuRow } from './MusuRow';
-import { Send } from './Send';
-
-const REFRESH_INTERVAL = 1000;
+import { Transfer } from './transfer/Transfer';
+import { Mode, REFRESH_INTERVAL } from './types';
 
 export const InventoryModal: UIComponent = {
   id: 'Inventory',
@@ -85,7 +84,7 @@ export const InventoryModal: UIComponent = {
 
     const [account, setAccount] = useState<Account>(NullAccount);
     const [lastRefresh, setLastRefresh] = useState(Date.now());
-    const [sendView, setSendView] = useState(false);
+    const [mode, setMode] = useState<Mode>('STOCK');
     const [shuffle, setShuffle] = useState(false);
     const [inventories, setInventories] = useState<Inventory[]>([]);
     const [kamis, setKamis] = useState<Kami[]>([]);
@@ -142,7 +141,8 @@ export const InventoryModal: UIComponent = {
       return actionID;
     };
 
-    const useForKami = (kami: Kami, item: Item) => {
+    // use an item on a Kami
+    const useForKamiTx = (kami: Kami, item: Item) => {
       actions.add({
         action: 'KamiFeed',
         params: [kami.id, item.index],
@@ -153,7 +153,8 @@ export const InventoryModal: UIComponent = {
       });
     };
 
-    const useForAccount = (item: Item, amount: number) => {
+    // use an item on an Account
+    const useForAccountTx = (item: Item, amount: number) => {
       let actionKey = 'Using';
       if (item.type === 'LOOTBOX') actionKey = 'Opening';
 
@@ -184,31 +185,42 @@ export const InventoryModal: UIComponent = {
     };
 
     /////////////////
+    // INTERPRETATION
+
+    // get modal title
+    const getTitle = (mode: Mode) => {
+      return mode === 'STOCK' ? 'Inventory' : 'Inventory Transfer';
+    };
+
+    /////////////////
     // DISPLAY
 
     return (
       <ModalWrapper
         id='inventory'
-        header={<ModalHeader title='Inventory' icon={InventoryIcon} />}
+        header={<ModalHeader title={getTitle(mode)} icon={InventoryIcon} />}
         footer={
           <MusuRow
             key='musu'
             data={{
               musu: getMusuBalance(),
               obols: getObolsBalance(),
-              sendView,
-              setSendView,
+            }}
+            state={{
+              mode,
+              setMode,
               setShuffle,
             }}
           />
         }
-        canExit
-        overlay
-        truncate
         shuffle={shuffle}
         onClose={() => {
-          setSendView(false);
+          setMode('STOCK');
         }}
+        canExit
+        noPadding
+        overlay
+        truncate
       >
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
@@ -216,32 +228,16 @@ export const InventoryModal: UIComponent = {
           <>
             <ItemGrid
               key='grid'
-              actions={{ sendItemsTx, useForAccount, useForKami }}
-              data={{
-                account,
-                accountEntity,
-                inventories,
-                kamis,
-                sendView,
-                setSendView,
-              }}
+              actions={{ useForAccount: useForAccountTx, useForKami: useForKamiTx }}
+              data={{ accountEntity, account, inventories, kamis }}
+              state={{ mode }}
               utils={utils}
             />
-            <Send
+            <Transfer
               actions={{ sendItemsTx }}
-              data={{
-                account,
-                accountEntity,
-                inventories,
-                sendView,
-                lastRefresh,
-                resetSend,
-                setResetSend,
-              }}
-              utils={{
-                ...utils,
-                setSendView,
-              }}
+              data={{ accountEntity, account, inventories }}
+              state={{ lastRefresh, mode, resetSend, setResetSend }}
+              utils={{ ...utils, setMode }}
             />
           </>
         )}

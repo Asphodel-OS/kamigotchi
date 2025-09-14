@@ -11,6 +11,7 @@ import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
+import { Mode } from '../types';
 import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
@@ -19,10 +20,10 @@ const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 export const ItemGrid = ({
   actions,
   data,
+  state,
   utils,
 }: {
   actions: {
-    sendItemsTx: (items: Item[], amts: number[], account: Account) => void;
     useForAccount: (item: Item, amount: number) => void;
     useForKami: (kami: Kami, item: Item) => void;
   };
@@ -31,8 +32,9 @@ export const ItemGrid = ({
     accountEntity: EntityIndex;
     inventories: Inventory[];
     kamis: Kami[];
-    sendView: boolean;
-    setSendView: (show: boolean) => void;
+  };
+  state: {
+    mode: Mode;
   };
   utils: {
     displayRequirements: (item: Item) => string;
@@ -47,37 +49,42 @@ export const ItemGrid = ({
     setSendView: (show: boolean) => void;
   };
 }) => {
-  const { sendView, account, inventories, kamis } = data;
+  const { useForAccount, useForKami } = actions;
+  const { account, inventories, kamis } = data;
+  const { mode } = state;
   const { meetsRequirements } = utils;
 
   const [visible, setVisible] = useState(false);
 
   // hide ItemGrid when sendView is true
   useEffect(() => {
-    const id = setTimeout(() => setVisible(!sendView), 200);
+    const id = setTimeout(() => setVisible(mode === 'STOCK'), 200);
     return () => clearTimeout(id);
-  }, [sendView]);
+  }, [mode]);
 
   /////////////////
   // INTERPRETATION
 
+  // get the usage options for a given item
   const getItemActions = (item: Item, bal: number): Option[] => {
     if (item.for && item.for === 'KAMI') return getKamiOptions(item);
     else if (item.for && item.for === 'ACCOUNT') return getAccountOptions(item, bal);
     else return [];
   };
 
+  // get the list of options for Kami to use Item on
   const getKamiOptions = (item: Item): Option[] => {
     const available = kamis.filter((kami) => meetsRequirements(kami, item));
     return available.map((kami) => ({
       text: kami.name,
-      onClick: () => actions.useForKami(kami, item),
+      onClick: () => useForKami(kami, item),
     }));
   };
 
+  // get the list of quantity options for an Account to use an Item in batch
   const getAccountOptions = (item: Item, bal: number): Option[] => {
     if (!meetsRequirements(account, item)) return [];
-    const useItem = (amt: number) => actions.useForAccount(item, amt);
+    const useItem = (amt: number) => useForAccount(item, amt);
 
     const options: ButtonListOption[] = [];
     const increments = [1, 3, 10, 33, 100, 333, 1000, 3333];
@@ -101,34 +108,32 @@ export const ItemGrid = ({
   // };
 
   /////////////////
-  // DISPLAY
-
-  const ItemIcon = (inv: Inventory) => {
-    const item = inv.item;
-    const options = getItemActions(item, inv.balance);
-
-    return (
-      <ItemWrapper key={item.index}>
-        <IconListButton
-          key={item.index}
-          img={item.image}
-          scale={4.8}
-          balance={inv.balance}
-          options={options}
-          disabled={options.length == 0}
-          tooltipProps={{
-            text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
-            maxWidth: 25,
-          }}
-        />
-      </ItemWrapper>
-    );
-  };
+  // RENDER
 
   return (
     <Container isVisible={visible} key='grid'>
       {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
-      {inventories.map((inv) => ItemIcon(inv))}
+      {inventories.map((inv) => {
+        const item = inv.item;
+        const options = getItemActions(item, inv.balance);
+
+        return (
+          <ItemWrapper key={item.index}>
+            <IconListButton
+              key={item.index}
+              img={item.image}
+              scale={4.8}
+              balance={inv.balance}
+              options={options}
+              disabled={options.length == 0}
+              tooltipProps={{
+                text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
+                maxWidth: 25,
+              }}
+            />
+          </ItemWrapper>
+        );
+      })}
     </Container>
   );
 };
@@ -138,6 +143,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
+  padding: 0.6vw;
 `;
 
 const ItemWrapper = styled.div`

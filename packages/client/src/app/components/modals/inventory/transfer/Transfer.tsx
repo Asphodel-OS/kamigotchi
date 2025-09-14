@@ -1,5 +1,6 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { BigNumber } from 'ethers';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Inventory } from 'app/cache/inventory';
@@ -18,14 +19,15 @@ import { STONE_INDEX } from 'constants/items';
 import { formatEntityID } from 'engine/utils';
 import { Account } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
-import { LineItem } from '../trading/management/create/LineItem';
+import { Mode } from '../types';
+import { LineItem } from './LineItem';
 
 const KamidenClient = getKamidenClient();
 
-export const Send = ({
+export const Transfer = ({
   actions,
   data,
+  state,
   utils,
 }: {
   actions: {
@@ -35,8 +37,10 @@ export const Send = ({
     account: Account;
     accountEntity: EntityIndex;
     inventories: Inventory[];
-    sendView: boolean;
+  };
+  state: {
     lastRefresh: number;
+    mode: Mode;
     resetSend: boolean;
     setResetSend: (reset: boolean) => void;
   };
@@ -50,9 +54,10 @@ export const Send = ({
   };
 }) => {
   const { sendItemsTx } = actions;
-  const { sendView, inventories, account, accountEntity, lastRefresh, resetSend, setResetSend } =
-    data;
+  const { inventories, account, accountEntity } = data;
+  const { lastRefresh, mode, resetSend, setResetSend } = state;
   const { getInventoryBalance, getEntityIndex, getAccount, getItem, queryAllAccounts } = utils;
+  const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
 
   const [amt, setAmt] = useState<number>(1);
   const [item, setItem] = useState<Item>(NullItem);
@@ -61,31 +66,20 @@ export const Send = ({
   const [sendHistory, setSendHistory] = useState<ItemTransfer[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
-  const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
-
-  const stone = () =>
-    inventories.find((inventory) => inventory.item.index === STONE_INDEX)?.item ?? NullItem;
+  const stone = () => {
+    const candidate = inventories.find((inv) => inv.item.index === STONE_INDEX);
+    return candidate?.item ?? NullItem;
+  };
 
   /////////////////
   // SUBSCRIPTIONS
+
+  // set the item to stone if inventories or items update
   useEffect(() => {
-    if (item === NullItem) {
-      setItem(stone());
-    }
+    if (item === NullItem) setItem(stone());
   }, [inventories, item]);
 
-  useEffect(() => {
-    if (!sendView) {
-      // Reset the values when the send view is closed
-      resetSelections();
-    }
-  }, [sendView]);
-
-  useEffect(() => {
-    const id = setTimeout(() => setVisible(sendView), 200);
-    return () => clearTimeout(id);
-  }, [sendView]);
-
+  // Reset the values when the send view is closed
   useEffect(() => {
     if (resetSend) {
       resetSelections();
@@ -93,11 +87,15 @@ export const Send = ({
     }
   }, [resetSend]);
 
-  // show list of account to send items
-  // and get send history
+  // delays the visibility toggle of the send modal to account for animation time
+  useEffect(() => {
+    const id = setTimeout(() => setVisible(mode === 'TRANSFER'), 200);
+    return () => clearTimeout(id);
+  }, [mode]);
+
+  // retrieve the list of Account options and get send history
   useEffect(() => {
     if (!inventoryModalOpen) return;
-    // check if we need to update the list of accounts
     const accountEntities = queryAllAccounts() as EntityIndex[];
     if (accountEntities.length > accounts.length) {
       const filtered = accountEntities.filter((entity) => entity != accountEntity);
@@ -105,14 +103,14 @@ export const Send = ({
       const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
       setAccounts(accountsSorted);
     }
-    getSendHistoryKamiden(account.id);
+    setSendEvents(account.id);
   }, [inventoryModalOpen, lastRefresh, accountEntity]);
 
   /////////////////
   // GETTERS
 
   // get the send history from Kamiden
-  async function getSendHistoryKamiden(accountId: string) {
+  async function setSendEvents(accountId: string) {
     const parsedAccountId = BigInt(accountId).toString();
     try {
       const request: ItemTransferRequest = {
@@ -127,16 +125,16 @@ export const Send = ({
     }
   }
 
+  // get the history of items sent
   const getSendHistory = useMemo(() => {
     const transfers: JSX.Element[] = [];
     sendHistory.forEach((send, index) => {
-      const sender = getAccount(
-        getEntityIndex(formatEntityID(BigNumber.from(send.SenderAccountID)))
-      );
-      const receiver = getAccount(
-        getEntityIndex(formatEntityID(BigNumber.from(send.RecvAccountID)))
-      );
+      const senderID = formatEntityID(BigNumber.from(send.SenderAccountID));
+      const receiverID = formatEntityID(BigNumber.from(send.RecvAccountID));
+      const sender = getAccount(getEntityIndex(senderID));
+      const receiver = getAccount(getEntityIndex(receiverID));
       const item = getItem(send.ItemIndex as EntityIndex);
+
       if (receiver.id === account.id) {
         transfers.push(
           <div key={`receiver-${index}`}>
@@ -189,12 +187,15 @@ export const Send = ({
 
   ///////////////////
   // HANDLERS
+
+  // reset the inputs
   const resetSelections = () => {
     setItem(stone());
     setAmt(1);
     setTargetAcc(null);
   };
 
+  // send the selected item to the target account
   const handleSend = ([item]: Item[], [amt]: number[], targetAcc: Account | null) => {
     if (!targetAcc || !amt || !item) return;
     sendItemsTx([item], [amt], targetAcc);
@@ -202,6 +203,7 @@ export const Send = ({
 
   /////////////////
   // DISPLAY
+
   const SendButton = (item: Item[]) => {
     const options = accounts.map((targetAcc) => ({
       text: `${targetAcc.name} (#${targetAcc.index})`,
@@ -221,34 +223,32 @@ export const Send = ({
 
   return (
     <Container isVisible={visible} key='send'>
-      <Column side={`top`}>
-        <Row>
-          <LineItem
-            options={getItemOptions()}
-            selected={item}
-            amt={amt}
-            setAmt={(e) => updateItemAmt(e)}
-            reverse
-          />
-          <IconButton
-            img={ArrowIcons.right}
-            scale={2}
-            onClick={() => targetAcc && handleSend([item], [amt], targetAcc)}
-            disabled={!targetAcc || !amt || !item}
-          />
-          {SendButton([item])}
-        </Row>
-      </Column>
-      <Column side={`bottom`}>
+      <Top>
+        <LineItem
+          options={getItemOptions()}
+          selected={item}
+          amt={amt}
+          setAmt={(e) => updateItemAmt(e)}
+          reverse
+        />
+        <IconButton
+          img={ArrowIcons.right}
+          scale={2}
+          onClick={() => targetAcc && handleSend([item], [amt], targetAcc)}
+          disabled={!targetAcc || !amt || !item}
+        />
+        {SendButton([item])}
+      </Top>
+      <Bottom>
         <Title>Your Transfer History</Title>
         {getSendHistory}
-      </Column>
+      </Bottom>
     </Container>
   );
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
-  ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
+  display: ${({ isVisible }) => (isVisible ? `flex` : `none`)};
   flex-direction: column;
   width: 100%;
   min-height: 30vh;
@@ -256,29 +256,28 @@ const Container = styled.div<{ isVisible: boolean }>`
   font-size: 0.75vw;
 `;
 
-const Row = styled.div`
+const Top = styled.div`
   width: 100%;
   padding: 0.6vw;
+  gap: 2vw;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  gap: 2vw;
 `;
 
-const Column = styled.div<{ side: 'top' | 'bottom' }>`
+const Bottom = styled.div`
+  border-top: 0.15vw solid black;
   width: 100%;
-  display: flex;
-  flex-direction: column;
   gap: 0.3vw;
-  ${({ side }) =>
-    side === 'bottom' &&
-    `    border-top: 0.15vw solid black;    
-        overflow-y: auto; 
-        align-items: flex-start;
-        justify-content: flex-start;
-      `}
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+
+  overflow-y: auto;
 `;
 
 const Title = styled.div`
