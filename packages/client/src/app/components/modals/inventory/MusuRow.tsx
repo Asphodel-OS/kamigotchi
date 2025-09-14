@@ -29,43 +29,44 @@ export const MusuRow = ({
 
   const [displayMusu, setDisplayMusu] = useState<number>(musu);
   const animationRef = useRef<number | null>(null);
-  const startRef = useRef<number | null>(null);
-  const prevPropRef = useRef<number>(musu);
+  const stepTimeRef = useRef<number | null>(null);
+  const prevMusuRef = useRef<number>(musu);
 
+  // animate the musu balance, eased to the target value
   useEffect(() => {
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    startRef.current = null;
-
-    const from = prevPropRef.current;
+    stepTimeRef.current = null;
+    const from = prevMusuRef.current;
     const to = musu;
-    const durationMs = 600;
+
+    // don't animate if the musu balance difference is low
+    if (Math.abs(to - from) < 10) {
+      prevMusuRef.current = musu;
+      setDisplayMusu(to);
+      return;
+    }
 
     // animation step
     const step = (t: number) => {
-      if (startRef.current == null) startRef.current = t;
-      const elapsed = t - startRef.current;
-      const progress = Math.min(1, elapsed / durationMs);
+      if (stepTimeRef.current == null) stepTimeRef.current = t;
+      const elapsed = t - stepTimeRef.current;
+      const progress = Math.min(1, elapsed / 750); // elapsed divided by tick duration
       const eased = 1 - Math.pow(1 - progress, 3);
       const value = Math.round(from + (to - from) * eased);
       setDisplayMusu(value);
       if (progress < 1) animationRef.current = requestAnimationFrame(step);
     };
 
-    if (Math.abs(to - from) < 1) {
-      setDisplayMusu(to);
-      return;
-    }
-
     animationRef.current = requestAnimationFrame(step);
+    prevMusuRef.current = musu;
 
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
   }, [musu]);
 
-  useEffect(() => {
-    prevPropRef.current = musu;
-  }, [musu]);
+  /////////////////
+  // INTERACTION
 
   // toggles views and activates the shuffle animation
   const triggerModalShuffle = () => {
