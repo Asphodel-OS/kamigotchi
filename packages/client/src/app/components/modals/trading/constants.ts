@@ -1,4 +1,3 @@
-// order type colors
 const BUY_COLOR = 'rgb(192, 224, 139)';
 const SELL_COLOR = 'rgb(222, 90, 120)';
 const BARTER_COLOR = 'rgb(180, 50, 180)';

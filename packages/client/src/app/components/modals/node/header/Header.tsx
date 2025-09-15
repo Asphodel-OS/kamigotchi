@@ -113,7 +113,7 @@ export const Header = ({
   const AddButton = (kamis: Kami[]) => {
     const options = kamis.filter((kami) => canAdd(kami));
     const actionOptions = options.map((kami) => {
-      return { text: `${kami.name}`, onClick: () => addKami(kami) };
+      return { text: `${kami.name}`, image: kami.image, onClick: () => addKami(kami) };
     });
 
     return (
@@ -124,7 +124,7 @@ export const Header = ({
         text='Add Kami to Node'
         disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
         fullWidth
-        tooltipProps={{ text: [getDisabledReason(kamis)], grow: true }}
+        tooltip={{ text: [getDisabledReason(kamis)], grow: true }}
       />
     );
   };

@@ -3,11 +3,13 @@ pragma solidity >=0.8.28;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { Coord } from "libraries/LibRoom.sol";
 import { MUSU_INDEX, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
+import { ROOM as BRIDGE_721_ROOM } from "systems/Kami721StakeSystem.sol";
 
 import "./TestSetupImports.t.sol";
 import { InitWorld } from "deployment/InitWorld.s.sol";
@@ -289,6 +291,11 @@ abstract contract SetupTemplate is TestSetupImports {
   // OWNER ACTIONS
 
   function _mintKamis(PlayerAccount memory acc, uint amt) internal returns (uint[] memory) {
+    if (amt > 5) {
+      // max gacha mint is 5, split up into multiple calls
+      return LibArray.concat(_mintKamis(acc, 5), _mintKamis(acc, amt - 5));
+    }
+
     vm.roll(++_currBlock);
     _giveGachaTicket(acc, amt);
     vm.prank(acc.owner);
@@ -310,6 +317,55 @@ abstract contract SetupTemplate is TestSetupImports {
   // (public) mint and reveal a single pet to a specified address
   function _mintKami(uint playerIndex) internal virtual returns (uint) {
     return _mintKami(_accounts[playerIndex]);
+  }
+
+  function _stakeKami(uint[] memory kamiIDs) internal {
+    for (uint i = 0; i < kamiIDs.length; i++) {
+      _stakeKami(kamiIDs[i]);
+    }
+  }
+
+  // abstracts kami ownership and room movements
+  function _stakeKami(uint kamiID) internal {
+    uint accID = LibKami.getAccount(components, kamiID);
+    uint32 room = LibAccount.getRoom(components, accID);
+    vm.prank(deployer);
+    _IndexRoomComponent.set(accID, BRIDGE_721_ROOM.toUint32());
+
+    // staking
+    address owner = LibAccount.getOwner(components, accID);
+    vm.startPrank(owner);
+    _Kami721StakeSystem.executeTyped(LibKami.getIndex(components, kamiID));
+    vm.stopPrank();
+
+    // resetting room
+    vm.prank(deployer);
+    _IndexRoomComponent.set(accID, room);
+  }
+
+  function _unstakeKami(uint[] memory kamiIDs) internal {
+    for (uint i = 0; i < kamiIDs.length; i++) {
+      _unstakeKami(kamiIDs[i]);
+    }
+  }
+
+  // abstracts kami ownership and room movements
+  function _unstakeKami(uint kamiID) internal {
+    // setup
+    uint accID = LibKami.getAccount(components, kamiID);
+    uint32 room = LibAccount.getRoom(components, accID);
+    vm.prank(deployer);
+    _IndexRoomComponent.set(accID, BRIDGE_721_ROOM.toUint32());
+
+    // unstaking
+    address owner = LibAccount.getOwner(components, accID);
+    vm.startPrank(owner);
+    _Kami721UnstakeSystem.executeTyped(LibKami.getIndex(components, kamiID));
+    vm.stopPrank();
+
+    // resetting room
+    vm.prank(deployer);
+    _IndexRoomComponent.set(kamiID, room);
   }
 
   /////////////////

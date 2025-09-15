@@ -105,7 +105,6 @@ export const ChatModal: UIComponent = {
             getItemByIndex,
           }}
           player={account}
-          actions={{ setMessages }}
         />
       </ModalWrapper>
     );

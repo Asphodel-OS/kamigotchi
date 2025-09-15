@@ -21,7 +21,7 @@ export const SudoMenuButton = () => {
       scale={4.5}
       scaleOrientation='vh'
       radius={0.9}
-      tooltipProps={{ text: ['External Apps'] }}
+      tooltip={{ text: ['External Apps'] }}
     />
   );
 };

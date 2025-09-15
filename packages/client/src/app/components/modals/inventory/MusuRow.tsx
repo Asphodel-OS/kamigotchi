@@ -1,22 +1,82 @@
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
+import { TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
+import { Mode } from './types';
 
 // get the row of consumable items to display in the player inventory
 export const MusuRow = ({
-  data: {
-    musu,
-    obols,
-  },
+  data,
+  state,
 }: {
   data: {
     musu: number;
     obols: number;
-  }
+  };
+  state: {
+    mode: Mode;
+    setMode: (mode: Mode) => void;
+    setShuffle: (suffle: boolean) => void;
+  };
 }) => {
   const { modals, setModals } = useVisibility();
+  const { musu, obols } = data;
+  const { mode, setMode, setShuffle } = state;
+
+  const [displayMusu, setDisplayMusu] = useState<number>(musu);
+  const animationRef = useRef<number | null>(null);
+  const stepTimeRef = useRef<number | null>(null);
+  const prevMusuRef = useRef<number>(musu);
+
+  // animate the musu balance, eased to the target value
+  useEffect(() => {
+    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    stepTimeRef.current = null;
+    const from = prevMusuRef.current;
+    const to = musu;
+
+    // don't animate if the musu balance difference is low
+    if (Math.abs(to - from) < 10) {
+      prevMusuRef.current = musu;
+      setDisplayMusu(to);
+      return;
+    }
+
+    // animation step
+    const step = (t: number) => {
+      if (stepTimeRef.current == null) stepTimeRef.current = t;
+      const elapsed = t - stepTimeRef.current;
+      const progress = Math.min(1, elapsed / 750); // elapsed divided by tick duration
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(from + (to - from) * eased);
+      setDisplayMusu(value);
+      if (progress < 1) animationRef.current = requestAnimationFrame(step);
+    };
+
+    animationRef.current = requestAnimationFrame(step);
+    prevMusuRef.current = musu;
+
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, [musu]);
+
+  /////////////////
+  // INTERACTION
+
+  // toggles views and activates the shuffle animation
+  const triggerModalShuffle = () => {
+    setMode(mode === 'STOCK' ? 'TRANSFER' : 'STOCK');
+    setTimeout(() => setShuffle(true), 100);
+    setTimeout(() => setShuffle(false), 500);
+  };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container key='musu'>
@@ -30,25 +90,31 @@ export const MusuRow = ({
           direction='row'
         >
           <IconButton
-            img={ItemImages.musu}
-            text='Trades'
+            img={TradeIcon}
             onClick={() => setModals({ ...modals, trading: !modals.trading })}
             radius={0.9}
           />
         </TextTooltip>
-        {obols > 1 && (
+        <IconButton
+          img={ItemImages.obol}
+          onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
+          radius={0.9}
+        />
+        <TextTooltip
+          text={mode === 'TRANSFER' ? ['Back to Inventory'] : ['Send Item']}
+          direction='row'
+        >
           <IconButton
-            img={ItemImages.obol}
-            text='Shop'
-            onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
+            img={mode === 'TRANSFER' ? ArrowIcons.left : ArrowIcons.right}
+            onClick={() => triggerModalShuffle()}
             radius={0.9}
           />
-        )}
+        </TextTooltip>
       </Icons>
       <TextTooltip text={['MUSU']} direction='row' fullWidth>
         <MusuSection>
           <Icon src={ItemImages.musu} onClick={() => null} />
-          <Balance>{musu.toLocaleString()}</Balance>
+          <Balance>{displayMusu.toLocaleString()}</Balance>
         </MusuSection>
       </TextTooltip>
     </Container>
@@ -82,6 +148,7 @@ const Icons = styled.div`
   flex-flow: row nowrap;
   gap: 0.3vw;
 `;
+
 const Icon = styled.img`
   width: 1.8vw;
   height: 1.8vw;
