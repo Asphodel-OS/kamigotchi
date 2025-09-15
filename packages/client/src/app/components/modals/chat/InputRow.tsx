@@ -1,8 +1,8 @@
+import { EntityID, EntityIndex, World } from '@mud-classic/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { ActionSystem } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
 import { playMessage } from 'utils/sounds';

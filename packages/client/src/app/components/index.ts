@@ -48,6 +48,14 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: ActionQueue,
     gridConfig: { colStart: 66, colEnd: 99, rowStart: 90, rowEnd: 100 },
   },
+  {
+    uiComponent: RightMenuFixture,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 3, rowEnd: 6 },
+  },
+  {
+    uiComponent: HelpModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
 
   // validators
   {
@@ -80,10 +88,7 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: LeftMenuFixture,
     gridConfig: { colStart: 2, colEnd: 33, rowStart: 3, rowEnd: 6 },
   },
-  {
-    uiComponent: RightMenuFixture,
-    gridConfig: { colStart: 67, colEnd: 100, rowStart: 3, rowEnd: 6 },
-  },
+
   {
     uiComponent: NotificationFixture,
     gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
@@ -107,10 +112,6 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: CraftingModal,
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
-  },
-  {
-    uiComponent: HelpModal,
-    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {
     uiComponent: InventoryModal,

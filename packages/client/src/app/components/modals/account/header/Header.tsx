@@ -15,6 +15,7 @@ import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
 import { FriendActions } from './FriendActions';
 import { Pfp } from './Pfp';
+import { TwitterPrivyAccountLink } from './TwitterPrivyAccountLink';
 
 export const Header = ({
   account,
@@ -91,7 +92,10 @@ export const Header = ({
       )}
       <Info>
         <TitleSection>
-          <Text size={1.2}>{account.name}</Text>
+          <TitleHeader>
+            <Text size={1.2}>{account.name}</Text>
+            {isSelf && <TwitterPrivyAccountLink />}
+          </TitleHeader>
           <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
             <Subtitle onClick={() => copyText(account.ownerAddress)}>
               {abbreviateAddress(account.ownerAddress)}
@@ -140,6 +144,14 @@ const TitleSection = styled.div`
   flex-flow: column nowrap;
   gap: 0.3vw;
   margin-bottom: 0.6vw;
+`;
+
+const TitleHeader = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 2vw;
+  gap: 0.3vw;
 `;
 
 const Subtitle = styled.div`

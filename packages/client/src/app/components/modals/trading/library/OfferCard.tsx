@@ -116,8 +116,8 @@ export const OfferCard = ({
         </TextTooltip>
       </Side>
 
-      <TextTooltip title='status' text={utils?.getStateTooltip() || []} alignText='left'>
-        <Controls>
+      <Controls>
+        <TextTooltip title='status' text={utils?.getStateTooltip() || []} alignText='left'>
           {trade.state === 'CANCELLED' && <CancelOverlay>Cancelled</CancelOverlay>}
           <TagContainer>
             <Overlay top={0.21} left={0.21}>
@@ -128,13 +128,13 @@ export const OfferCard = ({
             </Overlay>
             <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
           </TagContainer>
-          <TextTooltip text={button.tooltip} fullWidth>
-            <Button onClick={handleClick} disabled={button.disabled}>
-              {button.text}
-            </Button>
-          </TextTooltip>
-        </Controls>
-      </TextTooltip>
+        </TextTooltip>
+        <TextTooltip text={button.tooltip} fullWidth>
+          <Button onClick={handleClick} disabled={button.disabled}>
+            {button.text}
+          </Button>
+        </TextTooltip>
+      </Controls>
 
       <Side span={getSpan()} borderLeft>
         <TextTooltip
@@ -234,13 +234,14 @@ const Button = styled.button`
   }
   &:disabled {
     background-color: #bbb;
-    cursor: default;
+    cursor: help;
   }
 `;
 
 const TagContainer = styled.div`
   position: relative;
-  width: 100%;
+  width: 15vw;
+  height: 4vw;
   flex-grow: 1;
 
   display: flex;

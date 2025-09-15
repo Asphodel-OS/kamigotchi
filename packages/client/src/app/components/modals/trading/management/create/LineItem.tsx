@@ -42,7 +42,13 @@ export const LineItem = ({
         {iconOnly ? (
           <IconImage src={selected.image} />
         ) : (
-          <IconListButton img={selected.image} scale={2.7} options={options} searchable />
+          <IconListButton
+            img={selected.image}
+            scale={2.7}
+            options={options}
+            searchable
+            tooltip={{ text: [selected.description] }}
+          />
         )}
       </TextTooltip>
       {!reverse && (

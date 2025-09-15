@@ -598,6 +598,10 @@
       "writeAccess": ["*"]
     },
     {
+      "name": "KamiCastItemSystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "QuestAcceptSystem",
       "writeAccess": [
         "EntityType",

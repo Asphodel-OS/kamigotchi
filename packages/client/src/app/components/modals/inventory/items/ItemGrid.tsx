@@ -1,98 +1,91 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { cleanInventories, Inventory } from 'app/cache/inventory';
-import { EmptyText, IconListButton, TextTooltip } from 'app/components/library';
+import { Inventory } from 'app/cache/inventory';
+import { EmptyText, IconListButton } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
-import { useVisibility } from 'app/stores';
-import { Account, NullAccount } from 'network/shapes/Account';
+import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
+import { Mode } from '../types';
 import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
-const REFRESH_INTERVAL = 2000;
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = ({
-  accountEntity,
   actions,
+  data,
+  state,
   utils,
 }: {
-  accountEntity: EntityIndex;
   actions: {
     useForAccount: (item: Item, amount: number) => void;
     useForKami: (kami: Kami, item: Item) => void;
   };
+  data: {
+    account: Account;
+    accountEntity: EntityIndex;
+    inventories: Inventory[];
+    kamis: Kami[];
+  };
+  state: {
+    mode: Mode;
+  };
   utils: {
-    meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
-    getAccount: () => Account;
-    getInventories: () => Inventory[];
-    getKamis: () => Kami[];
     displayRequirements: (item: Item) => string;
+    getAccount: (entityIndex: EntityIndex) => Account;
+    getEntityIndex: (entity: EntityID) => EntityIndex;
+    getInventories: () => Inventory[];
+    getInventoryBalance: (inventories: Inventory[], index: number) => number;
+    getItem: (index: EntityIndex) => Item;
+    getKamis: () => Kami[];
+    meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
+    setSendView: (show: boolean) => void;
   };
 }) => {
-  const { getAccount, getInventories, getKamis, meetsRequirements } = utils;
-  const { modals } = useVisibility();
+  const { useForAccount, useForKami } = actions;
+  const { account, inventories, kamis } = data;
+  const { mode } = state;
+  const { meetsRequirements } = utils;
 
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-  const [account, setAccount] = useState<Account>(NullAccount);
-  const [inventories, setInventories] = useState<Inventory[]>([]);
-  const [kamis, setKamis] = useState<Kami[]>([]);
+  const [visible, setVisible] = useState(false);
 
-  // set timer
+  // hide ItemGrid when sendView is true
   useEffect(() => {
-    updateData();
-    const refreshClock = () => setLastRefresh(Date.now());
-    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-    return () => clearInterval(timerId);
-  }, []);
-
-  // refresh data whenever the modal is opened
-  useEffect(() => {
-    if (!modals.inventory) return;
-    updateData();
-  }, [modals.inventory, lastRefresh, accountEntity]);
-
-  // update the inventory, account and kami data
-  const updateData = () => {
-    const account = getAccount();
-    setAccount(account);
-
-    // get, clean, and set account inventories
-    const rawInventories = getInventories() ?? [];
-    const inventories = cleanInventories(rawInventories);
-    setInventories(inventories);
-
-    // get, and set account kamis
-    setKamis(getKamis());
-  };
+    const id = setTimeout(() => setVisible(mode === 'STOCK'), 200);
+    return () => clearTimeout(id);
+  }, [mode]);
 
   /////////////////
   // INTERPRETATION
 
+  // get the usage options for a given item
   const getItemActions = (item: Item, bal: number): Option[] => {
     if (item.for && item.for === 'KAMI') return getKamiOptions(item);
     else if (item.for && item.for === 'ACCOUNT') return getAccountOptions(item, bal);
     else return [];
   };
 
+  // get the list of options for Kami to use Item on
   const getKamiOptions = (item: Item): Option[] => {
     const available = kamis.filter((kami) => meetsRequirements(kami, item));
     return available.map((kami) => ({
       text: kami.name,
-      onClick: () => actions.useForKami(kami, item),
+      image: kami.image,
+      onClick: () => useForKami(kami, item),
     }));
   };
 
+  // get the list of quantity options for an Account to use an Item in batch
   const getAccountOptions = (item: Item, bal: number): Option[] => {
     if (!meetsRequirements(account, item)) return [];
-    const useItem = (amt: number) => actions.useForAccount(item, amt);
+    const useItem = (amt: number) => useForAccount(item, amt);
 
     const options: ButtonListOption[] = [];
     const increments = [1, 3, 10, 33, 100, 333, 1000, 3333];
@@ -116,41 +109,44 @@ export const ItemGrid = ({
   // };
 
   /////////////////
-  // DISPLAY
-
-  const ItemIcon = (inv: Inventory) => {
-    const item = inv.item;
-    const options = getItemActions(item, inv.balance);
-
-    return (
-      <TextTooltip
-        key={item.index}
-        text={item.index ? [<ItemGridTooltip key={item.index} item={item} utils={utils} />] : []}
-        maxWidth={25}
-      >
-        <IconListButton
-          key={item.index}
-          img={item.image}
-          scale={4.8}
-          balance={inv.balance}
-          options={options}
-          disabled={options.length == 0}
-        />
-      </TextTooltip>
-    );
-  };
+  // RENDER
 
   return (
-    <Container key='grid'>
+    <Container isVisible={visible} key='grid'>
       {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
-      {inventories.map((inv) => ItemIcon(inv))}
+      {inventories.map((inv) => {
+        const item = inv.item;
+        const options = getItemActions(item, inv.balance);
+
+        return (
+          <ItemWrapper key={item.index}>
+            <IconListButton
+              key={item.index}
+              img={item.image}
+              scale={4.8}
+              balance={inv.balance}
+              options={options}
+              disabled={options.length == 0}
+              tooltip={{
+                text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
+                maxWidth: 25,
+              }}
+            />
+          </ItemWrapper>
+        );
+      })}
     </Container>
   );
 };
 
-const Container = styled.div`
-  display: flex;
+const Container = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
+  padding: 0.6vw;
+`;
+
+const ItemWrapper = styled.div`
+  position: relative;
 `;

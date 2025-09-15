@@ -6,7 +6,7 @@ import { getInventoryBalance } from 'app/cache/inventory';
 import { calcTradeTax, getTradeType, Trade } from 'app/cache/trade';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
 import { EmptyText, Pairing, Text, TextTooltip } from 'app/components/library';
-import { ItemGridTooltip } from 'app/components/modals/inventory/ItemGridTooltip';
+import { ItemGridTooltip } from 'app/components/modals/inventory/items/ItemGridTooltip';
 import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item } from 'network/shapes';
