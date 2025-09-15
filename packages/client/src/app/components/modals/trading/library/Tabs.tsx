@@ -3,14 +3,7 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { TabType } from '../types';
 
-export const Tabs = ({
-  tab,
-  setTab,
-}: {
-  tab: TabType;
-  setTab: (tab: TabType) => void;
-}) => {
-
+export const Tabs = ({ tab, setTab }: { tab: TabType; setTab: (tab: TabType) => void }) => {
   const handleTabbing = (tab: TabType) => {
     setTab(tab);
     playClick();
@@ -49,10 +42,11 @@ const Container = styled.div`
 const Button = styled.button`
   border: none;
   border-bottom: solid black 0.15vw;
-  padding: 0.6vw;
+  padding: 0 0.6vw;
 
-  font-size: 1.2vw;
-  line-height: 1.8vw;
+  height: 2.4vw;
+  line-height: 2.4vw;
+  font-size: 1vw;
   flex-grow: 1;
 
   cursor: pointer;

@@ -48,7 +48,7 @@ export const HarvestButton = ({
       img={HarvestIcon}
       options={options}
       disabled={disabled}
-      tooltipProps={{ text: [tooltip] }}
+      tooltip={{ text: [tooltip] }}
     />
   );
 };

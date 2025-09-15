@@ -9,7 +9,8 @@ import { getAllItems, getItem, getItemByIndex } from 'app/cache/item';
 import { getTrade, getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility } from 'app/stores';
+import { useNetwork, useSelected, useVisibility } from 'app/stores';
+import { TradeIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
@@ -96,6 +97,52 @@ export const TradingModal: UIComponent = {
       refreshTrades();
       getTradeHistoryKamiden(account.id);
     }, [tradingModalVisible, tick]);
+
+    // open account modal on events from offers
+    useEffect(() => {
+      const handleOpenAccountModal = (_event: Event) => {
+        try {
+          const { setModals } = useVisibility.getState();
+          setModals({ account: true });
+        } catch (error) {
+          console.error('Failed to open account modal from event', error);
+        }
+      };
+
+      const handleSetAccountIndex = (event: Event) => {
+        try {
+          if (!event) return;
+          const detail = (event as CustomEvent).detail;
+
+          let index: number | null = null;
+          if (typeof detail === 'number') {
+            index = detail;
+          } else {
+            const parsed = Number(detail);
+            if (Number.isFinite(parsed)) index = parsed;
+          }
+
+          if (index === null || index < 0) return;
+
+          const state = useSelected.getState();
+          const setAccount = (state as any).setAccount;
+          if (typeof setAccount === 'function') {
+            setAccount(index);
+          } else {
+            console.error('useSelected.setAccount is not a function');
+          }
+        } catch (error) {
+          console.error('Error handling account:setIndex event', error);
+        }
+      };
+
+      window.addEventListener('modal:openAccount', handleOpenAccountModal);
+      window.addEventListener('account:setIndex', handleSetAccountIndex);
+      return () => {
+        window.removeEventListener('modal:openAccount', handleOpenAccountModal);
+        window.removeEventListener('account:setIndex', handleSetAccountIndex);
+      };
+    }, []);
 
     useEffect(() => {
       refreshItemRegistry();
@@ -232,7 +279,13 @@ export const TradingModal: UIComponent = {
     };
 
     return (
-      <ModalWrapper id='trading' header={<ModalHeader title='Trade' />} canExit noPadding overlay>
+      <ModalWrapper
+        id='trading'
+        header={<ModalHeader title='Trade' icon={TradeIcon} />}
+        canExit
+        noPadding
+        overlay
+      >
         <Overlay fullHeight fullWidth passthrough>
           <Confirmation
             title={confirmData.title}
@@ -244,7 +297,7 @@ export const TradingModal: UIComponent = {
           </Confirmation>
         </Overlay>
         <Tabs tab={tab} setTab={setTab} />
-        <Content>
+        <Content className='trading-modal-content'>
           <Orderbook
             actions={{ cancelTrade, executeTrade }}
             controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
@@ -283,7 +336,6 @@ export const TradingModal: UIComponent = {
 
 const Content = styled.div`
   position: relative;
-  gap: 0.6vw;
 
   flex-grow: 1;
   display: flex;
@@ -291,5 +343,6 @@ const Content = styled.div`
   justify-content: flex-start;
 
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
+  font-size: 0.9vw;
 `;

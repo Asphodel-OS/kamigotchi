@@ -1,4 +1,5 @@
-import { Dispatch, useState } from 'react';
+import { animate } from 'animejs';
+import { Dispatch, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
@@ -42,40 +43,115 @@ export const Orderbook = ({
   const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
   const [itemSearch, setItemSearch] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const to = collapsed ? '0%' : '40%';
+    if (!containerRef.current) return;
+    animate(containerRef.current, { ['--top' as any]: to, duration: 220, easing: 'easeOutSine' });
+  }, [collapsed]);
 
   return (
-    <Container isVisible={isVisible}>
-      <Controls
-        controls={{
-          typeFilter,
-          setTypeFilter,
-          sort,
-          setSort,
-          ascending,
-          setAscending,
-          itemFilter,
-          setItemFilter,
-          itemSearch,
-          setItemSearch,
-        }}
-        data={data}
-        utils={utils}
-      />
-      <Offers
-        actions={actions}
-        controls={{ ...controls, typeFilter, sort, ascending, itemFilter, itemSearch }}
-        data={data}
-        utils={utils}
-      />
+    <Container
+      ref={containerRef}
+      isVisible={isVisible}
+      style={{ ['--top' as any]: collapsed ? '0%' : '40%' }}
+    >
+      <TopPane collapsed={collapsed}>
+        <Controls
+          controls={{
+            typeFilter,
+            setTypeFilter,
+            sort,
+            setSort,
+            ascending,
+            setAscending,
+            itemFilter,
+            setItemFilter,
+            itemSearch,
+            setItemSearch,
+          }}
+          data={data}
+          utils={utils}
+        />
+      </TopPane>
+      <ToggleRow>
+        <CollapseToggle onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? '∨' : '∧'}
+        </CollapseToggle>
+      </ToggleRow>
+      <BottomPane>
+        <Offers
+          actions={actions}
+          controls={{
+            ...controls,
+            typeFilter,
+            sort,
+            setSort,
+            ascending,
+            setAscending,
+            itemFilter,
+            itemSearch,
+          }}
+          data={data}
+          utils={utils}
+        />
+      </BottomPane>
     </Container>
   );
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
   height: 100%;
-
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  flex-flow: row nowrap;
-
+  display: ${({ isVisible }) => (isVisible ? 'grid' : 'none')};
+  grid-template-rows: var(--top, 40%) min-content 1fr;
+  grid-template-columns: 1fr;
+  position: relative;
+  width: 100%;
   user-select: none;
+`;
+
+const TopPane = styled.div<{ collapsed: boolean }>`
+  position: relative;
+  grid-row: 1;
+  overflow: hidden auto;
+  height: 100%;
+  width: 100%;
+  pointer-events: ${({ collapsed }) => (collapsed ? 'none' : 'auto')};
+  background: transparent;
+  visibility: ${({ collapsed }) => (collapsed ? 'hidden' : 'visible')};
+`;
+
+const BottomPane = styled.div`
+  position: relative;
+  grid-row: 3;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden auto;
+  z-index: 0;
+`;
+
+const ToggleRow = styled.div`
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+`;
+
+const CollapseToggle = styled.button`
+  border: 0.12vw solid black;
+  border-left: 0;
+  border-right: 0;
+  width: 100%;
+  height: 1.2vw;
+  line-height: 1.2vw;
+  padding: 0;
+  font-size: 0.9vw;
+  background: rgb(221, 221, 221);
+  cursor: pointer;
 `;

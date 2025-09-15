@@ -17,7 +17,6 @@ export const SingleCreate = ({
   actions,
   controls,
   data,
-  isVisible,
 }: {
   actions: {
     handleCreatePrompt: (want: Item[], wantAmt: number[], have: Item[], haveAmt: number[]) => void;
@@ -32,7 +31,6 @@ export const SingleCreate = ({
     items: Item[];
     thousandsSeparator: string;
   };
-  isVisible: boolean;
 }) => {
   const { handleCreatePrompt } = actions;
   const { isConfirming } = controls;
@@ -63,17 +61,26 @@ export const SingleCreate = ({
 
   // toggle between buy and sell modes
   const toggleMode = () => {
-    if (mode === 'Buy') setMode('Sell');
-    else setMode('Buy');
+    setMode((m) => (m === 'Buy' ? 'Sell' : 'Buy'));
   };
 
   const triggerConfirmation = () => {
     const musu = items.find((item) => item.index === MUSU_INDEX)!;
-    const want = mode === 'Buy' ? [item] : [musu];
-    const wantAmt = mode === 'Buy' ? [amt] : [cost];
-    const have = mode === 'Buy' ? [musu] : [item];
-    const haveAmt = mode === 'Buy' ? [cost] : [amt];
-    handleCreatePrompt(want, wantAmt, have, haveAmt);
+    if (mode === 'Sell') {
+      // Selling item for MUSU
+      const want = [musu];
+      const wantAmt = [cost];
+      const have = [item];
+      const haveAmt = [amt];
+      handleCreatePrompt(want, wantAmt, have, haveAmt);
+    } else {
+      // Buying item with MUSU
+      const want = [item];
+      const wantAmt = [amt];
+      const have = [musu];
+      const haveAmt = [cost];
+      handleCreatePrompt(want, wantAmt, have, haveAmt);
+    }
   };
 
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change
@@ -173,13 +180,17 @@ export const SingleCreate = ({
    */
   const getCurrencyOptions = useMemo(
     () => (): IconListButtonOption[] => {
-      return currencies.map((item: Item) => {
-        return {
-          text: item.name,
-          image: item.image,
-          onClick: () => setCurrency(item),
-        };
-      });
+      // Only MUSU is allowed
+      const musu = currencies.find((it) => it.index === MUSU_INDEX);
+      return musu
+        ? [
+            {
+              text: musu.name,
+              image: musu.image,
+              onClick: () => setCurrency(musu),
+            },
+          ]
+        : [];
     },
     [currencies.length]
   );
@@ -188,35 +199,36 @@ export const SingleCreate = ({
   // RENDER
 
   return (
-    <Container isVisible={isVisible}>
-      <Row>
+    <Container>
+      <Inline>
         <Text size={1.2}>I want to</Text>
         <IconButton text={`<${mode}>`} onClick={toggleMode} />
-      </Row>
-      <Row>
-        <LineItem
-          options={getItemOptions()}
-          selected={item}
-          amt={amt}
-          setAmt={(e) => updateItemAmt(e)}
-          reverse
-        />
-      </Row>
-      <Row>
-        <Text size={1.2}>for</Text>
-      </Row>
-      <Row>
-        <LineItem
-          options={getCurrencyOptions()}
-          selected={currency}
-          amt={cost}
-          setAmt={(e) => updateCost(e)}
-          reverse
-        />
-      </Row>
+        <InlineGrow>
+          <LineItem
+            options={getItemOptions()}
+            selected={item}
+            amt={amt}
+            setAmt={(e) => updateItemAmt(e)}
+            reverse
+          />
+        </InlineGrow>
+        <ForWrap>
+          <Text size={1.2}>for</Text>
+        </ForWrap>
+        <InlineGrow>
+          <LineItem
+            options={getCurrencyOptions()}
+            selected={currency}
+            amt={cost}
+            setAmt={(e) => updateCost(e)}
+            reverse
+            iconOnly
+          />
+        </InlineGrow>
+      </Inline>
       <Overlay bottom={0.75} right={0.75}>
         <TextTooltip
-          title={`${mode} for ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
+          title={`${mode} ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
           text={getCreateError()}
           alignText='left'
           maxWidth={24}
@@ -232,23 +244,33 @@ export const SingleCreate = ({
   );
 };
 
-const Container = styled.div<{ isVisible: boolean }>`
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
+const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
-
-  flex-flow: column nowrap;
-  padding: 6vw 0.6vw 0.6vw 0.6vw;
-`;
-
-const Row = styled.div`
-  width: 100%;
-  padding: 0.6vw;
+  height: 7.5vw;
 
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Inline = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
   gap: 0.6vw;
+`;
+
+const InlineGrow = styled.div`
+  min-width: 0;
+`;
+
+const ForWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3vw;
 `;

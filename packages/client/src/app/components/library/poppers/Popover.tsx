@@ -13,6 +13,7 @@ export const Popover = ({
   forceClose,
   disabled,
   fullWidth,
+  maxHeight,
 }: {
   children: React.ReactNode;
   content: any;
@@ -23,6 +24,7 @@ export const Popover = ({
   forceClose?: boolean; // forceclose the popover
   disabled?: boolean; // disable the popover
   fullWidth?: boolean;
+  maxHeight?: number;
 }) => {
   const popoverRef = useRef<HTMLDivElement>(document.createElement('div'));
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -142,6 +144,7 @@ export const Popover = ({
         isVisible={isVisible}
         ref={popoverRef}
         popoverPosition={popoverPosition}
+        maxHeight={maxHeight}
         onClick={(e) => {
           if (disabled) return;
           handleClick(e);
@@ -170,11 +173,11 @@ const PopoverTrigger = styled.div<{ cursor: string }>`
 
 const PopoverContent = styled.div<{
   position?: string[];
-  dimensions?: any;
   isVisible?: boolean;
   popoverPosition: any;
+  maxHeight?: number;
 }>`
-  max-height: 22vh;
+  max-height: ${({ maxHeight }) => maxHeight ?? 22}vh;
   overflow-y: auto;
   overflow-x: hidden;
   visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};
@@ -182,13 +185,15 @@ const PopoverContent = styled.div<{
 
   background-color: white;
   border: 0.15vw solid black;
-  border-radius: 0.45vw;
+  border-radius: 0.75vw;
   z-index: 10;
   white-space: nowrap;
   max-width: fit-content;
   font-size: 0.6vw;
   top: ${({ popoverPosition }) => popoverPosition.y};
   left: ${({ popoverPosition }) => popoverPosition.x};
+  white-space: normal;
+  overflow-wrap: break-word;
   ::-webkit-scrollbar {
     background: transparent;
     width: 0.9vw;

@@ -1,5 +1,4 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import moment from 'moment';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -8,22 +7,25 @@ import { pushBattles } from 'app/cache/battles';
 import { getChat, pushChat } from 'app/cache/chat';
 import { Item } from 'app/cache/item';
 import { Kami } from 'app/cache/kami';
-import { TextTooltip } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { Text, TextTooltip } from 'app/components/library';
+import { useSelected, useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
 import {
+  KamiCast as CastEvent,
   getKamidenClient,
-  HarvestEnd,
-  KamiCast,
+  HarvestEnd as HarvestEndEvent,
   Message as KamiMessage,
-  Kill,
-  Movement,
+  Kill as KillEvent,
+  Movement as MovementEvent,
 } from 'clients/kamiden';
 import { subscribeToFeed, subscribeToMessages } from 'clients/kamiden/subscriptions';
+import { rooms } from 'constants/rooms';
 import { formatEntityID } from 'engine/utils';
 import { BigNumber } from 'ethers';
 import { Room } from 'network/shapes/Room';
 import { ActionSystem } from 'network/systems';
+import { playClick } from 'utils/sounds';
+import { getDateString } from 'utils/time';
 import { Message } from './Message';
 
 // TODO: retrieve this in the flow of the application with hooks
@@ -33,7 +35,6 @@ export const Feed = ({
   activeTab,
   setActiveTab,
   utils,
-  actions,
   player,
   blocked,
   actionSystem,
@@ -48,9 +49,6 @@ export const Feed = ({
     getRoomByIndex: (nodeIndex: number) => Room;
     getItemByIndex: (itemIndex: number) => Item;
   };
-  actions: {
-    setMessages: (messages: KamiMessage[]) => void;
-  };
   player: Account;
   blocked: EntityID[];
   actionSystem: ActionSystem;
@@ -63,7 +61,18 @@ export const Feed = ({
   };
 }) => {
   const { getAccount, getEntityIndex, getKami, getRoomByIndex, getItemByIndex } = utils;
+  const selectAccount = useSelected((s) => s.setAccount);
+  const selectedAccount = useSelected((s) => s.accountIndex);
+  const selectKami = useSelected((s) => s.setKami);
+  const selectedKami = useSelected((s) => s.kamiIndex);
+  const selectNode = useSelected((s) => s.setNode);
+  const selectedNode = useSelected((s) => s.nodeIndex);
+  const setModals = useVisibility((s) => s.setModals);
+  const accountModalVisible = useVisibility((s) => s.modals.account);
   const chatModalVisible = useVisibility((s) => s.modals.chat);
+  const kamiModalVisible = useVisibility((s) => s.modals.kami);
+  const nodeModalVisible = useVisibility((s) => s.modals.node);
+
   const [kamidenMessages, setKamidenMessages] = useState<KamiMessage[]>([]);
   const [feedData, setFeedData] = useState<React.ReactNode[]>([]);
   const [isPolling, setIsPolling] = useState(false);
@@ -99,72 +108,104 @@ export const Feed = ({
     const unsubscribeFeed = subscribeToFeed((feed) => {
       let feedMessage: React.ReactNode[] = [];
 
-      feed.Movements.forEach((movement: Movement) => {
+      // process Movement events
+      feed.Movements.forEach((movement: MovementEvent) => {
         if (movement.RoomIndex !== player.roomIndex) return;
-        if (movement.AccountId === player.id) return;
-        let accountName = getAccount(getEntityIndex(formatEntityID(movement.AccountId))).name;
+        const room = getRoomByIndex(movement.RoomIndex);
+        const account = getAccount(getEntityIndex(formatEntityID(movement.AccountId)));
+        const accountName = movement.AccountId === player.id ? 'You' : account.name;
+
         feedMessage.push(
-          <>
-            {moment(movement.Timestamp).format('MM/DD HH:mm')} : {accountName}
-            {<Bold color='#eda910'> entered</Bold>} the room.
-          </>
+          <Row>
+            <Bold color='#333'>{getDateString(movement.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {accountName}
+            </Text>
+            <Bold color='#eda910'> entered</Bold>
+            <TextTooltip text={[room.name]}>
+              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
+            </TextTooltip>
+          </Row>
         );
       });
-      feed.HarvestEnds.forEach((harvest: HarvestEnd) => {
+
+      // process Harvest Stop events
+      feed.HarvestEnds.forEach((harvest: HarvestEndEvent) => {
         if (harvest.RoomIndex !== player.roomIndex) return;
-        let kamiName = getKami(getEntityIndex(formatEntityID(harvest.KamiId))).name;
+        const kami = getKami(getEntityIndex(formatEntityID(harvest.KamiId)));
+        const room = getRoomByIndex(harvest.RoomIndex);
+
         feedMessage.push(
-          <>
-            {moment(harvest.Timestamp).format('MM/DD HH:mm')} : {kamiName} finished
-            <Bold color='#b176f1'> harvesting.</Bold>
-          </>
+          <Row>
+            <Bold color='#333'>{getDateString(harvest.Timestamp, 3)}:</Bold>
+            <TextTooltip text={[kami.name]}>
+              <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+            </TextTooltip>
+            <Bold color='#b176f1'>stopped</Bold>
+            harvesting in
+            <TextTooltip text={[room.name]}>
+              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
+            </TextTooltip>
+          </Row>
         );
       });
-      feed.Kills.forEach((kill: Kill) => {
-        let killerName = getKami(
-          getEntityIndex(formatEntityID(BigNumber.from(kill.KillerId)))
-        ).name;
-        let victimName = getKami(
-          getEntityIndex(formatEntityID(BigNumber.from(kill.VictimId)))
-        ).name;
-        let roomName = getRoomByIndex(kill.RoomIndex).name;
-        let spoil = kill.Spoils;
+
+      // process Harvest Liquidate events
+      feed.Kills.forEach((kill: KillEvent) => {
         pushBattles(kill);
+        const killer = getKami(getEntityIndex(formatEntityID(BigNumber.from(kill.KillerId))));
+        const victim = getKami(getEntityIndex(formatEntityID(BigNumber.from(kill.VictimId))));
+        const room = getRoomByIndex(kill.RoomIndex);
+
         feedMessage.push(
-          <>
-            {moment(kill.Timestamp * 1000).format('MM/DD HH:mm')} : {killerName}
-            <Bold color='#ff6161'> liquidated</Bold> {victimName} in {roomName} for {spoil}
-            <TooltipWrapper>
-              <TextTooltip text={['Musu']}>
-                <Icon src={ItemImages.musu} />
-              </TextTooltip>
-            </TooltipWrapper>
-            .
-          </>
+          <Row>
+            <Bold color='#333'>{getDateString(kill.Timestamp, 0)}:</Bold>
+            <TextTooltip text={[killer.name]}>
+              <KamiIcon src={killer.image} onClick={() => openKamiModal(killer)} />
+            </TextTooltip>
+            <Bold color='#ff6161'>liquidated</Bold>
+            <TextTooltip text={[victim.name]}>
+              <KamiIcon src={victim.image} onClick={() => openKamiModal(victim)} />
+            </TextTooltip>
+            for {kill.Spoils}
+            <TextTooltip text={['Musu']}>
+              <Icon src={ItemImages.musu} />
+            </TextTooltip>
+            in
+            <TextTooltip text={[room.name]}>
+              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
+            </TextTooltip>
+          </Row>
         );
       });
-      feed.KamiCasts.forEach((cast: KamiCast) => {
-        let casterName = getAccount(
-          getEntityIndex(formatEntityID(BigNumber.from(cast.AccountID)))
-        ).name;
-        let victimName = getKami(
-          getEntityIndex(formatEntityID(BigNumber.from(cast.TargetID)))
-        ).name;
-        let item = getItemByIndex(cast.itemIndex);
-        let roomName = getRoomByIndex(cast.nodeIndex).name;
+
+      // process Item Cast events
+      feed.KamiCasts.forEach((cast: CastEvent) => {
+        const caster = getAccount(getEntityIndex(formatEntityID(BigNumber.from(cast.AccountID))));
+        const victim = getKami(getEntityIndex(formatEntityID(BigNumber.from(cast.TargetID))));
+        const item = getItemByIndex(cast.itemIndex);
+        const room = getRoomByIndex(cast.nodeIndex);
+
         feedMessage.push(
-          <>
-            {moment(cast.Timestamp * 1000).format('MM/DD HH:mm')} : {casterName}
+          <Row>
+            <Bold color='#333'>{getDateString(cast.Timestamp, 0)}:</Bold>
+            {caster.name}
             <Bold color='#33a58fff'> used </Bold>
-            <TooltipWrapper>
-              <TextTooltip text={[item?.name]}>
-                <Icon style={{ marginRight: '0.3vw' }} src={item?.image} />
-              </TextTooltip>
-            </TooltipWrapper>
-            on {victimName} in {roomName}.
-          </>
+            <TextTooltip text={[item?.name]}>
+              <Icon src={item?.image} />
+            </TextTooltip>
+            on
+            <TextTooltip text={[victim.name]}>
+              <KamiIcon src={victim.image} onClick={() => openKamiModal(victim)} />
+            </TextTooltip>
+            in
+            <TextTooltip text={[room.name]}>
+              <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
+            </TextTooltip>
+          </Row>
         );
       });
+
       if (feedData.length >= 50) {
         setFeedData((prev) => [...prev.slice(prev.length - 50, prev.length), ...feedMessage]);
       } else {
@@ -186,36 +227,6 @@ export const Feed = ({
       setIsPolling(false);
     });
   }, [player.roomIndex]);
-
-  /////////////////
-  // HELPERS
-  // poll for recent messages. do not update the Feed state/cursor
-  async function pollMessages() {
-    const messages = await getChat(player.roomIndex, false);
-    if (messages.length === kamidenMessages.length) {
-      setNoMoreMessages(true);
-      return;
-    } else {
-      setNoMoreMessages(false);
-    }
-    setKamidenMessages(messages);
-  }
-
-  async function pollMoreMessages() {
-    if (!KamidenClient || noMoreMessages) return;
-
-    setIsPolling(true);
-    try {
-      const messages = await getChat(player.roomIndex, true);
-      if (messages.length === kamidenMessages.length) {
-        setNoMoreMessages(true);
-      } else {
-        setKamidenMessages(messages);
-      }
-    } finally {
-      setIsPolling(false);
-    }
-  }
 
   // scrolling effects
   // when scrolling, autopoll when nearing the top and set the scroll position
@@ -258,14 +269,100 @@ export const Feed = ({
   useEffect(() => {
     if (!feedRef.current) return;
     const node = feedRef.current;
-    const { clientHeight, scrollHeight } = node;
+    const { scrollHeight } = node;
 
     node.scrollTop = scrollHeight;
     setScrollDown(false);
   }, [scrollDown, player.roomIndex, activeTab, chatModalVisible]);
 
   /////////////////
+  // INTERPRETATION
+
+  // get the image of a room object
+  const getRoomImage = (room: Room) => {
+    const roomObject = rooms[room.index] ?? rooms[0];
+    return roomObject.backgrounds[0];
+  };
+
+  /////////////////
+  // INTERACTION
+
+  // open the Account Modal with the selected account shown
+  const openAccountModal = (account: Account) => {
+    const isAccountSelected = selectedAccount === account.index;
+
+    if (accountModalVisible) {
+      if (isAccountSelected) setModals({ account: false });
+      else selectAccount(account.index);
+    } else {
+      if (!isAccountSelected) selectAccount(account.index);
+      setModals({ account: true, map: false, party: false });
+    }
+
+    playClick();
+  };
+
+  // open the Kami Modal with the selected kami shown
+  const openKamiModal = (kami: Kami) => {
+    const isKamiSelected = selectedKami === kami.index;
+
+    if (kamiModalVisible) {
+      if (isKamiSelected) setModals({ kami: false });
+      else selectKami(kami.index);
+    } else {
+      if (!isKamiSelected) selectKami(kami.index);
+      setModals({ kami: true });
+    }
+
+    playClick();
+  };
+
+  // open the Node Modal to the selected Node
+  const openNodeModal = (room: Room) => {
+    const isRoomSelected = selectedNode === room.index;
+
+    if (nodeModalVisible) {
+      if (isRoomSelected) setModals({ node: false });
+      else selectNode(room.index);
+    } else {
+      if (!isRoomSelected) selectNode(room.index);
+      setModals({ node: true });
+    }
+
+    playClick();
+  };
+
+  // poll for recent messages. do not update the Feed state/cursor
+  const pollMessages = async () => {
+    const messages = await getChat(player.roomIndex, false);
+    if (messages.length === kamidenMessages.length) {
+      setNoMoreMessages(true);
+      return;
+    } else {
+      setNoMoreMessages(false);
+    }
+    setKamidenMessages(messages);
+  };
+
+  const pollMoreMessages = async () => {
+    if (!KamidenClient || noMoreMessages) return;
+
+    setIsPolling(true);
+    try {
+      const messages = await getChat(player.roomIndex, true);
+      if (messages.length === kamidenMessages.length) {
+        setNoMoreMessages(true);
+      } else {
+        setKamidenMessages(messages);
+      }
+    } finally {
+      setIsPolling(false);
+    }
+  };
+
+  /////////////////
   // RENDER
+
   return (
     <Wrapper ref={feedRef} id='feed'>
       <Buttons>
@@ -327,7 +424,7 @@ export const Feed = ({
       ) : (
         <FeedTab>
           {feedData.map((message, index) => (
-            <FeedTabMessage key={index}>&#x2022; {message}</FeedTabMessage>
+            <FeedTabMessage key={index}>{message}</FeedTabMessage>
           ))}
         </FeedTab>
       )}
@@ -391,7 +488,7 @@ const PollingMessage = styled.div`
 `;
 
 const FeedTab = styled.div`
-  line-height: 1.3vw;
+  line-height: 1.8vw;
   text-align: justify;
   word-break: break-all;
   width: 100%;
@@ -405,12 +502,11 @@ const FeedTabMessage = styled.div`
   font-size: 0.6vw;
 `;
 
-const Icon = styled.img`
-  bottom: -0.1vw;
-  position: relative;
-  width: 0.8vw;
-  height: 0.8vw;
-  margin-left: 0.3vw;
+const Row = styled.span`
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 0.3vw;
 `;
 
 const Bold = styled.span<{ color: string }>`
@@ -418,7 +514,32 @@ const Bold = styled.span<{ color: string }>`
   color: ${({ color }) => color};
 `;
 
-const TooltipWrapper = styled.span`
-  display: inline-flex;
-  align-items: center;
+const Icon = styled.img`
+  position: relative;
+  width: 0.9vw;
+  height: 0.9vw;
+`;
+
+const KamiIcon = styled.img`
+  position: relative;
+  border-radius: 0.3vw;
+  width: 1.5vw;
+  height: 1.5vw;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+`;
+
+const RoomIcon = styled.img`
+  position: relative;
+  border-radius: 0.3vw;
+  width: 1.5vw;
+  height: 1.5vw;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
 `;

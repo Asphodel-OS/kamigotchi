@@ -102,7 +102,7 @@ export const KamisExternal = ({
         img={ArrowIcons.right}
         options={options}
         searchable
-        tooltipProps={{ text: getSendTooltip(kami) }}
+        tooltip={{ text: getSendTooltip(kami) }}
       />
     );
   };

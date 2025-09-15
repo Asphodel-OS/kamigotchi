@@ -102,7 +102,7 @@ export const MoreMenuButton = () => {
       scale={4.5}
       scaleOrientation='vh'
       radius={0.9}
-      tooltipProps={{ text: ['More'] }}
+      tooltip={{ text: ['More'] }}
     />
   );
 };
