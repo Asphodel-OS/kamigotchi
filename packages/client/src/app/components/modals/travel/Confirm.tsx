@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActionButton, TextTooltip } from 'app/components/library';
 import { calcCurrentStamina } from 'app/cache/account/calcs';
 import { findPathAndCost } from 'network/shapes/Room';
+import { passesConditions } from 'network/shapes/Conditional/functions';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
 import { getRoomByIndex } from 'network/shapes/Room/functions';
@@ -25,8 +26,18 @@ export const TravelConfirm = ({
   const { world, components, actions, api } = network;
 
   const { path, moves, staminaCost } = useMemo(() => {
-    return findPathAndCost(world, components, account.roomIndex, targetRoomIndex);
-  }, [world, components, account.roomIndex, targetRoomIndex]);
+    return findPathAndCost(
+      world,
+      components,
+      account.roomIndex,
+      targetRoomIndex,
+      (w, c, roomIndex) => {
+        const room = getRoomByIndex(w, c, roomIndex);
+        if (!room) return false;
+        return passesConditions(w, c, room.gates, account);
+      }
+    );
+  }, [world, components, account, account.roomIndex, targetRoomIndex]);
 
   const queueMoves = useCallback(() => {
     if (path.length <= 1) return onClose();
@@ -53,8 +64,6 @@ export const TravelConfirm = ({
   useEffect(() => {
     if (path.length === 0) onClose();
   }, [path.length, onClose]);
-
-  if (path.length === 0) return null; // still avoid rendering; effect will close
 
   const toRoom = useMemo(() => getRoomByIndex(world, components, targetRoomIndex), [world, components, targetRoomIndex]);
   const previewSrc = useMemo(() => {
@@ -84,6 +93,10 @@ export const TravelConfirm = ({
 
   const currentStamina = useMemo(() => calcCurrentStamina(account), [account.stamina.sync, account.time.action, account.config]);
   const staminaRemaining = useMemo(() => Math.max(0, currentStamina - staminaCost), [currentStamina, staminaCost]);
+
+  // Early-return guard AFTER hooks have been declared to satisfy React's rules.
+  // If there is no valid path, effect above will also trigger onClose.
+  if (path.length === 0) return null;
 
   return (
     <Container>
