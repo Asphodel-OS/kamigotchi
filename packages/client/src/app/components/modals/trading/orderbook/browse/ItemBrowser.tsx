@@ -38,6 +38,7 @@ export const ItemBrowser = ({
       } catch {}
     }
   };
+
   // Build category list dynamically from item types
   const categories: { key: CategoryKey; label: string }[] = useMemo(() => {
     const reserved = [

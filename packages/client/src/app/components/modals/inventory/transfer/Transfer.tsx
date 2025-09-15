@@ -106,7 +106,7 @@ export const Transfer = ({
       const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
       setAccounts(accountsSorted);
     }
-    setTransferEvents(account.id);
+    // setTransferEvents(account.id);
   }, [inventoryModalOpen, lastRefresh, accountEntity]);
 
   /////////////////
@@ -177,6 +177,7 @@ export const Transfer = ({
       }
     });
     if (transfers.length === 0) {
+      return <EmptyText text={['Coming Soon!']} />;
       return <EmptyText text={['No transfers to show.']} />;
     } else {
       return transfers.reverse();

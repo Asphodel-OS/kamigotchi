@@ -561,7 +561,7 @@ export const Offers = ({
                 : !canFillOrder(account, trade);
               const typeName = item.type;
               return (
-                <Row key={i}>
+                <Row key={trade.id}>
                   {isManageMode ? (
                     <td>
                       <OrderTypeCell title={makerType}>
