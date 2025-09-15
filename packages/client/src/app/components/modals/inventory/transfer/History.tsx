@@ -1,12 +1,13 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { BigNumber } from 'ethers';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
 import { EmptyText, Text, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ItemTransfer } from 'clients/kamiden/proto';
 import { formatEntityID } from 'engine/utils';
-import { BigNumber } from 'ethers';
 import { Account, Item } from 'network/shapes';
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import { Mode } from '../types';
 
 export const History = ({
@@ -40,6 +41,9 @@ export const History = ({
     const filtered = filterEvents(events);
     setDisplayed(filtered);
   }, [events, isInventoryOpen, mode, account.id]);
+
+  /////////////////
+  // INTERPRETATION
 
   // filter the list of events to just those relevant to the account
   const filterEvents = (events: ItemTransfer[]) => {
