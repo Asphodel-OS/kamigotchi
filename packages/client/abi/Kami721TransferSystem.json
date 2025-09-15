@@ -18,25 +18,7 @@
     },
     {
       "type": "function",
-      "name": "batchTransferToMultiple",
-      "inputs": [
-        {
-          "name": "tokenIndices",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        },
-        {
-          "name": "to",
-          "type": "address[]",
-          "internalType": "address[]"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "batchTransferToSingle",
+      "name": "batchTransfer",
       "inputs": [
         {
           "name": "tokenIndices",
@@ -47,6 +29,24 @@
           "name": "to",
           "type": "address",
           "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "batchTransferToMany",
+      "inputs": [
+        {
+          "name": "tokenIndices",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "to",
+          "type": "address[]",
+          "internalType": "address[]"
         }
       ],
       "outputs": [],
@@ -230,8 +230,8 @@
     }
   ],
   "methodIdentifiers": {
-    "batchTransferToMultiple(uint256[],address[])": "0d8a3733",
-    "batchTransferToSingle(uint256[],address)": "6578a539",
+    "batchTransfer(uint256[],address)": "ce40ad86",
+    "batchTransferToMany(uint256[],address[])": "ebcee357",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",

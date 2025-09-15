@@ -41,11 +41,11 @@ export const bridgeAPI = (systems: any) => {
   };
 
   const batchTransferKami = (indices: number[], to: string) => {
-    return systems['system.kami721.transfer'].batchTransferToSingle(indices, to);
+    return systems['system.kami721.transfer'].batchTransfer(indices, to);
   };
 
   const batchTransferKamiToMultiple = (indices: number[], tos: string[]) => {
-    return systems['system.kami721.transfer'].batchTransferToMultiple(indices, tos);
+    return systems['system.kami721.transfer'].batchTransferToMany(indices, tos);
   };
 
   return {

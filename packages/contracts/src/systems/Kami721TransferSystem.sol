@@ -16,14 +16,14 @@ uint256 constant ID = uint256(keccak256("system.kami721.transfer"));
 contract Kami721TransferSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
-  function batchTransferToSingle(uint256[] memory tokenIndices, address to) public {
+  function batchTransfer(uint256[] memory tokenIndices, address to) public {
     Kami721 nft = LibKami721.getContract(components);
     for (uint256 i; i < tokenIndices.length; i++) {
       transfer(nft, tokenIndices[i], to);
     }
   }
 
-  function batchTransferToMultiple(uint256[] memory tokenIndices, address[] memory to) public {
+  function batchTransferToMany(uint256[] memory tokenIndices, address[] memory to) public {
     require(tokenIndices.length == to.length, "tokenIndices and to must be the same length");
     Kami721 nft = LibKami721.getContract(components);
     for (uint256 i; i < tokenIndices.length; i++) {

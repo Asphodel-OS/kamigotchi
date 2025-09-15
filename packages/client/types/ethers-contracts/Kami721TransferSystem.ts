@@ -30,8 +30,8 @@ import type {
 
 export interface Kami721TransferSystemInterface extends utils.Interface {
   functions: {
-    "batchTransferToMultiple(uint256[],address[])": FunctionFragment;
-    "batchTransferToSingle(uint256[],address)": FunctionFragment;
+    "batchTransfer(uint256[],address)": FunctionFragment;
+    "batchTransferToMany(uint256[],address[])": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "completeOwnershipHandover(address)": FunctionFragment;
     "deprecate()": FunctionFragment;
@@ -45,8 +45,8 @@ export interface Kami721TransferSystemInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "batchTransferToMultiple"
-      | "batchTransferToSingle"
+      | "batchTransfer"
+      | "batchTransferToMany"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "deprecate"
@@ -59,12 +59,12 @@ export interface Kami721TransferSystemInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "batchTransferToMultiple",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>[]]
+    functionFragment: "batchTransfer",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "batchTransferToSingle",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>]
+    functionFragment: "batchTransferToMany",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
@@ -98,11 +98,11 @@ export interface Kami721TransferSystemInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "batchTransferToMultiple",
+    functionFragment: "batchTransfer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "batchTransferToSingle",
+    functionFragment: "batchTransferToMany",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -213,15 +213,15 @@ export interface Kami721TransferSystem extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    batchTransferToMultiple(
+    batchTransfer(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
+      to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    batchTransferToSingle(
+    batchTransferToMany(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>,
+      to: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -264,15 +264,15 @@ export interface Kami721TransferSystem extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  batchTransferToMultiple(
+  batchTransfer(
     tokenIndices: PromiseOrValue<BigNumberish>[],
-    to: PromiseOrValue<string>[],
+    to: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  batchTransferToSingle(
+  batchTransferToMany(
     tokenIndices: PromiseOrValue<BigNumberish>[],
-    to: PromiseOrValue<string>,
+    to: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -315,15 +315,15 @@ export interface Kami721TransferSystem extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    batchTransferToMultiple(
+    batchTransfer(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
+      to: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    batchTransferToSingle(
+    batchTransferToMany(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>,
+      to: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -387,15 +387,15 @@ export interface Kami721TransferSystem extends BaseContract {
   };
 
   estimateGas: {
-    batchTransferToMultiple(
+    batchTransfer(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
+      to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    batchTransferToSingle(
+    batchTransferToMany(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>,
+      to: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -439,15 +439,15 @@ export interface Kami721TransferSystem extends BaseContract {
   };
 
   populateTransaction: {
-    batchTransferToMultiple(
+    batchTransfer(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
+      to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    batchTransferToSingle(
+    batchTransferToMany(
       tokenIndices: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>,
+      to: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
