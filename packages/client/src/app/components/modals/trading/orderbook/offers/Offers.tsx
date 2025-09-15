@@ -3,12 +3,14 @@ import styled from 'styled-components';
 
 import { animate } from 'animejs';
 import { getInventoryBalance } from 'app/cache/inventory';
-import { getTradeType, Trade } from 'app/cache/trade';
+import { calcTradeTax, getTradeType, Trade } from 'app/cache/trade';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
-import { EmptyText, TextTooltip } from 'app/components/library';
+import { EmptyText, Pairing, Text, TextTooltip } from 'app/components/library';
 import { ItemGridTooltip } from 'app/components/modals/inventory/ItemGridTooltip';
+import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item } from 'network/shapes';
+import { TRADE_ROOM_INDEX } from '../../constants';
 import { ConfirmationData } from '../../library/Confirmation';
 
 export const Offers = ({
@@ -253,40 +255,88 @@ export const Offers = ({
     else qty = (trade?.sellOrder?.amounts?.[0] || trade?.buyOrder?.amounts?.[0] || 1) as number;
     const per = getPerUnitPrice(trade, t as any);
     const total = per * qty;
-    const verb = t === 'Buy' ? 'Buy' : t === 'Sell' ? 'Sell' : 'Trade';
+    // Build detailed confirmation matching legacy modal
+    const buyItems = trade.buyOrder?.items ?? [];
+    const buyAmts = trade.buyOrder?.amounts ?? [];
+    const sellItems = trade.sellOrder?.items ?? [];
+    const sellAmts = trade.sellOrder?.amounts ?? [];
+    const tradeConfig = account.config?.trade;
+    const deliveryFee = tradeConfig?.fees.delivery ?? 0;
+    const taxRate = tradeConfig?.tax.value ?? 0;
+    const taxAmts = sellAmts.map((amt, i) => calcTradeTax(sellItems[i], amt, taxRate));
+
     setConfirmData({
-      title: 'Confirm Order',
+      title: 'Confirm Execution',
       subTitle: undefined,
       content: (
-        <div
-          style={{
-            padding: '0.6vw',
-            fontSize: '0.9vw',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.6vw',
-          }}
-        >
-          <TextTooltip
-            text={[
-              <ItemGridTooltip
-                key={item?.index || 0}
-                item={item as any}
-                utils={{ displayRequirements: () => '', parseAllos: () => [] }}
-              />,
-            ]}
-            maxWidth={26}
-          >
-            <img
-              src={item?.image}
-              style={{ width: '3vw', height: '3vw', imageRendering: 'pixelated' }}
-            />
-          </TextTooltip>
-          <span>
-            {verb} {qty.toLocaleString()} {item?.name ?? 'Item'} for {total.toLocaleString()} MUSU?
-          </span>
-        </div>
+        <ConfirmParagraph>
+          <ConfirmRow>
+            <Text size={1.2}>{'('}</Text>
+            {buyAmts.map((amt, i) => {
+              const amtStr = amt.toLocaleString();
+              const buyItem = buyItems[i];
+              return (
+                <Pairing
+                  key={i}
+                  text={amtStr}
+                  icon={buyItem.image}
+                  tooltip={[`${amtStr} ${buyItem.name}`]}
+                />
+              );
+            })}
+            <Text size={1.2}>{`) `}</Text>
+            <Text size={1.2}>{`will be transferred to the Trade.`}</Text>
+          </ConfirmRow>
+          <ConfirmRow>
+            <Text size={1.2}>{'You will receive ('}</Text>
+            {sellAmts.map((amt, i) => {
+              const sellItem = sellItems[i];
+              const tax = taxAmts[i];
+              return (
+                <Pairing
+                  key={i}
+                  text={(amt - tax).toLocaleString()}
+                  icon={sellItem.image}
+                  tooltip={[`${amt.toLocaleString()} (-${tax.toLocaleString()}) ${sellItem.name}`]}
+                />
+              );
+            })}
+            <Text size={1.2}>{`)`}</Text>
+          </ConfirmRow>
+          {taxAmts.some((tax) => tax > 0) && (
+            <ConfirmRow>
+              <Text size={0.9}>{`Trade Tax: (`}</Text>
+              {taxAmts.map((tax, i) => {
+                if (tax <= 0) return null;
+                return (
+                  <Pairing
+                    key={`tax-${i}`}
+                    text={tax.toLocaleString()}
+                    icon={sellItems[i].image}
+                    scale={0.9}
+                    tooltip={[
+                      `There is no income tax in Kamigotchi World.`,
+                      `Thank you for your patronage.`,
+                    ]}
+                  />
+                );
+              })}
+              <Text size={0.9}>{`)`}</Text>
+            </ConfirmRow>
+          )}
+          {account.roomIndex !== TRADE_ROOM_INDEX && (
+            <ConfirmRow>
+              <Text size={0.9}>{`Delivery Fee: (`}</Text>
+              <Pairing
+                text={deliveryFee.toLocaleString()}
+                icon={ItemImages.musu}
+                scale={0.9}
+                tooltip={[`Trading outside of designated rooms`, `incurs a flat delivery fee.`]}
+              />
+              <Text size={0.9}>{`)`}</Text>
+            </ConfirmRow>
+          )}
+        </ConfirmParagraph>
       ),
       onConfirm: () => actions.executeTrade(trade),
     });
@@ -828,4 +878,23 @@ const OwnerLink = styled.span`
 
 const TotalCell = styled.td`
   word-break: break-word;
+`;
+
+const ConfirmParagraph = styled.div`
+  color: #333;
+  flex-grow: 1;
+  padding: 1.8vw;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const ConfirmRow = styled.div`
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6vw;
 `;
