@@ -9,7 +9,7 @@ import { getAllItems, getItem, getItemByIndex } from 'app/cache/item';
 import { getTrade, getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility, useSelected } from 'app/stores';
+import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
 import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';

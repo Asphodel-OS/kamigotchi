@@ -3,14 +3,7 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { TabType } from '../types';
 
-export const Tabs = ({
-  tab,
-  setTab,
-}: {
-  tab: TabType;
-  setTab: (tab: TabType) => void;
-}) => {
-
+export const Tabs = ({ tab, setTab }: { tab: TabType; setTab: (tab: TabType) => void }) => {
   const handleTabbing = (tab: TabType) => {
     setTab(tab);
     playClick();
