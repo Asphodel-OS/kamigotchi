@@ -95,13 +95,11 @@ export const MusuRow = ({
             radius={0.9}
           />
         </TextTooltip>
-        {obols > 1 && (
-          <IconButton
-            img={ItemImages.obol}
-            onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
-            radius={0.9}
-          />
-        )}
+        <IconButton
+          img={ItemImages.obol}
+          onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
+          radius={0.9}
+        />
         <TextTooltip
           text={mode === 'TRANSFER' ? ['Back to Inventory'] : ['Send Item']}
           direction='row'

@@ -1,7 +1,7 @@
+import { animate } from 'animejs';
 import { Dispatch, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { animate } from 'animejs';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { calcTradeTax, getTradeType, Trade } from 'app/cache/trade';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
