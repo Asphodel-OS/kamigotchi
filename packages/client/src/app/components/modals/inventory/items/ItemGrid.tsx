@@ -2,19 +2,23 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Inventory } from 'app/cache/inventory';
+import { Inventory, cleanInventories } from 'app/cache/inventory';
 import { EmptyText, IconListButton } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
-import { Account } from 'network/shapes/Account';
+import { useVisibility } from 'app/stores';
+import { Account, NullAccount } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
-import { Mode } from '../types';
+
+import { CategoryFilter, ItemCategory, categorizeItem } from '../CategoryFilter';
 import { ItemGridTooltip } from './ItemGridTooltip';
+import { Mode } from '../types';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
+const REFRESH_INTERVAL = 2000;
 
 // get the row of consumable items to display in the player inventory
 export const ItemGrid = ({
@@ -50,17 +54,66 @@ export const ItemGrid = ({
   };
 }) => {
   const { useForAccount, useForKami } = actions;
-  const { account, inventories, kamis } = data;
+  const { account: propAccount, inventories: propInventories, kamis: propKamis } = data;
   const { mode } = state;
-  const { meetsRequirements } = utils;
+  const { meetsRequirements, getAccount, getInventories, getKamis } = utils;
+  const { modals } = useVisibility();
 
+  // State management combining both approaches
   const [visible, setVisible] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [account, setAccount] = useState<Account>(propAccount || NullAccount);
+  const [inventories, setInventories] = useState<Inventory[]>(propInventories || []);
+  const [filteredInventories, setFilteredInventories] = useState<Inventory[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategory>('All');
+  const [kamis, setKamis] = useState<Kami[]>(propKamis || []);
 
   // hide ItemGrid when sendView is true
   useEffect(() => {
     const id = setTimeout(() => setVisible(mode === 'STOCK'), 200);
     return () => clearTimeout(id);
   }, [mode]);
+
+  // Initialize data and set up refresh timer
+  useEffect(() => {
+    updateData();
+    const refreshClock = () => setLastRefresh(Date.now());
+    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+    return () => clearInterval(timerId);
+  }, []);
+
+  // refresh data whenever the modal is opened
+  useEffect(() => {
+    if (!modals.inventory) return;
+    updateData();
+  }, [modals.inventory, lastRefresh, data.accountEntity]);
+
+  // filter inventories by selected category
+  useEffect(() => {
+    if (selectedCategory === 'All') {
+      setFilteredInventories(inventories);
+    } else {
+      const filtered = inventories.filter(inventory => {
+        const itemCategory = categorizeItem(inventory.item);
+        return itemCategory === selectedCategory;
+      });
+      setFilteredInventories(filtered);
+    }
+  }, [inventories, selectedCategory]);
+
+  // update the inventory, account and kami data
+  const updateData = () => {
+    const currentAccount = getAccount(data.accountEntity);
+    setAccount(currentAccount);
+
+    // get, clean, and set account inventories
+    const rawInventories = getInventories() ?? [];
+    const cleanedInventories = cleanInventories(rawInventories);
+    setInventories(cleanedInventories);
+
+    // get, and set account kamis
+    setKamis(getKamis());
+  };
 
   /////////////////
   // INTERPRETATION
@@ -111,36 +164,54 @@ export const ItemGrid = ({
   /////////////////
   // RENDER
 
+  // Helper function to render individual item icons
+  const ItemIcon = (inv: Inventory) => {
+    const item = inv.item;
+    const options = getItemActions(item, inv.balance);
+
+    return (
+      <ItemWrapper key={item.index}>
+        <IconListButton
+          key={item.index}
+          img={item.image}
+          scale={4.8}
+          balance={inv.balance}
+          options={options}
+          disabled={options.length == 0}
+          tooltip={{
+            text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
+            maxWidth: 25,
+          }}
+        />
+      </ItemWrapper>
+    );
+  };
+
   return (
     <Container isVisible={visible} key='grid'>
-      {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
-      {inventories.map((inv) => {
-        const item = inv.item;
-        const options = getItemActions(item, inv.balance);
-
-        return (
-          <ItemWrapper key={item.index}>
-            <IconListButton
-              key={item.index}
-              img={item.image}
-              scale={4.8}
-              balance={inv.balance}
-              options={options}
-              disabled={options.length == 0}
-              tooltip={{
-                text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
-                maxWidth: 25,
-              }}
-            />
-          </ItemWrapper>
-        );
-      })}
+      <CategoryFilter
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
+      <ItemsGrid>
+        {filteredInventories.length < 1 && inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
+        {filteredInventories.length < 1 && inventories.length > 0 && (
+          <EmptyText text={['No items in this category.', 'Try a different filter.']} />
+        )}
+        {filteredInventories.map((inv) => ItemIcon(inv))}
+      </ItemsGrid>
     </Container>
   );
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
+  flex-direction: column;
+  width: 100%;
+`;
+
+const ItemsGrid = styled.div`
+  display: flex;
   flex-flow: row wrap;
   justify-content: center;
   gap: 0.3vw;
