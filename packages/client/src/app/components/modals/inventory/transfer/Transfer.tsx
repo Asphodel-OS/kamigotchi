@@ -9,7 +9,6 @@ import {
   IconButton,
   IconListButton,
   IconListButtonOption,
-  Text,
 } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
@@ -21,6 +20,7 @@ import { formatEntityID } from 'engine/utils';
 import { Account } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Mode } from '../types';
+import { History } from './History';
 import { LineItem } from './LineItem';
 
 const KamidenClient = getKamidenClient();
@@ -64,7 +64,7 @@ export const Transfer = ({
   const [item, setItem] = useState<Item>(NullItem);
   const [visible, setVisible] = useState(false);
   const [targetAcc, setTargetAcc] = useState<Account | null>(null);
-  const [sendHistory, setSendHistory] = useState<ItemTransfer[]>([]);
+  const [history, setHistory] = useState<ItemTransfer[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
   const stone = () => {
@@ -106,7 +106,7 @@ export const Transfer = ({
       const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
       setAccounts(accountsSorted);
     }
-    // setTransferEvents(account.id);
+    setTransferEvents(account.id);
   }, [inventoryModalOpen, lastRefresh, accountEntity]);
 
   /////////////////
@@ -121,7 +121,7 @@ export const Transfer = ({
         //  Timestamp: '0',
       };
       const response = await KamidenClient?.getItemTransfers(request);
-      setSendHistory(response?.Transfers || []);
+      setHistory(response?.Transfers || []);
     } catch (error) {
       console.error('Error getting send history :', error);
       throw error;
@@ -153,7 +153,7 @@ export const Transfer = ({
   // TODO: consider moving this to its own component
   const TransferHistory = useMemo(() => {
     const transfers: JSX.Element[] = [];
-    sendHistory.forEach((send, index) => {
+    history.forEach((send, index) => {
       const senderID = formatEntityID(BigNumber.from(send.SenderAccountID));
       const receiverID = formatEntityID(BigNumber.from(send.RecvAccountID));
       const sender = getAccount(getEntityIndex(senderID));
@@ -177,12 +177,11 @@ export const Transfer = ({
       }
     });
     if (transfers.length === 0) {
-      return <EmptyText text={['Coming Soon!']} />;
       return <EmptyText text={['No transfers to show.']} />;
     } else {
       return transfers.reverse();
     }
-  }, [sendHistory, account.id, getAccount, getEntityIndex, getItem]);
+  }, [history, account.id, getAccount, getEntityIndex, getItem]);
 
   // gets filtered item options
   const ItemOptions = useMemo(() => {
@@ -228,23 +227,21 @@ export const Transfer = ({
           tooltip={{ text: [`Send ${item.name} to another account.`] }}
         />
       </Top>
-      <Bottom>
-        <TitleBar>
-          <Text size={0.9}>Your Transfer History</Text>
-          <Text size={0.75}>Fee: 15 MUSU</Text>
-        </TitleBar>
-        {TransferHistory}
-      </Bottom>
+      <History
+        data={{ account, events: history }}
+        state={{ mode }}
+        utils={{ getAccount, getEntityIndex, getItem }}
+      />
     </Container>
   );
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
+  position: relative;
   display: ${({ isVisible }) => (isVisible ? `flex` : `none`)};
   flex-direction: column;
   width: 100%;
-  min-height: 30vh;
-  max-height: 40vh;
+  height: 30vh;
   font-size: 0.75vw;
 `;
 
@@ -257,34 +254,4 @@ const Top = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-`;
-
-const Bottom = styled.div`
-  border-top: 0.15vw solid black;
-  width: 100%;
-  gap: 0.3vw;
-
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-
-  overflow-y: auto;
-`;
-
-const TitleBar = styled.div`
-  background-color: rgb(221, 221, 221);
-  position: sticky;
-  top: 0;
-  width: 100%;
-  margin-bottom: 0.2vw;
-  padding: 1vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-
-  opacity: 0.9;
-  height: 3vw;
 `;
