@@ -1,7 +1,15 @@
-import { Component, defineQuery, EntityIndex, EntityQueryFragment, Schema, toUpdate, getComponentEntities } from "@mud-classic/recs";
-import { ObservableSet } from "mobx";
-import { useEffect, useMemo, useState } from "react";
-import { filter, Observable } from "rxjs";
+import {
+  Component,
+  defineQuery,
+  EntityIndex,
+  EntityQueryFragment,
+  getComponentEntities,
+  Schema,
+  toUpdate,
+} from '@mud-classic/recs';
+import { ObservableSet } from 'mobx';
+import { useEffect, useMemo, useState } from 'react';
+import { filter, Observable } from 'rxjs';
 
 /** @deprecated Use hooks exported from @mud-classic/react package instead. */
 export function useStream<T>(stream: Observable<T>, defaultValue?: T) {
@@ -16,7 +24,10 @@ export function useStream<T>(stream: Observable<T>, defaultValue?: T) {
 }
 
 /** @deprecated Use hooks exported from @mud-classic/react package instead. */
-export function useComponentValueStream<T extends Schema>(component: Component<T>, entity?: EntityIndex) {
+export function useComponentValueStream<T extends Schema>(
+  component: Component<T>,
+  entity?: EntityIndex
+) {
   const stream = useMemo(() => {
     if (entity != null) return component.update$.pipe(filter((update) => update.entity === entity));
     return component.update$.asObservable();
@@ -51,11 +62,15 @@ export function useQuery(queryFragments: EntityQueryFragment[]) {
  * reactively on any add/update/remove via the component's update$ stream.
  */
 export function useComponentEntities<T extends Schema>(component: Component<T>) {
-  const [list, setList] = useState<EntityIndex[]>(() => Array.from(getComponentEntities(component)));
+  const [list, setList] = useState<EntityIndex[]>(() =>
+    Array.from(getComponentEntities(component))
+  );
 
   useEffect(() => {
     const recompute = () => setList(Array.from(getComponentEntities(component)));
+    // Prime once on mount
     recompute();
+    // Subscribe to component changes
     const sub = component.update$.subscribe(recompute);
     return () => sub?.unsubscribe();
   }, [component]);
