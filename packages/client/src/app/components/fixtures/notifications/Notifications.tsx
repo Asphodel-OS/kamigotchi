@@ -1,9 +1,10 @@
-import { EntityIndex, getComponentEntities, getComponentValue } from '@mud-classic/recs';
+import { EntityIndex, getComponentValue } from '@mud-classic/recs';
 import styled, { keyframes } from 'styled-components';
 
 import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
 import { Modals, useVisibility } from 'app/stores';
+import { useComponentEntities } from 'network/utils/hooks';
 
 export const NotificationFixture: UIComponent = {
   id: 'NotificationFixture',
@@ -12,18 +13,17 @@ export const NotificationFixture: UIComponent = {
     
     const {
       notifications,
-      list,
     } = (() => {
       const {
         network: { notifications },
       } = layers;
-      const list = Array.from(getComponentEntities(notifications.Notification));
       return {
         notifications: notifications,
-        list: list,
       };
     })();
 
+      // Reactive list of notification entities via hook
+      const list = useComponentEntities(notifications.Notification);
       const notificationsVisible = useVisibility((s) => s.fixtures.notifications);
       const setModals = useVisibility((s) => s.setModals);
 

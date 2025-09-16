@@ -1,4 +1,4 @@
-import { Component, defineQuery, EntityIndex, EntityQueryFragment, Schema, toUpdate } from "@mud-classic/recs";
+import { Component, defineQuery, EntityIndex, EntityQueryFragment, Schema, toUpdate, getComponentEntities } from "@mud-classic/recs";
 import { ObservableSet } from "mobx";
 import { useEffect, useMemo, useState } from "react";
 import { filter, Observable } from "rxjs";
@@ -44,4 +44,23 @@ export function useQuery(queryFragments: EntityQueryFragment[]) {
   }, []);
 
   return matching;
+}
+
+/**
+ * Returns the current list of entities for a given component and re-renders
+ * reactively on any add/update/remove via the component's update$ stream.
+ */
+export function useComponentEntities<T extends Schema>(component: Component<T>) {
+  const [list, setList] = useState<EntityIndex[]>(() => Array.from(getComponentEntities(component)));
+
+  useEffect(() => {
+    const recompute = () => setList(Array.from(getComponentEntities(component)));
+    // Prime once on mount
+    recompute();
+    // Subscribe to component changes
+    const sub = component.update$.subscribe(recompute);
+    return () => sub?.unsubscribe();
+  }, [component]);
+
+  return list;
 }
