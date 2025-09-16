@@ -67,10 +67,10 @@ const Wrapper = styled.div<Wrapper>`
   pointer-events: ${({ isOpen }) => (isOpen ? 'auto' : 'none')};
   z-index: 20;
 
-  width: 50em;
-  height: 50em;
-  left: 25em;
-  top: 25em;
+  width: 50%;
+  height: 50%;
+  left: 25%;
+  top: 25%;
 
   user-select: none;
 `;
