@@ -1,18 +1,10 @@
-import { Dispatch, useEffect, useMemo, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
-import {
-  IconButton,
-  IconListButton,
-  IconListButtonOption,
-  TextTooltip,
-} from 'app/components/library';
-import { MenuIcons } from 'assets/images/icons/menu';
-import { MUSU_INDEX } from 'constants/items';
 import { Item, NullItem } from 'network/shapes';
-import { playClick } from 'utils/sounds';
 import { ItemBrowser } from '../browse/ItemBrowser';
+import { SearchBar } from './SearchBar';
 
 const SORTS = ['Item', 'Type', 'Qty', 'Total', 'Owner', 'Price'];
 
@@ -43,20 +35,8 @@ export const Controls = ({
     getItemByIndex: (index: number) => Item;
   };
 }) => {
-  const {
-    typeFilter,
-    setTypeFilter,
-    sort,
-    setSort,
-    ascending,
-    setAscending,
-    itemFilter,
-    setItemFilter,
-    itemSearch,
-    setItemSearch,
-  } = controls;
+  const { itemFilter, setItemFilter } = controls;
   const { items } = data;
-  const { getItemByIndex } = utils;
   // smart search across items and categories
   const [query, setQuery] = useState<string>('');
   const [category, setCategory] = useState<string>('All');
@@ -85,135 +65,24 @@ export const Controls = ({
   }, []);
 
   /////////////////
-  // INTERACTION
-
-  // toggle the type filter
-  const toggleTypeFilter = () => {
-    setTypeFilter(typeFilter === 'Buy' ? 'Sell' : 'Buy');
-  };
-
-  /////////////////
-  // INTERPRETATION
-
-  const getItemOptions = (): IconListButtonOption[] => {
-    // if buying  show all tradable items
-    const itemOptions = items.map(
-      (item): IconListButtonOption => ({
-        text: item.name,
-        image: item.image,
-        onClick: () => {
-          setItemSearch('');
-          setItemFilter(item);
-        },
-      })
-    );
-    itemOptions.unshift({
-      text: 'Any',
-      onClick: () => {
-        setItemFilter(NullItem);
-        setItemSearch('');
-      },
-    });
-    return itemOptions;
-  };
-
-  // get the interactive list of available sorts
-  const getSortOptions = (): IconListButtonOption[] => {
-    return SORTS.map((sort) => ({
-      text: sort,
-      image: getSortIcon(sort),
-      onClick: () => {
-        playClick();
-        setSort(sort);
-      },
-    }));
-  };
-
-  // get the Icon for a given Sort option
-  const getSortIcon = (sort: string) => {
-    if (sort === 'Price' || sort === 'Total') return getItemByIndex(MUSU_INDEX).image;
-    if (sort === 'Owner') return MenuIcons.social;
-    if (sort === 'Item') return MenuIcons.inventory;
-    if (sort === 'Type') return MenuIcons.more; // generic categories icon
-    if (sort === 'Qty') return MenuIcons.inventory; // stack-like inventory icon for quantity
-    return MenuIcons.operator;
-  };
-
-  // always open by default; no per-section collapse state
-  const suggestions = useMemo(() => {
-    const lower = query.toLowerCase();
-    if (!lower) return [] as { label: string; onPick: () => void }[];
-    const catMatches = ['All', 'Consumables', 'Materials', 'Currencies', 'Other']
-      .filter((c) => c.toLowerCase().includes(lower))
-      .map((c) => ({ label: `Category: ${c}`, onPick: () => setCategory(c as any) }));
-    const itemMatches = items
-      .filter((it) => it.name.toLowerCase().includes(lower))
-      .slice(0, 6)
-      .map((it) => ({
-        label: it.name,
-        onPick: () => {
-          setItemFilter(it);
-          try {
-            window.dispatchEvent(
-              new CustomEvent('trading:filterOffersByItem', { detail: it.index })
-            );
-          } catch {}
-        },
-      }));
-    return [...catMatches, ...itemMatches];
-  }, [query, items]);
-
-  /////////////////
   // RENDER
 
   return (
     <Container>
-      <CollapsibleWrap style={{ minHeight: '12%', overflow: 'visible' }}>
-        <SearchRow>
-          <IconButton
-            text={`< ${typeFilter} >`}
-            onClick={() => {
-              playClick();
-              toggleTypeFilter();
-            }}
-          />
-          <IconListButton img={getSortIcon(sort)} text={sort} options={getSortOptions()} />
-          <TextTooltip text={[ascending ? 'sorting by ascending' : 'sorting by descending']}>
-            <IconButton
-              text={ascending ? '↑' : '↓'}
-              onClick={() => {
-                setAscending(!ascending);
-              }}
-            />
-          </TextTooltip>
-          <SearchInput
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder='Search items or categories...'
-          />
-          {query && (
-            <SuggestBox>
-              {suggestions.map((s, i) => (
-                <Suggest key={i} onClick={() => (s.onPick(), setQuery(''))}>
-                  {s.label}
-                </Suggest>
-              ))}
-            </SuggestBox>
-          )}
-        </SearchRow>
-      </CollapsibleWrap>
-      <Padding />
-      <CollapsibleWrap style={{ flex: '1 1 auto', minHeight: '7%' }}>
-        <BrowserSection>
-          <ItemBrowser
-            items={items}
-            selected={itemFilter}
-            setSelected={setItemFilter}
-            category={category as any}
-            onCategoryChange={setCategory as any}
-          />
-        </BrowserSection>
-      </CollapsibleWrap>
+      <SearchBar
+        controls={{ ...controls, query, setQuery, setCategory }}
+        data={{ items }}
+        utils={utils}
+      />
+      <BrowserSection>
+        <ItemBrowser
+          items={items}
+          selected={itemFilter}
+          setSelected={setItemFilter}
+          category={category as any}
+          onCategoryChange={setCategory as any}
+        />
+      </BrowserSection>
     </Container>
   );
 };
@@ -230,10 +99,6 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const Padding = styled.div`
-  height: 0.6vw;
-`;
-
 const BrowserSection = styled.div`
   position: relative;
   width: 100%;
@@ -241,78 +106,4 @@ const BrowserSection = styled.div`
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-`;
-
-const CollapsibleWrap = styled.div`
-  overflow-y: auto;
-  overflow-x: hidden;
-  transition: max-height 0.2s ease-out;
-  max-height: none;
-  min-height: 7%;
-  @media (min-width: 1400px) {
-    min-height: 10%;
-  }
-  @media (min-width: 1600px) {
-    min-height: 12%;
-  }
-`;
-
-const SearchRow = styled.div`
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  gap: 0.6vw;
-  /* Keep search controls comfortably smaller than their container */
-  & button {
-    height: 1.8vw;
-    line-height: 1.8vw;
-    padding: 0 0.6vw;
-    font-size: 0.9vw;
-    max-height: 100%;
-  }
-  @media (min-width: 1400px) {
-    & button {
-      height: 1.6vw;
-      line-height: 1.6vw;
-    }
-  }
-  @media (min-width: 1800px) {
-    & button {
-      height: 1.5vw;
-      line-height: 1.5vw;
-    }
-  }
-`;
-
-const SearchInput = styled.input`
-  flex: 1 1 auto;
-  min-width: 0;
-  padding: 0 0.6vw;
-  height: 1.8vw;
-  line-height: 1.8vw;
-  font-size: 0.9vw;
-  border: 0.12vw solid black;
-`;
-
-const SuggestBox = styled.div`
-  position: absolute;
-  top: calc(100% + 0.3vw);
-  left: 0;
-  right: 0;
-  background: #fff;
-  border: 0.12vw solid black;
-  max-height: 12vw;
-  overflow: auto;
-  z-index: 9999;
-`;
-
-const Suggest = styled.div`
-  padding: 0.45vw 0.6vw;
-  font-size: 0.9vw;
-  cursor: pointer;
-  &:hover {
-    background: #eee;
-  }
 `;
