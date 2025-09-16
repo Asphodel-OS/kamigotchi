@@ -93,8 +93,8 @@ export const SearchBar = ({
       onPick: () => setCategory(c as any),
     }));
 
-    const itemMatches = items.filter((item) => item.name.toLowerCase().includes(lower)).slice(0, 6);
-    const itemOptions = itemMatches.map((item) => ({
+    const itemMatches = items.filter((item) => item.name.toLowerCase().includes(lower));
+    const itemOptions = itemMatches.slice(0, 6).map((item) => ({
       label: item.name,
       onPick: () => {
         setItemFilter(item);

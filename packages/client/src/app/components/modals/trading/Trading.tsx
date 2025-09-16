@@ -93,11 +93,20 @@ export const TradingModal: UIComponent = {
       const account = getAccount(accountEntity);
       refreshTrades(account);
       setAccount(account);
+      getTradeHistory(account.id);
 
       const updateSync = () => setTick(Date.now());
       const timerId = setInterval(updateSync, SYNC_TIME);
       return () => clearInterval(timerId);
     }, []);
+
+    // sets trades upon opening modal
+    useEffect(() => {
+      if (!modalVisible) return;
+      const account = getAccount(accountEntity);
+      setAccount(account);
+      refreshTrades(account);
+    }, [modalVisible, tick]);
 
     // open account modal on events from offers
     // Q: what is this used for?
@@ -145,13 +154,6 @@ export const TradingModal: UIComponent = {
         window.removeEventListener('account:setIndex', handleSetAccountIndex);
       };
     }, []);
-
-    // sets trades upon opening modal
-    useEffect(() => {
-      if (!modalVisible || accountEntity) return;
-      refreshTrades(account);
-      // getTradeHistory(account.id);
-    }, [modalVisible, tick]);
 
     /////////////////
     // GETTERS

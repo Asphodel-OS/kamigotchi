@@ -29,8 +29,8 @@ export const ItemBrowser = ({
     let count = 0;
     trades.forEach((trade) => {
       let orderItems: Item[] = [];
-      if (typeFilter === 'Buy') orderItems = trade.buyOrder?.items ?? [];
-      else if (typeFilter === 'Sell') orderItems = trade.sellOrder?.items ?? [];
+      if (typeFilter === 'Buy') orderItems = trade.sellOrder?.items ?? [];
+      else if (typeFilter === 'Sell') orderItems = trade.buyOrder?.items ?? [];
       if (orderItems.some((it) => it.index === item.index)) count++;
     });
     return count;
