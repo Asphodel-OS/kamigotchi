@@ -39,14 +39,16 @@ export const Orderbook = ({
 }) => {
   const { items } = data;
 
+  const [collapsed, setCollapsed] = useState<boolean>(false);
   const [sort, setSort] = useState<string>('Price'); // Price, Owner
   const [ascending, setAscending] = useState<boolean>(true);
-  const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
-  const [itemSearch, setItemSearch] = useState<string>('');
-  const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
-  const [collapsed, setCollapsed] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
+
+  // TODO: consolidate these filters into a single object
+  const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
+  const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
   const [category, setCategory] = useState<string>('All');
+
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -72,8 +74,6 @@ export const Orderbook = ({
             setAscending,
             itemFilter,
             setItemFilter,
-            itemSearch,
-            setItemSearch,
             query,
             setQuery,
             category,
@@ -115,7 +115,6 @@ export const Orderbook = ({
             ascending,
             setAscending,
             itemFilter,
-            itemSearch,
           }}
           data={data}
           utils={utils}

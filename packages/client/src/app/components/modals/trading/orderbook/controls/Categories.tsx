@@ -9,7 +9,6 @@ export type CategoryKey = string; // dynamic categories plus grouped: 'All' | 'C
 
 export const Categories = ({
   items,
-  selected,
   setSelected,
   category: controlledCategory,
   onCategoryChange,

@@ -17,9 +17,6 @@ export const Controls = ({
     itemFilter: Item;
     setItemFilter: Dispatch<Item>;
 
-    itemSearch: string;
-    setItemSearch: Dispatch<string>;
-
     sort: string;
     setSort: Dispatch<string>;
     ascending: boolean;
@@ -34,7 +31,7 @@ export const Controls = ({
     trades: Trade[];
   };
 }) => {
-  const { itemFilter, setItemFilter } = controls;
+  const { itemFilter, setItemFilter, typeFilter } = controls;
   const { setQuery, category, setCategory } = controls;
   const { items } = data;
   // smart search across items and categories
@@ -105,13 +102,14 @@ export const Controls = ({
         items={items}
         selected={itemFilter}
         setSelected={setItemFilter}
-        category={category as any}
-        onCategoryChange={setCategory as any}
+        category={category}
+        onCategoryChange={setCategory}
       />
       <ItemBrowser
         items={categorizedItems.get(category as any) ?? []}
         selected={itemFilter}
         setSelected={setItemFilter}
+        typeFilter={typeFilter}
       />
     </Container>
   );

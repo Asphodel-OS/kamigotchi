@@ -22,16 +22,17 @@ export const SearchBar = ({
   utils,
 }: {
   controls: {
+    // TODO: consolidate these filters into a single object
     typeFilter: TradeType;
     setTypeFilter: Dispatch<TradeType>;
     setItemFilter: Dispatch<Item>;
+    setCategory: Dispatch<string>;
 
     sort: string;
     setSort: Dispatch<string>;
     ascending: boolean;
     setAscending: Dispatch<boolean>;
 
-    setCategory: Dispatch<string>;
     query: string;
     setQuery: Dispatch<string>;
   };

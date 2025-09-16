@@ -1,6 +1,7 @@
 import { Dispatch } from 'react';
 import styled from 'styled-components';
 
+import { TradeType } from 'app/cache/trade';
 import { Item } from 'network/shapes';
 
 export type CategoryKey = string; // dynamic categories plus grouped: 'All' | 'Consumables' | 'Materials' | 'Currencies'
@@ -9,10 +10,12 @@ export const ItemBrowser = ({
   items,
   selected,
   setSelected,
+  typeFilter,
 }: {
   items: Item[];
   selected: Item;
   setSelected: Dispatch<Item>;
+  typeFilter: TradeType;
 }) => {
   return (
     <Container>
@@ -27,6 +30,7 @@ export const ItemBrowser = ({
           {items.map((item) => (
             <DataRow
               key={item.index}
+              color={typeFilter === 'Buy' ? '#e9ffe9' : '#ffe9e9'}
               selected={item.index === selected.index}
               onClick={() => setSelected(item)}
             >
@@ -78,9 +82,9 @@ const Table = styled.table`
   padding: 0.6vw;
 `;
 
-const DataRow = styled.tr<{ selected: boolean }>`
+const DataRow = styled.tr<{ selected: boolean; color: string }>`
   cursor: pointer;
-  background: ${({ selected }) => (selected ? '#e9ffe9' : 'transparent')};
+  background: ${({ selected, color }) => (selected ? color : 'transparent')};
   & > td {
     padding: 0.45vw 0.6vw;
     border-bottom: 0.06vw solid #ccc;
