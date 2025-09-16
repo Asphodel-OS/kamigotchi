@@ -44,8 +44,8 @@ export const hasCompletedDelay = (
   if (instance === undefined) return false; // prior quest not accepted
   if (!getIsComplete(components, instance)) return false; // prior quest not completed
 
-  const endTime = getComponentValue(LastTime, instance)?.value ?? 0;
-  return Date.now() / 1000 > endTime + delay;
+  const endTime = Number(getComponentValue(LastTime, instance)?.value ?? 0);
+  return Date.now() / 1000 > endTime + Number(delay);
 };
 
 // find a Quest in a list of other Quests by its index
