@@ -25,6 +25,7 @@ export interface BaseQuest {
 
 export interface Quest extends BaseQuest {
   startTime: number;
+  endTime: number;
   complete: boolean;
   repeatable: boolean;
   requirements: Requirement[];
@@ -58,12 +59,13 @@ export const getBase = (world: World, components: Components, entity: EntityInde
 
 // populate a BareQuest with all the details of a full Quest
 export const populate = (world: World, components: Components, base: BaseQuest): Quest => {
-  const { IsComplete, StartTime } = components;
+  const { IsComplete, StartTime, LastTime } = components;
   const entity = base.entity;
 
   return {
     ...base,
     startTime: (getComponentValue(StartTime, entity)?.value ?? 0) as number,
+    endTime: (getComponentValue(LastTime, entity)?.value ?? 0) as number,
     complete: hasComponent(IsComplete, entity),
     requirements: getRequirements(world, components, base.index),
     objectives: getObjectives(world, components, base.index),

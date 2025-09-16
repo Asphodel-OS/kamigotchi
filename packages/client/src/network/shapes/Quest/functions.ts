@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityIndex, World, getComponentValue } from '@mud-classic/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';
@@ -12,7 +12,7 @@ import { BaseQuest, Quest, populate } from './quest';
 /////////////////
 // CHECKERS
 
-// check whethter a Repeatable Quest is Available to be repeated now
+// check whether a Repeatable Quest is Available to be repeated now
 const canRepeat = (completed: Quest) => {
   if (!completed.repeatable) return false;
   const now = Date.now() / 1000;
@@ -29,6 +29,23 @@ export const hasCompleted = (
 ): boolean => {
   const instance = queryInstance(world, questIndex, holder);
   return instance !== undefined && getIsComplete(components, instance);
+};
+
+export const hasCompletedDelay = (
+  world: World,
+  components: Components,
+  questIndex: number,
+  holder: EntityIndex,
+  delay: number
+): boolean => {
+  const { LastTime } = components;
+
+  const instance = queryInstance(world, questIndex, holder);
+  if (instance === undefined) return false; // prior quest not accepted
+  if (!getIsComplete(components, instance)) return false; // prior quest not completed
+
+  const endTime = getComponentValue(LastTime, instance)?.value ?? 0;
+  return Date.now() / 1000 > endTime + delay;
 };
 
 // find a Quest in a list of other Quests by its index
