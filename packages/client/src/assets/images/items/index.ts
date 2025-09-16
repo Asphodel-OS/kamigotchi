@@ -54,6 +54,7 @@ import kamigotchi_world_passport_purple from './kamigotchi_world_passport_purple
 import kamigotchi_world_passport_red from './kamigotchi_world_passport_red.png';
 import kamigotchi_world_passport_white from './kamigotchi_world_passport_white.png';
 import kamigotchi_world_passport_yellow from './kamigotchi_world_passport_yellow.png';
+import kw_maps_data_chip from './kw_maps_data_chip.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import melkarths_heroic_awakening_spell_card from './melkarths_heroic_awakening_spell_card.png';
 import microplastics from './microplastics.png';
@@ -70,6 +71,7 @@ import plastic_bottle from './plastic_bottle.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import portable_burner from './portable_burner.png';
 import powdered_red_amber from './powdered_red_amber.png';
+import pyramid_engine from './pyramid_engine.png';
 import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
 import reroll_ticket from './reroll_ticket.png';
@@ -151,6 +153,7 @@ export const ItemImages = {
   kamigotchi_world_passport_red: kamigotchi_world_passport_red,
   kamigotchi_world_passport_white: kamigotchi_world_passport_white,
   kamigotchi_world_passport_yellow: kamigotchi_world_passport_yellow,
+  kw_maps_data_chip: kw_maps_data_chip,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
   melkarths_heroic_awakening_spell_card: melkarths_heroic_awakening_spell_card,
   microplastics: microplastics,
@@ -167,6 +170,7 @@ export const ItemImages = {
   pom_pom_fruit_candy: pom_pom_fruit_candy,
   portable_burner: portable_burner,
   powdered_red_amber: powdered_red_amber,
+  pyramid_engine: pyramid_engine,
   red_amber_crystal: red_amber_crystal,
   red_gakki_ribbon: red_gakki_ribbon,
   reroll_ticket: reroll_ticket,
