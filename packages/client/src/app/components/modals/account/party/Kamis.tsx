@@ -55,8 +55,7 @@ export const Kamis = ({
 
   /////////////////
   // SUBSCRIPTIONS
-  kamis.map((kami) => console.log(`WORLD`, kami.name));
-  wildKamis.map((kami) => console.log(`WILD`, kami.name));
+
   // mounting
   useEffect(() => {
     // set ticking
