@@ -33,7 +33,7 @@ export const Controls = ({
 }) => {
   const { itemFilter, setItemFilter, typeFilter } = controls;
   const { setQuery, category, setCategory } = controls;
-  const { items } = data;
+  const { items, trades } = data;
   // smart search across items and categories
 
   // respond to external category change events
@@ -106,10 +106,11 @@ export const Controls = ({
         onCategoryChange={setCategory}
       />
       <ItemBrowser
-        items={categorizedItems.get(category as any) ?? []}
-        selected={itemFilter}
-        setSelected={setItemFilter}
-        typeFilter={typeFilter}
+        controls={{ selected: itemFilter, setSelected: setItemFilter, typeFilter }}
+        data={{
+          items: categorizedItems.get(category) ?? [],
+          trades,
+        }}
       />
     </Container>
   );

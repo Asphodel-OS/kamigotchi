@@ -2,21 +2,43 @@ import { Dispatch } from 'react';
 import styled from 'styled-components';
 
 import { TradeType } from 'app/cache/trade';
-import { Item } from 'network/shapes';
+import { Item, Trade } from 'network/shapes';
 
 export type CategoryKey = string; // dynamic categories plus grouped: 'All' | 'Consumables' | 'Materials' | 'Currencies'
 
 export const ItemBrowser = ({
-  items,
-  selected,
-  setSelected,
-  typeFilter,
+  controls,
+  data,
 }: {
-  items: Item[];
-  selected: Item;
-  setSelected: Dispatch<Item>;
-  typeFilter: TradeType;
+  controls: {
+    selected: Item;
+    setSelected: Dispatch<Item>;
+    typeFilter: TradeType;
+  };
+  data: {
+    items: Item[];
+    trades: Trade[];
+  };
 }) => {
+  const { selected, setSelected, typeFilter } = controls;
+  const { items, trades } = data;
+
+  // get the number of trades containing a particular item (filtered by type)
+  // NOTE: perhaps do it by orderbook musu depth instead?
+  const getNumTrades = (item: Item) => {
+    let count = 0;
+    trades.forEach((trade) => {
+      let orderItems: Item[] = [];
+      if (typeFilter === 'Buy') orderItems = trade.buyOrder?.items ?? [];
+      else if (typeFilter === 'Sell') orderItems = trade.sellOrder?.items ?? [];
+      if (orderItems.some((it) => it.index === item.index)) count++;
+    });
+    return count;
+  };
+
+  /////////////////
+  // RENDER
+
   return (
     <Container>
       <Table>
@@ -24,6 +46,7 @@ export const ItemBrowser = ({
           <Header>
             <th>Item</th>
             <th>Type</th>
+            <th>Count</th>
           </Header>
         </thead>
         <tbody>
@@ -41,6 +64,7 @@ export const ItemBrowser = ({
                 </RowItem>
               </td>
               <td>{item.type}</td>
+              <td>{getNumTrades(item)}</td>
             </DataRow>
           ))}
         </tbody>
