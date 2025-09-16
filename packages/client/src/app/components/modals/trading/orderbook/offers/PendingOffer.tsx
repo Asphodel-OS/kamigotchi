@@ -185,7 +185,7 @@ export const PendingOffer = ({
 const Paragraph = styled.div`
   color: #333;
   flex-grow: 1;
-  padding: 1.8em;
+  padding: 1.8rem;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-evenly;
@@ -198,5 +198,5 @@ const Row = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6em;
+  gap: 0.6rem;
 `;

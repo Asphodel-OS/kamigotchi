@@ -26,7 +26,7 @@ export const Tabs = ({
         <Button
           onClick={() => setTab('social')}
           disabled={tab === 'social'}
-          style={{ borderLeft: 'solid black 0.15em', borderRight: 'solid black 0.15em' }}
+          style={{ borderLeft: 'solid black 0.15rem', borderRight: 'solid black 0.15rem' }}
         >
           Social
         </Button>
@@ -41,8 +41,8 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15em black;
-  border-radius: 0.3em 0.3em 0 0;
+  border: solid 0.15rem black;
+  border-radius: 0.3rem 0.3rem 0 0;
   border-bottom: none;
 
   width: 100%;
@@ -54,13 +54,13 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5em;
+  padding: 0.5rem;
   flex-grow: 1;
   color: black;
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 1em;
+  font-size: 1rem;
   text-align: center;
 
   cursor: pointer;

@@ -64,8 +64,8 @@ export const ItemGridTooltip = ({
 };
 
 const Container = styled.div`
-  padding: 0.2em;
-  min-width: 20em;
+  padding: 0.2rem;
+  min-width: 20rem;
 `;
 
 const Header = styled.span`
@@ -73,54 +73,54 @@ const Header = styled.span`
   align-items: stretch;
   background-color: transparent;
   color: #666;
-  border-radius: 0.4em;
-  padding: 0 0.3em;
+  border-radius: 0.4rem;
+  padding: 0 0.3rem;
 `;
 
 const Section = styled.span`
   color: #666;
   background: #f0f0f0;
-  border-radius: 0.4em;
-  padding: 0 0.3em;
+  border-radius: 0.4rem;
+  padding: 0 0.3rem;
   width: 100%;
 `;
 
 const SubSection = styled.span`
   display: flex;
   flex-direction: column;
-  margin-left: 0.5em;
+  margin-left: 0.5rem;
   align-items: flex-start;
   text-align: left;
-  margin-top: 0.5em;
+  margin-top: 0.5rem;
 `;
 
 const BottomSection = styled.div`
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: 0.5em;
-  padding: 0.5em;
+  gap: 0.5rem;
+  padding: 0.5rem;
 `;
 
 const Image = styled.img`
-  width: 4.5em;
-  height: 4.5em;
-  padding: 0.3em;
-  border-radius: 0.6em;
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 0.3rem;
+  border-radius: 0.6rem;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: solid black 0.15em;
+  border: solid black 0.15rem;
 `;
 
 const Title = styled.div`
-  font-size: 1.2em;
+  font-size: 1.2rem;
   font-weight: bold;
 `;
 
 const Description = styled.div`
-  margin: 0.5em 0 0 0;
-  font-size: 0.8em;
+  margin: 0.5rem 0 0 0;
+  font-size: 0.8rem;
   font-style: italic;
   white-space: normal;
 `;

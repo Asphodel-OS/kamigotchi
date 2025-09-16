@@ -54,10 +54,10 @@ const Wrapper = styled.div`
 // cancer. just absolute cancer
 const Content = styled.div`
   display: grid;
-  padding: 0.2em;
+  padding: 0.2rem;
 
-  border: solid black 0.15em;
-  border-radius: 0.6em;
+  border: solid black 0.15rem;
+  border-radius: 0.6rem;
 
   background-color: white;
 `;

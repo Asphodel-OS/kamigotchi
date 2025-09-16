@@ -101,7 +101,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 0.6em;
+  padding: 0.6rem;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: row wrap;

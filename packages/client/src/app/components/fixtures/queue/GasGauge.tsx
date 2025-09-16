@@ -54,16 +54,16 @@ const Container = styled.div<{ effectScale: number }>`
 
 const Meter = styled.div`
   position: relative;
-  border: 0.15em solid #333;
-  border-radius: 1.2em 1.2em 0.3em 0.3em;
-  width: 2.4em;
-  height: 1.5em;
+  border: 0.15rem solid #333;
+  border-radius: 1.2rem 1.2rem 0.3rem 0.3rem;
+  width: 2.4rem;
+  height: 1.5rem;
   background: conic-gradient(from 180deg at 50% 100%, red, red, orange, yellow, green, green);
 `;
 
 const Arrow = styled.div<{ angle: number }>`
   position: absolute;
-  bottom: -0.07em;
+  bottom: -0.07rem;
   left: 50%;
 
   height: 75%;
@@ -77,13 +77,13 @@ const Arrow = styled.div<{ angle: number }>`
 const Arm = styled.div`
   position: relative;
   background-color: #333;
-  width: 0.15em;
+  width: 0.15rem;
   height: 100%;
 `;
 
 const Tip = styled.div`
   position: absolute;
-  border: solid #333 0.12em;
+  border: solid #333 0.12rem;
   bottom: 80%;
   right: 50%;
 
@@ -94,9 +94,9 @@ const Tip = styled.div`
 const Pivot = styled.div`
   position: absolute;
   background-color: #333;
-  border-radius: 0.15em;
-  width: 0.3em;
-  height: 0.3em;
+  border-radius: 0.15rem;
+  width: 0.3rem;
+  height: 0.3rem;
   bottom: -17%;
   right: 50%;
   transform-origin: bottom center;

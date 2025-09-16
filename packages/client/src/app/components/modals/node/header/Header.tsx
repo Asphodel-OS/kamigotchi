@@ -168,8 +168,8 @@ export const Header = ({
 
 const Container = styled.div`
   color: black;
-  padding: 0.6em;
-  gap: 0.3em;
+  padding: 0.6rem;
+  gap: 0.3rem;
   display: flex;
   flex-flow: column nowrap;
   user-select: none;
@@ -183,28 +183,28 @@ const Content = styled.div`
 `;
 
 const Image = styled.img`
-  border-radius: 0.6em;
-  border: solid black 0.15em;
-  height: 11em;
-  width: 11em;
+  border-radius: 0.6rem;
+  border: solid black 0.15rem;
+  height: 11rem;
+  width: 11rem;
   user-drag: none;
 `;
 
 const Details = styled.div`
-  padding: 0.6em;
+  padding: 0.6rem;
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Name = styled.div`
-  font-size: 1.2em;
-  padding: 0.5em 0;
+  font-size: 1.2rem;
+  padding: 0.5rem 0;
 `;
 
 const Row = styled.div`
   width: 100%;
-  padding: 0.03em 0;
-  gap: 0.3em;
+  padding: 0.03rem 0;
+  gap: 0.3rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -213,22 +213,22 @@ const Row = styled.div`
 `;
 
 const Label = styled.div`
-  font-size: 0.75em;
+  font-size: 0.75rem;
   color: #666;
   text-align: left;
-  padding-left: 0.3em;
+  padding-left: 0.3rem;
 `;
 
 const Icon = styled.img`
-  height: 1.2em;
-  width: 1.2em;
+  height: 1.2rem;
+  width: 1.2rem;
 `;
 
 const Description = styled.div`
-  font-size: 0.75em;
-  line-height: 1.1em;
+  font-size: 0.75rem;
+  line-height: 1.1rem;
   text-align: left;
-  padding: 0.45em 0.3em;
+  padding: 0.45rem 0.3rem;
 `;
 
 const ButtonRow = styled.div`
@@ -242,7 +242,7 @@ const Footer = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 0.1em;
+  padding: 0.1rem;
 
   display: flex;
   justify-content: flex-end;
@@ -250,7 +250,7 @@ const Footer = styled.div`
 
 const FooterText = styled.div`
   font-family: Pixel;
-  font-size: 0.6em;
+  font-size: 0.6rem;
   text-align: right;
   color: #666;
 `;

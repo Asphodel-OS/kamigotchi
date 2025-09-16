@@ -23,7 +23,7 @@ export const Tabs = ({
           key={t}
           onClick={() => handleTab(t)}
           disabled={tab === t}
-          style={{ borderLeft: i == 0 ? '' : 'solid black .15em' }}
+          style={{ borderLeft: i == 0 ? '' : 'solid black .15rem' }}
         >
           {t.toLowerCase()}
         </Button>
@@ -33,7 +33,7 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  border-bottom: 0.15em solid black;
+  border-bottom: 0.15rem solid black;
 
   display: flex;
   width: 100%;
@@ -45,12 +45,12 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 1.2em;
+  padding: 1.2rem;
   justify-content: center;
   align-items: center;
   width: 100%;
 
-  font-size: 1.2em;
+  font-size: 1.2rem;
   text-align: center;
 
   cursor: pointer;

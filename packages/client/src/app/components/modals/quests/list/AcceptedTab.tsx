@@ -69,11 +69,11 @@ const CollapseText = styled.button`
 
   width: 100%;
   textalign: center;
-  padding: 0.5em;
+  padding: 0.5rem;
 
   color: #bbb;
   font-family: Pixel;
-  font-size: 0.85em;
+  font-size: 0.85rem;
   text-align: center;
 
   &:hover {

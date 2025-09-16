@@ -209,21 +209,21 @@ const Text = styled.div<{ npc?: { name: string; background: string } }>`
   height: 100%;
   min-height: max-content;
   width: 100%;
-  padding: 0em 9em;
+  padding: 0rem 9rem;
 
   display: flex;
   flex-grow: 1;
   flex-flow: column nowrap;
   justify-content: center;
 
-  font-size: 1.2em;
-  line-height: 2.4em;
+  font-size: 1.2rem;
+  line-height: 2.4rem;
   white-space: pre-line;
 `;
 
 const Header = styled.div`
-  padding: 1em;
-  font-size: 1.1em;
+  padding: 1rem;
+  font-size: 1.1rem;
   color: #a800cf;
 `;
 
@@ -247,7 +247,7 @@ const ButtonRow = styled.div`
   align-self: center;
   width: 100%;
   bottom: 0;
-  padding: 0.7em;
+  padding: 0.7rem;
 
   display: flex;
   flex-flow: row nowrap;

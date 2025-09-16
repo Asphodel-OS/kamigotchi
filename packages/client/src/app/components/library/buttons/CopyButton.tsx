@@ -38,8 +38,8 @@ export const CopyButton = ({
           style={{
             backgroundColor: '#fff',
             color: '#333',
-            borderRadius: '0.6em',
-            padding: '0.6em',
+            borderRadius: '0.6rem',
+            padding: '0.6rem',
             alignItems: 'center',
             justifyContent: 'center',
           }}

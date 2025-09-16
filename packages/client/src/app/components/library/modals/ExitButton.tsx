@@ -29,14 +29,14 @@ export const ExitButton = ({
 
 const Button = styled.button`
   background-color: #ffffff;
-  border: 0.15em solid black;
-  border-radius: 0.6em;
+  border: 0.15rem solid black;
+  border-radius: 0.6rem;
 
   color: black;
-  padding: 0.3em 0.4em;
+  padding: 0.3rem 0.4rem;
   z-index: 1;
 
-  font-size: 0.9em;
+  font-size: 0.9rem;
   cursor: pointer;
 
   &:hover {

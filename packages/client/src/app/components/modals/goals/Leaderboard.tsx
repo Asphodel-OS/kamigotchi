@@ -50,9 +50,9 @@ export const Leaderboard = ({
 };
 
 const Container = styled.div`
-  margin: 3.5em 3em;
-  border: solid black 0.15em;
-  border-radius: 0.75em;
+  margin: 3.5rem 3rem;
+  border: solid black 0.15rem;
+  border-radius: 0.75rem;
 
   overflow: auto;
   scroll: auto;
@@ -64,7 +64,7 @@ const Row = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  padding: 1.2em 1em;
+  padding: 1.2rem 1rem;
 
   &:hover {
     background-color: #eee;
@@ -72,17 +72,17 @@ const Row = styled.div`
 `;
 
 const NameText = styled.p`
-  font-size: 1.2em;
+  font-size: 1.2rem;
   font-family: Pixel;
   text-align: left;
   color: #333;
 
   flex-basis: 80%;
-  padding: 0 1em;
+  padding: 0 1rem;
 `;
 
 const SideText = styled.p`
-  font-size: 1.2em;
+  font-size: 1.2rem;
   font-family: Pixel;
   text-align: center;
   color: #333;

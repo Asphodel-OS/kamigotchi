@@ -49,12 +49,12 @@ const Container = styled.div`
 
 const EmptyText = styled.div`
   color: black;
-  margin: 1em;
+  margin: 1rem;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  font-size: 0.9em;
+  font-size: 0.9rem;
   font-family: Pixel;
 `;

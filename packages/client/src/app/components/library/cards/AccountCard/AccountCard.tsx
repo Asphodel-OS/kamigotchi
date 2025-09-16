@@ -107,9 +107,9 @@ export const AccountCard = ({
 
 const TitleBar = styled.div`
   border-style: solid;
-  border-width: 0em 0em 0.15em 0em;
+  border-width: 0rem 0rem 0.15rem 0rem;
   border-color: black;
-  padding: 0.45em;
+  padding: 0.45rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -119,7 +119,7 @@ const TitleBar = styled.div`
 
 const TitleText = styled.div`
   font-family: Pixel;
-  font-size: 1em;
+  font-size: 1rem;
   text-align: left;
   justify-content: flex-start;
   cursor: pointer;
@@ -131,7 +131,7 @@ const TitleText = styled.div`
 
 const Content = styled.div`
   flex-grow: 1;
-  padding: 0.2em;
+  padding: 0.2rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -150,7 +150,7 @@ const ContentSubtext = styled.div`
 
   font-family: Pixel;
   text-align: right;
-  font-size: 0.7em;
+  font-size: 0.7rem;
 
   ${({ onClick }) =>
     onClick &&
@@ -170,9 +170,9 @@ const ContentActions = styled.div`
 `;
 
 const TextBig = styled.p`
-  padding-bottom: 0.05em;
+  padding-bottom: 0.05rem;
 
-  font-size: 0.9em;
+  font-size: 0.9rem;
   font-family: Pixel;
   text-align: left;
 
@@ -188,9 +188,9 @@ const TextBig = styled.p`
 `;
 
 const TextMedium = styled.p`
-  font-size: 0.7em;
+  font-size: 0.7rem;
   font-family: Pixel;
   text-align: left;
-  padding-top: 0.4em;
-  padding-left: 0.2em;
+  padding-top: 0.4rem;
+  padding-left: 0.2rem;
 `;

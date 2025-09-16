@@ -107,7 +107,7 @@ export const Registration = ({
           </Description>
         </TextTooltip>
         <TextTooltip text={infoText} alignText='center'>
-          <InfoIcon fontSize='small' style={{ color: '#666', width: '1.2em' }} />
+          <InfoIcon fontSize='small' style={{ color: '#666', width: '1.2rem' }} />
         </TextTooltip>
       </AddressRow>
     );
@@ -188,19 +188,19 @@ export const AddressRow = styled.div`
 `;
 
 export const Input = styled.input`
-  border-radius: 0.45em;
-  border: solid #71f 0.15em;
+  border-radius: 0.45rem;
+  border: solid #71f 0.15rem;
   background-color: #ddd;
 
-  padding: 0.6em;
-  width: 18em;
-  height: 2.1em;
+  padding: 0.6rem;
+  width: 18rem;
+  height: 2.1rem;
 
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: text;
 
-  font-size: 0.75em;
+  font-size: 0.75rem;
   text-align: center;
 `;

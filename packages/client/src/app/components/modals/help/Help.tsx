@@ -65,7 +65,7 @@ const ButtonRow = styled.div`
 const Banner = styled.img`
   height: auto;
   width: 100%;
-  padding: 2em;
-  padding-bottom: 1em;
+  padding: 2rem;
+  padding-bottom: 1rem;
   align-self: center;
 `;

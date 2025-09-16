@@ -62,8 +62,8 @@ export const Card = ({
 
 const Wrapper = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
-  border: 0.15em solid black;
-  border-radius: 0.6em;
+  border: 0.15rem solid black;
+  border-radius: 0.6rem;
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
@@ -73,12 +73,12 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 
 const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   position: relative;
-  border-right: solid black 0.15em;
-  border-radius: 0.45em 0em 0em 0.45em;
+  border-right: solid black 0.15rem;
+  border-radius: 0.45rem 0rem 0rem 0.45rem;
   min-height: 100%;
-  height: ${({ scale }) => scale}em;
-  width: ${({ scale }) => scale}em;
-  padding: ${({ padding }) => padding ?? 0}em;
+  height: ${({ scale }) => scale}rem;
+  width: ${({ scale }) => scale}rem;
+  padding: ${({ padding }) => padding ?? 0}rem;
   ${({ scale }) => scale > 4 && `image-rendering: pixelated;`}
   user-select: none;
   overflow: hidden;
@@ -100,7 +100,7 @@ const Image = styled.img<{ onClick?: () => void }>`
 
 const Container = styled.div`
   border-color: black;
-  border-width: 0.15em;
+  border-width: 0.15rem;
   color: black;
   flex-grow: 1;
 
@@ -123,11 +123,11 @@ const ForegroundSlot = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: black;
-  font-size: ${(props) => props.size}em;
+  font-size: ${(props) => props.size}rem;
 `;
 
 const Sp = styled.div`
-  font-size: 1.2em;
+  font-size: 1.2rem;
   font-weight: bold;
   background: linear-gradient(to right, #0b0d0eff, #ee0979);
   -webkit-background-clip: text;

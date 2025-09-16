@@ -24,14 +24,14 @@ export const CircleExitButton = ({
 
 // circular exit button on the top right of the Container
 const Container = styled.div<{ scale: number; circle?: boolean }>`
-  border: 0.15em solid black;
-  border-radius: ${({ scale, circle }) => (circle ? scale * 0.5 : 0.6)}em;
+  border: 0.15rem solid black;
+  border-radius: ${({ scale, circle }) => (circle ? scale * 0.5 : 0.6)}rem;
   background-color: #fff;
 
-  width: ${({ scale }) => scale}em;
-  height: ${({ scale }) => scale}em;
+  width: ${({ scale }) => scale}rem;
+  height: ${({ scale }) => scale}rem;
 
-  font-size: ${({ scale }) => scale * 0.75}em;
+  font-size: ${({ scale }) => scale * 0.75}rem;
   text-align: center;
 
   display: flex;

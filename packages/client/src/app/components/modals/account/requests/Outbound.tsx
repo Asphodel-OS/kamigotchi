@@ -44,7 +44,7 @@ export const Outbound = ({
 
 const Container = styled.div<{ isVisible: boolean }>`
   width: 100%;
-  gap: 0.6em;
+  gap: 0.6rem;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;

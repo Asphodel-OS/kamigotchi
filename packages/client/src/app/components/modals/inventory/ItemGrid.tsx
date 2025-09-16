@@ -152,5 +152,5 @@ const Container = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  gap: 0.3em;
+  gap: 0.3rem;
 `;

@@ -182,7 +182,7 @@ interface Coordinates {
 }
 
 const Clickbox = styled.div<Coordinates>`
-  border-radius: 3em;
+  border-radius: 3rem;
   position: absolute;
   top: ${({ y1 }) => y1}%;
   left: ${({ x1 }) => x1}%;

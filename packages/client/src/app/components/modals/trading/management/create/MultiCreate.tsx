@@ -287,8 +287,8 @@ const Container = styled.div<{ isVisible: boolean }>`
 const Body = styled.div`
   position: relative;
   height: 100%;
-  padding: 6em 0.6em 0.6em 0.6em;
-  gap: 1.2em;
+  padding: 6rem 0.6rem 0.6rem 0.6rem;
+  gap: 1.2rem;
 
   display: flex;
   flex-direction: column;
@@ -300,10 +300,10 @@ const Body = styled.div`
 
 const Section = styled.div`
   background-color: rgb(221, 221, 221);
-  border-radius: 0.6em;
-  border: 0.15em solid black;
-  padding: 0.6em;
-  gap: 0.6em;
+  border-radius: 0.6rem;
+  border: 0.15rem solid black;
+  padding: 0.6rem;
+  gap: 0.6rem;
   width: 100%;
 
   display: flex;
@@ -313,11 +313,11 @@ const Section = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  padding: 0.6em;
+  padding: 0.6rem;
 
   display: flex;
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6em;
+  gap: 0.6rem;
 `;

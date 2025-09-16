@@ -100,7 +100,7 @@ const Scrollable = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 5em;
+  margin-top: 5rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -109,6 +109,6 @@ const Scrollable = styled.div`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}em;
-  line-height: ${({ size }) => size * 1.5}em;
+  font-size: ${({ size }) => size}rem;
+  line-height: ${({ size }) => size * 1.5}rem;
 `;

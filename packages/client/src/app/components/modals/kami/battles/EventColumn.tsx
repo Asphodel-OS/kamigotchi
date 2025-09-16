@@ -59,20 +59,20 @@ const Container = styled.div`
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 0.3em;
+  gap: 0.3rem;
 `;
 
 const Row = styled.div`
   width: 100%;
-  height: 2.1em;
+  height: 2.1rem;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.45em;
+  gap: 0.45rem;
 `;
 
 const Icon = styled.img`
-  height: 1.2em;
-  width: 1.2em;
+  height: 1.2rem;
+  width: 1.2rem;
 `;

@@ -47,8 +47,8 @@ export const ItemDrops = ({
 
 const Container = styled.div`
   width: 100%;
-  padding: 0.03em 0;
-  gap: 0.3em;
+  padding: 0.03rem 0;
+  gap: 0.3rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -57,12 +57,12 @@ const Container = styled.div`
 `;
 
 const Row = styled.div`
-  border-left: solid #666 0.1em;
+  border-left: solid #666 0.1rem;
 
   width: 100%;
-  padding: 0.03em 0;
-  padding-left: 0.3em;
-  gap: 0.3em;
+  padding: 0.03rem 0;
+  padding-left: 0.3rem;
+  gap: 0.3rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -71,13 +71,13 @@ const Row = styled.div`
 `;
 
 const Icon = styled.img`
-  height: 1.2em;
-  width: 1.2em;
+  height: 1.2rem;
+  width: 1.2rem;
 `;
 
 const Label = styled.div`
-  font-size: 0.75em;
+  font-size: 0.75rem;
   color: #666;
   text-align: left;
-  padding-left: 0.3em;
+  padding-left: 0.3rem;
 `;

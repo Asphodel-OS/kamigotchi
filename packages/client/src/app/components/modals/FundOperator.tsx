@@ -202,12 +202,12 @@ const BoxButton = styled.button`
   align-items: center;
   width: 90%;
   min-width: 100px;
-  padding: 0.5em 0;
-  margin: 0 0.5em;
+  padding: 0.5rem 0;
+  margin: 0 0.5rem;
 
   background-color: #fff;
   border-style: solid;
-  border-width: 0.15em;
+  border-width: 0.15rem;
   border-color: black;
   color: black;
 
@@ -216,10 +216,10 @@ const BoxButton = styled.button`
 
 const Header = styled.p`
   color: black;
-  padding: 0.75em;
+  padding: 0.75rem;
 
   font-family: Pixel;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   text-align: center;
 `;
 
@@ -230,8 +230,8 @@ const Grid = styled.div`
   align-items: center;
   height: 100%;
 
-  padding: 1em 1em;
-  margin: 2em 0;
+  padding: 1rem 1rem;
+  margin: 2rem 0;
 `;
 
 const Row = styled.div`
@@ -245,14 +245,14 @@ const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2em;
+  gap: 2rem;
 `;
 
 const Description = styled.p`
-  font-size: 1em;
+  font-size: 1rem;
   color: black;
   text-align: center;
-  padding: 0.5em;
+  padding: 0.5rem;
   font-family: Pixel;
   width: 100%;
 `;
@@ -263,13 +263,13 @@ const Input = styled.input`
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   cursor: pointer;
   justify-content: center;
   font-family: Pixel;
 
   border-width: 0px;
-  padding: 1em 1em;
+  padding: 1rem 1rem;
 
   &:focus {
     outline: none;
@@ -277,19 +277,19 @@ const Input = styled.input`
 `;
 
 const SubDescription = styled.p`
-  font-size: 0.8em;
+  font-size: 0.8rem;
   color: grey;
   text-align: center;
-  padding: 0.1em;
+  padding: 0.1rem;
   font-family: Pixel;
   width: 100%;
 `;
 
 const WarnText = styled.div`
-  font-size: 0.8em;
+  font-size: 0.8rem;
   color: #ff785b;
   text-align: center;
-  padding: 0.75em;
+  padding: 0.75rem;
   font-family: Pixel;
 
   cursor: pointer;
@@ -299,8 +299,8 @@ const WarnText = styled.div`
 
 const GasLink = styled.a<{ linkColor?: string }>`
   color: ${({ linkColor }) => linkColor ?? '#0077cc'};
-  font-size: 0.8em;
-  margin-bottom: 1em;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
   text-decoration: underline;
   &:hover {
     text-decoration: none;

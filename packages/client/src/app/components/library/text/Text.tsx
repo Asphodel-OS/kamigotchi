@@ -10,10 +10,10 @@ export const Text = styled.div<{
     right?: number;
   };
 }>`
-  font-size: ${({ size }) => size}em;
-  line-height: ${({ size }) => size * 1.5}em;
+  font-size: ${({ size }) => size}rem;
+  line-height: ${({ size }) => size * 1.5}rem;
   color: ${({ color }) => color ?? '#333'};
 
-  padding: ${({ padding }) => padding?.top ?? 0}em ${({ padding }) => padding?.right ?? 0}em
-    ${({ padding }) => padding?.bottom ?? 0}em ${({ padding }) => padding?.left ?? 0}em;
+  padding: ${({ padding }) => padding?.top ?? 0}rem ${({ padding }) => padding?.right ?? 0}rem
+    ${({ padding }) => padding?.bottom ?? 0}rem ${({ padding }) => padding?.left ?? 0}rem;
 `;

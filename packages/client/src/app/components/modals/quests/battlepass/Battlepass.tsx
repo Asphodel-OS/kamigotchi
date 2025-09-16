@@ -199,7 +199,7 @@ export const Battlepass = ({
 
 const Container = styled.div`
   position: relative;
-  margin: 0.9em;
+  margin: 0.9rem;
 
   flex-grow: 1;
   display: flex;

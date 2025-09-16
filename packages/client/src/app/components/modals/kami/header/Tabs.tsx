@@ -21,14 +21,14 @@ export const Tabs = ({
       <Button
         onClick={() => setTab('TRAITS')}
         disabled={tab === 'TRAITS'}
-        style={{ borderRight: 'solid black .15em' }}
+        style={{ borderRight: 'solid black .15rem' }}
       >
         Traits
       </Button>
       <Button
         onClick={() => setTab('SKILLS')}
         disabled={tab === 'SKILLS'}
-        style={{ borderRight: 'solid black .15em' }}
+        style={{ borderRight: 'solid black .15rem' }}
       >
         Skills
       </Button>
@@ -50,12 +50,12 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5em;
+  padding: 0.5rem;
   flex-grow: 1;
   color: black;
   justify-content: center;
 
-  font-size: 1em;
+  font-size: 1rem;
   text-align: center;
 
   cursor: pointer;

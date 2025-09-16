@@ -66,15 +66,15 @@ export const KamiBlock = ({
 
 const Container = styled.div`
   background-color: white;
-  border-radius: 0.6em;
-  margin: 0.9em;
-  filter: drop-shadow(0.2em 0.2em 0.1em black);
+  border-radius: 0.6rem;
+  margin: 0.9rem;
+  filter: drop-shadow(0.2rem 0.2rem 0.1rem black);
 `;
 
 const Image = styled.img<{ onClick?: () => void }>`
-  border: solid black 0.15em;
-  border-radius: 0.6em;
-  width: 10em;
+  border: solid black 0.15rem;
+  border-radius: 0.6rem;
+  width: 10rem;
   image-rendering: pixelated;
   user-drag: none;
 
@@ -96,13 +96,13 @@ const Grouping = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: white;
-  font-size: ${({ size }) => size}em;
-  text-shadow: ${({ size }) => `0 0 ${size * 0.5}em black`};
+  font-size: ${({ size }) => size}rem;
+  text-shadow: ${({ size }) => `0 0 ${size * 0.5}rem black`};
 `;
 
 const ClickBox = styled.input`
-  width: 1.8em;
-  height: 1.8em;
+  width: 1.8rem;
+  height: 1.8rem;
   opacity: 0.9;
   user-select: none;
 `;

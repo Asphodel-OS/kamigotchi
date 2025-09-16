@@ -56,11 +56,11 @@ export const GridTooltip = ({
         </TextRow>
 
         <TextRow>
-          <Icon margin={'0 0.4em 0 0'} src={OperatorIcon} />
+          <Icon margin={'0 0.4rem 0 0'} src={OperatorIcon} />
           Players here: {playerEntitiesLength} Friends: {friendsCount}
         </TextRow>
         <TextRow>
-          <Icon margin={'0 0.4em 0 0'} src={KamiIcon} />
+          <Icon margin={'0 0.4rem 0 0'} src={KamiIcon} />
           Kami here: {kamiEntitiesLength} Yours: {owned}
           {owned > 0 && (
             <OwnedIcons fullFirstRow={owned >= 6}>
@@ -79,49 +79,49 @@ export const GridTooltip = ({
 const TopSection = styled.div`
   display: flex;
   justify-content: space-evenly;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.5rem;
 `;
 
 const BottomSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
-  padding: 0.5em;
+  gap: 0.5rem;
+  padding: 0.5rem;
 `;
 
 const OwnedIcons = styled.div<{ fullFirstRow: boolean }>`
   display: flex;
   flex-flow: row wrap;
 
-  margin-top: 0.3em;
-  margin-bottom: 0.66em;
+  margin-top: 0.3rem;
+  margin-bottom: 0.66rem;
   ${({ fullFirstRow }) =>
-    fullFirstRow ? ` justify-content:flex-start;  margin-left: 1.5em; ` : `justify-content:center;`}
+    fullFirstRow ? ` justify-content:flex-start;  margin-left: 1.5rem; ` : `justify-content:center;`}
 `;
 
 const OwnedIcon = styled.img`
-  width: 3em;
-  border-radius: 0.6em;
-  border: solid rgb(129, 128, 128) 0.15em;
-  margin: 0.05em;
+  width: 3rem;
+  border-radius: 0.6rem;
+  border: solid rgb(129, 128, 128) 0.15rem;
+  margin: 0.05rem;
 `;
 
 const Icon = styled.img<{ margin?: string }>`
-  width: 1.4em;
-  margin: ${({ margin }) => margin ?? '0 0.1em'};
+  width: 1.4rem;
+  margin: ${({ margin }) => margin ?? '0 0.1rem'};
 `;
 
 const TextRow = styled.span`
   color: #666;
   background: #f0f0f0;
-  border-radius: 0.4em;
-  padding: 0 0.3em;
+  border-radius: 0.4rem;
+  padding: 0 0.3rem;
 `;
 
 const Ellipsis = styled.span`
   display: flex;
   align-items: center;
   font-weight: bold;
-  padding-left: 1.2em;
-  width: 3em;
+  padding-left: 1.2rem;
+  width: 3rem;
 `;

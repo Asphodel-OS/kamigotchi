@@ -158,7 +158,7 @@ export const Toolbar = ({
 };
 
 const Container = styled.div`
-  padding: 0.6em;
+  padding: 0.6rem;
   z-index: 1;
   position: sticky;
   top: 0;
@@ -173,7 +173,7 @@ const Container = styled.div`
 `;
 
 const Section = styled.div`
-  gap: 0.3em;
+  gap: 0.3rem;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;

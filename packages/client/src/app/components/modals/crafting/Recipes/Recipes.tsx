@@ -59,8 +59,8 @@ export const Recipes = ({
 const Container = styled.div`
   display: flex;
   flex-flow: row wrap;
-  margin-top: 0.6em;
-  gap: 0.6em;
+  margin-top: 0.6rem;
+  gap: 0.6rem;
 
   user-select: none;
 `;

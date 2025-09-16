@@ -32,11 +32,11 @@ const Container = styled.div`
 `;
 
 const Shell = styled.div<{ scale: number }>`
-  border: 0.15em solid #444;
-  border-radius: ${({ scale }) => scale * 0.25}em;
-  height: ${({ scale }) => scale * 1}em;
-  width: ${({ scale }) => scale * 1.5}em;
-  padding: ${({ scale }) => scale * 0.05}em;
+  border: 0.15rem solid #444;
+  border-radius: ${({ scale }) => scale * 0.25}rem;
+  height: ${({ scale }) => scale * 1}rem;
+  width: ${({ scale }) => scale * 1.5}rem;
+  padding: ${({ scale }) => scale * 0.05}rem;
 
   display: flex;
   flex-direction: row;
@@ -44,7 +44,7 @@ const Shell = styled.div<{ scale: number }>`
 `;
 
 const Juice = styled.div<{ level: number; scale: number }>`
-  border-radius: ${({ scale }) => scale * 0.2 - 0.15}em;
+  border-radius: ${({ scale }) => scale * 0.2 - 0.15}rem;
   background-color: ${({ level }) => getColor(level)};
   width: ${({ level }) => `${level}%`};
   height: 100%;
@@ -52,8 +52,8 @@ const Juice = styled.div<{ level: number; scale: number }>`
 
 const Bump = styled.div<{ scale: number }>`
   background-color: #444;
-  border-radius: 0 ${({ scale }) => scale * 0.05}em ${({ scale }) => scale * 0.05}em 0;
-  margin: ${({ scale }) => scale * 0.03}em;
-  width: ${({ scale }) => scale * 0.09}em;
-  height: ${({ scale }) => scale * 0.33}em;
+  border-radius: 0 ${({ scale }) => scale * 0.05}rem ${({ scale }) => scale * 0.05}rem 0;
+  margin: ${({ scale }) => scale * 0.03}rem;
+  width: ${({ scale }) => scale * 0.09}rem;
+  height: ${({ scale }) => scale * 0.33}rem;
 `;

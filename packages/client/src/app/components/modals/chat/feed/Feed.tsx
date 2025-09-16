@@ -311,14 +311,14 @@ export const Feed = ({
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  margin-top: 1.5em;
+  margin-top: 1.5rem;
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
-  font-size: 0.6em;
+  font-size: 0.6rem;
 `;
 
 const Buttons = styled.div`
@@ -336,12 +336,12 @@ const Messages = styled.div`
 //hover {  cursor: pointer;
 const Button = styled.button<{ position: number }>`
   position: absolute;
-  ${({ position }) => position && `left:${position}em;`};
-  font-size: 1em;
-  padding: 0.4em;
-  padding-right: 2em;
-  padding-left: 2em;
-  border-radius: 0 0 0.8em 0.8em;
+  ${({ position }) => position && `left:${position}rem;`};
+  font-size: 1rem;
+  padding: 0.4rem;
+  padding-right: 2rem;
+  padding-left: 2rem;
+  border-radius: 0 0 0.8rem 0.8rem;
   border-top: 0;
   z-index: 1;
   background-color: #c5c5c5;
@@ -364,7 +364,7 @@ const PollingMessage = styled.div`
 `;
 
 const FeedTab = styled.div`
-  line-height: 1.3em;
+  line-height: 1.3rem;
   text-align: justify;
   word-break: break-all;
   width: 100%;
@@ -373,7 +373,7 @@ const FeedTab = styled.div`
 const FeedTabMessage = styled.div<{ color: string }>`
   color: black;
   width: 100%;
-  font-size: 0.6em;
+  font-size: 0.6rem;
   strong {
     font-weight: bold;
     ${({ color }) => `color: ${color} `};
@@ -381,8 +381,8 @@ const FeedTabMessage = styled.div<{ color: string }>`
 `;
 
 const Musu = styled.img`
-  bottom: -0.1em;
+  bottom: -0.1rem;
   position: relative;
-  width: 0.8em;
-  height: 0.8em;
+  width: 0.8rem;
+  height: 0.8rem;
 `;

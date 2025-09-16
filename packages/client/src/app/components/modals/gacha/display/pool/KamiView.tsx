@@ -219,7 +219,7 @@ export const KamiView = ({
 
 const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
-  padding: 0.6em;
+  padding: 0.6rem;
   width: 100%;
   height: 100%;
 

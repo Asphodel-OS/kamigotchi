@@ -56,14 +56,14 @@ export const Node = ({
 };
 
 const Container = styled.div<{ percent: number }>`
-  border: solid black 0.15em;
-  border-radius: 0.5em;
+  border: solid black 0.15rem;
+  border-radius: 0.5rem;
   position: relative;
   overflow: hidden;
 
-  width: 5em;
-  height: 5em;
-  padding: 0.1em;
+  width: 5rem;
+  height: 5rem;
+  padding: 0.1rem;
 
   align-items: center;
   justify-content: center;
@@ -80,8 +80,8 @@ const Container = styled.div<{ percent: number }>`
 `;
 
 const Image = styled.img`
-  border: solid black 0.15em;
-  border-radius: 0.4em;
+  border: solid black 0.15rem;
+  border-radius: 0.4rem;
   height: 100%;
   width: 100%;
   image-rendering: pixelated;

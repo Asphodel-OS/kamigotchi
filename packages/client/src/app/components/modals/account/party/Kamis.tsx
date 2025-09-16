@@ -62,16 +62,16 @@ const Container = styled.div`
 `;
 
 const CellContainer = styled.div`
-  border: solid 0.15em black;
-  border-radius: 0.25em;
+  border: solid 0.15rem black;
+  border-radius: 0.25rem;
 
-  margin: 0.3em 0.4em;
+  margin: 0.3rem 0.4rem;
   position: relative;
 `;
 
 const Image = styled.img`
-  border-radius: 0.1em;
-  height: 8em;
+  border-radius: 0.1rem;
+  height: 8rem;
   cursor: pointer;
 
   &:hover {
@@ -81,8 +81,8 @@ const Image = styled.img`
 
 const EmptyText = styled.div`
   color: black;
-  margin: 1em;
+  margin: 1rem;
 
-  font-size: 1.2em;
+  font-size: 1.2rem;
   font-family: Pixel;
 `;

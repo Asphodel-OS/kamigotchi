@@ -50,14 +50,14 @@ export const Footer = ({
 
 const Container = styled.div`
   position: relative;
-  border-radius: 0 0 0.45em 0.45em;
+  border-radius: 0 0 0.45rem 0.45rem;
   width: 100%;
 `;
 
 const Text = styled.div<{ size: number }>`
   color: #d0fe41;
-  font-size: ${({ size }) => size}em;
-  line-height: ${({ size }) => size * 1.5}em;
+  font-size: ${({ size }) => size}rem;
+  line-height: ${({ size }) => size * 1.5}rem;
   cursor: pointer;
   &:hover {
     opacity: 0.8;
@@ -72,8 +72,8 @@ const Bar = styled.div<{
   bgColor: string;
   fgColor: string;
 }>`
-  border-radius: 0 0 1.05em 1.2em;
-  height: 4.2em;
+  border-radius: 0 0 1.05rem 1.2rem;
+  height: 4.2rem;
 
   background: ${({ percent, bgColor, fgColor }) =>
     `linear-gradient(90deg, ${fgColor}, 0%, ${fgColor}, ${percent * 0.9}%, ${bgColor}, ${Math.min(percent * 1.1, 100)}%, ${bgColor} 100%)`};

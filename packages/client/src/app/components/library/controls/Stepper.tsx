@@ -50,11 +50,11 @@ export const Stepper = ({
 };
 
 const Container = styled.div<{ scale: number; isHidden: boolean }>`
-  border-right: 0.15em solid black;
+  border-right: 0.15rem solid black;
   background-color: black;
   height: 100%;
-  width: ${({ scale }) => scale}em;
-  gap: 0.12em;
+  width: ${({ scale }) => scale}rem;
+  gap: 0.12rem;
 
   display: ${({ isHidden }) => (isHidden ? 'none' : 'flex')};
   flex-flow: column nowrap;
@@ -75,7 +75,7 @@ const Button = styled.div<{ scale: number; disabled?: boolean }>`
   user-select: none;
 
   color: black;
-  font-size: ${({ scale }) => 0.6 * scale ** 0.5}em;
+  font-size: ${({ scale }) => 0.6 * scale ** 0.5}rem;
   text-align: center;
 
   &:hover {

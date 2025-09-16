@@ -89,16 +89,16 @@ const Contents = styled.div`
   flex-flow: column nowrap;
   align-items: flex-start;
 
-  gap: 0.4em 0.2em;
+  gap: 0.4rem 0.2rem;
 `;
 
 const Card = styled.div`
   position: relative;
 
   background-color: #fff;
-  border: 0.2em solid #333;
-  border-radius: 0.8em;
-  padding: 0.7em 1em;
+  border: 0.2rem solid #333;
+  border-radius: 0.8rem;
+  padding: 0.7rem 1rem;
   width: 100%;
   opacity: 0.9;
 
@@ -115,12 +115,12 @@ const Card = styled.div`
 
 const Title = styled.p`
   font-family: Pixel;
-  font-size: 1em;
+  font-size: 1rem;
   text-align: left;
   text-wrap: wrap;
   justify-content: flex-start;
   color: #333;
-  padding: 1em 0.5em 0 0.5em;
+  padding: 1rem 0.5rem 0 0.5rem;
 
   max-width: 100%;
 `;
@@ -131,27 +131,27 @@ const Description = styled.div`
   font-family: Pixel;
   text-align: left;
   text-wrap: wrap;
-  line-height: 1.2em;
-  font-size: 0.7em;
-  padding: 0.4em 0.5em;
+  line-height: 1.2rem;
+  font-size: 0.7rem;
+  padding: 0.4rem 0.5rem;
 
   max-width: 100%;
 `;
 
 const ExitButton = styled.button`
   position: absolute;
-  right: -0.6em;
-  top: -0.6em;
+  right: -0.6rem;
+  top: -0.6rem;
 
   background-color: #ffffff;
-  border: 0.15em solid black;
-  border-radius: 0.6em;
+  border: 0.15rem solid black;
+  border-radius: 0.6rem;
   opacity: 0;
 
   color: black;
-  padding: 0.3em 0.4em;
+  padding: 0.3rem 0.4rem;
 
-  font-size: 0.9em;
+  font-size: 0.9rem;
   cursor: pointer;
 
   &:hover {

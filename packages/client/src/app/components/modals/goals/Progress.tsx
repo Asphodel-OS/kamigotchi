@@ -73,7 +73,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: column;
 
-  margin: 1em 1em;
+  margin: 1rem 1rem;
 `;
 
 const Row = styled.div`
@@ -83,19 +83,19 @@ const Row = styled.div`
 `;
 
 const SubTitleText = styled.h2`
-  font-size: 1.2em;
+  font-size: 1.2rem;
   font-family: Pixel;
   text-align: left;
   color: #333;
 
-  padding: 0 1em;
+  padding: 0 1rem;
 `;
 
 const SubText = styled.p`
-  font-size: 1em;
+  font-size: 1rem;
   font-family: Pixel;
   text-align: center;
   color: #333;
 
-  padding: 1em 1em 0;
+  padding: 1rem 1rem 0;
 `;

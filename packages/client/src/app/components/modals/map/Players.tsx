@@ -48,19 +48,19 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  height: 6em;
+  height: 6rem;
   width: 100%;
 `;
 
 const Title = styled.div`
   position: absolute;
-  padding: 0.6em;
+  padding: 0.6rem;
   width: 100%;
   background-color: #eee;
 
   color: #333;
   font-family: Pixel;
-  font-size: 0.9em;
+  font-size: 0.9rem;
   text-align: left;
 `;
 
@@ -68,8 +68,8 @@ const PlayerRow = styled.div`
   display: flex;
   flex-flow: row wrap;
   align-items: flex-start;
-  padding: 0.3em;
-  padding-top: 2.7em;
+  padding: 0.3rem;
+  padding-top: 2.7rem;
 
   width: 100%;
   height: 100%;
@@ -78,17 +78,17 @@ const PlayerRow = styled.div`
 
 const Player = styled.div`
   color: #333;
-  padding: 0.3em;
+  padding: 0.3rem;
 
   font-family: Pixel;
-  font-size: 0.75em;
+  font-size: 0.75rem;
   text-align: left;
-  line-height: 1.2em;
+  line-height: 1.2rem;
 
   &:hover {
     opacity: 0.6;
     cursor: pointer;
     background-color: #ddd;
-    border-radius: 0.45em;
+    border-radius: 0.45rem;
   }
 `;

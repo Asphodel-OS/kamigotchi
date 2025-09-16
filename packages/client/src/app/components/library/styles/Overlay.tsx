@@ -24,20 +24,20 @@ export const Overlay = styled.div<{
 }>`
   position: absolute;
 
-  ${({ width }) => width && `width: ${width}em;`}
+  ${({ width }) => width && `width: ${width}rem;`}
   ${({ fullWidth }) => fullWidth && 'width: 100%;'}
-  ${({ height }) => height && `height: ${height}em;`}
+  ${({ height }) => height && `height: ${height}rem;`}
   ${({ fullHeight }) => fullHeight && 'height: 100%;'}
 
   ${({ zIndex }) => zIndex !== undefined && `z-index: ${zIndex};`}
-  ${({ bottom }) => bottom !== undefined && `bottom: ${bottom}em;`}
-  ${({ top }) => top !== undefined && `top: ${top}em;`}
-  ${({ right }) => right !== undefined && `right: ${right}em;`}
-  ${({ left }) => left !== undefined && `left: ${left}em;`}
+  ${({ bottom }) => bottom !== undefined && `bottom: ${bottom}rem;`}
+  ${({ top }) => top !== undefined && `top: ${top}rem;`}
+  ${({ right }) => right !== undefined && `right: ${right}rem;`}
+  ${({ left }) => left !== undefined && `left: ${left}rem;`}
   ${({ translateX, translateY }) =>
     translateX && translateY && `transform: translate(${translateX}%, ${translateY}%);`}
 
-  ${({ gap }) => gap && `gap: ${gap}em;`}
+  ${({ gap }) => gap && `gap: ${gap}rem;`}
   ${({ opacity }) => opacity !== undefined && `opacity: ${opacity};`}
 
   display: ${({ isHidden }) => (isHidden ? 'none' : 'flex')};

@@ -31,13 +31,13 @@ export const AffinityBlock = ({
 const Container = styled.div<{ color?: string }>`
   position: relative;
   background-color: ${({ color }) => color ?? '#fff'};
-  border: solid black 0.15em;
-  border-radius: 1.2em;
+  border: solid black 0.15rem;
+  border-radius: 1.2rem;
 
-  width: 12em;
-  padding: 0.9em;
-  gap: 0.6em;
-  filter: drop-shadow(0.3em 0.3em 0.15em black);
+  width: 12rem;
+  padding: 0.9rem;
+  gap: 0.6rem;
+  filter: drop-shadow(0.3rem 0.3rem 0.15rem black);
 
   flex-grow: 1;
   display: flex;
@@ -53,15 +53,15 @@ const Container = styled.div<{ color?: string }>`
 
 // TODO: move to library
 const Icon = styled.img<{ size: number }>`
-  height: ${({ size }) => size}em;
-  width: ${({ size }) => size}em;
-  filter: drop-shadow(0 0 0.2em #bbb);
+  height: ${({ size }) => size}rem;
+  width: ${({ size }) => size}rem;
+  filter: drop-shadow(0 0 0.2rem #bbb);
   user-drag: none;
 `;
 
 // TODO: generalize with library Text
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}em;
-  text-shadow: ${({ size }) => `0 0 ${size * 0.4}em white`};
+  font-size: ${({ size }) => size}rem;
+  text-shadow: ${({ size }) => `0 0 ${size * 0.4}rem white`};
   pointer-events: none;
 `;

@@ -111,12 +111,12 @@ export function IconListButton({
 const MenuOption = styled.div<{ disabled?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 0.4em;
+  gap: 0.4rem;
 
-  border-radius: 0.4em;
-  padding: 0.6em;
+  border-radius: 0.4rem;
+  padding: 0.6rem;
   justify-content: left;
-  font-size: 0.8em;
+  font-size: 0.8rem;
 
   cursor: ${({ disabled }) => (disabled ? 'none' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
@@ -131,25 +131,25 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 `;
 
 const MenuIcon = styled.img`
-  height: 1.4em;
+  height: 1.4rem;
   user-drag: none;
 `;
 
 const MenuInput = styled.input`
   position: sticky;
-  border: 0.15em solid black;
-  border-radius: 0.45em;
+  border: 0.15rem solid black;
+  border-radius: 0.45rem;
 
   width: 90%;
-  height: 2.5em;
+  height: 2.5rem;
   box-sizing: border-box;
-  top: 0.6em;
+  top: 0.6rem;
 
-  padding: 0em 0.6em;
-  margin: 0.6em;
+  padding: 0rem 0.6rem;
+  margin: 0.6rem;
   flex-grow: 1;
 
-  font-size: 0.75em;
+  font-size: 0.75rem;
 `;
 
 const MenuWrapper = styled.div`

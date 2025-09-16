@@ -27,8 +27,8 @@ export const Countdown = ({
 
 const CountdownWrapper = styled.div`
   position: relative;
-  width: 1.1em;
-  height: 1.1em;
+  width: 1.1rem;
+  height: 1.1rem;
 `;
 
 const CountdownCircle = styled.div.attrs<{

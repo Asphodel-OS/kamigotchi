@@ -46,15 +46,15 @@ const Container = styled.div`
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 0.3em;
+  gap: 0.3rem;
 
   overflow-x: hidden;
 `;
 
 const Row = styled.div`
   width: 100%;
-  height: 2.1em;
-  gap: 0.45em;
+  height: 2.1rem;
+  gap: 0.45rem;
 
   display: flex;
   flex-flow: row nowrap;

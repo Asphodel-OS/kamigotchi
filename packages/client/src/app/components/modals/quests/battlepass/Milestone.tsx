@@ -95,10 +95,10 @@ const BaseButton = styled.div<{
   transform: translateX(${({ shift }) => 100 * shift}%);
   background-color: ${({ color }) => color};
 
-  border: solid black 0.15em;
-  border-radius: ${({ size }) => size * 0.5}em;
-  height: ${({ size }) => size}em;
-  width: ${({ size }) => size}em;
+  border: solid black 0.15rem;
+  border-radius: ${({ size }) => size * 0.5}rem;
+  height: ${({ size }) => size}rem;
+  width: ${({ size }) => size}rem;
 
   display: flex;
   align-items: center;
@@ -124,8 +124,8 @@ const ActiveButton = styled(BaseButton)`
 const InnerRing = styled.div<{ scale: number; color: string; isVisible?: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
   position: absolute;
-  border: solid ${({ color }) => color} 0.15em;
-  border-radius: 0.6em;
+  border: solid ${({ color }) => color} 0.15rem;
+  border-radius: 0.6rem;
   height: ${({ scale }) => scale * 100}%;
   width: ${({ scale }) => scale * 100}%;
 `;

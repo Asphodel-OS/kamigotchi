@@ -53,15 +53,15 @@ export const ActionListButton = ({
     if (disabled) styles.backgroundColor = '#bbb';
 
     if (size === 'small') {
-      styles.fontSize = '.6em';
-      styles.margin = '0em .12em';
-      styles.padding = '.2em .5em';
-      styles.borderRadius = '.3em';
+      styles.fontSize = '.6rem';
+      styles.margin = '0rem .12rem';
+      styles.padding = '.2rem .5rem';
+      styles.borderRadius = '.3rem';
     } else if (size === 'medium') {
-      styles.fontSize = '.8em';
-      styles.margin = '0em .16em';
-      styles.padding = '.35em .7em';
-      styles.borderRadius = '.4em';
+      styles.fontSize = '.8rem';
+      styles.margin = '0rem .16rem';
+      styles.padding = '.35rem .7rem';
+      styles.borderRadius = '.4rem';
     }
 
     return styles;
@@ -87,7 +87,7 @@ export const ActionListButton = ({
 
 const Button = styled.button`
   background-color: #fff;
-  border: solid black 0.15em;
+  border: solid black 0.15rem;
   color: black;
   display: flex;
 
@@ -109,9 +109,9 @@ const Button = styled.button`
 
 const Entry = styled.div<{ disabled?: boolean }>`
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  border-radius: 0.6em;
-  padding: 0.6em;
-  gap: 0.3em;
+  border-radius: 0.6rem;
+  padding: 0.6rem;
+  gap: 0.3rem;
 
   display: flex;
   justify-content: flex-start;
@@ -128,6 +128,6 @@ const Entry = styled.div<{ disabled?: boolean }>`
 `;
 
 const Icon = styled.img`
-  width: 1.4em;
+  width: 1.4rem;
   user-drag: none;
 `;

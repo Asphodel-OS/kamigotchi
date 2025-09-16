@@ -134,14 +134,14 @@ export const KamiImage = ({
 
 const Container = styled.div`
   position: relative;
-  height: 18em;
-  margin: 0.6em 0 0.6em 0.6em;
+  height: 18rem;
+  margin: 0.6rem 0 0.6rem 0.6rem;
   overflow: hidden;
 `;
 
 const Image = styled.img`
-  border: solid black 0.15em;
-  border-radius: 0.6em;
+  border: solid black 0.15rem;
+  border-radius: 0.6rem;
   height: 100%;
   image-rendering: pixelated;
   user-drag: none;
@@ -158,9 +158,9 @@ const Grouping = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: white;
-  font-size: ${({ size }) => size}em;
-  line-height: ${({ size }) => size * 1.5}em;
-  text-shadow: ${({ size }) => `0 0 ${size * 0.5}em black`};
+  font-size: ${({ size }) => size}rem;
+  line-height: ${({ size }) => size * 1.5}rem;
+  text-shadow: ${({ size }) => `0 0 ${size * 0.5}rem black`};
 
   &:hover {
     opacity: 0.8;
@@ -171,33 +171,33 @@ const Text = styled.div<{ size: number }>`
 const IndexInput = styled.input`
   border: none;
   background-color: #eee;
-  width: 4.5em;
+  width: 4.5rem;
   cursor: text;
 
   color: black;
-  font-size: 0.9em;
-  line-height: 1.35em;
+  font-size: 0.9rem;
+  line-height: 1.35rem;
   text-align: center;
 `;
 
 const Percentage = styled.div`
   position: absolute;
   width: 100%;
-  padding-top: 0.15em;
+  padding-top: 0.15rem;
   pointer-events: none;
 
-  font-size: 0.75em;
+  font-size: 0.75rem;
   text-align: center;
-  text-shadow: 0 0 0.5em white;
+  text-shadow: 0 0 0.5rem white;
 `;
 
 const ExperienceBar = styled.div<{ percent: number }>`
   position: relative;
-  border: solid black 0.15em;
-  border-radius: 0 0 0.6em 0.6em;
+  border: solid black 0.15rem;
+  border-radius: 0 0 0.6rem 0.6rem;
   opacity: 0.6;
   background-color: #bbb;
-  height: 1.8em;
+  height: 1.8rem;
   width: 100%;
 
   background: ${({ percent }) =>
@@ -211,11 +211,11 @@ const Button = styled.div<{
   color?: string;
   disabled?: boolean;
 }>`
-  border: solid black 0.15em;
-  border-radius: 0 0 0.6em 0;
+  border: solid black 0.15rem;
+  border-radius: 0 0 0.6rem 0;
   opacity: 0.8;
-  height: 1.8em;
-  width: 1.8em;
+  height: 1.8rem;
+  width: 1.8rem;
 
   display: flex;
   justify-content: center;
@@ -235,12 +235,12 @@ const Button = styled.div<{
   }
 
   color: black;
-  font-size: 0.8em;
+  font-size: 0.8rem;
   text-align: center;
   user-select: none;
 `;
 
 const Arrow = styled.img`
-  width: 1.2em;
-  height: 1.2em;
+  width: 1.2rem;
+  height: 1.2rem;
 `;

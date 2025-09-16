@@ -104,7 +104,7 @@ export const Message = ({
   const optionsMap = () => {
     return options.map((option, i) => (
       <PopOverButtons key={i}>
-        <button style={{ padding: `0.4em`, width: ` 100%` }} onClick={() => option.onClick()}>
+        <button style={{ padding: `0.4rem`, width: ` 100%` }} onClick={() => option.onClick()}>
           {option.text}
         </button>
       </PopOverButtons>
@@ -165,14 +165,14 @@ export const Message = ({
 };
 
 const Container = styled.div`
-  padding: 0em 0.9em;
+  padding: 0rem 0.9rem;
   width: 100%;
 
   color: black;
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-start;
-  gap: 0.4em;
+  gap: 0.4rem;
   caret-color: transparent;
 `;
 
@@ -186,9 +186,9 @@ const Content = styled.div`
 
 const Pfp = styled.img<{ author: boolean }>`
   position: relative;
-  left: -0.5em;
-  width: 3.6em;
-  height: 3.6em;
+  left: -0.5rem;
+  width: 3.6rem;
+  height: 3.6rem;
   border-radius: 50%;
   &:hover {
     opacity: 0.6;
@@ -198,26 +198,26 @@ const Pfp = styled.img<{ author: boolean }>`
   ${({ author }) =>
     author &&
     `  pointer-events: none;
-    left: 0em;
+    left: 0rem;
   `}
 `;
 
 const Header = styled.div<{ yours: boolean }>`
-  margin-top: 0.2em;
+  margin-top: 0.2rem;
   width: 100%;
   color: black;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
 
-  gap: 0.6em;
+  gap: 0.6rem;
 `;
 
 const PfpAuthor = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  gap: 0.5rem;
   justify-content: flex-end;
   align-items: flex-start;
 `;
@@ -234,7 +234,7 @@ const Name = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 9ch;
-  margin-right: 0.5em;
+  margin-right: 0.5rem;
   justify-content: flex-start;
   color: black;
   font-weight: bold;
@@ -251,13 +251,13 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   color: black;
   width: 86%;
 
-  font-size: 0.6em;
-  line-height: 1.2em;
+  font-size: 0.6rem;
+  line-height: 1.2rem;
   word-wrap: break-word;
 
-  border-radius: 1em;
-  padding: 0.4em 0.4em 0.4em 0.8em;
-  margin: 0.2em 0 0.2em 0;
+  border-radius: 1rem;
+  padding: 0.4rem 0.4rem 0.4rem 0.8rem;
+  margin: 0.2rem 0 0.2rem 0;
   display: inline-block;
   align-items: flex-start;
 
@@ -271,9 +271,9 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
     z-index: -1;
     content: '';
     position: absolute;
-   top: 1.7em;
-    min-height: 2em;
-    width: 0.7em;
+   top: 1.7rem;
+    min-height: 2rem;
+    width: 0.7rem;
     background: rgb(238, 238, 238);
     border-top-left-radius: 80%;
     left: 0;   
@@ -283,9 +283,9 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
     z-index: -1;
     content: "";
     position: absolute;
-    top: 1.7em;
-    min-height: 2em;
-    width: 0.7em;
+    top: 1.7rem;
+    min-height: 2rem;
+    width: 0.7rem;
     background: rgb(238, 238, 238);
     border-top-right-radius: 80%;
     right: 0; 

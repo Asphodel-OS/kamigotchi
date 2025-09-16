@@ -138,31 +138,31 @@ const Row = styled.div`
 `;
 
 const RowPrefix = styled.div`
-  border-left: 0.15em solid #333;
-  border-bottom: 0.15em solid #333;
-  border-radius: 0 0 0 0.4em;
-  margin 0.2em;
-  padding: 0.3em;
+  border-left: 0.15rem solid #333;
+  border-bottom: 0.15rem solid #333;
+  border-radius: 0 0 0 0.4rem;
+  margin 0.2rem;
+  padding: 0.3rem;
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-end;
-  gap: 0.6em;
+  gap: 0.6rem;
 `;
 
 const Text = styled.div`
   color: #333;
-  padding-bottom: 0.09em;
+  padding-bottom: 0.09rem;
   text-align: left;
   font-family: Pixel;
-  font-size: 0.75em;
+  font-size: 0.75rem;
 `;
 
 const WarningEmoji = styled.div`
   flex-grow: 2;
 
-  margin-bottom: -0.3em;
-  margin-right: -0.2em;
+  margin-bottom: -0.3rem;
+  margin-right: -0.2rem;
 
   text-align: center;
-  font-size: 1.25em;
+  font-size: 1.25rem;
 `;

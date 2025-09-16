@@ -195,8 +195,8 @@ export const DropdownToggle = ({
 
 const Container = styled.div`
   display: flex;
-  width: 14em;
-  height: 2.5em;
+  width: 14rem;
+  height: 2.5rem;
 `;
 
 const MenuOption = styled.div<{
@@ -206,13 +206,13 @@ const MenuOption = styled.div<{
   display: flex;
   align-items: center;
   justify-content: left;
-  gap: 0.4em;
-  border-radius: 0.4em;
-  font-size: 0.8em;
+  gap: 0.4rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  padding: ${({ isSelectAll }) => (isSelectAll ? '1em 0.6em 0.4em 0.9em ' : '0 0.2em 0.1em 2.2em')};
+  padding: ${({ isSelectAll }) => (isSelectAll ? '1rem 0.6rem 0.4rem 0.9rem ' : '0 0.2rem 0.1rem 2.2rem')};
 
   &:hover {
     background-color: #ddd;
@@ -223,22 +223,22 @@ const MenuOption = styled.div<{
 const Row = styled.span<{ simplified?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 0.6em;
+  gap: 0.6rem;
 
   input[type='checkbox'],
   input[type='radio'] {
-    width: 1em;
-    height: 1em;
+    width: 1rem;
+    height: 1rem;
     cursor: pointer;
     accent-color: rgb(203, 186, 61);
   }
 `;
 
 const Image = styled.img`
-  height: 2em;
-  width: 2em;
+  height: 2rem;
+  width: 2rem;
   object-fit: cover;
   margin-left: auto;
-  border-radius: 0.3em;
-  border: solid black 0.05em;
+  border-radius: 0.3rem;
+  border: solid black 0.05rem;
 `;

@@ -46,8 +46,8 @@ const Container = styled.div<{
 }>`
   background-color: ${({ color }) => color};
   width: 100%;
-  padding: ${({ size }) => size / 1.5}em;
-  gap: ${({ size }) => size / 1.5}em;
+  padding: ${({ size }) => size / 1.5}rem;
+  gap: ${({ size }) => size / 1.5}rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -61,6 +61,6 @@ const Text = styled.div<{
 }>`
   color: ${({ color }) => color ?? 'black'};
   text-align: left;
-  font-size: ${({ size }) => size}em;
-  line-height: ${({ size }) => 1.5 * size}em;
+  font-size: ${({ size }) => size}rem;
+  line-height: ${({ size }) => 1.5 * size}rem;
 `;

@@ -164,10 +164,10 @@ export const OfferCard = ({
 
 const Container = styled.div`
   position: relative;
-  border: 0.15em solid black;
-  border-radius: 1.2em;
+  border: 0.15rem solid black;
+  border-radius: 1.2rem;
 
-  height: 6em;
+  height: 6rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -178,12 +178,12 @@ const Container = styled.div`
 
 const Side = styled.div<{ span: number; borderRight?: boolean; borderLeft?: boolean }>`
   position: relative;
-  ${({ borderRight }) => borderRight && `border-right: 0.15em solid black;`}
-  ${({ borderLeft }) => borderLeft && `border-left: 0.15em solid black;`}
+  ${({ borderRight }) => borderRight && `border-right: 0.15rem solid black;`}
+  ${({ borderLeft }) => borderLeft && `border-left: 0.15rem solid black;`}
   height: 100%;
-  width: ${({ span }) => 4 * span + 1}em;
-  padding: 0 0.6em;
-  gap: 0.6em;
+  width: ${({ span }) => 4 * span + 1}rem;
+  padding: 0 0.6rem;
+  gap: 0.6rem;
 
   display: flex;
   justify-content: flex-start;
@@ -193,10 +193,10 @@ const Side = styled.div<{ span: number; borderRight?: boolean; borderLeft?: bool
 `;
 
 const ImagesWrapper = styled.div`
-  padding-top: 0.6em;
+  padding-top: 0.6rem;
 
-  gap: 0.1em;
-  margin: 0 0.3em;
+  gap: 0.1rem;
+  margin: 0 0.3rem;
 
   display: flex;
   flex-flow: column nowrap;
@@ -205,7 +205,7 @@ const ImagesWrapper = styled.div`
 `;
 
 const Image = styled.img`
-  height: 3.3em;
+  height: 3.3rem;
 
   image-rendering: pixelated;
   user-drag: none;
@@ -216,7 +216,7 @@ const Image = styled.img`
 `;
 
 const Controls = styled.div`
-  width: 15em;
+  width: 15rem;
   flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
@@ -227,11 +227,11 @@ const Controls = styled.div`
 const Button = styled.button`
   background-color: #eee;
   border: none;
-  border-top: 0.15em solid black;
+  border-top: 0.15rem solid black;
   width: 100%;
 
-  font-size: 0.9em;
-  line-height: 1.8em;
+  font-size: 0.9rem;
+  line-height: 1.8rem;
   cursor: pointer;
 
   &:hover {
@@ -258,8 +258,8 @@ const TagContainer = styled.div`
 `;
 
 const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
-  width: 6em;
-  padding: 0.2em;
+  width: 6rem;
+  padding: 0.2rem;
 
   color: rgb(25, 39, 2);
   background-color: ${({ color }) => color};
@@ -272,8 +272,8 @@ const TypeTag = styled.div<{ color: string; reverse?: boolean }>`
   align-items: center;
   justify-content: center;
 
-  font-size: 0.9em;
-  line-height: 1.2em;
+  font-size: 0.9rem;
+  line-height: 1.2rem;
 `;
 
 const CancelOverlay = styled.div`
@@ -286,9 +286,9 @@ const CancelOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2em;
+  font-size: 1.2rem;
   color: rgb(128, 4, 4);
-  border: 0.19em solid rgb(128, 4, 4);
+  border: 0.19rem solid rgb(128, 4, 4);
   transform: rotate(-22deg);
   z-index: 1;
   clip-path: polygon(0.5% 1%, 80% 0%, 100% 25%, 100% 90%, 90% 100%, 0% 100%, 15% 100%, 0% 70%);

@@ -88,26 +88,26 @@ export const LeaderboardModal: UIComponent = {
 
 const Header = styled.div`
   font-family: Pixel;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   text-align: center;
   color: black;
   margin: 10px;
-  padding-top: 1.5em;
+  padding-top: 1.5rem;
 `;
 
 const ColumnTitleBox = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  margin: 0.75em 1em;
-  border: solid black 0.15em;
-  border-radius: 0.75em;
+  margin: 0.75rem 1rem;
+  border: solid black 0.15rem;
+  border-radius: 0.75rem;
 `;
 
 const ColumnTitleText = styled.p`
-  font-size: 1em;
+  font-size: 1rem;
   font-family: Pixel;
   text-align: center;
   color: #333;
 
-  padding: 1em 1em;
+  padding: 1rem 1rem;
 `;

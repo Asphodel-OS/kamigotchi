@@ -84,13 +84,13 @@ export const SocialBottom = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15em black;
+  border: solid 0.15rem black;
   border-top: none;
-  border-radius: 0 0 0.6em 0.6em;
+  border-radius: 0 0 0.6rem 0.6rem;
   width: 100%;
   height: 100%;
   background-color: white;
-  padding: 0.45em;
+  padding: 0.45rem;
 
   display: flex;
   flex-flow: column nowrap;
@@ -102,8 +102,8 @@ const Container = styled.div`
 
 const EmptyText = styled.div`
   color: black;
-  margin: 1em;
+  margin: 1rem;
 
-  font-size: 0.9em;
+  font-size: 0.9rem;
   font-family: Pixel;
 `;

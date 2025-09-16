@@ -31,5 +31,5 @@ export const Sort = ({
 
 const Container = styled.div`
   position: relative;
-  margin: 0.1em;
+  margin: 0.1rem;
 `;

@@ -203,6 +203,6 @@ export const KamisExpanded = ({
 const Container = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
-  gap: 0.45em;
-  padding: 0.6em;
+  gap: 0.45rem;
+  padding: 0.6rem;
 `;

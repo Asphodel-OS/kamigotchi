@@ -104,12 +104,12 @@ export const Public = ({
 };
 
 const Container = styled.div<{ isSelected: boolean }>`
-  border-radius: 1.2em;
+  border-radius: 1.2rem;
   background-color: ${({ isSelected }) => (isSelected ? '#9c9' : 'white')};
-  filter: drop-shadow(0.3em 0.3em 0.15em black);
-  width: 24em;
-  padding: 2.1em;
-  gap: 0.6em;
+  filter: drop-shadow(0.3rem 0.3rem 0.15rem black);
+  width: 24rem;
+  padding: 2.1rem;
+  gap: 0.6rem;
   z-index: 2;
 
   display: flex;
@@ -132,18 +132,18 @@ const Section = styled.div`
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  gap: 0.3em;
+  gap: 0.3rem;
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}em;
-  line-height: ${({ size }) => size * 1.5}em;
+  font-size: ${({ size }) => size}rem;
+  line-height: ${({ size }) => size * 1.5}rem;
 `;
 
 const Image = styled.img<{ selected: boolean }>`
-  border-radius: 0.6em;
-  height: 10em;
-  width: 10em;
+  border-radius: 0.6rem;
+  height: 10rem;
+  width: 10rem;
   image-rendering: pixelated;
   opacity: ${({ selected }) => (selected ? 1 : 0.6)};
 `;

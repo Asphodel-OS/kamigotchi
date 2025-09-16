@@ -86,11 +86,11 @@ export const Filter = ({
 const Container = styled.div`
   background-color: #eee;
   position: relative;
-  border: solid black 0.15em;
-  border-radius: 0.6em;
-  padding: 0.6em;
-  margin: 0.3em;
-  filter: drop-shadow(0.1em 0.1em 0.05em black);
+  border: solid black 0.15rem;
+  border-radius: 0.6rem;
+  padding: 0.6rem;
+  margin: 0.3rem;
+  filter: drop-shadow(0.1rem 0.1rem 0.05rem black);
 
   display: flex;
   flex-flow: column nowrap;
@@ -100,7 +100,7 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  gap: 0.6em;
+  gap: 0.6rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -112,31 +112,31 @@ const Grouping = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.6em;
+  gap: 0.6rem;
 `;
 
 const Icon = styled.img`
-  height: 1.8em;
-  width: 1.8em;
+  height: 1.8rem;
+  width: 1.8rem;
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}em;
+  font-size: ${({ size }) => size}rem;
   color: #333;
 `;
 
 const Quantity = styled.input`
-  border: solid black 0.15em;
-  border-radius: 0.4em;
+  border: solid black 0.15rem;
+  border-radius: 0.4rem;
   background-color: #fff;
 
-  width: 3em;
-  padding: 0.45em 0.3em;
+  width: 3rem;
+  padding: 0.45rem 0.3rem;
 
   color: black;
-  font-size: 0.75em;
+  font-size: 0.75rem;
   text-align: center;
 
   cursor: text;
-  box-shadow: inset 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.5);
 `;

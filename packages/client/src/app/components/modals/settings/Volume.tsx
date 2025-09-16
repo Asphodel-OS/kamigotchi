@@ -75,21 +75,21 @@ export const Volume = () => {
 const Section = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: 0.6em;
+  padding: 0.6rem;
 `;
 
 const Header = styled.div`
-  font-size: 1em;
+  font-size: 1rem;
   color: #333;
   text-align: left;
   font-family: Pixel;
-  padding-bottom: 0.5em;
+  padding-bottom: 0.5rem;
 `;
 
 const Row = styled.div`
-  padding-left: 0.7em;
-  padding-right: 0.7em;
-  padding-bottom: 0.3em;
+  padding-left: 0.7rem;
+  padding-right: 0.7rem;
+  padding-bottom: 0.3rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -98,16 +98,16 @@ const Row = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 3em;
-  height: 3em;
-  margin: 0em 1em;
+  width: 3rem;
+  height: 3rem;
+  margin: 0rem 1rem;
   cursor: pointer;
 `;
 
 const Text = styled.p`
   color: #333;
   font-family: Pixel;
-  font-size: 0.8em;
+  font-size: 0.8rem;
   text-align: left;
 `;
 

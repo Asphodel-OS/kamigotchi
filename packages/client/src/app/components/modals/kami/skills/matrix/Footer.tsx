@@ -111,14 +111,14 @@ export const Footer = ({
 
 const Points = styled.div`
   background-color: #ffffff;
-  border: solid black 0.15em;
-  border-radius: 0.45em;
-  height: 2.5em;
-  width: 7.5em;
+  border: solid black 0.15rem;
+  border-radius: 0.45rem;
+  height: 2.5rem;
+  width: 7.5rem;
 
   color: black;
-  font-size: 0.9em;
-  line-height: 1.35em;
+  font-size: 0.9rem;
+  line-height: 1.35rem;
 
   display: flex;
   flex-flow: row nowrap;

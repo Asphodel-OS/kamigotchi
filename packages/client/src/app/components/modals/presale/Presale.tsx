@@ -148,7 +148,7 @@ export const Presale: UIComponent = {
 const Container = styled.div`
   background-color: #1d3441;
   height: 100%;
-  gap: 0.6em;
+  gap: 0.6rem;
 
   display: flex;
   flex-flow: column nowrap;
@@ -170,8 +170,8 @@ const Content = styled.div`
 `;
 
 const OnyxColumn = styled.div`
-  width: 24em;
-  height: 32em;
+  width: 24rem;
+  height: 32rem;
 
   display: flex;
   flex-flow: column nowrap;
@@ -180,14 +180,14 @@ const OnyxColumn = styled.div`
 `;
 
 const Image = styled.img`
-  height: 24em;
-  max-height: 15em;
-  margin: 1.2em;
+  height: 24rem;
+  max-height: 15rem;
+  margin: 1.2rem;
   background-color: transparent;
 
   image-rendering: pixelated;
-  filter: drop-shadow(-0.9em -0.9em 0.9em #fff) drop-shadow(0.9em 0.9em 0.9em #d0fe41)
-    drop-shadow(0 0 0.6em #fff);
+  filter: drop-shadow(-0.9rem -0.9rem 0.9rem #fff) drop-shadow(0.9rem 0.9rem 0.9rem #d0fe41)
+    drop-shadow(0 0 0.6rem #fff);
 
   user-select: none;
 

@@ -229,8 +229,8 @@ export const EnemyCards = ({
 };
 
 const Container = styled.div`
-  padding: 0.6em;
-  gap: 0.45em;
+  padding: 0.6rem;
+  gap: 0.45rem;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -244,7 +244,7 @@ const StickyRow = styled.div`
   opacity: 0.9;
   width: 100%;
 
-  padding: 0.3em 0 0.3em 0;
+  padding: 0.3rem 0 0.3rem 0;
 
   display: flex;
   flex-flow: row nowrap;
@@ -254,7 +254,7 @@ const StickyRow = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 1.2em;
+  font-size: 1.2rem;
   color: #333;
   cursor: pointer;
 

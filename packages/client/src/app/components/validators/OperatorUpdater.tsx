@@ -105,8 +105,8 @@ export const OperatorUpdater: UIComponent = {
 
 const Description = styled.div`
   color: #333;
-  padding: 0.9em 0;
-  font-size: 0.75em;
+  padding: 0.9rem 0;
+  font-size: 0.75rem;
   text-align: center;
 `;
 

@@ -87,7 +87,7 @@ export const Friends = ({
 
 const Container = styled.div`
   width: 100%;
-  gap: 0.6em;
+  gap: 0.6rem;
 
   display: flex;
   flex-flow: wrap;

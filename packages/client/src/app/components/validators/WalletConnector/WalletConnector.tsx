@@ -227,7 +227,7 @@ export const WalletConnecter: UIComponent = {
 };
 
 const Container = styled.div`
-  height: 15em;
+  height: 15rem;
 
   display: flex;
   flex-flow: column nowrap;

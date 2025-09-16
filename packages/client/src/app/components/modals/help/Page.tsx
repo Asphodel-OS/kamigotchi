@@ -21,11 +21,11 @@ export const Page = ({
 
 const Container = styled.div`
   color: #333;
-  padding: 1.5em;
+  padding: 1.5rem;
 `;
 
 const Line = styled.div`
-  font-size: 0.9em;
+  font-size: 0.9rem;
   line-height: 150%;
   text-align: left;
 `;

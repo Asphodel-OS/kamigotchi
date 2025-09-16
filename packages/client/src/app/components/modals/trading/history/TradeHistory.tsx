@@ -86,10 +86,10 @@ const Title = styled.div`
   background-color: rgb(221, 221, 221);
   width: 100%;
 
-  padding: 1.8em;
+  padding: 1.8rem;
   opacity: 0.9;
   color: black;
-  font-size: 1.2em;
+  font-size: 1.2rem;
   text-align: left;
   z-index: 2;
 `;
@@ -99,8 +99,8 @@ const Body = styled.div`
   height: max-content;
   width: 100%;
 
-  padding: 0.9em;
-  gap: 0.9em;
+  padding: 0.9rem;
+  gap: 0.9rem;
 
   display: flex;
   flex-flow: column nowrap;

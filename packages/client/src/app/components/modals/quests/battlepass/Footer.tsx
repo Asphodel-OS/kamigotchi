@@ -46,8 +46,8 @@ export const Footer = ({
 };
 
 const Container = styled.div`
-  padding: 0.9em;
-  gap: 0.6em;
+  padding: 0.9rem;
+  gap: 0.6rem;
 
   display: flex;
   flex-flow: column no-wrap;
@@ -56,7 +56,7 @@ const Container = styled.div`
 `;
 
 const Icon = styled.img`
-  height: 2.4em;
+  height: 2.4rem;
   width: auto;
   image-rendering: pixelated;
 `;

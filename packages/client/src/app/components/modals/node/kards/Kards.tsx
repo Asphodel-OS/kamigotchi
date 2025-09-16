@@ -147,5 +147,5 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   overflow-y: auto;
-  gap: 0.3em;
+  gap: 0.3rem;
 `;
