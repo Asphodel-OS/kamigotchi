@@ -5,8 +5,9 @@ import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useVisibility } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
 import { QuestsIcon } from 'assets/images/icons/menu';
+import { DEAD_ADDRESS } from 'constants/addresses';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import {
@@ -30,6 +31,9 @@ export const QuestModal: UIComponent = {
   id: 'QuestModal',
   Render: () => {
     const layers = useLayers();
+    const { burnerAddress, validations } = useNetwork();
+    const isNetworkReady =
+      validations.authenticated && validations.chainMatches && burnerAddress !== DEAD_ADDRESS;
 
     const {
       network,
@@ -106,22 +110,14 @@ export const QuestModal: UIComponent = {
     const isUpdating = useRef(false);
     const [tab, setTab] = useState<TabType>('ONGOING');
     const [available, setAvailable] = useState<Quest[]>([]);
-    const [lastRefresh, setLastRefresh] = useState(Date.now());
 
     /////////////////
     // SUBSCRIPTIONS
 
-    // ticking
-    useEffect(() => {
-      const timerId = setInterval(() => {
-        setLastRefresh(Date.now());
-      }, 250);
-      return () => clearInterval(timerId);
-    }, []);
-
     // update Available Quests whenever quests change state
     // TODO: figure out a trigger for repeatable quests
     useEffect(() => {
+      if (!isNetworkReady) return;
       if (isUpdating.current) return;
       isUpdating.current = true;
 
@@ -132,12 +128,13 @@ export const QuestModal: UIComponent = {
       if (populated.length > available.length) setTab('AVAILABLE');
 
       isUpdating.current = false;
-    }, [questsModalVisible, registry.length, completed.length, ongoing.length, lastRefresh]);
+    }, [questsModalVisible, registry.length, completed.length, ongoing.length, isNetworkReady]);
 
     // update the Notifications when the number of available quests changes
     useEffect(() => {
+      if (!isNetworkReady) return;
       updateNotifications();
-    }, [available.length, lastRefresh]);
+    }, [available.length, isNetworkReady]);
 
     /////////////////
     // HELPERS
