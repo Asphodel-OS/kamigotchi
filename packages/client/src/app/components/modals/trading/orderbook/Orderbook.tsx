@@ -8,6 +8,7 @@ import { ConfirmationData } from '../library/Confirmation';
 import { TabType } from '../types';
 import { Controls } from './controls';
 import { Offers } from './offers/Offers';
+import { SearchBar } from './SearchBar';
 
 export const Orderbook = ({
   actions,
@@ -36,7 +37,7 @@ export const Orderbook = ({
   };
   isVisible: boolean;
 }) => {
-  const { tab } = controls;
+  const { items } = data;
 
   const [sort, setSort] = useState<string>('Price'); // Price, Owner
   const [ascending, setAscending] = useState<boolean>(true);
@@ -44,6 +45,8 @@ export const Orderbook = ({
   const [itemSearch, setItemSearch] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>('');
+  const [category, setCategory] = useState<string>('All');
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -71,9 +74,12 @@ export const Orderbook = ({
             setItemFilter,
             itemSearch,
             setItemSearch,
+            query,
+            setQuery,
+            category,
+            setCategory,
           }}
           data={data}
-          utils={utils}
         />
       </TopPane>
       <ToggleRow>
@@ -81,6 +87,23 @@ export const Orderbook = ({
           {collapsed ? '∨' : '∧'}
         </CollapseToggle>
       </ToggleRow>
+      <SearchBar
+        controls={{
+          typeFilter,
+          setTypeFilter,
+          setItemFilter,
+
+          sort,
+          setSort,
+          ascending,
+          setAscending,
+          query,
+          setQuery,
+          setCategory,
+        }}
+        data={{ items }}
+        utils={utils}
+      />
       <BottomPane>
         <Offers
           actions={actions}
@@ -103,18 +126,18 @@ export const Orderbook = ({
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
-  height: 100%;
-  display: ${({ isVisible }) => (isVisible ? 'grid' : 'none')};
-  grid-template-rows: var(--top, 40%) min-content 1fr;
-  grid-template-columns: 1fr;
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   position: relative;
+
+  flex-flow: column nowrap;
+  height: 100%;
   width: 100%;
   user-select: none;
 `;
 
 const TopPane = styled.div<{ collapsed: boolean }>`
+  display: ${({ collapsed }) => (collapsed ? 'none' : 'flex')};
   position: relative;
-  grid-row: 1;
   overflow: hidden auto;
   height: 100%;
   width: 100%;
@@ -125,7 +148,6 @@ const TopPane = styled.div<{ collapsed: boolean }>`
 
 const BottomPane = styled.div`
   position: relative;
-  grid-row: 3;
   display: flex;
   width: 100%;
   height: 100%;
@@ -135,7 +157,6 @@ const BottomPane = styled.div`
 `;
 
 const ToggleRow = styled.div`
-  grid-row: 2;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -111,7 +111,7 @@ export const SearchBar = ({
   // RENDER
 
   return (
-    <SearchRow>
+    <Container>
       <IconButton text={`< ${typeFilter} >`} onClick={toggleTypeFilter} />
       <IconListButton img={getSortIcon(sort)} text={sort} options={getSortOptions()} />
       <TextTooltip text={[ascending ? 'sorting by ascending' : 'sorting by descending']}>
@@ -131,15 +131,15 @@ export const SearchBar = ({
           ))}
         </SuggestBox>
       )}
-    </SearchRow>
+    </Container>
   );
 };
 
-const SearchRow = styled.div`
+const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 20vw;
   gap: 0.6vw;
+  padding-top: 0.3vw;
 
   display: flex;
   flex-flow: row nowrap;
@@ -169,9 +169,6 @@ const SearchRow = styled.div`
 `;
 
 const SearchInput = styled.input`
-  border-left: 0.12vw solid black;
-  border-bottom: 0.12vw solid black;
-
   flex: 1 1 auto;
   min-width: 0;
   height: 1.8vw;

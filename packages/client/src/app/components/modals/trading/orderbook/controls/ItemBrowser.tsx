@@ -164,8 +164,7 @@ const Sidebar = styled.div`
   gap: 0.3vw;
   border-right: 0.15vw solid black;
   flex: 0 0 auto;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: scroll;
 `;
 
 const CategoryButton = styled.button`
@@ -194,42 +193,10 @@ const Right = styled.div`
   overflow: hidden;
 `;
 
-const DetailsBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.6vw;
-`;
-
-const SelectedWrap = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.6vw;
-`;
-
 const Thumb = styled.img`
   width: 1.8vw;
   height: 1.8vw;
   image-rendering: pixelated;
-`;
-
-const SelectedName = styled.div`
-  max-width: 18vw;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 1vw;
-`;
-
-const ClearButton = styled.button`
-  border: 0.12vw solid black;
-  background: #f5f5f5;
-  padding: 0.45vw 0.9vw;
-  cursor: pointer;
-  &:disabled {
-    background: #e5e5e5;
-    cursor: default;
-  }
 `;
 
 const TableWrap = styled.div`

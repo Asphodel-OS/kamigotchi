@@ -1,17 +1,13 @@
-import { Dispatch, useEffect, useState } from 'react';
+import { Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
 import { Item, NullItem } from 'network/shapes';
-import { ItemBrowser } from '../browse/ItemBrowser';
-import { SearchBar } from './SearchBar';
-
-const SORTS = ['Item', 'Type', 'Qty', 'Total', 'Owner', 'Price'];
+import { ItemBrowser } from './ItemBrowser';
 
 export const Controls = ({
   controls,
   data,
-  utils,
 }: {
   controls: {
     typeFilter: TradeType;
@@ -26,20 +22,20 @@ export const Controls = ({
     setSort: Dispatch<string>;
     ascending: boolean;
     setAscending: Dispatch<boolean>;
+    query: string;
+    setQuery: Dispatch<string>;
+    category: string;
+    setCategory: Dispatch<string>;
   };
   data: {
     items: Item[];
     trades: Trade[];
   };
-  utils: {
-    getItemByIndex: (index: number) => Item;
-  };
 }) => {
   const { itemFilter, setItemFilter } = controls;
+  const { setQuery, category, setCategory } = controls;
   const { items } = data;
   // smart search across items and categories
-  const [query, setQuery] = useState<string>('');
-  const [category, setCategory] = useState<string>('All');
 
   // respond to external category change events
   useEffect(() => {
@@ -69,20 +65,13 @@ export const Controls = ({
 
   return (
     <Container>
-      <SearchBar
-        controls={{ ...controls, query, setQuery, setCategory }}
-        data={{ items }}
-        utils={utils}
+      <ItemBrowser
+        items={items}
+        selected={itemFilter}
+        setSelected={setItemFilter}
+        category={category as any}
+        onCategoryChange={setCategory as any}
       />
-      <BrowserSection>
-        <ItemBrowser
-          items={items}
-          selected={itemFilter}
-          setSelected={setItemFilter}
-          category={category as any}
-          onCategoryChange={setCategory as any}
-        />
-      </BrowserSection>
     </Container>
   );
 };
@@ -96,14 +85,5 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  overflow: hidden;
-`;
-
-const BrowserSection = styled.div`
-  position: relative;
-  width: 100%;
-  padding: 0;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
+  overflow-y: scroll;
 `;
