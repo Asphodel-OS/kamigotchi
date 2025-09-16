@@ -1,5 +1,6 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
+import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
@@ -9,7 +10,6 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
-import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 const REFRESH_INTERVAL = 1000;
 
@@ -90,7 +90,7 @@ export const Kamis = ({
     playClick();
   };
 
-  if (kamis.length && wildKamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
+  if (kamis.length === 0 && wildKamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
   return (
     <Container key='grid'>
       {kamis.map((kami) => (

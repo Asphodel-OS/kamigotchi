@@ -3,9 +3,6 @@ import { uuid } from '@mud-classic/utils';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 
-import { getKami as _getKami } from 'app/cache/kami';
-import { queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
-
 import {
   getAccount as _getAccount,
   getAccountKamis as _getAccountKamis,
@@ -14,7 +11,7 @@ import {
 } from 'app/cache/account';
 import { getFriends as _getFriends } from 'app/cache/account/getters';
 import { getConfigAddress } from 'app/cache/config';
-import { Kami } from 'app/cache/kami';
+import { getKami as _getKami, Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
@@ -22,6 +19,7 @@ import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { BaseAccount, NullAccount, queryAccountByIndex } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
+import { queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
 import { getTotalScoreByFilter, getVIPEpoch } from 'network/shapes/Score';
 import { getCompAddr } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';
