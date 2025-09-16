@@ -2,11 +2,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
 import { useEffect, useState } from 'react';
 
-import {
-  getAccount as _getAccount,
-  getAccountInventories,
-  getAccountKamis,
-} from 'app/cache/account';
+import { getAccount as _getAccount, getAccountKamis } from 'app/cache/account';
 import {
   getInventoryBalance as _getInventoryBalance,
   cleanInventories,
@@ -50,7 +46,13 @@ export const InventoryModal: UIComponent = {
       const accountEntity = queryAccountFromEmbedded(network);
       const accountID = world.entities[accountEntity];
 
-      const kamiRefreshOptions = {
+      const accRefresh = {
+        live: 1,
+        inventory: 1,
+        config: 3600,
+      };
+
+      const kamiRefresh = {
         bonuses: 5,
         config: 3600,
         flags: 10,
@@ -71,13 +73,12 @@ export const InventoryModal: UIComponent = {
             recipe.requirements.use
               .map((req) => parseConditionalText(world, components, req))
               .join('\n '),
-          getAccount: (entity: EntityIndex) => _getAccount(world, components, entity),
-          getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
-          getInventories: () => getAccountInventories(world, components, accountEntity),
+          getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
           getBalance: (invs: Inventory[], index: number) => _getInventoryBalance(invs, index),
+          getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
           getItem: (index: EntityIndex) => getItemByIndex(world, components, index),
           getKamis: () =>
-            getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
+            getAccountKamis(world, components, accountEntity, kamiRefresh, debug.cache),
           getMusuBalance: () => getItemBalance(world, components, accountID, MUSU_INDEX),
           getObolsBalance: () => getItemBalance(world, components, accountID, OBOL_INDEX),
           meetsRequirements: (holder: Kami | Account, item: Item) =>
@@ -89,7 +90,7 @@ export const InventoryModal: UIComponent = {
     })();
     const { actions, api } = network;
     const { accountEntity } = data;
-    const { getAccount, getInventories, getKamis } = utils;
+    const { getAccount, getKamis } = utils;
     const { getItem, getBalance } = utils;
 
     const [tick, setTick] = useState(Date.now());
@@ -103,7 +104,7 @@ export const InventoryModal: UIComponent = {
 
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
-    const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
+    const modalOpen = useVisibility((s) => s.modals.inventory);
 
     /////////////////
     // SUBSCRIPTIONS
@@ -118,9 +119,21 @@ export const InventoryModal: UIComponent = {
 
     // refresh data whenever the modal is opened
     useEffect(() => {
-      if (!inventoryModalOpen) return;
+      if (!modalOpen) return;
       updateData();
-    }, [inventoryModalOpen, tick, accountEntity]);
+    }, [modalOpen, tick, accountEntity]);
+
+    /////////////////
+    // GETTERS
+
+    // update the inventory, account and kami data
+    const updateData = () => {
+      const account = getAccount(accountEntity);
+      setAccount(account);
+      const inventories = cleanInventories(account.inventories ?? []);
+      setInventories(inventories);
+      setKamis(getKamis());
+    };
 
     /////////////////
     // ACTIONS
@@ -179,22 +192,6 @@ export const InventoryModal: UIComponent = {
     };
 
     /////////////////
-    // GETTERS
-
-    // update the inventory, account and kami data
-    const updateData = () => {
-      const account = getAccount(accountEntity);
-      setAccount(account);
-
-      // get, clean, and set account inventories
-      const rawInventories = getInventories() ?? [];
-      const inventories = cleanInventories(rawInventories);
-      setInventories(inventories);
-      // get, and set account kamis
-      setKamis(getKamis());
-    };
-
-    /////////////////
     // INTERPRETATION
 
     // get modal title
@@ -213,20 +210,14 @@ export const InventoryModal: UIComponent = {
           <MusuRow
             key='musu'
             data={{
-              musu: getBalance(account.inventories ?? [], MUSU_INDEX),
-              obols: getBalance(account.inventories ?? [], OBOL_INDEX),
+              musu: getBalance(inventories, MUSU_INDEX),
+              obols: getBalance(inventories, OBOL_INDEX),
             }}
-            state={{
-              mode,
-              setMode,
-              setShuffle,
-            }}
+            state={{ mode, setMode, setShuffle }}
           />
         }
         shuffle={shuffle}
-        onClose={() => {
-          setMode('STOCK');
-        }}
+        onClose={() => setMode('STOCK')}
         canExit
         noPadding
         overlay

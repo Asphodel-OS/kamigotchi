@@ -6,6 +6,7 @@ import { Inventory } from 'app/cache/inventory';
 import { EmptyText, IconListButton } from 'app/components/library';
 import { ButtonListOption } from 'app/components/library/buttons';
 import { Option } from 'app/components/library/buttons/IconListButton';
+import { MUSU_INDEX } from 'constants/items';
 import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
@@ -48,6 +49,7 @@ export const ItemGrid = ({
   const { meetsRequirements } = utils;
 
   const [visible, setVisible] = useState(false);
+  const [displayed, setDisplayed] = useState<Inventory[]>([]);
 
   // hide ItemGrid when sendView is true
   useEffect(() => {
@@ -55,14 +57,21 @@ export const ItemGrid = ({
     return () => clearTimeout(id);
   }, [mode]);
 
+  // set displayed when inventory changes
+  useEffect(() => {
+    const filtered = inventories.filter((inv) => inv.item.index !== MUSU_INDEX);
+    setDisplayed(filtered);
+  }, [inventories]);
+
   /////////////////
   // INTERPRETATION
 
   // get the usage options for a given item
   const getItemActions = (item: Item, bal: number): Option[] => {
-    if (item.for && item.for === 'KAMI') return getKamiOptions(item);
-    else if (item.for && item.for === 'ACCOUNT') return getAccountOptions(item, bal);
-    else return [];
+    if (!item.for) return [];
+    if (item.for === 'KAMI') return getKamiOptions(item);
+    if (item.for === 'ACCOUNT') return getAccountOptions(item, bal);
+    return [];
   };
 
   // get the list of options for Kami to use Item on
@@ -106,8 +115,8 @@ export const ItemGrid = ({
 
   return (
     <Container isVisible={visible} key='grid'>
-      {inventories.length < 1 && <EmptyText text={EMPTY_TEXT} />}
-      {inventories.map((inv) => {
+      {displayed.length < 1 && <EmptyText text={EMPTY_TEXT} />}
+      {displayed.map((inv) => {
         const item = inv.item;
         const options = getItemActions(item, inv.balance);
 
