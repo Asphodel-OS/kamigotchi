@@ -15,12 +15,7 @@ export const Bottom = ({
   actions,
   data,
   utils,
-  view: {
-    tab,
-    subTab,
-    setSubTab,
-    isSelf,
-  },
+  view: { tab, subTab, setSubTab, isSelf },
 }: {
   actions: {
     acceptFren: (friendship: Friendship) => void;
@@ -32,6 +27,7 @@ export const Bottom = ({
     account: Account;
     accounts: Account[];
     isSelf: boolean;
+    kamiNFTAddress: `0x${string}`;
     player: PlayerAccount;
     vip: {
       epoch: number; // current VIP epoch
@@ -41,6 +37,8 @@ export const Bottom = ({
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
     getFriends: (accEntity: EntityIndex) => Friends;
+    queryKamiByIndex: (index: number) => EntityIndex | undefined;
+    getKami: (entity: EntityIndex) => Kami;
   };
   view: {
     isSelf: boolean;
@@ -71,7 +69,7 @@ export const Bottom = ({
         <StatsBottom key='statsbottom' data={data} />
       </Tab>
       <Tab isVisible={tab === 'party'}>
-        <PartyBottom key='partybottom' data={{ account }} utils={utils} />
+        <PartyBottom key='partybottom' data={data} utils={utils} />
       </Tab>
     </>
   );

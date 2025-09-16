@@ -3,33 +3,84 @@ import styled from 'styled-components';
 
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { ExternalIcon } from 'assets/images/icons/menu';
+import { erc721ABI } from 'network/chain/ERC721';
+import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
-import type { ComponentProps } from 'react';
+import { useReadContracts, useWatchBlockNumber } from 'wagmi';
+
+const REFRESH_INTERVAL = 1000;
 
 export const Kamis = ({
   data,
   utils,
 }: {
-  data: ComponentProps<typeof Kamis>['data'];
+  data: { account: Account; kamiNFTAddress: `0x${string}` };
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
+    queryKamiByIndex: (index: number) => EntityIndex | undefined;
+    getKami: (entity: EntityIndex) => Kami;
   };
 }) => {
-  const { account } = data;
-  const { getAccountKamis } = utils;
+  const { account, kamiNFTAddress } = data;
+  const { getAccountKamis, queryKamiByIndex, getKami } = utils;
 
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setModals = useVisibility((s) => s.setModals);
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const setKami = useSelected((s) => s.setKami);
   const [kamis, setKamis] = useState<Kami[]>([]);
+  const [wildKamis, setWildKamis] = useState<Kami[]>([]);
+  const [tick, setTick] = useState(Date.now());
+
+  /////////////////
+  // BLOCK WATCHERS
+
+  useWatchBlockNumber({
+    onBlockNumber: () => refetchNFTs(),
+  });
+
+  const { refetch: refetchNFTs, data: nftData } = useReadContracts({
+    contracts: [
+      {
+        address: kamiNFTAddress,
+        abi: erc721ABI,
+        functionName: 'getAllTokens',
+        args: [account.ownerAddress],
+      },
+    ],
+  });
+
+  /////////////////
+  // SUBSCRIPTIONS
+  kamis.map((kami) => console.log(`WORLD`, kami.name));
+  wildKamis.map((kami) => console.log(`WILD`, kami.name));
+  // mounting
+  useEffect(() => {
+    // set ticking
+    const refreshClock = () => setTick(Date.now());
+    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+    return () => clearInterval(timerId);
+  }, []);
 
   useEffect(() => {
-    const kamis = getAccountKamis(account?.entity);
-    setKamis(kamis);
-  }, [account?.entity]);
+    const accountKamis = getAccountKamis(account?.entity);
+    setKamis(accountKamis);
+  }, [account?.entity, tick]);
+
+  // update list of wild kamis whenever that changes
+  // TOTO: properly typecast the result of the abi call
+  useEffect(() => {
+    const result = (nftData?.[0]?.result ?? []) as number[];
+    if (result.length != wildKamis.length) {
+      const entities = result.map((index: number) => queryKamiByIndex(index));
+      const filtered = entities.filter((entity) => !!entity) as EntityIndex[];
+      const externalKamis = filtered.map((entity: EntityIndex) => getKami(entity));
+      setWildKamis(externalKamis);
+    }
+  }, [nftData, account?.entity]);
 
   const kamiOnClick = (kami: Kami) => {
     const sameKami = kamiIndex === kami.index;
@@ -40,13 +91,21 @@ export const Kamis = ({
     playClick();
   };
 
-  if (kamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
+  if (kamis.length && wildKamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
   return (
     <Container key='grid'>
       {kamis.map((kami) => (
-        <TextTooltip key={kami.index} text={[kami.name]}>
+        <TextTooltip key={kami.index} text={[kami.name, 'in the wild']}>
           <CellContainer id={`grid-${kami.id}`}>
             <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
+          </CellContainer>
+        </TextTooltip>
+      ))}
+      {wildKamis.map((kami) => (
+        <TextTooltip key={kami.index} text={[kami.name, 'in the wild']}>
+          <CellContainer id={`grid-${kami.id}`}>
+            <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
+            <ExtIcon src={ExternalIcon} />
           </CellContainer>
         </TextTooltip>
       ))}
@@ -73,10 +132,16 @@ const Image = styled.img`
   border-radius: 0.1vw;
   height: 8vw;
   cursor: pointer;
-
   &:hover {
     opacity: 0.75;
   }
+`;
+
+const ExtIcon = styled.img`
+  position: absolute;
+  width: 2.5vw;
+  right: 0vw;
+  bottom: 0vw;
 `;
 
 const EmptyText = styled.div`
