@@ -68,9 +68,7 @@ export function useComponentEntities<T extends Schema>(component: Component<T>) 
 
   useEffect(() => {
     const recompute = () => setList(Array.from(getComponentEntities(component)));
-    // Prime once on mount
     recompute();
-    // Subscribe to component changes
     const sub = component.update$.subscribe(recompute);
     return () => sub?.unsubscribe();
   }, [component]);
