@@ -103,19 +103,20 @@ const getOption = (
   triggerAction: Function,
   showEffects?: boolean
 ) => {
-  let text = `${inv.item.name} `;
+  const name = inv.item.name;
+
   // its not querying use correctly!
-  if (!!showEffects) {
-    const effectsText = parseAllos(world, components, inv.item.effects.use)
-      .map((entry) => `${entry.description}`)
-      .join(', ');
-    text = `${text} (${effectsText})`;
+  let effectsText = '';
+  if (showEffects) {
+    const allos = parseAllos(world, components, inv.item.effects.use);
+    const alloList = allos.map((entry) => `${entry.description}`).join(', ');
+    effectsText = `(${alloList})`;
   }
 
   // const canEat = () => passesConditions(world, components, inv.item.requirements.use, kami);
 
   return {
-    text,
+    text: `${name} ${effectsText}`,
     onClick: () => triggerAction(kami, inv.item),
     image: inv.item.image,
     // disabled: !canEat(),

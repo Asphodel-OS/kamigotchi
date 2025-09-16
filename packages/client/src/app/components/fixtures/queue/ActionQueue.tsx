@@ -1,28 +1,23 @@
 import { EntityIndex, getComponentEntities } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { map, merge } from 'rxjs';
 import styled from 'styled-components';
 
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { useVisibility } from 'app/stores';
+import { useStream } from 'network/utils/hooks';
 import { Controls } from './Controls';
 import { Logs } from './Logs';
 
 export const ActionQueue: UIComponent = {
   id: 'ActionQueue',
-  requirement: (layers) => {
-    const { network } = layers;
-    const { actions, components } = network;
-    const { LoadingState } = components;
+  Render: () => {
+    const { network } = useLayers();
 
-    return merge(actions.Action.update$, LoadingState.update$).pipe(
-      map(() => {
-        return { network };
-      })
-    );
-  },
-  Render: ({ network }) => {
-    const ActionComponent = network.actions.Action;
+    const { actions: { Action: ActionComponent } } = network;
+
+    const actionUpdate = useStream(ActionComponent.update$);
+
     const actionQueueVisible = useVisibility((s) => s.fixtures.actionQueue);
     const [mode, setMode] = useState<number>(1);
     const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
@@ -30,7 +25,7 @@ export const ActionQueue: UIComponent = {
     // track the full list of Actions by their Entity Index
     useEffect(() => {
       setActionIndices([...getComponentEntities(ActionComponent)]);
-    }, [[...getComponentEntities(ActionComponent)].length]);
+    }, [actionUpdate]);
 
     const sizes = ['none', '23vh', '90vh'];
     return (

@@ -10,18 +10,18 @@ import { playClick } from 'utils/sounds';
 
 // rendering of an ally kami on this node
 export const AllyKards = ({
-  account,
-  kamis,
-  actions: { collect, stop },
-  display: { UseItemButton },
-  utils: { getTempBonuses },
+  actions,
+  data,
+  display,
+  utils,
 }: {
-  account: Account;
-  kamis: Kami[]; // ally kami entities
-
   actions: {
     collect: (kami: Kami) => void;
     stop: (kami: Kami) => void;
+  };
+  data: {
+    account: Account;
+    kamis: Kami[]; // ally kami entities
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
@@ -30,6 +30,10 @@ export const AllyKards = ({
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
+  const { collect, stop } = actions;
+  const { account, kamis } = data;
+  const { UseItemButton } = display;
+  const { getTempBonuses } = utils;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCollapseToggle = () => {

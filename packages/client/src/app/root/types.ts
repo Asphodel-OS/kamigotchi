@@ -15,6 +15,5 @@ export type UIComponentWithGrid = {
 
 export type UIComponent = {
   id: string;
-  requirement: (layers: Layers) => Observable<any>;
-  Render: React.FC<any>;
+  Render: React.FC;
 };

@@ -11,7 +11,6 @@ import { playClick } from 'utils/sounds';
 import { Card } from '../';
 import { Cooldown, useCooldownVisuals } from './Cooldown';
 import { Health } from './Health';
-import { onCooldown } from 'app/cache/kami/calcs/base';
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
@@ -28,10 +27,7 @@ export const KamiCard = ({
   showLevelUp,
   showSkillPoints,
   showCooldown,
-  utils: {
-    calcExpRequirement,
-    getTempBonuses,
-  } = {},
+  utils: { calcExpRequirement, getTempBonuses } = {},
 }: {
   kami: Kami; // assumed to have a harvest attached
   description: string[];
@@ -55,6 +51,8 @@ export const KamiCard = ({
   const setKami = useSelected((s) => s.setKami);
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const [canLevel, setCanLevel] = useState(false);
+
+  const { filter: cdFilter, foreground: cdForeground } = useCooldownVisuals(kami, showCooldown);
 
   /////////////////
   // INTERACTION
@@ -102,11 +100,6 @@ export const KamiCard = ({
     }));
   }, [getTempBonuses, kami]);
 
-  const { filter: cooldownFilter, foreground: cooldownForeground } = useCooldownVisuals(
-    kami,
-    !!showCooldown,
-  );
-
   const TitleSection = (
     <TitleBar>
       <TitleText key='title' onClick={() => handleKamiClick()}>
@@ -119,6 +112,9 @@ export const KamiCard = ({
     </TitleBar>
   );
 
+  /////////////////
+  // RENDER
+
   return (
     <Card
       image={{
@@ -126,9 +122,9 @@ export const KamiCard = ({
         showLevelUp: showLevelUp && canLevel,
         showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
         onClick: handleKamiClick,
-        filter: cooldownFilter,
+        filter: cdFilter,
         background: undefined,
-        foreground: cooldownForeground,
+        foreground: cdForeground,
       }}
     >
       {TitleSection}

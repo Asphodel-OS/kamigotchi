@@ -16,6 +16,7 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { CategoryFilter, ItemCategory, categorizeItem } from '../CategoryFilter';
 import { ItemGridTooltip } from './ItemGridTooltip';
 import { Mode } from '../types';
+import { MUSU_INDEX } from 'constants/items';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 const REFRESH_INTERVAL = 2000;
@@ -90,10 +91,11 @@ export const ItemGrid = ({
 
   // filter inventories by selected category
   useEffect(() => {
+    const base = inventories.filter((inventory) => inventory.item.index !== MUSU_INDEX);
     if (selectedCategory === 'All') {
-      setFilteredInventories(inventories);
+      setFilteredInventories(base);
     } else {
-      const filtered = inventories.filter(inventory => {
+      const filtered = base.filter((inventory) => {
         const itemCategory = categorizeItem(inventory.item);
         return itemCategory === selectedCategory;
       });

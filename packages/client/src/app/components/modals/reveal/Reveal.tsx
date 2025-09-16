@@ -1,8 +1,8 @@
 import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
 import { UIComponent } from 'app/root/types';
+import { useLayers } from 'app/root/hooks';
 import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -14,22 +14,24 @@ import { Commits } from './Commits';
 
 export const RevealModal: UIComponent = {
   id: 'RevealModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const account = getAccountFromEmbedded(network);
-        const commits = queryDTCommits(world, components, account.id);
+  Render: () => {
+    const layers = useLayers();
+    
+    const {
+      network,
+      data: { commits }
+    } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const account = getAccountFromEmbedded(network);
+      const commits = queryDTCommits(world, components, account.id);
 
-        return {
-          network: layers.network,
-          data: { commits },
-        };
-      })
-    ),
-  Render: ({ network, data }) => {
-    const { commits } = data;
+      return {
+        network: layers.network,
+        data: { commits },
+      };
+    })();
+
     const {
       actions,
       api,

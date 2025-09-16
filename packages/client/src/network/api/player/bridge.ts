@@ -40,6 +40,14 @@ export const bridgeAPI = (systems: any) => {
     return systems['system.kami721.unstake'].executeBatch(indices);
   };
 
+  const batchTransferKami = (indices: number[], to: string) => {
+    return systems['system.kami721.transfer'].batchTransfer(indices, to);
+  };
+
+  const batchTransferKamiToMultiple = (indices: number[], tos: string[]) => {
+    return systems['system.kami721.transfer'].batchTransferToMany(indices, tos);
+  };
+
   return {
     ERC20: {},
     ERC721: {
@@ -49,6 +57,8 @@ export const bridgeAPI = (systems: any) => {
         batch: {
           stake: batchStakeKami,
           unstake: batchUnstakeKami,
+          transfer: batchTransferKami,
+          transferToMultiple: batchTransferKamiToMultiple,
         },
       },
     },
