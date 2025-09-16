@@ -93,18 +93,14 @@ export const Kamis = ({
   if (kamis.length === 0 && wildKamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
   return (
     <Container key='grid'>
-      {kamis.map((kami) => (
-        <TextTooltip key={kami.index} text={[kami.name, 'in the wild']}>
+      {[...kamis, ...wildKamis].map((kami, idx) => (
+        <TextTooltip
+          key={`${kami.index}-${kami.id}-${idx}`}
+          text={[kami.name, kami.state === '721_EXTERNAL' ? 'in the wild' : '']}
+        >
           <CellContainer id={`grid-${kami.id}`}>
             <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
-          </CellContainer>
-        </TextTooltip>
-      ))}
-      {wildKamis.map((kami) => (
-        <TextTooltip key={kami.index} text={[kami.name, 'in the wild']}>
-          <CellContainer id={`grid-${kami.id}`}>
-            <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
-            <ExtIcon src={ExternalIcon} />
+            {kami.state === '721_EXTERNAL' && <ExtIcon src={ExternalIcon} />}
           </CellContainer>
         </TextTooltip>
       ))}
