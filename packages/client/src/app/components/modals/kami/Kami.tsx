@@ -1,15 +1,15 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
 import { useLayers } from 'app/root/hooks';
+import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
 import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
 import {
+  getSkillUpgradeError as _getSkillUpgradeError,
   getHolderSkillTreePoints,
   getSkillByIndex,
   getSkillTreePointsRequirement,
-  getSkillUpgradeError as _getSkillUpgradeError,
   parseSkillRequirementText,
 } from 'app/cache/skills';
 import { ModalWrapper } from 'app/components/library';
@@ -36,30 +36,7 @@ export const KamiModal: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
-    const {
-      network,
-      data: {
-        account,
-        onyxItem,
-        spender
-      },
-      utils: {
-        calcExpRequirement,
-        getItemBalance,
-        getAccountByID,
-        getKami,
-        getKamiByID,
-        getOwner,
-        getSkill,
-        getUpgradeError,
-        getTreePoints,
-        getTreeRequirement,
-        queryKamiByIndex,
-        parseSkillRequirement,
-        getEntityIndex,
-        getNodeByIndex
-      }
-    } = (() => {
+    const { network, data, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -108,8 +85,13 @@ export const KamiModal: UIComponent = {
     })();
 
     const { actions, api } = network;
+    const { account, onyxItem, spender } = data;
+    const { getSkillUpgradeError, getTreePoints } = utils;
+    const { getKami, getOwner, queryKamiByIndex } = utils;
+
+    const ownerAPIs = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
     const kamiIndex = useSelected((s) => s.kamiIndex);
-    const { selectedAddress, apis: ownerAPIs } = useNetwork();
     const kamiModalOpen = useVisibility((s) => s.modals.kami);
     const accountModalOpen = useVisibility((s) => s.modals.account);
 
@@ -227,9 +209,7 @@ export const KamiModal: UIComponent = {
             key='banner'
             data={{ account, kami, owner }}
             actions={{ levelUp }}
-            utils={{
-              calcExpRequirement,
-            }}
+            utils={utils}
           />,
           <Tabs key='tabs' tab={tab} setTab={setTab} />,
         ]}
@@ -249,30 +229,13 @@ export const KamiModal: UIComponent = {
             }}
             state={{ tick }}
             utils={{
-              getItemBalance,
-              getSkill,
+              ...utils,
               getUpgradeError: (index: number) => getSkillUpgradeError(index, kami),
               getTreePoints: (tree: string) => getTreePoints(tree, kami.id),
-              getTreeRequirement,
-              parseSkillRequirement,
             }}
           />
         )}
-        {tab === 'BATTLES' && (
-          <Battles
-            kami={kami}
-            setKami={setKami}
-            tab={tab}
-            utils={{
-              getAccountByID,
-              getKami,
-              getKamiByID,
-              getEntityIndex,
-              getOwner,
-              getNodeByIndex,
-            }}
-          />
-        )}
+        {tab === 'BATTLES' && <Battles kami={kami} setKami={setKami} tab={tab} utils={utils} />}
       </ModalWrapper>
     );
   },

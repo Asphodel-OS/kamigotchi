@@ -10,21 +10,21 @@ import { Details } from './Details';
 import { Matrix } from './matrix/Matrix';
 
 export const Skills = ({
-  data,
   actions,
+  data,
   state,
   utils,
 }: {
-  data: {
-    account: Account;
-    kami: Kami;
-    owner: BaseAccount;
-  };
   actions: {
     upgrade: (skill: Skill) => void;
     reset: (kami: Kami) => void;
     onyxApprove: (price: number) => void;
     onyxRespec: (kami: Kami) => void;
+  };
+  data: {
+    account: Account;
+    kami: Kami;
+    owner: BaseAccount;
   };
   state: { tick: number };
   utils: {
