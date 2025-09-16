@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { QuestsIcon } from 'assets/images/icons/menu';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -30,17 +30,13 @@ export const QuestModal: UIComponent = {
   id: 'QuestModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const {
       network,
       data: {
         accountEntity,
         account,
-        quests: {
-          registry,
-          ongoing,
-          completed
-        }
+        quests: { registry, ongoing, completed },
       },
       utils: {
         describeEntity,
@@ -51,8 +47,8 @@ export const QuestModal: UIComponent = {
         parseObjectives,
         parseRequirements,
         parseStatus,
-        populate
-      }
+        populate,
+      },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -110,9 +106,18 @@ export const QuestModal: UIComponent = {
     const isUpdating = useRef(false);
     const [tab, setTab] = useState<TabType>('ONGOING');
     const [available, setAvailable] = useState<Quest[]>([]);
+    const [lastRefresh, setLastRefresh] = useState(Date.now());
 
     /////////////////
     // SUBSCRIPTIONS
+
+    // ticking
+    useEffect(() => {
+      const timerId = setInterval(() => {
+        setLastRefresh(Date.now());
+      }, 250);
+      return () => clearInterval(timerId);
+    }, []);
 
     // update Available Quests whenever quests change state
     // TODO: figure out a trigger for repeatable quests
@@ -127,12 +132,12 @@ export const QuestModal: UIComponent = {
       if (populated.length > available.length) setTab('AVAILABLE');
 
       isUpdating.current = false;
-    }, [questsModalVisible, registry.length, completed.length, ongoing.length]);
+    }, [questsModalVisible, registry.length, completed.length, ongoing.length, lastRefresh]);
 
     // update the Notifications when the number of available quests changes
     useEffect(() => {
       updateNotifications();
-    }, [available.length]);
+    }, [available.length, lastRefresh]);
 
     /////////////////
     // HELPERS
