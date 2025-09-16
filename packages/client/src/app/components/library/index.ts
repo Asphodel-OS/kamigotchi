@@ -6,6 +6,7 @@ export { KamiBar } from './bars';
 export {
   ActionButton,
   ActionListButton,
+  CastItemButton,
   CircleExitButton,
   CollectButton,
   CopyButton,

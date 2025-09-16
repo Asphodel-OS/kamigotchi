@@ -7,23 +7,27 @@ import {
   getAccountInventories,
   getAccountKamis,
 } from 'app/cache/account';
-import { cleanInventories, getInventoryBalance as _getInventoryBalance, Inventory } from 'app/cache/inventory';
+import {
+  getInventoryBalance as _getInventoryBalance,
+  cleanInventories,
+  Inventory,
+} from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { InventoryIcon } from 'assets/images/icons/menu';
-import { OBOL_INDEX } from 'constants/items';
+import { MUSU_INDEX, OBOL_INDEX } from 'constants/items';
 import {
+  queryAllAccounts as _queryAllAccounts,
   Account,
   NullAccount,
   queryAccountFromEmbedded,
-  queryAllAccounts as _queryAllAccounts,
 } from 'network/shapes/Account';
 import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
-import { getMusuBalance as _getMusuBalance, getItemBalance, Item } from 'network/shapes/Item';
+import { getItemBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { didActionComplete } from 'network/utils';
 import { ItemGrid } from './items/ItemGrid';
@@ -37,27 +41,15 @@ export const InventoryModal: UIComponent = {
     const layers = useLayers();
     const { debug } = useAccount.getState();
 
-    const {
-      network,
-      data: { accountEntity },
-      utils: {
-        displayRequirements,
-        getAccount,
-        getEntityIndex,
-        getInventories,
-        getInventoryBalance,
-        getItem,
-        getKamis,
-        getMusuBalance,
-        getObolsBalance,
-        meetsRequirements,
-        parseAllos,
-        queryAllAccounts,
-      },
-    } = (() => {
+    /////////////////
+    // PREPARATION
+
+    const { network, data, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
+      const accountID = world.entities[accountEntity];
+
       const kamiRefreshOptions = {
         bonuses: 5,
         config: 3600,
@@ -82,14 +74,12 @@ export const InventoryModal: UIComponent = {
           getAccount: (entity: EntityIndex) => _getAccount(world, components, entity),
           getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
           getInventories: () => getAccountInventories(world, components, accountEntity),
-          getInventoryBalance: (inventories: Inventory[], index: number) =>
-            _getInventoryBalance(inventories, index),
+          getBalance: (invs: Inventory[], index: number) => _getInventoryBalance(invs, index),
           getItem: (index: EntityIndex) => getItemByIndex(world, components, index),
           getKamis: () =>
             getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
-          getMusuBalance: () => _getMusuBalance(world, components, accountEntity),
-          getObolsBalance: () =>
-            getItemBalance(world, components, world.entities[accountEntity], OBOL_INDEX),
+          getMusuBalance: () => getItemBalance(world, components, accountID, MUSU_INDEX),
+          getObolsBalance: () => getItemBalance(world, components, accountID, OBOL_INDEX),
           meetsRequirements: (holder: Kami | Account, item: Item) =>
             passesConditions(world, components, item.requirements.use, holder),
           parseAllos: (allo: Allo[]) => _parseAllos(world, components, allo),
@@ -97,29 +87,31 @@ export const InventoryModal: UIComponent = {
         },
       };
     })();
-
     const { actions, api } = network;
+    const { accountEntity } = data;
+    const { getAccount, getInventories, getKamis } = utils;
+    const { getItem, getBalance } = utils;
 
-    const [account, setAccount] = useState<Account>(NullAccount);
-    const [lastRefresh, setLastRefresh] = useState(Date.now());
+    const [tick, setTick] = useState(Date.now());
     const [mode, setMode] = useState<Mode>('STOCK');
     const [shuffle, setShuffle] = useState(false);
-    const [inventories, setInventories] = useState<Inventory[]>([]);
-    const [kamis, setKamis] = useState<Kami[]>([]);
     const [resetSend, setResetSend] = useState(false);
 
+    const [account, setAccount] = useState<Account>(NullAccount);
+    const [inventories, setInventories] = useState<Inventory[]>([]);
+    const [kamis, setKamis] = useState<Kami[]>([]);
+
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
     const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
-    const {
-      selectedAddress, // injected
-      apis,
-    } = useNetwork();
 
     /////////////////
     // SUBSCRIPTIONS
 
+    // set data and setup ticking on mount
     useEffect(() => {
       updateData();
-      const refreshClock = () => setLastRefresh(Date.now());
+      const refreshClock = () => setTick(Date.now());
       const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
       return () => clearInterval(timerId);
     }, []);
@@ -128,7 +120,7 @@ export const InventoryModal: UIComponent = {
     useEffect(() => {
       if (!inventoryModalOpen) return;
       updateData();
-    }, [inventoryModalOpen, lastRefresh, accountEntity]);
+    }, [inventoryModalOpen, tick, accountEntity]);
 
     /////////////////
     // ACTIONS
@@ -221,8 +213,8 @@ export const InventoryModal: UIComponent = {
           <MusuRow
             key='musu'
             data={{
-              musu: getMusuBalance(),
-              obols: getObolsBalance(),
+              musu: getBalance(account.inventories ?? [], MUSU_INDEX),
+              obols: getBalance(account.inventories ?? [], OBOL_INDEX),
             }}
             state={{
               mode,
@@ -249,24 +241,13 @@ export const InventoryModal: UIComponent = {
               actions={{ useForAccount: useForAccountTx, useForKami: useForKamiTx }}
               data={{ accountEntity, account, inventories, kamis }}
               state={{ mode }}
-              utils={{
-                getAccount,
-                getInventories,
-                getKamis,
-                meetsRequirements,
-                displayRequirements,
-                parseAllos,
-              }}
+              utils={utils}
             />
             <Transfer
               actions={{ sendItemsTx }}
               data={{ accountEntity, account, inventories }}
-              state={{ lastRefresh, mode, resetSend, setResetSend }}
-              utils={{
-                getEntityIndex,
-                getInventoryBalance,
-                getItem,
-              }}
+              state={{ tick, mode, resetSend, setResetSend }}
+              utils={utils}
             />
           </>
         )}

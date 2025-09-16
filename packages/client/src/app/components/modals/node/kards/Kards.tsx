@@ -10,21 +10,22 @@ import { AllyKards } from './AllyKards';
 import { EnemyCards } from './EnemyKards';
 
 export const Kards = ({
-  account,
-  kamiEntities,
   actions,
+  data,
   display,
   utils,
 }: {
-  account: Account;
-  kamiEntities: {
-    account: EntityIndex[];
-    node: EntityIndex[];
-  };
   actions: {
     collect: (kami: Kami) => void;
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
     stop: (kami: Kami) => void;
+  };
+  data: {
+    account: Account;
+    kamiEntities: {
+      account: EntityIndex[];
+      node: EntityIndex[];
+    };
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => JSX.Element;
@@ -37,6 +38,7 @@ export const Kards = ({
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
+  const { account, kamiEntities } = data;
   const { getKami } = utils;
   const nodeModalVisible = useVisibility((s) => s.modals.node);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -124,20 +126,17 @@ export const Kards = ({
       style={{ display: kamiEntities.node.length > 0 ? 'flex' : 'none' }}
     >
       <AllyKards
-        account={account}
-        kamis={allies}
         actions={actions}
+        data={{ account, kamis: allies }}
         display={display}
         utils={utils}
       />
       <EnemyCards
-        account={account}
-        allies={allies}
-        enemyEntities={enemyEntities}
-        display={display}
         actions={actions}
+        data={{ account, allies, enemyEntities }}
+        display={display}
+        state={{ limit: { val: visibleEnemies, set: setVisibleEnemies } }}
         utils={utils}
-        limit={{ val: visibleEnemies, set: setVisibleEnemies }}
       />
     </Container>
   );

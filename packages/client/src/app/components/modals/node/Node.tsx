@@ -3,14 +3,18 @@ import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
-import { getBonusesForEndType, getTempBonuses as _getTempBonuses } from 'app/cache/bonus';
+import { getTempBonuses as _getTempBonuses, getBonusesForEndType } from 'app/cache/bonus';
 import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoomByIndex } from 'app/cache/room';
-import { EmptyText, ModalWrapper, UseItemButton as _UseItemButton } from 'app/components/library';
-import { CastItemButton as _CastItemButton } from 'app/components/library/buttons/actions';
-import { UIComponent } from 'app/root/types';
+import {
+  EmptyText,
+  ModalWrapper,
+  CastItemButton as _CastItemButton,
+  UseItemButton as _UseItemButton,
+} from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { CastIcon, FeedIcon } from 'assets/images/icons/actions';
 import {
@@ -20,7 +24,10 @@ import {
   queryAccountKamis,
 } from 'network/shapes/Account';
 import { Allo, parseAllos as _parseAllos } from 'network/shapes/Allo';
-import { Condition, parseConditionalText as _parseConditionalText } from 'network/shapes/Conditional';
+import {
+  Condition,
+  parseConditionalText as _parseConditionalText,
+} from 'network/shapes/Conditional';
 import { queryDTCommits } from 'network/shapes/Droptable';
 import { Kami } from 'network/shapes/Kami';
 import {
@@ -30,7 +37,7 @@ import {
   queryNodeByIndex,
   queryNodeKamis,
 } from 'network/shapes/Node';
-import { queryScavInstance as _queryScavInstance, ScavBar } from 'network/shapes/Scavenge/';
+import { ScavBar, queryScavInstance as _queryScavInstance } from 'network/shapes/Scavenge/';
 import { getValue as _getValue } from 'network/shapes/utils/component';
 import { waitForActionCompletion } from 'network/utils';
 import { Header } from './header/Header';
@@ -43,126 +50,97 @@ export const NodeModal: UIComponent = {
   id: 'NodeModal',
   Render: () => {
     const layers = useLayers();
-    
-    const {
-      network,
-      data: {
-        accountEntity,
-        kamiEntities,
-        commits
-      },
-      display: {
-        UseItemButton
-      },
-      utils: {
-        getAccount,
-        getAccountKamis,
-        getBonuses,
-        getKami,
-        getOwner,
-        getNode,
-        getRoom,
-        getScavenge,
-        getValue,
-        parseAllos,
-        queryScavInstance,
-        passesNodeReqs,
-        parseConditionalText,
-        getTempBonuses
-      }
-    } = (() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const { nodeIndex } = useSelected.getState();
 
-        const accountEntity = queryAccountFromEmbedded(network);
-        const accountID = world.entities[accountEntity];
-        const accountRefreshOptions = {
-          live: LIVE_UPDATE_LIMIT,
-          inventories: LIVE_UPDATE_LIMIT,
-          config: 3600,
-          friends: 60,
-        };
+    const { network, data, display, utils } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const { nodeIndex } = useSelected.getState();
 
-        const nodeEntity = queryNodeByIndex(world, nodeIndex);
-        const kamiRefreshOptions = {
-          live: LIVE_UPDATE_LIMIT,
-          bonuses: 3600,
-          config: 3600,
-          harvest: LIVE_UPDATE_LIMIT,
-          progress: 3600,
-          skills: 3600,
-          stats: 3600,
-          traits: 3600,
-        };
+      const accountEntity = queryAccountFromEmbedded(network);
+      const accountID = world.entities[accountEntity];
+      const accountRefreshOptions = {
+        live: LIVE_UPDATE_LIMIT,
+        inventories: LIVE_UPDATE_LIMIT,
+        config: 3600,
+        friends: 60,
+      };
 
-        return {
-          network,
-          data: {
-            accountEntity,
-            kamiEntities: {
-              account: queryAccountKamis(world, components, accountEntity),
-              node: queryNodeKamis(world, components, nodeEntity),
-            },
-            commits: queryDTCommits(world, components, accountID),
+      const nodeEntity = queryNodeByIndex(world, nodeIndex);
+      const kamiRefreshOptions = {
+        live: LIVE_UPDATE_LIMIT,
+        bonuses: 3600,
+        config: 3600,
+        harvest: LIVE_UPDATE_LIMIT,
+        progress: 3600,
+        skills: 3600,
+        stats: 3600,
+        traits: 3600,
+      };
+
+      return {
+        network,
+        data: {
+          accountEntity,
+          kamiEntities: {
+            account: queryAccountKamis(world, components, accountEntity),
+            node: queryNodeKamis(world, components, nodeEntity),
           },
-          display: {
-            UseItemButton: (kami: Kami, account: Account) =>
-              _UseItemButton(network, kami, account, FeedIcon),
-            CastItemButton: (kami: Kami, account: Account) =>
-              _CastItemButton(network, kami, account, CastIcon),
-          },
-          utils: {
-            getAccount: () => _getAccount(world, components, accountEntity, accountRefreshOptions),
-            getAccountKamis: () =>
-              _getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
-            getBonuses: (entity: EntityIndex) =>
-              getBonusesForEndType(
-                world,
-                components,
-                'UPON_HARVEST_ACTION',
-                entity,
-                LIVE_UPDATE_LIMIT
-              ),
-            getKami: (entity: EntityIndex) =>
-              _getKami(world, components, entity, kamiRefreshOptions),
-            getOwner: (kamiEntity: EntityIndex) =>
-              getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
-            getNode: (index: number) => getNodeByIndex(world, components, index),
-            getRoom: (index: number) => getRoomByIndex(world, components, index),
-            getScavenge: (index: number) => getNodeByIndex(world, components, index).scavenge,
-            getValue: (entity: EntityIndex) => _getValue(components, entity),
-            parseAllos: (allos: Allo[]) => _parseAllos(world, components, allos, true),
-            queryScavInstance: (index: number, holderID: EntityID) =>
-              _queryScavInstance(world, 'NODE', index, holderID),
-            // node header functions..
-            // TODO: clean up this mess
-            passesNodeReqs: (kami: Kami) => _passesNodeReqs(world, components, nodeIndex, kami),
-            parseConditionalText: (condition: Condition, tracking?: boolean) =>
-              _parseConditionalText(world, components, condition, tracking),
-            getTempBonuses: (kami: Kami) =>
-              _getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
-          },
-        };
-      })();
+          commits: queryDTCommits(world, components, accountID),
+        },
+        display: {
+          UseItemButton: (kami: Kami, account: Account) =>
+            _UseItemButton(network, kami, account, FeedIcon),
+          CastItemButton: (kami: Kami, account: Account) =>
+            _CastItemButton(network, kami, account, CastIcon),
+        },
+        utils: {
+          getAccount: () => _getAccount(world, components, accountEntity, accountRefreshOptions),
+          getAccountKamis: () =>
+            _getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
+          getBonuses: (entity: EntityIndex) =>
+            getBonusesForEndType(
+              world,
+              components,
+              'UPON_HARVEST_ACTION',
+              entity,
+              LIVE_UPDATE_LIMIT
+            ),
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiRefreshOptions),
+          getOwner: (kamiEntity: EntityIndex) =>
+            getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
+          getNode: (index: number) => getNodeByIndex(world, components, index),
+          getRoom: (index: number) => getRoomByIndex(world, components, index),
+          getScavenge: (index: number) => getNodeByIndex(world, components, index).scavenge,
+          getValue: (entity: EntityIndex) => _getValue(components, entity),
+          parseAllos: (allos: Allo[]) => _parseAllos(world, components, allos, true),
+          queryScavInstance: (index: number, holderID: EntityID) =>
+            _queryScavInstance(world, 'NODE', index, holderID),
+          // node header functions..
+          // TODO: clean up this mess
+          passesNodeReqs: (kami: Kami) => _passesNodeReqs(world, components, nodeIndex, kami),
+          parseConditionalText: (condition: Condition, tracking?: boolean) =>
+            _parseConditionalText(world, components, condition, tracking),
+          getTempBonuses: (kami: Kami) =>
+            _getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
+        },
+      };
+    })();
 
-      const {
-        actions,
-        api,
-        world,
-        localSystems: { DTRevealer },
-      } = network;
-      const nodeIndex = useSelected((s) => s.nodeIndex);
-      const nodeModalOpen = useVisibility((s) => s.modals.node);
-      const setModals = useVisibility((s) => s.setModals);
+    const { actions, api, world, localSystems } = network;
+    const { kamiEntities } = data;
+    const { getAccount, getNode } = utils;
+
+    const nodeIndex = useSelected((s) => s.nodeIndex);
+    const nodeModalOpen = useVisibility((s) => s.modals.node);
+    const setModals = useVisibility((s) => s.setModals);
 
     const [account, setAccount] = useState<Account>(NullAccount);
     const [node, setNode] = useState<Node>(NullNode);
-    const [lastRefresh, setLastRefresh] = useState(Date.now());
+    const [tick, setTick] = useState(Date.now());
 
     // ticking
     useEffect(() => {
-      const refreshClock = () => setLastRefresh(Date.now());
+      const refreshClock = () => setTick(Date.now());
       const timerId = setInterval(refreshClock, 1000);
       return () => clearInterval(timerId);
     }, []);
@@ -171,7 +149,7 @@ export const NodeModal: UIComponent = {
     useEffect(() => {
       if (!nodeModalOpen) return;
       setAccount(getAccount());
-    }, [nodeModalOpen, lastRefresh]);
+    }, [nodeModalOpen, tick]);
 
     // updates from selected Node updates
     useEffect(() => {
@@ -234,7 +212,7 @@ export const NodeModal: UIComponent = {
 
     // claim the scavenge at the given scavenge bar
     const claim = async (scavBar: ScavBar) => {
-      DTRevealer.nameEntity('scavenge' as EntityID, scavBar.id);
+      localSystems.DTRevealer.nameEntity('scavenge' as EntityID, scavBar.id);
       const node = getNode(scavBar.index);
 
       const actionID = uuid() as EntityID;
@@ -265,15 +243,7 @@ export const NodeModal: UIComponent = {
             key='banner'
             data={{ account, node, kamiEntities: kamiEntities.account }}
             actions={{ claim, addKami: (kami: Kami) => start(kami, node) }}
-            utils={{
-              getAccountKamis,
-              getRoom,
-              getValue,
-              parseAllos,
-              queryScavInstance,
-              passesNodeReqs,
-              parseConditionalText,
-            }}
+            utils={utils}
           />,
         ]}
         canExit
@@ -287,22 +257,14 @@ export const NodeModal: UIComponent = {
           />
         )}
         <Kards
-          account={account}
-          kamiEntities={kamiEntities}
           actions={{
             collect,
             liquidate,
             stop,
           }}
-          display={{
-            UseItemButton,
-          }}
-          utils={{
-            getBonuses,
-            getKami,
-            getOwner,
-            getTempBonuses,
-          }}
+          data={{ ...data, account }}
+          display={display}
+          utils={utils}
         />
       </ModalWrapper>
     );

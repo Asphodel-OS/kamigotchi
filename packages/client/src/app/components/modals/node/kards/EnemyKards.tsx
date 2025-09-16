@@ -22,33 +22,40 @@ const SortMap: Record<KamiSort, string> = {
 
 // rendering of enermy kamis on this node
 export const EnemyCards = ({
-  account,
-  allies,
-  enemyEntities,
-  limit,
   actions,
+  data,
   display,
+  state,
   utils,
 }: {
-  account: Account;
-  allies: Kami[];
-  enemyEntities: EntityIndex[];
-  limit: {
-    val: number;
-    set: (val: number) => void;
-  };
   actions: {
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
   };
+  data: {
+    account: Account;
+    allies: Kami[];
+    enemyEntities: EntityIndex[];
+  };
   display: {
     CastItemButton: (kami: Kami, account: Account, width?: number) => JSX.Element;
+  };
+  state: {
+    limit: {
+      val: number;
+      set: (val: number) => void;
+    };
   };
   utils: {
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
   };
 }) => {
+  const { liquidate } = actions;
+  const { account, allies, enemyEntities } = data;
+  const { CastItemButton } = display;
+  const { limit } = state;
   const { getOwner, getKami } = utils;
+
   const accountModalOpen = useVisibility((s) => s.modals.account);
   const setModals = useVisibility((s) => s.setModals);
   const accountIndex = useSelected((s) => s.accountIndex);
@@ -181,8 +188,8 @@ export const EnemyCards = ({
   const getActions = (kami: Kami) => {
     const sharedWidth = 2.0;
     return [
-      display.CastItemButton(kami, account, sharedWidth),
-      LiquidateButton(kami, allies, actions.liquidate, sharedWidth),
+      CastItemButton(kami, account, sharedWidth),
+      LiquidateButton(kami, allies, liquidate, sharedWidth),
     ];
   };
 

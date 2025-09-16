@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -38,15 +38,8 @@ export const ItemGrid = ({
   };
   utils: {
     displayRequirements: (item: Item) => string;
-    getAccount: (entityIndex: EntityIndex) => Account;
-    getEntityIndex: (entity: EntityID) => EntityIndex;
-    getInventories: () => Inventory[];
-    getInventoryBalance: (inventories: Inventory[], index: number) => number;
-    getItem: (index: EntityIndex) => Item;
-    getKamis: () => Kami[];
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
-    setSendView: (show: boolean) => void;
   };
 }) => {
   const { useForAccount, useForKami } = actions;

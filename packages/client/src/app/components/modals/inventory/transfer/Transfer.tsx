@@ -40,7 +40,7 @@ export const Transfer = ({
     inventories: Inventory[];
   };
   state: {
-    lastRefresh: number;
+    tick: number;
     mode: Mode;
     resetSend: boolean;
     setResetSend: (reset: boolean) => void;
@@ -48,16 +48,15 @@ export const Transfer = ({
   utils: {
     getAccount: (index: EntityIndex, options?: any) => Account;
     getEntityIndex: (entity: EntityID) => EntityIndex;
-    getInventoryBalance: (inventories: Inventory[], index: number) => number;
+    getBalance: (inventories: Inventory[], index: number) => number;
     getItem: (index: EntityIndex) => Item;
     queryAllAccounts: () => EntityIndex[];
-    setSendView: (show: boolean) => void;
   };
 }) => {
   const { sendItemsTx } = actions;
   const { inventories, account, accountEntity } = data;
-  const { lastRefresh, mode, resetSend, setResetSend } = state;
-  const { getInventoryBalance, getEntityIndex, getAccount, getItem, queryAllAccounts } = utils;
+  const { tick, mode, resetSend, setResetSend } = state;
+  const { getBalance, getEntityIndex, getAccount, getItem, queryAllAccounts } = utils;
   const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
 
   const [amt, setAmt] = useState<number>(1);
@@ -107,7 +106,7 @@ export const Transfer = ({
       setAccounts(accountsSorted);
     }
     setTransferEvents(account.id);
-  }, [inventoryModalOpen, lastRefresh, accountEntity]);
+  }, [inventoryModalOpen, tick, accountEntity]);
 
   /////////////////
   // GETTERS
@@ -135,7 +134,7 @@ export const Transfer = ({
   const handleAmtChange = (event: ChangeEvent<HTMLInputElement>) => {
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
-    const max = getInventoryBalance(inventories, item.index);
+    const max = getBalance(inventories, item.index);
     const amt = Math.max(0, Math.min(max, rawQuantity));
     setAmt(amt);
   };
