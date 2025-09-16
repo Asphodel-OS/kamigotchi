@@ -10,6 +10,7 @@ import better_ice_cream from './better_ice_cream.png';
 import black_poppy from './black_poppy.png';
 import black_poppy_extract from './black_poppy_extract.png';
 import bless_potion from './bless_potion.png';
+import booster_pack from './booster_pack.png';
 import chalkberry from './chalkberry.png';
 import cheeseburger from './cheeseburger.png';
 import cultivation_i_spell_card from './cultivation_i_spell_card.png';
@@ -109,6 +110,7 @@ export const ItemImages = {
   black_poppy: black_poppy,
   black_poppy_extract: black_poppy_extract,
   bless_potion: bless_potion,
+  booster_pack: booster_pack,
   chalkberry: chalkberry,
   cheeseburger: cheeseburger,
   cultivation_i_spell_card: cultivation_i_spell_card,
