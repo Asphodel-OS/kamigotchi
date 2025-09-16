@@ -164,7 +164,19 @@ export const Offers = ({
       const an = getNumeric(av);
       const bn = getNumeric(bv);
       if (Number.isNaN(an) || Number.isNaN(bn)) return 0;
-      return ascending ? an - bn : bn - an;
+      const adjA =
+        sort === 'Price' && an <= 0
+          ? ascending
+            ? Number.POSITIVE_INFINITY
+            : Number.NEGATIVE_INFINITY
+          : an;
+      const adjB =
+        sort === 'Price' && bn <= 0
+          ? ascending
+            ? Number.POSITIVE_INFINITY
+            : Number.NEGATIVE_INFINITY
+          : bn;
+      return ascending ? adjA - adjB : adjB - adjA;
     });
     // only update state if something actually changed to avoid flicker
     const changed =
@@ -172,13 +184,22 @@ export const Offers = ({
       sorted.some((t, i) => t.id !== displayed[i]?.id || t.state !== displayed[i]?.state);
     if (changed) {
       setDisplayed(sorted);
-      // animate only when data changes
+      // animate only when data changes, and cap total animation <= 500ms
       requestAnimationFrame(() => {
+        const rowCount = Math.max(1, sorted.length);
+        const durationMs = 160; // snappy fade/slide for animated rows
+        const maxTotalMs = 500; // hard cap for the whole list animation
+        const maxStaggerMs = Math.max(0, maxTotalMs - durationMs);
+        const computed = rowCount > 1 ? Math.floor(maxStaggerMs / (rowCount - 1)) : 0;
+        const stepDelay = Math.min(20, computed);
+        // Animate only the first N rows so the entire sequence finishes <= 500ms.
+        // All remaining rows render immediately without delay.
+        const maxAnimatedIndex = stepDelay > 0 ? Math.floor(maxStaggerMs / stepDelay) : 0;
         animate('tbody tr', {
           translateY: [6, 0],
           opacity: [0, 1],
-          delay: (_el, i) => 20 * i,
-          duration: 140,
+          delay: (_el, i) => (i <= maxAnimatedIndex ? stepDelay * i : 0),
+          duration: (_el, i) => (i <= maxAnimatedIndex ? durationMs : 1),
           easing: 'easeOutSine',
         });
       });
