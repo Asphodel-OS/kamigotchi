@@ -1,6 +1,6 @@
 ﻿.,Status,Name,Index,Type,Rarity,For,Address,Flags,Effects,Requirements,Description
 ,In Game,MUSU,1,Misc,Common,,,,,,Kamigotchi kurrency
-,In Game,VIPP,2,Consumable,Uncommon,Account,,,VIP1,VIP_ROOM,"Sacred paper which can be sacrificed for VIP status. "
+,In Game,VIPP,2,Consumable,Uncommon,Account,,,VIP1,,"Sacred paper which can be sacrificed for VIP status. "
 ,In Game,Gacha Ticket,10,Misc,Epic,,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,Rare,,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
 ,In Game,Kamigotchi World Passport (Yellow),20,NFT,Rare,,,,,,Your ticket to great fortunes. In yellow.
@@ -21,7 +21,7 @@
 
 You want this. You want this so bad."
 ,Test,INIT,101,ERC20,Rare,,0x0000000000000000000000000000000000000101,,,,Initia
-,In Game,ETH,103,ERC20,Rare,,0xE1Ff7038eAAAF027031688E1535a055B2Bac2546,,,,Ethereum
+,Test,ETH,103,ERC20,Rare,,0xE1Ff7038eAAAF027031688E1535a055B2Bac2546,,,,Ether
 ,In Game,Wooden Stick,1001,Material,Common,,,,,,"Wood in its unprocessed form. Grows on trees. "
 ,In Game,Stone,1002,Material,Common,,,,,,"It’s just a stone. Can be used to get Stone. "
 ,In Game,Plastic Bottle,1003,Material,Uncommon,,,,,,"Can be reprocessed into valuable raw Microplastics. "
@@ -84,7 +84,7 @@ These ribbons are greatly prized…. "
 ,In Game,Festival Chime,11408,Food,Rare,Kami,,BYPASS_BONUS_RESET,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
 ,In Game,Energy Drink,11409,Food,Uncommon,Kami,,BYPASS_BONUS_RESET,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
 ,In Game,Hostility Potion,11410,Food,Uncommon,Kami,,BYPASS_BONUS_RESET,"ATS+3%,ITEM1120",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
-,To Deploy,Spirit Glue,19001,Potion,Uncommon,Enemy_Kami,,,"NEXT_COOLDOWN+180,ITEM1003",,This glue even sticks to intangible things. Can be used to add additional Cooldown to an enemy Kami and temporarily lock it down to a Node.
+,In Game,Spirit Glue,19001,Potion,Uncommon,Enemy_Kami,,,"NEXT_COOLDOWN+120,ITEM1003",,This glue even sticks to intangible things. Can be used to add additional Cooldown to an enemy Kami and temporarily lock it down to a Node.
 ,In Game,Giftbox,21001,Lootbox,Uncommon,Account,,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Rare,Account,,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
 ,In Game,Wonder Egg,21003,Lootbox,Rare,Account,,,DT3,,"A cracked egg held together by blood-red wax. The contents are a surprise. "
@@ -99,3 +99,5 @@ These ribbons are greatly prized…. "
 ,In Game,Ancient Machine Part,100002,Key Item,Epic,,,,,,A durable part of some kind of high-tech machinery. It has wear and corrosion like it’s been exposed to the elements for thousands of years.
 ,In Game,Disc-Shaped Map,100003,Key Item,Epic,,,,,,"A golden disk inlaid with other metals. It resembles an overhead map of a temple complex. Seems to depict roads, pyramids, and other structures."
 ,In Game,Aetheric Sextant,100004,Key Item,Legendary,,,,,,"Capable of divining some things beyond the perception of mortals. "
+,To Deploy,Pyramid Engine,100005,Misc,Epic,,,NOT_TRADABLE,,,This device dates to thousands of years old and is constructed in Egyptian style. It can be used to generate electrical power. The process through which this occurs is unknown.
+,To Deploy,“KW Maps” Data Chip,100006,Key Item,Rare,Account,,,,,"“Kamigotchi World Maps.” A data chip found in the Lost Skeleton’s laptop. It looks damaged, but it might still be readable."
