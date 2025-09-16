@@ -23,14 +23,19 @@
 ,1x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,1
 ,2x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,2
 ,100x Resin,ITEM,11311,100
+,1x Booster Pack,ITEM,21004,1
+,2x Booster Pack,ITEM,21004,2
 ,"1x ""Neith’s River of Life"" Spell Card",ITEM,21204,1
 ,2x “Neith’s River of Life” Spell Card,ITEM,21204,2
 ,3x “Neith’s River of Life” Spell Card,ITEM,21204,3
 ,1x Grinder,ITEM,23100,1
 ,1x Burner,ITEM,23101,1
 ,1x Screwdriver,ITEM,23102,1
+,1x Pyramid Engine (Soulbound),ITEM,100005,1
+,"""KW Maps"" Data Chip",ITEM,100006,1
 ,2x Agency Reputation,REPUTATION,1,2
 ,4x Agency Reputation,REPUTATION,1,4
 ,6x Agency Reputation,REPUTATION,1,6
 ,2x Elders Loyalty,REPUTATION,2,2
 ,4x Elders Loyalty,REPUTATION,2,4
+,6x Elders Loyalty,REPUTATION,2,6
