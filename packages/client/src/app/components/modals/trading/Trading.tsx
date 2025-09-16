@@ -93,7 +93,6 @@ export const TradingModal: UIComponent = {
       const account = getAccount(accountEntity);
       refreshTrades(account);
       setAccount(account);
-      getTradeHistory(account.id);
 
       const updateSync = () => setTick(Date.now());
       const timerId = setInterval(updateSync, SYNC_TIME);
@@ -107,6 +106,12 @@ export const TradingModal: UIComponent = {
       setAccount(account);
       refreshTrades(account);
     }, [modalVisible, tick]);
+
+    // update trade history whenever tab is checked
+    useEffect(() => {
+      if (!modalVisible || tab !== `History`) return;
+      getTradeHistory(account.id);
+    }, [tab]);
 
     // open account modal on events from offers
     // Q: what is this used for?

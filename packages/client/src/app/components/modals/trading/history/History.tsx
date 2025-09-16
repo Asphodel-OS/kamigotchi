@@ -38,7 +38,6 @@ export const History = ({
           itemFilter: { index: 0 } as unknown as any,
           typeFilter: typeFilter as unknown as any,
           isConfirming: false,
-          itemSearch: '',
           setIsConfirming: (() => {}) as any,
           setConfirmData: (() => {}) as any,
         }}
