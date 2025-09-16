@@ -116,7 +116,6 @@ export const Controls = ({
 };
 
 const Container = styled.div`
-  border-right: 0.15vw solid black;
   height: 100%;
   width: 100%;
   min-height: 0;

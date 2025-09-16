@@ -113,7 +113,11 @@ export const SearchBar = ({
 
   return (
     <Container>
-      <IconButton text={`< ${typeFilter} >`} onClick={toggleTypeFilter} />
+      <IconButton
+        text={`< ${typeFilter} >`}
+        onClick={toggleTypeFilter}
+        color={typeFilter === 'Buy' ? '#e9ffe9' : '#ffe9e9'}
+      />
       <IconListButton img={getSortIcon(sort)} text={sort} options={getSortOptions()} />
       <TextTooltip text={[ascending ? 'sorting by ascending' : 'sorting by descending']}>
         <IconButton text={ascending ? '↑' : '↓'} onClick={() => setAscending(!ascending)} />
