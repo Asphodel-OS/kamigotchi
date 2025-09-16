@@ -16,6 +16,7 @@ import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQue
 import { LogicTypeComponent, ID as LogicTypeCompID } from "components/LogicTypeComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
+import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
@@ -75,6 +76,7 @@ library LibQuest {
       id = repeatQuestID;
       removeCompleted(components, id);
       TimeStartComponent(getAddrByID(components, TimeStartCompID)).set(id, block.timestamp);
+      TimeLastComponent(getAddrByID(components, TimeLastCompID)).remove(id);
 
       // previous objective snapshot are unset during quest completion
       snapshotObjectives(components, questIndex, id, accID);
@@ -86,6 +88,7 @@ library LibQuest {
   function complete(IWorld world, IUintComp components, uint256 questID, uint256 accID) internal {
     setCompleted(components, questID);
     removeSnapshottedObjectives(components, questID);
+    TimeLastComponent(getAddrByID(components, TimeLastCompID)).set(questID, block.timestamp);
 
     uint32 questIndex = IndexQuestComponent(getAddrByID(components, IndexQuestCompID)).get(questID);
     distributeRewards(world, components, questIndex, accID);
@@ -266,6 +269,22 @@ library LibQuest {
   ) internal view returns (bool) {
     uint256 id = getAccQuestIndex(components, accID, questIndex);
     return id != 0 ? isCompleted(components, id) : false;
+  }
+
+  // checks if a quest has been completed >X time ago
+  function checkCompletedDelay(
+    IUintComp components,
+    uint32 questIndex,
+    uint256 accID,
+    uint256 delay
+  ) internal view returns (bool) {
+    uint256 id = getAccQuestIndex(components, accID, questIndex);
+    if (!isCompleted(components, id)) {
+      // prior quest not completed
+      return false;
+    }
+    uint256 timeLast = TimeLastComponent(getAddrByID(components, TimeLastCompID)).safeGet(id);
+    return block.timestamp > timeLast + delay;
   }
 
   function verifyEnabled(IUintComp components, uint32 index) public view {
