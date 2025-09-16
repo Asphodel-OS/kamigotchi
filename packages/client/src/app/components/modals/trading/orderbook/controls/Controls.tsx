@@ -12,7 +12,9 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { MUSU_INDEX } from 'constants/items';
 import { Item, NullItem } from 'network/shapes';
 import { playClick } from 'utils/sounds';
-import { ItemBrowser } from './browse/ItemBrowser';
+import { ItemBrowser } from '../browse/ItemBrowser';
+
+const SORTS = ['Item', 'Type', 'Qty', 'Total', 'Owner', 'Price'];
 
 export const Controls = ({
   controls,
@@ -22,14 +24,16 @@ export const Controls = ({
   controls: {
     typeFilter: TradeType;
     setTypeFilter: Dispatch<TradeType>;
+    itemFilter: Item;
+    setItemFilter: Dispatch<Item>;
+
+    itemSearch: string;
+    setItemSearch: Dispatch<string>;
+
     sort: string;
     setSort: Dispatch<string>;
     ascending: boolean;
     setAscending: Dispatch<boolean>;
-    itemFilter: Item;
-    setItemFilter: Dispatch<Item>;
-    itemSearch: string;
-    setItemSearch: Dispatch<string>;
   };
   data: {
     items: Item[];
@@ -53,48 +57,6 @@ export const Controls = ({
   } = controls;
   const { items } = data;
   const { getItemByIndex } = utils;
-
-  /////////////////
-  // INTERPRETATION
-
-  const getItemOptions = (): IconListButtonOption[] => {
-    // if buying  show all tradable items
-    const itemOptions = items.map(
-      (item): IconListButtonOption => ({
-        text: item.name,
-        image: item.image,
-        onClick: () => {
-          setItemSearch('');
-          setItemFilter(item);
-        },
-      })
-    );
-    itemOptions.unshift({
-      text: 'Any',
-      onClick: () => {
-        setItemFilter(NullItem);
-        setItemSearch('');
-      },
-    });
-    return itemOptions;
-  };
-
-  const getSortIcon = (sort: string) => {
-    if (sort === 'Price' || sort === 'Total') return getItemByIndex(MUSU_INDEX).image;
-    if (sort === 'Owner') return MenuIcons.social;
-    if (sort === 'Item') return MenuIcons.inventory;
-    if (sort === 'Type') return MenuIcons.more; // generic categories icon
-    if (sort === 'Qty') return MenuIcons.inventory; // stack-like inventory icon for quantity
-    return MenuIcons.operator;
-  };
-
-  /////////////////
-  // INTERACTION
-
-  const toggleTypeFilter = () => {
-    setTypeFilter(typeFilter === 'Buy' ? 'Sell' : 'Buy');
-  };
-
   // smart search across items and categories
   const [query, setQuery] = useState<string>('');
   const [category, setCategory] = useState<string>('All');
@@ -122,6 +84,61 @@ export const Controls = ({
     };
   }, []);
 
+  /////////////////
+  // INTERACTION
+
+  // toggle the type filter
+  const toggleTypeFilter = () => {
+    setTypeFilter(typeFilter === 'Buy' ? 'Sell' : 'Buy');
+  };
+
+  /////////////////
+  // INTERPRETATION
+
+  const getItemOptions = (): IconListButtonOption[] => {
+    // if buying  show all tradable items
+    const itemOptions = items.map(
+      (item): IconListButtonOption => ({
+        text: item.name,
+        image: item.image,
+        onClick: () => {
+          setItemSearch('');
+          setItemFilter(item);
+        },
+      })
+    );
+    itemOptions.unshift({
+      text: 'Any',
+      onClick: () => {
+        setItemFilter(NullItem);
+        setItemSearch('');
+      },
+    });
+    return itemOptions;
+  };
+
+  // get the interactive list of available sorts
+  const getSortOptions = (): IconListButtonOption[] => {
+    return SORTS.map((sort) => ({
+      text: sort,
+      image: getSortIcon(sort),
+      onClick: () => {
+        playClick();
+        setSort(sort);
+      },
+    }));
+  };
+
+  // get the Icon for a given Sort option
+  const getSortIcon = (sort: string) => {
+    if (sort === 'Price' || sort === 'Total') return getItemByIndex(MUSU_INDEX).image;
+    if (sort === 'Owner') return MenuIcons.social;
+    if (sort === 'Item') return MenuIcons.inventory;
+    if (sort === 'Type') return MenuIcons.more; // generic categories icon
+    if (sort === 'Qty') return MenuIcons.inventory; // stack-like inventory icon for quantity
+    return MenuIcons.operator;
+  };
+
   // always open by default; no per-section collapse state
   const suggestions = useMemo(() => {
     const lower = query.toLowerCase();
@@ -146,6 +163,9 @@ export const Controls = ({
     return [...catMatches, ...itemMatches];
   }, [query, items]);
 
+  /////////////////
+  // RENDER
+
   return (
     <Container>
       <CollapsibleWrap style={{ minHeight: '12%', overflow: 'visible' }}>
@@ -157,65 +177,11 @@ export const Controls = ({
               toggleTypeFilter();
             }}
           />
-          <IconListButton
-            img={getSortIcon(sort)}
-            text={sort}
-            options={[
-              {
-                text: 'Item',
-                image: getSortIcon('Item'),
-                onClick: () => {
-                  playClick();
-                  setSort('Item');
-                },
-              },
-              {
-                text: 'Type',
-                image: getSortIcon('Type'),
-                onClick: () => {
-                  playClick();
-                  setSort('Type');
-                },
-              },
-              {
-                text: 'Qty',
-                image: getSortIcon('Qty'),
-                onClick: () => {
-                  playClick();
-                  setSort('Qty');
-                },
-              },
-              {
-                text: 'Total',
-                image: getSortIcon('Total'),
-                onClick: () => {
-                  playClick();
-                  setSort('Total');
-                },
-              },
-              {
-                text: 'Owner',
-                image: getSortIcon('Owner'),
-                onClick: () => {
-                  playClick();
-                  setSort('Owner');
-                },
-              },
-              {
-                text: 'Price',
-                image: getSortIcon('Price'),
-                onClick: () => {
-                  playClick();
-                  setSort('Price');
-                },
-              },
-            ]}
-          />
+          <IconListButton img={getSortIcon(sort)} text={sort} options={getSortOptions()} />
           <TextTooltip text={[ascending ? 'sorting by ascending' : 'sorting by descending']}>
             <IconButton
               text={ascending ? '↑' : '↓'}
               onClick={() => {
-                playClick();
                 setAscending(!ascending);
               }}
             />
@@ -267,32 +233,6 @@ const Container = styled.div`
 const Padding = styled.div`
   height: 0.6vw;
 `;
-
-/* corner minimize toggle removed */
-
-const Body = styled.div`
-  position: relative;
-  margin: 1.1vw 0.6vw;
-  gap: 0.6vw;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* allow visible scrollbars in nested content */
-  scrollbar-color: auto;
-`;
-
-const Row = styled.div<{ compact?: boolean }>`
-  width: 100%;
-  gap: ${({ compact }) => (compact ? 0.3 : 0.6)}vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
-const SectionTitle = styled.div``;
 
 const BrowserSection = styled.div`
   position: relative;

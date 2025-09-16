@@ -6,7 +6,7 @@ import { Trade, TradeType } from 'app/cache/trade';
 import { Account, Item, NullItem } from 'network/shapes';
 import { ConfirmationData } from '../library/Confirmation';
 import { TabType } from '../types';
-import { Controls } from './Controls';
+import { Controls } from './controls/Controls';
 import { Offers } from './offers/Offers';
 
 export const Orderbook = ({

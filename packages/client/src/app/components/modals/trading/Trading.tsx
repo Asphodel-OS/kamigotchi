@@ -17,11 +17,11 @@ import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { TradeIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
-import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getMusuBalance as _getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades as _queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
+import { CURRENCIES } from './constants';
 import { History } from './history/History';
 import { Confirmation, ConfirmationData, EmptyConfimation } from './library/Confirmation';
 import { Tabs } from './library/Tabs';
@@ -30,7 +30,6 @@ import { Orderbook } from './orderbook';
 import { TabType } from './types';
 
 const SYNC_TIME = 1000;
-const CurrencyIndices = [MUSU_INDEX, ETH_INDEX, ONYX_INDEX];
 const KamidenClient = getKamidenClient();
 
 export const TradingModal: UIComponent = {
@@ -161,12 +160,12 @@ export const TradingModal: UIComponent = {
     const refreshItemRegistry = () => {
       const all: Item[] = getAllItems();
 
-      const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
-      const tradable = nonCurrencies.filter((item) => item.is.tradeable);
+      // const nonCurrencies = all.filter((item) => !CURRENCIES.includes(item.index));
+      const tradable = all.filter((item) => item.is.tradeable);
       tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
       if (tradable.length !== items.length) setItems(tradable);
 
-      const currencyIndices = new Set(CurrencyIndices);
+      const currencyIndices = new Set(CURRENCIES);
       setCurrencies(all.filter((item) => currencyIndices.has(item.index)));
     };
 
