@@ -139,7 +139,7 @@ const Container = styled.div`
   position: relative;
   width: 100%;
   gap: 0.6vw;
-  padding-top: 0.3vw;
+  padding: 0.3vw;
 
   display: flex;
   flex-flow: row nowrap;
