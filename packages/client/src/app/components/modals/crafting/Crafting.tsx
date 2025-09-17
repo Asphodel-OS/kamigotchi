@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { getAccount } from 'app/cache/account';
 import { getAllRecipes } from 'app/cache/recipes';
 import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -19,21 +19,11 @@ export const CraftingModal: UIComponent = {
   id: 'CraftingModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const {
-      network: {
-        actions,
-        api,
-        components,
-        world,
-      },
+      network: { actions, api, components, world },
       data: { account },
-      utils: {
-        meetsRequirements,
-        displayRequirements,
-        getItemBalance,
-        hasIngredients
-      }
+      utils: { meetsRequirements, displayRequirements, getItemBalance, hasIngredients },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -76,7 +66,10 @@ export const CraftingModal: UIComponent = {
       const recipes = getAllRecipes(world, components);
       const currentTabRecipes = recipes.filter((recipe) => recipe.type === tab.toUpperCase());
       if (showAll) setRecipes(currentTabRecipes);
-      else setRecipes(currentTabRecipes.filter((recipe) => hasIngredients(recipe)));
+      else
+        setRecipes(
+          currentTabRecipes.filter((recipe) => meetsRequirements(recipe) && hasIngredients(recipe))
+        );
     }, [showAll, tab, craftingModalVisible]);
 
     /////////////////
@@ -124,7 +117,7 @@ export const CraftingModal: UIComponent = {
             data={{
               account,
               recipes,
-              tab
+              tab,
             }}
             actions={{
               craft,
