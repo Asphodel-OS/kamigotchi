@@ -521,7 +521,9 @@ export const Offers = ({
                   setSort('Item');
                 }}
               >
-                Item {sort === 'Item' ? (ascending ? '↑' : '↓') : ''}
+                <TextTooltip text={['Item']}>
+                  Item {sort === 'Item' ? (ascending ? '↑' : '↓') : ''}
+                </TextTooltip>
               </SortableTh>
               <SortableTh
                 onClick={() => {
@@ -529,7 +531,9 @@ export const Offers = ({
                   setSort('Type');
                 }}
               >
-                Type {sort === 'Type' ? (ascending ? '↑' : '↓') : ''}
+                <TextTooltip text={['Type']}>
+                  Type {sort === 'Type' ? (ascending ? '↑' : '↓') : ''}
+                </TextTooltip>
               </SortableTh>
               <SortableTh
                 onClick={() => {
@@ -537,7 +541,9 @@ export const Offers = ({
                   setSort('Qty');
                 }}
               >
-                Qty {sort === 'Qty' ? (ascending ? '↑' : '↓') : ''}
+                <TextTooltip text={['Quantity']}>
+                  Qty {sort === 'Qty' ? (ascending ? '↑' : '↓') : ''}
+                </TextTooltip>
               </SortableTh>
               <SortableTh
                 onClick={() => {
@@ -545,7 +551,9 @@ export const Offers = ({
                   setSort('Total');
                 }}
               >
-                Total {sort === 'Total' ? (ascending ? '↑' : '↓') : ''}
+                <TextTooltip text={['Total price']}>
+                  Total {sort === 'Total' ? (ascending ? '↑' : '↓') : ''}
+                </TextTooltip>
               </SortableTh>
               <SortableTh
                 onClick={() => {
@@ -553,10 +561,18 @@ export const Offers = ({
                   setSort('Owner');
                 }}
               >
-                Maker {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
+                <TextTooltip text={['Maker']}>
+                  Maker {sort === 'Owner' ? (ascending ? '↑' : '↓') : ''}
+                </TextTooltip>
               </SortableTh>
-              {showStatus ? <th>Status</th> : null}
-              <th>Action</th>
+              {showStatus ? (
+                <th>
+                  <TextTooltip text={['Status']}>Status</TextTooltip>
+                </th>
+              ) : null}
+              <th>
+                <TextTooltip text={['Action']}>Action</TextTooltip>
+              </th>
             </HeaderRow>
           </thead>
           <tbody>
@@ -776,7 +792,7 @@ const Table = styled.table<{ $withStatus?: boolean; $manageMode?: boolean }>`
     width: ${({ $manageMode }) => ($manageMode ? '11%' : '12%')};
   }
   colgroup col.maker {
-    width: ${({ $withStatus, $manageMode }) => ($manageMode ? '18%' : $withStatus ? '18%' : '20%')};
+    width: ${({ $withStatus, $manageMode }) => ($manageMode ? '15%' : $withStatus ? '18%' : '20%')};
   }
   colgroup col.status {
     width: ${({ $withStatus }) => ($withStatus ? '10%' : '8%')};
@@ -795,12 +811,21 @@ const HeaderRow = styled.tr`
     text-align: left;
     padding: 0.6vw 0.9vw;
     border-bottom: 0.12vw solid black;
+    /* Prefer resizing labels over truncation */
+    white-space: nowrap;
+    font-size: clamp(0.65vw, 0.9vw, 1.05vw);
+    overflow: hidden; /* keep as fallback */
+    text-overflow: ellipsis; /* fallback for extreme cases */
   }
 `;
 
 const SortableTh = styled.th`
   cursor: pointer;
   user-select: none;
+  white-space: nowrap;
+  font-size: clamp(0.65vw, 0.9vw, 1.05vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Row = styled.tr`
@@ -868,7 +893,12 @@ const ActionButton = styled.button`
   border: 0.12vw solid black;
   background: #e6ffd6;
   padding: 0.3vw 0.6vw;
-  font-size: 0.85vw;
+  font-size: clamp(0.55vw, 0.8vw, 0.95vw);
+  width: 100%;
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   cursor: pointer;
   &:disabled {
     background: #eee;
@@ -882,6 +912,9 @@ const ActionCell = styled.div`
   flex-direction: column;
   gap: 0.3vw;
   align-items: flex-start;
+  /* Prevent action column from drifting off-screen */
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 const OwnerLink = styled.span`

@@ -125,6 +125,8 @@ const Bottom = styled.div`
   min-height: 0;
   & > div {
     width: 100% !important;
+    /* Ensure nested table respects container and avoids overflow on narrow viewports */
+    max-width: 100vw;
   }
   padding: 0;
 `;
