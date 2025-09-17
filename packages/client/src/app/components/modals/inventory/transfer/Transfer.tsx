@@ -79,6 +79,11 @@ export const Transfer = ({
     if (item === NullItem) setItem(stone());
   }, [inventories, item]);
 
+  // updates transfer history
+  useEffect(() => {
+    setTransferEvents(account.id);
+  }, [accountEntity, resetSend, mode]);
+
   // reset form values when a reset update is triggered
   useEffect(() => {
     if (resetSend) {
@@ -105,7 +110,6 @@ export const Transfer = ({
       const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
       setAccounts(accountsSorted);
     }
-    setTransferEvents(account.id);
   }, [inventoryModalOpen, tick, accountEntity]);
 
   /////////////////
