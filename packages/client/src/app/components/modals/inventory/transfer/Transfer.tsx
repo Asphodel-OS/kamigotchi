@@ -1,22 +1,15 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { BigNumber } from 'ethers';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Inventory } from 'app/cache/inventory';
-import {
-  EmptyText,
-  IconButton,
-  IconListButton,
-  IconListButtonOption,
-} from 'app/components/library';
+import { IconButton, IconListButton, IconListButtonOption } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { STONE_INDEX } from 'constants/items';
-import { formatEntityID } from 'engine/utils';
 import { Account } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Mode } from '../types';
@@ -124,7 +117,7 @@ export const Transfer = ({
         //  Timestamp: '0',
       };
       const response = await KamidenClient?.getItemTransfers(request);
-      setHistory(response?.Transfers || []);
+      setHistory(response?.Transfers.reverse() || []);
     } catch (error) {
       console.error('Error getting send history :', error);
       throw error;
@@ -151,40 +144,6 @@ export const Transfer = ({
 
   /////////////////
   // DISPLAY
-
-  // get the history of items sent
-  // TODO: consider moving this to its own component
-  const TransferHistory = useMemo(() => {
-    const transfers: JSX.Element[] = [];
-    history.forEach((send, index) => {
-      const senderID = formatEntityID(BigNumber.from(send.SenderAccountID));
-      const receiverID = formatEntityID(BigNumber.from(send.RecvAccountID));
-      const sender = getAccount(getEntityIndex(senderID));
-      const receiver = getAccount(getEntityIndex(receiverID));
-      const item = getItem(send.ItemIndex as EntityIndex);
-
-      if (receiver.id === account.id) {
-        transfers.push(
-          <div key={`receiver-${index}`}>
-            * You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name} from{' '}
-            {sender?.name}
-          </div>
-        );
-      } else if (sender.id === account.id) {
-        transfers.push(
-          <div key={`sender-${index}`}>
-            * You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
-            {receiver?.name}
-          </div>
-        );
-      }
-    });
-    if (transfers.length === 0) {
-      return <EmptyText text={['No transfers to show.']} />;
-    } else {
-      return transfers.reverse();
-    }
-  }, [history, account.id, getAccount, getEntityIndex, getItem]);
 
   // gets filtered item options
   const ItemOptions = useMemo(() => {
