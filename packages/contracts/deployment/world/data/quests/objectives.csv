@@ -28,7 +28,7 @@
 ,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
 ,Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
 ,Spend 1000 $MUSU at Mina’s Shop,MIN,INC,ITEM_SPEND,1,1000
-,Spend 15000 $MUSU at Mina's Shop,MIN,INC,ITEM_SPEND,1,15000
+,"Spend 15,000 $MUSU at Mina's Shop",MIN,INC,ITEM_SPEND,1,15000
 ,Reroll one Kamigotchi,MIN,INC,KAMI_GACHA_REROLL,,1
 ,Use an item to heal a Kamigotchi that has been reduced below 100% Health,MIN,INC,KAMI_ITEM_USE,,1
 ,Level up a Kami,MIN,CURR,KAMI_LEVELS_TOTAL,,1
@@ -64,7 +64,7 @@
 ,Craft 1 Respec Potion,MIN,INC,CRAFT_ITEM,11403,1
 ,Craft 1 Grace Potion,MIN,INC,CRAFT_ITEM,11404,1
 ,Craft 1 Bless Potion,MIN,INC,CRAFT_ITEM,11405,1
-,Craft 1 Hostility Potion,MIN,INC,CRAFT_ITEM,11405,1
+,Craft 1 Hostility Potion,MIN,INC,CRAFT_ITEM,11410,1
 ,Scavenge 2 Plastic Bottles,MIN,INC,DROPTABLE_ITEM_TOTAL,1003,2
 ,Scavenge 1 Pine Cone,MIN,INC,DROPTABLE_ITEM_TOTAL,1004,1
 ,Scavenge 1 Daffodil,MIN,INC,DROPTABLE_ITEM_TOTAL,1011,1
