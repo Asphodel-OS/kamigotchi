@@ -1,4 +1,3 @@
-import anime from 'animejs';
 import { Dispatch, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -141,12 +140,8 @@ export const Toolbar = ({
     let rafId = 0;
 
     const setY = (y: number) => {
-      try {
-        anime.set(toolbarEl, { translateY: y });
-      } catch {
-        // If Anime.js is unavailable for any reason, fallback to direct style
-        toolbarEl.style.transform = `translateY(${y}px)`;
-      }
+      // Use direct transform to avoid dependency issues and keep this hotfix minimal
+      toolbarEl.style.transform = `translateY(${y}px)`;
     };
 
     const readScrollTop = () => {
@@ -178,7 +173,7 @@ export const Toolbar = ({
     };
     return () => {
       if (detachScroll.current) detachScroll.current();
-      setY(0);
+      toolbarEl.style.transform = 'translateY(0px)';
     };
   }, [partyModalVisible]);
 
