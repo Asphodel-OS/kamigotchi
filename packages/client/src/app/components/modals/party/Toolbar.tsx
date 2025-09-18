@@ -1,4 +1,5 @@
-import { Dispatch, useEffect, useMemo, useState } from 'react';
+import anime from 'animejs';
+import { Dispatch, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
@@ -51,6 +52,8 @@ export const Toolbar = ({
   const { passesNodeReqs } = utils;
   const { displayedKamis, setDisplayedKamis, tick } = state;
   const partyModalVisible = useVisibility((s) => s.modals.party);
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
+  const detachScroll = useRef<(() => void) | null>(null);
 
   const [addOptions, setAddOptions] = useState<DropdownOption[]>([]);
   const [collectOptions, setCollectOptions] = useState<DropdownOption[]>([]);
@@ -111,6 +114,31 @@ export const Toolbar = ({
     setDisplayedKamis(sorted);
   }, [partyModalVisible, kamis.length, sort, view]);
 
+  // JS-driven sticky fallback for Safari: translateY toolbar as parent scrolls
+  useEffect(() => {
+    if (!partyModalVisible) return;
+    const toolbarEl = toolbarRef.current;
+    if (!toolbarEl) return;
+
+    // Find the nearest modal scroll container
+    const container = toolbarEl.closest("[data-scroll-container='true']") as HTMLElement | null;
+    if (!container) return;
+
+    const onScroll = () => {
+      const y = container.scrollTop;
+      anime.set(toolbarEl, { translateY: y });
+    };
+
+    // initialize position and bind
+    onScroll();
+    container.addEventListener('scroll', onScroll, { passive: true });
+    detachScroll.current = () => container.removeEventListener('scroll', onScroll);
+    return () => {
+      if (detachScroll.current) detachScroll.current();
+      anime.set(toolbarEl, { translateY: 0 });
+    };
+  }, [partyModalVisible]);
+
   /////////////////
   // INTERACTION
 
@@ -133,7 +161,7 @@ export const Toolbar = ({
   );
 
   return (
-    <Container>
+    <Container ref={toolbarRef}>
       <Section>
         <TextTooltip text={[`${view}`]}>
           <IconButton img={ViewIcons[view]} onClick={() => toggleView()} radius={0.6} />
@@ -160,7 +188,8 @@ export const Toolbar = ({
 const Container = styled.div`
   padding: 0.6vw;
   z-index: 1;
-  position: sticky;
+  /* Avoid Safari white-screen bug when sticky is nested in overflow containers */
+  position: relative;
   top: 0;
   opacity: 0.9;
   width: 100%;

@@ -83,7 +83,12 @@ export const ModalWrapper = ({
           </ButtonRow>
         )}
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
-        <Children scrollBarColor={scrollBarColor} noPadding={noPadding}>
+        <Children
+          scrollBarColor={scrollBarColor}
+          noPadding={noPadding}
+          data-scroll-container='true'
+          data-modal-id={id}
+        >
           {children}
         </Children>
         {footer && <Footer noBorder={noInternalBorder}>{footer}</Footer>}
