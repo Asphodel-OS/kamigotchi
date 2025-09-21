@@ -194,7 +194,9 @@ const Children = styled.div<{
   display: flex;
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
-  overflow: hidden;
+  // avoid the scrollbar  modifying the layout
+  scrollbar-gutter: stable;
+  scrollbar-color: transparent transparent;
 `;
 
 const fadeIn = keyframes`
