@@ -110,17 +110,37 @@ const Button = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-
   text-align: center;
   text-decoration: none;
 
   cursor: pointer;
   pointer-events: auto;
-  &:hover {
-    background-color: #e8e8e8;
+  // plain button colour
+  background: #ffffffff;
+  transform-style: preserve-3d;
+
+  &::before {
+    position: absolute;
+    content: '';
+    height: 100%;
+    width: 100%;
+    // 3d part
+    background: #aaa9a9ff;
+    border-radius: inherit;
+    border: inherit;
+    // shadow
+    box-shadow: 0 0.625em 0 0 #d8d8d8ff;
+    //puts 3d part behind and below the button
+    transform: translate3d(0, 0.75em, -1em);
   }
-  &:active {
-    background-color: #c4c4c4;
+
+  &:hover {
+    background: #e8e8e8;
+    transform: translate3d(0, 0.25em, -1em);
+  }
+
+  &:hover::before {
+    transform: translate3d(0, 0.5em, -1em);
   }
 `;
 
