@@ -194,6 +194,7 @@ const Children = styled.div<{
   display: flex;
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
+  overflow: hidden;
 `;
 
 const fadeIn = keyframes`

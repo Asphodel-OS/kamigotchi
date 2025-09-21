@@ -49,7 +49,6 @@ export const ActionButton = ({
     } else if (size === 'medium') {
       styles.fontSize = '.8vw';
       styles.padding = '.4vw .8vw';
-      styles.height = '2.1vw';
       styles.borderRadius = '.45vw';
       styles.borderWidth = '.15vw';
     } else if (size === 'large') {
@@ -128,12 +127,12 @@ const Button = styled.button<{ wasClicked: boolean; showState: boolean }>`
   // plain button colour
   background-color: #ffffffff;
   transform-style: preserve-3d;
+  // 3d part
   &::before {
     position: absolute;
     content: '';
     height: 100%;
     width: 100%;
-    // 3d part
     background-color: #aaa9a9ff;
     border-radius: inherit;
     border: inherit;
@@ -150,10 +149,12 @@ const Button = styled.button<{ wasClicked: boolean; showState: boolean }>`
   &:hover::before {
     transform: translate3d(0, 0.5em, -1em);
   }
+
   ${({ wasClicked, showState }) =>
     wasClicked &&
     showState &&
-    `      background-color: #e8e8e8;
+    `     
+     background-color: #e8e8e8;
     transform: translate3d(0, 0.25em, -1em);    
     &::before {
       transform: translate3d(0, 0.5em, -1em);
