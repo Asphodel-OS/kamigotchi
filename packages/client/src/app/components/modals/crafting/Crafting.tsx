@@ -109,7 +109,11 @@ export const CraftingModal: UIComponent = {
         canExit
       >
         <Tabs tab={tab} setTab={setTab} />
-        <ActionButton onClick={() => setShowAll(!showAll)} text='Filter by Available' />
+        <ActionButton
+          onClick={() => setShowAll(!showAll)}
+          text='Filter by Available'
+          showState={true}
+        />
         {recipes.length == 0 ? (
           <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
         ) : (

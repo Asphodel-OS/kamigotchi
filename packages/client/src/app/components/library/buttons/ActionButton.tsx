@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { pulseFx } from 'app/styles/effects';
+import { useState } from 'react';
 import { playClick } from 'utils/sounds';
 import { TextTooltip } from '../poppers/TextTooltip';
 
@@ -15,6 +16,7 @@ export const ActionButton = ({
   pulse = false,
   tooltip,
   noBorder = false,
+  showState = false,
 }: {
   onClick: Function;
   text: string;
@@ -25,10 +27,13 @@ export const ActionButton = ({
   pulse?: boolean;
   tooltip?: string[];
   noBorder?: boolean;
+  showState?: boolean;
 }) => {
+  const [wasClicked, setWasClicked] = useState(false);
   // layer on a sound effect
   const handleClick = async () => {
     playClick();
+    setWasClicked(!wasClicked);
     await onClick();
   };
 
@@ -86,13 +91,23 @@ export const ActionButton = ({
 
   if (pulse)
     result = (
-      <PulseButton onClick={!disabled ? handleClick : () => {}} style={setStyles()}>
+      <PulseButton
+        onClick={!disabled ? handleClick : () => {}}
+        style={setStyles()}
+        wasClicked={wasClicked}
+        showState={showState}
+      >
         {text}
       </PulseButton>
     );
   else
     result = (
-      <Button onClick={!disabled ? handleClick : () => {}} style={setStyles()}>
+      <Button
+        onClick={!disabled ? handleClick : () => {}}
+        style={setStyles()}
+        wasClicked={wasClicked}
+        showState={showState}
+      >
         {text}
       </Button>
     );
@@ -102,48 +117,50 @@ export const ActionButton = ({
   return result;
 };
 
-const Button = styled.button`
-  background-color: #ffffff;
-  border: solid black;
-
-  color: black;
+const Button = styled.button<{ wasClicked: boolean; showState: boolean }>`
   display: flex;
+  margin-bottom: 0.5em;
   justify-content: center;
   align-items: center;
   text-align: center;
-  text-decoration: none;
-
   cursor: pointer;
   pointer-events: auto;
   // plain button colour
-  background: #ffffffff;
+  background-color: #ffffffff;
   transform-style: preserve-3d;
-
   &::before {
     position: absolute;
     content: '';
     height: 100%;
     width: 100%;
     // 3d part
-    background: #aaa9a9ff;
+    background-color: #aaa9a9ff;
     border-radius: inherit;
     border: inherit;
     // shadow
-    box-shadow: 0 0.625em 0 0 #d8d8d8ff;
+    // box-shadow: 0 0.625em 0 0 #d8d8d8ff;
     //puts 3d part behind and below the button
     transform: translate3d(0, 0.75em, -1em);
   }
-
   &:hover {
-    background: #e8e8e8;
+    background-color: #e8e8e8;
     transform: translate3d(0, 0.25em, -1em);
   }
 
   &:hover::before {
     transform: translate3d(0, 0.5em, -1em);
   }
+  ${({ wasClicked, showState }) =>
+    wasClicked &&
+    showState &&
+    `      background-color: #e8e8e8;
+    transform: translate3d(0, 0.25em, -1em);    
+    &::before {
+      transform: translate3d(0, 0.5em, -1em);
+    }
+  `}
 `;
 
-const PulseButton = styled(Button)`
+const PulseButton = styled(Button)<{ wasClicked: boolean; showState: boolean }>`
   animation: ${pulseFx} 3s ease-in-out infinite;
 `;
