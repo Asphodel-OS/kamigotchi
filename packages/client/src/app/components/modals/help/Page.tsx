@@ -47,6 +47,4 @@ const GasLink = styled.a<{ linkColor?: string }>`
   &:hover {
     text-decoration: none;
   }
-  position: absolute;
-  bottom: 0;
 `;

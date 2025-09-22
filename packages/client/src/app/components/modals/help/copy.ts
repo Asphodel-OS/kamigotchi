@@ -1,6 +1,5 @@
 import { HelpBanners } from 'assets/images/banners';
 import { HelpMenuIcons } from 'assets/images/help';
-import * as placeholder from 'assets/images/icons/placeholder.png';
 import { HelpTabs, PageCopy } from './types';
 
 const WelcomeCopy: PageCopy = {
@@ -64,8 +63,8 @@ const NodeCopy: PageCopy = {
 
 const TermsCopy: PageCopy = {
   title: 'Terms & Conditions',
-  menuIcon: placeholder.default,
-  header: placeholder.default,
+  menuIcon: HelpMenuIcons.placeholder.default,
+  header: HelpMenuIcons.placeholder.default,
   body: [''],
 };
 

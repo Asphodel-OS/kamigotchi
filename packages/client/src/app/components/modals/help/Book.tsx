@@ -3,15 +3,10 @@ import styled from 'styled-components';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 import { CopyInfo } from './copy';
+import { HelpTabs } from './types';
 
 // ActionButton is a text button that triggers an Action when clicked
-export const Book = ({
-  infoKey,
-  setTab,
-}: {
-  infoKey: keyof typeof CopyInfo
-  setTab: Function
-}) => {
+export const Book = ({ infoKey, setTab }: { infoKey: keyof typeof CopyInfo; setTab: Function }) => {
   const details = CopyInfo[infoKey];
 
   // layer on a sound effect
@@ -22,7 +17,7 @@ export const Book = ({
 
   return (
     <Container onClick={handleClick}>
-      <Image src={details.menuIcon} />
+      <Image infoKey={infoKey} src={details.menuIcon} />
       <Title>{details.title}</Title>
     </Container>
   );
@@ -53,8 +48,9 @@ const Container = styled.div`
   }
 `;
 
-const Image = styled.img`
+const Image = styled.img<{ infoKey: number }>`
   width: 90%;
+  image-rendering: ${({ infoKey }) => infoKey === HelpTabs.TERMS && 'pixelated'};
 `;
 
 const Title = styled.div`
