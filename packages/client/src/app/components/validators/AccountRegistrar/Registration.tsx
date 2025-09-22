@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { ActionButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
-import { TermsAndConditions } from 'assets/documents';
+import { TermsAndConditions } from 'assets/documents/documents';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
@@ -148,7 +148,6 @@ export const Registration = ({
         {OwnerDisplay()}
         {OperatorDisplay()}
       </Section>
-
       <Row>
         <Input
           type='string'
@@ -159,16 +158,20 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
+      <TermsWrapper lang='en'>
+        {TermsAndConditions.map((line: string, i: number) => {
+          return (
+            <Line isBold={i === 0} key={i}>
+              {line}
+              <br />
+            </Line>
+          );
+        })}
+      </TermsWrapper>
+
       <Row style={{ marginTop: '1vw', marginBottom: '1vw' }}>
-        <Checkbox type='checkbox' onChange={() => setTermsAccepted(!termsAccepted)} />{' '}
-        <GasLink
-          key='terms&conditions'
-          href={TermsAndConditions}
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          I agree to the terms and conditions
-        </GasLink>
+        <Checkbox type='checkbox' onChange={() => setTermsAccepted(!termsAccepted)} />
+        <div style={{ fontSize: '0.75vw' }}>I agree to the terms and conditions </div>
       </Row>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />
@@ -227,11 +230,22 @@ const Checkbox = styled.input`
   cursor: pointer;
 `;
 
-const GasLink = styled.a<{ linkColor?: string }>`
-  color: ${({ linkColor }) => linkColor ?? '#145006ff'};
-  font-size: 0.8vw;
-  text-decoration: underline;
-  &:hover {
-    text-decoration: none;
-  }
+const Line = styled.div<{ isBold?: boolean }>`
+  font-size: 0.9vw;
+  line-height: 150%;
+  text-align: justify;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  font-weight: ${({ isBold }) => (isBold ? 'bold' : 'normal')};
+`;
+
+const TermsWrapper = styled.div`
+  color: #333;
+  padding: 1.5vw;
+  position: relative;
+  white-space: pre-wrap;
+  height: 15vh;
+  overflow-y: auto;
 `;
