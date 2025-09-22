@@ -161,7 +161,7 @@ export const Registration = ({
       <TermsWrapper lang='en'>
         {TermsAndConditions.map((line: string, i: number) => {
           return (
-            <Line isBold={i === 0} key={i}>
+            <Line isTitle={i === 0 || i === 1} key={i}>
               {line}
               <br />
             </Line>
@@ -230,17 +230,6 @@ const Checkbox = styled.input`
   cursor: pointer;
 `;
 
-const Line = styled.div<{ isBold?: boolean }>`
-  font-size: 0.9vw;
-  line-height: 150%;
-  text-align: justify;
-  white-space: pre-wrap;
-  word-break: normal;
-  overflow-wrap: break-word;
-  hyphens: auto;
-  font-weight: ${({ isBold }) => (isBold ? 'bold' : 'normal')};
-`;
-
 const TermsWrapper = styled.div`
   color: #333;
   padding: 1.5vw;
@@ -248,4 +237,16 @@ const TermsWrapper = styled.div`
   white-space: pre-wrap;
   height: 15vh;
   overflow-y: auto;
+  margin-top: 1vw;
+`;
+
+const Line = styled.div<{ isTitle?: boolean }>`
+  font-size: 0.9vw;
+  line-height: 150%;
+  text-align: justify;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  ${({ isTitle }) => isTitle && 'font-weight: bold;text-align: center;'}
 `;
