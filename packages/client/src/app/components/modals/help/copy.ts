@@ -1,4 +1,3 @@
-import { TermsAndConditions } from 'assets/documents';
 import { HelpBanners } from 'assets/images/banners';
 import { HelpMenuIcons } from 'assets/images/help';
 import * as placeholder from 'assets/images/icons/placeholder.png';
@@ -67,7 +66,7 @@ const TermsCopy: PageCopy = {
   title: 'Terms & Conditions',
   menuIcon: placeholder.default,
   header: placeholder.default,
-  body: ['Please refer to the Terms & Conditions document.', `Document: ${TermsAndConditions}`],
+  body: [''],
 };
 
 export const CopyInfo = {

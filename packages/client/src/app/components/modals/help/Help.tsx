@@ -40,7 +40,11 @@ export const HelpModal: UIComponent = {
         </Row>
         <BackButton />
         <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
-        {tab === HelpTabs.HOME ? <Books setTab={setTab} /> : <Page body={CopyInfo[tab].body} />}
+        {tab === HelpTabs.HOME ? (
+          <Books setTab={setTab} />
+        ) : (
+          <Page tab={tab} body={CopyInfo[tab].body} />
+        )}
       </ModalWrapper>
     );
   },
@@ -69,4 +73,5 @@ const Banner = styled.img`
   padding: 2vw;
   padding-bottom: 1vw;
   align-self: center;
+  image-rendering: pixelated;
 `;

@@ -19,5 +19,5 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 2.4vw;
-  gap: 1.5vw;
+  gap: 1vw;
 `;
