@@ -7,7 +7,7 @@ export const Page = ({ body, tab }: { body: string[]; tab: HelpTabs }) => {
     <Container lang='en'>
       {body.map((line: string, i: number) => {
         return (
-          <Line lang='en' key={i}>
+          <Line isBold={tab === HelpTabs.TERMS && i === 0} key={i}>
             {line}
             <br />
           </Line>
@@ -24,7 +24,7 @@ const Container = styled.div`
   white-space: pre-wrap;
 `;
 
-const Line = styled.div`
+const Line = styled.div<{ isBold: boolean }>`
   font-size: 0.9vw;
   line-height: 150%;
   text-align: justify;
@@ -32,4 +32,5 @@ const Line = styled.div`
   word-break: normal;
   overflow-wrap: break-word;
   hyphens: auto;
+  font-weight: ${({ isBold }) => (isBold ? 'bold' : 'normal')};
 `;
