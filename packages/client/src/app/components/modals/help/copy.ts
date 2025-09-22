@@ -1,5 +1,7 @@
+import { TermsAndConditions } from 'assets/documents';
 import { HelpBanners } from 'assets/images/banners';
 import { HelpMenuIcons } from 'assets/images/help';
+import * as placeholder from 'assets/images/icons/placeholder.png';
 import { HelpTabs, PageCopy } from './types';
 
 const WelcomeCopy: PageCopy = {
@@ -61,9 +63,17 @@ const NodeCopy: PageCopy = {
   ],
 };
 
+const TermsCopy: PageCopy = {
+  title: 'Terms & Conditions',
+  menuIcon: placeholder.default,
+  header: placeholder.default,
+  body: ['Please refer to the Terms & Conditions document.', `Document: ${TermsAndConditions}`],
+};
+
 export const CopyInfo = {
   [HelpTabs.HOME]: WelcomeCopy,
   [HelpTabs.WORLD]: WorldCopy,
   [HelpTabs.KAMIS]: KamiCopy,
   [HelpTabs.NODES]: NodeCopy,
+  [HelpTabs.TERMS]: TermsCopy,
 };

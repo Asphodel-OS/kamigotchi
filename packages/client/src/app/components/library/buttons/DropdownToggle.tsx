@@ -191,7 +191,7 @@ export const DropdownToggle = ({
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;

@@ -2,16 +2,13 @@ import styled from 'styled-components';
 import { Book } from './Book';
 import { HelpTabs } from './types';
 
-export const Books = ({
-  setTab,
-}: {
-  setTab: Function;
-}) => {
+export const Books = ({ setTab }: { setTab: Function }) => {
   return (
     <Container>
       <Book key={HelpTabs.WORLD} infoKey={HelpTabs.WORLD} setTab={setTab} />
       <Book key={HelpTabs.KAMIS} infoKey={HelpTabs.KAMIS} setTab={setTab} />
       <Book key={HelpTabs.NODES} infoKey={HelpTabs.NODES} setTab={setTab} />
+      <Book key={HelpTabs.TERMS} infoKey={HelpTabs.TERMS} setTab={setTab} />
     </Container>
   );
 };

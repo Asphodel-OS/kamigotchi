@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { ActionButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
+import { TermsAndConditions } from 'assets/documents';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
@@ -40,6 +41,7 @@ export const Registration = ({
   const { balances: tokenBalances } = useTokens();
 
   const [name, setName] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   /////////////////
   // VALIDATION
@@ -136,6 +138,7 @@ export const Registration = ({
         '',
         'you can bridge some over at bridge.initia.xyz',
       ];
+    else if (!termsAccepted) return ['You must accept the terms and conditions.'];
     return ['Register'];
   };
 
@@ -145,6 +148,7 @@ export const Registration = ({
         {OwnerDisplay()}
         {OperatorDisplay()}
       </Section>
+
       <Row>
         <Input
           type='string'
@@ -154,6 +158,17 @@ export const Registration = ({
           placeholder='your username'
           style={{ pointerEvents: 'auto' }}
         />
+      </Row>
+      <Row style={{ marginTop: '1vw', marginBottom: '1vw' }}>
+        <Checkbox type='checkbox' onChange={() => setTermsAccepted(!termsAccepted)} />{' '}
+        <GasLink
+          key='terms&conditions'
+          href={TermsAndConditions}
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          I agree to the terms and conditions
+        </GasLink>
       </Row>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />
@@ -203,4 +218,20 @@ export const Input = styled.input`
 
   font-size: 0.75vw;
   text-align: center;
+`;
+
+const Checkbox = styled.input`
+  width: 1.2vw;
+  height: 1.2vw;
+  accent-color: rgba(199, 243, 162, 1);
+  cursor: pointer;
+`;
+
+const GasLink = styled.a<{ linkColor?: string }>`
+  color: ${({ linkColor }) => linkColor ?? '#145006ff'};
+  font-size: 0.8vw;
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
 `;

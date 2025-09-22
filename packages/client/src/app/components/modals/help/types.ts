@@ -3,6 +3,7 @@ export enum HelpTabs {
   KAMIS,
   NODES,
   WORLD,
+  TERMS,
 }
 
 export interface PageCopy {
