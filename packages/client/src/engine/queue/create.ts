@@ -32,6 +32,13 @@ export function create<C extends Contracts>(
   dispose: () => void;
   ready: IComputedValue<boolean | undefined>;
 } {
+  // Gate warnings behind dev flag to avoid noisy logs in production
+  const isDev =
+    typeof import.meta !== 'undefined' && (import.meta as any).env?.MODE !== 'production';
+  const devWarn = (...args: any[]) => {
+    if (isDev) console.warn(...args);
+  };
+
   const queue = createPriorityQueue<{
     execute: (
       txOverrides: Overrides
@@ -39,6 +46,8 @@ export function create<C extends Contracts>(
     estimateGas: () => Promise<BigNumberish>;
     cancel: (error: any) => void;
     stateMutability?: string;
+    id: string;
+    isCanceled: () => boolean;
   }>();
   const submissionMutex = new Mutex();
   const _nonce = observable.box<number | null>(null);
@@ -128,14 +137,23 @@ export function create<C extends Contracts>(
     };
 
     // Queue the tx execution
-    queue.add(uuid(), {
+    const id = uuid();
+    let canceled = false;
+    const isCanceled = () => canceled;
+    queue.add(id, {
       execute,
       cancel: (error?: any) => reject(error ?? new Error('TX_CANCELLED')),
       estimateGas,
       stateMutability: '',
+      id,
+      isCanceled,
     });
 
     processQueue(); // Start processing the queue
+    (promise as any).queueId = id;
+    (promise as any).cancel = () => {
+      canceled = true;
+    };
     return promise; // Promise resolves when the tx is confirmed or rejected
   }
 
@@ -165,6 +183,11 @@ export function create<C extends Contracts>(
 
     // Run exclusive to avoid two tx requests awaiting the nonce in parallel and submitting with the same nonce.
     const txResult = await submissionMutex.runExclusive(async () => {
+      // Early cancel check before any provider work
+      if (txRequest.isCanceled()) {
+        devWarn('[TXQueue] Canceled before estimation');
+        return txRequest.cancel(new Error('TX_CANCELLED'));
+      }
       // First estimate gas to avoid increasing nonce before tx is sent
       let txOverrides: Overrides = {};
       try {
@@ -172,8 +195,14 @@ export function create<C extends Contracts>(
         txOverrides.gasLimit = await txRequest.estimateGas();
         txOverrides.nonce = nonce;
       } catch (e) {
-        console.warn('[TXQueue] GAS ESTIMATION FAILED');
+        devWarn('[TXQueue] GAS ESTIMATION FAILED');
         return txRequest.cancel(e);
+      }
+
+      // Final pre-send cancel check
+      if (txRequest.isCanceled()) {
+        devWarn('[TXQueue] Request canceled before submit');
+        return txRequest.cancel(new Error('TX_CANCELLED'));
       }
 
       // Execute the tx
@@ -181,7 +210,7 @@ export function create<C extends Contracts>(
       try {
         return await txRequest.execute(txOverrides);
       } catch (e) {
-        console.warn('[TXQueue] EXECUTION FAILED');
+        devWarn('[TXQueue] EXECUTION FAILED');
         error = e;
       } finally {
         // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
@@ -195,9 +224,9 @@ export function create<C extends Contracts>(
     if (txResult?.hash) {
       try {
         const tx = await txResult.wait();
-        console.log(`[TXQueue] TX Confirmed\n`, tx);
+        if (isDev) console.log(`[TXQueue] TX Confirmed\n`, tx);
       } catch (e) {
-        console.warn('[TXQueue] tx failed in block');
+        devWarn('[TXQueue] tx failed in block');
         throw e; // bubble up error
         // // Decode and log the revert reason.
         // getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
