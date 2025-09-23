@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { ActionButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
-import { TermsAndConditions } from 'assets/documents/documents';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
@@ -41,7 +40,6 @@ export const Registration = ({
   const { balances: tokenBalances } = useTokens();
 
   const [name, setName] = useState('');
-  const [termsAccepted, setTermsAccepted] = useState(false);
 
   /////////////////
   // VALIDATION
@@ -138,7 +136,6 @@ export const Registration = ({
         '',
         'you can bridge some over at bridge.initia.xyz',
       ];
-    else if (!termsAccepted) return ['You must accept the terms and conditions.'];
     return ['Register'];
   };
 
@@ -158,21 +155,7 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
-      <TermsWrapper lang='en'>
-        {TermsAndConditions.map((line: string, i: number) => {
-          return (
-            <Line isTitle={i === 0 || i === 1} key={i}>
-              {line}
-              <br />
-            </Line>
-          );
-        })}
-      </TermsWrapper>
 
-      <Row style={{ marginTop: '1vw', marginBottom: '1vw' }}>
-        <Checkbox type='checkbox' onChange={() => setTermsAccepted(!termsAccepted)} />
-        <div style={{ fontSize: '0.75vw' }}>I agree to the terms and conditions </div>
-      </Row>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />
         <TextTooltip text={getSubmitTooltip()} alignText='center'>
@@ -221,32 +204,4 @@ export const Input = styled.input`
 
   font-size: 0.75vw;
   text-align: center;
-`;
-
-const Checkbox = styled.input`
-  width: 1.2vw;
-  height: 1.2vw;
-  accent-color: rgba(199, 243, 162, 1);
-  cursor: pointer;
-`;
-
-const TermsWrapper = styled.div`
-  color: #333;
-  padding: 1.5vw;
-  position: relative;
-  white-space: pre-wrap;
-  height: 15vh;
-  overflow-y: auto;
-  margin-top: 1vw;
-`;
-
-const Line = styled.div<{ isTitle?: boolean }>`
-  font-size: 0.9vw;
-  line-height: 150%;
-  text-align: justify;
-  white-space: pre-wrap;
-  word-break: normal;
-  overflow-wrap: break-word;
-  hyphens: auto;
-  ${({ isTitle }) => isTitle && 'font-weight: bold;text-align: center;'}
 `;

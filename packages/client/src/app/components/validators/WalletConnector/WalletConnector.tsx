@@ -223,21 +223,24 @@ export const WalletConnecter: UIComponent = {
             step={getCurrentStep()}
           />
 
-          <TermsWrapper lang='en'>
-            {TermsAndConditions.map((line: string, i: number) => {
-              return (
-                <Line isTitle={i === 0 || i === 1} key={i}>
-                  {line}
-                  <br />
-                </Line>
-              );
-            })}
-          </TermsWrapper>
-
-          <Row style={{ marginTop: '1vw', marginBottom: '1vw' }}>
-            <Checkbox type='checkbox' onChange={() => setTermsAccepted(!termsAccepted)} />
-            <div style={{ fontSize: '0.75vw' }}>I agree to the terms and conditions </div>
-          </Row>
+          {state === 'unauthenticated' && (
+            <>
+              <TermsWrapper lang='en'>
+                {TermsAndConditions.map((line: string, i: number) => {
+                  return (
+                    <Line isTitle={i === 0} isSubTitle={i === 1} key={i}>
+                      {line}
+                      <br />
+                    </Line>
+                  );
+                })}
+              </TermsWrapper>
+              <Row style={{ marginTop: '1vw', marginBottom: '1vw' }}>
+                <Checkbox type='checkbox' onChange={() => setTermsAccepted(!termsAccepted)} />
+                <div style={{ fontSize: '0.75vw' }}>I agree to the terms and conditions </div>
+              </Row>
+            </>
+          )}
 
           <ActionButton
             disabled={!termsAccepted && state === 'unauthenticated'}
@@ -277,7 +280,7 @@ const TermsWrapper = styled.div`
   margin-top: 1vw;
 `;
 
-const Line = styled.div<{ isTitle?: boolean }>`
+const Line = styled.div<{ isTitle?: boolean; isSubTitle?: boolean }>`
   font-size: 0.9vw;
   line-height: 150%;
   text-align: justify;
@@ -286,4 +289,5 @@ const Line = styled.div<{ isTitle?: boolean }>`
   overflow-wrap: break-word;
   hyphens: auto;
   ${({ isTitle }) => isTitle && 'font-weight: bold;text-align: center;'}
+  ${({ isSubTitle }) => isSubTitle && 'text-align: center; text-decoration: underline; '}
 `;

@@ -7,7 +7,11 @@ export const Page = ({ body, tab }: { body: string[]; tab: HelpTabs }) => {
     <Container lang='en'>
       {body.map((line: string, i: number) => {
         return (
-          <Line isTitle={tab === HelpTabs.TERMS && (i === 0 || i === 1)} key={i}>
+          <Line
+            isTitle={tab === HelpTabs.TERMS && i === 0}
+            isSubTitle={tab === HelpTabs.TERMS && i === 1}
+            key={i}
+          >
             {line}
             <br />
           </Line>
@@ -24,7 +28,7 @@ const Container = styled.div`
   white-space: pre-wrap;
 `;
 
-const Line = styled.div<{ isTitle?: boolean }>`
+const Line = styled.div<{ isTitle?: boolean; isSubTitle?: boolean }>`
   font-size: 0.9vw;
   line-height: 150%;
   text-align: justify;
@@ -33,4 +37,5 @@ const Line = styled.div<{ isTitle?: boolean }>`
   overflow-wrap: break-word;
   hyphens: auto;
   ${({ isTitle }) => isTitle && 'font-weight: bold;text-align: center;'}
+  ${({ isSubTitle }) => isSubTitle && 'text-align: center; text-decoration: underline; '}
 `;
