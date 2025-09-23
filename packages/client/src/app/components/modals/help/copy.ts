@@ -64,8 +64,8 @@ const NodeCopy: PageCopy = {
 
 const TermsCopy: PageCopy = {
   title: 'Terms & Conditions',
-  menuIcon: HelpMenuIcons.placeholder.default,
-  header: HelpMenuIcons.placeholder.default,
+  menuIcon: HelpMenuIcons.privacy,
+  header: HelpBanners.privacyPolicy,
   body: TermsAndConditions,
 };
 

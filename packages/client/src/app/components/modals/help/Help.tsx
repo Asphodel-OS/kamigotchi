@@ -60,7 +60,6 @@ const Row = styled.div`
 
 const ButtonRow = styled.div`
   position: absolute;
-
   display: inline-flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
@@ -69,9 +68,8 @@ const ButtonRow = styled.div`
 
 const Banner = styled.img<{ tab: HelpTabs }>`
   height: auto;
-  width: ${({ tab }) => (tab !== HelpTabs.TERMS ? '100%' : '40%')};
+  width: 100%;
   padding: 2vw;
   padding-bottom: 1vw;
   align-self: center;
-  image-rendering: ${({ tab }) => tab === HelpTabs.TERMS && 'pixelated'};
 `;
