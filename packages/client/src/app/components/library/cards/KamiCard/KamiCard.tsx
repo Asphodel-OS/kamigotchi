@@ -9,7 +9,7 @@ import { Kami } from 'network/shapes/Kami';
 import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
-import { Cooldown, useCooldownVisuals } from './Cooldown';
+import { Cooldown } from './Cooldown';
 import { Health } from './Health';
 
 // KamiCard is a card that displays information about a Kami. It is designed to display
@@ -52,7 +52,7 @@ export const KamiCard = ({
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const [canLevel, setCanLevel] = useState(false);
 
-  const { filter: cdFilter, foreground: cdForeground } = useCooldownVisuals(kami, showCooldown);
+  // const { filter: cdFilter, foreground: cdForeground } = useCooldownVisuals(kami, showCooldown);
 
   /////////////////
   // INTERACTION
@@ -122,9 +122,9 @@ export const KamiCard = ({
         showLevelUp: showLevelUp && canLevel,
         showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
         onClick: handleKamiClick,
-        filter: cdFilter,
+        //   filter: cdFilter,
         background: undefined,
-        foreground: cdForeground,
+        // foreground: cdForeground,
       }}
     >
       {TitleSection}
