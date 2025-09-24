@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
 import { Address } from 'viem';
 
-const REFRESH_INTERVAL = 3000;
+const REFRESH_INTERVAL = 5000;
 
 export const Kamis = ({
   data,
