@@ -4,10 +4,10 @@ import moment from 'moment';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, TextTooltip } from 'app/components/library';
-import cancelSketch from 'assets/images/icons/queue/cancel_sketch.png';
+import { TextTooltip } from 'app/components/library';
 import { IndicatorIcons } from 'assets/images/icons/indicators';
 import { OpenInNewIcon } from 'assets/images/icons/misc';
+import cancelSketch from 'assets/images/icons/queue/cancel_sketch.png';
 import { DefaultChain } from 'constants/chains';
 import { NetworkLayer } from 'network/';
 import { ActionState, ActionStateString } from 'network/systems/ActionSystem/constants';
@@ -91,6 +91,8 @@ export const Logs = ({
       <TextTooltip text={[`View on block explorer`]}>
         <OpenIcon
           src={OpenInNewIcon}
+          role='button'
+          tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
             window.open(`${explorerUrl}/txs/${hash}`, '_blank');
@@ -122,13 +124,31 @@ export const Logs = ({
       };
       if (tx.maxFeePerGas || fee.maxFeePerGas) {
         // EIP-1559 style
-        const baseMaxFee = (tx.maxFeePerGas ?? fee.maxFeePerGas)!;
-        const baseTip = (tx.maxPriorityFeePerGas ?? fee.maxPriorityFeePerGas ?? baseMaxFee.div(2))!;
+        const baseMaxFee =
+          tx.maxFeePerGas && fee.maxFeePerGas
+            ? tx.maxFeePerGas.gt(fee.maxFeePerGas)
+              ? tx.maxFeePerGas
+              : fee.maxFeePerGas
+            : (tx.maxFeePerGas ?? fee.maxFeePerGas)!;
+        const baseTip =
+          tx.maxPriorityFeePerGas && fee.maxPriorityFeePerGas
+            ? tx.maxPriorityFeePerGas.gt(fee.maxPriorityFeePerGas)
+              ? tx.maxPriorityFeePerGas
+              : fee.maxPriorityFeePerGas
+            : (tx.maxPriorityFeePerGas ?? fee.maxPriorityFeePerGas ?? baseMaxFee.div(2))!;
         cancelReq.maxFeePerGas = bump(baseMaxFee);
         cancelReq.maxPriorityFeePerGas = bump(baseTip);
       } else if (tx.gasPrice || fee.gasPrice) {
         // legacy style
-        cancelReq.gasPrice = bump((tx.gasPrice ?? fee.gasPrice)!);
+        const base =
+          tx.gasPrice && fee.gasPrice
+            ? tx.gasPrice.gt(fee.gasPrice)
+              ? tx.gasPrice
+              : fee.gasPrice
+            : (tx.gasPrice ?? fee.gasPrice)!;
+        cancelReq.gasPrice = bump(base);
+      } else {
+        return console.warn('No fee data available to craft replacement tx');
       }
       await signer.sendTransaction(cancelReq);
     } catch (e) {
@@ -147,6 +167,7 @@ export const Logs = ({
         const data = getComponentValueStrict(ActionComponent, entity);
         const h = data.txHash as string | undefined;
         const state = ActionStateString[data.state as ActionState];
+        if (['Complete', 'Failed', 'Canceled'].includes(state)) break;
         if (h && state !== 'Complete') {
           await cancelPendingTx(h);
           break;
@@ -194,11 +215,13 @@ export const Logs = ({
             </TextTooltip>
           )}
           {(state === 'Requested' || state === 'Executing') && (
-            <TextTooltip text={[
-              state === 'Requested'
-                ? 'Remove this queued request before it sends'
-                : 'Stop this request before the tx is submitted',
-            ]}>
+            <TextTooltip
+              text={[
+                state === 'Requested'
+                  ? 'Remove this queued request before it sends'
+                  : 'Stop this request before the tx is submitted',
+              ]}
+            >
               <CancelIcon
                 src={cancelSketch}
                 alt='Cancel'
@@ -273,7 +296,7 @@ const Text = styled.div`
   text-align: left;
 `;
 
-const OpenIcon = styled.img`
+const OpenIcon = styled.img.attrs({ alt: 'Open in explorer' })`
   cursor: pointer;
 
   width: 1.5vw;
@@ -290,36 +313,18 @@ const Icon = styled.img`
   align-self: center;
 `;
 
-const SmallButton = styled.button`
-  background-color: #fff;
-  border: solid black 0.12vw;
-  color: black;
-  padding: 0.1vw 0.4vw;
-  margin-left: 0.3vw;
-  border-radius: 0.3vw;
-  font-family: Pixel;
-  font-size: 0.6vw;
-  cursor: pointer;
-  &:hover { background-color: #eee; }
-  &:active { background-color: #ddd; }
-`;
-
-const CancelTxButton = styled(SmallButton)`
-  background-color: #ffd6d6;
-  border-color: #cc4444;
-  color: #222;
-  &:hover { background-color: #ffbcbc; }
-  &:active { background-color: #ffa3a3; }
-`;
-
 const CancelIcon = styled.img`
   cursor: pointer;
   width: 1.6vw;
   height: 1.6vw;
   margin-left: 0.3vw;
-  filter: drop-shadow(0 0 0.1vw rgba(0,0,0,0.4));
-  &:hover { opacity: 0.9; }
-  &:active { opacity: 0.8; }
+  filter: drop-shadow(0 0 0.1vw rgba(0, 0, 0, 0.4));
+  &:hover {
+    opacity: 0.9;
+  }
+  &:active {
+    opacity: 0.8;
+  }
 `;
 
 // Color coded icon mapping of action queue
@@ -331,5 +336,5 @@ const statusIcons: ColorMapping = {
   pending: <Icon src={IndicatorIcons.executing} />,
   complete: <Icon src={IndicatorIcons.success} />,
   failed: <Icon src={IndicatorIcons.failure} />,
-  canceled: <Icon src={IndicatorIcons.failure} />,
+  canceled: <Icon src={IndicatorIcons.canceled} />,
 };

@@ -34,7 +34,9 @@ export function create<C extends Contracts>(
 } {
   // Gate warnings behind dev flag to avoid noisy logs in production
   const isDev =
-    typeof import.meta !== 'undefined' && (import.meta as any).env?.MODE !== 'production';
+    (typeof import.meta !== 'undefined' &&
+      ((import.meta as any).env?.DEV ?? (import.meta as any).env?.MODE !== 'production')) ||
+    (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production');
   const devWarn = (...args: any[]) => {
     if (isDev) console.warn(...args);
   };
@@ -150,10 +152,18 @@ export function create<C extends Contracts>(
     });
 
     processQueue(); // Start processing the queue
-    (promise as any).queueId = id;
-    (promise as any).cancel = () => {
+
+    const cancelNow = (reason: any = new Error('TX_CANCELLED')) => {
       canceled = true;
+      try {
+        queue.remove(id);
+      } catch {}
+      try {
+        reject(reason);
+      } catch {}
     };
+    (promise as any).queueId = id;
+    (promise as any).cancel = cancelNow;
     return promise; // Promise resolves when the tx is confirmed or rejected
   }
 
@@ -195,7 +205,7 @@ export function create<C extends Contracts>(
         txOverrides.gasLimit = await txRequest.estimateGas();
         txOverrides.nonce = nonce;
       } catch (e) {
-        devWarn('[TXQueue] GAS ESTIMATION FAILED');
+        devWarn('[TXQueue] GAS ESTIMATION FAILED', e);
         return txRequest.cancel(e);
       }
 
@@ -210,7 +220,7 @@ export function create<C extends Contracts>(
       try {
         return await txRequest.execute(txOverrides);
       } catch (e) {
-        devWarn('[TXQueue] EXECUTION FAILED');
+        devWarn('[TXQueue] EXECUTION FAILED', e);
         error = e;
       } finally {
         // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
@@ -265,6 +275,6 @@ export function create<C extends Contracts>(
       systems: cachedProxiedContracts,
     },
     dispose,
-    ready: computed(() => (readyState ? true : undefined)),
+    ready: computed(() => (readyState.get() ? true : undefined)),
   };
 }
