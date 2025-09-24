@@ -6,6 +6,7 @@ import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friends } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
+import { Address } from 'viem';
 import { PartyBottom } from './PartyBottom';
 import { SocialBottom } from './SocialBottom/SocialBottom';
 import { SubTabs } from './SocialBottom/SubTabs';
@@ -27,7 +28,7 @@ export const Bottom = ({
     account: Account;
     accounts: Account[];
     isSelf: boolean;
-    kamiNFTAddress: `0x${string}`;
+    kamiNFTAddress: Address;
     player: PlayerAccount;
     vip: {
       epoch: number; // current VIP epoch

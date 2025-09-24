@@ -3,13 +3,14 @@ import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
+import { Address } from 'viem';
 import { Kamis } from '../party/Kamis';
 
 export const PartyBottom = ({
   data,
   utils,
 }: {
-  data: { account: Account; kamiNFTAddress: `0x${string}` };
+  data: { account: Account; kamiNFTAddress: Address };
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
     queryKamiByIndex: (index: number) => EntityIndex | undefined;

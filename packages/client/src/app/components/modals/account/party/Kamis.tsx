@@ -10,14 +10,15 @@ import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
 import { playClick } from 'utils/sounds';
+import { Address } from 'viem';
 
-const REFRESH_INTERVAL = 1000;
+const REFRESH_INTERVAL = 3000;
 
 export const Kamis = ({
   data,
   utils,
 }: {
-  data: { account: Account; kamiNFTAddress: `0x${string}` };
+  data: { account: Account; kamiNFTAddress: Address };
   utils: {
     getAccountKamis: (accEntity: EntityIndex) => Kami[];
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
