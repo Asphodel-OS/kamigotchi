@@ -1,11 +1,11 @@
 import { EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
-import { useReadContracts, useWatchBlockNumber } from 'wagmi';
+import { useWatchBlockNumber } from 'wagmi';
 
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ExternalIcon } from 'assets/images/icons/menu';
-import { erc721ABI } from 'network/chain/ERC721';
+import { useBalance } from 'network/chain/ERC721';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
@@ -42,16 +42,7 @@ export const Kamis = ({
     onBlockNumber: () => refetchNFTs(),
   });
 
-  const { refetch: refetchNFTs, data: nftData } = useReadContracts({
-    contracts: [
-      {
-        address: kamiNFTAddress,
-        abi: erc721ABI,
-        functionName: 'getAllTokens',
-        args: [account.ownerAddress],
-      },
-    ],
-  });
+  const { refetch: refetchNFTs, data: nftData } = useBalance(account.ownerAddress, kamiNFTAddress);
 
   /////////////////
   // SUBSCRIPTIONS
