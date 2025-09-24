@@ -95,7 +95,7 @@ export const Logs = ({
           tabIndex={0}
           onClick={(e) => {
             e.stopPropagation();
-            window.open(`${explorerUrl}/txs/${hash}`, '_blank');
+            window.open(`${explorerUrl}/tx/${hash}`, '_blank');
           }}
         />
       </TextTooltip>
