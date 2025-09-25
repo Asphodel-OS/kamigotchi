@@ -5,6 +5,7 @@ import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
+import { useTravel, useVisibility } from 'app/stores';
 import { HelpMenuIcons } from 'assets/images/help';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { insectIcon } from 'assets/images/icons/affinities';
@@ -20,8 +21,6 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
-import { useVisibility } from 'app/stores';
-import { useTravel } from 'app/stores/travel';
 
 type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
 
@@ -33,19 +32,9 @@ const options = [
 ];
 
 export const Grid = ({
-  data: {
-    account,
-    accountKamis,
-    rooms,
-    roomIndex,
-    zone,
-  },
-  actions: {
-    move,
-  },
-  state: {
-    tick,
-  },
+  data: { account, accountKamis, rooms, roomIndex, zone },
+  actions: { move },
+  state: { tick },
   utils,
 }: {
   actions: {
@@ -163,8 +152,8 @@ export const Grid = ({
   };
 
   // open fast travel confirmation on right-click
-  const { setModals } = useVisibility();
-  const { setTravel } = useTravel();
+  const setModals = useVisibility((s) => s.setModals);
+  const setTravel = useTravel((s) => s.setTravel);
 
   const handleRoomRightClick = (roomIndex: number, e: React.MouseEvent) => {
     e.preventDefault();
@@ -278,9 +267,7 @@ export const Grid = ({
                     onClick={() =>
                       room.index !== 0 && !isRoomBlocked(room) && handleRoomMove(room.index)
                     }
-                    onContextMenu={(e) =>
-                      room.index !== 0 && handleRoomRightClick(room.index, e)
-                    }
+                    onContextMenu={(e) => room.index !== 0 && handleRoomRightClick(room.index, e)}
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}

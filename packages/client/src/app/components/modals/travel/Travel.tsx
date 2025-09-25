@@ -1,36 +1,32 @@
-import { interval, map } from 'rxjs';
-import { UIComponent } from 'app/root/types';
-import { ModalWrapper, ModalHeader } from 'app/components/library';
-import { useVisibility } from 'app/stores';
-import { useTravel } from 'app/stores/travel';
-import { TravelConfirm } from './Confirm';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getAccount } from 'app/cache/account';
+import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { UIComponent } from 'app/root/types';
+import { useTravel, useVisibility } from 'app/stores';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { useMemo } from 'react';
+import { TravelConfirm } from './Confirm';
+import { of } from 'rxjs';
 
 export const TravelModal: UIComponent = {
   id: 'TravelModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const accountOptions = { live: 2 };
-        return {
-          network,
-          data: {
-            getAccount: () => getAccount(world, components, accountEntity, accountOptions),
-          },
-        };
-      })
-    ),
-  Render: ({ network, data }) => {
-    const { modals, setModals } = useVisibility();
-    const { account: travelAccount, targetRoomIndex, resetTravel } = useTravel();
+  requirement: (layers) => of({ network: layers.network }),
+  Render: ({ network }) => {
+    const isVisible = useVisibility((s) => s.modals.travelConfirm);
+    const setModals = useVisibility((s) => s.setModals);
 
-    if (!modals.travelConfirm || targetRoomIndex == null) return null;
+    const travelAccount = useTravel((s) => s.account);
+    const targetRoomIndex = useTravel((s) => s.targetRoomIndex);
+    const resetTravel = useTravel((s) => s.resetTravel);
 
-    const account = travelAccount ?? data.getAccount();
+    const { world, components } = network;
+    const accountEntity = queryAccountFromEmbedded(network);
+    const accountOptions = { live: 2 };
+    const account = useMemo(
+      () => travelAccount ?? getAccount(world, components, accountEntity, accountOptions),
+      [travelAccount, world, components, accountEntity]
+    );
+
+    if (!isVisible || targetRoomIndex == null) return null;
 
     return (
       <ModalWrapper
@@ -54,4 +50,4 @@ export const TravelModal: UIComponent = {
       </ModalWrapper>
     );
   },
-}; 
+};

@@ -1,14 +1,13 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ActionButton, TextTooltip } from 'app/components/library';
 import { calcCurrentStamina } from 'app/cache/account/calcs';
-import { findPathAndCost } from 'network/shapes/Room';
-import { passesConditions } from 'network/shapes/Conditional/functions';
+import { ActionButton, TextTooltip } from 'app/components/library';
+import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
-import { getRoomByIndex } from 'network/shapes/Room/functions';
-import { rooms } from 'constants/rooms';
+import { passesConditions } from 'network/shapes/Conditional/functions';
+import { findPathAndCost, getRoomByIndex } from 'network/shapes/Room';
 
 export const TravelConfirm = ({
   network,
@@ -43,10 +42,11 @@ export const TravelConfirm = ({
     if (path.length <= 1) return onClose();
     for (let i = 1; i < path.length; i++) {
       const step = path[i];
+      const dest = getRoomByIndex(world, components, step);
       actions.add({
         action: 'AccountMove',
         params: [step],
-        description: `Moving to ${getRoomByIndex(world, components, step).name}`,
+        description: `Moving to ${dest?.name ?? step}`,
         execute: async () => {
           try {
             await api.player.account.move(step);
@@ -65,24 +65,35 @@ export const TravelConfirm = ({
     if (path.length === 0) onClose();
   }, [path.length, onClose]);
 
-  const toRoom = useMemo(() => getRoomByIndex(world, components, targetRoomIndex), [world, components, targetRoomIndex]);
+  const toRoom = useMemo(
+    () => getRoomByIndex(world, components, targetRoomIndex),
+    [world, components, targetRoomIndex]
+  );
   const previewSrc = useMemo(() => {
     const arr = rooms?.[targetRoomIndex]?.backgrounds;
     return Array.isArray(arr) && arr.length ? arr[arr.length - 1] : undefined;
   }, [targetRoomIndex]);
   const [previewRatio, setPreviewRatio] = useState<number | null>(null);
   useEffect(() => {
-    if (!previewSrc) { setPreviewRatio(null); return; }
+    if (!previewSrc) {
+      setPreviewRatio(null);
+      return;
+    }
+    let cancelled = false;
     const img = new Image();
     img.onload = () => {
+      if (cancelled) return;
       if (img.naturalWidth && img.naturalHeight) {
         setPreviewRatio(img.naturalWidth / img.naturalHeight);
       }
     };
     img.src = previewSrc;
-    return () => { img.onload = null; };
+    return () => {
+      cancelled = true;
+      img.onload = null;
+    };
   }, [previewSrc]);
-  const steps = useMemo(() => path.slice(0, -1), [path]);
+  const steps = useMemo(() => (path.length > 1 ? path.slice(0, -1) : []), [path]);
   const perRow = Math.min(6, Math.max(3, steps.length));
   const rows = Math.max(1, Math.ceil(steps.length / perRow));
   let thumbSize = 34 / perRow;
@@ -91,8 +102,14 @@ export const TravelConfirm = ({
   if (rows > 1) thumbSize *= 0.94;
   thumbSize = Math.max(2.4, Math.min(5.4, thumbSize));
 
-  const currentStamina = useMemo(() => calcCurrentStamina(account), [account.stamina.sync, account.time.action, account.config]);
-  const staminaRemaining = useMemo(() => Math.max(0, currentStamina - staminaCost), [currentStamina, staminaCost]);
+  const currentStamina = useMemo(
+    () => calcCurrentStamina(account),
+    [account.stamina.sync, account.time.action, account.config]
+  );
+  const staminaRemaining = useMemo(
+    () => Math.max(0, currentStamina - staminaCost),
+    [currentStamina, staminaCost]
+  );
 
   // Early-return guard AFTER hooks have been declared to satisfy React's rules.
   // If there is no valid path, effect above will also trigger onClose.
@@ -103,7 +120,8 @@ export const TravelConfirm = ({
       <Body>
         <Left>
           <TitleRow>
-            <TitlePrefix>Travel to </TitlePrefix><RoomName>{toRoom.name}</RoomName>?
+            <TitlePrefix>Travel to </TitlePrefix>
+            <RoomName>{toRoom.name}</RoomName>?
           </TitleRow>
           <StatsCard>
             <StatsRow>
@@ -111,7 +129,10 @@ export const TravelConfirm = ({
                 <PillLabel>Moves</PillLabel>
                 <PillValue>{moves}</PillValue>
               </Pill>
-              <TextTooltip text={[`Stamina Remaining After Journey: ${staminaRemaining}`]} direction='row'>
+              <TextTooltip
+                text={[`Stamina Remaining After Journey: ${staminaRemaining}`]}
+                direction='row'
+              >
                 <Pill>
                   <PillLabel>Stamina</PillLabel>
                   <PillValue>{staminaCost}</PillValue>
@@ -233,7 +254,7 @@ const Divider = styled.div`
   background: rgba(0, 0, 0, 0.25);
   border-radius: 0.06vw;
   /* Pull in slightly from edges to avoid touching rounded corners */
-  margin: 0.2vw 0.3vw 0.4vw 0; 
+  margin: 0.2vw 0.3vw 0.4vw 0;
 `;
 const PreviewMask = styled.div<{ $ratio?: number }>`
   width: min(100%, 22vw);

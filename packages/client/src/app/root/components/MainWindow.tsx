@@ -7,6 +7,7 @@ import { useLayers } from 'app/root/hooks';
 import type { UIComponentWithGrid } from 'app/root/types';
 import { Layers } from 'network/index';
 import { useStream } from 'network/utils';
+import { of } from 'rxjs';
 
 export const MainWindow = observer(({ ready }: { ready: boolean }) => {
   const layers = useLayers();
@@ -35,7 +36,10 @@ const UIComponentRenderer = ({
   componentWithGrid: UIComponentWithGrid;
 }) => {
   const { uiComponent, gridConfig } = componentWithGrid;
-  const req$ = useMemo(() => uiComponent.requirement(layers), [uiComponent, layers]);
+  const req$ = useMemo(
+    () => (uiComponent.requirement ? uiComponent.requirement(layers) : of({})),
+    [uiComponent, layers]
+  );
 
   const state = useStream(req$);
 
