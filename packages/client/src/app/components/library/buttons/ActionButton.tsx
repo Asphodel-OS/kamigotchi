@@ -16,7 +16,7 @@ export const ActionButton = ({
   pulse = false,
   tooltip,
   noBorder = false,
-  showState = false,
+  maintainToggle = false,
 }: {
   onClick: Function;
   text: string;
@@ -27,7 +27,7 @@ export const ActionButton = ({
   pulse?: boolean;
   tooltip?: string[];
   noBorder?: boolean;
-  showState?: boolean;
+  maintainToggle?: boolean;
 }) => {
   const [wasClicked, setWasClicked] = useState(false);
   // layer on a sound effect
@@ -94,7 +94,7 @@ export const ActionButton = ({
         onClick={!disabled ? handleClick : () => {}}
         style={setStyles()}
         wasClicked={wasClicked}
-        showState={showState}
+        maintainToggle={maintainToggle}
       >
         {text}
       </PulseButton>
@@ -105,7 +105,7 @@ export const ActionButton = ({
         onClick={!disabled ? handleClick : () => {}}
         style={setStyles()}
         wasClicked={wasClicked}
-        showState={showState}
+        maintainToggle={maintainToggle}
       >
         {text}
       </Button>
@@ -116,7 +116,7 @@ export const ActionButton = ({
   return result;
 };
 
-const Button = styled.button<{ wasClicked: boolean; showState: boolean }>`
+const Button = styled.button<{ wasClicked: boolean; maintainToggle: boolean }>`
   display: flex;
   margin-bottom: 0.5em;
   justify-content: center;
@@ -150,9 +150,9 @@ const Button = styled.button<{ wasClicked: boolean; showState: boolean }>`
     transform: translate3d(0, 0.5em, -1em);
   }
 
-  ${({ wasClicked, showState }) =>
+  ${({ wasClicked, maintainToggle }) =>
     wasClicked &&
-    showState &&
+    maintainToggle &&
     `     
      background-color: #e8e8e8;
     transform: translate3d(0, 0.25em, -1em);    
@@ -162,6 +162,6 @@ const Button = styled.button<{ wasClicked: boolean; showState: boolean }>`
   `}
 `;
 
-const PulseButton = styled(Button)<{ wasClicked: boolean; showState: boolean }>`
+const PulseButton = styled(Button)<{ wasClicked: boolean; maintainToggle: boolean }>`
   animation: ${pulseFx} 3s ease-in-out infinite;
 `;
