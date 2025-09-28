@@ -117,7 +117,7 @@ export const Transfer = ({
         //  Timestamp: '0',
       };
       const response = await KamidenClient?.getItemTransfers(request);
-      setHistory(response?.Transfers.reverse() || []);
+      setHistory((response?.Transfers ?? []).slice().reverse());
     } catch (error) {
       console.error('Error getting send history :', error);
       throw error;
