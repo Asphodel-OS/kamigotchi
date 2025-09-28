@@ -74,6 +74,7 @@ export function connect(
           ) {
             let gap = Math.abs(responsePrevBlockNumber - prevCurrentBlock);
 
+            /*
             if (import.meta.env.MODE !== 'testing' && gap > MAX_ALLOWED_BLOCK_GAP) {
               console.log(
                 `MAX_ALLOWED_BLOCK_GAP exceeded gap:${gap} currentBlock:${prevCurrentBlock} responsePrevBlockNumber:${responsePrevBlockNumber}`
@@ -83,6 +84,7 @@ export function connect(
                 minTimeBetweenReloads: MIN_TIME_BETWEEN_RELOADS,
               });
             }
+            */
             debug(
               `FILLING FROM ${prevCurrentBlock + 1} to ${
                 responsePrevBlockNumber == 0
@@ -96,7 +98,7 @@ export function connect(
               responsePrevBlockNumber == 0
                 ? responseChunk.blockNumber - 1
                 : responsePrevBlockNumber,
-              50
+              100
             );
             debug(`Backfilled events: ${gapStateEvents.length}`);
 

@@ -289,7 +289,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     if (snapshotUrl) {
       this.setLoadingState({ msg: 'Querying for Partial Snapshot', percentage: 0 });
-      const kamigazeClient = createSnapshotClient(snapshotUrl);
+      const kamigazeClient = createSnapshotClient('https://api.prod.kamigotchi.io/green');
 
       try {
         initialState = await fetchSnapshot(
