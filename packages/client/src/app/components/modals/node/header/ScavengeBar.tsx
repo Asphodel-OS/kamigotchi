@@ -82,6 +82,7 @@ const Container = styled.div`
   gap: 0.3vw;
   display: flex;
   flex-flow: row;
+  height: 2.5vw;
 `;
 
 const ProgressBar = styled.div<{ percent: number }>`

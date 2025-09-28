@@ -197,6 +197,7 @@ const Children = styled.div<{
   // avoid the scrollbar  modifying the layout
   scrollbar-gutter: stable;
   scrollbar-color: transparent transparent;
+  scrollbar-width: none;
 `;
 
 const fadeIn = keyframes`
