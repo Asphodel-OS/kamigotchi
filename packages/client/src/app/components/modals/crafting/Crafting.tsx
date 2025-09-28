@@ -112,7 +112,7 @@ export const CraftingModal: UIComponent = {
         <ActionButton
           onClick={() => setShowAll(!showAll)}
           text='Filter by Available'
-          showState={true}
+          maintainToggle={true}
         />
         {recipes.length == 0 ? (
           <EmptyText text={['There are no recipes here.', 'Look somewhere else!']} size={1} />
