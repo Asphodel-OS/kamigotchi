@@ -18,6 +18,7 @@ import {
 } from '../utils/component';
 import { getBio } from './bio';
 import { Configs, getConfigs } from './configs';
+import { Flags, getFlags } from './flags';
 import { Friends, getFriends } from './friends';
 import { getInventories } from './inventories';
 import { getKamis } from './kamis';
@@ -51,10 +52,11 @@ export interface Account extends BaseAccount {
     creation: number;
   };
 
-  config?: Configs;
   bio?: string;
-  kamis?: Kami[];
+  config?: Configs;
+  flags?: Flags;
   friends?: Friends;
+  kamis?: Kami[];
   inventories?: Inventory[];
   stats?: Stats;
 }
@@ -62,6 +64,7 @@ export interface Account extends BaseAccount {
 export interface Options {
   bio?: boolean;
   config?: boolean;
+  flags?: boolean;
   friends?: boolean;
   inventory?: boolean;
   kamis?: boolean | KamiOptions;
@@ -121,9 +124,10 @@ export const getAccount = (
   /////////////////
   // OPTIONAL DATA
 
-  if (options?.config) account.config = getConfigs(world, components);
-  if (options?.friends) account.friends = getFriends(world, components, entity);
   if (options?.bio) account.bio = getBio(components, entity);
+  if (options?.config) account.config = getConfigs(world, components);
+  if (options?.flags) account.flags = getFlags(world, components, entity);
+  if (options?.friends) account.friends = getFriends(world, components, entity);
   if (options?.inventory) account.inventories = getInventories(world, components, entity);
   if (options?.kamis) {
     const kamiOptions = typeof options.kamis === 'boolean' ? {} : options.kamis;

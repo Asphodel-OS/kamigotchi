@@ -186,6 +186,7 @@
     },
     { "name": "_TriggerCompEventSystem", "writeAccess": ["TimeStart"], "skipEnv": ["puter", "production"] },
     { "name": "_WorldWhitelistSystem", "writeAccess": ["HasFlag"] },
+    { "name": "AccountAcceptTCSystem", "writeAccess": ["HasFlag"] },
     {
       "name": "AccountUseItemSystem",
       "writeAccess": [

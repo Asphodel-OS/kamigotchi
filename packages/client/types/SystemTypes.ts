@@ -19,6 +19,7 @@ import { _SnapshotT2System } from "./ethers-contracts/_SnapshotT2System";
 import { _TraitRegistrySystem } from "./ethers-contracts/_TraitRegistrySystem";
 import { _TriggerCompEventSystem } from "./ethers-contracts/_TriggerCompEventSystem";
 import { _WorldWhitelistSystem } from "./ethers-contracts/_WorldWhitelistSystem";
+import { AccountAcceptTCSystem } from "./ethers-contracts/AccountAcceptTCSystem";
 import { AccountMoveSystem } from "./ethers-contracts/AccountMoveSystem";
 import { AccountRegisterSystem } from "./ethers-contracts/AccountRegisterSystem";
 import { AccountSetBioSystem } from "./ethers-contracts/AccountSetBioSystem";
@@ -96,6 +97,7 @@ export type SystemTypes = {
   "system.trait.registry": _TraitRegistrySystem;
   "system.test.comp.event": _TriggerCompEventSystem;
   "system.world.whitelist.set": _WorldWhitelistSystem;
+  "system.account.termsAndConditions": AccountAcceptTCSystem;
   "system.account.move": AccountMoveSystem;
   "system.account.register": AccountRegisterSystem;
   "system.account.set.bio": AccountSetBioSystem;

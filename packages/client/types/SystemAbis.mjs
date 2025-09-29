@@ -19,6 +19,7 @@ import _SnapshotT2System from "../abi/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../abi/_TraitRegistrySystem.json";
 import _TriggerCompEventSystem from "../abi/_TriggerCompEventSystem.json";
 import _WorldWhitelistSystem from "../abi/_WorldWhitelistSystem.json";
+import AccountAcceptTCSystem from "../abi/AccountAcceptTCSystem.json";
 import AccountMoveSystem from "../abi/AccountMoveSystem.json";
 import AccountRegisterSystem from "../abi/AccountRegisterSystem.json";
 import AccountSetBioSystem from "../abi/AccountSetBioSystem.json";
@@ -96,6 +97,7 @@ export const SystemAbis = {
   "system.trait.registry": _TraitRegistrySystem.abi,
   "system.test.comp.event": _TriggerCompEventSystem.abi,
   "system.world.whitelist.set": _WorldWhitelistSystem.abi,
+  "system.account.termsAndConditions": AccountAcceptTCSystem.abi,
   "system.account.move": AccountMoveSystem.abi,
   "system.account.register": AccountRegisterSystem.abi,
   "system.account.set.bio": AccountSetBioSystem.abi,

@@ -19,6 +19,7 @@ import _SnapshotT2System from "../../../out/_SnapshotT2System.sol/_SnapshotT2Sys
 import _TraitRegistrySystem from "../../../out/_TraitRegistrySystem.sol/_TraitRegistrySystem.json";
 import _TriggerCompEventSystem from "../../../out/_TriggerCompEventSystem.sol/_TriggerCompEventSystem.json";
 import _WorldWhitelistSystem from "../../../out/_WorldWhitelistSystem.sol/_WorldWhitelistSystem.json";
+import AccountAcceptTCSystem from "../../../out/AccountAcceptTCSystem.sol/AccountAcceptTCSystem.json";
 import AccountMoveSystem from "../../../out/AccountMoveSystem.sol/AccountMoveSystem.json";
 import AccountRegisterSystem from "../../../out/AccountRegisterSystem.sol/AccountRegisterSystem.json";
 import AccountSetBioSystem from "../../../out/AccountSetBioSystem.sol/AccountSetBioSystem.json";
@@ -96,6 +97,7 @@ export const SystemBytecodes = {
   "system.trait.registry": _TraitRegistrySystem,
   "system.test.comp.event": _TriggerCompEventSystem,
   "system.world.whitelist.set": _WorldWhitelistSystem,
+  "system.account.termsAndConditions": AccountAcceptTCSystem,
   "system.account.move": AccountMoveSystem,
   "system.account.register": AccountRegisterSystem,
   "system.account.set.bio": AccountSetBioSystem,

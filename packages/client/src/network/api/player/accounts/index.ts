@@ -26,6 +26,13 @@ export function accountsAPI(systems: any) {
   // ACTIONS
 
   /**
+   * @dev accept the terms and conditions
+   */
+  const acceptTerms = () => {
+    return systems['system.account.termsAndConditions'].executeTyped();
+  };
+
+  /**
    * @dev move the Account to a new room
    *
    * @param roomIndex index of the room to move to
@@ -39,6 +46,7 @@ export function accountsAPI(systems: any) {
   // ITEMS
 
   return {
+    acceptTerms,
     move,
     register,
     chat: chatAPI(systems),

@@ -158,6 +158,10 @@ library LibAccount {
     LibFlag.set(components, uint256(uint160(owner)), "WORLD_WHITELIST", wl);
   }
 
+  function setAcceptedTerms(IUintComp components, uint256 id) internal {
+    LibFlag.set(components, id, "ACCEPTED_TERMS_AND_CONDITIONS", true);
+  }
+
   /////////////////
   // CHECKS
 

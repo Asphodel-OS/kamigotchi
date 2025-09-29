@@ -22,9 +22,12 @@ import {
 } from './stats';
 
 const FullAccountOptions: AccountOptions = {
-  kamis: true,
+  bio: true,
+  config: true,
+  flags: true,
   friends: true,
   inventory: true,
+  kamis: true,
   stats: true,
 };
 
