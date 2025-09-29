@@ -91,6 +91,9 @@ export const ActionButton = ({
   if (pulse)
     result = (
       <PulseButton
+        type='button'
+        disabled={disabled}
+        aria-disabled={disabled}
         onClick={!disabled ? handleClick : () => {}}
         style={setStyles()}
         wasClicked={wasClicked}
@@ -102,6 +105,9 @@ export const ActionButton = ({
   else
     result = (
       <Button
+        type='button'
+        disabled={disabled}
+        aria-disabled={disabled}
         onClick={!disabled ? handleClick : () => {}}
         style={setStyles()}
         wasClicked={wasClicked}
@@ -124,10 +130,8 @@ const Button = styled.button<{ wasClicked: boolean; maintainToggle: boolean }>`
   text-align: center;
   cursor: pointer;
   pointer-events: auto;
-  // plain button colour
   background-color: #ffffffff;
   transform-style: preserve-3d;
-  // 3d part
   &::before {
     position: absolute;
     content: '';
@@ -136,16 +140,12 @@ const Button = styled.button<{ wasClicked: boolean; maintainToggle: boolean }>`
     background-color: #aaa9a9ff;
     border-radius: inherit;
     border: inherit;
-    // shadow
-    // box-shadow: 0 0.625em 0 0 #d8d8d8ff;
-    //puts 3d part behind and below the button
     transform: translate3d(0, 0.75em, -1em);
   }
   &:hover {
     background-color: #e8e8e8;
     transform: translate3d(0, 0.25em, -1em);
   }
-
   &:hover::before {
     transform: translate3d(0, 0.5em, -1em);
   }
