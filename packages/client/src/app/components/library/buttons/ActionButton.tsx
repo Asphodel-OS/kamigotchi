@@ -33,7 +33,7 @@ export const ActionButton = ({
   // layer on a sound effect
   const handleClick = async () => {
     playClick();
-    setWasClicked(!wasClicked);
+    setWasClicked((v) => !v);
     await onClick();
   };
 
@@ -96,8 +96,8 @@ export const ActionButton = ({
         aria-disabled={disabled}
         onClick={!disabled ? handleClick : () => {}}
         style={setStyles()}
-        wasClicked={wasClicked}
-        maintainToggle={maintainToggle}
+        $wasClicked={wasClicked}
+        $maintainToggle={maintainToggle}
       >
         {text}
       </PulseButton>
@@ -110,8 +110,8 @@ export const ActionButton = ({
         aria-disabled={disabled}
         onClick={!disabled ? handleClick : () => {}}
         style={setStyles()}
-        wasClicked={wasClicked}
-        maintainToggle={maintainToggle}
+        $wasClicked={wasClicked}
+        $maintainToggle={maintainToggle}
       >
         {text}
       </Button>
@@ -122,7 +122,7 @@ export const ActionButton = ({
   return result;
 };
 
-const Button = styled.button<{ wasClicked: boolean; maintainToggle: boolean }>`
+const Button = styled.button<{ $wasClicked: boolean; $maintainToggle: boolean }>`
   display: flex;
   margin-bottom: 0.5em;
   justify-content: center;
@@ -150,9 +150,9 @@ const Button = styled.button<{ wasClicked: boolean; maintainToggle: boolean }>`
     transform: translate3d(0, 0.5em, -1em);
   }
 
-  ${({ wasClicked, maintainToggle }) =>
-    wasClicked &&
-    maintainToggle &&
+  ${({ $wasClicked, $maintainToggle }) =>
+    $wasClicked &&
+    $maintainToggle &&
     `     
      background-color: #e8e8e8;
     transform: translate3d(0, 0.25em, -1em);    
@@ -162,6 +162,6 @@ const Button = styled.button<{ wasClicked: boolean; maintainToggle: boolean }>`
   `}
 `;
 
-const PulseButton = styled(Button)<{ wasClicked: boolean; maintainToggle: boolean }>`
+const PulseButton = styled(Button)<{ $wasClicked: boolean; $maintainToggle: boolean }>`
   animation: ${pulseFx} 3s ease-in-out infinite;
 `;
