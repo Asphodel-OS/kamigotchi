@@ -209,6 +209,9 @@ export const WalletConnecter: UIComponent = {
       return '';
     };
 
+    const termsNotAccepted = () => {
+      return state === 'unauthenticated' && localStorage.getItem('termsAccepted') !== 'true';
+    };
     /////////////////
     // RENDER
 
@@ -229,7 +232,7 @@ export const WalletConnecter: UIComponent = {
             step={getCurrentStep()}
           />
 
-          {state === 'unauthenticated' && localStorage.getItem('termsAccepted') !== 'true' && (
+          {termsNotAccepted() && (
             <>
               <TermsWrapper lang='en'>
                 {TermsAndConditions.map((line: string, i: number) => {
@@ -249,11 +252,7 @@ export const WalletConnecter: UIComponent = {
           )}
 
           <ActionButton
-            disabled={
-              !!termsAccepted &&
-              state === 'unauthenticated' &&
-              localStorage.getItem('termsAccepted') !== 'true'
-            }
+            disabled={!termsAccepted && termsNotAccepted()}
             onClick={handleClick}
             text={getButtonLabel()}
             size='large'
