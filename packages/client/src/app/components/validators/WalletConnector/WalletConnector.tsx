@@ -51,6 +51,12 @@ export const WalletConnecter: UIComponent = {
     const [chainMatches, setChainMatches] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
 
+    useEffect(() => {
+      if (isConnected) {
+        localStorage.setItem('termsAccepted', 'true');
+      }
+    }, [isConnected]);
+
     // update network settings/validations on relevant network updates
     useEffect(() => {
       // console.log({ walletsReady, wallets });
@@ -223,7 +229,7 @@ export const WalletConnecter: UIComponent = {
             step={getCurrentStep()}
           />
 
-          {state === 'unauthenticated' && (
+          {state === 'unauthenticated' && localStorage.getItem('termsAccepted') !== 'true' && (
             <>
               <TermsWrapper lang='en'>
                 {TermsAndConditions.map((line: string, i: number) => {
@@ -243,7 +249,11 @@ export const WalletConnecter: UIComponent = {
           )}
 
           <ActionButton
-            disabled={!termsAccepted && state === 'unauthenticated'}
+            disabled={
+              !!termsAccepted &&
+              state === 'unauthenticated' &&
+              localStorage.getItem('termsAccepted') !== 'true'
+            }
             onClick={handleClick}
             text={getButtonLabel()}
             size='large'

@@ -59,7 +59,11 @@ export const MoreMenuButton = () => {
   };
 
   const clearStorage = () => {
-    localStorage.clear();
+    Object.keys(localStorage).forEach((key) => {
+      if (key !== 'termsAccepted') {
+        localStorage.removeItem(key);
+      }
+    });
   };
 
   const toggleSettings = () => {
