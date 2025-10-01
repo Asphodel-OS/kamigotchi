@@ -49,7 +49,7 @@ export const WalletConnecter: UIComponent = {
     const [isUpdating, setIsUpdating] = useState(false);
     const [state, setState] = useState('');
     const [chainMatches, setChainMatches] = useState(false);
-    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
 
     useEffect(() => {
       if (isConnected) {
@@ -245,14 +245,14 @@ export const WalletConnecter: UIComponent = {
                 })}
               </TermsWrapper>
               <Row style={{ marginTop: '1vw', marginBottom: '1vw' }}>
-                <Checkbox type='checkbox' onChange={() => setTermsAccepted(!termsAccepted)} />
+                <Checkbox type='checkbox' onChange={() => setIsChecked(!isChecked)} />
                 <div style={{ fontSize: '0.75vw' }}>I agree to the terms and conditions </div>
               </Row>
             </>
           )}
 
           <ActionButton
-            disabled={!termsAccepted && termsNotAccepted()}
+            disabled={!isChecked && termsNotAccepted()}
             onClick={handleClick}
             text={getButtonLabel()}
             size='large'
