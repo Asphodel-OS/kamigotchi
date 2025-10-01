@@ -39,7 +39,7 @@ export const HelpModal: UIComponent = {
           />
         </Row>
         <BackButton />
-        <Banner tab={tab} src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
+        <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
         {tab === HelpTabs.HOME ? (
           <Books setTab={setTab} />
         ) : (
@@ -66,7 +66,7 @@ const ButtonRow = styled.div`
   align-self: flex-start;
 `;
 
-const Banner = styled.img<{ tab: HelpTabs }>`
+const Banner = styled.img`
   height: auto;
   width: 100%;
   padding: 2vw;

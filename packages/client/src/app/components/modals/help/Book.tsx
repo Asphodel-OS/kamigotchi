@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 import { CopyInfo } from './copy';
-import { HelpTabs } from './types';
 
 // ActionButton is a text button that triggers an Action when clicked
 export const Book = ({ infoKey, setTab }: { infoKey: keyof typeof CopyInfo; setTab: Function }) => {
@@ -17,7 +16,7 @@ export const Book = ({ infoKey, setTab }: { infoKey: keyof typeof CopyInfo; setT
 
   return (
     <Container onClick={handleClick}>
-      <Image infoKey={infoKey} src={details.menuIcon} />
+      <Image src={details.menuIcon} />
       <Title>{details.title}</Title>
     </Container>
   );
@@ -48,9 +47,8 @@ const Container = styled.div`
   }
 `;
 
-const Image = styled.img<{ infoKey: number }>`
+const Image = styled.img`
   width: 90%;
-  image-rendering: ${({ infoKey }) => infoKey === HelpTabs.TERMS && 'pixelated'};
 `;
 
 const Title = styled.div`
