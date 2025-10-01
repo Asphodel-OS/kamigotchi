@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useMemo, useRef, useState } from 'react';
+import { Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
@@ -51,8 +51,8 @@ export const Toolbar = ({
   const { passesNodeReqs } = utils;
   const { displayedKamis, setDisplayedKamis, tick } = state;
   const partyModalVisible = useVisibility((s) => s.modals.party);
-  const toolbarRef = useRef<HTMLDivElement | null>(null);
-  const detachScroll = useRef<(() => void) | null>(null);
+  //const toolbarRef = useRef<HTMLDivElement | null>(null);
+  //const detachScroll = useRef<(() => void) | null>(null);
 
   const [addOptions, setAddOptions] = useState<DropdownOption[]>([]);
   const [collectOptions, setCollectOptions] = useState<DropdownOption[]>([]);
@@ -113,6 +113,7 @@ export const Toolbar = ({
     setDisplayedKamis(sorted);
   }, [partyModalVisible, kamis.length, sort, view]);
 
+  /*
   // JS-driven sticky fallback across browsers: translateY toolbar as parent scrolls
   useEffect(() => {
     if (!partyModalVisible) return;
@@ -176,7 +177,7 @@ export const Toolbar = ({
       toolbarEl.style.transform = 'translateY(0px)';
     };
   }, [partyModalVisible]);
-
+*/
   /////////////////
   // INTERACTION
 
@@ -199,7 +200,8 @@ export const Toolbar = ({
   );
 
   return (
-    <Container ref={toolbarRef}>
+    // <Container ref={toolbarRef}>
+    <Container>
       <Section>
         <TextTooltip text={[`${view}`]}>
           <IconButton img={ViewIcons[view]} onClick={() => toggleView()} radius={0.6} />
@@ -226,8 +228,8 @@ export const Toolbar = ({
 const Container = styled.div`
   padding: 0.6vw;
   z-index: 1;
-  /* Avoid Safari white-screen bug when sticky is nested in overflow containers */
-  position: relative;
+  /* Avoid Safari white-screen bug when sticky is nested in overflow containers  will-change: transform; position: relative;*/
+  position: sticky;
   top: 0;
   opacity: 0.9;
   width: 100%;
@@ -237,7 +239,6 @@ const Container = styled.div`
   align-items: center;
   user-select: none;
   background-color: rgb(238, 238, 238);
-  will-change: transform;
 `;
 
 const Section = styled.div`

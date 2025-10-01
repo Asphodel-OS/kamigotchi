@@ -86,8 +86,8 @@ export const ModalWrapper = ({
         <Children
           scrollBarColor={scrollBarColor}
           noPadding={noPadding}
-          data-scroll-container='true'
-          data-modal-id={id}
+          // data-scroll-container='true'
+          // data-modal-id={id}
         >
           {children}
         </Children>
