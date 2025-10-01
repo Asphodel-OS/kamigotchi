@@ -52,10 +52,10 @@ export const WalletConnecter: UIComponent = {
     const [isChecked, setIsChecked] = useState(false);
 
     useEffect(() => {
-      if (isConnected) {
+      if (isConnected && isChecked) {
         localStorage.setItem('termsAccepted', 'true');
       }
-    }, [isConnected]);
+    }, [isConnected, isChecked]);
 
     // update network settings/validations on relevant network updates
     useEffect(() => {
