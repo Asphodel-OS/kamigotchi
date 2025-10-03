@@ -37,7 +37,7 @@ export function IconListButton({
   icon?: { inset?: { px?: number; x?: number; y?: number } };
   radius?: number;
   scale?: number;
-  scaleOrientation?: 'vw' | 'vh' | 'rem';
+  scaleOrientation?: 'rem' | 'vh' | 'rem';
   width?: number;
   fullWidth?: boolean;
   balance?: number;
@@ -153,11 +153,11 @@ const MenuInput = styled.input`
 const MenuOption = styled.div<{ disabled?: boolean }>`
   position: relative;
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  border-radius: 0.45vw;
+  border-radius: 0.45rem;
 
   width: 100%;
-  padding: 0.45vw;
-  gap: 0.6vw;
+  padding: 0.45rem;
+  gap: 0.6rem;
 
   display: flex;
   align-items: center;
@@ -168,7 +168,7 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
   &:hover {
     background-color: #7d7;
     background-color: #ddd;
-    outline: 0.15vw solid #444;
+    outline: 0.15rem solid #444;
     z-index: 1;
   }
   &:active {
@@ -177,8 +177,8 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 `;
 
 const OptionIcon = styled.img`
-  border-radius: 0.3vw;
-  height: 1.8vw;
+  border-radius: 0.3rem;
+  height: 1.8rem;
   user-drag: none;
 `;
 
@@ -189,6 +189,6 @@ const OptionText = styled.div`
   justify-content: flex-start;
   align-items: center;
 
-  font-size: 0.9vw;
-  line-height: 1.5vw;
+  font-size: 0.9rem;
+  line-height: 1.5rem;
 `;

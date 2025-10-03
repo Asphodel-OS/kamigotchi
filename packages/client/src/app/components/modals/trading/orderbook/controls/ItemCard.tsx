@@ -28,13 +28,13 @@ export const ItemCard = ({
 
 const Card = styled.button<{ selected: boolean }>`
   position: relative;
-  width: 6.6vw;
-  min-width: 6.6vw;
-  height: 7.8vw;
-  border: 0.15vw solid black;
-  border-radius: 0.3vw;
+  width: 6.6rem;
+  min-width: 6.6rem;
+  height: 7.8rem;
+  border: 0.15rem solid black;
+  border-radius: 0.3rem;
   background: ${({ selected }) => (selected ? '#d6ffd6' : '#f5f5f5')};
-  padding: 0.6vw;
+  padding: 0.6rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,14 +45,14 @@ const Card = styled.button<{ selected: boolean }>`
     background: ${({ selected }) => (selected ? '#c6f5c6' : '#eaeaea')};
   }
   &:focus-visible {
-    outline: 0.18vw solid #66a3ff;
-    outline-offset: 0.12vw;
+    outline: 0.18rem solid #66a3ff;
+    outline-offset: 0.12rem;
   }
 `;
 
 const Image = styled.img`
-  width: 3.6vw;
-  height: 3.6vw;
+  width: 3.6rem;
+  height: 3.6rem;
   image-rendering: pixelated;
   background: #ddd;
   object-fit: contain;
@@ -64,8 +64,8 @@ const Image = styled.img`
 
 const Name = styled.div`
   width: 100%;
-  font-size: 0.84vw;
-  line-height: 1.2vw;
+  font-size: 0.84rem;
+  line-height: 1.2rem;
   text-align: center;
   color: #222;
   overflow: hidden;

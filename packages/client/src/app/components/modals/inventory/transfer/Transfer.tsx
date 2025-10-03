@@ -204,13 +204,13 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-direction: column;
   width: 100%;
   height: 30vh;
-  font-size: 0.75vw;
+  font-size: 0.75rem;
 `;
 
 const Top = styled.div`
   width: 100%;
-  padding: 0.6vw;
-  gap: 2vw;
+  padding: 0.6rem;
+  gap: 2rem;
 
   display: flex;
   flex-flow: row nowrap;

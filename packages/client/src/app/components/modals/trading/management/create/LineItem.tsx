@@ -109,7 +109,7 @@ const ExitContainer = styled.div`
 `;
 
 const IconImage = styled.img`
-  width: 2.7vw;
-  height: 2.7vw;
+  width: 2.7rem;
+  height: 2.7rem;
   image-rendering: pixelated;
 `;

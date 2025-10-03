@@ -132,9 +132,9 @@ const Image = styled.img`
 
 const ExtIcon = styled.img`
   position: absolute;
-  width: 2.5vw;
-  right: 0vw;
-  bottom: 0vw;
+  width: 2.5rem;
+  right: 0rem;
+  bottom: 0rem;
 `;
 
 const EmptyText = styled.div`

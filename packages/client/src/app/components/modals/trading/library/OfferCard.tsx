@@ -240,8 +240,8 @@ const Button = styled.button`
 
 const TagContainer = styled.div`
   position: relative;
-  width: 15vw;
-  height: 4vw;
+  width: 15rem;
+  height: 4rem;
   flex-grow: 1;
 
   display: flex;

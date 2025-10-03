@@ -103,10 +103,10 @@ export const History = ({
 
 const Container = styled.div`
   position: relative;
-  border-top: 0.15vw solid black;
+  border-top: 0.15rem solid black;
   width: 100%;
   height: 100%;
-  gap: 0.3vw;
+  gap: 0.3rem;
 
   display: flex;
   flex-flow: column nowrap;
@@ -121,10 +121,10 @@ const TitleBar = styled.div`
   position: sticky;
   top: 0;
   width: 100%;
-  height: 3vw;
+  height: 3rem;
 
-  margin-bottom: 0.3vw;
-  padding: 0.9vw;
+  margin-bottom: 0.3rem;
+  padding: 0.9rem;
 
   display: flex;
   flex-flow: row nowrap;
@@ -149,19 +149,19 @@ const List = styled.div`
 
 const Row = styled.div`
   width: 96%;
-  height: 1.2vw;
-  gap: 0.3vw;
+  height: 1.2rem;
+  gap: 0.3rem;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-start;
 
-  font-size: 0.6vw;
+  font-size: 0.6rem;
 `;
 
 const Icon = styled.img`
   position: relative;
-  width: 0.9vw;
-  height: 0.9vw;
+  width: 0.9rem;
+  height: 0.9rem;
 `;

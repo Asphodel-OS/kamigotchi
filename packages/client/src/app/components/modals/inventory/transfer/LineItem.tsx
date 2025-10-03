@@ -57,28 +57,28 @@ export const LineItem = ({
 
 const Container = styled.div`
   width: 100%;
-  height: 2.4vw;
+  height: 2.4rem;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 0.6rem;
 `;
 
 const Quantity = styled.input<{ width?: number }>`
   border: none;
   background-color: #eee;
-  border: 0.15vw solid black;
-  border-radius: 0.45vw;
-  width: ${({ width }) => width ?? 6}vw;
+  border: 0.15rem solid black;
+  border-radius: 0.45rem;
+  width: ${({ width }) => width ?? 6}rem;
   height: 100%;
-  padding: 0.3vw;
+  padding: 0.3rem;
   margin: 0w;
   cursor: text;
 
   color: black;
-  font-size: 0.9vw;
+  font-size: 0.9rem;
   text-align: center;
 `;
 

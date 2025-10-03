@@ -150,8 +150,8 @@ const TitleHeader = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  height: 2vw;
-  gap: 0.3vw;
+  height: 2rem;
+  gap: 0.3rem;
 `;
 
 const Subtitle = styled.div`
