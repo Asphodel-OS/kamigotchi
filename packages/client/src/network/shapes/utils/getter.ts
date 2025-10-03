@@ -11,7 +11,7 @@ import { hasFlag } from '../Flag';
 import { getInventoryByHolderItem } from '../Inventory';
 import { getItemBalance } from '../Item';
 import { getKamiLocation } from '../Kami';
-import { hasCompletedQuest } from '../Quest';
+import { hasCompletedDelayQuest, hasCompletedQuest } from '../Quest';
 import { queryRoomByIndex } from '../Room';
 import { getHolderSkillLevel } from '../Skill';
 import { getEntityType, getKamiOwnerID, getLevel, getRoomIndex, getState } from './component';
@@ -81,6 +81,9 @@ export const getBool = (
 
   if (type === 'QUEST') {
     return hasCompletedQuest(world, components, index as number, holder);
+  } else if (type === 'QUEST_COMPLETED_DELAY') {
+    if (!hasCompletedQuest(world, components, index as number, holder)) return false;
+    return hasCompletedDelayQuest(world, components, index as number, holder, value ?? 0);
   } else if (type === 'ROOM') {
     // note: does not support kami shapes. might need to implement kami handler
     return getRoomIndex(components, holder) == index;

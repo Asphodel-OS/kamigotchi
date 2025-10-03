@@ -1,14 +1,15 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
-import { useVisibility } from 'app/stores';
+import { UIComponent } from 'app/root/types';
+import { useNetwork, useVisibility } from 'app/stores';
 import { QuestsIcon } from 'assets/images/icons/menu';
+import { DEAD_ADDRESS } from 'constants/addresses';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
+import { getItemBalance as _getItemBalance, getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
   filterQuestsByAvailable,
@@ -23,6 +24,7 @@ import {
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getFromDescription } from 'network/shapes/utils/parse';
+import { useComponentEntities } from 'network/utils/hooks';
 import { List } from './list/List';
 import { Tabs } from './Tabs';
 
@@ -30,17 +32,20 @@ export const QuestModal: UIComponent = {
   id: 'QuestModal',
   Render: () => {
     const layers = useLayers();
-    
+    const { burnerAddress, validations } = useNetwork();
+    const isNetworkReady =
+      validations.authenticated && validations.chainMatches && burnerAddress !== DEAD_ADDRESS;
+
     const {
       network,
+      components: {
+        IsRegistry,
+        OwnsQuestID,
+        IsComplete,
+      },
       data: {
         accountEntity,
         account,
-        quests: {
-          registry,
-          ongoing,
-          completed
-        }
       },
       utils: {
         describeEntity,
@@ -51,8 +56,11 @@ export const QuestModal: UIComponent = {
         parseObjectives,
         parseRequirements,
         parseStatus,
-        populate
-      }
+        populate,
+        queryRegistry,
+        queryOngoing,
+        queryCompleted,
+      },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -62,26 +70,12 @@ export const QuestModal: UIComponent = {
         inventory: true,
       });
 
-      const registry = queryRegistryQuests(components).map((entity) =>
-        getBaseQuest(world, components, entity)
-      );
-      const completed = queryCompletedQuests(components, account.id).map((entity) =>
-        getBaseQuest(world, components, entity)
-      );
-      const ongoing = queryOngoingQuests(components, account.id).map((entity) =>
-        getBaseQuest(world, components, entity)
-      );
-
       return {
         network,
+        components,
         data: {
           accountEntity,
           account,
-          quests: {
-            registry,
-            ongoing,
-            completed,
-          },
         },
         utils: {
           describeEntity: (type: string, index: number) =>
@@ -100,16 +94,44 @@ export const QuestModal: UIComponent = {
             parseQuestRequirements(world, components, account, quest),
           parseStatus: (quest: Quest) => parseQuestStatus(world, components, account, quest),
           populate: (base: BaseQuest) => populateQuest(world, components, base),
+          queryRegistry: () => queryRegistryQuests(components),
+          queryOngoing: () => queryOngoingQuests(components, account.id),
+          queryCompleted: () => queryCompletedQuests(components, account.id),
         },
       };
     })();
 
-    const { actions, api, notifications } = network;
+    const {
+      actions,
+      api,
+      components,
+      notifications,
+    } = network;
+
     const questsModalVisible = useVisibility((s) => s.modals.quests);
 
     const isUpdating = useRef(false);
     const [tab, setTab] = useState<TabType>('ONGOING');
     const [available, setAvailable] = useState<Quest[]>([]);
+
+    // Reactively subscribe to ECS changes relevant to quests
+    const registryEntities = useComponentEntities(IsRegistry) || [];
+    const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
+    const isCompleteEntities = useComponentEntities(IsComplete) || [];
+
+    // Derive quest lists reactively from ECS streams
+
+    const registry: BaseQuest[] = useMemo(() => {
+      return queryRegistry().map((entity) => getBase(entity));
+    }, [network, registryEntities]);
+
+    const completed: BaseQuest[] = useMemo(() => {
+      return queryCompleted().map((entity) => getBase(entity));
+    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
+
+    const ongoing: BaseQuest[] = useMemo(() => {
+      return queryOngoing().map((entity) => getBase(entity));
+    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
 
     /////////////////
     // SUBSCRIPTIONS
@@ -117,6 +139,7 @@ export const QuestModal: UIComponent = {
     // update Available Quests whenever quests change state
     // TODO: figure out a trigger for repeatable quests
     useEffect(() => {
+      if (!isNetworkReady) return;
       if (isUpdating.current) return;
       isUpdating.current = true;
 
@@ -127,12 +150,13 @@ export const QuestModal: UIComponent = {
       if (populated.length > available.length) setTab('AVAILABLE');
 
       isUpdating.current = false;
-    }, [questsModalVisible, registry.length, completed.length, ongoing.length]);
+    }, [questsModalVisible, registry, completed, ongoing, isNetworkReady]);
 
     // update the Notifications when the number of available quests changes
     useEffect(() => {
+      if (!isNetworkReady) return;
       updateNotifications();
-    }, [available.length]);
+    }, [available.length, isNetworkReady]);
 
     /////////////////
     // HELPERS

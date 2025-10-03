@@ -43,7 +43,7 @@ export const Matrix = ({
     setTierMins(kami.config?.general.skills ?? [0, 0, 0, 0, 0, 0, 0]);
   }, [kami.config?.general.skills]);
 
-  ////////////////////
+  /////////////////
   // DISPLAY
 
   return (

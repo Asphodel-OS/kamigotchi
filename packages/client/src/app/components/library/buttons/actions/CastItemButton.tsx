@@ -1,6 +1,7 @@
 import { World } from '@mud-classic/recs';
+import { calcCurrentStamina } from 'app/cache/account';
 import { cleanInventories, filterInventories, Inventory } from 'app/cache/inventory';
-import { calcCooldown, isHarvesting, Kami } from 'app/cache/kami';
+import { isHarvesting, Kami } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
 import { Components } from 'network/components';
 import { NetworkLayer } from 'network/create';
@@ -61,12 +62,12 @@ export const CastItemButton = (
 
 // generate a tooltip for any reason the kami cannot be cast on
 const getDisabledTooltip = (kami: Kami, account: Account): string => {
-  const cooldown = calcCooldown(kami);
   const inRoom = kami.harvest?.node?.roomIndex == account.roomIndex;
+  const stamina = calcCurrentStamina(account);
 
   let tooltip = '';
   if (isHarvesting(kami) && !inRoom) tooltip = `too far away`;
-  else if (cooldown > 0) tooltip = `on cooldown (${cooldown.toFixed(0)}s)`;
+  else if (stamina < 10) tooltip = `insufficient stamina`; // costs 10 stamina to cast
 
   return tooltip;
 };
@@ -77,7 +78,8 @@ const getOptions = (
   components: Components,
   kami: Kami,
   account: Account,
-  triggerAction: Function
+  triggerAction: Function,
+  showEffects?: boolean
 ) => {
   let inventories = account.inventories ?? [];
   inventories = cleanInventories(inventories);
@@ -87,7 +89,7 @@ const getOptions = (
   );
 
   const options = inventories.map((inv: Inventory) => {
-    return getOption(world, components, kami, inv, triggerAction);
+    return getOption(world, components, kami, inv, triggerAction, showEffects);
   });
 
   return options.filter((option) => !!option.text);
@@ -100,18 +102,23 @@ const getOption = (
   components: Components,
   kami: Kami,
   inv: Inventory,
-  triggerAction: Function
+  triggerAction: Function,
+  showEffects?: boolean
 ) => {
+  const name = inv.item.name;
+
   // its not querying use correctly!
-  const effectsText = parseAllos(world, components, inv.item.effects.use)
-    .map((entry) => `${entry.description}`)
-    .join(', ');
-  const text = `${inv.item.name} (${effectsText})`;
+  let effectsText = '';
+  if (showEffects) {
+    const allos = parseAllos(world, components, inv.item.effects.use);
+    const alloList = allos.map((entry) => `${entry.description}`).join(', ');
+    effectsText = `(${alloList})`;
+  }
 
   // const canEat = () => passesConditions(world, components, inv.item.requirements.use, kami);
 
   return {
-    text,
+    text: `${name} ${effectsText}`,
     onClick: () => triggerAction(kami, inv.item),
     image: inv.item.image,
     // disabled: !canEat(),

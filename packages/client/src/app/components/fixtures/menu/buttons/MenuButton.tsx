@@ -52,9 +52,10 @@ const Button = styled.button<{
   effectScale: number;
   disabled?: boolean;
 }>`
-  height: 4.5em;
-  border-radius: 0.9em;
-  border: solid black 0.15em;
+  height: 4.5rem;
+  border-radius: 0.9rem;
+  border: solid black 0.15rem;
+
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 

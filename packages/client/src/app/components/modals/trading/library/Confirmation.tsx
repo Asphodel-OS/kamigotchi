@@ -10,6 +10,11 @@ export interface ConfirmationData {
   onConfirm: () => void;
 }
 
+export const EmptyConfimation: ConfirmationData = {
+  content: <></>,
+  onConfirm: () => null,
+};
+
 export const Confirmation = ({
   title,
   subTitle,

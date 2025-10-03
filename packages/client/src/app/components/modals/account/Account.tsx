@@ -3,17 +3,25 @@ import { uuid } from '@mud-classic/utils';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 
-import { Account, getAccount as _getAccount, getAccountKamis as _getAccountKamis, getAllAccounts } from 'app/cache/account';
+import {
+  getAccount as _getAccount,
+  getAccountKamis as _getAccountKamis,
+  Account,
+  getAllAccounts,
+} from 'app/cache/account';
 import { getFriends as _getFriends } from 'app/cache/account/getters';
-import { Kami } from 'app/cache/kami';
+import { getConfigAddress } from 'app/cache/config';
+import { getKami as _getKami, Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { BaseAccount, NullAccount, queryAccountByIndex } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
+import { queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
 import { getTotalScoreByFilter, getVIPEpoch } from 'network/shapes/Score';
+import { getCompAddr } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';
 import { Bottom } from './bottom/Bottom';
 import { Header } from './header/Header';
@@ -23,11 +31,11 @@ export const AccountModal: UIComponent = {
   id: 'AccountModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const {
       network,
-      data: { vip },
-      utils: { getAccount, getAccountKamis, getFriends }
+      data: { vip, kamiNFTAddress, spender },
+      utils: { getAccount, getAccountKamis, getFriends, getKami, queryKamiByIndex },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -41,10 +49,24 @@ export const AccountModal: UIComponent = {
 
       const vipEpoch = getVIPEpoch(world, components);
       const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
+      const kamiRefreshOptions = {
+        live: 0,
+        bonuses: 5, // set this to 3600 once we get explicit triggers for updates
+        harvest: 5, // set this to 60 once we get explicit triggers for updates
+        progress: 5,
+        skills: 5, // set this to 3600 once we get explicit triggers for updates
+        flags: 10, // set this to 3600 once we get explicit triggers for updates
+        config: 3600,
+        stats: 3600,
+        traits: 3600,
+        state: 5,
+      };
 
       return {
         network,
         data: {
+          kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+          spender: getCompAddr(world, components, 'component.token.allowance'),
           vip: {
             epoch: vipEpoch,
             total: getTotalScoreByFilter(world, components, vipFilter),
@@ -56,6 +78,8 @@ export const AccountModal: UIComponent = {
           getAccountKamis: (accEntity: EntityIndex) =>
             _getAccountKamis(world, components, accEntity),
           getFriends: (accEntity: EntityIndex) => _getFriends(world, components, accEntity),
+          queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiRefreshOptions),
         },
       };
     })();
@@ -72,6 +96,10 @@ export const AccountModal: UIComponent = {
     const [isSelf, setIsSelf] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [accounts, setAccounts] = useState<Account[]>([]);
+
+    /////////////////
+    // SUBSCRIPTIONS
+
     useEffect(() => {
       setAccounts(getAllAccounts(world, components));
     }, []);
@@ -198,7 +226,7 @@ export const AccountModal: UIComponent = {
         header={<ModalHeader key='header' title='Account' icon={OperatorIcon} />}
         canExit
         truncate
-        >
+      >
         <Header
           key='header'
           account={account} // account selected for viewing
@@ -226,10 +254,13 @@ export const AccountModal: UIComponent = {
             vip,
             player,
             isSelf,
+            kamiNFTAddress,
           }}
           utils={{
             getAccountKamis,
             getFriends,
+            queryKamiByIndex,
+            getKami,
           }}
           view={{
             isSelf,

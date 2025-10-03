@@ -265,6 +265,24 @@ library LibTrade {
     if (takerID != 0 && takerID != accID) revert("Trade target mismatch");
   }
 
+  /// @notice verify that a Trade has exactly one buy/sell order and one side is musu
+  /// @dev this constraint will be enforced for new trades to prepare for shape
+  /// and functionality upgrades
+  function verifyStructure(
+    IUintComp comps,
+    uint32[] memory buyIndices,
+    uint32[] memory sellIndices
+  ) public view {
+    if (buyIndices.length != 1) revert("Trade must have exactly one buy order");
+    if (sellIndices.length != 1) revert("Trade must have exactly one sell order");
+    if (buyIndices[0] != MUSU_INDEX && sellIndices[0] != MUSU_INDEX) {
+      revert("Trade cannot be a Barter. Please use MUSU.");
+    }
+    if (buyIndices[0] == MUSU_INDEX && sellIndices[0] == MUSU_INDEX) {
+      revert("Trade cannot be purely MUSU. But we love the energy.");
+    }
+  }
+
   /// @notice verify an Account has not exceeded the maximum allowable open Trade orders
   function verifyMaxOrders(IUintComp comps, uint256 accID) public view {
     uint256 max = LibConfig.get(comps, "MAX_TRADES_PER_ACCOUNT");

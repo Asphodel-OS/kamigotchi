@@ -22,11 +22,14 @@ contract KamiCastItemSystem is System {
 
     // pet checks
     LibKami.verifyRoom(components, kamiID, accID);
-    LibKami.verifyCooldown(components, kamiID);
 
     // item checks
     LibItem.verifyForShape(components, itemIndex, "ENEMY_KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
+
+    // use stamina from caster
+    LibAccount.sync(components, accID);
+    LibAccount.depleteStamina(components, accID, 10); // implicit stamina check
 
     // use item
     LibKami.sync(components, kamiID);

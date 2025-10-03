@@ -47,14 +47,14 @@ export const MainWindow = observer(({
     {!ready && <>
       {/* Boot components */}
       {<LoadingState.Render />}
-    </>}
 
-    {/* Validators */}
-    {<WalletConnecter.Render />}
-    {<AccountRegistrar.Render />}
-    {<OperatorUpdater.Render />}
-    {<GasHarasser.Render />}
-    {<TokenChecker.Render />}
+      {/* Validators */}
+      {<WalletConnecter.Render />}
+      {<AccountRegistrar.Render />}
+      {<OperatorUpdater.Render />}
+      {<GasHarasser.Render />}
+      {<TokenChecker.Render />}
+    </>}
 
     {ready && <>
       {/* Canvas */}

@@ -24,11 +24,14 @@ export const AllyKards = ({
   },
 }: {
   account: Account;
-  kamis: Kami[]; // ally kami entities
-
+  kamis: Kami[];
   actions: {
     collect: (kami: Kami) => void;
     stop: (kami: Kami) => void;
+  };
+  data: {
+    account: Account;
+    kamis: Kami[]; // ally kami entities
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;

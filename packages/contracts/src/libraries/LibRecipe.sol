@@ -224,7 +224,15 @@ library LibRecipe {
   /////////////////
   // LOGGING
 
-  function logCraft(IUintComp components, uint256 accID, uint32 recipeIndex, uint256 amt) public {
+  function logCraft(
+    IUintComp components,
+    uint256 accID,
+    uint32 recipeIndex,
+    uint256 amt,
+    uint32[] memory craftedIndices,
+    uint256[] memory craftedAmts
+  ) public {
     LibData.inc(components, accID, recipeIndex, "CRAFT_TOTAL", amt);
+    LibData.inc(components, accID, craftedIndices, "CRAFT_ITEM", craftedAmts);
   }
 }

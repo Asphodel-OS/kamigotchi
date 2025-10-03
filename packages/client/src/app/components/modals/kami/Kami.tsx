@@ -1,15 +1,15 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { useEffect, useState } from 'react';
 import { useLayers } from 'app/root/hooks';
+import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
 import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
 import {
+  getSkillUpgradeError as _getSkillUpgradeError,
   getHolderSkillTreePoints,
   getSkillByIndex,
   getSkillTreePointsRequirement,
-  getSkillUpgradeError as _getSkillUpgradeError,
   parseSkillRequirementText,
 } from 'app/cache/skills';
 import { ModalWrapper } from 'app/components/library';
@@ -108,8 +108,11 @@ export const KamiModal: UIComponent = {
     })();
 
     const { actions, api } = network;
+
+    const ownerAPIs = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+
     const kamiIndex = useSelected((s) => s.kamiIndex);
-    const { selectedAddress, apis: ownerAPIs } = useNetwork();
     const kamiModalOpen = useVisibility((s) => s.modals.kami);
     const accountModalOpen = useVisibility((s) => s.modals.account);
 

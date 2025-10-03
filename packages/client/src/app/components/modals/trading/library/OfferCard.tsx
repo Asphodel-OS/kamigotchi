@@ -8,16 +8,11 @@ import { Trade, TradeOrder } from 'network/shapes/Trade';
 import { playClick } from 'utils/sounds';
 import { getTypeColor } from '../helpers';
 
-// represents the player's Buy/Sell Orders that are in EXECUTED state
-// NOTE: only supports simple (single item) trades against musu atm
-// TODO: add support for Trades you're the Taker for (disable action)
+// Represents the player's Buy/Sell Orders that are in EXECUTED state
+// Currently only supports simple (single item) trades against MUSU
 export const OfferCard = ({
   button,
-  data: {
-    account,
-    trade,
-    type,
-  },
+  data: { account, trade, type },
   utils,
   reverse,
 }: {
@@ -77,21 +72,18 @@ export const OfferCard = ({
   /////////////////
   // INTERPRETATION
 
-  // span is the max of the number of items specified on either side
   const getSpan = () => {
     const buySpan = trade.buyOrder?.items.length ?? 0;
     const sellSpan = trade.sellOrder?.items.length ?? 0;
     return Math.min(Math.max(buySpan, sellSpan), 2);
   };
 
-  // determine the name to display for an Account
   const getNameDisplay = (trader?: Account): string => {
     if (!trader || !trader.name) return '???';
     if (trader.entity === account.entity) return 'You';
     return trader.name;
   };
 
-  // tooltip for list of order items/amts
   const getOrderTooltip = (order?: TradeOrder): string[] => {
     const tooltip = [];
     if (!order) return [];
@@ -124,8 +116,8 @@ export const OfferCard = ({
         </TextTooltip>
       </Side>
 
-      <TextTooltip title='status' text={utils?.getStateTooltip() || []} alignText='left'>
-        <Controls>
+      <Controls>
+        <TextTooltip title='status' text={utils?.getStateTooltip() || []} alignText='left'>
           {trade.state === 'CANCELLED' && <CancelOverlay>Cancelled</CancelOverlay>}
           <TagContainer>
             <Overlay top={0.21} left={0.21}>
@@ -136,13 +128,13 @@ export const OfferCard = ({
             </Overlay>
             <TypeTag color={getTypeColor(type)}>{type}</TypeTag>
           </TagContainer>
-          <TextTooltip text={button.tooltip} fullWidth>
-            <Button onClick={handleClick} disabled={button.disabled}>
-              {button.text}
-            </Button>
-          </TextTooltip>
-        </Controls>
-      </TextTooltip>
+        </TextTooltip>
+        <TextTooltip text={button.tooltip} fullWidth>
+          <Button onClick={handleClick} disabled={button.disabled}>
+            {button.text}
+          </Button>
+        </TextTooltip>
+      </Controls>
 
       <Side span={getSpan()} borderLeft>
         <TextTooltip
@@ -242,13 +234,14 @@ const Button = styled.button`
   }
   &:disabled {
     background-color: #bbb;
-    cursor: default;
+    cursor: help;
   }
 `;
 
 const TagContainer = styled.div`
   position: relative;
-  width: 100%;
+  width: 15vw;
+  height: 4vw;
   flex-grow: 1;
 
   display: flex;

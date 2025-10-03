@@ -24,10 +24,10 @@ export interface Friends {
 export const getFriends = (world: World, components: Components, entity: EntityIndex) => {
   const id = world.entities[entity];
   return {
-    friends: getAccFriends(world, components, entity),
-    incomingReqs: getAccIncomingRequests(world, components, entity),
-    outgoingReqs: getAccOutgoingRequests(world, components, entity),
-    blocked: getAccBlocked(world, components, entity),
+    friends: getAccFriends(world, components, entity, { bio: true }),
+    incomingReqs: getAccIncomingRequests(world, components, entity, { bio: true }),
+    outgoingReqs: getAccOutgoingRequests(world, components, entity, { bio: true }),
+    blocked: getAccBlocked(world, components, entity, { bio: true }),
     limits: {
       friends:
         getConfigFieldValue(world, components, 'BASE_FRIENDS_LIMIT') * 1 +

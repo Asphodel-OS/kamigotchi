@@ -49,6 +49,7 @@ import ItemTransferSystem from "../../../out/ItemTransferSystem.sol/ItemTransfer
 import Kami721IsInWorldSystem from "../../../out/Kami721IsInWorldSystem.sol/Kami721IsInWorldSystem.json";
 import Kami721MetadataSystem from "../../../out/Kami721MetadataSystem.sol/Kami721MetadataSystem.json";
 import Kami721StakeSystem from "../../../out/Kami721StakeSystem.sol/Kami721StakeSystem.json";
+import Kami721TransferSystem from "../../../out/Kami721TransferSystem.sol/Kami721TransferSystem.json";
 import Kami721UnstakeSystem from "../../../out/Kami721UnstakeSystem.sol/Kami721UnstakeSystem.json";
 import KamiCastItemSystem from "../../../out/KamiCastItemSystem.sol/KamiCastItemSystem.json";
 import KamiGachaMintSystem from "../../../out/KamiGachaMintSystem.sol/KamiGachaMintSystem.json";
@@ -125,6 +126,7 @@ export const SystemBytecodes = {
   "system.Kami721.IsInWorld": Kami721IsInWorldSystem,
   "system.Kami721.Metadata": Kami721MetadataSystem,
   "system.kami721.stake": Kami721StakeSystem,
+  "system.kami721.transfer": Kami721TransferSystem,
   "system.kami721.unstake": Kami721UnstakeSystem,
   "system.kami.cast.item": KamiCastItemSystem,
   "system.kami.gacha.mint": KamiGachaMintSystem,

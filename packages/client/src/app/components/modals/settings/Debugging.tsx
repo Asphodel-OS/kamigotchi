@@ -36,8 +36,8 @@ export const Debugging = ({
       </HeaderRow>
       <Section key='commits'>
         {FieldRow('Commits Modal', 'Open', () => setModals({ reveal: true }))}
-        {FieldRow('Sync kamis', 'sync', actions.echoKamis)}
-        {FieldRow('Sync location', 'sync', actions.echoRoom)}
+        {/* {FieldRow('Sync kamis', 'sync', actions.echoKamis)} */}
+        {/* {FieldRow('Sync location', 'sync', actions.echoRoom)} */}
         {FieldRow('Cache Debugging', debug.cache ? 'turn off' : 'turn on', toggleDebug)}
       </Section>
     </Container>
