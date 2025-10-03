@@ -68,14 +68,14 @@ export const AllyKards = ({
   };
 
   return (
-    <Container style={{ display: kamis.length > 0 ? 'flex' : 'none' }}>
+    <Container style={{ display: kamis?.length > 0 ? 'flex' : 'none' }}>
       <StickyRow>
         <Title onClick={handleCollapseToggle}>
-          {`${isCollapsed ? '▶' : '▼'} Allies(${kamis.length})`}
+          {`${isCollapsed ? '▶' : '▼'} Allies(${kamis?.length ?? 0})`}
         </Title>
       </StickyRow>
       {!isCollapsed &&
-        kamis.map((kami: Kami, i: number) => (
+        kamis?.map((kami: Kami, i: number) => (
           <KamiCard
             key={kami.index}
             kami={kami}
