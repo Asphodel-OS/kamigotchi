@@ -191,9 +191,7 @@ const Content = styled.div`
 
 const ContentRow = styled.div`
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  align-items: center;
+  margin-top: 0.95vw;
 `;
 
 const ContentColumn = styled.div`
