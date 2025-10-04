@@ -8,9 +8,11 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { CraftIcon } from 'assets/images/icons/actions';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
-import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
+import { getItemBalance as _getItemBalance, Item } from 'network/shapes/Item';
+import { Kami } from 'network/shapes/Kami';
 import { hasIngredients as _hasIngredients, Ingredient, Recipe } from 'network/shapes/Recipe';
 import { Recipes } from './Recipes/Recipes';
 import { Tabs } from './tabs/Tabs';
@@ -23,7 +25,15 @@ export const CraftingModal: UIComponent = {
     const {
       network: { actions, api, components, world },
       data: { account },
-      utils: { meetsRequirements, displayRequirements, getItemBalance, hasIngredients },
+      utils: {
+        meetsRequirementsRecipe,
+        meetsRequirements,
+        displayRequirementsRecipe,
+        displayRequirements,
+        getItemBalance,
+        hasIngredients,
+        parseAllos,
+      },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -35,15 +45,22 @@ export const CraftingModal: UIComponent = {
         network,
         data: { account },
         utils: {
-          meetsRequirements: (recipe: Recipe) =>
+          meetsRequirementsRecipe: (recipe: Recipe) =>
             passesConditions(world, components, recipe.requirements, account),
-          displayRequirements: (recipe: Recipe) =>
+          meetsRequirements: (holder: Kami | Account, item: Item) =>
+            passesConditions(world, components, item.requirements.use, holder),
+          displayRequirementsRecipe: (recipe: Recipe) =>
             recipe.requirements
               .map((req) => parseConditionalText(world, components, req))
               .join(', '),
+          displayRequirements: (recipe: Item) =>
+            recipe.requirements.use
+              .map((req) => parseConditionalText(world, components, req))
+              .join('\n '),
           getItemBalance: (index: number) => _getItemBalance(world, components, account.id, index),
           hasIngredients: (recipe: Recipe) =>
             _hasIngredients(world, components, recipe, account.id),
+          parseAllos: (allo: Allo[]) => _parseAllos(world, components, allo),
         },
       };
     })();
@@ -68,7 +85,9 @@ export const CraftingModal: UIComponent = {
       if (showAll) setRecipes(currentTabRecipes);
       else
         setRecipes(
-          currentTabRecipes.filter((recipe) => meetsRequirements(recipe) && hasIngredients(recipe))
+          currentTabRecipes.filter(
+            (recipe) => meetsRequirementsRecipe(recipe) && hasIngredients(recipe)
+          )
         );
     }, [showAll, tab, craftingModalVisible]);
 
@@ -123,9 +142,12 @@ export const CraftingModal: UIComponent = {
               craft,
             }}
             utils={{
+              meetsRequirementsRecipe,
               meetsRequirements,
+              displayRequirementsRecipe,
               displayRequirements,
               getItemBalance,
+              parseAllos,
             }}
           />
         )}

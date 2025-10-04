@@ -4,9 +4,13 @@ import styled from 'styled-components';
 import { Card, CraftButton, Stepper } from 'app/components/library';
 import { StyledTooltipText, TextTooltip } from 'app/components/library/poppers';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
+import { Kami } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
-import { NullItem } from 'network/shapes/Item';
+import { Allo } from 'network/shapes/Allo';
+import { Item, NullItem } from 'network/shapes/Item';
 import { Recipe } from 'network/shapes/Recipe';
+import { DetailedEntity } from 'network/shapes/utils';
+import { ItemGridTooltip } from '../../inventory/items/ItemGridTooltip';
 import { Input } from './Input';
 
 export const RecipeCard = ({
@@ -23,9 +27,12 @@ export const RecipeCard = ({
     craft: (amount: number) => void;
   };
   utils: {
-    displayRequirements: (recipe: Recipe) => string;
+    displayRequirementsRecipe: (recipe: Recipe) => string;
+    displayRequirements: (item: Item) => string;
     getItemBalance: (index: number) => number;
-    meetsRequirements: (recipe: Recipe) => boolean;
+    meetsRequirementsRecipe: (recipe: Recipe) => boolean;
+    meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
+    parseAllos: (allo: Allo[]) => DetailedEntity[];
   };
 }) => {
   const { recipe, stamina } = data;
@@ -58,7 +65,7 @@ export const RecipeCard = ({
         scale: 7.5,
         padding: 1,
         overlay: `${amt * quantity}`,
-        tooltip: [item.description ?? ''],
+        tooltip: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
       }}
       fullWidth
     >
@@ -80,7 +87,7 @@ export const RecipeCard = ({
               subTitleContent={`${recipe.experience} xp`}
               description={''}
               leftSideText='Requirements'
-              leftSideContent={utils.displayRequirements(recipe)}
+              leftSideContent={utils.displayRequirementsRecipe(recipe)}
               rightSideText='Costs'
               rightSideContent={getCosts()}
             />,

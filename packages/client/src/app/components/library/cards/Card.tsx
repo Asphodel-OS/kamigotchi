@@ -21,7 +21,7 @@ export const Card = ({
     scale?: number;
     showLevelUp?: boolean;
     showSkillPoints?: boolean;
-    tooltip?: string[];
+    tooltip?: string[] | React.ReactNode[];
     skillPoints?: boolean;
     background?: React.ReactNode;
     foreground?: React.ReactNode; // rendered above image

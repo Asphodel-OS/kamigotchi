@@ -1,6 +1,9 @@
 import { calcCurrentStamina } from 'app/cache/account';
+import { Item, Kami } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
+import { Allo } from 'network/shapes/Allo';
 import { Recipe } from 'network/shapes/Recipe';
+import { DetailedEntity } from 'network/shapes/utils';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RecipeCard } from './RecipeCard';
@@ -19,9 +22,12 @@ export const Recipes = ({
     craft: (recipe: Recipe, amount: number) => void;
   };
   utils: {
-    displayRequirements: (recipe: Recipe) => string;
+    displayRequirementsRecipe: (recipe: Recipe) => string;
+    displayRequirements: (item: Item) => string;
     getItemBalance: (index: number) => number;
-    meetsRequirements: (recipe: Recipe) => boolean;
+    meetsRequirementsRecipe: (recipe: Recipe) => boolean;
+    meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
+    parseAllos: (allo: Allo[]) => DetailedEntity[];
   };
 }) => {
   const { account, recipes } = data;
