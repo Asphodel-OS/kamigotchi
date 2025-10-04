@@ -1,4 +1,4 @@
 export { Popover } from './Popover';
-export { StyledTooltip } from './StyledTooltip';
+export { StyledTooltipText } from './StyledTooltipText';
 export { TextTooltip } from './TextTooltip';
 export { Tooltip } from './Tooltip';

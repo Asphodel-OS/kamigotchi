@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 
-export const StyledTooltip = ({
+export const StyledTooltipText = ({
   img,
   title,
   subTitleText,
