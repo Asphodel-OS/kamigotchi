@@ -16,7 +16,7 @@ export const StyledTooltipText = ({
   title: string;
   subTitleText: string;
   subTitleContent: ReactNode;
-  description: string;
+  description?: string;
   leftSideText: string;
   leftSideContent: ReactNode;
   rightSideText: string;
@@ -28,17 +28,19 @@ export const StyledTooltipText = ({
         <Image src={img} />
         <SubSection>
           <Title>{title}</Title>
-          {subTitleText}: {subTitleContent}
+          <Subtitle>
+            {subTitleText}: {subTitleContent}
+          </Subtitle>
         </SubSection>
       </Header>
 
       <Description>{description}</Description>
       <BottomSection>
         <Section>
-          {leftSideText}: {leftSideContent}
+          {leftSideText}: <Content>{leftSideContent}</Content>
         </Section>
         <Section>
-          {rightSideText}: {rightSideContent}
+          {rightSideText}:<Content>{rightSideContent}</Content>
         </Section>
       </BottomSection>
     </Container>
@@ -100,9 +102,17 @@ const Title = styled.div`
   font-weight: bold;
 `;
 
+const Subtitle = styled.div`
+  display: flex;
+  gap: 0.3vw;
+  align-items: flex-start;
+`;
+
 const Description = styled.div`
   margin: 0.5vw 0 0 0;
   font-size: 0.8vw;
   font-style: italic;
   white-space: normal;
 `;
+
+const Content = styled.div``;
