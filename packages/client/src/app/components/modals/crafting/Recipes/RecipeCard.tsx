@@ -65,7 +65,10 @@ export const RecipeCard = ({
         scale: 7.5,
         padding: 1,
         overlay: `${amt * quantity}`,
-        tooltip: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
+        tooltip: {
+          text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
+          maxWidth: 25,
+        },
       }}
       fullWidth
     >
@@ -92,6 +95,7 @@ export const RecipeCard = ({
               rightSideContent={getCosts()}
             />,
           ]}
+          maxWidth={25}
         >
           <ContentRow key='column-1'>
             {inputs.map((input, i) => (

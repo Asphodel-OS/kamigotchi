@@ -21,7 +21,7 @@ export const Card = ({
     scale?: number;
     showLevelUp?: boolean;
     showSkillPoints?: boolean;
-    tooltip?: string[] | React.ReactNode[];
+    tooltip?: { text: string[] | React.ReactNode[]; maxWidth?: number };
     skillPoints?: boolean;
     background?: React.ReactNode;
     foreground?: React.ReactNode; // rendered above image
@@ -41,7 +41,7 @@ export const Card = ({
 
   return (
     <Wrapper fullWidth={fullWidth}>
-      <TextTooltip text={image?.tooltip ?? []}>
+      <TextTooltip text={image?.tooltip?.text ?? []} maxWidth={image?.tooltip?.maxWidth}>
         <ImageContainer scale={scale} padding={image?.padding}>
           {!!image?.background && <BackgroundSlot>{image.background}</BackgroundSlot>}
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
