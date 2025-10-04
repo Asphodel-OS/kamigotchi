@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Card, CraftButton, Stepper, TextTooltip } from 'app/components/library';
+import { Card, CraftButton, Stepper } from 'app/components/library';
+import { StyledTooltip } from 'app/components/library/poppers';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Account } from 'network/shapes/Account';
 import { NullItem } from 'network/shapes/Item';
@@ -36,11 +37,7 @@ export const RecipeCard = ({
   const amt = output.amount;
 
   const getTooltipText = () => {
-    const text = [
-      `Requires: ${utils.displayRequirements(recipe)}`,
-      `Grants: ${recipe.experience} xp`,
-      `Costs: ${recipe.cost.stamina} stamina`,
-    ];
+    const text = [`Costs: ${recipe.cost.stamina} stamina`];
     recipe.inputs.forEach((input) => {
       const itemName = input.item?.name ?? '???';
       text.push(`• ${input.amount} ${itemName}`);
@@ -70,7 +67,17 @@ export const RecipeCard = ({
         </TitleCorner>
       </TitleBar>
       <Content>
-        <TextTooltip text={getTooltipText()} direction='row' grow>
+        <StyledTooltip
+          img={item.image}
+          title={`Recipe for ${item.name}`}
+          subTitleText='Grants'
+          subTitleContent={`${recipe.experience} xp`}
+          description={''}
+          leftSideText='Requirements'
+          leftSideContent={utils.displayRequirements(recipe)}
+          rightSideText='Costs'
+          rightSideContent={`${recipe.cost.stamina} stamina`}
+        >
           <ContentRow key='column-1'>
             {inputs.map((input, i) => (
               <Input
@@ -82,7 +89,7 @@ export const RecipeCard = ({
             ))}
             <Input image={StaminaIcon} amt={recipe.cost.stamina * quantity} prepend='+' />
           </ContentRow>
-        </TextTooltip>
+        </StyledTooltip>
         <ContentColumn key='column-2'>
           <Actions>
             <CraftButton data={{ recipe, quantity, stamina }} actions={actions} utils={utils} />
