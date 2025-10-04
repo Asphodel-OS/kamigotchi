@@ -33,6 +33,7 @@ export const RecipeCard = ({
     meetsRequirementsRecipe: (recipe: Recipe) => boolean;
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
+    getItemByIndex: (itemIndex: number) => Item;
   };
 }) => {
   const { recipe, stamina } = data;
@@ -45,20 +46,34 @@ export const RecipeCard = ({
 
   const getCosts = () => {
     const text = [
-      <p>
+      <p key='stamina'>
         {recipe.cost.stamina} <img style={{ width: '1.2vw' }} src={StaminaIcon} />
       </p>,
     ];
-    recipe.inputs.forEach((input) => {
+    recipe.inputs.forEach((input, i) => {
       const itemName = input.item?.name ?? '???';
       text.push(
-        <p>
+        <p key={`cost-${i}`}>
           {input.amount} {itemName}
         </p>
       );
     });
 
     return text;
+  };
+
+  const getRequirements = () => {
+    return recipe.requirements.map((req, i) => (
+      <Requirements key={`req-${req.target?.index ?? i}`}>
+        <p key='value'>{Number(req.target?.value ?? 0)}</p>
+        <img
+          key='img'
+          style={{ width: '1.2vw' }}
+          src={utils.getItemByIndex(req.target?.index ?? 0).image}
+          alt='Requirement'
+        />
+      </Requirements>
+    ));
   };
 
   return (
@@ -98,7 +113,7 @@ export const RecipeCard = ({
               }
               description={''}
               leftSideText='Requirements'
-              leftSideContent={utils.displayRequirementsRecipe(recipe)}
+              leftSideContent={getRequirements()}
               rightSideText='Costs'
               rightSideContent={getCosts()}
             />,
@@ -196,4 +211,11 @@ const Actions = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   gap: 0.4vw;
+`;
+
+const Requirements = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3vw;
 `;

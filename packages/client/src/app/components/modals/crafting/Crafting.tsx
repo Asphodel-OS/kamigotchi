@@ -2,6 +2,7 @@ import pluralize from 'pluralize';
 import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
+import { getItemByIndex as _getItemByIndex } from 'app/cache/item';
 import { getAllRecipes } from 'app/cache/recipes';
 import { ActionButton, EmptyText, ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
@@ -33,6 +34,7 @@ export const CraftingModal: UIComponent = {
         getItemBalance,
         hasIngredients,
         parseAllos,
+        getItemByIndex,
       },
     } = (() => {
       const { network } = layers;
@@ -61,6 +63,7 @@ export const CraftingModal: UIComponent = {
           hasIngredients: (recipe: Recipe) =>
             _hasIngredients(world, components, recipe, account.id),
           parseAllos: (allo: Allo[]) => _parseAllos(world, components, allo),
+          getItemByIndex: (index: number) => _getItemByIndex(world, components, index),
         },
       };
     })();
@@ -148,6 +151,7 @@ export const CraftingModal: UIComponent = {
               displayRequirements,
               getItemBalance,
               parseAllos,
+              getItemByIndex,
             }}
           />
         )}

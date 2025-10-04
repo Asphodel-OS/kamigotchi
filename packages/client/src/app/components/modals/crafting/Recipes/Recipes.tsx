@@ -28,6 +28,7 @@ export const Recipes = ({
     meetsRequirementsRecipe: (recipe: Recipe) => boolean;
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
+    getItemByIndex: (itemIndex: number) => Item;
   };
 }) => {
   const { account, recipes } = data;
