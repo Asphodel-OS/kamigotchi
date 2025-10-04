@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Card, CraftButton, Stepper } from 'app/components/library';
-import { StyledTooltip } from 'app/components/library/poppers';
+import { StyledTooltipText, TextTooltip } from 'app/components/library/poppers';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Account } from 'network/shapes/Account';
 import { NullItem } from 'network/shapes/Item';
@@ -36,11 +36,15 @@ export const RecipeCard = ({
   const item = output.item ?? NullItem;
   const amt = output.amount;
 
-  const getTooltipText = () => {
-    const text = [`Costs: ${recipe.cost.stamina} stamina`];
+  const getCosts = () => {
+    const text = [<p>{recipe.cost.stamina} stamina</p>];
     recipe.inputs.forEach((input) => {
       const itemName = input.item?.name ?? '???';
-      text.push(`• ${input.amount} ${itemName}`);
+      text.push(
+        <p>
+          {input.amount} {itemName}
+        </p>
+      );
     });
 
     return text;
@@ -67,16 +71,20 @@ export const RecipeCard = ({
         </TitleCorner>
       </TitleBar>
       <Content>
-        <StyledTooltip
-          img={item.image}
-          title={`Recipe for ${item.name}`}
-          subTitleText='Grants'
-          subTitleContent={`${recipe.experience} xp`}
-          description={''}
-          leftSideText='Requirements'
-          leftSideContent={utils.displayRequirements(recipe)}
-          rightSideText='Costs'
-          rightSideContent={`${recipe.cost.stamina} stamina`}
+        <TextTooltip
+          text={[
+            <StyledTooltipText
+              img={item.image}
+              title={`Recipe for ${item.name}`}
+              subTitleText='Grants'
+              subTitleContent={`${recipe.experience} xp`}
+              description={''}
+              leftSideText='Requirements'
+              leftSideContent={utils.displayRequirements(recipe)}
+              rightSideText='Costs'
+              rightSideContent={getCosts()}
+            />,
+          ]}
         >
           <ContentRow key='column-1'>
             {inputs.map((input, i) => (
@@ -89,7 +97,7 @@ export const RecipeCard = ({
             ))}
             <Input image={StaminaIcon} amt={recipe.cost.stamina * quantity} prepend='+' />
           </ContentRow>
-        </StyledTooltip>
+        </TextTooltip>
         <ContentColumn key='column-2'>
           <Actions>
             <CraftButton data={{ recipe, quantity, stamina }} actions={actions} utils={utils} />

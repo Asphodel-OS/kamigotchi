@@ -1,5 +1,5 @@
 import { Item } from 'app/cache/item';
-import { StyledTooltip } from 'app/components/library/poppers';
+import { StyledTooltipText } from 'app/components/library/poppers';
 import { Allo } from 'network/shapes/Allo';
 import { DetailedEntity } from 'network/shapes/utils';
 
@@ -29,7 +29,7 @@ export const ItemGridTooltip = ({
   };
 
   return (
-    <StyledTooltip
+    <StyledTooltipText
       img={image}
       title={title}
       subTitleText='Type'
