@@ -44,7 +44,11 @@ export const RecipeCard = ({
   const amt = output.amount;
 
   const getCosts = () => {
-    const text = [<p>{recipe.cost.stamina} stamina</p>];
+    const text = [
+      <p>
+        {recipe.cost.stamina} <img style={{ width: '1.2vw' }} src={StaminaIcon} />
+      </p>,
+    ];
     recipe.inputs.forEach((input) => {
       const itemName = input.item?.name ?? '???';
       text.push(
@@ -87,7 +91,11 @@ export const RecipeCard = ({
               img={item.image}
               title={`Recipe for ${item.name}`}
               subTitleText='Grants'
-              subTitleContent={`${recipe.experience} xp`}
+              subTitleContent={
+                <>
+                  {recipe.experience} <img style={{ width: '1.2vw' }} src={ExpIcon} />
+                </>
+              }
               description={''}
               leftSideText='Requirements'
               leftSideContent={utils.displayRequirementsRecipe(recipe)}
