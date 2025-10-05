@@ -19,7 +19,6 @@ export function createTopics<C extends Contracts>(config: TopicsConfig<C>): Cont
   const contractTopics: ContractTopics[] = [];
   for (const key of Object.keys(config)) {
     const { abi, topics } = config[key]!;
-
     const contractTopic = [topics.map((t) => abi.getEvent(t as string)!.topicHash || [])] as Array<
       string[]
     >;

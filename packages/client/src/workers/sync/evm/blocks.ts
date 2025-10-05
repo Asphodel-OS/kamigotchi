@@ -71,7 +71,7 @@ export async function fetchEventsInBlockRange<C extends Contracts>(
     }
 
     const { address, abi } = contracts[contractKey];
-    const contract = new Contract(address, abi);
+    const contract = new Contract(address, abi); //ethersv6 todo: interface vs interfaceABI?
     try {
       const logDescription = contract.interface.parseLog(log);
       if (!logDescription) {
