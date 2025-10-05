@@ -1,6 +1,5 @@
 import { uuid } from '@mud-classic/utils';
 import { EntityID, EntityIndex } from 'engine/recs';
-import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import {
@@ -170,7 +169,7 @@ export const AccountModal: UIComponent = {
       });
     };
 
-    const pfpTx = (kamiID: BigNumberish) => {
+    const pfpTx = (kamiID: EntityID) => {
       if (!api) return console.error(`API not established for ${selectedAddress}`);
       const actionID = uuid() as EntityID;
       actions!.add({

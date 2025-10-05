@@ -1,8 +1,7 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { awaitPromise, range, to256BitString } from '@mud-classic/utils';
-import { abi as WorldAbi } from 'abi/World.json';
+import { abi as worldAbi } from 'abi/World.json';
 import { Components, EntityID } from 'engine/recs';
-import { BigNumber } from 'ethers';
+import { Interface, Provider } from 'ethers';
 import { Observable, concatMap, map, of } from 'rxjs';
 import { World } from 'types/ethers-contracts';
 
@@ -181,20 +180,20 @@ export async function fetchEventsInBlockRangeChunked(
  */
 export function createWorldTopics() {
   return createTopics<{ World: World }>({
-    World: { abi: WorldAbi, topics: ['ComponentValueSet', 'ComponentValueRemoved'] },
+    World: { abi: new Interface(worldAbi), topics: ['ComponentValueSet', 'ComponentValueRemoved'] },
   });
 }
 
 /**
  * Create a function to fetch World contract events in a given block range.
- * @param provider ethers JsonRpcProvider
+ * @param provider ethers Provider
  * @param worldConfig Contract address and interface of the World contract.
  * @param batch Set to true if the provider supports batch queries (recommended).
  * @param decode Function to decode raw component values ({@link createDecode})
  * @returns Function to fetch World contract events in a given block range.
  */
 export function createFetchWorldEventsInBlockRange<C extends Components>(
-  provider: JsonRpcProvider,
+  provider: Provider,
   worldConfig: ContractConfig,
   batch: boolean | undefined,
   decode: ReturnType<typeof createDecode>
@@ -222,9 +221,9 @@ export function createFetchWorldEventsInBlockRange<C extends Components>(
         componentId: rawComponentId,
       } = args as unknown as {
         component: string;
-        entity: BigNumber;
+        entity: string;
         data: string;
-        componentId: BigNumber;
+        componentId: string;
       };
 
       const component = formatComponentID(rawComponentId);
@@ -255,15 +254,15 @@ export function createFetchWorldEventsInBlockRange<C extends Components>(
   };
 }
 
-export function createFetchSystemCallsFromEvents(provider: JsonRpcProvider) {
+export function createFetchSystemCallsFromEvents(provider: Provider) {
   const { fetchBlock, clearBlock } = createBlockCache(provider);
 
   // fetch the call data of a transaction by its hash/block number
-  // Q(jb): are we even using this function?
+  // used for event logging when streamer is unavailable
   const fetchSystemCallData = async (txHash: string, blockNumber: number) => {
     const block = await fetchBlock(blockNumber);
     if (!block) return;
-    const tx = block.transactions.find((tx) => tx.hash === txHash);
+    const tx = block.prefetchedTransactions.find((tx) => tx.hash === txHash);
     if (!tx) return;
 
     return {
@@ -297,14 +296,14 @@ export function createFetchSystemCallsFromEvents(provider: JsonRpcProvider) {
   };
 }
 
-function createBlockCache(provider: JsonRpcProvider) {
-  const blocks: Record<number, Awaited<ReturnType<typeof provider.getBlockWithTransactions>>> = {};
+function createBlockCache(provider: Provider) {
+  const blocks: Record<number, Awaited<ReturnType<typeof provider.getBlock>>> = {};
 
   return {
     fetchBlock: async (blockNumber: number) => {
       if (blocks[blockNumber]) return blocks[blockNumber];
 
-      const block = await provider.getBlockWithTransactions(blockNumber);
+      const block = await provider.getBlock(blockNumber, true); // prefetch transactions
       blocks[blockNumber] = block;
 
       return block;

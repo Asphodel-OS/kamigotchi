@@ -1,7 +1,12 @@
-import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, mapObject } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
-import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
+import {
+  BigNumberish,
+  FunctionFragment,
+  Overrides,
+  TransactionReceipt,
+  TransactionRequest,
+} from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 import { v4 as uuid } from 'uuid';
 
@@ -46,7 +51,7 @@ export function create<C extends Contracts>(
   const readyState = computed(() => {
     const connected = network.connected.get();
     const contracts = computedContracts.get();
-    const signer = network.signer.get();
+    const signer = network.signer;
     const provider = network.providers.get()?.json;
     const nonce = _nonce.get();
 
@@ -64,7 +69,7 @@ export function create<C extends Contracts>(
 
   async function resetNonce() {
     runInAction(() => _nonce.set(null));
-    const newNonce = (await network.signer.get()?.getTransactionCount()) ?? null;
+    const newNonce = (await network.signer?.getNonce()) ?? null;
     runInAction(() => _nonce.set(newNonce));
   }
 
@@ -83,7 +88,7 @@ export function create<C extends Contracts>(
   // queue up a transaction call in the txQueue
   async function queueCall(
     txRequest: TransactionRequest,
-    callOverrides?: CallOverrides
+    callOverrides?: Overrides
   ): Promise<{
     hash: string;
     wait: () => Promise<TransactionReceipt>;
@@ -139,25 +144,6 @@ export function create<C extends Contracts>(
     return promise; // Promise resolves when the tx is confirmed or rejected
   }
 
-  // queue up a system call in the txQueue
-  async function queueCallSystem(
-    target: C[keyof C],
-    prop: keyof C[keyof C],
-    args: unknown[]
-  ): Promise<{
-    hash: string;
-    wait: () => Promise<TransactionReceipt>;
-    response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
-  }> {
-    // Extract existing overrides from function call
-    const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
-    const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as CallOverrides;
-    const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
-
-    const populatedTx = await target.populateTransaction[prop as string](...argsWithoutOverrides);
-    return queueCall(populatedTx, callOverrides);
-  }
-
   async function processQueue() {
     const txRequest = queue.next();
     if (!txRequest) return;
@@ -209,20 +195,39 @@ export function create<C extends Contracts>(
     processQueue();
   }
 
-  // wraps contract call with txQueue
-  function proxyContract<Contract extends C[keyof C]>(contract: Contract): Contract {
-    return mapObject(contract as any, (value, key) => {
-      // Relay all base contract methods to the original target
-      if (key in BaseContract.prototype) return value;
+  // queue up a system call in the txQueue
+  async function queueCallSystem(
+    target: C[keyof C],
+    prop: keyof C[keyof C],
+    args: unknown[]
+  ): Promise<{
+    hash: string;
+    wait: () => Promise<TransactionReceipt>;
+    response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
+  }> {
+    // Extract existing overrides from function call
+    const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
+    const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as Overrides;
+    const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
 
-      // Relay everything that is not a function call to the original target
-      if (!(value instanceof Function)) return value;
-
-      // Channel all contract specific methods through the queue
-      return (...args: unknown[]) => queueCallSystem(contract, key as keyof BaseContract, args);
-    }) as Contract;
+    const fn = target.getFunction(prop.toString());
+    const populatedTx = await fn.populateTransaction(...argsWithoutOverrides);
+    return queueCall(populatedTx, callOverrides);
   }
 
+  // wraps contract call with txQueue
+  function proxyContract<Contract extends C[keyof C]>(
+    contract: any
+  ): any extends Contract ? any : never {
+    const methods: string[] = [];
+    contract.interface.forEachFunction((func: FunctionFragment) => methods.push(func.name));
+    methods.forEach((method) => {
+      contract[method] = (...args: unknown[]) => queueCallSystem(contract, method, args);
+    });
+    return contract;
+  }
+
+  // todo: optimize: this runs on every call, should only need once at the start + upon system update
   const proxiedContracts = computed(() => {
     const contracts = readyState.get()?.contracts;
     return contracts ? mapObject(contracts, proxyContract) : undefined;

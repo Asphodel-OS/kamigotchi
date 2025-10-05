@@ -1,10 +1,10 @@
-import { ExternalProvider } from '@ethersproject/providers';
 import { Type, createWorld, defineComponent } from 'engine/recs';
+import { BrowserProvider } from 'ethers';
 
 import { createNetwork } from 'engine/executors';
 import { SystemAbis } from 'types/SystemAbis';
 import { SystemTypes } from 'types/SystemTypes';
-import { createAdminAPI, createPlayerAPI } from './api';
+import { createPlayerAPI } from './api';
 import { createComponents } from './components';
 import { initExplorer } from './explorer';
 import { SetupContractConfig, createConfig, setupMUDNetwork } from './setup';
@@ -30,7 +30,6 @@ export async function createNetworkLayer(config: SetupContractConfig) {
   const actions = createActionSystem(world, txReduced$, provider);
   const notifications = createNotificationSystem(world);
   const api = {
-    admin: createAdminAPI(txQueue),
     player: createPlayerAPI(txQueue),
   };
 
@@ -69,7 +68,7 @@ export async function createNetworkLayer(config: SetupContractConfig) {
 
 // Create a network instance using the provided provider.
 // Uses private key in localstorage if no provider is provided.
-export async function createNetworkInstance(provider?: ExternalProvider) {
+export async function createNetworkInstance(provider?: BrowserProvider) {
   const networkConfig = createConfig(provider);
   if (!networkConfig) throw new Error('Invalid config');
   const network = await createNetwork(networkConfig);
@@ -78,13 +77,12 @@ export async function createNetworkInstance(provider?: ExternalProvider) {
 
 // Create a newly initialized System Executor, using a new provider.
 // Update the network/systems/api of the network layer, if one is provided.
-export async function updateNetworkLayer(layer: NetworkLayer, provider?: ExternalProvider) {
+export async function updateNetworkLayer(layer: NetworkLayer, provider?: BrowserProvider) {
   const networkInstance = await createNetworkInstance(provider);
   const txQueue = layer.createTxQueue(networkInstance);
   layer.network = networkInstance;
   layer.txQueue = txQueue;
   layer.api = {
-    admin: createAdminAPI(txQueue),
     player: createPlayerAPI(txQueue),
   };
   return layer;

@@ -1,8 +1,7 @@
-import '@ethersproject/abstract-provider'; // we really need to figure out why this is necessary
 import { keccak256 } from '@mud-classic/utils';
 import { abi as WorldAbi } from 'abi/World.json';
 import { Metadata, Type, World, defineComponent } from 'engine/recs';
-import { Contract, ContractInterface } from 'ethers';
+import { Contract, InterfaceAbi } from 'ethers';
 import { keys } from 'lodash';
 import { Subject } from 'rxjs';
 
@@ -28,7 +27,7 @@ export async function setupMUDNetwork<
 >(
   world: World,
   contractComponents: C,
-  SystemAbis: { [key in keyof SystemTypes]: ContractInterface },
+  SystemAbis: { [key in keyof SystemTypes]: InterfaceAbi },
   networkConfig: SetupContractConfig,
   options?: { initialGasPrice?: number; fetchSystemCalls?: boolean }
 ) {

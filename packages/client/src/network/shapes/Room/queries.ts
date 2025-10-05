@@ -19,7 +19,7 @@ export const query = (components: Components, options?: QueryOptions): EntityInd
   if (options?.location) {
     toQuery.push(
       HasValue(Location, {
-        value: '0x' + ('0' + coordToBigInt(options.location).toString(16)).slice(-48),
+        value: '0x' + coordToBigInt(options.location).toString(16).slice(-48),
       })
     );
   }

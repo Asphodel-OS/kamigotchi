@@ -1,7 +1,5 @@
-import { Formatter, JsonRpcProvider, Log } from '@ethersproject/providers';
 import { callWithRetry, range, sleep } from '@mud-classic/utils';
-import { BigNumber, Contract } from 'ethers';
-import { resolveProperties } from 'ethers/lib/utils';
+import { Contract, JsonRpcProvider, Log, resolveProperties } from 'ethers';
 
 import { Contracts } from 'engine/types';
 import { ContractEvent, ContractsConfig } from 'workers/types';
@@ -48,7 +46,7 @@ export async function fetchEventsInBlockRange<C extends Contracts>(
       } else if (a.transactionIndex > b.transactionIndex) {
         return 1;
       } else {
-        return a.logIndex < b.logIndex ? -1 : 1;
+        return a.index < b.index ? -1 : 1;
       }
     }
   });
@@ -67,7 +65,7 @@ export async function fetchEventsInBlockRange<C extends Contracts>(
     const contractKey = addressToContractKey[log.address.toLowerCase()];
     if (!contractKey) {
       throw new Error(
-        "This should not happen. An event's address is not part of the contracts dictionnary: " +
+        "This should not happen. An event's address is not part of the contracts dictionary: " +
           log.address
       );
     }
@@ -76,6 +74,9 @@ export async function fetchEventsInBlockRange<C extends Contracts>(
     const contract = new Contract(address, abi);
     try {
       const logDescription = contract.interface.parseLog(log);
+      if (!logDescription) {
+        throw new Error('Log description is null');
+      }
 
       // Set a flag if this is the last event in this transaction
       const lastEventInTx = logs[i + 1]?.transactionHash !== log.transactionHash;
@@ -127,19 +128,22 @@ export async function fetchLogs<C extends Contracts>(
         topics: topics,
       }),
     });
-    const logs: Array<Log> = await provider.perform('getLogs', params);
-    logs.forEach((log) => {
-      if (log.removed == null) {
-        log.removed = false;
-      }
-    });
-    return Formatter.arrayOf(provider.formatter.filterLog.bind(provider.formatter))(logs);
+    return provider.getLogs(params.filter);
+    // const logs: Array<Log> = await provider.getLogs(params);
+    // logs.forEach((log) => {
+    //   if (log.removed == null) {
+    //     log.removed = false;
+    //   }
+    // });
+    // return Formatter.arrayOf(provider.formatter.filterLog.bind(provider.formatter))(logs);
   };
 
   const blockPromise = async () => {
-    const _blockNumber = await provider.perform('getBlockNumber', {});
-    const blockNumber = BigNumber.from(_blockNumber).toNumber();
-    return blockNumber;
+    console.log('getBlockNumber');
+
+    console.log('getBlockNumber', await provider.getBlockNumber());
+
+    return await provider.getBlockNumber();
   };
 
   const getLogPromises = () => {
@@ -152,6 +156,9 @@ export async function fetchLogs<C extends Contracts>(
     }
     return logPromises;
   };
+
+  // todo: do we use this?
+  // console.log('requireMinimumBlockNumber', requireMinimumBlockNumber);
 
   if (requireMinimumBlockNumber) {
     for (const _ in range(10)) {

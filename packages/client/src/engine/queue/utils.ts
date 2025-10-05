@@ -1,8 +1,14 @@
-import { BaseProvider, TransactionRequest, TransactionResponse } from '@ethersproject/providers';
 import { extractEncodedArguments } from '@mud-classic/utils';
 import { baseGasPrice, DefaultChain } from 'constants/chains';
-import { Overrides, Signer } from 'ethers';
-import { defaultAbiCoder as abi, Deferrable } from 'ethers/lib/utils';
+import {
+  AbiCoder,
+  Overrides,
+  Provider,
+  Signer,
+  TransactionReceipt,
+  TransactionRequest,
+  TransactionResponse,
+} from 'ethers';
 
 /**
  * Get the revert reason from a given transaction hash
@@ -11,27 +17,39 @@ import { defaultAbiCoder as abi, Deferrable } from 'ethers/lib/utils';
  * @param provider ethers Provider
  * @returns Promise resolving with revert reason string
  */
-export async function getRevertReason(txHash: string, provider: BaseProvider): Promise<string> {
+export async function getRevertReason(txHash: string, provider: Provider): Promise<string> {
   // Decoding the revert reason: https://docs.soliditylang.org/en/latest/control-structures.html#revert
   const tx = await provider.getTransaction(txHash);
   // tx.gasPrice = undefined; // tx object contains both gasPrice and maxFeePerGas
   const encodedRevertReason = await provider.call(tx as TransactionRequest);
-  const decodedRevertReason = abi.decode(['string'], extractEncodedArguments(encodedRevertReason));
+  const decodedRevertReason = AbiCoder.defaultAbiCoder().decode(
+    ['string'],
+    extractEncodedArguments(encodedRevertReason)
+  );
   return decodedRevertReason[0];
 }
 
-export async function waitForTx(txResponse: Promise<TransactionResponse>) {
+export async function waitForTx(
+  txResponse: Promise<TransactionResponse | null>
+): Promise<TransactionReceipt> {
   const response = await txResponse;
   if (response == null) {
-    // todo: review upon mainnet launch
     /**
      * Issue: tx response can be null if tx is yet pending or indexed. (tx is unknown, or not in mempool)
      * Issue is caused by RPC. Review again with new mainnet version, should be fixed.
      * If necessary, add a wait and try again
      */
     console.warn('tx response null');
+    // todo: ethersv6 migration - review error handling
+    throw new Error('tx response null');
   }
-  return response.wait();
+
+  const receipt = await response.wait();
+  if (receipt == null) {
+    // todo: ethersv6 migration - review error handling
+    throw new Error('tx response null');
+  }
+  return receipt; // confirmations >0, so wait() will never return null
 }
 
 /**
@@ -40,7 +58,7 @@ export async function waitForTx(txResponse: Promise<TransactionResponse>) {
  */
 export async function sendTx(
   signer: Signer | undefined,
-  txData: Deferrable<TransactionRequest>
+  txData: TransactionRequest
 ): Promise<TransactionResponse> {
   txData.chainId = DefaultChain.id;
   txData.maxFeePerGas = baseGasPrice; // gas prices for minievm are fixed
@@ -58,10 +76,8 @@ export function shouldIncNonce(error: any) {
 
 export function shouldResetNonce(error: any) {
   const isExpirationError = error?.code === 'NONCE_EXPIRED';
-  const isRepeatError = error?.reason?.includes('transaction already imported');
-  // miniEVM currently returns "processing response error" instead of "NONCE_EXPIRED"
-  const isRepeatError2 = error?.reason?.includes('processing response error');
-  return isExpirationError || isRepeatError || isRepeatError2;
+  const isRepeatError = error?.reason?.includes('account sequence mismatch');
+  return isExpirationError || isRepeatError;
 }
 
 export function isOverrides(obj: any): obj is Overrides {

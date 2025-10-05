@@ -1,5 +1,4 @@
 import { EntityID, EntityIndex } from 'engine/recs';
-import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -48,8 +47,8 @@ export const History = ({
   // filter the list of events to just those relevant to the account
   const filterEvents = (events: ItemTransfer[]) => {
     const filtered = events.filter((event) => {
-      const senderID = formatEntityID(BigNumber.from(event.SenderAccountID));
-      const receiverID = formatEntityID(BigNumber.from(event.RecvAccountID));
+      const senderID = formatEntityID(event.SenderAccountID);
+      const receiverID = formatEntityID(event.RecvAccountID);
       const senderMatches = senderID === account.id;
       const receiverMatches = receiverID === account.id;
       return senderMatches || receiverMatches;
@@ -68,8 +67,8 @@ export const History = ({
       </TitleBar>
       <List>
         {displayed.map((send, index) => {
-          const senderID = formatEntityID(BigNumber.from(send.SenderAccountID));
-          const receiverID = formatEntityID(BigNumber.from(send.RecvAccountID));
+          const senderID = formatEntityID(send.SenderAccountID);
+          const receiverID = formatEntityID(send.RecvAccountID);
           const sender = getAccount(getEntityIndex(senderID));
           const receiver = getAccount(getEntityIndex(receiverID));
           const item = getItem(send.ItemIndex as EntityIndex);

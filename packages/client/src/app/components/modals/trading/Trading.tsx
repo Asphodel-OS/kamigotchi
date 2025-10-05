@@ -91,7 +91,7 @@ export const TradingModal: UIComponent = {
     useEffect(() => {
       refreshItemRegistry();
       const account = getAccount(accountEntity);
-      refreshTrades(account);
+      if (account.index !== NullAccount.index) refreshTrades(account); // tends to render before account is loaded
       setAccount(account);
 
       const updateSync = () => setTick(Date.now());

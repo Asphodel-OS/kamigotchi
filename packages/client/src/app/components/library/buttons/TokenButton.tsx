@@ -1,6 +1,6 @@
 import { uuid } from '@mud-classic/utils';
 import { EntityID } from 'engine/recs';
-import { utils } from 'ethers';
+import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getAddress } from 'viem';
 
@@ -30,7 +30,7 @@ export const TokenButton = ({
 
   useEffect(() => {
     const allowAddress = getCompAddr(world, components, 'component.token.allowance');
-    setSpender(utils.hexZeroPad(allowAddress, 20));
+    setSpender(ethers.zeroPadValue(allowAddress, 20));
   }, [world, components]);
 
   useEffect(() => {

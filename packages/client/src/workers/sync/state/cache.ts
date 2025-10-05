@@ -80,7 +80,7 @@ export const getEntries = <C extends Components>(
 export const storeEvent = (stateCache: StateCache, event: StateEvent) => {
   const { component, entity, value, blockNumber } = event;
 
-  // Remove the 0 padding from all entityes
+  // Remove the 0 padding from all entities
   const normalizedEntity = formatEntityID(entity);
 
   const { components, entities, componentToIndex, entityToIndex, state } = stateCache;
@@ -173,7 +173,8 @@ export const storeEntities = (stateCache: StateCache, entities: Entity[]) => {
     const index = entity.idx;
     const tail = cacheEntities.length; // current length of cache
     if (index == tail) {
-      const hexID = uint8ArrayToHexString(entity.id);
+      const hexID = formatEntityID(uint8ArrayToHexString(entity.id));
+      // const hexID = uint8ArrayToHexString(entity.id);
       cacheEntities.push(hexID);
       stateCache.entityToIndex.set(hexID, index);
     } else {
