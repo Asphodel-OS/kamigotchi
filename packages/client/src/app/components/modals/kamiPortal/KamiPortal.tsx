@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
@@ -7,8 +7,8 @@ import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from '
 import { getConfigAddress } from 'app/cache/config';
 import { getKami as _getKami, isDead, isHarvesting, onCooldown } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
@@ -25,18 +25,9 @@ export const KamiPortalModal: UIComponent = {
     const layers = useLayers();
 
     const {
-      network: {
-        actions,
-      },
-      data: {
-        kamiNFTAddress,
-        account
-      },
-      utils: {
-        getAccountKamis,
-        getKami,
-        queryKamiByIndex
-      }
+      network: { actions },
+      data: { kamiNFTAddress, account },
+      utils: { getAccountKamis, getKami, queryKamiByIndex },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -54,8 +45,7 @@ export const KamiPortalModal: UIComponent = {
         },
         utils: {
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
-          getKami: (entity: EntityIndex) =>
-            _getKami(world, components, entity, kamiRefreshOptions),
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiRefreshOptions),
           getAccountKamis: (accountEntity: EntityIndex) =>
             _getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
         },

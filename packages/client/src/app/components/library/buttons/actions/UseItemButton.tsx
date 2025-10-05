@@ -1,6 +1,6 @@
-import { World } from '@mud-classic/recs';
 import { cleanInventories, filterInventories, Inventory } from 'app/cache/inventory';
 import { calcCooldown, isHarvesting, Kami } from 'app/cache/kami';
+import { World } from 'engine/recs';
 import { Components } from 'network/components';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';

@@ -1,17 +1,27 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { erc721Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
 
-import { AccountOptions, getAccount as _getAccount, getAccountKamis, getAllAccounts as _getAllAccounts } from 'app/cache/account';
+import {
+  AccountOptions,
+  getAccount as _getAccount,
+  getAllAccounts as _getAllAccounts,
+  getAccountKamis,
+} from 'app/cache/account';
 import { getTempBonuses as _getTempBonuses } from 'app/cache/bonus';
 import { getConfigAddress } from 'app/cache/config';
 import { getKami as _getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
-import { HarvestButton as _HarvestButton, ModalHeader, ModalWrapper, UseItemButton as _UseItemButton } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
+import {
+  ModalHeader,
+  ModalWrapper,
+  HarvestButton as _HarvestButton,
+  UseItemButton as _UseItemButton,
+} from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useSelected, useTokens, useVisibility } from 'app/stores';
 import { BalPair } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
@@ -20,11 +30,15 @@ import { erc721ABI } from 'network/chain/ERC721';
 import {
   Account,
   NullAccount,
-  queryAccountFromEmbedded,
   queryAllAccounts as _queryAllAccounts,
+  queryAccountFromEmbedded,
 } from 'network/shapes/Account';
-import { getItemByIndex, Item, NullItem } from 'network/shapes/Item';
-import { calcKamiExpRequirement, Kami, queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
+import { Item, NullItem, getItemByIndex } from 'network/shapes/Item';
+import {
+  Kami,
+  queryKamiByIndex as _queryKamiByIndex,
+  calcKamiExpRequirement,
+} from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs as _passesNodeReqs } from 'network/shapes/Node';
 import { getCompAddr } from 'network/shapes/utils';
 import { KamiList } from './KamiList';
@@ -37,18 +51,11 @@ export const PartyModal: UIComponent = {
   id: 'PartyModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const {
       network,
-      data: {
-        accountEntity,
-        kamiNFTAddress,
-        spender
-      },
-      display: {
-        HarvestButton,
-        UseItemButton
-      },
+      data: { accountEntity, kamiNFTAddress, spender },
+      display: { HarvestButton, UseItemButton },
       utils: {
         calcExpRequirement,
         getAccount,
@@ -60,25 +67,25 @@ export const PartyModal: UIComponent = {
         getWorldKamis,
         passesNodeReqs,
         queryKamiByIndex,
-        queryAllAccounts
-      }
+        queryAllAccounts,
+      },
     } = (() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const { debug } = useAccount.getState();
-        const { nodeIndex } = useSelected.getState();
-        const accountEntity = queryAccountFromEmbedded(network);
-        const kamiRefreshOptions = {
-          live: 0,
-          bonuses: 5, // set this to 3600 once we get explicit triggers for updates
-          harvest: 5, // set this to 60 once we get explicit triggers for updates
-          progress: 5,
-          skills: 5, // set this to 3600 once we get explicit triggers for updates
-          flags: 10, // set this to 3600 once we get explicit triggers for updates
-          config: 3600,
-          stats: 3600,
-          traits: 3600,
-        };
+      const { network } = layers;
+      const { world, components } = network;
+      const { debug } = useAccount.getState();
+      const { nodeIndex } = useSelected.getState();
+      const accountEntity = queryAccountFromEmbedded(network);
+      const kamiRefreshOptions = {
+        live: 0,
+        bonuses: 5, // set this to 3600 once we get explicit triggers for updates
+        harvest: 5, // set this to 60 once we get explicit triggers for updates
+        progress: 5,
+        skills: 5, // set this to 3600 once we get explicit triggers for updates
+        flags: 10, // set this to 3600 once we get explicit triggers for updates
+        config: 3600,
+        stats: 3600,
+        traits: 3600,
+      };
 
       return {
         network,
@@ -102,8 +109,7 @@ export const PartyModal: UIComponent = {
           getTempBonuses: (kami: Kami) =>
             _getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
           getItem: (index: number) => getItemByIndex(world, components, index),
-          getKami: (entity: EntityIndex) =>
-            _getKami(world, components, entity, kamiRefreshOptions),
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiRefreshOptions),
           getNode: (index: number) => getNodeByIndex(world, components, index),
           getWorldKamis: () =>
             getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
@@ -376,7 +382,7 @@ export const PartyModal: UIComponent = {
           utils={{
             calcExpRequirement,
             getTempBonuses,
-            getAllAccounts
+            getAllAccounts,
           }}
         />
       </ModalWrapper>

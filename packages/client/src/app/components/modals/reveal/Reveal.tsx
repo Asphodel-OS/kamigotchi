@@ -1,6 +1,6 @@
-import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
+import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -16,10 +16,10 @@ export const RevealModal: UIComponent = {
   id: 'RevealModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const {
       network,
-      data: { commits }
+      data: { commits },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;

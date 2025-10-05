@@ -1,4 +1,4 @@
-import { EntityIndex, HasValue, QueryFragment, runQuery, World } from '@mud-classic/recs';
+import { EntityIndex, HasValue, QueryFragment, runQuery, World } from 'engine/recs';
 import { BigNumber } from 'ethers';
 
 import { Components, NetworkLayer } from 'network/';

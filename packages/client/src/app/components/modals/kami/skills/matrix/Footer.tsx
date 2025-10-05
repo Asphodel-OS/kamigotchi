@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';

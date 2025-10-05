@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
 import { getAccount as _getAccount } from 'app/cache/account';
@@ -6,8 +6,8 @@ import { getItemByIndex as _getItemByIndex } from 'app/cache/item';
 import { getKami as _getKami } from 'app/cache/kami';
 import { getRoomByIndex as _getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
 import { Message as KamiMessage } from 'clients/kamiden/proto';
@@ -21,17 +21,11 @@ export const ChatModal: UIComponent = {
   id: 'ChatModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const {
       data: { accountEntity, world, components },
-      utils: {
-        getAccount,
-        getRoomByIndex,
-        getEntityIndex,
-        getKami,
-        getItemByIndex,
-      },
-      network
+      utils: { getAccount, getRoomByIndex, getEntityIndex, getKami, getItemByIndex },
+      network,
     } = (() => {
       const { network } = layers;
       const accountEntity = queryAccountFromEmbedded(network);

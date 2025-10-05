@@ -1,5 +1,5 @@
-import { EntityID } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { EntityID } from 'engine/recs';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getAddress } from 'viem';
@@ -13,11 +13,7 @@ import { ActionButton } from './ActionButton';
 // ActionButton wrapper for token approval/spend flows
 // Overrides onClick with approval flow if approval needed
 export const TokenButton = ({
-  network: {
-    actions,
-    world,
-    components,
-  },
+  network: { actions, world, components },
   token,
   amount,
   ...props

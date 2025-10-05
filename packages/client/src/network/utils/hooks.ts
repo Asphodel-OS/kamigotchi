@@ -6,7 +6,7 @@ import {
   getComponentEntities,
   Schema,
   toUpdate,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 import { ObservableSet } from 'mobx';
 import { useEffect, useMemo, useState } from 'react';
 import { filter, Observable } from 'rxjs';

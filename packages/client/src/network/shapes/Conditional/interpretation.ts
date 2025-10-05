@@ -1,4 +1,4 @@
-import { World } from '@mud-classic/recs';
+import { World } from 'engine/recs';
 import moment from 'moment';
 
 import { getRoomByIndex } from 'app/cache/room';

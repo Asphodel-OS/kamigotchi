@@ -1,4 +1,4 @@
-import { Type, World, defineComponent } from '@mud-classic/recs';
+import { Type, World, defineComponent } from 'engine/recs';
 
 export function defineLoadingStateComponent(world: World) {
   return defineComponent(

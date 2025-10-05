@@ -1,4 +1,7 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
+import { Component as SolecsComponent } from '@mud-classic/solecs';
+import ComponentAbi from '@mud-classic/solecs/abi/Component.json';
+import { toEthAddress } from '@mud-classic/utils';
 import {
   Component,
   Components,
@@ -12,10 +15,7 @@ import {
   setComponent,
   Type,
   World,
-} from '@mud-classic/recs';
-import { Component as SolecsComponent } from '@mud-classic/solecs';
-import ComponentAbi from '@mud-classic/solecs/abi/Component.json';
-import { toEthAddress } from '@mud-classic/utils';
+} from 'engine/recs';
 import { Contract, Signer } from 'ethers';
 import { compact, toLower } from 'lodash';
 import { IComputedValue } from 'mobx';

@@ -1,15 +1,15 @@
-import { EntityIndex } from '@mud-classic/recs';
 import CakeIcon from '@mui/icons-material/Cake';
+import { EntityIndex } from 'engine/recs';
 import moment from 'moment';
 import styled from 'styled-components';
 
 import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
+import { Account as PlayerAccount } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
@@ -19,21 +19,11 @@ import { TwitterPrivyAccountLink } from './TwitterPrivyAccountLink';
 
 export const Header = ({
   account,
-  actions: {
-    setBio,
-    handlePfpChange,
-    requestFren,
-    cancelFren,
-    blockFren,
-    acceptFren,
-  },
+  actions: { setBio, handlePfpChange, requestFren, cancelFren, blockFren, acceptFren },
   isLoading,
   isSelf,
   player,
-  utils: {
-    getAccountKamis,
-    getFriends,
-  },
+  utils: { getAccountKamis, getFriends },
 }: {
   account: Account; // account selected for viewing
   actions: {

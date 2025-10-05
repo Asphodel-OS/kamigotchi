@@ -1,5 +1,5 @@
-import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
 import { packTuple, unpackTuple } from '@mud-classic/utils';
+import { Components, ComponentValue, EntityID, SchemaOf } from 'engine/recs';
 
 import { createDecode } from 'engine/encoders';
 import { BlockResponse, Component, Entity, State } from 'engine/types/kamigaze/kamigaze';

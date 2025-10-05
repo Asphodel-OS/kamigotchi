@@ -6,7 +6,7 @@ import {
   World,
   getComponentValue,
   runQuery,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 
 import { Components } from 'network/components';
 import { Item, NullItem, getItem } from '../Item';

@@ -1,8 +1,8 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { Components, EntityID } from '@mud-classic/recs';
 import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { World } from '@mud-classic/solecs/types/ethers-contracts';
 import { awaitPromise, range, to256BitString } from '@mud-classic/utils';
+import { Components, EntityID } from 'engine/recs';
 import { BigNumber } from 'ethers';
 import { Observable, concatMap, map, of } from 'rxjs';
 

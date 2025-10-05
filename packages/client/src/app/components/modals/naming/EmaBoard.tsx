@@ -1,17 +1,17 @@
-import { v4 as uuid } from 'uuid';
 import { useEffect, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 
-import { EntityID } from '@mud-classic/recs';
 import { getAccount as _getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { BalPair, useTokens } from 'app/stores/tokens';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { HOLY_DUST_INDEX, ONYX_INDEX } from 'constants/items';
+import { EntityID } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami, NullKami } from 'network/shapes/Kami';
@@ -28,40 +28,32 @@ export const EmaBoardModal: UIComponent = {
 
     const {
       network,
-      data: {
-        accountEntity,
-        spender
-      },
-      utils: {
-        getAccount,
-        getKamis,
-        getItemBalance,
-        getItem,
-      }
+      data: { accountEntity, spender },
+      utils: { getAccount, getKamis, getItemBalance, getItem },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
+      const accountEntity = queryAccountFromEmbedded(network);
 
-        return {
-          network,
-          data: {
-            accountEntity,
-            spender: getCompAddr(world, components, 'component.token.allowance'),
-          },
-          utils: {
-            getAccount: () =>
-              _getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
-            getKamis: () =>
-              getAccountKamis(world, components, accountEntity, {
-                base: 2,
-                live: 2,
-                progress: 3600,
-              }),
-            getItemBalance: (inventory: Inventory[], index: number) =>
-              getInventoryBalance(inventory, index),
-            getItem: (index: number) => getItemByIndex(world, components, index),
-          },
+      return {
+        network,
+        data: {
+          accountEntity,
+          spender: getCompAddr(world, components, 'component.token.allowance'),
+        },
+        utils: {
+          getAccount: () =>
+            _getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
+          getKamis: () =>
+            getAccountKamis(world, components, accountEntity, {
+              base: 2,
+              live: 2,
+              progress: 3600,
+            }),
+          getItemBalance: (inventory: Inventory[], index: number) =>
+            getInventoryBalance(inventory, index),
+          getItem: (index: number) => getItemByIndex(world, components, index),
+        },
       };
     })();
 

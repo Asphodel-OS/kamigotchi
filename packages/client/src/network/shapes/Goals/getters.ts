@@ -1,4 +1,4 @@
-import { EntityID, HasValue, runQuery, World } from '@mud-classic/recs';
+import { EntityID, HasValue, runQuery, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { Account } from '../Account';

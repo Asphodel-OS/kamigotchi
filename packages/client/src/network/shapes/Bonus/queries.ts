@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
+import { EntityID, EntityIndex, HasValue, QueryFragment, runQuery } from 'engine/recs';
 import { Components } from 'network/';
 import { hashArgs, queryChildrenOf } from '../utils';
 import { genEndAnchor } from './types';

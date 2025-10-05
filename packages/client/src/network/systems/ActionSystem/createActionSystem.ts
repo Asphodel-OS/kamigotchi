@@ -8,7 +8,7 @@ import {
   removeComponent,
   setComponent,
   updateComponent,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 import { Observable } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { defineActionComponent } from './ActionComponent';

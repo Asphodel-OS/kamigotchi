@@ -1,5 +1,5 @@
-import { World } from '@mud-classic/recs';
 import * as placeholder from 'assets/images/icons/placeholder.png';
+import { World } from 'engine/recs';
 import { Components } from 'network/components';
 import { Allo } from '.';
 import { getBonusesByParent, parseBonusText } from '../Bonus';

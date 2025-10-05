@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from 'engine/recs';
 import { Components } from 'network/';
 import { getFor } from '../utils/component';
 

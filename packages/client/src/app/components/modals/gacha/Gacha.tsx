@@ -1,10 +1,10 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { useLayers } from 'app/root/hooks';
 
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
@@ -12,9 +12,9 @@ import { GachaMintConfig, getGachaMintConfig } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { getKami as _getKami } from 'app/cache/kami';
-import { useDevControls } from 'app/stores/devControls';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useNetwork, useVisibility } from 'app/stores';
+import { useDevControls } from 'app/stores/devControls';
 import { GACHA_ID } from 'constants/gacha';
 import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -35,460 +35,453 @@ const KamiBlockCache = new Map<EntityIndex, JSX.Element>();
 export const GachaModal: UIComponent = {
   id: 'Gacha',
   Render: () => {
-      const layers = useLayers();
+    const layers = useLayers();
 
-      const {
+    const {
+      network,
+      data: { accountEntity, commits, poolKamis },
+      tokens: { spenderAddr },
+      utils: {
+        getAccount,
+        getAccountKamis,
+        getAuction,
+        getItem,
+        getItemBalance,
+        getKami,
+        getMintConfig,
+        getMintData,
+        isWhitelisted,
+      },
+    } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const accountID = world.entities[accountEntity];
+      const accountOptions = { inventories: 2, live: 2 };
+      const auctionOptions = { items: 3600, balance: 1 };
+      const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
+
+      return {
         network,
         data: {
           accountEntity,
-          commits,
-          poolKamis
+          commits: getGachaCommits(world, components, accountID),
+          poolKamis: queryKamis(components, { account: GACHA_ID }),
         },
         tokens: {
-          spenderAddr
+          spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
         },
         utils: {
-          getAccount,
-          getAccountKamis,
-          getAuction,
-          getItem,
-          getItemBalance,
-          getKami,
-          getMintConfig,
-          getMintData,
-          isWhitelisted
+          getAccount: () => _getAccount(world, components, accountEntity, accountOptions),
+          getAccountKamis: () => _getAccountKamis(world, components, accountEntity, kamiOptions),
+          getAuction: (itemIndex: number) =>
+            getAuctionByIndex(world, components, itemIndex, auctionOptions),
+          getItem: (index: number) => getItemByIndex(world, components, index),
+          getItemBalance: (inventories: Inventory[], index: number) =>
+            getInventoryBalance(inventories, index),
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiOptions, false),
+          getMintConfig: () => getGachaMintConfig(world, components),
+          getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
+          isWhitelisted: (entity: EntityIndex) =>
+            hasFlag(world, components, entity, 'MINT_WHITELISTED'),
+        },
+      };
+    })();
+
+    const { actions, world, api } = network;
+
+    const setModals = useVisibility((s) => s.setModals);
+    const gachaModalVisible = useVisibility((s) => s.modals.gacha);
+    const { selectedAddress, apis } = useNetwork();
+
+    // modal controls
+    const [tab, setTab] = useState<TabType>('GACHA');
+    const [mode, setMode] = useState<ViewMode>('DEFAULT');
+    const [filters, setFilters] = useState<Filter[]>([]);
+    const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
+
+    // general data
+    const [account, setAccount] = useState<Account>(NullAccount);
+
+    // auction data
+    const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
+    const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
+
+    // mint data
+    const [mintConfig, _] = useState<GachaMintConfig>(getMintConfig());
+    const [accountMintData, setAccountMintData] = useState(getMintData(account.id));
+    const [gachaMintData, setGachaMintData] = useState(getMintData('0' as EntityID));
+    const [whitelisted, setWhitelisted] = useState(isWhitelisted(account.entity));
+
+    // modal state
+    const [quantity, setQuantity] = useState(1);
+    const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
+    const [tick, setTick] = useState(Date.now());
+    const [triedReveal, setTriedReveal] = useState(true);
+    const [waitingToReveal, setWaitingToReveal] = useState(false);
+
+    /////////////////
+    // DEV CONTROL LISTENER
+    const { lastEvent } = useDevControls();
+    useEffect(() => {
+      try {
+        if (!lastEvent) return;
+        if (lastEvent.target !== 'gacha' && lastEvent.target !== 'global') return;
+        if (lastEvent.type === 'set') {
+          const p = lastEvent.payload || {};
+          if (p.tab) setTab(p.tab as TabType);
+          if (p.mode) setMode(p.mode as ViewMode);
+          if (typeof p.quantity === 'number') setQuantity(p.quantity);
+        } else if (lastEvent.type === 'tab' && lastEvent.payload) {
+          setTab(lastEvent.payload as TabType);
+        } else if (lastEvent.type === 'mode' && lastEvent.payload) {
+          setMode(lastEvent.payload as ViewMode);
+        } else if (lastEvent.type === 'quantity' && typeof lastEvent.payload === 'number') {
+          setQuantity(lastEvent.payload);
+        } else if (lastEvent.type === 'toggle') {
+          // simple toggle between DEFAULT/ALT for quick testing
+          setMode((m) => (m === 'DEFAULT' ? 'ALT' : 'DEFAULT'));
         }
-      } = (() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const accountID = world.entities[accountEntity];
-        const accountOptions = { inventories: 2, live: 2 };
-        const auctionOptions = { items: 3600, balance: 1 };
-        const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
+      } catch (e) {
+        console.warn('[GachaModal] dev control failed', e);
+      }
+    }, [lastEvent?.token]);
 
-        return {
-          network,
-          data: {
-            accountEntity,
-            commits: getGachaCommits(world, components, accountID),
-            poolKamis: queryKamis(components, { account: GACHA_ID }),
-          },
-          tokens: {
-            spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
-          },
-          utils: {
-            getAccount: () => _getAccount(world, components, accountEntity, accountOptions),
-            getAccountKamis: () => _getAccountKamis(world, components, accountEntity, kamiOptions),
-            getAuction: (itemIndex: number) =>
-              getAuctionByIndex(world, components, itemIndex, auctionOptions),
-            getItem: (index: number) => getItemByIndex(world, components, index),
-            getItemBalance: (inventories: Inventory[], index: number) =>
-              getInventoryBalance(inventories, index),
-            getKami: (entity: EntityIndex) =>
-              _getKami(world, components, entity, kamiOptions, false),
-            getMintConfig: () => getGachaMintConfig(world, components),
-            getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
-            isWhitelisted: (entity: EntityIndex) =>
-              hasFlag(world, components, entity, 'MINT_WHITELISTED'),
-          },
-        };
-      })();
+    /////////////////
+    // SUBSCRIPTIONS
 
-      const { actions, world, api } = network;
+    // ticking
+    useEffect(() => {
+      setAccount(getAccount());
 
-      const setModals = useVisibility((s) => s.setModals);
-      const gachaModalVisible = useVisibility((s) => s.modals.gacha);
-      const { selectedAddress, apis } = useNetwork();
+      const tick = () => setTick(Date.now());
+      const timerID = setInterval(tick, 1000);
+      return () => clearInterval(timerID);
+    }, []);
 
-      // modal controls
-      const [tab, setTab] = useState<TabType>('GACHA');
-      const [mode, setMode] = useState<ViewMode>('DEFAULT');
-      const [filters, setFilters] = useState<Filter[]>([]);
-      const [sorts, setSorts] = useState<Sort[]>([DefaultSorts[0]]);
+    // update the data when the modal is open
+    useEffect(() => {
+      if (!gachaModalVisible) return;
+      const account = getAccount();
+      setAccount(account);
 
-      // general data
-      const [account, setAccount] = useState<Account>(NullAccount);
+      if (tab === 'GACHA' && mode === 'ALT') {
+        const auction = getAuction(GACHA_TICKET_INDEX);
+        setGachaAuction(auction);
+      } else if (tab === 'REROLL' && mode === 'ALT') {
+        const auction = getAuction(REROLL_TICKET_INDEX);
+        setRerollAuction(auction);
+      } else if (tab === 'MINT') {
+        setAccountMintData(getMintData(account.id));
+        setGachaMintData(getMintData('0' as EntityID));
+        setWhitelisted(isWhitelisted(account.entity));
+      }
+    }, [gachaModalVisible, tab, mode, accountEntity, tick]);
 
-      // auction data
-      const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
-      const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
+    // open the party modal when the reveal is triggered
+    useEffect(() => {
+      if (!waitingToReveal) return;
+      setModals({ party: true });
+      setWaitingToReveal(false);
+    }, [waitingToReveal]);
 
-      // mint data
-      const [mintConfig, _] = useState<GachaMintConfig>(getMintConfig());
-      const [accountMintData, setAccountMintData] = useState(getMintData(account.id));
-      const [gachaMintData, setGachaMintData] = useState(getMintData('0' as EntityID));
-      const [whitelisted, setWhitelisted] = useState(isWhitelisted(account.entity));
-
-      // modal state
-      const [quantity, setQuantity] = useState(1);
-      const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
-      const [tick, setTick] = useState(Date.now());
-      const [triedReveal, setTriedReveal] = useState(true);
-      const [waitingToReveal, setWaitingToReveal] = useState(false);
-
-      /////////////////
-      // DEV CONTROL LISTENER
-      const { lastEvent } = useDevControls();
-      useEffect(() => {
-        try {
-          if (!lastEvent) return;
-          if (lastEvent.target !== 'gacha' && lastEvent.target !== 'global') return;
-          if (lastEvent.type === 'set') {
-            const p = lastEvent.payload || {};
-            if (p.tab) setTab(p.tab as TabType);
-            if (p.mode) setMode(p.mode as ViewMode);
-            if (typeof p.quantity === 'number') setQuantity(p.quantity);
-          } else if (lastEvent.type === 'tab' && lastEvent.payload) {
-            setTab(lastEvent.payload as TabType);
-          } else if (lastEvent.type === 'mode' && lastEvent.payload) {
-            setMode(lastEvent.payload as ViewMode);
-          } else if (lastEvent.type === 'quantity' && typeof lastEvent.payload === 'number') {
-            setQuantity(lastEvent.payload);
-          } else if (lastEvent.type === 'toggle') {
-            // simple toggle between DEFAULT/ALT for quick testing
-            setMode((m) => (m === 'DEFAULT' ? 'ALT' : 'DEFAULT'));
+    // reveal gacha result(s) when the number of commits changes
+    // Q(jb): is it necessary to run this as an async
+    // We should pass over a function for
+    useEffect(() => {
+      const tx = async () => {
+        const filtered = filterRevealableCommits(commits);
+        if (!triedReveal && filtered.length > 0) {
+          try {
+            // wait to give buffer for rpc
+            await new Promise((resolve) => setTimeout(resolve, 750));
+            revealTx(filtered);
+            setTriedReveal(true);
+          } catch (e) {
+            console.log('Gacha.tsx: handlePull() reveal failed', e);
           }
-        } catch (e) {
-          console.warn('[GachaModal] dev control failed', e);
         }
-      }, [lastEvent?.token]);
-
-      /////////////////
-      // SUBSCRIPTIONS
-
-      // ticking
-      useEffect(() => {
-        setAccount(getAccount());
-
-        const tick = () => setTick(Date.now());
-        const timerID = setInterval(tick, 1000);
-        return () => clearInterval(timerID);
-      }, []);
-
-      // update the data when the modal is open
-      useEffect(() => {
-        if (!gachaModalVisible) return;
-        const account = getAccount();
-        setAccount(account);
-
-        if (tab === 'GACHA' && mode === 'ALT') {
-          const auction = getAuction(GACHA_TICKET_INDEX);
-          setGachaAuction(auction);
-        } else if (tab === 'REROLL' && mode === 'ALT') {
-          const auction = getAuction(REROLL_TICKET_INDEX);
-          setRerollAuction(auction);
-        } else if (tab === 'MINT') {
-          setAccountMintData(getMintData(account.id));
-          setGachaMintData(getMintData('0' as EntityID));
-          setWhitelisted(isWhitelisted(account.entity));
-        }
-      }, [gachaModalVisible, tab, mode, accountEntity, tick]);
-
-      // open the party modal when the reveal is triggered
-      useEffect(() => {
-        if (!waitingToReveal) return;
-        setModals({ party: true });
-        setWaitingToReveal(false);
-      }, [waitingToReveal]);
-
-      // reveal gacha result(s) when the number of commits changes
-      // Q(jb): is it necessary to run this as an async
-      // We should pass over a function for
-      useEffect(() => {
-        const tx = async () => {
-          const filtered = filterRevealableCommits(commits);
-          if (!triedReveal && filtered.length > 0) {
-            try {
-              // wait to give buffer for rpc
-              await new Promise((resolve) => setTimeout(resolve, 750));
-              revealTx(filtered);
-              setTriedReveal(true);
-            } catch (e) {
-              console.log('Gacha.tsx: handlePull() reveal failed', e);
-            }
-          }
-        };
-
-        tx();
-      }, [commits]);
-
-      /////////////////
-      // ACTIONS
-
-      // purchase an item from auction
-      const auctionTx = async (item: Item, amt: number) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'AuctionBuy',
-          params: [item.index, amt],
-          description: `Buying ${amt} ${item.name} from auction`,
-          execute: async () => {
-            return api.auction.buy(item.index, amt);
-          },
-        });
-
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
       };
 
-      // approve the spend of an ERC20 token
-      const approveTx = async (payItem: Item, price: number) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
+      tx();
+    }, [commits]);
 
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'Approve token',
-          params: [payItem.address, spenderAddr, price],
-          description: `Approve ${price} ${payItem.name} to be spent`,
-          execute: async () => {
-            return api.erc20.approve(payItem.address!, spenderAddr, price);
-          },
-        });
-      };
+    /////////////////
+    // ACTIONS
 
-      // mint a Gacha Ticket from the WL Mint
-      const mintWLTx = () => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
+    // purchase an item from auction
+    const auctionTx = async (item: Item, amt: number) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+      const actionID = uuid() as EntityID;
+      actions!.add({
+        id: actionID,
+        action: 'AuctionBuy',
+        params: [item.index, amt],
+        description: `Buying ${amt} ${item.name} from auction`,
+        execute: async () => {
+          return api.auction.buy(item.index, amt);
+        },
+      });
 
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'GachaMintWL',
-          params: [],
-          description: `Acquiring Gacha Ticket from the WL Mint`,
-          execute: async () => {
-            return api.gacha.tickets.buy.whitelist();
-          },
-        });
-        return actionID;
-      };
-
-      // mint a Gacha Ticket from the Public Mint
-      const mintPublicTx = (amount: number) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'GachaMintPublic',
-          params: [amount],
-          description: `Acquiring ${amount} Gacha Tickets from the Public Mint`,
-          execute: async () => {
-            return api.gacha.tickets.buy.public(amount);
-          },
-        });
-        return actionID;
-      };
-
-      // pull a pet from gacha with a Gacha Ticket
-      const pullTx = (amount: number) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'KamiMint',
-          params: [amount],
-          description: `Minting ${amount} Kami`,
-          execute: async () => {
-            return api.gacha.pet.mint(amount);
-          },
-        });
-        return actionID;
-      };
-
-      // reroll a pet with a Reroll Ticket
-      const rerollTx = (kamis: Kami[]) => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'KamiReroll',
-          params: [kamis.map((n) => n.name)],
-          description: `Rerolling ${kamis.length} Kami`,
-          execute: async () => {
-            return api.gacha.pet.reroll(kamis.map((n) => n.id));
-          },
-        });
-        return actionID;
-      };
-
-      // reveal gacha result(s)
-      const revealTx = async (commits: Commit[]) => {
-        const toReveal = commits.slice(0, 5).map((n) => n.id); // reveal 5 at a time
-        const actionID = uuid() as EntityID;
-        actions!.add({
-          id: actionID,
-          action: 'KamiReveal',
-          params: commits,
-          description: `Revealing ${commits.length} Gacha rolls`,
-          execute: async () => {
-            return api.player.gacha.pet.reveal(toReveal);
-          },
-        });
-
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
-      };
-
-      ///////////////
-      // HANDLERS
-
-      // reset mode and quantity on tab change
-      const handleSetTab = (tab: TabType) => {
-        setTab(tab);
-        setMode('DEFAULT');
-        if (tab !== 'REROLL') setQuantity(1);
-        else setQuantity(0);
-      };
-
-      // reset quantity on mode change
-      const handleSetMode = (mode: ViewMode) => {
-        setMode(mode);
-        setQuantity(1);
-      };
-
-      const handlePull = async (amount: number) => {
-        try {
-          setWaitingToReveal(true);
-          const mintActionID = pullTx(amount);
-          if (!mintActionID) throw new Error('Mint reveal failed');
-
-          await waitForActionCompletion(
-            actions!.Action,
-            world.entityToIndex.get(mintActionID) as EntityIndex
-          );
-          setTriedReveal(false);
-          playVend();
-          return true;
-        } catch (e) {
-          console.log('Gacha: handlePull() failed', e);
-        }
-        return false;
-      };
-
-      const handleReroll = async (kamis: Kami[]) => {
-        if (kamis.length === 0) return false;
-        try {
-          setWaitingToReveal(true);
-          const rerollActionID = rerollTx(kamis);
-          if (!rerollActionID) throw new Error('Reroll action failed');
-
-          await waitForActionCompletion(
-            actions!.Action,
-            world.entityToIndex.get(rerollActionID) as EntityIndex
-          );
-          setTriedReveal(false);
-          playVend();
-          return true;
-        } catch (e) {
-          console.log('Gacha: handleReroll() failed', e);
-        }
-        return false;
-      };
-
-      ///////////////
-      // DISPLAY
-
-      return (
-        <ModalWrapper
-          id='gacha'
-          header={
-            <ModalHeader
-              title={`Gacha (${poolKamis.length} kamis in pool)`}
-              icon={MYSTERY_KAMI_GIF}
-            />
-          }
-          canExit
-          noPadding
-          overlay
-        >
-          <Container>
-            <Display
-              caches={{ kamiBlocks: KamiBlockCache }}
-              controls={{ mode, setMode: handleSetMode, tab, filters, sorts }}
-              data={{
-                poolKamis,
-                account,
-                auctions: { gacha: gachaAuction, reroll: rerollAuction },
-                mint: {
-                  config: mintConfig,
-                  data: {
-                    account: accountMintData,
-                    gacha: gachaMintData,
-                  },
-                  whitelisted: whitelisted,
-                },
-              }}
-              state={{ setQuantity, selectedKamis, setSelectedKamis, tick }}
-              utils={{  
-                getKami,
-                getAccountKamis,
-                getMintConfig,
-                getMintData
-              }}
-            />
-            <Sidebar
-              actions={{
-                approve: approveTx,
-                bid: auctionTx,
-                mintPublic: mintPublicTx,
-                mintWL: mintWLTx,
-                pull: handlePull,
-                reroll: handleReroll,
-                reveal: revealTx,
-              }}
-              controls={{
-                mode,
-                setMode: handleSetMode,
-                tab,
-                setTab: handleSetTab,
-                filters,
-                setFilters,
-                sorts,
-                setSorts,
-              }}
-              data={{
-                commits,
-                inventories: account.inventories ?? [],
-                auctions: { gacha: gachaAuction, reroll: rerollAuction },
-                mint: {
-                  config: mintConfig,
-                  data: { account: accountMintData, gacha: gachaMintData },
-                  whitelisted, // whether the account is whitelisted for mint
-                },
-              }}
-              state={{
-                quantity,
-                setQuantity,
-                selectedKamis,
-                setSelectedKamis,
-                tick,
-              }}
-              utils={{
-                getItem,
-                getItemBalance: (index: number) => getItemBalance(account.inventories ?? [], index),
-                isWhitelisted
-              }}
-            />
-          </Container>
-        </ModalWrapper>
+      await waitForActionCompletion(
+        actions!.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
       );
+    };
+
+    // approve the spend of an ERC20 token
+    const approveTx = async (payItem: Item, price: number) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'Approve token',
+        params: [payItem.address, spenderAddr, price],
+        description: `Approve ${price} ${payItem.name} to be spent`,
+        execute: async () => {
+          return api.erc20.approve(payItem.address!, spenderAddr, price);
+        },
+      });
+    };
+
+    // mint a Gacha Ticket from the WL Mint
+    const mintWLTx = () => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions!.add({
+        id: actionID,
+        action: 'GachaMintWL',
+        params: [],
+        description: `Acquiring Gacha Ticket from the WL Mint`,
+        execute: async () => {
+          return api.gacha.tickets.buy.whitelist();
+        },
+      });
+      return actionID;
+    };
+
+    // mint a Gacha Ticket from the Public Mint
+    const mintPublicTx = (amount: number) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions!.add({
+        id: actionID,
+        action: 'GachaMintPublic',
+        params: [amount],
+        description: `Acquiring ${amount} Gacha Tickets from the Public Mint`,
+        execute: async () => {
+          return api.gacha.tickets.buy.public(amount);
+        },
+      });
+      return actionID;
+    };
+
+    // pull a pet from gacha with a Gacha Ticket
+    const pullTx = (amount: number) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions!.add({
+        id: actionID,
+        action: 'KamiMint',
+        params: [amount],
+        description: `Minting ${amount} Kami`,
+        execute: async () => {
+          return api.gacha.pet.mint(amount);
+        },
+      });
+      return actionID;
+    };
+
+    // reroll a pet with a Reroll Ticket
+    const rerollTx = (kamis: Kami[]) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions!.add({
+        id: actionID,
+        action: 'KamiReroll',
+        params: [kamis.map((n) => n.name)],
+        description: `Rerolling ${kamis.length} Kami`,
+        execute: async () => {
+          return api.gacha.pet.reroll(kamis.map((n) => n.id));
+        },
+      });
+      return actionID;
+    };
+
+    // reveal gacha result(s)
+    const revealTx = async (commits: Commit[]) => {
+      const toReveal = commits.slice(0, 5).map((n) => n.id); // reveal 5 at a time
+      const actionID = uuid() as EntityID;
+      actions!.add({
+        id: actionID,
+        action: 'KamiReveal',
+        params: commits,
+        description: `Revealing ${commits.length} Gacha rolls`,
+        execute: async () => {
+          return api.player.gacha.pet.reveal(toReveal);
+        },
+      });
+
+      await waitForActionCompletion(
+        actions!.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
+      );
+    };
+
+    ///////////////
+    // HANDLERS
+
+    // reset mode and quantity on tab change
+    const handleSetTab = (tab: TabType) => {
+      setTab(tab);
+      setMode('DEFAULT');
+      if (tab !== 'REROLL') setQuantity(1);
+      else setQuantity(0);
+    };
+
+    // reset quantity on mode change
+    const handleSetMode = (mode: ViewMode) => {
+      setMode(mode);
+      setQuantity(1);
+    };
+
+    const handlePull = async (amount: number) => {
+      try {
+        setWaitingToReveal(true);
+        const mintActionID = pullTx(amount);
+        if (!mintActionID) throw new Error('Mint reveal failed');
+
+        await waitForActionCompletion(
+          actions!.Action,
+          world.entityToIndex.get(mintActionID) as EntityIndex
+        );
+        setTriedReveal(false);
+        playVend();
+        return true;
+      } catch (e) {
+        console.log('Gacha: handlePull() failed', e);
+      }
+      return false;
+    };
+
+    const handleReroll = async (kamis: Kami[]) => {
+      if (kamis.length === 0) return false;
+      try {
+        setWaitingToReveal(true);
+        const rerollActionID = rerollTx(kamis);
+        if (!rerollActionID) throw new Error('Reroll action failed');
+
+        await waitForActionCompletion(
+          actions!.Action,
+          world.entityToIndex.get(rerollActionID) as EntityIndex
+        );
+        setTriedReveal(false);
+        playVend();
+        return true;
+      } catch (e) {
+        console.log('Gacha: handleReroll() failed', e);
+      }
+      return false;
+    };
+
+    ///////////////
+    // DISPLAY
+
+    return (
+      <ModalWrapper
+        id='gacha'
+        header={
+          <ModalHeader
+            title={`Gacha (${poolKamis.length} kamis in pool)`}
+            icon={MYSTERY_KAMI_GIF}
+          />
+        }
+        canExit
+        noPadding
+        overlay
+      >
+        <Container>
+          <Display
+            caches={{ kamiBlocks: KamiBlockCache }}
+            controls={{ mode, setMode: handleSetMode, tab, filters, sorts }}
+            data={{
+              poolKamis,
+              account,
+              auctions: { gacha: gachaAuction, reroll: rerollAuction },
+              mint: {
+                config: mintConfig,
+                data: {
+                  account: accountMintData,
+                  gacha: gachaMintData,
+                },
+                whitelisted: whitelisted,
+              },
+            }}
+            state={{ setQuantity, selectedKamis, setSelectedKamis, tick }}
+            utils={{
+              getKami,
+              getAccountKamis,
+              getMintConfig,
+              getMintData,
+            }}
+          />
+          <Sidebar
+            actions={{
+              approve: approveTx,
+              bid: auctionTx,
+              mintPublic: mintPublicTx,
+              mintWL: mintWLTx,
+              pull: handlePull,
+              reroll: handleReroll,
+              reveal: revealTx,
+            }}
+            controls={{
+              mode,
+              setMode: handleSetMode,
+              tab,
+              setTab: handleSetTab,
+              filters,
+              setFilters,
+              sorts,
+              setSorts,
+            }}
+            data={{
+              commits,
+              inventories: account.inventories ?? [],
+              auctions: { gacha: gachaAuction, reroll: rerollAuction },
+              mint: {
+                config: mintConfig,
+                data: { account: accountMintData, gacha: gachaMintData },
+                whitelisted, // whether the account is whitelisted for mint
+              },
+            }}
+            state={{
+              quantity,
+              setQuantity,
+              selectedKamis,
+              setSelectedKamis,
+              tick,
+            }}
+            utils={{
+              getItem,
+              getItemBalance: (index: number) => getItemBalance(account.inventories ?? [], index),
+              isWhitelisted,
+            }}
+          />
+        </Container>
+      </ModalWrapper>
+    );
   },
 };
 

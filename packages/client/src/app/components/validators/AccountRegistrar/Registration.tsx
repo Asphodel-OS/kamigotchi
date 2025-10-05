@@ -1,5 +1,5 @@
-import { EntityID } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
+import { EntityID } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 

@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 

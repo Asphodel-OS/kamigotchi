@@ -1,5 +1,5 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
 import { getAccount as _getAccount, getAccountKamis } from 'app/cache/account';

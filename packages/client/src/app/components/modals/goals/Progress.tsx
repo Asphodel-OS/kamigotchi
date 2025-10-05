@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -57,12 +57,7 @@ export const Progress = ({
             indicator
           />
         </div>
-        <ActionBar
-          actions={actions}
-          account={account}
-          goal={goal}
-          utils={utils}
-        />
+        <ActionBar actions={actions} account={account} goal={goal} utils={utils} />
       </Row>
       <SubText>{contributedAmtText}</SubText>
     </Container>

@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { Dispatch, useEffect, useState } from 'react';
 
 import { calcTradeTax } from 'app/cache/trade';

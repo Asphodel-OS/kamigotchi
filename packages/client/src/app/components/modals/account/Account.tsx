@@ -1,5 +1,5 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { useEffect, useState } from 'react';
 

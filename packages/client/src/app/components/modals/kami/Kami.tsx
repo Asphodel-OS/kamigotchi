@@ -1,5 +1,5 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useLayers } from 'app/root/hooks';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
