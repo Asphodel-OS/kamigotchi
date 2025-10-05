@@ -1,4 +1,4 @@
-import { keccak256 as keccak256Bytes, toUtf8Bytes } from 'ethers/lib/utils';
+import { keccak256 as keccak256Bytes, toUtf8Bytes } from 'ethers';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { contractsDir, deployConfigPath } from './paths';

@@ -1,6 +1,5 @@
-import { JsonRpcProvider, Provider } from '@ethersproject/providers';
 import dotenv from 'dotenv';
-import { ethers } from 'ethers';
+import { ethers, JsonRpcProvider, Provider } from 'ethers';
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 ///////////////

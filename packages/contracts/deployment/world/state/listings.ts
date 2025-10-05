@@ -1,4 +1,3 @@
-import { BigNumberish } from 'ethers';
 import { AdminAPI } from '../api';
 import { generateRegID, getSheet, readFile } from './utils';
 
@@ -81,9 +80,9 @@ export async function initListings(api: AdminAPI, indices?: number[], all?: bool
       const reqIndex = Number(req['Index'] ?? 0);
 
       // determine the value
-      let reqValue: BigNumberish;
+      let reqValue: string;
       const reqValueRaw = req['Value'];
-      if (reqValueRaw) reqValue = Number(reqValueRaw);
+      if (reqValueRaw) reqValue = reqValueRaw;
       else {
         const reqValueField = String(req['ValueField']);
         const reqValueIndex = Number(req['ValueIndex']);
@@ -153,7 +152,7 @@ export const setRequirement = async (
   conditionType: string,
   logicType: string,
   index: number,
-  value: BigNumberish
+  value: string | number
 ) => {
   await api.listing.set.requirement(
     npcIndex,
