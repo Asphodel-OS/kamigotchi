@@ -1,4 +1,3 @@
-import '@ethersproject/abstract-provider'; // we really need to figure out why this is necessary
 import { keccak256 } from '@mud-classic/utils';
 import { abi as WorldAbi } from 'abi/World.json';
 import { Metadata, Type, World, defineComponent } from 'engine/recs';

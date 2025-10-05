@@ -21,7 +21,6 @@ import {
 import { subscribeToFeed, subscribeToMessages } from 'clients/kamiden/subscriptions';
 import { rooms } from 'constants/rooms';
 import { formatEntityID } from 'engine/utils';
-import { BigNumber } from 'ethers';
 import { Room } from 'network/shapes/Room';
 import { ActionSystem } from 'network/systems';
 import { playClick } from 'utils/sounds';
@@ -153,8 +152,8 @@ export const Feed = ({
       // process Harvest Liquidate events
       feed.Kills.forEach((kill: KillEvent) => {
         pushBattles(kill);
-        const killer = getKami(getEntityIndex(formatEntityID(BigNumber.from(kill.KillerId))));
-        const victim = getKami(getEntityIndex(formatEntityID(BigNumber.from(kill.VictimId))));
+        const killer = getKami(getEntityIndex(formatEntityID(kill.KillerId)));
+        const victim = getKami(getEntityIndex(formatEntityID(kill.VictimId)));
         const room = getRoomByIndex(kill.RoomIndex);
 
         feedMessage.push(
@@ -181,8 +180,8 @@ export const Feed = ({
 
       // process Item Cast events
       feed.KamiCasts.forEach((cast: CastEvent) => {
-        const caster = getAccount(getEntityIndex(formatEntityID(BigNumber.from(cast.AccountID))));
-        const victim = getKami(getEntityIndex(formatEntityID(BigNumber.from(cast.TargetID))));
+        const caster = getAccount(getEntityIndex(formatEntityID(cast.AccountID)));
+        const victim = getKami(getEntityIndex(formatEntityID(cast.TargetID)));
         const item = getItemByIndex(cast.itemIndex);
         const room = getRoomByIndex(cast.nodeIndex);
 

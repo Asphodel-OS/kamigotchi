@@ -2,7 +2,6 @@ import { EntityID, World } from 'engine/recs';
 
 import { Trade as TradeHistory } from 'clients/kamiden/proto';
 import { formatEntityID } from 'engine/utils';
-import { BigNumber } from 'ethers';
 import { Components } from 'network/';
 import {
   getTradeHistory,
@@ -42,7 +41,7 @@ export const processHistory = (
 
 // manages non live trades
 export const getHistory = (world: World, comps: Components, tradeHistory: TradeHistory): Trade => {
-  const id: EntityID = formatEntityID(BigNumber.from(tradeHistory.TradeId));
+  const id: EntityID = formatEntityID(tradeHistory.TradeId);
   if (!HistoryUpdated.has(id)) {
     processHistory(world, comps, tradeHistory, id);
   }

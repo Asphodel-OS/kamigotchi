@@ -1,6 +1,5 @@
-import { Result } from '@ethersproject/abi';
 import { Components, ComponentValue, EntityID, SchemaOf } from 'engine/recs';
-import { BigNumber, ContractInterface } from 'ethers';
+import { Interface, Result } from 'ethers';
 
 import { ProviderConfig } from 'engine/providers';
 import { Contracts } from 'engine/types';
@@ -8,7 +7,7 @@ import { TxMetadata } from 'engine/types/ecs-stream/ecs-stream';
 
 export type ContractConfig = {
   address: string;
-  abi: ContractInterface;
+  abi: Interface;
 };
 
 export type ContractsConfig<C extends Contracts> = {
@@ -41,7 +40,7 @@ export type SystemCallTransaction = {
   hash: string;
   to: string;
   data: string;
-  value: BigNumber;
+  value: bigint;
 };
 
 export type SystemCall<C extends Components = Components> = {

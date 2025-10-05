@@ -1,5 +1,4 @@
 import { World } from 'engine/recs';
-import { BigNumber } from 'ethers';
 
 import { Trade as TradeHistory } from 'clients/kamiden/proto';
 import { formatEntityID } from 'engine/utils';
@@ -24,7 +23,7 @@ export const getTradeHistory = (
   tradeHistory: TradeHistory,
   options?: Options
 ): Trade => {
-  const id = formatEntityID(BigNumber.from(tradeHistory.TradeId));
+  const id = formatEntityID(tradeHistory.TradeId);
 
   const tradeEntity = world.entityToIndex.get(id)!;
   const trade: Trade = {
@@ -36,12 +35,12 @@ export const getTradeHistory = (
   };
 
   if (options?.maker) {
-    const makerID = formatEntityID(BigNumber.from(tradeHistory.MakerId));
+    const makerID = formatEntityID(tradeHistory.MakerId);
     trade.maker = getAccountByID(world, comps, makerID);
   }
 
   if (options?.taker) {
-    const takerID = formatEntityID(BigNumber.from(tradeHistory.TakerId));
+    const takerID = formatEntityID(tradeHistory.TakerId);
     trade.taker = getAccountByID(world, comps, takerID);
   }
 

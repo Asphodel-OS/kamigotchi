@@ -1,6 +1,5 @@
-import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { Cached } from '@mud-classic/utils';
-import { CallOverrides } from 'ethers';
+import { CallOverrides, TransactionReceipt, TransactionRequest } from 'ethers';
 
 import { Contracts } from 'engine/types';
 

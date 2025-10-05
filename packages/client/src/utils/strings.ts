@@ -1,9 +1,8 @@
 import { formatEntityID } from 'engine/utils';
-import { BigNumber } from 'ethers';
 
 // parse an ID into an EntityID
 export const parseID = (id: string) => {
-  return formatEntityID(BigNumber.from(id));
+  return formatEntityID(id);
 };
 
 // abbreviate a string to a given length with ellipses

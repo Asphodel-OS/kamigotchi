@@ -1,5 +1,5 @@
 import { ComponentValue } from 'engine/recs';
-import { BytesLike, defaultAbiCoder as abi } from 'ethers/lib/utils';
+import { AbiCoder, BytesLike } from 'ethers';
 
 import { ComponentsSchema } from 'types/ComponentsSchema';
 import { ContractSchemaValue, ContractSchemaValueId } from './types';
@@ -59,7 +59,7 @@ export function createDecoder<D extends { [key: string]: unknown }>(
 ): (data: BytesLike) => D {
   return (data: BytesLike) => {
     // Decode data with the schema values provided by the component
-    const decoded = abi.decode(
+    const decoded = AbiCoder.defaultAbiCoder().decode(
       valueTypes.map((valueType) => ContractSchemaValueId[valueType]),
       data
     );

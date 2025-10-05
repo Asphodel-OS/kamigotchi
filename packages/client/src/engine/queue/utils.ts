@@ -1,8 +1,13 @@
-import { BaseProvider, TransactionRequest, TransactionResponse } from '@ethersproject/providers';
 import { extractEncodedArguments } from '@mud-classic/utils';
 import { baseGasPrice, DefaultChain } from 'constants/chains';
-import { Overrides, Signer } from 'ethers';
-import { defaultAbiCoder as abi, Deferrable } from 'ethers/lib/utils';
+import {
+  AbiCoder,
+  Overrides,
+  Provider,
+  Signer,
+  TransactionRequest,
+  TransactionResponse,
+} from 'ethers';
 
 /**
  * Get the revert reason from a given transaction hash
@@ -11,12 +16,15 @@ import { defaultAbiCoder as abi, Deferrable } from 'ethers/lib/utils';
  * @param provider ethers Provider
  * @returns Promise resolving with revert reason string
  */
-export async function getRevertReason(txHash: string, provider: BaseProvider): Promise<string> {
+export async function getRevertReason(txHash: string, provider: Provider): Promise<string> {
   // Decoding the revert reason: https://docs.soliditylang.org/en/latest/control-structures.html#revert
   const tx = await provider.getTransaction(txHash);
   // tx.gasPrice = undefined; // tx object contains both gasPrice and maxFeePerGas
   const encodedRevertReason = await provider.call(tx as TransactionRequest);
-  const decodedRevertReason = abi.decode(['string'], extractEncodedArguments(encodedRevertReason));
+  const decodedRevertReason = AbiCoder.defaultAbiCoder().decode(
+    ['string'],
+    extractEncodedArguments(encodedRevertReason)
+  );
   return decodedRevertReason[0];
 }
 
@@ -40,7 +48,7 @@ export async function waitForTx(txResponse: Promise<TransactionResponse>) {
  */
 export async function sendTx(
   signer: Signer | undefined,
-  txData: Deferrable<TransactionRequest>
+  txData: TransactionRequest
 ): Promise<TransactionResponse> {
   txData.chainId = DefaultChain.id;
   txData.maxFeePerGas = baseGasPrice; // gas prices for minievm are fixed

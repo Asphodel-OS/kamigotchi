@@ -1,4 +1,3 @@
-import { Provider } from '@ethersproject/providers';
 import { keccak256, toEthAddress } from '@mud-classic/utils';
 import {
   Component,
@@ -8,7 +7,7 @@ import {
   Type,
   World,
 } from 'engine/recs';
-import { Contract, ContractInterface, Signer } from 'ethers';
+import { Contract, ContractInterface, Provider, Signer } from 'ethers';
 import { observable, runInAction } from 'mobx';
 
 import { createTxQueue } from 'engine/queue';

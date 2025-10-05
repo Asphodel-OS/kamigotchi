@@ -1,7 +1,13 @@
-import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, mapObject } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
-import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
+import {
+  BaseContract,
+  BigNumberish,
+  CallOverrides,
+  Overrides,
+  TransactionReceipt,
+  TransactionRequest,
+} from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 import { v4 as uuid } from 'uuid';
 

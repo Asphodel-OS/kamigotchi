@@ -1,4 +1,4 @@
-import type { BigNumberish } from '@ethersproject/bignumber';
+import type { BigNumberish } from 'ethers';
 
 export const itemsAPI = (systems: any) => {
   /**

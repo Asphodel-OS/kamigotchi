@@ -1,6 +1,6 @@
 import { computedToStream } from '@mud-classic/utils';
 import { Signer, Wallet } from 'ethers';
-import { computed, observable, toJS } from 'mobx';
+import { IComputedValue, computed, observable, toJS } from 'mobx';
 import { EMPTY, combineLatest, concatMap, filter, map, throttleTime } from 'rxjs';
 
 import { Providers, createReconnectingProvider } from '../providers';
@@ -29,7 +29,10 @@ export async function createNetwork(initialConfig: NetworkConfig) {
   disposers.push(disposeProvider);
 
   // Create signer
-  const signer = computed<Signer | undefined>(() => {
+  //todo: ethersv6 migration - getSigner has become async, which doesnt work with mbox. need fix
+  const signer: IComputedValue<Promise<Signer> | Signer | undefined> = computed<
+    Promise<Signer> | Signer | undefined
+  >(() => {
     const currentProviders = providers.get();
     if (config.provider.externalProvider) return currentProviders.json.getSigner();
     const privateKey = config.privateKey;
@@ -38,7 +41,7 @@ export async function createNetwork(initialConfig: NetworkConfig) {
 
   // Get address
   const initialConnectedAddress = config.provider.externalProvider
-    ? await signer.get()?.getAddress()
+    ? await (await signer.get())?.getAddress()
     : undefined;
 
   const connectedAddress = computed(() =>
