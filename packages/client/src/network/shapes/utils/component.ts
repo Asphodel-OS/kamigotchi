@@ -1,11 +1,13 @@
 import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
-import { BigNumber } from 'ethers';
 import { Address } from 'viem';
 
 import { Affinity } from 'constants/affinities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { parseAddress } from 'utils/address';
+
+const I32_MAX = 2147483647n;
+const I32_MIN = -2147483648n;
 
 export const getAffinity = (comps: Components, entity: EntityIndex): Affinity => {
   const { Affinity } = comps;
@@ -153,16 +155,18 @@ export const getType = (comps: Components, entity: EntityIndex): string => {
   return result ?? '';
 };
 
+// todo: return bigint?
 export const getValue = (comps: Components, entity: EntityIndex): number => {
   const { Value } = comps;
-  const result = getComponentValue(Value, entity)?.value ?? 0;
-  try {
-    // convert if meant to be negative
-    const raw = BigNumber.from(result);
-    return raw.fromTwos(256).toNumber(); // throws if out of bounds
-  } catch {
-    // return raw form otherwise - used for raw uint256 handling
-    return result;
+  const rawValue = getComponentValue(Value, entity)?.value ?? 0;
+  const signed = BigInt.asIntN(256, BigInt(rawValue));
+
+  if (signed > I32_MAX || signed < I32_MIN) {
+    // return as normal if within int32 bounds
+    return Number(signed);
+  } else {
+    // return as raw value otherwise - used for raw uint256 handling
+    return rawValue;
   }
 };
 

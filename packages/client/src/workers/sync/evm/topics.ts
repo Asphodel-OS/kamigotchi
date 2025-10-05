@@ -9,7 +9,7 @@ export type ContractTopics = {
 
 type TopicsConfig<C extends Contracts> = {
   [ContractType in keyof C]: {
-    abi: ethers.ContractInterface;
+    abi: ethers.Interface;
     topics: (keyof C[ContractType]['filters'])[];
   };
 };
@@ -19,16 +19,21 @@ export function createTopics<C extends Contracts>(config: TopicsConfig<C>): Cont
   const contractTopics: ContractTopics[] = [];
   for (const key of Object.keys(config)) {
     const { abi, topics } = config[key]!;
-    const dummyContract = new ethers.Contract(
-      ethers.constants.AddressZero,
+    const dummyContract = new ethers.BaseContract(
+      ethers.ZeroAddress,
       abi,
-      new VoidSigner(ethers.constants.AddressZero)
+      new VoidSigner(ethers.ZeroAddress)
     ) as C[typeof key];
-    const contractTopic = [
-      topics
-        .map((t) => dummyContract.filters[t as string]!().topics)
-        .map((topicsOrUndefined) => (topicsOrUndefined || [])[0]),
-    ] as Array<Array<string>>;
+    // const contractTopic = [
+    //   topics
+    //     .map((t) => dummyContract.filters[t as string]!().topics)
+    //     .map((topicsOrUndefined) => (topicsOrUndefined || [])[0]),
+    // ] as Array<Array<string>>;
+
+    console.log('abi', abi);
+    const contractTopic = [topics.map((t) => abi.getEvent(t as string)!.topicHash || [])] as Array<
+      string[]
+    >;
     contractTopics.push({
       key,
       topics: contractTopic,

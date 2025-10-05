@@ -1,6 +1,6 @@
 import { EntityIndex, HasValue, QueryFragment, runQuery, World } from 'engine/recs';
-import { BigNumber } from 'ethers';
 
+import { formatEntityID } from 'engine/utils';
 import { Components, NetworkLayer } from 'network/';
 import { getKamiOwnerID } from '../utils/component';
 
@@ -65,7 +65,7 @@ export const queryByName = (comps: Components, name: string) => {
 // NOTE: we format to match MUD's abbreviated style. fix, eventually
 export const queryByOperator = (comps: Components, operator: string, debug = false) => {
   if (!OperatorCache.has(operator)) {
-    const formatted = BigNumber.from(operator).toHexString();
+    const formatted = formatEntityID(operator);
     const results = query(comps, { operator: formatted });
 
     // report on multiple matches if in debug mode

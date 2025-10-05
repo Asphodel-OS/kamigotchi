@@ -1,6 +1,7 @@
+import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
-export const harvestsAPI = (systems: any) => {
+export const harvestsAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev retrieves the amount due from a passive deposit harvest and resets the starting point
    *

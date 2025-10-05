@@ -372,6 +372,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     } catch (e) {
       this.retryCount++;
       console.error(`Failed to save state cache to store, attempt ${this.retryCount}`);
+      console.error(e);
       if (this.hasExceededMaxRetries()) {
         this.setLoadingState({
           state: SyncState.FAILED,

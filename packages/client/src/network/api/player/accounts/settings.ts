@@ -1,6 +1,6 @@
-import { BigNumberish } from '@ethersproject/bignumber';
+import { SystemQueue } from 'engine/queue';
 
-export const settingsAPI = (systems: any) => {
+export const settingsAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev sets a bio for the player's account
    * @param string bio to set
@@ -13,7 +13,7 @@ export const settingsAPI = (systems: any) => {
    *
    * @param kamiID entityID of the Kami
    */
-  const setPFP = (kamiID: BigNumberish) => {
+  const setPFP = (kamiID: string) => {
     return systems['system.account.set.pfp'].executeTyped(kamiID);
   };
 
@@ -31,7 +31,7 @@ export const settingsAPI = (systems: any) => {
    *
    * @param operatorAddress Operator EOA to update to
    */
-  const setOperator = (operatorAddress: BigNumberish) => {
+  const setOperator = (operatorAddress: string) => {
     return systems['system.account.set.operator'].executeTyped(operatorAddress);
   };
 

@@ -1,8 +1,6 @@
-import { Block, JsonRpcProvider } from '@ethersproject/providers';
 import { callWithRetry, range, sleep } from '@mud-classic/utils';
 import { EntityID } from 'engine/recs';
-import { BigNumber } from 'ethers';
-import { keccak256 } from 'ethers/lib/utils';
+import { Block, JsonRpcProvider, keccak256 } from 'ethers';
 
 import { Message } from './types/ecs-relay';
 
@@ -14,16 +12,23 @@ export function messagePayload(msg: Message) {
 // Remove zero padding from all entity ids
 // Q(jb): do we even want to do this?  standardization seems preferable
 // ethers utils keccak256 function maintains zero padding
-export function formatEntityID(entityID: string | EntityID | BigNumber): EntityID {
-  if (BigNumber.isBigNumber(entityID) || entityID.substring(0, 2) === '0x') {
-    return BigNumber.from(entityID).toHexString() as EntityID;
+export function formatEntityID(entityID: string | EntityID | bigint): EntityID {
+  if (typeof entityID === 'bigint') {
+    return bigintToHex(entityID) as EntityID;
+  } else if (typeof entityID === 'string' && entityID.substring(0, 2) === '0x') {
+    // remove padded zeroes
+    return bigintToHex(BigInt(entityID)) as EntityID;
   }
   return entityID as EntityID;
 }
 
 // Remove zero padding from all component ids
-export function formatComponentID(componentID: string | BigNumber): string {
-  return BigNumber.from(componentID).toHexString();
+export function formatComponentID(componentID: string | bigint): string {
+  return bigintToHex(BigInt(componentID)) as EntityID;
+}
+
+export function bigintToHex(bigint: BigInt): string {
+  return '0x' + bigint.toString(16);
 }
 
 /**
@@ -40,21 +45,16 @@ export async function fetchBlock(
 ): Promise<Block> {
   // console.log(`fetching block (min ${minBlockNumber})`);
   for (const _ of range(10)) {
-    const blockPromise = async () => {
-      const rawBlock = await provider.perform('getBlock', {
-        includeTransactions: false,
-        blockTag: provider.formatter.blockTag(await provider._getBlockTag('latest')),
-      });
-      return provider.formatter.block(rawBlock);
-    };
+    const blockPromise = async () => await provider.getBlock('latest');
 
-    const block = await callWithRetry<Block>(blockPromise, [], 10, 25);
-    if (minBlockNumber && block.number < minBlockNumber) {
+    const block = await callWithRetry<Block | null>(blockPromise, [], 10, 25);
+    if (minBlockNumber && (block ? block.number : 0) < minBlockNumber) {
       await sleep(50);
       continue;
     } else {
       // console.log(`\tretrieved block ${block.number}`);
       // console.log(`\twith ${block.transactions.length} txs`);
+      if (!block) throw new Error('Could not fetch a block with blockNumber ' + minBlockNumber);
       return block;
     }
   }

@@ -1,8 +1,7 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
 import { awaitPromise, range, to256BitString } from '@mud-classic/utils';
-import { abi as WorldAbi } from 'abi/World.json';
+import { abi as worldAbi } from 'abi/World.json';
 import { Components, EntityID } from 'engine/recs';
-import { BigNumber } from 'ethers';
+import { Interface, JsonRpcProvider } from 'ethers';
 import { Observable, concatMap, map, of } from 'rxjs';
 import { World } from 'types/ethers-contracts';
 
@@ -181,7 +180,7 @@ export async function fetchEventsInBlockRangeChunked(
  */
 export function createWorldTopics() {
   return createTopics<{ World: World }>({
-    World: { abi: WorldAbi, topics: ['ComponentValueSet', 'ComponentValueRemoved'] },
+    World: { abi: new Interface(worldAbi), topics: ['ComponentValueSet', 'ComponentValueRemoved'] },
   });
 }
 
@@ -222,9 +221,9 @@ export function createFetchWorldEventsInBlockRange<C extends Components>(
         componentId: rawComponentId,
       } = args as unknown as {
         component: string;
-        entity: BigNumber;
+        entity: bigint;
         data: string;
-        componentId: BigNumber;
+        componentId: bigint;
       };
 
       const component = formatComponentID(rawComponentId);
@@ -259,11 +258,11 @@ export function createFetchSystemCallsFromEvents(provider: JsonRpcProvider) {
   const { fetchBlock, clearBlock } = createBlockCache(provider);
 
   // fetch the call data of a transaction by its hash/block number
-  // Q(jb): are we even using this function?
+  // used for event logging when streamer is unavailable
   const fetchSystemCallData = async (txHash: string, blockNumber: number) => {
     const block = await fetchBlock(blockNumber);
     if (!block) return;
-    const tx = block.transactions.find((tx) => tx.hash === txHash);
+    const tx = block.prefetchedTransactions.find((tx) => tx.hash === txHash);
     if (!tx) return;
 
     return {
@@ -298,13 +297,13 @@ export function createFetchSystemCallsFromEvents(provider: JsonRpcProvider) {
 }
 
 function createBlockCache(provider: JsonRpcProvider) {
-  const blocks: Record<number, Awaited<ReturnType<typeof provider.getBlockWithTransactions>>> = {};
+  const blocks: Record<number, Awaited<ReturnType<typeof provider.getBlock>>> = {};
 
   return {
     fetchBlock: async (blockNumber: number) => {
       if (blocks[blockNumber]) return blocks[blockNumber];
 
-      const block = await provider.getBlockWithTransactions(blockNumber);
+      const block = await provider.getBlock(blockNumber, true); // prefetch transactions
       blocks[blockNumber] = block;
 
       return block;

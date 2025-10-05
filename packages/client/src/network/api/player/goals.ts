@@ -1,7 +1,9 @@
+import { SystemQueue } from 'engine/queue';
+
 /**
  * @dev A Goal is a special type of "quest" that players complete collectively.
  */
-export const goalsAPI = (systems: any) => {
+export const goalsAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev contributes to a goal
    * @param goalIndex index of the goal

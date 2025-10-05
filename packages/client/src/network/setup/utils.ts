@@ -96,7 +96,7 @@ export function createSystemCallStreams<
         ...systemCall,
         updates: compact(rawUpdates.map(decodeNetworkComponentUpdate)),
         systemId: name,
-        args: decodedTx.args,
+        args: decodedTx?.args ?? {},
       });
     },
   };

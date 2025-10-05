@@ -1,6 +1,7 @@
-import { BigNumberish } from '@ethersproject/bignumber';
+import { SystemQueue } from 'engine/queue';
+import { BigNumberish } from 'ethers';
 
-export const questsAPI = (systems: any) => {
+export const questsAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev accept a Quest for an Account
    * @param index index of the Quest

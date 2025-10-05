@@ -1,8 +1,10 @@
+import { SystemQueue } from 'engine/queue';
+
 /**
  * @dev A bridge is actually a staking mechanism for ERC721s or ERC20s
  * to use within the Game World.
  */
-export const bridgeAPI = (systems: any) => {
+export const bridgeAPI = (systems: SystemQueue<any>) => {
   /////////////////
   // KAMI
 
