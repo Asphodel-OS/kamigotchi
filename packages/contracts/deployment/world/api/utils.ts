@@ -1,5 +1,3 @@
-import { BigNumberish } from 'ethers';
-
 import { SystemBytecodes } from '../../contracts/mappings/SystemBytecodes';
 import { createCall } from '../../scripts/systemCaller';
 
@@ -13,7 +11,7 @@ export function generateCallData(
   args: any[],
   func?: string,
   encodedTypes?: any[],
-  gasLimit?: BigNumberish
+  gasLimit?: string | number
 ) {
   // if execute or has typed args, encode args
   const encode = func === undefined || encodedTypes !== undefined;

@@ -3,55 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
-export interface WorldInterface extends utils.Interface {
-  functions: {
-    "_emitter()": FunctionFragment;
-    "cancelOwnershipHandover()": FunctionFragment;
-    "completeOwnershipHandover(address)": FunctionFragment;
-    "components()": FunctionFragment;
-    "getUniqueEntityId()": FunctionFragment;
-    "init()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "register()": FunctionFragment;
-    "registerComponent(address,uint256)": FunctionFragment;
-    "registerComponentValueRemoved(uint256)": FunctionFragment;
-    "registerComponentValueSet(uint256,bytes)": FunctionFragment;
-    "registerSystem(address,uint256)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "requestOwnershipHandover()": FunctionFragment;
-    "systems()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "updateEmitter(address)": FunctionFragment;
-  };
-
+export interface WorldInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "_emitter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
@@ -72,6 +46,18 @@ export interface WorldInterface extends utils.Interface {
       | "updateEmitter"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "ComponentRegistered"
+      | "ComponentValueRemoved"
+      | "ComponentValueSet"
+      | "EmitterUpdated"
+      | "OwnershipHandoverCanceled"
+      | "OwnershipHandoverRequested"
+      | "OwnershipTransferred"
+      | "SystemRegistered"
+  ): EventFragment;
+
   encodeFunctionData(functionFragment: "_emitter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
@@ -79,7 +65,7 @@ export interface WorldInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "components",
@@ -93,24 +79,24 @@ export interface WorldInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "register", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "registerComponent",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "registerComponentValueRemoved",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "registerComponentValueSet",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+    values: [BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "registerSystem",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -123,11 +109,11 @@ export interface WorldInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "systems", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "updateEmitter",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "_emitter", data: BytesLike): Result;
@@ -184,583 +170,456 @@ export interface WorldInterface extends utils.Interface {
     functionFragment: "updateEmitter",
     data: BytesLike
   ): Result;
-
-  events: {
-    "ComponentRegistered(uint256,address)": EventFragment;
-    "ComponentValueRemoved(uint256,address,uint256)": EventFragment;
-    "ComponentValueSet(uint256,address,uint256,bytes)": EventFragment;
-    "EmitterUpdated(address)": EventFragment;
-    "OwnershipHandoverCanceled(address)": EventFragment;
-    "OwnershipHandoverRequested(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "SystemRegistered(uint256,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "ComponentRegistered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EmitterUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SystemRegistered"): EventFragment;
 }
 
-export interface ComponentRegisteredEventObject {
-  componentId: BigNumber;
-  component: string;
+export namespace ComponentRegisteredEvent {
+  export type InputTuple = [componentId: BigNumberish, component: AddressLike];
+  export type OutputTuple = [componentId: bigint, component: string];
+  export interface OutputObject {
+    componentId: bigint;
+    component: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ComponentRegisteredEvent = TypedEvent<
-  [BigNumber, string],
-  ComponentRegisteredEventObject
->;
 
-export type ComponentRegisteredEventFilter =
-  TypedEventFilter<ComponentRegisteredEvent>;
-
-export interface ComponentValueRemovedEventObject {
-  componentId: BigNumber;
-  component: string;
-  entity: BigNumber;
+export namespace ComponentValueRemovedEvent {
+  export type InputTuple = [
+    componentId: BigNumberish,
+    component: AddressLike,
+    entity: BigNumberish
+  ];
+  export type OutputTuple = [
+    componentId: bigint,
+    component: string,
+    entity: bigint
+  ];
+  export interface OutputObject {
+    componentId: bigint;
+    component: string;
+    entity: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ComponentValueRemovedEvent = TypedEvent<
-  [BigNumber, string, BigNumber],
-  ComponentValueRemovedEventObject
->;
 
-export type ComponentValueRemovedEventFilter =
-  TypedEventFilter<ComponentValueRemovedEvent>;
-
-export interface ComponentValueSetEventObject {
-  componentId: BigNumber;
-  component: string;
-  entity: BigNumber;
-  data: string;
+export namespace ComponentValueSetEvent {
+  export type InputTuple = [
+    componentId: BigNumberish,
+    component: AddressLike,
+    entity: BigNumberish,
+    data: BytesLike
+  ];
+  export type OutputTuple = [
+    componentId: bigint,
+    component: string,
+    entity: bigint,
+    data: string
+  ];
+  export interface OutputObject {
+    componentId: bigint;
+    component: string;
+    entity: bigint;
+    data: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ComponentValueSetEvent = TypedEvent<
-  [BigNumber, string, BigNumber, string],
-  ComponentValueSetEventObject
->;
 
-export type ComponentValueSetEventFilter =
-  TypedEventFilter<ComponentValueSetEvent>;
-
-export interface EmitterUpdatedEventObject {
-  emitter: string;
+export namespace EmitterUpdatedEvent {
+  export type InputTuple = [emitter: AddressLike];
+  export type OutputTuple = [emitter: string];
+  export interface OutputObject {
+    emitter: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type EmitterUpdatedEvent = TypedEvent<
-  [string],
-  EmitterUpdatedEventObject
->;
 
-export type EmitterUpdatedEventFilter = TypedEventFilter<EmitterUpdatedEvent>;
-
-export interface OwnershipHandoverCanceledEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverCanceledEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverCanceledEvent = TypedEvent<
-  [string],
-  OwnershipHandoverCanceledEventObject
->;
 
-export type OwnershipHandoverCanceledEventFilter =
-  TypedEventFilter<OwnershipHandoverCanceledEvent>;
-
-export interface OwnershipHandoverRequestedEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverRequestedEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverRequestedEvent = TypedEvent<
-  [string],
-  OwnershipHandoverRequestedEventObject
->;
 
-export type OwnershipHandoverRequestedEventFilter =
-  TypedEventFilter<OwnershipHandoverRequestedEvent>;
-
-export interface OwnershipTransferredEventObject {
-  oldOwner: string;
-  newOwner: string;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [oldOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [oldOwner: string, newOwner: string];
+  export interface OutputObject {
+    oldOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface SystemRegisteredEventObject {
-  systemId: BigNumber;
-  system: string;
+export namespace SystemRegisteredEvent {
+  export type InputTuple = [systemId: BigNumberish, system: AddressLike];
+  export type OutputTuple = [systemId: bigint, system: string];
+  export interface OutputObject {
+    systemId: bigint;
+    system: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type SystemRegisteredEvent = TypedEvent<
-  [BigNumber, string],
-  SystemRegisteredEventObject
->;
-
-export type SystemRegisteredEventFilter =
-  TypedEventFilter<SystemRegisteredEvent>;
 
 export interface World extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): World;
+  waitForDeployment(): Promise<this>;
 
   interface: WorldInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    _emitter(overrides?: CallOverrides): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  _emitter: TypedContractMethod<[], [string], "view">;
 
-    components(overrides?: CallOverrides): Promise<[string]>;
+  cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-    getUniqueEntityId(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  completeOwnershipHandover: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-    init(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  components: TypedContractMethod<[], [string], "view">;
 
-    owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
+  getUniqueEntityId: TypedContractMethod<[], [bigint], "nonpayable">;
 
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
+  init: TypedContractMethod<[], [void], "nonpayable">;
 
-    register(overrides?: CallOverrides): Promise<[string]>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-    registerComponent(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  ownershipHandoverExpiresAt: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    registerComponentValueRemoved(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  register: TypedContractMethod<[], [string], "view">;
 
-    registerComponentValueSet(
-      entity: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  registerComponent: TypedContractMethod<
+    [addr: AddressLike, id: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    registerSystem(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  registerComponentValueRemoved: TypedContractMethod<
+    [entity: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  registerComponentValueSet: TypedContractMethod<
+    [entity: BigNumberish, data: BytesLike],
+    [void],
+    "nonpayable"
+  >;
 
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  registerSystem: TypedContractMethod<
+    [addr: AddressLike, id: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    systems(overrides?: CallOverrides): Promise<[string]>;
+  renounceOwnership: TypedContractMethod<[], [void], "payable">;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-    updateEmitter(
-      emitter: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+  systems: TypedContractMethod<[], [string], "view">;
 
-  _emitter(overrides?: CallOverrides): Promise<string>;
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-  cancelOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  updateEmitter: TypedContractMethod<
+    [emitter: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  completeOwnershipHandover(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  components(overrides?: CallOverrides): Promise<string>;
+  getFunction(
+    nameOrSignature: "_emitter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "cancelOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "completeOwnershipHandover"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "components"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getUniqueEntityId"
+  ): TypedContractMethod<[], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "init"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "ownershipHandoverExpiresAt"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "register"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "registerComponent"
+  ): TypedContractMethod<
+    [addr: AddressLike, id: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "registerComponentValueRemoved"
+  ): TypedContractMethod<[entity: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "registerComponentValueSet"
+  ): TypedContractMethod<
+    [entity: BigNumberish, data: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "registerSystem"
+  ): TypedContractMethod<
+    [addr: AddressLike, id: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "requestOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "systems"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "updateEmitter"
+  ): TypedContractMethod<[emitter: AddressLike], [void], "nonpayable">;
 
-  getUniqueEntityId(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  init(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  ownershipHandoverExpiresAt(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  register(overrides?: CallOverrides): Promise<string>;
-
-  registerComponent(
-    addr: PromiseOrValue<string>,
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  registerComponentValueRemoved(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  registerComponentValueSet(
-    entity: PromiseOrValue<BigNumberish>,
-    data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  registerSystem(
-    addr: PromiseOrValue<string>,
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  requestOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  systems(overrides?: CallOverrides): Promise<string>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateEmitter(
-    emitter: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    _emitter(overrides?: CallOverrides): Promise<string>;
-
-    cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    components(overrides?: CallOverrides): Promise<string>;
-
-    getUniqueEntityId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    init(overrides?: CallOverrides): Promise<void>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    register(overrides?: CallOverrides): Promise<string>;
-
-    registerComponent(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    registerComponentValueRemoved(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    registerComponentValueSet(
-      entity: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    registerSystem(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    systems(overrides?: CallOverrides): Promise<string>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateEmitter(
-      emitter: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "ComponentRegistered"
+  ): TypedContractEvent<
+    ComponentRegisteredEvent.InputTuple,
+    ComponentRegisteredEvent.OutputTuple,
+    ComponentRegisteredEvent.OutputObject
+  >;
+  getEvent(
+    key: "ComponentValueRemoved"
+  ): TypedContractEvent<
+    ComponentValueRemovedEvent.InputTuple,
+    ComponentValueRemovedEvent.OutputTuple,
+    ComponentValueRemovedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ComponentValueSet"
+  ): TypedContractEvent<
+    ComponentValueSetEvent.InputTuple,
+    ComponentValueSetEvent.OutputTuple,
+    ComponentValueSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "EmitterUpdated"
+  ): TypedContractEvent<
+    EmitterUpdatedEvent.InputTuple,
+    EmitterUpdatedEvent.OutputTuple,
+    EmitterUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverCanceled"
+  ): TypedContractEvent<
+    OwnershipHandoverCanceledEvent.InputTuple,
+    OwnershipHandoverCanceledEvent.OutputTuple,
+    OwnershipHandoverCanceledEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverRequested"
+  ): TypedContractEvent<
+    OwnershipHandoverRequestedEvent.InputTuple,
+    OwnershipHandoverRequestedEvent.OutputTuple,
+    OwnershipHandoverRequestedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "SystemRegistered"
+  ): TypedContractEvent<
+    SystemRegisteredEvent.InputTuple,
+    SystemRegisteredEvent.OutputTuple,
+    SystemRegisteredEvent.OutputObject
+  >;
 
   filters: {
-    "ComponentRegistered(uint256,address)"(
-      componentId?: PromiseOrValue<BigNumberish> | null,
-      component?: PromiseOrValue<string> | null
-    ): ComponentRegisteredEventFilter;
-    ComponentRegistered(
-      componentId?: PromiseOrValue<BigNumberish> | null,
-      component?: PromiseOrValue<string> | null
-    ): ComponentRegisteredEventFilter;
+    "ComponentRegistered(uint256,address)": TypedContractEvent<
+      ComponentRegisteredEvent.InputTuple,
+      ComponentRegisteredEvent.OutputTuple,
+      ComponentRegisteredEvent.OutputObject
+    >;
+    ComponentRegistered: TypedContractEvent<
+      ComponentRegisteredEvent.InputTuple,
+      ComponentRegisteredEvent.OutputTuple,
+      ComponentRegisteredEvent.OutputObject
+    >;
 
-    "ComponentValueRemoved(uint256,address,uint256)"(
-      componentId?: PromiseOrValue<BigNumberish> | null,
-      component?: PromiseOrValue<string> | null,
-      entity?: PromiseOrValue<BigNumberish> | null
-    ): ComponentValueRemovedEventFilter;
-    ComponentValueRemoved(
-      componentId?: PromiseOrValue<BigNumberish> | null,
-      component?: PromiseOrValue<string> | null,
-      entity?: PromiseOrValue<BigNumberish> | null
-    ): ComponentValueRemovedEventFilter;
+    "ComponentValueRemoved(uint256,address,uint256)": TypedContractEvent<
+      ComponentValueRemovedEvent.InputTuple,
+      ComponentValueRemovedEvent.OutputTuple,
+      ComponentValueRemovedEvent.OutputObject
+    >;
+    ComponentValueRemoved: TypedContractEvent<
+      ComponentValueRemovedEvent.InputTuple,
+      ComponentValueRemovedEvent.OutputTuple,
+      ComponentValueRemovedEvent.OutputObject
+    >;
 
-    "ComponentValueSet(uint256,address,uint256,bytes)"(
-      componentId?: PromiseOrValue<BigNumberish> | null,
-      component?: PromiseOrValue<string> | null,
-      entity?: PromiseOrValue<BigNumberish> | null,
-      data?: null
-    ): ComponentValueSetEventFilter;
-    ComponentValueSet(
-      componentId?: PromiseOrValue<BigNumberish> | null,
-      component?: PromiseOrValue<string> | null,
-      entity?: PromiseOrValue<BigNumberish> | null,
-      data?: null
-    ): ComponentValueSetEventFilter;
+    "ComponentValueSet(uint256,address,uint256,bytes)": TypedContractEvent<
+      ComponentValueSetEvent.InputTuple,
+      ComponentValueSetEvent.OutputTuple,
+      ComponentValueSetEvent.OutputObject
+    >;
+    ComponentValueSet: TypedContractEvent<
+      ComponentValueSetEvent.InputTuple,
+      ComponentValueSetEvent.OutputTuple,
+      ComponentValueSetEvent.OutputObject
+    >;
 
-    "EmitterUpdated(address)"(
-      emitter?: PromiseOrValue<string> | null
-    ): EmitterUpdatedEventFilter;
-    EmitterUpdated(
-      emitter?: PromiseOrValue<string> | null
-    ): EmitterUpdatedEventFilter;
+    "EmitterUpdated(address)": TypedContractEvent<
+      EmitterUpdatedEvent.InputTuple,
+      EmitterUpdatedEvent.OutputTuple,
+      EmitterUpdatedEvent.OutputObject
+    >;
+    EmitterUpdated: TypedContractEvent<
+      EmitterUpdatedEvent.InputTuple,
+      EmitterUpdatedEvent.OutputTuple,
+      EmitterUpdatedEvent.OutputObject
+    >;
 
-    "OwnershipHandoverCanceled(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
-    OwnershipHandoverCanceled(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
+    "OwnershipHandoverCanceled(address)": TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
+    OwnershipHandoverCanceled: TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
 
-    "OwnershipHandoverRequested(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
-    OwnershipHandoverRequested(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
+    "OwnershipHandoverRequested(address)": TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
+    OwnershipHandoverRequested: TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
 
-    "OwnershipTransferred(address,address)"(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
 
-    "SystemRegistered(uint256,address)"(
-      systemId?: PromiseOrValue<BigNumberish> | null,
-      system?: PromiseOrValue<string> | null
-    ): SystemRegisteredEventFilter;
-    SystemRegistered(
-      systemId?: PromiseOrValue<BigNumberish> | null,
-      system?: PromiseOrValue<string> | null
-    ): SystemRegisteredEventFilter;
-  };
-
-  estimateGas: {
-    _emitter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    components(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getUniqueEntityId(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    init(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    register(overrides?: CallOverrides): Promise<BigNumber>;
-
-    registerComponent(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    registerComponentValueRemoved(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    registerComponentValueSet(
-      entity: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    registerSystem(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    systems(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateEmitter(
-      emitter: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    _emitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    components(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getUniqueEntityId(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    init(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    register(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    registerComponent(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerComponentValueRemoved(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerComponentValueSet(
-      entity: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerSystem(
-      addr: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    systems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateEmitter(
-      emitter: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "SystemRegistered(uint256,address)": TypedContractEvent<
+      SystemRegisteredEvent.InputTuple,
+      SystemRegisteredEvent.OutputTuple,
+      SystemRegisteredEvent.OutputObject
+    >;
+    SystemRegistered: TypedContractEvent<
+      SystemRegisteredEvent.InputTuple,
+      SystemRegisteredEvent.OutputTuple,
+      SystemRegisteredEvent.OutputObject
+    >;
   };
 }

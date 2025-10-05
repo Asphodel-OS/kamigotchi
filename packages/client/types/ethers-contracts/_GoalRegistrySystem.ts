@@ -3,55 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
-export interface _GoalRegistrySystemInterface extends utils.Interface {
-  functions: {
-    "addRequirement(bytes)": FunctionFragment;
-    "addRewardBasic(bytes)": FunctionFragment;
-    "addRewardDT(bytes)": FunctionFragment;
-    "addRewardDisplay(bytes)": FunctionFragment;
-    "addRewardStat(bytes)": FunctionFragment;
-    "cancelOwnershipHandover()": FunctionFragment;
-    "completeOwnershipHandover(address)": FunctionFragment;
-    "create(bytes)": FunctionFragment;
-    "deprecate()": FunctionFragment;
-    "execute(bytes)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "remove(uint32)": FunctionFragment;
-    "removeRewards(uint32)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "requestOwnershipHandover()": FunctionFragment;
-    "setDisabled(uint32,bool)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-  };
-
+export interface _GoalRegistrySystemInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "addRequirement"
       | "addRewardBasic"
       | "addRewardDT"
@@ -72,25 +46,33 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "OwnershipHandoverCanceled"
+      | "OwnershipHandoverRequested"
+      | "OwnershipTransferred"
+      | "SystemDeprecated"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "addRequirement",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "addRewardBasic",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "addRewardDT",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "addRewardDisplay",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "addRewardStat",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
@@ -98,29 +80,23 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "create",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
+  encodeFunctionData(functionFragment: "create", values: [BytesLike]): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "execute",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
+  encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "remove",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "removeRewards",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -132,11 +108,11 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setDisabled",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<boolean>]
+    values: [BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -196,531 +172,309 @@ export interface _GoalRegistrySystemInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-
-  events: {
-    "OwnershipHandoverCanceled(address)": EventFragment;
-    "OwnershipHandoverRequested(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "SystemDeprecated()": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
-export interface OwnershipHandoverCanceledEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverCanceledEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverCanceledEvent = TypedEvent<
-  [string],
-  OwnershipHandoverCanceledEventObject
->;
 
-export type OwnershipHandoverCanceledEventFilter =
-  TypedEventFilter<OwnershipHandoverCanceledEvent>;
-
-export interface OwnershipHandoverRequestedEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverRequestedEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverRequestedEvent = TypedEvent<
-  [string],
-  OwnershipHandoverRequestedEventObject
->;
 
-export type OwnershipHandoverRequestedEventFilter =
-  TypedEventFilter<OwnershipHandoverRequestedEvent>;
-
-export interface OwnershipTransferredEventObject {
-  oldOwner: string;
-  newOwner: string;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [oldOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [oldOwner: string, newOwner: string];
+  export interface OutputObject {
+    oldOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface SystemDeprecatedEventObject {}
-export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
-
-export type SystemDeprecatedEventFilter =
-  TypedEventFilter<SystemDeprecatedEvent>;
+export namespace SystemDeprecatedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface _GoalRegistrySystem extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): _GoalRegistrySystem;
+  waitForDeployment(): Promise<this>;
 
   interface: _GoalRegistrySystemInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    addRequirement(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    addRewardBasic(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    addRewardDT(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  addRequirement: TypedContractMethod<
+    [arguments: BytesLike],
+    [bigint],
+    "nonpayable"
+  >;
 
-    addRewardDisplay(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  addRewardBasic: TypedContractMethod<
+    [arguments: BytesLike],
+    [bigint],
+    "nonpayable"
+  >;
 
-    addRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  addRewardDT: TypedContractMethod<
+    [arguments: BytesLike],
+    [bigint],
+    "nonpayable"
+  >;
 
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  addRewardDisplay: TypedContractMethod<
+    [arguments: BytesLike],
+    [bigint],
+    "nonpayable"
+  >;
 
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  addRewardStat: TypedContractMethod<
+    [arguments: BytesLike],
+    [bigint],
+    "nonpayable"
+  >;
 
-    create(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  completeOwnershipHandover: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  create: TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
 
-    owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
+  deprecate: TypedContractMethod<[], [void], "nonpayable">;
 
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
+  execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
-    remove(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-    removeRewards(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  ownershipHandoverExpiresAt: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  remove: TypedContractMethod<[goalIndex: BigNumberish], [void], "nonpayable">;
 
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  removeRewards: TypedContractMethod<
+    [goalIndex: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-    setDisabled(
-      index: PromiseOrValue<BigNumberish>,
-      disabled: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  renounceOwnership: TypedContractMethod<[], [void], "payable">;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+  requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-  addRequirement(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setDisabled: TypedContractMethod<
+    [index: BigNumberish, disabled: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-  addRewardBasic(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-  addRewardDT(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  addRewardDisplay(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction(
+    nameOrSignature: "addRequirement"
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "addRewardBasic"
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "addRewardDT"
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "addRewardDisplay"
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "addRewardStat"
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "cancelOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "completeOwnershipHandover"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "create"
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  getFunction(
+    nameOrSignature: "deprecate"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "execute"
+  ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "ownershipHandoverExpiresAt"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "remove"
+  ): TypedContractMethod<[goalIndex: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "removeRewards"
+  ): TypedContractMethod<[goalIndex: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "requestOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "setDisabled"
+  ): TypedContractMethod<
+    [index: BigNumberish, disabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
 
-  addRewardStat(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  cancelOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  completeOwnershipHandover(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  create(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  deprecate(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  execute(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  ownershipHandoverExpiresAt(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  remove(
-    goalIndex: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  removeRewards(
-    goalIndex: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  requestOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setDisabled(
-    index: PromiseOrValue<BigNumberish>,
-    disabled: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    addRequirement(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    addRewardBasic(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    addRewardDT(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    addRewardDisplay(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    addRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    create(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    deprecate(overrides?: CallOverrides): Promise<void>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    remove(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    removeRewards(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    setDisabled(
-      index: PromiseOrValue<BigNumberish>,
-      disabled: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "OwnershipHandoverCanceled"
+  ): TypedContractEvent<
+    OwnershipHandoverCanceledEvent.InputTuple,
+    OwnershipHandoverCanceledEvent.OutputTuple,
+    OwnershipHandoverCanceledEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverRequested"
+  ): TypedContractEvent<
+    OwnershipHandoverRequestedEvent.InputTuple,
+    OwnershipHandoverRequestedEvent.OutputTuple,
+    OwnershipHandoverRequestedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "SystemDeprecated"
+  ): TypedContractEvent<
+    SystemDeprecatedEvent.InputTuple,
+    SystemDeprecatedEvent.OutputTuple,
+    SystemDeprecatedEvent.OutputObject
+  >;
 
   filters: {
-    "OwnershipHandoverCanceled(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
-    OwnershipHandoverCanceled(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
+    "OwnershipHandoverCanceled(address)": TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
+    OwnershipHandoverCanceled: TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
 
-    "OwnershipHandoverRequested(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
-    OwnershipHandoverRequested(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
+    "OwnershipHandoverRequested(address)": TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
+    OwnershipHandoverRequested: TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
 
-    "OwnershipTransferred(address,address)"(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
 
-    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
-    SystemDeprecated(): SystemDeprecatedEventFilter;
-  };
-
-  estimateGas: {
-    addRequirement(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addRewardBasic(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addRewardDT(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addRewardDisplay(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    addRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    create(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    remove(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    removeRewards(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setDisabled(
-      index: PromiseOrValue<BigNumberish>,
-      disabled: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    addRequirement(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addRewardBasic(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addRewardDT(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addRewardDisplay(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addRewardStat(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    create(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    remove(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeRewards(
-      goalIndex: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setDisabled(
-      index: PromiseOrValue<BigNumberish>,
-      disabled: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "SystemDeprecated()": TypedContractEvent<
+      SystemDeprecatedEvent.InputTuple,
+      SystemDeprecatedEvent.OutputTuple,
+      SystemDeprecatedEvent.OutputObject
+    >;
+    SystemDeprecated: TypedContractEvent<
+      SystemDeprecatedEvent.InputTuple,
+      SystemDeprecatedEvent.OutputTuple,
+      SystemDeprecatedEvent.OutputObject
+    >;
   };
 }

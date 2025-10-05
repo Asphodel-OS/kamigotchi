@@ -60,17 +60,17 @@
     "build:abi:gen": "rimraf ../client/abi && mkdir ../client/abi && bash exports.sh && rimraf ../client/abi/*.metadata.json",
     "build:abi:clean": "for i in ../client/abi/*; do jq 'del(.bytecode) | del(.deployedBytecode) | del(.ast) | del(.rawMetadata) | del(.metadata) | del(.ast) | del(.id)' \"$i\" > \"$i\".tmp && mv \"$i\".tmp \"$i\"; done",
     "build:abi:types": "rimraf ../client/types && mkdir ../client/types && pnpm build:abi:types:gen && pnpm build:abi:types:mappings && rimraf ../client/types/ethers-contracts/factories",
-    "build:abi:types:gen": "pnpm typechain --target=ethers-v5 --out-dir ../client/types/ethers-contracts ../client/abi/*.json",
+    "build:abi:types:gen": "pnpm typechain --target=ethers-v6 --out-dir ../client/types/ethers-contracts ../client/abi/*.json",
     "build:abi:types:mappings": "ts-node deployment/commands/genMappings.ts"
   },
   "devDependencies": {
-    "@typechain/ethers-v5": "^10.1.1",
+    "@typechain/ethers-v6": "^0.5.1",
     "@types/ejs": "^3.1.5",
     "@types/glob": "^8.1.0",
     "@types/node": "^18.11.9",
     "dotenv": "^16.4.5",
     "ds-test": "https://github.com/dapphub/ds-test.git#c7a36fb236f298e04edf28e2fee385b80f53945f",
-    "ethers": "^5.7.1",
+    "ethers": "^6.15.0",
     "execa": "^5.1.1",
     "forge-std": "github:foundry-rs/forge-std",
     "memmove": "https://github.com/brockelmore/memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2",
@@ -85,10 +85,6 @@
     "yargs": "^17.7.2"
   },
   "dependencies": {
-    "@ethersproject/abi": "^5.7.0",
-    "@ethersproject/bignumber": "^5.0",
-    "@ethersproject/bytes": "^5.7.0",
-    "@ethersproject/providers": "^5.7.0",
     "@morpho-labs/gnosis-tx-builder": "^1.3.1",
     "@mud-classic/std-contracts": "^0.0.1",
     "@openzeppelin/contracts": "^4.9.0",

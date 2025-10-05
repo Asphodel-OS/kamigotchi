@@ -1,5 +1,3 @@
-import { BigNumberish } from 'ethers';
-
 import { toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
 import { goalsAPI } from './goals';
@@ -28,7 +26,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   /////////////////
   //  CONFIG
 
-  async function setConfig(field: string, value: BigNumberish) {
+  async function setConfig(field: string, value: number) {
     const callData = generateCallData(
       'system.config.registry',
       [field, value],
@@ -119,7 +117,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
-  async function batchMint(amount: number, gasLimit?: BigNumberish) {
+  async function batchMint(amount: number, gasLimit?: string) {
     const callData = generateCallData(
       'system.Kami721.BatchMint',
       [amount],
@@ -204,7 +202,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     roomIndex: number,
     sourceIndex: number,
     conditionIndex: number,
-    conditionValue: BigNumberish,
+    conditionValue: string | number,
     type: string,
     logicType: string,
     for_: string

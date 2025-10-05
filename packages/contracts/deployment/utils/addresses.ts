@@ -1,5 +1,4 @@
-import { Provider } from '@ethersproject/providers';
-import { BigNumberish, ethers } from 'ethers';
+import { ethers, Provider } from 'ethers';
 
 import { UintCompABI, WorldABI } from '../contracts/mappings/worldABIs';
 import { getProvider } from './chain';
@@ -41,7 +40,7 @@ export class WorldAddresses {
   private async getAddr(registry: any, strID: string) {
     if (this.cache.has(strID)) return this.cache.get(strID);
 
-    const id = ethers.utils.solidityKeccak256(['string'], [strID]);
+    const id = ethers.solidityPackedKeccak256(['string'], [strID]);
     const addr = await getAddrByID(this.provider, registry, id);
     this.cache.set(strID, addr);
     return addr;
@@ -54,7 +53,7 @@ export class WorldAddresses {
 export const getAddrByID = async (
   provider: Provider,
   compsAddr: string,
-  id: BigNumberish
+  id: string
 ): Promise<string> => {
   const comp = new ethers.Contract(compsAddr, UintCompABI, provider);
   const values = await comp.getEntitiesWithValue(id);
@@ -66,7 +65,7 @@ export const getSystemAddr = async (strID: string): Promise<string> => {
   const world = new ethers.Contract(process.env.WORLD!, WorldABI, provider);
   const systemRegistry = await world.systems();
 
-  const id = ethers.utils.solidityKeccak256(['string'], [strID]);
+  const id = ethers.solidityPackedKeccak256(['string'], [strID]);
   return await getAddrByID(provider, systemRegistry, id);
 };
 
@@ -75,6 +74,6 @@ export const getCompAddr = async (strID: string): Promise<string> => {
   const world = new ethers.Contract(process.env.WORLD!, WorldABI, provider);
   const systemRegistry = await world.components();
 
-  const id = ethers.utils.solidityKeccak256(['string'], [strID]);
+  const id = ethers.solidityPackedKeccak256(['string'], [strID]);
   return await getAddrByID(provider, systemRegistry, id);
 };
