@@ -1,5 +1,5 @@
 import { parse } from 'csv-parse/sync';
-import { BigNumberish, utils } from 'ethers';
+import { ethers } from 'ethers';
 
 ////////////////
 // CONSTANTS
@@ -87,7 +87,7 @@ export const getGoalID = (index: number) => {
 };
 
 export const generateRegID = (field: string, index: number) => {
-  return utils.solidityKeccak256(['string', 'uint32'], [field, index]);
+  return ethers.solidityPackedKeccak256(['string', 'uint32'], [field, index]);
 };
 
 ///////////////
@@ -112,13 +112,13 @@ export const parseToInitCon = (
   logicType: string,
   type: string,
   index: number,
-  value: BigNumberish
-): { logicType: string; type: string; index: number; value: BigNumberish } => {
+  value: string | number
+): { logicType: string; type: string; index: number; value: string } => {
   return {
     logicType: logicType == '' ? '' : parseToLogicType(logicType),
     type: parseToConType(type),
     index: parseToConIndex(type, index),
-    value: parseToConValue(type, index, value),
+    value: parseToConValue(type, index, Number(value)),
   };
 };
 
@@ -184,7 +184,7 @@ const parseToConIndex = (type: string, index: number): number => {
   else return index;
 };
 
-const parseToConValue = (type: string, index: number, value: BigNumberish): BigNumberish => {
+const parseToConValue = (type: string, index: number, value: string | number): string => {
   if (type === 'GOAL') return getGoalID(index);
-  else return value;
+  else return String(value);
 };

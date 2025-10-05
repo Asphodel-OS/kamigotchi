@@ -15,7 +15,7 @@ async function dropKillRewards(api: AdminAPI) {
   let i = 0;
   for (i; i < killRewardsCSV.length; i += batchSize) {
     const batch = killRewardsCSV.slice(i, i + batchSize);
-    const addresses = batch.map((k: any) => ethers.utils.getAddress(k['address']));
+    const addresses = batch.map((k: any) => ethers.getAddress(k['address']));
     const amounts = batch.map((k: any) => Number(k['amt']));
     await api.setup.live.obols(addresses, amounts);
   }

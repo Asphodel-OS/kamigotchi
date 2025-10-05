@@ -3,60 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
-export interface ControlledBridgeSystemInterface extends utils.Interface {
-  functions: {
-    "blacklist(address)": FunctionFragment;
-    "cancelOwnershipHandover()": FunctionFragment;
-    "completeOwnershipHandover(address)": FunctionFragment;
-    "deprecate()": FunctionFragment;
-    "execute(bytes)": FunctionFragment;
-    "getMinDelay()": FunctionFragment;
-    "getOperationState(bytes32)": FunctionFragment;
-    "getTimestamp(bytes32)": FunctionFragment;
-    "hashOperation(address,uint256,uint256)": FunctionFragment;
-    "isAdmin(address)": FunctionFragment;
-    "isBlacklisted(address)": FunctionFragment;
-    "isOperation(bytes32)": FunctionFragment;
-    "isOperationDone(bytes32)": FunctionFragment;
-    "isOperationPending(bytes32)": FunctionFragment;
-    "isOperationReady(bytes32)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "requestOwnershipHandover()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unblacklist(address)": FunctionFragment;
-    "updateAdmin(address,bool)": FunctionFragment;
-    "updateMinDelay(uint256)": FunctionFragment;
-  };
-
+export interface ControlledBridgeSystemInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "blacklist"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
@@ -82,9 +51,20 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
       | "updateMinDelay"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "CallCancelled"
+      | "CallExecuted"
+      | "CallScheduled"
+      | "OwnershipHandoverCanceled"
+      | "OwnershipHandoverRequested"
+      | "OwnershipTransferred"
+      | "SystemDeprecated"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "blacklist",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
@@ -92,61 +72,54 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "execute",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
+  encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "getMinDelay",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getOperationState",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getTimestamp",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "hashOperation",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isAdmin",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isBlacklisted",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isOperation",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isOperationDone",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isOperationPending",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "isOperationReady",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -158,19 +131,19 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "unblacklist",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "updateAdmin",
-    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+    values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "updateMinDelay",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "blacklist", data: BytesLike): Result;
@@ -250,720 +223,431 @@ export interface ControlledBridgeSystemInterface extends utils.Interface {
     functionFragment: "updateMinDelay",
     data: BytesLike
   ): Result;
-
-  events: {
-    "CallCancelled(bytes32)": EventFragment;
-    "CallExecuted(bytes32,address,uint256)": EventFragment;
-    "CallScheduled(bytes32,address,uint256,uint256)": EventFragment;
-    "OwnershipHandoverCanceled(address)": EventFragment;
-    "OwnershipHandoverRequested(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "SystemDeprecated()": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "CallCancelled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CallExecuted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CallScheduled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
-export interface CallCancelledEventObject {
-  id: string;
+export namespace CallCancelledEvent {
+  export type InputTuple = [id: BytesLike];
+  export type OutputTuple = [id: string];
+  export interface OutputObject {
+    id: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CallCancelledEvent = TypedEvent<[string], CallCancelledEventObject>;
 
-export type CallCancelledEventFilter = TypedEventFilter<CallCancelledEvent>;
-
-export interface CallExecutedEventObject {
-  id: string;
-  target: string;
-  value: BigNumber;
+export namespace CallExecutedEvent {
+  export type InputTuple = [
+    id: BytesLike,
+    target: AddressLike,
+    value: BigNumberish
+  ];
+  export type OutputTuple = [id: string, target: string, value: bigint];
+  export interface OutputObject {
+    id: string;
+    target: string;
+    value: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CallExecutedEvent = TypedEvent<
-  [string, string, BigNumber],
-  CallExecutedEventObject
->;
 
-export type CallExecutedEventFilter = TypedEventFilter<CallExecutedEvent>;
-
-export interface CallScheduledEventObject {
-  id: string;
-  target: string;
-  value: BigNumber;
-  timestamp: BigNumber;
+export namespace CallScheduledEvent {
+  export type InputTuple = [
+    id: BytesLike,
+    target: AddressLike,
+    value: BigNumberish,
+    timestamp: BigNumberish
+  ];
+  export type OutputTuple = [
+    id: string,
+    target: string,
+    value: bigint,
+    timestamp: bigint
+  ];
+  export interface OutputObject {
+    id: string;
+    target: string;
+    value: bigint;
+    timestamp: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CallScheduledEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
-  CallScheduledEventObject
->;
 
-export type CallScheduledEventFilter = TypedEventFilter<CallScheduledEvent>;
-
-export interface OwnershipHandoverCanceledEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverCanceledEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverCanceledEvent = TypedEvent<
-  [string],
-  OwnershipHandoverCanceledEventObject
->;
 
-export type OwnershipHandoverCanceledEventFilter =
-  TypedEventFilter<OwnershipHandoverCanceledEvent>;
-
-export interface OwnershipHandoverRequestedEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverRequestedEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverRequestedEvent = TypedEvent<
-  [string],
-  OwnershipHandoverRequestedEventObject
->;
 
-export type OwnershipHandoverRequestedEventFilter =
-  TypedEventFilter<OwnershipHandoverRequestedEvent>;
-
-export interface OwnershipTransferredEventObject {
-  oldOwner: string;
-  newOwner: string;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [oldOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [oldOwner: string, newOwner: string];
+  export interface OutputObject {
+    oldOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface SystemDeprecatedEventObject {}
-export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
-
-export type SystemDeprecatedEventFilter =
-  TypedEventFilter<SystemDeprecatedEvent>;
+export namespace SystemDeprecatedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface ControlledBridgeSystem extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): ControlledBridgeSystem;
+  waitForDeployment(): Promise<this>;
 
   interface: ControlledBridgeSystemInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    blacklist(
-      target: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    execute(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    getMinDelay(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getOperationState(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    getTimestamp(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    hashOperation(
-      target: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
-      salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    isAdmin(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isBlacklisted(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isOperation(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isOperationDone(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isOperationPending(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    isOperationReady(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    unblacklist(
-      target: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateAdmin(
-      target: PromiseOrValue<string>,
-      enabled: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateMinDelay(
-      newMinDelay: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  blacklist(
-    target: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  cancelOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  completeOwnershipHandover(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  deprecate(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  execute(
-    args: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  getMinDelay(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getOperationState(
-    id: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  getTimestamp(
-    id: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  hashOperation(
-    target: PromiseOrValue<string>,
-    value: PromiseOrValue<BigNumberish>,
-    salt: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  isAdmin(
-    target: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isBlacklisted(
-    target: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isOperation(
-    id: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isOperationDone(
-    id: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isOperationPending(
-    id: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  isOperationReady(
-    id: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  ownershipHandoverExpiresAt(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  renounceOwnership(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  requestOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  unblacklist(
-    target: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateAdmin(
-    target: PromiseOrValue<string>,
-    enabled: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateMinDelay(
-    newMinDelay: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    blacklist(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    deprecate(overrides?: CallOverrides): Promise<void>;
-
-    execute(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getMinDelay(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOperationState(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    getTimestamp(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    hashOperation(
-      target: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
-      salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    isAdmin(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isBlacklisted(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isOperation(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isOperationDone(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isOperationPending(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    isOperationReady(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unblacklist(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateAdmin(
-      target: PromiseOrValue<string>,
-      enabled: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateMinDelay(
-      newMinDelay: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  blacklist: TypedContractMethod<[target: AddressLike], [void], "nonpayable">;
+
+  cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
+
+  completeOwnershipHandover: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [void],
+    "payable"
+  >;
+
+  deprecate: TypedContractMethod<[], [void], "nonpayable">;
+
+  execute: TypedContractMethod<[args: BytesLike], [string], "nonpayable">;
+
+  getMinDelay: TypedContractMethod<[], [bigint], "view">;
+
+  getOperationState: TypedContractMethod<[id: BytesLike], [bigint], "view">;
+
+  getTimestamp: TypedContractMethod<[id: BytesLike], [bigint], "view">;
+
+  hashOperation: TypedContractMethod<
+    [target: AddressLike, value: BigNumberish, salt: BigNumberish],
+    [string],
+    "view"
+  >;
+
+  isAdmin: TypedContractMethod<[target: AddressLike], [boolean], "view">;
+
+  isBlacklisted: TypedContractMethod<[target: AddressLike], [boolean], "view">;
+
+  isOperation: TypedContractMethod<[id: BytesLike], [boolean], "view">;
+
+  isOperationDone: TypedContractMethod<[id: BytesLike], [boolean], "view">;
+
+  isOperationPending: TypedContractMethod<[id: BytesLike], [boolean], "view">;
+
+  isOperationReady: TypedContractMethod<[id: BytesLike], [boolean], "view">;
+
+  owner: TypedContractMethod<[], [string], "view">;
+
+  ownershipHandoverExpiresAt: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  renounceOwnership: TypedContractMethod<[], [void], "payable">;
+
+  requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
+
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "payable"
+  >;
+
+  unblacklist: TypedContractMethod<[target: AddressLike], [void], "nonpayable">;
+
+  updateAdmin: TypedContractMethod<
+    [target: AddressLike, enabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+
+  updateMinDelay: TypedContractMethod<
+    [newMinDelay: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "blacklist"
+  ): TypedContractMethod<[target: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "cancelOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "completeOwnershipHandover"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "deprecate"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "execute"
+  ): TypedContractMethod<[args: BytesLike], [string], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getMinDelay"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getOperationState"
+  ): TypedContractMethod<[id: BytesLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getTimestamp"
+  ): TypedContractMethod<[id: BytesLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "hashOperation"
+  ): TypedContractMethod<
+    [target: AddressLike, value: BigNumberish, salt: BigNumberish],
+    [string],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "isAdmin"
+  ): TypedContractMethod<[target: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "isBlacklisted"
+  ): TypedContractMethod<[target: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "isOperation"
+  ): TypedContractMethod<[id: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "isOperationDone"
+  ): TypedContractMethod<[id: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "isOperationPending"
+  ): TypedContractMethod<[id: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "isOperationReady"
+  ): TypedContractMethod<[id: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "ownershipHandoverExpiresAt"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "requestOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "unblacklist"
+  ): TypedContractMethod<[target: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateAdmin"
+  ): TypedContractMethod<
+    [target: AddressLike, enabled: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateMinDelay"
+  ): TypedContractMethod<[newMinDelay: BigNumberish], [void], "nonpayable">;
+
+  getEvent(
+    key: "CallCancelled"
+  ): TypedContractEvent<
+    CallCancelledEvent.InputTuple,
+    CallCancelledEvent.OutputTuple,
+    CallCancelledEvent.OutputObject
+  >;
+  getEvent(
+    key: "CallExecuted"
+  ): TypedContractEvent<
+    CallExecutedEvent.InputTuple,
+    CallExecutedEvent.OutputTuple,
+    CallExecutedEvent.OutputObject
+  >;
+  getEvent(
+    key: "CallScheduled"
+  ): TypedContractEvent<
+    CallScheduledEvent.InputTuple,
+    CallScheduledEvent.OutputTuple,
+    CallScheduledEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverCanceled"
+  ): TypedContractEvent<
+    OwnershipHandoverCanceledEvent.InputTuple,
+    OwnershipHandoverCanceledEvent.OutputTuple,
+    OwnershipHandoverCanceledEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverRequested"
+  ): TypedContractEvent<
+    OwnershipHandoverRequestedEvent.InputTuple,
+    OwnershipHandoverRequestedEvent.OutputTuple,
+    OwnershipHandoverRequestedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "SystemDeprecated"
+  ): TypedContractEvent<
+    SystemDeprecatedEvent.InputTuple,
+    SystemDeprecatedEvent.OutputTuple,
+    SystemDeprecatedEvent.OutputObject
+  >;
 
   filters: {
-    "CallCancelled(bytes32)"(
-      id?: PromiseOrValue<BytesLike> | null
-    ): CallCancelledEventFilter;
-    CallCancelled(
-      id?: PromiseOrValue<BytesLike> | null
-    ): CallCancelledEventFilter;
+    "CallCancelled(bytes32)": TypedContractEvent<
+      CallCancelledEvent.InputTuple,
+      CallCancelledEvent.OutputTuple,
+      CallCancelledEvent.OutputObject
+    >;
+    CallCancelled: TypedContractEvent<
+      CallCancelledEvent.InputTuple,
+      CallCancelledEvent.OutputTuple,
+      CallCancelledEvent.OutputObject
+    >;
 
-    "CallExecuted(bytes32,address,uint256)"(
-      id?: PromiseOrValue<BytesLike> | null,
-      target?: PromiseOrValue<string> | null,
-      value?: null
-    ): CallExecutedEventFilter;
-    CallExecuted(
-      id?: PromiseOrValue<BytesLike> | null,
-      target?: PromiseOrValue<string> | null,
-      value?: null
-    ): CallExecutedEventFilter;
+    "CallExecuted(bytes32,address,uint256)": TypedContractEvent<
+      CallExecutedEvent.InputTuple,
+      CallExecutedEvent.OutputTuple,
+      CallExecutedEvent.OutputObject
+    >;
+    CallExecuted: TypedContractEvent<
+      CallExecutedEvent.InputTuple,
+      CallExecutedEvent.OutputTuple,
+      CallExecutedEvent.OutputObject
+    >;
 
-    "CallScheduled(bytes32,address,uint256,uint256)"(
-      id?: PromiseOrValue<BytesLike> | null,
-      target?: PromiseOrValue<string> | null,
-      value?: null,
-      timestamp?: null
-    ): CallScheduledEventFilter;
-    CallScheduled(
-      id?: PromiseOrValue<BytesLike> | null,
-      target?: PromiseOrValue<string> | null,
-      value?: null,
-      timestamp?: null
-    ): CallScheduledEventFilter;
+    "CallScheduled(bytes32,address,uint256,uint256)": TypedContractEvent<
+      CallScheduledEvent.InputTuple,
+      CallScheduledEvent.OutputTuple,
+      CallScheduledEvent.OutputObject
+    >;
+    CallScheduled: TypedContractEvent<
+      CallScheduledEvent.InputTuple,
+      CallScheduledEvent.OutputTuple,
+      CallScheduledEvent.OutputObject
+    >;
 
-    "OwnershipHandoverCanceled(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
-    OwnershipHandoverCanceled(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
+    "OwnershipHandoverCanceled(address)": TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
+    OwnershipHandoverCanceled: TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
 
-    "OwnershipHandoverRequested(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
-    OwnershipHandoverRequested(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
+    "OwnershipHandoverRequested(address)": TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
+    OwnershipHandoverRequested: TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
 
-    "OwnershipTransferred(address,address)"(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
 
-    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
-    SystemDeprecated(): SystemDeprecatedEventFilter;
-  };
-
-  estimateGas: {
-    blacklist(
-      target: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    execute(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    getMinDelay(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOperationState(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTimestamp(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    hashOperation(
-      target: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
-      salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isAdmin(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isBlacklisted(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isOperation(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isOperationDone(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isOperationPending(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isOperationReady(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    unblacklist(
-      target: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateAdmin(
-      target: PromiseOrValue<string>,
-      enabled: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateMinDelay(
-      newMinDelay: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    blacklist(
-      target: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    execute(
-      args: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getMinDelay(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOperationState(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTimestamp(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    hashOperation(
-      target: PromiseOrValue<string>,
-      value: PromiseOrValue<BigNumberish>,
-      salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isAdmin(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isBlacklisted(
-      target: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isOperation(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isOperationDone(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isOperationPending(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isOperationReady(
-      id: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unblacklist(
-      target: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateAdmin(
-      target: PromiseOrValue<string>,
-      enabled: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateMinDelay(
-      newMinDelay: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "SystemDeprecated()": TypedContractEvent<
+      SystemDeprecatedEvent.InputTuple,
+      SystemDeprecatedEvent.OutputTuple,
+      SystemDeprecatedEvent.OutputObject
+    >;
+    SystemDeprecated: TypedContractEvent<
+      SystemDeprecatedEvent.InputTuple,
+      SystemDeprecatedEvent.OutputTuple,
+      SystemDeprecatedEvent.OutputObject
+    >;
   };
 }

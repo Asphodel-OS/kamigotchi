@@ -1,4 +1,4 @@
-import { constants } from 'ethers';
+import { ethers } from 'ethers';
 import { ignoreSolcErrors } from '../utils';
 import { findLog } from '../utils/findLog';
 import { verifyContracts } from '../utils/forge';
@@ -22,11 +22,11 @@ export async function deploy(
       '--sig',
       'deploy(uint256,address,bool,bool,bool,address,bool)',
       process.env.PRIV_KEY!, // deployer
-      worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
+      worldAddress || ethers.ZeroAddress, // World address (0 = deploy a new world)
       (reuseComponents || false).toString(), // Reuse components
       (initWorld || false).toString(), // Init world
       (emitter || false).toString(), // Deploy emitter
-      (process.env.MULTISIG || constants.AddressZero).toString(), // Multisig address
+      (process.env.MULTISIG || ethers.ZeroAddress).toString(), // Multisig address
       (process.env.NODE_ENV === 'puter').toString(), // Local mode
       '--fork-url',
       process.env.RPC!,
