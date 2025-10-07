@@ -1,5 +1,3 @@
-import { of } from 'rxjs';
-
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
@@ -13,7 +11,6 @@ import {
 
 export const RightMenuFixture: UIComponent = {
   id: 'RightMenuFixture',
-  requirement: (layers) => of(layers),
   Render: () => {
     const menuVisible = useVisibility((s) => s.fixtures.menu);
     return (
@@ -39,4 +36,6 @@ const Wrapper = styled.div`
   justify-content: flex-end;
   padding-right: 0.32vw;
   gap: 0.6vh;
+  position: relative;
+  z-index: 3;
 `;

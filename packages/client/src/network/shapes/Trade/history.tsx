@@ -1,4 +1,4 @@
-import { World } from '@mud-classic/recs';
+import { World } from 'engine/recs';
 import { BigNumber } from 'ethers';
 
 import { Trade as TradeHistory } from 'clients/kamiden/proto';

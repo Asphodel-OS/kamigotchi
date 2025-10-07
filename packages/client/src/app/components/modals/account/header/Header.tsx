@@ -1,38 +1,29 @@
-import { EntityIndex } from '@mud-classic/recs';
 import CakeIcon from '@mui/icons-material/Cake';
+import { EntityIndex } from 'engine/recs';
 import moment from 'moment';
 import styled from 'styled-components';
 
 import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
+import { Account as PlayerAccount } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
 import { FriendActions } from './FriendActions';
 import { Pfp } from './Pfp';
+import { TwitterPrivyAccountLink } from './TwitterPrivyAccountLink';
 
 export const Header = ({
   account,
-  actions: {
-    setBio,
-    handlePfpChange,
-    requestFren,
-    cancelFren,
-    blockFren,
-    acceptFren,
-  },
+  actions: { setBio, handlePfpChange, requestFren, cancelFren, blockFren, acceptFren },
   isLoading,
   isSelf,
   player,
-  utils: {
-    getAccountKamis,
-    getFriends,
-  },
+  utils: { getAccountKamis, getFriends },
 }: {
   account: Account; // account selected for viewing
   actions: {
@@ -91,7 +82,10 @@ export const Header = ({
       )}
       <Info>
         <TitleSection>
-          <Text size={1.2}>{account.name}</Text>
+          <TitleHeader>
+            <Text size={1.2}>{account.name}</Text>
+            {isSelf && <TwitterPrivyAccountLink />}
+          </TitleHeader>
           <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
             <Subtitle onClick={() => copyText(account.ownerAddress)}>
               {abbreviateAddress(account.ownerAddress)}
@@ -140,6 +134,14 @@ const TitleSection = styled.div`
   flex-flow: column nowrap;
   gap: 0.3vw;
   margin-bottom: 0.6vw;
+`;
+
+const TitleHeader = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 2vw;
+  gap: 0.3vw;
 `;
 
 const Subtitle = styled.div`

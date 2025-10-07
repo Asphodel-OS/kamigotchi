@@ -484,6 +484,10 @@
       "skipEnv": ["testing"]
     },
     {
+      "name": "Kami721TransferSystem",
+      "writeAccess": []
+    },
+    {
       "name": "KamiGachaMintSystem",
       "writeAccess": [
         "Affinity",
@@ -598,6 +602,10 @@
     },
     {
       "name": "KamiUseItemSystem",
+      "writeAccess": ["*"]
+    },
+    {
+      "name": "KamiCastItemSystem",
       "writeAccess": ["*"]
     },
     {

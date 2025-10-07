@@ -1,5 +1,5 @@
 import { Result } from '@ethersproject/abi';
-import { Components, ComponentValue, EntityID, SchemaOf } from '@mud-classic/recs';
+import { Components, ComponentValue, EntityID, SchemaOf } from 'engine/recs';
 import { BigNumber, ContractInterface } from 'ethers';
 
 import { ProviderConfig } from 'engine/providers';

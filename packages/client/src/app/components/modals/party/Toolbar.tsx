@@ -51,6 +51,8 @@ export const Toolbar = ({
   const { passesNodeReqs } = utils;
   const { displayedKamis, setDisplayedKamis, tick } = state;
   const partyModalVisible = useVisibility((s) => s.modals.party);
+  //const toolbarRef = useRef<HTMLDivElement | null>(null);
+  //const detachScroll = useRef<(() => void) | null>(null);
 
   const [addOptions, setAddOptions] = useState<DropdownOption[]>([]);
   const [collectOptions, setCollectOptions] = useState<DropdownOption[]>([]);
@@ -111,6 +113,71 @@ export const Toolbar = ({
     setDisplayedKamis(sorted);
   }, [partyModalVisible, kamis.length, sort, view]);
 
+  /*
+  // JS-driven sticky fallback across browsers: translateY toolbar as parent scrolls
+  useEffect(() => {
+    if (!partyModalVisible) return;
+    const toolbarEl = toolbarRef.current;
+    if (!toolbarEl) return;
+
+    // Helper: find the nearest scrollable ancestor if explicit container not found
+    const findScrollContainer = (start: HTMLElement): HTMLElement | null => {
+      let el: HTMLElement | null = start;
+      while (el) {
+        const style = window.getComputedStyle(el);
+        const overflowY = style.overflowY;
+        if ((overflowY === 'auto' || overflowY === 'scroll') && el.scrollHeight > el.clientHeight) {
+          return el;
+        }
+        el = el.parentElement;
+      }
+      return (document.scrollingElement as HTMLElement) || document.documentElement;
+    };
+
+    const explicit = toolbarEl.closest("[data-scroll-container='true']") as HTMLElement | null;
+    const container = explicit ?? findScrollContainer(toolbarEl);
+    if (!container) return;
+
+    let rafId = 0;
+
+    const setY = (y: number) => {
+      // Use direct transform to avoid dependency issues and keep this hotfix minimal
+      toolbarEl.style.transform = `translateY(${y}px)`;
+    };
+
+    const readScrollTop = () => {
+      if (container === document.scrollingElement || container === document.documentElement) {
+        return document.scrollingElement?.scrollTop ?? window.scrollY ?? 0;
+      }
+      return (container as HTMLElement).scrollTop;
+    };
+
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        const y = readScrollTop();
+        setY(y);
+        rafId = 0;
+      });
+    };
+
+    // initialize position and bind
+    onScroll();
+    container.addEventListener(
+      'scroll',
+      onScroll as EventListener,
+      { passive: true } as AddEventListenerOptions
+    );
+    detachScroll.current = () => {
+      container.removeEventListener('scroll', onScroll as EventListener);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+    return () => {
+      if (detachScroll.current) detachScroll.current();
+      toolbarEl.style.transform = 'translateY(0px)';
+    };
+  }, [partyModalVisible]);
+*/
   /////////////////
   // INTERACTION
 
@@ -133,6 +200,7 @@ export const Toolbar = ({
   );
 
   return (
+    // <Container ref={toolbarRef}>
     <Container>
       <Section>
         <TextTooltip text={[`${view}`]}>
@@ -160,6 +228,7 @@ export const Toolbar = ({
 const Container = styled.div`
   padding: 0.6vw;
   z-index: 1;
+  /* Avoid Safari white-screen bug when sticky is nested in overflow containers  will-change: transform; position: relative;*/
   position: sticky;
   top: 0;
   opacity: 0.9;

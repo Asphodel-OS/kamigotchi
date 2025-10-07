@@ -4,8 +4,8 @@ import { addAllos } from './allos';
 import { addRequirements, addTypeRequirement } from './requirements';
 
 const IGNORE_TYPES = ['OTHER'];
-const BASIC_TYPES = ['ERC20', 'MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL'];
-const USE_TYPES = ['FOOD', 'LOOTBOX', 'REVIVE', 'CONSUMABLE'];
+const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL', 'ERC20'];
+const USE_TYPES = ['FOOD', 'LOOTBOX', 'POTION', 'REVIVE', 'CONSUMABLE'];
 
 // initialize a single item
 async function init(api: AdminAPI, entry: any) {

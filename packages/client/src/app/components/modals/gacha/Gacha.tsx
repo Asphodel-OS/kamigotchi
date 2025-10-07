@@ -1,21 +1,21 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount, getAccountKamis } from 'app/cache/account';
+import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
 import { GachaMintConfig, getGachaMintConfig } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
-import { getKami } from 'app/cache/kami';
+import { getKami as _getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { useDevControls } from 'app/stores/devControls';
 import { GACHA_ID } from 'constants/gacha';
 import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { NullAuction } from 'network/shapes/Auction';
 import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
@@ -34,55 +34,57 @@ const KamiBlockCache = new Map<EntityIndex, JSX.Element>();
 
 export const GachaModal: UIComponent = {
   id: 'Gacha',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const accountID = world.entities[accountEntity];
-        const accountOptions = { inventories: 2, live: 2 };
-        const auctionOptions = { items: 3600, balance: 1 };
-        const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
 
-        return {
-          network,
-          data: {
-            accountEntity,
-            commits: getGachaCommits(world, components, accountID),
-            poolKamis: queryKamis(components, { account: GACHA_ID }),
-          },
-          tokens: {
-            spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
-          },
-          utils: {
-            getAccount: () => getAccount(world, components, accountEntity, accountOptions),
-            getAccountKamis: () => getAccountKamis(world, components, accountEntity, kamiOptions),
-            getAuction: (itemIndex: number) =>
-              getAuctionByIndex(world, components, itemIndex, auctionOptions),
-            getItem: (index: number) => getItemByIndex(world, components, index),
-            getItemBalance: (inventories: Inventory[], index: number) =>
-              getInventoryBalance(inventories, index),
-            getKami: (entity: EntityIndex) =>
-              getKami(world, components, entity, kamiOptions, false),
-            getMintConfig: () => getGachaMintConfig(world, components),
-            getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
-            isWhitelisted: (entity: EntityIndex) =>
-              hasFlag(world, components, entity, 'MINT_WHITELISTED'),
-          },
-        };
-      })
-    ),
-  Render: ({ network, data, tokens, utils }) => {
+  /////////////////
+  // PREPARATION
+
+  Render: () => {
+    const layers = useLayers();
+
+    const { network, data, utils } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const accountID = world.entities[accountEntity];
+      const accountOptions = { inventories: 2, live: 2 };
+      const auctionOptions = { items: 3600, balance: 1 };
+      const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
+
+      return {
+        network,
+        data: {
+          accountEntity,
+          commits: getGachaCommits(world, components, accountID),
+          poolKamis: queryKamis(components, { account: GACHA_ID }),
+          spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
+        },
+        utils: {
+          getAccount: () => _getAccount(world, components, accountEntity, accountOptions),
+          getAccountKamis: () => _getAccountKamis(world, components, accountEntity, kamiOptions),
+          getAuction: (itemIndex: number) =>
+            getAuctionByIndex(world, components, itemIndex, auctionOptions),
+          getItem: (index: number) => getItemByIndex(world, components, index),
+          getItemBalance: (inventories: Inventory[], index: number) =>
+            getInventoryBalance(inventories, index),
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiOptions, false),
+          getMintConfig: () => getGachaMintConfig(world, components),
+          getMintData: (accountID: EntityID) => getGachaMintData(world, components, accountID),
+          isWhitelisted: (entity: EntityIndex) =>
+            hasFlag(world, components, entity, 'MINT_WHITELISTED'),
+        },
+      };
+    })();
+
+    /////////////////
+    // INSTANTIATIONS
+
     const { actions, world, api } = network;
-    const { accountEntity, commits, poolKamis } = data;
-    const { spenderAddr } = tokens;
+    const { accountEntity, commits, poolKamis, spenderAddr } = data;
     const { getAccount, getAuction, getItemBalance } = utils;
-    const { getMintConfig, getMintData, isWhitelisted } = utils;
+    const { getMintConfig, getMintData, isWhitelisted } = utils; // TODO: deprecate these
 
     const setModals = useVisibility((s) => s.setModals);
     const gachaModalVisible = useVisibility((s) => s.modals.gacha);
-    const lastEvent = useDevControls((s) => s.lastEvent);
     const { selectedAddress, apis } = useNetwork();
 
     // modal controls
@@ -114,6 +116,7 @@ export const GachaModal: UIComponent = {
     /////////////////
     // DEV CONTROL LISTENER
 
+    const { lastEvent } = useDevControls();
     useEffect(() => {
       try {
         if (!lastEvent) return;
@@ -407,7 +410,7 @@ export const GachaModal: UIComponent = {
             caches={{ kamiBlocks: KamiBlockCache }}
             controls={{ mode, setMode: handleSetMode, tab, filters, sorts }}
             data={{
-              ...data,
+              poolKamis,
               account,
               auctions: { gacha: gachaAuction, reroll: rerollAuction },
               mint: {

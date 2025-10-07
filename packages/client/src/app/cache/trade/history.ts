@@ -1,4 +1,4 @@
-import { EntityID, World } from '@mud-classic/recs';
+import { EntityID, World } from 'engine/recs';
 
 import { Trade as TradeHistory } from 'clients/kamiden/proto';
 import { formatEntityID } from 'engine/utils';

@@ -7,7 +7,7 @@ import {
   QueryFragment,
   runQuery,
   World,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 
 import { Components } from 'network/';
 import { getInstanceEntity } from './quest';

@@ -1,85 +1,84 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
 import { ModalWrapper } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { Details, LeaderboardKey, LeaderboardsDetails } from 'constants/leaderboards/leaderboards';
-import { getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
+import { getAccountByID as _getAccountByID, getAccountFromEmbedded } from 'network/shapes/Account';
 import { Score, ScoresFilter, getScoresByFilter } from 'network/shapes/Score';
 import { Filters } from './Filters';
 import { Table } from './Table';
 
 export const LeaderboardModal: UIComponent = {
   id: 'LeaderboardModal',
-  requirement: (layers) => {
-    return interval(3000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const account = getAccountFromEmbedded(network);
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          data: { account },
-          utils: {
-            getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ network, data, utils }) => {
-      const { components } = network;
-      const leaderboardModalOpen = useVisibility((s) => s.modals.leaderboard);
-      const leaderboardKey = useSelected((s) => s.leaderboardKey);
-      const [filter, setFilter] = useState<ScoresFilter>({
-        epoch: 1,
-        index: 1,
-        type: 'TOTAL_SPENT',
+    const { network, data, utils } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const account = getAccountFromEmbedded(network);
+
+      return {
+        network,
+        data: { account },
+        utils: {
+          getAccountByID: (id: EntityID) => _getAccountByID(world, components, id),
+        },
+      };
+    })();
+
+    const { components } = network;
+    const leaderboardModalOpen = useVisibility((s) => s.modals.leaderboard);
+    const leaderboardKey = useSelected((s) => s.leaderboardKey);
+    const [filter, setFilter] = useState<ScoresFilter>({
+      epoch: 1,
+      index: 1,
+      type: 'TOTAL_SPENT',
+    });
+    const [tableData, setTableData] = useState<Score[]>([]);
+    const [details, setDetails] = useState<Details>(LeaderboardsDetails.default);
+
+    // update details based on selected
+    useEffect(() => {
+      const dets = LeaderboardsDetails[leaderboardKey as LeaderboardKey];
+      setDetails(dets);
+      setFilter({
+        ...filter,
+        epoch: filter.epoch,
+        index: filter.index,
+        type: dets ? dets.type : '',
       });
-      const [tableData, setTableData] = useState<Score[]>([]);
-      const [details, setDetails] = useState<Details>(LeaderboardsDetails.default);
+    }, [leaderboardKey]);
 
-      // update details based on selected
-      useEffect(() => {
-        const dets = LeaderboardsDetails[leaderboardKey as LeaderboardKey];
-        setDetails(dets);
-        setFilter({
-          ...filter,
-          epoch: filter.epoch,
-          index: filter.index,
-          type: dets ? dets.type : '',
-        });
-      }, [leaderboardKey]);
+    // table data update
+    useEffect(() => {
+      if (!leaderboardModalOpen) return;
+      const tableData = getScoresByFilter(components, filter);
+      setTableData(tableData);
+    }, [filter, leaderboardModalOpen]);
 
-      // table data update
-      useEffect(() => {
-        if (!leaderboardModalOpen) return;
-        const tableData = getScoresByFilter(components, filter);
-        setTableData(tableData);
-      }, [filter, leaderboardModalOpen]);
-
-      return (
-        <ModalWrapper id='leaderboard' canExit overlay>
-          <Header>{details ? details.title : 'Leaderboards'}</Header>
-          <ColumnTitleBox>
-            <ColumnTitleText style={{ flexBasis: '10%' }}>Rank</ColumnTitleText>
-            <ColumnTitleText style={{ flexBasis: '70%' }}>Player</ColumnTitleText>
-            <ColumnTitleText style={{ flexBasis: '20%' }}>
-              {details ? details.label : 'Score'}
-            </ColumnTitleText>
-          </ColumnTitleBox>
-          <Table scores={tableData} prefix={details ? details.prefix ?? '' : ''} utils={utils} />
-          {details && details.showFilter ? (
-            <Filters filter={filter} setFilter={setFilter} epochOptions={[1]} />
-          ) : (
-            <div></div>
-          )}
-        </ModalWrapper>
-      );
+    return (
+      <ModalWrapper id='leaderboard' canExit overlay>
+        <Header>{details ? details.title : 'Leaderboards'}</Header>
+        <ColumnTitleBox>
+          <ColumnTitleText style={{ flexBasis: '10%' }}>Rank</ColumnTitleText>
+          <ColumnTitleText style={{ flexBasis: '70%' }}>Player</ColumnTitleText>
+          <ColumnTitleText style={{ flexBasis: '20%' }}>
+            {details ? details.label : 'Score'}
+          </ColumnTitleText>
+        </ColumnTitleBox>
+        <Table scores={tableData} prefix={details ? (details.prefix ?? '') : ''} utils={utils} />
+        {details && details.showFilter ? (
+          <Filters filter={filter} setFilter={setFilter} epochOptions={[1]} />
+        ) : (
+          <div></div>
+        )}
+      </ModalWrapper>
+    );
   },
 };
 

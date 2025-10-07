@@ -1,19 +1,20 @@
-import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount, getAccountKamis } from 'app/cache/account';
+import { getAccount as _getAccount, getAccountKamis } from 'app/cache/account';
 import { getInventoryBalance, Inventory } from 'app/cache/inventory';
 import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { HOLY_DUST_INDEX } from 'constants/items';
+import { EntityID } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami, NullKami } from 'network/shapes/Kami';
+import { getCompAddr } from 'network/shapes/utils';
 import { Carousel } from './Carousel';
 import { Stage } from './Stage';
 
@@ -21,38 +22,46 @@ const REFRESH_INTERVAL = 2000;
 
 export const EmaBoardModal: UIComponent = {
   id: 'EmaBoardModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          data: {
-            accountEntity,
-          },
-          utils: {
-            getAccount: () =>
-              getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
-            getKamis: () =>
-              getAccountKamis(world, components, accountEntity, {
-                base: 2,
-                live: 2,
-                progress: 3600,
-              }),
-            getItemBalance: (inventory: Inventory[], index: number) =>
-              getInventoryBalance(inventory, index),
-            getItem: (index: number) => getItemByIndex(world, components, index),
-          },
-        };
-      })
-    ),
-  Render: ({ network, data, utils }) => {
+    /////////////////
+    // PREPARATION
+
+    const { network, data, utils } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+
+      return {
+        network,
+        data: {
+          accountEntity,
+          spender: getCompAddr(world, components, 'component.token.allowance'),
+        },
+        utils: {
+          getAccount: () =>
+            _getAccount(world, components, accountEntity, { live: 2, inventory: 2 }),
+          getKamis: () =>
+            getAccountKamis(world, components, accountEntity, {
+              base: 2,
+              live: 2,
+              progress: 3600,
+            }),
+          getItemBalance: (inventory: Inventory[], index: number) =>
+            getInventoryBalance(inventory, index),
+          getItem: (index: number) => getItemByIndex(world, components, index),
+        },
+      };
+    })();
+
+    /////////////////
+    // INSTANTIATIONS
+
     const { accountEntity } = data;
     const { actions, api } = network;
     const { getAccount, getItem, getKamis } = utils;
+
     const emaBoardVisible = useVisibility((s) => s.modals.emaBoard);
 
     const [tick, setTick] = useState(Date.now());

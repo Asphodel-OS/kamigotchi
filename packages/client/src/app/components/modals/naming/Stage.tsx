@@ -1,9 +1,9 @@
-import { EntityID } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, KamiBlock, Text, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { EntityID } from 'engine/recs';
 import { Account } from 'network/shapes/Account';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item } from 'network/shapes/Item';

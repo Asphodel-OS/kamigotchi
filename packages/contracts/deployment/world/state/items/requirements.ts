@@ -56,7 +56,7 @@ export async function addRequirement(api: AdminAPI, itemIndex: number, entry: an
 /// @dev requirements depend on outdated item types (ie. FOOD, REVIVE, etc). to update
 export async function addTypeRequirement(api: AdminAPI, item: any) {
   // only adds requirement from type for now. slightly hardcoded for state requirements
-  if (item['For'].toUpperCase() !== 'KAMI') return; // only kami need state requirements
+  if (!item['For'].toUpperCase().includes('KAMI')) return; // only kami need state requirements
 
   const itemType = item['Type'].toUpperCase();
   const [type, logicType, index, value] = itemTypeToRequirement(itemType);
@@ -73,7 +73,7 @@ export async function addTypeRequirement(api: AdminAPI, item: any) {
 
 // determine the structure of an item's requirement based on its type
 export function itemTypeToRequirement(type: string): [string, string, number, number] {
-  if (type === 'FOOD') return ['KAMI_CAN_EAT', 'BOOL_IS', 0, 0];
+  if (type === 'FOOD' || type === 'POTION') return ['KAMI_CAN_EAT', 'BOOL_IS', 0, 0];
   else if (type === 'REVIVE') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('DEAD'), 0];
   else if (type === 'CONSUMABLE') return ['STATE', 'BOOL_IS', parseKamiStateToIndex('RESTING'), 0];
   else throw new Error('Item type not found: ' + type);

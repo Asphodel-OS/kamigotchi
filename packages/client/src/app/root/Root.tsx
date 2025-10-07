@@ -1,6 +1,6 @@
-import { getComponentValue } from '@mud-classic/recs';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { getComponentValue } from 'engine/recs';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';

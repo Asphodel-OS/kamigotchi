@@ -40,7 +40,7 @@ import {
 } from './validators';
 
 export const allComponents: UIComponentWithGrid[] = [
-  // boot
+  // boot (preload)
   {
     uiComponent: LoadingState,
     gridConfig: { colStart: 1, colEnd: 13, rowStart: 1, rowEnd: 13 },
@@ -48,6 +48,34 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: ActionQueue,
     gridConfig: { colStart: 66, colEnd: 99, rowStart: 90, rowEnd: 100 },
+  },
+  {
+    uiComponent: RightMenuFixture,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 3, rowEnd: 6 },
+  },
+  {
+    uiComponent: NotificationFixture,
+    gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
+  },
+  {
+    uiComponent: HelpModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+
+  // canvas
+  {
+    uiComponent: Scene,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
+
+  // fixtures
+  {
+    uiComponent: ClockFixture,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 78, rowEnd: 99 },
+  },
+  {
+    uiComponent: LeftMenuFixture,
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 3, rowEnd: 6 },
   },
 
   // validators
@@ -72,30 +100,6 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
   },
 
-  // fixtures
-  {
-    uiComponent: ClockFixture,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 78, rowEnd: 99 },
-  },
-  {
-    uiComponent: LeftMenuFixture,
-    gridConfig: { colStart: 2, colEnd: 33, rowStart: 3, rowEnd: 6 },
-  },
-  {
-    uiComponent: RightMenuFixture,
-    gridConfig: { colStart: 67, colEnd: 100, rowStart: 3, rowEnd: 6 },
-  },
-  {
-    uiComponent: NotificationFixture,
-    gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
-  },
-
-  // canvas
-  {
-    uiComponent: Scene,
-    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
-  },
-
   // menu modals
   {
     uiComponent: AccountModal,
@@ -108,10 +112,6 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: CraftingModal,
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
-  },
-  {
-    uiComponent: HelpModal,
-    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {
     uiComponent: InventoryModal,

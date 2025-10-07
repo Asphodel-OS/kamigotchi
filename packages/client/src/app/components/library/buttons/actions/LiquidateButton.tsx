@@ -3,7 +3,6 @@ import { calcLiqRecoil, calcLiqSpoils } from 'app/cache/kami/calcs';
 import { IconListButton } from 'app/components/library';
 import { LiquidateIcon } from 'assets/images/icons/actions';
 import { Kami } from 'network/shapes/Kami';
-import { TextTooltip } from '../..';
 
 // button for liquidating a harvest
 // TODO: clean this up
@@ -19,6 +18,7 @@ export const LiquidateButton = (
     const recoil = calcLiqRecoil(myKami, target);
 
     return {
+      image: myKami.image,
       text: `${myKami.name} (+${spoils}MUSU; -${recoil}HP)`,
       onClick: () => triggerAction(myKami, target),
     };
@@ -26,16 +26,15 @@ export const LiquidateButton = (
 
   let tooltipText = getLiquidateTooltip(target, allies);
   return (
-    <TextTooltip key='liquidate-tooltip' text={[tooltipText]}>
-      <IconListButton
-        key='liquidate-button'
-        img={LiquidateIcon}
-        options={actionOptions}
-        disabled={actionOptions.length == 0}
-        width={width}
-        icon={{ inset: { x: 2 } }}
-      />
-    </TextTooltip>
+    <IconListButton
+      key='liquidate-button'
+      img={LiquidateIcon}
+      options={actionOptions}
+      disabled={actionOptions.length == 0}
+      tooltip={{ text: [tooltipText] }}
+      width={width}
+      icon={{ inset: { x: 2 } }}
+    />
   );
 };
 

@@ -6,7 +6,7 @@ import {
   World,
   getComponentValue,
   runQuery,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 
 import { Components } from 'network/';

@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 
 import { KAMI_BASE_URI } from 'constants/media';
 import { Kami } from './types';

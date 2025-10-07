@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { of } from 'rxjs';
 import styled from 'styled-components';
 
 import { ActionButton, ModalHeader, ModalWrapper } from 'app/components/library';
@@ -12,38 +11,38 @@ import { HelpTabs } from './types';
 
 export const HelpModal: UIComponent = {
   id: 'HelpModal',
-  requirement: (layers) => of(layers),
   Render: () => {
-      const [tab, setTab] = useState<HelpTabs>(HelpTabs.HOME);
+    const [tab, setTab] = useState<HelpTabs>(HelpTabs.HOME);
 
-      const BackButton = () => (
-        <ButtonRow
-          style={{
-            display: `${tab == HelpTabs.HOME ? 'none' : 'inline-flex'}`,
-          }}
-        >
-          <ActionButton onClick={() => setTab(HelpTabs.HOME)} text='<' />
-        </ButtonRow>
-      );
+    const BackButton = () => (
+      <ButtonRow
+        style={{
+          display: `${tab == HelpTabs.HOME ? 'none' : 'inline-flex'}`,
+        }}
+      >
+        <ActionButton onClick={() => setTab(HelpTabs.HOME)} text='<' />
+      </ButtonRow>
+    );
 
-      return (
-        <ModalWrapper
-          id='help'
-          header={<ModalHeader title='Help' icon={HelpIcon} />}
-          canExit
-          truncate
-        >
-          <Row>
-            <ActionButton
-              text='Join the Discord'
-              onClick={() => window.open('https://discord.gg/eyUAtzZsE8')}
-            />
-          </Row>
-          <BackButton />
-          <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
-          {tab === HelpTabs.HOME ? <Books setTab={setTab} /> : <Page body={CopyInfo[tab].body} />}
-        </ModalWrapper>
-      );
+    return (
+      <ModalWrapper
+        id='help'
+        header={<ModalHeader title='Help' icon={HelpIcon} />}
+        canExit
+        truncate
+        overlay
+      >
+        <Row>
+          <ActionButton
+            text='Join the Discord'
+            onClick={() => window.open('https://discord.gg/eyUAtzZsE8')}
+          />
+        </Row>
+        <BackButton />
+        <Banner src={CopyInfo[tab].header} alt={CopyInfo[tab].title} />
+        {tab === HelpTabs.HOME ? <Books setTab={setTab} /> : <Page body={CopyInfo[tab].body} />}
+      </ModalWrapper>
+    );
   },
 };
 

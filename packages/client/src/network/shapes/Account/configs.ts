@@ -1,5 +1,5 @@
-import { World } from '@mud-classic/recs';
 import { getConfigArray, getConfigValue } from 'app/cache/config';
+import { World } from 'engine/recs';
 import { Components } from 'network/components';
 
 export interface Configs {

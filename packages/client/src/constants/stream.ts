@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import { NetworkComponentUpdate, NetworkEvents } from 'workers/types';
 
 export const EmptyNetworkEvent = {

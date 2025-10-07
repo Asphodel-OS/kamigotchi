@@ -1,5 +1,5 @@
 import { ExternalProvider } from '@ethersproject/providers';
-import { Type, createWorld, defineComponent } from '@mud-classic/recs';
+import { Type, createWorld, defineComponent } from 'engine/recs';
 
 import { createNetwork } from 'engine/executors';
 import { SystemAbis } from 'types/SystemAbis';

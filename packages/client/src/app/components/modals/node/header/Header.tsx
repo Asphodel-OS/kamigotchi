@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -113,20 +113,19 @@ export const Header = ({
   const AddButton = (kamis: Kami[]) => {
     const options = kamis.filter((kami) => canAdd(kami));
     const actionOptions = options.map((kami) => {
-      return { text: `${kami.name}`, onClick: () => addKami(kami) };
+      return { text: `${kami.name}`, image: kami.image, onClick: () => addKami(kami) };
     });
 
     return (
-      <TextTooltip text={[getDisabledReason(kamis)]} grow>
-        <IconListButton
-          key={`harvest-add`}
-          img={HarvestIcon}
-          options={actionOptions}
-          text='Add Kami to Node'
-          disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
-          fullWidth
-        />
-      </TextTooltip>
+      <IconListButton
+        key={`harvest-add`}
+        img={HarvestIcon}
+        options={actionOptions}
+        text='Add Kami to Node'
+        disabled={options.length == 0 || account.roomIndex !== node.roomIndex}
+        fullWidth
+        tooltip={{ text: [getDisabledReason(kamis)], grow: true }}
+      />
     );
   };
 

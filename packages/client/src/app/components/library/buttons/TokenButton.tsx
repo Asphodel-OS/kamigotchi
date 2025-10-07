@@ -1,5 +1,5 @@
-import { EntityID } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { EntityID } from 'engine/recs';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getAddress } from 'viem';

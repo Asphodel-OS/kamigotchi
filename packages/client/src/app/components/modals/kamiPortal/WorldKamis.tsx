@@ -8,7 +8,11 @@ import { KamiBlock } from '../../library/KamiBlock';
 
 export const WorldKamis = ({
   kamis,
-  state,
+  state: {
+    selectedWorld,
+    setSelectedWorld,
+    selectedWild,
+  },
 }: {
   kamis: Kami[];
   state: {
@@ -17,7 +21,6 @@ export const WorldKamis = ({
     selectedWild?: Kami[];
   };
 }) => {
-  const { selectedWorld, setSelectedWorld, selectedWild } = state;
   const [displayed, setDisplayed] = useState<Kami[]>([]);
 
   useEffect(() => {

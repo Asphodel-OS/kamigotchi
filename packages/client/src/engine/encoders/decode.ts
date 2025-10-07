@@ -1,4 +1,4 @@
-import { ComponentValue } from '@mud-classic/recs';
+import { ComponentValue } from 'engine/recs';
 import { BytesLike, defaultAbiCoder as abi } from 'ethers/lib/utils';
 
 import { ComponentsSchema } from 'types/ComponentsSchema';

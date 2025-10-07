@@ -1,4 +1,4 @@
-import { EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityIndex, getComponentValue } from 'engine/recs';
 
 import { ActionState, defineActionComponent } from 'network/systems/ActionSystem';
 import { waitForComponentValueIn } from 'network/utils/';

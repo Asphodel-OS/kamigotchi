@@ -1,4 +1,3 @@
-import { Components, ComponentValue, SchemaOf } from '@mud-classic/recs';
 import {
   awaitStreamValue,
   DoWork,
@@ -6,6 +5,7 @@ import {
   keccak256,
   streamToDefinedComputed,
 } from '@mud-classic/utils';
+import { Components, ComponentValue, SchemaOf } from 'engine/recs';
 import { computed } from 'mobx';
 import {
   bufferTime,

@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 
 import { Components } from 'network/';
 import { getLastTime, getNextTime, getStartTime } from '../utils/component';

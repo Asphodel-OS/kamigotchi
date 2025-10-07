@@ -1,4 +1,4 @@
-import { Components } from '@mud-classic/recs';
+import { Components } from 'engine/recs';
 import { map, Observable, Subject, timer } from 'rxjs';
 
 import { fromWorker } from 'workers/utils';

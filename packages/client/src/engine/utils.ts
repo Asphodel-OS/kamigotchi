@@ -1,6 +1,6 @@
 import { Block, JsonRpcProvider } from '@ethersproject/providers';
-import { EntityID } from '@mud-classic/recs';
 import { callWithRetry, range, sleep } from '@mud-classic/utils';
+import { EntityID } from 'engine/recs';
 import { BigNumber } from 'ethers';
 import { keccak256 } from 'ethers/lib/utils';
 

@@ -1,4 +1,4 @@
-import { Components } from '@mud-classic/recs';
+import { Components } from 'engine/recs';
 import { BaseContract } from 'ethers';
 
 import { ClockConfig } from './executors';

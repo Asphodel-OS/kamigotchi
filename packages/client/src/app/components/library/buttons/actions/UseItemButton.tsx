@@ -1,7 +1,6 @@
-import { World } from '@mud-classic/recs';
 import { cleanInventories, filterInventories, Inventory } from 'app/cache/inventory';
 import { calcCooldown, isHarvesting, Kami } from 'app/cache/kami';
-import { TextTooltip } from 'app/components/library';
+import { World } from 'engine/recs';
 import { Components } from 'network/components';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
@@ -39,7 +38,7 @@ export const UseItemButton = (
   let disabled = !!tooltip;
   if (!disabled) {
     tooltip = `Feed Kami`;
-    options = getOptions(world, components, kami, account, triggerAction);
+    options = getOptions(world, components, kami, account, triggerAction, false);
     if (options.length === 0) {
       tooltip = `No items to feed`;
       disabled = true;
@@ -47,15 +46,15 @@ export const UseItemButton = (
   }
 
   return (
-    <TextTooltip key='feed-tooltip' text={[tooltip]}>
-      <IconListButton
-        img={icon}
-        options={options}
-        disabled={disabled}
-        width={width}
-        icon={{ inset: { x: iconInsetXpx, y: iconInsetYpx } }}
-      />
-    </TextTooltip>
+    <IconListButton
+      key='feed-tooltip'
+      img={icon}
+      options={options}
+      disabled={disabled}
+      tooltip={{ text: [tooltip] }}
+      width={width}
+      icon={{ inset: { x: iconInsetXpx, y: iconInsetYpx } }}
+    />
   );
 };
 
@@ -77,7 +76,8 @@ const getOptions = (
   components: Components,
   kami: Kami,
   account: Account,
-  triggerAction: Function
+  triggerAction: Function,
+  showEffects?: boolean
 ) => {
   let inventories = account.inventories ?? [];
   inventories = cleanInventories(inventories);
@@ -87,7 +87,7 @@ const getOptions = (
   );
 
   const options = inventories.map((inv: Inventory) => {
-    return getOption(world, components, kami, inv, triggerAction);
+    return getOption(world, components, kami, inv, triggerAction, showEffects);
   });
 
   return options.filter((option) => !!option.text);
@@ -100,18 +100,23 @@ const getOption = (
   components: Components,
   kami: Kami,
   inv: Inventory,
-  triggerAction: Function
+  triggerAction: Function,
+  showEffects?: boolean
 ) => {
+  const name = inv.item.name;
+
   // its not querying use correctly!
-  const effectsText = parseAllos(world, components, inv.item.effects.use)
-    .map((entry) => `${entry.description}`)
-    .join(', ');
-  const text = `${inv.item.name} (${effectsText})`;
+  let effectsText = '';
+  if (showEffects) {
+    const allos = parseAllos(world, components, inv.item.effects.use);
+    const alloList = allos.map((entry) => `${entry.description}`).join(', ');
+    effectsText = `(${alloList})`;
+  }
 
   // const canEat = () => passesConditions(world, components, inv.item.requirements.use, kami);
 
   return {
-    text,
+    text: `${name} ${effectsText}`,
     onClick: () => triggerAction(kami, inv.item),
     image: inv.item.image,
     // disabled: !canEat(),

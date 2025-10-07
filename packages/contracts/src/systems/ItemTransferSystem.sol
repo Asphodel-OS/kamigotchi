@@ -5,7 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
+import { LibInventory, MUSU_INDEX, TRANSFER_FEE } from "libraries/LibInventory.sol";
 
 uint256 constant ID = uint256(keccak256("system.item.transfer"));
 
@@ -26,6 +26,7 @@ contract ItemTransferSystem is System {
 
     // transfer
     LibInventory.transferFor(components, accID, targetID, indices, amts);
+    LibInventory.decFor(components, accID, MUSU_INDEX, TRANSFER_FEE);
 
     // data logging and event emission
     LibInventory.logTransfer(world, components, accID, targetID, indices, amts);

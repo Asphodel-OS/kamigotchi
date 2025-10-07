@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityIndex, World } from 'engine/recs';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';

@@ -82,6 +82,9 @@ library LibGetter {
       return IsCompleteComponent(getAddrByID(components, IsCompleteCompID)).has(value);
     } else if (_type.eq("QUEST")) {
       return LibQuest.checkAccQuestComplete(components, index, targetID);
+    } else if (_type.eq("QUEST_COMPLETED_DELAY")) {
+      // check if time between now and quest end time is greater than value
+      return LibQuest.checkCompletedDelay(components, index, targetID, value);
     } else if (_type.eq("ROOM")) {
       return getRoom(components, targetID) == index;
     } else if (_type.eq("PHASE")) {

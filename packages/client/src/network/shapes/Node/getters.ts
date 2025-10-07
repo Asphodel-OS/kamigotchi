@@ -1,4 +1,4 @@
-import { HasValue, World, runQuery } from '@mud-classic/recs';
+import { HasValue, World, runQuery } from 'engine/recs';
 
 import { Components } from 'network/';
 import { Condition } from '../Conditional';

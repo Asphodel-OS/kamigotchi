@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -14,13 +14,8 @@ import { ActionSystem } from 'network/systems';
 
 export const Message = ({
   previousEqual,
-  utils: {
-    getAccount,
-    getEntityIndex
-  },
-  data: {
-    message,
-  },
+  utils: { getAccount, getEntityIndex },
+  data: { message },
   player,
   actionSystem,
   api,
@@ -119,7 +114,7 @@ export const Message = ({
             {player.id != getAccountFunc().id ? (
               <>
                 <PfpAuthor id='pfp-author' ref={pfpRef}>
-                  <Popover content={optionsMap()} mouseButton={2}>
+                  <Popover content={optionsMap()} mouseButton={'right'}>
                     <Pfp
                       author={false}
                       onClick={() => {

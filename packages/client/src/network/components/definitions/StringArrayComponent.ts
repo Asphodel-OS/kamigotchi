@@ -1,4 +1,4 @@
-import { defineComponent, Type, World } from "@mud-classic/recs";
+import { defineComponent, Type, World } from 'engine/recs';
 
 export function defineStringArrayComponent(world: World, name: string, contractId: string) {
   return defineComponent(

@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 import { create } from 'zustand';
 
 import { LeaderboardKey } from 'constants/leaderboards/leaderboards';

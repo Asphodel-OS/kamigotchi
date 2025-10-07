@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 
 import { getKamidenClient, Kill } from 'clients/kamiden';
 import { parseID } from 'utils/strings';

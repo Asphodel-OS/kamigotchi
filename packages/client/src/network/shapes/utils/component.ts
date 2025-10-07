@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
 import { BigNumber } from 'ethers';
 import { Address } from 'viem';
 
