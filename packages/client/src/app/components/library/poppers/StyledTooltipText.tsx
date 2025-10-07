@@ -33,8 +33,7 @@ export const StyledTooltipText = ({
           </Subtitle>
         </SubSection>
       </Header>
-
-      <Description>{description}</Description>
+      {description && <Description>{description}</Description>}
       <BottomSection>
         <Section>
           {leftSideText}: <Content>{leftSideContent}</Content>
@@ -115,4 +114,6 @@ const Description = styled.div`
   white-space: normal;
 `;
 
-const Content = styled.div``;
+const Content = styled.div`
+  white-space: pre-line;
+`;
