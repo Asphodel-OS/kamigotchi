@@ -44,6 +44,23 @@ export const RecipeCard = ({
   const item = output.item ?? NullItem;
   const amt = output.amount;
 
+  const getSubtitle = () => {
+    return (
+      <>
+        {recipe.experience} <Icon src={ExpIcon} />
+      </>
+    );
+  };
+
+  const getRequirements = () => {
+    return recipe.requirements.map((req, i) => (
+      <Requirements key={`req-${req.target?.index ?? i}`}>
+        {Number(req.target?.value ?? 0)}
+        <Icon key='img' src={utils.getItemByIndex(req.target?.index ?? 0).image} />
+      </Requirements>
+    ));
+  };
+
   const getCosts = () => {
     const text = [
       <p key='stamina'>
@@ -58,25 +75,7 @@ export const RecipeCard = ({
         </p>
       );
     });
-
     return text;
-  };
-
-  const getRequirements = () => {
-    return recipe.requirements.map((req, i) => (
-      <Requirements key={`req-${req.target?.index ?? i}`}>
-        {Number(req.target?.value ?? 0)}
-        <Icon key='img' src={utils.getItemByIndex(req.target?.index ?? 0).image} />
-      </Requirements>
-    ));
-  };
-
-  const getSubtitle = () => {
-    return (
-      <>
-        {recipe.experience} <img style={{ width: '1.2vw' }} src={ExpIcon} />
-      </>
-    );
   };
 
   return (
@@ -143,7 +142,6 @@ export const RecipeCard = ({
 
 const TitleBar = styled.div`
   border-bottom: solid black 0.15vw;
-
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -155,7 +153,6 @@ const TitleText = styled.div`
   display: flex;
   justify-content: flex-start;
   padding: 0.6vw;
-
   font-size: 0.9vw;
   text-align: left;
 `;
@@ -163,7 +160,6 @@ const TitleText = styled.div`
 const TitleCorner = styled.div`
   padding: 0.45vw;
   gap: 0.15vw;
-
   display: flex;
   flex-grow: 1;
   align-items: center;
@@ -184,7 +180,6 @@ const Content = styled.div`
   flex-grow: 1;
   flex-flow: row nowrap;
   align-items: stretch;
-
   padding: 0.2vw;
 `;
 
@@ -198,7 +193,6 @@ const ContentColumn = styled.div`
   flex-flow: column nowrap;
   flex-grow: 1;
   justify-content: flex-end;
-
   margin: 0.2vw;
   padding-top: 0.2vw;
 `;
