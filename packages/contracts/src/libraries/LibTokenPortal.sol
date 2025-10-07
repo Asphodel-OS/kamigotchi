@@ -16,7 +16,6 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibERC20 } from "libraries/utils/LibERC20.sol";
-import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";

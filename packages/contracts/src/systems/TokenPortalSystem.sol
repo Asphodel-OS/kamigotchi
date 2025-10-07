@@ -95,10 +95,10 @@ contract TokenPortalSystem is System, AuthRoles {
   //////////////////
   // ADMIN CONTROLS
 
-  /// @notice pauses a Withdrawal Receipt
+  /// @notice pause a Withdrawal Receipt, as an admin
   function adminPause(uint256 receiptID) public onlyAdmin(components) {}
 
-  /// @notice cancels a Withdrawal Receipt
+  /// @notice cancel a Withdrawal Receipt, as an admin
   function adminCancel(uint256 receiptID) public onlyAdmin(components) {
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
     int32 scale = itemScales[itemIndex];
@@ -108,8 +108,29 @@ contract TokenPortalSystem is System, AuthRoles {
   //////////////////
   // REGISTRY
 
-  // add an item to the token portal by populating its address and conversion scale
-  // NOTE: item needs to be added through the ItemRegistrySystem first
+  /// @notice initialize portal items from the item registry
+  /// @dev call this after system upgrades, to add items to system storage without relisting
+  function initItems() public onlyOwner {
+    uint256 itemID;
+    uint32 itemIndex;
+    address tokenAddr;
+    int32 scale;
+
+    uint256[] memory itemIDs = LibItem.queryTokenItems(components);
+    for (uint256 i; i < itemIDs.length; i++) {
+      itemID = itemIDs[i];
+      itemIndex = LibItem.getIndex(components, itemID);
+      tokenAddr = LibItem.getTokenAddr(components, itemIndex);
+      scale = LibItem.getScale(components, itemIndex);
+
+      if (tokenAddr == address(0)) continue;
+      itemAddrs[itemIndex] = tokenAddr;
+      itemScales[itemIndex] = scale;
+    }
+  }
+
+  /// @notice add an item to the token portal by populating its address and conversion scale
+  /// @dev item needs to be added through the ItemRegistrySystem first
   function setItem(uint32 index, address tokenAddr, int32 scale) public onlyOwner {
     require(LibItem.getByIndex(components, index) != 0, "TokenPortal: item does not exist");
     require(scale < 18, "TokenPortal: scale > 18 not supported");

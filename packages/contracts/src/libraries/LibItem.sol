@@ -338,6 +338,10 @@ library LibItem {
     return NameComponent(getAddrByID(components, NameCompID)).get(genID(index));
   }
 
+  function getScale(IUintComp components, uint32 index) internal view returns (int32) {
+    return ScaleComponent(getAddrByID(components, ScaleCompID)).safeGet(genID(index));
+  }
+
   function getTokenAddr(IUintComp components, uint32 index) internal view returns (address) {
     return TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).safeGet(genID(index));
   }
@@ -417,6 +421,17 @@ library LibItem {
     IndexItemComponent comp = IndexItemComponent(getAddrByID(components, IndexItemCompID));
     uint256 id = genID(index);
     return comp.has(id) ? id : 0;
+  }
+
+  /// @notice retrieve all Item registry entities with an ERC20 type
+  function queryTokenItems(IUintComp components) internal view returns (uint256[] memory) {
+    return
+      LibEntityType.queryWithValue(
+        components,
+        "ITEM",
+        getCompByID(components, TypeCompID),
+        abi.encode("ERC20")
+      );
   }
 
   /////////////////
