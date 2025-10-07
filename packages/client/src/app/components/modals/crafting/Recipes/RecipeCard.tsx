@@ -70,9 +70,10 @@ export const RecipeCard = ({
     recipe.inputs.forEach((input, i) => {
       const itemName = input.item?.name ?? '???';
       text.push(
-        <p key={`cost-${i}`}>
+        <Costs key={`cost-${i}`}>
+          {'\u2022 '}
           {input.amount} {itemName}
-        </p>
+        </Costs>
       );
     });
     return text;
@@ -209,4 +210,10 @@ const Requirements = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.3vw;
+`;
+
+const Costs = styled.p`
+  margin-left: 7.5%;
+  text-align: left;
+  overflow-wrap: break-word;
 `;
