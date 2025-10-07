@@ -1,10 +1,9 @@
 import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount } from 'app/cache/account';
-import { getItem } from 'app/cache/item';
+import { getAccount as _getAccount } from 'app/cache/account';
+import { getItem as _getItem } from 'app/cache/item';
 import {
   EmptyText,
   HelpChip,
@@ -13,13 +12,17 @@ import {
   ModalWrapper,
   Overlay,
 } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
+import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { ItemImages } from 'assets/images/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
-import { getReceipt, queryReceipts, Receipt } from 'network/shapes/Portal';
+import {
+  getReceipt as _getReceipt,
+  queryReceipts as _queryReceipts,
+  Receipt,
+} from 'network/shapes/Portal';
 import { getCompAddr } from 'network/shapes/utils';
 import { HELP_TEXT } from './constants';
 import { Queue } from './queue';
@@ -27,35 +30,41 @@ import { Swap } from './swap';
 
 export const TokenPortalModal: UIComponent = {
   id: 'TokenPortal',
-  requirement: (layers) => {
-    return interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          data: {
-            accountEntity,
-            spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
-          },
-          utils: {
-            getAccount: () => getAccount(world, components, accountEntity, { inventory: 2 }),
-            getItem: (entity: EntityIndex) => getItem(world, components, entity),
-            getReceipt: (entity: EntityIndex) =>
-              getReceipt(world, components, entity, { account: true, item: true }),
-            queryReceipts: () => queryReceipts(components),
-            queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ network, data, utils }) => {
+    /////////////////
+    // PREPARATION
+
+    const { network, data, utils } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+
+      return {
+        network,
+        data: {
+          accountEntity,
+          spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
+        },
+        utils: {
+          getAccount: () => _getAccount(world, components, accountEntity, { inventory: 2 }),
+          getItem: (entity: EntityIndex) => _getItem(world, components, entity),
+          getReceipt: (entity: EntityIndex) =>
+            _getReceipt(world, components, entity, { account: true, item: true }),
+          queryReceipts: () => _queryReceipts(components),
+          queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
+        },
+      };
+    })();
+
+    /////////////////
+    // INSTANTIATIONS
+
     const { actions } = network;
     const { accountEntity, spenderAddr } = data;
     const { getAccount, getItem, getReceipt, queryTokenItems, queryReceipts } = utils;
+
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const isOpen = useVisibility((s) => s.modals.tokenPortal);
@@ -67,10 +76,13 @@ export const TokenPortalModal: UIComponent = {
     const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
 
+    /////////////////
+    // SUBSCRIPTIONS
+
     // on mount, retrieve the list of ERC20 items and default to ONYX
     useEffect(() => {
       const itemEntites = queryTokenItems();
-      const items = itemEntites.map((item: Item) => getItem(item)) as Item[];
+      const items = itemEntites.map((item) => getItem(item)) as Item[];
       setOptions(items);
 
       // set up ticking
@@ -82,7 +94,7 @@ export const TokenPortalModal: UIComponent = {
     // set the account if the connected entity changes
     useEffect(() => {
       if (!accountEntity) return;
-      const account = getAccount(accountEntity);
+      const account = getAccount();
       setAccount(account);
     }, [accountEntity]);
 
@@ -91,7 +103,7 @@ export const TokenPortalModal: UIComponent = {
     useEffect(() => {
       if (!isOpen) return;
       const receiptEntities = queryReceipts();
-      const receipts = receiptEntities.map((receipt: Receipt) => getReceipt(receipt));
+      const receipts = receiptEntities.map((receipt) => getReceipt(receipt));
       setReceipts(receipts);
     }, [isOpen, tick]);
 
