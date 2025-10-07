@@ -185,7 +185,7 @@ const Image = styled.img<{
     `calc(${scale * 0.75}${orientation} - ${iconInsetXpx ?? iconInsetPx ?? 0}px)`};
   height: ${({ scale, orientation, iconInsetPx, iconInsetYpx }) =>
     `calc(${scale * 0.75}${orientation} - ${iconInsetYpx ?? iconInsetPx ?? 0}px)`};
-  ${({ scale }) => (scale > 4.5 ? 'image-rendering: pixelated;' : '')}
+  ${({ scale }) => (scale > 4 ? 'image-rendering: pixelated;' : '')}
   user-drag: none;
 `;
 

@@ -15,7 +15,7 @@ import {
 import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
-import { ItemImages } from 'assets/images/items';
+import { TokenIcons } from 'assets/images/tokens';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import {
@@ -196,7 +196,7 @@ export const TokenPortalModal: UIComponent = {
     return (
       <ModalWrapper
         id='tokenPortal'
-        header={<ModalHeader title='Token Portal' icon={ItemImages.onyx} />}
+        header={<ModalHeader title='Token Portal' icon={TokenIcons.onyx} />}
         canExit
         overlay
         noPadding

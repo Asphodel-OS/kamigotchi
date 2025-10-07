@@ -1,6 +1,6 @@
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
-import { ItemImages } from 'assets/images/items';
+import { TokenIcons } from 'assets/images/tokens';
 
 const ONYX_ADDR = '0x4BaDFb501Ab304fF11217C44702bb9E9732E7CF4';
 
@@ -24,7 +24,7 @@ export const OnyxMenuButton = () => {
       ]}
     >
       <IconButton
-        img={ItemImages.onyx}
+        img={TokenIcons.onyx}
         text={balance?.toFixed(3)}
         onClick={openBaselineLink}
         scale={4.5}

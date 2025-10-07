@@ -10,7 +10,7 @@ import { ModalWrapper, TextTooltip } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
-import { ItemImages } from 'assets/images/items';
+import { TokenIcons } from 'assets/images/tokens';
 import { ETH_INDEX } from 'constants/items';
 import { EntityID } from 'engine/recs';
 import { useERC20Balance, usePresaleInfo } from 'network/chain';
@@ -129,7 +129,7 @@ export const Presale: UIComponent = {
                 text={['What is $ONYX?', '', "Wouldn't you like to know."]}
                 alignText='center'
               >
-                <Image src={ItemImages.onyx} onClick={openOnyxDocs} />
+                <Image src={TokenIcons.onyx} onClick={openOnyxDocs} />
               </TextTooltip>
             </OnyxColumn>
             <Info
