@@ -6,6 +6,7 @@ import { IconListButton, IconListButtonOption, Text } from 'app/components/libra
 import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
+import { TokenIcons } from 'assets/images/tokens';
 import { ONYX_INDEX } from 'constants/items';
 import { Account, Inventory, Item, NullItem } from 'network/shapes';
 import { playClick } from 'utils/sounds';
@@ -145,6 +146,7 @@ export const Swap = ({
             scale={4.2}
             options={getItemOptions()}
             balance={getInventoryBalance(inventory, selected.index)}
+            tooltip={{ text: [`Select an item to ${mode}`] }}
           />
           <Input type='text' value={amt} onChange={handleInputChange} onKeyDown={handleKeyDown} />
         </Column>
@@ -155,10 +157,11 @@ export const Swap = ({
         </Column>
         <Column>
           <IconButton
-            img={selected.image}
+            img={TokenIcons.onyx} // hardcoded for now
             scale={4.2}
             balance={getTokenBalance(selected)}
             onClick={() => {}}
+            disabled
           />
           <Input type='text' value={amt / getConversionRate(selected)} disabled />
         </Column>
@@ -208,10 +211,9 @@ const Input = styled.input`
   background-color: #eee;
   width: 6vw;
   height: 100%;
-  padding: 0.3vw;
 
+  padding: 0.3vw;
   margin: 0w;
-  cursor: text;
 
   color: black;
   font-size: 1vw;

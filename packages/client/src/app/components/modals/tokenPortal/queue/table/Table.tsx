@@ -46,10 +46,10 @@ export const Table = ({
   useEffect(() => {
     const flip = sort.reverse ? -1 : 1;
     if (sort.key === 'Amount') {
-      const sorted = receipts.sort((a, b) => (a.amt - b.amt) * flip);
+      const sorted = filtered.sort((a, b) => (a.amt - b.amt) * flip);
       setSorted(sorted);
     } else if (sort.key === 'Account') {
-      const sorted = receipts.sort((a, b) => {
+      const sorted = filtered.sort((a, b) => {
         const aName = a.account?.name.toLowerCase() ?? '';
         const bName = b.account?.name.toLowerCase() ?? '';
         if (aName > bName) return 1 * flip;
@@ -58,10 +58,10 @@ export const Table = ({
       });
       setSorted(sorted);
     } else if (sort.key === 'Status') {
-      const sorted = receipts.sort((a, b) => (a.time.end - b.time.end) * flip);
+      const sorted = filtered.sort((a, b) => (a.time.end - b.time.end) * flip);
       setSorted(sorted);
     }
-  }, [receipts, sort]);
+  }, [filtered.length, sort]);
 
   /////////////////
   // DISPLAY

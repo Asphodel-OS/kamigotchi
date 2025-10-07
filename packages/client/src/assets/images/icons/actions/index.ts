@@ -1,3 +1,4 @@
+import CancelIcon from './cancel.png';
 import CastIcon from './cast.png';
 import ChatIcon from './chat.png';
 import CollectIcon from './collect.png';
@@ -13,6 +14,7 @@ import StopIcon from './stop.png';
 import UseIcon from './use.png';
 
 export {
+  CancelIcon,
   CastIcon,
   ChatIcon,
   CollectIcon,
@@ -29,6 +31,7 @@ export {
 };
 
 export const ActionIcons = {
+  cancel: CancelIcon,
   cast: CastIcon,
   chat: ChatIcon,
   collect: CollectIcon,

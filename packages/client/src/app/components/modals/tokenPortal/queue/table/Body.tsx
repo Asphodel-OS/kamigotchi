@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { IconButton, Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { PlaceholderIcon } from 'assets/images/icons';
+import { ActionIcons } from 'assets/images/icons/actions';
 import { Account, Item, Receipt } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import { getCountdown } from 'utils/time';
@@ -121,7 +122,12 @@ export const Body = ({
                   />
                 </TextTooltip>
                 <TextTooltip text={getCancelTooltip(r)}>
-                  <IconButton img={PlaceholderIcon} scale={1.5} onClick={() => cancel(r)} />
+                  <IconButton
+                    img={ActionIcons.cancel}
+                    scale={1.5}
+                    onClick={() => cancel(r)}
+                    disabled={!isCancelable(r)}
+                  />
                 </TextTooltip>
               </IconGroup>
             </Field>
@@ -137,7 +143,7 @@ const Container = styled.div`
   max-height: 100%;
   width: 100%;
 
-  padding-top: 0.6vw;
+  padding: 0.6vw 0;
 
   display: flex;
   flex-flow: column nowrap;
