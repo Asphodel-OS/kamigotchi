@@ -65,15 +65,18 @@ export const RecipeCard = ({
   const getRequirements = () => {
     return recipe.requirements.map((req, i) => (
       <Requirements key={`req-${req.target?.index ?? i}`}>
-        <p key='value'>{Number(req.target?.value ?? 0)}</p>
-        <img
-          key='img'
-          style={{ width: '1.2vw' }}
-          src={utils.getItemByIndex(req.target?.index ?? 0).image}
-          alt='Requirement'
-        />
+        {Number(req.target?.value ?? 0)}
+        <Icon key='img' src={utils.getItemByIndex(req.target?.index ?? 0).image} />
       </Requirements>
     ));
+  };
+
+  const getSubtitle = () => {
+    return (
+      <>
+        {recipe.experience} <img style={{ width: '1.2vw' }} src={ExpIcon} />
+      </>
+    );
   };
 
   return (
@@ -106,11 +109,7 @@ export const RecipeCard = ({
               img={item.image}
               title={`Recipe for ${item.name}`}
               subTitleText='Grants'
-              subTitleContent={
-                <>
-                  {recipe.experience} <img style={{ width: '1.2vw' }} src={ExpIcon} />
-                </>
-              }
+              subTitleContent={getSubtitle()}
               description={''}
               leftSideText='Requirements'
               leftSideContent={getRequirements()}
