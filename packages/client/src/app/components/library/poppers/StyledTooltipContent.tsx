@@ -1,26 +1,29 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 
-export const StyledTooltipText = ({
+export const StyledTooltipContent = ({
   img,
   title,
-  subTitleText,
-  subTitleContent,
   description,
-  leftSideText,
-  leftSideContent,
-  rightSideText,
-  rightSideContent,
+  subtitle,
+  left,
+  right,
 }: {
   img: string;
   title: string;
-  subTitleText: string;
-  subTitleContent: ReactNode;
-  description?: string;
-  leftSideText: string;
-  leftSideContent: ReactNode;
-  rightSideText: string;
-  rightSideContent: ReactNode;
+  description: string;
+  subtitle: {
+    text: string;
+    content: ReactNode;
+  };
+  left?: {
+    text: string;
+    content: ReactNode;
+  };
+  right?: {
+    text: string;
+    content: ReactNode;
+  };
 }) => {
   return (
     <Container>
@@ -29,18 +32,22 @@ export const StyledTooltipText = ({
         <SubSection>
           <Title>{title}</Title>
           <Subtitle>
-            {subTitleText}: {subTitleContent}
+            {subtitle.text}: {subtitle.content}
           </Subtitle>
         </SubSection>
       </Header>
       {description && <Description>{description}</Description>}
       <BottomSection>
-        <Section>
-          {leftSideText}: <Content>{leftSideContent}</Content>
-        </Section>
-        <Section>
-          {rightSideText}:<Content>{rightSideContent}</Content>
-        </Section>
+        {left && (
+          <Section>
+            {left.text}: <Content>{left.content}</Content>
+          </Section>
+        )}
+        {right && (
+          <Section>
+            {right.text}: <Content>{right.content}</Content>
+          </Section>
+        )}
       </BottomSection>
     </Container>
   );
