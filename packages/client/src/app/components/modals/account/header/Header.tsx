@@ -83,7 +83,7 @@ export const Header = ({
       <Info>
         <TitleSection>
           <TitleHeader>
-            <Text size={1}>{account.name}</Text>
+            <Text size={1.1}>{account.name}</Text>
           </TitleHeader>
           <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
             <Subtitle onClick={() => copyText(account.ownerAddress)}>
