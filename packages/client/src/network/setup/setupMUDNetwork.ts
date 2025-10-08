@@ -1,6 +1,6 @@
 import '@ethersproject/abstract-provider'; // we really need to figure out why this is necessary
-import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
 import { keccak256 } from '@mud-classic/utils';
+import { abi as WorldAbi } from 'abi/World.json';
 import { Metadata, Type, World, defineComponent } from 'engine/recs';
 import { Contract, ContractInterface } from 'ethers';
 import { keys } from 'lodash';

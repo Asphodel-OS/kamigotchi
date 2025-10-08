@@ -56,7 +56,6 @@
     "@ethersproject/networks": "^5.7.0",
     "@ethersproject/providers": "^5.7.0",
     "@improbable-eng/grpc-web": "^0.15.0",
-    "@mud-classic/solecs": "^0.0.1",
     "@mud-classic/utils": "^0.0.3",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.13.7",
