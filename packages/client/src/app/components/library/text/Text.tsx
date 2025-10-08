@@ -14,10 +14,13 @@ export const Text = styled.div<{
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size }) => size * 1.5}vw;
   color: ${({ color }) => color ?? '#333'};
-  ${({ limit }) =>
-    limit &&
-    `max-width: ${limit}ch; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;`};
 
   padding: ${({ padding }) => padding?.top ?? 0}vw ${({ padding }) => padding?.right ?? 0}vw
     ${({ padding }) => padding?.bottom ?? 0}vw ${({ padding }) => padding?.left ?? 0}vw;
+  ${({ limit }) =>
+    limit &&
+    `max-width: ${limit}ch;
+    overflow-wrap: break-word;
+    white-space: normal;
+  `}
 `;

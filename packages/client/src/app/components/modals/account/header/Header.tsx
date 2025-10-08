@@ -82,12 +82,10 @@ export const Header = ({
       )}
       <Info>
         <TitleSection>
-          <TitleHeader>
-            <TextTooltip text={[account.name]}>
-              <Text size={1.2} limit={12}>
-                {account.name}
-              </Text>
-            </TextTooltip>
+          <TitleHeader nameLength={account.name.length}>
+            <Text size={1.2} limit={12}>
+              {account.name}
+            </Text>
             {isSelf && <TwitterPrivyAccountLink />}
           </TitleHeader>
           <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
@@ -140,11 +138,10 @@ const TitleSection = styled.div`
   margin-bottom: 0.6vw;
 `;
 
-const TitleHeader = styled.div`
+const TitleHeader = styled.div<{ nameLength: number }>`
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  height: 2vw;
+  ${({ nameLength }) => (nameLength > 12 ? `align-items: flex-start;` : `align-items: center;`)}
+  height: auto;
   gap: 0.3vw;
 `;
 
