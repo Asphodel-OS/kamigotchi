@@ -82,15 +82,12 @@ export const Header = ({
       )}
       <Info>
         <TitleSection>
-          <TitleHeader nameLength={account.name.length}>
-            <Text size={1.2} limit={12}>
-              {account.name}
-            </Text>
-            {isSelf && <TwitterPrivyAccountLink />}
+          <TitleHeader>
+            <Text size={1}>{account.name}</Text>
           </TitleHeader>
           <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
             <Subtitle onClick={() => copyText(account.ownerAddress)}>
-              {abbreviateAddress(account.ownerAddress)}
+              {isSelf && <TwitterPrivyAccountLink />} {abbreviateAddress(account.ownerAddress)}
             </Subtitle>
           </TextTooltip>
         </TitleSection>
@@ -135,19 +132,19 @@ const TitleSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
   gap: 0.3vw;
-  margin-bottom: 0.6vw;
 `;
 
-const TitleHeader = styled.div<{ nameLength: number }>`
+const TitleHeader = styled.div`
   display: flex;
-  ${({ nameLength }) => (nameLength > 12 ? `align-items: flex-start;` : `align-items: center;`)}
-  height: auto;
+  height: 0.6vw;
   gap: 0.3vw;
 `;
 
 const Subtitle = styled.div`
+  display: flex;
+  align-items: center;
   color: #777;
-  padding-left: 0.5vw;
+
   font-size: 0.7vw;
   cursor: copy;
 `;
