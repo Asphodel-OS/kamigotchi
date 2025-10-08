@@ -83,7 +83,11 @@ export const Header = ({
       <Info>
         <TitleSection>
           <TitleHeader>
-            <Text size={1.2}>{account.name}</Text>
+            <TextTooltip text={[account.name]}>
+              <Text size={1.2} limit={12}>
+                {account.name}
+              </Text>
+            </TextTooltip>
             {isSelf && <TwitterPrivyAccountLink />}
           </TitleHeader>
           <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
