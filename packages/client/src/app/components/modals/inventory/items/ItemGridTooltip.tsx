@@ -1,5 +1,5 @@
 import { Item } from 'app/cache/item';
-import { StyledTooltipText } from 'app/components/library/poppers';
+import { StyledTooltipContent } from 'app/components/library/poppers';
 import { Allo } from 'network/shapes/Allo';
 import { DetailedEntity } from 'network/shapes/utils';
 
@@ -29,22 +29,24 @@ export const ItemGridTooltip = ({
   };
 
   return (
-    <StyledTooltipText
+    <StyledTooltipContent
       img={image}
       title={title}
-      subTitleText='Type'
-      subTitleContent={type}
+      subtitle={{ text: 'Type', content: type }}
       description={description}
-      leftSideText='Requirements'
-      leftSideContent={requirements?.use?.length > 0 ? display(item) : 'None'}
-      rightSideText='Effects'
-      rightSideContent={
-        !isLootbox && effects?.use?.length > 0
-          ? parseAllos(effects.use)
-              .map((entry) => entry.description)
-              .join('\n')
-          : 'None'
-      }
+      left={{
+        text: 'Requirements',
+        content: requirements?.use?.length > 0 ? display(item) : 'None',
+      }}
+      right={{
+        text: 'Effects',
+        content:
+          !isLootbox && effects?.use?.length > 0
+            ? parseAllos(effects.use)
+                .map((entry) => entry.description)
+                .join('\n')
+            : 'None',
+      }}
     />
   );
 };

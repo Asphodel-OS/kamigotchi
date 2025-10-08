@@ -11,7 +11,7 @@ export const StyledTooltipContent = ({
 }: {
   img: string;
   title: string;
-  description: string;
+  description?: string;
   subtitle: {
     text: string;
     content: ReactNode;

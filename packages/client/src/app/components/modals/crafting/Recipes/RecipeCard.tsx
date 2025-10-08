@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Card, CraftButton, Stepper } from 'app/components/library';
-import { StyledTooltipText, TextTooltip } from 'app/components/library/poppers';
+import { StyledTooltipContent, TextTooltip } from 'app/components/library/poppers';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Kami } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
@@ -105,16 +105,13 @@ export const RecipeCard = ({
       <Content>
         <TextTooltip
           text={[
-            <StyledTooltipText
+            <StyledTooltipContent
               img={item.image}
               title={`Recipe for ${item.name}`}
-              subTitleText='Grants'
-              subTitleContent={getSubtitle()}
+              subtitle={{ text: 'Grants', content: getSubtitle() }}
               description={''}
-              leftSideText='Requirements'
-              leftSideContent={getRequirements()}
-              rightSideText='Costs'
-              rightSideContent={getCosts()}
+              left={{ text: 'Requirements', content: getRequirements() }}
+              right={{ text: 'Costs', content: getCosts() }}
             />,
           ]}
           maxWidth={25}
