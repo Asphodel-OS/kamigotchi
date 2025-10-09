@@ -19,10 +19,12 @@ import { Ack, ack } from 'workers/sync';
 import {
   isNetworkComponentUpdateEvent,
   isSystemCallEvent,
+  isTimingDataEvent,
   NetworkComponentUpdate,
   NetworkEvent,
   SystemCall,
 } from 'workers/types';
+import { storeWorkerTimingData } from 'workers/sync/timingExport';
 import { DecodedNetworkComponentUpdate, DecodedSystemCall } from './types';
 
 export function createDecodeNetworkComponentUpdate<C extends Components>(
@@ -146,6 +148,9 @@ export function applyNetworkUpdates<C extends Components>(
         }
       } else if (decodeAndEmitSystemCall && isSystemCallEvent(update)) {
         decodeAndEmitSystemCall(update);
+      } else if (isTimingDataEvent(update)) {
+        // Store timing data from worker for later export
+        storeWorkerTimingData(update.measures, update.marks);
       }
     }
     // Send "ack" after every processed batch of events to process faster than ever 100ms

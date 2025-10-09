@@ -55,6 +55,8 @@ import {
   createLatestEventStreamRPC,
   fetchEventsInBlockRangeChunked,
 } from './utils';
+// Import timing export utilities to expose them globally
+import './timingExport';
 
 const debug = parentDebug.extend('SyncWorker');
 
@@ -407,6 +409,24 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     performance.measure('gapfill', 'gapfill', 'init');
     performance.measure('initialization', 'init', 'live');
     console.log(performance.getEntriesByType('measure'));
+
+    // Send timing data to main thread (serialize PerformanceEntry objects for postMessage)
+    const timingData: NetworkEvent<C> = {
+      type: NetworkEvents.TimingData,
+      measures: performance.getEntriesByType('measure').map((entry) => ({
+        name: entry.name,
+        duration: entry.duration,
+        startTime: entry.startTime,
+        entryType: entry.entryType,
+      })),
+      marks: performance.getEntriesByType('mark').map((entry) => ({
+        name: entry.name,
+        duration: entry.duration,
+        startTime: entry.startTime,
+        entryType: entry.entryType,
+      })),
+    } as NetworkEvent<C>;
+    this.output$.next(timingData);
   }
 
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {

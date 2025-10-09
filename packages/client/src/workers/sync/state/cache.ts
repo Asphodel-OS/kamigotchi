@@ -193,6 +193,7 @@ export const storeValues = async (
   values: State[],
   decode: ReturnType<typeof createDecode>
 ) => {
+  performance.mark('storeValues:start');
   const numReceived = values.length;
   if (numReceived == 0) {
     console.log(`No new values to store`);
@@ -204,17 +205,42 @@ export const storeValues = async (
   const numInitial = valueCache.size;
 
   // process new values
+  performance.mark('storeValues:loop:start');
+
+  // Use performance.now() to accumulate times without creating thousands of measures
+  let unpackDuration = 0;
+  let decodeDuration = 0;
+  let setCacheDuration = 0;
+
   for (const event of values) {
     const { packedIdx, data } = event;
+
+    const unpackStart = performance.now();
     const componentIdx = unpackTuple(packedIdx)[0];
+    unpackDuration += performance.now() - unpackStart;
+
+    const decodeStart = performance.now();
     const value = await decode(stateCache.components[componentIdx], data);
+    decodeDuration += performance.now() - decodeStart;
+
+    const setCacheStart = performance.now();
     valueCache.set(packedIdx, value);
+    setCacheDuration += performance.now() - setCacheStart;
   }
+
+  performance.mark('storeValues:loop:end');
+  performance.measure('storeValues:loop', 'storeValues:loop:start', 'storeValues:loop:end');
+
+  // Log the accumulated durations
+  console.log(`storeValues timing: unpack=${unpackDuration.toFixed(2)}ms, decode=${decodeDuration.toFixed(2)}ms, setCache=${setCacheDuration.toFixed(2)}ms`);
 
   //
   const numTotal = valueCache.size;
   const diff = numTotal - numInitial;
   console.log(`Values: received ${numReceived}, diff ${diff}, total ${numTotal}`);
+
+  performance.mark('storeValues:end');
+  performance.measure('storeValues:full', 'storeValues:start', 'storeValues:end');
 };
 
 // delete state entries indicated by Kamigaze

@@ -49,14 +49,29 @@ export type SystemCall<C extends Components = Components> = {
   updates: NetworkComponentUpdate<C>[];
 };
 
+export type SerializedPerformanceEntry = {
+  name: string;
+  duration: number;
+  startTime: number;
+  entryType: string;
+};
+
+export type TimingData = {
+  type: NetworkEvents.TimingData;
+  measures: SerializedPerformanceEntry[];
+  marks: SerializedPerformanceEntry[];
+};
+
 export enum NetworkEvents {
   SystemCall = 'SystemCall',
   NetworkComponentUpdate = 'NetworkComponentUpdate',
+  TimingData = 'TimingData',
 }
 
 export type NetworkEvent<C extends Components = Components> =
   | NetworkComponentUpdate<C>
-  | SystemCall<C>;
+  | SystemCall<C>
+  | TimingData;
 
 export function isSystemCallEvent<C extends Components>(e: NetworkEvent<C>): e is SystemCall<C> {
   return e.type === NetworkEvents.SystemCall;
@@ -66,6 +81,10 @@ export function isNetworkComponentUpdateEvent<C extends Components>(
   e: NetworkEvent<C>
 ): e is NetworkComponentUpdate<C> {
   return e.type === NetworkEvents.NetworkComponentUpdate;
+}
+
+export function isTimingDataEvent(e: NetworkEvent): e is TimingData {
+  return e.type === NetworkEvents.TimingData;
 }
 
 export type SyncWorkerConfig = {
