@@ -1,3 +1,6 @@
+'use client';
+
+import { InterwovenKitProvider } from '@initia/interwovenkit-react'; // ✅ add this import
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getComponentValue } from 'engine/recs';
@@ -49,6 +52,7 @@ export const Root = observer(
     }, [layers]);
 
     const showBootScreen = !mounted || !layers;
+
     return showBootScreen ? (
       <BootScreen status='' />
     ) : (
@@ -58,11 +62,13 @@ export const Root = observer(
         config={privyConfig}
       >
         <WagmiProvider config={wagmiConfig}>
-          <QueryClientProvider client={tanstackClient}>
-            <NetworkContext.Provider value={layers}>
-              <MainWindow ready={ready} />
-            </NetworkContext.Provider>
-          </QueryClientProvider>
+          <InterwovenKitProvider>
+            <QueryClientProvider client={tanstackClient}>
+              <NetworkContext.Provider value={layers}>
+                <MainWindow ready={ready} />
+              </NetworkContext.Provider>
+            </QueryClientProvider>
+          </InterwovenKitProvider>
         </WagmiProvider>
       </PrivyProvider>
     );

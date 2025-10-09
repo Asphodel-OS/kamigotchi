@@ -13,6 +13,7 @@ import { Kami } from 'network/shapes/Kami';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
+import Bridge from './Bridge';
 import { FriendActions } from './FriendActions';
 import { Pfp } from './Pfp';
 import { TwitterPrivyAccountLink } from './TwitterPrivyAccountLink';
@@ -101,6 +102,7 @@ export const Header = ({
           />
         )}
         <DetailRow>
+          <Bridge />
           <CakeIcon style={{ height: '1.4vh' }} />
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
         </DetailRow>
@@ -154,7 +156,7 @@ const Subtitle = styled.div`
 const DetailRow = styled.div<{ edit?: boolean }>`
   padding: 0.15vw 0;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
   ${({ edit }) => edit && `cursor: pointer`}
