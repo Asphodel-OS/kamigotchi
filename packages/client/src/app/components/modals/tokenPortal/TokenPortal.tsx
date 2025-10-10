@@ -25,6 +25,7 @@ import { getCompAddr } from 'network/shapes/utils';
 import { HELP_TEXT } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
+import { getResultWithdraw } from './utils';
 
 export const TokenPortalModal: UIComponent = {
   id: 'TokenPortal',
@@ -128,19 +129,19 @@ export const TokenPortalModal: UIComponent = {
     };
 
     // deposit ERC20 tokens into the game world
-    const depositTx = async (item: Item, amt: number) => {
+    const depositTx = async (item: Item, amt: number, convertAmt: number) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       const scale = item.token?.scale ?? 0;
-      const tokenAmt = amt / 10 ** scale;
+      const tokenAmt = convertAmt / 10 ** scale;
 
       // construct the transaction and push it to the queue
       const tx = actions.add({
         action: 'TokenDeposit',
         params: [item.index, amt],
         description: `Depositing ${tokenAmt.toFixed(scale)} $ONYX for ${amt} ${item.name}`,
-        execute: async () => api.portal.ERC20.deposit(item.index, amt),
+        execute: async () => api.portal.ERC20.deposit(item.index, convertAmt),
       });
     };
 
@@ -149,8 +150,9 @@ export const TokenPortalModal: UIComponent = {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
+      const taxedAmt = getResultWithdraw(config, amt);
       const scale = item.token?.scale ?? 0;
-      const tokenAmt = amt / 10 ** scale;
+      const tokenAmt = taxedAmt / 10 ** scale;
 
       // construct the transaction and push it to the queue
       const tx = actions.add({

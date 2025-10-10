@@ -11,6 +11,7 @@ import { TokenIcons } from 'assets/images/tokens';
 import { ONYX_INDEX } from 'constants/items';
 import { Account, Inventory, Item, NullItem } from 'network/shapes';
 import { playClick } from 'utils/sounds';
+import { getNeededDeposit, getResultWithdraw } from '../utils';
 import { Mode } from './types';
 
 export const Swap = ({
@@ -20,7 +21,7 @@ export const Swap = ({
 }: {
   actions: {
     approve: (item: Item, amt: number) => Promise<void>;
-    deposit: (item: Item, amt: number) => Promise<void>;
+    deposit: (item: Item, amt: number, convertAmt: number) => Promise<void>;
     withdraw: (item: Item, amt: number) => Promise<void>;
   };
   data: {
@@ -77,10 +78,10 @@ export const Swap = ({
   // get the action to perform based on the mode
   const triggerAction = () => {
     if (mode === 'DEPOSIT') {
-      const neededAmt = getNeededDeposit(amt);
+      const neededAmt = getNeededDeposit(config, amt);
       const tokenAmt = neededAmt / getSwapRate(selected);
       if (tokenAmt > onyxAllowance) approve(selected, tokenAmt);
-      else deposit(selected, neededAmt);
+      else deposit(selected, amt, neededAmt);
     } else {
       withdraw(selected, amt);
     }
@@ -111,26 +112,11 @@ export const Swap = ({
     return 10 ** (item.token?.scale ?? 0);
   };
 
-  // get the necessary deposit balance to achieve the target balance (in item units)
-  const getNeededDeposit = (target: number) => {
-    const { flat, rate } = config.tax.import;
-    const needAmt = Math.floor((target + flat) / (1 - rate));
-    return needAmt;
-  };
-
-  // get the resulting (post-tax) withdrawal balance from initial (in item units)
-  const getResultWithdraw = (target: number) => {
-    const { flat, rate } = config.tax.export;
-    const ratedTax = Math.floor(target * rate);
-    const amt = target - ratedTax - flat;
-    return Math.max(0, amt);
-  };
-
   // get the conversion rate from item balance to token balance with tax applied
   const getTokenConversion = (amt: number) => {
     let converted = 0;
-    if (mode === 'DEPOSIT') converted = getNeededDeposit(amt);
-    else converted = getResultWithdraw(amt);
+    if (mode === 'DEPOSIT') converted = getNeededDeposit(config, amt);
+    else converted = getResultWithdraw(config, amt);
     return converted / getSwapRate(selected);
   };
 
