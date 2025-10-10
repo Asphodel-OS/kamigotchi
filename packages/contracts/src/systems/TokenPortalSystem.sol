@@ -13,8 +13,8 @@ uint256 constant ID = uint256(keccak256("system.erc20.portal"));
 
 /// @notice System for bridging in ERC20 tokens into the game world (as an item).
 /** @dev
- * A special system, uses local storage to avoid depending on item registries.
- * Not meant to be upgraded, but can be if needed.
+ * A special system, uses local storage as the source of truth to avoid depending
+ * on item registries. Not meant to be upgraded frequently, but can be if needed.
  */
 contract TokenPortalSystem is System, AuthRoles {
   // store item's token address/conversion rate locally, no dependence on registries
@@ -108,25 +108,15 @@ contract TokenPortalSystem is System, AuthRoles {
   //////////////////
   // REGISTRY
 
-  /// @notice initialize portal items from the item registry
+  /// @notice initialize portal item from the item registry
   /// @dev call this after system upgrades, to add items to system storage without relisting
-  function initItems() public onlyOwner {
-    uint256 itemID;
-    uint32 itemIndex;
-    address tokenAddr;
-    int32 scale;
+  function initItem(uint32 index) public onlyOwner {
+    address tokenAddr = LibItem.getTokenAddr(components, index);
+    int32 scale = LibItem.getScale(components, index);
+    require(tokenAddr != address(0), "TokenPortal: item has no registered token");
 
-    uint256[] memory itemIDs = LibItem.queryTokenItems(components);
-    for (uint256 i; i < itemIDs.length; i++) {
-      itemID = itemIDs[i];
-      itemIndex = LibItem.getIndex(components, itemID);
-      tokenAddr = LibItem.getTokenAddr(components, itemIndex);
-      scale = LibItem.getScale(components, itemIndex);
-
-      if (tokenAddr == address(0)) continue;
-      itemAddrs[itemIndex] = tokenAddr;
-      itemScales[itemIndex] = scale;
-    }
+    itemAddrs[index] = tokenAddr;
+    itemScales[index] = scale;
   }
 
   /// @notice add an item to the token portal by populating its address and conversion scale

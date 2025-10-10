@@ -8,6 +8,7 @@ import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IndexItemComponent, ID as ItemIndexCompID } from "components/IndexItemComponent.sol";
 import { IDOwnsWithdrawalComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsWithdrawalComponent.sol";
+import { TaxComponent, ID as TaxCompID } from "components/TaxComponent.sol";
 import { TokenAddressComponent, ID as TokenAddrCompID } from "components/TokenAddressComponent.sol";
 import { TokenHolderComponent, ID as TokenHolderCompID } from "components/TokenHolderComponent.sol";
 import { TimeEndComponent, ID as TimeEndCompID } from "components/TimeEndComponent.sol";
@@ -22,34 +23,38 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
+uint256 constant taxRateUnits = 1e4;
+
 /** @notice lib for ERC20 bridging and timelocks
  *
- * User flow (deposit):
- *  1. User calls DepositSystem with (itemIndex, amount)
- *  2. DepositSystem checks if item can be deposited
- *  3. DepositSystem pulls ERC20 from user via TokenAllowanceComp, stores in TokenHolderComp
- *  4. DepositSystem logs deposit, emit event
+ * User flow TokenPortalSystem deposit():
+ *  1. User calls deposit() with (itemIndex, amount)
+ *  2. checks if item is registered with the portal (can be deposited)
+ *  3. pulls associated ERC20 from user via TokenAllowanceComp, stores in TokenHolderComp
+ *  4. increments user inventory balance accordingly (after accounting for import tax)
+ *  5. log deposit details, emit event
  *
- * User flow (withdraw):
- *  1. User calls WithdrawSystem with (itemIndex, amount)
- *  2. WithdrawSystem checks if item can be withdrawn
- *  3. WithdrawSystem creates an Receipt
- *  4. WithdrawSystem removes items
- *  5. Emit initiateWithdraw event
- *  - withdrawal delay - (admins can block tx)
- *  1. Anyone calls WithdrawSystem with ReceiptID
- *  2. WithdrawSystem checks if withdrawal delay has ended. remove if so
- *  3. WithdrawSystem sends ERC20 from TokenHolderComp to user
- *  4. WithdrawSystem logs withdraw, emit event
+ * User flow TokenPortalSystem withdraw():
+ *  1. User calls withdraw() with (itemIndex, amount)
+ *  2. check if item can be withdrawn
+ *  3. decrement inventory
+ *  4. create a pending withdrawal Receipt with details
+ *  5. log withdrawal details, emit event
+ *  - withdrawal delay - (admins can pause or cancel outstanding Receipts)
+ *  1. User calls WithdrawSystem with ReceiptID
+ *  2. check if withdrawal delay has ended. remove if so
+ *  3. send ERC20 from TokenHolderComp to user
+ *  4. log withdraw action, emit event
  *
  * Shapes:
  *  Receipt: ID = new entity ID
  *   - IDOwnsWithdrawal (owner address)
  *   - ItemIndex
  *   - TokenAddress (must match itemIndex upon inventory increase actions)
- *   - Scale (conversion scale token->item)
- *   - Value (tokenAmt of)
- *   - endTime
+ *   - Value (token amount being withdrawn)
+ *   - Tax (tax being collected, denominated in units of item)
+ *   - StartTime
+ *   - EndTime
  */
 library LibTokenPortal {
   ///////////////
@@ -62,6 +67,7 @@ library LibTokenPortal {
     uint32 itemIndex,
     address tokenAddr,
     uint256 tokenAmt,
+    uint256 taxAmt, // in item units
     uint256 endTime
   ) internal returns (uint256 id) {
     id = world.getUniqueEntityId();
@@ -71,6 +77,7 @@ library LibTokenPortal {
     IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).set(id, itemIndex);
     TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).set(id, tokenAddr);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, tokenAmt);
+    TaxComponent(getAddrByID(comps, TaxCompID)).set(id, taxAmt);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     TimeEndComponent(getAddrByID(comps, TimeEndCompID)).set(id, endTime);
   }
@@ -81,6 +88,7 @@ library LibTokenPortal {
     IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).remove(id);
     TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).remove(id);
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
+    TaxComponent(getAddrByID(comps, TaxCompID)).remove(id);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).remove(id);
     TimeEndComponent(getAddrByID(comps, TimeEndCompID)).remove(id);
   }
@@ -98,15 +106,19 @@ library LibTokenPortal {
     address tokenAddr,
     int32 scale
   ) internal {
+    // determine amount of tax to be collected
+    uint256 taxAmt = calcImportTax(comps, itemAmt);
+    require(taxAmt < itemAmt, "TokenPortal: tax exceeds item amount");
+
     address accAddr = LibAccount.getOwner(comps, accID);
     uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt, scale); // scaling accordingly
 
     // transfer tokens and increase inventory
     LibERC20.transfer(comps, tokenAddr, accAddr, getAddrByID(comps, TokenHolderCompID), tokenAmt);
-    LibInventory._incFor(comps, accID, itemIndex, itemAmt);
+    LibInventory._incFor(comps, accID, itemIndex, itemAmt - taxAmt);
 
     // logging
-    LogData memory logData = LogData(accID, itemIndex, itemAmt, tokenAddr, tokenAmt);
+    LogData memory logData = LogData(accID, itemIndex, itemAmt, taxAmt, tokenAddr, tokenAmt);
     logDeposit(world, comps, logData);
   }
 
@@ -120,15 +132,19 @@ library LibTokenPortal {
     address tokenAddr,
     int32 scale
   ) internal returns (uint256 receiptID) {
-    uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt, scale); // scaling accordingly
-    uint256 endTime = block.timestamp + getWithdrawDelay(comps);
+    // determine amount of tax to be collected
+    uint256 taxAmt = calcExportTax(comps, itemAmt);
+    require(taxAmt < itemAmt, "TokenPortal: tax exceeds item amount");
+
+    uint256 tokenAmt = LibERC20.toTokenUnits(itemAmt - taxAmt, scale); // scaling accordingly
+    uint256 endTime = block.timestamp + calcWithdrawalDelay(comps);
 
     // create receipt and decrease inventory
-    receiptID = createReceipt(world, comps, accID, itemIndex, tokenAddr, tokenAmt, endTime);
+    receiptID = createReceipt(world, comps, accID, itemIndex, tokenAddr, tokenAmt, taxAmt, endTime);
     LibInventory._decFor(comps, accID, itemIndex, itemAmt);
 
     // logging
-    LogData memory logData = LogData(accID, itemIndex, itemAmt, tokenAddr, tokenAmt);
+    LogData memory logData = LogData(accID, itemIndex, itemAmt, taxAmt, tokenAddr, tokenAmt);
     logWithdraw(world, comps, logData);
   }
 
@@ -146,11 +162,12 @@ library LibTokenPortal {
     removeReceipt(comps, receiptID);
 
     // logging
-    LogData memory logData = LogData(accID, itemIndex, itemAmt, tokenAddr, tokenAmt);
+    LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddr, tokenAmt);
     logClaim(world, comps, logData);
   }
 
   /// @notice cancel a pending Withdrawal Receipt, return items
+  /// @dev no refund on export tax
   function cancel(IWorld world, IUintComp comps, uint256 receiptID, int32 scale) internal {
     uint256 accID = OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
     address tokenAddr = TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).get(receiptID);
@@ -163,8 +180,35 @@ library LibTokenPortal {
     removeReceipt(comps, receiptID);
 
     // logging
-    LogData memory logData = LogData(accID, itemIndex, itemAmt, tokenAddr, tokenAmt);
+    LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddr, tokenAmt);
     logCancel(world, comps, logData);
+  }
+
+  ///////////////
+  // CALCULATIONS
+
+  /// @notice get the delay for a Withdrawal Receipt
+  /// @dev hardcoded for now. change to dynamic later
+  function calcWithdrawalDelay(IUintComp comps) internal view returns (uint256) {
+    return LibConfig.get(comps, "PORTAL_TOKEN_EXPORT_DELAY");
+  }
+
+  /// @notice get the tax amount for a Withdrawal (amt * taxRate + flatTax)
+  /// @dev this is determined against the target item quantity being withdrawn
+  function calcExportTax(IUintComp comps, uint256 amt) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(comps, "PORTAL_ITEM_EXPORT_TAX");
+    uint32 flatTax = config[0];
+    uint32 taxRate = config[1];
+    return (amt * taxRate) / taxRateUnits + flatTax;
+  }
+
+  /// @notice get the tax amount for a Deposit
+  /// @dev this is determined against the resulting item quantity from a deposit
+  function calcImportTax(IUintComp comps, uint256 amt) internal view returns (uint256) {
+    uint32[8] memory config = LibConfig.getArray(comps, "PORTAL_ITEM_IMPORT_TAX");
+    uint32 flatTax = config[0];
+    uint32 taxRate = config[1];
+    return (amt * taxRate) / taxRateUnits + flatTax;
   }
 
   ////////////////
@@ -180,21 +224,15 @@ library LibTokenPortal {
     if (block.timestamp < endTime) revert("withdrawal not ready");
   }
 
-  ///////////////
-  // GETTERS
-
-  function getWithdrawDelay(IUintComp comps) internal view returns (uint256) {
-    return LibConfig.get(comps, "ERC20_WITHDRAWAL_DELAY"); // todo: replace with dynamic OR hardcoded
-  }
-
   /////////////////
   // LOGGING
 
   /// @notice Deposit/Withdraw data logging details
   struct LogData {
     uint256 accID; // account ID
-    uint32 item; // item index
+    uint32 itemIndex; // item index
     uint256 itemAmt; // item amount
+    uint256 taxAmt; // tax amount
     address token; // token address
     uint256 tokenAmt; // token amount
   }
@@ -204,12 +242,13 @@ library LibTokenPortal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
-    LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_DEPOSIT_TOTAL", data.itemAmt);
+    LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_TAX_TOTAL", data.taxAmt);
+    LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_DEPOSIT_TOTAL", data.itemAmt);
     LibData.inc(
       comps,
       uint256(uint160(data.token)),
       0,
-      "BRIDGE_TOKEN_DEPOSIT_TOTAL",
+      "PORTAL_TOKEN_DEPOSIT_TOTAL",
       data.tokenAmt
     );
 
@@ -217,17 +256,18 @@ library LibTokenPortal {
     // LibEmitter.emitEvent(world, "ERC20_DEPOSIT", _eventSchema(), abi.encode(data));
   }
 
-  /// @notice logs pending withdrawals data
+  /// @notice logs pending withdrawal data
   function logWithdraw(IWorld world, IUintComp comps, LogData memory data) internal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
-    LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_WITHDRAW_INIT_TOTAL", data.itemAmt);
+    LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_TAX_TOTAL", data.taxAmt);
+    LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_WITHDRAW_TOTAL", data.itemAmt);
     LibData.inc(
       comps,
       uint256(uint160(data.token)),
       0,
-      "BRIDGE_TOKEN_WITHDRAW_INIT_TOTAL",
+      "PORTAL_TOKEN_WITHDRAW_TOTAL",
       data.tokenAmt
     );
 
@@ -235,37 +275,25 @@ library LibTokenPortal {
     // LibEmitter.emitEvent(world, "ERC20_WITHDRAW_INIT", _eventSchema(), abi.encode(data));
   }
 
-  /// @notice logs cancelled withdrawals data
+  /// @notice logs canceled withdrawal data
   function logCancel(IWorld world, IUintComp comps, LogData memory data) internal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
-    LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_WITHDRAW_CANCEL_TOTAL", data.itemAmt);
-    LibData.inc(
-      comps,
-      uint256(uint160(data.token)),
-      0,
-      "BRIDGE_TOKEN_WITHDRAW_CANCEL_TOTAL",
-      data.tokenAmt
-    );
+    LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_CANCEL_TOTAL", data.itemAmt);
+    LibData.inc(comps, uint256(uint160(data.token)), 0, "PORTAL_TOKEN_CANCEL_TOTAL", data.tokenAmt);
 
     // emit event
     // LibEmitter.emitEvent(world, "ERC20_WITHDRAW_CANCEL", _eventSchema(), abi.encode(data));
   }
 
-  /// @notice logs withdrawals data
+  /// @notice logs withdrawal data
   function logClaim(IWorld world, IUintComp comps, LogData memory data) internal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
-    LibData.inc(comps, holders, data.item, "BRIDGE_ITEM_WITHDRAW_CLAIM_TOTAL", data.itemAmt);
-    LibData.inc(
-      comps,
-      uint256(uint160(data.token)),
-      0,
-      "BRIDGE_TOKEN_WITHDRAW_CLAIM_TOTAL",
-      data.tokenAmt
-    );
+    LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_CLAIM_TOTAL", data.itemAmt);
+    LibData.inc(comps, uint256(uint160(data.token)), 0, "PORTAL_TOKEN_CLAIM_TOTAL", data.tokenAmt);
 
     // emit event
     // LibEmitter.emitEvent(world, "ERC20_WITHDRAW_CLAIM", _eventSchema(), abi.encode(data));
@@ -274,7 +302,7 @@ library LibTokenPortal {
   /////////////////
   // EVENTS
 
-  function _eventSchema() internal pure returns (uint8[] memory _schema) {
+  function _depositEventSchema() internal pure returns (uint8[] memory _schema) {
     _schema = new uint8[](5);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID

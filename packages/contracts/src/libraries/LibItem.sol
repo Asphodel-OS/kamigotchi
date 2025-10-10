@@ -423,17 +423,6 @@ library LibItem {
     return comp.has(id) ? id : 0;
   }
 
-  /// @notice retrieve all Item registry entities with an ERC20 type
-  function queryTokenItems(IUintComp components) internal view returns (uint256[] memory) {
-    return
-      LibEntityType.queryWithValue(
-        components,
-        "ITEM",
-        getCompByID(components, TypeCompID),
-        abi.encode("ERC20")
-      );
-  }
-
   /////////////////
   // UTILS
 

@@ -90,6 +90,7 @@ export function createComponents(world: World) {
     Stamina: defineStatComponent(world, 'Stamina', 'component.stat.stamina'),
     State: defineStringComponent(world, 'State', 'component.state', true),
     Subtype: defineStringComponent(world, 'Subtype', 'component.subtype'),
+    Tax: defineNumberComponent(world, 'Tax', 'component.tax'),
     Time: defineNumberComponent(world, 'Time', 'component.Time'),
     TimeEnd: defineNumberComponent(world, 'TimeEnd', 'component.Time.End'),
     LastActionTime: defineNumberComponent(world, 'LastActionTime', 'component.Time.LastAction'),
