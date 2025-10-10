@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount } from 'app/cache/account';
+import { getPortalConfig } from 'app/cache/config';
 import { getItem as _getItem } from 'app/cache/item';
 import { getReceipt as _getReceipt } from 'app/cache/receipts';
 import {
@@ -42,6 +43,7 @@ export const TokenPortalModal: UIComponent = {
         network,
         data: {
           accountEntity,
+          config: getPortalConfig(world, components),
           spenderAddr: getCompAddr(world, components, 'component.token.allowance'),
         },
         utils: {
@@ -58,7 +60,7 @@ export const TokenPortalModal: UIComponent = {
     // INSTANTIATIONS
 
     const { actions } = network;
-    const { accountEntity, spenderAddr } = data;
+    const { accountEntity, config, spenderAddr } = data;
     const { getAccount, getItem, getReceipt, queryTokenItems, queryReceipts } = utils;
 
     const apis = useNetwork((s) => s.apis);
@@ -67,8 +69,8 @@ export const TokenPortalModal: UIComponent = {
 
     const [account, setAccount] = useState<Account>(NullAccount);
     const [options, setOptions] = useState<Item[]>([]);
-    const [receipts, setReceipts] = useState<Receipt[]>([]);
     const [selected, setSelected] = useState<Item>(NullItem); // selected item for import/export
+    const [receipts, setReceipts] = useState<Receipt[]>([]);
     const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
 
@@ -211,7 +213,7 @@ export const TokenPortalModal: UIComponent = {
               deposit: depositTx,
               withdraw: withdrawTx,
             }}
-            data={{ account, inventory: account.inventories ?? [] }}
+            data={{ account, config, inventory: account.inventories ?? [] }}
             state={{ options }}
           />
         )}

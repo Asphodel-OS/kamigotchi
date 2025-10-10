@@ -1,8 +1,9 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
-import { IconListButton, IconListButtonOption, Text } from 'app/components/library';
+import { IconListButton, IconListButtonOption, Text, TextTooltip } from 'app/components/library';
 import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
@@ -24,6 +25,7 @@ export const Swap = ({
   };
   data: {
     account: Account;
+    config: PortalConfigs;
     inventory: Inventory[];
   };
   state: {
@@ -31,7 +33,7 @@ export const Swap = ({
   };
 }) => {
   const { approve, deposit, withdraw } = actions;
-  const { account, inventory } = data;
+  const { account, config, inventory } = data;
   const { options } = state;
   // hardcoded for now to just onyx
   const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
@@ -54,7 +56,6 @@ export const Swap = ({
   const toggleMode = () => {
     if (mode === 'DEPOSIT') setMode('WITHDRAW');
     else setMode('DEPOSIT');
-    playClick();
   };
 
   // adjust and clean the Want amounts in the trade offer in respoonse to a form change
@@ -76,9 +77,10 @@ export const Swap = ({
   // get the action to perform based on the mode
   const triggerAction = () => {
     if (mode === 'DEPOSIT') {
-      const tokenAmt = amt / getConversionRate(selected);
+      const neededAmt = getNeededDeposit(amt);
+      const tokenAmt = neededAmt / getSwapRate(selected);
       if (tokenAmt > onyxAllowance) approve(selected, tokenAmt);
-      else deposit(selected, amt);
+      else deposit(selected, neededAmt);
     } else {
       withdraw(selected, amt);
     }
@@ -91,14 +93,8 @@ export const Swap = ({
   const cleanAmount = (raw: number) => {
     let max = Number.MAX_SAFE_INTEGER;
     if (mode === 'WITHDRAW') max = getInventoryBalance(inventory, selected.index);
-    else max = getTokenBalance(selected) * getConversionRate(selected);
+    else max = getTokenBalance(selected) * getSwapRate(selected);
     return Math.max(0, Math.min(max, raw));
-  };
-
-  // get the icon for the Mode toggle
-  const getModeIcon = (mode: Mode) => {
-    if (mode === 'DEPOSIT') return ArrowIcons.left;
-    else return ArrowIcons.right;
   };
 
   // generate the selectable list of ERC20 items
@@ -111,23 +107,87 @@ export const Swap = ({
   };
 
   // get the balance conversion rate from token to item
-  const getConversionRate = (item: Item) => {
+  const getSwapRate = (item: Item) => {
     return 10 ** (item.token?.scale ?? 0);
   };
 
+  // get the necessary deposit balance to achieve the target balance (in item units)
+  const getNeededDeposit = (target: number) => {
+    const { flat, rate } = config.tax.import;
+    const needAmt = Math.floor((target + flat) / (1 - rate));
+    return needAmt;
+  };
+
+  // get the resulting (post-tax) withdrawal balance from initial (in item units)
+  const getResultWithdraw = (target: number) => {
+    const { flat, rate } = config.tax.export;
+    const ratedTax = Math.floor(target * rate);
+    const amt = target - ratedTax - flat;
+    return Math.max(0, amt);
+  };
+
+  // get the conversion rate from item balance to token balance with tax applied
+  const getTokenConversion = (amt: number) => {
+    let converted = 0;
+    if (mode === 'DEPOSIT') converted = getNeededDeposit(amt);
+    else converted = getResultWithdraw(amt);
+    return converted / getSwapRate(selected);
+  };
+
   // get the token balance of the selected item
+  // NOTE: hardcoded to onyx for now
   const getTokenBalance = (item: Item) => {
-    const scale = getConversionRate(item);
+    const scale = getSwapRate(item);
     return (1.0 * Math.trunc(onyxBalance * scale)) / scale;
   };
+
+  /////////////////
+  // DISPLAY
 
   // get the action text of the submission button
   const getActionText = () => {
     if (mode === 'DEPOSIT') {
-      const tokenAmt = amt / getConversionRate(selected);
+      const tokenAmt = amt / getSwapRate(selected);
       if (tokenAmt > onyxAllowance) return 'Approve';
       else return 'Deposit';
     } else return 'Withdraw';
+  };
+
+  // get the icon for the Mode toggle
+  const getModeIcon = (mode: Mode) => {
+    if (mode === 'DEPOSIT') return ArrowIcons.left;
+    else return ArrowIcons.right;
+  };
+
+  // get the tooltip for the tax rate
+  const getRateTooltip = () => {
+    const swapRate = getSwapRate(selected);
+    if (mode === 'DEPOSIT') {
+      const { flat, rate: taxRate } = config.tax.import;
+      const taxAmt = Math.floor(amt * taxRate) + flat;
+      const effectiveTaxRate = (100 * taxAmt) / amt;
+
+      return [
+        `The base conversion rate from $ONYX to ${selected.name} is 1:${swapRate}`,
+        `\n`,
+        `A tax rate of ${taxRate * 100}% (rounded down) is applied to the converted item balance. As well as a flat fee of ${flat} unit(s) per deposit.`,
+        `\n`,
+        `This will result in a total import tax of ${taxAmt} unit(s) or ${effectiveTaxRate.toFixed(2)}% of the total deposit.`,
+      ];
+    } else if (mode === 'WITHDRAW') {
+      const { flat, rate: taxRate } = config.tax.export;
+      const taxAmt = Math.floor(amt * taxRate) + flat;
+      const effectiveTaxRate = (100 * taxAmt) / amt;
+
+      return [
+        `The base conversion rate from ${selected.name} to $ONYX is ${swapRate}:1`,
+        `\n`,
+        `A tax rate of ${taxRate * 100}% (rounded down) is applied to the withdrawn item balance. As well as a flat fee of ${flat} unit(s) per withdrawal.`,
+        `\n`,
+        `This will result in a total export tax of ${taxAmt} unit(s) or ${effectiveTaxRate.toFixed(2)}% of the total withdrawal.`,
+      ];
+    }
+    return [];
   };
 
   const isDisabled = () => {
@@ -153,7 +213,9 @@ export const Swap = ({
         <Column style={{ width: '6vw' }}>
           <Text size={0.9}>{mode}</Text>
           <IconButton img={getModeIcon(mode)} onClick={toggleMode} />
-          <Text size={0.6}>{`(${getConversionRate(selected)}:1)`}</Text>
+          <TextTooltip text={getRateTooltip()} size={0.6} maxWidth={24}>
+            <Text size={0.6}>{`(${getSwapRate(selected)}:1)`}</Text>
+          </TextTooltip>
         </Column>
         <Column>
           <IconButton
@@ -163,7 +225,7 @@ export const Swap = ({
             onClick={() => {}}
             disabled
           />
-          <Input type='text' value={amt / getConversionRate(selected)} disabled />
+          <Input type='text' value={getTokenConversion(amt)} disabled />
         </Column>
       </Row>
       <IconButton
@@ -209,7 +271,7 @@ const Column = styled.div`
 const Input = styled.input`
   border-radius: 0.45vw;
   background-color: #eee;
-  width: 6vw;
+  width: 9vw;
   height: 100%;
 
   padding: 0.3vw;

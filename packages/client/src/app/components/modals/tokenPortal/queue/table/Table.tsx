@@ -71,7 +71,7 @@ export const Table = ({
       <Header
         columns={{
           Account: 7.5,
-          Item: 4.5,
+          Token: 4.5,
           Amount: 6,
           Status: 6,
           Actions: 6,

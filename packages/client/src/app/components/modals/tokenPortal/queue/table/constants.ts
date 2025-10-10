@@ -3,7 +3,7 @@ export type Mode = 'MINE' | 'ALL';
 // table header columns
 export const COLUMN_WIDTHS = {
   Account: 0,
-  Item: 0,
+  Token: 0,
   Amount: 0,
   Status: 0,
   Actions: 0,

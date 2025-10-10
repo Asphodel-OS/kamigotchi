@@ -18,7 +18,7 @@ export const Text = styled.div<{
   padding: ${({ padding }) => padding?.top ?? 0}vw ${({ padding }) => padding?.right ?? 0}vw
     ${({ padding }) => padding?.bottom ?? 0}vw ${({ padding }) => padding?.left ?? 0}vw;
 
-  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
+  ${({ onClick }) => onClick && 'cursor: pointer'};
   &:hover {
     ${({ onClick }) => (onClick ? 'opacity: 0.6;' : '')}
   }

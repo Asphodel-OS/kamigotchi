@@ -4,7 +4,9 @@ import { IconButton, Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
+import { TokenIcons } from 'assets/images/tokens';
 import { Account, Item, Receipt } from 'network/shapes';
+import { parseTokenBalance } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { getCountdown } from 'utils/time';
 
@@ -107,9 +109,11 @@ export const Body = ({
               </TextTooltip>
             </Field>
             <Field width={4.5}>
-              <Icon src={r.item?.image ?? PlaceholderIcon} />
+              <TextTooltip text={['$ONYX']} alignText={'right'}>
+                <Icon src={TokenIcons.onyx} />
+              </TextTooltip>
             </Field>
-            <Field width={6}>{convertAmt(r.item!, r.amt)}</Field>
+            <Field width={6}>{parseTokenBalance(BigInt(r.amt))}</Field>
             <Field width={6}>{getCountdown(r.time.end)}</Field>
             <Field width={6}>
               <IconGroup>
