@@ -1,27 +1,18 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
-import { Component as SolecsComponent } from '@mud-classic/solecs';
-import ComponentAbi from '@mud-classic/solecs/abi/Component.json';
-import { toEthAddress } from '@mud-classic/utils';
 import {
   Component,
   Components,
   EntityID,
-  EntityIndex,
-  getComponentEntities,
   getComponentValue,
-  getComponentValueStrict,
   removeComponent,
   Schema,
   setComponent,
   Type,
   World,
 } from 'engine/recs';
-import { Contract, Signer } from 'ethers';
+import { Contract } from 'ethers';
 import { compact, toLower } from 'lodash';
-import { IComputedValue } from 'mobx';
 import { filter, map, Observable, Subject, timer } from 'rxjs';
 
-import { createEncoder } from 'engine/encoders';
 import { Mappings } from 'engine/types';
 import { formatEntityID } from 'engine/utils';
 import { Ack, ack } from 'workers/sync';
@@ -109,38 +100,6 @@ export function createSystemCallStreams<
       });
     },
   };
-}
-
-export async function createEncoders(
-  world: World,
-  components: Component<{ value: Type.String }>,
-  signerOrProvider: IComputedValue<JsonRpcProvider | Signer>
-) {
-  const encoders = {} as Record<string, ReturnType<typeof createEncoder>>;
-
-  async function fetchAndCreateEncoder(entity: EntityIndex) {
-    const componentAddress = toEthAddress(world.entities[entity]);
-    const componentId = getComponentValueStrict(components, entity).value;
-    console.info('[SyncUtils] Creating encoder for ' + componentAddress);
-    const componentContract = new Contract(
-      componentAddress,
-      ComponentAbi.abi,
-      signerOrProvider.get()
-    ) as SolecsComponent;
-    const [componentSchemaPropNames, componentSchemaTypes] = await componentContract.getSchema();
-    encoders[componentId] = createEncoder(componentSchemaPropNames, componentSchemaTypes);
-  }
-
-  // Initial setup
-  for (const entity of getComponentEntities(components)) fetchAndCreateEncoder(entity);
-
-  // Keep up to date
-  const subscription = components.update$.subscribe((update) =>
-    fetchAndCreateEncoder(update.entity)
-  );
-  world.registerDisposer(() => subscription?.unsubscribe());
-
-  return encoders;
 }
 
 /**

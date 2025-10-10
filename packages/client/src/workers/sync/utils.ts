@@ -1,10 +1,10 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { abi as WorldAbi } from '@mud-classic/solecs/abi/World.json';
-import { World } from '@mud-classic/solecs/types/ethers-contracts';
 import { awaitPromise, range, to256BitString } from '@mud-classic/utils';
+import { abi as WorldAbi } from 'abi/World.json';
 import { Components, EntityID } from 'engine/recs';
 import { BigNumber } from 'ethers';
 import { Observable, concatMap, map, of } from 'rxjs';
+import { World } from 'types/ethers-contracts';
 
 import { createDecode } from 'engine/encoders';
 import { ECSStateReplyV2, ECSStateSnapshotServiceClient } from 'engine/types/ecs-snapshot';
