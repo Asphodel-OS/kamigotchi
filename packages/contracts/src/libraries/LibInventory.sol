@@ -139,7 +139,7 @@ library LibInventory {
     uint32 itemIndex,
     uint256 amt
   ) internal returns (uint256 id) {
-    LibItem.verifyNotToken(comps, itemIndex);
+    LibItem.verifyToken(comps, itemIndex, false);
     id = _incFor(comps, holderID, itemIndex, amt);
   }
 

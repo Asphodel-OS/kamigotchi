@@ -111,9 +111,13 @@ contract TokenPortalSystem is System, AuthRoles {
   /// @notice initialize portal item from the item registry
   /// @dev call this after system upgrades, to add items to system storage without relisting
   function initItem(uint32 index) public onlyOwner {
+    uint256 id = LibItem.getByIndex(components, index);
+    if (id == 0) revert("TokenPortal: item does not exist");
+    LibItem.verifyType(components, index, "ERC20");
+    LibItem.verifyToken(components, index, true);
+
     address tokenAddr = LibItem.getTokenAddr(components, index);
     int32 scale = LibItem.getScale(components, index);
-    require(tokenAddr != address(0), "TokenPortal: item has no registered token");
 
     itemAddrs[index] = tokenAddr;
     itemScales[index] = scale;
@@ -122,9 +126,14 @@ contract TokenPortalSystem is System, AuthRoles {
   /// @notice add an item to the token portal by populating its address and conversion scale
   /// @dev item needs to be added through the ItemRegistrySystem first
   function setItem(uint32 index, address tokenAddr, int32 scale) public onlyOwner {
-    require(LibItem.getByIndex(components, index) != 0, "TokenPortal: item does not exist");
-    require(scale < 18, "TokenPortal: scale > 18 not supported");
-    require(scale > 0, "TokenPortal: negative scale not supported");
+    uint256 id = LibItem.getByIndex(components, index);
+    if (id == 0) revert("TokenPortal: item does not exist");
+    LibItem.verifyType(components, index, "ERC20");
+    LibItem.verifyToken(components, index, false);
+
+    if (scale < 0) revert("TokenPortal: negative scale not supported");
+    if (scale > 18) revert("TokenPortal: scale > 18 not supported");
+
     LibItem.setERC20(components, index, tokenAddr, scale);
     itemAddrs[index] = tokenAddr;
     itemScales[index] = scale;
@@ -132,7 +141,11 @@ contract TokenPortalSystem is System, AuthRoles {
 
   // remove an item from the token portal
   function unsetItem(uint32 index) public onlyOwner {
-    require(LibItem.getByIndex(components, index) != 0, "TokenPortal: item does not exist");
+    uint256 id = LibItem.getByIndex(components, index);
+    if (id == 0) revert("TokenPortal: item does not exist");
+    LibItem.verifyType(components, index, "ERC20");
+    LibItem.verifyToken(components, index, true);
+
     LibItem.unsetERC20(components, index);
     delete itemAddrs[index];
     delete itemScales[index];

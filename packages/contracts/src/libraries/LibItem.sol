@@ -115,13 +115,6 @@ library LibItem {
   /// @dev do not call anywhere outside of TokenPortal
   function setERC20(IUintComp components, uint32 index, address tokenAddr, int32 scale) internal {
     uint256 id = genID(index);
-    string memory type_ = TypeComponent(getAddrByID(components, TypeCompID)).get(id);
-    require(LibString.eq(type_, "ERC20"), "LibItem: not an ERC20 item");
-
-    TokenAddressComponent tokenAddrComp = TokenAddressComponent(
-      getAddrByID(components, TokenAddressCompID)
-    );
-    require(!tokenAddrComp.has(id), "LibItem: ERC20 address already set");
     TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).set(id, tokenAddr);
     ScaleComponent(getAddrByID(components, ScaleCompID)).set(id, scale);
   }
@@ -130,13 +123,6 @@ library LibItem {
   /// @dev do not call anywhere outside of TokenPortal
   function unsetERC20(IUintComp components, uint32 index) internal {
     uint256 id = genID(index);
-    string memory type_ = TypeComponent(getAddrByID(components, TypeCompID)).get(id);
-    require(LibString.eq(type_, "ERC20"), "LibItem: not an ERC20 item");
-
-    TokenAddressComponent tokenAddrComp = TokenAddressComponent(
-      getAddrByID(components, TokenAddressCompID)
-    );
-    require(tokenAddrComp.has(id), "LibItem: ERC20 address not set");
     TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).remove(id);
     ScaleComponent(getAddrByID(components, ScaleCompID)).remove(id);
   }
@@ -239,17 +225,6 @@ library LibItem {
     return LibFlag.has(components, genID(index), "BYPASS_BONUS_RESET");
   }
 
-  function verifyBurnable(IUintComp components, uint32[] memory indices) public view {
-    uint256[] memory ids = new uint256[](indices.length);
-    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
-    if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
-  }
-
-  function verifyForShape(IUintComp components, uint32 index, string memory shape) public view {
-    if (!LibFor.get(components, genID(index)).eq(shape))
-      revert(LibString.concat("not for ", shape));
-  }
-
   /// @notice check if an item has a given state for a flag
   function checkFlag(
     IUintComp components,
@@ -284,15 +259,17 @@ library LibItem {
     return LibFlag.checkAny(components, ids, flag, state);
   }
 
-  /// @dev to prevent potential overflows, somehow
-  function verifyMaxPerUse(IUintComp components, uint256 amt) public view {
-    if (amt > 100) revert("max 100 item use at once");
+  /// @notice check that all items passed in are burnable
+  function verifyBurnable(IUintComp components, uint32[] memory indices) public view {
+    uint256[] memory ids = new uint256[](indices.length);
+    for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
+    if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
   }
 
-  /// @notice ensure item does not have a token attached
-  function verifyNotToken(IUintComp components, uint32 index) public view {
-    if (TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).has(genID(index))) {
-      revert("item is a token");
+  /// @notice check if an item is meant for use by a specific shape (e.g. KAMI or ACCOUNT)
+  function verifyForShape(IUintComp components, uint32 index, string memory shape) public view {
+    if (!LibFor.get(components, genID(index)).eq(shape)) {
+      revert(LibString.concat("not for ", shape));
     }
   }
 
@@ -304,15 +281,24 @@ library LibItem {
     uint256 targetID
   ) public view {
     if (!LibConditional.check(components, getReqsFor(components, index, usecase), targetID))
-      revert("Item: Reqs not met");
+      revert("Item: requirements not met");
+  }
+
+  /// @notice ensure an item does/doesn't have a token attached
+  function verifyToken(IUintComp components, uint32 index, bool want) public view {
+    uint256 id = genID(index);
+    bool has = TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).has(id);
+    if (want && !has) revert("LibItem: item has no token");
+    if (!want && has) revert("LibItem: item has a token");
   }
 
   /// @notice check if entity is an item of specific type
   function verifyType(IUintComp components, uint32 index, string memory type_) public view {
     uint256 id = genID(index);
     if (!LibEntityType.isShape(components, id, "ITEM")) revert("thats not an item");
-    if (!getCompByID(components, TypeCompID).eqString(id, type_))
+    if (!getCompByID(components, TypeCompID).eqString(id, type_)) {
       revert(LibString.concat("thats not item type ", type_));
+    }
   }
 
   function verifyType(
@@ -323,8 +309,9 @@ library LibItem {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     if (!LibEntityType.isShape(components, ids, "ITEM")) revert("thats not an item");
-    if (!getCompByID(components, TypeCompID).eqString(ids, type_))
+    if (!getCompByID(components, TypeCompID).eqString(ids, type_)) {
       revert(LibString.concat("thats not item type ", type_));
+    }
   }
 
   /////////////////

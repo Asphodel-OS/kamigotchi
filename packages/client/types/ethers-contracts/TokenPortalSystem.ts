@@ -39,7 +39,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     "deposit(uint32,uint256)": FunctionFragment;
     "deprecate()": FunctionFragment;
     "execute(bytes)": FunctionFragment;
-    "initItems()": FunctionFragment;
+    "initItem(uint32)": FunctionFragment;
     "itemAddrs(uint32)": FunctionFragment;
     "itemScales(uint32)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -63,7 +63,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
       | "deposit"
       | "deprecate"
       | "execute"
-      | "initItems"
+      | "initItem"
       | "itemAddrs"
       | "itemScales"
       | "owner"
@@ -109,7 +109,10 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     functionFragment: "execute",
     values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(functionFragment: "initItems", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "initItem",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "itemAddrs",
     values: [PromiseOrValue<BigNumberish>]
@@ -170,7 +173,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initItems", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initItem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "itemAddrs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "itemScales", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -318,7 +321,8 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    initItems(
+    initItem(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -415,7 +419,8 @@ export interface TokenPortalSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  initItems(
+  initItem(
+    index: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -508,7 +513,10 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    initItems(overrides?: CallOverrides): Promise<void>;
+    initItem(
+      index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     itemAddrs(
       arg0: PromiseOrValue<BigNumberish>,
@@ -628,7 +636,8 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    initItems(
+    initItem(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -726,7 +735,8 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    initItems(
+    initItem(
+      index: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

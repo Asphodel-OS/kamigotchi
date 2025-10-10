@@ -134,8 +134,14 @@
     },
     {
       "type": "function",
-      "name": "initItems",
-      "inputs": [],
+      "name": "initItem",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
       "outputs": [],
       "stateMutability": "nonpayable"
     },
@@ -364,11 +370,6 @@
     },
     {
       "type": "error",
-      "name": "QueryOrderNotSupported",
-      "inputs": []
-    },
-    {
-      "type": "error",
       "name": "Unauthorized",
       "inputs": []
     }
@@ -383,7 +384,7 @@
     "deposit(uint32,uint256)": "aaf10398",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "initItems()": "3967e180",
+    "initItem(uint32)": "e83e407f",
     "itemAddrs(uint32)": "c122aef3",
     "itemScales(uint32)": "7d7b397a",
     "owner()": "8da5cb5b",
