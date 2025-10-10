@@ -15,6 +15,7 @@ import { TimeEndComponent, ID as TimeEndCompID } from "components/TimeEndCompone
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibERC20 } from "libraries/utils/LibERC20.sol";
 
@@ -77,7 +78,7 @@ library LibTokenPortal {
     IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).set(id, itemIndex);
     TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).set(id, tokenAddr);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, tokenAmt);
-    TaxComponent(getAddrByID(comps, TaxCompID)).set(id, taxAmt);
+    TaxComponent(getAddrByID(comps, TaxCompID)).set(id, taxAmt); // here if we ever want to support tax refunds
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     TimeEndComponent(getAddrByID(comps, TimeEndCompID)).set(id, endTime);
   }
@@ -146,6 +147,7 @@ library LibTokenPortal {
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, taxAmt, tokenAddr, tokenAmt);
     logWithdraw(world, comps, logData);
+    emitWithdraw(world, receiptID, logData);
   }
 
   /// @notice execute a pending Withdrawal Receipt to claim tokens
@@ -164,6 +166,7 @@ library LibTokenPortal {
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddr, tokenAmt);
     logClaim(world, comps, logData);
+    emitClaim(world, accID, receiptID);
   }
 
   /// @notice cancel a pending Withdrawal Receipt, return items
@@ -182,6 +185,7 @@ library LibTokenPortal {
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddr, tokenAmt);
     logCancel(world, comps, logData);
+    emitCancel(world, accID, receiptID);
   }
 
   ///////////////
@@ -302,12 +306,89 @@ library LibTokenPortal {
   /////////////////
   // EVENTS
 
-  function _depositEventSchema() internal pure returns (uint8[] memory _schema) {
-    _schema = new uint8[](5);
+  /// @notice emit a Deposit event
+  function emitDeposit(IWorld world, LogData memory data) public {
+    uint8[] memory _schema = new uint8[](7);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // item
-    _schema[3] = uint8(LibTypes.SchemaValue.ADDRESS); // token
-    _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // amt
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // item index
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT256); // item amt
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // tax amt
+    _schema[5] = uint8(LibTypes.SchemaValue.ADDRESS); // token
+    _schema[6] = uint8(LibTypes.SchemaValue.UINT256); // token amt
+
+    LibEmitter.emitEvent(
+      world,
+      "PORTAL_TOKEN_DEPOSIT",
+      _schema,
+      abi.encode(
+        block.timestamp,
+        data.accID,
+        data.itemIndex,
+        data.itemAmt,
+        data.taxAmt,
+        data.token,
+        data.tokenAmt
+      )
+    );
+  }
+
+  /// @notice emit a Withdrawal event
+  function emitWithdraw(IWorld world, uint256 receiptID, LogData memory data) public {
+    uint8[] memory _schema = new uint8[](8);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256); // receiptID
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT32); // item index
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // item amt
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256); // tax amt
+    _schema[6] = uint8(LibTypes.SchemaValue.ADDRESS); // token
+    _schema[7] = uint8(LibTypes.SchemaValue.UINT256); // token amt
+
+    LibEmitter.emitEvent(
+      world,
+      "PORTAL_TOKEN_WITHDRAW",
+      _schema,
+      abi.encode(
+        block.timestamp,
+        data.accID,
+        receiptID,
+        data.itemIndex,
+        data.itemAmt,
+        data.taxAmt,
+        data.token,
+        data.tokenAmt
+      )
+    );
+  }
+
+  /// @notice emit a Claim event
+  function emitClaim(IWorld world, uint256 accID, uint256 receiptID) public {
+    uint8[] memory _schema = new uint8[](3);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256); // receiptID
+
+    LibEmitter.emitEvent(
+      world,
+      "PORTAL_TOKEN_CLAIM",
+      _schema,
+      abi.encode(block.timestamp, accID, receiptID)
+    );
+  }
+
+  /// @notice emit a Cancelation event
+  function emitCancel(IWorld world, uint256 accID, uint256 receiptID) public {
+    uint8[] memory _schema = new uint8[](3);
+    _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
+    _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256); // receiptID
+
+    LibEmitter.emitEvent(
+      world,
+      "PORTAL_TOKEN_CANCEL",
+      _schema,
+      abi.encode(block.timestamp, accID, receiptID)
+    );
   }
 }
