@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibTokenPortal } from "libraries/LibTokenPortal.sol";
 
@@ -67,6 +68,7 @@ contract TokenPortalSystem is System, AuthRoles {
   function claim(uint256 receiptID) public {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
+    LibDisabled.verifyEnabled(components, receiptID);
     LibTokenPortal.verifyTimeEnd(components, receiptID);
 
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
@@ -83,6 +85,7 @@ contract TokenPortalSystem is System, AuthRoles {
   function cancel(uint256 receiptID) public {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibTokenPortal.verifyReceiptOwner(components, accID, receiptID);
+    LibDisabled.verifyEnabled(components, receiptID);
 
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
     require(itemIndex != 0, "Item Registry: item not registered");
@@ -96,12 +99,21 @@ contract TokenPortalSystem is System, AuthRoles {
   // ADMIN CONTROLS
 
   /// @notice pause a Withdrawal Receipt, as an admin
-  function adminPause(uint256 receiptID) public onlyAdmin(components) {}
+  function adminPause(uint256 receiptID) public onlyAdmin(components) {
+    LibDisabled.set(components, receiptID, true);
+  }
+
+  /// @notice unpause a Withdrawal Receipt, as Owner only
+  function adminUnpause(uint256 receiptID) public onlyOwner {
+    LibDisabled.verifyDisabled(components, receiptID);
+    LibDisabled.set(components, receiptID, false);
+  }
 
   /// @notice cancel a Withdrawal Receipt, as an admin
   function adminCancel(uint256 receiptID) public onlyAdmin(components) {
     uint32 itemIndex = LibItem.getIndex(components, receiptID);
     int32 scale = itemScales[itemIndex];
+    LibDisabled.set(components, receiptID, false);
     LibTokenPortal.cancel(world, components, receiptID, scale);
   }
 

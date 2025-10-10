@@ -8,6 +8,7 @@ import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IndexItemComponent, ID as ItemIndexCompID } from "components/IndexItemComponent.sol";
 import { IDOwnsWithdrawalComponent as OwnerComponent, ID as OwnerCompID } from "components/IDOwnsWithdrawalComponent.sol";
+import { IsDisabledComponent, ID as IsDisabledCompID } from "components/IsDisabledComponent.sol";
 import { TaxComponent, ID as TaxCompID } from "components/TaxComponent.sol";
 import { TokenAddressComponent, ID as TokenAddrCompID } from "components/TokenAddressComponent.sol";
 import { TokenHolderComponent, ID as TokenHolderCompID } from "components/TokenHolderComponent.sol";

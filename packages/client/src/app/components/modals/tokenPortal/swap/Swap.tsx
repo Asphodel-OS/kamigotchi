@@ -45,7 +45,7 @@ export const Swap = ({
 
   // default the selected option to ONYX whenever the list of item options change
   useEffect(() => {
-    const onyxItem = options.find((item: Item) => item.index == ONYX_INDEX);
+    const onyxItem = options.find((item: Item) => item.index === ONYX_INDEX);
     if (onyxItem) setSelected(onyxItem);
     else console.warn('no onyx item found');
   }, [options.length]);
@@ -261,7 +261,6 @@ const Input = styled.input`
   height: 100%;
 
   padding: 0.3vw;
-  margin: 0w;
 
   color: black;
   font-size: 1vw;

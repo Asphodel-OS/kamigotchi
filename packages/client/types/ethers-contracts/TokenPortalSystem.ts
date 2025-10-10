@@ -32,6 +32,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
   functions: {
     "adminCancel(uint256)": FunctionFragment;
     "adminPause(uint256)": FunctionFragment;
+    "adminUnpause(uint256)": FunctionFragment;
     "cancel(uint256)": FunctionFragment;
     "cancelOwnershipHandover()": FunctionFragment;
     "claim(uint256)": FunctionFragment;
@@ -56,6 +57,7 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "adminCancel"
       | "adminPause"
+      | "adminUnpause"
       | "cancel"
       | "cancelOwnershipHandover"
       | "claim"
@@ -82,6 +84,10 @@ export interface TokenPortalSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "adminPause",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adminUnpause",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -160,6 +166,10 @@ export interface TokenPortalSystemInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "adminPause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "adminUnpause",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
@@ -287,6 +297,11 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    adminUnpause(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     cancel(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -385,6 +400,11 @@ export interface TokenPortalSystem extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  adminUnpause(
+    receiptID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   cancel(
     receiptID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -479,6 +499,11 @@ export interface TokenPortalSystem extends BaseContract {
     ): Promise<void>;
 
     adminPause(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    adminUnpause(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -602,6 +627,11 @@ export interface TokenPortalSystem extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    adminUnpause(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     cancel(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -697,6 +727,11 @@ export interface TokenPortalSystem extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     adminPause(
+      receiptID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adminUnpause(
       receiptID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

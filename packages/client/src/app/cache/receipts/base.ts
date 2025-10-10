@@ -15,8 +15,10 @@ const process = (world: World, comps: Components, entity: EntityIndex): Receipt 
   receipt.item = getItemByIndex(world, comps, itemIndex);
 
   const accountID = getOwnsWithdwalID(comps, entity);
-  const accountEntity = world.entityToIndex.get(accountID) ?? (0 as EntityIndex);
-  receipt.account = getAccount(world, comps, accountEntity);
+  const accountEntity = world.entityToIndex.get(accountID);
+  if (accountEntity !== undefined) {
+    receipt.account = getAccount(world, comps, accountEntity);
+  }
 
   ReceiptCache.set(entity, receipt);
   return receipt;

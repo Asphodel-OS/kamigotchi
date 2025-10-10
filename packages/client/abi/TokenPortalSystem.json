@@ -44,6 +44,19 @@
     },
     {
       "type": "function",
+      "name": "adminUnpause",
+      "inputs": [
+        {
+          "name": "receiptID",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "cancel",
       "inputs": [
         {
@@ -377,6 +390,7 @@
   "methodIdentifiers": {
     "adminCancel(uint256)": "2a628e83",
     "adminPause(uint256)": "2692c59f",
+    "adminUnpause(uint256)": "25fc00f0",
     "cancel(uint256)": "40e58ee5",
     "cancelOwnershipHandover()": "54d1f13d",
     "claim(uint256)": "379607f5",
