@@ -13,7 +13,6 @@ import {
   deleteRelationships,
   deleteRooms,
   deleteSkills,
-  deleteTokens,
   initAll,
   initAllLocal,
   initAllTesting,
@@ -30,14 +29,16 @@ import {
   initMintConfigs,
   initNodes,
   initNpcs,
+  initPortalConfigs,
+  initPortalTokens,
   initQuests,
   initRecipes,
   initRelationships,
   initRooms,
   initSkills,
   initSnapshot,
+  initTestingConfigs,
   initTokenConfigs,
-  initTokens,
   initTradeConfigs,
   initTraits,
   mintToGachaPool,
@@ -51,6 +52,8 @@ import {
   reviseRecipes,
   reviseRooms,
   reviseSkills,
+  setPortalTokens,
+  unsetPortalTokens,
 } from './state';
 
 // TODO: rename this file to something that makes more sense
@@ -95,11 +98,13 @@ export class WorldState {
     auth: {
       init: () => this.genCalls(initAuth),
     },
-    config: {
+    configs: {
       init: () => this.genCalls(initConfigs),
-      initMint: () => this.genCalls(initMintConfigs),
+      initTesting: () => this.genCalls(initTestingConfigs),
       initHarvest: () => this.genCalls(initHarvestConfigs),
       initLiquidation: () => this.genCalls(initLiquidationConfigs),
+      initMint: () => this.genCalls(initMintConfigs),
+      initPortal: () => this.genCalls(initPortalConfigs),
       initTrade: () => this.genCalls(initTradeConfigs),
       initTokens: () => this.genCalls(initTokenConfigs),
     } as SubFunc,
@@ -138,8 +143,9 @@ export class WorldState {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),
     } as SubFunc,
     portal: {
-      init: (indices: number[]) => this.genCalls((api) => initTokens(api, indices)),
-      delete: (indices: number[]) => this.genCalls((api) => deleteTokens(api, indices)),
+      init: (indices: number[]) => this.genCalls((api) => initPortalTokens(api, indices)),
+      set: (indices: number[]) => this.genCalls((api) => setPortalTokens(api, indices)),
+      unset: (indices: number[]) => this.genCalls((api) => unsetPortalTokens(api, indices)),
     } as SubFunc,
     quests: {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),

@@ -1,4 +1,4 @@
-import { AdminAPI } from '../api';
+import { AdminAPI } from '../../api';
 
 export async function initConfigs(api: AdminAPI) {
   await initBase(api);
@@ -10,10 +10,12 @@ export async function initConfigs(api: AdminAPI) {
   await initStats(api);
   await initHarvest(api);
   await initLiquidation(api);
-  await initTokens(api);
   await initTrade(api);
   await initSkills(api);
   await initVIP(api);
+
+  await initTokens(api);
+  await initPortal(api);
 }
 
 // local config settings for faster testing
@@ -34,6 +36,17 @@ export async function initLocalConfigs(api: AdminAPI) {
 export async function initTestingConfigs(api: AdminAPI) {
   // await api.config.set.bool('WORLD_PRIVATE', true);
   await api.config.set.string('BASE_KAMI_NAME', 'Test Kami ');
+
+  // token portal
+  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 60); // measured in seconds (1 minute)
+  await api.config.set.array('PORTAL_ITEM_EXPORT_TAX', [
+    1, // flat tax (in resulting item)
+    100, // % tax in basis points
+  ]);
+  await api.config.set.array('PORTAL_ITEM_IMPORT_TAX', [
+    1, // flat tax (in resulting item)
+    100, // % tax in basis points
+  ]);
 }
 
 export async function initProdConfigs(api: AdminAPI) {
@@ -128,14 +141,24 @@ export async function initLiquidation(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_RECOIL', [0, 0, 600, 3, 0, 0, 1000, 3]);
 }
 
+export async function initPortal(api: AdminAPI) {
+  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 86400); // measured in seconds (1 week)
+  await api.config.set.array('PORTAL_ITEM_EXPORT_TAX', [
+    1, // flat tax (in resulting item)
+    100, // % in basis points
+  ]);
+  await api.config.set.array('PORTAL_ITEM_IMPORT_TAX', [
+    1, // flat tax (in resulting item)
+    100, // % in basis points
+  ]);
+}
+
 export async function initTokens(api: AdminAPI) {
   await api.config.set.address(
     'ERC20_RECEIVER_ADDRESS',
     '0x6a2350be9eA194cB67df934Df24bFA939A1aAd40'
   );
   await api.config.set.address('ONYX_BURNER_ADDRESS', '0x4A8B41aC258aE5AAe054C10C8b475eB0Ce2465Ec');
-
-  await api.config.set.number('ERC20_WITHDRAWAL_DELAY', 60); // 1 week
 }
 
 export async function initTrade(api: AdminAPI) {

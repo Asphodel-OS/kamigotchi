@@ -1,1 +1,6 @@
-export { deleteTokens, initLocalTokens, initTokens } from './tokens';
+export {
+  initTokens as initPortalTokens,
+  setLocalTokens as setLocalPortalTokens,
+  setTokens as setPortalTokens,
+  unsetTokens as unsetPortalTokens,
+} from './tokens';
