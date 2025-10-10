@@ -8,6 +8,7 @@ import {
   getItemIndex,
   getOwnsWithdwalID,
   getStartTime,
+  getTax,
   getValue,
 } from '../utils/component';
 
@@ -16,6 +17,7 @@ export interface Receipt {
   entity: EntityIndex;
   ObjectType: string;
   amt: number; // token amount
+  tax: number; // tax amount (in item units)
   time: {
     start: number;
     end: number;
@@ -42,6 +44,7 @@ export const getReceipt = (
     entity,
     ObjectType: 'TOKEN_RECEIPT',
     amt: getValue(comps, entity), // token amount
+    tax: getTax(comps, entity), // tax amount
     time: {
       start: getStartTime(comps, entity),
       end: getEndTime(comps, entity),

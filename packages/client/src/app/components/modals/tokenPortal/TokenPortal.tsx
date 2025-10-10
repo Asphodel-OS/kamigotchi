@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount } from 'app/cache/account';
 import { getItem as _getItem } from 'app/cache/item';
+import { getReceipt as _getReceipt } from 'app/cache/receipts';
 import {
   EmptyText,
   HelpChip,
@@ -18,11 +19,7 @@ import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
-import {
-  getReceipt as _getReceipt,
-  queryReceipts as _queryReceipts,
-  Receipt,
-} from 'network/shapes/Portal';
+import { queryReceipts as _queryReceipts, Receipt } from 'network/shapes/Portal';
 import { getCompAddr } from 'network/shapes/utils';
 import { HELP_TEXT } from './constants';
 import { Queue } from './queue';
@@ -50,8 +47,7 @@ export const TokenPortalModal: UIComponent = {
         utils: {
           getAccount: () => _getAccount(world, components, accountEntity, { inventory: 2 }),
           getItem: (entity: EntityIndex) => _getItem(world, components, entity),
-          getReceipt: (entity: EntityIndex) =>
-            _getReceipt(world, components, entity, { account: true, item: true }),
+          getReceipt: (entity: EntityIndex) => _getReceipt(world, components, entity),
           queryReceipts: () => _queryReceipts(components),
           queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
         },
@@ -105,6 +101,7 @@ export const TokenPortalModal: UIComponent = {
       const receiptEntities = queryReceipts();
       const receipts = receiptEntities.map((receipt) => getReceipt(receipt));
       setReceipts(receipts);
+      getAccount();
     }, [isOpen, tick]);
 
     /////////////////

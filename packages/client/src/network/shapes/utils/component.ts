@@ -153,6 +153,13 @@ export const getState = (comps: Components, entity: EntityIndex): string => {
   return result ?? '';
 };
 
+export const getTax = (comps: Components, entity: EntityIndex): number => {
+  const { Tax } = comps;
+  const result = getComponentValue(Tax, entity)?.value;
+  if (result === undefined) console.warn('getTax(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
 export const getType = (comps: Components, entity: EntityIndex): string => {
   const { Type } = comps;
   const result = getComponentValue(Type, entity)?.value;

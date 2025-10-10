@@ -6,17 +6,17 @@ import { getItemIndex, getValue } from 'network/shapes/utils/component';
 import { getItem } from '../item';
 
 // mapping from an inventory entity to its item entity
-const ITEM_CACHE = new Map<EntityIndex, EntityIndex>();
+const ItemEntityCache = new Map<EntityIndex, EntityIndex>();
 
 // get an inventory from its EnityIndex
 // NOTE: inventory itself doesn't really need an explicit cache with only one direct field
 export const get = (world: World, components: Components, entity: EntityIndex) => {
-  if (!ITEM_CACHE.has(entity)) {
+  if (!ItemEntityCache.has(entity)) {
     const itemIndex = getItemIndex(components, entity);
     const itemEntity = queryItemByIndex(world, itemIndex);
-    if (!!itemEntity) ITEM_CACHE.set(entity, itemEntity);
+    if (!!itemEntity) ItemEntityCache.set(entity, itemEntity);
   }
-  const itemEntity = ITEM_CACHE.get(entity) ?? (0 as EntityIndex);
+  const itemEntity = ItemEntityCache.get(entity) ?? (0 as EntityIndex);
 
   return {
     id: world.entities[entity],
