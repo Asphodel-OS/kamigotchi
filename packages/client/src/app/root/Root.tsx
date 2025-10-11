@@ -1,3 +1,6 @@
+'use client';
+
+import { injectStyles, InterwovenKitProvider } from '@initia/interwovenkit-react';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getComponentValue } from 'engine/recs';
@@ -5,6 +8,7 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
 
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js';
 import { BootScreen } from 'app/components/boot';
 import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
 import { GodID, SyncState } from 'engine/constants';
@@ -23,7 +27,10 @@ export const Root = observer(
     const [mounted, setMounted] = useState(true);
     const [layers, _setLayers] = useState<Layers | undefined>();
     const [ready, setReady] = useState(false);
-
+    useEffect(() => {
+      // Inject styles into the shadow DOM used by Initia Wallet
+      injectStyles(InterwovenKitStyles);
+    }, []);
     // mount root and layers used for app context
     useEffect(() => {
       mountReact.current = (mounted: boolean) => setMounted(mounted);
@@ -49,6 +56,7 @@ export const Root = observer(
     }, [layers]);
 
     const showBootScreen = !mounted || !layers;
+
     return showBootScreen ? (
       <BootScreen status='' />
     ) : (
@@ -58,11 +66,14 @@ export const Root = observer(
         config={privyConfig}
       >
         <WagmiProvider config={wagmiConfig}>
-          <QueryClientProvider client={tanstackClient}>
-            <NetworkContext.Provider value={layers}>
-              <MainWindow ready={ready} />
-            </NetworkContext.Provider>
-          </QueryClientProvider>
+          // defaultChainId={import.meta.env.VITE_CHAIN_ID}
+          <InterwovenKitProvider>
+            <QueryClientProvider client={tanstackClient}>
+              <NetworkContext.Provider value={layers}>
+                <MainWindow ready={ready} />
+              </NetworkContext.Provider>
+            </QueryClientProvider>
+          </InterwovenKitProvider>
         </WagmiProvider>
       </PrivyProvider>
     );
