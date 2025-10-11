@@ -28,7 +28,6 @@ export const Root = observer(
     const [layers, _setLayers] = useState<Layers | undefined>();
     const [ready, setReady] = useState(false);
     useEffect(() => {
-      // Inject styles into the shadow DOM used by Initia Wallet
       injectStyles(InterwovenKitStyles);
     }, []);
     // mount root and layers used for app context
