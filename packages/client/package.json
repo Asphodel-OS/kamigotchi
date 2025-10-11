@@ -51,6 +51,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@improbable-eng/grpc-web": "^0.15.0",
+    "@initia/interwovenkit-react": "^2.0.5",
     "@mud-classic/utils": "^0.0.3",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.13.7",
@@ -59,7 +60,7 @@
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@rollup/plugin-dsv": "^3.0.4",
     "@stdlib/stats-base-dists-normal-cdf": "^0.0.7",
-    "@tanstack/react-query": "^5.28.9",
+    "@tanstack/react-query": "^5.85.5",
     "@uidotdev/usehooks": "^2.4.1",
     "@wagmi/connectors": "^5.0.6",
     "@wagmi/core": "^2.10.4",
@@ -98,8 +99,8 @@
     "usehooks-ts": "^2.9.1",
     "utf-8-validate": "^5.0.2",
     "uuid": "^9.0.1",
-    "viem": "^2.33.1",
-    "wagmi": "^2.16.0",
+    "viem": "^2.36.0",
+    "wagmi": "^2.16.8",
     "zustand": "^4.3.1"
   },
   "staticFiles": {
