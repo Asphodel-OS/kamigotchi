@@ -25,10 +25,22 @@ export const getConfig = (world: World, comps: Components): Configs => {
   };
 };
 
+// get the tax config for a given key
 const getTaxConfig = (world: World, comps: Components, key: string): TaxConfig => {
   const configArray = getArray(world, comps, key);
+  if (configArray.length < 2) {
+    throw new Error(
+      `Invalid tax config for ${key}: expected 2 elements, got ${configArray.length}`
+    );
+  }
+
+  const rate = configArray[1] / 1e4;
+  if (rate < 0 || rate >= 1) {
+    console.warn(`Tax rate for ${key} is out of expected range [0, 1): ${rate}`);
+  }
+
   return {
     flat: configArray[0],
-    rate: configArray[1] / 1e4,
+    rate,
   };
 };

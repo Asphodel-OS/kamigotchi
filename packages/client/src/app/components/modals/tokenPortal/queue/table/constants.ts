@@ -1,4 +1,4 @@
-export type Mode = 'MINE' | 'ALL';
+export type Filter = 'MINE' | 'ALL';
 
 // table header columns
 export const COLUMN_WIDTHS = {

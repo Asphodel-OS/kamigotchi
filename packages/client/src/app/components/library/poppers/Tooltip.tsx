@@ -142,7 +142,7 @@ const PopoverContainer = styled.span.attrs<{
   border: solid black 0.15vw;
   border-radius: 0.6vw;
   padding: 0.9vw;
-  color: black;
+  color: ${({ color }) => color || '#333'};
 
   display: flex;
   flex-direction: column;

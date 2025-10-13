@@ -13,11 +13,13 @@ import {
   ModalHeader,
   ModalWrapper,
   Overlay,
+  Text,
 } from 'app/components/library';
 import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
+import { ONYX_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { queryReceipts as _queryReceipts, Receipt } from 'network/shapes/Portal';
@@ -25,7 +27,7 @@ import { getCompAddr } from 'network/shapes/utils';
 import { HELP_TEXT } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
-import { getResultWithdraw } from './utils';
+import { getResultWithdraw, openBaselineLink } from './utils';
 
 export const TokenPortalModal: UIComponent = {
   id: 'TokenPortal',
@@ -89,6 +91,13 @@ export const TokenPortalModal: UIComponent = {
       const timerId = setInterval(refreshClock, 1000);
       return () => clearInterval(timerId);
     }, []);
+
+    // default the selected option to ONYX whenever the list of item options change
+    useEffect(() => {
+      const onyxItem = options.find((item: Item) => item.index === ONYX_INDEX);
+      if (onyxItem) setSelected(onyxItem);
+      else console.warn('no onyx item found');
+    }, [options.length]);
 
     // set the account if the connected entity changes
     useEffect(() => {
@@ -204,7 +213,16 @@ export const TokenPortalModal: UIComponent = {
         truncate
       >
         <Overlay left={0.6} top={0.6}>
-          <HelpChip tooltip={{ text: HELP_TEXT, size: 0.9 }} size={1.2} />
+          <HelpChip tooltip={{ text: HELP_TEXT, size: 0.6 }} size={1.2} />
+        </Overlay>
+        <Overlay right={0.6} top={0.6}>
+          <Text
+            size={0.6}
+            color='#3b3'
+            onClick={() => openBaselineLink(selected.token?.address ?? '')}
+          >
+            Purchase $ONYX
+          </Text>
         </Overlay>
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />
@@ -216,7 +234,7 @@ export const TokenPortalModal: UIComponent = {
               withdraw: withdrawTx,
             }}
             data={{ account, config, inventory: account.inventories ?? [] }}
-            state={{ options }}
+            state={{ options, selected, setSelected }}
           />
         )}
         <Overlay right={0.6} top={12.5}>

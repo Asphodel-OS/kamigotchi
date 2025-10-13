@@ -1,9 +1,9 @@
 import { IconButton } from 'app/components/library';
 import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
-import { Mode } from './constants';
+import { Filter } from './constants';
 
-export const Footer = ({ state }: { state: { mode: Mode; setMode: (mode: Mode) => void } }) => {
+export const Footer = ({ state }: { state: { mode: Filter; setMode: (mode: Filter) => void } }) => {
   const { mode, setMode } = state;
 
   /////////////////

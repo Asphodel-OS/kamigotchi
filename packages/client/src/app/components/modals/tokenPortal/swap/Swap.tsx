@@ -3,21 +3,15 @@ import styled from 'styled-components';
 
 import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
-import {
-  IconListButton,
-  IconListButtonOption,
-  Overlay,
-  Text,
-  TextTooltip,
-} from 'app/components/library';
+import { IconListButton, IconListButtonOption, Text, TextTooltip } from 'app/components/library';
 import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { TokenIcons } from 'assets/images/tokens';
 import { ONYX_INDEX } from 'constants/items';
-import { Account, Inventory, Item, NullItem } from 'network/shapes';
+import { Account, Inventory, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
-import { getNeededDeposit, getResultWithdraw, openBaselineLink } from '../utils';
+import { getNeededDeposit, getResultWithdraw } from '../utils';
 import { Mode } from './types';
 
 export const Swap = ({
@@ -37,15 +31,16 @@ export const Swap = ({
   };
   state: {
     options: Item[];
+    selected: Item;
+    setSelected: (item: Item) => void;
   };
 }) => {
   const { approve, deposit, withdraw } = actions;
   const { account, config, inventory } = data;
-  const { options } = state;
+  const { options, selected, setSelected } = state;
   // hardcoded for now to just onyx
   const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
 
-  const [selected, setSelected] = useState<Item>(NullItem);
   const [mode, setMode] = useState<Mode>('DEPOSIT');
   const [amt, setAmt] = useState<number>(0);
 
@@ -192,15 +187,6 @@ export const Swap = ({
   return (
     <Container>
       <Row>
-        <Overlay right={0.6} top={0.6}>
-          <Text
-            size={0.6}
-            color='#3b3'
-            onClick={() => openBaselineLink(selected.token?.address ?? '')}
-          >
-            Purchase $ONYX
-          </Text>
-        </Overlay>
         <Column>
           <IconListButton
             img={selected.image}

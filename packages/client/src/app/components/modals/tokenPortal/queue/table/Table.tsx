@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Account, Item, Receipt } from 'network/shapes';
 import { Body } from './Body';
-import { Mode, Sort } from './constants';
+import { Filter, Sort } from './constants';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -27,7 +27,7 @@ export const Table = ({
 }) => {
   const { account, receipts } = data;
 
-  const [mode, setMode] = useState<Mode>('MINE');
+  const [mode, setMode] = useState<Filter>('MINE');
   const [filtered, setFiltered] = useState<Receipt[]>([]);
   const [sort, setSort] = useState<Sort>({ key: 'Status', reverse: false });
   const [sorted, setSorted] = useState<Receipt[]>([]);
