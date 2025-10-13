@@ -1,10 +1,8 @@
 import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
 
-import { GachaMintConfig } from 'app/cache/config';
 import { ActionButton, Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
-import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 
@@ -36,14 +34,6 @@ export const Controls = ({
     commits: Commit[];
     payItem: Item;
     saleItem: Item;
-    mint: {
-      config: GachaMintConfig;
-      data: {
-        account: GachaMintData;
-        gacha: GachaMintData;
-      };
-      whitelisted: boolean;
-    };
   };
   state: {
     quantity: number;

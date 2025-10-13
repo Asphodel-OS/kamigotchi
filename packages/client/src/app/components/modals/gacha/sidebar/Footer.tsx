@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { GachaMintConfig } from 'app/cache/config';
 import { Stepper, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { GACHA_MAX_PER_TX } from 'constants/gacha';
-import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick, playSuccess } from 'utils/sounds';
@@ -20,8 +18,6 @@ export const Footer = ({
   actions: {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
-    mintPublic: (amount: number) => void;
-    mintWL: () => void;
     pull: (amount: number) => Promise<boolean>;
     reroll: (kamis: Kami[]) => Promise<boolean>;
   };
@@ -33,14 +29,6 @@ export const Footer = ({
     payItem: Item;
     saleItem: Item;
     balance: number;
-    mint: {
-      config: GachaMintConfig;
-      data: {
-        account: GachaMintData;
-        gacha: GachaMintData;
-      };
-      whitelisted: boolean;
-    };
   };
   state: {
     quantity: number;
@@ -52,9 +40,9 @@ export const Footer = ({
     tick: number;
   };
 }) => {
-  const { approve, bid, mintPublic, mintWL, pull, reroll } = actions;
+  const { approve, bid, pull, reroll } = actions;
   const { mode, tab } = controls;
-  const { payItem, saleItem, balance, mint } = data;
+  const { payItem, saleItem, balance } = data;
   const { selectedKamis, setSelectedKamis } = state;
   const { quantity, setQuantity, price, tick } = state;
 
@@ -62,7 +50,7 @@ export const Footer = ({
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
-    setIsDisabled(quantity <= 0 || needsFunds() || exceedsMax() || !hasStarted());
+    setIsDisabled(quantity <= 0 || needsFunds() || exceedsMax());
   }, [price, balance, quantity]);
 
   /////////////////
@@ -73,16 +61,6 @@ export const Footer = ({
     if (tab === 'GACHA' && mode === 'DEFAULT') return quantity > GACHA_MAX_PER_TX;
 
     return false;
-  };
-
-  // hardcoded bc this only matters temporarily
-  const hasStarted = () => {
-    const now = tick / 1000;
-    const publicMintStart = data.mint.config.public.startTs;
-
-    if (tab === 'GACHA') return now >= publicMintStart + 3600;
-    else if (tab === 'REROLL' && mode === 'ALT') return now >= publicMintStart + 3600;
-    return true;
   };
 
   // check if a user needs further spend approval for a token
@@ -168,11 +146,11 @@ export const Footer = ({
     // gacha
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') {
-        if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
+        // if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
         if (!exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
       }
       if (mode === 'ALT') {
-        if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
+        // if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
         if (needsFunds()) return [`too poore`, `you need ${price - balance} more musu`];
       }
     }
@@ -192,7 +170,7 @@ export const Footer = ({
         }
       }
       if (mode === 'ALT') {
-        if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
+        // if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
         if (needsFunds()) {
           return [`too poore`, `you need ${(price - balance).toFixed(3)} more ONYX`];
         }

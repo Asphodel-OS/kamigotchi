@@ -28,6 +28,10 @@ export const PricePanel = ({
       return [`Target 32000 ${payItem.name}`, `for 1 ${saleItem.name}`];
     }
 
+    if (saleItem.index === 11 && tick / 1000 < 1760486400) {
+      return [`Target 50 ${payItem.name}s`, `for 1 ${saleItem.name}`];
+    }
+
     return [
       `Total ${price.toLocaleString()} ${payItem.name}`,
       `for ${quantity} ${saleItem.name}${quantity == 1 ? '' : 's'}`,

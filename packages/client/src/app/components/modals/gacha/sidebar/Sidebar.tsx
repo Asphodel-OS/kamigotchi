@@ -3,13 +3,11 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcAuctionCost } from 'app/cache/auction';
-import { GachaMintConfig } from 'app/cache/config';
 import { useTokens, useVisibility } from 'app/stores';
 import { GACHA_TICKET_INDEX, MUSU_INDEX, ONYX_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { toERC20DisplayUnits } from 'network/chain';
 import { Auction } from 'network/shapes/Auction';
 import { Commit } from 'network/shapes/Commit';
-import { GachaMintData } from 'network/shapes/Gacha';
 import { Inventory } from 'network/shapes/Inventory';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami/types';
@@ -51,14 +49,6 @@ export const Sidebar = ({
       gacha: Auction;
       reroll: Auction;
     };
-    mint: {
-      config: GachaMintConfig;
-      data: {
-        account: GachaMintData;
-        gacha: GachaMintData;
-      };
-      whitelisted: boolean;
-    };
   };
   state: {
     quantity: number;
@@ -74,7 +64,7 @@ export const Sidebar = ({
   };
 }) => {
   const { mode, tab, setTab } = controls;
-  const { auctions, commits, mint } = data;
+  const { auctions, commits } = data;
   const { tick, quantity, setQuantity } = state;
   const { getItem, getItemBalance } = utils;
   const { balances: tokenBal } = useTokens(); // ERC20
@@ -166,7 +156,7 @@ export const Sidebar = ({
       <Controls
         actions={actions}
         controls={controls}
-        data={{ balance, commits, payItem, saleItem, mint }}
+        data={{ balance, commits, payItem, saleItem }}
         state={{ ...state, price }}
         utils={utils}
       />

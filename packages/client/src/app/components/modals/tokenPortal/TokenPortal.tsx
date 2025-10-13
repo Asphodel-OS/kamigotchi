@@ -18,7 +18,7 @@ import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
-import { ONYX_INDEX } from 'constants/items';
+import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
@@ -84,7 +84,8 @@ export const TokenPortalModal: UIComponent = {
     useEffect(() => {
       const itemEntites = queryTokenItems();
       const items = itemEntites.map((item) => getItem(item)) as Item[];
-      setOptions(items);
+      const cleaned = items.filter((item) => item.index !== ETH_INDEX);
+      setOptions(cleaned);
 
       // set up ticking
       const refreshClock = () => setTick(Date.now());
