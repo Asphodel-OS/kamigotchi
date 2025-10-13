@@ -26,6 +26,7 @@ import { LibData } from "libraries/LibData.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 
 uint256 constant taxRateUnits = 1e4;
+uint256 constant RESERVE_ACC = uint256(uint160(0x3d7f111B3b69C657624b8633a997A56300212872)); // asphodel cold wallet account
 
 /** @notice lib for ERC20 bridging and timelocks
  *
@@ -107,7 +108,7 @@ library LibTokenPortal {
     uint256 itemAmt,
     address tokenAddr,
     int32 scale
-  ) internal {
+  ) public {
     // determine amount of tax to be collected
     uint256 taxAmt = calcImportTax(comps, itemAmt);
     require(taxAmt < itemAmt, "TokenPortal: tax exceeds item amount");
@@ -118,10 +119,11 @@ library LibTokenPortal {
     // transfer tokens and increase inventory
     LibERC20.transfer(comps, tokenAddr, accAddr, getAddrByID(comps, TokenHolderCompID), tokenAmt);
     LibInventory._incFor(comps, accID, itemIndex, itemAmt - taxAmt);
+    LibInventory._incFor(comps, RESERVE_ACC, itemIndex, taxAmt); // send tax to reserve
 
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, taxAmt, tokenAddr, tokenAmt);
-    logDeposit(world, comps, logData);
+    logDeposit(comps, logData);
     emitDeposit(world, logData);
   }
 
@@ -134,7 +136,7 @@ library LibTokenPortal {
     uint256 itemAmt,
     address tokenAddr,
     int32 scale
-  ) internal returns (uint256 receiptID) {
+  ) public returns (uint256 receiptID) {
     // determine amount of tax to be collected
     uint256 taxAmt = calcExportTax(comps, itemAmt);
     require(taxAmt < itemAmt, "TokenPortal: tax exceeds item amount");
@@ -145,15 +147,17 @@ library LibTokenPortal {
     // create receipt and decrease inventory
     receiptID = createReceipt(world, comps, accID, itemIndex, tokenAddr, tokenAmt, taxAmt, endTime);
     LibInventory._decFor(comps, accID, itemIndex, itemAmt);
+    LibInventory._incFor(comps, RESERVE_ACC, itemIndex, taxAmt); // send tax to reserve
 
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, taxAmt, tokenAddr, tokenAmt);
-    logWithdraw(world, comps, logData);
+    logWithdraw(comps, logData);
     emitWithdraw(world, receiptID, logData);
   }
 
   /// @notice execute a pending Withdrawal Receipt to claim tokens
-  function claim(IWorld world, IUintComp comps, uint256 receiptID, int32 scale) internal {
+  /// @dev tax already handled
+  function claim(IWorld world, IUintComp comps, uint256 receiptID, int32 scale) public {
     uint256 accID = OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
     address tokenAddr = TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
@@ -167,13 +171,13 @@ library LibTokenPortal {
 
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddr, tokenAmt);
-    logClaim(world, comps, logData);
+    logClaim(comps, logData);
     emitClaim(world, accID, receiptID);
   }
 
   /// @notice cancel a pending Withdrawal Receipt, return items
   /// @dev no refund on export tax
-  function cancel(IWorld world, IUintComp comps, uint256 receiptID, int32 scale) internal {
+  function cancel(IWorld world, IUintComp comps, uint256 receiptID, int32 scale) public {
     uint256 accID = OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
     address tokenAddr = TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
@@ -186,7 +190,7 @@ library LibTokenPortal {
 
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddr, tokenAmt);
-    logCancel(world, comps, logData);
+    logCancel(comps, logData);
     emitCancel(world, accID, receiptID);
   }
 
@@ -244,7 +248,7 @@ library LibTokenPortal {
   }
 
   /// @notice logs deposits data
-  function logDeposit(IWorld world, IUintComp comps, LogData memory data) internal {
+  function logDeposit(IUintComp comps, LogData memory data) internal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
@@ -263,7 +267,7 @@ library LibTokenPortal {
   }
 
   /// @notice logs pending withdrawal data
-  function logWithdraw(IWorld world, IUintComp comps, LogData memory data) internal {
+  function logWithdraw(IUintComp comps, LogData memory data) internal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
@@ -282,34 +286,28 @@ library LibTokenPortal {
   }
 
   /// @notice logs canceled withdrawal data
-  function logCancel(IWorld world, IUintComp comps, LogData memory data) internal {
+  function logCancel(IUintComp comps, LogData memory data) internal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
     LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_CANCEL_TOTAL", data.itemAmt);
     LibData.inc(comps, uint256(uint160(data.token)), 0, "PORTAL_TOKEN_CANCEL_TOTAL", data.tokenAmt);
-
-    // emit event
-    // LibEmitter.emitEvent(world, "ERC20_WITHDRAW_CANCEL", _eventSchema(), abi.encode(data));
   }
 
   /// @notice logs withdrawal data
-  function logClaim(IWorld world, IUintComp comps, LogData memory data) internal {
+  function logClaim(IUintComp comps, LogData memory data) internal {
     // logging account and world item totals
     uint256[] memory holders = new uint256[](2);
     holders[0] = data.accID;
     LibData.inc(comps, holders, data.itemIndex, "PORTAL_ITEM_CLAIM_TOTAL", data.itemAmt);
     LibData.inc(comps, uint256(uint160(data.token)), 0, "PORTAL_TOKEN_CLAIM_TOTAL", data.tokenAmt);
-
-    // emit event
-    // LibEmitter.emitEvent(world, "ERC20_WITHDRAW_CLAIM", _eventSchema(), abi.encode(data));
   }
 
   /////////////////
   // EVENTS
 
   /// @notice emit a Deposit event
-  function emitDeposit(IWorld world, LogData memory data) public {
+  function emitDeposit(IWorld world, LogData memory data) internal {
     uint8[] memory _schema = new uint8[](7);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID
@@ -336,7 +334,7 @@ library LibTokenPortal {
   }
 
   /// @notice emit a Withdrawal event
-  function emitWithdraw(IWorld world, uint256 receiptID, LogData memory data) public {
+  function emitWithdraw(IWorld world, uint256 receiptID, LogData memory data) internal {
     uint8[] memory _schema = new uint8[](8);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID
@@ -365,7 +363,7 @@ library LibTokenPortal {
   }
 
   /// @notice emit a Claim event
-  function emitClaim(IWorld world, uint256 accID, uint256 receiptID) public {
+  function emitClaim(IWorld world, uint256 accID, uint256 receiptID) internal {
     uint8[] memory _schema = new uint8[](3);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID
@@ -380,7 +378,7 @@ library LibTokenPortal {
   }
 
   /// @notice emit a Cancelation event
-  function emitCancel(IWorld world, uint256 accID, uint256 receiptID) public {
+  function emitCancel(IWorld world, uint256 accID, uint256 receiptID) internal {
     uint8[] memory _schema = new uint8[](3);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // ts
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // accID

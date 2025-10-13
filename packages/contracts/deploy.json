@@ -696,6 +696,7 @@
         "IDOwnsInventory",
         "IDOwnsWithdrawal",
         "IndexItem",
+        "IsDisabled",
         "Scale",
         "Tax",
         "TimeEnd",
