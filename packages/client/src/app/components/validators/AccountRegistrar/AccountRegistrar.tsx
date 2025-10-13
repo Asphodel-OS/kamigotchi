@@ -7,14 +7,12 @@ import { ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { emptyAccountDetails, useAccount, useNetwork, useVisibility } from 'app/stores';
-import { ETH_INDEX } from 'constants/items';
 import { GodID, SyncState } from 'engine/constants';
 import {
   getBaseAccount as _getBaseAccount,
   queryAccountFromEmbedded,
   queryAllAccounts,
 } from 'network/shapes/Account';
-import { getItemByIndex } from 'network/shapes/Item';
 import { waitForActionCompletion } from 'network/utils';
 import { IntroStep1, IntroStep2 } from './IntroSteps';
 import { Registration } from './Registration';
@@ -50,7 +48,6 @@ export const AccountRegistrar: UIComponent = {
       return {
         data: {
           accountEntity,
-          ethAddress: getItemByIndex(world, components, ETH_INDEX).token?.address!,
         },
         network,
         utils: {
@@ -65,30 +62,31 @@ export const AccountRegistrar: UIComponent = {
     })();
 
     /////////////////
-    // INSTANTIATIONS
+    // INSTANTIATION
 
     const { accountEntity } = data;
     const { getBaseAccount } = utils;
     const { actions } = network;
 
-    const {
-      burnerAddress, // embedded
-      selectedAddress, // injected
-      apis,
-      validations: networkValidations,
-    } = useNetwork();
+    const apis = useNetwork((s) => s.apis);
+    const burnerAddress = useNetwork((s) => s.burnerAddress); // embedded
+    const selectedAddress = useNetwork((s) => s.selectedAddress); // injected
+    const networkValidations = useNetwork((s) => s.validations);
+
     const toggleModals = useVisibility((s) => s.toggleModals);
     const toggleFixtures = useVisibility((s) => s.toggleFixtures);
     const accountRegistrarVisible = useVisibility((s) => s.validators.accountRegistrar);
     const walletConnectorVisible = useVisibility((s) => s.validators.walletConnector);
     const setValidators = useVisibility((s) => s.setValidators);
-    const { validations, setValidations } = useAccount();
-    const { setAccount } = useAccount();
+
+    const validations = useAccount((s) => s.validations);
+    const setValidations = useAccount((s) => s.setValidations);
+    const setAccount = useAccount((s) => s.setAccount);
 
     const [step, setStep] = useState(0);
 
     /////////////////
-    // SUBSCRIPTIONS
+    // SUBSCRIPTION
 
     // update the Kami Account and validation based on changes to the
     // connected address and detected account in the world
@@ -159,7 +157,6 @@ export const AccountRegistrar: UIComponent = {
             selected: selectedAddress,
             burner: burnerAddress,
           }}
-          tokens={{ ethAddress: data.ethAddress }}
           actions={{ createAccount }}
           utils={{
             setStep,

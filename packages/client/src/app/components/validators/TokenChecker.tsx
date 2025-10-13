@@ -7,7 +7,7 @@ import { getItemByIndex } from 'app/cache/item';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useTokens } from 'app/stores';
-import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
+import { ONYX_INDEX } from 'constants/items';
 import { getCompAddr } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/numbers';
 
@@ -16,18 +16,15 @@ export const TokenChecker: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
-    const {
-      tokenAddresses,
-      spender,
-      utils: { getItem },
-    } = (() => {
+    const { tokenAddresses, spender, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
       return {
         tokenAddresses: {
           // todo: dynamically query based on items with address?
           onyx: getItemByIndex(world, components, ONYX_INDEX).token?.address!,
-          eth: getItemByIndex(world, components, ETH_INDEX).token?.address!,
+          // eth: getItemByIndex(world, components, ETH_INDEX).token?.address!,
+          eth: '0xE1Ff7038eAAAF027031688E1535a055B2Bac2546' as `0x${string}`,
         },
         spender: getCompAddr(world, components, 'component.token.allowance'),
         utils: {
@@ -36,8 +33,11 @@ export const TokenChecker: UIComponent = {
       };
     })();
 
-    const { selectedAddress } = useNetwork();
-    const { balances, set, setOnyx } = useTokens();
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const balances = useTokens((s) => s.balances);
+    const setToken = useTokens((s) => s.set);
+    const setOnyx = useTokens((s) => s.setOnyx);
+    const setEth = useTokens((s) => s.setEth);
 
     useWatchBlockNumber({
       onBlockNumber(block) {
@@ -89,7 +89,10 @@ export const TokenChecker: UIComponent = {
 
       const balanceMismatch = oldEthData?.balance !== balance;
       const allowanceMismatch = oldEthData?.allowance !== allowance;
-      if (balanceMismatch || allowanceMismatch) set(tokenAddresses.eth, { balance, allowance });
+      if (balanceMismatch || allowanceMismatch) {
+        setToken(tokenAddresses.eth, { balance, allowance });
+        setEth({ balance, allowance });
+      }
     }, [ethData]);
 
     // onyx
@@ -101,8 +104,8 @@ export const TokenChecker: UIComponent = {
       const balanceMismatch = oldOnyxData?.balance !== balance;
       const allowanceMismatch = oldOnyxData?.allowance !== allowance;
       if (balanceMismatch || allowanceMismatch) {
+        setToken(tokenAddresses.onyx, { balance, allowance });
         setOnyx({ balance, allowance });
-        set(tokenAddresses.onyx, { balance, allowance });
       }
     }, [onyxData]);
 

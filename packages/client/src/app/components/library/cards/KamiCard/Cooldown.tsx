@@ -43,12 +43,12 @@ export const Cooldown = ({ kami }: { kami: Kami }) => {
     return () => clearInterval(timerId);
   }, [kami]);
 
-  const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
+  // const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
 
-  // update the remaining time on the cooldown
-  useEffect(() => {
-    setCurrent(calcRemainingForVisuals());
-  }, [lastRefresh, total, kami]);
+  // // update the remaining time on the cooldown
+  // useEffect(() => {
+  //   setCurrent(calcRemainingForVisuals());
+  // }, [lastRefresh, total, kami]);
 
   return (
     <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>

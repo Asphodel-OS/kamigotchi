@@ -16,16 +16,12 @@ const IS_LOCAL = import.meta.env.MODE === 'puter';
 
 export const Registration = ({
   address,
-  tokens,
   actions,
   utils,
 }: {
   address: {
     selected: string;
     burner: string;
-  };
-  tokens: {
-    ethAddress: string;
   };
   actions: {
     createAccount: (username: string) => EntityID | void;
@@ -36,9 +32,7 @@ export const Registration = ({
     waitForActionCompletion: (action: EntityID) => Promise<void>;
   };
 }) => {
-  const { ethAddress } = tokens;
-  const { balances: tokenBalances } = useTokens();
-
+  const ethBalance = useTokens((s) => s.eth.balance);
   const [name, setName] = useState('');
 
   /////////////////
@@ -52,11 +46,9 @@ export const Registration = ({
     return OperatorCache.has(address);
   };
 
+  // check whether user has eth balance, skip check on local
   const hasEth = () => {
-    if (IS_LOCAL) return true; // skip eth balance check on local
-    const ethBalances = tokenBalances.get(ethAddress);
-    if (!ethBalances) return false;
-    return ethBalances.balance > 0;
+    return IS_LOCAL || ethBalance > 0;
   };
 
   /////////////////
