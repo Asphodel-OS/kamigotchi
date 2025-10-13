@@ -3,7 +3,13 @@ import styled from 'styled-components';
 
 import { PortalConfigs } from 'app/cache/config';
 import { getInventoryBalance } from 'app/cache/inventory';
-import { IconListButton, IconListButtonOption, Text, TextTooltip } from 'app/components/library';
+import {
+  IconListButton,
+  IconListButtonOption,
+  Overlay,
+  Text,
+  TextTooltip,
+} from 'app/components/library';
 import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
@@ -11,7 +17,7 @@ import { TokenIcons } from 'assets/images/tokens';
 import { ONYX_INDEX } from 'constants/items';
 import { Account, Inventory, Item, NullItem } from 'network/shapes';
 import { playClick } from 'utils/sounds';
-import { getNeededDeposit, getResultWithdraw } from '../utils';
+import { getNeededDeposit, getResultWithdraw, openBaselineLink } from '../utils';
 import { Mode } from './types';
 
 export const Swap = ({
@@ -186,6 +192,15 @@ export const Swap = ({
   return (
     <Container>
       <Row>
+        <Overlay right={0.6} top={0.6}>
+          <Text
+            size={0.6}
+            color='#3b3'
+            onClick={() => openBaselineLink(selected.token?.address ?? '')}
+          >
+            Purchase $ONYX
+          </Text>
+        </Overlay>
         <Column>
           <IconListButton
             img={selected.image}

@@ -204,7 +204,7 @@ export const TokenPortalModal: UIComponent = {
         truncate
       >
         <Overlay left={0.6} top={0.6}>
-          <HelpChip tooltip={HELP_TEXT} size={1.2} />
+          <HelpChip tooltip={{ text: HELP_TEXT, size: 0.9 }} size={1.2} />
         </Overlay>
         {!accountEntity ? (
           <EmptyText text={['Failed to Connect Account']} size={1} />

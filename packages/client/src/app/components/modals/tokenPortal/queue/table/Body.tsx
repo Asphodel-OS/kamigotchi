@@ -5,10 +5,11 @@ import { useSelected, useVisibility } from 'app/stores';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { TokenIcons } from 'assets/images/tokens';
-import { Account, Item, Receipt } from 'network/shapes';
+import { Account, Receipt } from 'network/shapes';
 import { parseTokenBalance } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { getCountdown } from 'utils/time';
+import { openBaselineLink } from '../../utils';
 
 export const Body = ({
   actions,
@@ -48,12 +49,6 @@ export const Body = ({
 
   /////////////////
   // INTERPRETATION
-
-  // convert an amount from a Receipt to a game unit
-  const convertAmt = (item: Item, amt: number) => {
-    const scale = item.token?.scale ?? 0;
-    return amt * 10 ** (scale - 18);
-  };
 
   // get the display name for an Account
   const getNameDisplay = (owner: Account) => {
@@ -110,7 +105,10 @@ export const Body = ({
             </Field>
             <Field width={4.5}>
               <TextTooltip text={['$ONYX']} alignText={'right'}>
-                <Icon src={TokenIcons.onyx} />
+                <Icon
+                  src={TokenIcons.onyx}
+                  onClick={() => openBaselineLink(r.item?.token?.address ?? '')}
+                />
               </TextTooltip>
             </Field>
             <Field width={6}>{parseTokenBalance(BigInt(r.amt))}</Field>
@@ -193,4 +191,9 @@ const IconGroup = styled.div`
 const Icon = styled.img`
   width: 1.2vw;
   height: 1.2vw;
+
+  &:hover {
+    opacity: 0.8;
+    cursor: pointer;
+  }
 `;
