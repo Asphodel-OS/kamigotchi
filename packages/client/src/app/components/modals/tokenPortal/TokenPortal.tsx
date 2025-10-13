@@ -1,4 +1,3 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
@@ -20,6 +19,7 @@ import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
 import { ONYX_INDEX } from 'constants/items';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
 import { queryReceipts as _queryReceipts, Receipt } from 'network/shapes/Portal';

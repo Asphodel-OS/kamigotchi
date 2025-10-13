@@ -1,5 +1,4 @@
-import { EntityID, EntityIndex, HasValue, QueryFragment, runQuery } from '@mud-classic/recs';
-
+import { EntityID, EntityIndex, HasValue, QueryFragment, runQuery } from 'engine/recs';
 import { Components } from 'network/';
 
 export type QueryOptions = {
