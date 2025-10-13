@@ -3,6 +3,8 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 
+import { RESERVE_ACC } from "libraries/LibTokenPortal.sol";
+
 /// @notice basic system testing for systems that are not directly tested elsewhere
 /** @dev
  * does not check for any state – just to see if the systems are working
@@ -16,13 +18,16 @@ contract TokenPortalTest is SetupTemplate {
   function setUp() public override {
     super.setUp();
 
-    _createGenericItem(tokenItem);
+    _createGenericItem(tokenItem, string("ERC20"));
     vm.startPrank(deployer);
     _TokenPortalSystem.setItem(tokenItem, address(token), 3);
     vm.stopPrank();
+
+    _setConfig("PORTAL_ITEM_IMPORT_TAX", [uint32(0), 0, 0, 0, 0, 0, 0, 0]); // 10 flat + 2% tax
+    _setConfig("PORTAL_ITEM_EXPORT_TAX", [uint32(0), 0, 0, 0, 0, 0, 0, 0]); // 20 flat + 50% tax
   }
 
-  function testBridgeBasic() public {
+  function testTokenPortalBasic() public {
     ////////////
     // alice deposits 11 tokens
     token.mint(alice.owner, 11 ether);
@@ -47,7 +52,7 @@ contract TokenPortalTest is SetupTemplate {
     vm.stopPrank();
 
     // withdraw after time end
-    _setTime(block.timestamp + LibTokenPortal.getWithdrawDelay(components));
+    _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
     vm.startPrank(alice.owner);
     _TokenPortalSystem.claim(receiptID);
     vm.stopPrank();
@@ -70,7 +75,7 @@ contract TokenPortalTest is SetupTemplate {
     assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(6 ether, 3));
   }
 
-  function testBridgeWithdrawCancel() public {
+  function testTokenPortalWithdrawCancel() public {
     // setup (deposit)
     token.mint(alice.owner, 11 ether);
     _approveERC20(address(token), alice.owner);
@@ -91,7 +96,7 @@ contract TokenPortalTest is SetupTemplate {
     // getting admin blocked
     receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(5 ether, 3));
     vm.startPrank(deployer);
-    _TokenPortalSystem.adminBlock(receiptID);
+    _TokenPortalSystem.adminCancel(receiptID);
     vm.stopPrank();
     assertEq(token.balanceOf(alice.owner), 0);
     assertEq(_getItemBal(alice, tokenItem), LibERC20.toGameUnits(11 ether, 3));
@@ -99,6 +104,31 @@ contract TokenPortalTest is SetupTemplate {
     vm.expectRevert();
     _TokenPortalSystem.claim(receiptID);
     vm.stopPrank();
+  }
+
+  function testTokenPortalTax() public {
+    // setup
+    token.mint(alice.owner, 100 ether);
+    _approveERC20(address(token), alice.owner);
+    _setConfig("PORTAL_ITEM_IMPORT_TAX", [uint32(10), 200, 0, 0, 0, 0, 0, 0]); // 10 flat + 2% tax
+    _setConfig("PORTAL_ITEM_EXPORT_TAX", [uint32(20), 5000, 0, 0, 0, 0, 0, 0]); // 20 flat + 50% tax
+
+    // deposit
+    uint256 expectedTax = LibERC20.toGameUnits(2 ether, 3) + 10; // in game units
+    uint256 expectedAmt = LibERC20.toGameUnits(100 ether, 3) - expectedTax;
+    _deposit(alice, tokenItem, LibERC20.toGameUnits(100 ether, 3));
+    assertEq(token.balanceOf(alice.owner), 0);
+    assertEq(_getItemBal(alice, tokenItem), expectedAmt);
+    assertEq(_getItemBal(RESERVE_ACC, tokenItem), expectedTax);
+
+    // withdraw
+    uint256 reserveBal = expectedTax;
+    uint256 expectedTax2 = expectedAmt / 2 + 20;
+    uint256 expectedAmt2 = expectedAmt - expectedTax2;
+    _initiateWithdraw(alice, tokenItem, expectedAmt);
+    assertEq(token.balanceOf(alice.owner), 0);
+    assertEq(_getItemBal(alice, tokenItem), 0);
+    assertEq(_getItemBal(RESERVE_ACC, tokenItem), reserveBal + expectedTax2);
   }
 
   //////////////////
