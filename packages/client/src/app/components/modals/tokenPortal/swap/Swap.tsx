@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useState } from 'react';
 import styled from 'styled-components';
 
 import { PortalConfigs } from 'app/cache/config';
@@ -8,7 +8,6 @@ import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { TokenIcons } from 'assets/images/tokens';
-import { ONYX_INDEX } from 'constants/items';
 import { Account, Inventory, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import { getNeededDeposit, getResultWithdraw } from '../utils';
@@ -43,13 +42,6 @@ export const Swap = ({
 
   const [mode, setMode] = useState<Mode>('DEPOSIT');
   const [amt, setAmt] = useState<number>(0);
-
-  // default the selected option to ONYX whenever the list of item options change
-  useEffect(() => {
-    const onyxItem = options.find((item: Item) => item.index === ONYX_INDEX);
-    if (onyxItem) setSelected(onyxItem);
-    else console.warn('no onyx item found');
-  }, [options.length]);
 
   /////////////////
   // INTERACTION

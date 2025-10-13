@@ -1,22 +1,22 @@
-import { EntityID, EntityIndex } from 'engine/recs';
 import { Dispatch, useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 import { calcTradeTax } from 'app/cache/trade';
 import { Pairing, Text } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
-import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
+import { ETH_INDEX } from 'constants/items';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, Inventory } from 'network/shapes';
 import { Item } from 'network/shapes/Item';
 import { ActionComponent } from 'network/systems';
 import { waitForActionCompletion } from 'network/utils';
-import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 import { TRADE_ROOM_INDEX } from '../../constants';
 import { ConfirmationData } from '../../library';
 import { SingleCreate } from './SingleCreate';
 
 type Mode = 'Single' | 'Multi';
-const DisabledItems = [ONYX_INDEX, ETH_INDEX];
+const DisabledItems = [ETH_INDEX];
 
 export const Create = ({
   actions,

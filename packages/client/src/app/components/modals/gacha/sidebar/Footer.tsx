@@ -70,15 +70,6 @@ export const Footer = ({
 
   // check if a user is under max amt per tx
   const exceedsMax = () => {
-    if (tab === 'MINT') {
-      const whitelistMax = mint.config.whitelist.max;
-      const publicMax = mint.config.public.max;
-      const whitelistMinted = mint.data.account.whitelist;
-      const publicMinted = mint.data.account.public;
-      if (mode === 'DEFAULT') return whitelistMinted + quantity > whitelistMax;
-      if (mode === 'ALT') return publicMinted + quantity > publicMax;
-    }
-
     if (tab === 'GACHA' && mode === 'DEFAULT') return quantity > GACHA_MAX_PER_TX;
 
     return false;
@@ -87,13 +78,9 @@ export const Footer = ({
   // hardcoded bc this only matters temporarily
   const hasStarted = () => {
     const now = tick / 1000;
-    const wlMintStart = data.mint.config.whitelist.startTs;
     const publicMintStart = data.mint.config.public.startTs;
 
-    if (tab === 'MINT') {
-      if (mode === 'DEFAULT') return now >= wlMintStart;
-      else return now >= publicMintStart;
-    } else if (tab === 'GACHA') return now >= publicMintStart + 3600;
+    if (tab === 'GACHA') return now >= publicMintStart + 3600;
     else if (tab === 'REROLL' && mode === 'ALT') return now >= publicMintStart + 3600;
     return true;
   };
@@ -125,11 +112,6 @@ export const Footer = ({
         if (needsApproval()) approve(payItem, price);
         else bid(saleItem, quantity);
       }
-    } else if (tab === 'MINT') {
-      if (needsApproval()) approve(payItem, price);
-      else if (mode === 'DEFAULT') mintWL();
-      else if (mode === 'ALT') mintPublic(quantity);
-      else bid(saleItem, quantity);
     }
     if (success) {
       playSuccess();
@@ -150,9 +132,6 @@ export const Footer = ({
 
   // get the text of the submission button
   const getButtonText = () => {
-    // mint tab
-    if (tab === 'MINT') return needsApproval() ? 'Approve' : 'Mint';
-
     // gacha pool tab
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') return 'Claim';
@@ -169,12 +148,6 @@ export const Footer = ({
 
   // get the sale description for the submit button tooltip
   const getSaleDescription = () => {
-    // mint
-    if (tab === 'MINT') {
-      if (mode === 'DEFAULT') return [`Mint your whitelist ${saleItem.name}`];
-      if (mode === 'ALT') return [`Mint ${quantity} ${saleItem.name}s`];
-    }
-
     // gacha
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') return [`Claim a Kami from the pool`];
@@ -192,25 +165,6 @@ export const Footer = ({
 
   // get the error description for the submit button tooltip
   const getErrorDescription = () => {
-    // mint
-    if (tab === 'MINT') {
-      if (mode === 'DEFAULT') {
-        if (!mint.whitelisted) return [`you're not whitelisted`];
-        if (!hasStarted()) return ['whitelist mint has not started'];
-        if (exceedsMax()) return [`max ${mint.config.whitelist.max} for whitelist mint`];
-      }
-      if (mode === 'ALT') {
-        if (!hasStarted()) return ['public mint has not started'];
-        if (exceedsMax()) {
-          const max = mint.config.public.max;
-          const curr = mint.data.account.public;
-          return [`this purchase will exceed your mint limit`, `${curr}/${max} minted so far`];
-        }
-      }
-      if (needsFunds()) return ['too poore', `you need ${(price - balance).toFixed(3)} more ETH`];
-      if (needsApproval()) return [`approve ${price.toFixed(3)}ETH to spend`];
-    }
-
     // gacha
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') {

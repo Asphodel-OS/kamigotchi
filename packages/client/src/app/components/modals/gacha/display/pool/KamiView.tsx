@@ -1,9 +1,9 @@
-import { EntityIndex } from 'engine/recs';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, KamiBlock, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { EntityIndex } from 'engine/recs';
 import { Auction } from 'network/shapes/Auction';
 import { KamiStats } from 'network/shapes/Kami';
 import { Kami } from 'network/shapes/Kami/types';

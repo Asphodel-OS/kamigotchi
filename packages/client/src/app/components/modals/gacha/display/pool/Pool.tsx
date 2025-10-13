@@ -1,8 +1,8 @@
-import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
 import { Overlay } from 'app/components/library';
+import { EntityIndex } from 'engine/recs';
 import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami/types';

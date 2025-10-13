@@ -9,7 +9,6 @@ import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 
 import { Filter, Sort, TabType, ViewMode } from '../../types';
-import { Mint } from './mint/Mint';
 import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
@@ -73,7 +72,6 @@ export const Controls = ({
   };
 
   const isButtonVisible = () => {
-    return tab === 'GACHA';
     return tab === 'GACHA' || tab === 'REROLL';
   };
 
@@ -90,7 +88,6 @@ export const Controls = ({
           }}
         />
       )}
-      <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
       <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
       <Overlay bottom={0.75} left={0.75}>

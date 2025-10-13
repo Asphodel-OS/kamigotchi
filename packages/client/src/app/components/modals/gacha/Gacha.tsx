@@ -165,10 +165,6 @@ export const GachaModal: UIComponent = {
       } else if (tab === 'REROLL' && mode === 'ALT') {
         const auction = getAuction(REROLL_TICKET_INDEX);
         setRerollAuction(auction);
-      } else if (tab === 'MINT') {
-        setAccountMintData(getMintData(account.id));
-        setGachaMintData(getMintData('0' as EntityID));
-        setWhitelisted(isWhitelisted(account.entity));
       }
     }, [gachaModalVisible, tab, mode, accountEntity, tick]);
 

@@ -7,7 +7,7 @@ import { getItemByIndex } from 'app/cache/item';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useTokens } from 'app/stores';
-import { ONYX_INDEX } from 'constants/items';
+import { Tokens } from 'constants/tokens';
 import { getCompAddr } from 'network/shapes/utils';
 import { parseTokenBalance } from 'utils/numbers';
 
@@ -21,10 +21,8 @@ export const TokenChecker: UIComponent = {
       const { world, components } = network;
       return {
         tokenAddresses: {
-          // todo: dynamically query based on items with address?
-          onyx: getItemByIndex(world, components, ONYX_INDEX).token?.address!,
-          // eth: getItemByIndex(world, components, ETH_INDEX).token?.address!,
-          eth: '0xE1Ff7038eAAAF027031688E1535a055B2Bac2546' as `0x${string}`,
+          onyx: Tokens.ONYX.address,
+          eth: Tokens.ETH.address,
         },
         spender: getCompAddr(world, components, 'component.token.allowance'),
         utils: {

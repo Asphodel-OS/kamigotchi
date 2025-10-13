@@ -15,10 +15,9 @@ import {
 import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
-import { ONYX_INDEX } from 'constants/items';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Condition } from 'network/shapes/Conditional';
-import { getItemBalance as _getItemBalance, getItemByIndex } from 'network/shapes/Item';
+import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { getCompAddr } from 'network/shapes/utils';
@@ -59,7 +58,6 @@ export const KamiModal: UIComponent = {
         network,
         data: {
           account,
-          onyxItem: getItemByIndex(world, components, ONYX_INDEX),
           spender: getCompAddr(world, components, 'component.token.allowance'),
         },
         utils: {
