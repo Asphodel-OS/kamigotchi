@@ -122,6 +122,7 @@ library LibTokenPortal {
     // logging
     LogData memory logData = LogData(accID, itemIndex, itemAmt, taxAmt, tokenAddr, tokenAmt);
     logDeposit(world, comps, logData);
+    emitDeposit(world, logData);
   }
 
   /// @notice initialize a token withdrawal, generating a pending Receipt
