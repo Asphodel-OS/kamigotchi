@@ -20,7 +20,6 @@ export const RightMenuFixture: UIComponent = {
           <InventoryMenuButton />
           <QuestMenuButton />
           <ChatMenuButton />
-
           <MoreMenuButton />
         </Wrapper>
         <Wrapper style={{ display: menuVisible ? 'none' : 'flex' }}>

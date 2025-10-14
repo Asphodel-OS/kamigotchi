@@ -119,12 +119,12 @@ export const Registration = ({
     );
   };
 
-  const getSubmitTooltip = () => {
-    if (isOperaterTaken(address.burner)) return ['That Operator address is already taken.'];
+  const getError = () => {
+    if (!hasEth()) return [`You need to bridge some ETH to register.`];
+    else if (isOperaterTaken(address.burner)) return ['That Operator address is already taken.'];
     else if (isNameTaken(name)) return ['That name is already taken.'];
     else if (name === '') return [`Name cannot be empty.`];
     else if (/\s/.test(name)) return [`Name cannot contain whitespace.`];
-    else if (!hasEth()) return [`You need to bridge some ETH to register.`];
     return ['Register'];
   };
 
@@ -144,19 +144,16 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
+      <Text>{getError()}</Text>
       {!hasEth() ? (
-        <Column>
-          <Text>You need to bridge some ETH to register</Text>
-          <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} text={'Bridge ETH'} />
-        </Column>
+        <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} text={'Bridge ETH'} />
       ) : (
         <Row>
           <BackButton step={2} setStep={utils.setStep} />
           <ActionButton
             text='Next ⟶'
-            disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
+            disabled={getError()[0] !== 'Register'} // so hacky..
             onClick={() => handleAccountCreation()}
-            tooltip={getSubmitTooltip()}
           />
         </Row>
       )}
@@ -200,15 +197,8 @@ export const Input = styled.input`
   text-align: center;
 `;
 
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 1vw 0 0 0;
-  gap: 1.8vw;
-`;
-
 const Text = styled.div`
   font-size: 0.75vw;
+  margin: 1vw 0 2vw 0;
   color: red;
 `;
