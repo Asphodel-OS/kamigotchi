@@ -144,25 +144,24 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
-      <Column>
-        {!hasEth() && (
-          <>
-            <Text>You need to bridge some ETH to register.</Text>
-            <TextTooltip text={[' Bridge ETH']} alignText='center'>
-              <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} />
-            </TextTooltip>
-          </>
-        )}
-      </Column>
-      <Row>
-        <BackButton step={2} setStep={utils.setStep} />
-        <ActionButton
-          text='Next ⟶'
-          disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
-          onClick={() => handleAccountCreation()}
-          tooltip={getSubmitTooltip()}
-        />
-      </Row>
+      {!hasEth() ? (
+        <Row>
+          <Text>Bridge ETH:</Text>
+          <TextTooltip text={[' You need to bridge some ETH to register.']} alignText='center'>
+            <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} scale={2} />
+          </TextTooltip>
+        </Row>
+      ) : (
+        <Row>
+          <BackButton step={2} setStep={utils.setStep} />
+          <ActionButton
+            text='Next ⟶'
+            disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
+            onClick={() => handleAccountCreation()}
+            tooltip={getSubmitTooltip()}
+          />
+        </Row>
+      )}
     </Container>
   );
 };
@@ -212,6 +211,6 @@ const Column = styled.div`
 `;
 
 const Text = styled.div`
-  font-size: 0.75vw;
+  font-size: 0.9vw;
   color: red;
 `;
