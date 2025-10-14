@@ -1,5 +1,3 @@
-'use client';
-
 import { injectStyles, InterwovenKitProvider } from '@initia/interwovenkit-react';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -27,9 +25,11 @@ export const Root = observer(
     const [mounted, setMounted] = useState(true);
     const [layers, _setLayers] = useState<Layers | undefined>();
     const [ready, setReady] = useState(false);
+
     useEffect(() => {
       injectStyles(InterwovenKitStyles);
     }, []);
+
     // mount root and layers used for app context
     useEffect(() => {
       mountReact.current = (mounted: boolean) => setMounted(mounted);
@@ -48,7 +48,6 @@ export const Root = observer(
         const loadingState = getComponentValue(LoadingState, GodEntityIndex!);
         if (loadingState?.state === SyncState.LIVE) setReady(true);
       });
-
       return () => {
         liveStateWatcher.unsubscribe();
       };
@@ -65,13 +64,13 @@ export const Root = observer(
         config={privyConfig}
       >
         <WagmiProvider config={wagmiConfig}>
-          <InterwovenKitProvider>
-            <QueryClientProvider client={tanstackClient}>
+          <QueryClientProvider client={tanstackClient}>
+            <InterwovenKitProvider>
               <NetworkContext.Provider value={layers}>
                 <MainWindow ready={ready} />
               </NetworkContext.Provider>
-            </QueryClientProvider>
-          </InterwovenKitProvider>
+            </InterwovenKitProvider>
+          </QueryClientProvider>
         </WagmiProvider>
       </PrivyProvider>
     );

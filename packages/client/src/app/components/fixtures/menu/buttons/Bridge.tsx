@@ -1,14 +1,10 @@
-'use client';
-
 import { useInterwovenKit } from '@initia/interwovenkit-react';
-import { useAccount } from 'wagmi';
 
 import { MenuIcons } from 'assets/images/icons/menu';
-import { MenuButton } from './menu/buttons/MenuButton';
+import { MenuButton } from './MenuButton';
 
-export default function Home() {
-  const { address } = useAccount();
-  const { openConnect, openBridge } = useInterwovenKit();
+export const BridgeMenuButton = () => {
+  const { openBridge } = useInterwovenKit();
 
   const bridgeTransferDetails = {
     srcChainId: 'interwoven-1',
@@ -18,10 +14,6 @@ export default function Home() {
     quantity: '1',
   };
 
-  if (!address) {
-    return <button onClick={openConnect}>Connect</button>;
-  }
-
   return (
     <MenuButton
       id='bridge-button'
@@ -30,4 +22,4 @@ export default function Home() {
       onClick={() => openBridge(bridgeTransferDetails)}
     />
   );
-}
+};
