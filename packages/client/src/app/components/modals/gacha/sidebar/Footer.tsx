@@ -150,11 +150,10 @@ export const Footer = ({
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') {
         // if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
-        if (!exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
+        if (exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
       }
       if (mode === 'ALT') {
         if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
-        if (needsFunds()) return [`too poore`, `you need ${price - balance} more musu`];
       }
     }
 
@@ -168,18 +167,13 @@ export const Footer = ({
             `it's time to play favorites..`,
           ];
         }
-        if (needsFunds()) {
-          return [`too poore`, `you need ${price - balance} more Reroll Tickets`];
-        }
       }
       if (mode === 'ALT') {
         if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
-        if (needsFunds()) {
-          return [`too poore`, `you need ${(price - balance).toFixed(3)} more ONYX`];
-        }
-        if (needsApproval()) return [`approve ${price.toFixed(3)}ONYX to spend`];
       }
     }
+
+    if (needsFunds()) return [`too poore`, `you need ${price - balance} more ${payItem.name}(s)`];
 
     return [];
   };

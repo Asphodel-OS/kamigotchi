@@ -134,25 +134,21 @@ export const Sidebar = ({
   // update the price according to tab/mode
   const updatePrice = () => {
     if (mode === 'DEFAULT') setPrice(quantity);
-    if (tab === 'GACHA') {
-      if (mode === 'DEFAULT') setPrice(quantity);
-      else if (mode === 'ALT') {
-        const auctionCost = calcAuctionCost(auctions.gacha, quantity);
-        setPrice(auctionCost);
-      }
-    } else if (tab === 'REROLL') {
-      if (mode === 'DEFAULT') setPrice(quantity);
-      else if (mode === 'ALT') {
-        const auctionCost = calcAuctionCost(auctions.reroll, quantity);
-        setPrice(auctionCost);
-      }
+    else if (mode === 'ALT') {
+      let auctionCost = 0;
+      if (tab === 'GACHA') auctionCost = calcAuctionCost(auctions.gacha, quantity);
+      else if (tab === 'REROLL') auctionCost = calcAuctionCost(auctions.reroll, quantity);
+      setPrice(auctionCost);
     }
   };
 
   // update the start timestamp according to tab/mode
   const updateStartTs = () => {
-    if (tab === 'GACHA' && mode === 'ALT') setStartTs(auctions.gacha.time.start);
-    else if (tab === 'REROLL' && mode === 'ALT') setStartTs(auctions.reroll.time.start);
+    if (mode === 'DEFAULT') setStartTs(0);
+    else if (mode === 'ALT') {
+      if (tab === 'GACHA') setStartTs(auctions.gacha.time.start);
+      else if (tab === 'REROLL') setStartTs(auctions.reroll.time.start);
+    }
   };
 
   ////////////////
