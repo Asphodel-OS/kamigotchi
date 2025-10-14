@@ -3,10 +3,12 @@ import { EntityID } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, TextTooltip } from 'app/components/library';
+import { ActionButton, IconButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
+import { ItemImages } from 'assets/images/items';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
+import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './components';
@@ -122,12 +124,7 @@ export const Registration = ({
     else if (isNameTaken(name)) return ['That name is already taken.'];
     else if (name === '') return [`Name cannot be empty.`];
     else if (/\s/.test(name)) return [`Name cannot contain whitespace.`];
-    else if (!hasEth())
-      return [
-        `You need to some ETH to register.`,
-        '',
-        'you can bridge some over at bridge.initia.xyz',
-      ];
+    else if (!hasEth()) return [`You need to bridge some ETH to register.`];
     return ['Register'];
   };
 
@@ -147,15 +144,23 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
+      <Column>
+        {!hasEth() && (
+          <>
+            <Text>You need to bridge some ETH to register.</Text>
+            <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} />
+          </>
+        )}
+      </Column>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />
-        <TextTooltip text={getSubmitTooltip()} alignText='center'>
-          <ActionButton
-            text='Next ⟶'
-            disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
-            onClick={() => handleAccountCreation()}
-          />
-        </TextTooltip>
+
+        <ActionButton
+          text='Next ⟶'
+          disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
+          onClick={() => handleAccountCreation()}
+          tooltip={getSubmitTooltip()}
+        />
       </Row>
     </Container>
   );
@@ -195,4 +200,17 @@ export const Input = styled.input`
 
   font-size: 0.75vw;
   text-align: center;
+`;
+
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1vw 0 0 0;
+  gap: 0.6vw;
+`;
+
+const Text = styled.div`
+  font-size: 0.75vw;
+  color: red;
 `;

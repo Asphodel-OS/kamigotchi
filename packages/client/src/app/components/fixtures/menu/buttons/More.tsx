@@ -99,8 +99,8 @@ export const MoreMenuButton = () => {
         { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
         { text: 'Help', image: HelpIcon, onClick: toggleHelp },
         { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
-        { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
         { text: 'Bridge', image: ItemImages.initia, onClick: useBridgeOpener() },
+        { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
       ]}
       scale={4.5}
       scaleOrientation='vh'
