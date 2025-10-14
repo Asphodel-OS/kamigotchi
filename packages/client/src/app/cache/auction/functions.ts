@@ -3,9 +3,13 @@ import { Auction } from 'network/shapes/Auction';
 // calculate the cost to buy N items from an auction Now
 export const calcCost = (auction: Auction, amt: number) => {
   if (amt <= 0) return 0;
-  const now = Date.now() / 1000;
+
+  let ts = Date.now() / 1000;
+  const startTs = auction.time.start;
+  if (startTs > ts) ts = startTs;
+
   const prevSold = auction.supply.sold;
-  return calcPrice(auction, now, prevSold, amt);
+  return calcPrice(auction, ts, prevSold, amt);
 };
 
 // calculate the price of the auction at a given time and balance sold

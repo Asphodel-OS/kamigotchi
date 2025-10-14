@@ -25,11 +25,11 @@ export const PricePanel = ({
 
   const getText = () => {
     if (saleItem.index === 10 && tick / 1000 < 1747400400) {
-      return [`Target 32000 ${payItem.name}`, `for 1 ${saleItem.name}`];
+      return [`Target ${price} ${payItem.name}`, `for 1 ${saleItem.name}`];
     }
 
     if (saleItem.index === 11 && tick / 1000 < 1760486400) {
-      return [`Target 50 ${payItem.name}s`, `for 1 ${saleItem.name}`];
+      return [`Target ${price} ${payItem.name}s`, `for 1 ${saleItem.name}`];
     }
 
     return [
