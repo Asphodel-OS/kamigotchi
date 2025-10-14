@@ -144,7 +144,7 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
-      <Text>{getError()}</Text>
+      <Text>{getError()[0] !== 'Register' ? getError()[0] : ''}</Text>
       {!hasEth() ? (
         <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} text={'Bridge ETH'} />
       ) : (
