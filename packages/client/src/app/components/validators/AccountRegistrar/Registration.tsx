@@ -35,6 +35,8 @@ export const Registration = ({
   };
 }) => {
   const ethBalance = useTokens((s) => s.eth.balance);
+  const openBridge = useBridgeOpener();
+
   const [name, setName] = useState('');
 
   /////////////////
@@ -146,7 +148,7 @@ export const Registration = ({
       </Row>
       <Text>{getError()[0] !== 'Register' ? getError()[0] : ''}</Text>
       {!hasEth() ? (
-        <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} text={'Bridge ETH'} />
+        <IconButton img={ItemImages.initia} onClick={openBridge} text={'Bridge ETH'} />
       ) : (
         <Row>
           <BackButton step={2} setStep={utils.setStep} />
