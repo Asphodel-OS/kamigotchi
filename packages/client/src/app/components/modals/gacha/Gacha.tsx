@@ -34,12 +34,11 @@ const KamiBlockCache = new Map<EntityIndex, JSX.Element>();
 
 export const GachaModal: UIComponent = {
   id: 'Gacha',
-
-  /////////////////
-  // PREPARATION
-
   Render: () => {
     const layers = useLayers();
+
+    /////////////////
+    // PREPARATION
 
     const { network, data, utils } = (() => {
       const { network } = layers;
@@ -76,7 +75,7 @@ export const GachaModal: UIComponent = {
     })();
 
     /////////////////
-    // INSTANTIATIONS
+    // INSTANTIATION
 
     const { actions, world, api } = network;
     const { accountEntity, commits, poolKamis, spenderAddr } = data;
@@ -184,7 +183,7 @@ export const GachaModal: UIComponent = {
         if (!triedReveal && filtered.length > 0) {
           try {
             // wait to give buffer for rpc
-            await new Promise((resolve) => setTimeout(resolve, 750));
+            await new Promise((resolve) => setTimeout(resolve, 1500));
             revealTx(filtered);
             setTriedReveal(true);
           } catch (e) {
@@ -445,11 +444,6 @@ export const GachaModal: UIComponent = {
               ...data,
               inventories: account.inventories ?? [],
               auctions: { gacha: gachaAuction, reroll: rerollAuction },
-              mint: {
-                config: mintConfig,
-                data: { account: accountMintData, gacha: gachaMintData },
-                whitelisted, // whether the account is whitelisted for mint
-              },
             }}
             state={{
               quantity,

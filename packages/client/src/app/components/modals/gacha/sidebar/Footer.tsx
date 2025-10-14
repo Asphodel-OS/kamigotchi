@@ -49,7 +49,7 @@ export const Footer = ({
 
   useEffect(() => {
     setIsDisabled(quantity <= 0 || needsFunds() || exceedsMax() || !hasStarted());
-  }, [price, balance, quantity]);
+  }, [price, balance, quantity, startTs]);
 
   /////////////////
   // CHECKERS
@@ -72,7 +72,7 @@ export const Footer = ({
 
   // check if the auction has started
   const hasStarted = () => {
-    if (!startTs) return false;
+    if (!startTs) return true;
     return startTs < Date.now() / 1000;
   };
 
@@ -149,7 +149,7 @@ export const Footer = ({
     // gacha
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') {
-        if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
+        // if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
         if (!exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
       }
       if (mode === 'ALT') {
