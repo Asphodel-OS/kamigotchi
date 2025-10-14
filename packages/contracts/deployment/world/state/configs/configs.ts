@@ -142,7 +142,7 @@ export async function initLiquidation(api: AdminAPI) {
 }
 
 export async function initPortal(api: AdminAPI) {
-  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 86400); // measured in seconds (1 week)
+  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 3 * 24 * 3600); // measured in seconds (3 days)
   await api.config.set.array('PORTAL_ITEM_EXPORT_TAX', [
     1, // flat tax (in resulting item)
     100, // % in basis points
