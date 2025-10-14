@@ -145,12 +145,10 @@ export const Registration = ({
         />
       </Row>
       {!hasEth() ? (
-        <Row>
-          <Text>Bridge ETH:</Text>
-          <TextTooltip text={[' You need to bridge some ETH to register.']} alignText='center'>
-            <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} scale={2} />
-          </TextTooltip>
-        </Row>
+        <Column>
+          <Text>You need to bridge some ETH to register</Text>
+          <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} text={'Bridge ETH'} />
+        </Column>
       ) : (
         <Row>
           <BackButton step={2} setStep={utils.setStep} />
@@ -207,10 +205,10 @@ const Column = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 1vw 0 0 0;
-  gap: 0.6vw;
+  gap: 1.8vw;
 `;
 
 const Text = styled.div`
-  font-size: 0.9vw;
+  font-size: 0.75vw;
   color: red;
 `;
