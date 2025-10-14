@@ -148,13 +148,14 @@ export const Registration = ({
         {!hasEth() && (
           <>
             <Text>You need to bridge some ETH to register.</Text>
-            <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} />
+            <TextTooltip text={[' Bridge ETH']} alignText='center'>
+              <IconButton img={ItemImages.initia} onClick={useBridgeOpener()} />
+            </TextTooltip>
           </>
         )}
       </Column>
       <Row>
         <BackButton step={2} setStep={utils.setStep} />
-
         <ActionButton
           text='Next ⟶'
           disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
