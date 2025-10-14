@@ -35,14 +35,6 @@ export const Display = ({
       gacha: Auction;
       reroll: Auction;
     };
-    mint: {
-      config: GachaMintConfig;
-      data: {
-        account: GachaMintData;
-        gacha: GachaMintData;
-      };
-      whitelisted: boolean;
-    };
   };
   state: {
     setQuantity: (quantity: number) => void;
@@ -58,7 +50,7 @@ export const Display = ({
   };
 }) => {
   const { mode, setMode, tab } = controls;
-  const { account, auctions, mint, poolKamis } = data;
+  const { account, auctions, poolKamis } = data;
 
   const toggleMode = () => {
     if (mode === 'DEFAULT') setMode('ALT');
@@ -100,7 +92,6 @@ export const Display = ({
         data={{
           ...data,
           account,
-          mintConfig: mint.config,
           auction: auctions.gacha,
           entities: poolKamis,
         }}

@@ -1,12 +1,9 @@
 import styled from 'styled-components';
 
-import { GachaMintConfig } from 'app/cache/config';
-import { Overlay } from 'app/components/library';
 import { EntityIndex } from 'engine/recs';
 import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
 import { Kami } from 'network/shapes/Kami/types';
-import { formatCountdown } from 'utils/time';
 import { Filter, Sort, TabType, ViewMode } from '../../types';
 import { AuctionView } from '../auctions/AuctionView';
 import { KamiView } from './KamiView';
@@ -33,7 +30,6 @@ export const Pool = ({
     account: Account;
     auction: Auction;
     entities: EntityIndex[];
-    mintConfig: GachaMintConfig;
   };
   state: {
     tick: number;
@@ -44,24 +40,10 @@ export const Pool = ({
   isVisible: boolean;
 }) => {
   const { mode } = controls;
-  const { auction, mintConfig } = data;
-  const { tick } = state;
-
-  const getTimeLeft = () => {
-    const now = tick / 1000;
-    const start = mintConfig.public.startTs + 3600;
-    return Math.max(start - now, 0);
-  };
+  const { auction } = data;
 
   return (
     <Container isVisible={isVisible}>
-      {mode === 'DEFAULT' && getTimeLeft() > 0 && (
-        <Overlay orientation='column' opacity={0.6} zIndex={1} fullWidth fullHeight passthrough>
-          <Text size={3}>No Running</Text>
-          <Text size={3}>Around the Pool</Text>
-          <Text size={3}>{formatCountdown(getTimeLeft())}</Text>
-        </Overlay>
-      )}
       <KamiView
         controls={controls}
         caches={caches}

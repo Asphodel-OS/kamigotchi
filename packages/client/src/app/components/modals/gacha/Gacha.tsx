@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { Auction, getAuctionByIndex } from 'app/cache/auction';
-import { GachaMintConfig, getGachaMintConfig } from 'app/cache/config';
+import { getGachaMintConfig } from 'app/cache/config';
 import { Inventory, getInventoryBalance } from 'app/cache/inventory';
 import { Item, getItemByIndex } from 'app/cache/item';
 import { getKami as _getKami } from 'app/cache/kami';
@@ -18,7 +18,7 @@ import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { NullAuction } from 'network/shapes/Auction';
-import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
+import { Commit } from 'network/shapes/Commit';
 import { hasFlag } from 'network/shapes/Flag';
 import { getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
 import { Kami, queryKamis } from 'network/shapes/Kami';
@@ -45,7 +45,7 @@ export const GachaModal: UIComponent = {
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
       const accountID = world.entities[accountEntity];
-      const accountOptions = { inventories: 2, live: 2 };
+      const accountOptions = { inventory: 2, live: 2 };
       const auctionOptions = { items: 3600, balance: 1 };
       const kamiOptions = { live: 0, progress: 3600, stats: 3600, traits: 3600 };
 
@@ -80,11 +80,11 @@ export const GachaModal: UIComponent = {
     const { actions, world, api } = network;
     const { accountEntity, commits, poolKamis, spenderAddr } = data;
     const { getAccount, getAuction, getItemBalance } = utils;
-    const { getMintConfig, getMintData, isWhitelisted } = utils; // TODO: deprecate these
 
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const isModalVisible = useVisibility((s) => s.modals.gacha);
     const setModals = useVisibility((s) => s.setModals);
-    const gachaModalVisible = useVisibility((s) => s.modals.gacha);
-    const { selectedAddress, apis } = useNetwork();
 
     // modal controls
     const [tab, setTab] = useState<TabType>('GACHA');
@@ -98,12 +98,6 @@ export const GachaModal: UIComponent = {
     // auction data
     const [gachaAuction, setGachaAuction] = useState<Auction>(NullAuction);
     const [rerollAuction, setRerollAuction] = useState<Auction>(NullAuction);
-
-    // mint data
-    const [mintConfig, _] = useState<GachaMintConfig>(getMintConfig());
-    const [accountMintData, setAccountMintData] = useState(getMintData(account.id));
-    const [gachaMintData, setGachaMintData] = useState(getMintData('0' as EntityID));
-    const [whitelisted, setWhitelisted] = useState(isWhitelisted(account.entity));
 
     // modal state
     const [quantity, setQuantity] = useState(1);
@@ -154,7 +148,7 @@ export const GachaModal: UIComponent = {
 
     // update the data when the modal is open
     useEffect(() => {
-      if (!gachaModalVisible) return;
+      if (!isModalVisible) return;
       const account = getAccount();
       setAccount(account);
 
@@ -165,7 +159,7 @@ export const GachaModal: UIComponent = {
         const auction = getAuction(REROLL_TICKET_INDEX);
         setRerollAuction(auction);
       }
-    }, [gachaModalVisible, tab, mode, accountEntity, tick]);
+    }, [isModalVisible, tab, mode, accountEntity, tick]);
 
     // open the party modal when the reveal is triggered
     useEffect(() => {
@@ -174,26 +168,25 @@ export const GachaModal: UIComponent = {
       setWaitingToReveal(false);
     }, [waitingToReveal]);
 
-    // reveal gacha result(s) when the number of commits changes
-    // Q(jb): is it necessary to run this as an async
-    // We should pass over a function for
-    useEffect(() => {
-      const tx = async () => {
-        const filtered = filterRevealableCommits(commits);
-        if (!triedReveal && filtered.length > 0) {
-          try {
-            // wait to give buffer for rpc
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            revealTx(filtered);
-            setTriedReveal(true);
-          } catch (e) {
-            console.log('Gacha.tsx: handlePull() reveal failed', e);
-          }
-        }
-      };
+    // // auto reveal gacha result(s) when the number of commits changes
+    // // NOTE: disabled for now as it's bugged and causes many redundant txs
+    // useEffect(() => {
+    //   const tx = async () => {
+    //     const filtered = filterRevealableCommits(commits);
+    //     if (!triedReveal && filtered.length > 0) {
+    //       try {
+    //         // wait to give buffer for rpc
+    //         await new Promise((resolve) => setTimeout(resolve, 1500));
+    //         revealTx(filtered);
+    //         setTriedReveal(true);
+    //       } catch (e) {
+    //         console.log('Gacha.tsx: handlePull() reveal failed', e);
+    //       }
+    //     }
+    //   };
 
-      tx();
-    }, [commits]);
+    //   tx();
+    // }, [commits]);
 
     /////////////////
     // ACTIONS
@@ -408,14 +401,6 @@ export const GachaModal: UIComponent = {
               poolKamis,
               account,
               auctions: { gacha: gachaAuction, reroll: rerollAuction },
-              mint: {
-                config: mintConfig,
-                data: {
-                  account: accountMintData,
-                  gacha: gachaMintData,
-                },
-                whitelisted: whitelisted,
-              },
             }}
             state={{ setQuantity, selectedKamis, setSelectedKamis, tick }}
             utils={utils}
