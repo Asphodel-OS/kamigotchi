@@ -2,7 +2,6 @@ import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import styled from 'styled-components';
 import {
-  BridgeMenuButton,
   ChatMenuButton,
   CraftMenuButton,
   InventoryMenuButton,
@@ -21,7 +20,7 @@ export const RightMenuFixture: UIComponent = {
           <InventoryMenuButton />
           <QuestMenuButton />
           <ChatMenuButton />
-          <BridgeMenuButton />
+
           <MoreMenuButton />
         </Wrapper>
         <Wrapper style={{ display: menuVisible ? 'none' : 'flex' }}>

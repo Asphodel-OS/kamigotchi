@@ -1,5 +1,4 @@
 import { AccountMenuButton } from './Account';
-import { BridgeMenuButton } from './Bridge';
 import { ChatMenuButton } from './Chat';
 import { CraftMenuButton } from './Crafting';
 import { InventoryMenuButton } from './Inventory';
@@ -14,7 +13,6 @@ import { SudoMenuButton } from './Sudo';
 
 export {
   AccountMenuButton,
-  BridgeMenuButton,
   ChatMenuButton,
   CraftMenuButton,
   InventoryMenuButton,

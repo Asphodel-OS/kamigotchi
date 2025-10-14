@@ -1,3 +1,4 @@
+import { useInterwovenKit } from '@initia/interwovenkit-react';
 import {
   Component,
   defineQuery,
@@ -74,4 +75,18 @@ export function useComponentEntities<T extends Schema>(component: Component<T>) 
   }, [component]);
 
   return list;
+}
+
+export function useBridgeOpener() {
+  const { openBridge } = useInterwovenKit();
+
+  const bridgeTransferDetails = {
+    srcChainId: 'interwoven-1',
+    srcDenom: 'move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954',
+    dstChainId: 'interwoven-1',
+    dstDenom: 'ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4',
+    quantity: '1',
+  };
+
+  return () => openBridge(bridgeTransferDetails);
 }

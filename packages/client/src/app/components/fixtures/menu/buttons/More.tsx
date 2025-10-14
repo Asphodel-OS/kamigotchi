@@ -5,6 +5,8 @@ import { IconListButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
+import { ItemImages } from 'assets/images/items';
+import { useBridgeOpener } from 'network/utils/hooks';
 
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
@@ -98,6 +100,7 @@ export const MoreMenuButton = () => {
         { text: 'Help', image: HelpIcon, onClick: toggleHelp },
         { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
         { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
+        { text: 'Bridge', image: ItemImages.initia, onClick: useBridgeOpener() },
       ]}
       scale={4.5}
       scaleOrientation='vh'
