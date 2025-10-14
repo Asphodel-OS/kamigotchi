@@ -1,5 +1,6 @@
 import ChatIcon from './chat.png';
 import HelpIcon from './help.png';
+import Initia from './initia.png';
 import InventoryIcon from './inventory.png';
 import KamiIcon from './kami.png';
 import ExternalIcon from './link_to_external_apps.png';
@@ -18,6 +19,7 @@ export {
   ChatIcon,
   ExternalIcon,
   HelpIcon,
+  Initia,
   InventoryIcon,
   KamiIcon,
   MapIcon,
@@ -33,6 +35,7 @@ export {
 };
 
 export const MenuIcons = {
+  initia: Initia,
   trade: TradeIcon,
   whispo: Whispo,
   link_to_external_apps: ExternalIcon,

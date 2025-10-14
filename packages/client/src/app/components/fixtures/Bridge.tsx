@@ -3,7 +3,7 @@
 import { useInterwovenKit } from '@initia/interwovenkit-react';
 import { useAccount } from 'wagmi';
 
-import { ItemImages } from 'assets/images/items';
+import { MenuIcons } from 'assets/images/icons/menu';
 import { MenuButton } from './menu/buttons/MenuButton';
 
 export default function Home() {
@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <MenuButton
       id='bridge-button'
-      image={ItemImages.initia_icon}
+      image={MenuIcons.initia}
       tooltip='Bridge'
       onClick={() => openBridge(bridgeTransferDetails)}
     />
