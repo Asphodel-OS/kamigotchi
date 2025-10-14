@@ -2,28 +2,11 @@
 
 import { useInterwovenKit } from '@initia/interwovenkit-react';
 
-import { useState } from 'react';
-import { parseEther } from 'viem';
-import { useAccount, useChainId, useSendTransaction, useSwitchChain } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 export default function Home() {
-  const chainId = useChainId();
   const { address } = useAccount();
-  const { switchChainAsync } = useSwitchChain();
-  const { sendTransactionAsync } = useSendTransaction();
-  const { username, openConnect, openWallet, openBridge } = useInterwovenKit();
-
-  const [transactionHash, setTransactionHash] = useState<string | null>(null);
-
-  const send = async () => {
-    await switchChainAsync({ chainId });
-    const transactionHash = await sendTransactionAsync({
-      to: address,
-      value: parseEther('0.01'),
-      chainId: chainId,
-    });
-    setTransactionHash(transactionHash);
-  };
+  const { openConnect, openBridge } = useInterwovenKit();
 
   const bridgeTransferDetails = {
     srcChainId: 'interwoven-1',
@@ -37,11 +20,5 @@ export default function Home() {
     return <button onClick={openConnect}>Connect</button>;
   }
 
-  return (
-    <>
-      <button onClick={send}>Send</button>
-      <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>
-      {transactionHash && <p>Transaction hash: {transactionHash}</p>}
-    </>
-  );
+  return <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>;
 }
