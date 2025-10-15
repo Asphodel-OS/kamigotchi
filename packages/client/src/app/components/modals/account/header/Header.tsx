@@ -81,7 +81,7 @@ export const Header = ({
         <Pfp account={account} isLoading={isLoading} />
       )}
       <Info>
-        <TitleSection>
+        <TitleSection isSelf={isSelf}>
           <TitleHeader>
             <Text size={1.1}>{account.name}</Text>
           </TitleHeader>
@@ -128,10 +128,10 @@ const Info = styled.div`
   align-items: flex-start;
 `;
 
-const TitleSection = styled.div`
+const TitleSection = styled.div<{ isSelf: boolean }>`
   display: flex;
   flex-flow: column nowrap;
-  gap: 0.3vw;
+  ${({ isSelf }) => (isSelf ? `gap: 0.3vw` : `gap: 1vw`)}
 `;
 
 const TitleHeader = styled.div`
