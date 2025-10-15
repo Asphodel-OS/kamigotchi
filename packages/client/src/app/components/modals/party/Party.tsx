@@ -156,9 +156,7 @@ export const PartyModal: UIComponent = {
       if (!partyModalVisible) return;
 
       // update the connected account if it changes
-      if (accountEntity != account.entity) {
-        setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
-      }
+      setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
 
       // update the list of the
       setKamis(getWorldKamis());
