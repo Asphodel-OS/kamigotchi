@@ -245,7 +245,7 @@ export const getOwnerAddress = (comps: Components, entity: EntityIndex): Address
   const { OwnerAddress } = comps;
   const result = getComponentValue(OwnerAddress, entity)?.value;
   if (result === undefined) {
-    console.warn(`getOwnerAddress(): undefined for entity ${entity}`);
+    console.warn(`getOwnerAddress(): undefined for entity`, entity);
     return '0x000000000000000000000000000000000000dEaD';
   }
 
@@ -257,7 +257,7 @@ export const getOperatorAddress = (comps: Components, entity: EntityIndex): Addr
   const { OperatorAddress } = comps;
   const result = getComponentValue(OperatorAddress, entity)?.value;
   if (result === undefined) {
-    console.warn(`getOperatorAddress(): undefined for entity ${entity}`);
+    console.warn(`getOperatorAddress(): undefined for entity`, entity);
     return '0x000000000000000000000000000000000000dEaD';
   }
 
@@ -268,7 +268,7 @@ export const getTokenAddress = (comps: Components, entity: EntityIndex): Address
   const { TokenAddress } = comps;
   const result = getComponentValue(TokenAddress, entity)?.value;
   if (result === undefined) {
-    console.warn(`getTokenAddress(): undefined for entity ${entity}`);
+    console.warn(`getTokenAddress(): undefined for entity`, entity);
     return '0x000000000000000000000000000000000000dEaD';
   }
 
@@ -303,7 +303,8 @@ export const getTargetID = (comps: Components, entity: EntityIndex, debug = true
   const { TargetID } = comps;
   const result = getComponentValue(TargetID, entity)?.value;
   if (debug && result === undefined) console.warn('getTargetID(): undefined for entity', entity);
-  return formatEntityID(result ?? '');
+  const cleaned = result ? formatEntityID(result) : ('' as EntityID);
+  return cleaned;
 };
 
 export const getOwnsTradeID = (comps: Components, entity: EntityIndex): EntityID => {

@@ -1,7 +1,6 @@
-import { uuid } from '@mud-classic/utils';
-import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountByID as _getAccountByID } from 'app/cache/account';
 import {
@@ -17,6 +16,7 @@ import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { TradeIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getMusuBalance as _getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades as _queryTrades } from 'network/shapes/Trade';
@@ -36,6 +36,9 @@ export const TradingModal: UIComponent = {
   id: 'TradingModal',
   Render: () => {
     const layers = useLayers();
+
+    /////////////////
+    // PREPARATION
 
     const { network, data, types, utils } = (() => {
       const { network } = layers;
