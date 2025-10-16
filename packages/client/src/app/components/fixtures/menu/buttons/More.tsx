@@ -13,6 +13,8 @@ export const MoreMenuButton = () => {
   const setModals = useVisibility((s) => s.setModals);
   const settingsVisible = useVisibility((s) => s.modals.settings);
   const helpVisible = useVisibility((s) => s.modals.help);
+  const openBridge = useBridgeOpener();
+
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
@@ -99,7 +101,7 @@ export const MoreMenuButton = () => {
         { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
         { text: 'Help', image: HelpIcon, onClick: toggleHelp },
         { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
-        { text: 'Bridge', image: TokenIcons.init, onClick: useBridgeOpener() },
+        { text: 'Bridge', image: TokenIcons.init, onClick: openBridge },
         { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
       ]}
       scale={4.5}

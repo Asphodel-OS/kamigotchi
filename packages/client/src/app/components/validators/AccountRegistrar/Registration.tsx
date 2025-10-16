@@ -121,13 +121,13 @@ export const Registration = ({
     );
   };
 
-  const getError = () => {
-    if (!hasEth()) return [`You need to bridge some ETH to register.`];
-    else if (isOperaterTaken(address.burner)) return ['That Operator address is already taken.'];
-    else if (isNameTaken(name)) return ['That name is already taken.'];
-    else if (name === '') return [`Name cannot be empty.`];
-    else if (/\s/.test(name)) return [`Name cannot contain whitespace.`];
-    return ['Register'];
+  const getError = (): string | null => {
+    if (!hasEth()) return 'You need to bridge some ETH to register.';
+    if (isOperaterTaken(address.burner)) return 'That Operator address is already taken.';
+    if (name === '') return 'Name cannot be empty.';
+    if (/\s/.test(name)) return 'Name cannot contain whitespace.';
+    if (isNameTaken(name)) return 'That name is already taken.';
+    return null;
   };
 
   return (
@@ -146,7 +146,9 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
-      <Text>{getError()[0] !== 'Register' ? getError()[0] : ''}</Text>
+      <Text role='status' aria-live='polite'>
+        {getError() ?? ''}
+      </Text>
       {!hasEth() ? (
         <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
       ) : (
@@ -154,7 +156,7 @@ export const Registration = ({
           <BackButton step={2} setStep={utils.setStep} />
           <ActionButton
             text='Next ⟶'
-            disabled={getError()[0] !== 'Register'} // so hacky..
+            disabled={!!getError()}
             onClick={() => handleAccountCreation()}
           />
         </Row>
