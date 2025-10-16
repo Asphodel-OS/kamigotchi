@@ -153,7 +153,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: FundOperator,
-    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 74 },
+    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 80 },
   },
   {
     uiComponent: GachaModal,

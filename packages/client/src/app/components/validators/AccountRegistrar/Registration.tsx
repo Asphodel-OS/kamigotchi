@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { ActionButton, IconButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
-import { ItemImages } from 'assets/images/items';
+import { TokenIcons } from 'assets/images/tokens';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
@@ -148,7 +148,7 @@ export const Registration = ({
       </Row>
       <Text>{getError()[0] !== 'Register' ? getError()[0] : ''}</Text>
       {!hasEth() ? (
-        <IconButton img={ItemImages.initia} onClick={openBridge} text={'Bridge ETH'} />
+        <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
       ) : (
         <Row>
           <BackButton step={2} setStep={utils.setStep} />

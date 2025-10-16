@@ -36,7 +36,6 @@ import holy_dust from './holy_dust.png';
 import holy_syrup from './holy_syrup.png';
 import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
-import initia from './initia.png';
 import inverted_teardrop_jewel from './inverted_teardrop_jewel.png';
 import kamigotchi_world_citizen_giftbox from './kamigotchi_world_citizen_giftbox.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
@@ -97,7 +96,6 @@ import xp_candy_small from './xp_candy_small.png';
 import xp_potion from './xp_potion.png';
 
 export const ItemImages = {
-  initia: initia,
   aetheric_sextant: aetheric_sextant,
   agency_giftbox: agency_giftbox,
   ancient_machine_part: ancient_machine_part,

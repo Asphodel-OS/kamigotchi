@@ -5,7 +5,7 @@ import { IconListButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
-import { ItemImages } from 'assets/images/items';
+import { TokenIcons } from 'assets/images/tokens';
 import { useBridgeOpener } from 'network/utils/hooks';
 
 export const MoreMenuButton = () => {
@@ -99,7 +99,7 @@ export const MoreMenuButton = () => {
         { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
         { text: 'Help', image: HelpIcon, onClick: toggleHelp },
         { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
-        { text: 'Bridge', image: ItemImages.initia, onClick: useBridgeOpener() },
+        { text: 'Bridge', image: TokenIcons.init, onClick: useBridgeOpener() },
         { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
       ]}
       scale={4.5}

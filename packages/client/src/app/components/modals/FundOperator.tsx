@@ -7,12 +7,16 @@ import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
-import { ActionButton, ModalWrapper } from 'app/components/library';
+import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useNetwork } from 'app/stores';
+import { useAccount, useNetwork, useTokens } from 'app/stores';
+import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
+import { useBridgeOpener } from 'network/utils/hooks';
 import { playFund } from 'utils/sounds';
+
+const IS_LOCAL = import.meta.env.MODE === 'puter';
 
 export const FundOperator: UIComponent = {
   id: 'FundOperator',
@@ -23,6 +27,8 @@ export const FundOperator: UIComponent = {
     const { actions, world } = network;
     const { account: kamiAccount } = useAccount();
     const { selectedAddress, apis } = useNetwork();
+    const openBridge = useBridgeOpener();
+    const ethBalance = useTokens((s) => s.eth.balance);
 
     const [isFunding, setIsFunding] = useState(true);
     const [amount, setAmount] = useState(GasConstants.Full);
@@ -102,6 +108,10 @@ export const FundOperator: UIComponent = {
       setAmount(Number(event.target.value));
     };
 
+    // check whether user has eth balance, skip check on local
+    const hasEth = () => {
+      return IS_LOCAL || ethBalance > 0;
+    };
     ///////////////
     // DISPLAY
 
@@ -179,16 +189,14 @@ export const FundOperator: UIComponent = {
             ></Input>
             <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
           </div>
-          <GasLink
-            key='gas'
-            href={`https://www.gas.zip/`}
-            target='_blank'
-            rel='noopener noreferrer'
-            linkColor='#d44c79'
-          >
-            Not enough gas? Get some here!
-          </GasLink>
-          <Column>{TxButton()}</Column>
+          {!hasEth() ? (
+            <Bridge>
+              <Text> Not enough gas. You need to bridge some ETH first</Text>
+              <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+            </Bridge>
+          ) : (
+            <Column>{TxButton()}</Column>
+          )}
         </Grid>
       </ModalWrapper>
     );
@@ -297,12 +305,14 @@ const WarnText = styled.div`
   background-color: #ffffff;
 `;
 
-const GasLink = styled.a<{ linkColor?: string }>`
-  color: ${({ linkColor }) => linkColor ?? '#0077cc'};
-  font-size: 0.8vw;
-  margin-bottom: 1vw;
-  text-decoration: underline;
-  &:hover {
-    text-decoration: none;
-  }
+const Bridge = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+`;
+
+const Text = styled.div`
+  font-size: 0.75vw;
+  margin: 0 0 2vw 0;
+  color: red;
 `;
