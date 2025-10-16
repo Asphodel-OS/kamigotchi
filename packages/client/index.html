@@ -11,10 +11,10 @@
         img-src * data:;
         object-src 'none';
         script-src 'report-sample' 'self' https://challenges.cloudflare.com wasm-eval;
-        style-src 'report-sample' 'self' 'unsafe-inline';
+        style-src 'report-sample' 'self' 'unsafe-inline' https://fonts.googleapis.com https://assets.initia.xyz/fonts/PilatWide.css;
         report-to https://664cf648a52bdea0f50de7ab.endpoint.csper.io/?v=0;
         base-uri 'self';
-        font-src 'self';
+        font-src 'self' https://fonts.gstatic.com https://assets.initia.xyz;
         manifest-src 'self';
         media-src 'self';
         worker-src 'self';
