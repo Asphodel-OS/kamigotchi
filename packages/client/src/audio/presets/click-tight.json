@@ -1,0 +1,9 @@
+{
+  "name": "click-tight",
+  "pedals": [
+    { "pedal": "gain", "params": { "level": 0.9 } },
+    { "pedal": "filter", "params": { "type": "highpass", "tone": 600 } },
+    { "pedal": "compressor", "params": { "tightness": 0.7, "makeup": 1.0 } },
+    { "pedal": "limiter", "params": { "ceilingDb": -0.6 } }
+  ]
+}

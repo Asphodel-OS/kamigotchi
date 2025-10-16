@@ -1,4 +1,4 @@
-import { Howler } from 'howler';
+import { audioManager } from 'audio/AudioManager';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
@@ -17,7 +17,8 @@ export const Volume = () => {
 
   useEffect(() => {
     setSettings({ ...settings, volume: { bgm: bgmVolume, fx: fxVolume } });
-    Howler.volume(bgmVolume);
+    audioManager.setBusVolume('bgm', bgmVolume);
+    audioManager.setBusVolume('fx', fxVolume);
   }, [bgmVolume, fxVolume]);
 
   const toggleVolume = (type: string) => {
@@ -45,74 +46,70 @@ export const Volume = () => {
     );
   };
 
-  const SoundEffectsRow = () => {
-    const icon = fxVolume == 0 ? TriggerIcons.soundOff : TriggerIcons.soundOn;
-    return (
-      <Row>
-        <Text style={{ flexGrow: 2 }}>Sounds</Text>
-        <RangeInput
-          type='range'
-          min='0'
-          max='1'
-          step='0.1'
-          value={fxVolume}
-          onChange={(e) => setFxVolume(e.target.value as unknown as number)}
-        />
-        <Icon src={icon} onClick={() => toggleVolume('fx')} />
-      </Row>
-    );
-  };
+  const SoundEffectsRow = () => (
+    <Row>
+      <Text style={{ flexGrow: 2 }}>Sound FX</Text>
+      <RangeInput
+        type='range'
+        min='0'
+        max='1'
+        step='0.1'
+        value={fxVolume}
+        onChange={(e) => setFxVolume(e.target.value as unknown as number)}
+      />
+      <Icon
+        src={fxVolume == 0 ? TriggerIcons.soundOff : TriggerIcons.soundOn}
+        onClick={() => toggleVolume('fx')}
+      />
+    </Row>
+  );
 
   return (
-    <Section>
-      <Header>Volume</Header>
-      <MusicRow />
-      <SoundEffectsRow />
-    </Section>
+    <Container>
+      <Section>
+        <Title>Volume</Title>
+        {MusicRow()}
+        {SoundEffectsRow()}
+      </Section>
+    </Container>
   );
 };
 
 const Section = styled.div`
   display: flex;
-  flex-flow: column nowrap;
-  padding: 0.6vw;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 16px;
 `;
 
-const Header = styled.div`
-  font-size: 1vw;
-  color: #333;
-  text-align: left;
-  font-family: Pixel;
-  padding-bottom: 0.5vw;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const Title = styled.div`
+  font-weight: 600;
+  font-size: 1.4rem;
+  margin-bottom: 4px;
 `;
 
 const Row = styled.div`
-  padding-left: 0.7vw;
-  padding-right: 0.7vw;
-  padding-bottom: 0.3vw;
-
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
+`;
+
+const Text = styled.div`
+  font-size: 1rem;
+`;
+
+const RangeInput = styled.input`
+  width: 180px;
 `;
 
 const Icon = styled.img`
-  width: 3vw;
-  height: 3vw;
-  margin: 0vw 1vw;
-  cursor: pointer;
-`;
-
-const Text = styled.p`
-  color: #333;
-  font-family: Pixel;
-  font-size: 0.8vw;
-  text-align: left;
-`;
-
-// how df do you style this thing
-const RangeInput = styled.input`
-  padding: 0;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 `;

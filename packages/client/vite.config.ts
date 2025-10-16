@@ -5,10 +5,14 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  root: path.resolve(__dirname, '.'),
   plugins: [dsv(), react()],
   assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.mp3', '**/*.png', '**/*.wav', '**/*.webp'],
   build: {
     assetsInlineLimit: 0,
+    rollupOptions: {
+      input: path.resolve(__dirname, 'index.html'),
+    },
   },
   resolve: {
     alias: {
@@ -16,6 +20,7 @@ export default defineConfig({
       src: path.resolve(__dirname, './src'),
       types: path.resolve(__dirname, './types'),
       app: path.resolve(__dirname, './src/app'),
+      audio: path.resolve(__dirname, './src/audio'),
       assets: path.resolve(__dirname, './src/assets'),
       cache: path.resolve(__dirname, './src/cache'),
       clients: path.resolve(__dirname, './src/clients'),
