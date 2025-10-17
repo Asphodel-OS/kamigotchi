@@ -99,13 +99,13 @@ export function itemsAPI(generateCallData: GenerateCallData, compiledCalls: stri
     index: number,
     usecase: string,
     bonusType: string,
-    endType: string,
+    terminator: string,
     duration: number,
     value: number
   ) {
     const callData = generateCallData(
       'system.item.registry',
-      [index, usecase, bonusType, endType, duration, value],
+      [index, usecase, bonusType, terminator, duration, value],
       'addAlloBonus',
       ['uint32', 'string', 'string', 'string', 'uint256', 'int256']
     );

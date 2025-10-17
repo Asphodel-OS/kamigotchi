@@ -155,6 +155,13 @@ export const getState = (comps: Components, entity: EntityIndex): string => {
   return result ?? '';
 };
 
+export const getSubtype = (comps: Components, entity: EntityIndex, debug = false): string => {
+  const { Subtype } = comps;
+  const result = getComponentValue(Subtype, entity)?.value;
+  if (debug && !result) console.warn('getSubType(): undefined for entity', entity);
+  return result ?? '';
+};
+
 export const getTax = (comps: Components, entity: EntityIndex): number => {
   const { Tax } = comps;
   const result = getComponentValue(Tax, entity)?.value;
@@ -278,6 +285,13 @@ export const getTokenAddress = (comps: Components, entity: EntityIndex): Address
 ////////////////
 // IDS
 
+export const getAnchorID = (comps: Components, entity: EntityIndex): EntityID => {
+  const { AnchorID } = comps;
+  const result = getComponentValue(AnchorID, entity)?.value;
+  if (result === undefined) console.warn('getAnchorID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
 export const getHolderID = (comps: Components, entity: EntityIndex): EntityID => {
   const { HolderID } = comps;
   const result = getComponentValue(HolderID, entity)?.value;
@@ -292,21 +306,6 @@ export const getKamiOwnerID = (comps: Components, entity: EntityIndex): EntityID
   return formatEntityID(result ?? '');
 };
 
-export const getSourceID = (comps: Components, entity: EntityIndex): EntityID => {
-  const { SourceID } = comps;
-  const result = getComponentValue(SourceID, entity)?.value;
-  if (result === undefined) console.warn('getSourceID(): undefined for entity', entity);
-  return formatEntityID(result ?? '');
-};
-
-export const getTargetID = (comps: Components, entity: EntityIndex, debug = true): EntityID => {
-  const { TargetID } = comps;
-  const result = getComponentValue(TargetID, entity)?.value;
-  if (debug && result === undefined) console.warn('getTargetID(): undefined for entity', entity);
-  const cleaned = result ? formatEntityID(result) : ('' as EntityID);
-  return cleaned;
-};
-
 export const getOwnsTradeID = (comps: Components, entity: EntityIndex): EntityID => {
   const { OwnsTradeID } = comps;
   const result = getComponentValue(OwnsTradeID, entity)?.value;
@@ -318,6 +317,20 @@ export const getOwnsWithdwalID = (comps: Components, entity: EntityIndex): Entit
   const { OwnsWithdrawalID } = comps;
   const result = getComponentValue(OwnsWithdrawalID, entity)?.value;
   if (result === undefined) console.warn('getOwnsWithdwalID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
+export const getSourceID = (comps: Components, entity: EntityIndex): EntityID => {
+  const { SourceID } = comps;
+  const result = getComponentValue(SourceID, entity)?.value;
+  if (result === undefined) console.warn('getSourceID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
+export const getTargetID = (comps: Components, entity: EntityIndex, debug = true): EntityID => {
+  const { TargetID } = comps;
+  const result = getComponentValue(TargetID, entity)?.value;
+  if (debug && result === undefined) console.warn('getTargetID(): undefined for entity', entity);
   return formatEntityID(result ?? '');
 };
 
