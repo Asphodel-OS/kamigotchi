@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { calcCooldownRequirement } from 'app/cache/kami';
+import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { makeCRTLayer } from 'app/components/shaders/CRTShader';
 import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
@@ -14,6 +14,45 @@ const getKamiCacheKey = (k: Kami) =>
     ? (k as any).index
     : ((k as any).id ?? `name:${(k as any).name || 'unknown'}`);
 
+export const Cooldown = ({ kami }: { kami: Kami }) => {
+  const [lastTick, setLastTick] = useState(Date.now());
+  const [current, setCurrent] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  // ticking and setting total cooldown on mount
+  useEffect(() => {
+    const total = calcCooldownRequirement(kami);
+    setTotal(total);
+
+    const refreshClock = () => setLastTick(Date.now());
+    const timerId = setInterval(refreshClock, 1000);
+    return () => clearInterval(timerId);
+  }, []);
+
+  // update the total of the cooldown meter whenever the kami changes
+  useEffect(() => {
+    const total = calcCooldownRequirement(kami);
+    setTotal(total);
+  }, [kami.bonuses?.general.cooldown]);
+
+  // const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
+
+  // update the remaining time on the cooldown
+  useEffect(() => {
+    const currentCooldown = calcCooldown(kami);
+    setCurrent(currentCooldown);
+  }, [lastTick, kami]);
+
+  return (
+    <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
+      <Countdown total={total} current={current} />
+    </TextTooltip>
+  );
+};
+
+////////////////
+// UNUSED ATM
+
 const calcRemainingFromCooldownOrCache = (k: Kami): number => {
   const now = Date.now() / 1000;
   const key = getKamiCacheKey(k);
@@ -26,35 +65,6 @@ const calcRemainingFromCooldownOrCache = (k: Kami): number => {
     else end = now;
   }
   return Math.max(0, end - now);
-};
-
-export const Cooldown = ({ kami }: { kami: Kami }) => {
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-  const [current, setCurrent] = useState(0);
-  const [total, setTotal] = useState(0);
-
-  // ticking and setting total cooldown
-  useEffect(() => {
-    const total = calcCooldownRequirement(kami);
-    setTotal(total);
-
-    const refreshClock = () => setLastRefresh(Date.now());
-    const timerId = setInterval(refreshClock, 1000);
-    return () => clearInterval(timerId);
-  }, [kami]);
-
-  // const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
-
-  // // update the remaining time on the cooldown
-  // useEffect(() => {
-  //   setCurrent(calcRemainingForVisuals());
-  // }, [lastRefresh, total, kami]);
-
-  return (
-    <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
-      <Countdown total={total} current={current} />
-    </TextTooltip>
-  );
 };
 
 // Hook to provide image filter and foreground shaders for cooldown visuals

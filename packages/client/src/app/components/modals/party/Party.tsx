@@ -47,11 +47,13 @@ export const PartyModal: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
+    /////////////////
+    // PREPARATION
+
     const { network, data, display, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const { debug } = useAccount.getState();
-      const { nodeIndex } = useSelected.getState();
       const accountEntity = queryAccountFromEmbedded(network);
       const kamiRefreshOptions = {
         live: 0,
@@ -90,7 +92,8 @@ export const PartyModal: UIComponent = {
           getNode: (index: number) => getNodeByIndex(world, components, index),
           getWorldKamis: () =>
             getAccountKamis(world, components, accountEntity, kamiRefreshOptions, debug.cache),
-          passesNodeReqs: (kami: Kami) => _passesNodeReqs(world, components, nodeIndex, kami),
+          passesNodeReqs: (node: Node, kami: Kami) =>
+            _passesNodeReqs(world, components, node.index, kami), // TODO: use a cache function for this
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
           queryAllAccounts: () => _queryAllAccounts(components),
         },
@@ -103,12 +106,13 @@ export const PartyModal: UIComponent = {
     const { actions, api } = network;
     const { accountEntity, kamiNFTAddress } = data;
     const { getNode, getAccount, queryAllAccounts } = utils;
-    const { getKami, getWorldKamis, queryKamiByIndex } = utils;
+    const { getKami, getWorldKamis, queryKamiByIndex, passesNodeReqs } = utils;
 
-    const partyModalVisible = useVisibility((s) => s.modals.party);
+    const { writeContract } = useWriteContract();
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const ownerAPIs = useNetwork((s) => s.apis);
-    const { writeContract } = useWriteContract();
+    const nodeIndex = useSelected((s) => s.nodeIndex);
+    const isModalOpen = useVisibility((s) => s.modals.party);
 
     const [account, setAccount] = useState<Account>(NullAccount);
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -153,14 +157,15 @@ export const PartyModal: UIComponent = {
 
     // update account and kamis every tick or if the connnected account changes
     useEffect(() => {
-      if (!partyModalVisible) return;
+      if (!isModalOpen) return;
 
       // update the connected account if it changes
       if (accountEntity != account.entity) {
-        setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
+        const account = getAccount(accountEntity, { live: 0, inventory: 2 });
+        setAccount(account);
       }
 
-      // update the list of the
+      // update the list of kamis in the world
       setKamis(getWorldKamis());
 
       // check if we need to update the list of accounts
@@ -171,13 +176,20 @@ export const PartyModal: UIComponent = {
         const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
         setAccounts(accountsSorted);
       }
-    }, [partyModalVisible, accountEntity, tick]);
+    }, [isModalOpen, accountEntity, tick]);
 
     // update node if the account or room changes
     useEffect(() => {
       const roomIndex = account.roomIndex;
-      setNode(getNode(roomIndex));
+      const node = getNode(roomIndex);
+      setNode(node);
     }, [accountEntity, account.roomIndex]);
+
+    // update the node if the selected node changes
+    useEffect(() => {
+      const node = getNode(nodeIndex);
+      setNode(node);
+    }, [nodeIndex]);
 
     // update list of wild kamis whenever that changes
     // TOTO: properly typecast the result of the abi call
@@ -288,7 +300,7 @@ export const PartyModal: UIComponent = {
           controls={{ sort, setSort, view, setView }}
           data={{ kamis, wildKamis }}
           state={{ displayedKamis, setDisplayedKamis, tick }}
-          utils={utils}
+          utils={{ passesNodeReqs: (kami: Kami) => passesNodeReqs(node, kami) }}
         />
         <KamiList
           actions={{
