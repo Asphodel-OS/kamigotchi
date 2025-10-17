@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
-import { ActionButton, Overlay, TextTooltip } from 'app/components/library';
+import { ActionButton, Overlay } from 'app/components/library';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
@@ -76,14 +76,6 @@ export const Display = ({
     return tab === 'GACHA' || tab === 'REROLL';
   };
 
-  const getButtonTooltip = () => {
-    let tooltip: string[] = [];
-    if (tab === 'REROLL') {
-      tooltip = ['Onyx features are temporarily disabled', 'in anticipation of things to come.'];
-    }
-    return tooltip;
-  };
-
   return (
     <Container>
       <Pool
@@ -107,11 +99,7 @@ export const Display = ({
         isVisible={tab === 'REROLL'}
       />
       <Overlay top={0.9} right={0.6}>
-        {isButtonVisible() && (
-          <TextTooltip text={getButtonTooltip()}>
-            <ActionButton text={getButtonText()} onClick={toggleMode} />
-          </TextTooltip>
-        )}
+        {isButtonVisible() && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>
     </Container>
   );
