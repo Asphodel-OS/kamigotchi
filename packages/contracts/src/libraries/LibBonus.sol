@@ -3,8 +3,7 @@ pragma solidity >=0.8.28;
 
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IComponent } from "solecs/interfaces/IComponent.sol";
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID, getCompByID } from "solecs/utils.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
@@ -84,8 +83,11 @@ library LibBonus {
     ValueComponent(getAddrByID(components, ValueCompID)).set(id, uint256(value));
 
     // adding if temporary
-    if (!endAnchor.eq(""))
+    if (!endAnchor.eq("")) {
       SubtypeComponent(getAddrByID(components, SubtypeCompID)).set(id, endAnchor);
+    }
+
+    // NOTE: maybe this should be TimeEnd
     if (duration > 0) TimeComponent(getAddrByID(components, TimeCompID)).set(id, duration);
   }
 

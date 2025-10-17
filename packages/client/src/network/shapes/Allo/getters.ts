@@ -4,8 +4,7 @@ import { Components } from 'network/';
 import { Allo, getAllo } from '.';
 import { queryChildrenOf } from '../utils';
 
-export const getAllosOf = (world: World, components: Components, anchorID: EntityID): Allo[] => {
-  return queryChildrenOf(components, anchorID).map((entity: EntityIndex) =>
-    getAllo(world, components, entity)
-  );
+export const getAllosOf = (world: World, comps: Components, anchorID: EntityID): Allo[] => {
+  const childEntities = queryChildrenOf(comps, anchorID);
+  return childEntities.map((entity: EntityIndex) => getAllo(world, comps, entity));
 };
