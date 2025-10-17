@@ -94,14 +94,22 @@ export async function createReconnecting(config: IComputedValue<ProviderConfig>)
     reaction(
       () => providers.get(),
       (currentProviders) => {
-        if (currentProviders?.ws?.websocket) {
-          currentProviders.ws.websocket.onerror = initProviders;
-          currentProviders.ws.on('close', () => {
+        const ws = currentProviders?.ws?.websocket as WebSocket;
+        if (ws) {
+          ws.onerror = () => {
+            initProviders();
+          };
+          ws.onclose = () => {
             // Only reconnect if closed unexpectedly
-            if (connected.get() === ConnectionState.CONNECTED) {
-              initProviders();
+            try {
+              if (connected.get() === ConnectionState.CONNECTED) {
+                console.log(`Reconnecting websocket`);
+                initProviders();
+              }
+            } catch (e) {
+              console.log(`Error closing websocket: ${e}`);
             }
-          });
+          };
         }
       }
     )
