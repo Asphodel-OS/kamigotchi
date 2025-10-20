@@ -83,8 +83,8 @@ export function useBridgeOpener() {
   const bridgeTransferDetails = {
     srcChainId: 'interwoven-1',
     srcDenom: 'move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954',
-    dstChainId: 'interwoven-1',
-    dstDenom: 'ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4',
+    dstChainId: 'yominet-1',
+    dstDenom: 'evm/E1Ff7038eAAAF027031688E1535a055B2Bac2546',
     quantity: '0',
   };
 
