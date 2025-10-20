@@ -140,24 +140,25 @@ export const GasHarasser: UIComponent = {
             Address: {abbreviateAddress(account.operatorAddress)}
           </Description>
         </TextTooltip>
-        <Row>
-          <Input
-            type='number'
-            value={value}
-            step={fullGas / 10}
-            onChange={(e) => handleChange(e)}
-            onKeyDown={(e) => catchKeys(e)}
-            style={{ pointerEvents: 'auto' }}
-          />
-          {!hasEth() ? (
-            <Bridge>
-              <Text> Not enough gas. You need to bridge some ETH first.</Text>
-              <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
-            </Bridge>
-          ) : (
+        {!hasEth() ? (
+          <Bridge>
+            <Text> Not enough gas. You need to bridge some ETH first.</Text>
+            <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+          </Bridge>
+        ) : (
+          <Row>
+            <Input
+              type='number'
+              value={value}
+              step={fullGas / 10}
+              onChange={(e) => handleChange(e)}
+              onKeyDown={(e) => catchKeys(e)}
+              style={{ pointerEvents: 'auto' }}
+            />
+
             <ActionButton text='feed' onClick={feed} />
-          )}
-        </Row>
+          </Row>
+        )}
       </ValidatorWrapper>
     );
   },
@@ -198,19 +199,11 @@ const Input = styled.input`
   justify-content: center;
 `;
 
-const GasLink = styled.a<{ linkColor?: string }>`
-  color: ${({ linkColor }) => linkColor ?? '#0077cc'};
-  font-size: 0.8vw;
-  text-decoration: underline;
-  &:hover {
-    text-decoration: none;
-  }
-`;
-
 const Bridge = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+  margin-top: 1vw;
 `;
 
 const Text = styled.div`
