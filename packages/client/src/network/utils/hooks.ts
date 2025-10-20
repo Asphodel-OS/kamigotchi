@@ -81,8 +81,8 @@ export function useBridgeOpener() {
   const { openBridge } = useInterwovenKit();
 
   const bridgeTransferDetails = {
-    srcChainId: 'interwoven-1',
-    srcDenom: 'move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954',
+    srcChainId: '1',
+    srcDenom: 'ethereum-native',
     dstChainId: 'yominet-1',
     dstDenom: 'evm/E1Ff7038eAAAF027031688E1535a055B2Bac2546',
     quantity: '0',
