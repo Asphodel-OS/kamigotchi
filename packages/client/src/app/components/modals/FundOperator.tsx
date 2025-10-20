@@ -10,13 +10,12 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useNetwork, useTokens } from 'app/stores';
+import { useAccount, useNetwork } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { useBridgeOpener } from 'network/utils/hooks';
+import { hasEth } from 'utils/numbers/balances';
 import { playFund } from 'utils/sounds';
-
-const IS_LOCAL = import.meta.env.MODE === 'puter';
 
 export const FundOperator: UIComponent = {
   id: 'FundOperator',
@@ -28,7 +27,6 @@ export const FundOperator: UIComponent = {
     const { account: kamiAccount } = useAccount();
     const { selectedAddress, apis } = useNetwork();
     const openBridge = useBridgeOpener();
-    const ethBalance = useTokens((s) => s.eth.balance);
 
     const [isFunding, setIsFunding] = useState(true);
     const [amount, setAmount] = useState(GasConstants.Full);
@@ -108,10 +106,6 @@ export const FundOperator: UIComponent = {
       setAmount(Number(event.target.value));
     };
 
-    // check whether user has eth balance, skip check on local
-    const hasEth = () => {
-      return IS_LOCAL || ethBalance > 0;
-    };
     ///////////////
     // DISPLAY
 

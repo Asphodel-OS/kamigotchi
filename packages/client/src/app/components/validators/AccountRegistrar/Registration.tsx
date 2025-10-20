@@ -4,17 +4,15 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, IconButton, TextTooltip } from 'app/components/library';
-import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
 import { TokenIcons } from 'assets/images/tokens';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
+import { hasEth } from 'utils/numbers/balances';
 import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './components';
 import { Section } from './components/shared';
-
-const IS_LOCAL = import.meta.env.MODE === 'puter';
 
 export const Registration = ({
   address,
@@ -34,7 +32,6 @@ export const Registration = ({
     waitForActionCompletion: (action: EntityID) => Promise<void>;
   };
 }) => {
-  const ethBalance = useTokens((s) => s.eth.balance);
   const openBridge = useBridgeOpener();
 
   const [name, setName] = useState('');
@@ -48,11 +45,6 @@ export const Registration = ({
 
   const isOperaterTaken = (address: string) => {
     return OperatorCache.has(address);
-  };
-
-  // check whether user has eth balance, skip check on local
-  const hasEth = () => {
-    return IS_LOCAL || ethBalance > 0;
   };
 
   /////////////////

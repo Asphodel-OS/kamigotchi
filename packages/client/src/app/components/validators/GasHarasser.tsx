@@ -8,16 +8,15 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import { ActionButton, IconButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useNetwork, useTokens, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
 import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
 import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
+import { hasEth } from 'utils/numbers/balances';
 import { playFund, playSuccess } from 'utils/sounds';
-
-const IS_LOCAL = import.meta.env.MODE === 'puter';
 
 export const GasHarasser: UIComponent = {
   id: 'GasHarasser',
@@ -30,7 +29,6 @@ export const GasHarasser: UIComponent = {
     const { selectedAddress, apis, validations: networkValidations } = useNetwork();
     const { validators, setValidators, toggleModals } = useVisibility();
     const openBridge = useBridgeOpener();
-    const ethBalance = useTokens((s) => s.eth.balance);
 
     const fullGas = GasConstants.Full; // js floating points are retarded
     const [value, setValue] = useState(fullGas);
@@ -84,11 +82,6 @@ export const GasHarasser: UIComponent = {
     // abstracted out for easy modification and readability. keyword: 'Enough'
     const hasEnoughGas = (value: bigint) => {
       return Number(formatUnits(value, GasExponent)) > GasConstants.Warning;
-    };
-
-    // check whether user has eth balance, skip check on local
-    const hasEth = () => {
-      return IS_LOCAL || ethBalance > 0;
     };
 
     /////////////////
