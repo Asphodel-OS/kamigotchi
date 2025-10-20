@@ -191,7 +191,7 @@ export const FundOperator: UIComponent = {
           </div>
           {!hasEth() ? (
             <Bridge>
-              <Text> Not enough gas. You need to bridge some ETH first</Text>
+              <Text> Not enough gas. You need to bridge some ETH first.</Text>
               <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
             </Bridge>
           ) : (

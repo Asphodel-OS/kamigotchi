@@ -5,15 +5,19 @@ import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
-import { ActionButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
+import { ActionButton, IconButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useNetwork, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useTokens, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
+import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
+import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
 import { playFund, playSuccess } from 'utils/sounds';
+
+const IS_LOCAL = import.meta.env.MODE === 'puter';
 
 export const GasHarasser: UIComponent = {
   id: 'GasHarasser',
@@ -25,6 +29,8 @@ export const GasHarasser: UIComponent = {
     const { account, validations, setValidations } = useAccount();
     const { selectedAddress, apis, validations: networkValidations } = useNetwork();
     const { validators, setValidators, toggleModals } = useVisibility();
+    const openBridge = useBridgeOpener();
+    const ethBalance = useTokens((s) => s.eth.balance);
 
     const fullGas = GasConstants.Full; // js floating points are retarded
     const [value, setValue] = useState(fullGas);
@@ -80,6 +86,11 @@ export const GasHarasser: UIComponent = {
       return Number(formatUnits(value, GasExponent)) > GasConstants.Warning;
     };
 
+    // check whether user has eth balance, skip check on local
+    const hasEth = () => {
+      return IS_LOCAL || ethBalance > 0;
+    };
+
     /////////////////
     // ACTION
 
@@ -131,15 +142,6 @@ export const GasHarasser: UIComponent = {
         title='Embedded wallet is empty!'
         errorPrimary={`pls feed me pls a crumb of ETH ._.`}
       >
-        <GasLink
-          key='gas'
-          href={`https://www.gas.zip/`}
-          target='_blank'
-          rel='noopener noreferrer'
-          linkColor='#d44c79'
-        >
-          Not enough gas? Get some here!
-        </GasLink>
         <TextTooltip text={[account.operatorAddress, '(click to copy)']}>
           <Description onClick={() => copy(account.operatorAddress)}>
             Address: {abbreviateAddress(account.operatorAddress)}
@@ -154,7 +156,14 @@ export const GasHarasser: UIComponent = {
             onKeyDown={(e) => catchKeys(e)}
             style={{ pointerEvents: 'auto' }}
           />
-          <ActionButton text='feed' onClick={feed} />
+          {!hasEth() ? (
+            <Bridge>
+              <Text> Not enough gas. You need to bridge some ETH first.</Text>
+              <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+            </Bridge>
+          ) : (
+            <ActionButton text='feed' onClick={feed} />
+          )}
         </Row>
       </ValidatorWrapper>
     );
@@ -203,4 +212,16 @@ const GasLink = styled.a<{ linkColor?: string }>`
   &:hover {
     text-decoration: none;
   }
+`;
+
+const Bridge = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+`;
+
+const Text = styled.div`
+  font-size: 0.75vw;
+  margin: 0 0 2vw 0;
+  color: red;
 `;
