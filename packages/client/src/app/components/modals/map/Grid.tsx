@@ -335,17 +335,13 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundCo
     ` &:hover {
       opacity: 0.9;
       cursor: pointer;
-      border-left-color: rgba(0, 0, 0, 1);
-      border-bottom-color: rgba(0, 0, 0, 1);
       background-color: rgba(255, 255, 255, 0.3);
     }
   `}
   ${({ isHighlighted }) =>
     isHighlighted &&
-    `opacity: 0.9;
-    border-left-color: rgba(0, 0, 0, 1);
-    border-bottom-color: rgba(0, 0, 0, 1);
-  `}
+    `opacity: 0.9;`
+  }
 `;
 
 const DropdownWrapper = styled.div`

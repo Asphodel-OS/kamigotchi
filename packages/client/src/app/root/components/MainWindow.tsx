@@ -43,7 +43,9 @@ const UIComponentRenderer = ({
 
   const state = useStream(req$);
 
-  if (!state) return null;
+  // Only prevent rendering when stream hasn't emitted yet, not when state is valid but falsy
+  // This allows components to render states like { open: false } or 0
+  if (state === undefined) return null;
 
   return (
     <div

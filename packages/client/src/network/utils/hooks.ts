@@ -3,14 +3,18 @@ import { ObservableSet } from "mobx";
 import { useEffect, useMemo, useState } from "react";
 import { filter, Observable } from "rxjs";
 
-/** @deprecated Use hooks exported from @mud-classic/react package instead. */
+/**
+ * @deprecated Use hooks exported from @mud-classic/react package instead.
+ * Subscribes to an Observable stream and returns its current value.
+ * Automatically resubscribes when the stream reference changes.
+ */
 export function useStream<T>(stream: Observable<T>, defaultValue?: T) {
   const [state, setState] = useState<T | undefined>(defaultValue);
 
   useEffect(() => {
     const sub = stream.subscribe((newState) => setState(newState));
     return () => sub?.unsubscribe();
-  }, []);
+  }, [stream]);
 
   return state;
 }

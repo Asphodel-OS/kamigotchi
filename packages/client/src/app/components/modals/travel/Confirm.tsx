@@ -3,11 +3,12 @@ import styled from 'styled-components';
 
 import { calcCurrentStamina } from 'app/cache/account/calcs';
 import { ActionButton, TextTooltip } from 'app/components/library';
+import { getRoomByIndex } from 'app/cache/room';
 import { rooms } from 'constants/rooms';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';
 import { passesConditions } from 'network/shapes/Conditional/functions';
-import { findPathAndCost, getRoomByIndex } from 'network/shapes/Room';
+import { findPathAndCost } from 'network/shapes/Room';
 
 export const TravelConfirm = ({
   network,
@@ -96,23 +97,43 @@ export const TravelConfirm = ({
   const steps = useMemo(() => (path.length > 1 ? path.slice(0, -1) : []), [path]);
   const perRow = Math.min(6, Math.max(3, steps.length));
   const rows = Math.max(1, Math.ceil(steps.length / perRow));
-  let thumbSize = 34 / perRow;
-  if (rows > 1) thumbSize = Math.min(thumbSize, 24 / perRow);
-  if (rows > 2) thumbSize = Math.min(thumbSize, 20 / perRow);
-  if (rows > 1) thumbSize *= 0.94;
-  thumbSize = Math.max(2.4, Math.min(5.4, thumbSize));
+
+  // Calculate responsive thumbnail size based on layout constraints
+  // Ensures consistent readability regardless of path complexity
+  const THUMBNAIL_SIZES = {
+    singleRow: 34,
+    twoRows: 24,
+    multiRow: 20,
+    min: 2.4,
+    max: 5.4,
+    scaleDown: 0.94,
+  } as const;
+
+  const getThumbnailSize = (rows: number, perRow: number): number => {
+    const baseSize = THUMBNAIL_SIZES.singleRow / perRow;
+
+    if (rows === 1) return Math.min(THUMBNAIL_SIZES.max, Math.max(THUMBNAIL_SIZES.min, baseSize));
+
+    const maxSizeForRows = rows === 2
+      ? THUMBNAIL_SIZES.twoRows / perRow
+      : THUMBNAIL_SIZES.multiRow / perRow;
+
+    const sizeForLayout = Math.min(baseSize, maxSizeForRows);
+    const finalSize = rows > 1 ? sizeForLayout * THUMBNAIL_SIZES.scaleDown : sizeForLayout;
+
+    return Math.min(THUMBNAIL_SIZES.max, Math.max(THUMBNAIL_SIZES.min, finalSize));
+  };
+
+  const thumbSize = getThumbnailSize(rows, perRow);
 
   const currentStamina = useMemo(
     () => calcCurrentStamina(account),
     [account.stamina.sync, account.time.action, account.config]
   );
-  const staminaRemaining = useMemo(
-    () => Math.max(0, currentStamina - staminaCost),
-    [currentStamina, staminaCost]
-  );
+  const staminaRemaining = Math.max(0, currentStamina - staminaCost);
 
-  // Early-return guard AFTER hooks have been declared to satisfy React's rules.
-  // If there is no valid path, effect above will also trigger onClose.
+  // Prevent rendering when no valid travel path exists to avoid showing confusing empty state.
+  // The useEffect above handles cleanup when path becomes invalid.
   if (path.length === 0) return null;
 
   return (
@@ -183,22 +204,26 @@ const Container = styled.div`
   padding: 0.6vw;
   color: black;
 `;
+
 const Body = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.8vw;
   align-items: start;
 `;
+
 const Left = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.6vw;
 `;
+
 const Right = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
 `;
+
 const RightStack = styled.div`
   width: min(100%, 22vw);
   margin-left: auto;
@@ -207,17 +232,21 @@ const RightStack = styled.div`
   flex-direction: column;
   gap: 0.6vw;
 `;
+
 const RightActions = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
+
 const TitleRow = styled.div`
   font-size: 1.3vw;
   font-weight: 700;
 `;
+
 const TitlePrefix = styled.span`
   color: inherit;
 `;
+
 const RoomName = styled.span`
   text-decoration: underline;
   color: #8fc7ff;
@@ -227,12 +256,14 @@ const StatsCard = styled.div`
   flex-direction: column;
   gap: 0.4vw;
 `;
+
 const StatsRow = styled.div`
   display: flex;
   gap: 0.6vw;
   align-items: center;
   flex-wrap: wrap;
 `;
+
 const Pill = styled.div`
   display: flex;
   flex-direction: column;
@@ -240,15 +271,17 @@ const Pill = styled.div`
   border: 0.1vw solid black;
   border-radius: 0.4vw;
 `;
+
 const PillLabel = styled.div`
   font-size: 0.8vw;
   opacity: 0.7;
 `;
+
 const PillValue = styled.div`
   font-size: 1.1vw;
   font-weight: 700;
 `;
-// removed inline stamina note; now shown via tooltip on the Stamina pill
+
 const Divider = styled.div`
   height: 0.12vw;
   background: rgba(0, 0, 0, 0.25);
@@ -267,6 +300,7 @@ const PreviewMask = styled.div<{ $ratio?: number }>`
   position: relative;
   margin: 0 auto;
 `;
+
 const Preview = styled.div<{ $src: string }>`
   width: 100%;
   height: 100%;
@@ -275,6 +309,7 @@ const Preview = styled.div<{ $src: string }>`
   background-position: center;
   background-repeat: no-repeat;
 `;
+
 const PreviewPlaceholder = styled.div`
   width: 100%;
   height: 100%;
@@ -289,11 +324,13 @@ const ThumbRow = styled.div<{ $ts: number }>`
   gap: 0.5vw;
   align-items: center;
 `;
+
 const StepGroup = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 0.3vw;
 `;
+
 const Thumb = styled.div<{ $src: string }>`
   width: var(--ts);
   height: var(--ts);
@@ -303,14 +340,18 @@ const Thumb = styled.div<{ $src: string }>`
   border: 0.08vw solid black;
   border-radius: 0.2vw;
 `;
+
 const ThumbPlaceholder = styled.div`
   width: var(--ts);
   height: var(--ts);
   border: 0.08vw dashed black;
   border-radius: 0.2vw;
 `;
-const ArrowSmall = styled.div``;
+
+const ArrowSmall = styled.div`
+  font-size: 1.2vw;
+`;
+
 const ArrowBig = styled.div`
   font-size: 1.6vw;
 `;
-// Footer removed; actions are placed inline under the preview
