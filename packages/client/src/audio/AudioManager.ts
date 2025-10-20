@@ -258,21 +258,18 @@ export class AudioManager {
   private async getOrLoadBuffer(src: string): Promise<AudioBuffer> {
     if (this.buffers.has(src)) return this.buffers.get(src) as AudioBuffer;
     const url = this.resolveAssetUrl(src);
-    const arrayBuffer = await this.fetchArrayBuffer(url);
-    const audioBuffer = await this.context.decodeAudioData(arrayBuffer.slice(0));
-    this.buffers.set(src, audioBuffer);
-    return audioBuffer;
-  }
-
-  private async fetchArrayBuffer(url: string): Promise<ArrayBuffer> {
-    // Use THREE.AudioLoader for better caching; fallback to fetch
     try {
-      const data = await this.loader.loadAsync(url);
-      // loader returns ArrayBuffer
-      return data as unknown as ArrayBuffer;
+      // THREE.AudioLoader.loadAsync returns a decoded AudioBuffer
+      const audioBuffer = (await this.loader.loadAsync(url)) as unknown as AudioBuffer;
+      this.buffers.set(src, audioBuffer);
+      return audioBuffer;
     } catch {
+      // Fallback: fetch and decode via AudioContext
       const res = await fetch(url);
-      return await res.arrayBuffer();
+      const arrayBuffer = await res.arrayBuffer();
+      const audioBuffer = await this.context.decodeAudioData(arrayBuffer);
+      this.buffers.set(src, audioBuffer);
+      return audioBuffer;
     }
   }
 
@@ -350,10 +347,10 @@ export class AudioManager {
         const mix = this.clamp01(p?.mix ?? 0.2);
         const conv = this.context.createConvolver();
         if (p?.irUrl) {
-          // fire and forget
-          this.fetchArrayBuffer(this.resolveAssetUrl(p.irUrl))
-            .then((buf) => this.context.decodeAudioData(buf.slice(0)))
-            .then((ab) => (conv.buffer = ab))
+          // fire and forget: use AudioLoader to get an AudioBuffer directly
+          this.loader
+            .loadAsync(this.resolveAssetUrl(p.irUrl))
+            .then((ab) => (conv.buffer = ab as unknown as AudioBuffer))
             .catch(() => void 0);
         }
         const dryGain = this.context.createGain();
