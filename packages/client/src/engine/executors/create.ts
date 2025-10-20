@@ -11,6 +11,7 @@ import { Contract, InterfaceAbi, Provider, Signer } from 'ethers';
 import { observable, runInAction } from 'mobx';
 
 import { createTxQueue } from 'engine/queue';
+import { formatEntityID } from 'engine/utils';
 import { deferred } from 'utils/async';
 import { Network } from './network';
 
@@ -35,7 +36,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   const systemContracts = observable.box({} as T);
   const systemIdPreimages: { [key: string]: string } = Object.keys(interfaces).reduce(
     (acc, curr) => {
-      return { ...acc, [keccak256(curr)]: curr };
+      return { ...acc, [formatEntityID(keccak256(curr))]: curr };
     },
     {}
   );
@@ -45,7 +46,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
     const [resolve, , promise] = deferred<void>();
     runInAction(() => {
       systemContracts.set({ ...systemContracts.get(), [system.id]: system.contract });
-      systemIdPreimages[keccak256(system.id)] = system.id;
+      systemIdPreimages[formatEntityID(keccak256(system.id))] = system.id;
       resolve();
     });
 
