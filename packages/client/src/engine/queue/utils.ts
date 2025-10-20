@@ -76,7 +76,7 @@ export function shouldIncNonce(error: any) {
 
 export function shouldResetNonce(error: any) {
   const isExpirationError = error?.code === 'NONCE_EXPIRED';
-  const isRepeatError = error?.reason?.includes('account sequence mismatch');
+  const isRepeatError = error?.message?.includes('account sequence');
   return isExpirationError || isRepeatError;
 }
 
