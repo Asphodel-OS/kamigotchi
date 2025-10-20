@@ -94,22 +94,35 @@ export async function createReconnecting(config: IComputedValue<ProviderConfig>)
     reaction(
       () => providers.get(),
       (currentProviders) => {
-        const ws = currentProviders?.ws?.websocket as WebSocket;
-        if (ws) {
-          ws.onerror = () => {
+        const wsAny = currentProviders?.ws?.websocket as any;
+        if (!wsAny) return;
+
+        const onError = () => {
+          initProviders();
+        };
+        const onClose = () => {
+          if (connected.get() === ConnectionState.CONNECTED) {
+            console.debug('Reconnecting websocket');
             initProviders();
-          };
-          ws.onclose = () => {
-            // Only reconnect if closed unexpectedly
-            try {
-              if (connected.get() === ConnectionState.CONNECTED) {
-                console.log(`Reconnecting websocket`);
-                initProviders();
-              }
-            } catch (e) {
-              console.log(`Error closing websocket: ${e}`);
-            }
-          };
+          }
+        };
+
+        if (typeof wsAny.addEventListener === 'function') {
+          // Browser WebSocket
+          wsAny.addEventListener('error', onError, { once: true });
+          wsAny.addEventListener('close', onClose, { once: true });
+        } else if (typeof wsAny.once === 'function') {
+          // Node "ws" best-effort
+          wsAny.once('error', onError);
+          wsAny.once('close', onClose);
+        } else if (typeof wsAny.on === 'function') {
+          // Fallback additive
+          wsAny.on('error', onError);
+          wsAny.on('close', onClose);
+        } else {
+          // Last resort: property assignment
+          wsAny.onerror = onError;
+          wsAny.onclose = onClose;
         }
       }
     )
