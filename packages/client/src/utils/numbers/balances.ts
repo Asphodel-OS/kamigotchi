@@ -15,7 +15,7 @@ export const round = (num: number, decimals: number) => {
 // check whether user has eth balance, skip check on local
 const IS_LOCAL = import.meta.env.MODE === 'puter';
 
-export const hasEth = () => {
+export const useHasEth = () => {
   const ethBalance = useTokens((s) => s.eth.balance);
   return IS_LOCAL || ethBalance > 0;
 };

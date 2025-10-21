@@ -15,7 +15,7 @@ import { GasConstants, GasExponent } from 'constants/gas';
 import { waitForActionCompletion } from 'network/utils';
 import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
-import { hasEth } from 'utils/numbers/balances';
+import { useHasEth } from 'utils/numbers/balances';
 import { playFund, playSuccess } from 'utils/sounds';
 
 export const GasHarasser: UIComponent = {
@@ -140,7 +140,7 @@ export const GasHarasser: UIComponent = {
             Address: {abbreviateAddress(account.operatorAddress)}
           </Description>
         </TextTooltip>
-        {!hasEth() ? (
+        {!useHasEth() ? (
           <Bridge>
             <Text> Not enough gas. You need to bridge some ETH first.</Text>
             <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />

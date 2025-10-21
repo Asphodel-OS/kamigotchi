@@ -14,7 +14,7 @@ import { useAccount, useNetwork } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { useBridgeOpener } from 'network/utils/hooks';
-import { hasEth } from 'utils/numbers/balances';
+import { useHasEth } from 'utils/numbers/balances';
 import { playFund } from 'utils/sounds';
 
 export const FundOperator: UIComponent = {
@@ -183,7 +183,7 @@ export const FundOperator: UIComponent = {
             ></Input>
             <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
           </div>
-          {!hasEth() ? (
+          {!useHasEth() ? (
             <Bridge>
               <Text> Not enough gas. You need to bridge some ETH first.</Text>
               <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />

@@ -9,7 +9,7 @@ import { TokenIcons } from 'assets/images/tokens';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
-import { hasEth } from 'utils/numbers/balances';
+import { useHasEth } from 'utils/numbers/balances';
 import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './components';
 import { Section } from './components/shared';
@@ -114,7 +114,7 @@ export const Registration = ({
   };
 
   const getError = (): string | null => {
-    if (!hasEth()) return 'You need to bridge some ETH to register.';
+    if (!useHasEth()) return 'You need to bridge some ETH to register.';
     if (isOperaterTaken(address.burner)) return 'That Operator address is already taken.';
     if (name === '') return 'Name cannot be empty.';
     if (/\s/.test(name)) return 'Name cannot contain whitespace.';
@@ -141,7 +141,7 @@ export const Registration = ({
       <Text role='status' aria-live='polite'>
         {getError() ?? ''}
       </Text>
-      {!hasEth() ? (
+      {!useHasEth() ? (
         <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
       ) : (
         <Row>
