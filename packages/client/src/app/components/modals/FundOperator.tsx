@@ -27,6 +27,7 @@ export const FundOperator: UIComponent = {
     const { account: kamiAccount } = useAccount();
     const { selectedAddress, apis } = useNetwork();
     const openBridge = useBridgeOpener();
+    const hasEthBalance = useHasEth();
 
     const [isFunding, setIsFunding] = useState(true);
     const [amount, setAmount] = useState(GasConstants.Full);
@@ -183,7 +184,7 @@ export const FundOperator: UIComponent = {
             ></Input>
             <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
           </div>
-          {!useHasEth() ? (
+          {!hasEthBalance ? (
             <Bridge>
               <Text> Not enough gas. You need to bridge some ETH first.</Text>
               <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />

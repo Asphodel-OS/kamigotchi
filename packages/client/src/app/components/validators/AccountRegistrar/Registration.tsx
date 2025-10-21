@@ -33,6 +33,7 @@ export const Registration = ({
   };
 }) => {
   const openBridge = useBridgeOpener();
+  const hasEthBalance = useHasEth();
 
   const [name, setName] = useState('');
 
@@ -114,7 +115,7 @@ export const Registration = ({
   };
 
   const getError = (): string | null => {
-    if (!useHasEth()) return 'You need to bridge some ETH to register.';
+    if (!hasEthBalance) return 'You need to bridge some ETH to register.';
     if (isOperaterTaken(address.burner)) return 'That Operator address is already taken.';
     if (name === '') return 'Name cannot be empty.';
     if (/\s/.test(name)) return 'Name cannot contain whitespace.';
@@ -141,7 +142,7 @@ export const Registration = ({
       <Text role='status' aria-live='polite'>
         {getError() ?? ''}
       </Text>
-      {!useHasEth() ? (
+      {!hasEthBalance ? (
         <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
       ) : (
         <Row>

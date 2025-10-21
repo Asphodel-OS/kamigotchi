@@ -29,6 +29,7 @@ export const GasHarasser: UIComponent = {
     const { selectedAddress, apis, validations: networkValidations } = useNetwork();
     const { validators, setValidators, toggleModals } = useVisibility();
     const openBridge = useBridgeOpener();
+    const hasEthBalance = useHasEth();
 
     const fullGas = GasConstants.Full; // js floating points are retarded
     const [value, setValue] = useState(fullGas);
@@ -140,7 +141,7 @@ export const GasHarasser: UIComponent = {
             Address: {abbreviateAddress(account.operatorAddress)}
           </Description>
         </TextTooltip>
-        {!useHasEth() ? (
+        {!hasEthBalance ? (
           <Bridge>
             <Text> Not enough gas. You need to bridge some ETH first.</Text>
             <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
