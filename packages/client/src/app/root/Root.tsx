@@ -2,7 +2,6 @@ import { injectStyles, InterwovenKitProvider } from '@initia/interwovenkit-react
 import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { getComponentValue } from 'engine/recs';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
@@ -10,6 +9,7 @@ import { WagmiProvider } from 'wagmi';
 import { BootScreen } from 'app/components/boot';
 import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
 import { GodID, SyncState } from 'engine/constants';
+import { getComponentValue } from 'engine/recs';
 import { Layers } from 'network/';
 import { MainWindow } from './components/MainWindow';
 import { NetworkContext } from './context';
@@ -65,7 +65,7 @@ export const Root = observer(
       >
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={tanstackClient}>
-            <InterwovenKitProvider>
+            <InterwovenKitProvider disableAnalytics>
               <NetworkContext.Provider value={layers}>
                 <MainWindow ready={ready} />
               </NetworkContext.Provider>
