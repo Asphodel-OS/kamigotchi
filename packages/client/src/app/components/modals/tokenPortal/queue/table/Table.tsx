@@ -63,12 +63,12 @@ export const Table = ({
       );
     } else if (sort.key === 'Status') {
       sortedList = [...filtered].sort((a, b) => {
-        if (a.IsWithdrawal !== b.IsWithdrawal) {
-          return (a.IsWithdrawal ? -1 : 1) * flip;
-        }
-        if (a.IsCanceled !== b.IsCanceled) {
-          return (a.IsCanceled ? -1 : 1) * flip;
-        }
+        const withdrawalDiff = (Number(a.IsWithdrawal) - Number(b.IsWithdrawal)) * flip;
+        if (withdrawalDiff !== 0) return withdrawalDiff;
+
+        const canceledDiff = (Number(a.IsCanceled) - Number(b.IsCanceled)) * flip;
+        if (canceledDiff !== 0) return canceledDiff;
+
         return (Number(a.IsClaimed) - Number(b.IsClaimed)) * flip;
       });
     } else if (sort.key === 'Type') {
