@@ -9,7 +9,7 @@ import { Table } from './table/Table';
 export const Queue = ({
   actions,
   data,
-  state,
+
   isVisible,
   utils,
 }: {
@@ -24,10 +24,7 @@ export const Queue = ({
     selected: Item;
     account: Account;
   };
-  state: {
-    options: Item[];
-    setOptions: (items: Item[]) => void;
-  };
+
   isVisible: boolean;
   utils: {
     getItemByIndex: (index: number) => Item;
@@ -39,7 +36,7 @@ export const Queue = ({
 
   return (
     <Container isVisible={isVisible}>
-      <Table actions={actions} data={data} state={state} utils={utils} />
+      <Table actions={actions} data={data} utils={utils} />
     </Container>
   );
 };

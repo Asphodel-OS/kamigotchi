@@ -14,7 +14,7 @@ import { Header } from './Header';
 export const Table = ({
   actions,
   data,
-  state,
+
   utils,
 }: {
   actions: {
@@ -28,10 +28,6 @@ export const Table = ({
     selected: Item;
     account: Account;
   };
-  state: {
-    options: Item[];
-    setOptions: (items: Item[]) => void;
-  };
   utils: {
     getItemByIndex: (index: number) => Item;
     getAccountByID: (id: EntityID) => Account;
@@ -43,6 +39,9 @@ export const Table = ({
   const [sort, setSort] = useState<Sort>({ key: 'Created', reverse: true });
   const [sorted, setSorted] = useState<TokenPortal[]>([]);
   const [mode, setMode] = useState<Filter>('MINE');
+
+  /////////////////
+  // SUBSCRIPTIONS
 
   // determine which receipts get passed in based on the
   useEffect(() => {
@@ -83,6 +82,9 @@ export const Table = ({
 
     setSorted(sortedList);
   }, [filtered, sort]);
+
+  /////////////////
+  // GETTERS
 
   const getTokenConversion = (receipt: TokenPortal) => {
     const scale = selected?.token?.scale ?? 0;

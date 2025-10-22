@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid';
 import { getAccount as _getAccount, getAccountByID } from 'app/cache/account';
 import { getPortalConfig } from 'app/cache/config';
 import { getItem as _getItem, getItemByIndex as _getItemByIndex } from 'app/cache/item';
-import { getReceipt as _getReceipt } from 'app/cache/receipts';
 import {
   EmptyText,
   HelpChip,
@@ -24,7 +23,6 @@ import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
-import { queryReceipts as _queryReceipts } from 'network/shapes/Portal';
 import { getCompAddr } from 'network/shapes/utils';
 import { HELP_TEXT } from './constants';
 import { Queue } from './queue';
@@ -56,8 +54,6 @@ export const TokenPortalModal: UIComponent = {
         utils: {
           getAccount: () => _getAccount(world, components, accountEntity, { inventory: 2 }),
           getItem: (entity: EntityIndex) => _getItem(world, components, entity),
-          getReceipt: (entity: EntityIndex) => _getReceipt(world, components, entity),
-          queryReceipts: () => _queryReceipts(components),
           queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
           getItemByIndex: (index: number) => _getItemByIndex(world, components, index),
           getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
@@ -70,7 +66,7 @@ export const TokenPortalModal: UIComponent = {
 
     const { actions } = network;
     const { accountEntity, config, spenderAddr } = data;
-    const { getAccount, getItem, getReceipt, queryTokenItems, queryReceipts } = utils;
+    const { getAccount, getItem, queryTokenItems } = utils;
 
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
@@ -274,7 +270,6 @@ export const TokenPortalModal: UIComponent = {
             cancel: cancelTx,
           }}
           data={{ myReceipts, othersReceipts, config, selected, account }}
-          state={{ options, setOptions }}
           isVisible={showQueue}
           utils={utils}
         />

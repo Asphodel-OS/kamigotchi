@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { Configs } from 'app/cache/config/portal';
 import { IconButton, TextTooltip } from 'app/components/library';
+import { useSelected, useVisibility } from 'app/stores';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { TokenIcons } from 'assets/images/tokens';
@@ -9,6 +10,7 @@ import { TokenPortal } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
+import { playClick } from 'utils/sounds';
 import { getCountdown } from 'utils/time';
 import { openBaselineLink } from '../../utils';
 
@@ -37,6 +39,14 @@ export const Body = ({
   const { receipts, config, mode, account } = data;
   const { getItemByIndex, getTokenConversion, getAccountByID } = utils;
 
+  const selectAccount = useSelected((s) => s.setAccount);
+  const selectedAccount = useSelected((s) => s.accountIndex);
+  const setModals = useVisibility((s) => s.setModals);
+  const accountModalOpen = useVisibility((s) => s.modals.account);
+
+  /////////////////
+  // GETTERS
+
   const getAccount = (receipt: TokenPortal) => {
     const account = getAccountByID(formatEntityID(BigInt(receipt.AccountID)) as EntityID);
     return account;
@@ -44,6 +54,19 @@ export const Body = ({
 
   /////////////////
   // INTERPRETATION
+
+  // open the Account modal for the owner of the receipt
+  const onClickAccount = (owner: Account) => {
+    if (owner.index === 0) return;
+    if (accountModalOpen) {
+      if (selectedAccount !== owner.index) selectAccount(owner.index);
+      else setModals({ account: false });
+    } else {
+      selectAccount(owner.index);
+      setModals({ account: true, map: false, party: false });
+    }
+    playClick();
+  };
 
   // check whether a Receipt is claimable
   const isClaimable = (receipt: TokenPortal) => {
@@ -86,7 +109,7 @@ export const Body = ({
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
             {mode === 'OTHERS' && (
               <TextTooltip text={[getAccount(r).name]} alignText={'right'}>
-                <Field width={4}>
+                <Field width={4} onClick={() => onClickAccount(getAccount(r))}>
                   <Name>{getAccount(r).name}</Name>
                 </Field>
               </TextTooltip>
@@ -203,4 +226,5 @@ const Name = styled.div`
   white-space: nowrap;
   margin-left: 2.3vw;
   text-overflow: ellipsis;
+  cursor: pointer;
 `;
