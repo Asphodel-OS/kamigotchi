@@ -97,6 +97,7 @@
   "systems": [
     { "name": "__LocalSetupSystem", "writeAccess": ["*"], "skipEnv": ["testing", "production"] },
     { "name": "_SnapshotT2System", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "Value"] },
+    { "name": "_AdminSetFlagSystem", "writeAccess": ["HasFlag"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",

@@ -1,23 +1,23 @@
-import { ethers } from 'ethers';
 import { AdminAPI } from '../api';
 import { readFile } from './utils';
+
+const FLAG_TYPE = '25OCT22_BUGGED';
+const FLAG_CSV = 'snapshot/25oct22.csv';
 
 export async function initSnapshot(api: AdminAPI) {
   // used for initial setup
   // await initPassports(api);
   // await initGachaWhitelist(api);
-  await dropKillRewards(api);
+  await setFlags(api);
 }
 
-async function dropKillRewards(api: AdminAPI) {
-  const killRewardsCSV = await readFile('snapshot/kills_19_aug_25.csv');
-  const batchSize = 25;
+async function setFlags(api: AdminAPI) {
+  const flagsCSV = await readFile(FLAG_CSV);
+  const batchSize = 10;
   let i = 0;
-  for (i; i < killRewardsCSV.length; i += batchSize) {
-    const batch = killRewardsCSV.slice(i, i + batchSize);
-    const addresses = batch.map((k: any) => ethers.getAddress(k['address']));
-    const amounts = batch.map((k: any) => Number(k['amt']));
-    await api.setup.live.obols(addresses, amounts);
+  for (i; i < flagsCSV.length; i += batchSize) {
+    const batch = flagsCSV.slice(i, i + batchSize).map((entry: any) => entry['address']);
+    await api.setup.live.flags(batch, FLAG_TYPE);
   }
 }
 

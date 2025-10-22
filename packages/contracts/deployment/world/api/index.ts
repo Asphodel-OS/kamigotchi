@@ -85,9 +85,6 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
-  //  GOALS
-
-  /////////////////
   //  NPCs
 
   // (creates an NPC with the name at the specified roomIndex
@@ -380,13 +377,13 @@ export function createAdminAPI(compiledCalls: string[]) {
   ////////////////
   // SETUP
 
-  function dropKillRewards(owners: string[], amts: number[]) {
+  function setFlag(ids: number[], flagType: string) {
     const callData = generateCallData(
-      'system.setup.snapshot.t2',
-      [owners, amts],
-      'dropKillRewards',
-      ['address[]', 'uint256[]'],
-      '12000000'
+      'system.admin.set.flag',
+      [ids, flagType, true],
+      undefined,
+      undefined,
+      '4000000' // very roughly estimated 10 batch size
     );
     compiledCalls.push(callData);
   }
@@ -536,7 +533,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         },
       },
       live: {
-        obols: dropKillRewards,
+        flags: setFlag,
         // passports: distributePassports,
         // whitelists: distributeGachaWhitelists,
       },
