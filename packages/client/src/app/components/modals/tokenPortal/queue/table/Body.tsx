@@ -1,91 +1,76 @@
 import styled from 'styled-components';
 
-import { IconButton, Text, TextTooltip } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/stores';
+import { Configs } from 'app/cache/config/portal';
+import { IconButton, TextTooltip } from 'app/components/library';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { TokenIcons } from 'assets/images/tokens';
-import { Account, Receipt } from 'network/shapes';
-import { parseTokenBalance } from 'utils/numbers';
-import { playClick } from 'utils/sounds';
+import { TokenPortal } from 'clients/kamiden/proto';
+import { EntityID } from 'engine/recs';
+import { formatEntityID } from 'engine/utils';
+import { Account, Item } from 'network/shapes';
 import { getCountdown } from 'utils/time';
 import { openBaselineLink } from '../../utils';
 
 export const Body = ({
   actions,
   data,
+  utils,
 }: {
   actions: {
-    claim: (receiptID: Receipt) => Promise<void>;
-    cancel: (receiptID: Receipt) => Promise<void>;
+    claim: (receiptID: TokenPortal) => Promise<void>;
+    cancel: (receiptID: TokenPortal) => Promise<void>;
   };
   data: {
+    receipts: TokenPortal[];
+    config: Configs;
+    mode: string;
     account: Account;
-    receipts: Receipt[];
+  };
+  utils: {
+    getItemByIndex: (index: number) => Item;
+    getTokenConversion: (receipt: TokenPortal) => number;
+    getAccountByID: (id: EntityID) => Account;
   };
 }) => {
   const { cancel, claim } = actions;
-  const { account, receipts } = data;
-  const selectAccount = useSelected((s) => s.setAccount);
-  const selectedAccount = useSelected((s) => s.accountIndex);
-  const setModals = useVisibility((s) => s.setModals);
-  const accountModalOpen = useVisibility((s) => s.modals.account);
+  const { receipts, config, mode, account } = data;
+  const { getItemByIndex, getTokenConversion, getAccountByID } = utils;
 
-  /////////////////
-  // INTERACTION
-
-  // open the Account modal for the owner of the receipt
-  const onClickAccount = (owner: Account) => {
-    if (owner.index === 0) return;
-    if (accountModalOpen) {
-      if (selectedAccount !== owner.index) selectAccount(owner.index);
-      else setModals({ account: false });
-    } else {
-      selectAccount(owner.index);
-      setModals({ account: true, map: false, party: false });
-    }
-    playClick();
+  const getAccount = (receipt: TokenPortal) => {
+    const account = getAccountByID(formatEntityID(BigInt(receipt.AccountID)) as EntityID);
+    return account;
   };
 
   /////////////////
   // INTERPRETATION
 
-  // get the display name for an Account
-  const getNameDisplay = (owner: Account) => {
-    if (owner.index === 0) return 'Unknown';
-    if (owner.index === account.index) return 'You';
-
-    const name = owner.name.toLowerCase();
-    if (name.length > 12) return `${name.slice(0, 9)}...`;
-    return name;
-  };
-
-  // check whether a Receipt is cancelable
-  const isCancelable = (receipt: Receipt) => {
-    const isYours = receipt.account?.index === account.index;
-    return isYours;
-  };
-
-  // get the tooltip for a Receipt Cancel
-  const getCancelTooltip = (receipt: Receipt) => {
-    if (!isCancelable(receipt)) return ['Not yours'];
-    else return ['Cancel'];
-  };
-
   // check whether a Receipt is claimable
-  const isClaimable = (receipt: Receipt) => {
-    const isRipe = Date.now() / 1000 > receipt.time.end;
-    const isYours = receipt.account?.index === account.index;
-    return isRipe && isYours;
+  const isClaimable = (receipt: TokenPortal) => {
+    return getCountdown(Number(receipt.Timestamp) + config.delay) === '00:00:00';
   };
 
   // get the tooltip for a Receipt Claim
-  const getClaimTooltip = (receipt: Receipt) => {
-    const isYours = receipt.account?.index === account.index;
-    if (!isYours) return ['Not your Receipt'];
-    const isRipe = Date.now() / 1000 > receipt.time.end;
+  const getClaimTooltip = (receipt: TokenPortal) => {
+    const isRipe = (Date.now() - config.delay) / 1000 > Number(receipt.Timestamp);
     if (!isRipe) return ['Not yet claimable'];
     else return ['Claim'];
+  };
+
+  const getStatus = (receipt: TokenPortal) => {
+    if (!receipt.IsWithdrawal) return '';
+    if (receipt.IsCanceled) return 'Canceled';
+    if (receipt.IsClaimed) return 'Claimed';
+    return getCountdown(Number(receipt.Timestamp) + config.delay);
+  };
+
+  const getDate = (timestamp: string, onlyDate: boolean) => {
+    const date = new Date(Number(timestamp) * 1000);
+    return onlyDate
+      ? date.toLocaleDateString(navigator.language)
+      : date.toLocaleString(navigator.language, {
+          hour12: false,
+        });
   };
 
   /////////////////
@@ -93,46 +78,63 @@ export const Body = ({
 
   return (
     <Container>
-      {receipts.map((r: Receipt, i: number) => {
+      {receipts.map((r: TokenPortal, i: number) => {
+        const item = getItemByIndex(r.ItemIndex as number);
+        const itsPlayer = account.id === formatEntityID(BigInt(r.AccountID));
+        if (itsPlayer && mode === 'OTHERS') return null;
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
-            <Field width={7.5}>
-              <TextTooltip text={[r.account?.name]}>
-                <Text size={0.6} onClick={() => onClickAccount(r.account!)}>
-                  {getNameDisplay(r.account!)}
-                </Text>
+            {mode === 'OTHERS' && (
+              <TextTooltip text={[getAccount(r).name]} alignText={'right'}>
+                <Field width={4}>
+                  <Name>{getAccount(r).name}</Name>
+                </Field>
               </TextTooltip>
-            </Field>
-            <Field width={4.5}>
+            )}
+            {mode === 'MINE' && (
+              <Field width={5}>{r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}</Field>
+            )}
+            <Field width={2}>
               <TextTooltip text={['$ONYX']} alignText={'right'}>
                 <Icon
                   src={TokenIcons.onyx}
-                  onClick={() => openBaselineLink(r.item?.token?.address ?? '')}
+                  onClick={() => openBaselineLink(item?.token?.address ?? '')}
                 />
               </TextTooltip>
             </Field>
-            <Field width={6}>{parseTokenBalance(BigInt(r.amt))}</Field>
-            <Field width={6}>{getCountdown(r.time.end)}</Field>
-            <Field width={6}>
-              <IconGroup>
-                <TextTooltip text={getClaimTooltip(r)}>
-                  <IconButton
-                    img={PlaceholderIcon}
-                    scale={1.5}
-                    onClick={() => claim(r)}
-                    disabled={!isClaimable(r)}
-                  />
-                </TextTooltip>
-                <TextTooltip text={getCancelTooltip(r)}>
-                  <IconButton
-                    img={ActionIcons.cancel}
-                    scale={1.5}
-                    onClick={() => cancel(r)}
-                    disabled={!isCancelable(r)}
-                  />
-                </TextTooltip>
-              </IconGroup>
-            </Field>
+            <Field width={3.5}>{getTokenConversion(r)}</Field>
+            <TextTooltip text={[getDate(r.Timestamp, false)]}>
+              <Field style={{ lineHeight: `1vw` }} width={5}>
+                {getDate(r.Timestamp, true)}
+              </Field>
+            </TextTooltip>
+            <Field width={4}>{getStatus(r)}</Field>
+            {mode === 'MINE' && (
+              <Field width={3.5}>
+                {r.IsWithdrawal && (
+                  <IconGroup>
+                    <TextTooltip text={getClaimTooltip(r)}>
+                      <IconButton
+                        img={PlaceholderIcon}
+                        scale={1.5}
+                        onClick={() => {
+                          claim(r);
+                        }}
+                        disabled={!isClaimable(r) || r.IsCanceled || r.IsClaimed}
+                      />
+                    </TextTooltip>
+                    <IconButton
+                      img={ActionIcons.cancel}
+                      scale={1.5}
+                      onClick={() => {
+                        cancel(r);
+                      }}
+                      disabled={r.IsCanceled || r.IsClaimed}
+                    />
+                  </IconGroup>
+                )}
+              </Field>
+            )}
           </Row>
         );
       })}
@@ -150,8 +152,6 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-
-  overflow-y: scroll;
 `;
 
 const Row = styled.div`
@@ -177,7 +177,6 @@ const Field = styled.div<{ width: number }>`
 
   font-size: 0.6vw;
   user-select: none;
-  overflow-x: scroll;
 `;
 
 const IconGroup = styled.div`
@@ -196,4 +195,12 @@ const Icon = styled.img`
     opacity: 0.8;
     cursor: pointer;
   }
+`;
+
+const Name = styled.div`
+  width: 12ch;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: 2.3vw;
+  text-overflow: ellipsis;
 `;

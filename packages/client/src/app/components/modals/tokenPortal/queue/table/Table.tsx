@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Account, Item, Receipt } from 'network/shapes';
+import { Configs } from 'app/cache/config/portal';
+import { TokenPortal } from 'clients/kamiden/proto';
+import { EntityID } from 'engine/recs';
+import { Account, Item } from 'network/shapes';
+import { getResultWithdraw, getSwapRate } from '../../utils';
 import { Body } from './Body';
 import { Filter, Sort } from './constants';
 import { Footer } from './Footer';
@@ -11,57 +15,82 @@ export const Table = ({
   actions,
   data,
   state,
+  utils,
 }: {
   actions: {
-    claim: (receiptID: Receipt) => Promise<void>;
-    cancel: (receiptID: Receipt) => Promise<void>;
+    claim: (receiptID: TokenPortal) => Promise<void>;
+    cancel: (receiptID: TokenPortal) => Promise<void>;
   };
   data: {
+    myReceipts: TokenPortal[];
+    othersReceipts: TokenPortal[];
+    config: Configs;
+    selected: Item;
     account: Account;
-    receipts: Receipt[];
   };
   state: {
     options: Item[];
     setOptions: (items: Item[]) => void;
   };
+  utils: {
+    getItemByIndex: (index: number) => Item;
+    getAccountByID: (id: EntityID) => Account;
+  };
 }) => {
-  const { account, receipts } = data;
+  const { myReceipts, othersReceipts, config, selected, account } = data;
 
+  const [filtered, setFiltered] = useState<TokenPortal[]>([]);
+  const [sort, setSort] = useState<Sort>({ key: 'Created', reverse: true });
+  const [sorted, setSorted] = useState<TokenPortal[]>([]);
   const [mode, setMode] = useState<Filter>('MINE');
-  const [filtered, setFiltered] = useState<Receipt[]>([]);
-  const [sort, setSort] = useState<Sort>({ key: 'Status', reverse: false });
-  const [sorted, setSorted] = useState<Receipt[]>([]);
 
   // determine which receipts get passed in based on the
   useEffect(() => {
     if (mode === 'MINE') {
-      const myReceipts = receipts.filter((r) => r.account?.index === account.index);
       setFiltered(myReceipts);
     } else {
-      setFiltered([...receipts]);
+      setFiltered(othersReceipts);
     }
-  }, [receipts.length, mode]);
+  }, [myReceipts, mode, othersReceipts]);
 
   // sort the receipts if the list of receipts changes
   useEffect(() => {
     const flip = sort.reverse ? -1 : 1;
+    let sortedList: TokenPortal[] = [];
+
     if (sort.key === 'Amount') {
-      const sorted = filtered.sort((a, b) => (a.amt - b.amt) * flip);
-      setSorted(sorted);
-    } else if (sort.key === 'Account') {
-      const sorted = filtered.sort((a, b) => {
-        const aName = a.account?.name.toLowerCase() ?? '';
-        const bName = b.account?.name.toLowerCase() ?? '';
-        if (aName > bName) return 1 * flip;
-        if (aName < bName) return -1 * flip;
-        return 0;
-      });
-      setSorted(sorted);
+      sortedList = [...filtered].sort(
+        (a, b) => (getTokenConversion(a) - getTokenConversion(b)) * flip
+      );
     } else if (sort.key === 'Status') {
-      const sorted = filtered.sort((a, b) => (a.time.end - b.time.end) * flip);
-      setSorted(sorted);
+      sortedList = [...filtered].sort((a, b) => {
+        if (a.IsWithdrawal !== b.IsWithdrawal) {
+          return (a.IsWithdrawal ? -1 : 1) * flip;
+        }
+        if (a.IsCanceled !== b.IsCanceled) {
+          return (a.IsCanceled ? -1 : 1) * flip;
+        }
+        return (Number(a.IsClaimed) - Number(b.IsClaimed)) * flip;
+      });
+    } else if (sort.key === 'Type') {
+      sortedList = [...filtered].sort(
+        (a, b) => (Number(a.IsWithdrawal) - Number(b.IsWithdrawal)) * flip
+      );
+    } else {
+      // date
+      sortedList = [...filtered].sort((a, b) => (Number(a.Timestamp) - Number(b.Timestamp)) * flip);
     }
-  }, [filtered.length, sort]);
+
+    setSorted(sortedList);
+  }, [filtered, sort]);
+
+  const getTokenConversion = (receipt: TokenPortal) => {
+    const scale = selected?.token?.scale ?? 0;
+    let converted = 0;
+    if (!receipt.IsWithdrawal) converted = Number(Number(receipt.ItemAmt).toFixed(scale));
+    else converted = getResultWithdraw(config, Number(receipt.ItemAmt));
+    return converted / getSwapRate(selected);
+  };
 
   /////////////////
   // DISPLAY
@@ -70,15 +99,22 @@ export const Table = ({
     <Container>
       <Header
         columns={{
-          Account: 7.5,
-          Token: 4.5,
-          Amount: 6,
-          Status: 6,
-          Actions: 6,
+          Account: 4,
+          Type: 4,
+          Token: 4,
+          Amount: 4,
+          Created: 5,
+          Status: 4,
+          Actions: 3.5,
         }}
+        data={{ mode }}
         state={{ sort, setSort }}
       />
-      <Body actions={actions} data={{ account, receipts: sorted }} />
+      <Body
+        actions={actions}
+        data={{ receipts: sorted, config, mode, account }}
+        utils={{ ...utils, getTokenConversion }}
+      />
       <Footer state={{ mode, setMode }} />
     </Container>
   );
@@ -87,10 +123,8 @@ export const Table = ({
 const Container = styled.div`
   position: relative;
   width: 100%;
-
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-
   overflow-y: auto;
 `;
