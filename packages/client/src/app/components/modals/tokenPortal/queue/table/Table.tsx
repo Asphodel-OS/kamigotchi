@@ -81,7 +81,7 @@ export const Table = ({
     }
 
     setSorted(sortedList);
-  }, [filtered, sort]);
+  }, [filtered, sort, config]);
 
   /////////////////
   // GETTERS

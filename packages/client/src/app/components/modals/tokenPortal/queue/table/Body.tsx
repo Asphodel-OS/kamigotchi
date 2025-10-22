@@ -70,13 +70,13 @@ export const Body = ({
 
   // check whether a Receipt is claimable
   const isClaimable = (receipt: TokenPortal) => {
-    return getCountdown(Number(receipt.Timestamp) + config.delay) === '00:00:00';
+    const nowSec = Math.floor(Date.now() / 1000);
+    return nowSec >= Number(receipt.Timestamp) + config.delay;
   };
 
   // get the tooltip for a Receipt Claim
   const getClaimTooltip = (receipt: TokenPortal) => {
-    const isRipe = (Date.now() - config.delay) / 1000 > Number(receipt.Timestamp);
-    if (!isRipe) return ['Not yet claimable'];
+    if (!isClaimable(receipt)) return ['Not yet claimable'];
     else return ['Claim'];
   };
 
