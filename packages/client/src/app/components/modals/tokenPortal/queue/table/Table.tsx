@@ -90,9 +90,13 @@ export const Table = ({
     const item = utils.getItemByIndex(receipt.ItemIndex);
     const scale = item?.token?.scale ?? 0;
     let converted = 0;
-    if (!receipt.IsWithdrawal) converted = Number(Number(receipt.ItemAmt).toFixed(scale));
-    else converted = getResultWithdraw(config, Number(receipt.ItemAmt));
-    return converted / getSwapRate(item);
+    if (!receipt.IsWithdrawal) {
+      converted = Number(Number(receipt.ItemAmt).toFixed(scale));
+    } else {
+      converted = getResultWithdraw(config, Number(receipt.ItemAmt));
+    }
+    const rate = item ? getSwapRate(item) : 1;
+    return rate ? converted / rate : 0;
   };
 
   /////////////////
