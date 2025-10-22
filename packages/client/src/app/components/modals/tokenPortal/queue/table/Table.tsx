@@ -87,11 +87,12 @@ export const Table = ({
   // GETTERS
 
   const getTokenConversion = (receipt: TokenPortal) => {
-    const scale = selected?.token?.scale ?? 0;
+    const item = utils.getItemByIndex(receipt.ItemIndex);
+    const scale = item?.token?.scale ?? 0;
     let converted = 0;
     if (!receipt.IsWithdrawal) converted = Number(Number(receipt.ItemAmt).toFixed(scale));
     else converted = getResultWithdraw(config, Number(receipt.ItemAmt));
-    return converted / getSwapRate(selected);
+    return converted / getSwapRate(item);
   };
 
   /////////////////

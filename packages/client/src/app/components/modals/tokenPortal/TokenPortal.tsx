@@ -182,7 +182,7 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenReceiptClaim',
         params: [receipt.ReceiptID],
-        description: `Claiming withdrawal of ${Number(receipt.ItemAmt) / 10 ** 18} $ONYX`,
+        description: `Claiming withdrawal of ${Number(receipt.TokenAmt) / 10 ** 18} $ONYX`,
         execute: async () => api.portal.ERC20.claim(receipt.ReceiptID),
       });
     };
@@ -196,7 +196,7 @@ export const TokenPortalModal: UIComponent = {
       const tx = actions.add({
         action: 'TokenReceiptCancel',
         params: [receipt.ReceiptID],
-        description: `Canceling withdrawal of ${Number(receipt.ItemAmt) / 10 ** 18} $ONYX`,
+        description: `Canceling withdrawal of ${Number(receipt.TokenAmt) / 10 ** 18} $ONYX`,
         execute: async () => api.portal.ERC20.cancel(receipt.ReceiptID),
       });
     };
