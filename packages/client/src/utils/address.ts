@@ -30,8 +30,8 @@ export const abbreviateAddress = (
 
 export const addressesMatch = (a1: string, a2: string) => {
   if (!a1 || !a2) return false;
-  a1 = ethers.zeroPadValue('0x' + BigInt(a1).toString(16), 20);
-  a2 = ethers.zeroPadValue('0x' + BigInt(a2).toString(16), 20);
+  a1 = ethers.toBeHex(a1, 20);
+  a2 = ethers.toBeHex(a2, 20);
   return a1 === a2;
 };
 

@@ -25,7 +25,7 @@ export const OperatorUpdater: UIComponent = {
     const { toggleModals } = useVisibility();
     const { validators, setValidators } = useVisibility();
 
-    // run the primary check(s) for this validator, track in store for easy saccess
+    // run the primary check(s) for this validator, track in store for easy access
     useEffect(() => {
       if (!validations.accountExists) return;
       const operatorMatches = addressesMatch(kamiAccount.operatorAddress, burnerAddress);
