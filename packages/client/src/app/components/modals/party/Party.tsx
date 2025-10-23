@@ -295,11 +295,12 @@ export const PartyModal: UIComponent = {
         <Toolbar
           actions={{
             addKami: (kamis: Kami[]) => start(kamis, node),
+            collectKami: (kamis: Kami[]) => collect(kamis),
             stopKami: (kamis: Kami[]) => stop(kamis),
-            collect: (kamis: Kami[]) => collect(kamis),
+            stakeKami: (kamis: Kami[]) => stakeKamiTx(kamis),
           }}
           controls={{ sort, setSort, view, setView }}
-          data={{ kamis, wildKamis }}
+          data={{ account, kamis, wildKamis }}
           state={{ displayedKamis, setDisplayedKamis, tick }}
           utils={{ passesNodeReqs: (kami: Kami) => passesNodeReqs(node, kami) }}
         />
@@ -315,6 +316,13 @@ export const PartyModal: UIComponent = {
           state={{ displayedKamis, tick }}
           utils={utils}
         />
+        {/* <ExternalBar
+          actions={{ stakeKamis: (kamis: Kami[]) => stakeKamiTx(kamis) }}
+          controls={{ view }}
+          data={{ account, accounts }}
+          state={{ kamis: displayedKamis, tick }}
+          isVisible={isModalOpen && view === 'external'}
+        /> */}
       </ModalWrapper>
     );
   },

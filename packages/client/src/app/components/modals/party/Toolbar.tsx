@@ -7,6 +7,9 @@ import { IconButton, IconListButton, TextTooltip } from 'app/components/library'
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { useVisibility } from 'app/stores';
 import { CollectIcon, HarvestIcon, StopIcon } from 'assets/images/icons/actions';
+import { ArrowIcons } from 'assets/images/icons/arrows';
+import { PORTAL_ROOM_INDEX } from 'constants/rooms';
+import { Account } from 'network/shapes';
 import { Kami } from 'network/shapes/Kami';
 import { SortIcons, ViewIcons } from './constants';
 import { Sort, View } from './types';
@@ -25,8 +28,9 @@ export const Toolbar = ({
 }: {
   actions: {
     addKami: (kamis: Kami[]) => void;
-    collect: (kamis: Kami[]) => void;
+    collectKami: (kamis: Kami[]) => void;
     stopKami: (kamis: Kami[]) => void;
+    stakeKami: (kamis: Kami[]) => void;
   };
   controls: {
     sort: Sort;
@@ -35,6 +39,7 @@ export const Toolbar = ({
     setView: Dispatch<View>;
   };
   data: {
+    account: Account;
     kamis: Kami[];
     wildKamis: Kami[];
   };
@@ -45,26 +50,33 @@ export const Toolbar = ({
   };
   utils: { passesNodeReqs: (kami: Kami) => boolean };
 }) => {
-  const { addKami, stopKami, collect } = actions;
+  const { addKami, collectKami, stopKami, stakeKami } = actions;
   const { sort, setSort, view, setView } = controls;
-  const { kamis, wildKamis } = data;
-  const { passesNodeReqs } = utils;
+  const { account, kamis, wildKamis } = data;
   const { displayedKamis, setDisplayedKamis, tick } = state;
-  const partyModalVisible = useVisibility((s) => s.modals.party);
-  //const toolbarRef = useRef<HTMLDivElement | null>(null);
-  //const detachScroll = useRef<(() => void) | null>(null);
+  const { passesNodeReqs } = utils;
+
+  const isModalOpen = useVisibility((s) => s.modals.party);
 
   const [addOptions, setAddOptions] = useState<DropdownOption[]>([]);
   const [collectOptions, setCollectOptions] = useState<DropdownOption[]>([]);
   const [stopOptions, setStopOptions] = useState<DropdownOption[]>([]);
+  const [stakeOptions, setStakeOptions] = useState<DropdownOption[]>([]);
 
   /////////////////
   // SUBSCRIPTIONS
 
   useEffect(() => {
-    if (!partyModalVisible) return;
-    if (view === 'external') return;
+    if (!isModalOpen) return;
 
+    // if external view, set stake options directly from list of displayed kamis
+    if (view === 'external') {
+      const stakeOptions = wildKamis.map((kami) => ({ text: kami.name, object: kami }));
+      setStakeOptions(stakeOptions);
+      return;
+    }
+
+    // otherwise, set dropdown options based on internal kami states
     const addOptions = displayedKamis
       .filter((kami) => canHarvest(kami) && passesNodeReqs(kami))
       .map((kami) => ({ text: kami.name, object: kami }));
@@ -80,13 +92,13 @@ export const Toolbar = ({
     setAddOptions(addOptions);
     setCollectOptions(collectOptions);
     setStopOptions(stopOptions);
-  }, [displayedKamis, tick, partyModalVisible]);
+  }, [displayedKamis, tick, isModalOpen]);
 
   // sort kamis when changes are detected
   // TODO: trigger updates after successful state updates
   // NOTE: sorts in place (setDisplayedKamis is just used to trigger a rendering update)
   useEffect(() => {
-    if (!partyModalVisible) return;
+    if (!isModalOpen) return;
 
     let sorted = view === 'external' ? wildKamis : kamis;
     if (sort === 'name') {
@@ -111,12 +123,12 @@ export const Toolbar = ({
     }
 
     setDisplayedKamis(sorted);
-  }, [partyModalVisible, kamis.length, sort, view]);
+  }, [isModalOpen, kamis.length, sort, view]);
 
   /*
   // JS-driven sticky fallback across browsers: translateY toolbar as parent scrolls
   useEffect(() => {
-    if (!partyModalVisible) return;
+    if (!isModalOpen) return;
     const toolbarEl = toolbarRef.current;
     if (!toolbarEl) return;
 
@@ -176,8 +188,9 @@ export const Toolbar = ({
       if (detachScroll.current) detachScroll.current();
       toolbarEl.style.transform = 'translateY(0px)';
     };
-  }, [partyModalVisible]);
+  }, [isModalOpen]);
 */
+
   /////////////////
   // INTERACTION
 
@@ -186,6 +199,39 @@ export const Toolbar = ({
     if (view === 'external') setView('expanded');
     if (view === 'expanded') setView('collapsed');
     if (view === 'collapsed') setView('external');
+  };
+
+  /////////////////
+  // INTERPRETATION
+
+  // get DropDownToggle action options, depending on view
+  const getDDTActions = (mode: View) => {
+    if (mode === 'external') return [stakeKami];
+    return [addKami, collectKami, stopKami];
+  };
+
+  // get DropDownToggle disabled settings, depending on view
+  const getDDTDisabled = (mode: View) => {
+    if (mode === 'external') return [account.roomIndex !== PORTAL_ROOM_INDEX];
+    return [addOptions.length == 0, collectOptions.length == 0, stopOptions.length == 0];
+  };
+
+  // get DropDownToggle icon images, depending on view
+  const getDDTIcons = (mode: View) => {
+    if (mode === 'external') return [ArrowIcons.down];
+    return [HarvestIcon, CollectIcon, StopIcon];
+  };
+
+  // get DropDownToggle selection options, depending on view
+  const getDDTOptions = (mode: View) => {
+    if (mode === 'external') return [stakeOptions];
+    return [addOptions, collectOptions, stopOptions];
+  };
+
+  // get DropDownToggle tooltips, depending on view
+  const getDDTTooltips = (mode: View) => {
+    if (mode === 'external') return ['Stake Kami. (You must be at Scrap Confluence)'];
+    return ['Add Kami to Node', 'Collect Harvest', 'Stop Harvest'];
   };
 
   // memoized sort options
@@ -199,6 +245,9 @@ export const Toolbar = ({
     []
   );
 
+  /////////////////
+  // RENDER
+
   return (
     // <Container ref={toolbarRef}>
     <Container>
@@ -208,43 +257,45 @@ export const Toolbar = ({
         </TextTooltip>
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
-      {view !== 'external' && (
-        <DropdownToggle
-          limit={33}
-          button={{
-            images: [HarvestIcon, CollectIcon, StopIcon],
-            tooltips: ['Add Kami to Node', 'Collect Harvest', 'Stop Harvest'],
-          }}
-          disabled={[addOptions.length == 0, collectOptions.length == 0, stopOptions.length == 0]}
-          onClick={[addKami, collect, stopKami]}
-          options={[addOptions, collectOptions, stopOptions]}
-          radius={0.6}
-        />
-      )}
+      <DropdownToggle
+        limit={33}
+        button={{
+          images: getDDTIcons(view),
+          tooltips: getDDTTooltips(view),
+        }}
+        disabled={getDDTDisabled(view)}
+        onClick={getDDTActions(view)}
+        options={getDDTOptions(view)}
+        radius={0.6}
+      />
     </Container>
   );
 };
 
 const Container = styled.div`
-  padding: 0.6vw;
-  z-index: 1;
+  background-color: rgb(238, 238, 238);
+  opacity: 0.9;
+
   /* Avoid Safari white-screen bug when sticky is nested in overflow containers  will-change: transform; position: relative;*/
   position: sticky;
   top: 0;
-  opacity: 0.9;
+  z-index: 1;
+
   width: 100%;
+  padding: 0.6vw;
+
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
+  justify-content: space-apart;
   align-items: center;
+
   user-select: none;
-  background-color: rgb(238, 238, 238);
 `;
 
 const Section = styled.div`
   gap: 0.3vw;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-end;
   align-items: center;
+  flex-grow: 1;
 `;

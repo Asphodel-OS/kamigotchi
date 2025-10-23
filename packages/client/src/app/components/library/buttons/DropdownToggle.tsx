@@ -95,6 +95,9 @@ export const DropdownToggle = ({
     }
   };
 
+  /////////////////
+  // INTERACTION
+
   const toggleAll = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent popover from closing
     // currently selected
@@ -113,6 +116,9 @@ export const DropdownToggle = ({
     playClick();
     onClick[currentMode]?.(selectedObjects);
   };
+
+  /////////////////
+  // DISPLAY
 
   const MenuCheckListOption = (
     { text, img, object }: Option,
@@ -150,6 +156,9 @@ export const DropdownToggle = ({
       </MenuOption>
     );
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container>
@@ -191,12 +200,10 @@ export const DropdownToggle = ({
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
-  width: 14vw;
-  height: 2.5vw;
 `;
 
 const MenuOption = styled.div<{

@@ -165,6 +165,7 @@ const Container = styled.button<{
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
+    z-index: 1;
   }
   &:active {
     animation: ${() => clickFx()} 0.3s;
