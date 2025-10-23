@@ -104,6 +104,8 @@ export const Logs = ({
 
   // Attempt to cancel a pending on-chain tx via replacement (same nonce, higher fee)
   const cancelPendingTx = async (hash: string) => {
+    console.log('Attempting to cancel transaction on chain:', DefaultChain.id);
+
     try {
       const provider = network.network.providers.get()?.json;
       const signer = network.network.signer.get();
@@ -159,6 +161,8 @@ export const Logs = ({
   // For Requested/Executing: mark canceled and, if a tx hash appears shortly after,
   // automatically send a cancel replacement.
   const cancelRequestOrTx = async (entity: EntityIndex) => {
+    console.log('Attempting to cancel request/tx on chain:', DefaultChain.id);
+
     try {
       actions.cancel(entity);
       // Poll briefly for a hash if execution already started
@@ -185,13 +189,29 @@ export const Logs = ({
     const metadata = actionData.metadata ?? '';
     const hash = actionData.txHash as string | undefined;
 
+    // Enable cancellation for all chains (works on yominet too despite initial concerns)
+    const isClickable = state === 'Pending' && hash;
+
+    // Debug logging (remove in production)
+    console.log('Chain Debug:', {
+      defaultChainId: DefaultChain?.id,
+      isYominet: DefaultChain.id === 428962654539583,
+      state,
+      hash,
+      envMode: import.meta.env.MODE,
+      isClickable
+    });
+
     return (
       <Row
         key={`action${entity}`}
-        style={{ cursor: state === 'Pending' && hash ? 'pointer' : 'default' }}
+        clickable={isClickable}
+        style={{ cursor: isClickable ? 'pointer' : 'default' }}
         onClick={() => {
-          if (state === 'Pending' && hash) {
-            if (confirm('Replace pending tx with a cancel tx?')) cancelPendingTx(hash);
+          if (isClickable) {
+            // Temporarily remove confirmation for debugging
+            console.log('Row clicked - attempting to cancel transaction:', hash);
+            cancelPendingTx(hash);
           }
         }}
       >
@@ -203,13 +223,15 @@ export const Logs = ({
           {Time(actionData.time)}
           {ExplorerButton(hash)}
           {state === 'Pending' && hash && (
-            <TextTooltip text={[`Replace with a 0-value tx (same nonce) to cancel.`]}>
+            <TextTooltip text={[`Click cancel button or hover and click row to replace with 0-value tx.`]}>
               <CancelIcon
                 src={cancelSketch}
                 alt='Cancel Tx'
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (confirm('Cancel this pending transaction?')) cancelPendingTx(hash);
+                  // Temporarily remove confirmation for debugging
+                  console.log('Cancel button clicked for transaction:', hash);
+                  cancelPendingTx(hash);
                 }}
               />
             </TextTooltip>
@@ -218,8 +240,8 @@ export const Logs = ({
             <TextTooltip
               text={[
                 state === 'Requested'
-                  ? 'Remove this queued request before it sends'
-                  : 'Stop this request before the tx is submitted',
+                  ? 'Cancel this queued request before it sends'
+                  : 'Cancel this request before the tx is submitted',
               ]}
             >
               <CancelIcon
@@ -239,7 +261,7 @@ export const Logs = ({
 
   return (
     <Content id='tx-logs'>
-      <Row style={{ justifyContent: 'space-evenly' }}>
+      <Row clickable={false} style={{ justifyContent: 'space-evenly' }}>
         <Bar />
         <Text>TxQueue</Text>
         <Bar />
@@ -271,6 +293,21 @@ const Row = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
+
+  ${props => props.clickable && `
+    background-color: #fafbfc;
+    border: 0.05vw solid #e1e8ed;
+    border-radius: 0.2vw;
+    margin: 0.1vw;
+  `}
+
+  &:hover {
+    background-color: ${props => props.clickable ? '#e8f4f8' : 'transparent'};
+    border-radius: 0.2vw;
+    box-shadow: ${props => props.clickable ? 'inset 0 0 0 0.1vw #4a90e2' : 'none'};
+  }
+
+  transition: all 0.15s ease;
 `;
 
 const RowSegment = styled.div`

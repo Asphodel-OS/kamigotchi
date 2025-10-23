@@ -125,22 +125,11 @@ export function createActionSystem<M = undefined>(
 
     try {
       // Execute the action
-      // Small grace window to allow users to cancel before submission on fast chains
-      const GRACE_MS = 400; // reduced because we now have queue-level cancel
-      const start = Date.now();
-      while (!canceled.has(request.index!) && Date.now() - start < GRACE_MS) {
-        await new Promise((r) => setTimeout(r, 50));
-      }
-      if (canceled.has(request.index!)) {
-        updateAction({ state: ActionState.Canceled });
-        return;
-      }
-
       const execPromise: any = request.execute();
       const cancelFn = typeof execPromise?.cancel === 'function' ? execPromise.cancel.bind(execPromise) : undefined;
       if (cancelFn) execCancels.set(request.index!, cancelFn);
 
-      // If user already canceled during grace, propagate to queue immediately
+      // If user already canceled, propagate to queue immediately
       if (canceled.has(request.index!) && cancelFn) {
         try { cancelFn(); } catch {}
         updateAction({ state: ActionState.Canceled });
