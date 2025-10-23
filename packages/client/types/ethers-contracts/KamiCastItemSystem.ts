@@ -214,7 +214,7 @@ export interface KamiCastItemSystem extends BaseContract {
   execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
   executeTyped: TypedContractMethod<
-    [kamiID: BigNumberish, itemIndex: BigNumberish],
+    [targetID: BigNumberish, itemIndex: BigNumberish],
     [string],
     "nonpayable"
   >;
@@ -256,7 +256,7 @@ export interface KamiCastItemSystem extends BaseContract {
   getFunction(
     nameOrSignature: "executeTyped"
   ): TypedContractMethod<
-    [kamiID: BigNumberish, itemIndex: BigNumberish],
+    [targetID: BigNumberish, itemIndex: BigNumberish],
     [string],
     "nonpayable"
   >;
