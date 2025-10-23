@@ -37,6 +37,7 @@ contract HarvestCollectSystem is System {
     LibKami.verifyRoom(components, kamiID, accID);
 
     // collect harvest
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(_collect(id, accID, kamiID));
   }
 
@@ -55,6 +56,7 @@ contract HarvestCollectSystem is System {
     if (!LibKami.isHealthy(components, kamiID)) return abi.encode(0);
     if (!LibKami.checkRoom(components, kamiID, accID)) return abi.encode(0);
 
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(_collect(id, accID, kamiID));
   }
 
