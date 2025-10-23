@@ -10,11 +10,6 @@ import { Account, NullAccount } from 'network/shapes';
 import { Kami, NullKami } from 'network/shapes/Kami';
 import { Sort, View } from './types';
 
-interface DropdownOption {
-  text: string;
-  object?: any;
-}
-
 export const SendBar = ({
   actions,
   controls,
@@ -88,7 +83,7 @@ export const SendBar = ({
   };
 
   /////////////////
-  // INTERACTION
+  // RENDER
 
   return (
     <Container isVisible={isVisible}>

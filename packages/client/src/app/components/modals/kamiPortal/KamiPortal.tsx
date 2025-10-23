@@ -213,7 +213,7 @@ export const KamiPortalModal: UIComponent = {
 const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
+  max-height: 100%;
   z-index: 2;
 
   display: flex;

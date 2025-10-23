@@ -172,7 +172,7 @@ export const PartyModal: UIComponent = {
 
       // check if we need to update the list of accounts
       const accountEntities = queryAllAccounts() as EntityIndex[];
-      if (accountEntities.length + 1 > accounts.length) {
+      if (accountEntities.length - 1 > accounts.length) {
         const filtered = accountEntities.filter((entity) => entity != accountEntity);
         const newAccounts = filtered.map((entity) => getAccount(entity));
         const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
