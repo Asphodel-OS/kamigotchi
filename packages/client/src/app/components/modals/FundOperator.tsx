@@ -1,20 +1,19 @@
-import { EntityID, EntityIndex } from 'engine/recs';
-// import converter from 'bech32-converting';
-import { waitForActionCompletion } from 'network/utils';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
-import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
+import { IconButton, ModalWrapper, Overlay, Text } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useNetwork } from 'app/stores';
+import { useAccount, useNetwork, useTokens } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
+import { EntityID, EntityIndex } from 'engine/recs';
+import { waitForActionCompletion } from 'network/utils';
 import { useBridgeOpener } from 'network/utils/hooks';
-import { useHasEth } from 'utils/numbers/balances';
+import { parseTokenBalance } from 'utils/numbers';
 import { playFund } from 'utils/sounds';
 
 export const FundOperator: UIComponent = {
@@ -24,15 +23,20 @@ export const FundOperator: UIComponent = {
 
     const { network } = layers;
     const { actions, world } = network;
-    const { account: kamiAccount } = useAccount();
-    const { selectedAddress, apis } = useNetwork();
+
+    const kamiAccount = useAccount((s) => s.account);
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const ownerBalance = useTokens((s) => s.eth.balance);
     const openBridge = useBridgeOpener();
-    const hasEthBalance = useHasEth();
 
     const [isFunding, setIsFunding] = useState(true);
     const [amount, setAmount] = useState(GasConstants.Full);
     const [statusText, setStatusText] = useState('');
     const [statusColor, setStatusColor] = useState('grey');
+    const [currBalance, setCurrBalance] = useState(0);
+
+    const fullGas = GasConstants.Full; // js floating points are retarded
 
     /////////////////
     // SUBSCRIPTIONS
@@ -51,6 +55,33 @@ export const FundOperator: UIComponent = {
     const { data: OperatorBalance, refetch: refetchOperatorBalance } = useBalance({
       address: kamiAccount.operatorAddress,
     });
+
+    // update the operating balance when mode or balanceds change
+    useEffect(() => {
+      const balanceResult = isFunding ? OwnerBalance : OperatorBalance;
+      const currBal = parseTokenBalance(balanceResult?.value ?? 0n, GasExponent);
+      setCurrBalance(currBal);
+    }, [isFunding, OwnerBalance, OperatorBalance]);
+
+    // run the primary check(s) for this validator, track in store for easy access
+    useEffect(() => {
+      if (amount >= currBalance - GasConstants.Warning) {
+        setStatusText('Leave a little for gas!');
+        setStatusColor('#FF785B');
+      } else {
+        setStatusColor('grey');
+        // placeholder gas estimation
+        if (isFunding) {
+          if (amount < GasConstants.Low)
+            setStatusText('This might not last very long. Consider more?');
+          else if (amount < GasConstants.Full) setStatusText('This should last you for a while');
+          else setStatusText('This should last you for quite a while');
+        } else {
+          const remainBal = currBalance - amount;
+          setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ETH left');
+        }
+      }
+    }, [amount, currBalance]);
 
     /////////////////
     // ACTIONS
@@ -92,222 +123,181 @@ export const FundOperator: UIComponent = {
     /////////////////
     // INTERACTIONS
 
-    const chooseTx = async () => {
+    const triggerAction = async () => {
       playFund();
       isFunding ? await fundTx() : await refundTx();
     };
 
     const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        chooseTx();
+        triggerAction();
       }
     };
 
+    // handle the input balance change based on mode and state
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setAmount(Number(event.target.value));
+      let newValue = Number(event.target.value);
+      if (isFunding) {
+        newValue = Math.max(fullGas / 10, newValue);
+        newValue = Math.min(currBalance, newValue);
+        newValue = Math.min(fullGas * 10, newValue);
+      } else {
+        newValue = Math.min(currBalance, newValue);
+      }
+
+      newValue = Math.max(0, newValue);
+      setAmount(newValue);
     };
 
     ///////////////
     // DISPLAY
 
-    const TxButton = () => {
-      const text = isFunding! ? 'Fund Operator' : 'Send to Owner';
-      return <ActionButton onClick={chooseTx} size='large' text={text} />;
-    };
-
     const StateBox = (fundState: boolean) => {
       const text = fundState ? 'Owner' : 'Operator';
       const balance = fundState
-        ? Number(formatUnits(OwnerBalance?.value ?? 0n, GasExponent)).toFixed(2)
-        : Number(formatUnits(OperatorBalance?.value ?? 0n, GasExponent)).toFixed(2);
+        ? Number(formatUnits(OwnerBalance?.value ?? 0n, GasExponent)).toFixed(5)
+        : Number(formatUnits(OperatorBalance?.value ?? 0n, GasExponent)).toFixed(5);
       const color = fundState == isFunding ? 'grey' : 'white';
       const textColor = fundState == isFunding ? 'white' : 'black';
       return (
         <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFunding(fundState)}>
-          <Description style={{ color: textColor }}> {balance} ETH </Description>
-          <SubDescription style={{ color: textColor }}> {text} </SubDescription>
+          <Overlay top={0.3} left={0.3}>
+            <Text size={0.75} color={textColor}>
+              {text}
+            </Text>
+          </Overlay>
+          <Text size={1.2} color={textColor}>
+            {balance}
+          </Text>
+          <Overlay bottom={0.3} right={0.3}>
+            <Text size={0.9} color={textColor}>
+              ETH
+            </Text>
+          </Overlay>
         </BoxButton>
       );
     };
 
-    useEffect(() => {
-      const curBal = Number(
-        formatUnits((isFunding ? OwnerBalance : OperatorBalance)?.value ?? 0n, GasExponent)
-      );
-
-      if (amount > curBal) {
-        setStatusText('Insufficient balance');
-        setStatusColor('#FF785B');
-      } else if (amount == curBal) {
-        setStatusText('Leave a little for gas!');
-        setStatusColor('#FF785B');
-      } else {
-        setStatusColor('grey');
-        // placeholder gas estimation
-        if (isFunding) {
-          if (amount < GasConstants.Low)
-            setStatusText('This might not last very long. Consider more?');
-          else if (amount < GasConstants.Full) setStatusText('This should last you for a while');
-          else setStatusText('This should last you for quite a while');
-        } else {
-          const remainBal = curBal - amount;
-          setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ETH left');
-        }
-      }
-    }, [amount, OwnerBalance, OperatorBalance, isFunding]);
+    /////////////////
+    // RENDER
 
     return (
-      <ModalWrapper id='operatorFund' canExit overlay>
-        <Grid>
-          <Header>Operator gas</Header>
-          <Row>
-            {StateBox(true)}
-            {StateBox(false)}
-          </Row>
-          <Description>
-            Fund operator. You need gas to function. Better description to follow.
-          </Description>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-            }}
-          >
-            <Input
-              style={{ pointerEvents: 'auto' }}
-              type='number'
-              step='1'
-              onKeyDown={(e) => catchKeys(e)}
-              placeholder={GasConstants.Full.toString()}
-              onChange={(e) => handleChange(e)}
-            ></Input>
+      <ModalWrapper id='operatorFund' canExit overlay truncate>
+        <Header>
+          <Text size={1.5}>Operator gas</Text>
+          <Text size={0.9}>Your Operator needs gas to function.</Text>
+        </Header>
+        <Row>
+          {StateBox(true)}
+          {StateBox(false)}
+        </Row>
+        {isFunding && ownerBalance < GasConstants.Empty ? (
+          <BridgeGroup>
+            <WarnText>You need to bridge some ETH first.</WarnText>
+            <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+          </BridgeGroup>
+        ) : (
+          <Column>
+            <Row>
+              <Input
+                style={{ pointerEvents: 'auto' }}
+                type='number'
+                value={amount.toFixed(5)}
+                step={0.0001}
+                min={0}
+                max={currBalance}
+                onKeyDown={(e) => catchKeys(e)}
+                onChange={(e) => handleChange(e)}
+                placeholder={GasConstants.Full.toString()}
+              />
+              <IconButton
+                onClick={triggerAction}
+                scale={3}
+                text={isFunding! ? 'Fund Operator' : 'Send to Owner'}
+              />
+            </Row>
             <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
-          </div>
-          {!hasEthBalance ? (
-            <Bridge>
-              <Text> Not enough gas. You need to bridge some ETH first.</Text>
-              <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
-            </Bridge>
-          ) : (
-            <Column>{TxButton()}</Column>
-          )}
-        </Grid>
+          </Column>
+        )}
       </ModalWrapper>
     );
   },
 };
 
+const Header = styled.div`
+  color: black;
+  padding: 1.2vw;
+  gap: 0.3vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+`;
+
 const BoxButton = styled.button`
+  position: relative;
+  border: solid black 0.15vw;
+  background-color: #fff;
+
+  width: 45%;
+  padding: 1.8vw 0;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 90%;
-  min-width: 100px;
-  padding: 0.5vh 0;
-  margin: 0 0.5vw;
-
-  background-color: #fff;
-  border-style: solid;
-  border-width: 0.15vw;
-  border-color: black;
-  color: black;
 
   pointerevents: 'auto';
 `;
 
-const Header = styled.p`
-  color: black;
-  padding: 0.75vw;
-
-  font-family: Pixel;
-  font-size: 1.5vw;
-  text-align: center;
-`;
-
-const Grid = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-
-  padding: 1vh 1vw;
-  margin: 2vh 0;
-`;
-
 const Row = styled.div`
   display: flex;
-  flex-direction: row wrap;
+  flex-direction: row nowrap;
   align-items: center;
-  width: 100%;
+  justify-content: center;
+
+  gap: 0.6vw;
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2vh;
-`;
-
-const Description = styled.p`
-  font-size: 1vw;
-  color: black;
-  text-align: center;
-  padding: 0.5vw;
-  font-family: Pixel;
-  width: 100%;
+  gap: 1vw;
+  padding: 0.6vw;
+  margin-top: 1.2vw;
 `;
 
 const Input = styled.input`
-  width: 100%;
+  display: inline-block;
+  border-radius: 0.45vw;
+  width: 12vw;
+  padding: 1vh 0.6vw;
 
+  font-size: 1.2vw;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  font-size: 1.5vw;
+
   cursor: pointer;
-  justify-content: center;
-  font-family: Pixel;
-
-  border-width: 0px;
-  padding: 1vh 1vw;
-
   &:focus {
     outline: none;
   }
 `;
 
-const SubDescription = styled.p`
-  font-size: 0.8vw;
-  color: grey;
-  text-align: center;
-  padding: 0.1vw;
-  font-family: Pixel;
-  width: 100%;
-`;
-
 const WarnText = styled.div`
-  font-size: 0.8vw;
-  color: #ff785b;
-  text-align: center;
-  padding: 0.75vw;
-  font-family: Pixel;
-
-  cursor: pointer;
-  border-width: 0px;
   background-color: #ffffff;
+  color: #ff785b;
+  padding: 0.75vw;
+
+  font-size: 0.8vw;
+  text-align: center;
 `;
 
-const Bridge = styled.div`
+const BridgeGroup = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-`;
 
-const Text = styled.div`
-  font-size: 0.75vw;
-  margin: 0 0 2vw 0;
-  color: red;
+  padding: 0.6vw;
 `;

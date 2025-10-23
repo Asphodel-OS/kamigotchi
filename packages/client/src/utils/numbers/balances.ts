@@ -1,4 +1,3 @@
-import { useTokens } from 'app/stores';
 import { formatUnits } from 'viem';
 
 export const parseTokenBalance = (balance: bigint = BigInt(0), decimals: number = 18) => {
@@ -10,12 +9,4 @@ export const parseTokenBalance = (balance: bigint = BigInt(0), decimals: number 
 export const round = (num: number, decimals: number) => {
   const factor = 10 ** decimals;
   return Math.round(num * factor) / factor;
-};
-
-// check whether user has eth balance, skip check on local
-const IS_LOCAL = import.meta.env.MODE === 'puter';
-
-export const useHasEth = () => {
-  const ethBalance = useTokens((s) => s.eth.balance);
-  return IS_LOCAL || ethBalance > 0;
 };

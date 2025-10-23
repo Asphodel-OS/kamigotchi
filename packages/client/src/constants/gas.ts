@@ -8,7 +8,7 @@ export const GasConstants = {
   Quarter: 250 * txCostEst,
   Low: 100 * txCostEst,
   Warning: 10 * txCostEst,
-  Empty: 0,
+  Empty: 1 * txCostEst,
 };
 
 export const GasExponent = 18;
