@@ -34,14 +34,13 @@ export const SendBar = ({
   };
   state: {
     kamis: Kami[];
-    tick: number;
   };
   isVisible: boolean;
 }) => {
   const { sendKami } = actions;
   const { sort, view } = controls;
   const { accounts } = data;
-  const { kamis, tick } = state;
+  const { kamis } = state;
 
   const isModalOpen = useVisibility((s) => s.modals.party);
 
@@ -99,6 +98,7 @@ export const SendBar = ({
           text={selectedKami.entity === 0 ? 'None' : selectedKami.name}
           options={kamiOptions}
           radius={0.6}
+          searchable
         />
         <IconListButton
           img={MenuIcons.operator}

@@ -321,7 +321,7 @@ export const PartyModal: UIComponent = {
           actions={{ sendKami: (k: Kami, a: Account) => sendKamiTx(k, a) }}
           controls={{ sort, view }}
           data={{ accounts }}
-          state={{ kamis: displayedKamis, tick }}
+          state={{ kamis: displayedKamis }}
           isVisible={isModalOpen && view === 'external'}
         />
       </ModalWrapper>
