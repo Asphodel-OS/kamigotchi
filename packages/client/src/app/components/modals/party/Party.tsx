@@ -37,6 +37,7 @@ import {
 } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs as _passesNodeReqs } from 'network/shapes/Node';
 import { KamiList } from './KamiList';
+import { SendBar } from './SendBar';
 import { Toolbar } from './Toolbar';
 import { Sort, View } from './types';
 
@@ -171,7 +172,7 @@ export const PartyModal: UIComponent = {
 
       // check if we need to update the list of accounts
       const accountEntities = queryAllAccounts() as EntityIndex[];
-      if (accountEntities.length > accounts.length) {
+      if (accountEntities.length + 1 > accounts.length) {
         const filtered = accountEntities.filter((entity) => entity != accountEntity);
         const newAccounts = filtered.map((entity) => getAccount(entity));
         const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
@@ -316,13 +317,13 @@ export const PartyModal: UIComponent = {
           state={{ displayedKamis, tick }}
           utils={utils}
         />
-        {/* <ExternalBar
-          actions={{ stakeKamis: (kamis: Kami[]) => stakeKamiTx(kamis) }}
-          controls={{ view }}
-          data={{ account, accounts }}
+        <SendBar
+          actions={{ sendKami: (k: Kami, a: Account) => sendKamiTx(k, a) }}
+          controls={{ sort, view }}
+          data={{ accounts }}
           state={{ kamis: displayedKamis, tick }}
           isVisible={isModalOpen && view === 'external'}
-        /> */}
+        />
       </ModalWrapper>
     );
   },
