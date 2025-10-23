@@ -189,10 +189,10 @@ export const KamiPortalModal: UIComponent = {
     return (
       <ModalWrapper
         id='bridgeERC721'
-        header={<ModalHeader title='Kami Bridge' icon={MenuIcons.kami} />}
+        header={<ModalHeader title='Kami Portal' icon={MenuIcons.kami} />}
         canExit
-        truncate
         noPadding
+        overlay
       >
         <Container>
           <WorldKamis
@@ -211,9 +211,11 @@ export const KamiPortalModal: UIComponent = {
 };
 
 const Container = styled.div`
-  display: flex;
+  position: relative;
   width: 100%;
-  height: 33vw;
-  align-items: stretch;
-  justify-content: space-between;
+  height: 100%;
+  z-index: 2;
+
+  display: flex;
+  flex-flow: row nowrap;
 `;

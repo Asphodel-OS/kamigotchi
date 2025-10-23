@@ -1,18 +1,14 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, IconButton, Overlay } from 'app/components/library';
+import { EmptyText, IconButton } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiBlock } from '../../library/KamiBlock';
 
 export const WildKamis = ({
   kamis,
-  state: {
-    selectedWild,
-    setSelectedWild,
-    selectedWorld,
-  },
+  state: { selectedWild, setSelectedWild, selectedWorld },
 }: {
   kamis: Kami[];
   state: {
@@ -39,27 +35,20 @@ export const WildKamis = ({
   };
 
   /////////////////
-  // INTERPRETATION
-
-  const getCount = () => {
-    return `${kamis.length}`;
-  };
-
-  /////////////////
   // RENDER
 
   return (
     <Container>
-      <Overlay top={0.9} fullWidth orientation='column' gap={0.4}>
-        <Text size={0.9}>Wilderness({getCount()})</Text>
+      <Header>
+        <Text size={0.9}>Wilderness</Text>
         <IconButton
           onClick={() => {
             setSelectedWild(kamis);
           }}
-          text={'Select All'}
+          text={`Select All (${kamis.length})`}
           disabled={(selectedWorld?.length ?? 0) > 0 || selectedWild.length === kamis.length}
         />
-      </Overlay>
+      </Header>
       <Scrollable>
         {displayed.map((kami) => (
           <KamiBlock
@@ -74,13 +63,11 @@ export const WildKamis = ({
           />
         ))}
       </Scrollable>
-      <Overlay fullWidth fullHeight passthrough>
-        <EmptyText
-          text={['You have no Kami', 'in the wild']}
-          size={1}
-          isHidden={!!displayed.length}
-        />
-      </Overlay>
+      <EmptyText
+        text={['You have no Kami', 'in the wild']}
+        size={1}
+        isHidden={!!displayed.length}
+      />
     </Container>
   );
 };
@@ -93,6 +80,24 @@ const Container = styled.div`
   flex-flow: column nowrap;
 `;
 
+const Header = styled.div`
+  position: sticky;
+  top: 0;
+
+  padding: 0.6vw;
+  background-color: rgb(238, 238, 238);
+  gap: 0.6vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 0.9vw;
+  line-height: 1.5vw;
+  text-align: center;
+`;
+
 const Scrollable = styled.div`
   display: flex;
   flex-flow: row;
@@ -100,7 +105,6 @@ const Scrollable = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 5vw;
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
