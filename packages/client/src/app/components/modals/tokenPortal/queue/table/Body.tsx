@@ -117,16 +117,21 @@ export const Body = ({
             <TextTooltip text={[getDate(r.Timestamp, false)]}>
               <Field width={4}>{getDate(r.Timestamp, true)}</Field>
             </TextTooltip>
-            {mode === 'OTHERS' && (
-              <TextTooltip text={[getAccount(r).name]} alignText={'right'}>
-                <Field width={4} onClick={() => onClickAccount(getAccount(r))}>
-                  <Name>{getAccount(r).name}</Name>
-                </Field>
-              </TextTooltip>
-            )}
-            {mode === 'MINE' && (
-              <Field width={5}>{r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}</Field>
-            )}
+
+            <TextTooltip text={[getAccount(r).name]} alignText={'right'}>
+              <Field
+                width={4}
+                visible={mode === 'OTHERS'}
+                onClick={() => onClickAccount(getAccount(r))}
+              >
+                <Name>{getAccount(r).name}</Name>
+              </Field>
+            </TextTooltip>
+
+            <Field width={5} visible={mode === 'MINE'}>
+              {r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}
+            </Field>
+
             <Field width={2}>
               <TextTooltip text={['$ONYX']} alignText={'right'}>
                 <Icon
@@ -135,34 +140,32 @@ export const Body = ({
                 />
               </TextTooltip>
             </Field>
+
             <Field width={3.5}>{getTokenConversion(r)}</Field>
             <Field width={4}>{getStatus(r)}</Field>
-            {mode === 'MINE' && (
-              <Field width={3.5}>
-                {isActive(r) && (
-                  <IconGroup>
-                    <TextTooltip text={getClaimTooltip(r)}>
-                      <IconButton
-                        img={PlaceholderIcon}
-                        scale={1.5}
-                        onClick={() => {
-                          claim(r);
-                        }}
-                        disabled={!isClaimable(r) || r.IsCanceled || r.IsClaimed}
-                      />
-                    </TextTooltip>
-                    <IconButton
-                      img={ActionIcons.cancel}
-                      scale={1.5}
-                      onClick={() => {
-                        cancel(r);
-                      }}
-                      disabled={r.IsCanceled || r.IsClaimed}
-                    />
-                  </IconGroup>
-                )}
-              </Field>
-            )}
+
+            <Field width={3.5} visible={mode === 'MINE'}>
+              <IconGroup visible={isActive(r)}>
+                <TextTooltip text={getClaimTooltip(r)}>
+                  <IconButton
+                    img={PlaceholderIcon}
+                    scale={1.5}
+                    onClick={() => {
+                      claim(r);
+                    }}
+                    disabled={!isClaimable(r) || r.IsCanceled || r.IsClaimed}
+                  />
+                </TextTooltip>
+                <IconButton
+                  img={ActionIcons.cancel}
+                  scale={1.5}
+                  onClick={() => {
+                    cancel(r);
+                  }}
+                  disabled={r.IsCanceled || r.IsClaimed}
+                />
+              </IconGroup>
+            </Field>
           </Row>
         );
       })}
@@ -193,12 +196,12 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const Field = styled.div<{ width: number }>`
+const Field = styled.div<{ width: number; visible?: boolean }>`
   gap: 0.6vw;
   width: ${({ width }) => width}vw;
   height: 100%;
 
-  display: flex;
+  display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
@@ -207,10 +210,10 @@ const Field = styled.div<{ width: number }>`
   user-select: none;
 `;
 
-const IconGroup = styled.div`
+const IconGroup = styled.div<{ visible?: boolean }>`
   gap: 0.3vw;
 
-  display: flex;
+  display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   flex-flow: row nowrap;
   justify-content: center;
 `;
