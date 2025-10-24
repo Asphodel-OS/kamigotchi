@@ -68,6 +68,11 @@ export const Body = ({
     playClick();
   };
 
+  // determine whether a receipt is active
+  const isActive = (receipt: TokenPortal) => {
+    return receipt.IsWithdrawal && !receipt.IsCanceled && !receipt.IsClaimed;
+  };
+
   // check whether a Receipt is claimable
   const isClaimable = (receipt: TokenPortal) => {
     const nowSec = Math.floor(Date.now() / 1000);
@@ -80,17 +85,19 @@ export const Body = ({
     else return ['Claim'];
   };
 
+  // get the status text of a receipt
   const getStatus = (receipt: TokenPortal) => {
-    if (!receipt.IsWithdrawal) return '';
+    if (!receipt.IsWithdrawal) return 'Complete';
     if (receipt.IsCanceled) return 'Canceled';
     if (receipt.IsClaimed) return 'Claimed';
     return getCountdown(Number(receipt.Timestamp) + config.delay);
   };
 
+  // get the date string of a receipt
   const getDate = (timestamp: string, onlyDate: boolean) => {
     const date = new Date(Number(timestamp) * 1000);
     return onlyDate
-      ? date.toLocaleDateString(navigator.language)
+      ? date.toLocaleDateString(navigator.language, { month: 'short', day: 'numeric' })
       : date.toLocaleString(navigator.language, {
           hour12: false,
         });
@@ -107,6 +114,9 @@ export const Body = ({
         if (itsPlayer && mode === 'OTHERS') return null;
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
+            <TextTooltip text={[getDate(r.Timestamp, false)]}>
+              <Field width={4}>{getDate(r.Timestamp, true)}</Field>
+            </TextTooltip>
             {mode === 'OTHERS' && (
               <TextTooltip text={[getAccount(r).name]} alignText={'right'}>
                 <Field width={4} onClick={() => onClickAccount(getAccount(r))}>
@@ -126,15 +136,10 @@ export const Body = ({
               </TextTooltip>
             </Field>
             <Field width={3.5}>{getTokenConversion(r)}</Field>
-            <TextTooltip text={[getDate(r.Timestamp, false)]}>
-              <Field style={{ lineHeight: `1vw` }} width={5}>
-                {getDate(r.Timestamp, true)}
-              </Field>
-            </TextTooltip>
             <Field width={4}>{getStatus(r)}</Field>
             {mode === 'MINE' && (
               <Field width={3.5}>
-                {r.IsWithdrawal && (
+                {isActive(r) && (
                   <IconGroup>
                     <TextTooltip text={getClaimTooltip(r)}>
                       <IconButton

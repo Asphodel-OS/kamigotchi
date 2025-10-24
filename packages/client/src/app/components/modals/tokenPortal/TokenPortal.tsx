@@ -92,7 +92,7 @@ export const TokenPortalModal: UIComponent = {
 
       // set up ticking
       const refreshClock = () => setTick(Date.now());
-      const timerId = setInterval(refreshClock, 5000);
+      const timerId = setInterval(refreshClock, 1000);
       return () => clearInterval(timerId);
     }, []);
 
@@ -114,7 +114,8 @@ export const TokenPortalModal: UIComponent = {
     // TODO: set up a caching for receipts
     useEffect(() => {
       if (!isOpen) return;
-      getTokenHistory(account.id);
+      const tickSeconds = Math.floor(tick / 1000);
+      if (tickSeconds % 5 === 0) getTokenHistory(account.id);
     }, [isOpen, tick]);
 
     /////////////////

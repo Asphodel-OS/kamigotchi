@@ -106,11 +106,11 @@ export const Table = ({
     <Container>
       <Header
         columns={{
+          Created: 4,
           Account: 4,
           Type: 4,
           Token: 4,
           Amount: 4,
-          Created: 5,
           Status: 4,
           Actions: 3.5,
         }}
