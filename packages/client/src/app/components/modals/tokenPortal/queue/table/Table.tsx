@@ -80,7 +80,7 @@ export const Table = ({
     }
 
     setSorted(sortedList);
-  }, [filtered, sort, config]);
+  }, [filtered, sort, config, utils]);
 
   /////////////////
   // GETTERS
