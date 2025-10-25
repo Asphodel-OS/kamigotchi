@@ -185,7 +185,7 @@ export const Logs = ({
     const metadata = actionData.metadata ?? '';
     const hash = actionData.txHash as string | undefined;
 
-    // Enable cancellation for all chains (works on yominet too despite initial concerns)
+    // Enable cancellation for pending transactions with a hash
     const isClickable = state === 'Pending' && hash;
 
     return (
