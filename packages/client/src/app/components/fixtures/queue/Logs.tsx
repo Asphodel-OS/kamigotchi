@@ -192,16 +192,6 @@ export const Logs = ({
     // Enable cancellation for all chains (works on yominet too despite initial concerns)
     const isClickable = state === 'Pending' && hash;
 
-    // Debug logging (remove in production)
-    console.log('Chain Debug:', {
-      defaultChainId: DefaultChain?.id,
-      isYominet: DefaultChain.id === 428962654539583,
-      state,
-      hash,
-      envMode: import.meta.env.MODE,
-      isClickable
-    });
-
     return (
       <Row
         key={`action${entity}`}
