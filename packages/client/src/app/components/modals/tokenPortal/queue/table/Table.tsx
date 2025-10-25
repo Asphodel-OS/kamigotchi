@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Configs } from 'app/cache/config/portal';
 import { TokenPortal } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
+import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
 import { getResultWithdraw, getSwapRate } from '../../utils';
 import { BodyMine } from './Body/BodyMine';
@@ -33,6 +34,7 @@ export const Table = ({
   };
 }) => {
   const { myReceipts, othersReceipts, config, account } = data;
+  const { getItemByIndex, getAccountByID } = utils;
 
   const [filtered, setFiltered] = useState<TokenPortal[]>([]);
   const [sort, setSort] = useState<Sort>({ key: 'Created', reverse: true });
@@ -69,6 +71,19 @@ export const Table = ({
         if (canceledDiff !== 0) return canceledDiff;
 
         return (Number(a.IsClaimed) - Number(b.IsClaimed)) * flip;
+      });
+    } else if (sort.key === 'Account') {
+      sortedList = [...filtered].sort((a, b) => {
+        const aName =
+          getAccountByID(formatEntityID(BigInt(a.AccountID)) as EntityID)?.name?.toLowerCase() ??
+          '';
+        const bName =
+          getAccountByID(formatEntityID(BigInt(b.AccountID)) as EntityID)?.name?.toLowerCase() ??
+          '';
+
+        if (aName > bName) return 1 * flip;
+        if (aName < bName) return -1 * flip;
+        return 0;
       });
     } else if (sort.key === 'Type') {
       sortedList = [...filtered].sort(
@@ -125,7 +140,6 @@ export const Table = ({
       />
 
       <BodyOthers
-        actions={actions}
         data={{ receipts: sorted, config, account }}
         utils={{ ...utils, getTokenConversion }}
         state={{ visible: mode === 'OTHERS' }}
