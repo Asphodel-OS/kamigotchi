@@ -21,7 +21,6 @@ export const Queue = ({
     myReceipts: TokenPortal[];
     othersReceipts: TokenPortal[];
     config: Configs;
-    selected: Item;
     account: Account;
   };
 

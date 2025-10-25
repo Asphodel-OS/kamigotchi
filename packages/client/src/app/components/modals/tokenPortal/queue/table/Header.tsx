@@ -42,14 +42,12 @@ export const Header = ({
     <Container>
       {Object.entries(columns).map(([col, width]) => {
         return (
-          showColumn(col) && (
-            <Label key={col} width={width}>
-              <Text size={0.75} onClick={() => labelOnClick(col as Column)}>
-                {col}
-              </Text>
-              {sort.key === col && <Text size={0.9}>{sort.reverse ? '↑' : '↓'}</Text>}
-            </Label>
-          )
+          <Label key={col} width={width} visible={showColumn(col)}>
+            <Text size={0.75} onClick={() => labelOnClick(col as Column)}>
+              {col}
+            </Text>
+            {sort.key === col && <Text size={0.9}>{sort.reverse ? '↑' : '↓'}</Text>}
+          </Label>
         );
       })}
     </Container>
@@ -77,12 +75,12 @@ const Container = styled.div`
   z-index: 1;
 `;
 
-const Label = styled.div<{ width: number }>`
+const Label = styled.div<{ width: number; visible: boolean }>`
   position: relative;
   padding: 0.6vw;
   width: ${({ width }) => width}vw;
 
-  display: flex;
+  display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;

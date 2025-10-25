@@ -6,7 +6,8 @@ import { TokenPortal } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { Account, Item } from 'network/shapes';
 import { getResultWithdraw, getSwapRate } from '../../utils';
-import { Body } from './Body';
+import { BodyMine } from './Body/BodyMine';
+import { BodyOthers } from './Body/BodyOthers';
 import { Filter, Sort } from './constants';
 import { Footer } from './Footer';
 import { Header } from './Header';
@@ -14,7 +15,6 @@ import { Header } from './Header';
 export const Table = ({
   actions,
   data,
-
   utils,
 }: {
   actions: {
@@ -25,7 +25,6 @@ export const Table = ({
     myReceipts: TokenPortal[];
     othersReceipts: TokenPortal[];
     config: Configs;
-    selected: Item;
     account: Account;
   };
   utils: {
@@ -33,7 +32,7 @@ export const Table = ({
     getAccountByID: (id: EntityID) => Account;
   };
 }) => {
-  const { myReceipts, othersReceipts, config, selected, account } = data;
+  const { myReceipts, othersReceipts, config, account } = data;
 
   const [filtered, setFiltered] = useState<TokenPortal[]>([]);
   const [sort, setSort] = useState<Sort>({ key: 'Created', reverse: true });
@@ -117,11 +116,21 @@ export const Table = ({
         data={{ mode }}
         state={{ sort, setSort }}
       />
-      <Body
+
+      <BodyMine
         actions={actions}
-        data={{ receipts: sorted, config, mode, account }}
+        data={{ receipts: sorted, config, account }}
         utils={{ ...utils, getTokenConversion }}
+        state={{ visible: mode === 'MINE' }}
       />
+
+      <BodyOthers
+        actions={actions}
+        data={{ receipts: sorted, config, account }}
+        utils={{ ...utils, getTokenConversion }}
+        state={{ visible: mode === 'OTHERS' }}
+      />
+
       <Footer state={{ mode, setMode }} />
     </Container>
   );

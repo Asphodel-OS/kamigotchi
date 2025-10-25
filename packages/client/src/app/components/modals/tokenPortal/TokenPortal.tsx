@@ -270,7 +270,7 @@ export const TokenPortalModal: UIComponent = {
             claim: claimTx,
             cancel: cancelTx,
           }}
-          data={{ myReceipts, othersReceipts, config, selected, account }}
+          data={{ myReceipts, othersReceipts, config, account }}
           isVisible={showQueue}
           utils={utils}
         />

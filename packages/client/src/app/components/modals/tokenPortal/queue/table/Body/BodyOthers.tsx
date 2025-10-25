@@ -1,10 +1,8 @@
 import styled from 'styled-components';
 
 import { Configs } from 'app/cache/config/portal';
-import { IconButton, TextTooltip } from 'app/components/library';
+import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { PlaceholderIcon } from 'assets/images/icons';
-import { ActionIcons } from 'assets/images/icons/actions';
 import { TokenIcons } from 'assets/images/tokens';
 import { TokenPortal } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
@@ -12,12 +10,13 @@ import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 import { getCountdown } from 'utils/time';
-import { openBaselineLink } from '../../utils';
+import { openBaselineLink } from '../../../utils';
 
-export const Body = ({
+export const BodyOthers = ({
   actions,
   data,
   utils,
+  state,
 }: {
   actions: {
     claim: (receiptID: TokenPortal) => Promise<void>;
@@ -26,7 +25,6 @@ export const Body = ({
   data: {
     receipts: TokenPortal[];
     config: Configs;
-    mode: string;
     account: Account;
   };
   utils: {
@@ -34,10 +32,13 @@ export const Body = ({
     getTokenConversion: (receipt: TokenPortal) => number;
     getAccountByID: (id: EntityID) => Account;
   };
+  state: {
+    visible: boolean;
+  };
 }) => {
-  const { cancel, claim } = actions;
-  const { receipts, config, mode, account } = data;
+  const { receipts, config, account } = data;
   const { getItemByIndex, getTokenConversion, getAccountByID } = utils;
+  const { visible } = state;
 
   const selectAccount = useSelected((s) => s.setAccount);
   const selectedAccount = useSelected((s) => s.accountIndex);
@@ -68,23 +69,6 @@ export const Body = ({
     playClick();
   };
 
-  // determine whether a receipt is active
-  const isActive = (receipt: TokenPortal) => {
-    return receipt.IsWithdrawal && !receipt.IsCanceled && !receipt.IsClaimed;
-  };
-
-  // check whether a Receipt is claimable
-  const isClaimable = (receipt: TokenPortal) => {
-    const nowSec = Math.floor(Date.now() / 1000);
-    return nowSec >= Number(receipt.Timestamp) + config.delay;
-  };
-
-  // get the tooltip for a Receipt Claim
-  const getClaimTooltip = (receipt: TokenPortal) => {
-    if (!isClaimable(receipt)) return ['Not yet claimable'];
-    else return ['Claim'];
-  };
-
   // get the status text of a receipt
   const getStatus = (receipt: TokenPortal) => {
     if (!receipt.IsWithdrawal) return 'Complete';
@@ -107,31 +91,21 @@ export const Body = ({
   // DISPLAY
 
   return (
-    <Container>
+    <Container visible={visible}>
       {receipts.map((r: TokenPortal, i: number) => {
         const item = getItemByIndex(r.ItemIndex as number);
         const itsPlayer = account.id === formatEntityID(BigInt(r.AccountID));
-        if (itsPlayer && mode === 'OTHERS') return null;
+        if (itsPlayer) return null;
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
             <TextTooltip text={[getDate(r.Timestamp, false)]}>
               <Field width={4}>{getDate(r.Timestamp, true)}</Field>
             </TextTooltip>
-
             <TextTooltip text={[getAccount(r).name]} alignText={'right'}>
-              <Field
-                width={4}
-                visible={mode === 'OTHERS'}
-                onClick={() => onClickAccount(getAccount(r))}
-              >
+              <Field width={4} onClick={() => onClickAccount(getAccount(r))}>
                 <Name>{getAccount(r).name}</Name>
               </Field>
             </TextTooltip>
-
-            <Field width={5} visible={mode === 'MINE'}>
-              {r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}
-            </Field>
-
             <Field width={2}>
               <TextTooltip text={['$ONYX']} alignText={'right'}>
                 <Icon
@@ -140,32 +114,8 @@ export const Body = ({
                 />
               </TextTooltip>
             </Field>
-
             <Field width={3.5}>{getTokenConversion(r)}</Field>
             <Field width={4}>{getStatus(r)}</Field>
-
-            <Field width={3.5} visible={mode === 'MINE'}>
-              <IconGroup visible={isActive(r)}>
-                <TextTooltip text={getClaimTooltip(r)}>
-                  <IconButton
-                    img={PlaceholderIcon}
-                    scale={1.5}
-                    onClick={() => {
-                      claim(r);
-                    }}
-                    disabled={!isClaimable(r) || r.IsCanceled || r.IsClaimed}
-                  />
-                </TextTooltip>
-                <IconButton
-                  img={ActionIcons.cancel}
-                  scale={1.5}
-                  onClick={() => {
-                    cancel(r);
-                  }}
-                  disabled={r.IsCanceled || r.IsClaimed}
-                />
-              </IconGroup>
-            </Field>
           </Row>
         );
       })}
@@ -173,14 +123,14 @@ export const Body = ({
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ visible?: boolean }>`
+  display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   position: relative;
   max-height: 100%;
   width: 100%;
 
   padding: 0.6vw 0;
 
-  display: flex;
   flex-flow: column nowrap;
   align-items: center;
 `;
@@ -196,26 +146,18 @@ const Row = styled.div`
   align-items: center;
 `;
 
-const Field = styled.div<{ width: number; visible?: boolean }>`
+const Field = styled.div<{ width: number }>`
   gap: 0.6vw;
   width: ${({ width }) => width}vw;
   height: 100%;
 
-  display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
+  display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
 
   font-size: 0.6vw;
   user-select: none;
-`;
-
-const IconGroup = styled.div<{ visible?: boolean }>`
-  gap: 0.3vw;
-
-  display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
-  flex-flow: row nowrap;
-  justify-content: center;
 `;
 
 const Icon = styled.img`
