@@ -9,7 +9,11 @@ import { IsDisabledComponent, ID as IsDisabledCompID } from "components/IsDisabl
 /// @notice handles isDisabled component and logic
 library LibDisabled {
   function verifyEnabled(IUintComp components, uint256 id) internal view {
-    if (get(components, id)) revert("entity disabled");
+    if (get(components, id)) revert("entity not enabled");
+  }
+
+  function verifyDisabled(IUintComp components, uint256 id) internal view {
+    if (!get(components, id)) revert("entity not disabled");
   }
 
   function get(IUintComp components, uint256 id) internal view returns (bool) {

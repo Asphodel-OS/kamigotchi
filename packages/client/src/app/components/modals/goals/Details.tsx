@@ -24,7 +24,7 @@ export const Details = ({
       <Box key={tier.name} style={{ padding: '0 0.4vw' }}>
         <Row>
           <SmallTitleText>{tier.name}</SmallTitleText>
-          <HelpChip tooltip={[helpText]} />
+          <HelpChip tooltip={{ text: [helpText] }} />
         </Row>
 
         <Row>

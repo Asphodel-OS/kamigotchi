@@ -9,6 +9,7 @@ export const Text = styled.div<{
     left?: number;
     right?: number;
   };
+  onClick?: () => void;
 }>`
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size }) => size * 1.5}vw;
@@ -16,4 +17,10 @@ export const Text = styled.div<{
 
   padding: ${({ padding }) => padding?.top ?? 0}vw ${({ padding }) => padding?.right ?? 0}vw
     ${({ padding }) => padding?.bottom ?? 0}vw ${({ padding }) => padding?.left ?? 0}vw;
+
+  ${({ onClick }) => onClick && 'cursor: pointer'};
+  &:hover {
+    ${({ onClick }) => (onClick ? 'opacity: 0.6;' : '')}
+  }
+  user-select: none;
 `;

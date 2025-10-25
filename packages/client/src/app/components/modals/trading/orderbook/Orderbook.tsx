@@ -6,8 +6,9 @@ import { Trade, TradeType } from 'app/cache/trade';
 import { Account, Item, NullItem } from 'network/shapes';
 import { ConfirmationData } from '../library/Confirmation';
 import { TabType } from '../types';
-import { Controls } from './Controls';
+import { Controls } from './controls';
 import { Offers } from './offers/Offers';
+import { SearchBar } from './SearchBar';
 
 export const Orderbook = ({
   actions,
@@ -36,14 +37,18 @@ export const Orderbook = ({
   };
   isVisible: boolean;
 }) => {
-  const { tab } = controls;
+  const { items } = data;
 
+  const [collapsed, setCollapsed] = useState<boolean>(false);
   const [sort, setSort] = useState<string>('Price'); // Price, Owner
   const [ascending, setAscending] = useState<boolean>(true);
+  const [query, setQuery] = useState<string>('');
+
+  // TODO: consolidate these filters into a single object
   const [itemFilter, setItemFilter] = useState<Item>(NullItem); // item index
-  const [itemSearch, setItemSearch] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<TradeType>('Buy');
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [category, setCategory] = useState<string>('All');
+
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -69,11 +74,12 @@ export const Orderbook = ({
             setAscending,
             itemFilter,
             setItemFilter,
-            itemSearch,
-            setItemSearch,
+            query,
+            setQuery,
+            category,
+            setCategory,
           }}
           data={data}
-          utils={utils}
         />
       </TopPane>
       <ToggleRow>
@@ -81,6 +87,23 @@ export const Orderbook = ({
           {collapsed ? '∨' : '∧'}
         </CollapseToggle>
       </ToggleRow>
+      <SearchBar
+        controls={{
+          typeFilter,
+          setTypeFilter,
+          setItemFilter,
+
+          sort,
+          setSort,
+          ascending,
+          setAscending,
+          query,
+          setQuery,
+          setCategory,
+        }}
+        data={{ items }}
+        utils={utils}
+      />
       <BottomPane>
         <Offers
           actions={actions}
@@ -92,7 +115,6 @@ export const Orderbook = ({
             ascending,
             setAscending,
             itemFilter,
-            itemSearch,
           }}
           data={data}
           utils={utils}
@@ -103,18 +125,18 @@ export const Orderbook = ({
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
-  height: 100%;
-  display: ${({ isVisible }) => (isVisible ? 'grid' : 'none')};
-  grid-template-rows: var(--top, 40%) min-content 1fr;
-  grid-template-columns: 1fr;
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   position: relative;
+
+  flex-flow: column nowrap;
+  height: 100%;
   width: 100%;
   user-select: none;
 `;
 
 const TopPane = styled.div<{ collapsed: boolean }>`
+  display: ${({ collapsed }) => (collapsed ? 'none' : 'flex')};
   position: relative;
-  grid-row: 1;
   overflow: hidden auto;
   height: 100%;
   width: 100%;
@@ -125,7 +147,6 @@ const TopPane = styled.div<{ collapsed: boolean }>`
 
 const BottomPane = styled.div`
   position: relative;
-  grid-row: 3;
   display: flex;
   width: 100%;
   height: 100%;
@@ -135,7 +156,6 @@ const BottomPane = styled.div`
 `;
 
 const ToggleRow = styled.div`
-  grid-row: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -144,14 +164,14 @@ const ToggleRow = styled.div`
 `;
 
 const CollapseToggle = styled.button`
+  background: rgb(221, 221, 221);
   border: 0.12vw solid black;
   border-left: 0;
   border-right: 0;
   width: 100%;
   height: 1.2vw;
-  line-height: 1.2vw;
-  padding: 0;
+
   font-size: 0.9vw;
-  background: rgb(221, 221, 221);
+  line-height: 1.2vw;
   cursor: pointer;
 `;

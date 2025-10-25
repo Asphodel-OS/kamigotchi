@@ -10,6 +10,7 @@ import better_ice_cream from './better_ice_cream.png';
 import black_poppy from './black_poppy.png';
 import black_poppy_extract from './black_poppy_extract.png';
 import bless_potion from './bless_potion.png';
+import booster_pack from './booster_pack.png';
 import chalkberry from './chalkberry.png';
 import cheeseburger from './cheeseburger.png';
 import cultivation_i_spell_card from './cultivation_i_spell_card.png';
@@ -20,7 +21,6 @@ import disc_shaped_map from './disc_shaped_map.png';
 import empty_cup from './empty_cup.png';
 import energy_drink from './energy_drink.png';
 import essence_of_daffodil from './essence_of_daffodil.png';
-import eth from './eth.png';
 import festival_chime from './festival_chime.png';
 import fetid_egg from './fetid_egg.png';
 import fuliginous_ooze from './fuliginous_ooze.png';
@@ -36,7 +36,6 @@ import holy_dust from './holy_dust.png';
 import holy_syrup from './holy_syrup.png';
 import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
-import initia_icon from './initia_icon.png';
 import inverted_teardrop_jewel from './inverted_teardrop_jewel.png';
 import kamigotchi_world_citizen_giftbox from './kamigotchi_world_citizen_giftbox.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
@@ -54,6 +53,7 @@ import kamigotchi_world_passport_purple from './kamigotchi_world_passport_purple
 import kamigotchi_world_passport_red from './kamigotchi_world_passport_red.png';
 import kamigotchi_world_passport_white from './kamigotchi_world_passport_white.png';
 import kamigotchi_world_passport_yellow from './kamigotchi_world_passport_yellow.png';
+import kw_maps_data_chip from './kw_maps_data_chip.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import melkarths_heroic_awakening_spell_card from './melkarths_heroic_awakening_spell_card.png';
 import microplastics from './microplastics.png';
@@ -62,7 +62,7 @@ import musu from './musu.png';
 import musu_magnet from './musu_magnet.png';
 import neiths_river_of_life_spell_card from './neiths_river_of_life_spell_card.png';
 import obol from './obol.png';
-import onyx from './onyx.png';
+import onyx_shard from './onyx_shard.webp';
 import paeons_field_of_flowers_spell_card from './paeons_field_of_flowers_spell_card.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
@@ -70,6 +70,7 @@ import plastic_bottle from './plastic_bottle.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import portable_burner from './portable_burner.png';
 import powdered_red_amber from './powdered_red_amber.png';
+import pyramid_engine from './pyramid_engine.png';
 import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
 import reroll_ticket from './reroll_ticket.png';
@@ -107,6 +108,7 @@ export const ItemImages = {
   black_poppy: black_poppy,
   black_poppy_extract: black_poppy_extract,
   bless_potion: bless_potion,
+  booster_pack: booster_pack,
   chalkberry: chalkberry,
   cheeseburger: cheeseburger,
   cultivation_i_spell_card: cultivation_i_spell_card,
@@ -117,7 +119,6 @@ export const ItemImages = {
   empty_cup: empty_cup,
   energy_drink: energy_drink,
   essence_of_daffodil: essence_of_daffodil,
-  eth: eth,
   festival_chime: festival_chime,
   fetid_egg: fetid_egg,
   fuliginous_ooze: fuliginous_ooze,
@@ -133,7 +134,6 @@ export const ItemImages = {
   holy_syrup: holy_syrup,
   hostility_potion: hostility_potion,
   ice_cream: ice_cream,
-  initia_icon: initia_icon,
   inverted_teardrop_jewel: inverted_teardrop_jewel,
   kamigotchi_world_citizen_giftbox: kamigotchi_world_citizen_giftbox,
   kamigotchi_world_passport: kamigotchi_world_passport,
@@ -151,6 +151,7 @@ export const ItemImages = {
   kamigotchi_world_passport_red: kamigotchi_world_passport_red,
   kamigotchi_world_passport_white: kamigotchi_world_passport_white,
   kamigotchi_world_passport_yellow: kamigotchi_world_passport_yellow,
+  kw_maps_data_chip: kw_maps_data_chip,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
   melkarths_heroic_awakening_spell_card: melkarths_heroic_awakening_spell_card,
   microplastics: microplastics,
@@ -159,7 +160,7 @@ export const ItemImages = {
   musu_magnet: musu_magnet,
   neiths_river_of_life_spell_card: neiths_river_of_life_spell_card,
   obol: obol,
-  onyx: onyx,
+  onyx_shard: onyx_shard,
   paeons_field_of_flowers_spell_card: paeons_field_of_flowers_spell_card,
   pine_cone: pine_cone,
   pine_pollen: pine_pollen,
@@ -167,6 +168,7 @@ export const ItemImages = {
   pom_pom_fruit_candy: pom_pom_fruit_candy,
   portable_burner: portable_burner,
   powdered_red_amber: powdered_red_amber,
+  pyramid_engine: pyramid_engine,
   red_amber_crystal: red_amber_crystal,
   red_gakki_ribbon: red_gakki_ribbon,
   reroll_ticket: reroll_ticket,

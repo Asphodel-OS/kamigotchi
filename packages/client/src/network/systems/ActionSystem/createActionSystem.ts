@@ -1,4 +1,3 @@
-import { Provider } from '@ethersproject/providers';
 import {
   EntityID,
   EntityIndex,
@@ -8,7 +7,8 @@ import {
   removeComponent,
   setComponent,
   updateComponent,
-} from '@mud-classic/recs';
+} from 'engine/recs';
+import { Provider } from 'ethers';
 import { Observable } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { defineActionComponent } from './ActionComponent';

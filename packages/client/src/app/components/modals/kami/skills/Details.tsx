@@ -97,13 +97,7 @@ export const Details = ({
   // DISPLAY
 
   // render a list of values with a label (for Bonuses/Requirements)
-  const LabeledList = ({
-    label,
-    values,
-  }: {
-    label: string;
-    values?: string[];
-  }) => {
+  const LabeledList = ({ label, values }: { label: string; values?: string[] }) => {
     if (!values || values.length <= 0 || values[0] == '') return <></>;
     return (
       <DetailSection>
@@ -134,11 +128,13 @@ export const Details = ({
         </div>
         <div style={{ position: 'absolute', top: '.6vw', right: '.6vw' }}>
           <HelpChip
-            tooltip={[
-              `Skill Index: ${skill.index}`,
-              `Cost: ${skill.cost} Skill Point(s)`,
-              `Max: Level ${skill.max}`,
-            ]}
+            tooltip={{
+              text: [
+                `Skill Index: ${skill.index}`,
+                `Cost: ${skill.cost} Skill Point(s)`,
+                `Max: Level ${skill.max}`,
+              ],
+            }}
           />
         </div>
       </ImageSection>

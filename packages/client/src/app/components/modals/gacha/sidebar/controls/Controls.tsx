@@ -1,15 +1,12 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
 
-import { GachaMintConfig } from 'app/cache/config';
 import { ActionButton, Overlay, Pairing, Warning } from 'app/components/library';
 import { Commit } from 'network/shapes/Commit';
-import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 
 import { Filter, Sort, TabType, ViewMode } from '../../types';
-import { Mint } from './mint/Mint';
 import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
@@ -37,14 +34,6 @@ export const Controls = ({
     commits: Commit[];
     payItem: Item;
     saleItem: Item;
-    mint: {
-      config: GachaMintConfig;
-      data: {
-        account: GachaMintData;
-        gacha: GachaMintData;
-      };
-      whitelisted: boolean;
-    };
   };
   state: {
     quantity: number;
@@ -73,7 +62,6 @@ export const Controls = ({
   };
 
   const isButtonVisible = () => {
-    return tab === 'GACHA';
     return tab === 'GACHA' || tab === 'REROLL';
   };
 
@@ -90,7 +78,6 @@ export const Controls = ({
           }}
         />
       )}
-      <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Pool controls={controls} data={data} state={state} isVisible={tab === 'GACHA'} />
       <Reroll controls={controls} data={data} state={state} isVisible={tab === 'REROLL'} />
       <Overlay bottom={0.75} left={0.75}>

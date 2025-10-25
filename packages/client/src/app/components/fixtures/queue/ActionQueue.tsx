@@ -1,9 +1,9 @@
-import { EntityIndex, getComponentEntities } from '@mud-classic/recs';
+import { EntityIndex, getComponentEntities } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { useStream } from 'network/utils/hooks';
 import { Controls } from './Controls';
@@ -14,7 +14,9 @@ export const ActionQueue: UIComponent = {
   Render: () => {
     const { network } = useLayers();
 
-    const { actions: { Action: ActionComponent } } = network;
+    const {
+      actions: { Action: ActionComponent },
+    } = network;
 
     const actionUpdate = useStream(ActionComponent.update$);
 

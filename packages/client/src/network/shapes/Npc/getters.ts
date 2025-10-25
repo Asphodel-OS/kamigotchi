@@ -1,4 +1,4 @@
-import { World } from '@mud-classic/recs';
+import { World } from 'engine/recs';
 
 import { Components } from 'network/components';
 import { NullNPC } from './constants';

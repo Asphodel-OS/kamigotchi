@@ -11,7 +11,6 @@ import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
-import { RateComponent, ID as RateCompID } from "components/RateComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeLastComponent, ID as TimeLastCompID } from "components/TimeLastComponent.sol";
 import { TimeResetComponent, ID as TimeResetCompID } from "components/TimeResetComponent.sol";
@@ -252,8 +251,12 @@ library LibHarvest {
     return getCompByID(components, StateCompID).eqString(id, "ACTIVE");
   }
 
+  function isHarvest(IUintComp components, uint256 id) internal view returns (bool) {
+    return LibEntityType.isShape(components, id, "HARVEST");
+  }
+
   function verifyIsHarvest(IUintComp components, uint256 id) internal view {
-    if (!LibEntityType.isShape(components, id, "HARVEST")) revert("not a harvest");
+    if (!isHarvest(components, id)) revert("not a harvest");
   }
 
   /////////////////

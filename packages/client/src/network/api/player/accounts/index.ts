@@ -1,3 +1,4 @@
+import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
 import { chatAPI } from './chat';
@@ -8,10 +9,10 @@ import { settingsAPI } from './settings';
 import { tradesAPI } from './trades';
 
 /**
- * @dev A player is an account on the KamiGotchi ecosystem.
+ * @dev A player is an account on the Kamigotchi ecosystem.
  * They can own and trade Kami, and interact with other players.
  */
-export function accountsAPI(systems: any) {
+export function accountsAPI(systems: SystemQueue<any>) {
   /**
    * @dev (Owner) register an account
    *

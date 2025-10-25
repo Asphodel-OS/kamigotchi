@@ -1,19 +1,8 @@
-import {
-  JsonRpcProvider,
-  Networkish,
-  Web3Provider,
-  WebSocketProvider,
-} from '@ethersproject/providers';
 import { callWithRetry, observableToComputed, timeoutAfter } from '@mud-classic/utils';
+import { BrowserProvider, JsonRpcProvider, Networkish, WebSocketProvider } from 'ethers';
 import { IComputedValue, IObservableValue, observable, reaction, runInAction } from 'mobx';
 
-import {
-  ConnectionState,
-  MUDJsonRpcBatchProvider,
-  MUDJsonRpcProvider,
-  ProviderConfig,
-  Providers,
-} from './types';
+import { ConnectionState, MUDJsonRpcProvider, ProviderConfig, Providers } from './types';
 
 /**
  * Create a JsonRpcProvider and WebsocketProvider pair
@@ -36,11 +25,9 @@ export function create({
     name: 'yominet',
   };
   const providers = externalProvider
-    ? { json: new Web3Provider(externalProvider, network), ws: undefined }
+    ? { json: externalProvider, ws: undefined }
     : {
-        json: options?.batch
-          ? new MUDJsonRpcBatchProvider(jsonRpcUrl, network)
-          : new MUDJsonRpcProvider(jsonRpcUrl, network),
+        json: new MUDJsonRpcProvider(jsonRpcUrl, network),
         ws: wsRpcUrl ? new WebSocketProvider(wsRpcUrl, network) : undefined,
       };
 
@@ -74,7 +61,7 @@ export async function createReconnecting(config: IComputedValue<ProviderConfig>)
     const prevProviders = providers.get();
     prevProviders?.json.removeAllListeners();
     try {
-      prevProviders?.ws?._websocket?.close();
+      prevProviders?.ws?.websocket?.close();
     } catch {
       // Ignore errors when closing websocket that was not in an open state
     }
@@ -107,14 +94,35 @@ export async function createReconnecting(config: IComputedValue<ProviderConfig>)
     reaction(
       () => providers.get(),
       (currentProviders) => {
-        if (currentProviders?.ws?._websocket) {
-          currentProviders.ws._websocket.onerror = initProviders;
-          currentProviders.ws._websocket.onclose = () => {
-            // Only reconnect if closed unexpectedly
-            if (connected.get() === ConnectionState.CONNECTED) {
-              initProviders();
-            }
-          };
+        const wsAny = currentProviders?.ws?.websocket as any;
+        if (!wsAny) return;
+
+        const onError = () => {
+          initProviders();
+        };
+        const onClose = () => {
+          if (connected.get() === ConnectionState.CONNECTED) {
+            console.debug('Reconnecting websocket');
+            initProviders();
+          }
+        };
+
+        if (typeof wsAny.addEventListener === 'function') {
+          // Browser WebSocket
+          wsAny.addEventListener('error', onError, { once: true });
+          wsAny.addEventListener('close', onClose, { once: true });
+        } else if (typeof wsAny.once === 'function') {
+          // Node "ws" best-effort
+          wsAny.once('error', onError);
+          wsAny.once('close', onClose);
+        } else if (typeof wsAny.on === 'function') {
+          // Fallback additive
+          wsAny.on('error', onError);
+          wsAny.on('close', onClose);
+        } else {
+          // Last resort: property assignment
+          wsAny.onerror = onError;
+          wsAny.onclose = onClose;
         }
       }
     )
@@ -141,7 +149,7 @@ export async function createReconnecting(config: IComputedValue<ProviderConfig>)
     dispose: () => {
       for (const disposer of disposers) disposer();
       try {
-        providers.get()?.ws?._websocket?.close();
+        providers.get()?.ws?.websocket?.close();
       } catch {
         // Ignore error if websocket is not on OPEN state
       }
@@ -157,7 +165,7 @@ export async function createReconnecting(config: IComputedValue<ProviderConfig>)
  * @returns Promise resolving once the network is reachable
  */
 export async function ensureNetworkIsUp(
-  provider: JsonRpcProvider,
+  provider: JsonRpcProvider | BrowserProvider,
   wssProvider?: WebSocketProvider
 ): Promise<void> {
   const networkInfoPromise = () => {

@@ -1,8 +1,9 @@
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumberish } from 'ethers';
 
 // convert a BigNumberish into a hex string
 export const numberToHex = (n: BigNumberish) => {
-  return BigNumber.from(n).toHexString();
+  const raw = BigInt(n).toString(16);
+  return (raw.length % 2 !== 0 ? '0x0' : '0x') + raw;
 };
 
 // convert an array of bytes (as uint8) into a padded hex string

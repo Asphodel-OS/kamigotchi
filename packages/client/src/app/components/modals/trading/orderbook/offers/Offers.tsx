@@ -39,7 +39,6 @@ export const Offers = ({
     itemFilter: Item;
     typeFilter: string;
     isConfirming: boolean;
-    itemSearch: string;
     setIsConfirming: Dispatch<boolean>;
     setConfirmData: Dispatch<ConfirmationData>;
   };
@@ -55,7 +54,7 @@ export const Offers = ({
   showStatus?: boolean;
   statusAsIcons?: boolean;
 }) => {
-  const { typeFilter, sort, setSort, ascending, setAscending, itemFilter, itemSearch } = controls;
+  const { typeFilter, sort, setSort, ascending, setAscending, itemFilter } = controls;
   const { account, trades } = data;
 
   const [displayed, setDisplayed] = useState<Trade[]>([]);
@@ -189,7 +188,6 @@ export const Offers = ({
     sort,
     ascending,
     itemFilter,
-    itemSearch,
     categoryFilter,
     ownerFilter,
     itemFilterIndexLocal,

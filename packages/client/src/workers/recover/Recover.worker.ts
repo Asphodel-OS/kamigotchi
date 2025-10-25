@@ -1,4 +1,4 @@
-import { verifyMessage } from 'ethers/lib/utils';
+import { verifyMessage } from 'ethers';
 import { expose } from 'threads';
 
 import { Message } from 'engine/types/ecs-relay';

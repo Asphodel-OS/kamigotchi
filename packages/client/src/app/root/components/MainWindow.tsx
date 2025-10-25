@@ -5,7 +5,7 @@ import { allComponents } from 'app/components';
 
 export const MainWindow = observer(({ ready }: { ready: boolean }) => {
   // this includes the LoadingState and ActionQueue components when not ready
-  const renderedComponents = ready ? allComponents : allComponents.slice(0, 4);
+  const renderedComponents = ready ? allComponents : allComponents.slice(0, 5);
 
   return (
     <UIGrid>

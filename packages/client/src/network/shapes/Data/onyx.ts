@@ -1,4 +1,4 @@
-import { EntityID, World } from '@mud-classic/recs';
+import { EntityID, World } from 'engine/recs';
 
 import { ONYX_INDEX } from 'constants/items';
 import { ONYX_RENAME_PRICE, ONYX_RESPEC_PRICE, ONYX_REVIVE_PRICE } from 'constants/prices';

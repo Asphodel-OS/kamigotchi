@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from 'engine/recs';
 import { getEntityByHash, hashArgs } from '../utils';
 
 export const queryRegistry = (

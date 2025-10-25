@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -38,7 +38,6 @@ export const History = ({
           itemFilter: { index: 0 } as unknown as any,
           typeFilter: typeFilter as unknown as any,
           isConfirming: false,
-          itemSearch: '',
           setIsConfirming: (() => {}) as any,
           setConfirmData: (() => {}) as any,
         }}

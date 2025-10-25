@@ -3,12 +3,11 @@ import styled from 'styled-components';
 
 import { IconButton, IconListButton, KamiBar, TextTooltip } from 'app/components/library';
 import { ArrowIcons } from 'assets/images/icons/arrows';
+import { PORTAL_ROOM_INDEX } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { View } from './types';
-
-const PORTAL_ROOM_INDEX = 12;
 
 // resorting to this pattern as useMemo and useCallback don't seem to be effective
 const StakeButtons = new Map<number, React.ReactNode>();
@@ -129,7 +128,7 @@ export const KamisExternal = ({
         <KamiBar
           key={kami.entity}
           kami={kami}
-          actions={[StakeButtons.get(kami.index), SendButtons.get(kami.index)]}
+          // actions={[StakeButtons.get(kami.index), SendButtons.get(kami.index)]}
           utils={utils}
           tick={0}
         />

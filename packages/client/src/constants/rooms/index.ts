@@ -43,6 +43,8 @@ import { room65 } from './65_forest-hut';
 import { room66 } from './66_trading-room';
 import { Room } from './types';
 
+export const PORTAL_ROOM_INDEX = 12;
+
 export const duplicateRoomMusic = [
   [1, 2, 3],
   [5, 6],

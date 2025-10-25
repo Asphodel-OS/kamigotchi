@@ -1,16 +1,16 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAccount as _getAccount } from 'app/cache/account';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected } from 'app/stores';
 import { backgrounds } from 'assets/images/backgrounds';
+import { EntityIndex } from 'engine/recs';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getGoalByIndex as _getGoalByIndex } from 'network/shapes/Goals';
 import { getRoomIndex as _getRoomIndex } from 'network/shapes/utils/component';
 import { Room } from './Room';
-import { useLayers } from 'app/root/hooks';
 
 // The Scene paints the wallpaper and the room. It updates the selected room
 // index in the Selected store whenever the player switches rooms or changes
@@ -20,16 +20,10 @@ export const Scene: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
-    const {
-      data: {
-        accountEntity,
-      },
-      utils: {
-        getAccount,
-        getGoalByIndex,
-        getRoomIndex,
-      }
-    } = (() => {
+    /////////////////
+    // PREPARATION
+
+    const { data, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
 
@@ -46,9 +40,18 @@ export const Scene: UIComponent = {
       };
     })();
 
+    /////////////////
+    // INSTANTIATION
+
+    const { accountEntity } = data;
+    const { getRoomIndex } = utils;
+
     const roomIndex = useSelected((s) => s.roomIndex);
     const setRoom = useSelected((s) => s.setRoom);
     const [lastRefresh, setLastRefresh] = useState(Date.now());
+
+    /////////////////
+    // SUBSCRIPTION
 
     // ticking
     useEffect(() => {

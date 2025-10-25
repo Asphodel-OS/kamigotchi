@@ -1,6 +1,7 @@
+import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
-export const skillsAPI = (systems: any) => {
+export const skillsAPI = (systems: SystemQueue<any>) => {
   // upgrade a pet's skill
   const upgrade = (kamiID: BigNumberish, skillIndex: number) => {
     return systems['system.skill.upgrade'].executeTyped(kamiID, skillIndex);

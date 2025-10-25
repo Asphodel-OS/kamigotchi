@@ -112,9 +112,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpConfigs() public virtual {
     InitWorld initer = new InitWorld();
     initer.initTests(deployer, address(world));
-
-    // temp value for whitelist timer
-    _setConfig("MINT_START_PUBLIC", 0);
   }
 
   // sets up mint to a default state. override to change/remove behaviour if needed
@@ -802,19 +799,28 @@ abstract contract SetupTemplate is TestSetupImports {
   /* ITEMS */
 
   /// @notice creates and empty item index for testing
-  function _createGenericItem(uint32 index) public returns (uint256 id) {
+  function _createGenericItem(uint32 index, string memory type_) public returns (uint256 id) {
     vm.startPrank(deployer);
 
     id = LibItem.genID(index);
+    LibEntityType.set(components, id, "ITEM");
     _IsRegistryComponent.set(id);
     _IndexItemComponent.set(id, index);
+    if (!type_.eq("")) _TypeComponent.set(id, type_);
 
     vm.stopPrank();
   }
 
-  function _addItemERC20(uint32 index, address tokenAddress) public {
+  function _createGenericItem(uint32 index) public returns (uint256 id) {
+    return _createGenericItem(index, "");
+  }
+
+  // todo: cleanup this with new flow via token portal
+  function _addItemERC20(uint32 index, address tokenAddress, int32 scale) public {
     vm.startPrank(deployer);
-    LibItem.addERC20(components, index, tokenAddress);
+    uint256 id = LibItem.getByIndex(components, index);
+    _TypeComponent.set(id, string("ERC20"));
+    LibItem.setERC20(components, index, tokenAddress, scale);
     vm.stopPrank();
   }
 

@@ -71,7 +71,7 @@ contract Kami721TransferTest is SetupTemplate {
 
     // transferring fully owned kamis
     vm.prank(alice.owner);
-    _Kami721TransferSystem.batchTransferMany(kamiIndices, recipients);
+    _Kami721TransferSystem.batchTransferToMany(kamiIndices, recipients);
     for (uint256 i = 0; i < kamiIDs.length; i++) {
       assertEq(_Kami721.ownerOf(kamiIndices[i]), recipients[i]);
     }
@@ -84,7 +84,7 @@ contract Kami721TransferTest is SetupTemplate {
       aliceKamiIndices[i] = LibKami.getIndex(components, aliceKamis[i]);
     vm.prank(alice.owner);
     vm.expectRevert();
-    _Kami721TransferSystem.batchTransferMany(aliceKamiIndices, recipients);
+    _Kami721TransferSystem.batchTransferToMany(aliceKamiIndices, recipients);
     for (uint256 i = 0; i < kamiIDs.length; i++) {
       assertEq(_Kami721.ownerOf(kamiIndices[i]), recipients[i]);
     }
@@ -95,7 +95,7 @@ contract Kami721TransferTest is SetupTemplate {
     // transferring fully unowned kamis
     vm.prank(bob.owner);
     vm.expectRevert();
-    _Kami721TransferSystem.batchTransferMany(kamiIndices, recipients);
+    _Kami721TransferSystem.batchTransferToMany(kamiIndices, recipients);
     for (uint256 i = 0; i < kamiIDs.length; i++) {
       assertEq(_Kami721.ownerOf(kamiIndices[i]), recipients[i]);
     }

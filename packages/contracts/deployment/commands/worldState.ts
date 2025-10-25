@@ -1,10 +1,10 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 import dotenv from 'dotenv';
-import { constants } from 'ethers';
 import execa from 'execa';
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
+import { ethers } from 'ethers';
 import { genInitScript } from '../scripts/worldIniter';
 import { ignoreSolcErrors, setAutoMine } from '../utils';
 import { SubFunc, WorldAPI } from '../world/world';
@@ -49,7 +49,7 @@ async function initWorld(worldAddress?: string, forge?: string) {
       '--sig',
       'initWorld(uint256,address)',
       process.env.PRIV_KEY!,
-      worldAddress || constants.AddressZero, // World address (0 = deploy a new world)
+      worldAddress || ethers.ZeroAddress, // World address (0 = deploy a new world)
       '--fork-url',
       process.env.RPC!,
       '--priority-gas-price=0',

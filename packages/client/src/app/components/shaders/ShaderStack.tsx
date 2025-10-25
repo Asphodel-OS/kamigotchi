@@ -30,7 +30,9 @@ const tryAcquireContext = () => {
   ACTIVE_CONTEXTS += 1;
   return true;
 };
-const releaseContext = () => { if (ACTIVE_CONTEXTS > 0) ACTIVE_CONTEXTS -= 1; };
+const releaseContext = () => {
+  if (ACTIVE_CONTEXTS > 0) ACTIVE_CONTEXTS -= 1;
+};
 
 export const ShaderStack: React.FC<ShaderStackProps> = ({
   layers,
@@ -63,7 +65,11 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
     if (!tryAcquireContext()) return;
     contextAcquiredRef.current = true;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: transparent, powerPreference: 'high-performance' });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      alpha: transparent,
+      powerPreference: 'high-performance',
+    });
     renderer.autoClear = false;
     renderer.setClearColor(0x000000, transparent ? 0 : 1);
     rendererRef.current = renderer;
@@ -89,8 +95,16 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
         }
       }
     };
-    renderer.domElement.addEventListener('webglcontextlost', handleContextLost as EventListener, false);
-    renderer.domElement.addEventListener('webglcontextrestored', handleContextRestored as EventListener, false);
+    renderer.domElement.addEventListener(
+      'webglcontextlost',
+      handleContextLost as EventListener,
+      false
+    );
+    renderer.domElement.addEventListener(
+      'webglcontextrestored',
+      handleContextRestored as EventListener,
+      false
+    );
     // Stash handlers for cleanup
     (renderer as any).userData ??= {};
     (renderer as any).userData.__ctxHandlers = {
@@ -153,13 +167,19 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
   };
 
   const disposeAll = () => {
-    if (frameRef.current) { cancelAnimationFrame(frameRef.current); frameRef.current = null; }
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
     const container = containerRef.current;
     const renderer = rendererRef.current;
     const scene = sceneRef.current;
     const mesh = meshRef.current;
     const geometry = geometryRef.current;
-    if (resizeObserverRef.current) { resizeObserverRef.current.disconnect(); resizeObserverRef.current = null; }
+    if (resizeObserverRef.current) {
+      resizeObserverRef.current.disconnect();
+      resizeObserverRef.current = null;
+    }
     if (mesh && scene) scene.remove(mesh);
     if (geometry) geometry.dispose();
     for (const m of materialsRef.current) m.dispose();
@@ -173,38 +193,50 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
         (renderer as any).userData.__ctxHandlers = undefined;
       }
       renderer.dispose();
-      if (renderer.domElement && container && renderer.domElement.parentElement === container) container.removeChild(renderer.domElement);
+      if (renderer.domElement && container && renderer.domElement.parentElement === container)
+        container.removeChild(renderer.domElement);
     }
     rendererRef.current = null;
     sceneRef.current = null;
     cameraRef.current = null;
     meshRef.current = null;
     geometryRef.current = null;
-    if (contextAcquiredRef.current) { releaseContext(); contextAcquiredRef.current = false; }
+    if (contextAcquiredRef.current) {
+      releaseContext();
+      contextAcquiredRef.current = false;
+    }
   };
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     if (!animateWhenOffscreen && 'IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        for (const entry of entries) setIsVisible(entry.isIntersecting);
-      }, { root: null, threshold: 0 });
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) setIsVisible(entry.isIntersecting);
+        },
+        { root: null, threshold: 0 }
+      );
       io.observe(container);
       ioRef.current = io;
     } else if (animateWhenOffscreen) {
       setIsVisible(true);
     }
-    return () => { if (ioRef.current) { ioRef.current.disconnect(); ioRef.current = null; } };
+    return () => {
+      if (ioRef.current) {
+        ioRef.current.disconnect();
+        ioRef.current = null;
+      }
+    };
   }, [animateWhenOffscreen]);
 
   useEffect(() => {
     if (!paused && (isVisible || animateWhenOffscreen)) {
-      if (!rendererRef.current) init();
+      // if (!rendererRef.current) init();
     } else {
       if (rendererRef.current) disposeAll();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paused, isVisible, animateWhenOffscreen, layers]);
 
   useEffect(() => {
@@ -255,7 +287,9 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
       frameRef.current = requestAnimationFrame(loop);
     };
     if (rendererRef.current) frameRef.current = requestAnimationFrame(loop);
-    return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
   }, [layers, paused, isVisible, animateWhenOffscreen]);
 
   useEffect(() => {
@@ -264,7 +298,11 @@ export const ShaderStack: React.FC<ShaderStackProps> = ({
   }, [paused]);
 
   return (
-    <div ref={containerRef} className={className} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', ...style }} />
+    <div
+      ref={containerRef}
+      className={className}
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', ...style }}
+    />
   );
 };
 

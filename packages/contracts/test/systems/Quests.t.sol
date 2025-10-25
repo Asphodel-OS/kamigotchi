@@ -384,6 +384,32 @@ contract QuestsTest is SetupTemplate {
     assertEq(LibFaction.getRep(components, alice.id, 1), 111);
   }
 
+  function testQuestCompletedDelay() public {
+    // create quest
+    _createQuest(1, 0);
+    _createQuest(2, 0);
+    _createQuestRequirement(2, "BOOL_IS", "QUEST_COMPLETED_DELAY", 1, 1 days);
+
+    // accepting quest 2 without completing quest 1
+    vm.expectRevert("reqs not met");
+    vm.prank(alice.operator);
+    _QuestAcceptSystem.executeTyped(2);
+
+    // completing quest 1
+    uint256 questID1 = _acceptQuest(alice.index, 1);
+    _completeQuest(alice.index, questID1);
+
+    // accepting without delay
+    vm.expectRevert("reqs not met");
+    vm.prank(alice.operator);
+    _QuestAcceptSystem.executeTyped(2);
+
+    // fast forwarding 1 day, accepting quest 2
+    _fastForward(1 days + 1);
+    vm.prank(alice.operator);
+    _QuestAcceptSystem.executeTyped(2);
+  }
+
   //////////////////
   // ASSERTIONS
 

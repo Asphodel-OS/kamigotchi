@@ -1,4 +1,4 @@
-import { Component, Components, EntityIndex, Schema, Type } from '@mud-classic/recs';
+import { Component, Components, EntityIndex, Schema, Type } from 'engine/recs';
 import { Contract } from 'ethers';
 
 import { NetworkConfig } from 'engine/types';

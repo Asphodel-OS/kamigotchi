@@ -29,6 +29,7 @@ import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
 import { AnimationStudio } from './modals/studio/AnimationStudio';
+import { TokenPortalModal } from './modals/tokenPortal';
 import { TradingModal } from './modals/trading';
 import {
   AccountRegistrar,
@@ -39,7 +40,7 @@ import {
 } from './validators';
 
 export const allComponents: UIComponentWithGrid[] = [
-  // boot
+  // boot (preload)
   {
     uiComponent: LoadingState,
     gridConfig: { colStart: 1, colEnd: 13, rowStart: 1, rowEnd: 13 },
@@ -53,8 +54,28 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 3, rowEnd: 6 },
   },
   {
+    uiComponent: NotificationFixture,
+    gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
+  },
+  {
     uiComponent: HelpModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+
+  // canvas
+  {
+    uiComponent: Scene,
+    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
+  },
+
+  // fixtures
+  {
+    uiComponent: ClockFixture,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 78, rowEnd: 99 },
+  },
+  {
+    uiComponent: LeftMenuFixture,
+    gridConfig: { colStart: 2, colEnd: 33, rowStart: 3, rowEnd: 6 },
   },
 
   // validators
@@ -76,27 +97,6 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: TokenChecker,
-    gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
-  },
-
-  // fixtures
-  {
-    uiComponent: ClockFixture,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 78, rowEnd: 99 },
-  },
-  {
-    uiComponent: LeftMenuFixture,
-    gridConfig: { colStart: 2, colEnd: 33, rowStart: 3, rowEnd: 6 },
-  },
-
-  {
-    uiComponent: NotificationFixture,
-    gridConfig: { colStart: 72, colEnd: 100, rowStart: 8, rowEnd: 30 },
-  },
-
-  // canvas
-  {
-    uiComponent: Scene,
     gridConfig: { colStart: 1, colEnd: 100, rowStart: 1, rowEnd: 100 },
   },
 
@@ -137,7 +137,6 @@ export const allComponents: UIComponentWithGrid[] = [
     uiComponent: SettingsModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
-  
   {
     uiComponent: TradingModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
@@ -154,7 +153,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: FundOperator,
-    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 74 },
+    gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 80 },
   },
   {
     uiComponent: GachaModal,
@@ -166,7 +165,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: KamiPortalModal,
-    gridConfig: { colStart: 25, colEnd: 75, rowStart: 15, rowEnd: 99 },
+    gridConfig: { colStart: 25, colEnd: 75, rowStart: 8, rowEnd: 75 },
   },
   {
     uiComponent: KamiModal,
@@ -183,6 +182,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: RevealModal,
     gridConfig: { colStart: 30, colEnd: 70, rowStart: 30, rowEnd: 75 },
+  },
+  {
+    uiComponent: TokenPortalModal,
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 20, rowEnd: 90 },
   },
   {
     uiComponent: MerchantModal,

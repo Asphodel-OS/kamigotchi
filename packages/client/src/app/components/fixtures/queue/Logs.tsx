@@ -1,4 +1,4 @@
-import { EntityIndex, getComponentValueStrict } from '@mud-classic/recs';
+import { EntityIndex, getComponentValueStrict } from 'engine/recs';
 import { BigNumber } from 'ethers';
 import moment from 'moment';
 import { useEffect } from 'react';

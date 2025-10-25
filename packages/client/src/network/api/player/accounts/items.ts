@@ -1,6 +1,7 @@
-import type { BigNumberish } from '@ethersproject/bignumber';
+import { SystemQueue } from 'engine/queue';
+import type { BigNumberish } from 'ethers';
 
-export const itemsAPI = (systems: any) => {
+export const itemsAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev burn items from the player's inventory
    *

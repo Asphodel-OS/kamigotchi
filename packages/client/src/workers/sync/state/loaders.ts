@@ -1,4 +1,4 @@
-import { ComponentValue } from '@mud-classic/recs';
+import { ComponentValue } from 'engine/recs';
 
 import { debug as parentDebug } from 'workers/debug';
 import { StateCache } from './cache';

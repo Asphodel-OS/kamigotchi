@@ -1,7 +1,16 @@
-import { Component, defineQuery, EntityIndex, EntityQueryFragment, Schema, toUpdate } from "@mud-classic/recs";
-import { ObservableSet } from "mobx";
-import { useEffect, useMemo, useState } from "react";
-import { filter, Observable } from "rxjs";
+import { useInterwovenKit } from '@initia/interwovenkit-react';
+import {
+  Component,
+  defineQuery,
+  EntityIndex,
+  EntityQueryFragment,
+  getComponentEntities,
+  Schema,
+  toUpdate,
+} from 'engine/recs';
+import { ObservableSet } from 'mobx';
+import { useEffect, useMemo, useState } from 'react';
+import { filter, Observable } from 'rxjs';
 
 /** @deprecated Use hooks exported from @mud-classic/react package instead. */
 export function useStream<T>(stream: Observable<T>, defaultValue?: T) {
@@ -16,7 +25,10 @@ export function useStream<T>(stream: Observable<T>, defaultValue?: T) {
 }
 
 /** @deprecated Use hooks exported from @mud-classic/react package instead. */
-export function useComponentValueStream<T extends Schema>(component: Component<T>, entity?: EntityIndex) {
+export function useComponentValueStream<T extends Schema>(
+  component: Component<T>,
+  entity?: EntityIndex
+) {
   const stream = useMemo(() => {
     if (entity != null) return component.update$.pipe(filter((update) => update.entity === entity));
     return component.update$.asObservable();
@@ -44,4 +56,37 @@ export function useQuery(queryFragments: EntityQueryFragment[]) {
   }, []);
 
   return matching;
+}
+
+/**
+ * Returns the current list of entities for a given component and re-renders
+ * reactively on any add/update/remove via the component's update$ stream.
+ */
+export function useComponentEntities<T extends Schema>(component: Component<T>) {
+  const [list, setList] = useState<EntityIndex[]>(() =>
+    Array.from(getComponentEntities(component))
+  );
+
+  useEffect(() => {
+    const recompute = () => setList(Array.from(getComponentEntities(component)));
+    recompute();
+    const sub = component.update$.subscribe(recompute);
+    return () => sub?.unsubscribe();
+  }, [component]);
+
+  return list;
+}
+
+export function useBridgeOpener() {
+  const { openBridge } = useInterwovenKit();
+
+  const bridgeTransferDetails = {
+    srcChainId: '1',
+    srcDenom: 'ethereum-native',
+    dstChainId: 'yominet-1',
+    dstDenom: 'evm/E1Ff7038eAAAF027031688E1535a055B2Bac2546',
+    quantity: '0',
+  };
+
+  return () => openBridge(bridgeTransferDetails);
 }
