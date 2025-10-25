@@ -104,8 +104,6 @@ export const Logs = ({
 
   // Attempt to cancel a pending on-chain tx via replacement (same nonce, higher fee)
   const cancelPendingTx = async (hash: string) => {
-    console.log('Attempting to cancel transaction on chain:', DefaultChain.id);
-
     try {
       const provider = network.network.providers.get()?.json;
       const signer = network.network.signer.get();
@@ -161,8 +159,6 @@ export const Logs = ({
   // For Requested/Executing: mark canceled and, if a tx hash appears shortly after,
   // automatically send a cancel replacement.
   const cancelRequestOrTx = async (entity: EntityIndex) => {
-    console.log('Attempting to cancel request/tx on chain:', DefaultChain.id);
-
     try {
       actions.cancel(entity);
       // Poll briefly for a hash if execution already started
@@ -199,8 +195,6 @@ export const Logs = ({
         style={{ cursor: isClickable ? 'pointer' : 'default' }}
         onClick={() => {
           if (isClickable) {
-            // Temporarily remove confirmation for debugging
-            console.log('Row clicked - attempting to cancel transaction:', hash);
             cancelPendingTx(hash);
           }
         }}
