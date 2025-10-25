@@ -13,15 +13,10 @@ import { getCountdown } from 'utils/time';
 import { openBaselineLink } from '../../../utils';
 
 export const BodyOthers = ({
-  actions,
   data,
   utils,
   state,
 }: {
-  actions: {
-    claim: (receiptID: TokenPortal) => Promise<void>;
-    cancel: (receiptID: TokenPortal) => Promise<void>;
-  };
   data: {
     receipts: TokenPortal[];
     config: Configs;
