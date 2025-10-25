@@ -162,7 +162,7 @@ export const Logs = ({
     try {
       actions.cancel(entity);
       // Poll briefly for a hash if execution already started
-      const deadline = Date.now() + 45000; // 45s window for slow networks
+      const deadline = Date.now() + 5000; // 5s timeout - shorter for better UX
       while (Date.now() < deadline) {
         const data = getComponentValueStrict(ActionComponent, entity);
         const h = data.txHash as string | undefined;
@@ -172,7 +172,7 @@ export const Logs = ({
           await cancelPendingTx(h);
           break;
         }
-        await new Promise((r) => setTimeout(r, 200));
+        await new Promise((r) => setTimeout(r, 500)); // Poll every 500ms instead of 200ms
       }
     } catch (e) {
       console.warn('Cancel request/tx failed', e);
