@@ -6,6 +6,7 @@ import { TokenPortal } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
+import { getCountdown } from 'utils/time';
 import { getResultWithdraw, getSwapRate } from '../../utils';
 import { BodyMine } from './Body/BodyMine';
 import { BodyOthers } from './Body/BodyOthers';
@@ -64,13 +65,15 @@ export const Table = ({
       );
     } else if (sort.key === 'Status') {
       sortedList = [...filtered].sort((a, b) => {
-        const withdrawalDiff = (Number(a.IsWithdrawal) - Number(b.IsWithdrawal)) * flip;
-        if (withdrawalDiff !== 0) return withdrawalDiff;
-
         const canceledDiff = (Number(a.IsCanceled) - Number(b.IsCanceled)) * flip;
         if (canceledDiff !== 0) return canceledDiff;
+        const claimedDiff = (Number(a.IsClaimed) - Number(b.IsClaimed)) * flip;
+        if (claimedDiff !== 0) return claimedDiff;
 
-        return (Number(a.IsClaimed) - Number(b.IsClaimed)) * flip;
+        const aCountdown = getCountdown(Number(a.Timestamp) + config.delay);
+        const bCountdown = getCountdown(Number(b.Timestamp) + config.delay);
+
+        return aCountdown.localeCompare(bCountdown, undefined, { numeric: true }) * flip;
       });
     } else if (sort.key === 'Account') {
       sortedList = [...filtered].sort((a, b) => {
