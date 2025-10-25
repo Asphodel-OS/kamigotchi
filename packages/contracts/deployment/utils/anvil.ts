@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
+import { JsonRpcProvider } from 'ethers';
 
 export const setAutoMine = async (on: boolean) => {
   if (process.env.NODE_ENV !== 'puter') return;

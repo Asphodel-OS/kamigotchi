@@ -1,11 +1,9 @@
-import { MUSU_INDEX } from 'constants/items';
 import { Inventory } from 'network/shapes/Inventory';
 
 // removes MUSU, filters out empty, sorts
 export const clean = (inventories: Inventory[]): Inventory[] => {
   return inventories
     .filter((inv) => !!inv && !!inv.item) // skip empty
-    .filter((inv) => inv.item.index !== MUSU_INDEX) // skip musu
     .filter((inv) => (inv.balance || 0) > 0) // filter out empty
     .sort((a: Inventory, b: Inventory) => (a.item.index > b.item.index ? 1 : -1)); //sort
 };

@@ -8,7 +8,7 @@
 *.tsx   @jiracheron
 
 # By Domain
-packages/client/ @jiracheron
+packages/client/ @jiracheron @chlwys
 packages/client/src/components/modals/chat/ @Xenofluxx
 
-packages/contracts/ @chlwys
+packages/contracts/ @chlwys @jiracheron

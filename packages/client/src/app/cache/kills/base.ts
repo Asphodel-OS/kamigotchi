@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityIndex, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { getKill, KillLog } from 'network/shapes/Kill';

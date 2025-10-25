@@ -1,10 +1,12 @@
+import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
+
 import { harvestsAPI } from './harvests';
 import { itemsAPI } from './items';
 import { onyxAPI } from './onyx';
 import { skillsAPI } from './skills';
 
-export const kamisAPI = (systems: any) => {
+export const kamisAPI = (systems: SystemQueue<any>) => {
   // level a pet, if it has enough experience
   const level = (kamiID: BigNumberish) => {
     return systems['system.kami.level'].executeTyped(kamiID);

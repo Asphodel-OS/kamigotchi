@@ -1,19 +1,26 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
-import { BigNumberish } from 'ethers';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 
-import { Account, getAccount, getAccountKamis, getAllAccounts } from 'app/cache/account';
-import { getFriends } from 'app/cache/account/getters';
-import { Kami } from 'app/cache/kami';
+import {
+  getAccount as _getAccount,
+  getAccountKamis as _getAccountKamis,
+  Account,
+  getAllAccounts,
+} from 'app/cache/account';
+import { getFriends as _getFriends } from 'app/cache/account/getters';
+import { getConfigAddress } from 'app/cache/config';
+import { getKami as _getKami, Kami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useSelected, useVisibility } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { BaseAccount, NullAccount, queryAccountByIndex } from 'network/shapes/Account';
 import { Friendship } from 'network/shapes/Friendship';
+import { queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
 import { getTotalScoreByFilter, getVIPEpoch } from 'network/shapes/Score';
+import { getCompAddr } from 'network/shapes/utils';
 import { waitForActionCompletion } from 'network/utils';
 import { Bottom } from './bottom/Bottom';
 import { Header } from './header/Header';
@@ -21,45 +28,62 @@ import { Tabs } from './tabs/Tabs';
 
 export const AccountModal: UIComponent = {
   id: 'AccountModal',
-  requirement: (layers) => {
-    const { network } = layers;
-    const { world, components } = network;
+  Render: () => {
+    const layers = useLayers();
 
-    const accountOptions = {
-      friends: 5,
-      pfp: 5,
-      stats: 5,
-      bio: 5,
-    };
+    const {
+      network,
+      data: { vip, kamiNFTAddress, spender },
+      utils: { getAccount, getAccountKamis, getFriends, getKami, queryKamiByIndex },
+    } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
 
-    const vipEpoch = getVIPEpoch(world, components);
-    const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
+      const accountOptions = {
+        friends: 5,
+        pfp: 5,
+        stats: 5,
+        bio: 5,
+      };
 
-    return interval(3333).pipe(
-      map(() => {
-        return {
-          network,
-          data: {
-            vip: {
-              epoch: vipEpoch,
-              total: getTotalScoreByFilter(world, components, vipFilter),
-            },
+      const vipEpoch = getVIPEpoch(world, components);
+      const vipFilter = { epoch: vipEpoch, index: 0, type: 'VIP_SCORE' };
+      const kamiRefreshOptions = {
+        live: 0,
+        bonuses: 5, // set this to 3600 once we get explicit triggers for updates
+        harvest: 5, // set this to 60 once we get explicit triggers for updates
+        progress: 5,
+        skills: 5, // set this to 3600 once we get explicit triggers for updates
+        flags: 10, // set this to 3600 once we get explicit triggers for updates
+        config: 3600,
+        stats: 3600,
+        traits: 3600,
+        state: 5,
+      };
+
+      return {
+        network,
+        data: {
+          kamiNFTAddress: getConfigAddress(world, components, 'KAMI721_ADDRESS'),
+          spender: getCompAddr(world, components, 'component.token.allowance'),
+          vip: {
+            epoch: vipEpoch,
+            total: getTotalScoreByFilter(world, components, vipFilter),
           },
-          utils: {
-            getAccount: (entity: EntityIndex) =>
-              getAccount(world, components, entity, accountOptions),
-            getAccountKamis: (accEntity: EntityIndex) =>
-              getAccountKamis(world, components, accEntity),
-            getFriends: (accEntity: EntityIndex) => getFriends(world, components, accEntity),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ network, data, utils }) => {
+        },
+        utils: {
+          getAccount: (entity: EntityIndex) =>
+            _getAccount(world, components, entity, accountOptions),
+          getAccountKamis: (accEntity: EntityIndex) =>
+            _getAccountKamis(world, components, accEntity),
+          getFriends: (accEntity: EntityIndex) => _getFriends(world, components, accEntity),
+          queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
+          getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiRefreshOptions),
+        },
+      };
+    })();
+
     const { actions, api, components, world } = network;
-    const { vip } = data;
-    const { getAccount } = utils;
     const { account: player } = useAccount();
     const accountIndex = useSelected((s) => s.accountIndex);
     const accountModalVisible = useVisibility((s) => s.modals.account);
@@ -71,6 +95,10 @@ export const AccountModal: UIComponent = {
     const [isSelf, setIsSelf] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [accounts, setAccounts] = useState<Account[]>([]);
+
+    /////////////////
+    // SUBSCRIPTIONS
+
     useEffect(() => {
       setAccounts(getAllAccounts(world, components));
     }, []);
@@ -141,7 +169,7 @@ export const AccountModal: UIComponent = {
       });
     };
 
-    const pfpTx = (kamiID: BigNumberish) => {
+    const pfpTx = (kamiID: EntityID) => {
       if (!api) return console.error(`API not established for ${selectedAddress}`);
       const actionID = uuid() as EntityID;
       actions!.add({
@@ -197,7 +225,7 @@ export const AccountModal: UIComponent = {
         header={<ModalHeader key='header' title='Account' icon={OperatorIcon} />}
         canExit
         truncate
-        >
+      >
         <Header
           key='header'
           account={account} // account selected for viewing
@@ -205,15 +233,40 @@ export const AccountModal: UIComponent = {
           isLoading={isLoading}
           isSelf={isSelf}
           player={player}
-          utils={utils}
+          utils={{
+            getAccountKamis,
+            getFriends,
+          }}
         />
         <Tabs tab={tab} setTab={setTab} isSelf={isSelf} />
         <Bottom
           key='bottom'
-          actions={{ acceptFren, blockFren, cancelFren, requestFren }}
-          data={{ accounts, account, vip, player, isSelf }}
-          utils={utils}
-          view={{ isSelf, setSubTab, subTab, tab }}
+          actions={{
+            acceptFren,
+            blockFren,
+            cancelFren,
+            requestFren,
+          }}
+          data={{
+            accounts,
+            account,
+            vip,
+            player,
+            isSelf,
+            kamiNFTAddress,
+          }}
+          utils={{
+            getAccountKamis,
+            getFriends,
+            queryKamiByIndex,
+            getKami,
+          }}
+          view={{
+            isSelf,
+            setSubTab,
+            subTab,
+            tab,
+          }}
         />
       </ModalWrapper>
     );

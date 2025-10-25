@@ -1,4 +1,4 @@
-import { getComponentValue, removeComponent, setComponent } from '@mud-classic/recs';
+import { getComponentValue, removeComponent, setComponent } from 'engine/recs';
 
 import { boot as bootReact, mountReact, setLayers } from 'app/boot';
 import { DefaultChain } from 'constants/chains';

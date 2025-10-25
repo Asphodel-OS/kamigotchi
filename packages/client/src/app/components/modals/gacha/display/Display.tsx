@@ -1,14 +1,13 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import styled from 'styled-components';
 
 import { GachaMintConfig } from 'app/cache/config';
-import { ActionButton, Overlay, TextTooltip } from 'app/components/library';
+import { ActionButton, Overlay } from 'app/components/library';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { Account } from 'network/shapes/Account';
 import { Auction } from 'network/shapes/Auction';
 import { GachaMintData } from 'network/shapes/Gacha';
 import { Kami } from 'network/shapes/Kami';
 import { Filter, Sort, TabType, ViewMode } from '../types';
-import { Mint } from './mint/Mint';
 import { Pool } from './pool/Pool';
 import { Reroll } from './reroll/Reroll';
 
@@ -36,14 +35,6 @@ export const Display = ({
       gacha: Auction;
       reroll: Auction;
     };
-    mint: {
-      config: GachaMintConfig;
-      data: {
-        account: GachaMintData;
-        gacha: GachaMintData;
-      };
-      whitelisted: boolean;
-    };
   };
   state: {
     setQuantity: (quantity: number) => void;
@@ -59,7 +50,7 @@ export const Display = ({
   };
 }) => {
   const { mode, setMode, tab } = controls;
-  const { account, auctions, mint, poolKamis } = data;
+  const { account, auctions, poolKamis } = data;
 
   const toggleMode = () => {
     if (mode === 'DEFAULT') setMode('ALT');
@@ -85,14 +76,6 @@ export const Display = ({
     return tab === 'GACHA' || tab === 'REROLL';
   };
 
-  const getButtonTooltip = () => {
-    let tooltip: string[] = [];
-    if (tab === 'REROLL') {
-      tooltip = ['Onyx features are temporarily disabled', 'in anticipation of things to come.'];
-    }
-    return tooltip;
-  };
-
   return (
     <Container>
       <Pool
@@ -101,7 +84,6 @@ export const Display = ({
         data={{
           ...data,
           account,
-          mintConfig: mint.config,
           auction: auctions.gacha,
           entities: poolKamis,
         }}
@@ -116,13 +98,8 @@ export const Display = ({
         utils={utils}
         isVisible={tab === 'REROLL'}
       />
-      <Mint controls={controls} data={data} state={state} isVisible={tab === 'MINT'} />
       <Overlay top={0.9} right={0.6}>
-        {isButtonVisible() && (
-          <TextTooltip text={getButtonTooltip()}>
-            <ActionButton text={getButtonText()} onClick={toggleMode} disabled={tab === 'REROLL'} />
-          </TextTooltip>
-        )}
+        {isButtonVisible() && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>
     </Container>
   );

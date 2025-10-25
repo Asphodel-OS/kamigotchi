@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Kami } from 'network/shapes/Kami';
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
-import { onCooldown } from 'app/cache/kami/calcs/base';
 import { makeCRTLayer } from 'app/components/shaders/CRTShader';
 import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
-
+import { Kami } from 'network/shapes/Kami';
 import { Countdown, TextTooltip } from '../..';
 
 const cooldownEndCache: Map<number | string, number> = new Map();
@@ -16,44 +14,34 @@ const getKamiCacheKey = (k: Kami) =>
     ? (k as any).index
     : ((k as any).id ?? `name:${(k as any).name || 'unknown'}`);
 
-const calcRemainingFromCooldownOrCache = (k: Kami): number => {
-  const now = Date.now() / 1000;
-  const key = getKamiCacheKey(k);
-  let end = Number((k as any).time?.cooldown);
-  if (isFinite(end) && end > now) {
-    cooldownEndCache.set(key, end);
-  } else {
-    const cached = cooldownEndCache.get(key);
-    if (cached && cached > now) end = cached; else end = now;
-  }
-  return Math.max(0, end - now);
-};
-
-export const Cooldown = ({
-  kami,
-}: {
-  kami: Kami;
-}) => {
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
+export const Cooldown = ({ kami }: { kami: Kami }) => {
+  const [lastTick, setLastTick] = useState(Date.now());
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);
 
-  // ticking and setting total cooldown
+  // ticking and setting total cooldown on mount
   useEffect(() => {
     const total = calcCooldownRequirement(kami);
     setTotal(total);
 
-    const refreshClock = () => setLastRefresh(Date.now());
+    const refreshClock = () => setLastTick(Date.now());
     const timerId = setInterval(refreshClock, 1000);
     return () => clearInterval(timerId);
-  }, [kami]);
+  }, []);
 
-  const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
+  // update the total of the cooldown meter whenever the kami changes
+  useEffect(() => {
+    const total = calcCooldownRequirement(kami);
+    setTotal(total);
+  }, [kami.bonuses?.general.cooldown]);
+
+  // const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);
 
   // update the remaining time on the cooldown
   useEffect(() => {
-    setCurrent(calcRemainingForVisuals());
-  }, [lastRefresh, total, kami]);
+    const currentCooldown = calcCooldown(kami);
+    setCurrent(currentCooldown);
+  }, [lastTick, kami]);
 
   return (
     <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
@@ -62,10 +50,27 @@ export const Cooldown = ({
   );
 };
 
+////////////////
+// UNUSED ATM
+
+const calcRemainingFromCooldownOrCache = (k: Kami): number => {
+  const now = Date.now() / 1000;
+  const key = getKamiCacheKey(k);
+  let end = Number((k as any).time?.cooldown);
+  if (isFinite(end) && end > now) {
+    cooldownEndCache.set(key, end);
+  } else {
+    const cached = cooldownEndCache.get(key);
+    if (cached && cached > now) end = cached;
+    else end = now;
+  }
+  return Math.max(0, end - now);
+};
+
 // Hook to provide image filter and foreground shaders for cooldown visuals
 export const useCooldownVisuals = (
   kami: Kami,
-  enabled: boolean,
+  enabled?: boolean
 ): { filter?: string; foreground?: React.ReactNode } => {
   // visuals-only remaining time that prefers on-chain end timestamp, then cache
   const calcRemainingForVisuals = () => calcRemainingFromCooldownOrCache(kami);

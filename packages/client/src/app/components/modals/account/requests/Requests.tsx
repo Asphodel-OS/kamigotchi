@@ -53,7 +53,6 @@ export const Requests = ({
   }, [accounts, knownAccIndices]);
 
   const filteredSearch = useMemo(() => {
-    if (search.length < 2) return [];
     return filteredAccounts.filter(
       (account) => account.name.toLowerCase().includes(search.toLowerCase())
       // decided to comment this line because we are indexing by name and it feels confusing
@@ -62,7 +61,7 @@ export const Requests = ({
   }, [filteredAccounts, search]);
 
   const filteredByLetter = useMemo(() => {
-    if (search.length >= 2) return filteredSearch;
+    if (search) return filteredSearch;
     return filteredAccounts.filter((account) => {
       const firstChar = account.name?.[0]?.toUpperCase() ?? '';
       if (selectedLetter === '#') return !/^[A-Z]$/.test(firstChar);
@@ -78,20 +77,10 @@ export const Requests = ({
     setSearch(event.target.value);
   };
 
-  const ModeButton = ({
-    mode: _mode,
-    label,
-  }: {
-    mode: string;
-    label: string;
-  }) => {
+  const ModeButton = ({ mode: _mode, label }: { mode: string; label: string }) => {
     return (
       <TextTooltip text={[_mode]}>
-        <ActionButton
-          text={label}
-          onClick={() => setMode(_mode)}
-          disabled={mode === _mode}
-        />
+        <ActionButton text={label} onClick={() => setMode(_mode)} disabled={mode === _mode} />
       </TextTooltip>
     );
   };
@@ -128,9 +117,10 @@ export const Requests = ({
       />
       <>
         <Pagination
-          isVisible={mode === 'search' && search.length < 2}
+          isVisible={mode === 'search'}
           selectedLetter={selectedLetter}
           onSelect={setSelectedLetter}
+          setSearch={setSearch}
         />
         <Searched
           isVisible={mode === 'search'}

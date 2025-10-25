@@ -1,11 +1,10 @@
-import { ExternalProvider } from '@ethersproject/providers';
-import { Wallet } from 'ethers';
+import { BrowserProvider, Wallet } from 'ethers';
 
 import { SetupContractConfig } from 'network/setup';
 import { NetworkConfig } from './types';
 
 // Populate the network config based on url params
-export const createConfig = (provider?: ExternalProvider): SetupContractConfig | undefined => {
+export const createConfig = (provider?: BrowserProvider): SetupContractConfig | undefined => {
   let config: NetworkConfig = <NetworkConfig>{};
 
   // resolve the network config based on the environment mode
@@ -26,7 +25,7 @@ export const createConfig = (provider?: ExternalProvider): SetupContractConfig |
 };
 
 // get the config of a non-local deployment, populated with environment variables
-export const getConfig = (provider?: ExternalProvider): NetworkConfig => {
+export const getConfig = (provider?: BrowserProvider): NetworkConfig => {
   let config: NetworkConfig = {
     devMode: false,
     jsonRpc: import.meta.env.VITE_RPC_TRANSPORT_URL,
@@ -46,7 +45,7 @@ export const getConfig = (provider?: ExternalProvider): NetworkConfig => {
 };
 
 // create the network config of a local node deployment
-export const getLocalConfig = (provider?: ExternalProvider): NetworkConfig => {
+export const getLocalConfig = (provider?: BrowserProvider): NetworkConfig => {
   const params = new URLSearchParams(window.location.search);
   let config: NetworkConfig = <NetworkConfig>{
     devMode: true,

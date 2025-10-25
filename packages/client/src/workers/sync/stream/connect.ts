@@ -1,8 +1,8 @@
 import { awaitPromise } from '@mud-classic/utils';
-import { BigNumber } from 'ethers';
 import { concatMap, from, map, Observable, of } from 'rxjs';
 
 import { EmptyNetworkEvent } from 'constants/stream';
+import { ethers } from 'ethers';
 import { debug as parentDebug } from '../../debug';
 import {
   NetworkComponentUpdate,
@@ -74,6 +74,7 @@ export function connect(
           ) {
             let gap = Math.abs(responsePrevBlockNumber - prevCurrentBlock);
 
+            /*
             if (import.meta.env.MODE !== 'testing' && gap > MAX_ALLOWED_BLOCK_GAP) {
               console.log(
                 `MAX_ALLOWED_BLOCK_GAP exceeded gap:${gap} currentBlock:${prevCurrentBlock} responsePrevBlockNumber:${responsePrevBlockNumber}`
@@ -83,6 +84,7 @@ export function connect(
                 minTimeBetweenReloads: MIN_TIME_BETWEEN_RELOADS,
               });
             }
+            */
             debug(
               `FILLING FROM ${prevCurrentBlock + 1} to ${
                 responsePrevBlockNumber == 0
@@ -96,7 +98,7 @@ export function connect(
               responsePrevBlockNumber == 0
                 ? responseChunk.blockNumber - 1
                 : responsePrevBlockNumber,
-              50
+              100
             );
             debug(`Backfilled events: ${gapStateEvents.length}`);
 
@@ -128,7 +130,7 @@ const parseSystemCalls = (events: NetworkComponentUpdate[]): SystemCall[] => {
   const transactionHashToEvents = groupByTxHash(events);
 
   for (const txHash of Object.keys(transactionHashToEvents)) {
-    // All ECS events include the information needed to parse the SysytemCallTransasction out, so it doesn't
+    // All ECS events include the information needed to parse the SystemCallTransaction out, so it doesn't
     // matter which one we take here.
     const tx = parseSystemCall(transactionHashToEvents[txHash]![0]!);
     if (!tx) continue;
@@ -149,8 +151,8 @@ const parseSystemCall = (event: NetworkComponentUpdate) => {
   const { to, data, value } = event.txMetadata;
   return {
     to,
-    data: BigNumber.from(data).toHexString(),
-    value: BigNumber.from(value),
+    data: ethers.hexlify(data),
+    value: BigInt(value),
     hash: event.txHash,
   } as SystemCallTransaction;
 };

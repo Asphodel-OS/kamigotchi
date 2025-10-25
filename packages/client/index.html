@@ -6,15 +6,15 @@
       content="
         default-src 'self';
         child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
-        connect-src 'self' http://127.0.0.1:*/ http://localhost:*/ ws://localhost:*/ https://*.asphodel.io wss://*.asphodel.io https://*.kamigotchi.io wss://*.kamigotchi.io https://*.initia.xyz wss://*.initia.xyz https://*.initia.tech wss://*.initia.tech  https://auth.privy.io https://*.rpc.privy.systems https://explorer-api.walletconnect.com wss://relay.walletconnect.com wss://relay.walletconnect.org https://pulse.walletconnect.org wss://www.walletlink.org;
+        connect-src 'self' http://127.0.0.1:*/ http://localhost:*/ ws://localhost:*/ https://*.asphodel.io wss://*.asphodel.io https://*.kamigotchi.io wss://*.kamigotchi.io https://*.initia.xyz wss://*.initia.xyz https://*.initia.tech wss://*.initia.tech  https://auth.privy.io https://*.rpc.privy.systems https://explorer-api.walletconnect.com wss://relay.walletconnect.com wss://relay.walletconnect.org https://pulse.walletconnect.org wss://www.walletlink.org https://api2.amplitude.com https://sr-client-cfg.amplitude.com;
         frame-src 'self' https://auth.privy.io https://privy.kamigotchi.io https://verify.walletconnect.com https://verify.walletconnect.org;
         img-src * data:;
         object-src 'none';
         script-src 'report-sample' 'self' https://challenges.cloudflare.com wasm-eval;
-        style-src 'report-sample' 'self' 'unsafe-inline';
+        style-src 'report-sample' 'self' 'unsafe-inline' https://fonts.googleapis.com https://assets.initia.xyz/fonts/PilatWide.css;
         report-to https://664cf648a52bdea0f50de7ab.endpoint.csper.io/?v=0;
         base-uri 'self';
-        font-src 'self';
+        font-src 'self' https://fonts.gstatic.com https://assets.initia.xyz;
         manifest-src 'self';
         media-src 'self';
         worker-src 'self';

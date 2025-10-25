@@ -1,4 +1,4 @@
-{
+{ 
   "OperatorAddress": {
     "id": "component.address.operator",
     "encodedID": "0x8a1264e7094de803414cccf0c32d2bd50f25c909fa2415b38f065f320e4eabe6"
@@ -10,6 +10,10 @@
   "Affinity": {
     "id": "component.affiinity",
     "encodedID": "0xf3e296372a5e5be810386b4a0416d479397a474fb9d4f37f1eed4c72bf11af6d"
+  },
+  "Balance": {
+    "id": "component.balance",
+    "encodedID": "0x3be5761f4444019a26faec2991f5bf613add59db9423d5295caf36a8cd971efd"
   },
   "Blacklist": {
     "id": "component.blacklist",
@@ -26,6 +30,10 @@
   "Cost": {
     "id": "component.cost",
     "encodedID": "0x90dcbc5e087c3256549b6c7bca0f1c5c346b54cf5623c913b88198ba64d2cdbe"
+  },
+  "Decay": {
+    "id": "component.decay",
+    "encodedID": "0xdb0a2c2923f596106d3420f17dba40c6898f9f7ed616487818d18a74165b53b1"
   },
   "DescriptionAlt": {
     "id": "component.description.alt",
@@ -50,10 +58,6 @@
   "For": {
     "id": "component.for",
     "encodedID": "0x0e980fab8730829e1930c8cdc024ae35650d9eec12d20425b19fc4ade883178c"
-  },
-  "For": {
-    "id": "component.for",
-    "encodedID": "0xd5a29ec804ba00516f4f308189ea7905739b5e45207909a6df03a0ccbf6aae9f"
   },
   "HasFlag": {
     "id": "component.has.flag",
@@ -83,6 +87,10 @@
     "id": "component.id.inventory.owns",
     "encodedID": "0x1ee9964c9c16bbb74f9e401f1ab450f99b2343a602036525f23f0da350bc74d0"
   },
+  "OwnsKamiID": {
+    "id": "component.id.kami.owns",
+    "encodedID": "0xdb1228220c36234210e3f04b6ac039f5d81c4d6d81f43d9b4a9d70c4d5bcfac1"
+  },
   "OwnsQuestID": {
     "id": "component.id.quest.owns",
     "encodedID": "0x2a2f9797d308537ff91ca605795dfe371c297d821901e4d3618d6b4064a02d76"
@@ -95,17 +103,17 @@
     "id": "component.id.skill.owns",
     "encodedID": "0x062cd306ad225a632b22436963e5460cbeffac9c848eb8ae319dc628c6acd64c"
   },
-  "OwnsKamiID": {
-    "id": "component.id.kami.owns",
-    "encodedID": "0xdb1228220c36234210e3f04b6ac039f5d81c4d6d81f43d9b4a9d70c4d5bcfac1"
+  "OwnsTaxID": {
+    "id": "component.id.tax.owns",
+    "encodedID": "0xada9efea9b60db2f3de8535bcf056d66fc7d5ab3def1fb1dd3efe8117c4b4607"
+  },
+  "OwnsTradeID": {
+    "id": "component.id.trade.owns",
+    "encodedID": "0x4570b4c20b1780474e20c57e9886741763e9fd018b544cf42ed3c228b98e9045"
   },
   "AnchorID": {
     "id": "component.id.anchor",
-    "encodedID": "0xbca01f994221da3049c3ee687ab5c6a1ebf40f2011941d5581d9cd500fdf2cd0"
-  },
-  "RoomID": {
-    "id": "component.id.room",
-    "encodedID": "0x78b1ef013cafd65ebaa39f84081e7a0dfd0ac73a9c373c972780715705987a95"
+    "encodedID": "0xb045c5017717023376f3cca4fc00dc4ee26e151a86d28f1db156cf5222daccd1"
   },
   "SourceID": {
     "id": "component.id.source",
@@ -142,6 +150,10 @@
   "ColorIndex": {
     "id": "component.index.color",
     "encodedID": "0x9ec7fdb312cfd917b9499405d9619afea82cbe7bc994a6d9b97aa4a29d95cba4"
+  },
+  "CurrencyIndex": {
+    "id": "component.index.currency",
+    "encodedID": "0x5309efaaef444315bf70eaa34d6ec17ac1fd39ff436ff46d3210f8efb1b467b4"
   },
   "FaceIndex": {
     "id": "component.index.face",
@@ -195,17 +207,13 @@
     "id": "component.is.complete",
     "encodedID": "0x9522897410526014691d8a863fac7bd2e048ab08176b6e3c6fa8a1f5195164bb"
   },
-  "IsKill": {
-    "id": "component.is.kill",
-    "encodedID": "0xb6bdcc62626ced423f5f38e4e456e04d992e999e95927e90a162c8101d228a1f"
+  "IsDisabled": {
+    "id": "component.is.disabled",
+    "encodedID": "0xf5fd86907d4f5647b6d2d75edf01c4ff1a7d5bdf6bccf2d4828e86425b83b256"
   },
   "IsRegistry": {
     "id": "component.is.registry",
     "encodedID": "0xf70dee74a99a7bf98a6058c2e93635b82826d8267ec7a3a05d2f12dcbf92534d"
-  },
-  "IsRepeatable": {
-    "id": "component.is.repeatable",
-    "encodedID": "0x55fc1d6f060c9a0b82cfb50cf47ed24d77ee495eb31e561183a9a9e9c41fd06b"
   },
   "Keys": {
     "id": "component.keys",
@@ -235,6 +243,10 @@
     "id": "component.name",
     "encodedID": "0x2acf3c3c6b18ed6530ed0fd161fd0b65f4febe79d1182824d3263e852d29ca03"
   },
+  "Period": {
+    "id": "component.period",
+    "encodedID": "0x16d883d37648798ab8e3fa4bb4d4d4680f890b679b13d715f942321c616cbe43"
+  },
   "Power": {
     "id": "component.stat.power",
     "encodedID": "0x036642765aca64d0dc0aa7a1a5b293901589aec219fb89c7c5e7c042e927386c"
@@ -242,6 +254,10 @@
   "ProxyPermissionsERC721": {
     "id": "components.proxy.Permissions.ERC721",
     "encodedID": "0x684f26c01de9687e37d1e64c56d1ac28a32e93c97f778f9646f4fd78c11a5717"
+  },
+  "ProxyVIPScore": {
+    "id": "component.proxy.vip.score",
+    "encodedID": "0xd55d039902aec330ebbfbcd2bdad35e27b53f57e9b7f501f820c8a9ce829594b"
   },
   "Rarity": {
     "id": "component.rarity",
@@ -254,6 +270,10 @@
   "Reroll": {
     "id": "component.reroll",
     "encodedID": "0xd3d6110f8c07a5a54442b3c3ae6c6c55da5e123d17d83305858b216fc0078e83"
+  },
+  "Scale": {
+    "id": "component.scale",
+    "encodedID": "0x60a0dd8891c9eb10d1c7925049e6a921af7c42c67904ae7963fce0bb6b9c3f3c"
   },
   "SkillPoint": {
     "id": "component.skill.point",
@@ -283,13 +303,13 @@
     "id": "component.Time.LastAction",
     "encodedID": "0x5f9759544a286ad42df1aa1cab6dca162b48885d3060ac74aecbf8ff4483ad1b"
   },
+  "NextTime": {
+    "id": "component.Time.Next",
+    "encodedID": "0x9a455692d645d22a9a9d1b48a1db11967dcc5afa935001d61a87f6847311cf23"
+  },
   "LastTime": {
     "id": "component.Time.Last",
     "encodedID": "0x342adee7430e96bca6f5d4fe57ba5155dc7271000494e77110c292d51ae887fa"
-  },
-  "Timelock": {
-    "id": "component.Timelock",
-    "encodedID": "0x3f3f63e9cdb5140cea59571af34200e7324c7aff808efe1fc400623499d86f05"
   },
   "ResetTime": {
     "id": "component.Time.Reset",
@@ -302,6 +322,14 @@
   "Type": {
     "id": "component.type",
     "encodedID": "0x024accd0d273ef6123273b21662f5cc055a7d58adf98cc1b060edd029af93f7f"
+  },
+  "TokenAddress": {
+    "id": "component.token.address",
+    "encodedID": "0x25be228384c105f3b600b6f22fde9094268ac614140d82716b701911ef45eac8"
+  },
+  "TokenAllowance": {
+    "id": "component.token.allowance",
+    "encodedID": "0x6c3c0812fd9b660e25d8c46a7a176468a291aea02a77ff5e253a8ce4bbfc8e32"
   },
   "Value": {
     "id": "component.value",
@@ -322,5 +350,5 @@
   "Whitelist": {
     "id": "component.whitelist",
     "encodedID": "0x4e8e9e1c7a24cab87cf9c93105c2ba1e02c4738f22ecab88b312e4de35819ca6"
-  }
+  },
 }

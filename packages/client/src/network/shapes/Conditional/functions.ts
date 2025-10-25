@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityIndex, World } from 'engine/recs';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/';
@@ -131,13 +131,13 @@ export const parseToInitCon = (
   logicType: string,
   type: string,
   index: number,
-  value: number
+  value: number | string
 ): { logicType: string; type: string; index: number; value: number } => {
   return {
     logicType: logicType == '' ? '' : parseToLogicType(logicType),
     type: parseToConType(type),
     index: parseToConIndex(type, index),
-    value: value,
+    value: Number(value),
   };
 };
 

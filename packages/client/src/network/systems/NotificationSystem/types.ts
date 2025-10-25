@@ -1,11 +1,11 @@
-import { EntityID, EntityIndex, Components, SchemaOf, Override } from "@mud-classic/recs";
-import { ValueOf } from "@mud-classic/utils";
+import { ValueOf } from '@mud-classic/utils';
+import { Components, EntityID, EntityIndex, Override, SchemaOf } from 'engine/recs';
 
 export type ComponentUpdate<C extends Components> = ValueOf<{
   [key in keyof C]: {
     component: key;
     entity: EntityIndex;
-    value: Override<SchemaOf<C[key]>>["value"];
+    value: Override<SchemaOf<C[key]>>['value'];
   };
 }>;
 
@@ -15,4 +15,4 @@ export type NotificationData = {
   description: string;
   time: string;
   modal?: string;
-}
+};

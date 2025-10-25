@@ -1,4 +1,4 @@
-import { Has, HasValue, World, runQuery } from '@mud-classic/recs';
+import { Has, HasValue, World, runQuery } from 'engine/recs';
 
 import { Components } from 'network/components';
 import { DetailedEntity } from '../utils';

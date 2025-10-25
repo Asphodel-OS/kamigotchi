@@ -3,11 +3,13 @@ pragma solidity >=0.8.28;
 
 import { LibString } from "solady/utils/LibString.sol";
 import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { Stat } from "solecs/components/types/Stat.sol";
 
 import { Condition } from "libraries/LibConditional.sol";
 import { Coord } from "libraries/LibRoom.sol";
 import { MUSU_INDEX, GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
+import { ROOM as BRIDGE_721_ROOM } from "systems/Kami721StakeSystem.sol";
 
 import "./TestSetupImports.t.sol";
 import { InitWorld } from "deployment/InitWorld.s.sol";
@@ -110,9 +112,6 @@ abstract contract SetupTemplate is TestSetupImports {
   function setUpConfigs() public virtual {
     InitWorld initer = new InitWorld();
     initer.initTests(deployer, address(world));
-
-    // temp value for whitelist timer
-    _setConfig("MINT_START_PUBLIC", 0);
   }
 
   // sets up mint to a default state. override to change/remove behaviour if needed
@@ -289,6 +288,11 @@ abstract contract SetupTemplate is TestSetupImports {
   // OWNER ACTIONS
 
   function _mintKamis(PlayerAccount memory acc, uint amt) internal returns (uint[] memory) {
+    if (amt > 5) {
+      // max gacha mint is 5, split up into multiple calls
+      return LibArray.concat(_mintKamis(acc, 5), _mintKamis(acc, amt - 5));
+    }
+
     vm.roll(++_currBlock);
     _giveGachaTicket(acc, amt);
     vm.prank(acc.owner);
@@ -310,6 +314,55 @@ abstract contract SetupTemplate is TestSetupImports {
   // (public) mint and reveal a single pet to a specified address
   function _mintKami(uint playerIndex) internal virtual returns (uint) {
     return _mintKami(_accounts[playerIndex]);
+  }
+
+  function _stakeKami(uint[] memory kamiIDs) internal {
+    for (uint i = 0; i < kamiIDs.length; i++) {
+      _stakeKami(kamiIDs[i]);
+    }
+  }
+
+  // abstracts kami ownership and room movements
+  function _stakeKami(uint kamiID) internal {
+    uint accID = LibKami.getAccount(components, kamiID);
+    uint32 room = LibAccount.getRoom(components, accID);
+    vm.prank(deployer);
+    _IndexRoomComponent.set(accID, BRIDGE_721_ROOM.toUint32());
+
+    // staking
+    address owner = LibAccount.getOwner(components, accID);
+    vm.startPrank(owner);
+    _Kami721StakeSystem.executeTyped(LibKami.getIndex(components, kamiID));
+    vm.stopPrank();
+
+    // resetting room
+    vm.prank(deployer);
+    _IndexRoomComponent.set(accID, room);
+  }
+
+  function _unstakeKami(uint[] memory kamiIDs) internal {
+    for (uint i = 0; i < kamiIDs.length; i++) {
+      _unstakeKami(kamiIDs[i]);
+    }
+  }
+
+  // abstracts kami ownership and room movements
+  function _unstakeKami(uint kamiID) internal {
+    // setup
+    uint accID = LibKami.getAccount(components, kamiID);
+    uint32 room = LibAccount.getRoom(components, accID);
+    vm.prank(deployer);
+    _IndexRoomComponent.set(accID, BRIDGE_721_ROOM.toUint32());
+
+    // unstaking
+    address owner = LibAccount.getOwner(components, accID);
+    vm.startPrank(owner);
+    _Kami721UnstakeSystem.executeTyped(LibKami.getIndex(components, kamiID));
+    vm.stopPrank();
+
+    // resetting room
+    vm.prank(deployer);
+    _IndexRoomComponent.set(kamiID, room);
   }
 
   /////////////////
@@ -746,19 +799,28 @@ abstract contract SetupTemplate is TestSetupImports {
   /* ITEMS */
 
   /// @notice creates and empty item index for testing
-  function _createGenericItem(uint32 index) public returns (uint256 id) {
+  function _createGenericItem(uint32 index, string memory type_) public returns (uint256 id) {
     vm.startPrank(deployer);
 
     id = LibItem.genID(index);
+    LibEntityType.set(components, id, "ITEM");
     _IsRegistryComponent.set(id);
     _IndexItemComponent.set(id, index);
+    if (!type_.eq("")) _TypeComponent.set(id, type_);
 
     vm.stopPrank();
   }
 
-  function _addItemERC20(uint32 index, address tokenAddress) public {
+  function _createGenericItem(uint32 index) public returns (uint256 id) {
+    return _createGenericItem(index, "");
+  }
+
+  // todo: cleanup this with new flow via token portal
+  function _addItemERC20(uint32 index, address tokenAddress, int32 scale) public {
     vm.startPrank(deployer);
-    LibItem.addERC20(components, index, tokenAddress);
+    uint256 id = LibItem.getByIndex(components, index);
+    _TypeComponent.set(id, string("ERC20"));
+    LibItem.setERC20(components, index, tokenAddress, scale);
     vm.stopPrank();
   }
 

@@ -28,17 +28,12 @@ export async function createNetwork(initialConfig: NetworkConfig) {
   } = await createReconnectingProvider(computed(() => toJS(config.provider)));
   disposers.push(disposeProvider);
 
-  // Create signer
-  const signer = computed<Signer | undefined>(() => {
-    const currentProviders = providers.get();
-    if (config.provider.externalProvider) return currentProviders.json.getSigner();
-    const privateKey = config.privateKey;
-    if (privateKey && currentProviders) return createSigner(privateKey, currentProviders);
-  });
+  // create signer
+  const signer = await getSigner(config, providers.get());
 
   // Get address
   const initialConnectedAddress = config.provider.externalProvider
-    ? await signer.get()?.getAddress()
+    ? await signer?.getAddress()
     : undefined;
 
   const connectedAddress = computed(() =>
@@ -75,6 +70,7 @@ export async function createNetwork(initialConfig: NetworkConfig) {
     .subscribe(clock.update); // Update the local clock
   disposers.push(() => syncBlockSub?.unsubscribe());
 
+  // todo: stop using computed because we create a new network layer for each wallet?
   return {
     providers,
     signer,
@@ -90,6 +86,12 @@ export async function createNetwork(initialConfig: NetworkConfig) {
   };
 }
 
-function createSigner(privateKey: string, providers: Providers) {
-  return new Wallet(privateKey, providers.json);
+async function getSigner(
+  config: NetworkConfig,
+  currentProviders: Providers
+): Promise<Signer | undefined> {
+  if (config.provider.externalProvider) return currentProviders.json.getSigner();
+  const privateKey = config.privateKey;
+  if (privateKey && currentProviders) return new Wallet(privateKey, currentProviders.json);
+  return undefined;
 }

@@ -1,4 +1,4 @@
-import { EntityIndex, getComponentValueStrict } from '@mud-classic/recs';
+import { EntityIndex, getComponentValueStrict } from 'engine/recs';
 import moment from 'moment';
 import { useEffect } from 'react';
 import styled from 'styled-components';
@@ -11,9 +11,7 @@ import { NetworkLayer } from 'network/';
 import { ActionState, ActionStateString } from 'network/systems/ActionSystem/constants';
 
 export const Logs = ({
-  network: {
-    actions,
-  },
+  network: { actions },
   actionIndices,
 }: {
   network: NetworkLayer;

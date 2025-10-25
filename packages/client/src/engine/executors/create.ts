@@ -1,4 +1,4 @@
-import { Provider } from '@ethersproject/providers';
+import { keccak256, toEthAddress } from '@mud-classic/utils';
 import {
   Component,
   EntityIndex,
@@ -6,12 +6,12 @@ import {
   getComponentValue,
   Type,
   World,
-} from '@mud-classic/recs';
-import { keccak256, toEthAddress } from '@mud-classic/utils';
-import { Contract, ContractInterface, Signer } from 'ethers';
+} from 'engine/recs';
+import { Contract, InterfaceAbi, Provider, Signer } from 'ethers';
 import { observable, runInAction } from 'mobx';
 
 import { createTxQueue } from 'engine/queue';
+import { formatEntityID } from 'engine/utils';
 import { deferred } from 'utils/async';
 import { Network } from './network';
 
@@ -31,12 +31,12 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   world: World,
   network: Network,
   systems: Component<{ value: Type.String }>,
-  interfaces: { [key in keyof T]: ContractInterface }
+  interfaces: { [key in keyof T]: InterfaceAbi }
 ) {
   const systemContracts = observable.box({} as T);
   const systemIdPreimages: { [key: string]: string } = Object.keys(interfaces).reduce(
     (acc, curr) => {
-      return { ...acc, [keccak256(curr)]: curr };
+      return { ...acc, [formatEntityID(keccak256(curr))]: curr };
     },
     {}
   );
@@ -46,7 +46,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
     const [resolve, , promise] = deferred<void>();
     runInAction(() => {
       systemContracts.set({ ...systemContracts.get(), [system.id]: system.contract });
-      systemIdPreimages[keccak256(system.id)] = system.id;
+      systemIdPreimages[formatEntityID(keccak256(system.id))] = system.id;
       resolve();
     });
 
@@ -78,7 +78,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   // Initialize systems
   const contracts = {} as T;
   for (const systemEntity of getComponentEntities(systems)) {
-    const system = createSystemContract(systemEntity, network.signer.get());
+    const system = createSystemContract(systemEntity, network.signer);
     if (system) contracts[system.id as keyof T] = system.contract as T[keyof T];
   }
   runInAction(() => systemContracts.set(contracts));
@@ -86,7 +86,7 @@ export function createSystemExecutor<T extends { [key: string]: Contract }>(
   // Keep up to date
   systems.update$.subscribe((update) => {
     if (!update.value[0]) return;
-    const system = createSystemContract(update.entity, network.signer.get());
+    const system = createSystemContract(update.entity, network.signer);
     if (system) registerSystem(system);
   });
 

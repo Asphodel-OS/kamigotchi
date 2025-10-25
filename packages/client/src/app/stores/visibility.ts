@@ -52,17 +52,18 @@ export interface Modals {
   inventory: boolean;
   kami: boolean;
   leaderboard: boolean;
+  lootBox: boolean;
   map: boolean;
   merchant: boolean;
   node: boolean;
   operatorFund: boolean;
   party: boolean;
+  presale: boolean;
   quests: boolean;
   reveal: boolean;
   settings: boolean;
-  presale: boolean;
+  tokenPortal: boolean;
   trading: boolean;
-  lootBox: boolean;
   travelConfirm: boolean;
 }
 
@@ -81,17 +82,18 @@ export const toggleModals = (isOn: boolean): Modals => ({
   inventory: isOn,
   kami: isOn,
   leaderboard: isOn,
+  lootBox: isOn,
   map: isOn,
   merchant: isOn,
   node: isOn,
   operatorFund: isOn,
   party: isOn,
+  presale: isOn,
   quests: isOn,
   reveal: isOn,
   settings: isOn,
-  presale: isOn,
+  tokenPortal: isOn,
   trading: isOn,
-  lootBox: isOn,
   travelConfirm: isOn,
 });
 
@@ -131,17 +133,18 @@ export const useVisibility = create<State & Actions>((set) => {
       inventory: false,
       kami: false,
       leaderboard: false,
+      lootBox: false,
       map: false,
       merchant: false,
       node: false,
       operatorFund: false,
       party: false,
+      presale: false,
       quests: false,
       reveal: false,
       settings: false,
-      presale: false,
+      tokenPortal: false,
       trading: false,
-      lootBox: false,
       travelConfirm: false,
     },
     validators: {

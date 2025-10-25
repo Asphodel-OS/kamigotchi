@@ -1,4 +1,4 @@
-import { BigNumber, Wallet, utils } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 import { Address, getAddress, padHex } from 'viem';
 
 export const generatePrivateKey = (): string => {
@@ -30,8 +30,8 @@ export const abbreviateAddress = (
 
 export const addressesMatch = (a1: string, a2: string) => {
   if (!a1 || !a2) return false;
-  a1 = utils.hexZeroPad(BigNumber.from(a1).toHexString(), 20);
-  a2 = utils.hexZeroPad(BigNumber.from(a2).toHexString(), 20);
+  a1 = ethers.toBeHex(a1, 20);
+  a2 = ethers.toBeHex(a2, 20);
   return a1 === a2;
 };
 

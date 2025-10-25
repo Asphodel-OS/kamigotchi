@@ -47,7 +47,7 @@ export function usePresaleInfo(address: Address, presaleAddr: Address) {
 
 // uses ethersjs for RECS compatibility
 export function presaleDeposit(addToQueue: any, presaleAddr: string, amount: BigNumberish) {
-  const iPreAsset = new ethers.utils.Interface(preAssetAbi);
+  const iPreAsset = new ethers.Interface(preAssetAbi);
   return addToQueue({
     data: iPreAsset.encodeFunctionData('whitelistDeposit', [amount]),
     to: presaleAddr,

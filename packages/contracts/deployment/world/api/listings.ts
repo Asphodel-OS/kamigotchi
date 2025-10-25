@@ -1,4 +1,3 @@
-import { BigNumberish } from 'ethers';
 import { GenerateCallData } from './types';
 
 export function listingAPI(generateCallData: GenerateCallData, compiledCalls: string[]) {
@@ -7,7 +6,7 @@ export function listingAPI(generateCallData: GenerateCallData, compiledCalls: st
     npcIndex: number,
     itemIndex: number,
     currencyIndex: number,
-    value: BigNumberish
+    value: string | number
   ) {
     const callData = generateCallData(
       'system.listing.registry',
@@ -71,7 +70,7 @@ export function listingAPI(generateCallData: GenerateCallData, compiledCalls: st
     conditionType: string,
     logicType: string,
     index: number,
-    value: BigNumberish,
+    value: string | number,
     for_: string
   ) {
     const callData = generateCallData(

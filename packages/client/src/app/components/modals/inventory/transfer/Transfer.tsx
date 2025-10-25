@@ -1,26 +1,19 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { BigNumber } from 'ethers';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Inventory } from 'app/cache/inventory';
-import {
-  EmptyText,
-  IconButton,
-  IconListButton,
-  IconListButtonOption,
-  Text,
-} from 'app/components/library';
+import { IconButton, IconListButton, IconListButtonOption } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { STONE_INDEX } from 'constants/items';
-import { formatEntityID } from 'engine/utils';
 import { Account } from 'network/shapes/Account';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Mode } from '../types';
+import { History } from './History';
 import { LineItem } from './LineItem';
 
 const KamidenClient = getKamidenClient();
@@ -40,7 +33,7 @@ export const Transfer = ({
     inventories: Inventory[];
   };
   state: {
-    lastRefresh: number;
+    tick: number;
     mode: Mode;
     resetSend: boolean;
     setResetSend: (reset: boolean) => void;
@@ -48,23 +41,22 @@ export const Transfer = ({
   utils: {
     getAccount: (index: EntityIndex, options?: any) => Account;
     getEntityIndex: (entity: EntityID) => EntityIndex;
-    getInventoryBalance: (inventories: Inventory[], index: number) => number;
+    getBalance: (inventories: Inventory[], index: number) => number;
     getItem: (index: EntityIndex) => Item;
     queryAllAccounts: () => EntityIndex[];
-    setSendView: (show: boolean) => void;
   };
 }) => {
   const { sendItemsTx } = actions;
   const { inventories, account, accountEntity } = data;
-  const { lastRefresh, mode, resetSend, setResetSend } = state;
-  const { getInventoryBalance, getEntityIndex, getAccount, getItem, queryAllAccounts } = utils;
+  const { tick, mode, resetSend, setResetSend } = state;
+  const { getBalance, getEntityIndex, getAccount, getItem, queryAllAccounts } = utils;
   const inventoryModalOpen = useVisibility((s) => s.modals.inventory);
 
   const [amt, setAmt] = useState<number>(1);
   const [item, setItem] = useState<Item>(NullItem);
   const [visible, setVisible] = useState(false);
   const [targetAcc, setTargetAcc] = useState<Account | null>(null);
-  const [sendHistory, setSendHistory] = useState<ItemTransfer[]>([]);
+  const [history, setHistory] = useState<ItemTransfer[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
   const stone = () => {
@@ -79,6 +71,11 @@ export const Transfer = ({
   useEffect(() => {
     if (item === NullItem) setItem(stone());
   }, [inventories, item]);
+
+  // updates transfer history
+  useEffect(() => {
+    setTransferEvents(account.id);
+  }, [accountEntity, resetSend, mode]);
 
   // reset form values when a reset update is triggered
   useEffect(() => {
@@ -106,8 +103,7 @@ export const Transfer = ({
       const accountsSorted = newAccounts.sort((a, b) => a.name.localeCompare(b.name));
       setAccounts(accountsSorted);
     }
-    // setTransferEvents(account.id);
-  }, [inventoryModalOpen, lastRefresh, accountEntity]);
+  }, [inventoryModalOpen, tick, accountEntity]);
 
   /////////////////
   // GETTERS
@@ -121,7 +117,7 @@ export const Transfer = ({
         //  Timestamp: '0',
       };
       const response = await KamidenClient?.getItemTransfers(request);
-      setSendHistory(response?.Transfers || []);
+      setHistory((response?.Transfers ?? []).slice().reverse());
     } catch (error) {
       console.error('Error getting send history :', error);
       throw error;
@@ -135,7 +131,7 @@ export const Transfer = ({
   const handleAmtChange = (event: ChangeEvent<HTMLInputElement>) => {
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
     const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
-    const max = getInventoryBalance(inventories, item.index);
+    const max = getBalance(inventories, item.index);
     const amt = Math.max(0, Math.min(max, rawQuantity));
     setAmt(amt);
   };
@@ -148,41 +144,6 @@ export const Transfer = ({
 
   /////////////////
   // DISPLAY
-
-  // get the history of items sent
-  // TODO: consider moving this to its own component
-  const TransferHistory = useMemo(() => {
-    const transfers: JSX.Element[] = [];
-    sendHistory.forEach((send, index) => {
-      const senderID = formatEntityID(BigNumber.from(send.SenderAccountID));
-      const receiverID = formatEntityID(BigNumber.from(send.RecvAccountID));
-      const sender = getAccount(getEntityIndex(senderID));
-      const receiver = getAccount(getEntityIndex(receiverID));
-      const item = getItem(send.ItemIndex as EntityIndex);
-
-      if (receiver.id === account.id) {
-        transfers.push(
-          <div key={`receiver-${index}`}>
-            * You <span style={{ color: 'green' }}>received</span> {send?.Amount} {item?.name} from{' '}
-            {sender?.name}
-          </div>
-        );
-      } else if (sender.id === account.id) {
-        transfers.push(
-          <div key={`sender-${index}`}>
-            * You <span style={{ color: 'red' }}>sent</span> {send?.Amount} {item?.name} to{' '}
-            {receiver?.name}
-          </div>
-        );
-      }
-    });
-    if (transfers.length === 0) {
-      return <EmptyText text={['Coming Soon!']} />;
-      return <EmptyText text={['No transfers to show.']} />;
-    } else {
-      return transfers.reverse();
-    }
-  }, [sendHistory, account.id, getAccount, getEntityIndex, getItem]);
 
   // gets filtered item options
   const ItemOptions = useMemo(() => {
@@ -228,23 +189,21 @@ export const Transfer = ({
           tooltip={{ text: [`Send ${item.name} to another account.`] }}
         />
       </Top>
-      <Bottom>
-        <TitleBar>
-          <Text size={0.9}>Your Transfer History</Text>
-          <Text size={0.75}>Fee: 15 MUSU</Text>
-        </TitleBar>
-        {TransferHistory}
-      </Bottom>
+      <History
+        data={{ account, events: history }}
+        state={{ mode }}
+        utils={{ getAccount, getEntityIndex, getItem }}
+      />
     </Container>
   );
 };
 
 const Container = styled.div<{ isVisible: boolean }>`
+  position: relative;
   display: ${({ isVisible }) => (isVisible ? `flex` : `none`)};
   flex-direction: column;
   width: 100%;
-  min-height: 30vh;
-  max-height: 40vh;
+  height: 30vh;
   font-size: 0.75vw;
 `;
 
@@ -257,34 +216,4 @@ const Top = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-`;
-
-const Bottom = styled.div`
-  border-top: 0.15vw solid black;
-  width: 100%;
-  gap: 0.3vw;
-
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-
-  overflow-y: auto;
-`;
-
-const TitleBar = styled.div`
-  background-color: rgb(221, 221, 221);
-  position: sticky;
-  top: 0;
-  width: 100%;
-  margin-bottom: 0.2vw;
-  padding: 1vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-
-  opacity: 0.9;
-  height: 3vw;
 `;

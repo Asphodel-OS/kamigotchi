@@ -1,11 +1,13 @@
-import { EntityID, EntityIndex, getComponentValue } from '@mud-classic/recs';
-import { BigNumber } from 'ethers';
+import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
 import { Address } from 'viem';
 
 import { Affinity } from 'constants/affinities';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
 import { parseAddress } from 'utils/address';
+
+const I32_MAX = 2147483647n;
+const I32_MIN = -2147483648n;
 
 export const getAffinity = (comps: Components, entity: EntityIndex): Affinity => {
   const { Affinity } = comps;
@@ -124,11 +126,18 @@ export const getRerolls = (comps: Components, entity: EntityIndex): number => {
   return (result ?? 0) * 1;
 };
 
-// assume scale is always defined with 3 decimals
-export const getScale = (comps: Components, entity: EntityIndex, precision = 3): number => {
+// NOTE: this is interpreted in two different ways
+// 1. the actual conversion rate, with some assumption on decimals. [default case, handle onsite]
+// 2. the scale represents a magnitude (e.g. token portal, 2 => 1e2). [handle elsewhere]
+export const getScale = (
+  comps: Components,
+  entity: EntityIndex,
+  precision = 3,
+  debug = true
+): number => {
   const { Scale } = comps;
   const result = getComponentValue(Scale, entity)?.value;
-  if (result === undefined) console.warn('getScale(): undefined for entity', entity);
+  if (debug && result === undefined) console.warn('getScale(): undefined for entity', entity);
   return ((result ?? 0) * 1.0) / 10 ** precision;
 };
 
@@ -146,6 +155,20 @@ export const getState = (comps: Components, entity: EntityIndex): string => {
   return result ?? '';
 };
 
+export const getSubtype = (comps: Components, entity: EntityIndex, debug = false): string => {
+  const { Subtype } = comps;
+  const result = getComponentValue(Subtype, entity)?.value;
+  if (debug && !result) console.warn('getSubType(): undefined for entity', entity);
+  return result ?? '';
+};
+
+export const getTax = (comps: Components, entity: EntityIndex): number => {
+  const { Tax } = comps;
+  const result = getComponentValue(Tax, entity)?.value;
+  if (result === undefined) console.warn('getTax(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
 export const getType = (comps: Components, entity: EntityIndex): string => {
   const { Type } = comps;
   const result = getComponentValue(Type, entity)?.value;
@@ -153,17 +176,14 @@ export const getType = (comps: Components, entity: EntityIndex): string => {
   return result ?? '';
 };
 
+// todo: return bigint?
 export const getValue = (comps: Components, entity: EntityIndex): number => {
   const { Value } = comps;
-  const result = getComponentValue(Value, entity)?.value ?? 0;
-  try {
-    // convert if meant to be negative
-    const raw = BigNumber.from(result);
-    return raw.fromTwos(256).toNumber(); // throws if out of bounds
-  } catch {
-    // return raw form otherwise - used for raw uint256 handling
-    return result;
-  }
+  const rawValue = getComponentValue(Value, entity)?.value ?? 0;
+  const signed = BigInt.asIntN(256, BigInt(rawValue));
+
+  if (signed < I32_MIN || signed > I32_MAX) return rawValue;
+  return Number(signed);
 };
 
 /////////////////
@@ -232,7 +252,7 @@ export const getOwnerAddress = (comps: Components, entity: EntityIndex): Address
   const { OwnerAddress } = comps;
   const result = getComponentValue(OwnerAddress, entity)?.value;
   if (result === undefined) {
-    console.warn(`getOwnerAddress(): undefined for entity ${entity}`);
+    console.warn(`getOwnerAddress(): undefined for entity`, entity);
     return '0x000000000000000000000000000000000000dEaD';
   }
 
@@ -244,7 +264,7 @@ export const getOperatorAddress = (comps: Components, entity: EntityIndex): Addr
   const { OperatorAddress } = comps;
   const result = getComponentValue(OperatorAddress, entity)?.value;
   if (result === undefined) {
-    console.warn(`getOperatorAddress(): undefined for entity ${entity}`);
+    console.warn(`getOperatorAddress(): undefined for entity`, entity);
     return '0x000000000000000000000000000000000000dEaD';
   }
 
@@ -255,7 +275,7 @@ export const getTokenAddress = (comps: Components, entity: EntityIndex): Address
   const { TokenAddress } = comps;
   const result = getComponentValue(TokenAddress, entity)?.value;
   if (result === undefined) {
-    console.warn(`getTokenAddress(): undefined for entity ${entity}`);
+    console.warn(`getTokenAddress(): undefined for entity`, entity);
     return '0x000000000000000000000000000000000000dEaD';
   }
 
@@ -264,6 +284,13 @@ export const getTokenAddress = (comps: Components, entity: EntityIndex): Address
 
 ////////////////
 // IDS
+
+export const getAnchorID = (comps: Components, entity: EntityIndex): EntityID => {
+  const { AnchorID } = comps;
+  const result = getComponentValue(AnchorID, entity)?.value;
+  if (result === undefined) console.warn('getAnchorID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
 
 export const getHolderID = (comps: Components, entity: EntityIndex): EntityID => {
   const { HolderID } = comps;
@@ -279,6 +306,20 @@ export const getKamiOwnerID = (comps: Components, entity: EntityIndex): EntityID
   return formatEntityID(result ?? '');
 };
 
+export const getOwnsTradeID = (comps: Components, entity: EntityIndex): EntityID => {
+  const { OwnsTradeID } = comps;
+  const result = getComponentValue(OwnsTradeID, entity)?.value;
+  if (result === undefined) console.warn('getOwnsTradeID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
+export const getOwnsWithdwalID = (comps: Components, entity: EntityIndex): EntityID => {
+  const { OwnsWithdrawalID } = comps;
+  const result = getComponentValue(OwnsWithdrawalID, entity)?.value;
+  if (result === undefined) console.warn('getOwnsWithdwalID(): undefined for entity', entity);
+  return formatEntityID(result ?? '');
+};
+
 export const getSourceID = (comps: Components, entity: EntityIndex): EntityID => {
   const { SourceID } = comps;
   const result = getComponentValue(SourceID, entity)?.value;
@@ -290,13 +331,6 @@ export const getTargetID = (comps: Components, entity: EntityIndex, debug = true
   const { TargetID } = comps;
   const result = getComponentValue(TargetID, entity)?.value;
   if (debug && result === undefined) console.warn('getTargetID(): undefined for entity', entity);
-  return formatEntityID(result ?? '');
-};
-
-export const getOwnsTradeID = (comps: Components, entity: EntityIndex): EntityID => {
-  const { OwnsTradeID } = comps;
-  const result = getComponentValue(OwnsTradeID, entity)?.value;
-  if (result === undefined) console.warn('getOwnsTradeID(): undefined for entity', entity);
   return formatEntityID(result ?? '');
 };
 
@@ -362,7 +396,15 @@ export const getSkillIndex = (comps: Components, entity: EntityIndex): number =>
 /////////////////
 // TIME
 
-// get the last action time of an entity (cooldown reset)
+// get the end time of an entity (e.g. cooldown reset)
+export const getEndTime = (comps: Components, entity: EntityIndex, debug = false): number => {
+  const { TimeEnd } = comps;
+  const result = getComponentValue(TimeEnd, entity)?.value;
+  if (debug && result === undefined) console.warn('getEndTime(): undefined for entity', entity);
+  return (result ?? 0) * 1;
+};
+
+// get the last action time of an entity
 export const getLastActionTime = (
   comps: Components,
   entity: EntityIndex,

@@ -1,16 +1,15 @@
-import { EntityIndex } from '@mud-classic/recs';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
 
-import { getAccount } from 'app/cache/account';
+import { getAccount as _getAccount } from 'app/cache/account';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected } from 'app/stores';
 import { backgrounds } from 'assets/images/backgrounds';
-import { Layers } from 'network/index';
+import { EntityIndex } from 'engine/recs';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getGoalByIndex } from 'network/shapes/Goals';
-import { getRoomIndex } from 'network/shapes/utils/component';
+import { getGoalByIndex as _getGoalByIndex } from 'network/shapes/Goals';
+import { getRoomIndex as _getRoomIndex } from 'network/shapes/utils/component';
 import { Room } from './Room';
 
 // The Scene paints the wallpaper and the room. It updates the selected room
@@ -18,33 +17,41 @@ import { Room } from './Room';
 // the connected account.
 export const Scene: UIComponent = {
   id: 'Scene',
-  requirement: (layers: Layers) => {
-    const { network } = layers;
-    const { world, components } = network;
+  Render: () => {
+    const layers = useLayers();
 
-    // TODO: subscribe this on network layer updates to the embedded address
-    return interval(1000).pipe(
-      map(() => {
-        const accountEntity = queryAccountFromEmbedded(network);
-        return {
-          data: {
-            accountEntity,
-          },
-          utils: {
-            getAccount: (entity: EntityIndex) => getAccount(world, components, entity),
-            getGoalByIndex: (index: number) => getGoalByIndex(world, components, index),
-            getRoomIndex: (entity: EntityIndex) => getRoomIndex(components, entity),
-          },
-        };
-      })
-    );
-  },
-  Render: ({ data, utils }) => {
+    /////////////////
+    // PREPARATION
+
+    const { data, utils } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+
+      const accountEntity = queryAccountFromEmbedded(network);
+      return {
+        data: {
+          accountEntity,
+        },
+        utils: {
+          getAccount: (entity: EntityIndex) => _getAccount(world, components, entity),
+          getGoalByIndex: (index: number) => _getGoalByIndex(world, components, index),
+          getRoomIndex: (entity: EntityIndex) => _getRoomIndex(components, entity),
+        },
+      };
+    })();
+
+    /////////////////
+    // INSTANTIATION
+
     const { accountEntity } = data;
     const { getRoomIndex } = utils;
+
     const roomIndex = useSelected((s) => s.roomIndex);
     const setRoom = useSelected((s) => s.setRoom);
     const [lastRefresh, setLastRefresh] = useState(Date.now());
+
+    /////////////////
+    // SUBSCRIPTION
 
     // ticking
     useEffect(() => {

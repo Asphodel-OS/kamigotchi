@@ -1,75 +1,84 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { useEffect, useState } from 'react';
-import { interval, map } from 'rxjs';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
-import { getAccount, getAccountByID } from 'app/cache/account';
-import { getAllItems, getItem, getItemByIndex } from 'app/cache/item';
-import { getTrade, getTradeHistory } from 'app/cache/trade';
+import { getAccount as _getAccount, getAccountByID as _getAccountByID } from 'app/cache/account';
+import {
+  getItem as _getItem,
+  getItemByIndex as _getItemByIndex,
+  getAllItems,
+} from 'app/cache/item';
+import { getTrade as _getTrade, getTradeHistory as _getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { TradeIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
-import { ETH_INDEX, MUSU_INDEX, ONYX_INDEX } from 'constants/items';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getMusuBalance, Item } from 'network/shapes/Item';
-import { queryTrades } from 'network/shapes/Trade';
+import { EntityID, EntityIndex } from 'engine/recs';
+import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getMusuBalance as _getMusuBalance, Item } from 'network/shapes/Item';
+import { queryTrades as _queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
+import { CURRENCIES } from './constants';
 import { History } from './history/History';
-import { Confirmation, ConfirmationData } from './library/Confirmation';
+import { Confirmation, ConfirmationData, EmptyConfimation } from './library/Confirmation';
 import { Tabs } from './library/Tabs';
 import { Management } from './management';
 import { Orderbook } from './orderbook';
 import { TabType } from './types';
 
 const SYNC_TIME = 1000;
-const CurrencyIndices = [MUSU_INDEX, ETH_INDEX, ONYX_INDEX];
 const KamidenClient = getKamidenClient();
 
 export const TradingModal: UIComponent = {
   id: 'TradingModal',
-  requirement: (layers) =>
-    interval(1000).pipe(
-      map(() => {
-        const { network } = layers;
-        const { world, components: comps, actions } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const accountOptions = { live: 1, config: 3600 };
-        const tradeOptions = { state: 2, taker: 2 };
+  Render: () => {
+    const layers = useLayers();
 
-        return {
-          network,
-          data: {
-            account: getAccount(world, comps, accountEntity, accountOptions),
-          },
-          types: {
-            ActionComp: actions.Action,
-          },
-          utils: {
-            entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
-            getAccount: () => getAccount(world, comps, accountEntity, accountOptions),
-            getTrade: (entity: EntityIndex) => getTrade(world, comps, entity, tradeOptions),
-            queryTrades: () => queryTrades(comps),
-            getItemByIndex: (index: number) => getItemByIndex(world, comps, index),
-            getMusuBalance: () => getMusuBalance(world, comps, accountEntity),
-            getItem: (entity: EntityIndex) => getItem(world, comps, entity),
-            getAccountByID: (id: EntityID) => getAccountByID(world, comps, id, accountOptions),
-            getTradeHistory: (history: TradeHistory) => getTradeHistory(world, comps, history),
-          },
-        };
-      })
-    ),
+    /////////////////
+    // PREPARATION
 
-  Render: ({ network, data, types, utils }) => {
+    const { network, data, types, utils } = (() => {
+      const { network } = layers;
+      const { world, components: comps, actions } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const accountOptions = { live: 1, inventory: 1, config: 3600 };
+      const tradeOptions = { state: 2, taker: 2 };
+
+      return {
+        network,
+        data: {
+          accountEntity,
+        },
+        types: {
+          ActionComp: actions.Action,
+        },
+        utils: {
+          entityToIndex: (id: EntityID) => world.entityToIndex.get(id)!,
+          getAccount: (entity: EntityIndex) => _getAccount(world, comps, entity, accountOptions),
+          getTrade: (entity: EntityIndex) => _getTrade(world, comps, entity, tradeOptions),
+          queryTrades: () => _queryTrades(comps),
+          getItemByIndex: (index: number) => _getItemByIndex(world, comps, index),
+          getMusuBalance: () => _getMusuBalance(world, comps, accountEntity),
+          getItem: (entity: EntityIndex) => _getItem(world, comps, entity),
+          getAccountByID: (id: EntityID) => _getAccountByID(world, comps, id, accountOptions),
+          getTradeHistory: (history: TradeHistory) => _getTradeHistory(world, comps, history),
+        },
+      };
+    })();
+
     const { actions } = network;
-    const { account } = data;
-    const { getTrade, queryTrades } = utils;
-    const tradingModalVisible = useVisibility((s) => s.modals.trading);
-    const { selectedAddress, apis } = useNetwork();
+    const { accountEntity } = data;
+    const { ActionComp } = types;
+    const { getAccount, getTrade, queryTrades } = utils;
 
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const modalVisible = useVisibility((s) => s.modals.trading);
+
+    const [account, setAccount] = useState<Account>(NullAccount);
     const [items, setItems] = useState<Item[]>([]);
     const [currencies, setCurrencies] = useState<Item[]>([]);
     const [trades, setTrades] = useState<Trade[]>([]);
@@ -78,14 +87,16 @@ export const TradingModal: UIComponent = {
     const [tab, setTab] = useState<TabType>('Orderbook');
     const [tick, setTick] = useState(Date.now());
     const [isConfirming, setIsConfirming] = useState(false);
-    const [confirmData, setConfirmData] = useState<ConfirmationData>({
-      content: <></>,
-      onConfirm: () => null,
-    });
+    const [confirmData, setConfirmData] = useState<ConfirmationData>(EmptyConfimation);
     const [tradeHistory, setTradeHistory] = useState<TradeHistory[]>([]);
 
-    // time trigger to use for periodic refreshes
+    // set the item registry and ticking on mount
     useEffect(() => {
+      refreshItemRegistry();
+      const account = getAccount(accountEntity);
+      if (account.index !== NullAccount.index) refreshTrades(account); // tends to render before account is loaded
+      setAccount(account);
+
       const updateSync = () => setTick(Date.now());
       const timerId = setInterval(updateSync, SYNC_TIME);
       return () => clearInterval(timerId);
@@ -93,12 +104,20 @@ export const TradingModal: UIComponent = {
 
     // sets trades upon opening modal
     useEffect(() => {
-      if (!tradingModalVisible) return;
-      refreshTrades();
-      getTradeHistoryKamiden(account.id);
-    }, [tradingModalVisible, tick]);
+      if (!modalVisible) return;
+      const account = getAccount(accountEntity);
+      setAccount(account);
+      refreshTrades(account);
+    }, [modalVisible, tick]);
+
+    // update trade history whenever tab is checked
+    useEffect(() => {
+      if (!modalVisible || tab !== `History`) return;
+      getTradeHistory(account.id);
+    }, [tab]);
 
     // open account modal on events from offers
+    // Q: what is this used for?
     useEffect(() => {
       const handleOpenAccountModal = (_event: Event) => {
         try {
@@ -144,10 +163,6 @@ export const TradingModal: UIComponent = {
       };
     }, []);
 
-    useEffect(() => {
-      refreshItemRegistry();
-    }, [tradingModalVisible]);
-
     /////////////////
     // GETTERS
 
@@ -155,18 +170,18 @@ export const TradingModal: UIComponent = {
     const refreshItemRegistry = () => {
       const all: Item[] = getAllItems();
 
-      // const nonCurrencies = all.filter((item) => !CurrencyIndices.includes(item.index));
+      // const nonCurrencies = all.filter((item) => !CURRENCIES.includes(item.index));
       const tradable = all.filter((item) => item.is.tradeable);
       tradable.sort((a, b) => (a.name > b.name ? 1 : -1));
       if (tradable.length !== items.length) setItems(tradable);
 
-      const currencyIndices = new Set(CurrencyIndices);
+      const currencyIndices = new Set(CURRENCIES);
       setCurrencies(all.filter((item) => currencyIndices.has(item.index)));
     };
 
     // pull all open trades and partition them based on whether created by the player
     // NOTE: filtering by Taker not yet implemented
-    const refreshTrades = () => {
+    const refreshTrades = (account: Account) => {
       const tradeEntities = queryTrades();
       const allTrades = tradeEntities.map((entity: EntityIndex) => getTrade(entity));
       const myTrades = allTrades.filter((trade: Trade) => {
@@ -184,7 +199,9 @@ export const TradingModal: UIComponent = {
       setTrades(trades);
     };
 
-    async function getTradeHistoryKamiden(accountId: string) {
+    // get trade history from Kamiden
+    // TODO: make this subscription based
+    async function getTradeHistory(accountId: string) {
       const parsedAccountId = BigInt(accountId).toString();
       try {
         const request: TradesRequest = {
@@ -278,6 +295,9 @@ export const TradingModal: UIComponent = {
       return actionID;
     };
 
+    /////////////////
+    // RENDER
+
     return (
       <ModalWrapper
         id='trading'
@@ -302,8 +322,8 @@ export const TradingModal: UIComponent = {
             actions={{ cancelTrade, executeTrade }}
             controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
             data={{ account, items, trades }}
-            isVisible={tab === `Orderbook`}
             utils={utils}
+            isVisible={tab === `Orderbook`}
           />
           <Management
             actions={{ cancelTrade, completeTrade, createTrade, executeTrade }}
@@ -315,8 +335,8 @@ export const TradingModal: UIComponent = {
               items,
               trades: myTrades,
             }}
-            types={types}
-            utils={utils}
+            types={{ ActionComp }}
+            utils={{ ...utils, getAllItems }}
             isVisible={tab === `Management`}
           />
           <History

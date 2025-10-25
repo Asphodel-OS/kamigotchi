@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import { EntityID, EntityIndex } from 'engine/recs';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
-
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { Account } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';

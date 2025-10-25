@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, HasValue, runQuery } from '@mud-classic/recs';
+import { EntityID, EntityIndex, HasValue, runQuery } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { Components } from 'network/';
 import { hashArgs } from './IDs';

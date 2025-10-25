@@ -3,13 +3,12 @@ ABIS=(
   # Add greps to export here 
   *Component
   *System
-  # World     # do we need this?
-  # LibQuery  # Q(jb): Where do we find this??
+  World     # do we need this?
 )
 
 EXCLUDE=(
   # Add files not to export here 
-  Component         # only include this if *Component is uncommented above 
+  # Component         # only include this if *Component is uncommented above 
   IComponent        # only include this if *Component is uncommented above 
   BareComponent     # only include this if *Component is uncommented above 
   IUint256Component # only include this if *Component is uncommented above 

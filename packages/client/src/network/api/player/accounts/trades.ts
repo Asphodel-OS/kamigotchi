@@ -1,11 +1,12 @@
-import { BigNumberish } from '@ethersproject/bignumber';
+import { SystemQueue } from 'engine/queue';
+import { BigNumberish } from 'ethers';
 
 /*******************
  *  TRADES
  * @title Trade interaction API for Players
  * @notice A Trade represents an exchange of items between two Accounts.
  */
-export const tradesAPI = (systems: any) => {
+export const tradesAPI = (systems: SystemQueue<any>) => {
   /**
    * @notice create a Trade.
    * @dev transfers SellOrder items from the caller (Maker) to the Trade entity

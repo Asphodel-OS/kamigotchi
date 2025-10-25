@@ -3,68 +3,29 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
-export interface LogicTypeComponentInterface extends utils.Interface {
-  functions: {
-    "authorizeWriter(address)": FunctionFragment;
-    "cancelOwnershipHandover()": FunctionFragment;
-    "completeOwnershipHandover(address)": FunctionFragment;
-    "equal(uint256[],bytes)": FunctionFragment;
-    "equal(uint256,bytes)": FunctionFragment;
-    "extract(uint256[])": FunctionFragment;
-    "extract(uint256)": FunctionFragment;
-    "extractRaw(uint256[])": FunctionFragment;
-    "extractRaw(uint256)": FunctionFragment;
-    "get(uint256[])": FunctionFragment;
-    "get(uint256)": FunctionFragment;
-    "getEntitiesWithValue(bytes)": FunctionFragment;
-    "getRaw(uint256[])": FunctionFragment;
-    "getRaw(uint256)": FunctionFragment;
-    "has(uint256)": FunctionFragment;
-    "id()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "remove(uint256[])": FunctionFragment;
-    "remove(uint256)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "requestOwnershipHandover()": FunctionFragment;
-    "safeGet(uint256)": FunctionFragment;
-    "safeGet(uint256[])": FunctionFragment;
-    "set(uint256,string)": FunctionFragment;
-    "set(uint256,bytes)": FunctionFragment;
-    "set(uint256[],bytes[])": FunctionFragment;
-    "set(uint256[],string[])": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-    "unauthorizeWriter(address)": FunctionFragment;
-    "writeAccess(address)": FunctionFragment;
-  };
-
+export interface LogicTypeComponentInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "authorizeWriter"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
@@ -98,9 +59,18 @@ export interface LogicTypeComponentInterface extends utils.Interface {
       | "writeAccess"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "AuthorizedWriter"
+      | "OwnershipHandoverCanceled"
+      | "OwnershipHandoverRequested"
+      | "OwnershipTransferred"
+      | "UnauthorizedWriter"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "authorizeWriter",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
@@ -108,69 +78,66 @@ export interface LogicTypeComponentInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "equal(uint256[],bytes)",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>]
+    values: [BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "equal(uint256,bytes)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+    values: [BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "extract(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "extract(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "extractRaw(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "extractRaw(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "get(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "get(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getRaw(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getRaw(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "has",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
+  encodeFunctionData(functionFragment: "has", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "remove(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "remove(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -182,39 +149,39 @@ export interface LogicTypeComponentInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "safeGet(uint256)",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeGet(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,string)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256,bytes)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+    values: [BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256[],bytes[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
+    values: [BigNumberish[], BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "set(uint256[],string[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>[]]
+    values: [BigNumberish[], string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "unauthorizeWriter",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "writeAccess",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -332,902 +299,476 @@ export interface LogicTypeComponentInterface extends utils.Interface {
     functionFragment: "writeAccess",
     data: BytesLike
   ): Result;
-
-  events: {
-    "AuthorizedWriter(address)": EventFragment;
-    "OwnershipHandoverCanceled(address)": EventFragment;
-    "OwnershipHandoverRequested(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "UnauthorizedWriter(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AuthorizedWriter"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UnauthorizedWriter"): EventFragment;
 }
 
-export interface AuthorizedWriterEventObject {
-  writer: string;
+export namespace AuthorizedWriterEvent {
+  export type InputTuple = [writer: AddressLike];
+  export type OutputTuple = [writer: string];
+  export interface OutputObject {
+    writer: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AuthorizedWriterEvent = TypedEvent<
-  [string],
-  AuthorizedWriterEventObject
->;
 
-export type AuthorizedWriterEventFilter =
-  TypedEventFilter<AuthorizedWriterEvent>;
-
-export interface OwnershipHandoverCanceledEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverCanceledEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverCanceledEvent = TypedEvent<
-  [string],
-  OwnershipHandoverCanceledEventObject
->;
 
-export type OwnershipHandoverCanceledEventFilter =
-  TypedEventFilter<OwnershipHandoverCanceledEvent>;
-
-export interface OwnershipHandoverRequestedEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverRequestedEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverRequestedEvent = TypedEvent<
-  [string],
-  OwnershipHandoverRequestedEventObject
->;
 
-export type OwnershipHandoverRequestedEventFilter =
-  TypedEventFilter<OwnershipHandoverRequestedEvent>;
-
-export interface OwnershipTransferredEventObject {
-  oldOwner: string;
-  newOwner: string;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [oldOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [oldOwner: string, newOwner: string];
+  export interface OutputObject {
+    oldOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface UnauthorizedWriterEventObject {
-  writer: string;
+export namespace UnauthorizedWriterEvent {
+  export type InputTuple = [writer: AddressLike];
+  export type OutputTuple = [writer: string];
+  export interface OutputObject {
+    writer: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type UnauthorizedWriterEvent = TypedEvent<
-  [string],
-  UnauthorizedWriterEventObject
->;
-
-export type UnauthorizedWriterEventFilter =
-  TypedEventFilter<UnauthorizedWriterEvent>;
 
 export interface LogicTypeComponent extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): LogicTypeComponent;
+  waitForDeployment(): Promise<this>;
 
   interface: LogicTypeComponentInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    authorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "equal(uint256[],bytes)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    "equal(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    "extract(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "extract(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "extractRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "extractRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "get(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
-
-    "get(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    "getRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
-
-    "getRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    has(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    id(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
-
-    "remove(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "remove(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "safeGet(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    "safeGet(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
-
-    "set(uint256,string)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "set(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "set(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "set(uint256[],string[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    unauthorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    writeAccess(
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-  };
-
-  authorizeWriter(
-    writer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  cancelOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  completeOwnershipHandover(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "equal(uint256[],bytes)"(
-    entities: PromiseOrValue<BigNumberish>[],
-    value: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "equal(uint256,bytes)"(
-    entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "extract(uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "extract(uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "extractRaw(uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "extractRaw(uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "get(uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<string[]>;
-
-  "get(uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getEntitiesWithValue(
-    arg0: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  "getRaw(uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<string[]>;
-
-  "getRaw(uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  has(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  id(overrides?: CallOverrides): Promise<BigNumber>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  ownershipHandoverExpiresAt(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "remove(uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "remove(uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  renounceOwnership(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  requestOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "safeGet(uint256)"(
-    entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  "safeGet(uint256[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<string[]>;
-
-  "set(uint256,string)"(
-    entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "set(uint256,bytes)"(
-    entity: PromiseOrValue<BigNumberish>,
-    value: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "set(uint256[],bytes[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<BytesLike>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "set(uint256[],string[])"(
-    entities: PromiseOrValue<BigNumberish>[],
-    values: PromiseOrValue<string>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  unauthorizeWriter(
-    writer: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  writeAccess(
-    operator: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  callStatic: {
-    authorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "equal(uint256[],bytes)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "equal(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "extract(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    "extract(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    "extractRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    "extractRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    "get(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    "get(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    "getRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    "getRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    has(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    id(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "remove(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "remove(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    "safeGet(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    "safeGet(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    "set(uint256,string)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "set(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "set(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "set(uint256[],string[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<string>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unauthorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    writeAccess(
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-  };
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  authorizeWriter: TypedContractMethod<
+    [writer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
+
+  completeOwnershipHandover: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [void],
+    "payable"
+  >;
+
+  "equal(uint256[],bytes)": TypedContractMethod<
+    [entities: BigNumberish[], value: BytesLike],
+    [boolean],
+    "view"
+  >;
+
+  "equal(uint256,bytes)": TypedContractMethod<
+    [entity: BigNumberish, value: BytesLike],
+    [boolean],
+    "view"
+  >;
+
+  "extract(uint256[])": TypedContractMethod<
+    [entities: BigNumberish[]],
+    [string[]],
+    "nonpayable"
+  >;
+
+  "extract(uint256)": TypedContractMethod<
+    [entity: BigNumberish],
+    [string],
+    "nonpayable"
+  >;
+
+  "extractRaw(uint256[])": TypedContractMethod<
+    [entities: BigNumberish[]],
+    [string[]],
+    "nonpayable"
+  >;
+
+  "extractRaw(uint256)": TypedContractMethod<
+    [entity: BigNumberish],
+    [string],
+    "nonpayable"
+  >;
+
+  "get(uint256[])": TypedContractMethod<
+    [entities: BigNumberish[]],
+    [string[]],
+    "view"
+  >;
+
+  "get(uint256)": TypedContractMethod<[entity: BigNumberish], [string], "view">;
+
+  getEntitiesWithValue: TypedContractMethod<
+    [arg0: BytesLike],
+    [bigint[]],
+    "view"
+  >;
+
+  "getRaw(uint256[])": TypedContractMethod<
+    [entities: BigNumberish[]],
+    [string[]],
+    "view"
+  >;
+
+  "getRaw(uint256)": TypedContractMethod<
+    [entity: BigNumberish],
+    [string],
+    "view"
+  >;
+
+  has: TypedContractMethod<[entity: BigNumberish], [boolean], "view">;
+
+  id: TypedContractMethod<[], [bigint], "view">;
+
+  owner: TypedContractMethod<[], [string], "view">;
+
+  ownershipHandoverExpiresAt: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  "remove(uint256[])": TypedContractMethod<
+    [entities: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+
+  "remove(uint256)": TypedContractMethod<
+    [entity: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  renounceOwnership: TypedContractMethod<[], [void], "payable">;
+
+  requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
+
+  "safeGet(uint256)": TypedContractMethod<
+    [entity: BigNumberish],
+    [string],
+    "view"
+  >;
+
+  "safeGet(uint256[])": TypedContractMethod<
+    [entities: BigNumberish[]],
+    [string[]],
+    "view"
+  >;
+
+  "set(uint256,string)": TypedContractMethod<
+    [entity: BigNumberish, value: string],
+    [void],
+    "nonpayable"
+  >;
+
+  "set(uint256,bytes)": TypedContractMethod<
+    [entity: BigNumberish, value: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+
+  "set(uint256[],bytes[])": TypedContractMethod<
+    [entities: BigNumberish[], values: BytesLike[]],
+    [void],
+    "nonpayable"
+  >;
+
+  "set(uint256[],string[])": TypedContractMethod<
+    [entities: BigNumberish[], values: string[]],
+    [void],
+    "nonpayable"
+  >;
+
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "payable"
+  >;
+
+  unauthorizeWriter: TypedContractMethod<
+    [writer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  writeAccess: TypedContractMethod<[operator: AddressLike], [boolean], "view">;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "authorizeWriter"
+  ): TypedContractMethod<[writer: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "cancelOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "completeOwnershipHandover"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "equal(uint256[],bytes)"
+  ): TypedContractMethod<
+    [entities: BigNumberish[], value: BytesLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "equal(uint256,bytes)"
+  ): TypedContractMethod<
+    [entity: BigNumberish, value: BytesLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "extract(uint256[])"
+  ): TypedContractMethod<[entities: BigNumberish[]], [string[]], "nonpayable">;
+  getFunction(
+    nameOrSignature: "extract(uint256)"
+  ): TypedContractMethod<[entity: BigNumberish], [string], "nonpayable">;
+  getFunction(
+    nameOrSignature: "extractRaw(uint256[])"
+  ): TypedContractMethod<[entities: BigNumberish[]], [string[]], "nonpayable">;
+  getFunction(
+    nameOrSignature: "extractRaw(uint256)"
+  ): TypedContractMethod<[entity: BigNumberish], [string], "nonpayable">;
+  getFunction(
+    nameOrSignature: "get(uint256[])"
+  ): TypedContractMethod<[entities: BigNumberish[]], [string[]], "view">;
+  getFunction(
+    nameOrSignature: "get(uint256)"
+  ): TypedContractMethod<[entity: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "getEntitiesWithValue"
+  ): TypedContractMethod<[arg0: BytesLike], [bigint[]], "view">;
+  getFunction(
+    nameOrSignature: "getRaw(uint256[])"
+  ): TypedContractMethod<[entities: BigNumberish[]], [string[]], "view">;
+  getFunction(
+    nameOrSignature: "getRaw(uint256)"
+  ): TypedContractMethod<[entity: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "has"
+  ): TypedContractMethod<[entity: BigNumberish], [boolean], "view">;
+  getFunction(nameOrSignature: "id"): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "ownershipHandoverExpiresAt"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "remove(uint256[])"
+  ): TypedContractMethod<[entities: BigNumberish[]], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "remove(uint256)"
+  ): TypedContractMethod<[entity: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "requestOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "safeGet(uint256)"
+  ): TypedContractMethod<[entity: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "safeGet(uint256[])"
+  ): TypedContractMethod<[entities: BigNumberish[]], [string[]], "view">;
+  getFunction(
+    nameOrSignature: "set(uint256,string)"
+  ): TypedContractMethod<
+    [entity: BigNumberish, value: string],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "set(uint256,bytes)"
+  ): TypedContractMethod<
+    [entity: BigNumberish, value: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "set(uint256[],bytes[])"
+  ): TypedContractMethod<
+    [entities: BigNumberish[], values: BytesLike[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "set(uint256[],string[])"
+  ): TypedContractMethod<
+    [entities: BigNumberish[], values: string[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "unauthorizeWriter"
+  ): TypedContractMethod<[writer: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "writeAccess"
+  ): TypedContractMethod<[operator: AddressLike], [boolean], "view">;
+
+  getEvent(
+    key: "AuthorizedWriter"
+  ): TypedContractEvent<
+    AuthorizedWriterEvent.InputTuple,
+    AuthorizedWriterEvent.OutputTuple,
+    AuthorizedWriterEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverCanceled"
+  ): TypedContractEvent<
+    OwnershipHandoverCanceledEvent.InputTuple,
+    OwnershipHandoverCanceledEvent.OutputTuple,
+    OwnershipHandoverCanceledEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverRequested"
+  ): TypedContractEvent<
+    OwnershipHandoverRequestedEvent.InputTuple,
+    OwnershipHandoverRequestedEvent.OutputTuple,
+    OwnershipHandoverRequestedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "UnauthorizedWriter"
+  ): TypedContractEvent<
+    UnauthorizedWriterEvent.InputTuple,
+    UnauthorizedWriterEvent.OutputTuple,
+    UnauthorizedWriterEvent.OutputObject
+  >;
 
   filters: {
-    "AuthorizedWriter(address)"(
-      writer?: PromiseOrValue<string> | null
-    ): AuthorizedWriterEventFilter;
-    AuthorizedWriter(
-      writer?: PromiseOrValue<string> | null
-    ): AuthorizedWriterEventFilter;
-
-    "OwnershipHandoverCanceled(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
-    OwnershipHandoverCanceled(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
-
-    "OwnershipHandoverRequested(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
-    OwnershipHandoverRequested(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
-
-    "OwnershipTransferred(address,address)"(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-
-    "UnauthorizedWriter(address)"(
-      writer?: PromiseOrValue<string> | null
-    ): UnauthorizedWriterEventFilter;
-    UnauthorizedWriter(
-      writer?: PromiseOrValue<string> | null
-    ): UnauthorizedWriterEventFilter;
-  };
-
-  estimateGas: {
-    authorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "equal(uint256[],bytes)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "equal(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "extract(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "extract(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "extractRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "extractRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "get(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "get(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    has(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    id(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "remove(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "remove(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "safeGet(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "safeGet(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "set(uint256,string)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "set(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "set(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "set(uint256[],string[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    unauthorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    writeAccess(
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    authorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "equal(uint256[],bytes)"(
-      entities: PromiseOrValue<BigNumberish>[],
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "equal(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "extract(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "extract(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "extractRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "extractRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "get(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "get(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getEntitiesWithValue(
-      arg0: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getRaw(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getRaw(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    has(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    id(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "remove(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "remove(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "safeGet(uint256)"(
-      entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "safeGet(uint256[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "set(uint256,string)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "set(uint256,bytes)"(
-      entity: PromiseOrValue<BigNumberish>,
-      value: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "set(uint256[],bytes[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "set(uint256[],string[])"(
-      entities: PromiseOrValue<BigNumberish>[],
-      values: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unauthorizeWriter(
-      writer: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    writeAccess(
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "AuthorizedWriter(address)": TypedContractEvent<
+      AuthorizedWriterEvent.InputTuple,
+      AuthorizedWriterEvent.OutputTuple,
+      AuthorizedWriterEvent.OutputObject
+    >;
+    AuthorizedWriter: TypedContractEvent<
+      AuthorizedWriterEvent.InputTuple,
+      AuthorizedWriterEvent.OutputTuple,
+      AuthorizedWriterEvent.OutputObject
+    >;
+
+    "OwnershipHandoverCanceled(address)": TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
+    OwnershipHandoverCanceled: TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
+
+    "OwnershipHandoverRequested(address)": TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
+    OwnershipHandoverRequested: TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
+
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+
+    "UnauthorizedWriter(address)": TypedContractEvent<
+      UnauthorizedWriterEvent.InputTuple,
+      UnauthorizedWriterEvent.OutputTuple,
+      UnauthorizedWriterEvent.OutputObject
+    >;
+    UnauthorizedWriter: TypedContractEvent<
+      UnauthorizedWriterEvent.InputTuple,
+      UnauthorizedWriterEvent.OutputTuple,
+      UnauthorizedWriterEvent.OutputObject
+    >;
   };
 }

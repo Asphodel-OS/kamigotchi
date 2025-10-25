@@ -6,9 +6,9 @@ import { MapMenuButton } from './Map';
 import { MoreMenuButton } from './More';
 import { NodeMenuButton } from './Node';
 import { OnyxMenuButton } from './Onyx';
-import { StudioMenuButton } from './Studio';
 import { PartyMenuButton } from './Party';
 import { QuestMenuButton } from './Quests';
+import { StudioMenuButton } from './Studio';
 import { SudoMenuButton } from './Sudo';
 
 export {
@@ -20,8 +20,8 @@ export {
   MoreMenuButton,
   NodeMenuButton,
   OnyxMenuButton,
-  StudioMenuButton,
   PartyMenuButton,
   QuestMenuButton,
+  StudioMenuButton,
   SudoMenuButton,
 };

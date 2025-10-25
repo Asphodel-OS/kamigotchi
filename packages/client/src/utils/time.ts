@@ -7,7 +7,15 @@ const SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
 /////////////////
 // NORMIETIME
 
+// get the countdown string for a given end timestamp
+export const getCountdown = (endTs: number) => {
+  const now = Math.floor(Date.now() / 1000);
+  return formatCountdown(endTs - now);
+};
+
+// formats seconds into a countdown string
 export const formatCountdown = (secs: number) => {
+  if (secs < 0) return '00:00:00';
   const pad = (n: number) => (n < 10 ? `0${n}` : n);
 
   const h = Math.floor(secs / 3600);

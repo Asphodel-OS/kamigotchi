@@ -12,7 +12,10 @@ export function useBalance(owner: Address, token: Address) {
   });
   return {
     ...results,
-    tokenIndices: results.data?.[0].result?.map((i: any) => Number(i)),
+    tokenIndices:
+      results.data && Array.isArray(results.data[0].result)
+        ? results.data[0].result.map((i) => Number(i))
+        : [],
   };
 }
 

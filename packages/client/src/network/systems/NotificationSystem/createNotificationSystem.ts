@@ -7,7 +7,7 @@ import {
   removeComponent,
   setComponent,
   updateComponent,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 import { defineNotificationComponent } from './NotificationComponent';
 import { NotificationData } from './types';
 

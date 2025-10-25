@@ -3,58 +3,53 @@
 /* eslint-disable */
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "./common";
 
 export type AccountShapeStruct = {
-  index: PromiseOrValue<BigNumberish>;
-  name: PromiseOrValue<string>;
-  currStamina: PromiseOrValue<BigNumberish>;
-  room: PromiseOrValue<BigNumberish>;
+  index: BigNumberish;
+  name: string;
+  currStamina: BigNumberish;
+  room: BigNumberish;
 };
 
-export type AccountShapeStructOutput = [number, string, number, number] & {
-  index: number;
-  name: string;
-  currStamina: number;
-  room: number;
-};
+export type AccountShapeStructOutput = [
+  index: bigint,
+  name: string,
+  currStamina: bigint,
+  room: bigint
+] & { index: bigint; name: string; currStamina: bigint; room: bigint };
 
 export type StatStruct = {
-  base: PromiseOrValue<BigNumberish>;
-  shift: PromiseOrValue<BigNumberish>;
-  boost: PromiseOrValue<BigNumberish>;
-  sync: PromiseOrValue<BigNumberish>;
+  base: BigNumberish;
+  shift: BigNumberish;
+  boost: BigNumberish;
+  sync: BigNumberish;
 };
 
-export type StatStructOutput = [number, number, number, number] & {
-  base: number;
-  shift: number;
-  boost: number;
-  sync: number;
-};
+export type StatStructOutput = [
+  base: bigint,
+  shift: bigint,
+  boost: bigint,
+  sync: bigint
+] & { base: bigint; shift: bigint; boost: bigint; sync: bigint };
 
 export type KamiStatsStruct = {
   health: StatStruct;
@@ -64,10 +59,10 @@ export type KamiStatsStruct = {
 };
 
 export type KamiStatsStructOutput = [
-  StatStructOutput,
-  StatStructOutput,
-  StatStructOutput,
-  StatStructOutput
+  health: StatStructOutput,
+  power: StatStructOutput,
+  harmony: StatStructOutput,
+  violence: StatStructOutput
 ] & {
   health: StatStructOutput;
   power: StatStructOutput;
@@ -76,88 +71,73 @@ export type KamiStatsStructOutput = [
 };
 
 export type KamiTraitsStruct = {
-  face: PromiseOrValue<BigNumberish>;
-  hand: PromiseOrValue<BigNumberish>;
-  body: PromiseOrValue<BigNumberish>;
-  background: PromiseOrValue<BigNumberish>;
-  color: PromiseOrValue<BigNumberish>;
+  face: BigNumberish;
+  hand: BigNumberish;
+  body: BigNumberish;
+  background: BigNumberish;
+  color: BigNumberish;
 };
 
 export type KamiTraitsStructOutput = [
-  number,
-  number,
-  number,
-  number,
-  number
+  face: bigint,
+  hand: bigint,
+  body: bigint,
+  background: bigint,
+  color: bigint
 ] & {
-  face: number;
-  hand: number;
-  body: number;
-  background: number;
-  color: number;
+  face: bigint;
+  hand: bigint;
+  body: bigint;
+  background: bigint;
+  color: bigint;
 };
 
 export type KamiShapeStruct = {
-  id: PromiseOrValue<BigNumberish>;
-  index: PromiseOrValue<BigNumberish>;
-  name: PromiseOrValue<string>;
-  mediaURI: PromiseOrValue<string>;
+  id: BigNumberish;
+  index: BigNumberish;
+  name: string;
+  mediaURI: string;
   stats: KamiStatsStruct;
   traits: KamiTraitsStruct;
-  affinities: PromiseOrValue<string>[];
-  account: PromiseOrValue<BigNumberish>;
-  level: PromiseOrValue<BigNumberish>;
-  xp: PromiseOrValue<BigNumberish>;
-  room: PromiseOrValue<BigNumberish>;
-  state: PromiseOrValue<string>;
+  affinities: string[];
+  account: BigNumberish;
+  level: BigNumberish;
+  xp: BigNumberish;
+  room: BigNumberish;
+  state: string;
 };
 
 export type KamiShapeStructOutput = [
-  BigNumber,
-  number,
-  string,
-  string,
-  KamiStatsStructOutput,
-  KamiTraitsStructOutput,
-  string[],
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  number,
-  string
+  id: bigint,
+  index: bigint,
+  name: string,
+  mediaURI: string,
+  stats: KamiStatsStructOutput,
+  traits: KamiTraitsStructOutput,
+  affinities: string[],
+  account: bigint,
+  level: bigint,
+  xp: bigint,
+  room: bigint,
+  state: string
 ] & {
-  id: BigNumber;
-  index: number;
+  id: bigint;
+  index: bigint;
   name: string;
   mediaURI: string;
   stats: KamiStatsStructOutput;
   traits: KamiTraitsStructOutput;
   affinities: string[];
-  account: BigNumber;
-  level: BigNumber;
-  xp: BigNumber;
-  room: number;
+  account: bigint;
+  level: bigint;
+  xp: bigint;
+  room: bigint;
   state: string;
 };
 
-export interface GetterSystemInterface extends utils.Interface {
-  functions: {
-    "cancelOwnershipHandover()": FunctionFragment;
-    "completeOwnershipHandover(address)": FunctionFragment;
-    "deprecate()": FunctionFragment;
-    "execute(bytes)": FunctionFragment;
-    "getAccount(uint256)": FunctionFragment;
-    "getKami(uint256)": FunctionFragment;
-    "getKamiByIndex(uint32)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "ownershipHandoverExpiresAt(address)": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
-    "requestOwnershipHandover()": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
-  };
-
+export interface GetterSystemInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "deprecate"
@@ -172,35 +152,40 @@ export interface GetterSystemInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "OwnershipHandoverCanceled"
+      | "OwnershipHandoverRequested"
+      | "OwnershipTransferred"
+      | "SystemDeprecated"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "completeOwnershipHandover",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "execute",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
+  encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "getAccount",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getKami",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getKamiByIndex",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -212,7 +197,7 @@ export interface GetterSystemInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -248,376 +233,267 @@ export interface GetterSystemInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-
-  events: {
-    "OwnershipHandoverCanceled(address)": EventFragment;
-    "OwnershipHandoverRequested(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
-    "SystemDeprecated()": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SystemDeprecated"): EventFragment;
 }
 
-export interface OwnershipHandoverCanceledEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverCanceledEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverCanceledEvent = TypedEvent<
-  [string],
-  OwnershipHandoverCanceledEventObject
->;
 
-export type OwnershipHandoverCanceledEventFilter =
-  TypedEventFilter<OwnershipHandoverCanceledEvent>;
-
-export interface OwnershipHandoverRequestedEventObject {
-  pendingOwner: string;
+export namespace OwnershipHandoverRequestedEvent {
+  export type InputTuple = [pendingOwner: AddressLike];
+  export type OutputTuple = [pendingOwner: string];
+  export interface OutputObject {
+    pendingOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipHandoverRequestedEvent = TypedEvent<
-  [string],
-  OwnershipHandoverRequestedEventObject
->;
 
-export type OwnershipHandoverRequestedEventFilter =
-  TypedEventFilter<OwnershipHandoverRequestedEvent>;
-
-export interface OwnershipTransferredEventObject {
-  oldOwner: string;
-  newOwner: string;
+export namespace OwnershipTransferredEvent {
+  export type InputTuple = [oldOwner: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [oldOwner: string, newOwner: string];
+  export interface OutputObject {
+    oldOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string],
-  OwnershipTransferredEventObject
->;
 
-export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface SystemDeprecatedEventObject {}
-export type SystemDeprecatedEvent = TypedEvent<[], SystemDeprecatedEventObject>;
-
-export type SystemDeprecatedEventFilter =
-  TypedEventFilter<SystemDeprecatedEvent>;
+export namespace SystemDeprecatedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface GetterSystem extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): GetterSystem;
+  waitForDeployment(): Promise<this>;
 
   interface: GetterSystemInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  completeOwnershipHandover: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-    getAccount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[AccountShapeStructOutput]>;
+  deprecate: TypedContractMethod<[], [void], "nonpayable">;
 
-    getKami(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[KamiShapeStructOutput]>;
+  execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
-    getKamiByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[KamiShapeStructOutput]>;
+  getAccount: TypedContractMethod<
+    [id: BigNumberish],
+    [AccountShapeStructOutput],
+    "view"
+  >;
 
-    owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
+  getKami: TypedContractMethod<
+    [id: BigNumberish],
+    [KamiShapeStructOutput],
+    "view"
+  >;
 
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
+  getKamiByIndex: TypedContractMethod<
+    [index: BigNumberish],
+    [KamiShapeStructOutput],
+    "view"
+  >;
 
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  ownershipHandoverExpiresAt: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+  renounceOwnership: TypedContractMethod<[], [void], "payable">;
 
-  cancelOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-  completeOwnershipHandover(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-  deprecate(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  execute(
-    arguments: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction(
+    nameOrSignature: "cancelOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "completeOwnershipHandover"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "deprecate"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "execute"
+  ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getAccount"
+  ): TypedContractMethod<
+    [id: BigNumberish],
+    [AccountShapeStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getKami"
+  ): TypedContractMethod<[id: BigNumberish], [KamiShapeStructOutput], "view">;
+  getFunction(
+    nameOrSignature: "getKamiByIndex"
+  ): TypedContractMethod<
+    [index: BigNumberish],
+    [KamiShapeStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "ownershipHandoverExpiresAt"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "requestOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
 
-  getAccount(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<AccountShapeStructOutput>;
-
-  getKami(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<KamiShapeStructOutput>;
-
-  getKamiByIndex(
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<KamiShapeStructOutput>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  ownershipHandoverExpiresAt(
-    pendingOwner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  renounceOwnership(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  requestOwnershipHandover(
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    deprecate(overrides?: CallOverrides): Promise<void>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getAccount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<AccountShapeStructOutput>;
-
-    getKami(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<KamiShapeStructOutput>;
-
-    getKamiByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<KamiShapeStructOutput>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "OwnershipHandoverCanceled"
+  ): TypedContractEvent<
+    OwnershipHandoverCanceledEvent.InputTuple,
+    OwnershipHandoverCanceledEvent.OutputTuple,
+    OwnershipHandoverCanceledEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipHandoverRequested"
+  ): TypedContractEvent<
+    OwnershipHandoverRequestedEvent.InputTuple,
+    OwnershipHandoverRequestedEvent.OutputTuple,
+    OwnershipHandoverRequestedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnershipTransferred"
+  ): TypedContractEvent<
+    OwnershipTransferredEvent.InputTuple,
+    OwnershipTransferredEvent.OutputTuple,
+    OwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "SystemDeprecated"
+  ): TypedContractEvent<
+    SystemDeprecatedEvent.InputTuple,
+    SystemDeprecatedEvent.OutputTuple,
+    SystemDeprecatedEvent.OutputObject
+  >;
 
   filters: {
-    "OwnershipHandoverCanceled(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
-    OwnershipHandoverCanceled(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverCanceledEventFilter;
+    "OwnershipHandoverCanceled(address)": TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
+    OwnershipHandoverCanceled: TypedContractEvent<
+      OwnershipHandoverCanceledEvent.InputTuple,
+      OwnershipHandoverCanceledEvent.OutputTuple,
+      OwnershipHandoverCanceledEvent.OutputObject
+    >;
 
-    "OwnershipHandoverRequested(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
-    OwnershipHandoverRequested(
-      pendingOwner?: PromiseOrValue<string> | null
-    ): OwnershipHandoverRequestedEventFilter;
+    "OwnershipHandoverRequested(address)": TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
+    OwnershipHandoverRequested: TypedContractEvent<
+      OwnershipHandoverRequestedEvent.InputTuple,
+      OwnershipHandoverRequestedEvent.OutputTuple,
+      OwnershipHandoverRequestedEvent.OutputObject
+    >;
 
-    "OwnershipTransferred(address,address)"(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
-    OwnershipTransferred(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnershipTransferredEventFilter;
+    "OwnershipTransferred(address,address)": TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
+    OwnershipTransferred: TypedContractEvent<
+      OwnershipTransferredEvent.InputTuple,
+      OwnershipTransferredEvent.OutputTuple,
+      OwnershipTransferredEvent.OutputObject
+    >;
 
-    "SystemDeprecated()"(): SystemDeprecatedEventFilter;
-    SystemDeprecated(): SystemDeprecatedEventFilter;
-  };
-
-  estimateGas: {
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    getAccount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getKami(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getKamiByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    cancelOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    completeOwnershipHandover(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    deprecate(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    execute(
-      arguments: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getAccount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getKami(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getKamiByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownershipHandoverExpiresAt(
-      pendingOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    renounceOwnership(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestOwnershipHandover(
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "SystemDeprecated()": TypedContractEvent<
+      SystemDeprecatedEvent.InputTuple,
+      SystemDeprecatedEvent.OutputTuple,
+      SystemDeprecatedEvent.OutputObject
+    >;
+    SystemDeprecated: TypedContractEvent<
+      SystemDeprecatedEvent.InputTuple,
+      SystemDeprecatedEvent.OutputTuple,
+      SystemDeprecatedEvent.OutputObject
+    >;
   };
 }

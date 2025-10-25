@@ -1,4 +1,4 @@
-import { defineComponent, Metadata, Type, World } from '@mud-classic/recs';
+import { defineComponent, Metadata, Type, World } from 'engine/recs';
 
 export function defineNumberComponent(
   world: World,

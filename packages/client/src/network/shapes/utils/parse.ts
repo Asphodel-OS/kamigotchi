@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from 'engine/recs';
 import moment from 'moment';
 
 import { HelpIcon, QuestsIcon } from 'assets/images/icons/menu';

@@ -1,5 +1,5 @@
-import { EntityIndex, World } from '@mud-classic/recs';
 import { MUSU_INDEX } from 'constants/items';
+import { EntityIndex, World } from 'engine/recs';
 import { Components } from 'network/components';
 import { getData } from '../Data';
 import { getScoreFromHash, getVIPEpoch } from '../Score';

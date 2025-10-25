@@ -16,8 +16,8 @@ import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -94,8 +94,7 @@ library LibTrade {
 
     // transferring items
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    LibInventory.decFor(comps, makerID, toSell.indices, toSell.amounts); // implicit balance check
-    LibInventory.incFor(comps, tradeID, toSell.indices, toSell.amounts); // store items at sell anchor
+    LibInventory.transferFor(comps, makerID, tradeID, toSell.indices, toSell.amounts);
   }
 
   /////////////////
@@ -122,8 +121,7 @@ library LibTrade {
     logSpend(comps, takerID, indices, amts);
 
     // transfer Buy Order items from Taker to Trade
-    LibInventory.decFor(comps, takerID, indices, amts);
-    LibInventory.incFor(comps, tradeID, indices, amts);
+    LibInventory.transferFor(comps, takerID, tradeID, indices, amts);
   }
 
   /// @notice execute a Sell Order (transfers items between Sell Order and Taker)
@@ -150,8 +148,7 @@ library LibTrade {
     }
 
     // transfer Sell Order items from Trade to Taker
-    LibInventory.decFor(comps, tradeID, indices, amts);
-    LibInventory.incFor(comps, takerID, indices, amts);
+    LibInventory.transferFor(comps, tradeID, takerID, indices, amts);
   }
 
   /////////////////
@@ -188,8 +185,7 @@ library LibTrade {
     }
 
     // transfer Buy Order items from Trade to Maker
-    LibInventory.decFor(comps, tradeID, indices, amts);
-    LibInventory.incFor(comps, makerID, indices, amts);
+    LibInventory.transferFor(comps, tradeID, makerID, indices, amts);
   }
 
   /// @notice complete a Sell Order (cleanup, sell side should already be fulfilled)
@@ -230,8 +226,7 @@ library LibTrade {
 
     // transfer items back from Trade to Maker
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    LibInventory.decFor(comps, tradeID, indices, amounts); // sets to 0
-    LibInventory.incFor(comps, makerID, indices, amounts); // sends back to Maker
+    LibInventory.transferFor(comps, tradeID, makerID, indices, amounts);
   }
 
   /////////////////
@@ -263,6 +258,24 @@ library LibTrade {
   function verifyTaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
     uint256 takerID = IdTargetComponent(getAddrByID(comps, IdTargetCompID)).safeGet(tradeID);
     if (takerID != 0 && takerID != accID) revert("Trade target mismatch");
+  }
+
+  /// @notice verify that a Trade has exactly one buy/sell order and one side is musu
+  /// @dev this constraint will be enforced for new trades to prepare for shape
+  /// and functionality upgrades
+  function verifyStructure(
+    IUintComp comps,
+    uint32[] memory buyIndices,
+    uint32[] memory sellIndices
+  ) public view {
+    if (buyIndices.length != 1) revert("Trade must have exactly one buy order");
+    if (sellIndices.length != 1) revert("Trade must have exactly one sell order");
+    if (buyIndices[0] != MUSU_INDEX && sellIndices[0] != MUSU_INDEX) {
+      revert("Trade cannot be a Barter. Please use MUSU.");
+    }
+    if (buyIndices[0] == MUSU_INDEX && sellIndices[0] == MUSU_INDEX) {
+      revert("Trade cannot be purely MUSU. But we love the energy.");
+    }
   }
 
   /// @notice verify an Account has not exceeded the maximum allowable open Trade orders
