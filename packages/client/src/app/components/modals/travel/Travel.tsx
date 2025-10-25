@@ -1,16 +1,17 @@
 import { getAccount } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useTravel, useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { useMemo } from 'react';
 import { TravelConfirm } from './Confirm';
-import { of } from 'rxjs';
 
 export const TravelModal: UIComponent = {
   id: 'TravelModal',
-  requirement: (layers) => of({ network: layers.network }),
-  Render: ({ network }) => {
+  Render: () => {
+    const layers = useLayers();
+    const { network } = layers;
     const isVisible = useVisibility((s) => s.modals.travelConfirm);
     const setModals = useVisibility((s) => s.setModals);
 
