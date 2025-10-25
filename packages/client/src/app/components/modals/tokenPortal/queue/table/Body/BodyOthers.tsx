@@ -94,7 +94,8 @@ export const BodyOthers = ({
     <Container visible={visible}>
       {receipts.map((r: TokenPortal, i: number) => {
         const item = getItemByIndex(r.ItemIndex as number);
-        const itsPlayer = account.id === formatEntityID(BigInt(r.AccountID));
+        const owner = getAccount(r);
+        const itsPlayer = account.id === owner.id;
         if (itsPlayer) return null;
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>

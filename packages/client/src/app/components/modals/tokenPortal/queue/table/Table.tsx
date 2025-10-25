@@ -119,7 +119,7 @@ export const Table = ({
 
       <BodyMine
         actions={actions}
-        data={{ receipts: sorted, config, account }}
+        data={{ receipts: sorted, config }}
         utils={{ ...utils, getTokenConversion }}
         state={{ visible: mode === 'MINE' }}
       />

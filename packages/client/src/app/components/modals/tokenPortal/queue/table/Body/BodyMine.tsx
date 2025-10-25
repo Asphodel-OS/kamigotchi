@@ -24,7 +24,6 @@ export const BodyMine = ({
   data: {
     receipts: TokenPortal[];
     config: Configs;
-    account: Account;
   };
   utils: {
     getItemByIndex: (index: number) => Item;
