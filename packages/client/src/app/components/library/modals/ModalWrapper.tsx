@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
 import { Modals, useVisibility } from 'app/stores';
@@ -46,15 +46,19 @@ export const ModalWrapper = ({
   const isVisible = useVisibility((s) => s.modals[id]);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
+  const wasVisibleRef = useRef(false);
 
   // execute cleaning func when modal closes
   useEffect(() => {
     if (isVisible) {
+      wasVisibleRef.current = true;
       setShouldDisplay(true);
-    } else {
-      if (onClose) onClose();
-      setShouldDisplay(false);
+      return;
     }
+    // only run onClose if we were previously visible
+    if (wasVisibleRef.current) onClose?.();
+    wasVisibleRef.current = false;
+    setShouldDisplay(false);
   }, [isVisible, onClose]);
 
   useEffect(() => {
