@@ -2,13 +2,11 @@ import styled from 'styled-components';
 
 import { Configs } from 'app/cache/config/portal';
 import { IconButton, TextTooltip } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/stores';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { TokenIcons } from 'assets/images/tokens';
 import { TokenPortal } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
-import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
 import { getCountdown } from 'utils/time';
 import { openBaselineLink } from '../../../utils';
@@ -38,22 +36,9 @@ export const BodyMine = ({
   };
 }) => {
   const { cancel, claim } = actions;
-  const { receipts, config, account } = data;
-  const { getItemByIndex, getTokenConversion, getAccountByID } = utils;
+  const { receipts, config } = data;
+  const { getItemByIndex, getTokenConversion } = utils;
   const { visible } = state;
-
-  const selectAccount = useSelected((s) => s.setAccount);
-  const selectedAccount = useSelected((s) => s.accountIndex);
-  const setModals = useVisibility((s) => s.setModals);
-  const accountModalOpen = useVisibility((s) => s.modals.account);
-
-  /////////////////
-  // GETTERS
-
-  const getAccount = (receipt: TokenPortal) => {
-    const account = getAccountByID(formatEntityID(BigInt(receipt.AccountID)) as EntityID);
-    return account;
-  };
 
   /////////////////
   // INTERPRETATION
@@ -150,42 +135,38 @@ const Container = styled.div<{ visible?: boolean }>`
   position: relative;
   max-height: 100%;
   width: 100%;
-
   padding: 0.6vw 0;
-
   flex-flow: column nowrap;
   align-items: center;
 `;
 
 const Row = styled.div`
+  display: flex;
   position: relative;
   width: 96%;
   height: 2.4vw;
 
-  display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
   align-items: center;
 `;
 
 const Field = styled.div<{ width: number }>`
+  display: flex;
   gap: 0.6vw;
   width: ${({ width }) => width}vw;
   height: 100%;
 
-  display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-
   font-size: 0.6vw;
   user-select: none;
 `;
 
 const IconGroup = styled.div<{ visible?: boolean }>`
-  gap: 0.3vw;
-
   display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
+  gap: 0.3vw;
   flex-flow: row nowrap;
   justify-content: center;
 `;
@@ -193,7 +174,6 @@ const IconGroup = styled.div<{ visible?: boolean }>`
 const Icon = styled.img`
   width: 1.2vw;
   height: 1.2vw;
-
   &:hover {
     opacity: 0.8;
     cursor: pointer;
