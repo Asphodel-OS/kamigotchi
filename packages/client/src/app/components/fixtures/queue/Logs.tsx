@@ -195,9 +195,7 @@ export const Logs = ({
         style={{ cursor: isClickable ? 'pointer' : 'default' }}
         onClick={() => {
           if (isClickable) {
-            if (window.confirm('Cancel this pending transaction? This will attempt to replace it with a 0-value tx.')) {
-              cancelPendingTx(hash);
-            }
+            cancelPendingTx(hash);
           }
         }}
       >
@@ -235,9 +233,7 @@ export const Logs = ({
                 alt='Cancel'
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (window.confirm('Cancel this request? This action cannot be undone.')) {
-                    cancelRequestOrTx(entity);
-                  }
+                  cancelRequestOrTx(entity);
                 }}
               />
             </TextTooltip>
