@@ -85,7 +85,7 @@ export const BodyMine = ({
       {receipts.map((r: TokenPortal, i: number) => {
         const item = getItemByIndex(r.ItemIndex as number);
         return (
-          <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
+          <Row key={r.ReceiptID} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
             <TextTooltip text={[getDate(r.Timestamp, false)]}>
               <Field width={4}>{getDate(r.Timestamp, true)}</Field>
             </TextTooltip>
