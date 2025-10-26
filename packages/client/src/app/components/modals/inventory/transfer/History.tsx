@@ -95,7 +95,7 @@ export const History = ({
           );
         })}
       </List>
-      {displayed.length === 0 && <EmptyText text={['No transfers to show.']} />}
+      {displayed.length === 0 && <EmptyText text={['No transfers to show.']} size={1} />}
     </Container>
   );
 };
@@ -109,8 +109,8 @@ const Container = styled.div`
 
   display: flex;
   flex-flow: column nowrap;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
 
   overflow-y: auto;
 `;
