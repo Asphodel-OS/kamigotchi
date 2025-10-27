@@ -8,8 +8,8 @@ const pending = executing;
 
 export const IndicatorIcons = {
   requested,
-  pending,
   executing,
+  pending,
   canceled,
   failure,
   success,

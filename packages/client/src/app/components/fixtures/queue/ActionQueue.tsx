@@ -1,13 +1,13 @@
-import { EntityIndex, getComponentEntities } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
+import { EntityIndex, getComponentEntities } from 'engine/recs';
 import { useStream } from 'network/utils/hooks';
-import { Controls } from './Controls';
-import { Logs } from './Logs';
+import { Controls } from './controls';
+import { Logs } from './logs';
 
 export const ActionQueue: UIComponent = {
   id: 'ActionQueue',
@@ -31,17 +31,19 @@ export const ActionQueue: UIComponent = {
 
     const sizes = ['none', '23vh', '90vh'];
     return (
-      <Wrapper style={{ display: actionQueueVisible ? 'block' : 'none' }}>
+      <Container style={{ display: actionQueueVisible ? 'block' : 'none' }}>
         <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
           {mode !== 0 && <Logs actionIndices={actionIndices} network={network} />}
           <Controls mode={mode} setMode={setMode} />
         </Content>
-      </Wrapper>
+      </Container>
     );
   },
 };
 
-const Wrapper = styled.div`
+const Container = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
   align-items: left;
   user-select: none;
 `;

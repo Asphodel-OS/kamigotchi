@@ -1,5 +1,4 @@
 import { EntityIndex, getComponentValueStrict } from 'engine/recs';
-import { BigNumber } from 'ethers';
 import moment from 'moment';
 import { useEffect } from 'react';
 import styled from 'styled-components';
@@ -19,13 +18,17 @@ export const Logs = ({
   network: NetworkLayer;
   actionIndices: EntityIndex[];
 }) => {
-  const { actions } = network;
+  const {
+    actions,
+    network: { providers, signer },
+  } = network;
   const ActionComponent = actions!.Action;
+  const provider = providers.get()?.json;
 
   // scroll to bottom when tx added
   useEffect(() => {
-    const logs = document.getElementById('tx-logs');
-    if (logs) logs.scrollTop = logs.scrollHeight + 1000;
+    const logsElement = document.getElementById('tx-logs');
+    if (logsElement) logsElement.scrollTop = logsElement.scrollHeight + 1000;
   }, [actionIndices]);
 
   //////////////////
@@ -104,48 +107,51 @@ export const Logs = ({
 
   // Attempt to cancel a pending on-chain tx via replacement (same nonce, higher fee)
   const cancelPendingTx = async (hash: string) => {
+    if (!provider || !signer) return console.warn('No provider/signer for cancel');
+
     try {
-      const provider = network.network.providers.get()?.json;
-      const signer = network.network.signer.get();
-      if (!provider || !signer) return console.warn('No provider/signer for cancel');
       const tx = await provider.getTransaction(hash);
       if (!tx) return console.warn('Original tx not found');
       const from = (await signer.getAddress())?.toLowerCase();
       if (tx.from?.toLowerCase() !== from) return console.warn('Not sender of tx');
 
-      // fetch current fee data to build a valid replacement on this chain
-      const fee = await provider.getFeeData();
-      const bump = (v?: BigNumber) => (v ? v.mul(12).div(10) : undefined); // +20%
+      // fetch current provider fee data as fallback
+      const pFee = await provider.getFeeData();
+      const safetyMargin = BigInt(1.2); // +20%
+      const bump = (v?: bigint) => (v ? v * safetyMargin : undefined);
 
       const cancelReq: any = {
         to: await signer.getAddress(),
         value: 0,
         nonce: tx.nonce,
       };
-      if (tx.maxFeePerGas || fee.maxFeePerGas) {
+
+      if (tx.maxFeePerGas || pFee.maxFeePerGas) {
         // EIP-1559 style
         const baseMaxFee =
-          tx.maxFeePerGas && fee.maxFeePerGas
-            ? tx.maxFeePerGas.gt(fee.maxFeePerGas)
+          tx.maxFeePerGas && pFee.maxFeePerGas
+            ? tx.maxFeePerGas > pFee.maxFeePerGas
               ? tx.maxFeePerGas
-              : fee.maxFeePerGas
-            : (tx.maxFeePerGas ?? fee.maxFeePerGas)!;
+              : pFee.maxFeePerGas
+            : (tx.maxFeePerGas ?? pFee.maxFeePerGas)!;
+
         const baseTip =
-          tx.maxPriorityFeePerGas && fee.maxPriorityFeePerGas
-            ? tx.maxPriorityFeePerGas.gt(fee.maxPriorityFeePerGas)
+          tx.maxPriorityFeePerGas && pFee.maxPriorityFeePerGas
+            ? tx.maxPriorityFeePerGas > pFee.maxPriorityFeePerGas
               ? tx.maxPriorityFeePerGas
-              : fee.maxPriorityFeePerGas
-            : (tx.maxPriorityFeePerGas ?? fee.maxPriorityFeePerGas ?? baseMaxFee.div(2))!;
+              : pFee.maxPriorityFeePerGas
+            : (tx.maxPriorityFeePerGas ?? pFee.maxPriorityFeePerGas ?? baseMaxFee / BigInt(2))!;
+
         cancelReq.maxFeePerGas = bump(baseMaxFee);
         cancelReq.maxPriorityFeePerGas = bump(baseTip);
-      } else if (tx.gasPrice || fee.gasPrice) {
+      } else if (tx.gasPrice || pFee.gasPrice) {
         // legacy style
         const base =
-          tx.gasPrice && fee.gasPrice
-            ? tx.gasPrice.gt(fee.gasPrice)
+          tx.gasPrice && pFee.gasPrice
+            ? tx.gasPrice > pFee.gasPrice
               ? tx.gasPrice
-              : fee.gasPrice
-            : (tx.gasPrice ?? fee.gasPrice)!;
+              : pFee.gasPrice
+            : (tx.gasPrice ?? pFee.gasPrice)!;
         cancelReq.gasPrice = bump(base);
       } else {
         return console.warn('No fee data available to craft replacement tx');
@@ -165,11 +171,11 @@ export const Logs = ({
       const deadline = Date.now() + 5000; // 5s timeout - shorter for better UX
       while (Date.now() < deadline) {
         const data = getComponentValueStrict(ActionComponent, entity);
-        const h = data.txHash as string | undefined;
+        const hash = data.txHash as string | undefined;
         const state = ActionStateString[data.state as ActionState];
         if (['Complete', 'Failed', 'Canceled'].includes(state)) break;
-        if (h && state !== 'Complete') {
-          await cancelPendingTx(h);
+        if (hash && state !== 'Complete') {
+          await cancelPendingTx(hash);
           break;
         }
         await new Promise((r) => setTimeout(r, 500)); // Poll every 500ms instead of 200ms
@@ -186,18 +192,14 @@ export const Logs = ({
     const hash = actionData.txHash as string | undefined;
 
     // Enable cancellation for pending transactions with a hash
-    const isClickable = state === 'Pending' && hash;
+    const isClickable = state === 'Pending' && !!hash;
 
     return (
       <Row
         key={`action${entity}`}
-        clickable={isClickable}
+        isClickable={isClickable}
         style={{ cursor: isClickable ? 'pointer' : 'default' }}
-        onClick={() => {
-          if (isClickable) {
-            cancelPendingTx(hash);
-          }
-        }}
+        onClick={() => isClickable && cancelPendingTx(hash)}
       >
         <RowSegment>
           {Status(state, metadata)}
@@ -207,7 +209,9 @@ export const Logs = ({
           {Time(actionData.time)}
           {ExplorerButton(hash)}
           {state === 'Pending' && hash && (
-            <TextTooltip text={[`Click cancel button or hover and click row to replace with 0-value tx.`]}>
+            <TextTooltip
+              text={[`Click cancel button or hover and click row to replace with 0-value tx.`]}
+            >
               <CancelIcon
                 src={cancelSketch}
                 alt='Cancel Tx'
@@ -245,7 +249,7 @@ export const Logs = ({
 
   return (
     <Content id='tx-logs'>
-      <Row clickable={false} style={{ justifyContent: 'space-evenly' }}>
+      <Row style={{ justifyContent: 'space-evenly' }}>
         <Bar />
         <Text>TxQueue</Text>
         <Bar />
@@ -269,7 +273,7 @@ const Content = styled.div`
   flex-grow: 1;
 `;
 
-const Row = styled.div`
+const Row = styled.div<{ isClickable?: boolean }>`
   padding: 0.2vw;
   height: 100%;
 
@@ -278,17 +282,20 @@ const Row = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  ${props => props.clickable && `
+  ${(props) =>
+    props.isClickable &&
+    `
     background-color: #fafbfc;
     border: 0.05vw solid #e1e8ed;
     border-radius: 0.2vw;
     margin: 0.1vw;
+    
   `}
 
   &:hover {
-    background-color: ${props => props.clickable ? '#e8f4f8' : 'transparent'};
+    background-color: ${(props) => (props.isClickable ? '#e8f4f8' : 'transparent')};
     border-radius: 0.2vw;
-    box-shadow: ${props => props.clickable ? 'inset 0 0 0 0.1vw #4a90e2' : 'none'};
+    box-shadow: ${(props) => (props.isClickable ? 'inset 0 0 0 0.1vw #4a90e2' : 'none')};
   }
 
   transition: all 0.15s ease;
