@@ -7,6 +7,7 @@ import { useVisibility } from 'app/stores';
 import { EntityIndex, getComponentEntities, getComponentValueStrict } from 'engine/recs';
 import { ActionState, ActionStateString } from 'network/systems/ActionSystem';
 import { useStream } from 'network/utils/hooks';
+import { getBigger } from 'utils/numbers/bigint';
 import { LOG_HEIGHTS } from './constants';
 import { Controls } from './controls';
 import { Logs } from './logs';
@@ -54,42 +55,28 @@ export const ActionQueue: UIComponent = {
         const safetyMargin = BigInt(1.2); // +20%
         const bump = (v?: bigint) => (v ? v * safetyMargin : undefined);
 
+        // create cancel request
         const cancelReq: any = {
           to: await signer.getAddress(),
           value: 0,
           nonce: tx.nonce,
         };
 
+        // determine fee for cancel request
         if (tx.maxFeePerGas || pFee.maxFeePerGas) {
           // EIP-1559 style
-          const baseMaxFee =
-            tx.maxFeePerGas && pFee.maxFeePerGas
-              ? tx.maxFeePerGas > pFee.maxFeePerGas
-                ? tx.maxFeePerGas
-                : pFee.maxFeePerGas
-              : (tx.maxFeePerGas ?? pFee.maxFeePerGas)!;
-
-          const baseTip =
-            tx.maxPriorityFeePerGas && pFee.maxPriorityFeePerGas
-              ? tx.maxPriorityFeePerGas > pFee.maxPriorityFeePerGas
-                ? tx.maxPriorityFeePerGas
-                : pFee.maxPriorityFeePerGas
-              : (tx.maxPriorityFeePerGas ?? pFee.maxPriorityFeePerGas ?? baseMaxFee / BigInt(2))!;
-
+          const baseMaxFee = getBigger(tx.maxFeePerGas ?? 0n, pFee.maxFeePerGas ?? 0n);
+          const baseTip = getBigger(tx.maxPriorityFeePerGas ?? 0n, pFee.maxPriorityFeePerGas ?? 0n);
           cancelReq.maxFeePerGas = bump(baseMaxFee);
-          cancelReq.maxPriorityFeePerGas = bump(baseTip);
+          cancelReq.maxPriorityFeePerGas = bump(baseTip ?? baseMaxFee / BigInt(2)); // fallback to half of max fee
         } else if (tx.gasPrice || pFee.gasPrice) {
           // legacy style
-          const base =
-            tx.gasPrice && pFee.gasPrice
-              ? tx.gasPrice > pFee.gasPrice
-                ? tx.gasPrice
-                : pFee.gasPrice
-              : (tx.gasPrice ?? pFee.gasPrice)!;
+          const base = getBigger(tx.gasPrice ?? 0n, pFee.gasPrice ?? 0n);
           cancelReq.gasPrice = bump(base);
         } else {
           return console.warn('No fee data available to craft replacement tx');
         }
+
         await signer.sendTransaction(cancelReq);
       } catch (e) {
         console.warn('Cancel tx failed', e);
