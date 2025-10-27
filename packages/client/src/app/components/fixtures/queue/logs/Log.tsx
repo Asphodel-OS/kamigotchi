@@ -1,4 +1,3 @@
-import moment from 'moment';
 import styled from 'styled-components';
 
 import { Text, TextTooltip } from 'app/components/library';
@@ -8,32 +7,36 @@ import { OpenInNewIcon } from 'assets/images/icons/misc';
 import { EntityIndex, getComponentValueStrict } from 'engine/recs';
 import { NetworkLayer } from 'network/';
 import { ActionState, ActionStateString } from 'network/systems/ActionSystem';
+import { getDateString, getTimeDeltaString } from 'utils/time';
 import { EXPLORER_URL } from '../constants';
 
 export const Log = ({
   network,
   entity,
+  state,
   utils,
 }: {
   network: NetworkLayer;
+  entity: EntityIndex;
+  state: { tick: number };
   utils: {
     cancelRequest: (entity: EntityIndex) => Promise<void>;
     cancelPendingTx: (hash: string) => Promise<void>;
   };
-  entity: EntityIndex;
 }) => {
   const { cancelRequest, cancelPendingTx } = utils;
   const ActionComponent = network.actions!.Action;
   const actionData = getComponentValueStrict(ActionComponent, entity);
+  const { tick } = state;
 
   const command = actionData.action ?? 'Unknown System';
   const description = actionData.description;
   const hash = actionData.txHash as string | undefined;
   const metadata = actionData.metadata ?? '';
   const params = actionData.params ?? [];
-  const state = ActionStateString[actionData.state as ActionState];
+  const actionState = ActionStateString[actionData.state as ActionState];
   const time = actionData.time;
-  const canCancel = state === 'Pending' && !!hash;
+  const canCancel = actionState === 'Pending' && !!hash;
 
   //////////////////
   // INTERPRETATION
@@ -87,16 +90,16 @@ export const Log = ({
       onClick={() => canCancel && cancelPendingTx(hash)}
     >
       <Left>
-        <TextTooltip text={getStatusTooltip(state, metadata)}>
-          {statusIcons[state.toLowerCase()]}
+        <TextTooltip text={getStatusTooltip(actionState, metadata)}>
+          {statusIcons[actionState.toLowerCase()]}
         </TextTooltip>
         <TextTooltip text={getDescriptionTooltip(command, params)} alignText='left'>
           <Text size={0.6}>{description}</Text>
         </TextTooltip>
       </Left>
       <Right>
-        <TextTooltip text={[moment(time).format('Do MMMM, h:mm:ss a')]}>
-          <Text size={0.6}>{moment(time).fromNow()}</Text>
+        <TextTooltip text={[getDateString(time)]}>
+          <Text size={0.6}>{getTimeDeltaString((tick - time) / 1000)}</Text>
         </TextTooltip>
         {!!hash && (
           <TextTooltip text={[`View on block explorer`]}>
@@ -111,7 +114,7 @@ export const Log = ({
             />
           </TextTooltip>
         )}
-        {state === 'Requested' && (
+        {actionState === 'Requested' && (
           <TextTooltip text={['Cancel this queued tx before it sends']}>
             <CancelIcon
               src={ActionIcons.cancel}

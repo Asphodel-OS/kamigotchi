@@ -48,9 +48,13 @@ export const getTimeDeltaString = (delta: number): string => {
     const hours = Math.floor(delta / SECONDS_PER_HOUR);
     const minutes = Math.floor((delta % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
     return `${hours} hours ${minutes} minutes ago`;
-  } else {
+  } else if (delta > SECONDS_PER_MINUTE) {
     const minutes = Math.floor(delta / SECONDS_PER_MINUTE);
     return `${minutes} minutes ago`;
+  } else if (delta > 5) {
+    return `${Math.floor(delta)} seconds ago`;
+  } else {
+    return 'just now';
   }
 };
 

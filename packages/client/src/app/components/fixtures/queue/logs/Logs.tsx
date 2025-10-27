@@ -9,15 +9,17 @@ import { Log } from './Log';
 export const Logs = ({
   network,
   actionIndices,
+  state,
   utils,
   isVisible,
 }: {
   network: NetworkLayer;
+  actionIndices: EntityIndex[];
+  state: { tick: number };
   utils: {
     cancelRequest: (entity: EntityIndex) => Promise<void>;
     cancelPendingTx: (hash: string) => Promise<void>;
   };
-  actionIndices: EntityIndex[];
   isVisible: boolean;
 }) => {
   // scroll to bottom when tx added
@@ -37,7 +39,7 @@ export const Logs = ({
         <Bar />
       </Header>
       {actionIndices.map((entity) => {
-        return <Log key={entity} network={network} entity={entity} utils={utils} />;
+        return <Log key={entity} network={network} entity={entity} state={state} utils={utils} />;
       })}
     </Container>
   );

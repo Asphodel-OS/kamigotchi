@@ -28,9 +28,17 @@ export const ActionQueue: UIComponent = {
     const isFixtureVisible = useVisibility((s) => s.fixtures.actionQueue);
     const [mode, setMode] = useState<number>(1);
     const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
+    const [tick, setTick] = useState(Date.now());
 
     /////////////////
     // SUBSCRIPTIONS
+
+    // set ticking on mount
+    useEffect(() => {
+      const refreshClock = () => setTick(Date.now());
+      const timerId = setInterval(refreshClock, 1000);
+      return () => clearInterval(timerId);
+    }, []);
 
     // track the full list of Actions by their Entity Index
     useEffect(() => {
@@ -41,6 +49,7 @@ export const ActionQueue: UIComponent = {
     // ACTIONS
 
     // Attempt to cancel a pending on-chain tx via replacement (same nonce, higher fee)
+    // NOTE: this is never used in production. initia's miniEVM does not support it
     const cancelPendingTx = async (hash: string) => {
       if (!provider || !signer) return console.warn('No provider/signer for cancel');
 
@@ -52,8 +61,7 @@ export const ActionQueue: UIComponent = {
 
         // fetch current provider fee data as fallback
         const pFee = await provider.getFeeData();
-        const safetyMargin = BigInt(1.2); // +20%
-        const bump = (v?: bigint) => (v ? v * safetyMargin : undefined);
+        const bump = (v?: bigint) => (v ? (v * 6n) / 5n : undefined); // +20%
 
         // create cancel request
         const cancelReq: any = {
@@ -77,6 +85,7 @@ export const ActionQueue: UIComponent = {
           return console.warn('No fee data available to craft replacement tx');
         }
 
+        // attempt to send the cancel request
         await signer.sendTransaction(cancelReq);
       } catch (e) {
         console.warn('Cancel tx failed', e);
@@ -88,6 +97,7 @@ export const ActionQueue: UIComponent = {
     const cancelRequest = async (entity: EntityIndex) => {
       try {
         actions.cancel(entity);
+
         // Poll briefly for a hash if execution already started
         const deadline = Date.now() + 5000; // 5s timeout - shorter for better UX
         while (Date.now() < deadline) {
@@ -115,6 +125,7 @@ export const ActionQueue: UIComponent = {
           <Logs
             actionIndices={actionIndices}
             network={network}
+            state={{ tick }}
             utils={{ cancelPendingTx, cancelRequest }}
             isVisible={mode !== 0}
           />
