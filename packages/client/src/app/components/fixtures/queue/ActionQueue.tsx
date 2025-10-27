@@ -61,7 +61,7 @@ export const ActionQueue: UIComponent = {
 
         // fetch current provider fee data as fallback
         const pFee = await provider.getFeeData();
-        const bump = (v?: bigint) => (v ? (v * 6n) / 5n : undefined); // +20%
+        const bump = (v: bigint) => (v * 6n) / 5n; // +20%
 
         // create cancel request
         const cancelReq: any = {

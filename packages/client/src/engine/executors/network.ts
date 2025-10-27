@@ -91,7 +91,9 @@ async function getSigner(
   config: NetworkConfig,
   currentProviders: Providers
 ): Promise<Signer | undefined> {
-  if (config.provider.externalProvider) return currentProviders.json.getSigner();
+  if (config.provider.externalProvider && currentProviders) {
+    return currentProviders.json.getSigner();
+  }
 
   const privateKey = config.privateKey;
   if (privateKey && currentProviders) {
