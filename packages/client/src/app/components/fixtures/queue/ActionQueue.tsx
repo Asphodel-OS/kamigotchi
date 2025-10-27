@@ -74,9 +74,13 @@ export const ActionQueue: UIComponent = {
         if (tx.maxFeePerGas || pFee.maxFeePerGas) {
           // EIP-1559 style
           const baseMaxFee = getBigger(tx.maxFeePerGas ?? 0n, pFee.maxFeePerGas ?? 0n);
-          const baseTip = getBigger(tx.maxPriorityFeePerGas ?? 0n, pFee.maxPriorityFeePerGas ?? 0n);
+          const basePriorityFee = getBigger(
+            tx.maxPriorityFeePerGas ?? 0n,
+            pFee.maxPriorityFeePerGas ?? 0n
+          );
+          const baseTip = basePriorityFee !== 0n ? basePriorityFee : baseMaxFee / BigInt(2); // fallback to half of max fee
           cancelReq.maxFeePerGas = bump(baseMaxFee);
-          cancelReq.maxPriorityFeePerGas = bump(baseTip ?? baseMaxFee / BigInt(2)); // fallback to half of max fee
+          cancelReq.maxPriorityFeePerGas = bump(baseTip);
         } else if (tx.gasPrice || pFee.gasPrice) {
           // legacy style
           const base = getBigger(tx.gasPrice ?? 0n, pFee.gasPrice ?? 0n);
