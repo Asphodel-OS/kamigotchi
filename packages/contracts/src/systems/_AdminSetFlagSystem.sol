@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 
 uint256 constant ID = uint256(keccak256("system.admin.set.flag"));
@@ -20,6 +21,7 @@ contract _AdminSetFlagSystem is System, AuthRoles {
       (uint256[], string, bool)
     );
     for (uint256 i = 0; i < ids.length; i++) {
+      require(LibAccount.isAccount(components, ids[i]), "not an account");
       LibFlag.set(components, ids[i], flagType, state);
     }
     return "";
