@@ -11,6 +11,7 @@ import {
 import { Provider } from 'ethers';
 import { Observable } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+
 import { defineActionComponent } from './ActionComponent';
 import { ActionState } from './constants';
 import { ActionRequest } from './types';
@@ -100,7 +101,6 @@ export function createActionSystem<M = undefined>(
     }
   }
 
-
   // Track cancellations requested while action is executing
   const canceled = new Set<EntityIndex>();
   const execCancels = new Map<EntityIndex, () => void>();
@@ -126,12 +126,17 @@ export function createActionSystem<M = undefined>(
     try {
       // Execute the action
       const execPromise: any = request.execute();
-      const cancelFn = typeof execPromise?.cancel === 'function' ? execPromise.cancel.bind(execPromise) : undefined;
+      const cancelFn =
+        typeof execPromise?.cancel === 'function'
+          ? execPromise.cancel.bind(execPromise)
+          : undefined;
       if (cancelFn) execCancels.set(request.index!, cancelFn);
 
       // If user already canceled, propagate to queue immediately
       if (canceled.has(request.index!) && cancelFn) {
-        try { cancelFn(); } catch {}
+        try {
+          cancelFn();
+        } catch {}
         updateAction({ state: ActionState.Canceled });
         execCancels.delete(request.index!);
         return;
@@ -187,7 +192,9 @@ export function createActionSystem<M = undefined>(
       canceled.add(index);
       const fn = execCancels.get(index);
       if (fn) {
-        try { fn(); } catch {}
+        try {
+          fn();
+        } catch {}
       }
       updateComponent(Action, index, { state: ActionState.Canceled });
       return true;

@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
-import { EntityIndex, getComponentEntities } from 'engine/recs';
+import { EntityIndex, getComponentEntities, getComponentValueStrict } from 'engine/recs';
+import { ActionState, ActionStateString } from 'network/systems/ActionSystem';
 import { useStream } from 'network/utils/hooks';
+import { LOG_HEIGHTS } from './constants';
 import { Controls } from './controls';
 import { Logs } from './logs';
 
@@ -15,25 +17,120 @@ export const ActionQueue: UIComponent = {
     const { network } = useLayers();
 
     const {
-      actions: { Action: ActionComponent },
+      actions,
+      network: { providers, signer },
     } = network;
-
+    const provider = providers.get()?.json;
+    const ActionComponent = actions!.Action;
     const actionUpdate = useStream(ActionComponent.update$);
 
-    const actionQueueVisible = useVisibility((s) => s.fixtures.actionQueue);
+    const isFixtureVisible = useVisibility((s) => s.fixtures.actionQueue);
     const [mode, setMode] = useState<number>(1);
     const [actionIndices, setActionIndices] = useState<EntityIndex[]>([]);
+
+    /////////////////
+    // SUBSCRIPTIONS
 
     // track the full list of Actions by their Entity Index
     useEffect(() => {
       setActionIndices([...getComponentEntities(ActionComponent)]);
     }, [actionUpdate]);
 
-    const sizes = ['none', '23vh', '90vh'];
+    /////////////////
+    // ACTIONS
+
+    // Attempt to cancel a pending on-chain tx via replacement (same nonce, higher fee)
+    const cancelPendingTx = async (hash: string) => {
+      if (!provider || !signer) return console.warn('No provider/signer for cancel');
+
+      try {
+        const tx = await provider.getTransaction(hash);
+        if (!tx) return console.warn('Original tx not found');
+        const from = (await signer.getAddress())?.toLowerCase();
+        if (tx.from?.toLowerCase() !== from) return console.warn('Not sender of tx');
+
+        // fetch current provider fee data as fallback
+        const pFee = await provider.getFeeData();
+        const safetyMargin = BigInt(1.2); // +20%
+        const bump = (v?: bigint) => (v ? v * safetyMargin : undefined);
+
+        const cancelReq: any = {
+          to: await signer.getAddress(),
+          value: 0,
+          nonce: tx.nonce,
+        };
+
+        if (tx.maxFeePerGas || pFee.maxFeePerGas) {
+          // EIP-1559 style
+          const baseMaxFee =
+            tx.maxFeePerGas && pFee.maxFeePerGas
+              ? tx.maxFeePerGas > pFee.maxFeePerGas
+                ? tx.maxFeePerGas
+                : pFee.maxFeePerGas
+              : (tx.maxFeePerGas ?? pFee.maxFeePerGas)!;
+
+          const baseTip =
+            tx.maxPriorityFeePerGas && pFee.maxPriorityFeePerGas
+              ? tx.maxPriorityFeePerGas > pFee.maxPriorityFeePerGas
+                ? tx.maxPriorityFeePerGas
+                : pFee.maxPriorityFeePerGas
+              : (tx.maxPriorityFeePerGas ?? pFee.maxPriorityFeePerGas ?? baseMaxFee / BigInt(2))!;
+
+          cancelReq.maxFeePerGas = bump(baseMaxFee);
+          cancelReq.maxPriorityFeePerGas = bump(baseTip);
+        } else if (tx.gasPrice || pFee.gasPrice) {
+          // legacy style
+          const base =
+            tx.gasPrice && pFee.gasPrice
+              ? tx.gasPrice > pFee.gasPrice
+                ? tx.gasPrice
+                : pFee.gasPrice
+              : (tx.gasPrice ?? pFee.gasPrice)!;
+          cancelReq.gasPrice = bump(base);
+        } else {
+          return console.warn('No fee data available to craft replacement tx');
+        }
+        await signer.sendTransaction(cancelReq);
+      } catch (e) {
+        console.warn('Cancel tx failed', e);
+      }
+    };
+
+    // For Requested/Executing: mark canceled and, if a tx hash appears shortly after,
+    // automatically send a cancel replacement.
+    const cancelRequest = async (entity: EntityIndex) => {
+      try {
+        actions.cancel(entity);
+        // Poll briefly for a hash if execution already started
+        const deadline = Date.now() + 5000; // 5s timeout - shorter for better UX
+        while (Date.now() < deadline) {
+          const data = getComponentValueStrict(ActionComponent, entity);
+          const hash = data.txHash as string | undefined;
+          const state = ActionStateString[data.state as ActionState];
+          if (['Complete', 'Failed', 'Canceled'].includes(state)) break;
+          if (hash && state !== 'Complete') {
+            await cancelPendingTx(hash);
+            break;
+          }
+          await new Promise((r) => setTimeout(r, 500)); // Poll every 500ms instead of 200ms
+        }
+      } catch (e) {
+        console.warn('Cancel request/tx failed', e);
+      }
+    };
+
+    /////////////////
+    // RENDER
+
     return (
-      <Container style={{ display: actionQueueVisible ? 'block' : 'none' }}>
-        <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
-          {mode !== 0 && <Logs actionIndices={actionIndices} network={network} />}
+      <Container style={{ display: isFixtureVisible ? 'block' : 'none' }}>
+        <Content style={{ pointerEvents: 'auto', maxHeight: LOG_HEIGHTS[mode] }}>
+          <Logs
+            actionIndices={actionIndices}
+            network={network}
+            utils={{ cancelPendingTx, cancelRequest }}
+            isVisible={mode !== 0}
+          />
           <Controls mode={mode} setMode={setMode} />
         </Content>
       </Container>

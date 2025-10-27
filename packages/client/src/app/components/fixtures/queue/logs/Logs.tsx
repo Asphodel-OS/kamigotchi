@@ -1,267 +1,51 @@
-import { EntityIndex, getComponentValueStrict } from 'engine/recs';
-import moment from 'moment';
 import { useEffect } from 'react';
 import styled from 'styled-components';
 
-import { TextTooltip } from 'app/components/library';
-import { IndicatorIcons } from 'assets/images/icons/indicators';
-import { OpenInNewIcon } from 'assets/images/icons/misc';
-import cancelSketch from 'assets/images/icons/queue/cancel_sketch.png';
-import { DefaultChain } from 'constants/chains';
+import { Text } from 'app/components/library';
+import { EntityIndex } from 'engine/recs';
 import { NetworkLayer } from 'network/';
-import { ActionState, ActionStateString } from 'network/systems/ActionSystem/constants';
+import { Log } from './Log';
 
 export const Logs = ({
   network,
   actionIndices,
+  utils,
+  isVisible,
 }: {
   network: NetworkLayer;
+  utils: {
+    cancelRequest: (entity: EntityIndex) => Promise<void>;
+    cancelPendingTx: (hash: string) => Promise<void>;
+  };
   actionIndices: EntityIndex[];
+  isVisible: boolean;
 }) => {
-  const {
-    actions,
-    network: { providers, signer },
-  } = network;
-  const ActionComponent = actions!.Action;
-  const provider = providers.get()?.json;
-
   // scroll to bottom when tx added
   useEffect(() => {
     const logsElement = document.getElementById('tx-logs');
     if (logsElement) logsElement.scrollTop = logsElement.scrollHeight + 1000;
   }, [actionIndices]);
 
-  //////////////////
-  // RENDERINGS
-
-  // generate the status icon
-  const Status = (status: string, metadata: string) => {
-    const icon = statusIcons[status.toLowerCase()];
-
-    let event = '';
-    let details = metadata;
-    if (/\S/.test(metadata)) {
-      const bodyStart = metadata.indexOf('body=');
-      const errorStart = metadata.indexOf('error='); // used to determine end of body segment
-      if (bodyStart != -1 && errorStart != -1) {
-        let response: any;
-        try {
-          const body = metadata.substring(bodyStart + 6, errorStart - 3).replaceAll('\\"', '"');
-          response = JSON.parse(body);
-        } catch (e) {
-          const body = metadata.substring(bodyStart + 6, errorStart - 5).replaceAll('\\"', '"');
-          response = JSON.parse(body);
-        }
-
-        const responseMessage = response?.error?.message ?? response?.message;
-        const splitIndex = responseMessage.indexOf(':');
-        if (splitIndex != -1) {
-          event = responseMessage.substring(0, splitIndex);
-          details = responseMessage.substring(splitIndex + 1);
-        } else {
-          details = responseMessage;
-        }
-      }
-    }
-
-    const tooltip = status === 'Complete' ? [status] : [`${status} (${event})`, '', details];
-    return <TextTooltip text={tooltip}>{icon}</TextTooltip>;
-  };
-
-  // render the human readable description and detailed tooltip of a given action
-  const Description = (action: any) => {
-    const tooltip = [`Action: ${action.action}`, `Input(s): ${action.params.join(', ')}`];
-    return (
-      <TextTooltip text={tooltip}>
-        <Text>{action.description}</Text>
-      </TextTooltip>
-    );
-  };
-
-  const Time = (time: number) => {
-    return (
-      <TextTooltip text={[moment(time).format('Do MMMM, h:mm:ss a')]}>
-        <Text>{moment(time).fromNow()}</Text>
-      </TextTooltip>
-    );
-  };
-
-  const ExplorerButton = (hash: string | undefined) => {
-    const explorerUrl = DefaultChain?.blockExplorers?.default?.url ?? '';
-    if (!hash || !explorerUrl) return <></>;
-
-    return (
-      <TextTooltip text={[`View on block explorer`]}>
-        <OpenIcon
-          src={OpenInNewIcon}
-          role='button'
-          tabIndex={0}
-          onClick={(e) => {
-            e.stopPropagation();
-            window.open(`${explorerUrl}/tx/${hash}`, '_blank');
-          }}
-        />
-      </TextTooltip>
-    );
-  };
-
-  // Attempt to cancel a pending on-chain tx via replacement (same nonce, higher fee)
-  const cancelPendingTx = async (hash: string) => {
-    if (!provider || !signer) return console.warn('No provider/signer for cancel');
-
-    try {
-      const tx = await provider.getTransaction(hash);
-      if (!tx) return console.warn('Original tx not found');
-      const from = (await signer.getAddress())?.toLowerCase();
-      if (tx.from?.toLowerCase() !== from) return console.warn('Not sender of tx');
-
-      // fetch current provider fee data as fallback
-      const pFee = await provider.getFeeData();
-      const safetyMargin = BigInt(1.2); // +20%
-      const bump = (v?: bigint) => (v ? v * safetyMargin : undefined);
-
-      const cancelReq: any = {
-        to: await signer.getAddress(),
-        value: 0,
-        nonce: tx.nonce,
-      };
-
-      if (tx.maxFeePerGas || pFee.maxFeePerGas) {
-        // EIP-1559 style
-        const baseMaxFee =
-          tx.maxFeePerGas && pFee.maxFeePerGas
-            ? tx.maxFeePerGas > pFee.maxFeePerGas
-              ? tx.maxFeePerGas
-              : pFee.maxFeePerGas
-            : (tx.maxFeePerGas ?? pFee.maxFeePerGas)!;
-
-        const baseTip =
-          tx.maxPriorityFeePerGas && pFee.maxPriorityFeePerGas
-            ? tx.maxPriorityFeePerGas > pFee.maxPriorityFeePerGas
-              ? tx.maxPriorityFeePerGas
-              : pFee.maxPriorityFeePerGas
-            : (tx.maxPriorityFeePerGas ?? pFee.maxPriorityFeePerGas ?? baseMaxFee / BigInt(2))!;
-
-        cancelReq.maxFeePerGas = bump(baseMaxFee);
-        cancelReq.maxPriorityFeePerGas = bump(baseTip);
-      } else if (tx.gasPrice || pFee.gasPrice) {
-        // legacy style
-        const base =
-          tx.gasPrice && pFee.gasPrice
-            ? tx.gasPrice > pFee.gasPrice
-              ? tx.gasPrice
-              : pFee.gasPrice
-            : (tx.gasPrice ?? pFee.gasPrice)!;
-        cancelReq.gasPrice = bump(base);
-      } else {
-        return console.warn('No fee data available to craft replacement tx');
-      }
-      await signer.sendTransaction(cancelReq);
-    } catch (e) {
-      console.warn('Cancel tx failed', e);
-    }
-  };
-
-  // For Requested/Executing: mark canceled and, if a tx hash appears shortly after,
-  // automatically send a cancel replacement.
-  const cancelRequestOrTx = async (entity: EntityIndex) => {
-    try {
-      actions.cancel(entity);
-      // Poll briefly for a hash if execution already started
-      const deadline = Date.now() + 5000; // 5s timeout - shorter for better UX
-      while (Date.now() < deadline) {
-        const data = getComponentValueStrict(ActionComponent, entity);
-        const hash = data.txHash as string | undefined;
-        const state = ActionStateString[data.state as ActionState];
-        if (['Complete', 'Failed', 'Canceled'].includes(state)) break;
-        if (hash && state !== 'Complete') {
-          await cancelPendingTx(hash);
-          break;
-        }
-        await new Promise((r) => setTimeout(r, 500)); // Poll every 500ms instead of 200ms
-      }
-    } catch (e) {
-      console.warn('Cancel request/tx failed', e);
-    }
-  };
-
-  const Log = (entity: EntityIndex) => {
-    const actionData = getComponentValueStrict(ActionComponent, entity);
-    const state = ActionStateString[actionData.state as ActionState];
-    const metadata = actionData.metadata ?? '';
-    const hash = actionData.txHash as string | undefined;
-
-    // Enable cancellation for pending transactions with a hash
-    const isClickable = state === 'Pending' && !!hash;
-
-    return (
-      <Row
-        key={`action${entity}`}
-        isClickable={isClickable}
-        style={{ cursor: isClickable ? 'pointer' : 'default' }}
-        onClick={() => isClickable && cancelPendingTx(hash)}
-      >
-        <RowSegment>
-          {Status(state, metadata)}
-          {Description(actionData)}
-        </RowSegment>
-        <RowSegment>
-          {Time(actionData.time)}
-          {ExplorerButton(hash)}
-          {state === 'Pending' && hash && (
-            <TextTooltip
-              text={[`Click cancel button or hover and click row to replace with 0-value tx.`]}
-            >
-              <CancelIcon
-                src={cancelSketch}
-                alt='Cancel Tx'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Temporarily remove confirmation for debugging
-                  console.log('Cancel button clicked for transaction:', hash);
-                  cancelPendingTx(hash);
-                }}
-              />
-            </TextTooltip>
-          )}
-          {(state === 'Requested' || state === 'Executing') && (
-            <TextTooltip
-              text={[
-                state === 'Requested'
-                  ? 'Cancel this queued request before it sends'
-                  : 'Cancel this request before the tx is submitted',
-              ]}
-            >
-              <CancelIcon
-                src={cancelSketch}
-                alt='Cancel'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  cancelRequestOrTx(entity);
-                }}
-              />
-            </TextTooltip>
-          )}
-        </RowSegment>
-      </Row>
-    );
-  };
+  /////////////////
+  // RENDER
 
   return (
-    <Content id='tx-logs'>
-      <Row style={{ justifyContent: 'space-evenly' }}>
+    <Container id='tx-logs' style={{ display: isVisible ? 'block' : 'none' }}>
+      <Header>
         <Bar />
-        <Text>TxQueue</Text>
+        <Text size={0.6}>TxQueue</Text>
         <Bar />
-      </Row>
-      {actionIndices.map((entity) => Log(entity))}
-    </Content>
+      </Header>
+      {actionIndices.map((entity) => {
+        return <Log key={entity} network={network} entity={entity} utils={utils} />;
+      })}
+    </Container>
   );
 };
 
-const Content = styled.div`
-  border: solid grey 0.14vw;
-  border-radius: 0.4vw;
+const Container = styled.div`
+  border: solid grey 0.15vw;
+  border-radius: 0.45vw;
 
   background-color: #ddd;
   margin: 0.2vw;
@@ -273,39 +57,13 @@ const Content = styled.div`
   flex-grow: 1;
 `;
 
-const Row = styled.div<{ isClickable?: boolean }>`
-  padding: 0.2vw;
-  height: 100%;
+const Header = styled.div`
+  padding: 0.3vw;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
-
-  ${(props) =>
-    props.isClickable &&
-    `
-    background-color: #fafbfc;
-    border: 0.05vw solid #e1e8ed;
-    border-radius: 0.2vw;
-    margin: 0.1vw;
-    
-  `}
-
-  &:hover {
-    background-color: ${(props) => (props.isClickable ? '#e8f4f8' : 'transparent')};
-    border-radius: 0.2vw;
-    box-shadow: ${(props) => (props.isClickable ? 'inset 0 0 0 0.1vw #4a90e2' : 'none')};
-  }
-
-  transition: all 0.15s ease;
-`;
-
-const RowSegment = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  gap: 0.2vw;
+  justify-content: space-evenly;
 `;
 
 const Bar = styled.div`
@@ -313,56 +71,3 @@ const Bar = styled.div`
   width: 40%;
   padding: 0.1vw;
 `;
-
-const Text = styled.div`
-  color: #333;
-  margin: 0.2vw;
-
-  font-family: Pixel;
-  font-size: 0.6vw;
-  line-height: 0.9vw;
-  text-align: left;
-`;
-
-const OpenIcon = styled.img.attrs({ alt: 'Open in explorer' })`
-  cursor: pointer;
-
-  width: 1.5vw;
-  margin-right: 0.4vw;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-const Icon = styled.img`
-  width: 1.5vw;
-  margin: 0.3vw;
-  align-self: center;
-`;
-
-const CancelIcon = styled.img`
-  cursor: pointer;
-  width: 1.6vw;
-  height: 1.6vw;
-  margin-left: 0.3vw;
-  filter: drop-shadow(0 0 0.1vw rgba(0, 0, 0, 0.4));
-  &:hover {
-    opacity: 0.9;
-  }
-  &:active {
-    opacity: 0.8;
-  }
-`;
-
-// Color coded icon mapping of action queue
-type ColorMapping = { [key: string]: any };
-const statusIcons: ColorMapping = {
-  requested: <Icon src={IndicatorIcons.requested} />,
-  executing: <Icon src={IndicatorIcons.executing} />,
-  // Use the regular orange icon for pending instead of yellow
-  pending: <Icon src={IndicatorIcons.executing} />,
-  complete: <Icon src={IndicatorIcons.success} />,
-  failed: <Icon src={IndicatorIcons.failure} />,
-  canceled: <Icon src={IndicatorIcons.canceled} />,
-};
