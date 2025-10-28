@@ -43,4 +43,5 @@ const Button = styled.button`
   &:active {
     background-color: #c4c4c4;
   }
+  z-index: 1;
 `;
