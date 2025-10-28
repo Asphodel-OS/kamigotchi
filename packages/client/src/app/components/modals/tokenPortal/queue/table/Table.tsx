@@ -35,7 +35,7 @@ export const Table = ({
   };
 }) => {
   const { myReceipts, othersReceipts, config, account } = data;
-  const { getItemByIndex, getAccountByID } = utils;
+  const { getAccountByID } = utils;
 
   const [filtered, setFiltered] = useState<TokenPortal[]>([]);
   const [sort, setSort] = useState<Sort>({ key: 'Created', reverse: true });
@@ -47,12 +47,9 @@ export const Table = ({
 
   // determine which receipts get passed in based on the
   useEffect(() => {
-    if (mode === 'MINE') {
-      setFiltered(myReceipts);
-    } else {
-      setFiltered(othersReceipts);
-    }
-  }, [myReceipts, mode, othersReceipts]);
+    if (mode === 'MINE') setFiltered(myReceipts);
+    else setFiltered(othersReceipts);
+  }, [mode, myReceipts, othersReceipts]);
 
   // sort the receipts if the list of receipts changes
   useEffect(() => {
@@ -134,20 +131,17 @@ export const Table = ({
         data={{ mode }}
         state={{ sort, setSort }}
       />
-
       <BodyMine
         actions={actions}
         data={{ receipts: sorted, config }}
         utils={{ ...utils, getTokenConversion }}
         state={{ visible: mode === 'MINE' }}
       />
-
       <BodyOthers
         data={{ receipts: sorted, config, account }}
         utils={{ ...utils, getTokenConversion }}
         state={{ visible: mode === 'OTHERS' }}
       />
-
       <Footer state={{ mode, setMode }} />
     </Container>
   );

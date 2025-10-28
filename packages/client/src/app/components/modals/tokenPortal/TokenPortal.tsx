@@ -53,10 +53,10 @@ export const TokenPortalModal: UIComponent = {
         },
         utils: {
           getAccount: () => _getAccount(world, components, accountEntity, { inventory: 2 }),
-          getItem: (entity: EntityIndex) => _getItem(world, components, entity),
-          queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
-          getItemByIndex: (index: number) => _getItemByIndex(world, components, index),
           getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
+          getItem: (entity: EntityIndex) => _getItem(world, components, entity),
+          getItemByIndex: (index: number) => _getItemByIndex(world, components, index),
+          queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
         },
       };
     })();
@@ -214,8 +214,12 @@ export const TokenPortalModal: UIComponent = {
         const myWidthdrawals = await KamidenClient?.getTokenWithdrawals(request);
         const myDeposits = await KamidenClient?.getTokenDeposits(request);
         setMyReceipts((myWidthdrawals?.TokenPortals ?? []).concat(myDeposits?.TokenPortals ?? []));
-        const othersWidthdrawals = await KamidenClient?.getOpenWithdrawals(requestOthers);
-        setOthersReceipts(othersWidthdrawals?.TokenPortals ?? []);
+        const allWithdrawals = await KamidenClient?.getOpenWithdrawals(requestOthers);
+        const allReceipts = allWithdrawals?.TokenPortals ?? [];
+        const othersReceipts = allReceipts.filter(
+          (receipt) => receipt.AccountID !== parsedAccountId
+        );
+        setOthersReceipts(othersReceipts);
       } catch (error) {
         console.error('Error getting token history :', error);
         throw error;

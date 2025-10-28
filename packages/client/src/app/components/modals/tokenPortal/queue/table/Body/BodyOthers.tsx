@@ -31,14 +31,14 @@ export const BodyOthers = ({
     visible: boolean;
   };
 }) => {
-  const { receipts, config, account } = data;
+  const { receipts, config } = data;
   const { getItemByIndex, getTokenConversion, getAccountByID } = utils;
   const { visible } = state;
 
   const selectAccount = useSelected((s) => s.setAccount);
   const selectedAccount = useSelected((s) => s.accountIndex);
   const setModals = useVisibility((s) => s.setModals);
-  const accountModalOpen = useVisibility((s) => s.modals.account);
+  const isAccountModalOpen = useVisibility((s) => s.modals.account);
 
   /////////////////
   // GETTERS
@@ -54,7 +54,7 @@ export const BodyOthers = ({
   // open the Account modal for the owner of the receipt
   const onClickAccount = (owner: Account) => {
     if (owner.index === 0) return;
-    if (accountModalOpen) {
+    if (isAccountModalOpen) {
       if (selectedAccount !== owner.index) selectAccount(owner.index);
       else setModals({ account: false });
     } else {
@@ -69,7 +69,12 @@ export const BodyOthers = ({
     if (!receipt.IsWithdrawal) return 'Complete';
     if (receipt.IsCanceled) return 'Canceled';
     if (receipt.IsClaimed) return 'Claimed';
-    return getCountdown(Number(receipt.Timestamp) + config.delay);
+
+    const now = Math.floor(Date.now() / 1000);
+    const endTs = Number(receipt.Timestamp) + config.delay;
+    if (now > endTs) return 'Ready';
+
+    return getCountdown(endTs);
   };
 
   // get the date string of a receipt
@@ -89,9 +94,6 @@ export const BodyOthers = ({
     <Container visible={visible}>
       {receipts.map((r: TokenPortal, i: number) => {
         const item = getItemByIndex(r.ItemIndex as number);
-        const owner = getAccount(r);
-        const itsPlayer = account.id === owner.id;
-        if (itsPlayer) return null;
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
             <TextTooltip text={[getDate(r.Timestamp, false)]}>

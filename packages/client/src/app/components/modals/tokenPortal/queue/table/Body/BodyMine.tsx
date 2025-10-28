@@ -64,7 +64,12 @@ export const BodyMine = ({
     if (!receipt.IsWithdrawal) return 'Complete';
     if (receipt.IsCanceled) return 'Canceled';
     if (receipt.IsClaimed) return 'Claimed';
-    return getCountdown(Number(receipt.Timestamp) + config.delay);
+
+    const now = Math.floor(Date.now() / 1000);
+    const endTs = Number(receipt.Timestamp) + config.delay;
+    if (now > endTs) return 'Ready';
+
+    return getCountdown(endTs);
   };
 
   // get the date string of a receipt
