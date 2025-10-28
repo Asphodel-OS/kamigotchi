@@ -49,6 +49,10 @@ export const Registration = ({
     return OperatorCache.has(address);
   };
 
+  const needsToBridge = () => {
+    return ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+  };
+
   /////////////////
   // INTERACTION
 
@@ -116,7 +120,7 @@ export const Registration = ({
   };
 
   const getError = (): string | null => {
-    if (ethBalance < GasConstants.Empty) return 'You need to bridge some ETH to register.';
+    if (needsToBridge()) return 'You need to bridge some ETH to register.';
     if (isOperaterTaken(address.burner)) return 'That Operator address is already taken.';
     if (name === '') return 'Name cannot be empty.';
     if (/\s/.test(name)) return 'Name cannot contain whitespace.';
@@ -143,7 +147,7 @@ export const Registration = ({
       <Text role='status' aria-live='polite'>
         {getError() ?? ''}
       </Text>
-      {ethBalance < GasConstants.Empty ? (
+      {needsToBridge() ? (
         <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
       ) : (
         <Row>

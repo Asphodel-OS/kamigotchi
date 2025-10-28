@@ -93,6 +93,10 @@ export const GasHarasser: UIComponent = {
       return Number(formatUnits(value, GasExponent)) > GasConstants.Warning;
     };
 
+    const needsToBridge = () => {
+      return ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+    };
+
     /////////////////
     // ACTION
 
@@ -150,7 +154,7 @@ export const GasHarasser: UIComponent = {
             Address: {abbreviateAddress(account.operatorAddress)}
           </Description>
         </TextTooltip>
-        {ethBalance < GasConstants.Empty ? (
+        {needsToBridge() ? (
           <Bridge>
             <Text> Not enough gas. You need to bridge some ETH first.</Text>
             <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
