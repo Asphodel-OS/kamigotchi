@@ -18,7 +18,9 @@ export const harvestsAPI = (systems: SystemQueue<any>) => {
    * @param kamiID kamiID
    */
   const liquidate = (harvestID: BigNumberish, kamiID: BigNumberish) => {
-    return systems['system.harvest.liquidate'].executeTyped(harvestID, kamiID);
+    return systems['system.harvest.liquidate'].executeTyped(harvestID, kamiID, {
+      gasLimit: 7500000,
+    });
   };
 
   /**

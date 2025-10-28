@@ -81,10 +81,38 @@ export const getContribution = (
 };
 
 const getGoalTiers = (world: World, comps: Components, goalIndex: number): Tier[] => {
-  const tiers = queryRefsWithParent(comps, getTierAnchorID(goalIndex)).map((entity: EntityIndex) =>
-    getTier(world, comps, entity)
-  );
-  return tiers.sort((a, b) => a.cutoff - b.cutoff);
+  // getting all tiers
+  const tiers = queryRefsWithParent(comps, getTierAnchorID(goalIndex))
+    .map((entity: EntityIndex) => getTier(world, comps, entity))
+    .sort((a, b) => a.cutoff - b.cutoff);
+
+  // splitting display_only and proportional rewards, which both use cutoff 0
+  if (tiers.length > 0 && tiers[0].cutoff === 0) {
+    // filtering based on reward type
+    const displayRwds = tiers[0].rewards.filter((reward) => reward.type.includes('DISPLAY_ONLY'));
+    const propRwds = tiers[0].rewards.filter((reward) => !reward.type.includes('DISPLAY_ONLY'));
+
+    const displayTier: Tier = {
+      ...tiers[0],
+      name: 'Community',
+      rewards: displayRwds.map((reward) => ({
+        ...reward,
+        type: reward.type.replace('DISPLAY_ONLY_', ''),
+      })),
+    };
+    const proportionalTier: Tier = {
+      ...tiers[0],
+      name: 'Proportional',
+      rewards: propRwds,
+    };
+
+    const newTiers: Tier[] = [];
+    if (displayRwds.length > 0) newTiers.push(displayTier);
+    if (propRwds.length > 0) newTiers.push(proportionalTier);
+    tiers.splice(0, 1, ...newTiers);
+  }
+
+  return tiers;
 };
 
 const getTier = (world: World, comps: Components, entity: EntityIndex) => {

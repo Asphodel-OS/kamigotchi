@@ -26,7 +26,7 @@ library LibReference {
     uint256 anchorID
   ) internal returns (uint256 id) {
     id = genID(field, anchorID);
-    _create(components, id, field, anchorID);
+    _create(components, id, anchorID);
   }
 
   function create(
@@ -36,15 +36,10 @@ library LibReference {
     uint256 anchorID
   ) internal returns (uint256 id) {
     id = genID(field, key, anchorID);
-    _create(components, id, field, anchorID);
+    _create(components, id, anchorID);
   }
 
-  function _create(
-    IUintComp components,
-    uint256 id,
-    string memory field,
-    uint256 anchorID
-  ) internal {
+  function _create(IUintComp components, uint256 id, uint256 anchorID) internal {
     LibEntityType.set(components, id, "REFERENCE");
     IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, anchorID);
   }

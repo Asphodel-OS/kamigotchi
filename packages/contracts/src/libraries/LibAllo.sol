@@ -196,9 +196,10 @@ library LibAllo {
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
 
     for (uint256 i; i < alloIDs.length; i++) {
-      uint256 alloID = alloIDs[i];
-      if (alloID == 0) continue;
+      if (skipDistribution(typeComp.get(alloIDs[i]))) continue;
+      if (alloIDs[i] == 0) continue;
 
+      uint256 alloID = alloIDs[i];
       string memory type_ = typeComp.get(alloID);
       uint256 amt = valueComp.safeGet(alloID);
 
@@ -271,6 +272,14 @@ library LibAllo {
         rawStat.toStat().multiply(mult), // converts raw uint to stat and multiply
         targetID
       );
+  }
+
+  ////////////////
+  // CHECKERS
+
+  /// @dev skips distribution for display only rewards
+  function skipDistribution(string memory type_) internal pure returns (bool) {
+    return type_.eq("DISPLAY_ONLY");
   }
 
   ////////////////////
