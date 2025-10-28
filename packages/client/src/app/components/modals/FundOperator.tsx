@@ -83,6 +83,10 @@ export const FundOperator: UIComponent = {
       }
     }, [amount, currBalance]);
 
+    const needsToBridge = () => {
+      return ownerBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+    };
+
     /////////////////
     // ACTIONS
 
@@ -191,7 +195,7 @@ export const FundOperator: UIComponent = {
           {StateBox(true)}
           {StateBox(false)}
         </Row>
-        {isFunding && ownerBalance < GasConstants.Empty ? (
+        {isFunding && needsToBridge() ? (
           <BridgeGroup>
             <WarnText>You need to bridge some ETH first.</WarnText>
             <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
