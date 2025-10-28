@@ -6,7 +6,6 @@ import { TokenPortal } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
-import { getCountdown } from 'utils/time';
 import { getResultWithdraw, getSwapRate } from '../../utils';
 import { BodyMine } from './Body/BodyMine';
 import { BodyOthers } from './Body/BodyOthers';
@@ -53,45 +52,44 @@ export const Table = ({
 
   // sort the receipts if the list of receipts changes
   useEffect(() => {
+    const temp = [...filtered];
     const flip = sort.reverse ? -1 : 1;
     let sortedList: TokenPortal[] = [];
 
     if (sort.key === 'Amount') {
-      sortedList = [...filtered].sort(
-        (a, b) => (getTokenConversion(a) - getTokenConversion(b)) * flip
-      );
+      sortedList = temp.sort((a, b) => {
+        const aAmt = Number(a.TokenAmt);
+        const bAmt = Number(b.TokenAmt);
+        return (aAmt - bAmt) * flip;
+      });
     } else if (sort.key === 'Status') {
-      sortedList = [...filtered].sort((a, b) => {
-        const canceledDiff = (Number(a.IsCanceled) - Number(b.IsCanceled)) * flip;
-        if (canceledDiff !== 0) return canceledDiff;
-        const claimedDiff = (Number(a.IsClaimed) - Number(b.IsClaimed)) * flip;
-        if (claimedDiff !== 0) return claimedDiff;
+      sortedList = temp.sort((a, b) => {
+        const withdrawalDiff = compareBools(!a.IsWithdrawal, !b.IsWithdrawal);
+        if (withdrawalDiff !== 0) return withdrawalDiff * flip;
 
-        const aCountdown = getCountdown(Number(a.Timestamp) + config.delay);
-        const bCountdown = getCountdown(Number(b.Timestamp) + config.delay);
+        const canceledDiff = compareBools(a.IsCanceled, b.IsCanceled);
+        if (canceledDiff !== 0) return canceledDiff * flip;
 
-        return aCountdown.localeCompare(bCountdown, undefined, { numeric: true }) * flip;
+        const claimedDiff = compareBools(a.IsClaimed, b.IsClaimed);
+        if (claimedDiff !== 0) return claimedDiff * flip;
+
+        // compare based on end times if no status differences
+        const aEndTs = Number(a.Timestamp) + config.delay;
+        const bEndTs = Number(b.Timestamp) + config.delay;
+        return (bEndTs - aEndTs) * flip;
       });
     } else if (sort.key === 'Account') {
-      sortedList = [...filtered].sort((a, b) => {
-        const aName =
-          getAccountByID(formatEntityID(BigInt(a.AccountID)) as EntityID)?.name?.toLowerCase() ??
-          '';
-        const bName =
-          getAccountByID(formatEntityID(BigInt(b.AccountID)) as EntityID)?.name?.toLowerCase() ??
-          '';
-
-        if (aName > bName) return 1 * flip;
-        if (aName < bName) return -1 * flip;
-        return 0;
+      sortedList = temp.sort((a, b) => {
+        const aID = formatEntityID(BigInt(a.AccountID)) as EntityID;
+        const bID = formatEntityID(BigInt(b.AccountID)) as EntityID;
+        const aName = getAccountByID(aID)?.name?.toLowerCase() ?? '';
+        const bName = getAccountByID(bID)?.name?.toLowerCase() ?? '';
+        return bName.localeCompare(aName) * flip;
       });
     } else if (sort.key === 'Type') {
-      sortedList = [...filtered].sort(
-        (a, b) => (Number(a.IsWithdrawal) - Number(b.IsWithdrawal)) * flip
-      );
-    } else {
-      // date
-      sortedList = [...filtered].sort((a, b) => (Number(a.Timestamp) - Number(b.Timestamp)) * flip);
+      sortedList = temp.sort((a, b) => compareBools(a.IsWithdrawal, b.IsWithdrawal) * flip);
+    } else if (sort.key === 'Created') {
+      sortedList = temp.sort((a, b) => (Number(a.Timestamp) - Number(b.Timestamp)) * flip);
     }
 
     setSorted(sortedList);
@@ -99,6 +97,12 @@ export const Table = ({
 
   /////////////////
   // GETTERS
+
+  // compares two booleans
+  const compareBools = (a: boolean, b: boolean) => {
+    if (a === b) return 0;
+    return a ? -1 : 1;
+  };
 
   const getTokenConversion = (receipt: TokenPortal) => {
     const item = utils.getItemByIndex(receipt.ItemIndex);
