@@ -385,7 +385,7 @@ library LibInventory {
   }
 
   /// @notice Log transfer for each index/amount pair individually using a for loop
-  function logTransfer(
+  function emitTransfer(
     IWorld world,
     IUintComp comps,
     uint256 holderID,
@@ -394,11 +394,12 @@ library LibInventory {
     uint256[] memory amts
   ) internal {
     // event schema
-    uint8[] memory _schema = new uint8[](4);
+    uint8[] memory _schema = new uint8[](5);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256); // holderID
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256); // targetID
     _schema[2] = uint8(LibTypes.SchemaValue.UINT32); // itemIndex
     _schema[3] = uint8(LibTypes.SchemaValue.UINT256); // amount
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
 
     // emit event for each index/amount pair
     for (uint256 i = 0; i < indices.length; i++) {
@@ -406,7 +407,7 @@ library LibInventory {
         world,
         "ITEM_TRANSFER",
         _schema,
-        abi.encode(holderID, targetID, indices[i], amts[i])
+        abi.encode(holderID, targetID, indices[i], amts[i], block.timestamp)
       );
     }
   }
