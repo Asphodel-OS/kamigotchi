@@ -1,7 +1,6 @@
 import {
   Component,
   Components,
-  EntityID,
   getComponentValue,
   removeComponent,
   Schema,
@@ -10,7 +9,7 @@ import {
   World,
 } from 'engine/recs';
 import { Contract } from 'ethers';
-import { compact, toLower } from 'lodash';
+import { compact } from 'lodash';
 import { filter, map, Observable, Subject, timer } from 'rxjs';
 
 import { Mappings } from 'engine/types';
@@ -73,11 +72,11 @@ export function createSystemCallStreams<
     decodeAndEmitSystemCall: (systemCall: SystemCall<C>) => {
       const { tx } = systemCall;
 
-      const systemEntityIndex = world.entityToIndex.get(toLower(formatEntityID(tx.to)) as EntityID);
-      if (!systemEntityIndex) return;
+      const systemEntityIndex = world.entityToIndex.get(formatEntityID(tx.to));
+      if (systemEntityIndex === undefined) return;
 
       const hashedSystemId = getComponentValue(systemsRegistry, systemEntityIndex)?.value;
-      if (!hashedSystemId) return;
+      if (hashedSystemId === undefined) return;
 
       const { name, contract } = getSystemContract(hashedSystemId);
 
