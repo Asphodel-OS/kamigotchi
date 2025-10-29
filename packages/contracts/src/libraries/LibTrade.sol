@@ -155,6 +155,7 @@ library LibTrade {
   // COMPLETE
 
   /// @notice complete a Trade
+  /// @dev makerID param seems a bit unsafe.. maybe just derive it here
   function complete(IWorld world, IUintComp comps, uint256 id, uint256 makerID) internal {
     // process orders
     completeBuyOrder(comps, id, makerID);
@@ -250,7 +251,7 @@ library LibTrade {
 
   /// @notice verify that an Account is not a Trade's Maker
   function verifyNotMaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
-    uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
+    uint256 makerID = getMaker(comps, tradeID);
     if (makerID == accID) revert("Trade cannot be executed by Maker");
   }
 
@@ -309,6 +310,10 @@ library LibTrade {
     uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).get(id);
     uint256[] memory amounts = ValuesComponent(getAddrByID(comps, ValuesCompID)).get(id);
     return Order(indices, amounts);
+  }
+
+  function getMaker(IUintComp comps, uint256 tradeID) internal view returns (uint256) {
+    return IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
   }
 
   /// @notice gets the number of open orders owned by an account

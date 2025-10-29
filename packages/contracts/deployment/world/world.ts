@@ -55,6 +55,7 @@ import {
   setPortalTokens,
   unsetPortalTokens,
 } from './state';
+import { cancelTrades, completeTrades } from './state/trades';
 
 // TODO: rename this file to something that makes more sense
 // ('api.ts' would conflict with api/)
@@ -175,6 +176,10 @@ export class WorldState {
     snapshot: {
       init: () => this.genCalls(initSnapshot),
     } as SubFunc,
+    trades: {
+      cancel: () => this.genCalls((api) => cancelTrades(api)), // IDs are hardcoded into the function
+      complete: () => this.genCalls((api) => completeTrades(api)), // IDs are hardcoded into the function
+    },
     traits: {
       init: () => this.genCalls(initTraits),
       // delete: (indices: number[], types: string[]) =>

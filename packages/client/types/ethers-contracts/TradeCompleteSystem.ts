@@ -30,6 +30,7 @@ export interface TradeCompleteSystemInterface extends Interface {
       | "completeOwnershipHandover"
       | "deprecate"
       | "execute"
+      | "executeAdmin"
       | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
@@ -56,6 +57,10 @@ export interface TradeCompleteSystemInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "executeAdmin",
+    values: [BigNumberish[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "executeTyped",
     values: [BigNumberish]
@@ -88,6 +93,10 @@ export interface TradeCompleteSystemInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "executeAdmin",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "executeTyped",
     data: BytesLike
@@ -213,6 +222,12 @@ export interface TradeCompleteSystem extends BaseContract {
 
   execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
+  executeAdmin: TypedContractMethod<
+    [ids: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+
   executeTyped: TypedContractMethod<[id: BigNumberish], [string], "nonpayable">;
 
   owner: TypedContractMethod<[], [string], "view">;
@@ -249,6 +264,9 @@ export interface TradeCompleteSystem extends BaseContract {
   getFunction(
     nameOrSignature: "execute"
   ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+  getFunction(
+    nameOrSignature: "executeAdmin"
+  ): TypedContractMethod<[ids: BigNumberish[]], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "executeTyped"
   ): TypedContractMethod<[id: BigNumberish], [string], "nonpayable">;

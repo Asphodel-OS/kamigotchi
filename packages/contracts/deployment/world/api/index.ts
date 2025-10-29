@@ -6,6 +6,7 @@ import { listingAPI } from './listings';
 import { nodesAPI } from './nodes';
 import { portalAPI } from './portal';
 import { questsAPI } from './quests';
+import { tradeAPI } from './trades';
 import { generateCallData } from './utils';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
@@ -365,15 +366,6 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
-  //////////////////
-  // KWOB
-
-  // cancel a set of trades, as an admin
-  function cancelTrades(ids: number[]) {
-    const callData = generateCallData('system.trade.cancel', [ids], 'executeAdmin');
-    compiledCalls.push(callData);
-  }
-
   ////////////////
   // SETUP
 
@@ -517,9 +509,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       createGate: createRoomGate,
       delete: deleteRoom,
     },
-    trade: {
-      cancel: cancelTrades,
-    },
+    trade: tradeAPI(generateCallData, compiledCalls),
     setup: {
       local: {
         initAccounts: initAccounts,
