@@ -18,11 +18,14 @@ export const process = (world: World, comps: Components, entity: EntityIndex, id
 
   // set maker
   const makerID = getOwnsTradeID(comps, entity);
-  trade.maker = getAccount(world, comps, world.entityToIndex.get(makerID)!);
+  const makerEntity = world.entityToIndex.get(makerID);
+  if (makerEntity) trade.maker = getAccount(world, comps, makerEntity);
+  else console.warn('maker not found', makerID);
 
   // set taker if defined
   const takerID = getTargetID(comps, entity, false);
-  if (takerID) trade.taker = getAccount(world, comps, world.entityToIndex.get(takerID)!);
+  const takerEntity = world.entityToIndex.get(takerID);
+  if (takerEntity) trade.taker = getAccount(world, comps, takerEntity);
 
   // set order data
   trade.buyOrder = getOrder(world, comps, getBuyAnchor(world, trade.id));
@@ -63,7 +66,8 @@ export const get = (
     const updateDelta = (now - updateTs) / 1000; // convert to seconds
     if (updateDelta > options.taker) {
       const takerID = getTargetID(comps, entity, false);
-      if (takerID) trade.taker = getAccount(world, comps, world.entityToIndex.get(takerID)!);
+      const takerEntity = world.entityToIndex.get(takerID);
+      if (takerEntity) trade.taker = getAccount(world, comps, takerEntity);
       TakerUpdateTs.set(entity, now);
     }
   }

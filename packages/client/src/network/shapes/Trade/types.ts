@@ -50,7 +50,7 @@ export const get = (
     const makerID = getOwnsTradeID(comps, entity);
     trade.maker = getAccountByID(world, comps, makerID);
   }
-  if (options?.taker && trade.state === 'EXECUTED') {
+  if (options?.taker) {
     const takerID = getTargetID(comps, entity);
     trade.taker = getAccountByID(world, comps, takerID);
   }
