@@ -133,7 +133,6 @@ export const Log = ({
 
 const Container = styled.div<{ isClickable?: boolean }>`
   padding: 0.2vw;
-  height: 100%;
   gap: 0.3vw;
 
   display: flex;
