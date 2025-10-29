@@ -32,7 +32,7 @@ interface Options {
 }
 
 // get a Trade Object
-export const getTrade = (
+export const get = (
   world: World,
   comps: Components,
   entity: EntityIndex,
@@ -50,7 +50,7 @@ export const getTrade = (
     const makerID = getOwnsTradeID(comps, entity);
     trade.maker = getAccountByID(world, comps, makerID);
   }
-  if (options?.taker) {
+  if (options?.taker && trade.state === 'EXECUTED') {
     const takerID = getTargetID(comps, entity);
     trade.taker = getAccountByID(world, comps, takerID);
   }

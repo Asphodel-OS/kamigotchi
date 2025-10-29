@@ -1,5 +1,4 @@
 import { Component, EntityID, EntityIndex, World, getComponentValue } from 'engine/recs';
-
 import { Components } from 'network/';
 import { accounts } from './accounts';
 import { addresses } from './addresses';
@@ -16,6 +15,7 @@ import { quests } from './quests';
 import { recipes } from './recipes';
 import { rooms } from './rooms';
 import { skills } from './skills';
+import { trades } from './trades/trades';
 import { traits } from './traits';
 
 // explorer for our 'shapes', exposed on the window object @ network.explorer
@@ -59,6 +59,7 @@ export const initExplorer = (world: World, components: Components) => {
     recipes: recipes(world, components),
     rooms: rooms(world, components),
     skills: skills(world, components),
+    trades: trades(world, components),
     traits: traits(world, components),
 
     // helper function to get all the set components values for a given entity
