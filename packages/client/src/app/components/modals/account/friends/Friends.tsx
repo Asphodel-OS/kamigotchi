@@ -1,5 +1,5 @@
+import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
-import { EntityIndex } from '@mud-classic/recs';
 
 import { AccountCard, ActionListButton, EmptyText } from 'app/components/library';
 import { Account as PlayerAccount } from 'app/stores';
@@ -8,19 +8,14 @@ import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 
 export const Friends = ({
-  data: {
-    isSelf,
-    player,
-  },
+  data: { isSelf, player },
   actions,
   friendships,
-  utils: {
-    getFriends,
-  },
+  utils: { getFriends },
 }: {
   data: {
     isSelf: boolean;
-    player: PlayerAccount
+    player: PlayerAccount;
   };
   actions: {
     acceptFren: (friendship: Friendship) => void;

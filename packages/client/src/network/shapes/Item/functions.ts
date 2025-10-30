@@ -1,9 +1,8 @@
-import { EntityID, EntityIndex, World, getComponentValue } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, getComponentValue } from 'engine/recs';
 
 import { MUSU_INDEX } from 'constants/items';
 import { Components } from 'network/index';
 import { queryInventoryInstance } from '../Inventory';
-import { Item } from './types';
 
 /////////////////
 // GETTERS
@@ -29,13 +28,4 @@ export const getItemBalance = (
   const { Value } = components;
   const entity = queryInventoryInstance(world, holderID ?? 0, itemIndex);
   return entity ? (getComponentValue(Value, entity)?.value ?? 0) * 1 : 0;
-};
-
-// handles item balance if it's an ERC20 (assume 18dp)
-export const formatItemBalance = (item: Item, balance: number): number => {
-  if (item.address) {
-    const bignum = BigInt(balance);
-    return Number((bignum * 1000n) / BigInt(10 ** 18)) / 1000; // show up to 3dp
-  }
-  return balance;
 };

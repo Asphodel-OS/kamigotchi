@@ -1,4 +1,4 @@
-import { EntityID, World } from '@mud-classic/recs';
+import { EntityID, World } from 'engine/recs';
 import { Components } from 'network/';
 import { queryForParent, queryForType } from './queries';
 import { Bonus, getRegistry, getValue } from './types';

@@ -77,17 +77,17 @@ export const ModalWrapper = ({
   return (
     <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
       <Content isOpen={isVisible} truncate={truncate} data-resizable={id === 'trading'}>
+        {header && <Header noBorder={noInternalBorder}>{header}</Header>}
         {canExit && (
           <ButtonRow>
             <ExitButton divName={id} />
           </ButtonRow>
         )}
-        {header && <Header noBorder={noInternalBorder}>{header}</Header>}
         <Children
           scrollBarColor={scrollBarColor}
           noPadding={noPadding}
-          data-scroll-container='true'
-          data-modal-id={id}
+          // data-scroll-container='true'
+          // data-modal-id={id}
         >
           {children}
         </Children>

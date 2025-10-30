@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { GachaMintConfig } from 'app/cache/config';
 import { Stepper, TextTooltip } from 'app/components/library';
-import { useTokens } from 'app/stores';
 import { GACHA_MAX_PER_TX } from 'constants/gacha';
-import { GachaMintData } from 'network/shapes/Gacha';
 import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { playClick, playSuccess } from 'utils/sounds';
@@ -20,8 +17,6 @@ export const Footer = ({
   actions: {
     approve: (payItem: Item, price: number) => void;
     bid: (item: Item, amt: number) => void;
-    mintPublic: (amount: number) => void;
-    mintWL: () => void;
     pull: (amount: number) => Promise<boolean>;
     reroll: (kamis: Kami[]) => Promise<boolean>;
   };
@@ -33,14 +28,7 @@ export const Footer = ({
     payItem: Item;
     saleItem: Item;
     balance: number;
-    mint: {
-      config: GachaMintConfig;
-      data: {
-        account: GachaMintData;
-        gacha: GachaMintData;
-      };
-      whitelisted: boolean;
-    };
+    startTs?: number;
   };
   state: {
     quantity: number;
@@ -49,65 +37,43 @@ export const Footer = ({
     setPrice: (price: number) => void;
     selectedKamis: Kami[];
     setSelectedKamis: (kamis: Kami[]) => void;
-    tick: number;
   };
 }) => {
-  const { approve, bid, mintPublic, mintWL, pull, reroll } = actions;
+  const { approve, bid, pull, reroll } = actions;
   const { mode, tab } = controls;
-  const { payItem, saleItem, balance, mint } = data;
+  const { payItem, saleItem, balance, startTs } = data;
   const { selectedKamis, setSelectedKamis } = state;
-  const { quantity, setQuantity, price, tick } = state;
+  const { quantity, setQuantity, price } = state;
 
-  const { balances: tokenBal } = useTokens();
   const [isDisabled, setIsDisabled] = useState(true);
 
   useEffect(() => {
     setIsDisabled(quantity <= 0 || needsFunds() || exceedsMax() || !hasStarted());
-  }, [price, balance, quantity]);
+  }, [price, balance, quantity, startTs]);
 
   /////////////////
   // CHECKERS
 
   // check if a user is under max amt per tx
   const exceedsMax = () => {
-    if (tab === 'MINT') {
-      const whitelistMax = mint.config.whitelist.max;
-      const publicMax = mint.config.public.max;
-      const whitelistMinted = mint.data.account.whitelist;
-      const publicMinted = mint.data.account.public;
-      if (mode === 'DEFAULT') return whitelistMinted + quantity > whitelistMax;
-      if (mode === 'ALT') return publicMinted + quantity > publicMax;
-    }
-
     if (tab === 'GACHA' && mode === 'DEFAULT') return quantity > GACHA_MAX_PER_TX;
-
     return false;
-  };
-
-  // hardcoded bc this only matters temporarily
-  const hasStarted = () => {
-    const now = tick / 1000;
-    const wlMintStart = data.mint.config.whitelist.startTs;
-    const publicMintStart = data.mint.config.public.startTs;
-
-    if (tab === 'MINT') {
-      if (mode === 'DEFAULT') return now >= wlMintStart;
-      else return now >= publicMintStart;
-    } else if (tab === 'GACHA') return now >= publicMintStart + 3600;
-    else if (tab === 'REROLL' && mode === 'ALT') return now >= publicMintStart + 3600;
-    return true;
   };
 
   // check if a user needs further spend approval for a token
   const needsApproval = () => {
-    if (!payItem.address) return false;
-    const allowance = tokenBal.get(payItem.address!)?.allowance || 0;
-    return allowance < price;
+    return false;
   };
 
   // check if a user has enough balance of a token to purchase
   const needsFunds = () => {
     return balance < price;
+  };
+
+  // check if the auction has started
+  const hasStarted = () => {
+    if (!startTs) return true;
+    return startTs < Date.now() / 1000;
   };
 
   //////////////////
@@ -127,11 +93,6 @@ export const Footer = ({
         if (needsApproval()) approve(payItem, price);
         else bid(saleItem, quantity);
       }
-    } else if (tab === 'MINT') {
-      if (needsApproval()) approve(payItem, price);
-      else if (mode === 'DEFAULT') mintWL();
-      else if (mode === 'ALT') mintPublic(quantity);
-      else bid(saleItem, quantity);
     }
     if (success) {
       playSuccess();
@@ -152,9 +113,6 @@ export const Footer = ({
 
   // get the text of the submission button
   const getButtonText = () => {
-    // mint tab
-    if (tab === 'MINT') return needsApproval() ? 'Approve' : 'Mint';
-
     // gacha pool tab
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') return 'Claim';
@@ -171,12 +129,6 @@ export const Footer = ({
 
   // get the sale description for the submit button tooltip
   const getSaleDescription = () => {
-    // mint
-    if (tab === 'MINT') {
-      if (mode === 'DEFAULT') return [`Mint your whitelist ${saleItem.name}`];
-      if (mode === 'ALT') return [`Mint ${quantity} ${saleItem.name}s`];
-    }
-
     // gacha
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') return [`Claim a Kami from the pool`];
@@ -194,34 +146,14 @@ export const Footer = ({
 
   // get the error description for the submit button tooltip
   const getErrorDescription = () => {
-    // mint
-    if (tab === 'MINT') {
-      if (mode === 'DEFAULT') {
-        if (!mint.whitelisted) return [`you're not whitelisted`];
-        if (!hasStarted()) return ['whitelist mint has not started'];
-        if (exceedsMax()) return [`max ${mint.config.whitelist.max} for whitelist mint`];
-      }
-      if (mode === 'ALT') {
-        if (!hasStarted()) return ['public mint has not started'];
-        if (exceedsMax()) {
-          const max = mint.config.public.max;
-          const curr = mint.data.account.public;
-          return [`this purchase will exceed your mint limit`, `${curr}/${max} minted so far`];
-        }
-      }
-      if (needsFunds()) return ['too poore', `you need ${(price - balance).toFixed(3)} more ETH`];
-      if (needsApproval()) return [`approve ${price.toFixed(3)}ETH to spend`];
-    }
-
     // gacha
     if (tab === 'GACHA') {
       if (mode === 'DEFAULT') {
-        if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
-        if (!exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
+        // if (!hasStarted()) return [`calm down`, `the pool isn't open yet`];
+        if (exceedsMax()) return [`you can only claim ${GACHA_MAX_PER_TX} Kami at a time`];
       }
       if (mode === 'ALT') {
         if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
-        if (needsFunds()) return [`too poore`, `you need ${price - balance} more musu`];
       }
     }
 
@@ -235,18 +167,13 @@ export const Footer = ({
             `it's time to play favorites..`,
           ];
         }
-        if (needsFunds()) {
-          return [`too poore`, `you need ${price - balance} more Reroll Tickets`];
-        }
       }
       if (mode === 'ALT') {
         if (!hasStarted()) return [`you're early!`, ``, `this auction hasn't started yet`];
-        if (needsFunds()) {
-          return [`too poore`, `you need ${(price - balance).toFixed(3)} more ONYX`];
-        }
-        if (needsApproval()) return [`approve ${price.toFixed(3)}ONYX to spend`];
       }
     }
+
+    if (needsFunds()) return [`too poore`, `you need ${price - balance} more ${payItem.name}(s)`];
 
     return [];
   };

@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
@@ -31,19 +31,9 @@ const options = [
 ];
 
 export const Grid = ({
-  data: {
-    account,
-    accountKamis,
-    rooms,
-    roomIndex,
-    zone,
-  },
-  actions: {
-    move,
-  },
-  state: {
-    tick,
-  },
+  data: { account, accountKamis, rooms, roomIndex, zone },
+  actions: { move },
+  state: { tick },
   utils,
 }: {
   actions: {

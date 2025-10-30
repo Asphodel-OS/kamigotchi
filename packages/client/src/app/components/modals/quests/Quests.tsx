@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getItemByIndex } from 'app/cache/item';

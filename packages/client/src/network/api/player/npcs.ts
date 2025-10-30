@@ -1,4 +1,6 @@
-export const npcsAPI = (systems: any) => {
+import { SystemQueue } from 'engine/queue';
+
+export const npcsAPI = (systems: SystemQueue<any>) => {
   /////////////////
   // LISTINGS
 

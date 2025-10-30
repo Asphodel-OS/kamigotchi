@@ -1,4 +1,4 @@
-import { triggerPetMintModal } from 'app/triggers/triggerPetMintModal';
+import { triggerGachaModal } from 'app/triggers/triggerGachaModal';
 import { bgGifDay, bgGifEvening, bgGifNight } from 'assets/images/rooms/4_junkyard';
 import { mystique } from 'assets/sound/ost';
 import { Room } from './types';
@@ -14,7 +14,7 @@ export const room04: Room = {
     {
       name: 'vending machine',
       coordinates: { x1: 15, y1: 56, x2: 46, y2: 90 },
-      onClick: triggerPetMintModal,
+      onClick: triggerGachaModal,
     },
   ],
 };

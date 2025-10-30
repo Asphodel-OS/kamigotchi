@@ -24,7 +24,7 @@ const run = async () => {
   const signer = await getSigner();
 
   const triggerer = new ethers.Contract(await getSystemAddr('system.test.comp.event'), abi, signer);
-  console.log('trigger system: ' + triggerer.address);
+  console.log('trigger system: ' + (await triggerer.getAddress()));
 
   const tx = await triggerer.executeTyped({ gasLimit: 200000 });
   console.log('tx: ' + tx.hash);

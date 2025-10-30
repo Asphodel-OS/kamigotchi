@@ -1,6 +1,7 @@
+import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
-export const gachaAPI = (systems: any) => {
+export const gachaAPI = (systems: SystemQueue<any>) => {
   /////////////////
   // KAMI
 

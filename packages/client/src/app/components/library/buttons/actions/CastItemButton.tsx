@@ -1,8 +1,8 @@
-import { World } from '@mud-classic/recs';
 import { calcCurrentStamina } from 'app/cache/account';
 import { cleanInventories, filterInventories, Inventory } from 'app/cache/inventory';
 import { isHarvesting, Kami } from 'app/cache/kami';
 import { TextTooltip } from 'app/components/library';
+import { World } from 'engine/recs';
 import { Components } from 'network/components';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes/Account';

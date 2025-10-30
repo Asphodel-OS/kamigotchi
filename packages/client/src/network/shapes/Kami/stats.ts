@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityIndex, World } from 'engine/recs';
 import { Components } from 'network/components';
 import { getBonusValue } from '../Bonus';
 import { Stat, getStat } from '../Stats';

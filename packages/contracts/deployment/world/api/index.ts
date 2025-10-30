@@ -1,12 +1,12 @@
-import { BigNumberish } from 'ethers';
-
 import { toUint32FixedArrayLiteral } from '../../scripts/systemCaller';
 import { auctionAPI } from './auctions';
 import { goalsAPI } from './goals';
 import { itemsAPI } from './items';
 import { listingAPI } from './listings';
 import { nodesAPI } from './nodes';
+import { portalAPI } from './portal';
 import { questsAPI } from './quests';
+import { tradeAPI } from './trades';
 import { generateCallData } from './utils';
 
 export type AdminAPI = Awaited<ReturnType<typeof createAdminAPI>>;
@@ -28,7 +28,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   /////////////////
   //  CONFIG
 
-  async function setConfig(field: string, value: BigNumberish) {
+  async function setConfig(field: string, value: number) {
     const callData = generateCallData(
       'system.config.registry',
       [field, value],
@@ -86,9 +86,6 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
-  //  GOALS
-
-  /////////////////
   //  NPCs
 
   // (creates an NPC with the name at the specified roomIndex
@@ -119,7 +116,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
-  async function batchMint(amount: number, gasLimit?: BigNumberish) {
+  async function batchMint(amount: number, gasLimit?: string) {
     const callData = generateCallData(
       'system.Kami721.BatchMint',
       [amount],
@@ -204,7 +201,7 @@ export function createAdminAPI(compiledCalls: string[]) {
     roomIndex: number,
     sourceIndex: number,
     conditionIndex: number,
-    conditionValue: BigNumberish,
+    conditionValue: string | number,
     type: string,
     logicType: string,
     for_: string
@@ -279,7 +276,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   /////////////////
-  // TRAITS
+  //  TRAITS
 
   // @dev adds a trait in registry
   async function registerTrait(
@@ -369,25 +366,16 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
-  //////////////////
-  // KWOB
-
-  // cancel a set of trades, as an admin
-  function cancelTrades(ids: number[]) {
-    const callData = generateCallData('system.trade.cancel', [ids], 'executeAdmin');
-    compiledCalls.push(callData);
-  }
-
   ////////////////
   // SETUP
 
-  function dropKillRewards(owners: string[], amts: number[]) {
+  function setFlag(ids: number[], flagType: string) {
     const callData = generateCallData(
-      'system.setup.snapshot.t2',
-      [owners, amts],
-      'dropKillRewards',
-      ['address[]', 'uint256[]'],
-      '12000000'
+      'system.admin.set.flag',
+      [ids, flagType, true],
+      undefined,
+      undefined,
+      '4000000' // very roughly estimated 10 batch size
     );
     compiledCalls.push(callData);
   }
@@ -472,6 +460,12 @@ export function createAdminAPI(compiledCalls: string[]) {
     },
     goal: goalsAPI(generateCallData, compiledCalls),
     listing: listingAPI(generateCallData, compiledCalls),
+    mint: {
+      batchMinter: {
+        init: initBatchMinter,
+        mint: batchMint,
+      },
+    },
     node: nodesAPI(generateCallData, compiledCalls),
     npc: {
       create: createNPC,
@@ -480,12 +474,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         name: setNPCName,
       },
     },
-    mint: {
-      batchMinter: {
-        init: initBatchMinter,
-        mint: batchMint,
-      },
-    },
+    portal: portalAPI(generateCallData, compiledCalls),
     registry: {
       item: itemsAPI(generateCallData, compiledCalls),
       trait: {
@@ -520,9 +509,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       createGate: createRoomGate,
       delete: deleteRoom,
     },
-    trade: {
-      cancel: cancelTrades,
-    },
+    trade: tradeAPI(generateCallData, compiledCalls),
     setup: {
       local: {
         initAccounts: initAccounts,
@@ -536,7 +523,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         },
       },
       live: {
-        obols: dropKillRewards,
+        flags: setFlag,
         // passports: distributePassports,
         // whitelists: distributeGachaWhitelists,
       },

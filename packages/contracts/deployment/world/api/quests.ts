@@ -1,4 +1,3 @@
-import { BigNumberish } from 'ethers';
 import { GenerateCallData } from './types';
 
 export function questsAPI(generateCallData: GenerateCallData, compiledCalls: string[]) {
@@ -39,7 +38,7 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
     logicType: string,
     type: string,
     index: number,
-    value: BigNumberish,
+    value: string | number,
     for_: string
   ) {
     const callData = generateCallData(
@@ -57,7 +56,7 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
     logicType: string,
     type: string,
     index: number,
-    value: BigNumberish,
+    value: string | number,
     for_: string
   ) {
     const callData = generateCallData(
@@ -74,7 +73,7 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
     questIndex: number,
     type: string,
     index: number,
-    value: BigNumberish
+    value: string | number
   ) {
     const callData = generateCallData(
       'system.quest.registry',
@@ -89,7 +88,7 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
     questIndex: number,
     keys: number[],
     weights: number[],
-    value: BigNumberish
+    value: string | number
   ) {
     const callData = generateCallData(
       'system.quest.registry',

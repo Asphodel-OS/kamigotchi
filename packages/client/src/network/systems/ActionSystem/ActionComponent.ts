@@ -1,4 +1,4 @@
-import { Component, defineComponent, Metadata, SchemaOf, Type, World } from '@mud-classic/recs';
+import { Component, defineComponent, Metadata, SchemaOf, Type, World } from 'engine/recs';
 
 export type ActionComponent = ReturnType<typeof defineActionComponent>;
 

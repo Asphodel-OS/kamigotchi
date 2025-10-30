@@ -1,7 +1,12 @@
-import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { awaitValue, cacheUntilReady, mapObject } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
-import { BaseContract, BigNumberish, CallOverrides, Overrides } from 'ethers';
+import {
+  BigNumberish,
+  FunctionFragment,
+  Overrides,
+  TransactionReceipt,
+  TransactionRequest,
+} from 'ethers';
 import { IComputedValue, IObservableValue, autorun, computed, observable, runInAction } from 'mobx';
 import { v4 as uuid } from 'uuid';
 
@@ -32,6 +37,15 @@ export function create<C extends Contracts>(
   dispose: () => void;
   ready: IComputedValue<boolean | undefined>;
 } {
+  // Gate warnings behind dev flag to avoid noisy logs in production
+  const isDev =
+    (typeof import.meta !== 'undefined' &&
+      ((import.meta as any).env?.DEV ?? (import.meta as any).env?.MODE !== 'production')) ||
+    (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production');
+  const devWarn = (...args: any[]) => {
+    if (isDev) console.warn(...args);
+  };
+
   const queue = createPriorityQueue<{
     execute: (
       txOverrides: Overrides
@@ -39,6 +53,8 @@ export function create<C extends Contracts>(
     estimateGas: () => Promise<BigNumberish>;
     cancel: (error: any) => void;
     stateMutability?: string;
+    id: string;
+    isCanceled: () => boolean;
   }>();
   const submissionMutex = new Mutex();
   const _nonce = observable.box<number | null>(null);
@@ -46,7 +62,7 @@ export function create<C extends Contracts>(
   const readyState = computed(() => {
     const connected = network.connected.get();
     const contracts = computedContracts.get();
-    const signer = network.signer.get();
+    const signer = network.signer;
     const provider = network.providers.get()?.json;
     const nonce = _nonce.get();
 
@@ -64,7 +80,7 @@ export function create<C extends Contracts>(
 
   async function resetNonce() {
     runInAction(() => _nonce.set(null));
-    const newNonce = (await network.signer.get()?.getTransactionCount()) ?? null;
+    const newNonce = (await network.signer?.getNonce()) ?? null;
     runInAction(() => _nonce.set(newNonce));
   }
 
@@ -83,7 +99,7 @@ export function create<C extends Contracts>(
   // queue up a transaction call in the txQueue
   async function queueCall(
     txRequest: TransactionRequest,
-    callOverrides?: CallOverrides
+    callOverrides?: Overrides
   ): Promise<{
     hash: string;
     wait: () => Promise<TransactionReceipt>;
@@ -128,15 +144,94 @@ export function create<C extends Contracts>(
     };
 
     // Queue the tx execution
-    queue.add(uuid(), {
+    const id = uuid();
+    let canceled = false;
+    const isCanceled = () => canceled;
+    queue.add(id, {
       execute,
       cancel: (error?: any) => reject(error ?? new Error('TX_CANCELLED')),
       estimateGas,
       stateMutability: '',
+      id,
+      isCanceled,
     });
 
     processQueue(); // Start processing the queue
+
+    const cancelNow = (reason: any = new Error('TX_CANCELLED')) => {
+      canceled = true;
+      try {
+        queue.remove(id);
+      } catch {}
+      try {
+        reject(reason);
+      } catch {}
+    };
+    (promise as any).queueId = id;
+    (promise as any).cancel = cancelNow;
     return promise; // Promise resolves when the tx is confirmed or rejected
+  }
+
+  async function processQueue() {
+    const txRequest = queue.next();
+    if (!txRequest) return;
+    processQueue(); // Start processing another request from the queue
+
+    // Run exclusive to avoid two tx requests awaiting the nonce in parallel and submitting with the same nonce.
+    const txResult = await submissionMutex.runExclusive(async () => {
+      // Early cancel check before any provider work
+      if (txRequest.isCanceled()) {
+        devWarn('[TXQueue] Canceled before estimation');
+        return txRequest.cancel(new Error('TX_CANCELLED'));
+      }
+      // First estimate gas to avoid increasing nonce before tx is sent
+      let txOverrides: Overrides = {};
+      try {
+        const { nonce } = await awaitValue(readyState); // wait for network if not ready
+        txOverrides.gasLimit = await txRequest.estimateGas();
+        txOverrides.nonce = nonce;
+      } catch (e) {
+        devWarn('[TXQueue] GAS ESTIMATION FAILED', e);
+        return txRequest.cancel(e);
+      }
+
+      // Final pre-send cancel check
+      if (txRequest.isCanceled()) {
+        devWarn('[TXQueue] Request canceled before submit');
+        return txRequest.cancel(new Error('TX_CANCELLED'));
+      }
+
+      // Execute the tx
+      let error: any;
+      try {
+        return await txRequest.execute(txOverrides);
+      } catch (e) {
+        devWarn('[TXQueue] EXECUTION FAILED', e);
+        error = e;
+      } finally {
+        // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
+        if (shouldResetNonce(error)) await resetNonce();
+        else if (shouldIncNonce(error)) incNonce();
+        if (error) txRequest.cancel(error);
+      }
+    });
+
+    // Await confirmation
+    if (txResult?.hash) {
+      try {
+        const tx = await txResult.wait();
+        if (isDev) console.log(`[TXQueue] TX Confirmed\n`, tx);
+      } catch (e) {
+        devWarn('[TXQueue] tx failed in block');
+        throw e; // bubble up error
+        // // Decode and log the revert reason.
+        // getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
+        //   console.warn('[TXQueue] Revert reason:', reason)
+        // ); // calling then instead of await to avoid blocking
+      }
+    }
+
+    processQueue();
   }
 
   // queue up a system call in the txQueue
@@ -151,78 +246,27 @@ export function create<C extends Contracts>(
   }> {
     // Extract existing overrides from function call
     const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
-    const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as CallOverrides;
+    const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as Overrides;
     const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
 
-    const populatedTx = await target.populateTransaction[prop as string](...argsWithoutOverrides);
+    const fn = target.getFunction(prop.toString());
+    const populatedTx = await fn.populateTransaction(...argsWithoutOverrides);
     return queueCall(populatedTx, callOverrides);
   }
 
-  async function processQueue() {
-    const txRequest = queue.next();
-    if (!txRequest) return;
-    processQueue(); // Start processing another request from the queue
-
-    // Run exclusive to avoid two tx requests awaiting the nonce in parallel and submitting with the same nonce.
-    const txResult = await submissionMutex.runExclusive(async () => {
-      // First estimate gas to avoid increasing nonce before tx is sent
-      let txOverrides: Overrides = {};
-      try {
-        const { nonce } = await awaitValue(readyState); // wait for network if not ready
-        txOverrides.gasLimit = await txRequest.estimateGas();
-        txOverrides.nonce = nonce;
-      } catch (e) {
-        console.warn('[TXQueue] GAS ESTIMATION FAILED');
-        return txRequest.cancel(e);
-      }
-
-      // Execute the tx
-      let error: any;
-      try {
-        return await txRequest.execute(txOverrides);
-      } catch (e) {
-        console.warn('[TXQueue] EXECUTION FAILED');
-        error = e;
-      } finally {
-        // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
-        if (shouldResetNonce(error)) await resetNonce();
-        else if (shouldIncNonce(error)) incNonce();
-        if (error) txRequest.cancel(error);
-      }
-    });
-
-    // Await confirmation
-    if (txResult?.hash) {
-      try {
-        const tx = await txResult.wait();
-        console.log(`[TXQueue] TX Confirmed\n`, tx);
-      } catch (e) {
-        console.warn('[TXQueue] tx failed in block');
-        throw e; // bubble up error
-        // // Decode and log the revert reason.
-        // getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
-        //   console.warn('[TXQueue] Revert reason:', reason)
-        // ); // calling then instead of await to avoid blocking
-      }
-    }
-
-    processQueue();
-  }
-
   // wraps contract call with txQueue
-  function proxyContract<Contract extends C[keyof C]>(contract: Contract): Contract {
-    return mapObject(contract as any, (value, key) => {
-      // Relay all base contract methods to the original target
-      if (key in BaseContract.prototype) return value;
-
-      // Relay everything that is not a function call to the original target
-      if (!(value instanceof Function)) return value;
-
-      // Channel all contract specific methods through the queue
-      return (...args: unknown[]) => queueCallSystem(contract, key as keyof BaseContract, args);
-    }) as Contract;
+  function proxyContract<Contract extends C[keyof C]>(
+    contract: any
+  ): any extends Contract ? any : never {
+    const methods: string[] = [];
+    contract.interface.forEachFunction((func: FunctionFragment) => methods.push(func.name));
+    methods.forEach((method) => {
+      contract[method] = (...args: unknown[]) => queueCallSystem(contract, method, args);
+    });
+    return contract;
   }
 
+  // todo: optimize: this runs on every call, should only need once at the start + upon system update
   const proxiedContracts = computed(() => {
     const contracts = readyState.get()?.contracts;
     return contracts ? mapObject(contracts, proxyContract) : undefined;
@@ -236,6 +280,6 @@ export function create<C extends Contracts>(
       systems: cachedProxiedContracts,
     },
     dispose,
-    ready: computed(() => (readyState ? true : undefined)),
+    ready: computed(() => (readyState.get() ? true : undefined)),
   };
 }

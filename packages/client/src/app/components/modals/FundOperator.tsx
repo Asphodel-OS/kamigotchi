@@ -1,308 +1,307 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-// import converter from 'bech32-converting';
-import { waitForActionCompletion } from 'network/utils';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
-import { ActionButton, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
+import { IconButton, ModalWrapper, Overlay, Text } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
-import { useAccount, useNetwork } from 'app/stores';
+import { UIComponent } from 'app/root/types';
+import { useAccount, useNetwork, useTokens } from 'app/stores';
+import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
+import { EntityID, EntityIndex } from 'engine/recs';
+import { waitForActionCompletion } from 'network/utils';
+import { useBridgeOpener } from 'network/utils/hooks';
+import { parseTokenBalance } from 'utils/numbers';
 import { playFund } from 'utils/sounds';
 
 export const FundOperator: UIComponent = {
   id: 'FundOperator',
   Render: () => {
-      const layers = useLayers();
+    const layers = useLayers();
 
-      const { network } = layers;
-      const { actions, world } = network;
-      const { account: kamiAccount } = useAccount();
-      const { selectedAddress, apis } = useNetwork();
+    const { network } = layers;
+    const { actions, world } = network;
 
-      const [isFunding, setIsFunding] = useState(true);
-      const [amount, setAmount] = useState(GasConstants.Full);
-      const [statusText, setStatusText] = useState('');
-      const [statusColor, setStatusColor] = useState('grey');
+    const kamiAccount = useAccount((s) => s.account);
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const ownerBalance = useTokens((s) => s.eth.balance);
+    const openBridge = useBridgeOpener();
 
-      /////////////////
-      // SUBSCRIPTIONS
+    const [isFunding, setIsFunding] = useState(true);
+    const [amount, setAmount] = useState(GasConstants.Full);
+    const [statusText, setStatusText] = useState('');
+    const [statusColor, setStatusColor] = useState('grey');
+    const [currBalance, setCurrBalance] = useState(0);
 
-      useWatchBlockNumber({
-        onBlockNumber: (n) => {
-          refetchOwnerBalance();
-          refetchOperatorBalance();
+    const fullGas = GasConstants.Full; // js floating points are retarded
+
+    /////////////////
+    // SUBSCRIPTIONS
+
+    useWatchBlockNumber({
+      onBlockNumber: (n) => {
+        refetchOwnerBalance();
+        refetchOperatorBalance();
+      },
+    });
+
+    const { data: OwnerBalance, refetch: refetchOwnerBalance } = useBalance({
+      address: kamiAccount.ownerAddress,
+    });
+
+    const { data: OperatorBalance, refetch: refetchOperatorBalance } = useBalance({
+      address: kamiAccount.operatorAddress,
+    });
+
+    // update the operating balance when mode or balanceds change
+    useEffect(() => {
+      const balanceResult = isFunding ? OwnerBalance : OperatorBalance;
+      const currBal = parseTokenBalance(balanceResult?.value ?? 0n, GasExponent);
+      setCurrBalance(currBal);
+    }, [isFunding, OwnerBalance, OperatorBalance]);
+
+    // run the primary check(s) for this validator, track in store for easy access
+    useEffect(() => {
+      if (amount >= currBalance - GasConstants.Warning) {
+        setStatusText('Leave a little for gas!');
+        setStatusColor('#FF785B');
+      } else {
+        setStatusColor('grey');
+        // placeholder gas estimation
+        if (isFunding) {
+          if (amount < GasConstants.Low)
+            setStatusText('This might not last very long. Consider more?');
+          else if (amount < GasConstants.Full) setStatusText('This should last you for a while');
+          else setStatusText('This should last you for quite a while');
+        } else {
+          const remainBal = currBalance - amount;
+          setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ETH left');
+        }
+      }
+    }, [amount, currBalance]);
+
+    const needsToBridge = () => {
+      return ownerBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+    };
+
+    /////////////////
+    // ACTIONS
+
+    const fundTx = async () => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'AccountFund',
+        params: [amount.toString()],
+        description: `Funding Operator ${amount.toString()} ETH`,
+        execute: async () => {
+          return api.send(kamiAccount.operatorAddress, amount);
         },
       });
+      const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
+      await waitForActionCompletion(actions!.Action, actionIndex);
+    };
 
-      const { data: OwnerBalance, refetch: refetchOwnerBalance } = useBalance({
-        address: kamiAccount.ownerAddress,
+    // refund the specified eth balance to the owner from the burner/operator address
+    const refundTx = async () => {
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'AccountRefund',
+        params: [amount.toString()],
+        description: `Refunding Owner ${amount.toString()} ETH`,
+        execute: async () => {
+          return network.api.player.send(kamiAccount.ownerAddress, amount);
+        },
       });
+      const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
+      await waitForActionCompletion(actions!.Action, actionIndex);
+    };
 
-      const { data: OperatorBalance, refetch: refetchOperatorBalance } = useBalance({
-        address: kamiAccount.operatorAddress,
-      });
+    /////////////////
+    // INTERACTIONS
 
-      /////////////////
-      // ACTIONS
+    const triggerAction = async () => {
+      playFund();
+      isFunding ? await fundTx() : await refundTx();
+    };
 
-      const fundTx = async () => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
+    const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Enter') {
+        triggerAction();
+      }
+    };
 
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'AccountFund',
-          params: [amount.toString()],
-          description: `Funding Operator ${amount.toString()} ETH`,
-          execute: async () => {
-            return api.send(kamiAccount.operatorAddress, amount);
-          },
-        });
-        const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        await waitForActionCompletion(actions!.Action, actionIndex);
-      };
+    // handle the input balance change based on mode and state
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      let newValue = Number(event.target.value);
+      if (isFunding) {
+        newValue = Math.max(fullGas / 10, newValue);
+        newValue = Math.min(currBalance, newValue);
+        newValue = Math.min(fullGas * 10, newValue);
+      } else {
+        newValue = Math.min(currBalance, newValue);
+      }
 
-      // refund the specified eth balance to the owner from the burner/operator address
-      const refundTx = async () => {
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'AccountRefund',
-          params: [amount.toString()],
-          description: `Refunding Owner ${amount.toString()} ETH`,
-          execute: async () => {
-            return network.api.player.send(kamiAccount.ownerAddress, amount);
-          },
-        });
-        const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        await waitForActionCompletion(actions!.Action, actionIndex);
-      };
+      newValue = Math.max(0, newValue);
+      setAmount(newValue);
+    };
 
-      /////////////////
-      // INTERACTIONS
+    ///////////////
+    // DISPLAY
 
-      const chooseTx = async () => {
-        playFund();
-        isFunding ? await fundTx() : await refundTx();
-      };
-
-      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-          chooseTx();
-        }
-      };
-
-      const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(Number(event.target.value));
-      };
-
-      ///////////////
-      // DISPLAY
-
-      const TxButton = () => {
-        const text = isFunding! ? 'Fund Operator' : 'Send to Owner';
-        return <ActionButton onClick={chooseTx} size='large' text={text} />;
-      };
-
-      const StateBox = (fundState: boolean) => {
-        const text = fundState ? 'Owner' : 'Operator';
-        const balance = fundState
-          ? Number(formatUnits(OwnerBalance?.value ?? 0n, GasExponent)).toFixed(2)
-          : Number(formatUnits(OperatorBalance?.value ?? 0n, GasExponent)).toFixed(2);
-        const color = fundState == isFunding ? 'grey' : 'white';
-        const textColor = fundState == isFunding ? 'white' : 'black';
-        return (
-          <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFunding(fundState)}>
-            <Description style={{ color: textColor }}> {balance} ETH </Description>
-            <SubDescription style={{ color: textColor }}> {text} </SubDescription>
-          </BoxButton>
-        );
-      };
-
-      useEffect(() => {
-        const curBal = Number(
-          formatUnits((isFunding ? OwnerBalance : OperatorBalance)?.value ?? 0n, GasExponent)
-        );
-
-        if (amount > curBal) {
-          setStatusText('Insufficient balance');
-          setStatusColor('#FF785B');
-        } else if (amount == curBal) {
-          setStatusText('Leave a little for gas!');
-          setStatusColor('#FF785B');
-        } else {
-          setStatusColor('grey');
-          // placeholder gas estimation
-          if (isFunding) {
-            if (amount < GasConstants.Low)
-              setStatusText('This might not last very long. Consider more?');
-            else if (amount < GasConstants.Full) setStatusText('This should last you for a while');
-            else setStatusText('This should last you for quite a while');
-          } else {
-            const remainBal = curBal - amount;
-            setStatusText("You'd have " + remainBal.toFixed(4).toString() + ' ETH left');
-          }
-        }
-      }, [amount, OwnerBalance, OperatorBalance, isFunding]);
-
+    const StateBox = (fundState: boolean) => {
+      const text = fundState ? 'Owner' : 'Operator';
+      const balance = fundState
+        ? Number(formatUnits(OwnerBalance?.value ?? 0n, GasExponent)).toFixed(5)
+        : Number(formatUnits(OperatorBalance?.value ?? 0n, GasExponent)).toFixed(5);
+      const color = fundState == isFunding ? 'grey' : 'white';
+      const textColor = fundState == isFunding ? 'white' : 'black';
       return (
-        <ModalWrapper id='operatorFund' canExit overlay>
-          <Grid>
-            <Header>Operator gas</Header>
+        <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFunding(fundState)}>
+          <Overlay top={0.3} left={0.3}>
+            <Text size={0.75} color={textColor}>
+              {text}
+            </Text>
+          </Overlay>
+          <Text size={1.2} color={textColor}>
+            {balance}
+          </Text>
+          <Overlay bottom={0.3} right={0.3}>
+            <Text size={0.9} color={textColor}>
+              ETH
+            </Text>
+          </Overlay>
+        </BoxButton>
+      );
+    };
+
+    /////////////////
+    // RENDER
+
+    return (
+      <ModalWrapper id='operatorFund' canExit overlay truncate>
+        <Header>
+          <Text size={1.5}>Operator gas</Text>
+          <Text size={0.9}>Your Operator needs gas to function.</Text>
+        </Header>
+        <Row>
+          {StateBox(true)}
+          {StateBox(false)}
+        </Row>
+        {isFunding && needsToBridge() ? (
+          <BridgeGroup>
+            <WarnText>You need to bridge some ETH first.</WarnText>
+            <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+          </BridgeGroup>
+        ) : (
+          <Column>
             <Row>
-              {StateBox(true)}
-              {StateBox(false)}
-            </Row>
-            <Description>
-              Fund operator. You need gas to function. Better description to follow.
-            </Description>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-              }}
-            >
               <Input
                 style={{ pointerEvents: 'auto' }}
                 type='number'
-                step='1'
+                value={amount.toFixed(5)}
+                step={0.0001}
+                min={0}
+                max={currBalance}
                 onKeyDown={(e) => catchKeys(e)}
-                placeholder={GasConstants.Full.toString()}
                 onChange={(e) => handleChange(e)}
-              ></Input>
-              <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
-            </div>
-            <GasLink
-              key='gas'
-              href={`https://www.gas.zip/`}
-              target='_blank'
-              rel='noopener noreferrer'
-              linkColor='#d44c79'
-            >
-              Not enough gas? Get some here!
-            </GasLink>
-            <Column>{TxButton()}</Column>
-          </Grid>
-        </ModalWrapper>
-      );
+                placeholder={GasConstants.Full.toString()}
+              />
+              <IconButton
+                onClick={triggerAction}
+                scale={3}
+                text={isFunding! ? 'Fund Operator' : 'Send to Owner'}
+              />
+            </Row>
+            <WarnText style={{ color: statusColor }}>{statusText}</WarnText>
+          </Column>
+        )}
+      </ModalWrapper>
+    );
   },
 };
 
+const Header = styled.div`
+  color: black;
+  padding: 1.2rem;
+  gap: 0.3rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+`;
+
 const BoxButton = styled.button`
+  position: relative;
+  border: solid black 0.15rem;
+  background-color: #fff;
+
+  width: 45%;
+  padding: 1.8rem 0;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 90%;
-  min-width: 100px;
-  padding: 0.5rem 0;
-  margin: 0 0.5rem;
-
-  background-color: #fff;
-  border-style: solid;
-  border-width: 0.15rem;
-  border-color: black;
-  color: black;
 
   pointerevents: 'auto';
 `;
 
-const Header = styled.p`
-  color: black;
-  padding: 0.75rem;
-
-  font-family: Pixel;
-  font-size: 1.5rem;
-  text-align: center;
-`;
-
-const Grid = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-
-  padding: 1rem 1rem;
-  margin: 2rem 0;
-`;
-
 const Row = styled.div`
   display: flex;
-  flex-direction: row wrap;
+  flex-direction: row nowrap;
   align-items: center;
-  width: 100%;
+  justify-content: center;
+
+  gap: 0.6rem;
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
-`;
-
-const Description = styled.p`
-  font-size: 1rem;
-  color: black;
-  text-align: center;
-  padding: 0.5rem;
-  font-family: Pixel;
-  width: 100%;
+  gap: 1rem;
+  padding: 0.6rem;
+  margin-top: 1.2rem;
 `;
 
 const Input = styled.input`
-  width: 100%;
+  display: inline-block;
+  border-radius: 0.45rem;
+  width: 12rem;
+  padding: 1vh 0.6rem;
 
+  font-size: 1.2rem;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  font-size: 1.5rem;
+
   cursor: pointer;
-  justify-content: center;
-  font-family: Pixel;
-
-  border-width: 0px;
-  padding: 1rem 1rem;
-
   &:focus {
     outline: none;
   }
 `;
 
-const SubDescription = styled.p`
-  font-size: 0.8rem;
-  color: grey;
-  text-align: center;
-  padding: 0.1rem;
-  font-family: Pixel;
-  width: 100%;
-`;
-
 const WarnText = styled.div`
-  font-size: 0.8rem;
-  color: #ff785b;
-  text-align: center;
-  padding: 0.75rem;
-  font-family: Pixel;
-
-  cursor: pointer;
-  border-width: 0px;
   background-color: #ffffff;
+  color: #ff785b;
+  padding: 0.75rem;
+
+  font-size: 0.8rem;
+  text-align: center;
 `;
 
-const GasLink = styled.a<{ linkColor?: string }>`
-  color: ${({ linkColor }) => linkColor ?? '#0077cc'};
-  font-size: 0.8rem;
-  margin-bottom: 1rem;
-  text-decoration: underline;
-  &:hover {
-    text-decoration: none;
-  }
+const BridgeGroup = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
+  padding: 0.6rem;
 `;

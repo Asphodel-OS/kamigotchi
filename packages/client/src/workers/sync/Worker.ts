@@ -1,4 +1,3 @@
-import { Components, ComponentValue, SchemaOf } from '@mud-classic/recs';
 import {
   awaitStreamValue,
   DoWork,
@@ -6,6 +5,7 @@ import {
   keccak256,
   streamToDefinedComputed,
 } from '@mud-classic/utils';
+import { Components, ComponentValue, SchemaOf } from 'engine/recs';
 import { computed } from 'mobx';
 import {
   bufferTime,
@@ -372,6 +372,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     } catch (e) {
       this.retryCount++;
       console.error(`Failed to save state cache to store, attempt ${this.retryCount}`);
+      console.error(e);
       if (this.hasExceededMaxRetries()) {
         this.setLoadingState({
           state: SyncState.FAILED,

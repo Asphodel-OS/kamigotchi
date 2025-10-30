@@ -1,31 +1,28 @@
-import { EntityID } from '@mud-classic/recs';
 import InfoIcon from '@mui/icons-material/Info';
+import { EntityID } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, TextTooltip } from 'app/components/library';
+import { ActionButton, IconButton, TextTooltip } from 'app/components/library';
 import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
+import { TokenIcons } from 'assets/images/tokens';
+import { GasConstants } from 'constants/gas';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
+import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { BackButton, Description, Row } from './components';
 import { Section } from './components/shared';
 
-const IS_LOCAL = import.meta.env.MODE === 'puter';
-
 export const Registration = ({
   address,
-  tokens,
   actions,
   utils,
 }: {
   address: {
     selected: string;
     burner: string;
-  };
-  tokens: {
-    ethAddress: string;
   };
   actions: {
     createAccount: (username: string) => EntityID | void;
@@ -36,8 +33,8 @@ export const Registration = ({
     waitForActionCompletion: (action: EntityID) => Promise<void>;
   };
 }) => {
-  const { ethAddress } = tokens;
-  const { balances: tokenBalances } = useTokens();
+  const openBridge = useBridgeOpener();
+  const ethBalance = useTokens((s) => s.eth.balance);
 
   const [name, setName] = useState('');
 
@@ -52,11 +49,8 @@ export const Registration = ({
     return OperatorCache.has(address);
   };
 
-  const hasEth = () => {
-    if (IS_LOCAL) return true; // skip eth balance check on local
-    const ethBalances = tokenBalances.get(ethAddress);
-    if (!ethBalances) return false;
-    return ethBalances.balance > 0;
+  const needsToBridge = () => {
+    return ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
   };
 
   /////////////////
@@ -125,18 +119,13 @@ export const Registration = ({
     );
   };
 
-  const getSubmitTooltip = () => {
-    if (isOperaterTaken(address.burner)) return ['That Operator address is already taken.'];
-    else if (isNameTaken(name)) return ['That name is already taken.'];
-    else if (name === '') return [`Name cannot be empty.`];
-    else if (/\s/.test(name)) return [`Name cannot contain whitespace.`];
-    else if (!hasEth())
-      return [
-        `You need to some ETH to register.`,
-        '',
-        'you can bridge some over at bridge.initia.xyz',
-      ];
-    return ['Register'];
+  const getError = (): string | null => {
+    if (needsToBridge()) return 'You need to bridge some ETH to register.';
+    if (isOperaterTaken(address.burner)) return 'That Operator address is already taken.';
+    if (name === '') return 'Name cannot be empty.';
+    if (/\s/.test(name)) return 'Name cannot contain whitespace.';
+    if (isNameTaken(name)) return 'That name is already taken.';
+    return null;
   };
 
   return (
@@ -155,16 +144,21 @@ export const Registration = ({
           style={{ pointerEvents: 'auto' }}
         />
       </Row>
-      <Row>
-        <BackButton step={2} setStep={utils.setStep} />
-        <TextTooltip text={getSubmitTooltip()} alignText='center'>
+      <Text role='status' aria-live='polite'>
+        {getError() ?? ''}
+      </Text>
+      {needsToBridge() ? (
+        <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+      ) : (
+        <Row>
+          <BackButton step={2} setStep={utils.setStep} />
           <ActionButton
             text='Next ⟶'
-            disabled={getSubmitTooltip()[0] !== 'Register'} // so hacky..
+            disabled={!!getError()}
             onClick={() => handleAccountCreation()}
           />
-        </TextTooltip>
-      </Row>
+        </Row>
+      )}
     </Container>
   );
 };
@@ -203,4 +197,10 @@ export const Input = styled.input`
 
   font-size: 0.75rem;
   text-align: center;
+`;
+
+const Text = styled.div`
+  font-size: 0.75vw;
+  margin: 1vw 0 2vw 0;
+  color: red;
 `;

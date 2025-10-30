@@ -1,14 +1,9 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
-import { uuid } from '@mud-classic/utils';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountByID as _getAccountByID } from 'app/cache/account';
-import {
-  getItem as _getItem,
-  getItemByIndex as _getItemByIndex,
-  getAllItems,
-} from 'app/cache/item';
+import { getItemByIndex as _getItemByIndex, getAllItems } from 'app/cache/item';
 import { getTrade as _getTrade, getTradeHistory as _getTradeHistory } from 'app/cache/trade';
 import { ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
@@ -17,8 +12,9 @@ import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { TradeIcon } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getMusuBalance as _getMusuBalance, Item } from 'network/shapes/Item';
+import { Item } from 'network/shapes/Item';
 import { queryTrades as _queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
 import { CURRENCIES } from './constants';
@@ -39,23 +35,9 @@ export const TradingModal: UIComponent = {
 
     const {
       network,
-      data: {
-        accountEntity,
-      },
-      types: {
-        ActionComp,
-      },
-      utils: {
-        getAccount,
-        getTrade,
-        queryTrades,
-        entityToIndex,
-        getItemByIndex,
-        getMusuBalance,
-        getItem,
-        getAccountByID,
-        getTradeHistory,
-      },
+      data: { accountEntity },
+      types: { ActionComp },
+      utils: { getAccount, getTrade, queryTrades, entityToIndex, getItemByIndex, getAccountByID },
     } = (() => {
       const { network } = layers;
       const { world, components: comps, actions } = network;
@@ -77,10 +59,8 @@ export const TradingModal: UIComponent = {
           getTrade: (entity: EntityIndex) => _getTrade(world, comps, entity, tradeOptions),
           queryTrades: () => _queryTrades(comps),
           getItemByIndex: (index: number) => _getItemByIndex(world, comps, index),
-          getMusuBalance: () => _getMusuBalance(world, comps, accountEntity),
-          getItem: (entity: EntityIndex) => _getItem(world, comps, entity),
           getAccountByID: (id: EntityID) => _getAccountByID(world, comps, id, accountOptions),
-          getTradeHistory: (history: TradeHistory) => _getTradeHistory(world, comps, history),
+          getTradeHistory: (entity: EntityIndex) => _getTradeHistory(world, comps, entity),
         },
       };
     })();
@@ -107,7 +87,7 @@ export const TradingModal: UIComponent = {
     useEffect(() => {
       refreshItemRegistry();
       const account = getAccount(accountEntity);
-      refreshTrades(account);
+      if (account.index !== NullAccount.index) refreshTrades(account); // tends to render before account is loaded
       setAccount(account);
 
       const updateSync = () => setTick(Date.now());
@@ -126,7 +106,7 @@ export const TradingModal: UIComponent = {
     // update trade history whenever tab is checked
     useEffect(() => {
       if (!modalVisible || tab !== `History`) return;
-      getTradeHistory(account.id);
+      getKamidenHistory(account.id);
     }, [tab]);
 
     // open account modal on events from offers
@@ -214,20 +194,20 @@ export const TradingModal: UIComponent = {
 
     // get trade history from Kamiden
     // TODO: make this subscription based
-    // async function getTradeHistory(accountId: string) {
-    //   const parsedAccountId = BigInt(accountId).toString();
-    //   try {
-    //     const request: TradesRequest = {
-    //       AccountId: parsedAccountId,
-    //       Timestamp: '0',
-    //     };
-    //     const response = await KamidenClient?.getTradeHistory(request);
-    //     setTradeHistory(response?.Trades || []);
-    //   } catch (error) {
-    //     console.error('Error getting trade history :', error);
-    //     throw error;
-    //   }
-    // }
+    async function getKamidenHistory(accountId: string) {
+      const parsedAccountId = BigInt(accountId).toString();
+      try {
+        const request: TradesRequest = {
+          AccountId: parsedAccountId,
+          Timestamp: '0',
+        };
+        const response = await KamidenClient?.getTradeHistory(request);
+        setTradeHistory(response?.Trades || []);
+      } catch (error) {
+        console.error('Error getting trade history :', error);
+        throw error;
+      }
+    }
 
     /////////////////
     // ACTIONS
@@ -335,9 +315,7 @@ export const TradingModal: UIComponent = {
             actions={{ cancelTrade, executeTrade }}
             controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
             data={{ account, items, trades }}
-            utils={{
-              getItemByIndex,
-            }}
+            utils={{ getItemByIndex }}
             isVisible={tab === `Orderbook`}
           />
           <Management

@@ -6,7 +6,7 @@ import {
   HasValue,
   runQuery,
   World,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 
 import { Components } from 'network/';
 import { getTrait, Trait } from '../Trait';

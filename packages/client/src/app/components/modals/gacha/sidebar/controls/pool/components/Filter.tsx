@@ -1,7 +1,7 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { CircleExitButton, Overlay } from 'app/components/library';
-import { useEffect, useState } from 'react';
 
 // TODO (jb): fire these filter updates off on a debounce
 export const Filter = ({

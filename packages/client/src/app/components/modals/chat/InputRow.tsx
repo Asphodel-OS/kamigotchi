@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';

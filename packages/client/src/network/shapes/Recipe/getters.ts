@@ -1,4 +1,4 @@
-import { Has, runQuery, World } from '@mud-classic/recs';
+import { Has, runQuery, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { NullRecipe } from './constants';

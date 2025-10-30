@@ -6,15 +6,17 @@ export const config: PrivyClientConfig = {
   defaultChain: DefaultChain,
   loginMethods: ['wallet'],
   embeddedWallets: {
-    createOnLogin: 'all-users',
-    noPromptOnSignature: true,
-    waitForTransactionConfirmation: false,
+    ethereum: {
+      createOnLogin: 'all-users',
+    },
+    showWalletUIs: false,
   },
   appearance: {
     theme: 'light',
     accentColor: '#676FFF',
     logo: import.meta.env.VITE_PRIVY_APP_LOGO,
     showWalletLoginFirst: true,
+    walletChainType: 'ethereum-only',
     walletList: ['detected_ethereum_wallets'],
   },
 };

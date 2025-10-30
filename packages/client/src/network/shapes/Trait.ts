@@ -1,11 +1,4 @@
-import {
-  EntityIndex,
-  Has,
-  World,
-  getComponentValue,
-  hasComponent,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityIndex, Has, World, getComponentValue, hasComponent, runQuery } from 'engine/recs';
 
 import { Affinity } from 'constants/affinities';
 import { Components } from 'network/';

@@ -1,150 +1,165 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
-import { ActionButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
+import { ActionButton, IconButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
-import { useAccount, useNetwork, useVisibility } from 'app/stores';
+import { UIComponent } from 'app/root/types';
+import { useAccount, useNetwork, useTokens, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
+import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants, GasExponent } from 'constants/gas';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
+import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
 import { playFund, playSuccess } from 'utils/sounds';
 
 export const GasHarasser: UIComponent = {
   id: 'GasHarasser',
   Render: () => {
-      const layers = useLayers();
-      const { network } = layers;
-      const { actions, world } = network;
+    const layers = useLayers();
+    const { network } = layers;
+    const { actions, world } = network;
 
-      const { account, validations, setValidations } = useAccount();
-      const { selectedAddress, apis, validations: networkValidations } = useNetwork();
-      const { validators, setValidators, toggleModals } = useVisibility();
+    const account = useAccount((s) => s.account);
+    const validations = useAccount((s) => s.validations);
+    const setValidations = useAccount((s) => s.setValidations);
 
-      const fullGas = GasConstants.Full; // js floating points are retarded
-      const [value, setValue] = useState(fullGas);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const apis = useNetwork((s) => s.apis);
+    const networkValidations = useNetwork((s) => s.validations);
 
-      /////////////////
-      // SUBSCRIPTIONS
+    const validators = useVisibility((s) => s.validators);
+    const setValidators = useVisibility((s) => s.setValidators);
+    const ethBalance = useTokens((s) => s.eth.balance);
 
-      useWatchBlockNumber({
-        onBlockNumber: (n) => {
-          if (n % 4n === 0n) refetch();
+    const openBridge = useBridgeOpener();
+
+    const fullGas = GasConstants.Full; // js floating points are retarded
+    const [value, setValue] = useState(fullGas);
+
+    /////////////////
+    // SUBSCRIPTIONS
+
+    useWatchBlockNumber({
+      onBlockNumber: (n) => {
+        if (n % 4n === 0n) refetch();
+      },
+    });
+
+    const { data: operatorBalance, refetch } = useBalance({
+      address: account.operatorAddress,
+    });
+
+    /////////////////
+    // TRACKING
+
+    // run the primary check(s) for this validator, track in store for easy access
+    useEffect(() => {
+      if (!validations.operatorMatches) return;
+      const hasGas = hasEnoughGas(operatorBalance?.value ?? BigInt(0));
+      if (hasGas !== validations.operatorHasGas) {
+        setValidations({ ...validations, operatorHasGas: hasGas });
+      }
+    }, [validations.operatorMatches, operatorBalance]);
+
+    // adjust actual visibility of windows based on above determination
+    useEffect(() => {
+      const isVisible =
+        networkValidations.authenticated &&
+        networkValidations.chainMatches &&
+        validations.accountExists &&
+        validations.operatorMatches &&
+        !validations.operatorHasGas;
+
+      if (isVisible != validators.gasHarasser) {
+        setValidators({
+          walletConnector: false,
+          accountRegistrar: false,
+          operatorUpdater: false,
+          gasHarasser: isVisible,
+        });
+      }
+    }, [networkValidations, validations.operatorMatches, validations.operatorHasGas]);
+
+    /////////////////
+    // INTERPRETATION
+
+    // abstracted out for easy modification and readability. keyword: 'Enough'
+    const hasEnoughGas = (value: bigint) => {
+      return Number(formatUnits(value, GasExponent)) > GasConstants.Warning;
+    };
+
+    const needsToBridge = () => {
+      return ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+    };
+
+    /////////////////
+    // ACTION
+
+    const fundTx = async () => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        action: 'AccountFund',
+        params: [value.toString()],
+        description: `Funding Operator ${value.toLocaleString()} ETH`,
+        execute: async () => {
+          return api.send(account.operatorAddress, value);
         },
       });
+      const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
+      await waitForActionCompletion(actions!.Action, actionIndex);
+    };
 
-      const { data: balance, refetch } = useBalance({
-        address: account.operatorAddress,
-      });
+    /////////////////
+    // INTERACTION
 
-      /////////////////
-      // TRACKING
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      let newValue = Number(event.target.value);
+      newValue = Math.max(fullGas / 10, newValue);
+      newValue = Math.min(ethBalance, newValue);
+      newValue = Math.min(fullGas * 10, newValue);
+      setValue(newValue);
+    };
 
-      // run the primary check(s) for this validator, track in store for easy access
-      useEffect(() => {
-        if (!validations.operatorMatches) return;
-        const hasGas = hasEnoughGas(balance?.value ?? BigInt(0));
-        if (hasGas == validations.operatorHasGas) return; // no change
-        setValidations({ ...validations, operatorHasGas: hasGas });
-      }, [validations.operatorMatches, balance]);
+    const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Enter') feed();
+    };
 
-      // adjust actual visibility of windows based on above determination
-      useEffect(() => {
-        const isVisible =
-          networkValidations.authenticated &&
-          networkValidations.chainMatches &&
-          validations.accountExists &&
-          validations.operatorMatches &&
-          !validations.operatorHasGas;
+    const feed = async () => {
+      playFund();
+      await fundTx();
+      playSuccess();
+    };
 
-        if (isVisible != validators.gasHarasser) {
-          setValidators({
-            walletConnector: false,
-            accountRegistrar: false,
-            operatorUpdater: false,
-            gasHarasser: isVisible,
-          });
-        }
-      }, [networkValidations, validations.operatorMatches, validations.operatorHasGas]);
+    /////////////////
+    // DISPLAY
 
-      /////////////////
-      // INTERPRETATION
-
-      // abstracted out for easy modification and readability. keyword: 'Enough'
-      const hasEnoughGas = (value: bigint) => {
-        return Number(formatUnits(value, GasExponent)) > GasConstants.Warning;
-      };
-
-      /////////////////
-      // ACTION
-
-      const fundTx = async () => {
-        const api = apis.get(selectedAddress);
-        if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-        const actionID = uuid() as EntityID;
-        actions.add({
-          action: 'AccountFund',
-          params: [value.toString()],
-          description: `Funding Operator ${value.toLocaleString()} ETH`,
-          execute: async () => {
-            return api.send(account.operatorAddress, value);
-          },
-        });
-        const actionIndex = world.entityToIndex.get(actionID) as EntityIndex;
-        await waitForActionCompletion(actions!.Action, actionIndex);
-      };
-
-      /////////////////
-      // INTERACTION
-
-      const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let newValue = Number(event.target.value);
-        newValue = Math.max(fullGas / 10, newValue);
-        newValue = Math.min(fullGas * 10, newValue);
-        setValue(newValue);
-      };
-
-      const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') feed();
-      };
-
-      const feed = async () => {
-        playFund();
-        await fundTx();
-        playSuccess();
-      };
-
-      /////////////////
-      // DISPLAY
-
-      return (
-        <ValidatorWrapper
-          id='gasHarasser'
-          canExit
-          divName='gasHarasser'
-          title='Embedded wallet is empty!'
-          errorPrimary={`pls feed me pls a crumb of ETH ._.`}
-        >
-          <GasLink
-            key='gas'
-            href={`https://www.gas.zip/`}
-            target='_blank'
-            rel='noopener noreferrer'
-            linkColor='#d44c79'
-          >
-            Not enough gas? Get some here!
-          </GasLink>
-          <TextTooltip text={[account.operatorAddress, '(click to copy)']}>
-            <Description onClick={() => copy(account.operatorAddress)}>
-              Address: {abbreviateAddress(account.operatorAddress)}
-            </Description>
-          </TextTooltip>
+    return (
+      <ValidatorWrapper
+        id='gasHarasser'
+        canExit
+        divName='gasHarasser'
+        title='Embedded wallet is empty!'
+        errorPrimary={`pls feed me pls a crumb of ETH ._.`}
+      >
+        <TextTooltip text={[account.operatorAddress, '(click to copy)']}>
+          <Description onClick={() => copy(account.operatorAddress)}>
+            Address: {abbreviateAddress(account.operatorAddress)}
+          </Description>
+        </TextTooltip>
+        {needsToBridge() ? (
+          <Bridge>
+            <Text> Not enough gas. You need to bridge some ETH first.</Text>
+            <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+          </Bridge>
+        ) : (
           <Row>
             <Input
               type='number'
@@ -156,8 +171,9 @@ export const GasHarasser: UIComponent = {
             />
             <ActionButton text='feed' onClick={feed} />
           </Row>
-        </ValidatorWrapper>
-      );
+        )}
+      </ValidatorWrapper>
+    );
   },
 };
 
@@ -196,11 +212,15 @@ const Input = styled.input`
   justify-content: center;
 `;
 
-const GasLink = styled.a<{ linkColor?: string }>`
-  color: ${({ linkColor }) => linkColor ?? '#0077cc'};
-  font-size: 0.8rem;
-  text-decoration: underline;
-  &:hover {
-    text-decoration: none;
-  }
+const Bridge = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  margin-top: 1rem;
+`;
+
+const Text = styled.div`
+  font-size: 0.75rem;
+  margin: 0 0 2rem 0;
+  color: red;
 `;

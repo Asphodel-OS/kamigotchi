@@ -36,7 +36,7 @@ const run = async () => {
     abi,
     signer
   );
-  console.log('createSystem: ' + minterSystem.address);
+  console.log('createSystem: ' + (await minterSystem.getAddress()));
 
   const increment = 10;
   for (let i = 0; i < toMint; i += increment) {

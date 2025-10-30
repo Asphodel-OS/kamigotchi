@@ -18,8 +18,6 @@ export const Skills = ({
   actions: {
     upgrade: (skill: Skill) => void;
     reset: (kami: Kami) => void;
-    onyxApprove: (price: number) => void;
-    onyxRespec: (kami: Kami) => void;
   };
   data: {
     account: Account;

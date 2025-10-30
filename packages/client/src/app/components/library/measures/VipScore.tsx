@@ -1,10 +1,11 @@
-import { ItemImages } from 'assets/images/items';
 import styled from 'styled-components';
+
+import { TokenIcons } from 'assets/images/tokens';
 
 export const VipScore = () => {
   return (
     <Row>
-      <img style={{ height: '1.3rem', width: '1.3rem' }} src={ItemImages.init} alt='initia' />
+      <img style={{ height: '1.3rem', width: '1.3rem' }} src={TokenIcons.init} alt='initia' />
       <div style={{ fontSize: '0.7rem' }}>0 VIP score</div>
     </Row>
   );

@@ -1,5 +1,5 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { useLayers } from 'app/root/hooks';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
@@ -14,11 +14,10 @@ import {
 } from 'app/cache/skills';
 import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useSelected, useVisibility } from 'app/stores';
-import { ONYX_INDEX } from 'constants/items';
+import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Condition } from 'network/shapes/Conditional';
-import { getItemBalance as _getItemBalance, getItemByIndex } from 'network/shapes/Item';
+import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { getCompAddr } from 'network/shapes/utils';
@@ -38,11 +37,7 @@ export const KamiModal: UIComponent = {
 
     const {
       network,
-      data: {
-        account,
-        onyxItem,
-        spender
-      },
+      data: { account, spender },
       utils: {
         calcExpRequirement,
         getItemBalance,
@@ -51,14 +46,14 @@ export const KamiModal: UIComponent = {
         getKamiByID,
         getOwner,
         getSkill,
-        getUpgradeError,
+        getSkillUpgradeError,
         getTreePoints,
         getTreeRequirement,
         queryKamiByIndex,
         parseSkillRequirement,
         getEntityIndex,
-        getNodeByIndex
-      }
+        getNodeByIndex,
+      },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -79,7 +74,6 @@ export const KamiModal: UIComponent = {
         network,
         data: {
           account,
-          onyxItem: getItemByIndex(world, components, ONYX_INDEX),
           spender: getCompAddr(world, components, 'component.token.allowance'),
         },
         utils: {
@@ -107,10 +101,10 @@ export const KamiModal: UIComponent = {
       };
     })();
 
-    const { actions, api } = network;
+    /////////////////
+    // INSTANTIATIONS
 
-    const ownerAPIs = useNetwork((s) => s.apis);
-    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const { actions, api } = network;
 
     const kamiIndex = useSelected((s) => s.kamiIndex);
     const kamiModalOpen = useVisibility((s) => s.modals.kami);
@@ -189,34 +183,6 @@ export const KamiModal: UIComponent = {
       });
     };
 
-    const onyxRespecSkill = (kami: Kami) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      const actionIndex = actions.add({
-        action: 'SkillRespec',
-        params: [kami.id],
-        description: `Respecing skills for ${kami.name}`,
-        execute: async () => {
-          return api.pet.onyx.respec(kami.id);
-        },
-      });
-    };
-
-    const onyxApprove = (price: number) => {
-      const api = ownerAPIs.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      actions.add({
-        action: 'Approve token',
-        params: [onyxItem.address, spender, price],
-        description: `Approve ${price} ${onyxItem.name} to be spent`,
-        execute: async () => {
-          return api.erc20.approve(onyxItem.address!, spender, price);
-        },
-      });
-    };
-
     /////////////////
     // DISPLAY
 
@@ -247,8 +213,6 @@ export const KamiModal: UIComponent = {
             actions={{
               upgrade: (skill: Skill) => upgradeSkill(kami, skill),
               reset: resetSkill,
-              onyxApprove,
-              onyxRespec: onyxRespecSkill,
             }}
             state={{ tick }}
             utils={{

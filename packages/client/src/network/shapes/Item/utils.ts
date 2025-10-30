@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import { hashArgs } from '../utils';
 
 export const genRefAnchorID = (index: number): EntityID => {

@@ -64,6 +64,19 @@
     },
     {
       "type": "function",
+      "name": "executeAdmin",
+      "inputs": [
+        {
+          "name": "ids",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "executeTyped",
       "inputs": [
         {
@@ -217,6 +230,7 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
+    "executeAdmin(uint256[])": "a781e655",
     "executeTyped(uint256)": "3e991df3",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",

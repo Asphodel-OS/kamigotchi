@@ -1,6 +1,7 @@
+import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
-export const onyxAPI = (systems: any) => {
+export const onyxAPI = (systems: SystemQueue<any>) => {
   // (Owner) rename a pet by spending onyx
   const rename = (kamiID: BigNumberish, name: string) => {
     return systems['system.kami.onyx.rename'].executeTyped(kamiID, name);

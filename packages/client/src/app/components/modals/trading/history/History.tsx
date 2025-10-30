@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
@@ -26,6 +26,7 @@ export const History = ({
   };
 }) => {
   const [typeFilter, setTypeFilter] = useState<TradeType>('All' as any);
+
   return (
     <Content isVisible={isVisible}>
       <OffersTable

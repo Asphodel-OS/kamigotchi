@@ -5,39 +5,24 @@ import { TextTooltip } from '..';
 
 export const HelpChip = ({
   tooltip,
-  size = 'medium',
+  size = 1.5,
 }: {
-  tooltip: string[];
-  size?: string;
+  tooltip: {
+    text: string[];
+    size?: number;
+  };
+  size?: number;
 }) => {
   return (
-    <TextTooltip text={tooltip}>
+    <TextTooltip text={tooltip.text} size={tooltip.size}>
       <Icon size={size} src={HelpIcon} />
     </TextTooltip>
   );
 };
 
-const Icon = styled.img<{ size: string }>`
+const Icon = styled.img<{ size: number }>`
   margin: 0.1rem 0.5rem;
+  width: ${({ size }) => size}rem;
+  height: ${({ size }) => size}rem;
   user-drag: none;
-
-  ${({ size }) => {
-    if (size === 'small')
-      return `
-      width: 1rem;
-      height: 1rem;
-    `;
-
-    if (size === 'medium')
-      return `
-      width: 1.5rem;
-      height: 1.5rem;
-    `;
-
-    if (size === 'large')
-      return `
-      width: 2rem;
-      height: 2rem;
-    `;
-  }}
 `;

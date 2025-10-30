@@ -1,4 +1,4 @@
-import { EntityIndex, World } from '@mud-classic/recs';
+import { EntityIndex, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { getAllGoals, getContributions, getGoal, getGoalByIndex } from 'network/shapes/Goals';

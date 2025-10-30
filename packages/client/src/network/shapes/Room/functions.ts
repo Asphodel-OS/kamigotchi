@@ -1,4 +1,4 @@
-import { getComponentValue, World } from '@mud-classic/recs';
+import { getComponentValue, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { getRoomsX } from './getters';

@@ -1,22 +1,15 @@
 import styled from 'styled-components';
 
-import { IndicatorIcons } from 'assets/images/icons/indicators';
+import { TxStatusIcons } from 'assets/images/icons/indicators';
 import { Status } from './types';
 
 const IconMap = {
-  WRONG: IndicatorIcons.failure,
-  FIXING: IndicatorIcons.executing,
-  FIXED: IndicatorIcons.success,
+  WRONG: TxStatusIcons.failure,
+  FIXING: TxStatusIcons.executing,
+  FIXED: TxStatusIcons.success,
 };
 
-export const StatusCircle = ({
-  state,
-  size,
-}: {
-  state: Status;
-  size?: number;
-}) => {
-
+export const StatusCircle = ({ state, size }: { state: Status; size?: number }) => {
   return (
     <Container size={size ?? 3}>
       <Icon src={IconMap[state]} />

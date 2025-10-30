@@ -38,6 +38,7 @@ contract TradeCancelSystem is System, AuthRoles {
     uint256 id;
     for (uint256 i; i < ids.length; i++) {
       id = ids[i];
+      LibTrade.verifyState(components, id, "PENDING");
       LibTrade.cancel(components, id); // cancel the Trade
       LibTrade.emitTradeCancel(world, id, 0); // emit Cancel event as admin
     }

@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, getComponentValue, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, getComponentValue, World } from 'engine/recs';
 
 import { Components } from 'network/components';
 import { Account, getAccountByID } from '../Account';
@@ -32,7 +32,7 @@ interface Options {
 }
 
 // get a Trade Object
-export const getTrade = (
+export const get = (
   world: World,
   comps: Components,
   entity: EntityIndex,

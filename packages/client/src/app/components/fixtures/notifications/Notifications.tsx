@@ -1,8 +1,8 @@
-import { EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityIndex, getComponentValue } from 'engine/recs';
 import styled, { keyframes } from 'styled-components';
 
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { Modals, useVisibility } from 'app/stores';
 import { useComponentEntities } from 'network/utils/hooks';
 
@@ -10,10 +10,8 @@ export const NotificationFixture: UIComponent = {
   id: 'NotificationFixture',
   Render: () => {
     const layers = useLayers();
-    
-    const {
-      notifications,
-    } = (() => {
+
+    const { notifications } = (() => {
       const {
         network: { notifications },
       } = layers;
@@ -22,56 +20,56 @@ export const NotificationFixture: UIComponent = {
       };
     })();
 
-      // Reactive list of notification entities via hook
-      const list = useComponentEntities(notifications.Notification);
-      const notificationsVisible = useVisibility((s) => s.fixtures.notifications);
-      const setModals = useVisibility((s) => s.setModals);
+    // Reactive list of notification entities via hook
+    const list = useComponentEntities(notifications.Notification);
+    const notificationsVisible = useVisibility((s) => s.fixtures.notifications);
+    const setModals = useVisibility((s) => s.setModals);
 
-      /////////////////
-      // INTERACTION
+    /////////////////
+    // INTERACTION
 
-      const handleClick = (targetModal: string | undefined, entity: EntityIndex) => {
-        if (targetModal === undefined) return;
+    const handleClick = (targetModal: string | undefined, entity: EntityIndex) => {
+      if (targetModal === undefined) return;
 
-        const target = targetModal as keyof Modals;
-        setModals({ [target]: true });
-        dismiss(entity);
-      };
+      const target = targetModal as keyof Modals;
+      setModals({ [target]: true });
+      dismiss(entity);
+    };
 
-      const dismiss = (entity: EntityIndex) => {
-        notifications.remove(entity);
-      };
+    const dismiss = (entity: EntityIndex) => {
+      notifications.remove(entity);
+    };
 
-      /////////////////
-      // VISUALIZATION
+    /////////////////
+    // VISUALIZATION
 
-      const SingleNotif = (entity: EntityIndex) => {
-        const notification = getComponentValue(notifications.Notification, entity);
-        if (!notification) return null;
-
-        return (
-          <Card key={entity.toString()}>
-            <ExitButton onClick={() => dismiss(entity)}>X</ExitButton>
-            <div onClick={() => handleClick(notification.modal as string | undefined, entity)}>
-              <Title>{notification.title}</Title>
-              <Description>{notification.description}</Description>
-            </div>
-          </Card>
-        );
-      };
-
-      const isVisible = () => {
-        return notificationsVisible && list.length > 0;
-      };
-
-      /////////////////
-      // RENDER
+    const SingleNotif = (entity: EntityIndex) => {
+      const notification = getComponentValue(notifications.Notification, entity);
+      if (!notification) return null;
 
       return (
-        <Wrapper style={{ display: isVisible() ? 'block' : 'none' }}>
-          <Contents>{list.map((id: EntityIndex) => SingleNotif(id))}</Contents>
-        </Wrapper>
+        <Card key={entity.toString()}>
+          <ExitButton onClick={() => dismiss(entity)}>X</ExitButton>
+          <div onClick={() => handleClick(notification.modal as string | undefined, entity)}>
+            <Title>{notification.title}</Title>
+            <Description>{notification.description}</Description>
+          </div>
+        </Card>
       );
+    };
+
+    const isVisible = () => {
+      return notificationsVisible && list.length > 0;
+    };
+
+    /////////////////
+    // RENDER
+
+    return (
+      <Wrapper style={{ display: isVisible() ? 'block' : 'none' }}>
+        <Contents>{list.map((id: EntityIndex) => SingleNotif(id))}</Contents>
+      </Wrapper>
+    );
   },
 };
 

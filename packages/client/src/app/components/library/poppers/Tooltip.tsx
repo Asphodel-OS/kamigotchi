@@ -139,17 +139,20 @@ const PopoverContainer = styled.span.attrs<{
   maxWidth?: number;
 }>`
   position: fixed;
-  flex-direction: column;
   border: solid black 0.15rem;
   border-radius: 0.6rem;
   padding: 0.9rem;
+  color: ${({ color }) => color || '#333'};
+
   display: flex;
+  flex-direction: column;
   overflow-wrap: anywhere;
-  color: black;
+
   font-size: 0.7rem;
   line-height: 1.25rem;
   white-space: normal;
   z-index: 10;
+
   pointer-events: none;
   user-select: none;
 `;

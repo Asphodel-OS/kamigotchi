@@ -54,7 +54,7 @@ export const Controls = ({
         {selectedWorld.length > 0 &&
           selectedWorld.map((kami) => <KamiBlock key={`world-${kami.index}`} kami={kami} />)}
       </Scrollable>
-      <Overlay top={30} fullWidth>
+      <Overlay bottom={1.2} fullWidth>
         <IconButton
           onClick={() => {
             setSelectedWild([]);

@@ -254,6 +254,11 @@ library LibKami {
     if (LibCooldown.isActive(components, ids)) revert("kami on cooldown");
   }
 
+  /// @dev only needed if kami's Account is not checked
+  function verifyIsKami(IUintComp components, uint256 id) public view {
+    if (!LibEntityType.isShape(components, id, "KAMI")) revert("not a kami");
+  }
+
   function verifyHealthy(IUintComp components, uint256 id) public view {
     if (!isHealthy(components, id)) revert("kami starving..");
   }

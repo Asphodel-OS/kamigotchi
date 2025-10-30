@@ -5,7 +5,7 @@ import {
   Metadata,
   Schema,
   componentValueEquals,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 import { filter } from 'rxjs';
 
 import { deferred } from 'utils/async';

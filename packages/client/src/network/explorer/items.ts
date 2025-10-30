@@ -1,4 +1,4 @@
-import { EntityIndex, getEntitiesWithValue, World } from '@mud-classic/recs';
+import { EntityIndex, getEntitiesWithValue, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { getAllItems, getItem, getItemByIndex } from 'network/shapes/Item';

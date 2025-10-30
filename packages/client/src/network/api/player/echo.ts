@@ -1,7 +1,9 @@
+import { SystemQueue } from 'engine/queue';
+
 /**
  * @dev an echo is a forced emit of onchain data. Used to resolve lagging indexer issues.
  */
-export const echoAPI = (systems: any) => {
+export const echoAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev echo an Account's Kami data.
    */

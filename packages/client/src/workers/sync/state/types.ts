@@ -1,4 +1,4 @@
-import { ComponentValue } from '@mud-classic/recs';
+import { ComponentValue } from 'engine/recs';
 import { NetworkComponentUpdate } from 'workers/types';
 
 // represents a single state entry for a Component. entityIndex->value

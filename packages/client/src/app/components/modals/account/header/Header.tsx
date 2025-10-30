@@ -1,15 +1,15 @@
-import { EntityIndex } from '@mud-classic/recs';
 import CakeIcon from '@mui/icons-material/Cake';
 import moment from 'moment';
 import styled from 'styled-components';
 
 import { Overlay, Popover, Text, TextTooltip } from 'app/components/library';
+import { Account as PlayerAccount } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
+import { EntityIndex } from 'engine/recs';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
 import { Kami } from 'network/shapes/Kami';
-import { Account as PlayerAccount } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
 import { playClick } from 'utils/sounds';
 import { Bio } from './Bio';
@@ -19,21 +19,11 @@ import { TwitterPrivyAccountLink } from './TwitterPrivyAccountLink';
 
 export const Header = ({
   account,
-  actions: {
-    setBio,
-    handlePfpChange,
-    requestFren,
-    cancelFren,
-    blockFren,
-    acceptFren,
-  },
+  actions: { setBio, handlePfpChange, requestFren, cancelFren, blockFren, acceptFren },
   isLoading,
   isSelf,
   player,
-  utils: {
-    getAccountKamis,
-    getFriends,
-  },
+  utils: { getAccountKamis, getFriends },
 }: {
   account: Account; // account selected for viewing
   actions: {
@@ -91,16 +81,21 @@ export const Header = ({
         <Pfp account={account} isLoading={isLoading} />
       )}
       <Info>
-        <TitleSection>
+        <TitleSection isSelf={isSelf}>
           <TitleHeader>
-            <Text size={1.2}>{account.name}</Text>
-            {isSelf && <TwitterPrivyAccountLink />}
+            <Text size={1.1}>{account.name}</Text>
           </TitleHeader>
-          <TextTooltip title='Owner Address' text={[account.ownerAddress, '\n', '(click to copy)']}>
-            <Subtitle onClick={() => copyText(account.ownerAddress)}>
-              {abbreviateAddress(account.ownerAddress)}
-            </Subtitle>
-          </TextTooltip>
+          {isSelf && (
+            <TextTooltip
+              title='Owner Address'
+              text={[account.ownerAddress, '\n', '(click to copy)']}
+            >
+              <Subtitle onClick={() => copyText(account.ownerAddress)}>
+                <TwitterPrivyAccountLink />
+                {abbreviateAddress(account.ownerAddress)}
+              </Subtitle>
+            </TextTooltip>
+          )}
         </TitleSection>
         {!isSelf && (
           <FriendActions
@@ -139,24 +134,24 @@ const Info = styled.div`
   align-items: flex-start;
 `;
 
-const TitleSection = styled.div`
+const TitleSection = styled.div<{ isSelf: boolean }>`
   display: flex;
   flex-flow: column nowrap;
-  gap: 0.3rem;
-  margin-bottom: 0.6rem;
+  gap: 0.5rem;
+  ${({ isSelf }) => !isSelf && `padding-bottom: 1rem;`}
 `;
 
 const TitleHeader = styled.div`
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  height: 2rem;
+  height: 0.6rem;
   gap: 0.3rem;
 `;
 
 const Subtitle = styled.div`
+  display: flex;
+  align-items: center;
   color: #777;
-  padding-left: 0.5rem;
+
   font-size: 0.7rem;
   cursor: copy;
 `;

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { ActionButton } from 'app/components/library';
 
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import { Commit, canRevealCommit } from 'network/shapes/Commit';
 import { getTimeDeltaString } from 'utils/time';
 

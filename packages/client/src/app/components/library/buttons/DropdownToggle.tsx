@@ -95,6 +95,9 @@ export const DropdownToggle = ({
     }
   };
 
+  /////////////////
+  // INTERACTION
+
   const toggleAll = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent popover from closing
     // currently selected
@@ -113,6 +116,9 @@ export const DropdownToggle = ({
     playClick();
     onClick[currentMode]?.(selectedObjects);
   };
+
+  /////////////////
+  // DISPLAY
 
   const MenuCheckListOption = (
     { text, img, object }: Option,
@@ -150,6 +156,9 @@ export const DropdownToggle = ({
       </MenuOption>
     );
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container>
@@ -191,12 +200,10 @@ export const DropdownToggle = ({
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
-  width: 14rem;
-  height: 2.5rem;
 `;
 
 const MenuOption = styled.div<{
@@ -212,7 +219,8 @@ const MenuOption = styled.div<{
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  padding: ${({ isSelectAll }) => (isSelectAll ? '1rem 0.6rem 0.4rem 0.9rem ' : '0 0.2rem 0.1rem 2.2rem')};
+  padding: ${({ isSelectAll }) =>
+    isSelectAll ? '1rem 0.6rem 0.4rem 0.9rem ' : '0 0.2rem 0.1rem 2.2rem'};
 
   &:hover {
     background-color: #ddd;

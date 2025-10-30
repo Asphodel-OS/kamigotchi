@@ -98,7 +98,7 @@ export const CrosshairPlugin = {
       const rectHeight = width * 0.024;
       ctx.fillRect(right, y - rectHeight / 2, rectWidth, rectHeight);
 
-      ctx.font = 'bold 0.75vw sans-serif';
+      ctx.font = 'bold 0.75rem sans-serif';
       ctx.fillStyle = 'white';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -115,7 +115,7 @@ export const CrosshairPlugin = {
     //   // left, top, width, height
     //   ctx.fillRect(x - rectWidth / 2, bottom, rectWidth, rectHeight);
 
-    //   ctx.font = 'bold 0.75vw sans-serif';
+    //   ctx.font = 'bold 0.75rem sans-serif';
     //   ctx.fillStyle = 'white';
     //   ctx.textAlign = 'center';
     //   ctx.textBaseline = 'middle';

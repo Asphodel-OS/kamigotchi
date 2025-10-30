@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { EntityIndex } from '@mud-classic/recs';
 import { ActionButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { EntityIndex } from 'engine/recs';
 import { ScavBar } from 'network/shapes/Scavenge';
 import { useEffect, useState } from 'react';
 

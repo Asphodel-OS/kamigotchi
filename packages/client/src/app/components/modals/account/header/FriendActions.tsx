@@ -1,9 +1,9 @@
+import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
-import { EntityIndex } from '@mud-classic/recs';
 
-import { Account as PlayerAccount } from 'app/stores';
 import { ActionButton } from 'app/components/library/buttons/ActionButton';
 import { ActionListButton } from 'app/components/library/buttons/ActionListButton';
+import { Account as PlayerAccount } from 'app/stores';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Friends as FriendsType } from 'network/shapes/Account/friends';
 import { Friendship } from 'network/shapes/Friendship';
@@ -29,27 +29,31 @@ export const FriendActions = (props: Props) => {
 
   const friends = getFriends(player.entity);
 
-  const incoming = friends?.incomingReqs?.find(r => r.account.entity === account.entity) ?? null;
-  const outgoing = friends?.outgoingReqs?.find(r => r.target.entity === account.entity) ?? null;
-  const friendship = friends?.friends?.find(f => f.target.entity === account.entity) ?? null;
-  const blocked = friends?.blocked?.find(b => b.target.entity === account.entity) ?? null;
+  const incoming = friends?.incomingReqs?.find((r) => r.account.entity === account.entity) ?? null;
+  const outgoing = friends?.outgoingReqs?.find((r) => r.target.entity === account.entity) ?? null;
+  const friendship = friends?.friends?.find((f) => f.target.entity === account.entity) ?? null;
+  const blocked = friends?.blocked?.find((b) => b.target.entity === account.entity) ?? null;
 
   const isIncoming = !!incoming;
   const isOutgoing = !!outgoing;
   const isFriend = !!friendship;
   const isBlockedByPlayer = !!blocked;
   const isBlockedByOther =
-    account.friends?.blocked?.some(b => b.target.entity === player.entity) ?? false;
+    account.friends?.blocked?.some((b) => b.target.entity === player.entity) ?? false;
 
   return (
     <Container>
       {isBlockedByPlayer ? (
         <>
-          <ActionListLabel $variant="blocked">Blocked</ActionListLabel>
-          <ActionButton size="small" text="Unblock" onClick={() => blocked && cancelFren(blocked)} />
+          <ActionListLabel $variant='blocked'>Blocked</ActionListLabel>
+          <ActionButton
+            size='small'
+            text='Unblock'
+            onClick={() => blocked && cancelFren(blocked)}
+          />
         </>
       ) : isBlockedByOther ? (
-        <ActionListLabel $variant="blocked">Blocked You</ActionListLabel>
+        <ActionListLabel $variant='blocked'>Blocked You</ActionListLabel>
       ) : !isFriend && !isIncoming && !isOutgoing ? (
         <>
           <ActionButton size='small' text='Add Friend' onClick={() => requestFren(account)} />
@@ -57,7 +61,7 @@ export const FriendActions = (props: Props) => {
         </>
       ) : isIncoming ? (
         <>
-          <ActionListLabel $variant="pending">Requested You</ActionListLabel>
+          <ActionListLabel $variant='pending'>Requested You</ActionListLabel>
           <ActionListButton
             id={`friend-actions-inbound-${account.entity}`}
             text=''
@@ -79,7 +83,7 @@ export const FriendActions = (props: Props) => {
         </>
       ) : isOutgoing ? (
         <>
-          <ActionListLabel $variant="pending">Request Sent</ActionListLabel>
+          <ActionListLabel $variant='pending'>Request Sent</ActionListLabel>
           <ActionListButton
             id={`friend-actions-outbound-${account.entity}`}
             text=''
@@ -96,11 +100,11 @@ export const FriendActions = (props: Props) => {
         </>
       ) : (
         <>
-          <ActionListLabel $variant="friends">Friends</ActionListLabel>
+          <ActionListLabel $variant='friends'>Friends</ActionListLabel>
           <ActionListButton
             id={`friend-actions-friends-${account.entity}`}
-            text=""
-            size="small"
+            text=''
+            size='small'
             options={[
               { text: 'Remove', onClick: () => friendship && cancelFren(friendship) },
               { text: 'Block', onClick: () => blockFren(account) },
@@ -110,7 +114,7 @@ export const FriendActions = (props: Props) => {
       )}
     </Container>
   );
-}
+};
 
 const Container = styled.div`
   display: flex;
@@ -140,10 +144,10 @@ const ActionListLabel = styled.div<{ $variant: 'friends' | 'pending' | 'blocked'
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: .6rem;
-  padding: .3rem .6rem;
-  border-radius: .3rem;
-  border: .15rem solid ${({ $variant }) => COLORS[$variant].border};
+  font-size: 0.6rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.3rem;
+  border: 0.15rem solid ${({ $variant }) => COLORS[$variant].border};
   color: ${({ $variant }) => COLORS[$variant].text};
   background-color: ${({ $variant }) => COLORS[$variant].background};
   box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.1);

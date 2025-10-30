@@ -21,7 +21,6 @@ import disc_shaped_map from './disc_shaped_map.png';
 import empty_cup from './empty_cup.png';
 import energy_drink from './energy_drink.png';
 import essence_of_daffodil from './essence_of_daffodil.png';
-import eth from './eth.png';
 import festival_chime from './festival_chime.png';
 import fetid_egg from './fetid_egg.png';
 import fuliginous_ooze from './fuliginous_ooze.png';
@@ -37,7 +36,6 @@ import holy_dust from './holy_dust.png';
 import holy_syrup from './holy_syrup.png';
 import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
-import initia_icon from './initia_icon.png';
 import inverted_teardrop_jewel from './inverted_teardrop_jewel.png';
 import kamigotchi_world_citizen_giftbox from './kamigotchi_world_citizen_giftbox.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
@@ -64,7 +62,7 @@ import musu from './musu.png';
 import musu_magnet from './musu_magnet.png';
 import neiths_river_of_life_spell_card from './neiths_river_of_life_spell_card.png';
 import obol from './obol.png';
-import onyx from './onyx.png';
+import onyx_shard from './onyx_shard.webp';
 import paeons_field_of_flowers_spell_card from './paeons_field_of_flowers_spell_card.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
@@ -121,7 +119,6 @@ export const ItemImages = {
   empty_cup: empty_cup,
   energy_drink: energy_drink,
   essence_of_daffodil: essence_of_daffodil,
-  eth: eth,
   festival_chime: festival_chime,
   fetid_egg: fetid_egg,
   fuliginous_ooze: fuliginous_ooze,
@@ -137,7 +134,6 @@ export const ItemImages = {
   holy_syrup: holy_syrup,
   hostility_potion: hostility_potion,
   ice_cream: ice_cream,
-  initia_icon: initia_icon,
   inverted_teardrop_jewel: inverted_teardrop_jewel,
   kamigotchi_world_citizen_giftbox: kamigotchi_world_citizen_giftbox,
   kamigotchi_world_passport: kamigotchi_world_passport,
@@ -164,7 +160,7 @@ export const ItemImages = {
   musu_magnet: musu_magnet,
   neiths_river_of_life_spell_card: neiths_river_of_life_spell_card,
   obol: obol,
-  onyx: onyx,
+  onyx_shard: onyx_shard,
   paeons_field_of_flowers_spell_card: paeons_field_of_flowers_spell_card,
   pine_cone: pine_cone,
   pine_pollen: pine_pollen,
