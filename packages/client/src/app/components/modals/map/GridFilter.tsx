@@ -2,8 +2,7 @@ import { HelpMenuIcons } from 'assets/images/help';
 import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { getAffinityImage } from 'network/shapes/utils';
 import { FloatingOnMap } from './FloatingOnMap';
-
-type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
+import { Mode } from './types';
 
 interface Props {
   data: {

@@ -3,13 +3,8 @@ import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'app/cache/account';
-import { TextTooltip } from 'app/components/library';
-import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
-import { HelpMenuIcons } from 'assets/images/help';
-import { ActionIcons } from 'assets/images/icons/actions';
-import { insectIcon } from 'assets/images/icons/affinities';
-import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
-import { mapBackgrounds } from 'assets/images/map';
+import { Overlay, TextTooltip } from 'app/components/library';
+import { MapImages } from 'assets/images/map';
 import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
 import { Condition } from 'network/shapes/Conditional';
@@ -20,20 +15,12 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
-
-type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
-
-const options = [
-  { text: 'My Kamis', img: KamiIcon, object: 'MyKamis' },
-  { text: 'Room Type', img: insectIcon, object: 'RoomType' },
-  { text: 'Kami Count', img: HelpMenuIcons.kamis, object: 'KamiCount' },
-  { text: 'Operator Count', img: OperatorIcon, object: 'OperatorCount' },
-];
+import { Mode } from './types';
 
 export const Grid = ({
   data: { account, accountKamis, rooms, roomIndex, zone },
   actions: { move },
-  state: { tick },
+  state: { mode, tick },
   utils,
 }: {
   actions: {
@@ -46,7 +33,10 @@ export const Grid = ({
     roomIndex: number; // index of current room
     zone: number;
   };
-  state: { tick: number };
+  state: {
+    mode: Mode;
+    tick: number;
+  };
   utils: {
     getKami: (entity: EntityIndex) => BaseKami;
     getKamiLocation: (entity: EntityIndex) => number | undefined;
@@ -75,7 +65,6 @@ export const Grid = ({
 
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
-  const [mode, setMode] = useState<Mode[]>(['MyKamis']);
 
   const rolls = useMemo(() => {
     const map = new Map<number, number>();
@@ -157,10 +146,6 @@ export const Grid = ({
     setKamiEntities(queryNodeKamis(queryNodeByIndex(roomIndex)));
   };
 
-  const setType = (option: Mode[]) => {
-    setMode(option);
-  };
-
   // used for the GrdiFilter, calculates averages to use
   // for the floating icons coloring
   // and maps to check if there are any kami
@@ -204,21 +189,8 @@ export const Grid = ({
 
   return (
     <Container>
-      <Background src={mapBackgrounds[zone]} />
-      <Overlay>
-        <DropdownWrapper>
-          <DropdownToggle
-            limit={33}
-            button={{
-              images: [ActionIcons.search],
-              tooltips: ['Filter tile by Type'],
-            }}
-            onClick={[setType]}
-            options={[options]}
-            simplified
-            radius={0.6}
-          />
-        </DropdownWrapper>
+      <Background src={MapImages[zone]} />
+      <Overlay fullWidth fullHeight orientation='column'>
         {grid.map((row, i) => (
           <Row key={i}>
             {row.map((room, j) => {
@@ -258,7 +230,7 @@ export const Grid = ({
                   >
                     <GridFilter
                       data={{
-                        optionSelected: mode[0],
+                        optionSelected: mode,
                         roomIndex: room.index,
                         yourKamiIconsMap,
                         kamiCountMap,
@@ -293,13 +265,6 @@ const Background = styled.img`
   image-rendering: pixelated;
 `;
 
-const Overlay = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-`;
-
 const Row = styled.div`
   width: 100%;
   display: flex;
@@ -330,12 +295,4 @@ const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundCo
     border-left-color: rgba(0, 0, 0, 1);
     border-bottom-color: rgba(0, 0, 0, 1);
   `}
-`;
-
-const DropdownWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 3;
-  pointer-events: none;
 `;
