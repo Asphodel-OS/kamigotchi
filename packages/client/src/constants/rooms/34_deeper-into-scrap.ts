@@ -21,18 +21,18 @@ export const room34: Room = {
       onClick: () => triggerGoalModal([2]),
     },
     {
-      name: 'kami',
-      coordinates: { x1: 75, y1: 33, x2: 96, y2: 53 },
+      name: 'kami1',
+      coordinates: { x1: 75, y1: 53, x2: 96, y2: 53 },
       onClick: () => {},
     },
     {
-      name: 'kami',
+      name: 'kami2',
       coordinates: { x1: 33, y1: 12, x2: 63, y2: 68 },
       onClick: () => {},
     },
     {
-      name: 'kami',
-      coordinates: { x1: 83, y1: 17, x2: 111, y2: 32 },
+      name: 'kami3',
+      coordinates: { x1: 20, y1: 90, x2: 11, y2: 32 },
       onClick: () => {},
     },
   ],

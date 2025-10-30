@@ -1,5 +1,5 @@
 import { Howl } from 'howler';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
@@ -15,6 +15,7 @@ import { getCurrPhase } from 'utils/time';
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 const defaultBgm = { key: 'cave', path: cave };
+const RandomKami: Map<string, EntityIndex> = new Map();
 
 // painting of the room alongside any clickable objects
 export const Room = ({
@@ -26,15 +27,40 @@ export const Room = ({
   data: { kamis: EntityIndex[] };
   utils: { getKami: (entity: EntityIndex) => Kami | undefined };
 }) => {
+  const { kamis } = data;
+  const { getKami } = utils;
+
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
   const setModals = useVisibility((s) => s.setModals);
   const setNode = useSelected((s) => s.setNode);
-  const [room, setRoom] = useState(rooms[0]);
-  const [bgm, setBgm] = useState<Howl>();
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
-  const { kamis } = data;
-  const { getKami } = utils;
+
+  const [room, setRoom] = useState(rooms[0]);
+  const [bgm, setBgm] = useState<Howl>();
+
+  // add logic to manage situations where
+  // kami in room < kami object
+  useEffect(() => {
+    if (kamis.length === 0) {
+      room.objects.forEach((object) => {
+        if (object.name.startsWith('kami')) {
+          RandomKami.delete(`${index}-${object.name}`);
+        }
+      });
+      return;
+    }
+
+    room.objects.forEach((object) => {
+      if (object.name.startsWith('kami')) {
+        const key = `${index}-${object.name}`;
+        if (!RandomKami.has(key)) {
+          const randomIndex = Math.floor(Math.random() * kamis.length);
+          RandomKami.set(key, kamis[randomIndex]);
+        }
+      }
+    });
+  }, [index, kamis.length, room.objects]);
 
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
@@ -64,37 +90,6 @@ export const Room = ({
     setNode(index);
     closeModals();
   }, [index]);
-
-  /* TODO: when the time comes to have multiple tracks per room,
-  remember to turn each room music object into an array of objects,
-  also substitute existing useeffect by something like this .
-  useEffect(() => {
-    const newRoom = rooms[index];
-    const newRoomPhase = (getCurrPhase() - 1) % room.music.length;
-    const music = newRoom.music[newRoomPhase];
-    if (!music) {
-      bgm?.stop();
-      return;
-    }
-    if (music.path !== room.music?.path) {
-      if (!RoomsBgm.has(music.path)) {
-        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
-      }
-      if (bgm) bgm.stop();
-
-      const newBgm = RoomsBgm.get(music.path);
-      newBgm?.play();
-      newBgm?.fade(0, bgmVolume, 3000);
-      setBgm(newBgm);
-    }
-
-    setRoom(newRoom);
-    setNode(index);
-    closeModals();
-  }, [index,getCurrPhase()]);
-
-
-*/
 
   // manages volume changes from the variable stored in local storage
   useEffect(() => {
@@ -128,41 +123,46 @@ export const Room = ({
     return room.backgrounds[phase];
   };
 
-  const getClickbox = (object: RoomAsset) => {
-    let coords = object.coordinates;
-    if (!coords) return;
-    const scale = 100 / 128;
-    const x1 = coords.x1 * scale;
-    const y1 = coords.y1 * scale;
-    const x2 = coords.x2 * scale;
-    const y2 = coords.y2 * scale;
-    // add boundaries to array position and check object.name === 'kami'
-    if (kamis.length > 0) {
-      const kamiImage = getKami(kamis[Math.floor(Math.random())])?.image;
-      if (kamiImage) {
-        console.log('meh');
-        return <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} kami={kamiImage} />;
-      }
-    }
-    let onClick = (() => {}) as React.MouseEventHandler<HTMLDivElement>;
-    if (object.dialogue) onClick = () => triggerDialogueModal(object.dialogue!);
-    else if (object.onClick) onClick = object.onClick;
+  const getClickbox = useCallback(
+    (object: RoomAsset) => {
+      let coords = object.coordinates;
+      if (!coords) return null;
 
-    return object.name !== 'trading' ? (
-      <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />
-    ) : (
-      <Clickbox
-        key={object.name}
-        x1={x1}
-        y1={y1}
-        x2={x2}
-        y2={y2}
-        onClick={() => {
-          setModals({ trading: !tradingModalOpen });
-        }}
-      />
-    );
-  };
+      const scale = 100 / 128;
+      const x1 = coords.x1 * scale;
+      const y1 = coords.y1 * scale;
+      const x2 = coords.x2 * scale;
+      const y2 = coords.y2 * scale;
+
+      if (object.name.startsWith('kami')) {
+        const assignedEntity = RandomKami.get(`${index}-${object.name}`);
+        const kami = assignedEntity ? getKami(assignedEntity) : undefined;
+        if (kami?.image) {
+          return <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} kami={kami.image} />;
+        }
+      }
+
+      let onClick = (() => {}) as React.MouseEventHandler<HTMLDivElement>;
+      if (object.dialogue) onClick = () => triggerDialogueModal(object.dialogue!);
+      else if (object.onClick) onClick = object.onClick;
+
+      return object.name !== 'trading' ? (
+        <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />
+      ) : (
+        <Clickbox
+          key={object.name}
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          onClick={() => {
+            setModals({ trading: !tradingModalOpen });
+          }}
+        />
+      );
+    },
+    [index, getKami]
+  );
 
   ///////////////////
   // RENDER
@@ -221,18 +221,21 @@ const Clickbox = styled.div<Coordinates>`
     `background: url(${kami});
   background-size: cover;
   width: 20%;
-  height: 20%;opacity: 1;`}
-
+  height: 20%;
+  opacity: 1;`}
   cursor: pointer;
   pointer-events: auto;
-
   &:hover {
-    animation: ${({}) => radiateFx} 1.5s linear infinite;
+    ${({ kami }) =>
+      kami
+        ? `filter:brightness(1.2);`
+        : `   
+         animation: ${({}) => radiateFx} 1.5s linear infinite;
     background: radial-gradient(
       closest-side,
       rgba(255, 255, 255, 1) 0%,
       rgba(80, 80, 205, 1) 70%,
       rgba(80, 80, 80, 0) 90%
-    );
+    );`}
   }
 `;
