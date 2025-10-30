@@ -16,14 +16,15 @@ export const RightMenuFixture: UIComponent = {
 
     return (
       <Wrapper>
-        {menuVisible ? <>
-          <CraftMenuButton />
-          <InventoryMenuButton />
-          <QuestMenuButton />
-          <ChatMenuButton />
-        </> : <>
-          <MoreMenuButton />
-        </>}
+        {menuVisible && (
+          <>
+            <CraftMenuButton />
+            <InventoryMenuButton />
+            <QuestMenuButton />
+            <ChatMenuButton />
+          </>
+        )}
+        <MoreMenuButton />
       </Wrapper>
     );
   },

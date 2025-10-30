@@ -4,147 +4,140 @@ import styled from 'styled-components';
 import { Account, calcCurrentStamina as _calcCurrentStamina, getAccount } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { getColor } from 'app/components/library/measures/Battery';
+import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { ClockIcons } from 'assets/images/icons/clock';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { calcPercent } from 'utils/numbers';
 import { getCurrPhase, getKamiTime, getPhaseName } from 'utils/time';
-import { useLayers } from 'app/root/hooks';
 
 export const ClockFixture: UIComponent = {
   id: 'ClockFixture',
   Render: () => {
-      const layers = useLayers();
+    const layers = useLayers();
 
-      const {
+    const {
+      data: { account },
+      utils: { calcCurrentStamina },
+    } = (() => {
+      const { network } = layers;
+      const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
+      const accountOptions = { config: 3600, live: 2 };
+
+      return {
         data: {
-          account,
+          account: getAccount(world, components, accountEntity, accountOptions),
         },
         utils: {
-          calcCurrentStamina,
+          calcCurrentStamina: (account: Account) => _calcCurrentStamina(account),
         },
-      } = (() => {
-        const { network } = layers;
-        const { world, components } = network;
-        const accountEntity = queryAccountFromEmbedded(network);
-        const accountOptions = { config: 3600, live: 2 };
-
-        return {
-          data: {
-            account: getAccount(world, components, accountEntity, accountOptions),
-          },
-          utils: {
-            calcCurrentStamina: (account: Account) => _calcCurrentStamina(account),
-          },
-        };
-      })();
-
-      const menuVisible = useVisibility((s) => s.fixtures.menu);
-      const [staminaCurr, setStaminaCurr] = useState(0);
-      const [rotateClock, setRotateClock] = useState(0);
-      const [rotateBand, setRotateBand] = useState(0);
-      const [lastTick, setLastTick] = useState(Date.now());
-
-      // ticking
-      useEffect(() => {
-        const tick = () => setLastTick(Date.now());
-        const timerID = setInterval(tick, 1000);
-        return () => clearInterval(timerID);
-      }, []);
-      // update the current stamina on each tick
-      useEffect(() => {
-        const staminaCurr = calcCurrentStamina(account);
-        setStaminaCurr(staminaCurr);
-      }, [account.stamina, lastTick]);
-      /////////////////
-      // INTERPRETATION
-
-      const getStaminaTooltip = () => {
-        const staminaTotal = account.stamina.total;
-        const staminaString = `${staminaCurr}/${staminaTotal * 1}`;
-        const recoveryPeriod = account.config?.stamina.recovery ?? '??';
-        return [
-          `Account Stamina (${staminaString})`,
-          '',
-          `Determines how far your Operator can travel. Recovers by 1 every ${recoveryPeriod}s`,
-        ];
       };
+    })();
 
-      const getClockTooltip = () => {
-        const phase = getPhaseName(getCurrPhase());
-        return [
-          `Kami World Clock (${phase}): ${getKamiTime(Date.now())}`,
-          '',
-          `Kamigotchi World operates on a 36h day with three distinct phases: Daylight, Evenfall, and Moonside.`,
-        ];
-      };
+    const menuVisible = useVisibility((s) => s.fixtures.menu);
+    const [staminaCurr, setStaminaCurr] = useState(0);
+    const [rotateClock, setRotateClock] = useState(0);
+    const [rotateBand, setRotateBand] = useState(0);
+    const [lastTick, setLastTick] = useState(Date.now());
 
-      function updateClocks() {
-        const kamiTime = parseInt(getKamiTime(Date.now()).split(':')[0]);
-        setRotateClock((kamiTime - 18) * 10);
-        //day, twilight, night
-        setRotateBand([60, 300, 180][Math.floor(kamiTime / 12)]);
+    // ticking
+    useEffect(() => {
+      const tick = () => setLastTick(Date.now());
+      const timerID = setInterval(tick, 1000);
+      return () => clearInterval(timerID);
+    }, []);
+    // update the current stamina on each tick
+    useEffect(() => {
+      const staminaCurr = calcCurrentStamina(account);
+      setStaminaCurr(staminaCurr);
+    }, [account.stamina, lastTick]);
+    /////////////////
+    // INTERPRETATION
+
+    const getStaminaTooltip = () => {
+      const staminaTotal = account.stamina.total;
+      const staminaString = `${staminaCurr}/${staminaTotal * 1}`;
+      const recoveryPeriod = account.config?.stamina.recovery ?? '??';
+      return [
+        `Account Stamina (${staminaString})`,
+        '',
+        `Determines how far your Operator can travel. Recovers by 1 every ${recoveryPeriod}s`,
+      ];
+    };
+
+    const getClockTooltip = () => {
+      const phase = getPhaseName(getCurrPhase());
+      return [
+        `Kami World Clock (${phase}): ${getKamiTime(Date.now())}`,
+        '',
+        `Kamigotchi World operates on a 36h day with three distinct phases: Daylight, Evenfall, and Moonside.`,
+      ];
+    };
+
+    function updateClocks() {
+      const kamiTime = parseInt(getKamiTime(Date.now()).split(':')[0]);
+      setRotateClock((kamiTime - 18) * 10);
+      //day, twilight, night
+      setRotateBand([60, 300, 180][Math.floor(kamiTime / 12)]);
+    }
+
+    useEffect(() => {
+      updateClocks();
+      const interval = setInterval(updateClocks, 1000);
+      return () => clearInterval(interval);
+    }, []);
+
+    const Ticks = () => {
+      let tickList = [];
+      for (let i = 0; i < 36; i++) {
+        tickList.push(<Tick key={i} rotationZ={i} />);
       }
+      return tickList;
+    };
 
-      useEffect(() => {
-        updateClocks();
-        const interval = setInterval(updateClocks, 1000);
-        return () => clearInterval(interval);
-      }, []);
-
-      const Ticks = () => {
-        let tickList = [];
-        for (let i = 0; i < 36; i++) {
-          tickList.push(<Tick key={i} rotationZ={i} />);
-        }
-        return tickList;
-      };
-
-      //Render
-      return (
+    //Render
+    return (
+      <Container>
         <TextTooltip text={getClockTooltip()}>
-          <Container>
-            <Circle rotation={rotateClock}>
-              <CircleContent>
-                <TicksPosition>{Ticks()}</TicksPosition>
-                <BandColor rotation={rotateBand} />
-                <Phases>
-                  <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
-                  <IconTwilight
-                    src={ClockIcons.twilight}
-                    iconColor={rotateBand}
-                    rotation={rotateClock}
-                  />
-                  <IconDay src={ClockIcons.day} iconColor={rotateBand} rotation={rotateClock} />
-                </Phases>
-                <CircleWrapper rotation={rotateClock}>
-                  <ClockOverlay />
-                  <TextTooltip text={getStaminaTooltip()}>
-                    <SmallCircle>
-                      <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
-                    </SmallCircle>
-                  </TextTooltip>
-                  <StaminaText rotation={0}>
-                    {staminaCurr}/{account.stamina.total}
-                  </StaminaText>
-                </CircleWrapper>
-              </CircleContent>
-            </Circle>
-            <Time
-              rotation={rotateClock}
-              viewBox='0 0 30 6'
-            >
-              <path id='MyPath' fill='none' d='M 2.5 3.5 Q 13 -3.5 27 3.5' pathLength='2' />
-              <text fill='white' dominantBaseline='hanging' textAnchor='middle'>
-                <textPath href='#MyPath' startOffset='0.9'>
-                  {getKamiTime(Date.now())}
-                </textPath>
-              </text>
-            </Time>
-          </Container>
+          <Circle rotation={rotateClock}>
+            <CircleContent>
+              <TicksPosition>{Ticks()}</TicksPosition>
+              <BandColor rotation={rotateBand} />
+              <Phases>
+                <IconNight src={ClockIcons.night} iconColor={rotateBand} rotation={rotateClock} />
+                <IconTwilight
+                  src={ClockIcons.twilight}
+                  iconColor={rotateBand}
+                  rotation={rotateClock}
+                />
+                <IconDay src={ClockIcons.day} iconColor={rotateBand} rotation={rotateClock} />
+              </Phases>
+              <CircleWrapper rotation={rotateClock}>
+                <ClockOverlay />
+                <TextTooltip text={getStaminaTooltip()}>
+                  <SmallCircle>
+                    <SmallCircleFill height={calcPercent(staminaCurr, account.stamina.total)} />
+                  </SmallCircle>
+                </TextTooltip>
+                <StaminaText rotation={0}>
+                  {staminaCurr}/{account.stamina.total}
+                </StaminaText>
+              </CircleWrapper>
+            </CircleContent>
+          </Circle>
+          <Time rotation={rotateClock} viewBox='0 0 30 6'>
+            <path id='MyPath' fill='none' d='M 2.5 3.5 Q 13 -3.5 27 3.5' pathLength='2' />
+            <text fill='white' dominantBaseline='hanging' textAnchor='middle'>
+              <textPath href='#MyPath' startOffset='0.9'>
+                {getKamiTime(Date.now())}
+              </textPath>
+            </text>
+          </Time>
         </TextTooltip>
-      );
+      </Container>
+    );
   },
 };
 
@@ -154,7 +147,6 @@ const Container = styled.div`
 
   align-self: start;
   position: relative;
-  margin: -1em;
 
   pointer-events: auto;
   user-select: none;
