@@ -32,6 +32,7 @@ export const Room = ({
 
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
   const setModals = useVisibility((s) => s.setModals);
+  const setKami = useSelected((s) => s.setKami);
   const setNode = useSelected((s) => s.setNode);
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
@@ -41,6 +42,7 @@ export const Room = ({
 
   // add logic to manage situations where
   // kami in room < kami object
+  // and avoid repeating the same kami
   useEffect(() => {
     if (kamis.length === 0) {
       room.objects.forEach((object) => {
@@ -138,7 +140,20 @@ export const Room = ({
         const assignedEntity = RandomKami.get(`${index}-${object.name}`);
         const kami = assignedEntity ? getKami(assignedEntity) : undefined;
         if (kami?.image) {
-          return <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} kami={kami.image} />;
+          return (
+            <Clickbox
+              key={object.name}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              kami={kami.image}
+              onClick={() => {
+                setKami(kami.index);
+                setModals({ kami: true });
+              }}
+            />
+          );
         }
       }
 
