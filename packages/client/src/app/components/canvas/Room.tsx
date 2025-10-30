@@ -33,6 +33,8 @@ export const Room = ({
   const [bgm, setBgm] = useState<Howl>();
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
+  const { kamis } = data;
+  const { getKami } = utils;
 
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
@@ -134,7 +136,14 @@ export const Room = ({
     const y1 = coords.y1 * scale;
     const x2 = coords.x2 * scale;
     const y2 = coords.y2 * scale;
-
+    // add boundaries to array position and check object.name === 'kami'
+    if (kamis.length > 0) {
+      const kamiImage = getKami(kamis[Math.floor(Math.random())])?.image;
+      if (kamiImage) {
+        console.log('meh');
+        return <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} kami={kamiImage} />;
+      }
+    }
     let onClick = (() => {}) as React.MouseEventHandler<HTMLDivElement>;
     if (object.dialogue) onClick = () => triggerDialogueModal(object.dialogue!);
     else if (object.onClick) onClick = object.onClick;
@@ -196,6 +205,7 @@ interface Coordinates {
   y1: number;
   x2: number;
   y2: number;
+  kami?: string;
 }
 
 const Clickbox = styled.div<Coordinates>`
@@ -205,10 +215,16 @@ const Clickbox = styled.div<Coordinates>`
   left: ${({ x1 }) => x1}%;
   width: ${({ x1, x2 }) => x2 - x1}%;
   height: ${({ y1, y2 }) => y2 - y1}%;
+  opacity: 0.2;
+  ${({ kami }) =>
+    kami &&
+    `background: url(${kami});
+  background-size: cover;
+  width: 20%;
+  height: 20%;opacity: 1;`}
 
   cursor: pointer;
   pointer-events: auto;
-  opacity: 0.2;
 
   &:hover {
     animation: ${({}) => radiateFx} 1.5s linear infinite;

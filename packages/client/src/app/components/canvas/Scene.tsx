@@ -100,7 +100,7 @@ export const Scene: UIComponent = {
         else enemies.push(entity);
       });
       setKamis(allies.concat(enemies));
-    }, [kamiEntities]);
+    }, [lastRefresh]);
 
     /////////////////
     // DISPLAY
