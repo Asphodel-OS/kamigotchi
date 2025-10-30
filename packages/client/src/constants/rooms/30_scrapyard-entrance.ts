@@ -13,5 +13,18 @@ export const room30: Room = {
     key: 'cave',
     path: cave,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'kami1',
+      coordinates: { x1: 75, y1: 33, x2: 96, y2: 53 },
+    },
+    {
+      name: 'kami2',
+      coordinates: { x1: 33, y1: 12, x2: 63, y2: 68 },
+    },
+    {
+      name: 'kami3',
+      coordinates: { x1: 83, y1: 17, x2: 111, y2: 32 },
+    },
+  ],
 };

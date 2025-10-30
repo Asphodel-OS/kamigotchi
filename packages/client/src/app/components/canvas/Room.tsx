@@ -9,6 +9,8 @@ import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { cave } from 'assets/sound/ost';
 import { rooms } from 'constants/rooms';
 import { RoomAsset } from 'constants/rooms/types';
+import { EntityIndex } from 'engine/recs';
+import { Kami } from 'network/shapes';
 import { getCurrPhase } from 'utils/time';
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
@@ -17,8 +19,12 @@ const defaultBgm = { key: 'cave', path: cave };
 // painting of the room alongside any clickable objects
 export const Room = ({
   index,
+  data,
+  utils,
 }: {
-  index: number
+  index: number;
+  data: { kamis: EntityIndex[] };
+  utils: { getKami: (entity: EntityIndex) => Kami | undefined };
 }) => {
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
   const setModals = useVisibility((s) => s.setModals);
