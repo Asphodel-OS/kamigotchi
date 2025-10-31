@@ -40,12 +40,9 @@ import {
 
 export const MainWindow = observer(({ ready }: { ready: boolean }) => (
   <Stack>
-    {!ready && (
-      <>
-        {/* Boot components */}
-        {<LoadingState.Render />}
-      </>
-    )}
+    {/* Boot components */}
+    <LoadingState.Render />
+
     {ready && (
       <>
         {/* Validators */}
@@ -226,8 +223,8 @@ const UIGrid = styled.div`
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
   }
 
-  gap: 1.5em 1em;
-  padding: 1em;
+  gap: 1.5rem 1rem;
+  padding: 1rem;
 
   pointer-events: none;
   z-index: 10;

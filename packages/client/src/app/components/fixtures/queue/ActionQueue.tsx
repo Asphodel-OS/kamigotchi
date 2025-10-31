@@ -126,7 +126,7 @@ export const ActionQueue: UIComponent = {
     // RENDER
 
     return (
-      <Content
+      <Container
         maxHeight={LOG_HEIGHTS[mode]}
         style={{ display: isFixtureVisible ? 'flex' : 'none' }}
       >
@@ -138,24 +138,21 @@ export const ActionQueue: UIComponent = {
           isVisible={mode !== 0}
         />
         <Controls mode={mode} setMode={setMode} />
-      </Content>
+      </Container>
     );
   },
 };
 
-const Container = styled.div``;
-
-// cancer. just absolute cancer
-const Content = styled.div<{ maxHeight: string }>`
+const Container = styled.div<{ maxHeight: string }>`
   padding: 0.2rem;
   border: solid black 0.15rem;
   border-radius: 0.6rem;
-  max-height: ${({ maxHeight }) => maxHeight}rem;
+  max-height: ${({ maxHeight }) => maxHeight};
 
   display: flex;
   flex-flow: column nowrap;
   user-select: none;
 
   background-color: white;
-  pointerevents: 'auto';
+  pointer-events: auto;
 `;
