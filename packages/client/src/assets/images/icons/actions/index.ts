@@ -12,7 +12,6 @@ import ReviveIcon from './revive.png';
 import SearchIcon from './search.png';
 import StopIcon from './stop.png';
 import UseIcon from './use.png';
-import XIcon from './x.png';
 
 export {
   CancelIcon,
@@ -29,7 +28,6 @@ export {
   SearchIcon,
   StopIcon,
   UseIcon,
-  XIcon,
 };
 
 export const ActionIcons = {
@@ -38,7 +36,6 @@ export const ActionIcons = {
   chat: ChatIcon,
   collect: CollectIcon,
   craft: CraftIcon,
-  edit: EditIcon,
   feed: FeedIcon,
   harvest: HarvestIcon,
   liquidate: LiquidateIcon,
@@ -47,5 +44,5 @@ export const ActionIcons = {
   search: SearchIcon,
   stop: StopIcon,
   use: UseIcon,
-  x: XIcon,
+  edit: EditIcon,
 };

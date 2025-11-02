@@ -35,9 +35,5 @@ export function createPriorityQueue<T>() {
     return queue.size;
   }
 
-  function clear(): void {
-    queue.clear();
-  }
-
-  return { add, remove, setPriority, next, size, clear };
+  return { add, remove, setPriority, next, size };
 }
