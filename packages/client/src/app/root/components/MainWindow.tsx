@@ -215,9 +215,9 @@ const UIGrid = styled.div`
     grid:
       'LeftBottom RightTop' auto
       [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
-      'Center' minmax(0, 1fr)
+      'Center Center' minmax(0, 1fr)
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
-      'RightBottom' 25vmin
+      'RightBottom RightBottom' 25vmin
       'LeftTop LeftTop' auto
       / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr)
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
