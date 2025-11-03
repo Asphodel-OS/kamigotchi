@@ -18,7 +18,7 @@ import { GACHA_TICKET_INDEX, REROLL_TICKET_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { NullAuction } from 'network/shapes/Auction';
-import { Commit } from 'network/shapes/Commit';
+import { Commit, filterRevealableCommits } from 'network/shapes/Commit';
 import { hasFlag } from 'network/shapes/Flag';
 import { getGachaCommits, getGachaMintData } from 'network/shapes/Gacha';
 import { Kami, queryKamis } from 'network/shapes/Kami';
@@ -168,25 +168,23 @@ export const GachaModal: UIComponent = {
       setWaitingToReveal(false);
     }, [waitingToReveal]);
 
-    // // auto reveal gacha result(s) when the number of commits changes
-    // // NOTE: disabled for now as it's bugged and causes many redundant txs
-    // useEffect(() => {
-    //   const tx = async () => {
-    //     const filtered = filterRevealableCommits(commits);
-    //     if (!triedReveal && filtered.length > 0) {
-    //       try {
-    //         // wait to give buffer for rpc
-    //         await new Promise((resolve) => setTimeout(resolve, 1500));
-    //         revealTx(filtered);
-    //         setTriedReveal(true);
-    //       } catch (e) {
-    //         console.log('Gacha.tsx: handlePull() reveal failed', e);
-    //       }
-    //     }
-    //   };
+    // auto reveal gacha result(s) when the number of commits changes
+    // NOTE: not the most consistent; errs on not revealing, since user is prompted to reveal manually
+    useEffect(() => {
+      const tx = async (filtered: Commit[]) => {
+        try {
+          setTriedReveal(true);
+          await revealTx(filtered);
+        } catch (e) {
+          console.log('Gacha.tsx: handlePull() reveal failed', e);
+        }
+      };
 
-    //   tx();
-    // }, [commits]);
+      if (triedReveal) return;
+      const filtered = filterRevealableCommits(commits);
+      if (filtered.length === 0) return;
+      tx(filtered);
+    }, [commits]);
 
     /////////////////
     // ACTIONS
