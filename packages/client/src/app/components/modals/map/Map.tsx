@@ -157,6 +157,7 @@ export const MapModal: UIComponent = {
         id='map'
         header={<ModalHeader title={roomMap.get(roomIndex)?.name ?? 'Map'} icon={MapIcon} />}
         canExit
+        truncate
         noPadding
         scrollBarColor='#cbba3d #e1e1b5'
       >

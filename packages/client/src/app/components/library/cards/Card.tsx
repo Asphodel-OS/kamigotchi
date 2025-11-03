@@ -72,12 +72,16 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 `;
 
 const ImageContainer = styled.div<{ scale: number; padding?: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   border-right: solid black 0.15rem;
   border-radius: 0.45rem 0rem 0rem 0.45rem;
   min-height: 100%;
   height: ${({ scale }) => scale}rem;
   width: ${({ scale }) => scale}rem;
+
   padding: ${({ padding }) => padding ?? 0}rem;
   ${({ scale }) => scale > 4 && `image-rendering: pixelated;`}
   user-select: none;
@@ -86,7 +90,7 @@ const ImageContainer = styled.div<{ scale: number; padding?: number }>`
 
 const Image = styled.img<{ onClick?: () => void }>`
   object-fit: cover;
-  height: 100%;
+
   width: 100%;
 
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};

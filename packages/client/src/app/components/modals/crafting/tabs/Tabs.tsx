@@ -2,13 +2,7 @@ import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
-export const Tabs = ({
-  tab,
-  setTab: _setTab,
-}: {
-  tab: string;
-  setTab: (tab: string) => void;
-}) => {
+export const Tabs = ({ tab, setTab: _setTab }: { tab: string; setTab: (tab: string) => void }) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
@@ -26,11 +20,7 @@ export const Tabs = ({
       <Button onClick={() => setTab('reagent')} disabled={tab === 'reagent'}>
         Reagents
       </Button>
-      <Button
-        onClick={() => setTab('special')}
-        disabled={tab === 'special'}
-        style={{ borderRight: 'none' }}
-      >
+      <Button onClick={() => setTab('special')} disabled={tab === 'special'}>
         Special
       </Button>
     </Container>
@@ -45,7 +35,7 @@ const Container = styled.div`
   width: 100%;
   background-color: white;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
 `;
 
@@ -56,11 +46,11 @@ const Button = styled.button`
   flex-grow: 1;
   color: black;
   justify-content: center;
-  border-right: solid black 0.15rem;
+  border: solid 0.1em black;
 
   font-size: 0.9rem;
   text-align: center;
-
+  text-wrap: wrap;
   cursor: pointer;
   pointer-events: auto;
   &:active {

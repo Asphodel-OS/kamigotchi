@@ -138,11 +138,12 @@ const Content = styled.div`
   align-items: stretch;
 
   padding: 0.2rem;
+  margin: 0.4rem 0rem;
 `;
 
 const ContentRow = styled.div`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
 `;
