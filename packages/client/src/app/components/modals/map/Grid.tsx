@@ -131,14 +131,11 @@ export const Grid = ({
     return !passesConditions(account, room.gates);
   };
 
-  const currExit = (room: Room) => {
-    return rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
-  };
-
   const getTileColor = (room: Room) => {
     if (!room.index) return;
     if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
-    if (!currExit(room)) return;
+    const exit = rooms.get(roomIndex)?.exits?.find((e) => e.toIndex === room.index);
+    if (!exit || exit.blocked) return;
     return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
   };
 
