@@ -16,8 +16,8 @@
 }
 
 /* 2:1 view*/
-@media (orientation: landscape) {
+@media (orientation: landscape), (max-aspect-ratio: 2/1) {
   :root {
-    font-size: min(1.4vw, 1.4vh);
+    font-size: max(1vw, 1vh);
   }
 }
