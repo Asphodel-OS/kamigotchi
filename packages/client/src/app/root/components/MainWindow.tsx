@@ -213,12 +213,13 @@ const UIGrid = styled.div`
   /* 1 column (alternative) */
   @media (max-aspect-ratio: 11/16) {
     grid:
-      'LeftBottom RightTop' auto
+      'LeftBottom LeftBottom' auto
       [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
       'Center Center' minmax(0, 1fr)
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
       'RightBottom RightBottom' 25vmin
       'LeftTop LeftTop' auto
+      'RightTop RightTop' auto
       / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr)
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
   }

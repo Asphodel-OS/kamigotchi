@@ -33,6 +33,23 @@ export const RightMenuFixture: UIComponent = {
 const Wrapper = styled.div`
   justify-self: end;
 
+  @media (max-aspect-ratio: 11/16) {
+    justify-self: stretch;
+
+    > * {
+      flex: 1;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    > :nth-child(5),
+    > :nth-child(6) {
+      display: none;
+    }
+  }
+
   font-size: clamp(0.5rem, 1vmax, 0.66rem);
 
   display: flex;
