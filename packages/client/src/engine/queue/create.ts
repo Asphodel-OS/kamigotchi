@@ -58,6 +58,7 @@ export function create<C extends Contracts>(
   }>();
   const submissionMutex = new Mutex();
   const _nonce = observable.box<number | null>(null);
+  let nonceResetPromise: Promise<void> | null = null;
 
   const readyState = computed(() => {
     const connected = network.connected.get();
@@ -78,10 +79,23 @@ export function create<C extends Contracts>(
     return { contracts, signer, provider, nonce };
   });
 
+  // Prevent concurrent nonce resets - wait for in-progress reset to complete
   async function resetNonce() {
-    runInAction(() => _nonce.set(null));
-    const newNonce = (await network.signer?.getNonce()) ?? null;
-    runInAction(() => _nonce.set(newNonce));
+    if (nonceResetPromise) {
+      await nonceResetPromise;
+      return;
+    }
+    
+    nonceResetPromise = (async () => {
+      try {
+        const newNonce = (await network.signer?.getNonce()) ?? null;
+        runInAction(() => _nonce.set(newNonce));
+      } finally {
+        nonceResetPromise = null;
+      }
+    })();
+    
+    await nonceResetPromise;
   }
 
   // Set the nonce on init and reset if the signer changed
@@ -119,27 +133,27 @@ export function create<C extends Contracts>(
         ? Promise.resolve(callOverrides.gasLimit)
         : signer!.estimateGas(txRequest);
 
-    // Create a function that executes the tx when called
     const execute = async (txOverrides: Overrides) => {
       try {
-        // Populate config and Tx
+        // Final cancel check before network call
+        if (isCanceled()) {
+          throw new Error('TX_CANCELLED_BEFORE_SEND');
+        }
+        
         const populatedTx = { ...txRequest, ...txOverrides, ...callOverrides };
         const tx = await sendTx(signer, populatedTx!);
         const hash = tx?.hash || '';
 
-        const response = signer.provider!.getTransaction(hash); // todo: do we need to return response?
+        const response = signer.provider!.getTransaction(hash);
 
-        // This promise is awaited asynchronously in the tx queue and the action queue to catch errors
         const wait = async () => waitForTx(response);
 
-        // Resolved value goes to the initiator of the transaction
         resolve({ hash, wait, response });
 
-        // Returned value gets processed inside the tx queue
         return { hash, wait };
       } catch (e) {
         reject(e as Error);
-        throw e; // Rethrow error to catch when processing the queue
+        throw e;
       }
     };
 
@@ -191,7 +205,12 @@ export function create<C extends Contracts>(
         txOverrides.gasLimit = await txRequest.estimateGas();
         txOverrides.nonce = nonce;
       } catch (e) {
-        devWarn('[TXQueue] GAS ESTIMATION FAILED', e);
+        const error = e as any;
+        const reason = error?.reason || error?.message || 'Unknown reason';
+        const shortReason = error?.code === 'CALL_EXCEPTION' && reason === 'missing revert data'
+          ? 'Transaction would revert (contract validation failed)'
+          : reason;
+        devWarn(`[TXQueue] GAS ESTIMATION FAILED: ${shortReason}`);
         return txRequest.cancel(e);
       }
 
@@ -201,17 +220,22 @@ export function create<C extends Contracts>(
         return txRequest.cancel(new Error('TX_CANCELLED'));
       }
 
-      // Execute the tx
       let error: any;
       try {
         return await txRequest.execute(txOverrides);
       } catch (e) {
-        devWarn('[TXQueue] EXECUTION FAILED', e);
         error = e;
+        if (error?.message === 'TX_CANCELLED_BEFORE_SEND') {
+          devWarn('[TXQueue] TX cancelled right before send - nonce preserved');
+        } else {
+          devWarn('[TXQueue] EXECUTION FAILED', e);
+        }
       } finally {
-        // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
-        if (shouldResetNonce(error)) await resetNonce();
-        else if (shouldIncNonce(error)) incNonce();
+        // Don't increment nonce if tx was cancelled before actually being sent
+        if (error?.message !== 'TX_CANCELLED_BEFORE_SEND') {
+          if (shouldResetNonce(error)) await resetNonce();
+          else if (shouldIncNonce(error)) incNonce();
+        }
         if (error) txRequest.cancel(error);
       }
     });
@@ -222,12 +246,8 @@ export function create<C extends Contracts>(
         const tx = await txResult.wait();
         if (isDev) console.log(`[TXQueue] TX Confirmed\n`, tx);
       } catch (e) {
+        // Error already handled by ActionSystem, just log here
         devWarn('[TXQueue] tx failed in block');
-        throw e; // bubble up error
-        // // Decode and log the revert reason.
-        // getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
-        //   console.warn('[TXQueue] Revert reason:', reason)
-        // ); // calling then instead of await to avoid blocking
       }
     }
 
