@@ -2,6 +2,14 @@
 :root {
   font-size: min(2vw, 2vh);
 }
+
+/* this one i eyeballed it, avoids overflowing in weird views */
+@media (max-width: 2750px) and (orientation: landscape) {
+  :root {
+    font-size: min(1.3vw, 1.3vh);
+  }
+}
+
 /*1:2 view*/
 @media (orientation: portrait) {
   :root {
