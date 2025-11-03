@@ -15,9 +15,16 @@
   }
 }
 
-/* wide views*/
+/* fixes moodals getting weird in certain resolutions */
+@media (max-width: 1172px), (max-height: 852px) {
+  :root {
+    font-size: max(1.3vw, 1.3vh);
+  }
+}
+
+/* 2:1 view*/
 @media (min-aspect-ratio: 21/9) {
   :root {
-    font-size: max(0.5vw, 0.5vh);
+    font-size: max(1vw, 1vh);
   }
 }

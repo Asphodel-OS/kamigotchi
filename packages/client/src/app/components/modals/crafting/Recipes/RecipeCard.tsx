@@ -120,6 +120,7 @@ const TitleCorner = styled.div`
   flex-grow: 1;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
 `;
 
 const Text = styled.div`

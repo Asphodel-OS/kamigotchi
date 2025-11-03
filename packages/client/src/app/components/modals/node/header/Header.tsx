@@ -206,7 +206,7 @@ const Row = styled.div`
   gap: 0.3rem;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
 `;
