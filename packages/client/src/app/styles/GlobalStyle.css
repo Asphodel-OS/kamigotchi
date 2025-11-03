@@ -2,7 +2,7 @@
 :root {
   font-size: min(2vw, 2vh);
 }
-/*portrait*/
+/*1:2 view*/
 @media (orientation: portrait) {
   :root {
     font-size: min(1.6vw, 1.6vh);
@@ -15,16 +15,9 @@
   }
 }
 
-/* fixes moodals getting weird in certain resolutions */
-@media (max-width: 1172px), (max-height: 852px) {
-  :root {
-    font-size: max(1.3vw, 1.3vh);
-  }
-}
-
 /* 2:1 view*/
-@media (min-aspect-ratio: 21/9) {
+@media (orientation: landscape) {
   :root {
-    font-size: max(1vw, 1vh);
+    font-size: min(1.4vw, 1.4vh);
   }
 }
