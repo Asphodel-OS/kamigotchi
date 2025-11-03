@@ -104,9 +104,9 @@ export const MoreMenuButton = () => {
         { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
         { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
       ]}
-      scale={4.5}
+      scale={2.5}
       scaleOrientation='rem'
-      radius={0.9}
+      radius={0.4}
       tooltip={{ text: ['More'] }}
     />
   );

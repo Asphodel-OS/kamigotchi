@@ -52,8 +52,8 @@ const Button = styled.button<{
   effectScale: number;
   disabled?: boolean;
 }>`
-  height: 4.5rem;
-  border-radius: 0.9rem;
+  height: 2.5rem;
+  border-radius: 0.4rem;
   border: solid black 0.15rem;
 
   cursor: pointer;

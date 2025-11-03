@@ -1,0 +1,23 @@
+/*fullscreen*/
+:root {
+  font-size: min(2vw, 2vh);
+}
+/*portrait*/
+@media (orientation: portrait) {
+  :root {
+    font-size: min(1.6vw, 1.6vh);
+  }
+}
+/* 11/16, 1 column*/
+@media (max-aspect-ratio: 11/16) {
+  :root {
+    font-size: min(2vw, 2.2vh);
+  }
+}
+
+/* wide views*/
+@media (min-aspect-ratio: 21/9) {
+  :root {
+    font-size: max(0.5vw, 0.5vh);
+  }
+}

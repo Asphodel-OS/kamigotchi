@@ -22,9 +22,9 @@ export const OnyxMenuButton = () => {
         img={TokenIcons.onyx}
         text={balance?.toFixed(3)}
         onClick={() => setModals({ tokenPortal: !portalIsOpen })}
-        scale={4.5}
+        scale={2.5}
         scaleOrientation='rem'
-        radius={0.9}
+        radius={0.4}
       />
     </TextTooltip>
   );
