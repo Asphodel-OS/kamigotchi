@@ -60,15 +60,10 @@ const Wrapper = styled.div`
         width: 100%;
       }
     }
-
-    > :nth-child(5),
-    > :nth-child(6) {
-      display: none;
-    }
   }
 
   font-size: clamp(0.5rem, 1vmax, 0.66rem);
 
   display: flex;
-  gap: 0.6em;
+  gap: 0.3em;
 `;
