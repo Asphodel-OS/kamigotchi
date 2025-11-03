@@ -11,6 +11,7 @@ import {
 import { Provider } from 'ethers';
 import { Observable } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+
 import { defineActionComponent } from './ActionComponent';
 import { ActionState } from './constants';
 import { ActionRequest } from './types';
@@ -24,6 +25,9 @@ export function createActionSystem<M = undefined>(
 ) {
   const Action = defineActionComponent<M>(world);
   const requests = new Map<EntityIndex, ActionRequest>();
+  const queueOrder: EntityIndex[] = [];
+  let running: boolean = false;
+  let currentIndex: EntityIndex | null = null;
 
   /**
    * Schedules an Action from an ActionRequest and schedules it for execution.
@@ -60,12 +64,46 @@ export function createActionSystem<M = undefined>(
       txHash: undefined,
     });
 
-    // Store the request with the Action System and execute it
+    // Store the request with the Action System and enqueue it
     request.index = entity;
     requests.set(entity, request);
-    execute(request);
+    queueOrder.push(entity);
+    processNext();
     return entity;
   }
+  async function processNext() {
+    if (running) return;
+    // find next requested (not canceled) action
+    while (queueOrder.length > 0) {
+      const idx = queueOrder[0]!;
+      const state = getComponentValue(Action, idx)?.state;
+      if (state === ActionState.Canceled) {
+        queueOrder.shift();
+        continue;
+      }
+      if (state === ActionState.Requested) {
+        running = true;
+        currentIndex = idx;
+        try {
+          await execute(requests.get(idx)!);
+        } finally {
+          // remove from queue and continue
+          queueOrder.shift();
+          currentIndex = null;
+          running = false;
+          // kick off next
+          setTimeout(processNext, 0);
+        }
+        return;
+      }
+      // if not in a requested state, remove and continue
+      queueOrder.shift();
+    }
+  }
+
+  // Track cancellations requested while action is executing
+  const canceled = new Set<EntityIndex>();
+  const execCancels = new Map<EntityIndex, () => void>();
 
   /**
    * Executes the given Action and sets the corresponding fields accordingly.
@@ -79,19 +117,54 @@ export function createActionSystem<M = undefined>(
     const updateAction = (data: any) => updateComponent(Action, request.index!, data);
     updateAction({ state: ActionState.Executing });
 
+    // If a cancel was requested before execution starts, honor it
+    if (canceled.has(request.index!)) {
+      updateAction({ state: ActionState.Canceled });
+      return;
+    }
+
     try {
       // Execute the action
-      const tx = await request.execute();
-      updateAction({ state: ActionState.WaitingForTxEvents }); // pending
+      const execPromise: any = request.execute();
+      const cancelFn =
+        typeof execPromise?.cancel === 'function'
+          ? execPromise.cancel.bind(execPromise)
+          : undefined;
+      if (cancelFn) execCancels.set(request.index!, cancelFn);
 
-      if (tx) {
-        if (!request.skipConfirmation) await tx.wait();
-        updateAction({ txHash: tx.hash });
+      // If user already canceled, propagate to queue immediately
+      if (canceled.has(request.index!) && cancelFn) {
+        try {
+          cancelFn();
+        } catch {}
+        updateAction({ state: ActionState.Canceled });
+        execCancels.delete(request.index!);
+        return;
       }
 
-      updateAction({ state: ActionState.Complete });
+      const tx = await execPromise;
+      // Mark pending and expose hash immediately so UI can cancel/replace
+      updateAction({
+        state: ActionState.WaitingForTxEvents,
+        txHash: tx?.hash,
+      });
+
+      // If cancel requested after submission, do not proceed to completion
+      if (canceled.has(request.index!)) {
+        updateAction({ state: ActionState.Canceled });
+        return;
+      }
+
+      if (tx && !request.skipConfirmation) {
+        await tx.wait();
+      }
+
+      if (canceled.has(request.index!)) updateAction({ state: ActionState.Canceled });
+      else updateAction({ state: ActionState.Complete });
+      execCancels.delete(request.index!);
     } catch (e) {
       handleError(e, request);
+      execCancels.delete(request.index!);
     }
   }
 
@@ -106,14 +179,28 @@ export function createActionSystem<M = undefined>(
       console.warn(`Trying to cancel Action Request that does not exist.`);
       return false;
     }
-    if (getComponentValue(Action, index)?.state !== ActionState.Requested) {
-      console.warn(`Trying to cancel Action Request ${request.id} not in the "Requested" state.`);
-      return false;
+    const state = getComponentValue(Action, index)?.state;
+    if (state === ActionState.Requested) {
+      // remove from local queue before it ever executes
+      const pos = queueOrder.indexOf(index);
+      if (pos !== -1) queueOrder.splice(pos, 1);
+      canceled.add(index);
+      updateComponent(Action, index, { state: ActionState.Canceled });
+      return true;
     }
-
-    updateComponent(Action, index, { state: ActionState.Canceled });
-    // remove(index);
-    return true;
+    if (state === ActionState.Executing || state === ActionState.WaitingForTxEvents) {
+      canceled.add(index);
+      const fn = execCancels.get(index);
+      if (fn) {
+        try {
+          fn();
+        } catch {}
+      }
+      updateComponent(Action, index, { state: ActionState.Canceled });
+      return true;
+    }
+    console.warn(`Trying to cancel Action Request ${request.id} not in a cancellable state.`);
+    return false;
   }
 
   /**

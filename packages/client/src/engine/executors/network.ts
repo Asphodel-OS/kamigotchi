@@ -86,12 +86,19 @@ export async function createNetwork(initialConfig: NetworkConfig) {
   };
 }
 
+// get the signer for a given network config
 async function getSigner(
   config: NetworkConfig,
   currentProviders: Providers
 ): Promise<Signer | undefined> {
-  if (config.provider.externalProvider) return currentProviders.json.getSigner();
+  if (config.provider.externalProvider && currentProviders) {
+    return currentProviders.json.getSigner();
+  }
+
   const privateKey = config.privateKey;
-  if (privateKey && currentProviders) return new Wallet(privateKey, currentProviders.json);
+  if (privateKey && currentProviders) {
+    return new Wallet(privateKey, currentProviders.json);
+  }
+
   return undefined;
 }
