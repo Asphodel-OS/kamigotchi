@@ -85,13 +85,14 @@ export function createActionSystem<M = undefined>(
         currentIndex = idx;
         try {
           await execute(requests.get(idx)!);
+        } catch (err) {
+          console.error('[ActionSystem] Execute failed:', err);
         } finally {
-          // remove from queue and continue
           queueOrder.shift();
           currentIndex = null;
           running = false;
-          // kick off next
-          setTimeout(processNext, 0);
+          // Use microtask queue to avoid blocking
+          Promise.resolve().then(() => processNext());
         }
         return;
       }
@@ -117,36 +118,35 @@ export function createActionSystem<M = undefined>(
     const updateAction = (data: any) => updateComponent(Action, request.index!, data);
     updateAction({ state: ActionState.Executing });
 
-    // If a cancel was requested before execution starts, honor it
     if (canceled.has(request.index!)) {
       updateAction({ state: ActionState.Canceled });
+      canceled.delete(request.index!);
       return;
     }
 
     try {
-      // Execute the action
       const execPromise: any = request.execute();
       const cancelFn = typeof execPromise?.cancel === 'function' ? execPromise.cancel.bind(execPromise) : undefined;
       if (cancelFn) execCancels.set(request.index!, cancelFn);
 
-      // If user already canceled, propagate to queue immediately
       if (canceled.has(request.index!) && cancelFn) {
         try { cancelFn(); } catch {}
         updateAction({ state: ActionState.Canceled });
+        canceled.delete(request.index!);
         execCancels.delete(request.index!);
         return;
       }
 
       const tx = await execPromise;
-      // Mark pending and expose hash immediately so UI can cancel/replace
       updateAction({
         state: ActionState.WaitingForTxEvents,
         txHash: tx?.hash,
       });
 
-      // If cancel requested after submission, do not proceed to completion
       if (canceled.has(request.index!)) {
         updateAction({ state: ActionState.Canceled });
+        canceled.delete(request.index!);
+        execCancels.delete(request.index!);
         return;
       }
 
@@ -154,11 +154,17 @@ export function createActionSystem<M = undefined>(
         await tx.wait();
       }
 
-      if (canceled.has(request.index!)) updateAction({ state: ActionState.Canceled });
-      else updateAction({ state: ActionState.Complete });
+      if (canceled.has(request.index!)) {
+        updateAction({ state: ActionState.Canceled });
+        canceled.delete(request.index!);
+      } else {
+        updateAction({ state: ActionState.Complete });
+        canceled.delete(request.index!);
+      }
       execCancels.delete(request.index!);
     } catch (e) {
       handleError(e, request);
+      canceled.delete(request.index!);
       execCancels.delete(request.index!);
     }
   }
@@ -210,7 +216,11 @@ export function createActionSystem<M = undefined>(
 
     if (request.id) world.entityToIndex.delete(request.id);
     setTimeout(() => removeComponent(Action, index), delay);
-    requests.delete(index); // Remove the request from the ActionSystem
+    requests.delete(index);
+    
+    // Cleanup to prevent memory leaks
+    canceled.delete(index);
+    execCancels.delete(index);
   }
 
   // Set the action's state to ActionState.Failed and pass through the error
