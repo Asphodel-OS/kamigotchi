@@ -232,6 +232,8 @@ const LabelIcon = styled.img`
 
 const Buffs = styled.div`
   position: absolute;
+  width: 20%;
+  max-height: 30%;
   top: 0.2vw;
   left: 0.2vw;
   display: flex;
@@ -242,15 +244,21 @@ const Buffs = styled.div`
   border: solid black 0.15vw;
   border-radius: 0.3vw;
   padding: 0.1vw;
-  max-height: 95%;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: black transparent;
+  overflow: hidden auto;
+  &::-webkit-scrollbar {
+    width: 0.2vw;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: rgba(202, 202, 56, 1);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(201, 150, 9, 1);
+    border-radius: 0.2vw;
+  }
 `;
 
 const Buff = styled.img`
-  height: 1vw;
-  width: 1vw;
+  width: 1.3vw;
   object-fit: cover;
 `;
 
