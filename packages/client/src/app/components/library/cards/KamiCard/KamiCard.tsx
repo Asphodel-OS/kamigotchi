@@ -233,7 +233,7 @@ const LabelIcon = styled.img`
 const Buffs = styled.div`
   position: absolute;
   width: 20%;
-  max-height: 30%;
+  max-height: 31%;
   top: 0.2vw;
   left: 0.2vw;
   display: flex;
