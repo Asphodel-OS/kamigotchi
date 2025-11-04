@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { calcHealth, calcOutput } from 'app/cache/kami';
-import { CollectButton, KamiCard, Pairing, StopButton } from 'app/components/library';
+import { calcOutput } from 'app/cache/kami';
+import { CollectButton, KamiCard, StopButton } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
-import { StatColors, StatIcons } from 'constants/stats';
 import { Node } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
+import { StatsDisplay } from './StatsDisplay';
 
 // rendering of an ally kami on this node
 export const AllyKards = ({
@@ -46,56 +46,6 @@ export const AllyKards = ({
   };
 
   /////////////////
-  // DISPLAY
-
-  // generate the content section for a Kami
-  const StatsDisplay = ({ kami }: { kami: Kami }) => {
-    const stats = kami.stats;
-    if (!stats) return <></>;
-
-    const power = stats.power.total;
-    const violence = stats.violence.total;
-    const harmony = stats.harmony.total;
-    const health = calcHealth(kami);
-    const healthText = `${health.toFixed()} / ${stats?.health.total ?? 0}`;
-
-    return (
-      <Column>
-        <Pairing
-          icon={StatIcons.health}
-          text={healthText}
-          iconSize={0.9}
-          textSize={0.6}
-          background={{ gradient: StatColors.health }}
-        />
-        <Row>
-          <Pairing
-            icon={StatIcons.power}
-            text={`${power}`}
-            iconSize={0.9}
-            textSize={0.6}
-            background={{ gradient: StatColors.power }}
-          />
-          <Pairing
-            icon={StatIcons.violence}
-            text={`${violence}`}
-            iconSize={0.9}
-            textSize={0.6}
-            background={{ gradient: StatColors.violence }}
-          />
-          <Pairing
-            icon={StatIcons.harmony}
-            text={`${harmony}`}
-            iconSize={0.9}
-            textSize={0.6}
-            background={{ gradient: StatColors.harmony }}
-          />
-        </Row>
-      </Column>
-    );
-  };
-
-  /////////////////
   // RENDER
 
   return (
@@ -111,13 +61,13 @@ export const AllyKards = ({
             key={kami.index}
             kami={kami}
             description={['']}
-            content={<StatsDisplay kami={kami} />}
-            label={{ text: `${calcOutput(kami)}`, icon: ItemImages.musu }}
             actions={[
               UseItemButton(kami, account),
               CollectButton(kami, account, collect),
               StopButton(kami, account, stop),
             ]}
+            content={<StatsDisplay kami={kami} />}
+            label={{ text: `${calcOutput(kami)}`, icon: ItemImages.musu }}
             utils={{ getTempBonuses }}
             showBattery
             showCooldown

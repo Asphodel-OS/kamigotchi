@@ -17,11 +17,10 @@ import { Health } from './Health';
 export const KamiCard = ({
   kami,
   content,
-  description,
-  descriptionOnClick,
   isFriend,
   contentTooltip,
   label,
+  labelAlt,
   actions,
   showBattery,
   showLevelUp,
@@ -36,6 +35,13 @@ export const KamiCard = ({
   content: ReactNode;
   label?: {
     text: string;
+    color?: string;
+    icon?: string;
+    onClick?: () => void;
+  };
+  labelAlt?: {
+    text: string;
+    color?: string;
     icon?: string;
     onClick?: () => void;
   };
@@ -82,25 +88,12 @@ export const KamiCard = ({
   /////////////////
   // DISPLAY
 
-  // generate the styled text divs for the description
-  const Description = () => {
-    const header = (
-      <TextBig key='header' onClick={descriptionOnClick}>
-        {description[0]}
-      </TextBig>
-    );
-
-    const details = description
-      .slice(1)
-      .map((text, i) => <TextMedium key={`desc-${i}`}>{text}</TextMedium>);
-    return <>{[header, ...details]}</>;
-  };
-
   // get the list of item bonuses to display
   const itemBonuses = useMemo(() => {
     if (!getTempBonuses) return [];
     return getTempBonuses(kami).map((bonus) => ({
-      image: getItemImage(bonus.source?.name || ''),
+      image: getItemImage(bonus.source?.name ?? ''),
+      itemName: bonus.source?.name ?? '',
       text: parseBonusText(bonus),
     }));
   }, [getTempBonuses, kami]);
@@ -135,18 +128,23 @@ export const KamiCard = ({
       </TitleBar>
       <Content>
         <Top>
-          <Column key='column-1'>
-            <TextTooltip text={contentTooltip ?? []}>{content}</TextTooltip>
-            {isFriend && <Friend>Friend</Friend>}
-          </Column>
-          {label && (
-            <Column key='column-2'>
+          <Column key='column-1'>{content}</Column>
+          <Column key='column-2'>
+            {label && (
               <Label onClick={label.onClick}>
                 <Text size={0.75}>{label.text}</Text>
                 <LabelIcon src={label.icon} />
               </Label>
-            </Column>
-          )}
+            )}
+            {labelAlt && (
+              <Label onClick={labelAlt.onClick}>
+                <Text size={0.6} color={labelAlt.color}>
+                  {labelAlt.text}
+                </Text>
+                <LabelIcon src={labelAlt.icon} />
+              </Label>
+            )}
+          </Column>
         </Top>
         <Bottom>
           {itemBonuses.length > 0 && (
@@ -201,7 +199,7 @@ const TitleCorner = styled.div`
 
 const Buffs = styled.div`
   display: flex;
-  gap: 0.15vw;
+  gap: 0.21vw;
   width: max-content;
   align-items: center;
   padding-bottom: 0.3vw;
@@ -294,14 +292,6 @@ const TextBig = styled.p`
       text-decoration: underline;
     }
   `}
-`;
-
-const TextMedium = styled.p`
-  padding-left: 0.5vw;
-
-  font-size: 0.6vw;
-  line-height: 1vw;
-  text-align: left;
 `;
 
 const Friend = styled.div`

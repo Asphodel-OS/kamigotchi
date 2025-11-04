@@ -13,7 +13,7 @@ export const parseBonusText = (bonus: Bonus): string => {
   // number formatting
   if (type.includes('STAT')) text += value * 1;
   else if (type.includes('COOLDOWN')) text += `${value * 1}s`;
-  else if (type.includes('INTENSITY')) text += `${value * 1}musu/hr`;
+  else if (type.includes('INTENSITY')) text += `${value * 1}`;
   else text += `${(value / 10).toFixed(1)}%`; // default %
 
   // type
@@ -36,6 +36,10 @@ export const parseBonusText = (bonus: Bonus): string => {
   }
 
   return text;
+};
+
+export const parseTooltipText = (bonus: Bonus): string[] => {
+  return [];
 };
 
 const parseEndtype = (bonus: Bonus): string => {
