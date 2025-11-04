@@ -4,9 +4,9 @@
 }
 
 /* this one i eyeballed it, avoids overflowing in weird views */
-@media (max-width: 1100px) and (min-width: 700px) and (min-height: 600px) and (max-height: 1300px) {
+@media (max-width: 1100px) and (max-height: 1300px) {
   :root {
-    font-size: min(1.3vw, 1.3vh);
+    font-size: max(1.3vw, 1.3vh);
   }
 }
 
