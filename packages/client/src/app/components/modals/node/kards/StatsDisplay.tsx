@@ -42,15 +42,14 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
           </>
         )}
       </Affinities>
+      <Pairing
+        icon={StatIcons.health}
+        text={healthText}
+        iconSize={0.9}
+        textSize={0.6}
+        background={{ gradient: StatColors.health, border: StatBorderColors.health }}
+      />
       <Row>
-        {' '}
-        <Pairing
-          icon={StatIcons.health}
-          text={healthText}
-          iconSize={0.9}
-          textSize={0.6}
-          background={{ gradient: StatColors.health, border: StatBorderColors.health }}
-        />{' '}
         <Pairing
           icon={StatIcons.power}
           text={`${power}`}
@@ -58,8 +57,6 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
           textSize={0.6}
           background={{ gradient: StatColors.power, border: StatBorderColors.power }}
         />
-      </Row>
-      <Row>
         <Pairing
           icon={StatIcons.violence}
           text={`${violence}`}
@@ -108,7 +105,7 @@ const Affinities = styled.div`
   border: solid black 0.15vw;
   border-radius: 0.3vw;
   padding: 0.3vw 0.5vw;
-  font-size: 0.7vw;
+  font-size: 0.6vw;
 `;
 
 const Affinity = styled.span`
