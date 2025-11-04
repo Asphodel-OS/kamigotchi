@@ -20,8 +20,7 @@ export const KamiCard = ({
   descriptionOnClick,
   isFriend,
   contentTooltip,
-  subtext,
-  subtextOnClick,
+  label,
   actions,
   showBattery,
   showLevelUp,
@@ -34,8 +33,11 @@ export const KamiCard = ({
   descriptionOnClick?: () => void;
   isFriend?: boolean;
   contentTooltip?: string[];
-  subtext?: string;
-  subtextOnClick?: () => void;
+  label?: {
+    text: string;
+    icon?: string;
+    onClick?: () => void;
+  };
   actions?: React.ReactNode;
   showBattery?: boolean;
   showLevelUp?: boolean;
@@ -92,6 +94,7 @@ export const KamiCard = ({
     return <>{[header, ...details]}</>;
   };
 
+  // get the list of item bonuses to display
   const itemBonuses = useMemo(() => {
     if (!getTempBonuses) return [];
     return getTempBonuses(kami).map((bonus) => ({
@@ -100,18 +103,6 @@ export const KamiCard = ({
     }));
   }, [getTempBonuses, kami]);
 
-  const TitleSection = (
-    <TitleBar>
-      <TitleText key='title' onClick={() => handleKamiClick()}>
-        {kami.name}
-      </TitleText>
-      <TitleCorner key='corner'>
-        {showCooldown && <Cooldown kami={kami} />}
-        {showBattery && <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />}
-      </TitleCorner>
-    </TitleBar>
-  );
-
   /////////////////
   // RENDER
 
@@ -119,15 +110,27 @@ export const KamiCard = ({
     <Card
       image={{
         icon: kami.image,
-        showLevelUp: showLevelUp && canLevel,
-        showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
         onClick: handleKamiClick,
-        //   filter: cdFilter,
-        background: undefined,
-        // foreground: cdForeground,
+        effects: {
+          showLevelUp: showLevelUp && canLevel,
+          showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
+          // foreground: cdForeground,
+          // background: undefined,
+          // filter: cdFilter,
+        },
       }}
     >
-      {TitleSection}
+      <TitleBar>
+        <TitleText key='title' onClick={() => handleKamiClick()}>
+          {kami.name}
+        </TitleText>
+        <TitleCorner key='corner'>
+          {showCooldown && <Cooldown kami={kami} />}
+          {showBattery && (
+            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
+          )}
+        </TitleCorner>
+      </TitleBar>
       <Content>
         <ContentRow>
           <ContentColumn key='column-1'>
@@ -136,9 +139,11 @@ export const KamiCard = ({
             </TextTooltip>
             {isFriend && <Friend>Friend</Friend>}
           </ContentColumn>
-          <ContentColumn key='column-2'>
-            <ContentSubtext onClick={subtextOnClick}>{subtext}</ContentSubtext>
-          </ContentColumn>
+          {label && (
+            <ContentColumn key='column-2'>
+              <LabelText onClick={label.onClick}>{label.text}</LabelText>
+            </ContentColumn>
+          )}
         </ContentRow>
         <ContentBottom>
           {itemBonuses.length > 0 && (
@@ -238,7 +243,7 @@ const ContentColumn = styled.div`
   padding-top: 0.2vw;
 `;
 
-const ContentSubtext = styled.div`
+const LabelText = styled.div`
   flex-grow: 1;
   text-align: right;
   font-size: 0.7vw;

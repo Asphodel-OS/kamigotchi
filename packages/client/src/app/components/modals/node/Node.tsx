@@ -110,7 +110,6 @@ export const NodeModal: UIComponent = {
             getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
           getNode: (index: number) => getNodeByIndex(world, components, index),
           getRoom: (index: number) => getRoomByIndex(world, components, index),
-          getScavenge: (index: number) => getNodeByIndex(world, components, index).scavenge,
           getValue: (entity: EntityIndex) => _getValue(components, entity),
           parseAllos: (allos: Allo[]) => _parseAllos(world, components, allos, true),
           queryScavInstance: (index: number, holderID: EntityID) =>

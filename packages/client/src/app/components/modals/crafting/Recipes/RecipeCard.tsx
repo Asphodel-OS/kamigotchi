@@ -56,8 +56,10 @@ export const RecipeCard = ({
         icon: item.image,
         scale: 7.5,
         padding: 1,
-        overlay: `${amt * quantity}`,
         tooltip: [item.description ?? ''],
+        effects: {
+          overlay: `${amt * quantity}`,
+        },
       }}
       fullWidth
     >

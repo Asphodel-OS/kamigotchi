@@ -64,7 +64,7 @@ export const EnemyCards = ({
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
+  const [tick, setTick] = useState(Date.now());
 
   const [enemies, setEnemies] = useState<Kami[]>([]);
   const [sorted, setSorted] = useState<Kami[]>([]);
@@ -83,7 +83,7 @@ export const EnemyCards = ({
 
   // set up ticking
   useEffect(() => {
-    const refreshClock = () => setLastRefresh(Date.now());
+    const refreshClock = () => setTick(Date.now());
     const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
     return () => clearInterval(timerId);
   }, []);
@@ -135,7 +135,7 @@ export const EnemyCards = ({
       if (newEnemies[i] != enemies[i]) enemiesStale = true;
     }
     if (enemiesStale) setEnemies(newEnemies);
-  }, [isCollapsed, lastRefresh]);
+  }, [isCollapsed, tick]);
 
   // sort whenever the list of enemies changes or the sort changes
   useEffect(() => {
@@ -219,10 +219,12 @@ export const EnemyCards = ({
               isFriend={account.friends?.friends.some((fren) => fren.target.index === owner.index)}
               key={kami.index}
               kami={kami}
-              subtext={`${owner.name} (\$${calcOutput(kami)})`}
-              subtextOnClick={() => selectAccount(owner.index)}
               actions={getActions(kami)}
               description={getDescription(kami)}
+              label={{
+                text: `${owner.name} (\$${calcOutput(kami)})`,
+                onClick: () => selectAccount(owner.index),
+              }}
               showBattery
               showCooldown
             />

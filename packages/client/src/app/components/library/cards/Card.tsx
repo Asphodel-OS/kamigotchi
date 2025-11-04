@@ -16,20 +16,22 @@ export const Card = ({
   image?: {
     icon?: string;
     onClick?: () => void;
-    overlay?: string;
     padding?: number;
     scale?: number;
-    showLevelUp?: boolean;
-    showSkillPoints?: boolean;
     tooltip?: string[];
-    skillPoints?: boolean;
-    background?: React.ReactNode;
-    foreground?: React.ReactNode; // rendered above image
-    filter?: string; // CSS filter applied to base image only
+    effects?: {
+      overlay?: string;
+      showLevelUp?: boolean; // TODO: move this field up one level to KamiCard, pass in as Foreground
+      showSkillPoints?: boolean; // TODO: move this field up one level to KamiCard, pass in as Foreground or Overlay
+      background?: React.ReactNode;
+      foreground?: React.ReactNode; // rendered above image
+      filter?: string; // CSS filter applied to base image only
+    };
   };
   fullWidth?: boolean;
 }) => {
   const scale = image?.scale ?? 9;
+  const effects = image?.effects;
 
   // handle image click if there is one
   const handleImageClick = () => {
@@ -43,16 +45,16 @@ export const Card = ({
     <Wrapper fullWidth={fullWidth}>
       <TextTooltip text={image?.tooltip ?? []}>
         <ImageContainer scale={scale} padding={image?.padding}>
-          {!!image?.background && <BackgroundSlot>{image.background}</BackgroundSlot>}
+          {!!effects?.background && <BackgroundSlot>{effects.background}</BackgroundSlot>}
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
-            <Text size={scale * 0.075}>{image?.overlay}</Text>
+            <Text size={scale * 0.075}>{effects?.overlay}</Text>
           </Overlay>
-          {!!image?.showLevelUp && <LevelUpArrows />}
+          {!!effects?.showLevelUp && <LevelUpArrows />}
           <Overlay top={0.5} right={0.5}>
-            {!!image?.showSkillPoints && <Sp>SP</Sp>}
+            {!!effects?.showSkillPoints && <Sp>SP</Sp>}
           </Overlay>
-          <Image src={image?.icon} onClick={handleImageClick} style={{ filter: image?.filter }} />
-          {!!image?.foreground && <ForegroundSlot>{image.foreground}</ForegroundSlot>}
+          <Image src={image?.icon} onClick={handleImageClick} style={{ filter: effects?.filter }} />
+          {!!effects?.foreground && <ForegroundSlot>{effects.foreground}</ForegroundSlot>}
         </ImageContainer>
       </TextTooltip>
       <Container>{children}</Container>

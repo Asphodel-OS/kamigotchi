@@ -148,7 +148,7 @@ export const KamisExpanded = ({
           kami={kami}
           description={getDescription(kami)}
           descriptionOnClick={getDescriptionOnClick(kami)}
-          subtext={getSubtext(kami)}
+          label={{ text: getSubtext(kami) }}
           actions={DisplayedActions(account, kami, node)}
           showBattery
           showCooldown

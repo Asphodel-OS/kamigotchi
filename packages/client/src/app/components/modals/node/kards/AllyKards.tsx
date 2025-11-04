@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { calcHealth, calcOutput } from 'app/cache/kami';
 import { CollectButton, KamiCard, StopButton } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
-import { Bonus, parseBonusText } from 'network/shapes/Bonus';
+import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
@@ -56,10 +56,8 @@ export const AllyKards = ({
     return description;
   };
 
-  const getItemBonusesDescription = (kami: Kami) => {
-    const bonuses = getTempBonuses(kami);
-    return bonuses.map((bonus) => parseBonusText(bonus));
-  };
+  /////////////////
+  // RENDER
 
   return (
     <Container style={{ display: kamis.length > 0 ? 'flex' : 'none' }}>
@@ -74,15 +72,15 @@ export const AllyKards = ({
             key={kami.index}
             kami={kami}
             description={getDescription(kami)}
-            subtext={`yours (\$${calcOutput(kami)})`}
+            label={{ text: `yours (\$${calcOutput(kami)})` }}
             actions={[
               UseItemButton(kami, account),
               CollectButton(kami, account, collect),
               StopButton(kami, account, stop),
             ]}
+            utils={{ getTempBonuses }}
             showBattery
             showCooldown
-            utils={{ getTempBonuses }}
           />
         ))}
     </Container>
