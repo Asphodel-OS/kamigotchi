@@ -6,17 +6,17 @@ import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
+import { View } from '../types';
 import { KamisCollapsed } from './KamisCollapsed';
-import { KamisExpanded } from './KamisExpanded';
 import { KamisExternal } from './KamisExternal';
-import { View } from './types';
+import { KamisExpanded } from './expanded/KamisExpanded';
 
 export const KamiList = ({
   actions,
   controls: { view },
   data,
   display,
-  state: { displayedKamis, tick },
+  state,
   utils,
 }: {
   actions: {
@@ -75,14 +75,14 @@ export const KamiList = ({
       <KamisExpanded
         data={data}
         display={display}
-        state={{ displayedKamis }}
+        state={state}
         utils={utils}
         isVisible={partyModalVisible && view === 'expanded'}
       />
       <KamisCollapsed
         data={data}
         display={display}
-        state={{ displayedKamis, tick }}
+        state={state}
         utils={utils}
         isVisible={partyModalVisible && view === 'collapsed'}
       />

@@ -16,7 +16,7 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
   const healthText = `${health.toFixed()} / ${stats?.health.total ?? 0}`;
 
   return (
-    <Column>
+    <Container>
       <Pairing
         icon={StatIcons.health}
         text={healthText}
@@ -47,11 +47,11 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
           background={{ gradient: StatColors.harmony }}
         />
       </Row>
-    </Column>
+    </Container>
   );
 };
 
-const Column = styled.div`
+const Container = styled.div`
   padding: 0 0.3vw;
   gap: 0.45vw;
 

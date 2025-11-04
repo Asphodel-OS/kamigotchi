@@ -60,7 +60,6 @@ export const AllyKards = ({
           <KamiCard
             key={kami.index}
             kami={kami}
-            description={['']}
             actions={[
               UseItemButton(kami, account),
               CollectButton(kami, account, collect),
@@ -111,20 +110,4 @@ const Title = styled.div`
   &:hover {
     opacity: 0.8;
   }
-`;
-
-const Column = styled.div`
-  padding: 0 0.3vw;
-  gap: 0.45vw;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-`;
-
-const Row = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 0.6vw;
 `;

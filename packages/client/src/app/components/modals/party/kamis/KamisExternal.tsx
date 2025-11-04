@@ -7,7 +7,7 @@ import { PORTAL_ROOM_INDEX } from 'constants/rooms';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
-import { View } from './types';
+import { View } from '../types';
 
 // resorting to this pattern as useMemo and useCallback don't seem to be effective
 const StakeButtons = new Map<number, React.ReactNode>();

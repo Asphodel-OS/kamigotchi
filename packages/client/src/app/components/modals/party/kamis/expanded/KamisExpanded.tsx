@@ -1,28 +1,21 @@
 import styled from 'styled-components';
 
 import { getHarvestItem } from 'app/cache/harvest';
-import {
-  calcHealth,
-  calcOutput,
-  isDead,
-  isHarvesting,
-  isOffWorld,
-  isResting,
-} from 'app/cache/kami';
+import { calcOutput, isDead, isHarvesting } from 'app/cache/kami';
 import { KamiCard } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/stores';
+import { LabelParams } from 'app/components/library/cards/KamiCard/KamiCard';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
-import { Node, NullNode } from 'network/shapes/Node';
+import { Node } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
-import { playClick } from 'utils/sounds';
+import { StateDisplay } from './StatusDisplay';
 
 export const KamisExpanded = ({
   data: { account, node },
   display: { HarvestButton, UseItemButton },
-  state: { displayedKamis },
+  state: { displayedKamis, tick },
   utils,
   isVisible,
 }: {
@@ -37,6 +30,7 @@ export const KamisExpanded = ({
   };
   state: {
     displayedKamis: Kami[];
+    tick: number;
   };
   utils: {
     calcExpRequirement: (lvl: number) => number;
@@ -45,53 +39,16 @@ export const KamisExpanded = ({
 
   isVisible: boolean;
 }) => {
-  const nodeModalOpen = useVisibility((s) => s.modals.node);
-  const setModals = useVisibility((s) => s.setModals);
-  const nodeIndex = useSelected((s) => s.nodeIndex);
-  const setSelectedNode = useSelected((s) => s.setNode);
-
   /////////////////
   // INTERPRETATION
 
-  // get the description of the kami as a list of lines
-  // TODO: clean this up. might be overeager on harvest rate calcs
-  const getDescription = (kami: Kami): string[] => {
-    const healthRate = getRateDisplay(kami.stats!.health.rate, 2);
-
-    let description: string[] = [];
-    if (isOffWorld(kami)) description = ['kidnapped by slave traders'];
-    else if (isResting(kami)) description = ['Resting', `${healthRate} HP/hr`];
-    else if (isDead(kami)) description = [`Murdered`];
-    else if (isHarvesting(kami) && kami.harvest) {
-      const harvest = kami.harvest;
-      const harvestRate = getRateDisplay(harvest.rates.total.spot, 2);
-      const item = getHarvestItem(harvest);
-      const node = harvest.node ?? NullNode;
-
-      if (calcHealth(kami) == 0) {
-        description = [`Starving.. `, `on ${node.name}`];
-      } else {
-        description = [
-          `Harvesting`,
-          `on ${node.name}`,
-          `${harvestRate} ${item.name}/hr`,
-          `${healthRate} HP/hr`,
-        ];
-      }
-    }
-
-    // add bonuses from items to description
-
-    return description;
-  };
-
   // get the balance subtext for a kami
   // TODO: update this with iconography
-  const getSubtext = (kami: Kami): string => {
+  const getSubtext = (kami: Kami): LabelParams => {
     const harvest = kami.harvest;
-    if (!harvest || harvest.state != 'ACTIVE') return '';
+    if (!harvest || harvest.state != 'ACTIVE') return { text: '' };
     const item = getHarvestItem(harvest);
-    return `${calcOutput(kami)} ${item.name}`;
+    return { text: `${calcOutput(kami)}`, icon: item.image };
   };
 
   // get the description tooltip on the kami card
@@ -108,22 +65,6 @@ export const KamisExpanded = ({
       tooltip.push(`> over the last ${lastDuration.toFixed(2)}hours`);
     }
     return tooltip;
-  };
-
-  /////////////////
-  // INTERACTION
-
-  // toggle the node modal to the selected one
-  const selectNode = (index: number) => {
-    if (nodeIndex !== index) setSelectedNode(index);
-    if (!nodeModalOpen) setModals({ node: true });
-    else if (nodeIndex == index) setModals({ node: false });
-    playClick();
-  };
-
-  // returns the onClick function for the description
-  const getDescriptionOnClick = (kami: Kami) => {
-    if (isHarvesting(kami)) return () => selectNode(kami.harvest?.node?.index!);
   };
 
   /////////////////
@@ -146,15 +87,14 @@ export const KamisExpanded = ({
         <KamiCard
           key={kami.entity}
           kami={kami}
-          description={getDescription(kami)}
-          descriptionOnClick={getDescriptionOnClick(kami)}
-          label={{ text: getSubtext(kami) }}
           actions={DisplayedActions(account, kami, node)}
+          content={<StateDisplay kami={kami} tick={tick} />}
+          label={getSubtext(kami)}
+          utils={utils}
           showBattery
           showCooldown
           showLevelUp
           showSkillPoints
-          utils={utils}
         />
       ))}
     </Container>

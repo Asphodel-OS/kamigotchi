@@ -36,7 +36,7 @@ import {
   calcKamiExpRequirement,
 } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs as _passesNodeReqs } from 'network/shapes/Node';
-import { KamiList } from './KamiList';
+import { KamiList } from './kamis/KamiList';
 import { SendBar } from './SendBar';
 import { Toolbar } from './Toolbar';
 import { Sort, View } from './types';
@@ -283,7 +283,7 @@ export const PartyModal: UIComponent = {
     };
 
     /////////////////
-    // DISPLAY
+    // RENDER
 
     return (
       <ModalWrapper

@@ -12,13 +12,18 @@ import { Card } from '../';
 import { Cooldown } from './Cooldown';
 import { Health } from './Health';
 
+export type LabelParams = {
+  text: string;
+  color?: string;
+  icon?: string;
+  onClick?: () => void;
+};
+
 // KamiCard is a card that displays information about a Kami. It is designed to display
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = ({
   kami,
   content,
-  isFriend,
-  contentTooltip,
   label,
   labelAlt,
   actions,
@@ -29,8 +34,6 @@ export const KamiCard = ({
   utils: { calcExpRequirement, getTempBonuses } = {},
 }: {
   kami: Kami; // assumed to have a harvest attached
-  description: string[];
-  descriptionOnClick?: () => void;
   contentTooltip?: string[];
   content: ReactNode;
   label?: {

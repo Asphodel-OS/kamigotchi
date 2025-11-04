@@ -210,7 +210,6 @@ export const EnemyCards = ({
               isFriend={account.friends?.friends.some((fren) => fren.target.index === owner.index)}
               key={kami.index}
               kami={kami}
-              description={['']}
               actions={[
                 CastItemButton(kami, account, 2.0),
                 LiquidateButton(kami, allies, liquidate, 2.0),
