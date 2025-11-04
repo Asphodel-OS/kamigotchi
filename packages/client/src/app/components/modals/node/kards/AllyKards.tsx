@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import { getHarvestItem } from 'app/cache/harvest';
 import { calcOutput } from 'app/cache/kami';
 import { CollectButton, KamiCard, StopButton } from 'app/components/library';
-import { ItemImages } from 'assets/images/items';
 import { Node } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
@@ -40,9 +40,20 @@ export const AllyKards = ({
   const { getTempBonuses } = utils;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  /////////////////
+  // INTERACTION
+
+  // collapse and expand the list
   const handleCollapseToggle = () => {
-    playClick();
     setIsCollapsed(!isCollapsed);
+    playClick();
+  };
+
+  // get the harvest balance label for a kami
+  const getLabel = (kami: Kami) => {
+    const harvestOutput = calcOutput(kami);
+    const harvestItem = getHarvestItem(kami.harvest!);
+    return { text: `${harvestOutput}`, icon: harvestItem.image };
   };
 
   /////////////////
@@ -66,7 +77,7 @@ export const AllyKards = ({
               StopButton(kami, account, stop),
             ]}
             content={<StatsDisplay kami={kami} />}
-            label={{ text: `${calcOutput(kami)}`, icon: ItemImages.musu }}
+            label={getLabel(kami)}
             utils={{ getTempBonuses }}
             showBattery
             showCooldown

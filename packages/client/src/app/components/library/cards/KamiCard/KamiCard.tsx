@@ -34,30 +34,18 @@ export const KamiCard = ({
   utils: { calcExpRequirement, getTempBonuses } = {},
 }: {
   kami: Kami; // assumed to have a harvest attached
-  contentTooltip?: string[];
-  content: ReactNode;
-  label?: {
-    text: string;
-    color?: string;
-    icon?: string;
-    onClick?: () => void;
-  };
-  labelAlt?: {
-    text: string;
-    color?: string;
-    icon?: string;
-    onClick?: () => void;
-  };
   actions?: ReactNode;
-  isFriend?: boolean;
-  showBattery?: boolean;
-  showLevelUp?: boolean;
-  showSkillPoints?: boolean;
-  showCooldown?: boolean;
+  content: ReactNode;
+  label?: LabelParams;
+  labelAlt?: LabelParams;
   utils?: {
     calcExpRequirement?: (lvl: number) => number;
     getTempBonuses?: (kami: Kami) => Bonus[];
   };
+  showBattery?: boolean;
+  showLevelUp?: boolean;
+  showSkillPoints?: boolean;
+  showCooldown?: boolean;
 }) => {
   const setModals = useVisibility((s) => s.setModals);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);

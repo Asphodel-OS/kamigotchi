@@ -2,12 +2,12 @@ import { EntityIndex } from 'engine/recs';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { getHarvestItem } from 'app/cache/harvest';
 import { calcHealthPercent, calcOutput, Kami } from 'app/cache/kami';
 import { EmptyText, IconListButton, KamiCard, LiquidateButton } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { CooldownIcon } from 'assets/images/icons/battles';
-import { ItemImages } from 'assets/images/items';
 import { StatIcons } from 'constants/stats';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
@@ -169,6 +169,23 @@ export const EnemyCards = ({
   /////////////////
   // INTERPRETATION
 
+  // get the harvest balance label for a kami
+  const getLabel = (kami: Kami) => {
+    const harvestOutput = calcOutput(kami);
+    const harvestItem = getHarvestItem(kami.harvest!);
+    return { text: `${harvestOutput}`, icon: harvestItem.image };
+  };
+
+  // get the owner label for a kami
+  const getLabelAlt = (kami: Kami) => {
+    const owner = getOwner(kami.entity);
+    return {
+      text: `${owner.name}`,
+      color: getOwnerColor(owner),
+      onClick: () => selectAccount(owner.index),
+    };
+  };
+
   // get the color of the owner text (e.g. friend, guild, etc)
   const getOwnerColor = (owner: BaseAccount) => {
     const friends = account.friends?.friends ?? [];
@@ -204,10 +221,8 @@ export const EnemyCards = ({
       </StickyRow>
       {!isCollapsed &&
         sorted.slice(0, limit.val).map((kami: Kami) => {
-          const owner = getOwner(kami.entity);
           return (
             <KamiCard
-              isFriend={account.friends?.friends.some((fren) => fren.target.index === owner.index)}
               key={kami.index}
               kami={kami}
               actions={[
@@ -215,12 +230,8 @@ export const EnemyCards = ({
                 LiquidateButton(kami, allies, liquidate, 2.0),
               ]}
               content={<StatsDisplay kami={kami} />}
-              label={{ text: `${calcOutput(kami)}`, icon: ItemImages.musu }}
-              labelAlt={{
-                text: `${owner.name}`,
-                color: getOwnerColor(owner),
-                onClick: () => selectAccount(owner.index),
-              }}
+              label={getLabel(kami)}
+              labelAlt={getLabelAlt(kami)}
               utils={{ getTempBonuses }}
               showBattery
               showCooldown
