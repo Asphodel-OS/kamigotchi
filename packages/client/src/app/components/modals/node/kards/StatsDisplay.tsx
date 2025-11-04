@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { calcHealth, Kami } from 'app/cache/kami';
 import { Pairing } from 'app/components/library';
-import { StatColors, StatIcons } from 'constants/stats';
+import { StatBorderColors, StatColors, StatIcons } from 'constants/stats';
 
 // generate the content section for a Kami
 export const StatsDisplay = ({ kami }: { kami: Kami }) => {
@@ -22,7 +22,7 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
         text={healthText}
         iconSize={0.9}
         textSize={0.6}
-        background={{ gradient: StatColors.health }}
+        background={{ gradient: StatColors.health, border: StatBorderColors.health }}
       />
       <Row>
         <Pairing
@@ -30,21 +30,21 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
           text={`${power}`}
           iconSize={0.9}
           textSize={0.6}
-          background={{ gradient: StatColors.power }}
+          background={{ gradient: StatColors.power, border: StatBorderColors.power }}
         />
         <Pairing
           icon={StatIcons.violence}
           text={`${violence}`}
           iconSize={0.9}
           textSize={0.6}
-          background={{ gradient: StatColors.violence }}
+          background={{ gradient: StatColors.violence, border: StatBorderColors.violence }}
         />
         <Pairing
           icon={StatIcons.harmony}
           text={`${harmony}`}
           iconSize={0.9}
           textSize={0.6}
-          background={{ gradient: StatColors.harmony }}
+          background={{ gradient: StatColors.harmony, border: StatBorderColors.harmony }}
         />
       </Row>
     </Container>

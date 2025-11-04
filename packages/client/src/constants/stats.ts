@@ -17,8 +17,15 @@ export const StatDescriptions = {
 export const StatColors = {
   health: '#D7BCE8',
   power: '#F9DB6D',
-  violence: '#BD4F6C',
+  violence: '#df829bff',
   harmony: '#9CBCD2',
+};
+
+export const StatBorderColors = {
+  health: '#61178fff',
+  power: '#8a6c00ff',
+  violence: '#690c25ff',
+  harmony: '#14537cff',
 };
 
 export const StatIcons = {

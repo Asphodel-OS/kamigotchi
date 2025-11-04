@@ -25,20 +25,33 @@ export const Pairing = ({
   reverse?: boolean;
   background?: {
     gradient: string;
+    border: string;
   };
 }) => {
   return (
-    <Container gap={textSize ?? scale} color={background?.gradient ?? '#fff'}>
-      {reverse && <Text size={textSize ?? scale}>{text}</Text>}
+    <Container
+      gap={textSize ?? scale}
+      color={background?.gradient ?? '#fff'}
+      border={background?.border ?? '#fff'}
+    >
+      {reverse && (
+        <Text color={background?.border ?? '#000000ff'} size={textSize ?? scale}>
+          {text}
+        </Text>
+      )}
       <TextTooltip text={tooltip}>
         <Icon src={icon} scale={iconSize ?? scale} color={background?.gradient ?? '#fff'} />
       </TextTooltip>
-      {!reverse && <Text size={textSize ?? scale}>{text}</Text>}
+      {!reverse && (
+        <Text color={background?.border ?? '#000000ff'} size={textSize ?? scale}>
+          {text}
+        </Text>
+      )}
     </Container>
   );
 };
 
-const Container = styled.div<{ gap: number; color: string }>`
+const Container = styled.div<{ gap: number; color: string; border: string }>`
   gap: ${({ gap }) => gap * 0.3}vw;
 
   display: flex;
@@ -49,8 +62,10 @@ const Container = styled.div<{ gap: number; color: string }>`
   user-select: none;
   pointer-events: auto;
 
-  // background: radial-gradient(ellipse at center, ${({ color }) => color} 0%, transparent 80%);
-  border-bottom: solid ${({ color }) => color} 0.15vw;
+  background: ${({ color }) => color};
+  padding: 0.15vw;
+  border: solid ${({ border }) => border} 0.15vw;
+  border-radius: 0.3vw;
 `;
 
 const Icon = styled.img<{ scale: number; color: string }>`
