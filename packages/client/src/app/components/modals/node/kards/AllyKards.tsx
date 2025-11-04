@@ -2,7 +2,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealth, calcOutput } from 'app/cache/kami';
-import { CollectButton, KamiCard, StopButton } from 'app/components/library';
+import { CollectButton, KamiCard, Pairing, StopButton } from 'app/components/library';
+import { ItemImages } from 'assets/images/items';
+import { StatColors, StatIcons } from 'constants/stats';
+import { Node } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
@@ -22,6 +25,7 @@ export const AllyKards = ({
   data: {
     account: Account;
     kamis: Kami[]; // ally kami entities
+    node: Node;
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;
@@ -42,18 +46,53 @@ export const AllyKards = ({
   };
 
   /////////////////
-  // INTERPRETATION
+  // DISPLAY
 
-  // get the description on the card
-  const getDescription = (kami: Kami): string[] => {
+  // generate the content section for a Kami
+  const StatsDisplay = ({ kami }: { kami: Kami }) => {
+    const stats = kami.stats;
+    if (!stats) return <></>;
+
+    const power = stats.power.total;
+    const violence = stats.violence.total;
+    const harmony = stats.harmony.total;
     const health = calcHealth(kami);
-    const description = [
-      '',
-      `Health: ${health.toFixed()}/${kami.stats?.health.total ?? 0}`,
-      `Harmony: ${kami.stats?.harmony.total ?? 0}`,
-      `Violence: ${kami.stats?.violence.total ?? 0}`,
-    ];
-    return description;
+    const healthText = `${health.toFixed()} / ${stats?.health.total ?? 0}`;
+
+    return (
+      <Column>
+        <Pairing
+          icon={StatIcons.health}
+          text={healthText}
+          iconSize={0.9}
+          textSize={0.6}
+          background={{ gradient: StatColors.health }}
+        />
+        <Row>
+          <Pairing
+            icon={StatIcons.power}
+            text={`${power}`}
+            iconSize={0.9}
+            textSize={0.6}
+            background={{ gradient: StatColors.power }}
+          />
+          <Pairing
+            icon={StatIcons.violence}
+            text={`${violence}`}
+            iconSize={0.9}
+            textSize={0.6}
+            background={{ gradient: StatColors.violence }}
+          />
+          <Pairing
+            icon={StatIcons.harmony}
+            text={`${harmony}`}
+            iconSize={0.9}
+            textSize={0.6}
+            background={{ gradient: StatColors.harmony }}
+          />
+        </Row>
+      </Column>
+    );
   };
 
   /////////////////
@@ -71,8 +110,9 @@ export const AllyKards = ({
           <KamiCard
             key={kami.index}
             kami={kami}
-            description={getDescription(kami)}
-            label={{ text: `yours (\$${calcOutput(kami)})` }}
+            description={['']}
+            content={<StatsDisplay kami={kami} />}
+            label={{ text: `${calcOutput(kami)}`, icon: ItemImages.musu }}
             actions={[
               UseItemButton(kami, account),
               CollectButton(kami, account, collect),
@@ -88,7 +128,7 @@ export const AllyKards = ({
 };
 
 const Container = styled.div`
-  padding: 0.6vw;
+  padding: 0 0.6vw 0.6vw 0.6vw;
   gap: 0.45vw;
   display: flex;
   flex-flow: column nowrap;
@@ -114,11 +154,27 @@ const StickyRow = styled.div`
 
 const Title = styled.div`
   font-size: 1.2vw;
-  line-height: 1.8vw;
+  line-height: 2.4vw;
   color: #333;
   cursor: pointer;
 
   &:hover {
     opacity: 0.8;
   }
+`;
+
+const Column = styled.div`
+  padding: 0 0.3vw;
+  gap: 0.45vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.6vw;
 `;

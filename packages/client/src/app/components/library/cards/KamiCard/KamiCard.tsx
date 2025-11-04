@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
-import { TextTooltip } from 'app/components/library';
+import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
@@ -16,6 +16,7 @@ import { Health } from './Health';
 // information ranging from current harvest or death as well as support common actions.
 export const KamiCard = ({
   kami,
+  content,
   description,
   descriptionOnClick,
   isFriend,
@@ -31,14 +32,15 @@ export const KamiCard = ({
   kami: Kami; // assumed to have a harvest attached
   description: string[];
   descriptionOnClick?: () => void;
-  isFriend?: boolean;
   contentTooltip?: string[];
+  content: ReactNode;
   label?: {
     text: string;
     icon?: string;
     onClick?: () => void;
   };
-  actions?: React.ReactNode;
+  actions?: ReactNode;
+  isFriend?: boolean;
   showBattery?: boolean;
   showLevelUp?: boolean;
   showSkillPoints?: boolean;
@@ -132,20 +134,21 @@ export const KamiCard = ({
         </TitleCorner>
       </TitleBar>
       <Content>
-        <ContentRow>
-          <ContentColumn key='column-1'>
-            <TextTooltip text={contentTooltip ?? []}>
-              <Description />
-            </TextTooltip>
+        <Top>
+          <Column key='column-1'>
+            <TextTooltip text={contentTooltip ?? []}>{content}</TextTooltip>
             {isFriend && <Friend>Friend</Friend>}
-          </ContentColumn>
+          </Column>
           {label && (
-            <ContentColumn key='column-2'>
-              <LabelText onClick={label.onClick}>{label.text}</LabelText>
-            </ContentColumn>
+            <Column key='column-2'>
+              <Label onClick={label.onClick}>
+                <Text size={0.75}>{label.text}</Text>
+                <LabelIcon src={label.icon} />
+              </Label>
+            </Column>
           )}
-        </ContentRow>
-        <ContentBottom>
+        </Top>
+        <Bottom>
           {itemBonuses.length > 0 && (
             <Buffs>
               {itemBonuses.map((bonus, i) => (
@@ -155,8 +158,8 @@ export const KamiCard = ({
               ))}
             </Buffs>
           )}
-          <ContentActions>{actions}</ContentActions>
-        </ContentBottom>
+          <Actions>{actions}</Actions>
+        </Bottom>
       </Content>
     </Card>
   );
@@ -198,18 +201,15 @@ const TitleCorner = styled.div`
 
 const Buffs = styled.div`
   display: flex;
-  gap: 0.2vw;
+  gap: 0.15vw;
   width: max-content;
   align-items: center;
-  padding: 0.2vw;
-  margin: 0 0 0 0.4vw;
+  padding-bottom: 0.3vw;
+  margin-left: 0.15vw;
 `;
 
 const Buff = styled.img`
-  height: 1.6vw;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  height: 1.2vw;
 `;
 
 const Content = styled.div`
@@ -221,12 +221,12 @@ const Content = styled.div`
   user-select: none;
 `;
 
-const ContentRow = styled.div`
+const Top = styled.div`
   display: flex;
   flex-grow: 1;
 `;
 
-const ContentBottom = styled.div`
+const Bottom = styled.div`
   display: flex;
   position: relative;
 
@@ -234,7 +234,7 @@ const ContentBottom = styled.div`
   align-items: flex-end;
 `;
 
-const ContentColumn = styled.div`
+const Column = styled.div`
   display: flex;
   flex-flow: column nowrap;
   flex-grow: 1;
@@ -243,10 +243,13 @@ const ContentColumn = styled.div`
   padding-top: 0.2vw;
 `;
 
-const LabelText = styled.div`
-  flex-grow: 1;
-  text-align: right;
-  font-size: 0.7vw;
+const Label = styled.div`
+  gap: 0.3vw;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-end;
 
   ${({ onClick }) =>
     onClick &&
@@ -259,10 +262,15 @@ const LabelText = styled.div`
   `}
 `;
 
-const ContentActions = styled.div`
+const LabelIcon = styled.img`
+  height: 1.2vw;
+  margin-bottom: 0.15vw;
+`;
+
+const Actions = styled.div`
   display: flex;
   position: absolute;
-  right: 0.2vw;
+  right: 0.1vw;
   bottom: 0.1vw;
 
   flex-flow: row nowrap;

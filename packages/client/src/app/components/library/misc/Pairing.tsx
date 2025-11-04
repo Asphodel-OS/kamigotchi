@@ -11,27 +11,35 @@ export const Pairing = ({
   text,
   tooltip = [],
   scale = SCALE_DEFAULT,
+  iconSize,
+  textSize,
+  background,
   reverse = false,
 }: {
   icon: string;
   text: string;
   tooltip?: string[];
   scale?: number;
+  textSize?: number;
+  iconSize?: number;
   reverse?: boolean;
+  background?: {
+    gradient: string;
+  };
 }) => {
   return (
-    <Container scale={scale}>
-      {reverse && <Text size={scale}>{text}</Text>}
+    <Container gap={textSize ?? scale} color={background?.gradient ?? '#fff'}>
+      {reverse && <Text size={textSize ?? scale}>{text}</Text>}
       <TextTooltip text={tooltip}>
-        <Icon src={icon} scale={scale} />
+        <Icon src={icon} scale={iconSize ?? scale} color={background?.gradient ?? '#fff'} />
       </TextTooltip>
-      {!reverse && <Text size={scale}>{text}</Text>}
+      {!reverse && <Text size={textSize ?? scale}>{text}</Text>}
     </Container>
   );
 };
 
-const Container = styled.div<{ scale: number }>`
-  gap: ${({ scale }) => scale * 0.5}vw;
+const Container = styled.div<{ gap: number; color: string }>`
+  gap: ${({ gap }) => gap * 0.3}vw;
 
   display: flex;
   flex-direction: row;
@@ -39,10 +47,15 @@ const Container = styled.div<{ scale: number }>`
   justify-content: center;
 
   user-select: none;
+  pointer-events: auto;
+
+  // background: radial-gradient(ellipse at center, ${({ color }) => color} 0%, transparent 80%);
+  border-bottom: solid ${({ color }) => color} 0.15vw;
 `;
 
-const Icon = styled.img<{ scale: number }>`
+const Icon = styled.img<{ scale: number; color: string }>`
   height: ${({ scale }) => scale * 1.5}vw;
   margin-bottom: ${({ scale }) => scale * 0.12}vw;
   ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
+  user-drag: none;
 `;
