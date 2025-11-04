@@ -238,10 +238,14 @@ const Buffs = styled.div`
   flex-flow: column nowrap;
   gap: 0.1vw;
   pointer-events: auto;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: rgba(255, 255, 255, 1);
   border: solid black 0.15vw;
   border-radius: 0.3vw;
   padding: 0.1vw;
+  max-height: 95%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: black transparent;
 `;
 
 const Buff = styled.img`
