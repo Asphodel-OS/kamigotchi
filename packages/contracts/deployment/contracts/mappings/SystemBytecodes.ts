@@ -15,6 +15,7 @@ import _QuestRegistrySystem from "../../../out/_QuestRegistrySystem.sol/_QuestRe
 import _RecipeRegistrySystem from "../../../out/_RecipeRegistrySystem.sol/_RecipeRegistrySystem.json";
 import _RelationshipRegistrySystem from "../../../out/_RelationshipRegistrySystem.sol/_RelationshipRegistrySystem.json";
 import _RoomRegistrySystem from "../../../out/_RoomRegistrySystem.sol/_RoomRegistrySystem.json";
+import _ShapeRegistrySystem from "../../../out/_ShapeRegistrySystem.sol/_ShapeRegistrySystem.json";
 import _SkillRegistrySystem from "../../../out/_SkillRegistrySystem.sol/_SkillRegistrySystem.json";
 import _SnapshotT2System from "../../../out/_SnapshotT2System.sol/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../../../out/_TraitRegistrySystem.sol/_TraitRegistrySystem.json";
@@ -94,6 +95,7 @@ export const SystemBytecodes = {
   "system.recipe.registry": _RecipeRegistrySystem,
   "system.relationship.registry": _RelationshipRegistrySystem,
   "system.room.registry": _RoomRegistrySystem,
+  "system.shape.registry": _ShapeRegistrySystem,
   "system.skill.registry": _SkillRegistrySystem,
   "system.setup.snapshot.t2": _SnapshotT2System,
   "system.trait.registry": _TraitRegistrySystem,
