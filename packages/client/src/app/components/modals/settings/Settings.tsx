@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { SettingsIcon } from 'assets/images/icons/menu';
 import { Account } from './Account';
 import { Debugging } from './Debugging';
@@ -12,7 +12,7 @@ export const SettingsModal: UIComponent = {
   id: 'SettingsModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const { network } = layers;
     const { actions, api } = network;
 
@@ -46,6 +46,7 @@ export const SettingsModal: UIComponent = {
         id='settings'
         header={<ModalHeader title='Settings' icon={SettingsIcon} />}
         canExit
+        overlay
         truncate
       >
         <Volume />
