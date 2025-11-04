@@ -143,6 +143,7 @@ export const KamiCard = ({
             )}
           </Column>
         </Top>
+        <Actions>{actions}</Actions>
       </Content>
     </Card>
   );
@@ -247,4 +248,14 @@ const Buff = styled.img`
   height: 1vw;
   width: 1vw;
   object-fit: cover;
+`;
+
+const Actions = styled.div`
+  display: flex;
+  position: absolute;
+  right: 0.1vw;
+  bottom: 0.1vw;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  gap: 0.3vw;
 `;
