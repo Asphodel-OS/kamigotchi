@@ -10,7 +10,7 @@ import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { Node } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
-import { StateDisplay } from './StatusDisplay';
+import { StatusDisplay } from './StatusDisplay';
 
 export const KamisExpanded = ({
   data: { account, node },
@@ -88,7 +88,7 @@ export const KamisExpanded = ({
           key={kami.entity}
           kami={kami}
           actions={DisplayedActions(account, kami, node)}
-          content={<StateDisplay kami={kami} tick={tick} />}
+          content={<StatusDisplay kami={kami} tick={tick} />}
           label={getSubtext(kami)}
           utils={utils}
           showBattery
