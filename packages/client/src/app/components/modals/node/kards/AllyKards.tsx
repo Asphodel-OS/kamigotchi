@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { getHarvestItem } from 'app/cache/harvest';
 import { calcOutput } from 'app/cache/kami';
 import { CollectButton, KamiCard, StopButton } from 'app/components/library';
-import { Node } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
@@ -25,7 +24,6 @@ export const AllyKards = ({
   data: {
     account: Account;
     kamis: Kami[]; // ally kami entities
-    node: Node;
   };
   display: {
     UseItemButton: (kami: Kami, account: Account) => React.ReactNode;

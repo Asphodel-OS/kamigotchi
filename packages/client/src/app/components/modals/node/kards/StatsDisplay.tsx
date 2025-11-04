@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
 import { calcHealth, Kami } from 'app/cache/kami';
-import { Pairing } from 'app/components/library';
+import { Pairing, TextTooltip } from 'app/components/library';
 import { StatBorderColors, StatColors, StatIcons } from 'constants/stats';
+import { getAffinityImage } from 'network/shapes/utils';
 
 // generate the content section for a Kami
 export const StatsDisplay = ({ kami }: { kami: Kami }) => {
@@ -17,6 +18,30 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
 
   return (
     <Container>
+      <Affinities>
+        {kami.traits?.body.affinity && (
+          <>
+            <TextTooltip text={[`Body`]}>
+              <Affinity>
+                {kami.traits?.body.affinity.toUpperCase()}
+                <Icon src={getAffinityImage(kami.traits?.body.affinity)} />
+              </Affinity>
+            </TextTooltip>
+          </>
+        )}
+
+        {kami.traits?.hand.affinity && (
+          <>
+            <Slash>/</Slash>
+            <TextTooltip text={[`Hand`]}>
+              <Affinity>
+                {kami.traits?.hand.affinity.toUpperCase()}
+                <Icon src={getAffinityImage(kami.traits?.hand.affinity)} />
+              </Affinity>
+            </TextTooltip>
+          </>
+        )}
+      </Affinities>
       <Pairing
         icon={StatIcons.health}
         text={healthText}
@@ -65,4 +90,31 @@ const Row = styled.div`
   display: flex;
   flex-flow: row nowrap;
   gap: 0.6vw;
+`;
+
+const Icon = styled.img`
+  height: 1.2vw;
+  width: 1.2vw;
+`;
+
+const Affinities = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.4vw;
+  border: solid black 0.15vw;
+  border-radius: 0.3vw;
+  padding: 0.3vw 0.5vw;
+  font-size: 0.7vw;
+`;
+
+const Affinity = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const Slash = styled.span`
+  opacity: 0.6;
+  margin: 0 0.1vw;
 `;

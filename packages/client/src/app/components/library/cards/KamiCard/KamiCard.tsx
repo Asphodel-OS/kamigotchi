@@ -100,9 +100,15 @@ export const KamiCard = ({
         effects: {
           showLevelUp: showLevelUp && canLevel,
           showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
-          // foreground: cdForeground,
-          // background: undefined,
-          // filter: cdFilter,
+          foreground: itemBonuses.length > 0 && (
+            <Buffs>
+              {itemBonuses.map((bonus, i) => (
+                <TextTooltip key={i} text={[bonus.text]} direction='row'>
+                  <Buff src={bonus.image} />
+                </TextTooltip>
+              ))}
+            </Buffs>
+          ),
         },
       }}
     >
@@ -137,18 +143,6 @@ export const KamiCard = ({
             )}
           </Column>
         </Top>
-        <Bottom>
-          {itemBonuses.length > 0 && (
-            <Buffs>
-              {itemBonuses.map((bonus, i) => (
-                <TextTooltip key={i} text={[bonus.text]} direction='row'>
-                  <Buff src={bonus.image} />
-                </TextTooltip>
-              ))}
-            </Buffs>
-          )}
-          <Actions>{actions}</Actions>
-        </Bottom>
       </Content>
     </Card>
   );
@@ -188,19 +182,6 @@ const TitleCorner = styled.div`
   height: 1.2vw;
 `;
 
-const Buffs = styled.div`
-  display: flex;
-  gap: 0.21vw;
-  width: max-content;
-  align-items: center;
-  padding-bottom: 0.3vw;
-  margin-left: 0.15vw;
-`;
-
-const Buff = styled.img`
-  height: 1.2vw;
-`;
-
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -213,14 +194,6 @@ const Content = styled.div`
 const Top = styled.div`
   display: flex;
   flex-grow: 1;
-`;
-
-const Bottom = styled.div`
-  display: flex;
-  position: relative;
-
-  justify-content: space-between;
-  align-items: flex-end;
 `;
 
 const Column = styled.div`
@@ -256,46 +229,22 @@ const LabelIcon = styled.img`
   margin-bottom: 0.15vw;
 `;
 
-const Actions = styled.div`
-  display: flex;
+const Buffs = styled.div`
   position: absolute;
-  right: 0.1vw;
-  bottom: 0.1vw;
-
-  flex-flow: row nowrap;
-  justify-content: flex-end;
-  gap: 0.3vw;
+  top: 0.2vw;
+  left: 0.2vw;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.1vw;
+  pointer-events: auto;
+  background-color: rgba(255, 255, 255, 0.65);
+  border: solid black 0.15vw;
+  border-radius: 0.3vw;
+  padding: 0.1vw;
 `;
 
-const TextBig = styled.p`
-  padding: 0.2vw;
-
-  font-size: 0.75vw;
-  line-height: 0.9vw;
-  text-align: left;
-
-  ${({ onClick }) =>
-    onClick &&
-    `
-    &:hover {
-      opacity: 0.6;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  `}
-`;
-
-const Friend = styled.div`
-  display: flex;
-  width: 5vw;
-  padding: 0.2vw;
-  position: absolute;
-  bottom: 0;
-  background-color: rgb(192, 224, 139);
-  color: rgb(25, 39, 2);
-  clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
-
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6vw;
+const Buff = styled.img`
+  height: 1vw;
+  width: 1vw;
+  object-fit: cover;
 `;
