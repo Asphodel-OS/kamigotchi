@@ -229,15 +229,14 @@ const LabelIcon = styled.img`
   height: 1.2vw;
   margin-bottom: 0.15vw;
 `;
-
+//TODO: override mosewheel behaviour
 const Buffs = styled.div`
   position: absolute;
-  width: 20%;
-  max-height: 31%;
-  top: 0.2vw;
+  max-width: 95%;
+  bottom: 0.2vw;
   left: 0.2vw;
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
   gap: 0.1vw;
   pointer-events: auto;
   background-color: rgba(255, 255, 255, 1);
@@ -247,6 +246,7 @@ const Buffs = styled.div`
   overflow: hidden auto;
   &::-webkit-scrollbar {
     width: 0.2vw;
+    height: 0.2vw;
   }
   &::-webkit-scrollbar-track {
     background-color: rgba(202, 202, 56, 1);
@@ -259,6 +259,7 @@ const Buffs = styled.div`
 
 const Buff = styled.img`
   width: 1.3vw;
+  height: 1.3vw;
   object-fit: cover;
 `;
 
