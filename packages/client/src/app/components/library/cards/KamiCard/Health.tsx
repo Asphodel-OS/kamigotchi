@@ -16,12 +16,13 @@ export const Health = ({ current, total }: { current: number; total: number }) =
 
 const HealthFill = styled.div<{ $percent: number }>`
   position: absolute;
-  left: 0;
+  right: 17.5%;
   top: 0;
   bottom: 0;
-  width: calc(83%);
+  width: 22%;
   overflow: hidden;
   background: #fdf0ecff;
+  border-left: solid black 0.15vw;
   border-right: solid black 0.15vw;
   &::after {
     content: '';
@@ -36,10 +37,11 @@ const HealthFill = styled.div<{ $percent: number }>`
 `;
 const HealthContainer = styled.div`
   position: absolute;
-  right: 18%;
+  right: 16.8%;
   top: 0;
   bottom: 0;
-  font-size: 0.6vw;
+
+  font-size: 0.55vw;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -47,11 +49,13 @@ const HealthContainer = styled.div`
   font-weight: bold;
   z-index: 1;
   color: #61178fff;
-  gap: 0.1vw;
+  gap: 0vw;
+
+  padding: 0.1vw 0.3vw;
 `;
 const Icon = styled.img`
-  height: 1.3vw;
-  width: 1.3vw;
+  height: 1.2vw;
+  width: 1.2vw;
 
   filter: sepia(1) saturate(200%);
 

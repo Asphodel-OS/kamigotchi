@@ -20,7 +20,7 @@ const CooldownFill = styled.div<{ $percent: number }>`
   right: 0;
   top: 0;
   bottom: 0;
-  width: calc(17%);
+  width: 24.5%;
   background: #b1f74fff;
   overflow: hidden;
   border-top-right-radius: 0.45vw;
@@ -41,7 +41,8 @@ const StaminaContainer = styled.div`
   right: 1%;
   top: 0;
   bottom: 0;
-  font-size: 0.6vw;
+
+  font-size: 0.55vw;
   display: flex;
   flex-direction: row;
   align-items: center;
