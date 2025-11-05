@@ -7,8 +7,8 @@ export const Countdown = ({ total, current }: { total: number; current: number }
   return (
     <TextTooltip text={[`Cooldown: ${Math.round(current)}s`]}>
       <StaminaContainer>
-        {`${Math.round(current)}s`}
         <Icon src={objectClock} />
+        {`${Math.round(current)}s`}
       </StaminaContainer>
       <CooldownFill $percent={percent} />
     </TextTooltip>
@@ -38,7 +38,7 @@ const CooldownFill = styled.div<{ $percent: number }>`
 
 const StaminaContainer = styled.div`
   position: absolute;
-  right: 1%;
+  left: 83%;
   top: 0;
   bottom: 0;
 
@@ -50,7 +50,7 @@ const StaminaContainer = styled.div`
   font-weight: bold;
   z-index: 1;
   color: #61178fff;
-  gap: 0.1vw;
+  gap: 0.2vw;
 `;
 const Icon = styled.img`
   height: 1.2vw;

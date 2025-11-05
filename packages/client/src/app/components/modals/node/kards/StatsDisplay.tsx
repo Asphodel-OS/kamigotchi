@@ -18,29 +18,6 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
 
   return (
     <Container>
-      <Affinities>
-        {kami.traits?.body.affinity && (
-          <>
-            <TextTooltip text={[`Body`]}>
-              <Affinity>
-                <Icon src={getAffinityImage(kami.traits?.body.affinity)} />
-              </Affinity>
-            </TextTooltip>
-          </>
-        )}
-
-        {kami.traits?.hand.affinity && (
-          <>
-            <Slash>/</Slash>
-            <TextTooltip text={[`Hand`]}>
-              <Affinity>
-                <Icon src={getAffinityImage(kami.traits?.hand.affinity)} />
-              </Affinity>
-            </TextTooltip>
-          </>
-        )}
-      </Affinities>
-
       <Row>
         <Pairing
           icon={StatIcons.power}
@@ -63,7 +40,29 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
           textSize={0.6}
           background={{ gradient: StatColors.harmony, border: StatBorderColors.harmony }}
         />
-      </Row>
+      </Row>{' '}
+      <Affinities>
+        {kami.traits?.body.affinity && (
+          <>
+            <TextTooltip text={[`Body`]}>
+              <Affinity>
+                <Icon src={getAffinityImage(kami.traits?.body.affinity)} />
+              </Affinity>
+            </TextTooltip>
+          </>
+        )}
+
+        {kami.traits?.hand.affinity && (
+          <>
+            <Slash>/</Slash>
+            <TextTooltip text={[`Hand`]}>
+              <Affinity>
+                <Icon src={getAffinityImage(kami.traits?.hand.affinity)} />
+              </Affinity>
+            </TextTooltip>
+          </>
+        )}
+      </Affinities>
     </Container>
   );
 };
