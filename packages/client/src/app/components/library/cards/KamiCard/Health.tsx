@@ -6,8 +6,8 @@ export const Health = ({ current, total }: { current: number; total: number }) =
   return (
     <TextTooltip text={[`Health: ${current}/${total}`]}>
       <HealthContainer>
-        <Icon src={StatIcons.health} />
         {current}/{total}
+        <Icon src={StatIcons.health} />
       </HealthContainer>
       <HealthFill $percent={(100 * current) / total} />
     </TextTooltip>
@@ -16,10 +16,11 @@ export const Health = ({ current, total }: { current: number; total: number }) =
 
 const HealthFill = styled.div<{ $percent: number }>`
   position: absolute;
-  right: 17.5%;
+  left: 61.5%;
+
   top: 0;
   bottom: 0;
-  width: 22%;
+  width: 22.5%;
   overflow: hidden;
   background: #fdf0ecff;
   border-left: solid black 0.15vw;
@@ -37,7 +38,7 @@ const HealthFill = styled.div<{ $percent: number }>`
 `;
 const HealthContainer = styled.div`
   position: absolute;
-  left: 59.8%;
+  right: 15.5%;
   top: 0;
   bottom: 0;
 

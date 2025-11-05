@@ -18,29 +18,6 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
 
   return (
     <Container>
-      <Row>
-        <Pairing
-          icon={StatIcons.power}
-          text={`${power}`}
-          iconSize={0.9}
-          textSize={0.6}
-          background={{ gradient: StatColors.power, border: StatBorderColors.power }}
-        />
-        <Pairing
-          icon={StatIcons.violence}
-          text={`${violence}`}
-          iconSize={0.9}
-          textSize={0.6}
-          background={{ gradient: StatColors.violence, border: StatBorderColors.violence }}
-        />
-        <Pairing
-          icon={StatIcons.harmony}
-          text={`${harmony}`}
-          iconSize={0.9}
-          textSize={0.6}
-          background={{ gradient: StatColors.harmony, border: StatBorderColors.harmony }}
-        />
-      </Row>{' '}
       <Affinities>
         {kami.traits?.body.affinity && (
           <>
@@ -63,6 +40,29 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
           </>
         )}
       </Affinities>
+      <Row>
+        <Pairing
+          icon={StatIcons.power}
+          text={`${power}`}
+          iconSize={0.9}
+          textSize={0.6}
+          background={{ gradient: StatColors.power, border: StatBorderColors.power }}
+        />
+        <Pairing
+          icon={StatIcons.violence}
+          text={`${violence}`}
+          iconSize={0.9}
+          textSize={0.6}
+          background={{ gradient: StatColors.violence, border: StatBorderColors.violence }}
+        />
+        <Pairing
+          icon={StatIcons.harmony}
+          text={`${harmony}`}
+          iconSize={0.9}
+          textSize={0.6}
+          background={{ gradient: StatColors.harmony, border: StatBorderColors.harmony }}
+        />
+      </Row>
     </Container>
   );
 };
