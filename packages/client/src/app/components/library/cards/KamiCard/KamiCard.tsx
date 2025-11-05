@@ -150,26 +150,25 @@ export const KamiCard = ({
 };
 
 const TitleBar = styled.div`
+  position: relative;
   display: flex;
-
+  align-items: center;
+  justify-content: center;
+  height: 1.8vw;
   border-bottom: solid black 0.15vw;
   padding: 0.45vw;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
 `;
-
+//change font size for party modal
 const TitleText = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  font-size: 1vw;
+  position: relative;
+  z-index: 1;
+  font-size: 0.95vw;
+
   text-align: left;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.6;
-    text-decoration: underline;
-  }
+  width: 100%;
+  color: #4b126eff;
+
+  pointer-events: none;
 `;
 
 const TitleCorner = styled.div`

@@ -254,7 +254,7 @@ const Container = styled.div`
 
 const StickyRow = styled.div`
   position: sticky;
-  z-index: 1;
+  z-index: 2;
   top: 0;
 
   background-color: white;
@@ -274,7 +274,6 @@ const Title = styled.div`
   font-size: 1.2vw;
   color: #333;
   cursor: pointer;
-
   &:hover {
     opacity: 0.8;
   }

@@ -1,65 +1,59 @@
+import { objectClock } from 'assets/images/rooms/13_giftshop';
 import styled from 'styled-components';
+import { TextTooltip } from '../poppers';
 
-// 0% means countdown is finished
-export const Countdown = ({
-  total,
-  current,
-}: {
-  total: number
-  current: number
-}) => {
+export const Countdown = ({ total, current }: { total: number; current: number }) => {
   const percent = (current / total) * 100;
-
-  let color = '#29ABE9'; // blue;
-  if (percent > 80)
-    color = '#FF6611'; // red
-  else if (percent > 50)
-    color = '#FFD022'; // yellow
-  else if (percent > 0) color = '#23BD41'; // green
-
   return (
-    <CountdownWrapper>
-      <CountdownCircle percent={percent} color={color} />
-      <InnerCircle />
-    </CountdownWrapper>
+    <TextTooltip text={[`Cooldown: ${Math.round(current)}s`]}>
+      <StaminaContainer>
+        {`${Math.round(current)}s`}
+        <Icon src={objectClock} />
+      </StaminaContainer>
+      <CooldownFill $percent={percent} />
+    </TextTooltip>
   );
 };
 
-const CountdownWrapper = styled.div`
-  position: relative;
-  width: 1.1vw;
-  height: 1.1vw;
-`;
-
-const CountdownCircle = styled.div.attrs<{
-  percent: number;
-  color: string;
-}>(({
-  percent,
-  color,
-}) => ({
-  style: {
-    background: `conic-gradient(
-      #aaa ${percent}%,
-      #aaa ${percent}% ${percent}%,
-      ${color} ${percent}%
-    )`,
-  },
-}))`
+const CooldownFill = styled.div<{ $percent: number }>`
   position: absolute;
+  right: 0;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  bottom: 0;
+  width: calc(17%);
+  background: #b1f74fff;
+  overflow: hidden;
+  border-top-right-radius: 0.45vw;
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: ${({ $percent }) => Math.min(100, Math.max(0, $percent))}%;
+    background: #fdff6dff;
+    transition: width 0.4s ease;
+  }
 `;
 
-const InnerCircle = styled.div`
+const StaminaContainer = styled.div`
   position: absolute;
-  top: 20%;
-  bottom: 20%;
-  left: 20%;
-  right: 20%;
-  background: white;
-  border-radius: 50%;
+  right: 1%;
+  top: 0;
+  bottom: 0;
+  font-size: 0.6vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 1;
+  color: #61178fff;
+  gap: 0.1vw;
+`;
+const Icon = styled.img`
+  height: 1.2vw;
+  width: 1.2vw;
+  filter: sepia(1) saturate(200%);
+  transform: rotate(20deg);
 `;

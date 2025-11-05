@@ -23,7 +23,6 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
           <>
             <TextTooltip text={[`Body`]}>
               <Affinity>
-                {kami.traits?.body.affinity.toUpperCase()}
                 <Icon src={getAffinityImage(kami.traits?.body.affinity)} />
               </Affinity>
             </TextTooltip>
@@ -35,20 +34,13 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
             <Slash>/</Slash>
             <TextTooltip text={[`Hand`]}>
               <Affinity>
-                {kami.traits?.hand.affinity.toUpperCase()}
                 <Icon src={getAffinityImage(kami.traits?.hand.affinity)} />
               </Affinity>
             </TextTooltip>
           </>
         )}
       </Affinities>
-      <Pairing
-        icon={StatIcons.health}
-        text={healthText}
-        iconSize={0.9}
-        textSize={0.6}
-        background={{ gradient: StatColors.health, border: StatBorderColors.health }}
-      />
+
       <Row>
         <Pairing
           icon={StatIcons.power}
@@ -101,7 +93,7 @@ const Affinities = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.4vw;
+  gap: 0.2vw;
   border: solid black 0.15vw;
   border-radius: 0.3vw;
   padding: 0.3vw 0.5vw;
@@ -115,6 +107,5 @@ const Affinity = styled.span`
 `;
 
 const Slash = styled.span`
-  opacity: 0.6;
-  margin: 0 0.1vw;
+  font-size: 0.7vw;
 `;
