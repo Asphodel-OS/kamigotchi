@@ -122,20 +122,20 @@ const Container = styled.span<{
 const PopoverContainer = styled.span.attrs<{
   isVisible: boolean;
   color?: string;
-  tooltipPosition?: { x: number; y: number };
+  tooltipPosition?: any;
   maxWidth?: number;
 }>(({ isVisible, color, tooltipPosition, maxWidth }) => ({
   style: {
     backgroundColor: color ?? '#fff',
     opacity: isVisible ? 1 : 0,
-    top: tooltipPosition ? tooltipPosition.y : 0,
-    left: tooltipPosition ? tooltipPosition.x : 0,
+    top: tooltipPosition.y,
+    left: tooltipPosition.x,
     maxWidth: maxWidth ? `${maxWidth}vw` : '36vw',
   },
 }))<{
   isVisible: boolean;
   color?: string;
-  tooltipPosition?: { x: number; y: number };
+  tooltipPosition?: any;
   maxWidth?: number;
 }>`
   position: fixed;
