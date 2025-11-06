@@ -1,5 +1,4 @@
 import { EntityIndex, getComponentValueStrict } from 'engine/recs';
-import { BigNumber } from 'ethers';
 import moment from 'moment';
 import { useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
@@ -133,7 +132,7 @@ export const Logs = ({
       if (tx.from?.toLowerCase() !== from) return console.warn('Not sender of tx');
 
       const fee = await provider.getFeeData();
-      const bump = (v?: BigNumber) => (v ? v.mul(12).div(10) : undefined);
+      const bump = (v?: bigint) => (v ? (v * 12n) / 10n : undefined);
 
       const cancelReq: any = {
         to: await signer.getAddress(),
@@ -144,23 +143,23 @@ export const Logs = ({
         // EIP-1559 style
         const baseMaxFee =
           tx.maxFeePerGas && fee.maxFeePerGas
-            ? tx.maxFeePerGas.gt(fee.maxFeePerGas)
+            ? tx.maxFeePerGas > fee.maxFeePerGas
               ? tx.maxFeePerGas
               : fee.maxFeePerGas
             : (tx.maxFeePerGas ?? fee.maxFeePerGas)!;
         const baseTip =
           tx.maxPriorityFeePerGas && fee.maxPriorityFeePerGas
-            ? tx.maxPriorityFeePerGas.gt(fee.maxPriorityFeePerGas)
+            ? tx.maxPriorityFeePerGas > fee.maxPriorityFeePerGas
               ? tx.maxPriorityFeePerGas
               : fee.maxPriorityFeePerGas
-            : (tx.maxPriorityFeePerGas ?? fee.maxPriorityFeePerGas ?? baseMaxFee.div(2))!;
+            : (tx.maxPriorityFeePerGas ?? fee.maxPriorityFeePerGas ?? baseMaxFee / 2n)!;
         cancelReq.maxFeePerGas = bump(baseMaxFee);
         cancelReq.maxPriorityFeePerGas = bump(baseTip);
       } else if (tx.gasPrice || fee.gasPrice) {
         // legacy style
         const base =
           tx.gasPrice && fee.gasPrice
-            ? tx.gasPrice.gt(fee.gasPrice)
+            ? tx.gasPrice > fee.gasPrice
               ? tx.gasPrice
               : fee.gasPrice
             : (tx.gasPrice ?? fee.gasPrice)!;
