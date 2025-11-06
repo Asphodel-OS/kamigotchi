@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { calcHealth } from 'app/cache/kami';
@@ -52,6 +52,14 @@ export const KamiCard = ({
   const setKami = useSelected((s) => s.setKami);
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const [canLevel, setCanLevel] = useState(false);
+  const buffsRef = useRef<HTMLDivElement | null>(null);
+
+  // horizontal scroll for buffs
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!buffsRef.current) return;
+    e.preventDefault();
+    buffsRef.current.scrollLeft += e.deltaY;
+  };
 
   // const { filter: cdFilter, foreground: cdForeground } = useCooldownVisuals(kami, showCooldown);
 
@@ -101,7 +109,7 @@ export const KamiCard = ({
           showLevelUp: showLevelUp && canLevel,
           showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
           foreground: itemBonuses.length > 0 && (
-            <Buffs>
+            <Buffs ref={buffsRef} onWheel={handleWheel}>
               {itemBonuses.map((bonus, i) => (
                 <TextTooltip key={i} text={[bonus.text]} direction='row'>
                   <Buff src={bonus.image} />
@@ -242,9 +250,9 @@ const Buffs = styled.div`
   border: solid black 0.15vw;
   border-radius: 0.3vw;
   padding: 0.1vw;
-  overflow: hidden auto;
+  overflow: auto hidden;
+
   &::-webkit-scrollbar {
-    width: 0.2vw;
     height: 0.2vw;
   }
   &::-webkit-scrollbar-track {
