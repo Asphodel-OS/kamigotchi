@@ -28,7 +28,7 @@ const CooldownFill = styled.div.attrs<CooldownFillProps>(({ percent }) => ({
   left: 82.6%;
   top: 0;
   bottom: 0;
-  width: 17.3%;
+  width: 17.4%;
   background: #bd8fd4ff;
   overflow: hidden;
   border-top-right-radius: 0.45vw;

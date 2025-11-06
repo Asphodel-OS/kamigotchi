@@ -187,6 +187,7 @@ const TitleText = styled.div<{ showSkillPoints?: boolean }>`
 const TitleCorner = styled.div`
   display: flex;
   flex-grow: 1;
+
   align-items: center;
   justify-content: flex-end;
   gap: 0.3vw;

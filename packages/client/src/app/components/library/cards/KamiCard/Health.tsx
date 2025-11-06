@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import { TextTooltip } from '../..';
 
 export const Health = ({ current, total }: { current: number; total: number }) => {
+  const percent = Math.min(100, Math.max(0, (current / total) * 100));
   return (
     <TextTooltip text={[`Health: ${current}/${total}`]}>
       <HealthContainer>
         {current}/{total}
         <Icon src={StatIcons.health} />
       </HealthContainer>
-      <HealthFill $percent={(100 * current) / total} />
+      <HealthFill $percent={percent} />
     </TextTooltip>
   );
 };
