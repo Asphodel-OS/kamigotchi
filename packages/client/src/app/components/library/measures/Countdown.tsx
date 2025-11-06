@@ -21,7 +21,7 @@ const CooldownFill = styled.div<{ $percent: number }>`
   top: 0;
   bottom: 0;
   width: 17.4%;
-  background: #b1f74fff;
+  background: #bd8fd4ff;
   overflow: hidden;
   border-top-right-radius: 0.45vw;
   &::after {
@@ -31,7 +31,7 @@ const CooldownFill = styled.div<{ $percent: number }>`
     top: 0;
     bottom: 0;
     width: ${({ $percent }) => Math.min(100, Math.max(0, $percent))}%;
-    background: #fdff6dff;
+    background: #faf5c9ff;
     transition: width 0.4s ease;
   }
 `;
@@ -49,7 +49,7 @@ const StaminaContainer = styled.div`
   justify-content: center;
   font-weight: bold;
   z-index: 1;
-  color: #61178fff;
+  color: #2d0b42ff;
   gap: 0.2vw;
 `;
 const Icon = styled.img`
