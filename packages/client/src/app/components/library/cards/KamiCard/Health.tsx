@@ -15,15 +15,35 @@ export const Health = ({ current, total }: { current: number; total: number }) =
   );
 };
 
+const HealthContainer = styled.div`
+  position: absolute;
+  top: 5%;
+  right: 17.1%;
+  font-size: 0.55vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 1;
+  color: #61178fff;
+  gap: 0.1vw;
+  padding: 0.1vw 0.3vw;
+  margin-left: auto;
+  margin-right: 0.3vw;
+`;
+
 const HealthFill = styled.div<{ $percent: number }>`
   position: absolute;
+  overflow: hidden;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 82.6%;
-  overflow: hidden;
+  right: 0;
+  width: 81%;
   background: #faf5c9ff;
   border-right: solid black 0.15vw;
+
   &::after {
     content: '';
     position: absolute;
@@ -43,22 +63,6 @@ const HealthFill = styled.div<{ $percent: number }>`
     }};
     transition: width 0.4s ease;
   }
-`;
-const HealthContainer = styled.div`
-  position: absolute;
-  right: 17%;
-  top: 0;
-  bottom: 0;
-  font-size: 0.55vw;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  z-index: 1;
-  color: #61178fff;
-  gap: 0.1vw;
-  padding: 0.1vw 0.3vw;
 `;
 
 const Icon = styled.img`

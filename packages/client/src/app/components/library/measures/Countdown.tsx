@@ -19,36 +19,10 @@ interface CooldownFillProps {
   percent: number;
 }
 
-const CooldownFill = styled.div.attrs<CooldownFillProps>(({ percent }) => ({
-  style: {
-    '--fill': `${Math.min(100, Math.max(0, percent))}%`,
-  },
-}))<CooldownFillProps>`
-  position: absolute;
-  left: 82.6%;
-  top: 0;
-  bottom: 0;
-  width: 17.4%;
-  background: #bd8fd4ff;
-  overflow: hidden;
-  border-top-right-radius: 0.45vw;
-  &::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: var(--fill);
-    background: #faf5c9ff;
-    transition: width 0.4s ease;
-  }
-`;
-
 const StaminaContainer = styled.div`
   position: absolute;
-  top: 0;
-  right: 0.5%;
-  bottom: 0;
+  top: 12%;
+  right: 1%;
   font-size: 0.55vw;
   display: flex;
   flex-direction: row;
@@ -58,6 +32,33 @@ const StaminaContainer = styled.div`
   z-index: 1;
   color: #2d0b42ff;
   gap: 0.2vw;
+  margin-left: 0.3vw;
+`;
+
+const CooldownFill = styled.div.attrs<CooldownFillProps>(({ percent }) => ({
+  style: {
+    '--fill': `${Math.min(100, Math.max(0, percent))}%`,
+  },
+}))<CooldownFillProps>`
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: #bd8fd4ff;
+  width: 19.9%;
+  border-top-right-radius: 0.6vw;
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--fill);
+    border-top-right-radius: 0.6vw;
+    background: #faf5c9ff;
+    transition: width 0.4s ease;
+  }
 `;
 
 const Icon = styled.img`
