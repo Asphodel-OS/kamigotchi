@@ -97,6 +97,10 @@ const Affinities = styled.div`
   border-radius: 0.3vw;
   padding: 0.3vw 0.5vw;
   font-size: 0.6vw;
+
+  filter: sepia(1) saturate(100%);
+  background-color: #ffffd6;
+  border: solid 0.15vw #4e4e03ff;
 `;
 
 const Affinity = styled.span`
