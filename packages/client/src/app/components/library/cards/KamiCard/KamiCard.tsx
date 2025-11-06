@@ -172,7 +172,7 @@ const TitleBar = styled.div`
 const TitleText = styled.div<{ showSkillPoints?: boolean }>`
   position: relative;
   z-index: 1;
-  font-size: ${({ showSkillPoints }) => (showSkillPoints ? '0.8vw' : '0.95vw;')};
+  font-size: ${({ showSkillPoints }) => (showSkillPoints ? '0.8vw' : '0.95vw')};
 
   text-align: left;
   width: 100%;
