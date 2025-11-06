@@ -10,7 +10,7 @@ import { useStream } from 'network/utils/hooks';
 import { getBigger } from 'utils/numbers/bigint';
 import { LOG_HEIGHTS } from './constants';
 import { Controls } from './controls';
-import { Logs } from './logs';
+import { Logs } from './Logs';
 
 export const ActionQueue: UIComponent = {
   id: 'ActionQueue',
