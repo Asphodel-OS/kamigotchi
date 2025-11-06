@@ -94,7 +94,7 @@ const Container = styled.div`
 
 const StickyRow = styled.div`
   position: sticky;
-  z-index: 1;
+  z-index: 2;
   top: 0;
 
   background-color: white;

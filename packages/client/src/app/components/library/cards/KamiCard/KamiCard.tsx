@@ -113,7 +113,7 @@ export const KamiCard = ({
       }}
     >
       <TitleBar>
-        <TitleText key='title' onClick={() => handleKamiClick()}>
+        <TitleText showSkillPoints={showSkillPoints} key='title' onClick={() => handleKamiClick()}>
           {kami.name}
         </TitleText>
         <TitleCorner key='corner'>
@@ -159,10 +159,10 @@ const TitleBar = styled.div`
   padding: 0.45vw;
 `;
 //change font size for party modal
-const TitleText = styled.div`
+const TitleText = styled.div<{ showSkillPoints?: boolean }>`
   position: relative;
   z-index: 1;
-  font-size: 0.95vw;
+  font-size: ${({ showSkillPoints }) => (showSkillPoints ? '0.8vw' : '0.95vw;')};
 
   text-align: left;
   width: 100%;

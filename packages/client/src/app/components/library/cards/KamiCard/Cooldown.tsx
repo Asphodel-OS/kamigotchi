@@ -6,6 +6,7 @@ import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
 import { Kami } from 'network/shapes/Kami';
 import { Countdown, TextTooltip } from '../..';
+import { OldCountdown } from '../../measures/OldCountdown';
 
 const cooldownEndCache: Map<number | string, number> = new Map();
 
@@ -14,7 +15,7 @@ const getKamiCacheKey = (k: Kami) =>
     ? (k as any).index
     : ((k as any).id ?? `name:${(k as any).name || 'unknown'}`);
 
-export const Cooldown = ({ kami }: { kami: Kami }) => {
+export const Cooldown = ({ kami, collapsedView }: { kami: Kami; collapsedView?: boolean }) => {
   const [lastTick, setLastTick] = useState(Date.now());
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);
@@ -45,7 +46,11 @@ export const Cooldown = ({ kami }: { kami: Kami }) => {
 
   return (
     <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
-      <Countdown total={total} current={current} />
+      {collapsedView ? (
+        <OldCountdown total={total} current={current} />
+      ) : (
+        <Countdown total={total} current={current} />
+      )}
     </TextTooltip>
   );
 };

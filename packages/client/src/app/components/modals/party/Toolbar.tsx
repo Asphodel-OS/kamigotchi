@@ -279,7 +279,7 @@ const Container = styled.div`
   /* Avoid Safari white-screen bug when sticky is nested in overflow containers  will-change: transform; position: relative;*/
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
 
   width: 100%;
   padding: 0.6vw;

@@ -27,11 +27,7 @@ import { formatCountdown } from 'utils/time';
 export const KamiBar = ({
   kami,
   actions,
-  options: {
-    showCooldown,
-    showPercent,
-    showTooltip,
-  } = {},
+  options: { showCooldown, showPercent, showTooltip } = {},
   utils,
   tick,
 }: {
@@ -49,7 +45,6 @@ export const KamiBar = ({
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
-
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
@@ -214,7 +209,7 @@ export const KamiBar = ({
         </TextTooltip>
       </Middle>
       <Right>
-        {showCooldown && <Cooldown kami={kami} />}
+        {showCooldown && <Cooldown collapsedView={true} kami={kami} />}
         {actions}
       </Right>
     </Container>
@@ -246,6 +241,7 @@ const Left = styled.div`
 
 const Right = styled.div`
   display: flex;
+  position: relative;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-end;
