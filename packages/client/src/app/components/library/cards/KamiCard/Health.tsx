@@ -16,14 +16,12 @@ export const Health = ({ current, total }: { current: number; total: number }) =
 
 const HealthFill = styled.div<{ $percent: number }>`
   position: absolute;
-  left: 61.5%;
-
+  left: 0;
   top: 0;
   bottom: 0;
-  width: 22.5%;
+  width: 82.6%;
   overflow: hidden;
   background: #fdf0ecff;
-  border-left: solid black 0.15vw;
   border-right: solid black 0.15vw;
   &::after {
     content: '';
@@ -38,7 +36,7 @@ const HealthFill = styled.div<{ $percent: number }>`
 `;
 const HealthContainer = styled.div`
   position: absolute;
-  right: 15.5%;
+  right: 17%;
   top: 0;
   bottom: 0;
 

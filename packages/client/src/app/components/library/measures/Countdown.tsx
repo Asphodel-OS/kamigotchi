@@ -39,7 +39,7 @@ const CooldownFill = styled.div<{ $percent: number }>`
 const StaminaContainer = styled.div`
   position: absolute;
   top: 0;
-  right: 0.2%;
+  right: 0.5%;
   bottom: 0;
 
   font-size: 0.55vw;
