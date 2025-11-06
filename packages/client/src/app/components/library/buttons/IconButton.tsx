@@ -27,11 +27,13 @@ export const IconButton = forwardRef(function IconButton(
     icon,
     filter,
     noBorder,
+    shake,
   }: {
     img?: string | SvgIconComponent;
     onClick: Function;
     text?: string;
     width?: number;
+    shake?: boolean;
 
     // general styling
     color?: string;
@@ -80,6 +82,7 @@ export const IconButton = forwardRef(function IconButton(
             iconInsetPx={resolvedIconInsetPx}
             iconInsetXpx={resolvedIconInsetXpx}
             iconInsetYpx={resolvedIconInsetYpx}
+            filter={filter}
           />
         );
       }
@@ -105,6 +108,7 @@ export const IconButton = forwardRef(function IconButton(
       flatten={flatten}
       noBorder={noBorder}
       filter={filter}
+      shake={shake}
     >
       {MyImage()}
       {text && (
@@ -132,6 +136,7 @@ const Container = styled.button<{
   shadow?: boolean;
   noBorder?: boolean;
   filter?: string;
+  shake?: boolean;
 }>`
   position: relative;
   border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15vw')};
@@ -172,7 +177,26 @@ const Container = styled.button<{
   }
 
   ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
-  ${({ filter }) => filter && `filter: ${filter};`}
+
+  animation: ${({ shake }) => shake && `shake 0.5s ease-in-out infinite;`};
+
+  @keyframes shake {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+      transform: translate(0.1vw, 0.1vw) rotate(5deg);
+    }
+    50% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    75% {
+      transform: translate(-0.1vw, 0.1vw) rotate(-5deg);
+    }
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+  }
 `;
 
 const Image = styled.img<{
@@ -181,6 +205,7 @@ const Image = styled.img<{
   iconInsetPx?: number;
   iconInsetXpx?: number;
   iconInsetYpx?: number;
+  filter?: string;
 }>`
   width: ${({ scale, orientation, iconInsetPx, iconInsetXpx }) =>
     `calc(${scale * 0.75}${orientation} - ${iconInsetXpx ?? iconInsetPx ?? 0}px)`};
@@ -188,6 +213,7 @@ const Image = styled.img<{
     `calc(${scale * 0.75}${orientation} - ${iconInsetYpx ?? iconInsetPx ?? 0}px)`};
   ${({ scale }) => (scale > 4 ? 'image-rendering: pixelated;' : '')}
   user-drag: none;
+  ${({ filter }) => filter && `filter: ${filter};`}
 `;
 
 const Text = styled.div<{ scale: number; orientation: string; withIcon?: boolean }>`

@@ -25,11 +25,14 @@ export function IconListButton({
   scaleOrientation,
   searchable,
   icon,
+  filter,
+  shake,
   tooltip,
   disabled,
 }: {
   options: Option[];
   searchable?: boolean;
+  filter?: string;
 
   // button
   img?: string;
@@ -41,6 +44,7 @@ export function IconListButton({
   width?: number;
   fullWidth?: boolean;
   balance?: number;
+  shake?: boolean;
 
   // tooltip
   tooltip?: {
@@ -122,6 +126,8 @@ export function IconListButton({
           balance={balance}
           corner={!balance}
           icon={icon}
+          filter={filter}
+          shake={shake}
         />
       </TextTooltip>
     </Popover>

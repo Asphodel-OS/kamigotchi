@@ -17,10 +17,10 @@ export const Countdown = ({ total, current }: { total: number; current: number }
 
 const CooldownFill = styled.div<{ $percent: number }>`
   position: absolute;
-  left: 82.5%;
+  left: 82.6%;
   top: 0;
   bottom: 0;
-  width: 17.4%;
+  width: 17.5%;
   background: #bd8fd4ff;
   overflow: hidden;
   border-top-right-radius: 0.45vw;
