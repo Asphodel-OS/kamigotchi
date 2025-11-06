@@ -143,11 +143,7 @@ export function createActionSystem<M = undefined>(
       }
 
       const tx = await execPromise;
-      updateAction({
-        state: ActionState.WaitingForTxEvents,
-        txHash: tx?.hash,
-      });
-
+      
       if (canceled.has(request.index!)) {
         updateAction({ state: ActionState.Canceled });
         canceled.delete(request.index!);
@@ -155,17 +151,11 @@ export function createActionSystem<M = undefined>(
         return;
       }
 
-      if (tx && !request.skipConfirmation) {
-        await tx.wait();
-      }
-
-      if (canceled.has(request.index!)) {
-        updateAction({ state: ActionState.Canceled });
-        canceled.delete(request.index!);
-      } else {
-        updateAction({ state: ActionState.Complete });
-        canceled.delete(request.index!);
-      }
+      updateAction({
+        state: ActionState.Complete,
+        txHash: tx?.hash,
+      });
+      canceled.delete(request.index!);
       execCancels.delete(request.index!);
     } catch (e) {
       handleError(e, request);
