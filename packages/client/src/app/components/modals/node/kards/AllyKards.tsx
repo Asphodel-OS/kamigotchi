@@ -49,8 +49,9 @@ export const AllyKards = ({
 
   // get the harvest balance label for a kami
   const getLabel = (kami: Kami) => {
+    if (!kami.harvest) return { text: '0', icon: '' };
     const harvestOutput = calcOutput(kami);
-    const harvestItem = getHarvestItem(kami.harvest!);
+    const harvestItem = getHarvestItem(kami.harvest);
     return { text: `${harvestOutput}`, icon: harvestItem.image };
   };
 

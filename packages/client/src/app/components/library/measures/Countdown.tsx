@@ -10,12 +10,20 @@ export const Countdown = ({ total, current }: { total: number; current: number }
         {`${Math.round(current)}s`}
         <Icon src={objectClock} />
       </StaminaContainer>
-      <CooldownFill $percent={percent} />
+      <CooldownFill percent={percent} />
     </TextTooltip>
   );
 };
 
-const CooldownFill = styled.div<{ $percent: number }>`
+interface CooldownFillProps {
+  percent: number;
+}
+
+const CooldownFill = styled.div.attrs<CooldownFillProps>(({ percent }) => ({
+  style: {
+    '--fill': `${Math.min(100, Math.max(0, percent))}%`,
+  },
+}))<CooldownFillProps>`
   position: absolute;
   left: 82.6%;
   top: 0;
@@ -30,7 +38,7 @@ const CooldownFill = styled.div<{ $percent: number }>`
     right: 0;
     top: 0;
     bottom: 0;
-    width: ${({ $percent }) => Math.min(100, Math.max(0, $percent))}%;
+    width: var(--fill);
     background: #faf5c9ff;
     transition: width 0.4s ease;
   }
