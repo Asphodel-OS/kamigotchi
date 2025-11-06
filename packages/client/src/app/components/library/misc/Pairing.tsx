@@ -68,7 +68,7 @@ const Container = styled.div<{ gap: number; color: string; border: string }>`
   border-radius: 0.3vw;
 `;
 
-const Icon = styled.img<{ scale: number; color: string }>`
+const Icon = styled.img<{ scale: number }>`
   height: ${({ scale }) => scale * 1.5}vw;
   margin-bottom: ${({ scale }) => scale * 0.12}vw;
   ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
