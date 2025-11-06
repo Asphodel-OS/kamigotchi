@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 // 0% means countdown is finished
 export const OldCountdown = ({ total, current }: { total: number; current: number }) => {
-  const percent = (current / total) * 100;
+  const percent = Math.min(100, Math.max(0, (current / total) * 100));
 
   let color = '#29ABE9'; // blue;
   if (percent > 80)

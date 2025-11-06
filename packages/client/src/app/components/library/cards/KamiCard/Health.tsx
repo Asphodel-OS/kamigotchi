@@ -33,14 +33,13 @@ const HealthFill = styled.div<{ $percent: number }>`
     background: ${({ $percent }) => {
       const clamped = Math.min(100, Math.max(0, $percent));
       if (clamped > 50) {
-        return `linear-gradient(to right, #AACC00 ${clamped}%)`; // Full green
+        return ` #AACC00`;
       }
       if (clamped > 30) {
         return `linear-gradient(to right,   #e0bc1aff   10%, #AACC00 70%)`;
       }
       return `linear-gradient(to right,   #CC3F00   10%, #e0bc1aff 30%)`;
     }};
-
     transition: width 0.4s ease;
   }
 `;
@@ -49,7 +48,6 @@ const HealthContainer = styled.div`
   right: 17%;
   top: 0;
   bottom: 0;
-
   font-size: 0.55vw;
   display: flex;
   flex-direction: row;
@@ -59,9 +57,9 @@ const HealthContainer = styled.div`
   z-index: 1;
   color: #61178fff;
   gap: 0.1vw;
-
   padding: 0.1vw 0.3vw;
 `;
+
 const Icon = styled.img`
   height: 1.2vw;
   width: 1.2vw;

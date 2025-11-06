@@ -166,7 +166,9 @@ const TitleBar = styled.div`
   border-bottom: solid black 0.15vw;
   padding: 0.45vw;
 `;
-//change font size for party modal
+// because party is the only one passing
+// showSkillPoints, using it
+// to change the font size
 const TitleText = styled.div<{ showSkillPoints?: boolean }>`
   position: relative;
   z-index: 1;
@@ -175,8 +177,11 @@ const TitleText = styled.div<{ showSkillPoints?: boolean }>`
   text-align: left;
   width: 100%;
   color: #4b126eff;
-
-  pointer-events: none;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.6;
+    text-decoration: underline;
+  }
 `;
 
 const TitleCorner = styled.div`
@@ -236,7 +241,7 @@ const LabelIcon = styled.img`
   height: 1.2vw;
   margin-bottom: 0.15vw;
 `;
-//TODO: override mosewheel behaviour
+
 const Buffs = styled.div`
   position: absolute;
   max-width: 95%;
@@ -251,7 +256,6 @@ const Buffs = styled.div`
   border-radius: 0.3vw;
   padding: 0.1vw;
   overflow: auto hidden;
-
   &::-webkit-scrollbar {
     height: 0.2vw;
   }

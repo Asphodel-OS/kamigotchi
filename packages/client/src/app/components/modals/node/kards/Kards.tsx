@@ -147,4 +147,5 @@ const Container = styled.div`
   flex-flow: column nowrap;
   overflow-y: auto;
   gap: 0.3vw;
+  scrollbar-gutter: stable;
 `;

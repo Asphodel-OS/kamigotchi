@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TextTooltip } from '../poppers';
 
 export const Countdown = ({ total, current }: { total: number; current: number }) => {
-  const percent = (current / total) * 100;
+  const percent = Math.min(100, Math.max(0, (current / total) * 100));
   return (
     <TextTooltip text={[`Cooldown: ${Math.round(current)}s`]}>
       <StaminaContainer>
@@ -20,7 +20,7 @@ const CooldownFill = styled.div<{ $percent: number }>`
   left: 82.6%;
   top: 0;
   bottom: 0;
-  width: 17.5%;
+  width: 17.3%;
   background: #bd8fd4ff;
   overflow: hidden;
   border-top-right-radius: 0.45vw;
@@ -41,7 +41,6 @@ const StaminaContainer = styled.div`
   top: 0;
   right: 0.5%;
   bottom: 0;
-
   font-size: 0.55vw;
   display: flex;
   flex-direction: row;
@@ -52,6 +51,7 @@ const StaminaContainer = styled.div`
   color: #2d0b42ff;
   gap: 0.2vw;
 `;
+
 const Icon = styled.img`
   height: 1.2vw;
   width: 1.2vw;
