@@ -1,5 +1,6 @@
-import { StatIcons } from 'constants/stats';
 import styled from 'styled-components';
+
+import { StatIcons } from 'constants/stats';
 import { TextTooltip } from '../..';
 
 export const Health = ({ current, total }: { current: number; total: number }) => {
@@ -52,14 +53,11 @@ const HealthFill = styled.div<{ $percent: number }>`
     bottom: 0;
     width: ${({ $percent }) => Math.min(100, Math.max(0, $percent))}%;
     background: ${({ $percent }) => {
-      const clamped = Math.min(100, Math.max(0, $percent));
-      if (clamped > 50) {
-        return ` #AACC00`;
-      }
-      if (clamped > 30) {
-        return `linear-gradient(to right,   #e0bc1aff   10%, #AACC00 70%)`;
-      }
-      return `linear-gradient(to right,   #CC3F00   10%, #e0bc1aff 30%)`;
+      const health = Math.min(100, Math.max(0, $percent));
+      if (health <= 25) return '#BD4F6C';
+      if (health <= 50) return '#F3752B';
+      if (health <= 75) return '#F9DB6D';
+      return ` #16DB93`;
     }};
     transition: width 0.4s ease;
   }

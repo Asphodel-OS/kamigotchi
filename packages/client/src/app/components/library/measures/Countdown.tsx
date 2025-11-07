@@ -1,5 +1,6 @@
-import { objectClock } from 'assets/images/rooms/13_giftshop';
 import styled from 'styled-components';
+
+import { objectClock } from 'assets/images/rooms/13_giftshop';
 import { TextTooltip } from '../poppers';
 
 export const Countdown = ({ total, current }: { total: number; current: number }) => {
