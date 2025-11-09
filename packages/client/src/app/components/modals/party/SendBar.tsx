@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, IconListButtonOption } from 'app/components/library';
-import { TextTooltip } from 'app/components/library/poppers';
+import { IconListButton, IconListButtonOption } from 'app/components/library';
+import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { Account, NullAccount } from 'network/shapes';
-import { Kami, NullKami } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
 import { Sort, View } from './types';
 
 export const SendBar = ({
@@ -18,7 +18,7 @@ export const SendBar = ({
   isVisible,
 }: {
   actions: {
-    sendKami: (k: Kami, a: Account) => void;
+    sendKami: (k: Kami[], a: Account) => void;
   };
   controls: {
     sort: Sort;
@@ -39,7 +39,6 @@ export const SendBar = ({
 
   const isModalOpen = useVisibility((s) => s.modals.party);
 
-  const [selectedKami, setSelectedKami] = useState<Kami>(NullKami);
   const [kamiOptions, setKamiOptions] = useState<IconListButtonOption[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<Account>(NullAccount);
   const [accountOptions, setAccountOptions] = useState<IconListButtonOption[]>([]);
@@ -47,16 +46,16 @@ export const SendBar = ({
   /////////////////
   // SUBSCRIPTIONS
 
-  // set the kami options when the modal opens or the view changes
-  useEffect(() => {
-    if (!isModalOpen || view !== 'external') return;
-    const kamiOptions = kamis.map((kami) => ({
-      image: kami.image,
-      text: kami.name,
-      onClick: () => setSelectedKami(kami),
-    }));
-    setKamiOptions(kamiOptions);
-  }, [isModalOpen, view, sort, kamis]);
+  // // set the kami options when the modal opens or the view changes
+  // useEffect(() => {
+  //   if (!isModalOpen || view !== 'external') return;
+  //   const kamiOptions = kamis.map((kami) => ({
+  //     image: kami.image,
+  //     text: kami.name,
+  //     onClick: () => setSelectedKami(kami),
+  //   }));
+  //   setKamiOptions(kamiOptions);
+  // }, [isModalOpen, view, sort, kamis]);
 
   // set the account options when the modal opens or the view changes
   useEffect(() => {
@@ -72,14 +71,10 @@ export const SendBar = ({
   // INTERPRETATION
 
   const getSendTooltip = () => {
-    if (selectedKami.entity === 0 || selectedAccount.entity === 0) {
-      return ['You must select a Kami and an Account'];
+    if (selectedAccount.entity === 0) {
+      return ['You must select a recipient Account'];
     }
-
-    return [
-      `Send ${selectedKami.name} to ${selectedAccount.name}`,
-      '\nCareful, this action is irreversible!',
-    ];
+    return [`Send Kami to ${selectedAccount.name}`];
   };
 
   /////////////////
@@ -87,30 +82,40 @@ export const SendBar = ({
 
   return (
     <Container isVisible={isVisible}>
+      <IconListButton
+        img={MenuIcons.operator}
+        text={selectedAccount.entity === 0 ? 'Send To' : selectedAccount.name}
+        options={accountOptions}
+        radius={0.6}
+        searchable
+      />
       <Section>
-        <IconListButton
-          img={selectedKami.entity === 0 ? MenuIcons.kami : selectedKami.image}
-          text={selectedKami.entity === 0 ? 'None' : selectedKami.name}
+        {/* <IconListButton
+          img={selectedKamis[0].entity === 0 ? MenuIcons.kami : selectedKami.image}
+          text={selectedKamis[0].entity === 0 ? 'None' : selectedKami.name}
           options={kamiOptions}
           radius={0.6}
           searchable
         />
-        <IconListButton
-          img={MenuIcons.operator}
-          text={selectedAccount.entity === 0 ? 'None' : selectedAccount.name}
-          options={accountOptions}
+        <TextTooltip text={getSendTooltip()}>
+          <IconButton
+            img={ArrowIcons.right}
+            onClick={() => sendKami(selectedKamis, selectedAccount)}
+            radius={0.6}
+            disabled={selectedKamis.length === 0 || selectedAccount.entity === 0}
+          />
+        </TextTooltip> */}
+        <DropdownToggle
+          button={{
+            images: [ArrowIcons.right],
+            tooltips: getSendTooltip(),
+          }}
+          disabled={[selectedAccount.entity === 0]}
+          onClick={[(k: Kami[]) => sendKami(k, selectedAccount)]}
+          options={[kamis.map((kami) => ({ text: kami.name, object: kami }))]}
           radius={0.6}
-          searchable
         />
       </Section>
-      <TextTooltip text={getSendTooltip()}>
-        <IconButton
-          img={ArrowIcons.right}
-          onClick={() => sendKami(selectedKami, selectedAccount)}
-          radius={0.6}
-          disabled={selectedKami.entity === 0 || selectedAccount.entity === 0}
-        />
-      </TextTooltip>
     </Container>
   );
 };

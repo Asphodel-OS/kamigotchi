@@ -103,6 +103,8 @@ export const Toolbar = ({
     let sorted = view === 'external' ? wildKamis : kamis;
     if (sort === 'name') {
       sorted = sorted.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sort === 'index') {
+      sorted = sorted.sort((a, b) => a.index - b.index);
     } else if (sort === 'state') {
       sorted = sorted.sort((a, b) => {
         const stateDiff = a.state.localeCompare(b.state);
@@ -235,15 +237,17 @@ export const Toolbar = ({
   };
 
   // memoized sort options
-  const SortOptions = useMemo(
-    () =>
-      Object.entries(SortIcons).map(([key, image]) => ({
-        text: key,
-        image,
-        onClick: () => setSort(key as Sort),
-      })),
-    []
-  );
+  const SortOptions = useMemo(() => {
+    let sorts = [] as Sort[];
+    if (view === 'external') sorts = ['index', 'traits'];
+    else sorts = ['name', 'state', 'traits'];
+
+    return sorts.map((key) => ({
+      text: key,
+      image: SortIcons[key],
+      onClick: () => setSort(key as Sort),
+    }));
+  }, [view]);
 
   /////////////////
   // RENDER

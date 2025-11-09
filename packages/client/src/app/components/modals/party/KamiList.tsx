@@ -21,7 +21,6 @@ export const KamiList = ({
 }: {
   actions: {
     addKamis: (kamis: Kami[]) => void;
-    sendKamis: (kami: Kami, account: Account) => void;
     stakeKamis: (kamis: Kami[]) => void;
   };
   controls: {
@@ -87,10 +86,8 @@ export const KamiList = ({
         isVisible={partyModalVisible && view === 'collapsed'}
       />
       <KamisExternal
-        actions={actions}
         controls={{ view }}
         data={{ ...data, kamis: data.wildKamis }}
-        utils={utils}
         isVisible={partyModalVisible && view === 'external'}
       />
     </Container>

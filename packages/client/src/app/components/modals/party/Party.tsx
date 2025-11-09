@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { erc721Abi } from 'viem';
-import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
+import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import {
   AccountOptions,
@@ -109,7 +108,6 @@ export const PartyModal: UIComponent = {
     const { getNode, getAccount, queryAllAccounts } = utils;
     const { getKami, getWorldKamis, queryKamiByIndex, passesNodeReqs } = utils;
 
-    const { writeContract } = useWriteContract();
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const ownerAPIs = useNetwork((s) => s.apis);
     const nodeIndex = useSelected((s) => s.nodeIndex);
@@ -124,6 +122,7 @@ export const PartyModal: UIComponent = {
     const [view, setView] = useState<View>('expanded');
 
     const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
+    const [selectedKamis, setSelectedKamis] = useState<Kami[]>([]);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
 
     /////////////////
@@ -209,12 +208,19 @@ export const PartyModal: UIComponent = {
     // ACTIONS
 
     // send a kami NFT to another player
-    const sendKamiTx = (kami: Kami, to: Account) => {
-      writeContract({
-        abi: erc721Abi,
-        address: kamiNFTAddress,
-        functionName: 'safeTransferFrom',
-        args: [account.ownerAddress, to.ownerAddress, BigInt(kami.index)],
+    const sendKamiTx = (kamis: Kami[], to: Account) => {
+      const api = ownerAPIs.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      const indices = kamis.map((kami) => kami.index);
+      const subject = kamis.length == 1 ? kamis[0].name : `${kamis.length} Kami`;
+      actions.add({
+        action: 'KamiTransfer',
+        params: [indices, to.ownerAddress],
+        description: `Transfering Kami ${subject} to ${to.name}`,
+        execute: async () => {
+          return api.portal.ERC721.kami.batch.transfer(indices, to.ownerAddress);
+        },
       });
     };
 
@@ -309,7 +315,6 @@ export const PartyModal: UIComponent = {
           actions={{
             addKamis: (kamis: Kami[]) => start(kamis, node),
             stakeKamis: stakeKamiTx,
-            sendKamis: sendKamiTx,
           }}
           controls={{ view }}
           data={{ account, accounts, kamis, wildKamis, node }}
@@ -318,7 +323,7 @@ export const PartyModal: UIComponent = {
           utils={utils}
         />
         <SendBar
-          actions={{ sendKami: (k: Kami, a: Account) => sendKamiTx(k, a) }}
+          actions={{ sendKami: (kamis: Kami[], a: Account) => sendKamiTx(kamis, a) }}
           controls={{ sort, view }}
           data={{ accounts }}
           state={{ kamis: displayedKamis }}

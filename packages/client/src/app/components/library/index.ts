@@ -3,6 +3,7 @@ export { Overlay } from './styles';
 export { ItemIconHorizontal } from '../modals/goals/ItemIconHorizontal';
 export { Warning } from './banners';
 export { KamiBar } from './bars';
+export { KamiBlock, KamiBlockMini } from './blocks';
 export {
   ActionButton,
   ActionListButton,
@@ -22,7 +23,6 @@ export {
 export { AccountCard, Card, KamiCard } from './cards';
 export { Stepper } from './controls';
 export { InputSingleNumberForm, InputSingleTextForm } from './inputs';
-export { KamiBlock } from './KamiBlock';
 export { Battery, Countdown, ProgressBar } from './measures';
 export { HelpChip, Pairing } from './misc';
 export { ModalHeader, ModalWrapper } from './modals';

@@ -1,3 +1,4 @@
+import { PlaceholderIcon } from 'assets/images/icons';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { TriggerIcons } from 'assets/images/icons/triggers';
@@ -6,6 +7,7 @@ import { Sort, View } from './types';
 
 export const SortIcons: Record<Sort, string> = {
   name: KamiIcon,
+  index: PlaceholderIcon,
   state: StatIcons.health,
   traits: TraitIcons.hand,
 };

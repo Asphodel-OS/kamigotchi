@@ -1,3 +1,3 @@
-export type Sort = 'name' | 'state' | 'traits';
+export type Sort = 'name' | 'index' | 'state' | 'traits';
 
 export type View = 'expanded' | 'collapsed' | 'external';

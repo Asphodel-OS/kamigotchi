@@ -4,7 +4,7 @@ import { isDead, isHarvesting, isResting } from 'app/cache/kami';
 import { EmptyText, Overlay, Text } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
-import { KamiBlock } from '../../library/KamiBlock';
+import { KamiBlock } from '../../library/blocks/KamiBlock';
 
 export const Carousel = ({
   kamis,
