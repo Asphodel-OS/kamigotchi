@@ -38,13 +38,13 @@ export const MenuButton = ({
   };
 
   return (
-    <TextTooltip text={[tooltip]}>
-      <div id={id}>
+    <div id={id}>
+      <TextTooltip text={[tooltip]}>
         <Button onClick={handleToggle} effectScale={0.1} disabled={disabled}>
           <Image src={image} alt={id} />
         </Button>
-      </div>
-    </TextTooltip>
+      </TextTooltip>
+    </div>
   );
 };
 
@@ -52,7 +52,6 @@ const Button = styled.button<{
   effectScale: number;
   disabled?: boolean;
 }>`
-  height: 2.5em;
   border-radius: 0.4em;
   border: solid black 0.15em;
 

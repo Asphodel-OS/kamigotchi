@@ -137,7 +137,6 @@ const Container = styled.button<{
   border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15em')};
   border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
 
-  height: ${({ scale, orientation }) => `${scale}${orientation}`};
   width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}rem` : 'auto')};
   min-width: fit-content;
   padding: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
