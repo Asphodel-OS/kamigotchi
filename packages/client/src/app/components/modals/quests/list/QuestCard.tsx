@@ -7,6 +7,7 @@ import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
+import { useState } from 'react';
 
 // Quest Card
 export const QuestCard = ({
@@ -27,6 +28,9 @@ export const QuestCard = ({
 }) => {
   const { accept, complete, burnItems } = actions;
   const { describeEntity, getItemBalance } = utils;
+
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isAltCollapsed, setIsAltCollapsed] = useState(false);
 
   /////////////////
   // INTERPRETATION
@@ -155,7 +159,26 @@ export const QuestCard = ({
         {getFactionStamp(quest)}
       </Overlay>
       <Title>{quest.name}</Title>
-      <Description>{quest.description}</Description>
+      {status === 'COMPLETED' && (
+        <CollapsibleSegment onClick={() => setIsCollapsed(!isCollapsed)}>
+          {`${isCollapsed ? '▶' : '▼'} Quest`}
+        </CollapsibleSegment>
+      )}
+
+      {((status === 'COMPLETED' && !isCollapsed) || status !== 'COMPLETED') && (
+        <Description>{quest.description}</Description>
+      )}
+
+      {status === 'COMPLETED' && (
+        <CollapsibleSegment onClick={() => setIsAltCollapsed(!isAltCollapsed)}>
+          {`${isAltCollapsed ? '▶' : '▼'} Completition`}
+        </CollapsibleSegment>
+      )}
+
+      {status === 'COMPLETED' && !isAltCollapsed && (
+        <Description>{quest.descriptionAlt}</Description>
+      )}
+
       <Section key='objectives' style={{ display: quest.objectives.length > 0 ? 'block' : 'none' }}>
         <SubTitle>Objectives</SubTitle>
         {quest.objectives.map((o) => (
@@ -249,4 +272,8 @@ const Image = styled.img<{ size: number }>`
   width: ${({ size }) => size}vw;
   margin-right: ${({ size }) => size * 0.2}vw;
   user-drag: none;
+`;
+
+const CollapsibleSegment = styled.div`
+  cursor: pointer;
 `;
