@@ -160,7 +160,9 @@ const Stack = styled.div`
   display: grid;
   grid:
     'Stack' minmax(0, 100vh)
-    / 100vw;
+    /
+     100vw
+  ;
   align-items: stretch;
 
   > * {
@@ -177,53 +179,130 @@ const UIGrid = styled.div`
 
   /* 3 columns: "Left", "Center", "Right" */
   grid:
-    'LeftTop Center RightTop' auto
-    [LeftWide-start LeftTall-start RightWide-start]
-    'Left Center Right' minmax(0, 1fr)
-    'LeftBottom Center RightBottom' auto
-    [LeftWide-end LeftTall-end RightWide-end]
-    / [LeftWide-start LeftTall-start] minmax(0, 1fr) [LeftTall-end RightWide-start] minmax(0, 1fr)
-    [LeftWide-end] minmax(0, 1fr) [RightWide-end];
+                                                                  []
+    'LeftTop        Center         RightTop      ' auto
+                                                                  [LeftWide-start LeftTall-start RightWide-start]
+    'Left           Center         Right         ' minmax(0, 1fr)
+                                                                  []
+    'LeftBottom     Center         RightBottom   ' auto
+                                                                  [LeftWide-end LeftTall-end RightWide-end]
+    /
+    [
+    LeftWide-start
+    LeftTall-start
+    ]
+     minmax(0, 1fr)
+                   [
+                   LeftTall-end
+                   RightWide-start
+                   ]
+                    minmax(0, 1fr)
+                                  [
+                                  LeftWide-end
+                                  ]
+                                   minmax(0, 1fr)
+                                                 [
+                                                 RightWide-end
+                                                 ]
+  ;
 
   /* 2 columns: "Left", and "Center" (overlapped with "Right") */
   @media (orientation: portrait) {
     grid:
-      'LeftTop RightTop' auto
-      [LeftWide-start LeftTall-start Right-start RightWide-start]
-      'Left Center' minmax(0, 1fr)
-      [Right-end]
-      'LeftBottom RightBottom' auto
-      [LeftWide-end LeftTall-end RightWide-end]
-      / [LeftWide-start LeftTall-start] minmax(0, 1fr)
-      [LeftTall-end LeftWide-end Right-start RightWide-start] minmax(0, 1fr)
-      [Right-end RightWide-end];
+                                                     []
+      'LeftTop        RightTop      ' auto
+                                                     [LeftWide-start LeftTall-start Right-start RightWide-start]
+      'Left           Center        ' minmax(0, 1fr)
+                                                     [Right-end]
+      'LeftBottom     RightBottom   ' auto
+                                                     [LeftWide-end LeftTall-end RightWide-end]
+      /
+      [
+      LeftWide-start
+      LeftTall-start
+      ]
+       minmax(0, 1fr)
+                     [
+          LeftTall-end
+          LeftWide-end
+                     Right-start
+                     RightWide-start
+                     ]
+                      minmax(0, 1fr)
+                                    [
+                            Right-end
+                        RightWide-end
+                                    ]
+    ;
   }
 
   /* 1 column. Rows: "LeftTop", "Left" "Center" "Right" overlapping, "RightTop", "LeftBottom" / "RightBottom" */
   @media (max-aspect-ratio: 11/16) {
     grid:
-      'LeftTop LeftTop' auto
-      [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
-      'Center' minmax(0, 1fr)
-      [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
-      'RightTop RightTop' auto
-      'LeftBottom RightBottom' auto
-      / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr)
-      [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
+                                                     []
+      'LeftTop        LeftTop       ' auto
+                                                     [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
+      'Center         Center        ' minmax(0, 1fr)
+                                                     [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
+      'RightTop       RightTop      ' auto
+                                                     []
+      'LeftBottom     RightBottom   ' auto
+                                                     []
+      /
+      [
+      Left-start
+      LeftWide-start
+      LeftTall-start
+      Right-start
+      RightWide-start
+      ]
+       auto
+                     [
+                     ]
+                      minmax(0, 1fr)
+                                    [
+                             Left-end
+                         LeftWide-end
+                         LeftTall-end
+                            Right-end
+                        RightWide-end
+                                    ]
+    ;
   }
 
   /* 1 column (alternative) */
   @media (max-aspect-ratio: 11/16) {
     grid:
-      'LeftBottom LeftBottom' auto
-      [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
-      'Center Center' minmax(0, 1fr)
-      [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
-      'RightBottom RightBottom' 25vmin
-      'LeftTop LeftTop' auto
-      'RightTop RightTop' auto
-      / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr)
-      [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
+      'LeftBottom     LeftBottom   ' auto
+                                                    [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
+      'Center         Center       ' minmax(0, 1fr)
+                                                    [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
+      'RightBottom    RightBottom  ' 25vmin
+                                                    []
+      'LeftTop        LeftTop      ' auto
+                                                    []
+      'RightTop       RightTop     ' auto
+                                                    []
+      /
+      [
+      Left-start
+      LeftWide-start
+      LeftTall-start
+      Right-start
+      RightWide-start
+      ]
+       auto
+                     [
+                     ]
+                      minmax(0, 1fr)
+                                    [
+                             Left-end
+                         LeftWide-end
+                         LeftTall-end
+                            Right-end
+                        RightWide-end
+                                    ]
+    ;
   }
 
   pointer-events: none;
