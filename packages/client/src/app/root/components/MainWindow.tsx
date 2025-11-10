@@ -224,8 +224,8 @@ const UIGrid = styled.div`
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
   }
 
-  gap: 1.5rem 1rem;
-  padding: 1rem;
+  gap: 0.3rem 0.3rem;
+  padding: 0.6rem 0.9rem;
 
   pointer-events: none;
   z-index: 10;
