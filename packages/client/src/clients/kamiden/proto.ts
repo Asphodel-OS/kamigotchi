@@ -108,7 +108,7 @@ export interface KamiCast {
   nodeIndex: number;
 }
 
-export interface TokenPortal {
+export interface PortalReceipt {
   Timestamp: string;
   AccountID: string;
   ReceiptID: string;
@@ -117,8 +117,9 @@ export interface TokenPortal {
   TaxAmt: string;
   TokenAddress: string;
   TokenAmt: string;
-  isCanceled: boolean;
-  isClaimed: boolean;
+  IsWithdrawal: boolean;
+  IsCanceled: boolean;
+  IsClaimed: boolean;
 }
 
 /** REQUESTS */
@@ -165,6 +166,8 @@ export interface TokenPortalRequest {
   AccountID: string;
 }
 
+export interface LeaderboardRequest {}
+
 /** RESPONSE */
 export interface RoomResponse {
   Messages: Message[];
@@ -188,8 +191,8 @@ export interface BattleStatsResponse {
   BattleStats: BattleStats | undefined;
 }
 
-export interface RankingResponse {
-  Ranking: RankRow[];
+export interface LeaderboardResponse {
+  Rows: LeaderboardRow[];
 }
 
 export interface TradesResponse {
@@ -201,7 +204,12 @@ export interface ItemTransferResponse {
 }
 
 export interface TokenPortalResponse {
-  TokenPortals: TokenPortal[];
+  Receipts: PortalReceipt[];
+}
+
+export interface LeaderboardRow {
+  Name: string;
+  Value: string;
 }
 
 function createBaseMessage(): Message {
@@ -1385,7 +1393,7 @@ export const KamiCast: MessageFns<KamiCast> = {
   },
 };
 
-function createBaseTokenPortal(): TokenPortal {
+function createBasePortalReceipt(): PortalReceipt {
   return {
     Timestamp: '',
     AccountID: '',
@@ -1395,13 +1403,14 @@ function createBaseTokenPortal(): TokenPortal {
     TaxAmt: '',
     TokenAddress: '',
     TokenAmt: '',
-    isCanceled: false,
-    isClaimed: false,
+    IsWithdrawal: false,
+    IsCanceled: false,
+    IsClaimed: false,
   };
 }
 
-export const TokenPortal: MessageFns<TokenPortal> = {
-  encode(message: TokenPortal, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const PortalReceipt: MessageFns<PortalReceipt> = {
+  encode(message: PortalReceipt, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.Timestamp !== '') {
       writer.uint32(10).string(message.Timestamp);
     }
@@ -1426,19 +1435,22 @@ export const TokenPortal: MessageFns<TokenPortal> = {
     if (message.TokenAmt !== '') {
       writer.uint32(66).string(message.TokenAmt);
     }
-    if (message.isCanceled !== false) {
-      writer.uint32(80).bool(message.isCanceled);
+    if (message.IsWithdrawal !== false) {
+      writer.uint32(72).bool(message.IsWithdrawal);
     }
-    if (message.isClaimed !== false) {
-      writer.uint32(88).bool(message.isClaimed);
+    if (message.IsCanceled !== false) {
+      writer.uint32(80).bool(message.IsCanceled);
+    }
+    if (message.IsClaimed !== false) {
+      writer.uint32(88).bool(message.IsClaimed);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): TokenPortal {
+  decode(input: BinaryReader | Uint8Array, length?: number): PortalReceipt {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseTokenPortal();
+    const message = createBasePortalReceipt();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1506,12 +1518,20 @@ export const TokenPortal: MessageFns<TokenPortal> = {
           message.TokenAmt = reader.string();
           continue;
         }
+        case 9: {
+          if (tag !== 72) {
+            break;
+          }
+
+          message.IsWithdrawal = reader.bool();
+          continue;
+        }
         case 10: {
           if (tag !== 80) {
             break;
           }
 
-          message.isCanceled = reader.bool();
+          message.IsCanceled = reader.bool();
           continue;
         }
         case 11: {
@@ -1519,7 +1539,7 @@ export const TokenPortal: MessageFns<TokenPortal> = {
             break;
           }
 
-          message.isClaimed = reader.bool();
+          message.IsClaimed = reader.bool();
           continue;
         }
       }
@@ -1531,11 +1551,11 @@ export const TokenPortal: MessageFns<TokenPortal> = {
     return message;
   },
 
-  create(base?: DeepPartial<TokenPortal>): TokenPortal {
-    return TokenPortal.fromPartial(base ?? {});
+  create(base?: DeepPartial<PortalReceipt>): PortalReceipt {
+    return PortalReceipt.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<TokenPortal>): TokenPortal {
-    const message = createBaseTokenPortal();
+  fromPartial(object: DeepPartial<PortalReceipt>): PortalReceipt {
+    const message = createBasePortalReceipt();
     message.Timestamp = object.Timestamp ?? '';
     message.AccountID = object.AccountID ?? '';
     message.ReceiptID = object.ReceiptID ?? '';
@@ -1544,8 +1564,9 @@ export const TokenPortal: MessageFns<TokenPortal> = {
     message.TaxAmt = object.TaxAmt ?? '';
     message.TokenAddress = object.TokenAddress ?? '';
     message.TokenAmt = object.TokenAmt ?? '';
-    message.isCanceled = object.isCanceled ?? false;
-    message.isClaimed = object.isClaimed ?? false;
+    message.IsWithdrawal = object.IsWithdrawal ?? false;
+    message.IsCanceled = object.IsCanceled ?? false;
+    message.IsClaimed = object.IsClaimed ?? false;
     return message;
   },
 };
@@ -2060,6 +2081,40 @@ export const TokenPortalRequest: MessageFns<TokenPortalRequest> = {
   },
 };
 
+function createBaseLeaderboardRequest(): LeaderboardRequest {
+  return {};
+}
+
+export const LeaderboardRequest: MessageFns<LeaderboardRequest> = {
+  encode(_: LeaderboardRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LeaderboardRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLeaderboardRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<LeaderboardRequest>): LeaderboardRequest {
+    return LeaderboardRequest.fromPartial(base ?? {});
+  },
+  fromPartial(_: DeepPartial<LeaderboardRequest>): LeaderboardRequest {
+    const message = createBaseLeaderboardRequest();
+    return message;
+  },
+};
+
 function createBaseRoomResponse(): RoomResponse {
   return { Messages: [], Feeds: [] };
 }
@@ -2318,22 +2373,22 @@ export const BattleStatsResponse: MessageFns<BattleStatsResponse> = {
   },
 };
 
-function createBaseRankingResponse(): RankingResponse {
-  return { Ranking: [] };
+function createBaseLeaderboardResponse(): LeaderboardResponse {
+  return { Rows: [] };
 }
 
-export const RankingResponse: MessageFns<RankingResponse> = {
-  encode(message: RankingResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.Ranking) {
-      RankRow.encode(v!, writer.uint32(10).fork()).join();
+export const LeaderboardResponse: MessageFns<LeaderboardResponse> = {
+  encode(message: LeaderboardResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Rows) {
+      LeaderboardRow.encode(v!, writer.uint32(10).fork()).join();
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): RankingResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): LeaderboardResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRankingResponse();
+    const message = createBaseLeaderboardResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2342,7 +2397,7 @@ export const RankingResponse: MessageFns<RankingResponse> = {
             break;
           }
 
-          message.Ranking.push(RankRow.decode(reader, reader.uint32()));
+          message.Rows.push(LeaderboardRow.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2354,12 +2409,12 @@ export const RankingResponse: MessageFns<RankingResponse> = {
     return message;
   },
 
-  create(base?: DeepPartial<RankingResponse>): RankingResponse {
-    return RankingResponse.fromPartial(base ?? {});
+  create(base?: DeepPartial<LeaderboardResponse>): LeaderboardResponse {
+    return LeaderboardResponse.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<RankingResponse>): RankingResponse {
-    const message = createBaseRankingResponse();
-    message.Ranking = object.Ranking?.map((e) => RankRow.fromPartial(e)) || [];
+  fromPartial(object: DeepPartial<LeaderboardResponse>): LeaderboardResponse {
+    const message = createBaseLeaderboardResponse();
+    message.Rows = object.Rows?.map((e) => LeaderboardRow.fromPartial(e)) || [];
     return message;
   },
 };
@@ -2457,13 +2512,13 @@ export const ItemTransferResponse: MessageFns<ItemTransferResponse> = {
 };
 
 function createBaseTokenPortalResponse(): TokenPortalResponse {
-  return { TokenPortals: [] };
+  return { Receipts: [] };
 }
 
 export const TokenPortalResponse: MessageFns<TokenPortalResponse> = {
   encode(message: TokenPortalResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.TokenPortals) {
-      TokenPortal.encode(v!, writer.uint32(10).fork()).join();
+    for (const v of message.Receipts) {
+      PortalReceipt.encode(v!, writer.uint32(10).fork()).join();
     }
     return writer;
   },
@@ -2480,7 +2535,7 @@ export const TokenPortalResponse: MessageFns<TokenPortalResponse> = {
             break;
           }
 
-          message.TokenPortals.push(TokenPortal.decode(reader, reader.uint32()));
+          message.Receipts.push(PortalReceipt.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -2497,7 +2552,65 @@ export const TokenPortalResponse: MessageFns<TokenPortalResponse> = {
   },
   fromPartial(object: DeepPartial<TokenPortalResponse>): TokenPortalResponse {
     const message = createBaseTokenPortalResponse();
-    message.TokenPortals = object.TokenPortals?.map((e) => TokenPortal.fromPartial(e)) || [];
+    message.Receipts = object.Receipts?.map((e) => PortalReceipt.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseLeaderboardRow(): LeaderboardRow {
+  return { Name: '', Value: '' };
+}
+
+export const LeaderboardRow: MessageFns<LeaderboardRow> = {
+  encode(message: LeaderboardRow, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.Name !== '') {
+      writer.uint32(10).string(message.Name);
+    }
+    if (message.Value !== '') {
+      writer.uint32(18).string(message.Value);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LeaderboardRow {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLeaderboardRow();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Name = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.Value = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<LeaderboardRow>): LeaderboardRow {
+    return LeaderboardRow.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<LeaderboardRow>): LeaderboardRow {
+    const message = createBaseLeaderboardRow();
+    message.Name = object.Name ?? '';
+    message.Value = object.Value ?? '';
     return message;
   },
 };
@@ -2545,7 +2658,7 @@ export const KamidenServiceDefinition = {
       name: 'GetHarvestRanking',
       requestType: RankingRequest,
       requestStream: false,
-      responseType: RankingResponse,
+      responseType: LeaderboardResponse,
       responseStream: false,
       options: {},
     },
@@ -2553,7 +2666,7 @@ export const KamidenServiceDefinition = {
       name: 'GetKillerRanking',
       requestType: RankingRequest,
       requestStream: false,
-      responseType: RankingResponse,
+      responseType: LeaderboardResponse,
       responseStream: false,
       options: {},
     },
@@ -2597,6 +2710,70 @@ export const KamidenServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getOpenWithdrawals: {
+      name: 'GetOpenWithdrawals',
+      requestType: TokenPortalRequest,
+      requestStream: false,
+      responseType: TokenPortalResponse,
+      responseStream: false,
+      options: {},
+    },
+    getKillsByAccount: {
+      name: 'GetKillsByAccount',
+      requestType: LeaderboardRequest,
+      requestStream: false,
+      responseType: LeaderboardResponse,
+      responseStream: false,
+      options: {},
+    },
+    getDeathsByAccount: {
+      name: 'GetDeathsByAccount',
+      requestType: LeaderboardRequest,
+      requestStream: false,
+      responseType: LeaderboardResponse,
+      responseStream: false,
+      options: {},
+    },
+    getMusuByAccount: {
+      name: 'GetMusuByAccount',
+      requestType: LeaderboardRequest,
+      requestStream: false,
+      responseType: LeaderboardResponse,
+      responseStream: false,
+      options: {},
+    },
+    getMovementsByAccount: {
+      name: 'GetMovementsByAccount',
+      requestType: LeaderboardRequest,
+      requestStream: false,
+      responseType: LeaderboardResponse,
+      responseStream: false,
+      options: {},
+    },
+    getKillsByKami: {
+      name: 'GetKillsByKami',
+      requestType: LeaderboardRequest,
+      requestStream: false,
+      responseType: LeaderboardResponse,
+      responseStream: false,
+      options: {},
+    },
+    getDeathsByKami: {
+      name: 'GetDeathsByKami',
+      requestType: LeaderboardRequest,
+      requestStream: false,
+      responseType: LeaderboardResponse,
+      responseStream: false,
+      options: {},
+    },
+    getPNLByKami: {
+      name: 'GetPNLByKami',
+      requestType: LeaderboardRequest,
+      requestStream: false,
+      responseType: LeaderboardResponse,
+      responseStream: false,
+      options: {},
+    },
     /** Stream */
     subscribeToStream: {
       name: 'SubscribeToStream',
@@ -2630,11 +2807,11 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
   getHarvestRanking(
     request: RankingRequest,
     context: CallContext & CallContextExt
-  ): Promise<DeepPartial<RankingResponse>>;
+  ): Promise<DeepPartial<LeaderboardResponse>>;
   getKillerRanking(
     request: RankingRequest,
     context: CallContext & CallContextExt
-  ): Promise<DeepPartial<RankingResponse>>;
+  ): Promise<DeepPartial<LeaderboardResponse>>;
   getTradeHistory(
     request: TradesRequest,
     context: CallContext & CallContextExt
@@ -2655,6 +2832,38 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
     request: TokenPortalRequest,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<TokenPortalResponse>>;
+  getOpenWithdrawals(
+    request: TokenPortalRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<TokenPortalResponse>>;
+  getKillsByAccount(
+    request: LeaderboardRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<LeaderboardResponse>>;
+  getDeathsByAccount(
+    request: LeaderboardRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<LeaderboardResponse>>;
+  getMusuByAccount(
+    request: LeaderboardRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<LeaderboardResponse>>;
+  getMovementsByAccount(
+    request: LeaderboardRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<LeaderboardResponse>>;
+  getKillsByKami(
+    request: LeaderboardRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<LeaderboardResponse>>;
+  getDeathsByKami(
+    request: LeaderboardRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<LeaderboardResponse>>;
+  getPNLByKami(
+    request: LeaderboardRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<LeaderboardResponse>>;
   /** Stream */
   subscribeToStream(
     request: StreamRequest,
@@ -2683,11 +2892,11 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
   getHarvestRanking(
     request: DeepPartial<RankingRequest>,
     options?: CallOptions & CallOptionsExt
-  ): Promise<RankingResponse>;
+  ): Promise<LeaderboardResponse>;
   getKillerRanking(
     request: DeepPartial<RankingRequest>,
     options?: CallOptions & CallOptionsExt
-  ): Promise<RankingResponse>;
+  ): Promise<LeaderboardResponse>;
   getTradeHistory(
     request: DeepPartial<TradesRequest>,
     options?: CallOptions & CallOptionsExt
@@ -2708,6 +2917,38 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<TokenPortalRequest>,
     options?: CallOptions & CallOptionsExt
   ): Promise<TokenPortalResponse>;
+  getOpenWithdrawals(
+    request: DeepPartial<TokenPortalRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<TokenPortalResponse>;
+  getKillsByAccount(
+    request: DeepPartial<LeaderboardRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<LeaderboardResponse>;
+  getDeathsByAccount(
+    request: DeepPartial<LeaderboardRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<LeaderboardResponse>;
+  getMusuByAccount(
+    request: DeepPartial<LeaderboardRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<LeaderboardResponse>;
+  getMovementsByAccount(
+    request: DeepPartial<LeaderboardRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<LeaderboardResponse>;
+  getKillsByKami(
+    request: DeepPartial<LeaderboardRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<LeaderboardResponse>;
+  getDeathsByKami(
+    request: DeepPartial<LeaderboardRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<LeaderboardResponse>;
+  getPNLByKami(
+    request: DeepPartial<LeaderboardRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<LeaderboardResponse>;
   /** Stream */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,
