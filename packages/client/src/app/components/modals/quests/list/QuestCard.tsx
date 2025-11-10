@@ -7,7 +7,7 @@ import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Quest Card
 export const QuestCard = ({
@@ -29,8 +29,14 @@ export const QuestCard = ({
   const { accept, complete, burnItems } = actions;
   const { describeEntity, getItemBalance } = utils;
 
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAltCollapsed, setIsAltCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (quest.descriptionAlt) {
+      setIsCollapsed(true);
+    }
+  }, []);
 
   /////////////////
   // INTERPRETATION
