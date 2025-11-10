@@ -221,6 +221,7 @@ const Container = styled.div<{ completed?: boolean }>`
 const Title = styled.div`
   font-size: 0.9vw;
   line-height: 1.2vw;
+  width: 90%;
 `;
 
 const Description = styled.div`
