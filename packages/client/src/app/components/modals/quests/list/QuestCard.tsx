@@ -166,14 +166,19 @@ export const QuestCard = ({
           </CollapsibleSegment>
           {!isCollapsed && <Description>{quest.description}</Description>}
 
-          <CollapsibleSegment onClick={() => setIsAltCollapsed(!isAltCollapsed)}>
-            <Arrow>{isAltCollapsed ? '▸' : '▾'}</Arrow> Completion
-          </CollapsibleSegment>
-          {!isAltCollapsed && <Description>{quest.descriptionAlt}</Description>}
+          {quest.descriptionAlt && (
+            <>
+              <CollapsibleSegment onClick={() => setIsAltCollapsed(!isAltCollapsed)}>
+                <Arrow>{isAltCollapsed ? '▸' : '▾'}</Arrow> Completion
+              </CollapsibleSegment>
+              {!isAltCollapsed && <Description>{quest.descriptionAlt}</Description>}
+            </>
+          )}
         </>
       ) : (
         <Description>{quest.description}</Description>
       )}
+
       <Section key='objectives' style={{ display: quest.objectives.length > 0 ? 'block' : 'none' }}>
         <SubTitle>Objectives</SubTitle>
         {quest.objectives.map((o) => (
