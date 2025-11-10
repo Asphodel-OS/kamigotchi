@@ -28,10 +28,10 @@ export const Tabs = ({ tab, setTab: _setTab }: { tab: string; setTab: (tab: stri
 };
 
 const Container = styled.div`
-  border: solid 0.15rem black;
-  border-radius: 0.3rem 0.3rem 0 0;
+  border: solid 0.15em black;
+  border-radius: 0.3em 0.3em 0 0;
 
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.6em;
   width: 100%;
   background-color: white;
   display: flex;
@@ -41,14 +41,14 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5rem;
+  padding: 0.5em;
 
   flex-grow: 1;
   color: black;
   justify-content: center;
   border: solid 0.1em black;
 
-  font-size: 0.9rem;
+  font-size: 0.9em;
   text-align: center;
   text-wrap: wrap;
   cursor: pointer;

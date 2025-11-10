@@ -132,8 +132,8 @@ export const Log = ({
 };
 
 const Container = styled.div<{ isClickable?: boolean }>`
-  padding: 0.2rem;
-  gap: 0.3rem;
+  padding: 0.2em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -142,25 +142,25 @@ const Container = styled.div<{ isClickable?: boolean }>`
 `;
 
 const Left = styled.div`
-  width: 21rem;
+  width: 21em;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.3em;
 `;
 
 const Right = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.3em;
 `;
 
 const OpenIcon = styled.img.attrs({ alt: 'Open in explorer' })`
   cursor: pointer;
 
-  width: 1.5rem;
-  margin-right: 0.4rem;
+  width: 1.5em;
+  margin-right: 0.4em;
 
   &:hover {
     opacity: 0.8;
@@ -168,17 +168,17 @@ const OpenIcon = styled.img.attrs({ alt: 'Open in explorer' })`
 `;
 
 const Icon = styled.img`
-  width: 1.5rem;
-  margin: 0.3rem;
+  width: 1.5em;
+  margin: 0.3em;
   align-self: center;
 `;
 
 const CancelIcon = styled.img`
   cursor: pointer;
-  width: 1.6rem;
-  height: 1.6rem;
-  margin-left: 0.3rem;
-  filter: drop-shadow(0 0 0.1rem rgba(0, 0, 0, 0.4));
+  width: 1.6em;
+  height: 1.6em;
+  margin-left: 0.3em;
+  filter: drop-shadow(0 0 0.1em rgba(0, 0, 0, 0.4));
   &:hover {
     opacity: 0.9;
   }

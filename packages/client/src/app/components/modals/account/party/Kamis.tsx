@@ -114,16 +114,16 @@ const Container = styled.div`
 `;
 
 const CellContainer = styled.div`
-  border: solid 0.15rem black;
-  border-radius: 0.25rem;
+  border: solid 0.15em black;
+  border-radius: 0.25em;
 
-  margin: 0.3rem 0.4rem;
+  margin: 0.3em 0.4em;
   position: relative;
 `;
 
 const Image = styled.img`
-  border-radius: 0.1rem;
-  height: 8rem;
+  border-radius: 0.1em;
+  height: 8em;
   cursor: pointer;
   &:hover {
     opacity: 0.75;
@@ -132,15 +132,15 @@ const Image = styled.img`
 
 const ExtIcon = styled.img`
   position: absolute;
-  width: 2.5rem;
-  right: 0rem;
-  bottom: 0rem;
+  width: 2.5em;
+  right: 0em;
+  bottom: 0em;
 `;
 
 const EmptyText = styled.div`
   color: black;
-  margin: 1rem;
+  margin: 1em;
 
-  font-size: 1.2rem;
+  font-size: 1.2em;
   font-family: Pixel;
 `;

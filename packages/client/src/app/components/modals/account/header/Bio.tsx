@@ -106,7 +106,7 @@ export const Bio = ({
 };
 
 const DetailRow = styled.div`
-  padding: 0.15rem 0;
+  padding: 0.15em 0;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -130,11 +130,11 @@ const TextArea = styled.textarea<{ isEditing: boolean; isSelf: boolean }>`
   resize: none;
   overflow: hidden;
   width: 100%;
-  padding: 0.6rem 0.6rem 1.3rem 0.6rem;
-  border-radius: 0.6rem;
-  min-height: 4rem;
-  font-size: 0.7rem;
-  line-height: 1.2rem;
+  padding: 0.6em 0.6em 1.3em 0.6em;
+  border-radius: 0.6em;
+  min-height: 4em;
+  font-size: 0.7em;
+  line-height: 1.2em;
   text-align: justify;
   outline: none;
   hyphens: auto;
@@ -145,17 +145,17 @@ const TextArea = styled.textarea<{ isEditing: boolean; isSelf: boolean }>`
 
 const LetterCount = styled.div`
   position: absolute;
-  left: 0.6rem;
-  bottom: 0.7rem;
+  left: 0.6em;
+  bottom: 0.7em;
   color: grey;
-  font-size: 0.5rem;
+  font-size: 0.5em;
 `;
 
 const EditIcon = styled.img`
   position: absolute;
-  right: 0.6rem;
-  bottom: 0.6rem;
-  height: min(1.4rem, 1.4rem);
+  right: 0.6em;
+  bottom: 0.6em;
+  height: min(1.4em, 1.4em);
   pointer-events: none;
   opacity: 0.6;
 `;

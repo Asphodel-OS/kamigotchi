@@ -67,6 +67,6 @@ const Container = styled.div<{ isVisible: boolean }>`
 
 const Text = styled.div<{ size: number }>`
   color: black;
-  font-size: ${({ size }) => size}rem;
-  line-height: ${({ size }) => size * 1.5}rem;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
 `;

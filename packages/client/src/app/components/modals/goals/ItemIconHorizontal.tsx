@@ -39,7 +39,7 @@ export const ItemIconHorizontal = ({
     if (styleOverride?.box) styles = styleOverride.box;
 
     if (glow) {
-      styles.boxShadow = `0 0 0.75rem 0.75rem ${glow}`;
+      styles.boxShadow = `0 0 0.75em 0.75em ${glow}`;
     }
 
     return styles;
@@ -90,24 +90,24 @@ const Box = styled.div`
   align-items: center;
   justify-content: center;
 
-  border: solid black 0.1rem;
-  border-radius: 0.5rem;
+  border: solid black 0.1em;
+  border-radius: 0.5em;
 
-  margin: 0.25rem;
-  padding: 0.4rem 0.4rem;
+  margin: 0.25em;
+  padding: 0.4em 0.4em;
 `;
 
 const Icon = styled.img`
-  height: 1.5rem;
+  height: 1.5em;
 `;
 
 const Text = styled.p`
-  font-size: 0.7rem;
+  font-size: 0.7em;
   font-family: Pixel;
   text-align: left;
   color: #444;
 
-  padding: 0 0rem 0 0.3rem;
+  padding: 0 0em 0 0.3em;
 `;
 
 const ButtonWrapper = styled.div`

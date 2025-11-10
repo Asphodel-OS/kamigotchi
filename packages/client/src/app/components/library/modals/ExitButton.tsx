@@ -27,14 +27,14 @@ export const ExitButton = ({
 
 const Button = styled.button`
   background-color: #ffffff;
-  border: 0.15rem solid black;
-  border-radius: 0.6rem;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
 
-  padding: 0.3rem 0.4rem;
+  padding: 0.3em 0.4em;
   z-index: 1;
 
   color: black;
-  font-size: 0.9rem;
+  font-size: 0.9em;
 
   cursor: pointer;
 

@@ -207,7 +207,7 @@ export const Chart = ({
 const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 60rem;
+  height: 60em;
 
   display: flex;
   flex-flow: column wrap;
@@ -219,8 +219,8 @@ const Container = styled.div`
 
 const Title = styled.div`
   color: black;
-  font-size: 2.1rem;
-  margin: 0.6rem;
+  font-size: 2.1em;
+  margin: 0.6em;
 
   &:hover {
     opacity: 0.8;
@@ -231,8 +231,8 @@ const Title = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: black;
-  font-size: ${({ size }) => size}rem;
-  line-height: 1.8rem;
+  font-size: ${({ size }) => size}em;
+  line-height: 1.8em;
 `;
 
 const ChartContainer = styled.div`

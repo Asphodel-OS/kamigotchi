@@ -23,14 +23,14 @@ export const SubTabs = ({
         <Button
           onClick={() => handleSetTab('frens')}
           disabled={subTab === 'frens'}
-          style={{ borderRight: 'solid black .15rem' }}
+          style={{ borderRight: 'solid black .15em' }}
         >
           Friends
         </Button>
         <Button
           onClick={() => handleSetTab('requests')}
           disabled={subTab === 'requests'}
-          style={{ borderRight: 'solid black .15rem' }}
+          style={{ borderRight: 'solid black .15em' }}
         >
           Requests
         </Button>
@@ -47,7 +47,7 @@ export const SubTabs = ({
         <Button
           onClick={() => handleSetTab('frens')}
           disabled={subTab === 'frens'}
-          style={{ borderRight: 'solid black .15rem' }}
+          style={{ borderRight: 'solid black .15em' }}
         >
           Friends
         </Button>
@@ -62,8 +62,8 @@ export const SubTabs = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15rem black;
-  border-radius: 0.3rem 0.3rem 0 0;
+  border: solid 0.15em black;
+  border-radius: 0.3em 0.3em 0 0;
   border-bottom: none;
 
   width: 100%;
@@ -74,16 +74,16 @@ const Container = styled.div`
 `;
 
 const Button = styled.button`
-  border: solid 0.15rem black;
-  border-radius: 0.3rem;
-  padding: 0.5rem;
-  margin: 0.5rem;
+  border: solid 0.15em black;
+  border-radius: 0.3em;
+  padding: 0.5em;
+  margin: 0.5em;
   flex-grow: 1;
   color: black;
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 1rem;
+  font-size: 1em;
   text-align: center;
 
   cursor: pointer;

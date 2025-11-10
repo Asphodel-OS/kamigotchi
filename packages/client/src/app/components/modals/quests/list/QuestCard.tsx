@@ -186,10 +186,10 @@ export const QuestCard = ({
 
 const Container = styled.div<{ completed?: boolean }>`
   position: relative;
-  border: solid black 0.15rem;
-  border-radius: 1.2rem;
-  padding: 1.2rem;
-  margin: 0.9rem;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
+  padding: 1.2em;
+  margin: 0.9em;
   background-color: #fff;
 
   display: flex;
@@ -201,14 +201,14 @@ const Container = styled.div<{ completed?: boolean }>`
 `;
 
 const Title = styled.div`
-  font-size: 0.9rem;
-  line-height: 1.2rem;
+  font-size: 0.9em;
+  line-height: 1.2em;
 `;
 
 const Description = styled.div`
-  font-size: 0.6rem;
-  line-height: 1.4rem;
-  padding: 0.3rem 0.6rem;
+  font-size: 0.6em;
+  line-height: 1.4em;
+  padding: 0.3em 0.6em;
 `;
 
 const Section = styled.div`
@@ -216,12 +216,12 @@ const Section = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin: 0.3rem 0.3rem;
+  margin: 0.3em 0.3em;
 `;
 
 const SubTitle = styled.div`
-  font-size: 0.8rem;
-  line-height: 1.5rem;
+  font-size: 0.8em;
+  line-height: 1.5em;
   text-align: left;
   justify-content: flex-start;
 `;
@@ -234,9 +234,9 @@ const Row = styled.div`
 `;
 
 const ConditionText = styled.div`
-  font-size: 0.7rem;
-  padding: 0.3rem;
-  padding-left: 0.3rem;
+  font-size: 0.7em;
+  padding: 0.3em;
+  padding-left: 0.3em;
 
   display: flex;
   flex-direction: row;
@@ -245,8 +245,8 @@ const ConditionText = styled.div`
 `;
 
 const Image = styled.img<{ size: number }>`
-  height: ${({ size }) => size}rem;
-  width: ${({ size }) => size}rem;
-  margin-right: ${({ size }) => size * 0.2}rem;
+  height: ${({ size }) => size}em;
+  width: ${({ size }) => size}em;
+  margin-right: ${({ size }) => size * 0.2}em;
   user-drag: none;
 `;

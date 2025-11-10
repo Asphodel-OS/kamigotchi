@@ -113,6 +113,6 @@ const Scrollable = styled.div`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}rem;
-  line-height: ${({ size }) => size * 1.5}rem;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
 `;

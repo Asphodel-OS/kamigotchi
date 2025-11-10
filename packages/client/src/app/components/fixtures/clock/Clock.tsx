@@ -142,7 +142,7 @@ export const ClockFixture: UIComponent = {
 };
 
 const Container = styled.div`
-  --clock-size: max(14rem, 25vmin);
+  --clock-size: max(14em, 25vmin);
   --base-unit: calc(var(--clock-size) / 25);
 
   align-self: start;

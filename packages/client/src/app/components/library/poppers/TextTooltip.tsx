@@ -66,8 +66,8 @@ export const TextTooltip = ({
 
 
 const Text = styled.div<{ size: number; align?: string }>`
-  font-size: ${({ size }) => size}rem;
-  line-height: ${({ size }) => size * 1.8}rem;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.8}em;
   text-align: ${({ align }) => align ?? 'center'};
   white-space: pre-line;
   img {

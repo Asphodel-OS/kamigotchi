@@ -134,7 +134,7 @@ const Container = styled.button<{
   filter?: string;
 }>`
   position: relative;
-  border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15rem')};
+  border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15em')};
   border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
 
   height: ${({ scale, orientation }) => `${scale}${orientation}`};
@@ -223,14 +223,14 @@ const CornerAlt = styled.div<{ radius: number; orientation: string }>`
 const Balance = styled.div`
   position: absolute;
   background-color: white;
-  border-top: solid black 0.15rem;
-  border-left: solid black 0.15rem;
-  border-radius: 0.3rem 0 0.3rem 0;
+  border-top: solid black 0.15em;
+  border-left: solid black 0.15em;
+  border-radius: 0.3em 0 0.3em 0;
   bottom: 0;
   right: 0;
 
-  font-size: 0.75rem;
+  font-size: 0.75em;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem;
+  padding: 0.2em;
 `;

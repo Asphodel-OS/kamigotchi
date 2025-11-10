@@ -230,8 +230,8 @@ export const FundOperator: UIComponent = {
 
 const Header = styled.div`
   color: black;
-  padding: 1.2rem;
-  gap: 0.3rem;
+  padding: 1.2em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -241,11 +241,11 @@ const Header = styled.div`
 
 const BoxButton = styled.button`
   position: relative;
-  border: solid black 0.15rem;
+  border: solid black 0.15em;
   background-color: #fff;
 
   width: 45%;
-  padding: 1.8rem 0;
+  padding: 1.8em 0;
 
   display: flex;
   flex-direction: column;
@@ -261,25 +261,25 @@ const Row = styled.div`
   align-items: center;
   justify-content: center;
 
-  gap: 0.6rem;
+  gap: 0.6em;
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 0.6rem;
-  margin-top: 1.2rem;
+  gap: 1em;
+  padding: 0.6em;
+  margin-top: 1.2em;
 `;
 
 const Input = styled.input`
   display: inline-block;
-  border-radius: 0.45rem;
-  width: 12rem;
-  padding: 1vh 0.6rem;
+  border-radius: 0.45em;
+  width: 12em;
+  padding: 1vh 0.6em;
 
-  font-size: 1.2rem;
+  font-size: 1.2em;
   text-align: center;
   text-decoration: none;
 
@@ -292,9 +292,9 @@ const Input = styled.input`
 const WarnText = styled.div`
   background-color: #ffffff;
   color: #ff785b;
-  padding: 0.75rem;
+  padding: 0.75em;
 
-  font-size: 0.8rem;
+  font-size: 0.8em;
   text-align: center;
 `;
 
@@ -303,5 +303,5 @@ const BridgeGroup = styled.div`
   flex-flow: column nowrap;
   align-items: center;
 
-  padding: 0.6rem;
+  padding: 0.6em;
 `;

@@ -31,7 +31,7 @@ const Container = styled.div`
 `;
 
 const Image = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 3}rem;
+  height: ${({ scale }) => scale * 3}em;
   position: relative;
   image-rendering: pixelated;
   user-drag: none;
@@ -42,18 +42,18 @@ const Image = styled.img<{ scale: number }>`
 const Quantity = styled.div<{ scale: number }>`
   position: absolute;
   color: black;
-  bottom: ${({ scale }) => scale * -0.6}rem;
-  left: ${({ scale }) => scale * 4}rem;
+  bottom: ${({ scale }) => scale * -0.6}em;
+  left: ${({ scale }) => scale * 4}em;
 
-  font-size: ${({ scale }) => scale * 0.6}rem;
-  padding: ${({ scale }) => scale * 0.2}rem;
+  font-size: ${({ scale }) => scale * 0.6}em;
+  padding: ${({ scale }) => scale * 0.2}em;
   align-items: center;
   justify-content: center;
 `;
 
 const Text = styled.div<{ scale: number }>`
-  font-size: ${({ scale }) => scale * 1.2}rem;
-  padding: ${({ scale }) => scale * 0.3}rem;
+  font-size: ${({ scale }) => scale * 1.2}em;
+  padding: ${({ scale }) => scale * 0.3}em;
   ::placeholder {
     opacity: 1;
     color: black;

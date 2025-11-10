@@ -25,7 +25,7 @@ export const TwitterPrivyAccountLink = () => {
           <TextTooltip
             text={[
               <span key="unlinked-text">
-                Link <XIcon style={{ fontSize: '1.2rem', verticalAlign: 'middle' }} /> Account
+                Link <XIcon style={{ fontSize: '1.2em', verticalAlign: 'middle' }} /> Account
               </span>
             ]}
           >
@@ -43,7 +43,7 @@ export const TwitterPrivyAccountLink = () => {
         <>
           <TextTooltip
             text={[
-              <XIcon key="x-icon" style={{ fontSize: '1.2rem', marginBottom: '0.7rem' }} />,
+              <XIcon key="x-icon" style={{ fontSize: '1.2em', marginBottom: '0.7em' }} />,
               `${user?.twitter?.username}`,
               `Linked ${moment(twitterAccount?.firstVerifiedAt).fromNow()}`,
               `\n`,
@@ -69,5 +69,5 @@ const Container = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.3em;
 `;

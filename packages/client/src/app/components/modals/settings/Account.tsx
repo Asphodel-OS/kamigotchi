@@ -57,21 +57,21 @@ export const Account = () => {
 const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: 0.6rem;
+  padding: 0.6em;
 `;
 
 const Header = styled.div`
   color: #333;
-  margin: 0.6rem 0rem;
+  margin: 0.6em 0em;
   font-family: Pixel;
-  font-size: 1rem;
+  font-size: 1em;
   text-align: left;
 `;
 
 const Section = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  margin: 0.4rem;
+  margin: 0.4em;
 `;
 
 const HeaderRow = styled.div`
@@ -83,14 +83,14 @@ const HeaderRow = styled.div`
 
 const SubHeader = styled.div`
   color: #333;
-  padding: 0rem 0.2rem;
+  padding: 0em 0.2em;
   font-family: Pixel;
-  font-size: 0.75rem;
+  font-size: 0.75em;
   text-align: left;
 `;
 
 const Row = styled.div`
-  padding: 0.75rem 0.6rem;
+  padding: 0.75em 0.6em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -103,12 +103,12 @@ const RowContent = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.5em;
 `;
 
 const Text = styled.div`
   color: #333;
   font-family: Pixel;
-  font-size: 0.6rem;
+  font-size: 0.6em;
   text-align: left;
 `;

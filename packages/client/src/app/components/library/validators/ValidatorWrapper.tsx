@@ -78,10 +78,10 @@ const Wrapper = styled.div<Wrapper>`
 const Content = styled.div`
   position: relative;
   background-color: white;
-  border: solid black 0.15rem;
-  border-radius: 1.2rem;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
 
-  padding: 2rem 4rem;
+  padding: 2em 4em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -94,37 +94,37 @@ const Header = styled.div`
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3rem;
+  padding: 0.3em;
   width: 100%;
 `;
 
 const Title = styled.div`
   color: #333;
-  padding: 0.6rem;
-  font-size: 2.1rem;
+  padding: 0.6em;
+  font-size: 2.1em;
   text-align: center;
 `;
 
 const Subtitle = styled.div`
   color: #666;
-  padding: 0.6rem;
-  font-size: 1.2rem;
+  padding: 0.6em;
+  font-size: 1.2em;
   text-align: center;
 `;
 
 const ErrorPrimary = styled.div`
   color: #922;
-  padding: 0.45rem;
-  font-size: 1.2rem;
-  line-height: 2.1rem;
+  padding: 0.45em;
+  font-size: 1.2em;
+  line-height: 2.1em;
   text-align: center;
 `;
 
 const ErrorSecondary = styled.div`
   color: #922;
-  padding: 0.45rem;
-  font-size: 0.9rem;
-  line-height: 1.2rem;
+  padding: 0.45em;
+  font-size: 0.9em;
+  line-height: 1.2em;
   text-align: center;
 `;
 
@@ -150,7 +150,7 @@ const fadeOut = keyframes`
 
 const ButtonRow = styled.div`
   position: absolute;
-  padding: 0.7rem;
+  padding: 0.7em;
   right: 0;
   display: inline-flex;
 `;

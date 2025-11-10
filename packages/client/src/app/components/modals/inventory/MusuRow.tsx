@@ -123,8 +123,8 @@ export const MusuRow = ({
 
 const Container = styled.div`
   width: 100%;
-  padding: 0.45rem;
-  gap: 0.45rem;
+  padding: 0.45em;
+  gap: 0.45em;
 
   user-select: none;
   display: flex;
@@ -140,25 +140,25 @@ const MusuSection = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.3em;
 `;
 
 const Icons = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.3rem;
+  gap: 0.3em;
 `;
 
 const Icon = styled.img`
-  width: 1.8rem;
-  height: 1.8rem;
-  margin-top: 0.12rem;
+  width: 1.8em;
+  height: 1.8em;
+  margin-top: 0.12em;
 `;
 
 const Balance = styled.div`
-  border: solid #333 0.15rem;
-  border-radius: 0.6rem 0 0.6rem 0.6rem;
-  padding: 0.3rem;
+  border: solid #333 0.15em;
+  border-radius: 0.6em 0 0.6em 0.6em;
+  padding: 0.3em;
   width: 50%;
 
   display: flex;
@@ -167,6 +167,6 @@ const Balance = styled.div`
   align-items: center;
 
   color: black;
-  font-size: 0.9rem;
-  line-height: 1.2rem;
+  font-size: 0.9em;
+  line-height: 1.2em;
 `;

@@ -706,16 +706,16 @@ const FilterBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.6rem;
-  padding: 0.3rem 0.6rem;
+  gap: 0.6em;
+  padding: 0.3em 0.6em;
   background: #f0f0f0;
-  border-bottom: 0.12rem solid black;
+  border-bottom: 0.12em solid black;
 `;
 
 const ClearButton = styled.button`
-  border: 0.12rem solid black;
-  padding: 0.15rem 0.6rem;
-  font-size: 0.85rem;
+  border: 0.12em solid black;
+  padding: 0.15em 0.6em;
+  font-size: 0.85em;
   cursor: pointer;
   background: #eee;
 `;
@@ -771,8 +771,8 @@ const HeaderRow = styled.tr`
   z-index: 1;
   & > th {
     text-align: left;
-    padding: 0.6rem 0.9rem;
-    border-bottom: 0.12rem solid black;
+    padding: 0.6em 0.9em;
+    border-bottom: 0.12em solid black;
   }
 `;
 
@@ -783,9 +783,9 @@ const SortableTh = styled.th`
 
 const Row = styled.tr`
   & > td {
-    padding: 0.45rem 0.6rem;
-    border-bottom: 0.06rem solid #ccc;
-    font-size: 0.9rem;
+    padding: 0.45em 0.6em;
+    border-bottom: 0.06em solid #ccc;
+    font-size: 0.9em;
     vertical-align: middle;
     white-space: nowrap;
   }
@@ -794,17 +794,17 @@ const Row = styled.tr`
 const ItemCell = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.6em;
 `;
 
 const Icon = styled.img`
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.5em;
+  height: 1.5em;
   image-rendering: pixelated;
 `;
 
 const Name = styled.div`
-  max-width: 20rem;
+  max-width: 20em;
   overflow: hidden;
   white-space: normal;
   word-break: break-word;
@@ -823,19 +823,19 @@ const OrderTypeCell = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.2rem;
+  gap: 0.2em;
 `;
 
 const Badge = styled.span<{ $variant: 'offer' | 'seek' | 'neutral' }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.8rem;
-  height: 1.2rem;
-  padding: 0 0.3rem;
-  border: 0.09rem solid black;
-  border-radius: 0.2rem;
-  font-size: 0.75rem;
+  min-width: 1.8em;
+  height: 1.2em;
+  padding: 0 0.3em;
+  border: 0.09em solid black;
+  border-radius: 0.2em;
+  font-size: 0.75em;
   line-height: 1;
   color: #192702;
   background: ${({ $variant }) =>
@@ -843,10 +843,10 @@ const Badge = styled.span<{ $variant: 'offer' | 'seek' | 'neutral' }>`
 `;
 
 const ActionButton = styled.button`
-  border: 0.12rem solid black;
+  border: 0.12em solid black;
   background: #e6ffd6;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.85rem;
+  padding: 0.3em 0.6em;
+  font-size: 0.85em;
   cursor: pointer;
   &:disabled {
     background: #eee;
@@ -858,7 +858,7 @@ const ActionButton = styled.button`
 const ActionCell = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.3em;
   align-items: flex-start;
 `;
 
@@ -881,7 +881,7 @@ const TotalCell = styled.td`
 const ConfirmParagraph = styled.div`
   color: #333;
   flex-grow: 1;
-  padding: 1.8rem;
+  padding: 1.8em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-evenly;
@@ -894,5 +894,5 @@ const ConfirmRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: 0.6em;
 `;

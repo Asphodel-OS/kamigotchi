@@ -71,10 +71,10 @@ export const Traits = ({
 };
 
 const Container = styled.div`
-  border: solid black 0.15rem;
-  border-radius: 0.5rem;
-  margin: 0.7rem;
-  padding: 0.5rem;
+  border: solid black 0.15em;
+  border-radius: 0.5em;
+  margin: 0.7em;
+  padding: 0.5em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -83,14 +83,14 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
-  padding: 0.5rem;
+  padding: 0.5em;
   color: black;
   font-family: Pixel;
-  font-size: 1.5rem;
+  font-size: 1.5em;
 `;
 
 const Content = styled.div`
-  padding: 0.7rem;
+  padding: 0.7em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -99,11 +99,11 @@ const Content = styled.div`
 `;
 
 const InfoBox = styled.div<{ color: string }>`
-  border: solid black 0.12rem;
+  border: solid black 0.12em;
   border-radius: 5px;
-  margin: 0.3rem;
-  padding: 0.5rem 1rem;
-  gap: 0.5rem;
+  margin: 0.3em;
+  padding: 0.5em 1em;
+  gap: 0.5em;
   ${({ color }) => `background-color: ${color ?? 'white'};`}
   display: flex;
   flex-direction: row nowrap;
@@ -115,7 +115,7 @@ const InfoBox = styled.div<{ color: string }>`
 `;
 
 const InfoIcon = styled.img`
-  height: 2rem;
+  height: 2em;
   align-self: center;
 `;
 
@@ -123,7 +123,7 @@ const InfoNumber = styled.div`
   color: black;
   align-self: center;
 
-  font-size: 1.2rem;
+  font-size: 1.2em;
   font-family: Pixel;
   margin: auto;
 `;

@@ -86,7 +86,7 @@ const Container = styled.div<{ fullWidth?: boolean }>`
   flex-direction: row;
   align-items: flex-end;
   justify-content: center;
-  gap: 0.3rem;
+  gap: 0.3em;
 `;
 
 const InputGroup = styled.div`
@@ -99,22 +99,22 @@ const InputGroup = styled.div`
 `;
 
 const Label = styled.label`
-  font-size: 0.6rem;
+  font-size: 0.6em;
   color: #333;
-  margin: 0.3rem;
+  margin: 0.3em;
   text-align: left;
 `;
 
 const Input = styled.input`
-  border: solid 0.15rem black;
-  border-radius: 0.4rem;
+  border: solid 0.15em black;
+  border-radius: 0.4em;
 
   background-color: #ffffff;
   width: 100%;
   color: black;
-  padding: 0.75rem 1rem;
+  padding: 0.75em 1em;
 
-  font-size: 0.75rem;
+  font-size: 0.75em;
   text-align: left;
   text-decoration: none;
 

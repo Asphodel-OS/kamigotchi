@@ -44,12 +44,12 @@ export const Logs = ({
 };
 
 const Container = styled.div`
-  border: solid grey 0.15rem;
-  border-radius: 0.45rem;
+  border: solid grey 0.15em;
+  border-radius: 0.45em;
 
   background-color: #ddd;
-  margin: 0.2rem;
-  padding: 0.2rem;
+  margin: 0.2em;
+  padding: 0.2em;
   overflow-y: auto;
 
   display: flex;
@@ -58,7 +58,7 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  padding: 0.3rem;
+  padding: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -67,7 +67,7 @@ const Header = styled.div`
 `;
 
 const Bar = styled.div`
-  border-top: 0.1rem solid #888;
+  border-top: 0.1em solid #888;
   width: 40%;
-  padding: 0.1rem;
+  padding: 0.1em;
 `;

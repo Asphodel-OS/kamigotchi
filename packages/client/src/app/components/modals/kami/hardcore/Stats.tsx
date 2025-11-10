@@ -41,7 +41,7 @@ export const Stats = ({
 
 const Container = styled.div`
   height: 80%;
-  margin-left: 1.8rem;
+  margin-left: 1.8em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -51,9 +51,9 @@ const Container = styled.div`
 
 const Grouping = styled.div`
   position: relative;
-  border-radius: 0.3rem;
-  padding: 0.3rem 0.45rem;
-  gap: 0.45rem;
+  border-radius: 0.3em;
+  padding: 0.3em 0.45em;
+  gap: 0.45em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -64,15 +64,15 @@ const Grouping = styled.div`
 `;
 
 const Title = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}rem;
+  font-size: ${({ size }) => size}em;
   padding: ${({ size }) => `${size * 0.4}rem ${size * 0}rem`};
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}rem;
+  font-size: ${({ size }) => size}em;
   margin: auto;
 `;
 
 const Icon = styled.img<{ size: number }>`
-  height: ${({ size }) => size}rem;
+  height: ${({ size }) => size}em;
 `;

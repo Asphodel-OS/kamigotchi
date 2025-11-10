@@ -177,31 +177,31 @@ const PopoverContent = styled.div<{
   popoverPosition: any;
   maxHeight?: number;
 }>`
-  max-height: ${({ maxHeight }) => maxHeight ?? 22}rem;
+  max-height: ${({ maxHeight }) => maxHeight ?? 22}em;
   overflow-y: auto;
   overflow-x: hidden;
   visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};
   position: fixed;
 
   background-color: white;
-  border: 0.15rem solid black;
-  border-radius: 0.75rem;
+  border: 0.15em solid black;
+  border-radius: 0.75em;
   z-index: 10;
   white-space: nowrap;
   max-width: fit-content;
-  font-size: 0.6rem;
+  font-size: 0.6em;
   top: ${({ popoverPosition }) => popoverPosition.y};
   left: ${({ popoverPosition }) => popoverPosition.x};
   white-space: normal;
   overflow-wrap: break-word;
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.9rem;
+    width: 0.9em;
   }
   ::-webkit-scrollbar-thumb {
-    border: 0.2rem solid transparent;
+    border: 0.2em solid transparent;
     background-clip: padding-box;
-    border-radius: 0.2rem;
+    border-radius: 0.2em;
     background-color: rgba(0, 0, 0, 0.15);
     &:hover {
       cursor: auto;

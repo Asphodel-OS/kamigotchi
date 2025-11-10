@@ -63,7 +63,7 @@ export const Header = ({
       </KamiDropDown>
     ));
     if (kamis.length === 0) {
-      kamis = [<div style={{ padding: `0.5rem` }}>No Kamis</div>];
+      kamis = [<div style={{ padding: `0.5em` }}>No Kamis</div>];
     }
     return kamis;
   };
@@ -106,7 +106,7 @@ export const Header = ({
           />
         )}
         <DetailRow>
-          <CakeIcon style={{ height: '1.4rem' }} />
+          <CakeIcon style={{ height: '1.4em' }} />
           <Description>{moment(1000 * account.time.creation).format('MMM DD, YYYY')}</Description>
         </DetailRow>
         <Bio account={account} isSelf={isSelf} actions={{ setBio }} />
@@ -116,18 +116,18 @@ export const Header = ({
 };
 
 const Container = styled.div`
-  padding: 0.75rem;
+  padding: 0.75em;
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.9rem;
+  gap: 0.9em;
   align-items: flex-start;
   user-select: none;
 `;
 
 const Info = styled.div`
   width: 100%;
-  padding-bottom: 1.5rem;
-  gap: 0.3rem;
+  padding-bottom: 1.5em;
+  gap: 0.3em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -137,14 +137,14 @@ const Info = styled.div`
 const TitleSection = styled.div<{ isSelf: boolean }>`
   display: flex;
   flex-flow: column nowrap;
-  gap: 0.5rem;
-  ${({ isSelf }) => !isSelf && `padding-bottom: 1rem;`}
+  gap: 0.5em;
+  ${({ isSelf }) => !isSelf && `padding-bottom: 1em;`}
 `;
 
 const TitleHeader = styled.div`
   display: flex;
-  height: 0.6rem;
-  gap: 0.3rem;
+  height: 0.6em;
+  gap: 0.3em;
 `;
 
 const Subtitle = styled.div`
@@ -152,12 +152,12 @@ const Subtitle = styled.div`
   align-items: center;
   color: #777;
 
-  font-size: 0.7rem;
+  font-size: 0.7em;
   cursor: copy;
 `;
 
 const DetailRow = styled.div<{ edit?: boolean }>`
-  padding: 0.15rem 0;
+  padding: 0.15em 0;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -166,12 +166,12 @@ const DetailRow = styled.div<{ edit?: boolean }>`
 `;
 
 const Description = styled.div`
-  font-size: 0.7rem;
-  line-height: 0.9rem;
+  font-size: 0.7em;
+  line-height: 0.9em;
 `;
 
 const KamiDropDown = styled.button`
-  padding: 0.5rem;
+  padding: 0.5em;
   display: flex;
   flex-direction: column;
   width: 100%;

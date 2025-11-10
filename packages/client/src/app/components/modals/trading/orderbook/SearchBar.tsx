@@ -143,8 +143,8 @@ export const SearchBar = ({
 const Container = styled.div`
   position: relative;
   width: 100%;
-  gap: 0.6rem;
-  padding: 0.3rem;
+  gap: 0.6em;
+  padding: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -153,22 +153,22 @@ const Container = styled.div`
 
   /* Keep search controls comfortably smaller than their container */
   & button {
-    height: 1.8rem;
-    line-height: 1.8rem;
-    padding: 0 0.6rem;
-    font-size: 0.9rem;
+    height: 1.8em;
+    line-height: 1.8em;
+    padding: 0 0.6em;
+    font-size: 0.9em;
     max-height: 100%;
   }
   @media (min-width: 1400px) {
     & button {
-      height: 1.6rem;
-      line-height: 1.6rem;
+      height: 1.6em;
+      line-height: 1.6em;
     }
   }
   @media (min-width: 1800px) {
     & button {
-      height: 1.5rem;
-      line-height: 1.5rem;
+      height: 1.5em;
+      line-height: 1.5em;
     }
   }
 `;
@@ -176,28 +176,28 @@ const Container = styled.div`
 const SearchInput = styled.input`
   flex: 1 1 auto;
   min-width: 0;
-  height: 1.8rem;
-  padding: 0 0.6rem;
+  height: 1.8em;
+  padding: 0 0.6em;
 
-  font-size: 0.9rem;
-  line-height: 1.8rem;
+  font-size: 0.9em;
+  line-height: 1.8em;
 `;
 
 const SuggestBox = styled.div`
   position: absolute;
-  top: calc(100% + 0.3rem);
+  top: calc(100% + 0.3em);
   left: 0;
   right: 0;
   background: #fff;
-  border: 0.12rem solid black;
-  max-height: 12rem;
+  border: 0.12em solid black;
+  max-height: 12em;
   overflow: auto;
   z-index: 1;
 `;
 
 const Suggest = styled.div`
-  padding: 0.45rem 0.6rem;
-  font-size: 0.9rem;
+  padding: 0.45em 0.6em;
+  font-size: 0.9em;
   cursor: pointer;
   &:hover {
     background: #eee;

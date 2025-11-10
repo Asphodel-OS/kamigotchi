@@ -293,7 +293,7 @@ const Container = styled.div`
 `;
 
 const Section = styled.div`
-  gap: 0.3rem;
+  gap: 0.3em;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;

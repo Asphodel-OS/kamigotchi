@@ -145,8 +145,8 @@ const Container = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
   flex-flow: row wrap;
   justify-content: center;
-  gap: 0.3rem;
-  padding: 0.6rem;
+  gap: 0.3em;
+  padding: 0.6em;
 `;
 
 const ItemWrapper = styled.div`

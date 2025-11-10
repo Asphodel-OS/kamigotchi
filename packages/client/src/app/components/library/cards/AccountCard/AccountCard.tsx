@@ -73,8 +73,8 @@ export const AccountCard = ({
 };
 
 const TitleBar = styled.div`
-  border-bottom: solid black 0.15rem;
-  padding: 0.45rem;
+  border-bottom: solid black 0.15em;
+  padding: 0.45em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -83,7 +83,7 @@ const TitleBar = styled.div`
 `;
 
 const TitleText = styled.div`
-  font-size: 0.9rem;
+  font-size: 0.9em;
   text-align: left;
 
   cursor: pointer;
@@ -93,8 +93,8 @@ const TitleText = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 0.2rem;
-  min-height: 4rem;
+  padding: 0.2em;
+  min-height: 4em;
 
   display: grid;
   grid-template-columns: 9fr 1fr; 
@@ -104,13 +104,13 @@ const Content = styled.div`
 const BioColumn = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  max-height: 3.5rem;
+  max-height: 3.5em;
   overflow-y: auto;
   overflow-wrap: break-word; 
   
   /* Hide scrollbar by default and show on hover */
   &::-webkit-scrollbar {
-    width: 1rem;
+    width: 1em;
   }
   &::-webkit-scrollbar-track {
     background: transparent;
@@ -134,7 +134,7 @@ const ContentSubtext = styled.div`
   flex-grow: 1;
 
   text-align: right;
-  font-size: 0.7rem;
+  font-size: 0.7em;
 
   ${({ onClick }) =>
     onClick &&
@@ -154,8 +154,8 @@ const ContentActions = styled.div`
 `;
 
 const TextMedium = styled.p`
-  font-size: 0.75rem;
-  line-height: 1.5rem;
+  font-size: 0.75em;
+  line-height: 1.5em;
   text-align: left;
-  padding-left: 0.2rem;
+  padding-left: 0.2em;
 `;

@@ -165,13 +165,13 @@ const ToggleRow = styled.div`
 
 const CollapseToggle = styled.button`
   background: rgb(221, 221, 221);
-  border: 0.12rem solid black;
+  border: 0.12em solid black;
   border-left: 0;
   border-right: 0;
   width: 100%;
-  height: 1.2rem;
+  height: 1.2em;
 
-  font-size: 0.9rem;
-  line-height: 1.2rem;
+  font-size: 0.9em;
+  line-height: 1.2em;
   cursor: pointer;
 `;

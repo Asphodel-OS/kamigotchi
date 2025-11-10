@@ -211,10 +211,10 @@ export const Footer = ({
 const Container = styled.div`
   background-color: #fff;
   position: relative;
-  border-radius: 0 0 1.2rem 0;
-  border-top: 0.15rem solid black;
+  border-radius: 0 0 1.2em 0;
+  border-top: 0.15em solid black;
   width: 100%;
-  height: 4.5rem;
+  height: 4.5em;
 
   display: flex;
   flex-direction: row nowrap;
@@ -224,21 +224,21 @@ const Container = styled.div`
 const Quantity = styled.input`
   border: none;
   background-color: #eee;
-  border-right: 0.15rem solid black;
-  width: 6rem;
+  border-right: 0.15em solid black;
+  width: 6em;
   height: 100%;
-  padding: 0.3rem;
+  padding: 0.3em;
   margin: 0w;
   cursor: text;
 
   color: black;
   font-family: Pixel;
-  font-size: 1.2rem;
+  font-size: 1.2em;
   text-align: center;
 `;
 
 const Submit = styled.div<{ disabled?: boolean }>`
-  border-radius: 0 0 1.05rem 0;
+  border-radius: 0 0 1.05em 0;
   width: 100%;
   height: 100%;
   text-align: center;
@@ -248,7 +248,7 @@ const Submit = styled.div<{ disabled?: boolean }>`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1.5em;
 
   cursor: pointer;
   user-select: none;

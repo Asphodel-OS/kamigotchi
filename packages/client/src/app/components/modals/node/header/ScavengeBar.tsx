@@ -78,18 +78,18 @@ export const ScavengeBar = ({
 
 const Container = styled.div`
   color: black;
-  padding: 0.5rem 0;
-  gap: 0.3rem;
+  padding: 0.5em 0;
+  gap: 0.3em;
   display: flex;
   flex-flow: row;
 `;
 
 const ProgressBar = styled.div<{ percent: number }>`
-  border: solid black 0.15rem;
-  border-radius: 0.4rem;
-  height: 2.2rem;
+  border: solid black 0.15em;
+  border-radius: 0.4em;
+  height: 2.2em;
   width: 100%;
-  padding: 0.4rem 0.8rem;
+  padding: 0.4em 0.8em;
 
   background: ${({ percent }) =>
     `linear-gradient(90deg, #11ee11, 0%, #11ee11, ${percent}%, #bbb, ${percent}%, #fff 100%)`};
@@ -99,6 +99,6 @@ const ProgressBar = styled.div<{ percent: number }>`
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 0.8rem;
+  font-size: 0.8em;
   text-align: center;
 `;

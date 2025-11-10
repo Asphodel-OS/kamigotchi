@@ -272,8 +272,8 @@ const Row = styled.div`
 `;
 
 const Tile = styled.div<{ hasRoom: boolean; isHighlighted: boolean; backgroundColor: any }>`
-  border-left: 0.01rem solid rgba(0, 0, 0, 0.2);
-  border-bottom: 0.01rem solid rgba(0, 0, 0, 0.2);
+  border-left: 0.01em solid rgba(0, 0, 0, 0.2);
+  border-bottom: 0.01em solid rgba(0, 0, 0, 0.2);
   background-color: ${({ backgroundColor }) => backgroundColor};
   display: flex;
   flex-grow: 1;

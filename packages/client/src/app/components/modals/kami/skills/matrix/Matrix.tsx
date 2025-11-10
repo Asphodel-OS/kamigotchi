@@ -84,7 +84,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 3rem 0rem 3.9rem 0rem;
+  padding: 3em 0em 3.9em 0em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -93,8 +93,8 @@ const Content = styled.div`
 
 const Row = styled.div<{ locked: boolean }>`
   position: relative;
-  border-bottom: solid black 0.15rem;
-  padding: 1.2rem 3rem;
+  border-bottom: solid black 0.15em;
+  padding: 1.2em 3em;
 
   display: flex;
   flex-flow: row;
@@ -106,11 +106,11 @@ const Row = styled.div<{ locked: boolean }>`
 
 const RowPrefix = styled.div`
   position: absolute;
-  left: 2rem;
+  left: 2em;
 `;
 
 const RowNumber = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: 1.2rem;
+  font-size: 1.2em;
 `;

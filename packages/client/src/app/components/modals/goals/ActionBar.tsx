@@ -107,7 +107,7 @@ export const ActionBar = ({
 };
 
 const Container = styled.div`
-  margin: 2rem 1rem 1rem;
+  margin: 2em 1em 1em;
 `;
 
 const Column = styled.div`
@@ -117,10 +117,10 @@ const Column = styled.div`
 `;
 
 const SubText = styled.p`
-  font-size: 0.8rem;
+  font-size: 0.8em;
   font-family: Pixel;
   text-align: center;
   color: #666;
 
-  padding: 1rem 1rem 0;
+  padding: 1em 1em 0;
 `;

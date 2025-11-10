@@ -117,7 +117,7 @@ export const Details = ({
     <Container>
       <ImageSection>
         <Image src={getSkillImage(skill)} />
-        <div style={{ position: 'absolute', bottom: '.6rem', right: '.6rem' }}>
+        <div style={{ position: 'absolute', bottom: '.6em', right: '.6em' }}>
           <TextTooltip text={getUpgradeButtonTooltip()}>
             <ActionButton
               text={'Upgrade'}
@@ -126,7 +126,7 @@ export const Details = ({
             />
           </TextTooltip>
         </div>
-        <div style={{ position: 'absolute', top: '.6rem', right: '.6rem' }}>
+        <div style={{ position: 'absolute', top: '.6em', right: '.6em' }}>
           <HelpChip
             tooltip={{
               text: [
@@ -164,10 +164,10 @@ export const Details = ({
 };
 
 const Container = styled.div`
-  border-right: 0.15rem solid #333;
-  padding-bottom: 3rem;
-  max-width: 20rem;
-  min-width: 20rem;
+  border-right: 0.15em solid #333;
+  padding-bottom: 3em;
+  max-width: 20em;
+  min-width: 20em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -176,7 +176,7 @@ const Container = styled.div`
 `;
 
 const ImageSection = styled.div`
-  border-bottom: 0.15rem solid #333;
+  border-bottom: 0.15em solid #333;
   position: relative;
 
   display: flex;
@@ -185,17 +185,17 @@ const ImageSection = styled.div`
 
 const Image = styled.img`
   image-rendering: pixelated;
-  width: 10rem;
-  margin: 0.75rem;
+  width: 10em;
+  margin: 0.75em;
 
-  border: solid black 0.15rem;
-  border-radius: 0.5rem;
+  border: solid black 0.15em;
+  border-radius: 0.5em;
   user-drag: none;
 `;
 
 const NameSection = styled.div`
-  border-bottom: 0.15rem solid #333;
-  padding: 1.4rem 0.3rem;
+  border-bottom: 0.15em solid #333;
+  padding: 1.4em 0.3em;
 
   display: flex;
   flex-flow: row wrap;
@@ -205,53 +205,53 @@ const NameSection = styled.div`
 const Name = styled.div`
   color: #333;
   width: 100%;
-  padding: 0rem 1.2rem;
+  padding: 0em 1.2em;
 
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 1.2rem;
-  line-height: 1.5rem;
+  font-size: 1.2em;
+  line-height: 1.5em;
 `;
 
 const LevelText = styled.div`
   color: #333;
   font-family: Pixel;
-  font-size: 0.6rem;
+  font-size: 0.6em;
   width: 100%;
   text-align: center;
-  padding: 0.5rem 0 0 0;
+  padding: 0.5em 0 0 0;
 `;
 
 const Description = styled.div`
   color: #666;
-  padding: 1.2rem 1rem;
+  padding: 1.2em 1em;
   font-family: Pixel;
   text-align: left;
-  line-height: 1rem;
-  font-size: 0.75rem;
+  line-height: 1em;
+  font-size: 0.75em;
 `;
 
 const DetailSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: 0.8rem 1rem;
+  padding: 0.8em 1em;
 `;
 
 const DetailLabel = styled.div`
   color: #333;
   font-family: Pixel;
-  font-size: 0.9rem;
-  padding: 0.3rem 0;
+  font-size: 0.9em;
+  padding: 0.3em 0;
 `;
 
 const DetailDescription = styled.div`
   color: #666;
   font-family: Pixel;
-  font-size: 0.6rem;
-  line-height: 1rem;
-  padding: 0.3rem 0;
-  padding-left: 0.3rem;
+  font-size: 0.6em;
+  line-height: 1em;
+  padding: 0.3em 0;
+  padding-left: 0.3em;
 `;

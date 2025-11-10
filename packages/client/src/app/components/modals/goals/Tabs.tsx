@@ -40,6 +40,6 @@ const Container = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
 
-  margin: 1rem 1rem 0rem 1rem;
+  margin: 1em 1em 0em 1em;
   right: 0;
 `;

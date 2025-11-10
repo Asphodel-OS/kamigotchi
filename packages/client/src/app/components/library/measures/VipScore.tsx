@@ -5,20 +5,20 @@ import { TokenIcons } from 'assets/images/tokens';
 export const VipScore = () => {
   return (
     <Row>
-      <img style={{ height: '1.3rem', width: '1.3rem' }} src={TokenIcons.init} alt='initia' />
-      <div style={{ fontSize: '0.7rem' }}>0 VIP score</div>
+      <img style={{ height: '1.3em', width: '1.3em' }} src={TokenIcons.init} alt='initia' />
+      <div style={{ fontSize: '0.7em' }}>0 VIP score</div>
     </Row>
   );
 };
 
 const Row = styled.div`
   display: flex;
-  margin: 0.5rem 01rem;
+  margin: 0.5em 01em;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
-  --width: 12.5rem;
+  --width: 12.5em;
   position: relative;
   right: 6%;
-  gap: 0.25rem;
+  gap: 0.25em;
 `;

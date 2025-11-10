@@ -41,7 +41,7 @@ export const Blocked = ({
 
 const Container = styled.div`
   width: 100%;
-  gap: 0.6rem;
+  gap: 0.6em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -50,12 +50,12 @@ const Container = styled.div`
 
 const EmptyText = styled.div`
   color: black;
-  margin: 1rem;
+  margin: 1em;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  font-size: 0.9rem;
+  font-size: 0.9em;
   font-family: Pixel;
 `;

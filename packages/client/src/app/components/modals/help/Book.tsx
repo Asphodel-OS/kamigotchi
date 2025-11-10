@@ -29,13 +29,13 @@ export const Book = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15rem black;
-  border-radius: 1rem;
-  width: 8rem;
-  height: 10rem;
-  padding: 0.9rem;
-  gap: 0.6rem;
-  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.5);
+  border: solid 0.15em black;
+  border-radius: 1em;
+  width: 8em;
+  height: 10em;
+  padding: 0.9em;
+  gap: 0.6em;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.5);
 
   display: flex;
   flex-flow: column nowrap;
@@ -59,7 +59,7 @@ const Image = styled.img`
 
 const Title = styled.div`
   color: black;
-  font-size: 0.6rem;
-  line-height: 0.8rem;
+  font-size: 0.6em;
+  line-height: 0.8em;
   text-align: center;
 `;

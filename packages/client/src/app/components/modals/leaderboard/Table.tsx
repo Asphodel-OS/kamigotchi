@@ -53,14 +53,14 @@ export const Table = ({
 };
 
 const Container = styled.div`
-  margin: 0 1rem;
-  border: solid black 0.15rem;
-  border-radius: 0.75rem;
+  margin: 0 1em;
+  border: solid black 0.15em;
+  border-radius: 0.75em;
 
   overflow: auto;
   scroll: auto;
   height: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
 `;
 
 const Row = styled.div`
@@ -68,7 +68,7 @@ const Row = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  padding: 1.2rem 1rem;
+  padding: 1.2em 1em;
 
   &:hover {
     background-color: #eee;
@@ -76,17 +76,17 @@ const Row = styled.div`
 `;
 
 const NameText = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.2em;
   font-family: Pixel;
   text-align: left;
   color: #333;
 
   flex-basis: 80%;
-  padding: 0 1rem;
+  padding: 0 1em;
 `;
 
 const SideText = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.2em;
   font-family: Pixel;
   text-align: center;
   color: #333;

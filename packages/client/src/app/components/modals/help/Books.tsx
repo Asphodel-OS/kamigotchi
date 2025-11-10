@@ -21,6 +21,6 @@ const Container = styled.div`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  padding: 2.4rem;
-  gap: 1.5rem;
+  padding: 2.4em;
+  gap: 1.5em;
 `;

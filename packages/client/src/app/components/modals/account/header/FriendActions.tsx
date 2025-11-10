@@ -119,7 +119,7 @@ export const FriendActions = (props: Props) => {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.45em;
 `;
 
 const COLORS = {
@@ -144,11 +144,11 @@ const ActionListLabel = styled.div<{ $variant: 'friends' | 'pending' | 'blocked'
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.3rem;
-  border: 0.15rem solid ${({ $variant }) => COLORS[$variant].border};
+  font-size: 0.6em;
+  padding: 0.3em 0.6em;
+  border-radius: 0.3em;
+  border: 0.15em solid ${({ $variant }) => COLORS[$variant].border};
   color: ${({ $variant }) => COLORS[$variant].text};
   background-color: ${({ $variant }) => COLORS[$variant].background};
-  box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 0.1);
 `;

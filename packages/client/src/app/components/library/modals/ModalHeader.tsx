@@ -17,9 +17,9 @@ export const ModalHeader = ({
 };
 
 const Container = styled.div`
-  padding: 0.6rem 1rem;
-  gap: 0.7rem;
-  line-height: 1.5rem;
+  padding: 0.6em 1em;
+  gap: 0.7em;
+  line-height: 1.5em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -29,14 +29,14 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 1.2rem;
+  font-size: 1.2em;
   color: #333;
   text-align: left;
   font-family: Pixel;
 `;
 
 const Image = styled.img`
-  height: 2rem;
+  height: 2em;
   width: auto;
   user-drag: none;
 `;

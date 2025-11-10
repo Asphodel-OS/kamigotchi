@@ -121,7 +121,7 @@ export const Stage = ({
 
 const Container = styled.div`
   position: relative;
-  margin: 0.9rem;
+  margin: 0.9em;
   background-color: #fff;
 
   display: flex;
@@ -133,13 +133,13 @@ const Container = styled.div`
 `;
 
 const Input = styled.input`
-  border: solid 0.15rem black;
-  border-radius: 0.45rem;
+  border: solid 0.15em black;
+  border-radius: 0.45em;
 
-  width: 18rem;
-  padding: 0.75rem 1rem;
+  width: 18em;
+  padding: 0.75em 1em;
 
-  font-size: 0.75rem;
+  font-size: 0.75em;
   text-align: center;
   text-decoration: none;
 
@@ -150,8 +150,8 @@ const Input = styled.input`
 const Row = styled.div`
   position: relative;
   width: 90%;
-  padding-top: 0.6rem;
-  gap: 0.3rem;
+  padding-top: 0.6em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;

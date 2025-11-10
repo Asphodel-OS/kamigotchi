@@ -147,7 +147,7 @@ const ActionRow = styled.div`
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
 `;
 
 const ModeButtons = styled.div`
@@ -155,18 +155,18 @@ const ModeButtons = styled.div`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  gap: 0.1rem;
+  gap: 0.1em;
 `;
 
 const Input = styled.input`
   width: 50%;
   background-color: #ffffff;
-  border: 0.15rem solid black;
-  border-radius: 0.5rem;
+  border: 0.15em solid black;
+  border-radius: 0.5em;
   color: black;
-  margin: 0.3rem;
-  padding: 0.6rem;
+  margin: 0.3em;
+  padding: 0.6em;
   cursor: pointer;
   font-family: Pixel;
-  font-size: 0.8rem;
+  font-size: 0.8em;
 `;

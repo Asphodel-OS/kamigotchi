@@ -94,7 +94,7 @@ export const RecipeCard = ({
 };
 
 const TitleBar = styled.div`
-  border-bottom: solid black 0.15rem;
+  border-bottom: solid black 0.15em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -106,15 +106,15 @@ const TitleBar = styled.div`
 const TitleText = styled.div`
   display: flex;
   justify-content: flex-start;
-  padding: 0.6rem;
+  padding: 0.6em;
 
-  font-size: 0.9rem;
+  font-size: 0.9em;
   text-align: left;
 `;
 
 const TitleCorner = styled.div`
-  padding: 0.45rem;
-  gap: 0.15rem;
+  padding: 0.45em;
+  gap: 0.15em;
 
   display: flex;
   flex-grow: 1;
@@ -124,12 +124,12 @@ const TitleCorner = styled.div`
 `;
 
 const Text = styled.div`
-  font-size: 0.9rem;
-  padding-top: 0.05rem;
+  font-size: 0.9em;
+  padding-top: 0.05em;
 `;
 
 const Icon = styled.img`
-  height: 1.2rem;
+  height: 1.2em;
 `;
 
 const Content = styled.div`
@@ -138,8 +138,8 @@ const Content = styled.div`
   flex-flow: row nowrap;
   align-items: stretch;
 
-  padding: 0.2rem;
-  margin: 0.4rem 0rem;
+  padding: 0.2em;
+  margin: 0.4em 0em;
 `;
 
 const ContentRow = styled.div`
@@ -155,13 +155,13 @@ const ContentColumn = styled.div`
   flex-grow: 1;
   justify-content: flex-end;
 
-  margin: 0.2rem;
-  padding-top: 0.2rem;
+  margin: 0.2em;
+  padding-top: 0.2em;
 `;
 
 const Actions = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
-  gap: 0.4rem;
+  gap: 0.4em;
 `;

@@ -133,12 +133,12 @@ const Container = styled.div`
 
 const Table = styled.div`
   position: relative;
-  border: solid black 0.15rem;
-  border-radius: 0.6rem;
+  border: solid black 0.15em;
+  border-radius: 0.6em;
 
-  margin: 0 0.9rem;
-  padding: 0.6rem;
-  gap: 0.9rem;
+  margin: 0 0.9em;
+  padding: 0.6em;
+  gap: 0.9em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -148,11 +148,11 @@ const Table = styled.div`
 
 const Stats = styled.div`
   width: fit-content;
-  border: solid black 0.15rem;
-  border-radius: 0.6rem;
-  margin: 0.9rem;
-  padding: 0.3rem;
-  gap: 0.6rem;
+  border: solid black 0.15em;
+  border-radius: 0.6em;
+  margin: 0.9em;
+  padding: 0.3em;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row nowrap;

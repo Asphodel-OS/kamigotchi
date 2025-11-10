@@ -135,8 +135,8 @@ export const Progress = ({
 const Container = styled.div`
   position: relative;
 
-  width: 36rem;
-  height: 9rem;
+  width: 36em;
+  height: 9em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -146,8 +146,8 @@ const Container = styled.div`
 
 const Pairing = styled.div`
   width: 100%;
-  height: 7.5rem;
-  gap: 0.6rem;
+  height: 7.5em;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -159,14 +159,14 @@ const Pairing = styled.div`
 
 const Text = styled.div`
   color: #333;
-  font-size: 0.9rem;
+  font-size: 0.9em;
   text-align: center;
 `;
 
 const DottedLines = styled.div<{ left: number; top: number }>`
   position: absolute;
-  border-top: 0.6rem dotted gray;
-  width: 3rem;
-  left: ${({ left }) => left}rem;
-  top: ${({ top }) => top}rem;
+  border-top: 0.6em dotted gray;
+  width: 3em;
+  left: ${({ left }) => left}em;
+  top: ${({ top }) => top}em;
 `;

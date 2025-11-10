@@ -41,15 +41,15 @@ export const Pfp = (props: Props) => {
 
 const PfpContainer = styled.div`
   position: relative;
-  width: 10rem;
-  height: 10rem;
+  width: 10em;
+  height: 10em;
 `;
 
 const PfpImage = styled.img<{ isLoading: boolean }>`
-  border: solid black 0.15rem;
-  border-radius: 10rem;
-  width: 10rem;
-  height: 10rem;
+  border: solid black 0.15em;
+  border-radius: 10em;
+  width: 10em;
+  height: 10em;
   object-fit: cover;
   object-position: 100% 0;
   opacity: 1;
@@ -69,13 +69,13 @@ const PfpImage = styled.img<{ isLoading: boolean }>`
 `;
 
 const PfpStatus = styled.div<{ timeDelta: number; isLoading: boolean }>`
-  border: solid 0.2rem white;
+  border: solid 0.2em white;
   position: absolute;
-  bottom: 0.9rem;
-  right: 0.9rem;
-  width: 1.2rem;
-  height: 1.2rem;
-  border-radius: 3rem;
+  bottom: 0.9em;
+  right: 0.9em;
+  width: 1.2em;
+  height: 1.2em;
+  border-radius: 3em;
   z-index: 1;
   background-color: ${(props) => {
     if (props.timeDelta < 300) return '#6f3';

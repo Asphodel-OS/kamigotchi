@@ -128,7 +128,7 @@ const Wrapper = styled.div<{
           `}
       ${shuffle && css`, ${Shuffle} 0.4s ease-in-out`};
   `}
-  margin: 0.2rem;
+  margin: 0.2em;
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -140,8 +140,8 @@ const Content = styled.div<{
 }>`
   position: relative;
   background-color: white;
-  border: solid black 0.15rem;
-  border-radius: 1.2rem;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
 
   width: 100%;
   ${({ truncate }) => (truncate ? `max-height: 100%;` : `height: 100%;`)}
@@ -165,7 +165,7 @@ const Content = styled.div<{
 
 const ButtonRow = styled.div`
   position: absolute;
-  padding: 0.6rem;
+  padding: 0.6em;
 
   display: inline-flex;
   flex-flow: row nowrap;
@@ -174,15 +174,15 @@ const ButtonRow = styled.div`
 `;
 
 const Header = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15rem;')}
-  border-radius: 1.05rem 1.05rem 0 0;
+  ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15em;')}
+  border-radius: 1.05em 1.05em 0 0;
   display: flex;
   flex-flow: column nowrap;
 `;
 
 const Footer = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15rem;')}
-  border-radius: 0 0 1.05rem 1.05rem;
+  ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15em;')}
+  border-radius: 0 0 1.05em 1.05em;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -198,7 +198,7 @@ const Children = styled.div<{
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
   flex-flow: column nowrap;
-  padding: ${({ noPadding }) => (noPadding ? `0` : `.6rem`)};
+  padding: ${({ noPadding }) => (noPadding ? `0` : `.6em`)};
 `;
 
 const fadeIn = keyframes`

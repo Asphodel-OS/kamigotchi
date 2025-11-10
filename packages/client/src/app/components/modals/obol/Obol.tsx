@@ -15,8 +15,8 @@ import { didActionComplete } from 'network/utils';
 const obolsPerEgg = 5;
 const arrowButtons = [
   { label: '+5', value: 5, symbol: '\u25B2' },
-  { label: '+1', value: 1, symbol: '\u25B4', smaller: true, marginLeft: '0.6rem' },
-  { label: '-1', value: -1, symbol: '\u25BE', smaller: true, marginLeft: '0.7rem' },
+  { label: '+1', value: 1, symbol: '\u25B4', smaller: true, marginLeft: '0.6em' },
+  { label: '-1', value: -1, symbol: '\u25BE', smaller: true, marginLeft: '0.7em' },
   { label: '-5', value: -5, symbol: '\u25BC' },
 ];
 
@@ -108,7 +108,7 @@ export const ObolModal: UIComponent = {
     const FooterRenderer = useMemo(() => {
       return (
         <Footer>
-          <img src={ItemImages.obol} style={{ width: `2rem` }} />
+          <img src={ItemImages.obol} style={{ width: `2em` }} />
           <Balance>{getObolsBalance()}</Balance>
         </Footer>
       );
@@ -165,7 +165,7 @@ export const ObolModal: UIComponent = {
 
 const Content = styled.div`
   position: relative;
-  gap: 0.6rem;
+  gap: 0.6em;
   flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
@@ -173,11 +173,11 @@ const Content = styled.div`
   overflow: hidden auto;
   background-color: black;
   color: white;
-  border: 0.3rem solid white;
+  border: 0.3em solid white;
   align-items: center;
-  padding: 2rem;
-  font-size: 1rem;
-  padding-bottom: 0.5rem;
+  padding: 2em;
+  font-size: 1em;
+  padding-bottom: 0.5em;
 `;
 
 const Header = styled.div`
@@ -187,14 +187,14 @@ const Header = styled.div`
   flex-flow: row nowrap;
   justify-content: space-around;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
+  gap: 0.5em;
+  padding: 1em;
   padding-bottom: 0;
   flex-direction: column;
-  line-height: 1rem;
-  border: 0.3rem solid white;
+  line-height: 1em;
+  border: 0.3em solid white;
   border-bottom: none;
-  border-radius: 1rem 1rem 0 0;
+  border-radius: 1em 1em 0 0;
 `;
 
 const HeaderRow = styled.div`
@@ -207,9 +207,9 @@ const HeaderRow = styled.div`
 const HeaderPart = styled.div<{ size: number; weight?: string; spacing?: number }>`
   position: relative;
   color: white;
-  padding: 0.5rem;
-  letter-spacing: ${({ spacing }) => spacing || -0.25}rem;
-  font-size: ${({ size }) => size}rem;
+  padding: 0.5em;
+  letter-spacing: ${({ spacing }) => spacing || -0.25}em;
+  font-size: ${({ size }) => size}em;
   font-weight: ${({ weight }) => weight || 'normal'};
 `;
 
@@ -219,15 +219,15 @@ const Footer = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.3em;
   background-color: black;
   color: white;
-  border: 0.3rem solid white;
+  border: 0.3em solid white;
   border-top: none;
-  border-radius: 0 0 1rem 1rem;
-  height: 4rem;
+  border-radius: 0 0 1em 1em;
+  height: 4em;
   width: 100%;
-  padding-right: 0.5rem;
+  padding-right: 0.5em;
 `;
 
 const ButtonsRow = styled.div`
@@ -237,18 +237,18 @@ const ButtonsRow = styled.div`
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
+  gap: 0.5em;
+  padding: 0.5em;
 `;
 
 // modify icontbutton so it
 //  has color and bakcground color
 const Button = styled.button`
-  border: 0.2rem solid white;
+  border: 0.2em solid white;
   background-color: black;
   color: white;
-  padding: 0.5rem;
-  font-size: 1rem;
+  padding: 0.5em;
+  font-size: 1em;
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
@@ -257,23 +257,23 @@ const Button = styled.button`
 `;
 
 const Img = styled.img`
-  width: 5rem;
+  width: 5em;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  padding: 0.5rem;
+  padding: 0.5em;
 `;
 
 const Text = styled.span<{ size?: number; weight?: string }>`
   color: white;
-  ${({ size }) => (size ? `font-size: ${size}rem;` : '0.8rem;')}
+  ${({ size }) => (size ? `font-size: ${size}em;` : '0.8em;')}
   ${({ weight }) => (weight ? `font-weight: ${weight};` : 'normal;')}
 `;
 
 const Balance = styled.div`
-  border: solid white 0.3rem;
-  border-radius: 0.6rem 0 0.6rem 0.6rem;
-  padding: 0.3rem;
+  border: solid white 0.3em;
+  border-radius: 0.6em 0 0.6em 0.6em;
+  padding: 0.3em;
   width: 30%;
 
   display: flex;
@@ -282,8 +282,8 @@ const Balance = styled.div`
   align-items: center;
 
   color: white;
-  font-size: 0.9rem;
-  line-height: 1.2rem;
+  font-size: 0.9em;
+  line-height: 1.2em;
 `;
 
 const Row = styled.div`
@@ -301,11 +301,11 @@ const Row = styled.div`
 
 const Arrow = styled.div<{ smaller?: boolean }>`
   color: currentColor;
-  font-size: ${({ smaller }) => (smaller ? '0.7rem' : '0.8rem')};
+  font-size: ${({ smaller }) => (smaller ? '0.7em' : '0.8em')};
 `;
 
 const Number = styled.div<{ marginLeft?: string }>`
   color: currentColor;
-  font-size: 0.8rem;
-  margin-left: ${({ marginLeft }) => marginLeft ?? '0.4'}rem;
+  font-size: 0.8em;
+  margin-left: ${({ marginLeft }) => marginLeft ?? '0.4'}em;
 `;

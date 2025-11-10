@@ -175,9 +175,9 @@ export const Sidebar = ({
 };
 
 const Container = styled.div`
-  border-left: solid black 0.15rem;
+  border-left: solid black 0.15em;
   height: 100%;
-  width: 32rem;
+  width: 32em;
 
   display: flex;
   flex-flow: column nowrap;

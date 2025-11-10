@@ -37,32 +37,32 @@ export const ActionButton = ({
     const styles: any = {};
 
     if (size === 'small') {
-      styles.fontSize = '.6rem';
-      styles.padding = '.3rem .6rem';
-      styles.borderRadius = '.3rem';
-      styles.borderWidth = '.1rem';
+      styles.fontSize = '.6em';
+      styles.padding = '.3em .6em';
+      styles.borderRadius = '.3em';
+      styles.borderWidth = '.1em';
     } else if (size === 'medium') {
-      styles.fontSize = '.8rem';
-      styles.padding = '.4rem .8rem';
-      styles.height = '2.1rem';
-      styles.borderRadius = '.45rem';
-      styles.borderWidth = '.15rem';
+      styles.fontSize = '.8em';
+      styles.padding = '.4em .8em';
+      styles.height = '2.1em';
+      styles.borderRadius = '.45em';
+      styles.borderWidth = '.15em';
     } else if (size === 'large') {
-      styles.fontSize = '1.4rem';
-      styles.padding = '.7rem 1.4rem';
-      styles.borderRadius = '.7rem';
-      styles.borderWidth = '.2rem';
+      styles.fontSize = '1.4em';
+      styles.padding = '.7em 1.4em';
+      styles.borderRadius = '.7em';
+      styles.borderWidth = '.2em';
     } else if (size === 'validator') {
-      styles.fontSize = '1.2rem';
-      styles.padding = '0.9rem';
-      styles.borderRadius = '0.45rem';
-      styles.borderWidth = '0.1rem';
+      styles.fontSize = '1.2em';
+      styles.padding = '0.9em';
+      styles.borderRadius = '0.45em';
+      styles.borderWidth = '0.1em';
     } else if (size === 'menu') {
-      styles.fontSize = '0.9rem';
-      styles.padding = '0rem .6rem';
-      styles.borderRadius = '0.9rem';
-      styles.borderWidth = '.15rem';
-      styles.height = '4.5rem';
+      styles.fontSize = '0.9em';
+      styles.padding = '0em .6em';
+      styles.borderRadius = '0.9em';
+      styles.borderWidth = '.15em';
+      styles.height = '4.5em';
     }
 
     if (inverted) {
@@ -77,7 +77,7 @@ export const ActionButton = ({
     if (fill) styles.flexGrow = '1';
     if (noBorder) {
       styles.border = 'none';
-      styles.borderRadius = '0rem';
+      styles.borderRadius = '0em';
     }
     return styles;
   };

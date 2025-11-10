@@ -213,14 +213,14 @@ const MenuOption = styled.div<{
   display: flex;
   align-items: center;
   justify-content: left;
-  gap: 0.4rem;
-  border-radius: 0.4rem;
-  font-size: 0.8rem;
+  gap: 0.4em;
+  border-radius: 0.4em;
+  font-size: 0.8em;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
   padding: ${({ isSelectAll }) =>
-    isSelectAll ? '1rem 0.6rem 0.4rem 0.9rem ' : '0 0.2rem 0.1rem 2.2rem'};
+    isSelectAll ? '1em 0.6em 0.4em 0.9em ' : '0 0.2em 0.1em 2.2em'};
 
   &:hover {
     background-color: #ddd;
@@ -231,22 +231,22 @@ const MenuOption = styled.div<{
 const Row = styled.span<{ simplified?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.6em;
 
   input[type='checkbox'],
   input[type='radio'] {
-    width: 1rem;
-    height: 1rem;
+    width: 1em;
+    height: 1em;
     cursor: pointer;
     accent-color: rgb(203, 186, 61);
   }
 `;
 
 const Image = styled.img`
-  height: 2rem;
-  width: 2rem;
+  height: 2em;
+  width: 2em;
   object-fit: cover;
   margin-left: auto;
-  border-radius: 0.3rem;
-  border: solid black 0.05rem;
+  border-radius: 0.3em;
+  border: solid black 0.05em;
 `;

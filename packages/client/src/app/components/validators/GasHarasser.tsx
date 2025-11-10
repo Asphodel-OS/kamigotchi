@@ -179,9 +179,9 @@ export const GasHarasser: UIComponent = {
 
 const Description = styled.div`
   color: #333;
-  padding: 0.9rem 0 0 0;
-  font-size: 0.9rem;
-  line-height: 1.5rem;
+  padding: 0.9em 0 0 0;
+  font-size: 0.9em;
+  line-height: 1.5em;
   text-align: center;
 `;
 
@@ -190,21 +190,21 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 0.75rem;
-  gap: 0.15rem;
+  margin: 0.75em;
+  gap: 0.15em;
 `;
 
 const Input = styled.input`
   background-color: #ffffff;
-  border: solid black 0.15rem;
-  border-radius: 0.45rem;
+  border: solid black 0.15em;
+  border-radius: 0.45em;
 
   color: black;
-  width: 9rem;
-  height: 1.8rem;
-  padding: 0.6rem;
+  width: 9em;
+  height: 1.8em;
+  padding: 0.6em;
 
-  font-size: 0.75rem;
+  font-size: 0.75em;
   text-align: left;
   text-decoration: none;
 
@@ -216,11 +216,11 @@ const Bridge = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 1em;
 `;
 
 const Text = styled.div`
-  font-size: 0.75rem;
-  margin: 0 0 2rem 0;
+  font-size: 0.75em;
+  margin: 0 0 2em 0;
   color: red;
 `;

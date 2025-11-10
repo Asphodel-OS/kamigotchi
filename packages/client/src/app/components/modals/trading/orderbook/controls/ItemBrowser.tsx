@@ -85,7 +85,7 @@ const Container = styled.div`
 `;
 
 const Header = styled.tr`
-  border-bottom: 0.12rem solid black;
+  border-bottom: 0.12em solid black;
   background: #e6e6e6;
   position: sticky;
   top: 0;
@@ -93,9 +93,9 @@ const Header = styled.tr`
   z-index: 1;
 
   & > th {
-    padding: 0.45rem 0.6rem;
+    padding: 0.45em 0.6em;
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 0.9em;
   }
 `;
 
@@ -103,34 +103,34 @@ const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  padding: 0.6rem;
+  padding: 0.6em;
 `;
 
 const DataRow = styled.tr<{ selected: boolean; color: string }>`
   cursor: pointer;
   background: ${({ selected, color }) => (selected ? color : 'transparent')};
   & > td {
-    padding: 0.45rem 0.6rem;
-    border-bottom: 0.06rem solid #ccc;
-    font-size: 0.9rem;
+    padding: 0.45em 0.6em;
+    border-bottom: 0.06em solid #ccc;
+    font-size: 0.9em;
   }
 `;
 
 const RowItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.6em;
 `;
 
 const RowName = styled.div`
-  max-width: 18rem;
+  max-width: 18em;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
 
 const Thumb = styled.img`
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 1.8em;
+  height: 1.8em;
   image-rendering: pixelated;
 `;

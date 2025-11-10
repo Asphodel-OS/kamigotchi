@@ -364,5 +364,5 @@ const Content = styled.div`
 
   overflow-x: hidden;
   overflow-y: hidden;
-  font-size: 0.9rem;
+  font-size: 0.9em;
 `;

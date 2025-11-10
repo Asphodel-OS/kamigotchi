@@ -11,12 +11,12 @@ export const Text = styled.div<{
   };
   onClick?: () => void;
 }>`
-  font-size: ${({ size }) => size}rem;
-  line-height: ${({ size }) => size * 1.5}rem;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
   color: ${({ color }) => color ?? '#333'};
 
   padding: ${({ padding }) => padding?.top ?? 0}rem ${({ padding }) => padding?.right ?? 0}rem
-    ${({ padding }) => padding?.bottom ?? 0}rem ${({ padding }) => padding?.left ?? 0}rem;
+    ${({ padding }) => padding?.bottom ?? 0}rem ${({ padding }) => padding?.left ?? 0}em;
 
   ${({ onClick }) => onClick && 'cursor: pointer'};
   &:hover {
