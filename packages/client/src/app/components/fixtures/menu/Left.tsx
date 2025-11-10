@@ -62,8 +62,6 @@ const Wrapper = styled.div`
     }
   }
 
-  font-size: clamp(0.5rem, 1vmax, 0.66rem);
-
   display: flex;
   gap: 0.3em;
 `;
