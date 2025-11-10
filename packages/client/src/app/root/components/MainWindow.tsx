@@ -308,8 +308,9 @@ const UIGrid = styled.div`
   pointer-events: none;
   z-index: 10;
 
-  > * {
+  > * {  
     container-type: inline-size;
+    isolation: isolate;
 
     font-size: clamp(1rem, -0.5rem + 1.2cqi, 1.5rem);
   }
