@@ -128,10 +128,6 @@ const Wrapper = styled.div<{
           `}
       ${shuffle && css`, ${Shuffle} 0.4s ease-in-out`};
   `}
-  margin: 0.2em;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
 `;
 
 const Content = styled.div<{
