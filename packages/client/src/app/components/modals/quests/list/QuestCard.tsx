@@ -32,6 +32,8 @@ export const QuestCard = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAltCollapsed, setIsAltCollapsed] = useState(false);
 
+  // collapse the quest description if
+  // the quest has a descriptionAlt
   useEffect(() => {
     if (quest.descriptionAlt) {
       setIsCollapsed(true);
