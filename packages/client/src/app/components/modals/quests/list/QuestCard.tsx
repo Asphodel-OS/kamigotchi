@@ -159,26 +159,21 @@ export const QuestCard = ({
         {getFactionStamp(quest)}
       </Overlay>
       <Title>{quest.name}</Title>
-      {status === 'COMPLETED' && (
-        <CollapsibleSegment onClick={() => setIsCollapsed(!isCollapsed)}>
-          {`${isCollapsed ? '▶' : '▼'} Quest`}
-        </CollapsibleSegment>
-      )}
+      {status === 'COMPLETED' ? (
+        <>
+          <CollapsibleSegment onClick={() => setIsCollapsed(!isCollapsed)}>
+            <Arrow>{isCollapsed ? '▸' : '▾'}</Arrow> Quest
+          </CollapsibleSegment>
+          {!isCollapsed && <Description>{quest.description}</Description>}
 
-      {((status === 'COMPLETED' && !isCollapsed) || status !== 'COMPLETED') && (
+          <CollapsibleSegment onClick={() => setIsAltCollapsed(!isAltCollapsed)}>
+            <Arrow>{isAltCollapsed ? '▸' : '▾'}</Arrow> Completion
+          </CollapsibleSegment>
+          {!isAltCollapsed && <Description>{quest.descriptionAlt}</Description>}
+        </>
+      ) : (
         <Description>{quest.description}</Description>
       )}
-
-      {status === 'COMPLETED' && (
-        <CollapsibleSegment onClick={() => setIsAltCollapsed(!isAltCollapsed)}>
-          {`${isAltCollapsed ? '▶' : '▼'} Completition`}
-        </CollapsibleSegment>
-      )}
-
-      {status === 'COMPLETED' && !isAltCollapsed && (
-        <Description>{quest.descriptionAlt}</Description>
-      )}
-
       <Section key='objectives' style={{ display: quest.objectives.length > 0 ? 'block' : 'none' }}>
         <SubTitle>Objectives</SubTitle>
         {quest.objectives.map((o) => (
@@ -220,7 +215,7 @@ const Container = styled.div<{ completed?: boolean }>`
   justify-content: flex-start;
   align-items: flex-start;
 
-  ${({ completed }) => completed && 'opacity: 0.3;'}
+  ${({ completed }) => completed && 'opacity: 0.5;'}
 `;
 
 const Title = styled.div`
@@ -275,5 +270,13 @@ const Image = styled.img<{ size: number }>`
 `;
 
 const CollapsibleSegment = styled.div`
+  display: flex;
   cursor: pointer;
+  align-items: center;
+`;
+
+const Arrow = styled.div`
+  font-size: 1.5vw;
+  margin-right: 0.3vw;
+  line-height: 1;
 `;
