@@ -14,46 +14,44 @@ export const Input = ({
   return (
     <Container>
       <Text scale={scale}>{prepend}</Text>
-      <Image src={image} scale={scale} />
-      <Quantity scale={scale}>{amt}</Quantity>
+      <div>
+        <Image src={image} scale={scale} />
+        <Quantity scale={scale}>{amt}</Quantity>
+      </div>
     </Container>
   );
 };
 
 const Container = styled.div`
-  position: relative;
+  font-size: ${({ scale }) => scale}em;
+
   display: flex;
-  flex-flow: row wrap;
-  margin-bottom: 0.2em;
-  justify-content: flex-start;
+  gap: 0.4em;
   align-items: center;
+
   user-select: none;
+
+  > div {
+   display: grid;
+   justify-items: start;
+  }
 `;
 
 const Image = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 3}em;
-  position: relative;
+  height: 3em;
+
   image-rendering: pixelated;
   user-drag: none;
-  margin-bottom: 0.6em;
-  font-size: 0.7em;
 `;
 
 const Quantity = styled.div<{ scale: number }>`
-  position: absolute;
   color: black;
-  bottom: ${({ scale }) => scale * -0.6}em;
-  left: ${({ scale }) => scale * 4}em;
-
-  font-size: ${({ scale }) => scale * 0.6}em;
-  padding: ${({ scale }) => scale * 0.2}em;
-  align-items: center;
-  justify-content: center;
+  font-size: 0.6em;
+  margin-left: 80%;
 `;
 
-const Text = styled.div<{ scale: number }>`
-  font-size: ${({ scale }) => scale * 1.2}em;
-  padding: ${({ scale }) => scale * 0.3}em;
+const Text = styled.span<{ scale: number }>`
+  font-size: 1.2em;
   ::placeholder {
     opacity: 1;
     color: black;
