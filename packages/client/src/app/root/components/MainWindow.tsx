@@ -232,5 +232,7 @@ const UIGrid = styled.div`
 
   > * {
     container-type: inline-size;
+
+    font-size: clamp(1rem, -0.5rem + 1.2cqi, 1.5rem);
   }
 `;
