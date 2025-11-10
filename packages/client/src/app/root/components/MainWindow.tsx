@@ -172,6 +172,8 @@ const Stack = styled.div`
 
 const UIGrid = styled.div`
   display: grid;
+  padding: 0.75rem;
+  gap: 0.5rem;
 
   /* 3 columns: "Left", "Center", "Right" */
   grid:
@@ -223,9 +225,6 @@ const UIGrid = styled.div`
       / [Left-start LeftWide-start LeftTall-start Right-start RightWide-start] auto minmax(0, 1fr)
       [Left-end LeftWide-end LeftTall-end Right-end RightWide-end];
   }
-
-  gap: 0.3rem 0.3rem;
-  padding: 0.6rem 0.9rem;
 
   pointer-events: none;
   z-index: 10;
