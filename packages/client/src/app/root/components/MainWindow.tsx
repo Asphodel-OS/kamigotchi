@@ -179,13 +179,13 @@ const UIGrid = styled.div`
 
   /* 3 columns: "Left", "Center", "Right" */
   grid:
-                                                                  []
+                                                                  [                                             ]
     'LeftTop        Center         RightTop      ' auto
                                                                   [LeftWide-start LeftTall-start RightWide-start]
     'Left           Center         Right         ' minmax(0, 1fr)
-                                                                  []
+                                                                  [                                             ]
     'LeftBottom     Center         RightBottom   ' auto
-                                                                  [LeftWide-end LeftTall-end RightWide-end]
+                                                                  [LeftWide-end   LeftTall-end   RightWide-end  ]
     /
     [
     LeftWide-start
@@ -193,16 +193,16 @@ const UIGrid = styled.div`
     ]
      minmax(0, 1fr)
                    [
-                   LeftTall-end
+        LeftTall-end
                    RightWide-start
                    ]
                     minmax(0, 1fr)
                                   [
-                                  LeftWide-end
+                       LeftWide-end
                                   ]
                                    minmax(0, 1fr)
                                                  [
-                                                 RightWide-end
+                                     RightWide-end
                                                  ]
   ;
 
@@ -213,9 +213,9 @@ const UIGrid = styled.div`
       'LeftTop        RightTop      ' auto
                                                      [LeftWide-start LeftTall-start Right-start RightWide-start]
       'Left           Center        ' minmax(0, 1fr)
-                                                     [Right-end]
+                                                     [                              Right-end                  ]
       'LeftBottom     RightBottom   ' auto
-                                                     [LeftWide-end LeftTall-end RightWide-end]
+                                                     [LeftWide-end   LeftTall-end               RightWide-end  ]
       /
       [
       LeftWide-start
@@ -239,15 +239,15 @@ const UIGrid = styled.div`
   /* 1 column. Rows: "LeftTop", "Left" "Center" "Right" overlapping, "RightTop", "LeftBottom" / "RightBottom" */
   @media (max-aspect-ratio: 11/16) {
     grid:
-                                                     []
+                                                     [                                                                    ]
       'LeftTop        LeftTop       ' auto
                                                      [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
       'Center         Center        ' minmax(0, 1fr)
-                                                     [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
+                                                     [Left-end   LeftWide-end   LeftTall-end   Right-end   RightWide-end  ]
       'RightTop       RightTop      ' auto
-                                                     []
+                                                     [                                                                    ]
       'LeftBottom     RightBottom   ' auto
-                                                     []
+                                                     [                                                                    ]
       /
       [
       Left-start
@@ -276,13 +276,13 @@ const UIGrid = styled.div`
       'LeftBottom     LeftBottom   ' auto
                                                     [Left-start LeftWide-start LeftTall-start Right-start RightWide-start]
       'Center         Center       ' minmax(0, 1fr)
-                                                    [Left-end LeftWide-end LeftTall-end Right-end RightWide-end]
+                                                    [Left-end   LeftWide-end   LeftTall-end   Right-end   RightWide-end  ]
       'RightBottom    RightBottom  ' 25vmin
-                                                    []
+                                                    [                                                                    ]
       'LeftTop        LeftTop      ' auto
-                                                    []
+                                                    [                                                                    ]
       'RightTop       RightTop     ' auto
-                                                    []
+                                                    [                                                                    ]
       /
       [
       Left-start
