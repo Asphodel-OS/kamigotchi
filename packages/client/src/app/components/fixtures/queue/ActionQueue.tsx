@@ -125,34 +125,44 @@ export const ActionQueue: UIComponent = {
     /////////////////
     // RENDER
 
+    const sizes = ['none', '100%', '90vh'];
+
     return (
-      <Container
-        maxHeight={LOG_HEIGHTS[mode]}
-        style={{ display: isFixtureVisible ? 'flex' : 'none' }}
-      >
-        <Logs
-          actionIndices={actionIndices}
-          network={network}
-          state={{ tick }}
-          utils={{ cancelPendingTx, cancelRequest }}
-          isVisible={mode !== 0}
-        />
-        <Controls mode={mode} setMode={setMode} />
-      </Container>
+      <Wrapper>
+        <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
+          {mode !== 0 && (
+            <Logs
+              actionIndices={actionIndices}
+              network={network}
+              state={{ tick }}
+              utils={{ cancelPendingTx, cancelRequest }}
+            />
+          )}
+          <Controls mode={mode} setMode={setMode} />
+        </Content>
+      </Wrapper>
     );
   },
 };
 
-const Container = styled.div<{ maxHeight: string }>`
+
+const Wrapper = styled.div`
+  height: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+
+  user-select: none;
+`;
+
+// cancer. just absolute cancer
+const Content = styled.div`
+  display: grid;
   padding: 0.2rem;
+
   border: solid black 0.15rem;
   border-radius: 0.6rem;
-  max-height: ${({ maxHeight }) => maxHeight};
-
-  display: flex;
-  flex-flow: column nowrap;
-  user-select: none;
 
   background-color: white;
-  pointer-events: auto;
 `;

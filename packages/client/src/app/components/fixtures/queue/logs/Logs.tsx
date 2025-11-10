@@ -11,7 +11,6 @@ export const Logs = ({
   actionIndices,
   state,
   utils,
-  isVisible,
 }: {
   network: NetworkLayer;
   actionIndices: EntityIndex[];
@@ -20,7 +19,6 @@ export const Logs = ({
     cancelRequest: (entity: EntityIndex) => Promise<void>;
     cancelPendingTx: (hash: string) => Promise<void>;
   };
-  isVisible: boolean;
 }) => {
   // scroll to bottom when tx added
   useEffect(() => {
@@ -32,7 +30,7 @@ export const Logs = ({
   // RENDER
 
   return (
-    <Container id='tx-logs' style={{ display: isVisible ? 'block' : 'none' }}>
+    <Container id='tx-logs'>
       <Header>
         <Bar />
         <Text size={0.6}>TxQueue</Text>
