@@ -165,7 +165,9 @@ const Circle = styled.div<{ rotation: number }>`
   transform-origin: center;
   ${({ rotation }) => `transform: rotate(${rotation}deg);`}
   overflow: visible;
-  margin-bottom: -10%;
+  margin-top: calc(var(--clock-size) * -0.05);
+  margin-bottom: calc(var(--clock-size) * -0.15);
+  margin-left: calc(var(--clock-size) * -0.055);
 `;
 
 const CircleContent = styled.div`
@@ -317,8 +319,8 @@ const Time = styled.svg<{ rotation: number }>`
     black 1px 0px,
     black 0px -1px;
   position: absolute;
-  left: calc(var(--clock-size) * 0.22);
-  top: calc(var(--clock-size) * 0.04);
+  left: calc(var(--clock-size) * 0.161);
+  top: calc(var(--clock-size) * -0.0078);
   width: calc(var(--clock-size) * 0.56);
   height: calc(var(--clock-size) * 0.22);
   pointer-events: none;
