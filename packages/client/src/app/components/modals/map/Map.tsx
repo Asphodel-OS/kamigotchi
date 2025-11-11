@@ -112,6 +112,7 @@ export const MapModal: UIComponent = {
 
       const roomMap = new Map<number, Room>();
       const roomEntities = queryAllRooms();
+      // Load rooms WITH exits for pathfinding to work
       const rooms = roomEntities.map((entity) => getRoom(entity));
       const filteredRooms = rooms.filter((room) => room.location.z == newZone);
       filteredRooms.forEach((r) => roomMap.set(r.index, r));
@@ -167,6 +168,10 @@ export const MapModal: UIComponent = {
             parseAllos,
             queryScavInstance,
             getValue,
+          }}
+          network={{
+            world: network.world,
+            components: network.components,
           }}
         />
       </ModalWrapper>
