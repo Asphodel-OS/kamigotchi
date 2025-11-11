@@ -11,6 +11,7 @@
 ,Give 3000 $MUSU,MIN,INC,ITEM_BURN,1,3000
 ,Give 5000 $MUSU,MIN,INC,ITEM_BURN,1,5000
 ,Give 9999 $MUSU,MIN,INC,ITEM_BURN,1,9999
+,Give 2 Wooden Sticks,MIN,INC,ITEM_BURN,1001,2
 ,Give 5 Wooden Sticks,MIN,INC,ITEM_BURN,1001,5
 ,Give 5 Stone,MIN,INC,ITEM_BURN,1002,5
 ,Give 5 Plastic Bottle,MIN,INC,ITEM_BURN,1003,5
@@ -21,14 +22,13 @@
 ,Give 15 Daffodil,MIN,INC,ITEM_BURN,1011,15
 ,Give 1 Mint,MIN,INC,ITEM_BURN,1012,1
 ,Give 5 Obols,MIN,INC,ITEM_BURN,1015,5
-,Give 2 Wooden Sticks,MIN,INC,ITEM_BURN,1101,2
 ,Give 125 Sanguineous Powder,MIN,INC,ITEM_BURN,1113,125
 ,Give 125 Resin Tincture,MIN,INC,ITEM_BURN,1202,125
 ,Give 1 Wonder Egg,MIN,INC,ITEM_BURN,21003,1
 ,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
 ,Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
 ,Spend 1000 $MUSU at Mina’s Shop,MIN,INC,ITEM_SPEND,1,1000
-,"Spend 15000 $MUSU at Mina's Shop",MIN,INC,ITEM_SPEND,1,15000
+,Spend 15000 $MUSU at Mina's Shop,MIN,INC,ITEM_SPEND,1,15000
 ,Reroll one Kamigotchi,MIN,INC,KAMI_GACHA_REROLL,,1
 ,Use an item to heal a Kamigotchi that has been reduced below 100% Health,MIN,INC,KAMI_ITEM_USE,,1
 ,Level up a Kami,MIN,CURR,KAMI_LEVELS_TOTAL,,1
