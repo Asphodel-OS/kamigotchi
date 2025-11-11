@@ -27,7 +27,13 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
   }
 
   async function enable(index: number) {
-    const callData = generateCallData('system.quest.registry', [index, false], 'setDisabled');
+    const callData = generateCallData(
+      'system.quest.registry',
+      [index, false],
+      'setDisabled',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
