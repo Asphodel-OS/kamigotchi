@@ -11,10 +11,10 @@ import {
 import { initFactions } from './factions';
 import { initGachaPool } from './gacha';
 import { initGoals } from './goals';
-import { initItems, initLocalItems } from './items';
+import { initItems } from './items';
 import { initListings } from './listings';
 import { initNpcs } from './npcs';
-import { setLocalPortalTokens, setPortalTokens } from './portal';
+import { setPortalTokens } from './portal';
 import { initQuests } from './quests/quests';
 import { initRecipes } from './recipes/recipes';
 import { initRelationships } from './relationships';
@@ -82,11 +82,11 @@ export async function initAll(api: AdminAPI) {
 export async function initAllLocal(api: AdminAPI) {
   await initLocalAuth(api);
   await initLocalConfigs(api);
-  await initLocalItems(api);
+  // await initLocalItems(api);
   await api.setup.local.initAccounts();
   await api.setup.local.initPets();
   await api.setup.local.initHarvests();
-  await setLocalPortalTokens(api);
+  // await setLocalPortalTokens(api);
 }
 
 export async function initAllTesting(api: AdminAPI) {

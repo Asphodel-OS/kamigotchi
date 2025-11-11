@@ -1,35 +1,65 @@
-﻿.,Status,Name,Index,Affinity,Level Limit,YieldIndex,Scav Cost,Drops
-,To Update,Misty Riverside,1,Eerie,15,1,100,Stones & Bottle
-,To Update,Tunnel of Trees,2,Normal,15,1,100,Sticks & Stones
-,To Update,Torii Gate,3,Normal,15,1,100,Stick Stone Rename
-,To Update,Restricted Area,5,Normal,,1,100,Sticks & Stones
-,To Update,Labs Entrance,6,Eerie,,1,100,Stone Only
-,To Update,Forest: Old Growth,9,Insect,,1,200,Stick Cone Poppy
-,To Update,Forest: Insect Node,10,Insect,,1,200,Stick Cone Rename
-,To Update,Scrap Confluence,12,Scrap,,1,500,Scrap Burger Rename Driver
-,To Update,Lost Skeleton,25,Eerie,,1,200,Stick Cone Berry
-,To Update,Trash-Strewn Graves,26,Eerie,,1,100,Stone Bottle Burger
-,To Update,Misty Forest Path,29,Insect,15,1,100,Stick Stone Resin
-,To Update,Scrapyard Entrance,30,Scrap,15,1,100,Stone Scrap Burger
-,To Update,Scrapyard Exit,31,Scrap,,1,100,Stone Scrap Burger
-,To Update,Road To Labs,32,Normal,,1,100,Sticks & Stones
-,To Update,Forest Entrance,33,Normal,,1,200,Sticks & Cones
-,To Update,Deeper Into Scrap,34,Scrap,,1,300,Scrap Burger
-,To Update,Elder Path,35,Normal,,1,200,Stick Cone Poppy
-,To Update,Parting Path,36,Insect,,1,200,Stick Resin Poppy
-,To Update,Hollow Path,37,Normal,,1,200,Sticks & Cones
-,To Update,Scrap Paths,47,Scrap,,1,100,Stone Scrap Burger
-,To Update,Murky Forest Path,48,Insect,,1,200,Stick Resin Poppy
-,To Update,Clearing,49,Normal,,1,300,Stick Stone Mint
-,To Update,Ancient Forest Entrance,50,Insect,,1,200,Stone Shroom
-,To Update,Scrap-Littered Undergrowth,51,Insect,,1,300,"Bottle Scrap Resin "
-,To Update,Airplane Crash,52,Eerie,,1,300,Bottle Scrap Jar
-,To Update,Blooming Tree,53,Eerie,,1,300,Stick Cone Amber
-,To Update,Shady Path,55,Normal,,1,200,Stick Stone Daffodil
-,To Update,Butterfly Forest,56,Insect,,1,200,Stick Stone Resin
-,To Update,River Crossing,57,Normal,,1,200,Stick Stone Cone
-,To Update,Scrap Trees,60,Scrap,,2,500,Scrap Daffodil Driver
-,To Update,Musty Forest Path,61,Normal,,2,200,Stick Cone Rename
-,To Update,Centipedes,62,Insect,,2,300,Stone Resin Mint
-,To Update,Deeper Forest Path,63,Normal,,2,300,Stone Daffodil Pinecone Poppy
-,To Update,Forest Hut,65,Eerie,,2,200,Bottle Stick Burger
+﻿.,Status,Name,Index,Affinity,Level Limit,YieldIndex,Scav Cost,Drops,💥 Node Effects
+,In Game,Misty Riverside,1,"Eerie, Insect",15,1,100,Stones & Bottle,
+,In Game,Tunnel of Trees,2,Normal,15,1,100,Sticks & Stones,
+,In Game,Torii Gate,3,Normal,15,1,100,Stick Stone Rename,
+,In Game,Restricted Area,5,Normal,,1,100,Sticks & Stones,
+,In Game,Labs Entrance,6,Eerie,,1,100,Stone Only,
+,In Game,Forest: Old Growth,9,Insect,,1,200,Stick Cone Poppy,
+,In Game,Forest: Insect Node,10,Insect,,1,200,Stick Cone Rename,
+,In Game,Scrap Confluence,12,Scrap,,1,500,Scrap Burger Rename Driver,
+,In progress,Temple Cave,15,Scrap,,1,100,Pipe Butt Burger,
+,In progress,Techno Temple,16,"Eerie, Scrap",,1,500,Pipe Burger Cone Hearing,
+,In progress,Cave Crossroads,18,Insect,,2,200,Stems Shroom Scale Talisman,
+,In progress,Temple of the Wheel,19,"Eerie, Scrap",,1,300,Butt Pipe Daffodil Mint,
+,In Game,Lost Skeleton,25,Eerie,,1,200,Stick Cone Berry,
+,In Game,Trash-Strewn Graves,26,Eerie,,1,100,Stone Bottle Burger,
+,In Game,Misty Forest Path,29,Insect,15,1,100,Stick Stone Resin,
+,In Game,Scrapyard Entrance,30,Scrap,15,1,100,Stone Scrap Burger,
+,In Game,Scrapyard Exit,31,Scrap,,1,100,Stone Scrap Burger,
+,In Game,Road To Labs,32,Normal,,1,100,Sticks & Stones,
+,In Game,Forest Entrance,33,Normal,,1,200,Sticks & Cones,
+,In Game,Deeper Into Scrap,34,Scrap,,1,300,Scrap Burger,
+,In Game,Elder Path,35,Normal,,1,200,Stick Cone Poppy,
+,In Game,Parting Path,36,Insect,,1,200,Stick Resin Poppy,
+,In Game,Hollow Path,37,Normal,,1,200,Sticks & Cones,
+,In Game,Scrap Paths,47,Scrap,,1,100,Stone Scrap Burger,
+,In Game,Murky Forest Path,48,Insect,,1,200,Stick Resin Poppy,
+,In Game,Clearing,49,Normal,,1,300,Stick Stone Mint,
+,In Game,Ancient Forest Entrance,50,Insect,,1,200,Stone Shroom,
+,In Game,Scrap-Littered Undergrowth,51,Insect,,1,300,"Bottle Scrap Resin ",
+,In Game,Airplane Crash,52,Eerie,,1,300,Bottle Scrap Jar,
+,In Game,Blooming Tree,53,Eerie,,1,300,Stick Cone Amber,
+,In Game,Shady Path,55,Normal,,1,200,Stick Stone Daffodil,
+,In Game,Butterfly Forest,56,Insect,,1,200,Stick Stone Resin,
+,In Game,River Crossing,57,Normal,,1,200,Stick Stone Cone,
+,In progress,Mouth of Scrap,58,Scrap,,1,100,Stone Scrap Burger,
+,In progress,Black Pool,59,Eerie,,1,100,Pipe Butt Burger,
+,In Game,Scrap Trees,60,Scrap,,2,500,Scrap Daffodil Driver,
+,In Game,Musty Forest Path,61,Normal,,2,200,Stick Cone Rename,
+,In Game,Centipedes,62,Insect,,2,300,Stone Resin Mint,
+,In Game,Deeper Forest Path,63,Normal,,2,300,Stone Daffodil Pinecone Poppy,
+,In Game,Forest Hut,65,Eerie,,2,200,Bottle Stick Burger,
+,In progress,Boulder Tunnel,67,Normal,,1,200,Chunk Butt Pansy,
+,In progress,Slippery Pit,68,Normal,,1,200,Chunk Butt Pansy,
+,In progress,Lotus Pool,69,Eerie,,1,500,Butt Stems Berry Smell,
+,In progress,Still Stream,70,Normal,,1,100,Chunk Pipe Pansy,
+,In progress,Shabby Deck,71,Insect,,1,200,Butt Pipe Scale,
+,In progress,Hatch to Nowhere,72,"Insect, Scrap",,1,500,Chunk Pipe Shroom Touch,
+,In progress,Broken Tube,73,Scrap,,2,300,Butt Pipe Driver,
+,In progress,Engraved Door,74,Eerie,,1,200,Butt Chunk Apple Dust,
+,In progress,Flood Mural,75,Eerie,,2,200,Chunk Berry Floss,
+,In progress,Fungus Garden,76,Insect,,1,500,Stems Shroom Taste,
+,In progress,Thriving Mushrooms,77,Insect,,1,100,Stems Chunk Scale,
+,In progress,Toadstool Platforms,78,Insect,,1,200,Stems Butt Burger,
+,In progress,Abandoned Campsite,79,Normal,,2,100,Butt Stems Shroom Pansy,
+,In progress,Radiant Crystal,80,Eerie,,1,200,Chunk Pipe Berry Apple,
+,In progress,Flower Mural,81,Normal,,1,200,Chunk Butt Pansy,
+,In progress,Geometric Cliffs,82,Scrap,,1,500,Chunk Butt Floss Sight,
+,In progress,Canyon Bridge,83,Normal,,2,100,Chunk Pipe Pansy,
+,In progress,Reinforced Tunnel,84,Scrap,,1,200,Stems Butt Burger,
+,In progress,Giant's Palm,85,Normal,,1,200,Chunk Pansy Talisman,
+,In progress,Guardian Skull,86,"Eerie, Insect",,1,500,Chunk Scale Thought Crystal,
+,In progress,Sacrarium,87,Eerie,,1,300,Chunk Berry Dust Lens,
+,In progress,Treasure Hoard,88,Scrap,,2,300,Coin Apple Jar,
+,In progress,Trophies of the Hunt,89,Insect,,1,300,Coin Tablet Box,
+,In progress,Scenic View,90,Eerie,,1,200,Coin Resin,

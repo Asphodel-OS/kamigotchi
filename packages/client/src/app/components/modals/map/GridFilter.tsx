@@ -17,7 +17,7 @@ interface Props {
   };
 
   utils: {
-    getNode: (index: number) => { affinity: string };
+    getNode: (index: number) => { affinity: string[] };
   };
 }
 
@@ -49,10 +49,10 @@ export const GridFilter = (props: Props) => {
     return 0;
   };
 
-  const getIcon = (): string | null => {
-    const map: Record<Mode, string | null> = {
+  const getIcon = (): string | string[] | null => {
+    const map: Record<Mode, string | string[] | null> = {
       MyKamis: yourKamiIconsMap.has(roomIndex) ? KamiIcon : null,
-      RoomType: getAffinityImage(getNode(roomIndex).affinity),
+      RoomType: getNode(roomIndex).affinity.map((aff) => getAffinityImage(aff)),
       KamiCount: (kamiCountMap.get(roomIndex) ?? 0) > 0 ? HelpMenuIcons.kamis : null,
       OperatorCount: (operatorCountMap.get(roomIndex) ?? 0) > 0 ? OperatorIcon : null,
     };
