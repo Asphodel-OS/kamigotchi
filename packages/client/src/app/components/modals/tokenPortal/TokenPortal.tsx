@@ -18,7 +18,7 @@ import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient } from 'clients/kamiden';
-import { TokenPortal, TokenPortalRequest } from 'clients/kamiden/proto';
+import { PortalReceipt, TokenPortalRequest } from 'clients/kamiden/proto';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -75,8 +75,8 @@ export const TokenPortalModal: UIComponent = {
     const [account, setAccount] = useState<Account>(NullAccount);
     const [options, setOptions] = useState<Item[]>([]);
     const [selected, setSelected] = useState<Item>(NullItem); // selected item for import/export
-    const [myReceipts, setMyReceipts] = useState<TokenPortal[]>([]);
-    const [othersReceipts, setOthersReceipts] = useState<TokenPortal[]>([]);
+    const [myReceipts, setMyReceipts] = useState<PortalReceipt[]>([]);
+    const [othersReceipts, setOthersReceipts] = useState<PortalReceipt[]>([]);
     const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
 
@@ -175,7 +175,7 @@ export const TokenPortalModal: UIComponent = {
     };
 
     // claim a withdrawal receipt whose time has come
-    const claimTx = async (receipt: TokenPortal) => {
+    const claimTx = async (receipt: PortalReceipt) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -189,7 +189,7 @@ export const TokenPortalModal: UIComponent = {
     };
 
     // cancel a withdrawal receipt
-    const cancelTx = async (receipt: TokenPortal) => {
+    const cancelTx = async (receipt: PortalReceipt) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -213,9 +213,9 @@ export const TokenPortalModal: UIComponent = {
         };
         const myWidthdrawals = await KamidenClient?.getTokenWithdrawals(request);
         const myDeposits = await KamidenClient?.getTokenDeposits(request);
-        setMyReceipts((myWidthdrawals?.TokenPortals ?? []).concat(myDeposits?.TokenPortals ?? []));
+        setMyReceipts((myWidthdrawals?.Receipts ?? []).concat(myDeposits?.Receipts ?? []));
         const allWithdrawals = await KamidenClient?.getOpenWithdrawals(requestOthers);
-        const allReceipts = allWithdrawals?.TokenPortals ?? [];
+        const allReceipts = allWithdrawals?.Receipts ?? [];
         const othersReceipts = allReceipts.filter(
           (receipt) => receipt.AccountID !== parsedAccountId
         );

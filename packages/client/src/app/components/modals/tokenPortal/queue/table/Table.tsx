@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Configs } from 'app/cache/config/portal';
-import { TokenPortal } from 'clients/kamiden/proto';
+import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
@@ -19,12 +19,12 @@ export const Table = ({
   utils,
 }: {
   actions: {
-    claim: (receiptID: TokenPortal) => Promise<void>;
-    cancel: (receiptID: TokenPortal) => Promise<void>;
+    claim: (receiptID: PortalReceipt) => Promise<void>;
+    cancel: (receiptID: PortalReceipt) => Promise<void>;
   };
   data: {
-    myReceipts: TokenPortal[];
-    othersReceipts: TokenPortal[];
+    myReceipts: PortalReceipt[];
+    othersReceipts: PortalReceipt[];
     config: Configs;
     account: Account;
   };
@@ -36,9 +36,9 @@ export const Table = ({
   const { myReceipts, othersReceipts, config, account } = data;
   const { getAccountByID } = utils;
 
-  const [filtered, setFiltered] = useState<TokenPortal[]>([]);
+  const [filtered, setFiltered] = useState<PortalReceipt[]>([]);
   const [sort, setSort] = useState<Sort>({ key: 'Created', reverse: true });
-  const [sorted, setSorted] = useState<TokenPortal[]>([]);
+  const [sorted, setSorted] = useState<PortalReceipt[]>([]);
   const [mode, setMode] = useState<Filter>('MINE');
 
   /////////////////
@@ -54,7 +54,7 @@ export const Table = ({
   useEffect(() => {
     const temp = [...filtered];
     const flip = sort.reverse ? -1 : 1;
-    let sortedList: TokenPortal[] = [];
+    let sortedList: PortalReceipt[] = [];
 
     if (sort.key === 'Amount') {
       sortedList = temp.sort((a, b) => {
@@ -104,7 +104,7 @@ export const Table = ({
     return a ? -1 : 1;
   };
 
-  const getTokenConversion = (receipt: TokenPortal) => {
+  const getTokenConversion = (receipt: PortalReceipt) => {
     const item = utils.getItemByIndex(receipt.ItemIndex);
     const scale = item?.token?.scale ?? 0;
     let converted = 0;

@@ -4,7 +4,7 @@ import { Configs } from 'app/cache/config/portal';
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { TokenIcons } from 'assets/images/tokens';
-import { TokenPortal } from 'clients/kamiden/proto';
+import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
@@ -18,13 +18,13 @@ export const BodyOthers = ({
   state,
 }: {
   data: {
-    receipts: TokenPortal[];
+    receipts: PortalReceipt[];
     config: Configs;
     account: Account;
   };
   utils: {
     getItemByIndex: (index: number) => Item;
-    getTokenConversion: (receipt: TokenPortal) => number;
+    getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
   };
   state: {
@@ -43,7 +43,7 @@ export const BodyOthers = ({
   /////////////////
   // GETTERS
 
-  const getAccount = (receipt: TokenPortal) => {
+  const getAccount = (receipt: PortalReceipt) => {
     const account = getAccountByID(formatEntityID(BigInt(receipt.AccountID)) as EntityID);
     return account;
   };
@@ -65,7 +65,7 @@ export const BodyOthers = ({
   };
 
   // get the status text of a receipt
-  const getStatus = (receipt: TokenPortal) => {
+  const getStatus = (receipt: PortalReceipt) => {
     if (!receipt.IsWithdrawal) return 'Complete';
     if (receipt.IsCanceled) return 'Canceled';
     if (receipt.IsClaimed) return 'Claimed';
@@ -92,7 +92,7 @@ export const BodyOthers = ({
 
   return (
     <Container visible={visible}>
-      {receipts.map((r: TokenPortal, i: number) => {
+      {receipts.map((r: PortalReceipt, i: number) => {
         const item = getItemByIndex(r.ItemIndex as number);
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>

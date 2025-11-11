@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { Configs } from 'app/cache/config/portal';
-import { TokenPortal } from 'clients/kamiden/proto';
+import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { Account, Item } from 'network/shapes';
 import { Table } from './table/Table';
@@ -14,12 +14,12 @@ export const Queue = ({
   utils,
 }: {
   actions: {
-    claim: (receiptID: TokenPortal) => Promise<void>;
-    cancel: (receiptID: TokenPortal) => Promise<void>;
+    claim: (receiptID: PortalReceipt) => Promise<void>;
+    cancel: (receiptID: PortalReceipt) => Promise<void>;
   };
   data: {
-    myReceipts: TokenPortal[];
-    othersReceipts: TokenPortal[];
+    myReceipts: PortalReceipt[];
+    othersReceipts: PortalReceipt[];
     config: Configs;
     account: Account;
   };

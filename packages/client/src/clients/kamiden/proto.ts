@@ -1403,13 +1403,14 @@ function createBasePortalReceipt(): PortalReceipt {
     TaxAmt: '',
     TokenAddress: '',
     TokenAmt: '',
-    isCanceled: false,
-    isClaimed: false,
+    IsWithdrawal: false,
+    IsCanceled: false,
+    IsClaimed: false,
   };
 }
 
-export const TokenPortal: MessageFns<TokenPortal> = {
-  encode(message: TokenPortal, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const PortalReceipt: MessageFns<PortalReceipt> = {
+  encode(message: PortalReceipt, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.Timestamp !== '') {
       writer.uint32(10).string(message.Timestamp);
     }
@@ -1553,8 +1554,8 @@ export const TokenPortal: MessageFns<TokenPortal> = {
   create(base?: DeepPartial<PortalReceipt>): PortalReceipt {
     return PortalReceipt.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<TokenPortal>): TokenPortal {
-    const message = createBaseTokenPortal();
+  fromPartial(object: DeepPartial<PortalReceipt>): PortalReceipt {
+    const message = createBasePortalReceipt();
     message.Timestamp = object.Timestamp ?? '';
     message.AccountID = object.AccountID ?? '';
     message.ReceiptID = object.ReceiptID ?? '';
@@ -1563,8 +1564,9 @@ export const TokenPortal: MessageFns<TokenPortal> = {
     message.TaxAmt = object.TaxAmt ?? '';
     message.TokenAddress = object.TokenAddress ?? '';
     message.TokenAmt = object.TokenAmt ?? '';
-    message.isCanceled = object.isCanceled ?? false;
-    message.isClaimed = object.isClaimed ?? false;
+    message.IsWithdrawal = object.IsWithdrawal ?? false;
+    message.IsCanceled = object.IsCanceled ?? false;
+    message.IsClaimed = object.IsClaimed ?? false;
     return message;
   },
 };
@@ -2716,14 +2718,6 @@ export const KamidenServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    getOpenWithdrawals: {
-      name: 'GetOpenWithdrawals',
-      requestType: TokenPortalRequest,
-      requestStream: false,
-      responseType: TokenPortalResponse,
-      responseStream: false,
-      options: {},
-    },
     getKillsByAccount: {
       name: 'GetKillsByAccount',
       requestType: LeaderboardRequest,
@@ -2813,11 +2807,11 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
   getHarvestRanking(
     request: RankingRequest,
     context: CallContext & CallContextExt
-  ): Promise<DeepPartial<RankingResponse>>;
+  ): Promise<DeepPartial<LeaderboardResponse>>;
   getKillerRanking(
     request: RankingRequest,
     context: CallContext & CallContextExt
-  ): Promise<DeepPartial<RankingResponse>>;
+  ): Promise<DeepPartial<LeaderboardResponse>>;
   getTradeHistory(
     request: TradesRequest,
     context: CallContext & CallContextExt
@@ -2835,10 +2829,6 @@ export interface KamidenServiceImplementation<CallContextExt = {}> {
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<TokenPortalResponse>>;
   getTokenDeposits(
-    request: TokenPortalRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<TokenPortalResponse>>;
-  getOpenWithdrawals(
     request: TokenPortalRequest,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<TokenPortalResponse>>;
@@ -2902,11 +2892,11 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
   getHarvestRanking(
     request: DeepPartial<RankingRequest>,
     options?: CallOptions & CallOptionsExt
-  ): Promise<RankingResponse>;
+  ): Promise<LeaderboardResponse>;
   getKillerRanking(
     request: DeepPartial<RankingRequest>,
     options?: CallOptions & CallOptionsExt
-  ): Promise<RankingResponse>;
+  ): Promise<LeaderboardResponse>;
   getTradeHistory(
     request: DeepPartial<TradesRequest>,
     options?: CallOptions & CallOptionsExt
@@ -2924,10 +2914,6 @@ export interface KamidenServiceClient<CallOptionsExt = {}> {
     options?: CallOptions & CallOptionsExt
   ): Promise<TokenPortalResponse>;
   getTokenDeposits(
-    request: DeepPartial<TokenPortalRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<TokenPortalResponse>;
-  getOpenWithdrawals(
     request: DeepPartial<TokenPortalRequest>,
     options?: CallOptions & CallOptionsExt
   ): Promise<TokenPortalResponse>;

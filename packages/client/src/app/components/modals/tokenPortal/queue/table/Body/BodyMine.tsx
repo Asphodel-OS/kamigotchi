@@ -5,7 +5,7 @@ import { IconButton, TextTooltip } from 'app/components/library';
 import { PlaceholderIcon } from 'assets/images/icons';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { TokenIcons } from 'assets/images/tokens';
-import { TokenPortal } from 'clients/kamiden/proto';
+import { PortalReceipt } from 'clients/kamiden/proto';
 import { EntityID } from 'engine/recs';
 import { Account, Item } from 'network/shapes';
 import { getCountdown } from 'utils/time';
@@ -18,16 +18,16 @@ export const BodyMine = ({
   state,
 }: {
   actions: {
-    claim: (receiptID: TokenPortal) => Promise<void>;
-    cancel: (receiptID: TokenPortal) => Promise<void>;
+    claim: (receiptID: PortalReceipt) => Promise<void>;
+    cancel: (receiptID: PortalReceipt) => Promise<void>;
   };
   data: {
-    receipts: TokenPortal[];
+    receipts: PortalReceipt[];
     config: Configs;
   };
   utils: {
     getItemByIndex: (index: number) => Item;
-    getTokenConversion: (receipt: TokenPortal) => number;
+    getTokenConversion: (receipt: PortalReceipt) => number;
     getAccountByID: (id: EntityID) => Account;
   };
   state: {
@@ -43,24 +43,24 @@ export const BodyMine = ({
   // INTERPRETATION
 
   // determine whether a receipt is active
-  const isActive = (receipt: TokenPortal) => {
+  const isActive = (receipt: PortalReceipt) => {
     return receipt.IsWithdrawal && !receipt.IsCanceled && !receipt.IsClaimed;
   };
 
   // check whether a Receipt is claimable
-  const isClaimable = (receipt: TokenPortal) => {
+  const isClaimable = (receipt: PortalReceipt) => {
     const nowSec = Math.floor(Date.now() / 1000);
     return nowSec >= Number(receipt.Timestamp) + config.delay;
   };
 
   // get the tooltip for a Receipt Claim
-  const getClaimTooltip = (receipt: TokenPortal) => {
+  const getClaimTooltip = (receipt: PortalReceipt) => {
     if (!isClaimable(receipt)) return ['Not yet claimable'];
     else return ['Claim'];
   };
 
   // get the status text of a receipt
-  const getStatus = (receipt: TokenPortal) => {
+  const getStatus = (receipt: PortalReceipt) => {
     if (!receipt.IsWithdrawal) return 'Complete';
     if (receipt.IsCanceled) return 'Canceled';
     if (receipt.IsClaimed) return 'Claimed';
@@ -87,7 +87,7 @@ export const BodyMine = ({
 
   return (
     <Container visible={visible}>
-      {receipts.map((r: TokenPortal, i: number) => {
+      {receipts.map((r: PortalReceipt, i: number) => {
         const item = getItemByIndex(r.ItemIndex as number);
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
