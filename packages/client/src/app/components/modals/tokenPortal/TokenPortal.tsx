@@ -89,7 +89,7 @@ export const TokenPortalModal: UIComponent = {
       const items = itemEntites.map((item) => getItem(item)) as Item[];
       const cleaned = items.filter((item) => item.index !== ETH_INDEX);
       setOptions(cleaned);
-      getTokenHistory(account.id);
+
       // set up ticking
       const refreshClock = () => setTick(Date.now());
       const timerId = setInterval(refreshClock, 1000);
@@ -108,6 +108,7 @@ export const TokenPortalModal: UIComponent = {
       if (!accountEntity) return;
       const account = getAccount();
       setAccount(account);
+      getTokenHistory(account.id);
     }, [accountEntity]);
 
     // query for the list of Receipts

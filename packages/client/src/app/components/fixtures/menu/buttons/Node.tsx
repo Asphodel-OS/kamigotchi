@@ -9,6 +9,7 @@ export const NodeMenuButton = ({ disabled }: { disabled?: boolean }) => {
   const modalsToHide: Partial<Modals> = {
     goal: false,
     crafting: false,
+    bridgeERC20: false,
     bridgeERC721: false,
     dialogue: false,
     kami: false,
