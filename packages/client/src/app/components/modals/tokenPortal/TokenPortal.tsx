@@ -89,7 +89,7 @@ export const TokenPortalModal: UIComponent = {
       const items = itemEntites.map((item) => getItem(item)) as Item[];
       const cleaned = items.filter((item) => item.index !== ETH_INDEX);
       setOptions(cleaned);
-
+      getTokenHistory(account.id);
       // set up ticking
       const refreshClock = () => setTick(Date.now());
       const timerId = setInterval(refreshClock, 1000);
