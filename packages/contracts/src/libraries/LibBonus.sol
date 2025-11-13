@@ -91,42 +91,6 @@ library LibBonus {
     if (duration > 0) TimeComponent(getAddrByID(components, TimeCompID)).set(id, duration);
   }
 
-  function assign(
-    IUintComp components,
-    uint256 regID,
-    uint256 anchorID,
-    uint256 holderID
-  ) internal returns (uint256 id) {
-    // get duration (if any)
-    TimeComponent timeComp = TimeComponent(getAddrByID(components, TimeCompID));
-    uint256 duration = timeComp.safeGet(regID);
-    if (duration == 0) {
-      id = genInstanceID(regID, holderID, 0);
-    } else {
-      id = genInstanceID(regID, holderID, block.timestamp + duration);
-      timeComp.set(id, block.timestamp + duration); // set end time for each timed instance
-    }
-
-    // setting base components
-    IdSourceComponent sourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
-    if (sourceComp.has(id)) return id; // skip if already created
-    sourceComp.set(id, regID);
-    setTypeIDFromReg(components, id, regID, holderID);
-
-    // setting anchor (permanent or temporary)
-    SubtypeComponent endTypeComp = SubtypeComponent(getAddrByID(components, SubtypeCompID));
-    if (endTypeComp.has(regID)) {
-      // temporary bonus (registry has endtype)
-      if (anchorID != 0) revert("Bonus: anchorID not needed for temp bonus");
-      uint256 endAnchor = genEndAnchor(endTypeComp.get(regID), holderID);
-      IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, endAnchor);
-    } else {
-      // permanent bonus (anchor to entity)
-      if (anchorID == 0) revert("Bonus: anchorID needed for perm bonus");
-      IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, anchorID);
-    }
-  }
-
   // registry anchor
   function regRemoveByAnchor(IUintComp components, uint256[] memory anchorIDs) internal {
     uint256[] memory ids = queryByParent(components, anchorIDs);
@@ -172,22 +136,41 @@ library LibBonus {
   /////////////////
   // INTERACTIONS
 
-  /// @notice increases bonus based on registry entry (eg skill)
-  function incBy(
+  /// @dev prefer incBy() or assignTemporary() for general usage.
+  function assign(
     IUintComp components,
-    uint256 regAnchorID, // registry anchor, holds all bonuses from same registry entry
-    uint256 anchorID, // instance anchor, holds bonuses of (holder + source/type)
-    uint256 holderID,
-    uint256 amt
-  ) internal returns (uint256[] memory instanceIDs) {
-    uint256[] memory regIDs = queryByParent(components, regAnchorID);
-    if (regIDs.length == 0) return new uint256[](0);
-
-    instanceIDs = new uint256[](regIDs.length);
-    for (uint256 i; i < regIDs.length; i++) {
-      instanceIDs[i] = assign(components, regIDs[i], anchorID, holderID);
+    uint256 regID,
+    uint256 anchorID,
+    uint256 holderID
+  ) internal returns (uint256 id) {
+    // get duration (if any)
+    TimeComponent timeComp = TimeComponent(getAddrByID(components, TimeCompID));
+    uint256 duration = timeComp.safeGet(regID);
+    if (duration == 0) {
+      id = genInstanceID(regID, holderID, 0);
+    } else {
+      id = genInstanceID(regID, holderID, block.timestamp + duration);
+      timeComp.set(id, block.timestamp + duration); // set end time for each timed instance
     }
-    LevelComponent(getAddrByID(components, LevelCompID)).inc(instanceIDs, amt);
+
+    // setting base components
+    IdSourceComponent sourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
+    if (sourceComp.has(id)) return id; // skip if already created
+    sourceComp.set(id, regID);
+    setTypeIDFromReg(components, id, regID, holderID);
+
+    // setting anchor (permanent or temporary)
+    SubtypeComponent endTypeComp = SubtypeComponent(getAddrByID(components, SubtypeCompID));
+    if (endTypeComp.has(regID)) {
+      // temporary bonus (registry has endtype)
+      if (anchorID != 0) revert("Bonus: anchorID not needed for temp bonus");
+      uint256 endAnchor = genEndAnchor(endTypeComp.get(regID), holderID);
+      IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, endAnchor);
+    } else {
+      // permanent bonus (anchor to entity)
+      if (anchorID == 0) revert("Bonus: anchorID needed for perm bonus");
+      IDAnchorComponent(getAddrByID(components, IDAnchorCompID)).set(id, anchorID);
+    }
   }
 
   /// @dev temporary bonuses cannot be stacked (if same source, same end type). will never level up
@@ -206,6 +189,24 @@ library LibBonus {
       levels[i] = 1;
     }
     LevelComponent(getAddrByID(components, LevelCompID)).set(instanceIDs, levels);
+  }
+
+  /// @notice increases bonus based on registry entry (eg skill)
+  function incBy(
+    IUintComp components,
+    uint256 regAnchorID, // registry anchor, holds all bonuses from same registry entry
+    uint256 anchorID, // instance anchor, holds bonuses of (holder + source/type)
+    uint256 holderID,
+    uint256 amt
+  ) internal returns (uint256[] memory instanceIDs) {
+    uint256[] memory regIDs = queryByParent(components, regAnchorID);
+    if (regIDs.length == 0) return new uint256[](0);
+
+    instanceIDs = new uint256[](regIDs.length);
+    for (uint256 i; i < regIDs.length; i++) {
+      instanceIDs[i] = assign(components, regIDs[i], anchorID, holderID);
+    }
+    LevelComponent(getAddrByID(components, LevelCompID)).inc(instanceIDs, amt);
   }
 
   /// @notice unassigns non-timed bonuses with given anchor
@@ -318,11 +319,13 @@ library LibBonus {
   /// @notice resets upon kami death
   function resetUponDeath(IUintComp components, uint256 holderID) public {
     unassignBy(components, "UPON_DEATH", holderID);
+    unassignBy(components, "UPON_KILL_OR_KILLED", holderID);
   }
 
   /// @notice resets upon liquidation
   function resetUponLiquidation(IUintComp components, uint256 holderID) public {
     unassignBy(components, "UPON_LIQUIDATION", holderID);
+    unassignBy(components, "UPON_KILL_OR_KILLED", holderID);
   }
 
   //////////////
