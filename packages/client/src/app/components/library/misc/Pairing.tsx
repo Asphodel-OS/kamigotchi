@@ -22,9 +22,11 @@ export const Pairing = ({
   return (
     <Container scale={scale}>
       {reverse && <Text size={scale}>{text}</Text>}
-      <TextTooltip text={tooltip}>
-        <Icon src={icon} scale={scale} />
-      </TextTooltip>
+      {icon && (
+        <TextTooltip text={tooltip}>
+          <Icon src={icon} scale={scale} />
+        </TextTooltip>
+      )}
       {!reverse && <Text size={scale}>{text}</Text>}
     </Container>
   );
