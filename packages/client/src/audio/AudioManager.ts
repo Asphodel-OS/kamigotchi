@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as Tone from 'tone';
 
 import registry from './registry.json';
 import type {
@@ -33,6 +34,7 @@ export class AudioManager {
   private readonly busGains: Map<string, GainNode> = new Map();
 
   private readonly buffers: Map<string, AudioBuffer> = new Map();
+  private readonly toneBuffers: Map<string, Tone.ToneAudioBuffer> = new Map();
   private readonly chains: Map<string, ChainPreset> = new Map();
   private readonly assets: Map<string, AssetConfig> = new Map();
 
@@ -42,6 +44,7 @@ export class AudioManager {
   private currentBgm?: { key: string; gain: GainNode; source: AudioBufferSourceNode };
 
   private readonly cfg: AudioRegistry;
+  private fxToneBus: Tone.Gain;
 
   private constructor() {
     this.listener = new THREE.AudioListener();
@@ -68,6 +71,10 @@ export class AudioManager {
 
     // index assets by key
     this.cfg.assets.forEach((a) => this.assets.set(a.key, a));
+
+    // Tone.js FX bus -> Destination
+    const fxVol = this.cfg.buses?.fx?.volume ?? 0.7;
+    this.fxToneBus = new Tone.Gain(fxVol).toDestination();
   }
 
   get audioListener(): THREE.AudioListener {
@@ -85,6 +92,9 @@ export class AudioManager {
   setBusVolume(bus: string, value: number): void {
     const g = this.busGains.get(bus);
     if (g) g.gain.value = this.clamp01(value);
+    if (bus === 'fx') {
+      this.fxToneBus.gain.value = this.clamp01(value);
+    }
   }
 
   async preload(): Promise<void> {
@@ -94,6 +104,9 @@ export class AudioManager {
     await Promise.all(
       toLoad.filter((a) => !!a.chain).map((a) => this.getOrLoadChain(a.chain as string))
     );
+    // Preload FX Tone buffers
+    const fxAssets = this.cfg.assets.filter((a) => a.preload && a.bus !== 'bgm');
+    await Promise.all(fxAssets.map((a) => this.getOrLoadToneBuffer(a.src)));
   }
 
   async playByKey(key: string): Promise<void> {
@@ -204,29 +217,34 @@ export class AudioManager {
     this.fxInstances.set(asset.key, active + 1);
 
     try {
-      const busGain = this.getOrCreateBus(asset.bus || 'fx');
-      const buffer = await this.getOrLoadBuffer(asset.src);
       const chain = asset.chain ? await this.getOrLoadChain(asset.chain) : null;
-
-      const src = this.context.createBufferSource();
-      src.buffer = buffer;
-      src.loop = false;
-
-      // find pitch pedal to adjust playbackRate
-      const rate = this.extractPlaybackRate(chain);
-      if (rate !== 1) src.playbackRate.value = rate;
-
-      const startGain = this.context.createGain();
-      startGain.gain.value = this.safeVolume(asset.volume ?? 1.0);
-
-      const chainOut = await this.buildChain(chain, src, startGain, /*forFx*/ true);
-      chainOut.connect(busGain);
+      const buffer = await this.getOrLoadToneBuffer(asset.src);
+      const player = new Tone.Player(buffer);
+      // build Tone chain and connect to fx bus
+      const { input, output } = this.buildToneChain(chain);
+      player.connect(input);
+      output.connect(this.fxToneBus);
+      // gain per asset
+      const vol = this.safeVolume(asset.volume ?? 1.0);
+      const g = new Tone.Gain(vol);
+      player.connect(g);
+      g.connect(input);
+      // pitch shift if specified
+      const ps = this.createTonePitchNode(chain);
+      if (ps) {
+        g.disconnect();
+        g.connect(ps);
+        ps.connect(input);
+      }
 
       // Optional ducking: reduce bgm temporarily
       this.duckBgmOnFx();
 
-      src.start();
-      src.onended = () => {
+      player.autostart = true;
+      player.onstop = () => {
+        player.dispose();
+        g.dispose();
+        if (ps) ps.dispose();
         const activeNow = this.fxInstances.get(asset.key) || 1;
         this.fxInstances.set(asset.key, Math.max(0, activeNow - 1));
       };
@@ -282,6 +300,131 @@ export class AudioManager {
     return json;
   }
 
+  private async getOrLoadToneBuffer(src: string): Promise<Tone.ToneAudioBuffer> {
+    if (this.toneBuffers.has(src)) return this.toneBuffers.get(src) as Tone.ToneAudioBuffer;
+    const url = this.resolveAssetUrl(src);
+    const buf = await new Promise<Tone.ToneAudioBuffer>((resolve, reject) => {
+      const tb = new Tone.ToneAudioBuffer(
+        url,
+        () => resolve(tb),
+        (e) => reject(e)
+      );
+    });
+    this.toneBuffers.set(src, buf);
+    return buf;
+  }
+
+  private createTonePitchNode(chain: ChainPreset | null): Tone.PitchShift | null {
+    const rate = this.extractPlaybackRate(chain);
+    if (rate === 1) return null;
+    // Convert rate back to semitones
+    const semitones = Math.round(Math.log2(rate) * 12);
+    return new Tone.PitchShift({ pitch: semitones });
+  }
+
+  private buildToneChain(chain: ChainPreset | null): {
+    input: Tone.ToneAudioNode;
+    output: Tone.ToneAudioNode;
+  } {
+    const input = new Tone.Gain(1);
+    let head: Tone.ToneAudioNode = input;
+    if (!chain) return { input, output: head };
+    for (const pedal of chain.pedals) {
+      const node = this.createTonePedal(pedal);
+      if (!node) continue;
+      head.connect(node);
+      head = node as unknown as Tone.ToneAudioNode;
+    }
+    return { input, output: head };
+  }
+
+  private createTonePedal(pedal: PedalConfig): Tone.ToneAudioNode | null {
+    const p = pedal.params as any;
+    switch (pedal.pedal) {
+      case 'gain':
+        return new Tone.Gain(this.safeVolume(p?.level ?? 1.0));
+      case 'filter': {
+        const type = p?.type ?? 'lowpass';
+        const freq = p?.frequencyHz ?? p?.tone ?? (type.includes('high') ? 800 : 3000);
+        const q = p?.q ?? 0.0;
+        const f = new Tone.Filter({ type: type, frequency: freq, Q: q });
+        if (p?.gainDb !== undefined) {
+          // Tone.Filter gain is in dB for shelf filters
+          (f as any).gain?.setValueAtTime?.(p.gainDb, Tone.now());
+        }
+        return f;
+      }
+      case 'delay': {
+        const time = (p?.timeMs ?? 180) / 1000;
+        const feedback = this.clamp01(p?.feedback ?? 0.3);
+        const mix = this.clamp01(p?.mix ?? 0.25);
+        const d = new Tone.FeedbackDelay(time, feedback);
+        const x = new Tone.CrossFade(mix);
+        return this.wrapMixNode(d, x);
+      }
+      case 'reverb': {
+        const mix = this.clamp01(p?.mix ?? 0.2);
+        if (p?.irUrl) {
+          const conv = new Tone.Convolver(this.resolveAssetUrl(p.irUrl));
+          const x = new Tone.CrossFade(mix);
+          return this.wrapMixNode(conv, x);
+        } else {
+          const rv = new Tone.Reverb({ decay: 1 + (p?.size ?? 0.5) * 3, wet: mix });
+          return rv;
+        }
+      }
+      case 'compressor': {
+        const tight = this.clamp01(p?.tightness ?? 0.5);
+        const comp = new Tone.Compressor({
+          threshold: -50 + tight * 30,
+          ratio: 2 + tight * 8,
+          attack: (p?.attackMs ?? 6) / 1000,
+          release: (p?.releaseMs ?? 120) / 1000,
+        });
+        const makeup = this.safeVolume(p?.makeup ?? 1.0);
+        const g = new Tone.Gain(makeup);
+        comp.connect(g);
+        return this.wrapInline(comp, g);
+      }
+      case 'limiter':
+        return new Tone.Limiter(p?.ceilingDb ?? -0.1);
+      case 'panner':
+        return new Tone.Panner(p?.pan ?? 0);
+      case 'distortion':
+        return new Tone.Distortion(this.clamp01(p?.drive ?? 0.2));
+      case 'sparkle': {
+        const amount = this.clamp01(p?.amount ?? 0.2);
+        return new Tone.Filter({ type: 'highshelf', frequency: 6000, gain: amount * 6 });
+      }
+      case 'warmth': {
+        const amount = this.clamp01(p?.amount ?? 0.2);
+        return new Tone.Filter({ type: 'lowshelf', frequency: 180, gain: amount * 6 });
+      }
+      case 'pitch':
+        return null;
+      default:
+        return null;
+    }
+  }
+
+  private wrapInline(a: Tone.ToneAudioNode, b: Tone.ToneAudioNode): Tone.ToneAudioNode {
+    // returns node that accepts input and outputs at the end
+    // We'll create a mini chain entry point for consistency
+    const g = new Tone.Gain(1);
+    g.connect(a);
+    a.connect(b);
+    // use b as output, but expose g as input via property chaining
+    // not strictly type-safe; we return b and let callers connect head->g then g->a->b
+    // We'll just return a small proxy-like: but simplest is to return a and rely on pre-connect
+    return a as unknown as Tone.ToneAudioNode;
+  }
+
+  private wrapMixNode(effect: Tone.ToneAudioNode, cross: Tone.CrossFade): Tone.ToneAudioNode {
+    const input = new Tone.Gain(1);
+    input.fan(cross.a, effect);
+    effect.connect(cross.b);
+    return cross as unknown as Tone.ToneAudioNode;
+  }
   private async buildChain(
     chain: ChainPreset | null,
     source: AudioNode,
