@@ -15,6 +15,7 @@ import { calcCooldownRequirement } from 'app/cache/kami';
 import { Modals, useVisibility } from 'app/stores';
 import { useDevControls } from 'app/stores/devControls';
 import React, { useEffect, useMemo, useState } from 'react';
+import { playClick } from 'utils/sounds';
 
 // A completely local, safe animation playground. It never calls network/api.
 // Only available in development mode (localhost:3000)
@@ -161,6 +162,7 @@ export const AnimationStudio: UIComponent = {
               </Select>
               <OpenButton
                 onClick={() => {
+                  playClick();
                   try {
                     if (!(selectedModal in modals)) throw new Error(`Unknown modal: ${String(selectedModal)}`);
                     toggleModals(false);
@@ -175,6 +177,7 @@ export const AnimationStudio: UIComponent = {
               </OpenButton>
               <OpenButton
                 onClick={() => {
+                  playClick();
                   try {
                     // send a generic toggle event to the selected modal
                     send(selectedModal, 'toggle');
@@ -188,6 +191,7 @@ export const AnimationStudio: UIComponent = {
               </OpenButton>
               <OpenButton
                 onClick={() => {
+                  playClick();
                   try {
                     toggleModals(false);
                     setModals({ animationStudio: true });
@@ -228,6 +232,7 @@ export const AnimationStudio: UIComponent = {
             <Row>
               <OpenButton
                 onClick={() => {
+                  playClick();
                   try {
                     const payload: Partial<Modals> = { animationStudio: true } as any;
                     selectedSet.forEach((k) => ((payload as any)[k] = true));
@@ -241,7 +246,14 @@ export const AnimationStudio: UIComponent = {
               >
                 Open Selected
               </OpenButton>
-              <OpenButton onClick={() => setSelectedSet(new Set())}>Clear Selection</OpenButton>
+              <OpenButton
+                onClick={() => {
+                  playClick();
+                  setSelectedSet(new Set());
+                }}
+              >
+                Clear Selection
+              </OpenButton>
             </Row>
 
             <Divider />
@@ -289,6 +301,7 @@ export const AnimationStudio: UIComponent = {
             <Row>
               <OpenButton
                 onClick={() => {
+                  playClick();
                   try {
                     const type = (document.getElementById('dev_type') as HTMLInputElement)?.value || 'toggle';
                     const raw = (document.getElementById('dev_payload') as HTMLTextAreaElement)?.value;
@@ -321,7 +334,14 @@ export const AnimationStudio: UIComponent = {
             <KamiPreview>
               <KamiPreviewHeader>
                 <span>Kami Card Preview</span>
-                <RefreshButton onClick={refreshKami}>↻ Refresh Kami</RefreshButton>
+                <RefreshButton
+                  onClick={() => {
+                    playClick();
+                    refreshKami();
+                  }}
+                >
+                  ↻ Refresh Kami
+                </RefreshButton>
               </KamiPreviewHeader>
               <KamiCard
                 kami={simKami}
@@ -332,13 +352,14 @@ export const AnimationStudio: UIComponent = {
                 showSkillPoints
               />
               <KamiControls>
-                <StateButton onClick={() => setKamiState('idle')}>Idle</StateButton>
-                <StateButton onClick={() => setKamiState('cooldown')}>Cooldown</StateButton>
-                <StateButton onClick={() => setKamiState('harvesting')}>Harvesting</StateButton>
-                <StateButton onClick={() => setKamiState('healing')}>Healing</StateButton>
-                <StateButton onClick={() => setKamiState('murdered')}>Murdered</StateButton>
+                <StateButton onClick={() => { playClick(); setKamiState('idle'); }}>Idle</StateButton>
+                <StateButton onClick={() => { playClick(); setKamiState('cooldown'); }}>Cooldown</StateButton>
+                <StateButton onClick={() => { playClick(); setKamiState('harvesting'); }}>Harvesting</StateButton>
+                <StateButton onClick={() => { playClick(); setKamiState('healing'); }}>Healing</StateButton>
+                <StateButton onClick={() => { playClick(); setKamiState('murdered'); }}>Murdered</StateButton>
                 <StateButton 
                   onClick={() => {
+                    playClick();
                     const nowSec = Math.floor(Date.now() / 1000);
                     try {
                       // Start at the final second of cooldown to preview the wipe
