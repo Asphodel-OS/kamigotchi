@@ -21,13 +21,8 @@ export const TileContextMenu = ({
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // listen for clicking outside the menu
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
     const timer = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
     }, 100);
@@ -37,6 +32,13 @@ export const TileContextMenu = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [onClose]);
+
+  // close the menu when an outside click is detected
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      onClose();
+    }
+  };
 
   return (
     <MenuContainer
@@ -107,4 +109,3 @@ const Icon = styled.img`
 const Text = styled.span`
   white-space: nowrap;
 `;
-

@@ -18,16 +18,20 @@ export const findPath = (
   const fromRoom = getRoomByIndex(world, components, fromIndex);
   const toRoom = getRoomByIndex(world, components, toIndex);
 
+  // early exit if either room is not found
   if (!fromRoom || !toRoom) {
     return { path: [], distance: -1, reachable: false };
   }
 
+  // early exit if the rooms are the same
   if (fromIndex === toIndex) {
     return { path: [fromIndex], distance: 0, reachable: true };
   }
 
+  // assume ungated if no custom canEnter function is provided
   const allow = canEnter ?? (() => true);
 
+  // breadth-first search
   const queue: number[] = [fromIndex];
   const visited = new Set<number>([fromIndex]);
   const prev = new Map<number, number>();
@@ -50,6 +54,7 @@ export const findPath = (
     }
   }
 
+  // path not found
   if (!visited.has(toIndex)) {
     return { path: [], distance: -1, reachable: false };
   }
@@ -75,4 +80,3 @@ export const calculatePathStaminaCost = (
 ): number => {
   return distance * staminaCostPerMove;
 };
-

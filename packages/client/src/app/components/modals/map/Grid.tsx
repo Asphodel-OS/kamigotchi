@@ -89,6 +89,7 @@ export const Grid = ({
     position: { x: number; y: number };
   } | null>(null);
 
+  // track the number of scavenge rolls are in each room
   const rolls = useMemo(() => {
     const map = new Map<number, number>();
     rooms.forEach((room) => {
@@ -137,26 +138,9 @@ export const Grid = ({
   }, [accountKamis]);
 
   /////////////////
-  // INTERPRETATION
-
-  const isRoomBlocked = (room: Room) => {
-    return !passesConditions(account, room.gates);
-  };
-
-  const currExit = (room: Room) => {
-    return rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
-  };
-
-  const getTileColor = (room: Room) => {
-    if (!room.index) return;
-    if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
-    if (!currExit(room)) return;
-    return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
-  };
-
-  /////////////////
   // INTERACTION
 
+  // move the player to a room
   const handleRoomMove = (roomIndex: number) => {
     playClick();
     move(roomIndex);
@@ -169,10 +153,12 @@ export const Grid = ({
     setKamiEntities(queryNodeKamis(queryNodeByIndex(roomIndex)));
   };
 
+  // set the view mode
   const setType = (option: Mode[]) => {
     setMode(option);
   };
 
+  // handle right clicking a room tile
   const handleRightClick = useCallback(
     (event: React.MouseEvent, room: Room) => {
       event.preventDefault();
@@ -186,6 +172,7 @@ export const Grid = ({
     [roomIndex]
   );
 
+  // handle auto-traveling to a room
   const handleAutoTravel = useCallback(
     (targetRoom: Room) => {
       const { world, components } = network;
@@ -200,6 +187,28 @@ export const Grid = ({
     [network, roomIndex, move]
   );
 
+  /////////////////
+  // INTERPRETATION
+
+  // check if a room is blocked by gates (requirements)
+  const isRoomBlocked = (room: Room) => {
+    return !passesConditions(account, room.gates);
+  };
+
+  // check if a room is an exit from another room
+  const currExit = (room: Room) => {
+    return rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
+  };
+
+  // get the color of a room tile
+  const getTileColor = (room: Room) => {
+    if (!room.index) return;
+    if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
+    if (!currExit(room)) return;
+    return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
+  };
+
+  // get the context menu options for a room
   const contextMenuOptions = useMemo(() => {
     if (!contextMenu) return [];
 
@@ -207,13 +216,9 @@ export const Grid = ({
     const room = contextMenu.room;
 
     const pathResult = findPath(world, components, roomIndex, room.index);
-    const staminaCost = pathResult.reachable
-      ? calculatePathStaminaCost(pathResult.distance)
-      : -1;
+    const staminaCost = pathResult.reachable ? calculatePathStaminaCost(pathResult.distance) : -1;
     const canTravel =
-      room.index !== roomIndex &&
-      staminaCost >= 0 &&
-      account.stamina.total >= staminaCost;
+      room.index !== roomIndex && staminaCost >= 0 && account.stamina.total >= staminaCost;
 
     return [
       {
@@ -235,10 +240,7 @@ export const Grid = ({
     ];
   }, [contextMenu, network, roomIndex, account.stamina.total, handleAutoTravel]);
 
-  // used for the GrdiFilter, calculates averages to use
-  // for the floating icons coloring
-  // and maps to check if there are any kami
-  // or players on a tile
+  // populate the GridFilter details for room stats
   const { kamiCountMap, operatorCountMap, kamiAverage, operatorAverage } = useMemo(() => {
     const kamiCountMap = new Map<number, number>();
     const operatorCountMap = new Map<number, number>();
