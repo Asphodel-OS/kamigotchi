@@ -21,8 +21,15 @@ export const TileContextMenu = ({
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // listen for clicking outside the menu
+  // Add a small delay before attaching the outside-click listener
+  // to prevent the menu from immediately closing due to the click that opened it
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
     const timer = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
     }, 100);
@@ -33,12 +40,8 @@ export const TileContextMenu = ({
     };
   }, [onClose]);
 
-  // close the menu when an outside click is detected
-  const handleClickOutside = (event: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      onClose();
-    }
-  };
+  /////////////////
+  // RENDER
 
   return (
     <MenuContainer

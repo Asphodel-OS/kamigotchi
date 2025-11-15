@@ -158,7 +158,8 @@ export const Grid = ({
     setMode(option);
   };
 
-  // handle right clicking a room tile
+  // Open the context menu when right-clicking a room tile
+  // Prevents opening menu on current room or empty tiles
   const handleRightClick = useCallback(
     (event: React.MouseEvent, room: Room) => {
       event.preventDefault();
@@ -172,7 +173,8 @@ export const Grid = ({
     [roomIndex]
   );
 
-  // handle auto-traveling to a room
+  // Queue moves along the shortest path to the target room
+  // Skips first element (current position) and enqueues remaining path
   const handleAutoTravel = useCallback(
     (targetRoom: Room) => {
       const { world, components } = network;
