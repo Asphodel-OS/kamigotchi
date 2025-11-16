@@ -15,7 +15,7 @@ import geometricCliffs from './geometricCliffs.mp3';
 import giantsPalm from './giantsPalm.mp3';
 import glitter from './glitter.mp3';
 import guardianSkull from './guardianSkull.mp3';
-import hatchtoNowhere from './hatchtoNowhere.mp3';
+import hatchToNowhere from './hatchToNowhere.mp3';
 import k1 from './k1.mp3';
 import k11 from './k11.mp3';
 import k13 from './k13.mp3';
@@ -63,7 +63,7 @@ export {
   giantsPalm,
   glitter,
   guardianSkull,
-  hatchtoNowhere,
+  hatchToNowhere,
   k1,
   k11,
   k13,
