@@ -131,8 +131,10 @@ export const ItemImages = {
   aetheric_sextant: aetheric_sextant,
   agency_giftbox: agency_giftbox,
   ancient_machine_part: ancient_machine_part,
+  animistic_potion: animistic_potion, // INSERT HERE
   apology_letter: apology_letter,
   ash_pearl: ash_pearl,
+  ashlar: ashlar, // INSERT HERE
   astrolabe_disk: astrolabe_disk,
   berry_chalk: berry_chalk,
   best_ice_cream: best_ice_cream,
@@ -140,32 +142,52 @@ export const ItemImages = {
   black_poppy: black_poppy,
   black_poppy_extract: black_poppy_extract,
   bless_potion: bless_potion,
+  blue_pansy: blue_pansy, // INSERT HERE
+  bone_chunk: bone_chunk, // INSERT HERE
   booster_pack: booster_pack,
   chalkberry: chalkberry,
   cheeseburger: cheeseburger,
+  cigarette_butt: cigarette_butt, // INSERT HERE
+  cleaning_fluid: cleaning_fluid, // INSERT HERE
+  cthonic_blight: cthonic_blight, // INSERT HERE
   cultivation_i_spell_card: cultivation_i_spell_card,
   cultivation_ii_spell_card: cultivation_ii_spell_card,
   cultivation_iii_spell_card: cultivation_iii_spell_card,
+  curse_tablet: curse_tablet, // INSERT HERE
   daffodil: daffodil,
   disc_shaped_map: disc_shaped_map,
+  djed_pillar: djed_pillar, // INSERT HERE
+  dried_stems: dried_stems, // INSERT HERE
   empty_cup: empty_cup,
   energy_drink: energy_drink,
   essence_of_daffodil: essence_of_daffodil,
+  essence_of_hearing: essence_of_hearing, // INSERT HERE
+  essence_of_sight: essence_of_sight, // INSERT HERE
+  essence_of_smell: essence_of_smell, // INSERT HERE
+  essence_of_taste: essence_of_taste, // INSERT HERE
+  essence_of_thought: essence_of_thought, // INSERT HERE
+  essence_of_touch: essence_of_touch, // INSERT HERE
+  fast_travel_potion: fast_travel_potion, // INSERT HERE
   festival_chime: festival_chime,
   fetid_egg: fetid_egg,
+  flash_talisman: flash_talisman, // INSERT HERE
+  fortified_xp_potion: fortified_xp_potion, // INSERT HERE
   fuliginous_ooze: fuliginous_ooze,
   full_heart_crystal: full_heart_crystal,
   gacha_ticket: gacha_ticket,
   gakki_cookie_sticks: gakki_cookie_sticks,
   glass_jar: glass_jar,
+  golden_apple: golden_apple, // INSERT HERE
   grace_potion: grace_potion,
   great_heart_crystal: great_heart_crystal,
   greater_xp_potion: greater_xp_potion,
   half_heart_crystal: half_heart_crystal,
   holy_dust: holy_dust,
   holy_syrup: holy_syrup,
+  honeydew_scale: honeydew_scale, // INSERT HERE
   hostility_potion: hostility_potion,
   ice_cream: ice_cream,
+  ingot: ingot, // INSERT HERE
   inverted_teardrop_jewel: inverted_teardrop_jewel,
   kamigotchi_world_citizen_giftbox: kamigotchi_world_citizen_giftbox,
   kamigotchi_world_passport: kamigotchi_world_passport,
@@ -193,13 +215,16 @@ export const ItemImages = {
   neiths_river_of_life_spell_card: neiths_river_of_life_spell_card,
   obol: obol,
   onyx_shard: onyx_shard,
+  otherworld_coin: otherworld_coin, // INSERT HERE
   paeons_field_of_flowers_spell_card: paeons_field_of_flowers_spell_card,
+  patinated_pipe: patinated_pipe, // INSERT HERE
   pine_cone: pine_cone,
   pine_pollen: pine_pollen,
   plastic_bottle: plastic_bottle,
   pom_pom_fruit_candy: pom_pom_fruit_candy,
   portable_burner: portable_burner,
   powdered_red_amber: powdered_red_amber,
+  pure_essence: pure_essence, // INSERT HERE
   pyramid_engine: pyramid_engine,
   red_amber_crystal: red_amber_crystal,
   red_gakki_ribbon: red_gakki_ribbon,
@@ -207,15 +232,22 @@ export const ItemImages = {
   resin: resin,
   resin_tincture: resin_tincture,
   respec_potion: respec_potion,
+  rock_candyfloss: rock_candyfloss, // INSERT HERE
+  rock_crystal_lens: rock_crystal_lens, // INSERT HERE
   sanguine_shroom: sanguine_shroom,
   sanguineous_powder: sanguineous_powder,
+  sarcophagus_honey: sarcophagus_honey, // INSERT HERE
   scrap_metal: scrap_metal,
   screwdriver: screwdriver,
   shredded_mint: shredded_mint,
   spice_grinder: spice_grinder,
   spirit_glue: spirit_glue,
   stone: stone,
+  switchbox_imp: switchbox_imp, // INSERT HERE
   teardrop_jewel: teardrop_jewel,
+  timber: timber, // INSERT HERE
+  toadstool_liquor: toadstool_liquor, // INSERT HERE
+  unmarked_data_chip: unmarked_data_chip, // INSERT HERE
   vipp: vipp,
   wonder_egg: wonder_egg,
   wooden_stick: wooden_stick,
@@ -224,36 +256,4 @@ export const ItemImages = {
   xp_candy_medium: xp_candy_medium,
   xp_candy_small: xp_candy_small,
   xp_potion: xp_potion,
-  bone_chunk: bone_chunk,
-  dried_stems: dried_stems,
-  patinated_pipe: patinated_pipe,
-  cigarette_butt: cigarette_butt,
-  otherworld_coin: otherworld_coin,
-  ashlar: ashlar,
-  timber: timber,
-  ingot: ingot,
-  essence_of_hearing: essence_of_hearing,
-  essence_of_sight: essence_of_sight,
-  essence_of_taste: essence_of_taste,
-  essence_of_touch: essence_of_touch,
-  essence_of_thought: essence_of_thought,
-  pure_essence: pure_essence,
-  honeydew_scale: honeydew_scale,
-  golden_apple: golden_apple,
-  blue_pansy: blue_pansy,
-  curse_tablet: curse_tablet,
-  djed_pillar: djed_pillar,
-  sarcophagus_honey: sarcophagus_honey,
-  flash_talisman: flash_talisman,
-  rock_crystal_lens: rock_crystal_lens,
-  animistic_potion: animistic_potion,
-  cleaning_fluid: cleaning_fluid,
-  cthonic_blight: cthonic_blight,
-  unmarked_data_chip: unmarked_data_chip,
-  essence_of_smell: essence_of_smell,
-  fast_travel_potion: fast_travel_potion,
-  fortified_xp_potion: fortified_xp_potion,
-  rock_candyfloss: rock_candyfloss,
-  toadstool_liquor: toadstool_liquor,
-  switchbox_imp: switchbox_imp,
 };
