@@ -1,8 +1,10 @@
 import aetheric_sextant from './aetheric_sextant.png';
 import agency_giftbox from './agency_giftbox.png';
 import ancient_machine_part from './ancient_machine_part.png';
+import animistic_potion from './animistic_potion.png';
 import apology_letter from './apology_letter.png';
 import ash_pearl from './ash_pearl.png';
+import ashlar from './ashlar.png';
 import astrolabe_disk from './astrolabe_disk.png';
 import berry_chalk from './berry_chalk.png';
 import best_ice_cream from './best_ice_cream.png';
@@ -10,32 +12,52 @@ import better_ice_cream from './better_ice_cream.png';
 import black_poppy from './black_poppy.png';
 import black_poppy_extract from './black_poppy_extract.png';
 import bless_potion from './bless_potion.png';
+import blue_pansy from './blue_pansy.png';
+import bone_chunk from './bone_chunk.png';
 import booster_pack from './booster_pack.png';
 import chalkberry from './chalkberry.png';
 import cheeseburger from './cheeseburger.png';
+import cigarette_butt from './cigarette_butt.png';
+import cleaning_fluid from './cleaning_fluid.png';
+import cthonic_blight from './cthonic_blight.png';
 import cultivation_i_spell_card from './cultivation_i_spell_card.png';
 import cultivation_ii_spell_card from './cultivation_ii_spell_card.png';
 import cultivation_iii_spell_card from './cultivation_iii_spell_card.png';
+import curse_tablet from './curse_tablet.png';
 import daffodil from './daffodil.png';
 import disc_shaped_map from './disc_shaped_map.png';
+import djed_pillar from './djed_pillar.png';
+import dried_stems from './dried_stems.png';
 import empty_cup from './empty_cup.png';
 import energy_drink from './energy_drink.png';
 import essence_of_daffodil from './essence_of_daffodil.png';
+import essence_of_hearing from './essence_of_hearing.png';
+import essence_of_sight from './essence_of_sight.png';
+import essence_of_smell from './essence_of_smell.png';
+import essence_of_taste from './essence_of_taste.png';
+import essence_of_thought from './essence_of_thought.png';
+import essence_of_touch from './essence_of_touch.png';
+import fast_travel_potion from './fast_travel_potion.png';
 import festival_chime from './festival_chime.png';
 import fetid_egg from './fetid_egg.png';
+import flash_talisman from './flash_talisman.png';
+import fortified_xp_potion from './fortified_xp_potion.png';
 import fuliginous_ooze from './fuliginous_ooze.png';
 import full_heart_crystal from './full_heart_crystal.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
 import glass_jar from './glass_jar.png';
+import golden_apple from './golden_apple.png';
 import grace_potion from './grace_potion.png';
 import great_heart_crystal from './great_heart_crystal.png';
 import greater_xp_potion from './greater_xp_potion.png';
 import half_heart_crystal from './half_heart_crystal.png';
 import holy_dust from './holy_dust.png';
 import holy_syrup from './holy_syrup.png';
+import honeydew_scale from './honeydew_scale.png';
 import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
+import ingot from './ingot.png';
 import inverted_teardrop_jewel from './inverted_teardrop_jewel.png';
 import kamigotchi_world_citizen_giftbox from './kamigotchi_world_citizen_giftbox.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
@@ -63,13 +85,16 @@ import musu_magnet from './musu_magnet.png';
 import neiths_river_of_life_spell_card from './neiths_river_of_life_spell_card.png';
 import obol from './obol.png';
 import onyx_shard from './onyx_shard.webp';
+import otherworld_coin from './otherworld_coin.png';
 import paeons_field_of_flowers_spell_card from './paeons_field_of_flowers_spell_card.png';
+import patinated_pipe from './patinated_pipe.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
 import plastic_bottle from './plastic_bottle.png';
 import pom_pom_fruit_candy from './pom_pom_fruit_candy.png';
 import portable_burner from './portable_burner.png';
 import powdered_red_amber from './powdered_red_amber.png';
+import pure_essence from './pure_essence.png';
 import pyramid_engine from './pyramid_engine.png';
 import red_amber_crystal from './red_amber_crystal.png';
 import red_gakki_ribbon from './red_gakki_ribbon.png';
@@ -77,15 +102,22 @@ import reroll_ticket from './reroll_ticket.png';
 import resin from './resin.png';
 import resin_tincture from './resin_tincture.png';
 import respec_potion from './respec_potion.png';
+import rock_candyfloss from './rock_candyfloss.png';
+import rock_crystal_lens from './rock_crystal_lens.png';
 import sanguine_shroom from './sanguine_shroom.png';
 import sanguineous_powder from './sanguineous_powder.png';
+import sarcophagus_honey from './sarcophagus_honey.png';
 import scrap_metal from './scrap_metal.png';
 import screwdriver from './screwdriver.png';
 import shredded_mint from './shredded_mint.png';
 import spice_grinder from './spice_grinder.png';
 import spirit_glue from './spirit_glue.png';
 import stone from './stone.png';
+import switchbox_imp from './switchbox_imp.png';
 import teardrop_jewel from './teardrop_jewel.png';
+import timber from './timber.png';
+import toadstool_liquor from './toadstool_liquor.png';
+import unmarked_data_chip from './unmarked_data_chip.png';
 import vipp from './vipp.png';
 import wonder_egg from './wonder_egg.png';
 import wooden_stick from './wooden_stick.png';
@@ -192,4 +224,36 @@ export const ItemImages = {
   xp_candy_medium: xp_candy_medium,
   xp_candy_small: xp_candy_small,
   xp_potion: xp_potion,
+  bone_chunk: bone_chunk,
+  dried_stems: dried_stems,
+  patinated_pipe: patinated_pipe,
+  cigarette_butt: cigarette_butt,
+  otherworld_coin: otherworld_coin,
+  ashlar: ashlar,
+  timber: timber,
+  ingot: ingot,
+  essence_of_hearing: essence_of_hearing,
+  essence_of_sight: essence_of_sight,
+  essence_of_taste: essence_of_taste,
+  essence_of_touch: essence_of_touch,
+  essence_of_thought: essence_of_thought,
+  pure_essence: pure_essence,
+  honeydew_scale: honeydew_scale,
+  golden_apple: golden_apple,
+  blue_pansy: blue_pansy,
+  curse_tablet: curse_tablet,
+  djed_pillar: djed_pillar,
+  sarcophagus_honey: sarcophagus_honey,
+  flash_talisman: flash_talisman,
+  rock_crystal_lens: rock_crystal_lens,
+  animistic_potion: animistic_potion,
+  cleaning_fluid: cleaning_fluid,
+  cthonic_blight: cthonic_blight,
+  unmarked_data_chip: unmarked_data_chip,
+  essence_of_smell: essence_of_smell,
+  fast_travel_potion: fast_travel_potion,
+  fortified_xp_potion: fortified_xp_potion,
+  rock_candyfloss: rock_candyfloss,
+  toadstool_liquor: toadstool_liquor,
+  switchbox_imp: switchbox_imp,
 };
