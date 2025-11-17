@@ -1,4 +1,16 @@
 ﻿.,Description,Operator,Type,Index,Value
+,Complete MSQ041,,,,
+,Complete MSQ040,,,,
+,Complete MSQ039,,,,
+,Complete MSQ038,,,,
+,Complete MSQ037,,,,
+,Complete MSQ036,,,,
+,Complete MSQ035,,,,
+,Complete MSQ034,,,,
+,Complete MSQ033,,,,
+,Complete MSQ032,,,,
+,Complete MIN015,COMPLETE,QUEST,2015,
+,Complete MIN016,COMPLETE,QUEST,2016,
 ,At least 1 Kami liquidated,MIN,LIQUIDATED_VICTIM,,1
 ,Before 25/10/25 0 GMT,MAX,BLOCKTIME,,1761350400
 ,Complete SQ015,COMPLETE,QUEST,3015,
@@ -15,7 +27,7 @@
 ,Complete MSQ023,COMPLETE,QUEST,23,
 ,Complete MSQ022,COMPLETE,QUEST,22,
 ,Complete MSQ021,COMPLETE,QUEST,21,
-,"Complete MSQ020 & wait 1 day",COMPLETE,QUEST_COMPLETED_DELAY,20,129600
+,Complete MSQ020 & wait 1 day,COMPLETE,QUEST_COMPLETED_DELAY,20,129600
 ,Complete MIN013,COMPLETE,QUEST,2013,
 ,Complete MIN012,COMPLETE,QUEST,2012,
 ,Complete MIN011,COMPLETE,QUEST,2011,

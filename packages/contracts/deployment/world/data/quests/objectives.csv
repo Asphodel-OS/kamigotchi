@@ -70,3 +70,16 @@
 ,Scavenge 1 Daffodil,MIN,INC,DROPTABLE_ITEM_TOTAL,1011,1
 ,Scavenge 1 Sanguine Shroom,MIN,INC,DROPTABLE_ITEM_TOTAL,1013,1
 ,Use the machine to buy something in the Marketplace,MIN,INC,TRADE_EXECUTE,,1
+,Craft 1 Ashlar,,,,,
+,Scavenge 5 Bone Chunks,,,,,
+,Craft 1 Lumber,,,,,
+,Scavenge 5 Dried Stems,,,,,
+,Make 7 Scavenging Rolls at Temple Cave,,,,,
+,Harvest for >720 minutes at Techno Temple,,,,,
+,"Use the object ""Waterfall"" in ""Temple by the Waterfall"" to enter a new zone",,,,,
+,Give 25x Scrap Metal,,,,,
+,Give 1000 Black Poppy Extract,,,,,
+,Give 1000 Holy Syrup,,,,,
+,Give 5000 Resin Tincture,,,,,
+,Move to Lost Skeleton,,,,,
+,Give Soulbound Pyramid Engine,,,,,

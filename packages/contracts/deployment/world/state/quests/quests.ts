@@ -10,8 +10,8 @@ import { addRewards } from './rewards';
 export const init = async (api: AdminAPI, entry: any): Promise<boolean> => {
   const index = Number(entry['Index']);
   const name = entry['Title'];
-  const description = entry['Description'] ?? '';
-  const altDescription = entry['Resolution text'] ?? '';
+  const description = entry['Introduction Dialogue'] ?? '';
+  const altDescription = entry['Resolution Dialogue'] ?? '';
   const isDaily = entry['Daily'] === 'Yes';
   const questType = entry['Type'] ?? '';
   const questGiver = entry['Giver'] ?? '';
