@@ -59,7 +59,7 @@ const HealthFill = styled.div<{ $percent: number; color: string }>`
     left: 0;
     top: 0;
     bottom: 0;
-    width: ${({ $percent }) => Math.min(100, Math.max(0, $percent))}%;
+    width: ${({ $percent }) => $percent}%;
     background: ${({ color }) => color};
     transition: width 0.4s ease;
   }

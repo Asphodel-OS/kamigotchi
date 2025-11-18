@@ -133,7 +133,7 @@ export const Header = ({
     return (
       <div style={{ display: 'flex', flexFlow: 'row' }}>
         {affs.map((aff) => (
-          <Icon src={getAffinityImage(aff)} />
+          <Icon key={aff} src={getAffinityImage(aff)} />
         ))}
       </div>
     );

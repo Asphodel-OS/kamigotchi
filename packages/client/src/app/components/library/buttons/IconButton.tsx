@@ -1,6 +1,6 @@
 import { SvgIconComponent } from '@mui/icons-material';
 import { ForwardedRef, forwardRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { clickFx, hoverFx, pulseFx, shakeFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
@@ -169,8 +169,8 @@ const Container = styled.button<{
       border-bottom-left-radius: 0;
   `}
 
-  ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
-  ${({ shake }) => shake && `animation: ${shakeFx} 0.5s ease-in-out infinite;`}
+  ${({ pulse }) => pulse && pulseAnimationRule}
+  ${({ shake }) => shake && shakeAnimationRule}
 
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
@@ -242,4 +242,12 @@ const Balance = styled.div`
   align-items: center;
   justify-content: center;
   padding: 0.2vw;
+`;
+
+const pulseAnimationRule = css`
+  animation: ${pulseFx} 2.5s ease-in-out infinite;
+`;
+
+const shakeAnimationRule = css`
+  animation: ${shakeFx} 0.5s ease-in-out infinite;
 `;

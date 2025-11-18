@@ -148,11 +148,7 @@ export const KamiCard = ({
       }}
     >
       <TitleBar>
-        <TitleText
-          showSkillPoints={show?.skillPoints}
-          key='title'
-          onClick={() => handleKamiClick()}
-        >
+        <TitleText key='title' onClick={() => handleKamiClick()}>
           {kami.name}
         </TitleText>
         <TitleCorner key='corner'>
@@ -201,13 +197,11 @@ const TitleBar = styled.div`
   border-bottom: solid black 0.15vw;
   padding: 0.45vw;
 `;
-// because party is the only one passing
-// showSkillPoints, using it
-// to change the font size
-const TitleText = styled.div<{ showSkillPoints?: boolean }>`
+
+const TitleText = styled.div`
   position: relative;
   z-index: 1;
-  font-size: ${({ showSkillPoints }) => (showSkillPoints ? '0.8vw' : '0.95vw')};
+  font-size: 0.9vw;
 
   text-align: left;
   width: 100%;
