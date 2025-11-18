@@ -22,10 +22,20 @@ contract _QuestRegistrySystem is System, AuthRoles {
       string memory name,
       string memory description,
       string memory endText,
+      string memory questType,
+      string memory questGiver,
       uint256 duration
-    ) = abi.decode(arguments, (uint32, string, string, string, uint256));
+    ) = abi.decode(arguments, (uint32, string, string, string, string, string, uint256));
 
-    uint256 regID = LibQuestRegistry.createQuest(components, index, name, description, endText);
+    uint256 regID = LibQuestRegistry.createQuest(
+      components,
+      index,
+      name,
+      description,
+      endText,
+      questType,
+      questGiver
+    );
 
     // set repeatable (if so)
     if (duration > 0) LibQuestRegistry.setRepeatable(components, regID, duration);

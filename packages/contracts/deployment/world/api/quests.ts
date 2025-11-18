@@ -9,13 +9,15 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
     name: string,
     description: string,
     endText: string,
+    questType: string,
+    questGiver: string,
     repeatTime: number
   ) {
     const callData = generateCallData(
       'system.quest.registry',
-      [index, name, description, endText, repeatTime],
+      [index, name, description, endText, questType, questGiver, repeatTime],
       'create',
-      ['uint32', 'string', 'string', 'string', 'uint256']
+      ['uint32', 'string', 'string', 'string', 'string', 'string', 'uint256']
     );
     compiledCalls.push(callData);
   }
