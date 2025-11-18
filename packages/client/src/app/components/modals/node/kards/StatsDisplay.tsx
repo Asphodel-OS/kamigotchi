@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { calcHealth, Kami } from 'app/cache/kami';
+import { Kami } from 'app/cache/kami';
 import { Pairing, TextTooltip } from 'app/components/library';
 import { StatBorderColors, StatColors, StatIcons } from 'constants/stats';
 import { getAffinityImage } from 'network/shapes/utils';
@@ -13,8 +13,6 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
   const power = stats.power.total;
   const violence = stats.violence.total;
   const harmony = stats.harmony.total;
-  const health = calcHealth(kami);
-  const healthText = `${health.toFixed()} / ${stats?.health.total ?? 0}`;
 
   return (
     <Container>

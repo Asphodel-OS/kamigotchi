@@ -1,9 +1,10 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { calcHealth } from 'app/cache/kami';
+import { calcHealth, isResting } from 'app/cache/kami';
 import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { HealthColors } from 'constants/kamis/health';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { getItemImage } from 'network/shapes/utils/images';
@@ -27,10 +28,8 @@ export const KamiCard = ({
   label,
   labelAlt,
   actions,
-  showBattery,
-  showLevelUp,
-  showSkillPoints,
-  showCooldown,
+  show,
+  tick,
   utils: { calcExpRequirement, getTempBonuses } = {},
 }: {
   kami: Kami; // assumed to have a harvest attached
@@ -38,33 +37,29 @@ export const KamiCard = ({
   content: ReactNode;
   label?: LabelParams;
   labelAlt?: LabelParams;
+  show?: {
+    battery?: boolean;
+    levelUp?: boolean;
+    skillPoints?: boolean;
+    cooldown?: boolean;
+  };
   utils?: {
     calcExpRequirement?: (lvl: number) => number;
     getTempBonuses?: (kami: Kami) => Bonus[];
   };
-  showBattery?: boolean;
-  showLevelUp?: boolean;
-  showSkillPoints?: boolean;
-  showCooldown?: boolean;
+  tick: number;
 }) => {
   const setModals = useVisibility((s) => s.setModals);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setKami = useSelected((s) => s.setKami);
   const kamiIndex = useSelected((s) => s.kamiIndex);
+
   const [canLevel, setCanLevel] = useState(false);
+  const [currentHealth, setCurrentHealth] = useState(0);
+
   const buffsRef = useRef<HTMLDivElement | null>(null);
 
-  // horizontal scroll for buffs
-  const handleWheel = (e: React.WheelEvent) => {
-    if (!buffsRef.current) return;
-    e.preventDefault();
-    buffsRef.current.scrollLeft += e.deltaY;
-  };
-
   // const { filter: cdFilter, foreground: cdForeground } = useCooldownVisuals(kami, showCooldown);
-
-  /////////////////
-  // INTERACTION
 
   // check if a kami can level up
   useEffect(() => {
@@ -74,6 +69,13 @@ export const KamiCard = ({
     setCanLevel(expCurr >= expLimit);
   }, [kami, calcExpRequirement]);
 
+  useEffect(() => {
+    setCurrentHealth(calcHealth(kami));
+  }, [tick]);
+
+  /////////////////
+  // INTERACTION
+
   // toggle the kami modal settings depending on its current state
   const handleKamiClick = () => {
     const sameKami = kamiIndex === kami.index;
@@ -82,6 +84,31 @@ export const KamiCard = ({
     if (kamiModalOpen && sameKami) setModals({ kami: false });
     else setModals({ kami: true });
     playClick();
+  };
+
+  // horizontal scroll for buffs
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!buffsRef.current) return;
+    e.preventDefault();
+    buffsRef.current.scrollLeft += e.deltaY;
+  };
+
+  /////////////////
+  // INTERPRETATION
+
+  // get the percent health the kami has remaining
+  const calcHealthPercent = () => {
+    const total = kami.stats?.health.total ?? 0;
+    return (100 * currentHealth) / total;
+  };
+
+  // get the color of the kami's status bar
+  const getHealthColor = (level: number) => {
+    if (isResting(kami)) return HealthColors.resting;
+    if (level <= 25) return HealthColors.dying;
+    if (level <= 50) return HealthColors.vulnerable;
+    if (level <= 75) return HealthColors.exposed;
+    return HealthColors.healthy;
   };
 
   /////////////////
@@ -106,8 +133,8 @@ export const KamiCard = ({
         icon: kami.image,
         onClick: handleKamiClick,
         effects: {
-          showLevelUp: showLevelUp && canLevel,
-          showSkillPoints: showSkillPoints && (kami.skills?.points ?? 0) > 0,
+          showLevelUp: show?.levelUp && canLevel,
+          showSkillPoints: show?.skillPoints && (kami.skills?.points ?? 0) > 0,
           foreground: itemBonuses.length > 0 && (
             <Buffs ref={buffsRef} onWheel={handleWheel}>
               {itemBonuses.map((bonus, i) => (
@@ -121,13 +148,21 @@ export const KamiCard = ({
       }}
     >
       <TitleBar>
-        <TitleText showSkillPoints={showSkillPoints} key='title' onClick={() => handleKamiClick()}>
+        <TitleText
+          showSkillPoints={show?.skillPoints}
+          key='title'
+          onClick={() => handleKamiClick()}
+        >
           {kami.name}
         </TitleText>
         <TitleCorner key='corner'>
-          {showCooldown && <Cooldown kami={kami} />}
-          {showBattery && (
-            <Health current={calcHealth(kami)} total={kami.stats?.health.total ?? 0} />
+          {show?.cooldown && <Cooldown kami={kami} tick={tick} />}
+          {show?.battery && (
+            <Health
+              current={calcHealth(kami)}
+              total={kami.stats?.health.total ?? 0}
+              color={getHealthColor(calcHealthPercent())}
+            />
           )}
         </TitleCorner>
       </TitleBar>

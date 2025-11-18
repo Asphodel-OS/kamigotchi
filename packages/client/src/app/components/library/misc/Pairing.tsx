@@ -25,7 +25,7 @@ export const Pairing = ({
     border: string;
   };
   reverse?: boolean;
-  scale?: number; // default scale of iconSize and textSize aren't defined
+  scale?: number; // default scale if iconSize and textSize aren't defined
   tooltip?: string[];
 }) => {
   return (

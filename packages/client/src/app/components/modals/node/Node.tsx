@@ -264,6 +264,7 @@ export const NodeModal: UIComponent = {
           data={{ ...data, account }}
           display={display}
           utils={utils}
+          tick={tick}
         />
       </ModalWrapper>
     );

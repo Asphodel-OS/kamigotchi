@@ -15,8 +15,7 @@ const getKamiCacheKey = (k: Kami) =>
     ? (k as any).index
     : ((k as any).id ?? `name:${(k as any).name || 'unknown'}`);
 
-export const Cooldown = ({ kami, collapsedView }: { kami: Kami; collapsedView?: boolean }) => {
-  const [lastTick, setLastTick] = useState(Date.now());
+export const Cooldown = ({ kami, tick }: { kami: Kami; tick: number }) => {
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);
 
@@ -24,10 +23,6 @@ export const Cooldown = ({ kami, collapsedView }: { kami: Kami; collapsedView?: 
   useEffect(() => {
     const total = calcCooldownRequirement(kami);
     setTotal(total);
-
-    const refreshClock = () => setLastTick(Date.now());
-    const timerId = setInterval(refreshClock, 1000);
-    return () => clearInterval(timerId);
   }, []);
 
   // update the total of the cooldown meter whenever the kami changes
@@ -42,7 +37,7 @@ export const Cooldown = ({ kami, collapsedView }: { kami: Kami; collapsedView?: 
   useEffect(() => {
     const currentCooldown = calcCooldown(kami);
     setCurrent(currentCooldown);
-  }, [lastTick, kami]);
+  }, [tick, kami]);
 
   return (
     <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>

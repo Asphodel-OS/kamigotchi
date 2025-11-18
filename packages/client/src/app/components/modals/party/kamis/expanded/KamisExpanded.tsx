@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { getHarvestItem } from 'app/cache/harvest';
 import { calcOutput, isDead, isHarvesting } from 'app/cache/kami';
 import { KamiCard } from 'app/components/library';
-import { LabelParams } from 'app/components/library/cards/KamiCard/KamiCard';
 import { FeedIcon, ReviveIcon } from 'assets/images/icons/actions';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
@@ -44,9 +43,9 @@ export const KamisExpanded = ({
 
   // get the balance subtext for a kami
   // TODO: update this with iconography
-  const getSubtext = (kami: Kami): LabelParams => {
+  const getSubtext = (kami: Kami) => {
     const harvest = kami.harvest;
-    if (!harvest || harvest.state != 'ACTIVE') return { text: '' };
+    if (!harvest || harvest.state != 'ACTIVE') return;
     const item = getHarvestItem(harvest);
     return { text: `${calcOutput(kami)}`, icon: item.image };
   };
@@ -90,11 +89,14 @@ export const KamisExpanded = ({
           actions={DisplayedActions(account, kami, node)}
           content={<StatusDisplay kami={kami} tick={tick} />}
           label={getSubtext(kami)}
+          show={{
+            battery: true,
+            levelUp: true,
+            skillPoints: true,
+            cooldown: true,
+          }}
           utils={utils}
-          showBattery
-          showCooldown
-          showLevelUp
-          showSkillPoints
+          tick={tick}
         />
       ))}
     </Container>

@@ -16,6 +16,7 @@ export const AllyKards = ({
   data,
   display,
   utils,
+  tick,
 }: {
   actions: {
     collect: (kami: Kami) => void;
@@ -31,6 +32,7 @@ export const AllyKards = ({
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
   };
+  tick: number;
 }) => {
   const { collect, stop } = actions;
   const { account, kamis } = data;
@@ -78,8 +80,11 @@ export const AllyKards = ({
             content={<StatsDisplay kami={kami} />}
             label={getLabel(kami)}
             utils={{ getTempBonuses }}
-            showBattery
-            showCooldown
+            show={{
+              battery: true,
+              cooldown: true,
+            }}
+            tick={tick}
           />
         ))}
     </Container>

@@ -3,15 +3,23 @@ import styled from 'styled-components';
 import { StatIcons } from 'constants/stats';
 import { TextTooltip } from '../..';
 
-export const Health = ({ current, total }: { current: number; total: number }) => {
+export const Health = ({
+  current,
+  total,
+  color,
+}: {
+  current: number;
+  total: number;
+  color: string;
+}) => {
   const percent = Math.min(100, Math.max(0, (current / total) * 100));
   return (
-    <TextTooltip text={[`Health: ${current}/${total}`]}>
+    <TextTooltip text={[`${percent.toFixed(1)}%`]}>
       <HealthContainer>
         {current}/{total}
         <Icon src={StatIcons.health} />
       </HealthContainer>
-      <HealthFill $percent={percent} />
+      <HealthFill $percent={percent} color={color} />
     </TextTooltip>
   );
 };
@@ -34,7 +42,7 @@ const HealthContainer = styled.div`
   margin-right: 0.3vw;
 `;
 
-const HealthFill = styled.div<{ $percent: number }>`
+const HealthFill = styled.div<{ $percent: number; color: string }>`
   position: absolute;
   overflow: hidden;
   left: 0;
@@ -52,13 +60,7 @@ const HealthFill = styled.div<{ $percent: number }>`
     top: 0;
     bottom: 0;
     width: ${({ $percent }) => Math.min(100, Math.max(0, $percent))}%;
-    background: ${({ $percent }) => {
-      const health = Math.min(100, Math.max(0, $percent));
-      if (health <= 25) return '#BD4F6C';
-      if (health <= 50) return '#F3752B';
-      if (health <= 75) return '#F9DB6D';
-      return ` #16DB93`;
-    }};
+    background: ${({ color }) => color};
     transition: width 0.4s ease;
   }
 `;

@@ -15,7 +15,6 @@ import { playClick } from 'utils/sounds';
 import { StatsDisplay } from './StatsDisplay';
 
 type KamiSort = 'violence' | 'health' | 'output' | 'cooldown';
-const REFRESH_INTERVAL = 1000;
 const SortMap: Record<KamiSort, string> = {
   cooldown: CooldownIcon,
   health: ActionIcons.liquidate,
@@ -30,6 +29,7 @@ export const EnemyCards = ({
   display,
   state,
   utils,
+  tick,
 }: {
   actions: {
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
@@ -53,6 +53,7 @@ export const EnemyCards = ({
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
+  tick: number;
 }) => {
   const { liquidate } = actions;
   const { account, allies, enemyEntities } = data;
@@ -68,7 +69,6 @@ export const EnemyCards = ({
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [tick, setTick] = useState(Date.now());
 
   const [enemies, setEnemies] = useState<Kami[]>([]);
   const [sorted, setSorted] = useState<Kami[]>([]);
@@ -84,13 +84,6 @@ export const EnemyCards = ({
       })),
     []
   );
-
-  // set up ticking
-  useEffect(() => {
-    const refreshClock = () => setTick(Date.now());
-    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-    return () => clearInterval(timerId);
-  }, []);
 
   // populate enemy kami data as the list of entities changes.
   // the purpose of this hook is to incrementally ensure all kamis that belong
@@ -233,8 +226,11 @@ export const EnemyCards = ({
               label={getLabel(kami)}
               labelAlt={getLabelAlt(kami)}
               utils={{ getTempBonuses }}
-              showBattery
-              showCooldown
+              show={{
+                battery: true,
+                cooldown: true,
+              }}
+              tick={tick}
             />
           );
         })}

@@ -13,16 +13,17 @@ import {
 } from 'app/cache/kami';
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
 import { Overlay, Text, TextTooltip } from 'app/components/library';
-import { Cooldown } from 'app/components/library/cards/KamiCard/Cooldown';
 import { useSelected, useVisibility } from 'app/stores';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
+import { HealthColors } from 'constants/kamis/health';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
+import { Cooldown } from './Cooldown';
 
 export const KamiBar = ({
   kami,
@@ -175,11 +176,11 @@ export const KamiBar = ({
 
   // get the color of the kami's status bar
   const getStatusColor = (level: number) => {
-    if (isResting(kami)) return '#9CBCD2';
-    if (level <= 25) return '#BD4F6C';
-    if (level <= 50) return '#F3752B';
-    if (level <= 75) return '#F9DB6D';
-    return '#16DB93';
+    if (isResting(kami)) return HealthColors.resting;
+    if (level <= 25) return HealthColors.dying;
+    if (level <= 50) return HealthColors.vulnerable;
+    if (level <= 75) return HealthColors.exposed;
+    return HealthColors.healthy;
   };
 
   /////////////////
@@ -209,7 +210,7 @@ export const KamiBar = ({
         </TextTooltip>
       </Middle>
       <Right>
-        {showCooldown && <Cooldown collapsedView={true} kami={kami} />}
+        {showCooldown && <Cooldown kami={kami} />}
         {actions}
       </Right>
     </Container>
