@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { objectClock } from 'assets/images/rooms/13_giftshop';
 import { TextTooltip } from '../poppers';
 
-export const Countdown = ({ total, current }: { total: number; current: number }) => {
+export const CountdownBar = ({ total, current }: { total: number; current: number }) => {
   const percent = Math.min(100, Math.max(0, (current / total) * 100));
   return (
     <TextTooltip text={[`Cooldown: ${Math.round(current)}s`]}>
@@ -22,18 +22,20 @@ interface CooldownFillProps {
 
 const StaminaContainer = styled.div`
   position: absolute;
+  margin-left: 0.3vw;
+  gap: 0.2vw;
   top: 12%;
   right: 1%;
-  font-size: 0.55vw;
+  z-index: 1;
+
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+
+  font-size: 0.55vw;
   font-weight: bold;
-  z-index: 1;
   color: #2d0b42ff;
-  gap: 0.2vw;
-  margin-left: 0.3vw;
 `;
 
 const CooldownFill = styled.div.attrs<CooldownFillProps>(({ percent }) => ({
@@ -43,12 +45,14 @@ const CooldownFill = styled.div.attrs<CooldownFillProps>(({ percent }) => ({
 }))<CooldownFillProps>`
   position: absolute;
   overflow: hidden;
+  border-top-right-radius: 0.45vw;
+
   top: 0;
   bottom: 0;
   right: 0;
-  background: #bd8fd4ff;
   width: 19.9%;
-  border-top-right-radius: 0.6vw;
+  background: #bd8fd4ff;
+
   &::after {
     content: '';
     position: absolute;

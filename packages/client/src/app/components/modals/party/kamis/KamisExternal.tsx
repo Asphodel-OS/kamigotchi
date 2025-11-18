@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, KamiBar } from 'app/components/library';
@@ -7,10 +6,6 @@ import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { View } from '../types';
-
-// resorting to this pattern as useMemo and useCallback don't seem to be effective
-const StakeButtons = new Map<number, React.ReactNode>();
-const SendButtons = new Map<number, React.ReactNode>();
 
 export const KamisExternal = ({
   data: { kamis },

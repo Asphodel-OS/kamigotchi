@@ -18,15 +18,15 @@ export const Pairing = ({
 }: {
   icon: string;
   text: string;
-  tooltip?: string[];
-  scale?: number;
   textSize?: number;
   iconSize?: number;
-  reverse?: boolean;
   background?: {
     gradient: string;
     border: string;
   };
+  reverse?: boolean;
+  scale?: number; // default scale of iconSize and textSize aren't defined
+  tooltip?: string[];
 }) => {
   return (
     <Container

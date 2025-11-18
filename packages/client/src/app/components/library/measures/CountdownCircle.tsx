@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 // 0% means countdown is finished
-export const OldCountdown = ({ total, current }: { total: number; current: number }) => {
+export const CountdownCircle = ({ total, current }: { total: number; current: number }) => {
   const percent = Math.min(100, Math.max(0, (current / total) * 100));
 
   let color = '#29ABE9'; // blue;
@@ -12,20 +12,20 @@ export const OldCountdown = ({ total, current }: { total: number; current: numbe
   else if (percent > 0) color = '#23BD41'; // green
 
   return (
-    <CountdownWrapper>
-      <CountdownCircle percent={percent} color={color} />
+    <Container>
+      <OuterCircle percent={percent} color={color} />
       <InnerCircle />
-    </CountdownWrapper>
+    </Container>
   );
 };
 
-const CountdownWrapper = styled.div`
+const Container = styled.div`
   position: relative;
   width: 1.1vw;
   height: 1.1vw;
 `;
 
-const CountdownCircle = styled.div.attrs<{
+const OuterCircle = styled.div.attrs<{
   percent: number;
   color: string;
 }>(({ percent, color }) => ({

@@ -1,3 +1,4 @@
 export { Battery } from './Battery';
-export { Countdown } from './Countdown';
+export { CountdownBar } from './CountdownBar';
+export { CountdownCircle } from './CountdownCircle';
 export { ProgressBar } from './ProgressBar';
