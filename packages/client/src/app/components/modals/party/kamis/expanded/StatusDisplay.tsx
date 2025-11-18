@@ -97,7 +97,10 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
 
   // returns the onClick function for the description
   const getDescriptionOnClick = (kami: Kami) => {
-    if (isHarvesting(kami)) return () => selectNode(kami.harvest?.node?.index!);
+    if (isHarvesting(kami) && kami.harvest?.node) {
+      const node = kami.harvest.node;
+      return () => selectNode(node.index);
+    }
   };
 
   /////////////////

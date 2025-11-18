@@ -197,7 +197,7 @@ const TitleBar = styled.div`
 const TitleText = styled.div`
   position: relative;
   z-index: 1;
-  font-size: 0.9vw;
+  font-size: 0.75vw;
 
   text-align: left;
   width: 100%;
