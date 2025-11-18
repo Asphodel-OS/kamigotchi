@@ -1,16 +1,13 @@
 # Global
-
--       @chlwys @jiracheron
+*       @chlwys @jiracheron
 
 # By Language
-
-_.js @jiracheron
-_.sol @chlwys
-_.ts @jiracheron
-_.tsx @jiracheron
+*.js    @jiracheron
+*.sol   @chlwys
+*.ts    @jiracheron 
+*.tsx   @jiracheron
 
 # By Domain
-
 packages/client/ @jiracheron @chlwys
 packages/client/src/components/modals/chat/ @Xenofluxx
 packages/client/src/kamiden/ @hubur
