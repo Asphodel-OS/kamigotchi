@@ -230,7 +230,7 @@ export const Toolbar = ({
 
   // get DropDownToggle tooltips, depending on view
   const getDDTTooltips = (mode: View) => {
-    if (mode === 'external') return ['Stake Kami. (You must be at Scrap Confluence)'];
+    if (mode === 'external') return ['Import Kami. (You must be at Scrap Confluence)'];
     return ['Add Kami to Node', 'Collect Harvest', 'Stop Harvest'];
   };
 

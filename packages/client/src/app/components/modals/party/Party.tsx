@@ -205,6 +205,13 @@ export const PartyModal: UIComponent = {
       }
     }, [nftData]);
 
+    // if there are no world kamis and only wild, set the view to External
+    useEffect(() => {
+      if (wildKamis.length && kamis.length === 0) {
+        setView('external');
+      }
+    }, [wildKamis.length, kamis.length]);
+
     /////////////////
     // ACTIONS
 
