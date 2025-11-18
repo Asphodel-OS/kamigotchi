@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
 import { objectClock } from 'assets/images/rooms/13_giftshop';
+import { calcPercent } from 'utils/numbers';
 import { TextTooltip } from '../poppers';
 
 export const CountdownBar = ({ total, current }: { total: number; current: number }) => {
-  const percent = Math.min(100, Math.max(0, (current / total) * 100));
   return (
     <TextTooltip text={[`Cooldown: ${Math.round(current)}s`]}>
       <StaminaContainer>
         {`${Math.round(current)}s`}
         <Icon src={objectClock} />
       </StaminaContainer>
-      <CooldownFill percent={percent} />
+      <CooldownFill percent={calcPercent(current, total)} />
     </TextTooltip>
   );
 };

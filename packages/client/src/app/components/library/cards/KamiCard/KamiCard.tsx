@@ -8,6 +8,7 @@ import { HealthColors } from 'constants/kamis/health';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { getItemImage } from 'network/shapes/utils/images';
+import { calcPercent } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
 import { Cooldown } from './Cooldown';
@@ -69,6 +70,7 @@ export const KamiCard = ({
     setCanLevel(expCurr >= expLimit);
   }, [kami, calcExpRequirement]);
 
+  // update the current health on the kami on each tick
   useEffect(() => {
     setCurrentHealth(calcHealth(kami));
   }, [tick]);
@@ -95,12 +97,6 @@ export const KamiCard = ({
 
   /////////////////
   // INTERPRETATION
-
-  // get the percent health the kami has remaining
-  const calcHealthPercent = () => {
-    const total = kami.stats?.health.total ?? 0;
-    return (100 * currentHealth) / total;
-  };
 
   // get the color of the kami's status bar
   const getHealthColor = (level: number) => {
@@ -157,7 +153,7 @@ export const KamiCard = ({
             <Health
               current={calcHealth(kami)}
               total={kami.stats?.health.total ?? 0}
-              color={getHealthColor(calcHealthPercent())}
+              color={getHealthColor(calcPercent(currentHealth, kami.stats?.health.total ?? 0))}
             />
           )}
         </TitleCorner>

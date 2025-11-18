@@ -7,37 +7,25 @@ import { getAffinityImage } from 'network/shapes/utils';
 
 // generate the content section for a Kami
 export const StatsDisplay = ({ kami }: { kami: Kami }) => {
-  const stats = kami.stats;
-  if (!stats) return <></>;
-
-  const power = stats.power.total;
-  const violence = stats.violence.total;
-  const harmony = stats.harmony.total;
+  const power = kami.stats?.power.total ?? 0;
+  const violence = kami.stats?.violence.total ?? 0;
+  const harmony = kami.stats?.harmony.total ?? 0;
+  const bodyAffinity = kami.traits?.body.affinity ?? 'UNKOWN';
+  const handAffinity = kami.traits?.hand.affinity ?? 'UNKOWN';
 
   return (
     <Container>
-      <Affinities>
-        {kami.traits?.body.affinity && (
-          <>
-            <TextTooltip text={[`Body`]}>
-              <Affinity>
-                <Icon src={getAffinityImage(kami.traits?.body.affinity)} />
-              </Affinity>
-            </TextTooltip>
-          </>
-        )}
-
-        {kami.traits?.hand.affinity && (
-          <>
-            <Slash>/</Slash>
-            <TextTooltip text={[`Hand`]}>
-              <Affinity>
-                <Icon src={getAffinityImage(kami.traits?.hand.affinity)} />
-              </Affinity>
-            </TextTooltip>
-          </>
-        )}
-      </Affinities>
+      <TextTooltip text={[`Body: ${bodyAffinity}`, `Hand: ${handAffinity}`]} alignText='left'>
+        <Affinities>
+          <Affinity>
+            <Icon src={getAffinityImage(bodyAffinity)} />
+          </Affinity>
+          <Slash>/</Slash>
+          <Affinity>
+            <Icon src={getAffinityImage(handAffinity)} />
+          </Affinity>
+        </Affinities>
+      </TextTooltip>
       <Row>
         <Pairing
           icon={StatIcons.power}
@@ -108,5 +96,5 @@ const Affinity = styled.span`
 `;
 
 const Slash = styled.span`
-  font-size: 0.7vw;
+  font-size: 0.9vw;
 `;
