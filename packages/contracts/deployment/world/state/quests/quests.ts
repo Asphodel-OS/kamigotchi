@@ -10,14 +10,24 @@ import { addRewards } from './rewards';
 export const init = async (api: AdminAPI, entry: any): Promise<boolean> => {
   const index = Number(entry['Index']);
   const name = entry['Title'];
-  const description = entry['Description'] ?? '';
-  const altDescription = entry['Resolution text'] ?? '';
+  const description = entry['Introduction Dialogue'] ?? '';
+  const altDescription = entry['Resolution Dialogue'] ?? '';
   const isDaily = entry['Daily'] === 'Yes';
+  const questType = entry['Type'] ?? '';
+  const questGiver = entry['Giver'] ?? '';
 
   let success = true;
   try {
     console.log(`Creating ${isDaily ? 'Daily' : ''} Quest: ${index} (${name})`);
-    await api.registry.quest.create(index, name, description, altDescription, isDaily ? 64800 : 0);
+    await api.registry.quest.create(
+      index,
+      name,
+      description,
+      altDescription,
+      questType,
+      questGiver,
+      isDaily ? 64800 : 0
+    );
   } catch (e) {
     console.log(`Error: Failed to create Quest ${index}`);
     console.log(`  ${!!description} ${!!altDescription} ${isDaily}`);

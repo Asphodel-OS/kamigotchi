@@ -129,6 +129,16 @@ export const Header = ({
     );
   };
 
+  function getAffinityIcons(affs: string[]) {
+    return (
+      <div style={{ display: 'flex', flexFlow: 'row' }}>
+        {affs.map((aff) => (
+          <Icon src={getAffinityImage(aff)} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <Container>
       <Content>
@@ -137,8 +147,8 @@ export const Header = ({
           <Name>{room.name}</Name>
           <Row>
             <Label>Type: </Label>
-            <TextTooltip text={[node.affinity ?? '']}>
-              <Icon src={getAffinityImage(node.affinity)} />
+            <TextTooltip text={[node.affinity.join(', ') ?? '']}>
+              {getAffinityIcons(node.affinity)}
             </TextTooltip>
             <ItemDrops node={node} scavenge={scavenge} utils={utils} />
           </Row>

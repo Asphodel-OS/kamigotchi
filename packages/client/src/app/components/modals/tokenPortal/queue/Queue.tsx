@@ -1,36 +1,41 @@
 import styled from 'styled-components';
 
-import { Account, Item, Receipt } from 'network/shapes';
+import { Configs } from 'app/cache/config/portal';
+import { PortalReceipt } from 'clients/kamiden/proto';
+import { EntityID } from 'engine/recs';
+import { Account, Item } from 'network/shapes';
 import { Table } from './table/Table';
 
 export const Queue = ({
   actions,
   data,
-  state,
+
   isVisible,
+  utils,
 }: {
   actions: {
-    claim: (receiptID: Receipt) => Promise<void>;
-    cancel: (receiptID: Receipt) => Promise<void>;
+    claim: (receiptID: PortalReceipt) => Promise<void>;
+    cancel: (receiptID: PortalReceipt) => Promise<void>;
   };
   data: {
+    myReceipts: PortalReceipt[];
+    othersReceipts: PortalReceipt[];
+    config: Configs;
     account: Account;
-    receipts: Receipt[];
   };
-  state: {
-    options: Item[];
-    setOptions: (items: Item[]) => void;
-  };
-  isVisible: boolean;
-}) => {
-  const { account, receipts } = data;
 
+  isVisible: boolean;
+  utils: {
+    getItemByIndex: (index: number) => Item;
+    getAccountByID: (id: EntityID) => Account;
+  };
+}) => {
   /////////////////
   // DISPLAY
 
   return (
     <Container isVisible={isVisible}>
-      <Table actions={actions} data={{ account, receipts }} state={state} />
+      <Table actions={actions} data={data} utils={utils} />
     </Container>
   );
 };

@@ -6,13 +6,7 @@ import { AffinityColors } from 'constants/affinities';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
-export const AffinityBlock = ({
-  kami,
-  traitKey,
-}: {
-  kami: Kami;
-  traitKey: 'body' | 'hand';
-}) => {
+export const AffinityBlock = ({ kami, traitKey }: { kami: Kami; traitKey: 'body' | 'hand' }) => {
   const traits = kami.traits!;
 
   const icon = TraitIcons[traitKey as keyof typeof TraitIcons];
@@ -64,4 +58,11 @@ const Text = styled.div<{ size: number }>`
   font-size: ${({ size }) => size}vw;
   text-shadow: ${({ size }) => `0 0 ${size * 0.4}vw white`};
   pointer-events: none;
+  /* mystery bug fix?*/
+  position: unset;
+  border: unset;
+  border-radius: unset;
+  height: unset;
+  width: unset;
+  background-color: unset;
 `;

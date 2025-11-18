@@ -7,6 +7,7 @@ import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getFactionImage } from 'network/shapes/utils/images';
+import { useEffect, useState } from 'react';
 
 // Quest Card
 export const QuestCard = ({
@@ -27,6 +28,17 @@ export const QuestCard = ({
 }) => {
   const { accept, complete, burnItems } = actions;
   const { describeEntity, getItemBalance } = utils;
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isAltCollapsed, setIsAltCollapsed] = useState(false);
+
+  // collapse the quest description if
+  // the quest has a descriptionAlt
+  useEffect(() => {
+    if (quest.descriptionAlt) {
+      setIsCollapsed(true);
+    }
+  }, []);
 
   /////////////////
   // INTERPRETATION
@@ -155,7 +167,26 @@ export const QuestCard = ({
         {getFactionStamp(quest)}
       </Overlay>
       <Title>{quest.name}</Title>
-      <Description>{quest.description}</Description>
+      {status === 'COMPLETED' ? (
+        <>
+          <CollapsibleSegment onClick={() => setIsCollapsed(!isCollapsed)}>
+            <Arrow>{isCollapsed ? '▸' : '▾'}</Arrow> Quest
+          </CollapsibleSegment>
+          {!isCollapsed && <Description>{quest.description}</Description>}
+
+          {quest.descriptionAlt && (
+            <>
+              <CollapsibleSegment onClick={() => setIsAltCollapsed(!isAltCollapsed)}>
+                <Arrow>{isAltCollapsed ? '▸' : '▾'}</Arrow> Completion
+              </CollapsibleSegment>
+              {!isAltCollapsed && <Description>{quest.descriptionAlt}</Description>}
+            </>
+          )}
+        </>
+      ) : (
+        <Description>{quest.description}</Description>
+      )}
+
       <Section key='objectives' style={{ display: quest.objectives.length > 0 ? 'block' : 'none' }}>
         <SubTitle>Objectives</SubTitle>
         {quest.objectives.map((o) => (
@@ -197,12 +228,13 @@ const Container = styled.div<{ completed?: boolean }>`
   justify-content: flex-start;
   align-items: flex-start;
 
-  ${({ completed }) => completed && 'opacity: 0.3;'}
+  ${({ completed }) => completed && 'opacity: 0.5;'}
 `;
 
 const Title = styled.div`
   font-size: 0.9vw;
   line-height: 1.2vw;
+  width: 90%;
 `;
 
 const Description = styled.div`
@@ -249,4 +281,16 @@ const Image = styled.img<{ size: number }>`
   width: ${({ size }) => size}vw;
   margin-right: ${({ size }) => size * 0.2}vw;
   user-drag: none;
+`;
+
+const CollapsibleSegment = styled.div`
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+`;
+
+const Arrow = styled.div`
+  font-size: 1.5vw;
+  margin-right: 0.3vw;
+  line-height: 1;
 `;

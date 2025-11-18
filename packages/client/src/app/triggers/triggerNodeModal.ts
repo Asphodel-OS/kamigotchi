@@ -5,9 +5,11 @@ export const triggerNodeModal = (index: number) => {
   const { modals } = useVisibility.getState();
   const { setNode } = useSelected.getState();
 
+  // Always update the node index, even if modal is already open
+  setNode(index);
+
   if (!modals.node) {
     playClick();
-    setNode(index);
     useVisibility.setState({
       modals: {
         ...modals,

@@ -224,7 +224,6 @@ export const InventoryModal: UIComponent = {
         onClose={() => setMode('STOCK')}
         canExit
         noPadding
-        overlay
         truncate
       >
         {!accountEntity ? (

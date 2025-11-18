@@ -1,4 +1,5 @@
 import { PortalConfigs } from 'app/cache/config';
+import { Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
 
 // get the necessary deposit balance to achieve the target balance (in item units)
@@ -20,4 +21,9 @@ export const getResultWithdraw = (config: PortalConfigs, target: number) => {
 export const openBaselineLink = (address: string) => {
   window.open(`https://app.baseline.markets/trade/yominet/${address}`, '_blank');
   playClick();
+};
+
+// get the balance conversion rate from token to item
+export const getSwapRate = (item: Item) => {
+  return 10 ** (item.token?.scale ?? 0);
 };

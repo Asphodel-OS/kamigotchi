@@ -73,7 +73,12 @@ export const SendBar = ({
 
   const getSendTooltip = () => {
     if (selectedKami.entity === 0 || selectedAccount.entity === 0) {
-      return ['You must select a Kami and an Account'];
+      return [
+        'Send Kami to another account.',
+        '\n',
+        'You must first select',
+        'a Kami and an Account',
+      ];
     }
 
     return [

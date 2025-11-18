@@ -7,15 +7,17 @@ import { Column, ColumnWidths, Sort, Sortable, SORTABLE } from './constants';
 export const Header = ({
   columns,
   state,
+  data,
 }: {
   columns: ColumnWidths;
   state: {
     sort: Sort;
     setSort: (sort: Sort) => void;
   };
+  data: { mode: string };
 }) => {
   const { sort, setSort } = state;
-
+  const { mode } = data;
   /////////////////
   // INTERACTION
 
@@ -27,6 +29,12 @@ export const Header = ({
     playClick();
   };
 
+  const showColumn = (col: string) => {
+    return (
+      (col != 'Account' && mode === 'MINE') ||
+      (col != 'Type' && col != 'Actions' && mode === 'OTHERS')
+    );
+  };
   /////////////////
   // DISPLAY
 
@@ -34,7 +42,7 @@ export const Header = ({
     <Container>
       {Object.entries(columns).map(([col, width]) => {
         return (
-          <Label key={col} width={width}>
+          <Label key={col} width={width} visible={showColumn(col)}>
             <Text size={0.75} onClick={() => labelOnClick(col as Column)}>
               {col}
             </Text>
@@ -56,7 +64,7 @@ const Container = styled.div`
   padding: 0.6vw;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
 
   color: black;
@@ -67,12 +75,12 @@ const Container = styled.div`
   z-index: 1;
 `;
 
-const Label = styled.div<{ width: number }>`
+const Label = styled.div<{ width: number; visible: boolean }>`
   position: relative;
   padding: 0.6vw;
   width: ${({ width }) => width}vw;
 
-  display: flex;
+  display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;

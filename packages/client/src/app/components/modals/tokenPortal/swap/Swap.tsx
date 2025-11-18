@@ -8,9 +8,9 @@ import { IconButton } from 'app/components/library/buttons';
 import { useTokens } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { TokenIcons } from 'assets/images/tokens';
-import { Account, Inventory, Item } from 'network/shapes';
+import { Inventory, Item } from 'network/shapes';
 import { playClick } from 'utils/sounds';
-import { getNeededDeposit, getResultWithdraw } from '../utils';
+import { getNeededDeposit, getResultWithdraw, getSwapRate } from '../utils';
 import { Mode } from './types';
 
 export const Swap = ({
@@ -24,7 +24,6 @@ export const Swap = ({
     withdraw: (item: Item, amt: number) => Promise<void>;
   };
   data: {
-    account: Account;
     config: PortalConfigs;
     inventory: Inventory[];
   };
@@ -35,7 +34,7 @@ export const Swap = ({
   };
 }) => {
   const { approve, deposit, withdraw } = actions;
-  const { account, config, inventory } = data;
+  const { config, inventory } = data;
   const { options, selected, setSelected } = state;
   // hardcoded for now to just onyx
   const { allowance: onyxAllowance, balance: onyxBalance } = useTokens((s) => s.onyx);
@@ -98,11 +97,6 @@ export const Swap = ({
       image: item.image,
       onClick: () => setSelected(item),
     }));
-  };
-
-  // get the balance conversion rate from token to item
-  const getSwapRate = (item: Item) => {
-    return 10 ** (item.token?.scale ?? 0);
   };
 
   // get the conversion rate from item balance to token balance with tax applied

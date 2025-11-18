@@ -878,7 +878,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createQuest(uint32 index, uint duration) public returns (uint256 id) {
     vm.startPrank(deployer);
     id = __QuestRegistrySystem.create(
-      abi.encode(index, LibString.toString(index), "DESCRIPTION", "", duration)
+      abi.encode(index, LibString.toString(index), "DESCRIPTION", "", "type", "giver", duration)
     );
     __QuestRegistrySystem.setDisabled(index, false);
     vm.stopPrank();

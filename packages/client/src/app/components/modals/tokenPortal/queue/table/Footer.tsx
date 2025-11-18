@@ -11,7 +11,7 @@ export const Footer = ({ state }: { state: { mode: Filter; setMode: (mode: Filte
 
   // toggle between depositing and withdrawing
   const toggleMode = () => {
-    setMode(mode === 'MINE' ? 'ALL' : 'MINE');
+    setMode(mode === 'MINE' ? 'OTHERS' : 'MINE');
     playClick();
   };
 

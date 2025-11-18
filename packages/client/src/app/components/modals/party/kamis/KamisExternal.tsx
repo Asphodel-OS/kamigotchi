@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, KamiBar, TextTooltip } from 'app/components/library';
-import { ArrowIcons } from 'assets/images/icons/arrows';
-import { PORTAL_ROOM_INDEX } from 'constants/rooms';
+import { EmptyText, KamiBar } from 'app/components/library';
+import { objectBellShapedDevice } from 'assets/images/rooms/12_junkyard-machine';
 import { Account } from 'network/shapes/Account';
 import { Bonus } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
@@ -14,15 +13,10 @@ const StakeButtons = new Map<number, React.ReactNode>();
 const SendButtons = new Map<number, React.ReactNode>();
 
 export const KamisExternal = ({
-  actions: { sendKamis, stakeKamis },
-  data: { account, accounts, kamis },
+  data: { kamis },
   isVisible,
   utils,
 }: {
-  actions: {
-    sendKamis: (kami: Kami, account: Account) => void;
-    stakeKamis: (kamis: Kami[]) => void;
-  };
   controls: {
     view: View;
   };
@@ -37,102 +31,25 @@ export const KamisExternal = ({
   isVisible: boolean;
 }) => {
   /////////////////
-  // SUBSCRIPTIONS
-
-  // when a new kami is added, add both buttons
-  useEffect(() => {
-    kamis.forEach((kami) => {
-      if (!StakeButtons.has(kami.index)) {
-        // console.log(`adding stake button for ${kami.name}`);
-        StakeButtons.set(kami.index, StakeButton(kami));
-      }
-      if (!SendButtons.has(kami.index)) {
-        // console.log(`adding send button for ${kami.name}`);
-        SendButtons.set(kami.index, SendButton(kami));
-      }
-    });
-  }, [kamis.length]);
-
-  // when the room changes update all stake buttons
-  useEffect(() => {
-    kamis.forEach((kami) => {
-      StakeButtons.set(kami.index, StakeButton(kami));
-    });
-  }, [account.roomIndex]);
-
-  // when the list of accounts changes update all send buttons
-  useEffect(() => {
-    kamis.forEach((kami) => {
-      SendButtons.set(kami.index, SendButton(kami));
-    });
-  }, [accounts.length]);
-
-  /////////////////
-  // INTERPRETATION
-
-  // get the tooltip for a send action
-  const getSendTooltip = (kami: Kami) => {
-    const tooltip = [`Send ${kami.name} to another account.`];
-    return tooltip;
-  };
-
-  // get the tooltip for a stake action
-  const getStakeTooltip = (kami: Kami) => {
-    const tooltip = [`Import ${kami.name}`, `through the Scrap Confluence.`];
-    if (account.roomIndex !== PORTAL_ROOM_INDEX) {
-      tooltip.push(`\nYou must first navigate there`, `(search West of the Vending Machine)`);
-    }
-    return tooltip;
-  };
-
-  /////////////////
-  // DISPLAY
-
-  // compute the send button for a kami
-  const SendButton = (kami: Kami) => {
-    const options = accounts.map((targetAcc) => ({
-      text: `${targetAcc.name} (#${targetAcc.index})`,
-      onClick: () => sendKamis(kami, targetAcc),
-    }));
-
-    return (
-      <IconListButton
-        key='send-tooltip'
-        img={ArrowIcons.right}
-        options={options}
-        searchable
-        tooltip={{ text: getSendTooltip(kami) }}
-      />
-    );
-  };
-
-  // compute the stake button for a kami
-  const StakeButton = (kami: Kami) => {
-    return (
-      <TextTooltip key='stake-tooltip' text={getStakeTooltip(kami)}>
-        <IconButton
-          img={ArrowIcons.down}
-          onClick={() => stakeKamis([kami])}
-          disabled={account.roomIndex !== PORTAL_ROOM_INDEX}
-        />
-      </TextTooltip>
-    );
-  };
-
-  /////////////////
   // RENDER
 
   return (
     <Container isVisible={isVisible}>
       {kamis.map((kami) => (
-        <KamiBar
-          key={kami.entity}
-          kami={kami}
-          // actions={[StakeButtons.get(kami.index), SendButtons.get(kami.index)]}
-          utils={utils}
-          tick={0}
-        />
+        <KamiBar key={kami.entity} kami={kami} utils={utils} tick={0} />
       ))}
+      <EmptyText text={['You can import your new Kami', 'through the Kami Portal.']} size={1.2} />
+      <Row>
+        <EmptyText
+          text={[
+            'You can find the Portal',
+            'at the Scrap Confluence,',
+            'West of the Vending Machine.',
+          ]}
+          size={0.9}
+        />
+        <Image src={objectBellShapedDevice} />
+      </Row>
     </Container>
   );
 };
@@ -142,4 +59,15 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: column nowrap;
   gap: 0.45vw;
   padding: 0.6vw;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.6vw;
+`;
+
+const Image = styled.img`
+  width: 7vw;
+  image-rendering: pixelated;
 `;

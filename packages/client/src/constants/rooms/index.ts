@@ -10,6 +10,10 @@ import { room10 } from './10_forest-insect';
 import { room11 } from './11_waterfall';
 import { room12 } from './12_junkyard-machine';
 import { room13 } from './13_giftshop';
+import { room15 } from './15';
+import { room16 } from './16';
+import { room18 } from './18';
+import { room19 } from './19';
 import { room25 } from './25_lost-skeleton';
 import { room26 } from './26_trash-strewn-graves';
 import { room27 } from './27_guardhouse';
@@ -34,6 +38,8 @@ import { room54 } from './54_plane-interior';
 import { room55 } from './55_shady-path';
 import { room56 } from './56_butterfly-forest';
 import { room57 } from './57_river-crossing';
+import { room58 } from './58';
+import { room59 } from './59';
 import { room60 } from './60_scrap-trees';
 import { room61 } from './61_decaying-forest-path';
 import { room62 } from './62_centipedes';
@@ -41,6 +47,30 @@ import { room63 } from './63_deeper-forest-paths';
 import { room64 } from './64_burning-room';
 import { room65 } from './65_forest-hut';
 import { room66 } from './66_trading-room';
+import { room67 } from './67';
+import { room68 } from './68';
+import { room69 } from './69';
+import { room70 } from './70';
+import { room71 } from './71';
+import { room72 } from './72';
+import { room73 } from './73';
+import { room74 } from './74';
+import { room75 } from './75';
+import { room76 } from './76';
+import { room77 } from './77';
+import { room78 } from './78';
+import { room79 } from './79';
+import { room80 } from './80';
+import { room81 } from './81';
+import { room82 } from './82';
+import { room83 } from './83';
+import { room84 } from './84';
+import { room85 } from './85';
+import { room86 } from './86';
+import { room87 } from './87';
+import { room88 } from './88';
+import { room89 } from './89';
+import { room90 } from './90';
 import { Room } from './types';
 
 export const PORTAL_ROOM_INDEX = 12;
@@ -71,11 +101,11 @@ export const rooms: Room[] = [
   room12,
   room13,
   { index: 14, backgrounds: [''], objects: [] },
-  { index: 15, backgrounds: [''], objects: [] },
-  { index: 16, backgrounds: [''], objects: [] },
+  room15,
+  room16,
   { index: 17, backgrounds: [''], objects: [] },
-  { index: 18, backgrounds: [''], objects: [] },
-  { index: 19, backgrounds: [''], objects: [] },
+  room18,
+  room19,
   { index: 20, backgrounds: [''], objects: [] },
   { index: 21, backgrounds: [''], objects: [] },
   { index: 22, backgrounds: [''], objects: [] },
@@ -114,8 +144,8 @@ export const rooms: Room[] = [
   room55,
   room56,
   room57,
-  { index: 58, backgrounds: [''], objects: [] },
-  { index: 59, backgrounds: [''], objects: [] },
+  room58,
+  room59,
   room60,
   room61,
   room62,
@@ -123,4 +153,28 @@ export const rooms: Room[] = [
   room64,
   room65,
   room66,
+  room67,
+  room68,
+  room69,
+  room70,
+  room71,
+  room72,
+  room73,
+  room74,
+  room75,
+  room76,
+  room77,
+  room78,
+  room79,
+  room80,
+  room81,
+  room82,
+  room83,
+  room84,
+  room85,
+  room86,
+  room87,
+  room88,
+  room89,
+  room90,
 ];

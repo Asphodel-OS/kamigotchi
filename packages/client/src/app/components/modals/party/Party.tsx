@@ -205,11 +205,18 @@ export const PartyModal: UIComponent = {
       }
     }, [nftData]);
 
+    // if there are no world kamis and only wild, set the view to External
+    useEffect(() => {
+      if (wildKamis.length && kamis.length === 0) {
+        setView('external');
+      }
+    }, [wildKamis.length, kamis.length]);
+
     /////////////////
     // ACTIONS
 
     // send a kami NFT to another player
-    const sendKamiTx = (kami: Kami, to: Account) => {
+    const send = (kami: Kami, to: Account) => {
       writeContract({
         abi: erc721Abi,
         address: kamiNFTAddress,
@@ -219,7 +226,7 @@ export const PartyModal: UIComponent = {
     };
 
     // import a kami from the wild to the world
-    const stakeKamiTx = (kamis: Kami[]) => {
+    const stake = (kamis: Kami[]) => {
       const api = ownerAPIs.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -227,7 +234,7 @@ export const PartyModal: UIComponent = {
       actions.add({
         action: 'KamiDeposit',
         params: [kamis[0].index],
-        description: `Staking Kami ${kamis[0].index}`,
+        description: `Importing Kami ${kamis[0].index}`,
         execute: async () => {
           return api.portal.ERC721.kami.batch.stake(indices);
         },
@@ -298,7 +305,7 @@ export const PartyModal: UIComponent = {
             addKami: (kamis: Kami[]) => start(kamis, node),
             collectKami: (kamis: Kami[]) => collect(kamis),
             stopKami: (kamis: Kami[]) => stop(kamis),
-            stakeKami: (kamis: Kami[]) => stakeKamiTx(kamis),
+            stakeKami: (kamis: Kami[]) => stake(kamis),
           }}
           controls={{ sort, setSort, view, setView }}
           data={{ account, kamis, wildKamis }}
@@ -308,8 +315,6 @@ export const PartyModal: UIComponent = {
         <KamiList
           actions={{
             addKamis: (kamis: Kami[]) => start(kamis, node),
-            stakeKamis: stakeKamiTx,
-            sendKamis: sendKamiTx,
           }}
           controls={{ view }}
           data={{ account, accounts, kamis, wildKamis, node }}
@@ -318,7 +323,7 @@ export const PartyModal: UIComponent = {
           utils={utils}
         />
         <SendBar
-          actions={{ sendKami: (k: Kami, a: Account) => sendKamiTx(k, a) }}
+          actions={{ sendKami: (k: Kami, a: Account) => send(k, a) }}
           controls={{ sort, view }}
           data={{ accounts }}
           state={{ kamis: displayedKamis }}

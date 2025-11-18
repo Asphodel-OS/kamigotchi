@@ -1,13 +1,17 @@
 import styled from 'styled-components';
 
 interface Props {
-  icon: string;
+  icon: string | string[];
   color?: number;
 }
 export const FloatingOnMap = (props: Props) => {
+  const icons = Array.isArray(props.icon) ? props.icon : [props.icon];
+
   return (
     <Container>
-      <Icon icon={props.icon} $color={props.color} />
+      {icons.map((icon) => (
+        <Icon icon={icon} $color={props.color} />
+      ))}
       <Shadow />
     </Container>
   );
