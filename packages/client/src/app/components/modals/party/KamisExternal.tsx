@@ -13,15 +13,10 @@ const StakeButtons = new Map<number, React.ReactNode>();
 const SendButtons = new Map<number, React.ReactNode>();
 
 export const KamisExternal = ({
-  actions: { sendKamis, stakeKamis },
-  data: { account, accounts, kamis },
+  data: { kamis },
   isVisible,
   utils,
 }: {
-  actions: {
-    sendKamis: (kami: Kami, account: Account) => void;
-    stakeKamis: (kamis: Kami[]) => void;
-  };
   controls: {
     view: View;
   };
