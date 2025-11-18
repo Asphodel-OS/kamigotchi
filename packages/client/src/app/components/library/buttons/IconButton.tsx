@@ -2,10 +2,11 @@ import { SvgIconComponent } from '@mui/icons-material';
 import { ForwardedRef, forwardRef } from 'react';
 import styled from 'styled-components';
 
-import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
+import { clickFx, hoverFx, pulseFx, shakeFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
-// ActionButton is a text button that triggers an Action when clicked
+// IconButton is a button that triggers an action when clicked
+// TODO: clean up these parameters as nested objects
 export const IconButton = forwardRef(function IconButton(
   {
     img,
@@ -29,8 +30,8 @@ export const IconButton = forwardRef(function IconButton(
     noBorder,
     shake,
   }: {
-    img?: string | SvgIconComponent;
     onClick: Function;
+    img?: string | SvgIconComponent; // TODO: get rid of all svg icons and mui references
     text?: string;
     width?: number;
     shake?: boolean;
@@ -167,6 +168,10 @@ const Container = styled.button<{
         ` border-top-left-radius: 0;
       border-bottom-left-radius: 0;
   `}
+
+  ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
+  ${({ shake }) => shake && `animation: ${shakeFx} 0.5s ease-in-out infinite;`}
+
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
@@ -174,28 +179,6 @@ const Container = styled.button<{
   }
   &:active {
     animation: ${() => clickFx()} 0.3s;
-  }
-
-  ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
-
-  animation: ${({ shake }) => shake && `shake 0.5s ease-in-out infinite;`};
-
-  @keyframes shake {
-    0% {
-      transform: translate(0, 0) rotate(0deg);
-    }
-    25% {
-      transform: translate(0.1vw, 0.1vw) rotate(5deg);
-    }
-    50% {
-      transform: translate(0, 0) rotate(0deg);
-    }
-    75% {
-      transform: translate(-0.1vw, 0.1vw) rotate(-5deg);
-    }
-    100% {
-      transform: translate(0, 0) rotate(0deg);
-    }
   }
 `;
 
