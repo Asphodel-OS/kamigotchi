@@ -31,7 +31,8 @@ export const hashArgs = (args: any[], argTypes: string[], skipFormat?: boolean):
   if (IDStore.has(key)) id = IDStore.get(key)!;
   else {
     id = ethers.solidityPackedKeccak256(argTypes, args);
-    if (!skipFormat) id = formatEntityID(id);
+    // if (!skipFormat) id = formatEntityID(id); // no longer used, as all IDs are now formatted upon decoding via RECS
+    id = formatEntityID(id);
     IDStore.set(key, id);
   }
 

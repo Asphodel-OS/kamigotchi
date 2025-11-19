@@ -168,5 +168,5 @@ const getTierAnchorID = (goalIndex: number): EntityID => {
 };
 
 const getRwdAnchorID = (tierID: EntityID): EntityID => {
-  return hashArgs(['goal.reward', tierID], ['string', 'uint256'], true);
+  return hashArgs(['goal.reward', tierID], ['string', 'uint256']);
 };

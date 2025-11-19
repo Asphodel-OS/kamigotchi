@@ -71,5 +71,5 @@ export const get = (
 };
 
 export const genReqAnchor = (id: EntityID): EntityID => {
-  return hashArgs(['listing.requirement', id], ['string', 'uint256'], true);
+  return hashArgs(['listing.requirement', id], ['string', 'uint256']);
 };
