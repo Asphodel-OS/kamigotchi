@@ -9,5 +9,11 @@ export const room15: Room = {
     key: 'templeCave',
     path: templeCave,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'temple exit',
+      coordinates: { x1: 30, y1: 100, x2: 100, y2: 150 },
+      dialogue: 151,
+    },
+  ],
 };
