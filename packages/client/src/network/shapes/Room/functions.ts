@@ -1,6 +1,8 @@
 import { getComponentValue, World } from 'engine/recs';
 
 import { Components } from 'network/';
+import { Account } from '../Account';
+import { passesConditions } from '../Conditional';
 import { getRoomsX } from './getters';
 import { query } from './queries';
 import { getRoom, Room, RoomOptions } from './types';
@@ -39,4 +41,13 @@ export const getAdjacentRoomIndices = (components: Components, location: Coord):
   }
 
   return results;
+};
+
+export const canEnterRoom = (
+  world: World,
+  components: Components,
+  account: Account,
+  room: Room
+): boolean => {
+  return passesConditions(world, components, room.gates, account);
 };

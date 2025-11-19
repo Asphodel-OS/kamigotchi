@@ -14,7 +14,6 @@ import { StaminaIcon } from 'assets/images/icons/stats';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
-import { Condition } from 'network/shapes/Conditional';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Node } from 'network/shapes/Node';
 import { calculatePathStaminaCost, findPath, NullRoom, Room } from 'network/shapes/Room';
@@ -54,7 +53,7 @@ export const Grid = ({
   utils: {
     getKami: (entity: EntityIndex) => BaseKami;
     getKamiLocation: (entity: EntityIndex) => number | undefined;
-    passesConditions: (account: Account, gates: Condition[]) => boolean;
+    canEnterRoom: (room: Room) => boolean;
     queryNodeByIndex: (index: number) => EntityIndex;
     queryNodeKamis: (nodeEntity: EntityIndex) => EntityIndex[];
     queryRoomAccounts: (roomIndex: number) => EntityIndex[];
@@ -71,7 +70,7 @@ export const Grid = ({
   const {
     getKamiLocation,
     getKami,
-    passesConditions,
+    canEnterRoom,
     queryNodeByIndex,
     queryNodeKamis,
     queryRoomAccounts,
@@ -194,7 +193,7 @@ export const Grid = ({
 
   // check if a room is blocked by gates (requirements)
   const isRoomBlocked = (room: Room) => {
-    return !passesConditions(account, room.gates);
+    return !canEnterRoom(room);
   };
 
   // check if a room is an exit from another room

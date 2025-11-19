@@ -1,7 +1,7 @@
 import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
-import { Account, getAccount as _getAccount } from 'app/cache/account';
+import { getAccount as _getAccount } from 'app/cache/account';
 import { getKami as _getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoom as _getRoom, getRoomByIndex as _getRoomByIndex } from 'app/cache/room';
@@ -16,13 +16,12 @@ import {
   queryAccountKamis,
 } from 'network/shapes/Account';
 import { Allo, parseAllos as _parseAllos } from 'network/shapes/Allo';
-import { Condition, passesConditions as _passesConditions } from 'network/shapes/Conditional';
 import { getKamiLocation as _getKamiLocation } from 'network/shapes/Kami';
 import {
   queryNodeByIndex as _queryNodeByIndex,
   queryNodeKamis as _queryNodeKamis,
 } from 'network/shapes/Node';
-import { Room, queryRooms } from 'network/shapes/Room';
+import { Room, canEnterRoom as _canEnterRoom, queryRooms } from 'network/shapes/Room';
 import { queryScavInstance as _queryScavInstance } from 'network/shapes/Scavenge';
 import { getValue as _getValue } from 'network/shapes/utils/component';
 import { Grid } from './Grid';
@@ -41,7 +40,7 @@ export const MapModal: UIComponent = {
         getRoomByIndex,
         getKami,
         getKamiLocation,
-        passesConditions,
+        canEnterRoom,
         queryNodeByIndex,
         queryNodeKamis,
         queryAllRooms,
@@ -71,8 +70,7 @@ export const MapModal: UIComponent = {
           getKami: (entity: EntityIndex) =>
             _getKami(world, components, entity, { live: 2, harvest: 10 }),
           getKamiLocation: (entity: EntityIndex) => _getKamiLocation(world, components, entity),
-          passesConditions: (account: Account, gates: Condition[]) =>
-            _passesConditions(world, components, gates, account),
+          canEnterRoom: (room: Room) => _canEnterRoom(world, components, account, room),
           queryNodeByIndex: (index: number) => _queryNodeByIndex(world, index),
           queryNodeKamis: (nodeEntity: EntityIndex) =>
             _queryNodeKamis(world, components, nodeEntity),
@@ -160,7 +158,7 @@ export const MapModal: UIComponent = {
           utils={{
             getKami,
             getKamiLocation,
-            passesConditions,
+            canEnterRoom,
             queryNodeByIndex,
             queryNodeKamis,
             queryRoomAccounts,

@@ -22,11 +22,16 @@ export const queryGates = (
   fromIndex: number
 ): EntityIndex[] => {
   const { ToID, FromID } = components;
-  const toQuery = [
-    HasValue(ToID, { value: genGateAnchorTo(toIndex) }),
-    HasValue(FromID, { value: fromIndex == 0 ? '0x00' : genGateAnchorFrom(fromIndex) }),
-  ];
-  return Array.from(runQuery(toQuery));
+
+  const toQuery = [HasValue(ToID, { value: genGateAnchorTo(toIndex) })];
+  let gates = Array.from(runQuery(toQuery)); // querying from all rooms
+
+  if (fromIndex > 0) {
+    toQuery.push(HasValue(FromID, { value: genGateAnchorFrom(fromIndex) }));
+    gates = gates.concat(Array.from(runQuery(toQuery)));
+  }
+
+  return gates;
 };
 
 // get the Gates between two Rooms
