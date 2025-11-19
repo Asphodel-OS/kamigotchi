@@ -1,204 +1,234 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
+import { getAccount as _getAccount } from 'app/cache/account';
+import { getRoomByIndex } from 'app/cache/room';
 import { ActionButton, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'app/triggers';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getRoomByIndex } from 'network/shapes/Room';
+import { EntityIndex } from 'engine/recs';
+import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { canEnterRoom } from 'network/shapes/Room';
 import { getBalance } from 'network/shapes/utils';
 
 export const DialogueModal: UIComponent = {
   id: 'DialogueModal',
   Render: () => {
     const layers = useLayers();
-    
+
     const {
       network,
-      data: { accEntity }
+      data: { accEntity },
+      utils,
     } = (() => {
       const { network } = layers;
       const accountEntity = queryAccountFromEmbedded(network);
+      const { world, components } = network;
+
+      const accRefresh = {
+        live: 1,
+        inventory: 1,
+        config: 3600,
+      };
 
       return {
         network: layers.network,
         data: { accEntity: accountEntity },
+        utils: {
+          getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
+        },
       };
     })();
 
-      const { actions, components, world } = network;
-      const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
-      const dialogueIndex = useSelected((s) => s.dialogueIndex);
-      const [dialogueNode, setDialogueNode] = React.useState({
-        text: [''],
-      } as DialogueNode);
-      const [dialogueLength, setDialogueLength] = React.useState(0);
-      const [step, setStep] = React.useState(0);
-      const [npc, setNpc] = React.useState({ name: '', background: '' });
-      const [typing, setTyping] = React.useState<any>();
+    const { actions, components, world } = network;
+    const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
+    const dialogueIndex = useSelected((s) => s.dialogueIndex);
+    const [dialogueNode, setDialogueNode] = React.useState({
+      text: [''],
+    } as DialogueNode);
+    const [dialogueLength, setDialogueLength] = React.useState(0);
+    const [step, setStep] = React.useState(0);
+    const [npc, setNpc] = React.useState({ name: '', background: '' });
+    const [typing, setTyping] = React.useState<any>();
+    const [account, setAccount] = React.useState<Account>(NullAccount);
 
-      useEffect(() => {
-        setTyping(typeWriter(getText(dialogueNode.text[step])));
-      }, [dialogueNode.text[step]]);
+    useEffect(() => {
+      setTyping(typeWriter(getText(dialogueNode.text[step])));
+    }, [dialogueNode.text[step]]);
 
-      // reset the step to 0 whenever the dialogue modal is toggled
-      useEffect(() => setStep(0), [dialogueModalOpen]);
+    // reset the step to 0 whenever the dialogue modal is toggled
+    useEffect(() => setStep(0), [dialogueModalOpen]);
 
-      // set the current dialogue node when the dialogue index changes
-      useEffect(() => {
-        setStep(0);
-        setDialogueNode(dialogues[dialogueIndex]);
-        setDialogueLength(dialogues[dialogueIndex].text.length);
-        setNpc(dialogues[dialogueIndex].npc || { name: '', background: '' });
-      }, [dialogueIndex]);
+    // set the current dialogue node when the dialogue index changes
+    useEffect(() => {
+      setStep(0);
+      setDialogueNode(dialogues[dialogueIndex]);
+      setDialogueLength(dialogues[dialogueIndex].text.length);
+      setNpc(dialogues[dialogueIndex].npc || { name: '', background: '' });
+    }, [dialogueIndex]);
 
-      //////////////////
-      // INTERPRETATION
+    // update account data when the modal opens
+    useEffect(() => {
+      if (!dialogueModalOpen) return;
+      const account = utils.getAccount(accEntity);
+      setAccount(account);
+    }, [dialogueModalOpen, accEntity]);
 
-      const getText = (raw: (typeof dialogueNode.text)[number]) => {
-        if (typeof raw === 'string') return raw;
-        else if (typeof raw === 'function') return raw(getArgs());
-        return '';
-      };
+    //////////////////
+    // INTERPRETATION
 
-      const getArgs = () => {
-        if (!dialogueNode.args) return [];
+    const isDisabled = (action: ActionParam) => {
+      if (action.type === 'move') {
+        const room = getRoomByIndex(world, components, action.input ?? 0);
+        return !canEnterRoom(world, components, account, room);
+      }
+      return action === undefined;
+    };
 
-        const result: any[] = [];
-        dialogueNode.args.forEach((param) => {
-          result.push(getBalance(world, components, accEntity, param.index, param.type));
-        });
+    const getText = (raw: (typeof dialogueNode.text)[number]) => {
+      if (typeof raw === 'string') return raw;
+      else if (typeof raw === 'function') return raw(getArgs());
+      return '';
+    };
 
-        return result;
-      };
+    const getArgs = () => {
+      if (!dialogueNode.args) return [];
 
-      //////////////////
-      // ACTIONS
+      const result: any[] = [];
+      dialogueNode.args.forEach((param) => {
+        result.push(getBalance(world, components, accEntity, param.index, param.type));
+      });
 
-      const getAction = (type: string, input?: number) => {
-        if (type === 'move') return move(input ?? 0);
-        else if (type === 'goal') return triggerGoalModal([input ?? 0]);
-        else if (type === 'erc721Bridge') return triggerKamiBridgeModal();
-        else if (type === 'trading') return triggerTradingModal();
-      };
+      return result;
+    };
 
-      const move = (roomIndex: number) => {
-        const room = getRoomByIndex(world, components, roomIndex);
+    //////////////////
+    // ACTIONS
 
-        actions.add({
-          action: 'AccountMove',
-          params: [roomIndex],
-          description: `Moving to ${room.name}`,
-          execute: async () => {
-            const roomMovment = await network.api.player.account.move(roomIndex);
-            return roomMovment;
-          },
-        });
-      };
+    const getAction = (type: string, input?: number) => {
+      if (type === 'move') return move(input ?? 0);
+      else if (type === 'goal') return triggerGoalModal([input ?? 0]);
+      else if (type === 'erc721Bridge') return triggerKamiBridgeModal();
+      else if (type === 'trading') return triggerTradingModal();
+    };
 
-      //////////////////
-      // DISPLAY
+    const move = (roomIndex: number) => {
+      const room = getRoomByIndex(world, components, roomIndex);
 
-      const BackButton = () => {
-        const disabled = step === 0;
-        return (
-          <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
-            <ActionButton text='←' disabled={disabled} onClick={() => setStep(step - 1)} />
-          </div>
-        );
-      };
+      actions.add({
+        action: 'AccountMove',
+        params: [roomIndex],
+        description: `Moving to ${room.name}`,
+        execute: async () => {
+          const roomMovment = await network.api.player.account.move(roomIndex);
+          return roomMovment;
+        },
+      });
+    };
 
-      const NextButton = () => {
-        const disabled = step === dialogueLength - 1;
-        return (
-          <div
-            style={{
-              visibility: disabled ? 'hidden' : 'visible',
-            }}
-          >
-            <ActionButton text='→' disabled={disabled} onClick={() => setStep(step + 1)} />
-          </div>
-        );
-      };
+    //////////////////
+    // DISPLAY
 
-      const MiddleButton = () => {
-        if (!dialogueNode.action) return <div />;
-        let action: ActionParam;
-        let disabled = false;
+    const BackButton = () => {
+      const disabled = step === 0;
+      return (
+        <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
+          <ActionButton text='←' disabled={disabled} onClick={() => setStep(step - 1)} />
+        </div>
+      );
+    };
 
-        // split by step if action is an array
-        if ('label' in dialogueNode.action) {
-          // only on last step
-          action = dialogueNode.action;
-          disabled = step !== dialogueLength - 1 && !!action;
-        } else {
-          // per step
-          action = dialogueNode.action[step];
-          disabled = action === undefined;
-        }
+    const NextButton = () => {
+      const disabled = step === dialogueLength - 1;
+      return (
+        <div
+          style={{
+            visibility: disabled ? 'hidden' : 'visible',
+          }}
+        >
+          <ActionButton text='→' disabled={disabled} onClick={() => setStep(step + 1)} />
+        </div>
+      );
+    };
 
-        if (disabled) return <div />;
+    const MiddleButton = () => {
+      if (!dialogueNode.action) return <div />;
+      let action: ActionParam;
+      let show = false;
 
-        return (
-          <ActionButton
-            text={action.label}
-            disabled={disabled}
-            onClick={() => getAction(action.type, action.input)} // hardcoded for now
-          />
-        );
-      };
+      // split by step if action is an array
+      if ('label' in dialogueNode.action) {
+        // only on last step
+        action = dialogueNode.action;
+        show = step !== dialogueLength - 1 && !!action;
+      } else {
+        // per step
+        action = dialogueNode.action[step];
+        show = action === undefined;
+      }
 
-      //////////////////
-      // NPCS DIALOGUES
-
-      const typeWriter = (text: string) => {
-        let maxSize = 49;
-        let numberSlices = text.length / maxSize + 1;
-        let sliceStart = 0;
-        let sliceEnd = maxSize;
-        let endLine = [' ', '.', ';', ','];
-        let stringSliced: string[] = [];
-        for (let i = 0; i <= numberSlices; i++) {
-          if (sliceEnd > text.length) {
-            stringSliced.push(text.slice(sliceStart));
-            break;
-          }
-          while (!endLine.includes(text.charAt(sliceEnd))) {
-            sliceEnd--;
-          }
-          stringSliced.push(text.slice(sliceStart, sliceEnd));
-          sliceStart = sliceEnd;
-          sliceEnd += maxSize;
-        }
-        return stringSliced.map((string, index) => (
-          <Strings delay={index} key={text + index}>
-            {string}
-          </Strings>
-        ));
-      };
+      if (show) return <div />;
 
       return (
-        <ModalWrapper
-          id='dialogue'
-          header={npc.name.length > 0 && <Header>{npc.name}</Header>}
-          canExit
-          overlay
-          noPadding={npc.name.length > 0}
-        >
-          <Text npc={npc}>
-            {npc.name.length > 0 ? typing : getText(dialogueNode.text[step])}
-            <ButtonRow>
-              {BackButton()}
-              {MiddleButton()}
-              {NextButton()}
-            </ButtonRow>
-          </Text>
-        </ModalWrapper>
+        <ActionButton
+          text={action.label}
+          disabled={isDisabled(action)}
+          onClick={() => getAction(action.type, action.input)} // hardcoded for now
+        />
       );
+    };
+
+    //////////////////
+    // NPCS DIALOGUES
+
+    const typeWriter = (text: string) => {
+      let maxSize = 49;
+      let numberSlices = text.length / maxSize + 1;
+      let sliceStart = 0;
+      let sliceEnd = maxSize;
+      let endLine = [' ', '.', ';', ','];
+      let stringSliced: string[] = [];
+      for (let i = 0; i <= numberSlices; i++) {
+        if (sliceEnd > text.length) {
+          stringSliced.push(text.slice(sliceStart));
+          break;
+        }
+        while (!endLine.includes(text.charAt(sliceEnd))) {
+          sliceEnd--;
+        }
+        stringSliced.push(text.slice(sliceStart, sliceEnd));
+        sliceStart = sliceEnd;
+        sliceEnd += maxSize;
+      }
+      return stringSliced.map((string, index) => (
+        <Strings delay={index} key={text + index}>
+          {string}
+        </Strings>
+      ));
+    };
+
+    return (
+      <ModalWrapper
+        id='dialogue'
+        header={npc.name.length > 0 && <Header>{npc.name}</Header>}
+        canExit
+        overlay
+        noPadding={npc.name.length > 0}
+      >
+        <Text npc={npc}>
+          {npc.name.length > 0 ? typing : getText(dialogueNode.text[step])}
+          <ButtonRow>
+            {BackButton()}
+            {MiddleButton()}
+            {NextButton()}
+          </ButtonRow>
+        </Text>
+      </ModalWrapper>
+    );
   },
 };
 
