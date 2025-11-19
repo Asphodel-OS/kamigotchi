@@ -61,7 +61,7 @@
 ,Make 3 Scavenging Rolls at Blooming Tree,MIN,INC,SCAV_CLAIM_NODE,53,3
 ,Make 2 Scavenging rolls at Scrap Trees,MIN,INC,SCAV_CLAIM_NODE,60,2
 ,Make 3 Scavenging Rolls at Centipedes,MIN,INC,SCAV_CLAIM_NODE,62,3
-,Scavenge 5 Bone Chunks,MIN,INC,SCAV_CLAIM_NODE,1015,5
+,Scavenge 5 Bone Chunks,MIN,INC,SCAV_CLAIM_NODE,1020,5
 ,Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
 ,Spend a point in any Skill Tree after levelling up,MIN,CURR,SKILL_POINTS_USE,,1
 ,Make a Scavenging roll in 3 rooms of the Scrap type,MIN,INC,SCAV_CLAIM_AFFINITY_SCRAP,,3
