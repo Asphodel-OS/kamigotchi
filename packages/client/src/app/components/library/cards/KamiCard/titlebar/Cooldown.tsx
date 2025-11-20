@@ -5,8 +5,7 @@ import { makeCRTLayer } from 'app/components/shaders/CRTShader';
 import { ShaderStack } from 'app/components/shaders/ShaderStack';
 import { makeStaticLayer } from 'app/components/shaders/StaticShader';
 import { Kami } from 'network/shapes/Kami';
-import { CountdownBar } from '../../measures';
-import { TextTooltip } from '../../poppers';
+import { CountdownBar } from '../../../measures';
 
 const cooldownEndCache: Map<number | string, number> = new Map();
 
@@ -39,11 +38,7 @@ export const Cooldown = ({ kami, tick }: { kami: Kami; tick: number }) => {
     setCurrent(currentCooldown);
   }, [tick, kami]);
 
-  return (
-    <TextTooltip key='cooldown' text={[`Cooldown: ${Math.round(current)}s`]}>
-      <CountdownBar total={total} current={current} />
-    </TextTooltip>
-  );
+  return <CountdownBar total={total} current={current} />;
 };
 
 ////////////////

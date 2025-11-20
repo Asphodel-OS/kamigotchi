@@ -2,17 +2,14 @@ import styled from 'styled-components';
 
 import { objectClock } from 'assets/images/rooms/13_giftshop';
 import { calcPercent } from 'utils/numbers';
-import { TextTooltip } from '../poppers';
 
 export const CountdownBar = ({ total, current }: { total: number; current: number }) => {
   return (
-    <TextTooltip text={[`Cooldown: ${Math.round(current)}s`]}>
-      <StaminaContainer>
-        {`${Math.round(current)}s`}
-        <Icon src={objectClock} />
-      </StaminaContainer>
+    <Container>
+      {`${Math.round(current)}s`}
+      <Icon src={objectClock} />
       <CooldownFill percent={calcPercent(current, total)} />
-    </TextTooltip>
+    </Container>
   );
 };
 
@@ -20,12 +17,10 @@ interface CooldownFillProps {
   percent: number;
 }
 
-const StaminaContainer = styled.div`
-  position: absolute;
-  margin-left: 0.3vw;
+const Container = styled.div`
+  background-color: red;
+  position: relative;
   gap: 0.2vw;
-  top: 12%;
-  right: 1%;
   z-index: 1;
 
   display: flex;
@@ -50,7 +45,7 @@ const CooldownFill = styled.div.attrs<CooldownFillProps>(({ percent }) => ({
   top: 0;
   bottom: 0;
   right: 0;
-  width: 19.9%;
+  width: 100%;
   background: #bd8fd4ff;
 
   &::after {
@@ -71,4 +66,5 @@ const Icon = styled.img`
   width: 1.2vw;
   filter: sepia(1) saturate(200%);
   transform: rotate(20deg);
+  user-drag: none;
 `;

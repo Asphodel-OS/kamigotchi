@@ -1,18 +1,14 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { calcHealth, isResting } from 'app/cache/kami';
 import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { HealthColors } from 'constants/kamis/health';
 import { Bonus, parseBonusText } from 'network/shapes/Bonus';
 import { Kami } from 'network/shapes/Kami';
 import { getItemImage } from 'network/shapes/utils/images';
-import { calcPercent } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { Card } from '../';
-import { Cooldown } from './Cooldown';
-import { Health } from './Health';
+import { TitleBar } from './titlebar/TitleBar';
 
 export type LabelParams = {
   text: string;
@@ -40,9 +36,9 @@ export const KamiCard = ({
   labelAlt?: LabelParams;
   show?: {
     battery?: boolean;
+    cooldown?: boolean;
     levelUp?: boolean;
     skillPoints?: boolean;
-    cooldown?: boolean;
   };
   utils?: {
     calcExpRequirement?: (lvl: number) => number;
@@ -56,8 +52,6 @@ export const KamiCard = ({
   const kamiIndex = useSelected((s) => s.kamiIndex);
 
   const [canLevel, setCanLevel] = useState(false);
-  const [currentHealth, setCurrentHealth] = useState(0);
-
   const buffsRef = useRef<HTMLDivElement | null>(null);
 
   // const { filter: cdFilter, foreground: cdForeground } = useCooldownVisuals(kami, showCooldown);
@@ -68,12 +62,7 @@ export const KamiCard = ({
     const expCurr = kami.progress.experience;
     const expLimit = calcExpRequirement(kami.progress.level);
     setCanLevel(expCurr >= expLimit);
-  }, [kami, calcExpRequirement]);
-
-  // update the current health on the kami on each tick
-  useEffect(() => {
-    setCurrentHealth(calcHealth(kami));
-  }, [tick]);
+  }, [kami.progress?.experience, calcExpRequirement]);
 
   /////////////////
   // INTERACTION
@@ -93,18 +82,6 @@ export const KamiCard = ({
     if (!buffsRef.current) return;
     e.preventDefault();
     buffsRef.current.scrollLeft += e.deltaY;
-  };
-
-  /////////////////
-  // INTERPRETATION
-
-  // get the color of the kami's status bar
-  const getHealthColor = (level: number) => {
-    if (isResting(kami)) return HealthColors.resting;
-    if (level <= 25) return HealthColors.dying;
-    if (level <= 50) return HealthColors.vulnerable;
-    if (level <= 75) return HealthColors.exposed;
-    return HealthColors.healthy;
   };
 
   /////////////////
@@ -143,21 +120,7 @@ export const KamiCard = ({
         },
       }}
     >
-      <TitleBar>
-        <TitleText key='title' onClick={() => handleKamiClick()}>
-          {kami.name}
-        </TitleText>
-        <TitleCorner key='corner'>
-          {show?.cooldown && <Cooldown kami={kami} tick={tick} />}
-          {show?.battery && (
-            <Health
-              current={calcHealth(kami)}
-              total={kami.stats?.health.total ?? 0}
-              color={getHealthColor(calcPercent(currentHealth, kami.stats?.health.total ?? 0))}
-            />
-          )}
-        </TitleCorner>
-      </TitleBar>
+      <TitleBar kami={kami} onClick={handleKamiClick} show={show} tick={tick} />
       <Content>
         <Top>
           <Column key='column-1'>{content}</Column>
@@ -183,43 +146,6 @@ export const KamiCard = ({
     </Card>
   );
 };
-
-const TitleBar = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.8vw;
-  border-bottom: solid black 0.15vw;
-  padding: 0.45vw;
-`;
-
-const TitleText = styled.div`
-  position: relative;
-  z-index: 1;
-  font-size: 0.75vw;
-
-  text-align: left;
-  width: 100%;
-  color: #4b126eff;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.6;
-    text-decoration: underline;
-  }
-`;
-
-const TitleCorner = styled.div`
-  display: flex;
-  flex-grow: 1;
-
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.3vw;
-  font-size: 1vw;
-  text-align: right;
-  height: 1.2vw;
-`;
 
 const Content = styled.div`
   display: flex;

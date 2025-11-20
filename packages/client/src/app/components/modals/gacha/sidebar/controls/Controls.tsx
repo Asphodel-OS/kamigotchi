@@ -84,12 +84,14 @@ export const Controls = ({
         {isButtonVisible() && <ActionButton text={getButtonText()} onClick={toggleMode} />}
       </Overlay>
       <Overlay right={0.75} bottom={0.75}>
-        <Pairing
-          icon={payItem.image}
-          text={balance.toLocaleString()}
-          tooltip={[payItem.name]}
-          reverse
-        />
+        {payItem.image && (
+          <Pairing
+            icon={payItem.image}
+            text={balance.toLocaleString()}
+            tooltip={[payItem.name]}
+            reverse
+          />
+        )}
       </Overlay>
     </Container>
   );

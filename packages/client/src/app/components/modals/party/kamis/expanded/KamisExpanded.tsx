@@ -91,9 +91,9 @@ export const KamisExpanded = ({
           label={getSubtext(kami)}
           show={{
             battery: true,
+            cooldown: true,
             levelUp: true,
             skillPoints: true,
-            cooldown: true,
           }}
           utils={utils}
           tick={tick}

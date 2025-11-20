@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const Text = styled.div<{
   size: number;
   color?: string;
+  weight?: 'normal' | 'bold';
   padding?: {
     top?: number;
     bottom?: number;
@@ -12,6 +13,7 @@ export const Text = styled.div<{
   onClick?: () => void;
 }>`
   font-size: ${({ size }) => size}vw;
+  font-weight: ${({ weight }) => (weight === 'bold' ? 'bold' : 'normal')};
   line-height: ${({ size }) => size * 1.5}vw;
   color: ${({ color }) => color ?? '#333'};
 
