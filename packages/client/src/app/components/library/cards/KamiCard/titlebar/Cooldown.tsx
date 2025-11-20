@@ -22,7 +22,7 @@ export const Cooldown = ({ kami, tick }: { kami: Kami; tick: number }) => {
   useEffect(() => {
     const total = calcCooldownRequirement(kami);
     setTotal(total);
-  }, [kami.bonuses?.general.cooldown]);
+  }, [kami.bonuses?.general.cooldown, kami.config?.general.cooldown]);
 
   // update the remaining time on the cooldown
   useEffect(() => {

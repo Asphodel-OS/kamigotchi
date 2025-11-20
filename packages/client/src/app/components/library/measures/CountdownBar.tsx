@@ -9,7 +9,7 @@ export const CountdownBar = ({ total, current }: { total: number; current: numbe
     <Container>
       <Fill percent={calcPercent(current, total)} />
       <Text size={0.55} color='#2d0b42ff' weight='bold' style={{ zIndex: 1 }}>
-        {current == 0 ? 'ready' : `${Math.floor(current)}s`}
+        {current === 0 ? 'ready' : `${Math.floor(current)}s`}
       </Text>
       <Icon src={objectClock} />
     </Container>
@@ -58,9 +58,11 @@ const Fill = styled.div.attrs<FillProps>(({ percent }) => ({
 const Icon = styled.img`
   height: 1.2vw;
   width: 1.2vw;
+  margin-right: 0.2vw;
+
   filter: sepia(1) saturate(200%);
   transform: rotate(20deg);
-  user-drag: none;
 
-  margin-right: 0.2vw;
+  user-drag: none;
+  -webkit-user-drag: none;
 `;
