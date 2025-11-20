@@ -16,7 +16,6 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import {
   filterQuestsByAvailable,
   getBaseQuest,
-  parseQuestObjectives,
   populateQuest,
   queryCompletedQuests,
   queryOngoingQuests,
@@ -62,8 +61,6 @@ export const DialogueModal: UIComponent = {
           populate: (base: BaseQuest) => populateQuest(world, components, base),
           getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
           queryOngoing: (accountId: EntityID) => queryOngoingQuests(components, accountId),
-          parseObjectives: (quest: Quest, account: Account) =>
-            parseQuestObjectives(world, components, account, quest),
           queryCompleted: (account: Account) => queryCompletedQuests(components, account.id),
           filterByAvailable: (
             registry: BaseQuest[],
@@ -77,15 +74,8 @@ export const DialogueModal: UIComponent = {
 
     const { actions, components, world } = network;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const {
-      queryRegistry,
-      queryOngoing,
-      getBase,
-      populate,
-      parseObjectives,
-      filterByAvailable,
-      queryCompleted,
-    } = utils;
+    const { queryRegistry, queryOngoing, getBase, populate, filterByAvailable, queryCompleted } =
+      utils;
 
     const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
     const setModals = useVisibility((s) => s.setModals);
@@ -155,7 +145,6 @@ export const DialogueModal: UIComponent = {
       const filterMinaQuests = (baseQuests: BaseQuest[]): Quest[] => {
         return baseQuests
           .map((q) => populate(q))
-          .map((q) => parseObjectives(q, account))
           .filter(
             (quest) => quest.subType.toLowerCase() === npc.name.toLowerCase() && !quest.complete
           );
@@ -191,7 +180,6 @@ export const DialogueModal: UIComponent = {
 
     const getArgs = () => {
       if (!dialogueNode.args) return [];
-
       const result: any[] = [];
       dialogueNode.args.forEach((param) => {
         result.push(getBalance(world, components, accEntity, param.index, param.type));
@@ -212,7 +200,6 @@ export const DialogueModal: UIComponent = {
 
     const move = (roomIndex: number) => {
       const room = getRoomByIndex(world, components, roomIndex);
-
       actions.add({
         action: 'AccountMove',
         params: [roomIndex],
