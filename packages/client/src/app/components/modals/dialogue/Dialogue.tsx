@@ -14,9 +14,11 @@ import { ActionParam } from 'constants/dialogue/types';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
+  filterQuestsByAvailable,
   getBaseQuest,
   parseQuestObjectives,
   populateQuest,
+  queryCompletedQuests,
   queryOngoingQuests,
   queryRegistryQuests,
   Quest,
@@ -62,13 +64,28 @@ export const DialogueModal: UIComponent = {
           queryOngoing: (accountId: EntityID) => queryOngoingQuests(components, accountId),
           parseObjectives: (quest: Quest, account: Account) =>
             parseQuestObjectives(world, components, account, quest),
+          queryCompleted: (account: Account) => queryCompletedQuests(components, account.id),
+          filterByAvailable: (
+            registry: BaseQuest[],
+            ongoing: BaseQuest[],
+            completed: BaseQuest[],
+            account: Account
+          ) => filterQuestsByAvailable(world, components, account, registry, ongoing, completed),
         },
       };
     })();
 
     const { actions, components, world } = network;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const { queryRegistry, queryOngoing, getBase, populate, parseObjectives } = utils;
+    const {
+      queryRegistry,
+      queryOngoing,
+      getBase,
+      populate,
+      parseObjectives,
+      filterByAvailable,
+      queryCompleted,
+    } = utils;
 
     const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
     const setModals = useVisibility((s) => s.setModals);
@@ -118,33 +135,39 @@ export const DialogueModal: UIComponent = {
 
     const registryEntities = useComponentEntities(IsRegistry) || [];
     const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
+    const isCompleteEntities = useComponentEntities(IsComplete) || [];
 
     const registry = useMemo(() => {
       return queryRegistry().map((entity) => getBase(entity));
-    }, [registryEntities]);
+    }, [network, registryEntities]);
+
+    const completed: BaseQuest[] = useMemo(() => {
+      return queryCompleted(account).map((entity) => getBase(entity));
+    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
 
     const ongoing = useMemo(() => {
       return queryOngoing(account.id).map((entity) => getBase(entity));
-    }, [account.id, ownsQuestEntities]);
+    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
 
     useEffect(() => {
       if (!dialogueModalOpen || npc.name.length === 0) return;
+      const raw = filterByAvailable(registry, ongoing, completed, account);
       const filterMinaQuests = (baseQuests: BaseQuest[]): Quest[] => {
         return baseQuests
-          .map((base) => populate(base))
-          .map((populated) => parseObjectives(populated, account))
+          .map((q) => populate(q))
+          .map((q) => parseObjectives(q, account))
           .filter(
             (quest) => quest.subType.toLowerCase() === npc.name.toLowerCase() && !quest.complete
           );
       };
-      setAvailableQuests(filterMinaQuests(registry));
+      setAvailableQuests(filterMinaQuests(raw));
       setOngoingQuests(filterMinaQuests(ongoing));
     }, [
-      account,
       dialogueModalOpen,
       dialogueIndex,
       registryEntities,
       ownsQuestEntities,
+      isCompleteEntities,
       registry,
       ongoing,
       npc.name,
