@@ -14,15 +14,6 @@ export const triggerQuestDialogueModal = (entity: EntityIndex) => {
     setModals({
       dialogue: false,
       questDialogue: true,
-      bridgeERC20: false,
-      bridgeERC721: false,
-      emaBoard: false,
-      kami: false,
-      map: false,
-      merchant: false,
-      node: false,
-      party: false,
-      leaderboard: false,
     });
   } else {
     setModals({ questDialogue: false });
