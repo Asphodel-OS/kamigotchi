@@ -194,7 +194,7 @@ export const PartyModal: UIComponent = {
     }, [nodeIndex]);
 
     // update list of wild kamis whenever that changes
-    // TOTO: properly typecast the result of the abi call
+    // TODO: properly typecast the result of the abi call
     useEffect(() => {
       const result = (nftData?.[0]?.result ?? []) as number[];
       if (result.length != wildKamis.length) {

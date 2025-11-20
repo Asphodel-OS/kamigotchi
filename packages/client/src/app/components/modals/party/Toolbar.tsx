@@ -1,7 +1,13 @@
 import { Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
+import {
+  calcHealthPercent,
+  getKamiRoomIndex,
+  isHarvesting,
+  isResting,
+  onCooldown,
+} from 'app/cache/kami';
 import { compareTraitAffinity, compareTraitName, compareTraitRarity } from 'app/cache/trait';
 import { IconButton, IconListButton, TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
@@ -66,36 +72,7 @@ export const Toolbar = ({
   /////////////////
   // SUBSCRIPTIONS
 
-  useEffect(() => {
-    if (!isModalOpen) return;
-
-    // if external view, set stake options directly from list of displayed kamis
-    if (view === 'external') {
-      const stakeOptions = wildKamis.map((kami) => ({ text: kami.name, object: kami }));
-      setStakeOptions(stakeOptions);
-      return;
-    }
-
-    // otherwise, set dropdown options based on internal kami states
-    const addOptions = displayedKamis
-      .filter((kami) => canHarvest(kami) && passesNodeReqs(kami))
-      .map((kami) => ({ text: kami.name, object: kami }));
-
-    const collectOptions = displayedKamis
-      .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
-      .map((kami) => ({ text: kami.name, object: kami }));
-
-    const stopOptions = displayedKamis
-      .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
-      .map((kami) => ({ text: kami.name, object: kami }));
-
-    setAddOptions(addOptions);
-    setCollectOptions(collectOptions);
-    setStopOptions(stopOptions);
-  }, [displayedKamis, tick, isModalOpen]);
-
   // sort kamis when changes are detected
-  // TODO: trigger updates after successful state updates
   // NOTE: sorts in place (setDisplayedKamis is just used to trigger a rendering update)
   useEffect(() => {
     if (!isModalOpen) return;
@@ -123,82 +100,47 @@ export const Toolbar = ({
     }
 
     setDisplayedKamis(sorted);
-  }, [isModalOpen, kamis.length, sort, view]);
+  }, [isModalOpen, wildKamis.length, kamis.length, view, sort]);
 
-  /*
-  // JS-driven sticky fallback across browsers: translateY toolbar as parent scrolls
+  // updates the list of action options based on state updates
   useEffect(() => {
     if (!isModalOpen) return;
-    const toolbarEl = toolbarRef.current;
-    if (!toolbarEl) return;
 
-    // Helper: find the nearest scrollable ancestor if explicit container not found
-    const findScrollContainer = (start: HTMLElement): HTMLElement | null => {
-      let el: HTMLElement | null = start;
-      while (el) {
-        const style = window.getComputedStyle(el);
-        const overflowY = style.overflowY;
-        if ((overflowY === 'auto' || overflowY === 'scroll') && el.scrollHeight > el.clientHeight) {
-          return el;
-        }
-        el = el.parentElement;
-      }
-      return (document.scrollingElement as HTMLElement) || document.documentElement;
-    };
+    // if external view, set stake options directly from list of displayed kamis
+    if (view === 'external') {
+      const stakeOptions = displayedKamis.map((kami) => ({ text: kami.name, object: kami }));
+      setStakeOptions(stakeOptions);
+      return;
+    }
 
-    const explicit = toolbarEl.closest("[data-scroll-container='true']") as HTMLElement | null;
-    const container = explicit ?? findScrollContainer(toolbarEl);
-    if (!container) return;
+    // otherwise, set dropdown options based on world kami states
+    const freeKamis = displayedKamis.filter((kami) => !onCooldown(kami));
 
-    let rafId = 0;
+    const addOptions = freeKamis
+      .filter((kami) => isResting(kami) && passesNodeReqs(kami))
+      .map((kami) => ({ text: kami.name, object: kami }));
 
-    const setY = (y: number) => {
-      // Use direct transform to avoid dependency issues and keep this hotfix minimal
-      toolbarEl.style.transform = `translateY(${y}px)`;
-    };
+    const collectOptions = freeKamis
+      .filter((kami) => isHarvesting(kami) && getKamiRoomIndex(kami) === account.roomIndex)
+      .map((kami) => ({ text: kami.name, object: kami }));
 
-    const readScrollTop = () => {
-      if (container === document.scrollingElement || container === document.documentElement) {
-        return document.scrollingElement?.scrollTop ?? window.scrollY ?? 0;
-      }
-      return (container as HTMLElement).scrollTop;
-    };
+    const stopOptions = freeKamis
+      .filter((kami) => isHarvesting(kami) && getKamiRoomIndex(kami) === account.roomIndex)
+      .map((kami) => ({ text: kami.name, object: kami }));
 
-    const onScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        const y = readScrollTop();
-        setY(y);
-        rafId = 0;
-      });
-    };
-
-    // initialize position and bind
-    onScroll();
-    container.addEventListener(
-      'scroll',
-      onScroll as EventListener,
-      { passive: true } as AddEventListenerOptions
-    );
-    detachScroll.current = () => {
-      container.removeEventListener('scroll', onScroll as EventListener);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-    return () => {
-      if (detachScroll.current) detachScroll.current();
-      toolbarEl.style.transform = 'translateY(0px)';
-    };
-  }, [isModalOpen]);
-*/
+    setAddOptions(addOptions);
+    setCollectOptions(collectOptions);
+    setStopOptions(stopOptions);
+  }, [isModalOpen, displayedKamis, tick]);
 
   /////////////////
   // INTERACTION
 
   // toggle between views
   const toggleView = () => {
-    if (view === 'external') setView('expanded');
-    if (view === 'expanded') setView('collapsed');
-    if (view === 'collapsed') setView('external');
+    if (view === 'external') setView('collapsed');
+    if (view === 'collapsed') setView('expanded');
+    if (view === 'expanded') setView('external');
   };
 
   /////////////////
@@ -249,7 +191,6 @@ export const Toolbar = ({
   // RENDER
 
   return (
-    // <Container ref={toolbarRef}>
     <Container>
       <Section>
         <TextTooltip text={[`${view}`]}>
@@ -258,7 +199,7 @@ export const Toolbar = ({
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
       <DropdownToggle
-        limit={33}
+        limit={15}
         button={{
           images: getDDTIcons(view),
           tooltips: getDDTTooltips(view),
