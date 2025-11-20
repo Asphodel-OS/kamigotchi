@@ -157,8 +157,8 @@ export const DialogueModal: UIComponent = {
       registryEntities,
       ownsQuestEntities,
       isCompleteEntities,
-      registry,
-      ongoing,
+      account,
+      completed,
       npc.name,
     ]);
     //////////////////
