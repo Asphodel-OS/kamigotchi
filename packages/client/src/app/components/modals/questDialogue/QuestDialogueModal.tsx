@@ -22,6 +22,7 @@ import { didActionComplete } from 'network/utils';
 import { useComponentEntities } from 'network/utils/hooks';
 import styled from 'styled-components';
 import { QuestDialogue } from './QuestDialogue';
+const REFRESH_INTERVAL = 3333;
 
 export const QuestDialogueModal: UIComponent = {
   id: 'QuestDialogue',
@@ -65,6 +66,7 @@ export const QuestDialogueModal: UIComponent = {
 
     const [quest, setQuest] = useState<Quest>();
     const [modalOpen, setModalOpen] = useState(false);
+    const [tick, setTick] = useState(Date.now());
     // Reactively subscribe to ECS changes relevant to quests
     const registryEntities = useComponentEntities(IsRegistry) || [];
     const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
@@ -72,6 +74,14 @@ export const QuestDialogueModal: UIComponent = {
 
     /////////////////
     // SUBSCRIPTIONS
+
+    // set data and setup ticking on mount
+    useEffect(() => {
+      const refreshClock = () => setTick(Date.now());
+      const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
+      return () => clearInterval(timerId);
+    }, []);
+
     useEffect(() => {
       if (!questDialogueOpen) {
         setModalOpen(false);
@@ -87,7 +97,14 @@ export const QuestDialogueModal: UIComponent = {
       const parsed = parseObjectives(populated);
       const filtered = filterOngoingQuests([parsed]);
       setQuest(filtered[0]);
-    }, [questIndex, questDialogueOpen, registryEntities, ownsQuestEntities, isCompleteEntities]);
+    }, [
+      tick,
+      questIndex,
+      questDialogueOpen,
+      registryEntities,
+      ownsQuestEntities,
+      isCompleteEntities,
+    ]);
 
     /////////////////
     // ACTIONS
