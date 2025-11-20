@@ -8,6 +8,7 @@ import { useSelected, useVisibility } from 'app/stores';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
   Quest,
+  filterOngoingQuests,
   getBaseQuest,
   getQuestByEntityIndex,
   meetsObjectives,
@@ -55,9 +56,8 @@ export const QuestDialogueModal: UIComponent = {
     })();
 
     const { actions, api, components, world } = network;
-    const { account } = data;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const { queryRegistry, getBase, populate, parseObjectives } = utils;
+    const { getBase, populate, parseObjectives } = utils;
 
     const questDialogueOpen = useVisibility((s) => s.modals.questDialogue);
     const setModals = useVisibility((s) => s.setModals);
@@ -85,15 +85,20 @@ export const QuestDialogueModal: UIComponent = {
       const base = getBase(questIndex);
       const populated = populate(base);
       const parsed = parseObjectives(populated);
-      setQuest(parsed);
+      const filtered = filterOngoingQuests([parsed]);
+      setQuest(filtered[0]);
     }, [questIndex, questDialogueOpen, registryEntities, ownsQuestEntities, isCompleteEntities]);
 
     /////////////////
     // ACTIONS
 
-    const handleClick = async (tx: EntityIndex) => {
+    // always close modal after
+    //Accet/Complete
+    // except when there is
+    // a completion text
+    const handleClick = async (tx: EntityIndex, isComplete = false) => {
       const completed = await didActionComplete(actions.Action, tx);
-      if (completed) {
+      if (completed || (isComplete && !!quest?.descriptionAlt)) {
         setModals({ questDialogue: false });
       }
     };
@@ -119,10 +124,11 @@ export const QuestDialogueModal: UIComponent = {
           return api.player.account.quest.complete(quest.id);
         },
       });
-      handleClick(tx);
+      handleClick(tx, true);
     };
 
     if (!quest) return <></>;
+    console.log(quest);
     return (
       <ModalWrapper
         id='questDialogue'
