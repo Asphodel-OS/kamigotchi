@@ -73,21 +73,21 @@ export const Toolbar = ({
   // SUBSCRIPTIONS
 
   // sort kamis when changes are detected
-  // NOTE: sorts in place (setDisplayedKamis is just used to trigger a rendering update)
   useEffect(() => {
     if (!isModalOpen) return;
 
-    let sorted = view === 'external' ? wildKamis : kamis;
+    const base = view === 'external' ? wildKamis : kamis;
+    const sorted = [...base];
     if (sort === 'name') {
-      sorted = sorted.sort((a, b) => a.name.localeCompare(b.name));
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sort === 'state') {
-      sorted = sorted.sort((a, b) => {
+      sorted.sort((a, b) => {
         const stateDiff = a.state.localeCompare(b.state);
         if (stateDiff != 0) return stateDiff;
         return calcHealthPercent(a) - calcHealthPercent(b);
       });
     } else if (sort === 'traits') {
-      sorted = sorted.sort((a, b) => {
+      sorted.sort((a, b) => {
         let diff = 0;
         if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
         if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
@@ -139,8 +139,8 @@ export const Toolbar = ({
   // toggle between views
   const toggleView = () => {
     if (view === 'external') setView('collapsed');
-    if (view === 'collapsed') setView('expanded');
-    if (view === 'expanded') setView('external');
+    else if (view === 'collapsed') setView('expanded');
+    else setView('external');
   };
 
   /////////////////
