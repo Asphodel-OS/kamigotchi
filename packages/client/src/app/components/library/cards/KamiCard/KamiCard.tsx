@@ -195,19 +195,23 @@ const LabelIcon = styled.img`
 `;
 
 const Buffs = styled.div`
+  background-color: rgba(255, 255, 255, 1);
   position: absolute;
   max-width: 95%;
-  bottom: 0.2vw;
-  left: 0.2vw;
+  bottom: 0.15vw;
+  left: 0.15vw;
+
+  border: solid black 0.15vw;
+  border-radius: 0.45vw;
+  padding: 0.1vw;
+  gap: 0.1vw;
+
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.1vw;
+
   pointer-events: auto;
-  background-color: rgba(255, 255, 255, 1);
-  border: solid black 0.15vw;
-  border-radius: 0.3vw;
-  padding: 0.1vw;
   overflow: auto hidden;
+
   &::-webkit-scrollbar {
     height: 0.2vw;
   }
@@ -227,11 +231,12 @@ const Buff = styled.img`
 `;
 
 const Actions = styled.div`
-  display: flex;
   position: absolute;
-  right: 0.1vw;
-  bottom: 0.1vw;
+  right: 0.15vw;
+  bottom: 0.15vw;
+  gap: 0.15vw;
+
+  display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
-  gap: 0.3vw;
 `;

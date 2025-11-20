@@ -65,7 +65,7 @@ export const Card = ({
 const Wrapper = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
   border: 0.15vw solid black;
-  border-radius: 0.6vw;
+  border-radius: 0.75vw;
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
@@ -76,7 +76,7 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   position: relative;
   border-right: solid black 0.15vw;
-  border-radius: 0.45vw 0vw 0vw 0.45vw;
+  border-radius: 0.6vw 0vw 0vw 0.6vw;
   min-height: 100%;
   height: ${({ scale }) => scale}vw;
   width: ${({ scale }) => scale}vw;

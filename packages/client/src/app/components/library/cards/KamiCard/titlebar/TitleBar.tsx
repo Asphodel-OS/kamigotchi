@@ -63,12 +63,11 @@ const Title = styled.div`
 `;
 
 const Corner = styled.div`
-  display: flex;
   flex-grow: 1;
+  width: 2.7vw;
+  height: 100%;
 
+  display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.3vw;
-  font-size: 1vw;
-  text-align: right;
 `;
