@@ -32,6 +32,8 @@ export interface Quest extends BaseQuest {
   objectives: Objective[];
   rewards: Allo[];
   descriptionAlt: string;
+  subType: string;
+  typeComp: string;
 }
 
 // Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
@@ -60,7 +62,7 @@ export const getBase = (world: World, components: Components, entity: EntityInde
 
 // populate a BareQuest with all the details of a full Quest
 export const populate = (world: World, components: Components, base: BaseQuest): Quest => {
-  const { IsComplete, StartTime, LastTime, DescriptionAlt } = components;
+  const { IsComplete, StartTime, LastTime, DescriptionAlt, Subtype, Type } = components;
   const entity = base.entity;
 
   return {
@@ -72,6 +74,8 @@ export const populate = (world: World, components: Components, base: BaseQuest):
     objectives: getObjectives(world, components, base.index),
     rewards: getRewards(world, components, base.index),
     descriptionAlt: getComponentValue(DescriptionAlt, base.registryEntityIndex)?.value ?? '',
+    subType: getComponentValue(Subtype, base.registryEntityIndex)?.value ?? '',
+    typeComp: getComponentValue(Type, base.registryEntityIndex)?.value ?? '',
   };
 };
 

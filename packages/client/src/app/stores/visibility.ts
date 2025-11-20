@@ -56,6 +56,7 @@ export interface Modals {
   map: boolean;
   merchant: boolean;
   node: boolean;
+  questDialogue: boolean;
   operatorFund: boolean;
   party: boolean;
   presale: boolean;
@@ -83,6 +84,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   leaderboard: isOn,
   lootBox: isOn,
   map: isOn,
+  questDialogue: isOn,
   merchant: isOn,
   node: isOn,
   operatorFund: isOn,
@@ -122,6 +124,7 @@ export const useVisibility = create<State & Actions>((set) => {
       bridgeERC721: false,
       chat: false,
       crafting: false,
+      questDialogue: false,
       dialogue: false,
       emaBoard: false,
       animationStudio: false,

@@ -25,6 +25,7 @@ import { EmaBoardModal } from './modals/naming';
 import { NodeModal } from './modals/node';
 import { ObolModal } from './modals/obol';
 import { PartyModal } from './modals/party';
+import { QuestDialogueModal } from './modals/questDialogue';
 import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
@@ -146,6 +147,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: DialogueModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 75, rowEnd: 99 },
+  },
+  {
+    uiComponent: QuestDialogueModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 85 },
   },
   {
     uiComponent: EmaBoardModal,

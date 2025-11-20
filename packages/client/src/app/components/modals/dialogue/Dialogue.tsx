@@ -1,20 +1,30 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
-
-import { getAccount as _getAccount } from 'app/cache/account';
-import { getRoomByIndex } from 'app/cache/room';
-import { ActionButton, ModalWrapper } from 'app/components/library';
+import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'app/triggers';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
 import { EntityIndex } from 'engine/recs';
-import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { canEnterRoom } from 'network/shapes/Room';
+import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import {
+  getBaseQuest,
+  parseQuestObjectives,
+  populateQuest,
+  queryOngoingQuests,
+  queryRegistryQuests,
+} from 'network/shapes/Quest';
+import { BaseQuest, Quest } from 'network/shapes/Quest/quest';
+import { getRoomByIndex } from 'network/shapes/Room';
 import { getBalance } from 'network/shapes/utils';
-
+import { useComponentEntities } from 'network/utils/hooks';
+import React, { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import { NpcDialogue } from './NpcDialogue';
+// TODO: maybe in the future
+// have another dialogue modal
+// just for npcs?
 export const DialogueModal: UIComponent = {
   id: 'DialogueModal',
   Render: () => {
@@ -22,45 +32,50 @@ export const DialogueModal: UIComponent = {
 
     const {
       network,
-      data: { accEntity },
+      data: { accEntity, account },
       utils,
     } = (() => {
       const { network } = layers;
-      const accountEntity = queryAccountFromEmbedded(network);
       const { world, components } = network;
-
-      const accRefresh = {
-        live: 1,
-        inventory: 1,
-        config: 3600,
-      };
+      const accountEntity = queryAccountFromEmbedded(network);
+      const account = getAccount(world, components, accountEntity, {
+        kamis: true,
+        inventory: true,
+      });
 
       return {
-        network: layers.network,
-        data: { accEntity: accountEntity },
+        network,
+        data: { accEntity: accountEntity, account },
         utils: {
-          getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
+          queryRegistry: () => queryRegistryQuests(components),
+          queryOngoing: () => queryOngoingQuests(components, account.id),
+          getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
+          populate: (base: BaseQuest) => populateQuest(world, components, base),
+          parseObjectives: (quest: Quest) =>
+            parseQuestObjectives(world, components, account, quest),
         },
       };
     })();
 
     const { actions, components, world } = network;
+    const { IsRegistry, OwnsQuestID, IsComplete } = components;
+    const { queryRegistry, queryOngoing, getBase, populate, parseObjectives } = utils;
     const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
+    const setModals = useVisibility((s) => s.setModals);
+
     const dialogueIndex = useSelected((s) => s.dialogueIndex);
     const [dialogueNode, setDialogueNode] = React.useState({
       text: [''],
     } as DialogueNode);
     const [dialogueLength, setDialogueLength] = React.useState(0);
     const [step, setStep] = React.useState(0);
-    const [npc, setNpc] = React.useState({ name: '', background: '' });
-    const [typing, setTyping] = React.useState<any>();
-    const [account, setAccount] = React.useState<Account>(NullAccount);
+    const [npc, setNpc] = React.useState({ name: '' });
+    const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
+    const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
 
-    useEffect(() => {
-      setTyping(typeWriter(getText(dialogueNode.text[step])));
-    }, [dialogueNode.text[step]]);
+    /////////////////
+    // SUBSCRIPTION
 
-    // reset the step to 0 whenever the dialogue modal is toggled
     useEffect(() => setStep(0), [dialogueModalOpen]);
 
     // set the current dialogue node when the dialogue index changes
@@ -68,27 +83,57 @@ export const DialogueModal: UIComponent = {
       setStep(0);
       setDialogueNode(dialogues[dialogueIndex]);
       setDialogueLength(dialogues[dialogueIndex].text.length);
-      setNpc(dialogues[dialogueIndex].npc || { name: '', background: '' });
+      setNpc(dialogues[dialogueIndex].npc || { name: '' });
     }, [dialogueIndex]);
 
-    // update account data when the modal opens
     useEffect(() => {
-      if (!dialogueModalOpen) return;
-      const account = utils.getAccount(accEntity);
-      setAccount(account);
-    }, [dialogueModalOpen, accEntity]);
+      if (npc.name.length > 0 && dialogueModalOpen) {
+        setModals({
+          inventory: false,
+          questDialogue: false,
+          quests: false,
+          chat: false,
+        });
+      }
+    }, [dialogueModalOpen, npc.name.length, setModals]);
+
+    const registryEntities = useComponentEntities(IsRegistry) || [];
+    const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
+    const isCompleteEntities = useComponentEntities(IsComplete) || [];
+
+    const registry = useMemo(() => {
+      return queryRegistry().map((entity) => getBase(entity));
+    }, [registryEntities]);
+
+    const ongoing = useMemo(() => {
+      return queryOngoing().map((entity) => getBase(entity));
+    }, [account.id, ownsQuestEntities, isCompleteEntities]);
+
+    useEffect(() => {
+      if (!dialogueModalOpen || npc.name.length === 0) return;
+      const filterMinaQuests = (baseQuests: BaseQuest[]): Quest[] => {
+        return baseQuests
+          .map((base) => populate(base))
+          .map((populated) => parseObjectives(populated))
+          .filter(
+            (quest) => quest.subType.toLowerCase() === npc.name.toLowerCase() && !quest.complete
+          );
+      };
+      setAvailableQuests(filterMinaQuests(registry));
+      setOngoingQuests(filterMinaQuests(ongoing));
+    }, [
+      dialogueModalOpen,
+      dialogueIndex,
+      registryEntities,
+      ownsQuestEntities,
+      isCompleteEntities,
+      registry,
+      ongoing,
+      npc.name,
+    ]);
 
     //////////////////
     // INTERPRETATION
-
-    const isDisabled = (action: ActionParam) => {
-      if (action.type === 'move') {
-        const room = getRoomByIndex(world, components, action.input ?? 0);
-        return !canEnterRoom(world, components, account, room);
-      }
-      return action === undefined;
-    };
-
     const getText = (raw: (typeof dialogueNode.text)[number]) => {
       if (typeof raw === 'string') return raw;
       else if (typeof raw === 'function') return raw(getArgs());
@@ -115,10 +160,8 @@ export const DialogueModal: UIComponent = {
       else if (type === 'erc721Bridge') return triggerKamiBridgeModal();
       else if (type === 'trading') return triggerTradingModal();
     };
-
     const move = (roomIndex: number) => {
       const room = getRoomByIndex(world, components, roomIndex);
-
       actions.add({
         action: 'AccountMove',
         params: [roomIndex],
@@ -137,7 +180,12 @@ export const DialogueModal: UIComponent = {
       const disabled = step === 0;
       return (
         <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
-          <ActionButton text='←' disabled={disabled} onClick={() => setStep(step - 1)} />
+          <IconButton
+            scale={1.8}
+            img={ArrowIcons.left}
+            disabled={disabled}
+            onClick={() => setStep(step - 1)}
+          />
         </div>
       );
     };
@@ -150,7 +198,12 @@ export const DialogueModal: UIComponent = {
             visibility: disabled ? 'hidden' : 'visible',
           }}
         >
-          <ActionButton text='→' disabled={disabled} onClick={() => setStep(step + 1)} />
+          <IconButton
+            scale={1.8}
+            img={ArrowIcons.right}
+            disabled={disabled}
+            onClick={() => setStep(step + 1)}
+          />
         </div>
       );
     };
@@ -158,69 +211,65 @@ export const DialogueModal: UIComponent = {
     const MiddleButton = () => {
       if (!dialogueNode.action) return <div />;
       let action: ActionParam;
-      let show = false;
+      let disabled = false;
 
       // split by step if action is an array
       if ('label' in dialogueNode.action) {
         // only on last step
         action = dialogueNode.action;
-        show = step !== dialogueLength - 1 && !!action;
+        disabled = step !== dialogueLength - 1 && !!action;
       } else {
         // per step
         action = dialogueNode.action[step];
-        show = action === undefined;
+        disabled = action === undefined;
       }
 
-      if (show) return <div />;
+      if (disabled) return <div />;
 
       return (
         <ActionButton
           text={action.label}
-          disabled={isDisabled(action)}
-          onClick={() => getAction(action.type, action.input)} // hardcoded for now
+          disabled={disabled}
+          onClick={() => getAction(action.type, action.input)}
         />
       );
     };
 
-    //////////////////
-    // NPCS DIALOGUES
-
-    const typeWriter = (text: string) => {
-      let maxSize = 49;
-      let numberSlices = text.length / maxSize + 1;
-      let sliceStart = 0;
-      let sliceEnd = maxSize;
-      let endLine = [' ', '.', ';', ','];
-      let stringSliced: string[] = [];
-      for (let i = 0; i <= numberSlices; i++) {
-        if (sliceEnd > text.length) {
-          stringSliced.push(text.slice(sliceStart));
-          break;
-        }
-        while (!endLine.includes(text.charAt(sliceEnd))) {
-          sliceEnd--;
-        }
-        stringSliced.push(text.slice(sliceStart, sliceEnd));
-        sliceStart = sliceEnd;
-        sliceEnd += maxSize;
-      }
-      return stringSliced.map((string, index) => (
-        <Strings delay={index} key={text + index}>
-          {string}
-        </Strings>
-      ));
-    };
-
+    if (npc.name.length > 0) {
+      return (
+        <ModalWrapper
+          id='dialogue'
+          header={<Header>{npc.name}</Header>}
+          canExit
+          backgroundColor={'rgba(0,0,0,1)'}
+          positionOverride={{
+            colStart: 66,
+            colEnd: 99,
+            rowStart: 7,
+            rowEnd: 74,
+            position: 'fixed',
+          }}
+          noScroll
+        >
+          <NpcDialogue
+            hasAvailableQuests={availableQuests}
+            hasOngoingQuests={ongoingQuests}
+            npcColor='#ffffffff'
+            npcName={npc.name}
+            dialogueText={getText(dialogueNode.text[step])}
+            dialogueButtons={{
+              BackButton: BackButton,
+              NextButton: NextButton,
+              MiddleButton: MiddleButton,
+            }}
+          />
+        </ModalWrapper>
+      );
+    }
     return (
-      <ModalWrapper
-        id='dialogue'
-        header={npc.name.length > 0 && <Header>{npc.name}</Header>}
-        canExit
-        overlay
-        noPadding={npc.name.length > 0}
-      >
-        <Text npc={npc}>
-          {npc.name.length > 0 ? typing : getText(dialogueNode.text[step])}
+      <ModalWrapper id='dialogue' canExit overlay>
+        <Text>
+          {getText(dialogueNode.text[step])}
           <ButtonRow>
             {BackButton()}
             {MiddleButton()}
@@ -232,10 +281,9 @@ export const DialogueModal: UIComponent = {
   },
 };
 
-const Text = styled.div<{ npc?: { name: string; background: string } }>`
+const Text = styled.div`
   background-color: rgb(255, 255, 204);
   text-align: center;
-  ${({ npc }) => npc && npc.background.length > 0 && `${npc?.background}; text-align: left`};
   height: 100%;
   min-height: max-content;
   width: 100%;
@@ -251,27 +299,6 @@ const Text = styled.div<{ npc?: { name: string; background: string } }>`
   white-space: pre-line;
 `;
 
-const Header = styled.div`
-  padding: 1vw;
-  font-size: 1.1vw;
-  color: #a800cf;
-`;
-
-const Strings = styled.div<{ delay: number }>`
-  display: inline-block;
-  color: #a800cf;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 0%;
-  animation: type 2s steps(90, end) forwards;
-  animation-delay: ${({ delay }) => delay * 2}s;
-  @keyframes type {
-    to {
-      width: 100%;
-    }
-  }
-`;
-
 const ButtonRow = styled.div`
   position: absolute;
   align-self: center;
@@ -282,4 +309,11 @@ const ButtonRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+`;
+
+const Header = styled.div`
+  padding: 1vw;
+  font-size: 1.4vw;
+  color: #cc88ffff;
+  border-color: white;
 `;
