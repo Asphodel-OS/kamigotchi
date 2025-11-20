@@ -14,6 +14,7 @@ import { ActionParam } from 'constants/dialogue/types';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
+  filterOngoingQuests,
   filterQuestsByAvailable,
   getBaseQuest,
   populateQuest,
@@ -141,16 +142,18 @@ export const DialogueModal: UIComponent = {
 
     useEffect(() => {
       if (!dialogueModalOpen || npc.name.length === 0) return;
-      const raw = filterByAvailable(registry, ongoing, completed, account);
-      const filterMinaQuests = (baseQuests: BaseQuest[]): Quest[] => {
-        return baseQuests
-          .map((q) => populate(q))
-          .filter(
-            (quest) => quest.subType.toLowerCase() === npc.name.toLowerCase() && !quest.complete
-          );
+      const available = filterByAvailable(registry, ongoing, completed, account).map((q) =>
+        populate(q)
+      );
+      const populatedOngoing = ongoing.map((q) => populate(q));
+      const filteredOngoing = filterOngoingQuests(populatedOngoing);
+      const filterMinaQuests = (baseQuests: Quest[]): Quest[] => {
+        return baseQuests.filter(
+          (quest) => quest.subType.toLowerCase() === npc.name.toLowerCase() && !quest.complete
+        );
       };
-      setAvailableQuests(filterMinaQuests(raw));
-      setOngoingQuests(filterMinaQuests(ongoing));
+      setAvailableQuests(filterMinaQuests(available));
+      setOngoingQuests(filterMinaQuests(filteredOngoing));
     }, [
       dialogueModalOpen,
       dialogueIndex,
