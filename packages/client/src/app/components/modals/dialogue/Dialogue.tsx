@@ -129,15 +129,15 @@ export const DialogueModal: UIComponent = {
 
     const registry = useMemo(() => {
       return queryRegistry().map((entity) => getBase(entity));
-    }, [network, registryEntities]);
+    }, [registryEntities]);
 
     const completed: BaseQuest[] = useMemo(() => {
       return queryCompleted(account).map((entity) => getBase(entity));
-    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
+    }, [account.id, ownsQuestEntities, isCompleteEntities]);
 
     const ongoing = useMemo(() => {
       return queryOngoing(account.id).map((entity) => getBase(entity));
-    }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
+    }, [account.id, ownsQuestEntities, isCompleteEntities]);
 
     useEffect(() => {
       if (!dialogueModalOpen || npc.name.length === 0) return;
