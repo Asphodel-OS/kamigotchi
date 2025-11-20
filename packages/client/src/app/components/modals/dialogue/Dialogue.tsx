@@ -1,3 +1,8 @@
+import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+
+import { getAccount as _getAccount } from 'app/cache/account';
+import { getRoomByIndex } from 'app/cache/room';
 import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
@@ -6,22 +11,22 @@ import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'a
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { DialogueNode, dialogues } from 'constants/dialogue';
 import { ActionParam } from 'constants/dialogue/types';
-import { EntityIndex } from 'engine/recs';
-import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { EntityID, EntityIndex } from 'engine/recs';
+import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
   getBaseQuest,
   parseQuestObjectives,
   populateQuest,
   queryOngoingQuests,
   queryRegistryQuests,
+  Quest,
 } from 'network/shapes/Quest';
-import { BaseQuest, Quest } from 'network/shapes/Quest/quest';
-import { getRoomByIndex } from 'network/shapes/Room';
+import { BaseQuest } from 'network/shapes/Quest/quest';
+import { canEnterRoom } from 'network/shapes/Room';
 import { getBalance } from 'network/shapes/utils';
 import { useComponentEntities } from 'network/utils/hooks';
-import React, { useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import { NpcDialogue } from './NpcDialogue';
+
 // TODO: maybe in the future
 // have another dialogue modal
 // just for npcs?
@@ -32,26 +37,30 @@ export const DialogueModal: UIComponent = {
 
     const {
       network,
-      data: { accEntity, account },
+      data: { accEntity },
       utils,
     } = (() => {
       const { network } = layers;
-      const { world, components } = network;
+
       const accountEntity = queryAccountFromEmbedded(network);
-      const account = getAccount(world, components, accountEntity, {
-        kamis: true,
-        inventory: true,
-      });
+      const { world, components } = network;
+
+      const accRefresh = {
+        live: 1,
+        inventory: 1,
+        config: 3600,
+      };
 
       return {
-        network,
-        data: { accEntity: accountEntity, account },
+        network: layers.network,
+        data: { accEntity: accountEntity },
         utils: {
           queryRegistry: () => queryRegistryQuests(components),
-          queryOngoing: () => queryOngoingQuests(components, account.id),
           getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
           populate: (base: BaseQuest) => populateQuest(world, components, base),
-          parseObjectives: (quest: Quest) =>
+          getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
+          queryOngoing: (accountId: EntityID) => queryOngoingQuests(components, accountId),
+          parseObjectives: (quest: Quest, account: Account) =>
             parseQuestObjectives(world, components, account, quest),
         },
       };
@@ -60,22 +69,25 @@ export const DialogueModal: UIComponent = {
     const { actions, components, world } = network;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
     const { queryRegistry, queryOngoing, getBase, populate, parseObjectives } = utils;
+
     const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
     const setModals = useVisibility((s) => s.setModals);
-
     const dialogueIndex = useSelected((s) => s.dialogueIndex);
-    const [dialogueNode, setDialogueNode] = React.useState({
+
+    const [dialogueNode, setDialogueNode] = useState({
       text: [''],
     } as DialogueNode);
-    const [dialogueLength, setDialogueLength] = React.useState(0);
-    const [step, setStep] = React.useState(0);
-    const [npc, setNpc] = React.useState({ name: '' });
+    const [dialogueLength, setDialogueLength] = useState(0);
+    const [step, setStep] = useState(0);
+    const [npc, setNpc] = useState({ name: '' });
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
+    const [account, setAccount] = useState<Account>(NullAccount);
 
     /////////////////
     // SUBSCRIPTION
 
+    // reset the step to 0 whenever the dialogue modal is toggled
     useEffect(() => setStep(0), [dialogueModalOpen]);
 
     // set the current dialogue node when the dialogue index changes
@@ -85,6 +97,13 @@ export const DialogueModal: UIComponent = {
       setDialogueLength(dialogues[dialogueIndex].text.length);
       setNpc(dialogues[dialogueIndex].npc || { name: '' });
     }, [dialogueIndex]);
+
+    // update account data when the modal opens
+    useEffect(() => {
+      if (!dialogueModalOpen) return;
+      const account = utils.getAccount(accEntity);
+      setAccount(account);
+    }, [dialogueModalOpen, accEntity]);
 
     useEffect(() => {
       if (npc.name.length > 0 && dialogueModalOpen) {
@@ -99,22 +118,21 @@ export const DialogueModal: UIComponent = {
 
     const registryEntities = useComponentEntities(IsRegistry) || [];
     const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
-    const isCompleteEntities = useComponentEntities(IsComplete) || [];
 
     const registry = useMemo(() => {
       return queryRegistry().map((entity) => getBase(entity));
     }, [registryEntities]);
 
     const ongoing = useMemo(() => {
-      return queryOngoing().map((entity) => getBase(entity));
-    }, [account.id, ownsQuestEntities, isCompleteEntities]);
+      return queryOngoing(account.id).map((entity) => getBase(entity));
+    }, [account.id, ownsQuestEntities]);
 
     useEffect(() => {
       if (!dialogueModalOpen || npc.name.length === 0) return;
       const filterMinaQuests = (baseQuests: BaseQuest[]): Quest[] => {
         return baseQuests
           .map((base) => populate(base))
-          .map((populated) => parseObjectives(populated))
+          .map((populated) => parseObjectives(populated, account))
           .filter(
             (quest) => quest.subType.toLowerCase() === npc.name.toLowerCase() && !quest.complete
           );
@@ -122,18 +140,26 @@ export const DialogueModal: UIComponent = {
       setAvailableQuests(filterMinaQuests(registry));
       setOngoingQuests(filterMinaQuests(ongoing));
     }, [
+      account,
       dialogueModalOpen,
       dialogueIndex,
       registryEntities,
       ownsQuestEntities,
-      isCompleteEntities,
       registry,
       ongoing,
       npc.name,
     ]);
-
     //////////////////
     // INTERPRETATION
+
+    const isDisabled = (action: ActionParam) => {
+      if (action.type === 'move') {
+        const room = getRoomByIndex(world, components, action.input ?? 0);
+        return !canEnterRoom(world, components, account, room);
+      }
+      return action === undefined;
+    };
+
     const getText = (raw: (typeof dialogueNode.text)[number]) => {
       if (typeof raw === 'string') return raw;
       else if (typeof raw === 'function') return raw(getArgs());
@@ -160,8 +186,10 @@ export const DialogueModal: UIComponent = {
       else if (type === 'erc721Bridge') return triggerKamiBridgeModal();
       else if (type === 'trading') return triggerTradingModal();
     };
+
     const move = (roomIndex: number) => {
       const room = getRoomByIndex(world, components, roomIndex);
+
       actions.add({
         action: 'AccountMove',
         params: [roomIndex],
@@ -207,33 +235,35 @@ export const DialogueModal: UIComponent = {
         </div>
       );
     };
-
     const MiddleButton = () => {
       if (!dialogueNode.action) return <div />;
       let action: ActionParam;
-      let disabled = false;
+      let show = false;
 
       // split by step if action is an array
       if ('label' in dialogueNode.action) {
         // only on last step
         action = dialogueNode.action;
-        disabled = step !== dialogueLength - 1 && !!action;
+        show = step !== dialogueLength - 1 && !!action;
       } else {
         // per step
         action = dialogueNode.action[step];
-        disabled = action === undefined;
+        show = action === undefined;
       }
 
-      if (disabled) return <div />;
+      if (show) return <div />;
 
       return (
         <ActionButton
           text={action.label}
-          disabled={disabled}
-          onClick={() => getAction(action.type, action.input)}
+          disabled={isDisabled(action)}
+          onClick={() => getAction(action.type, action.input)} // hardcoded for now
         />
       );
     };
+
+    //////////////////
+    // NPCS DIALOGUES
 
     if (npc.name.length > 0) {
       return (
