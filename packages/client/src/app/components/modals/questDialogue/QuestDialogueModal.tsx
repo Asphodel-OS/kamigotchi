@@ -128,7 +128,7 @@ export const QuestDialogueModal: UIComponent = {
     };
 
     if (!quest) return <></>;
-    console.log(quest);
+
     return (
       <ModalWrapper
         id='questDialogue'
