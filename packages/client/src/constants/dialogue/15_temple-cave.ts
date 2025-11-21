@@ -36,7 +36,7 @@ const templecave: DialogueNode = {
   },
 };
 
-const crownedstatues: DialogueNode = {
+const crownedstatue: DialogueNode = {
   index: 154,
   text: [
     'A large male figure sitting in a throne',
@@ -54,4 +54,4 @@ const monkstatues: DialogueNode = {
   ],
 };
 
-export default [templegrass, templedoor, templecave, crownedstatues, monkstatues];
+export default [templegrass, templedoor, templecave, crownedstatue, monkstatues];

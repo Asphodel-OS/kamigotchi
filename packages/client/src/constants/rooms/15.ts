@@ -17,12 +17,17 @@ export const room15: Room = {
     },
     {
       name: 'crowned statue',
-      coordinates: { x1: 49, y1: 4, x2: 79, y2: 34 },
+      coordinates: { x1: 90, y1: 0, x2: 120, y2: 40 },
       dialogue: 154,
     },
     {
-      name: 'monk statues',
-      coordinates: { x1: 49, y1: 4, x2: 79, y2: 34 },
+      name: 'monk statues 1',
+      coordinates: { x1: 10, y1: 70, x2: 20, y2: 120 },
+      dialogue: 155,
+    },
+    {
+      name: 'monk statues 2',
+      coordinates: { x1: 80, y1: 70, x2: 110, y2: 120 },
       dialogue: 155,
     },
   ],
