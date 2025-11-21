@@ -5,8 +5,8 @@ export const useTypewriter = (
   text: string,
   speed: number,
   retrigger?: boolean | string,
-
-  onUpdate?: () => void
+  onUpdate?: () => void,
+  cancelled?: boolean
 ) => {
   const [displayedText, setDisplayedText] = useState<ReactNode[]>([]);
   const indexRef = useRef(0);
@@ -18,9 +18,15 @@ export const useTypewriter = (
 
   useEffect(() => {
     if (!text) return;
+    if (cancelled) {
+      setDisplayedText([text]);
+      indexRef.current = text.length;
+      return;
+    }
     const interval = setInterval(() => {
       if (indexRef.current >= text.length) {
         clearInterval(interval);
+
         return;
       }
       // leaving this hardcoreded
@@ -55,13 +61,15 @@ export const TypewriterComponent = ({
   retrigger,
   speed = 30,
   onUpdate,
+  cancelled = false,
 }: {
   text?: string;
   retrigger?: boolean | string;
   speed?: number;
   onUpdate?: () => void;
+  cancelled?: boolean;
 }) => {
-  const displayedText = useTypewriter(text, speed, retrigger, onUpdate);
+  const displayedText = useTypewriter(text, speed, retrigger, onUpdate, cancelled);
   return <Container>{displayedText}</Container>;
 };
 

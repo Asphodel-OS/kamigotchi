@@ -40,6 +40,8 @@ export const QuestDialogue = ({
   const [baseText, setBaseText] = useState(!hasCompletion);
   const [completionText, setCompletionText] = useState(hasCompletion);
   const [wasToggled, setWasToggled] = useState(false);
+  const [cancelledIntro, setCancelledIntro] = useState(false);
+  const [cancelledComplete, setCancelledComplete] = useState(false);
 
   const pastRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
@@ -48,10 +50,19 @@ export const QuestDialogue = ({
 
   /////////////////
   // SUBSCRIPTIONS
+  // shows completion text by default
+  // hsa intro text as fallback
   useEffect(() => {
     setBaseText(!hasCompletion);
     setCompletionText(hasCompletion);
   }, [questCompletion, questText, modalOpened]);
+
+  // resets cancelation when modal
+  // opened or sectiosn are toggled
+  useEffect(() => {
+    setCancelledIntro(false);
+    setCancelledComplete(false);
+  }, [modalOpened, wasToggled]);
 
   //TODO: maybe make this a component
   ///////////////
@@ -97,17 +108,15 @@ export const QuestDialogue = ({
           ref={pastRef}
           isExpanded={baseText}
           color={questColor}
-          onClick={() => {
-            setBaseText(true);
-            setCompletionText(false);
-          }}
           onScroll={(e) => handleUserScroll(pastRef, isUserScrollingPastRef)}
+          onClick={() => setCancelledIntro(true)} // only cancel this one
         >
           <TypewriterComponent
-            speed={40}
+            speed={30}
             retrigger={`${modalOpened}${wasToggled}`}
             text={questText}
             onUpdate={() => handleScroll(pastRef, isUserScrollingPastRef)}
+            cancelled={cancelledIntro}
           />
         </Text>
       </>
@@ -120,17 +129,15 @@ export const QuestDialogue = ({
             ref={mainRef}
             isExpanded={completionText}
             color={questColor}
-            onClick={() => {
-              setCompletionText(true);
-              setBaseText(false);
-            }}
             onScroll={(e) => handleUserScroll(mainRef, isUserScrollingMainRef)}
+            onClick={() => setCancelledComplete(true)} // only cancel this one
           >
             <TypewriterComponent
-              speed={40}
+              speed={30}
               retrigger={`${modalOpened}${wasToggled}`}
               text={questCompletion}
               onUpdate={() => handleScroll(mainRef, isUserScrollingMainRef)}
+              cancelled={cancelledComplete}
             />
           </Text>
         </>
@@ -176,7 +183,7 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
   white-space: pre-line;
   word-wrap: break-word;
   overflow-y: auto;
-  cursor: ${({ isExpanded }) => (isExpanded ? 'auto' : 'pointer')};
+  cursor: pointer;
   transition:
     height 0.3s ease,
     visibility 0.3s ease;
