@@ -3,6 +3,7 @@ import { getComponentValue, World } from 'engine/recs';
 import { Components } from 'network/';
 import { Account } from '../Account';
 import { passesConditions } from '../Conditional';
+import { filterGates } from './gate';
 import { getRoomsX } from './getters';
 import { query } from './queries';
 import { getRoom, Room, RoomOptions } from './types';
@@ -49,5 +50,9 @@ export const canEnterRoom = (
   account: Account,
   room: Room
 ): boolean => {
-  return passesConditions(world, components, room.gates, account);
+  const gates = filterGates(room.gates, account.roomIndex);
+  if (room.index === 88) {
+    console.log('gates', gates);
+  }
+  return passesConditions(world, components, gates, account);
 };

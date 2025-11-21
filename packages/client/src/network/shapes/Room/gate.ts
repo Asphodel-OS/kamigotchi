@@ -1,48 +1,48 @@
-import { EntityID, EntityIndex, HasValue, runQuery, World } from 'engine/recs';
+import { EntityID, EntityIndex, getComponentValue, HasValue, runQuery, World } from 'engine/recs';
 
 import { Components } from 'network/';
-import { Condition, getCondition } from '../Conditional';
+import { getCondition } from '../Conditional';
 import { hashArgs } from '../utils';
+import { Gate } from './types';
 
 export const getGatesBetween = (
   world: World,
   components: Components,
-  to: number,
-  from: number
-): Condition[] => {
-  const gatesGeneral = getGates(world, components, to, 0);
-  const gatesBetween = getGates(world, components, to, from);
-  return [...gatesGeneral, ...gatesBetween];
-};
-
-// query Gate Entities for a Room/Room pair
-export const queryGates = (
-  components: Components,
   toIndex: number,
   fromIndex: number
-): EntityIndex[] => {
-  const { ToID, FromID } = components;
+): Gate[] => {
+  const gates = getGates(world, components, toIndex);
+  return filterGates(gates, fromIndex);
+};
+
+// query all gate entities for a Room
+export const queryGates = (components: Components, toIndex: number): EntityIndex[] => {
+  const { ToID } = components;
 
   const toQuery = [HasValue(ToID, { value: genGateAnchorTo(toIndex) })];
   let gates = Array.from(runQuery(toQuery)); // querying from all rooms
 
-  if (fromIndex > 0) {
-    toQuery.push(HasValue(FromID, { value: genGateAnchorFrom(fromIndex) }));
-    gates = gates.concat(Array.from(runQuery(toQuery)));
-  }
-
   return gates;
 };
 
-// get the Gates between two Rooms
-export const getGates = (
-  world: World,
-  components: Components,
-  toIndex: number,
-  fromIndex: number
-): Condition[] => {
-  const entities = queryGates(components, toIndex, fromIndex);
-  return entities.map((index): Condition => getCondition(world, components, index));
+export const filterGates = (gates: Gate[], sourceRoom: number): Gate[] => {
+  return gates.filter((gate) => {
+    // gates from either all or specified room
+    return !gate.fromRoom || gate.fromRoom === sourceRoom;
+  });
+};
+
+// gets all gates, including specified fromRooms
+export const getGates = (world: World, components: Components, toIndex: number): Gate[] => {
+  const { SourceID } = components;
+
+  const entities = queryGates(components, toIndex);
+  return entities.map((index): Gate => {
+    const condition = getCondition(world, components, index);
+    const rawFromRoom = getComponentValue(SourceID, index)?.value;
+    const fromRoom = rawFromRoom ? Number(rawFromRoom) * 1 : undefined;
+    return { ...condition, fromRoom };
+  });
 };
 
 // generate the EntityID of the Gate Anchor to a Room

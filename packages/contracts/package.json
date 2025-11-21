@@ -16,7 +16,7 @@
     "----- SPECIFIC COMMANDS -----": "---------------------------",
     "deploy:local": "NODE_ENV=puter pnpm deploy:script  --forge='--code-size-limit 9999999'",
     "deploy:local:partial": "pnpm deploy:local --partial",
-    "deploy:test": "NODE_ENV=testing pnpm deploy:script --forge='-g=150 --batch-size=5'",
+    "deploy:test": "NODE_ENV=testing pnpm deploy:script --forge='-g=110 --batch-size=5'",
     "deploy:test:partial": "pnpm deploy:test --partial",
     "deploy:prod": "NODE_ENV=production pnpm deploy:script --forge='-g=150 --batch-size=5'",
     "deploy:prod:partial": "pnpm deploy:prod --partial",

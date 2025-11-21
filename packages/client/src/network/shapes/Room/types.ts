@@ -5,7 +5,7 @@ import { Account } from '../Account';
 import { Condition } from '../Conditional';
 import { getRoomIndex } from '../utils/component';
 import { Exit, getExitsFor } from './exit';
-import { getGatesBetween } from './gate';
+import { getGates } from './gate';
 import { Coord, getLocation } from './utils';
 
 // standardized Object shape of a Room Entity
@@ -16,10 +16,14 @@ export interface Room {
   name: string;
   description: string;
   location: Coord;
-  gates: Condition[];
+  gates: Gate[];
   exits?: Exit[];
   players?: Account[];
   // owner?: Account; // not implemented
+}
+
+export interface Gate extends Condition {
+  fromRoom?: number;
 }
 
 export interface RoomOptions {
@@ -45,7 +49,7 @@ export const getRoom = (
     name: getComponentValue(Name, entity)?.value as string,
     description: getComponentValue(Description, entity)?.value as string,
     location: getLocation(components, entity),
-    gates: getGatesBetween(world, components, index, 0),
+    gates: getGates(world, components, index),
   };
 
   if (options?.exits) room.exits = getExitsFor(world, components, room);
