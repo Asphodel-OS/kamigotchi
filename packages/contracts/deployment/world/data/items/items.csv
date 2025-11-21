@@ -66,6 +66,7 @@ Slightly sacred. "
 
 These ribbons are greatly prized…. "
 ,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Rare,Kami,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
+,To Deploy,Djed Pillar,11003,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,In Game,XP Candy (Small),11201,Food,Uncommon,Kami,NOT_TRADABLE,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
 ,In Game,XP Candy (Medium),11202,Food,Uncommon,Kami,NOT_TRADABLE,"HP+10,XP+100",,"Provides a decent amount of XP when fed to a Kami. "
@@ -101,19 +102,18 @@ These ribbons are greatly prized…. "
 ,In Game,Festival Chime,11408,Food,Rare,Kami,BYPASS_BONUS_RESET,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
 ,In Game,Energy Drink,11409,Food,Uncommon,Kami,BYPASS_BONUS_RESET,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
 ,In Game,Hostility Potion,11410,Food,Uncommon,Kami,BYPASS_BONUS_RESET,"ATS+3%,ITEM1102",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
-,To Deploy,Toadstool Liquor,11411,Potion,Rare,Kami,BYPASS_BONUS_RESET,"TEMP10HEALTH,TEMP1POWER",,Liquor distilled from a mash made from mushrooms and black poppy. An underworld favorite.
-,To Deploy,Fortified XP Potion,11413,Potion,Epic,Kami,,"XP+50000,ITEM1006",,A deep-green potion with a grainy texture and dense mouthfeel. Fortified with rare red amber and the essences of old memories.
+,To Deploy,Fortified XP Potion,11411,Potion,Epic,Kami,,"XP+50000,ITEM1006",,A deep-green potion with a grainy texture and dense mouthfeel. Fortified with rare red amber and the essences of old memories.
+,To Deploy,Flash Talisman,11412,Consumable,Rare,Kami,,"ATR+10%_KK,DTR-10%_KK",,"A magical talisman that burns easily. Using this on a Kami intensifies their overall sensitivity to Types, buffing their advantages on liquidations but nerfing their advantages on defense. "
+,To Deploy,Toadstool Liquor,11501,Potion,Rare,Kami,BYPASS_BONUS_RESET,"TEMP10HEALTH,TEMP1POWER",,Liquor distilled from a mash made from mushrooms and black poppy. An underworld favorite.
+,To Deploy,Sarcophagus Honey,11502,Consumable,Uncommon,Kami,,TEMP10HEALTH,,Legendary medicine believed to be the stuff of rumors. A piece of flesh has been preserved inside using ancient techniques. Give this to a Kami to grant them a temporary bonus to maximum Health.
 ,In Game,Spirit Glue,19001,Potion,Uncommon,Enemy_Kami,,"NEXT_COOLDOWN+180,ITEM1003",,This glue even sticks to intangible things. Can be used to add additional Cooldown to an enemy Kami and temporarily lock it down to a Node.
-,To Deploy,Animistic Poison,19002,Potion,Rare,Enemy_Kami,,STRAIN+50%,,"Dangerous to both living and nonliving beings. When used on Kamigotchi, it causes them to lose HP at a faster rate while Harvesting. "
-,To Deploy,Cthonic Blight,19003,Potion,Rare,Enemy_Kami,BYPASS_BONUS_RESET,DTS-5%,,"Highly corrosive. Can be used to clear barriers of plant or fungal matter. It can also be used on a Kamigotchi to lower its defenses. The Blight is particularly dangerous to Normal-type Kami. "
-,To Deploy,Curse Tablet,19004,Consumable,Rare,Enemy_Kami,,ATS-30%_KK,,"Also called a Defixio or Katadesmos. This ancient tablet is inscribed with a curse of weakness. Although it was meant for a long-dead human, Kami can use it on their own kind."
+,To Deploy,Animistic Poison,19101,Potion,Rare,Enemy_Kami,,STRAIN+50%,,"Dangerous to both living and nonliving beings. When used on Kamigotchi, it causes them to lose HP at a faster rate while Harvesting. "
+,To Deploy,Cthonic Blight,19201,Potion,Rare,Enemy_Kami,BYPASS_BONUS_RESET,DTS-5%,,"Highly corrosive. Can be used to clear barriers of plant or fungal matter. It can also be used on a Kamigotchi to lower its defenses. The Blight is particularly dangerous to Normal-type Kami. "
+,To Deploy,Curse Tablet,19301,Consumable,Rare,Enemy_Kami,,ATS-30%_KK,,"Also called a Defixio or Katadesmos. This ancient tablet is inscribed with a curse of weakness. Although it was meant for a long-dead human, Kami can use it on their own kind."
 ,In Game,Giftbox,21001,Lootbox,Uncommon,Account,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Rare,Account,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
 ,In Game,Wonder Egg,21003,Lootbox,Rare,Account,,DT3,,"A cracked egg held together by blood-red wax. The contents are a surprise. "
 ,In Game,Booster Pack,21004,Lootbox,Rare,Account,,DT4,,Open this magical booster pack to receive a Spell Card. You might find something super rare!
-,To Deploy,Djed Pillar,21101,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
-,To Deploy,Sarcophagus Honey,21102,Consumable,Uncommon,Kami,,TEMP10HEALTH,,Legendary medicine believed to be the stuff of rumors. A piece of flesh has been preserved inside using ancient techniques. Give this to a Kami to grant them a temporary bonus to maximum Health.
-,To Deploy,Flash Talisman,21103,Consumable,Rare,Kami,,"DTR-10%_KK,ATR+10%_KK",,"A magical talisman that burns easily. Using this on a Kami intensifies their overall sensitivity to Types, buffing their advantages on liquidations but nerfing their advantages on defense. "
 ,In Game,Ice Cream,21201,Food,Uncommon,Account,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Rare,Account,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Rare,Account,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
