@@ -1,7 +1,7 @@
 import aetheric_sextant from './aetheric_sextant.png';
 import agency_giftbox from './agency_giftbox.png';
 import ancient_machine_part from './ancient_machine_part.png';
-import animistic_potion from './animistic_potion.png';
+import animistic_poison from './animistic_poison.png';
 import apology_letter from './apology_letter.png';
 import ash_pearl from './ash_pearl.png';
 import ashlar from './ashlar.png';
@@ -131,7 +131,7 @@ export const ItemImages = {
   aetheric_sextant: aetheric_sextant,
   agency_giftbox: agency_giftbox,
   ancient_machine_part: ancient_machine_part,
-  animistic_potion: animistic_potion, // INSERT HERE
+  animistic_poison: animistic_poison, // INSERT HERE
   apology_letter: apology_letter,
   ash_pearl: ash_pearl,
   ashlar: ashlar, // INSERT HERE
