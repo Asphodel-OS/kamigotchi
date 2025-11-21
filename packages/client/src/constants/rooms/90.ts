@@ -9,5 +9,16 @@ export const room90: Room = {
     key: 'scenicView',
     path: scenicView,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'dragons',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 901,
+    },
+    {
+      name: 'pipe',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 902,
+    },
+  ],
 };

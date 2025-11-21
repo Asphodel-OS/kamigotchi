@@ -36,4 +36,22 @@ const templecave: DialogueNode = {
   },
 };
 
-export default [templegrass, templedoor, templecave];
+const crownedstatues: DialogueNode = {
+  index: 154,
+  text: [
+    'A large male figure sitting in a throne',
+    'He seems to be wearing a leotard with gloves, boots, and a belt, like a comic book superhero',
+    'The figure is crowned with a golden crown',
+  ],
+};
+
+const monkstatues: DialogueNode = {
+  index: 155,
+  text: [
+    'A row of monk statues',
+    'Each figure is carved from dark stone',
+    'Their eyes seem to follow you',
+  ],
+};
+
+export default [templegrass, templedoor, templecave, crownedstatues, monkstatues];

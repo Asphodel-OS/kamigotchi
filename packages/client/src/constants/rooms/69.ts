@@ -9,5 +9,11 @@ export const room69: Room = {
     key: 'lotusPool',
     path: lotusPool,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'lotus',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 691,
+    },
+  ],
 };

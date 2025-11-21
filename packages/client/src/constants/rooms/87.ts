@@ -9,5 +9,16 @@ export const room87: Room = {
     key: 'sacrarium',
     path: sacrarium,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'black pool',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 871,
+    },
+    {
+      name: 'pillars',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 872,
+    },
+  ],
 };

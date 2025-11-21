@@ -9,5 +9,21 @@ export const room71: Room = {
     key: 'shabbyDeck',
     path: shabbyDeck,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'bones',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 711,
+    },
+    {
+      name: 'broken window',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 712,
+    },
+    {
+      name: 'albino centipede',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 713,
+    },
+  ],
 };

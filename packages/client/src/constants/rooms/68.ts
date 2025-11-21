@@ -9,5 +9,16 @@ export const room68: Room = {
     key: 'slipperyPit',
     path: slipperyPit,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'Ladder up',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 681,
+    },
+    {
+      name: 'Dark Pit',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 682,
+    },
+  ],
 };

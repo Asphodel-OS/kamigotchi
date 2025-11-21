@@ -9,5 +9,11 @@ export const room18: Room = {
     key: 'caveCrossroads',
     path: caveCrossroads,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'hanging bell',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 184,
+    },
+  ],
 };

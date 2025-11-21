@@ -9,5 +9,16 @@ export const room84: Room = {
     key: 'reinforcedTunnel',
     path: reinforcedTunnel,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'purple hardback book',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 841,
+    },
+    {
+      name: 'mine tunnel note',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 842,
+    },
+  ],
 };

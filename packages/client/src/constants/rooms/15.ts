@@ -15,5 +15,15 @@ export const room15: Room = {
       coordinates: { x1: 30, y1: 100, x2: 100, y2: 150 },
       dialogue: 151,
     },
+    {
+      name: 'crowned statue',
+      coordinates: { x1: 49, y1: 4, x2: 79, y2: 34 },
+      dialogue: 154,
+    },
+    {
+      name: 'monk statues',
+      coordinates: { x1: 49, y1: 4, x2: 79, y2: 34 },
+      dialogue: 155,
+    },
   ],
 };

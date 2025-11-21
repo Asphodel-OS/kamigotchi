@@ -15,5 +15,16 @@ export const room72: Room = {
       coordinates: { x1: 50, y1: 50, x2: 80, y2: 100 },
       dialogue: 721,
     },
+    {
+      name: 'open hatch',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 722,
+    },
+    {
+      name: 'shattered tube',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 723,
+    },
+    { name: 'damaged device', coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 }, dialogue: 724 },
   ],
 };

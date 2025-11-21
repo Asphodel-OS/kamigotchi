@@ -9,5 +9,16 @@ export const room16: Room = {
     key: 'technoTemple',
     path: technoTemple,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'offering box',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 162,
+    },
+    {
+      name: 'crt monitor',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 163,
+    },
+  ],
 };

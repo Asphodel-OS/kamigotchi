@@ -9,5 +9,11 @@ export const room78: Room = {
     key: 'toadstoolPlatforms',
     path: toadstoolPlatforms,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'rope ladder',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 781,
+    },
+  ],
 };

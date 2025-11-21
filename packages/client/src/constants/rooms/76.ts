@@ -9,5 +9,16 @@ export const room76: Room = {
     key: 'fungusGarden',
     path: fungusGarden,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'purple mushrooms',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 761,
+    },
+    {
+      name: 'red mushrooms',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 762,
+    },
+  ],
 };

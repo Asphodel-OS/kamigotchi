@@ -16,5 +16,11 @@ export const room89: Room = {
       coordinates: { x1: 45, y1: 45, x2: 80, y2: 100 },
       onClick: () => triggerGoalModal([9]),
     },
+    { name: 'red birds', coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 }, dialogue: 891 },
+    {
+      name: 'green dragon',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 892,
+    },
   ],
 };
