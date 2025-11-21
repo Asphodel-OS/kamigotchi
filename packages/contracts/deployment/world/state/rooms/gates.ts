@@ -23,6 +23,7 @@ const gates = {
     api.room.createGate(84, 0, 0, getGoalID(6), 'COMPLETE_COMP', 'BOOL_IS', ''),
   86: (api: AdminAPI) =>
     api.room.createGate(86, 0, 0, getGoalID(7), 'COMPLETE_COMP', 'BOOL_IS', ''),
+  88: (api: AdminAPI) => api.room.createGate(88, 72, 100004, 1, 'ITEM', 'CURR_MIN', 'ACCOUNT'),
 };
 
 export async function createGates(api: AdminAPI, roomIndex: number) {

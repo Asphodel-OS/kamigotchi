@@ -9,5 +9,11 @@ export const room88: Room = {
     key: 'sextantRooms',
     path: sextantRooms,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'exit',
+      coordinates: { x1: 105, y1: 20, x2: 125, y2: 130 },
+      dialogue: 881,
+    },
+  ],
 };

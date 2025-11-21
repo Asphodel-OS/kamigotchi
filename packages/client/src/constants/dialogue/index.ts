@@ -22,6 +22,8 @@ import dialogues54 from './54_plane_interior';
 import dialogues64 from './64_burning_room';
 import dialogues65 from './65_forest_hut';
 import dialogues66 from './66_trading-room';
+import dialogues72 from './72_hatch-to-nowhere';
+import dialogues88 from './88_treasure-hoard';
 import { DialogueNode } from './types';
 
 const dialogues00: DialogueNode[] = [
@@ -60,7 +62,9 @@ const dialogueList = dialogues00.concat(
   dialogues54,
   dialogues64,
   dialogues65,
-  dialogues66
+  dialogues66,
+  dialogues72,
+  dialogues88
 );
 
 // aggregated map of all dialogue nodes, referenced by index

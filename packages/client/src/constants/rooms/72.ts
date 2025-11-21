@@ -9,5 +9,11 @@ export const room72: Room = {
     key: 'hatchToNowhere',
     path: hatchToNowhere,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'exit',
+      coordinates: { x1: 50, y1: 50, x2: 80, y2: 100 },
+      dialogue: 721,
+    },
+  ],
 };
