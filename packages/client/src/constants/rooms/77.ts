@@ -13,12 +13,12 @@ export const room77: Room = {
   objects: [
     {
       name: 'coop trigger',
-      coordinates: { x1: 110, y1: 30, x2: 130, y2: 70 },
+      coordinates: { x1: 105, y1: 25, x2: 135, y2: 75 },
       onClick: () => triggerGoalModal([6]),
     },
     {
       name: 'coop trigger',
-      coordinates: { x1: 5, y1: 20, x2: 20, y2: 40 },
+      coordinates: { x1: 0, y1: 15, x2: 25, y2: 45 },
       onClick: () => triggerGoalModal([6]),
     },
   ],
