@@ -12,12 +12,12 @@ export const room16: Room = {
   objects: [
     {
       name: 'offering box',
-      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      coordinates: { x1: 45, y1: 90, x2: 80, y2: 120 },
       dialogue: 162,
     },
     {
       name: 'crt monitor',
-      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      coordinates: { x1: 53, y1: 35, x2: 75, y2: 55 },
       dialogue: 163,
     },
   ],

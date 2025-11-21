@@ -15,11 +15,7 @@ const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 const defaultBgm = { key: 'cave', path: cave };
 
 // painting of the room alongside any clickable objects
-export const Room = ({
-  index,
-}: {
-  index: number
-}) => {
+export const Room = ({ index }: { index: number }) => {
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
   const setModals = useVisibility((s) => s.setModals);
   const setNode = useSelected((s) => s.setNode);
@@ -202,15 +198,17 @@ const Clickbox = styled.div<Coordinates>`
 
   cursor: pointer;
   pointer-events: auto;
-  opacity: 0.2;
 
-  &:hover {
-    animation: ${({}) => radiateFx} 1.5s linear infinite;
-    background: radial-gradient(
-      closest-side,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(80, 80, 205, 1) 70%,
-      rgba(80, 80, 80, 0) 90%
-    );
-  }
+  opacity: 1;
+
+  animation: ${radiateFx} 1.8s ease-in-out infinite;
+
+  background: radial-gradient(
+    circle,
+    rgba(255, 215, 0, 1) 0%,
+    rgba(255, 215, 0, 1) 40%,
+    rgba(255, 215, 0, 1) 70%,
+    rgba(255, 215, 0, 0.95) 80%,
+    rgba(195, 255, 0, 0.59) 90%
+  );
 `;
