@@ -199,7 +199,7 @@ export const Toolbar = ({
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
       <DropdownToggle
-        limit={15}
+        limit={12}
         button={{
           images: getDDTIcons(view),
           tooltips: getDDTTooltips(view),
