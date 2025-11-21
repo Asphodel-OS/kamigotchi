@@ -115,8 +115,10 @@ export const QuestDialogueModal: UIComponent = {
     // a completion text
     const handleClick = async (tx: EntityIndex, isComplete = false) => {
       const completed = await didActionComplete(actions.Action, tx);
-      if (completed || (isComplete && !!quest?.descriptionAlt)) {
-        setModals({ questDialogue: false });
+      if (completed) {
+        if (!(isComplete && !!quest?.descriptionAlt)) {
+          setTimeout(() => setModals({ questDialogue: false }), 500);
+        }
       }
     };
 
