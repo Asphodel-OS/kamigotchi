@@ -17,7 +17,9 @@ const defaultBgm = { key: 'cave', path: cave };
 // painting of the room alongside any clickable objects
 export const Room = ({ index }: { index: number }) => {
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
+  const showHidden = useSelected((s) => s.showHidden);
   const setModals = useVisibility((s) => s.setModals);
+
   const setNode = useSelected((s) => s.setNode);
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
@@ -120,6 +122,7 @@ export const Room = ({ index }: { index: number }) => {
       <Clickbox
         key={object.name}
         shiftHeld={shiftHeld}
+        showHidden={showHidden}
         x1={x1}
         y1={y1}
         x2={x2}
@@ -130,6 +133,7 @@ export const Room = ({ index }: { index: number }) => {
       <Clickbox
         key={object.name}
         shiftHeld={shiftHeld}
+        showHidden={showHidden}
         x1={x1}
         y1={y1}
         x2={x2}
@@ -184,7 +188,7 @@ interface Coordinates {
   y2: number;
 }
 
-const Clickbox = styled.div<Coordinates & { shiftHeld?: boolean }>`
+const Clickbox = styled.div<Coordinates & { shiftHeld?: boolean; showHidden?: boolean }>`
   border-radius: 3vw;
   position: absolute;
   top: ${({ y1 }) => y1}%;
@@ -194,8 +198,8 @@ const Clickbox = styled.div<Coordinates & { shiftHeld?: boolean }>`
   cursor: pointer;
   pointer-events: auto;
 
-  ${({ shiftHeld }) =>
-    shiftHeld &&
+  ${({ shiftHeld, showHidden }) =>
+    (shiftHeld || showHidden) &&
     css`
       animation: ${alternativeRadiateFx} 1.5s ease-in-out infinite;
       opacity: 0.4;

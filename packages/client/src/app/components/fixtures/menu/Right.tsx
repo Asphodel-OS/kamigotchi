@@ -1,5 +1,7 @@
+import { TextTooltip } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
-import { useVisibility } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
+import { SearchIcon } from 'assets/images/icons/actions';
 import styled from 'styled-components';
 import {
   ChatMenuButton,
@@ -13,9 +15,18 @@ export const RightMenuFixture: UIComponent = {
   id: 'RightMenuFixture',
   Render: () => {
     const menuVisible = useVisibility((s) => s.fixtures.menu);
+
     return (
       <>
         <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
+          <TextTooltip text={['Hold shift for kamivision to highlight objects']}>
+            <HiddenObjects
+              src={SearchIcon}
+              onMouseEnter={() => useSelected.setState({ showHidden: true })}
+              onMouseLeave={() => useSelected.setState({ showHidden: false })}
+            />
+          </TextTooltip>
+
           <CraftMenuButton />
           <InventoryMenuButton />
           <QuestMenuButton />
@@ -38,4 +49,16 @@ const Wrapper = styled.div`
   gap: 0.6vh;
   position: relative;
   z-index: 3;
+  pointer-events: none;
+`;
+
+const HiddenObjects = styled.img`
+  width: 2vw;
+  height: 2vw;
+
+  pointer-events: auto;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.5;
+  }
 `;
