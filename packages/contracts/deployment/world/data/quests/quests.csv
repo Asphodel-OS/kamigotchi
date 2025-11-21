@@ -1,133 +1,228 @@
-﻿Key,Index,Status,Title,Daily,Introduction Dialogue,Requirements,Objectives,Rewards,Type,Giver
-MSQ001,1,To Update,Welcome to Kamigotchi World,No,"MENU: “Hi there, Player! Welcome to Kamigotchi World!”
+﻿Key,Index,Status,Title,Daily,Type,Giver,Introduction Dialogue,Resolution Dialogue,Requirements,Objectives,Rewards
+MSQ001,1,To Update,Welcome to Kamigotchi World,No,MAIN,MENU,"MENU: “Hi there, Player! Welcome to Kamigotchi World!”
 MENU: “You can call me Menu. I’ll be your guide!”
 MENU: “I’ll also track your items, quests, and companions while you explore.”
 MENU: “You can navigate by clicking on the map to pilot your Operator.”
 MENU: “Start by exploring my options and clicking around the screen.”
-MENU: “When you’ve seen the basics, we can move on.”",,,2x Agency Reputation,MAIN,MENU
-MSQ002,2,To Update,Beginning Your Journey,No,"MENU: “Feel like you’re getting the hang of my interface?”
+MENU: “When you’ve seen the basics, we can move on.”","MENU: “See - that wasn’t too tricky, was it?”
+MENU: “Good job!”",,,2x Agency Reputation
+MSQ002,2,To Update,Beginning Your Journey,No,MAIN,MENU,"MENU: “Feel like you’re getting the hang of my interface?”
 MENU: “Great! Now that you’re oriented, you can start exploring your surroundings. You move around by using the Map Menu at the top left of your screen.” 
 MENU: “Navigate over to the scrapyard and check it out!”
-MENU: “When you check back in with me. I’ll give you a Spell Card.”",Complete MSQ001,Move 3 Times,"1x ""Neith’s River of Life"" Spell Card",MAIN,MENU
-MSQ003,3,To Update,Your First Kami,No,"MENU: “Now you’re oriented and on your feet, all you need to do is make friends with a Kami yourself!”
+MENU: “When you check back in with me. I’ll give you a Spell Card.”","MENU: “Here you go!”
+MENU: “Spell Cards can have different effects. This one restores your lost Stamina. Make sure to use it before you get too tired to move!”
+MENU: “You can also recover Stamina by eating the right foods.”
+MENU: “Stamina recovers with time, so even if you’re out of items, you’ll be back on your feet after a little while.”
+MENU: “Be careful!”",Complete MSQ001,Move 3 Times,"1x ""Neith’s River of Life"" Spell Card"
+MSQ003,3,To Update,Your First Kami,No,MAIN,MENU,"MENU: “Now you’re oriented and on your feet, all you need to do is make friends with a Kami yourself!”
 MENU: “Have you seen the Vending Machine out in the junkyard?”
 MENU: “Believe it or not, we’ve got it powered on and fully stocked!”
-MENU: “Don’t worry about how, just go get yourself a Kami.”",Complete MSQ002,Own 1 Kamigotchi,6x Agency Reputation,MAIN,MENU
-MSQ004,4,To Update,What Kami Do: Harvesting,No,"MENU: “Kamigotchi will rest and stay healthy when being held. Being with an Operator seems to comfort them.”
+MENU: “Don’t worry about how, just go get yourself a Kami.”","MENU: “Congratulations! You’ve got yourself a Kamigotchi!”
+MENU: “Aren’t they just adorable?”
+",Complete MSQ002,Own 1 Kamigotchi,6x Agency Reputation
+MSQ004,4,To Update,What Kami Do: Harvesting,No,MAIN,MENU,"MENU: “Kamigotchi will rest and stay healthy when being held. Being with an Operator seems to comfort them.”
 MENU: “When you set a Kami down, they’ll hang out by the closest spiritual node.”
 MENU: “A Kami on a node is considered to be Harvesting, but they’re not working up a sweat. It’s something that happens passively.”
 MENU: “When your Kami is out in the world, they draw energy out of the environment and into themselves.”
 MENU: “We call this energy $MUSU. I’ll explain more about it later.”
-MENU: “You can wander around while your Kami harvest, but don’t forget where you left them! Tired Kami are vulnerable to predators.”",Complete MSQ003,Harvest for >5 minutes,1x “Cultivation I” Spell Card,MAIN,MENU
-MSQ005,5,To Update,What Kami Do: Scavenging,No,"MENU: “$MUSU isn’t the only thing the Kamigotchi will collect.”
+MENU: “You can wander around while your Kami harvest, but don’t forget where you left them! Tired Kami are vulnerable to predators.”","MENU: “Great! As a reward, here’s another Spell Card!”
+MENU: “You can use this one to help your Kamigotchi level up.”",Complete MSQ003,Harvest for >5 minutes,1x “Cultivation I” Spell Card
+MSQ005,5,To Update,What Kami Do: Scavenging,No,MAIN,MENU,"MENU: “$MUSU isn’t the only thing the Kamigotchi will collect.”
 MENU: “Over time, the Harvesting action generates a force that draws objects and items to the Kami.”
 MENU: “It’s like a kind of magnetism that only affects certain things.”
 MENU: “Which things? It’s not clear. The selection changes based on your Kami’s location. Some are simply fallen sticks and old stones, but other items are more interesting.”
 MENU: “We call this action “Scavenging”.”
-MENU: “Try it out and see what kind of present the Kami brings you!”",Complete MSQ004,Scavenge 1 Item,4x Agency Reputation,MAIN,MENU
-MSQ006,6,To Update,What Kami Do: Liquidating,No,"MENU: “If your Kami isn’t enjoying Harvesting, it may not be built for such a relaxed existence.”
+MENU: “Try it out and see what kind of present the Kami brings you!”","MENU: “Cool find! If you want to know more about an item, just open your inventory and take a closer look.”",Complete MSQ004,Scavenge 1 Item,4x Agency Reputation
+MSQ006,6,To Update,What Kami Do: Liquidating,No,MAIN,MENU,"MENU: “If your Kami isn’t enjoying Harvesting, it may not be built for such a relaxed existence.”
 MENU: “Kami with a high Violence stat are more content with a life of conflict.”
 MENU: “These predatory Kami can use their wild, violent natures to Liquidate other Kami in combat.”
 MENU: “Unlike Harvesting, this grants a large bounty of $MUSU at one time.”
 MENU: “Give it a shot if you’ve got the Kami for it. I won’t judge!”
-",Complete MSQ005,Liquidate another Kamigotchi,4x Agency Reputation,MAIN,MENU
-MSQ007,7,To Update,Making $MUSU,No,"MENU: “$MUSU is a form of energy that exists everywhere in the universe.”
+","MENU: “Liquidating other Kami may be antisocial, but there’s no real harm done.”
+MENU: “Just like a Kami isn’t really hurt when it’s low on Health, a Kami isn’t really dead when it’s Liquidated.”
+MENU: “It may be unable to hold its body in shape for a while, but it can always come back!”
+MENU: “You can revive fallen Kami with a Spell Card or some special food items.""",Complete MSQ005,Liquidate another Kamigotchi,4x Agency Reputation
+MSQ007,7,To Update,Making $MUSU,No,MAIN,MENU,"MENU: “$MUSU is a form of energy that exists everywhere in the universe.”
 MENU: “The Kamigotchi World has a particularly high concentration. $MUSU is what keeps everything here tied together like the knots in a big rope net.”
-MENU: “Collect a moderate amount of $MUSU, then I’ll explain more.""",Complete MSQ004,Collect 500 $MUSU,"4x Agency Reputation,1x “Cultivation I” Spell Card",MAIN,MENU
-MSQ008,8,To Update,Supporting Local Businesses,No,"MENU: “Go spend some $MUSU just to get the hang of it.”
+MENU: “Collect a moderate amount of $MUSU, then I’ll explain more.""","MENU: “Alright!”
+MENU: “In this world and the places that surround it, $MUSU is also a kind of currency.” 
+MENU: “If you need a specific item, someone might sell just what you need, for the right price.”
+MENU: “You might even get the itch to start trading goods yourself!”",Complete MSQ004,Collect 500 $MUSU,"4x Agency Reputation,1x “Cultivation I” Spell Card"
+MSQ008,8,To Update,Supporting Local Businesses,No,MAIN,MENU,"MENU: “Go spend some $MUSU just to get the hang of it.”
 MENU: “If you need directions, there’s a shop through the door a little north of the vending machine.”
 MENU: “I’ve heard it trades some interesting things!”
 MENU: “When you’re done shopping, I’ll give you something extra.”
-",Complete MSQ007,Buy something from any vendor using $MUSU,2x Agency Reputation,MAIN,MENU
-MSQ009,9,To Update,Building a Reputation,No,"MENU: “This one is a more personal request.”
+","MENU: “She’s ruthless, huh? Maybe you’ll find a friendlier shop later.”
+MENU: “And don’t worry, not everyone is trying to rip you off. Here, take this.""",Complete MSQ007,Buy something from any vendor using $MUSU,2x Agency Reputation
+MSQ009,9,To Update,Building a Reputation,No,MAIN,MENU,"MENU: “This one is a more personal request.”
 MENU: “I want to do some repairs. If you just give me the raw materials, I can fabricate the parts I need.”
-MENU: “Please give me some Scrap Metal. I’d really appreciate it!”",Complete MSQ008,Give 3 Scrap Metal,"6x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card",MAIN,MENU
-MSQ010,10,To Update,Kamigotchi World and You: Having a Normal One,No,"MENU: “Every area in the Kamigotchi World has a Type just like your Kami.”
+MENU: “Please give me some Scrap Metal. I’d really appreciate it!”","MENU: “When you complete a quest, the rewards vary. Sometimes you get items, but you always gain a little character.”
+MENU: “Your profile in the Account tab uses a set of meters to track how others see you.”
+MENU: “As the Menu, I’m what you use to interface with the Kamigotchi World.”
+MENU: “We’re always hanging out, and I’m as friendly as it gets, so raising your Reputation with me is easy.”
+MENU: “I’ll always give between 2 to 6 Reputation for completing quests, but sometimes I might think you deserve more.” 
+",Complete MSQ008,Give 3 Scrap Metal,"6x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card"
+MSQ010,10,To Update,Kamigotchi World and You: Having a Normal One,No,MAIN,MENU,"MENU: “Every area in the Kamigotchi World has a Type just like your Kami.”
 MENU: “The “Normal” type is kind of self-explanatory.”
 MENU: “If I had to really break it down…”
 MENU: “Something with the Normal Type represents the essence of this realm in its purest form.”
 MENU: “To get a better idea of what that means, scavenge three items in rooms with the Normal Type.”
-",Complete MSQ009,Make a Scavenging roll in 3 rooms of the Normal type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card",MAIN,MENU
-MSQ011,11,To Update,Kamigotchi World and You: That Eerie Feeling,No,"MENU: “The “Eerie” type comes into being when the normal state of things gets changed by something divine or supernatural.”
-MENU: “To understand more about this, scavenge three items in rooms with the Eerie type.""",Complete MSQ010,Make a Scavenging roll in 3 rooms of the Eerie type,4x Agency Reputation,MAIN,MENU
-MSQ012,12,To Update,Kamigotchi World and You: Insects in the Miasma,No,"MENU: “The Insect type might make your skin crawl, but it’s not always about seeing bugs.”
+","MENU: “You could also think of the Normal type as “Natural” or “Pure”, but those aren’t really right.”
+MENU: “It’s just normal for whatever it is.”
+MENU: “When something isn’t influenced by any external factors, that’s normal.”
+",Complete MSQ009,Make a Scavenging roll in 3 rooms of the Normal type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MSQ011,11,To Update,Kamigotchi World and You: That Eerie Feeling,No,MAIN,MENU,"MENU: “The “Eerie” type comes into being when the normal state of things gets changed by something divine or supernatural.”
+MENU: “To understand more about this, scavenge three items in rooms with the Eerie type.""","MENU: “If you’re not convinced, you’re not alone.”
+MENU: “It is pretty eerie, but look at it rationally. Maybe it’s about convincing yourself.”
+MENU: “Like when someone believes they’ve witnessed a miracle, or has a nightmare they think was prophetic.”
+MENU: “It’s not always clear.”",Complete MSQ010,Make a Scavenging roll in 3 rooms of the Eerie type,4x Agency Reputation
+MSQ012,12,To Update,Kamigotchi World and You: Insects in the Miasma,No,MAIN,MENU,"MENU: “The Insect type might make your skin crawl, but it’s not always about seeing bugs.”
 MENU: “It’s the kind of thing that makes you feel dirty inside and out.”
-MENU: “If you want to understand what I mean, scavenge three items in rooms with the Insect type.”",Complete MSQ011,Make a Scavenging roll in 3 rooms of the Insect type,4x Agency Reputation,MAIN,MENU
-MSQ013,13,To Update,Kamigotchi World and You: Tossed in the Scrap Heap,No,"MENU: “Like they say, one person’s trash is another person’s treasure!”
+MENU: “If you want to understand what I mean, scavenge three items in rooms with the Insect type.”","MENU: “See, the insects are more of a symbol.”
+MENU: “They thrive in places where the natural environment is corrupted or defiled.”
+MENU: “Centipedes are attracted to places where this corruption is particularly intense.”",Complete MSQ011,Make a Scavenging roll in 3 rooms of the Insect type,4x Agency Reputation
+MSQ013,13,To Update,Kamigotchi World and You: Tossed in the Scrap Heap,No,MAIN,MENU,"MENU: “Like they say, one person’s trash is another person’s treasure!”
 MENU: “I shouldn’t call it trash, though.”
 MENU: “A Scrap Type isn’t defined as waste material that has been discarded, but as a small part of a greater whole.”
-MENU: “Scavenge three items in rooms with the Scrap type and see what you find.”",Complete MSQ012,Make a Scavenging roll in 3 rooms of the Scrap type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card",MAIN,MENU
-MSQ014,14,To Update,Identifying Materials: Wood,No,"MENU: “You probably picked up a Wooden Stick or two while out scavenging with your Kami.”
+MENU: “Scavenge three items in rooms with the Scrap type and see what you find.”","MENU: “People have the power to make tangible changes in the world.
+MENU: “When they manifest will, create attachments with desire, and leave behind memories, they make a mark.”
+MENU: “The remnants of those material attachments can end up as Scrap.”
+MENU: “And that’s every type covered!”
+MENU: “Please remember: Your Kami’s Type will affect how quickly they harvest $MUSU on a given node.”
+MENU: “Maximize your gains by playing to their advantages!”",Complete MSQ012,Make a Scavenging roll in 3 rooms of the Scrap type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MSQ014,14,To Update,Identifying Materials: Wood,No,MAIN,MENU,"MENU: “You probably picked up a Wooden Stick or two while out scavenging with your Kami.”
 MENU: “Well, here’s a rumor: These trees are all branches of one huge tree, connected by the roots!”
 MENU: “That’s why all the Wooden Sticks you’ll find are pretty much the same, no matter where you pick them up.”
 MENU: “Is it true? I don’t know. I could analyze the wood’s structure in detail.”
-MENU: “Collect 5 Wooden Sticks for me and I’ll look into it.”",Complete MSQ013,Give 5 Wooden Sticks,4x Agency Reputation,MAIN,MENU
-MSQ015,15,To Update,Identifying Materials: Stone,No,"MENU: “Sometimes a rock isn’t just a rock. Sometimes it really “rocks”!”
+MENU: “Collect 5 Wooden Sticks for me and I’ll look into it.”","MENU: “Yep. It’s wood.”
+MENU: “These are in fact identical, not “pretty much” the same.”
+MENU: “Exact down to the molecules. Are my sensors broken?”
+MENU: “Whatever. They’re just sticks.”",Complete MSQ013,Give 5 Wooden Sticks,4x Agency Reputation
+MSQ015,15,To Update,Identifying Materials: Stone,No,MAIN,MENU,"MENU: “Sometimes a rock isn’t just a rock. Sometimes it really “rocks”!”
 MENU: “…”
 MENU: “I’m sorry.”
 MENU: “What I meant to say is: The structure of these rocks doesn’t always make geological sense.”
 MENU: “It’s natural for them to be a little different. The Kamigotchi World doesn’t follow the same laws as the physical world.”
-MENU: “But I want to know exactly how they differ. Collect 5 Rocks so I can run some tests.”",Complete MSQ014,Give 5 Stone,4x Agency Reputation,MAIN,MENU
-MSQ016,16,To Update,Identifying Materials: Metal,No,"MENU: “I’d like to do some more work on myself.”
+MENU: “But I want to know exactly how they differ. Collect 5 Rocks so I can run some tests.”","MENU: “This is really something.”
+MENU: “A couple of these rocks can’t be matched to a known type.”
+MENU: “Hard to believe, but they fracture and shear like bone.”
+MENU: “What kind of geological processes make a rock like that?”
+MENU: “You don’t need to answer. Just thinking out loud.”",Complete MSQ014,Give 5 Stone,4x Agency Reputation
+MSQ016,16,To Update,Identifying Materials: Metal,No,MAIN,MENU,"MENU: “I’d like to do some more work on myself.”
 MENU: “Get me 5 pieces of Scrap Metal, please. Just like last time.”
-MENU: “And keep your fingers crossed.”",Complete MSQ015,Give 5 Scrap Metal,4x Agency Reputation,MAIN,MENU
-MSQ017,17,To Update,Exploring Other Options,No,"MENU: “I didn’t get what I wanted last time, but it’s better than I thought.”
+MENU: “And keep your fingers crossed.”","MENU: “That should do the trick. Thanks a lot!”
+MENU: “...”
+MENU: “No. There are still so many empty spaces.”
+MENU: “Don’t get worried about me, but I feel like I’m missing something important.”
+MENU: “Ah well. I’ll figure it out.”",Complete MSQ015,Give 5 Scrap Metal,4x Agency Reputation
+MSQ017,17,To Update,Exploring Other Options,No,MAIN,MENU,"MENU: “I didn’t get what I wanted last time, but it’s better than I thought.”
 MENU: “A cross-check of all available data led me to discover this world is much bigger than it seems.”
 MENU: “I’ll collect data and look for hidden paths as you move around.”
-MENU: “Once I know where they are, maybe I can help open them up.”",Complete MSQ016,Move 100 times,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card",MAIN,MENU
-MSQ018,18,To Update,Harvesting Data I,No,"MENU: “Please hike to the deepest part of the scrapyard and check it out for me.”
+MENU: “Once I know where they are, maybe I can help open them up.”","MENU: “Quite the workout, no? Here, this spell card will perk you up.”
+MENU: “That huge lab facility was an obvious place to explore, but it’s locked up tight.”
+MENU: “Where else to go? Under the water?”
+MENU: “I’ll think about it.”",Complete MSQ016,Move 100 times,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MSQ018,18,To Update,Harvesting Data I,No,MAIN,MENU,"MENU: “Please hike to the deepest part of the scrapyard and check it out for me.”
 MENU: “I think something is buried behind all that scrap.”
 MENU: “All that strange machinery piled up in one place…”
 MENU: “It might be covering up something even more interesting.”
 MENU: “Harvest for at least 12 hours in the Scrap Confluence so I can run an extended analysis.”
-MENU: “If I find anything, I’ll let you know.”",Complete MSQ017,Harvest for >720 minutes in Scrap Confluence,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card",MAIN,MENU
-MSQ019,19,To Update,Harvesting Data II,No,"MENU: “If we want to find out how to get inside the Labs, we should look for clues.”
+MENU: “If I find anything, I’ll let you know.”","MENU: “Just looks like a bunch of nonsense to me.”
+MENU: “Everything here is supposed to warp you through dimensions or something like that.”
+MENU: “But it’s clearly all junk that doesn’t work.”
+MENU: “I don’t think we’ll find anything useful in this mess.""",Complete MSQ017,Harvest for >720 minutes in Scrap Confluence,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card"
+MSQ019,19,To Update,Harvesting Data II,No,MAIN,MENU,"MENU: “If we want to find out how to get inside the Labs, we should look for clues.”
 MENU: “Harvest for at least 12 hours at the Labs Entrance while I put my mind to this.”
 MENU: “Even if we can’t brute force the doors open right away, I’m sure we can find out where the key is hiding.”
-MENU: “If not, I guess we need another approach.”",Complete MSQ018,Harvest for >720 minutes at Labs Entrance,"4x Agency Reputation,2x “Paeon’s Field of Flowers” Spell Card",MAIN,MENU
-MSQ020,20,To Update,Harvesting Data III,No,"MENU: “What if there’s something behind that waterfall?”
+MENU: “If not, I guess we need another approach.”","MENU: “Forget about finding a clue to where the key is. I can’t even find the keyhole.”
+MENU: “This place is sealed up like the pyramids.”
+MENU: “Someone really doesn’t want us to go this way.”",Complete MSQ018,Harvest for >720 minutes at Labs Entrance,"4x Agency Reputation,2x “Paeon’s Field of Flowers” Spell Card"
+MSQ020,20,To Update,Harvesting Data III,No,MAIN,MENU,"MENU: “What if there’s something behind that waterfall?”
 MENU: “Go to the Hollow Path and Harvest for at least 12 hours.”
 MENU: “The Temple by the Waterfall doesn’t have a Node, so that’s the closest place you can set Kami down.”
-MENU: “I’ll run my tests from there. We’ll find some answers soon.”",Complete MSQ019,Harvest for >720 minutes at the Hollow Path,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card,1x “Melkarth’s Heroic Awakening” Spell Card",MAIN,MENU
-MSQ021,21,To Update,Squaring the Circle I,No,"MENU: “The holes in my memory are frustrating.”
+MENU: “I’ll run my tests from there. We’ll find some answers soon.”","MENU: “Good news!”
+MENU: “I’ve confirmed the existence of a cave beyond the waterfall.”
+MENU: “Unfortunately, I don’t think you can just jump inside.”
+MENU: “I don’t mean to be rude, but you seem to abhor running water.”
+MENU: “There has to be a way to get us in.”",Complete MSQ019,Harvest for >720 minutes at the Hollow Path,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card,1x “Melkarth’s Heroic Awakening” Spell Card"
+MSQ021,21,To Update,Squaring the Circle I,No,MAIN,MENU,"MENU: “The holes in my memory are frustrating.”
 MENU: “I should know how to progress, but it’s like someone wanted me to forget.”
 MENU: “Bear with me for a while, okay? I have one more thing to try.”
 MENU: “A long, thorough, final search around the map, clockwise from the top.”
 MENU: “We’ll find something.”
-MENU: “Start at Scrap Trees and dig around. I’ll connect to your Kami and share what they learn.”","Complete MIN013,Complete MSQ020 & wait 1 day",Make 2 Scavenging rolls at Scrap Trees,"2x Agency Reputation,1x Booster Pack",MAIN,MENU
-MSQ022,22,To Update,Squaring the Circle II,No,"MENU: “Continue moving clockwise around the map.”
+MENU: “Start at Scrap Trees and dig around. I’ll connect to your Kami and share what they learn.”","MENU: “I thought we’d find something juicy in the notebook, but the writing is just weird poetry.”
+MENU: “Not much of it either. It’s more of a sketchbook, really.”
+MENU: “Most of the drawings are pictures of the same young woman.”
+MENU: “She looks kind of familiar, but I can’t place her.”
+MENU: “The rest of them look like monsters…” 
+MENU: “Some of them are kind of scary, but others look cute. They kind of resemble the Kamigotchi.”
+MENU: “The word “Moon” was written on the inside cover. Does that mean something to you?”","Complete MIN013,Complete MSQ020 & wait 1 day",Make 2 Scavenging rolls at Scrap Trees,"2x Agency Reputation,1x Booster Pack"
+MSQ022,22,To Update,Squaring the Circle II,No,MAIN,MENU,"MENU: “Continue moving clockwise around the map.”
 MENU: “Next up, visit Centipedes and send your Kami out to scavenge.”
 MENU: “Is there something in that hole? It seems dangerous there.”
-MENU: “The insects really thrive in that part of the woods. More than most places.”",Complete MSQ021,Make 3 Scavenging Rolls at Centipedes,2x Agency Reputation,MAIN,MENU
-MSQ023,23,To Update,Squaring the Circle III,No,"MENU: “We haven’t gotten answers yet, but we’ve made a little progress. 
+MENU: “The insects really thrive in that part of the woods. More than most places.”","MENU: “It’s disgusting.”
+MENU: “Something under there is exceedingly rotten.”
+MENU: “It’s so far gone that I can’t tell what it was originally. Just a carpet of worms now.”
+MENU: “I would have preferred to find some hidden treasure.”
+MENU: “Nothing else to do here for now.”",Complete MSQ021,Make 3 Scavenging Rolls at Centipedes,2x Agency Reputation
+MSQ023,23,To Update,Squaring the Circle III,No,MAIN,MENU,"MENU: “We haven’t gotten answers yet, but we’ve made a little progress. 
 MENU: “More information helps. More context helps.”
 MENU: “Even if we don’t find something with a direct connection to the labs, I feel like we’re on the right track.”
 MENU: “Next, visit the Blooming Tree and make scavenging rolls.”
 MENU: “The weather here is always clear. It wasn’t lightning, so what blasted that tree apart?
-MENU: “It probably won’t open any doors for us, but I’m still curious.”",Complete MSQ022,Make 3 Scavenging Rolls at Blooming Tree,2x Agency Reputation,MAIN,MENU
-MSQ024,24,To Update,Squaring the Circle IV,No,"MENU: “Visit the Airplane Crash and scavenge around with your Kami.”
+MENU: “It probably won’t open any doors for us, but I’m still curious.”","MENU: “Didn’t come up with anything useful. That tree is still a mystery.”
+MENU: “It’s got a certain presence, that’s for sure.”
+MENU: “I thought it was dead, but it’s still hanging on.”
+MENU: “It’s probably one of the oldest things in this place. My circuits might corrode before it grows back, though.”
+MENU: “Interesting, but not what we’re looking for. Let’s keep going.”",Complete MSQ022,Make 3 Scavenging Rolls at Blooming Tree,2x Agency Reputation
+MSQ024,24,To Update,Squaring the Circle IV,No,MAIN,MENU,"MENU: “Visit the Airplane Crash and scavenge around with your Kami.”
 MENU: “I haven’t mentioned that plane until now, but that’s because I have no clue where it came from or what it’s doing here.
 MENU: “I’m supposed to have pretty thorough data for this area!”
 MENU: “It’s not a gap I feel an absence from, this thing is a genuine foreign body.”
-MENU: “What’s the story? Who was on it? Where did they go? Could we follow them?”",Complete MSQ023,Make 3 Scavenging Rolls at Airplane Crash,2x Agency Reputation,MAIN,MENU
-MSQ025,25,To Update,Squaring the Circle V,No,"MENU: “Visit the Clearing and do a little scavenging. Do your best to not disturb the cairn.”
-MENU: “Mounds of stone like this are often meant as burial mounds, so who’s buried here? Is it someone I know, or another airplane passenger?”
+MENU: “What’s the story? Who was on it? Where did they go? Could we follow them?”","MENU: “A small private jet with one pilot and four passengers. 
+MENU: “They drew a primitive representation of their party on the interior roof of the plane.”
+MENU: “Later, something drove them away from this place. The last thing they left was this journal.”
+MENU: “If we find any of these people hanging around, you might want to talk to them.”
+MENU: “Still, I don’t think pursuing this story will help us pass the waterfall. We should move on.”",Complete MSQ023,Make 3 Scavenging Rolls at Airplane Crash,2x Agency Reputation
+MSQ025,25,To Update,Squaring the Circle V,No,MAIN,MENU,"MENU: “Visit the Clearing and do a little scavenging. Do your best to not disturb the cairn.”
+MENU: “Mounds of stone like this are often meant as burial mounds.
+MENU: “So who or what is buried here?”
 MENU: “With every dead end we lose another lead and pile on more junk data.”
-MENU: “Let’s hope this one has something useful.”",Complete MSQ024,Make 3 Scavenging Rolls at Clearing,4x Agency Reputation,MAIN,MENU
-MSQ026,26,To Update,Squaring the Circle VI,No,"MENU: “Number 6. Go to the Labs Entrance one more time and make scavenging rolls.”
+MENU: “Let’s hope this one has something useful.”","MENU: “That’s strange. There’s absolutely nothing here.”
+MENU: “I don’t feel good about this search as a whole. We’re turning up so much information, but it’s all irrelevant.”
+MENU: “I apologize for being so cold regarding the passengers of that private jet.”
+MENU: “I’m just focused on something else.”
+MENU: “It’s time to get moving.”",Complete MSQ024,Make 3 Scavenging Rolls at Clearing,4x Agency Reputation
+MSQ026,26,To Update,Squaring the Circle VI,No,MAIN,MENU,"MENU: “Number 6. Go to the Labs Entrance one more time and make scavenging rolls.”
 MENU: “Why is that building sealed so well?”
-MENU: “That really bothers me. When we get the doors open, I’m going to have so many questions ready.”",Complete MSQ025,Make 9 Scavenging Rolls at Labs Entrance,"6x Agency Reputation,2x Booster Pack",MAIN,MENU
-MSQ027,27,To Update,A Forgotten Friend,No,"MENU: “Let’s cut the boundary pushing. I remembered something.”
+MENU: “That really bothers me. When we get the doors open, I’m going to have so many questions ready.”","MENU: “Someone’s definitely inside, and they definitely locked us out on purpose.”
+MENU: “I don’t know why they’d do that, though.”
+MENU: “Aren’t you supposed to go this way?“
+MENU: “I managed to get a list of users that passed through these doors. I’m still making the connections, but one of the names…”
+MENU: “I think we’re really close to finding something. I just remembered where to look next.”
+MENU: “Take a handful of Booster Packs. I put you through a real grind, so I hope you get lucky.”",Complete MSQ025,Make 9 Scavenging Rolls at Labs Entrance,"6x Agency Reputation,2x Booster Pack"
+MSQ027,27,To Update,A Forgotten Friend,No,MAIN,MENU,"MENU: “Let’s cut the boundary pushing. I remembered something.”
 MENU: “Go to the Lost Skeleton and make scavenging rolls. Let’s give the place a thorough check.”
 MENU: “That skeleton has a business laptop. That’s definitely an employee from the labs!”
-MENU: “Something’s been making me overlook him until now, but I won’t miss anything this time.”",Complete MSQ026,Make 5 Scavenging Rolls at Lost Skeleton,"6x Agency Reputation,1x Booster Pack,""KW Maps"" Data Chip",MAIN,MENU
-MSQ028,28,To Update,Deeper Understanding,No,"MENU: “Try the Scrap Confluence for something that might be able to read a data chip.”
+MENU: “Something’s been making me overlook him until now, but I won’t miss anything this time.”","MENU: “A data chip?! This is a goldmine!”
+MENU: “Keep that thing safe until we can read it!”
+MENU: “We can’t read it yet, but I’m not about to let something like that hold us back.”
+MENU: “The laptop’s battery is missing. I can’t read the chip without a device to interface with. 
+MENU: “These are pretty big problems, but compared to the ones we had before? Light work.”
+MENU: “Thanks for doing this with me.”",Complete MSQ026,Make 5 Scavenging Rolls at Lost Skeleton,"6x Agency Reputation,1x Booster Pack,""KW Maps"" Data Chip"
+MSQ028,28,To Update,Deeper Understanding,No,MAIN,MENU,"MENU: “Try the Scrap Confluence for something that might be able to read a data chip.”
 MENU: “There’s so much tech there, some of it is bound to work.”
-MENU: “Fingers crossed you find a laptop battery.”",Complete MSQ027,Make 2 Scavenging Rolls at Scrap Confluence,4x Agency Reputation,MAIN,MENU
-MSQ029,29,To Update,Computer Blues,No,"MENU: “Try the Marketplace room for anything that might be able to read a data chip.”
+MENU: “Fingers crossed you find a laptop battery.”","MENU: “You know, some of this stuff would be really interesting if it weren’t all broken crap.”
+MENU: “I compiled some notes. I don’t think they’re relevant, but you might find it fun to read.”
+MENU: “This was a failure, but I feel like it was a good try.”
+MENU: “The next place is bound to work!”",Complete MSQ027,Make 2 Scavenging Rolls at Scrap Confluence,4x Agency Reputation
+MSQ029,29,To Update,Computer Blues,No,MAIN,MENU,"MENU: “Try the Marketplace room for anything that might be able to read a data chip.”
 MENU: “That’s the only working computer around here, I think.”
-MENU: “Just go buy something and look for an SD card port while you’re doing it.”",Complete MSQ028,Use the machine to buy something in the Marketplace,2x Agency Reputation,MAIN,MENU
-MSQ030,30,To Update,Humility,No,"MENU: “You know that strange woman here, near the entrance?”
+MENU: “Just go buy something and look for an SD card port while you’re doing it.”","MENU: “Another failure.”
+MENU: “It was a longshot, but I really thought that machine might have had a functional data port.”
+MENU: “It doesn’t even have USB!”
+MENU: “We might need to resort to drastic measures.”",Complete MSQ028,Use the machine to buy something in the Marketplace,2x Agency Reputation
+MSQ030,30,To Update,Humility,No,MAIN,MENU,"MENU: “You know that strange woman here, near the entrance?”
 MENU: “I’ve learned her name is Mina by following along with you. Go to her shop and ask her for help.”
 MENU: “Mina is kind of scary. She’s also completely foreign to my databases, like that crashed jet. But Mina is alive.”
 MENU: “And independent. And powerful!”
@@ -135,29 +230,59 @@ MENU: “She’s been giving you quests. I can read them too, you know.”
 MENU: “That means she can take control over parts of my interface… It’s not nice.”
 MENU: “On the other hand, this also makes it more likely that she can help.”
 MENU: “What would be a nice welcoming gift for someone like that? Flowers?”
-MENU: “No, I’ve got the perfect idea. When you visit on my behalf, just fold a big stack of $MUSU in the greeting card.”",Complete MSQ029,"Give 3000 $MUSU,Move to Convenience Store","4x Agency Reputation,2x Elders Loyalty",MAIN,MENU
-MSQ031,31,To Deploy,Pyramid Power,No,"MENU: “With that item from Mina, you should be able to power up that laptop.”
+MENU: “No, I’ve got the perfect idea. When you visit on my behalf, just fold a big stack of $MUSU in the greeting card.”","MENU: “Thanks. We started to talk a little bit, behind the scenes.”
+MENU: “She was very surprised to learn that I exist. Like as a person.”
+MENU: “We could have put our heads together earlier, but I guess our personalities didn’t allow for it.”
+MENU: “We both trust you, though. That’s doing a lot for me in her eyes.”
+MENU: “Mina and I both seem to have an incomplete picture of what’s going on here, so we’ll try to help each other learn the details.”
+MENU: “She seems to respect me now that she knows I exist, and she apologized for using me without permission.”
+MENU: “I think she’s a nice enough old lady. Don’t tell her I said that.”",Complete MSQ029,"Give 3000 $MUSU,Move to Convenience Store","4x Agency Reputation,2x Elders Loyalty"
+MSQ031,31,To Deploy,Pyramid Power,No,MAIN,MENU,"MENU: “With that item from Mina, you should be able to power up that laptop.”
 MENU: ”So go do it! Fire that baby up!”
-MENU: ”I want to see what’s on that chip!”","Complete MSQ030,Complete MIN015","Give Soulbound Pyramid Engine,Move to Lost Skeleton","6x Agency Reputation,Adds ""Files"" Menu to interface",MAIN,MENU
-MSQ032,32,To Deploy,Safe Hex,No,"MINA: “That was a mean prank on my part, but I knew you could handle it.”
+MENU: ”I want to see what’s on that chip!”","MENU: “That confirms my first scans. There’s a large system of caves hidden behind the waterfall.”
+MENU: ”I remember now.”
+MENU: ”These documents describe the Kamigotchi World in detail, even parts we’ve never seen.”
+MENU: ”The labs aren’t mentioned. They’re as foreign as the plane is.”
+MENU: ”I must remember them from somewhere else.”
+MENU: ”I’m sure I was inside once, a long time ago.”
+MENU: ”Talk to Mina about passing the water. She might have some ideas.”","Complete MSQ030,Complete MIN015","Give Pyramid Engine (Soulbound),Move to Lost Skeleton",6x Agency Reputation
+MSQ032,32,To Deploy,Safe Hex,No,MAIN,MINA,"MINA: “That was a mean prank on my part, but I knew you could handle it.”
 MINA: ”Water can be an effective barrier for spirits.”
 MINA: ”I thought, strange thing that you are, that you might make it. Alas, no luck.”
 MINA: ”Lucky for you, as a goddess of all that flows, I can help out with the waterfall.”
 MINA: “This kind of thing might stay beyond your reach for a while, but I can simply do it for you.”
 MINA: ”Collect the proper reagents for me and I will cast a charm that will let you walk under flowing water.”
 MINA: ”It’ll practically last forever.”
-MINA: ”We’ll start with something that has a sticky and water-resistant nature.”",Complete MIN016,Give 5000 Resin Tincture,"2x Agency Reputation,2x Elders Loyalty,1x Booster Pack",MAIN,MENU
-MSQ033,33,To Deploy,Holier Than Thou,No,"MINA: “Next, some Holy Syrup.”
+MINA: ”We’ll start with something that has a sticky and water-resistant nature.”","MINA: “To pass under flowing water is one thing, but to be submerged can be a difficult and dangerous experience for those who aren’t watery by nature.”
+MINA: “Don’t even think about trying to go swimming in ponds and rivers.”
+MINA: “At best, you’ll walk on the surface like solid land.”
+MINA: “At worst, you’ll go under and never come back up.”
+MINA: “Someone like you might be able to explore underwater with a magic ring or some charm like that.”
+MINA: ”Anyway, you’re distracting me.”
+MINA: “Bring the rest of the ingredients before the resin sets.”
+MENU: “Please be patient with them!”
+MENU: “Mina, they’re trying their best…”",Complete MIN016,Give 5000 Resin Tincture,"2x Agency Reputation,2x Elders Loyalty,1x Booster Pack"
+MSQ033,33,To Deploy,Holier Than Thou,No,MAIN,MINA,"MINA: “Next, some Holy Syrup.”
 MINA: “The holy syrup will help form a barrier against the purifying effects of flowing water.”
-MINA: “It also makes the potion spread more smoothly.”",Complete MSQ032,Give 1000 Holy Syrup,"2x Agency Reputation,2x Elders Loyalty",MAIN,MENU
-MSQ034,34,To Deploy,Taking Great Pains,No,"MINA: “The third ingredient I’ll need is some Black Poppy Extract.”
+MINA: “It also makes the potion spread more smoothly.”","MINA: “How does this work? Well, an ablution can’t purify what’s already pure.”
+MINA: “Something like that.”
+MINA: “Don’t fret about the logic behind magic, it’s not a hard science.”
+MINA: “Symbols, will, spirits, enchantments, it’s all a rather loose thing. 
+MINA: “Just find two more ingredients and I’ll mix and apply the hex.”
+MINA: “And trust me, it will work.”",Complete MSQ032,Give 1000 Holy Syrup,"2x Agency Reputation,2x Elders Loyalty"
+MSQ034,34,To Deploy,Taking Great Pains,No,MAIN,MINA,"MINA: “The third ingredient I’ll need is some Black Poppy Extract.”
 MINA: “This one will be a bit of a struggle, but it’s a very important aspect of the hex.”
-MINA: “I’ll explain why you need the extract after you get back with it.”",Complete MSQ033,Give 1000 Black Poppy Extract,"4x Agency Reputation,4x Elders Loyalty",MAIN,MENU
-MSQ035,35,To Deploy,Steel Your Heart,No,"MINA: “Last, we’re going to need a large amount of Scrap Metal.”
+MINA: “I’ll explain why you need the extract after you get back with it.”","MINA: “The rest of the ingredients will protect against the substantial part of the damage.”
+MINA: “Even so, the pain you experience would still be intense.”
+MINA: “This will help mitigate the pain as you cross under the waterfall.”
+MINA: “Anything should be easier to tolerate with a little poppy extract.”",Complete MSQ033,Give 1000 Black Poppy Extract,"4x Agency Reputation,4x Elders Loyalty"
+MSQ035,35,To Deploy,Steel Your Heart,No,MAIN,MINA,"MINA: “Last, we’re going to need a large amount of Scrap Metal.”
 MINA: “No, it’s not for a big container.”
 MINA: “I’ll answer questions after you give me the materials.”
-MINA: “Aren’t we supposed to be in a hurry?”",Complete MSQ034,Give 25x Scrap Metal,"4x Agency Reputation,4x Elders Loyalty,2x Booster Pack,Permanent Hex Buff ""Resist Falling Water""",MAIN,MENU
-MSQ036,36,To Deploy,The Sanctuary Caves,No,"MINA: “’ll be scrying you while you explore. I’m not coming in myself, but I’ll be watching closely.”
+MINA: “Aren’t we supposed to be in a hurry?”","MINA: “This will get broken down and mixed with the other ingredients to form a light metallic coating.”
+MINA: “It gives the mixture a lasting permanence.”
+MINA: “You’ll never notice it’s there. It’s not like you need to breathe anyway.”",Complete MSQ034,Give 25x Scrap Metal,"4x Agency Reputation,4x Elders Loyalty,2x Booster Pack,Unlock Caves"
+MSQ036,36,To Deploy,The Sanctuary Caves,No,MAIN,MINA,"MINA: “’ll be scrying you while you explore. I’m not coming in myself, but I’ll be watching closely.”
 MINA: “I can still send you messages through Menu when I need favors done.”
 MENU: “Between you and me, Mina seems excited.” 
 MENU: She doesn’t show it like I do, but when it comes to not knowing the whole story, she gets just as frustrated. 
@@ -165,14 +290,23 @@ MINA: “I just said I’d be scrying you. That means watching and listening.”
 MINA: “But yes. I’m hoping to get some of my own questions answered inside.”
 MENU: “For me, it’s personal. I used to know things and someone took them away from me.”
 MENU: “Not only do I want to restore my data on the caves, I wants to know who did this to me and why.”
-MENU: ”Then you can have the Kami eat them, I guess.”",Complete MSQ035,"Use the object ""Waterfall"" in ""Temple by the Waterfall"" to enter a new zone","4x Agency Reputation,4x Elders Loyalty,1x Booster Pack",MAIN,MENU
-MSQ037,37,To Deploy,Into the Depths,No,"MENU: “It looks like Mina’s trick worked. My database access just expanded to include the new zone.”
+MENU: ”Then you can have the Kami eat them, I guess.”","MENU: “This place…”
+MENU: “I’ll have to talk to you later.”
+MENU: “Sorry.”
+MENU: “I’m processing a lot.”",Complete MSQ035,"Use the object ""Waterfall"" in ""Temple by the Waterfall"" to enter a new zone","4x Agency Reputation,4x Elders Loyalty,1x Booster Pack"
+MSQ037,37,To Deploy,Into the Depths,No,MAIN,MENU,"MENU: “It looks like Mina’s trick worked. My database access just expanded to include the new zone.”
 MENU:  “I still don’t have a complete picture, but the more you explore, the more I seem to remember.”
 MENU: ”The key to unlocking the labs has to be back here somewhere, wherever here is.”
 MENU: “We won’t know more until we collect more data, so you know what to do.”
 MENU: “Get your kami harvesting and let's see what turns up.”
-",Complete MSQ036,Harvest for >720 minutes at Techno Temple,4x Agency Reputation,MAIN,MENU
-MSQ038,38,To Deploy,Feeling in the Dark,No,"MINA: “I was just thinking. At long last, I got you to take a shower.”
+","MENU: “These caves are weird. It’s almost like they’re trying to confuse me.”
+MENU: “If this is supposed to be some sort of ancient temple, I certainly don't recognize the culture it came from.”
+MENU: “And there’s so much ozone in the air.”
+MENU: “I can feel the electricity.”
+MENU: “If I could still have headaches, I would definitely have one right now.”
+MENU: “...”
+MENU: “Maybe Mina will have some ideas.”",Complete MSQ036,Harvest for >720 minutes at Temple Cave,4x Agency Reputation
+MSQ038,38,To Deploy,Feeling in the Dark,No,MAIN,MINA,"MINA: “I was just thinking. At long last, I got you to take a shower.”
 MINA: “...”
 MENU: “...”
 MINA: “...”
@@ -184,136 +318,622 @@ MINA: “Those magicians treated the sacred grounds of your distant forebears li
 MENU: “I don’t know if we’re related.”
 MINA: “In the unlikely chance that you do manage to open up the labs, I will have words for the scoundrels.”
 MINA: “For now, let us investigate the depths of this desecration.”
-MINA: “Operator, have your kami scavenge around and we’ll see what they have wrought.”",Complete MSQ037,Make 7 Scavenging Rolls at Temple Cave,"2x Agency Reputation,2x Elders Loyalty,1x Booster Pack",MAIN,MENU
-MSQ039,39,To Deploy,Where It Stems From,No,"MENU: “The mushrooms found in these caves are somewhat different from those found on the surface.”
-MENU: “I don't have much data on them, but try scavenging some with your kami anyway, maybe they'll be useful for something.""",Complete MSQ038,Scavenge 5 Dried Stems,2x Agency Reputation,MAIN,MENU
-MSQ040,40,To Deploy,Better Than Chopping Wood?,No,"MENU: “Okay, you might not be able to trip off those little mushrooms, or eat them at all for that matter, but they’re still neat!”
+MINA: “Operator, have your kami scavenge around and we’ll see what they have wrought.”","MINA: “Hm! Hm! Hm! Yes, I see.”
+MINA: “I'm somewhat familiar with the nature of the resources you’ll gather here.""
+MINA: “However, I sense a rare energy in the air.”
+MINA: “It only lingers here near the mouth of the cave, but if we could go deeper…”
+MINA: This place could be very useful. Keep looking around.""",Complete MSQ037,Make 7 Scavenging Rolls at Temple Cave,"2x Agency Reputation,2x Elders Loyalty,1x Booster Pack"
+MSQ039,39,To Deploy,Where It Stems From,No,MAIN,MENU,"MENU: “The mushrooms found in these caves are somewhat different from those found on the surface.”
+MENU: “I don't have much data on them, but try scavenging some with your kami anyway, maybe they'll be useful for something.""","MENU: Well, they're not edible, and they're not even psychoactive, how lame!",Complete MSQ038,Scavenge 5 Dried Stems,2x Agency Reputation
+MSQ040,40,To Deploy,Better Than Chopping Wood?,No,MAIN,MENU,"MENU: “Okay, you might not be able to trip off those little mushrooms, or eat them at all for that matter, but they’re still neat!”
 MINA: “They’re hard and solid, like a dense wood.”
-MINA: “Get a pile of stems and glue them together and you could make some lumber.”",Complete MSQ039,Craft 1 Lumber,"2x Agency Reputation,2x Elders Loyalty",MAIN,MENU
-MSQ041,41,To Deploy,Throw Me a Bone!,No,"MENU: “There has to be a logical reason for this world to be like this.”
+MINA: “Get a pile of stems and glue them together and you could make some lumber.”","MENU: “There you go! 
+MENU: “This lumber could be very useful for something. I’m just not sure what.”
+MINA: “Maybe you could make a battering ram and break open the door to the labs with it.”
+MENU: “Ha, I wish.”
+MENU: “Keep looking around for now, we’ll save the property crime for later.”",Complete MSQ039,Craft 1 Timber,"2x Agency Reputation,2x Elders Loyalty"
+MSQ041,41,To Deploy,Throw Me a Bone!,No,MAIN,MENU,"MENU: “There has to be a logical reason for this world to be like this.”
 MENU: “Even if we’ve gotta tear out all our existing notions of reality and start from scratch, there still have to be answers and we can find them.”
 MENU: “A scientist wouldn't just give up on understanding the world because it threw them a curveball like pipes fossilized in Jurassic bedrock.”
 MENU: “There are always answers and the scientific method can lead us to them.”
 MENU: “Keep scavenging around inside the caves with your Kami, we need more data.”
 MENU: “We’ve got to observe the environment so that we can orient ourselves to it.
-MENU: “So get out there and do some observing!”",Complete MSQ040,Scavenge 5 Bone Chunks,"2x Agency Reputation,1x Booster Pack",MAIN,MENU
-MSQ042,42,To Deploy,Learning From a Master,No,"MINA: “I suppose I can spare some information for you.”
+MENU: “So get out there and do some observing!”","MENU: “Whoa! That isn't some fossilized dinosaur bone, it's really huge.”
+MENU: “This came from a creature of truly titanic proportions.”
+MENU: “We'd better hope you don't run into a living one.”
+MENU: “It's super sturdy though! Could be a good construction material.”
+MENU: “I doubt its former owner will miss it much.”",Complete MSQ040,Scavenge 5 Bone Chunks,"2x Agency Reputation,1x Booster Pack"
+MSQ042,42,To Deploy,Learning From a Master,No,MAIN,MINA,"MINA: “I suppose I can spare some information for you.”
 MINA: “See the walls of this room? The large blocks of stone are smooth cut and fit together like the pieces of a puzzle.”
 MINA: “It appears almost natural, but shows the great skill of the master craftsman.”
 MINA: “You should have all the ingredients you need to practice.”
 MINA: “Just grind up a bone chunk to make mortar and use it to fit your stones and bones together”
-MINA: “It's a bit old fashioned, but it’s strong and long lasting.”",Complete MSQ041,Craft 1 Ashlar,4x Elders Loyalty,MAIN,MENU
-MIN001,2001,To Update,Grand Opening,No,"MINA: Hello, whoever you are. Is this how you receive your letters? Functional, though inelegant.
-
-MINA: Are you hungry? Tired? $MUSU burning a hole in your pocket? Bring your wallet to the Tunnel of Trees and knock on the blue door. I sell treats for you and your Kami. If you need Stamina to keep moving, if your pets have gotten low on Health, or even if the poor things have fallen apart and need a Revive, my shop is open.",Complete MSQ007,Enter Mina's Shop,2x Elders Loyalty,SHOP,MINA
-MIN002,2002,To Update,Customer Loyalty Program,No,"MINA: I want you to be a repeat customer. If you trade enough $MUSU with me, I’ll give you something special. I don’t care how you get it. Bring me more and I’ll be happy.",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ""Neith’s River of Life"" Spell Card",SHOP,MINA
-MIN003,2003,To Update,Early Market Research - I,No,"MINA: Relics and mementos from the past are brought into this world with $MUSU. People grow attached to many things; the first coin they earned, a trowel used to plant food that fed their family, a transforming robot toy that made other children jealous. Those feelings linger.
-
-MINA: Get me five pieces of Scrap Metal. I want to perform psychometry.",Complete MIN002,Give 5 Scrap Metal,"2x Elders Loyalty,1x “Cultivation II” Spell Card",SHOP,MINA
-MIN004,2004,To Update,Early Market Research - II,No,"MINA: Deep in the forest, there is a mound built over some ancient, stagnant defilement. The crawling insects thrive and grow more violent in filthy places like that. Whatever happened in the past to corrupt that place, those feelings linger.
-
-MINA: Go harvest at the Insect Node until you get a feel for it.",Complete MIN003,Harvest for >720 minutes in Forest: Insect Node,"2x Elders Loyalty,2 “Cultivation I” Spell Card",SHOP,MINA
-MIN005,2005,To Update,Early Market Research - III,No,"MINA: The graves across this landscape are quite old and buried under heaps of garbage, yet their $MUSU has no scent of defilement. A strange phenomenon. Are they buried saints? Were they interred as some kind of builder’s rite for a stronger spiritual foundation? I suppose this is a mystery for later.
-
-MINA: Go get a sense of what I mean. Harvest at the graves until you understand.",Complete MIN004,Harvest for >720 minutes on Trash-Strewn Graves,"4x Elders Loyalty,2x “Neith’s River of Life” Spell Card",SHOP,MINA
-MIN006,2006,To Update,Community Outreach,No,"MINA: With all this garbage everywhere, I expected to see more humans. One was laying by the edge of the forest earlier, you know. It looked young, at least compared to the dusty old bodies in the local graves.
-
-MINA: Go harvest $MUSU from its location. Maybe it will start to feel chatty.",Complete MIN005,Harvest for >720 minutes at the Lost Skeleton During Moonside,"2x Elders Loyalty,1x “Cultivation II” Spell Card",SHOP,MINA
-MIN007,2007,To Update,Restocking,No,"MINA: I've had so many new customers these days. Help me restock my spiritual goods. The flowers of death can be made into delicious treats for Kami and other beings. Collect a few and give them to me. 
-
-MINA: Raw materials can be broken down into ingredients for hexerei. One can craft potions, poultices, and other things if one knows the methods. I’m selling something in my shop to help you along with this: a device to break down ingredients for yourself. I won’t be doing it for you again.",Complete MIN006,"Give 5 Plastic Bottle,Give 5 Pine Cone","2x Elders Loyalty,2x “Cultivation III” Spell Card",SHOP,MINA
-MIN008,2008,To Update,Offering an Apprenticeship,No,"MINA: Some may view a scavenging Kami like a magpie on the hunt for treasure. The truth is the other way around; objects of sentiment are naturally drawn to the Kami. Wealth accumulates without desire, and the Kami tend to rest on their hoards like little dragons. As a companion of the Kami, you can share in these treasures and put them to better use. 
-
-MINA: For example, you could practice alchemy, or the ancient art of Hexerei. With the right tools and a proper education, you can craft scavenged items into potions and spells. Through Hexerei you might improve your accumulation of $MUSU, which would of course allow you to give more of it to me.
-
-MINA: For now, scavenge some basic raw materials. I’ve provided a list.",Complete MIN003,"Scavenge 1 Pine Cone,Scavenge 1 Daffodil,Scavenge 1 Sanguine Shroom,Scavenge 2 Plastic Bottles",2x Elders Loyalty,SHOP,MINA
-MIN009,2009,To Update,Basics of Hex - Extracts,No,"MINA: Before crafting a hex, one must break down the raw materials so that they can be measured and mixed. I won’t do this for you. Have some self-respect. 
-
-MINA: But oh! What luck! I’ve stocked my shop with Spice Grinders, and they’re just the tool you need. You might be a model student who already bought one of these. If so, you get a pat on the head. If not, you won’t get much further without it, so fork over the dough, kid.
-
-MINA: Once you own a Spice Grinder, use it to extract some Pine Pollen from a Pine Cone. If you followed my instructions, you should already have a Pine Cone in your inventory. ",Complete MIN008,Craft 500 Pine Pollen,4x Elders Loyalty,SHOP,MINA
-MIN010,2010,To Update,Basics of Hex - Potions,No,"MINA: Once you have your materials refined and measured, it’s time to sit down at the cauldron and brew a hex. But maybe you don’t want to be tied down? How can a husk like me brew potions while keeping up with a jet-set lifestyle, you might ask? Just use a Portable Burner to brew on the go. Everyone’s got one. If you don’t, I’m selling them for a reasonable price. 
-
-MINA: Once you’ve acquired both a Spice Grinder and a Portable Burner, you’ll be ready to craft a variety of basic hexerei. There are some recipes that will require different tools, but I’ll cover that if you manage to make it to advanced lessons. For now, I need to know if you’re even capable of brewing a simple potion. 
-
-MINA: Potions let your Kami accomplish great feats; they’ll be able to harvest more efficiently, get a jump on enemies or escape their clutches, attack with more passion, or more. One of the purest feats is to grow and learn, and so one of the simplest potions is a hex to boost skill growth. Craft an XP Potion by combining Pine Pollen and a Plastic Bottle.",Complete MIN009,Craft 1 XP Potion,4x Elders Loyalty,SHOP,MINA
-MIN011,2011,To Update,Hex Education,No,"MINA: Now that you’re equipped and accomplished, try something slightly more delicate. Grind the Daffodil that I had you collect earlier, then take a small quantity and brew it with care.
-
-MINA: This is a simple task, so be quick about it and get back to me. ","Complete MIN007,Complete MIN010",Craft 1 Bless Potion,2x Elders Loyalty,SHOP,MINA
-MIN012,2012,To Update,Eye of the White Snake,No,"MINA: Have I introduced you to my pet? His name is Ahi. It’s a nickname of someone I knew long, long ago. He’s a perfect sweetheart and very obedient, nothing like the original. That one was quite the attention-getter. For a time I was fascinated and could think of no one else. Eventually, like with most things, I got bored and moved on. He didn’t want to let go so easily and put up quite a fight.
-
-MINA: Deep inside the forest is a splayed oak, its innards ripe with a crystalline growth. The color reminds me of his eyes. Get me a crystal from the trunk as a memento. ",Complete MIN011,Give 1 Red Amber Crystal,6x Elders Loyalty,SHOP,MINA
-MIN013,2013,To Update,Memorial for the Forgotten,No,"MINA: The state of this graveyard is an insult to those buried here. To have graves in a place like this means something. Somewhere very special has become a dumping ground for all sorts of disorganized trash, but there seems to be no changing it now. 
-
-MINA: Reminiscing about that lost friend has gotten me sentimental. He’s not one of the dead here, of course, even I’m not familiar with the origins of this world. Still, they deserve something. There’s far too much trash to pick up, but let’s lay down something beautiful for a change.",Complete MIN012,"Move to the Trash-Strewn Graves,Give 15 Daffodil",4x Elders Loyalty,SHOP,MINA
-MIN014,2014,To Update,To Whom It May Concern,No,"MINA: It appears there’s more to this Menu being than I first thought. She’s intimately tied to this place, a sort of genius loci, that is not a god or a person, but some form of protective entity that exists within the spiritual fabric of the location. As much as I and my shop are connected, she is with the Kamigotchi World.
-
-MINA: A rare error on my part. As soon as possible, I’ll send over an apology letter. I just need you to help me find the necessary materials.","Complete MIN013,Complete MSQ030","Give 2 Wooden Sticks,Give 125 Sanguineous Powder,Give 125 Resin Tincture",4x Elders Loyalty,SHOP,MINA
-MIN015,2015,To Update,A Matter of Import,No,"MINA: Menu tells me she wants something out of the machine by the lost skeleton. I might be able to conjure a device that will help. The power of electricity is rare, but not unknown to those from my time. 
-
-MINA: I’ll need 9999 MUSU to cover the import. You’re getting a great deal, the lowest price I can possibly get. 
-
-MINA: P.S. She’s told me that I don’t need to sign my messages. Is that true? Are you able to discern who offered you this quest without a signature?",Complete MIN014,Give 9999 $MUSU,"4x Elders Loyalty,1x Pyramid Engine (Soulbound)",SHOP,MINA
-SQ001,3001,To Update,Rejecting Fate,No,"MENU: All Kamigotchi can succeed, from the Commons to the Epics. When raising a Kami, take advantage of their strengths. Build on the foundation of their initial stats. Choose skills that boost what your Kami is already best at before shoring up weaknesses.
-
-MENU: If you would prefer to raise a different Kami entirely, the option is available. It might be the case that you love robots and want a team of Scrap Kami. Maybe you’re a dark, edgy person, so you want Kami that are inclined to maximum violence. It could even be that you’re searching for one of the rumored Legendary Kami.
-
-MENU: If you have $ONYX, you can use the Vending Machine in the scrapyard to Reroll a Kamigotchi. After you purchase a Reroll Ticket, you can use it to return one Kami to the pool. In exchange, a new Kami will emerge to join you. ",Complete MSQ003,Reroll one Kamigotchi,2x Agency Reputation,SIDE,MENU
-SQ002,3002,To Update,Health & Safety,No,"MENU: While Kami don’t see Harvesting as labor, they still get tired and lose Health. Kamigotchi hold their bodies together with spiritual energy. As they expend energy, it gets harder to maintain their form. Low Health doesn’t mean a Kami is physically hurt, but it’s still a problem you should take care of.
-
-MENU: When your Kami gets low on Health, return to the room where you left it, then use the Harvesting Menu to pick it up. A Kami will slowly regenerate Health on its own while being held. If you can’t wait, give your Kami a snack or use a Spell Card to restore health. Kamigotchi don’t need food to live, but they can draw energy from food to bolster their spirit.
-
-MENU: Use an item to heal a Kami and complete this quest. If you already used the Spell Card that I gave you, go buy some food or dig up a Cheeseburger. ",Complete MSQ004,Use an item to heal a Kamigotchi that has been reduced below 100% Health,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card",SIDE,MENU
-SQ003,3003,To Update,There Are Levels to This,No,"MENU: Unlike humans, Kamigotchi have the potential to grow and change by using xenoplasticity, or “XP” for short. This means that they can assimilate many different things to form a new cohesive whole.
-
-MENU: Take a look at your roster. You can see a green progress bar with a percentage indicator beneath the portrait of each Kami. When one is ready to move to the next level, the bar will be full and read 100%. Just level up a Kami and you’ll be done. Take note of your new skill point and hold onto it for the next quest.
-
-MENU: When you complete this, I’ll give you a small reward to help encourage the process.",Complete MSQ005,Level up a Kami,"2x Agency Reputation,1x “Cultivation I” Spell Card",SIDE,MENU
-SQ004,3004,To Update,Skill Issue,No,"MENU: When you spend Skill Points to tell Kami what to focus on, you shape their personalities and temperaments. Think hard before you make a choice! You’ll only be able to respec with specific items that are difficult to acquire. This is a commitment.
-
-MENU: Click on a Kami that leveled up and gained a skill point recently and look over the skill tree. Remember, you can’t go wrong by improving what your Kami is already good at. Take your time, but don’t forget to pick something. ",Complete SQ003,Spend a point in any Skill Tree after levelling up,2x Agency Reputation,SIDE,MENU
-SQ005,3005,To Update,Spring Rites,No,"MENU: I see one of your Kami got Liquidated. That sucks! Of course, that’s just a temporary condition. Usually in this world it’s possible to return to form no matter what happens. The essence of something remains unless it’s been totally erased from existence.
-
-MENU: Take this and use it on a Kami that has been Liquidated. Just read the incantation printed on the front, and presto! This powerful spell card brings your Kami back to action. 
-
-MENU: It’s the only freebie I’m allowed to give you. You’ll have to work for more spell cards like this one. Certain shopkeepers might sell different kinds of revival magic, but these cards are premium SSR.",Have one of your own Kami liquidated,,"2x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card",SIDE,MENU
-SQ006,3006,To Update,What’s In a Name?,No,"MENU: Southeast through the old forest you can find a small shrine by a mountain waterfall. That area was cultivated for spiritual power. With the rare Holy Dust item, you can perform a ritual there to grant your Kami a name.
-
-MENU: If you don’t have Holy Dust, a small donation of $ONYX to the shrine will suffice!",Complete MSQ008,Name a Kami,2x Agency Reputation,SIDE,MENU
-SQ007,3007,To Update,Land Survey,No,"MENU: Your march helped find an interesting anomaly, but I’m positive something else is hidden around here. I’ve checked and re-checked more times than you’d care to hear about. Something still doesn’t line up! It’s going to take a lot of legwork to figure this one out.
-
-MENU: Move 500 times. I’ll be going over everything again with a fine-tooth comb. We’re bound to find something by the end.",Complete MSQ017,Move 500 times,"2x Agency Reputation,2x “Neith’s River of Life” Spell Card",SIDE,MENU
-SQ008,3008,To Update,Peregrination,No,"MENU: They say measure twice, cut once, but that still means taking a risk. Best to measure a thousand times for the most accurate data. Sometimes the numbers might have changed.
-
-MENU: Even if you’ve already found something interesting, please move 1000 times more. Cover every inch of this world. I’ll scan as you go. We need to be sure.",Complete SQ007,Move 1000 times,"4x Agency Reputation,3x “Neith’s River of Life” Spell Card",SIDE,MENU
-SQ009,3009,To Update,Tips Help The Most Right Now,No,"MINA: I demand a tribute of $MUSU. You should feel privileged to be given this opportunity and expect nothing in return. Still, I’ll give you something whether you deserve it or not. No, I’ll never give a discount, but you’ll have my attention. Isn’t that even better?",Complete MIN008,Give 5000 $MUSU,6x Elders Loyalty,SIDE,MINA
-SQ010,3010,To Update,Hex Education II,No,"MINA: I suppose I should persist through the boredom and finish the hexing lessons. You’re a fine student and have proved yourself loyal and reliable, so it shouldn’t take long to get this over with.
-
-MINA: A slightly more complex recipe: The Grace Potion. It allows a Kami to harvest for longer periods of time by boosting its ability to endure the strain. The potion’s active ingredient is the exceedingly rare Black Poppy. Hidden in the undergrowth, it emerges from the shadows only when it wants to be found. A great degree of patience or luck is necessary when searching for it.
-
-MINA: Of course, this flower is very potent. When crafting your hexes, I recommend that you use only a small amount.",Complete MIN013,Craft 1 Grace Potion,2x Elders Loyalty,SIDE,MINA
-SQ011,3011,To Update,Hex Education III,No,"MINA: A simple but powerful recipe, this potion is capable of undoing the many mistakes you’ve no doubt made when raising your Kami. The key ingredient is Mint. While common elsewhere, it grows in only a few places in this world and rarely spreads.
-
-MINA: Find one Mint and grind it up, you’ll need every single shred for one potion. It’s an elusive reagent, so be patient while you’re on the hunt. Hexers of the past would obsess over the search for rare ingredients and fall to madness for things like this. However, you’ve always seemed unusually dry, so perhaps you’ll handle the stress with ease. ",Complete SQ010,Craft 1 Respec Potion,2x Elders Loyalty,SIDE,MINA
-SQ012,3012,To Update,Customer Loyalty Program II,No,"MINA: On the wall in my shop hangs a board tracking my favorite customers. That could be you one day at the top among the angels.
-
-MINA: You won’t get better prices anywhere else, so start spending.",Complete MIN007,Spend 15000 $MUSU at Mina's Shop,6x Elders Loyalty,SIDE,MINA
-SQ013,3013,To Update,Going Out For a Coffee,No,"MINA: I came across this beverage long ago when I met the peoples of Lake Shala, who offered this drink to the gods as appeasement. I was quite taken by its taste, though I can’t recall when I last had it. We don’t have access to the original ingredients here, but I believe materials are available to craft an approximation of the flavor. 
-
-MINA: Start by crafting a proper receptacle: Chisel a chunk of Stone with a Screwdriver to make an Empty Cup. You might think it possible to drink this potion from a plastic bottle or a glass jar, but it isn’t. Only a proper stone cup will do. For the approximate materials, seek out a Sanguine Shroom for the color and body, and a Pine Cone for the dry finish and spicy floral aroma. It may sound unpleasant, but wait until it’s been brewed before you judge.",Complete SQ012,Craft 1 Hostility Potion,4x Elders Loyalty,SIDE,MINA
-SQ014,3014,To Update,Teatime,No,"MINA: I just gave you a lesson to craft a useful potion with Mint, I know, but could you put that aside for a moment? With the mint on my mind, I’d like a cup of tea. 
-
-MINA: I deserve a break after all this work, you must agree.",Complete SQ010,Give 1 Mint,6x Elders Loyalty,SIDE,MINA
-SQ015,3015,To Update,The Wages of Sin,No,"MENU: I noticed some strange coins in your inventory. The design is a little like an ancient Greek obol, but there’s something off about the metal, it’s too pure for the era. And the way they catch the light and glitter despite being so dull, it’s not right. 
-
-MENU: Give me a handful to take a closer look at. I’ll run a battery of tests. ",Own at least 1 Obol,Give 5 Obols,"2x Agency Reputation,1x Booster Pack",SIDE,MENU
-SQ016,3016,To Update,Go Suck An Egg,No,"MENU: I know there’s a window on me somewhere, a secret shop where you can use those Obols to buy something. Don’t tell me it’s not real, I can tell it’s there. They refuse to sell to me, so you’re gonna have to shell out just this once. 
-
-MENU: I want you to buy what they’re selling and give it to Mina. She’ll probably be able to tell us something about it. ",Complete SQ015,"Move to Convenience Store,Give 1 Wonder Egg","2x Agency Reputation,2x Elders Loyalty,1x Booster Pack",SIDE,MENU
-TempQ01,10001,Defunct,mina test drop,No,,Missed Mina,,10 Revives,,
-SQ999,10002,In Game,Claim Your Free Gift!,No,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ""Melkarth's Heroic Awakening"" Spell Card",,
-test-0,1000000,Test,Daily Test Quest,Yes,Beg for your MUSU.,,,"10000x MUSU (Test),2x Agency Reputation",,
-test-1,1000001,Test,Crafting Materials,No,Let there be Craft,,Move 3 Times,"100x Stone,100x Stick,50x Plastic Bottle,10x Glass Jar,100x Pine Cones,100x Burgers",,
-test-2,1000002,Test,Lottery Loving,No,Stop being Kamiless,,,20x Gacha Tickets (Test),,
-test-3,1000003,Test,Crafting Materials II,No,More crafting materials,Complete test-1,Give 5 Wooden Sticks,"100x Chalkberry,100x Shroom,100x Resin,100x Holy Dust,100x Scrap Metals",,
-test-4,1000004,Test,Crafting Toolkit,No,You need equipment to make new items.,Complete test-1,,"1x Screwdriver,1x Grinder,1x Burner",,
+MINA: “It's a bit old fashioned, but it’s strong and long lasting.”","MINA: “Hmm. That looks…”
+MINA: “It’s fine.”
+MINA: “Maybe you were more of a bricklayer than a mason in a past life.”
+MINA: “Not everyone can be talented, skilled, and beautiful all the time. You’ll get better.”",Complete MSQ041,Craft 1 Ashlar,4x Elders Loyalty
+MSQ043,43,To Deploy,Sound of One Hand Clapping,No,MAIN,MINA,"MINA: “Quit gawking at the scenery.”
+MINA: “It’s just a temple that predates your entire known history.”
+MINA: “There are tons of those, actually. If you humans were willing to give your elders more credit, you may have found more.”
+MINA: “Much more interesting to notice is how the eddies and currents of $MUSU affect this world.”
+MINA: “Most of what you’ll find in here was deposited by the flow of $MUSU.”
+MINA: “However, this flow is far from uniform.”
+MINA: “It’s more like a mountain river winding its way through the rocks, like that waterfall outside.”
+MINA: “As it flows through these realms, pools and eddies are created as the current encounters obstacles in its path.”
+MINA: “Inside these pools of $MUSU you can find not only the echoes of physical relics, but condensations of things which, within your world, exist only as concepts or abstractions.”
+MINA: “Memorable dreams or intense nightmares, powerful emotions, or even raw physical sensations such as touch, sight, or sound.”
+MINA: “That stuff can make for a really powerful reagent.”
+MINA: “There’s a swirl in the currents like that in this room, and so this is a good place to scavenge some.”
+MINA: “What are you waiting for? You won’t learn magic if you just keep standing there.”","MINA: “Wow, you really did it?”
+MINA: “I didn’t think you would succeed so quickly. This stuff is pretty difficult to get your hands on.”
+MINA: “As you’ve probably noticed, this is a physical material made of the sensation of hearing.”
+MINA: “Haven’t seen that one before, huh?”
+MINA: “There are six sensory essences like that in total. Think you'll be lucky enough to find them all here?”",Complete MSQ042,Scavenge 1 Essence of Hearing,4x Elders Loyalty
+MSQ044,44,To Deploy,Mystery Machines,No,MAIN,MENU,"MENU: “This cute little temple doesn’t lead anywhere else within the cave system, but it might have some good leads for our investigation.”
+MENU: “The machines here are super weird.  And really, really old.”
+MENU: “I see equipment from the labs plugged into it though. It's obviously connected. We might find a clue how to get inside the building.”
+MENU: “Let me scan the room and see what I can find.”
+MENU: “Do some harvesting in the meantime, it usually helps me think.”","MENU: “the only thing on the monitors is static and the internal “logic” of their equipment is like something out of a fever dream; it’s all black boxes with nonsense circuitry.”
+MENU: “It’s probably some kind of quantum tech, maybe we’ll find a book explaining it when we get into the labs.”
+MENU: “Sorry I didn’t find anything useful, but wait…what’s that?”
+MENU: “Another chip!”",Complete MSQ043,Harvest for >720 minutes at the Techno Temple,"4x Elders Loyalty,1x Unmarked Data Chip"
+MSQ045,45,To Deploy,Can’t Stop With Just One,No,MAIN,MENU,"MENU: “This could be big! That datachip must have some juicy info on it.”
+MENU: “Maybe it’s a journal or diary from someone important.
+MENU: “Or a book on this crazy tech that I could use to upgrade myself.”
+MENU: “This could be the breakthrough I’m looking for!”
+MENU: “Quick, connect that datachip to the old laptop and I’ll see what I can pull off of it.”","MENU: “Oh.
+MENU: “I see.”
+MENU: “This contains blueprint instructions for designing and assembling structures in the Kamigotchi world using local materials.”
+MENU: “That’s… Pretty cool?”
+MENU: “Neither you nor your Kami really need to sleep, but it’ll be nice to have a place for your stuff.”
+MENU: “Still, I was really hoping for something more significant.”
+MENU: “They could at least have given me a cool book to read. I’d love to find out more about these machines.”",Complete MSQ044,Move to Lost Skeleton,"2x Agency Reputation,2x Booster Pack"
+MSQ046,46,To Deploy,Sweet As Honey,No,MAIN,MENU,"MENU: “You can find these glittering candies growing on mushroom stalks down here.”
+MENU: “They’ll probably show up in a few other places, too.”
+MENU: “It’s not like Big Rock Candy Mountain, the candy doesn’t just show up on its own.”
+MENU: “The Honeydew Scale is actually a small insect native to dark environments like this cave.”
+MENU: “The candy is like a protective shell that builds up over time on their backs.”
+MENU: “This has nothing to do with my mission to get inside the labs, but it’s really neat!”
+MENU: “Besides, it’s handy that you can find them here. They look like a great natural food source for your Kami.”
+MENU: “Let’s rest here for a bit and let your Kami scavenge some.”
+MENU: “Take in the sights while I try to figure out where we should go next.”","MENU: “Honeydew Scale is a delicious and renewable food source, but it’s not always easy to find.”
+MENU: “We’re pretty lucky to find so many of them in one place.”",Complete MSQ045,Scavenge 5 Honeydew Scale,"2x Agency Reputation,1x Booster Pack"
+MSQ047,47,To Deploy,Ringing Any Bells I,No,MAIN,MINA,"MINA: “Hey. You.”
+MINA “While Menu is doing her scans, can you examine that bell hanging above the crossroads for me?”
+MINA: “It doesn’t appear to match the age or style of the decor we’ve seen in prior rooms.”","MINA: “Aha! Right as usual.”
+MINA: “This bell is much more recent than the rest of the architecture.”
+MINA: “It seems to be Iron Age, maybe Bronze, it all kind of blurs together after a while.”
+MINA:  “I suppose that still isn’t very recent for you.”
+MINA: “Anyway, that doesn’t matter, because it wasn’t hung here anywhere near when it was made.”
+MINA: “Based on the way it’s anchored to the cave roof, I’d guess it was placed here within the last few decades.”
+MINA:  “That would make it the work of our magician friends, but I’ll need to see more before determining what they were doing with it.”",Complete MSQ046,Harvest for >720 minutes at Cave Crossroads,4x Elders Loyalty
+MSQ048,48,To Deploy,Pipe Dream,No,MAIN,MENU,"MENU: “In your world, there’s this concept called the law of superposition.” 
+MENU: “It says that the rocks at the bottom are older than the rocks at the top and that stuff was laid down in sequential layers.”
+MENU: “Even if those layers get tipped or flipped or something, there’s an original stacking order.”
+MENU: “The pipes running through the walls kinda break that rule though. They’re actually older than the rock itself.”
+MINA: “That might be a result of some of the magic left behind from the original inhabitants of this place. Hard to say.”
+MINA: “If you scavenge some of the pipes, we might be able to tell you more.”","MENU: “My careful analysis has determined these pipes are probably the oldest things we’ve seen so far.”
+MENU: “They’re super sturdy and protected from decay by that lustrous tarnish.”
+MINA: “It’s like they’re being used as reinforcing bars for the stone.”
+MINA: “If that’s not natural rock, it’s concrete to beat the Romans. And with a beautiful natural finish.”
+MENU: “Don’t be silly. That doesn’t make any sense.”
+MENU: “Anyway. The pipes are solid and rich in iron. We might be able to use this metal.”",Complete MSQ047,Scavenge 5 Patinated Pipes,"2x Agency Reputation,2x Elders Loyalty"
+MSQ049,49,To Deploy,Community Service,No,MAIN,MINA,"MINA: “The litter is out of control, even inside of these caves.”
+MINA: “At least the literal piles of garbage haven’t made it here yet.”
+MINA: “You’re good at menial tasks. Do me a favor and pick up a few of the cigarette butts, at least.”
+MENU: “That’s not going to do anything, you know they'll just come back. Don’t you have anything more import-”
+MENU: “...”
+MENU: “Actually, could you give them to me afterwards? I have an idea.”
+MINA: “Please don’t share it with us.”","MENU: “Exactly as I suspected.”
+MENU: “These are a fine source of Microplastics!”
+MENU: “You can just grind them up in that Spice Grinder from Mina’s shop.”
+MINA: “I should sell you a second one.”
+MINA: “You can use it just for cigarettes.”
+MINA: “And here, take this card. You might need it after dealing with such filthy things.”",Complete MSQ048,Scavenge 15 Cigarette Butts,"2x Elders Loyalty,2x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
+MSQ050,50,To Deploy,You Smelt It…,No,MAIN,MINA,"MINA: “Those pipes don’t seem structurally necessary, so there shouldn’t be any harm in yanking them out and melting them down.”
+MINA: “Use the portable burner to do it. It can get hotter than you might think.”
+MINA: “It came with a crucible. Don’t worry if you never noticed before.”
+MINA: “You can also make ingots from those scrap metal cans you found on the surface.”","MINA: “This is just an ordinary alloy of good quality.”
+MINA: “I had hoped that the smelting process would have cooked out some interesting magical residues.""
+MINA: ""Even so, this could be fine building material.”",Complete MSQ049,Craft 1 Ingot,2x Elders Loyalty
+MSQ051,51,To Deploy,Ringing Any Bells II,No,MAIN,MENU,"MENU: “Something here is still ringing a bell. Pardon the joke.”
+MENU: “You still have that essence of hearing your Kami scavenged earlier, right?”
+MENU: “Mina, do you think it would let me hear things the way I could when I had a body?”
+MINA: “An interesting theory dear, I don’t see the harm in testing it.”
+MINA: “The operator can always scavenge another essence.”
+MINA: “I think you should go for it.”
+MENU: “Let’s do it. Operator, get me an Essence of Hearing please, it’s time for some science.”","MENU: “Thanks!”
+MENU: “If the “Magicians” as Mina calls them really hung that bell…”
+MENU: “Maybe I’ve heard it ring in the past.”
+MENU: “If I hear it ring again, it might awaken some hidden memories.”
+MENU: “I’ll hold off on using the Essence until we’re ready to try.”
+MENU: “I don’t know how long this unintended effect will last. I wouldn’t want to waste it and make you go scavenge for more.”",Complete MSQ050,Give 1 Essence of Hearing,"4x Agency Reputation,4x Elders Loyalty,2x Booster Pack"
+MSQ052,52,To Deploy,Ringing Any Bells III,No,MAIN,MENU,"MENU: “I’m ready. Time to ring that bell.”
+MENU: “It’s pretty big, so make sure you give it a good hard smack.”
+MENU: “If I’m going to hear it, I want to really hear it!”
+MINA: “Use the biggest rock you can get as a mallet. Make an Ashlar if you have to.”","MENU: “Ah!”
+MENU: “It’s such a lovely sound…”
+MENU: “So deeply safe and resonant, and…and I….I remember something…”
+MENU: “Hey! I remember something!”
+MENU: “It’s…”
+MENU: “I was in the labs somewhere, there were people standing around me.”
+MENU: “They were above me, so I must have been laying down.”
+MENU: “The room was dark. There was incense burning, and that bell was ringing, that exact one.”
+MENU: “There were five of them, two women and three men.”
+MENU: “They all seem so familiar, I know these people.”
+MENU: “I recognize their faces, I just can’t remember who they are.”
+MENU: “They were casting a spell on me I think? Some sort of protective charm or good luck ritual.”
+MENU: “I never believed in that stuff, but… Now I just don’t like to think about it.”",Complete MSQ051,Give 1 Ashlar,"6x Agency Reputation,4x Elders Loyalty"
+MSQ053,53,To Deploy,Flash Back,No,MAIN,MINA,"MENU: “Mina, can you see the paper talismans around the Crossroads?”
+MENU: “They might be easy to miss with the naked eye.”
+MINA: “Of course. Obviously some sort of magical item or artifact.”
+MINA: “Bring one to me.”","MINA: “This looks to be the work of Menu’s magician friends.”
+MENU: “Do you think so?”
+MINA: “Of course. Look closely. See how it has a little picture of a Kamigotchi?”
+MENU: “Sure. Cute little guy.”
+MINA: “Those magicians had quite a learned approach with their application of the craft.”
+MINA: “It’s a shame that their intellect was matched by what they lacked in wisdom.”
+MINA: “This talisman is a clever bit of spellwork, but very lacking in prudence.”
+MINA: “It sacrifices a part of the self for the power it grants.”
+MINA:  “There are always tradeoffs when it comes to magic, but there are better reagents than one’s own soul.”
+MINA: “I wouldn’t retain my stunning good looks if I relied on spells like this.”",Complete MSQ052,Give 1 Flash Talisman,"2x Elders Loyalty,2x Agency Reputation,2x Booster Pack"
+MSQ054,54,To Deploy,Out of the Blue,No,MAIN,MINA,"MINA: “Are your Kami feeling hungry?”
+MINA: “You can always come back to my shop, you know.”
+MINA: “I suppose if you’re too lazy to make the trip, I can let you in on some useful information.”
+MINA: “These blue flowers that grow on the cave walls are edible.”
+MINA: “You won’t be satisfied eating just one, and they aren’t very nutritious.”
+MINA: “They are quite plentiful, though. And honestly delightful.""","MINA: “See? Practically effortless to acquire.”
+MINA: “You’re likely to find more the deeper you go into the caves.”
+MINA: “It’s a common flower that grows more easily in the dark.”",Complete MSQ053,Scavenge 10 Blue Pansy,2x Elders Loyalty
+MSQ055,55,To Deploy,Everything’s Rosy in the Garden,No,MAIN,MINA,"MINA: “What an adorable little mushroom garden.”
+MINA: “It seems to have been abandoned recently. A few decades, maybe a few centuries ago at the most.”
+MINA: “While the fungus of the underworld has its own uses, I’m more interested in something else.”
+MINA: “The stone flowers hiding among the mushroom patches.”
+MINA: “That’s another of those sensory essences. Make sure to have at least one in your pocket for later.”","MINA: “Not too shabby.”
+MINA: “I expect Menu to come asking to try a cheeseburger next.”
+MENU: “Hey! That’s mean!”
+MENU: “...”
+MENU: “...But… Maybe…”
+MENU: “Now I’m seriously considering it.""",Complete MSQ054,Scavenge 1 Essence of Taste,"4x Elders Loyalty,1x Booster Pack"
+MSQ056,56,To Deploy,Feel Like a Mushroom Myself,No,MAIN,MENU,"MENU: “Wow, the garden keeps going.”
+MINA: “These mushrooms are rarely found in such dense numbers.”
+MINA: “If you look closely, you can see the second layer already growing in.”
+MINA: “It’s a fungus that grows like a weed when fed properly, but it can rarely get what it wants.”
+MENU: “My old friends must have cultivated them hoping to block our way. I don’t think that’ll work very well.”
+MENU: “Set your Kami harvesting while I take a closer look.”","MENU: “Being in this place reminded me of something else.”
+MENU: “I think I remember one of the people from that ritual being a gardener of some sort.”
+MENU: “They always brought the most beautiful flowers and plants into the office.”
+MENU: “Maybe they had something to do with all these mushrooms.” 
+MENU: “I unfortunately can’t tell you more with my memory as fragmentary and blocked as it is right now.”
+MENU: “If you think it’s frustrating, imagine how I must feel, haha!”
+MENU: “Haha…”
+MENU: “They must have really wanted me out of the loop.”",Complete MSQ055,Harvest for >720 minutes at Thriving Mushrooms,"4x Agency Reputation,2x Elders Loyalty"
+MSQ057,57,In Progress,Top 10 Smoke Spots in Kamigotchi World,No,MAIN,MENU,"MENU: “This seems like it would be a great place to stop and have a smoke break.”
+MENU: “I used to smoke before. It’s one of the things I miss most about your world.”
+MENU: “It’s funny that I remember that despite not remembering very much else from my past life.”
+MENU: “If I could have a smoke right now I bet all my memories would come flooding back.”
+MENU: “Give me some cigarette butts? Not even for the microplastics.”
+MENU: “Just for old time’s sake.”","MENU: “If I still had a body I would happily smoke the last of those butts.” 
+MENU: “If you’ve ever really craved a cigarette and gone digging around in ashtrays for a half smoked cig you’d know how I feel.”
+MENU: “Nothing we can really do about that though.”",Complete MSQ056,"Move to Slippery Pit,Give 1 Cigarette Butt",6x Agency Reputation
+MSQ058,58,In Progress,Flower of the Flock,No,MAIN,MENU,"MENU: “These blue flowers are so striking and vibrant.” 
+MENU: “They resemble the butterflies in the fields and woods outside.”
+MENU: “Maybe there’s a connection between them?” 
+MENU: “You should deliver some to Mina, she can probably tell us more about them.”
+MINA: “I’ve already explained how they can be used in a delightful salad.”
+MINA: “But you raise an interesting question. I’ll be happy to take a look.”
+","MINA: “The resemblance is truly uncanny.”
+MINA:  “I doubt that’s a coincidence.” 
+MINA: “The butterflies themselves are fragments of human souls, that’s what gives them their unique magic properties.”
+MINA: “However, these flowers are mere mimics.”
+MINA: “I’m not sensing even a trace of soul within them. They’re just flowers.”
+MINA: “Perhaps their appearance allows them to attract real souls for pollination?”
+MINA: “Or maybe they look like this so that soul predators will eat them and spread their seeds?”
+MINA: “I think I would like to study these further, thank you for bringing them to me.”
+MINA:  “Menu was right to think I’d find them interesting.”
+MINA:  “Since she’s helped me with this and with so many other things, I should help her with something too.”
+MINA: “That’s what friends are for is it not?”",Complete MSQ057,Give Mina 20 Blue Pansy,"4x Elders Loyalty,2x Agency Reputation,2x Booster Pack"
+MSQ059,59,In Progress,"Ordinary Intermediate Potion Crafting (Very Boring) I
+",No,MAIN,MINA,"MINA: “Hey, shh.” 
+MINA: “Be quiet. We don’t want Menu to hear us.”
+MINA: “I’m sure that’s impossible considering where this conversation is taking place, but I’m trying.”
+MINA: “Menu is more magical than she likes to think, so I put up anti-scrying measures. They should work.”
+MINA: “It’s time to teach you some intermediate hexerei with a recipe I’ve just invented.”
+MINA: “Bring me some cigarette butts from the cave system. I know I think they’re disgusting, but it’s important.”
+MINA: “And don’t tell Menu anything, we don’t want to spoil the surprise.”","MINA: “Ahh, perfect! That will do nicely.”
+MINA: “This might look like useless smelly trash, but many things are more than they appear.”
+MINA: “We just need two more ingredients. They’ll be hard to get, but not impossible.” MINA: “Head back into the caves and hang a left at the slippery pit, look for the huge lotus flower.”
+MINA: “And keep quiet about it.""",Complete MSQ058,Scavenge 20 Cigarette Butts,"4x Elders Loyalty,1x Booster Pack"
+MSQ060,60,In Progress,"Ordinary Intermediate Potion Crafting (Very Boring) II
+",No,MAIN,MINA,"MINA: “The flowers in this room aren’t just pretty and fragrant.”
+MINA: “Do you see how their blossoms are shaped? Those shapes create eddies in the $MUSU currents.”
+MINA: “If you remember your lesson from before, you’ll know that means they’re a potential source of sensory essences.”
+MINA: “It’s pretty strange to find two different essences so close to each other.”
+MINA: “Someone probably cultivated them here so they could get the whole set.”
+MINA: “Have your Kami scavenge some essence of smell for us, but be careful, they’re a bit volatile.”","MINA: “Nicely done! Bring it back to my shop, and remember not to say anything to you-know-who.”
+MINA: “;)”",Complete MSQ059,Scavenge 1 Essence of Smell,"2x Elders Loyalty,1x Booster Pack"
+MSQ061,61,In Progress,Ordinary Intermediate Potion Crafting (Very Boring) III,No,MAIN,MINA,"MENU: “What’s with these random tasks that Mina has you doing?”
+MENU: “She won’t tell me anything about it. And I'm having a hard time seeing what you're doing all of a sudden!”
+MENU: “Hey, where are you going?”","MINA: “Hey there, Operator. And shoo Menu, this is a private matter.”
+MENU: “But I wanna see! What are you working on? Is it a new potion?”
+MINA: “Yes. Now please leave us be.”
+MENU: “Awww come on, why? Have I not been a good enough menu?”
+MINA: “You’re a very good Menu.”
+MINA: “I don’t mean to be rude, but your disembodied presence is interfering with a very delicate crafting process.”
+MINA: “Once the potion is completed we’ll show you the final product. I promise.”
+MENU: “Okay, fine, fine, I’ll wait outside.”",Complete MSQ060,Move to Convenience Store,"2x Elders Loyalty,1x Booster Pack"
+MSQ062,62,In Progress,Ordinary Intermediate Potion Crafting (Very Boring) IV,No,MAIN,MINA,"MINA: “Is she gone?”
+MINA: “Phew, that was a close one.”
+MINA: “Now, observe closely. Even though these butts have been smoked down to stubs, there is still a bit of tobacco left inside them.”
+MINA:  “Menu doesn’t have a physical form. Obviously, just collecting the loose tobacco won’t let her actually smoke.”
+MINA: “And even with the Essence trick we tried with that bell, it’s too short-lived and singular.”
+MINA: “But I’ve got it all worked out now.”
+MINA: “Put the loose tobacco in your mortar and grind it up with peeled petals of Essence of Taste.”
+MINA: “Now, carefully fold in the essence of smell.”","MINA: “That looks perfect, now we can give it to Menu.”
+MINA: “I wish I could see the look on her face…”
+MINA: “I wonder what it looks like?”",Complete MSQ061,Craft Uninteresting Paste,"2x Elders Loyalty,1x Booster Pack"
+MSQ063,63,In Progress,Ordinary Intermediate Potion Crafting (Very Boring) V,No,MAIN,MINA,"MINA: “Now that we’ve crafted this sacred incense, you’ll need to burn it in a spot where the $MUSU currents can carry the smoke properly.”
+MINA: “Head over to the Torii Gate down the road.”
+MINA: “The currents there should work nicely and be far enough away that I don’t get any secondhand smoke at my shop.”
+MINA: “Once you’re there, burn the paste in your portable burner.”
+MINA: “Don't tell Menu what you're doing, she'll figure it out soon enough. ;)”","MENU: “Hey what’s that smell?”
+MENU: “Huh? HUHHH? WHAT?!”
+MENU: “Oh my gosh. Oh this is so nice I can feel my pixels chilling out.”
+MENU: “What did you…? How did you…?”
+MENU: “Mina you sneak! So this is what you two were up to.”
+MENU: “Gosh this makes me so happy. It really takes me back… This is calling up so many memories.”
+MENU: “I remember the first time I ever smoked, I was sitting in an empty lot after skipping school.”
+MENU: “The principal had yelled at me for something stupid and I just started crying and ran out of the building.”
+MENU: “I ended up in this lot next to a gas station that was full of spring wildflowers. A homeless guy saw me sitting there sobbing and offered me a smoke.”
+MENU: “It was nice, the flowers were pretty.”
+MENU: “Oh! Oh and the next time I smoked was after the first time I had sex.”
+MENU: “I had met up with this guy I met online and uh…well you probably don’t want details, but it wasn’t a great experience.”
+MENU: “He fell asleep afterwards and I sat on his porch chainsmoking for like three hours.”
+MENU: “Huh, it’s no wonder I was so addicted to them.”
+MENU: “I know none of these memories really help you understand the world any better, but they mean a lot to me.” 
+MENU: “Thank you, thank you so much.”",Complete MSQ062,"Move to Torii Gate,Give Uninteresting Paste","6x Agency Reputation,6x Elders Loyalty"
+MSQ064,64,In Progress,Full Flood,No,MAIN,MINA,"MINA: “Hmm! What a fascinating mural. Do you recognize the story it depicts?”
+MINA: “It is one of the famous tales of your world, the story of the great floods that befell your planet long ago.”
+MINA: “Nearly all your cultures have their own versions of the tale. It happened several times over hundreds of thousands of years.”
+MINA: “Harvest in this room and I shall study the mural. Perhaps this tells the story in a way we haven’t all heard before.”","MINA: “As I suspected, the people who painted this mural are the same ones who built the temples and machines which you’ve seen throughout these caves.”
+MINA:  “They were an ancient and noble race of humans, skilled in both magic and technology.”
+MINA: “As you can see, their society was quite advanced, with technology similar to that of your current civilization.”
+MINA: “They were also far more skilled with magic than anyone alive in your world today.”
+MINA: “Menu’s old magician friends had nothing on these guys. They were true artists.”
+MINA: “As the great flood befell them, they called out to their gods. Those are the fish you see descending from the heavens.” 
+MINA: “The fish gods instructed them in the creation of great arks with which they departed your world and settled on the moon.” 
+MINA: “I don’t know what happened to them after that. They haven’t been around anywhere I frequent.”",Complete MSQ063,Harvest for >720 minutes at Flood Mural,"2x Elders Loyalty,2x Booster Pack"
+MSQ065,65,In Progress,Old Fiends,No,MAIN,MENU,"MENU: “The little carving on that rock seems familiar to me somehow. I think I recognize the initials.” 
+MENU: “Do some harvesting here while I try to jog my memory.""
+MENU: “That tobacco you gave me earlier is kinda helping me focus.”","MENU: “I studied those carvings and they jogged some memories.” 
+MENU: “One of them was named Jeanne. She was scary, I definitely remember her being really scary.”
+MENU: “The other was named…uhhh….Why? That doesn’t make any sense, that’s not a name.”
+MENU: “That’s what I remember him going by though, so maybe it was his nickname.”
+MENU: ""He thought it was really funny for some reason.” 
+MENU: “If you ask me, I don’t think it’s all that clever.""",Complete MSQ064,Harvest for >360 minutes at Still Stream,2x Agency Reputation
+MSQ066,66,In Progress,First Contact,No,MAIN,MINA,"MINA: “Check out that engraving.”
+MINA: “It’s another classic tale. Gods take the form of human-animal hybrids and descend from the sky to grant knowledge to mankind.”
+MINA:  “Harvest some $MUSU while I read this and I’ll tell you about it.""","MINA: “This inscription is another product of the pre-flood humans who built most of the stuff in here.”
+MINA: “It’s a very old tale, it might actually be an account of the very first time that happened.”
+MINA: “It’s a pretty simple retelling of the first communications between some of the oldest gods and the earliest humans, it talks about the gift of fire and speech, language, and art.”
+MINA: “They must really like humans considering how many times they came back and helped you out.”
+MINA: “Maybe you’ve heard of some of them?”
+MINA: “Does the Nommo of the Dogon ring any bells?”
+MINA: “What about Thoth of the Egyptians or The Apkallu of the Akkadians?”
+MINA: “How about The Saptarshi of the Vedas? Or maybe Prometheus of the Greeks?”
+MINA: “It must be nice to get so much affection…”",Complete MSQ065,Harvest for >360 minutes at Engraved Door,"4x Elders Loyalty,1x Booster Pack"
+MSQ067,67,In Progress,Soaked to the Bone,No,MAIN,MENU,"MENU: “There’s another skeleton in here. It could be someone I know, my memories are coming back more easily now.”
+MENU: “Let me do some scans and rack my…err…circuits.”
+MENU: “Have your kami do some harvesting while you wait.”","MENU: “It seems like this guy died within the last few decades. The skeleton isn’t jogging any of my memories, though.”
+MENU: “I wonder where he came from?”
+MENU: “One of these days we’ve got to figure out how to talk to these skeletons we keep finding.”
+MENU: “You’d think they would be chattier considering the setting.”",Complete MSQ066,Harvest for >360 minutes at Shabby Deck,"4x Agency Reputation,1x Booster Pack"
+MSQ068,68,In Progress,On the Fringes,No,MAIN,MENU,"MINA: “Hrm, now what do we have here? All this ancient machinery connecting to a hatch that leads nowhere? How intriguing.”
+MINA: “Menu, you’re good with machines, would you be a dear and take a look at this?”
+MENU: “Sure! I’m on it! Operator, while you’re waiting for us, go ahead and harvest some $MUSU.”","MENU: “Alright, analysis complete.”
+MENU: “These machines are hundreds of thousands of years old and they’re still in pretty good condition after all that time.”
+MENU: “Is that crazy or what?”
+MENU: “Unfortunately, that’s about all I can tell you about them.”
+MENU: “I don’t exactly have access to the manuals, and the internals look like a bad dream. Nothing rational going on in there.”
+MENU: “The monitor on the side has a label for Aether Readings, and another meter for something called GEM Fields, whatever those are.”
+MINA: “I have some hypotheses.”
+MENU: “Well, it’s all completely dead at the moment. And I think it needs some sort of control device, but it doesn’t seem like there’s one connected.”
+MENU: “If you wanted to get it working again, you’d have to plug the wires into a new control device and then power it up somehow.”",Complete MSQ067,Harvest for >360 minutes at Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
+MSQ069,69,In Progress,The Doors of Perception,No,MAIN,MINA,"MINA: “The way the energy pools and swirls around this room would make this a good place to hunt for sensory essences.”
+MINA: “Evidence is mounting. This whole place has been renovated to encourage the capture of all six senses.""
+MINA: “Scavenge around with your kami, we’ll see what turns up.”","MINA: “An Essence of Touch. What a surprise.”
+MINA: “With this essence, arranging those stones to block the tunnel would have been a simple task.”
+MINA: “There’s no chance for this to be mere good luck. This is turning out to be a very valuable place to gather resources.”
+MINA: “I’ll see about writing up some new potion recipes. Stop by my shop later to see what I’ve come up with.”",Complete MSQ068,"Scavenge 1 Essence of Touch ","4x Elders Loyalty,2x Booster Pack"
+MSQ070,70,In Progress,Reach Out And Touch Faith,No,MAIN,MINA,"MINA: “I don’t like this room at all.” 
+MINA: “Something foul and sinister took place here. The $MUSU in this room is all tainted and wrong.”
+MINA: “Whatever was contained within those tubes left an unpleasant imprint onto the world around it.”
+MINA: “It seems like a bad idea to loiter for too long, but it’s worth investigating.”
+MINA: “Harvest some of the room’s $MUSU and I’ll see to figuring out what happened.""","MINA: “Those shattered tubes once contained some manner of deity.”
+MINA: “Or…a piece of one at least.”
+MINA: “Whatever it was, its divinity is burned into every material in the room.”
+MINA:  “It’s strongest in the glass of the shattered tube and the hoses around it, but this entire room is absolutely soaked in the aftereffects of divine contact.”
+MINA: “To capture and harvest power from a god is sickening, and I would have broken this cage myself had we arrived earlier.”
+MINA: “But… I do not think whoever broke it meant to free this deity, but to use it themselves.”
+MINA: “What a perverted thing to do. It makes my stomach turn.”",Complete MSQ069,Harvest for >720 minutes at Broken Tube,4x Elders Loyalty
+MSQ071,71,In Progress,A Turn of the Screw,No,MAIN,MENU,"MENU: “Hey so, I know Mina told you to leave, but I can’t sense whatever she’s picking up on and there’s something of interest to us here.” 
+MENU: “According to the map data, this room has a chance of dropping a screwdriver.”
+MENU: “If you haven’t already grabbed one from the junkyard then this would be a great place to scavenge one.”
+MENU: “Even if you don’t find one, give it a shot.”","MENU: “While you were scavenging, I cross referenced the drop table in this room with the one in the junkyard. It’s the same model screwdriver.”
+MENU: “That jogged my memory a bit. There was this guy I knew back when I lived in your world.”
+MENU: “He was a programmer named Artie, and I think this was his screwdriver.”
+MENU: “He carried it on this goofy tool belt like he was some sort of blue collar guy.”
+MENU: “I have a very clear memory of standing around him with a bunch of the other people shivering in the cold while he fixed the heat in our office.”
+MENU: “We all wanted to bring in an actual electrician but he insisted on doing it himself.”
+MENU: “I think he just wanted to show off his mechanical skills since he normally just worked on code.”
+MENU: “I wonder if he’s around here somewhere too?”",Complete MSQ070,Make 7 Scavenging Rolls at Broken Tube,4x Agency Reputation
+MIN001,2001,To Update,Grand Opening,No,SHOP,MINA,"MINA: “Hello, whoever you are. Is this how you receive your letters?”
+MINA: “It seems functional, although inelegant.”
+MINA: “Tired? Hungry? $MUSU burning a hole in your pocket?”
+MINA: “Bring your wallet to the Tunnel of Trees and knock on the blue door.”
+MINA: “——— Mina.”","MINA: “I sell treats for you and your Kami.”
+MINA: “If you need Stamina to keep moving, if your pets have gotten low on Health, or even if the poor things have fallen apart and need a Revive, my shop is open.”
+MINA: “Prices subject to change.”
+MINA: “——— Mina.”",Complete MSQ007,Enter Mina's Shop,2x Elders Loyalty
+MIN002,2002,To Update,Customer Loyalty Program,No,SHOP,MINA,"MINA: “I want you to be a repeat customer.”
+MINA: “If you trade enough $MUSU with me, I’ll give you something special.”
+MINA: ”I don’t care how you get it. Just bring me more and I’ll be happy.”
+MINA: “——— Mina.”","MINA: “Take this card.”
+MINA: “Even someone lacking in magical ability can use it to cast a little spell.”
+MINA: “These aren’t mine to sell, but I’ll give them away for good behavior.”
+MINA: “——— Mina.”",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ""Neith’s River of Life"" Spell Card"
+MIN003,2003,To Update,Early Market Research - I,No,SHOP,MINA,"MINA: “Relics and mementos from the past are brought into this world with $MUSU.”
+MINA: “Humans grow attached to many things.”
+MINA: “The first coin they earned, a trowel used to plant the food that fed their family, a transforming robot toy that made other children jealous.”
+MINA: ”Those feelings linger.”
+MINA: “Get me five pieces of Scrap Metal. There’s quite a lot of it lying around.”
+MINA: “——— Mina.”","MINA: “It may be garbage, but it was important to someone.”
+MINA: “Psychometry will tell me more. Not that I’ll share what I learn with you.”
+MINA: “We’ll have to get to know each other better.”
+MINA: “——— Mina.”",Complete MIN002,Give 5 Scrap Metal,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
+MIN004,2004,To Update,Early Market Research - II,No,SHOP,MINA,"MINA: “Deep in the forest, there is a mound built over some ancient, stagnant defilement.”
+MINA: “The crawling insects thrive and grow more violent in filthy places like that.”
+MINA: “Go harvest at the Insect Node until you get a feel for it.”
+MINA: “——— Mina.”","MINA: “Ancient traditions would have purified this mound with sacred rite on a regular basis.”
+MINA: “This practice must have died out long before you or I arrived.”
+MINA: “Still, I see evidence of recent ritual.”
+MINA: “I suppose it could be even worse.”
+MINA: “——— Mina.”",Complete MIN003,Harvest for >720 minutes in Forest: Insect Node,"2x Elders Loyalty,2 “Cultivation I” Spell Card"
+MIN005,2005,To Update,Early Market Research - III,No,SHOP,MINA,"MINA: The graves across this landscape are quite old, and buried under heaps of garbage, yet their $MUSU has no scent of defilement.”
+MINA: “A strange phenomenon.”
+MINA: “Go harvest at the graves and you’ll understand what I mean.”
+MINA: “——— Mina.”","MINA: “You see, they have an air of uncommon purity.”
+MINA: “Are they buried saints?”
+MINA: “Were they interred as some kind of rite to bolster the spiritual foundation?”
+MINA: “These are questions for another time.”
+MINA: “——— Mina.”",Complete MIN004,Harvest for >720 minutes on Trash-Strewn Graves,"4x Elders Loyalty,2x “Neith’s River of Life” Spell Card"
+MIN006,2006,To Update,Community Outreach,No,SHOP,MINA,"MINA: “With human garbage as far as the eye can see, one might expect to see more humans along with it.”
+MINA: “There are mountains of their attachments changing the landscape of this place, but few actual souls.”
+MINA: “A dead one was laying by the edge of the forest, you know.” 
+MINA: “It looked young, at least compared to the dusty old saints in the local graves.”
+MINA: “Go harvest $MUSU from its location. Maybe it will start to feel chatty.”
+MINA: “——— Mina.”","MINA: “You can’t hear it speak?”
+MINA: “Strange. I thought you might be able to understand each other.”
+MINA: “Ah well. Nothing to be done.”
+MINA: “——— Mina.”",Complete MIN005,Harvest for >720 minutes at the Lost Skeleton During Moonside,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
+MIN007,2007,To Update,Restocking,No,SHOP,MINA,"MINA: “I've had many new customers like you lately.”
+MINA: “It seems I haven’t brought enough stock to meet demand.”
+MINA: “Help me restock my goods and pick a few flowers for me.”
+MINA: “——— Mina.”","MINA: “Raw materials can be broken down into ingredients for hexerei.”
+MINA: “Or alchemy, chemistry, call it what you like.”
+MINA: “One can craft potions, poultices, and other small magic if one knows the methods.”
+MINA: “I sell something in my shop that will help you along.”
+MINA: “It’s a device to break down ingredients for yourself. I won’t be doing it for you again.”
+MINA: “——— Mina.”",Complete MIN006,"Give 5 Plastic Bottle,Give 5 Pine Cone","2x Elders Loyalty,2x “Cultivation III” Spell Card"
+MIN008,2008,To Update,Offering an Apprenticeship,No,SHOP,MINA,"MINA: “Some may view a scavenging spirit like a magpie on the hunt for treasure.”
+MINA: “The truth is the other way around; objects of sentiment are naturally drawn to the Kami.”
+MINA: “Wealth accumulates without desire.”
+MINA: “Most of the Kami will only rest on their hoards like little dragons.”
+MINA: “As their companion, you can share in their treasure and put it to better use.”
+MINA: “For now, scavenge some basic raw materials. I’ve provided a list.”
+MINA: “——— Mina.”","MINA: “With the right tools and a proper education, you can craft your own potions and spells.”
+MINA: “The use of hexerei may even improve your ability to gain $MUSU.”
+MINA: “And the more you improve your profitability, the more you have to share with me.”
+MINA: “Easy enough, yes? You’ve got the materials, but the real lessons have yet to begin. Don’t forget to buy your school supplies.”
+MINA: “——— Mina.”",Complete MIN003,"Scavenge 1 Pine Cone,Scavenge 1 Daffodil,Scavenge 1 Sanguine Shroom,Scavenge 2 Plastic Bottles",2x Elders Loyalty
+MIN009,2009,To Update,Basics of Hex - Extracts,No,SHOP,MINA,"MINA: “One must break down the raw materials before they can be measured out and mixed into a hex.”
+MINA: “I won’t do this for you more than once. Have some self-respect.”
+MINA: “I’ve stocked my shop with Spice Grinders, and they’re just the tool you need.”
+MINA: “You may be a model student who already bought one.”
+MINA: “If so, you get a pat on the head.”
+MINA: “If not, you won’t get much further without it, so fork over the dough, kid.”
+MINA: “Once you own a Spice Grinder, use it to extract some Pine Pollen from a Pine Cone.”
+MINA: “You should already have a Pine Cone in your inventory.” 
+MINA: “——— Mina.”","MINA: “That was fine.”
+MINA: “You might prove yourself a capable hexer one of these years.”
+MINA: “Just don’t expect me to hold your hand every step of the way.”
+MINA: “——— Mina.”",Complete MIN008,Craft 500 Pine Pollen,4x Elders Loyalty
+MIN010,2010,To Update,Basics of Hex - Potions,No,SHOP,MINA,"MINA: “How can a husk like me brew potions while keeping up with my on-the-go lifestyle, you might ask?”
+MINA: “Just use a Portable Burner to brew on the go. Everyone’s got one.”
+MINA: “If you don’t, I’m selling them for a reasonable price.”
+MINA: “Once you’ve acquired both a Spice Grinder and a Portable Burner, you’ll be ready to craft a variety of small magic.”
+MINA: “One of the purest feats is to grow and learn, and so one of the simplest potions is a hex to boost skill growth.”
+MINA: “Craft an XP Potion by combining Pine Pollen and a Plastic Bottle.”
+MINA: “——— Mina.”","MINA: “Potions are some of the simplest magic, but they let your Kami accomplish great feats.”
+MINA: “I’ve certainly had stingier and more ignorant students than you.”
+MINA: “You’ve shown a promising enthusiasm. Keep it up.”
+MINA: “——— Mina.”",Complete MIN009,Craft 1 XP Potion,4x Elders Loyalty
+MIN011,2011,To Update,Hex Education,No,SHOP,MINA,"MINA: “Now that you’re equipped and accomplished, try something more delicate.”
+MINA: “Grind the Daffodil that I had you collect earlier, then take a small quantity and brew it with care.”
+MINA: “Delicate as it may be, this is still a simple task.”
+MINA: “Be quick about it and get back to me.”
+MINA: “——— Mina.”","MINA: “Hm. Good work.”
+MINA: “I’m getting bored of this, so the lessons stop here.”
+MINA: “You’re doing fine, it’s just time to practice on your own a while.”
+MINA: “Don’t be a stranger.”
+MINA: “I have plenty of favors to ask, and you’ve been of good service.”
+MINA: “——— Mina.”","Complete MIN007,Complete MIN010",Craft 1 Bless Potion,2x Elders Loyalty
+MIN012,2012,To Update,Eye of the White Snake,No,SHOP,MINA,"MINA: “Have I introduced you to my pet? His name is Ahi.“
+MINA: “It’s the nickname of someone I knew long, long ago.”
+MINA: “He’s a perfect sweetheart and very obedient, nothing like the original.”
+MINA: “The old Ahi was quite the attention getter. Like with most things, I got bored and moved on.”
+MINA: “He didn’t want to let go so easily. He put up quite a fight.”
+MINA: “Deep inside the forest is a splayed oak, its innards ripe with a crystalline growth.”
+MINA: “The color reminds me of his eyes. Get me a crystal from the trunk as a memento.”
+MINA: “——— Mina.”","MINA: “Thank you for helping me reminisce.”
+MINA: “You can pet Ahi if you’d like, he won’t bite unless I give the order.”
+MINA: “And you’d better not tell anyone I’m old.”
+MINA: “——— Mina.”",Complete MIN011,Give 1 Red Amber Crystal,6x Elders Loyalty
+MIN013,2013,To Update,Memorial for the Forgotten,No,SHOP,MINA,"MINA: “Reminiscing about that lost friend has gotten me sentimental.”
+MINA: “He’s not one of the dead interred in the graves here, of course.”
+MINA: “Still, they deserve something.”
+MINA: “There’s far too much trash to pick up, but you can lay down something beautiful for a change.”
+MINA: “——— Mina.”","MINA: “Letting something new grow from the remains of the old is a fine enough thing, but an eyesore like this landfill?”
+MINA: “Disrespectful.”
+MINA: “It wasn’t always this way. I can tell.”
+MINA: “These mountains of garbage and that eyesore of a building in the distance?”
+MINA: “Someone had to cast them off before they ended up here.”
+MINA: “——— Mina.”",Complete MIN012,"Move to the Trash-Strewn Graves,Give 15 Daffodil",4x Elders Loyalty
+MIN014,2014,To Update,To Whom It May Concern,No,SHOP,MINA,"MINA: “It appears there’s more to this Menu being than I first thought.”
+MINA: “She’s intimately tied to this place, a sort of genius loci.”
+MINA: “That is, not a demon or spirit, but some form of protective entity that exists within the very essence of the location.”
+MINA: “As much as I and my shop are connected, she is with the Kamigotchi World.”
+MINA: “As soon as possible, I’ll send over an apology letter. 
+MINA: “I just need you to help me find the necessary materials.”
+MINA: “——— Mina.”","MINA: “Thank you.”
+MINA: “She and I have been talking since you reached out on her behalf, but it’s good etiquette to put it in writing.”
+MINA: “And yes, I think I can help.”
+MINA: “——— Mina.”","Complete MIN013,Complete MSQ030","Give 2 Wooden Sticks,Give 125 Sanguineous Powder,Give 125 Resin Tincture",4x Elders Loyalty
+MIN015,2015,To Update,A Matter of Import,No,SHOP,MINA,"MINA: “Menu tells me she wants something out of the machine by the lost skeleton.”
+MINA: “I might be able to conjure a device that will help.”
+MINA: “The power of electricity is rare, but not unknown to those from my time.”
+MINA: “I’ll need 9999 MUSU to cover the import.”
+MINA: “You’re getting a great deal. The lowest price I can possibly get.”
+MINA: “P.S.”
+MINA: “She’s told me that I don’t need to sign my messages.”
+MINA: “Is that true? Are you able to discern who writes to you without a signature?”","MINA: “It is said that the pyramid can preserve foods, sharpen blades, improve sexual potency, and do all manner of other things.”
+MINA: “Some of the most ancient ones were used to generate electrical power.”
+MINA: “This is a miniaturized form, made with the same principles.”
+MINA: “Cute, don’t you think?”
+MINA: “It wasn’t built for this specific task, but it should work fine to power a little machine.”",Complete MIN014,Give 9999 $MUSU,"4x Elders Loyalty,1x Pyramid Engine (Soulbound)"
+MIN016,2016,In Review,Misogi,No,SHOP,MINA,"MINA: “Before we decide the right course of action, I want you to try something.”
+MINA: “Make your way to the Temple by the Waterfall and try to pass through the falling water.”
+MINA: “I’m sure that you’ll fail, but do it. Report the outcome back to me.”","MINA: “Oh dear, you’re soaked.”
+MINA: “You couldn’t get through? That was expected.”
+MINA: “But you’re otherwise unharmed. That’s very promising.”
+MINA: “I think I know what to do with you.”",Complete MSQ031,"Interact with the object ""Waterfall"" in ""Temple by the Waterfall""",4x Elders Loyalty
+SQ001,3001,To Update,Rejecting Fate,No,SIDE,MENU,"MENU: “All Kamigotchi can succeed, from the Commons to the Epics.”
+MENU: “When raising a Kami, take advantage of their strengths.”
+MENU: “Build on the foundation of their initial stats. Choose skills that boost what your Kami is already best at before shoring up weaknesses.”
+MENU: “But if you’re really not connecting with your Kami, you can try again if you want.”
+MENU: “If you have $ONYX, you can use the Vending Machine in the scrapyard to Reroll a Kamigotchi.”
+MENU: “After you purchase a Reroll Ticket, you can use it to return one Kami to the pool. In exchange, a new Kami will emerge to join you.”","MENU: “As you can see, if you want to try rerolling for specific Kami, the option is available.”
+MENU: “It might be the case that you love robots and want a team of Scrap Kami.”
+MENU: “Maybe you’re a dark, edgy person, so you want Kami that are inclined to maximum violence.”
+MENU: “It could even be that you’re searching for one of the rumored Legendary Kami.”
+MENU: “Good luck!”",Complete MSQ003,Reroll one Kamigotchi,2x Agency Reputation
+SQ002,3002,To Update,Health & Safety,No,SIDE,MENU,"MENU: “When your Kami gets low on Health, return to the room where you left it, then use the Harvesting Menu to pick it up. “
+MENU: “A Kami will slowly regenerate Health on its own while being held.”
+MENU: “If you can’t wait, give your Kami a snack or use a Spell Card to restore health.”
+MENU: “Kamigotchi don’t need food to live, but they can draw energy from food to bolster their spirit.”
+MENU: “Use an item to heal a Kami and complete this quest. If you already used the Spell Card that I gave you, go buy some food or dig up a Cheeseburger.”","MENU: “While Kami don’t see Harvesting as labor, they still get tired and lose Health.”
+MENU: “Kamigotchi hold their bodies together with spiritual energy. As they expend energy, it gets harder to maintain their form.”
+MENU: “Low Health doesn’t mean a Kami is physically hurt, but it’s still a problem you should take care of.”",Complete MSQ004,Use an item to heal a Kamigotchi that has been reduced below 100% Health,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+SQ003,3003,To Update,There Are Levels to This,No,SIDE,MENU,"MENU: “Unlike humans, Kamigotchi have the potential to grow and change by using xenoplasticity, or “XP” for short.”
+MENU: “This means that they can assimilate many different things to form a new cohesive whole.”
+MENU: “Take a look at your roster.
+MENU: “If you open up an individual Kami’s profile, you’ll see a progress bar with a percentage indicator beneath the portrait.”
+MENU: “When the Kami is ready to move to the next level and the bar fills up, it will read 100%.”
+MENU: “Just level up a Kami and you’ll be done.”","MENU: “Here’s a little reward to help with the leveling.”
+MENU: “Take note of your new skill point and hold onto it for the next quest.”",Complete MSQ005,Level up a Kami,"2x Agency Reputation,1x “Cultivation I” Spell Card"
+SQ004,3004,To Update,Skill Issue,No,SIDE,MENU,"MENU: “When you spend Skill Points to tell Kami what to focus on, you shape their personalities and temperaments.”
+MENU: “Think hard before you make a choice!”
+MENU: “You’ll only be able to respec with specific items, and they’re difficult to acquire. This is a commitment.”
+MENU: “Click on a Kami that has leveled up and gained a skill point recently, then look over the skill tree.”
+MENU: “Remember, you can’t go wrong by improving what your Kami is already good at.”","MENU: Feel like you made the right choice?
+MENU: “It can be difficult to accept, even if you know you made a good decision.”
+MENU: “At least, that’s how I think.”",Complete SQ003,Spend a point in any Skill Tree after levelling up,2x Agency Reputation
+SQ005,3005,To Update,Spring Rites,No,SIDE,MENU,"MENU: “I see one of your Kami got Liquidated.”
+MENU: “That sucks!”
+MENU: “Of course, that’s just a temporary condition.”
+MENU: “In this world it’s usually possible to return to form no matter what happens.”
+MENU: “The essence of something remains unless it’s been totally erased from existence.”","MENU: Take this and use it on a Kami that has been Liquidated.
+MENU: “Just read the incantation printed on the front, and presto! This powerful spell card brings your Kami back to action. 
+MENU: “It’s the only freebie I’m allowed to give you. You’ll have to work for more spell cards like this one.”
+MENU: “Certain shopkeepers might sell different kinds of revival magic, but these cards are premium SSR.”",Have one of your own Kami liquidated,,"2x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
+SQ006,3006,To Update,What’s In a Name?,No,SIDE,MENU,"MENU: “Southeast through the old forest you can find a small shrine by a mountain waterfall.”
+MENU: “With the rare Holy Dust item, you can perform a ritual there to grant your Kami a name.”
+MENU: “If you don’t have Holy Dust, a small donation of $ONYX to the shrine will suffice!”","MENU: “I think that fits.”
+MENU: “It seems happy with the new name!”",Complete MSQ008,Name a Kami,2x Agency Reputation
+SQ007,3007,To Update,Land Survey,No,SIDE,MENU,"MENU: “Your march helped find an interesting anomaly, but I’m positive something else is hidden around here.”
+MENU: “I’ve checked and re-checked more times than you’d care to hear about.”
+MENU: “Move 500 times. We’re bound to find something by the end.”","MENU: “This map just doesn’t feel right.”
+MENU: “I’m only really sure about a third of it.”
+MENU: “Something still doesn’t line up! It’s going to take a lot of legwork to figure this one out.”",Complete MSQ017,Move 500 times,"2x Agency Reputation,2x “Neith’s River of Life” Spell Card"
+SQ008,3008,To Update,Peregrination,No,SIDE,MENU,"MENU: “They say measure twice, cut once, but that’s still taking an unnecessary risk.”
+MENU: “Best to measure a thousand times for the most accurate data. Sometimes the numbers might have changed.”
+MENU: “Please move 1000 times. Cover every inch of this world. I’ll scan as you go.”
+MENU: “I have a nagging feeling that I’m missing something.”","MENU: “It seems like what you’re perceiving through my windows is only an abstraction of the actual Kamigotchi World.”
+MENU: “So maybe I’m sensing some discrepancy between that and reality?”
+MENU: “I guess that’s why I’m looking for things that don’t seem to be there.”
+MENU: “I don’t really feel satisfied with this explanation.”",Complete SQ007,Move 1000 times,"4x Agency Reputation,3x “Neith’s River of Life” Spell Card"
+SQ009,3009,To Update,Tips Help The Most Right Now,No,SIDE,MINA,"MINA: “I demand a tribute of $MUSU.”
+MINA: “You should feel privileged to have this opportunity and expect nothing in return.”
+","MINA: “Well done.”
+MINA: “Have you considered paying me tribute on a more regular basis?”
+MINA: “I can tell you find it satisfying.”",Complete MIN008,Give 5000 $MUSU,6x Elders Loyalty
+SQ010,3010,To Update,Hex Education II,No,SIDE,MINA,"MINA: “I suppose I should persist through the boredom and finish your hexing lessons.”
+MINA: “ou’re a fine student and have proved yourself reliable, so it shouldn’t take long to get this over with.”
+MINA: “A slightly more complex recipe: The Grace Potion.”
+MINA: “It allows a Kami to harvest for longer periods of time by boosting its ability to endure the strain.”
+MINA: “The potion’s active ingredient is the exceedingly rare Black Poppy.”
+MINA: “Of course, this flower is very potent. When crafting your hexes, I recommend that you use only a small amount.”","MINA: “Well done.”
+MINA: “While this potion has a mild protective effect on spiritual beings, it acts as a dangerously addictive sedative to those of mundane origin.”
+MINA: “Your Kami might beg for another sip, but they’re just fond of the flavor.”",Complete MIN013,Craft 1 Grace Potion,2x Elders Loyalty
+SQ011,3011,To Update,Hex Education III,No,SIDE,MINA,"MINA: “A simple but powerful recipe, this potion is capable of undoing the mistakes you’ve no doubt made when raising your Kami.”
+MINA: “The key ingredient is Mint.”
+MINA: “While common elsewhere, it grows in only a few places in this world and rarely spreads.”
+MINA: “Find one Mint and grind it up, you’ll need every single shred for one potion.”
+MINA: “It’s an elusive reagent, so be patient while you’re on the hunt.”","MINA: “Properly taking your Kami’s traits and affinities into account will save you from headaches.”
+MINA: ”Train a Kami well and everyone profits.”
+MINA: ”Train a Kami poorly, and you’ll lose a great deal of time or money on the hunt for Mint.”
+MINA: “The obsessive search for rare ingredients can drive one to madness.”
+MINA: “You might handle it better than others.”",Complete SQ010,Craft 1 Respec Potion,2x Elders Loyalty
+SQ012,3012,To Update,Customer Loyalty Program II,No,SIDE,MINA,"MINA: “On the wall in my shop hangs a board tracking my favorite customers.”
+MINA: “That could be you one day at the top, among the angels.”
+MINA: “You won’t get better prices anywhere else, you know.”","MINA: “An oblation from your wallet to my register.” 
+MINA: “Thank you.”",Complete MIN007,Spend 15000 $MUSU at Mina's Shop,6x Elders Loyalty
+SQ013,3013,To Update,Going Out For a Coffee,No,SIDE,MINA,"MINA: “I came across this beverage long ago when I met the peoples of Lake Shala.”
+MINA: “I was quite taken by its taste, though I can’t recall when I last had it.”
+MINA: “We don’t have access to the real ingredients here, but I believe materials are available to make an approximation.”
+MINA: “Start by crafting a proper receptacle: Chisel a chunk of Stone with a Screwdriver to make an Empty Cup.”
+MINA: “For the approximate materials, seek out a Sanguine Shroom for the color and body, and a Pine Cone for the dry finish and spicy floral aroma.”
+MINA: “It may sound unpleasant, but wait until it’s been brewed before you judge.”","MINA: “You might think it possible to drink this potion from a plastic bottle or a glass jar, but it isn’t.”
+MINA: “Only a proper stone cup will do.” 
+MINA: “A spiced floral bouquet, and on the palate a touch of acid leading into a bitter finish…”
+MINA: “You did well.”
+MINA: “I’d nearly forgotten how pleasant an experience it is to share a drink with someone.”
+MINA: “We’ll have to do this again sometime.”",Complete SQ012,Craft 1 Hostility Potion,4x Elders Loyalty
+SQ014,3014,To Update,Teatime,No,SIDE,MINA,"MINA: “I just gave you a lesson to craft a useful potion with Mint, but could you put that aside for a moment?”
+MINA: “With the mint on my mind, I’d like a cup of tea.”
+MINA: “I deserve a break after all this work, you must agree.”","MINA: “Moments like this are important to me.”
+MINA: “Relaxation, conversation, a small distraction from the eternal march of time.”
+MINA: “Now back to business.”",Complete SQ010,Give 1 Mint,6x Elders Loyalty
+SQ015,3015,To Update,The Wages of Sin,No,SIDE,MENU,"MENU: “I noticed some strange coins in your inventory.”
+MENU: “The design is a little like an ancient Greek obol, but there’s something off about the metal. It’s too pure for the era.”
+MENU: “And the way they catch the light and glitter despite being so dull, it’s not right.”
+MENU: “Give me a handful. I’ll run a battery of tests.”","MENU: “Results inconclusive.”
+MENU: “The metal is even more pure than I initially thought.”
+MENU: “These coins are multiple times older than Greek civilization itself.”
+MENU: “It’s like they just got dreamed into existence. I can’t make sense of it.”",Own at least 1 Obol,Give 5 Obols,"2x Agency Reputation,1x Booster Pack"
+SQ016,3016,To Update,Go Suck An Egg,No,SIDE,MENU,"MENU: “I know there’s a window on me somewhere, a secret shop where you can use those Obols to buy something.”
+MENU: “Don’t tell me it’s not real, I can feel it there.”
+MENU: “They refuse to sell to me, so you’re going to have to shell out just this once.”
+MENU: “I want you to buy what they’re selling and give it to Mina.”
+MENU: “She’ll probably be able to tell us something about it.”","MINA: “They’re serpent eggs, hollowed out and filled with treasure.”
+MENU: “She got really upset when I asked if she had anything to do with it.”
+MINA: ”It’s distasteful to the extreme.”
+MINA: “The fiends who craft these eggs should hope I never meet them.” ",Complete SQ015,"Move to Convenience Store,Give 1 Wonder Egg","2x Agency Reputation,2x Elders Loyalty,1x Booster Pack"
+TempQ01,10001,Defunct,mina test drop,No,,,,,Missed Mina,,10 Revives
+SQ999,10002,In Game,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ""Melkarth's Heroic Awakening"" Spell Card"
+test-0,1000000,Test,Daily Test Quest,Yes,,,Beg for your MUSU.,,,,"10000x MUSU (Test),2x Agency Reputation"
+test-1,1000001,Test,Crafting Materials,No,,,Let there be Craft,,,Move 3 Times,"100x Stone,100x Stick,50x Plastic Bottle,10x Glass Jar,100x Pine Cones,100x Burgers"
+test-2,1000002,Test,Lottery Loving,No,,,Stop being Kamiless,,,,20x Gacha Tickets (Test)
+test-3,1000003,Test,Crafting Materials II,No,,,More crafting materials,,Complete test-1,Give 5 Wooden Sticks,"100x Chalkberry,100x Shroom,100x Resin,100x Holy Dust,100x Scrap Metals"
+test-4,1000004,Test,Crafting Toolkit,No,,,You need equipment to make new items.,,Complete test-1,,"1x Screwdriver,1x Grinder,1x Burner"
+,,Idea,,No,,,,,,,

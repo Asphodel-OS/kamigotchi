@@ -1,4 +1,5 @@
 ﻿.,Description,Type,Index,Value
+,Unlock Caves,FLAG_CAVES_UNLOCKED,,1
 ,10000x MUSU (Test),ITEM,1,10000
 ,20x Gacha Tickets (Test),ITEM,10,20
 ,100x Stick,ITEM,1001,100
@@ -35,6 +36,7 @@
 ,1x Screwdriver,ITEM,23102,1
 ,1x Pyramid Engine (Soulbound),ITEM,100005,1
 ,"""KW Maps"" Data Chip",ITEM,100006,1
+,1x Unmarked Data Chip,ITEM,100007,1
 ,2x Agency Reputation,REPUTATION,1,2
 ,4x Agency Reputation,REPUTATION,1,4
 ,6x Agency Reputation,REPUTATION,1,6

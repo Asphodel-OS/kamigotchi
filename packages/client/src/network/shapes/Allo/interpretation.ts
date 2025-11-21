@@ -120,5 +120,6 @@ const parseFlag = (allo: Allo): string => {
     return 'Enable kami renaming'; // rename potion, set namable
   else if (allo.type.toUpperCase() === 'FLAG_CAN_RESET_SKILLS')
     return 'Enable skill reset'; // rename potion, set not namable
+  else if (allo.type.toUpperCase() === 'FLAG_CAVES_UNLOCKED') return 'Unlock Caves';
   else return 'Set ' + allo.type.toLowerCase().replaceAll('_', ' ');
 };
