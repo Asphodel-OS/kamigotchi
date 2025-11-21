@@ -30,11 +30,11 @@
 ,Give 5 Scrap Metal,MIN,INC,ITEM_BURN,1005,5
 ,Give 25x Scrap Metal,MIN,INC,ITEM_BURN,1005,25
 ,Give 1 Red Amber Crystal,MIN,INC,ITEM_BURN,1007,1
-,Give 1000 Black Poppy Extract,MIN,INC,ITEM_BURN,1010,1000
 ,Give 15 Daffodil,MIN,INC,ITEM_BURN,1011,15
 ,Give 1 Mint,MIN,INC,ITEM_BURN,1012,1
 ,Give 5 Obols,MIN,INC,ITEM_BURN,1015,5
 ,Give 1 Cigarette Butt,MIN,INC,ITEM_BURN,1018,1
+,Give 1000 Black Poppy Extract,MIN,INC,ITEM_BURN,1110,1000
 ,Give 125 Sanguineous Powder,MIN,INC,ITEM_BURN,1113,125
 ,Give 1000 Holy Syrup,MIN,INC,ITEM_BURN,1201,1000
 ,Give 125 Resin Tincture,MIN,INC,ITEM_BURN,1202,125
@@ -64,6 +64,7 @@
 ,Move 1000 times,MIN,INC,MOVE,,1000
 ,During Moonside,IS,BOOL,PHASE,,
 ,Move to Torii Gate,IS,BOOL,ROOM,3,
+,Go to the Temple by the Waterfall,IS,BOOL,ROOM,11,
 ,Move to Convenience Store,IS,BOOL,ROOM,13,
 ,Enter Mina's Shop,IS,BOOL,ROOM,13,
 ,"Use the object ""Waterfall"" in ""Temple by the Waterfall"" to enter a new zone",IS,BOOL,ROOM,15,
@@ -112,4 +113,3 @@
 ,Scavenge 5 Honeydew Scale,MIN,INC,DROPTABLE_ITEM_TOTAL,11312,5
 ,Scavenge 10 Blue Pansy,MIN,INC,DROPTABLE_ITEM_TOTAL,11314,10
 ,Use the machine to buy something in the Marketplace,MIN,INC,TRADE_EXECUTE,,1
-,"Interact with the object ""Waterfall"" in ""Temple by the Waterfall""",,,,,

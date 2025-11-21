@@ -13,6 +13,8 @@ const gates = {
     api.room.createGate(50, 0, 0, getGoalID(3), 'COMPLETE_COMP', 'BOOL_IS', ''),
   53: (api: AdminAPI) =>
     api.room.createGate(53, 0, 0, getGoalID(4), 'COMPLETE_COMP', 'BOOL_IS', ''),
+  58: (api: AdminAPI) =>
+    api.room.createGate(58, 0, 0, getGoalID(9), 'COMPLETE_COMP', 'BOOL_IS', ''),
   68: (api: AdminAPI) =>
     api.room.createGate(68, 0, 0, getGoalID(5), 'COMPLETE_COMP', 'BOOL_IS', ''),
   78: (api: AdminAPI) =>
