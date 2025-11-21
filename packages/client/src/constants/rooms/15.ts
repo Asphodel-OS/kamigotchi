@@ -22,7 +22,7 @@ export const room15: Room = {
     },
     {
       name: 'monk statues 1',
-      coordinates: { x1: 10, y1: 70, x2: 20, y2: 120 },
+      coordinates: { x1: 0, y1: 70, x2: 30, y2: 120 },
       dialogue: 155,
     },
     {
