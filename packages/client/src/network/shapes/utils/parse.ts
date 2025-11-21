@@ -6,6 +6,7 @@ import * as placeholderIcon from 'assets/images/icons/placeholder.png';
 import { Components } from 'network/';
 import pluralize from 'pluralize';
 import { getFactionByIndex, getReputationDetailsByIndex } from '../Faction';
+import { parseFlagString } from '../Flag';
 import { getItemByIndex } from '../Item';
 import { getQuestByIndex } from '../Quest';
 import { getSkillByIndex } from '../Skill';
@@ -74,6 +75,7 @@ export const getFromDescription = (
   else if (type === 'REPUTATION') return getReputation(args);
   else if (type === 'SKILL') return getSkill(args);
   else if (type === 'STATE') return getState(args);
+  else if (type.toUpperCase().startsWith('FLAG_')) return getFlag(args);
   else return { entity: 0 as EntityIndex, ObjectType: type, image: HelpIcon, name: type };
 };
 
@@ -160,6 +162,16 @@ function getItem(args: getArgs): DetailedEntity {
 
 function getFaction(args: getArgs): DetailedEntity {
   return getFactionByIndex(args.world, args.components, args.index);
+}
+
+// cannot get the actual flag entity. gets a description instead
+function getFlag(args: getArgs): DetailedEntity {
+  return {
+    ObjectType: 'FLAG',
+    entity: 0 as EntityIndex,
+    image: HelpIcon,
+    name: parseFlagString(args.type ?? ''),
+  };
 }
 
 function getQuest(args: getArgs): DetailedEntity {
