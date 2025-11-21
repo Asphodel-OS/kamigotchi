@@ -12,7 +12,7 @@ export const room15: Room = {
   objects: [
     {
       name: 'temple exit',
-      coordinates: { x1: 30, y1: 100, x2: 100, y2: 150 },
+      coordinates: { x1: 53, y1: 110, x2: 75, y2: 128 },
       dialogue: 151,
     },
     {

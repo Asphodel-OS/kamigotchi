@@ -53,6 +53,32 @@ export const radiateFx = keyframes`
   }
 `;
 
+export const alternativeRadiateFx = keyframes`
+  0% {
+    box-shadow:
+      0 0 2vw 0.7vw rgba(255, 225, 0, 0.3),
+      0 0 4vw 1.4vw rgba(255, 180, 0, 0.3),
+      0 0 6vw 2.8vw rgba(255, 160, 0, 0.2);
+    transform: scale(0.9);
+  }
+
+  50% {
+    box-shadow:
+      0 0 2.8vw 1.4vw rgba(255, 211, 163, 1),
+      0 0 5.5vw 2.8vw rgba(255, 180, 0, 0.3),
+      0 0 7.5vw 2vw rgba(255, 160, 0, 0.3);
+    transform: scale(1);
+  }
+
+  100% {
+    box-shadow:
+      0 0 2vw 0.7vw rgba(255, 200, 0, 0.3),
+      0 0 4vw 1.4vw rgba(255, 180, 0, 0.4),
+      0 0 6vw 2.8vw rgba(255, 160, 0, 0.2);
+    transform: scale(0.9);
+  }
+`;
+
 export const shakeFx = keyframes`
   0% {
     transform: translate(0, 0) rotate(0deg);

@@ -1,10 +1,10 @@
 import { Howl } from 'howler';
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
 import { useSelected, useVisibility } from 'app/stores';
-import { radiateFx } from 'app/styles/effects';
+import { alternativeRadiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { cave } from 'assets/sound/ost';
 import { rooms } from 'constants/rooms';
@@ -21,6 +21,7 @@ export const Room = ({ index }: { index: number }) => {
   const setNode = useSelected((s) => s.setNode);
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
+  const [shiftHeld, setShiftHeld] = useState(false);
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
 
@@ -53,36 +54,22 @@ export const Room = ({ index }: { index: number }) => {
     closeModals();
   }, [index]);
 
-  /* TODO: when the time comes to have multiple tracks per room,
-  remember to turn each room music object into an array of objects,
-  also substitute existing useeffect by something like this .
   useEffect(() => {
-    const newRoom = rooms[index];
-    const newRoomPhase = (getCurrPhase() - 1) % room.music.length;
-    const music = newRoom.music[newRoomPhase];
-    if (!music) {
-      bgm?.stop();
-      return;
-    }
-    if (music.path !== room.music?.path) {
-      if (!RoomsBgm.has(music.path)) {
-        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
-      }
-      if (bgm) bgm.stop();
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') setShiftHeld(true);
+    };
+    const up = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') setShiftHeld(false);
+    };
 
-      const newBgm = RoomsBgm.get(music.path);
-      newBgm?.play();
-      newBgm?.fade(0, bgmVolume, 3000);
-      setBgm(newBgm);
-    }
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
 
-    setRoom(newRoom);
-    setNode(index);
-    closeModals();
-  }, [index,getCurrPhase()]);
-
-
-*/
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, []);
 
   // manages volume changes from the variable stored in local storage
   useEffect(() => {
@@ -130,10 +117,19 @@ export const Room = ({ index }: { index: number }) => {
     else if (object.onClick) onClick = object.onClick;
 
     return object.name !== 'trading' ? (
-      <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />
+      <Clickbox
+        key={object.name}
+        shiftHeld={shiftHeld}
+        x1={x1}
+        y1={y1}
+        x2={x2}
+        y2={y2}
+        onClick={onClick}
+      />
     ) : (
       <Clickbox
         key={object.name}
+        shiftHeld={shiftHeld}
         x1={x1}
         y1={y1}
         x2={x2}
@@ -188,27 +184,27 @@ interface Coordinates {
   y2: number;
 }
 
-const Clickbox = styled.div<Coordinates>`
+const Clickbox = styled.div<Coordinates & { shiftHeld?: boolean }>`
   border-radius: 3vw;
   position: absolute;
   top: ${({ y1 }) => y1}%;
   left: ${({ x1 }) => x1}%;
   width: ${({ x1, x2 }) => x2 - x1}%;
   height: ${({ y1, y2 }) => y2 - y1}%;
-
   cursor: pointer;
   pointer-events: auto;
 
-  opacity: 1;
-
-  animation: ${radiateFx} 1.8s ease-in-out infinite;
-
-  background: radial-gradient(
-    circle,
-    rgba(255, 215, 0, 1) 0%,
-    rgba(255, 215, 0, 1) 40%,
-    rgba(255, 215, 0, 1) 70%,
-    rgba(255, 215, 0, 0.95) 80%,
-    rgba(195, 255, 0, 0.59) 90%
-  );
+  ${({ shiftHeld }) =>
+    shiftHeld &&
+    css`
+      animation: ${alternativeRadiateFx} 1.5s ease-in-out infinite;
+      opacity: 0.4;
+      transform: scale(1.08);
+      background: radial-gradient(
+        closest-side,
+        rgba(4, 249, 212, 1),
+        rgba(253, 209, 14, 0.43),
+        rgba(255, 231, 124, 1)
+      );
+    `}
 `;
