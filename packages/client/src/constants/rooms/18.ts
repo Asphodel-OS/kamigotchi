@@ -12,7 +12,7 @@ export const room18: Room = {
   objects: [
     {
       name: 'hanging bell',
-      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      coordinates: { x1: 47, y1: 15, x2: 65, y2: 45 },
       dialogue: 184,
     },
   ],
