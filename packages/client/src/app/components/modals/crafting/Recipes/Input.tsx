@@ -52,6 +52,7 @@ const Quantity = styled.div<{ scale: number }>`
   font-weight: 900;
   border-radius: 0.6vw;
   background-color: rgba(255, 255, 255, 1);
+  border: solid black 0.08vw;
 `;
 
 const Text = styled.div<{ scale: number }>`
