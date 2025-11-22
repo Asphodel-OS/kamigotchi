@@ -165,7 +165,7 @@ export const QuestDialogueModal: UIComponent = {
               ? quest.descriptionAlt.replace(/\n+/g, '\n')
               : ''
           }
-          hasCompletionText={Boolean(quest?.descriptionAlt.trim())}
+          hasCompletionText={Boolean(quest?.descriptionAlt?.trim())}
           color='#5e4a14ff'
           questButtons={{
             AcceptButton: {
