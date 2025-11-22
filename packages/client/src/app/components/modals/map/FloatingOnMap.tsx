@@ -102,7 +102,7 @@ const Shadow = styled.div`
   height: 15%;
   animation: 2s infinite alternate shadow;
   animation-timing-function: linear;
-  transform: translatey(260%);
+  transform: translatey(400%);
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
@@ -111,13 +111,12 @@ const Shadow = styled.div`
     rgba(0, 0, 0, 0.3) 70%,
     transparent 100%
   );
-
   @keyframes shadow {
     0% {
-      width: 25%;
+      width: 35%;
     }
     50% {
-      width: 43%;
+      width: 63%;
     }
     100% {
       width: 30%;
