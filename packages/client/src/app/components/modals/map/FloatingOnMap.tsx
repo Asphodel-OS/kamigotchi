@@ -4,15 +4,19 @@ interface Props {
   icon: string | string[];
   color?: number;
 }
+
 export const FloatingOnMap = (props: Props) => {
   const icons = Array.isArray(props.icon) ? props.icon : [props.icon];
+  const isMultiple = icons.length > 1;
 
   return (
     <Container>
-      {icons.map((icon) => (
-        <Icon icon={icon} $color={props.color} />
+      {icons.map((icon, index) => (
+        <IconGroup key={index} $position={isMultiple ? index : undefined}>
+          <Icon icon={icon} $color={props.color} />
+          <Shadow />
+        </IconGroup>
       ))}
-      <Shadow />
     </Container>
   );
 };
@@ -29,6 +33,37 @@ const Container = styled.div`
   pointer-events: none;
 `;
 
+const IconGroup = styled.div<{ $position?: number }>`
+  position: absolute;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 50%;
+
+  ${({ $position }) => {
+    if ($position === 0) {
+      return `
+        top: 10%;
+        left: 10%;
+      `;
+    } else if ($position === 1) {
+      return `
+        bottom: 10%;
+        right: 10%;
+      `;
+    }
+    return `
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      height: 70%;
+    `;
+  }}
+`;
+
 // https://cdn-images-1.medium.com/v2/resize:fit:800/1*0iw7ymhZXKuggiTelXgzGQ.jpeg
 //  after applying sepia(1) and saturate(500%), hue-rotate will have a starting point of 40 deg aprox
 const Icon = styled.div<{ icon: string; $color?: number | string }>`
@@ -36,9 +71,9 @@ const Icon = styled.div<{ icon: string; $color?: number | string }>`
   flex-flow: column nowrap;
   justify-content: flex-end;
   align-items: center;
-  height: 70%;
-  width: 70%;
-  position: absolute;
+  height: 100%;
+  width: 100%;
+  position: relative;
   ${({ icon }) => `background-image: url(${icon});`}
   background-position: center;
   background-repeat: no-repeat;
@@ -48,6 +83,7 @@ const Icon = styled.div<{ icon: string; $color?: number | string }>`
   ${({ $color }) =>
     $color !== 0 ? `filter: sepia(1) saturate(500%) hue-rotate(${$color}deg);` : ''}
   z-index: 2;
+
   @keyframes floating {
     0% {
       transform: translateY(-25%);
