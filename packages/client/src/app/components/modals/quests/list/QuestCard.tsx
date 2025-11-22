@@ -31,6 +31,12 @@ export const QuestCard = ({
   /////////////////
   // INTERPRETATION
 
+  function getButtonText(status: string) {
+    if (status === 'AVAILABLE') return 'Accept';
+    if (status === 'ONGOING' && !meetsObjectives(quest)) return 'Details';
+    return 'Complete';
+  }
+
   // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective): string => {
     let prefix = '';
@@ -165,13 +171,7 @@ export const QuestCard = ({
       <ButtonRow>
         <IconButton
           scale={2.5}
-          text={
-            status === 'AVAILABLE'
-              ? ' Accept'
-              : status === 'ONGOING' && !meetsObjectives(quest)
-                ? ' Details'
-                : 'Complete'
-          }
+          text={getButtonText(status)}
           onClick={() => {
             triggerQuestDialogueModal(quest.entity);
           }}
