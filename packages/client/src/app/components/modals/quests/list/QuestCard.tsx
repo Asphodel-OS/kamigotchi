@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import { ActionListButton, IconButton, Overlay, TextTooltip } from 'app/components/library';
 import { triggerQuestDialogueModal } from 'app/triggers/triggerQuestDialogueModal';
-import { QuestsIcon } from 'assets/images/icons/menu';
 import { Allo } from 'network/shapes/Allo';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
@@ -164,13 +163,15 @@ export const QuestCard = ({
         </Overlay>
       )}
       <ButtonRow>
-        {meetsObjectives(quest) && status !== 'AVAILABLE' && !quest.complete && (
-          <TickIcon>✓</TickIcon>
-        )}
         <IconButton
           scale={2.5}
-          img={status !== 'AVAILABLE' ? QuestsIcon : null}
-          text={status === 'AVAILABLE' ? ' Details' : ''}
+          text={
+            status === 'AVAILABLE'
+              ? ' Accept'
+              : status === 'ONGOING' && !meetsObjectives(quest)
+                ? ' Details'
+                : 'Complete'
+          }
           onClick={() => {
             triggerQuestDialogueModal(quest.entity);
           }}

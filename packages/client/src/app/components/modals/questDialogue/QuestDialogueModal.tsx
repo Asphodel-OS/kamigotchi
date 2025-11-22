@@ -117,7 +117,8 @@ export const QuestDialogueModal: UIComponent = {
       const completed = await didActionComplete(actions.Action, tx);
       if (completed) {
         if (!(isComplete && !!quest?.descriptionAlt)) {
-          setTimeout(() => setModals({ questDialogue: false }), 500);
+          const timeoutId = setTimeout(() => setModals({ questDialogue: false }), 500);
+          return () => clearTimeout(timeoutId);
         }
       }
     };
@@ -158,13 +159,14 @@ export const QuestDialogueModal: UIComponent = {
       >
         <QuestDialogue
           modalOpened={modalOpen}
-          questText={quest.description.replace(/\n+/g, '\n')}
-          questCompletion={
+          text={quest.description.replace(/\n+/g, '\n')}
+          isCompleted={
             quest?.descriptionAlt && quest.complete
               ? quest.descriptionAlt.replace(/\n+/g, '\n')
               : ''
           }
-          questColor='#5e4a14ff'
+          hasCompletionText={Boolean(quest?.descriptionAlt.trim())}
+          color='#5e4a14ff'
           questButtons={{
             AcceptButton: {
               backgroundColor: '#f8f6e4',

@@ -1,3 +1,4 @@
+import { EmptyText } from 'app/components/library';
 import { QuestsIcon } from 'assets/images/icons/menu';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -10,15 +11,17 @@ const DEFAULT_QUEST_BUTTONS = {
 
 export const QuestDialogue = ({
   modalOpened = false,
-  questText = '',
-  questCompletion = '',
-  questColor = '',
+  text = '',
+  isCompleted = '',
+  color = '',
+  hasCompletionText = false,
   questButtons = DEFAULT_QUEST_BUTTONS,
 }: {
   modalOpened: boolean;
-  questText: string;
-  questCompletion?: string;
-  questColor: string;
+  text: string;
+  isCompleted?: string;
+  color: string;
+  hasCompletionText?: boolean;
   questButtons?: {
     AcceptButton: {
       label: string;
@@ -36,7 +39,7 @@ export const QuestDialogue = ({
 }) => {
   const { CompleteButton, AcceptButton } = questButtons;
 
-  const hasCompletion = Boolean(questCompletion.trim());
+  const hasCompletion = Boolean(isCompleted.trim());
   const [baseText, setBaseText] = useState(!hasCompletion);
   const [completionText, setCompletionText] = useState(hasCompletion);
   const [wasToggled, setWasToggled] = useState(false);
@@ -55,7 +58,7 @@ export const QuestDialogue = ({
   useEffect(() => {
     setBaseText(!hasCompletion);
     setCompletionText(hasCompletion);
-  }, [questCompletion, questText, modalOpened]);
+  }, [isCompleted, text, modalOpened]);
 
   // resets cancelation when modal
   // opened or sectiosn are toggled
@@ -99,55 +102,64 @@ export const QuestDialogue = ({
   return (
     <>
       <>
-        {questCompletion && (
-          <Divider color={questColor} expanded={baseText} onClick={toggleSections}>
+        {hasCompletionText && (
+          <Divider color={color} expanded={baseText} onClick={toggleSections}>
             Intro:
           </Divider>
         )}
         <Text
           ref={pastRef}
           isExpanded={baseText}
-          color={questColor}
+          color={color}
           onScroll={(e) => handleUserScroll(pastRef, isUserScrollingPastRef)}
-          onClick={() => setCancelledIntro(true)} // only cancel this one
+          onClick={() => setCancelledIntro(true)}
         >
           <TypewriterComponent
             speed={30}
             retrigger={`${modalOpened}${wasToggled}`}
-            text={questText}
+            text={text}
             onUpdate={() => handleScroll(pastRef, isUserScrollingPastRef)}
             cancelled={cancelledIntro}
           />
         </Text>
       </>
-      {hasCompletion && (
+      {hasCompletionText && (
         <>
-          <Divider color={questColor} expanded={completionText} onClick={toggleSections}>
+          <Divider color={color} expanded={completionText} onClick={toggleSections}>
             Completed:
           </Divider>
-          <Text
-            ref={mainRef}
-            isExpanded={completionText}
-            color={questColor}
-            onScroll={(e) => handleUserScroll(mainRef, isUserScrollingMainRef)}
-            onClick={() => setCancelledComplete(true)} // only cancel this one
-          >
-            <TypewriterComponent
-              speed={30}
-              retrigger={`${modalOpened}${wasToggled}`}
-              text={questCompletion}
-              onUpdate={() => handleScroll(mainRef, isUserScrollingMainRef)}
-              cancelled={cancelledComplete}
-            />
-          </Text>
+          {hasCompletionText && (
+            <Text
+              ref={mainRef}
+              isExpanded={completionText}
+              color={color}
+              onScroll={(e) => handleUserScroll(mainRef, isUserScrollingMainRef)}
+              onClick={() => setCancelledComplete(true)} // only cancel this one
+            >
+              {isCompleted ? (
+                <TypewriterComponent
+                  speed={30}
+                  retrigger={`${modalOpened}${wasToggled}`}
+                  text={isCompleted}
+                  onUpdate={() => handleScroll(mainRef, isUserScrollingMainRef)}
+                  cancelled={cancelledComplete}
+                />
+              ) : (
+                <EmptyText
+                  textColor={color}
+                  text={['Empty for now, finish this quest and maybe then...']}
+                />
+              )}
+            </Text>
+          )}
         </>
       )}
-      <Bottom color={questColor}>
+      <Bottom color={color}>
         <NpcSprite src={QuestsIcon} />
         <OptionColumn>
-          <OptionsLabel color={questColor}>Options:</OptionsLabel>
+          <OptionsLabel color={color}>Options:</OptionsLabel>
           <Option
-            color={questColor}
+            color={color}
             onClick={AcceptButton.onClick}
             disabled={AcceptButton.disabled}
             backgroundColor={AcceptButton.backgroundColor}
@@ -155,7 +167,7 @@ export const QuestDialogue = ({
             {AcceptButton.label}
           </Option>
           <Option
-            color={questColor}
+            color={color}
             onClick={CompleteButton.onClick}
             disabled={CompleteButton.disabled}
             backgroundColor={CompleteButton.backgroundColor}
@@ -203,7 +215,7 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
   }
 `;
 
-const Divider = styled.div<{ color?: string; expanded?: boolean }>`
+const Divider = styled.button<{ color?: string; expanded?: boolean }>`
   position: relative;
   width: 100%;
   cursor: pointer;
@@ -215,6 +227,7 @@ const Divider = styled.div<{ color?: string; expanded?: boolean }>`
   font-size: 1vw;
   padding: 0.8vw;
   color: ${({ color }) => color};
+  background-color: #f8f6e4;
   ::after {
     content: ${({ expanded }) => (expanded ? '"▾"' : '"▸"')};
     color: ${({ color }) => color};

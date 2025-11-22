@@ -14,11 +14,13 @@ export const EmptyText = ({
   text,
   size = 1.2,
   gapScale = 3,
+  textColor,
   isHidden,
   linkColor,
 }: {
   text: TextPart[];
   size?: number;
+  textColor?: string;
   gapScale?: number;
   isHidden?: boolean;
   linkColor?: string;
@@ -30,7 +32,7 @@ export const EmptyText = ({
         text.map((part, index) => {
           if (typeof part === 'string') {
             return (
-              <Text key={index} size={size} gapScale={gapScale}>
+              <Text key={index} size={size} gapScale={gapScale} textColor={textColor}>
                 {part}
               </Text>
             );
@@ -72,7 +74,8 @@ const Container = styled.div<{ isHidden: boolean }>`
   user-select: none;
 `;
 
-const Text = styled.div<{ size: number; gapScale: number }>`
+const Text = styled.div<{ size: number; gapScale: number; textColor?: string }>`
+  color: ${({ textColor }) => textColor ?? '#000000ff'};
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size, gapScale }) => gapScale * size}vw;
   text-align: center;
