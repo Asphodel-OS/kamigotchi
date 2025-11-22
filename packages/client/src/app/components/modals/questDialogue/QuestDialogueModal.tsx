@@ -1,5 +1,5 @@
 import { EntityIndex } from 'engine/recs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
@@ -67,6 +67,8 @@ export const QuestDialogueModal: UIComponent = {
     const [quest, setQuest] = useState<Quest>();
     const [modalOpen, setModalOpen] = useState(false);
     const [tick, setTick] = useState(Date.now());
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     // Reactively subscribe to ECS changes relevant to quests
     const registryEntities = useComponentEntities(IsRegistry) || [];
     const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
@@ -106,6 +108,13 @@ export const QuestDialogueModal: UIComponent = {
       isCompleteEntities,
     ]);
 
+    useEffect(() => {
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
     /////////////////
     // ACTIONS
 
@@ -117,8 +126,7 @@ export const QuestDialogueModal: UIComponent = {
       const completed = await didActionComplete(actions.Action, tx);
       if (completed) {
         if (!(isComplete && !!quest?.descriptionAlt)) {
-          const timeoutId = setTimeout(() => setModals({ questDialogue: false }), 500);
-          return () => clearTimeout(timeoutId);
+          timeoutRef.current = setTimeout(() => setModals({ questDialogue: false }), 500);
         }
       }
     };
