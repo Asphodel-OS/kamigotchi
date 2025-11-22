@@ -13,8 +13,8 @@ export const FloatingOnMap = (props: Props) => {
     <Container>
       {icons.map((icon, index) => (
         <IconGroup key={index} $position={isMultiple ? index : undefined}>
-          <Icon icon={icon} $color={props.color} />
-          <Shadow />
+          <Icon icon={icon} $color={props.color} key={`${icon}-${index}`} />
+          <Shadow key={`${icon}-shadow-${index}`} />
         </IconGroup>
       ))}
     </Container>
@@ -50,8 +50,8 @@ const IconGroup = styled.div<{ $position?: number }>`
       `;
     } else if ($position === 1) {
       return `
-        bottom: 10%;
-        right: 10%;
+        bottom: 20%;
+        right: 20%;
       `;
     }
     return `
