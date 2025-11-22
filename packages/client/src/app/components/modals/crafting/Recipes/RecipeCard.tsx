@@ -53,6 +53,7 @@ export const RecipeCard = ({
     <Card
       key={recipe.index}
       image={{
+        fit: 'contain',
         icon: item.image,
         scale: 7.5,
         padding: 1,
@@ -103,6 +104,7 @@ const TitleBar = styled.div`
   align-items: center;
   justify-content: space-between;
   user-select: none;
+  width: 100%;
 `;
 
 const TitleText = styled.div`
@@ -132,7 +134,6 @@ const Text = styled.div`
 const Icon = styled.img`
   height: 1.2vw;
 `;
-
 const Content = styled.div`
   display: flex;
   flex-grow: 1;
@@ -141,12 +142,12 @@ const Content = styled.div`
 
   padding: 0.2vw;
 `;
-
 const ContentRow = styled.div`
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
+  padding: 0.3vw;
 `;
 
 const ContentColumn = styled.div`

@@ -63,4 +63,5 @@ const Container = styled.div`
   gap: 0.6vw;
 
   user-select: none;
+  min-width: fit-content;
 `;

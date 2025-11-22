@@ -11,7 +11,6 @@ export const Input = ({
   prepend?: string;
   scale?: number;
 }) => {
-
   return (
     <Container>
       <Text scale={scale}>{prepend}</Text>
@@ -24,11 +23,12 @@ export const Input = ({
 const Container = styled.div`
   position: relative;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
 
   justify-content: flex-start;
   align-items: center;
   user-select: none;
+  margin-bottom: 0.3vw;
 `;
 
 const Image = styled.img<{ scale: number }>`
@@ -36,6 +36,7 @@ const Image = styled.img<{ scale: number }>`
   position: relative;
   image-rendering: pixelated;
   user-drag: none;
+  font-size: 0.7vw;
 `;
 
 const Quantity = styled.div<{ scale: number }>`
@@ -48,6 +49,9 @@ const Quantity = styled.div<{ scale: number }>`
   padding: ${({ scale }) => scale * 0.2}vw;
   align-items: center;
   justify-content: center;
+  font-weight: 900;
+  border-radius: 0.6vw;
+  background-color: rgba(255, 255, 255, 1);
 `;
 
 const Text = styled.div<{ scale: number }>`
