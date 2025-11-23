@@ -54,13 +54,12 @@ export const KamisExternal = ({
 const Container = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
-  gap: 0.45vw;
 `;
 
 const Kamis = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: 0.6vw;
+  padding: 0.6vw 0.6vw 0 0.6vw;
   gap: 0.45vw;
 `;
 
