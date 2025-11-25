@@ -9,7 +9,7 @@ export const ItemTooltip = ({
 }: {
   item: Item;
   utils: {
-    displayRequirements: (recipe: Item) => string;
+    displayRequirements: (item: Item) => string;
     parseAllos: (allo: Allo[]) => DetailedEntity[];
   };
 }) => {
