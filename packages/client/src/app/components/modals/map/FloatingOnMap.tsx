@@ -35,12 +35,13 @@ const Container = styled.div`
 
 const IconGroup = styled.div<{ $position?: number }>`
   position: absolute;
+  width: 50%;
+  height: 50%;
+
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
   justify-content: center;
-  width: 50%;
-  height: 50%;
 
   ${({ $position }) => {
     if ($position === 0) {
@@ -50,8 +51,8 @@ const IconGroup = styled.div<{ $position?: number }>`
       `;
     } else if ($position === 1) {
       return `
-        bottom: 20%;
-        right: 20%;
+        bottom: 10%;
+        right: 10%;
       `;
     }
     return `
