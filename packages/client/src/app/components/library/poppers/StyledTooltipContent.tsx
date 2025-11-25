@@ -19,10 +19,12 @@ export const StyledTooltipContent = ({
   left?: {
     text: string;
     content: ReactNode;
+    align?: 'center' | 'flex-start' | 'flex-end';
   };
   right?: {
     text: string;
     content: ReactNode;
+    align?: 'center' | 'flex-start' | 'flex-end';
   };
 }) => {
   return (
@@ -39,12 +41,12 @@ export const StyledTooltipContent = ({
       {description && <Description>{description}</Description>}
       <BottomSection>
         {left && (
-          <Section>
+          <Section align={left.align ?? 'center'}>
             {left.text}: <Content>{left.content}</Content>
           </Section>
         )}
         {right && (
-          <Section>
+          <Section align={right.align ?? 'center'}>
             {right.text}: <Content>{right.content}</Content>
           </Section>
         )}
@@ -67,12 +69,17 @@ const Header = styled.span`
   padding: 0 0.3vw;
 `;
 
-const Section = styled.span`
+const Section = styled.span<{ align?: 'center' | 'flex-start' | 'flex-end' }>`
   color: #666;
   background: #f0f0f0;
   border-radius: 0.4vw;
   padding: 0 0.3vw;
   width: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: ${({ align }) => align ?? 'center'};
 `;
 
 const SubSection = styled.span`

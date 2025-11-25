@@ -14,18 +14,12 @@ export const Card = ({
 }: {
   children: React.ReactNode;
   image?: {
-    fit?: 'cover' | 'contain';
     icon?: string;
     onClick?: () => void;
+    fit?: 'cover' | 'contain';
     padding?: number;
     scale?: number;
-    showLevelUp?: boolean;
-    showSkillPoints?: boolean;
     tooltip?: { text: string[] | React.ReactNode[]; maxWidth?: number };
-    skillPoints?: boolean;
-    background?: React.ReactNode;
-    foreground?: React.ReactNode; // rendered above image
-    filter?: string; // CSS filter applied to base image only
     effects?: {
       overlay?: string;
       showLevelUp?: boolean; // TODO: move this field up one level to KamiCard, pass in as Foreground

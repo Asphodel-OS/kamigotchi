@@ -22,7 +22,7 @@ export const Input = ({
 
 const Container = styled.div`
   position: relative;
-  margin-bottom: 0.3vw;
+  margin-top: 0.45vw;
 
   display: flex;
   flex-flow: row wrap;
@@ -43,8 +43,8 @@ const Image = styled.img<{ scale: number }>`
 const Quantity = styled.div<{ scale: number }>`
   position: absolute;
   color: black;
-  bottom: ${({ scale }) => scale * -0.6}vw;
-  left: ${({ scale }) => scale * 4}vw;
+  bottom: ${({ scale }) => scale * -0.3}vw;
+  right: ${({ scale }) => scale * -0.6}vw;
 
   font-size: ${({ scale }) => scale * 0.6}vw;
   padding: ${({ scale }) => scale * 0.2}vw;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { Card, CraftButton, Stepper } from 'app/components/library';
-import { StyledTooltipContent, TextTooltip } from 'app/components/library/poppers';
+import { TextTooltip } from 'app/components/library/poppers';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Kami } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
@@ -12,6 +12,7 @@ import { Recipe } from 'network/shapes/Recipe';
 import { DetailedEntity } from 'network/shapes/utils';
 import { ItemGridTooltip } from '../../inventory/items/ItemGridTooltip';
 import { Input } from './Input';
+import { RecipeTooltip } from './RecipeTooltip';
 
 export const RecipeCard = ({
   data,
@@ -44,40 +45,8 @@ export const RecipeCard = ({
   const item = output.item ?? NullItem;
   const amt = output.amount;
 
-  const getSubtitle = () => {
-    return (
-      <>
-        {recipe.experience} <Icon src={ExpIcon} />
-      </>
-    );
-  };
-
-  const getRequirements = () => {
-    return recipe.requirements.map((req, i) => (
-      <Requirements key={`req-${req.target?.index ?? i}`}>
-        {Number(req.target?.value ?? 0)}
-        <Icon key='img' src={utils.getItemByIndex(req.target?.index ?? 0).image} />
-      </Requirements>
-    ));
-  };
-
-  const getCosts = () => {
-    const text = [
-      <p key='stamina'>
-        {recipe.cost.stamina} <img style={{ width: '1.2vw' }} src={StaminaIcon} />
-      </p>,
-    ];
-    recipe.inputs.forEach((input, i) => {
-      const itemName = input.item?.name ?? '???';
-      text.push(
-        <Costs key={`cost-${i}`}>
-          {'\u2022 '}
-          {input.amount} {itemName}
-        </Costs>
-      );
-    });
-    return text;
-  };
+  /////////////////
+  // RENDER
 
   return (
     <Card
@@ -107,16 +76,7 @@ export const RecipeCard = ({
       </TitleBar>
       <Content>
         <TextTooltip
-          text={[
-            <StyledTooltipContent
-              img={item.image}
-              title={`Recipe for ${item.name}`}
-              subtitle={{ text: 'Grants', content: getSubtitle() }}
-              description={''}
-              left={{ text: 'Requirements', content: getRequirements() }}
-              right={{ text: 'Costs', content: getCosts() }}
-            />,
-          ]}
+          text={[<RecipeTooltip key={recipe.index} recipe={recipe} utils={utils} />]}
           maxWidth={25}
         >
           <ContentRow key='column-1'>
@@ -178,22 +138,21 @@ const Icon = styled.img`
 `;
 
 const Content = styled.div`
+  padding: 0.2vw;
+
   display: flex;
-  flex-grow: 1;
   flex-flow: row nowrap;
   align-items: stretch;
-  padding: 0.2vw;
+  flex-grow: 1;
 `;
+
 const ContentRow = styled.div`
   display: flex;
-<<<<<<< HEAD
-  margin-top: 0.95vw;
-=======
   flex-flow: row wrap;
   justify-content: flex-start;
   align-items: center;
+
   padding: 0.3vw;
->>>>>>> main
 `;
 
 const ContentColumn = styled.div`
@@ -209,18 +168,4 @@ const Actions = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
-  gap: 0.4vw;
-`;
-
-const Requirements = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3vw;
-`;
-
-const Costs = styled.p`
-  margin-left: 7.5%;
-  text-align: left;
-  overflow-wrap: break-word;
 `;
