@@ -1,4 +1,4 @@
-import { defineComponent, Type, World } from "@mud-classic/recs";
+import { defineComponent, Type, World } from 'engine/recs';
 
 /**
  * DevHighlight is for use during development to highlight the positions of
@@ -6,5 +6,5 @@ import { defineComponent, Type, World } from "@mud-classic/recs";
  * Example: Highlight the Entities that you are currently editing in the ComponentBrowser.
  */
 export function defineDevHighlightComponent(world: World) {
-  return defineComponent(world, { value: Type.OptionalNumber }, { id: "DevHighlight" });
+  return defineComponent(world, { value: Type.OptionalNumber }, { id: 'DevHighlight' });
 }

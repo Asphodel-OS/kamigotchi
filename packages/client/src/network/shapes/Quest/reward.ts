@@ -1,4 +1,4 @@
-import { EntityID, World } from '@mud-classic/recs';
+import { EntityID, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { Allo, getAllosOf } from '../Allo';
@@ -14,24 +14,6 @@ export const getRewards = (world: World, components: Components, questIndex: num
     return 0;
   });
   return results;
-};
-
-export const getRewardText = (reward: Allo, name = ''): string => {
-  const value = (reward.value ?? 0) * 1;
-
-  if (reward.type === 'ITEM') {
-    return `x${value}`;
-  } else if (reward.type === 'EXPERIENCE') {
-    return `${value} Experience`;
-  } else if (reward.type === 'MINT20') {
-    return `${value} ${name}`;
-  } else if (reward.type === 'REPUTATION') {
-    return `x${value}`;
-  } else if (reward.type === 'NFT') {
-    return `Kamigotchi World Passport`;
-  } else {
-    return '???';
-  }
 };
 
 const genAlloAnchorID = (questIndex: number): EntityID => {

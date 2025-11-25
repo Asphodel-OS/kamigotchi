@@ -5,9 +5,4 @@ export {
 } from './create';
 export { ConnectionState } from './types';
 
-export type {
-  MUDJsonRpcBatchProvider,
-  MUDJsonRpcProvider,
-  ProviderConfig,
-  Providers,
-} from './types';
+export type { MUDJsonRpcProvider, ProviderConfig, Providers } from './types';

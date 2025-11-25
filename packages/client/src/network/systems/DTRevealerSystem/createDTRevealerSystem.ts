@@ -6,7 +6,7 @@ import {
   getComponentValue,
   removeComponent,
   setComponent,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 
 import { Components } from 'network/components';
 import { canRevealCommit } from 'network/shapes/Commit';

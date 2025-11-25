@@ -1,9 +1,10 @@
-import { World } from '@mud-classic/recs';
 import * as placeholder from 'assets/images/icons/placeholder.png';
+import { World } from 'engine/recs';
 import { Components } from 'network/components';
 import { Allo } from '.';
 import { getBonusesByParent, parseBonusText } from '../Bonus';
 import { getDTDetails, NullDT } from '../Droptable';
+import { parseFlagString } from '../Flag';
 import { NullStat } from '../Stats';
 import {
   capitalize,
@@ -116,9 +117,5 @@ const parseState = (details: DetailedEntity): string => {
 };
 
 const parseFlag = (allo: Allo): string => {
-  if (allo.type.toUpperCase() === 'FLAG_NOT_NAMEABLE')
-    return 'Enable kami renaming'; // rename potion, set namable
-  else if (allo.type.toUpperCase() === 'FLAG_CAN_RESET_SKILLS')
-    return 'Enable skill reset'; // rename potion, set not namable
-  else return 'Set ' + allo.type.toLowerCase().replaceAll('_', ' ');
+  return parseFlagString(allo.type ?? '');
 };

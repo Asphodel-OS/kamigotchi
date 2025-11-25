@@ -1,6 +1,5 @@
-import { ethers } from 'ethers';
+import { ethers, ParamType } from 'ethers';
 
-import { ParamType } from '@ethersproject/abi';
 import { SystemBytecodes } from '../contracts/mappings/SystemBytecodes';
 import { idToSystem } from '../contracts/mappings/SystemMappings';
 
@@ -29,11 +28,15 @@ export const encodeArgs = (
   encodedTypes?: ParamType[]
 ) => {
   const types = encodedTypes ?? getExecuteTyped(system); // uses executeTyped if no types provided
-  return 'hex\\"' + ethers.utils.defaultAbiCoder.encode(types, args).slice(2) + '\\"';
+  return 'hex\\"' + ethers.AbiCoder.defaultAbiCoder().encode(types, args).slice(2) + '\\"';
 };
 
 export const parseArgs = (args: any[]) => {
   return args.map((arg) => {
+    if (typeof arg === 'string' && arg.startsWith('INJECT:')) {
+      // allow for injections, when solidity logic is needed to derive an argument
+      return arg.replace('INJECT: ', '');
+    }
     if (typeof arg === 'string' && !arg.includes('[') && !arg.startsWith('0x'))
       // if string, and not array or starts with 0x
       return `\\"${arg}\\"`; // converting to string literal
@@ -58,7 +61,7 @@ export const toUint32FixedArrayLiteral = (arr: any[]): string => {
 // GETTERS
 
 const getSystemID = (system: string): bigint => {
-  return BigInt(ethers.utils.id(system));
+  return BigInt(ethers.id(system));
 };
 
 const getAbi = (system: keyof typeof SystemBytecodes) => {

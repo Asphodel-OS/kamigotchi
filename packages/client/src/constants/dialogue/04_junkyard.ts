@@ -23,7 +23,7 @@ export default [];
 //       key: 'vendingmachine',
 //       path: objectVendingMachine,
 //       offset: { x: -33.5, y: 9.5 },
-//       onClick: triggerPetMintModal,
+//       onClick: triggerGachaModal,
 //     },
 //   ],
 // };

@@ -263,33 +263,6 @@ contract NPCTest is SetupTemplate {
     assertEq(_getItemBal(alice, currency), 0);
   }
 
-  function testListingTokenBuy() public {
-    // setup
-    address tokenAddr = _createERC20("name", "symbol");
-    uint32 item = 100;
-    uint32 currency = 7; // item currency
-    _createGenericItem(item);
-    _createGenericItem(currency);
-    _addItemERC20(currency, tokenAddr);
-    uint256 price = 100;
-    _createNPC(1, 1, "npc1");
-    _createListing(1, item, currency, price);
-    _setListingBuyFixed(1, item);
-    _mintERC20(tokenAddr, price, alice.owner);
-    _approveERC20(tokenAddr, alice.owner);
-
-    // pre-buy
-    assertEq(_getItemBal(alice, item), 0);
-    assertEq(_getTokenBal(tokenAddr, alice.owner), LibERC20.toTokenUnits(100));
-
-    // buy
-    _buy(alice, 1, item, 1);
-
-    // post-buy
-    assertEq(_getItemBal(alice, item), 1);
-    assertEq(_getTokenBal(tokenAddr, alice.owner), 0);
-  }
-
   // function testGDABasic() public {
   //   // setup
   //   uint32 item = 100;

@@ -6,10 +6,11 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibTrade } from "libraries/LibTrade.sol";
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 
 uint256 constant ID = uint256(keccak256("system.trade.complete"));
 
-contract TradeCompleteSystem is System {
+contract TradeCompleteSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -30,6 +31,20 @@ contract TradeCompleteSystem is System {
     LibAccount.updateLastTs(components, accID);
 
     return "";
+  }
+
+  // admin function for completing a Trade
+  function executeAdmin(uint256[] memory ids) public onlyAdmin(components) {
+    uint256 id;
+    uint256 makerID;
+    for (uint256 i; i < ids.length; i++) {
+      id = ids[i];
+      LibTrade.verifyState(components, id, "EXECUTED");
+
+      makerID = LibTrade.getMaker(components, id);
+      LibTrade.complete(world, components, id, makerID); // complete the Trade as maker
+      LibTrade.emitTradeComplete(world, id, 0); // emit Complete event as admin
+    }
   }
 
   /// @param id Trade ID

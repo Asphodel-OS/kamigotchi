@@ -34,6 +34,8 @@ export const LiquidateButton = (
       tooltip={{ text: [tooltipText] }}
       width={width}
       icon={{ inset: { x: 2 } }}
+      filter={actionOptions.length !== 0 ? 'saturate(1500%) hue-rotate(233deg)' : ''}
+      shake={actionOptions.length !== 0}
     />
   );
 };

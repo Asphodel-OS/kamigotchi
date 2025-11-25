@@ -1,22 +1,22 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { QuestsIcon } from 'assets/images/icons/menu';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount, getAccountByID as _getAccountByID } from 'app/cache/account';
+import { getAccountByID as _getAccountByID, getAccount } from 'app/cache/account';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
   Contribution,
   Goal,
-  canClaim,
   canContribute as _canContribute,
-  getContributionByHash,
   getContributions as _getContributions,
+  canClaim,
+  getContributionByHash,
   getGoalByIndex,
 } from 'network/shapes/Goals';
 import { Score } from 'network/shapes/Score';
@@ -32,11 +32,7 @@ export const GoalModal: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
-    const {
-      network,
-      data,
-      utils,
-    } = (() => {
+    const { network, data, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -51,8 +47,7 @@ export const GoalModal: UIComponent = {
           getAccountByID: (id: EntityID) => _getAccountByID(world, components, id),
           getBalance: (holder: EntityIndex, index: number | undefined, type: string) =>
             getBalance(world, components, holder, index, type),
-          getContribution: (goal: Goal) =>
-            getContributionByHash(world, components, goal, account),
+          getContribution: (goal: Goal) => getContributionByHash(world, components, goal, account),
           getContributions: (goal: Goal) => _getContributions(components, goal.id),
           getFromDescription: (type: string, index: number) =>
             getFromDescription(world, components, type, index),
@@ -60,114 +55,112 @@ export const GoalModal: UIComponent = {
       };
     })();
 
-      const { actions, api, world, components } = network;
-      const { account } = data;
-      const { canContribute, getContribution, getContributions } = utils;
-      const goalModalOpen = useVisibility((s) => s.modals.goal);
-      const goalIndex = useSelected((s) => s.goalIndex); // only support 1 goal type for now
+    const { actions, api, world, components } = network;
+    const { account } = data;
+    const { canContribute, getContribution, getContributions } = utils;
+    const goalModalOpen = useVisibility((s) => s.modals.goal);
+    const goalIndex = useSelected((s) => s.goalIndex); // only support 1 goal type for now
 
-      const [tab, setTab] = useState('GOAL');
-      const [step, setStep] = useState(0);
-      const [goal, setGoal] = useState<Goal>();
-      const [accContribution, setAccContribution] = useState<Contribution>();
-      const [scores, setScores] = useState<Score[]>([]);
+    const [tab, setTab] = useState('GOAL');
+    const [step, setStep] = useState(0);
+    const [goal, setGoal] = useState<Goal>();
+    const [accContribution, setAccContribution] = useState<Contribution>();
+    const [scores, setScores] = useState<Score[]>([]);
 
-      // update details based on selected
-      useEffect(() => {
-        if (!goalModalOpen) return;
-        const goal = getGoalByIndex(world, components, goalIndex[0]);
-        setGoal(goal);
+    // update details based on selected
+    useEffect(() => {
+      if (!goalModalOpen) return;
+      const goal = getGoalByIndex(world, components, goalIndex[0]);
+      setGoal(goal);
 
-        const accountContribution = getContribution(goal);
-        setAccContribution(accountContribution);
+      const accountContribution = getContribution(goal);
+      setAccContribution(accountContribution);
 
-        const contributions = getContributions(goal);
-        setScores(contributions);
-      }, [goalIndex, goalModalOpen, step, account.coin]);
+      const contributions = getContributions(goal);
+      setScores(contributions);
+    }, [goalIndex, goalModalOpen, step, account.coin]);
 
-      /////////////////
-      // INTERACTIONS
+    /////////////////
+    // INTERACTIONS
 
-      const contributeTx = async (goal: Goal, amount: number) => {
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'Contributing to goal',
-          params: [goal.index, amount],
-          description: `Contributing ${amount} to  goal [${goal.name}]`,
-          execute: async () => {
-            return api.player.goal.contribute(goal.index, amount);
-          },
-        });
+    const contributeTx = async (goal: Goal, amount: number) => {
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'Contributing to goal',
+        params: [goal.index, amount],
+        description: `Contributing ${amount} to  goal [${goal.name}]`,
+        execute: async () => {
+          return api.player.goal.contribute(goal.index, amount);
+        },
+      });
 
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
-        setStep(step + 1);
-      };
+      await waitForActionCompletion(
+        actions!.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
+      );
+      setStep(step + 1);
+    };
 
-      const claimTx = async (goal: Goal) => {
-        const actionID = uuid() as EntityID;
-        actions.add({
-          id: actionID,
-          action: 'Claiming reward',
-          params: [goal.index],
-          description: `Claiming reward for goal [${goal.name}]`,
-          execute: async () => {
-            return api.player.goal.claim(goal.index);
-          },
-        });
+    const claimTx = async (goal: Goal) => {
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'Claiming reward',
+        params: [goal.index],
+        description: `Claiming reward for goal [${goal.name}]`,
+        execute: async () => {
+          return api.player.goal.claim(goal.index);
+        },
+      });
 
-        await waitForActionCompletion(
-          actions!.Action,
-          world.entityToIndex.get(actionID) as EntityIndex
-        );
-        setStep(step + 1);
-      };
+      await waitForActionCompletion(
+        actions!.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
+      );
+      setStep(step + 1);
+    };
 
-      /////////////////
-      // DISPLAY
+    /////////////////
+    // DISPLAY
 
-      const MainBox = () => {
-        if (goal === undefined) return <Header>Goal not found</Header>;
-
-        return (
-          <>
-            <Details
-              goal={goal}
-              getFromDescription={(type, index) =>
-                getFromDescription(world, components, type, index)
-              }
-            />
-            <Progress
-              actions={{ contributeTx, claimTx }}
-              account={account}
-              accContribution={accContribution}
-              goal={goal}
-              utils={{
-                ...utils,
-                canContribute: () => canContribute(goal),
-                canClaim: () => canClaim(goal, accContribution),
-              }}
-            />
-          </>
-        );
-      };
-
-      const LeaderboardBox = <Leaderboard scores={scores} utils={utils} />;
+    const MainBox = () => {
+      if (goal === undefined) return <Header>Goal not found</Header>;
 
       return (
-        <ModalWrapper
-          id='goal'
-          header={<ModalHeader title='Co-op Quest' icon={QuestsIcon} />}
-          canExit
-          overlay
-        >
-          <Tabs tab={tab} setTab={setTab} />
-          <Content>{tab === 'GOAL' ? MainBox() : LeaderboardBox}</Content>
-        </ModalWrapper>
+        <>
+          <Details
+            goal={goal}
+            getFromDescription={(type, index) => getFromDescription(world, components, type, index)}
+          />
+          <Progress
+            actions={{ contributeTx, claimTx }}
+            account={account}
+            accContribution={accContribution}
+            goal={goal}
+            utils={{
+              ...utils,
+              canContribute: () => canContribute(goal),
+              canClaim: () => canClaim(goal, accContribution),
+            }}
+          />
+        </>
       );
+    };
+
+    const LeaderboardBox = <Leaderboard scores={scores} utils={utils} />;
+
+    return (
+      <ModalWrapper
+        id='goal'
+        header={<ModalHeader title='Co-op Quest' icon={QuestsIcon} />}
+        canExit
+        overlay
+      >
+        <Tabs tab={tab} setTab={setTab} />
+        <Content>{tab === 'GOAL' ? MainBox() : LeaderboardBox}</Content>
+      </ModalWrapper>
+    );
   },
 };
 

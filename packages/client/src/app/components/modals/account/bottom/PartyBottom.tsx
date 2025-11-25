@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';

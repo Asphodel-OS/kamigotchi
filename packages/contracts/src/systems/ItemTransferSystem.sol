@@ -29,7 +29,7 @@ contract ItemTransferSystem is System {
     LibInventory.decFor(components, accID, MUSU_INDEX, TRANSFER_FEE);
 
     // data logging and event emission
-    LibInventory.logTransfer(world, components, accID, targetID, indices, amts);
+    LibInventory.emitTransfer(world, components, accID, targetID, indices, amts);
     LibAccount.updateLastTs(components, accID);
 
     return "";

@@ -1,4 +1,4 @@
-import { defaultAbiCoder as abi } from 'ethers/lib/utils';
+import { AbiCoder } from 'ethers';
 
 import { ContractSchemaValue, ContractSchemaValueId } from './types';
 
@@ -22,6 +22,6 @@ export function createEncoder<D extends { [key: string]: unknown }>(
       contractArgTypes.push(ContractSchemaValueId[valueTypes[index] as ContractSchemaValue]);
     }
 
-    return abi.encode(contractArgTypes, contractArgs);
+    return AbiCoder.defaultAbiCoder().encode(contractArgTypes, contractArgs);
   };
 }

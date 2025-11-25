@@ -8,6 +8,8 @@ const ModalsToHide: Partial<Modals> = {
   help: false,
   inventory: false,
   settings: false,
+  questDialogue: false,
+  dialogue: false,
 };
 
 export const QuestMenuButton = () => {

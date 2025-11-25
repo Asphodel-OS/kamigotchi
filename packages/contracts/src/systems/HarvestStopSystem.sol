@@ -42,6 +42,7 @@ contract HarvestStopSystem is System {
     LibKami.verifyRoom(components, kamiID, accID);
 
     // collect and stop harvest
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(_collectAndStop(id, accID, kamiID));
   }
 
@@ -60,6 +61,7 @@ contract HarvestStopSystem is System {
     if (!LibKami.isHealthy(components, kamiID)) return abi.encode(0);
     if (!LibKami.checkRoom(components, kamiID, accID)) return abi.encode(0);
 
+    LibAccount.updateLastTs(components, accID);
     return abi.encode(_collectAndStop(id, accID, kamiID));
   }
 

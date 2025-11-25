@@ -3,13 +3,13 @@ import { BigNumberish } from 'ethers';
 import { TxQueue } from 'engine/queue';
 import { accountsAPI } from './accounts';
 import { auctionsAPI } from './auctions';
-import { bridgeAPI } from './bridge';
 import { echoAPI } from './echo';
 import { externalAPI } from './external';
 import { gachaAPI } from './gacha';
 import { goalsAPI } from './goals';
 import { kamisAPI } from './kamis';
 import { npcsAPI } from './npcs';
+import { portalAPI } from './portal';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
 
@@ -36,7 +36,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
     echo: echoAPI(systems),
     account: accountsAPI(systems),
     auction: auctionsAPI(systems),
-    bridge: bridgeAPI(systems),
+    portal: portalAPI(systems),
     gacha: gachaAPI(systems),
     npc: npcsAPI(systems),
     pet: kamisAPI(systems),

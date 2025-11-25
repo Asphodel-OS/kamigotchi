@@ -52,6 +52,8 @@ library LibNode {
   // Create a Node as specified and return its id.
   // Type: [ HARVEST | HEALING | SACRIFICIAL | TRAINING ]
   function create(IUintComp components, Base memory node) internal returns (uint256 id) {
+    require(isValidAffinity(node.affinity), "Node: invalid affinity");
+
     id = genID(node.index);
     LibEntityType.set(components, id, "NODE");
 
@@ -155,6 +157,13 @@ library LibNode {
 
   function isHarvestingType(IUintComp components, uint256 id) internal view returns (bool) {
     return LibString.eq(getType(components, id), "HARVEST");
+  }
+
+  /// @dev prevent NORMAL+TYPED nodes
+  function isValidAffinity(string memory type_) internal pure returns (bool) {
+    string[] memory affinities = type_.split("-");
+    if (affinities.length == 1) return true; // single affinity node
+    return !affinities[0].eq("NORMAL") && !affinities[1].eq("NORMAL");
   }
 
   /////////////////

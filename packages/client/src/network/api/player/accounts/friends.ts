@@ -1,6 +1,7 @@
-import { BigNumberish } from '@ethersproject/bignumber';
+import { SystemQueue } from 'engine/queue';
+import { BigNumberish } from 'ethers';
 
-export const friendsAPI = (systems: any) => {
+export const friendsAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev send a friend request
    * @param targetAddr owner address of the target account

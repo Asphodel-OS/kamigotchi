@@ -1,4 +1,4 @@
-import { EntityID, HasValue, QueryFragment, runQuery, World } from '@mud-classic/recs';
+import { EntityID, HasValue, QueryFragment, runQuery, World } from 'engine/recs';
 import { result } from 'lodash';
 import { Components } from 'network/';
 import { Address, getAddress, pad } from 'viem';

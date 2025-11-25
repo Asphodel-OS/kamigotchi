@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from 'engine/recs';
 
 import { Components } from 'network/';
 import { getItemByIndex, Item } from 'network/shapes/Item';
@@ -71,5 +71,5 @@ export const get = (
 };
 
 export const genReqAnchor = (id: EntityID): EntityID => {
-  return hashArgs(['listing.requirement', id], ['string', 'uint256'], true);
+  return hashArgs(['listing.requirement', id], ['string', 'uint256']);
 };

@@ -3,17 +3,26 @@ import styled from 'styled-components';
 export const Text = styled.div<{
   size: number;
   color?: string;
+  weight?: 'normal' | 'bold';
   padding?: {
     top?: number;
     bottom?: number;
     left?: number;
     right?: number;
   };
+  onClick?: () => void;
 }>`
   font-size: ${({ size }) => size}vw;
+  font-weight: ${({ weight }) => (weight === 'bold' ? 'bold' : 'normal')};
   line-height: ${({ size }) => size * 1.5}vw;
   color: ${({ color }) => color ?? '#333'};
 
   padding: ${({ padding }) => padding?.top ?? 0}vw ${({ padding }) => padding?.right ?? 0}vw
     ${({ padding }) => padding?.bottom ?? 0}vw ${({ padding }) => padding?.left ?? 0}vw;
+
+  ${({ onClick }) => onClick && 'cursor: pointer'};
+  &:hover {
+    ${({ onClick }) => (onClick ? 'opacity: 0.6;' : '')}
+  }
+  user-select: none;
 `;

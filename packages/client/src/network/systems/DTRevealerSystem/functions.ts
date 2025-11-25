@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, World, hasComponent } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World, hasComponent } from 'engine/recs';
 import { Components } from 'network/components';
 import { DTLog, getDTLogByHash } from 'network/shapes/Droptable';
 import { NotificationSystem } from 'network/systems';

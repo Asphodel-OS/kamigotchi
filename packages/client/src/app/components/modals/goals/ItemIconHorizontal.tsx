@@ -12,6 +12,7 @@ export const ItemIconHorizontal = ({
   glow,
   onClick,
   disabled,
+  suffix,
   styleOverride,
 }: {
   item: DetailedEntity;
@@ -21,6 +22,7 @@ export const ItemIconHorizontal = ({
   glow?: string;
   onClick?: Function;
   disabled?: boolean;
+  suffix?: string;
   styleOverride?: {
     box?: any;
     icon?: any;
@@ -52,8 +54,7 @@ export const ItemIconHorizontal = ({
     return styles;
   };
 
-  // text = x{balance} {item.name}
-  const text = `${balance ? `x${balance}` : ''} ${item.name}`;
+  const text = `${balance ? `x${balance}` : ''} ${item.name}` + (suffix ? ` ${suffix}` : '');
 
   const base = () => {
     return (

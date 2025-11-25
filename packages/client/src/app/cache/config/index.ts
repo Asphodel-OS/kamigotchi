@@ -12,5 +12,7 @@ export {
   isFalsey as isKamiConfigFalsey,
   processConfig as processKamiConfig,
 } from './kami';
+export { getConfig as getPortalConfig } from './portal';
 
 export type { GachaMintConfig } from './gacha';
+export type { Configs as PortalConfigs } from './portal';

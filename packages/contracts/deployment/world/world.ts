@@ -29,12 +29,16 @@ import {
   initMintConfigs,
   initNodes,
   initNpcs,
+  initPortalConfigs,
+  initPortalTokens,
   initQuests,
   initRecipes,
   initRelationships,
   initRooms,
   initSkills,
   initSnapshot,
+  initTestingConfigs,
+  initTokenConfigs,
   initTradeConfigs,
   initTraits,
   mintToGachaPool,
@@ -48,7 +52,13 @@ import {
   reviseRecipes,
   reviseRooms,
   reviseSkills,
+  setPortalTokens,
+  unsetPortalTokens,
 } from './state';
+import { cancelTrades, completeTrades } from './state/trades';
+
+// TODO: rename this file to something that makes more sense
+// ('api.ts' would conflict with api/)
 
 export type WorldAPI = typeof WorldState.prototype.api;
 
@@ -89,12 +99,15 @@ export class WorldState {
     auth: {
       init: () => this.genCalls(initAuth),
     },
-    config: {
+    configs: {
       init: () => this.genCalls(initConfigs),
-      initMint: () => this.genCalls(initMintConfigs),
+      initTesting: () => this.genCalls(initTestingConfigs),
       initHarvest: () => this.genCalls(initHarvestConfigs),
       initLiquidation: () => this.genCalls(initLiquidationConfigs),
+      initMint: () => this.genCalls(initMintConfigs),
+      initPortal: () => this.genCalls(initPortalConfigs),
       initTrade: () => this.genCalls(initTradeConfigs),
+      initTokens: () => this.genCalls(initTokenConfigs),
     } as SubFunc,
     factions: {
       init: () => this.genCalls(initFactions),
@@ -130,6 +143,11 @@ export class WorldState {
     mint: {
       init: () => this.genCalls((api) => initGachaPool(api, 333)),
     } as SubFunc,
+    portal: {
+      init: (indices: number[]) => this.genCalls((api) => initPortalTokens(api, indices)),
+      set: (indices: number[]) => this.genCalls((api) => setPortalTokens(api, indices)),
+      unset: (indices: number[]) => this.genCalls((api) => unsetPortalTokens(api, indices)),
+    } as SubFunc,
     quests: {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices)),
@@ -158,6 +176,10 @@ export class WorldState {
     snapshot: {
       init: () => this.genCalls(initSnapshot),
     } as SubFunc,
+    trades: {
+      cancel: () => this.genCalls((api) => cancelTrades(api)), // IDs are hardcoded into the function
+      complete: () => this.genCalls((api) => completeTrades(api)), // IDs are hardcoded into the function
+    },
     traits: {
       init: () => this.genCalls(initTraits),
       // delete: (indices: number[], types: string[]) =>

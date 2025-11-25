@@ -1,4 +1,4 @@
-import { ItemImages } from 'assets/images/items';
+import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
 import { TextTooltip } from '../../poppers';
 import { IconButton } from '../IconButton';
@@ -38,7 +38,7 @@ export const OnyxButton = ({
     <TextTooltip text={tooltip ?? []} maxWidth={24}>
       <IconButton
         key='onyx-button'
-        img={ItemImages.onyx}
+        img={TokenIcons.onyx}
         onClick={onClick}
         disabled={balance < price || disabled}
       />

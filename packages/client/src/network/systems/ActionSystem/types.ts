@@ -1,5 +1,5 @@
-import { Components, EntityID, EntityIndex, Override, SchemaOf } from '@mud-classic/recs';
 import { ValueOf } from '@mud-classic/utils';
+import { Components, EntityID, EntityIndex, Override, SchemaOf } from 'engine/recs';
 import { ContractTransaction } from 'ethers';
 
 export type ComponentUpdate<C extends Components> = ValueOf<{

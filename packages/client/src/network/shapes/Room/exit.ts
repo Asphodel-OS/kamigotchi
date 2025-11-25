@@ -1,11 +1,11 @@
-import { getComponentValue, World } from '@mud-classic/recs';
+import { getComponentValue, World } from 'engine/recs';
 import { Components } from 'network/components';
 import { Condition } from '../Conditional';
 import { getAdjacentRoomIndices } from './functions';
 import { getGatesBetween } from './gate';
 import { Room } from './types';
 
-// TODO: consider how best to cache these room-to-room Exit results
+// TODO: unsure if we still want to use this pattern. seems unnecessary.
 export interface Exit {
   fromIndex: number;
   toIndex: number;

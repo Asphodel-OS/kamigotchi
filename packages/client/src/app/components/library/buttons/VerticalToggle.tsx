@@ -1,7 +1,10 @@
-import { hoverFx } from 'app/styles/effects';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import { hoverFx } from 'app/styles/effects';
+
+// TODO: needs robust positioning calculations
+// good opportunity for pair programming (@tisiphone + @acheron)
 export const VerticalToggle = ({
   setModeSelected,
 }: {
@@ -16,36 +19,42 @@ export const VerticalToggle = ({
     setModeSelected(mode);
   };
 
-  const getTranslate = (pos: number) => (pos % 3) * 55 + '%';
+  const getTranslate = (pos: number) => {
+    return (pos % 3) * 55 + '%';
+  };
 
   return (
     <Container onClick={handleClick}>
-      <KnobWrapper>
-        <Knob position={getTranslate(position)} />
-      </KnobWrapper>
+      <SwitchHolder>
+        <Switch position={getTranslate(position)} />
+      </SwitchHolder>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  width: 100%;
-  height: 100%;
   background-color: white;
-  overflow: hidden;
+  border-block: 0.15vw solid black;
+
+  width: 1.5vw;
+
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  cursor: pointer;
-  border-block: 0.12vw solid black;
   align-items: center;
+
+  cursor: pointer;
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
+    z-index: 1;
+    border-right: 0.15vw solid black;
+    border-left: 0.15vw solid black;
   }
 `;
 
-const KnobWrapper = styled.div`
+const SwitchHolder = styled.div`
   width: 80%;
   height: 90%;
   pointer-events: none;
@@ -56,12 +65,13 @@ const KnobWrapper = styled.div`
   border-radius: 1vw;
 `;
 
-const Knob = styled.div<{ position: string }>`
+const Switch = styled.div<{ position: string }>`
   position: absolute;
-  width: 70%;
-  aspect-ratio: 1;
   background-color: #494545;
   border-radius: 50%;
+  aspect-ratio: 1;
+  width: 70%;
+
   transition: transform 0.3s ease;
   transform: translateY(${({ position }) => position});
 `;

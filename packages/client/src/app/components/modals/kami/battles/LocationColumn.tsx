@@ -1,4 +1,4 @@
-import { EntityIndex } from '@mud-classic/recs';
+import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
 
 import { Text, TextTooltip } from 'app/components/library';
@@ -21,12 +21,19 @@ export const LocationColumn = ({
   const { getNodeByIndex } = utils;
   const setNode = useSelected((s) => s.setNode);
   const setModals = useVisibility((s) => s.setModals);
-  
+
   const showNode = (node: Node) => {
     setNode(node.index);
     setModals({ node: true, crafting: false, kami: false });
     playClick();
   };
+
+  ////////////////
+  // DISPLAY
+
+  function affinityIcons(affs: string[]) {
+    return affs.map((aff) => <Icon src={getAffinityImage(aff)} />);
+  }
 
   return (
     <Container>
@@ -36,7 +43,7 @@ export const LocationColumn = ({
         return (
           <TextTooltip key={index} text={[node.name]}>
             <Row key={index} onClick={() => showNode(node)}>
-              <Icon src={getAffinityImage(node.affinity)} />
+              {affinityIcons(node.affinity)}
               <Text size={0.9}> {abbreviateString(node.name)}</Text>
             </Row>
           </TextTooltip>

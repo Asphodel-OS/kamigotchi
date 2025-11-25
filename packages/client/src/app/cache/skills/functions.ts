@@ -1,4 +1,4 @@
-import { EntityID, World } from '@mud-classic/recs';
+import { EntityID, World } from 'engine/recs';
 
 import { isDead, isHarvesting, isOffWorld, isStarving } from 'app/cache/kami';
 import { Components } from 'network/';

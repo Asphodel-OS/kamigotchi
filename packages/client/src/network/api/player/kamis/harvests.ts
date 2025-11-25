@@ -1,6 +1,7 @@
+import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
-export const harvestsAPI = (systems: any) => {
+export const harvestsAPI = (systems: SystemQueue<any>) => {
   /**
    * @dev retrieves the amount due from a passive deposit harvest and resets the starting point
    *
@@ -17,7 +18,9 @@ export const harvestsAPI = (systems: any) => {
    * @param kamiID kamiID
    */
   const liquidate = (harvestID: BigNumberish, kamiID: BigNumberish) => {
-    return systems['system.harvest.liquidate'].executeTyped(harvestID, kamiID);
+    return systems['system.harvest.liquidate'].executeTyped(harvestID, kamiID, {
+      gasLimit: 7500000,
+    });
   };
 
   /**

@@ -1,12 +1,4 @@
-import {
-  EntityID,
-  EntityIndex,
-  Has,
-  HasValue,
-  QueryFragment,
-  World,
-  runQuery,
-} from '@mud-classic/recs';
+import { EntityID, EntityIndex, Has, HasValue, QueryFragment, World, runQuery } from 'engine/recs';
 
 import { Components } from 'network/';
 import { getEntityByHash } from '../utils';

@@ -16,8 +16,8 @@ import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibComp } from "libraries/utils/LibComp.sol";
-import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
+import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
@@ -94,8 +94,7 @@ library LibTrade {
 
     // transferring items
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    LibInventory.decFor(comps, makerID, toSell.indices, toSell.amounts); // implicit balance check
-    LibInventory.incFor(comps, tradeID, toSell.indices, toSell.amounts); // store items at sell anchor
+    LibInventory.transferFor(comps, makerID, tradeID, toSell.indices, toSell.amounts);
   }
 
   /////////////////
@@ -122,8 +121,7 @@ library LibTrade {
     logSpend(comps, takerID, indices, amts);
 
     // transfer Buy Order items from Taker to Trade
-    LibInventory.decFor(comps, takerID, indices, amts);
-    LibInventory.incFor(comps, tradeID, indices, amts);
+    LibInventory.transferFor(comps, takerID, tradeID, indices, amts);
   }
 
   /// @notice execute a Sell Order (transfers items between Sell Order and Taker)
@@ -150,14 +148,14 @@ library LibTrade {
     }
 
     // transfer Sell Order items from Trade to Taker
-    LibInventory.decFor(comps, tradeID, indices, amts);
-    LibInventory.incFor(comps, takerID, indices, amts);
+    LibInventory.transferFor(comps, tradeID, takerID, indices, amts);
   }
 
   /////////////////
   // COMPLETE
 
   /// @notice complete a Trade
+  /// @dev makerID param seems a bit unsafe.. maybe just derive it here
   function complete(IWorld world, IUintComp comps, uint256 id, uint256 makerID) internal {
     // process orders
     completeBuyOrder(comps, id, makerID);
@@ -188,8 +186,7 @@ library LibTrade {
     }
 
     // transfer Buy Order items from Trade to Maker
-    LibInventory.decFor(comps, tradeID, indices, amts);
-    LibInventory.incFor(comps, makerID, indices, amts);
+    LibInventory.transferFor(comps, tradeID, makerID, indices, amts);
   }
 
   /// @notice complete a Sell Order (cleanup, sell side should already be fulfilled)
@@ -230,8 +227,7 @@ library LibTrade {
 
     // transfer items back from Trade to Maker
     uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
-    LibInventory.decFor(comps, tradeID, indices, amounts); // sets to 0
-    LibInventory.incFor(comps, makerID, indices, amounts); // sends back to Maker
+    LibInventory.transferFor(comps, tradeID, makerID, indices, amounts);
   }
 
   /////////////////
@@ -255,7 +251,7 @@ library LibTrade {
 
   /// @notice verify that an Account is not a Trade's Maker
   function verifyNotMaker(IUintComp comps, uint256 tradeID, uint256 accID) public view {
-    uint256 makerID = IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
+    uint256 makerID = getMaker(comps, tradeID);
     if (makerID == accID) revert("Trade cannot be executed by Maker");
   }
 
@@ -314,6 +310,10 @@ library LibTrade {
     uint32[] memory indices = KeysComponent(getAddrByID(comps, KeysCompID)).get(id);
     uint256[] memory amounts = ValuesComponent(getAddrByID(comps, ValuesCompID)).get(id);
     return Order(indices, amounts);
+  }
+
+  function getMaker(IUintComp comps, uint256 tradeID) internal view returns (uint256) {
+    return IDOwnsTradeComponent(getAddrByID(comps, IDOwnsTradeCompID)).get(tradeID);
   }
 
   /// @notice gets the number of open orders owned by an account

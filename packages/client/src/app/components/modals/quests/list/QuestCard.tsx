@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { ActionButton, ActionListButton, TextTooltip } from 'app/components/library';
-import { Overlay } from 'app/components/library/styles';
+import { ActionListButton, IconButton, Overlay, TextTooltip } from 'app/components/library';
+import { triggerQuestDetailsModal } from 'app/triggers/triggerQuestDetailsModal';
 import { Allo } from 'network/shapes/Allo';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
@@ -31,6 +31,12 @@ export const QuestCard = ({
   /////////////////
   // INTERPRETATION
 
+  function getButtonText(status: string) {
+    if (status === 'AVAILABLE') return 'Accept';
+    if (status === 'ONGOING' && !meetsObjectives(quest)) return 'Details';
+    return 'Complete';
+  }
+
   // idea: room objectives should state the number of rooms away you are on the grid map
   const getObjectiveText = (objective: Objective): string => {
     let prefix = '';
@@ -44,7 +50,7 @@ export const QuestCard = ({
   // NOTE: hardcoded to agency for now
   const getFactionStamp = (quest: Quest) => {
     const reward = quest.rewards.find((r) => r.type === 'REPUTATION');
-    if (!reward) return <></>;
+    if (!reward) return null;
     const index = reward.index;
 
     let iconKey = '';
@@ -83,26 +89,6 @@ export const QuestCard = ({
   /////////////////
   // DISPLAY
 
-  const AcceptButton = (quest: Quest) => {
-    return (
-      <Overlay key={'accept-button'} bottom={0.8} right={0.8}>
-        <ActionButton onClick={() => accept(quest)} text='Accept' />
-      </Overlay>
-    );
-  };
-
-  const CompleteButton = (quest: Quest) => {
-    return (
-      <Overlay key={'complete-button'} bottom={0.8} right={0.8}>
-        <ActionButton
-          onClick={() => complete(quest)}
-          text='Complete'
-          disabled={!meetsObjectives(quest)}
-        />
-      </Overlay>
-    );
-  };
-
   const ItemBurnButton = (objective: Objective) => {
     const show = status === 'ONGOING' && objective.target.type === 'ITEM_BURN';
     if (!show) return <></>;
@@ -140,7 +126,7 @@ export const QuestCard = ({
         id={`quest-item-burn-${objective.id}`}
         text={`[${gave}/${want}]`}
         options={options}
-        size='small'
+        size='medium'
         disabled={have == 0}
       />
     );
@@ -148,38 +134,49 @@ export const QuestCard = ({
 
   /////////////////
   // RENDER
-
+  const factionStamp = getFactionStamp(quest);
   return (
     <Container key={quest.id} completed={status === 'COMPLETED'}>
-      <Overlay key={'faction-image'} top={0.6} right={0.6}>
-        {getFactionStamp(quest)}
-      </Overlay>
-      <Title>{quest.name}</Title>
-      <Description>{quest.description}</Description>
+      <Title>
+        {quest.name}
+        {factionStamp && <Faction>{factionStamp}</Faction>}
+      </Title>
       <Section key='objectives' style={{ display: quest.objectives.length > 0 ? 'block' : 'none' }}>
         <SubTitle>Objectives</SubTitle>
         {quest.objectives.map((o) => (
           <Row key={o.id}>
             {ItemBurnButton(o)}
-            <ConditionText>{getObjectiveText(o)}</ConditionText>
+            <ConditionText objective={true}>{getObjectiveText(o)}</ConditionText>
           </Row>
         ))}
       </Section>
       <Section key='rewards' style={{ display: quest.rewards.length > 0 ? 'block' : 'none' }}>
         <SubTitle>Rewards</SubTitle>
         <Row>
-          {quest.rewards.map((r) => (
-            <Row key={r.id}>
-              <ConditionText>
-                {getRewardImage(r)}
-                {`x${(r.value ?? 0) * 1}`}
-              </ConditionText>
-            </Row>
+          {quest.rewards.map((r, i) => (
+            <ConditionText key={`${r.type}-${r.index}-${i}`} objective={false}>
+              {getRewardImage(r)}
+              {`x${(r.value ?? 0) * 1}`}
+            </ConditionText>
           ))}
         </Row>
       </Section>
-      {status === 'AVAILABLE' && AcceptButton(quest)}
-      {status === 'ONGOING' && CompleteButton(quest)}
+      {quest.typeComp === 'MAIN' && (
+        <Overlay top={4.5} right={2}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            {quest.typeComp.toLowerCase()}
+          </div>
+        </Overlay>
+      )}
+      <ButtonRow>
+        <IconButton
+          scale={2.5}
+          text={getButtonText(status)}
+          onClick={() => {
+            triggerQuestDetailsModal(quest.entity);
+          }}
+        />
+      </ButtonRow>
     </Container>
   );
 };
@@ -197,18 +194,29 @@ const Container = styled.div<{ completed?: boolean }>`
   justify-content: flex-start;
   align-items: flex-start;
 
-  ${({ completed }) => completed && 'opacity: 0.3;'}
+  ${({ completed }) => completed && 'opacity: 0.5;'}
 `;
 
 const Title = styled.div`
+  display: flex;
   font-size: 0.9vw;
   line-height: 1.2vw;
+  width: 100%;
+  font-weight: bold;
+  background-color: rgba(248, 246, 228, 1);
+  border-radius: 0.5vw;
+  padding: 0.3vw;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
 `;
 
-const Description = styled.div`
-  font-size: 0.6vw;
-  line-height: 1.4vw;
-  padding: 0.3vw 0.6vw;
+const Faction = styled.div`
+  border: 0.15vw solid #e4c270;
+  border-radius: 6.5vw;
+  height: 2vw;
+  width: 2vw;
 `;
 
 const Section = styled.div`
@@ -216,7 +224,7 @@ const Section = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin: 0.3vw 0.3vw;
+  margin: 0.3vw;
 `;
 
 const SubTitle = styled.div`
@@ -224,24 +232,31 @@ const SubTitle = styled.div`
   line-height: 1.5vw;
   text-align: left;
   justify-content: flex-start;
+  background-color: #f5f0cdff;
+  border-radius: 0.5vw;
+  padding: 0.3vw;
+  width: fit-content;
 `;
 
 const Row = styled.div`
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
+  flex-flow: row wrap;
+
+  justify-content: left;
   align-items: flex-start;
+  margin: 0.3vw;
+  gap: 0.3vw;
 `;
 
-const ConditionText = styled.div`
+const ConditionText = styled.div<{ objective: boolean }>`
   font-size: 0.7vw;
-  padding: 0.3vw;
-  padding-left: 0.3vw;
-
+  padding: ${({ objective }) => (objective ? '0.6vw' : '0.2vw')};
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  border: solid black 0.15vw;
+  border-radius: 0.3vw;
 `;
 
 const Image = styled.img<{ size: number }>`
@@ -249,4 +264,23 @@ const Image = styled.img<{ size: number }>`
   width: ${({ size }) => size}vw;
   margin-right: ${({ size }) => size * 0.2}vw;
   user-drag: none;
+`;
+
+const ButtonRow = styled.div`
+  position: absolute;
+  right: 3%;
+  bottom: 5%;
+  display: flex;
+  z-index: 0;
+`;
+
+const TickIcon = styled.div`
+  position: absolute;
+  bottom: -30%;
+  left: 40%;
+  font-size: 2.5vw;
+  font-weight: bold;
+  color: rgba(59, 185, 0, 1);
+  z-index: 2;
+  pointer-events: none;
 `;

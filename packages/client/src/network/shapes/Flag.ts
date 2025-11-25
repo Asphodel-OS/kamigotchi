@@ -6,7 +6,7 @@ import {
   World,
   getComponentValue,
   runQuery,
-} from '@mud-classic/recs';
+} from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 
 import { Components } from 'network/';
@@ -78,6 +78,16 @@ export const getFlagsByFilter = (
   filter: FlagsFilter
 ): Flag[] => {
   return getFlagsByType(world, components, filter.type);
+};
+
+///////////////
+// INTERPRETATION
+
+export const parseFlagString = (str: string): string => {
+  if (str.toUpperCase() === 'FLAG_NOT_NAMEABLE') return 'Enable kami renaming';
+  else if (str.toUpperCase() === 'FLAG_CAN_RESET_SKILLS') return 'Enable skill reset';
+  else if (str.toUpperCase() === 'FLAG_CAVES_UNLOCKED') return 'Unlock Caves';
+  else return 'Set ' + str.toLowerCase().replaceAll('_', ' ');
 };
 
 ///////////////

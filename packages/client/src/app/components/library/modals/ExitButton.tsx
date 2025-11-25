@@ -19,9 +19,7 @@ export const ExitButton = ({
   // closes the modal this exit button is on
   const handleClose = () => {
     playClick();
-    isValidator
-      ? setValidators({ [divName]: false })
-      : setModals({ [divName]: false });
+    isValidator ? setValidators({ [divName]: false }) : setModals({ [divName]: false });
   };
 
   return <Button onClick={handleClose}>X</Button>;
@@ -34,7 +32,6 @@ const Button = styled.button`
 
   color: black;
   padding: 0.3vw 0.4vw;
-  z-index: 1;
 
   font-size: 0.9vw;
   cursor: pointer;
@@ -46,4 +43,5 @@ const Button = styled.button`
   &:active {
     background-color: #c4c4c4;
   }
+  z-index: 1;
 `;

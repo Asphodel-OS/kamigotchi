@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
@@ -110,7 +110,6 @@ export const NodeModal: UIComponent = {
             getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
           getNode: (index: number) => getNodeByIndex(world, components, index),
           getRoom: (index: number) => getRoomByIndex(world, components, index),
-          getScavenge: (index: number) => getNodeByIndex(world, components, index).scavenge,
           getValue: (entity: EntityIndex) => _getValue(components, entity),
           parseAllos: (allos: Allo[]) => _parseAllos(world, components, allos, true),
           queryScavInstance: (index: number, holderID: EntityID) =>
@@ -265,6 +264,7 @@ export const NodeModal: UIComponent = {
           data={{ ...data, account }}
           display={display}
           utils={utils}
+          tick={tick}
         />
       </ModalWrapper>
     );

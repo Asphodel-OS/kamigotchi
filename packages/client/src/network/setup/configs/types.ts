@@ -1,4 +1,4 @@
-import { ExternalProvider } from '@ethersproject/providers';
+import { BrowserProvider } from 'ethers';
 
 // flat network configuration struct
 // TODO: replace this with the version in "engine/types"
@@ -9,7 +9,7 @@ export type NetworkConfig = {
   jsonRpc: string;
   wsRpc?: string;
   privateKey?: string;
-  externalProvider?: ExternalProvider;
+  externalProvider?: BrowserProvider;
   initialBlockNumber: number;
   checkpointUrl?: string;
   faucetServiceUrl?: string;

@@ -1,4 +1,4 @@
-import { defineComponent, Metadata, Type, World } from '@mud-classic/recs';
+import { defineComponent, Metadata, Type, World } from 'engine/recs';
 
 export function defineBoolComponent(world: World, name: string, contractId: string) {
   return defineComponent<{ value: Type.Boolean }, Metadata>(

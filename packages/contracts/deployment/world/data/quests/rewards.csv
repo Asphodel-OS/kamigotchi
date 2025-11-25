@@ -1,4 +1,5 @@
 ﻿.,Description,Type,Index,Value
+,Unlock Caves,FLAG_CAVES_UNLOCKED,,1
 ,10000x MUSU (Test),ITEM,1,10000
 ,20x Gacha Tickets (Test),ITEM,10,20
 ,100x Stick,ITEM,1001,100
@@ -11,6 +12,7 @@
 ,100x Chalkberry,ITEM,1014,100
 ,10 Revives,ITEM,11001,10
 ,1x “Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
+,"3x ""Melkarth's Heroic Awakening"" Spell Card",ITEM,11002,3
 ,100x Holy Dust,ITEM,11011,100
 ,1x XP Candy (Small),ITEM,11201,1
 ,1x XP Candy (Medium),ITEM,11202,1
@@ -18,13 +20,14 @@
 ,2 “Cultivation I” Spell Card,ITEM,11211,2
 ,1x “Cultivation II” Spell Card,ITEM,11212,1
 ,2x “Cultivation III” Spell Card,ITEM,11213,2
-,25 Gum,ITEM,11301,25
+,,ITEM,11301,25
 ,100x Burgers,ITEM,11302,100
 ,1x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,1
 ,2x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,2
 ,100x Resin,ITEM,11311,100
 ,1x Booster Pack,ITEM,21004,1
 ,2x Booster Pack,ITEM,21004,2
+,5x Booster Pack,ITEM,21004,5
 ,"1x ""Neith’s River of Life"" Spell Card",ITEM,21204,1
 ,2x “Neith’s River of Life” Spell Card,ITEM,21204,2
 ,3x “Neith’s River of Life” Spell Card,ITEM,21204,3
@@ -33,6 +36,7 @@
 ,1x Screwdriver,ITEM,23102,1
 ,1x Pyramid Engine (Soulbound),ITEM,100005,1
 ,"""KW Maps"" Data Chip",ITEM,100006,1
+,1x Unmarked Data Chip,ITEM,100007,1
 ,2x Agency Reputation,REPUTATION,1,2
 ,4x Agency Reputation,REPUTATION,1,4
 ,6x Agency Reputation,REPUTATION,1,6

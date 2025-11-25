@@ -8,7 +8,7 @@ async function initNode(api: AdminAPI, entry: any) {
   const item = entry['YieldIndex'];
   const name = entry['Name'];
   const description = 'placeholder';
-  const affinity = entry['Affinity'].toUpperCase();
+  const affinity = entry['Affinity'].toUpperCase().replace(',', '-').replace(' ', '');
 
   try {
     console.log(`Creating Node: (${index}) ${name} (${affinity})`);

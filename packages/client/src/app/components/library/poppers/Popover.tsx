@@ -171,18 +171,27 @@ const PopoverTrigger = styled.div<{ cursor: string }>`
   width: 100%;
 `;
 
-const PopoverContent = styled.div<{
+const PopoverContent = styled.div.attrs<{
   position?: string[];
   isVisible?: boolean;
-  popoverPosition: any;
+  popoverPosition: { x: number; y: number };
+  maxHeight?: number;
+}>(({ isVisible, popoverPosition, maxHeight }) => ({
+  style: {
+    maxHeight: maxHeight ? `${maxHeight}vh` : '22vh',
+    visibility: isVisible ? 'visible' : 'hidden',
+    top: popoverPosition?.y,
+    left: popoverPosition?.x,
+  },
+}))<{
+  position?: string[];
+  isVisible?: boolean;
+  popoverPosition: { x: number; y: number };
   maxHeight?: number;
 }>`
-  max-height: ${({ maxHeight }) => maxHeight ?? 22}vh;
   overflow-y: auto;
   overflow-x: hidden;
-  visibility: ${({ isVisible }) => (isVisible ? `visible` : `hidden`)};
   position: fixed;
-
   background-color: white;
   border: 0.15vw solid black;
   border-radius: 0.75vw;
@@ -190,14 +199,14 @@ const PopoverContent = styled.div<{
   white-space: nowrap;
   max-width: fit-content;
   font-size: 0.6vw;
-  top: ${({ popoverPosition }) => popoverPosition.y};
-  left: ${({ popoverPosition }) => popoverPosition.x};
   white-space: normal;
   overflow-wrap: break-word;
+
   ::-webkit-scrollbar {
     background: transparent;
     width: 0.9vw;
   }
+
   ::-webkit-scrollbar-thumb {
     border: 0.2vw solid transparent;
     background-clip: padding-box;

@@ -1,6 +1,9 @@
-import { getComponentValue, World } from '@mud-classic/recs';
+import { getComponentValue, World } from 'engine/recs';
 
 import { Components } from 'network/';
+import { Account } from '../Account';
+import { passesConditions } from '../Conditional';
+import { filterGates } from './gate';
 import { getRoomsX } from './getters';
 import { query } from './queries';
 import { getRoom, Room, RoomOptions } from './types';
@@ -39,4 +42,17 @@ export const getAdjacentRoomIndices = (components: Components, location: Coord):
   }
 
   return results;
+};
+
+export const canEnterRoom = (
+  world: World,
+  components: Components,
+  account: Account,
+  room: Room
+): boolean => {
+  const gates = filterGates(room.gates, account.roomIndex);
+  if (room.index === 88) {
+    console.log('gates', gates);
+  }
+  return passesConditions(world, components, gates, account);
 };

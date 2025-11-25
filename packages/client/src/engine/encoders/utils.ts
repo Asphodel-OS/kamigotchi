@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers';
-
 import {
   ContractSchemaValue,
   ContractSchemaValueArrayToElement,
@@ -8,7 +6,7 @@ import {
 
 // flattens the structure of a decoded value
 export const flattenValue = <V extends ContractSchemaValue>(
-  value: BigNumber | BigNumber[] | number | number[] | boolean | boolean[] | string | string[],
+  value: bigint | bigint[] | number | number[] | boolean | boolean[] | string | string[],
   valueType: V
 ): ContractSchemaValueTypes[V] => {
   // If value is array, recursively flatten elements
@@ -21,8 +19,8 @@ export const flattenValue = <V extends ContractSchemaValue>(
   if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean')
     return value as ContractSchemaValueTypes[V];
 
-  // The value returned by abi.decode is Hexable but not a ethers.BigNumber
-  value = BigNumber.from(value);
+  // ensure value is a bigint
+  value = BigInt(value);
 
   // Value is a representable number
   if (
@@ -35,7 +33,7 @@ export const flattenValue = <V extends ContractSchemaValue>(
       ContractSchemaValue.UINT32,
     ].includes(valueType)
   ) {
-    return value.toNumber() as ContractSchemaValueTypes[V];
+    return Number(value) as ContractSchemaValueTypes[V];
   }
 
   // Value should be represented as a hex string
@@ -52,7 +50,7 @@ export const flattenValue = <V extends ContractSchemaValue>(
       ContractSchemaValue.BYTES4,
     ].includes(valueType)
   ) {
-    return value.toHexString() as ContractSchemaValueTypes[V];
+    return ('0x' + value.toString(16)) as ContractSchemaValueTypes[V];
   }
 
   // Value should be represented a plain string

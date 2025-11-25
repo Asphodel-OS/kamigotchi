@@ -10,6 +10,7 @@ import { LibTypes } from "solecs/LibTypes.sol";
 
 import { IDFromComponent, ID as IDFromCompID } from "components/IDFromComponent.sol";
 import { IDToComponent, ID as IDToCompID } from "components/IDToComponent.sol";
+import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { IndexRoomComponent, ID as IndexRoomCompID } from "components/IndexRoomComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { ExitsComponent, ID as ExitsCompID } from "components/ExitsComponent.sol";
@@ -59,8 +60,11 @@ library LibRoom {
 
     IDToComponent(getAddrByID(components, IDToCompID)).set(id, genGateAtPtr(roomIndex));
     IDFromComponent fromComp = IDFromComponent(getAddrByID(components, IDFromCompID));
-    if (sourceIndex != 0) fromComp.set(id, genGateSourcePtr(sourceIndex));
-    else fromComp.set(id, 0); // to enable queries
+    if (sourceIndex != 0) {
+      // store as sourceIndex for FE
+      IdSourceComponent(getAddrByID(components, IdSourceCompID)).set(id, sourceIndex);
+      fromComp.set(id, genGateSourcePtr(sourceIndex));
+    } else fromComp.set(id, 0); // to enable queries
   }
 
   function addFlag(IUintComp components, uint32 index, string memory flag) internal {

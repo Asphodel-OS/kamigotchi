@@ -1,4 +1,4 @@
-import { EntityID } from '@mud-classic/recs';
+import { EntityID } from 'engine/recs';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -9,17 +9,9 @@ import { Account, Item } from 'network/shapes';
 import { ExecutedOffer } from '../management/offers/ExecutedOffer';
 
 export const TradeHistory = ({
-  controls: {
-    typeFilter,
-  },
-  data: {
-    account,
-    tradeHistory,
-  },
-  utils: {
-    getTradeHistory,
-    getItemByIndex,
-  },
+  controls: { typeFilter },
+  data: { account, tradeHistory },
+  utils: { getTradeHistory, getItemByIndex },
 }: {
   controls: {
     typeFilter: TradeType;

@@ -14,6 +14,8 @@ import { LibAllo } from "libraries/LibAllo.sol";
 uint256 constant ID = uint256(keccak256("system.goal.registry"));
 
 contract _GoalRegistrySystem is System, AuthRoles {
+  using LibString for string;
+
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function create(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
@@ -143,9 +145,14 @@ contract _GoalRegistrySystem is System, AuthRoles {
     uint256 goalID = LibGoal.getByIndex(components, goalIndex);
     require(goalID != 0, "Goal does not exist");
 
-    uint256 tierID = LibGoal.createTier(components, goalIndex, name, 0);
+    uint256 tierID = LibGoal.createTier(components, goalIndex, "Community", 0);
     uint256 anchorID = LibGoal.genAlloAnchor(tierID);
-    uint256 id = LibAllo.createEmpty(components, goalID, anchorID, "Community");
+    uint256 id = LibAllo.createEmpty(
+      components,
+      goalID,
+      anchorID,
+      string("DISPLAY_ONLY_").concat(name)
+    );
     return id;
   }
 

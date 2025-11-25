@@ -38,10 +38,13 @@ import { LibScore } from "libraries/LibScore.sol";
  *   - to achieve a Goal with multiple objectives, create multiple Goals
  * - Requirements (generic account requirements via LibConditional)
  * - Tiers (e.g. bronze, silver, gold)
- *   - Intimidiate entity to split rewards based on contribution
- *     - Higher tiers also recieve lower tier rewards (eg Gold gets Gold + Silver + Bronze)
+ *   - Intimidate entity to split rewards based on contribution
+ *     - Higher tiers also receive lower tier rewards (eg Gold gets Gold + Silver + Bronze)
  *     - Uses ValueComp as the min contribution to qualify for a tier
  *       - eg Bronze ValueComp = 100, contribution >= 100 to qualify for Bronze
+ *   - 0 cutoff indicates
+ *     - DISPLAY_ONLY rewards, meant to display on client, no direct action via contracts
+ *     - Proportional rewards, meant to distribute rewards based on contribution
  * - Rewards (standard reward shape)
  *   - Points to tiers, rather than the goal directly
  *   - When querying: Goal -> Tier -> Reward
@@ -182,9 +185,16 @@ library LibGoal {
     uint256 goalID,
     uint256 accID
   ) internal {
-    uint256[] memory activeTiers = getClaimableTiers(comps, goalIndex, goalID, accID);
+    uint256 contributionAmt = getContributionAmt(comps, goalID, accID);
+
+    // distributing tiered rewards
+    uint256[] memory activeTiers = getClaimableTiers(comps, goalIndex, contributionAmt);
     uint256[] memory rwdIDs = getRewards(comps, activeTiers);
     LibAllo.distribute(world, comps, rwdIDs, accID);
+
+    // distributing proportional rewards
+    rwdIDs = getProportionalRewards(comps, goalIndex);
+    LibAllo.distribute(world, comps, rwdIDs, contributionAmt, accID);
   }
 
   ////////////////////
@@ -313,20 +323,29 @@ library LibGoal {
     return LibAllo.queryFor(comps, anchorIDs);
   }
 
+  /// @notice gets proportional rewards (cutoff = 0)
+  /// @dev DISPLAY_ONLY rewards are queried here too, but skipped in distribution
+  function getProportionalRewards(
+    IUintComp comps,
+    uint32 goalIndex
+  ) internal view returns (uint256[] memory) {
+    return LibAllo.queryFor(comps, genAlloAnchor(goalIndex, 0));
+  }
+
   /// @notice gets tiers that user qualifies for
+  /// @dev does not include proportional rewards
   function getClaimableTiers(
     IUintComp comps,
     uint32 goalIndex,
-    uint256 goalID,
-    uint256 accID
+    uint256 contributionAmt
   ) internal view returns (uint256[] memory) {
     uint256[] memory tierIDs = getTiers(comps, goalIndex);
     uint256[] memory cutoffs = ValueComponent(getAddrByID(comps, ValueCompID)).safeGet(tierIDs);
 
     // filter out unreached tiers and display only tiers that are reached
-    uint256 contribution = getContributionAmt(comps, goalID, accID);
     for (uint256 i; i < tierIDs.length; i++) {
-      if (cutoffs[i] == 0 || contribution < cutoffs[i]) tierIDs[i] = 0;
+      // possible optimization: don't filter here, and -1 for proportional rewards
+      if (cutoffs[i] == 0 || contributionAmt < cutoffs[i]) tierIDs[i] = 0;
     }
 
     return tierIDs;
@@ -376,5 +395,10 @@ library LibGoal {
   /// @notice Retrieve the ID of a reward array
   function genAlloAnchor(uint256 tierID) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked("goal.reward", tierID)));
+  }
+
+  /// @notice gen allo anchor without creating a tier reference
+  function genAlloAnchor(uint32 goalIndex, uint256 cutoff) internal pure returns (uint256) {
+    return genAlloAnchor(LibReference.genID("goal.tier", cutoff, genTierAnchorID(goalIndex)));
   }
 }

@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 
 import { Node } from './types';
 
@@ -12,7 +12,7 @@ export const NullNode: Node = {
   roomIndex: 0,
   name: 'Empty Node',
   description: 'There is no node in this room.',
-  affinity: 'NORMAL' as string,
+  affinity: ['NORMAL'] as string[],
   drops: [],
   requirements: [],
 };

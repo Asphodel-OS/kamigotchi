@@ -2,8 +2,6 @@
 pragma solidity >=0.8.28;
 
 import { IComponent } from "./interfaces/IComponent.sol";
-import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
-import { getCompByID } from "solecs/utils.sol";
 
 enum QueryType {
   Has,

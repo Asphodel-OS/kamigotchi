@@ -83,13 +83,16 @@ export const RecipeCard = ({
     <Card
       key={recipe.index}
       image={{
+        fit: 'contain',
         icon: item.image,
         scale: 7.5,
         padding: 1,
-        overlay: `${amt * quantity}`,
         tooltip: {
           text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
           maxWidth: 25,
+        },
+        effects: {
+          overlay: `${amt * quantity}`,
         },
       }}
       fullWidth
@@ -145,6 +148,7 @@ const TitleBar = styled.div`
   align-items: center;
   justify-content: space-between;
   user-select: none;
+  width: 100%;
 `;
 
 const TitleText = styled.div`
@@ -180,10 +184,16 @@ const Content = styled.div`
   align-items: stretch;
   padding: 0.2vw;
 `;
-
 const ContentRow = styled.div`
   display: flex;
+<<<<<<< HEAD
   margin-top: 0.95vw;
+=======
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0.3vw;
+>>>>>>> main
 `;
 
 const ContentColumn = styled.div`

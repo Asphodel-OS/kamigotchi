@@ -1,6 +1,6 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
-import { utils } from 'ethers';
+import { ethers } from 'ethers';
 
 const IDStore = new Map<string, string>();
 
@@ -30,8 +30,9 @@ export const hashArgs = (args: any[], argTypes: string[], skipFormat?: boolean):
   const key = args.join('-');
   if (IDStore.has(key)) id = IDStore.get(key)!;
   else {
-    id = utils.solidityKeccak256(argTypes, args);
-    if (!skipFormat) id = formatEntityID(id);
+    id = ethers.solidityPackedKeccak256(argTypes, args);
+    // if (!skipFormat) id = formatEntityID(id); // no longer used, as all IDs are now formatted upon decoding via RECS
+    id = formatEntityID(id);
     IDStore.set(key, id);
   }
 

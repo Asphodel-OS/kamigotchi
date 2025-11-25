@@ -1,4 +1,5 @@
-import { getComponentValue } from '@mud-classic/recs';
+import { injectStyles, InterwovenKitProvider } from '@initia/interwovenkit-react';
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { observer } from 'mobx-react-lite';
@@ -8,6 +9,7 @@ import { WagmiProvider } from 'wagmi';
 import { BootScreen } from 'app/components/boot';
 import { privyConfig, tanstackClient, wagmiConfig } from 'clients/';
 import { GodID, SyncState } from 'engine/constants';
+import { getComponentValue } from 'engine/recs';
 import { Layers } from 'network/';
 import { MainWindow } from './components/MainWindow';
 import { NetworkContext } from './context';
@@ -23,6 +25,10 @@ export const Root = observer(
     const [mounted, setMounted] = useState(true);
     const [layers, _setLayers] = useState<Layers | undefined>();
     const [ready, setReady] = useState(false);
+
+    useEffect(() => {
+      injectStyles(InterwovenKitStyles);
+    }, []);
 
     // mount root and layers used for app context
     useEffect(() => {
@@ -42,13 +48,13 @@ export const Root = observer(
         const loadingState = getComponentValue(LoadingState, GodEntityIndex!);
         if (loadingState?.state === SyncState.LIVE) setReady(true);
       });
-
       return () => {
         liveStateWatcher.unsubscribe();
       };
     }, [layers]);
 
     const showBootScreen = !mounted || !layers;
+
     return showBootScreen ? (
       <BootScreen status='' />
     ) : (
@@ -59,9 +65,11 @@ export const Root = observer(
       >
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={tanstackClient}>
-            <NetworkContext.Provider value={layers}>
-              <MainWindow ready={ready} />
-            </NetworkContext.Provider>
+            <InterwovenKitProvider disableAnalytics>
+              <NetworkContext.Provider value={layers}>
+                <MainWindow ready={ready} />
+              </NetworkContext.Provider>
+            </InterwovenKitProvider>
           </QueryClientProvider>
         </WagmiProvider>
       </PrivyProvider>

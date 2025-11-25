@@ -12,6 +12,8 @@ const ModalsToHide: Partial<Modals> = {
   inventory: false,
   quests: false,
   settings: false,
+  questDialogue: false,
+  dialogue: false,
 };
 
 export const ChatMenuButton = () => {

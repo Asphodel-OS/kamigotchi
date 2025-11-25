@@ -1,4 +1,4 @@
-import { EntityID, EntityIndex, World } from '@mud-classic/recs';
+import { EntityID, EntityIndex, World } from 'engine/recs';
 import { Components } from 'network/';
 import { Allo, getAllo } from '../Allo';
 import { queryChildrenOf } from '../utils';
@@ -35,14 +35,4 @@ export const get = (
     cost: getValue(components, entity),
     rewards: rewardEntities.map((entity: EntityIndex) => getAllo(world, components, entity)),
   };
-};
-
-export const NullScavenge: ScavBar = {
-  id: '0' as EntityID,
-  entity: 0 as EntityIndex,
-  index: 0,
-  type: '',
-  affinity: '',
-  cost: 100,
-  rewards: [],
 };

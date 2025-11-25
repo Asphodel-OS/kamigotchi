@@ -1,18 +1,14 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, IconButton, Overlay } from 'app/components/library';
+import { EmptyText, IconButton } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { KamiBlock } from '../../library/KamiBlock';
 
 export const WorldKamis = ({
   kamis,
-  state: {
-    selectedWorld,
-    setSelectedWorld,
-    selectedWild,
-  },
+  state: { selectedWorld, setSelectedWorld, selectedWild },
 }: {
   kamis: Kami[];
   state: {
@@ -40,31 +36,20 @@ export const WorldKamis = ({
   };
 
   /////////////////
-  // INTERPRETATION
-
-  const isDisabled = (kami: Kami) => {
-    return (selectedWild?.length ?? 0) > 0;
-  };
-
-  const getCount = () => {
-    return `${kamis.length}`;
-  };
-
-  /////////////////
   // RENDER
 
   return (
     <Container>
-      <Overlay top={0.9} fullWidth orientation='column' gap={0.4}>
-        <Text size={0.9}>World({getCount()})</Text>
+      <Header>
+        <Text size={0.9}>World</Text>
         <IconButton
           onClick={() => {
             setSelectedWorld(kamis);
           }}
-          text={'Select All'}
+          text={`Select All (${kamis.length})`}
           disabled={(selectedWild?.length ?? 0) > 0 || selectedWorld.length === kamis.length}
         />
-      </Overlay>
+      </Header>
       <Scrollable>
         {displayed.map((kami) => (
           <KamiBlock
@@ -72,20 +57,18 @@ export const WorldKamis = ({
             tooltip={(selectedWild?.length ?? 0) > 0 ? ['Only imports or exports at a time'] : []}
             kami={kami}
             select={{
-              isDisabled: isDisabled(kami),
+              isDisabled: (selectedWild?.length ?? 0) > 0,
               isSelected: selectedWorld.includes(kami),
               onClick: () => handleSelect(kami),
             }}
           />
         ))}
       </Scrollable>
-      <Overlay fullWidth fullHeight passthrough>
-        <EmptyText
-          size={1}
-          text={['You have no Kami', 'in the world']}
-          isHidden={!!displayed.length}
-        />
-      </Overlay>
+      <EmptyText
+        size={1}
+        text={['You have no Kami', 'in the world']}
+        isHidden={!!displayed.length}
+      />
     </Container>
   );
 };
@@ -98,6 +81,24 @@ const Container = styled.div`
   flex-flow: column nowrap;
 `;
 
+const Header = styled.div`
+  position: sticky;
+  top: 0;
+
+  padding: 0.6vw;
+  background-color: rgb(238, 238, 238);
+  gap: 0.6vw;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 0.9vw;
+  line-height: 1.5vw;
+  text-align: center;
+`;
+
 const Scrollable = styled.div`
   display: flex;
   flex-flow: row;
@@ -105,7 +106,6 @@ const Scrollable = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 5vw;
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {

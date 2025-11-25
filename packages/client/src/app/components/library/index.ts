@@ -23,7 +23,7 @@ export { AccountCard, Card, KamiCard } from './cards';
 export { Stepper } from './controls';
 export { InputSingleNumberForm, InputSingleTextForm } from './inputs';
 export { KamiBlock } from './KamiBlock';
-export { Battery, Countdown, ProgressBar } from './measures';
+export { Battery, CountdownBar, CountdownCircle, ProgressBar } from './measures';
 export { HelpChip, Pairing } from './misc';
 export { ModalHeader, ModalWrapper } from './modals';
 export { Popover, TextTooltip } from './poppers';

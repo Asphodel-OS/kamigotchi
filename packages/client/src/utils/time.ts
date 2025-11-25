@@ -7,7 +7,15 @@ const SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
 /////////////////
 // NORMIETIME
 
+// get the countdown string for a given end timestamp
+export const getCountdown = (endTs: number) => {
+  const now = Math.floor(Date.now() / 1000);
+  return formatCountdown(endTs - now);
+};
+
+// formats seconds into a countdown string
 export const formatCountdown = (secs: number) => {
+  if (secs < 0) return '00:00:00';
   const pad = (n: number) => (n < 10 ? `0${n}` : n);
 
   const h = Math.floor(secs / 3600);
@@ -35,14 +43,19 @@ export const getTimeDeltaString = (delta: number): string => {
   if (delta > SECONDS_PER_DAY) {
     const days = Math.floor(delta / SECONDS_PER_DAY);
     const hours = Math.floor((delta % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
-    return `${days} days ${hours} hours ago`;
+    return `${days}d ${hours}h ago`;
   } else if (delta > SECONDS_PER_HOUR) {
     const hours = Math.floor(delta / SECONDS_PER_HOUR);
     const minutes = Math.floor((delta % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-    return `${hours} hours ${minutes} minutes ago`;
-  } else {
+    return `${hours}h ${minutes}m ago`;
+  } else if (delta > SECONDS_PER_MINUTE) {
     const minutes = Math.floor(delta / SECONDS_PER_MINUTE);
-    return `${minutes} minutes ago`;
+    const seconds = Math.floor(delta % SECONDS_PER_MINUTE);
+    return `${minutes}m ${seconds}s ago`;
+  } else if (delta > 5) {
+    return `${Math.floor(delta)}s ago`;
+  } else {
+    return 'just now';
   }
 };
 

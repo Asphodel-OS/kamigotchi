@@ -1,4 +1,4 @@
-import { EntityIndex, getComponentValue } from '@mud-classic/recs';
+import { EntityIndex, getComponentValue } from 'engine/recs';
 
 import { ActionState, defineActionComponent } from 'network/systems/ActionSystem';
 import { waitForComponentValueIn } from 'network/utils/';
@@ -25,7 +25,7 @@ export const resolveState = async (
 };
 
 // check if an Action resolved to a successful completion
-export const didComplete = async (
+export const didSucceed = async (
   action: ReturnType<typeof defineActionComponent>,
   transaction: EntityIndex
 ) => {

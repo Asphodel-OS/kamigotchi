@@ -51,7 +51,7 @@ export async function genInitScript(
 // generates init script for tests, enabling tests/deployments to share configs
 export async function genInitTests() {
   const world = new WorldState();
-  await world.api.config.init();
+  await world.api.configs.init();
   await world.writeCalls();
   await generateInitWorld();
 

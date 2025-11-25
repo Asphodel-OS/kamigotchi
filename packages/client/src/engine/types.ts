@@ -1,11 +1,11 @@
-import { Components } from '@mud-classic/recs';
-import { BaseContract } from 'ethers';
+import { Components } from 'engine/recs';
+import { Contract } from 'ethers';
 
 import { ClockConfig } from './executors';
 import { ProviderConfig } from './providers';
 
 export type Contracts = {
-  [key: string]: BaseContract;
+  [key: string]: Contract;
 };
 
 // Mapping from hashed contract component id to client component key

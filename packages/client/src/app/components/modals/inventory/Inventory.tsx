@@ -1,5 +1,5 @@
-import { EntityID, EntityIndex } from '@mud-classic/recs';
 import { uuid } from '@mud-classic/utils';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
 import { getAccount as _getAccount, getAccountKamis } from 'app/cache/account';
@@ -25,7 +25,7 @@ import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { didActionComplete } from 'network/utils';
+import { didActionSucceed } from 'network/utils';
 import { ItemGrid } from './items/ItemGrid';
 import { MusuRow } from './MusuRow';
 import { Transfer } from './transfer/Transfer';
@@ -88,6 +88,10 @@ export const InventoryModal: UIComponent = {
         },
       };
     })();
+
+    /////////////////
+    // INSTANTIATIONS
+
     const { actions, api } = network;
     const { accountEntity } = data;
     const { getAccount, getKamis } = utils;
@@ -157,7 +161,7 @@ export const InventoryModal: UIComponent = {
           return api.account.item.transfer(itemsIndexes, amts, account.id);
         },
       });
-      const completed = await didActionComplete(actions.Action, tx);
+      const completed = await didActionSucceed(actions.Action, tx);
       if (completed) {
         setResetSend(true);
       }
@@ -220,7 +224,6 @@ export const InventoryModal: UIComponent = {
         onClose={() => setMode('STOCK')}
         canExit
         noPadding
-        overlay
         truncate
       >
         {!accountEntity ? (
