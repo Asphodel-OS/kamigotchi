@@ -1,9 +1,9 @@
 import { Item } from 'app/cache/item';
-import { StyledTooltipContent } from 'app/components/library/poppers';
+import { TooltipContent } from 'app/components/library';
 import { Allo } from 'network/shapes/Allo';
 import { DetailedEntity } from 'network/shapes/utils';
 
-export const ItemGridTooltip = ({
+export const ItemTooltip = ({
   item,
   utils: { displayRequirements, parseAllos },
 }: {
@@ -29,7 +29,7 @@ export const ItemGridTooltip = ({
   };
 
   return (
-    <StyledTooltipContent
+    <TooltipContent
       img={image}
       title={title}
       subtitle={{ text: 'Type', content: type }}

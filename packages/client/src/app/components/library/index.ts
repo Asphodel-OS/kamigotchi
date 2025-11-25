@@ -26,8 +26,9 @@ export { KamiBlock } from './KamiBlock';
 export { Battery, CountdownBar, CountdownCircle, ProgressBar } from './measures';
 export { HelpChip, Pairing } from './misc';
 export { ModalHeader, ModalWrapper } from './modals';
-export { Popover, TextTooltip } from './poppers';
+export { Popover } from './poppers';
 export { EmptyText, Text } from './text';
+export { ItemTooltip, TextTooltip, Tooltip, TooltipContent } from './tooltips';
 export { ValidatorWrapper } from './validators';
 
 export type { Option as IconListButtonOption } from './buttons/IconListButton';

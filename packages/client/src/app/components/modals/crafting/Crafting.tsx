@@ -29,8 +29,8 @@ export const CraftingModal: UIComponent = {
       utils: {
         meetsRequirementsRecipe,
         meetsRequirements,
-        displayRequirementsRecipe,
-        displayRequirements,
+        displayRecipeRequirements,
+        displayItemRequirements,
         getItemBalance,
         hasIngredients,
         parseAllos,
@@ -51,14 +51,17 @@ export const CraftingModal: UIComponent = {
             passesConditions(world, components, recipe.requirements, account),
           meetsRequirements: (holder: Kami | Account, item: Item) =>
             passesConditions(world, components, item.requirements.use, holder),
-          displayRequirementsRecipe: (recipe: Recipe) =>
-            recipe.requirements
+          // TODO: horrendous pattern. refactor when/how we parse conditional text
+          displayRecipeRequirements: (recipe: Recipe) => {
+            return recipe.requirements
               .map((req) => parseConditionalText(world, components, req))
-              .join(', '),
-          displayRequirements: (recipe: Item) =>
-            recipe.requirements.use
+              .join(', ');
+          },
+          displayItemRequirements: (item: Item) => {
+            return item.requirements.use
               .map((req) => parseConditionalText(world, components, req))
-              .join('\n '),
+              .join('\n ');
+          },
           getItemBalance: (index: number) => _getItemBalance(world, components, account.id, index),
           hasIngredients: (recipe: Recipe) =>
             _hasIngredients(world, components, recipe, account.id),
@@ -147,8 +150,8 @@ export const CraftingModal: UIComponent = {
             utils={{
               meetsRequirementsRecipe,
               meetsRequirements,
-              displayRequirementsRecipe,
-              displayRequirements,
+              displayRecipeRequirements,
+              displayItemRequirements,
               getItemBalance,
               parseAllos,
               getItemByIndex,

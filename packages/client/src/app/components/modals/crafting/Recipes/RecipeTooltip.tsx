@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { StyledTooltipContent } from 'app/components/library/poppers';
+import { TooltipContent } from 'app/components/library';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Recipe } from 'network/shapes/Recipe';
@@ -61,7 +61,7 @@ export const RecipeTooltip = ({
   // RENDER
 
   return (
-    <StyledTooltipContent
+    <TooltipContent
       img={item.image}
       title={`Recipe for ${item.name}`}
       subtitle={{ text: 'Grants', content: getSubtitle() }}

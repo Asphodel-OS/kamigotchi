@@ -69,8 +69,9 @@ export const InventoryModal: UIComponent = {
           accountEntity,
         },
         utils: {
-          displayRequirements: (recipe: Item) =>
-            recipe.requirements.use
+          // TODO: horrendous pattern. refactor when/how we parse conditional text
+          displayRequirements: (item: Item) =>
+            item.requirements.use
               .map((req) => parseConditionalText(world, components, req))
               .join('\n '),
           getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { Card, CraftButton, Stepper } from 'app/components/library';
-import { TextTooltip } from 'app/components/library/poppers';
+import { Card, CraftButton, ItemTooltip, Stepper, TextTooltip } from 'app/components/library';
 import { ExpIcon, StaminaIcon } from 'assets/images/icons/stats';
 import { Kami } from 'network/shapes';
 import { Account } from 'network/shapes/Account';
@@ -10,7 +9,6 @@ import { Allo } from 'network/shapes/Allo';
 import { Item, NullItem } from 'network/shapes/Item';
 import { Recipe } from 'network/shapes/Recipe';
 import { DetailedEntity } from 'network/shapes/utils';
-import { ItemGridTooltip } from '../../inventory/items/ItemGridTooltip';
 import { Input } from './Input';
 import { RecipeTooltip } from './RecipeTooltip';
 
@@ -28,8 +26,8 @@ export const RecipeCard = ({
     craft: (amount: number) => void;
   };
   utils: {
-    displayRequirementsRecipe: (recipe: Recipe) => string;
-    displayRequirements: (item: Item) => string;
+    displayRecipeRequirements: (recipe: Recipe) => string;
+    displayItemRequirements: (item: Item) => string;
     getItemBalance: (index: number) => number;
     meetsRequirementsRecipe: (recipe: Recipe) => boolean;
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
@@ -57,7 +55,16 @@ export const RecipeCard = ({
         scale: 7.5,
         padding: 1,
         tooltip: {
-          text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
+          text: [
+            <ItemTooltip
+              key={item.index}
+              item={item}
+              utils={{
+                parseAllos: utils.parseAllos,
+                displayRequirements: utils.displayItemRequirements,
+              }}
+            />,
+          ],
           maxWidth: 25,
         },
         effects: {

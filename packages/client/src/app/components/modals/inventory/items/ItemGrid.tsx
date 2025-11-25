@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Inventory } from 'app/cache/inventory';
-import { EmptyText, IconListButton } from 'app/components/library';
-import { ButtonListOption } from 'app/components/library/buttons';
-import { Option } from 'app/components/library/buttons/IconListButton';
+import { EmptyText, ItemTooltip } from 'app/components/library';
+import { ButtonListOption, IconListButton } from 'app/components/library/buttons';
 import { MUSU_INDEX } from 'constants/items';
 import { Account } from 'network/shapes/Account';
 import { Allo } from 'network/shapes/Allo';
@@ -13,7 +12,6 @@ import { Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { DetailedEntity } from 'network/shapes/utils';
 import { Mode } from '../types';
-import { ItemGridTooltip } from './ItemGridTooltip';
 
 const EMPTY_TEXT = ['Inventory is empty.', 'Be less poore..'];
 
@@ -67,7 +65,7 @@ export const ItemGrid = ({
   // INTERPRETATION
 
   // get the usage options for a given item
-  const getItemActions = (item: Item, bal: number): Option[] => {
+  const getItemActions = (item: Item, bal: number): ButtonListOption[] => {
     if (!item.for) return [];
     if (item.for === 'KAMI') return getKamiOptions(item);
     if (item.for === 'ACCOUNT') return getAccountOptions(item, bal);
@@ -75,7 +73,7 @@ export const ItemGrid = ({
   };
 
   // get the list of options for Kami to use Item on
-  const getKamiOptions = (item: Item): Option[] => {
+  const getKamiOptions = (item: Item): ButtonListOption[] => {
     const available = kamis.filter((kami) => meetsRequirements(kami, item));
     return available.map((kami) => ({
       text: kami.name,
@@ -85,7 +83,7 @@ export const ItemGrid = ({
   };
 
   // get the list of quantity options for an Account to use an Item in batch
-  const getAccountOptions = (item: Item, bal: number): Option[] => {
+  const getAccountOptions = (item: Item, bal: number): ButtonListOption[] => {
     if (!meetsRequirements(account, item)) return [];
     const useItem = (amt: number) => useForAccount(item, amt);
 
@@ -130,7 +128,7 @@ export const ItemGrid = ({
               options={options}
               disabled={options.length == 0}
               tooltip={{
-                text: [<ItemGridTooltip key={item.index} item={item} utils={utils} />],
+                text: [<ItemTooltip key={item.index} item={item} utils={utils} />],
                 maxWidth: 25,
               }}
             />

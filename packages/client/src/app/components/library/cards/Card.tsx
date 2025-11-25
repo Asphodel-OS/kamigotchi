@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 import { LevelUpArrows } from '../animations/LevelUp';
-import { TextTooltip } from '../poppers/TextTooltip';
 import { Overlay } from '../styles';
+import { TextTooltip } from '../tooltips';
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
 export const Card = ({

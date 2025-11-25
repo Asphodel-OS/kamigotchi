@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { calcTradeTax, getTradeType, Trade } from 'app/cache/trade';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
-import { EmptyText, Pairing, Text, TextTooltip } from 'app/components/library';
-import { ItemGridTooltip } from 'app/components/modals/inventory/items/ItemGridTooltip';
+import { EmptyText, ItemTooltip, Pairing, Text, TextTooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item } from 'network/shapes';
@@ -571,7 +570,7 @@ export const Offers = ({
                     <ItemCell>
                       <TextTooltip
                         text={[
-                          <ItemGridTooltip
+                          <ItemTooltip
                             key={`img-${item.index}`}
                             item={item as any}
                             utils={{ displayRequirements: () => '', parseAllos: () => [] }}
@@ -590,7 +589,7 @@ export const Offers = ({
                       </TextTooltip>
                       <TextTooltip
                         text={[
-                          <ItemGridTooltip
+                          <ItemTooltip
                             key={`name-${item.index}`}
                             item={item as any}
                             utils={{ displayRequirements: () => '', parseAllos: () => [] }}

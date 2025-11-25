@@ -22,8 +22,8 @@ export const Recipes = ({
     craft: (recipe: Recipe, amount: number) => void;
   };
   utils: {
-    displayRequirementsRecipe: (recipe: Recipe) => string;
-    displayRequirements: (item: Item) => string;
+    displayRecipeRequirements: (recipe: Recipe) => string;
+    displayItemRequirements: (item: Item) => string;
     getItemBalance: (index: number) => number;
     meetsRequirementsRecipe: (recipe: Recipe) => boolean;
     meetsRequirements: (holder: Kami | Account, item: Item) => boolean;
