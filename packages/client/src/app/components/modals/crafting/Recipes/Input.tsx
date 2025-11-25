@@ -22,13 +22,14 @@ export const Input = ({
 
 const Container = styled.div`
   position: relative;
+  margin-bottom: 0.3vw;
+
   display: flex;
   flex-flow: row wrap;
-
   justify-content: flex-start;
   align-items: center;
+
   user-select: none;
-  margin-bottom: 0.3vw;
 `;
 
 const Image = styled.img<{ scale: number }>`
@@ -47,10 +48,9 @@ const Quantity = styled.div<{ scale: number }>`
 
   font-size: ${({ scale }) => scale * 0.6}vw;
   padding: ${({ scale }) => scale * 0.2}vw;
-  align-items: center;
-  justify-content: center;
+
   font-weight: 900;
-  border-radius: 0.6vw;
+  border-radius: 0.3vw;
   background-color: rgba(255, 255, 255, 1);
   border: solid black 0.08vw;
 `;

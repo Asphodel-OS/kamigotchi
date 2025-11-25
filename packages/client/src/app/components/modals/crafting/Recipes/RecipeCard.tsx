@@ -134,6 +134,7 @@ const Text = styled.div`
 const Icon = styled.img`
   height: 1.2vw;
 `;
+
 const Content = styled.div`
   display: flex;
   flex-grow: 1;
