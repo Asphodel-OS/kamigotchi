@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionListButton, IconButton, Overlay, TextTooltip } from 'app/components/library';
-import { triggerQuestDialogueModal } from 'app/triggers/triggerQuestDialogueModal';
+import { triggerQuestDetailsModal } from 'app/triggers/triggerQuestDetailsModal';
 import { Allo } from 'network/shapes/Allo';
 import { parseConditionalTracking } from 'network/shapes/Conditional';
 import { meetsObjectives, Objective, Quest } from 'network/shapes/Quest';
@@ -173,7 +173,7 @@ export const QuestCard = ({
           scale={2.5}
           text={getButtonText(status)}
           onClick={() => {
-            triggerQuestDialogueModal(quest.entity);
+            triggerQuestDetailsModal(quest.entity);
           }}
         />
       </ButtonRow>

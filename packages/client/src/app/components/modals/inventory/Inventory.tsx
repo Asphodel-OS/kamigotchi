@@ -25,7 +25,7 @@ import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { didActionComplete } from 'network/utils';
+import { didActionSucceed } from 'network/utils';
 import { ItemGrid } from './items/ItemGrid';
 import { MusuRow } from './MusuRow';
 import { Transfer } from './transfer/Transfer';
@@ -161,7 +161,7 @@ export const InventoryModal: UIComponent = {
           return api.account.item.transfer(itemsIndexes, amts, account.id);
         },
       });
-      const completed = await didActionComplete(actions.Action, tx);
+      const completed = await didActionSucceed(actions.Action, tx);
       if (completed) {
         setResetSend(true);
       }

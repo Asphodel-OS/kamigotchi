@@ -12,7 +12,7 @@ export const useTypewriter = (
   speed: number,
   retrigger?: boolean | string,
   onUpdate?: () => void,
-  cancelled?: boolean
+  interrupted?: boolean
 ) => {
   const [displayedText, setDisplayedText] = useState<ReactNode[]>([]);
   const indexRef = useRef(0);
@@ -24,7 +24,7 @@ export const useTypewriter = (
 
   useEffect(() => {
     if (!text) return;
-    if (cancelled) {
+    if (interrupted) {
       const parts = text.split(/(MINA|MENU)/g);
       const result = parts.map((part, i) =>
         /^(MINA|MENU)$/.test(part) ? boldName(part, i) : part
@@ -39,8 +39,8 @@ export const useTypewriter = (
         clearInterval(interval);
         return;
       }
-      // leaving this hardcoreded
-      // for now
+
+      // leaving this hardcorded for now
       const remaining = text.substring(indexRef.current);
       const Mina = remaining.startsWith('MINA');
       const Menu = remaining.startsWith('MENU');
@@ -56,7 +56,7 @@ export const useTypewriter = (
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed, retrigger, onUpdate, cancelled]);
+  }, [text, speed, retrigger, onUpdate, interrupted]);
 
   return displayedText;
 };
@@ -66,15 +66,15 @@ export const TypewriterComponent = ({
   retrigger,
   speed = 30,
   onUpdate,
-  cancelled = false,
+  interrupted = false,
 }: {
   text?: string;
   retrigger?: boolean | string;
   speed?: number;
   onUpdate?: () => void;
-  cancelled?: boolean;
+  interrupted?: boolean;
 }) => {
-  const displayedText = useTypewriter(text, speed, retrigger, onUpdate, cancelled);
+  const displayedText = useTypewriter(text, speed, retrigger, onUpdate, interrupted);
   return <Container>{displayedText}</Container>;
 };
 

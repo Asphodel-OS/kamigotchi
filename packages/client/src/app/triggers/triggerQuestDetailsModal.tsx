@@ -3,7 +3,7 @@ import { EntityIndex } from 'engine/recs';
 
 import { playClick } from 'utils/sounds';
 
-export const triggerQuestDialogueModal = (entity: EntityIndex) => {
+export const triggerQuestDetailsModal = (entity: EntityIndex) => {
   const { questIndex } = useSelected.getState();
   const { setModals, modals } = useVisibility.getState();
   playClick();

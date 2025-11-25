@@ -1,16 +1,14 @@
+import styled from 'styled-components';
+
 import { Overlay } from 'app/components/library';
-import { triggerQuestDialogueModal } from 'app/triggers/triggerQuestDialogueModal';
+import { triggerQuestDetailsModal } from 'app/triggers/triggerQuestDetailsModal';
 import { objectMinaRed } from 'assets/images/rooms/13_giftshop';
 import { Quest } from 'network/shapes/Quest';
-import styled from 'styled-components';
-import { TypewriterComponent } from '../questDialogue/Typewriter';
-/* 
-this will be trigered
-when a npc has not a quest 
-associated to them 
-TODO: implement  opening last quest 
-associated with npc when clicking on them
-*/
+import { TypewriterComponent } from '../questDetails/Typewriter';
+/*
+ * this will be trigerred when an npc does not have a quest associated to them
+ * TODO: implement opening last quest associated with npc when clicking on them
+ */
 export const NpcDialogue = ({
   hasAvailableQuests = [],
   hasOngoingQuests = [],
@@ -58,7 +56,7 @@ export const NpcDialogue = ({
               <Option
                 color={npcColor}
                 key={i}
-                onClick={() => triggerQuestDialogueModal(quest.entity)}
+                onClick={() => triggerQuestDetailsModal(quest.entity)}
               >
                 {quest.name}
               </Option>
@@ -72,7 +70,7 @@ export const NpcDialogue = ({
               <Option
                 color={npcColor}
                 key={i}
-                onClick={() => triggerQuestDialogueModal(quest.entity)}
+                onClick={() => triggerQuestDetailsModal(quest.entity)}
               >
                 {quest.name}
               </Option>

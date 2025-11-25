@@ -1,7 +1,7 @@
 export {
   didCancel as didActionCancel,
-  didComplete as didActionComplete,
   didFail as didActionFail,
+  didSucceed as didActionSucceed,
   resolveState as resolveActionState,
   waitForCompletion as waitForActionCompletion,
 } from './actions';
