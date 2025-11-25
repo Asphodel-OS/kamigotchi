@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { Kami } from 'network/shapes/Kami';
 import { CountdownCircle } from '../measures';
-import { TextTooltip } from '../poppers';
+import { TextTooltip } from '../tooltips';
 
 export const Cooldown = ({ kami }: { kami: Kami }) => {
   const [lastTick, setLastTick] = useState(Date.now());

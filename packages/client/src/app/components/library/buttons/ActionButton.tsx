@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { pulseFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
-import { TextTooltip } from '../poppers/TextTooltip';
+import { TextTooltip } from '../tooltips';
 
 // ActionButton is a text button that triggers an Action when clicked
 export const ActionButton = ({

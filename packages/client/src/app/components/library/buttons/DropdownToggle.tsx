@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
-import { Tooltip } from '../poppers';
-import { Popover } from '../poppers/Popover';
+import { Popover } from '../poppers';
+import { Tooltip } from '../tooltips';
 import { IconButton } from './IconButton';
 import { VerticalToggle } from './VerticalToggle';
 

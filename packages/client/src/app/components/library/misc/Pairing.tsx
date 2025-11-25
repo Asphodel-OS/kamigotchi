@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { TextTooltip } from '../poppers/TextTooltip';
 import { Text } from '../text';
+import { TextTooltip } from '../tooltips';
 
 const SCALE_DEFAULT = 1.2;
 

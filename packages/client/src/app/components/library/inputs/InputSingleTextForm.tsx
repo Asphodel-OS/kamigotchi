@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { playClick } from 'utils/sounds';
 import { IconButton } from '../buttons';
-import { TextTooltip } from '../poppers/TextTooltip';
+import { TextTooltip } from '../tooltips';
 
 // InputSingleTextForm is a styled input field with some additional frills
 export const InputSingleTextForm = ({
