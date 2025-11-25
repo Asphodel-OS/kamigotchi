@@ -1,6 +1,6 @@
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
-import { TextTooltip } from '../../poppers';
+import { TextTooltip } from '../../tooltips';
 import { IconButton } from '../IconButton';
 
 export const OnyxButton = ({

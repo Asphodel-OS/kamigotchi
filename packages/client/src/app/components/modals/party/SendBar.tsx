@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, IconListButtonOption } from 'app/components/library';
-import { TextTooltip } from 'app/components/library/poppers';
+import {
+  IconButton,
+  IconListButton,
+  IconListButtonOption,
+  TextTooltip,
+} from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { MenuIcons } from 'assets/images/icons/menu';
