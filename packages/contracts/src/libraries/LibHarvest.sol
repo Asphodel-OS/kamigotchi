@@ -204,7 +204,7 @@ library LibHarvest {
     } else if (nodeAffs.length == 2) {
       bool isReversed = false;
       if (bodyAff.eq(nodeAffs[1])) isReversed = true;
-      else if (handAff.eq(nodeAffs[0])) isReversed = true;
+      else if (!bodyAff.eq(nodeAffs[0]) && handAff.eq(nodeAffs[0])) isReversed = true;
       nodeBodyAff = isReversed ? nodeAffs[1] : nodeAffs[0];
       nodeHandAff = isReversed ? nodeAffs[0] : nodeAffs[1];
     }

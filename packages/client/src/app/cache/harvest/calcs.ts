@@ -141,8 +141,8 @@ export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
     return 0;
   if (!kami.config) return 0;
 
-  const bodyAffinity = getKamiBodyAffinity(kami);
-  const handAffinity = getKamiHandAffinity(kami);
+  const bodyAff = getKamiBodyAffinity(kami);
+  const handAff = getKamiHandAffinity(kami);
 
   const nodeAffs = node.affinity;
   if (nodeAffs.length > 2) {
@@ -159,8 +159,8 @@ export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
     nodeHandAff = nodeAffs[0];
   } else if (nodeAffs.length == 2) {
     let isReversed = false;
-    if (bodyAffinity === nodeAffs[1]) isReversed = true;
-    else if (handAffinity === nodeAffs[0]) isReversed = true;
+    if (bodyAff === nodeAffs[1]) isReversed = true;
+    else if (bodyAff !== nodeAffs[0] && handAff === nodeAffs[0]) isReversed = true;
     nodeBodyAff = isReversed ? nodeAffs[1] : nodeAffs[0];
     nodeHandAff = isReversed ? nodeAffs[0] : nodeAffs[1];
   }
@@ -169,11 +169,11 @@ export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
   let shift = 0;
   const upShiftBonus = kami.bonuses?.harvest.fertility.boost ?? 0;
 
-  const bodyEffectiveness = getHarvestEffectiveness(nodeBodyAff, bodyAffinity);
+  const bodyEffectiveness = getHarvestEffectiveness(nodeBodyAff, bodyAff);
   const bodyConfig = kami.config.harvest.efficacy.body;
   shift += calcEfficacyShift(bodyEffectiveness, bodyConfig, upShiftBonus);
 
-  const handEffectiveness = getHarvestEffectiveness(nodeHandAff, handAffinity);
+  const handEffectiveness = getHarvestEffectiveness(nodeHandAff, handAff);
   const handConfig = kami.config.harvest.efficacy.hand;
   shift += calcEfficacyShift(handEffectiveness, handConfig, upShiftBonus);
 
