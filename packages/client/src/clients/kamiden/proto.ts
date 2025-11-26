@@ -212,11 +212,6 @@ export interface LeaderboardRow {
   Value: string;
 }
 
-export interface LeaderboardRow {
-  Name: string;
-  Value: string;
-}
-
 function createBaseMessage(): Message {
   return { RoomIndex: 0, AccountId: '', Message: '', Timestamp: 0 };
 }
@@ -2558,64 +2553,6 @@ export const TokenPortalResponse: MessageFns<TokenPortalResponse> = {
   fromPartial(object: DeepPartial<TokenPortalResponse>): TokenPortalResponse {
     const message = createBaseTokenPortalResponse();
     message.Receipts = object.Receipts?.map((e) => PortalReceipt.fromPartial(e)) || [];
-    return message;
-  },
-};
-
-function createBaseLeaderboardRow(): LeaderboardRow {
-  return { Name: '', Value: '' };
-}
-
-export const LeaderboardRow: MessageFns<LeaderboardRow> = {
-  encode(message: LeaderboardRow, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.Name !== '') {
-      writer.uint32(10).string(message.Name);
-    }
-    if (message.Value !== '') {
-      writer.uint32(18).string(message.Value);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): LeaderboardRow {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseLeaderboardRow();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 10) {
-            break;
-          }
-
-          message.Name = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.Value = reader.string();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  create(base?: DeepPartial<LeaderboardRow>): LeaderboardRow {
-    return LeaderboardRow.fromPartial(base ?? {});
-  },
-  fromPartial(object: DeepPartial<LeaderboardRow>): LeaderboardRow {
-    const message = createBaseLeaderboardRow();
-    message.Name = object.Name ?? '';
-    message.Value = object.Value ?? '';
     return message;
   },
 };
