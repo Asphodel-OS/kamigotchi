@@ -6,7 +6,7 @@ export {
   CraftButton,
   HarvestButton,
   LiquidateButton,
-  OnyxButton,
+  OnyxReviveButton,
   StopButton,
   UseItemButton,
 } from './actions';

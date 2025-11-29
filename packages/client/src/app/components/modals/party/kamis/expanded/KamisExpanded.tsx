@@ -13,7 +13,7 @@ import { StatusDisplay } from './StatusDisplay';
 
 export const KamisExpanded = ({
   data: { account, node },
-  display: { HarvestButton, UseItemButton },
+  display: { HarvestButton, UseItemButton, OnyxReviveButton },
   state: { displayedKamis, tick },
   utils,
   isVisible,
@@ -26,6 +26,7 @@ export const KamisExpanded = ({
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
+    OnyxReviveButton: (account: Account, kami: Kami) => JSX.Element;
   };
   state: {
     displayedKamis: Kami[];
@@ -70,15 +71,24 @@ export const KamisExpanded = ({
   // DISPLAY
 
   // Choose and return the action button to display
+  // Q: what's the right way to prevent recomputes here?
   const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
     if (!isVisible) return <></>;
-    let buttons = [];
 
-    let useIcon = isDead(kami) ? ReviveIcon : FeedIcon;
-    buttons.push(UseItemButton(kami, account, useIcon));
-    if (!isDead(kami)) buttons.push(HarvestButton(account, kami, node));
+    let buttons = [];
+    if (!isDead(kami)) {
+      buttons.push(UseItemButton(kami, account, FeedIcon));
+      buttons.push(HarvestButton(account, kami, node));
+    } else {
+      buttons.push(OnyxReviveButton(account, kami));
+      buttons.push(UseItemButton(kami, account, ReviveIcon));
+    }
+
     return buttons;
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container isVisible={isVisible}>
@@ -95,8 +105,8 @@ export const KamisExpanded = ({
             levelUp: true,
             skillPoints: true,
           }}
-          utils={utils}
           tick={tick}
+          utils={utils}
         />
       ))}
     </Container>

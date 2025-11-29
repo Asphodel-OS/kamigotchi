@@ -8,8 +8,8 @@ export const onyxAPI = (systems: SystemQueue<any>) => {
   };
 
   // (Owner) revive a pet by spending onyx
-  const revive = (kamiID: BigNumberish) => {
-    return systems['system.kami.onyx.revive'].executeTyped(kamiID);
+  const revive = (kamiIndex: number) => {
+    return systems['system.kami.onyx.revive'].executeTyped(kamiIndex);
   };
 
   // (Owner) respec a pet by spending onyx

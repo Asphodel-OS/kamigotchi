@@ -13,16 +13,12 @@ import { KamisExternal } from './KamisExternal';
 import { KamisExpanded } from './expanded/KamisExpanded';
 
 export const KamiList = ({
-  actions,
   controls: { view },
   data,
   display,
   state,
   utils,
 }: {
-  actions: {
-    addKamis: (kamis: Kami[]) => void;
-  };
   controls: {
     view: View;
   };
@@ -36,6 +32,7 @@ export const KamiList = ({
   display: {
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
+    OnyxReviveButton: (account: Account, kami: Kami) => JSX.Element;
   };
   state: {
     displayedKamis: Kami[];

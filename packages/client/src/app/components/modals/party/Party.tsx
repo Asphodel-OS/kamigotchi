@@ -16,6 +16,7 @@ import {
   ModalHeader,
   ModalWrapper,
   HarvestButton as _HarvestButton,
+  OnyxReviveButton as _OnyxReviveButton,
   UseItemButton as _UseItemButton,
 } from 'app/components/library';
 import { UIComponent, useLayers } from 'app/root';
@@ -78,6 +79,8 @@ export const PartyModal: UIComponent = {
         display: {
           HarvestButton: (account: Account, kami: Kami, node: Node) =>
             _HarvestButton({ network, account, kami, node }),
+          OnyxReviveButton: (account: Account, kami: Kami) =>
+            _OnyxReviveButton({ network, account, kami }),
           UseItemButton: (kami: Kami, account: Account, icon: string) =>
             _UseItemButton(network, kami, account, icon),
         },
@@ -313,9 +316,6 @@ export const PartyModal: UIComponent = {
           utils={{ passesNodeReqs: (kami: Kami) => passesNodeReqs(node, kami) }}
         />
         <KamiList
-          actions={{
-            addKamis: (kamis: Kami[]) => start(kamis, node),
-          }}
           controls={{ view }}
           data={{ account, accounts, kamis, wildKamis, node }}
           display={display}
