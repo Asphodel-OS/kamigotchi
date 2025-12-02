@@ -110,7 +110,7 @@
 ,Scavenge 1 Essence of Hearing,MIN,INC,DROPTABLE_ITEM_TOTAL,6001,1
 ,Scavenge 1 Essence of Smell,MIN,INC,DROPTABLE_ITEM_TOTAL,6002,1
 ,Scavenge 1 Essence of Taste,MIN,INC,DROPTABLE_ITEM_TOTAL,6004,1
-,"Scavenge 1 Essence of Touch ",MIN,INC,DROPTABLE_ITEM_TOTAL,6005,1
+,Scavenge 1 Essence of Touch,MIN,INC,DROPTABLE_ITEM_TOTAL,6005,1
 ,Scavenge 5 Honeydew Scale,MIN,INC,DROPTABLE_ITEM_TOTAL,11312,5
 ,Scavenge 10 Blue Pansy,MIN,INC,DROPTABLE_ITEM_TOTAL,11314,10
 ,Use the machine to buy something in the Marketplace,MIN,INC,TRADE_EXECUTE,,1
