@@ -85,6 +85,7 @@ export const TradingModal: UIComponent = {
     const [myTrades, setMyTrades] = useState<Trade[]>([]);
 
     const [tab, setTab] = useState<TabType>('Orderbook');
+    const [renderedTabs, setRenderedTabs] = useState<TabType[]>(['Orderbook']);
     const [tick, setTick] = useState(Date.now());
     const [isConfirming, setIsConfirming] = useState(false);
     const [confirmData, setConfirmData] = useState<ConfirmationData>(EmptyConfimation);
@@ -109,6 +110,11 @@ export const TradingModal: UIComponent = {
       setAccount(account);
       refreshTrades(account);
     }, [modalVisible, tick]);
+
+    // lazily mount content where there is a bunch
+    useEffect(() => {
+      setRenderedTabs((prev) => (prev.includes(tab) ? prev : [...prev, tab]));
+    }, [tab]);
 
     // update trade history whenever tab is checked
     useEffect(() => {
@@ -318,36 +324,42 @@ export const TradingModal: UIComponent = {
         </Overlay>
         <Tabs tab={tab} setTab={setTab} />
         <Content className='trading-modal-content'>
-          <Orderbook
-            actions={{ cancelTrade, executeTrade }}
-            controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
-            data={{ account, items, trades }}
-            utils={utils}
-            isVisible={tab === `Orderbook`}
-          />
-          <Management
-            actions={{ cancelTrade, completeTrade, createTrade, executeTrade }}
-            controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
-            data={{
-              account,
-              currencies,
-              inventory: account.inventories ?? [],
-              items,
-              trades: myTrades,
-            }}
-            types={{ ActionComp }}
-            utils={{ ...utils, getAllItems }}
-            isVisible={tab === `Management`}
-          />
-          <History
-            data={{
-              account,
-              currencies,
-              tradeHistory,
-            }}
-            utils={utils}
-            isVisible={tab === `History`}
-          />
+          {renderedTabs.includes('Orderbook') && (
+            <Orderbook
+              actions={{ cancelTrade, executeTrade }}
+              controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
+              data={{ account, items, trades }}
+              utils={utils}
+              isVisible={tab === `Orderbook`}
+            />
+          )}
+          {renderedTabs.includes('Management') && (
+            <Management
+              actions={{ cancelTrade, completeTrade, createTrade, executeTrade }}
+              controls={{ tab, setConfirmData, isConfirming, setIsConfirming }}
+              data={{
+                account,
+                currencies,
+                inventory: account.inventories ?? [],
+                items,
+                trades: myTrades,
+              }}
+              types={{ ActionComp }}
+              utils={{ ...utils, getAllItems }}
+              isVisible={tab === `Management`}
+            />
+          )}
+          {renderedTabs.includes('History') && (
+            <History
+              data={{
+                account,
+                currencies,
+                tradeHistory,
+              }}
+              utils={utils}
+              isVisible={tab === `History`}
+            />
+          )}
         </Content>
       </ModalWrapper>
     );
