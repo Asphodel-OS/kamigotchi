@@ -44,7 +44,7 @@
 ,Give Mina 20 Blue Pansy,MIN,INC,ITEM_BURN,11314,20
 ,Give Uninteresting Paste,MIN,INC,ITEM_BURN,11414,1
 ,Give 1 Wonder Egg,MIN,INC,ITEM_BURN,21003,1
-,Give 1 Flash Talisman,MIN,INC,ITEM_BURN,21103,1
+,Give 1 Flash Talisman,MIN,INC,ITEM_BURN,11412,1
 ,Give Pyramid Engine (Soulbound),MIN,INC,ITEM_BURN,100005,1
 ,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
 ,Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
@@ -71,6 +71,7 @@
 ,Move to Lost Skeleton,IS,BOOL,ROOM,25,
 ,Move to the Trash-Strewn Graves,IS,BOOL,ROOM,26,
 ,Move to Slippery Pit,IS,BOOL,ROOM,68,
+,Move to Flood Mural,IS,BOOL,ROOM,75,
 ,Make 9 Scavenging Rolls at Labs Entrance,MIN,INC,SCAV_CLAIM_NODE,6,9
 ,Make 2 Scavenging Rolls at Scrap Confluence,MIN,INC,SCAV_CLAIM_NODE,12,2
 ,Make 7 Scavenging Rolls at Temple Cave,MIN,INC,SCAV_CLAIM_NODE,15,7
@@ -101,11 +102,11 @@
 ,Scavenge 1 Pine Cone,MIN,INC,DROPTABLE_ITEM_TOTAL,1004,1
 ,Scavenge 1 Daffodil,MIN,INC,DROPTABLE_ITEM_TOTAL,1011,1
 ,Scavenge 1 Sanguine Shroom,MIN,INC,DROPTABLE_ITEM_TOTAL,1013,1
-,Scavenge 5 Bone Chunks,MIN,INC,DROPTABLE_ITEM_TOTAL,1015,5
 ,Scavenge 5 Dried Stems,MIN,INC,DROPTABLE_ITEM_TOTAL,1016,5
 ,Scavenge 5 Patinated Pipes,MIN,INC,DROPTABLE_ITEM_TOTAL,1017,5
 ,Scavenge 15 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,15
 ,Scavenge 20 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,20
+,Scavenge 5 Bone Chunks,MIN,INC,DROPTABLE_ITEM_TOTAL,1020,5
 ,Scavenge 1 Essence of Hearing,MIN,INC,DROPTABLE_ITEM_TOTAL,6001,1
 ,Scavenge 1 Essence of Smell,MIN,INC,DROPTABLE_ITEM_TOTAL,6002,1
 ,Scavenge 1 Essence of Taste,MIN,INC,DROPTABLE_ITEM_TOTAL,6004,1
