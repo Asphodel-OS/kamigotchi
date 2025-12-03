@@ -147,27 +147,27 @@ export async function initGoals(api: AdminAPI) {
   // await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 21004, 25);
   // await api.goal.enable(7);
 
-  // await api.goal.create(
-  //   8,
-  //   'Secret Teachings of the Ages',
-  //   `Whatever lies behind this door must be really important. There are layers of energy fields blocking us off. Some of these I can't even recognize…
-  //     Mina says it needs to recognize its people and remember its history. If the door feels like it's the right time and place, it'll open. Providing that sensation is going to be pretty hard, but you can do it!`,
-  //   74,
-  //   'ITEM',
-  //   'CURR_MIN',
-  //   6007,
-  //   500
-  // );
-  // await api.goal.add.reward.display(8, 'Door Unlock');
-  // await api.goal.add.reward.basic(8, 'Bronze', 2, 'LOYALTY', 1, 3);
-  // await api.goal.add.reward.basic(8, 'Bronze', 2, 'ITEM', 21004, 22);
-  // await api.goal.add.reward.basic(8, 'Bronze', 2, 'ITEM', 11411, 2);
-  // await api.goal.add.reward.basic(8, 'Silver', 6, 'LOYALTY', 1, 3);
-  // await api.goal.add.reward.basic(8, 'Silver', 6, 'ITEM', 21003, 66);
-  // await api.goal.add.reward.basic(8, 'Silver', 6, 'ITEM', 11501, 33);
-  // await api.goal.add.reward.basic(8, 'Gold', 11, 'LOYALTY', 1, 3);
-  // // TODO: Mochi Lootbox (item not found in items.csv)
-  // await api.goal.enable(8);
+  await api.goal.create(
+    8,
+    'Secret Teachings of the Ages',
+    `Whatever lies behind this door must be really important. There are layers of energy fields blocking us off. Some of these I can't even recognize…
+      Mina says it needs to recognize its people and remember its history. If the door feels like it's the right time and place, it'll open. Providing that sensation is going to be pretty hard, but you can do it!`,
+    74,
+    'ITEM',
+    'CURR_MIN',
+    6007,
+    500
+  );
+  await api.goal.add.reward.display(8, 'Door Unlock');
+  await api.goal.add.reward.basic(8, 'Bronze', 2, 'LOYALTY', 1, 3);
+  await api.goal.add.reward.basic(8, 'Bronze', 2, 'ITEM', 21004, 22);
+  await api.goal.add.reward.basic(8, 'Bronze', 2, 'ITEM', 11411, 2);
+  await api.goal.add.reward.basic(8, 'Silver', 6, 'LOYALTY', 1, 3);
+  await api.goal.add.reward.basic(8, 'Silver', 6, 'ITEM', 21003, 66);
+  await api.goal.add.reward.basic(8, 'Silver', 6, 'ITEM', 11501, 33);
+  await api.goal.add.reward.basic(8, 'Gold', 11, 'LOYALTY', 1, 3);
+  await api.goal.add.reward.basic(8, 'Gold', 11, 'ITEM', 21005, 1);
+  await api.goal.enable(8);
 
   await api.goal.create(
     9,
