@@ -169,29 +169,23 @@ export async function initGoals(api: AdminAPI) {
   // // TODO: Mochi Lootbox (item not found in items.csv)
   // await api.goal.enable(8);
 
-  // await api.goal.create(
-  //   9,
-  //   'Just a Little Snack',
-  //   `I thought that little creature on the pedestal was stuffed, but I can hear him whispering to us. Can you make it out?
-  //     It's saying that it's hungry and hasn't eaten in a long time. Why not eat the apples here? It says it doesn't like them.
-  //     The little thing is kind of cute. Maybe we could share something?`,
-  //   89,
-  //   'ITEM',
-  //   'CURR_MIN',
-  //   11302,
-  //   5000
-  // );
-  // await api.goal.add.reward.display(9, 'Questline unlocked');
-  // await api.goal.add.reward.basic(9, 'Bronze', 21, 'ITEM', 1012, 13);
-  // await api.goal.add.reward.basic(9, 'Bronze', 21, 'ITEM', 1010, 13);
-  // await api.goal.add.reward.basic(9, 'Bronze', 21, 'ITEM', 1007, 13);
-  // await api.goal.add.reward.basic(9, 'Silver', 67, 'ITEM', 1012, 13);
-  // await api.goal.add.reward.basic(9, 'Silver', 67, 'ITEM', 1010, 13);
-  // await api.goal.add.reward.basic(9, 'Silver', 67, 'ITEM', 1007, 13);
-  // await api.goal.add.reward.basic(9, 'Gold', 126, 'ITEM', 1012, 13);
-  // await api.goal.add.reward.basic(9, 'Gold', 126, 'ITEM', 1010, 13);
-  // await api.goal.add.reward.basic(9, 'Gold', 126, 'ITEM', 1007, 13);
-  // await api.goal.enable(9);
+  await api.goal.create(
+    9,
+    'Just a Little Snack',
+    `I thought that little creature on the pedestal was stuffed, but I can hear him whispering to us. Can you make it out?
+      It's saying that it's hungry and hasn't eaten in a long time. Why not eat the apples here? It says it doesn't like them.
+      The little thing is kind of cute. Maybe we could share something?`,
+    89,
+    'ITEM',
+    'CURR_MIN',
+    11302,
+    5000
+  );
+  await api.goal.add.reward.display(9, 'Questline unlocked globally');
+  await api.goal.add.reward.basic(9, 'Bronze', 18, 'ITEM', 1012, 3);
+  await api.goal.add.reward.basic(9, 'Silver', 60, 'ITEM', 1010, 7);
+  await api.goal.add.reward.basic(9, 'Gold', 100, 'ITEM', 1007, 12);
+  await api.goal.enable(9);
 }
 
 export async function deleteGoals(api: AdminAPI, indices: number[]) {
