@@ -35,11 +35,11 @@ Slightly sacred. "
 ,In Game,Sanguine Shroom,1013,Material,Uncommon,,,,,A mushroom that bruises and bleeds like flesh. Some believe that they feed on decaying spirits.
 ,In Game,Chalkberry,1014,Material,Uncommon,,,,,A dry and bitter berry coated with chalky white fungus. The berry itself is inedible; useless except as a medium for a unique wild yeast.
 ,In Game,Obol,1015,Misc,Uncommon,,,,,"An ancient coin. Despite a worn and dull finish, it still glitters in the light. Valuable to certain individuals. "
-,To Deploy,Dried Stems,1016,Material,Common,,,,,"Long-stemmed mushrooms dried in a small bundle. Although this mushroom has no known medicinal, culinary, or recreational use, it may be a functional building material. "
-,To Deploy,Patinated Pipe,1017,Material,Common,,,,,"These verdigris-coated pipes jut from the cave walls with no connection to any apparent plumbing system. Their presence defies conventional explanation. "
-,To Deploy,Cigarette Butt,1018,Material,Common,,,,,"Even something as small and disposable as a cigarette can be tied to a memory and be given a spiritual essence. You can break this down into Microplastics. "
-,To Deploy,Otherworld Coin,1019,Material,Uncommon,,,,,"The woman on the face of this coin has long pointed ears like a caracal. The language inscribed is incomprehensible. Unless you find a collector, this coin is only valuable as scrap."
-,To Deploy,Bone Chunk,1020,Material,Common,,,,,"Petrified bone in the form of a large stony chunk. If this fragment came from the skeleton of an animal, it must have been the size of a whale. "
+,In Game,Dried Stems,1016,Material,Common,,,,,"Long-stemmed mushrooms dried in a small bundle. Although this mushroom has no known medicinal, culinary, or recreational use, it may be a functional building material. "
+,In Game,Patinated Pipe,1017,Material,Common,,,,,"These verdigris-coated pipes jut from the cave walls with no connection to any apparent plumbing system. Their presence defies conventional explanation. "
+,In Game,Cigarette Butt,1018,Material,Common,,,,,"Even something as small and disposable as a cigarette can be tied to a memory and be given a spiritual essence. You can break this down into Microplastics. "
+,In Game,Otherworld Coin,1019,Material,Uncommon,,,,,"The woman on the face of this coin has long pointed ears like a caracal. The language inscribed is incomprehensible. Unless you find a collector, this coin is only valuable as scrap."
+,In Game,Bone Chunk,1020,Material,Common,,,,,"Petrified bone in the form of a large stony chunk. If this fragment came from the skeleton of an animal, it must have been the size of a whale. "
 ,In Game,Empty Cup,1102,Material,Uncommon,,,,,A small reusable cup crafted from stone. Useful for drinking potions or other beverages.
 ,In Game,Microplastics,1103,Material,Uncommon,,,,,"Fine translucent powder. A promising new substance in hexerei. "
 ,In Game,Pine Pollen,1104,Material,Uncommon,,,,,"Some people think this is very good for you. "
@@ -52,21 +52,21 @@ Slightly sacred. "
 ,In Game,Holy Syrup,1201,Material,Rare,,,,,Holy Dust diluted into a quantity of water. Forms a thin syrup that can be measured out for crafting.
 ,In Game,Resin Tincture,1202,Material,Uncommon,,,,,"A sweet, spicy syrup made from the natural resin found in the trees of Kamigotchi World. Useful for a number of recipes."
 ,In Game,Fuliginous Ooze,1203,Material,Epic,,,,,Like crude oil with the texture of clay. It seems to absorb the light around it. Could be an ingredient in powerful magic.
-,To Deploy,Ashlar,1301,Material,Uncommon,,,,,"A heavy block of unpolished and imperfect stone. Symbolic of unrefined potential. Masters can craft this into something useful.  "
-,To Deploy,Timber,1302,Material,Uncommon,,,,,Laminated timber made from thin strips of material that have been pressed and glued together. It can be cut into useful planks after a large mass has been shaped and dried.
-,To Deploy,Ingot,1303,Material,Uncommon,,,,,"A rough ingot of greenish metal. Soft enough to shape with force and heat and strong enough to hold an edge. Only .888 percent pure, so be careful when you work."
-,To Deploy,Essence of Hearing,6001,Material,Rare,,,,,One of the six essences. A coil of roaring blue flame.
-,To Deploy,Essence of Smell,6002,Material,Rare,,,,,"One of the six essences. A skyfish in a perfumed cloud. "
-,To Deploy,Essence of Sight,6003,Material,Rare,,,,,"One of the six essences. A weeping orb of sludge. "
-,To Deploy,Essence of Taste,6004,Material,Rare,,,,,One of the six essences. A stone flower bud.
-,To Deploy,Essence of Touch,6005,Material,Rare,,,,,One of the six essences. A hole in space with grasping tentacles.
-,To Deploy,Essence of Thought,6006,Material,Rare,,,,,"One of the six essences. A leafless tree with a reflective surface. "
-,To Deploy,Pure Essence,6007,Material,Epic,,,,,"The combined six essences. A ball of pure sensation. "
+,In Game,Ashlar,1301,Material,Uncommon,,,,,"A heavy block of unpolished and imperfect stone. Symbolic of unrefined potential. Masters can craft this into something useful.  "
+,In Game,Timber,1302,Material,Uncommon,,,,,Laminated timber made from thin strips of material that have been pressed and glued together. It can be cut into useful planks after a large mass has been shaped and dried.
+,In Game,Ingot,1303,Material,Uncommon,,,,,"A rough ingot of greenish metal. Soft enough to shape with force and heat and strong enough to hold an edge. Only .888 percent pure, so be careful when you work."
+,In Game,Essence of Hearing,6001,Material,Rare,,,,,One of the six essences. A coil of roaring blue flame.
+,In Game,Essence of Smell,6002,Material,Rare,,,,,"One of the six essences. A skyfish in a perfumed cloud. "
+,In Game,Essence of Sight,6003,Material,Rare,,,,,"One of the six essences. A weeping orb of sludge. "
+,In Game,Essence of Taste,6004,Material,Rare,,,,,One of the six essences. A stone flower bud.
+,In Game,Essence of Touch,6005,Material,Rare,,,,,One of the six essences. A hole in space with grasping tentacles.
+,In Game,Essence of Thought,6006,Material,Rare,,,,,"One of the six essences. A leafless tree with a reflective surface. "
+,In Game,Pure Essence,6007,Material,Epic,,,,,"The combined six essences. A ball of pure sensation. "
 ,In Game,Red Gakki Ribbon,11001,Revive,Rare,Kami,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
 
 These ribbons are greatly prized…. "
 ,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Rare,Kami,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
-,To Deploy,Djed Pillar,11003,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
+,In Game,Djed Pillar,11003,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,In Game,XP Candy (Small),11201,Food,Uncommon,Kami,NOT_TRADABLE,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
 ,In Game,XP Candy (Medium),11202,Food,Uncommon,Kami,NOT_TRADABLE,"HP+10,XP+100",,"Provides a decent amount of XP when fed to a Kami. "
@@ -89,9 +89,9 @@ These ribbons are greatly prized…. "
 ,In Game,Gakki Cookie Sticks,11304,Food,Rare,Kami,,HP+100,,Heavy duty rations by a Kami’s standards.. Restores 100 Health to a Kamigotchi.
 ,In Game,“Paeon's Field of Flowers” Spell Card,11305,Food,Rare,Kami,NOT_TRADABLE,HP+100,,The card depicts a mortally wounded man lying in a field of flowers. Some flowers take root on his body and knit the wounds closed while others bloom from the spilled blood. Activating this Spell Card on a Kamigotchi will restore 100 Health.
 ,In Game,Resin,11311,Food,Uncommon,Kami,,HP+35,,"Sticky sap with a flavor like spiced honey. An energizing snack by itself, but also useful in a number of recipes."
-,To Deploy,Honeydew Scale,11312,Food,Rare,Kami,,HP+75,,A sweet confection that appears on mushrooms and bones. Close inspection reveals this candy is actually the honeydew of a scale insect.
-,To Deploy,Golden Apple,11313,Food,Rare,Kami,,HP+150,,"Sweet golden apples on a dry silver branch. Said to be a divine gift, they are extremely rare. They’re more often found in places without trees."
-,To Deploy,Blue Pansy,11314,Food,Uncommon,Kami,,HP+25,,"A deep blue flower with a shape reminiscent of the blue butterflies common across the Kamigotchi World. It has a crisp, sweet, and refreshing flavor."
+,In Game,Honeydew Scale,11312,Food,Rare,Kami,,HP+75,,A sweet confection that appears on mushrooms and bones. Close inspection reveals this candy is actually the honeydew of a scale insect.
+,In Game,Golden Apple,11313,Food,Rare,Kami,,HP+150,,"Sweet golden apples on a dry silver branch. Said to be a divine gift, they are extremely rare. They’re more often found in places without trees."
+,In Game,Blue Pansy,11314,Food,Uncommon,Kami,,HP+25,,"A deep blue flower with a shape reminiscent of the blue butterflies common across the Kamigotchi World. It has a crisp, sweet, and refreshing flavor."
 ,In Game,XP Potion,11401,Food,Uncommon,Kami,BYPASS_BONUS_RESET,"XP+1000,ITEM1003",,Give to a Kami to increase their XP by 1000.
 ,In Game,Greater XP Potion,11402,Food,Epic,Kami,BYPASS_BONUS_RESET,"XP+15000,ITEM1006",,Give to a Kami to increase their XP by 15000.
 ,In Game,Respec Potion,11403,Misc,Epic,Kami,BYPASS_BONUS_RESET,ITEM1003,,"Give to a Kami to reset their skill points. "
@@ -102,23 +102,25 @@ These ribbons are greatly prized…. "
 ,In Game,Festival Chime,11408,Food,Rare,Kami,BYPASS_BONUS_RESET,HIB+25,,"Magical bells that gradually increase Harvest Intensity over the next long-term harvest. Your Kami will ring this chime until it breaks. "
 ,In Game,Energy Drink,11409,Food,Uncommon,Kami,BYPASS_BONUS_RESET,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
 ,In Game,Hostility Potion,11410,Food,Uncommon,Kami,BYPASS_BONUS_RESET,"ATS+3%,ITEM1102",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
-,To Deploy,Fortified XP Potion,11411,Potion,Epic,Kami,,"XP+50000,ITEM1006",,A deep-green potion with a grainy texture and dense mouthfeel. Fortified with rare red amber and the essences of old memories.
-,To Deploy,Flash Talisman,11412,Consumable,Rare,Kami,,"ATR+10%_KK,DTR-10%_KK",,"A magical talisman that burns easily. Using this on a Kami intensifies their overall sensitivity to Types, buffing their advantages on liquidations but nerfing their advantages on defense. "
-,To Deploy,Toadstool Liquor,11501,Potion,Rare,Kami,BYPASS_BONUS_RESET,"TEMP10HEALTH,TEMP1POWER",,Liquor distilled from a mash made from mushrooms and black poppy. An underworld favorite.
-,To Deploy,Sarcophagus Honey,11502,Consumable,Uncommon,Kami,,TEMP10HEALTH,,Legendary medicine believed to be the stuff of rumors. A piece of flesh has been preserved inside using ancient techniques. Give this to a Kami to grant them a temporary bonus to maximum Health.
+,In Game,Fortified XP Potion,11411,Potion,Epic,Kami,,"XP+50000,ITEM1006",,A deep-green potion with a grainy texture and dense mouthfeel. Fortified with rare red amber and the essences of old memories.
+,In Game,Flash Talisman,11412,Consumable,Rare,Kami,,"ATR+10%_KK,DTR-10%_KK",,"A magical talisman that burns easily. Using this on a Kami intensifies their overall sensitivity to Types, buffing their advantages on liquidations but nerfing their advantages on defense. "
+,To Deploy,Uninteresting Paste,11414,Consumable,Rare,Account,,SP+150,,A matte-black paste in a plastic jar. A secret incense recipe created by Mina that allows individuals without bodies to smoke tobacco.
+,In Game,Toadstool Liquor,11501,Potion,Rare,Kami,BYPASS_BONUS_RESET,"TEMP10HEALTH,TEMP1POWER",,Liquor distilled from a mash made from mushrooms and black poppy. An underworld favorite.
+,To Update,Sarcophagus Honey,11502,Consumable,Uncommon,Kami,,TEMP30HEALTH,,Legendary medicine believed to be the stuff of rumors. A piece of flesh has been preserved inside using ancient techniques. Give this to a Kami to grant them a temporary bonus to maximum Health.
 ,In Game,Spirit Glue,19001,Potion,Uncommon,Enemy_Kami,,"NEXT_COOLDOWN+180,ITEM1003",,This glue even sticks to intangible things. Can be used to add additional Cooldown to an enemy Kami and temporarily lock it down to a Node.
-,To Deploy,Animistic Poison,19101,Potion,Rare,Enemy_Kami,,STRAIN+50%,,"Dangerous to both living and nonliving beings. When used on Kamigotchi, it causes them to lose HP at a faster rate while Harvesting. "
-,To Deploy,Cthonic Blight,19201,Potion,Rare,Enemy_Kami,BYPASS_BONUS_RESET,DTS+5%,,"Highly corrosive. Can be used to clear barriers of plant or fungal matter. It can also be used on a Kamigotchi to lower its defenses. The Blight is particularly dangerous to Normal-type Kami. "
-,To Deploy,Curse Tablet,19301,Consumable,Rare,Enemy_Kami,,ATS-30%_KK,,"Also called a Defixio or Katadesmos. This ancient tablet is inscribed with a curse of weakness. Although it was meant for a long-dead human, Kami can use it on their own kind."
+,In Game,Animistic Poison,19101,Potion,Rare,Enemy_Kami,,STRAIN+50%,,"Dangerous to both living and nonliving beings. When used on Kamigotchi, it causes them to lose HP at a faster rate while Harvesting. "
+,In Game,Cthonic Blight,19201,Potion,Rare,Enemy_Kami,BYPASS_BONUS_RESET,DTS+5%,,"Highly corrosive. Can be used to clear barriers of plant or fungal matter. It can also be used on a Kamigotchi to lower its defenses. The Blight is particularly dangerous to Normal-type Kami. "
+,In Game,Curse Tablet,19301,Consumable,Rare,Enemy_Kami,,ATS-30%_KK,,"Also called a Defixio or Katadesmos. This ancient tablet is inscribed with a curse of weakness. Although it was meant for a long-dead human, Kami can use it on their own kind."
 ,In Game,Giftbox,21001,Lootbox,Uncommon,Account,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
 ,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Rare,Account,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
 ,In Game,Wonder Egg,21003,Lootbox,Rare,Account,,DT3,,"A cracked egg held together by blood-red wax. The contents are a surprise. "
 ,In Game,Booster Pack,21004,Lootbox,Rare,Account,,DT4,,Open this magical booster pack to receive a Spell Card. You might find something super rare!
+,To Deploy,Mochibox,21005,Lootbox,Epic,Account,,,,A sacred box containing exactly one Mochi.
 ,In Game,Ice Cream,21201,Food,Uncommon,Account,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Rare,Account,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Rare,Account,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
 ,In Game,“Neith’s River of Life” Spell Card,21204,Food,Rare,Account,NOT_TRADABLE,SP+80,,"The card depicts a flooding river beneath the night sky. The magical waters grant a bounty of stamina, and the reeds grow nearly as tall as the pyramids. Activating this Spell Card on an Operator will restore 80 Stamina."
-,To Deploy,Rock Candyfloss,21205,Food,Uncommon,Account,,SP+80,,"This rare crystal formation is soft to the touch, sweet, and edible. You can consume it to restore a large amount of Stamina. "
+,In Game,Rock Candyfloss,21205,Food,Uncommon,Account,,SP+80,,"This rare crystal formation is soft to the touch, sweet, and edible. You can consume it to restore a large amount of Stamina. "
 ,In Game,Spice Grinder,23100,Tool,Rare,,,,,Can be used to break down ingredients.
 ,In Game,Portable Burner,23101,Tool,Rare,,,,,"Can be used to make Potions at a riverside. "
 ,In Game,Screwdriver,23102,Tool,Epic,,,,,For driving screws. May be of practical use….
@@ -128,6 +130,6 @@ These ribbons are greatly prized…. "
 ,In Game,Aetheric Sextant,100004,Key Item,Legendary,,,,,"Capable of divining some things beyond the perception of mortals. "
 ,In Game,Pyramid Engine,100005,Key Item,Epic,,NOT_TRADABLE,,,This device dates to thousands of years old and is constructed in Egyptian style. It can be used to generate electrical power. The process through which this occurs is unknown.
 ,In Game,“KW Maps” Data Chip,100006,Key Item,Rare,Account,,,,"“Kamigotchi World Maps.” A data chip found in the Lost Skeleton’s laptop. It looks damaged, but it might still be readable."
-,To Deploy,Unmarked Data Chip,100007,Key Item,Rare,Account,,,,A data chip found in the Techno Temple. Looks to be in good working condition.
-,To Deploy,Rock Crystal Lens,100008,Key Item,Epic,,,,,"Although this lens has a slight crack, it can still be used to focus and magnify light. Scans indicate this item to be hundreds of thousands of years old. "
-,To Deploy,Switchbox Imp,100009,Key Item,Epic,,,,,Looks like a small wired relay box on the surface. A tiny humanoid imp lives under the faceplate and manually operates the contacts. This item can be used in crafting certain complex devices.
+,In Game,Unmarked Data Chip,100007,Key Item,Rare,Account,,,,A data chip found in the Techno Temple. Looks to be in good working condition.
+,In Game,Rock Crystal Lens,100008,Key Item,Epic,,,,,"Although this lens has a slight crack, it can still be used to focus and magnify light. Scans indicate this item to be hundreds of thousands of years old. "
+,In Game,Switchbox Imp,100009,Key Item,Epic,,,,,Looks like a small wired relay box on the surface. A tiny humanoid imp lives under the faceplate and manually operates the contacts. This item can be used in crafting certain complex devices.

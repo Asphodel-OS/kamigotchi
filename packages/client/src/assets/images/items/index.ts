@@ -80,6 +80,7 @@ import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import melkarths_heroic_awakening_spell_card from './melkarths_heroic_awakening_spell_card.png';
 import microplastics from './microplastics.png';
 import mint from './mint.png';
+import mochibox from './mochibox.png';
 import musu from './musu.png';
 import musu_magnet from './musu_magnet.png';
 import neiths_river_of_life_spell_card from './neiths_river_of_life_spell_card.png';
@@ -210,6 +211,7 @@ export const ItemImages = {
   melkarths_heroic_awakening_spell_card: melkarths_heroic_awakening_spell_card,
   microplastics: microplastics,
   mint: mint,
+  mochibox: mochibox,
   musu: musu,
   musu_magnet: musu_magnet,
   neiths_river_of_life_spell_card: neiths_river_of_life_spell_card,
