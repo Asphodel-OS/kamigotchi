@@ -75,7 +75,7 @@ importers:
         version: 0.15.0(google-protobuf@3.21.4)
       '@initia/interwovenkit-react':
         specifier: ^2.0.6
-        version: 2.0.6(8796b633076093d56cbfa1881955fb0d)
+        version: 2.0.6(6cbde991dad41939703f4f0796928a06)
       '@mud-classic/utils':
         specifier: ^0.0.3
         version: 0.0.3
@@ -266,9 +266,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.1.1
         version: 4.7.0(vite@5.4.21(@types/node@22.7.5)(terser@5.44.1))
-      babel-plugin-react-compiler:
-        specifier: ^1.0.0
-        version: 1.0.0
       eslint:
         specifier: ^8.29.0
         version: 8.57.1
@@ -353,7 +350,7 @@ importers:
         version: 5.1.1
       forge-std:
         specifier: github:foundry-rs/forge-std
-        version: https://codeload.github.com/foundry-rs/forge-std/tar.gz/799589bfa97698c2bdf0ba8df4d461b607e36c57
+        version: https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c
       memmove:
         specifier: https://github.com/brockelmore/memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2
         version: memmove.git#d577ecd1bc43656f4032edf4daa9797f756a8ad2@https://codeload.github.com/brockelmore/memmove/tar.gz/d577ecd1bc43656f4032edf4daa9797f756a8ad2
@@ -4576,9 +4573,6 @@ packages:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
     engines: {node: '>=10', npm: '>=6'}
 
-  babel-plugin-react-compiler@1.0.0:
-    resolution: {integrity: sha512-Ixm8tFfoKKIPYdCCKYTsqv+Fd4IJ0DQqMyEimo+pxUOMUR9cVPlwTrFt9Avu+3cb6Zp3mAzl+t1MrG2fxxKsxw==}
-
   babel-plugin-styled-components@2.1.4:
     resolution: {integrity: sha512-Xgp9g+A/cG47sUyRwwYxGM4bR/jDRg5N6it/8+HxCnbT5XNKSKDT9xm4oag/osgqjC2It/vH0yXsomOG6k558g==}
     peerDependencies:
@@ -5649,9 +5643,9 @@ packages:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
     engines: {node: '>=14'}
 
-  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/799589bfa97698c2bdf0ba8df4d461b607e36c57:
-    resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/799589bfa97698c2bdf0ba8df4d461b607e36c57}
-    version: 1.12.0
+  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c:
+    resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c}
+    version: 1.11.0
 
   form-data@4.0.4:
     resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
@@ -10297,20 +10291,20 @@ snapshots:
     transitivePeerDependencies:
       - google-protobuf
 
-  '@initia/interwovenkit-react@2.0.6(8796b633076093d56cbfa1881955fb0d)':
+  '@initia/interwovenkit-react@2.0.6(6cbde991dad41939703f4f0796928a06)':
     dependencies:
       '@amplitude/analytics-browser': 2.30.1
       '@base-ui-components/react': 1.0.0-beta.2(@types/react@17.0.89)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@cosmjs/amino': 0.36.2
-      '@cosmjs/crypto': 0.37.0
-      '@cosmjs/encoding': 0.37.0
-      '@cosmjs/math': 0.37.0
+      '@cosmjs/crypto': 0.36.2
+      '@cosmjs/encoding': 0.36.2
+      '@cosmjs/math': 0.36.2
       '@cosmjs/proto-signing': 0.37.0
       '@cosmjs/stargate': 0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@cosmjs/tendermint-rpc': 0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@initia/amino-converter': 1.0.13(@cosmjs/cosmwasm-stargate@0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@cosmjs/proto-signing@0.37.0)(@cosmjs/stargate@0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@initia/initia.proto@1.0.3(google-protobuf@3.21.4))(@initia/opinit.proto@1.0.2(google-protobuf@3.21.4))
       '@initia/icons-react': 1.0.0(react-native@0.82.1(@babel/core@7.28.5)(@types/react@17.0.89)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10))(react@19.2.0)
-      '@initia/utils': 2.0.0(@cosmjs/encoding@0.37.0)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+      '@initia/utils': 2.0.0(@cosmjs/encoding@0.36.2)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@lukemorales/query-key-factory': 1.3.4(@tanstack/query-core@5.90.8)(@tanstack/react-query@5.90.8(react@19.2.0))
       '@mysten/bcs': 1.9.2
       '@noble/hashes': 1.8.0
@@ -10349,9 +10343,9 @@ snapshots:
     transitivePeerDependencies:
       - google-protobuf
 
-  '@initia/utils@2.0.0(@cosmjs/encoding@0.37.0)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
+  '@initia/utils@2.0.0(@cosmjs/encoding@0.36.2)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
     dependencies:
-      '@cosmjs/encoding': 0.37.0
+      '@cosmjs/encoding': 0.36.2
       '@mysten/bcs': 1.9.2
       '@noble/hashes': 1.8.0
       bignumber.js: 9.3.1
@@ -15805,10 +15799,6 @@ snapshots:
       cosmiconfig: 7.1.0
       resolve: 1.22.11
 
-  babel-plugin-react-compiler@1.0.0:
-    dependencies:
-      '@babel/types': 7.28.5
-
   babel-plugin-styled-components@2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.2.0(react@19.2.0))(react-is@16.13.1)(react@19.2.0))(supports-color@5.5.0):
     dependencies:
       '@babel/helper-annotate-as-pure': 7.27.3
@@ -17021,7 +17011,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/799589bfa97698c2bdf0ba8df4d461b607e36c57: {}
+  forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/27ab851c7cde58b22cc4de426d59e23a31c5cb9c: {}
 
   form-data@4.0.4:
     dependencies:
