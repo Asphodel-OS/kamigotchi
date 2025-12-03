@@ -170,7 +170,7 @@ library LibHarvest {
     return (rate * ratio * boost) / precision;
   }
 
-  // Calculate the efficacy of the core harvesting calc (min 0).
+  // Calculate the efficacy of a kami's core harvesting calc (min 0).
   // Efficacy is a Boost on Fertility and precision is set by its (F's) config.
   function calcEfficacy(
     IUintComp comps,
@@ -216,7 +216,8 @@ library LibHarvest {
     return (efficacy < 0) ? 0 : uint(efficacy);
   }
 
-  // determine the body efficacy shifts from the config
+  // determine the efficacy shift for a single trait from the config
+  // normal traits get half of matching bonus
   function calcEfficacy(
     IUintComp comps,
     string memory traitAff,
@@ -224,6 +225,8 @@ library LibHarvest {
     Shifts memory bonusShifts,
     string memory configKey
   ) internal view returns (int256) {
+    if (traitAff.eq("NORMAL")) return bonusShifts.up / 2;
+
     Effectiveness effectiveness = LibAffinity.getHarvestEffectiveness(traitAff, nodeAff);
     Shifts memory configShifts = LibAffinity.getShifts(comps, configKey);
     return LibAffinity.calcEfficacyShift(effectiveness, configShifts, bonusShifts);

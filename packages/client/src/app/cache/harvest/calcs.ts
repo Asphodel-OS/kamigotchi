@@ -169,13 +169,19 @@ export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
   let shift = 0;
   const upShiftBonus = kami.bonuses?.harvest.fertility.boost ?? 0;
 
-  const bodyEffectiveness = getHarvestEffectiveness(nodeBodyAff, bodyAff);
-  const bodyConfig = kami.config.harvest.efficacy.body;
-  shift += calcEfficacyShift(bodyEffectiveness, bodyConfig, upShiftBonus);
+  if (bodyAff === 'NORMAL') shift += upShiftBonus / 2;
+  else {
+    const bodyEffectiveness = getHarvestEffectiveness(nodeBodyAff, bodyAff);
+    const bodyConfig = kami.config.harvest.efficacy.body;
+    shift += calcEfficacyShift(bodyEffectiveness, bodyConfig, upShiftBonus);
+  }
 
-  const handEffectiveness = getHarvestEffectiveness(nodeHandAff, handAff);
-  const handConfig = kami.config.harvest.efficacy.hand;
-  shift += calcEfficacyShift(handEffectiveness, handConfig, upShiftBonus);
+  if (handAff === 'NORMAL') shift += upShiftBonus / 2;
+  else {
+    const handEffectiveness = getHarvestEffectiveness(nodeHandAff, handAff);
+    const handConfig = kami.config.harvest.efficacy.hand;
+    shift += calcEfficacyShift(handEffectiveness, handConfig, upShiftBonus);
+  }
 
   return shift;
 };
