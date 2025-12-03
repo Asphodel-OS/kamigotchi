@@ -1,4 +1,12 @@
 ﻿.,Description,Operator,Type,Index,Value
+,In Room: Slippery Pit,IS,ROOM,68,
+,Own the Aetheric Sextant,MIN,ITEM,100004,1
+,Completed SQ021,COMPLETE,QUEST,3021,
+,In Room: Scenic View,IS,ROOM,90,
+,Complete SQ019,COMPLETE,QUEST,3019,
+,Complete SQ018,COMPLETE,QUEST,3018,
+,In Room: Trophies of the Hunt,IS,ROOM,89,
+,In Room: Treasure Hoard,IS,ROOM,88,
 ,Complete MSQ070,COMPLETE,QUEST,70,
 ,Complete MSQ069,COMPLETE,QUEST,69,
 ,Complete MSQ068,COMPLETE,QUEST,68,

@@ -14,6 +14,7 @@
 ,Harvest for >360 minutes at Engraved Door,MIN,INC,HARVEST_TIME,74,21600
 ,Harvest for >720 minutes at Flood Mural,MIN,INC,HARVEST_TIME,75,43200
 ,Harvest for >720 minutes at Thriving Mushrooms,MIN,INC,HARVEST_TIME,77,43200
+,Harvest for >360 minutes at Treasure Hoard,MIN,INC,HARVEST_TIME,88,21600
 ,Harvest 1 minute,MIN,INC,HARVEST_TIME,,60
 ,Harvest for >5 minutes,MIN,INC,HARVEST_TIME,,300
 ,Harvest for >720 minutes at the Lost Skeleton During Moonside,MIN,INC,HARVEST_TIME_MOONSIDE,25,43200
@@ -42,9 +43,11 @@
 ,Give 1 Ashlar,MIN,INC,ITEM_BURN,1301,1
 ,Give 1 Essence of Hearing,MIN,INC,ITEM_BURN,6001,1
 ,Give Mina 20 Blue Pansy,MIN,INC,ITEM_BURN,11314,20
-,Give Uninteresting Paste,MIN,INC,ITEM_BURN,11414,1
-,Give 1 Wonder Egg,MIN,INC,ITEM_BURN,21003,1
 ,Give 1 Flash Talisman,MIN,INC,ITEM_BURN,11412,1
+,Give Uninteresting Paste,MIN,INC,ITEM_BURN,11414,1
+,Give 1 Curse Tablet,MIN,INC,ITEM_BURN,19301,1
+,Give 1 Wonder Egg,MIN,INC,ITEM_BURN,21003,1
+,Give 3 Rock Candyfloss,MIN,INC,ITEM_BURN,21205,3
 ,Give Pyramid Engine (Soulbound),MIN,INC,ITEM_BURN,100005,1
 ,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
 ,Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
@@ -71,7 +74,9 @@
 ,Move to Lost Skeleton,IS,BOOL,ROOM,25,
 ,Move to the Trash-Strewn Graves,IS,BOOL,ROOM,26,
 ,Move to Slippery Pit,IS,BOOL,ROOM,68,
+,Move to Hatch to Nowhere,IS,BOOL,ROOM,72,
 ,Move to Flood Mural,IS,BOOL,ROOM,75,
+,Move to Trophies of the Hunt,IS,BOOL,ROOM,89,
 ,Make 9 Scavenging Rolls at Labs Entrance,MIN,INC,SCAV_CLAIM_NODE,6,9
 ,Make 2 Scavenging Rolls at Scrap Confluence,MIN,INC,SCAV_CLAIM_NODE,12,2
 ,Make 7 Scavenging Rolls at Temple Cave,MIN,INC,SCAV_CLAIM_NODE,15,7
@@ -82,6 +87,8 @@
 ,Make 2 Scavenging rolls at Scrap Trees,MIN,INC,SCAV_CLAIM_NODE,60,2
 ,Make 3 Scavenging Rolls at Centipedes,MIN,INC,SCAV_CLAIM_NODE,62,3
 ,Make 7 Scavenging Rolls at Broken Tube,MIN,INC,SCAV_CLAIM_NODE,73,7
+,Make 3 Scavenging Rolls at Trophies of the Hunt,MIN,INC,SCAV_CLAIM_NODE,89,3
+,Scavenge 25 Otherworld Coins,MIN,INC,SCAV_CLAIM_NODE,1019,25
 ,Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
 ,Spend a point in any Skill Tree after levelling up,MIN,CURR,SKILL_POINTS_USE,,1
 ,Make a Scavenging roll in 3 rooms of the Scrap type,MIN,INC,SCAV_CLAIM_AFFINITY_SCRAP,,3
