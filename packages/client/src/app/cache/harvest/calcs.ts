@@ -132,13 +132,7 @@ enum Effectiveness {
 // calculate the shift in harvest Efficacy (Fertility Boost)
 export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
   const node = harvest.node;
-  if (
-    !node ||
-    !kami.traits ||
-    !node.affinity ||
-    (node.affinity.length === 1 && node.affinity[0] === 'NORMAL')
-  )
-    return 0;
+  if (!node || !kami.traits || !node.affinity) return 0;
   if (!kami.config) return 0;
 
   const bodyAff = getKamiBodyAffinity(kami);
@@ -200,7 +194,6 @@ export const calcEfficacyShift = (
 
 // determine how effective a trait matchup is for a harvest
 export const getHarvestEffectiveness = (nodeAff: string, traitAff: string): Effectiveness => {
-  if (nodeAff === 'NORMAL' && traitAff === 'NORMAL') return Effectiveness.SPECIAL;
   if (nodeAff === 'NORMAL' || traitAff === 'NORMAL') return Effectiveness.NEUTRAL;
   if (nodeAff === traitAff) return Effectiveness.UP;
   return Effectiveness.DOWN;
