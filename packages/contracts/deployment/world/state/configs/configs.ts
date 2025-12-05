@@ -101,7 +101,7 @@ export async function initMint(api: AdminAPI) {
   await api.config.set.number('MINT_MAX_PUBLIC', 222);
 }
 
-async function initStats(api: AdminAPI) {
+export async function initStats(api: AdminAPI) {
   // base
   await api.config.set.number('KAMI_BASE_HEALTH', 50);
   await api.config.set.number('KAMI_BASE_POWER', 10);

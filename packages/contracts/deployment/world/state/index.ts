@@ -107,6 +107,7 @@ export {
   initLocalConfigs,
   initMintConfigs,
   initPortalConfigs,
+  initStatsConfigs,
   initTestingConfigs,
   initTokenConfigs,
   initTradeConfigs,
