@@ -116,9 +116,9 @@ library LibKill {
     int256 defBonus = LibBonus.getFor(comps, "DEF_THRESHOLD_RATIO", targetID);
     Shifts memory bonusEfficacyShifts = Shifts({
       base: int256(0),
-      up: atkBonus + defBonus,
+      up: atkBonus - defBonus,
       down: int256(0),
-      special: atkBonus + defBonus
+      special: atkBonus - defBonus
     });
 
     // sum the applied shift with the base efficacy value to get the final value
@@ -149,7 +149,7 @@ library LibKill {
     uint256 shiftPrec = 10 ** (ANIMOSITY_PREC + config[3] - config[5]);
     int256 shiftAttBonus = LibBonus.getFor(comps, "ATK_THRESHOLD_SHIFT", sourceID);
     int256 shiftDefBonus = LibBonus.getFor(comps, "DEF_THRESHOLD_SHIFT", targetID);
-    int256 shift = (shiftAttBonus + shiftDefBonus) * int256(shiftPrec);
+    int256 shift = (shiftAttBonus - shiftDefBonus) * int256(shiftPrec);
 
     int256 postShiftVal = int256(base * ratio) + shift;
     if (postShiftVal < 0) return 0;
