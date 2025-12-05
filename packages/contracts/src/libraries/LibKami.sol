@@ -132,15 +132,16 @@ library LibKami {
   // CALCULATIONS
 
   // Calculate resting recovery rate (HP/s) of a Kami. (1e9 precision)
+  // Metabolism = (H + d) * k * boost
   function calcMetabolism(IUintComp components, uint256 id) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(components, "KAMI_REST_METABOLISM");
     uint256 boostBonus = LibBonus.getFor(components, "REST_METABOLISM_BOOST", id).toUint256();
     uint256 base = LibStat.getTotal(components, "HARMONY", id).toUint256();
-    uint256 ratio = config[2]; // metabolism core
+    uint256 nudge = config[0]; // d
+    uint256 ratio = config[2]; // k
     uint256 boost = config[6] + boostBonus;
     uint256 precision = 10 ** (METABOLISM_PREC - (config[3] + config[7]));
-    uint256 metabolism = (precision * base * ratio * boost) / 3600;
-    return (metabolism);
+    return (precision * (base + nudge) * ratio * boost) / 3600;
   }
 
   // Calculate resting recovery (HP) of a Kami. This assume Kami is resting. Round down.

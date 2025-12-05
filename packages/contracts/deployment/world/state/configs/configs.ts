@@ -110,7 +110,7 @@ async function initStats(api: AdminAPI) {
   await api.config.set.number('KAMI_BASE_SLOTS', 0);
 
   // healing
-  await api.config.set.array('KAMI_REST_METABOLISM', [0, 0, 1200, 3, 0, 0, 1000, 3]);
+  await api.config.set.array('KAMI_REST_METABOLISM', [20, 0, 600, 3, 0, 0, 1000, 3]);
 
   // cooldown
   await api.config.set.number('KAMI_STANDARD_COOLDOWN', 180);
