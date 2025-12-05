@@ -1,15 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
-import { getAccount as _getAccount } from 'app/cache/account';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useSelected } from 'app/stores';
+import { useAccount, useSelected } from 'app/stores';
 import { backgrounds } from 'assets/images/backgrounds';
-import { EntityIndex } from 'engine/recs';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getGoalByIndex as _getGoalByIndex } from 'network/shapes/Goals';
-import { getRoomIndex as _getRoomIndex } from 'network/shapes/utils/component';
+import { useComponentValue } from 'engine/recs';
 import { Room } from './Room';
 
 // The Scene paints the wallpaper and the room. It updates the selected room
@@ -23,50 +19,26 @@ export const Scene: UIComponent = {
     /////////////////
     // PREPARATION
 
-    const { data, utils } = (() => {
-      const { network } = layers;
-      const { world, components } = network;
-
-      const accountEntity = queryAccountFromEmbedded(network);
-      return {
-        data: {
-          accountEntity,
-        },
-        utils: {
-          getAccount: (entity: EntityIndex) => _getAccount(world, components, entity),
-          getGoalByIndex: (index: number) => _getGoalByIndex(world, components, index),
-          getRoomIndex: (entity: EntityIndex) => _getRoomIndex(components, entity),
-        },
-      };
-    })();
+    const { network } = layers;
+    const { components } = network;
+    const { RoomIndex: RoomIndexComponent } = components;
 
     /////////////////
     // INSTANTIATION
 
-    const { accountEntity } = data;
-    const { getRoomIndex } = utils;
-
     const roomIndex = useSelected((s) => s.roomIndex);
     const setRoom = useSelected((s) => s.setRoom);
-    const [lastRefresh, setLastRefresh] = useState(Date.now());
+    const accountEntity = useAccount((s) => s.account.entity);
+    const roomIndexValue = useComponentValue(RoomIndexComponent, accountEntity);
 
     /////////////////
     // SUBSCRIPTION
 
-    // ticking
-    useEffect(() => {
-      const timerId = setInterval(() => {
-        setLastRefresh(Date.now());
-      }, 250);
-      return () => clearInterval(timerId);
-    }, []);
-
-    // update the room index on each interval and whenever the account changes
+    // update the room index whenever account or account's RoomIndex component changes
     useEffect(() => {
       if (!accountEntity) return;
-      const roomIndex = getRoomIndex(accountEntity);
-      setRoom(roomIndex);
-    }, [accountEntity, lastRefresh]);
+      setRoom(roomIndexValue?.value ?? 0);
+    }, [accountEntity, roomIndexValue, setRoom]);
 
     /////////////////
     // DISPLAY
