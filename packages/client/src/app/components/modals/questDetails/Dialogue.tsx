@@ -97,6 +97,7 @@ export const Dialogue = ({
           text={text}
           speed={30}
           interrupted={interrupted}
+          // paragraph={{ distance: 0, delay: 5 }}
           retrigger={`${isModalOpen}${wasToggled}`}
           onUpdate={() => handleScroll(introRef, isUserScrollingPastRef)}
         />

@@ -10,6 +10,7 @@ const boldName = (text: string, key: number | string) => (
 export const useTypewriter = (
   text: string,
   speed: number,
+  paragraph: { distance: number; delay: number },
   retrigger?: boolean | string,
   onUpdate?: () => void,
   interrupted?: boolean
@@ -24,6 +25,8 @@ export const useTypewriter = (
 
   useEffect(() => {
     if (!text) return;
+    const lastCharRef = { current: '' };
+
     if (interrupted) {
       const parts = text.split(/(MINA|MENU)/g);
       const result = parts.map((part, i) =>
@@ -42,15 +45,30 @@ export const useTypewriter = (
 
       // leaving this hardcorded for now
       const remaining = text.substring(indexRef.current);
-      const Mina = remaining.startsWith('MINA');
-      const Menu = remaining.startsWith('MENU');
-      if (Mina || Menu) {
-        setDisplayedText((prev) => [...prev, boldName(Mina ? 'MINA' : 'MENU', indexRef.current)]);
+      const isMina = remaining.startsWith('MINA');
+      const isMenu = remaining.startsWith('MENU');
+
+      if (lastCharRef.current === '”') {
+        if (paragraph.distance > 0) {
+          const breaks = Array(paragraph.distance).fill('\n');
+          setDisplayedText((prev) => [...prev, ...breaks]);
+        }
+        if (paragraph.delay > 0) {
+        }
+      }
+      let lastChar: string | null = null;
+      if (isMina || isMenu) {
+        const name = isMina ? 'MINA' : 'MENU';
+        setDisplayedText((prev) => [...prev, boldName(name, indexRef.current)]);
+        lastChar = name[name.length - 1];
         indexRef.current += 4;
       } else {
-        setDisplayedText((prev) => [...prev, remaining[0]]);
+        lastChar = remaining[0];
+        setDisplayedText((prev) => [...prev, lastChar]);
         indexRef.current += 1;
       }
+
+      lastCharRef.current = lastChar;
 
       if (onUpdate) onUpdate();
     }, speed);
@@ -67,14 +85,16 @@ export const TypewriterComponent = ({
   speed = 30,
   onUpdate,
   interrupted = false,
+  paragraph = { distance: 0, delay: 0 },
 }: {
   text?: string;
   retrigger?: boolean | string;
   speed?: number;
   onUpdate?: () => void;
   interrupted?: boolean;
+  paragraph?: { distance: number; delay: number };
 }) => {
-  const displayedText = useTypewriter(text, speed, retrigger, onUpdate, interrupted);
+  const displayedText = useTypewriter(text, speed, paragraph, retrigger, onUpdate, interrupted);
   return <Container>{displayedText}</Container>;
 };
 
