@@ -8,7 +8,7 @@ export async function initSnapshot(api: AdminAPI) {
   // used for initial setup
   // await initPassports(api);
   // await initGachaWhitelist(api);
-  await setFlags(api);
+  // await setFlags(api);
 }
 
 async function setFlags(api: AdminAPI) {

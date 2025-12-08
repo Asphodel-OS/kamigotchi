@@ -40,12 +40,24 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   async function setConfigAddress(field: string, value: string) {
-    const callData = generateCallData('system.config.registry', [field, value], 'setValueAddress');
+    const callData = generateCallData(
+      'system.config.registry',
+      [field, value],
+      'setValueAddress',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
   async function setConfigBool(field: string, value: boolean) {
-    const callData = generateCallData('system.config.registry', [field, value], 'setValueBool');
+    const callData = generateCallData(
+      'system.config.registry',
+      [field, value],
+      'setValueBool',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
@@ -56,14 +68,22 @@ export function createAdminAPI(compiledCalls: string[]) {
     const callData = generateCallData(
       'system.config.registry',
       [field, toUint32FixedArrayLiteral(arr)],
-      'setValueArray'
+      'setValueArray',
+      undefined,
+      '800000'
     );
     compiledCalls.push(callData);
   }
 
   // values must be ≤ 32char
   async function setConfigString(field: string, value: string) {
-    const callData = generateCallData('system.config.registry', [field, value], 'setValueString');
+    const callData = generateCallData(
+      'system.config.registry',
+      [field, value],
+      'setValueString',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
