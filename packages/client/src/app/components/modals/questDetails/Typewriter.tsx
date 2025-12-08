@@ -10,17 +10,19 @@ const boldName = (text: string, key: number | string) => (
 export const useTypewriter = (
   text: string,
   speed: number,
-  paragraph: { distance: number; delay: number },
+  paragraph: { lineJumps: number; delay: number },
   retrigger?: boolean | string,
   onUpdate?: () => void,
   interrupted?: boolean
 ) => {
   const [displayedText, setDisplayedText] = useState<ReactNode[]>([]);
   const indexRef = useRef(0);
+  const pauseRef = useRef(0);
 
   useEffect(() => {
     setDisplayedText([]);
     indexRef.current = 0;
+    pauseRef.current = 0;
   }, [retrigger]);
 
   useEffect(() => {
@@ -38,6 +40,9 @@ export const useTypewriter = (
     }
 
     const interval = setInterval(() => {
+      if (Date.now() < pauseRef.current) {
+        return;
+      }
       if (indexRef.current >= text.length) {
         clearInterval(interval);
         return;
@@ -48,15 +53,8 @@ export const useTypewriter = (
       const isMina = remaining.startsWith('MINA');
       const isMenu = remaining.startsWith('MENU');
 
-      if (lastCharRef.current === '”') {
-        if (paragraph.distance > 0) {
-          const breaks = Array(paragraph.distance).fill('\n');
-          setDisplayedText((prev) => [...prev, ...breaks]);
-        }
-        if (paragraph.delay > 0) {
-        }
-      }
       let lastChar: string | null = null;
+
       if (isMina || isMenu) {
         const name = isMina ? 'MINA' : 'MENU';
         setDisplayedText((prev) => [...prev, boldName(name, indexRef.current)]);
@@ -68,13 +66,24 @@ export const useTypewriter = (
         indexRef.current += 1;
       }
 
+      if (lastChar === '”') {
+        if (paragraph.lineJumps > 0) {
+          const breaks = Array(paragraph.lineJumps).fill('\n');
+          setDisplayedText((prev) => [...prev, ...breaks]);
+        }
+
+        if (paragraph.delay > 0) {
+          pauseRef.current = Date.now() + paragraph.delay * 1000;
+        }
+      }
+
       lastCharRef.current = lastChar;
 
       if (onUpdate) onUpdate();
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed, retrigger, onUpdate, interrupted]);
+  }, [text, speed, retrigger, onUpdate, interrupted, paragraph]);
 
   return displayedText;
 };
@@ -85,14 +94,14 @@ export const TypewriterComponent = ({
   speed = 30,
   onUpdate,
   interrupted = false,
-  paragraph = { distance: 0, delay: 0 },
+  paragraph = { lineJumps: 0, delay: 0 },
 }: {
   text?: string;
   retrigger?: boolean | string;
   speed?: number;
   onUpdate?: () => void;
   interrupted?: boolean;
-  paragraph?: { distance: number; delay: number };
+  paragraph?: { lineJumps: number; delay: number };
 }) => {
   const displayedText = useTypewriter(text, speed, paragraph, retrigger, onUpdate, interrupted);
   return <Container>{displayedText}</Container>;
