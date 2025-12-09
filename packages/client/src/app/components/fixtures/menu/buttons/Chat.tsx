@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getChatLastTimestamp, numMessagesChatSince } from 'app/cache/chat';
+import { getChatLastTimestamp } from 'app/cache/chat';
 import { Modals, useSelected, useVisibility } from 'app/stores';
 import { ChatIcon } from 'assets/images/icons/menu';
+import { subscribeToMessages } from 'clients/kamiden/subscriptions';
 import { MenuButton } from './MenuButton';
 
 const LastClearTs = new Map<number, number>(); // roomIndex => ts last opened
@@ -19,39 +20,39 @@ const ModalsToHide: Partial<Modals> = {
 export const ChatMenuButton = () => {
   const chatModalOpen = useVisibility((s) => s.modals.chat);
   const roomIndex = useSelected((s) => s.roomIndex);
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [notification, setNotification] = useState(false);
+  const [newMessageCount, setNewMessageCount] = useState(0);
 
-  const handleNumMessages = () => {
-    const numberNewMessages = numMessagesChatSince(roomIndex, LastClearTs.get(roomIndex) ?? 0);
-    return numberNewMessages > 10 ? '+10' : numberNewMessages;
-  };
+  const displayCount = () => (newMessageCount > 10 ? '+10' : newMessageCount);
 
-  // ticking
+  // subscribe to new messages of current room
   useEffect(() => {
-    const timerId = setInterval(() => {
-      setLastRefresh(Date.now());
-    }, 250);
-    return () => clearInterval(timerId);
-  }, []);
+    const unsubscribe = subscribeToMessages((message) => {
+      if (message.RoomIndex === roomIndex && !chatModalOpen) {
+        setNotification(true);
+        setNewMessageCount((prev) => prev + 1);
+      }
+    });
+    return unsubscribe;
+  }, [roomIndex, chatModalOpen]);
 
   useEffect(() => {
     if (chatModalOpen) {
       setNotification(false);
+      setNewMessageCount(0);
+      LastClearTs.set(roomIndex, Date.now());
     } else {
       const lastChatTs = getChatLastTimestamp(roomIndex);
       const lastClearTs = LastClearTs.get(roomIndex) ?? 0;
       setNotification(lastChatTs > lastClearTs);
     }
-  }, [lastRefresh, chatModalOpen, roomIndex]);
+  }, [chatModalOpen, roomIndex]);
 
   useEffect(() => {
-    LastClearTs.set(roomIndex, Date.now());
-  }, [chatModalOpen]);
-
-  // added (!LastClearTs.has(roomIndex)) to not overwrite the last clear timestamp each time an already visited room is visited again
-  useEffect(() => {
-    if (!LastClearTs.has(roomIndex)) LastClearTs.set(roomIndex, Date.now());
+    if (!LastClearTs.has(roomIndex)) {
+      LastClearTs.set(roomIndex, Date.now());
+      setNewMessageCount(0);
+    }
   }, [roomIndex]);
 
   return (
@@ -64,7 +65,7 @@ export const ChatMenuButton = () => {
         hideModals={ModalsToHide}
       />
       <Status notification={notification}>
-        <Number>{handleNumMessages()}</Number>
+        <Number>{displayCount()}</Number>
       </Status>
     </Container>
   );
