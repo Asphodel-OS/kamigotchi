@@ -45,6 +45,7 @@ export const ChatMenuButton = () => {
       const lastChatTs = getChatLastTimestamp(roomIndex);
       const lastClearTs = LastClearTs.get(roomIndex) ?? 0;
       setNotification(lastChatTs > lastClearTs);
+      setNewMessageCount(0);
     }
   }, [chatModalOpen, roomIndex]);
 
@@ -64,7 +65,7 @@ export const ChatMenuButton = () => {
         targetModal='chat'
         hideModals={ModalsToHide}
       />
-      <Status notification={notification}>
+      <Status notification={notification && newMessageCount > 0}>
         <Number>{displayCount()}</Number>
       </Status>
     </Container>
