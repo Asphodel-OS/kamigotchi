@@ -52,10 +52,11 @@ export const ClockFixture: UIComponent = {
         const timerID = setInterval(tick, 1000);
         return () => clearInterval(timerID);
       }, []);
-      // update the current stamina on each tick
+      // update the current stamina on each tick (skip if already full)
       useEffect(() => {
-        const staminaCurr = calcCurrentStamina(account);
-        setStaminaCurr(staminaCurr);
+        if (staminaCurr >= account.stamina.total) return;
+        const newStamina = calcCurrentStamina(account);
+        setStaminaCurr(newStamina);
       }, [account.stamina, lastTick]);
       /////////////////
       // INTERPRETATION
