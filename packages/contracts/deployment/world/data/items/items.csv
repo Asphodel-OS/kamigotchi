@@ -104,7 +104,6 @@ These ribbons are greatly prized…. "
 ,In Game,Hostility Potion,11410,Food,Uncommon,Kami,BYPASS_BONUS_RESET,"ATS+3%,ITEM1102",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
 ,In Game,Fortified XP Potion,11411,Potion,Epic,Kami,,"XP+50000,ITEM1006",,A deep-green potion with a grainy texture and dense mouthfeel. Fortified with rare red amber and the essences of old memories.
 ,To Update,Flash Talisman,11412,Potion,Rare,Enemy_Kami,,"ATR+10%_KK,DTR-10%_KK",,"A magical talisman that burns easily. Using this on a Kami intensifies their overall sensitivity to Types, buffing their advantages on liquidations but nerfing their advantages on defense. "
-,To Deploy,Uninteresting Paste,11414,Potion,Rare,Account,,SP+150,,A matte-black paste in a plastic jar. A secret incense recipe created by Mina that allows individuals without bodies to smoke tobacco.
 ,In Game,Toadstool Liquor,11501,Potion,Rare,Kami,BYPASS_BONUS_RESET,"TEMP10HEALTH,TEMP1POWER",,Liquor distilled from a mash made from mushrooms and black poppy. An underworld favorite.
 ,To Update,Sarcophagus Honey,11502,Potion,Uncommon,Kami,,TEMP30HEALTH,,Legendary medicine believed to be the stuff of rumors. A piece of flesh has been preserved inside using ancient techniques. Give this to a Kami to grant them a temporary bonus to maximum Health.
 ,In Game,Spirit Glue,19001,Potion,Uncommon,Enemy_Kami,,"NEXT_COOLDOWN+180,ITEM1003",,This glue even sticks to intangible things. Can be used to add additional Cooldown to an enemy Kami and temporarily lock it down to a Node.
@@ -120,7 +119,8 @@ These ribbons are greatly prized…. "
 ,In Game,Better Ice Cream,21202,Food,Rare,Account,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Rare,Account,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
 ,In Game,“Neith’s River of Life” Spell Card,21204,Food,Rare,Account,NOT_TRADABLE,SP+80,,"The card depicts a flooding river beneath the night sky. The magical waters grant a bounty of stamina, and the reeds grow nearly as tall as the pyramids. Activating this Spell Card on an Operator will restore 80 Stamina."
-,In Game,Rock Candyfloss,21205,Food,Uncommon,Account,,SP+80,,"This rare crystal formation is soft to the touch, sweet, and edible. You can consume it to restore a large amount of Stamina. "
+,In Game,Rock Candyfloss,21205,Food,Rare,Account,,SP+80,,"This rare crystal formation is soft to the touch, sweet, and edible. You can consume it to restore a large amount of Stamina. "
+,In Game,Uninteresting Paste,21206,Potion,Rare,Account,,SP+150,,A matte-black paste in a plastic jar. A secret incense recipe created by Mina that allows individuals without bodies to smoke tobacco.
 ,In Game,Spice Grinder,23100,Tool,Rare,,,,,Can be used to break down ingredients.
 ,In Game,Portable Burner,23101,Tool,Rare,,,,,"Can be used to make Potions at a riverside. "
 ,In Game,Screwdriver,23102,Tool,Epic,,,,,For driving screws. May be of practical use….

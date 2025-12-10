@@ -44,10 +44,10 @@
 ,Give 1 Essence of Hearing,MIN,INC,ITEM_BURN,6001,1
 ,Give Mina 20 Blue Pansy,MIN,INC,ITEM_BURN,11314,20
 ,Give 1 Flash Talisman,MIN,INC,ITEM_BURN,11412,1
-,Give Uninteresting Paste,MIN,INC,ITEM_BURN,11414,1
 ,Give 1 Curse Tablet,MIN,INC,ITEM_BURN,19301,1
 ,Give 1 Wonder Egg,MIN,INC,ITEM_BURN,21003,1
 ,Give 3 Rock Candyfloss,MIN,INC,ITEM_BURN,21205,3
+,Give Uninteresting Paste,MIN,INC,ITEM_BURN,21206,1
 ,Give Pyramid Engine (Soulbound),MIN,INC,ITEM_BURN,100005,1
 ,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
 ,Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
@@ -71,6 +71,7 @@
 ,Move to Convenience Store,IS,BOOL,ROOM,13,
 ,Enter Mina's Shop,IS,BOOL,ROOM,13,
 ,"Use the object ""Waterfall"" in ""Temple by the Waterfall"" to enter a new zone",IS,BOOL,ROOM,15,
+,Move to Cave Crossroads,IS,BOOL,ROOM,18,
 ,Move to Lost Skeleton,IS,BOOL,ROOM,25,
 ,Move to the Trash-Strewn Graves,IS,BOOL,ROOM,26,
 ,Move to Slippery Pit,IS,BOOL,ROOM,68,
@@ -104,7 +105,7 @@
 ,Craft 1 Grace Potion,MIN,INC,CRAFT_ITEM,11404,1
 ,Craft 1 Bless Potion,MIN,INC,CRAFT_ITEM,11405,1
 ,Craft 1 Hostility Potion,MIN,INC,CRAFT_ITEM,11410,1
-,Craft Uninteresting Paste,MIN,INC,CRAFT_ITEM,11414,1
+,Craft Uninteresting Paste,MIN,INC,CRAFT_ITEM,21206,1
 ,Scavenge 2 Plastic Bottles,MIN,INC,DROPTABLE_ITEM_TOTAL,1003,2
 ,Scavenge 1 Pine Cone,MIN,INC,DROPTABLE_ITEM_TOTAL,1004,1
 ,Scavenge 1 Daffodil,MIN,INC,DROPTABLE_ITEM_TOTAL,1011,1

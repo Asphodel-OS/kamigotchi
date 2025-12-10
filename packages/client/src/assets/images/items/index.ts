@@ -118,6 +118,7 @@ import switchbox_imp from './switchbox_imp.png';
 import teardrop_jewel from './teardrop_jewel.png';
 import timber from './timber.png';
 import toadstool_liquor from './toadstool_liquor.png';
+import uninteresting_paste from './uninteresting_paste.png';
 import unmarked_data_chip from './unmarked_data_chip.png';
 import vipp from './vipp.png';
 import wonder_egg from './wonder_egg.png';
@@ -249,6 +250,7 @@ export const ItemImages = {
   teardrop_jewel: teardrop_jewel,
   timber: timber, // INSERT HERE
   toadstool_liquor: toadstool_liquor, // INSERT HERE
+  uninteresting_paste: uninteresting_paste,
   unmarked_data_chip: unmarked_data_chip, // INSERT HERE
   vipp: vipp,
   wonder_egg: wonder_egg,
