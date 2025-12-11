@@ -4,6 +4,7 @@ import {
   usePrivy,
   useWallets,
 } from '@privy-io/react-auth';
+import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 import { switchChain } from '@wagmi/core';
 import { ethers } from 'ethers';
 import { isEqual } from 'lodash';
@@ -161,10 +162,17 @@ export const WalletConnecter: UIComponent = {
     };
 
     // NOTE: connect() fails silently if user has no connectors (connector[0] == null)
+    // On desktop with extensions: use connectWallet() for direct wallet connection
+    // On iOS/Safari: use login() which shows list walletList from privy config
     const handleClick = () => {
-      if (state === 'disconnected') connect({ connector: connectors[0] });
-      else if (state === 'wrongChain') switchChain(wagmiConfig, { chainId: DefaultChain.id });
-      else if (state === 'unauthenticated') login();
+      if (state === 'disconnected') {
+        if (!isSafariOrIOS() && connectors?.[0]) connect({ connector: connectors[0] });
+        else login();
+      } else if (state === 'wrongChain') {
+        switchChain(wagmiConfig, { chainId: DefaultChain.id });
+      } else if (state === 'unauthenticated') {
+        login();
+      }
     };
 
     /////////////////
@@ -181,7 +189,12 @@ export const WalletConnecter: UIComponent = {
     };
 
     const getWarning = () => {
-      if (state === 'disconnected') return `Your wallet is currently disconnected.`;
+      if (state === 'disconnected') {
+        if (isSafariOrIOS()) {
+          return `Safari/iOS detected. Please open this site in MetaMask Mobile's browser.`;
+        }
+        return `Your wallet is currently disconnected.`;
+      }
       if (state === 'wrongChain') return `You must connect to Yominet`;
       if (state === 'unauthenticated') return `You are currently logged out.`;
       return '';
