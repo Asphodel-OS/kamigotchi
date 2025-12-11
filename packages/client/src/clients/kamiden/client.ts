@@ -1,8 +1,8 @@
-import { grpc } from '@improbable-eng/grpc-web';
 import { createChannel, createClient } from 'nice-grpc-web';
 
 import { KamidenServiceClient, KamidenServiceDefinition } from './proto';
 import { FeedCallbacks, MessageCallbacks } from './subscriptions';
+import { getGrpcTransport } from '../../workers/sync/grpcTransport';
 
 let Client: KamidenServiceClient | null = null;
 
@@ -12,7 +12,7 @@ export function getClient(): KamidenServiceClient | null {
   if (!Client) {
     const channel = createChannel(
       import.meta.env.VITE_KAMIGAZE_URL, //, //'http://localhost:82',
-      grpc.WebsocketTransport()
+      getGrpcTransport()
     );
     Client = createClient(KamidenServiceDefinition, channel);
 

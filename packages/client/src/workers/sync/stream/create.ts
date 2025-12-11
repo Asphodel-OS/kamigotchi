@@ -1,8 +1,8 @@
-import { grpc } from '@improbable-eng/grpc-web';
 import { Channel, createChannel, createClient } from 'nice-grpc-web';
 
 import { KamigazeServiceClient, KamigazeServiceDefinition } from 'engine/types/kamigaze/kamigaze';
 import { debug as parentDebug } from '../../debug';
+import { getGrpcTransport } from '../grpcTransport';
 
 const debug = parentDebug.extend('syncUtils');
 
@@ -13,7 +13,7 @@ let channel: Channel;
 export const create = (url: string): KamigazeServiceClient => {
   if (client) destroy();
   console.log('[kamigaze] creating stream client');
-  channel = createChannel(url, grpc.WebsocketTransport());
+  channel = createChannel(url, getGrpcTransport());
   client = createClient(KamigazeServiceDefinition, channel);
   return client;
 };
