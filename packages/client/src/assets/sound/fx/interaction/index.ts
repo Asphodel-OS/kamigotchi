@@ -1,15 +1,15 @@
-import click from './click.mp3';
-import dice from './dice.mp3';
-import echo from './echo.mp3';
-import fund from './fund.mp3';
-import message from './message.mp3';
-import phase from './phase.mp3';
-import scribble from './scribble.mp3';
-import signup from './signup.mp3';
-import success from './success.mp3';
-import teleport from './teleport.mp3';
-import trade from './trade.wav';
-import vend from './vend.mp3';
+import click from './click.m4a';
+import dice from './dice.m4a';
+import echo from './echo.m4a';
+import fund from './fund.m4a';
+import message from './message.m4a';
+import phase from './phase.m4a';
+import scribble from './scribble.m4a';
+import signup from './signup.m4a';
+import success from './success.m4a';
+import teleport from './teleport.m4a';
+import trade from './trade.m4a';
+import vend from './vend.m4a';
 
 export const InteractionFX = {
   click,

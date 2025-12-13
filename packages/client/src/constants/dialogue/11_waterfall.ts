@@ -14,7 +14,7 @@ const waterfall: DialogueNode = {
   index: 113,
   text: [
     'Water pours down from a great height, but the pool is shallower than expected.',
-    'Where could the water be going? Maybe we should explore further.',
+    'Where could the water be going? Maybe we should explore further.\n(Quest Steel Your Heart must be completed)',
   ],
   action: {
     type: 'move',

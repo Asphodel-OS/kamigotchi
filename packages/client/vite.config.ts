@@ -7,7 +7,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   root: path.resolve(__dirname, '.'),
   plugins: [dsv(), react()],
-  assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.mp3', '**/*.png', '**/*.wav', '**/*.webp'],
+  assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.m4a', '**/*.png', '**/*.webp'],
   build: {
     assetsInlineLimit: 0,
     rollupOptions: {

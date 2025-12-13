@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as Tone from 'tone';
 
-import registry from './registry.json';
+import registry from './registry';
 import type {
   AssetConfig,
   AudioRegistry,

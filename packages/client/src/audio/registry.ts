@@ -1,0 +1,93 @@
+import { withAudioExt } from './constants';
+import type { AudioRegistry } from './types';
+
+const registry: AudioRegistry = {
+  master: { volume: 0.8 },
+  buses: {
+    bgm: { volume: 0.6 },
+    fx: { volume: 0.7, duckBgmByDb: 6, duckAttackMs: 10, duckReleaseMs: 250 },
+  },
+  assets: [
+    {
+      key: 'bgm.cave',
+      src: withAudioExt('assets/sound/ost/cave'),
+      bus: 'bgm',
+      chain: 'presets/warm-room.json',
+      loop: true,
+      preload: true,
+      volume: 1.0,
+    },
+    {
+      key: 'fx.click',
+      src: withAudioExt('assets/sound/fx/interaction/click'),
+      bus: 'fx',
+      chain: 'presets/click-tight.json',
+      allowOverlap: true,
+      maxInstances: 6,
+      cooldownMs: 15,
+      volume: 0.9,
+    },
+    {
+      key: 'fx.fund',
+      src: withAudioExt('assets/sound/fx/interaction/fund'),
+      bus: 'fx',
+      chain: 'presets/click-tight.json',
+      allowOverlap: true,
+      maxInstances: 4,
+      cooldownMs: 10,
+      volume: 0.9,
+    },
+    {
+      key: 'fx.scribble',
+      src: withAudioExt('assets/sound/fx/interaction/scribble'),
+      bus: 'fx',
+      chain: 'presets/click-tight.json',
+      allowOverlap: true,
+      maxInstances: 4,
+      cooldownMs: 10,
+      volume: 0.9,
+    },
+    {
+      key: 'fx.signup',
+      src: withAudioExt('assets/sound/fx/interaction/signup'),
+      bus: 'fx',
+      chain: 'presets/success-sparkle.json',
+      allowOverlap: true,
+      maxInstances: 4,
+      cooldownMs: 10,
+      volume: 1.0,
+    },
+    {
+      key: 'fx.success',
+      src: withAudioExt('assets/sound/fx/interaction/success'),
+      bus: 'fx',
+      chain: 'presets/success-sparkle.json',
+      allowOverlap: true,
+      maxInstances: 4,
+      cooldownMs: 50,
+      volume: 1.0,
+    },
+    {
+      key: 'fx.vend',
+      src: withAudioExt('assets/sound/fx/interaction/vend'),
+      bus: 'fx',
+      chain: 'presets/click-tight.json',
+      allowOverlap: true,
+      maxInstances: 2,
+      cooldownMs: 50,
+      volume: 1.0,
+    },
+    {
+      key: 'fx.message',
+      src: withAudioExt('assets/sound/fx/interaction/message'),
+      bus: 'fx',
+      chain: 'presets/click-tight.json',
+      allowOverlap: true,
+      maxInstances: 4,
+      cooldownMs: 25,
+      volume: 0.9,
+    },
+  ],
+};
+
+export default registry;
