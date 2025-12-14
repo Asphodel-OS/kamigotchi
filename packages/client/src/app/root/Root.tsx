@@ -40,6 +40,17 @@ export const Root = observer(
 
     // audio bootstrap: resume on first interaction, preload common assets
     useEffect(() => {
+      try {
+        const raw = localStorage.getItem('settings');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed?.audioQuality) {
+            audioManager.setQuality(parsed.audioQuality);
+          }
+        }
+      } catch {
+        // ignore malformed settings
+      }
       const onFirst = () => {
         audioManager.resume();
         window.removeEventListener('pointerdown', onFirst);

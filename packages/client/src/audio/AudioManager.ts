@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as Tone from 'tone';
 
+import { AUDIO_QUALITY_DEFAULT, withAudioQuality } from './constants';
 import registry from './registry';
 import type {
   AssetConfig,
@@ -45,6 +46,7 @@ export class AudioManager {
 
   private readonly cfg: AudioRegistry;
   private fxToneBus: Tone.Gain;
+  private quality: 'low' | 'high' = AUDIO_QUALITY_DEFAULT;
 
   private constructor() {
     this.listener = new THREE.AudioListener();
@@ -95,6 +97,14 @@ export class AudioManager {
     if (bus === 'fx') {
       this.fxToneBus.gain.value = this.clamp01(value);
     }
+  }
+
+  setQuality(quality: 'low' | 'high'): void {
+    if (this.quality === quality) return;
+    this.quality = quality;
+    // clear decoded caches so subsequent loads honor the new quality
+    this.buffers.clear();
+    this.toneBuffers.clear();
   }
 
   async preload(): Promise<void> {
@@ -274,19 +284,20 @@ export class AudioManager {
   }
 
   private async getOrLoadBuffer(src: string): Promise<AudioBuffer> {
-    if (this.buffers.has(src)) return this.buffers.get(src) as AudioBuffer;
-    const url = this.resolveAssetUrl(src);
+    const resolvedSrc = this.applyQuality(src);
+    if (this.buffers.has(resolvedSrc)) return this.buffers.get(resolvedSrc) as AudioBuffer;
+    const url = this.resolveAssetUrl(resolvedSrc);
     try {
       // THREE.AudioLoader.loadAsync returns a decoded AudioBuffer
       const audioBuffer = (await this.loader.loadAsync(url)) as unknown as AudioBuffer;
-      this.buffers.set(src, audioBuffer);
+      this.buffers.set(resolvedSrc, audioBuffer);
       return audioBuffer;
     } catch {
       // Fallback: fetch and decode via AudioContext
       const res = await fetch(url);
       const arrayBuffer = await res.arrayBuffer();
       const audioBuffer = await this.context.decodeAudioData(arrayBuffer);
-      this.buffers.set(src, audioBuffer);
+      this.buffers.set(resolvedSrc, audioBuffer);
       return audioBuffer;
     }
   }
@@ -301,8 +312,10 @@ export class AudioManager {
   }
 
   private async getOrLoadToneBuffer(src: string): Promise<Tone.ToneAudioBuffer> {
-    if (this.toneBuffers.has(src)) return this.toneBuffers.get(src) as Tone.ToneAudioBuffer;
-    const url = this.resolveAssetUrl(src);
+    const resolvedSrc = this.applyQuality(src);
+    if (this.toneBuffers.has(resolvedSrc))
+      return this.toneBuffers.get(resolvedSrc) as Tone.ToneAudioBuffer;
+    const url = this.resolveAssetUrl(resolvedSrc);
     const buf = await new Promise<Tone.ToneAudioBuffer>((resolve, reject) => {
       const tb = new Tone.ToneAudioBuffer(
         url,
@@ -310,7 +323,7 @@ export class AudioManager {
         (e) => reject(e)
       );
     });
-    this.toneBuffers.set(src, buf);
+    this.toneBuffers.set(resolvedSrc, buf);
     return buf;
   }
 
@@ -608,6 +621,10 @@ export class AudioManager {
     const fixed = src.startsWith('assets/') ? `../${src}` : src;
     const url = new URL(fixed, import.meta.url);
     return url.toString();
+  }
+
+  private applyQuality(src: string): string {
+    return withAudioQuality(src, this.quality);
   }
 
   private clamp01(v: number): number {

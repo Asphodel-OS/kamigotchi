@@ -11,15 +11,23 @@ import { playClick } from 'utils/sounds';
 export const Volume = () => {
   const [settings, setSettings] = useLocalStorage('settings', {
     volume: { fx: 0.5, bgm: 0.5 },
+    audioQuality: 'low',
   });
   const [bgmVolume, setBgmVolume] = useState(settings.volume.bgm);
   const [fxVolume, setFxVolume] = useState(settings.volume.fx);
+  const [audioQuality, setAudioQuality] = useState<'low' | 'high'>(
+    (settings as any).audioQuality || 'low'
+  );
 
   useEffect(() => {
-    setSettings({ ...settings, volume: { bgm: bgmVolume, fx: fxVolume } });
+    setSettings({ ...settings, volume: { bgm: bgmVolume, fx: fxVolume }, audioQuality });
     audioManager.setBusVolume('bgm', bgmVolume);
     audioManager.setBusVolume('fx', fxVolume);
-  }, [bgmVolume, fxVolume]);
+  }, [bgmVolume, fxVolume, audioQuality]);
+
+  useEffect(() => {
+    audioManager.setQuality(audioQuality);
+  }, [audioQuality]);
 
   const toggleVolume = (type: string) => {
     let volume = type === 'fx' ? fxVolume : bgmVolume;
@@ -39,7 +47,7 @@ export const Volume = () => {
           max='1'
           step='0.1'
           value={bgmVolume}
-          onChange={(e) => setBgmVolume(e.target.value as unknown as number)}
+          onChange={(e) => setBgmVolume(parseFloat(e.target.value))}
         />
         <Icon src={icon} onClick={() => toggleVolume('bgm')} />
       </Row>
@@ -55,7 +63,7 @@ export const Volume = () => {
         max='1'
         step='0.1'
         value={fxVolume}
-        onChange={(e) => setFxVolume(e.target.value as unknown as number)}
+        onChange={(e) => setFxVolume(parseFloat(e.target.value))}
       />
       <Icon
         src={fxVolume == 0 ? TriggerIcons.soundOff : TriggerIcons.soundOn}
@@ -70,6 +78,22 @@ export const Volume = () => {
         <Title>Volume</Title>
         {MusicRow()}
         {SoundEffectsRow()}
+      </Section>
+      <Section>
+        <Title>Audio Quality</Title>
+        <Row>
+          <Text style={{ flexGrow: 2 }}>Prefer faster downloads</Text>
+          <Select
+            value={audioQuality}
+            onChange={(e) => {
+              const q = e.target.value as 'low' | 'high';
+              setAudioQuality(q);
+            }}
+          >
+            <option value='low'>Fast (96 kbps)</option>
+            <option value='high'>Standard (128 kbps)</option>
+          </Select>
+        </Row>
       </Section>
     </Container>
   );
@@ -112,4 +136,12 @@ const Icon = styled.img`
   width: 20px;
   height: 20px;
   cursor: pointer;
+`;
+
+const Select = styled.select`
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
 `;
