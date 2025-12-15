@@ -89,7 +89,6 @@
 ,Make 3 Scavenging Rolls at Centipedes,MIN,INC,SCAV_CLAIM_NODE,62,3
 ,Make 7 Scavenging Rolls at Broken Tube,MIN,INC,SCAV_CLAIM_NODE,73,7
 ,Make 3 Scavenging Rolls at Trophies of the Hunt,MIN,INC,SCAV_CLAIM_NODE,89,3
-,Scavenge 25 Otherworld Coins,MIN,INC,SCAV_CLAIM_NODE,1019,25
 ,Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
 ,Spend a point in any Skill Tree after levelling up,MIN,CURR,SKILL_POINTS_USE,,1
 ,Make a Scavenging roll in 3 rooms of the Scrap type,MIN,INC,SCAV_CLAIM_AFFINITY_SCRAP,,3
@@ -114,6 +113,7 @@
 ,Scavenge 5 Patinated Pipes,MIN,INC,DROPTABLE_ITEM_TOTAL,1017,5
 ,Scavenge 15 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,15
 ,Scavenge 20 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,20
+,Scavenge 25 Otherworld Coins,MIN,INC,DROPTABLE_ITEM_TOTAL,1019,25
 ,Scavenge 5 Bone Chunks,MIN,INC,DROPTABLE_ITEM_TOTAL,1020,5
 ,Scavenge 1 Essence of Hearing,MIN,INC,DROPTABLE_ITEM_TOTAL,6001,1
 ,Scavenge 1 Essence of Smell,MIN,INC,DROPTABLE_ITEM_TOTAL,6002,1
