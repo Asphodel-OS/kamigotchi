@@ -1,95 +1,52 @@
-import abandoned from './abandoned.mp3';
-import abandonedCamp from './abandonedCamp.mp3';
-import amusement from './amusement.mp3';
-import arrival from './arrival.mp3';
-import brokenTube from './brokenTube.mp3';
-import canyonBridge from './canyonBridge.mp3';
-import cave from './cave.mp3';
-import caveCrossroads from './caveCrossroads.mp3';
-import charcoalMural from './charcoalMural.mp3';
-import collapsedTunnel from './collapsedTunnel.mp3';
-import engravedDoor from './engravedDoor.mp3';
-import floodMural from './floodMural.mp3';
-import fungusGarden from './fungusGarden.mp3';
-import geometricCliffs from './geometricCliffs.mp3';
-import giantsPalm from './giantsPalm.mp3';
-import glitter from './glitter.mp3';
-import guardianSkull from './guardianSkull.mp3';
-import hatchToNowhere from './hatchToNowhere.mp3';
-import k1 from './k1.mp3';
-import k11 from './k11.mp3';
-import k13 from './k13.mp3';
-import k14 from './k14.mp3';
-import k2 from './k2.mp3';
-import k3 from './k3.mp3';
-import k4 from './k4.mp3';
-import k5 from './k5.mp3';
-import k8 from './k8.mp3';
-import k9 from './k9.mp3';
-import lotusPool from './lotusPool.mp3';
-import market from './market.mp3';
-import mina from './mina.mp3';
-import mystique from './mystique.mp3';
-import radiantCrystal from './radiantCrystal.mp3';
-import reinforcedTunnel from './reinforcedTunnel.mp3';
-import sacrarium from './sacrarium.mp3';
-import scenicView from './scenicView.mp3';
-import sextantRooms from './sextantRooms.mp3';
-import shabbyDeck from './shabbyDeck.mp3';
-import shop from './shop.mp3';
-import slipperyPit from './slipperyPit.mp3';
-import stillStream from './stillStream.mp3';
-import technoTemple from './technoTemple.mp3';
-import templeCave from './templeCave.mp3';
-import templeOfTheWheel from './templeOfTheWheel.mp3';
-import thrivingMushrooms from './thrivingMushrooms.mp3';
-import toadstoolPlatforms from './toadstoolPlatforms.mp3';
+const CDN_BASE_URL = import.meta.env.VITE_CDN_BASE_URL || 'https://cdn.prod.kamigotchi.io';
 
-export {
-  abandoned,
-  abandonedCamp,
-  amusement,
-  arrival,
-  brokenTube,
-  canyonBridge,
-  cave,
-  caveCrossroads,
-  charcoalMural,
-  collapsedTunnel,
-  engravedDoor,
-  floodMural,
-  fungusGarden,
-  geometricCliffs,
-  giantsPalm,
-  glitter,
-  guardianSkull,
-  hatchToNowhere,
-  k1,
-  k11,
-  k13,
-  k14,
-  k2,
-  k3,
-  k4,
-  k5,
-  k8,
-  k9,
-  lotusPool,
-  market,
-  mina,
-  mystique,
-  radiantCrystal,
-  reinforcedTunnel,
-  sacrarium,
-  scenicView,
-  sextantRooms,
-  shabbyDeck,
-  shop,
-  slipperyPit,
-  stillStream,
-  technoTemple,
-  templeCave,
-  templeOfTheWheel,
-  thrivingMushrooms,
-  toadstoolPlatforms,
-};
+const ost = (filename: string) => `${CDN_BASE_URL}/sound/ost/${filename}.mp3`;
+
+export const abandoned = ost('abandoned');
+export const abandonedCamp = ost('abandonedCamp');
+export const amusement = ost('amusement');
+export const arrival = ost('arrival');
+export const brokenTube = ost('brokenTube');
+export const canyonBridge = ost('canyonBridge');
+export const cave = ost('cave');
+export const caveCrossroads = ost('caveCrossroads');
+export const charcoalMural = ost('charcoalMural');
+export const collapsedTunnel = ost('collapsedTunnel');
+export const engravedDoor = ost('engravedDoor');
+export const floodMural = ost('floodMural');
+export const fungusGarden = ost('fungusGarden');
+export const geometricCliffs = ost('geometricCliffs');
+export const giantsPalm = ost('giantsPalm');
+export const glitter = ost('glitter');
+export const guardianSkull = ost('guardianSkull');
+export const hatchToNowhere = ost('hatchToNowhere');
+export const k1 = ost('k1');
+export const k11 = ost('k11');
+export const k13 = ost('k13');
+export const k14 = ost('k14');
+export const k2 = ost('k2');
+export const k3 = ost('k3');
+export const k4 = ost('k4');
+export const k5 = ost('k5');
+export const k8 = ost('k8');
+export const k9 = ost('k9');
+export const lotusPool = ost('lotusPool');
+export const market = ost('market');
+export const mina = ost('mina');
+export const mystique = ost('mystique');
+export const radiantCrystal = ost('radiantCrystal');
+export const reinforcedTunnel = ost('reinforcedTunnel');
+export const sacrarium = ost('sacrarium');
+export const scenicView = ost('scenicView');
+export const sextantRooms = ost('sextantRooms');
+export const shabbyDeck = ost('shabbyDeck');
+export const shop = ost('shop');
+export const slipperyPit = ost('slipperyPit');
+export const stillStream = ost('stillStream');
+export const technoTemple = ost('technoTemple');
+export const templeCave = ost('templeCave');
+export const templeOfTheWheel = ost('templeOfTheWheel');
+export const thrivingMushrooms = ost('thrivingMushrooms');
+export const toadstoolPlatforms = ost('toadstoolPlatforms');
+
+export { ost };
