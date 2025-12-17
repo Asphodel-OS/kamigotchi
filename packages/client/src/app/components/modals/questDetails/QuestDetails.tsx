@@ -21,6 +21,7 @@ import {
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { didActionSucceed } from 'network/utils';
 import { useComponentEntities } from 'network/utils/hooks';
+import { playClick } from 'utils/sounds';
 import { Bottom } from './Bottom';
 import { Dialogue } from './Dialogue';
 
@@ -168,13 +169,19 @@ export const QuestDetailsModal: UIComponent = {
           buttons={{
             AcceptButton: {
               backgroundColor: '#f8f6e4',
-              onClick: () => acceptQuest(quest),
+              onClick: () => {
+                acceptQuest(quest);
+                playClick();
+              },
               disabled: quest.startTime !== 0,
               label: 'Accept',
             },
             CompleteButton: {
               backgroundColor: '#f8f6e4',
-              onClick: () => completeQuest(quest),
+              onClick: () => {
+                completeQuest(quest);
+                playClick();
+              },
               disabled: !meetsObjectives(quest) || quest.complete || quest.startTime === 0,
               label: 'Complete',
             },
