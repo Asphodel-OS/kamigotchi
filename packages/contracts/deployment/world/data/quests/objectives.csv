@@ -14,10 +14,39 @@
 ,Harvest for >360 minutes at Engraved Door,MIN,INC,HARVEST_TIME,74,21600
 ,Harvest for >720 minutes at Flood Mural,MIN,INC,HARVEST_TIME,75,43200
 ,Harvest for >720 minutes at Thriving Mushrooms,MIN,INC,HARVEST_TIME,77,43200
+,Harvest for >360 minutes at Toadstool Platforms,MIN,INC,HARVEST_TIME,78,21600
+,Harvest for >360 minutes at Flower Mural,MIN,INC,HARVEST_TIME,81,21600
+,Harvest for >360 minutes at Canyon Bridge,MIN,INC,HARVEST_TIME,83,21600
+,Harvest for >360 minutes at Reinforced Tunnel,MIN,INC,HARVEST_TIME,84,21600
+,Harvest for >360 minutes at Giant's Palm,MIN,INC,HARVEST_TIME,85,21600
+,Harvest for >360 minutes at Guardian Skull,MIN,INC,HARVEST_TIME,86,21600
+,Harvest for >720 minutes at the Sacrarium,MIN,INC,HARVEST_TIME,87,43200
 ,Harvest for >360 minutes at Treasure Hoard,MIN,INC,HARVEST_TIME,88,21600
 ,Harvest 1 minute,MIN,INC,HARVEST_TIME,,60
 ,Harvest for >5 minutes,MIN,INC,HARVEST_TIME,,300
 ,Harvest for >720 minutes at the Lost Skeleton During Moonside,MIN,INC,HARVEST_TIME_MOONSIDE,25,43200
+,Scavenge 2 Plastic Bottles,MIN,INC,DROPTABLE_ITEM_TOTAL,1003,2
+,Scavenge 1 Pine Cone,MIN,INC,DROPTABLE_ITEM_TOTAL,1004,1
+,Scavenge 1 Daffodil,MIN,INC,DROPTABLE_ITEM_TOTAL,1011,1
+,Scavenge 1 Sanguine Shroom,MIN,INC,DROPTABLE_ITEM_TOTAL,1013,1
+,Scavenge 5 Dried Stems,MIN,INC,DROPTABLE_ITEM_TOTAL,1016,5
+,Scavenge 5 Patinated Pipes,MIN,INC,DROPTABLE_ITEM_TOTAL,1017,5
+,Scavenge 15 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,15
+,Scavenge 20 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,20
+,Scavenge 25 Otherworld Coins,MIN,INC,DROPTABLE_ITEM_TOTAL,1019,25
+,Scavenge 5 Bone Chunks,MIN,INC,DROPTABLE_ITEM_TOTAL,1020,5
+,Scavenge 3 Irradiated Roots,MIN,INC,DROPTABLE_ITEM_TOTAL,1021,3
+,Scavenge 1 Essence of Hearing,MIN,INC,DROPTABLE_ITEM_TOTAL,6001,1
+,Scavenge 1 Essence of Smell,MIN,INC,DROPTABLE_ITEM_TOTAL,6002,1
+,Scavenge 1 Essence of Sight,MIN,INC,DROPTABLE_ITEM_TOTAL,6003,1
+,Scavenge 1 Essence of Taste,MIN,INC,DROPTABLE_ITEM_TOTAL,6004,1
+,Scavenge 1 Essence of Touch,MIN,INC,DROPTABLE_ITEM_TOTAL,6005,1
+,Scavenge 1 Essence of Thought,MIN,INC,DROPTABLE_ITEM_TOTAL,6006,1
+,Scavenge 5 Honeydew Scale,MIN,INC,DROPTABLE_ITEM_TOTAL,11312,5
+,Scavenge 10 Blue Pansy,MIN,INC,DROPTABLE_ITEM_TOTAL,11314,10
+,Own at least 1 Irradiated Root,MIN,INC,ITEM,1021,1
+,Own at least 1 Ingot,MIN,INC,ITEM,1303,1
+,Own at least 1 Essence of Sight,MIN,INC,ITEM,6003,1
 ,Give 10 MUSU,MIN,INC,ITEM_BURN,1,10
 ,Give 3000 $MUSU,MIN,INC,ITEM_BURN,1,3000
 ,Give 5000 $MUSU,MIN,INC,ITEM_BURN,1,5000
@@ -31,10 +60,13 @@
 ,Give 5 Scrap Metal,MIN,INC,ITEM_BURN,1005,5
 ,Give 25x Scrap Metal,MIN,INC,ITEM_BURN,1005,25
 ,Give 1 Red Amber Crystal,MIN,INC,ITEM_BURN,1007,1
+,Give 5 Daffodil,MIN,INC,ITEM_BURN,1011,5
 ,Give 15 Daffodil,MIN,INC,ITEM_BURN,1011,15
 ,Give 1 Mint,MIN,INC,ITEM_BURN,1012,1
 ,Give 5 Obols,MIN,INC,ITEM_BURN,1015,5
 ,Give 1 Cigarette Butt,MIN,INC,ITEM_BURN,1018,1
+,Give 1 Irradiated Root,MIN,INC,ITEM_BURN,1021,1
+,Give 2500 Microplastics,MIN,INC,ITEM_BURN,1103,2500
 ,Give 1000 Black Poppy Extract,MIN,INC,ITEM_BURN,1110,1000
 ,Give 125 Sanguineous Powder,MIN,INC,ITEM_BURN,1113,125
 ,Give 1000 Holy Syrup,MIN,INC,ITEM_BURN,1201,1000
@@ -42,8 +74,11 @@
 ,Give 5000 Resin Tincture,MIN,INC,ITEM_BURN,1202,5000
 ,Give 1 Ashlar,MIN,INC,ITEM_BURN,1301,1
 ,Give 1 Essence of Hearing,MIN,INC,ITEM_BURN,6001,1
+,Give 5 Blue Pansy,MIN,INC,ITEM_BURN,11314,5
 ,Give Mina 20 Blue Pansy,MIN,INC,ITEM_BURN,11314,20
+,Give 1 Energy Drink,MIN,INC,ITEM_BURN,11409,1
 ,Give 1 Flash Talisman,MIN,INC,ITEM_BURN,11412,1
+,Give 1 Toadstool Liquor,MIN,INC,ITEM_BURN,11501,1
 ,Give 1 Curse Tablet,MIN,INC,ITEM_BURN,19301,1
 ,Give 1 Wonder Egg,MIN,INC,ITEM_BURN,21003,1
 ,Give 3 Rock Candyfloss,MIN,INC,ITEM_BURN,21205,3
@@ -66,17 +101,24 @@
 ,Move 500 times,MIN,INC,MOVE,,500
 ,Move 1000 times,MIN,INC,MOVE,,1000
 ,During Moonside,IS,BOOL,PHASE,,
+,Move to Tunnel of Trees,IS,BOOL,ROOM,2,
 ,Move to Torii Gate,IS,BOOL,ROOM,3,
+,Move to Restricted Area,IS,BOOL,ROOM,5,
 ,Go to the Temple by the Waterfall,IS,BOOL,ROOM,11,
 ,Move to Convenience Store,IS,BOOL,ROOM,13,
 ,Enter Mina's Shop,IS,BOOL,ROOM,13,
 ,"Use the object ""Waterfall"" in ""Temple by the Waterfall"" to enter a new zone",IS,BOOL,ROOM,15,
+,Move to Techno Temple,IS,BOOL,ROOM,16,
 ,Move to Cave Crossroads,IS,BOOL,ROOM,18,
 ,Move to Lost Skeleton,IS,BOOL,ROOM,25,
 ,Move to the Trash-Strewn Graves,IS,BOOL,ROOM,26,
+,Move to Shady Path,IS,BOOL,ROOM,55,
 ,Move to Slippery Pit,IS,BOOL,ROOM,68,
 ,Move to Hatch to Nowhere,IS,BOOL,ROOM,72,
 ,Move to Flood Mural,IS,BOOL,ROOM,75,
+,Move to Abandoned Campsite,IS,BOOL,ROOM,79,
+,Move to Reinforced Tunnel,IS,BOOL,ROOM,84,
+,Move to Guardian Skull,IS,BOOL,ROOM,86,
 ,Move to Trophies of the Hunt,IS,BOOL,ROOM,89,
 ,Make 9 Scavenging Rolls at Labs Entrance,MIN,INC,SCAV_CLAIM_NODE,6,9
 ,Make 2 Scavenging Rolls at Scrap Confluence,MIN,INC,SCAV_CLAIM_NODE,12,2
@@ -84,10 +126,18 @@
 ,Make 5 Scavenging Rolls at Lost Skeleton,MIN,INC,SCAV_CLAIM_NODE,25,5
 ,Make 3 Scavenging Rolls at Clearing,MIN,INC,SCAV_CLAIM_NODE,49,3
 ,Make 3 Scavenging Rolls at Airplane Crash,MIN,INC,SCAV_CLAIM_NODE,52,3
+,Make 1 Scavenging Roll at Blooming Tree,MIN,INC,SCAV_CLAIM_NODE,53,1
 ,Make 3 Scavenging Rolls at Blooming Tree,MIN,INC,SCAV_CLAIM_NODE,53,3
 ,Make 2 Scavenging rolls at Scrap Trees,MIN,INC,SCAV_CLAIM_NODE,60,2
 ,Make 3 Scavenging Rolls at Centipedes,MIN,INC,SCAV_CLAIM_NODE,62,3
 ,Make 7 Scavenging Rolls at Broken Tube,MIN,INC,SCAV_CLAIM_NODE,73,7
+,Make 3 Scavenging Rolls at Toadstool Platforms,MIN,INC,SCAV_CLAIM_NODE,78,3
+,Make 6 Scavenging Rolls at Abandoned Campsite,MIN,INC,SCAV_CLAIM_NODE,79,6
+,Make 3 Scavenging Rolls at Radiant Crystal,MIN,INC,SCAV_CLAIM_NODE,80,3
+,Make 3 Scavenging Rolls at Flower Mural,MIN,INC,SCAV_CLAIM_NODE,81,3
+,Make 1 Scavenging Roll at Geometric Cliffs,MIN,INC,SCAV_CLAIM_NODE,82,1
+,Make 3 Scavenging Rolls at Canyon Bridge,MIN,INC,SCAV_CLAIM_NODE,83,3
+,Make 3 Scavenging Rolls at Reinforced Tunnel,MIN,INC,SCAV_CLAIM_NODE,84,3
 ,Make 3 Scavenging Rolls at Trophies of the Hunt,MIN,INC,SCAV_CLAIM_NODE,89,3
 ,Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
 ,Spend a point in any Skill Tree after levelling up,MIN,CURR,SKILL_POINTS_USE,,1
@@ -96,29 +146,18 @@
 ,Make a Scavenging roll in 3 rooms of the Eerie type,MIN,INC,SCAV_CLAIM_AFFINITY_EERIE,,3
 ,Make a Scavenging roll in 3 rooms of the Normal type,MIN,INC,SCAV_CLAIM_AFFINITY_NORMAL,,3
 ,Craft 500 Pine Pollen,MIN,INC,CRAFT_ITEM,1104,500
+,Craft 500 Pallid Root Extract,MIN,INC,CRAFT_ITEM,1121,500
 ,Craft 1 Ashlar,MIN,INC,CRAFT_ITEM,1301,1
 ,Craft 1 Timber,MIN,INC,CRAFT_ITEM,1302,1
 ,Craft 1 Ingot,MIN,INC,CRAFT_ITEM,1303,1
+,Craft 1 Pure Essence,MIN,INC,CRAFT_ITEM,6007,1
+,Craft 1 Pale Potion,MIN,INC,CRAFT_ITEM,11004,1
 ,Craft 1 XP Potion,MIN,INC,CRAFT_ITEM,11401,1
 ,Craft 1 Respec Potion,MIN,INC,CRAFT_ITEM,11403,1
 ,Craft 1 Grace Potion,MIN,INC,CRAFT_ITEM,11404,1
 ,Craft 1 Bless Potion,MIN,INC,CRAFT_ITEM,11405,1
 ,Craft 1 Hostility Potion,MIN,INC,CRAFT_ITEM,11410,1
 ,Craft Uninteresting Paste,MIN,INC,CRAFT_ITEM,21206,1
-,Scavenge 2 Plastic Bottles,MIN,INC,DROPTABLE_ITEM_TOTAL,1003,2
-,Scavenge 1 Pine Cone,MIN,INC,DROPTABLE_ITEM_TOTAL,1004,1
-,Scavenge 1 Daffodil,MIN,INC,DROPTABLE_ITEM_TOTAL,1011,1
-,Scavenge 1 Sanguine Shroom,MIN,INC,DROPTABLE_ITEM_TOTAL,1013,1
-,Scavenge 5 Dried Stems,MIN,INC,DROPTABLE_ITEM_TOTAL,1016,5
-,Scavenge 5 Patinated Pipes,MIN,INC,DROPTABLE_ITEM_TOTAL,1017,5
-,Scavenge 15 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,15
-,Scavenge 20 Cigarette Butts,MIN,INC,DROPTABLE_ITEM_TOTAL,1018,20
-,Scavenge 25 Otherworld Coins,MIN,INC,DROPTABLE_ITEM_TOTAL,1019,25
-,Scavenge 5 Bone Chunks,MIN,INC,DROPTABLE_ITEM_TOTAL,1020,5
-,Scavenge 1 Essence of Hearing,MIN,INC,DROPTABLE_ITEM_TOTAL,6001,1
-,Scavenge 1 Essence of Smell,MIN,INC,DROPTABLE_ITEM_TOTAL,6002,1
-,Scavenge 1 Essence of Taste,MIN,INC,DROPTABLE_ITEM_TOTAL,6004,1
-,Scavenge 1 Essence of Touch,MIN,INC,DROPTABLE_ITEM_TOTAL,6005,1
-,Scavenge 5 Honeydew Scale,MIN,INC,DROPTABLE_ITEM_TOTAL,11312,5
-,Scavenge 10 Blue Pansy,MIN,INC,DROPTABLE_ITEM_TOTAL,11314,10
+,Assemble the Dowsing Rod,MIN,INC,CRAFT_ITEM,100010,1
 ,Use the machine to buy something in the Marketplace,MIN,INC,TRADE_EXECUTE,,1
+,Make 3 Scavenging Rolls at the Sacrarium,,,,,

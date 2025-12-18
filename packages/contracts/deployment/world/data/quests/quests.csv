@@ -445,7 +445,7 @@ MENU: “Maybe I’ve heard it ring in the past.”
 MENU: “If I hear it ring again, it might awaken some hidden memories.”
 MENU: “I’ll hold off on using the Essence until we’re ready to try.”
 MENU: “I don’t know how long this unintended effect will last. I wouldn’t want to waste it and make you go scavenge for more.”",Complete MSQ050,Give 1 Essence of Hearing,"4x Agency Reputation,4x Elders Loyalty,2x Booster Pack"
-MSQ052,52,In Game,Ringing Any Bells III,No,MAIN,MENU,"MENU: “I’m ready. Time to ring that bell.”
+MSQ052,52,To Update,Ringing Any Bells III,No,MAIN,MENU,"MENU: “I’m ready. Time to ring that bell.”
 MENU: “It’s pretty big, so make sure you give it a good hard smack.”
 MENU: “If I’m going to hear it, I want to really hear it!”
 MINA: “Use the biggest rock you can get as a mallet. Make an Ashlar if you have to.”","MENU: “Ah!”
@@ -460,7 +460,7 @@ MENU: “There were five of them, two women and three men.”
 MENU: “They all seem so familiar, I know these people.”
 MENU: “I recognize their faces, I just can’t remember who they are.”
 MENU: “They were casting a spell on me I think? Some sort of protective charm or good luck ritual.”
-MENU: “I never believed in that stuff, but… Now I just don’t like to think about it.”",Complete MSQ051,Give 1 Ashlar,"6x Agency Reputation,4x Elders Loyalty"
+MENU: “I never believed in that stuff, but… Now I just don’t like to think about it.”",Complete MSQ051,"Move to Cave Crossroads,Give 1 Ashlar","6x Agency Reputation,4x Elders Loyalty"
 MSQ053,53,In Game,Flash Back,No,MAIN,MINA,"MENU: “Mina, can you see the paper talismans around the Crossroads?”
 MENU: “They might be easy to miss with the naked eye.”
 MINA: “Of course. Obviously some sort of magical item or artifact.”
@@ -482,14 +482,14 @@ MINA: “You won’t be satisfied eating just one, and they aren’t very nutrit
 MINA: “They are quite plentiful, though. And honestly delightful.""","MINA: “See? Practically effortless to acquire.”
 MINA: “You’re likely to find more the deeper you go into the caves.”
 MINA: “It’s a common flower that grows more easily in the dark.”",Complete MSQ053,Scavenge 10 Blue Pansy,2x Elders Loyalty
-MSQ055,55,To Update,Stop and Smell the Lotus,No,MAIN,MINA,"MINA: “In the underground lake at the bottom of these caves, you can find lotus flowers of uncommon size.”
+MSQ055,55,In Game,Stop and Smell the Lotus,No,MAIN,MINA,"MINA: “In the underground lake at the bottom of these caves, you can find lotus flowers of uncommon size.”
 MINA: “Do you see how their blossoms are shaped? Those shapes create eddies in the $MUSU currents.”
 MINA: “If you remember your lessons, you’ll know that means they’re a potential source of sensory essences.”
 MINA: “It’s pretty strange to find two different essences so close to each other.”
 MINA: “Someone probably cultivated them here so they could get the whole set.”
 MINA: “Have your Kami scavenge some essence of smell for us, but be careful, it’s a bit volatile.”","MINA: “Not too shabby.”
 MINA: “I thought they might all fly away before you managed to catch one.”",Complete MSQ054,Scavenge 1 Essence of Smell,"4x Elders Loyalty,1x Booster Pack"
-MSQ056,56,To Update,Feel Like a Mushroom Myself,No,MAIN,MENU,"MENU: “Wow, the garden down the middle of this cave just keeps going.”
+MSQ056,56,In Game,Feel Like a Mushroom Myself,No,MAIN,MENU,"MENU: “Wow, the garden down the middle of this cave just keeps going.”
 MINA: “These mushrooms are rarely found in such dense numbers.”
 MINA: “If you look closely, you can see the second layer already growing in.”
 MINA: “It’s a fungus that grows like a weed when fed properly, but it can rarely get what it wants.”
@@ -502,7 +502,7 @@ MENU: “I unfortunately can’t tell you more with my memory as fragmentary and
 MENU: “If you think it’s frustrating, imagine how I must feel, haha!”
 MENU: “Haha…”
 MENU: “They must have really wanted me out of the loop.”",Complete MSQ055,Harvest for >720 minutes at Thriving Mushrooms,"4x Agency Reputation,2x Elders Loyalty"
-MSQ057,57,To Deploy,Top 10 Smoke Spots in Kamigotchi World,No,MAIN,MENU,"MENU: “That spot overlooking the pit… It seems like it would be a great place to stop and have a smoke.”
+MSQ057,57,In Game,Top 10 Smoke Spots in Kamigotchi World,No,MAIN,MENU,"MENU: “That spot overlooking the pit… It seems like it would be a great place to stop and have a smoke.”
 MENU: “I used to love to smoke. It’s one of the things I miss most about your world.”
 MENU: “It’s funny that I remember that despite not remembering very much else from my past life.”
 MENU: “If I could burn one right now I bet all my memories would come flooding back.”
@@ -510,7 +510,7 @@ MENU: “Give me some cigarette butts? Not even for the microplastics.”
 MENU: “Just for old time’s sake.”","MENU: “If I still had a body I would happily smoke the last of those butts.” 
 MENU: “If you’ve ever really craved a cigarette and gone digging around in ashtrays for a half smoked cig you’d know how I feel.”
 MENU: “Nothing we can really do about that though.”",Complete MSQ056,"Move to Slippery Pit,Give 1 Cigarette Butt",6x Agency Reputation
-MSQ058,58,To Deploy,Flower of the Flock,No,MAIN,MENU,"MENU: “These blue flowers you find in the caves, they’re so striking.”
+MSQ058,58,In Game,Flower of the Flock,No,MAIN,MENU,"MENU: “These blue flowers you find in the caves, they’re so striking.”
 MENU: “They look like the butterflies in the fields and woods outside.”
 MENU: “Maybe there’s a connection between them?” 
 MENU: “You should deliver some to Mina, she can probably tell us more about them.”
@@ -527,7 +527,7 @@ MINA: “I think I would like to study these further, thank you for bringing the
 MINA:  “Menu was right to think I’d find them interesting.”
 MINA:  “Since she’s helped me with this and with so many other things, I should help her with something too.”
 MINA: “That’s what friends are for is it not?”",Complete MSQ057,Give Mina 20 Blue Pansy,"4x Elders Loyalty,2x Agency Reputation,2x Booster Pack"
-MSQ059,59,To Deploy,"Ordinary Intermediate Potion Crafting (Very Boring) I
+MSQ059,59,To Update,"Ordinary Intermediate Potion Crafting (Very Boring) I
 ",No,MAIN,MINA,"MINA: “Hey, shh.” 
 MINA: “Be quiet. We don’t want Menu to hear us.”
 MINA: “I’m sure that’s impossible considering where this conversation is taking place, but I’m trying.”
@@ -537,16 +537,16 @@ MINA: “It’s time to teach you some intermediate hexerei with a recipe I’ve
 MINA: “Bring me some cigarette butts from the cave system. I know I think they’re disgusting, but it’s important.”
 MINA: “And don’t tell Menu anything, we don’t want to spoil the surprise.”","MINA: “Ahh, perfect! That will do nicely.”
 MINA: “This might look like useless smelly trash, but many things are more than they appear.”
-MINA: “We just need two more ingredients. They’ll be hard to get, but not impossible.” MINA: “Head back into the caves and hang a left at the slippery pit, look for the huge lotus flower.”
-MINA: “And keep quiet about it.""",Complete MSQ058,Scavenge 20 Cigarette Butts,"4x Elders Loyalty,1x Booster Pack"
-MSQ060,60,To Deploy,"Ordinary Intermediate Potion Crafting (Very Boring) II
+MINA: “We just need two more ingredients. They’ll be hard to get, but not impossible.” MINA: “Head down the central passageway of the caves, stop in that fungus garden, and wait for me.”
+MINA: “Be quick about it.""",Complete MSQ058,Scavenge 20 Cigarette Butts,"4x Elders Loyalty,1x Booster Pack"
+MSQ060,60,In Game,"Ordinary Intermediate Potion Crafting (Very Boring) II
 ",No,MAIN,MINA,"MINA: “The mushroom garden in the central hall of this cave is adorable.”
 MINA: “It seems to have been abandoned recently. A few decades, maybe a few centuries ago at the most.”
 MINA: “While the fungus of the underworld has its own uses, I’m more interested in something else.”
 MINA: “You can find rare stone flowers hiding among the mushroom patches.”
 MINA: “Those flowers are another of the sensory essences. Make sure to have at least one in your pocket for our potion.”","MINA: “Nicely done! Bring it back to my shop, and remember not to say anything to you-know-who.”
 MINA: “;)”",Complete MSQ059,Scavenge 1 Essence of Taste,"2x Elders Loyalty,1x Booster Pack"
-MSQ061,61,To Deploy,Ordinary Intermediate Potion Crafting (Very Boring) III,No,MAIN,MINA,"MENU: “What’s with these random tasks that Mina has you doing?”
+MSQ061,61,In Game,Ordinary Intermediate Potion Crafting (Very Boring) III,No,MAIN,MINA,"MENU: “What’s with these random tasks that Mina has you doing?”
 MENU: “She won’t tell me anything about it. And I'm having a hard time seeing what you're doing all of a sudden!”
 MENU: “Hey, where are you going?”","MINA: “Hey there, Operator. And shoo Menu, this is a private matter.”
 MENU: “But I wanna see! What are you working on? Is it a new potion?”
@@ -556,7 +556,7 @@ MINA: “You’re a very good Menu.”
 MINA: “I don’t mean to be rude, but your disembodied presence is interfering with a very delicate crafting process.”
 MINA: “Once the potion is completed we’ll show you the final product. I promise.”
 MENU: “Okay, fine, fine, I’ll wait outside.”",Complete MSQ060,Move to Convenience Store,"2x Elders Loyalty,1x Booster Pack"
-MSQ062,62,To Deploy,Ordinary Intermediate Potion Crafting (Very Boring) IV,No,MAIN,MINA,"MINA: “Is she gone?”
+MSQ062,62,In Game,Ordinary Intermediate Potion Crafting (Very Boring) IV,No,MAIN,MINA,"MINA: “Is she gone?”
 MINA: “Phew, that was a close one.”
 MINA: “Now, observe closely. Even though these butts have been smoked down to stubs, there is still a bit of tobacco left inside them.”
 MINA:  “Menu doesn’t have a physical form. Obviously, just collecting the loose tobacco won’t let her actually smoke.”
@@ -567,7 +567,7 @@ MINA: “They’ll release oil and emulsify into a thin slurry.”
 MINA: “Now, fold in the tobacco.”","MINA: “That looks perfect, now we can give it to Menu.”
 MINA: “I wish I could see the look on her face…”
 MINA: “I wonder what it looks like?”",Complete MSQ061,Craft Uninteresting Paste,"2x Elders Loyalty,1x Booster Pack"
-MSQ063,63,To Deploy,Ordinary Intermediate Potion Crafting (Very Boring) V,No,MAIN,MINA,"MINA: “Now that we’ve crafted this sacred incense, you’ll need to burn it in a spot where the $MUSU currents can carry the smoke properly.”
+MSQ063,63,In Game,Ordinary Intermediate Potion Crafting (Very Boring) V,No,MAIN,MINA,"MINA: “Now that we’ve crafted this sacred incense, you’ll need to burn it in a spot where the $MUSU currents can carry the smoke properly.”
 MINA: “Head over to the Torii Gate down the road.”
 MINA: “The currents there should work nicely and be far enough away that I don’t get any secondhand smoke at my shop.”
 MINA: “Once you’re there, burn the paste in your portable burner.”
@@ -587,7 +587,7 @@ MENU: “He fell asleep afterwards and I sat on his porch chainsmoking for like 
 MENU: “Huh, it’s no wonder I was so addicted to them.”
 MENU: “I know none of these memories really help you understand the world any better, but they mean a lot to me.” 
 MENU: “Thank you, thank you so much.”",Complete MSQ062,"Move to Torii Gate,Give Uninteresting Paste","6x Agency Reputation,6x Elders Loyalty"
-MSQ064,64,To Deploy,Full Flood,No,MAIN,MINA,"MINA: “The mural on the wall outside of that antediluvian facility.”
+MSQ064,64,In Game,Full Flood,No,MAIN,MINA,"MINA: “The mural on the wall outside of that antediluvian facility.”
 MINA: “Do you recognize the story it depicts?”
 MINA: “It is one of the famous tales of your world, the great floods that befell your planet long ago.”
 MINA: “Nearly all your cultures have their own versions of the tale. It happened several times over hundreds of thousands of years.”
@@ -599,7 +599,7 @@ MINA: “Menu’s old magician friends had nothing on these guys. They were true
 MINA: “As the great flood befell them, they called out to their gods. Those are the fish you see descending from the heavens.” 
 MINA: “The fish gods instructed them in the creation of great arks with which they departed your world and settled on the moon.” 
 MINA: “I don’t know what happened to them after that. They haven’t been around anywhere I frequent.”",Complete MSQ063,Harvest for >720 minutes at Flood Mural,"2x Elders Loyalty,2x Booster Pack"
-MSQ065,65,To Deploy,Old Fiends,No,MAIN,MENU,"MENU: “There’s a calm underground stream at the bottom of these caves.""
+MSQ065,65,In Game,Old Fiends,No,MAIN,MENU,"MENU: “There’s a calm underground stream at the bottom of these caves.""
 MENU: “The little carving on that rock seems familiar to me somehow. I think I recognize the initials.” 
 MENU: “Do some harvesting here while I try to jog my memory.""
 MENU: “That tobacco you gave me earlier is kinda helping me focus.”","MENU: “I studied those carvings and they jogged some memories.” 
@@ -608,7 +608,7 @@ MENU: “The other was named…uhhh….Why? That doesn’t make any sense, that�
 MENU: “That’s what I remember him going by though, so maybe it was his nickname.”
 MENU: ""He thought it was really funny for some reason.” 
 MENU: “If you ask me, I don’t think it’s all that clever.""",Complete MSQ064,Harvest for >360 minutes at Still Stream,2x Agency Reputation
-MSQ066,66,To Deploy,First Contact,No,MAIN,MINA,"MINA: “In the middle of that advanced facility, there’s a huge black door that doesn’t quite match the rest of it.”
+MSQ066,66,In Game,First Contact,No,MAIN,MINA,"MINA: “In the middle of that advanced facility, there’s a huge black door that doesn’t quite match the rest of it.”
 MINA: “It’s sealed up tight. I want you to check out the engraving on the face.”
 MINA: “It’s another classic tale. Gods take the form of human-animal hybrids and descend from the sky to grant knowledge to mankind.”
 MINA:  “Harvest some $MUSU while I read this and I’ll tell you about it.""","MINA: “This inscription is another product of the pre-flood humans who built most of the stuff in here.”
@@ -620,14 +620,14 @@ MINA: “Does the Nommo of the Dogon ring any bells?”
 MINA: “What about Thoth of the Egyptians or The Apkallu of the Akkadians?”
 MINA: “How about The Saptarshi of the Vedas? Or maybe Prometheus of the Greeks?”
 MINA: “It must be nice to get so much affection…”",Complete MSQ065,Harvest for >360 minutes at Engraved Door,"4x Elders Loyalty,1x Booster Pack"
-MSQ067,67,To Deploy,Soaked to the Bone,No,MAIN,MENU,"MENU: “There’s another skeleton in the caves here, crumpled in the water underneath that observation deck.”
+MSQ067,67,In Game,Soaked to the Bone,No,MAIN,MENU,"MENU: “There’s another skeleton in the caves here, crumpled in the water underneath that observation deck.”
 MENU: “It could be someone I know. My memories are coming back more easily now.”
 MENU: “Let me do some scans and rack my…err…circuits.”
 MENU: “Have your kami do some harvesting over there while you wait for me.”","MENU: “It seems like this guy died within the last few decades. The skeleton isn’t jogging any of my memories, though.”
 MENU: “I wonder where he came from?”
 MENU: “One of these days we’ve got to figure out how to talk to these skeletons we keep finding.”
 MENU: “You’d think they would be chattier considering the setting.”",Complete MSQ066,Harvest for >360 minutes at Shabby Deck,"4x Agency Reputation,1x Booster Pack"
-MSQ068,68,To Deploy,On the Fringes,No,MAIN,MENU,"MINA: “Deep in the ancient facility, there’s a hatch that seems to lead nowhere at all, directly into a cave wall.”
+MSQ068,68,In Game,On the Fringes,No,MAIN,MENU,"MINA: “Deep in the ancient facility, there’s a hatch that seems to lead nowhere at all, directly into a cave wall.”
 MINA: “I suspect this door might be meant to work like the entrance to my shop. I’m intrigued.”
 MINA: “Menu, you’re good with machines, would you be a dear and take a look at it?”
 MENU: “Sure! I’m on it! Operator, while you’re waiting for us, go ahead and harvest some $MUSU.”","MENU: “Alright, analysis complete.”
@@ -639,35 +639,192 @@ MENU: “The monitor on the side has a label for Aether Readings, and another me
 MINA: “I have some hypotheses.”
 MENU: “Well, it’s all completely dead at the moment. And I think it needs some sort of control device, but it doesn’t seem like there’s one connected.”
 MENU: “If you wanted to get it working again, you’d have to plug the wires into a new control device and then power it up somehow.”",Complete MSQ067,Harvest for >360 minutes at Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
-MSQ069,69,To Deploy,The Doors of Perception,No,MAIN,MINA,"MINA: “There’s a specific flow of $MUSU around that hatch to nowhere.”
+MSQ069,69,In Game,The Doors of Perception,No,MAIN,MINA,"MINA: “There’s a specific flow of $MUSU around that hatch to nowhere.”
 MINA: “You should already know what I mean. It’s a fine place to harvest sensory essence.”
 MINA: “Evidence is mounting. This whole place has been renovated to encourage the capture of all six senses.""
 MINA: “Scavenge around with your kami, we’ll see what else turns up.”","MINA: “An Essence of Touch. What a surprise.”
 MINA: “With this essence, arranging those stones to block the tunnel would have been a simple task.”
 MINA: “There’s no chance for this to be mere good luck. This is turning out to be a very valuable place to gather resources.”
 MINA: “I’ll see about writing up some new potion recipes. Stop by my shop later to see what I’ve come up with.”",Complete MSQ068,Scavenge 1 Essence of Touch,"4x Elders Loyalty,2x Booster Pack"
-MSQ070,70,To Deploy,Reach Out And Touch Faith,No,MAIN,MINA,"MINA: “Something foul and sinister took place in the room with that broken tube. The $MUSU in there room feels tainted.”
+MSQ070,70,To Update,Reach Out And Touch Faith,No,MAIN,MINA,"MINA: “Something foul took place in the room with that broken tube. The $MUSU in there room feels tainted.”
 MINA: “Whatever was contained within those tubes left an unpleasant imprint onto the world around it.”
 MINA: “It seems like a bad idea to loiter for too long, but it’s worth investigating.”
-MINA: “Harvest some of the room’s $MUSU and I’ll see to figuring out what happened.""","MINA: “Those shattered tubes once contained some manner of deity.”
-MINA: “Or…a piece of one at least.”
-MINA: “Whatever it was, its divinity is burned into every material in the room.”
-MINA:  “It’s strongest in the glass of the shattered tube and the hoses around it, but this entire room is absolutely soaked in the aftereffects of divine contact.”
-MINA: “To capture and harvest power from a god is sickening, and I would have broken this cage myself had we arrived earlier.”
-MINA: “But… I do not think whoever broke it meant to free this deity, but to use it themselves.”
-MINA: “What a perverted thing to do. It makes my stomach turn.”",Complete MSQ069,Harvest for >720 minutes at Broken Tube,4x Elders Loyalty
-MSQ071,71,To Deploy,A Turn of the Screw,No,MAIN,MENU,"MENU: “Hey so, I know Mina told you not to hang out too long in that broken tube room, but…”
+MINA: “Harvest some of the room’s $MUSU and I’ll see to figuring out what happened.""","MINA: “Those shattered tubes once contained something very powerful.”
+MINA: “I shouldn’t go into much detail. You wouldn’t accept it anyway, I think.”
+MINA: “The residue of this power lingers within every object in the room.”
+MINA:  “It’s strongest in the glass of the shattered tube and the hoses around it, but everything here has been touched.”
+MINA: “To capture and use something like that as a power source…”
+MINA: “Truly perverse.”",Complete MSQ069,Harvest for >720 minutes at Broken Tube,4x Elders Loyalty
+MSQ071,71,To Update,A Turn of the Screw,No,MAIN,MENU,"MENU: “Hey so, I know Mina told you not to hang out too long in that broken tube room, but…”
 MENU: “I can’t sense whatever she’s picking up on and there’s something of interest to us here.” 
 MENU: “According to the map data, this room has a chance of dropping a screwdriver.”
 MENU: “If you haven’t already grabbed one from the junkyard then this would be a great place to scavenge one.”
 MENU: “Even if you don’t find one, give it a shot.”","MENU: “While you were scavenging, I cross referenced the drop table in this room with the one in the junkyard. It’s the same model screwdriver.”
-MENU: “That jogged my memory a bit. There was this guy I knew back when I lived in your world.”
-MENU: “He was a programmer named Artie, and I think this was his screwdriver.”
-MENU: “He carried it on this goofy tool belt like he was some sort of blue collar guy.”
-MENU: “I have a very clear memory of standing around him with a bunch of the other people shivering in the cold while he fixed the heat in our office.”
-MENU: “We all wanted to bring in an actual electrician but he insisted on doing it himself.”
-MENU: “I think he just wanted to show off his mechanical skills since he normally just worked on code.”
-MENU: “I wonder if he’s around here somewhere too?”",Complete MSQ070,Make 7 Scavenging Rolls at Broken Tube,4x Agency Reputation
+MENU: “It must have been someone’s favorite.”
+MENU: “I wonder who?”",Complete MSQ070,Make 7 Scavenging Rolls at Broken Tube,4x Agency Reputation
+MSQ072,72,To Deploy,Platforming Game,No,MAIN,MENU,"MENU: “Even this deep, we’re still picking up trash.”
+MENU: “They really got comfortable in here.”
+MENU: “You might as well let the Kami poke around.”
+MENU: “Maybe you’ll find something better than cigarette butts and stale burgers.”","MENU: “It must have been a hassle for people to pass through here.”
+MENU: “Seems like a real gymnastics course with all that jumping and climbing.”
+MENU: “You don’t seem to have any problem with it, though.”","In Room: Toadstool Platforms,Complete MSQ071",Make 3 Scavenging Rolls at Toadstool Platforms,2x Agency Reputation
+MSQ073,73,To Deploy,What Lies Beneath,No,MAIN,MINA,"MINA: “The growth of these fungi… It’s a bit strange.”
+MINA: “It’s a very large cavern in breadth and depth. The mushrooms nearly fill it.”
+MINA: “They must be getting plenty of sustenance.”
+MINA: “Harvest here a while. You’ll get a better sense of the decay.”","MINA: “As expected. Some kind of enormous rot beneath.”
+MINA: “No way to know what it is for sure.”
+MINA: “The growth is simply too thick.”",Complete MSQ072,Harvest for >360 minutes at Toadstool Platforms,2x Elders Loyalty
+MSQ074,74,To Deploy,Operator Goes To Camp,No,MAIN,MINA,"MINA: “Go on. Get moving.”
+MINA: “Menu tells me there’s a campsite ahead.” 
+MINA: “You’re bound to find a clue left behind, the way these scoundrels litter.”","MINA: “A complete mess, as expected.”
+MINA: “Not much of interest to me.”
+MINA: “That charcoal drawing on the wall, though…”
+MINA: “Have you seen anything like that before?”",Complete MSQ073,Move to Abandoned Campsite,2x Elders Loyalty
+MSQ075,75,To Deploy,Digging Up Clues,No,MAIN,MENU,"MENU: “For litterbugs, they sure cleaned up anything that could trace them.”
+MENU: “Nothing to scavenge but the usual stuff.”
+MINA: “The blue flowers and mushrooms suggest magical practice.”
+MINA: “You might as well dig up some reagents while you’re here.”","MENU: “Really nothing new, huh.”
+MENU: “Wait a minute.”
+MENU: “Did you notice the tent?”
+MENU: “That symbol looks familiar.”",Complete MSQ074,Make 6 Scavenging Rolls at Abandoned Campsite,"4x Agency Reputation,1x Booster Pack"
+MSQ076,76,To Deploy,Get Some Fresh Air,No,MAIN,MENU,"MENU: “Do me a favor and leave the caves for a minute.”
+MENU: “Head back to the Restricted Area and take a look at that office complex.”
+MENU: “This might be a pain, but I want you to make sure.”
+MENU: “You can keep exploring and put this off for now.”
+MENU: “Just keep it in mind.”","MENU: “Definitely the same logo. It looks like the letter A.”
+MENU: “Wonder what it stands for?”",Complete MSQ075,Move to Restricted Area,"6x Agency Reputation,2x Booster Pack"
+MSQ077,77,To Deploy,"Yep, That’s Wood",No,MAIN,MENU,"MENU: “Check out the construction on these supports.”
+MENU: “Wood, yeah. But it’s like that stuff you make out of sticks and stems.”
+MENU: “You might as well grab a few more while you’re here.”","MENU: “So, the wood.”
+MENU: “It’s like your laminated timber, but it’s not exactly.”
+MENU: “Looks more like chopped up office furniture. Desks, tables.”
+MENU: “Why do that?”
+MENU: “There are plenty of resources around to make this stuff.”
+MENU: “Why haul it in from somewhere else?”","In Room: Reinforced Tunnel,Complete MSQ056",Make 3 Scavenging Rolls at Reinforced Tunnel,2x Agency Reputation
+MSQ078,78,To Deploy,Plasmatics 101,No,MAIN,MINA,"MINA: “Have you seen that book leaning against the pillar?”
+MINA: “Menu seems to have no interest.”
+MINA: “She takes fascination in the strangest things.”
+MINA: “I’m always happy to find some new magical text, however.”
+MINA: “Have your Kami spend some time harvesting here while I negotiate with our mutual friend.” ","MINA: “Apparently she’s already got the contents recorded somewhere.”
+MINA: “For some reason it’s been difficult to show these files to you.”
+MINA: “She’ll figure it out eventually.”
+MINA: “Oh, the book? Nonsense. Foolish fancy. I didn’t finish it.""",Complete MSQ077,Harvest for >360 minutes at Reinforced Tunnel,"2x Elders Loyalty,250 $MUSU"
+MSQ079,79,To Deploy,Fringe Theories,No,MAIN,MENU,"MENU: “I took a look at that “Plasmatics” book with Mina.”
+MENU: “Most of it is stuff I’m not really familiar with.
+MENU: “The parts I am familiar with, I can kind of tell it’s bullshit.”
+MENU: “But then there’s this other part that I can’t get a handle on.”
+MENU: “You mind going around and helping me compare it with the tech here?”","MENU: “I think I’m getting a better vocabulary for this stuff, at least.”
+MENU: “Gravitoelectromagnetism as a unified field, zero point vacuum energy production…”
+MENU: “It’s starting to remind me of that stuff Mina told me about the aether.”
+MENU: “The technobabble feels better than the retro superstition, at least.”",Complete MSQ078,"Move to Hatch to Nowhere,Move to Techno Temple",2x Agency Reputation
+MSQ080,80,To Deploy,The Great Divide,No,MAIN,MENU,"MENU: “That bridge looks like fake wood.”
+MENU: “Check if it’s sturdy by sending some Kami out on it.”
+MENU: “I’m just kidding!”
+MENU: “Get them harvesting, though.”","MENU: “I wonder how you were meant to cross before the bridge got built?”
+MINA: “Maybe you weren’t.”
+MINA: “It may have another purpose.”","In Room: Canyon Bridge,Complete MSQ056",Harvest for >360 minutes at Canyon Bridge,"2x Agency Reputation,2x Booster Pack"
+MSQ081,81,To Deploy,Edge of the Abyss,No,MAIN,MINA,"MINA: “There’s an abundance of the blue pansies to be found around that canyon.”
+MINA: “It usually means an abundance of magic.”
+MINA: “Scavenge around and snatch a few up, let’s have a closer look.”","MINA: “Hmm…”
+MINA: “Be wary, Operator. Of whatever you find at the bottom.”",Complete MSQ080,Make 3 Scavenging Rolls at Canyon Bridge,2x Elders Loyalty
+MSQ082,82,To Deploy,Blue Light Special,No,MAIN,MINA,"MINA: “I don’t need to give you the lesson about $MUSU currents again.”
+MINA: “As predicted, you’ll find another essence here.”
+MINA: “It seems you can’t touch that lantern. No great worry.”
+MINA: “A bit strange, but no obstacle.” 
+MINA: “As long as you and your Kami can scavenge, you’re gold.”","MINA: “That lantern burns with a familiar element.”
+MINA: “The lingering radiation in the antediluvian facility, you remember?”
+MINA: “In a way, that tube was really just a bigger lantern.”
+MINA: “Consider yourself lucky being unable to touch it.”
+MINA: “Just extract the essence from the light it casts on the wall.”",In Room: Geometric Cliffs,Make 1 Scavenging Roll at Geometric Cliffs,2x Elders Loyalty
+MSQ083,83,To Deploy,Vision of Life,No,MAIN,MINA,"MINA: “Make sure to get the essence in this room.”
+MINA: “Of all six, Sight is one of the most prized.”
+MINA: “The power of a true vision is worth much.”","MINA: “Hold onto one after you’ve got it.”
+MINA: “I’m thinking of an interesting use for it.”",Complete MSQ082,Scavenge 1 Essence of Sight,"4x Elders Loyalty,500 $MUSU"
+MSQ084,84,To Deploy,flower mural scavenging,No,MAIN,MENU,"MENU: “This really stands out. It’s beautiful.”
+MENU: “Except for the burnt pages of some book all over the floor.”
+MENU: “They must have used that for the carbon. Passionate about their art.”
+MENU: “Burn up scraps are gonna be hard to decipher. I’ll work on it.”
+MENU: “The Kami can do their thing. I’ll do mine.”","MENU: “For nutjobs who set their own stuff on fire to paint pictures…”
+MENU: “They’re pretty good at covering their tracks.”
+MINA: “Not many clues, but plenty of blue pansies.”
+MINA: “Plenty of magic, too.”","In Room: Flower Mural,Complete MSQ056",Make 3 Scavenging Rolls at Flower Mural,"2x Agency Reputation,2x Booster Pack"
+MSQ085,85,To Deploy,flower magic,No,MAIN,MINA,"MINA: “I believe that flower is more than just a pretty drawing.”
+MINA: “Have you heard of sigil magic?”
+MINA: “It’s quite old, but had a modern revival some decades past.”
+MINA: “You may have read about it in a comic book.”
+MINA: “To seal your magic in a single image. That’s what this is.”
+MINA: “Let your Kami out to harvest and search more thoroughly.”
+MINA: “I wonder about those scraps.”","MINA: “What was the book sacrificed to draw this?”
+MINA: “You might think it doesn’t matter. You’d be a fool.”
+MINA: “It might be everything.”",Complete MSQ084,Harvest for >360 minutes at Flower Mural,2x Elders Loyalty
+MSQ086,86,To Deploy,flower magic 2,No,MAIN,MINA,"MINA: “Give me some flowers and plastics.”
+MINA: “I want to make some charms and cast some divinations on my own.”
+MINA: “You’ve been a good servant. Deliver the reagents immediately and uphold that reputation.” ","MINA: “Maybe a lure? No, perhaps a repellent. Is it possible that it’s apotropaic?”
+MINA: “Oh, to hell with this.”
+MINA: “I feel like I need to step down there personally to check this out.”
+MINA: “And I am absolutely not doing that.”
+MENU: “The probability of it being a trap does appear high.”",Complete MSQ085,"Give 5 Blue Pansy,Give 5 Daffodil,Give 2500 Microplastics","4x Elders Loyalty,500 $MUSU"
+MSQ087,87,To Deploy,crystal stuff,No,MAIN,MENU,"MENU: “I feel a little sick in here.”
+MENU: “Uh.”
+MENU: “Mina, you take this one. My vision is bugging out.”
+MINA: “Operator, take stock of the materials here.”
+MINA: “And make it quick.”","MINA: “I see why our friend was uncomfortable.”
+MINA: “I feel it too.” 
+MINA: “This crystal is radiating with incredible magical power.”
+MINA: “It feels just like the leftovers in the broken tube.”
+MINA: “A setting like this appears more natural than that prison…”
+MINA: “But still, something feels wrong.”","In Room: Radiant Crystal,Complete MSQ070",Make 3 Scavenging Rolls at Radiant Crystal,2x Agency Reputation
+MSQ088,88,To Deploy,crystal stuff 2,No,MAIN,MENU,"MENU: “Get out of there for a minute.”
+MENU: “I can think better in the other rooms, at least.”
+MENU: “Head back to the Reinforced Tunnel where that book is.”
+MENU: “I’ll do some cross referencing. Maybe I’ll understand it better.”","MENU: “So the crystal is like, the channeling point for some kind of zero point vacuum energy?”
+MENU: “And it’s kept in check by a polygonal unified field?”
+MINA: “I don’t follow you at all.”
+MENU: “I barely trust what I’m saying myself.”",Complete MSQ087,Move to Reinforced Tunnel,2x Agency Reputation
+MSQ089,89,To Deploy,crystal stuff 3,No,MAIN,MENU,"MENU: “I think I’m getting used to that room the more you visit.”
+MENU: “There’s a unique item to be found by the Radiant Crystal. Did you know?”
+MENU: “The roots wrapped around the crystal absorb the energy it radiates.”
+MENU: “Some of them fall off, but they keep that blue radiance.” 
+MENU: “Grab a few.”","MENU: “This seems like the sort of item that only ever shows up in one place.”
+MENU: “Something unpleasant about holding these things, too.”
+MENU: “Kind of like the crystal itself, but weaker.”
+MENU: “I’ll get used to it.”",Complete MSQ088,Scavenge 3 Irradiated Roots,"4x Agency Reputation,2x Booster Pack"
+MSQ090,90,To Deploy,crystal stuff 4,No,MAIN,MINA,"MINA: “I think that I’ve properly established how distasteful I find the act of drawing power from this crystal.”
+MINA: “With that said, I’ve also been considering the ethics of using these roots in hexerei.”
+MINA: “If the kami just happen to pick up whats already there…”
+MINA: “It’s acceptable.”","MINA: “Hmm… Indeed, something unpleasant about holding this.”
+MINA: “Though I can feel the potential.” 
+MINA: “Get your tools ready, apprentice. Let’s try something new.”",Complete MSQ089,Give 1 Irradiated Root,2x Elders Loyalty
+MSQ091,91,To Deploy,crystal stuff 5,No,MAIN,MINA,"MINA: “Make an extract of the root, but leave one unprocessed for later.”
+MINA: “I’ve got two recipes in mind.”","MINA: “I’m still not entirely comfortable working with this reagent.”
+MINA: “Ah well. There’s nothing to be done.” ",Complete MSQ090,Craft 500 Pallid Root Extract,2x Elders Loyalty
+MSQ092,92,To Deploy,crafting rez,No,MAIN,MINA,"MINA: “Mix the extract with a little mint and steep with freshly boiled water.”
+MINA: “Let it rest, then bottle it. Shake before drinking.”
+MINA: “Go on, give it a try.”","MINA: “These roots produce a startling effect on your Kami.”
+MINA: “But a very useful one.”
+MINA: “I’ll look the other way if you decide to use more of these potions.” ",Complete MSQ091,Craft 1 Pale Potion,2x Elders Loyalty
+MSQ093,93,To Deploy,roots,No,MAIN,MENU,"MENU: “So where do those roots go?”
+MENU: “Like up on the surface. A tree, I guess. But what tree?”
+MINA: “If the Operator is smart, they may have figured it out already.”
+MINA: “But if not, we can help them along.”
+MENU: “You already know?”
+MINA: “Operator. Take this list of ingredients. I’ve got something I want you to build.”","MINA: “I’ve been quite vocal about it… The crystal’s power, I mean.”
+MINA: “Sapping it for one’s own uses is distasteful, yes.”
+MINA: “And I don’t celebrate that sort of thing.”
+MINA: “But we must sometimes do distasteful things to win.”",Complete MSQ092,"Own at least 1 Ingot,Own at least 1 Irradiated Root,Own at least 1 Essence of Sight",2x Agency Reputation
+MSQ094,94,To Deploy,ancient magic,No,MAIN,MINA,"MINA: “I’ve given you plans for a sort of dowsing rod.”
+MINA: “The ingot to craft a housing, the root for a handle, and an essence of sight for the sensor.”
+MINA: “Menu’s technical language may be rubbing off.”
+MINA: “Craft the device. We’ll see what it turns up.”","MINA: “The rod isn’t a guiding hand to point you through the dark.”
+MINA: “It will respond when you get close to the right places.”
+MINA: “You should be able to use it to find the crystal’s tree above ground.”",Complete MSQ093,Assemble the Dowsing Rod,4x Elders Loyalty
+MSQ095,95,To Deploy,the big tree,No,MAIN,MINA,"MINA: “The rod senses something.” 
+MINA: “You see what I meant? You might have figured this out already, Operator.”
+MINA: “Not many trees that look like this.”
+MINA: “Get a little closer and buy something. I want to see how it reacts.”","MINA: “Awful.”
+MINA: “It gave me the shivers, even from the distance of scrying.”
+MINA: “There’s more than just the crystal in the caves.”
+MINA: “Something else is living in that tree. Tied in to those roots.”","Complete MSQ094,Own the Dowsing Rod,In Room: Marketplace",Use the machine to buy something in the Marketplace,"2x Elders Loyalty,250 $MUSU"
 MIN001,2001,In Game,Grand Opening,No,SHOP,MINA,"MINA: “Hello, whoever you are. Is this how you receive your letters?”
 MINA: “It seems functional, although inelegant.”
 MINA: “Tired? Hungry? $MUSU burning a hole in your pocket?”
@@ -930,7 +1087,7 @@ MENU: “She’ll probably be able to tell us something about it.”","MINA: “
 MENU: “She got really upset when I asked if she had anything to do with it.”
 MINA: ”It’s distasteful to the extreme.”
 MINA: “The fiends who craft these eggs should hope I never meet them.” ",Complete SQ015,"Move to Convenience Store,Give 1 Wonder Egg","2x Agency Reputation,2x Elders Loyalty,1x Booster Pack"
-SQ017,3017,To Deploy,Rearview Mirror,No,SIDE,MENU,"MENU: “Wow, this place is very pretty.”
+SQ017,3017,In Game,Rearview Mirror,No,SIDE,MENU,"MENU: “Wow, this place is very pretty.”
 MENU: “It looks like such a fantastical world. Even the bricks are some odd purple stone.”
 MENU: “And look at that huge sword!”
 MINA: “Nothing I haven’t seen before.”
@@ -942,7 +1099,7 @@ MENU: “R-P-G. It stands for role-playing game. You pretend to be someone else 
 MENU: “It’s kind of fun.”
 MINA: “Putting on other faces, tempting fate, amassing money and power?”
 MINA: “It sounds too much like real life.”",In Room: Treasure Hoard,Harvest for >360 minutes at Treasure Hoard,4x Agency Reputation
-SQ018,3018,To Deploy,One Man’s Trash,No,SIDE,MENU,"MENU: “The coins here are so plentiful, nobody’s going to mind if we take a few, right?”
+SQ018,3018,In Game,One Man’s Trash,No,SIDE,MENU,"MENU: “The coins here are so plentiful, nobody’s going to mind if we take a few, right?”
 MENU: “It’s not going to be some kind of curse, right? You’d tell me, right Mina?”
 MINA: “It doesn’t look cursed.”
 MINA: “But I might as well take a closer look.”
@@ -954,7 +1111,7 @@ MINA: “Speculating on this coin lost me a chunk of wealth, but still, I’m gl
 MENU: “They might be useless, but I think it’s fine if the Operator collects them.”
 MENU: “I sort of like having them around. They’re neat. Maybe we’ll find a buyer later!”
 MINA: “Ridiculous. They might as well be scrap metal.”",Complete SQ017,Scavenge 25 Otherworld Coins,"4x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
-SQ019,3019,To Deploy,Happy Hunting Ground,No,SIDE,MINA,"MINA: “If you haven’t figured it out yet, this is another world entirely.”
+SQ019,3019,In Game,Happy Hunting Ground,No,SIDE,MINA,"MINA: “If you haven’t figured it out yet, this is another world entirely.”
 MINA: “We’re far, far from the Kamigotchi World, warped through the reflection off of a mirrored blade.”
 MINA: “The trophies on display commemorate the slaying of monsters you may have never seen before.”
 MINA: “But don’t get fired up to explore.”
@@ -967,7 +1124,7 @@ MINA: “We might be.”
 MINA: “It’s nothing to get worked up over.”
 MINA: “I would have felt a presence if there were anyone here of any importance.”
 MINA: “If someone really is watching, it’s likely a worthless creature of no concern.”",In Room: Trophies of the Hunt,Make 3 Scavenging Rolls at Trophies of the Hunt,4x Elders Loyalty
-SQ020,3020,To Deploy,Better to Light a Candle,No,SIDE,MINA,"MINA: “The magic here must seem quite old fashioned to you, Menu.”
+SQ020,3020,In Game,Better to Light a Candle,No,SIDE,MINA,"MINA: “The magic here must seem quite old fashioned to you, Menu.”
 MINA: “You say this resembles the medieval fantasy fiction of your day?”
 MENU: “Yeah, the castles, the treasure, the monsters. It’s nostalgic.”
 MINA: “In the long run, this is really all rather recent.”
@@ -982,7 +1139,7 @@ MINA: “The curse is what matters, and this is a pure expression.”
 MENU: “Maybe one day you can teach us how to make them.”
 MENU: “We just need a screwdriver as a chisel, right?”
 MINA: “I’ll think about it.”",Complete SQ019,Give 1 Curse Tablet,"4x Elders Loyalty,5x Booster Pack"
-SQ021,3021,To Deploy,Castle in the Air,No,SIDE,ROB,"???: “Don’t bother to say hello.”
+SQ021,3021,In Game,Castle in the Air,No,SIDE,ROB,"???: “Don’t bother to say hello.”
 ???: “I’ve only been waitin’ a thousand years to talk to somebody civilized. I don’t mind.”
 ???: “And there’s nothin’ interesting out that window.”
 ???: “Ya might think so, but you’ll never get it open. The other side? Might as well not even exist.”
@@ -992,7 +1149,7 @@ SQ021,3021,To Deploy,Castle in the Air,No,SIDE,ROB,"???: “Don’t bother to sa
 ROB: “And you? Let’s have a look at ya.”
 ROB: “Sheesh, you’re a real sight. But I shouldn’t throw stones in glass houses.”
 ROB: “Nice to meet ya. Really. Don’t be a stranger.”",In Room: Scenic View,Move to Trophies of the Hunt,2x Booster Pack
-SQ022,3022,To Deploy,Sweet Deal,No,SIDE,ROB,"ROB: “I’m starvin’ over here. You know that?”
+SQ022,3022,In Game,Sweet Deal,No,SIDE,ROB,"ROB: “I’m starvin’ over here. You know that?”
 ROB: “Got a nice view and all, but they stopped with the lunches a long time back.”
 ROB: “Even when we got food, it was just a little barley and milk.”
 ROB: “Nothin’ for the sweet tooth at all. That’d be spoiling me.”
@@ -1005,7 +1162,7 @@ ROB: “You seemed to get in just fine, though. I might’ve even seen ya leave 
 ROB: “How’s about I follow you out?”
 ROB: “Heh heh. Just kidding. I’m fettered tight to this stone for now.”
 ROB: “Still hungry, too. Got any meat?”",Completed SQ021,Give 3 Rock Candyfloss,"3x ""Melkarth's Heroic Awakening"" Spell Card"
-SQ998,3998,To Deploy,Hidden GEM,No,SIDE,MENU,"MENU: “Whoa! Stop right there!”
+SQ998,3998,In Game,Hidden GEM,No,SIDE,MENU,"MENU: “Whoa! Stop right there!”
 MENU: “That machine in your inventory, it’s spinning up!”
 MENU: “I think it’s responding to an energy field in these caves!”
 MINA: “That piece of junk actually does something?”
@@ -1015,11 +1172,9 @@ MINA: “Will you indulge it?”
 MENU: “What’s it going to do?”
 MENU: “Is it even safe?”
 MINA: “I think that’s something the Operator should determine.”","Own the Aetheric Sextant,In Room: Slippery Pit",Move to Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
-TempQ01,10001,Defunct,mina test drop,No,,,,,Missed Mina,,10 Revives
 SQ999,10002,In Game,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ""Melkarth's Heroic Awakening"" Spell Card"
 test-0,1000000,Test,Daily Test Quest,Yes,,,Beg for your MUSU.,,,,"10000x MUSU (Test),2x Agency Reputation"
 test-1,1000001,Test,Crafting Materials,No,,,Let there be Craft,,,Move 3 Times,"100x Stone,100x Stick,50x Plastic Bottle,10x Glass Jar,100x Pine Cones,100x Burgers"
 test-2,1000002,Test,Lottery Loving,No,,,Stop being Kamiless,,,,20x Gacha Tickets (Test)
 test-3,1000003,Test,Crafting Materials II,No,,,More crafting materials,,Complete test-1,Give 5 Wooden Sticks,"100x Chalkberry,100x Shroom,100x Resin,100x Holy Dust,100x Scrap Metals"
 test-4,1000004,Test,Crafting Toolkit,No,,,You need equipment to make new items.,,Complete test-1,,"1x Screwdriver,1x Grinder,1x Burner"
-,,Idea,,No,,,,,,,

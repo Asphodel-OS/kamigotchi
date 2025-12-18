@@ -1,5 +1,7 @@
 ﻿.,Description,Type,Index,Value
 ,Unlock Caves,FLAG_CAVES_UNLOCKED,,1
+,250 $MUSU,ITEM,1,250
+,500 $MUSU,ITEM,1,500
 ,10000x MUSU (Test),ITEM,1,10000
 ,20x Gacha Tickets (Test),ITEM,10,20
 ,100x Stick,ITEM,1001,100
@@ -43,3 +45,4 @@
 ,2x Elders Loyalty,REPUTATION,2,2
 ,4x Elders Loyalty,REPUTATION,2,4
 ,6x Elders Loyalty,REPUTATION,2,6
+,4x Nursery Dedication,REPUTATION,3,4
