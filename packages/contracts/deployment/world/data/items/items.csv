@@ -40,6 +40,7 @@ Slightly sacred. "
 ,In Game,Cigarette Butt,1018,Material,Common,,,,,"Even something as small and disposable as a cigarette can be tied to a memory and be given a spiritual essence. You can break this down into Microplastics. "
 ,In Game,Otherworld Coin,1019,Material,Uncommon,,,,,"The woman on the face of this coin has long pointed ears like a caracal. The language inscribed is incomprehensible. Unless you find a collector, this coin is only valuable as scrap."
 ,In Game,Bone Chunk,1020,Material,Common,,,,,"Petrified bone in the form of a large stony chunk. If this fragment came from the skeleton of an animal, it must have been the size of a whale. "
+,To Deploy,Irradiated Root,1021,Material,Rare,,,,,"A dried root found wrapped around a glowing crystal. The tips have turned blue and taken on a waxen texture. "
 ,In Game,Empty Cup,1102,Material,Uncommon,,,,,A small reusable cup crafted from stone. Useful for drinking potions or other beverages.
 ,In Game,Microplastics,1103,Material,Uncommon,,,,,"Fine translucent powder. A promising new substance in hexerei. "
 ,In Game,Pine Pollen,1104,Material,Uncommon,,,,,"Some people think this is very good for you. "
@@ -49,6 +50,7 @@ Slightly sacred. "
 ,In Game,Shredded Mint,1112,Material,Epic,,,,,Makes a cooling and relaxing tea. Also used in various magical applications.
 ,In Game,Sanguineous Powder,1113,Material,Uncommon,,,,,"A dark, reddish powder that resembles dried blood, or maybe just coffee. Edible, but can also be used as an ink or dye."
 ,In Game,Berry Chalk,1114,Material,Uncommon,,,,,A chalky fungus scraped from a rare berry. Can ferment certain materials to produce a rejuvenating beverage.
+,To Deploy,Pallid Root Extract,1121,Material,Rare,,,,,The waxen paste extracted from an Irradiated Root. The jar has a pale gleam even in the deepest darkness.
 ,In Game,Holy Syrup,1201,Material,Rare,,,,,Holy Dust diluted into a quantity of water. Forms a thin syrup that can be measured out for crafting.
 ,In Game,Resin Tincture,1202,Material,Uncommon,,,,,"A sweet, spicy syrup made from the natural resin found in the trees of Kamigotchi World. Useful for a number of recipes."
 ,In Game,Fuliginous Ooze,1203,Material,Epic,,,,,Like crude oil with the texture of clay. It seems to absorb the light around it. Could be an ingredient in powerful magic.
@@ -62,12 +64,15 @@ Slightly sacred. "
 ,In Game,Essence of Touch,6005,Material,Rare,,,,,One of the six essences. A hole in space with grasping tentacles.
 ,In Game,Essence of Thought,6006,Material,Rare,,,,,"One of the six essences. A leafless tree with a reflective surface. "
 ,In Game,Pure Essence,6007,Material,Epic,,,,,"The combined six essences. A ball of pure sensation. "
-,In Game,Red Gakki Ribbon,11001,Revive,Rare,Kami,,"STATE-RESTING,HP+10",,"Capable of raising a Kamigotchi from the dead. 
-
-These ribbons are greatly prized…. "
+,To Update,Red Ribbon Gummy,11001,Revive,Rare,Kami,,"STATE-RESTING,HP+10",,This candy ribbon is so delicious that it can bring a Kami back after it’s been liquidated. They can’t say no to the flavor.
 ,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Rare,Kami,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
 ,In Game,Djed Pillar,11003,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
+,To Deploy,Pale Potion,11004,Potion,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
+,To Deploy,Gaokerena Mochi,11110,Food,Epic,Kami,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
+,To Deploy,Sunset Apple Mochi,11120,Food,Epic,Kami,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
+,To Deploy,Kami Mochi,11130,Food,Epic,Kami,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
+,To Deploy,Mana Mochi,11140,Food,Epic,Kami,,HARMONY+1,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
 ,In Game,XP Candy (Small),11201,Food,Uncommon,Kami,NOT_TRADABLE,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
 ,In Game,XP Candy (Medium),11202,Food,Uncommon,Kami,NOT_TRADABLE,"HP+10,XP+100",,"Provides a decent amount of XP when fed to a Kami. "
 ,In Game,XP Candy (Large),11203,Food,Uncommon,Kami,NOT_TRADABLE,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "
@@ -75,7 +80,7 @@ These ribbons are greatly prized…. "
 ,In Game,“Cultivation I” Spell Card,11211,Food,Uncommon,Kami,NOT_TRADABLE,"XP+100,HP+20",,"The card depicts a pale sprout emerging from rich, black soil. Activating this Spell Card on a Kamigotchi will restore 20 HP and grant 100 XP."
 ,In Game,“Cultivation II” Spell Card,11212,Food,Uncommon,Kami,NOT_TRADABLE,"XP+200,HP+50",,The card depicts a teardrop-shaped flowerbud growing out of light brown soil. Activating this Spell Card on a Kamigotchi will restore 50 HP and grant 200 XP.
 ,In Game,“Cultivation III” Spell Card,11213,Food,Rare,Kami,NOT_TRADABLE,"XP+1000,HP+100",,The card depicts a flower heartily blooming in pale and sandy earth. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 1000 XP.
-,Ready,“Cultivation IV” Spell Card,11214,Food,Rare,Kami,NOT_TRADABLE,"XP+5000,HP+100",,The card depicts a massive flower spreading across the frame. A baby sleeps in the center. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 5000 XP.
+,To Deploy,“Cultivation IV” Spell Card,11214,Food,Rare,Kami,NOT_TRADABLE,"XP+5000,HP+100",,The card depicts a massive flower spreading across the frame. A baby sleeps in the center. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 5000 XP.
 ,In Game,Full Heart Crystal,11221,Food,Rare,Kami,,XP+15000,,"It pulses with warmth. Give this to your Kami to grant it a large amount of XP. "
 ,In Game,Half Heart Crystal,11222,Food,Uncommon,Kami,,XP+1000,,It feels slightly warm in your hand. Give this to your Kami to grant it a moderate amount of XP.
 ,In Game,Great Heart Crystal,11223,Food,Epic,Kami,,XP+50000,,"The crystal beats like a real heart. It radiates with heat enough to warm your surroundings. Give this to your kami to grant it a very large amount of XP. "
@@ -83,6 +88,7 @@ These ribbons are greatly prized…. "
 ,In Game,Teardrop Jewel,11225,Food,Rare,Kami,BYPASS_BONUS_RESET,HFB+50%,,"A rare gem with a tranquil color. Some say that if you drop it into water, it won’t disturb the surface. This jewel boosts a kami’s Fertility, enhancing its type advantages when harvesting. "
 ,In Game,Ash Pearl,11226,Food,Rare,Kami,BYPASS_BONUS_RESET,"TEMP1HARMONY,TEMP1VIOLENCE",,"The Wonder Egg was filled with soot and ash, but also a large blue pearl. Give this pearl to your Kami to grant it a temporary +1 to Harmony and Violence. If your Kami is liquidated, the pearl breaks and the power is lost. "
 ,In Game,Fetid Egg,11227,Food,Uncommon,Kami,,HP+35,,"This egg seems fresh, and refuses to spoil even out of the shell. Still, it reeks of sulfur. Your Kami can eat this to restore HP. "
+,To Deploy,Gingerbread Cookie,11233,Food,Rare,Kami,,"XP+1000,HP+25",,A gingerbread cookie... feed this to a Kamigotchi for some extra experience.
 ,In Game,Maple-Flavor Ghost Gum,11301,Food,Uncommon,Kami,,HP+25,,"The most basic form of food available in this world - restores 25 Health to a Kamigotchi. "
 ,In Game,Cheeseburger,11302,Food,Uncommon,Kami,,HP+50,,"These burgers, still in their original wrapping, are occasionally found in the scrapyard. Apparently Kamigotchi love them. "
 ,In Game,Pom-Pom Fruit Candy,11303,Food,Uncommon,Kami,,HP+50,,These fruit candies contain a huge amount of energy. Restores 50 Health to a Kamigotchi.
@@ -103,23 +109,24 @@ These ribbons are greatly prized…. "
 ,In Game,Energy Drink,11409,Food,Uncommon,Kami,BYPASS_BONUS_RESET,COOLDOWN-30s,,A lightly fermented beverage that grants a burst of spiritual energy. Dramatically reduces Cooldown Shift for a kami’s next action.
 ,In Game,Hostility Potion,11410,Food,Uncommon,Kami,BYPASS_BONUS_RESET,"ATS+3%,ITEM1102",,"Most Kamigotchi find this bitter potion unpleasant, but some thrive on it. Expands a Kami’s Attack Threshold Shift by a small percentage."
 ,In Game,Fortified XP Potion,11411,Potion,Epic,Kami,,"XP+50000,ITEM1006",,A deep-green potion with a grainy texture and dense mouthfeel. Fortified with rare red amber and the essences of old memories.
-,To Update,Flash Talisman,11412,Potion,Rare,Enemy_Kami,,"ATR+10%_KK,DTR-10%_KK",,"A magical talisman that burns easily. Using this on a Kami intensifies their overall sensitivity to Types, buffing their advantages on liquidations but nerfing their advantages on defense. "
+,To Update,Flash Talisman,11412,Potion,Epic,Enemy_Kami,,"ATR+10%_KK,DTR-10%_KK",,"A magical talisman that burns easily. Using this on a Kami intensifies their overall sensitivity to Types, buffing their advantages on liquidations but nerfing their advantages on defense. "
+,To Deploy,Mistletoe,11413,Food,Rare,Kami,BYPASS_BONUS_RESET,BOUNTY+25%,,"Sacred, at this time of year..... can be used on Kami to Bless them!"
 ,In Game,Toadstool Liquor,11501,Potion,Rare,Kami,BYPASS_BONUS_RESET,"TEMP10HEALTH,TEMP1POWER",,Liquor distilled from a mash made from mushrooms and black poppy. An underworld favorite.
-,To Update,Sarcophagus Honey,11502,Potion,Uncommon,Kami,,TEMP30HEALTH,,Legendary medicine believed to be the stuff of rumors. A piece of flesh has been preserved inside using ancient techniques. Give this to a Kami to grant them a temporary bonus to maximum Health.
+,To Update,Sarcophagus Honey,11502,Potion,Uncommon,Kami,BYPASS_BONUS_RESET,TEMP30HEALTH,,Legendary medicine believed to be the stuff of rumors. A piece of flesh has been preserved inside using ancient techniques. Give this to a Kami to grant them a temporary bonus to maximum Health.
 ,In Game,Spirit Glue,19001,Potion,Uncommon,Enemy_Kami,,"NEXT_COOLDOWN+180,ITEM1003",,This glue even sticks to intangible things. Can be used to add additional Cooldown to an enemy Kami and temporarily lock it down to a Node.
 ,In Game,Animistic Poison,19101,Potion,Rare,Enemy_Kami,,STRAIN+50%,,"Dangerous to both living and nonliving beings. When used on Kamigotchi, it causes them to lose HP at a faster rate while Harvesting. "
 ,In Game,Cthonic Blight,19201,Potion,Rare,Enemy_Kami,BYPASS_BONUS_RESET,DTS-5%,,"Highly corrosive. Can be used to clear barriers of plant or fungal matter. It can also be used on a Kamigotchi to lower its defenses. The Blight is particularly dangerous to Normal-type Kami. "
-,To Update,Curse Tablet,19301,Potion,Rare,Enemy_Kami,,ATS-30%_KK,,"Also called a Defixio or Katadesmos. This ancient tablet is inscribed with a curse of weakness. Although it was meant for a long-dead human, Kami can use it on their own kind."
-,In Game,Giftbox,21001,Lootbox,Uncommon,Account,,DT1,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
-,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Rare,Account,,DT2,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
-,In Game,Wonder Egg,21003,Lootbox,Rare,Account,,DT3,,"A cracked egg held together by blood-red wax. The contents are a surprise. "
-,In Game,Booster Pack,21004,Lootbox,Rare,Account,,DT4,,Open this magical booster pack to receive a Spell Card. You might find something super rare!
-,To Deploy,Mochibox,21005,Lootbox,Epic,Account,,,,A sacred box containing exactly one Mochi.
+,In Game,Curse Tablet,19301,Potion,Rare,Enemy_Kami,,ATS-30%_KK,,"Also called a Defixio or Katadesmos. This ancient tablet is inscribed with a curse of weakness. Although it was meant for a long-dead human, Kami can use it on their own kind."
+,In Game,Giftbox,21001,Lootbox,Uncommon,Account,,DT OG,,"The lowest tier of giftbox. You can get XP candies, cheeseburgers, and even a few rare item drops from this! "
+,In Game,Kamigotchi World Citizen Giftbox,21002,Lootbox,Rare,Account,,DT Passport,,"A gold-trimmed and colorfully painted treasure chest. The gift inside must be particularly valuable. "
+,In Game,Wonder Egg,21003,Lootbox,Rare,Account,,DT Wonder Egg,,"A cracked egg held together by blood-red wax. The contents are a surprise. "
+,In Game,Booster Pack,21004,Lootbox,Rare,Account,,DT Booster Pack,,Open this magical booster pack to receive a Spell Card. You might find something super rare!
+,To Deploy,Mochibox,21005,Lootbox,Epic,Account,,DT Mochibox,,A sacred box containing exactly one Mochi.
 ,In Game,Ice Cream,21201,Food,Uncommon,Account,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Rare,Account,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Rare,Account,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
 ,In Game,“Neith’s River of Life” Spell Card,21204,Food,Rare,Account,NOT_TRADABLE,SP+80,,"The card depicts a flooding river beneath the night sky. The magical waters grant a bounty of stamina, and the reeds grow nearly as tall as the pyramids. Activating this Spell Card on an Operator will restore 80 Stamina."
-,In Game,Rock Candyfloss,21205,Food,Rare,Account,,SP+80,,"This rare crystal formation is soft to the touch, sweet, and edible. You can consume it to restore a large amount of Stamina. "
+,In Game,Rock Candyfloss,21205,Food,Uncommon,Account,,SP+80,,"This rare crystal formation is soft to the touch, sweet, and edible. You can consume it to restore a large amount of Stamina. "
 ,In Game,Uninteresting Paste,21206,Potion,Rare,Account,,SP+150,,A matte-black paste in a plastic jar. A secret incense recipe created by Mina that allows individuals without bodies to smoke tobacco.
 ,In Game,Spice Grinder,23100,Tool,Rare,,,,,Can be used to break down ingredients.
 ,In Game,Portable Burner,23101,Tool,Rare,,,,,"Can be used to make Potions at a riverside. "

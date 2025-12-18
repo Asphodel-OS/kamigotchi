@@ -23,6 +23,7 @@ import cthonic_blight from './cthonic_blight.png';
 import cultivation_i_spell_card from './cultivation_i_spell_card.png';
 import cultivation_ii_spell_card from './cultivation_ii_spell_card.png';
 import cultivation_iii_spell_card from './cultivation_iii_spell_card.png';
+import cultivation_iv_spell_card from './cultivation_iv_spell_card.png';
 import curse_tablet from './curse_tablet.png';
 import daffodil from './daffodil.png';
 import disc_shaped_map from './disc_shaped_map.png';
@@ -46,6 +47,8 @@ import fuliginous_ooze from './fuliginous_ooze.png';
 import full_heart_crystal from './full_heart_crystal.png';
 import gacha_ticket from './gacha_ticket.png';
 import gakki_cookie_sticks from './gakki_cookie_sticks.png';
+import gaokerena_mochi from './gaokerena_mochi.png';
+import gingerbread_cookie from './gingerbread_cookie.png';
 import glass_jar from './glass_jar.png';
 import golden_apple from './golden_apple.png';
 import grace_potion from './grace_potion.png';
@@ -59,6 +62,8 @@ import hostility_potion from './hostility_potion.png';
 import ice_cream from './ice_cream.png';
 import ingot from './ingot.png';
 import inverted_teardrop_jewel from './inverted_teardrop_jewel.png';
+import irradiated_root from './irradiated_root.png';
+import kami_mochi from './kami_mochi.png';
 import kamigotchi_world_citizen_giftbox from './kamigotchi_world_citizen_giftbox.png';
 import kamigotchi_world_passport from './kamigotchi_world_passport.png';
 import kamigotchi_world_passport_1_bit_black_and_white from './kamigotchi_world_passport_1_bit_black_and_white.png';
@@ -76,10 +81,12 @@ import kamigotchi_world_passport_red from './kamigotchi_world_passport_red.png';
 import kamigotchi_world_passport_white from './kamigotchi_world_passport_white.png';
 import kamigotchi_world_passport_yellow from './kamigotchi_world_passport_yellow.png';
 import kw_maps_data_chip from './kw_maps_data_chip.png';
+import mana_mochi from './mana_mochi.png';
 import maple_flavor_ghost_gum from './maple_flavor_ghost_gum.png';
 import melkarths_heroic_awakening_spell_card from './melkarths_heroic_awakening_spell_card.png';
 import microplastics from './microplastics.png';
 import mint from './mint.png';
+import mistletoe from './mistletoe.png';
 import mochibox from './mochibox.png';
 import musu from './musu.png';
 import musu_magnet from './musu_magnet.png';
@@ -88,6 +95,8 @@ import obol from './obol.png';
 import onyx_shard from './onyx_shard.webp';
 import otherworld_coin from './otherworld_coin.png';
 import paeons_field_of_flowers_spell_card from './paeons_field_of_flowers_spell_card.png';
+import pale_potion from './pale_potion.png';
+import pallid_root_extract from './pallid_root_extract.png';
 import patinated_pipe from './patinated_pipe.png';
 import pine_cone from './pine_cone.png';
 import pine_pollen from './pine_pollen.png';
@@ -98,7 +107,7 @@ import powdered_red_amber from './powdered_red_amber.png';
 import pure_essence from './pure_essence.png';
 import pyramid_engine from './pyramid_engine.png';
 import red_amber_crystal from './red_amber_crystal.png';
-import red_gakki_ribbon from './red_gakki_ribbon.png';
+import red_ribbon_gummy from './red_ribbon_gummy.png';
 import reroll_ticket from './reroll_ticket.png';
 import resin from './resin.png';
 import resin_tincture from './resin_tincture.png';
@@ -114,6 +123,7 @@ import shredded_mint from './shredded_mint.png';
 import spice_grinder from './spice_grinder.png';
 import spirit_glue from './spirit_glue.png';
 import stone from './stone.png';
+import sunset_apple_mochi from './sunset_apple_mochi.png';
 import switchbox_imp from './switchbox_imp.png';
 import teardrop_jewel from './teardrop_jewel.png';
 import timber from './timber.png';
@@ -155,6 +165,7 @@ export const ItemImages = {
   cultivation_i_spell_card: cultivation_i_spell_card,
   cultivation_ii_spell_card: cultivation_ii_spell_card,
   cultivation_iii_spell_card: cultivation_iii_spell_card,
+  cultivation_iv_spell_card: cultivation_iv_spell_card,
   curse_tablet: curse_tablet, // INSERT HERE
   daffodil: daffodil,
   disc_shaped_map: disc_shaped_map,
@@ -178,6 +189,8 @@ export const ItemImages = {
   full_heart_crystal: full_heart_crystal,
   gacha_ticket: gacha_ticket,
   gakki_cookie_sticks: gakki_cookie_sticks,
+  gaokerena_mochi: gaokerena_mochi,
+  gingerbread_cookie: gingerbread_cookie,
   glass_jar: glass_jar,
   golden_apple: golden_apple, // INSERT HERE
   grace_potion: grace_potion,
@@ -191,6 +204,8 @@ export const ItemImages = {
   ice_cream: ice_cream,
   ingot: ingot, // INSERT HERE
   inverted_teardrop_jewel: inverted_teardrop_jewel,
+  irradiated_root: irradiated_root,
+  kami_mochi: kami_mochi,
   kamigotchi_world_citizen_giftbox: kamigotchi_world_citizen_giftbox,
   kamigotchi_world_passport: kamigotchi_world_passport,
   kamigotchi_world_passport_1_bit_black_and_white: kamigotchi_world_passport_1_bit_black_and_white,
@@ -208,10 +223,12 @@ export const ItemImages = {
   kamigotchi_world_passport_white: kamigotchi_world_passport_white,
   kamigotchi_world_passport_yellow: kamigotchi_world_passport_yellow,
   kw_maps_data_chip: kw_maps_data_chip,
+  mana_mochi: mana_mochi,
   maple_flavor_ghost_gum: maple_flavor_ghost_gum,
   melkarths_heroic_awakening_spell_card: melkarths_heroic_awakening_spell_card,
   microplastics: microplastics,
   mint: mint,
+  mistletoe: mistletoe,
   mochibox: mochibox,
   musu: musu,
   musu_magnet: musu_magnet,
@@ -220,6 +237,8 @@ export const ItemImages = {
   onyx_shard: onyx_shard,
   otherworld_coin: otherworld_coin, // INSERT HERE
   paeons_field_of_flowers_spell_card: paeons_field_of_flowers_spell_card,
+  pale_potion: pale_potion,
+  pallid_root_extract: pallid_root_extract,
   patinated_pipe: patinated_pipe, // INSERT HERE
   pine_cone: pine_cone,
   pine_pollen: pine_pollen,
@@ -230,7 +249,7 @@ export const ItemImages = {
   pure_essence: pure_essence, // INSERT HERE
   pyramid_engine: pyramid_engine,
   red_amber_crystal: red_amber_crystal,
-  red_gakki_ribbon: red_gakki_ribbon,
+  red_ribbon_gummy: red_ribbon_gummy,
   reroll_ticket: reroll_ticket,
   resin: resin,
   resin_tincture: resin_tincture,
@@ -246,6 +265,7 @@ export const ItemImages = {
   spice_grinder: spice_grinder,
   spirit_glue: spirit_glue,
   stone: stone,
+  sunset_apple_mochi: sunset_apple_mochi,
   switchbox_imp: switchbox_imp, // INSERT HERE
   teardrop_jewel: teardrop_jewel,
   timber: timber, // INSERT HERE
