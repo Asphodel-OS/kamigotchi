@@ -34,6 +34,9 @@ Craft Ashlar with Bone,In Game,33,MATERIAL,1301,1,1020,100,50,300,23100,15
 Craft Timber with Stick,In Game,34,MATERIAL,1302,1,1001,100,50,300,23101,15
 Craft Ingot with Scrap,In Game,35,MATERIAL,1303,1,1005,100,50,300,23101,15
 Craft Ashlar with Stone,In Game,36,MATERIAL,1301,1,1002,100,50,300,23100,15
-Craft Uninteresting Paste,To Update,37,CONSUMABLE,21206,1,"1018,6004","20, 1",50,1500,23101,15
-Extract Microplastics From Cigs,To Deploy,38,REAGENT,1103,250,1018,1,15,50,23100,1
+Craft Uninteresting Paste,In Game,37,CONSUMABLE,21206,1,"1018,6004","20, 1",50,1500,23101,15
+Extract Microplastics From Cigs,In Game,38,REAGENT,1103,250,1018,1,15,50,23100,1
+Extract Irradiated Root,To Deploy,39,REAGENT,1121,500,1021,1,30,250,23100,15
+Craft Pale Potion,To Deploy,40,CONSUMABLE,11004,1,"1003,1121,1112","1,200,100",50,500,23101,15
+Assemble Dowsing Rod,To Deploy,41,SPECIAL,100010,1,"1021,1303,6003","1,1,1",100,2500,,1
 Craft Wonder Egg,In Game,10001,HIDDEN,21003,1,1015,5,0,0,,1

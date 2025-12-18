@@ -28,6 +28,7 @@ import curse_tablet from './curse_tablet.png';
 import daffodil from './daffodil.png';
 import disc_shaped_map from './disc_shaped_map.png';
 import djed_pillar from './djed_pillar.png';
+import dowsing_rod from './dowsing_rod.png';
 import dried_stems from './dried_stems.png';
 import empty_cup from './empty_cup.png';
 import energy_drink from './energy_drink.png';
@@ -170,6 +171,7 @@ export const ItemImages = {
   daffodil: daffodil,
   disc_shaped_map: disc_shaped_map,
   djed_pillar: djed_pillar, // INSERT HERE
+  dowsing_rod: dowsing_rod,
   dried_stems: dried_stems, // INSERT HERE
   empty_cup: empty_cup,
   energy_drink: energy_drink,
