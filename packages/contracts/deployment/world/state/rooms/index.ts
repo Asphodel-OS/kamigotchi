@@ -5,4 +5,4 @@ export {
   reviseNodeScavenges,
   reviseNodes,
 } from './nodes';
-export { deleteRooms, initRooms, reviseRooms } from './rooms';
+export { deleteRooms, initRooms, reviseRooms, setRoomText } from './rooms';

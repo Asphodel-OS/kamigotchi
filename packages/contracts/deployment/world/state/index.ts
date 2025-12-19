@@ -131,6 +131,7 @@ export {
   reviseNodes,
   reviseNodeScavenges,
   reviseRooms,
+  setRoomText,
 } from './rooms';
 export { deleteSkills, initSkills, reviseSkills } from './skills';
 export { initSnapshot } from './snapshot';

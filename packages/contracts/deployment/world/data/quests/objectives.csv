@@ -138,6 +138,7 @@
 ,Make 1 Scavenging Roll at Geometric Cliffs,MIN,INC,SCAV_CLAIM_NODE,82,1
 ,Make 3 Scavenging Rolls at Canyon Bridge,MIN,INC,SCAV_CLAIM_NODE,83,3
 ,Make 3 Scavenging Rolls at Reinforced Tunnel,MIN,INC,SCAV_CLAIM_NODE,84,3
+,Make 3 Scavenging Rolls at the Sacrarium,MIN,INC,SCAV_CLAIM_NODE,87,3
 ,Make 3 Scavenging Rolls at Trophies of the Hunt,MIN,INC,SCAV_CLAIM_NODE,89,3
 ,Scavenge 1 Item,MIN,INC,SCAV_CLAIM_NODE,,1
 ,Spend a point in any Skill Tree after levelling up,MIN,CURR,SKILL_POINTS_USE,,1
@@ -160,4 +161,3 @@
 ,Craft Uninteresting Paste,MIN,INC,CRAFT_ITEM,21206,1
 ,Assemble the Dowsing Rod,MIN,INC,CRAFT_ITEM,100010,1
 ,Use the machine to buy something in the Marketplace,MIN,INC,TRADE_EXECUTE,,1
-,Make 3 Scavenging Rolls at the Sacrarium,,,,,

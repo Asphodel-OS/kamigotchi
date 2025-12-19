@@ -6,6 +6,7 @@ import { listingAPI } from './listings';
 import { nodesAPI } from './nodes';
 import { portalAPI } from './portal';
 import { questsAPI } from './quests';
+import { roomAPI } from './rooms';
 import { tradeAPI } from './trades';
 import { generateCallData } from './utils';
 
@@ -192,51 +193,6 @@ export function createAdminAPI(compiledCalls: string[]) {
 
   async function deleteRecipe(index: number) {
     const callData = generateCallData('system.recipe.registry', [index], 'remove');
-    compiledCalls.push(callData);
-  }
-
-  /////////////////
-  //  ROOMS
-
-  // @dev creates a room with name, roomIndex and exits. cannot overwrite room at roomIndex
-  async function createRoom(
-    x: number,
-    y: number,
-    z: number,
-    roomIndex: number,
-    name: string,
-    description: string,
-    exits: number[]
-  ) {
-    const callData = generateCallData(
-      'system.room.registry',
-      [x, y, z, roomIndex, name, description, exits.length == 0 ? [] : exits],
-      'create',
-      ['int32', 'int32', 'int32', 'uint32', 'string', 'string', 'uint32[]']
-    );
-    compiledCalls.push(callData);
-  }
-
-  async function createRoomGate(
-    roomIndex: number,
-    sourceIndex: number,
-    conditionIndex: number,
-    conditionValue: string | number,
-    type: string,
-    logicType: string,
-    for_: string
-  ) {
-    const callData = generateCallData(
-      'system.room.registry',
-      [roomIndex, sourceIndex, conditionIndex, conditionValue, type, logicType, for_],
-      'addGate',
-      ['uint32', 'uint32', 'uint32', 'uint256', 'string', 'string', 'string']
-    );
-    compiledCalls.push(callData);
-  }
-
-  async function deleteRoom(roomIndex: number) {
-    const callData = generateCallData('system.room.registry', [roomIndex], 'remove');
     compiledCalls.push(callData);
   }
 
@@ -524,11 +480,7 @@ export function createAdminAPI(compiledCalls: string[]) {
         },
       },
     },
-    room: {
-      create: createRoom,
-      createGate: createRoomGate,
-      delete: deleteRoom,
-    },
+    room: roomAPI(generateCallData, compiledCalls),
     trade: tradeAPI(generateCallData, compiledCalls),
     setup: {
       local: {

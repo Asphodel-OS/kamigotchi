@@ -37,6 +37,18 @@ contract _RoomRegistrySystem is System, AuthRoles {
     return id;
   }
 
+  // update the name and description of a room
+  function setTexts(
+    uint32 index,
+    string memory name,
+    string memory description
+  ) public onlyAdmin(components) {
+    uint256 roomID = LibRoom.getByIndex(components, index);
+    if (roomID == 0) revert("Room: does not exist");
+    LibRoom.setName(components, roomID, name);
+    LibRoom.setDescription(components, roomID, description);
+  }
+
   function addGate(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
     (
       uint32 roomIndex,

@@ -54,6 +54,7 @@ import {
   reviseRooms,
   reviseSkills,
   setPortalTokens,
+  setRoomText,
   unsetPortalTokens,
 } from './state';
 import { cancelTrades, completeTrades } from './state/trades';
@@ -169,6 +170,7 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initRooms(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteRooms(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseRooms(api, indices)),
+      setText: (indices: number[]) => this.genCalls((api) => setRoomText(api, indices)),
     } as SubFunc,
     skills: {
       init: (indices?: number[]) => this.genCalls((api) => initSkills(api, indices)),

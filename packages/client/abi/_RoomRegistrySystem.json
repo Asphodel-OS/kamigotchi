@@ -191,6 +191,29 @@
       "stateMutability": "payable"
     },
     {
+      "type": "function",
+      "name": "updateText",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
       "type": "event",
       "name": "OwnershipHandoverCanceled",
       "inputs": [
@@ -280,6 +303,7 @@
     "remove(uint32)": "00d84fd8",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "transferOwnership(address)": "f2fde38b"
+    "transferOwnership(address)": "f2fde38b",
+    "updateText(uint32,string,string)": "ce091921"
   }
 }

@@ -39,6 +39,7 @@ export interface _RoomRegistrySystemInterface extends Interface {
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "transferOwnership"
+      | "updateText"
   ): FunctionFragment;
 
   getEvent(
@@ -86,6 +87,10 @@ export interface _RoomRegistrySystemInterface extends Interface {
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateText",
+    values: [BigNumberish, string, string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "addFlag", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addGate", data: BytesLike): Result;
@@ -118,6 +123,7 @@ export interface _RoomRegistrySystemInterface extends Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "updateText", data: BytesLike): Result;
 }
 
 export namespace OwnershipHandoverCanceledEvent {
@@ -252,6 +258,12 @@ export interface _RoomRegistrySystem extends BaseContract {
     "payable"
   >;
 
+  updateText: TypedContractMethod<
+    [index: BigNumberish, name: string, description: string],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -299,6 +311,13 @@ export interface _RoomRegistrySystem extends BaseContract {
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
+  getFunction(
+    nameOrSignature: "updateText"
+  ): TypedContractMethod<
+    [index: BigNumberish, name: string, description: string],
+    [void],
+    "nonpayable"
+  >;
 
   getEvent(
     key: "OwnershipHandoverCanceled"
