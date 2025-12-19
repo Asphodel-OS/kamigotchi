@@ -59,13 +59,13 @@ const Container = styled.div<{ isVisible: boolean }>`
 const Kamis = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: 0.6vw 0.6vw 0 0.6vw;
-  gap: 0.45vw;
+  padding: 0.6em 0.6em 0 0.6em;
+  gap: 0.45em;
 `;
 
 const Row = styled.div`
   width: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -73,6 +73,6 @@ const Row = styled.div`
 `;
 
 const Image = styled.img`
-  width: 7vw;
+  width: 7em;
   image-rendering: pixelated;
 `;

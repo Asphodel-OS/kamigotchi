@@ -128,8 +128,8 @@ export const Info = ({
 
 const Container = styled.div`
   position: relative;
-  padding: 1.2vw;
-  width: 32vw;
+  padding: 1.2em;
+  width: 32em;
   height: 100%;
 
   display: flex;
@@ -149,9 +149,9 @@ const TextSection = styled.div`
 
 const Text = styled.div<{ size: number; shift?: number }>`
   color: #d0fe41;
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 2.1}vw;
-  padding-left: ${({ shift }) => shift ?? 0}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 2.1}em;
+  padding-left: ${({ shift }) => shift ?? 0}em;
 `;
 
 const ButtonSection = styled.div`

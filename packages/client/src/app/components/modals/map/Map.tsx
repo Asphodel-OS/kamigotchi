@@ -5,11 +5,14 @@ import { getAccount as _getAccount } from 'app/cache/account';
 import { getKami as _getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoom as _getRoom, getRoomByIndex as _getRoomByIndex } from 'app/cache/room';
-import { ModalHeader, ModalWrapper } from 'app/components/library';
+import { IconListButton, ModalHeader, ModalWrapper, Overlay } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
-import { MapIcon } from 'assets/images/icons/menu';
+import { HelpMenuIcons } from 'assets/images/help';
+import { ActionIcons } from 'assets/images/icons/actions';
+import { insectIcon } from 'assets/images/icons/affinities';
+import { KamiIcon, MapIcon, OperatorIcon } from 'assets/images/icons/menu';
 import {
   queryRoomAccounts as _queryRoomAccounts,
   queryAccountFromEmbedded,
@@ -25,6 +28,7 @@ import { Room, canEnterRoom as _canEnterRoom, queryRooms } from 'network/shapes/
 import { queryScavInstance as _queryScavInstance } from 'network/shapes/Scavenge';
 import { getValue as _getValue } from 'network/shapes/utils/component';
 import { Grid } from './Grid';
+import { Mode } from './types';
 
 export const MapModal: UIComponent = {
   id: 'MapModal',
@@ -90,6 +94,7 @@ export const MapModal: UIComponent = {
     const mapModalOpen = useVisibility((s) => s.modals.map);
 
     const [roomMap, setRoomMap] = useState<Map<number, Room>>(new Map());
+    const [mode, setMode] = useState<Mode>('MyKamis');
     const [zone, setZone] = useState(0);
     const [tick, setTick] = useState(Date.now());
 
@@ -133,7 +138,17 @@ export const MapModal: UIComponent = {
       });
     };
 
-    ///////////////////
+    /////////////////
+    // INTERPRETATION
+
+    const ModeOptions = [
+      { text: 'My Kamis', image: KamiIcon, onClick: () => setMode('MyKamis') },
+      { text: 'Room Type', image: insectIcon, onClick: () => setMode('RoomType') },
+      { text: 'Kami Count', image: HelpMenuIcons.kamis, onClick: () => setMode('KamiCount') },
+      { text: 'Operator Count', image: OperatorIcon, onClick: () => setMode('OperatorCount') },
+    ];
+
+    /////////////////
     // RENDER
 
     return (
@@ -141,8 +156,8 @@ export const MapModal: UIComponent = {
         id='map'
         header={<ModalHeader title={roomMap.get(roomIndex)?.name ?? 'Map'} icon={MapIcon} />}
         canExit
-        noPadding
         truncate
+        noPadding
         scrollBarColor='#cbba3d #e1e1b5'
       >
         <Grid
@@ -154,7 +169,7 @@ export const MapModal: UIComponent = {
             zone,
             rooms: roomMap,
           }}
-          state={{ tick }}
+          state={{ mode, tick }}
           utils={{
             getKami,
             getKamiLocation,
@@ -172,6 +187,15 @@ export const MapModal: UIComponent = {
             components: network.components,
           }}
         />
+        <Overlay top={0.3} left={0.3}>
+          <IconListButton
+            img={ActionIcons.search}
+            text={mode}
+            tooltip={{ text: ['Filter tile by Type'] }}
+            options={ModeOptions}
+            radius={0.6}
+          />
+        </Overlay>
       </ModalWrapper>
     );
   },

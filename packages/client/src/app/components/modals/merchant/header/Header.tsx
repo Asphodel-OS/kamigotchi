@@ -30,7 +30,7 @@ export const Header = ({
 };
 
 const Container = styled.div`
-  margin: 0 1.2vw 0 1.2vw;
+  margin: 0 1.2em 0 1.2em;
 
   display: flex;
   flex-direction: row;
@@ -48,8 +48,8 @@ const ShopDetails = styled.div`
 `;
 
 const ShopImage = styled.img`
-  height: 9vw;
-  padding: 0.9vh 1.2vw 0 1.2vw;
+  height: 9em;
+  padding: 0.9em 1.2em 0 1.2em;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
 `;
@@ -58,18 +58,18 @@ const ShopDescription = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  gap: 0.75vw;
+  gap: 0.75em;
 `;
 
 const Title = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: 3.2vw;
+  font-size: 3.2em;
 `;
 
 const SubTitle = styled.div`
-  padding-left: 0.6vw;
+  padding-left: 0.6em;
   color: #999;
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.2em;
 `;

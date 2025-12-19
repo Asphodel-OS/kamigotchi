@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
@@ -43,7 +44,7 @@ export const TileContextMenu = ({
   /////////////////
   // RENDER
 
-  return (
+  return createPortal(
     <MenuContainer
       ref={menuRef}
       style={{
@@ -67,7 +68,8 @@ export const TileContextMenu = ({
           <Text>{option.text}</Text>
         </MenuItem>
       ))}
-    </MenuContainer>
+    </MenuContainer>,
+    document.body
   );
 };
 

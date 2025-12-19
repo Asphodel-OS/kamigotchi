@@ -108,10 +108,10 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
 
   return (
     <Container>
-      {header && <Text size={0.75}>{header}</Text>}
+      {header && <Text size={0.9}>{header}</Text>}
       <Description onClick={getDescriptionOnClick(kami)}>
         {description.map((text, i) => (
-          <Text key={i} size={0.6}>
+          <Text key={i} size={0.8}>
             {text}
           </Text>
         ))}

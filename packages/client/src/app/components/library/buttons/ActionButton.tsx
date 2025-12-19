@@ -37,32 +37,32 @@ export const ActionButton = ({
     const styles: any = {};
 
     if (size === 'small') {
-      styles.fontSize = '.6vw';
-      styles.padding = '.3vw .6vw';
-      styles.borderRadius = '.3vw';
-      styles.borderWidth = '.1vw';
+      styles.fontSize = '.6em';
+      styles.padding = '.3em .6em';
+      styles.borderRadius = '.3em';
+      styles.borderWidth = '.1em';
     } else if (size === 'medium') {
-      styles.fontSize = '.8vw';
-      styles.padding = '.4vw .8vw';
-      styles.height = '2.1vw';
-      styles.borderRadius = '.45vw';
-      styles.borderWidth = '.15vw';
+      styles.fontSize = '.8em';
+      styles.padding = '.4em .8em';
+      styles.height = '2.1em';
+      styles.borderRadius = '.45em';
+      styles.borderWidth = '.15em';
     } else if (size === 'large') {
-      styles.fontSize = '1.4vw';
-      styles.padding = '.7vw 1.4vw';
-      styles.borderRadius = '.7vw';
-      styles.borderWidth = '.2vw';
+      styles.fontSize = '1.4em';
+      styles.padding = '.7em 1.4em';
+      styles.borderRadius = '.7em';
+      styles.borderWidth = '.2em';
     } else if (size === 'validator') {
-      styles.fontSize = '1.2vh';
-      styles.padding = '0.9vh';
-      styles.borderRadius = '0.45vh';
-      styles.borderWidth = '0.1vh';
+      styles.fontSize = '1.2em';
+      styles.padding = '0.9em';
+      styles.borderRadius = '0.45em';
+      styles.borderWidth = '0.1em';
     } else if (size === 'menu') {
-      styles.fontSize = '0.9vh';
-      styles.padding = '0vh .6vh';
-      styles.borderRadius = '0.9vh';
-      styles.borderWidth = '.15vw';
-      styles.height = '4.5vh';
+      styles.fontSize = '0.9em';
+      styles.padding = '0em .6em';
+      styles.borderRadius = '0.9em';
+      styles.borderWidth = '.15em';
+      styles.height = '4.5em';
     }
 
     if (inverted) {
@@ -77,7 +77,7 @@ export const ActionButton = ({
     if (fill) styles.flexGrow = '1';
     if (noBorder) {
       styles.border = 'none';
-      styles.borderRadius = '0vw';
+      styles.borderRadius = '0em';
     }
     return styles;
   };

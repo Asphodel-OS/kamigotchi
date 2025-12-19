@@ -21,14 +21,15 @@ export function IconListButton({
   width,
   fullWidth,
   radius,
-  scale,
-  scaleOrientation,
+  scaleRelativeToRoot,
+  scaleRelativeToContainer,
   searchable,
   icon,
   filter,
   shake,
   tooltip,
   disabled,
+  menuButton = false,
 }: {
   options: Option[];
   searchable?: boolean;
@@ -39,13 +40,13 @@ export function IconListButton({
   text?: string;
   icon?: { inset?: { px?: number; x?: number; y?: number } };
   radius?: number;
-  scale?: number;
-  scaleOrientation?: 'vw' | 'vh';
+  scaleRelativeToRoot?: number;
+  scaleRelativeToContainer?: number;
   width?: number;
   fullWidth?: boolean;
   balance?: number;
   shake?: boolean;
-
+  menuButton?: boolean;
   // tooltip
   tooltip?: {
     text: string[] | React.ReactNode[];
@@ -54,7 +55,7 @@ export function IconListButton({
     grow?: boolean;
     direction?: 'row' | 'column';
     delay?: number;
-    maxWidth?: number;
+    maxWidth?: { desktop?: number; mobile?: number };
     size?: number;
     alignText?: 'left' | 'right' | 'center';
     color?: string;
@@ -119,8 +120,8 @@ export function IconListButton({
           onClick={handleOpen}
           disabled={disabled}
           radius={radius ?? 0.45}
-          scale={scale ?? 2.5}
-          scaleOrientation={scaleOrientation ?? 'vw'}
+          scaleRelativeToRoot={scaleRelativeToRoot}
+          scaleRelativeToContainer={scaleRelativeToContainer}
           width={width}
           fullWidth={fullWidth}
           balance={balance}
@@ -136,34 +137,35 @@ export function IconListButton({
 
 const MenuWrapper = styled.div`
   position: relative;
-  max-width: 30vw;
+  max-width: 30rem;
 `;
 
 const MenuInput = styled.input`
   position: sticky;
-  border: 0.15vw solid black;
-  border-radius: 0.45vw;
+  border: 0.15em solid black;
+  border-radius: 0.45em;
 
   width: 90%;
-  height: 2.5vw;
-  box-sizing: border-box;
-  top: 0.6vw;
+  height: 2.5em;
 
-  padding: 0vw 0.6vw;
-  margin: 0.6vw;
+  box-sizing: border-box;
+  top: 0.6em;
+
+  padding: 0em 0.6em;
+  margin: 0.6em;
   flex-grow: 1;
 
-  font-size: 0.75vw;
+  font-size: 0.75rem;
 `;
 
 const MenuOption = styled.div<{ disabled?: boolean }>`
   position: relative;
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  border-radius: 0.45vw;
+  border-radius: 0.45em;
 
   width: 100%;
-  padding: 0.45vw;
-  gap: 0.6vw;
+  padding: 0.45em;
+  gap: 0.6em;
 
   display: flex;
   align-items: center;
@@ -174,7 +176,7 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
   &:hover {
     background-color: #7d7;
     background-color: #ddd;
-    outline: 0.15vw solid #444;
+    outline: 0.15em solid #444;
     z-index: 1;
   }
   &:active {
@@ -183,18 +185,23 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 `;
 
 const OptionIcon = styled.img`
-  border-radius: 0.3vw;
-  height: 1.8vw;
+  border-radius: 0.3em;
+  height: 2rem;
   user-drag: none;
+  @media (pointer: coarse) and (max-aspect-ratio: 11/16) {
+    height: 2.5rem;
+  }
 `;
 
 const OptionText = styled.div`
   height: 100%;
-
   display: flex;
   justify-content: flex-start;
   align-items: center;
-
-  font-size: 0.9vw;
-  line-height: 1.5vw;
+  font-size: 1.3rem;
+  line-height: 1.5em;
+  @media (pointer: coarse) and (max-aspect-ratio: 11/16) {
+    font-size: 1.8rem;
+    line-height: 1.9em;
+  }
 `;

@@ -59,26 +59,29 @@ const Container = styled.div`
   top: 0;
   background-color: rgb(221, 221, 221);
   width: 100%;
-  height: 2.7vw;
+  height: 2.7em;
 
-  padding: 0.6vw;
+  padding: 0.6em;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
   align-items: center;
 
   color: black;
-  font-size: 0.9vw;
+  font-size: 1.3em;
+  width: 100%;
   text-align: left;
 
   opacity: 0.9;
   z-index: 1;
+  white-space: normal;
+  word-break: break-word;
 `;
 
 const Label = styled.div<{ width: number; visible: boolean }>`
   position: relative;
-  padding: 0.6vw;
-  width: ${({ width }) => width}vw;
+  padding: 0.6em;
+  width: ${({ width }) => width}em;
 
   display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
   flex-flow: row nowrap;

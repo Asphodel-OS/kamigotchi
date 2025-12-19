@@ -123,13 +123,13 @@ export const ItemGrid = ({
             <IconListButton
               key={item.index}
               img={item.image}
-              scale={4.8}
+              scaleRelativeToRoot={4}
+              scaleRelativeToContainer={12}
               balance={inv.balance}
               options={options}
               disabled={options.length == 0}
               tooltip={{
                 text: [<ItemTooltip key={item.index} item={item} utils={utils} />],
-                maxWidth: 25,
               }}
             />
           </ItemWrapper>
@@ -143,8 +143,8 @@ const Container = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex; ` : `display: none;`)}
   flex-flow: row wrap;
   justify-content: center;
-  gap: 0.3vw;
-  padding: 0.6vw;
+  gap: 0.4em;
+  padding: 0.4em;
 `;
 
 const ItemWrapper = styled.div`

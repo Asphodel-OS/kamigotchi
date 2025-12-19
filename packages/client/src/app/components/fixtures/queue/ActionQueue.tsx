@@ -31,7 +31,7 @@ export const ActionQueue: UIComponent = {
 
     const sizes = ['none', '23vh', '90vh'];
     return (
-      <Wrapper style={{ display: actionQueueVisible ? 'block' : 'none' }}>
+      <Wrapper style={{ display: actionQueueVisible ? 'flex' : 'none' }}>
         <Content style={{ pointerEvents: 'auto', maxHeight: sizes[mode] }}>
           {mode !== 0 && <Logs actionIndices={actionIndices} network={network} />}
           <Controls mode={mode} setMode={setMode} />
@@ -42,26 +42,21 @@ export const ActionQueue: UIComponent = {
 };
 
 const Wrapper = styled.div`
-  align-items: left;
+  height: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+
   user-select: none;
 `;
 
-// cancer. just absolute cancer
 const Content = styled.div`
-  position: absolute;
-  padding: 0.2vw;
+  display: grid;
+  padding: 0.2em;
 
-  right: 1.33vw;
-  width: 32.66vw;
-  max-width: 32.66vw;
-
-  bottom: 1.7vh;
-  max-height: 23vh;
-
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
+  border: solid black 0.15em;
+  border-radius: 0.6em;
 
   background-color: white;
-  display: flex;
-  flex-flow: column nowrap;
 `;

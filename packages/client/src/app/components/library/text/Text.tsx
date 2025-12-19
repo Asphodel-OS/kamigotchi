@@ -12,13 +12,13 @@ export const Text = styled.div<{
   };
   onClick?: () => void;
 }>`
-  font-size: ${({ size }) => size}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
   font-weight: ${({ weight }) => (weight === 'bold' ? 'bold' : 'normal')};
-  line-height: ${({ size }) => size * 1.5}vw;
   color: ${({ color }) => color ?? '#333'};
 
-  padding: ${({ padding }) => padding?.top ?? 0}vw ${({ padding }) => padding?.right ?? 0}vw
-    ${({ padding }) => padding?.bottom ?? 0}vw ${({ padding }) => padding?.left ?? 0}vw;
+  padding: ${({ padding }) => padding?.top ?? 0}em ${({ padding }) => padding?.right ?? 0}em
+    ${({ padding }) => padding?.bottom ?? 0}em ${({ padding }) => padding?.left ?? 0}em;
 
   ${({ onClick }) => onClick && 'cursor: pointer'};
   &:hover {

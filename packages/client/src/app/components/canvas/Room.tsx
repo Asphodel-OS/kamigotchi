@@ -15,11 +15,7 @@ const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 const defaultBgm = { key: 'cave', path: cave };
 
 // painting of the room alongside any clickable objects
-export const Room = ({
-  index,
-}: {
-  index: number
-}) => {
+export const Room = ({ index }: { index: number }) => {
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
   const setModals = useVisibility((s) => s.setModals);
   const setNode = useSelected((s) => s.setNode);
@@ -34,7 +30,7 @@ export const Room = ({
   // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
     if (index == room.index) return;
-    const newRoom = rooms[index];
+    const newRoom = rooms[index] ?? rooms[0];
     let music = newRoom.music;
     if (!music) {
       music = defaultBgm;
@@ -153,27 +149,16 @@ export const Room = ({
   // RENDER
 
   return (
-    <Wrapper>
-      <Container>
-        <Background draggable='false' src={getBackground()} />
-        {room.objects.map((object) => getClickbox(object))}
-      </Container>
-    </Wrapper>
+    <Container>
+      <Background draggable='false' src={getBackground()} />
+      {room.objects.map((object) => getClickbox(object))}
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
-  position: absolute;
-  width: auto;
-  height: 100%;
-  z-index: -2;
-`;
-
 const Container = styled.div`
   position: relative;
-  width: auto;
-  height: auto;
-  height: 100%;
+  aspect-ratio: 1;
 `;
 
 const Background = styled.img`
@@ -193,7 +178,7 @@ interface Coordinates {
 }
 
 const Clickbox = styled.div<Coordinates>`
-  border-radius: 3vw;
+  border-radius: 3em;
   position: absolute;
   top: ${({ y1 }) => y1}%;
   left: ${({ x1 }) => x1}%;

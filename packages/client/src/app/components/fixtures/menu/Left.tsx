@@ -34,7 +34,7 @@ export const LeftMenuFixture: UIComponent = {
     // RENDER
 
     return (
-      <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
+      <Wrapper>
         <AccountMenuButton />
         <PartyMenuButton />
         <MapMenuButton />
@@ -48,8 +48,20 @@ export const LeftMenuFixture: UIComponent = {
 };
 
 const Wrapper = styled.div`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.6vh;
+  justify-self: start;
+
+  @media (max-aspect-ratio: 11/16) {
+    justify-self: stretch;
+
+    > * {
+      flex: 1;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  display: flex;
+  gap: 0.3em;
 `;

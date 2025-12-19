@@ -19,7 +19,7 @@ export const depressFx = (shift = 1, scale = 0) => keyframes`
     transform: scale(1); 
   }
   30% { 
-    transform: scale(${1 + scale}) translateY(${shift}vw);
+    transform: scale(${1 + scale}) translateY(${shift}rem);
     filter: drop-shadow(0 0 0 #bbb);
   }
   100% { 

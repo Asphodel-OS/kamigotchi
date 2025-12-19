@@ -107,7 +107,7 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -115,6 +115,6 @@ const Row = styled.div`
 `;
 
 const Image = styled.img`
-  width: 7vw;
+  width: 7em;
   image-rendering: pixelated;
 `;

@@ -2,7 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 
 import { IconListButton } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { Modals, useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
@@ -11,11 +11,27 @@ import { useBridgeOpener } from 'network/utils/hooks';
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
   const setModals = useVisibility((s) => s.setModals);
-  const settingsVisible = useVisibility((s) => s.modals.settings);
-  const helpVisible = useVisibility((s) => s.modals.help);
   const openBridge = useBridgeOpener();
-
   const [disabled, setDisabled] = useState(true);
+
+  const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
+    const isMobile = window.matchMedia('(max-aspect-ratio: 11/16)').matches;
+    const { modals } = useVisibility.getState();
+    const isModalOpen = modals[targetModal];
+    let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
+    if (!isModalOpen) {
+      if (isMobile) {
+        // Close everything except
+        // the target modal
+        const { modals } = useVisibility.getState();
+        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
+        nextModals = { ...allClosed, [targetModal]: true };
+      } else {
+        nextModals = { ...nextModals, ...hideModals };
+      }
+    }
+    setModals(nextModals);
+  };
 
   useEffect(() => {
     if (ready) setDisabled(!authenticated);
@@ -66,32 +82,28 @@ export const MoreMenuButton = () => {
     localStorage.clear();
   };
 
-  const toggleSettings = () => {
-    if (settingsVisible) setModals({ settings: false });
-    else {
-      setModals({
-        chat: false,
-        help: false,
-        inventory: false,
-        quests: false,
-        settings: true,
-        trading: false,
-      });
-    }
+  const toggleSettings = (targetModal: keyof Modals) => {
+    const modalsToHide: Partial<Modals> = {
+      chat: false,
+      help: false,
+      inventory: false,
+      quests: false,
+      settings: true,
+      trading: false,
+    };
+    manageMobile(targetModal, modalsToHide);
   };
 
-  const toggleHelp = () => {
-    if (helpVisible) setModals({ help: false });
-    else {
-      setModals({
-        chat: false,
-        help: true,
-        inventory: false,
-        quests: false,
-        settings: false,
-        trading: false,
-      });
-    }
+  const toggleHelp = (targetModal: keyof Modals) => {
+    const modalsToHide: Partial<Modals> = {
+      chat: false,
+      help: true,
+      inventory: false,
+      quests: false,
+      settings: false,
+      trading: false,
+    };
+    manageMobile(targetModal, modalsToHide);
   };
 
   return (
@@ -99,14 +111,17 @@ export const MoreMenuButton = () => {
       img={MoreIcon}
       options={[
         { text: 'Bridge', image: TokenIcons.init, onClick: openBridge },
-        { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
-        { text: 'Help', image: HelpIcon, onClick: toggleHelp },
+        {
+          text: 'Settings',
+          disabled,
+          image: SettingsIcon,
+          onClick: () => toggleSettings('settings'),
+        },
+        { text: 'Help', image: HelpIcon, onClick: () => toggleHelp('help') },
         { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
         { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
       ]}
-      scale={4.5}
-      scaleOrientation='vh'
-      radius={0.9}
+      radius={0.4}
       tooltip={{ text: ['More'] }}
     />
   );

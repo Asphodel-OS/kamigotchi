@@ -67,37 +67,45 @@ export const Matrix = ({
             ))}
           </Row>
         ))}
-        <Footer kami={kami} actions={actions} utils={utils} />
-      </Content>
+      </Content>{' '}
+      <Footer kami={kami} actions={actions} utils={utils} />
     </Container>
   );
 };
 
 const Container = styled.div`
-  position: relative;
-  width: 100%;
-
+  width: 50%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   user-select: none;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  &::-webkit-scrollbar {
+    width: 0.5em;
+  }
+  &::-webkit-scrollbar-track {
+    background: trasparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #b6b6b6ff;
+  }
 `;
 
 const Content = styled.div`
-  padding: 3vw 0vw 3.9vw 0vw;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  overflow-y: auto;
 `;
 
 const Row = styled.div<{ locked: boolean }>`
   position: relative;
-  border-bottom: solid black 0.15vw;
-  padding: 1.2vw 3vw;
+  border-bottom: solid black 0.15em;
+  padding: 1.2em 3em;
 
   display: flex;
-  flex-flow: row;
+  flex-flow: row wrap;
   justify-content: space-evenly;
   align-items: center;
 
@@ -106,11 +114,11 @@ const Row = styled.div<{ locked: boolean }>`
 
 const RowPrefix = styled.div`
   position: absolute;
-  left: 2vw;
+  left: 2em;
 `;
 
 const RowNumber = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.2em;
 `;

@@ -74,11 +74,12 @@ export const Kamis = ({
   }, [nftData, account?.entity]);
 
   const kamiOnClick = (kami: Kami) => {
+    const isMobile = window.matchMedia('(max-aspect-ratio: 11/16)').matches;
     const sameKami = kamiIndex === kami.index;
     setKami(kami.index);
 
     if (kamiModalOpen && sameKami) setModals({ kami: false });
-    else setModals({ kami: true });
+    else setModals({ kami: true, ...(isMobile && { account: false }) });
     playClick();
   };
 
@@ -114,16 +115,16 @@ const Container = styled.div`
 `;
 
 const CellContainer = styled.div`
-  border: solid 0.15vw black;
-  border-radius: 0.25vw;
+  border: solid 0.15em black;
+  border-radius: 0.25em;
 
-  margin: 0.3vh 0.4vw;
+  margin: 0.3em 0.4em;
   position: relative;
 `;
 
 const Image = styled.img`
-  border-radius: 0.1vw;
-  height: 8vw;
+  border-radius: 0.1em;
+  height: 8em;
   cursor: pointer;
   &:hover {
     opacity: 0.75;
@@ -132,15 +133,15 @@ const Image = styled.img`
 
 const ExtIcon = styled.img`
   position: absolute;
-  width: 2.5vw;
-  right: 0vw;
-  bottom: 0vw;
+  width: 2.5em;
+  right: 0em;
+  bottom: 0em;
 `;
 
 const EmptyText = styled.div`
   color: black;
-  margin: 1vw;
+  margin: 1em;
 
-  font-size: 1.2vw;
+  font-size: 1.2em;
   font-family: Pixel;
 `;

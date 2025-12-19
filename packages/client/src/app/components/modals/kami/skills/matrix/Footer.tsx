@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
-import { IconButton, Overlay, TextTooltip } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { RESPEC_POTION_INDEX } from 'constants/items';
 import { Kami } from 'network/shapes';
@@ -53,30 +53,43 @@ export const Footer = ({
   // RENDER
 
   return (
-    <Overlay bottom={0.75} right={0.75} gap={0.3}>
-      <TextTooltip text={getRespecTooltip()} maxWidth={24}>
+    <StickyFooter>
+      <TextTooltip text={getRespecTooltip()} maxWidth={{ desktop: 24 }}>
         <IconButton
           key='respec-button'
           onClick={() => reset(kami)}
           img={ItemImages.respec_potion}
           disabled={!isResting(kami) || !hasRespecs()}
+          scaleRelativeToRoot={2.1}
         />
       </TextTooltip>
       <Points>{getPointsText()}</Points>
-    </Overlay>
+    </StickyFooter>
   );
 };
 
+const StickyFooter = styled.div`
+  position: sticky;
+  bottom: 2%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 0.3em;
+  z-index: 1;
+  height: 100%;
+`;
+
 const Points = styled.div`
   background-color: #ffffff;
-  border: solid black 0.15vw;
-  border-radius: 0.45vw;
-  height: 2.5vw;
-  width: 7.5vw;
+  border: solid black 0.15em;
+  border-radius: 0.45em;
+
+  width: 7.5em;
 
   color: black;
-  font-size: 0.9vw;
-  line-height: 1.35vw;
+  font-size: 0.9em;
+  line-height: 1.35em;
 
   display: flex;
   flex-flow: row nowrap;

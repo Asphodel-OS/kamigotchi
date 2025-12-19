@@ -54,7 +54,7 @@ export const Inbound = ({
 
 const Container = styled.div<{ isVisible: boolean }>`
   width: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
   justify-content: center;

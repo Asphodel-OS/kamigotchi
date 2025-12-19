@@ -38,8 +38,8 @@ export const TitleBar = ({
 
 const Container = styled.div`
   position: relative;
-  border-bottom: solid black 0.15vw;
-  height: 1.8vw;
+  border-bottom: solid black 0.15em;
+  height: 1.8em;
 
   display: flex;
   align-items: center;
@@ -50,12 +50,13 @@ const Container = styled.div`
 const Title = styled.div`
   position: absolute;
   z-index: 1;
-  font-size: 0.75vw;
-  margin-left: 0.6vw;
+  font-size: 0.7em;
+  margin-left: 0.6em;
 
   text-align: left;
   color: #4b126eff;
   cursor: pointer;
+
   &:hover {
     opacity: 0.6;
     text-decoration: underline;
@@ -64,7 +65,7 @@ const Title = styled.div`
 
 const Corner = styled.div`
   flex-grow: 1;
-  width: 2.7vw;
+  width: 2.7em;
   height: 100%;
 
   display: flex;

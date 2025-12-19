@@ -236,7 +236,7 @@ export const SingleCreate = ({
           title={`${mode} ${amt} ${item?.name ?? 'Unknown'} for ${cost} MUSU`}
           text={getCreateError()}
           alignText='left'
-          maxWidth={24}
+          maxWidth={{ desktop: 24 }}
         >
           <IconButton
             text='Create'
@@ -252,10 +252,10 @@ export const SingleCreate = ({
 const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 7.5vw;
+  height: 7.5em;
 
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: column wrap;
   align-items: center;
   justify-content: center;
 `;
@@ -263,10 +263,10 @@ const Container = styled.div`
 const Inline = styled.div`
   width: 100%;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const InlineGrow = styled.div`
@@ -277,5 +277,5 @@ const ForWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;

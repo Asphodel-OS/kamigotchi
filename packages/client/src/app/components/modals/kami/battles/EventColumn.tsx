@@ -5,13 +5,7 @@ import { DeathIcon, KillIcon } from 'assets/images/icons/battles';
 import { Kill } from 'clients/kamiden';
 import { Kami } from 'network/shapes';
 
-export const EventColumn = ({
-  kami,
-  kills,
-}: {
-  kami: Kami;
-  kills: Kill[];
-}) => {
+export const EventColumn = ({ kami, kills }: { kami: Kami; kills: Kill[] }) => {
   const getPnLString = (kill: Kill) => {
     if (kill.IsDeath) {
       const bounty = parseInt(kill.Bounty);
@@ -39,7 +33,7 @@ export const EventColumn = ({
 
   return (
     <Container>
-      <Text size={1.2}>Event</Text>
+      <Header>Event</Header>
       {kills.map((kill, index) => (
         <TextTooltip key={index} text={getTooltipText(kill)}>
           <Row>
@@ -59,20 +53,33 @@ const Container = styled.div`
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 0.3vw;
+  gap: 0.3em;
+  min-width: 0;
+  flex: 1 1 auto;
+`;
+
+const Header = styled.div`
+  font-size: 1.2em;
+  font-weight: bold;
+  white-space: normal;
+  word-break: break-word;
+  height: 2em;
+  border-bottom: solid black 0.1em;
 `;
 
 const Row = styled.div`
   width: 100%;
-  height: 2.1vw;
+  min-height: 2.1em;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.45vw;
+  justify-content: flex-start;
+  gap: 0.45em;
+  white-space: normal;
+  word-break: break-word;
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
-  width: 1.2vw;
+  height: 1.2em;
+  width: 1.2em;
 `;

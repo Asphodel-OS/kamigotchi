@@ -70,9 +70,11 @@ export const Skills = ({
 
 const Wrapper = styled.div`
   width: 100%;
+  min-height: fit-content;
   height: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   user-select: none;
+  position: relative;
 `;

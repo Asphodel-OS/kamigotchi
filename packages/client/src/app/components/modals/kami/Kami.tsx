@@ -21,6 +21,7 @@ import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { getCompAddr } from 'network/shapes/utils';
+import styled from 'styled-components';
 import { Battles } from './battles/Battles';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
@@ -35,10 +36,26 @@ export const KamiModal: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
-    /////////////////
-    // PREPARATION
-
-    const { network, data, utils } = (() => {
+    const {
+      network,
+      data: { account, spender },
+      utils: {
+        calcExpRequirement,
+        getItemBalance,
+        getAccountByID,
+        getKami,
+        getKamiByID,
+        getOwner,
+        getSkill,
+        getSkillUpgradeError,
+        getTreePoints,
+        getTreeRequirement,
+        queryKamiByIndex,
+        parseSkillRequirement,
+        getEntityIndex,
+        getNodeByIndex,
+      },
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -89,9 +106,6 @@ export const KamiModal: UIComponent = {
     // INSTANTIATIONS
 
     const { actions, api } = network;
-    const { account } = data;
-    const { getSkillUpgradeError, getTreePoints } = utils;
-    const { getKami, getOwner, queryKamiByIndex } = utils;
 
     const kamiIndex = useSelected((s) => s.kamiIndex);
     const kamiModalOpen = useVisibility((s) => s.modals.kami);
@@ -183,7 +197,9 @@ export const KamiModal: UIComponent = {
             key='banner'
             data={{ account, kami, owner }}
             actions={{ levelUp }}
-            utils={utils}
+            utils={{
+              calcExpRequirement,
+            }}
           />,
           <Tabs key='tabs' tab={tab} setTab={setTab} />,
         ]}
@@ -191,24 +207,47 @@ export const KamiModal: UIComponent = {
         overlay
         noPadding
       >
-        {tab === 'TRAITS' && <Traits kami={kami} />}
-        {tab === 'SKILLS' && (
-          <Skills
-            data={{ account, kami, owner }}
-            actions={{
-              upgrade: (skill: Skill) => upgradeSkill(kami, skill),
-              reset: resetSkill,
-            }}
-            state={{ tick }}
-            utils={{
-              ...utils,
-              getUpgradeError: (index: number) => getSkillUpgradeError(index, kami),
-              getTreePoints: (tree: string) => getTreePoints(tree, kami.id),
-            }}
-          />
-        )}
-        {tab === 'BATTLES' && <Battles kami={kami} setKami={setKami} tab={tab} utils={utils} />}
+        <Wrapper>
+          {tab === 'TRAITS' && <Traits kami={kami} />}
+          {tab === 'SKILLS' && (
+            <Skills
+              data={{ account, kami, owner }}
+              actions={{
+                upgrade: (skill: Skill) => upgradeSkill(kami, skill),
+                reset: resetSkill,
+              }}
+              state={{ tick }}
+              utils={{
+                getItemBalance,
+                getSkill,
+                getUpgradeError: (index: number) => getSkillUpgradeError(index, kami),
+                getTreePoints: (tree: string) => getTreePoints(tree, kami.id),
+                getTreeRequirement,
+                parseSkillRequirement,
+              }}
+            />
+          )}
+          {tab === 'BATTLES' && (
+            <Battles
+              kami={kami}
+              setKami={setKami}
+              tab={tab}
+              utils={{
+                getAccountByID,
+                getKami,
+                getKamiByID,
+                getEntityIndex,
+                getOwner,
+                getNodeByIndex,
+              }}
+            />
+          )}
+        </Wrapper>
       </ModalWrapper>
     );
   },
 };
+
+const Wrapper = styled.div`
+  height: 100%;
+`;

@@ -19,7 +19,10 @@ export const Card = ({
     fit?: 'cover' | 'contain';
     padding?: number;
     scale?: number;
-    tooltip?: { text: string[] | React.ReactNode[]; maxWidth?: number };
+    tooltip?: {
+      text: string[] | React.ReactNode[];
+      maxWidth?: { desktop?: number; mobile?: number };
+    };
     effects?: {
       overlay?: string;
       showLevelUp?: boolean; // TODO: move this field up one level to KamiCard, pass in as Foreground
@@ -44,7 +47,13 @@ export const Card = ({
 
   return (
     <Wrapper fullWidth={fullWidth}>
-      <TextTooltip text={image?.tooltip?.text ?? []} maxWidth={image?.tooltip?.maxWidth}>
+      <TextTooltip
+        text={image?.tooltip?.text ?? []}
+        maxWidth={{
+          desktop: image?.tooltip?.maxWidth?.desktop,
+          mobile: image?.tooltip?.maxWidth?.mobile,
+        }}
+      >
         <ImageContainer scale={scale} padding={image?.padding}>
           {!!effects?.background && <BackgroundSlot>{effects.background}</BackgroundSlot>}
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
@@ -70,8 +79,8 @@ export const Card = ({
 
 const Wrapper = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
-  border: 0.15vw solid black;
-  border-radius: 0.75vw;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
@@ -80,15 +89,17 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 `;
 
 const ImageContainer = styled.div<{ scale: number; padding?: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
-  border-right: solid black 0.15vw;
-  border-radius: 0.6vw 0vw 0vw 0.6vw;
-
+  border-right: solid black 0.15em;
+  border-radius: 0.45em 0em 0em 0.45em;
   min-height: 100%;
-  height: ${({ scale }) => scale}vw;
-  width: ${({ scale }) => scale}vw;
-  padding: ${({ padding }) => padding ?? 0}vw;
+  height: ${({ scale }) => scale}em;
+  width: ${({ scale }) => scale}em;
 
+  padding: ${({ padding }) => padding ?? 0}em;
   ${({ scale }) => scale > 4 && `image-rendering: pixelated;`}
   user-select: none;
   overflow: hidden;
@@ -109,9 +120,11 @@ const Image = styled.img<{ onClick?: () => void; fit?: string }>`
 
 const Container = styled.div`
   border-color: black;
-  border-width: 0.15vw;
+  border-width: 0.15em;
   color: black;
   flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
 
   display: flex;
   flex-flow: column nowrap;
@@ -132,11 +145,11 @@ const ForegroundSlot = styled.div`
 
 const Text = styled.div<{ size: number }>`
   color: black;
-  font-size: ${(props) => props.size}vw;
+  font-size: ${(props) => props.size}em;
 `;
 
 const Sp = styled.div`
-  font-size: 1.2vw;
+  font-size: 1.2em;
   font-weight: bold;
   background: linear-gradient(to right, #0b0d0eff, #ee0979);
   -webkit-background-clip: text;

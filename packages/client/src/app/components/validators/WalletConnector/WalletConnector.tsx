@@ -13,7 +13,7 @@ import styled from 'styled-components';
 import { Address } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
 
-import { ActionButton, ValidatorWrapper } from 'app/components/library';
+import { IconButton, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
@@ -232,7 +232,7 @@ export const WalletConnecter: UIComponent = {
             }}
             step={getCurrentStep()}
           />
-          <ActionButton onClick={handleClick} text={getButtonLabel()} size='large' />
+          <IconButton onClick={handleClick} text={getButtonLabel()} />
         </Container>
       </ValidatorWrapper>
     );
@@ -240,7 +240,7 @@ export const WalletConnecter: UIComponent = {
 };
 
 const Container = styled.div`
-  height: 15vw;
+  height: 15em;
 
   display: flex;
   flex-flow: column nowrap;

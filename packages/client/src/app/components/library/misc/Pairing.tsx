@@ -52,7 +52,7 @@ export const Pairing = ({
 };
 
 const Container = styled.div<{ gap: number; color: string; border: string }>`
-  gap: ${({ gap }) => gap * 0.3}vw;
+  gap: ${({ gap }) => gap * 0.5}em;
 
   display: flex;
   flex-direction: row;
@@ -69,8 +69,8 @@ const Container = styled.div<{ gap: number; color: string; border: string }>`
 `;
 
 const Icon = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 1.5}vw;
-  margin-bottom: ${({ scale }) => scale * 0.12}vw;
+  height: ${({ scale }) => scale * 1.5}em;
+  margin-bottom: ${({ scale }) => scale * 0.12}em;
   ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
   user-drag: none;
 `;

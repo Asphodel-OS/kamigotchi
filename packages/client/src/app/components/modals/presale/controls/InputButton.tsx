@@ -87,10 +87,10 @@ export const InputButton = ({
 
 const Container = styled.div`
   position: relative;
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
-  width: 21vw;
-  height: 4.5vw;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
+  width: 21em;
+  height: 4.5em;
 
   display: flex;
   flex-direction: row nowrap;
@@ -100,15 +100,15 @@ const Container = styled.div`
 const Input = styled.input`
   background-color: #eee;
   border: none;
-  border-radius: 0.45vw 0 0 0.45vw;
-  width: 9vw;
+  border-radius: 0.45em 0 0 0.45em;
+  width: 9em;
   height: 100%;
 
-  padding: 0.3vw;
+  padding: 0.3em;
   margin: 0w;
   cursor: text;
   color: black;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: center;
 
   outline: none;
@@ -116,8 +116,8 @@ const Input = styled.input`
 
 const Button = styled.div<{ disabled: boolean }>`
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#112535')};
-  border-left: 0.15vw solid black;
-  border-radius: 0 0.45vw 0.45vw 0;
+  border-left: 0.15em solid black;
+  border-radius: 0 0.45em 0.45em 0;
 
   width: 100%;
   height: 100%;
@@ -128,7 +128,7 @@ const Button = styled.div<{ disabled: boolean }>`
   justify-content: center;
 
   color: #d0fe41;
-  font-size: 1.5vw;
+  font-size: 1.5em;
 
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
@@ -143,14 +143,14 @@ const Button = styled.div<{ disabled: boolean }>`
 
 const Text = styled.div<{ size: number }>`
   color: #d0fe41;
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 1.5}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
 `;
 
 const ClickableText = styled.div<{ size: number }>`
   color: black;
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 1.5}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
   cursor: pointer;
   &:hover {
     opacity: 0.8;

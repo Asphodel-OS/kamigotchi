@@ -55,11 +55,11 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  gap: 2.5vw;
+  gap: 2.5em;
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 2}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 2}em;
   color: #b9e9b9;
 `;

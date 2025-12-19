@@ -134,6 +134,7 @@ export const QuestCard = ({
 
   /////////////////
   // RENDER
+
   const factionStamp = getFactionStamp(quest);
   return (
     <Container key={quest.id} completed={status === 'COMPLETED'}>
@@ -170,7 +171,7 @@ export const QuestCard = ({
       )}
       <ButtonRow>
         <IconButton
-          scale={2.5}
+          scaleRelativeToRoot={2.5}
           text={getButtonText(status)}
           onClick={() => {
             triggerQuestDetailsModal(quest.entity);
@@ -183,10 +184,10 @@ export const QuestCard = ({
 
 const Container = styled.div<{ completed?: boolean }>`
   position: relative;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
-  padding: 1.2vw;
-  margin: 0.9vw;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
+  padding: 1.2em;
+  margin: 0.9em;
   background-color: #fff;
 
   display: flex;
@@ -198,25 +199,26 @@ const Container = styled.div<{ completed?: boolean }>`
 `;
 
 const Title = styled.div`
-  display: flex;
-  font-size: 0.9vw;
-  line-height: 1.2vw;
-  width: 100%;
-  font-weight: bold;
   background-color: rgba(248, 246, 228, 1);
-  border-radius: 0.5vw;
-  padding: 0.3vw;
+  border-radius: 0.5em;
+  padding: 0.3em;
+  width: 100%;
+
+  font-size: 0.9em;
+  line-height: 1.2em;
+  font-weight: bold;
+
+  display: flex;
+  flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
-  flex-direction: row;
-  flex-wrap: nowrap;
 `;
 
 const Faction = styled.div`
-  border: 0.15vw solid #e4c270;
-  border-radius: 6.5vw;
-  height: 2vw;
-  width: 2vw;
+  border: 0.15em solid #e4c270;
+  border-radius: 6.5em;
+  height: 2em;
+  width: 2em;
 `;
 
 const Section = styled.div`
@@ -224,17 +226,17 @@ const Section = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin: 0.3vw;
+  margin: 0.3em 0.3em;
 `;
 
 const SubTitle = styled.div`
-  font-size: 0.8vw;
-  line-height: 1.5vw;
+  font-size: 0.8em;
+  line-height: 1.5em;
   text-align: left;
   justify-content: flex-start;
   background-color: #f5f0cdff;
-  border-radius: 0.5vw;
-  padding: 0.3vw;
+  border-radius: 0.5em;
+  padding: 0.3em;
   width: fit-content;
 `;
 
@@ -244,25 +246,27 @@ const Row = styled.div`
 
   justify-content: left;
   align-items: flex-start;
-  margin: 0.3vw;
-  gap: 0.3vw;
+  margin: 0.3em;
+  gap: 0.3em;
 `;
 
 const ConditionText = styled.div<{ objective: boolean }>`
-  font-size: 0.7vw;
-  padding: ${({ objective }) => (objective ? '0.6vw' : '0.2vw')};
+  border: solid black 0.15em;
+  border-radius: 0.3em;
+  padding: ${({ objective }) => (objective ? '0.6em' : '0.2em')};
+
+  font-size: 0.7em;
+
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  border: solid black 0.15vw;
-  border-radius: 0.3vw;
 `;
 
 const Image = styled.img<{ size: number }>`
-  height: ${({ size }) => size}vw;
-  width: ${({ size }) => size}vw;
-  margin-right: ${({ size }) => size * 0.2}vw;
+  height: ${({ size }) => size}em;
+  width: ${({ size }) => size}em;
+  margin-right: ${({ size }) => size * 0.2}em;
   user-drag: none;
 `;
 
@@ -272,15 +276,4 @@ const ButtonRow = styled.div`
   bottom: 5%;
   display: flex;
   z-index: 0;
-`;
-
-const TickIcon = styled.div`
-  position: absolute;
-  bottom: -30%;
-  left: 40%;
-  font-size: 2.5vw;
-  font-weight: bold;
-  color: rgba(59, 185, 0, 1);
-  z-index: 2;
-  pointer-events: none;
 `;

@@ -21,8 +21,8 @@ export const HelpChip = ({
 };
 
 const Icon = styled.img<{ size: number }>`
-  width: ${({ size }) => size}vw;
-  height: ${({ size }) => size}vw;
-  margin: 0.1vh 0.5vw;
+  margin: 0.1em 0.5em;
+  width: ${({ size }) => size}em;
+  height: ${({ size }) => size}em;
   user-drag: none;
 `;

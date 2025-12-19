@@ -434,14 +434,14 @@ export const Feed = ({
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  margin-top: 1.5vw;
+  margin-top: 1.5em;
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
-  font-size: 0.6vw;
+  font-size: 1.3em;
 `;
 
 const Buttons = styled.div`
@@ -459,12 +459,12 @@ const Messages = styled.div`
 //hover {  cursor: pointer;
 const Button = styled.button<{ position: number }>`
   position: absolute;
-  ${({ position }) => position && `left:${position}vw;`};
-  font-size: 1vw;
-  padding: 0.4vw;
-  padding-right: 2vw;
-  padding-left: 2vw;
-  border-radius: 0 0 0.8vw 0.8vw;
+  ${({ position }) => position && `left:${position}em;`};
+  font-size: 1em;
+  padding: 0.4em;
+  padding-right: 2em;
+  padding-left: 2em;
+  border-radius: 0 0 0.8em 0.8em;
   border-top: 0;
   z-index: 1;
   background-color: #c5c5c5;
@@ -487,7 +487,7 @@ const PollingMessage = styled.div`
 `;
 
 const FeedTab = styled.div`
-  line-height: 1.8vw;
+  line-height: 1.8em;
   text-align: justify;
   word-break: break-all;
   width: 100%;
@@ -495,17 +495,17 @@ const FeedTab = styled.div`
 
 const FeedTabMessage = styled.div`
   display: block;
-  gap: 0.3vw;
+  gap: 0.3em;
   color: black;
   width: 100%;
-  font-size: 0.6vw;
+  font-size: 0.6em;
 `;
 
 const Row = styled.span`
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const Bold = styled.span<{ color: string }>`
@@ -515,15 +515,15 @@ const Bold = styled.span<{ color: string }>`
 
 const Icon = styled.img`
   position: relative;
-  width: 0.9vw;
-  height: 0.9vw;
+  width: 0.9em;
+  height: 0.9em;
 `;
 
 const KamiIcon = styled.img`
   position: relative;
-  border-radius: 0.3vw;
-  width: 1.5vw;
-  height: 1.5vw;
+  border-radius: 0.3em;
+  width: 1.5em;
+  height: 1.5em;
 
   &:hover {
     cursor: pointer;
@@ -533,9 +533,9 @@ const KamiIcon = styled.img`
 
 const RoomIcon = styled.img`
   position: relative;
-  border-radius: 0.3vw;
-  width: 1.5vw;
-  height: 1.5vw;
+  border-radius: 0.3em;
+  width: 1.5em;
+  height: 1.5em;
 
   &:hover {
     cursor: pointer;

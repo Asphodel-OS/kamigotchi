@@ -51,8 +51,8 @@ export const CartRow = ({
 
 const Container = styled.div`
   position: relative;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
+  border: 0.15em solid black;
+  border-radius: 0.4em;
   width: 90%;
 
   display: flex;
@@ -63,19 +63,19 @@ const Container = styled.div`
 // circular exit button on the top right of the Container
 const ExitButton = styled.div`
   position: absolute;
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
   background-color: #fff;
   cursor: pointer;
 
-  width: 1.2vw;
-  height: 1.2vw;
-  top: -0.4vw;
-  right: -0.4vw;
+  width: 1.2em;
+  height: 1.2em;
+  top: -0.4em;
+  right: -0.4em;
 
   color: black;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
   text-align: center;
 
   &:hover {
@@ -87,8 +87,8 @@ const ExitButton = styled.div`
 `;
 
 const Image = styled.img`
-  width: 3vw;
-  padding: 0.3vw;
+  width: 3em;
+  padding: 0.3em;
   font-family: Pixel;
   image-rendering: pixelated;
 `;
@@ -96,23 +96,23 @@ const Image = styled.img`
 const Quantity = styled.input`
   border: none;
   background-color: #eee;
-  border-right: 0.15vw solid black;
-  border-left: 0.15vw solid black;
-  width: 4.5vw;
+  border-right: 0.15em solid black;
+  border-left: 0.15em solid black;
+  width: 4.5em;
   height: 100%;
-  padding: 0.3vw;
+  padding: 0.3em;
   margin: 0w;
   cursor: text;
 
   color: black;
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: center;
 `;
 
 const TotalPrice = styled.div`
   height: 100%;
-  padding: 0 0.6vw;
+  padding: 0 0.6em;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -121,15 +121,15 @@ const TotalPrice = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
-  margin-right: 0.3vw;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.3em;
 `;
 
 const Text = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
 
   display: flex;
   flex-flow: row nowrap;

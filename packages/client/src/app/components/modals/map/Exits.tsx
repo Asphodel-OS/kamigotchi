@@ -54,7 +54,7 @@ const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  border-right: solid black 0.15vw;
+  border-right: solid black 0.15em;
 
   height: 100%;
   width: 100%;
@@ -62,13 +62,13 @@ const Container = styled.div`
 
 const Title = styled.div`
   position: absolute;
-  padding: 0.6vw;
+  padding: 0.6em;
   width: 100%;
   background-color: #eee;
 
   color: #333;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
   text-align: left;
 `;
 
@@ -76,7 +76,7 @@ const Options = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  padding-top: 2.7vw;
+  padding-top: 2.7em;
 
   width: 100%;
   height: 100%;
@@ -87,13 +87,13 @@ const Options = styled.div`
 const ClickableDescription = styled.div`
   color: #333;
   cursor: pointer;
-  padding: 0.3vw 0.6vw;
-  border-radius: 0.45vw;
+  padding: 0.3em 0.6em;
+  border-radius: 0.45em;
   width: 100%;
 
   font-family: Pixel;
-  font-size: 0.75vw;
-  line-height: 1.2vw;
+  font-size: 0.75em;
+  line-height: 1.2em;
   text-align: left;
   &:hover {
     background-color: #ddd;
@@ -107,13 +107,13 @@ const ClickableDescription = styled.div`
 const UnclickableDescription = styled.div`
   color: #555;
   cursor: pointer;
-  padding: 0.3vw 0.6vw;
-  border-radius: 0.45vw;
+  padding: 0.3em 0.6em;
+  border-radius: 0.45em;
   width: 100%;
 
   font-family: Pixel;
-  font-size: 0.75vw;
-  line-height: 1.2vw;
+  font-size: 0.75em;
+  line-height: 1.2em;
   text-align: left;
 
   background-color: #eee;

@@ -6,11 +6,7 @@ import { StatIcons } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
 import { Trait } from 'network/shapes/Trait';
 
-export const Traits = ({
-  kami,
-}: {
-  kami: Kami;
-}) => {
+export const Traits = ({ kami }: { kami: Kami }) => {
   const statsDetails = new Map(
     Object.entries({
       health: {
@@ -71,26 +67,26 @@ export const Traits = ({
 };
 
 const Container = styled.div`
-  border: solid black 0.15vw;
-  border-radius: 0.5vw;
-  margin: 0.7vw;
-  padding: 0.5vw;
+  border: solid black 0.15em;
+  border-radius: 0.5em;
+  margin: 0.7em;
+  padding: 0.5em;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
   user-select: none;
 `;
 
 const Title = styled.div`
-  padding: 0.5vw;
+  padding: 0.5em;
   color: black;
   font-family: Pixel;
-  font-size: 1.5vw;
+  font-size: 1.5em;
 `;
 
 const Content = styled.div`
-  padding: 0.7vw;
+  padding: 0.7em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -99,11 +95,11 @@ const Content = styled.div`
 `;
 
 const InfoBox = styled.div<{ color: string }>`
-  border: solid black 0.12vw;
+  border: solid black 0.12em;
   border-radius: 5px;
-  margin: 0.3vw;
-  padding: 0.5vw 1vw;
-  gap: 0.5vw;
+  margin: 0.3em;
+  padding: 0.5em 1em;
+  gap: 0.5em;
   ${({ color }) => `background-color: ${color ?? 'white'};`}
   display: flex;
   flex-direction: row nowrap;
@@ -115,7 +111,7 @@ const InfoBox = styled.div<{ color: string }>`
 `;
 
 const InfoIcon = styled.img`
-  height: 2vw;
+  height: 2em;
   align-self: center;
 `;
 
@@ -123,7 +119,7 @@ const InfoNumber = styled.div`
   color: black;
   align-self: center;
 
-  font-size: 1.2vw;
+  font-size: 1.2em;
   font-family: Pixel;
   margin: auto;
 `;

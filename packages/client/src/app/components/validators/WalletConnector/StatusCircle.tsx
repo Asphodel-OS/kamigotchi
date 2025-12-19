@@ -27,11 +27,11 @@ export const StatusCircle = ({
 const Container = styled.div<{ size: number }>`
   position: relative;
   border-radius: 50%;
-  border: dashed black ${({ size }) => size / 15}vw;
-  margin: 0.3vw;
+  border: dashed black ${({ size }) => size / 15}em;
+  margin: 0.3em;
 
-  width: ${({ size }) => size}vw;
-  height: ${({ size }) => size}vw;
+  width: ${({ size }) => size}em;
+  height: ${({ size }) => size}em;
 
   display: flex;
   justify-content: center;

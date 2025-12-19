@@ -124,13 +124,13 @@ export const Table = ({
     <Container>
       <Header
         columns={{
-          Created: 4,
-          Account: 4,
-          Type: 4,
-          Token: 4,
-          Amount: 4,
-          Status: 4,
-          Actions: 3.5,
+          Created: 7,
+          Account: 7,
+          Type: 7,
+          Token: 7,
+          Amount: 7,
+          Status: 7,
+          Actions: 7,
         }}
         data={{ mode }}
         state={{ sort, setSort }}

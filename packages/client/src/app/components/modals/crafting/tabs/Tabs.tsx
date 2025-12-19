@@ -2,13 +2,7 @@ import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 
-export const Tabs = ({
-  tab,
-  setTab: _setTab,
-}: {
-  tab: string;
-  setTab: (tab: string) => void;
-}) => {
+export const Tabs = ({ tab, setTab: _setTab }: { tab: string; setTab: (tab: string) => void }) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
@@ -26,11 +20,7 @@ export const Tabs = ({
       <Button onClick={() => setTab('reagent')} disabled={tab === 'reagent'}>
         Reagents
       </Button>
-      <Button
-        onClick={() => setTab('special')}
-        disabled={tab === 'special'}
-        style={{ borderRight: 'none' }}
-      >
+      <Button onClick={() => setTab('special')} disabled={tab === 'special'}>
         Special
       </Button>
     </Container>
@@ -38,29 +28,29 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15vw black;
-  border-radius: 0.3vw 0.3vw 0 0;
+  border: solid 0.1em black;
+  border-radius: 0.3em 0.3em 0 0;
 
-  margin-bottom: 0.6vw;
+  margin-bottom: 0.6em;
   width: 100%;
   background-color: white;
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
 `;
 
 const Button = styled.button`
   border: none;
-  padding: 0.5vw;
+  padding: 0.5em;
 
   flex-grow: 1;
   color: black;
   justify-content: center;
-  border-right: solid black 0.15vw;
+  border: solid 0.1em black;
 
-  font-size: 0.9vw;
+  font-size: 0.9em;
   text-align: center;
-
+  text-wrap: wrap;
   cursor: pointer;
   pointer-events: auto;
   &:active {

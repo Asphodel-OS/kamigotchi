@@ -1,6 +1,7 @@
 import ChatIcon from './chat.png';
 import HelpIcon from './help.png';
 import InventoryIcon from './inventory.png';
+import Items from './items.png';
 import KamiIcon from './kami.png';
 import ExternalIcon from './link_to_external_apps.png';
 import MapIcon from './map.png';
@@ -10,15 +11,18 @@ import QuestsIcon from './quests.png';
 import ResetIcon from './reset.png';
 import SettingsIcon from './settings.png';
 import SocialIcon from './social.png';
+import Social2 from './social_2.png';
 import SudoIcon from './sudo.png';
 import TradeIcon from './trade.png';
 import Whispo from './whispo.png';
+import World from './world.png';
 
 export {
   ChatIcon,
   ExternalIcon,
   HelpIcon,
   InventoryIcon,
+  Items,
   KamiIcon,
   MapIcon,
   MoreIcon,
@@ -26,10 +30,12 @@ export {
   QuestsIcon,
   ResetIcon,
   SettingsIcon,
+  Social2,
   SocialIcon,
   SudoIcon,
   TradeIcon,
   Whispo,
+  World,
 };
 
 export const MenuIcons = {
@@ -48,4 +54,7 @@ export const MenuIcons = {
   settings: SettingsIcon,
   social: SocialIcon,
   sudo: SudoIcon,
+  world: World,
+  items: Items,
+  Social2: Social2,
 };

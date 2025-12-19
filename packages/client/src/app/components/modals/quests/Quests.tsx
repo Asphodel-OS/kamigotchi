@@ -9,7 +9,7 @@ import { useNetwork, useVisibility } from 'app/stores';
 import { QuestsIcon } from 'assets/images/icons/menu';
 import { DEAD_ADDRESS } from 'constants/addresses';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
+import { getItemBalance as _getItemBalance, getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
   filterQuestsByAvailable,
@@ -36,7 +36,32 @@ export const QuestModal: UIComponent = {
     const isNetworkReady =
       validations.authenticated && validations.chainMatches && burnerAddress !== DEAD_ADDRESS;
 
-    const { network, data, utils } = (() => {
+    const {
+      network,
+      components: {
+        IsRegistry,
+        OwnsQuestID,
+        IsComplete,
+      },
+      data: {
+        accountEntity,
+        account,
+      },
+      utils: {
+        describeEntity,
+        getBase,
+        getItem,
+        getItemBalance,
+        filterByAvailable,
+        parseObjectives,
+        parseRequirements,
+        parseStatus,
+        populate,
+        queryRegistry,
+        queryOngoing,
+        queryCompleted,
+      },
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -47,6 +72,7 @@ export const QuestModal: UIComponent = {
 
       return {
         network,
+        components,
         data: {
           accountEntity,
           account,
@@ -75,11 +101,13 @@ export const QuestModal: UIComponent = {
       };
     })();
 
-    const { actions, api, components, notifications } = network;
-    const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const { accountEntity, account } = data;
-    const { getBase, getItem, filterByAvailable, populate } = utils;
-    const { queryRegistry, queryOngoing, queryCompleted } = utils;
+    const {
+      actions,
+      api,
+      components,
+      notifications,
+    } = network;
+
     const questsModalVisible = useVisibility((s) => s.modals.quests);
 
     const isUpdating = useRef(false);
@@ -218,7 +246,14 @@ export const QuestModal: UIComponent = {
           quests={{ available, ongoing, completed }}
           mode={tab}
           actions={transactions}
-          utils={utils}
+          utils={{
+            describeEntity,
+            getItemBalance,
+            parseObjectives,
+            parseRequirements,
+            parseStatus,
+            populate,
+          }}
         />
       </ModalWrapper>
     );

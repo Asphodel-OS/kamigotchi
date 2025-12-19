@@ -52,38 +52,38 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
 
-  margin: 0vh 0.75vw;
+  margin: 0em 0.75em;
 `;
 
 const EdgeText = styled.p`
   font-family: Pixel;
-  font-size: 0.8vw;
+  font-size: 0.8em;
   color: #666;
 `;
 
 const IndicatorText = styled.p`
   position: absolute;
   left: 50%;
-  bottom: -0.6vw;
+  bottom: -0.6em;
   transform: translateX(-50%);
 
   font-family: Pixel;
-  font-size: 0.8vw;
+  font-size: 0.8em;
   color: #666;
 
-  padding: 1.5vh;
+  padding: 1.5em;
 `;
 
 const InnerBar = styled.div`
-  border-radius: 0.7vw;
+  border-radius: 0.7em;
 `;
 
 const OuterBar = styled.div`
-  border-radius: 1vw;
-  border: 0.15vw solid #444;
+  border-radius: 1em;
+  border: 0.15em solid #444;
   width: 100%;
-  height: 4vh;
-  padding: 0.2vw;
+  height: 4em;
+  padding: 0.2em;
 
   display: flex;
   flex-direction: row;
@@ -101,5 +101,5 @@ const Row = styled.div`
   justify-content: space-between;
 
   width: 100%;
-  padding: 0.75vh 0vw;
+  padding: 0.75em 0em;
 `;

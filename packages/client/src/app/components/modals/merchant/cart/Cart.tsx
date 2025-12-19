@@ -90,19 +90,19 @@ const Container = styled.div`
 const Title = styled.div`
   position: absolute;
   background-color: rgba(92, 83, 86, 0.9);
-  border-radius: 0 0.25vw 0 0;
+  border-radius: 0 0.25em 0 0;
   width: 100%;
-  padding: 1.2vw;
+  padding: 1.2em;
 
   color: black;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: left;
   z-index: 1;
 `;
 
 const Items = styled.div`
-  padding: 4.2vw 0 3.5vw 0;
-  gap: 0.6vw;
+  padding: 4.2em 0 3.5em 0;
+  gap: 0.6em;
   width: 100%;
 
   display: flex;
@@ -117,12 +117,12 @@ const Items = styled.div`
 
 const Checkout = styled.div`
   position: absolute;
-  border-radius: 0 0 0.25vw 0;
+  border-radius: 0 0 0.25em 0;
   width: 66%;
-  height: 4.5vh;
+  height: 4.5em;
   bottom: 0;
   right: 0;
-  padding: 0 0.6vw 1.8vw 0;
+  padding: 0 0.6em 1.8em 0;
 
   display: flex;
   flex-flow: row nowrap;
@@ -133,13 +133,13 @@ const Checkout = styled.div`
 const BuyButton = styled.div<{
   disabled?: boolean;
 }>`
-  border: solid 0.15vw black;
-  border-radius: 0.4vw;
+  border: solid 0.15em black;
+  border-radius: 0.4em;
 
   width: 100%;
-  margin: 0.6vh 0;
-  padding: 0.6vh 0.9vw;
-  gap: 0.9vw;
+  margin: 0.6em 0;
+  padding: 0.6em 0.9em;
+  gap: 0.9em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -164,26 +164,26 @@ const Total = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const Icon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 1.5em;
+  height: 1.5em;
 `;
 
 const Text = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
 `;
 
 const EmptyText = styled.div`
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: center;
   color: #333;
-  padding: 0.9vh 0vw;
-  margin: 3vh;
+  padding: 0.9em 0em;
+  margin: 3em;
   height: 100%;
 `;

@@ -26,7 +26,7 @@ export const AdversaryColumn = ({
 
   return (
     <Container>
-      <Text size={1.2}>Adversary</Text>
+      <Header>Adversary</Header>
       {kills.map((kill, index) => {
         const adversaryId = kill.IsDeath ? kill.KillerId : kill.VictimId;
         const adversary = getKamiByID(adversaryId as EntityID);
@@ -42,24 +42,35 @@ export const AdversaryColumn = ({
 
 const Container = styled.div`
   display: flex;
-
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 0.3vw;
-
+  gap: 0.3em;
+  min-width: 0;
+  flex: 1 1 auto;
   overflow-x: hidden;
+`;
+
+const Header = styled.div`
+  font-size: 1.2em;
+  font-weight: bold;
+  white-space: normal;
+  word-break: break-word;
+  height: 2em;
+  border-bottom: solid black 0.1em;
 `;
 
 const Row = styled.div`
   width: 100%;
-  height: 2.1vw;
-  gap: 0.45vw;
+  min-height: 2.1em;
+  gap: 0.45em;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  white-space: normal;
+  word-break: break-word;
 
   &:hover {
     cursor: pointer;

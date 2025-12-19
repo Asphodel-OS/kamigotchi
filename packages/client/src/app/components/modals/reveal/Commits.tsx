@@ -91,43 +91,43 @@ const Container = styled.div`
   justify-content: center;
   width: 100%;
 
-  padding: 0.6vw 0.4vw;
+  padding: 0.6em 0.4em;
   overflow-y: scroll;
 
-  gap: 0.6vh 0.4vw;
+  gap: 0.6em 0.4em;
 `;
 
 const CellContainer = styled.div`
-  border: solid 0.15vw black;
-  border-radius: 0.4vw;
+  border: solid 0.15em black;
+  border-radius: 0.4em;
 
-  padding: 1.2vh 0.8vw;
+  padding: 1.2em 0.8em;
 `;
 
 const ActiveName = styled.div`
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: left;
   justify-content: flex-start;
-  padding: 0.4vh 0vw;
+  padding: 0.4em 0em;
   color: black;
 `;
 
 const ExpiredName = styled.div`
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: left;
   justify-content: flex-start;
-  padding: 0.4vh 0vw;
+  padding: 0.4em 0em;
   color: red;
 `;
 
 const Description = styled.div`
   font-family: Pixel;
   text-align: left;
-  font-size: 0.8vw;
-  padding: 0.4vh 0.5vw;
-  line-height: 1.2vw;
+  font-size: 0.8em;
+  padding: 0.4em 0.5em;
+  line-height: 1.2em;
   color: black;
 `;
 
@@ -136,5 +136,5 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   align-items: flex-start;
-  padding: 0.1vw 0.5vw;
+  padding: 0.1em 0.5em;
 `;

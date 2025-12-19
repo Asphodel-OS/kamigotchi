@@ -216,7 +216,7 @@ export const FundOperator: UIComponent = {
               />
               <IconButton
                 onClick={triggerAction}
-                scale={3}
+                scaleRelativeToRoot={3}
                 text={isFunding! ? 'Fund Operator' : 'Send to Owner'}
               />
             </Row>
@@ -230,8 +230,8 @@ export const FundOperator: UIComponent = {
 
 const Header = styled.div`
   color: black;
-  padding: 1.2vw;
-  gap: 0.3vw;
+  padding: 1.2em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -241,11 +241,11 @@ const Header = styled.div`
 
 const BoxButton = styled.button`
   position: relative;
-  border: solid black 0.15vw;
+  border: solid black 0.15em;
   background-color: #fff;
 
   width: 45%;
-  padding: 1.8vw 0;
+  padding: 1.8em 0;
 
   display: flex;
   flex-direction: column;
@@ -261,25 +261,25 @@ const Row = styled.div`
   align-items: center;
   justify-content: center;
 
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1vw;
-  padding: 0.6vw;
-  margin-top: 1.2vw;
+  gap: 1em;
+  padding: 0.6em;
+  margin-top: 1.2em;
 `;
 
 const Input = styled.input`
   display: inline-block;
-  border-radius: 0.45vw;
-  width: 12vw;
-  padding: 1vh 0.6vw;
+  border-radius: 0.45em;
+  width: 12em;
+  padding: 1vh 0.6em;
 
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: center;
   text-decoration: none;
 
@@ -292,9 +292,9 @@ const Input = styled.input`
 const WarnText = styled.div`
   background-color: #ffffff;
   color: #ff785b;
-  padding: 0.75vw;
+  padding: 0.75em;
 
-  font-size: 0.8vw;
+  font-size: 0.8em;
   text-align: center;
 `;
 
@@ -303,5 +303,5 @@ const BridgeGroup = styled.div`
   flex-flow: column nowrap;
   align-items: center;
 
-  padding: 0.6vw;
+  padding: 0.6em;
 `;

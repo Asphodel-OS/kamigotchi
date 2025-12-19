@@ -24,12 +24,12 @@ export const Sort = ({
 
   return (
     <Container>
-      <IconButton img={icon} onClick={flip} text={getLabel()} scale={2} />
+      <IconButton img={icon} onClick={flip} text={getLabel()} scaleRelativeToRoot={2} />
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  margin: 0.1vw;
+  margin: 0.1em;
 `;

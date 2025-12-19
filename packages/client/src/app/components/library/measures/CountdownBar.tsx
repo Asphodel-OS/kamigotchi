@@ -24,7 +24,7 @@ const Container = styled.div`
   position: relative;
   height: 100%;
   width: 100%;
-  gap: 0.2vw;
+  gap: 0.2em;
 
   display: flex;
   flex-direction: row;
@@ -39,7 +39,7 @@ const Fill = styled.div.attrs<FillProps>(({ percent }) => ({
 }))<FillProps>`
   position: absolute;
   overflow: hidden;
-  border-top-right-radius: 0.6vw;
+  border-top-right-radius: 0.4em;
 
   width: 100%;
   height: 100%;
@@ -56,9 +56,9 @@ const Fill = styled.div.attrs<FillProps>(({ percent }) => ({
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
-  width: 1.2vw;
-  margin-right: 0.2vw;
+  height: 1.2em;
+  width: 1.2em;
+  margin-right: 0.2em;
 
   filter: sepia(1) saturate(200%);
   transform: rotate(20deg);

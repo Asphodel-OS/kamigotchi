@@ -35,8 +35,8 @@ export const Filters = ({
 };
 
 const Row = styled.div`
-  margin: 0.5vw 1vw;
-  gap: 0.5vw;
+  margin: 0.5em 1em;
+  gap: 0.5em;
 
   display: flex;
   flex-flow: row nowrap;

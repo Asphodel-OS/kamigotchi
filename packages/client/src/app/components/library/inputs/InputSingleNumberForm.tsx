@@ -78,7 +78,7 @@ export const InputSingleNumberForm = ({
           {' '}
           +{' '}
         </StepperButtonTop>
-        <hr style={{ width: '100%', height: '0px', border: '0.08vw solid black' }} />
+        <hr style={{ width: '100%', height: '0px', border: '0.08em solid black' }} />
         <StepperButtonBottom
           style={atMin ? disabledStepperStyle : {}}
           onClick={() => (atMin ? 0 : setValue(value - step))}
@@ -121,9 +121,9 @@ const Box = styled.div`
   display: flex;
   flex-direction: row;
   border-color: black;
-  border-radius: 0.4vw;
+  border-radius: 0.4em;
   border-style: solid;
-  border-width: 0.16vw;
+  border-width: 0.16em;
   color: black;
 
   overflow: hidden;
@@ -137,11 +137,11 @@ const Button = styled.button`
   border: none;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: center;
   text-decoration: none;
 
-  padding: 0.1vh 0.2vw;
+  padding: 0.1em 0.2em;
 
   cursor: pointer;
   pointer-events: auto;
@@ -164,7 +164,7 @@ const InputGroup = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  max-width: 8vw;
+  max-width: 8em;
 `;
 
 const Label = styled.label`
@@ -180,12 +180,12 @@ const Input = styled.input`
   background-color: #ffffff;
   border: none;
 
-  margin: 0.4vw 0;
+  margin: 0.4em 0;
 
-  padding: 0.8vw 0 0.8vw 0.8vw;
+  padding: 0.8em 0 0.8em 0.8em;
   cursor: pointer;
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: center;
   text-decoration: none;
   justify-content: center;
@@ -194,7 +194,7 @@ const Input = styled.input`
 
 const StepperButtonTop = styled.button`
   border: none;
-  border-radius: 0 0.2vw 0 0;
+  border-radius: 0 0.2em 0 0;
 
   background-color: transparent;
   color: black;
@@ -213,13 +213,13 @@ const StepperButtonTop = styled.button`
     background-color: #c4c4c4;
   }
 
-  font-size: 1vw;
-  padding: 0.325vw 0.8vw;
+  font-size: 1em;
+  padding: 0.325em 0.8em;
 `;
 
 const StepperButtonBottom = styled.button`
   border: none;
-  border-radius: 0 0 0.2vw 0;
+  border-radius: 0 0 0.2em 0;
 
   background-color: transparent;
   color: black;
@@ -238,8 +238,8 @@ const StepperButtonBottom = styled.button`
     background-color: #c4c4c4;
   }
 
-  font-size: 1vw;
-  padding: 0.325vw 0.8vw;
+  font-size: 1em;
+  padding: 0.325em 0.8em;
 `;
 
 const StepperGroup = styled.div`
@@ -247,6 +247,6 @@ const StepperGroup = styled.div`
   flex-direction: column;
   justify-content: space-around;
 
-  border-left: solid black 0.16vw;
+  border-left: solid black 0.16em;
   height: 100%;
 `;

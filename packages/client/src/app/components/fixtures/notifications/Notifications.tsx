@@ -74,8 +74,11 @@ export const NotificationFixture: UIComponent = {
 };
 
 const Wrapper = styled.div`
-  margin: 0.2vw;
+  justify-self: end;
+  min-width: 30em;
+
   display: block;
+  height: 100%;
   overflow-y: auto;
 `;
 
@@ -83,20 +86,17 @@ const Contents = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
-  padding: 0.6vw;
 
-  gap: 0.4vh 0.2vw;
-
-  overflow: show;
+  gap: 0.4em 0.2em;
 `;
 
 const Card = styled.div`
   position: relative;
 
   background-color: #fff;
-  border: 0.2vw solid #333;
-  border-radius: 0.8vw;
-  padding: 0.7vh 1vw;
+  border: 0.2em solid #333;
+  border-radius: 0.8em;
+  padding: 0.7em 1em;
   width: 100%;
   opacity: 0.9;
 
@@ -113,12 +113,12 @@ const Card = styled.div`
 
 const Title = styled.p`
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: left;
   text-wrap: wrap;
   justify-content: flex-start;
   color: #333;
-  padding: 1vh 0.5vw 0 0.5vw;
+  padding: 1em 0.5em 0 0.5em;
 
   max-width: 100%;
 `;
@@ -129,27 +129,27 @@ const Description = styled.div`
   font-family: Pixel;
   text-align: left;
   text-wrap: wrap;
-  line-height: 1.2vw;
-  font-size: 0.7vw;
-  padding: 0.4vh 0.5vw;
+  line-height: 1.2em;
+  font-size: 0.7em;
+  padding: 0.4em 0.5em;
 
   max-width: 100%;
 `;
 
 const ExitButton = styled.button`
   position: absolute;
-  right: -0.6vw;
-  top: -0.6vw;
+  right: -0.6em;
+  top: -0.6em;
 
   background-color: #ffffff;
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
   opacity: 0;
 
   color: black;
-  padding: 0.3vw 0.4vw;
+  padding: 0.3em 0.4em;
 
-  font-size: 0.9vw;
+  font-size: 0.9em;
   cursor: pointer;
 
   &:hover {

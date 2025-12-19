@@ -62,17 +62,17 @@ const Container = styled.div<{ color: string }>`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  border-top: solid grey 0.15vw;
+  border-top: solid grey 0.15em;
   height: 15vh;
   transition: height 0.3s ease;
   overflow-y: auto;
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.3vw;
+    width: 0.3em;
   }
   ::-webkit-scrollbar-thumb {
     background-color: ${({ color }) => color};
-    border-radius: 0.3vw;
+    border-radius: 0.3em;
   }
 `;
 
@@ -99,28 +99,28 @@ const Options = styled.div`
   width: 100%;
   justify-content: flex-start;
   align-items: flex-end;
-  gap: 0.9vw;
-  padding-top: 1vw;
-  padding-right: 1vw;
+  gap: 0.9em;
+  padding-top: 1em;
+  padding-right: 1em;
 `;
 
 const Label = styled.div<{ color?: string }>`
-  font-size: 1vw;
+  font-size: 1em;
   margin-right: 41%;
   color: ${({ color }) => color};
 `;
 
 const Option = styled.button<{ color?: string; backgroundColor?: string }>`
   position: relative;
-  ${({ color }) => color && `color: ${color};  border: solid ${color} 0.15vw;`}
-  padding: 0.2vw 0.3vw 0vw 0.3vw;
-  font-size: 0.8vw;
+  ${({ color }) => color && `color: ${color};  border: solid ${color} 0.15em;`}
+  padding: 0.2em 0.3em 0em 0.3em;
+  font-size: 0.8em;
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 1);
   cursor: pointer;
   width: 60%;
-  border-radius: 0.3vw;
-  line-height: 1.3vw;
+  border-radius: 0.3em;
+  line-height: 1.3em;
   background-color: ${({ backgroundColor }) => backgroundColor};
   &:disabled {
     opacity: 0.3;

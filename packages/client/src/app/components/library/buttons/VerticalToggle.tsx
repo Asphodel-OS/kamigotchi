@@ -19,14 +19,12 @@ export const VerticalToggle = ({
     setModeSelected(mode);
   };
 
-  const getTranslate = (pos: number) => {
-    return (pos % 3) * 55 + '%';
-  };
+  const getPosition = (pos: number) => pos % 3;
 
   return (
     <Container onClick={handleClick}>
       <SwitchHolder>
-        <Switch position={getTranslate(position)} />
+        <Switch step={getPosition(position)} />
       </SwitchHolder>
     </Container>
   );
@@ -35,9 +33,9 @@ export const VerticalToggle = ({
 const Container = styled.div`
   position: relative;
   background-color: white;
-  border-block: 0.15vw solid black;
+  border-block: 0.15em solid black;
 
-  width: 1.5vw;
+  width: 1.5em;
 
   display: flex;
   flex-direction: column;
@@ -49,29 +47,30 @@ const Container = styled.div`
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
     z-index: 1;
-    border-right: 0.15vw solid black;
-    border-left: 0.15vw solid black;
+    border-right: 0.15em solid black;
+    border-left: 0.15em solid black;
   }
 `;
 
 const SwitchHolder = styled.div`
+  position: relative;
   width: 80%;
   height: 90%;
   pointer-events: none;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
   background-color: #ccc;
-  border-radius: 1vw;
+  border-radius: 1em;
 `;
 
-const Switch = styled.div<{ position: string }>`
+const Switch = styled.div<{ step: number }>`
   position: absolute;
   background-color: #494545;
   border-radius: 50%;
+
   aspect-ratio: 1;
   width: 70%;
+  left: 50%;
+  top: ${({ step }) => step * 50}%;
 
+  transform: translateX(-50%) translateY(${({ step }) => step * -50}%);
   transition: transform 0.3s ease;
-  transform: translateY(${({ position }) => position});
 `;

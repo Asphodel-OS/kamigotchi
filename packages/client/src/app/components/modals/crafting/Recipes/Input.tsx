@@ -14,15 +14,18 @@ export const Input = ({
   return (
     <Container>
       <Text scale={scale}>{prepend}</Text>
-      <Image src={image} scale={scale} />
-      <Quantity scale={scale}>{amt}</Quantity>
+      <div>
+        <Image src={image} scale={scale} />
+        <Quantity scale={scale}>{amt}</Quantity>
+      </div>
     </Container>
   );
 };
 
 const Container = styled.div`
   position: relative;
-  margin-top: 0.45vw;
+  margin-top: 0.45em;
+  gap: 0.4em;
 
   display: flex;
   flex-flow: row wrap;
@@ -30,34 +33,38 @@ const Container = styled.div`
   align-items: center;
 
   user-select: none;
+
+  > div {
+    display: grid;
+    justify-items: start;
+  }
 `;
 
 const Image = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 3}vw;
-  position: relative;
+  height: 3em;
+
   image-rendering: pixelated;
   user-drag: none;
-  font-size: 0.7vw;
 `;
 
 const Quantity = styled.div<{ scale: number }>`
-  position: absolute;
   color: black;
-  bottom: ${({ scale }) => scale * -0.3}vw;
-  right: ${({ scale }) => scale * -0.6}vw;
+  margin-left: 80%;
+  position: absolute;
+  bottom: ${({ scale }) => scale * -0.3}em;
+  right: ${({ scale }) => scale * -0.6}em;
 
-  font-size: ${({ scale }) => scale * 0.6}vw;
-  padding: ${({ scale }) => scale * 0.2}vw;
+  font-size: ${({ scale }) => scale * 0.7}em;
+  padding: ${({ scale }) => scale * 0.2}em;
 
   font-weight: 900;
-  border-radius: 0.3vw;
+  border-radius: 0.3em;
   background-color: rgba(255, 255, 255, 1);
-  border: solid black 0.08vw;
+  border: solid black 0.08em;
 `;
 
-const Text = styled.div<{ scale: number }>`
-  font-size: ${({ scale }) => scale * 1.2}vw;
-  padding: ${({ scale }) => scale * 0.3}vw;
+const Text = styled.span<{ scale: number }>`
+  font-size: 1.2em;
   ::placeholder {
     opacity: 1;
     color: black;

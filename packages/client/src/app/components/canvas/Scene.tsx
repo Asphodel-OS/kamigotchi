@@ -44,46 +44,31 @@ export const Scene: UIComponent = {
     // DISPLAY
 
     return (
-      <Wrapper>
+      <>
+        <Wallpaper src={backgrounds.long2} />
         <Container>
           <Room index={roomIndex} />
-          <Wallpaper src={backgrounds.long2} />
         </Container>
-      </Wrapper>
+      </>
     );
   },
 };
 
-const Wrapper = styled.div`
-  display: block;
-  justify-content: center;
-  align-items: center;
-  opacity: 1;
-  z-index: -5;
+const Container = styled.div`
+  display: grid;
+  place-items: center;
+
   pointer-events: auto;
-  position: absolute;
-  width: 100%;
-  height: 100%;
   user-select: none;
 `;
 
-const Container = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  z-index: -4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Wallpaper = styled.img`
+const Wallpaper = styled.div<{ src: string }>`
   position: absolute;
   width: 100%;
-  max-height: 100%;
-  object-fit: cover;
-
-  z-index: -3;
+  height: 100%;
+  background-image: url(${props => props.src});
+  background-repeat: repeat;
+  background-size: contain;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
 `;

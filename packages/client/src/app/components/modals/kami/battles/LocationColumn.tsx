@@ -23,28 +23,29 @@ export const LocationColumn = ({
   const setModals = useVisibility((s) => s.setModals);
 
   const showNode = (node: Node) => {
+    const isMobile = window.matchMedia('(max-aspect-ratio: 11/16)').matches;
+
     setNode(node.index);
-    setModals({ node: true, crafting: false, kami: false });
+    setModals({
+      node: true,
+      crafting: false,
+      ...(isMobile && { kami: false, party: false }),
+    });
     playClick();
   };
 
-  ////////////////
-  // DISPLAY
-
-  function affinityIcons(affs: string[]) {
-    return affs.map((aff) => <Icon src={getAffinityImage(aff)} />);
-  }
-
   return (
     <Container>
-      <Text size={1.2}>Location</Text>
+      <Header>Location</Header>
       {kills.map((kill, index) => {
         const node = getNodeByIndex(kill.RoomIndex as EntityIndex);
         return (
           <TextTooltip key={index} text={[node.name]}>
-            <Row key={index} onClick={() => showNode(node)}>
-              {affinityIcons(node.affinity)}
-              <Text size={0.9}> {abbreviateString(node.name)}</Text>
+            <Row onClick={() => showNode(node)}>
+              {node.affinity.map((aff, i) => (
+                <Icon key={i} src={getAffinityImage(aff)} />
+              ))}
+              <Text size={0.9}>{abbreviateString(node.name)}</Text>
             </Row>
           </TextTooltip>
         );
@@ -58,18 +59,31 @@ const Container = styled.div`
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 0.3vw;
+  gap: 0.3em;
+  min-width: 0;
+  flex: 1 1 auto;
+`;
+
+const Header = styled.div`
+  font-size: 1.2em;
+  font-weight: bold;
+  white-space: normal;
+  word-break: break-word;
+  height: 2em;
+  border-bottom: solid black 0.1em;
 `;
 
 const Row = styled.div`
   width: 100%;
-  height: 2.1vw;
+  min-height: 2.1em;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.45vw;
+  gap: 0.45em;
+  white-space: normal;
+  word-break: break-word;
 
   &:hover {
     cursor: pointer;
@@ -78,6 +92,6 @@ const Row = styled.div`
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
-  width: 1.2vw;
+  height: 1.2em;
+  width: 1.2em;
 `;

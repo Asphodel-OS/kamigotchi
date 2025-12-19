@@ -176,7 +176,8 @@ export const Swap = ({
         <Column>
           <IconListButton
             img={selected.image}
-            scale={4.2}
+            scaleRelativeToRoot={3.2}
+            scaleRelativeToContainer={16}
             options={getItemOptions()}
             balance={getInventoryBalance(inventory, selected.index)}
             tooltip={{ text: [`Select an item to ${mode}`] }}
@@ -185,15 +186,21 @@ export const Swap = ({
         </Column>
         <Column style={{ width: '6vw' }}>
           <Text size={0.9}>{mode}</Text>
-          <IconButton img={getModeIcon(mode)} onClick={toggleMode} />
-          <TextTooltip text={getRateTooltip()} size={0.6} maxWidth={24}>
+          <IconButton
+            img={getModeIcon(mode)}
+            onClick={toggleMode}
+            scaleRelativeToRoot={3}
+            scaleRelativeToContainer={6}
+          />
+          <TextTooltip text={getRateTooltip()} size={0.6} maxWidth={{ desktop: 24 }}>
             <Text size={0.6}>{`(${getSwapRate(selected)}:1)`}</Text>
           </TextTooltip>
         </Column>
         <Column>
           <IconButton
             img={TokenIcons.onyx} // hardcoded for now
-            scale={4.2}
+            scaleRelativeToRoot={3.2}
+            scaleRelativeToContainer={16}
             balance={getTokenBalance(selected)}
             onClick={() => {}}
             disabled
@@ -203,7 +210,7 @@ export const Swap = ({
       </Row>
       <IconButton
         text={getActionText()}
-        scale={3}
+        scaleRelativeToRoot={2}
         onClick={triggerAction}
         disabled={isDisabled()}
       />
@@ -213,9 +220,9 @@ export const Swap = ({
 
 const Container = styled.div`
   width: 100%;
-  gap: 1.2vw;
-  padding: 3.6vw 0.6vw 1.2vw 0.6vw;
-
+  gap: 1.2em;
+  padding: 3.6vw 0.6vw 1.2vw 0.6em;
+  height: 18em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -224,7 +231,7 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -233,7 +240,7 @@ const Row = styled.div`
 `;
 
 const Column = styled.div`
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -242,15 +249,15 @@ const Column = styled.div`
 `;
 
 const Input = styled.input`
-  border-radius: 0.45vw;
+  border-radius: 0.45em;
   background-color: #eee;
-  width: 9vw;
+  width: 9em;
   height: 100%;
 
-  padding: 0.3vw;
+  padding: 0.3em;
 
   color: black;
-  font-size: 1vw;
-  line-height: 1.5vw;
+  font-size: 1.2em;
+  line-height: 1.5em;
   text-align: center;
 `;

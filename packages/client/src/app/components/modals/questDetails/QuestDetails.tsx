@@ -194,10 +194,10 @@ export const QuestDetailsModal: UIComponent = {
 
 const Header = styled.div`
   border-color: white;
-  padding: 0.7vw 1vw 0.2vw 1vw;
+  padding: 0.7em 1em 0.2em 1em;
   width: 95%;
 
-  font-size: 1.4vw;
+  font-size: 1.4em;
   font-weight: bold;
-  line-height: 2vw;
+  line-height: 2em;
 `;

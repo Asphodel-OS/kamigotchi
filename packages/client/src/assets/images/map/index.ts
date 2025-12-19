@@ -3,7 +3,7 @@ import zone2 from './z2.gif';
 import zone3 from './z3.png';
 import zone4 from './z4.png';
 
-export const mapBackgrounds = [
+export const MapImages = [
   zone1, // dud
   zone1,
   zone2,

@@ -152,7 +152,7 @@ const Content = styled.div`
   flex-direction: column;
   flex-grow: 1;
   position: relative;
-  padding: 0.2vw;
+  padding: 0.2em;
   user-select: none;
 `;
 
@@ -166,8 +166,8 @@ const Column = styled.div`
   flex-flow: column nowrap;
   flex-grow: 1;
   position: relative;
-  margin: 0.2vw;
-  padding-top: 0.2vw;
+  margin: 0.2em;
+  padding-top: 0.2em;
 `;
 
 const Label = styled.div`
@@ -197,17 +197,21 @@ const LabelIcon = styled.img`
 const Buffs = styled.div`
   background-color: rgba(255, 255, 255, 1);
   position: absolute;
-  max-width: 95%;
   bottom: 0.15vw;
   left: 0.15vw;
 
+  max-width: 95%;
+  width: max-content;
+
   border: solid black 0.15vw;
   border-radius: 0.45vw;
-  padding: 0.1vw;
-  gap: 0.1vw;
+  margin: 0 0 0 0.4em;
+  padding: 0.2em;
+  gap: 0.2em;
 
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
 
   pointer-events: auto;
   overflow: auto hidden;
@@ -225,9 +229,10 @@ const Buffs = styled.div`
 `;
 
 const Buff = styled.img`
-  width: 1.3vw;
-  height: 1.3vw;
-  object-fit: cover;
+  height: 1.6em;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 `;
 
 const Actions = styled.div`
@@ -239,4 +244,5 @@ const Actions = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
+  gap: 0.3em;
 `;

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 import { mouseBttnClicked } from 'app/utils';
@@ -140,20 +141,23 @@ export const Popover = ({
       >
         {children}
       </PopoverTrigger>
-      <PopoverContent
-        isVisible={isVisible}
-        ref={popoverRef}
-        popoverPosition={popoverPosition}
-        maxHeight={maxHeight}
-        onClick={(e) => {
-          if (disabled) return;
-          handleClick(e);
-        }}
-      >
-        {Array.isArray(content)
-          ? content.map((item, index) => <div key={`popover-item-${index}`}>{item}</div>)
-          : content}
-      </PopoverContent>
+      {createPortal(
+        <PopoverContent
+          isVisible={isVisible}
+          ref={popoverRef}
+          popoverPosition={popoverPosition}
+          maxHeight={maxHeight}
+          onClick={(e) => {
+            if (disabled) return;
+            handleClick(e);
+          }}
+        >
+          {Array.isArray(content)
+            ? content.map((item, index) => <div key={`popover-item-${index}`}>{item}</div>)
+            : content}
+        </PopoverContent>,
+        document.body
+      )}
     </PopoverContainer>
   );
 };
@@ -189,28 +193,31 @@ const PopoverContent = styled.div.attrs<{
   popoverPosition: { x: number; y: number };
   maxHeight?: number;
 }>`
+  max-height: ${({ maxHeight }) => maxHeight ?? 22}vh;
   overflow-y: auto;
   overflow-x: hidden;
   position: fixed;
   background-color: white;
-  border: 0.15vw solid black;
-  border-radius: 0.75vw;
+  border: 0.15em solid black;
+  border-radius: 0.75vmin;
   z-index: 10;
   white-space: nowrap;
   max-width: fit-content;
-  font-size: 0.6vw;
+  font-size: 1.5em;
+  top: ${({ popoverPosition }) => popoverPosition.y};
+  left: ${({ popoverPosition }) => popoverPosition.x};
   white-space: normal;
   overflow-wrap: break-word;
 
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.9vw;
+    width: 0.9vmin;
   }
 
   ::-webkit-scrollbar-thumb {
-    border: 0.2vw solid transparent;
+    border: 0.2em solid transparent;
     background-clip: padding-box;
-    border-radius: 0.2vw;
+    border-radius: 0.2vmin;
     background-color: rgba(0, 0, 0, 0.15);
     &:hover {
       cursor: auto;

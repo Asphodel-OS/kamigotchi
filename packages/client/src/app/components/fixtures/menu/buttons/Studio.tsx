@@ -20,13 +20,7 @@ export const StudioMenuButton = () => {
 
   return (
     <TextTooltip text={[`Animation Studio (Dev Only)`]}>
-      <IconButton
-        img={MenuIcons.settings}
-        onClick={handleClick}
-        scale={4.5}
-        scaleOrientation='vh'
-        radius={0.9}
-      />
+      <IconButton img={MenuIcons.settings} onClick={handleClick} radius={0.4} cornerAlt />
     </TextTooltip>
   );
 };

@@ -92,10 +92,10 @@ export const BodyMine = ({
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
             <TextTooltip text={[getDate(r.Timestamp, false)]}>
-              <Field width={4}>{getDate(r.Timestamp, true)}</Field>
+              <Field width={7}>{getDate(r.Timestamp, true)}</Field>
             </TextTooltip>
-            <Field width={5}>{r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}</Field>
-            <Field width={2}>
+            <Field width={7}>{r.IsWithdrawal ? 'Withdrawal' : 'Deposit'}</Field>
+            <Field width={7}>
               <TextTooltip text={['$ONYX']} alignText={'right'}>
                 <Icon
                   src={TokenIcons.onyx}
@@ -103,14 +103,14 @@ export const BodyMine = ({
                 />
               </TextTooltip>
             </Field>
-            <Field width={3.5}>{getTokenConversion(r)}</Field>
-            <Field width={4}>{getStatus(r)}</Field>
-            <Field width={3.5}>
+            <Field width={7}>{getTokenConversion(r)}</Field>
+            <Field width={7}>{getStatus(r)}</Field>
+            <Field width={7}>
               <IconGroup visible={isActive(r)}>
                 <TextTooltip text={getClaimTooltip(r)}>
                   <IconButton
                     img={PlaceholderIcon}
-                    scale={1.5}
+                    scaleRelativeToRoot={1.5}
                     onClick={() => {
                       claim(r);
                     }}
@@ -119,7 +119,7 @@ export const BodyMine = ({
                 </TextTooltip>
                 <IconButton
                   img={ActionIcons.cancel}
-                  scale={1.5}
+                  scaleRelativeToRoot={1.5}
                   onClick={() => {
                     cancel(r);
                   }}
@@ -142,13 +142,15 @@ const Container = styled.div<{ visible?: boolean }>`
   padding: 0.6vw 0;
   flex-flow: column nowrap;
   align-items: center;
+  white-space: normal;
+  word-break: break-word;
 `;
 
 const Row = styled.div`
   display: flex;
   position: relative;
   width: 96%;
-  height: 2.4vw;
+  height: 2.4em;
 
   flex-flow: row nowrap;
   justify-content: space-around;
@@ -157,27 +159,27 @@ const Row = styled.div`
 
 const Field = styled.div<{ width: number }>`
   display: flex;
-  gap: 0.6vw;
-  width: ${({ width }) => width}vw;
+  gap: 0.6em;
+  width: ${({ width }) => width}em;
   height: 100%;
 
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-  font-size: 0.6vw;
+  font-size: 1em;
   user-select: none;
 `;
 
 const IconGroup = styled.div<{ visible?: boolean }>`
   display: ${({ visible = true }) => (visible ? 'flex' : 'none')};
-  gap: 0.3vw;
+  gap: 0.3em;
   flex-flow: row nowrap;
   justify-content: center;
 `;
 
 const Icon = styled.img`
-  width: 1.2vw;
-  height: 1.2vw;
+  width: 1.2em;
+  height: 1.2em;
   &:hover {
     opacity: 0.8;
     cursor: pointer;

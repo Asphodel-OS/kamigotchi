@@ -44,7 +44,6 @@ export const Battles = ({
   const [kamidenKills, setKamidenKills] = useState<Kill[]>([]);
   const [isPolling, setIsPolling] = useState(false);
   const [noMoreKills, setNoMoreKills] = useState(false);
-  const [scrollBottom, setScrollBottom] = useState(0);
   const [battleStats, setBattleStats] = useState<BattleStats | null>(null);
 
   // manages battlestats, initial scroll and polling
@@ -79,7 +78,6 @@ export const Battles = ({
       await pollMoreBattles();
       setIsPolling(false);
     }
-    setScrollBottom(scrollHeight - scrollTop - clientHeight);
   };
 
   /////////////////
@@ -129,30 +127,32 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   user-select: none;
+  overflow-y: auto;
+  height: 100%;
 `;
 
 const Table = styled.div`
   position: relative;
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
+  border: solid black 0.15em;
+  border-radius: 0.6em;
 
-  margin: 0 0.9vw;
-  padding: 0.6vw;
-  gap: 0.9vw;
+  margin: 0 0.9em;
+  padding: 0.6em;
+  gap: 0.9em;
 
   display: flex;
   flex-flow: row nowrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 `;
 
 const Stats = styled.div`
   width: fit-content;
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  margin: 0.9vw;
-  padding: 0.3vw;
-  gap: 0.6vw;
+  border: solid black 0.15em;
+  border-radius: 0.6em;
+  margin: 0.9em;
+  padding: 0.3em;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row nowrap;

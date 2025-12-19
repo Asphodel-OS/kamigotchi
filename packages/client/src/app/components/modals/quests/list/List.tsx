@@ -54,6 +54,6 @@ export const List = ({
 
 const Container = styled.div`
   height: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
   user-select: none;
 `;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
@@ -17,23 +17,47 @@ export const Tooltip = ({
   grow?: boolean;
   direction?: 'row' | 'column';
   delay?: number;
-  maxWidth?: number;
+  maxWidth?: { desktop?: number; mobile?: number };
   color?: string;
   content: React.ReactNode;
   isDisabled: boolean;
   fullWidth?: boolean;
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [shouldBeVisible, setShouldBeVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
+  const isMobileRef = useRef(false);
+  const cursorPosRef = useRef({ x: 0, y: 0 });
+  // if user is scrolling, close the tooltip
+  useEffect(() => {
+    window.addEventListener('scroll', closeTooltip);
+    return () => {
+      window.removeEventListener('scroll', closeTooltip);
+    };
+  }, []);
+
+  // if user taps elsewhere on mobile, close the tooltip
+  useEffect(() => {
+    if (!shouldBeVisible) return;
+    const handleTapElsewhere = () => {
+      closeTooltip();
+    };
+    const timeoutId = setTimeout(() => {
+      window.addEventListener('touchstart', handleTapElsewhere);
+    }, 10);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('touchstart', handleTapElsewhere);
+    };
+  }, [shouldBeVisible]);
 
   /////////////////
   // HANDLERS
 
-  const handleMouseMove = (event: React.MouseEvent) => {
-    const { clientX: cursorX, clientY: cursorY } = event;
+  const updatePosition = () => {
+    const { x: cursorX, y: cursorY } = cursorPosRef.current;
     const width = tooltipRef.current?.offsetWidth || 0;
     const height = tooltipRef.current?.offsetHeight || 0;
     const viewportWidth = window.innerWidth;
@@ -49,12 +73,51 @@ export const Tooltip = ({
     setTooltipPosition({ x, y });
   };
 
+  const handleMouseMove = (event: React.MouseEvent | React.TouchEvent) => {
+    const isMobile = event.type.startsWith('touch');
+
+    if (isMobile) {
+      const touch = (event as React.TouchEvent).touches[0];
+      cursorPosRef.current = { x: touch.clientX, y: touch.clientY };
+    } else {
+      const mouseEvent = event as React.MouseEvent;
+      cursorPosRef.current = { x: mouseEvent.clientX, y: mouseEvent.clientY };
+    }
+    if (!isMobile) updatePosition();
+  };
+
+  // prevent flickering on mobile
+  useLayoutEffect(() => {
+    if (isActive) {
+      updatePosition();
+    }
+  }, [isActive]);
+
   const handleMouseEnter = (event: React.MouseEvent) => {
     handleMouseMove(event);
-
     if (!isDisabled) {
       setIsActive(true);
     }
+  };
+
+  // for mobile, handles opening
+  const handleTouchStart = (event: React.TouchEvent) => {
+    if (isDisabled) return;
+    handleMouseMove(event);
+    isMobileRef.current = true;
+    setIsActive(true);
+  };
+
+  // for mobile, handles finger release
+  const handleTouchEnd = () => {
+    isMobileRef.current = false;
+  };
+
+  /* closes the tooltip when
+  scrolling or tapping elsewhere*/
+  const closeTooltip = () => {
+    setIsActive(false);
+    setShouldBeVisible(false);
   };
 
   /////////////////
@@ -63,9 +126,15 @@ export const Tooltip = ({
   useEffect(() => {
     let timeoutId: ReturnType<typeof window.setTimeout>;
     if (isActive) {
+      const isMobile = isMobileRef.current;
+      const activeDelay = isMobile ? 500 : delay;
       timeoutId = setTimeout(() => {
-        if (!isDisabled) setIsVisible(true);
-      }, delay);
+        if (!isDisabled && (!isMobile || isMobileRef.current)) {
+          setShouldBeVisible(true);
+        } else if (isMobile) {
+          setIsActive(false);
+        }
+      }, activeDelay);
     }
     return () => clearTimeout(timeoutId);
   }, [isActive, delay, isDisabled]);
@@ -81,16 +150,19 @@ export const Tooltip = ({
       disabled={isDisabled}
       onMouseEnter={(e) => handleMouseEnter(e)}
       onMouseLeave={() => {
-        (setIsActive(false), setIsVisible(false));
+        closeTooltip();
       }}
       onMouseMove={(e) => {
         handleMouseMove(e);
       }}
+      onTouchStart={(e) => handleTouchStart(e)}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       {isActive &&
         createPortal(
           <PopoverContainer
-            isVisible={isVisible}
+            shouldBeVisible={shouldBeVisible}
             maxWidth={maxWidth}
             color={color}
             tooltipPosition={tooltipPosition}
@@ -116,27 +188,28 @@ const Container = styled.span<{
   flex-direction: ${({ direction }) => direction ?? 'column'};
   flex-grow: ${({ flexGrow }) => flexGrow};
   cursor: ${({ disabled }) => (disabled ? 'cursor' : 'help')};
-  ${({ fullWidth }) => fullWidth && 'width: 100%;'}
+  ${({ fullWidth }) => fullWidth && 'width: 100%;'};
 `;
 
 const PopoverContainer = styled.span.attrs<{
-  isVisible: boolean;
+  shouldBeVisible: boolean;
+
   color?: string;
   tooltipPosition?: any;
-  maxWidth?: number;
-}>(({ isVisible, color, tooltipPosition, maxWidth }) => ({
+  maxWidth?: { desktop?: number; mobile?: number };
+}>(({ shouldBeVisible, color, tooltipPosition }) => ({
   style: {
     backgroundColor: color ?? '#fff',
-    opacity: isVisible ? 1 : 0,
+    opacity: shouldBeVisible ? 1 : 0,
     top: tooltipPosition.y,
     left: tooltipPosition.x,
-    maxWidth: maxWidth ? `${maxWidth}vw` : '36vw',
   },
 }))<{
-  isVisible: boolean;
+  shouldBeVisible: boolean;
+
   color?: string;
   tooltipPosition?: any;
-  maxWidth?: number;
+  maxWidth?: { desktop?: number; mobile?: number };
 }>`
   position: fixed;
   border: solid black 0.15vw;
@@ -148,11 +221,23 @@ const PopoverContainer = styled.span.attrs<{
   flex-direction: column;
   overflow-wrap: anywhere;
 
-  font-size: 0.7vw;
-  line-height: 1.25vw;
-  white-space: normal;
-  z-index: 10;
+  max-width: ${({ maxWidth }) => (maxWidth?.desktop ? `${maxWidth.desktop}vw` : '20vw')};
 
+  font-size: min(1.8vw, 1.5em);
+  min-width: min-content;
   pointer-events: none;
   user-select: none;
+  @media (pointer: coarse) {
+    max-width: min(55vw, 55cqi);
+  }
+  @media (max-aspect-ratio: 11/16) and (pointer: coarse) {
+    font-size: min(3.4rem, 3.5cqi);
+    min-width: 0;
+
+    max-width: ${({ maxWidth }) => (maxWidth?.mobile ? `${maxWidth.mobile}vw` : '50vw')};
+  }
+
+  line-height: 1.25vw;
+  white-space: normal;
+  z-index: 20;
 `;

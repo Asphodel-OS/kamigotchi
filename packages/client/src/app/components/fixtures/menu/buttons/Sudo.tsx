@@ -18,9 +18,7 @@ export const SudoMenuButton = () => {
         { text: 'Sudoswap', image: SudoIcon, onClick: openSudoLink },
         { text: 'KamiBots', image: Whispo, onClick: openKamibotsLink },
       ]}
-      scale={4.5}
-      scaleOrientation='vh'
-      radius={0.9}
+      radius={0.4}
       tooltip={{ text: ['External Apps'] }}
     />
   );
