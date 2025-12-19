@@ -1,11 +1,11 @@
 import { triggerGoalModal } from 'app/triggers/triggerGoalModal';
-import { bgPlaytestEvening } from 'assets/images/rooms/67_boulder-tunnel';
+import { bgChristmasEvening } from 'assets/images/rooms/67_boulder-tunnel';
 import { collapsedTunnel } from 'assets/sound/ost';
 import { Room } from './types';
 
 export const room67: Room = {
   index: 67,
-  backgrounds: [bgPlaytestEvening],
+  backgrounds: [bgChristmasEvening],
   music: {
     key: 'collapsedTunnel',
     path: collapsedTunnel,

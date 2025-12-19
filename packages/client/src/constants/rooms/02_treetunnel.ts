@@ -1,6 +1,6 @@
 import {
-  bgPlaytestDay,
-  bgPlaytestEvening,
+  bgChristmasDay,
+  bgChristmasEvening,
   bgPlaytestNight,
 } from 'assets/images/rooms/2_tree-tunnel';
 import { arrival } from 'assets/sound/ost';
@@ -8,7 +8,7 @@ import { Room } from './types';
 
 export const room02: Room = {
   index: 2,
-  backgrounds: [bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight],
+  backgrounds: [bgChristmasDay, bgChristmasEvening, bgPlaytestNight],
   music: {
     key: 'arrival',
     path: arrival,
