@@ -1,2 +1,3 @@
 import bgPlaytestDay from './backgrounds/room16a.png';
-export { bgPlaytestDay };
+import bgChristmas from './backgrounds/room16-christmas.png';
+export { bgPlaytestDay, bgChristmas };
