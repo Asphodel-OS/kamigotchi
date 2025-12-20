@@ -116,7 +116,6 @@ export function createLatestEventStreamRPC(
   fetchSystemCallsFromEvents?: ReturnType<typeof createFetchSystemCallsFromEvents>
 ): Observable<NetworkEvent> {
   let lastSyncedBlockNumber: number | undefined;
-
   return blockNumber$.pipe(
     map(async (blockNumber) => {
       const from =

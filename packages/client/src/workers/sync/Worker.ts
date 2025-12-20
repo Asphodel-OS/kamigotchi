@@ -16,13 +16,8 @@ import {
   map,
   Observable,
   of,
-  retry,
   Subject,
-  Subscription,
   take,
-  throwError,
-  timeout,
-  timer,
 } from 'rxjs';
 
 import { VERSION as IDB_VERSION } from 'cache/db';
@@ -48,12 +43,11 @@ import {
   saveStateCacheToStore,
   storeStateEvents,
 } from './state';
-import { connectStreamService, createTransformWorldEvents } from './stream';
+import { createStream, fillGap } from './stream';
 import {
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
   createLatestEventStreamRPC,
-  fetchEventsInBlockRangeChunked,
 } from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
@@ -189,87 +183,29 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const stateCache = { current: createStateCache() };
     const { blockNumber$ } = createBlockNumberStream(providers);
 
-    // Setup RPC event stream
-    const latestEventRPC$ = createLatestEventStreamRPC(
-      blockNumber$,
-      fetchWorldEvents,
-      fetchSystemCalls ? createFetchSystemCallsFromEvents(provider) : undefined
-    );
-    let currentSubscription: Subscription;
-    // Setup Stream Service -> RPC event stream fallback
-    const transformWorldEvents = createTransformWorldEvents(decode);
-    let latestEvent$ = streamServiceUrl
-      ? connectStreamService(
-          streamServiceUrl,
-          worldContract.address,
-          transformWorldEvents,
-          Boolean(fetchSystemCalls),
-          fetchWorldEvents
-        )
-      : latestEventRPC$;
-
-    // Create the new event stream upon failure
-    const handleStreamReconnection = () => {
-      console.log('[worker] handleEventStreamError');
-      latestEvent$ = streamServiceUrl
-        ? connectStreamService(
-            streamServiceUrl,
-            worldContract.address,
-            transformWorldEvents,
-            Boolean(fetchSystemCalls),
-            fetchWorldEvents
-          )
-        : latestEventRPC$;
-      if (currentSubscription) currentSubscription.unsubscribe();
-      // Restart the subscription
-      currentSubscription.unsubscribe();
-      currentSubscription = subscribeToEventStream(latestEvent$);
-    };
-
+    // Setup event stream: use Kamigaze stream service if available, otherwise RPC
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
-    const subscribeToEventStream = (stream$: Observable<any>): Subscription => {
-      console.log('[worker] Subscribing to the event stream');
-      return stream$
-        .pipe(
-          timeout({
-            first: 60000, // Align with cloufront timeout/iddling
-            each: 60000,
-            with: () =>
-              throwError(() => {
-                console.log('Timeout');
-                return new Error('Stream timeout - no data received for 60s');
-              }),
-          }),
-          map((res) => res),
-          retry({
-            count: 3,
-            delay: (error, retryCount) => {
-              console.log(`retrying kamigaze stream subscription... ${retryCount}`);
-              const delayMs = 3000;
-              return timer(delayMs);
-            },
-          })
-        )
-        .subscribe({
-          next: (event) => {
-            if (event.component === 'Void') return;
-            if (!outputLiveEvents) {
-              if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
-              return;
-            }
-            this.output$.next(event as NetworkEvent<C>); //this is the sync magic
-          },
-          error: (error) => {
-            console.log(`[worker] error, attempting to re-subscribe to stream ${error}`, error);
-            handleStreamReconnection();
-          },
-          complete: () => {
-            console.log('[worker] stream completed');
-            handleStreamReconnection();
-          },
-        });
-    };
-    currentSubscription = subscribeToEventStream(latestEvent$);
+    const eventStream$ = streamServiceUrl
+      ? createStream({
+          url: streamServiceUrl!,
+          worldAddress: worldContract.address,
+          decode,
+          includeSystemCalls: Boolean(fetchSystemCalls),
+          fetchWorldEvents,
+        })
+      : createLatestEventStreamRPC(
+          blockNumber$,
+          fetchWorldEvents,
+          fetchSystemCalls ? createFetchSystemCallsFromEvents(provider) : undefined
+        );
+
+    eventStream$.subscribe((event) => {
+      if (!outputLiveEvents) {
+        if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
+        return;
+      }
+      this.output$.next(event as NetworkEvent<C>);
+    });
 
     const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
 
@@ -334,13 +270,14 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       percentage: 0,
     });
 
-    const gapStateEvents = await fetchEventsInBlockRangeChunked(
+    const gapStateEvents = await fillGap({
+      kamigazeUrl: streamServiceUrl!,
+      decode,
       fetchWorldEvents,
-      initialState.blockNumber,
-      streamStartBlockNumber,
-      50,
-      (percentage: number) => this.setLoadingState({ percentage })
-    );
+      fromBlock: initialState.blockNumber,
+      toBlock: streamStartBlockNumber,
+      setPercentage: (percentage: number) => this.setLoadingState({ percentage }),
+    });
 
     // Merge initial state, gap state and live events since initial sync started
     storeStateEvents(initialState, [...gapStateEvents, ...initialLiveEvents]);
@@ -410,23 +347,25 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   }
 
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {
-    input$.subscribe(this.input$);
+    input$.subscribe((e) => {
+      this.input$.next(e);
+    });
     const throttledOutput$ = new Subject<NetworkEvent<C>[]>();
 
     this.output$
       .pipe(
         bufferTime(33, null, 33333),
         filter((updates) => updates.length > 0),
-        concatMap((updates) =>
-          concat(
+        concatMap((updates) => {
+          return concat(
             of(updates),
             input$.pipe(
               filter((e) => e.type === InputType.Ack),
               take(1),
               ignoreElements()
             )
-          )
-        )
+          );
+        })
       )
       .subscribe(throttledOutput$);
 

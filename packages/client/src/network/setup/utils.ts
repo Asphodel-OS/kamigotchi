@@ -132,16 +132,20 @@ export function applyNetworkUpdates<C extends Components>(
         const entity =
           world.entityToIndex.get(update.entity) ?? world.registerEntity({ id: update.entity });
         const componentKey = mappings[update.component];
-        if (!componentKey) {
-          console.warn('Unknown component:', update);
+        const component = componentKey ? components[componentKey] : undefined;
+
+        if (!component) {
+          if (update.txHash !== 'EmptyNetworkEvent') {
+            console.warn('Unknown component:', update.component);
+          }
           continue;
         }
 
         if (update.value === undefined) {
           // undefined value means component removed
-          removeComponent(components[componentKey] as Component<Schema>, entity);
+          removeComponent(component as Component<Schema>, entity);
         } else {
-          setComponent(components[componentKey] as Component<Schema>, entity, update.value);
+          setComponent(component as Component<Schema>, entity, update.value);
         }
       } else if (decodeAndEmitSystemCall && isSystemCallEvent(update)) {
         decodeAndEmitSystemCall(update);

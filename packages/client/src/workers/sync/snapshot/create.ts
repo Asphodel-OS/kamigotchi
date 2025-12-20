@@ -1,9 +1,6 @@
-import { createChannel, createClient } from 'nice-grpc-web';
-
-import { KamigazeServiceClient, KamigazeServiceDefinition } from 'engine/types/kamigaze/kamigaze';
-import { getGrpcTransport } from '../grpcTransport';
+import { createKamigazeClient, KamigazeServiceClient } from 'clients/kamigaze';
 
 // create a KamigazeServiceClient for the SnapshotService
 export function create(url: string): KamigazeServiceClient {
-  return createClient(KamigazeServiceDefinition, createChannel(url, getGrpcTransport()));
+  return createKamigazeClient(url);
 }

@@ -2,7 +2,7 @@ import { packTuple, unpackTuple } from '@mud-classic/utils';
 import { Components, ComponentValue, EntityID, SchemaOf } from 'engine/recs';
 
 import { createDecode } from 'engine/encoders';
-import { BlockResponse, Component, Entity, State } from 'engine/types/kamigaze/kamigaze';
+import { BlockResponse, Component, Entity, State } from 'clients/kamigaze';
 import { formatEntityID } from 'engine/utils';
 import { transformIterator } from 'utils/iterators';
 import { uint8ArrayToHexString } from 'utils/numbers';

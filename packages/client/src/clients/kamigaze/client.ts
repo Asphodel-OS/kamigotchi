@@ -1,0 +1,28 @@
+import { createChannel, createClient } from 'nice-grpc-web';
+
+import { getGrpcTransport } from '../../workers/sync/grpcTransport';
+import { KamigazeServiceClient, KamigazeServiceDefinition } from './proto';
+
+let Client: KamigazeServiceClient | null = null;
+
+/**
+ * Create a KamigazeServiceClient for a given URL.
+ * Use this when you need a client for a specific endpoint.
+ */
+export function createKamigazeClient(url: string): KamigazeServiceClient {
+  const channel = createChannel(url, getGrpcTransport());
+  return createClient(KamigazeServiceDefinition, channel);
+}
+
+/**
+ * Get the singleton KamigazeServiceClient using the environment URL.
+ * Returns null if VITE_KAMIGAZE_URL is not set.
+ */
+export function getClient(): KamigazeServiceClient | null {
+  if (!import.meta.env.VITE_KAMIGAZE_URL) return Client; // null when kamigaze url is not set
+
+  if (!Client) {
+    Client = createKamigazeClient(import.meta.env.VITE_KAMIGAZE_URL);
+  }
+  return Client;
+}

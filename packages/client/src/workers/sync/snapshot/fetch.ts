@@ -1,5 +1,5 @@
 import { createDecode } from 'engine/encoders';
-import { KamigazeServiceClient } from 'engine/types/kamigaze/kamigaze';
+import { KamigazeServiceClient } from 'clients/kamigaze';
 import {
   StateCache,
   createStateCache,
