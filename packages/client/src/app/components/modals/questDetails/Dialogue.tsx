@@ -95,7 +95,7 @@ export const Dialogue = ({
       >
         <TypewriterComponent
           text={text}
-          speed={30}
+          speed={15}
           interrupted={interrupted}
           retrigger={`${isModalOpen}${wasToggled}`}
           onUpdate={() => handleScroll(introRef, isUserScrollingPastRef)}
@@ -116,7 +116,7 @@ export const Dialogue = ({
             {isComplete ? (
               <TypewriterComponent
                 text={completionText}
-                speed={30}
+                speed={15}
                 interrupted={interrupted}
                 retrigger={`${isModalOpen}${wasToggled}`}
                 onUpdate={() => handleScroll(outroRef, isUserScrollingMainRef)}
