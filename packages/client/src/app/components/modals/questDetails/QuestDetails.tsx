@@ -19,6 +19,7 @@ import {
   queryRegistryQuests,
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
+import { getFromDescription } from 'network/shapes/utils/parse';
 import { didActionSucceed } from 'network/utils';
 import { useComponentEntities } from 'network/utils/hooks';
 import { playClick } from 'utils/sounds';
@@ -54,6 +55,8 @@ export const QuestDetailsModal: UIComponent = {
           populate: (base: BaseQuest) => populateQuest(world, components, base),
           parseObjectives: (quest: Quest) =>
             parseQuestObjectives(world, components, account, quest),
+          describeEntity: (type: string, index: number) =>
+            getFromDescription(world, components, type, index),
         },
       };
     })();
@@ -63,7 +66,7 @@ export const QuestDetailsModal: UIComponent = {
 
     const { actions, api, components, world } = network;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const { getBase, populate, parseObjectives } = utils;
+    const { getBase, populate, parseObjectives, describeEntity } = utils;
 
     const isModalOpen = useVisibility((s) => s.modals.questDialogue);
     const setModals = useVisibility((s) => s.setModals);
@@ -166,6 +169,9 @@ export const QuestDetailsModal: UIComponent = {
         />
         <Bottom
           color='#5e4a14ff'
+          rewards={quest.rewards}
+          objectives={quest.objectives}
+          describeEntity={describeEntity}
           buttons={{
             AcceptButton: {
               backgroundColor: '#f8f6e4',
