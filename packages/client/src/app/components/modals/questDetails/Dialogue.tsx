@@ -33,8 +33,10 @@ export const Dialogue = ({
 
   // shows completion text by default intro text as fallback
   useEffect(() => {
-    if (isModalOpen && isComplete) setMode('OUTRO');
-  }, [isModalOpen, isComplete]);
+    if (isModalOpen) {
+      setMode(completionText && isComplete ? 'OUTRO' : 'INTRO');
+    }
+  }, [isModalOpen, completionText, isComplete]);
 
   // resets cancelation when modal is opened or sections are toggled
   useEffect(() => {
