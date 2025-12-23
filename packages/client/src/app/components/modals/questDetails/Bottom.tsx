@@ -47,7 +47,7 @@ export const Bottom = ({
       <TextTooltip key={`reward-${index}`} text={[entity.name]} direction='row'>
         <RewardItem>
           <RewardImage src={entity.image} />
-          <span>x{(reward.value ?? 0) * 1}</span>
+          <span style={{ color: color }}>x{(reward.value ?? 0) * 1}</span>
         </RewardItem>
       </TextTooltip>
     );
@@ -58,12 +58,10 @@ export const Bottom = ({
     const hasProgress = obj.status?.target && obj.status?.current !== undefined;
 
     return (
-      <ObjectiveItem key={`obj-${index}`} complete={isComplete}>
-        <span>
-          {isComplete ? '✓' : '•'} {obj.name}
-        </span>
+      <ObjectiveItem key={`obj-${index}`} complete={isComplete} color={color}>
+        {isComplete ? '✓' : '•'} {obj.name}
         {hasProgress && !isComplete && (
-          <span>
+          <span style={{ color: color }}>
             [{obj.status?.current}/{obj.status?.target}]
           </span>
         )}
@@ -177,7 +175,7 @@ const RewardImage = styled.img`
   image-rendering: pixelated;
 `;
 
-const ObjectiveItem = styled.div<{ complete?: boolean }>`
+const ObjectiveItem = styled.div<{ complete?: boolean; color?: string }>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -185,8 +183,9 @@ const ObjectiveItem = styled.div<{ complete?: boolean }>`
   padding: 0.3vw;
   border: solid #5e4a14ff 0.1vw;
   border-radius: 0.3vw;
-  font-size: 0.8vw;
+  font-size: 0.9vw;
   background-color: rgba(248, 246, 228, 0.8);
+  color: ${({ color }) => color};
   ${({ complete }) => complete && 'opacity: 0.6;'}
 `;
 
