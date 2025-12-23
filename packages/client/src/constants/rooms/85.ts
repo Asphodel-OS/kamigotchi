@@ -9,5 +9,11 @@ export const room85: Room = {
     key: 'giantsPalm',
     path: giantsPalm,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'skeletal hand',
+      coordinates: { x1: 72, y1: 80, x2: 136, y2: 130 },
+      dialogue: 851,
+    },
+  ],
 };
