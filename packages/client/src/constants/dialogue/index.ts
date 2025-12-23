@@ -23,7 +23,6 @@ import dialogues64 from './64_burning_room';
 import dialogues65 from './65_forest_hut';
 import dialogues66 from './66_trading-room';
 import dialogues72 from './72_hatch-to-nowhere';
-import dialogues85 from './85_skeletal_hand';
 import dialogues88 from './88_treasure-hoard';
 import { DialogueNode } from './types';
 
@@ -65,7 +64,6 @@ const dialogueList = dialogues00.concat(
   dialogues65,
   dialogues66,
   dialogues72,
-  dialogues85,
   dialogues88
 );
 
