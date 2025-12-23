@@ -17,6 +17,7 @@ import {
   parseQuestObjectives,
   parseQuestStatus,
   populateQuest,
+  queryQuestInstance,
   queryRegistryQuests,
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
@@ -110,7 +111,12 @@ export const QuestDetailsModal: UIComponent = {
       }
 
       const base = getBase(questIndex);
-      const populated = populate(base);
+      // this will avoid teh accept button buggin out
+      const instance = queryQuestInstance(world, base.index, data.accountEntity);
+      const entityToUse = instance ?? questIndex;
+
+      const actualBase = getBase(entityToUse);
+      const populated = populate(actualBase);
       const parsed = parseObjectives(populated);
       const filtered = filterOngoingQuests([parsed]);
       setQuest(filtered[0]);
