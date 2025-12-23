@@ -14,6 +14,7 @@ import {
   Quest,
   filterQuestsByAvailable,
   getBaseQuest,
+  meetsObjectives,
   parseQuestObjectives,
   parseQuestRequirements,
   parseQuestStatus,
@@ -85,6 +86,7 @@ export const QuestModal: UIComponent = {
     const isUpdating = useRef(false);
     const [tab, setTab] = useState<TabType>('ONGOING');
     const [available, setAvailable] = useState<Quest[]>([]);
+    const [completable, setCompletable] = useState<Quest[]>([]);
 
     // Reactively subscribe to ECS changes relevant to quests
     const registryEntities = useComponentEntities(IsRegistry) || [];
@@ -121,6 +123,10 @@ export const QuestModal: UIComponent = {
       setAvailable(populated);
       if (populated.length > available.length) setTab('AVAILABLE');
 
+      const populatedOngoing = ongoing.map((q) => utils.parseObjectives(populate(q)));
+      const completableQuests = populatedOngoing.filter((q) => meetsObjectives(q));
+      setCompletable(completableQuests);
+
       isUpdating.current = false;
     }, [questsModalVisible, registry, completed, ongoing, isNetworkReady]);
 
@@ -129,6 +135,12 @@ export const QuestModal: UIComponent = {
       if (!isNetworkReady) return;
       updateNotifications();
     }, [available.length, isNetworkReady]);
+
+    // update the Notifications when a quest becomes completable
+    useEffect(() => {
+      if (!isNetworkReady) return;
+      updateCompletableNotifications();
+    }, [completable.length, isNetworkReady]);
 
     /////////////////
     // HELPERS
@@ -152,6 +164,29 @@ export const QuestModal: UIComponent = {
           time: Date.now().toString(),
           modal: 'questDialogue',
           questIndex: available[n - 1].entity,
+        });
+      }
+    };
+
+    const updateCompletableNotifications = () => {
+      const id = 'Quest Ready' as EntityID;
+      const n = completable.length;
+
+      if (notifications.has(id)) {
+        if (n == 0) notifications.remove(id);
+        else {
+          const quest = completable[n - 1];
+          notifications.update(id, { description: `You can complete: ${quest.name}`, questIndex: quest.entity });
+        }
+      } else if (n > 0) {
+        const quest = completable[n - 1];
+        notifications.add({
+          id,
+          title: `Quest Ready!`,
+          description: `You can complete: ${quest.name}`,
+          time: Date.now().toString(),
+          modal: 'questDialogue',
+          questIndex: quest.entity,
         });
       }
     };
