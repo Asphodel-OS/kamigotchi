@@ -10,6 +10,7 @@ import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import {
   Quest,
   filterOngoingQuests,
+  findNextQuestInChain,
   getBaseQuest,
   getQuestByEntityIndex,
   meetsObjectives,
@@ -57,6 +58,12 @@ export const QuestDetailsModal: UIComponent = {
             parseQuestObjectives(world, components, account, quest),
           describeEntity: (type: string, index: number) =>
             getFromDescription(world, components, type, index),
+          findNextInChain: (questIndex: number) => {
+            const registry = queryRegistryQuests(components).map((e) =>
+              getBaseQuest(world, components, e)
+            );
+            return findNextQuestInChain(world, components, account, questIndex, registry);
+          },
         },
       };
     })();
@@ -66,7 +73,7 @@ export const QuestDetailsModal: UIComponent = {
 
     const { actions, api, components, world } = network;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const { getBase, populate, parseObjectives, describeEntity } = utils;
+    const { getBase, populate, parseObjectives, describeEntity, findNextInChain } = utils;
 
     const isModalOpen = useVisibility((s) => s.modals.questDialogue);
     const setModals = useVisibility((s) => s.setModals);
@@ -150,6 +157,23 @@ export const QuestDetailsModal: UIComponent = {
       handleStateUpdate(tx, true);
     };
 
+    // journey onwards to next quest in chain
+    // if there isnt any close modal
+    const journeyOnwards = () => {
+      if (quest?.index === undefined) {
+        setModals({ questDialogue: false });
+        playClick();
+        return;
+      }
+      const nextQuest = findNextInChain(quest.index);
+      if (nextQuest) {
+        useSelected.setState({ questIndex: nextQuest.entity });
+      } else {
+        setModals({ questDialogue: false });
+      }
+      playClick();
+    };
+
     if (!quest) return <></>;
 
     return (
@@ -175,12 +199,14 @@ export const QuestDetailsModal: UIComponent = {
           buttons={{
             AcceptButton: {
               backgroundColor: '#f8f6e4',
-              onClick: () => {
-                acceptQuest(quest);
-                playClick();
-              },
-              disabled: quest.startTime !== 0,
-              label: 'Accept',
+              onClick: quest.complete
+                ? journeyOnwards
+                : () => {
+                    acceptQuest(quest);
+                    playClick();
+                  },
+              disabled: quest.complete ? false : quest.startTime !== 0,
+              label: quest.complete ? 'Journey Onwards' : 'Accept',
             },
             CompleteButton: {
               backgroundColor: '#f8f6e4',

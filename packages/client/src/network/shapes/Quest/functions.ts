@@ -147,6 +147,28 @@ export const filterOngoing = (quests: Quest[]) => {
   return filterByNotObjective(quests, 1);
 };
 
+// find quest next in chain
+export const findNextInChain = (
+  world: World,
+  components: Components,
+  account: Account,
+  currentQuestIndex: number,
+  registry: BaseQuest[]
+): BaseQuest | undefined => {
+  const dependentQuests = registry.filter((q) => {
+    const fullQuest = populate(world, components, q);
+    return (
+      !hasCompleted(world, components, q.index, account.entity) &&
+      fullQuest.requirements.some(
+        (req) => req.target.type === 'QUEST' && req.target.index === currentQuestIndex
+      )
+    );
+  });
+
+  const sorted = dependentQuests.sort((a, b) => a.index - b.index);
+  return sorted[0];
+};
+
 /////////////////
 // SORTERS
 

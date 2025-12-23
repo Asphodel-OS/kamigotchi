@@ -116,8 +116,7 @@ const Container = styled.div<{ color: string }>`
   display: flex;
   flex-flow: row nowrap;
   border-top: solid grey 0.15vw;
-  min-height: fit-content;
-  max-height: 24vh;
+  height: 24vh;
   transition: height 0.3s ease;
   overflow-y: auto;
   ::-webkit-scrollbar {

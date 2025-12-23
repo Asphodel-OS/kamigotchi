@@ -4,6 +4,7 @@ export {
   filterByNotObjective as filterQuestsByNotObjective,
   filterByObjective as filterQuestsByObjective,
   filterByReward as filterQuestsByReward,
+  findNextInChain as findNextQuestInChain,
   hasCompletedDelay as hasCompletedDelayQuest,
   hasCompleted as hasCompletedQuest,
   meetsObjectives,
