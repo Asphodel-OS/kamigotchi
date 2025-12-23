@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { Modals, useVisibility } from 'app/stores';
+import { Modals, useSelected, useVisibility } from 'app/stores';
 import { useComponentEntities } from 'network/utils/hooks';
 
 export const NotificationFixture: UIComponent = {
@@ -28,9 +28,16 @@ export const NotificationFixture: UIComponent = {
     /////////////////
     // INTERACTION
 
-    const handleClick = (targetModal: string | undefined, entity: EntityIndex) => {
+    const handleClick = (
+      targetModal: string | undefined,
+      entity: EntityIndex,
+      questIndex?: EntityIndex
+    ) => {
       if (targetModal === undefined) return;
-
+      if (targetModal === 'questDialogue' && questIndex) {
+        // last available quest const
+        useSelected.setState({ questIndex: questIndex });
+      }
       const target = targetModal as keyof Modals;
       setModals({ [target]: true });
       dismiss(entity);
@@ -50,7 +57,15 @@ export const NotificationFixture: UIComponent = {
       return (
         <Card key={entity.toString()}>
           <ExitButton onClick={() => dismiss(entity)}>X</ExitButton>
-          <div onClick={() => handleClick(notification.modal as string | undefined, entity)}>
+          <div
+            onClick={() =>
+              handleClick(
+                notification.modal as string | undefined,
+                entity,
+                notification.questIndex as EntityIndex | undefined
+              )
+            }
+          >
             <Title>{notification.title}</Title>
             <Description>{notification.description}</Description>
           </div>

@@ -33,6 +33,7 @@ export function createNotificationSystem<M = undefined>(world: World) {
       description: toAdd.description,
       time: toAdd.time.toString(),
       modal: toAdd.modal,
+      questIndex: toAdd.questIndex,
     });
 
     return entity;

@@ -5,7 +5,7 @@ import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useSelected, useVisibility } from 'app/stores';
+import { useNetwork, useVisibility } from 'app/stores';
 import { QuestsIcon } from 'assets/images/icons/menu';
 import { DEAD_ADDRESS } from 'constants/addresses';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -140,8 +140,7 @@ export const QuestModal: UIComponent = {
       const auxVerb = n == 1 ? 'is' : 'are';
       const questWord = n == 1 ? 'quest' : 'quests';
       const description = `There ${auxVerb} ${n} ${questWord} you can accept.`;
-      // last available quest is selecteduest will be opened
-      useSelected.setState({ questIndex: available[length - 1].entity });
+
       if (notifications.has(id)) {
         if (n == 0) notifications.remove(id as EntityID);
         else notifications.update(id as EntityID, { description });
@@ -152,6 +151,7 @@ export const QuestModal: UIComponent = {
           description,
           time: Date.now().toString(),
           modal: 'questDialogue',
+          questIndex: available[n - 1].entity,
         });
       }
     };
