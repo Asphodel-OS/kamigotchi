@@ -34,8 +34,9 @@ export const NotificationFixture: UIComponent = {
       questIndex?: EntityIndex
     ) => {
       if (targetModal === undefined) return;
+      // now when clicking on quest notifications
+      // that questDialogue will open
       if (targetModal === 'questDialogue' && questIndex) {
-        // last available quest const
         useSelected.setState({ questIndex: questIndex });
       }
       const target = targetModal as keyof Modals;
