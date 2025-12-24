@@ -164,7 +164,6 @@ export const QuestDetailsModal: UIComponent = {
     };
 
     // journey onwards to next quest in chain
-    // if there isnt any close modal
     const journeyOnwards = () => {
       if (quest?.index === undefined) {
         setModals({ questDialogue: false });
