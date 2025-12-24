@@ -185,7 +185,7 @@ export const QuestDetailsModal: UIComponent = {
     return (
       <ModalWrapper
         id='questDialogue'
-        header={<Header>{quest?.name}</Header>}
+        header={<Header color='#5e4a14ff'>{quest?.name}</Header>}
         canExit
         backgroundColor={`#f8f6e4`}
         noScroll
@@ -230,11 +230,11 @@ export const QuestDetailsModal: UIComponent = {
   },
 };
 
-const Header = styled.div`
+const Header = styled.div<{ color?: string }>`
   border-color: white;
   padding: 0.7vw 1vw 0.2vw 1vw;
   width: 95%;
-
+  color: ${({ color }) => color};
   font-size: 1.4vw;
   font-weight: bold;
   line-height: 2vw;
