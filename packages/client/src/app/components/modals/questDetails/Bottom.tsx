@@ -63,7 +63,7 @@ export const Bottom = ({
         {isComplete ? '✓' : '•'} {obj.name}
         {hasProgress && !isComplete && (
           <span style={{ color: color }}>
-            [{obj.status?.current}/{obj.status?.target}]
+            [{Number(obj.status?.current)}/{Number(obj.status?.target)}]
           </span>
         )}
       </ObjectiveItem>
