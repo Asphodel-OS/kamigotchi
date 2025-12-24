@@ -22,6 +22,7 @@ export const TextTooltip = ({
   alignText = 'center',
   color,
   fullWidth,
+  cursor,
 }: {
   text: string[] | React.ReactNode[];
   title?: string;
@@ -34,6 +35,7 @@ export const TextTooltip = ({
   alignText?: 'left' | 'right' | 'center';
   color?: string;
   fullWidth?: boolean;
+  cursor?: string;
 }) => {
   return (
     <Tooltip
@@ -43,6 +45,7 @@ export const TextTooltip = ({
       maxWidth={maxWidth}
       fullWidth={fullWidth}
       color={color}
+      cursor={cursor}
       isDisabled={text.every((entry) => entry === '' || entry === null)}
       content={
         <>

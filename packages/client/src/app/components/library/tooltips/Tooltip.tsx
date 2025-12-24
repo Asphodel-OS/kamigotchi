@@ -12,6 +12,7 @@ export const Tooltip = ({
   content,
   isDisabled,
   fullWidth,
+  cursor,
 }: {
   children: React.ReactNode;
   grow?: boolean;
@@ -22,6 +23,7 @@ export const Tooltip = ({
   content: React.ReactNode;
   isDisabled: boolean;
   fullWidth?: boolean;
+  cursor?: string;
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -79,6 +81,7 @@ export const Tooltip = ({
       direction={direction}
       fullWidth={fullWidth}
       disabled={isDisabled}
+      cursor={cursor}
       onMouseEnter={(e) => handleMouseEnter(e)}
       onMouseLeave={() => {
         (setIsActive(false), setIsVisible(false));
@@ -111,11 +114,12 @@ const Container = styled.span<{
   direction?: string;
   ref?: any;
   fullWidth?: boolean;
+  cursor?: string;
 }>`
   display: flex;
   flex-direction: ${({ direction }) => direction ?? 'column'};
   flex-grow: ${({ flexGrow }) => flexGrow};
-  cursor: ${({ disabled }) => (disabled ? 'cursor' : 'help')};
+  cursor: ${({ disabled, cursor }) => (disabled ? 'default' : cursor ?? 'help')};
   ${({ fullWidth }) => fullWidth && 'width: 100%;'}
 `;
 

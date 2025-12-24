@@ -91,14 +91,26 @@ export const Bottom = ({
       </DetailsSection>
       <Options>
         <Label color={color}>Options:</Label>
+
         <Option
           color={color}
           onClick={AcceptButton.onClick}
           disabled={AcceptButton.disabled}
           backgroundColor={AcceptButton.backgroundColor}
         >
-          {AcceptButton.label}
+          <TextTooltip
+            text={
+              AcceptButton.label === 'Journey Onwards'
+                ? ['Proceed to the next quest in this chain']
+                : []
+            }
+            direction='row'
+            cursor={'pointer'}
+          >
+            {AcceptButton.label}
+          </TextTooltip>
         </Option>
+
         <Option
           color={color}
           onClick={CompleteButton.onClick}
