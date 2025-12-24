@@ -211,7 +211,7 @@ export const QuestDetailsModal: UIComponent = {
                     acceptQuest(quest);
                     playClick();
                   },
-              disabled: quest.complete ? false : quest.startTime !== 0,
+              disabled: quest.complete ? !findNextInChain(quest.index) : quest.startTime !== 0,
               label: quest.complete ? 'Journey Onwards' : 'Accept',
             },
             CompleteButton: {

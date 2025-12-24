@@ -195,7 +195,7 @@ const ObjectiveItem = styled.div<{ complete?: boolean; color?: string }>`
   padding: 0.3vw;
   border: solid #5e4a14ff 0.1vw;
   border-radius: 0.3vw;
-  font-size: 0.9vw;
+  font-size: 0.83vw;
   background-color: rgba(248, 246, 228, 0.8);
   color: ${({ color }) => color};
   ${({ complete }) => complete && 'opacity: 0.6;'}
