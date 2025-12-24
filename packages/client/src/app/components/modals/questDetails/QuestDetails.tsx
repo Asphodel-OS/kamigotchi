@@ -172,10 +172,10 @@ export const QuestDetailsModal: UIComponent = {
         return;
       }
       const nextQuest = findNextInChain(quest.index);
+      setModals({ questDialogue: false });
       if (nextQuest) {
         useSelected.setState({ questIndex: nextQuest.entity });
-      } else {
-        setModals({ questDialogue: false });
+        setTimeout(() => setModals({ questDialogue: true }), 250);
       }
       playClick();
     };

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { TextTooltip } from 'app/components/library';
+import { clickFx, hoverFx } from 'app/styles/effects';
 import { Allo } from 'network/shapes/Allo';
 import { Objective } from 'network/shapes/Quest/objective';
 import { DetailedEntity } from 'network/shapes/utils';
@@ -116,7 +117,7 @@ const Container = styled.div<{ color: string }>`
   display: flex;
   flex-flow: row nowrap;
   border-top: solid grey 0.15vw;
-  height: 24vh;
+  height: 26vh;
   transition: height 0.3s ease;
   overflow-y: auto;
   ::-webkit-scrollbar {
@@ -222,5 +223,13 @@ const Option = styled.button<{ color?: string; backgroundColor?: string }>`
   &:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+  }
+  &:hover {
+    animation: ${() => hoverFx()} 0.2s;
+    transform: scale(1.05);
+    z-index: 1;
+  }
+  &:active {
+    animation: ${() => clickFx()} 0.3s;
   }
 `;
