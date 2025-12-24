@@ -156,7 +156,7 @@ MENU: “Most of the drawings are pictures of the same young woman.”
 MENU: “She looks kind of familiar, but I can’t place her.”
 MENU: “The rest of them look like monsters…” 
 MENU: “Some of them are kind of scary, but others look cute. They kind of resemble the Kamigotchi.”
-MENU: “The word “Moon” was written on the inside cover. Does that mean something to you?”","Complete MIN013,Complete MSQ020 & wait 1 day",Make 2 Scavenging rolls at Scrap Trees,"2x Agency Reputation,1x Booster Pack"
+MENU: “The word “Moon” was written on the inside cover. Does that mean something to you?”","Complete MIN013,Complete MSQ020",Make 2 Scavenging rolls at Scrap Trees,"2x Agency Reputation,1x Booster Pack"
 MSQ022,22,In Game,Squaring the Circle II,No,MAIN,MENU,"MENU: “Continue moving clockwise around the map.”
 MENU: “Next up, visit Centipedes and send your Kami out to scavenge.”
 MENU: “Is there something in that hole? It seems dangerous there.”
@@ -709,14 +709,14 @@ MINA: “Have your Kami spend some time harvesting here while I negotiate with o
 MINA: “For some reason it’s been difficult to show these files to you.”
 MINA: “She’ll figure it out eventually.”
 MINA: “Oh, the book? Nonsense. Foolish fancy. I didn’t finish it.""",Complete MSQ077,Harvest for >360 minutes at Reinforced Tunnel,"2x Elders Loyalty,250 $MUSU"
-MSQ079,79,In Game,Fringe Theories,No,MAIN,MENU,"MENU: “I took a look at that “Plasmatics” book with Mina.”
+MSQ079,79,To Update,Fringe Theories,No,MAIN,MENU,"MENU: “I took a look at that “Plasmatics” book with Mina.”
 MENU: “Most of it is stuff I’m not really familiar with.
 MENU: “The parts I am familiar with, I can kind of tell it’s bullshit.”
 MENU: “But then there’s this other part that I can’t get a handle on.”
 MENU: “You mind going around and helping me compare it with the tech here?”","MENU: “I think I’m getting a better vocabulary for this stuff, at least.”
 MENU: “Gravitoelectromagnetism as a unified field, zero point vacuum energy production…”
 MENU: “It’s starting to remind me of that stuff Mina told me about the aether.”
-MENU: “The technobabble feels better than the retro superstition, at least.”",Complete MSQ078,"Move to Hatch to Nowhere,Move to Techno Temple",2x Agency Reputation
+MENU: “The technobabble feels better than the retro superstition, at least.”",Complete MSQ078,In Room: Hatch to Nowhere,2x Agency Reputation
 MSQ080,80,In Game,The Great Divide,No,MAIN,MENU,"MENU: “That bridge looks like fake wood.”
 MENU: “Check if it’s sturdy by sending some Kami out on it.”
 MENU: “I’m just kidding!”
@@ -851,7 +851,7 @@ MINA: “My shop is small. It’s a tight space. The dowsing rod is probably jus
 MINA: “Check outside my door, in the open air. You won’t find anything, I’m sure.”","MENU: “…Yeah, nothing out here.”
 MENU: “I guess she was right.”
 MENU: “But I don’t think that really proved anything.”","Complete MSQ094,Own the Dowsing Rod,In Room: Convenience Store",Move to Tunnel of Trees,"2x Agency Reputation,5x Booster Pack"
-MIN001,2001,In Game,Grand Opening,No,SHOP,MINA,"MINA: “Hello, whoever you are. Is this how you receive your letters?”
+MIN001,2001,In Game,Grand Opening,No,MAIN,MINA,"MINA: “Hello, whoever you are. Is this how you receive your letters?”
 MINA: “It seems functional, although inelegant.”
 MINA: “Tired? Hungry? $MUSU burning a hole in your pocket?”
 MINA: “Bring your wallet to the Tunnel of Trees and knock on the blue door.”
@@ -859,14 +859,14 @@ MINA: “——— Mina.”","MINA: “I sell treats for you and your Kami.”
 MINA: “If you need Stamina to keep moving, if your pets have gotten low on Health, or even if the poor things have fallen apart and need a Revive, my shop is open.”
 MINA: “Prices subject to change.”
 MINA: “——— Mina.”",Complete MSQ007,Enter Mina's Shop,2x Elders Loyalty
-MIN002,2002,In Game,Customer Loyalty Program,No,SHOP,MINA,"MINA: “I want you to be a repeat customer.”
+MIN002,2002,In Game,Customer Loyalty Program,No,MAIN,MINA,"MINA: “I want you to be a repeat customer.”
 MINA: “If you trade enough $MUSU with me, I’ll give you something special.”
 MINA: ”I don’t care how you get it. Just bring me more and I’ll be happy.”
 MINA: “——— Mina.”","MINA: “Take this card.”
 MINA: “Even someone lacking in magical ability can use it to cast a little spell.”
 MINA: “These aren’t mine to sell, but I’ll give them away for good behavior.”
 MINA: “——— Mina.”",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ""Neith’s River of Life"" Spell Card"
-MIN003,2003,In Game,Early Market Research - I,No,SHOP,MINA,"MINA: “Relics and mementos from the past are brought into this world with $MUSU.”
+MIN003,2003,In Game,Early Market Research - I,No,MAIN,MINA,"MINA: “Relics and mementos from the past are brought into this world with $MUSU.”
 MINA: “Humans grow attached to many things.”
 MINA: “The first coin they earned, a trowel used to plant the food that fed their family, a transforming robot toy that made other children jealous.”
 MINA: ”Those feelings linger.”
@@ -875,7 +875,7 @@ MINA: “——— Mina.”","MINA: “It may be garbage, but it was important t
 MINA: “Psychometry will tell me more. Not that I’ll share what I learn with you.”
 MINA: “We’ll have to get to know each other better.”
 MINA: “——— Mina.”",Complete MIN002,Give 5 Scrap Metal,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
-MIN004,2004,In Game,Early Market Research - II,No,SHOP,MINA,"MINA: “Deep in the forest, there is a mound built over some ancient, stagnant defilement.”
+MIN004,2004,In Game,Early Market Research - II,No,MAIN,MINA,"MINA: “Deep in the forest, there is a mound built over some ancient, stagnant defilement.”
 MINA: “The crawling insects thrive and grow more violent in filthy places like that.”
 MINA: “Go harvest at the Insect Node until you get a feel for it.”
 MINA: “——— Mina.”","MINA: “Ancient traditions would have purified this mound with sacred rite on a regular basis.”
@@ -883,7 +883,7 @@ MINA: “This practice must have died out long before you or I arrived.”
 MINA: “Still, I see evidence of recent ritual.”
 MINA: “I suppose it could be even worse.”
 MINA: “——— Mina.”",Complete MIN003,Harvest for >720 minutes in Forest: Insect Node,"2x Elders Loyalty,2 “Cultivation I” Spell Card"
-MIN005,2005,In Game,Early Market Research - III,No,SHOP,MINA,"MINA: The graves across this landscape are quite old, and buried under heaps of garbage, yet their $MUSU has no scent of defilement.”
+MIN005,2005,In Game,Early Market Research - III,No,MAIN,MINA,"MINA: The graves across this landscape are quite old, and buried under heaps of garbage, yet their $MUSU has no scent of defilement.”
 MINA: “A strange phenomenon.”
 MINA: “Go harvest at the graves and you’ll understand what I mean.”
 MINA: “——— Mina.”","MINA: “You see, they have an air of uncommon purity.”
@@ -891,7 +891,7 @@ MINA: “Are they buried saints?”
 MINA: “Were they interred as some kind of rite to bolster the spiritual foundation?”
 MINA: “These are questions for another time.”
 MINA: “——— Mina.”",Complete MIN004,Harvest for >720 minutes on Trash-Strewn Graves,"4x Elders Loyalty,2x “Neith’s River of Life” Spell Card"
-MIN006,2006,In Game,Community Outreach,No,SHOP,MINA,"MINA: “With human garbage as far as the eye can see, one might expect to see more humans along with it.”
+MIN006,2006,In Game,Community Outreach,No,MAIN,MINA,"MINA: “With human garbage as far as the eye can see, one might expect to see more humans along with it.”
 MINA: “There are mountains of their attachments changing the landscape of this place, but few actual souls.”
 MINA: “A dead one was laying by the edge of the forest, you know.” 
 MINA: “It looked young, at least compared to the dusty old saints in the local graves.”
@@ -900,7 +900,7 @@ MINA: “——— Mina.”","MINA: “You can’t hear it speak?”
 MINA: “Strange. I thought you might be able to understand each other.”
 MINA: “Ah well. Nothing to be done.”
 MINA: “——— Mina.”",Complete MIN005,Harvest for >720 minutes at the Lost Skeleton During Moonside,"2x Elders Loyalty,1x “Cultivation II” Spell Card"
-MIN007,2007,In Game,Restocking,No,SHOP,MINA,"MINA: “I've had many new customers like you lately.”
+MIN007,2007,In Game,Restocking,No,MAIN,MINA,"MINA: “I've had many new customers like you lately.”
 MINA: “It seems I haven’t brought enough stock to meet demand.”
 MINA: “Help me restock my goods and pick a few flowers for me.”
 MINA: “——— Mina.”","MINA: “Raw materials can be broken down into ingredients for hexerei.”
@@ -909,7 +909,7 @@ MINA: “One can craft potions, poultices, and other small magic if one knows th
 MINA: “I sell something in my shop that will help you along.”
 MINA: “It’s a device to break down ingredients for yourself. I won’t be doing it for you again.”
 MINA: “——— Mina.”",Complete MIN006,"Give 5 Plastic Bottle,Give 5 Pine Cone","2x Elders Loyalty,2x “Cultivation III” Spell Card"
-MIN008,2008,In Game,Offering an Apprenticeship,No,SHOP,MINA,"MINA: “Some may view a scavenging spirit like a magpie on the hunt for treasure.”
+MIN008,2008,In Game,Offering an Apprenticeship,No,MAIN,MINA,"MINA: “Some may view a scavenging spirit like a magpie on the hunt for treasure.”
 MINA: “The truth is the other way around; objects of sentiment are naturally drawn to the Kami.”
 MINA: “Wealth accumulates without desire.”
 MINA: “Most of the Kami will only rest on their hoards like little dragons.”
@@ -920,7 +920,7 @@ MINA: “The use of hexerei may even improve your ability to gain $MUSU.”
 MINA: “And the more you improve your profitability, the more you have to share with me.”
 MINA: “Easy enough, yes? You’ve got the materials, but the real lessons have yet to begin. Don’t forget to buy your school supplies.”
 MINA: “——— Mina.”",Complete MIN003,"Scavenge 1 Pine Cone,Scavenge 1 Daffodil,Scavenge 1 Sanguine Shroom,Scavenge 2 Plastic Bottles",2x Elders Loyalty
-MIN009,2009,In Game,Basics of Hex - Extracts,No,SHOP,MINA,"MINA: “One must break down the raw materials before they can be measured out and mixed into a hex.”
+MIN009,2009,In Game,Basics of Hex - Extracts,No,MAIN,MINA,"MINA: “One must break down the raw materials before they can be measured out and mixed into a hex.”
 MINA: “I won’t do this for you more than once. Have some self-respect.”
 MINA: “I’ve stocked my shop with Spice Grinders, and they’re just the tool you need.”
 MINA: “You may be a model student who already bought one.”
@@ -932,7 +932,7 @@ MINA: “——— Mina.”","MINA: “That was fine.”
 MINA: “You might prove yourself a capable hexer one of these years.”
 MINA: “Just don’t expect me to hold your hand every step of the way.”
 MINA: “——— Mina.”",Complete MIN008,Craft 500 Pine Pollen,4x Elders Loyalty
-MIN010,2010,In Game,Basics of Hex - Potions,No,SHOP,MINA,"MINA: “How can a husk like me brew potions while keeping up with my on-the-go lifestyle, you might ask?”
+MIN010,2010,In Game,Basics of Hex - Potions,No,MAIN,MINA,"MINA: “How can a husk like me brew potions while keeping up with my on-the-go lifestyle, you might ask?”
 MINA: “Just use a Portable Burner to brew on the go. Everyone’s got one.”
 MINA: “If you don’t, I’m selling them for a reasonable price.”
 MINA: “Once you’ve acquired both a Spice Grinder and a Portable Burner, you’ll be ready to craft a variety of small magic.”
@@ -942,7 +942,7 @@ MINA: “——— Mina.”","MINA: “Potions are some of the simplest magic, b
 MINA: “I’ve certainly had stingier and more ignorant students than you.”
 MINA: “You’ve shown a promising enthusiasm. Keep it up.”
 MINA: “——— Mina.”",Complete MIN009,Craft 1 XP Potion,4x Elders Loyalty
-MIN011,2011,In Game,Hex Education,No,SHOP,MINA,"MINA: “Now that you’re equipped and accomplished, try something more delicate.”
+MIN011,2011,In Game,Hex Education,No,MAIN,MINA,"MINA: “Now that you’re equipped and accomplished, try something more delicate.”
 MINA: “Grind the Daffodil that I had you collect earlier, then take a small quantity and brew it with care.”
 MINA: “Delicate as it may be, this is still a simple task.”
 MINA: “Be quick about it and get back to me.”
@@ -952,7 +952,7 @@ MINA: “You’re doing fine, it’s just time to practice on your own a while.�
 MINA: “Don’t be a stranger.”
 MINA: “I have plenty of favors to ask, and you’ve been of good service.”
 MINA: “——— Mina.”","Complete MIN007,Complete MIN010",Craft 1 Bless Potion,2x Elders Loyalty
-MIN012,2012,In Game,Eye of the White Snake,No,SHOP,MINA,"MINA: “Have I introduced you to my pet? His name is Ahi.“
+MIN012,2012,In Game,Eye of the White Snake,No,MAIN,MINA,"MINA: “Have I introduced you to my pet? His name is Ahi.“
 MINA: “It’s the nickname of someone I knew long, long ago.”
 MINA: “He’s a perfect sweetheart and very obedient, nothing like the original.”
 MINA: “The old Ahi was quite the attention getter. Like with most things, I got bored and moved on.”
@@ -963,7 +963,7 @@ MINA: “——— Mina.”","MINA: “Thank you for helping me reminisce.”
 MINA: “You can pet Ahi if you’d like, he won’t bite unless I give the order.”
 MINA: “And you’d better not tell anyone I’m old.”
 MINA: “——— Mina.”",Complete MIN011,Give 1 Red Amber Crystal,6x Elders Loyalty
-MIN013,2013,In Game,Memorial for the Forgotten,No,SHOP,MINA,"MINA: “Reminiscing about that lost friend has gotten me sentimental.”
+MIN013,2013,In Game,Memorial for the Forgotten,No,MAIN,MINA,"MINA: “Reminiscing about that lost friend has gotten me sentimental.”
 MINA: “He’s not one of the dead interred in the graves here, of course.”
 MINA: “Still, they deserve something.”
 MINA: “There’s far too much trash to pick up, but you can lay down something beautiful for a change.”
@@ -973,7 +973,7 @@ MINA: “It wasn’t always this way. I can tell.”
 MINA: “These mountains of garbage and that eyesore of a building in the distance?”
 MINA: “Someone had to cast them off before they ended up here.”
 MINA: “——— Mina.”",Complete MIN012,"Move to the Trash-Strewn Graves,Give 15 Daffodil",4x Elders Loyalty
-MIN014,2014,In Game,To Whom It May Concern,No,SHOP,MINA,"MINA: “It appears there’s more to this Menu being than I first thought.”
+MIN014,2014,In Game,To Whom It May Concern,No,MAIN,MINA,"MINA: “It appears there’s more to this Menu being than I first thought.”
 MINA: “She’s intimately tied to this place, a sort of genius loci.”
 MINA: “That is, not a demon or spirit, but some form of protective entity that exists within the very essence of the location.”
 MINA: “As much as I and my shop are connected, she is with the Kamigotchi World.”
@@ -983,7 +983,7 @@ MINA: “——— Mina.”","MINA: “Thank you.”
 MINA: “She and I have been talking since you reached out on her behalf, but it’s good etiquette to put it in writing.”
 MINA: “And yes, I think I can help.”
 MINA: “——— Mina.”","Complete MIN013,Complete MSQ030","Give 2 Wooden Sticks,Give 125 Sanguineous Powder,Give 125 Resin Tincture",4x Elders Loyalty
-MIN015,2015,In Game,A Matter of Import,No,SHOP,MINA,"MINA: “Menu tells me she wants something out of the machine by the lost skeleton.”
+MIN015,2015,In Game,A Matter of Import,No,MAIN,MINA,"MINA: “Menu tells me she wants something out of the machine by the lost skeleton.”
 MINA: “I might be able to conjure a device that will help.”
 MINA: “The power of electricity is rare, but not unknown to those from my time.”
 MINA: “I’ll need 9999 MUSU to cover the import.”
@@ -995,7 +995,7 @@ MINA: “Some of the most ancient ones were used to generate electrical power.�
 MINA: “This is a miniaturized form, made with the same principles.”
 MINA: “Cute, don’t you think?”
 MINA: “It wasn’t built for this specific task, but it should work fine to power a little machine.”",Complete MIN014,Give 9999 $MUSU,"4x Elders Loyalty,1x Pyramid Engine (Soulbound)"
-MIN016,2016,In Game,Misogi,No,SHOP,MINA,"MINA: “Before we decide the right course of action, I want you to try something.”
+MIN016,2016,In Game,Misogi,No,MAIN,MINA,"MINA: “Before we decide the right course of action, I want you to try something.”
 MINA: “Make your way to the Temple by the Waterfall and try to pass through the falling water.”
 MINA: “I’m sure that you’ll fail, but do it. Report the outcome back to me.”","MINA: “Oh dear, you’re soaked.”
 MINA: “You couldn’t get through? That was expected.”
@@ -1197,7 +1197,7 @@ MINA: “A strange device. It seems to have a spirit of its own.”
 MINA: “Will you indulge it?”
 MENU: “What’s it going to do?”
 MENU: “Is it even safe?”
-MINA: “I think that’s something the Operator should determine.”","Own the Aetheric Sextant,In Room: Slippery Pit",Move to Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
+MINA: “I think that’s something the Operator should determine.”","Own the Aetheric Sextant,In Room: Slippery Pit",In Room: Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
 SQ999,10002,In Game,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ""Melkarth's Heroic Awakening"" Spell Card"
 test-0,1000000,Test,Daily Test Quest,Yes,,,Beg for your MUSU.,,,,"10000x MUSU (Test),2x Agency Reputation"
 test-1,1000001,Test,Crafting Materials,No,,,Let there be Craft,,,Move 3 Times,"100x Stone,100x Stick,50x Plastic Bottle,10x Glass Jar,100x Pine Cones,100x Burgers"

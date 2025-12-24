@@ -114,7 +114,7 @@
 ,Move to the Trash-Strewn Graves,IS,BOOL,ROOM,26,
 ,Move to Shady Path,IS,BOOL,ROOM,55,
 ,Move to Slippery Pit,IS,BOOL,ROOM,68,
-,Move to Hatch to Nowhere,IS,BOOL,ROOM,72,
+,In Room: Hatch to Nowhere,IS,BOOL,ROOM,72,
 ,Move to Flood Mural,IS,BOOL,ROOM,75,
 ,Move to Abandoned Campsite,IS,BOOL,ROOM,79,
 ,Move to Reinforced Tunnel,IS,BOOL,ROOM,84,
