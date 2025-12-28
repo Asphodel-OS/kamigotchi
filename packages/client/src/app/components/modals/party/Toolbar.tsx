@@ -5,6 +5,7 @@ import {
   calcHealthPercent,
   calcHealthRate,
   getKamiRoomIndex,
+  isFull,
   isHarvesting,
   isResting,
   onCooldown,
@@ -112,8 +113,8 @@ export const Toolbar = ({
       });
     } else if (sort === 'resting rate') {
       sorted.sort((a, b) => {
-        const rateA = isResting(a) ? calcHealthRate(a) : 0;
-        const rateB = isResting(b) ? calcHealthRate(b) : 0;
+        const rateA = isResting(a) && !isFull(a) ? calcHealthRate(a) : 0;
+        const rateB = isResting(b) && !isFull(b) ? calcHealthRate(b) : 0;
         return rateB - rateA;
       });
     }
