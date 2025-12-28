@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import {
   calcHealthPercent,
+  calcHealthRate,
   getKamiRoomIndex,
   isHarvesting,
   isResting,
@@ -96,6 +97,24 @@ export const Toolbar = ({
         if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
         if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
         return diff;
+      });
+    } else if (sort === 'harvest rate') {
+      sorted.sort((a, b) => {
+        const rateA = a.harvest?.rates?.total?.average ?? 0;
+        const rateB = b.harvest?.rates?.total?.average ?? 0;
+        return rateB - rateA;
+      });
+    } else if (sort === 'strain') {
+      sorted.sort((a, b) => {
+        const rateA = isHarvesting(a) ? calcHealthRate(a) : 0;
+        const rateB = isHarvesting(b) ? calcHealthRate(b) : 0;
+        return rateA - rateB;
+      });
+    } else if (sort === 'resting rate') {
+      sorted.sort((a, b) => {
+        const rateA = isResting(a) ? calcHealthRate(a) : 0;
+        const rateB = isResting(b) ? calcHealthRate(b) : 0;
+        return rateB - rateA;
       });
     }
 

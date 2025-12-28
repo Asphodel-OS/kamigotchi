@@ -1,3 +1,4 @@
+import { CollectIcon, LiquidateIcon } from 'assets/images/icons/actions';
 import { KamiIcon } from 'assets/images/icons/menu';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { TriggerIcons } from 'assets/images/icons/triggers';
@@ -8,6 +9,9 @@ export const SortIcons: Record<Sort, string> = {
   name: KamiIcon,
   state: StatIcons.health,
   traits: TraitIcons.hand,
+  'harvest rate': CollectIcon,
+  'strain': LiquidateIcon,
+  'resting rate': StatIcons.harmony,
 };
 
 export const ViewIcons: Record<View, string> = {
