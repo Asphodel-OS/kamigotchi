@@ -1,4 +1,4 @@
-import { concatMap, from, Observable, of, retry, throwError, timeout, timer } from 'rxjs';
+import { concatMap, from, Observable, of, retry, Subject, throwError, timeout, timer } from 'rxjs';
 
 import { createKamigazeClient } from 'clients/kamigaze';
 import { EmptyNetworkEvent } from 'constants/stream';
@@ -16,6 +16,7 @@ export interface StreamOptions {
   decode: Decode;
   includeSystemCalls: boolean;
   fetchWorldEvents: FetchWorldEvents;
+  wakeSignal$?: Subject<void>;
 }
 
 interface StreamTrackingState {
@@ -27,7 +28,7 @@ interface StreamTrackingState {
 let currentBlock = 0;
 
 /** Calculate Fibonacci delay in ms, capped at maxSeconds */
-function getFibonacciDelay(attempt: number, maxSeconds: number = 10): number {
+function getFibonacciDelay(attempt: number, maxSeconds: number = 4): number {
   let a = 1,
     b = 1;
   for (let i = 2; i < attempt; i++) {
@@ -52,7 +53,7 @@ function getFibonacciDelay(attempt: number, maxSeconds: number = 10): number {
  * @returns Observable that emits NetworkEvents
  */
 export function createStream(options: StreamOptions): Observable<NetworkEvent> {
-  const { url, worldAddress, decode, includeSystemCalls, fetchWorldEvents } = options;
+  const { url, worldAddress, decode, includeSystemCalls, fetchWorldEvents, wakeSignal$ } = options;
   const transformWorldEvents = createTransformWorldEvents(decode);
 
   // Persist across retries
@@ -62,26 +63,51 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
     isFirstMessage: true,
   };
 
-  return createRawStream(
-    url,
-    worldAddress,
-    decode,
-    transformWorldEvents,
-    includeSystemCalls,
-    fetchWorldEvents,
-    trackingState
-  ).pipe(
-    timeout({
-      first: 10100,
-      each: 10100, // KeepAlive message freq from the backend
-      with: () =>
-        throwError(() => {
-          console.log('[kamigaze] Timeout - no data received for 10s');
-          return new Error('Stream timeout - no data received for 10s');
-        }),
-    }),
+  return new Observable<NetworkEvent>((subscriber) => {
+    // Subscribe to wake signal to trigger immediate reconnection
+    const wakeSub = wakeSignal$?.subscribe(() => {
+      console.log('[kamigaze] Wake signal received, forcing reconnection');
+      subscriber.error(new Error('Wake signal - forcing reconnection'));
+    });
+
+    const innerSub = createRawStream(
+      url,
+      worldAddress,
+      decode,
+      transformWorldEvents,
+      includeSystemCalls,
+      fetchWorldEvents,
+      trackingState
+    )
+      .pipe(
+        timeout({
+          first: 10100,
+          each: 10100, // KeepAlive message freq from the backend
+          with: () =>
+            throwError(() => {
+              console.log('[kamigaze] Timeout - no data received for 10s');
+              return new Error('Stream timeout - no data received for 10s');
+            }),
+        })
+      )
+      .subscribe({
+        next: (v) => subscriber.next(v),
+        error: (e) => subscriber.error(e),
+        complete: () => subscriber.complete(),
+      });
+
+    return () => {
+      wakeSub?.unsubscribe();
+      innerSub.unsubscribe();
+    };
+  }).pipe(
     retry({
       delay: (error, retryCount) => {
+        // Immediate retry on wake signal
+        if (error.message?.includes('Wake signal')) {
+          console.log('[kamigaze] Immediate retry due to wake signal');
+          return timer(0);
+        }
         const delayMs = getFibonacciDelay(retryCount);
         console.log(
           `[kamigaze] Retrying stream subscription... attempt ${retryCount} (waiting ${delayMs / 1000}s)`

@@ -55,15 +55,19 @@ const debug = parentDebug.extend('SyncWorker');
 export enum InputType {
   Ack,
   Config,
+  Wake,
 }
 export type Config = { type: InputType.Config; data: SyncWorkerConfig };
 export type Ack = { type: InputType.Ack };
+export type Wake = { type: InputType.Wake; timestamp: number };
 export const ack = { type: InputType.Ack as const };
-export type Input = Config | Ack;
+export const createWake = (): Wake => ({ type: InputType.Wake, timestamp: Date.now() });
+export type Input = Config | Ack | Wake;
 
 export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEvent<C>[]> {
   private input$ = new Subject<Input>();
   private output$ = new Subject<NetworkEvent<C>>();
+  private wakeSignal$ = new Subject<void>();
   private syncState: SyncStatus = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
   private config?: SyncWorkerConfig;
 
@@ -192,6 +196,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           decode,
           includeSystemCalls: Boolean(fetchSystemCalls),
           fetchWorldEvents,
+          wakeSignal$: this.wakeSignal$,
         })
       : createLatestEventStreamRPC(
           blockNumber$,
@@ -348,6 +353,11 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {
     input$.subscribe((e) => {
+      if (e.type === InputType.Wake) {
+        console.log(`[SyncWorker] Wake signal received (sent at ${new Date(e.timestamp).toISOString()})`);
+        this.wakeSignal$.next();
+        return;
+      }
       this.input$.next(e);
     });
     const throttledOutput$ = new Subject<NetworkEvent<C>[]>();
