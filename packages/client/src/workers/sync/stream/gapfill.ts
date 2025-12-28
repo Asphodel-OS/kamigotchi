@@ -29,17 +29,22 @@ export async function fetchGapEvents(
 
   // Try Kamigaze first
   try {
-    console.log(`[gapfill] Trying Kamigaze getEventsSince from block ${fromBlock}...`);
+    console.log(
+      `[gapfill] ${new Date().toISOString()} Trying Kamigaze getEventsSince from block ${fromBlock}...`
+    );
     const client = createKamigazeClient(kamigazeUrl);
     const gapResponse = await client.getEventsSince({
       sinceBlock: fromBlock,
     });
     const events = await parseGetEventsSinceResponse(gapResponse, decode, fromBlock);
-    console.log(`[gapfill] Got ${events.length} events from Kamigaze`);
+    console.log(`[gapfill] ${new Date().toISOString()} Got ${events.length} events from Kamigaze`);
     setPercentage?.(100);
     return events;
   } catch (err) {
-    console.warn('[gapfill] Kamigaze getEventsSince failed, falling back to RPC:', err);
+    console.warn(
+      `[gapfill] ${new Date().toISOString()} Kamigaze getEventsSince failed, falling back to RPC:`,
+      err
+    );
   }
 
   // Fallback to RPC

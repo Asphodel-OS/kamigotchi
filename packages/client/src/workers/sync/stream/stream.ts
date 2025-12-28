@@ -25,8 +25,6 @@ interface StreamTrackingState {
   isFirstMessage: boolean;
 }
 
-let currentBlock = 0;
-
 /** Calculate Fibonacci delay in ms, capped at maxSeconds */
 function getFibonacciDelay(attempt: number, maxSeconds: number = 4): number {
   let a = 1,

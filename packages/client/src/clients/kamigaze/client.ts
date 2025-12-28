@@ -5,13 +5,23 @@ import { KamigazeServiceClient, KamigazeServiceDefinition } from './proto';
 
 let Client: KamigazeServiceClient | null = null;
 
+// Reuse clients by URL to avoid recreating channels on each call
+const clientsByUrl = new Map<string, KamigazeServiceClient>();
+
 /**
- * Create a KamigazeServiceClient for a given URL.
- * Use this when you need a client for a specific endpoint.
+ * Get or create a KamigazeServiceClient for a given URL.
+ * Clients are reused by URL to preserve gRPC channels across reconnections.
  */
 export function createKamigazeClient(url: string): KamigazeServiceClient {
+  const existing = clientsByUrl.get(url);
+  if (existing) {
+    return existing;
+  }
+
   const channel = createChannel(url, getGrpcTransport());
-  return createClient(KamigazeServiceDefinition, channel);
+  const client = createClient(KamigazeServiceDefinition, channel);
+  clientsByUrl.set(url, client);
+  return client;
 }
 
 /**
