@@ -1,4 +1,15 @@
-import { concatMap, from, Observable, of, retry, Subject, throwError, timeout, timer } from 'rxjs';
+import {
+  concatMap,
+  from,
+  Observable,
+  of,
+  retry,
+  Subject,
+  tap,
+  throwError,
+  timeout,
+  timer,
+} from 'rxjs';
 
 import { createKamigazeClient } from 'clients/kamigaze';
 import { EmptyNetworkEvent } from 'constants/stream';
@@ -10,6 +21,15 @@ import { createTransformWorldEvents, parseSystemCalls, TransformWorldEvents } fr
 
 export type FetchWorldEvents = ReturnType<typeof createFetchWorldEventsInBlockRange>;
 
+/** Backend sends keepalive messages at this interval (ms) */
+export const KEEPALIVE_INTERVAL_MS = 10000;
+
+/** Buffer added to keepalive interval for stream timeout (ms) */
+export const STREAM_TIMEOUT_BUFFER_MS = 100;
+
+/** Buffer added to keepalive interval for health check threshold (ms) */
+export const HEALTH_CHECK_BUFFER_MS = 2000;
+
 export interface StreamOptions {
   url: string;
   worldAddress: string;
@@ -17,6 +37,7 @@ export interface StreamOptions {
   includeSystemCalls: boolean;
   fetchWorldEvents: FetchWorldEvents;
   wakeSignal$?: Subject<void>;
+  onMessage?: () => void;
 }
 
 interface StreamTrackingState {
@@ -51,7 +72,15 @@ function getFibonacciDelay(attempt: number, maxSeconds: number = 4): number {
  * @returns Observable that emits NetworkEvents
  */
 export function createStream(options: StreamOptions): Observable<NetworkEvent> {
-  const { url, worldAddress, decode, includeSystemCalls, fetchWorldEvents, wakeSignal$ } = options;
+  const {
+    url,
+    worldAddress,
+    decode,
+    includeSystemCalls,
+    fetchWorldEvents,
+    wakeSignal$,
+    onMessage,
+  } = options;
   const transformWorldEvents = createTransformWorldEvents(decode);
 
   // Persist across retries
@@ -78,13 +107,18 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
       trackingState
     )
       .pipe(
+        tap(() => onMessage?.()),
         timeout({
-          first: 10100,
-          each: 10100, // KeepAlive message freq from the backend
+          first: KEEPALIVE_INTERVAL_MS + STREAM_TIMEOUT_BUFFER_MS,
+          each: KEEPALIVE_INTERVAL_MS + STREAM_TIMEOUT_BUFFER_MS,
           with: () =>
             throwError(() => {
-              console.log('[kamigaze] Timeout - no data received for 10s');
-              return new Error('Stream timeout - no data received for 10s');
+              console.log(
+                `[kamigaze] Timeout - no data received for ${KEEPALIVE_INTERVAL_MS / 1000}s`
+              );
+              return new Error(
+                `Stream timeout - no data received for ${KEEPALIVE_INTERVAL_MS / 1000}s`
+              );
             }),
         })
       )

@@ -43,7 +43,12 @@ import {
   saveStateCacheToStore,
   storeStateEvents,
 } from './state';
-import { createStream, fillGap } from './stream';
+import {
+  createStream,
+  fillGap,
+  HEALTH_CHECK_BUFFER_MS,
+  KEEPALIVE_INTERVAL_MS,
+} from './stream';
 import {
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
@@ -68,6 +73,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   private input$ = new Subject<Input>();
   private output$ = new Subject<NetworkEvent<C>>();
   private wakeSignal$ = new Subject<void>();
+  private lastMessageTime = Date.now();
   private syncState: SyncStatus = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
   private config?: SyncWorkerConfig;
 
@@ -197,6 +203,9 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           includeSystemCalls: Boolean(fetchSystemCalls),
           fetchWorldEvents,
           wakeSignal$: this.wakeSignal$,
+          onMessage: () => {
+            this.lastMessageTime = Date.now();
+          },
         })
       : createLatestEventStreamRPC(
           blockNumber$,
@@ -354,7 +363,17 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {
     input$.subscribe((e) => {
       if (e.type === InputType.Wake) {
-        console.log(`[SyncWorker] Wake signal received (sent at ${new Date(e.timestamp).toISOString()})`);
+        const timeSinceLastMessage = Date.now() - this.lastMessageTime;
+        const healthThreshold = KEEPALIVE_INTERVAL_MS + HEALTH_CHECK_BUFFER_MS;
+        if (timeSinceLastMessage < healthThreshold) {
+          console.log(
+            `[SyncWorker] Stream healthy (last msg ${timeSinceLastMessage}ms ago), ignoring wake`
+          );
+          return;
+        }
+        console.log(
+          `[SyncWorker] Stream appears dead (${timeSinceLastMessage}ms since last msg), reconnecting`
+        );
         this.wakeSignal$.next();
         return;
       }

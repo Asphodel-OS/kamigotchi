@@ -49,7 +49,9 @@ export async function fetchGapEvents(
 
   // Fallback to RPC
   try {
-    console.log(`[gapfill] Using RPC fallback from block ${fromBlock} to ${toBlock}...`);
+    console.log(
+      `[gapfill] ${new Date().toISOString()} Using RPC fallback from block ${fromBlock} to ${toBlock}...`
+    );
     const events = await fetchEventsInBlockRangeChunked(
       fetchWorldEvents,
       fromBlock,
@@ -57,10 +59,10 @@ export async function fetchGapEvents(
       50,
       setPercentage
     );
-    console.log(`[gapfill] Got ${events.length} events from RPC`);
+    console.log(`[gapfill] ${new Date().toISOString()} Got ${events.length} events from RPC`);
     return events;
   } catch (rpcErr) {
-    console.warn('[gapfill] RPC fallback failed:', rpcErr);
+    console.warn(`[gapfill] ${new Date().toISOString()} RPC fallback failed:`, rpcErr);
     return [];
   }
 }
@@ -140,7 +142,7 @@ export async function fillGap(
       setPercentage,
     });
   } catch (err) {
-    console.warn('[gapfill] fetchGapEvents failed, falling back to RPC:', err);
+    console.warn(`[gapfill] ${new Date().toISOString()} fetchGapEvents failed, falling back to RPC:`, err);
     return await fetchEventsInBlockRangeChunked(
       fetchWorldEvents,
       fromBlock,
