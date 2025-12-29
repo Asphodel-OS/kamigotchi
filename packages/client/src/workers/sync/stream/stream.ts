@@ -162,7 +162,7 @@ function startProactiveGapFill(
     decode,
     fetchWorldEvents,
     fromBlock,
-    toBlock: 0,
+    skipRpcFallback: true,
   })
     .then((gapEvents) => {
       console.log(`[kamigaze] Emitting ${gapEvents.length} gap events immediately`);

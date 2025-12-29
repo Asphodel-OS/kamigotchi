@@ -11,8 +11,9 @@ export interface FetchGapEventsOptions {
   decode: Decode;
   fetchWorldEvents: FetchWorldEvents;
   fromBlock: number;
-  toBlock: number;
+  toBlock?: number;
   setPercentage?: (percentage: number) => void;
+  skipRpcFallback?: boolean;
 }
 
 /**
@@ -25,7 +26,7 @@ export interface FetchGapEventsOptions {
 export async function fetchGapEvents(
   options: FetchGapEventsOptions
 ): Promise<NetworkComponentUpdate[]> {
-  const { kamigazeUrl, decode, fetchWorldEvents, fromBlock, toBlock, setPercentage } = options;
+  const { kamigazeUrl, decode, fetchWorldEvents, fromBlock, toBlock, setPercentage, skipRpcFallback } = options;
 
   // Try Kamigaze first
   try {
@@ -48,6 +49,11 @@ export async function fetchGapEvents(
   }
 
   // Fallback to RPC
+  if (skipRpcFallback) {
+    console.warn(`[gapfill] ${new Date().toISOString()} RPC fallback skipped`);
+    return [];
+  }
+
   try {
     console.log(
       `[gapfill] ${new Date().toISOString()} Using RPC fallback from block ${fromBlock} to ${toBlock}...`
