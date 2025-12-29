@@ -1,7 +1,17 @@
+import ShareIcon from '@mui/icons-material/Share';
+import {
+  RedditIcon,
+  RedditShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  TwitterShareButton,
+  XIcon,
+} from 'react-share';
 import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
-import { TextTooltip } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
+import { Popover } from 'app/components/library/poppers';
 import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
@@ -86,7 +96,7 @@ export const KamiImage = ({
     }
   };
 
-  const handleShareClick = () => {
+  const handleDiscordShare = () => {
     playClick();
     shareToDiscord(kami.image);
   };
@@ -121,12 +131,50 @@ export const KamiImage = ({
           />
         )}
       </Overlay>
-      <Overlay top={3} right={0.5}>
-        <TextTooltip text={['Share to Discord']}>
-          <ShareButton onClick={handleShareClick}>
-            <ShareIcon src={DiscordIcon} alt="Discord" />
-          </ShareButton>
-        </TextTooltip>
+      <Overlay top={2.5} right={0.5}>
+        <Popover
+          content={[
+            <TwitterShareButton
+              key='twitter'
+              url={kami.image}
+              title={`Check out my Kami #${kami.index}!`}
+              resetButtonStyle={true}
+            >
+              <ShareButton>
+                <XIcon size={24} round />
+              </ShareButton>
+            </TwitterShareButton>,
+            <RedditShareButton
+              key='reddit'
+              url={kami.image}
+              title={`Check out my Kami #${kami.index}!`}
+              resetButtonStyle={true}
+            >
+              <ShareButton>
+                <RedditIcon size={24} round />
+              </ShareButton>
+            </RedditShareButton>,
+            <TelegramShareButton
+              key='telegram'
+              url={kami.image}
+              title={`Check out my Kami #${kami.index}!`}
+              resetButtonStyle={true}
+            >
+              <ShareButton>
+                <TelegramIcon size={24} round />
+              </ShareButton>
+            </TelegramShareButton>,
+            <ShareButton key='discord' onClick={handleDiscordShare}>
+              <TextTooltip text={['Copy image link and share on Discord']} cursor='pointer'>
+                <Discord src={DiscordIcon} alt='Discord' />
+              </TextTooltip>
+            </ShareButton>,
+          ]}
+        >
+          <TextTooltip text={['Share']}>
+            <IconButton img={ShareIcon} onClick={() => {}} scale={2} />
+          </TextTooltip>
+        </Popover>
       </Overlay>
       <Overlay bottom={0} fullWidth>
         <TextTooltip text={[`${expCurr}/${expLimit}`]} grow>
@@ -199,7 +247,6 @@ const Percentage = styled.div`
   width: 100%;
   padding-top: 0.15vw;
   pointer-events: none;
-
   font-size: 0.75vw;
   text-align: center;
   text-shadow: 0 0 0.5vw white;
@@ -213,10 +260,8 @@ const ExperienceBar = styled.div<{ percent: number }>`
   background-color: #bbb;
   height: 1.8vw;
   width: 100%;
-
   background: ${({ percent }) =>
     `linear-gradient(90deg, #11ee11, 0%, #11ee11, ${percent * 0.95}%, #bbb, ${percent * 1.05}%, #bbb 100%)`};
-
   display: flex;
   align-items: center;
 `;
@@ -230,11 +275,9 @@ const Button = styled.div<{
   opacity: 0.8;
   height: 1.8vw;
   width: 1.8vw;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#11ee11')};
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
@@ -247,7 +290,6 @@ const Button = styled.div<{
   &:active {
     animation: ${() => clickFx(0.1)} 0.3s;
   }
-
   color: black;
   font-size: 0.8vw;
   text-align: center;
@@ -259,28 +301,22 @@ const Arrow = styled.img`
   height: 1.2vw;
 `;
 
-const ShareButton = styled.button`
-  width: 2.2vw;
-  height: 2.2vw;
-  padding: 0.3vw;
-  border: 0.15vw solid rgba(0, 0, 0, 0.5);
-  border-radius: 0.4vw;
-  background-color: rgba(255, 255, 255, 0.9);
-  cursor: pointer;
+const ShareButton = styled.div`
+  width: 2vw;
+  height: 2vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
-
+  cursor: pointer;
+  border-radius: 50%;
+  transition: opacity 0.15s ease;
   &:hover {
-    background-color: #5865f2;
-    border-color: #5865f2;
-    transform: scale(1.1);
+    opacity: 0.7;
   }
 `;
 
-const ShareIcon = styled.img`
+const Discord = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  padding: 0.3vw;
 `;
