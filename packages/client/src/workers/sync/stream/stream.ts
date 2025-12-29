@@ -222,8 +222,6 @@ function createRawStream(
       )
       .subscribe(subscriber);
 
-    return () => {
-      console.log('[kamigaze] Cleaning up stream subscription');
-    };
+    return () => {};
   });
 }
