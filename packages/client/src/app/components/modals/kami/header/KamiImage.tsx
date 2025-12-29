@@ -6,9 +6,11 @@ import { Overlay } from 'app/components/library/styles';
 import { useSelected, useVisibility } from 'app/stores';
 import { clickFx, hoverFx, Shimmer } from 'app/styles/effects';
 import { ArrowIcons } from 'assets/images/icons/arrows';
+import { DiscordIcon } from 'assets/images/icons/misc';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
+import { shareToDiscord } from 'utils/share';
 import { playClick } from 'utils/sounds';
 
 const LEVEL_UP_STRING = 'Level Up!!';
@@ -84,6 +86,11 @@ export const KamiImage = ({
     }
   };
 
+  const handleShareClick = () => {
+    playClick();
+    shareToDiscord(kami.image);
+  };
+
   const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
 
   /////////////////
@@ -113,6 +120,13 @@ export const KamiImage = ({
             onKeyDown={handleIndexSubmit}
           />
         )}
+      </Overlay>
+      <Overlay top={3} right={0.5}>
+        <TextTooltip text={['Share to Discord']}>
+          <ShareButton onClick={handleShareClick}>
+            <ShareIcon src={DiscordIcon} alt="Discord" />
+          </ShareButton>
+        </TextTooltip>
       </Overlay>
       <Overlay bottom={0} fullWidth>
         <TextTooltip text={[`${expCurr}/${expLimit}`]} grow>
@@ -243,4 +257,30 @@ const Button = styled.div<{
 const Arrow = styled.img`
   width: 1.2vw;
   height: 1.2vw;
+`;
+
+const ShareButton = styled.button`
+  width: 2.2vw;
+  height: 2.2vw;
+  padding: 0.3vw;
+  border: 0.15vw solid rgba(0, 0, 0, 0.5);
+  border-radius: 0.4vw;
+  background-color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #5865f2;
+    border-color: #5865f2;
+    transform: scale(1.1);
+  }
+`;
+
+const ShareIcon = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
