@@ -15,8 +15,10 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 /** @notice
  * Scavenge (scav bar) is a point counter that distributes fungible rewards on a linear curve.
@@ -120,6 +122,7 @@ library LibScavenge {
   ) internal {
     uint256[] memory rwdIDs = getRewards(components, regID);
     LibAllo.distribute(world, components, rwdIDs, count, holderID);
+    emitLog(world, regID, count, holderID, rwdIDs);
   }
 
   /////////////////
@@ -171,6 +174,48 @@ library LibScavenge {
     types[2] = string("SCAV_CLAIM_AFFINITY_").concat(data.affinity);
 
     LibData.inc(components, accID, indices, types, amt);
+  }
+
+  function emitLog(
+    IWorld world,
+    uint256 regID,
+    uint256 count,
+    uint256 holderID,
+    uint256[] memory rwdIDs
+  ) internal {
+    ScavengeRewardsEventData memory eventData = ScavengeRewardsEventData({
+      regID: regID,
+      count: count,
+      holderID: holderID,
+      rwdIDs: rwdIDs
+    });
+
+    LibEmitter.emitEvent(
+      world,
+      "SCAVENGE_REWARDS",
+      _schema(),
+      _encodeScavengeRewardsEvent(eventData)
+    );
+  }
+
+  struct ScavengeRewardsEventData {
+    uint256 regID;
+    uint256 count;
+    uint256 holderID;
+    uint256[] rwdIDs;
+  }
+
+  function _schema() internal pure returns (uint8[] memory) {
+    uint8[] memory schema = new uint8[](4);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+    schema[3] = uint8(LibTypes.SchemaValue.UINT256_ARRAY);
+    return schema;
+  }
+
+  function _encodeScavengeRewardsEvent(ScavengeRewardsEventData memory data) internal pure returns (bytes memory) {
+    return abi.encode(data.regID, data.count, data.holderID, data.rwdIDs);
   }
 
   /////////////////
