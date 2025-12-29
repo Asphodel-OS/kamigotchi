@@ -25,7 +25,7 @@ export type FetchWorldEvents = ReturnType<typeof createFetchWorldEventsInBlockRa
 export const KEEPALIVE_INTERVAL_MS = 10000;
 
 /** Buffer added to keepalive interval for stream timeout (ms) */
-export const STREAM_TIMEOUT_BUFFER_MS = 100;
+export const STREAM_TIMEOUT_BUFFER_MS = 500;
 
 /** Buffer added to keepalive interval for health check threshold (ms) */
 export const HEALTH_CHECK_BUFFER_MS = 2000;
