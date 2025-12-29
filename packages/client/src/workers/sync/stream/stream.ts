@@ -146,6 +146,34 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
 }
 
 /**
+ * Proactive gap-fill: fetch and emit events immediately on reconnect.
+ * Runs in parallel with stream subscription for faster recovery.
+ */
+function startProactiveGapFill(
+  subscriber: { next: (e: NetworkEvent) => void },
+  url: string,
+  decode: Decode,
+  fetchWorldEvents: FetchWorldEvents,
+  fromBlock: number
+): void {
+  console.log(`[kamigaze] Proactive gap-fill from block ${fromBlock}`);
+  fetchGapEvents({
+    kamigazeUrl: url,
+    decode,
+    fetchWorldEvents,
+    fromBlock,
+    toBlock: 0,
+  })
+    .then((gapEvents) => {
+      console.log(`[kamigaze] Emitting ${gapEvents.length} gap events immediately`);
+      gapEvents.forEach((e) => subscriber.next(e));
+    })
+    .catch((err) => {
+      console.warn('[kamigaze] Proactive gap-fill failed:', err);
+    });
+}
+
+/**
  * Create a raw RxJS stream of NetworkEvents without timeout/retry resilience.
  * Use createStream for production use.
  */
@@ -161,6 +189,19 @@ function createRawStream(
   return new Observable((subscriber) => {
     const client = createKamigazeClient(url);
 
+    let proactiveGapFill = false;
+    // Proactive gap-fill on reconnect
+    if (trackingState.expectedPrevLogBlock > 0) {
+      startProactiveGapFill(
+        subscriber,
+        url,
+        decode,
+        fetchWorldEvents,
+        trackingState.expectedPrevLogBlock
+      );
+      proactiveGapFill = true;
+    }
+
     const response = client.subscribeToStream({});
     console.log('[kamigaze] subscribeToStream');
 
@@ -170,13 +211,13 @@ function createRawStream(
       .pipe(
         concatMap(async (responseChunk) => {
           let events = await transformWorldEvents(responseChunk);
+
           if (trackingState.isFirstMessage) {
             trackingState.isFirstMessage = false;
             console.log(
               `Stream started at block ${responseChunk.blockNumber}, logIndex ${responseChunk.logIndex}`
             );
           } else {
-            // Verify the message's prevLogIndex/prevLogBlockNumber match what we expect
             if (responseChunk.prevLogBlockNumber !== trackingState.expectedPrevLogBlock) {
               console.warn(
                 `Stream continuity warning: prevLogBlockNumber mismatch. Expected ${trackingState.expectedPrevLogBlock}, got ${responseChunk.prevLogBlockNumber}`
@@ -190,7 +231,7 @@ function createRawStream(
               gapToFill = true;
             }
 
-            if (gapToFill) {
+            if (gapToFill && !proactiveGapFill) {
               console.warn(`Getting events since block ${trackingState.expectedPrevLogBlock}`);
               gapToFill = false;
 
@@ -201,13 +242,14 @@ function createRawStream(
                 fromBlock: trackingState.expectedPrevLogBlock,
                 toBlock: responseChunk.blockNumber,
               });
-              // Prepend gap events to current events
               events = [...gapEvents, ...events];
             }
           }
-          // Update expected values for next message
+
           trackingState.expectedPrevLogIndex = responseChunk.logIndex;
           trackingState.expectedPrevLogBlock = responseChunk.blockNumber;
+          proactiveGapFill = false;
+          gapToFill = false;
 
           if (events.length === 0) return [EmptyNetworkEvent];
 
