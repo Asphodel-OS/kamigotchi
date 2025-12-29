@@ -22,24 +22,6 @@ export function createSyncWorker<C extends Components>(ack$?: Observable<Ack>) {
   });
   const ecsEvents$ = new Subject<NetworkEvent<C>[]>();
 
-  // Handle reloads from worker
-  worker.addEventListener('message', (event) => {
-    if (event.data.type === 'RELOAD_REQUIRED') {
-      const lastReload = localStorage.getItem('lastBlockGapReload');
-      const now = Date.now();
-
-      if (!lastReload || now - parseInt(lastReload) > event.data.minTimeBetweenReloads) {
-        console.log('Large block gap detected, reloadingpage...');
-        localStorage.setItem('lastBlockGapReload', now.toString());
-        window.location.reload();
-      } else {
-        console.log(
-          `Skipping reload.. ${now - parseInt(lastReload)} > ${event.data.minTimeBetweenReloads}`
-        );
-      }
-    }
-  });
-
   // Visibility change handler for mobile wake-up (debounced to max 1 per second)
   let lastWakeSignal = 0;
   const WAKE_DEBOUNCE_MS = 1000;
