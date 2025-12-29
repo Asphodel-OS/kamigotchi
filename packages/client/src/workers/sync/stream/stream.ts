@@ -46,17 +46,12 @@ interface StreamTrackingState {
   isFirstMessage: boolean;
 }
 
-/** Calculate Fibonacci delay in ms, capped at maxSeconds */
-function getFibonacciDelay(attempt: number, maxSeconds: number = 4): number {
-  let a = 1,
-    b = 1;
-  for (let i = 2; i < attempt; i++) {
-    const next = a + b;
-    a = b;
-    b = next;
-  }
-  const seconds = Math.min(attempt <= 1 ? 1 : b, maxSeconds);
-  return seconds * 1000;
+/** Fixed retry delays in seconds, capped at last value */
+const RETRY_DELAYS_SECONDS = [1, 2, 3, 5, 10];
+
+function getRetryDelay(retryCount: number): number {
+  const index = Math.min(retryCount, RETRY_DELAYS_SECONDS.length - 1);
+  return RETRY_DELAYS_SECONDS[index] * 1000;
 }
 
 /**
@@ -140,7 +135,7 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
           console.log('[kamigaze] Immediate retry due to wake signal');
           return timer(0);
         }
-        const delayMs = getFibonacciDelay(retryCount);
+        const delayMs = getRetryDelay(retryCount);
         console.log(
           `[kamigaze] Retrying stream subscription... attempt ${retryCount} (waiting ${delayMs / 1000}s)`
         );
