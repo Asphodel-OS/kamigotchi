@@ -56,7 +56,7 @@ export function createVisibilityHandler<C extends Components>(
       console.log(
         `[Visibility] Stream healthy (last event ${timeSinceLastEvent}ms ago), skipping main-thread gapfill`
       );
-      //return;
+      return;
     }
 
     // Fetch events since last known block from main thread
