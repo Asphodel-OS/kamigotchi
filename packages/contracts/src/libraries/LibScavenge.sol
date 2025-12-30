@@ -122,7 +122,33 @@ library LibScavenge {
   ) internal {
     uint256[] memory rwdIDs = getRewards(components, regID);
     LibAllo.distribute(world, components, rwdIDs, count, holderID);
-    emitLog(world, regID, count, holderID, rwdIDs);
+
+    uint32 nodeIndex = IndexComponent(getAddrByID(components, IndexCompID)).get(regID);
+    (uint32[] memory itemIndices, uint256[] memory itemAmounts) = _getItemData(
+      components,
+      rwdIDs,
+      count
+    );
+    emitLog(world, nodeIndex, holderID, itemIndices, itemAmounts);
+  }
+
+  function _getItemData(
+    IUintComp components,
+    uint256[] memory rwdIDs,
+    uint256 count
+  ) internal view returns (uint32[] memory, uint256[] memory) {
+    IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
+    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
+
+    uint32[] memory indices = new uint32[](rwdIDs.length);
+    uint256[] memory amounts = new uint256[](rwdIDs.length);
+
+    for (uint256 i; i < rwdIDs.length; i++) {
+      indices[i] = indexComp.safeGet(rwdIDs[i]);
+      amounts[i] = valueComp.safeGet(rwdIDs[i]) * count;
+    }
+
+    return (indices, amounts);
   }
 
   /////////////////
@@ -178,16 +204,17 @@ library LibScavenge {
 
   function emitLog(
     IWorld world,
-    uint256 regID,
-    uint256 count,
+    uint32 nodeIndex,
     uint256 holderID,
-    uint256[] memory rwdIDs
+    uint32[] memory itemIndices,
+    uint256[] memory itemAmounts
   ) internal {
     ScavengeRewardsEventData memory eventData = ScavengeRewardsEventData({
-      regID: regID,
-      count: count,
-      holderID: holderID,
-      rwdIDs: rwdIDs
+      nodeIndex: nodeIndex,
+      accID: holderID,
+      timestamp: block.timestamp,
+      itemIndices: itemIndices,
+      itemAmounts: itemAmounts
     });
 
     LibEmitter.emitEvent(
@@ -199,23 +226,25 @@ library LibScavenge {
   }
 
   struct ScavengeRewardsEventData {
-    uint256 regID;
-    uint256 count;
-    uint256 holderID;
-    uint256[] rwdIDs;
+    uint32 nodeIndex;
+    uint256 accID;
+    uint256 timestamp;
+    uint32[] itemIndices;
+    uint256[] itemAmounts;
   }
 
   function _schema() internal pure returns (uint8[] memory) {
-    uint8[] memory schema = new uint8[](4);
-    schema[0] = uint8(LibTypes.SchemaValue.UINT256);
+    uint8[] memory schema = new uint8[](5);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT32);
     schema[1] = uint8(LibTypes.SchemaValue.UINT256);
     schema[2] = uint8(LibTypes.SchemaValue.UINT256);
-    schema[3] = uint8(LibTypes.SchemaValue.UINT256_ARRAY);
+    schema[3] = uint8(LibTypes.SchemaValue.UINT32_ARRAY);
+    schema[4] = uint8(LibTypes.SchemaValue.UINT256_ARRAY);
     return schema;
   }
 
-  function _encodeScavengeRewardsEvent(ScavengeRewardsEventData memory data) internal pure returns (bytes memory) {
-    return abi.encode(data.regID, data.count, data.holderID, data.rwdIDs);
+  function _encodeScavengeRewardsEvent(ScavengeRewardsEventData memory data) internal view returns (bytes memory) {
+    return abi.encode(data.nodeIndex, data.accID, data.timestamp, data.itemIndices, data.itemAmounts);
   }
 
   /////////////////
