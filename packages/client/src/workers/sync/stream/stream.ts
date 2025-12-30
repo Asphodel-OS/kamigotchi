@@ -44,6 +44,7 @@ interface StreamTrackingState {
   expectedPrevLogIndex: number;
   expectedPrevLogBlock: number;
   isFirstMessage: boolean;
+  proactiveInFlight: boolean;
 }
 
 /** Fixed retry delays in seconds, capped at last value */
@@ -83,6 +84,7 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
     expectedPrevLogIndex: -1,
     expectedPrevLogBlock: -1,
     isFirstMessage: true,
+    proactiveInFlight: false,
   };
 
   return new Observable<NetworkEvent>((subscriber) => {
@@ -154,9 +156,11 @@ function startProactiveGapFill(
   url: string,
   decode: Decode,
   fetchWorldEvents: FetchWorldEvents,
-  fromBlock: number
+  fromBlock: number,
+  trackingState: StreamTrackingState
 ): void {
   console.log(`[kamigaze] Proactive gap-fill from block ${fromBlock}`);
+  trackingState.proactiveInFlight = true;
   fetchGapEvents({
     kamigazeUrl: url,
     decode,
@@ -170,6 +174,9 @@ function startProactiveGapFill(
     })
     .catch((err) => {
       console.warn('[kamigaze] Proactive gap-fill failed:', err);
+    })
+    .finally(() => {
+      trackingState.proactiveInFlight = false;
     });
 }
 
@@ -189,21 +196,23 @@ function createRawStream(
   return new Observable((subscriber) => {
     const client = createKamigazeClient(url);
 
-    let proactiveGapFill = false;
-    // Proactive gap-fill on reconnect
-    if (trackingState.expectedPrevLogBlock > 0) {
+    const response = client.subscribeToStream({});
+    console.log('[kamigaze] subscribeToStream');
+    // Proactive gap-fill on reconnect (skip if already in-flight)
+    let proactiveGapFill = trackingState.proactiveInFlight;
+    if (trackingState.proactiveInFlight) {
+      console.log('[kamigaze] Skipping proactive gap-fill (already in-flight)');
+    } else if (trackingState.expectedPrevLogBlock > 0) {
+      proactiveGapFill = true;
       startProactiveGapFill(
         subscriber,
         url,
         decode,
         fetchWorldEvents,
-        trackingState.expectedPrevLogBlock
+        trackingState.expectedPrevLogBlock,
+        trackingState
       );
-      proactiveGapFill = true;
     }
-
-    const response = client.subscribeToStream({});
-    console.log('[kamigaze] subscribeToStream');
 
     let gapToFill = false;
 
