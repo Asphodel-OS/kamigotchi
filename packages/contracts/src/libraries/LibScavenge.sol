@@ -123,32 +123,36 @@ library LibScavenge {
     uint256[] memory rwdIDs = getRewards(components, regID);
     LibAllo.distribute(world, components, rwdIDs, count, holderID);
 
+    string memory scavengeType = TypeComponent(getAddrByID(components, TypeCompID)).get(regID);
     uint32 nodeIndex = IndexComponent(getAddrByID(components, IndexCompID)).get(regID);
-    (uint32[] memory itemIndices, uint256[] memory itemAmounts) = _getItemData(
+    (string[] memory rewardTypes, uint32[] memory rewardIndices, uint256[] memory rewardAmounts) = _getRewardData(
       components,
       rwdIDs,
       count
     );
-    emitLog(world, nodeIndex, holderID, itemIndices, itemAmounts);
+    emitLog(world, regID, scavengeType, nodeIndex, holderID, rewardTypes, rewardIndices, rewardAmounts);
   }
 
-  function _getItemData(
+  function _getRewardData(
     IUintComp components,
     uint256[] memory rwdIDs,
     uint256 count
-  ) internal view returns (uint32[] memory, uint256[] memory) {
+  ) internal view returns (string[] memory, uint32[] memory, uint256[] memory) {
+    TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
     IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
 
+    string[] memory types = new string[](rwdIDs.length);
     uint32[] memory indices = new uint32[](rwdIDs.length);
     uint256[] memory amounts = new uint256[](rwdIDs.length);
 
     for (uint256 i; i < rwdIDs.length; i++) {
+      types[i] = typeComp.get(rwdIDs[i]);
       indices[i] = indexComp.safeGet(rwdIDs[i]);
       amounts[i] = valueComp.safeGet(rwdIDs[i]) * count;
     }
 
-    return (indices, amounts);
+    return (types, indices, amounts);
   }
 
   /////////////////
@@ -204,17 +208,23 @@ library LibScavenge {
 
   function emitLog(
     IWorld world,
+    uint256 regID,
+    string memory scavengeType,
     uint32 nodeIndex,
     uint256 holderID,
-    uint32[] memory itemIndices,
-    uint256[] memory itemAmounts
+    string[] memory rewardTypes,
+    uint32[] memory rewardIndices,
+    uint256[] memory rewardAmounts
   ) internal {
     ScavengeRewardsEventData memory eventData = ScavengeRewardsEventData({
+      regID: regID,
+      scavengeType: scavengeType,
       nodeIndex: nodeIndex,
-      accID: holderID,
+      holderID: holderID,
       timestamp: block.timestamp,
-      itemIndices: itemIndices,
-      itemAmounts: itemAmounts
+      rewardTypes: rewardTypes,
+      rewardIndices: rewardIndices,
+      rewardAmounts: rewardAmounts
     });
 
     LibEmitter.emitEvent(
@@ -226,25 +236,40 @@ library LibScavenge {
   }
 
   struct ScavengeRewardsEventData {
+    uint256 regID;
+    string scavengeType;
     uint32 nodeIndex;
-    uint256 accID;
+    uint256 holderID;
     uint256 timestamp;
-    uint32[] itemIndices;
-    uint256[] itemAmounts;
+    string[] rewardTypes;
+    uint32[] rewardIndices;
+    uint256[] rewardAmounts;
   }
 
   function _schema() internal pure returns (uint8[] memory) {
-    uint8[] memory schema = new uint8[](5);
-    schema[0] = uint8(LibTypes.SchemaValue.UINT32);
-    schema[1] = uint8(LibTypes.SchemaValue.UINT256);
-    schema[2] = uint8(LibTypes.SchemaValue.UINT256);
-    schema[3] = uint8(LibTypes.SchemaValue.UINT32_ARRAY);
-    schema[4] = uint8(LibTypes.SchemaValue.UINT256_ARRAY);
+    uint8[] memory schema = new uint8[](8);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT256);       // regID
+    schema[1] = uint8(LibTypes.SchemaValue.STRING);        // scavengeType
+    schema[2] = uint8(LibTypes.SchemaValue.UINT32);        // nodeIndex
+    schema[3] = uint8(LibTypes.SchemaValue.UINT256);       // holderID
+    schema[4] = uint8(LibTypes.SchemaValue.UINT256);       // timestamp
+    schema[5] = uint8(LibTypes.SchemaValue.STRING_ARRAY);  // rewardTypes
+    schema[6] = uint8(LibTypes.SchemaValue.UINT32_ARRAY);  // rewardIndices
+    schema[7] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // rewardAmounts
     return schema;
   }
 
-  function _encodeScavengeRewardsEvent(ScavengeRewardsEventData memory data) internal view returns (bytes memory) {
-    return abi.encode(data.nodeIndex, data.accID, data.timestamp, data.itemIndices, data.itemAmounts);
+  function _encodeScavengeRewardsEvent(ScavengeRewardsEventData memory data) internal pure returns (bytes memory) {
+    return abi.encode(
+      data.regID,
+      data.scavengeType,
+      data.nodeIndex,
+      data.holderID,
+      data.timestamp,
+      data.rewardTypes,
+      data.rewardIndices,
+      data.rewardAmounts
+    );
   }
 
   /////////////////
