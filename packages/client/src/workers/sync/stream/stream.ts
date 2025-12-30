@@ -40,6 +40,7 @@ export interface StreamOptions {
   includeSystemCalls: boolean;
   fetchWorldEvents: FetchWorldEvents;
   wakeSignal$?: Subject<void>;
+  blockUpdate$?: Subject<number>;
   onMessage?: () => void;
 }
 
@@ -47,8 +48,6 @@ interface StreamTrackingState {
   expectedPrevLogIndex: number;
   expectedPrevLogBlock: number;
   isFirstMessage: boolean;
-  proactiveInFlight: boolean;
-  isWakeReconnect: boolean;
 }
 
 /** Fixed retry delays in seconds, capped at last value */
@@ -79,6 +78,7 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
     includeSystemCalls,
     fetchWorldEvents,
     wakeSignal$,
+    blockUpdate$,
     onMessage,
   } = options;
   const transformWorldEvents = createTransformWorldEvents(decode);
@@ -88,9 +88,18 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
     expectedPrevLogIndex: -1,
     expectedPrevLogBlock: -1,
     isFirstMessage: true,
-    proactiveInFlight: false,
-    isWakeReconnect: false,
   };
+
+  // Update tracking state from main thread gapfill
+  blockUpdate$?.subscribe((blockNumber) => {
+    console.log(
+      `[kamigaze] worker received blockUpdate ${blockNumber} > ${trackingState.expectedPrevLogBlock}`
+    );
+    if (blockNumber > trackingState.expectedPrevLogBlock) {
+      console.log(`[kamigaze] Block update from main thread: ${blockNumber}`);
+      trackingState.expectedPrevLogBlock = blockNumber;
+    }
+  });
 
   return new Observable<NetworkEvent>((subscriber) => {
     // Subscribe to wake signal to trigger immediate reconnection
@@ -140,11 +149,9 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
         // Immediate retry on wake signal
         if (error.message?.includes('Wake signal')) {
           console.log('[kamigaze] Immediate retry due to wake signal');
-          trackingState.isWakeReconnect = true;
           return timer(0);
         }
 
-        trackingState.isWakeReconnect = false;
         const delayMs = getRetryDelay(retryCount);
         console.log(
           `[kamigaze] Retrying stream subscription... attempt ${retryCount} (waiting ${delayMs / 1000}s)`
@@ -159,7 +166,6 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
               take(1), // Only react to first wake signal
               tap(() => {
                 console.log('[kamigaze] Wake signal during retry delay, retrying immediately');
-                trackingState.isWakeReconnect = true; // Enable proactive gap-fill
               }),
               switchMap(() => timer(0)) // Emit immediately to trigger retry
             )
@@ -170,39 +176,6 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
       },
     })
   );
-}
-
-/**
- * Proactive gap-fill: fetch and emit events immediately on reconnect.
- * Runs in parallel with stream subscription for faster recovery.
- */
-function startProactiveGapFill(
-  subscriber: { next: (e: NetworkEvent) => void },
-  url: string,
-  decode: Decode,
-  fetchWorldEvents: FetchWorldEvents,
-  fromBlock: number,
-  trackingState: StreamTrackingState
-): void {
-  console.log(`[kamigaze] Proactive gap-fill from block ${fromBlock}`);
-  trackingState.proactiveInFlight = true;
-  fetchGapEvents({
-    kamigazeUrl: url,
-    decode,
-    fetchWorldEvents,
-    fromBlock,
-    skipRpcFallback: true,
-  })
-    .then((gapEvents) => {
-      console.log(`[kamigaze] Emitting ${gapEvents.length} gap events immediately`);
-      gapEvents.forEach((e) => subscriber.next(e));
-    })
-    .catch((err) => {
-      console.warn('[kamigaze] Proactive gap-fill failed:', err);
-    })
-    .finally(() => {
-      trackingState.proactiveInFlight = false;
-    });
 }
 
 /**
@@ -223,27 +196,8 @@ function createRawStream(
 
     const response = client.subscribeToStream({});
     console.log('[kamigaze] subscribeToStream', {
-      isWakeReconnect: trackingState.isWakeReconnect,
       expectedPrevLogBlock: trackingState.expectedPrevLogBlock,
-      proactiveInFlight: trackingState.proactiveInFlight,
     });
-    // Proactive gap-fill only on wake reconnect (skip if already in-flight)
-    let proactiveGapFill = trackingState.proactiveInFlight;
-    if (trackingState.proactiveInFlight) {
-      console.log('[kamigaze] Skipping proactive gap-fill (already in-flight)');
-    } else if (!trackingState.isWakeReconnect) {
-      console.log('[kamigaze] Skipping proactive gap-fill (not a wake reconnect)');
-    } else if (trackingState.expectedPrevLogBlock > 0) {
-      proactiveGapFill = true;
-      startProactiveGapFill(
-        subscriber,
-        url,
-        decode,
-        fetchWorldEvents,
-        trackingState.expectedPrevLogBlock,
-        trackingState
-      );
-    }
 
     let gapToFill = false;
 
@@ -271,7 +225,7 @@ function createRawStream(
               gapToFill = true;
             }
 
-            if (gapToFill && !proactiveGapFill) {
+            if (gapToFill) {
               console.warn(`Getting events since block ${trackingState.expectedPrevLogBlock}`);
               gapToFill = false;
 
@@ -288,7 +242,6 @@ function createRawStream(
 
           trackingState.expectedPrevLogIndex = responseChunk.logIndex;
           trackingState.expectedPrevLogBlock = responseChunk.blockNumber;
-          proactiveGapFill = false;
           gapToFill = false;
 
           if (events.length === 0) return [EmptyNetworkEvent];

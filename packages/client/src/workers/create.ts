@@ -2,8 +2,9 @@ import { Components } from 'engine/recs';
 import { map, Observable, Subject, timer } from 'rxjs';
 
 import { fromWorker } from 'workers/utils';
-import { Ack, ack, createWake, Input } from './sync/Worker';
+import { Ack, ack, Input } from './sync/Worker';
 import { NetworkEvent } from './types';
+import { createVisibilityHandler } from './visibility';
 
 /**
  * Create a new SyncWorker ({@link Sync.worker.ts}) to performn contract/client state sync.
@@ -22,26 +23,8 @@ export function createSyncWorker<C extends Components>(ack$?: Observable<Ack>) {
   });
   const ecsEvents$ = new Subject<NetworkEvent<C>[]>();
 
-  // Visibility change handler for mobile wake-up (debounced to max 1 per second)
-  let lastWakeSignal = 0;
-  const WAKE_DEBOUNCE_MS = 1000;
-
-  const handleVisibilityChange = () => {
-    if (document.visibilityState === 'visible') {
-      const now = Date.now();
-      if (now - lastWakeSignal < WAKE_DEBOUNCE_MS) {
-        console.log('[SyncWorker] Wake signal debounced');
-        return;
-      }
-      lastWakeSignal = now;
-      console.log('[SyncWorker] App became visible, sending wake signal');
-      input$.next(createWake());
-    }
-  };
-
-  if (typeof document !== 'undefined') {
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-  }
+  // Handle visibility changes (wake signals + main-thread gapfill)
+  const visibilityHandler = createVisibilityHandler({ input$, ecsEvents$ });
 
   // Send ack every 16ms if no external ack$ is provided
   ack$ = ack$ || timer(0, 16).pipe(map(() => ack));
@@ -49,13 +32,12 @@ export function createSyncWorker<C extends Components>(ack$?: Observable<Ack>) {
 
   // Pass in a "config stream", receive a stream of ECS events
   const subscription = fromWorker<Input, NetworkEvent<C>[]>(worker, input$).subscribe(ecsEvents$);
+
   const dispose = () => {
     worker.terminate();
     subscription?.unsubscribe();
     ackSub?.unsubscribe();
-    if (typeof document !== 'undefined') {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }
+    visibilityHandler.dispose();
   };
 
   return {

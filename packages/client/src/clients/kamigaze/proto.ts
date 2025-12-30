@@ -107,6 +107,7 @@ export interface GetEventsSinceRequest {
 
 export interface GetEventsSinceResponse {
   events: ECSEvent[];
+  latestBlock: number;
 }
 
 function createBaseEntity(): Entity {
@@ -1222,13 +1223,16 @@ export const GetEventsSinceRequest: MessageFns<GetEventsSinceRequest> = {
 };
 
 function createBaseGetEventsSinceResponse(): GetEventsSinceResponse {
-  return { events: [] };
+  return { events: [], latestBlock: 0 };
 }
 
 export const GetEventsSinceResponse: MessageFns<GetEventsSinceResponse> = {
   encode(message: GetEventsSinceResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     for (const v of message.events) {
       ECSEvent.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.latestBlock !== 0) {
+      writer.uint32(16).uint32(message.latestBlock);
     }
     return writer;
   },
@@ -1248,6 +1252,14 @@ export const GetEventsSinceResponse: MessageFns<GetEventsSinceResponse> = {
           message.events.push(ECSEvent.decode(reader, reader.uint32()));
           continue;
         }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.latestBlock = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1263,6 +1275,7 @@ export const GetEventsSinceResponse: MessageFns<GetEventsSinceResponse> = {
   fromPartial(object: DeepPartial<GetEventsSinceResponse>): GetEventsSinceResponse {
     const message = createBaseGetEventsSinceResponse();
     message.events = object.events?.map((e) => ECSEvent.fromPartial(e)) || [];
+    message.latestBlock = object.latestBlock ?? 0;
     return message;
   },
 };

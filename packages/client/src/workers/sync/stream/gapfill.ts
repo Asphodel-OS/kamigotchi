@@ -26,7 +26,15 @@ export interface FetchGapEventsOptions {
 export async function fetchGapEvents(
   options: FetchGapEventsOptions
 ): Promise<NetworkComponentUpdate[]> {
-  const { kamigazeUrl, decode, fetchWorldEvents, fromBlock, toBlock, setPercentage, skipRpcFallback } = options;
+  const {
+    kamigazeUrl,
+    decode,
+    fetchWorldEvents,
+    fromBlock,
+    toBlock,
+    setPercentage,
+    skipRpcFallback,
+  } = options;
 
   // Try Kamigaze first
   try {
@@ -37,8 +45,10 @@ export async function fetchGapEvents(
     const gapResponse = await client.getEventsSince({
       sinceBlock: fromBlock,
     });
-    const events = await parseGetEventsSinceResponse(gapResponse, decode, fromBlock);
-    console.log(`[gapfill] ${new Date().toISOString()} Got ${events.length} events from Kamigaze`);
+    const events = await parseGetEventsSinceResponse(gapResponse, decode, fromBlock, '[Worker]');
+    console.log(
+      `[gapfill] ${new Date().toISOString()} Got ${events.length} events from Kamigaze - latestBlock ${gapResponse.latestBlock}`
+    );
     setPercentage?.(100);
     return events;
   } catch (err) {
@@ -61,7 +71,7 @@ export async function fetchGapEvents(
     const events = await fetchEventsInBlockRangeChunked(
       fetchWorldEvents,
       fromBlock,
-      toBlock,
+      toBlock!,
       50,
       setPercentage
     );
@@ -84,12 +94,17 @@ export async function fetchGapEvents(
 export async function parseGetEventsSinceResponse(
   response: GetEventsSinceResponse,
   decode: Decode,
-  blockNumber: number = 0
+  blockNumber: number = 0,
+  source: string
 ): Promise<NetworkComponentUpdate[]> {
+  console.log(`${source} On parseGetEventsSinceResponse`);
   const { events } = response;
   const updates: NetworkComponentUpdate[] = [];
 
   for (let i = 0; i < events.length; i++) {
+    if (i % 10 == 0) {
+      console.log(`${source} Event ${i}`);
+    }
     const ecsEvent = events[i]!;
 
     const component = formatComponentID(ecsEvent.componentId);
@@ -113,7 +128,7 @@ export async function parseGetEventsSinceResponse(
       txMetadata: ecsEvent.txMetadata,
     });
   }
-
+  console.log(`${source} done with parseGetEventsSinceResponse`);
   return updates;
 }
 
@@ -148,7 +163,10 @@ export async function fillGap(
       setPercentage,
     });
   } catch (err) {
-    console.warn(`[gapfill] ${new Date().toISOString()} fetchGapEvents failed, falling back to RPC:`, err);
+    console.warn(
+      `[gapfill] ${new Date().toISOString()} fetchGapEvents failed, falling back to RPC:`,
+      err
+    );
     return await fetchEventsInBlockRangeChunked(
       fetchWorldEvents,
       fromBlock,

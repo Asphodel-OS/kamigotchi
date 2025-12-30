@@ -61,18 +61,25 @@ export enum InputType {
   Ack,
   Config,
   Wake,
+  BlockUpdate,
 }
 export type Config = { type: InputType.Config; data: SyncWorkerConfig };
 export type Ack = { type: InputType.Ack };
 export type Wake = { type: InputType.Wake; timestamp: number };
+export type BlockUpdate = { type: InputType.BlockUpdate; blockNumber: number };
 export const ack = { type: InputType.Ack as const };
 export const createWake = (): Wake => ({ type: InputType.Wake, timestamp: Date.now() });
-export type Input = Config | Ack | Wake;
+export const createBlockUpdate = (blockNumber: number): BlockUpdate => ({
+  type: InputType.BlockUpdate,
+  blockNumber,
+});
+export type Input = Config | Ack | Wake | BlockUpdate;
 
 export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEvent<C>[]> {
   private input$ = new Subject<Input>();
   private output$ = new Subject<NetworkEvent<C>>();
   private wakeSignal$ = new Subject<void>();
+  private blockUpdate$ = new Subject<number>();
   private lastMessageTime = Date.now();
   private syncState: SyncStatus = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
   private config?: SyncWorkerConfig;
@@ -203,6 +210,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           includeSystemCalls: Boolean(fetchSystemCalls),
           fetchWorldEvents,
           wakeSignal$: this.wakeSignal$,
+          blockUpdate$: this.blockUpdate$,
           onMessage: () => {
             this.lastMessageTime = Date.now();
           },
@@ -375,6 +383,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           `[SyncWorker] Stream appears dead (${timeSinceLastMessage}ms since last msg), reconnecting`
         );
         this.wakeSignal$.next();
+        return;
+      }
+      if (e.type === InputType.BlockUpdate) {
+        this.blockUpdate$.next(e.blockNumber);
         return;
       }
       this.input$.next(e);
