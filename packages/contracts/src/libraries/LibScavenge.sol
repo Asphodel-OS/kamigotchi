@@ -123,36 +123,43 @@ library LibScavenge {
     uint256[] memory rwdIDs = getRewards(components, regID);
     LibAllo.distribute(world, components, rwdIDs, count, holderID);
 
-    string memory scavengeType = TypeComponent(getAddrByID(components, TypeCompID)).get(regID);
-    uint32 nodeIndex = IndexComponent(getAddrByID(components, IndexCompID)).get(regID);
-    (string[] memory rewardTypes, uint32[] memory rewardIndices, uint256[] memory rewardAmounts) = _getRewardData(
-      components,
-      rwdIDs,
-      count
-    );
+    (
+      string memory scavengeType,
+      uint32 nodeIndex,
+      string[] memory rewardTypes,
+      uint32[] memory rewardIndices,
+      uint256[] memory rewardAmounts
+    ) = _getRewardData(components, regID, rwdIDs, count);
     emitLog(world, regID, scavengeType, nodeIndex, holderID, rewardTypes, rewardIndices, rewardAmounts);
   }
 
   function _getRewardData(
     IUintComp components,
+    uint256 regID,
     uint256[] memory rwdIDs,
     uint256 count
-  ) internal view returns (string[] memory, uint32[] memory, uint256[] memory) {
+  ) internal view returns (
+    string memory scavengeType,
+    uint32 nodeIndex,
+    string[] memory rewardTypes,
+    uint32[] memory rewardIndices,
+    uint256[] memory rewardAmounts
+  ) {
     TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
     IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
 
-    string[] memory types = new string[](rwdIDs.length);
-    uint32[] memory indices = new uint32[](rwdIDs.length);
-    uint256[] memory amounts = new uint256[](rwdIDs.length);
+    scavengeType = typeComp.get(regID);
+    nodeIndex = indexComp.get(regID);
+    rewardTypes = new string[](rwdIDs.length);
+    rewardIndices = new uint32[](rwdIDs.length);
+    rewardAmounts = new uint256[](rwdIDs.length);
 
     for (uint256 i; i < rwdIDs.length; i++) {
-      types[i] = typeComp.get(rwdIDs[i]);
-      indices[i] = indexComp.safeGet(rwdIDs[i]);
-      amounts[i] = valueComp.safeGet(rwdIDs[i]) * count;
+      rewardTypes[i] = typeComp.get(rwdIDs[i]);
+      rewardIndices[i] = indexComp.safeGet(rwdIDs[i]);
+      rewardAmounts[i] = valueComp.safeGet(rwdIDs[i]) * count;
     }
-
-    return (types, indices, amounts);
   }
 
   /////////////////
