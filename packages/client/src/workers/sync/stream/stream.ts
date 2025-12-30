@@ -201,13 +201,17 @@ function createRawStream(
     const client = createKamigazeClient(url);
 
     const response = client.subscribeToStream({});
-    console.log('[kamigaze] subscribeToStream');
+    console.log('[kamigaze] subscribeToStream', {
+      isWakeReconnect: trackingState.isWakeReconnect,
+      expectedPrevLogBlock: trackingState.expectedPrevLogBlock,
+      proactiveInFlight: trackingState.proactiveInFlight,
+    });
     // Proactive gap-fill only on wake reconnect (skip if already in-flight)
     let proactiveGapFill = trackingState.proactiveInFlight;
     if (trackingState.proactiveInFlight) {
       console.log('[kamigaze] Skipping proactive gap-fill (already in-flight)');
     } else if (!trackingState.isWakeReconnect) {
-      // Only do proactive gap-fill on wake reconnects (user just returned to app)
+      console.log('[kamigaze] Skipping proactive gap-fill (not a wake reconnect)');
     } else if (trackingState.expectedPrevLogBlock > 0) {
       proactiveGapFill = true;
       startProactiveGapFill(
