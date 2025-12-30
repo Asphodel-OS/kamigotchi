@@ -150,17 +150,18 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
           `[kamigaze] Retrying stream subscription... attempt ${retryCount} (waiting ${delayMs / 1000}s)`
         );
 
-        // Listen for wake signal during delay - if received, retry immediately
+        // Race between normal delay and wake signal - whichever emits first wins.
+        // This catches wake signals that arrive during retry delay (when wakeSub is unsubscribed).
         if (wakeSignal$) {
           return race(
-            timer(delayMs),
+            timer(delayMs), // Normal retry delay
             wakeSignal$.pipe(
-              take(1),
+              take(1), // Only react to first wake signal
               tap(() => {
                 console.log('[kamigaze] Wake signal during retry delay, retrying immediately');
-                trackingState.isWakeReconnect = true;
+                trackingState.isWakeReconnect = true; // Enable proactive gap-fill
               }),
-              switchMap(() => timer(0))
+              switchMap(() => timer(0)) // Emit immediately to trigger retry
             )
           );
         }
