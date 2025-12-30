@@ -3,8 +3,11 @@ import {
   from,
   Observable,
   of,
+  race,
   retry,
   Subject,
+  switchMap,
+  take,
   tap,
   throwError,
   timeout,
@@ -140,11 +143,28 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
           trackingState.isWakeReconnect = true;
           return timer(0);
         }
+
         trackingState.isWakeReconnect = false;
         const delayMs = getRetryDelay(retryCount);
         console.log(
           `[kamigaze] Retrying stream subscription... attempt ${retryCount} (waiting ${delayMs / 1000}s)`
         );
+
+        // Listen for wake signal during delay - if received, retry immediately
+        if (wakeSignal$) {
+          return race(
+            timer(delayMs),
+            wakeSignal$.pipe(
+              take(1),
+              tap(() => {
+                console.log('[kamigaze] Wake signal during retry delay, retrying immediately');
+                trackingState.isWakeReconnect = true;
+              }),
+              switchMap(() => timer(0))
+            )
+          );
+        }
+
         return timer(delayMs);
       },
     })
