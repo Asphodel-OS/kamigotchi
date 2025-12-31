@@ -14,6 +14,7 @@ import { filter, map, Observable, Subject, timer } from 'rxjs';
 
 import { Mappings } from 'engine/types';
 import { formatEntityID } from 'engine/utils';
+import { log } from 'utils/logger';
 import { Ack, ack } from 'workers/sync';
 import {
   isNetworkComponentUpdateEvent,
@@ -136,7 +137,7 @@ export function applyNetworkUpdates<C extends Components>(
 
         if (!component) {
           if (update.txHash !== 'EmptyNetworkEvent') {
-            console.warn('Unknown component:', update.component);
+            log.warn('Unknown component:', update.component);
           }
           continue;
         }

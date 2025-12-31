@@ -2,6 +2,7 @@ import { createKamigazeClient, GetEventsSinceResponse } from 'clients/kamigaze';
 import { Decode } from 'engine/encoders';
 import { Components } from 'engine/recs';
 import { formatComponentID, formatEntityID } from 'engine/utils';
+import { log } from 'utils/logger';
 import { NetworkComponentUpdate, NetworkEvents } from '../../types';
 import { fetchEventsInBlockRangeChunked } from '../utils';
 import type { FetchWorldEvents } from './stream';
@@ -38,7 +39,7 @@ export async function fetchGapEvents(
 
   // Try Kamigaze first
   try {
-    console.log(
+    log.debug(
       `[gapfill] ${new Date().toISOString()} Trying Kamigaze getEventsSince from block ${fromBlock}...`
     );
     const client = createKamigazeClient(kamigazeUrl);
@@ -46,13 +47,13 @@ export async function fetchGapEvents(
       sinceBlock: fromBlock,
     });
     const events = await parseGetEventsSinceResponse(gapResponse, decode, fromBlock, '[Worker]');
-    console.log(
+    log.debug(
       `[gapfill] ${new Date().toISOString()} Got ${events.length} events from Kamigaze - latestBlock ${gapResponse.latestBlock}`
     );
     setPercentage?.(100);
     return events;
   } catch (err) {
-    console.warn(
+    log.warn(
       `[gapfill] ${new Date().toISOString()} Kamigaze getEventsSince failed, falling back to RPC:`,
       err
     );
@@ -60,12 +61,12 @@ export async function fetchGapEvents(
 
   // Fallback to RPC
   if (skipRpcFallback) {
-    console.warn(`[gapfill] ${new Date().toISOString()} RPC fallback skipped`);
+    log.warn(`[gapfill] ${new Date().toISOString()} RPC fallback skipped`);
     return [];
   }
 
   try {
-    console.log(
+    log.debug(
       `[gapfill] ${new Date().toISOString()} Using RPC fallback from block ${fromBlock} to ${toBlock}...`
     );
     const events = await fetchEventsInBlockRangeChunked(
@@ -75,10 +76,10 @@ export async function fetchGapEvents(
       50,
       setPercentage
     );
-    console.log(`[gapfill] ${new Date().toISOString()} Got ${events.length} events from RPC`);
+    log.debug(`[gapfill] ${new Date().toISOString()} Got ${events.length} events from RPC`);
     return events;
   } catch (rpcErr) {
-    console.warn(`[gapfill] ${new Date().toISOString()} RPC fallback failed:`, rpcErr);
+    log.warn(`[gapfill] ${new Date().toISOString()} RPC fallback failed:`, rpcErr);
     return [];
   }
 }
@@ -97,14 +98,10 @@ export async function parseGetEventsSinceResponse(
   blockNumber: number = 0,
   source: string
 ): Promise<NetworkComponentUpdate[]> {
-  console.log(`${source} On parseGetEventsSinceResponse`);
   const { events } = response;
   const updates: NetworkComponentUpdate[] = [];
 
   for (let i = 0; i < events.length; i++) {
-    if (i % 10 == 0) {
-      console.log(`${source} Event ${i}`);
-    }
     const ecsEvent = events[i]!;
 
     const component = formatComponentID(ecsEvent.componentId);
@@ -128,7 +125,6 @@ export async function parseGetEventsSinceResponse(
       txMetadata: ecsEvent.txMetadata,
     });
   }
-  console.log(`${source} done with parseGetEventsSinceResponse`);
   return updates;
 }
 
@@ -163,7 +159,7 @@ export async function fillGap(
       setPercentage,
     });
   } catch (err) {
-    console.warn(
+    log.warn(
       `[gapfill] ${new Date().toISOString()} fetchGapEvents failed, falling back to RPC:`,
       err
     );

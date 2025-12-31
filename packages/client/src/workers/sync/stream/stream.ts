@@ -17,6 +17,7 @@ import {
 import { createKamigazeClient } from 'clients/kamigaze';
 import { EmptyNetworkEvent } from 'constants/stream';
 import { Decode } from 'engine/encoders';
+import { log } from 'utils/logger';
 import { NetworkEvent } from '../../types';
 import { createFetchWorldEventsInBlockRange } from '../utils';
 import { fetchGapEvents } from './gapfill';
@@ -92,11 +93,8 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
 
   // Update tracking state from main thread gapfill
   blockUpdate$?.subscribe((blockNumber) => {
-    console.log(
-      `[kamigaze] worker received blockUpdate ${blockNumber} > ${trackingState.expectedPrevLogBlock}`
-    );
     if (blockNumber > trackingState.expectedPrevLogBlock) {
-      console.log(`[kamigaze] Block update from main thread: ${blockNumber}`);
+      log.debug(`[kamigaze] Block update from main thread: ${blockNumber}`);
       trackingState.expectedPrevLogBlock = blockNumber;
     }
   });
@@ -104,7 +102,7 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
   return new Observable<NetworkEvent>((subscriber) => {
     // Subscribe to wake signal to trigger immediate reconnection
     const wakeSub = wakeSignal$?.subscribe(() => {
-      console.log('[kamigaze] Wake signal received, forcing reconnection');
+      log.debug('[kamigaze] Wake signal received, forcing reconnection');
       subscriber.error(new Error('Wake signal - forcing reconnection'));
     });
 
@@ -124,7 +122,7 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
           each: KEEPALIVE_INTERVAL_MS + STREAM_TIMEOUT_BUFFER_MS,
           with: () =>
             throwError(() => {
-              console.log(
+              log.debug(
                 `[kamigaze] Timeout - no data received for ${KEEPALIVE_INTERVAL_MS / 1000}s`
               );
               return new Error(
@@ -148,12 +146,12 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
       delay: (error, retryCount) => {
         // Immediate retry on wake signal
         if (error.message?.includes('Wake signal')) {
-          console.log('[kamigaze] Immediate retry due to wake signal');
+          log.debug('[kamigaze] Immediate retry due to wake signal');
           return timer(0);
         }
 
         const delayMs = getRetryDelay(retryCount);
-        console.log(
+        log.debug(
           `[kamigaze] Retrying stream subscription... attempt ${retryCount} (waiting ${delayMs / 1000}s)`
         );
 
@@ -165,7 +163,7 @@ export function createStream(options: StreamOptions): Observable<NetworkEvent> {
             wakeSignal$.pipe(
               take(1), // Only react to first wake signal
               tap(() => {
-                console.log('[kamigaze] Wake signal during retry delay, retrying immediately');
+                log.debug('[kamigaze] Wake signal during retry delay, retrying immediately');
               }),
               switchMap(() => timer(0)) // Emit immediately to trigger retry
             )
@@ -195,7 +193,7 @@ function createRawStream(
     const client = createKamigazeClient(url);
 
     const response = client.subscribeToStream({});
-    console.log('[kamigaze] subscribeToStream', {
+    log.debug('[kamigaze] subscribeToStream', {
       expectedPrevLogBlock: trackingState.expectedPrevLogBlock,
     });
 
@@ -208,25 +206,25 @@ function createRawStream(
 
           if (trackingState.isFirstMessage) {
             trackingState.isFirstMessage = false;
-            console.log(
+            log.debug(
               `Stream started at block ${responseChunk.blockNumber}, logIndex ${responseChunk.logIndex}`
             );
           } else {
             if (responseChunk.prevLogBlockNumber !== trackingState.expectedPrevLogBlock) {
-              console.warn(
+              log.warn(
                 `Stream continuity warning: prevLogBlockNumber mismatch. Expected ${trackingState.expectedPrevLogBlock}, got ${responseChunk.prevLogBlockNumber}`
               );
               gapToFill = true;
             }
             if (responseChunk.prevLogIndex !== trackingState.expectedPrevLogIndex) {
-              console.warn(
+              log.warn(
                 `Stream continuity warning: prevLogIndex mismatch. Expected ${trackingState.expectedPrevLogIndex}, got ${responseChunk.prevLogIndex}`
               );
               gapToFill = true;
             }
 
             if (gapToFill) {
-              console.warn(`Getting events since block ${trackingState.expectedPrevLogBlock}`);
+              log.warn(`Getting events since block ${trackingState.expectedPrevLogBlock}`);
               gapToFill = false;
 
               const gapEvents = await fetchGapEvents({

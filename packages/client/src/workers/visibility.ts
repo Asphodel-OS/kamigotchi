@@ -3,6 +3,7 @@ import { Subject, Subscription } from 'rxjs';
 import { getKamigazeClient } from 'clients/kamigaze';
 import { createDecode } from 'engine/encoders';
 import { Components } from 'engine/recs';
+import { log } from 'utils/logger';
 
 import { createBlockUpdate, createWake, Input } from './sync/Worker';
 import { parseGetEventsSinceResponse } from './sync/stream/gapfill';
@@ -42,18 +43,18 @@ export function createVisibilityHandler<C extends Components>(
 
     const now = Date.now();
     if (now - lastWakeSignal < WAKE_DEBOUNCE_MS) {
-      console.log('[Visibility] Wake signal debounced');
+      log.debug('[Visibility] Wake signal debounced');
       return;
     }
 
     lastWakeSignal = now;
-    console.log('[Visibility] App became visible, sending wake signal');
+    log.debug('[Visibility] App became visible, sending wake signal');
     input$.next(createWake());
 
     // Skip gapfill if stream is healthy
     const timeSinceLastEvent = now - lastEventTime;
     if (timeSinceLastEvent < HEALTH_THRESHOLD_MS) {
-      console.log(
+      log.debug(
         `[Visibility] Stream healthy (last event ${timeSinceLastEvent}ms ago), skipping main-thread gapfill`
       );
       return;
@@ -62,29 +63,27 @@ export function createVisibilityHandler<C extends Components>(
     // Fetch events since last known block from main thread
     const client = getKamigazeClient();
     if (client && lastKnownBlock > 0) {
-      console.log(
-        `[Visibility] Stream appears stale (${timeSinceLastEvent}ms since last event), fetching gap`
+      log.debug(
+        `[Visibility] Stream appears stale (${timeSinceLastEvent}ms since last event), fetching gap from block ${lastKnownBlock}`
       );
       try {
-        console.log(`[Visibility] Fetching events since block ${lastKnownBlock}`);
         const response = await client.getEventsSince({ sinceBlock: lastKnownBlock });
-        console.log(`[Visibility] Got ${response.events.length} gap events from main thread`);
+        log.debug(`[Visibility] Got ${response.events.length} gap events from main thread`);
         const events = await parseGetEventsSinceResponse(
           response,
           decode,
           lastKnownBlock,
           '[Visibility]'
         );
-        console.log(`[Visibility] Got ${events.length} after parsing`);
 
         if (events.length > 0) {
           ecsEvents$.next(events as NetworkEvent<C>[]);
           lastKnownBlock = response.latestBlock;
           input$.next(createBlockUpdate(lastKnownBlock));
-          console.log(`[Visibility] Sent BlockUpdate to worker ${response.latestBlock}`);
+          log.debug(`[Visibility] Sent BlockUpdate to worker ${response.latestBlock}`);
         }
       } catch (err) {
-        console.warn('[Visibility] Main thread gapfill failed:', err);
+        log.warn('[Visibility] Main thread gapfill failed:', err);
       }
     }
   };
