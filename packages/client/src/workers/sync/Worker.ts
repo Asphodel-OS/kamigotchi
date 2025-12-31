@@ -25,6 +25,7 @@ import { GodID, SyncState, SyncStatus } from 'engine/constants';
 import { createDecode } from 'engine/encoders';
 import { createBlockNumberStream } from 'engine/executors';
 import { createReconnectingProvider } from 'engine/providers';
+import { log } from 'utils/logger';
 import { debug as parentDebug } from '../debug';
 import {
   isNetworkComponentUpdateEvent,
@@ -43,12 +44,7 @@ import {
   saveStateCacheToStore,
   storeStateEvents,
 } from './state';
-import {
-  createStream,
-  fillGap,
-  HEALTH_CHECK_BUFFER_MS,
-  KEEPALIVE_INTERVAL_MS,
-} from './stream';
+import { createStream, fillGap, HEALTH_CHECK_BUFFER_MS, KEEPALIVE_INTERVAL_MS } from './stream';
 import {
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
@@ -374,7 +370,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
         const timeSinceLastMessage = Date.now() - this.lastMessageTime;
         const healthThreshold = KEEPALIVE_INTERVAL_MS + HEALTH_CHECK_BUFFER_MS;
         if (timeSinceLastMessage < healthThreshold) {
-          console.log(
+          log.debug(
             `[SyncWorker] Stream healthy (last msg ${timeSinceLastMessage}ms ago), ignoring wake`
           );
           return;
