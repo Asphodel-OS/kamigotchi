@@ -14,11 +14,32 @@ import { Network } from 'engine/executors';
 import { ConnectionState } from 'engine/providers';
 import { Contracts } from 'engine/types';
 import { deferred } from 'utils/async';
+import { log } from 'utils/logger';
 import { createPriorityQueue } from './priorityQueue';
 import { TxQueue } from './types';
-import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce, waitForTx } from './utils';
+import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce } from './utils';
+
+export const MAX_NONCE_RETRIES = 1; // Retry nonce errors exactly once
+
+function logTxError(label: string, error: any, txHash?: string) {
+  log.warn(`[TXQueue] ${label}`, {
+    code: error?.code,
+    message: error?.message,
+    reason: error?.reason,
+    data: error?.data,
+    revert: error?.revert,
+    shortMessage: error?.shortMessage,
+    ...(txHash && { txHash }),
+  });
+}
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
+
+type TxResult = {
+  hash: string;
+  wait: () => Promise<TransactionReceipt>;
+  response: Promise<any>;
+};
 
 /**
  * The TxQueue takes care of nonce management, concurrency and caching calls if the contracts are not connected.
@@ -37,14 +58,14 @@ export function create<C extends Contracts>(
   dispose: () => void;
   ready: IComputedValue<boolean | undefined>;
 } {
-  const queue = createPriorityQueue<{
-    execute: (
-      txOverrides: Overrides
-    ) => Promise<{ hash: string; wait: () => Promise<TransactionReceipt> }>;
+  type QueueItem = {
+    execute: (txOverrides: Overrides) => Promise<TxResult>;
     estimateGas: () => Promise<BigNumberish>;
-    cancel: (error: any) => void;
-    stateMutability?: string;
-  }>();
+    resolve: (result: TxResult) => void;
+    reject: (error: Error) => void;
+  };
+
+  const queue = createPriorityQueue<QueueItem>();
   const submissionMutex = new Mutex();
   const _nonce = observable.box<number | null>(null);
 
@@ -85,95 +106,112 @@ export function create<C extends Contracts>(
     });
   }
 
-  // queue up a transaction call in the txQueue
+  // Execute tx with retry on nonce errors. Returns result or throws final error.
+  async function executeTxWithRetry(
+    execute: (txOverrides: Overrides) => Promise<TxResult>,
+    txOverrides: Overrides
+  ): Promise<TxResult> {
+    let retryCount = 0;
+
+    while (retryCount <= MAX_NONCE_RETRIES) {
+      try {
+        return await execute(txOverrides);
+      } catch (error: any) {
+        log.warn('[TXQueue] EXECUTION FAILED');
+
+        const isNonceError = shouldResetNonce(error);
+        const canRetry = isNonceError && retryCount < MAX_NONCE_RETRIES;
+
+        if (canRetry) {
+          log.warn('[TXQueue] NONCE ERROR detected', {
+            code: error?.code,
+            message: error?.message,
+            retryCount,
+          });
+          await resetNonce();
+          retryCount++;
+          log.info(`[TXQueue] Retrying transaction (attempt ${retryCount}/${MAX_NONCE_RETRIES})`);
+
+          const { nonce: freshNonce } = await awaitValue(readyState);
+          txOverrides.nonce = freshNonce;
+          continue;
+        }
+
+        // Non-retryable or retries exhausted
+        if (isNonceError) {
+          log.warn(`[TXQueue] Nonce retry exhausted (${MAX_NONCE_RETRIES}), failing transaction`);
+          await resetNonce();
+        } else if (shouldIncNonce(error)) {
+          incNonce();
+        }
+        throw error;
+      }
+    }
+
+    // Should never reach here, but TypeScript needs it
+    throw new Error('Unexpected retry loop exit');
+  }
+
   async function queueCall(
     txRequest: TransactionRequest,
     callOverrides?: Overrides
-  ): Promise<{
-    hash: string;
-    wait: () => Promise<TransactionReceipt>;
-    response: Promise<any>;
-  }> {
-    const [resolve, reject, promise] = deferred<{
-      hash: string;
-      wait: () => Promise<TransactionReceipt>;
-      response: Promise<any>;
-    }>();
+  ): Promise<TxResult> {
+    const [resolve, reject, promise] = deferred<TxResult>();
+    const { signer } = await awaitValue(readyState);
 
-    const { signer } = await awaitValue(readyState); // wait for network if not ready
-
-    // skip gas estimation if gasLimit is set
     const estimateGas = () =>
       callOverrides?.gasLimit
         ? Promise.resolve(callOverrides.gasLimit)
         : signer!.estimateGas(txRequest);
 
-    // Create a function that executes the tx when called
-    const execute = async (txOverrides: Overrides) => {
-      try {
-        // Populate config and Tx
-        const populatedTx = { ...txRequest, ...txOverrides, ...callOverrides };
-        const tx = await sendTx(signer, populatedTx!);
-        const hash = tx?.hash || '';
-
-        const response = signer.provider!.getTransaction(hash); // todo: do we need to return response?
-
-        // This promise is awaited asynchronously in the tx queue and the action queue to catch errors
-        const wait = async () => waitForTx(response);
-
-        // Resolved value goes to the initiator of the transaction
-        resolve({ hash, wait, response });
-
-        // Returned value gets processed inside the tx queue
-        return { hash, wait };
-      } catch (e) {
-        reject(e as Error);
-        throw e; // Rethrow error to catch when processing the queue
+    const execute = async (txOverrides: Overrides): Promise<TxResult> => {
+      const populatedTx = { ...txRequest, ...txOverrides, ...callOverrides };
+      const tx = await sendTx(signer, populatedTx!);
+      if (!tx) {
+        throw new Error('Failed to send transaction: signer missing or sendTx returned undefined');
       }
+      const hash = tx.hash;
+
+      const wait = async () => {
+        const receipt = await tx.wait();
+        if (!receipt) throw new Error('tx receipt null');
+        return receipt;
+      };
+      const response = Promise.resolve(tx);
+      return { hash, wait, response };
     };
 
-    // Queue the tx execution
-    queue.add(uuid(), {
-      execute,
-      cancel: (error?: any) => reject(error ?? new Error('TX_CANCELLED')),
-      estimateGas,
-      stateMutability: '',
-    });
-
-    processQueue(); // Start processing the queue
-    return promise; // Promise resolves when the tx is confirmed or rejected
+    queue.add(uuid(), { execute, estimateGas, resolve, reject });
+    processQueue();
+    return promise;
   }
 
   async function processQueue() {
-    const txRequest = queue.next();
-    if (!txRequest) return;
+    const queueItem = queue.next();
+    if (!queueItem) return;
     processQueue(); // Start processing another request from the queue
 
-    // Run exclusive to avoid two tx requests awaiting the nonce in parallel and submitting with the same nonce.
     const txResult = await submissionMutex.runExclusive(async () => {
-      // First estimate gas to avoid increasing nonce before tx is sent
+      // Estimate gas and get nonce
       let txOverrides: Overrides = {};
       try {
-        const { nonce } = await awaitValue(readyState); // wait for network if not ready
-        txOverrides.gasLimit = await txRequest.estimateGas();
+        const { nonce } = await awaitValue(readyState);
+        txOverrides.gasLimit = await queueItem.estimateGas();
         txOverrides.nonce = nonce;
-      } catch (e) {
-        console.warn('[TXQueue] GAS ESTIMATION FAILED');
-        return txRequest.cancel(e);
+      } catch (e: any) {
+        logTxError('GAS ESTIMATION FAILED', e);
+        queueItem.reject(e as Error);
+        return;
       }
 
-      // Execute the tx
-      let error: any;
+      // Execute with retry on nonce errors
       try {
-        return await txRequest.execute(txOverrides);
+        const result = await executeTxWithRetry(queueItem.execute, txOverrides);
+        queueItem.resolve(result);
+        incNonce();
+        return { hash: result.hash, wait: result.wait };
       } catch (e) {
-        console.warn('[TXQueue] EXECUTION FAILED');
-        error = e;
-      } finally {
-        // console.log(`[TXQueue] TX Sent\n`, `Error: ${!!error}\n`);
-        if (shouldResetNonce(error)) await resetNonce();
-        else if (shouldIncNonce(error)) incNonce();
-        if (error) txRequest.cancel(error);
+        queueItem.reject(e as Error);
       }
     });
 
@@ -181,14 +219,10 @@ export function create<C extends Contracts>(
     if (txResult?.hash) {
       try {
         const tx = await txResult.wait();
-        console.log(`[TXQueue] TX Confirmed\n`, tx);
-      } catch (e) {
-        console.warn('[TXQueue] tx failed in block');
-        throw e; // bubble up error
-        // // Decode and log the revert reason.
-        // getRevertReason(txResult.hash, network.providers.get().json).then((reason) =>
-        //   console.warn('[TXQueue] Revert reason:', reason)
-        // ); // calling then instead of await to avoid blocking
+        log.info('[TXQueue] TX Confirmed', tx);
+      } catch (e: any) {
+        logTxError('TX FAILED IN BLOCK', e, txResult?.hash);
+        return;
       }
     }
 
