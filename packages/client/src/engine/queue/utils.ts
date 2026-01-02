@@ -77,7 +77,8 @@ export function shouldIncNonce(error: any) {
 export function shouldResetNonce(error: any) {
   const isExpirationError = error?.code === 'NONCE_EXPIRED';
   const isRepeatError = error?.message?.includes('account sequence');
-  return isExpirationError || isRepeatError;
+  const isReplacedError = error?.code === 'TRANSACTION_REPLACED';
+  return isExpirationError || isRepeatError || isReplacedError;
 }
 
 export function isOverrides(obj: any): obj is Overrides {
