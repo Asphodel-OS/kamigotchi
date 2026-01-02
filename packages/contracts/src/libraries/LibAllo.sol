@@ -184,16 +184,19 @@ library LibAllo {
   /////////////////
   // INTERACTIONS
 
+  /// @notice returns commitIDs for droptable rewards (0 for non-droptable entries)
   function distribute(
     IWorld world,
     IUintComp components,
     uint256[] memory alloIDs,
     uint256 mult, // multiplies reward value, optional
     uint256 targetID
-  ) internal {
+  ) internal returns (uint256[] memory commitIDs) {
     TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
     IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
     ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
+
+    commitIDs = new uint256[](alloIDs.length);
 
     for (uint256 i; i < alloIDs.length; i++) {
       if (skipDistribution(typeComp.get(alloIDs[i]))) continue;
@@ -203,7 +206,7 @@ library LibAllo {
       string memory type_ = typeComp.get(alloID);
       uint256 amt = valueComp.safeGet(alloID);
 
-      if (type_.eq("ITEM_DROPTABLE")) giveDT(world, components, alloID, amt, mult, targetID);
+      if (type_.eq("ITEM_DROPTABLE")) commitIDs[i] = giveDT(world, components, alloID, amt, mult, targetID);
       else if (type_.eq("STAT")) giveStat(components, indexComp.get(alloID), amt, mult, targetID);
       else if (type_.eq("BONUS")) giveBonus(components, alloID, mult, targetID);
       else giveBasic(world, components, type_, indexComp.get(alloID), amt, mult, targetID);
@@ -216,8 +219,8 @@ library LibAllo {
     IUintComp components,
     uint256[] memory alloIDs,
     uint256 targetID
-  ) internal {
-    distribute(world, components, alloIDs, 1, targetID);
+  ) internal returns (uint256[] memory) {
+    return distribute(world, components, alloIDs, 1, targetID);
   }
 
   /// @notice distributes basic rewards to an entity
@@ -252,8 +255,8 @@ library LibAllo {
     uint256 amount,
     uint256 mult,
     uint256 targetID // expected to be an account
-  ) internal {
-    LibDroptable.commit(world, components, alloID, amount * mult, targetID);
+  ) internal returns (uint256) {
+    return LibDroptable.commit(world, components, alloID, amount * mult, targetID);
   }
 
   /// @notice applies a stat to target

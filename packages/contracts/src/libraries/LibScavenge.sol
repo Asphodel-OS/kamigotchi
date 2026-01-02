@@ -121,7 +121,7 @@ library LibScavenge {
     uint256 holderID
   ) internal {
     uint256[] memory rwdIDs = getRewards(components, regID);
-    LibAllo.distribute(world, components, rwdIDs, count, holderID);
+    uint256[] memory commitIDs = LibAllo.distribute(world, components, rwdIDs, count, holderID);
 
     (
       string memory scavengeType,
@@ -130,7 +130,7 @@ library LibScavenge {
       uint32[] memory rewardIndices,
       uint256[] memory rewardAmounts
     ) = _getRewardData(components, regID, rwdIDs, count);
-    emitLog(world, regID, scavengeType, nodeIndex, holderID, rewardTypes, rewardIndices, rewardAmounts);
+    emitLog(world, regID, scavengeType, nodeIndex, holderID, rewardTypes, rewardIndices, rewardAmounts, commitIDs);
   }
 
   function _getRewardData(
@@ -221,7 +221,8 @@ library LibScavenge {
     uint256 holderID,
     string[] memory rewardTypes,
     uint32[] memory rewardIndices,
-    uint256[] memory rewardAmounts
+    uint256[] memory rewardAmounts,
+    uint256[] memory commitIDs
   ) internal {
     ScavengeRewardsEventData memory eventData = ScavengeRewardsEventData({
       regID: regID,
@@ -231,7 +232,8 @@ library LibScavenge {
       timestamp: block.timestamp,
       rewardTypes: rewardTypes,
       rewardIndices: rewardIndices,
-      rewardAmounts: rewardAmounts
+      rewardAmounts: rewardAmounts,
+      commitIDs: commitIDs
     });
 
     LibEmitter.emitEvent(
@@ -251,10 +253,11 @@ library LibScavenge {
     string[] rewardTypes;
     uint32[] rewardIndices;
     uint256[] rewardAmounts;
+    uint256[] commitIDs;
   }
 
   function _schema() internal pure returns (uint8[] memory) {
-    uint8[] memory schema = new uint8[](8);
+    uint8[] memory schema = new uint8[](9);
     schema[0] = uint8(LibTypes.SchemaValue.UINT256);       // regID
     schema[1] = uint8(LibTypes.SchemaValue.STRING);        // scavengeType
     schema[2] = uint8(LibTypes.SchemaValue.UINT32);        // nodeIndex
@@ -263,6 +266,7 @@ library LibScavenge {
     schema[5] = uint8(LibTypes.SchemaValue.STRING_ARRAY);  // rewardTypes
     schema[6] = uint8(LibTypes.SchemaValue.UINT32_ARRAY);  // rewardIndices
     schema[7] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // rewardAmounts
+    schema[8] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // commitIDs
     return schema;
   }
 
@@ -275,7 +279,8 @@ library LibScavenge {
       data.timestamp,
       data.rewardTypes,
       data.rewardIndices,
-      data.rewardAmounts
+      data.rewardAmounts,
+      data.commitIDs
     );
   }
 
