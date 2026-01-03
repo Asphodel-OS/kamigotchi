@@ -240,6 +240,19 @@ library LibAllo {
     uint256 mult,
     uint256 targetID
   ) internal {
+    // Check if this is a CLEARALL bonus (indicated by empty type)
+    uint256[] memory regIDs = LibBonus.queryByParent(components, alloID);
+    if (regIDs.length > 0) {
+      // Check if the first bonus registry has an empty type (CLEARALL indicator)
+      string memory bonusType = TypeComponent(getAddrByID(components, TypeCompID)).get(regIDs[0]);
+      if (bonusType.eq("")) {
+        // This is CLEARALL - remove all bonuses instead of assigning
+        LibBonus.clearAll(components, targetID);
+        return;
+      }
+    }
+    
+    // Normal bonus assignment
     LibBonus.assignTemporary(components, alloID, targetID);
   }
 

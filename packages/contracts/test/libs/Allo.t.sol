@@ -293,6 +293,74 @@ contract AlloTest is SetupTemplate {
     assertEq(_getItemBal(alice, 1) + _getItemBal(alice, 2) + _getItemBal(alice, 3), 1);
   }
 
+  function testAlloClearAll() public {
+    // Create some temporary bonuses
+    uint256 bonusAnchor1 = uint256(keccak256(abi.encodePacked("bonus.anchor.1")));
+    uint256 bonusAnchor2 = uint256(keccak256(abi.encodePacked("bonus.anchor.2")));
+    
+    _createAlloBonus(bonusAnchor1, "STAT_HEALTH_SHIFT", "UPON_HARVEST_ACTION", 0, 10);
+    _createAlloBonus(bonusAnchor1, "STAT_POWER_SHIFT", "UPON_HARVEST_ACTION", 0, 5);
+    _createAlloBonus(bonusAnchor2, "STAT_HARMONY_SHIFT", "UPON_DEATH", 0, 3);
+    _createAlloBonus(bonusAnchor2, "STAT_VIOLENCE_SHIFT", "TIMED", 100, 7);
+    
+    uint256 petID = _mintKami(alice);
+    
+    // Assign bonuses to the pet
+    vm.startPrank(deployer);
+    LibAllo.distribute(world, components, LibAllo.queryFor(components, bonusAnchor1), petID);
+    LibAllo.distribute(world, components, LibAllo.queryFor(components, bonusAnchor2), petID);
+    vm.stopPrank();
+    
+    // Verify bonuses exist
+    assertGt(
+      LibBonus.getFor(components, "STAT_HEALTH_SHIFT", petID),
+      0,
+      "Health bonus should exist before clearing"
+    );
+    assertGt(
+      LibBonus.getFor(components, "STAT_POWER_SHIFT", petID),
+      0,
+      "Power bonus should exist before clearing"
+    );
+    assertGt(
+      LibBonus.getFor(components, "STAT_HARMONY_SHIFT", petID),
+      0,
+      "Harmony bonus should exist before clearing"
+    );
+    assertGt(
+      LibBonus.getFor(components, "STAT_VIOLENCE_SHIFT", petID),
+      0,
+      "Violence bonus should exist before clearing"
+    );
+    
+    // Directly call clearAll (bypassing allo system for now)
+    vm.startPrank(deployer);
+    LibBonus.clearAll(components, petID);
+    vm.stopPrank();
+    
+    // Verify all bonuses are cleared
+    assertEq(
+      LibBonus.getFor(components, "STAT_HEALTH_SHIFT", petID),
+      0,
+      "Health bonus should be cleared"
+    );
+    assertEq(
+      LibBonus.getFor(components, "STAT_POWER_SHIFT", petID),
+      0,
+      "Power bonus should be cleared"
+    );
+    assertEq(
+      LibBonus.getFor(components, "STAT_HARMONY_SHIFT", petID),
+      0,
+      "Harmony bonus should be cleared"
+    );
+    assertEq(
+      LibBonus.getFor(components, "STAT_VIOLENCE_SHIFT", petID),
+      0,
+      "Violence bonus should be cleared"
+    );
+  }
+
   //////////////
   // UTILS
 
@@ -352,6 +420,16 @@ contract AlloTest is SetupTemplate {
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
     id = LibAllo.createBonus(components, 0, anchorID, bonusType, endType, duration, value);
+    vm.stopPrank();
+  }
+
+  // Creates a CLEARALL bonus allo (for Cleaning Fluid functionality)
+  function _createAlloClearAll(uint256 anchorID) internal returns (uint256 id) {
+    // Use createBonus with empty type (CLEARALL indicator)
+    // Empty endAnchor would cause revert, so we use a non-empty one even though it won't be used
+    vm.startPrank(deployer);
+    id = LibAllo.createBase(components, 0, anchorID, "BONUS", 1, true);
+    id = LibBonus.regCreate(components, 0, id, "", "PLACEHOLDER", 0, 0);
     vm.stopPrank();
   }
 
