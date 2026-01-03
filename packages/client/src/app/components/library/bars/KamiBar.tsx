@@ -12,8 +12,10 @@ import {
   isResting,
 } from 'app/cache/kami';
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
-import { Overlay, Text, TextTooltip } from 'app/components/library';
+import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { StatusIcons } from 'assets/images/icons/statuses';
+import { ItemImages } from 'assets/images/items';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { HealthColors } from 'constants/kamis/health';
@@ -163,6 +165,12 @@ export const KamiBar = ({
     return tooltip;
   };
 
+  const showHealth = (kami: Kami) => {
+    const totalHealth = kami.stats?.health.total ?? 0;
+    const healthPercent = calcHealthPercent();
+
+    return `${currentHealth}/${totalHealth} (${healthPercent.toFixed(0)}%)`;
+  };
   // get the description of temp bonuses currently applied to the kami
   const getBonusesDescription = (kami: Kami) => {
     const bonuses = utils.getTempBonuses(kami);
@@ -183,9 +191,14 @@ export const KamiBar = ({
     return HealthColors.healthy;
   };
 
+  const getKamiStateIcon = (state: string) => {
+    if (state === 'HARVESTING') return StatusIcons.kami_harvesting;
+    if (state === 'RESTING') return StatusIcons.kami_resting;
+    if (state === 'DEAD') return StatusIcons.kami_dead;
+  };
   /////////////////
   // RENDER
-
+  const kamiState = getKamiState(kami);
   return (
     <Container>
       <Left>
@@ -201,12 +214,17 @@ export const KamiBar = ({
         </TextTooltip>
       </Left>
       <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
-        <Overlay top={0.18} left={0.15} passthrough>
-          <Text size={0.45}>{calcOutput(kami)}</Text>
-        </Overlay>
+        <div style={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'center' }}>
+          <Text size={0.8}>{calcOutput(kami)}</Text>
+          <img style={{ width: `1vw`, height: `1vw` }} src={ItemImages.musu} />
+        </div>
         <TextTooltip text={getTooltip(kami)} direction='row'>
-          <Text size={0.9}>{getKamiState(kami)}</Text>
-          {showPercent && <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>}
+          {kamiState === 'WANDERING' ? (
+            <Text size={0.9}>{kamiState}</Text>
+          ) : (
+            <img style={{ marginRight: '0.3vw' }} src={getKamiStateIcon(kamiState)}></img>
+          )}
+          {showPercent && <Text size={0.75}>{showHealth(kami)}</Text>}
         </TextTooltip>
       </Middle>
       <Right>
@@ -260,12 +278,11 @@ const Middle = styled.div<MiddleProps>`
   border-right: solid black 0.15vw;
   border-left: solid black 0.15vw;
   margin: 0 0.3vw 0 0.3vw;
-  gap: 0.3vw;
-
+  padding: 0 0.5vw;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-grow: 1;
 
   background: ${({ percent, color }) =>
