@@ -67,8 +67,7 @@ const Title = styled.div`
 `;
 
 const Corner = styled.div`
-  flex-grow: 1;
-  width: 2.7vw;
+  width: 4.5vw;
   height: 100%;
 
   display: flex;

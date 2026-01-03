@@ -51,7 +51,7 @@ export const Health = ({
       <Fill $percent={percent} $color={getColor(percent)} />
       <TextTooltip text={[`${percent.toFixed(1)}%`]}>
         <Pairing>
-          <Text size={0.45} color='#61178f' weight='bold' style={{ zIndex: 1 }}>
+          <Text size={0.6} color='#61178f' weight='bold' style={{ zIndex: 1 }}>
             {current}/{total}
             {showPercent && ` (${percent.toFixed(0)}%)`}
           </Text>
@@ -67,7 +67,7 @@ const Container = styled.div`
   border-right: solid black 0.15vw;
 
   height: 100%;
-  flex-grow: 7;
+  flex-grow: 1;
 
   display: flex;
   flex-direction: row;
