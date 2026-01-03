@@ -4,6 +4,7 @@ import { getHarvestItem } from 'app/cache/harvest';
 import { calcHealth, isDead, isHarvesting, isResting, Kami } from 'app/cache/kami';
 import { Text } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { StatusIcons } from 'assets/images/icons/statuses';
 import { NullNode } from 'network/shapes';
 import { useEffect, useState } from 'react';
 import { getRateDisplay } from 'utils/numbers';
@@ -103,12 +104,24 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
     }
   };
 
+  const getStateIcon = () => {
+    if (isHarvesting(kami)) return StatusIcons.kami_harvesting;
+    if (isResting(kami)) return StatusIcons.kami_resting;
+    if (isDead(kami)) return StatusIcons.kami_dead;
+  };
+
   /////////////////
   // RENDER
 
   return (
     <Container>
-      {header && <Text size={0.75}>{header}</Text>}
+      <Text size={0.75}>{kami.name}</Text>
+      {header && (
+        <StateRow>
+          <StateIcon src={getStateIcon()} />
+          <Text size={0.65}>{header}</Text>
+        </StateRow>
+      )}
       <Description onClick={getDescriptionOnClick(kami)}>
         {description.map((text, i) => (
           <Text key={i} size={0.6}>
@@ -125,6 +138,18 @@ const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
+`;
+
+const StateRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.2vw;
+`;
+
+const StateIcon = styled.img`
+  width: 1vw;
+  height: 1vw;
 `;
 
 const Description = styled.div`

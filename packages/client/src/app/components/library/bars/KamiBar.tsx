@@ -196,9 +196,11 @@ export const KamiBar = ({
     if (state === 'RESTING') return StatusIcons.kami_resting;
     if (state === 'DEAD') return StatusIcons.kami_dead;
   };
-  /////////////////
-  // RENDER
+
   const kamiState = getKamiState(kami);
+  const healthPercent = calcHealthPercent();
+  const statusColor = getStatusColor(healthPercent);
+
   return (
     <Container>
       <Left>
@@ -213,16 +215,16 @@ export const KamiBar = ({
           <Icon src={getHandIcon()} />
         </TextTooltip>
       </Left>
-      <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
-        <div style={{ display: 'flex', flexFlow: 'column nowrap', alignItems: 'center' }}>
+      <Middle percent={healthPercent} color={statusColor}>
+        <OutputSection>
           <Text size={0.8}>{calcOutput(kami)}</Text>
-          <img style={{ width: `1vw`, height: `1vw` }} src={ItemImages.musu} />
-        </div>
+          <OutputIcon src={ItemImages.musu} />
+        </OutputSection>
         <TextTooltip text={getTooltip(kami)} direction='row'>
           {kamiState === 'WANDERING' ? (
             <Text size={0.9}>{kamiState}</Text>
           ) : (
-            <img style={{ marginRight: '0.3vw' }} src={getKamiStateIcon(kamiState)}></img>
+            <StateIcon src={getKamiStateIcon(kamiState)} />
           )}
           {showPercent && <Text size={0.75}>{showHealth(kami)}</Text>}
         </TextTooltip>
@@ -305,12 +307,21 @@ const Image = styled.img`
 const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
-
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: space-between;
-
   user-select: none;
   user-drag: none;
+`;
+
+const OutputSection = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+`;
+
+const OutputIcon = styled.img`
+  width: 1vw;
+  height: 1vw;
+`;
+
+const StateIcon = styled.img`
+  margin-right: 0.3vw;
 `;

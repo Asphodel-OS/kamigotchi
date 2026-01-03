@@ -8,7 +8,15 @@ import { Kami } from 'network/shapes';
 import { calcPercentBounded } from 'utils/numbers/percents';
 import { Text, TextTooltip } from '../../..';
 
-export const Health = ({ kami, tick }: { kami: Kami; tick: number }) => {
+export const Health = ({
+  kami,
+  tick,
+  showPercent,
+}: {
+  kami: Kami;
+  tick: number;
+  showPercent?: boolean;
+}) => {
   const [current, setCurrent] = useState(0);
   const [total, setTotal] = useState(0);
   const [percent, setPercent] = useState(0);
@@ -45,6 +53,7 @@ export const Health = ({ kami, tick }: { kami: Kami; tick: number }) => {
         <Pairing>
           <Text size={0.45} color='#61178f' weight='bold' style={{ zIndex: 1 }}>
             {current}/{total}
+            {showPercent && ` (${percent.toFixed(0)}%)`}
           </Text>
           <Icon src={StatIcons.health} />
         </Pairing>

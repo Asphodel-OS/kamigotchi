@@ -15,6 +15,8 @@ export const TitleBar = ({
   show?: {
     battery?: boolean;
     cooldown?: boolean;
+    hideName?: boolean;
+    showPercent?: boolean;
   };
   tick: number;
 }) => {
@@ -23,10 +25,12 @@ export const TitleBar = ({
 
   return (
     <Container>
-      <Title key='title' onClick={onClick}>
-        {kami.name}
-      </Title>
-      {show?.battery && <Health kami={kami} tick={tick} />}
+      {!show?.hideName && (
+        <Title key='title' onClick={onClick}>
+          {kami.name}
+        </Title>
+      )}
+      {show?.battery && <Health kami={kami} tick={tick} showPercent={show?.showPercent} />}
       {show?.cooldown && (
         <Corner key='corner'>
           <Cooldown kami={kami} tick={tick} />
