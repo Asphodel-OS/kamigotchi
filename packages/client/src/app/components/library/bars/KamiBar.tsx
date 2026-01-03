@@ -221,12 +221,14 @@ export const KamiBar = ({
           <OutputIcon src={ItemImages.musu} />
         </OutputSection>
         <TextTooltip text={getTooltip(kami)} direction='row'>
-          {kamiState === 'WANDERING' ? (
-            <Text size={0.9}>{kamiState}</Text>
-          ) : (
-            <StateIcon src={getKamiStateIcon(kamiState)} />
-          )}
-          {showPercent && <Text size={0.75}>{showHealth(kami)}</Text>}
+          <StateSection>
+            {kamiState === 'WANDERING' ? (
+              <Text size={0.9}>{kamiState}</Text>
+            ) : (
+              <StateIcon src={getKamiStateIcon(kamiState)} />
+            )}
+            {showPercent && <Text size={0.75}>{showHealth(kami)}</Text>}
+          </StateSection>
         </TextTooltip>
       </Middle>
       <Right>
@@ -324,4 +326,10 @@ const OutputIcon = styled.img`
 
 const StateIcon = styled.img`
   margin-right: 0.3vw;
+`;
+
+const StateSection = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
 `;

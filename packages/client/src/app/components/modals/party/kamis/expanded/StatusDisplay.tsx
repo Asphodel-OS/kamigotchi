@@ -148,8 +148,8 @@ const StateRow = styled.div`
 `;
 
 const StateIcon = styled.img`
-  width: 1vw;
-  height: 1vw;
+  width: 1.7vw;
+  height: 1.7vw;
 `;
 
 const Description = styled.div`
