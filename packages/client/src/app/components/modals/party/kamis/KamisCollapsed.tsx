@@ -10,7 +10,7 @@ import { Node } from 'network/shapes/Node';
 
 export const KamisCollapsed = ({
   data: { account, node },
-  display: { HarvestButton, UseItemButton, OnyxReviveButton },
+  display: { HarvestButton, UseItemButton, OnyxReviveButton, levelUp },
   state: { displayedKamis, tick },
   isVisible,
   utils,
@@ -24,6 +24,7 @@ export const KamisCollapsed = ({
     HarvestButton: (account: Account, kami: Kami, node: Node) => JSX.Element;
     UseItemButton: (kami: Kami, account: Account, icon: string) => JSX.Element;
     OnyxReviveButton: (account: Account, kami: Kami) => JSX.Element;
+    levelUp: (kami: Kami) => void;
   };
   state: {
     displayedKamis: Kami[];
@@ -31,6 +32,7 @@ export const KamisCollapsed = ({
   };
   isVisible: boolean;
   utils: {
+    calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
@@ -61,7 +63,8 @@ export const KamisCollapsed = ({
           key={kami.entity}
           kami={kami}
           actions={DisplayedActions(account, kami, node)}
-          options={{ showCooldown: true, showPercent: true, showTooltip: true }}
+          callbacks={{ levelUp }}
+          options={{ showCooldown: true, showLevelUp: true, showPercent: true, showTooltip: true }}
           utils={utils}
           tick={tick}
         />

@@ -14,6 +14,7 @@ import {
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
 import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { StatusIcons } from 'assets/images/icons/statuses';
 import { ItemImages } from 'assets/images/items';
 import { AffinityIcons } from 'constants/affinities';
@@ -30,14 +31,19 @@ import { Cooldown } from './Cooldown';
 export const KamiBar = ({
   kami,
   actions,
-  options: { showCooldown, showPercent, showTooltip } = {},
+  callbacks,
+  options: { showCooldown, showLevelUp, showPercent, showTooltip } = {},
   utils,
   tick,
 }: {
   kami: Kami;
   actions?: React.ReactNode;
+  callbacks?: {
+    levelUp?: (kami: Kami) => void;
+  };
   options?: {
     showCooldown?: boolean;
+    showLevelUp?: boolean;
     showPercent?: boolean; // whether to show the percent health
     showTooltip?: boolean;
   };
@@ -45,6 +51,7 @@ export const KamiBar = ({
 
   // NOTE: this is really messy, we should embed temp bonuses onto the kami object
   utils: {
+    calcExpRequirement?: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
@@ -53,10 +60,34 @@ export const KamiBar = ({
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setModals = useVisibility((s) => s.setModals);
   const [currentHealth, setCurrentHealth] = useState(0);
+  const [canLevel, setCanLevel] = useState(false);
 
   useEffect(() => {
     setCurrentHealth(calcHealth(kami));
   }, [tick]);
+
+  useEffect(() => {
+    if (!kami.progress || !utils.calcExpRequirement) return;
+    const expCurr = kami.progress.experience;
+    const expLimit = utils.calcExpRequirement(kami.progress.level);
+    setCanLevel(expCurr >= expLimit && isResting(kami));
+  }, [kami.progress?.experience, kami.state, utils.calcExpRequirement]);
+
+  const getLevelUpTooltip = () => {
+    if (!kami.progress || !utils.calcExpRequirement) return '';
+    const expCurr = kami.progress.experience;
+    const expLimit = utils.calcExpRequirement(kami.progress.level);
+    if (expCurr < expLimit) return 'not enough exp';
+    if (!isResting(kami)) return 'must be resting';
+    return 'Level Up!';
+  };
+
+  const handleLevelUp = () => {
+    if (canLevel && callbacks?.levelUp) {
+      callbacks.levelUp(kami);
+      playClick();
+    }
+  };
 
   /////////////////
   // INTERACTION
@@ -204,6 +235,14 @@ export const KamiBar = ({
   return (
     <Container>
       <Left>
+        {' '}
+        {showLevelUp && (
+          <TextTooltip text={[getLevelUpTooltip()]}>
+            <LevelUpButton disabled={!canLevel} onClick={handleLevelUp}>
+              <LevelUpArrow src={ArrowIcons.up} />
+            </LevelUpButton>
+          </TextTooltip>
+        )}
         <TextTooltip text={[`${kami.name}`]}>
           <Image src={kami.image} onClick={handleImageClick} />
         </TextTooltip>
@@ -279,10 +318,11 @@ interface MiddleProps {
 const Middle = styled.div<MiddleProps>`
   position: relative;
   height: 3vw;
+
   border-right: solid black 0.15vw;
   border-left: solid black 0.15vw;
-  margin: 0 0.3vw 0 0.3vw;
-  padding: 0 0.5vw;
+  margin: 0 0.2vw 0 0.2vw;
+  padding: 0 0.2vw;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -295,6 +335,7 @@ const Middle = styled.div<MiddleProps>`
 
 const Image = styled.img`
   border-right: solid black 0.15vw;
+  border-left: solid black 0.15vw;
   width: 3vw;
   height: 3vw;
 
@@ -332,4 +373,25 @@ const StateSection = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+`;
+
+const LevelUpButton = styled.div<{ disabled?: boolean }>`
+  width: 2vw;
+  height: 2vw;
+  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#11ee11')};
+  cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.3vw;
+  border: solid black 0.15vw;
+  border-radius: 100%;
+  &:hover {
+    opacity: ${({ disabled }) => (disabled ? 1 : 0.8)};
+  }
+`;
+
+const LevelUpArrow = styled.img`
+  width: 1.2vw;
+  height: 1.2vw;
 `;

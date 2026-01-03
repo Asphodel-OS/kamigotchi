@@ -5,6 +5,7 @@ import { calcHealth, isDead, isHarvesting, isResting, Kami } from 'app/cache/kam
 import { Text } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { StatusIcons } from 'assets/images/icons/statuses';
+import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { NullNode } from 'network/shapes';
 import { useEffect, useState } from 'react';
 import { getRateDisplay } from 'utils/numbers';
@@ -29,7 +30,25 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
       const health = calcHealth(kami);
       text = health == 0 ? 'Starving' : 'Harvesting';
     }
-    setHeader(text);
+    const calcHealthPercent = () => {
+      const total = kami.stats?.health.total ?? 0;
+      return (100 * calcHealth(kami)) / total;
+    };
+
+    const healthPercent = calcHealthPercent();
+    const getMood = (kami: Kami, percent: number) => {
+      let limit = 0;
+      const limits = Object.keys(RestingMoods);
+      for (let i = 0; i < limits.length; i++) {
+        limit = Number(limits[i]);
+        if (percent <= limit) {
+          if (isHarvesting(kami)) return HarvestingMoods[limit];
+          else if (isResting(kami)) return RestingMoods[limit];
+        }
+      }
+    };
+    const mood = getMood(kami, healthPercent) ?? '';
+    setHeader(text.concat(' while ', mood));
   }, [kami.state]);
 
   // update the description if the state changes
