@@ -46,29 +46,40 @@ library LibDroptable {
   /// @notice reveals and distributes items
   /// @dev avoid big array for memory's sake
   function reveal(IWorld world, IUintComp components, uint256[] memory commitIDs) internal {
-    // sorted in order of stack depth
+    for (uint256 i; i < commitIDs.length; i++) {
+      if (commitIDs[i] == 0) continue;
+      _revealSingle(world, components, commitIDs[i]);
+    }
+  }
+
+  /// @notice reveals and distributes a single commit
+  /// @dev helper function to avoid stack too deep errors in reveal()
+  function _revealSingle(
+    IWorld world,
+    IUintComp components,
+    uint256 commitID
+  ) internal {
     IdSourceComponent idSourceComp = IdSourceComponent(getAddrByID(components, IdSourceCompID));
     IdHolderComponent holderComp = IdHolderComponent(getAddrByID(components, IdHolderCompID));
+    
+    uint256 dtID = idSourceComp.extract(commitID);
+    uint256 holderID = holderComp.extract(commitID);
+
     BlockRevComponent blockComp = BlockRevComponent(getAddrByID(components, BlockRevealCompID));
     WeightsComponent weightsComp = WeightsComponent(getAddrByID(components, WeightsCompID));
     ValueComponent valComp = ValueComponent(getAddrByID(components, ValueCompID));
+    
+    uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
+    
     KeysComponent keysComp = KeysComponent(getAddrByID(components, KeysCompID));
+    uint32[] memory indices = keysComp.get(dtID);
+    
+    _distribute(components, indices, amts, holderID);
+    emitRevealEvent(world, commitID, holderID, dtID, indices, amts);
+    
     ValuesComponent logComp = ValuesComponent(getAddrByID(components, ValuesCompID));
     TimeComponent timeComp = TimeComponent(getAddrByID(components, TimeCompID));
-
-    for (uint256 i; i < commitIDs.length; i++) {
-      uint256 commitID = commitIDs[i];
-      if (commitID == 0) continue;
-
-      uint256 dtID = idSourceComp.extract(commitID);
-      uint256 holderID = holderComp.extract(commitID);
-
-      uint256[] memory amts = _select(blockComp, weightsComp, valComp, dtID, commitID);
-      uint32[] memory indices = keysComp.get(dtID);
-      _distribute(components, indices, amts, holderID);
-      emitRevealEvent(world, commitID, holderID, dtID, indices, amts);
-      logLatest(timeComp, logComp, holderID, dtID, amts); // latest result, to show on FE
-    }
+    logLatest(timeComp, logComp, holderID, dtID, amts); // latest result, to show on FE
   }
 
   /// @notice selects a single droptable result
