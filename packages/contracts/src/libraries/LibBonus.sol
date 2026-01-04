@@ -328,18 +328,18 @@ library LibBonus {
     unassignBy(components, "UPON_KILL_OR_KILLED", holderID);
   }
 
+  /// @notice resets timed bonuses
+  function resetTimed(IUintComp components, uint256 holderID) public {
+    unassignBy(components, "TIMED", holderID);
+  }
+
   /// @notice clears ALL bonuses from a holder (used by Cleaning Fluid item)
   function clearAll(IUintComp components, uint256 holderID) public {
-    // Clear all temporary bonuses by their end types
-    unassignBy(components, "UPON_HARVEST_ACTION", holderID);
-    unassignBy(components, "UPON_HARVEST_STOP", holderID);
-    unassignBy(components, "UPON_DEATH", holderID);
-    unassignBy(components, "UPON_LIQUIDATION", holderID);
-    unassignBy(components, "UPON_KILL_OR_KILLED", holderID);
-    
-    // Clear all timed bonuses
-    uint256[] memory timedBonusIDs = queryByParent(components, genEndAnchor("TIMED", holderID));
-    unassign(components, timedBonusIDs);
+    resetUponHarvestAction(components, holderID);
+    resetUponHarvestStop(components, holderID);
+    resetUponDeath(components, holderID);
+    resetUponLiquidation(components, holderID);
+    resetTimed(components, holderID);
   }
 
   //////////////
