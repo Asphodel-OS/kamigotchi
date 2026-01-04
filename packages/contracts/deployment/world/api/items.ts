@@ -59,7 +59,13 @@ export function itemsAPI(generateCallData: GenerateCallData, compiledCalls: stri
   }
 
   async function disable(index: number) {
-    const callData = generateCallData('system.item.registry', [index], 'disable');
+    const callData = generateCallData(
+      'system.item.registry',
+      [index],
+      'disable',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
