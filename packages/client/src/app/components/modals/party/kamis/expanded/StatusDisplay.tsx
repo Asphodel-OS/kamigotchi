@@ -54,7 +54,7 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
     } else {
       setHeader(text);
     }
-  }, [kami.state]);
+  }, [kami.state, kami.stats?.health.total]);
 
   // update the description if the state changes
   useEffect(() => {

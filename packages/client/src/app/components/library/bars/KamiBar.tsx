@@ -129,8 +129,8 @@ export const KamiBar = ({
 
   // get the percent health the kami has remaining
   const calcHealthPercent = () => {
-    if (!showTooltip) return 100;
     const total = kami.stats?.health.total ?? 0;
+    if (total === 0) return 0;
     return (100 * currentHealth) / total;
   };
 
