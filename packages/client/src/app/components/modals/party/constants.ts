@@ -1,5 +1,6 @@
 import { CollectIcon, LiquidateIcon } from 'assets/images/icons/actions';
 import { KamiIcon } from 'assets/images/icons/menu';
+import { StatusIcons } from 'assets/images/icons/statuses';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { StatIcons } from 'constants/stats';
@@ -10,8 +11,8 @@ export const SortIcons: Record<Sort, string> = {
   state: StatIcons.health,
   traits: TraitIcons.hand,
   'harvest rate': CollectIcon,
-  'strain': LiquidateIcon,
-  'resting rate': StatIcons.harmony,
+  strain: LiquidateIcon,
+  'resting rate': StatusIcons.resting_healrate,
 };
 
 export const ViewIcons: Record<View, string> = {
