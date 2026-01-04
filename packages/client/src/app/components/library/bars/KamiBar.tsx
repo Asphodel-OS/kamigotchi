@@ -262,7 +262,7 @@ export const KamiBar = ({
             ) : (
               <StateIcon src={getKamiStateIcon(kamiState)} />
             )}
-            {showPercent && <Text size={0.75}>{showHealth(kami)}</Text>}
+            {showPercent && <Text size={0.7}>{showHealth(kami)}</Text>}
           </StateSection>
         </TextTooltip>
       </Middle>
