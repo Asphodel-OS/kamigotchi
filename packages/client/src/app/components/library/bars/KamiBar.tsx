@@ -16,7 +16,6 @@ import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { StatusIcons } from 'assets/images/icons/statuses';
-import { ItemImages } from 'assets/images/items';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { HealthColors } from 'constants/kamis/health';
@@ -31,7 +30,7 @@ import { Cooldown } from './Cooldown';
 export const KamiBar = ({
   kami,
   actions,
-  options: { showCooldown, showLevelUp, showPercent, showTooltip } = {},
+  options: { showCooldown, showLevelUp, showPercent } = {},
   utils,
   tick,
 }: {
@@ -228,6 +227,7 @@ export const KamiBar = ({
   const kamiState = getKamiState(kami);
   const healthPercent = calcHealthPercent();
   const statusColor = getStatusColor(healthPercent);
+  const item = kami.harvest ? getHarvestItem(kami.harvest) : null;
 
   return (
     <Container>
@@ -253,7 +253,7 @@ export const KamiBar = ({
       <Middle percent={healthPercent} color={statusColor}>
         <OutputSection>
           <Text size={0.8}>{calcOutput(kami)}</Text>
-          <OutputIcon src={ItemImages.musu} />
+          {item && <OutputIcon src={item.image} />}
         </OutputSection>
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <StateSection>
