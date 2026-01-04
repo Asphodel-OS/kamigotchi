@@ -3,9 +3,11 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibGoal } from "libraries/LibGoal.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
 uint256 constant ID = uint256(keccak256("system.goal.contribute"));
 
@@ -23,11 +25,24 @@ contract GoalContributeSystem is System {
 
     amt = LibGoal.contribute(components, accID, goalID, amt);
 
+    // emit event if goal was just completed
+    if (LibGoal.isComplete(components, goalID)) {
+      _emitGoalComplete(goalIndex, goalID);
+    }
+
     // standard logging and tracking
     LibGoal.logContribution(components, accID, amt);
     LibAccount.updateLastTs(components, accID);
 
     return "";
+  }
+
+  function _emitGoalComplete(uint32 goalIndex, uint256 goalID) internal {
+    uint8[] memory schema = new uint8[](3);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT32);  // goalIndex
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // goalID
+    schema[2] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
+    LibEmitter.emitEvent(world, "GOAL_COMPLETE", schema, abi.encode(goalIndex, goalID, block.timestamp));
   }
 
   function executeTyped(uint32 goalIndex, uint256 amt) public returns (bytes memory) {
