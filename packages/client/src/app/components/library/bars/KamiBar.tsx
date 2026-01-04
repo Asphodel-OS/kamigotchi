@@ -31,16 +31,12 @@ import { Cooldown } from './Cooldown';
 export const KamiBar = ({
   kami,
   actions,
-  callbacks,
   options: { showCooldown, showLevelUp, showPercent, showTooltip } = {},
   utils,
   tick,
 }: {
   kami: Kami;
   actions?: React.ReactNode;
-  callbacks?: {
-    levelUp?: (kami: Kami) => void;
-  };
   options?: {
     showCooldown?: boolean;
     showLevelUp?: boolean;
@@ -51,6 +47,7 @@ export const KamiBar = ({
 
   // NOTE: this is really messy, we should embed temp bonuses onto the kami object
   utils: {
+    levelUp?: (kami: Kami) => void;
     calcExpRequirement?: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
@@ -83,8 +80,8 @@ export const KamiBar = ({
   };
 
   const handleLevelUp = () => {
-    if (canLevel && callbacks?.levelUp) {
-      callbacks.levelUp(kami);
+    if (canLevel && utils?.levelUp) {
+      utils.levelUp(kami);
       playClick();
     }
   };

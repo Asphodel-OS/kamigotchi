@@ -32,6 +32,7 @@ export const KamisCollapsed = ({
   };
   isVisible: boolean;
   utils: {
+    levelUp: (kami: Kami) => void;
     calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
@@ -63,7 +64,6 @@ export const KamisCollapsed = ({
           key={kami.entity}
           kami={kami}
           actions={DisplayedActions(account, kami, node)}
-          callbacks={{ levelUp }}
           options={{ showCooldown: true, showLevelUp: true, showPercent: true, showTooltip: true }}
           utils={utils}
           tick={tick}
