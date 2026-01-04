@@ -80,43 +80,51 @@ export const Toolbar = ({
 
     const base = view === 'external' ? wildKamis : kamis;
     const sorted = [...base];
-    if (sort === 'name') {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sort === 'state') {
-      sorted.sort((a, b) => {
-        const stateDiff = a.state.localeCompare(b.state);
-        if (stateDiff != 0) return stateDiff;
-        return calcHealthPercent(a) - calcHealthPercent(b);
-      });
-    } else if (sort === 'traits') {
-      sorted.sort((a, b) => {
-        let diff = 0;
-        if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
-        if (diff === 0) diff = compareTraitRarity(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitName(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
-        if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
-        return diff;
-      });
-    } else if (sort === 'harvest rate') {
-      sorted.sort((a, b) => {
-        const rateA = a.harvest?.rates?.total?.average ?? 0;
-        const rateB = b.harvest?.rates?.total?.average ?? 0;
-        return rateB - rateA;
-      });
-    } else if (sort === 'strain') {
-      sorted.sort((a, b) => {
-        const rateA = isHarvesting(a) ? calcHealthRate(a) : 0;
-        const rateB = isHarvesting(b) ? calcHealthRate(b) : 0;
-        return rateA - rateB;
-      });
-    } else if (sort === 'resting rate') {
-      sorted.sort((a, b) => {
-        const rateA = isResting(a) && !isFull(a) ? calcHealthRate(a) : 0;
-        const rateB = isResting(b) && !isFull(b) ? calcHealthRate(b) : 0;
-        return rateB - rateA;
-      });
+
+    switch (sort) {
+      case 'name':
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'state':
+        sorted.sort((a, b) => {
+          const stateDiff = a.state.localeCompare(b.state);
+          if (stateDiff != 0) return stateDiff;
+          return calcHealthPercent(a) - calcHealthPercent(b);
+        });
+        break;
+      case 'traits':
+        sorted.sort((a, b) => {
+          let diff = 0;
+          if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
+          if (diff === 0) diff = compareTraitRarity(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitName(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
+          if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
+          return diff;
+        });
+        break;
+      case 'harvest rate':
+        sorted.sort((a, b) => {
+          const rateA = isHarvesting(a) ? (a.harvest?.rates?.total?.average ?? 0) : 0;
+          const rateB = isHarvesting(b) ? (b.harvest?.rates?.total?.average ?? 0) : 0;
+          return rateB - rateA;
+        });
+        break;
+      case 'strain':
+        sorted.sort((a, b) => {
+          const rateA = isHarvesting(a) ? calcHealthRate(a) : 0;
+          const rateB = isHarvesting(b) ? calcHealthRate(b) : 0;
+          return rateA - rateB;
+        });
+        break;
+      case 'resting rate':
+        sorted.sort((a, b) => {
+          const rateA = isResting(a) && !isFull(a) ? calcHealthRate(a) : 0;
+          const rateB = isResting(b) && !isFull(b) ? calcHealthRate(b) : 0;
+          return rateB - rateA;
+        });
+        break;
     }
 
     setDisplayedKamis(sorted);
