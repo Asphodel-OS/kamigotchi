@@ -126,7 +126,7 @@ export const ItemGrid = ({
               scale={4.8}
               balance={inv.balance}
               options={options}
-              disabled={options.length == 0}
+              disabled={options.length == 0 || item.is.disabled}
               tooltip={{
                 text: [<ItemTooltip key={item.index} item={item} utils={utils} />],
                 maxWidth: 25,

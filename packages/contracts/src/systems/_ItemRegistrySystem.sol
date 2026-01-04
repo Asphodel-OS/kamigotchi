@@ -148,6 +148,18 @@ contract _ItemRegistrySystem is System, AuthRoles {
     LibItem.remove(components, index);
   }
 
+  function disable(uint32 index) public onlyAdmin(components) {
+    uint256 registryID = LibItem.getByIndex(components, index);
+    require(registryID != 0, "ItemReg: item does not exist");
+    LibItem.disable(components, index);
+  }
+
+  function enable(uint32 index) public onlyAdmin(components) {
+    uint256 registryID = LibItem.getByIndex(components, index);
+    require(registryID != 0, "ItemReg: item does not exist");
+    LibItem.enable(components, index);
+  }
+
   function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
     require(false, "not implemented");
     return "";

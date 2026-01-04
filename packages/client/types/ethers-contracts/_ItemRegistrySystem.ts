@@ -37,6 +37,8 @@ export interface _ItemRegistrySystemInterface extends Interface {
       | "create"
       | "createConsumable"
       | "deprecate"
+      | "disable"
+      | "enable"
       | "execute"
       | "owner"
       | "ownershipHandoverExpiresAt"
@@ -92,6 +94,14 @@ export interface _ItemRegistrySystemInterface extends Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "disable",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enable",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -147,6 +157,8 @@ export interface _ItemRegistrySystemInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "disable", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "enable", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -312,6 +324,10 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   deprecate: TypedContractMethod<[], [void], "nonpayable">;
 
+  disable: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+
+  enable: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+
   execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
   owner: TypedContractMethod<[], [string], "view">;
@@ -375,6 +391,12 @@ export interface _ItemRegistrySystem extends BaseContract {
   getFunction(
     nameOrSignature: "deprecate"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "disable"
+  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "enable"
+  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "execute"
   ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;

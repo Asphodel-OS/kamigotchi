@@ -53,6 +53,16 @@ export function itemsAPI(generateCallData: GenerateCallData, compiledCalls: stri
     compiledCalls.push(callData);
   }
 
+  async function enable(index: number) {
+    const callData = generateCallData('system.item.registry', [index], 'enable');
+    compiledCalls.push(callData);
+  }
+
+  async function disable(index: number) {
+    const callData = generateCallData('system.item.registry', [index], 'disable');
+    compiledCalls.push(callData);
+  }
+
   /////////////////
   // REQUIREMENTS
 
@@ -157,6 +167,8 @@ export function itemsAPI(generateCallData: GenerateCallData, compiledCalls: stri
       base: registerBase,
       consumable: registerConsumable,
     },
+    enable,
+    disable,
     add: {
       erc20: addERC20,
       flag: addFlag,

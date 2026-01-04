@@ -5,7 +5,6 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibBonus } from "libraries/LibBonus.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
@@ -27,6 +26,7 @@ contract KamiCastItemSystem is System {
     // item checks
     LibItem.verifyForShape(components, itemIndex, "ENEMY_KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", targetID);
+    LibItem.verifyEnabled(components, itemIndex);
 
     // use stamina from caster
     LibAccount.sync(components, accID);

@@ -27,6 +27,7 @@ contract KamiUseItemSystem is System {
         "you aren't even supposed to be here.."
       );
     }
+    LibItem.verifyEnabled(components, itemIndex);
 
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
