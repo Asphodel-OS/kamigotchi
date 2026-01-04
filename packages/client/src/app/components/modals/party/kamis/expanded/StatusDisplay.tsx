@@ -32,6 +32,7 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
     }
     const calcHealthPercent = () => {
       const total = kami.stats?.health.total ?? 0;
+      if (total === 0) return 0;
       return (100 * calcHealth(kami)) / total;
     };
 
@@ -47,8 +48,12 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
         }
       }
     };
-    const mood = getMood(kami, healthPercent) ?? '';
-    setHeader(text.concat(' while ', mood));
+    const mood = getMood(kami, healthPercent);
+    if (mood) {
+      setHeader(text.concat(' while ', mood));
+    } else {
+      setHeader(text);
+    }
   }, [kami.state]);
 
   // update the description if the state changes

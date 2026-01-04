@@ -68,7 +68,7 @@ export const KamiBar = ({
     const expCurr = kami.progress.experience;
     const expLimit = utils.calcExpRequirement(kami.progress.level);
     setCanLevel(expCurr >= expLimit && isResting(kami));
-  }, [kami.progress?.experience, kami.state, utils.calcExpRequirement]);
+  }, [kami.progress?.experience, kami.state, kami.progress?.level]);
 
   const getLevelUpTooltip = () => {
     if (!kami.progress || !utils.calcExpRequirement) return '';
@@ -232,7 +232,6 @@ export const KamiBar = ({
   return (
     <Container>
       <Left>
-        {' '}
         {showLevelUp && (
           <TextTooltip text={[getLevelUpTooltip()]}>
             <LevelUpButton disabled={!canLevel} onClick={handleLevelUp}>
