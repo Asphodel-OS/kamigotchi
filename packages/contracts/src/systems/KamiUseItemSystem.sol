@@ -20,6 +20,14 @@ contract KamiUseItemSystem is System {
     (uint256 kamiID, uint32 itemIndex) = abi.decode(arguments, (uint256, uint32));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
+    // (ach) temporary blocker for temple of the wheel
+    if (LibKami.getRoom(components, kamiID) == 19) {
+      require(
+        LibAccount.getIndex(components, accID) == 833,
+        "you aren't even supposed to be here.."
+      );
+    }
+
     // pet checks
     LibKami.verifyAccount(components, kamiID, accID);
     LibKami.verifyRoom(components, kamiID, accID);

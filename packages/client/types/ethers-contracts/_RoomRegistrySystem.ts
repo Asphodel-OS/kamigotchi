@@ -38,8 +38,8 @@ export interface _RoomRegistrySystemInterface extends Interface {
       | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
+      | "setTexts"
       | "transferOwnership"
-      | "updateText"
   ): FunctionFragment;
 
   getEvent(
@@ -84,12 +84,12 @@ export interface _RoomRegistrySystemInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
+    functionFragment: "setTexts",
+    values: [BigNumberish, string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateText",
-    values: [BigNumberish, string, string]
+    functionFragment: "transferOwnership",
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "addFlag", data: BytesLike): Result;
@@ -119,11 +119,11 @@ export interface _RoomRegistrySystemInterface extends Interface {
     functionFragment: "requestOwnershipHandover",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setTexts", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "updateText", data: BytesLike): Result;
 }
 
 export namespace OwnershipHandoverCanceledEvent {
@@ -252,16 +252,16 @@ export interface _RoomRegistrySystem extends BaseContract {
 
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
+  setTexts: TypedContractMethod<
+    [index: BigNumberish, name: string, description: string],
+    [void],
+    "nonpayable"
+  >;
+
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
     [void],
     "payable"
-  >;
-
-  updateText: TypedContractMethod<
-    [index: BigNumberish, name: string, description: string],
-    [void],
-    "nonpayable"
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -309,15 +309,15 @@ export interface _RoomRegistrySystem extends BaseContract {
     nameOrSignature: "requestOwnershipHandover"
   ): TypedContractMethod<[], [void], "payable">;
   getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
-  getFunction(
-    nameOrSignature: "updateText"
+    nameOrSignature: "setTexts"
   ): TypedContractMethod<
     [index: BigNumberish, name: string, description: string],
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
 
   getEvent(
     key: "OwnershipHandoverCanceled"

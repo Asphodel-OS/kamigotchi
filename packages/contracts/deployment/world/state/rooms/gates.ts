@@ -6,7 +6,7 @@ const gates = {
   // 1: (api: AdminAPI) => api.room.createGate(1, 1, 0, 0, 'CURR_MIN', 'KAMI', ''), // load bearing test to initialse IndexSourceComponent - queries wont work without
   15: (api: AdminAPI) => api.room.createGate(15, 0, 35, 0, 'QUEST', 'BOOL_IS', 'ACCOUNT'),
   19: (api: AdminAPI) =>
-    api.room.createGate(19, 0, 0, getGoalID(8), 'COMPLETE_COMP', 'BOOL_IS', ''),
+    api.room.createGate(19, 0, 0, getGoalID(999), 'COMPLETE_COMP', 'BOOL_IS', ''), // was coop 8 before
   31: (api: AdminAPI) =>
     api.room.createGate(31, 0, 0, getGoalID(1), 'COMPLETE_COMP', 'BOOL_IS', ''),
   50: (api: AdminAPI) =>
