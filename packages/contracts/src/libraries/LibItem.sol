@@ -22,6 +22,7 @@ import { TokenAddressComponent, ID as TokenAddressCompID } from "components/Toke
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
+import { LibDisabled } from "libraries/utils/LibDisabled.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibFor } from "libraries/utils/LibFor.sol";
@@ -140,6 +141,14 @@ library LibItem {
 
   function addFlag(IUintComp components, uint32 index, string memory flag) internal {
     LibFlag.setFull(components, genID(index), "ITEM", flag);
+  }
+
+  function enable(IUintComp components, uint32 index) internal {
+    LibDisabled.set(components, genID(index), false);
+  }
+
+  function disable(IUintComp components, uint32 index) internal {
+    LibDisabled.set(components, genID(index), true);
   }
 
   /// @notice delete a Registry entry for an item.
@@ -264,6 +273,11 @@ library LibItem {
     uint256[] memory ids = new uint256[](indices.length);
     for (uint256 i; i < indices.length; i++) ids[i] = genID(indices[i]);
     if (!LibFlag.checkAll(components, ids, "ITEM_UNBURNABLE", false)) revert("item not burnable");
+  }
+
+  function verifyEnabled(IUintComp components, uint32 index) public view {
+    uint256 id = genID(index);
+    if (LibDisabled.get(components, id)) revert("item is disabled");
   }
 
   /// @notice check if an item is meant for use by a specific shape (e.g. KAMI or ACCOUNT)

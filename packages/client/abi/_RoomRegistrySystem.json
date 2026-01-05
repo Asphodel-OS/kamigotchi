@@ -179,20 +179,7 @@
     },
     {
       "type": "function",
-      "name": "transferOwnership",
-      "inputs": [
-        {
-          "name": "newOwner",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "payable"
-    },
-    {
-      "type": "function",
-      "name": "updateText",
+      "name": "setTexts",
       "inputs": [
         {
           "name": "index",
@@ -212,6 +199,19 @@
       ],
       "outputs": [],
       "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "payable"
     },
     {
       "type": "event",
@@ -303,7 +303,7 @@
     "remove(uint32)": "00d84fd8",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "transferOwnership(address)": "f2fde38b",
-    "updateText(uint32,string,string)": "ce091921"
+    "setTexts(uint32,string,string)": "bc50578f",
+    "transferOwnership(address)": "f2fde38b"
   }
 }

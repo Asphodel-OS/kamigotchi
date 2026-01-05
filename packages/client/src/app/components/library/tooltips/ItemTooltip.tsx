@@ -18,9 +18,6 @@ export const ItemTooltip = ({
   const type = item.type;
   const description = item.description;
   const requirements = item.requirements;
-  const effects = item.effects;
-
-  const isLootbox = type === 'LOOTBOX';
 
   const display = (item: Item) => {
     const disp = displayRequirements(item);
@@ -28,10 +25,24 @@ export const ItemTooltip = ({
     else return disp;
   };
 
+  const getEffectsString = (item: Item) => {
+    const isLootbox = type === 'LOOTBOX';
+    const effects = item.effects;
+    let text = '';
+
+    if (!isLootbox && effects?.use?.length > 0) {
+      text = parseAllos(effects.use)
+        .map((entry) => entry.description)
+        .join('\n');
+    } else text = 'None';
+
+    return text;
+  };
+
   return (
     <TooltipContent
       img={image}
-      title={title}
+      title={item.is.disabled ? `${title} (disabled)` : title}
       subtitle={{ text: 'Type', content: type }}
       description={description}
       left={{
@@ -40,12 +51,7 @@ export const ItemTooltip = ({
       }}
       right={{
         text: 'Effects',
-        content:
-          !isLootbox && effects?.use?.length > 0
-            ? parseAllos(effects.use)
-                .map((entry) => entry.description)
-                .join('\n')
-            : 'None',
+        content: getEffectsString(item),
       }}
     />
   );

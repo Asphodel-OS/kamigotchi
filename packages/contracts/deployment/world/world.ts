@@ -57,6 +57,7 @@ import {
   setRoomText,
   unsetPortalTokens,
 } from './state';
+import { disableItems, enableItems } from './state/items';
 import { cancelTrades, completeTrades } from './state/trades';
 
 // TODO: rename this file to something that makes more sense
@@ -126,6 +127,8 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initItems(api, indices)),
       delete: (indices: number[]) => this.genCalls((api) => deleteItems(api, indices)),
       revise: (indices: number[]) => this.genCalls((api) => reviseItems(api, indices)),
+      enable: (indices: number[]) => this.genCalls((api) => enableItems(api, indices)),
+      disable: (indices: number[]) => this.genCalls((api) => disableItems(api, indices)),
     } as SubFunc,
     listings: {
       init: (indices?: number[]) => this.genCalls((api) => initListings(api, indices)),

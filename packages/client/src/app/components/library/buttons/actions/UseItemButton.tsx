@@ -85,6 +85,7 @@ const getOptions = (
   inventories = inventories.filter(
     (inv) => !!inv.item && passesConditions(world, components, inv.item.requirements.use, kami)
   );
+  inventories = inventories.filter((inv) => !inv.item.is.disabled);
 
   const options = inventories.map((inv: Inventory) => {
     return getOption(world, components, kami, inv, triggerAction, showEffects);

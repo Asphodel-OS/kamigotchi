@@ -201,6 +201,13 @@ export const getIsComplete = (comps: Components, entity: EntityIndex): boolean =
   return result ?? false;
 };
 
+export const getIsDisabled = (comps: Components, entity: EntityIndex): boolean => {
+  const { IsDisabled } = comps;
+  const result = getComponentValue(IsDisabled, entity)?.value;
+  return result ?? false;
+};
+('');
+
 export const getIsRegistry = (comps: Components, entity: EntityIndex): boolean => {
   const { IsRegistry } = comps;
   const result = getComponentValue(IsRegistry, entity)?.value;

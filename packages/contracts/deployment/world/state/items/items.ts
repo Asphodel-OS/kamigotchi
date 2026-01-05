@@ -93,6 +93,30 @@ export async function reviseItems(api: AdminAPI, overrideIndices?: number[]) {
   await initItems(api, indices);
 }
 
+export async function enableItems(api: AdminAPI, indices: number[]) {
+  console.log('\n==ENABLING ITEMS==');
+  for (let i = 0; i < indices.length; i++) {
+    try {
+      console.log(`Enabling item ${indices[i]}`);
+      await api.registry.item.enable(indices[i]);
+    } catch {
+      console.error('Could not enable item ' + indices[i]);
+    }
+  }
+}
+
+export async function disableItems(api: AdminAPI, indices: number[]) {
+  console.log('\n==DISABLING ITEMS==');
+  for (let i = 0; i < indices.length; i++) {
+    try {
+      console.log(`Disabling item ${indices[i]}`);
+      await api.registry.item.disable(indices[i]);
+    } catch {
+      console.error('Could not disable item ' + indices[i]);
+    }
+  }
+}
+
 ////////////////
 // SUB-SHAPES
 
