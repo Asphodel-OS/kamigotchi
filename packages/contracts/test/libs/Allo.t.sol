@@ -297,20 +297,20 @@ contract AlloTest is SetupTemplate {
     // Create some temporary bonuses
     uint256 bonusAnchor1 = uint256(keccak256(abi.encodePacked("bonus.anchor.1")));
     uint256 bonusAnchor2 = uint256(keccak256(abi.encodePacked("bonus.anchor.2")));
-    
+
     _createAlloBonus(bonusAnchor1, "STAT_HEALTH_SHIFT", "UPON_HARVEST_ACTION", 0, 10);
     _createAlloBonus(bonusAnchor1, "STAT_POWER_SHIFT", "UPON_HARVEST_ACTION", 0, 5);
     _createAlloBonus(bonusAnchor2, "STAT_HARMONY_SHIFT", "UPON_DEATH", 0, 3);
     _createAlloBonus(bonusAnchor2, "STAT_VIOLENCE_SHIFT", "TIMED", 100, 7);
-    
+
     uint256 petID = _mintKami(alice);
-    
+
     // Assign bonuses to the pet
     vm.startPrank(deployer);
     LibAllo.distribute(world, components, LibAllo.queryFor(components, bonusAnchor1), petID);
     LibAllo.distribute(world, components, LibAllo.queryFor(components, bonusAnchor2), petID);
     vm.stopPrank();
-    
+
     // Verify bonuses exist
     assertGt(
       LibBonus.getFor(components, "STAT_HEALTH_SHIFT", petID),
@@ -332,12 +332,14 @@ contract AlloTest is SetupTemplate {
       0,
       "Violence bonus should exist before clearing"
     );
-    
-    // Directly call clearAll (bypassing allo system for now)
-    vm.startPrank(deployer);
-    LibBonus.clearAll(components, petID);
-    vm.stopPrank();
-    
+
+    // Create Cleaning Fluid allo (ITEM type with index 11020) and distribute via allo system
+    uint256 cleaningFluidAnchor = uint256(keccak256(abi.encodePacked("cleaning.fluid.anchor")));
+    _createAlloCleaningFluid(cleaningFluidAnchor);
+
+    // Use ExternalCaller which has system permissions for component writes
+    ExternalCaller.alloDistribute(LibAllo.queryFor(components, cleaningFluidAnchor), 1, petID);
+
     // Verify all bonuses are cleared
     assertEq(
       LibBonus.getFor(components, "STAT_HEALTH_SHIFT", petID),
@@ -423,13 +425,10 @@ contract AlloTest is SetupTemplate {
     vm.stopPrank();
   }
 
-  // Creates a CLEARALL bonus allo (for Cleaning Fluid functionality)
-  function _createAlloClearAll(uint256 anchorID) internal returns (uint256 id) {
-    // Use createBonus with empty type (CLEARALL indicator)
-    // Empty endAnchor would cause revert, so we use a non-empty one even though it won't be used
+  // Creates Cleaning Fluid allo (ITEM type with index 11020)
+  function _createAlloCleaningFluid(uint256 anchorID) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibAllo.createBase(components, 0, anchorID, "BONUS", 1, true);
-    id = LibBonus.regCreate(components, 0, id, "", "PLACEHOLDER", 0, 0);
+    id = LibAllo.createBasic(components, 0, anchorID, "ITEM", 11020, 1);
     vm.stopPrank();
   }
 

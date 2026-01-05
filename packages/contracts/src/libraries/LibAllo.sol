@@ -206,6 +206,7 @@ library LibAllo {
       if (type_.eq("ITEM_DROPTABLE")) giveDT(world, components, alloID, amt, mult, targetID);
       else if (type_.eq("STAT")) giveStat(components, indexComp.get(alloID), amt, mult, targetID);
       else if (type_.eq("BONUS")) giveBonus(components, alloID, mult, targetID);
+      else if (type_.eq("ITEM") && indexComp.get(alloID) == 11020) LibBonus.clearAll(components, targetID);
       else giveBasic(world, components, type_, indexComp.get(alloID), amt, mult, targetID);
     }
   }
@@ -240,19 +241,6 @@ library LibAllo {
     uint256 mult,
     uint256 targetID
   ) internal {
-    // Check if this is a CLEARALL bonus (indicated by empty type)
-    uint256[] memory regIDs = LibBonus.queryByParent(components, alloID);
-    if (regIDs.length > 0) {
-      // Check if the first bonus registry has an empty type (CLEARALL indicator)
-      string memory bonusType = TypeComponent(getAddrByID(components, TypeCompID)).get(regIDs[0]);
-      if (bonusType.eq("")) {
-        // This is CLEARALL - remove all bonuses instead of assigning
-        LibBonus.clearAll(components, targetID);
-        return;
-      }
-    }
-    
-    // Normal bonus assignment
     LibBonus.assignTemporary(components, alloID, targetID);
   }
 
