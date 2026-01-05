@@ -15,7 +15,6 @@ import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/bas
 import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Shimmer } from 'app/styles/effects';
-import { ArrowIcons } from 'assets/images/icons/arrows';
 import { StatusIcons } from 'assets/images/icons/statuses';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
@@ -26,6 +25,7 @@ import { NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
+import { LevelUpArrows } from '../animations/LevelUp';
 import { Cooldown } from './Cooldown';
 
 export const KamiBar = ({
@@ -129,6 +129,7 @@ export const KamiBar = ({
 
   // get the percent health the kami has remaining
   const calcHealthPercent = () => {
+    if (isOffWorld(kami)) return 100;
     const total = kami.stats?.health.total ?? 0;
     if (total === 0) return 0;
     return (100 * currentHealth) / total;
@@ -223,6 +224,7 @@ export const KamiBar = ({
     if (state === 'HARVESTING') return StatusIcons.kami_harvesting;
     if (state === 'RESTING') return StatusIcons.kami_resting;
     if (state === 'DEAD') return StatusIcons.kami_dead;
+    if (state === 'WANDERING') return StatusIcons.kami_wandering;
   };
 
   const kamiState = getKamiState(kami);
@@ -237,7 +239,7 @@ export const KamiBar = ({
           <Image src={kami.image} onClick={handleImageClick} />{' '}
           {canLevel && (
             <LevelUpButton disabled={!canLevel} onClick={handleLevelUp}>
-              <LevelUpArrow src={ArrowIcons.up} />
+              <LevelUpArrows />
               <Shimmer />
             </LevelUpButton>
           )}
@@ -250,18 +252,16 @@ export const KamiBar = ({
           <Icon src={getHandIcon()} />
         </TextTooltip>
       </Left>
-      <Middle percent={healthPercent} color={statusColor}>
-        <OutputSection>
-          <Text size={0.8}>{calcOutput(kami)}</Text>
-          {item && <OutputIcon src={item.image} />}
-        </OutputSection>
+      <Middle percent={healthPercent} color={statusColor} centered={isOffWorld(kami)}>
+        {!isOffWorld(kami) && (
+          <OutputSection>
+            <Text size={0.8}>{calcOutput(kami)}</Text>
+            {item && <OutputIcon src={item.image} />}
+          </OutputSection>
+        )}
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <StateSection>
-            {kamiState === 'WANDERING' ? (
-              <Text size={0.9}>{kamiState}</Text>
-            ) : (
-              <StateIcon src={getKamiStateIcon(kamiState)} />
-            )}
+            <StateIcon src={getKamiStateIcon(kamiState)} />
             {showPercent && <Text size={0.7}>{showHealth(kami)}</Text>}
           </StateSection>
         </TextTooltip>
@@ -310,6 +310,7 @@ const Right = styled.div`
 interface MiddleProps {
   percent: number;
   color: string;
+  centered?: boolean;
 }
 const Middle = styled.div<MiddleProps>`
   position: relative;
@@ -322,7 +323,7 @@ const Middle = styled.div<MiddleProps>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};
   flex-grow: 1;
 
   background: ${({ percent, color }) =>
@@ -383,13 +384,9 @@ const LevelUpButton = styled.div<{ disabled?: boolean }>`
   justify-content: center;
 
   pointer-events: none;
+  overflow: hidden;
 
   &:hover {
     opacity: ${({ disabled }) => (disabled ? 1 : 0.8)};
   }
-`;
-
-const LevelUpArrow = styled.img`
-  width: 1.2vw;
-  height: 1.2vw;
 `;
