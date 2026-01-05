@@ -253,9 +253,9 @@ export const KamiBar = ({
         </TextTooltip>
       </Left>
       <Middle percent={healthPercent} color={statusColor}>
-        <Overlay top={0.5} left={0.5}>
+        <Overlay top={0.2} left={0.5}>
           <OutputSection>
-            <Text size={0.8}>{calcOutput(kami)}</Text>
+            <Text size={0.6}>{calcOutput(kami)}</Text>
             {item && <OutputIcon src={item.image} />}
           </OutputSection>
         </Overlay>
@@ -354,6 +354,7 @@ const OutputSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+  gap: 0.4vw;
 `;
 
 const OutputIcon = styled.img`
