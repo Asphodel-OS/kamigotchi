@@ -294,43 +294,80 @@ contract AlloTest is SetupTemplate {
   }
 
   function testAlloClearAll() public {
-    // Create some temporary bonuses
+    // Create temporary bonuses covering the full gamut of possible types:
+    // - UPON_HARVEST_ACTION
+    // - UPON_HARVEST_STOP
+    // - UPON_DEATH
+    // - UPON_KILL_OR_KILLED
+    // - UPON_LIQUIDATION
+    // - TIMED
     uint256 bonusAnchor1 = uint256(keccak256(abi.encodePacked("bonus.anchor.1")));
     uint256 bonusAnchor2 = uint256(keccak256(abi.encodePacked("bonus.anchor.2")));
+    uint256 bonusAnchor3 = uint256(keccak256(abi.encodePacked("bonus.anchor.3")));
 
-    _createAlloBonus(bonusAnchor1, "STAT_HEALTH_SHIFT", "UPON_HARVEST_ACTION", 0, 10);
-    _createAlloBonus(bonusAnchor1, "STAT_POWER_SHIFT", "UPON_HARVEST_ACTION", 0, 5);
-    _createAlloBonus(bonusAnchor2, "STAT_HARMONY_SHIFT", "UPON_DEATH", 0, 3);
-    _createAlloBonus(bonusAnchor2, "STAT_VIOLENCE_SHIFT", "TIMED", 100, 7);
+    // UPON_HARVEST_ACTION bonuses (like food/potion effects)
+    _createAlloBonus(bonusAnchor1, "HARV_BOUNTY_BOOST", "UPON_HARVEST_ACTION", 0, 250);
+    _createAlloBonus(bonusAnchor1, "STND_COOLDOWN_SHIFT", "UPON_HARVEST_ACTION", 0, -30);
+
+    // UPON_HARVEST_STOP bonus
+    _createAlloBonus(bonusAnchor1, "STND_STRAIN_BOOST", "UPON_HARVEST_STOP", 0, 500);
+
+    // UPON_DEATH bonus
+    _createAlloBonus(bonusAnchor2, "DEF_SALVAGE_RATIO", "UPON_DEATH", 0, 250);
+
+    // UPON_KILL_OR_KILLED bonus
+    _createAlloBonus(bonusAnchor2, "ATK_THRESHOLD_SHIFT", "UPON_KILL_OR_KILLED", 0, -300);
+
+    // UPON_LIQUIDATION bonus
+    _createAlloBonus(bonusAnchor3, "ATK_RECOIL_BOOST", "UPON_LIQUIDATION", 0, -250);
+
+    // TIMED bonus
+    _createAlloBonus(bonusAnchor3, "STAT_VIOLENCE_SHIFT", "TIMED", 100, 7);
 
     uint256 petID = _mintKami(alice);
 
-    // Assign bonuses to the pet
+    // Assign all bonuses to the pet
     vm.startPrank(deployer);
     LibAllo.distribute(world, components, LibAllo.queryFor(components, bonusAnchor1), petID);
     LibAllo.distribute(world, components, LibAllo.queryFor(components, bonusAnchor2), petID);
+    LibAllo.distribute(world, components, LibAllo.queryFor(components, bonusAnchor3), petID);
     vm.stopPrank();
 
-    // Verify bonuses exist
-    assertGt(
-      LibBonus.getFor(components, "STAT_HEALTH_SHIFT", petID),
+    // Verify all bonus types exist before clearing
+    assertNotEq(
+      LibBonus.getFor(components, "HARV_BOUNTY_BOOST", petID),
       0,
-      "Health bonus should exist before clearing"
+      "HARV_BOUNTY_BOOST should exist before clearing"
     );
-    assertGt(
-      LibBonus.getFor(components, "STAT_POWER_SHIFT", petID),
+    assertNotEq(
+      LibBonus.getFor(components, "STND_COOLDOWN_SHIFT", petID),
       0,
-      "Power bonus should exist before clearing"
+      "STND_COOLDOWN_SHIFT should exist before clearing"
     );
-    assertGt(
-      LibBonus.getFor(components, "STAT_HARMONY_SHIFT", petID),
+    assertNotEq(
+      LibBonus.getFor(components, "STND_STRAIN_BOOST", petID),
       0,
-      "Harmony bonus should exist before clearing"
+      "STND_STRAIN_BOOST should exist before clearing"
     );
-    assertGt(
+    assertNotEq(
+      LibBonus.getFor(components, "DEF_SALVAGE_RATIO", petID),
+      0,
+      "DEF_SALVAGE_RATIO should exist before clearing"
+    );
+    assertNotEq(
+      LibBonus.getFor(components, "ATK_THRESHOLD_SHIFT", petID),
+      0,
+      "ATK_THRESHOLD_SHIFT should exist before clearing"
+    );
+    assertNotEq(
+      LibBonus.getFor(components, "ATK_RECOIL_BOOST", petID),
+      0,
+      "ATK_RECOIL_BOOST should exist before clearing"
+    );
+    assertNotEq(
       LibBonus.getFor(components, "STAT_VIOLENCE_SHIFT", petID),
       0,
-      "Violence bonus should exist before clearing"
+      "STAT_VIOLENCE_SHIFT should exist before clearing"
     );
 
     // Create Cleaning Fluid allo (ITEM type with index 11020) and distribute via allo system
@@ -340,26 +377,41 @@ contract AlloTest is SetupTemplate {
     // Use ExternalCaller which has system permissions for component writes
     ExternalCaller.alloDistribute(LibAllo.queryFor(components, cleaningFluidAnchor), 1, petID);
 
-    // Verify all bonuses are cleared
+    // Verify ALL bonus types are cleared
     assertEq(
-      LibBonus.getFor(components, "STAT_HEALTH_SHIFT", petID),
+      LibBonus.getFor(components, "HARV_BOUNTY_BOOST", petID),
       0,
-      "Health bonus should be cleared"
+      "HARV_BOUNTY_BOOST should be cleared"
     );
     assertEq(
-      LibBonus.getFor(components, "STAT_POWER_SHIFT", petID),
+      LibBonus.getFor(components, "STND_COOLDOWN_SHIFT", petID),
       0,
-      "Power bonus should be cleared"
+      "STND_COOLDOWN_SHIFT should be cleared"
     );
     assertEq(
-      LibBonus.getFor(components, "STAT_HARMONY_SHIFT", petID),
+      LibBonus.getFor(components, "STND_STRAIN_BOOST", petID),
       0,
-      "Harmony bonus should be cleared"
+      "STND_STRAIN_BOOST should be cleared"
+    );
+    assertEq(
+      LibBonus.getFor(components, "DEF_SALVAGE_RATIO", petID),
+      0,
+      "DEF_SALVAGE_RATIO should be cleared"
+    );
+    assertEq(
+      LibBonus.getFor(components, "ATK_THRESHOLD_SHIFT", petID),
+      0,
+      "ATK_THRESHOLD_SHIFT should be cleared"
+    );
+    assertEq(
+      LibBonus.getFor(components, "ATK_RECOIL_BOOST", petID),
+      0,
+      "ATK_RECOIL_BOOST should be cleared"
     );
     assertEq(
       LibBonus.getFor(components, "STAT_VIOLENCE_SHIFT", petID),
       0,
-      "Violence bonus should be cleared"
+      "STAT_VIOLENCE_SHIFT should be cleared"
     );
   }
 
