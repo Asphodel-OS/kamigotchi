@@ -2,6 +2,9 @@
 pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
+import { IEmitter } from "solecs/interfaces/IEmitter.sol";
+import { Emitter } from "solecs/Emitter.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 contract GoalsTest is SetupTemplate {
   PlayerAccount accLurker;
@@ -184,6 +187,44 @@ contract GoalsTest is SetupTemplate {
       assertEq(1, _getItemBal(accGold, 300), "goldier gold mismatch");
       assertEq(goldContrib * 3, _getItemBal(accGold, 400), "goldier proportional mismatch");
     }
+  }
+
+  function testGoalCompleteEventEmission() public {
+    uint32 goalIndex = 99;
+    uint256 targetAmt = 100;
+
+    // Set up emitter for event testing
+    vm.prank(deployer);
+    Emitter emitter = new Emitter(world);
+    vm.prank(deployer);
+    world.updateEmitter(address(emitter));
+
+    // Create a simple goal
+    uint256 goalID = _createGoal(
+      goalIndex,
+      0,
+      Condition("ITEM", "CURR_MIN", MUSU_INDEX, targetAmt, "")
+    );
+
+    // Fund account to be able to complete the goal in one contribution
+    _fundAccount(accGold.index, 100);
+
+    // Build expected event parameters
+    uint8[] memory schema = new uint8[](3);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT32);  // goalIndex
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // goalID
+    schema[2] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
+
+    // Expect the GOAL_COMPLETE event to be emitted
+    vm.expectEmit(address(emitter));
+    emit IEmitter.WorldEvent("GOAL_COMPLETE", schema, abi.encode(goalIndex, goalID, block.timestamp));
+
+    // Contribute the full amount to complete the goal
+    vm.prank(accGold.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 100);
+
+    // Verify goal is complete
+    assertTrue(LibGoal.isComplete(components, goalID), "Goal should be complete");
   }
 
   //////////////////
