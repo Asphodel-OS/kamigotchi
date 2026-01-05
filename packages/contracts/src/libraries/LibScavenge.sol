@@ -123,43 +123,9 @@ library LibScavenge {
     uint256[] memory rwdIDs = getRewards(components, regID);
     uint256[] memory commitIDs = LibAllo.distribute(world, components, rwdIDs, count, holderID);
 
-    (
-      string memory scavengeType,
-      uint32 nodeIndex,
-      string[] memory rewardTypes,
-      uint32[] memory rewardIndices,
-      uint256[] memory rewardAmounts
-    ) = _getRewardData(components, regID, rwdIDs, count);
-    emitLog(world, regID, scavengeType, nodeIndex, holderID, rewardTypes, rewardIndices, rewardAmounts, commitIDs);
-  }
-
-  function _getRewardData(
-    IUintComp components,
-    uint256 regID,
-    uint256[] memory rwdIDs,
-    uint256 count
-  ) internal view returns (
-    string memory scavengeType,
-    uint32 nodeIndex,
-    string[] memory rewardTypes,
-    uint32[] memory rewardIndices,
-    uint256[] memory rewardAmounts
-  ) {
-    TypeComponent typeComp = TypeComponent(getAddrByID(components, TypeCompID));
-    IndexComponent indexComp = IndexComponent(getAddrByID(components, IndexCompID));
-    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
-
-    scavengeType = typeComp.get(regID);
-    nodeIndex = indexComp.get(regID);
-    rewardTypes = new string[](rwdIDs.length);
-    rewardIndices = new uint32[](rwdIDs.length);
-    rewardAmounts = new uint256[](rwdIDs.length);
-
-    for (uint256 i; i < rwdIDs.length; i++) {
-      rewardTypes[i] = typeComp.get(rwdIDs[i]);
-      rewardIndices[i] = indexComp.safeGet(rwdIDs[i]);
-      rewardAmounts[i] = valueComp.safeGet(rwdIDs[i]) * count;
-    }
+    string memory scavengeType = TypeComponent(getAddrByID(components, TypeCompID)).get(regID);
+    uint32 nodeIndex = IndexComponent(getAddrByID(components, IndexCompID)).get(regID);
+    emitLog(world, regID, scavengeType, nodeIndex, holderID, commitIDs);
   }
 
   /////////////////
@@ -219,9 +185,6 @@ library LibScavenge {
     string memory scavengeType,
     uint32 nodeIndex,
     uint256 holderID,
-    string[] memory rewardTypes,
-    uint32[] memory rewardIndices,
-    uint256[] memory rewardAmounts,
     uint256[] memory commitIDs
   ) internal {
     ScavengeRewardsEventData memory eventData = ScavengeRewardsEventData({
@@ -230,9 +193,6 @@ library LibScavenge {
       nodeIndex: nodeIndex,
       holderID: holderID,
       timestamp: block.timestamp,
-      rewardTypes: rewardTypes,
-      rewardIndices: rewardIndices,
-      rewardAmounts: rewardAmounts,
       commitIDs: commitIDs
     });
 
@@ -250,23 +210,17 @@ library LibScavenge {
     uint32 nodeIndex;
     uint256 holderID;
     uint256 timestamp;
-    string[] rewardTypes;
-    uint32[] rewardIndices;
-    uint256[] rewardAmounts;
     uint256[] commitIDs;
   }
 
   function _schema() internal pure returns (uint8[] memory) {
-    uint8[] memory schema = new uint8[](9);
+    uint8[] memory schema = new uint8[](6);
     schema[0] = uint8(LibTypes.SchemaValue.UINT256);       // regID
     schema[1] = uint8(LibTypes.SchemaValue.STRING);        // scavengeType
     schema[2] = uint8(LibTypes.SchemaValue.UINT32);        // nodeIndex
     schema[3] = uint8(LibTypes.SchemaValue.UINT256);       // holderID
     schema[4] = uint8(LibTypes.SchemaValue.UINT256);       // timestamp
-    schema[5] = uint8(LibTypes.SchemaValue.STRING_ARRAY);  // rewardTypes
-    schema[6] = uint8(LibTypes.SchemaValue.UINT32_ARRAY);  // rewardIndices
-    schema[7] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // rewardAmounts
-    schema[8] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // commitIDs
+    schema[5] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // commitIDs
     return schema;
   }
 
@@ -277,9 +231,6 @@ library LibScavenge {
       data.nodeIndex,
       data.holderID,
       data.timestamp,
-      data.rewardTypes,
-      data.rewardIndices,
-      data.rewardAmounts,
       data.commitIDs
     );
   }

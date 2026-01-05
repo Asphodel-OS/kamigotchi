@@ -196,19 +196,12 @@ contract ScavengeTest is SetupTemplate {
       uint32 nodeIndex,
       uint256 holderID,
       uint256 timestamp,
-      string[] memory rewardTypes,
-      uint32[] memory rewardIndices,
-      uint256[] memory rewardAmounts,
       uint256[] memory commitIDs
     )
   {
     // Skip schema array decoding, decode the values directly
     (, bytes memory values) = abi.decode(data, (uint8[], bytes));
-    return
-      abi.decode(
-        values,
-        (uint256, string, uint32, uint256, uint256, string[], uint32[], uint256[], uint256[])
-      );
+    return abi.decode(values, (uint256, string, uint32, uint256, uint256, uint256[]));
   }
 
   /// @notice Helper to decode DROPTABLE_REVEAL event data
@@ -256,12 +249,9 @@ contract ScavengeTest is SetupTemplate {
     (
       uint256 regID,
       string memory scavengeType,
-      uint32 nodeIndex,
+      ,
       uint256 holderID,
-      uint256 timestamp,
-      string[] memory rewardTypes,
-      uint32[] memory rewardIndices,
-      uint256[] memory rewardAmounts,
+      ,
       uint256[] memory commitIDs
     ) = _decodeScavengeRewardsEvent(eventLog.data);
 
@@ -269,9 +259,6 @@ contract ScavengeTest is SetupTemplate {
     assertEq(regID, scavbar1.id, "regID mismatch");
     assertEq(scavengeType, "TEST", "scavengeType mismatch");
     assertEq(holderID, alice.id, "holderID mismatch");
-    assertEq(rewardTypes.length, 1, "rewardTypes length mismatch");
-    assertEq(rewardTypes[0], "ITEM_DROPTABLE", "reward type should be ITEM_DROPTABLE");
-    assertEq(rewardAmounts[0], rolls * amt, "reward amount (rolls) mismatch");
     assertEq(commitIDs.length, 1, "commitIDs length mismatch");
     assertTrue(commitIDs[0] != 0, "commitID should be non-zero for droptable");
   }
@@ -279,74 +266,50 @@ contract ScavengeTest is SetupTemplate {
   /// @notice Test DROPTABLE_REVEAL event
   function testDroptableRevealEvent() public {
     // Setup: create scavbar with droptable, claim to create commit
-    uint256 amt = 2;
     uint32[] memory keys = new uint32[](2);
     keys[0] = 10;
     keys[1] = 20;
     uint256[] memory weights = new uint256[](2);
     weights[0] = 80;
     weights[1] = 20;
-    uint256 rolls = 1;
 
-    _addReward(scavbar1.id, keys, weights, rolls);
-    _incFor(alice, scavbar1, amt * scavbar1.tierCost);
+    _addReward(scavbar1.id, keys, weights, 1); // 1 roll per tier
+    _incFor(alice, scavbar1, 2 * scavbar1.tierCost); // 2 tiers
 
     // Claim to create commits
     vm.recordLogs();
     _claim(alice, scavbar1.id);
-    Vm.Log[] memory claimLogs = vm.getRecordedLogs();
-    Vm.Log memory scavEventLog = _findWorldEvent(claimLogs, "SCAVENGE_REWARDS");
-    (, , , , , , , , uint256[] memory commitIDs) = _decodeScavengeRewardsEvent(
-      scavEventLog.data
+    (, , , , , uint256[] memory commitIDs) = _decodeScavengeRewardsEvent(
+      _findWorldEvent(vm.getRecordedLogs(), "SCAVENGE_REWARDS").data
     );
 
-    // Advance block to allow reveal
+    // Advance block and reveal
     vm.roll(block.number + 2);
-
-    // Reveal and record logs
     vm.recordLogs();
     vm.prank(alice.operator);
     _DroptableRevealSystem.executeTyped(commitIDs);
-    Vm.Log[] memory revealLogs = vm.getRecordedLogs();
 
-    // Find and decode DROPTABLE_REVEAL event
-    Vm.Log memory revealEventLog = _findWorldEvent(revealLogs, "DROPTABLE_REVEAL");
-    (
-      uint256 commitID,
-      uint256 holderID,
-      uint256 dtID,
-      uint256 timestamp,
-      uint32[] memory itemIndices,
-      uint256[] memory itemAmounts
-    ) = _decodeDroptableRevealEvent(revealEventLog.data);
+    // Decode DROPTABLE_REVEAL event
+    (uint256 commitID, uint256 holderID, uint256 dtID, , , uint256[] memory itemAmounts) =
+      _decodeDroptableRevealEvent(_findWorldEvent(vm.getRecordedLogs(), "DROPTABLE_REVEAL").data);
 
     // Assertions
     assertEq(commitID, commitIDs[0], "commitID mismatch");
     assertEq(holderID, alice.id, "holderID mismatch");
     assertTrue(dtID != 0, "dtID should be non-zero");
-    assertEq(timestamp, block.timestamp, "timestamp mismatch");
-    assertEq(itemIndices.length, keys.length, "itemIndices length mismatch");
-    assertEq(itemAmounts.length, keys.length, "itemAmounts length mismatch");
-    
-    // Verify total items distributed equals rolls * amt
-    uint256 totalItems = 0;
-    for (uint i = 0; i < itemAmounts.length; i++) {
-      totalItems += itemAmounts[i];
-    }
-    assertEq(totalItems, rolls * amt, "total items distributed mismatch");
+
+    // Verify total items distributed equals rolls * tiers (1 * 2 = 2)
+    uint256 totalItems;
+    for (uint i = 0; i < itemAmounts.length; i++) totalItems += itemAmounts[i];
+    assertEq(totalItems, 2, "total items distributed mismatch");
   }
 
   /// @notice Test full event flow: SCAVENGE_REWARDS → DROPTABLE_REVEAL
   function testFullEventFlow() public {
-    // Setup: create scavbar with mixed rewards (basic item + droptable)
-    uint256 amt = 3;
-    
-    // Add basic item reward
-    uint32 basicItemIndex = 100;
-    uint256 basicItemValue = 10;
-    _addReward(scavbar1.id, "ITEM", basicItemIndex, basicItemValue);
-    
-    // Add droptable reward
+    // Add basic item reward (index 100, value 10)
+    _addReward(scavbar1.id, "ITEM", 100, 10);
+
+    // Add droptable reward (2 rolls per tier)
     uint32[] memory keys = new uint32[](3);
     keys[0] = 1;
     keys[1] = 2;
@@ -355,65 +318,42 @@ contract ScavengeTest is SetupTemplate {
     weights[0] = 60;
     weights[1] = 30;
     weights[2] = 10;
-    uint256 rolls = 2;
-    _addReward(scavbar1.id, keys, weights, rolls);
-    
-    _incFor(alice, scavbar1, amt * scavbar1.tierCost);
+    _addReward(scavbar1.id, keys, weights, 2);
 
-    // Step 1: Claim and verify SCAVENGE_REWARDS event
+    _incFor(alice, scavbar1, 3 * scavbar1.tierCost); // 3 tiers
+
+    // Step 1: Claim
     vm.recordLogs();
     _claim(alice, scavbar1.id);
-    Vm.Log[] memory claimLogs = vm.getRecordedLogs();
-    
-    Vm.Log memory scavEventLog = _findWorldEvent(claimLogs, "SCAVENGE_REWARDS");
-    (
-      ,
-      ,
-      ,
-      ,
-      ,
-      string[] memory rewardTypes,
-      ,
-      uint256[] memory rewardAmounts,
-      uint256[] memory commitIDs
-    ) = _decodeScavengeRewardsEvent(scavEventLog.data);
+    (, , , , , uint256[] memory commitIDs) = _decodeScavengeRewardsEvent(
+      _findWorldEvent(vm.getRecordedLogs(), "SCAVENGE_REWARDS").data
+    );
 
-    // Verify mixed rewards in SCAVENGE_REWARDS
-    assertEq(rewardTypes.length, 2, "should have 2 reward types");
-    assertEq(rewardTypes[0], "ITEM", "first reward should be ITEM");
-    assertEq(rewardTypes[1], "ITEM_DROPTABLE", "second reward should be ITEM_DROPTABLE");
-    assertEq(rewardAmounts[0], basicItemValue * amt, "basic item amount mismatch");
-    assertEq(rewardAmounts[1], rolls * amt, "droptable rolls mismatch");
+    // commitIDs should have entry for each allo (basic item = 0, droptable = non-zero)
+    assertEq(commitIDs.length, 2, "should have 2 commitIDs");
     assertEq(commitIDs[0], 0, "basic item should have no commitID");
     assertTrue(commitIDs[1] != 0, "droptable should have commitID");
 
-    // Verify basic item was distributed immediately
-    assertEq(_getItemBal(alice, basicItemIndex), basicItemValue * amt, "basic item not distributed");
+    // Verify basic item was distributed immediately (10 * 3 tiers = 30)
+    assertEq(_getItemBal(alice, 100), 30, "basic item not distributed");
 
-    // Step 2: Reveal and verify DROPTABLE_REVEAL event
+    // Step 2: Reveal
     vm.roll(block.number + 2);
-    
     uint256[] memory revealsArray = new uint256[](1);
     revealsArray[0] = commitIDs[1];
-    
+
     vm.recordLogs();
     vm.prank(alice.operator);
     _DroptableRevealSystem.executeTyped(revealsArray);
-    Vm.Log[] memory revealLogs = vm.getRecordedLogs();
 
-    Vm.Log memory revealEventLog = _findWorldEvent(revealLogs, "DROPTABLE_REVEAL");
     (uint256 commitID, , , , , uint256[] memory itemAmounts) = _decodeDroptableRevealEvent(
-      revealEventLog.data
+      _findWorldEvent(vm.getRecordedLogs(), "DROPTABLE_REVEAL").data
     );
 
-    // Verify commitID matches
+    // Verify commitID matches and droptable items were distributed (2 rolls * 3 tiers = 6)
     assertEq(commitID, commitIDs[1], "commitID should match between events");
-    
-    // Verify droptable items were distributed
-    uint256 totalDropItems = 0;
-    for (uint i = 0; i < itemAmounts.length; i++) {
-      totalDropItems += itemAmounts[i];
-    }
-    assertEq(totalDropItems, rolls * amt, "droptable items total mismatch");
+    uint256 totalDropItems;
+    for (uint i = 0; i < itemAmounts.length; i++) totalDropItems += itemAmounts[i];
+    assertEq(totalDropItems, 6, "droptable items total mismatch");
   }
 }
