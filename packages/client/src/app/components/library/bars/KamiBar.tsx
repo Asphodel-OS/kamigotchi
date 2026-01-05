@@ -14,6 +14,7 @@ import {
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
 import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { Shimmer } from 'app/styles/effects';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { StatusIcons } from 'assets/images/icons/statuses';
 import { AffinityIcons } from 'constants/affinities';
@@ -232,15 +233,14 @@ export const KamiBar = ({
   return (
     <Container>
       <Left>
-        {showLevelUp && (
-          <TextTooltip text={[getLevelUpTooltip()]}>
+        <TextTooltip text={[`${kami.name}`]}>
+          <Image src={kami.image} onClick={handleImageClick} />{' '}
+          {canLevel && (
             <LevelUpButton disabled={!canLevel} onClick={handleLevelUp}>
               <LevelUpArrow src={ArrowIcons.up} />
+              <Shimmer />
             </LevelUpButton>
-          </TextTooltip>
-        )}
-        <TextTooltip text={[`${kami.name}`]}>
-          <Image src={kami.image} onClick={handleImageClick} />
+          )}
         </TextTooltip>
         <TextTooltip
           text={[`Body: ${getKamiBodyAffinity(kami)}`, `Hand: ${getKamiHandAffinity(kami)}`]}
@@ -331,7 +331,7 @@ const Middle = styled.div<MiddleProps>`
 
 const Image = styled.img`
   border-right: solid black 0.15vw;
-  border-left: solid black 0.15vw;
+
   width: 3vw;
   height: 3vw;
 
@@ -363,6 +363,8 @@ const OutputIcon = styled.img`
 
 const StateIcon = styled.img`
   margin-right: 0.3vw;
+  width: 2vw;
+  height: 2vw;
 `;
 
 const StateSection = styled.div`
@@ -372,16 +374,16 @@ const StateSection = styled.div`
 `;
 
 const LevelUpButton = styled.div<{ disabled?: boolean }>`
-  width: 2vw;
-  height: 2vw;
-  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#11ee11')};
+  position: absolute;
+  width: 3vw;
+  height: 3vw;
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 0.3vw;
-  border: solid black 0.15vw;
-  border-radius: 100%;
+
+  pointer-events: none;
+
   &:hover {
     opacity: ${({ disabled }) => (disabled ? 1 : 0.8)};
   }
