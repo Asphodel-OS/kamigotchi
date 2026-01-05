@@ -12,7 +12,7 @@ import {
   isResting,
 } from 'app/cache/kami';
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
-import { Text, TextTooltip } from 'app/components/library';
+import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Shimmer } from 'app/styles/effects';
 import { StatusIcons } from 'assets/images/icons/statuses';
@@ -252,13 +252,13 @@ export const KamiBar = ({
           <Icon src={getHandIcon()} />
         </TextTooltip>
       </Left>
-      <Middle percent={healthPercent} color={statusColor} centered={isOffWorld(kami)}>
-        {!isOffWorld(kami) && (
+      <Middle percent={healthPercent} color={statusColor}>
+        <Overlay top={0.5} left={0.5}>
           <OutputSection>
             <Text size={0.8}>{calcOutput(kami)}</Text>
             {item && <OutputIcon src={item.image} />}
           </OutputSection>
-        )}
+        </Overlay>
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <StateSection>
             <StateIcon src={getKamiStateIcon(kamiState)} />
@@ -310,7 +310,6 @@ const Right = styled.div`
 interface MiddleProps {
   percent: number;
   color: string;
-  centered?: boolean;
 }
 const Middle = styled.div<MiddleProps>`
   position: relative;
@@ -323,7 +322,7 @@ const Middle = styled.div<MiddleProps>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: ${({ centered }) => (centered ? 'center' : 'space-between')};
+  justify-content: center;
   flex-grow: 1;
 
   background: ${({ percent, color }) =>
