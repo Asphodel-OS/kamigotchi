@@ -21,18 +21,6 @@ import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce } from './utils';
 
 export const MAX_NONCE_RETRIES = 1; // Retry nonce errors exactly once
 
-function logTxError(label: string, error: any, txHash?: string) {
-  log.warn(`[TXQueue] ${label}`, {
-    code: error?.code,
-    message: error?.message,
-    reason: error?.reason,
-    data: error?.data,
-    revert: error?.revert,
-    shortMessage: error?.shortMessage,
-    ...(txHash && { txHash }),
-  });
-}
-
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
 type TxResult = {
@@ -106,6 +94,17 @@ export function create<C extends Contracts>(
     });
   }
 
+  function logTxError(label: string, error: any, txHash?: string) {
+    const revertReason = error?.reason || error?.revert?.name;
+    log.warn(`[TXQueue] ${label}`, {
+      code: error?.code,
+      message: error?.message,
+      reason: revertReason,
+      shortMessage: error?.shortMessage,
+      ...(txHash && { txHash }),
+    });
+  }
+
   // Execute tx with retry on nonce errors. Returns result or throws final error.
   async function executeTxWithRetry(
     execute: (txOverrides: Overrides) => Promise<TxResult>,
@@ -117,7 +116,7 @@ export function create<C extends Contracts>(
       try {
         return await execute(txOverrides);
       } catch (error: any) {
-        log.warn('[TXQueue] EXECUTION FAILED');
+        log.warn(`[TXQueue] EXECUTION FAILED ${error}`);
 
         const isNonceError = shouldResetNonce(error);
         const canRetry = isNonceError && retryCount < MAX_NONCE_RETRIES;
@@ -159,10 +158,18 @@ export function create<C extends Contracts>(
     const [resolve, reject, promise] = deferred<TxResult>();
     const { signer } = await awaitValue(readyState);
 
-    const estimateGas = () =>
-      callOverrides?.gasLimit
-        ? Promise.resolve(callOverrides.gasLimit)
-        : signer!.estimateGas(txRequest);
+    const estimateGas = async (): Promise<BigNumberish> => {
+      if (callOverrides?.gasLimit) {
+        log.debug(`[estimateGas] Using callOverride ${callOverrides.gasLimit}`);
+        return callOverrides.gasLimit;
+      }
+      try {
+        log.debug('[estimateGas] Simulating transaction');
+        return await signer!.estimateGas(txRequest);
+      } catch (error) {
+        throw error;
+      }
+    };
 
     const execute = async (txOverrides: Overrides): Promise<TxResult> => {
       const populatedTx = { ...txRequest, ...txOverrides, ...callOverrides };
@@ -171,7 +178,7 @@ export function create<C extends Contracts>(
         throw new Error('Failed to send transaction: signer missing or sendTx returned undefined');
       }
       const hash = tx.hash;
-
+      log.debug(`[TXQueue] TX Sent ${tx.hash}`);
       const wait = async () => {
         const receipt = await tx.wait();
         if (!receipt) throw new Error('tx receipt null');
@@ -190,7 +197,6 @@ export function create<C extends Contracts>(
     const queueItem = queue.next();
     if (!queueItem) return;
     processQueue(); // Start processing another request from the queue
-
     const txResult = await submissionMutex.runExclusive(async () => {
       // Estimate gas and get nonce
       let txOverrides: Overrides = {};
@@ -199,11 +205,11 @@ export function create<C extends Contracts>(
         txOverrides.gasLimit = await queueItem.estimateGas();
         txOverrides.nonce = nonce;
       } catch (e: any) {
-        logTxError('GAS ESTIMATION FAILED', e);
-        queueItem.reject(e as Error);
-        return;
+        log.warn('[processQueue] Gas estimation failed using default gas limit');
+        txOverrides.gasLimit = 8_000_000n;
+        //queueItem.reject(e as Error);
+        //return;
       }
-
       // Execute with retry on nonce errors
       try {
         const result = await executeTxWithRetry(queueItem.execute, txOverrides);
@@ -221,7 +227,7 @@ export function create<C extends Contracts>(
         const tx = await txResult.wait();
         log.info('[TXQueue] TX Confirmed', tx);
       } catch (e: any) {
-        logTxError('TX FAILED IN BLOCK', e, txResult?.hash);
+        logTxError('TX FAILED', e, txResult?.hash);
         return;
       }
     }

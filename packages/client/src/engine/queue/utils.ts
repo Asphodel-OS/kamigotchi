@@ -1,7 +1,5 @@
-import { extractEncodedArguments } from '@mud-classic/utils';
 import { baseGasPrice, DefaultChain } from 'constants/chains';
 import {
-  AbiCoder,
   Overrides,
   Provider,
   Signer,
@@ -11,22 +9,30 @@ import {
 } from 'ethers';
 
 /**
- * Get the revert reason from a given transaction hash
+ * Get the revert reason from a failed transaction using debug_traceTransaction.
  *
- * @param txHash Transaction hash to get the revert reason from
- * @param provider ethers Provider
- * @returns Promise resolving with revert reason string
+ * NOTE: Requires RPC provider to support debug_traceTransaction (geth debug API).
+ * Many public providers disable this. If unsupported, callers should fall back
+ * to extracting error info from the exception object.
+ *
+ * @param txHash Transaction hash (0x prefixed)
+ * @param provider ethers Provider with debug API support
+ * @returns Promise resolving with revert reason string, or undefined if not found
+ * @throws Error if debug_traceTransaction is not supported by the provider
  */
-export async function getRevertReason(txHash: string, provider: Provider): Promise<string> {
-  // Decoding the revert reason: https://docs.soliditylang.org/en/latest/control-structures.html#revert
-  const tx = await provider.getTransaction(txHash);
-  // tx.gasPrice = undefined; // tx object contains both gasPrice and maxFeePerGas
-  const encodedRevertReason = await provider.call(tx as TransactionRequest);
-  const decodedRevertReason = AbiCoder.defaultAbiCoder().decode(
-    ['string'],
-    extractEncodedArguments(encodedRevertReason)
-  );
-  return decodedRevertReason[0];
+export async function getRevertReason(
+  txHash: string,
+  provider: Provider
+): Promise<string | undefined> {
+  const result = await (provider as any).send('debug_traceTransaction', [
+    txHash,
+    { tracer: 'callTracer' },
+  ]);
+
+  const revertReason = result?.revertReason || result?.error || result?.output;
+  if (!revertReason) return undefined;
+
+  return revertReason;
 }
 
 export async function waitForTx(

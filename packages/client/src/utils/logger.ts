@@ -2,10 +2,12 @@ declare global {
   interface Window {
     setLogLevel: (level: string) => void;
     getLogLevel: () => string;
+    resetLogLevel: () => void;
   }
   interface WorkerGlobalScope {
     setLogLevel: (level: string) => void;
     getLogLevel: () => string;
+    resetLogLevel: () => void;
   }
 }
 
@@ -14,6 +16,7 @@ const globalScope: Window | WorkerGlobalScope =
   typeof window !== 'undefined' ? window : (self as unknown as WorkerGlobalScope);
 
 export enum LogLevel {
+  SILENT = -1,
   ERROR = 0,
   WARN = 1,
   INFO = 2,
@@ -22,6 +25,7 @@ export enum LogLevel {
 }
 
 const LEVEL_NAMES: Record<LogLevel, string> = {
+  [LogLevel.SILENT]: 'SILENT',
   [LogLevel.ERROR]: 'ERROR',
   [LogLevel.WARN]: 'WARN',
   [LogLevel.INFO]: 'INFO',
@@ -45,6 +49,11 @@ globalScope.setLogLevel = (level: string) => {
   const found = Object.entries(LEVEL_NAMES).find(([, name]) => name === normalized);
   if (found) {
     currentLevel = Number(found[0]) as LogLevel;
+    if (LogLevel.SILENT == Number(found[0])) {
+      console.log(
+        'The wise speak only of what they know, Gríma son of Gálmód. A witless worm have you become. Therefore be silent'
+      );
+    }
     console.log(`Log level set to ${normalized}`);
   } else {
     console.log(`Invalid level. Use: ${Object.values(LEVEL_NAMES).join(', ')}`);
@@ -52,6 +61,11 @@ globalScope.setLogLevel = (level: string) => {
 };
 
 globalScope.getLogLevel = () => LEVEL_NAMES[currentLevel];
+
+globalScope.resetLogLevel = () => {
+  currentLevel = DEFAULT_LEVEL;
+  console.log(`Log level reset to ${LEVEL_NAMES[DEFAULT_LEVEL]}`);
+};
 
 function timestamp(): string {
   const now = new Date();
