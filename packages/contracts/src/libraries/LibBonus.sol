@@ -335,7 +335,8 @@ library LibBonus {
 
   /// @notice clears ALL bonuses from a holder (used by Cleaning Fluid item)
   function clearAll(IUintComp components, uint256 holderID) public {
-    resetUponHarvestAction(components, holderID);
+    // no need to call resetUponHarvestAction since it's included in resetUponHarvestStop
+
     resetUponHarvestStop(components, holderID);
     resetUponDeath(components, holderID);
     resetUponLiquidation(components, holderID);
