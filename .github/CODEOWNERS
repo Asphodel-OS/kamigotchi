@@ -10,6 +10,9 @@
 # By Domain
 packages/client/ @jiracheron @chlwys
 packages/client/src/components/modals/chat/ @Xenofluxx
-packages/client/src/kamiden/ @hubur
+packages/client/src/engine/queue @hubur
+packages/client/src/clients/kamiden @hubur
+packages/client/src/clients/kamigaze @hubur
+packages/client/src/workers @hubur
 
 packages/contracts/ @chlwys @jiracheron
