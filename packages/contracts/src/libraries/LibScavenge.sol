@@ -161,7 +161,7 @@ library LibScavenge {
   /////////////////
   // LOGGING
 
-  function logClaim(IUintComp components, Base memory data, uint256 amt, uint256 accID) public {
+  function logClaim(IUintComp components, Base memory data, uint256 amt, uint256 accID) internal {
     uint32[] memory indices = new uint32[](3);
     indices[1] = data.index; // rolls claim per index (e.g. node)
     indices[2] = 0; // rolls claim per affinity (e.g. SCRAP, NORMAL)
