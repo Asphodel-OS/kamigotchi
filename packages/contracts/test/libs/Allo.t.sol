@@ -477,10 +477,11 @@ contract AlloTest is SetupTemplate {
     vm.stopPrank();
   }
 
-  // Creates Cleaning Fluid allo (ITEM type with index 11020)
+  // Creates Cleaning Fluid allo (CLEAR_BONUS type)
   function _createAlloCleaningFluid(uint256 anchorID) internal returns (uint256 id) {
     vm.startPrank(deployer);
-    id = LibAllo.createBasic(components, 0, anchorID, "ITEM", 11020, 1);
+    // dedicated allo type for clearing bonuses
+    id = LibAllo.createBasic(components, 0, anchorID, "CLEAR_BONUS", 1, 1);
     vm.stopPrank();
   }
 
