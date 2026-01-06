@@ -377,6 +377,9 @@ contract AlloTest is SetupTemplate {
     // Use ExternalCaller which has system permissions for component writes
     ExternalCaller.alloDistribute(LibAllo.queryFor(components, cleaningFluidAnchor), 1, petID);
 
+    // Verify Cleaning Fluid is consumed
+    assertEq(_getItemBal(alice, 11020), 0, "Cleaning Fluid should be consumed, not added to inventory");
+
     // Verify ALL bonus types are cleared
     assertEq(
       LibBonus.getFor(components, "HARV_BOUNTY_BOOST", petID),
