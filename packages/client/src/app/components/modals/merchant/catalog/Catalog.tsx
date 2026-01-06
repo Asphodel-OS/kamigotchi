@@ -10,11 +10,16 @@ export const Catalog = ({
   listings,
   cart,
   setCart,
+  utils,
 }: {
   account: Account;
   listings: Listing[];
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
+  utils: {
+    parseAllos: (allo: any[]) => any[];
+    displayRequirements: (item: any) => string;
+  };
 }) => {
 
   const toggleListing = (itemIndex: number) => {
@@ -38,6 +43,7 @@ export const Catalog = ({
             listing={l}
             cart={cart}
             toggle={() => toggleListing(l.item.index)}
+            utils={utils}
           />
         ))}
       </Items>

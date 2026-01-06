@@ -17,11 +17,16 @@ export const CatalogRow = ({
   cart,
   listing,
   toggle,
+  utils,
 }: {
   account: Account;
   cart: CartItem[];
   listing: Listing;
   toggle: () => void;
+  utils: {
+    parseAllos: (allo: any[]) => { description?: string }[];
+    displayRequirements: (item: any) => string;
+  };
 }) => {
   const { item, payItem, buy } = listing;
 
@@ -61,9 +66,18 @@ export const CatalogRow = ({
   };
 
   const getItemTooltip = () => {
-    const tooltip: string[] = [];
+    const tooltip: (string | JSX.Element)[] = [];
     if (item.description) tooltip.push(item.description);
-    if (item.effects) tooltip.push(`Requirements: ${item.effects.use}`);
+
+    const requirementsText = utils.displayRequirements(item) || 'None';
+    tooltip.push(`Requirements: ${requirementsText}`);
+
+    const effectsList =
+      item.effects?.use?.length > 0
+        ? utils.parseAllos(item.effects.use).map((entry) => entry?.description ?? '').join('\n')
+        : 'None';
+    tooltip.push(`Effects: ${effectsList || 'None'}`);
+
     return tooltip;
   };
 
