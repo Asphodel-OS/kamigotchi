@@ -78,7 +78,7 @@ export const CatalogRow = ({
       item.effects?.use?.length > 0
         ? utils.parseAllos(item.effects.use).map((entry) => entry?.description ?? '').join('\n')
         : 'None';
-    tooltip.push(`Effects: ${effectsList || 'None'}`);
+    tooltip.push(`Effects: ${effectsList}`);
 
     return tooltip;
   };
