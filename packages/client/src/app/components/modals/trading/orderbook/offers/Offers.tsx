@@ -44,6 +44,8 @@ export const Offers = ({
   data: { account: Account; trades: Trade[] };
   utils: {
     getItemByIndex: (index: number) => Item;
+    parseAllos: (allo: any[]) => any[];
+    displayItemRequirements: (item: Item) => string;
   };
   extraFilter?: (t: Trade) => boolean;
   filtersEnabled?: boolean;
@@ -573,7 +575,10 @@ export const Offers = ({
                           <ItemTooltip
                             key={`img-${item.index}`}
                             item={item as any}
-                            utils={{ displayRequirements: () => '', parseAllos: () => [] }}
+                            utils={{
+                              displayRequirements: utils.displayItemRequirements,
+                              parseAllos: utils.parseAllos,
+                            }}
                           />,
                         ]}
                         maxWidth={25}
@@ -592,7 +597,10 @@ export const Offers = ({
                           <ItemTooltip
                             key={`name-${item.index}`}
                             item={item as any}
-                            utils={{ displayRequirements: () => '', parseAllos: () => [] }}
+                            utils={{
+                              displayRequirements: utils.displayItemRequirements,
+                              parseAllos: utils.parseAllos,
+                            }}
                           />,
                         ]}
                         maxWidth={25}

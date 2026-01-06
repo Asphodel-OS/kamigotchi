@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
 import { Account, Item, NullItem } from 'network/shapes';
+import { Allo } from 'network/shapes/Allo';
+import { DetailedEntity } from 'network/shapes/utils';
 import { ConfirmationData } from '../library/Confirmation';
 import { TabType } from '../types';
 import { Controls } from './controls';
@@ -34,6 +36,8 @@ export const Orderbook = ({
   };
   utils: {
     getItemByIndex: (index: number) => Item;
+    parseAllos: (allo: Allo[]) => DetailedEntity[];
+    displayItemRequirements: (item: Item) => string;
   };
   isVisible: boolean;
 }) => {

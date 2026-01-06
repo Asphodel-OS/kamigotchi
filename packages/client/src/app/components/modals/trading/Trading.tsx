@@ -18,6 +18,8 @@ import { getKamidenClient } from 'clients/kamiden';
 import { Trade as TradeHistory, TradesRequest } from 'clients/kamiden/proto';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Allo, parseAllos as _parseAllos } from 'network/shapes/Allo';
+import { parseConditionalText } from 'network/shapes/Conditional';
 import { getMusuBalance as _getMusuBalance, Item } from 'network/shapes/Item';
 import { queryTrades as _queryTrades } from 'network/shapes/Trade';
 import { Trade } from 'network/shapes/Trade/types';
@@ -65,6 +67,9 @@ export const TradingModal: UIComponent = {
           getItem: (entity: EntityIndex) => _getItem(world, comps, entity),
           getAccountByID: (id: EntityID) => _getAccountByID(world, comps, id, accountOptions),
           getTradeHistory: (history: TradeHistory) => _getTradeHistory(world, comps, history),
+          parseAllos: (allo: Allo[]) => _parseAllos(world, comps, allo),
+          displayItemRequirements: (item: Item) =>
+            item.requirements.use.map((req) => parseConditionalText(world, comps, req)).join('\n '),
         },
       };
     })();
