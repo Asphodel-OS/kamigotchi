@@ -27,7 +27,7 @@ contract GoalContributeSystem is System {
 
     // emit event if goal was just completed
     if (LibGoal.isComplete(components, goalID)) {
-      _emitGoalComplete(goalIndex, goalID);
+      _emitGoalComplete(goalIndex);
     }
 
     // standard logging and tracking
@@ -37,12 +37,11 @@ contract GoalContributeSystem is System {
     return "";
   }
 
-  function _emitGoalComplete(uint32 goalIndex, uint256 goalID) internal {
-    uint8[] memory schema = new uint8[](3);
+  function _emitGoalComplete(uint32 goalIndex) internal {
+    uint8[] memory schema = new uint8[](2);
     schema[0] = uint8(LibTypes.SchemaValue.UINT32);  // goalIndex
-    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // goalID
-    schema[2] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
-    LibEmitter.emitEvent(world, "GOAL_COMPLETE", schema, abi.encode(goalIndex, goalID, block.timestamp));
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
+    LibEmitter.emitEvent(world, "GOAL_COMPLETE", schema, abi.encode(goalIndex, block.timestamp));
   }
 
   function executeTyped(uint32 goalIndex, uint256 amt) public returns (bytes memory) {
