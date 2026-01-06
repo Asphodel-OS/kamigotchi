@@ -370,9 +370,9 @@ contract AlloTest is SetupTemplate {
       "STAT_VIOLENCE_SHIFT should exist before clearing"
     );
 
-    // Create Cleaning Fluid allo (ITEM type with index 11020) and distribute via allo system
+    // Create Cleaning Fluid allo (CLEAR_BONUS type) and distribute via allo system
     uint256 cleaningFluidAnchor = uint256(keccak256(abi.encodePacked("cleaning.fluid.anchor")));
-    _createAlloCleaningFluid(cleaningFluidAnchor);
+    _createAllo(cleaningFluidAnchor, "CLEAR_BONUS", 0, 0);
 
     // Use ExternalCaller which has system permissions for component writes
     ExternalCaller.alloDistribute(LibAllo.queryFor(components, cleaningFluidAnchor), 1, petID);
@@ -474,14 +474,6 @@ contract AlloTest is SetupTemplate {
   ) internal returns (uint256 id) {
     vm.startPrank(deployer);
     id = LibAllo.createBonus(components, 0, anchorID, bonusType, endType, duration, value);
-    vm.stopPrank();
-  }
-
-  // Creates Cleaning Fluid allo (CLEAR_BONUS type)
-  function _createAlloCleaningFluid(uint256 anchorID) internal returns (uint256 id) {
-    vm.startPrank(deployer);
-    // dedicated allo type for clearing bonuses
-    id = LibAllo.createBasic(components, 0, anchorID, "CLEAR_BONUS", 1, 1);
     vm.stopPrank();
   }
 
