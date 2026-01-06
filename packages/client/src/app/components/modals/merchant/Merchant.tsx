@@ -13,6 +13,7 @@ import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/A
 import { Allo, parseAllos as _parseAllos } from 'network/shapes/Allo';
 import { parseConditionalText } from 'network/shapes/Conditional';
 import { Inventory } from 'network/shapes/Inventory';
+import { Item } from 'network/shapes/Item';
 import { Listing } from 'network/shapes/Listing';
 import { DetailedEntity } from 'network/shapes/utils';
 import { Cart } from './cart';
@@ -55,9 +56,9 @@ export const MerchantModal: UIComponent = {
           getMusuBalance: (inventories: Inventory[]) =>
             getInventoryBalance(inventories, MUSU_INDEX),
           parseAllos: (allo: Allo[]): DetailedEntity[] => _parseAllos(world, components, allo),
-          displayItemRequirements: (item: any) =>
+          displayItemRequirements: (item: Item) =>
             item?.requirements?.use
-              ?.map((req: any) => parseConditionalText(world, components, req))
+              ?.map((req) => parseConditionalText(world, components, req))
               .join('\n ') || 'None',
         },
         network,

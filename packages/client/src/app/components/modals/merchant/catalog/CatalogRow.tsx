@@ -6,8 +6,10 @@ import { clickFx, hoverFx } from 'app/styles/effects';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { PricingIcons } from 'assets/images/icons/pricing';
 import { Account } from 'network/shapes/Account';
+import { Allo } from 'network/shapes/Allo';
+import { Item } from 'network/shapes/Item';
 import { Listing } from 'network/shapes/Listing';
-import { getItemImage } from 'network/shapes/utils';
+import { DetailedEntity, getItemImage } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { CartItem } from '../types';
 
@@ -24,8 +26,8 @@ export const CatalogRow = ({
   listing: Listing;
   toggle: () => void;
   utils: {
-    parseAllos: (allo: any[]) => { description?: string }[];
-    displayRequirements: (item: any) => string;
+    parseAllos: (allo: Allo[]) => DetailedEntity[];
+    displayRequirements: (item: Item) => string;
   };
 }) => {
   const { item, payItem, buy } = listing;
