@@ -71,7 +71,7 @@ export const CatalogRow = ({
     const tooltip: (string | JSX.Element)[] = [];
     if (item.description) tooltip.push(item.description);
 
-    const requirementsText = utils.displayRequirements(item) || 'None';
+    const requirementsText = utils.displayRequirements(item);
     tooltip.push(`Requirements: ${requirementsText}`);
 
     const effectsList =

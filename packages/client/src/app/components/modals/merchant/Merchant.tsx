@@ -59,7 +59,7 @@ export const MerchantModal: UIComponent = {
           displayItemRequirements: (item: Item) =>
             item?.requirements?.use
               ?.map((req) => parseConditionalText(world, components, req))
-              .join('\n ') || 'None',
+              .join('\n') || 'None',
         },
         network,
       };
