@@ -24,7 +24,6 @@ import {
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getFromDescription } from 'network/shapes/utils/parse';
-import { didActionSucceed } from 'network/utils';
 import { useComponentEntities } from 'network/utils/hooks';
 import { playClick } from 'utils/sounds';
 import { Bottom } from './Bottom';
@@ -154,18 +153,12 @@ export const QuestDetailsModal: UIComponent = {
     // ACTIONS
 
     // always close modal after Accept/Complete, if there is no completion text
-    const handleStateUpdate = async (txEntity: EntityIndex, willComplete = false) => {
-      const actionSucceeded = await didActionSucceed(actions.Action, txEntity);
-
-      if (actionSucceeded) {
-        const hasCompletionText = !!quest?.descriptionAlt;
-        const hasNextQuest = !!(quest && findNextInChain(quest.index));
-        if (!willComplete || (!hasCompletionText && !hasNextQuest)) {
-          const closeModal = () => setModals({ questDialogue: false });
-          timeoutRef.current = setTimeout(closeModal, 500);
-        }
-      } else {
-        setJustCompleted(false);
+    const handleStateUpdate = (willComplete = false) => {
+      const hasCompletionText = !!quest?.descriptionAlt;
+      const hasNextQuest = !!(quest && findNextInChain(quest.index));
+      if (!willComplete || (!hasCompletionText && !hasNextQuest)) {
+        const closeModal = () => setModals({ questDialogue: false });
+        timeoutRef.current = setTimeout(closeModal, 500);
       }
     };
 
@@ -179,7 +172,7 @@ export const QuestDetailsModal: UIComponent = {
           return api.player.account.quest.accept(quest.index);
         },
       });
-      handleStateUpdate(tx);
+      handleStateUpdate();
     };
 
     // complete an ongoing quest
@@ -193,7 +186,7 @@ export const QuestDetailsModal: UIComponent = {
           return api.player.account.quest.complete(quest.id);
         },
       });
-      handleStateUpdate(tx, true);
+      handleStateUpdate(true);
     };
 
     // journey onwards to next quest in chain
