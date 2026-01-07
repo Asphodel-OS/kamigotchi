@@ -13,7 +13,6 @@ export const Dialogue = ({
   isComplete,
   isAccepted,
   justCompleted,
-  isCompletionPending = false,
   isModalOpen,
   onOutroFinished,
 }: {
@@ -179,7 +178,7 @@ export const Dialogue = ({
             onClick={justCompleted ? () => handleAdvance(outroLines) : undefined}
             onScroll={() => handleUserScroll(outroRef, isUserScrollingMainRef)}
           >
-            {justCompleted ? (
+            {isComplete && justCompleted ? (
               <>
                 {revealedLines.map((line, i) => (
                   <TypewriterComponent
@@ -199,7 +198,7 @@ export const Dialogue = ({
                   showContinueArrow={lineFinished && lineIndex < outroLines.length - 1}
                 />
               </>
-            ) : isComplete && !isCompletionPending ? (
+            ) : isComplete && !justCompleted ? (
               <TypewriterComponent text={completionText} interrupted={true} />
             ) : (
               <EmptyText

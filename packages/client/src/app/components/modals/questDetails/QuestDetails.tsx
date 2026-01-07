@@ -95,8 +95,9 @@ export const QuestDetailsModal: UIComponent = {
     const [quest, setQuest] = useState<Quest>();
     const [tick, setTick] = useState(Date.now());
     const [justCompleted, setJustCompleted] = useState(false);
-    const [isCompletionPending, setIsCompletionPending] = useState(false);
+
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const prevCompleteRef = useRef<boolean | undefined>(undefined);
 
     // Reactively subscribe to ECS changes relevant to quests
     const registryEntities = useComponentEntities(IsRegistry) || [];
@@ -108,7 +109,16 @@ export const QuestDetailsModal: UIComponent = {
     // reset justCompleted when questIndex changes
     useEffect(() => {
       setJustCompleted(false);
+      prevCompleteRef.current = undefined;
     }, [questIndex]);
+
+    // trigger outro aniamtion only once
+    useEffect(() => {
+      if (quest?.complete && prevCompleteRef.current === false) {
+        setJustCompleted(true);
+      }
+      prevCompleteRef.current = quest?.complete;
+    }, [quest?.complete]);
 
     // setup ticking on mount. clear timeout ref and ticking on dismount
     useEffect(() => {
@@ -147,19 +157,12 @@ export const QuestDetailsModal: UIComponent = {
     const handleStateUpdate = async (txEntity: EntityIndex, willComplete = false) => {
       const actionSucceeded = await didActionSucceed(actions.Action, txEntity);
       if (actionSucceeded) {
-        if (willComplete) {
-          setJustCompleted(true);
-          setIsCompletionPending(false);
-        }
         const hasCompletionText = !!quest?.descriptionAlt;
         const hasNextQuest = !!(quest && findNextInChain(quest.index));
         if (!willComplete || (!hasCompletionText && !hasNextQuest)) {
           const closeModal = () => setModals({ questDialogue: false });
           timeoutRef.current = setTimeout(closeModal, 500);
         }
-      } else if (willComplete) {
-        // reset pending state if transaction failed
-        setIsCompletionPending(false);
       }
     };
 
@@ -178,8 +181,6 @@ export const QuestDetailsModal: UIComponent = {
 
     // complete an ongoing quest
     const completeQuest = async (quest: BaseQuest) => {
-      // used so outro waits while the transaction processes
-      setIsCompletionPending(true);
       const tx = actions.add({
         action: 'QuestComplete',
         params: [quest.id],
@@ -235,7 +236,6 @@ export const QuestDetailsModal: UIComponent = {
           isComplete={quest.complete}
           isAccepted={quest.startTime !== 0}
           justCompleted={justCompleted}
-          isCompletionPending={isCompletionPending}
           completionText={quest?.descriptionAlt?.replace(/\n+/g, '\n')}
           onOutroFinished={() => setJustCompleted(false)}
         />
