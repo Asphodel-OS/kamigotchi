@@ -53,9 +53,6 @@ contract KamiUseItemSystem is System {
     LibKami.sync(components, kamiID);
     LibInventory.decFor(components, accID, itemIndex, 1); // implicit balance check
     LibItem.applyAllos(world, components, itemIndex, "USE", 1, kamiID);
-    if (_isMochi(itemIndex)) {
-      LibData.inc(components, kamiID, 0, MOCHI_USED_TYPE, 1);
-    }
 
     // reset the pet's intensity
     LibKami.resetIntensity(components, kamiID);
