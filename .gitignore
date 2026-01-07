@@ -4,3 +4,5 @@ dist/
 .eslintcache
 .env
 .DS_STORE
+ 
+.claude
