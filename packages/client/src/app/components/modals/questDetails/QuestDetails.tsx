@@ -156,6 +156,7 @@ export const QuestDetailsModal: UIComponent = {
     // always close modal after Accept/Complete, if there is no completion text
     const handleStateUpdate = async (txEntity: EntityIndex, willComplete = false) => {
       const actionSucceeded = await didActionSucceed(actions.Action, txEntity);
+
       if (actionSucceeded) {
         const hasCompletionText = !!quest?.descriptionAlt;
         const hasNextQuest = !!(quest && findNextInChain(quest.index));
@@ -163,6 +164,8 @@ export const QuestDetailsModal: UIComponent = {
           const closeModal = () => setModals({ questDialogue: false });
           timeoutRef.current = setTimeout(closeModal, 500);
         }
+      } else {
+        setJustCompleted(false);
       }
     };
 
@@ -181,6 +184,7 @@ export const QuestDetailsModal: UIComponent = {
 
     // complete an ongoing quest
     const completeQuest = async (quest: BaseQuest) => {
+      setJustCompleted(true);
       const tx = actions.add({
         action: 'QuestComplete',
         params: [quest.id],
