@@ -30,7 +30,7 @@ import { Bottom } from './Bottom';
 import { Dialogue } from './Dialogue';
 
 const REFRESH_INTERVAL = 3333;
-// TODO: clean up this modal and Dialogue
+// TODO: need toclean up this modal and Dialogue
 export const QuestDetailsModal: UIComponent = {
   id: 'QuestDetails',
   Render: () => {
@@ -105,9 +105,18 @@ export const QuestDetailsModal: UIComponent = {
 
     /////////////////
     // SUBSCRIPTIONS
-    // reset justCompleted when questIndex changes
+    // this is for the outro animation to work as it should
+    // even if the quest is completed directly
+    // from the quest view
+
     useEffect(() => {
-      setJustCompleted(false);
+      const wasJustCompleted = useSelected.getState().questJustCompleted;
+      if (wasJustCompleted) {
+        setJustCompleted(true);
+        useSelected.setState({ questJustCompleted: false });
+      } else {
+        setJustCompleted(false);
+      }
       prevCompleteRef.current = undefined;
     }, [questIndex]);
 

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { ActionListButton, IconButton, TextTooltip } from 'app/components/library';
+import { useSelected } from 'app/stores';
 import { triggerQuestDetailsModal } from 'app/triggers/triggerQuestDetailsModal';
 import { mainQuestIcon } from 'assets/images/icons/misc';
 import { Allo } from 'network/shapes/Allo';
@@ -184,7 +185,10 @@ export const QuestCard = ({
           text={getButtonText(status)}
           onClick={() => {
             triggerQuestDetailsModal(quest.entity);
-            if (getButtonText(status) === 'Complete' && quest.complete === false) complete(quest);
+            if (getButtonText(status) === 'Complete' && quest.complete === false) {
+              useSelected.setState({ questJustCompleted: true });
+              complete(quest);
+            }
           }}
         />
       </ButtonRow>
