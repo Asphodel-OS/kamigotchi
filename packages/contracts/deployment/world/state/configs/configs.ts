@@ -76,7 +76,7 @@ async function initAccount(api: AdminAPI) {
 }
 
 async function initFriends(api: AdminAPI) {
-  await api.config.set.number('FRIENDS_BASE_LIMIT', 10);
+  await api.config.set.number('FRIENDS_BASE_LIMIT', 25);
   await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 }
 
