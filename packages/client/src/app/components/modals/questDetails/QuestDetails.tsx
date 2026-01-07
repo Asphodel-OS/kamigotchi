@@ -2,11 +2,13 @@ import { EntityIndex } from 'engine/recs';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import { getItemByIndex } from 'app/cache/item';
 import { ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
   filterOngoingQuests,
@@ -29,7 +31,7 @@ import { Bottom } from './Bottom';
 import { Dialogue } from './Dialogue';
 
 const REFRESH_INTERVAL = 3333;
-
+// TODO: clean up this modal and Dialogue
 export const QuestDetailsModal: UIComponent = {
   id: 'QuestDetails',
   Render: () => {
@@ -65,6 +67,8 @@ export const QuestDetailsModal: UIComponent = {
             );
             return findNextQuestInChain(world, components, account, questIndex, registry);
           },
+          getItem: (index: number) => getItemByIndex(world, components, index),
+          getItemBalance: (index: number) => _getItemBalance(world, components, account.id, index),
         },
       };
     })();
@@ -74,7 +78,15 @@ export const QuestDetailsModal: UIComponent = {
 
     const { actions, api, components, world } = network;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const { getBase, populate, parseObjectives, describeEntity, findNextInChain } = utils;
+    const {
+      getBase,
+      populate,
+      parseObjectives,
+      describeEntity,
+      findNextInChain,
+      getItem,
+      getItemBalance,
+    } = utils;
 
     const isModalOpen = useVisibility((s) => s.modals.questDialogue);
     const setModals = useVisibility((s) => s.setModals);
@@ -82,6 +94,8 @@ export const QuestDetailsModal: UIComponent = {
 
     const [quest, setQuest] = useState<Quest>();
     const [tick, setTick] = useState(Date.now());
+    const [justCompleted, setJustCompleted] = useState(false);
+    const [isCompletionPending, setIsCompletionPending] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Reactively subscribe to ECS changes relevant to quests
@@ -91,6 +105,10 @@ export const QuestDetailsModal: UIComponent = {
 
     /////////////////
     // SUBSCRIPTIONS
+    // reset justCompleted when questIndex changes
+    useEffect(() => {
+      setJustCompleted(false);
+    }, [questIndex]);
 
     // setup ticking on mount. clear timeout ref and ticking on dismount
     useEffect(() => {
@@ -129,15 +147,23 @@ export const QuestDetailsModal: UIComponent = {
     const handleStateUpdate = async (txEntity: EntityIndex, willComplete = false) => {
       const actionSucceeded = await didActionSucceed(actions.Action, txEntity);
       if (actionSucceeded) {
+        if (willComplete) {
+          setJustCompleted(true);
+          setIsCompletionPending(false);
+        }
         const hasCompletionText = !!quest?.descriptionAlt;
-        if (!willComplete || !hasCompletionText) {
+        const hasNextQuest = !!(quest && findNextInChain(quest.index));
+        if (!willComplete || (!hasCompletionText && !hasNextQuest)) {
           const closeModal = () => setModals({ questDialogue: false });
           timeoutRef.current = setTimeout(closeModal, 500);
         }
+      } else if (willComplete) {
+        // reset pending state if transaction failed
+        setIsCompletionPending(false);
       }
     };
 
-    // accept an available quest (creates a player instance to track progress)
+    // accept an available quest
     const acceptQuest = async (quest: BaseQuest) => {
       const tx = actions.add({
         action: 'QuestAccept',
@@ -152,6 +178,8 @@ export const QuestDetailsModal: UIComponent = {
 
     // complete an ongoing quest
     const completeQuest = async (quest: BaseQuest) => {
+      // used so outro waits while the transaction processes
+      setIsCompletionPending(true);
       const tx = actions.add({
         action: 'QuestComplete',
         params: [quest.id],
@@ -179,28 +207,48 @@ export const QuestDetailsModal: UIComponent = {
       playClick();
     };
 
+    const burnQuestItems = async (indices: number[], amts: number[]) => {
+      let description = 'Giving';
+      for (let i = 0; i < indices.length; i++) {
+        const item = getItem(indices[i]);
+        description += ` ${amts[i]} ${item.name}`;
+      }
+
+      actions.add({
+        action: 'ItemBurn',
+        params: [indices, amts],
+        description,
+        execute: async () => {
+          return api.player.account.item.burn(indices, amts);
+        },
+      });
+    };
+
     if (!quest) return <></>;
 
     return (
-      <ModalWrapper
-        id='questDialogue'
-        header={<Header color='#5e4a14ff'>{quest?.name}</Header>}
-        canExit
-        backgroundColor={`#f8f6e4`}
-        noScroll
-      >
+      <ModalWrapper id='questDialogue' header={<Header>{quest?.name}</Header>} canExit noScroll>
         <Dialogue
           isModalOpen={isModalOpen}
           text={quest.description.replace(/\n+/g, '\n')}
-          color='#5e4a14ff'
+          color='black'
           isComplete={quest.complete}
+          isAccepted={quest.startTime !== 0}
+          justCompleted={justCompleted}
+          isCompletionPending={isCompletionPending}
           completionText={quest?.descriptionAlt?.replace(/\n+/g, '\n')}
+          onOutroFinished={() => setJustCompleted(false)}
         />
         <Bottom
-          color='#5e4a14ff'
+          color='black'
           rewards={quest.rewards}
           objectives={quest.objectives}
           describeEntity={describeEntity}
+          burnItems={burnQuestItems}
+          getItemBalance={getItemBalance}
+          questStatus={
+            quest.startTime === 0 ? 'AVAILABLE' : quest.complete ? 'COMPLETED' : 'ONGOING'
+          }
           buttons={{
             AcceptButton: {
               backgroundColor: '#f8f6e4',
@@ -233,7 +281,7 @@ const Header = styled.div<{ color?: string }>`
   border-color: white;
   padding: 0.7vw 1vw 0.2vw 1vw;
   width: 95%;
-  color: ${({ color }) => color};
+  color: ${({ color }) => color ?? 'black'};
   font-size: 1.4vw;
   font-weight: bold;
   line-height: 2vw;

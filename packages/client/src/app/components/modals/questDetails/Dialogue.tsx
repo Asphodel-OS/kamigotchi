@@ -11,22 +11,36 @@ export const Dialogue = ({
   color,
   completionText = '',
   isComplete,
+  isAccepted,
+  justCompleted,
+  isCompletionPending = false,
   isModalOpen,
+  onOutroFinished,
 }: {
   text: string;
   color: string;
   completionText?: string;
   isModalOpen: boolean;
   isComplete: boolean;
+  isAccepted: boolean;
+  justCompleted: boolean;
+  isCompletionPending?: boolean;
+  onOutroFinished?: () => void;
 }) => {
   const [mode, setMode] = useState<MODE>('INTRO');
   const [wasToggled, setWasToggled] = useState(false);
   const [interrupted, setInterrupted] = useState(false);
+  const [lineIndex, setLineIndex] = useState(0);
+  const [lineFinished, setLineFinished] = useState(false);
+  const [revealedLines, setRevealedLines] = useState<string[]>([]);
 
   const introRef = useRef<HTMLDivElement>(null);
   const outroRef = useRef<HTMLDivElement>(null);
   const isUserScrollingPastRef = useRef(false);
   const isUserScrollingMainRef = useRef(false);
+
+  const introLines = text.split('\n').filter(Boolean);
+  const outroLines = completionText.split('\n').filter(Boolean);
 
   /////////////////
   // SUBSCRIPTIONS
@@ -40,8 +54,11 @@ export const Dialogue = ({
 
   // resets cancelation when modal is opened or sections are toggled
   useEffect(() => {
+    setLineIndex(0);
+    setRevealedLines([]);
     setInterrupted(false);
-  }, [isModalOpen, wasToggled]);
+    setLineFinished(false);
+  }, [isModalOpen, wasToggled, justCompleted]);
 
   ///////////////
   // HANDLERS
@@ -70,12 +87,43 @@ export const Dialogue = ({
       scrollingRef.current = false;
     }
   };
-
   // trigger a toggle between the two modes
   const toggleSections = () => {
     if (mode === 'INTRO') setMode('OUTRO');
     else setMode('INTRO');
     setWasToggled(!wasToggled);
+  };
+
+  const handleAdvance = (lines: string[]) => {
+    const currentLine = lines[lineIndex] ?? '';
+
+    // on click skips the animation
+    // for tat line
+    if (!lineFinished) {
+      setInterrupted(true);
+      return;
+    }
+    // this is for the isjustCompleted flag
+    const isLastLine = lineIndex >= lines.length - 1;
+    if (isLastLine) {
+      onOutroFinished?.();
+      return;
+    }
+    //add new line to revealed lines
+    setRevealedLines((prev) => [...prev, currentLine]);
+
+    // advance line if there are more
+    if (lineIndex <= lines.length - 1) {
+      setLineIndex((i) => i + 1);
+      setInterrupted(false);
+      setLineFinished(false);
+    }
+
+    // force scroll to bottom on click
+    const ref = mode === 'INTRO' ? introRef : outroRef;
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
   };
 
   /////////////////
@@ -92,16 +140,32 @@ export const Dialogue = ({
         ref={introRef}
         isExpanded={mode === 'INTRO'}
         color={color}
-        onClick={() => setInterrupted(true)}
+        onClick={!isAccepted ? () => handleAdvance(introLines) : undefined}
         onScroll={() => handleUserScroll(introRef, isUserScrollingPastRef)}
       >
-        <TypewriterComponent
-          text={text}
-          speed={15}
-          interrupted={interrupted}
-          retrigger={`${isModalOpen}${wasToggled}`}
-          onUpdate={() => handleScroll(introRef, isUserScrollingPastRef)}
-        />
+        {!isAccepted ? (
+          <>
+            {revealedLines.map((line, i) => (
+              <TypewriterComponent
+                key={i}
+                text={line}
+                interrupted
+                retrigger={`${isModalOpen}${wasToggled}${lineIndex}`}
+              />
+            ))}
+            <TypewriterComponent
+              text={introLines[lineIndex] ?? ''}
+              speed={15}
+              interrupted={interrupted}
+              retrigger={`${isModalOpen}${wasToggled}${lineIndex}`}
+              onComplete={() => setLineFinished(true)}
+              onUpdate={() => handleScroll(introRef, isUserScrollingPastRef)}
+              showContinueArrow={lineFinished && lineIndex < introLines.length - 1}
+            />
+          </>
+        ) : (
+          <TypewriterComponent text={text} interrupted={true} />
+        )}
       </Text>
       {!!completionText && (
         <>
@@ -112,17 +176,31 @@ export const Dialogue = ({
             ref={outroRef}
             isExpanded={mode === 'OUTRO'}
             color={color}
-            onClick={() => setInterrupted(true)}
+            onClick={justCompleted ? () => handleAdvance(outroLines) : undefined}
             onScroll={() => handleUserScroll(outroRef, isUserScrollingMainRef)}
           >
-            {isComplete ? (
-              <TypewriterComponent
-                text={completionText}
-                speed={15}
-                interrupted={interrupted}
-                retrigger={`${isModalOpen}${wasToggled}`}
-                onUpdate={() => handleScroll(outroRef, isUserScrollingMainRef)}
-              />
+            {justCompleted ? (
+              <>
+                {revealedLines.map((line, i) => (
+                  <TypewriterComponent
+                    key={i}
+                    text={line}
+                    interrupted
+                    retrigger={`${isModalOpen}${wasToggled}${lineIndex}`}
+                  />
+                ))}
+                <TypewriterComponent
+                  text={outroLines[lineIndex] ?? ''}
+                  speed={15}
+                  interrupted={interrupted}
+                  retrigger={`${isModalOpen}${wasToggled}${lineIndex}`}
+                  onComplete={() => setLineFinished(true)}
+                  onUpdate={() => handleScroll(outroRef, isUserScrollingMainRef)}
+                  showContinueArrow={lineFinished && lineIndex < outroLines.length - 1}
+                />
+              </>
+            ) : isComplete && !isCompletionPending ? (
+              <TypewriterComponent text={completionText} interrupted={true} />
             ) : (
               <EmptyText
                 textColor={color}
@@ -180,7 +258,7 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
 const Divider = styled.button<{ color?: string; expanded?: boolean }>`
   position: relative;
   border: ${({ color }) => `solid ${color} 0.15vw`};
-  background-color: #f8f6e4;
+
   width: 100%;
   height: 3%;
 

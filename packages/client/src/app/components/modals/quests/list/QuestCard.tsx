@@ -142,9 +142,9 @@ export const QuestCard = ({
   // RENDER
   const factionStamp = getFactionStamp(quest);
   const isMainQuest = quest.typeComp === 'MAIN';
-  
+
   return (
-    <Container key={quest.id} completed={status === 'COMPLETED'} isMainQuest={isMainQuest}>
+    <Container key={quest.id} isMainQuest={isMainQuest}>
       <Title>
         {quest.name}
         <IconsContainer>
@@ -192,7 +192,7 @@ export const QuestCard = ({
   );
 };
 
-const Container = styled.div<{ completed?: boolean; isMainQuest?: boolean }>`
+const Container = styled.div<{ isMainQuest?: boolean }>`
   position: relative;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
@@ -204,8 +204,6 @@ const Container = styled.div<{ completed?: boolean; isMainQuest?: boolean }>`
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
-
-  ${({ completed }) => completed && 'opacity: 0.5;'}
 `;
 
 const Title = styled.div`

@@ -12,7 +12,8 @@ export const useTypewriter = (
   speed: number,
   retrigger?: boolean | string,
   onUpdate?: () => void,
-  interrupted?: boolean
+  interrupted?: boolean,
+  onComplete?: () => void
 ) => {
   const [displayedText, setDisplayedText] = useState<ReactNode[]>([]);
   const indexRef = useRef(0);
@@ -24,6 +25,7 @@ export const useTypewriter = (
 
   useEffect(() => {
     if (!text) return;
+
     if (interrupted) {
       const parts = text.split(/(MINA|MENU)/g);
       const result = parts.map((part, i) =>
@@ -31,12 +33,14 @@ export const useTypewriter = (
       );
       setDisplayedText(result);
       indexRef.current = text.length;
+      onComplete?.();
       return;
     }
 
     const interval = setInterval(() => {
       if (indexRef.current >= text.length) {
         clearInterval(interval);
+        onComplete?.();
         return;
       }
 
@@ -56,7 +60,7 @@ export const useTypewriter = (
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed, retrigger, onUpdate, interrupted]);
+  }, [text, speed, retrigger, onUpdate, interrupted, onComplete]);
 
   return displayedText;
 };
@@ -67,19 +71,45 @@ export const TypewriterComponent = ({
   speed = 30,
   onUpdate,
   interrupted = false,
+  onComplete,
+  showContinueArrow = false,
 }: {
   text?: string;
   retrigger?: boolean | string;
   speed?: number;
   onUpdate?: () => void;
   interrupted?: boolean;
+  onComplete?: () => void;
+  showContinueArrow?: boolean;
 }) => {
-  const displayedText = useTypewriter(text, speed, retrigger, onUpdate, interrupted);
-  return <Container>{displayedText}</Container>;
+  const displayedText = useTypewriter(text, speed, retrigger, onUpdate, interrupted, onComplete);
+  return (
+    <Container>
+      {displayedText}
+      {showContinueArrow && <Arrow>▸</Arrow>}
+    </Container>
+  );
 };
 
 const Container = styled.div`
   font-size: inherit;
   color: inherit;
   white-space: pre-wrap;
+`;
+
+const Arrow = styled.span`
+  margin-left: 0.3em;
+  animation: flicker 1s steps(1) infinite;
+  font-size: 1.8vw;
+  @keyframes flicker {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 `;

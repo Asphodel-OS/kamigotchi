@@ -119,7 +119,7 @@ const Container = styled.span<{
   display: flex;
   flex-direction: ${({ direction }) => direction ?? 'column'};
   flex-grow: ${({ flexGrow }) => flexGrow};
-  cursor: ${({ disabled, cursor }) => (disabled ? 'default' : cursor ?? 'help')};
+  cursor: ${({ disabled, cursor }) => cursor ?? (disabled ? 'default' : 'help')};
   ${({ fullWidth }) => fullWidth && 'width: 100%;'}
 `;
 

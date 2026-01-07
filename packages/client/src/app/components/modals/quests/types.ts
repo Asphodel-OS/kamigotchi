@@ -1,4 +1,4 @@
-type TabType = 'AVAILABLE' | 'ONGOING';
+type TabType = 'AVAILABLE' | 'ONGOING' | 'COMPLETED';
 type QuestStatus = 'AVAILABLE' | 'ONGOING' | 'COMPLETED';
 
 type QuestModalActions = {
