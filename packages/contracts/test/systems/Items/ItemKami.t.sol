@@ -2,6 +2,7 @@
 pragma solidity >=0.8.28;
 
 import "./Item.t.sol";
+import { LibData } from "libraries/LibData.sol";
 
 contract ItemKamiTest is ItemTemplate {
   //todo:
@@ -77,5 +78,24 @@ contract ItemKamiTest is ItemTemplate {
     _KamiUseItemSystem.executeTyped(kamiID, foodIndex);
     assertEq(LibBonus.getFor(components, "BONUS_1", alice.id), 0);
     assertEq(LibBonus.getFor(components, "BONUS_2", alice.id), 0);
+  }
+
+  function testMochiLimitPerKami() public {
+    uint32 mochiA = 11110;
+    _createFood(mochiA, "Gaokerena Mochi", "desc", 10, 0, "");
+
+    uint256 kamiID = _mintKami(alice);
+    _giveItem(alice, mochiA, 4);
+
+    vm.startPrank(alice.operator);
+    _KamiUseItemSystem.executeTyped(kamiID, mochiA);
+    _KamiUseItemSystem.executeTyped(kamiID, mochiA);
+    _KamiUseItemSystem.executeTyped(kamiID, mochiA);
+    vm.expectRevert(bytes("mochi limit reached"));
+    _KamiUseItemSystem.executeTyped(kamiID, mochiA);
+    vm.stopPrank();
+
+    uint256 used = LibData.get(components, kamiID, 0, "MOCHI_USED");
+    assertEq(used, 3);
   }
 }
