@@ -128,6 +128,19 @@ export const QuestDetailsModal: UIComponent = {
       prevCompleteRef.current = quest?.complete;
     }, [quest?.complete]);
 
+    // close modal after completion if no completion text or next quest
+    useEffect(() => {
+      if (!justCompleted || !quest?.complete) return;
+
+      const hasCompletionText = !!quest?.descriptionAlt;
+      const hasNextQuest = !!(quest && findNextInChain(quest.index));
+
+      if (!hasCompletionText && !hasNextQuest) {
+        const closeModal = () => setModals({ questDialogue: false });
+        timeoutRef.current = setTimeout(closeModal, 500);
+      }
+    }, [justCompleted, quest?.complete]);
+
     // setup ticking on mount. clear timeout ref and ticking on dismount
     useEffect(() => {
       const refreshClock = () => setTick(Date.now());
@@ -195,7 +208,6 @@ export const QuestDetailsModal: UIComponent = {
           return api.player.account.quest.complete(quest.id);
         },
       });
-      handleStateUpdate(true);
     };
 
     // journey onwards to next quest in chain
