@@ -8,7 +8,7 @@ export interface State {
   assignerID: string;
   dialogueIndex: number;
   questIndex: EntityIndex;
-  questJustCompleted: boolean;
+  questJustCompleted: EntityIndex | null;
   goalIndex: number[];
   kamiIndex: number;
   listingEntityIndex: EntityIndex;
@@ -41,7 +41,7 @@ export const useSelected = create<State & Actions>((set) => {
     kamiIndex: 0 as number,
     leaderboardKey: 'default',
     questIndex: 0 as EntityIndex,
-    questJustCompleted: false,
+    questJustCompleted: null,
     listingEntityIndex: 0 as EntityIndex,
     nodeIndex: 0 as number,
     npcIndex: 0 as number,

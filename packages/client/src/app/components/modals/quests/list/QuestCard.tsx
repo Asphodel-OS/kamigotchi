@@ -186,7 +186,7 @@ export const QuestCard = ({
           onClick={() => {
             triggerQuestDetailsModal(quest.entity);
             if (getButtonText(status) === 'Complete' && quest.complete === false) {
-              useSelected.setState({ questJustCompleted: true });
+              useSelected.setState({ questJustCompleted: quest.entity });
               complete(quest);
             }
           }}

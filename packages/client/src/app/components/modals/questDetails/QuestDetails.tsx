@@ -110,10 +110,10 @@ export const QuestDetailsModal: UIComponent = {
     // from the quest view
 
     useEffect(() => {
-      const wasJustCompleted = useSelected.getState().questJustCompleted;
-      if (wasJustCompleted) {
+      const completedQuestIndex = useSelected.getState().questJustCompleted;
+      if (completedQuestIndex === questIndex) {
         setJustCompleted(true);
-        useSelected.setState({ questJustCompleted: false });
+        useSelected.setState({ questJustCompleted: null });
       } else {
         setJustCompleted(false);
       }
