@@ -98,4 +98,28 @@ contract ItemKamiTest is ItemTemplate {
     uint256 used = LibData.get(components, kamiID, 0, "MOCHI_USED");
     assertEq(used, 3);
   }
+
+  function testMochiLimitIsPerKami() public {
+    uint32 mochiA = 11110;
+    _createFood(mochiA, "Gaokerena Mochi", "desc", 10, 0, "");
+
+    uint256 kamiID1 = _mintKami(alice);
+    uint256 kamiID2 = _mintKami(alice);
+    _giveItem(alice, mochiA, 6);
+
+    vm.startPrank(alice.operator);
+    // Use 3 mochi on first kami
+    _KamiUseItemSystem.executeTyped(kamiID1, mochiA);
+    _KamiUseItemSystem.executeTyped(kamiID1, mochiA);
+    _KamiUseItemSystem.executeTyped(kamiID1, mochiA);
+    
+    // Should still be able to use 3 on second kami
+    _KamiUseItemSystem.executeTyped(kamiID2, mochiA);
+    _KamiUseItemSystem.executeTyped(kamiID2, mochiA);
+    _KamiUseItemSystem.executeTyped(kamiID2, mochiA);
+    vm.stopPrank();
+
+    assertEq(LibData.get(components, kamiID1, 0, "MOCHI_USED"), 3);
+    assertEq(LibData.get(components, kamiID2, 0, "MOCHI_USED"), 3);
+  }
 }
