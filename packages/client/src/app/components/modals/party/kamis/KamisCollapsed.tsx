@@ -64,7 +64,13 @@ export const KamisCollapsed = ({
           key={kami.entity}
           kami={kami}
           actions={DisplayedActions(account, kami, node)}
-          options={{ showCooldown: true, showLevelUp: true, showPercent: true, showTooltip: true }}
+          options={{
+            showCooldown: true,
+            showLevelUp: true,
+            showPercent: true,
+            showTooltip: true,
+            showSkillPoints: true,
+          }}
           utils={utils}
           tick={tick}
         />

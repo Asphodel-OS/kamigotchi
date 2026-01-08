@@ -31,7 +31,7 @@ import { Cooldown } from './Cooldown';
 export const KamiBar = ({
   kami,
   actions,
-  options: { showCooldown, showLevelUp, showPercent } = {},
+  options: { showCooldown, showLevelUp, showPercent, showTooltip, showSkillPoints } = {},
   utils,
   tick,
 }: {
@@ -42,6 +42,7 @@ export const KamiBar = ({
     showLevelUp?: boolean;
     showPercent?: boolean; // whether to show the percent health
     showTooltip?: boolean;
+    showSkillPoints?: boolean;
   };
   tick: number;
 
@@ -236,9 +237,16 @@ export const KamiBar = ({
     <Container>
       <Left>
         <TextTooltip text={[`${kami.name}`]}>
-          <Image src={kami.image} onClick={handleImageClick} />{' '}
-          {canLevel && (
-            <LevelUpButton disabled={!canLevel} onClick={handleLevelUp}>
+          <ImageWrapper>
+            <Image src={kami.image} onClick={handleImageClick} />
+            {showSkillPoints && (kami.skills?.points ?? 0) > 0 && (
+              <Overlay top={0.2} right={0.2}>
+                <Sp>SP</Sp>
+              </Overlay>
+            )}
+          </ImageWrapper>
+          {canLevel && showLevelUp && (
+            <LevelUpButton>
               <LevelUpArrows />
               <Shimmer />
             </LevelUpButton>
@@ -329,6 +337,12 @@ const Middle = styled.div<MiddleProps>`
     `linear-gradient(90deg, ${color}, 0%, ${color}, ${percent}%, #fff, ${Math.min(percent * 1.05, 100)}%, #fff 100%)`};
 `;
 
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 3vw;
+  height: 3vw;
+`;
+
 const Image = styled.img`
   border-right: solid black 0.15vw;
 
@@ -341,6 +355,14 @@ const Image = styled.img`
   &:hover {
     opacity: 0.8;
   }
+`;
+
+const Sp = styled.div`
+  font-size: 0.85vw;
+  font-weight: bold;
+  background: linear-gradient(to right, #0b0d0eff, #ee0979);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const Icon = styled.img`
