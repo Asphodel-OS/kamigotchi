@@ -9,13 +9,7 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
-import { LibData } from "libraries/LibData.sol";
-
 uint256 constant ID = uint256(keccak256("system.kami.use.item"));
-
-string constant MOCHI_USED_TYPE = "MOCHI_USED";
-string constant MOCHI_FLAG = "IS_MOCHI";
-uint256 constant MOCHI_LIMIT = 3;
 
 // eat one snack
 contract KamiUseItemSystem is System {
@@ -42,10 +36,6 @@ contract KamiUseItemSystem is System {
     // item checks
     LibItem.verifyForShape(components, itemIndex, "KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
-    if (LibItem.checkFlag(components, itemIndex, MOCHI_FLAG, true)) {
-      uint256 used = LibData.get(components, kamiID, 0, MOCHI_USED_TYPE);
-      require(used < MOCHI_LIMIT, "mochi limit reached");
-    }
 
     // reset action bonuses
     if (!LibItem.bypassBonusReset(components, itemIndex)) {

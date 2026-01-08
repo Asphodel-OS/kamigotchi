@@ -91,7 +91,7 @@ contract ItemKamiTest is ItemTemplate {
     _KamiUseItemSystem.executeTyped(kamiID, mochiA);
     _KamiUseItemSystem.executeTyped(kamiID, mochiA);
     _KamiUseItemSystem.executeTyped(kamiID, mochiA);
-    vm.expectRevert(bytes("mochi limit reached"));
+    vm.expectRevert(bytes("Item: requirements not met"));
     _KamiUseItemSystem.executeTyped(kamiID, mochiA);
     vm.stopPrank();
 

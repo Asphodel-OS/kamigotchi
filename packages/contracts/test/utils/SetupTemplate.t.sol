@@ -858,6 +858,7 @@ abstract contract SetupTemplate is TestSetupImports {
     ) {
       __ItemRegistrySystem.addFlag(index, "IS_MOCHI");
       __ItemRegistrySystem.addAlloBasic(abi.encode(index, "USE", "MOCHI_USED", 0, 1));
+      __ItemRegistrySystem.addRequirement(abi.encode(index, "USE", "MOCHI_USED", "CURR_MAX", 0, 2, ""));
     }
     vm.stopPrank();
   }
