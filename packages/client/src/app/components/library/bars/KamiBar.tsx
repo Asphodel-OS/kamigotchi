@@ -36,7 +36,9 @@ export const KamiBar = ({
   tick,
 }: {
   kami: Kami;
-  actions?: React.ReactNode;
+  actions?:
+    | React.ReactElement<{ cooldownBackground?: string }>
+    | React.ReactElement<{ cooldownBackground?: string }>[];
   options?: {
     showCooldown?: boolean;
     showLevelUp?: boolean;
@@ -275,8 +277,7 @@ export const KamiBar = ({
         </TextTooltip>
       </Middle>
       <Right>
-        {showCooldown && <Cooldown kami={kami} />}
-        {actions}
+        {actions && (showCooldown ? <Cooldown kami={kami}>{actions}</Cooldown> : actions)}
       </Right>
     </Container>
   );
@@ -388,6 +389,7 @@ const StateIcon = styled.img`
   margin-right: 0.3vw;
   width: 2vw;
   height: 2vw;
+  opacity: 0.7;
 `;
 
 const StateSection = styled.div`
