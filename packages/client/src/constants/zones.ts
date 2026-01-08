@@ -30,12 +30,12 @@ const zone1: Zone = {
 const zone2 = undefined;
 
 const zone3: Zone = {
-  name: 'zone3',
+  name: 'zone1',
   width: 10,
   height: 13,
   offset: {
     x: 0,
-    y: 0,
+    y: -1,
   },
 };
 
