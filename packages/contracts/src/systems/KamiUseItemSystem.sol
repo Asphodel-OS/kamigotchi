@@ -13,6 +13,7 @@ import { LibData } from "libraries/LibData.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.use.item"));
 string constant MOCHI_USED_TYPE = "MOCHI_USED";
+uint256 constant MOCHI_LIMIT = 3;
 
 // eat one snack
 contract KamiUseItemSystem is System {
@@ -41,7 +42,7 @@ contract KamiUseItemSystem is System {
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
     if (_isMochi(itemIndex)) {
       uint256 used = LibData.get(components, kamiID, 0, MOCHI_USED_TYPE);
-      require(used < 3, "mochi limit reached");
+      require(used < MOCHI_LIMIT, "mochi limit reached");
     }
 
     // reset action bonuses
