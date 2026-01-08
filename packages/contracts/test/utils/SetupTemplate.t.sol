@@ -856,6 +856,7 @@ abstract contract SetupTemplate is TestSetupImports {
       index == 11130 || // Kami Mochi
       index == 11140 // Mana Mochi
     ) {
+      __ItemRegistrySystem.addFlag(index, "IS_MOCHI");
       __ItemRegistrySystem.addAlloBasic(abi.encode(index, "USE", "MOCHI_USED", 0, 1));
     }
     vm.stopPrank();

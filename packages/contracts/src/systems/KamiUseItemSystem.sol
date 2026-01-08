@@ -12,7 +12,9 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibData } from "libraries/LibData.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.use.item"));
+
 string constant MOCHI_USED_TYPE = "MOCHI_USED";
+string constant MOCHI_FLAG = "IS_MOCHI";
 uint256 constant MOCHI_LIMIT = 3;
 
 // eat one snack
@@ -40,7 +42,7 @@ contract KamiUseItemSystem is System {
     // item checks
     LibItem.verifyForShape(components, itemIndex, "KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
-    if (_isMochi(itemIndex)) {
+    if (LibItem.checkFlag(components, itemIndex, MOCHI_FLAG, true)) {
       uint256 used = LibData.get(components, kamiID, 0, MOCHI_USED_TYPE);
       require(used < MOCHI_LIMIT, "mochi limit reached");
     }
@@ -69,12 +71,4 @@ contract KamiUseItemSystem is System {
     return execute(abi.encode(kamiID, itemIndex));
   }
 
-  // todo: we shouldn't be reliant on hardcoded item indices
-  function _isMochi(uint32 itemIndex) internal pure returns (bool) {
-    return
-      itemIndex == 11110 || // Gaokerena Mochi
-      itemIndex == 11120 || // Sunset Apple Mochi
-      itemIndex == 11130 || // Kami Mochi
-      itemIndex == 11140; // Mana Mochi
-  }
 }
