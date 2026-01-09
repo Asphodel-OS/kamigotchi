@@ -67,7 +67,7 @@ Slightly sacred. "
 ,In Game,Red Ribbon Gummy,11001,Revive,Rare,Kami,,"STATE-RESTING,HP+10",,This candy ribbon is so delicious that it can bring a Kami back after it’s been liquidated. They can’t say no to the flavor.
 ,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Rare,Kami,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
 ,In Game,Djed Pillar,11003,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
-,In Game,Pale Potion,11004,Potion,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
+,In Game,Pale Potion,11004,Revive,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,To Deploy,Cleaning Fluid,11020,Potion,Rare,Kami,,ITEM: Cleaning Fluid,,A suspension of pleasant-smelling reagents in holy syrup. Used for ritual purification and ablution.
 ,In Game,Gaokerena Mochi,11110,Food,Epic,Kami,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
@@ -141,4 +141,5 @@ Slightly sacred. "
 ,In Game,Unmarked Data Chip,100007,Key Item,Rare,Account,,,,A data chip found in the Techno Temple. Looks to be in good working condition.
 ,In Game,Rock Crystal Lens,100008,Key Item,Epic,,,,,"Although this lens has a slight crack, it can still be used to focus and magnify light. Scans indicate this item to be hundreds of thousands of years old. "
 ,In Game,Switchbox Imp,100009,Key Item,Epic,,,,,Looks like a small wired relay box on the surface. A tiny humanoid imp lives under the faceplate and manually operates the contacts. This item can be used in crafting certain complex devices.
+
 ,In Game,Dowsing Rod,100010,Key Item,Epic,,,,,The crystal in the caves radiates a strange power. Mina alleges that this item can sense traces of that power.
