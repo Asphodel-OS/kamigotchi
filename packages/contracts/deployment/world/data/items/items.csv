@@ -70,10 +70,10 @@ Slightly sacred. "
 ,In Game,Pale Potion,11004,Potion,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,To Deploy,Cleaning Fluid,11020,Potion,Rare,Kami,,ITEM: Cleaning Fluid,,A suspension of pleasant-smelling reagents in holy syrup. Used for ritual purification and ablution.
-,In Game,Gaokerena Mochi,11110,Food,Epic,Kami,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
-,In Game,Sunset Apple Mochi,11120,Food,Epic,Kami,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
-,In Game,Kami Mochi,11130,Food,Epic,Kami,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
-,In Game,Mana Mochi,11140,Food,Epic,Kami,,HARMONY+1,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
+,In Game,Gaokerena Mochi,11110,Food,Epic,Kami,IS_MOCHI,HEALTH+10,MOCHI_LIMIT,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
+,In Game,Sunset Apple Mochi,11120,Food,Epic,Kami,IS_MOCHI,POWER+1,MOCHI_LIMIT,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
+,In Game,Kami Mochi,11130,Food,Epic,Kami,IS_MOCHI,VIOLENCE+1,MOCHI_LIMIT,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
+,In Game,Mana Mochi,11140,Food,Epic,Kami,IS_MOCHI,HARMONY+1,MOCHI_LIMIT,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
 ,In Game,XP Candy (Small),11201,Food,Uncommon,Kami,NOT_TRADABLE,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
 ,In Game,XP Candy (Medium),11202,Food,Uncommon,Kami,NOT_TRADABLE,"HP+10,XP+100",,"Provides a decent amount of XP when fed to a Kami. "
 ,In Game,XP Candy (Large),11203,Food,Uncommon,Kami,NOT_TRADABLE,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "

@@ -856,6 +856,17 @@ abstract contract SetupTemplate is TestSetupImports {
     );
     __ItemRegistrySystem.addAlloBasic(abi.encode(index, "USE", "XP", 0, experience));
     __ItemRegistrySystem.addAlloStat(abi.encode(index, "USE", "HEALTH", 0, 0, 0, health));
+
+    if (
+      index == 11110 || // Gaokerena Mochi
+      index == 11120 || // Sunset Apple Mochi
+      index == 11130 || // Kami Mochi
+      index == 11140 // Mana Mochi
+    ) {
+      __ItemRegistrySystem.addFlag(index, "IS_MOCHI");
+      __ItemRegistrySystem.addAlloBasic(abi.encode(index, "USE", "MOCHI_USED", 0, 1));
+      __ItemRegistrySystem.addRequirement(abi.encode(index, "USE", "MOCHI_USED", "CURR_MAX", 0, 2, ""));
+    }
     vm.stopPrank();
   }
 

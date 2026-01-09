@@ -9,7 +9,6 @@ import { LibBonus } from "libraries/LibBonus.sol";
 import { LibItem } from "libraries/LibItem.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
-
 uint256 constant ID = uint256(keccak256("system.kami.use.item"));
 
 // eat one snack
@@ -61,4 +60,5 @@ contract KamiUseItemSystem is System {
   function executeTyped(uint256 kamiID, uint32 itemIndex) public returns (bytes memory) {
     return execute(abi.encode(kamiID, itemIndex));
   }
+
 }
