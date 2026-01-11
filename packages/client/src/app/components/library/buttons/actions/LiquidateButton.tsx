@@ -64,10 +64,14 @@ const getLiquidateTooltip = (target: Kami, allies: Kami[]): string => {
     const thresholds = available.map((ally) => calcLiqThreshold(ally, target));
     const [threshold, index] = thresholds.reduce(
       (a, b, i) => (a[0] < b ? [b, i] : a),
-      [Number.MIN_VALUE, -1]
+      [-Infinity, -1]
     );
     const champion = available[index];
-    reason = `${champion?.name} can liquidate below ${Math.round(threshold)} Health`;
+    if (threshold <= 0) {
+      reason = `${target.name} is too strong for any active kami to liquidate`;
+    } else {
+      reason = `${champion?.name} can liquidate below ${Math.round(threshold)} Health`;
+    }
   }
 
   if (reason === '') reason = 'Liquidate this Kami';
