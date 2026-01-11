@@ -157,12 +157,16 @@ export const findNextInChain = (
 ): BaseQuest | undefined => {
   const dependentQuests = registry.filter((q) => {
     const fullQuest = populate(world, components, q);
-    return (
-      !hasCompleted(world, components, q.index, account.entity) &&
-      fullQuest.requirements.some(
-        (req) => req.target.type === 'QUEST' && req.target.index === currentQuestIndex
-      )
+    const dependsOnCurrent = fullQuest.requirements.some(
+      (req) => req.target.type === 'QUEST' && req.target.index === currentQuestIndex
     );
+    if (!dependsOnCurrent) return false;
+    if (hasCompleted(world, components, q.index, account.entity)) return false;
+
+    // checks all requirements are met
+    // (not just the current quest)
+    parseRequirements(world, components, account, fullQuest);
+    return meetsRequirements(fullQuest);
   });
 
   const sorted = dependentQuests.sort((a, b) => a.index - b.index);
