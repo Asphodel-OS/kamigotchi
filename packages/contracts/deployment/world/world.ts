@@ -58,6 +58,7 @@ import {
   unsetPortalTokens,
 } from './state';
 import { disableItems, enableItems } from './state/items';
+import { disableQuests, enableQuests } from './state/quests/quests';
 import { cancelTrades, completeTrades } from './state/trades';
 
 // TODO: rename this file to something that makes more sense
@@ -158,6 +159,8 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseQuests(api, indices)),
+      disable: (indices: number[]) => this.genCalls((api) => disableQuests(api, indices)),
+      enable: (indices: number[]) => this.genCalls((api) => enableQuests(api, indices)),
     } as SubFunc,
     recipes: {
       init: (indices?: number[]) => this.genCalls((api) => initRecipes(api, indices)),

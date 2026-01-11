@@ -72,7 +72,7 @@ export async function initQuests(api: AdminAPI, indices?: number[], all?: boolea
     await addRequirements(api, row);
     await addObjectives(api, row);
     await addRewards(api, row);
-    await enable(api, index);
+    await enableQuest(api, index);
   }
 }
 
@@ -118,11 +118,34 @@ export async function reviseQuests(api: AdminAPI, overrideIndices?: number[]) {
   await initQuests(api, indices);
 }
 
-export async function enable(api: AdminAPI, index: number) {
+async function disableQuest(api: AdminAPI, index: number) {
   try {
-    // console.log(`Enabling quest ${index}`);
+    console.log(`Disabling quest ${index}`);
+    await api.registry.quest.disable(index);
+  } catch (e) {
+    console.error(`!! Could not disable quest ${index}`, e);
+  }
+}
+
+async function enableQuest(api: AdminAPI, index: number) {
+  try {
+    console.log(`Enabling quest ${index}`);
     await api.registry.quest.enable(index);
   } catch (e) {
     console.error(`!! Could not enable quest ${index}`, e);
+  }
+}
+
+export async function disableQuests(api: AdminAPI, indices: number[]) {
+  console.log('\n==DISABLING QUESTS==');
+  for (let i = 0; i < indices.length; i++) {
+    await disableQuest(api, indices[i]);
+  }
+}
+
+export async function enableQuests(api: AdminAPI, indices: number[]) {
+  console.log('\n==ENABLING QUESTS==');
+  for (let i = 0; i < indices.length; i++) {
+    await enableQuest(api, indices[i]);
   }
 }
