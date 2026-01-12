@@ -25,7 +25,7 @@ You want this. You want this so bad."
 ,In Game,Plastic Bottle,1003,Material,Uncommon,,,,,"Can be reprocessed into valuable raw Microplastics. "
 ,In Game,Pine Cone,1004,Material,Uncommon,,,,,"It’s a pine cone. 
 
-Slightly sacred. "
+Slightly sacred."
 ,In Game,Scrap Metal,1005,Material,Common,,,,,A small chunk of scrap metal. Maybe useful if processed.
 ,In Game,Glass Jar,1006,Material,Rare,,,,,"A somehow-unbroken jar of clear glass. "
 ,In Game,Red Amber Crystal,1007,Material,Epic,,,,,"A crystal of pure red amber, formed deep in the forest."
@@ -69,7 +69,7 @@ Slightly sacred. "
 ,In Game,Djed Pillar,11003,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
 ,In Game,Pale Potion,11004,Revive,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
-,To Deploy,Cleaning Fluid,11020,Potion,Rare,Kami,,ITEM: Cleaning Fluid,,A suspension of pleasant-smelling reagents in holy syrup. Used for ritual purification and ablution.
+,To Deploy,Cleaning Fluid,11020,Potion,Rare,Kami,,CLEARALL,,A suspension of pleasant-smelling reagents in holy syrup. Used for ritual purification and ablution.
 ,In Game,Gaokerena Mochi,11110,Food,Epic,Kami,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
 ,In Game,Sunset Apple Mochi,11120,Food,Epic,Kami,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
 ,In Game,Kami Mochi,11130,Food,Epic,Kami,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
@@ -141,5 +141,4 @@ Slightly sacred. "
 ,In Game,Unmarked Data Chip,100007,Key Item,Rare,Account,,,,A data chip found in the Techno Temple. Looks to be in good working condition.
 ,In Game,Rock Crystal Lens,100008,Key Item,Epic,,,,,"Although this lens has a slight crack, it can still be used to focus and magnify light. Scans indicate this item to be hundreds of thousands of years old. "
 ,In Game,Switchbox Imp,100009,Key Item,Epic,,,,,Looks like a small wired relay box on the surface. A tiny humanoid imp lives under the faceplate and manually operates the contacts. This item can be used in crafting certain complex devices.
-
 ,In Game,Dowsing Rod,100010,Key Item,Epic,,,,,The crystal in the caves radiates a strange power. Mina alleges that this item can sense traces of that power.
