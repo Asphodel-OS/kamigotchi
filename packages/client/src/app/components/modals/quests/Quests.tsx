@@ -24,6 +24,7 @@ import {
   queryRegistryQuests,
 } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
+import { getIsDisabled } from 'network/shapes/utils/component';
 import { getFromDescription } from 'network/shapes/utils/parse';
 import { useComponentEntities } from 'network/utils/hooks';
 import { List } from './list/List';
@@ -100,11 +101,15 @@ export const QuestModal: UIComponent = {
     }, [network, registryEntities]);
 
     const completed: BaseQuest[] = useMemo(() => {
-      return queryCompleted().map((entity) => getBase(entity));
+      return queryCompleted()
+        .map((entity) => getBase(entity))
+        .filter((q) => !getIsDisabled(components, q.registryEntityIndex));
     }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
 
     const ongoing: BaseQuest[] = useMemo(() => {
-      return queryOngoing().map((entity) => getBase(entity));
+      return queryOngoing()
+        .map((entity) => getBase(entity))
+        .filter((q) => !getIsDisabled(components, q.registryEntityIndex));
     }, [network, account.id, ownsQuestEntities, isCompleteEntities]);
 
     /////////////////
@@ -118,7 +123,7 @@ export const QuestModal: UIComponent = {
       isUpdating.current = true;
 
       const raw = filterByAvailable(registry, ongoing, completed);
-      const populated = raw.map((q) => populate(q));
+      const populated = raw.map((q) => populate(q)).filter((q) => !q.isDisabled);
 
       setAvailable(populated);
       if (populated.length > available.length) setTab('AVAILABLE');

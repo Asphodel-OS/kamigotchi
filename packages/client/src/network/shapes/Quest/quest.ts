@@ -4,6 +4,7 @@ import { Components } from 'network/';
 import { Allo } from '../Allo';
 import { hasFlag } from '../Flag';
 import { getEntityByHash } from '../utils';
+import { getIsDisabled } from '../utils/component';
 import { Objective, getObjectives } from './objective';
 import { query } from './queries';
 import { Requirement, getRequirements } from './requirement';
@@ -34,6 +35,7 @@ export interface Quest extends BaseQuest {
   descriptionAlt: string;
   subType: string;
   typeComp: string;
+  isDisabled: boolean;
 }
 
 // Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
@@ -76,6 +78,7 @@ export const populate = (world: World, components: Components, base: BaseQuest):
     descriptionAlt: getComponentValue(DescriptionAlt, base.registryEntityIndex)?.value ?? '',
     subType: getComponentValue(Subtype, base.registryEntityIndex)?.value ?? '',
     typeComp: getComponentValue(Type, base.registryEntityIndex)?.value ?? '',
+    isDisabled: getIsDisabled(components, base.registryEntityIndex),
   };
 };
 

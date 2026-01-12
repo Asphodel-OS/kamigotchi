@@ -157,6 +157,7 @@ export const findNextInChain = (
 ): BaseQuest | undefined => {
   const dependentQuests = registry.filter((q) => {
     const fullQuest = populate(world, components, q);
+    if (fullQuest.isDisabled) return false;
     const dependsOnCurrent = fullQuest.requirements.some(
       (req) => req.target.type === 'QUEST' && req.target.index === currentQuestIndex
     );
