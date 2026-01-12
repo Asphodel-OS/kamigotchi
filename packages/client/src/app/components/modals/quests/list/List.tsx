@@ -6,6 +6,7 @@ import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { AcceptedTab } from './AcceptedTab';
 import { AvailableTab } from './AvailableTab';
+import { CompletedQuests } from './Completed';
 
 export const List = ({
   quests,
@@ -47,6 +48,13 @@ export const List = ({
         utils={utils}
         imageCache={imageCache}
         isVisible={mode === 'ONGOING'}
+      />
+      <CompletedQuests
+        quests={completed}
+        actions={actions}
+        utils={utils}
+        imageCache={imageCache}
+        isVisible={mode === 'COMPLETED'}
       />
     </Container>
   );

@@ -11,40 +11,35 @@ export const Dialogue = ({
   color,
   completionText = '',
   isComplete,
+  isAccepted,
+  justCompleted,
   isModalOpen,
+  onOutroFinished,
 }: {
   text: string;
   color: string;
   completionText?: string;
   isModalOpen: boolean;
   isComplete: boolean;
+  isAccepted: boolean;
+  justCompleted: boolean;
+  onOutroFinished?: () => void;
 }) => {
   const [mode, setMode] = useState<MODE>('INTRO');
   const [wasToggled, setWasToggled] = useState(false);
-  const [interrupted, setInterrupted] = useState(false);
 
   const introRef = useRef<HTMLDivElement>(null);
   const outroRef = useRef<HTMLDivElement>(null);
-  const isUserScrollingPastRef = useRef(false);
-  const isUserScrollingMainRef = useRef(false);
-
-  /////////////////
-  // SUBSCRIPTIONS
+  const isUserScrollingIntroRef = useRef(false);
+  const isUserScrollingOutroRef = useRef(false);
 
   // shows completion text by default intro text as fallback
+
   useEffect(() => {
     if (isModalOpen) {
       setMode(completionText && isComplete ? 'OUTRO' : 'INTRO');
     }
   }, [isModalOpen, completionText, isComplete]);
-
-  // resets cancelation when modal is opened or sections are toggled
-  useEffect(() => {
-    setInterrupted(false);
-  }, [isModalOpen, wasToggled]);
-
-  ///////////////
-  // HANDLERS
 
   // if the user is not scrolling autoscroll to track generated text
   const handleScroll = (
@@ -64,18 +59,13 @@ export const Dialogue = ({
     if (!ref.current) return;
     const { scrollTop, scrollHeight, clientHeight } = ref.current;
     const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 5;
-    if (!isAtBottom) {
-      scrollingRef.current = true;
-    } else {
-      scrollingRef.current = false;
-    }
+    scrollingRef.current = !isAtBottom;
   };
 
   // trigger a toggle between the two modes
   const toggleSections = () => {
-    if (mode === 'INTRO') setMode('OUTRO');
-    else setMode('INTRO');
-    setWasToggled(!wasToggled);
+    setMode((mode) => (mode === 'INTRO' ? 'OUTRO' : 'INTRO'));
+    setWasToggled((t) => !t);
   };
 
   /////////////////
@@ -92,16 +82,19 @@ export const Dialogue = ({
         ref={introRef}
         isExpanded={mode === 'INTRO'}
         color={color}
-        onClick={() => setInterrupted(true)}
-        onScroll={() => handleUserScroll(introRef, isUserScrollingPastRef)}
+        onScroll={() => handleUserScroll(introRef, isUserScrollingIntroRef)}
       >
-        <TypewriterComponent
-          text={text}
-          speed={15}
-          interrupted={interrupted}
-          retrigger={`${isModalOpen}${wasToggled}`}
-          onUpdate={() => handleScroll(introRef, isUserScrollingPastRef)}
-        />
+        {!isAccepted ? (
+          <TypewriterComponent
+            text={text}
+            multiLine
+            speed={15}
+            retrigger={`${isModalOpen}${wasToggled}`}
+            onUpdate={() => handleScroll(introRef, isUserScrollingIntroRef)}
+          />
+        ) : (
+          <TypewriterComponent text={text} interrupted />
+        )}
       </Text>
       {!!completionText && (
         <>
@@ -112,17 +105,19 @@ export const Dialogue = ({
             ref={outroRef}
             isExpanded={mode === 'OUTRO'}
             color={color}
-            onClick={() => setInterrupted(true)}
-            onScroll={() => handleUserScroll(outroRef, isUserScrollingMainRef)}
+            onScroll={() => handleUserScroll(outroRef, isUserScrollingOutroRef)}
           >
-            {isComplete ? (
+            {isComplete && justCompleted ? (
               <TypewriterComponent
                 text={completionText}
+                multiLine
                 speed={15}
-                interrupted={interrupted}
-                retrigger={`${isModalOpen}${wasToggled}`}
-                onUpdate={() => handleScroll(outroRef, isUserScrollingMainRef)}
+                retrigger={`${isModalOpen}${wasToggled}${justCompleted}`}
+                onUpdate={() => handleScroll(outroRef, isUserScrollingOutroRef)}
+                onAllLinesComplete={onOutroFinished}
               />
+            ) : isComplete && !justCompleted ? (
+              <TypewriterComponent text={completionText} interrupted />
             ) : (
               <EmptyText
                 textColor={color}
@@ -157,7 +152,6 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
   word-wrap: break-word;
   color: ${({ isExpanded, color }) => (isExpanded ? color : '#cfcfcf')};
 
-  cursor: pointer;
   transition:
     height 0.3s ease,
     visibility 0.3s ease;
@@ -180,7 +174,7 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
 const Divider = styled.button<{ color?: string; expanded?: boolean }>`
   position: relative;
   border: ${({ color }) => `solid ${color} 0.15vw`};
-  background-color: #f8f6e4;
+
   width: 100%;
   height: 3%;
 
