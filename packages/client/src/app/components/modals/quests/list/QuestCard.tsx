@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { ActionListButton, IconButton, TextTooltip } from 'app/components/library';
-import { useSelected } from 'app/stores';
 import { triggerQuestDetailsModal } from 'app/triggers/triggerQuestDetailsModal';
 import { mainQuestIcon } from 'assets/images/icons/misc';
 import { Allo } from 'network/shapes/Allo';
@@ -143,9 +142,9 @@ export const QuestCard = ({
   // RENDER
   const factionStamp = getFactionStamp(quest);
   const isMainQuest = quest.typeComp === 'MAIN';
-
+  
   return (
-    <Container key={quest.id} isMainQuest={isMainQuest}>
+    <Container key={quest.id} completed={status === 'COMPLETED'} isMainQuest={isMainQuest}>
       <Title>
         {quest.name}
         <IconsContainer>
@@ -185,10 +184,7 @@ export const QuestCard = ({
           text={getButtonText(status)}
           onClick={() => {
             triggerQuestDetailsModal(quest.entity);
-            if (getButtonText(status) === 'Complete' && quest.complete === false) {
-              useSelected.setState({ questJustCompleted: quest.entity });
-              complete(quest);
-            }
+            if (getButtonText(status) === 'Complete' && quest.complete === false) complete(quest);
           }}
         />
       </ButtonRow>
@@ -196,7 +192,7 @@ export const QuestCard = ({
   );
 };
 
-const Container = styled.div<{ isMainQuest?: boolean }>`
+const Container = styled.div<{ completed?: boolean; isMainQuest?: boolean }>`
   position: relative;
   border: solid black 0.15vw;
   border-radius: 1.2vw;
@@ -208,6 +204,8 @@ const Container = styled.div<{ isMainQuest?: boolean }>`
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
+
+  ${({ completed }) => completed && 'opacity: 0.5;'}
 `;
 
 const Title = styled.div`

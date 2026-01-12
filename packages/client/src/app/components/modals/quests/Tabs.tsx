@@ -18,21 +18,14 @@ export const Tabs = ({
   return (
     <Container>
       <Button
-        style={{ borderRight: 'solid black .15vw' }}
         onClick={() => setTab('AVAILABLE')}
         disabled={tab === 'AVAILABLE'}
+        style={{ borderRight: 'solid black .15vw' }}
       >
         Available
       </Button>
-      <Button
-        style={{ borderRight: 'solid black .15vw' }}
-        onClick={() => setTab('ONGOING')}
-        disabled={tab === 'ONGOING'}
-      >
+      <Button onClick={() => setTab('ONGOING')} disabled={tab === 'ONGOING'}>
         Accepted
-      </Button>
-      <Button onClick={() => setTab('COMPLETED')} disabled={tab === 'COMPLETED'}>
-        Completed
       </Button>
     </Container>
   );

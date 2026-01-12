@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { EmptyText } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { Quest, sortCompletedQuests } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
@@ -8,7 +7,6 @@ import { DetailedEntity } from 'network/shapes/utils';
 import { QuestCard } from './QuestCard';
 
 const STALE_TIME = 5000;
-const emptyText = ['Nothing to see here.', 'Complete some quests first?'];
 
 export const CompletedQuests = ({
   quests,
@@ -52,7 +50,6 @@ export const CompletedQuests = ({
 
   return (
     <div style={{ display: isVisible ? 'block' : 'none' }}>
-      {quests.length === 0 && <EmptyText text={emptyText} />}
       {cleaned.map((q: Quest) => (
         <QuestCard
           key={q.id}

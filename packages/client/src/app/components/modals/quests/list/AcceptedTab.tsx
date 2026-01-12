@@ -5,6 +5,7 @@ import { Quest } from 'network/shapes/Quest';
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { DetailedEntity } from 'network/shapes/utils';
 import { EmptyText } from '../../../library/text/EmptyText';
+import { CompletedQuests } from './Completed';
 import { OngoingQuests } from './Ongoing';
 
 export const AcceptedTab = ({
@@ -44,10 +45,39 @@ export const AcceptedTab = ({
         imageCache={imageCache}
         isVisible={isVisible}
       />
+      <CollapseText onClick={() => setShowCompleted(!showCompleted)}>
+        {showCompleted ? `- Completed (${completed.length}) -` : '- Completed (collapsed) -'}
+      </CollapseText>
+      <CompletedQuests
+        quests={completed}
+        actions={actions}
+        utils={utils}
+        imageCache={imageCache}
+        isVisible={showCompleted}
+      />
     </Container>
   );
 };
 
 const Container = styled.div`
   height: 100%;
+`;
+
+const CollapseText = styled.button`
+  border: none;
+  background-color: transparent;
+
+  width: 100%;
+  textalign: center;
+  padding: 0.5vw;
+
+  color: #bbb;
+  font-family: Pixel;
+  font-size: 0.85vw;
+  text-align: center;
+
+  &:hover {
+    color: #666;
+    cursor: pointer;
+  }
 `;
