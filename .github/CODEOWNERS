@@ -8,7 +8,7 @@
 *.tsx   @jiracheron
 
 # By Domain
-packages/client/ @jiracheron @chlwys 
+packages/client/ @jiracheron @chlwys
 packages/client/src/app/ @Xenofluxx
 packages/client/src/assets/ @Xenofluxx
 packages/client/src/constants/ @Xenofluxx
