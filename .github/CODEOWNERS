@@ -8,8 +8,8 @@
 *.tsx   @jiracheron
 
 # By Domain
-packages/client/ @jiracheron @chlwys @Xenofluxx
-packages/client/src/components/modals/chat/ @Xenofluxx
+packages/client/ @jiracheron @chlwys 
+packages/client/src/ @Xenofluxx
 packages/client/src/engine/queue @hubur
 packages/client/src/clients/kamiden @hubur
 packages/client/src/clients/kamigaze @hubur
