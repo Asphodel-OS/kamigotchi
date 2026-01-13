@@ -22,5 +22,20 @@ export const room89: Room = {
       coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
       dialogue: 892,
     },
+    {
+      name: 'central pedestal',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 893,
+    },
+    {
+      name: 'reptilian beaver',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 894,
+    },
+    {
+      name: 'blue sea creature',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 895,
+    },
   ],
 };

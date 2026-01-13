@@ -25,5 +25,30 @@ export const room54: Room = {
       coordinates: { x1: 52, y1: 110, x2: 76, y2: 130 },
       dialogue: 541,
     },
+    {
+      name: 'egg',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 542,
+    },
+    {
+      name: 'screens',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 543,
+    },
+    {
+      name: 'exotic pelts',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 544,
+    },
+    {
+      name: 'ancient drawing',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 545,
+    },
+    {
+      name: 'leather-bound book',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 546,
+    },
   ],
 };

@@ -16,9 +16,12 @@ import dialogues15 from './15_temple-cave';
 import dialogues16 from './16_techno-temple';
 import dialogues18 from './18_cave-crossroads';
 import dialogues19 from './19_violence-temple';
+import dialogues25 from './25_lost-skeleton';
 import dialogues49 from './49_clearing';
 import dialogues52 from './52_airplane_crash';
 import dialogues54 from './54_plane_interior';
+import dialogues59 from './59_black-pool';
+import dialogues60 from './60_scrap-trees';
 import dialogues64 from './64_burning_room';
 import dialogues65 from './65_forest_hut';
 import dialogues66 from './66_trading-room';
@@ -78,9 +81,12 @@ const dialogueList = dialogues00.concat(
   dialogues16,
   dialogues18,
   dialogues19,
+  dialogues25,
   dialogues49,
   dialogues52,
   dialogues54,
+  dialogues59,
+  dialogues60,
   dialogues64,
   dialogues65,
   dialogues66,

@@ -13,5 +13,11 @@ export const room59: Room = {
     key: 'k14',
     path: k14,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'black pool',
+      coordinates: { x1: 0, y1: 0, x2: 0, y2: 0 },
+      dialogue: 591,
+    },
+  ],
 };

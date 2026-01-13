@@ -9,4 +9,11 @@ const tradingPanel: DialogueNode = {
   },
 };
 
-export default [tradingPanel];
+const marketplaceTree: DialogueNode = {
+  index: 662,
+  text: [
+    'This machine hums with energy. The power cords appear to be plugged directly into the ground.',
+  ],
+};
+
+export default [tradingPanel, marketplaceTree];
