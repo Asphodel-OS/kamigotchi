@@ -35,7 +35,7 @@ export const QuestCard = ({
 
   function getButtonText(status: string) {
     if (status === 'AVAILABLE') return 'Accept';
-    if (status === 'ONGOING' && !meetsObjectives(quest)) return 'Details';
+    if ((status === 'ONGOING' && !meetsObjectives(quest)) || status === 'COMPLETED') return 'Details';
     return 'Complete';
   }
 
