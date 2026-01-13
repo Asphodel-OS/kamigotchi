@@ -50,7 +50,7 @@ import {
   createFetchWorldEventsInBlockRange,
   createLatestEventStreamRPC,
 } from './utils';
-
+// TEST
 const debug = parentDebug.extend('SyncWorker');
 
 export enum InputType {
