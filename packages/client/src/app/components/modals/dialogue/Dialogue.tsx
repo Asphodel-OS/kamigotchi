@@ -284,7 +284,7 @@ export const DialogueModal: UIComponent = {
           id='dialogue'
           header={<Header>{npc.name}</Header>}
           canExit
-          backgroundColor={'rgba(0,0,0,1)'}
+          backgroundColor={'white'}
           positionOverride={{
             colStart: 66,
             colEnd: 99,
@@ -297,7 +297,7 @@ export const DialogueModal: UIComponent = {
           <NpcDialogue
             hasAvailableQuests={availableQuests}
             hasOngoingQuests={ongoingQuests}
-            npcColor='#ffffffff'
+            npcColor='#000000ff'
             npcName={npc.name}
             dialogueText={getText(dialogueNode.text[step])}
             dialogueButtons={{

@@ -87,7 +87,7 @@ export const NpcDialogue = ({
 const Text = styled.div<{
   color?: string;
 }>`
-  color: #cfcfcf;
+  color: ${({ color }) => color || 'black'};
   position: relative;
   text-align: justify;
   width: 100%;
@@ -105,13 +105,12 @@ const Text = styled.div<{
   transition:
     height 0.3s ease,
     visibility 0.3s ease;
-  color: ${({ color }) => color};
   ::-webkit-scrollbar {
     background: transparent;
     width: 0.3vw;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: ${({ color }) => color};
+    background-color: ${({ color }) => color || 'black'};
     border-radius: 0.3vw;
     background-clip: padding-box;
   }
@@ -140,12 +139,13 @@ const NpcSprite = styled.img`
 `;
 
 const NpcName = styled.div`
-  color: white;
-  border: solid white 0.15vw;
+  color: black;
+  border: solid black 0.15vw;
   padding: 0.3vw;
   font-size: min(2vw, 2vh);
   z-index: 3;
   box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  background-color: white;
 `;
 
 const Bottom = styled.div<{ hasQuests: boolean }>`
@@ -190,8 +190,8 @@ const OptionsLabel = styled.div<{ color?: string }>`
 
 const Option = styled.button<{ color?: string }>`
   position: relative;
-  color: ${({ color }) => color};
-  border: solid white 0.15vw;
+  color: ${({ color }) => color || 'black'};
+  border: solid black 0.15vw;
   padding: 0.1vw;
   text-wrap: wrap;
   font-size: 0.7vw;
@@ -201,7 +201,7 @@ const Option = styled.button<{ color?: string }>`
   width: 55%;
   border-radius: 0.3vw;
   line-height: 1.3vw;
-  background-color: black;
+  background-color: white;
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -210,7 +210,7 @@ const Option = styled.button<{ color?: string }>`
 
 const Message = styled.div<{ color?: string }>`
   position: relative;
-  color: ${({ color }) => color};
+  color: ${({ color }) => color || 'black'};
   padding: 0.2vw 0.3vw 0vw 0.3vw;
   font-size: 0.7vw;
   z-index: 3;
@@ -219,5 +219,5 @@ const Message = styled.div<{ color?: string }>`
 
   border-radius: 0.3vw;
   line-height: 1.3vw;
-  background-color: black;
+  background-color: white;
 `;
