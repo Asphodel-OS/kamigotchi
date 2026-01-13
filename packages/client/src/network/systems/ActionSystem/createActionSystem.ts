@@ -12,6 +12,7 @@ import {
 import { Provider } from 'ethers';
 import { Observable } from 'rxjs';
 import { log } from 'utils/logger';
+import { playError } from 'utils/sounds';
 import { v4 as uuid } from 'uuid';
 import { defineActionComponent } from './ActionComponent';
 import { ActionState } from './constants';
@@ -166,6 +167,7 @@ export function createActionSystem<M = undefined>(
     }
 
     updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
+    playError();
   }
 
   return {
