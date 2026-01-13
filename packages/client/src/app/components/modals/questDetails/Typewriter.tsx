@@ -128,6 +128,7 @@ const MultiLineTypewriter = ({
     if (!lineFinished) {
       // skip current line
       setIsInterrupted(true);
+      setTimeout(() => onUpdate?.(), 0);
       return;
     }
 
@@ -142,10 +143,12 @@ const MultiLineTypewriter = ({
     setLineIndex((i) => i + 1);
     setIsInterrupted(false);
     setLineFinished(false);
+    setTimeout(() => onUpdate?.(), 0);
   };
 
   const handleLineComplete = () => {
     setLineFinished(true);
+    setTimeout(() => onUpdate?.(), 0);
   };
 
   return (

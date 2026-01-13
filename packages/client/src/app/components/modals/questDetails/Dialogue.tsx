@@ -38,6 +38,9 @@ export const Dialogue = ({
   useEffect(() => {
     if (isModalOpen) {
       setMode(completionText && isComplete ? 'OUTRO' : 'INTRO');
+      // reset scroll
+      isUserScrollingIntroRef.current = false;
+      isUserScrollingOutroRef.current = false;
     }
   }, [isModalOpen, completionText, isComplete]);
 
@@ -58,7 +61,7 @@ export const Dialogue = ({
   ) => {
     if (!ref.current) return;
     const { scrollTop, scrollHeight, clientHeight } = ref.current;
-    const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 5;
+    const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 50;
     scrollingRef.current = !isAtBottom;
   };
 
