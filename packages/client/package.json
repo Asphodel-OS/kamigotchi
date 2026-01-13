@@ -22,7 +22,10 @@
     "nuke": "rimraf node_modules dist",
     "prettier": "prettier src --check",
     "prettier:fix": "pnpm run prettier --write",
-    "preview": "rimraf dist/ && mkdir dist/ && vite preview"
+    "preview": "rimraf dist/ && mkdir dist/ && vite preview",
+    "analyze": "ANALYZE=true vite build --mode production",
+    "analyze:sizes": "vite build --mode production 2>&1 | grep -E 'dist/assets.*\\.js' | tail -20",
+    "analyze:json": "vite build --mode production && node -e \"const fs=require('fs'),p=require('path'),d='./dist/assets';console.log(JSON.stringify(fs.readdirSync(d).filter(f=>f.endsWith('.js')).map(f=>({name:f,sizeKB:Math.round(fs.statSync(p.join(d,f)).size/1024)})).sort((a,b)=>a.sizeKB-b.sizeKB),null,2))\" > bundle-stats.json && cat bundle-stats.json"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
@@ -40,10 +43,12 @@
     "@vitejs/plugin-react": "^4.1.1",
     "eslint": "^8.29.0",
     "fs": "0.0.1-security",
+    "rollup-plugin-visualizer": "^6.0.5",
     "threads": "^1.7.0",
     "tspath": "^2.6.8",
     "typescript": "^5.0",
     "vite": "^5.0.11",
+    "vite-bundle-analyzer": "^1.3.2",
     "web3-utils": "^1.8.0"
   },
   "dependencies": {

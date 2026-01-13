@@ -3,5 +3,7 @@
 .DS_Store
 dist
 node_modules
-
 temp
+
+bundle-stats.html
+bundle-stats.json
