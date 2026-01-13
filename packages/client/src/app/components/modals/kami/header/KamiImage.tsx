@@ -9,7 +9,7 @@ import { ArrowIcons } from 'assets/images/icons/arrows';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
-import { playClick } from 'utils/sounds';
+import { playClick, playLevelup } from 'utils/sounds';
 
 const LEVEL_UP_STRING = 'Level Up!!';
 
@@ -60,7 +60,7 @@ export const KamiImage = ({
 
   const handleLevelUp = () => {
     levelUp(kami);
-    playClick();
+    playLevelup();
   };
 
   const handleIndexChange = (event: React.ChangeEvent<HTMLInputElement>) => {
