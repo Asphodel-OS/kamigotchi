@@ -141,7 +141,18 @@ export const QuestDetailsModal: UIComponent = {
       }
     }, [justCompleted, quest?.complete]);
 
-    // setup ticking on mount. clear timeout ref and ticking on dismount
+    // this fixes a bug where completing one quest would close
+    // another quests dialogue if opened before the timeout fired
+
+    useEffect(() => {
+      if (!isModalOpen || questIndex == null) {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+      }
+    }, [isModalOpen, questIndex]);
+
     useEffect(() => {
       const refreshClock = () => setTick(Date.now());
       const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
@@ -160,7 +171,6 @@ export const QuestDetailsModal: UIComponent = {
       }
 
       const base = getBase(questIndex);
-      // this will avoid teh accept button buggin out
       const instance = queryQuestInstance(world, base.index, data.accountEntity);
       const entityToUse = instance ?? questIndex;
 
