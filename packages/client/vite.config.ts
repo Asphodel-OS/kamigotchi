@@ -36,9 +36,6 @@ export default defineConfig({
             if (id.includes('react-dom') || id.includes('/react/')) {
               return 'react-vendor';
             }
-            if (id.includes('zustand') || id.includes('mobx') || id.includes('rxjs')) {
-              return 'state-vendor';
-            }
             if (id.includes('/three/')) {
               return 'three-vendor';
             }
