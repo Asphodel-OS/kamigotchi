@@ -8,13 +8,6 @@
 *.tsx   @jiracheron
 
 # By Domain
-packages/client/ @jiracheron @chlwys
-packages/client/src/app/ @Xenofluxx
-packages/client/src/assets/ @Xenofluxx
-packages/client/src/constants/ @Xenofluxx
-packages/client/src/engine/queue @hubur
-packages/client/src/clients/kamiden @hubur
-packages/client/src/clients/kamigaze @hubur
-packages/client/src/workers @hubur
-
+packages/client/ @jiracheron @chlwys @Xenofluxx @hubur @deeterbleater
+packages/client/app/ @ExistentialEnso
 packages/contracts/ @chlwys @jiracheron
