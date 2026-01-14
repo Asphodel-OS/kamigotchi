@@ -1,4 +1,3 @@
-import bgPlaytestDay from './backgrounds/room71.png';
-import bgChristmas from './backgrounds/room71-christmas.png';
+import bgPlaytestDay from './backgrounds/room71.png';    
 
-export { bgPlaytestDay, bgChristmas };
+export { bgPlaytestDay };
