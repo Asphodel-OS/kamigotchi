@@ -107,13 +107,13 @@ jobs:
           name: client-dist
           path: packages/client/dist
 
-      - name: Run Lighthouse CI
-        run: npx @lhci/cli@0.13.x autorun
+      - name: Run Lighthouse CI (Desktop)
+        run: npx @lhci/cli@0.13.x autorun --upload.outputDir=.lighthouseci/desktop
         working-directory: packages/client
-        continue-on-error: true # TODO: remove this once pipes are set
+        continue-on-error: true
 
       - name: Run Lighthouse CI (Mobile)
-        run: npx @lhci/cli@0.13.x autorun --collect.settings.formFactor=mobile --collect.settings.screenEmulation.mobile=true
+        run: npx @lhci/cli@0.13.x autorun --collect.settings.formFactor=mobile --collect.settings.screenEmulation.mobile=true --upload.outputDir=.lighthouseci/mobile
         working-directory: packages/client
         continue-on-error: true
 
