@@ -37,7 +37,7 @@ const hangingbell: DialogueNode = {
   ],
   action: {
     type: 'touch',
-    label: 'Ring bell',
+    label: 'Ring the bell',
     onClick: () => playBell(),
   },
 };
