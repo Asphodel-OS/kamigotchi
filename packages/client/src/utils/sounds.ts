@@ -1,5 +1,6 @@
 import { InteractionFX } from 'assets/sound/fx/interaction';
 
+const fxBell = new Audio(InteractionFX.bell);
 const fxClick = new Audio(InteractionFX.click2);
 const fxCrafting = new Audio(InteractionFX.crafting);
 const fxError = new Audio(InteractionFX.error);
@@ -17,6 +18,7 @@ const fxSuccess = new Audio(InteractionFX.success);
 const fxVend = new Audio(InteractionFX.vend);
 const fxWonderegg = new Audio(InteractionFX.wonderegg);
 
+export const playBell = () => playSound(fxBell);
 export const playClick = () => playSound(fxClick);
 export const playCrafting = () => playSound(fxCrafting);
 export const playError = () => playSound(fxError);
