@@ -1,7 +1,7 @@
 ﻿.,Description,Type,Index,Value
 ,Unlock Caves,FLAG_CAVES_UNLOCKED,,1
 ,250 $MUSU,ITEM,1,250
-,500 $MUSU,ITEM,1,500
+,1000 $MUSU,ITEM,1,1000
 ,10000x MUSU (Test),ITEM,1,10000
 ,20x Gacha Tickets (Test),ITEM,10,20
 ,100x Stick,ITEM,1001,100

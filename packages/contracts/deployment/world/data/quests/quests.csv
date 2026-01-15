@@ -739,7 +739,7 @@ MINA: “Just extract the essence from the light it casts on the wall.”",In Ro
 MSQ083,83,In Game,Vision of Life,No,MAIN,MINA,"MINA: “Make sure to get the essence in this room.”
 MINA: “Of all six, Sight is one of the most prized.”
 MINA: “The power of a true vision is worth much.”","MINA: “Hold onto one after you’ve got it.”
-MINA: “I’m thinking of an interesting use for it.”",Complete MSQ082,Scavenge 1 Essence of Sight,"4x Elders Loyalty,500 $MUSU"
+MINA: “I’m thinking of an interesting use for it.”",Complete MSQ082,Scavenge 1 Essence of Sight,"4x Elders Loyalty,1000 $MUSU"
 MSQ084,84,In Game,Soot and Ash,No,MAIN,MENU,"MENU: “This really stands out. It’s beautiful.”
 MENU: “Except for the burnt pages of some book all over the floor.”
 MENU: “They must have used that for the carbon. Passionate about their art.”
@@ -763,7 +763,7 @@ MINA: “You’ve been a good servant. Deliver the reagents immediately and upho
 MINA: “Oh, to hell with this.”
 MINA: “I feel like I need to step down there personally to check this out.”
 MINA: “And I am absolutely not doing that.”
-MENU: “The probability of it being a trap does appear high.”",Complete MSQ085,"Give 5 Blue Pansy,Give 5 Daffodil,Give 2500 Microplastics","4x Elders Loyalty,500 $MUSU"
+MENU: “The probability of it being a trap does appear high.”",Complete MSQ085,"Give 5 Blue Pansy,Give 5 Daffodil,Give 2500 Microplastics","4x Elders Loyalty,1000 $MUSU"
 MSQ087,87,In Game,The Crystal Set,No,MAIN,MENU,"MENU: “I feel a little sick in here.”
 MENU: “Uh.”
 MENU: “Mina, you take this one. My vision is bugging out.”
@@ -811,7 +811,7 @@ MENU: “You already know?”
 MINA: “Operator. Take this list of ingredients. I’ve got something I want you to build.”","MINA: “I’ve been quite vocal about it… The crystal’s power, I mean.”
 MINA: “Sapping it for one’s own uses is distasteful, yes.”
 MINA: “And I don’t celebrate that sort of thing.”
-MINA: “But we must sometimes do distasteful things to win.”",Complete MSQ092,"Give 1 Ingot,Give 1 Irradiated Root,Give 1 Essence of Sight","2x Agency Reputation,1x Ingot,1x Irradiated Root,1x Essence of Sight"
+MINA: “But we must sometimes do distasteful things to win.”",Complete MSQ092,"Give 1 Ingot,Give 1 Essence of Sight,Give 1 Irradiated Root","2x Agency Reputation,1x Ingot,1x Irradiated Root,1x Essence of Sight"
 MSQ094,94,In Game,Rhabdomancy,No,MAIN,MINA,"MINA: “I’ve given you plans for a sort of dowsing rod.”
 MINA: “The ingot to craft a housing, the root for a handle, and an essence of sight for the sensor.”
 MINA: “Menu’s technical language may be rubbing off.”
@@ -851,6 +851,59 @@ MINA: “My shop is small. It’s a tight space. The dowsing rod is probably jus
 MINA: “Check outside my door, in the open air. You won’t find anything, I’m sure.”","MENU: “…Yeah, nothing out here.”
 MENU: “I guess she was right.”
 MENU: “But I don’t think that really proved anything.”","Complete MSQ094,Own the Dowsing Rod,In Room: Convenience Store",Move to Tunnel of Trees,"2x Agency Reputation,5x Booster Pack"
+MSQ100,100,To Deploy,Prima Facie,No,MAIN,MENU,"MENU: “What kind of creepy decoration is this?”
+MINA: “Looks like a skeleton.”
+MENU: “Yeah, but it must be a model. The craftsmanship is really impressive.”
+MENU: “Operator, check this place out for a while with your Kami. I can run an analysis.”","MENU: “I must be bugging out again.”
+MENU: “It’s solid bone, but that doesn’t make much sense.”
+MINA: “My friend, sometimes things are just how they appear.”
+MENU: “Yeah, well, if someone’s trying to creep me out by spoofing my sensors, it’s working.”",In Room: Guardian Skull,Harvest for >360 minutes at Guardian Skull,2x Agency Reputation
+MSQ101,101,To Deploy,Pillars of the Earth,No,MAIN,MINA,"MINA: “Our dear friend Menu is having a hard time accepting the reality of this great corpse.”
+MINA: “Yes, of course it’s real. In fact, I recognize him.”
+MINA: “He was an old friend and mentor. Someone I thought would hang on forever.”
+MINA: “I’d like you to pay respects on my behalf.”
+MINA: “He loved a drink. Pour out something strong for him.”
+MINA: “This may not be a proper grave, but he would appreciate the gesture all the same.”","MINA: “Thank you. You’ve been truly generous.”
+MINA: “I’ve had a great deal of fun condescending to you and treating you as my servant, but I want to make something clear.”
+MINA: “You’re more than that. Absolutely not an equal, of course, but I’ve grown to respect you. I may have even begun to enjoy your company.”
+MINA: “Now then. That’s all the sentimentality you’ll get from me for some time.”
+MINA: “Goodbye.”",Complete MSQ100,"Move to Guardian Skull,Give 1 Toadstool Liquor",4x Elders Loyalty
+MSQ102,102,To Deploy,Axis Mundi,No,MAIN,MENU,"MENU: “This is the deepest part of the cave system.”
+MENU: “We’re deep below the central point of Kamigotchi World’s axial mountain.”
+MENU: “The location just feels important.”
+MENU: “These pillars and brickwork don’t match anything else in the caves, aesthetically. Let me run some scans.
+MENU: “You might trust the results more than I do, though.” 
+MENU: “I’ll check the marble. You grab some stuff from the room to compare.”","MENU: “Weirdest thing.”
+MENU: “These old marble pillars? Every one I check is just plaster with distressing. They just look old.”
+MENU: “This whole temple might have been built within the last fifty years.” 
+MENU: “Everything in it except the bones…”",In Room: Sacrarium,Make 3 Scavenging Rolls at the Sacrarium,"6x Agency Reputation,5x Booster Pack"
+MSQ103,103,To Deploy,Sealed Fate,No,MAIN,MINA,"MENU: “Hey, the dowsing rod is wiggling.”
+MENU: “I almost didn’t notice it in there. It’s barely moving.”
+MENU: “Actually, it seems to be indicating something below, not in the sacrarium itself.”
+MENU: “I don’t think you’ll be swimming through ooze anytime soon. It might even be deeper than that pool.”
+MENU: “Might as well put it out of your mind for now.”
+MINA: “Not so fast.”
+MINA: “Do me the favor of spending a few hours investigating. And tell me all the details.”","MINA: “Hmm.”
+MINA: “The pillars are laid out along the lines of a sigil.”
+MINA: “This sacrarium, bones and all, may have been constructed to seal whatever sleeps below.”
+MINA: “It’s despicable to put the old man to work in this state. He deserves to rest.”
+MINA: “But I’m still thankful he’s here.”
+MINA: “The dowsing rod can barely sense it, but the weakness of the signal matters not.”
+MINA: “At a far enough distance, or behind a great enough barrier, the most radiant power can be as faint as a candle’s flame.”
+MINA: “In my opinion, you should be happy you can’t yet find a way down there.”
+","Complete MSQ094,Own the Dowsing Rod,In Room: Sacrarium",Harvest for >720 minutes at the Sacrarium,"6x Elders Loyalty,1000 $MUSU"
+MSQ104,104,To Deploy,An Ounce of Sense,No,MAIN,MINA,"MINA: “You’ve probably collected all six of the sensory essences by now.”
+MINA: “If not, what are you waiting for? You won’t get far in this lesson without them.”
+MINA: “You may have already learned how they can be used to augment hexerei.”
+MINA: “Or perhaps you’ve experienced the magical effects that raw sensation can produce on its own.”
+MINA: “Each one of these sensory essences carries a great power.”
+MINA: “But together, they combine to produce something truly sublime.”
+MINA: “Craft one Pure Essence and I will explain further.”","MINA: “Now, think of the power you hold in the palm of your hand.”
+MINA: “A pure, complete, total sensory experience.”
+MINA: “All the sensations of mundane life in a single pulsating mass.”
+MINA: “It’s not immortality or life extension. It won’t keep you sustained. But it will let you feel what it’s like to live to the fullest.”
+MINA: “The finest food, the most enticing perfume, the softest silks, the most entrancing song, the most beautiful sights, the sublimity of imagination.”
+MINA: “To many individuals, that means more than anything.”",Complete MSQ102,Craft 1 Pure Essence,4x Elders Loyalty
 MIN001,2001,In Game,Grand Opening,No,MAIN,MINA,"MINA: “Hello, whoever you are. Is this how you receive your letters?”
 MINA: “It seems functional, although inelegant.”
 MINA: “Tired? Hungry? $MUSU burning a hole in your pocket?”
