@@ -11,6 +11,7 @@
 packages/client/ @jiracheron @chlwys @Xenofluxx @hubur @deeterbleater
 packages/client/src/app/ @ExistentialEnso
 packages/client/src/cache/ @ExistentialEnso
+packages/contracts/deployment/ @ExistentialEnso
 packages/contracts/ @chlwys @jiracheron
 
 
