@@ -18,3 +18,7 @@ packages/client/src/clients/kamigaze @hubur
 packages/client/src/workers @hubur
 
 packages/contracts/ @chlwys @jiracheron
+
+
+.github/workflows/ @hubur
+.github/scripts/ @hubur
