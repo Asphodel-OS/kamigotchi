@@ -302,8 +302,9 @@ const Arrow = styled.img`
 `;
 
 const ShareButton = styled.div`
-  width: 2vw;
-  height: 2vw;
+  width: 1.5vw;
+  height: 1.5vw;
+  padding: 0.1vw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -313,10 +314,13 @@ const ShareButton = styled.div`
   &:hover {
     opacity: 0.7;
   }
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const Discord = styled.img`
   width: 100%;
   height: 100%;
-  padding: 0.3vw;
 `;
