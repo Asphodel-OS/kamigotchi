@@ -12,6 +12,8 @@ packages/client/ @jiracheron @chlwys
 packages/client/src/app/ @Xenofluxx
 packages/client/src/assets/ @Xenofluxx
 packages/client/src/constants/ @Xenofluxx
+
+packages/client/lighthouserc.cjs @hubur
 packages/client/src/engine/queue @hubur
 packages/client/src/clients/kamiden @hubur
 packages/client/src/clients/kamigaze @hubur
