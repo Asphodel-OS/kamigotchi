@@ -5,12 +5,6 @@ import { calcCooldown, calcCooldownRequirement } from 'app/cache/kami';
 import { Kami } from 'network/shapes/Kami';
 import { TextTooltip } from '../tooltips';
 
-const getCooldownColor = (percent: number) => {
-  if (percent < 20) return '#FF6611'; // orange/red - just started
-  if (percent < 50) return '#FFD022'; // yellow - in progress
-  return '#23BD41'; // green - almost ready
-};
-
 export const Cooldown = ({
   kami,
   children,
@@ -47,7 +41,7 @@ export const Cooldown = ({
   }, [lastTick, kami]);
 
   const percent = total > 0 ? Math.min(100, Math.max(0, ((total - current) / total) * 100)) : 0;
-  const color = getCooldownColor(percent);
+  const color = `rgb(187, 187, 187)`;
 
   const cooldownBackground =
     current > 0 ? `conic-gradient(${color} ${percent}%, transparent ${percent}%)` : undefined;
