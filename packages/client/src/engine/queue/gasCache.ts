@@ -82,6 +82,14 @@ export class GasEstimationCache {
     log.debug(`[GasCache] SET ${key} = ${bufferedGas}`);
   }
 
+  delete(key: string): boolean {
+    const deleted = this.cache.delete(key);
+    if (deleted) {
+      log.debug(`[GasCache] INVALIDATED ${key}`);
+    }
+    return deleted;
+  }
+
   clear(): void {
     this.cache.clear();
     log.debug('[GasCache] Cache cleared');

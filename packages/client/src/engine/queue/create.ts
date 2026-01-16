@@ -53,6 +53,7 @@ export function create<C extends Contracts>(
     estimateGas: () => Promise<BigNumberish>;
     resolve: (result: TxResult) => void;
     reject: (error: Error) => void;
+    cacheKey?: string;
   };
 
   const queue = createPriorityQueue<QueueItem>();
@@ -204,7 +205,7 @@ export function create<C extends Contracts>(
       return { hash, wait, response };
     };
 
-    queue.add(uuid(), { execute, estimateGas, resolve, reject });
+    queue.add(uuid(), { execute, estimateGas, resolve, reject, cacheKey });
     processQueue();
     return promise;
   }
@@ -234,6 +235,9 @@ export function create<C extends Contracts>(
         return { hash: result.hash, wait: result.wait };
       } catch (e) {
         queueItem.reject(e as Error);
+        if (queueItem.cacheKey) {
+          gasCache.delete(queueItem.cacheKey);
+        }
       }
     });
 
@@ -244,6 +248,9 @@ export function create<C extends Contracts>(
         log.info('[TXQueue] TX Confirmed', tx);
       } catch (e: any) {
         logTxError('TX FAILED', e, txResult?.hash);
+        if (queueItem.cacheKey) {
+          gasCache.delete(queueItem.cacheKey);
+        }
         return;
       }
     }
@@ -275,24 +282,6 @@ export function create<C extends Contracts>(
   }
 
   // wraps contract call with txQueue
-  /*
-  function proxyContract<Contract extends C[keyof C]>(
-    contract: any
-  ): any extends Contract ? any : never {
-    const methods: string[] = [];
-    contract.interface.forEachFunction((func: FunctionFragment) => methods.push(func.name));
-    methods.forEach((method) => {
-      contract[method] = (...args: unknown[]) => queueCallSystem(contract, method, args);
-    });
-    return contract;
-  }
-
-  // todo: optimize: this runs on every call, should only need once at the start + upon system update
-  const proxiedContracts = computed(() => {
-    const contracts = readyState.get()?.contracts;
-    return contracts ? mapObject(contracts, proxyContract) : undefined;
-  });
-  */
   function proxyContract<Contract extends C[keyof C]>(
     systemName: string,
     contract: any
