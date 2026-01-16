@@ -40,7 +40,7 @@ export const Cooldown = ({
     setCurrent(currentCooldown);
   }, [lastTick, kami]);
 
-  const percent = total > 0 ? Math.min(100, Math.max(0, ((total - current) / total) * 100)) : 0;
+  const percent = total > 0 ? Math.min(100, Math.max(0, (current / total) * 100)) : 0;
   const color = `rgb(187, 187, 187)`;
 
   const cooldownBackground =
