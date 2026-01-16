@@ -1,4 +1,5 @@
 import ShareIcon from '@mui/icons-material/Share';
+import { Snackbar, SnackbarContent } from '@mui/material';
 import { RedditIcon, TelegramIcon, TwitterShareButton, XIcon } from 'react-share';
 import styled from 'styled-components';
 
@@ -13,7 +14,6 @@ import { DiscordIcon } from 'assets/images/icons/misc';
 import { Account, BaseAccount } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
 import { useEffect, useState } from 'react';
-import { shareToDiscord } from 'utils/share';
 import { playClick } from 'utils/sounds';
 
 const LEVEL_UP_STRING = 'Level Up!!';
@@ -43,6 +43,7 @@ export const KamiImage = ({
 
   const [isSearching, setIsSearching] = useState(false);
   const [indexInput, setIndexInput] = useState(kami.index);
+  const [discordSnackbar, setDiscordSnackbar] = useState(false);
 
   useEffect(() => {
     if (modals.kami) setIsSearching(false);
@@ -91,7 +92,11 @@ export const KamiImage = ({
 
   const handleDiscordShare = () => {
     playClick();
-    shareToDiscord(kami.image);
+    navigator.clipboard.writeText(kami.image);
+    setDiscordSnackbar(true);
+    setTimeout(() => {
+      window.open('https://discord.com/channels/@me', '_blank');
+    }, 1000);
   };
 
   const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
@@ -101,94 +106,110 @@ export const KamiImage = ({
 
   // used expCurr >= expLimit and not canLevel to show the level up animation even when not resting
   return (
-    <Container>
-      <Image src={kami.image} />
-      <Overlay top={0.75} left={0.7}>
-        <Grouping>
-          <Text size={0.6}>Lvl</Text>
-          <Text size={0.9}>{progress ? progress.level : '??'}</Text>
-        </Grouping>
-      </Overlay>
-      <Overlay top={0.75} right={0.7}>
-        {!isSearching && (
-          <Text size={0.9} onClick={handleIndexClick}>
-            {kami.index}
-          </Text>
-        )}
-        {isSearching && (
-          <IndexInput
-            type={'string'}
-            value={indexInput}
-            onChange={handleIndexChange}
-            onKeyDown={handleIndexSubmit}
-          />
-        )}
-      </Overlay>
-      <Overlay top={2.5} right={0.5}>
-        <Popover
-          content={[
-            <TwitterShareButton
-              key='twitter'
-              url={kami.image}
-              title={`Check out my Kami #${kami.index}!`}
-              resetButtonStyle={true}
-              onClick={playClick}
-            >
-              <ShareButton>
-                <XIcon size={24} round />
-              </ShareButton>
-            </TwitterShareButton>,
-            <ShareButton
-              key='reddit'
-              onClick={() => {
-                playClick();
-                window.open(
-                  `https://www.reddit.com/submit?url=${encodeURIComponent(kami.image)}&title=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
-                  '_blank'
-                );
-              }}
-            >
-              <RedditIcon size={24} round />
-            </ShareButton>,
-            <ShareButton
-              key='telegram'
-              onClick={() => {
-                playClick();
-                window.open(
-                  `https://t.me/share/url?url=${encodeURIComponent(kami.image)}&text=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
-                  '_blank'
-                );
-              }}
-            >
-              <TelegramIcon size={24} round />
-            </ShareButton>,
-            <ShareButton key='discord' onClick={handleDiscordShare}>
-              <TextTooltip text={['Copy image link and share on Discord']} cursor='pointer'>
-                <Discord src={DiscordIcon} alt='Discord' />
-              </TextTooltip>
-            </ShareButton>,
-          ]}
-        >
-          <TextTooltip text={['Share']}>
-            <IconButton img={ShareIcon} onClick={() => {}} scale={2} />
-          </TextTooltip>
-        </Popover>
-      </Overlay>
-      <Overlay bottom={0} fullWidth>
-        <TextTooltip text={[`${expCurr}/${expLimit}`]} grow>
-          <ExperienceBar percent={percentage}></ExperienceBar>
-        </TextTooltip>
-        <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
-        <Overlay bottom={0} right={0}>
-          <TextTooltip text={[getLevelTooltip()]}>
-            <Button disabled={!canLevel} onClick={() => handleLevelUp()}>
-              <Arrow src={ArrowIcons.up} />
-              {canLevel && <Shimmer />}
-            </Button>
-          </TextTooltip>
+    <>
+      <Container>
+        <Image src={kami.image} />
+        <Overlay top={0.75} left={0.7}>
+          <Grouping>
+            <Text size={0.6}>Lvl</Text>
+            <Text size={0.9}>{progress ? progress.level : '??'}</Text>
+          </Grouping>
         </Overlay>
-      </Overlay>
-    </Container>
+        <Overlay top={0.75} right={0.7}>
+          {!isSearching && (
+            <Text size={0.9} onClick={handleIndexClick}>
+              {kami.index}
+            </Text>
+          )}
+          {isSearching && (
+            <IndexInput
+              type={'string'}
+              value={indexInput}
+              onChange={handleIndexChange}
+              onKeyDown={handleIndexSubmit}
+            />
+          )}
+        </Overlay>
+        <Overlay top={2.5} right={0.5}>
+          <Popover
+            content={[
+              <TwitterShareButton
+                key='twitter'
+                url={kami.image}
+                title={`Check out my Kami #${kami.index}!`}
+                resetButtonStyle={true}
+                onClick={playClick}
+              >
+                <ShareButton>
+                  <XIcon size={24} round />
+                </ShareButton>
+              </TwitterShareButton>,
+              <ShareButton
+                key='reddit'
+                onClick={() => {
+                  playClick();
+                  window.open(
+                    `https://www.reddit.com/submit?url=${encodeURIComponent(kami.image)}&title=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
+                    '_blank'
+                  );
+                }}
+              >
+                <RedditIcon size={24} round />
+              </ShareButton>,
+              <ShareButton
+                key='telegram'
+                onClick={() => {
+                  playClick();
+                  window.open(
+                    `https://t.me/share/url?url=${encodeURIComponent(kami.image)}&text=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
+                    '_blank'
+                  );
+                }}
+              >
+                <TelegramIcon size={24} round />
+              </ShareButton>,
+              <ShareButton key='discord' onClick={handleDiscordShare}>
+                <Discord src={DiscordIcon} alt='Discord' />
+              </ShareButton>,
+            ]}
+          >
+            <TextTooltip text={['Share']}>
+              <IconButton img={ShareIcon} onClick={() => {}} scale={2} />
+            </TextTooltip>
+          </Popover>
+        </Overlay>
+        <Overlay bottom={0} fullWidth>
+          <TextTooltip text={[`${expCurr}/${expLimit}`]} grow>
+            <ExperienceBar percent={percentage}></ExperienceBar>
+          </TextTooltip>
+          <Percentage>{`${Math.min(percentage, 100)}%`}</Percentage>
+          <Overlay bottom={0} right={0}>
+            <TextTooltip text={[getLevelTooltip()]}>
+              <Button disabled={!canLevel} onClick={() => handleLevelUp()}>
+                <Arrow src={ArrowIcons.up} />
+                {canLevel && <Shimmer />}
+              </Button>
+            </TextTooltip>
+          </Overlay>
+        </Overlay>
+      </Container>
+      <Snackbar
+        open={discordSnackbar}
+        onClose={() => setDiscordSnackbar(false)}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <SnackbarContent
+          style={{
+            backgroundColor: '#fff',
+            color: '#333',
+            borderRadius: '0.6vw',
+            padding: '0.6vw',
+          }}
+          message='Copying kami link and opening Discord...'
+        />
+      </Snackbar>
+    </>
   );
 };
 
