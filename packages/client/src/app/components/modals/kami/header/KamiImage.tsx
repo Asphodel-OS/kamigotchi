@@ -140,9 +140,9 @@ export const KamiImage = ({
                 resetButtonStyle={true}
                 onClick={playClick}
               >
-                <ShareButton>
+                <ShareButtonContent>
                   <XIcon size={24} round />
-                </ShareButton>
+                </ShareButtonContent>
               </TwitterShareButton>,
               <ShareButton
                 key='reddit'
@@ -320,7 +320,7 @@ const Arrow = styled.img`
   height: 1.2vw;
 `;
 
-const ShareButton = styled.div`
+const ShareButton = styled.button`
   width: 1.5vw;
   height: 1.5vw;
   padding: 0.1vw;
@@ -328,6 +328,26 @@ const ShareButton = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  transition: opacity 0.15s ease;
+  &:hover {
+    opacity: 0.7;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const ShareButtonContent = styled.span`
+  width: 1.5vw;
+  height: 1.5vw;
+  padding: 0.1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   transition: opacity 0.15s ease;
   &:hover {
