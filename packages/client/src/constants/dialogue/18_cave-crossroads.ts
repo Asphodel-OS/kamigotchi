@@ -28,4 +28,12 @@ const pathRight: DialogueNode = {
   },
 };
 
-export default [caveFloor, pathLeft, pathRight];
+const hangingbell: DialogueNode = {
+  index: 184,
+  text: [
+    'A conical bell cast in dark bronze and decorated with patterns representing sea creatures.',
+    'It makes a quiet and hollow tone when struck.',
+  ],
+};
+
+export default [caveFloor, pathLeft, pathRight, hangingbell];

@@ -9,5 +9,11 @@ export const room82: Room = {
     key: 'geometricCliffs',
     path: geometricCliffs,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'blue lantern',
+      coordinates: { x1: 85, y1: 95, x2: 100, y2: 120 },
+      dialogue: 821,
+    },
+  ],
 };

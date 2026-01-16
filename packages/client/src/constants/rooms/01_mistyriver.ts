@@ -15,5 +15,10 @@ export const room01: Room = {
       coordinates: { x1: 40, y1: 87, x2: 50, y2: 106 }, // TODO: remove this once room objects are cleaned up
       dialogue: 11,
     },
+    {
+      name: 'river',
+      coordinates: { x1: 0, y1: 55, x2: 128, y2: 95 },
+      dialogue: 12,
+    },
   ],
 };
