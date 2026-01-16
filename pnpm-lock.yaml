@@ -75,7 +75,7 @@ importers:
         version: 0.15.0(google-protobuf@3.21.4)
       '@initia/interwovenkit-react':
         specifier: ^2.0.6
-        version: 2.0.6(6cbde991dad41939703f4f0796928a06)
+        version: 2.0.6(8796b633076093d56cbfa1881955fb0d)
       '@mud-classic/utils':
         specifier: ^0.0.3
         version: 0.0.3
@@ -193,6 +193,9 @@ importers:
       react-is:
         specifier: ^16.8.0
         version: 16.13.1
+      react-share:
+        specifier: ^5.2.2
+        version: 5.2.2(react@19.2.0)
       rxjs:
         specifier: ^7.5.5
         version: 7.8.2
@@ -6367,6 +6370,9 @@ packages:
   jsonfile@6.2.0:
     resolution: {integrity: sha512-FGuPw30AdOIUTRMC2OMRtQV+jkVj2cfPqSeWXv1NEAJ1qZ5zb1X6z1mFhbfOB/iy3ssJCD+3KuZ8r8C3uVFlAg==}
 
+  jsonp@0.2.1:
+    resolution: {integrity: sha512-pfog5gdDxPdV4eP7Kg87M8/bHgshlZ5pybl+yKxAnCZ5O7lCIn7Ixydj03wOlnDQesky2BPyA91SQ+5Y/mNwzw==}
+
   keccak@3.0.4:
     resolution: {integrity: sha512-3vKuW0jV8J3XNTzvfyicFR5qvxrSAGl7KIhvgOu5cmWwM7tZRj3fMbj/pfIf4be7aznbc+prBWGjywox/g2Y6Q==}
     engines: {node: '>=10.0.0'}
@@ -7776,6 +7782,11 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-share@5.2.2:
+    resolution: {integrity: sha512-z0nbOX6X6vHHWAvXduNkYeJUKTKNpKM5Xpmc5a2BxjJhUWl+sE7AsSEMmYEUj2DuDjZr5m7KFIGF0sQPKcUN6w==}
+    peerDependencies:
+      react: ^17 || ^18 || ^19
 
   react-style-singleton@2.2.3:
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
@@ -10291,20 +10302,20 @@ snapshots:
     transitivePeerDependencies:
       - google-protobuf
 
-  '@initia/interwovenkit-react@2.0.6(6cbde991dad41939703f4f0796928a06)':
+  '@initia/interwovenkit-react@2.0.6(8796b633076093d56cbfa1881955fb0d)':
     dependencies:
       '@amplitude/analytics-browser': 2.30.1
       '@base-ui-components/react': 1.0.0-beta.2(@types/react@17.0.89)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@cosmjs/amino': 0.36.2
-      '@cosmjs/crypto': 0.36.2
-      '@cosmjs/encoding': 0.36.2
-      '@cosmjs/math': 0.36.2
+      '@cosmjs/crypto': 0.37.0
+      '@cosmjs/encoding': 0.37.0
+      '@cosmjs/math': 0.37.0
       '@cosmjs/proto-signing': 0.37.0
       '@cosmjs/stargate': 0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@cosmjs/tendermint-rpc': 0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@initia/amino-converter': 1.0.13(@cosmjs/cosmwasm-stargate@0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@cosmjs/proto-signing@0.37.0)(@cosmjs/stargate@0.37.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@initia/initia.proto@1.0.3(google-protobuf@3.21.4))(@initia/opinit.proto@1.0.2(google-protobuf@3.21.4))
       '@initia/icons-react': 1.0.0(react-native@0.82.1(@babel/core@7.28.5)(@types/react@17.0.89)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10))(react@19.2.0)
-      '@initia/utils': 2.0.0(@cosmjs/encoding@0.36.2)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+      '@initia/utils': 2.0.0(@cosmjs/encoding@0.37.0)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@lukemorales/query-key-factory': 1.3.4(@tanstack/query-core@5.90.8)(@tanstack/react-query@5.90.8(react@19.2.0))
       '@mysten/bcs': 1.9.2
       '@noble/hashes': 1.8.0
@@ -10343,9 +10354,9 @@ snapshots:
     transitivePeerDependencies:
       - google-protobuf
 
-  '@initia/utils@2.0.0(@cosmjs/encoding@0.36.2)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
+  '@initia/utils@2.0.0(@cosmjs/encoding@0.37.0)(@mysten/bcs@1.9.2)(@noble/hashes@1.8.0)(bignumber.js@9.3.1)(ky@1.14.0)(viem@2.39.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))':
     dependencies:
-      '@cosmjs/encoding': 0.36.2
+      '@cosmjs/encoding': 0.37.0
       '@mysten/bcs': 1.9.2
       '@noble/hashes': 1.8.0
       bignumber.js: 9.3.1
@@ -17804,6 +17815,12 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
+  jsonp@0.2.1:
+    dependencies:
+      debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
+
   keccak@3.0.4:
     dependencies:
       node-addon-api: 2.0.2
@@ -19601,6 +19618,14 @@ snapshots:
       use-sidecar: 1.1.3(@types/react@17.0.89)(react@19.2.0)
     optionalDependencies:
       '@types/react': 17.0.89
+
+  react-share@5.2.2(react@19.2.0):
+    dependencies:
+      classnames: 2.5.1
+      jsonp: 0.2.1
+      react: 19.2.0
+    transitivePeerDependencies:
+      - supports-color
 
   react-style-singleton@2.2.3(@types/react@17.0.89)(react@19.2.0):
     dependencies:
