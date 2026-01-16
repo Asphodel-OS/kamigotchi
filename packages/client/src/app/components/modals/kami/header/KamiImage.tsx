@@ -1,11 +1,5 @@
 import ShareIcon from '@mui/icons-material/Share';
-import {
-  RedditIcon,
-  TelegramIcon,
-  TelegramShareButton,
-  TwitterShareButton,
-  XIcon,
-} from 'react-share';
+import { RedditIcon, TelegramIcon, TwitterShareButton, XIcon } from 'react-share';
 import styled from 'styled-components';
 
 import { isResting } from 'app/cache/kami';
@@ -138,12 +132,12 @@ export const KamiImage = ({
               url={kami.image}
               title={`Check out my Kami #${kami.index}!`}
               resetButtonStyle={true}
+              onClick={playClick}
             >
               <ShareButton>
                 <XIcon size={24} round />
               </ShareButton>
             </TwitterShareButton>,
-            /*addign this until they fix the reddit button*/
             <ShareButton
               key='reddit'
               onClick={() => {
@@ -156,16 +150,18 @@ export const KamiImage = ({
             >
               <RedditIcon size={24} round />
             </ShareButton>,
-            <TelegramShareButton
+            <ShareButton
               key='telegram'
-              url={kami.image}
-              title={`Check out my Kami #${kami.index}!`}
-              resetButtonStyle={true}
+              onClick={() => {
+                playClick();
+                window.open(
+                  `https://t.me/share/url?url=${encodeURIComponent(kami.image)}&text=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
+                  '_blank'
+                );
+              }}
             >
-              <ShareButton>
-                <TelegramIcon size={24} round />
-              </ShareButton>
-            </TelegramShareButton>,
+              <TelegramIcon size={24} round />
+            </ShareButton>,
             <ShareButton key='discord' onClick={handleDiscordShare}>
               <TextTooltip text={['Copy image link and share on Discord']} cursor='pointer'>
                 <Discord src={DiscordIcon} alt='Discord' />
