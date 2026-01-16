@@ -1,4 +1,4 @@
-import { awaitValue, cacheUntilReady, mapObject } from '@mud-classic/utils';
+import { awaitValue, cacheUntilReady } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
 import {
   BigNumberish,
@@ -18,6 +18,8 @@ import { log } from 'utils/logger';
 import { createPriorityQueue } from './priorityQueue';
 import { TxQueue } from './types';
 import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce } from './utils';
+
+import { GasEstimationCache } from './gasCache';
 
 export const MAX_NONCE_RETRIES = 1; // Retry nonce errors exactly once
 
@@ -56,6 +58,8 @@ export function create<C extends Contracts>(
   const queue = createPriorityQueue<QueueItem>();
   const submissionMutex = new Mutex();
   const _nonce = observable.box<number | null>(null);
+
+  const gasCache = new GasEstimationCache();
 
   const readyState = computed(() => {
     const connected = network.connected.get();
@@ -153,7 +157,8 @@ export function create<C extends Contracts>(
 
   async function queueCall(
     txRequest: TransactionRequest,
-    callOverrides?: Overrides
+    callOverrides?: Overrides,
+    cacheKey?: string
   ): Promise<TxResult> {
     const [resolve, reject, promise] = deferred<TxResult>();
     const { signer } = await awaitValue(readyState);
@@ -163,9 +168,20 @@ export function create<C extends Contracts>(
         log.debug(`[estimateGas] Using callOverride ${callOverrides.gasLimit}`);
         return callOverrides.gasLimit;
       }
+
+      if (cacheKey) {
+        const cached = gasCache.get(cacheKey);
+        if (cached) {
+          return cached;
+        }
+      }
       try {
         log.debug('[estimateGas] Simulating transaction');
-        return await signer!.estimateGas(txRequest);
+        const gasEstimate = await signer!.estimateGas(txRequest);
+        if (cacheKey) {
+          gasCache.set(cacheKey, gasEstimate);
+        }
+        return gasEstimate;
       } catch (error) {
         throw error;
       }
@@ -237,6 +253,7 @@ export function create<C extends Contracts>(
 
   // queue up a system call in the txQueue
   async function queueCallSystem(
+    systemName: string,
     target: C[keyof C],
     prop: keyof C[keyof C],
     args: unknown[]
@@ -250,12 +267,15 @@ export function create<C extends Contracts>(
     const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as Overrides;
     const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
 
+    const cacheKey = gasCache.generateKey(systemName, prop.toString(), argsWithoutOverrides);
+
     const fn = target.getFunction(prop.toString());
     const populatedTx = await fn.populateTransaction(...argsWithoutOverrides);
-    return queueCall(populatedTx, callOverrides);
+    return queueCall(populatedTx, callOverrides, cacheKey);
   }
 
   // wraps contract call with txQueue
+  /*
   function proxyContract<Contract extends C[keyof C]>(
     contract: any
   ): any extends Contract ? any : never {
@@ -272,6 +292,29 @@ export function create<C extends Contracts>(
     const contracts = readyState.get()?.contracts;
     return contracts ? mapObject(contracts, proxyContract) : undefined;
   });
+  */
+  function proxyContract<Contract extends C[keyof C]>(
+    systemName: string,
+    contract: any
+  ): any extends Contract ? any : never {
+    const methods: string[] = [];
+    contract.interface.forEachFunction((func: FunctionFragment) => methods.push(func.name));
+    methods.forEach((method) => {
+      contract[method] = (...args: unknown[]) =>
+        queueCallSystem(systemName, contract, method, args);
+    });
+    return contract;
+  }
+  const proxiedContracts = computed(() => {
+    const contracts = readyState.get()?.contracts;
+    if (!contracts) return undefined;
+
+    const result: Record<string, any> = {};
+    for (const [systemName, contract] of Object.entries(contracts)) {
+      result[systemName] = proxyContract(systemName, contract);
+    }
+    return result as C;
+  });
 
   const cachedProxiedContracts = cacheUntilReady(proxiedContracts);
 
@@ -279,6 +322,7 @@ export function create<C extends Contracts>(
     txQueue: {
       call: queueCall, // call tx directly
       systems: cachedProxiedContracts,
+      gasCache,
     },
     dispose,
     ready: computed(() => (readyState ? true : undefined)),
