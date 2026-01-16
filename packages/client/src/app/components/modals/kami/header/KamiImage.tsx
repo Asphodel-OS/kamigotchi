@@ -1,7 +1,6 @@
 import ShareIcon from '@mui/icons-material/Share';
 import {
   RedditIcon,
-  RedditShareButton,
   TelegramIcon,
   TelegramShareButton,
   TwitterShareButton,
@@ -144,16 +143,19 @@ export const KamiImage = ({
                 <XIcon size={24} round />
               </ShareButton>
             </TwitterShareButton>,
-            <RedditShareButton
+            /*addign this until they fix the reddit button*/
+            <ShareButton
               key='reddit'
-              url={kami.image}
-              title={`Check out my Kami #${kami.index}!`}
-              resetButtonStyle={true}
+              onClick={() => {
+                playClick();
+                window.open(
+                  `https://www.reddit.com/submit?url=${encodeURIComponent(kami.image)}&title=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
+                  '_blank'
+                );
+              }}
             >
-              <ShareButton>
-                <RedditIcon size={24} round />
-              </ShareButton>
-            </RedditShareButton>,
+              <RedditIcon size={24} round />
+            </ShareButton>,
             <TelegramShareButton
               key='telegram'
               url={kami.image}
