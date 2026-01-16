@@ -322,7 +322,6 @@ export function create<C extends Contracts>(
     txQueue: {
       call: queueCall, // call tx directly
       systems: cachedProxiedContracts,
-      gasCache,
     },
     dispose,
     ready: computed(() => (readyState ? true : undefined)),
