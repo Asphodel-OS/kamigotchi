@@ -90,13 +90,17 @@ export const KamiImage = ({
     }
   };
 
-  const handleDiscordShare = () => {
+  const handleDiscordShare = async () => {
     playClick();
-    navigator.clipboard.writeText(kami.image);
-    setDiscordSnackbar(true);
-    setTimeout(() => {
-      window.open('https://discord.com/channels/@me', '_blank');
-    }, 1000);
+    try {
+      await navigator.clipboard.writeText(kami.image);
+      setDiscordSnackbar(true);
+      setTimeout(() => {
+        window.open('https://discord.com/channels/@me', '_blank', 'noopener,noreferrer');
+      }, 1000);
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
   };
 
   const canLevel = getLevelTooltip() === LEVEL_UP_STRING;
@@ -150,7 +154,8 @@ export const KamiImage = ({
                   playClick();
                   window.open(
                     `https://www.reddit.com/submit?url=${encodeURIComponent(kami.image)}&title=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
-                    '_blank'
+                    '_blank',
+                    'noopener,noreferrer'
                   );
                 }}
               >
@@ -162,7 +167,8 @@ export const KamiImage = ({
                   playClick();
                   window.open(
                     `https://t.me/share/url?url=${encodeURIComponent(kami.image)}&text=${encodeURIComponent(`Check out my Kami #${kami.index}!`)}`,
-                    '_blank'
+                    '_blank',
+                    'noopener,noreferrer'
                   );
                 }}
               >
