@@ -389,7 +389,6 @@ const StateIcon = styled.img`
   margin-right: 0.3vw;
   width: 2vw;
   height: 2vw;
-  opacity: 0.7;
 `;
 
 const StateSection = styled.div`
