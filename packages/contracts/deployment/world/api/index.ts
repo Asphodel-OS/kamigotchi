@@ -17,7 +17,13 @@ export function createAdminAPI(compiledCalls: string[]) {
   // AUTH
 
   async function addRole(addr: string, role: string) {
-    const callData = generateCallData('system.auth.registry', [addr, role], 'addRole');
+    const callData = generateCallData(
+      'system.auth.registry',
+      [addr, role],
+      'addRole',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
