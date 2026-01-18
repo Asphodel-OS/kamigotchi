@@ -10,6 +10,19 @@ import {
   storeStateValues,
 } from '../state';
 
+const CHUNK_TIMEOUT_MS = 30000;
+const MAX_RETRIES = 20;
+const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function withTimeout<T>(fn: () => Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    fn(),
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Chunk timeout')), ms)),
+  ]);
+}
+
 interface FetchOptions {
   stateCache: StateCache;
   kamigazeClient: KamigazeServiceClient;
@@ -18,7 +31,6 @@ interface FetchOptions {
   setPercentage: (percentage: number) => void;
 }
 
-// fetch a state snapshot from Kamigaze and store it in the StateCache
 export const fetchSnapshot = async (
   stateCache: StateCache,
   kamigazeClient: KamigazeServiceClient,
@@ -39,6 +51,11 @@ export const fetchSnapshot = async (
       initialLoad = true;
     }
 
+    options.stateCache.lastStateValuesBlock =
+      options.stateCache.lastStateValuesBlock || options.stateCache.lastKamigazeBlock;
+    options.stateCache.lastStateRemovalsBlock =
+      options.stateCache.lastStateRemovalsBlock || options.stateCache.lastKamigazeBlock;
+
     await fetchComponents(options);
     if (!initialLoad) {
       await fetchStateRemovals(options);
@@ -57,9 +74,7 @@ export const fetchSnapshot = async (
   return options.stateCache;
 };
 
-// fetch components from Kamigaze and store them in the StateCache
 const fetchComponents = async ({ stateCache, kamigazeClient, setPercentage }: FetchOptions) => {
-  // remove from the cache any component added by the rpc sync
   stateCache.components.splice(stateCache.lastKamigazeComponent + 1);
 
   const ComponentsResponse = await kamigazeClient.getComponents({
@@ -71,66 +86,137 @@ const fetchComponents = async ({ stateCache, kamigazeClient, setPercentage }: Fe
   setPercentage(5);
 };
 
-// fetch entities from Kamigaze and store them in the StateCache
 const fetchEntities = async ({
   stateCache,
   kamigazeClient,
-  numChunks = 10,
   setPercentage,
-}: FetchOptions) => {
-  // remove from the cache any entity added by the rpc sync
-  let percent = 75;
-  let delta = 0;
+}: FetchOptions): Promise<void> => {
   stateCache.entities.splice(stateCache.lastKamigazeEntity + 1);
 
-  const EntitiesResponse = kamigazeClient.getEntities({
-    fromIdx: stateCache.lastKamigazeEntity,
-  });
+  let retryCount = 0;
+  let percent = 75;
+  let delta = 0;
 
-  for await (const responseChunk of EntitiesResponse) {
-    if (delta == 0) delta = 25 / responseChunk.pending;
-    percent += delta;
-    storeStateEntities(stateCache, responseChunk.entities);
-    setPercentage(percent);
+  while (retryCount <= MAX_RETRIES) {
+    try {
+      const response = kamigazeClient.getEntities({
+        fromIdx: stateCache.lastKamigazeEntity,
+      });
+
+      for await (const chunk of response) {
+        await withTimeout(async () => {
+          if (delta === 0 && chunk.pending > 0) delta = 25 / chunk.pending;
+
+          storeStateEntities(stateCache, chunk.entities);
+          stateCache.lastKamigazeEntity = stateCache.entities.length - 1;
+
+          percent += delta;
+          setPercentage(Math.min(percent, 100));
+        }, CHUNK_TIMEOUT_MS);
+
+        retryCount = 0;
+      }
+      return;
+    } catch (error) {
+      retryCount++;
+      if (retryCount > MAX_RETRIES) throw error;
+
+      const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
+      console.log(`[snapshot] Entities retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`);
+      await sleep(delay);
+
+      stateCache.entities.splice(stateCache.lastKamigazeEntity + 1);
+    }
   }
-
-  stateCache.lastKamigazeEntity = stateCache.entities.length - 1;
 };
 
-// fetch state removals from Kamigaze and remove them from the StateCache
-const fetchStateRemovals = async ({ stateCache, kamigazeClient, setPercentage }: FetchOptions) => {
+const fetchStateRemovals = async ({
+  stateCache,
+  kamigazeClient,
+  setPercentage,
+}: FetchOptions): Promise<void> => {
+  let retryCount = 0;
   let percent = 5;
   let delta = 0;
-  const StateRemovalsResponse = await kamigazeClient.getState({
-    fromBlock: stateCache.lastKamigazeBlock,
-    removals: true,
-  });
-  for await (const responseChunk of StateRemovalsResponse) {
-    if (delta == 0) delta = 10 / responseChunk.pending;
-    percent += delta;
-    removeStateValues(stateCache, responseChunk.state);
-    setPercentage(percent);
+
+  while (retryCount <= MAX_RETRIES) {
+    try {
+      const response = kamigazeClient.getState({
+        fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
+        removals: true,
+      });
+
+      for await (const chunk of response) {
+        await withTimeout(async () => {
+          if (delta === 0 && chunk.pending > 0) delta = 10 / chunk.pending;
+
+          removeStateValues(stateCache, chunk.state);
+
+          if (chunk.lastBlockNumber > stateCache.lastStateRemovalsBlock) {
+            stateCache.lastStateRemovalsBlock = chunk.lastBlockNumber;
+          }
+
+          percent += delta;
+          setPercentage(Math.min(percent, 15));
+        }, CHUNK_TIMEOUT_MS);
+
+        retryCount = 0;
+      }
+      return;
+    } catch (error) {
+      retryCount++;
+      if (retryCount > MAX_RETRIES) throw error;
+
+      const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
+      console.log(
+        `[snapshot] State removals retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`
+      );
+      await sleep(delay);
+    }
   }
 };
 
-// fetch state values from Kamigaze and store them in the StateCache
 const fetchStateValues = async ({
   stateCache,
   kamigazeClient,
   decode,
   setPercentage,
-}: FetchOptions) => {
+}: FetchOptions): Promise<void> => {
+  let retryCount = 0;
   let percent = 15;
   let delta = 0;
-  const StateValuesResponse = await kamigazeClient.getState({
-    fromBlock: stateCache.lastKamigazeBlock,
-    removals: false,
-  });
 
-  for await (const responseChunk of StateValuesResponse) {
-    if (delta == 0) delta = 60 / responseChunk.pending;
-    percent += delta;
-    storeStateValues(stateCache, responseChunk.state, decode);
-    setPercentage(percent);
+  while (retryCount <= MAX_RETRIES) {
+    try {
+      const response = kamigazeClient.getState({
+        fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
+        removals: false,
+      });
+
+      for await (const chunk of response) {
+        await withTimeout(async () => {
+          if (delta === 0 && chunk.pending > 0) delta = 60 / chunk.pending;
+
+          storeStateValues(stateCache, chunk.state, decode);
+
+          if (chunk.lastBlockNumber > stateCache.lastStateValuesBlock) {
+            stateCache.lastStateValuesBlock = chunk.lastBlockNumber;
+          }
+
+          percent += delta;
+          setPercentage(Math.min(percent, 75));
+        }, CHUNK_TIMEOUT_MS);
+
+        retryCount = 0;
+      }
+      return;
+    } catch (error) {
+      retryCount++;
+      if (retryCount > MAX_RETRIES) throw error;
+
+      const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
+      console.log(`[snapshot] State values retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`);
+      await sleep(delay);
+    }
   }
 };

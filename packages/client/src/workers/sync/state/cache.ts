@@ -27,6 +27,8 @@ export type StateCache = {
   lastKamigazeEntity: number;
   lastKamigazeComponent: number;
   kamigazeNonce: number;
+  lastStateValuesBlock: number;
+  lastStateRemovalsBlock: number;
 };
 
 // create an empty StateCache
@@ -42,6 +44,8 @@ export const create = (): StateCache => {
     lastKamigazeEntity: 0,
     lastKamigazeComponent: 0,
     kamigazeNonce: 0,
+    lastStateValuesBlock: 0,
+    lastStateRemovalsBlock: 0,
   };
 };
 

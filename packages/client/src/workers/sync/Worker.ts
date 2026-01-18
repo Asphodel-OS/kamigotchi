@@ -131,11 +131,12 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   /**
    * Start the sync process.
    * 1. Get config
-   * 2. Start the live sync from streamer/rpc
-   * 3. Load historic state from snapshotter or indexdDB cache
-   * 4. Fill the live-sync state gap since start
-   * 5. Initialize world
-   * 6. Keep in sync with streamer/rpc
+   * 2. Load historic state from snapshotter or IndexedDB cache
+   * 3. Save snapshot to IndexedDB
+   * 4. Start the live sync from streamer/rpc
+   * 5. Fill the live-sync state gap since start
+   * 6. Initialize world
+   * 7. Keep in sync with streamer/rpc
    */
   private async init() {
     performance.mark('connecting');
@@ -181,11 +182,74 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       decode
     );
 
+    const { blockNumber$ } = createBlockNumberStream(providers);
+
+    /*
+     * LOAD INITIAL STATE (BACKFILL)
+     * - use IndexedDB Storage state cache if not expired
+     * - otherwise retrieve from snapshot service
+     */
+    performance.mark('backfill');
+    this.setLoadingState({ state: SyncState.BACKFILL, percentage: 0 });
+
+    this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
+    let initialState = await loadStateCacheFromStore(indexedDB);
+    console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
+
+    let snapshotUrlLocal = 'http://localhost:80';
+    if (snapshotUrlLocal) {
+      this.setLoadingState({ msg: 'Querying for Partial Snapshot', percentage: 0 });
+      const kamigazeClient = createSnapshotClient(snapshotUrlLocal);
+
+      try {
+        initialState = await fetchSnapshot(
+          initialState,
+          kamigazeClient,
+          decode,
+          config.snapshotNumChunks ?? 10,
+          (percentage: number) => this.setLoadingState({ percentage })
+        );
+      } catch (e) {
+        console.log(snapshotUrlLocal);
+        var errorMessage: string;
+
+        if (await isRateLimited(snapshotUrlLocal, e)) {
+          errorMessage = "You're refreshing too much! Try again in a minute or two";
+        } else {
+          errorMessage = `Unknown error: ${e.code}. Can you drop this in the discord if it persists?`;
+        }
+        console.error('failed to retrieve state', e);
+        this.setLoadingState({
+          state: SyncState.FAILED,
+          msg: errorMessage,
+        });
+        return;
+      }
+      this.setLoadingState({ percentage: 100 });
+      console.log('INITIAL STATE (POST-SYNC)', getStateReport(initialState));
+    }
+
+    /*
+     * SAVE SNAPSHOT TO INDEXEDDB
+     * - Persist snapshot before starting live sync
+     * - This ensures we can resume from lastKamigazeBlock on failure
+     */
+    this.setLoadingState({ msg: 'Saving State Cache', percentage: 0 });
+    try {
+      await saveStateCacheToStore(indexedDB, initialState);
+    } catch (e) {
+      console.error('Failed to save snapshot to IndexedDB', e);
+      this.setLoadingState({
+        state: SyncState.FAILED,
+        msg: 'Failed to save state cache',
+      });
+      return;
+    }
+
     /*
      * START LIVE SYNC
-     * - start syncing current events to reduce block gap
-     * - only stream events to output after closing block gap
-     * - use stream service if available, otherwise rawdog RPC
+     * - Start after snapshot is saved
+     * - Buffer events while filling gap
      */
     this.setLoadingState({
       state: SyncState.SETUP,
@@ -193,10 +257,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       percentage: 0,
     });
     let outputLiveEvents = false;
-    const stateCache = { current: createStateCache() };
-    const { blockNumber$ } = createBlockNumberStream(providers);
+    const stateCache = { current: initialState };
 
-    // Setup event stream: use Kamigaze stream service if available, otherwise RPC
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
     const eventStream$ = streamServiceUrl
       ? createStream({
@@ -225,62 +287,15 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       this.output$.next(event as NetworkEvent<C>);
     });
 
-    const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
-
-    /*
-     * LOAD INITIAL STATE (BACKFILL)
-     * - use IndexedDB Storage state cache if not expired
-     * - otherwise retrieve from snapshot service
-     * TODO: support partial state retrieval and hybrid cache+snapshot state construction
-     */
-    performance.mark('backfill');
-    this.setLoadingState({ state: SyncState.BACKFILL, percentage: 0 });
-
-    // load cache
-    this.setLoadingState({ msg: 'Loading State Cache', percentage: 0 });
-    let initialState = await loadStateCacheFromStore(indexedDB);
-    console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
-
-    if (snapshotUrl) {
-      this.setLoadingState({ msg: 'Querying for Partial Snapshot', percentage: 0 });
-      const kamigazeClient = createSnapshotClient(snapshotUrl);
-
-      try {
-        initialState = await fetchSnapshot(
-          initialState,
-          kamigazeClient,
-          decode,
-          config.snapshotNumChunks ?? 10,
-          (percentage: number) => this.setLoadingState({ percentage })
-        );
-      } catch (e) {
-        console.log(snapshotUrl);
-        var errorMessage: string;
-
-        if (await isRateLimited(snapshotUrl, e)) {
-          errorMessage = "You're refreshing too much! Try again in a minute or two";
-        } else {
-          errorMessage = `Unknown error: ${e.code}. Can you drop this in the discord if it persists?`;
-        }
-        console.error('failed to retrieve state', e);
-        this.setLoadingState({
-          state: SyncState.FAILED,
-          msg: errorMessage,
-        });
-        return;
-      }
-      this.setLoadingState({ percentage: 100 }); // move % updates into fetchSnapshot
-      console.log('INTIAL STATE (POST-SYNC)', getStateReport(initialState));
-    }
+    const streamStartBlockNumber = await awaitStreamValue(blockNumber$);
 
     /*
      * FILL THE GAP
-     * - Load events between initial and recent state from RPC
-     * Q: shouldnt we just launch the live sync down here if we're chunking it anyways
+     * - Load events between lastKamigazeBlock and stream start
      */
     performance.mark('gapfill');
-    const streamStartBlockNumber = await streamStartBlockNumberPromise;
-    const startString = initialState.blockNumber.toLocaleString();
+    const gapFromBlock = initialState.lastKamigazeBlock;
+    const startString = gapFromBlock.toLocaleString();
     const endString = streamStartBlockNumber.toLocaleString();
     this.setLoadingState({
       state: SyncState.GAPFILL,
@@ -292,18 +307,17 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       kamigazeUrl: streamServiceUrl!,
       decode,
       fetchWorldEvents,
-      fromBlock: initialState.blockNumber,
+      fromBlock: gapFromBlock,
       toBlock: streamStartBlockNumber,
       setPercentage: (percentage: number) => this.setLoadingState({ percentage }),
     });
 
-    // Merge initial state, gap state and live events since initial sync started
-    storeStateEvents(initialState, [...gapStateEvents, ...initialLiveEvents]);
-    stateCache.current = initialState;
+    // Merge gap events and live events buffered during gap fill
+    storeStateEvents(stateCache.current, [...gapStateEvents, ...initialLiveEvents]);
 
     /*
      * INITIALIZE STATE
-     * - Initialize the app state from the list of network events
+     * - Output state cache entries to main thread
      */
     performance.mark('init');
     const stateCacheSize = stateCache.current.state.size;
@@ -313,7 +327,6 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       percentage: 0,
     });
 
-    // Pass current stateCache to output and start passing live events   try {
     try {
       let i = 0;
       for (const update of getStateCacheEntries(stateCache.current)) {
@@ -323,10 +336,9 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           this.setLoadingState({ percentage });
         }
       }
-      await saveStateCacheToStore(indexedDB, stateCache.current);
     } catch (e) {
       this.retryCount++;
-      console.error(`Failed to save state cache to store, attempt ${this.retryCount}`);
+      console.error(`Failed to output state cache, attempt ${this.retryCount}`);
       console.error(e);
       if (this.hasExceededMaxRetries()) {
         this.setLoadingState({
