@@ -86,10 +86,15 @@ export async function sendTx(
     signedTx,
     3000,
   ]);
-  console.log('receipt', receipt);
 
-  if (receipt.status !== 1) {
-    throw receipt;
+  const status = typeof receipt.status === 'string'
+    ? parseInt(receipt.status, 16)
+    : receipt.status;
+
+  if (status !== 1) {
+    const error = new Error(`Transaction failed with status ${receipt.status}`);
+    (error as any).receipt = receipt;
+    throw error;
   }
 
   return receipt;

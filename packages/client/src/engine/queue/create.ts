@@ -166,6 +166,7 @@ export function create<C extends Contracts>(
         log.debug('[estimateGas] Simulating transaction');
         return await signer!.estimateGas(txRequest);
       } catch (error) {
+        console.log(error)
         throw error;
       }
     };
@@ -176,8 +177,8 @@ export function create<C extends Contracts>(
       if (!tx) {
         throw new Error('Failed to send transaction: signer missing or sendTx returned undefined');
       }
-      const hash = tx.hash;
-      log.debug(`[TXQueue] TX Sent ${tx.hash}`);
+      const hash = tx.transactionHash;
+      log.debug(`[TXQueue] TX Sent ${hash}`);
       // Get receipt directly from sync transaction (EIP-7966)
       return { hash, receipt: tx };
     };
