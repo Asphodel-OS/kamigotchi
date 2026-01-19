@@ -84,7 +84,7 @@ export async function sendTx(
   const signedTx = await signer.signTransaction(txData);
   const receipt = await (signer.provider as any).send('eth_sendRawTransactionSync', [
     signedTx,
-    3000,
+    5000,
   ]);
 
   const status = typeof receipt.status === 'string'
