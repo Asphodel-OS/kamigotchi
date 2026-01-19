@@ -87,8 +87,7 @@ export function createActionSystem<M = undefined>(
       updateAction({ state: ActionState.WaitingForTxEvents }); // pending
 
       if (tx) {
-        if (!request.skipConfirmation) await tx.wait();
-        updateAction({ txHash: tx.hash });
+        updateAction({ txHash: (tx as any).hash });
       }
 
       updateAction({ state: ActionState.Complete });

@@ -65,11 +65,34 @@ export async function waitForTx(
 export async function sendTx(
   signer: Signer | undefined,
   txData: TransactionRequest
-): Promise<TransactionResponse> {
+): Promise<TransactionReceipt> {
+  if (!signer) {
+    throw new Error('Signer required');
+  }
+  if (!signer.provider) {
+    throw new Error('Provider required');
+  }
+
   txData.chainId = DefaultChain.id;
   txData.maxFeePerGas = baseGasPrice; // gas prices for minievm are fixed
   txData.maxPriorityFeePerGas = 0;
-  return signer?.sendTransaction(txData)!;
+
+  // Use EIP-7966 eth_sendRawTransactionSync for synchronous transaction submission
+  // Original async method - commented out because we're using EIP-7966
+  // return signer?.sendTransaction(txData)!;
+
+  const signedTx = await signer.signTransaction(txData);
+  const receipt = await (signer.provider as any).send('eth_sendRawTransactionSync', [
+    signedTx,
+    3000,
+  ]);
+  console.log('receipt', receipt);
+
+  if (receipt.status !== 1) {
+    throw receipt;
+  }
+
+  return receipt;
 }
 
 // check if nonce should be incremented
