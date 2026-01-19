@@ -7,4 +7,9 @@ const mooringPost: DialogueNode = {
   ],
 };
 
-export default [mooringPost];
+const river: DialogueNode = {
+  index: 12,
+  text: ['Dark water flows in a gentle current.'],
+};
+
+export default [mooringPost, river];

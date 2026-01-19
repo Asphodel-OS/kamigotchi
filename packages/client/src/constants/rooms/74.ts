@@ -16,5 +16,6 @@ export const room74: Room = {
       coordinates: { x1: 20, y1: 0, x2: 110, y2: 80 },
       onClick: () => triggerGoalModal([8]),
     },
+    // { name: 'communion relief', coordinates: { x1: 20, y1: 48, x2: 107, y2: 77 }, dialogue: 741 },
   ],
 };

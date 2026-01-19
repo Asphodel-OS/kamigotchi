@@ -15,11 +15,7 @@ const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
 const defaultBgm = { key: 'cave', path: cave };
 
 // painting of the room alongside any clickable objects
-export const Room = ({
-  index,
-}: {
-  index: number
-}) => {
+export const Room = ({ index }: { index: number }) => {
   const tradingModalOpen = useVisibility((s) => s.modals.trading);
   const setModals = useVisibility((s) => s.setModals);
   const setNode = useSelected((s) => s.setNode);
