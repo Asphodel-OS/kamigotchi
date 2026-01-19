@@ -21,7 +21,7 @@ export const room87: Room = {
       dialogue: 872,
     },
     {
-      name: 'pillar right ',
+      name: 'pillar right',
       coordinates: { x1: 116, y1: 57, x2: 128, y2: 120 },
       dialogue: 872,
     },

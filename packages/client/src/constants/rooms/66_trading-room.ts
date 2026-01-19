@@ -20,10 +20,5 @@ export const room66: Room = {
       coordinates: { x1: 25, y1: 40, x2: 90, y2: 110 },
       dialogue: 661,
     },
-    {
-      name: 'marketplace tree',
-      coordinates: { x1: 30, y1: 25, x2: 100, y2: 128 },
-      dialogue: 662,
-    },
   ],
 };
