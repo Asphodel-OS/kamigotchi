@@ -239,7 +239,7 @@ const fetchStateRemovals = async ({
   kamigazeClient,
   setPercentage,
 }: FetchOptions): Promise<void> => {
-  const fromBlock = stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock;
+  let fromBlock = stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock;
   log.debug('[snapshot] fetchStateRemovals started', { fromBlock });
 
   let retryCount = 0;
@@ -249,12 +249,13 @@ const fetchStateRemovals = async ({
 
   while (retryCount <= MAX_RETRIES) {
     try {
+      fromBlock = stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock;
       log.debug('[snapshot] fetchStateRemovals requesting stream', {
-        fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
+        fromBlock: fromBlock,
       });
 
       const response = kamigazeClient.getState({
-        fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
+        fromBlock: fromBlock,
         removals: true,
       });
 
@@ -311,7 +312,7 @@ const fetchStateValues = async ({
   decode,
   setPercentage,
 }: FetchOptions): Promise<void> => {
-  const fromBlock = stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock;
+  let fromBlock = stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock;
   log.debug('[snapshot] fetchStateValues started', { fromBlock });
 
   let retryCount = 0;
@@ -321,12 +322,13 @@ const fetchStateValues = async ({
 
   while (retryCount <= MAX_RETRIES) {
     try {
+      fromBlock = stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock
       log.debug('[snapshot] fetchStateValues requesting stream', {
-        fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
+        fromBlock: fromBlock,
       });
 
       const response = kamigazeClient.getState({
-        fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
+        fromBlock: fromBlock,
         removals: false,
       });
 
