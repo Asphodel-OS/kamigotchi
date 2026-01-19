@@ -6,3 +6,9 @@ dist/
 .DS_STORE
  
 .claude
+
+.serena/
+
+**/CLAUDE.md
+
+**/.serena
