@@ -139,7 +139,7 @@ export function createActionSystem<M = undefined>(
   async function handleError(error: any, action: ActionRequest) {
     if (!action.index) return;
 
-    const txHash = error?.receipt?.hash || error?.transactionHash || error?.hash;
+    const txHash = error?.receipt?.transactionHash || error?.transactionHash || error?.hash;
     let metadata: string | undefined;
 
     // Fetch revert reason and persist it in metadata
@@ -161,7 +161,7 @@ export function createActionSystem<M = undefined>(
       if (errData.error) errData = errData.error;
       else if (errData.data) errData = errData.data;
       if (errData.message) errData = errData.message;
-      metadata = errData;
+      metadata = typeof errData === 'string' ? errData : error.message || 'Transaction failed';
     }
 
     updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
