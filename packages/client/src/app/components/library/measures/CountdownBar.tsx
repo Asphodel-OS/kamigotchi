@@ -8,7 +8,7 @@ export const CountdownBar = ({ total, current }: { total: number; current: numbe
   return (
     <Container>
       <Fill percent={calcPercent(current, total)} />
-      <Text size={0.55} color='#2d0b42ff' weight='bold' style={{ zIndex: 1 }}>
+      <Text size={0.6} color='#2d0b42ff' weight='bold' style={{ zIndex: 1 }}>
         {current === 0 ? 'ready' : `${Math.floor(current)}s`}
       </Text>
       <Icon src={objectClock} />

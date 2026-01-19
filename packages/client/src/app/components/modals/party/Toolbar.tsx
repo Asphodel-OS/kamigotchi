@@ -3,7 +3,9 @@ import styled from 'styled-components';
 
 import {
   calcHealthPercent,
+  calcHealthRate,
   getKamiRoomIndex,
+  isFull,
   isHarvesting,
   isResting,
   onCooldown,
@@ -78,29 +80,55 @@ export const Toolbar = ({
 
     const base = view === 'external' ? wildKamis : kamis;
     const sorted = [...base];
-    if (sort === 'name') {
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sort === 'state') {
-      sorted.sort((a, b) => {
-        const stateDiff = a.state.localeCompare(b.state);
-        if (stateDiff != 0) return stateDiff;
-        return calcHealthPercent(a) - calcHealthPercent(b);
-      });
-    } else if (sort === 'traits') {
-      sorted.sort((a, b) => {
-        let diff = 0;
-        if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
-        if (diff === 0) diff = compareTraitRarity(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitName(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
-        if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
-        return diff;
-      });
+
+    switch (sort) {
+      case 'name':
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'state':
+        sorted.sort((a, b) => {
+          const stateDiff = a.state.localeCompare(b.state);
+          if (stateDiff != 0) return stateDiff;
+          return calcHealthPercent(a) - calcHealthPercent(b);
+        });
+        break;
+      case 'traits':
+        sorted.sort((a, b) => {
+          let diff = 0;
+          if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
+          if (diff === 0) diff = compareTraitRarity(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitName(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
+          if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
+          return diff;
+        });
+        break;
+      case 'harvest rate':
+        sorted.sort((a, b) => {
+          const rateA = isHarvesting(a) ? (a.harvest?.rates?.total?.average ?? 0) : 0;
+          const rateB = isHarvesting(b) ? (b.harvest?.rates?.total?.average ?? 0) : 0;
+          return rateB - rateA;
+        });
+        break;
+      case 'strain':
+        sorted.sort((a, b) => {
+          const rateA = isHarvesting(a) ? calcHealthRate(a) : 0;
+          const rateB = isHarvesting(b) ? calcHealthRate(b) : 0;
+          return rateA - rateB;
+        });
+        break;
+      case 'resting rate':
+        sorted.sort((a, b) => {
+          const rateA = isResting(a) && !isFull(a) ? calcHealthRate(a) : 0;
+          const rateB = isResting(b) && !isFull(b) ? calcHealthRate(b) : 0;
+          return rateB - rateA;
+        });
+        break;
     }
 
     setDisplayedKamis(sorted);
-  }, [isModalOpen, wildKamis.length, kamis.length, view, sort]);
+  }, [isModalOpen, wildKamis.length, kamis.length, view, sort, tick]);
 
   // updates the list of action options based on state updates
   useEffect(() => {
@@ -137,10 +165,14 @@ export const Toolbar = ({
   // INTERACTION
 
   // toggle between views
+  // only show external view if
+  // player has no kami in world
+  // or player has kami in the wild
   const toggleView = () => {
+    const showExternal = kamis.length === 0 || wildKamis.length > 0;
     if (view === 'external') setView('collapsed');
     else if (view === 'collapsed') setView('expanded');
-    else setView('external');
+    else setView(showExternal ? 'external' : 'collapsed');
   };
 
   /////////////////

@@ -97,6 +97,7 @@
     "react-collapse": "^5.1.1",
     "react-dom": "^19.2.0",
     "react-is": "^16.8.0",
+    "react-share": "^5.2.2",
     "rxjs": "^7.5.5",
     "styled-components": "^5.3.6",
     "threads": "^1.7.0",

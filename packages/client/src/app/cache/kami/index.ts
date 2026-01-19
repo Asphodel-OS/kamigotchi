@@ -5,6 +5,7 @@ export {
   calcHarvestTime,
   calcHealth,
   calcHealthPercent,
+  calcHealthRate,
   calcLiqKarma,
   calcLiqStrain,
   calcLiqThreshold,

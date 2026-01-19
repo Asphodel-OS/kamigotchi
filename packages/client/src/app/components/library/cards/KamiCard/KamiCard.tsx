@@ -37,7 +37,9 @@ export const KamiCard = ({
   show?: {
     battery?: boolean;
     cooldown?: boolean;
+    hideName?: boolean;
     levelUp?: boolean;
+    showPercent?: boolean;
     skillPoints?: boolean;
   };
   utils?: {
