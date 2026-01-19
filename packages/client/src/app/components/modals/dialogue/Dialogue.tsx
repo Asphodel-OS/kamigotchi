@@ -270,7 +270,10 @@ export const DialogueModal: UIComponent = {
         <ActionButton
           text={action.label}
           disabled={isDisabled(action)}
-          onClick={() => getAction(action.type, action.input)} // hardcoded for now
+          onClick={() => {
+            action.onClick?.();
+            getAction(action.type, action.input);
+          }}
         />
       );
     };

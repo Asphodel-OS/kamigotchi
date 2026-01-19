@@ -8,3 +8,4 @@ export const STONE_INDEX = 1002;
 export const OBOL_INDEX = 1015;
 export const HOLY_DUST_INDEX = 11011;
 export const RESPEC_POTION_INDEX = 11403;
+export const WONDER_EGG_INDEX = 21003;
