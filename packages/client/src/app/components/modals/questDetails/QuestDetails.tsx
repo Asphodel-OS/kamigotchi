@@ -25,7 +25,7 @@ import {
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getFromDescription } from 'network/shapes/utils/parse';
 import { useComponentEntities } from 'network/utils/hooks';
-import { playClick } from 'utils/sounds';
+import { playClick, playQuestaccept, playQuestcomplete } from 'utils/sounds';
 import { Bottom } from './Bottom';
 import { Dialogue } from './Dialogue';
 
@@ -285,7 +285,7 @@ export const QuestDetailsModal: UIComponent = {
                 ? journeyOnwards
                 : () => {
                     acceptQuest(quest);
-                    playClick();
+                    playQuestaccept();
                   },
               disabled: quest.complete ? !findNextInChain(quest.index) : quest.startTime !== 0,
               label: quest.complete ? 'Journey Onwards' : 'Accept',
@@ -294,7 +294,7 @@ export const QuestDetailsModal: UIComponent = {
               backgroundColor: '#f8f6e4',
               onClick: () => {
                 completeQuest(quest);
-                playClick();
+                playQuestcomplete();
               },
               disabled: !meetsObjectives(quest) || quest.complete || quest.startTime === 0,
               label: 'Complete',

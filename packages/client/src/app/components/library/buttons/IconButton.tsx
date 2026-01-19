@@ -29,6 +29,7 @@ export const IconButton = forwardRef(function IconButton(
     filter,
     noBorder,
     shake,
+    cooldownBackground,
   }: {
     onClick: Function;
     img?: string | SvgIconComponent; // TODO: get rid of all svg icons and mui references
@@ -41,6 +42,7 @@ export const IconButton = forwardRef(function IconButton(
     disabled?: boolean;
     fullWidth?: boolean;
     pulse?: boolean;
+    cooldownBackground?: string;
 
     balance?: number; // shows a balance on icon (for Inventory)
     corner?: boolean; // indicates button has options
@@ -110,6 +112,7 @@ export const IconButton = forwardRef(function IconButton(
       noBorder={noBorder}
       filter={filter}
       shake={shake}
+      cooldownBackground={cooldownBackground}
     >
       {MyImage()}
       {text && (
@@ -138,6 +141,7 @@ const Container = styled.button<{
   noBorder?: boolean;
   filter?: string;
   shake?: boolean;
+  cooldownBackground?: string;
 }>`
   position: relative;
   border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15vw')};
@@ -153,7 +157,8 @@ const Container = styled.button<{
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
+  background: ${({ color, disabled, cooldownBackground }) =>
+    cooldownBackground || (disabled ? '#bbb' : color)};
   box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
 
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};

@@ -29,6 +29,7 @@ export function IconListButton({
   shake,
   tooltip,
   disabled,
+  cooldownBackground,
 }: {
   options: Option[];
   searchable?: boolean;
@@ -45,6 +46,7 @@ export function IconListButton({
   fullWidth?: boolean;
   balance?: number;
   shake?: boolean;
+  cooldownBackground?: string;
 
   // tooltip
   tooltip?: {
@@ -128,6 +130,7 @@ export function IconListButton({
           icon={icon}
           filter={filter}
           shake={shake}
+          cooldownBackground={cooldownBackground}
         />
       </TextTooltip>
     </Popover>

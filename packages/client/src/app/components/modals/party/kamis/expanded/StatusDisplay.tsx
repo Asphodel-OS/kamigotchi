@@ -4,6 +4,8 @@ import { getHarvestItem } from 'app/cache/harvest';
 import { calcHealth, isDead, isHarvesting, isResting, Kami } from 'app/cache/kami';
 import { Text } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { StatusIcons } from 'assets/images/icons/statuses';
+import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { NullNode } from 'network/shapes';
 import { useEffect, useState } from 'react';
 import { getRateDisplay } from 'utils/numbers';
@@ -28,8 +30,31 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
       const health = calcHealth(kami);
       text = health == 0 ? 'Starving' : 'Harvesting';
     }
-    setHeader(text);
-  }, [kami.state]);
+    const calcHealthPercent = () => {
+      const total = kami.stats?.health.total ?? 0;
+      if (total === 0) return 0;
+      return (100 * calcHealth(kami)) / total;
+    };
+
+    const healthPercent = calcHealthPercent();
+    const getMood = (kami: Kami, percent: number) => {
+      let limit = 0;
+      const limits = Object.keys(RestingMoods);
+      for (let i = 0; i < limits.length; i++) {
+        limit = Number(limits[i]);
+        if (percent <= limit) {
+          if (isHarvesting(kami)) return HarvestingMoods[limit];
+          else if (isResting(kami)) return RestingMoods[limit];
+        }
+      }
+    };
+    const mood = getMood(kami, healthPercent);
+    if (mood) {
+      setHeader(text.concat(' while ', mood));
+    } else {
+      setHeader(text);
+    }
+  }, [kami.state, kami.stats?.health.total]);
 
   // update the description if the state changes
   useEffect(() => {
@@ -103,12 +128,24 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
     }
   };
 
+  const getStateIcon = () => {
+    if (isHarvesting(kami)) return StatusIcons.kami_harvesting;
+    if (isResting(kami)) return StatusIcons.kami_resting;
+    if (isDead(kami)) return StatusIcons.kami_dead;
+  };
+
   /////////////////
   // RENDER
 
   return (
     <Container>
-      {header && <Text size={0.75}>{header}</Text>}
+      <Text size={0.75}>{kami.name}</Text>
+      {header && (
+        <StateRow>
+          <StateIcon src={getStateIcon()} />
+          <Text size={0.65}>{header}</Text>
+        </StateRow>
+      )}
       <Description onClick={getDescriptionOnClick(kami)}>
         {description.map((text, i) => (
           <Text key={i} size={0.6}>
@@ -125,6 +162,18 @@ const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
+`;
+
+const StateRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 0.2vw;
+`;
+
+const StateIcon = styled.img`
+  width: 1.7vw;
+  height: 1.7vw;
 `;
 
 const Description = styled.div`

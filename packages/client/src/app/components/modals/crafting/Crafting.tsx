@@ -10,6 +10,7 @@ import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { Account, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { playCrafting } from 'utils/sounds';
 import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance as _getItemBalance, Item } from 'network/shapes/Item';
@@ -122,6 +123,7 @@ export const CraftingModal: UIComponent = {
           return api.player.account.item.craft(recipe.index, amount);
         },
       });
+      playCrafting();
     };
 
     /////////////////

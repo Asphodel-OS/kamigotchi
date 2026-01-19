@@ -1,3 +1,4 @@
+import { playBell } from 'utils/sounds';
 import { DialogueNode } from '.';
 
 const caveFloor: DialogueNode = {
@@ -34,6 +35,11 @@ const hangingbell: DialogueNode = {
     'A conical bell cast in dark bronze and decorated with patterns representing sea creatures.',
     'It makes a quiet and hollow tone when struck.',
   ],
+  action: {
+    type: 'touch',
+    label: 'Ring the bell',
+    onClick: () => playBell(),
+  },
 };
 
 export default [caveFloor, pathLeft, pathRight, hangingbell];

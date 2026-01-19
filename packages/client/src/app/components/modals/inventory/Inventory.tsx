@@ -14,7 +14,7 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { InventoryIcon } from 'assets/images/icons/menu';
-import { MUSU_INDEX, OBOL_INDEX } from 'constants/items';
+import { MUSU_INDEX, OBOL_INDEX, WONDER_EGG_INDEX } from 'constants/items';
 import {
   queryAllAccounts as _queryAllAccounts,
   Account,
@@ -26,6 +26,7 @@ import { parseConditionalText, passesConditions } from 'network/shapes/Condition
 import { getItemBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
 import { didActionSucceed } from 'network/utils';
+import { playWonderegg } from 'utils/sounds';
 import { ItemGrid } from './items/ItemGrid';
 import { MusuRow } from './MusuRow';
 import { Transfer } from './transfer/Transfer';
@@ -182,11 +183,11 @@ export const InventoryModal: UIComponent = {
     };
 
     // use an item on an Account
-    const useForAccountTx = (item: Item, amount: number) => {
+    const useForAccountTx = async (item: Item, amount: number) => {
       let actionKey = 'Using';
       if (item.type === 'LOOTBOX') actionKey = 'Opening';
 
-      actions.add({
+      const transaction = actions.add({
         action: 'AccountFeed',
         params: [item.index],
         description: `${actionKey} ${item.name}`,
@@ -194,6 +195,14 @@ export const InventoryModal: UIComponent = {
           return api.player.account.item.use(item.index, amount);
         },
       });
+
+      // if item used was a wonder egg play the sound
+      if (item.index === WONDER_EGG_INDEX) {
+        const completed = await didActionSucceed(actions.Action, transaction);
+        if (completed) {
+          playWonderegg();
+        }
+      }
     };
 
     /////////////////
