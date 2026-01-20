@@ -6,6 +6,7 @@ import {
   TransactionReceipt,
   TransactionRequest,
   TransactionResponse,
+  Wallet,
 } from 'ethers';
 
 /**
@@ -74,29 +75,37 @@ export async function sendTx(
   }
 
   txData.chainId = DefaultChain.id;
-  txData.maxFeePerGas = baseGasPrice; // gas prices for minievm are fixed
+  txData.maxFeePerGas = baseGasPrice;
   txData.maxPriorityFeePerGas = 0;
 
-  // Use EIP-7966 eth_sendRawTransactionSync for synchronous transaction submission
-  // Original async method - commented out because we're using EIP-7966
-  // return signer?.sendTransaction(txData)!;
+  // Embedded wallet (Wallet instance) supports EIP-7966 eth_sendRawTransactionSync
+  // Injected wallet (JsonRpcSigner) needs legacy sendTransaction
+  if (signer instanceof Wallet) {
+    const signedTx = await signer.signTransaction(txData);
+    const receipt = await (signer.provider as any).send('eth_sendRawTransactionSync', [
+      signedTx,
+      8000,
+    ]);
 
-  const signedTx = await signer.signTransaction(txData);
-  const receipt = await (signer.provider as any).send('eth_sendRawTransactionSync', [
-    signedTx,
-    8000,
-  ]);
+    const status = typeof receipt.status === 'string'
+      ? parseInt(receipt.status, 16)
+      : receipt.status;
 
-  const status = typeof receipt.status === 'string'
-    ? parseInt(receipt.status, 16)
-    : receipt.status;
+    if (status !== 1) {
+      const error = new Error(`Transaction failed with status ${receipt.status}`);
+      (error as any).receipt = receipt;
+      throw error;
+    }
 
-  if (status !== 1) {
-    const error = new Error(`Transaction failed with status ${receipt.status}`);
-    (error as any).receipt = receipt;
-    throw error;
+    return receipt;
   }
 
+  // Legacy path for injected wallets (MetaMask, etc.)
+  const response = await signer.sendTransaction(txData);
+  const receipt = await response.wait();
+  if (!receipt) {
+    throw new Error('Transaction receipt is null');
+  }
   return receipt;
 }
 
