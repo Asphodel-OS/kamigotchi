@@ -86,7 +86,6 @@ async function fetchWithRetry<TChunk>({
 
           chunkIndex++;
         }, CHUNK_TIMEOUT_MS);
-        maybeThrow()
         retryCount = 0;
       }
 

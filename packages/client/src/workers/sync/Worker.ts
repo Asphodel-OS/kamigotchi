@@ -196,10 +196,9 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     let initialState = await loadStateCacheFromStore(indexedDB);
     console.log('INITIAL STATE (PRE-SYNC)', getStateReport(initialState));
 
-    let snapshotUrlLocal = 'http://localhost:80';
-    if (snapshotUrlLocal) {
+    if (snapshotUrl) {
       this.setLoadingState({ msg: 'Querying for Components', percentage: 0 });
-      const kamigazeClient = createSnapshotClient(snapshotUrlLocal);
+      const kamigazeClient = createSnapshotClient(snapshotUrl);
 
       try {
         initialState = await fetchSnapshot(
@@ -211,10 +210,10 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           (msg: string) => this.setLoadingState({ msg })
         );
       } catch (e) {
-        console.log(snapshotUrlLocal);
+        console.log(snapshotUrl);
         var errorMessage: string;
 
-        if (await isRateLimited(snapshotUrlLocal, e)) {
+        if (await isRateLimited(snapshotUrl, e)) {
           errorMessage = "You're refreshing too much! Try again in a minute or two";
         } else {
           errorMessage = `Unknown error: ${e.code}. Can you drop this in the discord if it persists?`;
