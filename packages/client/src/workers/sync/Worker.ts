@@ -198,7 +198,7 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     let snapshotUrlLocal = 'http://localhost:80';
     if (snapshotUrlLocal) {
-      this.setLoadingState({ msg: 'Querying for Partial Snapshot', percentage: 0 });
+      this.setLoadingState({ msg: 'Querying for Components', percentage: 0 });
       const kamigazeClient = createSnapshotClient(snapshotUrlLocal);
 
       try {
@@ -207,7 +207,8 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
           kamigazeClient,
           decode,
           config.snapshotNumChunks ?? 10,
-          (percentage: number) => this.setLoadingState({ percentage })
+          (percentage: number) => this.setLoadingState({ percentage }),
+          (msg: string) => this.setLoadingState({ msg })
         );
       } catch (e) {
         console.log(snapshotUrlLocal);

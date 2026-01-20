@@ -18,8 +18,8 @@ const RETRY_DELAYS = [10000, 10000, 10000, 10000, 10000];
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const maybeThrow = () => {
-  if (Math.random() < 0.1) {
-    log.warn('[snapshot] Throwing in purpose')
+  if (Math.random() < 0.6) {
+    log.warn('[snapshot] Throwing on purpose')
     throw new Error('[snapshot] [TEST] Random chunk failure (1 in 5)');
   }
 };
@@ -37,6 +37,7 @@ interface StreamingFetchOptions<TChunk> {
   processChunk: (chunk: TChunk) => void;
   getProgress: (chunk: TChunk) => { pending: number };
   getChunkLogData?: (chunk: TChunk, chunkIndex: number) => Record<string, unknown>;
+  getRetryContext?: () => Record<string, unknown>;
   progressRange: { start: number; end: number };
   setPercentage: (percentage: number) => void;
   onRetry?: () => void;
@@ -48,25 +49,30 @@ async function fetchWithRetry<TChunk>({
   processChunk,
   getProgress,
   getChunkLogData,
+  getRetryContext,
   progressRange,
   setPercentage,
   onRetry,
 }: StreamingFetchOptions<TChunk>): Promise<void> {
   let retryCount = 0;
-  let percent = progressRange.start;
-  let delta = 0;
   let chunkIndex = 0;
+  let totalChunks = 0;
   const progressSpan = progressRange.end - progressRange.start;
+
+  setPercentage(progressRange.start);
 
   while (retryCount <= MAX_RETRIES) {
     try {
-      log.debug(`[snapshot] ${name} requesting stream`);
+      log.debug(`[snapshot] ${name} requesting stream`, getRetryContext?.());
       const response = createStream();
 
       for await (const chunk of response) {
         await withTimeout(async () => {
           const { pending } = getProgress(chunk);
-          if (delta === 0 && pending > 0) delta = progressSpan / pending;
+
+          if (totalChunks === 0) {
+            totalChunks = pending + 1;
+          }
 
           if (getChunkLogData) {
             log.debug(`[snapshot] ${name} chunk received`, getChunkLogData(chunk, chunkIndex));
@@ -74,8 +80,10 @@ async function fetchWithRetry<TChunk>({
 
           processChunk(chunk);
 
-          percent += delta;
+          const processedChunks = chunkIndex + 1;
+          const percent = progressRange.start + (processedChunks / totalChunks) * progressSpan;
           setPercentage(Math.min(percent, progressRange.end));
+
           chunkIndex++;
         }, CHUNK_TIMEOUT_MS);
         maybeThrow()
@@ -90,9 +98,11 @@ async function fetchWithRetry<TChunk>({
       if (retryCount > MAX_RETRIES) throw error;
 
       const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
-      log.debug(`[snapshot] ${name} retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`);
+      log.debug(`[snapshot] ${name} retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`, getRetryContext?.());
       await sleep(delay);
 
+      chunkIndex = 0;
+      totalChunks = 0;
       onRetry?.();
     }
   }
@@ -104,6 +114,7 @@ interface FetchOptions {
   decode: ReturnType<typeof createDecode>;
   numChunks?: number;
   setPercentage: (percentage: number) => void;
+  setMessage?: (msg: string) => void;
 }
 
 export const fetchSnapshot = async (
@@ -111,7 +122,8 @@ export const fetchSnapshot = async (
   kamigazeClient: KamigazeServiceClient,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
-  setPercentage: (percentage: number) => void
+  setPercentage: (percentage: number) => void,
+  setMessage?: (msg: string) => void
 ): Promise<StateCache> => {
   let currentBlock = stateCache.lastKamigazeBlock;
   let initialLoad = currentBlock == 0;
@@ -124,7 +136,7 @@ export const fetchSnapshot = async (
     lastStateRemovalsBlock: stateCache.lastStateRemovalsBlock,
   });
 
-  const options: FetchOptions = { stateCache, kamigazeClient, decode, numChunks, setPercentage };
+  const options: FetchOptions = { stateCache, kamigazeClient, decode, numChunks, setPercentage, setMessage };
 
   try {
     log.debug('[snapshot] Fetching state block');
@@ -144,19 +156,23 @@ export const fetchSnapshot = async (
     options.stateCache.lastStateValuesBlock = options.stateCache.lastKamigazeBlock;                  
     options.stateCache.lastStateRemovalsBlock = options.stateCache.lastKamigazeBlock;  
 
+    setMessage?.('Querying for Components');
     log.debug('[snapshot] Starting fetchComponents');
     await fetchComponents(options);
 
     if (!initialLoad) {
+      setMessage?.('Querying for State Removals');
       log.debug('[snapshot] Starting fetchStateRemovals (incremental load)');
       await fetchStateRemovals(options);
     } else {
       log.debug('[snapshot] Skipping fetchStateRemovals (initial load)');
     }
 
+    setMessage?.('Querying for State');
     log.debug('[snapshot] Starting fetchStateValues');
     await fetchStateValues(options);
 
+    setMessage?.('Querying for Entities');
     log.debug('[snapshot] Starting fetchEntities');
     await fetchEntities(options);
 
@@ -252,6 +268,7 @@ async function fetchEntities({
       entitiesInChunk: chunk.entities.length,
       pending: chunk.pending,
     }),
+    getRetryContext: () => ({ fromIdx: stateCache.lastKamigazeEntity }),
     progressRange: { start: 75, end: 100 },
     setPercentage,
     onRetry: () => stateCache.entities.splice(stateCache.lastKamigazeEntity + 1),
@@ -287,6 +304,7 @@ async function fetchStateRemovals({
       pending: chunk.pending,
       lastBlockNumber: chunk.lastBlockNumber,
     }),
+    getRetryContext: () => ({ fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock }),
     progressRange: { start: 5, end: 15 },
     setPercentage,
   });
@@ -322,6 +340,7 @@ async function fetchStateValues({
       pending: chunk.pending,
       lastBlockNumber: chunk.lastBlockNumber,
     }),
+    getRetryContext: () => ({ fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock }),
     progressRange: { start: 15, end: 75 },
     setPercentage,
   });

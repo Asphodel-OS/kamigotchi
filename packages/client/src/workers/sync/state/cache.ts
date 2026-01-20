@@ -189,7 +189,7 @@ export const storeEntities = (stateCache: StateCache, entities: Entity[]) => {
   // log stats
   const numTotal = cacheEntities.length;
   const diff = numTotal - numInitial;
-  console.log(`Entities: received ${numReceived}, diff ${diff}, total ${numTotal}`);
+  //console.log(`Entities: received ${numReceived}, diff ${diff}, total ${numTotal}`);
 };
 
 // decode and cache values received from Kamigaze
@@ -219,7 +219,7 @@ export const storeValues = async (
   //
   const numTotal = valueCache.size;
   const diff = numTotal - numInitial;
-  console.log(`Values: received ${numReceived}, diff ${diff}, total ${numTotal}`);
+  //console.log(`Values: received ${numReceived}, diff ${diff}, total ${numTotal}`);
 };
 
 // delete state entries indicated by Kamigaze
@@ -243,5 +243,5 @@ export const removeValues = (stateCache: StateCache, values: State[]) => {
   // log stats
   const numTotal = valueCache.size;
   const diff = numTotal - numInitial;
-  console.log(`Values (Removal): received ${numReceived}, diff ${diff}, total ${numTotal}`);
+  //console.log(`Values (Removal): received ${numReceived}, diff ${diff}, total ${numTotal}`);
 };

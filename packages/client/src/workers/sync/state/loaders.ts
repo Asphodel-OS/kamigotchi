@@ -1,14 +1,18 @@
 import { ComponentValue } from 'engine/recs';
 
-import { debug as parentDebug } from 'workers/debug';
+import { log } from 'utils/logger';
 import { StateCache } from './cache';
 import { StateStore } from './store';
 
-const debug = parentDebug.extend('StateCache');
-
 // saves a StateCache into an (IndexedDB) Cache
 export const toStore = async (store: StateStore, cache: StateCache) => {
-  debug('cache store with size', cache.state.size, 'at block', cache.blockNumber);
+  log.debug('[StateCache] saving to IndexedDB', {
+    entities: cache.entities.length,
+    components: cache.components.length,
+    stateEntries: cache.state.size,
+    blockNumber: cache.blockNumber,
+    lastKamigazeBlock: cache.lastKamigazeBlock,
+  });
   await Promise.all([
     store.set('ComponentValues', 'current', cache.state),
     store.set('Mappings', 'components', cache.components),
@@ -19,6 +23,7 @@ export const toStore = async (store: StateStore, cache: StateCache) => {
     store.set('LastKamigazeComponent', 'current', cache.lastKamigazeComponent),
     store.set('KamigazeNonce', 'current', cache.kamigazeNonce),
   ]);
+  log.debug('[StateCache] saved successfully');
 };
 
 // loads a StateCache from an (IndexedDB) Cache
@@ -51,6 +56,14 @@ export const fromStore = async (store: StateStore): Promise<StateCache> => {
   const lastKamigazeEntity = lastKamigazeEntityResult ?? 0;
   const lastKamigazeComponent = lastKamigazeComponentResult ?? 0;
   const kamigazeNonce = kamigazeNonceResult ?? 0;
+
+  log.debug('[StateCache] loaded from IndexedDB', {
+    entities: entities.length,
+    components: components.length,
+    stateEntries: state.size,
+    blockNumber,
+    lastKamigazeBlock,
+  });
 
   const componentToIndex = new Map<string, number>();
   const entityToIndex = new Map<string, number>();
