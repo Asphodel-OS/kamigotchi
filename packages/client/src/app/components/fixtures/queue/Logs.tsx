@@ -126,10 +126,10 @@ export const Logs = ({
 };
 
 const Content = styled.div`
-  border: solid grey 0.14vw;
+  border: solid var(--border-secondary, grey) 0.14vw;
   border-radius: 0.4vw;
 
-  background-color: #ddd;
+  background-color: var(--bg-secondary, #ddd);
   margin: 0.2vw;
   padding: 0.2vw;
   overflow-y: auto;
@@ -157,13 +157,13 @@ const RowSegment = styled.div`
 `;
 
 const Bar = styled.div`
-  border-top: 0.1vw solid #888;
+  border-top: 0.1vw solid var(--text-muted, #888);
   width: 40%;
   padding: 0.1vw;
 `;
 
 const Text = styled.div`
-  color: #333;
+  color: var(--text-primary, #333);
   margin: 0.2vw;
 
   font-family: Pixel;

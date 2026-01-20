@@ -26,22 +26,22 @@ export const ExitButton = ({
 };
 
 const Button = styled.button`
-  background-color: #ffffff;
-  border: 0.15vw solid black;
+  background-color: var(--bg-primary, #ffffff);
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.6vw;
 
-  color: black;
+  color: var(--text-primary, black);
   padding: 0.3vw 0.4vw;
 
   font-size: 0.9vw;
   cursor: pointer;
 
   &:hover {
-    background-color: #e8e8e8;
+    background-color: var(--hover-bg, #e8e8e8);
   }
 
   &:active {
-    background-color: #c4c4c4;
+    background-color: var(--active-bg, #c4c4c4);
   }
   z-index: 1;
 `;

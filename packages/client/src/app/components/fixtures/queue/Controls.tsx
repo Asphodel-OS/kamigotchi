@@ -138,8 +138,8 @@ const Row = styled.div`
 `;
 
 const RowPrefix = styled.div`
-  border-left: 0.15vw solid #333;
-  border-bottom: 0.15vw solid #333;
+  border-left: 0.15vw solid var(--border-primary, #333);
+  border-bottom: 0.15vw solid var(--border-primary, #333);
   border-radius: 0 0 0 0.4vw;
   margin 0.2vw;
   padding: 0.3vw;
@@ -150,7 +150,7 @@ const RowPrefix = styled.div`
 `;
 
 const Text = styled.div`
-  color: #333;
+  color: var(--text-primary, #333);
   padding-bottom: 0.09vw;
   text-align: left;
   font-family: Pixel;

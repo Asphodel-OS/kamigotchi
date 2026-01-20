@@ -96,7 +96,7 @@ export const IconButton = forwardRef(function IconButton(
   return (
     <Container
       width={width}
-      color={color ?? '#fff'}
+      color={color ?? 'var(--bg-primary, #fff)'}
       onClick={!disabled ? handleClick : () => {}}
       scale={scale}
       orientation={scaleOrientation}
@@ -140,7 +140,7 @@ const Container = styled.button<{
   shake?: boolean;
 }>`
   position: relative;
-  border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15vw')};
+  border: ${({ noBorder }) => (noBorder ? 'none' : 'solid var(--border-primary, black) 0.15vw')};
   border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
 
   height: ${({ scale, orientation }) => `${scale}${orientation}`};
@@ -153,7 +153,7 @@ const Container = styled.button<{
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
+  background-color: ${({ color, disabled }) => (disabled ? 'var(--disabled-bg, #bbb)' : color)};
   box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
 
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
@@ -207,10 +207,10 @@ const Text = styled.div<{ scale: number; orientation: string; withIcon?: boolean
 // TODO: get this scaling correctly with parent hover
 const Corner = styled.div<{ radius: number; orientation: string; flatten?: string }>`
   position: absolute;
-  border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
+  border: solid var(--border-primary, black) ${({ radius }) => radius}${({ orientation }) => orientation};
   border-bottom-right-radius: ${({ radius, flatten }) =>
       flatten === 'right' ? 0 : radius - 0.15}${({ orientation }) => orientation};
-  border-color: transparent black black transparent;
+  border-color: transparent var(--border-primary, black) var(--border-primary, black) transparent;
   bottom: 0;
   right: 0;
   width: 0;
@@ -220,9 +220,9 @@ const Corner = styled.div<{ radius: number; orientation: string; flatten?: strin
 // TODO: get this scaling correctly with parent hover
 const CornerAlt = styled.div<{ radius: number; orientation: string }>`
   position: absolute;
-  border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
+  border: solid var(--border-primary, black) ${({ radius }) => radius}${({ orientation }) => orientation};
   border-top-right-radius: ${({ radius }) => radius - 0.15}${({ orientation }) => orientation};
-  border-color: black black transparent transparent;
+  border-color: var(--border-primary, black) var(--border-primary, black) transparent transparent;
   top: 0;
   right: 0;
   width: 0;
@@ -231,9 +231,9 @@ const CornerAlt = styled.div<{ radius: number; orientation: string }>`
 
 const Balance = styled.div`
   position: absolute;
-  background-color: white;
-  border-top: solid black 0.15vw;
-  border-left: solid black 0.15vw;
+  background-color: var(--bg-primary, white);
+  border-top: solid var(--border-primary, black) 0.15vw;
+  border-left: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.3vw 0 0.3vw 0;
   bottom: 0;
   right: 0;

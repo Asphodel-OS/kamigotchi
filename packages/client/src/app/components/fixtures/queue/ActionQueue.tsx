@@ -58,10 +58,10 @@ const Content = styled.div`
   bottom: 1.7vh;
   max-height: 23vh;
 
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
 
-  background-color: white;
+  background-color: var(--bg-primary, white);
   display: flex;
   flex-flow: column nowrap;
 `;

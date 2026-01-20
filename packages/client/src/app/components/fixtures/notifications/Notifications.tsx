@@ -109,8 +109,8 @@ const Contents = styled.div`
 const Card = styled.div`
   position: relative;
 
-  background-color: #fff;
-  border: 0.2vw solid #333;
+  background-color: var(--bg-primary, #fff);
+  border: 0.2vw solid var(--border-primary, #333);
   border-radius: 0.8vw;
   padding: 0.7vh 1vw;
   width: 100%;
@@ -133,14 +133,14 @@ const Title = styled.p`
   text-align: left;
   text-wrap: wrap;
   justify-content: flex-start;
-  color: #333;
+  color: var(--text-primary, #333);
   padding: 1vh 0.5vw 0 0.5vw;
 
   max-width: 100%;
 `;
 
 const Description = styled.div`
-  color: #333;
+  color: var(--text-secondary, #333);
 
   font-family: Pixel;
   text-align: left;
@@ -157,25 +157,25 @@ const ExitButton = styled.button`
   right: -0.6vw;
   top: -0.6vw;
 
-  background-color: #ffffff;
-  border: 0.15vw solid black;
+  background-color: var(--bg-primary, #ffffff);
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.6vw;
   opacity: 0;
 
-  color: black;
+  color: var(--text-primary, black);
   padding: 0.3vw 0.4vw;
 
   font-size: 0.9vw;
   cursor: pointer;
 
   &:hover {
-    background-color: #e8e8e8;
+    background-color: var(--hover-bg, #e8e8e8);
     opacity: 1;
     animation: ${() => fadeIn} 0.1s ease-in-out;
   }
 
   &:active {
-    background-color: #c4c4c4;
+    background-color: var(--active-bg, #c4c4c4);
     opacity: 1;
   }
 `;

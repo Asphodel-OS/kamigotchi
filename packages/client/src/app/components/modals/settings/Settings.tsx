@@ -6,6 +6,7 @@ import { UIComponent } from 'app/root/types';
 import { SettingsIcon } from 'assets/images/icons/menu';
 import { Account } from './Account';
 import { Debugging } from './Debugging';
+import { Theme } from './Theme';
 import { Volume } from './Volume';
 
 export const SettingsModal: UIComponent = {
@@ -49,6 +50,8 @@ export const SettingsModal: UIComponent = {
         overlay
         truncate
       >
+        <Theme />
+        <Divider />
         <Volume />
         <Divider />
         <Account />
@@ -60,7 +63,7 @@ export const SettingsModal: UIComponent = {
 };
 
 const Divider = styled.hr`
-  color: #333;
+  color: var(--border-secondary, #333);
   width: 90%;
   align-self: center;
 `;

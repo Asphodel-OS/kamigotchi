@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 
 import 'app/styles/font.css';
+import 'app/styles/theme.css';
 import { Layers } from 'network/';
 import { Root } from './root/Root';
 

@@ -69,8 +69,8 @@ export const Card = ({
 };
 
 const Wrapper = styled.div<{ fullWidth?: boolean }>`
-  background-color: #fff;
-  border: 0.15vw solid black;
+  background-color: var(--bg-primary, #fff);
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.75vw;
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
@@ -81,7 +81,7 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 
 const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   position: relative;
-  border-right: solid black 0.15vw;
+  border-right: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw 0vw 0vw 0.6vw;
 
   min-height: 100%;
@@ -108,9 +108,9 @@ const Image = styled.img<{ onClick?: () => void; fit?: string }>`
 `;
 
 const Container = styled.div`
-  border-color: black;
+  border-color: var(--border-primary, black);
   border-width: 0.15vw;
-  color: black;
+  color: var(--text-primary, black);
   flex-grow: 1;
 
   display: flex;

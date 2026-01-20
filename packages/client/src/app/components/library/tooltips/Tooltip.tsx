@@ -130,7 +130,7 @@ const PopoverContainer = styled.span.attrs<{
   maxWidth?: number;
 }>(({ isVisible, color, tooltipPosition, maxWidth }) => ({
   style: {
-    backgroundColor: color ?? '#fff',
+    backgroundColor: color ?? 'var(--bg-primary, #fff)',
     opacity: isVisible ? 1 : 0,
     top: tooltipPosition.y,
     left: tooltipPosition.x,
@@ -143,10 +143,10 @@ const PopoverContainer = styled.span.attrs<{
   maxWidth?: number;
 }>`
   position: fixed;
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
   padding: 0.9vw;
-  color: ${({ color }) => color || '#333'};
+  color: ${({ color }) => color || 'var(--text-primary, #333)'};
 
   display: flex;
   flex-direction: column;

@@ -66,12 +66,12 @@ export const ActionButton = ({
     }
 
     if (inverted) {
-      styles.backgroundColor = '#111';
-      styles.borderColor = 'white';
-      styles.color = 'white';
-      if (disabled) styles.backgroundColor = '#4d4d4d';
+      styles.backgroundColor = 'var(--bg-tertiary, #111)';
+      styles.borderColor = 'var(--text-primary, white)';
+      styles.color = 'var(--text-primary, white)';
+      if (disabled) styles.backgroundColor = 'var(--disabled-bg, #4d4d4d)';
     } else {
-      if (disabled) styles.backgroundColor = '#b2b2b2';
+      if (disabled) styles.backgroundColor = 'var(--disabled-bg, #b2b2b2)';
     }
 
     if (fill) styles.flexGrow = '1';
@@ -103,10 +103,10 @@ export const ActionButton = ({
 };
 
 const Button = styled.button`
-  background-color: #ffffff;
-  border: solid black;
+  background-color: var(--bg-primary, #ffffff);
+  border: solid var(--border-primary, black);
 
-  color: black;
+  color: var(--text-primary, black);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,10 +117,10 @@ const Button = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #e8e8e8;
+    background-color: var(--hover-bg, #e8e8e8);
   }
   &:active {
-    background-color: #c4c4c4;
+    background-color: var(--active-bg, #c4c4c4);
   }
 `;
 

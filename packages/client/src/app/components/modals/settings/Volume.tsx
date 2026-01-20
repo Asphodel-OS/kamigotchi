@@ -80,7 +80,7 @@ const Section = styled.div`
 
 const Header = styled.div`
   font-size: 1vw;
-  color: #333;
+  color: var(--text-secondary, #333);
   text-align: left;
   font-family: Pixel;
   padding-bottom: 0.5vw;
@@ -105,7 +105,7 @@ const Icon = styled.img`
 `;
 
 const Text = styled.p`
-  color: #333;
+  color: var(--text-secondary, #333);
   font-family: Pixel;
   font-size: 0.8vw;
   text-align: left;

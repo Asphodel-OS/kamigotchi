@@ -150,8 +150,8 @@ const Content = styled.div<{
   backgroundColor?: string;
 }>`
   position: relative;
-  background-color: white;
-  border: solid black 0.15vw;
+  background-color: var(--bg-primary, white);
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 1.2vw;
 
   width: 100%;
@@ -172,7 +172,7 @@ const Content = styled.div<{
     min-width: 48vw;
     min-height: 42vh;
   }
-  background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
+  background-color: ${({ backgroundColor }) => backgroundColor || 'var(--bg-primary, white)'};
 `;
 
 const ButtonRow = styled.div`
@@ -186,15 +186,14 @@ const ButtonRow = styled.div`
 `;
 
 const Header = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15vw;')}
+  ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid var(--border-secondary, grey) 0.15vw;')}
   border-radius: 1.05vw 1.05vw 0 0;
   display: flex;
   flex-flow: column nowrap;
-  border-color: grey;
 `;
 
 const Footer = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15vw;')}
+  ${({ noBorder }) => (noBorder ? '' : 'border-top: solid var(--border-secondary, grey) 0.15vw;')}
   border-radius: 0 0 1.05vw 1.05vw;
   display: flex;
   flex-flow: column nowrap;

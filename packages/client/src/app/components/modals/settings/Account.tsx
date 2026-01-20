@@ -61,7 +61,7 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  color: #333;
+  color: var(--text-secondary, #333);
   margin: 0.6vw 0vw;
   font-family: Pixel;
   font-size: 1vw;
@@ -82,7 +82,7 @@ const HeaderRow = styled.div`
 `;
 
 const SubHeader = styled.div`
-  color: #333;
+  color: var(--text-secondary, #333);
   padding: 0vw 0.2vw;
   font-family: Pixel;
   font-size: 0.75vw;
@@ -107,7 +107,7 @@ const RowContent = styled.div`
 `;
 
 const Text = styled.div`
-  color: #333;
+  color: var(--text-secondary, #333);
   font-family: Pixel;
   font-size: 0.6vw;
   text-align: left;

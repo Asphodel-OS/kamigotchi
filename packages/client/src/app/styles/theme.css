@@ -1,0 +1,66 @@
+/* Light Theme (default) */
+:root {
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0f0f0;
+  --bg-tertiary: #e8e8e8;
+
+  /* Text */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+
+  /* Borders */
+  --border-primary: black;
+  --border-secondary: grey;
+
+  /* Interactive states */
+  --hover-bg: #dddddd;
+  --active-bg: #c4c4c4;
+  --disabled-bg: #b2b2b2;
+  --disabled-text: #888888;
+
+  /* Scrollbar */
+  --scrollbar-thumb: #888888;
+  --scrollbar-track: #f0f0f0;
+
+  /* Overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+}
+
+/* Dark Theme */
+[data-theme='dark'] {
+  /* Backgrounds */
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-tertiary: #0f3460;
+
+  /* Text */
+  --text-primary: #e8e8e8;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+
+  /* Borders */
+  --border-primary: #4a4a6a;
+  --border-secondary: #3a3a5a;
+
+  /* Interactive states */
+  --hover-bg: #2a2a4e;
+  --active-bg: #3a3a6e;
+  --disabled-bg: #4d4d6d;
+  --disabled-text: #6a6a8a;
+
+  /* Scrollbar */
+  --scrollbar-thumb: #4a4a6a;
+  --scrollbar-track: #1a1a2e;
+
+  /* Overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+}
+
+/* Smooth theme transition */
+*,
+*::before,
+*::after {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}

@@ -30,7 +30,7 @@ const Container = styled.div`
 
 const Title = styled.div`
   font-size: 1.2vw;
-  color: #333;
+  color: var(--text-primary, #333);
   text-align: left;
   font-family: Pixel;
 `;
