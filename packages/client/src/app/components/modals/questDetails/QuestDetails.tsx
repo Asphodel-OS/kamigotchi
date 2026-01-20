@@ -307,11 +307,11 @@ export const QuestDetailsModal: UIComponent = {
 };
 
 const Header = styled.div<{ color?: string }>`
-  border-color: white;
+  border-color: var(--border-primary, white);
   padding: 0.7vw 1vw 0.2vw 1vw;
   width: 95%;
-  color: ${({ color }) => color ?? 'black'};
+  color: var(--text-primary, ${({ color }) => color ?? 'black'});
   font-size: 1.4vw;
   font-weight: bold;
   line-height: 2vw;
-`;
+`;;

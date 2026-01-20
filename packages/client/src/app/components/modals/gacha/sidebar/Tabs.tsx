@@ -23,7 +23,7 @@ export const Tabs = ({
           key={t}
           onClick={() => handleTab(t)}
           disabled={tab === t}
-          style={{ borderLeft: i == 0 ? '' : 'solid black .15vw' }}
+          style={{ borderLeft: i == 0 ? '' : 'solid var(--border-primary, black) .15vw' }}
         >
           {t.toLowerCase()}
         </Button>
@@ -33,7 +33,7 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  border-bottom: 0.15vw solid black;
+  border-bottom: 0.15vw solid var(--border-primary, black);
 
   display: flex;
   width: 100%;
@@ -41,7 +41,7 @@ const Container = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-around;
-`;
+`;;
 
 const Button = styled.button`
   border: none;
@@ -49,6 +49,8 @@ const Button = styled.button`
   justify-content: center;
   align-items: center;
   width: 100%;
+  color: var(--text-primary, black);
+  background-color: var(--bg-primary, transparent);
 
   font-size: 1.2vw;
   text-align: center;
@@ -57,14 +59,14 @@ const Button = styled.button`
   pointer-events: auto;
   user-select: none;
   &:active {
-    background-color: #111;
+    background-color: var(--active-bg, #111);
   }
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:disabled {
-    background-color: #bbb;
+    background-color: var(--disabled-bg, #bbb);
     cursor: default;
     pointer-events: none;
   }
-`;
+`;;

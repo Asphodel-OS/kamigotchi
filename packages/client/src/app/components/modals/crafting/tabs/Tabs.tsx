@@ -38,25 +38,26 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15vw black;
+  border: solid 0.15vw var(--border-primary, black);
   border-radius: 0.3vw 0.3vw 0 0;
 
   margin-bottom: 0.6vw;
   width: 100%;
-  background-color: white;
+  background-color: var(--bg-primary, white);
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-`;
+`;;
 
 const Button = styled.button`
   border: none;
   padding: 0.5vw;
 
   flex-grow: 1;
-  color: black;
+  color: var(--text-primary, black);
+  background-color: var(--bg-primary, transparent);
   justify-content: center;
-  border-right: solid black 0.15vw;
+  border-right: solid var(--border-primary, black) 0.15vw;
 
   font-size: 0.9vw;
   text-align: center;
@@ -64,14 +65,14 @@ const Button = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:active {
-    background-color: #111;
+    background-color: var(--active-bg, #111);
   }
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:disabled {
-    background-color: #b2b2b2;
+    background-color: var(--disabled-bg, #b2b2b2);
     cursor: default;
     pointer-events: none;
   }
-`;
+`;;

@@ -183,7 +183,7 @@ const Container = styled.div<{ color: string }>`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  border-top: solid grey 0.15vw;
+  border-top: solid var(--border-secondary, grey) 0.15vw;
   height: 26vh;
   transition: height 0.3s ease;
   overflow-y: auto;
@@ -192,10 +192,10 @@ const Container = styled.div<{ color: string }>`
     width: 0.3vw;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: ${({ color }) => color};
+    background-color: var(--text-primary, ${({ color }) => color});
     border-radius: 0.3vw;
   }
-`;
+`;;
 
 const DetailsSection = styled.div`
   display: flex;
@@ -215,8 +215,8 @@ const Section = styled.div`
 const SectionTitle = styled.div<{ color?: string }>`
   font-size: 0.8vw;
   font-weight: bold;
-  color: ${({ color }) => color};
-`;
+  color: var(--text-primary, ${({ color }) => color});
+`;;
 
 const ItemsRow = styled.div`
   display: flex;
@@ -230,10 +230,11 @@ const RewardItem = styled.div`
   align-items: center;
   gap: 0.3vw;
   padding: 0.3vw;
-  border: solid #5e4a14ff 0.1vw;
+  border: solid var(--border-accent, #5e4a14ff) 0.1vw;
   border-radius: 0.3vw;
   font-size: 0.7vw;
-`;
+  color: var(--text-primary, black);
+`;;
 
 const RewardImage = styled.img`
   height: 1.5vw;
@@ -254,13 +255,13 @@ const ObjectiveItem = styled.div<{ complete?: boolean; color?: string }>`
   align-items: center;
   gap: 0.3vw;
   padding: 0.3vw;
-  border: solid #5e4a14ff 0.1vw;
+  border: solid var(--border-accent, #5e4a14ff) 0.1vw;
   border-radius: 0.3vw;
   font-size: 0.83vw;
 
-  color: ${({ color }) => color};
+  color: var(--text-primary, ${({ color }) => color});
   ${({ complete }) => complete && 'opacity: 0.6;'}
-`;
+`;;
 
 const Options = styled.div`
   position: absolute;
@@ -278,20 +279,21 @@ const Options = styled.div`
 
 const Label = styled.div<{ color?: string }>`
   font-size: 1vw;
-  color: ${({ color }) => color};
-`;
+  color: var(--text-primary, ${({ color }) => color});
+`;;
 
 const Option = styled.button<{ color?: string; backgroundColor?: string }>`
   position: relative;
-  ${({ color }) => color && `color: ${color};  border: solid ${color} 0.15vw;`}
+  ${({ color }) => color && `color: var(--text-primary, ${color}); border: solid var(--border-primary, ${color}) 0.15vw;`}
   padding: 0.2vw 0.3vw 0vw 0.3vw;
   font-size: 0.8vw;
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 0.5);
   cursor: pointer;
   width: 47%;
   border-radius: 0.3vw;
   line-height: 1.3vw;
+  background-color: var(--bg-secondary, ${({ backgroundColor }) => backgroundColor || 'transparent'});
 
   &:disabled {
     opacity: 0.3;
@@ -305,4 +307,4 @@ const Option = styled.button<{ color?: string; backgroundColor?: string }>`
   &:active {
     animation: ${() => clickFx()} 0.3s;
   }
-`;
+`;;

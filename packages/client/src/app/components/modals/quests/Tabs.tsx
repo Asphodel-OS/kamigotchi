@@ -18,14 +18,14 @@ export const Tabs = ({
   return (
     <Container>
       <Button
-        style={{ borderRight: 'solid black .15vw' }}
+        style={{ borderRight: 'solid var(--border-primary, black) .15vw' }}
         onClick={() => setTab('AVAILABLE')}
         disabled={tab === 'AVAILABLE'}
       >
         Available
       </Button>
       <Button
-        style={{ borderRight: 'solid black .15vw' }}
+        style={{ borderRight: 'solid var(--border-primary, black) .15vw' }}
         onClick={() => setTab('ONGOING')}
         disabled={tab === 'ONGOING'}
       >
@@ -40,18 +40,19 @@ export const Tabs = ({
 
 const Container = styled.div`
   width: 100%;
-  border-top: solid black 0.15vw;
-  background-color: white;
+  border-top: solid var(--border-primary, black) 0.15vw;
+  background-color: var(--bg-primary, white);
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-`;
+`;;
 
 const Button = styled.button`
   border: none;
   padding: 0.5vw;
   flex-grow: 1;
-  color: black;
+  color: var(--text-primary, black);
+  background-color: var(--bg-primary, transparent);
   justify-content: center;
 
   font-family: Pixel;
@@ -61,14 +62,14 @@ const Button = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:active {
-    background-color: #111;
+    background-color: var(--active-bg, #111);
   }
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:disabled {
-    background-color: #b2b2b2;
+    background-color: var(--disabled-bg, #b2b2b2);
     cursor: default;
     pointer-events: none;
   }
-`;
+`;;

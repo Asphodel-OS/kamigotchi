@@ -198,17 +198,17 @@ export const QuestCard = ({
 
 const Container = styled.div<{ isMainQuest?: boolean }>`
   position: relative;
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 1.2vw;
   padding: 1.2vw;
   margin: 0.9vw;
-  background-color: ${({ isMainQuest }) => (isMainQuest ? '#E8F5E9' : '#fff')};
+  background-color: ${({ isMainQuest }) => (isMainQuest ? 'var(--bg-accent-green, #E8F5E9)' : 'var(--bg-primary, #fff)')};
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
-`;
+`;;
 
 const Title = styled.div`
   display: flex;
@@ -216,14 +216,15 @@ const Title = styled.div`
   line-height: 1.2vw;
   width: 100%;
   font-weight: bold;
-  background-color: rgba(248, 246, 228, 1);
+  color: var(--text-primary, black);
+  background-color: var(--bg-secondary, rgba(248, 246, 228, 1));
   border-radius: 0.5vw;
   padding: 0.3vw;
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
   flex-wrap: nowrap;
-`;
+`;;
 
 const IconsContainer = styled.div`
   display: flex;
@@ -233,14 +234,14 @@ const IconsContainer = styled.div`
 `;
 
 const Faction = styled.div`
-  border: 0.15vw solid #e4c270;
+  border: 0.15vw solid var(--border-accent, #e4c270);
   border-radius: 6.5vw;
   height: 2vw;
   width: 2vw;
   display: flex;
   align-items: center;
   justify-content: center;
-`;
+`;;
 
 const Section = styled.div`
   display: flex;
@@ -255,11 +256,12 @@ const SubTitle = styled.div`
   line-height: 1.5vw;
   text-align: left;
   justify-content: flex-start;
-  background-color: #f5f0cdff;
+  color: var(--text-primary, black);
+  background-color: var(--bg-tertiary, #f5f0cdff);
   border-radius: 0.5vw;
   padding: 0.3vw;
   width: fit-content;
-`;
+`;;
 
 const Row = styled.div`
   display: flex;
@@ -278,10 +280,11 @@ const ConditionText = styled.div<{ objective: boolean }>`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  border: solid black 0.15vw;
+  color: var(--text-primary, black);
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.3vw;
-  background-color: #fff;
-`;
+  background-color: var(--bg-primary, #fff);
+`;;
 
 const Image = styled.img<{ size: number }>`
   height: ${({ size }) => size}vw;

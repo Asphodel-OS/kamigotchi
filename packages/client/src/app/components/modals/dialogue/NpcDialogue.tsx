@@ -87,7 +87,7 @@ export const NpcDialogue = ({
 const Text = styled.div<{
   color?: string;
 }>`
-  color: ${({ color }) => color || 'black'};
+  color: var(--text-primary, ${({ color }) => color || 'black'});
   position: relative;
   text-align: justify;
   width: 100%;
@@ -110,11 +110,11 @@ const Text = styled.div<{
     width: 0.3vw;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: ${({ color }) => color || 'black'};
+    background-color: var(--text-primary, ${({ color }) => color || 'black'});
     border-radius: 0.3vw;
     background-clip: padding-box;
   }
-`;
+`;;
 
 const ButtonRow = styled.div`
   position: absolute;
@@ -139,23 +139,23 @@ const NpcSprite = styled.img`
 `;
 
 const NpcName = styled.div`
-  color: black;
-  border: solid black 0.15vw;
+  color: var(--text-primary, black);
+  border: solid var(--border-primary, black) 0.15vw;
   padding: 0.3vw;
   font-size: min(2vw, 2vh);
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
-  background-color: white;
-`;
+  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 0.5);
+  background-color: var(--bg-primary, white);
+`;;
 
 const Bottom = styled.div<{ hasQuests: boolean }>`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  border-top: solid grey 0.15vw;
+  border-top: solid var(--border-secondary, grey) 0.15vw;
   height: ${({ hasQuests }) => (hasQuests ? '60%' : '40%')};
   transition: height 0.3s ease;
-`;
+`;;
 
 const OptionColumn = styled.div<{ color: string }>`
   margin-top: 0.5vw;
@@ -177,47 +177,47 @@ const OptionColumn = styled.div<{ color: string }>`
     width: 0.3vw;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: ${({ color }) => color};
+    background-color: var(--text-primary, ${({ color }) => color});
     border-radius: 0.3vw;
     background-clip: padding-box;
   }
-`;
+`;;
 
 const OptionsLabel = styled.div<{ color?: string }>`
   font-size: 1vw;
-  color: ${({ color }) => color};
-`;
+  color: var(--text-primary, ${({ color }) => color});
+`;;
 
 const Option = styled.button<{ color?: string }>`
   position: relative;
-  color: ${({ color }) => color || 'black'};
-  border: solid black 0.15vw;
+  color: var(--text-primary, ${({ color }) => color || 'black'});
+  border: solid var(--border-primary, black) 0.15vw;
   padding: 0.1vw;
   text-wrap: wrap;
   font-size: 0.7vw;
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 0.5);
   cursor: pointer;
   width: 55%;
   border-radius: 0.3vw;
   line-height: 1.3vw;
-  background-color: white;
+  background-color: var(--bg-primary, white);
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-`;
+`;;
 
 const Message = styled.div<{ color?: string }>`
   position: relative;
-  color: ${({ color }) => color || 'black'};
+  color: var(--text-primary, ${({ color }) => color || 'black'});
   padding: 0.2vw 0.3vw 0vw 0.3vw;
   font-size: 0.7vw;
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 0.5);
   cursor: pointer;
 
   border-radius: 0.3vw;
   line-height: 1.3vw;
-  background-color: white;
-`;
+  background-color: var(--bg-primary, white);
+`;;

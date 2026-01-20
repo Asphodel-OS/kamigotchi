@@ -153,7 +153,7 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
   text-align: justify;
   white-space: pre-line;
   word-wrap: break-word;
-  color: ${({ isExpanded, color }) => (isExpanded ? color : '#cfcfcf')};
+  color: ${({ isExpanded, color }) => (isExpanded ? `var(--text-primary, ${color || 'black'})` : 'var(--text-muted, #cfcfcf)')};
 
   transition:
     height 0.3s ease,
@@ -168,15 +168,16 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: ${({ color }) => color};
+    background-color: var(--text-primary, ${({ color }) => color || 'black'});
     border-radius: 0.3vw;
     background-clip: padding-box;
   }
-`;
+`;;
 
 const Divider = styled.button<{ color?: string; expanded?: boolean }>`
   position: relative;
-  border: ${({ color }) => `solid ${color} 0.15vw`};
+  border: ${({ color }) => `solid var(--border-primary, ${color || 'black'}) 0.15vw`};
+  background-color: var(--bg-primary, transparent);
 
   width: 100%;
   height: 3%;
@@ -188,15 +189,15 @@ const Divider = styled.button<{ color?: string; expanded?: boolean }>`
 
   font-size: 1vw;
   padding: 0.8vw;
-  color: ${({ color }) => color};
+  color: var(--text-primary, ${({ color }) => color || 'black'});
 
   cursor: pointer;
 
   ::after {
-    content: ${({ expanded }) => (expanded ? '"▾"' : '"▸"')};
-    color: ${({ color }) => color};
+    content: ${({ expanded }) => (expanded ? '\"▾\"' : '\"▸\"')};
+    color: var(--text-primary, ${({ color }) => color || 'black'});
     font-size: 2.5vw;
     transform: scale(0.8) translateY(-0.2vw);
     transition: transform 0.3s ease;
   }
-`;
+`;;
