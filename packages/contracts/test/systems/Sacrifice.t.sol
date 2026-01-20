@@ -1,23 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
-import { Test } from "forge-std/Test.sol";
 import "tests/systems/Minting/MintTemplate.t.sol";
 
 import { LibSacrifice, SACRIFICE_DT_NORMAL, SACRIFICE_DT_UNCOMMON_PITY, SACRIFICE_DT_RARE_PITY, UNCOMMON_PITY_THRESHOLD, RARE_PITY_THRESHOLD, BURN_ADDRESS } from "libraries/LibSacrifice.sol";
-
-/// @notice Test harness to expose internal LibSacrifice functions
-contract LibSacrificeHarness {
-  function filterNonZero(
-    uint32[] memory indices,
-    uint256[] memory amounts
-  ) external pure returns (uint32[] memory, uint256[] memory) {
-    return LibSacrifice.filterNonZero(indices, amounts);
-  }
-}
 import { KamiSacrificeCommitSystem, ID as SacrificeCommitSystemID } from "systems/KamiSacrificeCommitSystem.sol";
 import { KamiSacrificeRevealSystem, ID as SacrificeRevealSystemID } from "systems/KamiSacrificeRevealSystem.sol";
-import { _SacrificeRegistrySystem, ID as SacrificeRegistrySystemID } from "systems/_SacrificeRegistrySystem.sol";
 
 contract SacrificeTest is MintTemplate {
   KamiSacrificeCommitSystem _SacrificeCommitSystem;
@@ -173,25 +161,21 @@ contract SacrificeTest is MintTemplate {
     normalKeys[0] = COMMON_REWARD_INDEX;
     uint256[] memory normalWeights = new uint256[](1);
     normalWeights[0] = 100;
+    LibSacrifice.setDroptable(components, SACRIFICE_DT_NORMAL, normalKeys, normalWeights);
 
     // Uncommon pity droptable
     uint32[] memory uncommonKeys = new uint32[](1);
     uncommonKeys[0] = UNCOMMON_REWARD_INDEX;
     uint256[] memory uncommonWeights = new uint256[](1);
     uncommonWeights[0] = 100;
+    LibSacrifice.setDroptable(components, SACRIFICE_DT_UNCOMMON_PITY, uncommonKeys, uncommonWeights);
 
     // Rare pity droptable
     uint32[] memory rareKeys = new uint32[](1);
     rareKeys[0] = RARE_REWARD_INDEX;
     uint256[] memory rareWeights = new uint256[](1);
     rareWeights[0] = 100;
-
-    // Use the registry system to set up all droptables
-    __SacrificeRegistrySystem.setAllDroptables(
-      normalKeys, normalWeights,
-      uncommonKeys, uncommonWeights,
-      rareKeys, rareWeights
-    );
+    LibSacrifice.setDroptable(components, SACRIFICE_DT_RARE_PITY, rareKeys, rareWeights);
 
     vm.stopPrank();
   }
@@ -463,132 +447,4 @@ contract SacrificeTest is MintTemplate {
     _SacrificeRevealSystem.executeTypedBatch(commitIDs);
   }
 
-}
-
-contract FilterNonZeroTest is Test {
-  LibSacrificeHarness harness;
-
-  function setUp() public {
-    harness = new LibSacrificeHarness();
-  }
-
-  function testFilterSingleNonZero() public view {
-    // Typical sacrifice case: 36 items, only 1 selected
-    uint32[] memory indices = new uint32[](5);
-    indices[0] = 30001;
-    indices[1] = 30002;
-    indices[2] = 30003;
-    indices[3] = 30004;
-    indices[4] = 30005;
-
-    uint256[] memory amounts = new uint256[](5);
-    amounts[0] = 0;
-    amounts[1] = 0;
-    amounts[2] = 1; // Only this one selected
-    amounts[3] = 0;
-    amounts[4] = 0;
-
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
-
-    assertEq(filteredIndices.length, 1);
-    assertEq(filteredAmounts.length, 1);
-    assertEq(filteredIndices[0], 30003);
-    assertEq(filteredAmounts[0], 1);
-  }
-
-  function testFilterMultipleNonZero() public view {
-    uint32[] memory indices = new uint32[](5);
-    indices[0] = 100;
-    indices[1] = 200;
-    indices[2] = 300;
-    indices[3] = 400;
-    indices[4] = 500;
-
-    uint256[] memory amounts = new uint256[](5);
-    amounts[0] = 2;
-    amounts[1] = 0;
-    amounts[2] = 5;
-    amounts[3] = 0;
-    amounts[4] = 1;
-
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
-
-    assertEq(filteredIndices.length, 3);
-    assertEq(filteredAmounts.length, 3);
-    assertEq(filteredIndices[0], 100);
-    assertEq(filteredAmounts[0], 2);
-    assertEq(filteredIndices[1], 300);
-    assertEq(filteredAmounts[1], 5);
-    assertEq(filteredIndices[2], 500);
-    assertEq(filteredAmounts[2], 1);
-  }
-
-  function testFilterAllZeros() public view {
-    uint32[] memory indices = new uint32[](3);
-    indices[0] = 1;
-    indices[1] = 2;
-    indices[2] = 3;
-
-    uint256[] memory amounts = new uint256[](3);
-    amounts[0] = 0;
-    amounts[1] = 0;
-    amounts[2] = 0;
-
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
-
-    assertEq(filteredIndices.length, 0);
-    assertEq(filteredAmounts.length, 0);
-  }
-
-  function testFilterAllNonZero() public view {
-    uint32[] memory indices = new uint32[](3);
-    indices[0] = 10;
-    indices[1] = 20;
-    indices[2] = 30;
-
-    uint256[] memory amounts = new uint256[](3);
-    amounts[0] = 1;
-    amounts[1] = 2;
-    amounts[2] = 3;
-
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
-
-    assertEq(filteredIndices.length, 3);
-    assertEq(filteredAmounts.length, 3);
-    assertEq(filteredIndices[0], 10);
-    assertEq(filteredIndices[1], 20);
-    assertEq(filteredIndices[2], 30);
-    assertEq(filteredAmounts[0], 1);
-    assertEq(filteredAmounts[1], 2);
-    assertEq(filteredAmounts[2], 3);
-  }
-
-  function testFilterEmptyArrays() public view {
-    uint32[] memory indices = new uint32[](0);
-    uint256[] memory amounts = new uint256[](0);
-
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
-
-    assertEq(filteredIndices.length, 0);
-    assertEq(filteredAmounts.length, 0);
-  }
-
-  function testFilterLargeArray() public view {
-    // Simulate realistic 36-item droptable with 1 winner
-    uint32[] memory indices = new uint32[](36);
-    uint256[] memory amounts = new uint256[](36);
-
-    for (uint32 i = 0; i < 36; i++) {
-      indices[i] = 30001 + i;
-      amounts[i] = 0;
-    }
-    amounts[17] = 1; // Index 30018 wins
-
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
-
-    assertEq(filteredIndices.length, 1);
-    assertEq(filteredAmounts.length, 1);
-    assertEq(filteredIndices[0], 30018);
-    assertEq(filteredAmounts[0], 1);
-  }
 }
