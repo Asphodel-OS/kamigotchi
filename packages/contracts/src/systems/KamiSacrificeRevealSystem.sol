@@ -5,7 +5,6 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
-import { LibCommit } from "libraries/LibCommit.sol";
 import { LibSacrifice } from "libraries/LibSacrifice.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.sacrifice.reveal"));
@@ -34,9 +33,6 @@ contract KamiSacrificeRevealSystem is System {
 
     // Validate commits belong to caller and are sacrifice commits
     LibSacrifice.checkAndExtractIsCommit(components, commitIDs);
-
-    // Filter out already-revealed or non-existent commits
-    LibCommit.filterInvalid(components, commitIDs);
 
     // Reveal and distribute loot
     LibSacrifice.reveal(world, components, commitIDs);

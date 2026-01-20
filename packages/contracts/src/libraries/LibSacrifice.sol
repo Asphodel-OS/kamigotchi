@@ -8,7 +8,6 @@ import { LibString } from "solady/utils/LibString.sol";
 import { LibTypes } from "solecs/LibTypes.sol";
 
 import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
-import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
@@ -104,9 +103,6 @@ library LibSacrifice {
 
     // Update ECS state: set state to DEAD, health to 0
     LibKami.kill(components, kamiID);
-
-    // Clear ownership so kami no longer appears in party
-    IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).set(kamiID, 0);
   }
 
   /////////////////
@@ -342,52 +338,17 @@ library LibSacrifice {
     uint32[] memory indices,
     uint256[] memory amounts
   ) internal {
-    // Filter out zero amounts to reduce event size
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = filterNonZero(indices, amounts);
-
     SacrificeRevealEventData memory eventData = SacrificeRevealEventData({
       commitID: commitID,
       holderID: holderID,
       kamiID: kamiID,
       dtID: dtID,
       timestamp: block.timestamp,
-      itemIndices: filteredIndices,
-      itemAmounts: filteredAmounts
+      itemIndices: indices,
+      itemAmounts: amounts
     });
 
     LibEmitter.emitEvent(world, "SACRIFICE_REVEAL", _schema(), _encodeEvent(eventData));
-  }
-
-  /**
-   * @notice Filters parallel arrays to only include entries where amount > 0
-   * @dev Gas-efficient: single pass count + single pass copy
-   */
-  function filterNonZero(
-    uint32[] memory indices,
-    uint256[] memory amounts
-  ) internal pure returns (uint32[] memory, uint256[] memory) {
-    // Count non-zero entries
-    uint256 count;
-    uint256 len = amounts.length;
-    for (uint256 i; i < len; i++) {
-      if (amounts[i] > 0) count++;
-    }
-
-    // Allocate filtered arrays
-    uint32[] memory filteredIndices = new uint32[](count);
-    uint256[] memory filteredAmounts = new uint256[](count);
-
-    // Copy non-zero entries
-    uint256 j;
-    for (uint256 i; i < len; i++) {
-      if (amounts[i] > 0) {
-        filteredIndices[j] = indices[i];
-        filteredAmounts[j] = amounts[i];
-        j++;
-      }
-    }
-
-    return (filteredIndices, filteredAmounts);
   }
 
   function _schema() internal pure returns (uint8[] memory) {
