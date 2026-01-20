@@ -64,14 +64,14 @@ const Header = styled.span`
   display: flex;
   align-items: stretch;
   background-color: transparent;
-  color: #666;
+  color: var(--text-secondary, #666);
   border-radius: 0.4vw;
   padding: 0 0.3vw;
 `;
 
 const Section = styled.span<{ align?: 'center' | 'flex-start' | 'flex-end' }>`
-  color: #666;
-  background: #f0f0f0;
+  color: var(--text-secondary, #666);
+  background: var(--bg-secondary, #f0f0f0);
   border-radius: 0.4vw;
   padding: 0 0.3vw;
   width: 100%;
@@ -107,7 +107,7 @@ const Image = styled.img`
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
 `;
 
 const Title = styled.div`

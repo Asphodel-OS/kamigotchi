@@ -41,7 +41,7 @@ export const Tabs = ({
 
 const Container = styled.div`
   width: 100%;
-  background-color: white;
+  background-color: var(--bg-primary, white);
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -52,7 +52,8 @@ const Button = styled.button`
   border: none;
   padding: 0.5vw;
   flex-grow: 1;
-  color: black;
+  color: var(--text-primary, black);
+  background-color: var(--bg-primary, white);
   justify-content: center;
 
   font-size: 1vw;
@@ -61,13 +62,13 @@ const Button = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:active {
-    background-color: #bbb;
+    background-color: var(--active-bg, #bbb);
   }
   &:disabled {
-    background-color: #bbb;
+    background-color: var(--disabled-bg, #bbb);
     cursor: default;
     pointer-events: none;
   }

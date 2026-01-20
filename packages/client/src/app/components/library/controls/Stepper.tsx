@@ -50,8 +50,8 @@ export const Stepper = ({
 };
 
 const Container = styled.div<{ scale: number; isHidden: boolean }>`
-  border-right: 0.15vw solid black;
-  background-color: black;
+  border-right: 0.15vw solid var(--border-primary, black);
+  background-color: var(--border-primary, black);
   height: 100%;
   width: ${({ scale }) => scale}vw;
   gap: 0.12vw;
@@ -61,7 +61,7 @@ const Container = styled.div<{ scale: number; isHidden: boolean }>`
 `;
 
 const Button = styled.div<{ scale: number; disabled?: boolean }>`
-  background-color: #fff;
+  background-color: var(--bg-primary, #fff);
   height: 100%;
   width: 100%;
 
@@ -74,21 +74,21 @@ const Button = styled.div<{ scale: number; disabled?: boolean }>`
   pointer-events: auto;
   user-select: none;
 
-  color: black;
+  color: var(--text-primary, black);
   font-size: ${({ scale }) => 0.6 * scale ** 0.5}vw;
   text-align: center;
 
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:active {
-    background-color: #bbb;
+    background-color: var(--active-bg, #bbb);
   }
 
   ${({ disabled }) =>
     disabled &&
     `
-  background-color: #bbb;
+  background-color: var(--disabled-bg, #bbb);
   cursor: default;
   pointer-events: none;`}
 `;

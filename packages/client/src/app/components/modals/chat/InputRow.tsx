@@ -117,8 +117,11 @@ const InputBox = styled.textarea`
   width: 100%;
   min-height: 6vh;
   border-radius: 0.6vw;
+  background-color: var(--bg-primary, white);
+  color: var(--text-primary, black);
+  border: 0.15vw solid var(--border-primary, black);
   &:disabled {
-    background-color: rgb(236, 233, 233);
+    background-color: var(--disabled-bg, rgb(236, 233, 233));
   }
 `;
 
@@ -134,6 +137,6 @@ const LetterCount = styled.div`
   position: absolute;
   left: 1.3vw;
   bottom: 0.9vw;
-  color: grey;
+  color: var(--text-muted, grey);
   font-size: 0.5vw;
 `;

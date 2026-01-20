@@ -120,19 +120,19 @@ export const InputSingleNumberForm = ({
 const Box = styled.div`
   display: flex;
   flex-direction: row;
-  border-color: black;
+  border-color: var(--border-primary, black);
   border-radius: 0.4vw;
   border-style: solid;
   border-width: 0.16vw;
-  color: black;
+  color: var(--text-primary, black);
 
   overflow: hidden;
 `;
 
 const Button = styled.button`
-  background-color: #ffffff;
+  background-color: var(--bg-primary, #ffffff);
 
-  color: black;
+  color: var(--text-primary, black);
   justify-content: center;
   border: none;
 
@@ -146,10 +146,10 @@ const Button = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #e8e8e8;
+    background-color: var(--hover-bg, #e8e8e8);
   }
   &:active {
-    background-color: #c4c4c4;
+    background-color: var(--active-bg, #c4c4c4);
   }
 `;
 
@@ -170,14 +170,14 @@ const InputGroup = styled.div`
 const Label = styled.label`
   font-family: Pixel;
   font-size: 10px;
-  color: #333;
+  color: var(--text-primary, #333);
   margin: 0px 5px;
   text-align: left;
 `;
 
 const Input = styled.input`
   width: 100%;
-  background-color: #ffffff;
+  background-color: var(--bg-primary, #ffffff);
   border: none;
 
   margin: 0.4vw 0;
@@ -190,6 +190,7 @@ const Input = styled.input`
   text-decoration: none;
   justify-content: center;
   align-items: center;
+  color: var(--text-primary, black);
 `;
 
 const StepperButtonTop = styled.button`
@@ -197,7 +198,7 @@ const StepperButtonTop = styled.button`
   border-radius: 0 0.2vw 0 0;
 
   background-color: transparent;
-  color: black;
+  color: var(--text-primary, black);
   justify-content: center;
 
   font-family: Pixel;
@@ -207,10 +208,10 @@ const StepperButtonTop = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #e8e8e8;
+    background-color: var(--hover-bg, #e8e8e8);
   }
   &:active {
-    background-color: #c4c4c4;
+    background-color: var(--active-bg, #c4c4c4);
   }
 
   font-size: 1vw;
@@ -222,7 +223,7 @@ const StepperButtonBottom = styled.button`
   border-radius: 0 0 0.2vw 0;
 
   background-color: transparent;
-  color: black;
+  color: var(--text-primary, black);
   justify-content: center;
 
   font-family: Pixel;
@@ -232,10 +233,10 @@ const StepperButtonBottom = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #e8e8e8;
+    background-color: var(--hover-bg, #e8e8e8);
   }
   &:active {
-    background-color: #c4c4c4;
+    background-color: var(--active-bg, #c4c4c4);
   }
 
   font-size: 1vw;
@@ -247,6 +248,6 @@ const StepperGroup = styled.div`
   flex-direction: column;
   justify-content: space-around;
 
-  border-left: solid black 0.16vw;
+  border-left: solid var(--border-primary, black) 0.16vw;
   height: 100%;
 `;

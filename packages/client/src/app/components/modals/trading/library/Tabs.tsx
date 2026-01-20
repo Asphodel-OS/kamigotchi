@@ -41,24 +41,26 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid var(--border-primary, black) 0.15vw;
   padding: 0 0.6vw;
 
   height: 2.4vw;
   line-height: 2.4vw;
   font-size: 1vw;
   flex-grow: 1;
+  background-color: var(--bg-primary, white);
+  color: var(--text-primary, black);
 
   cursor: pointer;
   pointer-events: auto;
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:active {
-    background-color: #bbb;
+    background-color: var(--active-bg, #bbb);
   }
   &:disabled {
-    background-color: #bbb;
+    background-color: var(--disabled-bg, #bbb);
     cursor: default;
     pointer-events: none;
   }

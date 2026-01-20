@@ -77,8 +77,8 @@ const Wrapper = styled.div<Wrapper>`
 
 const Content = styled.div`
   position: relative;
-  background-color: white;
-  border: solid black 0.15vw;
+  background-color: var(--bg-primary, white);
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 1.2vw;
 
   padding: 2vw 4vw;
@@ -99,14 +99,14 @@ const Header = styled.div`
 `;
 
 const Title = styled.div`
-  color: #333;
+  color: var(--text-primary, #333);
   padding: 0.6vw;
   font-size: 2.1vw;
   text-align: center;
 `;
 
 const Subtitle = styled.div`
-  color: #666;
+  color: var(--text-secondary, #666);
   padding: 0.6vw;
   font-size: 1.2vw;
   text-align: center;

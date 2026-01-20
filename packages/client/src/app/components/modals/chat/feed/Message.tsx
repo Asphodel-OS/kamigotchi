@@ -163,7 +163,7 @@ const Container = styled.div`
   padding: 0vw 0.9vw;
   width: 100%;
 
-  color: black;
+  color: var(--text-primary, black);
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-start;
@@ -173,7 +173,7 @@ const Container = styled.div`
 
 const Content = styled.div`
   width: 100%;
-  color: black;
+  color: var(--text-primary, black);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -200,7 +200,7 @@ const Pfp = styled.img<{ author: boolean }>`
 const Header = styled.div<{ yours: boolean }>`
   margin-top: 0.2vw;
   width: 100%;
-  color: black;
+  color: var(--text-primary, black);
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -218,7 +218,7 @@ const PfpAuthor = styled.div`
 `;
 
 const Time = styled.div`
-  color: #a3a3a3;
+  color: var(--text-muted, #a3a3a3);
   display: flex;
   flex-flow: row;
   justify-content: flex-start;
@@ -231,7 +231,7 @@ const Name = styled.div`
   max-width: 9ch;
   margin-right: 0.5vw;
   justify-content: flex-start;
-  color: black;
+  color: var(--text-primary, black);
   font-weight: bold;
 `;
 
@@ -243,7 +243,7 @@ const PopOverButtons = styled.div`
 
 const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   z-index: 0;
-  color: black;
+  color: var(--text-primary, black);
   width: 86%;
 
   font-size: 0.6vw;
@@ -256,7 +256,7 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
   display: inline-block;
   align-items: flex-start;
 
-  background-color: #eee;
+  background-color: var(--bg-secondary, #eee);
   position: relative;
 
   ${({ yours, previousEqual }) =>
@@ -269,9 +269,9 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
    top: 1.7vw;
     min-height: 2vw;
     width: 0.7vw;
-    background: rgb(238, 238, 238);
+    background: var(--bg-secondary, rgb(238, 238, 238));
     border-top-left-radius: 80%;
-    left: 0;   
+    left: 0;
     rotate: -90deg;
   }`
       : ` ::before {
@@ -281,9 +281,9 @@ const Body = styled.div<{ yours: boolean; previousEqual: boolean }>`
     top: 1.7vw;
     min-height: 2vw;
     width: 0.7vw;
-    background: rgb(238, 238, 238);
+    background: var(--bg-secondary, rgb(238, 238, 238));
     border-top-right-radius: 80%;
-    right: 0; 
+    right: 0;
     rotate: 90deg;
   } `}
 `;

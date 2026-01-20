@@ -34,8 +34,8 @@ export const VerticalToggle = ({
 
 const Container = styled.div`
   position: relative;
-  background-color: white;
-  border-block: 0.15vw solid black;
+  background-color: var(--bg-primary, white);
+  border-block: 0.15vw solid var(--border-primary, black);
 
   width: 1.5vw;
 
@@ -49,8 +49,8 @@ const Container = styled.div`
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
     z-index: 1;
-    border-right: 0.15vw solid black;
-    border-left: 0.15vw solid black;
+    border-right: 0.15vw solid var(--border-primary, black);
+    border-left: 0.15vw solid var(--border-primary, black);
   }
 `;
 
@@ -61,13 +61,13 @@ const SwitchHolder = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  background-color: #ccc;
+  background-color: var(--disabled-bg, #ccc);
   border-radius: 1vw;
 `;
 
 const Switch = styled.div<{ position: string }>`
   position: absolute;
-  background-color: #494545;
+  background-color: var(--text-muted, #494545);
   border-radius: 50%;
   aspect-ratio: 1;
   width: 70%;

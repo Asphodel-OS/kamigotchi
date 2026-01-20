@@ -52,8 +52,8 @@ const Icon = styled.img<{ position: number }>`
   position: absolute;
   height: 1.8vw;
   width: auto;
-  border: solid black 0.15vw;
-  background-color: white;
+  border: solid var(--border-primary, black) 0.15vw;
+  background-color: var(--bg-primary, white);
   border-radius: 50%;
 `;
 
@@ -64,7 +64,7 @@ const Bar = styled.div<{
   fgColor: string;
 }>`
   position: relative;
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: ${({ height }) => height * 0.5}vw;
   height: ${({ height }) => height}vw;
   width: 100%;

@@ -55,7 +55,7 @@ export const Health = ({ kami, tick }: { kami: Kami; tick: number }) => {
 
 const Container = styled.div`
   position: relative;
-  border-right: solid black 0.15vw;
+  border-right: solid var(--border-primary, black) 0.15vw;
 
   height: 100%;
   flex-grow: 7;

@@ -156,7 +156,7 @@ const Icon = styled.img`
 `;
 
 const Balance = styled.div`
-  border: solid #333 0.15vw;
+  border: solid var(--border-primary, #333) 0.15vw;
   border-radius: 0.6vw 0 0.6vw 0.6vw;
   padding: 0.3vw;
   width: 50%;
@@ -166,7 +166,7 @@ const Balance = styled.div`
   justify-content: flex-end;
   align-items: center;
 
-  color: black;
+  color: var(--text-primary, black);
   font-size: 0.9vw;
   line-height: 1.2vw;
 `;

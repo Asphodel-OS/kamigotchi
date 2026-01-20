@@ -192,8 +192,8 @@ const PopoverContent = styled.div.attrs<{
   overflow-y: auto;
   overflow-x: hidden;
   position: fixed;
-  background-color: white;
-  border: 0.15vw solid black;
+  background-color: var(--bg-primary, white);
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.75vw;
   z-index: 10;
   white-space: nowrap;

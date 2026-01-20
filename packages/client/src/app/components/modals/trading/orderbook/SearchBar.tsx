@@ -188,8 +188,8 @@ const SuggestBox = styled.div`
   top: calc(100% + 0.3vw);
   left: 0;
   right: 0;
-  background: #fff;
-  border: 0.12vw solid black;
+  background: var(--bg-primary, #fff);
+  border: 0.12vw solid var(--border-primary, black);
   max-height: 12vw;
   overflow: auto;
   z-index: 1;
@@ -199,7 +199,8 @@ const Suggest = styled.div`
   padding: 0.45vw 0.6vw;
   font-size: 0.9vw;
   cursor: pointer;
+  color: var(--text-primary, black);
   &:hover {
-    background: #eee;
+    background: var(--hover-bg, #eee);
   }
 `;

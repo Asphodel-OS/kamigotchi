@@ -100,18 +100,18 @@ const InputGroup = styled.div`
 
 const Label = styled.label`
   font-size: 0.6vw;
-  color: #333;
+  color: var(--text-primary, #333);
   margin: 0.3vw;
   text-align: left;
 `;
 
 const Input = styled.input`
-  border: solid 0.15vw black;
+  border: solid 0.15vw var(--border-primary, black);
   border-radius: 0.4vw;
 
-  background-color: #ffffff;
+  background-color: var(--bg-primary, #ffffff);
   width: 100%;
-  color: black;
+  color: var(--text-primary, black);
   padding: 0.75vw 1vw;
 
   font-size: 0.75vw;
@@ -122,6 +122,6 @@ const Input = styled.input`
   align-items: center;
 
   &:disabled {
-    background-color: #ccc;
+    background-color: var(--disabled-bg, #ccc);
   }
 `;

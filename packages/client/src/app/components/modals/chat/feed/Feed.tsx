@@ -467,14 +467,15 @@ const Button = styled.button<{ position: number }>`
   border-radius: 0 0 0.8vw 0.8vw;
   border-top: 0;
   z-index: 1;
-  background-color: #c5c5c5;
+  background-color: var(--disabled-bg, #c5c5c5);
+  color: var(--text-primary, black);
   &:hover {
     cursor: pointer;
   }
   &: disabled {
-    background-color: rgb(255, 255, 255);
+    background-color: var(--bg-primary, rgb(255, 255, 255));
     z-index: 2;
-    border-color: black;
+    border-color: var(--border-primary, black);
     cursor: default;
   }
 `;
@@ -482,7 +483,7 @@ const Button = styled.button<{ position: number }>`
 const PollingMessage = styled.div`
   text-align: center;
   padding: 20px;
-  color: #666;
+  color: var(--text-secondary, #666);
   font-style: italic;
 `;
 
@@ -496,7 +497,7 @@ const FeedTab = styled.div`
 const FeedTabMessage = styled.div`
   display: block;
   gap: 0.3vw;
-  color: black;
+  color: var(--text-primary, black);
   width: 100%;
   font-size: 0.6vw;
 `;

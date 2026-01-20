@@ -156,7 +156,7 @@ export const OfferCard = ({
 
 const Container = styled.div`
   position: relative;
-  border: 0.15vw solid black;
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 1.2vw;
 
   height: 6vw;
@@ -170,8 +170,8 @@ const Container = styled.div`
 
 const Side = styled.div<{ span: number; borderRight?: boolean; borderLeft?: boolean }>`
   position: relative;
-  ${({ borderRight }) => borderRight && `border-right: 0.15vw solid black;`}
-  ${({ borderLeft }) => borderLeft && `border-left: 0.15vw solid black;`}
+  ${({ borderRight }) => borderRight && `border-right: 0.15vw solid var(--border-primary, black);`}
+  ${({ borderLeft }) => borderLeft && `border-left: 0.15vw solid var(--border-primary, black);`}
   height: 100%;
   width: ${({ span }) => 4 * span + 1}vw;
   padding: 0 0.6vw;
@@ -217,23 +217,24 @@ const Controls = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #eee;
+  background-color: var(--bg-secondary, #eee);
   border: none;
-  border-top: 0.15vw solid black;
+  border-top: 0.15vw solid var(--border-primary, black);
   width: 100%;
+  color: var(--text-primary, black);
 
   font-size: 0.9vw;
   line-height: 1.8vw;
   cursor: pointer;
 
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:active {
-    background-color: #bbb;
+    background-color: var(--active-bg, #bbb);
   }
   &:disabled {
-    background-color: #bbb;
+    background-color: var(--disabled-bg, #bbb);
     cursor: help;
   }
 `;

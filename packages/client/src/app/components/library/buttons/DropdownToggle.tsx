@@ -218,11 +218,11 @@ const MenuOption = styled.div<{
   font-size: 0.8vw;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  background-color: ${({ disabled }) => (disabled ? 'var(--disabled-bg, #bbb)' : 'var(--bg-primary, #fff)')};
   padding: ${({ isSelectAll }) => (isSelectAll ? '1vw 0.6vw 0.4vw 0.9vw ' : '0 0.2vw 0.1vw 2.2vw')};
 
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
 `;
 
@@ -247,5 +247,5 @@ const Image = styled.img`
   object-fit: cover;
   margin-left: auto;
   border-radius: 0.3vw;
-  border: solid black 0.05vw;
+  border: solid var(--border-primary, black) 0.05vw;
 `;

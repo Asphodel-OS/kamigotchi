@@ -73,7 +73,7 @@ export const AccountCard = ({
 };
 
 const TitleBar = styled.div`
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid var(--border-primary, black) 0.15vw;
   padding: 0.45vw;
 
   display: flex;
@@ -120,7 +120,7 @@ const BioColumn = styled.div`
     border-radius: 8px;
   }
   &:hover::-webkit-scrollbar-thumb {
-    background-color: #ccc;
+    background-color: var(--scrollbar-thumb, #ccc);
   }
 `;
 
@@ -130,7 +130,7 @@ const ActionsColumn = styled.div`
 `;
 
 const ContentSubtext = styled.div`
-  color: #333;
+  color: var(--text-primary, #333);
   flex-grow: 1;
 
   text-align: right;

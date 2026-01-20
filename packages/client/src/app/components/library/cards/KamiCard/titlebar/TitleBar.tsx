@@ -38,7 +38,7 @@ export const TitleBar = ({
 
 const Container = styled.div`
   position: relative;
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid var(--border-primary, black) 0.15vw;
   height: 1.8vw;
 
   display: flex;

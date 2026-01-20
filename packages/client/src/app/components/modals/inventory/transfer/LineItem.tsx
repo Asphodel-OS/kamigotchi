@@ -68,8 +68,8 @@ const Container = styled.div`
 
 const Quantity = styled.input<{ width?: number }>`
   border: none;
-  background-color: #eee;
-  border: 0.15vw solid black;
+  background-color: var(--bg-secondary, #eee);
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.45vw;
   width: ${({ width }) => width ?? 6}vw;
   height: 100%;
@@ -77,7 +77,7 @@ const Quantity = styled.input<{ width?: number }>`
   margin: 0w;
   cursor: text;
 
-  color: black;
+  color: var(--text-primary, black);
   font-size: 0.9vw;
   text-align: center;
 `;

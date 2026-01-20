@@ -195,13 +195,13 @@ const LabelIcon = styled.img`
 `;
 
 const Buffs = styled.div`
-  background-color: rgba(255, 255, 255, 1);
+  background-color: var(--bg-primary, rgba(255, 255, 255, 1));
   position: absolute;
   max-width: 95%;
   bottom: 0.15vw;
   left: 0.15vw;
 
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.45vw;
   padding: 0.1vw;
   gap: 0.1vw;
@@ -216,10 +216,10 @@ const Buffs = styled.div`
     height: 0.2vw;
   }
   &::-webkit-scrollbar-track {
-    background-color: rgba(202, 202, 56, 1);
+    background-color: var(--scrollbar-track, rgba(202, 202, 56, 1));
   }
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(201, 150, 9, 1);
+    background-color: var(--scrollbar-thumb, rgba(201, 150, 9, 1));
     border-radius: 0.2vw;
   }
 `;

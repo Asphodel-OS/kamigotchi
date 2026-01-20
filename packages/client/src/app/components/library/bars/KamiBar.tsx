@@ -218,7 +218,7 @@ export const KamiBar = ({
 };
 
 const Container = styled.div`
-  border: 0.15vw solid black;
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.6vw;
 
   height: 100%;
@@ -257,8 +257,8 @@ interface MiddleProps {
 const Middle = styled.div<MiddleProps>`
   position: relative;
   height: 3vw;
-  border-right: solid black 0.15vw;
-  border-left: solid black 0.15vw;
+  border-right: solid var(--border-primary, black) 0.15vw;
+  border-left: solid var(--border-primary, black) 0.15vw;
   margin: 0 0.3vw 0 0.3vw;
   gap: 0.3vw;
 
@@ -269,11 +269,11 @@ const Middle = styled.div<MiddleProps>`
   flex-grow: 1;
 
   background: ${({ percent, color }) =>
-    `linear-gradient(90deg, ${color}, 0%, ${color}, ${percent}%, #fff, ${Math.min(percent * 1.05, 100)}%, #fff 100%)`};
+    `linear-gradient(90deg, ${color}, 0%, ${color}, ${percent}%, var(--bg-primary, #fff), ${Math.min(percent * 1.05, 100)}%, var(--bg-primary, #fff) 100%)`};
 `;
 
 const Image = styled.img`
-  border-right: solid black 0.15vw;
+  border-right: solid var(--border-primary, black) 0.15vw;
   width: 3vw;
   height: 3vw;
 
