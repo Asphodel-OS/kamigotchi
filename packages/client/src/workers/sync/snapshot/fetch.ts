@@ -138,6 +138,7 @@ export const fetchSnapshot = async (
   const options: FetchOptions = { stateCache, kamigazeClient, decode, numChunks, setPercentage, setMessage };
 
   try {
+    setMessage?.('Querying for State Info');
     log.debug('[snapshot] Fetching state block');
     let BlockResponse = await fetchStateBlock(kamigazeClient);
     log.debug('[snapshot] State block received', {
