@@ -48,7 +48,7 @@ export function setupKamidenRevealHandler(
 
       notifications.add({
         id: notifId,
-        title: 'Items revealed! kek',
+        title: 'Items revealed!',
         description: 'Received: ' + results.join(', '),
         time: (reveal.Timestamp * 1000).toString(),
         modal: 'inventory',
