@@ -26,6 +26,7 @@
     { "comp": "IDOwnsQuest", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsEquipment", "name": "OwnsEquipID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTax", "name": "OwnsTaxID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsWithdrawal", "name": "OwnsWithdrawalID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -72,6 +73,7 @@
     { "comp": "Scale", "name": "Scale", "type": "int32" },
     { "comp": "SkillPoint", "name": "SkillPoint", "type": "uint256" },
     { "comp": "Slots", "name": "Slots", "type": "Stat" },
+    { "comp": "SlotType", "name": "SlotType", "type": "string" },
     { "comp": "Stamina", "name": "Stamina", "type": "Stat" },
     { "comp": "State", "name": "State", "type": "string", "indexed": true },
     { "comp": "Subtype", "name": "Subtype", "type": "string" },
@@ -612,6 +614,41 @@
       "writeAccess": ["*"]
     },
     {
+      "name": "KamiEquipSystem",
+      "writeAccess": [
+        "EntityType",
+        "IDAnchor",
+        "IDType",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "SlotType",
+        "Time",
+        "TimeLast",
+        "Type",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiUnequipSystem",
+      "writeAccess": [
+        "EntityType",
+        "IDAnchor",
+        "IDType",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "SlotType",
+        "Time",
+        "TimeLast",
+        "Value"
+      ]
+    },
+    {
       "name": "QuestAcceptSystem",
       "writeAccess": [
         "EntityType",
@@ -821,6 +858,7 @@
     "LibConfig",
     "LibData",
     "LibDroptable",
+    "LibEquipment",
     "LibExperience",
     "LibFaction",
     "LibFlag",
