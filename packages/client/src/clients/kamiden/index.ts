@@ -5,6 +5,7 @@ export type {
   AuctionBuy,
   AuctionBuysRequest,
   AuctionBuysResponse,
+  DroptableReveal,
   Feed,
   HarvestEnd,
   KamiCast,

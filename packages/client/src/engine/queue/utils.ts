@@ -7,6 +7,7 @@ import {
   TransactionRequest,
   TransactionResponse,
 } from 'ethers';
+import { log } from 'utils/logger';
 
 /**
  * Get the revert reason from a failed transaction using debug_traceTransaction.
