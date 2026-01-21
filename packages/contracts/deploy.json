@@ -73,6 +73,7 @@
     { "comp": "Scale", "name": "Scale", "type": "int32" },
     { "comp": "SkillPoint", "name": "SkillPoint", "type": "uint256" },
     { "comp": "Slots", "name": "Slots", "type": "Stat" },
+    { "comp": "SlotType", "name": "SlotType", "type": "string" },
     { "comp": "Stamina", "name": "Stamina", "type": "Stat" },
     { "comp": "State", "name": "State", "type": "string", "indexed": true },
     { "comp": "Subtype", "name": "Subtype", "type": "string" },
@@ -620,7 +621,6 @@
       "name": "KamiEquipSystem",
       "writeAccess": [
         "EntityType",
-        "For",
         "IDAnchor",
         "IDType",
         "IDOwnsEquipment",
@@ -628,6 +628,7 @@
         "IdSource",
         "IndexItem",
         "Level",
+        "SlotType",
         "Time",
         "TimeLast",
         "Type",
@@ -638,7 +639,6 @@
       "name": "KamiUnequipSystem",
       "writeAccess": [
         "EntityType",
-        "For",
         "IDAnchor",
         "IDType",
         "IDOwnsEquipment",
@@ -646,6 +646,7 @@
         "IdSource",
         "IndexItem",
         "Level",
+        "SlotType",
         "Time",
         "TimeLast",
         "Value"

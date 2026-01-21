@@ -16,15 +16,15 @@ contract KamiUnequipSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint256 kamiID, string memory slot) = abi.decode(arguments, (uint256, string));
+    (uint256 kamiID, string memory slotType) = abi.decode(arguments, (uint256, string));
     uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // Kami checks
     LibKami.verifyAccount(components, kamiID, accID);
-    LibEquipment.verifyKamiCanEquip(components, kamiID);
+    LibEquipment.verifyCanEquip(components, kamiID);
 
     // Unequip the item (clears bonuses, removes instance, returns to inventory)
-    uint32 itemIndex = LibEquipment.unequip(world, components, kamiID, accID, slot);
+    uint32 itemIndex = LibEquipment.unequip(world, components, kamiID, accID, slotType);
 
     // Update account timestamp
     LibAccount.updateLastTs(components, accID);
@@ -32,8 +32,8 @@ contract KamiUnequipSystem is System {
     return abi.encode(itemIndex);
   }
 
-  function executeTyped(uint256 kamiID, string memory slot) public returns (uint32) {
-    bytes memory result = execute(abi.encode(kamiID, slot));
+  function executeTyped(uint256 kamiID, string memory slotType) public returns (uint32) {
+    bytes memory result = execute(abi.encode(kamiID, slotType));
     return abi.decode(result, (uint32));
   }
 }
