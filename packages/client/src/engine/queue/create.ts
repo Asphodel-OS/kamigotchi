@@ -177,7 +177,7 @@ export function create<C extends Contracts>(
       if (!tx) {
         throw new Error('Failed to send transaction: signer missing or sendTx returned undefined');
       }
-      const hash = tx.transactionHash;
+      const hash = tx.transactionHash ?? tx.hash;
       log.debug(`[TXQueue] TX Sent ${hash}`);
       // Get receipt directly from sync transaction (EIP-7966)
       return { hash, receipt: tx };
