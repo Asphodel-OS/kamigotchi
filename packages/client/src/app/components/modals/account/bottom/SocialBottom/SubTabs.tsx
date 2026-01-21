@@ -23,14 +23,14 @@ export const SubTabs = ({
         <Button
           onClick={() => handleSetTab('frens')}
           disabled={subTab === 'frens'}
-          style={{ borderRight: 'solid black .15vw' }}
+          style={{ borderRight: 'solid var(--border-primary, black) .15vw' }}
         >
           Friends
         </Button>
         <Button
           onClick={() => handleSetTab('requests')}
           disabled={subTab === 'requests'}
-          style={{ borderRight: 'solid black .15vw' }}
+          style={{ borderRight: 'solid var(--border-primary, black) .15vw' }}
         >
           Requests
         </Button>
@@ -47,7 +47,7 @@ export const SubTabs = ({
         <Button
           onClick={() => handleSetTab('frens')}
           disabled={subTab === 'frens'}
-          style={{ borderRight: 'solid black .15vw' }}
+          style={{ borderRight: 'solid var(--border-primary, black) .15vw' }}
         >
           Friends
         </Button>
@@ -62,24 +62,25 @@ export const SubTabs = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15vw black;
+  border: solid 0.15vw var(--border-primary, black);
   border-radius: 0.3vw 0.3vw 0 0;
   border-bottom: none;
 
   width: 100%;
-  background-color: white;
+  background-color: var(--bg-primary, white);
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
 `;
 
 const Button = styled.button`
-  border: solid 0.15vw black;
+  border: solid 0.15vw var(--border-primary, black);
   border-radius: 0.3vw;
   padding: 0.5vw;
   margin: 0.5vw;
   flex-grow: 1;
-  color: black;
+  color: var(--text-primary, black);
+  background-color: var(--bg-primary, white);
   justify-content: center;
 
   font-family: Pixel;
@@ -89,13 +90,13 @@ const Button = styled.button`
   cursor: pointer;
   pointer-events: auto;
   &:active {
-    background-color: #111;
+    background-color: var(--active-bg, #111);
   }
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:disabled {
-    background-color: #b2b2b2;
+    background-color: var(--disabled-bg, #b2b2b2);
     cursor: default;
     pointer-events: none;
   }

@@ -49,7 +49,7 @@ const Container = styled.div`
 `;
 
 const EmptyText = styled.div`
-  color: black;
+  color: var(--text-primary, black);
   margin: 1vw;
 
   display: flex;

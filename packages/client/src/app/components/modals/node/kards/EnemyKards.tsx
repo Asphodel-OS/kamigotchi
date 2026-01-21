@@ -253,7 +253,7 @@ const StickyRow = styled.div`
   z-index: 2;
   top: 0;
 
-  background-color: white;
+  background-color: var(--bg-primary, white);
   opacity: 0.9;
   width: 100%;
 
@@ -268,7 +268,7 @@ const StickyRow = styled.div`
 
 const Title = styled.div`
   font-size: 1.2vw;
-  color: #333;
+  color: var(--text-primary, #333);
   cursor: pointer;
   &:hover {
     opacity: 0.8;

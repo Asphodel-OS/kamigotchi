@@ -4,11 +4,13 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f0f0f0;
   --bg-tertiary: #e8e8e8;
+  --bg-accent-green: #E8F5E9;
 
   /* Text */
   --text-primary: #333333;
   --text-secondary: #666666;
   --text-muted: #999999;
+  --text-link: #0077cc;
 
   /* Borders */
   --border-primary: black;
@@ -26,6 +28,10 @@
 
   /* Overlay */
   --overlay-bg: rgba(0, 0, 0, 0.5);
+
+  /* Progress */
+  --progress-fill: #11ee11;
+  --progress-empty: #bbbbbb;
 }
 
 /* Dark Theme */
@@ -34,11 +40,13 @@
   --bg-primary: #1a1a2e;
   --bg-secondary: #16213e;
   --bg-tertiary: #0f3460;
+  --bg-accent-green: #1b4332;
 
   /* Text */
   --text-primary: #e8e8e8;
   --text-secondary: #b0b0b0;
   --text-muted: #808080;
+  --text-link: #66b3ff;
 
   /* Borders */
   --border-primary: #4a4a6a;
@@ -56,6 +64,10 @@
 
   /* Overlay */
   --overlay-bg: rgba(0, 0, 0, 0.7);
+
+  /* Progress */
+  --progress-fill: #0d9d0d;
+  --progress-empty: #3a3a5a;
 }
 
 /* Smooth theme transition */

@@ -14,8 +14,8 @@ export const EmptyText = ({
   text,
   size = 1.2,
   gapScale = 3,
-  linkColor = '#0077ccff',
-  textColor = '#333333ff',
+  linkColor,
+  textColor,
   isHidden,
 }: {
   text: TextPart[];
@@ -72,16 +72,16 @@ const Container = styled.div<{ isHidden: boolean }>`
   user-select: none;
 `;
 
-const Text = styled.div<{ size: number; gapScale: number; color: string }>`
-  color: ${({ color }) => color};
+const Text = styled.div<{ size: number; gapScale: number; color?: string }>`
+  color: ${({ color }) => color || 'var(--text-primary, #333333ff)'};
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size, gapScale }) => gapScale * size}vw;
   text-align: center;
   pointer-events: auto;
 `;
 
-const Link = styled.a<{ size: number; gapScale: number; color: string }>`
-  color: ${({ color }) => color};
+const Link = styled.a<{ size: number; gapScale: number; color?: string }>`
+  color: ${({ color }) => color || 'var(--text-link, #0077ccff)'};
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size, gapScale }) => gapScale * size}vw;
   text-decoration: underline;

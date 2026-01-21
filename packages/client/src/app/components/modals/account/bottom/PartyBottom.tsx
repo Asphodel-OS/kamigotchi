@@ -28,11 +28,12 @@ export const PartyBottom = ({
 };
 
 const Container = styled.div`
-  border: solid 0.15vw black;
+  border: solid 0.15vw var(--border-primary, black);
   border-radius: 0 0 0.6vw 0.6vw;
   width: 100%;
   height: 100%;
-  background-color: white;
+  background-color: var(--bg-primary, white);
+  color: var(--text-primary, black);
   padding: 0.45vw;
 
   display: flex;

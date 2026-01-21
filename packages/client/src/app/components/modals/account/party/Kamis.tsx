@@ -114,7 +114,7 @@ const Container = styled.div`
 `;
 
 const CellContainer = styled.div`
-  border: solid 0.15vw black;
+  border: solid 0.15vw var(--border-primary, black);
   border-radius: 0.25vw;
 
   margin: 0.3vh 0.4vw;
@@ -138,7 +138,7 @@ const ExtIcon = styled.img`
 `;
 
 const EmptyText = styled.div`
-  color: black;
+  color: var(--text-primary, black);
   margin: 1vw;
 
   font-size: 1.2vw;

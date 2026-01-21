@@ -160,10 +160,10 @@ const ModeButtons = styled.div`
 
 const Input = styled.input`
   width: 50%;
-  background-color: #ffffff;
-  border: 0.15vw solid black;
+  background-color: var(--bg-primary, #ffffff);
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.5vw;
-  color: black;
+  color: var(--text-primary, black);
   margin: 0.3vw;
   padding: 0.6vw;
   cursor: pointer;
