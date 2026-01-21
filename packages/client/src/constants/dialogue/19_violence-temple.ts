@@ -13,4 +13,12 @@ const violenceFloor: DialogueNode = {
   },
 };
 
-export default [violenceFloor];
+const blackPool: DialogueNode = {
+  index: 192,
+  text: [
+    'This pool of black ooze rests at the exact center of the circular temple.',
+    'You could see it as a spoke within a greater wheel.',
+  ],
+};
+
+export default [violenceFloor, blackPool];

@@ -9,5 +9,16 @@ export const room86: Room = {
     key: 'guardianSkull',
     path: guardianSkull,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'ribcage pit',
+      coordinates: { x1: 36, y1: 92, x2: 111, y2: 111 },
+      dialogue: 861,
+    },
+    {
+      name: 'giant skull',
+      coordinates: { x1: 41, y1: 41, x2: 87, y2: 82 },
+      dialogue: 862,
+    },
+  ],
 };

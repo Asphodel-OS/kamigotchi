@@ -9,5 +9,11 @@ export const room70: Room = {
     key: 'stillStream',
     path: stillStream,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'central stalagmite',
+      coordinates: { x1: 45, y1: 70, x2: 85, y2: 110 },
+      dialogue: 701,
+    },
+  ],
 };

@@ -5,7 +5,7 @@ import { ONYX_INDEX } from 'constants/items';
 import { NetworkLayer } from 'network/create';
 import { Account } from 'network/shapes';
 import { Kami } from 'network/shapes/Kami';
-import { playClick } from 'utils/sounds';
+import { playClick, playRevive } from 'utils/sounds';
 import { TextTooltip } from '../../tooltips';
 import { IconButton } from '../IconButton';
 
@@ -41,6 +41,7 @@ export const OnyxReviveButton = ({
         return api.player.pet.onyx.revive(kami.index);
       },
     });
+    playRevive();
   };
 
   /////////////////
