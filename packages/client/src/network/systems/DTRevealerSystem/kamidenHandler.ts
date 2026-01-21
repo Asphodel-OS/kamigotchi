@@ -5,6 +5,7 @@ import { getItemDetailsByIndex } from 'network/shapes/Item';
 import { NotificationSystem } from '../NotificationSystem';
 import { NetworkLayer } from 'network/';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
+import { log } from 'utils/logger';
 
 export function setupKamidenRevealHandler(
   network: NetworkLayer,
@@ -19,6 +20,7 @@ export function setupKamidenRevealHandler(
     const accountID = formatEntityID(account.id);
 
     feed.DroptableReveals.forEach((reveal: DroptableReveal) => {
+      log.error('Got reveal')
       const holderID = formatEntityID(reveal.HolderID);
       if (holderID !== accountID) return;
 
@@ -46,7 +48,7 @@ export function setupKamidenRevealHandler(
 
       notifications.add({
         id: notifId,
-        title: 'Items revealed!',
+        title: 'Items revealed! kek',
         description: 'Received: ' + results.join(', '),
         time: (reveal.Timestamp * 1000).toString(),
         modal: 'inventory',
