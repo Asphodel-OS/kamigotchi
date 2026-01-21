@@ -27,8 +27,8 @@ export const Menu = ({
 
 const Container = styled.div`
   position: absolute;
-  border-bottom: solid black 0.15vw;
-  background-color: #999;
+  border-bottom: solid var(--border-primary, black) 0.15vw;
+  background-color: var(--bg-tertiary, #999);
   opacity: 0.9;
   z-index: 1;
 

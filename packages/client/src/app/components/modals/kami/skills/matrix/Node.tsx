@@ -56,7 +56,7 @@ export const Node = ({
 };
 
 const Container = styled.div<{ percent: number }>`
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.5vw;
   position: relative;
   overflow: hidden;
@@ -67,7 +67,10 @@ const Container = styled.div<{ percent: number }>`
 
   align-items: center;
   justify-content: center;
-  background-image: conic-gradient(gray ${({ percent }) => 360 * percent}deg, white 0);
+  background-image: conic-gradient(
+    var(--progress-fill, gray) ${({ percent }) => 360 * percent}deg,
+    var(--bg-primary, white) 0
+  );
 
   cursor: pointer;
   &:hover {
@@ -80,7 +83,7 @@ const Container = styled.div<{ percent: number }>`
 `;
 
 const Image = styled.img`
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.4vw;
   height: 100%;
   width: 100%;

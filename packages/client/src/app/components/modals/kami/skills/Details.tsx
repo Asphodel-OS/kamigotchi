@@ -164,7 +164,7 @@ export const Details = ({
 };
 
 const Container = styled.div`
-  border-right: 0.15vw solid #333;
+  border-right: 0.15vw solid var(--border-secondary, #333);
   padding-bottom: 3vw;
   max-width: 20vw;
   min-width: 20vw;
@@ -176,7 +176,7 @@ const Container = styled.div`
 `;
 
 const ImageSection = styled.div`
-  border-bottom: 0.15vw solid #333;
+  border-bottom: 0.15vw solid var(--border-secondary, #333);
   position: relative;
 
   display: flex;
@@ -188,13 +188,13 @@ const Image = styled.img`
   width: 10vw;
   margin: 0.75vw;
 
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.5vw;
   user-drag: none;
 `;
 
 const NameSection = styled.div`
-  border-bottom: 0.15vw solid #333;
+  border-bottom: 0.15vw solid var(--border-secondary, #333);
   padding: 1.4vh 0.3vw;
 
   display: flex;
@@ -203,7 +203,7 @@ const NameSection = styled.div`
 `;
 
 const Name = styled.div`
-  color: #333;
+  color: var(--text-primary, #333);
   width: 100%;
   padding: 0vw 1.2vw;
 
@@ -217,7 +217,7 @@ const Name = styled.div`
 `;
 
 const LevelText = styled.div`
-  color: #333;
+  color: var(--text-primary, #333);
   font-family: Pixel;
   font-size: 0.6vw;
   width: 100%;
@@ -226,7 +226,7 @@ const LevelText = styled.div`
 `;
 
 const Description = styled.div`
-  color: #666;
+  color: var(--text-secondary, #666);
   padding: 1.2vh 1vw;
   font-family: Pixel;
   text-align: left;
@@ -241,14 +241,14 @@ const DetailSection = styled.div`
 `;
 
 const DetailLabel = styled.div`
-  color: #333;
+  color: var(--text-primary, #333);
   font-family: Pixel;
   font-size: 0.9vw;
   padding: 0.3vh 0;
 `;
 
 const DetailDescription = styled.div`
-  color: #666;
+  color: var(--text-secondary, #666);
   font-family: Pixel;
   font-size: 0.6vw;
   line-height: 1vw;

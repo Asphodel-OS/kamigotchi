@@ -96,7 +96,7 @@ export const Header = ({
 };
 
 const Container = styled.div`
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid var(--border-primary, black) 0.15vw;
   display: flex;
   flex-flow: row nowrap;
   user-select: none;
@@ -140,10 +140,10 @@ const AffinityContainer = styled.div`
 `;
 
 const StatsContainer = styled.div`
-  background-color: #999;
-  border: solid black 0.15vw;
+  background-color: var(--bg-tertiary, #999);
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 1.2vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
+  filter: drop-shadow(0.3vw 0.3vw 0.15vw var(--shadow-color, black));
 
   height: 100%;
   width: 19.3vw;
@@ -157,10 +157,10 @@ const StatsContainer = styled.div`
 `;
 
 const StatPairing = styled.div<{ color?: string }>`
-  background-color: ${({ color }) => color ?? '#fff'};
-  border: solid black 0.15vw;
+  background-color: ${({ color }) => color ?? 'var(--bg-primary, #fff)'};
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
+  filter: drop-shadow(0.3vw 0.3vw 0.15vw var(--shadow-color, black));
 
   padding: 0.75vw;
   gap: 0.45vw;
@@ -183,6 +183,7 @@ const StatPairing = styled.div<{ color?: string }>`
 `;
 
 const Text = styled.div<{ size: number }>`
+  color: black;
   font-size: ${({ size }) => size}vw;
   text-shadow: ${({ size }) => `0 0 ${size * 0.4}vw white`};
   pointer-events: none;
@@ -198,7 +199,7 @@ const Icon = styled.img<{ size: number }>`
 const Footer = styled.div`
   font-size: 0.6vw;
   text-align: right;
-  color: #666;
+  color: var(--text-secondary, #666);
 
   user-select: none;
   ${({ onClick }) => !onClick && 'pointer-events: none;'}

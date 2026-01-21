@@ -71,7 +71,7 @@ export const Traits = ({
 };
 
 const Container = styled.div`
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.5vw;
   margin: 0.7vw;
   padding: 0.5vw;
@@ -84,7 +84,7 @@ const Container = styled.div`
 
 const Title = styled.div`
   padding: 0.5vw;
-  color: black;
+  color: var(--text-primary, black);
   font-family: Pixel;
   font-size: 1.5vw;
 `;
@@ -99,12 +99,12 @@ const Content = styled.div`
 `;
 
 const InfoBox = styled.div<{ color: string }>`
-  border: solid black 0.12vw;
+  border: solid var(--border-primary, black) 0.12vw;
   border-radius: 5px;
   margin: 0.3vw;
   padding: 0.5vw 1vw;
   gap: 0.5vw;
-  ${({ color }) => `background-color: ${color ?? 'white'};`}
+  ${({ color }) => `background-color: ${color ?? 'var(--bg-primary, white)'};`}
   display: flex;
   flex-direction: row nowrap;
   justify-content: space-between;

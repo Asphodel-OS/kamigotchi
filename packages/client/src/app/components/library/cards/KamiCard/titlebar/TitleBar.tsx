@@ -54,7 +54,7 @@ const Title = styled.div`
   margin-left: 0.6vw;
 
   text-align: left;
-  color: var(--text-primary, #4b126eff);
+  color: #4b126e;
   cursor: pointer;
   &:hover {
     opacity: 0.6;

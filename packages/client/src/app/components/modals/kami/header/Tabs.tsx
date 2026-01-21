@@ -21,14 +21,14 @@ export const Tabs = ({
       <Button
         onClick={() => setTab('TRAITS')}
         disabled={tab === 'TRAITS'}
-        style={{ borderRight: 'solid black .15vw' }}
+        $hasBorder
       >
         Traits
       </Button>
       <Button
         onClick={() => setTab('SKILLS')}
         disabled={tab === 'SKILLS'}
-        style={{ borderRight: 'solid black .15vw' }}
+        $hasBorder
       >
         Skills
       </Button>
@@ -48,8 +48,9 @@ const Container = styled.div`
   user-select: none;
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ $hasBorder?: boolean }>`
   border: none;
+  ${({ $hasBorder }) => $hasBorder && 'border-right: solid var(--border-primary, black) 0.15vw;'}
   padding: 0.5vw;
   flex-grow: 1;
   color: var(--text-primary, black);

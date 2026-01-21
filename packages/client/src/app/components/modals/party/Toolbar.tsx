@@ -214,7 +214,7 @@ export const Toolbar = ({
 };
 
 const Container = styled.div`
-  background-color: rgb(238, 238, 238);
+  background-color: var(--bg-secondary, rgb(238, 238, 238));
   opacity: 0.9;
 
   /* Avoid Safari white-screen bug when sticky is nested in overflow containers  will-change: transform; position: relative;*/

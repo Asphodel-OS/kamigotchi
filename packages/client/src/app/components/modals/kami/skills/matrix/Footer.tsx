@@ -68,13 +68,13 @@ export const Footer = ({
 };
 
 const Points = styled.div`
-  background-color: #ffffff;
-  border: solid black 0.15vw;
+  background-color: var(--bg-primary, #ffffff);
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.45vw;
   height: 2.5vw;
   width: 7.5vw;
 
-  color: black;
+  color: var(--text-primary, black);
   font-size: 0.9vw;
   line-height: 1.35vw;
 

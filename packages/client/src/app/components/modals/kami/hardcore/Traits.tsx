@@ -73,13 +73,13 @@ const Grouping = styled.div`
   align-items: center;
   justify-content: center;
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
 `;
 
 const Cell = styled.div`
-  border-bottom: solid black 0.15vw;
-  border-right: solid black 0.15vw;
+  border-bottom: solid var(--border-primary, black) 0.15vw;
+  border-right: solid var(--border-primary, black) 0.15vw;
   width: 1.9vw;
   height: 1.9vw;
 

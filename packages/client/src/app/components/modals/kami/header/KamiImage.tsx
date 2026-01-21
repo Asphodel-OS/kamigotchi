@@ -140,7 +140,7 @@ const Container = styled.div`
 `;
 
 const Image = styled.img`
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
   height: 100%;
   image-rendering: pixelated;
@@ -170,11 +170,11 @@ const Text = styled.div<{ size: number }>`
 
 const IndexInput = styled.input`
   border: none;
-  background-color: #eee;
+  background-color: var(--bg-secondary, #eee);
   width: 4.5vw;
   cursor: text;
 
-  color: black;
+  color: var(--text-primary, black);
   font-size: 0.9vw;
   line-height: 1.35vw;
   text-align: center;
@@ -193,15 +193,15 @@ const Percentage = styled.div`
 
 const ExperienceBar = styled.div<{ percent: number }>`
   position: relative;
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0 0 0.6vw 0.6vw;
   opacity: 0.6;
-  background-color: #bbb;
+  background-color: var(--progress-empty, #bbb);
   height: 1.8vw;
   width: 100%;
 
   background: ${({ percent }) =>
-    `linear-gradient(90deg, #11ee11, 0%, #11ee11, ${percent * 0.95}%, #bbb, ${percent * 1.05}%, #bbb 100%)`};
+    `linear-gradient(90deg, var(--progress-fill, #11ee11), 0%, var(--progress-fill, #11ee11), ${percent * 0.95}%, var(--progress-empty, #bbb), ${percent * 1.05}%, var(--progress-empty, #bbb) 100%)`};
 
   display: flex;
   align-items: center;
@@ -211,7 +211,7 @@ const Button = styled.div<{
   color?: string;
   disabled?: boolean;
 }>`
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0 0 0.6vw 0;
   opacity: 0.8;
   height: 1.8vw;
@@ -221,7 +221,8 @@ const Button = styled.div<{
   justify-content: center;
   align-items: center;
 
-  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#11ee11')};
+  background-color: ${({ disabled }) =>
+    disabled ? 'var(--progress-empty, #bbb)' : 'var(--progress-fill, #11ee11)'};
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
@@ -234,7 +235,7 @@ const Button = styled.div<{
     animation: ${() => clickFx(0.1)} 0.3s;
   }
 
-  color: black;
+  color: var(--text-primary, black);
   font-size: 0.8vw;
   text-align: center;
   user-select: none;

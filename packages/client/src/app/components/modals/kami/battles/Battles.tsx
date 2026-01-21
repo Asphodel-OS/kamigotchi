@@ -133,7 +133,7 @@ const Container = styled.div`
 
 const Table = styled.div`
   position: relative;
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
 
   margin: 0 0.9vw;
@@ -148,7 +148,7 @@ const Table = styled.div`
 
 const Stats = styled.div`
   width: fit-content;
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
   margin: 0.9vw;
   padding: 0.3vw;

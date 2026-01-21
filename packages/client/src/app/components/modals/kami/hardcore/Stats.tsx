@@ -59,7 +59,7 @@ const Grouping = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
 `;
 

@@ -73,7 +73,7 @@ const Row = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: rgb(221, 221, 221);
+    background-color: var(--hover-bg, rgb(221, 221, 221));
   }
 `;
 

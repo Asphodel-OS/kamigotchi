@@ -32,6 +32,9 @@
   /* Progress */
   --progress-fill: #11ee11;
   --progress-empty: #bbbbbb;
+
+  /* Shadows */
+  --shadow-color: rgba(0, 0, 0, 0.6);
 }
 
 /* Dark Theme */
@@ -50,7 +53,7 @@
 
   /* Borders */
   --border-primary: #4a4a6a;
-  --border-secondary: #3a3a5a;
+  --border-secondary: #6a6a8a;
 
   /* Interactive states */
   --hover-bg: #2a2a4e;
@@ -68,6 +71,9 @@
   /* Progress */
   --progress-fill: #0d9d0d;
   --progress-empty: #3a3a5a;
+
+  /* Shadows */
+  --shadow-color: rgba(0, 0, 0, 0.4);
 }
 
 /* Smooth theme transition */

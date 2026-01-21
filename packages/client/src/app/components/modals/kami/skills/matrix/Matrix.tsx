@@ -93,7 +93,7 @@ const Content = styled.div`
 
 const Row = styled.div<{ locked: boolean }>`
   position: relative;
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid var(--border-secondary, #555) 0.15vw;
   padding: 1.2vw 3vw;
 
   display: flex;
@@ -101,7 +101,8 @@ const Row = styled.div<{ locked: boolean }>`
   justify-content: space-evenly;
   align-items: center;
 
-  background-color: ${({ locked }) => (locked ? '#ddd' : '#fff')};
+  background-color: ${({ locked }) =>
+    locked ? 'var(--disabled-bg, #ddd)' : 'var(--bg-primary, #fff)'};
 `;
 
 const RowPrefix = styled.div`
@@ -110,7 +111,7 @@ const RowPrefix = styled.div`
 `;
 
 const RowNumber = styled.div`
-  color: black;
+  color: var(--text-primary, black);
   font-family: Pixel;
   font-size: 1.2vw;
 `;
