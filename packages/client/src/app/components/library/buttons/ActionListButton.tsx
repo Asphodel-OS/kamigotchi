@@ -50,7 +50,7 @@ export const ActionListButton = ({
 
   const setButtonStyles = () => {
     const styles: any = {};
-    if (disabled) styles.backgroundColor = '#bbb';
+    if (disabled) styles.backgroundColor = 'var(--disabled-bg, #bbb)';
 
     if (size === 'small') {
       styles.fontSize = '.6vw';
@@ -86,9 +86,9 @@ export const ActionListButton = ({
 }
 
 const Button = styled.button`
-  background-color: #fff;
-  border: solid black 0.15vw;
-  color: black;
+  background-color: var(--bg-primary, #fff);
+  border: solid var(--border-primary, black) 0.15vw;
+  color: var(--text-primary, black);
   display: flex;
 
   font-family: Pixel;
@@ -100,15 +100,16 @@ const Button = styled.button`
   pointer-events: auto;
   user-select: none;
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:active {
-    background-color: #bbb;
+    background-color: var(--active-bg, #bbb);
   }
 `;
 
 const Entry = styled.div<{ disabled?: boolean }>`
-  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  background-color: ${({ disabled }) => (disabled ? 'var(--disabled-bg, #bbb)' : 'var(--bg-primary, #fff)')};
+  color: var(--text-primary, black);
   border-radius: 0.6vw;
   padding: 0.6vw;
   gap: 0.3vw;
@@ -120,10 +121,10 @@ const Entry = styled.div<{ disabled?: boolean }>`
   cursor: pointer;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
   &:active {
-    background-color: #bbb;
+    background-color: var(--active-bg, #bbb);
   }
 `;
 

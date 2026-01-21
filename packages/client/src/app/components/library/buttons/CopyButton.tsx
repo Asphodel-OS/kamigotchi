@@ -2,6 +2,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { IconButton, Snackbar, SnackbarContent } from '@mui/material';
 import { useState } from 'react';
 
+import { useTheme } from 'app/root/hooks';
 import { playClick } from 'utils/sounds';
 
 // CopyButton provides visual and audio feedback to match common copy-button affordances.
@@ -13,6 +14,7 @@ export const CopyButton = ({
   text: string;
 }) => {
   const [open, setOpen] = useState(false);
+  const { isDark } = useTheme();
 
   const handleClick = () => {
     playClick();
@@ -23,7 +25,7 @@ export const CopyButton = ({
   return (
     <>
       <IconButton onClick={handleClick} size='small'>
-        <ContentCopyIcon fontSize='small' style={{ color: '#666' }} />
+        <ContentCopyIcon fontSize='small' style={{ color: isDark ? '#b0b0b0' : '#666' }} />
       </IconButton>
       <Snackbar
         open={open}
@@ -36,8 +38,9 @@ export const CopyButton = ({
       >
         <SnackbarContent
           style={{
-            backgroundColor: '#fff',
-            color: '#333',
+            backgroundColor: isDark ? '#1a1a2e' : '#fff',
+            color: isDark ? '#e8e8e8' : '#333',
+            border: isDark ? '1px solid #4a4a6a' : 'none',
             borderRadius: '0.6vw',
             padding: '0.6vw',
             alignItems: 'center',

@@ -42,12 +42,12 @@ const LetterIndex = styled.div<{ isVisible: boolean }>`
 const Letter = styled.div<{ isSelected: boolean }>`
   padding: 0.3vw 0.6vw;
   border-radius: 0.3vw;
-  color: black;
+  color: var(--text-primary, black);
   cursor: pointer;
   font-size: 0.8vw;
-  background-color: ${({ isSelected }) => (isSelected ? '#b2b2b2' : '#efefef')};
+  background-color: ${({ isSelected }) => (isSelected ? 'var(--active-bg, #b2b2b2)' : 'var(--bg-secondary, #efefef)')};
   display: flex;
   &:hover {
-    background-color: #ddd;
+    background-color: var(--hover-bg, #ddd);
   }
 `;

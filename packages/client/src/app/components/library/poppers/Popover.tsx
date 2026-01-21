@@ -203,7 +203,7 @@ const PopoverContent = styled.div.attrs<{
   overflow-wrap: break-word;
 
   ::-webkit-scrollbar {
-    background: transparent;
+    background: var(--scrollbar-track, transparent);
     width: 0.9vw;
   }
 
@@ -211,7 +211,7 @@ const PopoverContent = styled.div.attrs<{
     border: 0.2vw solid transparent;
     background-clip: padding-box;
     border-radius: 0.2vw;
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: var(--scrollbar-thumb, rgba(0, 0, 0, 0.15));
     &:hover {
       cursor: auto;
     }

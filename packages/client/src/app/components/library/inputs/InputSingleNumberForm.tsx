@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { playClick } from 'utils/sounds';
 
 const disabledStepperStyle = {
-  backgroundColor: '#c4c4c4',
+  backgroundColor: 'var(--disabled-bg, #c4c4c4)',
   pointerEvents: 'none' as const,
 };
 
@@ -78,7 +78,7 @@ export const InputSingleNumberForm = ({
           {' '}
           +{' '}
         </StepperButtonTop>
-        <hr style={{ width: '100%', height: '0px', border: '0.08vw solid black' }} />
+        <hr style={{ width: '100%', height: '0px', border: '0.08vw solid var(--border-primary, black)' }} />
         <StepperButtonBottom
           style={atMin ? disabledStepperStyle : {}}
           onClick={() => (atMin ? 0 : setValue(value - step))}

@@ -141,8 +141,10 @@ const MenuWrapper = styled.div`
 
 const MenuInput = styled.input`
   position: sticky;
-  border: 0.15vw solid black;
+  border: 0.15vw solid var(--border-primary, black);
   border-radius: 0.45vw;
+  background-color: var(--bg-primary, white);
+  color: var(--text-primary, black);
 
   width: 90%;
   height: 2.5vw;
@@ -154,12 +156,17 @@ const MenuInput = styled.input`
   flex-grow: 1;
 
   font-size: 0.75vw;
+
+  &::placeholder {
+    color: var(--text-muted, #999);
+  }
 `;
 
 const MenuOption = styled.div<{ disabled?: boolean }>`
   position: relative;
-  background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
+  background-color: ${({ disabled }) => (disabled ? 'var(--disabled-bg, #bbb)' : 'var(--bg-primary, #fff)')};
   border-radius: 0.45vw;
+  color: var(--text-primary, black);
 
   width: 100%;
   padding: 0.45vw;
@@ -172,13 +179,12 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
   &:hover {
-    background-color: #7d7;
-    background-color: #ddd;
-    outline: 0.15vw solid #444;
+    background-color: var(--hover-bg, #ddd);
+    outline: 0.15vw solid var(--border-primary, #444);
     z-index: 1;
   }
   &:active {
-    background-color: #bbb;
+    background-color: var(--active-bg, #bbb);
   }
 `;
 

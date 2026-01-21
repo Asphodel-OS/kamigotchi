@@ -146,7 +146,7 @@ const PopoverContainer = styled.span.attrs<{
   border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
   padding: 0.9vw;
-  color: ${({ color }) => color || 'var(--text-primary, #333)'};
+  color: var(--text-primary, #333);
 
   display: flex;
   flex-direction: column;

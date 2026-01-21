@@ -65,14 +65,14 @@ export const KamiBlock = ({
 };
 
 const Container = styled.div`
-  background-color: white;
+  background-color: var(--bg-primary, white);
   border-radius: 0.6vw;
   margin: 0.9vw;
-  filter: drop-shadow(0.2vw 0.2vw 0.1vw black);
+  filter: drop-shadow(0.2vw 0.2vw 0.1vw var(--border-primary, black));
 `;
 
 const Image = styled.img<{ onClick?: () => void }>`
-  border: solid black 0.15vw;
+  border: solid var(--border-primary, black) 0.15vw;
   border-radius: 0.6vw;
   width: 10vw;
   image-rendering: pixelated;

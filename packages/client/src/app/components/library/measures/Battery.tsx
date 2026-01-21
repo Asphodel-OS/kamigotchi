@@ -32,7 +32,7 @@ const Container = styled.div`
 `;
 
 const Shell = styled.div<{ scale: number }>`
-  border: 0.15vw solid #444;
+  border: 0.15vw solid var(--border-primary, #444);
   border-radius: ${({ scale }) => scale * 0.25}vw;
   height: ${({ scale }) => scale * 1}vw;
   width: ${({ scale }) => scale * 1.5}vw;
@@ -51,7 +51,7 @@ const Juice = styled.div<{ level: number; scale: number }>`
 `;
 
 const Bump = styled.div<{ scale: number }>`
-  background-color: #444;
+  background-color: var(--border-primary, #444);
   border-radius: 0 ${({ scale }) => scale * 0.05}vw ${({ scale }) => scale * 0.05}vw 0;
   margin: ${({ scale }) => scale * 0.03}vw;
   width: ${({ scale }) => scale * 0.09}vw;

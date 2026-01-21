@@ -131,7 +131,7 @@ const ForegroundSlot = styled.div`
 `;
 
 const Text = styled.div<{ size: number }>`
-  color: black;
+  color: var(--text-primary, black);
   font-size: ${(props) => props.size}vw;
 `;
 
