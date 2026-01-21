@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition } from "libraries/LibConditional.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibItem } from "libraries/LibItem.sol";
 
 uint256 constant ID = uint256(keccak256("system.item.registry"));
@@ -71,6 +72,14 @@ contract _ItemRegistrySystem is System, AuthRoles {
   function addFlag(uint32 index, string memory flag) public onlyAdmin(components) {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
     LibItem.addFlag(components, index, flag);
+  }
+
+  /// @notice Set the equipment slot type for an item
+  /// @param index Item registry index
+  /// @param slotType Equipment slot type (e.g., "PETPET")
+  function setSlotType(uint32 index, string memory slotType) public onlyAdmin(components) {
+    require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
+    LibEquipment.setItemSlotType(components, index, slotType);
   }
 
   function addAlloBasic(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
