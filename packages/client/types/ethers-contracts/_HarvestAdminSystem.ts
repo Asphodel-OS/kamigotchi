@@ -23,7 +23,7 @@ import type {
   TypedContractMethod,
 } from "./common";
 
-export interface HarvestAdminSystemInterface extends Interface {
+export interface _HarvestAdminSystemInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "cancelOwnershipHandover"
@@ -161,11 +161,11 @@ export namespace SystemDeprecatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface HarvestAdminSystem extends BaseContract {
-  connect(runner?: ContractRunner | null): HarvestAdminSystem;
+export interface _HarvestAdminSystem extends BaseContract {
+  connect(runner?: ContractRunner | null): _HarvestAdminSystem;
   waitForDeployment(): Promise<this>;
 
-  interface: HarvestAdminSystemInterface;
+  interface: _HarvestAdminSystemInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
