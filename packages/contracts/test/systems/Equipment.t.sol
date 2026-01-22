@@ -22,9 +22,30 @@ contract EquipmentTest is MintTemplate {
   int256 constant POWER_BONUS = 10;
   int256 constant HEALTH_BONUS = 20;
 
+  // Capacity skill for testing
+  uint32 constant CAPACITY_SKILL_INDEX = 9999;
+
   function setUp() public override {
     super.setUp();
     _createEquipmentItems();
+    _createCapacitySkill();
+  }
+
+  /// @notice Creates a skill that grants +1 equipment capacity per level
+  function _createCapacitySkill() internal {
+    vm.startPrank(deployer);
+    __SkillRegistrySystem.create(
+      abi.encode(CAPACITY_SKILL_INDEX, "KAMI", "", "Equip Capacity", "Increase equipment capacity", uint256(0), uint256(10), uint256(0), "")
+    );
+    __SkillRegistrySystem.addBonus(abi.encode(CAPACITY_SKILL_INDEX, "EQUIP_CAPACITY_SHIFT", int256(1)));
+    vm.stopPrank();
+  }
+
+  /// @notice Helper to increase a kami's equipment capacity
+  function _increaseCapacity(PlayerAccount memory acc, uint256 kamiID, uint256 amount) internal {
+    for (uint256 i = 0; i < amount; i++) {
+      _upgradeSkill(acc, kamiID, CAPACITY_SKILL_INDEX);
+    }
   }
 
   function setUpTraits() public virtual override {
@@ -114,6 +135,9 @@ contract EquipmentTest is MintTemplate {
     _giveItem(alice, PETPET_INDEX, 1);
     _giveItem(alice, HAT_INDEX, 1);
 
+    // Increase capacity to allow 2 items (default is 1)
+    _increaseCapacity(alice, kamiID, 1);
+
     // Get initial stats
     int256 powerBefore = LibStat.getTotal(components, "POWER", kamiID);
     int256 healthBefore = LibStat.getTotal(components, "HEALTH", kamiID);
@@ -186,6 +210,9 @@ contract EquipmentTest is MintTemplate {
 
     _giveItem(alice, PETPET_INDEX, 1);
     _giveItem(alice, HAT_INDEX, 1);
+
+    // Increase capacity to allow 2 items
+    _increaseCapacity(alice, kamiID, 1);
 
     vm.startPrank(alice.operator);
     _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
@@ -312,6 +339,9 @@ contract EquipmentTest is MintTemplate {
     _giveItem(alice, PETPET_INDEX, 1);
     _giveItem(alice, HAT_INDEX, 1);
 
+    // Increase capacity to allow 2 items
+    _increaseCapacity(alice, kamiID, 1);
+
     vm.startPrank(alice.operator);
     _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
     _KamiEquipSystem.executeTyped(kamiID, HAT_INDEX);
@@ -372,6 +402,9 @@ contract EquipmentTest is MintTemplate {
     _giveItem(alice, PETPET_INDEX, 1);
     _giveItem(alice, HAT_INDEX, 1);
 
+    // Increase capacity to allow 2 items
+    _increaseCapacity(alice, kamiID, 1);
+
     vm.startPrank(alice.operator);
     _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
     _KamiEquipSystem.executeTyped(kamiID, HAT_INDEX);
@@ -405,5 +438,123 @@ contract EquipmentTest is MintTemplate {
     // Non-equipment item should have empty slot type
     slotType = LibEquipment.getItemSlotType(components, KAMI_FOOD_INDEX);
     assertEq(slotType, "", "Non-equipment item should have empty slot type");
+  }
+
+  /////////////////
+  // CAPACITY TESTS
+
+  function testDefaultCapacityIsOne() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Default capacity should be 1
+    assertEq(LibEquipment.getCapacity(components, kamiID), 1, "Default capacity should be 1");
+  }
+
+  function testGetEquippedCount() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Initially should be 0
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 0, "Should have 0 equipped initially");
+
+    // Equip one item
+    _giveItem(alice, PETPET_INDEX, 1);
+    vm.prank(alice.operator);
+    _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
+
+    // Should be 1
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 1, "Should have 1 equipped after equip");
+  }
+
+  function testCannotEquipAtCapacity() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Equip first item (uses the one default slot)
+    _giveItem(alice, PETPET_INDEX, 1);
+    vm.prank(alice.operator);
+    _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
+
+    // Try to equip second item in different slot - should fail
+    _giveItem(alice, HAT_INDEX, 1);
+    vm.prank(alice.operator);
+    vm.expectRevert("Equipment: at capacity");
+    _KamiEquipSystem.executeTyped(kamiID, HAT_INDEX);
+  }
+
+  function testCanReplaceSameSlotAtCapacity() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Give two petpet items
+    _giveItem(alice, PETPET_INDEX, 2);
+
+    // Equip first item
+    vm.prank(alice.operator);
+    _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
+
+    // Replace with second item in same slot - should work even at capacity
+    vm.prank(alice.operator);
+    _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
+
+    // Verify still equipped
+    assertTrue(LibEquipment.hasEquipped(components, kamiID, SLOT_PETPET), "Should still have PETPET equipped");
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 1, "Should still have 1 equipped");
+  }
+
+  function testIncreasingCapacityAllowsMoreEquipment() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Equip first item
+    _giveItem(alice, PETPET_INDEX, 1);
+    vm.prank(alice.operator);
+    _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
+
+    // Increase capacity by 1 (now capacity is 2)
+    _increaseCapacity(alice, kamiID, 1);
+    assertEq(LibEquipment.getCapacity(components, kamiID), 2, "Capacity should be 2 after bonus");
+
+    // Now can equip second item
+    _giveItem(alice, HAT_INDEX, 1);
+    vm.prank(alice.operator);
+    _KamiEquipSystem.executeTyped(kamiID, HAT_INDEX);
+
+    // Verify both equipped
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 2, "Should have 2 equipped");
+  }
+
+  function testCapacityBonusStacks() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Default capacity
+    assertEq(LibEquipment.getCapacity(components, kamiID), 1, "Default capacity should be 1");
+
+    // Increase by 1
+    _increaseCapacity(alice, kamiID, 1);
+    assertEq(LibEquipment.getCapacity(components, kamiID), 2, "Capacity should be 2 after +1");
+
+    // Increase by 2 more
+    _increaseCapacity(alice, kamiID, 2);
+    assertEq(LibEquipment.getCapacity(components, kamiID), 4, "Capacity should be 4 after +3 total");
+  }
+
+  function testUnequipAfterCapacityLoss() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Increase capacity to 2
+    _increaseCapacity(alice, kamiID, 1);
+
+    // Equip 2 items
+    _giveItem(alice, PETPET_INDEX, 1);
+    _giveItem(alice, HAT_INDEX, 1);
+    vm.startPrank(alice.operator);
+    _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
+    _KamiEquipSystem.executeTyped(kamiID, HAT_INDEX);
+    vm.stopPrank();
+
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 2, "Should have 2 equipped");
+
+    // Unequip one item - should work
+    vm.prank(alice.operator);
+    _KamiUnequipSystem.executeTyped(kamiID, SLOT_PETPET);
+
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 1, "Should have 1 equipped after unequip");
   }
 }
