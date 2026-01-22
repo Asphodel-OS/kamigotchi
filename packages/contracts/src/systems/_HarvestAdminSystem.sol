@@ -14,7 +14,7 @@ import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 uint256 constant ID = uint256(keccak256("system.harvest.admin"));
 
 // admin controls for harvest operations
-contract HarvestAdminSystem is System, AuthRoles {
+contract _HarvestAdminSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   // index is kami index
