@@ -5,7 +5,7 @@ dist
 node_modules
 temp
 
+temp
+**/CLAUDE.md
 bundle-stats.html
-bundle-stats.json
-
 .serena
