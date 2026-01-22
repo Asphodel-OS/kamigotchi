@@ -7,6 +7,7 @@ import _AuthManageRoleSystem from "../../../out/_AuthManageRoleSystem.sol/_AuthM
 import _ConfigSetSystem from "../../../out/_ConfigSetSystem.sol/_ConfigSetSystem.json";
 import _FactionRegistrySystem from "../../../out/_FactionRegistrySystem.sol/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../../../out/_GoalRegistrySystem.sol/_GoalRegistrySystem.json";
+import _HarvestAdminSystem from "../../../out/_HarvestAdminSystem.sol/_HarvestAdminSystem.json";
 import _ItemRegistrySystem from "../../../out/_ItemRegistrySystem.sol/_ItemRegistrySystem.json";
 import _ListingRegistrySystem from "../../../out/_ListingRegistrySystem.sol/_ListingRegistrySystem.json";
 import _NodeRegistrySystem from "../../../out/_NodeRegistrySystem.sol/_NodeRegistrySystem.json";
@@ -86,6 +87,7 @@ export const SystemBytecodes = {
   "system.config.registry": _ConfigSetSystem,
   "system.faction.registry": _FactionRegistrySystem,
   "system.goal.registry": _GoalRegistrySystem,
+  "system.harvest.admin": _HarvestAdminSystem,
   "system.item.registry": _ItemRegistrySystem,
   "system.listing.registry": _ListingRegistrySystem,
   "system.node.registry": _NodeRegistrySystem,

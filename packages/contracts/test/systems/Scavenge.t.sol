@@ -223,7 +223,7 @@ contract ScavengeTest is SetupTemplate {
     (, bytes memory values) = abi.decode(data, (uint8[], bytes));
     return abi.decode(values, (uint256, uint256, uint256, uint256, uint32[], uint256[]));
   }
-  
+
   /// @notice Test SCAVENGE_REWARDS event with droptable rewards
   function testScavengeRewardsEventWithDroptable() public {
     // Setup: create scavbar with droptable reward
@@ -290,8 +290,14 @@ contract ScavengeTest is SetupTemplate {
     _DroptableRevealSystem.executeTyped(commitIDs);
 
     // Decode DROPTABLE_REVEAL event
-    (uint256 commitID, uint256 holderID, uint256 dtID, , , uint256[] memory itemAmounts) =
-      _decodeDroptableRevealEvent(_findWorldEvent(vm.getRecordedLogs(), "DROPTABLE_REVEAL").data);
+    (
+      uint256 commitID,
+      uint256 holderID,
+      uint256 dtID,
+      ,
+      ,
+      uint256[] memory itemAmounts
+    ) = _decodeDroptableRevealEvent(_findWorldEvent(vm.getRecordedLogs(), "DROPTABLE_REVEAL").data);
 
     // Assertions
     assertEq(commitID, commitIDs[0], "commitID mismatch");
