@@ -20,7 +20,7 @@ export function setupKamidenRevealHandler(
     const accountID = formatEntityID(account.id);
 
     feed.DroptableReveals.forEach((reveal: DroptableReveal) => {
-      log.error('Got reveal')
+      log.debug('Got reveal');
       const holderID = formatEntityID(reveal.HolderID);
       if (holderID !== accountID) return;
 
@@ -35,7 +35,31 @@ export function setupKamidenRevealHandler(
 
       const results: string[] = [];
       for (let i = 0; i < reveal.ItemIndices.length; i++) {
-        const amount = Number(BigInt(reveal.ItemAmounts[i] || '0'));
+        const rawAmount = reveal.ItemAmounts[i];
+
+        // Validate input is a valid integer string before parsing
+        if (typeof rawAmount !== 'string' || !/^-?\d+$/.test(rawAmount)) {
+          log.warn(`DroptableReveal: invalid ItemAmount at index ${i}`, { commitID, rawAmount });
+          continue;
+        }
+
+        let parsedAmountBigInt: bigint;
+        try {
+          parsedAmountBigInt = BigInt(rawAmount);
+        } catch (e) {
+          log.warn(`DroptableReveal: failed to parse ItemAmount at index ${i}`, { commitID, rawAmount, error: e });
+          continue;
+        }
+
+        if (parsedAmountBigInt <= 0n) continue;
+
+        // Check if value exceeds safe integer range to avoid precision loss
+        if (parsedAmountBigInt > BigInt(Number.MAX_SAFE_INTEGER)) {
+          log.warn(`DroptableReveal: ItemAmount exceeds safe integer range at index ${i}`, { commitID, rawAmount });
+          continue;
+        }
+
+        const amount = Number(parsedAmountBigInt);
         if (!Number.isSafeInteger(amount) || amount <= 0) continue;
 
         const item = getItemDetailsByIndex(world, components, reveal.ItemIndices[i]);
