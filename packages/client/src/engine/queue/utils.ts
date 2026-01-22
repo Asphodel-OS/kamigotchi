@@ -6,6 +6,7 @@ import {
   TransactionReceipt,
   TransactionRequest,
   TransactionResponse,
+  Wallet,
 } from 'ethers';
 
 /**
@@ -65,11 +66,47 @@ export async function waitForTx(
 export async function sendTx(
   signer: Signer | undefined,
   txData: TransactionRequest
-): Promise<TransactionResponse> {
+): Promise<TransactionReceipt> {
+  if (!signer) {
+    throw new Error('Signer required');
+  }
+  if (!signer.provider) {
+    throw new Error('Provider required');
+  }
+
   txData.chainId = DefaultChain.id;
-  txData.maxFeePerGas = baseGasPrice; // gas prices for minievm are fixed
+  txData.maxFeePerGas = baseGasPrice;
   txData.maxPriorityFeePerGas = 0;
-  return signer?.sendTransaction(txData)!;
+
+  // Embedded wallet (Wallet instance) supports EIP-7966 eth_sendRawTransactionSync
+  // Injected wallet (JsonRpcSigner) needs legacy sendTransaction
+  if (signer instanceof Wallet) {
+    const signedTx = await signer.signTransaction(txData);
+    const receipt = await (signer.provider as any).send('eth_sendRawTransactionSync', [
+      signedTx,
+      8000,
+    ]);
+
+    const status = typeof receipt.status === 'string'
+      ? parseInt(receipt.status, 16)
+      : receipt.status;
+
+    if (status !== 1) {
+      const error = new Error(`Transaction failed with status ${receipt.status}`);
+      (error as any).receipt = receipt;
+      throw error;
+    }
+
+    return receipt;
+  }
+
+  // Legacy path for injected wallets (MetaMask, etc.)
+  const response = await signer.sendTransaction(txData);
+  const receipt = await response.wait();
+  if (!receipt) {
+    throw new Error('Transaction receipt is null');
+  }
+  return receipt;
 }
 
 // check if nonce should be incremented
