@@ -139,6 +139,7 @@ export interface RoomRequest {
   Size?: number | undefined;
 }
 
+// biome-ignore lint/suspicious/noEmptyInterface: Generated from protobuf message with no fields
 export interface StreamRequest {
 }
 
@@ -177,6 +178,7 @@ export interface TokenPortalRequest {
   AccountID: string;
 }
 
+// biome-ignore lint/suspicious/noEmptyInterface: Generated from protobuf message with no fields
 export interface LeaderboardRequest {
 }
 
