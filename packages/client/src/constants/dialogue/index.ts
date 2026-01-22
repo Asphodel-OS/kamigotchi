@@ -16,14 +16,38 @@ import dialogues15 from './15_temple-cave';
 import dialogues16 from './16_techno-temple';
 import dialogues18 from './18_cave-crossroads';
 import dialogues19 from './19_violence-temple';
+import dialogues25 from './25_lost-skeleton';
 import dialogues49 from './49_clearing';
 import dialogues52 from './52_airplane_crash';
 import dialogues54 from './54_plane_interior';
+import dialogues59 from './59_black-pool';
+import dialogues60 from './60_scrap-trees';
 import dialogues64 from './64_burning_room';
 import dialogues65 from './65_forest_hut';
 import dialogues66 from './66_trading-room';
+import dialogues68 from './68_slippery-pit';
+import dialogues69 from './69_lotus-pool';
+import dialogues70 from './70_still-stream';
+import dialogues71 from './71_shabby-deck';
 import dialogues72 from './72_hatch-to-nowhere';
+import dialogues73 from './73_broken-tube';
+import dialogues74 from './74_engraved-door';
+import dialogues75 from './75_flood-mural';
+import dialogues76 from './76_fungus-garden';
+import dialogues77 from './77_thriving-mushrooms';
+import dialogues78 from './78_toadstool-platforms';
+import dialogues79 from './79_abandoned-campsite';
+import dialogues80 from './80_radiant-crystal';
+import dialogues81 from './81_flower-mural';
+import dialogues82 from './82_geometric-cliffs';
+import dialogues83 from './83_canyon-bridge';
+import dialogues84 from './84_reinforced-tunnel';
+import dialogues86 from './86_guardian-skull';
+import dialogues87 from './87_sacrarium';
 import dialogues88 from './88_treasure-hoard';
+import dialogues89 from './89_trophies-of-the-hunt';
+import dialogues90 from './90_scenic-view';
+
 import { DialogueNode } from './types';
 
 const dialogues00: DialogueNode[] = [
@@ -57,14 +81,39 @@ const dialogueList = dialogues00.concat(
   dialogues16,
   dialogues18,
   dialogues19,
+  dialogues25,
   dialogues49,
   dialogues52,
   dialogues54,
+  dialogues59,
+  dialogues60,
   dialogues64,
   dialogues65,
   dialogues66,
   dialogues72,
-  dialogues88
+  dialogues88,
+  dialogues68,
+  dialogues69,
+  dialogues70,
+  dialogues71,
+  dialogues72,
+  dialogues73,
+  dialogues74,
+  dialogues75,
+  dialogues76,
+  dialogues77,
+  dialogues78,
+  dialogues79,
+  dialogues80,
+  dialogues81,
+  dialogues82,
+  dialogues83,
+  dialogues84,
+  dialogues86,
+  dialogues87,
+  dialogues88,
+  dialogues89,
+  dialogues90
 );
 
 // aggregated map of all dialogue nodes, referenced by index

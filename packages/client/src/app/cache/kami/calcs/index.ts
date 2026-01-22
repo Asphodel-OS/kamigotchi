@@ -4,6 +4,7 @@ export {
   calcHarvestTime,
   calcHealth,
   calcHealthPercent,
+  calcHealthRate,
   canHarvest,
   isDead,
   isFull,

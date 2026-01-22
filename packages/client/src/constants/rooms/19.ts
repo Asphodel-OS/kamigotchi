@@ -9,5 +9,11 @@ export const room19: Room = {
     key: 'templeOfTheWheel',
     path: templeOfTheWheel,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'black pool',
+      coordinates: { x1: 35, y1: 95, x2: 95, y2: 107 },
+      dialogue: 192,
+    },
+  ],
 };

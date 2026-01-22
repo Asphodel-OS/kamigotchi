@@ -15,6 +15,8 @@ export const TitleBar = ({
   show?: {
     battery?: boolean;
     cooldown?: boolean;
+    hideName?: boolean;
+    showPercent?: boolean;
   };
   tick: number;
 }) => {
@@ -23,10 +25,12 @@ export const TitleBar = ({
 
   return (
     <Container>
-      <Title key='title' onClick={onClick}>
-        {kami.name}
-      </Title>
-      {show?.battery && <Health kami={kami} tick={tick} />}
+      {!show?.hideName && (
+        <Title key='title' onClick={onClick}>
+          {kami.name}
+        </Title>
+      )}
+      {show?.battery && <Health kami={kami} tick={tick} showPercent={show?.showPercent} />}
       {show?.cooldown && (
         <Corner key='corner'>
           <Cooldown kami={kami} tick={tick} />
@@ -63,8 +67,7 @@ const Title = styled.div`
 `;
 
 const Corner = styled.div`
-  flex-grow: 1;
-  width: 2.7vw;
+  width: 4.5vw;
   height: 100%;
 
   display: flex;

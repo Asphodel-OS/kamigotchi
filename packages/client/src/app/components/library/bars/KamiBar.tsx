@@ -14,6 +14,8 @@ import {
 import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/base';
 import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { Shimmer } from 'app/styles/effects';
+import { StatusIcons } from 'assets/images/icons/statuses';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
 import { HealthColors } from 'constants/kamis/health';
@@ -23,26 +25,33 @@ import { NullNode } from 'network/shapes/Node';
 import { getRateDisplay } from 'utils/numbers';
 import { playClick } from 'utils/sounds';
 import { formatCountdown } from 'utils/time';
+import { LevelUpArrows } from '../animations/LevelUp';
 import { Cooldown } from './Cooldown';
 
 export const KamiBar = ({
   kami,
   actions,
-  options: { showCooldown, showPercent, showTooltip } = {},
+  options: { showCooldown, showLevelUp, showPercent, showTooltip, showSkillPoints } = {},
   utils,
   tick,
 }: {
   kami: Kami;
-  actions?: React.ReactNode;
+  actions?:
+    | React.ReactElement<{ cooldownBackground?: string }>
+    | React.ReactElement<{ cooldownBackground?: string }>[];
   options?: {
     showCooldown?: boolean;
+    showLevelUp?: boolean;
     showPercent?: boolean; // whether to show the percent health
     showTooltip?: boolean;
+    showSkillPoints?: boolean;
   };
   tick: number;
 
   // NOTE: this is really messy, we should embed temp bonuses onto the kami object
   utils: {
+    levelUp?: (kami: Kami) => void;
+    calcExpRequirement?: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
 }) => {
@@ -51,10 +60,34 @@ export const KamiBar = ({
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setModals = useVisibility((s) => s.setModals);
   const [currentHealth, setCurrentHealth] = useState(0);
+  const [canLevel, setCanLevel] = useState(false);
 
   useEffect(() => {
     setCurrentHealth(calcHealth(kami));
   }, [tick]);
+
+  useEffect(() => {
+    if (!kami.progress || !utils.calcExpRequirement) return;
+    const expCurr = kami.progress.experience;
+    const expLimit = utils.calcExpRequirement(kami.progress.level);
+    setCanLevel(expCurr >= expLimit && isResting(kami));
+  }, [kami.progress?.experience, kami.state, kami.progress?.level]);
+
+  const getLevelUpTooltip = () => {
+    if (!kami.progress || !utils.calcExpRequirement) return '';
+    const expCurr = kami.progress.experience;
+    const expLimit = utils.calcExpRequirement(kami.progress.level);
+    if (expCurr < expLimit) return 'not enough exp';
+    if (!isResting(kami)) return 'must be resting';
+    return 'Level Up!';
+  };
+
+  const handleLevelUp = () => {
+    if (canLevel && utils?.levelUp) {
+      utils.levelUp(kami);
+      playClick();
+    }
+  };
 
   /////////////////
   // INTERACTION
@@ -99,8 +132,9 @@ export const KamiBar = ({
 
   // get the percent health the kami has remaining
   const calcHealthPercent = () => {
-    if (!showTooltip) return 100;
+    if (isOffWorld(kami)) return 100;
     const total = kami.stats?.health.total ?? 0;
+    if (total === 0) return 0;
     return (100 * currentHealth) / total;
   };
 
@@ -163,6 +197,12 @@ export const KamiBar = ({
     return tooltip;
   };
 
+  const showHealth = (kami: Kami) => {
+    const totalHealth = kami.stats?.health.total ?? 0;
+    const healthPercent = calcHealthPercent();
+
+    return `${currentHealth}/${totalHealth} (${healthPercent.toFixed(0)}%)`;
+  };
   // get the description of temp bonuses currently applied to the kami
   const getBonusesDescription = (kami: Kami) => {
     const bonuses = utils.getTempBonuses(kami);
@@ -183,14 +223,36 @@ export const KamiBar = ({
     return HealthColors.healthy;
   };
 
-  /////////////////
-  // RENDER
+  const getKamiStateIcon = (state: string) => {
+    if (state === 'HARVESTING') return StatusIcons.kami_harvesting;
+    if (state === 'RESTING') return StatusIcons.kami_resting;
+    if (state === 'DEAD') return StatusIcons.kami_dead;
+    if (state === 'WANDERING') return StatusIcons.kami_wandering;
+  };
+
+  const kamiState = getKamiState(kami);
+  const healthPercent = calcHealthPercent();
+  const statusColor = getStatusColor(healthPercent);
+  const item = kami.harvest ? getHarvestItem(kami.harvest) : null;
 
   return (
     <Container>
       <Left>
         <TextTooltip text={[`${kami.name}`]}>
-          <Image src={kami.image} onClick={handleImageClick} />
+          <ImageWrapper>
+            <Image src={kami.image} onClick={handleImageClick} />
+            {showSkillPoints && (kami.skills?.points ?? 0) > 0 && (
+              <Overlay top={0.2} right={0.2}>
+                <Sp>SP</Sp>
+              </Overlay>
+            )}
+          </ImageWrapper>
+          {canLevel && showLevelUp && (
+            <LevelUpButton>
+              <LevelUpArrows />
+              <Shimmer />
+            </LevelUpButton>
+          )}
         </TextTooltip>
         <TextTooltip
           text={[`Body: ${getKamiBodyAffinity(kami)}`, `Hand: ${getKamiHandAffinity(kami)}`]}
@@ -200,18 +262,22 @@ export const KamiBar = ({
           <Icon src={getHandIcon()} />
         </TextTooltip>
       </Left>
-      <Middle percent={calcHealthPercent()} color={getStatusColor(calcHealthPercent())}>
-        <Overlay top={0.18} left={0.15} passthrough>
-          <Text size={0.45}>{calcOutput(kami)}</Text>
+      <Middle percent={healthPercent} color={statusColor}>
+        <Overlay top={0.2} left={0.5}>
+          <OutputSection>
+            <Text size={0.6}>{calcOutput(kami)}</Text>
+            {item && <OutputIcon src={item.image} />}
+          </OutputSection>
         </Overlay>
         <TextTooltip text={getTooltip(kami)} direction='row'>
-          <Text size={0.9}>{getKamiState(kami)}</Text>
-          {showPercent && <Text size={0.75}>({calcHealthPercent().toFixed(0)}%)</Text>}
+          <StateSection>
+            <StateIcon src={getKamiStateIcon(kamiState)} />
+            {showPercent && <Text size={0.7}>{showHealth(kami)}</Text>}
+          </StateSection>
         </TextTooltip>
       </Middle>
       <Right>
-        {showCooldown && <Cooldown kami={kami} />}
-        {actions}
+        {actions && (showCooldown ? <Cooldown kami={kami}>{actions}</Cooldown> : actions)}
       </Right>
     </Container>
   );
@@ -257,11 +323,11 @@ interface MiddleProps {
 const Middle = styled.div<MiddleProps>`
   position: relative;
   height: 3vw;
+
   border-right: solid black 0.15vw;
   border-left: solid black 0.15vw;
-  margin: 0 0.3vw 0 0.3vw;
-  gap: 0.3vw;
-
+  margin: 0 0.2vw 0 0.2vw;
+  padding: 0 0.2vw;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -272,8 +338,15 @@ const Middle = styled.div<MiddleProps>`
     `linear-gradient(90deg, ${color}, 0%, ${color}, ${percent}%, #fff, ${Math.min(percent * 1.05, 100)}%, #fff 100%)`};
 `;
 
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 3vw;
+  height: 3vw;
+`;
+
 const Image = styled.img`
   border-right: solid black 0.15vw;
+
   width: 3vw;
   height: 3vw;
 
@@ -285,15 +358,58 @@ const Image = styled.img`
   }
 `;
 
+const Sp = styled.div`
+  font-size: 0.85vw;
+  font-weight: bold;
+  background: linear-gradient(to right, #0b0d0eff, #ee0979);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
 const Icon = styled.img`
   width: 1.5vw;
   height: 1.5vw;
+  user-select: none;
+  user-drag: none;
+`;
 
+const OutputSection = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 0.4vw;
+`;
+
+const OutputIcon = styled.img`
+  width: 1vw;
+  height: 1vw;
+`;
+
+const StateIcon = styled.img`
+  margin-right: 0.3vw;
+  width: 2vw;
+  height: 2vw;
+`;
+
+const StateSection = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  justify-content: space-between;
+`;
 
-  user-select: none;
-  user-drag: none;
+const LevelUpButton = styled.div<{ disabled?: boolean }>`
+  position: absolute;
+  width: 3vw;
+  height: 3vw;
+  cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+  overflow: hidden;
+
+  &:hover {
+    opacity: ${({ disabled }) => (disabled ? 1 : 0.8)};
+  }
 `;

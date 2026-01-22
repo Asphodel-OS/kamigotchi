@@ -17,4 +17,5 @@ export interface ActionParam {
   label: string;
   type: string;
   input?: number;
+  onClick?: () => void;
 }

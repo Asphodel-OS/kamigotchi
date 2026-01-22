@@ -13,5 +13,16 @@ export const room25: Room = {
     key: 'k13',
     path: k13,
   },
-  objects: [],
+  objects: [
+    {
+      name: '1997 laptop',
+      coordinates: { x1: 52, y1: 95, x2: 65, y2: 109 },
+      dialogue: 251,
+    },
+    {
+      name: 'skeleton in wide-leg jeans',
+      coordinates: { x1: 70, y1: 75, x2: 115, y2: 110 },
+      dialogue: 252,
+    },
+  ],
 };

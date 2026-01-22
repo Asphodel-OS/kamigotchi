@@ -2,17 +2,13 @@
 *       @chlwys @jiracheron
 
 # By Language
-*.js    @jiracheron
-*.sol   @chlwys
-*.ts    @jiracheron 
-*.tsx   @jiracheron
+*.sol   @chlwys @ExistentialEnso
 
 # By Domain
-packages/client/ @jiracheron @chlwys @Xenofluxx @hubur @deeterbleater
-packages/client/src/app/ @ExistentialEnso
-packages/client/src/cache/ @ExistentialEnso
-packages/contracts/ @chlwys @jiracheron
+pnpm-lock.yaml @Xenofluxx @hubur @deeterbleater @ExistentialEnso
 
+packages/client/ @Xenofluxx @deeterbleater @hubur @ExistentialEnso @jiracheron @chlwys
+packages/contracts/ @ExistentialEnso @chlwys @jiracheron 
 
 .github/workflows/ @hubur
 .github/scripts/ @hubur
