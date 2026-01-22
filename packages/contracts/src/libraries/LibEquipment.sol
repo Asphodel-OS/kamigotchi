@@ -2,6 +2,7 @@
 pragma solidity >=0.8.28;
 
 import { LibString } from "solady/utils/LibString.sol";
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
@@ -39,9 +40,14 @@ import { LibKami } from "libraries/LibKami.sol";
 library LibEquipment {
   using LibComp for IUintComp;
   using LibString for string;
+  using SafeCastLib for int256;
 
   string constant ENTITY_TYPE = "EQUIPMENT";
   string constant END_TYPE_PREFIX = "ON_UNEQUIP_";
+
+  // Equipment capacity: base limit on total equipment a kami can have equipped
+  uint256 constant DEFAULT_CAPACITY = 1;
+  string constant CAPACITY_BONUS_TYPE = "EQUIP_CAPACITY_SHIFT";
 
   /////////////////
   // SHAPES
@@ -97,6 +103,9 @@ library LibEquipment {
     uint256 existingEquipID = getEquipped(components, kamiID, slotType);
     if (existingEquipID != 0) {
       unequip(world, components, kamiID, accID, slotType);
+    } else {
+      // Adding new equipment (not replacing) - check capacity
+      require(getEquippedCount(components, kamiID) < getCapacity(components, kamiID), "Equipment: at capacity");
     }
 
     // Consume item from account inventory
@@ -196,6 +205,19 @@ library LibEquipment {
     uint256 itemID = LibItem.genID(itemIndex);
     SlotTypeComponent comp = SlotTypeComponent(getAddrByID(components, SlotTypeCompID));
     return comp.has(itemID) ? comp.get(itemID) : "";
+  }
+
+  /// @notice Get total equipment capacity for a kami (default + bonuses)
+  function getCapacity(IUintComp components, uint256 kamiID) internal view returns (uint256) {
+    int256 bonus = LibBonus.getFor(components, CAPACITY_BONUS_TYPE, kamiID);
+    // Bonus can be negative but total capacity should never go below 0
+    if (bonus < 0 && uint256(-bonus) >= DEFAULT_CAPACITY) return 0;
+    return uint256(int256(DEFAULT_CAPACITY) + bonus);
+  }
+
+  /// @notice Get current equipment count for a kami
+  function getEquippedCount(IUintComp components, uint256 kamiID) internal view returns (uint256) {
+    return getAllEquipped(components, kamiID).length;
   }
 
   /// @notice Get the allo ID for an equipment item's EQUIP use case bonus
