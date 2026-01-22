@@ -27,8 +27,7 @@ type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : nev
 
 type TxResult = {
   hash: string;
-  wait: () => Promise<TransactionReceipt>;
-  response: Promise<any>;
+  receipt?: TransactionReceipt;
 };
 
 /**
@@ -184,6 +183,7 @@ export function create<C extends Contracts>(
         }
         return gasEstimate;
       } catch (error) {
+        console.log(error)
         throw error;
       }
     };
@@ -194,15 +194,10 @@ export function create<C extends Contracts>(
       if (!tx) {
         throw new Error('Failed to send transaction: signer missing or sendTx returned undefined');
       }
-      const hash = tx.hash;
-      log.debug(`[TXQueue] TX Sent ${tx.hash}`);
-      const wait = async () => {
-        const receipt = await tx.wait();
-        if (!receipt) throw new Error('tx receipt null');
-        return receipt;
-      };
-      const response = Promise.resolve(tx);
-      return { hash, wait, response };
+      const hash = tx.transactionHash ?? tx.hash;
+      log.debug(`[TXQueue] TX Sent ${hash}`);
+      // Get receipt directly from sync transaction (EIP-7966)
+      return { hash, receipt: tx };
     };
 
     queue.add(uuid(), { execute, estimateGas, resolve, reject, cacheKey });
@@ -232,7 +227,7 @@ export function create<C extends Contracts>(
         const result = await executeTxWithRetry(queueItem.execute, txOverrides);
         queueItem.resolve(result);
         incNonce();
-        return { hash: result.hash, wait: result.wait };
+        return { hash: result.hash, receipt: result.receipt };
       } catch (e) {
         queueItem.reject(e as Error);
         if (queueItem.cacheKey) {
@@ -242,10 +237,16 @@ export function create<C extends Contracts>(
     });
 
     // Await confirmation
+    // Using EIP-7966 (eth_sendRawTransactionSync), receipt is already available
+    // so we can access it directly without calling wait()
     if (txResult?.hash) {
       try {
-        const tx = await txResult.wait();
-        log.info('[TXQueue] TX Confirmed', tx);
+        // Original async confirmation - commented out because we're using EIP-7966 sync transactions
+        // const tx = await txResult.wait();
+        const receipt = (txResult as any).receipt;
+        if (receipt) {
+          log.info('[TXQueue] TX Confirmed', receipt);
+        }
       } catch (e: any) {
         logTxError('TX FAILED', e, txResult?.hash);
         if (queueItem.cacheKey) {
@@ -266,8 +267,7 @@ export function create<C extends Contracts>(
     args: unknown[]
   ): Promise<{
     hash: string;
-    wait: () => Promise<TransactionReceipt>;
-    response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
+    receipt?: TransactionReceipt;
   }> {
     // Extract existing overrides from function call
     const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
