@@ -3,12 +3,11 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibExperience } from "libraries/LibExperience.sol";
-import { LibInventory, MUSU_INDEX } from "libraries/LibInventory.sol";
+import { MUSU_INDEX } from "libraries/LibInventory.sol";
 import { LibNode } from "libraries/LibNode.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";

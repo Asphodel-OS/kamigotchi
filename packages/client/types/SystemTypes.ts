@@ -7,6 +7,7 @@ import { _AuthManageRoleSystem } from "./ethers-contracts/_AuthManageRoleSystem"
 import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
 import { _FactionRegistrySystem } from "./ethers-contracts/_FactionRegistrySystem";
 import { _GoalRegistrySystem } from "./ethers-contracts/_GoalRegistrySystem";
+import { _HarvestAdminSystem } from "./ethers-contracts/_HarvestAdminSystem";
 import { _ItemRegistrySystem } from "./ethers-contracts/_ItemRegistrySystem";
 import { _ListingRegistrySystem } from "./ethers-contracts/_ListingRegistrySystem";
 import { _NodeRegistrySystem } from "./ethers-contracts/_NodeRegistrySystem";
@@ -86,6 +87,7 @@ export type SystemTypes = {
   "system.config.registry": _ConfigSetSystem;
   "system.faction.registry": _FactionRegistrySystem;
   "system.goal.registry": _GoalRegistrySystem;
+  "system.harvest.admin": _HarvestAdminSystem;
   "system.item.registry": _ItemRegistrySystem;
   "system.listing.registry": _ListingRegistrySystem;
   "system.node.registry": _NodeRegistrySystem;
