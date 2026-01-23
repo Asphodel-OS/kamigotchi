@@ -1,5 +1,5 @@
-import { createDecode } from 'engine/encoders';
 import { KamigazeServiceClient } from 'clients/kamigaze';
+import { createDecode } from 'engine/encoders';
 import { log } from 'utils/logger';
 import {
   StateCache,
@@ -13,13 +13,13 @@ import {
 
 const CHUNK_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 20;
-const RETRY_DELAYS = [10000, 10000, 10000, 10000, 10000];
+const RETRY_DELAYS = [2000, 3000, 5000, 10000];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const maybeThrow = () => {
   if (Math.random() < 0.6) {
-    log.warn('[snapshot] Throwing on purpose')
+    log.warn('[snapshot] Throwing on purpose');
     throw new Error('[snapshot] [TEST] Random chunk failure (1 in 5)');
   }
 };
@@ -63,7 +63,7 @@ async function fetchWithRetry<TChunk>({
 
   while (retryCount <= MAX_RETRIES) {
     try {
-      log.debug(`[snapshot] ${name} requesting stream`, getRetryContext?.());
+      log.debug(`[snapshot] ${name} fetching`, getRetryContext?.());
       const response = createStream();
 
       for await (const chunk of response) {
@@ -71,7 +71,7 @@ async function fetchWithRetry<TChunk>({
           const { pending } = getProgress(chunk);
 
           if (totalChunks === 0) {
-            totalChunks = pending + 1;
+            totalChunks = chunkIndex + pending + 1;
           }
 
           if (getChunkLogData) {
@@ -82,7 +82,7 @@ async function fetchWithRetry<TChunk>({
 
           const processedChunks = chunkIndex + 1;
           const percent = progressRange.start + (processedChunks / totalChunks) * progressSpan;
-          setPercentage(Math.min(percent, progressRange.end));
+          setPercentage(Math.min(+percent.toFixed(1), progressRange.end));
 
           chunkIndex++;
         }, CHUNK_TIMEOUT_MS);
@@ -97,10 +97,12 @@ async function fetchWithRetry<TChunk>({
       if (retryCount > MAX_RETRIES) throw error;
 
       const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
-      log.debug(`[snapshot] ${name} retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`, getRetryContext?.());
+      log.debug(
+        `[snapshot] ${name} retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`,
+        getRetryContext?.()
+      );
       await sleep(delay);
 
-      chunkIndex = 0;
       totalChunks = 0;
       onRetry?.();
     }
@@ -135,7 +137,14 @@ export const fetchSnapshot = async (
     lastStateRemovalsBlock: stateCache.lastStateRemovalsBlock,
   });
 
-  const options: FetchOptions = { stateCache, kamigazeClient, decode, numChunks, setPercentage, setMessage };
+  const options: FetchOptions = {
+    stateCache,
+    kamigazeClient,
+    decode,
+    numChunks,
+    setPercentage,
+    setMessage,
+  };
 
   try {
     setMessage?.('Querying for State Info');
@@ -152,9 +161,9 @@ export const fetchSnapshot = async (
       options.stateCache = createStateCache();
       initialLoad = true;
     }
-                
-    options.stateCache.lastStateValuesBlock = options.stateCache.lastKamigazeBlock;                  
-    options.stateCache.lastStateRemovalsBlock = options.stateCache.lastKamigazeBlock;  
+
+    options.stateCache.lastStateValuesBlock = options.stateCache.lastKamigazeBlock;
+    options.stateCache.lastStateRemovalsBlock = options.stateCache.lastKamigazeBlock;
 
     setMessage?.('Querying for Components');
     log.debug('[snapshot] Starting fetchComponents');
@@ -304,7 +313,9 @@ async function fetchStateRemovals({
       pending: chunk.pending,
       lastBlockNumber: chunk.lastBlockNumber,
     }),
-    getRetryContext: () => ({ fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock }),
+    getRetryContext: () => ({
+      fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
+    }),
     progressRange: { start: 5, end: 15 },
     setPercentage,
   });
@@ -340,7 +351,9 @@ async function fetchStateValues({
       pending: chunk.pending,
       lastBlockNumber: chunk.lastBlockNumber,
     }),
-    getRetryContext: () => ({ fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock }),
+    getRetryContext: () => ({
+      fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
+    }),
     progressRange: { start: 15, end: 75 },
     setPercentage,
   });
