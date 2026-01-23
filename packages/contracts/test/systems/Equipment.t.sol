@@ -363,7 +363,7 @@ contract EquipmentTest is MintTemplate {
     assertEq(itemIndex, PETPET_INDEX, "Item index should match");
   }
 
-  function testGetSlotTypeFromEquipment() public {
+  function testGetSlotFromEquipment() public {
     uint256 kamiID = _mintKami(alice);
     _giveItem(alice, PETPET_INDEX, 1);
 
@@ -426,7 +426,7 @@ contract EquipmentTest is MintTemplate {
   /////////////////
   // ITEM SLOT TYPE TESTS
 
-  function testGetItemSlotType() public {
+  function testGetItemSlot() public {
     // PETPET item should have PETPET slot type
     string memory slotType = LibEquipment.getItemSlot(components, PETPET_INDEX);
     assertEq(slotType, SLOT_PETPET, "PETPET item should have PETPET slot type");
