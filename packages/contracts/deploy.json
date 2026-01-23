@@ -617,6 +617,7 @@
       "name": "KamiEquipSystem",
       "writeAccess": [
         "EntityType",
+        "For",
         "IDAnchor",
         "IDType",
         "IDOwnsEquipment",
@@ -624,7 +625,6 @@
         "IdSource",
         "IndexItem",
         "Level",
-        "SlotType",
         "Time",
         "TimeLast",
         "Type",
@@ -635,6 +635,7 @@
       "name": "KamiUnequipSystem",
       "writeAccess": [
         "EntityType",
+        "For",
         "IDAnchor",
         "IDType",
         "IDOwnsEquipment",
@@ -642,7 +643,6 @@
         "IdSource",
         "IndexItem",
         "Level",
-        "SlotType",
         "Time",
         "TimeLast",
         "Value"
