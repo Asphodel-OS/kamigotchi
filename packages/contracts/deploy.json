@@ -73,7 +73,6 @@
     { "comp": "Scale", "name": "Scale", "type": "int32" },
     { "comp": "SkillPoint", "name": "SkillPoint", "type": "uint256" },
     { "comp": "Slots", "name": "Slots", "type": "Stat" },
-    { "comp": "SlotType", "name": "SlotType", "type": "string" },
     { "comp": "Stamina", "name": "Stamina", "type": "Stat" },
     { "comp": "State", "name": "State", "type": "string", "indexed": true },
     { "comp": "Subtype", "name": "Subtype", "type": "string" },
