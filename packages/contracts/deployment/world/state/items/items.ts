@@ -6,6 +6,7 @@ import { addRequirements, addTypeRequirement } from './requirements';
 const IGNORE_TYPES = ['OTHER'];
 const BASIC_TYPES = ['MISC', 'MATERIAL', 'RING', 'KEY ITEM', 'NFT', 'TOOL', 'ERC20'];
 const USE_TYPES = ['FOOD', 'LOOTBOX', 'POTION', 'REVIVE', 'CONSUMABLE'];
+const EQUIP_TYPES = ['EQUIPMENT'];
 
 // initialize a single item
 async function init(api: AdminAPI, entry: any) {
@@ -17,6 +18,7 @@ async function init(api: AdminAPI, entry: any) {
 
   if (BASIC_TYPES.includes(type)) await createBasic(api, entry);
   else if (USE_TYPES.includes(type)) await createConsumable(api, entry);
+  else if (EQUIP_TYPES.includes(type)) await createEquipment(api, entry);
   else console.error('Item type not found: ' + type);
 }
 
@@ -155,6 +157,26 @@ async function createConsumable(api: AdminAPI, entry: any) {
 
   await createEP.consumable(index, for_, name, description, type, image, rarity);
   await addTypeRequirement(api, entry); // hardcoded based on item types
+}
+
+// create an equipment item
+async function createEquipment(api: AdminAPI, entry: any) {
+  const createEP = api.registry.item.create;
+  const index = Number(entry['Index']);
+  const type = entry['Type'].toUpperCase();
+  const name = entry['Name'].trim();
+  const description = entry['Description'];
+  const rarityKey = entry['Rarity'];
+  const rarity = Rarities.indexOf(rarityKey) + 1;
+  const slot = entry['For']; // Slot is stored in the For column
+
+  const image = getItemImage(name);
+  console.log(`creating ${type} item ${name} (${index}) for slot ${slot}`);
+
+  await createEP.base(index, type, name, description, image, rarity);
+  if (slot) {
+    await api.registry.item.set.slot(index, slot);
+  }
 }
 
 ////////////////
