@@ -13,7 +13,7 @@ import {
 
 const CHUNK_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 20;
-const RETRY_DELAYS = [2000, 3000, 5000, 10000];
+const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
