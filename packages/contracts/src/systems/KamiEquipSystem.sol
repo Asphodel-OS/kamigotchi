@@ -22,7 +22,7 @@ contract KamiEquipSystem is System {
 
     // Kami checks
     LibKami.verifyAccount(components, kamiID, accID);
-    LibEquipment.verifyCanEquip(components, kamiID);
+    LibEquipment.verifyKamiCanEquip(components, kamiID);
 
     // Item checks
     LibItem.verifyEnabled(components, itemIndex);
