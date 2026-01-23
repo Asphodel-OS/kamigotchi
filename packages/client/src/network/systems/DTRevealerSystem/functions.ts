@@ -1,4 +1,5 @@
 import { EntityID, EntityIndex, World, hasComponent } from 'engine/recs';
+import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/components';
 import { DTLog, getDTLogByHash } from 'network/shapes/Droptable';
 import { NotificationSystem } from 'network/systems';
@@ -26,9 +27,14 @@ export async function notifyResult(
 ) {
   if (!commit) return;
 
+  const commitID = formatEntityID(commit.id);
+  const notifId = `DroptableReveal-${commitID}` as EntityID;
+
+  if (notifications.has(notifId)) return;
+
   await waitForRevealed(components, commit.entity);
   const resultLog = getDTLogByHash(world, components, commit.holder, commit.anchorID);
-  sendResultNotif(notifications, commit.anchorID, commit.rolls, resultLog);
+  sendResultNotifWithId(notifications, notifId, commit.rolls, resultLog);
 }
 
 export const sendKeepAliveNotif = (notifications: NotificationSystem, status: boolean) => {
@@ -44,9 +50,9 @@ export const sendKeepAliveNotif = (notifications: NotificationSystem, status: bo
   else notifications.remove(id as EntityID);
 };
 
-export const sendResultNotif = async (
+export const sendResultNotifWithId = (
   notifications: NotificationSystem,
-  type: string,
+  id: EntityID,
   count: number,
   result: DTLog,
   name?: string
@@ -54,12 +60,22 @@ export const sendResultNotif = async (
   const resultText = result.results.map((entry) => `x${entry.amount} ${entry.object.name}`);
   const description = 'Received: ' + resultText.join(', ');
 
-  const id = 'RevealerResult' + type; // one notif per reveal type
   notifications.add({
-    id: id as EntityID,
+    id,
     title: `x${count} ${name ?? 'Items'} revealed!`,
-    description: description,
+    description,
     time: Date.now().toString(),
     modal: 'inventory',
   });
+};
+
+export const sendResultNotif = async (
+  notifications: NotificationSystem,
+  type: string,
+  count: number,
+  result: DTLog,
+  name?: string
+) => {
+  const id = `DroptableReveal-${formatEntityID(type)}` as EntityID;
+  sendResultNotifWithId(notifications, id, count, result, name);
 };

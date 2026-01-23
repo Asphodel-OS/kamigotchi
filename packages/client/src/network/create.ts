@@ -9,7 +9,7 @@ import { createComponents } from './components';
 import { initExplorer } from './explorer';
 import { SetupContractConfig, createConfig, setupMUDNetwork } from './setup';
 import { createActionSystem, createNotificationSystem } from './systems';
-import { createDTRevealerSystem } from './systems/DTRevealerSystem';
+import { createDTRevealerSystem, setupKamidenRevealHandler } from './systems/DTRevealerSystem';
 
 export type NetworkLayer = Awaited<ReturnType<typeof createNetworkLayer>>;
 
@@ -62,6 +62,8 @@ export async function createNetworkLayer(config: SetupContractConfig) {
     },
     explorer: initExplorer(world, components),
   };
+
+  setupKamidenRevealHandler(networkLayer, notifications);
 
   return networkLayer;
 }
