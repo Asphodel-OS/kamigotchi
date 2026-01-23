@@ -59,7 +59,7 @@ contract EquipmentTest is MintTemplate {
     __ItemRegistrySystem.create(
       abi.encode(PETPET_INDEX, "EQUIPMENT", "PetPet", "A pet for your pet", "media", uint32(1))
     );
-    __ItemRegistrySystem.setSlotType(PETPET_INDEX, SLOT_PETPET);
+    __ItemRegistrySystem.setSlot(PETPET_INDEX, SLOT_PETPET);
     LibItem.setFor(components, LibItem.genID(PETPET_INDEX), "KAMI");
 
     // Add bonus with ON_UNEQUIP end type
@@ -78,7 +78,7 @@ contract EquipmentTest is MintTemplate {
     __ItemRegistrySystem.create(
       abi.encode(HAT_INDEX, "EQUIPMENT", "Cool Hat", "A stylish hat", "media", uint32(1))
     );
-    __ItemRegistrySystem.setSlotType(HAT_INDEX, SLOT_HAT);
+    __ItemRegistrySystem.setSlot(HAT_INDEX, SLOT_HAT);
     LibItem.setFor(components, LibItem.genID(HAT_INDEX), "KAMI");
 
     // Add bonus with ON_UNEQUIP end type
@@ -370,7 +370,7 @@ contract EquipmentTest is MintTemplate {
     vm.prank(alice.operator);
     uint256 equipID = _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
 
-    string memory slotType = LibEquipment.getSlotType(components, equipID);
+    string memory slotType = LibEquipment.getSlot(components, equipID);
     assertEq(slotType, SLOT_PETPET, "Slot type should match");
   }
 
@@ -428,15 +428,15 @@ contract EquipmentTest is MintTemplate {
 
   function testGetItemSlotType() public {
     // PETPET item should have PETPET slot type
-    string memory slotType = LibEquipment.getItemSlotType(components, PETPET_INDEX);
+    string memory slotType = LibEquipment.getItemSlot(components, PETPET_INDEX);
     assertEq(slotType, SLOT_PETPET, "PETPET item should have PETPET slot type");
 
     // HAT item should have HAT slot type
-    slotType = LibEquipment.getItemSlotType(components, HAT_INDEX);
+    slotType = LibEquipment.getItemSlot(components, HAT_INDEX);
     assertEq(slotType, SLOT_HAT, "HAT item should have HAT slot type");
 
     // Non-equipment item should have empty slot type
-    slotType = LibEquipment.getItemSlotType(components, KAMI_FOOD_INDEX);
+    slotType = LibEquipment.getItemSlot(components, KAMI_FOOD_INDEX);
     assertEq(slotType, "", "Non-equipment item should have empty slot type");
   }
 
