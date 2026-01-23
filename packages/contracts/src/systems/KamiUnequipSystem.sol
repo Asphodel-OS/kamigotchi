@@ -21,7 +21,7 @@ contract KamiUnequipSystem is System {
 
     // Kami checks
     LibKami.verifyAccount(components, kamiID, accID);
-    LibEquipment.verifyCanEquip(components, kamiID);
+    LibEquipment.verifyKamiCanEquip(components, kamiID);
 
     // Unequip the item (clears bonuses, removes instance, returns to inventory)
     uint32 itemIndex = LibEquipment.unequip(world, components, kamiID, accID, slotType);

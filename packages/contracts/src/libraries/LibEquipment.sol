@@ -7,9 +7,9 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
 
+import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IDOwnsEquipmentComponent, ID as IDOwnsEquipCompID } from "components/IDOwnsEquipmentComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
-import { SlotTypeComponent, ID as SlotTypeCompID } from "components/SlotTypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
@@ -22,20 +22,24 @@ import { LibItem } from "libraries/LibItem.sol";
 import { LibKami } from "libraries/LibKami.sol";
 
 /**
- * @notice Equipment system for kamis
+ * @notice Equipment system for kamis and accounts
  *
  * Equipment items are regular items (type="EQUIPMENT") with:
- * - SlotType stored on the item registry (e.g., "PETPET", "HAT")
+ * - For (slot) stored on the item registry (e.g., "Kami_Pet_Slot", "Account_Badge_Slot")
  * - Bonuses with end type "ON_UNEQUIP_{SLOT}" for automatic cleanup
  *
- * Equipment Instance shape: ID = hash("equipment.instance", kamiID, slotType)
- * - EntityType: EQUIPMENT
- * - IDOwnsEquipmentComponent: kamiID (owner)
- * - IndexItemComponent: itemIndex (which item)
- * - SlotTypeComponent: slot type string
+ * The "For" value encodes both the target type and slot:
+ * - "Kami_Pet_Slot" = equipment for kamis, goes in pet slot
+ * - "Account_Badge_Slot" = equipment for accounts, goes in badge slot
  *
- * Equipping: consumes item from account inventory, creates instance, assigns bonuses
- * Unequipping: clears bonuses, removes instance, returns item to account inventory
+ * Equipment Instance shape: ID = hash("equipment.instance", holderID, slot)
+ * - EntityType: EQUIPMENT
+ * - IDOwnsEquipmentComponent: holderID (kami or account that owns it)
+ * - IndexItemComponent: itemIndex (which item)
+ * - ForComponent: slot string
+ *
+ * Equipping: consumes item from inventory, creates instance, assigns bonuses
+ * Unequipping: clears bonuses, removes instance, returns item to inventory
  */
 library LibEquipment {
   using LibComp for IUintComp;
@@ -45,7 +49,7 @@ library LibEquipment {
   string constant ENTITY_TYPE = "EQUIPMENT";
   string constant END_TYPE_PREFIX = "ON_UNEQUIP_";
 
-  // Equipment capacity: base limit on total equipment a kami can have equipped
+  // Equipment capacity: base limit on total equipment an entity can have equipped
   uint256 constant DEFAULT_CAPACITY = 1;
   string constant CAPACITY_BONUS_TYPE = "EQUIP_CAPACITY_SHIFT";
 
@@ -53,19 +57,20 @@ library LibEquipment {
   // SHAPES
 
   /// @notice Create an equipment instance when equipping an item
+  /// @param holderID The entity being equipped (kami or account)
   function createInstance(
     IUintComp components,
-    uint256 kamiID,
+    uint256 holderID,
     uint32 itemIndex,
-    string memory slotType
+    string memory slot
   ) internal returns (uint256 id) {
-    id = genID(kamiID, slotType);
+    id = genID(holderID, slot);
     require(!LibEntityType.has(components, id), "Equipment: slot occupied");
 
     LibEntityType.set(components, id, ENTITY_TYPE);
-    IDOwnsEquipmentComponent(getAddrByID(components, IDOwnsEquipCompID)).set(id, kamiID);
+    IDOwnsEquipmentComponent(getAddrByID(components, IDOwnsEquipCompID)).set(id, holderID);
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).set(id, itemIndex);
-    SlotTypeComponent(getAddrByID(components, SlotTypeCompID)).set(id, slotType);
+    ForComponent(getAddrByID(components, ForCompID)).set(id, slot);
   }
 
   /// @notice Remove an equipment instance when unequipping
@@ -73,82 +78,82 @@ library LibEquipment {
     LibEntityType.remove(components, id);
     IDOwnsEquipmentComponent(getAddrByID(components, IDOwnsEquipCompID)).remove(id);
     IndexItemComponent(getAddrByID(components, IndexItemCompID)).remove(id);
-    SlotTypeComponent(getAddrByID(components, SlotTypeCompID)).remove(id);
+    ForComponent(getAddrByID(components, ForCompID)).remove(id);
   }
 
   /////////////////
   // INTERACTIONS
 
-  /// @notice Equip an item to a kami
+  /// @notice Equip an item to a holder (kami or account)
   /// @param world The world contract
   /// @param components The components registry
-  /// @param kamiID The kami entity ID
-  /// @param accID The account entity ID (owner of inventory)
+  /// @param holderID The entity being equipped (kami or account)
+  /// @param inventoryID The entity whose inventory to consume from (usually account)
   /// @param itemIndex The item registry index
   function equip(
     IWorld world,
     IUintComp components,
-    uint256 kamiID,
-    uint256 accID,
+    uint256 holderID,
+    uint256 inventoryID,
     uint32 itemIndex
   ) internal returns (uint256 equipID) {
     // Verify item is equipment type
     LibItem.verifyType(components, itemIndex, ENTITY_TYPE);
 
-    // Get slot type from item
-    string memory slotType = getItemSlotType(components, itemIndex);
-    require(!slotType.eq(""), "Equipment: no slot type");
+    // Get slot from item's For component
+    string memory slot = getItemSlot(components, itemIndex);
+    require(!slot.eq(""), "Equipment: no slot");
 
     // Check if slot is occupied; if so, unequip first
-    uint256 existingEquipID = getEquipped(components, kamiID, slotType);
+    uint256 existingEquipID = getEquipped(components, holderID, slot);
     if (existingEquipID != 0) {
-      unequip(world, components, kamiID, accID, slotType);
+      unequip(world, components, holderID, inventoryID, slot);
     } else {
       // Adding new equipment (not replacing) - check capacity
-      require(getEquippedCount(components, kamiID) < getCapacity(components, kamiID), "Equipment: at capacity");
+      require(getEquippedCount(components, holderID) < getCapacity(components, holderID), "Equipment: at capacity");
     }
 
-    // Consume item from account inventory
-    LibInventory.decFor(components, accID, itemIndex, 1);
+    // Consume item from inventory
+    LibInventory.decFor(components, inventoryID, itemIndex, 1);
 
     // Create equipment instance
-    equipID = createInstance(components, kamiID, itemIndex, slotType);
+    equipID = createInstance(components, holderID, itemIndex, slot);
 
-    // Assign bonuses from item to kami
+    // Assign bonuses from item to holder
     // Bonuses use end type "ON_UNEQUIP_{SLOT}" for slot-specific cleanup
     uint256 bonusAlloID = getEquipBonusAlloID(itemIndex);
-    LibBonus.assignTemporary(components, bonusAlloID, kamiID);
+    LibBonus.assignTemporary(components, bonusAlloID, holderID);
   }
 
-  /// @notice Unequip an item from a kami slot
+  /// @notice Unequip an item from a holder slot
   /// @param world The world contract (unused but kept for consistency)
   /// @param components The components registry
-  /// @param kamiID The kami entity ID
-  /// @param accID The account entity ID (to return item to)
-  /// @param slotType The slot type to unequip
+  /// @param holderID The entity being unequipped (kami or account)
+  /// @param inventoryID The entity whose inventory to return item to (usually account)
+  /// @param slot The slot to unequip
   function unequip(
     IWorld world,
     IUintComp components,
-    uint256 kamiID,
-    uint256 accID,
-    string memory slotType
+    uint256 holderID,
+    uint256 inventoryID,
+    string memory slot
   ) internal returns (uint32 itemIndex) {
     // Get equipment instance
-    uint256 equipID = getEquipped(components, kamiID, slotType);
+    uint256 equipID = getEquipped(components, holderID, slot);
     require(equipID != 0, "Equipment: slot empty");
 
     // Get item index before removing
     itemIndex = IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(equipID);
 
     // Clear bonuses for this slot
-    string memory endType = genEndType(slotType);
-    LibBonus.unassignBy(components, endType, kamiID);
+    string memory endType = genEndType(slot);
+    LibBonus.unassignBy(components, endType, holderID);
 
     // Remove equipment instance
     removeInstance(components, equipID);
 
-    // Return item to account inventory
-    LibInventory.incFor(components, accID, itemIndex, 1);
+    // Return item to inventory
+    LibInventory.incFor(components, inventoryID, itemIndex, 1);
   }
 
   /////////////////
@@ -157,37 +162,38 @@ library LibEquipment {
   /// @notice Check if a slot is occupied
   function hasEquipped(
     IUintComp components,
-    uint256 kamiID,
-    string memory slotType
+    uint256 holderID,
+    string memory slot
   ) internal view returns (bool) {
-    return getEquipped(components, kamiID, slotType) != 0;
+    return getEquipped(components, holderID, slot) != 0;
   }
 
   /// @notice Verify kami can be equipped (must be in RESTING state)
-  function verifyCanEquip(IUintComp components, uint256 kamiID) internal view {
+  /// @dev For account equipment, you may want a different check or none
+  function verifyKamiCanEquip(IUintComp components, uint256 kamiID) internal view {
     LibKami.verifyState(components, kamiID, "RESTING");
   }
 
   /////////////////
   // GETTERS
 
-  /// @notice Get equipment instance for a kami slot
+  /// @notice Get equipment instance for a holder slot
   function getEquipped(
     IUintComp components,
-    uint256 kamiID,
-    string memory slotType
+    uint256 holderID,
+    string memory slot
   ) internal view returns (uint256) {
-    uint256 id = genID(kamiID, slotType);
+    uint256 id = genID(holderID, slot);
     return LibEntityType.isShape(components, id, ENTITY_TYPE) ? id : 0;
   }
 
-  /// @notice Get all equipped item indices for a kami
+  /// @notice Get all equipment instance IDs for a holder
   function getAllEquipped(
     IUintComp components,
-    uint256 kamiID
+    uint256 holderID
   ) internal view returns (uint256[] memory) {
     return IDOwnsEquipmentComponent(getAddrByID(components, IDOwnsEquipCompID))
-      .getEntitiesWithValue(kamiID);
+      .getEntitiesWithValue(holderID);
   }
 
   /// @notice Get the item index from an equipment instance
@@ -195,29 +201,29 @@ library LibEquipment {
     return IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(equipID);
   }
 
-  /// @notice Get slot type from an equipment instance
-  function getSlotType(IUintComp components, uint256 equipID) internal view returns (string memory) {
-    return SlotTypeComponent(getAddrByID(components, SlotTypeCompID)).get(equipID);
+  /// @notice Get slot from an equipment instance
+  function getSlot(IUintComp components, uint256 equipID) internal view returns (string memory) {
+    return ForComponent(getAddrByID(components, ForCompID)).get(equipID);
   }
 
-  /// @notice Get slot type from an item registry entry
-  function getItemSlotType(IUintComp components, uint32 itemIndex) internal view returns (string memory) {
+  /// @notice Get slot from an item registry entry (via For component)
+  function getItemSlot(IUintComp components, uint32 itemIndex) internal view returns (string memory) {
     uint256 itemID = LibItem.genID(itemIndex);
-    SlotTypeComponent comp = SlotTypeComponent(getAddrByID(components, SlotTypeCompID));
+    ForComponent comp = ForComponent(getAddrByID(components, ForCompID));
     return comp.has(itemID) ? comp.get(itemID) : "";
   }
 
-  /// @notice Get total equipment capacity for a kami (default + bonuses)
-  function getCapacity(IUintComp components, uint256 kamiID) internal view returns (uint256) {
-    int256 bonus = LibBonus.getFor(components, CAPACITY_BONUS_TYPE, kamiID);
+  /// @notice Get total equipment capacity for a holder (default + bonuses)
+  function getCapacity(IUintComp components, uint256 holderID) internal view returns (uint256) {
+    int256 bonus = LibBonus.getFor(components, CAPACITY_BONUS_TYPE, holderID);
     // Bonus can be negative but total capacity should never go below 0
     if (bonus < 0 && uint256(-bonus) >= DEFAULT_CAPACITY) return 0;
     return uint256(int256(DEFAULT_CAPACITY) + bonus);
   }
 
-  /// @notice Get current equipment count for a kami
-  function getEquippedCount(IUintComp components, uint256 kamiID) internal view returns (uint256) {
-    return getAllEquipped(components, kamiID).length;
+  /// @notice Get current equipment count for a holder
+  function getEquippedCount(IUintComp components, uint256 holderID) internal view returns (uint256) {
+    return getAllEquipped(components, holderID).length;
   }
 
   /// @notice Get the allo ID for an equipment item's EQUIP use case bonus
@@ -236,23 +242,23 @@ library LibEquipment {
   /////////////////
   // SETTERS
 
-  /// @notice Set slot type on an item registry entry
-  /// @dev Called during item registry setup
-  function setItemSlotType(IUintComp components, uint32 itemIndex, string memory slotType) internal {
+  /// @notice Set slot on an item registry entry (via For component)
+  /// @dev Called during item registry setup. Slot values like "Kami_Pet_Slot", "Account_Badge_Slot"
+  function setItemSlot(IUintComp components, uint32 itemIndex, string memory slot) internal {
     uint256 itemID = LibItem.genID(itemIndex);
-    SlotTypeComponent(getAddrByID(components, SlotTypeCompID)).set(itemID, slotType);
+    ForComponent(getAddrByID(components, ForCompID)).set(itemID, slot);
   }
 
   /////////////////
   // IDs
 
   /// @notice Generate deterministic equipment instance ID
-  function genID(uint256 kamiID, string memory slotType) internal pure returns (uint256) {
-    return uint256(keccak256(abi.encodePacked("equipment.instance", kamiID, slotType)));
+  function genID(uint256 holderID, string memory slot) internal pure returns (uint256) {
+    return uint256(keccak256(abi.encodePacked("equipment.instance", holderID, slot)));
   }
 
   /// @notice Generate the end type string for a slot
-  function genEndType(string memory slotType) internal pure returns (string memory) {
-    return END_TYPE_PREFIX.concat(slotType);
+  function genEndType(string memory slot) internal pure returns (string memory) {
+    return END_TYPE_PREFIX.concat(slot);
   }
 }

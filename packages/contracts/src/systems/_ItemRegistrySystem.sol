@@ -74,12 +74,12 @@ contract _ItemRegistrySystem is System, AuthRoles {
     LibItem.addFlag(components, index, flag);
   }
 
-  /// @notice Set the equipment slot type for an item
+  /// @notice Set the equipment slot for an item
   /// @param index Item registry index
-  /// @param slotType Equipment slot type (e.g., "PETPET")
-  function setSlotType(uint32 index, string memory slotType) public onlyAdmin(components) {
+  /// @param slot Equipment slot (e.g., "Kami_Pet_Slot")
+  function setSlot(uint32 index, string memory slot) public onlyAdmin(components) {
     require(LibItem.getByIndex(components, index) != 0, "ItemReg: item does not exist");
-    LibEquipment.setItemSlotType(components, index, slotType);
+    LibEquipment.setItemSlot(components, index, slot);
   }
 
   function addAlloBasic(bytes memory arguments) public onlyAdmin(components) returns (uint256) {
