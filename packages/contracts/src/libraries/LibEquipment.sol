@@ -2,7 +2,6 @@
 pragma solidity >=0.8.28;
 
 import { LibString } from "solady/utils/LibString.sol";
-import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Component.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID } from "solecs/utils.sol";
@@ -44,7 +43,6 @@ import { LibKami } from "libraries/LibKami.sol";
 library LibEquipment {
   using LibComp for IUintComp;
   using LibString for string;
-  using SafeCastLib for int256;
 
   string constant ENTITY_TYPE = "EQUIPMENT";
   string constant END_TYPE_PREFIX = "ON_UNEQUIP_";

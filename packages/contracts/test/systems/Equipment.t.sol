@@ -7,6 +7,7 @@ import { stdError } from "forge-std/StdError.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
+import { LibItem } from "libraries/LibItem.sol";
 import { LibStat } from "libraries/LibStat.sol";
 
 contract EquipmentTest is MintTemplate {
@@ -14,9 +15,9 @@ contract EquipmentTest is MintTemplate {
   uint32 constant PETPET_INDEX = 9001;
   uint32 constant HAT_INDEX = 9002;
 
-  // Slot types
-  string constant SLOT_PETPET = "PETPET";
-  string constant SLOT_HAT = "HAT";
+  // Slot values (combined format: {EntityType}_{SlotName}_Slot)
+  string constant SLOT_PETPET = "Kami_Pet_Slot";
+  string constant SLOT_HAT = "Kami_Hat_Slot";
 
   // Bonus values
   int256 constant POWER_BONUS = 10;
@@ -56,19 +57,19 @@ contract EquipmentTest is MintTemplate {
     vm.startPrank(deployer);
 
     // Create PETPET equipment - gives +10 Power shift bonus
+    // Slot format encodes target type: "Kami_Pet_Slot" means for kamis, pet slot
     __ItemRegistrySystem.create(
       abi.encode(PETPET_INDEX, "EQUIPMENT", "PetPet", "A pet for your pet", "media", uint32(1))
     );
     __ItemRegistrySystem.setSlot(PETPET_INDEX, SLOT_PETPET);
-    LibItem.setFor(components, LibItem.genID(PETPET_INDEX), "KAMI");
 
-    // Add bonus with ON_UNEQUIP end type
+    // Add bonus with ON_UNEQUIP end type (must match slot)
     __ItemRegistrySystem.addAlloBonus(
       abi.encode(
         PETPET_INDEX,
         "EQUIP", // use case
         "STAT_POWER_SHIFT", // bonus type
-        "ON_UNEQUIP_PETPET", // end type (slot-specific)
+        "ON_UNEQUIP_Kami_Pet_Slot", // end type (slot-specific)
         uint256(0), // duration (0 for permanent until unequip)
         POWER_BONUS // value
       )
@@ -79,15 +80,14 @@ contract EquipmentTest is MintTemplate {
       abi.encode(HAT_INDEX, "EQUIPMENT", "Cool Hat", "A stylish hat", "media", uint32(1))
     );
     __ItemRegistrySystem.setSlot(HAT_INDEX, SLOT_HAT);
-    LibItem.setFor(components, LibItem.genID(HAT_INDEX), "KAMI");
 
-    // Add bonus with ON_UNEQUIP end type
+    // Add bonus with ON_UNEQUIP end type (must match slot)
     __ItemRegistrySystem.addAlloBonus(
       abi.encode(
         HAT_INDEX,
         "EQUIP",
         "STAT_HEALTH_SHIFT",
-        "ON_UNEQUIP_HAT",
+        "ON_UNEQUIP_Kami_Hat_Slot",
         uint256(0),
         HEALTH_BONUS
       )
@@ -427,17 +427,15 @@ contract EquipmentTest is MintTemplate {
   // ITEM SLOT TYPE TESTS
 
   function testGetItemSlot() public {
-    // PETPET item should have PETPET slot type
+    // Equipment items should have their slot in ForComponent
     string memory slotType = LibEquipment.getItemSlot(components, PETPET_INDEX);
-    assertEq(slotType, SLOT_PETPET, "PETPET item should have PETPET slot type");
+    assertEq(slotType, SLOT_PETPET, "PETPET item should have PETPET slot");
 
-    // HAT item should have HAT slot type
     slotType = LibEquipment.getItemSlot(components, HAT_INDEX);
-    assertEq(slotType, SLOT_HAT, "HAT item should have HAT slot type");
+    assertEq(slotType, SLOT_HAT, "HAT item should have HAT slot");
 
-    // Non-equipment item should have empty slot type
-    slotType = LibEquipment.getItemSlot(components, KAMI_FOOD_INDEX);
-    assertEq(slotType, "", "Non-equipment item should have empty slot type");
+    // Note: Non-equipment items may have ForComponent set for their target type (e.g., "KAMI")
+    // so getItemSlot may return a non-empty value. The equip system validates item type separately.
   }
 
   /////////////////
@@ -556,5 +554,122 @@ contract EquipmentTest is MintTemplate {
     _KamiUnequipSystem.executeTyped(kamiID, SLOT_PETPET);
 
     assertEq(LibEquipment.getEquippedCount(components, kamiID), 1, "Should have 1 equipped after unequip");
+  }
+
+  /////////////////
+  // ADDITIONAL EDGE CASE TESTS
+
+  function testCannotEquipItemWithNoSlot() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Create an equipment item without a slot
+    uint32 noSlotIndex = 9003;
+    vm.prank(deployer);
+    __ItemRegistrySystem.create(
+      abi.encode(noSlotIndex, "EQUIPMENT", "Broken Equipment", "Missing slot", "media", uint32(1))
+    );
+    // Intentionally NOT setting slot via setSlot
+
+    _giveItem(alice, noSlotIndex, 1);
+
+    vm.prank(alice.operator);
+    vm.expectRevert("Equipment: no slot");
+    _KamiEquipSystem.executeTyped(kamiID, noSlotIndex);
+  }
+
+  function testCannotEquipDisabledItem() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Disable the equipment item via registry system
+    vm.prank(deployer);
+    __ItemRegistrySystem.disable(PETPET_INDEX);
+
+    _giveItem(alice, PETPET_INDEX, 1);
+
+    vm.prank(alice.operator);
+    vm.expectRevert("item is disabled");
+    _KamiEquipSystem.executeTyped(kamiID, PETPET_INDEX);
+
+    // Re-enable for other tests
+    vm.prank(deployer);
+    __ItemRegistrySystem.enable(PETPET_INDEX);
+  }
+
+  function testCannotUnequipWrongKami() public {
+    // Alice has a kami with equipment
+    uint256 aliceKami = _mintKami(alice);
+    _giveItem(alice, PETPET_INDEX, 1);
+    vm.prank(alice.operator);
+    _KamiEquipSystem.executeTyped(aliceKami, PETPET_INDEX);
+
+    // Bob tries to unequip Alice's kami
+    vm.prank(bob.operator);
+    vm.expectRevert("kami not urs");
+    _KamiUnequipSystem.executeTyped(aliceKami, SLOT_PETPET);
+  }
+
+  function testEquipItemWithNoBonuses() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Create an equipment item with slot but no bonuses
+    string memory plainSlot = "Kami_Plain_Slot";
+    uint32 noBonusIndex = 9004;
+    vm.startPrank(deployer);
+    __ItemRegistrySystem.create(
+      abi.encode(noBonusIndex, "EQUIPMENT", "Plain Equipment", "No bonuses", "media", uint32(1))
+    );
+    __ItemRegistrySystem.setSlot(noBonusIndex, plainSlot);
+    vm.stopPrank();
+
+    _giveItem(alice, noBonusIndex, 1);
+
+    // Get initial power
+    int256 powerBefore = LibStat.getTotal(components, "POWER", kamiID);
+
+    // Equip - should work even without bonuses
+    vm.prank(alice.operator);
+    uint256 equipID = _KamiEquipSystem.executeTyped(kamiID, noBonusIndex);
+
+    // Verify equipped
+    assertTrue(equipID != 0, "Should be equipped");
+    assertEq(LibEquipment.getEquipped(components, kamiID, plainSlot), equipID, "Should be in slot");
+
+    // Power unchanged (no bonus)
+    int256 powerAfter = LibStat.getTotal(components, "POWER", kamiID);
+    assertEq(powerAfter, powerBefore, "Power should be unchanged (no bonus)");
+
+    // Unequip should also work
+    vm.prank(alice.operator);
+    _KamiUnequipSystem.executeTyped(kamiID, plainSlot);
+
+    assertEq(LibEquipment.getEquipped(components, kamiID, plainSlot), 0, "Slot should be empty");
+    assertEq(_getItemBal(alice, noBonusIndex), 1, "Item should be returned");
+  }
+
+  function testGenIDIsDeterministic() public {
+    uint256 kamiID = _mintKami(alice);
+
+    // Generate ID twice with same inputs
+    uint256 id1 = LibEquipment.genID(kamiID, SLOT_PETPET);
+    uint256 id2 = LibEquipment.genID(kamiID, SLOT_PETPET);
+
+    assertEq(id1, id2, "genID should be deterministic");
+
+    // Different slot should give different ID
+    uint256 id3 = LibEquipment.genID(kamiID, SLOT_HAT);
+    assertTrue(id1 != id3, "Different slots should give different IDs");
+
+    // Different kami should give different ID
+    uint256 kamiID2 = _mintKami(bob);
+    uint256 id4 = LibEquipment.genID(kamiID2, SLOT_PETPET);
+    assertTrue(id1 != id4, "Different kamis should give different IDs");
+  }
+
+  function testGenEndType() public {
+    string memory endType = LibEquipment.genEndType(SLOT_PETPET);
+    assertEq(endType, "ON_UNEQUIP_Kami_Pet_Slot", "End type should be ON_UNEQUIP_ + slot");
+
+    string memory endType2 = LibEquipment.genEndType(SLOT_HAT);
+    assertEq(endType2, "ON_UNEQUIP_Kami_Hat_Slot", "End type should match slot");
   }
 }
