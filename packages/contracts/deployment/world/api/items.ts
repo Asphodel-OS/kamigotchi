@@ -53,6 +53,12 @@ export function itemsAPI(generateCallData: GenerateCallData, compiledCalls: stri
     compiledCalls.push(callData);
   }
 
+  // set the equipment slot for an item
+  async function setSlot(index: number, slot: string) {
+    const callData = generateCallData('system.item.registry', [index, slot], 'setSlot');
+    compiledCalls.push(callData);
+  }
+
   async function enable(index: number) {
     const callData = generateCallData('system.item.registry', [index], 'enable');
     compiledCalls.push(callData);
@@ -185,6 +191,9 @@ export function itemsAPI(generateCallData: GenerateCallData, compiledCalls: stri
         droptable: addAlloDT,
         stat: addAlloStat,
       },
+    },
+    set: {
+      slot: setSlot,
     },
     delete: remove,
   };
