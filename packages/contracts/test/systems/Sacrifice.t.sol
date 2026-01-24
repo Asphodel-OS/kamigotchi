@@ -6,6 +6,7 @@ import "tests/systems/Minting/MintTemplate.t.sol";
 import { LibSacrifice, SACRIFICE_DT_NORMAL, SACRIFICE_DT_UNCOMMON_PITY, SACRIFICE_DT_RARE_PITY, UNCOMMON_PITY_THRESHOLD, RARE_PITY_THRESHOLD, BURN_ADDRESS } from "libraries/LibSacrifice.sol";
 import { KamiSacrificeCommitSystem, ID as SacrificeCommitSystemID } from "systems/KamiSacrificeCommitSystem.sol";
 import { KamiSacrificeRevealSystem, ID as SacrificeRevealSystemID } from "systems/KamiSacrificeRevealSystem.sol";
+import { _SacrificeRegistrySystem, ID as SacrificeRegistrySystemID } from "systems/_SacrificeRegistrySystem.sol";
 
 contract SacrificeTest is MintTemplate {
   KamiSacrificeCommitSystem _SacrificeCommitSystem;
@@ -161,21 +162,25 @@ contract SacrificeTest is MintTemplate {
     normalKeys[0] = COMMON_REWARD_INDEX;
     uint256[] memory normalWeights = new uint256[](1);
     normalWeights[0] = 100;
-    LibSacrifice.setDroptable(components, SACRIFICE_DT_NORMAL, normalKeys, normalWeights);
 
     // Uncommon pity droptable
     uint32[] memory uncommonKeys = new uint32[](1);
     uncommonKeys[0] = UNCOMMON_REWARD_INDEX;
     uint256[] memory uncommonWeights = new uint256[](1);
     uncommonWeights[0] = 100;
-    LibSacrifice.setDroptable(components, SACRIFICE_DT_UNCOMMON_PITY, uncommonKeys, uncommonWeights);
 
     // Rare pity droptable
     uint32[] memory rareKeys = new uint32[](1);
     rareKeys[0] = RARE_REWARD_INDEX;
     uint256[] memory rareWeights = new uint256[](1);
     rareWeights[0] = 100;
-    LibSacrifice.setDroptable(components, SACRIFICE_DT_RARE_PITY, rareKeys, rareWeights);
+
+    // Use the registry system to set up all droptables
+    __SacrificeRegistrySystem.setAllDroptables(
+      normalKeys, normalWeights,
+      uncommonKeys, uncommonWeights,
+      rareKeys, rareWeights
+    );
 
     vm.stopPrank();
   }
