@@ -839,8 +839,6 @@
         "EntityType",
         "IdHolder",
         "IdSource",
-        "IDOwnsInventory",
-        "IndexItem",
         "Keys",
         "Time",
         "TimeLast",
