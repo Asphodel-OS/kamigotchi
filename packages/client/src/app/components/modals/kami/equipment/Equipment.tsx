@@ -63,6 +63,7 @@ export const Equipment = ({
 
   const equippedCount = Object.values(equipped).filter(Boolean).length;
   const isAtCapacity = equippedCount >= capacity;
+  const equipmentBonuses = bonuses.filter((b) => b.endType?.startsWith('ON_UNEQUIP_'));
 
   const renderSlot = (slot: SlotKey) => {
     const equippedItem = equipped[slot] ?? null;
@@ -109,8 +110,8 @@ export const Equipment = ({
           ))}
           <SlotRow>
             <SlotLabel>Effects</SlotLabel>
-            {bonuses.length > 0 ? (
-              bonuses.map((bonus, i) => (
+            {equipmentBonuses.length > 0 ? (
+              equipmentBonuses.map((bonus, i) => (
                 <TextTooltip key={i} text={[parseBonusText(bonus)]}>
                   <BuffIcon src={getItemImage(bonus.source?.name ?? '')} />
                 </TextTooltip>
