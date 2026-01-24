@@ -809,6 +809,41 @@
     {
       "name": "_721BatchMinterSystem",
       "writeAccess": ["*", "ProxyPermissionsERC721"]
+    },
+    {
+      "name": "KamiSacrificeCommitSystem",
+      "writeAccess": [
+        "BlockReveal",
+        "EntityType",
+        "Health",
+        "IDOwnsKami",
+        "IdHolder",
+        "IdSource",
+        "ProxyPermissionsERC721",
+        "State",
+        "TimeLast",
+        "TimeLastAction",
+        "Type",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiSacrificeRevealSystem",
+      "writeAccess": [
+        "Balance",
+        "BlockReveal",
+        "EntityType",
+        "IdHolder",
+        "IdSource",
+        "Keys",
+        "Time",
+        "TimeLast",
+        "TimeLastAction",
+        "Type",
+        "Value",
+        "Values",
+        "Weights"
+      ]
     }
   ],
   "libraries": [
@@ -844,6 +879,7 @@
     "LibRelationshipRegistry",
     "LibRelationship",
     "LibRoom",
+    "LibSacrifice",
     "LibScavenge",
     "LibScore",
     "LibSkillRegistry",
