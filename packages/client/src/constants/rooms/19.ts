@@ -15,5 +15,11 @@ export const room19: Room = {
       coordinates: { x1: 35, y1: 95, x2: 95, y2: 107 },
       dialogue: 192,
     },
+    {
+      name: 'Dimidiatus',
+      coordinates: { x1: 0, y1: 40, x2: 50, y2: 150 },
+      dialogue: 193,
+      // onClick: triggerTempleOfTheWheelModal,
+    },
   ],
 };
