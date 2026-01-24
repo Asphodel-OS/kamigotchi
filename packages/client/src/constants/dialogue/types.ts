@@ -1,7 +1,7 @@
 export interface DialogueNode {
   index: number;
   text: Array<string | ((...args: any[]) => string)>;
-  npc?: { name: string };
+  npc?: { name: string; img: string; color?: string; special?: { name: string; onclick: () => void } };
   action?: ActionParam | Array<ActionParam>; // apply to last step or specific steps
   next?: Map<string, number>; // points to more dialogue nodes
   args?: GetterParam[];

@@ -4,7 +4,13 @@ import { Components } from 'network/components';
 import { DTLog, getDTLogByHash } from 'network/shapes/Droptable';
 import { NotificationSystem } from 'network/systems';
 import { waitForComponentValueUpdate } from 'network/utils';
-import { CommitData } from './types';
+import { CommitData, RevealType } from './types';
+
+// config per reveal type
+const REVEAL_CONFIG: Record<RevealType, { logPrefix: string; name: string }> = {
+  droptable: { logPrefix: 'droptable.item.log', name: 'Items' },
+  sacrifice: { logPrefix: 'sacrifice.log', name: 'Petpet' },
+};
 
 /////////////////
 // UTILS
@@ -27,14 +33,21 @@ export async function notifyResult(
 ) {
   if (!commit) return;
 
+  const config = REVEAL_CONFIG[commit.revealType];
   const commitID = formatEntityID(commit.id);
-  const notifId = `DroptableReveal-${commitID}` as EntityID;
+  const notifId = `${commit.revealType}Reveal-${commitID}` as EntityID;
 
   if (notifications.has(notifId)) return;
 
   await waitForRevealed(components, commit.entity);
-  const resultLog = getDTLogByHash(world, components, commit.holder, commit.anchorID);
-  sendResultNotifWithId(notifications, notifId, commit.rolls, resultLog);
+  const resultLog = getDTLogByHash(
+    world,
+    components,
+    commit.holder,
+    commit.anchorID,
+    config.logPrefix
+  );
+  sendResultNotifWithId(notifications, notifId, commit.rolls, resultLog, config.name);
 }
 
 export const sendKeepAliveNotif = (notifications: NotificationSystem, status: boolean) => {

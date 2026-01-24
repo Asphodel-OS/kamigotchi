@@ -23,29 +23,18 @@ import type {
   TypedContractMethod,
 } from "./common";
 
-export interface _ItemRegistrySystemInterface extends Interface {
+export interface KamiSacrificeCommitSystemInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "addAlloBasic"
-      | "addAlloBonus"
-      | "addAlloDT"
-      | "addAlloStat"
-      | "addFlag"
-      | "addRequirement"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
-      | "create"
-      | "createConsumable"
       | "deprecate"
-      | "disable"
-      | "enable"
       | "execute"
+      | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
-      | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
-      | "setSlot"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -58,30 +47,6 @@ export interface _ItemRegistrySystemInterface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "addAlloBasic",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addAlloBonus",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addAlloDT",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addAlloStat",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addFlag",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addRequirement",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
     values?: undefined
   ): string;
@@ -89,29 +54,16 @@ export interface _ItemRegistrySystemInterface extends Interface {
     functionFragment: "completeOwnershipHandover",
     values: [AddressLike]
   ): string;
-  encodeFunctionData(functionFragment: "create", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "createConsumable",
-    values: [BytesLike]
-  ): string;
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "disable",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "enable",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "executeTyped",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipHandoverExpiresAt",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "remove",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -120,10 +72,6 @@ export interface _ItemRegistrySystemInterface extends Interface {
   encodeFunctionData(
     functionFragment: "requestOwnershipHandover",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSlot",
-    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -131,24 +79,6 @@ export interface _ItemRegistrySystemInterface extends Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "addAlloBasic",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addAlloBonus",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "addAlloDT", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addAlloStat",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "addFlag", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addRequirement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
     data: BytesLike
   ): Result;
@@ -156,21 +86,17 @@ export interface _ItemRegistrySystemInterface extends Interface {
     functionFragment: "completeOwnershipHandover",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "createConsumable",
+    functionFragment: "executeTyped",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "disable", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "enable", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -179,7 +105,6 @@ export interface _ItemRegistrySystemInterface extends Interface {
     functionFragment: "requestOwnershipHandover",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setSlot", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -233,11 +158,11 @@ export namespace SystemDeprecatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface _ItemRegistrySystem extends BaseContract {
-  connect(runner?: ContractRunner | null): _ItemRegistrySystem;
+export interface KamiSacrificeCommitSystem extends BaseContract {
+  connect(runner?: ContractRunner | null): KamiSacrificeCommitSystem;
   waitForDeployment(): Promise<this>;
 
-  interface: _ItemRegistrySystemInterface;
+  interface: KamiSacrificeCommitSystemInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -276,42 +201,6 @@ export interface _ItemRegistrySystem extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  addAlloBasic: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
-
-  addAlloBonus: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
-
-  addAlloDT: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
-
-  addAlloStat: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
-
-  addFlag: TypedContractMethod<
-    [index: BigNumberish, flag: string],
-    [void],
-    "nonpayable"
-  >;
-
-  addRequirement: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
-
   cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
   completeOwnershipHandover: TypedContractMethod<
@@ -320,21 +209,15 @@ export interface _ItemRegistrySystem extends BaseContract {
     "payable"
   >;
 
-  create: TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  deprecate: TypedContractMethod<[], [void], "nonpayable">;
 
-  createConsumable: TypedContractMethod<
-    [arguments: BytesLike],
+  execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+
+  executeTyped: TypedContractMethod<
+    [kamiIndex: BigNumberish],
     [bigint],
     "nonpayable"
   >;
-
-  deprecate: TypedContractMethod<[], [void], "nonpayable">;
-
-  disable: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
-
-  enable: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
-
-  execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -344,17 +227,9 @@ export interface _ItemRegistrySystem extends BaseContract {
     "view"
   >;
 
-  remove: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
-
   renounceOwnership: TypedContractMethod<[], [void], "payable">;
 
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
-
-  setSlot: TypedContractMethod<
-    [index: BigNumberish, slot: string],
-    [void],
-    "nonpayable"
-  >;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -367,51 +242,20 @@ export interface _ItemRegistrySystem extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "addAlloBasic"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "addAlloBonus"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "addAlloDT"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "addAlloStat"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "addFlag"
-  ): TypedContractMethod<
-    [index: BigNumberish, flag: string],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "addRequirement"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
-  getFunction(
     nameOrSignature: "cancelOwnershipHandover"
   ): TypedContractMethod<[], [void], "payable">;
   getFunction(
     nameOrSignature: "completeOwnershipHandover"
   ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
   getFunction(
-    nameOrSignature: "create"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
-  getFunction(
-    nameOrSignature: "createConsumable"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
-  getFunction(
     nameOrSignature: "deprecate"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "disable"
-  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "enable"
-  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "execute"
   ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+  getFunction(
+    nameOrSignature: "executeTyped"
+  ): TypedContractMethod<[kamiIndex: BigNumberish], [bigint], "nonpayable">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -419,21 +263,11 @@ export interface _ItemRegistrySystem extends BaseContract {
     nameOrSignature: "ownershipHandoverExpiresAt"
   ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "remove"
-  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "payable">;
   getFunction(
     nameOrSignature: "requestOwnershipHandover"
   ): TypedContractMethod<[], [void], "payable">;
-  getFunction(
-    nameOrSignature: "setSlot"
-  ): TypedContractMethod<
-    [index: BigNumberish, slot: string],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
