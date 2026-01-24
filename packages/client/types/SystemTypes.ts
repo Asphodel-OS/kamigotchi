@@ -16,6 +16,7 @@ import { _QuestRegistrySystem } from "./ethers-contracts/_QuestRegistrySystem";
 import { _RecipeRegistrySystem } from "./ethers-contracts/_RecipeRegistrySystem";
 import { _RelationshipRegistrySystem } from "./ethers-contracts/_RelationshipRegistrySystem";
 import { _RoomRegistrySystem } from "./ethers-contracts/_RoomRegistrySystem";
+import { _ShapeRegistrySystem } from "./ethers-contracts/_ShapeRegistrySystem";
 import { _SkillRegistrySystem } from "./ethers-contracts/_SkillRegistrySystem";
 import { _SnapshotT2System } from "./ethers-contracts/_SnapshotT2System";
 import { _TraitRegistrySystem } from "./ethers-contracts/_TraitRegistrySystem";
@@ -96,6 +97,7 @@ export type SystemTypes = {
   "system.recipe.registry": _RecipeRegistrySystem;
   "system.relationship.registry": _RelationshipRegistrySystem;
   "system.room.registry": _RoomRegistrySystem;
+  "system.shape.registry": _ShapeRegistrySystem;
   "system.skill.registry": _SkillRegistrySystem;
   "system.setup.snapshot.t2": _SnapshotT2System;
   "system.trait.registry": _TraitRegistrySystem;

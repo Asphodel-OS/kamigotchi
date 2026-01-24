@@ -183,6 +183,20 @@
       ]
     },
     {
+      "name": "_ShapeRegistrySystem",
+      "writeAccess": [
+        "Description",
+        "EntityType",
+        "HasFlag",
+        "IdHolder",
+        "IDOwnsFlag",
+        "IDType",
+        "IsRegistry",
+        "Name",
+        "Type"
+      ]
+    },
+    {
       "name": "_SkillRegistrySystem",
       "writeAccess": ["*"]
     },
