@@ -7,4 +7,5 @@ export { triggerLeaderboardModal } from './triggerLeaderboardModal';
 export { triggerNodeModal } from './triggerNodeModal';
 export { triggerPetNamingModal } from './triggerPetNamingModal';
 export { triggerShopModal } from './triggerShopModal';
+export { triggerTempleOfTheWheelModal } from './triggerTempleOfTheWheelModal';
 export { triggerTradingModal } from './triggerTradingModal';

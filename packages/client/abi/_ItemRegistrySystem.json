@@ -300,6 +300,24 @@
     },
     {
       "type": "function",
+      "name": "setSlot",
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "slot",
+          "type": "string",
+          "internalType": "string"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "transferOwnership",
       "inputs": [
         {
@@ -408,6 +426,7 @@
     "remove(uint32)": "00d84fd8",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
+    "setSlot(uint32,string)": "5cbf4483",
     "transferOwnership(address)": "f2fde38b"
   }
 }

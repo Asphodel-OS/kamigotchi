@@ -17,9 +17,21 @@ export const kamisAPI = (systems: SystemQueue<any>) => {
     return systems['system.kami.name'].executeTyped(kamiID, name);
   };
 
+  // sacrifice a kami to receive a petpet
+  const sacrificeCommit = (kamiIndex: number) => {
+    return systems['system.kami.sacrifice.commit'].executeTyped(kamiIndex);
+  };
+
+  // reveal sacrifice loot
+  const sacrificeReveal = (commitIDs: BigNumberish[]) => {
+    return systems['system.kami.sacrifice.reveal'].executeTypedBatch(commitIDs);
+  };
+
   return {
     level,
     name,
+    sacrificeCommit,
+    sacrificeReveal,
     onyx: onyxAPI(systems),
     harvest: harvestsAPI(systems),
     item: itemsAPI(systems),

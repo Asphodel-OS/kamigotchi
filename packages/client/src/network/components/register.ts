@@ -41,6 +41,7 @@ export function createComponents(world: World) {
     OwnsQuestID: defineStringComponent(world, 'OwnsQuestID', 'component.id.quest.owns', true),
     OwnsRsID: defineStringComponent(world, 'OwnsRsID', 'component.id.relationship.owns', true),
     OwnsSkillID: defineStringComponent(world, 'OwnsSkillID', 'component.id.skill.owns', true),
+    OwnsEquipID: defineStringComponent(world, 'OwnsEquipID', 'component.id.equipment.owns', true),
     OwnsTaxID: defineStringComponent(world, 'OwnsTaxID', 'component.id.tax.owns', true),
     OwnsTradeID: defineStringComponent(world, 'OwnsTradeID', 'component.id.trade.owns', true),
     OwnsWithdrawalID: defineStringComponent(world, 'OwnsWithdrawalID', 'component.id.token.withdraw.owns', true),
