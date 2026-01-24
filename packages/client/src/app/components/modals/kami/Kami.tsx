@@ -3,6 +3,9 @@ import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
+import { getTempBonuses } from 'app/cache/bonus';
+import { getEquipped } from 'app/cache/equipment/equipment';
+import { cleanInventories } from 'app/cache/inventory';
 import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
 import {
@@ -22,13 +25,14 @@ import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { getCompAddr } from 'network/shapes/utils';
 import { Battles } from './battles/Battles';
+import { Equipment } from './equipment/Equipment';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
 import { Skills } from './skills/Skills';
 import { Traits } from './traits/Traits';
 
 const SYNC_TIME = 1000;
-export type TabType = 'TRAITS' | 'SKILLS' | 'BATTLES';
+export type TabType = 'TRAITS' | 'EQUIPMENT' | 'SKILLS' | 'BATTLES';
 
 export const KamiModal: UIComponent = {
   id: 'KamiModal',
@@ -81,6 +85,8 @@ export const KamiModal: UIComponent = {
             parseSkillRequirementText(world, components, requirement),
           getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
           getNodeByIndex: (index: number) => _getNodeByIndex(world, components, index),
+          getTempBonuses: (kami: Kami) => getTempBonuses(world, components, kami.entity, 2),
+          getKamiEquipped: (kami: Kami) => getEquipped(world, components, kami.id),
         },
       };
     })();
@@ -170,6 +176,28 @@ export const KamiModal: UIComponent = {
       });
     };
 
+    const equipItem = (kami: Kami, itemIndex: number) => {
+      actions.add({
+        action: 'KamiEquip',
+        params: [kami.id, itemIndex],
+        description: `Equipping item to ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.equipment.equip(kami.id, itemIndex);
+        },
+      });
+    };
+
+    const unequipItem = (kami: Kami, slotType: string) => {
+      actions.add({
+        action: 'KamiUnequip',
+        params: [kami.id, slotType],
+        description: `Unequipping ${slotType} from ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.equipment.unequip(kami.id, slotType);
+        },
+      });
+    };
+
     /////////////////
     // DISPLAY
 
@@ -192,6 +220,18 @@ export const KamiModal: UIComponent = {
         noPadding
       >
         {tab === 'TRAITS' && <Traits kami={kami} />}
+        {tab === 'EQUIPMENT' && (
+          <Equipment
+            inventories={cleanInventories(account.inventories ?? [])}
+            bonuses={utils.getTempBonuses(kami)}
+            equipped={utils.getKamiEquipped(kami)}
+            capacity={Math.max(1, kami.stats?.slots?.total ?? 1)}
+            actions={{
+              equip: (itemIndex: number) => equipItem(kami, itemIndex),
+              unequip: (slot: string) => unequipItem(kami, slot),
+            }}
+          />
+        )}
         {tab === 'SKILLS' && (
           <Skills
             data={{ account, kami, owner }}

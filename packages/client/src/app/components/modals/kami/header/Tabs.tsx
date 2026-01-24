@@ -26,6 +26,13 @@ export const Tabs = ({
         Traits
       </Button>
       <Button
+        onClick={() => setTab('EQUIPMENT')}
+        disabled={tab === 'EQUIPMENT'}
+        style={{ borderRight: 'solid black .15vw' }}
+      >
+        Equipment
+      </Button>
+      <Button
         onClick={() => setTab('SKILLS')}
         disabled={tab === 'SKILLS'}
         style={{ borderRight: 'solid black .15vw' }}

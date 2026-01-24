@@ -1,6 +1,7 @@
 import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
+import { equipmentAPI } from './equipment';
 import { harvestsAPI } from './harvests';
 import { itemsAPI } from './items';
 import { onyxAPI } from './onyx';
@@ -20,6 +21,7 @@ export const kamisAPI = (systems: SystemQueue<any>) => {
   return {
     level,
     name,
+    equipment: equipmentAPI(systems),
     onyx: onyxAPI(systems),
     harvest: harvestsAPI(systems),
     item: itemsAPI(systems),

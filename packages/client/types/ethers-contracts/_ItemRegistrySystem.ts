@@ -2,194 +2,107 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
+  AddressLike,
   BaseContract,
   BigNumberish,
   BytesLike,
-  FunctionFragment,
-  Result,
-  Interface,
-  EventFragment,
-  AddressLike,
-  ContractRunner,
   ContractMethod,
+  ContractRunner,
+  EventFragment,
+  FunctionFragment,
+  Interface,
   Listener,
-} from "ethers";
+  Result,
+} from 'ethers';
 import type {
   TypedContractEvent,
+  TypedContractMethod,
   TypedDeferredTopicFilter,
   TypedEventLog,
-  TypedLogDescription,
   TypedListener,
-  TypedContractMethod,
-} from "./common";
+  TypedLogDescription,
+} from './common';
 
 export interface _ItemRegistrySystemInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "addAlloBasic"
-      | "addAlloBonus"
-      | "addAlloDT"
-      | "addAlloStat"
-      | "addFlag"
-      | "addRequirement"
-      | "cancelOwnershipHandover"
-      | "completeOwnershipHandover"
-      | "create"
-      | "createConsumable"
-      | "deprecate"
-      | "disable"
-      | "enable"
-      | "execute"
-      | "owner"
-      | "ownershipHandoverExpiresAt"
-      | "remove"
-      | "renounceOwnership"
-      | "requestOwnershipHandover"
-      | "setRarity"
-      | "setSlot"
-      | "transferOwnership"
+      | 'addAlloBasic'
+      | 'addAlloBonus'
+      | 'addAlloDT'
+      | 'addAlloStat'
+      | 'addFlag'
+      | 'addRequirement'
+      | 'cancelOwnershipHandover'
+      | 'completeOwnershipHandover'
+      | 'create'
+      | 'createConsumable'
+      | 'deprecate'
+      | 'disable'
+      | 'enable'
+      | 'execute'
+      | 'owner'
+      | 'ownershipHandoverExpiresAt'
+      | 'remove'
+      | 'renounceOwnership'
+      | 'requestOwnershipHandover'
+      | 'setRarity'
+      | 'setSlot'
+      | 'transferOwnership'
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "OwnershipHandoverCanceled"
-      | "OwnershipHandoverRequested"
-      | "OwnershipTransferred"
-      | "SystemDeprecated"
+      | 'OwnershipHandoverCanceled'
+      | 'OwnershipHandoverRequested'
+      | 'OwnershipTransferred'
+      | 'SystemDeprecated'
   ): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "addAlloBasic",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addAlloBonus",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addAlloDT",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addAlloStat",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addFlag",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addRequirement",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cancelOwnershipHandover",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "completeOwnershipHandover",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(functionFragment: "create", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "createConsumable",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "disable",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "enable",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "ownershipHandoverExpiresAt",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "remove",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requestOwnershipHandover",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setRarity",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSlot",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: 'addAlloBasic', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'addAlloBonus', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'addAlloDT', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'addAlloStat', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'addFlag', values: [BigNumberish, string]): string;
+  encodeFunctionData(functionFragment: 'addRequirement', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'cancelOwnershipHandover', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'completeOwnershipHandover', values: [AddressLike]): string;
+  encodeFunctionData(functionFragment: 'create', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'createConsumable', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'deprecate', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'disable', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'enable', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'execute', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'ownershipHandoverExpiresAt', values: [AddressLike]): string;
+  encodeFunctionData(functionFragment: 'remove', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'requestOwnershipHandover', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'setRarity', values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'setSlot', values: [BigNumberish, string]): string;
+  encodeFunctionData(functionFragment: 'transferOwnership', values: [AddressLike]): string;
 
-  decodeFunctionResult(
-    functionFragment: "addAlloBasic",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addAlloBonus",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "addAlloDT", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addAlloStat",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "addFlag", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addRequirement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancelOwnershipHandover",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "completeOwnershipHandover",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "createConsumable",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "disable", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "enable", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ownershipHandoverExpiresAt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requestOwnershipHandover",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "setRarity", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setSlot", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: 'addAlloBasic', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addAlloBonus', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addAlloDT', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addAlloStat', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addFlag', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'addRequirement', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'cancelOwnershipHandover', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'completeOwnershipHandover', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'create', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'createConsumable', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'deprecate', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'disable', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'enable', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'execute', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ownershipHandoverExpiresAt', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'remove', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'requestOwnershipHandover', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setRarity', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setSlot', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
 }
 
 export namespace OwnershipHandoverCanceledEvent {
@@ -278,204 +191,138 @@ export interface _ItemRegistrySystem extends BaseContract {
     event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(event?: TCEvent): Promise<this>;
 
-  addAlloBasic: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
+  addAlloBasic: TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
 
-  addAlloBonus: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
+  addAlloBonus: TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
 
-  addAlloDT: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
+  addAlloDT: TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
 
-  addAlloStat: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
+  addAlloStat: TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
 
-  addFlag: TypedContractMethod<
-    [index: BigNumberish, flag: string],
-    [void],
-    "nonpayable"
-  >;
+  addFlag: TypedContractMethod<[index: BigNumberish, flag: string], [void], 'nonpayable'>;
 
-  addRequirement: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
+  addRequirement: TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
 
-  cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
+  cancelOwnershipHandover: TypedContractMethod<[], [void], 'payable'>;
 
-  completeOwnershipHandover: TypedContractMethod<
-    [pendingOwner: AddressLike],
-    [void],
-    "payable"
-  >;
+  completeOwnershipHandover: TypedContractMethod<[pendingOwner: AddressLike], [void], 'payable'>;
 
-  create: TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+  create: TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
 
-  createConsumable: TypedContractMethod<
-    [arguments: BytesLike],
-    [bigint],
-    "nonpayable"
-  >;
+  createConsumable: TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
 
-  deprecate: TypedContractMethod<[], [void], "nonpayable">;
+  deprecate: TypedContractMethod<[], [void], 'nonpayable'>;
 
-  disable: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+  disable: TypedContractMethod<[index: BigNumberish], [void], 'nonpayable'>;
 
-  enable: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+  enable: TypedContractMethod<[index: BigNumberish], [void], 'nonpayable'>;
 
-  execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+  execute: TypedContractMethod<[arguments: BytesLike], [string], 'nonpayable'>;
 
-  owner: TypedContractMethod<[], [string], "view">;
+  owner: TypedContractMethod<[], [string], 'view'>;
 
-  ownershipHandoverExpiresAt: TypedContractMethod<
-    [pendingOwner: AddressLike],
-    [bigint],
-    "view"
-  >;
+  ownershipHandoverExpiresAt: TypedContractMethod<[pendingOwner: AddressLike], [bigint], 'view'>;
 
-  remove: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+  remove: TypedContractMethod<[index: BigNumberish], [void], 'nonpayable'>;
 
-  renounceOwnership: TypedContractMethod<[], [void], "payable">;
+  renounceOwnership: TypedContractMethod<[], [void], 'payable'>;
 
-  requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
+  requestOwnershipHandover: TypedContractMethod<[], [void], 'payable'>;
 
-  setRarity: TypedContractMethod<
-    [arguments: BytesLike],
-    [boolean],
-    "nonpayable"
-  >;
+  setRarity: TypedContractMethod<[arguments: BytesLike], [boolean], 'nonpayable'>;
 
-  setSlot: TypedContractMethod<
-    [index: BigNumberish, slot: string],
-    [void],
-    "nonpayable"
-  >;
+  setSlot: TypedContractMethod<[index: BigNumberish, slot: string], [void], 'nonpayable'>;
 
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
-    [void],
-    "payable"
-  >;
+  transferOwnership: TypedContractMethod<[newOwner: AddressLike], [void], 'payable'>;
 
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
+  getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
 
   getFunction(
-    nameOrSignature: "addAlloBasic"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+    nameOrSignature: 'addAlloBasic'
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "addAlloBonus"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+    nameOrSignature: 'addAlloBonus'
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "addAlloDT"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+    nameOrSignature: 'addAlloDT'
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "addAlloStat"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+    nameOrSignature: 'addAlloStat'
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "addFlag"
-  ): TypedContractMethod<
-    [index: BigNumberish, flag: string],
-    [void],
-    "nonpayable"
-  >;
+    nameOrSignature: 'addFlag'
+  ): TypedContractMethod<[index: BigNumberish, flag: string], [void], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "addRequirement"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+    nameOrSignature: 'addRequirement'
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "cancelOwnershipHandover"
-  ): TypedContractMethod<[], [void], "payable">;
+    nameOrSignature: 'cancelOwnershipHandover'
+  ): TypedContractMethod<[], [void], 'payable'>;
   getFunction(
-    nameOrSignature: "completeOwnershipHandover"
-  ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
+    nameOrSignature: 'completeOwnershipHandover'
+  ): TypedContractMethod<[pendingOwner: AddressLike], [void], 'payable'>;
   getFunction(
-    nameOrSignature: "create"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+    nameOrSignature: 'create'
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "createConsumable"
-  ): TypedContractMethod<[arguments: BytesLike], [bigint], "nonpayable">;
+    nameOrSignature: 'createConsumable'
+  ): TypedContractMethod<[arguments: BytesLike], [bigint], 'nonpayable'>;
+  getFunction(nameOrSignature: 'deprecate'): TypedContractMethod<[], [void], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "deprecate"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+    nameOrSignature: 'disable'
+  ): TypedContractMethod<[index: BigNumberish], [void], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "disable"
-  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: 'enable'
+  ): TypedContractMethod<[index: BigNumberish], [void], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "enable"
-  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: 'execute'
+  ): TypedContractMethod<[arguments: BytesLike], [string], 'nonpayable'>;
+  getFunction(nameOrSignature: 'owner'): TypedContractMethod<[], [string], 'view'>;
   getFunction(
-    nameOrSignature: "execute"
-  ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+    nameOrSignature: 'ownershipHandoverExpiresAt'
+  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], 'view'>;
   getFunction(
-    nameOrSignature: "owner"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: 'remove'
+  ): TypedContractMethod<[index: BigNumberish], [void], 'nonpayable'>;
+  getFunction(nameOrSignature: 'renounceOwnership'): TypedContractMethod<[], [void], 'payable'>;
   getFunction(
-    nameOrSignature: "ownershipHandoverExpiresAt"
-  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
+    nameOrSignature: 'requestOwnershipHandover'
+  ): TypedContractMethod<[], [void], 'payable'>;
   getFunction(
-    nameOrSignature: "remove"
-  ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: 'setRarity'
+  ): TypedContractMethod<[arguments: BytesLike], [boolean], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "payable">;
+    nameOrSignature: 'setSlot'
+  ): TypedContractMethod<[index: BigNumberish, slot: string], [void], 'nonpayable'>;
   getFunction(
-    nameOrSignature: "requestOwnershipHandover"
-  ): TypedContractMethod<[], [void], "payable">;
-  getFunction(
-    nameOrSignature: "setRarity"
-  ): TypedContractMethod<[arguments: BytesLike], [boolean], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setSlot"
-  ): TypedContractMethod<
-    [index: BigNumberish, slot: string],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
+    nameOrSignature: 'transferOwnership'
+  ): TypedContractMethod<[newOwner: AddressLike], [void], 'payable'>;
 
   getEvent(
-    key: "OwnershipHandoverCanceled"
+    key: 'OwnershipHandoverCanceled'
   ): TypedContractEvent<
     OwnershipHandoverCanceledEvent.InputTuple,
     OwnershipHandoverCanceledEvent.OutputTuple,
     OwnershipHandoverCanceledEvent.OutputObject
   >;
   getEvent(
-    key: "OwnershipHandoverRequested"
+    key: 'OwnershipHandoverRequested'
   ): TypedContractEvent<
     OwnershipHandoverRequestedEvent.InputTuple,
     OwnershipHandoverRequestedEvent.OutputTuple,
     OwnershipHandoverRequestedEvent.OutputObject
   >;
   getEvent(
-    key: "OwnershipTransferred"
+    key: 'OwnershipTransferred'
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
     OwnershipTransferredEvent.OutputTuple,
     OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
-    key: "SystemDeprecated"
+    key: 'SystemDeprecated'
   ): TypedContractEvent<
     SystemDeprecatedEvent.InputTuple,
     SystemDeprecatedEvent.OutputTuple,
@@ -483,7 +330,7 @@ export interface _ItemRegistrySystem extends BaseContract {
   >;
 
   filters: {
-    "OwnershipHandoverCanceled(address)": TypedContractEvent<
+    'OwnershipHandoverCanceled(address)': TypedContractEvent<
       OwnershipHandoverCanceledEvent.InputTuple,
       OwnershipHandoverCanceledEvent.OutputTuple,
       OwnershipHandoverCanceledEvent.OutputObject
@@ -494,7 +341,7 @@ export interface _ItemRegistrySystem extends BaseContract {
       OwnershipHandoverCanceledEvent.OutputObject
     >;
 
-    "OwnershipHandoverRequested(address)": TypedContractEvent<
+    'OwnershipHandoverRequested(address)': TypedContractEvent<
       OwnershipHandoverRequestedEvent.InputTuple,
       OwnershipHandoverRequestedEvent.OutputTuple,
       OwnershipHandoverRequestedEvent.OutputObject
@@ -505,7 +352,7 @@ export interface _ItemRegistrySystem extends BaseContract {
       OwnershipHandoverRequestedEvent.OutputObject
     >;
 
-    "OwnershipTransferred(address,address)": TypedContractEvent<
+    'OwnershipTransferred(address,address)': TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
       OwnershipTransferredEvent.OutputObject
@@ -516,7 +363,7 @@ export interface _ItemRegistrySystem extends BaseContract {
       OwnershipTransferredEvent.OutputObject
     >;
 
-    "SystemDeprecated()": TypedContractEvent<
+    'SystemDeprecated()': TypedContractEvent<
       SystemDeprecatedEvent.InputTuple,
       SystemDeprecatedEvent.OutputTuple,
       SystemDeprecatedEvent.OutputObject
