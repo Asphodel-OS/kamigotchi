@@ -5,7 +5,10 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibCommit } from "libraries/LibCommit.sol";
 import { LibSacrifice } from "libraries/LibSacrifice.sol";
+
+import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.sacrifice.reveal"));
 
@@ -19,7 +22,7 @@ uint256 constant ID = uint256(keccak256("system.kami.sacrifice.reveal"));
  * - Uncommon pity droptable every 20 sacrifices
  * - Rare pity droptable every 100 sacrifices
  */
-contract KamiSacrificeRevealSystem is System {
+contract KamiSacrificeRevealSystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   /**
@@ -33,6 +36,9 @@ contract KamiSacrificeRevealSystem is System {
 
     // Validate commits belong to caller and are sacrifice commits
     LibSacrifice.checkAndExtractIsCommit(components, commitIDs);
+
+    // Filter out already-revealed or non-existent commits
+    LibCommit.filterInvalid(components, commitIDs);
 
     // Reveal and distribute loot
     LibSacrifice.reveal(world, components, commitIDs);
@@ -59,5 +65,27 @@ contract KamiSacrificeRevealSystem is System {
    */
   function executeTypedBatch(uint256[] memory commitIDs) public {
     execute(abi.encode(commitIDs));
+  }
+
+  /**
+   * @notice Force reveal for commits with expired blockhashes (admin only)
+   * @dev Used when blockhash is no longer available (>256 blocks since commit)
+   * @param commitID The commit entity ID to force reveal
+   */
+  function forceReveal(uint256 commitID) public onlyCommManager(components) {
+    uint256[] memory commitIDs = new uint256[](1);
+    commitIDs[0] = commitID;
+
+    // Revert if blockhash is still available (no need for force reveal)
+    if (LibCommit.isAvailable(components, commitIDs)) revert("no need for force reveal");
+
+    // Validate this is a sacrifice commit
+    LibSacrifice.checkAndExtractIsCommit(components, commitIDs);
+
+    // Reset to a recent block that has available blockhash
+    LibCommit.resetBlocks(components, commitIDs);
+
+    // Reveal and distribute loot
+    LibSacrifice.reveal(world, components, commitIDs);
   }
 }
