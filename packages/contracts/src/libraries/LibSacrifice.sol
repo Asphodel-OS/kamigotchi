@@ -342,17 +342,52 @@ library LibSacrifice {
     uint32[] memory indices,
     uint256[] memory amounts
   ) internal {
+    // Filter out zero amounts to reduce event size
+    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = filterNonZero(indices, amounts);
+
     SacrificeRevealEventData memory eventData = SacrificeRevealEventData({
       commitID: commitID,
       holderID: holderID,
       kamiID: kamiID,
       dtID: dtID,
       timestamp: block.timestamp,
-      itemIndices: indices,
-      itemAmounts: amounts
+      itemIndices: filteredIndices,
+      itemAmounts: filteredAmounts
     });
 
     LibEmitter.emitEvent(world, "SACRIFICE_REVEAL", _schema(), _encodeEvent(eventData));
+  }
+
+  /**
+   * @notice Filters parallel arrays to only include entries where amount > 0
+   * @dev Gas-efficient: single pass count + single pass copy
+   */
+  function filterNonZero(
+    uint32[] memory indices,
+    uint256[] memory amounts
+  ) internal pure returns (uint32[] memory, uint256[] memory) {
+    // Count non-zero entries
+    uint256 count;
+    uint256 len = amounts.length;
+    for (uint256 i; i < len; i++) {
+      if (amounts[i] > 0) count++;
+    }
+
+    // Allocate filtered arrays
+    uint32[] memory filteredIndices = new uint32[](count);
+    uint256[] memory filteredAmounts = new uint256[](count);
+
+    // Copy non-zero entries
+    uint256 j;
+    for (uint256 i; i < len; i++) {
+      if (amounts[i] > 0) {
+        filteredIndices[j] = indices[i];
+        filteredAmounts[j] = amounts[i];
+        j++;
+      }
+    }
+
+    return (filteredIndices, filteredAmounts);
   }
 
   function _schema() internal pure returns (uint8[] memory) {
