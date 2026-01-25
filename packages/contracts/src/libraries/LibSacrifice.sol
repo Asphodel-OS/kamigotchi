@@ -8,6 +8,7 @@ import { LibString } from "solady/utils/LibString.sol";
 import { LibTypes } from "solecs/LibTypes.sol";
 
 import { BlockRevealComponent as BlockRevComponent, ID as BlockRevealCompID } from "components/BlockRevealComponent.sol";
+import { IDOwnsKamiComponent, ID as IDOwnsKamiCompID } from "components/IDOwnsKamiComponent.sol";
 import { IdHolderComponent, ID as IdHolderCompID } from "components/IdHolderComponent.sol";
 import { IdSourceComponent, ID as IdSourceCompID } from "components/IdSourceComponent.sol";
 import { KeysComponent, ID as KeysCompID } from "components/KeysComponent.sol";
@@ -103,6 +104,9 @@ library LibSacrifice {
 
     // Update ECS state: set state to DEAD, health to 0
     LibKami.kill(components, kamiID);
+
+    // Clear ownership so kami no longer appears in party
+    IDOwnsKamiComponent(getAddrByID(components, IDOwnsKamiCompID)).set(kamiID, 0);
   }
 
   /////////////////
