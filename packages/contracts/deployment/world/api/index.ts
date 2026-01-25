@@ -7,6 +7,7 @@ import { nodesAPI } from './nodes';
 import { portalAPI } from './portal';
 import { questsAPI } from './quests';
 import { roomAPI } from './rooms';
+import { sacrificeAPI } from './sacrifice';
 import { tradeAPI } from './trades';
 import { generateCallData } from './utils';
 
@@ -487,6 +488,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
     },
     room: roomAPI(generateCallData, compiledCalls),
+    sacrifice: sacrificeAPI(generateCallData, compiledCalls),
     trade: tradeAPI(generateCallData, compiledCalls),
     setup: {
       local: {

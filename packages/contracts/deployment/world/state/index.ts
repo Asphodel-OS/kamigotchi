@@ -117,7 +117,7 @@ export { initGachaPool, mintToGachaPool } from './gacha';
 export { deleteGoalRewards, deleteGoals, initGoals } from './goals';
 export { deleteItems, initItems, reviseItems } from './items';
 export { deleteListings, initListings, reviseListings } from './listings';
-export { initNpcs } from './npcs';
+export { initNpcs, initNPCDroptables } from './npcs';
 export { initPortalTokens, setPortalTokens, unsetPortalTokens } from './portal';
 export { deleteQuests, initQuests, reviseQuests } from './quests';
 export { deleteRecipes, initRecipes, reviseRecipes } from './recipes/recipes';
