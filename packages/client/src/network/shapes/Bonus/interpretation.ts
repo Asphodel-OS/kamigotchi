@@ -48,5 +48,6 @@ const parseEndtype = (bonus: Bonus): string => {
   else if (bonus.endType === 'UPON_DEATH') return 'til death';
   else if (bonus.endType === 'UPON_LIQUIDATION') return 'til kami liquidates';
   else if (bonus.endType === 'UPON_KILL_OR_KILLED') return 'til kami kills or is killed';
+  else if (bonus.endType?.startsWith('ON_UNEQUIP_')) return 'til unequipped';
   else return '';
 };
