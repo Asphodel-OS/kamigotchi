@@ -6,7 +6,6 @@ import {
   TransactionReceipt,
   TransactionRequest,
   TransactionResponse,
-  Wallet,
 } from 'ethers';
 import { log } from 'utils/logger';
 
@@ -63,6 +62,9 @@ export async function waitForTx(
 /**
  * Performant send tx, reducing as many calls as possible
  * gasLimit is already estimated in prior step, passed in via txData
+ *
+ * Tries EIP-7966 eth_sendRawTransactionSync first for faster confirmation,
+ * falls back to legacy sendTransaction if the RPC doesn't support it.
  */
 export async function sendTx(
   signer: Signer | undefined,
@@ -79,18 +81,20 @@ export async function sendTx(
   txData.maxFeePerGas = baseGasPrice;
   txData.maxPriorityFeePerGas = 0;
 
-  // Embedded wallet (Wallet instance) supports EIP-7966 eth_sendRawTransactionSync
-  // Injected wallet (JsonRpcSigner) needs legacy sendTransaction
-  if (signer instanceof Wallet) {
+  try {
+    log.time.info('[queue] Signing tx');
     const signedTx = await signer.signTransaction(txData);
+    log.time.info('[queue] Sending tx (sync)');
+    const sendStart = performance.now();
     const receipt = await (signer.provider as any).send('eth_sendRawTransactionSync', [
       signedTx,
       8000,
     ]);
+    const sendDuration = performance.now() - sendStart;
+    log.time.info(`[queue] Got receipt (took ${sendDuration.toFixed(0)}ms)`);
 
-    const status = typeof receipt.status === 'string'
-      ? parseInt(receipt.status, 16)
-      : receipt.status;
+    const status =
+      typeof receipt.status === 'string' ? parseInt(receipt.status, 16) : receipt.status;
 
     if (status !== 1) {
       const error = new Error(`Transaction failed with status ${receipt.status}`);
@@ -99,15 +103,18 @@ export async function sendTx(
     }
 
     return receipt;
+  } catch (e: any) {
+    if (e?.message?.includes('Method not supported')) {
+      log.info('[queue] eth_sendRawTransactionSync not supported, using legacy path');
+      const response = await signer.sendTransaction(txData);
+      const receipt = await response.wait();
+      if (!receipt) {
+        throw new Error('Transaction receipt is null');
+      }
+      return receipt;
+    }
+    throw e;
   }
-
-  // Legacy path for injected wallets (MetaMask, etc.)
-  const response = await signer.sendTransaction(txData);
-  const receipt = await response.wait();
-  if (!receipt) {
-    throw new Error('Transaction receipt is null');
-  }
-  return receipt;
 }
 
 // check if nonce should be incremented
