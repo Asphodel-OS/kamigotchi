@@ -23,9 +23,7 @@ export const Room = ({ index }: { index: number }) => {
   const [bgm, setBgm] = useState<Howl>();
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
-  useEffect(() => {
-    setRoom(rooms[19]);
-  }, [index]);
+
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
   // in the Volume Settings modal. This recreates any new music from scratch,

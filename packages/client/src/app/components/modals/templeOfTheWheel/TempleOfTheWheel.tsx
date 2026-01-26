@@ -18,7 +18,7 @@ import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, NullKami } from 'network/shapes/Kami';
 import { getRarePityProgress, getUncommonPityProgress } from 'network/shapes/Sacrifice/sacrifice';
 import { didActionSucceed } from 'network/utils';
-import { playSacrifice } from 'utils/sounds';
+import { playClick, playSacrifice } from 'utils/sounds';
 import { StatsDisplay } from '../node/kards/StatsDisplay';
 
 export const TempleOfTheWheel: UIComponent = {
@@ -73,6 +73,7 @@ export const TempleOfTheWheel: UIComponent = {
     // ACTIONS
 
     const sacrificeKami = async (kami: Kami) => {
+      playClick();
       setIsDisabled(true);
       const transaction = actions.add({
         action: 'KamiSacrifice',
