@@ -16,6 +16,7 @@ import _QuestRegistrySystem from "../abi/_QuestRegistrySystem.json";
 import _RecipeRegistrySystem from "../abi/_RecipeRegistrySystem.json";
 import _RelationshipRegistrySystem from "../abi/_RelationshipRegistrySystem.json";
 import _RoomRegistrySystem from "../abi/_RoomRegistrySystem.json";
+import _SacrificeRegistrySystem from "../abi/_SacrificeRegistrySystem.json";
 import _SkillRegistrySystem from "../abi/_SkillRegistrySystem.json";
 import _SnapshotT2System from "../abi/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../abi/_TraitRegistrySystem.json";
@@ -54,6 +55,7 @@ import Kami721StakeSystem from "../abi/Kami721StakeSystem.json";
 import Kami721TransferSystem from "../abi/Kami721TransferSystem.json";
 import Kami721UnstakeSystem from "../abi/Kami721UnstakeSystem.json";
 import KamiCastItemSystem from "../abi/KamiCastItemSystem.json";
+import KamiEquipSystem from "../abi/KamiEquipSystem.json";
 import KamiGachaMintSystem from "../abi/KamiGachaMintSystem.json";
 import KamiGachaRerollSystem from "../abi/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../abi/KamiGachaRevealSystem.json";
@@ -62,6 +64,9 @@ import KamiNameSystem from "../abi/KamiNameSystem.json";
 import KamiOnyxRenameSystem from "../abi/KamiOnyxRenameSystem.json";
 import KamiOnyxRespecSystem from "../abi/KamiOnyxRespecSystem.json";
 import KamiOnyxReviveSystem from "../abi/KamiOnyxReviveSystem.json";
+import KamiSacrificeCommitSystem from "../abi/KamiSacrificeCommitSystem.json";
+import KamiSacrificeRevealSystem from "../abi/KamiSacrificeRevealSystem.json";
+import KamiUnequipSystem from "../abi/KamiUnequipSystem.json";
 import KamiUseItemSystem from "../abi/KamiUseItemSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
 import ListingSellSystem from "../abi/ListingSellSystem.json";
@@ -96,6 +101,7 @@ export const SystemAbis = {
   "system.recipe.registry": _RecipeRegistrySystem.abi,
   "system.relationship.registry": _RelationshipRegistrySystem.abi,
   "system.room.registry": _RoomRegistrySystem.abi,
+  "system.sacrifice.registry": _SacrificeRegistrySystem.abi,
   "system.skill.registry": _SkillRegistrySystem.abi,
   "system.setup.snapshot.t2": _SnapshotT2System.abi,
   "system.trait.registry": _TraitRegistrySystem.abi,
@@ -134,6 +140,7 @@ export const SystemAbis = {
   "system.kami721.transfer": Kami721TransferSystem.abi,
   "system.kami721.unstake": Kami721UnstakeSystem.abi,
   "system.kami.cast.item": KamiCastItemSystem.abi,
+  "system.kami.equip": KamiEquipSystem.abi,
   "system.kami.gacha.mint": KamiGachaMintSystem.abi,
   "system.kami.gacha.reroll": KamiGachaRerollSystem.abi,
   "system.kami.gacha.reveal": KamiGachaRevealSystem.abi,
@@ -142,6 +149,9 @@ export const SystemAbis = {
   "system.kami.onyx.rename": KamiOnyxRenameSystem.abi,
   "system.kami.onyx.respec": KamiOnyxRespecSystem.abi,
   "system.kami.onyx.revive": KamiOnyxReviveSystem.abi,
+  "system.kami.sacrifice.commit": KamiSacrificeCommitSystem.abi,
+  "system.kami.sacrifice.reveal": KamiSacrificeRevealSystem.abi,
+  "system.kami.unequip": KamiUnequipSystem.abi,
   "system.kami.use.item": KamiUseItemSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
   "system.listing.sell": ListingSellSystem.abi,
