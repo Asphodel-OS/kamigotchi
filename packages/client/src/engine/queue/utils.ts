@@ -82,6 +82,7 @@ export async function sendTx(
   txData.maxPriorityFeePerGas = 0;
 
   //if (signer instanceof Wallet) {
+
   try {
     log.time.info('[queue] Signing tx');
     const signedTx = await signer.signTransaction(txData);
@@ -106,6 +107,7 @@ export async function sendTx(
     return receipt;
   } catch (e: any) {
     if (e?.message?.includes('Method not supported') || e?.message?.includes('is not available')) {
+
       log.time.info('[queue] eth_sendRawTransactionSync not supported, using legacy path');
       const response = await signer.sendTransaction(txData);
       const receipt = await response.wait();
