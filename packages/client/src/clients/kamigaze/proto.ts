@@ -5,10 +5,10 @@
 // source: kamigaze.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
-import type { CallContext, CallOptions } from 'nice-grpc-common';
+import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import type { CallContext, CallOptions } from "nice-grpc-common";
 
-export const protobufPackage = 'kamigaze';
+export const protobufPackage = "kamigaze";
 
 /** Base type */
 export interface Entity {
@@ -61,6 +61,7 @@ export interface BlockResponse {
 export interface StateResponse {
   state: State[];
   pending: number;
+  lastBlockNumber: number;
 }
 
 export interface StreamResponse {
@@ -76,7 +77,8 @@ export interface StreamResponse {
 }
 
 /** Requests */
-export interface BlockRequest {}
+export interface BlockRequest {
+}
 
 export interface ComponentsRequest {
   fromIdx: number;
@@ -309,31 +311,24 @@ export const State: MessageFns<State> = {
 };
 
 function createBaseECSEvent(): ECSEvent {
-  return {
-    eventType: '',
-    componentId: '',
-    entityId: '',
-    value: undefined,
-    txHash: '',
-    txMetadata: undefined,
-  };
+  return { eventType: "", componentId: "", entityId: "", value: undefined, txHash: "", txMetadata: undefined };
 }
 
 export const ECSEvent: MessageFns<ECSEvent> = {
   encode(message: ECSEvent, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.eventType !== '') {
+    if (message.eventType !== "") {
       writer.uint32(10).string(message.eventType);
     }
-    if (message.componentId !== '') {
+    if (message.componentId !== "") {
       writer.uint32(18).string(message.componentId);
     }
-    if (message.entityId !== '') {
+    if (message.entityId !== "") {
       writer.uint32(26).string(message.entityId);
     }
     if (message.value !== undefined) {
       writer.uint32(34).bytes(message.value);
     }
-    if (message.txHash !== '') {
+    if (message.txHash !== "") {
       writer.uint32(42).string(message.txHash);
     }
     if (message.txMetadata !== undefined) {
@@ -411,26 +406,25 @@ export const ECSEvent: MessageFns<ECSEvent> = {
   },
   fromPartial(object: DeepPartial<ECSEvent>): ECSEvent {
     const message = createBaseECSEvent();
-    message.eventType = object.eventType ?? '';
-    message.componentId = object.componentId ?? '';
-    message.entityId = object.entityId ?? '';
+    message.eventType = object.eventType ?? "";
+    message.componentId = object.componentId ?? "";
+    message.entityId = object.entityId ?? "";
     message.value = object.value ?? undefined;
-    message.txHash = object.txHash ?? '';
-    message.txMetadata =
-      object.txMetadata !== undefined && object.txMetadata !== null
-        ? TxMetadata.fromPartial(object.txMetadata)
-        : undefined;
+    message.txHash = object.txHash ?? "";
+    message.txMetadata = (object.txMetadata !== undefined && object.txMetadata !== null)
+      ? TxMetadata.fromPartial(object.txMetadata)
+      : undefined;
     return message;
   },
 };
 
 function createBaseTxMetadata(): TxMetadata {
-  return { to: '', data: new Uint8Array(0), value: 0 };
+  return { to: "", data: new Uint8Array(0), value: 0 };
 }
 
 export const TxMetadata: MessageFns<TxMetadata> = {
   encode(message: TxMetadata, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.to !== '') {
+    if (message.to !== "") {
       writer.uint32(18).string(message.to);
     }
     if (message.data.length !== 0) {
@@ -487,7 +481,7 @@ export const TxMetadata: MessageFns<TxMetadata> = {
   },
   fromPartial(object: DeepPartial<TxMetadata>): TxMetadata {
     const message = createBaseTxMetadata();
-    message.to = object.to ?? '';
+    message.to = object.to ?? "";
     message.data = object.data ?? new Uint8Array(0);
     message.value = object.value ?? 0;
     return message;
@@ -657,7 +651,7 @@ export const BlockResponse: MessageFns<BlockResponse> = {
 };
 
 function createBaseStateResponse(): StateResponse {
-  return { state: [], pending: 0 };
+  return { state: [], pending: 0, lastBlockNumber: 0 };
 }
 
 export const StateResponse: MessageFns<StateResponse> = {
@@ -667,6 +661,9 @@ export const StateResponse: MessageFns<StateResponse> = {
     }
     if (message.pending !== 0) {
       writer.uint32(16).uint32(message.pending);
+    }
+    if (message.lastBlockNumber !== 0) {
+      writer.uint32(24).uint64(message.lastBlockNumber);
     }
     return writer;
   },
@@ -694,6 +691,14 @@ export const StateResponse: MessageFns<StateResponse> = {
           message.pending = reader.uint32();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.lastBlockNumber = longToNumber(reader.uint64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -710,6 +715,7 @@ export const StateResponse: MessageFns<StateResponse> = {
     const message = createBaseStateResponse();
     message.state = object.state?.map((e) => State.fromPartial(e)) || [];
     message.pending = object.pending ?? 0;
+    message.lastBlockNumber = object.lastBlockNumber ?? 0;
     return message;
   },
 };
@@ -717,7 +723,7 @@ export const StateResponse: MessageFns<StateResponse> = {
 function createBaseStreamResponse(): StreamResponse {
   return {
     blockNumber: 0,
-    blockHash: '',
+    blockHash: "",
     blockTimestamp: 0,
     transactionsConfirmed: [],
     ecsEvents: [],
@@ -733,7 +739,7 @@ export const StreamResponse: MessageFns<StreamResponse> = {
     if (message.blockNumber !== 0) {
       writer.uint32(8).uint32(message.blockNumber);
     }
-    if (message.blockHash !== '') {
+    if (message.blockHash !== "") {
       writer.uint32(18).string(message.blockHash);
     }
     if (message.blockTimestamp !== 0) {
@@ -854,7 +860,7 @@ export const StreamResponse: MessageFns<StreamResponse> = {
   fromPartial(object: DeepPartial<StreamResponse>): StreamResponse {
     const message = createBaseStreamResponse();
     message.blockNumber = object.blockNumber ?? 0;
-    message.blockHash = object.blockHash ?? '';
+    message.blockHash = object.blockHash ?? "";
     message.blockTimestamp = object.blockTimestamp ?? 0;
     message.transactionsConfirmed = object.transactionsConfirmed?.map((e) => e) || [];
     message.ecsEvents = object.ecsEvents?.map((e) => ECSEvent.fromPartial(e)) || [];
@@ -1052,7 +1058,7 @@ export const StateRequest: MessageFns<StateRequest> = {
 
 function createBaseStreamRequest(): StreamRequest {
   return {
-    worldAddress: '',
+    worldAddress: "",
     blockNumber: false,
     blockHash: false,
     blockTimestamp: false,
@@ -1064,7 +1070,7 @@ function createBaseStreamRequest(): StreamRequest {
 
 export const StreamRequest: MessageFns<StreamRequest> = {
   encode(message: StreamRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.worldAddress !== '') {
+    if (message.worldAddress !== "") {
       writer.uint32(10).string(message.worldAddress);
     }
     if (message.blockNumber !== false) {
@@ -1165,7 +1171,7 @@ export const StreamRequest: MessageFns<StreamRequest> = {
   },
   fromPartial(object: DeepPartial<StreamRequest>): StreamRequest {
     const message = createBaseStreamRequest();
-    message.worldAddress = object.worldAddress ?? '';
+    message.worldAddress = object.worldAddress ?? "";
     message.blockNumber = object.blockNumber ?? false;
     message.blockHash = object.blockHash ?? false;
     message.blockTimestamp = object.blockTimestamp ?? false;
@@ -1282,12 +1288,12 @@ export const GetEventsSinceResponse: MessageFns<GetEventsSinceResponse> = {
 
 export type KamigazeServiceDefinition = typeof KamigazeServiceDefinition;
 export const KamigazeServiceDefinition = {
-  name: 'KamigazeService',
-  fullName: 'kamigaze.KamigazeService',
+  name: "KamigazeService",
+  fullName: "kamigaze.KamigazeService",
   methods: {
     /** Requests the latest block number based on the latest ECS state. */
     getStateBlock: {
-      name: 'GetStateBlock',
+      name: "GetStateBlock",
       requestType: BlockRequest,
       requestStream: false,
       responseType: BlockResponse,
@@ -1296,7 +1302,7 @@ export const KamigazeServiceDefinition = {
     },
     /** components */
     getComponents: {
-      name: 'GetComponents',
+      name: "GetComponents",
       requestType: ComponentsRequest,
       requestStream: false,
       responseType: ComponentsResponse,
@@ -1305,7 +1311,7 @@ export const KamigazeServiceDefinition = {
     },
     /** entities */
     getEntities: {
-      name: 'GetEntities',
+      name: "GetEntities",
       requestType: EntitiesRequest,
       requestStream: false,
       responseType: EntitiesResponse,
@@ -1314,7 +1320,7 @@ export const KamigazeServiceDefinition = {
     },
     /** Get State */
     getState: {
-      name: 'GetState',
+      name: "GetState",
       requestType: StateRequest,
       requestStream: false,
       responseType: StateResponse,
@@ -1329,7 +1335,7 @@ export const KamigazeServiceDefinition = {
      * Stream
      */
     subscribeToStream: {
-      name: 'SubscribeToStream',
+      name: "SubscribeToStream",
       requestType: StreamRequest,
       requestStream: false,
       responseType: StreamResponse,
@@ -1338,7 +1344,7 @@ export const KamigazeServiceDefinition = {
     },
     /** Get cached events since a block number */
     getEventsSince: {
-      name: 'GetEventsSince',
+      name: "GetEventsSince",
       requestType: GetEventsSinceRequest,
       requestStream: false,
       responseType: GetEventsSinceResponse,
@@ -1350,24 +1356,21 @@ export const KamigazeServiceDefinition = {
 
 export interface KamigazeServiceImplementation<CallContextExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getStateBlock(
-    request: BlockRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<BlockResponse>>;
+  getStateBlock(request: BlockRequest, context: CallContext & CallContextExt): Promise<DeepPartial<BlockResponse>>;
   /** components */
   getComponents(
     request: ComponentsRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<ComponentsResponse>>;
   /** entities */
   getEntities(
     request: EntitiesRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<EntitiesResponse>>;
   /** Get State */
   getState(
     request: StateRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<StateResponse>>;
   /**
    * Get Kills
@@ -1378,36 +1381,30 @@ export interface KamigazeServiceImplementation<CallContextExt = {}> {
    */
   subscribeToStream(
     request: StreamRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<StreamResponse>>;
   /** Get cached events since a block number */
   getEventsSince(
     request: GetEventsSinceRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<GetEventsSinceResponse>>;
 }
 
 export interface KamigazeServiceClient<CallOptionsExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getStateBlock(
-    request: DeepPartial<BlockRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<BlockResponse>;
+  getStateBlock(request: DeepPartial<BlockRequest>, options?: CallOptions & CallOptionsExt): Promise<BlockResponse>;
   /** components */
   getComponents(
     request: DeepPartial<ComponentsRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<ComponentsResponse>;
   /** entities */
   getEntities(
     request: DeepPartial<EntitiesRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): AsyncIterable<EntitiesResponse>;
   /** Get State */
-  getState(
-    request: DeepPartial<StateRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): AsyncIterable<StateResponse>;
+  getState(request: DeepPartial<StateRequest>, options?: CallOptions & CallOptionsExt): AsyncIterable<StateResponse>;
   /**
    * Get Kills
    * rpc GetKills (KillsRequest) returns (stream KillsResponse) {}
@@ -1417,41 +1414,35 @@ export interface KamigazeServiceClient<CallOptionsExt = {}> {
    */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): AsyncIterable<StreamResponse>;
   /** Get cached events since a block number */
   getEventsSince(
     request: DeepPartial<GetEventsSinceRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<GetEventsSinceResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends globalThis.Array<infer U>
-    ? globalThis.Array<DeepPartial<U>>
-    : T extends ReadonlyArray<infer U>
-      ? ReadonlyArray<DeepPartial<U>>
-      : T extends {}
-        ? { [K in keyof T]?: DeepPartial<T[K]> }
-        : Partial<T>;
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : Partial<T>;
 
 function longToNumber(int64: { toString(): string }): number {
   const num = globalThis.Number(int64.toString());
   if (num > globalThis.Number.MAX_SAFE_INTEGER) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   if (num < globalThis.Number.MIN_SAFE_INTEGER) {
-    throw new globalThis.Error('Value is smaller than Number.MIN_SAFE_INTEGER');
+    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
   }
   return num;
 }
 
-export type ServerStreamingMethodResult<Response> = {
-  [Symbol.asyncIterator](): AsyncIterator<Response, void>;
-};
+export type ServerStreamingMethodResult<Response> = { [Symbol.asyncIterator](): AsyncIterator<Response, void> };
 
 export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;

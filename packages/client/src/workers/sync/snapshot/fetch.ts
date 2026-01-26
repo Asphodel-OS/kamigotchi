@@ -1,5 +1,6 @@
-import { createDecode } from 'engine/encoders';
 import { KamigazeServiceClient } from 'clients/kamigaze';
+import { createDecode } from 'engine/encoders';
+import { log } from 'utils/logger';
 import {
   StateCache,
   createStateCache,
@@ -10,127 +11,350 @@ import {
   storeStateValues,
 } from '../state';
 
+const CHUNK_TIMEOUT_MS = 30000;
+const MAX_RETRIES = 20;
+const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const maybeThrow = () => {
+  if (Math.random() < 0.6) {
+    log.warn('[snapshot] Throwing on purpose');
+    throw new Error('[snapshot] [TEST] Random chunk failure (1 in 5)');
+  }
+};
+
+async function withTimeout<T>(fn: () => Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    fn(),
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Chunk timeout')), ms)),
+  ]);
+}
+
+interface StreamingFetchOptions<TChunk> {
+  name: string;
+  createStream: () => AsyncIterable<TChunk>;
+  processChunk: (chunk: TChunk) => void;
+  getProgress: (chunk: TChunk) => { pending: number };
+  getChunkLogData?: (chunk: TChunk, chunkIndex: number) => Record<string, unknown>;
+  getRetryContext?: () => Record<string, unknown>;
+  progressRange: { start: number; end: number };
+  setPercentage: (percentage: number) => void;
+  onRetry?: () => void;
+}
+
+async function fetchWithRetry<TChunk>({
+  name,
+  createStream,
+  processChunk,
+  getProgress,
+  getChunkLogData,
+  getRetryContext,
+  progressRange,
+  setPercentage,
+  onRetry,
+}: StreamingFetchOptions<TChunk>): Promise<void> {
+  let retryCount = 0;
+  let chunkIndex = 0;
+  let totalChunks = 0;
+  const progressSpan = progressRange.end - progressRange.start;
+
+  setPercentage(progressRange.start);
+
+  while (retryCount <= MAX_RETRIES) {
+    try {
+      log.debug(`[snapshot] ${name} fetching`, getRetryContext?.());
+      const response = createStream();
+
+      for await (const chunk of response) {
+        await withTimeout(async () => {
+          const { pending } = getProgress(chunk);
+
+          if (totalChunks === 0) {
+            totalChunks = chunkIndex + pending + 1;
+          }
+
+          if (getChunkLogData) {
+            log.debug(`[snapshot] ${name} chunk received`, getChunkLogData(chunk, chunkIndex));
+          }
+
+          processChunk(chunk);
+
+          const processedChunks = chunkIndex + 1;
+          const percent = progressRange.start + (processedChunks / totalChunks) * progressSpan;
+          setPercentage(Math.min(+percent.toFixed(1), progressRange.end));
+
+          chunkIndex++;
+        }, CHUNK_TIMEOUT_MS);
+        retryCount = 0;
+      }
+
+      log.debug(`[snapshot] ${name} completed`, { chunksProcessed: chunkIndex });
+      return;
+    } catch (error) {
+      retryCount++;
+      log.debug(`[snapshot] ${name} error`, { retryCount, error });
+      if (retryCount > MAX_RETRIES) throw error;
+
+      const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
+      log.debug(
+        `[snapshot] ${name} retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`,
+        getRetryContext?.()
+      );
+      await sleep(delay);
+
+      totalChunks = 0;
+      onRetry?.();
+    }
+  }
+}
+
 interface FetchOptions {
   stateCache: StateCache;
   kamigazeClient: KamigazeServiceClient;
   decode: ReturnType<typeof createDecode>;
   numChunks?: number;
   setPercentage: (percentage: number) => void;
+  setMessage?: (msg: string) => void;
 }
 
-// fetch a state snapshot from Kamigaze and store it in the StateCache
 export const fetchSnapshot = async (
   stateCache: StateCache,
   kamigazeClient: KamigazeServiceClient,
   decode: ReturnType<typeof createDecode>,
   numChunks = 10,
-  setPercentage: (percentage: number) => void
+  setPercentage: (percentage: number) => void,
+  setMessage?: (msg: string) => void
 ): Promise<StateCache> => {
   let currentBlock = stateCache.lastKamigazeBlock;
   let initialLoad = currentBlock == 0;
 
-  const options: FetchOptions = { stateCache, kamigazeClient, decode, numChunks, setPercentage };
+  log.debug('[snapshot] fetchSnapshot started', {
+    currentBlock,
+    initialLoad,
+    numChunks,
+    lastStateValuesBlock: stateCache.lastStateValuesBlock,
+    lastStateRemovalsBlock: stateCache.lastStateRemovalsBlock,
+  });
+
+  const options: FetchOptions = {
+    stateCache,
+    kamigazeClient,
+    decode,
+    numChunks,
+    setPercentage,
+    setMessage,
+  };
 
   try {
-    let BlockResponse = await kamigazeClient.getStateBlock({});
+    setMessage?.('Querying for State Info');
+    log.debug('[snapshot] Fetching state block');
+    let BlockResponse = await fetchStateBlock(kamigazeClient);
+    log.debug('[snapshot] State block received', {
+      blockNumber: BlockResponse.blockNumber,
+      nonce: BlockResponse.nonce,
+      cachedNonce: stateCache.kamigazeNonce,
+    });
+
     if (stateCache.kamigazeNonce != BlockResponse.nonce) {
-      console.log('New nonce found, full state load required');
+      log.debug('[snapshot] Nonce mismatch, full state load required');
       options.stateCache = createStateCache();
       initialLoad = true;
     }
 
+    options.stateCache.lastStateValuesBlock = options.stateCache.lastKamigazeBlock;
+    options.stateCache.lastStateRemovalsBlock = options.stateCache.lastKamigazeBlock;
+
+    setMessage?.('Querying for Components');
+    log.debug('[snapshot] Starting fetchComponents');
     await fetchComponents(options);
+
     if (!initialLoad) {
+      setMessage?.('Querying for State Removals');
+      log.debug('[snapshot] Starting fetchStateRemovals (incremental load)');
       await fetchStateRemovals(options);
+    } else {
+      log.debug('[snapshot] Skipping fetchStateRemovals (initial load)');
     }
+
+    setMessage?.('Querying for State');
+    log.debug('[snapshot] Starting fetchStateValues');
     await fetchStateValues(options);
+
+    setMessage?.('Querying for Entities');
+    log.debug('[snapshot] Starting fetchEntities');
     await fetchEntities(options);
 
     storeStateBlock(options.stateCache, BlockResponse);
     options.stateCache.lastKamigazeBlock = BlockResponse.blockNumber;
     options.stateCache.kamigazeNonce = BlockResponse.nonce;
+
+    log.debug('[snapshot] fetchSnapshot completed', {
+      finalBlock: options.stateCache.lastKamigazeBlock,
+      entitiesCount: options.stateCache.entities.length,
+      componentsCount: options.stateCache.components.length,
+    });
   } catch (error) {
-    console.error('Error:', error);
+    log.debug('[snapshot] fetchSnapshot error', { error });
     throw error;
   }
 
   return options.stateCache;
 };
 
-// fetch components from Kamigaze and store them in the StateCache
+const fetchStateBlock = async (kamigazeClient: KamigazeServiceClient) => {
+  let retryCount = 0;
+  log.debug('[snapshot] fetchStateBlock started');
+
+  while (retryCount <= MAX_RETRIES) {
+    try {
+      const result = await kamigazeClient.getStateBlock({});
+      log.debug('[snapshot] fetchStateBlock succeeded', {
+        blockNumber: result.blockNumber,
+        nonce: result.nonce,
+      });
+      return result;
+    } catch (error) {
+      retryCount++;
+      log.debug('[snapshot] fetchStateBlock error', { retryCount, error });
+      if (retryCount > MAX_RETRIES) throw error;
+
+      const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
+      log.debug(`[snapshot] State block retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`);
+      await sleep(delay);
+    }
+  }
+
+  throw new Error('Failed to fetch state block after max retries');
+};
+
 const fetchComponents = async ({ stateCache, kamigazeClient, setPercentage }: FetchOptions) => {
-  // remove from the cache any component added by the rpc sync
+  log.debug('[snapshot] fetchComponents started', {
+    fromIdx: stateCache.lastKamigazeComponent,
+  });
+
   stateCache.components.splice(stateCache.lastKamigazeComponent + 1);
 
   const ComponentsResponse = await kamigazeClient.getComponents({
     fromIdx: stateCache.lastKamigazeComponent,
   });
 
+  log.debug('[snapshot] fetchComponents received', {
+    receivedCount: ComponentsResponse.components.length,
+  });
+
   storeStateComponents(stateCache, ComponentsResponse.components);
   stateCache.lastKamigazeComponent = stateCache.components.length - 1;
+
+  log.debug('[snapshot] fetchComponents completed', {
+    totalComponents: stateCache.components.length,
+  });
   setPercentage(5);
 };
 
-// fetch entities from Kamigaze and store them in the StateCache
-const fetchEntities = async ({
+async function fetchEntities({
   stateCache,
   kamigazeClient,
-  numChunks = 10,
   setPercentage,
-}: FetchOptions) => {
-  // remove from the cache any entity added by the rpc sync
-  let percent = 75;
-  let delta = 0;
+}: FetchOptions): Promise<void> {
+  log.debug('[snapshot] fetchEntities started', {
+    fromIdx: stateCache.lastKamigazeEntity,
+    currentEntitiesCount: stateCache.entities.length,
+  });
+
   stateCache.entities.splice(stateCache.lastKamigazeEntity + 1);
 
-  const EntitiesResponse = kamigazeClient.getEntities({
-    fromIdx: stateCache.lastKamigazeEntity,
+  await fetchWithRetry({
+    name: 'fetchEntities',
+    createStream: () => kamigazeClient.getEntities({ fromIdx: stateCache.lastKamigazeEntity }),
+    processChunk: (chunk) => {
+      storeStateEntities(stateCache, chunk.entities);
+      stateCache.lastKamigazeEntity = stateCache.entities.length - 1;
+    },
+    getProgress: (chunk) => ({ pending: chunk.pending }),
+    getChunkLogData: (chunk, chunkIndex) => ({
+      chunkIndex,
+      entitiesInChunk: chunk.entities.length,
+      pending: chunk.pending,
+    }),
+    getRetryContext: () => ({ fromIdx: stateCache.lastKamigazeEntity }),
+    progressRange: { start: 75, end: 100 },
+    setPercentage,
+    onRetry: () => stateCache.entities.splice(stateCache.lastKamigazeEntity + 1),
+  });
+}
+
+async function fetchStateRemovals({
+  stateCache,
+  kamigazeClient,
+  setPercentage,
+}: FetchOptions): Promise<void> {
+  log.debug('[snapshot] fetchStateRemovals started', {
+    fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
   });
 
-  for await (const responseChunk of EntitiesResponse) {
-    if (delta == 0) delta = 25 / responseChunk.pending;
-    percent += delta;
-    storeStateEntities(stateCache, responseChunk.entities);
-    setPercentage(percent);
-  }
-
-  stateCache.lastKamigazeEntity = stateCache.entities.length - 1;
-};
-
-// fetch state removals from Kamigaze and remove them from the StateCache
-const fetchStateRemovals = async ({ stateCache, kamigazeClient, setPercentage }: FetchOptions) => {
-  let percent = 5;
-  let delta = 0;
-  const StateRemovalsResponse = await kamigazeClient.getState({
-    fromBlock: stateCache.lastKamigazeBlock,
-    removals: true,
+  await fetchWithRetry({
+    name: 'fetchStateRemovals',
+    createStream: () =>
+      kamigazeClient.getState({
+        fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
+        removals: true,
+      }),
+    processChunk: (chunk) => {
+      removeStateValues(stateCache, chunk.state);
+      if (chunk.lastBlockNumber > stateCache.lastStateRemovalsBlock) {
+        stateCache.lastStateRemovalsBlock = chunk.lastBlockNumber;
+      }
+    },
+    getProgress: (chunk) => ({ pending: chunk.pending }),
+    getChunkLogData: (chunk, chunkIndex) => ({
+      chunkIndex,
+      stateEntriesInChunk: chunk.state.length,
+      pending: chunk.pending,
+      lastBlockNumber: chunk.lastBlockNumber,
+    }),
+    getRetryContext: () => ({
+      fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
+    }),
+    progressRange: { start: 5, end: 15 },
+    setPercentage,
   });
-  for await (const responseChunk of StateRemovalsResponse) {
-    if (delta == 0) delta = 10 / responseChunk.pending;
-    percent += delta;
-    removeStateValues(stateCache, responseChunk.state);
-    setPercentage(percent);
-  }
-};
+}
 
-// fetch state values from Kamigaze and store them in the StateCache
-const fetchStateValues = async ({
+async function fetchStateValues({
   stateCache,
   kamigazeClient,
   decode,
   setPercentage,
-}: FetchOptions) => {
-  let percent = 15;
-  let delta = 0;
-  const StateValuesResponse = await kamigazeClient.getState({
-    fromBlock: stateCache.lastKamigazeBlock,
-    removals: false,
+}: FetchOptions): Promise<void> {
+  log.debug('[snapshot] fetchStateValues started', {
+    fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
   });
 
-  for await (const responseChunk of StateValuesResponse) {
-    if (delta == 0) delta = 60 / responseChunk.pending;
-    percent += delta;
-    storeStateValues(stateCache, responseChunk.state, decode);
-    setPercentage(percent);
-  }
-};
+  await fetchWithRetry({
+    name: 'fetchStateValues',
+    createStream: () =>
+      kamigazeClient.getState({
+        fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
+        removals: false,
+      }),
+    processChunk: (chunk) => {
+      storeStateValues(stateCache, chunk.state, decode);
+      if (chunk.lastBlockNumber > stateCache.lastStateValuesBlock) {
+        stateCache.lastStateValuesBlock = chunk.lastBlockNumber;
+      }
+    },
+    getProgress: (chunk) => ({ pending: chunk.pending }),
+    getChunkLogData: (chunk, chunkIndex) => ({
+      chunkIndex,
+      stateEntriesInChunk: chunk.state.length,
+      pending: chunk.pending,
+      lastBlockNumber: chunk.lastBlockNumber,
+    }),
+    getRetryContext: () => ({
+      fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
+    }),
+    progressRange: { start: 15, end: 75 },
+    setPercentage,
+  });
+}

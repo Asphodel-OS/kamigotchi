@@ -28,12 +28,12 @@ export const MoreMenuButton = () => {
     if (ready && authenticated) logout();
   };
 
-  const handleResetState = () => {
+  const handleResetState = async () => {
     clearCookies();
-    clearCache();
+    await clearCache();
     clearStorage();
     location.reload();
-  };
+  };;
 
   /////////////////
   // INTERACTION
@@ -41,15 +41,24 @@ export const MoreMenuButton = () => {
   // clear all indexDBs
   const clearCache = async () => {
     const dbs = await indexedDB.databases();
-    dbs.forEach((db) => {
-      if (db.name) {
-        const request = indexedDB.deleteDatabase(db.name);
-        request.onsuccess = function (event) {
-          console.log('Database deleted successfully');
-        };
-      }
-    });
-  };
+    await Promise.all(
+      dbs.map((db) => {
+        if (!db.name) return Promise.resolve();
+        return new Promise<void>((resolve, reject) => {
+          const request = indexedDB.deleteDatabase(db.name!);
+          request.onsuccess = () => {
+            console.log(`Database ${db.name} deleted successfully`);
+            resolve();
+          };
+          request.onerror = () => reject(request.error);
+          request.onblocked = () => {
+            console.warn(`Database ${db.name} deletion blocked`);
+            resolve();
+          };
+        });
+      })
+    );
+  };;
 
   // cleares all cookies
   // TODO: move this to helper function next time we need it
