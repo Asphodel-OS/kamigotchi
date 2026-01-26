@@ -14,6 +14,7 @@ export type {
   Movement,
   RoomRequest,
   RoomResponse,
+  SacrificeReveal,
   StreamRequest,
   StreamResponse,
 } from './proto';
