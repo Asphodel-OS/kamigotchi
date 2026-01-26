@@ -4,7 +4,6 @@ pragma solidity >=0.8.28;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
 import { LibBonus } from "libraries/LibBonus.sol";
 import { LibHarvest } from "libraries/LibHarvest.sol";
 import { LibKami } from "libraries/LibKami.sol";
@@ -19,14 +18,13 @@ contract _HarvestAdminSystem is System, AuthRoles {
 
   // index is kami index
   function stop(uint32 index) public onlyAdmin(components) returns (bytes memory) {
-    uint256 accID = LibAccount.getByOperator(components, msg.sender);
     uint256 kamiID = LibKami.genID(index);
     uint256 id = LibKami.getHarvest(components, kamiID); // harvest ID
 
     LibHarvest.verifyIsHarvest(components, id);
     LibKami.verifyState(components, kamiID, "HARVESTING");
     LibKami.sync(components, kamiID);
-    _stop(id, accID, kamiID);
+    _stop(id, kamiID);
     return "";
   }
 
@@ -40,7 +38,7 @@ contract _HarvestAdminSystem is System, AuthRoles {
   ////////////////
   // INTERNALS
 
-  function _stop(uint256 harvestID, uint256 accID, uint256 kamiID) internal onlyAdmin(components) {
+  function _stop(uint256 harvestID, uint256 kamiID) internal onlyAdmin(components) {
     // stop harvest and reset states
     LibHarvest.stop(components, harvestID, kamiID);
     LibKami.setState(components, kamiID, "RESTING");
