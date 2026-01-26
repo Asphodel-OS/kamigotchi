@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAccountKamis } from 'app/cache/account';
+import { isResting } from 'app/cache/kami';
 import {
   IconListButton,
   IconListButtonOption,
@@ -13,9 +14,7 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { hoverFx } from 'app/styles/effects';
-import { OBOL_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
-import { getItemBalance } from 'network/shapes/Item';
 import { Kami, NullKami } from 'network/shapes/Kami';
 import { getRarePityProgress, getUncommonPityProgress } from 'network/shapes/Sacrifice/sacrifice';
 import { didActionSucceed } from 'network/utils';
@@ -29,7 +28,7 @@ export const TempleOfTheWheel: UIComponent = {
 
     const {
       network,
-      utils: { getObolsBalance, getKamis, getUncommonPity, getRarePity },
+      utils: { getKamis, getUncommonPity, getRarePity },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -39,7 +38,6 @@ export const TempleOfTheWheel: UIComponent = {
       return {
         network,
         utils: {
-          getObolsBalance: () => getItemBalance(world, components, account, OBOL_INDEX),
           getKamis: () =>
             getAccountKamis(world, components, accountEntity, { stats: 3600, traits: 3600 }),
           getUncommonPity: () => getUncommonPityProgress(world, components, account),
@@ -52,34 +50,24 @@ export const TempleOfTheWheel: UIComponent = {
 
     const templeOfTheWheelVisible = useVisibility((s) => s.modals.templeOfTheWheel);
     const setModals = useVisibility((s) => s.setModals);
-    const [eggsQuantity, setEggsQuantity] = useState(1);
     const [isDisabled, setIsDisabled] = useState(false);
     const [selectedKami, setSelectedKami] = useState<Kami>(NullKami);
     const [kamiOptions, setKamiOptions] = useState<IconListButtonOption[]>([]);
 
     /////////////////
-    useEffect(() => {
-      if (!templeOfTheWheelVisible) return;
-      // reset eggsQuantity on modal close
-      setEggsQuantity(1);
-      // close crafting modal
-      setModals({ crafting: false });
-    }, [templeOfTheWheelVisible, setModals]);
 
     useEffect(() => {
       if (!templeOfTheWheelVisible) return;
       const kamis = getKamis();
-      const options = kamis.map((kami) => ({
+      const restingKamis = kamis.filter((kami) => isResting(kami));
+      const options = restingKamis.map((kami) => ({
         image: kami.image,
         text: kami.name,
         onClick: () => setSelectedKami(kami),
       }));
       setKamiOptions(options);
-      setSelectedKami(NullKami); // Reset selection on modal open
+      setSelectedKami(NullKami); // reset selection on modal open
     }, [templeOfTheWheelVisible]);
-
-    /////////////////
-    // HELPERS
 
     /////////////////
     // ACTIONS
@@ -258,8 +246,6 @@ const ButtonsRow = styled.div`
   padding: 0.5vw;
 `;
 
-// modify icontbutton so it
-//  has color and bakcground color
 const Button = styled.button`
   border: 0.1vw solid black;
   background-color: white;
@@ -268,10 +254,14 @@ const Button = styled.button`
   padding: 0.2vw;
   font-size: 0.8vw;
   letter-spacing: -0.1vw;
-  &:hover {
+  &:hover:not(:disabled) {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
     cursor: pointer;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 
