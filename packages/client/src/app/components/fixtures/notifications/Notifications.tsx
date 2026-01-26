@@ -4,6 +4,8 @@ import styled, { keyframes } from 'styled-components';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { Modals, useSelected, useVisibility } from 'app/stores';
+import { getItemRarities } from 'constants/itemRarities';
+import { getItemByIndex } from 'network/shapes/Item';
 import { useComponentEntities } from 'network/utils/hooks';
 
 export const NotificationFixture: UIComponent = {
@@ -55,6 +57,36 @@ export const NotificationFixture: UIComponent = {
       const notification = getComponentValue(notifications.Notification, entity);
       if (!notification) return null;
 
+      const {
+        network: { world, components },
+      } = layers;
+
+      const renderDescription = () => {
+        const itemIndices = notification.itemIndices as number[] | undefined;
+        const itemAmounts = notification.itemAmounts as string[] | undefined;
+
+        if (!itemIndices || !itemAmounts) {
+          return <Description>{notification.description}</Description>;
+        }
+
+        return (
+          <Description>
+            Received:{' '}
+            {itemIndices.map((itemIndex, i) => {
+              const item = getItemByIndex(world, components, itemIndex);
+              const rarity = getItemRarities(item.rarity ?? 0);
+              const amount = itemAmounts[i];
+
+              return (
+                <span key={i}>
+                  {i > 0 && ', '}x{amount} <ItemText $color={rarity.color}>{item.name}</ItemText>
+                </span>
+              );
+            })}
+          </Description>
+        );
+      };
+
       return (
         <Card key={entity.toString()}>
           <ExitButton onClick={() => dismiss(entity)}>X</ExitButton>
@@ -68,7 +100,7 @@ export const NotificationFixture: UIComponent = {
             }
           >
             <Title>{notification.title}</Title>
-            <Description>{notification.description}</Description>
+            {renderDescription()}
           </div>
         </Card>
       );
@@ -150,6 +182,10 @@ const Description = styled.div`
   padding: 0.4vh 0.5vw;
 
   max-width: 100%;
+`;
+
+const ItemText = styled.span<{ $color: string }>`
+  color: ${(props) => props.$color};
 `;
 
 const ExitButton = styled.button`

@@ -8,6 +8,8 @@ export const TooltipContent = ({
   subtitle,
   left,
   right,
+  borderColor,
+  titleColor,
 }: {
   img: string;
   title: string;
@@ -26,13 +28,15 @@ export const TooltipContent = ({
     content: ReactNode;
     align?: 'center' | 'flex-start' | 'flex-end';
   };
+  borderColor?: string;
+  titleColor?: string;
 }) => {
   return (
-    <Container>
+    <Container $borderColor={borderColor}>
       <Header>
         <Image src={img} />
         <SubSection>
-          <Title>{title}</Title>
+          <Title $color={titleColor}>{title}</Title>
           <Subtitle>
             {subtitle.text}: {subtitle.content}
           </Subtitle>
@@ -55,9 +59,15 @@ export const TooltipContent = ({
   );
 };
 
-const Container = styled.div`
+const Container = styled.div<{ $borderColor?: string }>`
   padding: 0.2vw;
   min-width: 20vw;
+  ${({ $borderColor }) =>
+    $borderColor &&
+    `
+    outline: 0.15vw solid ${$borderColor};
+    border-radius: 0.4vw;
+  `}
 `;
 
 const Header = styled.span`
@@ -110,9 +120,10 @@ const Image = styled.img`
   border: solid black 0.15vw;
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ $color?: string }>`
   font-size: 1.2vw;
   font-weight: bold;
+  ${({ $color }) => $color && `color: ${$color};`}
 `;
 
 const Subtitle = styled.div`

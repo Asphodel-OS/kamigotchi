@@ -1,7 +1,9 @@
 import { Item } from 'app/cache/item';
 import { TooltipContent } from 'app/components/library';
+import { getItemRarities } from 'constants/itemRarities';
 import { Allo } from 'network/shapes/Allo';
 import { DetailedEntity } from 'network/shapes/utils';
+import { log } from 'utils/logger';
 
 export const ItemTooltip = ({
   item,
@@ -18,7 +20,11 @@ export const ItemTooltip = ({
   const type = item.type;
   const description = item.description;
   const requirements = item.requirements;
-
+  const rarity = getItemRarities(item.rarity ?? 0) ?? getItemRarities(0);
+  const rarityColor = rarity.color;
+  log.warn('RARITY IS: ', item.name);
+  log.warn('RARITY IS: ', item.rarity);
+  log.warn('RARITY IS: ', rarity);
   const display = (item: Item) => {
     const disp = displayRequirements(item);
     if (disp === '???') return 'None';
@@ -53,6 +59,8 @@ export const ItemTooltip = ({
         text: 'Effects',
         content: getEffectsString(item),
       }}
+      borderColor={rarityColor}
+      titleColor={rarityColor}
     />
   );
 };
