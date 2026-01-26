@@ -105,7 +105,7 @@ export async function sendTx(
     return receipt;
   } catch (e: any) {
     if (e?.message?.includes('Method not supported')) {
-      log.info('[queue] eth_sendRawTransactionSync not supported, using legacy path');
+      log.time.info('[queue] eth_sendRawTransactionSync not supported, using legacy path');
       const response = await signer.sendTransaction(txData);
       const receipt = await response.wait();
       if (!receipt) {
