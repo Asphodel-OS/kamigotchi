@@ -15,6 +15,7 @@ import _QuestRegistrySystem from "../../../out/_QuestRegistrySystem.sol/_QuestRe
 import _RecipeRegistrySystem from "../../../out/_RecipeRegistrySystem.sol/_RecipeRegistrySystem.json";
 import _RelationshipRegistrySystem from "../../../out/_RelationshipRegistrySystem.sol/_RelationshipRegistrySystem.json";
 import _RoomRegistrySystem from "../../../out/_RoomRegistrySystem.sol/_RoomRegistrySystem.json";
+import _SacrificeRegistrySystem from "../../../out/_SacrificeRegistrySystem.sol/_SacrificeRegistrySystem.json";
 import _SkillRegistrySystem from "../../../out/_SkillRegistrySystem.sol/_SkillRegistrySystem.json";
 import _SnapshotT2System from "../../../out/_SnapshotT2System.sol/_SnapshotT2System.json";
 import _TraitRegistrySystem from "../../../out/_TraitRegistrySystem.sol/_TraitRegistrySystem.json";
@@ -53,6 +54,7 @@ import Kami721StakeSystem from "../../../out/Kami721StakeSystem.sol/Kami721Stake
 import Kami721TransferSystem from "../../../out/Kami721TransferSystem.sol/Kami721TransferSystem.json";
 import Kami721UnstakeSystem from "../../../out/Kami721UnstakeSystem.sol/Kami721UnstakeSystem.json";
 import KamiCastItemSystem from "../../../out/KamiCastItemSystem.sol/KamiCastItemSystem.json";
+import KamiEquipSystem from "../../../out/KamiEquipSystem.sol/KamiEquipSystem.json";
 import KamiGachaMintSystem from "../../../out/KamiGachaMintSystem.sol/KamiGachaMintSystem.json";
 import KamiGachaRerollSystem from "../../../out/KamiGachaRerollSystem.sol/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../../../out/KamiGachaRevealSystem.sol/KamiGachaRevealSystem.json";
@@ -61,6 +63,9 @@ import KamiNameSystem from "../../../out/KamiNameSystem.sol/KamiNameSystem.json"
 import KamiOnyxRenameSystem from "../../../out/KamiOnyxRenameSystem.sol/KamiOnyxRenameSystem.json";
 import KamiOnyxRespecSystem from "../../../out/KamiOnyxRespecSystem.sol/KamiOnyxRespecSystem.json";
 import KamiOnyxReviveSystem from "../../../out/KamiOnyxReviveSystem.sol/KamiOnyxReviveSystem.json";
+import KamiSacrificeCommitSystem from "../../../out/KamiSacrificeCommitSystem.sol/KamiSacrificeCommitSystem.json";
+import KamiSacrificeRevealSystem from "../../../out/KamiSacrificeRevealSystem.sol/KamiSacrificeRevealSystem.json";
+import KamiUnequipSystem from "../../../out/KamiUnequipSystem.sol/KamiUnequipSystem.json";
 import KamiUseItemSystem from "../../../out/KamiUseItemSystem.sol/KamiUseItemSystem.json";
 import ListingBuySystem from "../../../out/ListingBuySystem.sol/ListingBuySystem.json";
 import ListingSellSystem from "../../../out/ListingSellSystem.sol/ListingSellSystem.json";
@@ -94,6 +99,7 @@ export const SystemBytecodes = {
   "system.recipe.registry": _RecipeRegistrySystem,
   "system.relationship.registry": _RelationshipRegistrySystem,
   "system.room.registry": _RoomRegistrySystem,
+  "system.sacrifice.registry": _SacrificeRegistrySystem,
   "system.skill.registry": _SkillRegistrySystem,
   "system.setup.snapshot.t2": _SnapshotT2System,
   "system.trait.registry": _TraitRegistrySystem,
@@ -132,6 +138,7 @@ export const SystemBytecodes = {
   "system.kami721.transfer": Kami721TransferSystem,
   "system.kami721.unstake": Kami721UnstakeSystem,
   "system.kami.cast.item": KamiCastItemSystem,
+  "system.kami.equip": KamiEquipSystem,
   "system.kami.gacha.mint": KamiGachaMintSystem,
   "system.kami.gacha.reroll": KamiGachaRerollSystem,
   "system.kami.gacha.reveal": KamiGachaRevealSystem,
@@ -140,6 +147,9 @@ export const SystemBytecodes = {
   "system.kami.onyx.rename": KamiOnyxRenameSystem,
   "system.kami.onyx.respec": KamiOnyxRespecSystem,
   "system.kami.onyx.revive": KamiOnyxReviveSystem,
+  "system.kami.sacrifice.commit": KamiSacrificeCommitSystem,
+  "system.kami.sacrifice.reveal": KamiSacrificeRevealSystem,
+  "system.kami.unequip": KamiUnequipSystem,
   "system.kami.use.item": KamiUseItemSystem,
   "system.listing.buy": ListingBuySystem,
   "system.listing.sell": ListingSellSystem,
