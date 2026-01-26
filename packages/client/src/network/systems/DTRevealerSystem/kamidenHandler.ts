@@ -3,7 +3,7 @@ import { EntityID, World } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { NetworkComponents, NetworkLayer } from 'network/';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
-import { getItemDetailsByIndex } from 'network/shapes/Item';
+import { getItemByIndex } from 'network/shapes/Item';
 import { getKami } from 'network/shapes/Kami';
 import { log } from 'utils/logger';
 import { NotificationSystem } from '../NotificationSystem';
@@ -16,52 +16,33 @@ type RevealBase = {
   Timestamp: number;
 };
 
+type ParsedRevealItem = {
+  index: number;
+  amount: string;
+  name: string;
+};
+
 function parseRevealResults(
   world: World,
   components: NetworkComponents,
-  reveal: RevealBase,
-  logPrefix: string
-): string[] {
-  const commitID = formatEntityID(reveal.CommitID);
-  const results: string[] = [];
+  reveal: RevealBase
+): ParsedRevealItem[] {
+  const results: ParsedRevealItem[] = [];
 
   for (let i = 0; i < reveal.ItemIndices.length; i++) {
-    const rawAmount = reveal.ItemAmounts[i];
+    const amount = reveal.ItemAmounts[i];
+    const rawIndex = reveal.ItemIndices[i];
 
-    if (typeof rawAmount !== 'string' || !/^-?\d+$/.test(rawAmount)) {
-      log.warn(`${logPrefix}: invalid ItemAmount at index ${i}`, { commitID, rawAmount });
-      continue;
-    }
+    if (!amount || amount === '0') continue;
 
-    let parsedAmountBigInt: bigint;
-    try {
-      parsedAmountBigInt = BigInt(rawAmount);
-    } catch (e) {
-      log.warn(`${logPrefix}: failed to parse ItemAmount at index ${i}`, {
-        commitID,
-        rawAmount,
-        error: e,
-      });
-      continue;
-    }
-
-    if (parsedAmountBigInt <= 0n) continue;
-
-    if (parsedAmountBigInt > BigInt(Number.MAX_SAFE_INTEGER)) {
-      log.warn(`${logPrefix}: ItemAmount exceeds safe integer range at index ${i}`, {
-        commitID,
-        rawAmount,
-      });
-      continue;
-    }
-
-    const amount = Number(parsedAmountBigInt);
-    if (!Number.isSafeInteger(amount) || amount <= 0) continue;
-
-    const item = getItemDetailsByIndex(world, components, reveal.ItemIndices[i]);
+    const item = getItemByIndex(world, components, rawIndex);
     if (item.index === 0) continue;
 
-    results.push(`x${amount} ${item.name}`);
+    results.push({
+      index: item.index,
+      amount,
+      name: item.name,
+    });
   }
 
   return results;
@@ -79,7 +60,7 @@ function processReveal(
   if (holderID !== accountID) return;
 
   if (reveal.ItemIndices.length !== reveal.ItemAmounts.length) {
-    console.warn(`${config.logPrefix}: misaligned arrays`, reveal.CommitID);
+    log.warn(`${config.logPrefix}: misaligned arrays`, { commitID: reveal.CommitID });
     return;
   }
 
@@ -87,13 +68,17 @@ function processReveal(
   const notifId = `${config.notifPrefix}-${commitID}` as EntityID;
   if (notifications.has(notifId)) return;
 
-  const results = parseRevealResults(world, components, reveal, config.logPrefix);
+  const results = parseRevealResults(world, components, reveal);
   if (results.length === 0) return;
+
+  const descriptionText = 'Received: ' + results.map((r) => `x${r.amount} ${r.name}`).join(', ');
 
   notifications.add({
     id: notifId,
     title: config.title,
-    description: 'Received: ' + results.join(', '),
+    description: descriptionText,
+    itemIndices: results.map((r) => r.index),
+    itemAmounts: results.map((r) => r.amount),
     time: (reveal.Timestamp * 1000).toString(),
     modal: 'inventory',
   });
@@ -122,11 +107,9 @@ export function setupKamidenRevealHandler(
 
     feed.SacrificeReveals.forEach((reveal: SacrificeReveal) => {
       log.debug('Got sacrifice reveal');
-      log.warn(JSON.stringify(reveal));
       const kamiIndex = world.entityToIndex.get(formatEntityID(reveal.KamiID));
       const kami = getKami(world, components, kamiIndex!);
       const kamiName = kami?.name ?? 'Kami';
-      log.error(JSON.stringify(kami));
       processReveal(world, components, notifications, reveal, accountID, {
         logPrefix: 'SacrificeReveal',
         notifPrefix: 'sacrificeReveal',
