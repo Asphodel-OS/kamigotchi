@@ -31,6 +31,7 @@ export async function notifyResult(
   notifications: NotificationSystem,
   commit: CommitData | undefined
 ) {
+  return; // TEMP: disabled in favor of kamiden reveals
   if (!commit) return;
 
   const config = REVEAL_CONFIG[commit.revealType];
