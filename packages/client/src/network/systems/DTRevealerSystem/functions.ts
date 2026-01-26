@@ -33,24 +33,6 @@ export async function notifyResult(
   commit: CommitData | undefined
 ) {
   return; // TEMP: disabled in favor of kamiden reveals
-  /*
-  if (!commit) return;
-
-  const config = REVEAL_CONFIG[commit.revealType];
-  const commitID = formatEntityID(commit.id);
-  const notifId = `${commit.revealType}Reveal-${commitID}` as EntityID;
-
-  if (notifications.has(notifId)) return;
-
-  await waitForRevealed(components, commit.entity);
-  const resultLog = getDTLogByHash(
-    world,
-    components,
-    commit.holder,
-    commit.anchorID,
-    config.logPrefix
-  );
-  sendResultNotifWithId(notifications, notifId, commit.rolls, resultLog, config.name);*/
 }
 
 export const sendKeepAliveNotif = (notifications: NotificationSystem, status: boolean) => {
