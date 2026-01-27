@@ -17,17 +17,17 @@ const itemRarities = [
   {
     // 2 UNCOMMON
     title: 'Uncommon',
-    color: '#A1C181',
+    color: '#7ac52f',
   },
   {
     // 3 RARE
     title: 'Rare',
-    color: '#9CBCD2',
+    color: '#3880ec',
   },
   {
     // 4 EPIC
     title: 'Epic',
-    color: '#BCA0ff',
+    color: '#7942f9',
   },
   {
     // 5
