@@ -1,16 +1,12 @@
 import { EntityID, getComponentValue, World } from 'engine/recs';
 
 import { Components } from 'network/components';
+import { getData } from '../Data';
 import { hashArgs } from '../utils';
 
 // pity thresholds
 export const UNCOMMON_PITY_THRESHOLD = 20;
 export const RARE_PITY_THRESHOLD = 100;
-
-// droptable IDs
-export const SACRIFICE_DT_NORMAL = hashArgs(['droptable.sacrifice.normal'], ['string']);
-export const SACRIFICE_DT_UNCOMMON_PITY = hashArgs(['droptable.sacrifice.uncommon'], ['string']);
-export const SACRIFICE_DT_RARE_PITY = hashArgs(['droptable.sacrifice.rare'], ['string']);
 
 /**
  * sacrifice pity count for an account
@@ -33,7 +29,11 @@ export const getSacrificePityCount = (
   if (entityIndex === undefined) return 0;
 
   const value = getComponentValue(Value, entityIndex);
-  return (value?.value as number) ?? 0;
+  return Number(value?.value ?? 0);
+};
+// returns worldwide kami sacrifice count
+export const getSacrificeTotal = (world: World, comps: Components) => {
+  return getData(world, comps, '0' as EntityID, 'KAMI_SACRIFICE_TOTAL', 0);
 };
 
 /**

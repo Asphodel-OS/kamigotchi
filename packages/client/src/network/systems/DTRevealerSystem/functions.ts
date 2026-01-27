@@ -1,16 +1,17 @@
 import { EntityID, EntityIndex, World, hasComponent } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/components';
-import { DTLog, getDTLogByHash } from 'network/shapes/Droptable';
+import { DTLog } from 'network/shapes/Droptable';
 import { NotificationSystem } from 'network/systems';
 import { waitForComponentValueUpdate } from 'network/utils';
-import { CommitData, RevealType } from './types';
+import { CommitData } from './types';
 
 // config per reveal type
+/*
 const REVEAL_CONFIG: Record<RevealType, { logPrefix: string; name: string }> = {
   droptable: { logPrefix: 'droptable.item.log', name: 'Items' },
   sacrifice: { logPrefix: 'sacrifice.log', name: 'Petpet' },
-};
+};*/
 
 /////////////////
 // UTILS
@@ -32,6 +33,7 @@ export async function notifyResult(
   commit: CommitData | undefined
 ) {
   return; // TEMP: disabled in favor of kamiden reveals
+  /*
   if (!commit) return;
 
   const config = REVEAL_CONFIG[commit.revealType];
@@ -48,7 +50,7 @@ export async function notifyResult(
     commit.anchorID,
     config.logPrefix
   );
-  sendResultNotifWithId(notifications, notifId, commit.rolls, resultLog, config.name);
+  sendResultNotifWithId(notifications, notifId, commit.rolls, resultLog, config.name);*/
 }
 
 export const sendKeepAliveNotif = (notifications: NotificationSystem, status: boolean) => {
