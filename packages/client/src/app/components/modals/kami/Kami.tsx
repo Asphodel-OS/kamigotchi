@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
 import { getTempBonuses } from 'app/cache/bonus';
-import { getEquipped } from 'app/cache/equipment/equipment';
+import { getEquipped, getEquipmentCapacity } from 'app/cache/equipment/equipment';
 import { cleanInventories } from 'app/cache/inventory';
 import { getKami as _getKami, getKamiAccount, isResting } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
@@ -88,6 +88,7 @@ export const KamiModal: UIComponent = {
           getNodeByIndex: (index: number) => _getNodeByIndex(world, components, index),
           getTempBonuses: (kami: Kami) => getTempBonuses(world, components, kami.entity, 2),
           getKamiEquipped: (kami: Kami) => getEquipped(world, components, kami.id),
+          getEquipmentCapacity: (kami: Kami) => getEquipmentCapacity(world, components, kami.id),
         },
       };
     })();
@@ -224,9 +225,8 @@ export const KamiModal: UIComponent = {
         {tab === 'EQUIPMENT' && (
           <Equipment
             inventories={cleanInventories(account.inventories ?? [])}
-            bonuses={utils.getTempBonuses(kami)}
             equipped={utils.getKamiEquipped(kami)}
-            capacity={Math.max(1, kami.stats?.slots?.total ?? 1)}
+            capacity={utils.getEquipmentCapacity(kami)}
             isResting={isResting(kami)}
             actions={{
               equip: (itemIndex: number) => equipItem(kami, itemIndex),

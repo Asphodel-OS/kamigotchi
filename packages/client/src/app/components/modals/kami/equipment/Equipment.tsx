@@ -9,29 +9,23 @@ import {
   TextTooltip,
 } from 'app/components/library';
 import { Allo } from 'network/shapes/Allo';
-import { BonusInstance } from 'network/shapes/Bonus';
 import { Item } from 'network/shapes/Item';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 
-type SlotKey =
-  | 'Kami_Head_Slot'
-  | 'Kami_Body_Slot'
-  | 'Kami_Hands_Slot'
-  | 'Kami_Passport_Slot'
-  | 'Kami_Pet_Slot';
+type SlotKey = 'Head_Slot' | 'Body_Slot' | 'Hands_Slot' | 'Passport_slot' | 'Kami_Pet_Slot';
 
 const SLOT_LABELS: Record<SlotKey, string> = {
-  Kami_Head_Slot: 'Head',
-  Kami_Body_Slot: 'Body',
-  Kami_Hands_Slot: 'Hands',
-  Kami_Passport_Slot: 'Passport',
+  Head_Slot: 'Head',
+  Body_Slot: 'Body',
+  Hands_Slot: 'Hands',
+  Passport_slot: 'Passport',
   Kami_Pet_Slot: 'Pet',
 };
 
-const EQUIPMENT_SLOTS: SlotKey[] = ['Kami_Head_Slot', 'Kami_Body_Slot', 'Kami_Hands_Slot'];
-const ACCESSORY_SLOTS: SlotKey[] = ['Kami_Passport_Slot', 'Kami_Pet_Slot'];
+const EQUIPMENT_SLOTS: SlotKey[] = ['Head_Slot', 'Body_Slot', 'Hands_Slot'];
+const ACCESSORY_SLOTS: SlotKey[] = ['Passport_slot', 'Kami_Pet_Slot'];
 
 export interface EquipmentActions {
   equip: (itemIndex: number) => void;
@@ -45,7 +39,6 @@ export interface EquipmentUtils {
 
 export const Equipment = ({
   inventories,
-  bonuses = [],
   equipped = {},
   capacity = 1,
   actions,
@@ -53,7 +46,6 @@ export const Equipment = ({
   utils,
 }: {
   inventories: Inventory[];
-  bonuses?: BonusInstance[];
   equipped?: Record<string, Inventory | null>;
   capacity?: number;
   actions?: EquipmentActions;

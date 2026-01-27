@@ -3,14 +3,15 @@ import { solidityPackedKeccak256 } from 'ethers';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { getBonusValue } from 'network/shapes/Bonus';
 import { Inventory } from 'network/shapes/Inventory';
 import { getItemByIndex } from 'network/shapes/Item';
 
 const EQUIPMENT_SLOTS = [
-  'Kami_Head_Slot',
-  'Kami_Body_Slot',
-  'Kami_Hands_Slot',
-  'Kami_Passport_Slot',
+  'Head_Slot',
+  'Body_Slot',
+  'Hands_Slot',
+  'Passport_slot',
   'Kami_Pet_Slot',
 ] as const;
 
@@ -56,4 +57,13 @@ export function getEquipped(
   }
 
   return result;
+}
+
+export function getEquipmentCapacity(
+  world: World,
+  components: Components,
+  kamiID: EntityID
+): number {
+  const bonus = getBonusValue(world, components, 'EQUIP_CAPACITY_SHIFT', kamiID);
+  return Math.max(1, 1 + bonus);
 }

@@ -8,13 +8,7 @@ const AnchorToInstances = new Map<EntityID, EntityIndex[]>();
 
 const QueryUpdateTs = new Map<EntityID, number>();
 
-const EQUIPMENT_SLOTS = [
-  'Kami_Head_Slot',
-  'Kami_Body_Slot',
-  'Kami_Hands_Slot',
-  'Kami_Passport_Slot',
-  'Kami_Pet_Slot',
-];
+const EQUIPMENT_SLOTS = ['Head_Slot', 'Body_Slot', 'Hands_Slot', 'Passport_slot', 'Kami_Pet_Slot'];
 
 export const getTemp = (
   world: World,
