@@ -30,7 +30,7 @@ export function getEquipped(
   components: Components,
   kamiID: EntityID
 ): Record<string, Inventory | null> {
-  const { OwnsEquipmentID, ItemIndex } = components;
+  const { OwnsEquipID, ItemIndex } = components;
   const result: Record<string, Inventory | null> = {};
 
   for (const slot of EQUIPMENT_SLOTS) {
@@ -40,7 +40,7 @@ export function getEquipped(
     const equipEntity = world.entityToIndex.get(equipID);
     if (equipEntity === undefined) continue;
 
-    const ownerID = getComponentValue(OwnsEquipmentID, equipEntity)?.value;
+    const ownerID = getComponentValue(OwnsEquipID, equipEntity)?.value;
     if (ownerID !== kamiID) continue;
 
     const itemIndex = getComponentValue(ItemIndex, equipEntity)?.value as number;
