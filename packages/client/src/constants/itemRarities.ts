@@ -27,7 +27,7 @@ const itemRarities = [
   {
     // 4 EPIC
     title: 'Epic',
-    color: '#A51CDA',
+    color: '#C200D3',
   },
   {
     // 5
