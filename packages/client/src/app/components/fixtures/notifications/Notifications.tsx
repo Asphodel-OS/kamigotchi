@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { Modals, useSelected, useVisibility } from 'app/stores';
-import { getRarities } from 'constants/rarities';
+import { getItemRarities } from 'constants/itemRarities';
 import { getItemByIndex } from 'network/shapes/Item';
 import { useComponentEntities } from 'network/utils/hooks';
 
@@ -74,7 +74,7 @@ export const NotificationFixture: UIComponent = {
             Received:{' '}
             {itemIndices.map((itemIndex, i) => {
               const item = getItemByIndex(world, components, itemIndex);
-              const rarity = getRarities(item.rarity ?? 0);
+              const rarity = getItemRarities(item.rarity ?? 0);
               const amount = itemAmounts[i];
 
               return (
