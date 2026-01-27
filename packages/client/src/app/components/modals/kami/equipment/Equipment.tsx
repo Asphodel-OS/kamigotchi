@@ -82,41 +82,38 @@ export const Equipment = ({
   const isAtCapacity = equippedCount >= capacity;
   const equipmentBonuses = bonuses.filter((b) => b.endType?.startsWith('ON_UNEQUIP_'));
 
+  const getSlotTooltip = (hasOptions: boolean) => {
+    if (!isResting) return { text: ['Kami must be resting.'] };
+    if (!hasOptions) return { text: ['No items compatible with this slot.'] };
+    return undefined;
+  };
+
   const renderSlot = (slot: SlotKey) => {
     const equippedItem = equipped[slot] ?? null;
     const options = getSlotOptions(slot);
-    const restingTooltip = !isResting ? { text: ['Kami must be resting'] } : undefined;
 
     if (equippedItem) {
-      const unequipButton = (
-        <RemoveButton onClick={() => isResting && handleUnequip(slot)} $disabled={!isResting}>
-          X
-        </RemoveButton>
-      );
-
-      const itemTooltipContent = utils ? (
-        <ItemTooltip item={equippedItem.item} utils={utils} />
-      ) : (
-        []
-      );
-
-      const tooltipText = !isResting ? ['Kami must be resting.'] : [itemTooltipContent];
+      const itemTooltip = utils
+        ? {
+            text: [<ItemTooltip key={slot} item={equippedItem.item} utils={utils} />],
+            maxWidth: 25,
+          }
+        : undefined;
 
       return (
-        <TextTooltip text={tooltipText} maxWidth={25}>
-          <FilledSlot $disabled={!isResting}>
-            {equippedItem.item.image && <ItemImage src={equippedItem.item.image} />}
-            {unequipButton}
-          </FilledSlot>
-        </TextTooltip>
+        <FilledSlotWrapper>
+          <IconListButton
+            img={equippedItem.item.image}
+            options={options}
+            scale={3}
+            radius={0.5}
+            disabled={!isResting}
+            tooltip={!isResting ? { text: ['Kami must be resting.'] } : itemTooltip}
+          />
+          {isResting && <RemoveButton onClick={() => handleUnequip(slot)}>X</RemoveButton>}
+        </FilledSlotWrapper>
       );
     }
-
-    const getEquipTooltip = () => {
-      if (!isResting) return { text: ['Kami must be resting.'] };
-      if (options.length === 0) return { text: ['No items compatible with this slot.'] };
-      return undefined;
-    };
 
     return (
       <IconListButton
@@ -124,8 +121,8 @@ export const Equipment = ({
         options={options}
         scale={3}
         radius={0.5}
-        disabled={options.length === 0 || !actions || isAtCapacity || !isResting}
-        tooltip={getEquipTooltip()}
+        disabled={!options.length || !actions || isAtCapacity || !isResting}
+        tooltip={getSlotTooltip(options.length > 0)}
       />
     );
   };
@@ -220,25 +217,11 @@ const SlotLabel = styled.div`
   padding: 0.3vw;
 `;
 
-const FilledSlot = styled.div<{ $disabled?: boolean }>`
+const FilledSlotWrapper = styled.div`
   position: relative;
-  width: 3vw;
-  height: 3vw;
-  border: solid black 0.15vw;
-  border-radius: 0.5vw;
-  background-color: ${({ $disabled }) => ($disabled ? '#ccc' : 'white')};
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
-const ItemImage = styled.img`
-  width: 2.5vw;
-  height: 2.5vw;
-  object-fit: contain;
-`;
-
-const RemoveButton = styled.div<{ $disabled?: boolean }>`
+const RemoveButton = styled.div`
   position: absolute;
   top: -0.5vw;
   right: -0.5vw;
@@ -246,18 +229,19 @@ const RemoveButton = styled.div<{ $disabled?: boolean }>`
   height: 1.2vw;
   border: solid black 0.1vw;
   border-radius: 50%;
-  background-color: ${({ $disabled }) => ($disabled ? '#ccc' : 'white')};
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.8vw;
-  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
-  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+  cursor: pointer;
+  z-index: 2;
   &:hover {
-    background-color: ${({ $disabled }) => ($disabled ? '#ccc' : '#ddd')};
+    background-color: #ddd;
+    scale: 1.1;
   }
   &:active {
-    background-color: ${({ $disabled }) => ($disabled ? '#ccc' : '#bbb')};
+    background-color: #bbb;
   }
 `;
 
