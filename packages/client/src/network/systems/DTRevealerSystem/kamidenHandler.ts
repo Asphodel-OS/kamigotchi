@@ -1,7 +1,7 @@
 import { DroptableReveal, SacrificeReveal, subscribeToFeed } from 'clients/kamiden';
 import { EntityID, World } from 'engine/recs';
 import { formatEntityID } from 'engine/utils';
-import { NetworkComponents, NetworkLayer } from 'network/';
+import { Components, NetworkLayer } from 'network/';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemDetailsByIndex } from 'network/shapes/Item';
 import { getKami } from 'network/shapes/Kami';
@@ -18,7 +18,7 @@ type RevealBase = {
 
 function parseRevealResults(
   world: World,
-  components: NetworkComponents,
+  components: Components,
   reveal: RevealBase,
   logPrefix: string
 ): string[] {
@@ -27,12 +27,6 @@ function parseRevealResults(
 
   for (let i = 0; i < reveal.ItemIndices.length; i++) {
     const rawAmount = reveal.ItemAmounts[i];
-
-    if (typeof rawAmount !== 'string' || !/^-?\d+$/.test(rawAmount)) {
-      log.warn(`${logPrefix}: invalid ItemAmount at index ${i}`, { commitID, rawAmount });
-      continue;
-    }
-
     let parsedAmountBigInt: bigint;
     try {
       parsedAmountBigInt = BigInt(rawAmount);
@@ -45,21 +39,8 @@ function parseRevealResults(
       continue;
     }
 
-    if (parsedAmountBigInt <= 0n) continue;
-
-    if (parsedAmountBigInt > BigInt(Number.MAX_SAFE_INTEGER)) {
-      log.warn(`${logPrefix}: ItemAmount exceeds safe integer range at index ${i}`, {
-        commitID,
-        rawAmount,
-      });
-      continue;
-    }
-
     const amount = Number(parsedAmountBigInt);
-    if (!Number.isSafeInteger(amount) || amount <= 0) continue;
-
     const item = getItemDetailsByIndex(world, components, reveal.ItemIndices[i]);
-    if (item.index === 0) continue;
 
     results.push(`x${amount} ${item.name}`);
   }
@@ -69,7 +50,7 @@ function parseRevealResults(
 
 function processReveal(
   world: World,
-  components: NetworkComponents,
+  components: Components,
   notifications: NotificationSystem,
   reveal: RevealBase,
   accountID: string,
