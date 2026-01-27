@@ -1,8 +1,16 @@
 import styled from 'styled-components';
 
 import { filterInventories, Inventory } from 'app/cache/inventory';
-import { IconListButton, IconListButtonOption, TextTooltip } from 'app/components/library';
+import {
+  IconListButton,
+  IconListButtonOption,
+  ItemTooltip,
+  TextTooltip,
+} from 'app/components/library';
+import { Allo } from 'network/shapes/Allo';
 import { BonusInstance, parseBonusText } from 'network/shapes/Bonus';
+import { Item } from 'network/shapes/Item';
+import { DetailedEntity } from 'network/shapes/utils';
 import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 
@@ -29,18 +37,27 @@ export interface EquipmentActions {
   unequip: (slot: string) => void;
 }
 
+export interface EquipmentUtils {
+  displayRequirements: (item: Item) => string;
+  parseAllos: (allo: Allo[]) => DetailedEntity[];
+}
+
 export const Equipment = ({
   inventories,
   bonuses = [],
   equipped = {},
   capacity = 1,
   actions,
+  isResting = true,
+  utils,
 }: {
   inventories: Inventory[];
   bonuses?: BonusInstance[];
   equipped?: Record<string, Inventory | null>;
   capacity?: number;
   actions?: EquipmentActions;
+  isResting?: boolean;
+  utils?: EquipmentUtils;
 }) => {
   const handleEquip = (inv: Inventory) => {
     playClick();
@@ -68,22 +85,47 @@ export const Equipment = ({
   const renderSlot = (slot: SlotKey) => {
     const equippedItem = equipped[slot] ?? null;
     const options = getSlotOptions(slot);
+    const restingTooltip = !isResting ? { text: ['Kami must be resting'] } : undefined;
 
     if (equippedItem) {
+      const unequipButton = (
+        <RemoveButton onClick={() => isResting && handleUnequip(slot)} $disabled={!isResting}>
+          X
+        </RemoveButton>
+      );
+
+      const itemTooltipContent = utils ? (
+        <ItemTooltip item={equippedItem.item} utils={utils} />
+      ) : (
+        []
+      );
+
+      const tooltipText = !isResting ? ['Kami must be resting.'] : [itemTooltipContent];
+
       return (
-        <FilledSlot>
-          {equippedItem.item.image && <ItemImage src={equippedItem.item.image} />}
-          <RemoveButton onClick={() => handleUnequip(slot)}>X</RemoveButton>
-        </FilledSlot>
+        <TextTooltip text={tooltipText} maxWidth={25}>
+          <FilledSlot $disabled={!isResting}>
+            {equippedItem.item.image && <ItemImage src={equippedItem.item.image} />}
+            {unequipButton}
+          </FilledSlot>
+        </TextTooltip>
       );
     }
+
+    const getEquipTooltip = () => {
+      if (!isResting) return { text: ['Kami must be resting.'] };
+      if (options.length === 0) return { text: ['No items compatible with this slot.'] };
+      return undefined;
+    };
+
     return (
       <IconListButton
         text='+'
         options={options}
         scale={3}
         radius={0.5}
-        disabled={options.length === 0 || !actions || isAtCapacity}
+        disabled={options.length === 0 || !actions || isAtCapacity || !isResting}
+        tooltip={getEquipTooltip()}
       />
     );
   };
@@ -124,7 +166,9 @@ export const Equipment = ({
       </ColumnsContainer>
       <InventoryBar>
         <InventoryIcon>📦</InventoryIcon>
-        <InventoryText>{equippedCount}/{capacity}</InventoryText>
+        <InventoryText>
+          {equippedCount}/{capacity}
+        </InventoryText>
       </InventoryBar>
     </Wrapper>
   );
@@ -176,13 +220,13 @@ const SlotLabel = styled.div`
   padding: 0.3vw;
 `;
 
-const FilledSlot = styled.div`
+const FilledSlot = styled.div<{ $disabled?: boolean }>`
   position: relative;
   width: 3vw;
   height: 3vw;
   border: solid black 0.15vw;
   border-radius: 0.5vw;
-  background-color: white;
+  background-color: ${({ $disabled }) => ($disabled ? '#ccc' : 'white')};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,7 +238,7 @@ const ItemImage = styled.img`
   object-fit: contain;
 `;
 
-const RemoveButton = styled.div`
+const RemoveButton = styled.div<{ $disabled?: boolean }>`
   position: absolute;
   top: -0.5vw;
   right: -0.5vw;
@@ -202,17 +246,18 @@ const RemoveButton = styled.div`
   height: 1.2vw;
   border: solid black 0.1vw;
   border-radius: 50%;
-  background-color: white;
+  background-color: ${({ $disabled }) => ($disabled ? '#ccc' : 'white')};
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.8vw;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
   &:hover {
-    background-color: #ddd;
+    background-color: ${({ $disabled }) => ($disabled ? '#ccc' : '#ddd')};
   }
   &:active {
-    background-color: #bbb;
+    background-color: ${({ $disabled }) => ($disabled ? '#ccc' : '#bbb')};
   }
 `;
 

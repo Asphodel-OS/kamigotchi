@@ -6,7 +6,7 @@ import { getAccount } from 'app/cache/account';
 import { getTempBonuses } from 'app/cache/bonus';
 import { getEquipped } from 'app/cache/equipment/equipment';
 import { cleanInventories } from 'app/cache/inventory';
-import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
+import { getKami as _getKami, getKamiAccount, isResting } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
 import {
   getSkillUpgradeError as _getSkillUpgradeError,
@@ -19,8 +19,9 @@ import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { Condition } from 'network/shapes/Conditional';
-import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
+import { parseAllos as _parseAllos } from 'network/shapes/Allo';
+import { Condition, parseConditionalText } from 'network/shapes/Conditional';
+import { getItemBalance as _getItemBalance, Item } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { getCompAddr } from 'network/shapes/utils';
@@ -226,9 +227,17 @@ export const KamiModal: UIComponent = {
             bonuses={utils.getTempBonuses(kami)}
             equipped={utils.getKamiEquipped(kami)}
             capacity={Math.max(1, kami.stats?.slots?.total ?? 1)}
+            isResting={isResting(kami)}
             actions={{
               equip: (itemIndex: number) => equipItem(kami, itemIndex),
               unequip: (slot: string) => unequipItem(kami, slot),
+            }}
+            utils={{
+              displayRequirements: (item: Item) =>
+                item.requirements.use
+                  .map((req) => parseConditionalText(network.world, network.components, req))
+                  .join(', ') || '???',
+              parseAllos: (allo) => _parseAllos(network.world, network.components, allo),
             }}
           />
         )}

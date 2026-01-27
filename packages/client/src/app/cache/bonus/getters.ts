@@ -20,6 +20,7 @@ export const getTemp = (
     ...getForEndType(world, components, 'UPON_LIQUIDATION', holder, update),
     ...getForEndType(world, components, 'UPON_DEATH', holder, update),
     ...getForEndType(world, components, 'UPON_KILL_OR_KILLED', holder, update),
+    ...getForEndType(world, components, 'ON_UNEQUIP_', holder, update),
   ];
 };
 
