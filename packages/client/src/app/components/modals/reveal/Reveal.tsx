@@ -101,7 +101,7 @@ export const RevealModal: UIComponent = {
         },
         sacrifice: {
           action: 'Sacrifice reveal',
-          description: 'Revealing petpet',
+          description: 'Revealing MicroKami',
           execute: () => api.player.pet.sacrificeReveal(commits),
         },
       };

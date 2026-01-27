@@ -16,7 +16,11 @@ import { useSelected, useVisibility } from 'app/stores';
 import { hoverFx } from 'app/styles/effects';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, NullKami } from 'network/shapes/Kami';
-import { getRarePityProgress, getUncommonPityProgress } from 'network/shapes/Sacrifice/sacrifice';
+import {
+  getRarePityProgress,
+  getSacrificeTotal,
+  getUncommonPityProgress,
+} from 'network/shapes/Sacrifice/sacrifice';
 import { didActionSucceed } from 'network/utils';
 import { playClick, playSacrifice } from 'utils/sounds';
 import { StatsDisplay } from '../node/kards/StatsDisplay';
@@ -28,7 +32,7 @@ export const TempleOfTheWheel: UIComponent = {
 
     const {
       network,
-      utils: { getKamis, getUncommonPity, getRarePity },
+      utils: { getKamis, getUncommonPity, getRarePity, getTotalSacrifices },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -42,6 +46,7 @@ export const TempleOfTheWheel: UIComponent = {
             getAccountKamis(world, components, accountEntity, { stats: 3600, traits: 3600 }),
           getUncommonPity: () => getUncommonPityProgress(world, components, account),
           getRarePity: () => getRarePityProgress(world, components, account),
+          getTotalSacrifices: () => getSacrificeTotal(world, components),
         },
       };
     })();
@@ -112,6 +117,7 @@ export const TempleOfTheWheel: UIComponent = {
     const FooterRenderer = useMemo(() => {
       const uncommonPity = getUncommonPity();
       const rarePity = getRarePity();
+      const totalSacrifices = getTotalSacrifices();
       return (
         <Footer>
           <Text size={0.8}>
@@ -122,9 +128,12 @@ export const TempleOfTheWheel: UIComponent = {
             <span style={{ color: 'red' }}>{rarePity.current}</span>/{rarePity.threshold} sacrifices
             for a guaranteed Rare!
           </Text>
+          <Text size={0.8}>
+            Total Kami sacrificed worldwide: <span style={{ color: 'red' }}>{totalSacrifices}</span>
+          </Text>
         </Footer>
       );
-    }, [getUncommonPity, getRarePity]);
+    }, [getUncommonPity, getRarePity, getTotalSacrifices]);
 
     return (
       <ModalWrapper
@@ -154,7 +163,7 @@ export const TempleOfTheWheel: UIComponent = {
               </SelectedKamiWrapper>
             )}
           </SelectionRow>
-          <Text spacing={-0.14}> Recieve a Petpet</Text>
+          <Text spacing={-0.14}> Recieve a MicroKami</Text>
           <ButtonsRow>
             <Button
               disabled={isDisabled || selectedKami.entity === 0}
@@ -231,7 +240,7 @@ const Footer = styled.div`
   color: black;
   border: 0.1vw solid black;
   border-radius: 0 0 1vw 1vw;
-  height: 2.7vw;
+  height: 3.8vw;
   width: 100%;
   padding: 0.3vw;
 `;
@@ -252,7 +261,7 @@ const Button = styled.button`
   background-color: white;
   border-radius: 0.3vw;
   color: black;
-  padding: 0.2vw;
+  padding: 0.4vw;
   font-size: 0.8vw;
   letter-spacing: -0.1vw;
   &:hover:not(:disabled) {
