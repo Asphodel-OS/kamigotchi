@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { filterInventories, Inventory } from 'app/cache/inventory';
@@ -8,7 +9,7 @@ import {
   TextTooltip,
 } from 'app/components/library';
 import { Allo } from 'network/shapes/Allo';
-import { BonusInstance, parseBonusText } from 'network/shapes/Bonus';
+import { BonusInstance } from 'network/shapes/Bonus';
 import { Item } from 'network/shapes/Item';
 import { DetailedEntity } from 'network/shapes/utils';
 import { getItemImage } from 'network/shapes/utils/images';
@@ -80,7 +81,20 @@ export const Equipment = ({
 
   const equippedCount = Object.values(equipped).filter(Boolean).length;
   const isAtCapacity = equippedCount >= capacity;
-  const equipmentBonuses = bonuses.filter((b) => b.endType?.startsWith('ON_UNEQUIP_'));
+
+  // TODO: maybe move this to a separate component?
+  const equipmentBonuses = useMemo(() => {
+    if (!utils) return [];
+    const items = Object.values(equipped).filter(Boolean);
+    return items.flatMap((inv) => {
+      const effects = inv?.item?.effects?.use ?? [];
+      const parsed = utils.parseAllos(effects);
+      return parsed.map((entity) => ({
+        source: { name: inv?.item?.name ?? '' },
+        text: entity.description ?? '',
+      }));
+    });
+  }, [equipped, utils]);
 
   const getSlotTooltip = (hasOptions: boolean) => {
     if (!isResting) return { text: ['Kami must be resting.'] };
@@ -151,7 +165,7 @@ export const Equipment = ({
             <SlotLabel>Effects</SlotLabel>
             {equipmentBonuses.length > 0 ? (
               equipmentBonuses.map((bonus, i) => (
-                <TextTooltip key={i} text={[parseBonusText(bonus)]}>
+                <TextTooltip key={i} text={[bonus.text]}>
                   <BuffIcon src={getItemImage(bonus.source?.name ?? '')} />
                 </TextTooltip>
               ))
