@@ -178,22 +178,22 @@ export const KamiModal: UIComponent = {
       });
     };
 
-    const equipItem = (kami: Kami, itemIndex: number) => {
+    const equipItem = (kami: Kami, itemIndex: number, itemName: string) => {
       actions.add({
         action: 'KamiEquip',
         params: [kami.id, itemIndex],
-        description: `Equipping item to ${kami.name}`,
+        description: `Equipping ${itemName} to ${kami.name}`,
         execute: async () => {
           return api.player.pet.equipment.equip(kami.id, itemIndex);
         },
       });
     };
 
-    const unequipItem = (kami: Kami, slotType: string) => {
+    const unequipItem = (kami: Kami, slotType: string, itemName: string) => {
       actions.add({
         action: 'KamiUnequip',
         params: [kami.id, slotType],
-        description: `Unequipping ${slotType} from ${kami.name}`,
+        description: `Unequipping ${itemName} from ${kami.name}`,
         execute: async () => {
           return api.player.pet.equipment.unequip(kami.id, slotType);
         },
@@ -229,8 +229,8 @@ export const KamiModal: UIComponent = {
             capacity={utils.getEquipmentCapacity(kami)}
             isResting={isResting(kami)}
             actions={{
-              equip: (itemIndex: number) => equipItem(kami, itemIndex),
-              unequip: (slot: string) => unequipItem(kami, slot),
+              equip: (itemIndex: number, itemName: string) => equipItem(kami, itemIndex, itemName),
+              unequip: (slot: string, itemName: string) => unequipItem(kami, slot, itemName),
             }}
             utils={{
               displayRequirements: (item: Item) =>

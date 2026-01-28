@@ -15,7 +15,6 @@ import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 
 type SlotKey = 'Head_Slot' | 'Body_Slot' | 'Hands_Slot' | 'Passport_slot' | 'Kami_Pet_Slot';
-
 const SLOT_LABELS: Record<SlotKey, string> = {
   Head_Slot: 'Head',
   Body_Slot: 'Body',
@@ -23,13 +22,13 @@ const SLOT_LABELS: Record<SlotKey, string> = {
   Passport_slot: 'Passport',
   Kami_Pet_Slot: 'Pet',
 };
-
 const EQUIPMENT_SLOTS: SlotKey[] = ['Head_Slot', 'Body_Slot', 'Hands_Slot'];
 const ACCESSORY_SLOTS: SlotKey[] = ['Passport_slot', 'Kami_Pet_Slot'];
+const UNAVAILABLE_SLOTS: SlotKey[] = ['Head_Slot', 'Body_Slot', 'Hands_Slot', 'Passport_slot'];
 
 export interface EquipmentActions {
-  equip: (itemIndex: number) => void;
-  unequip: (slot: string) => void;
+  equip: (itemIndex: number, itemName: string) => void;
+  unequip: (slot: string, itemName: string) => void;
 }
 
 export interface EquipmentUtils {
@@ -54,12 +53,13 @@ export const Equipment = ({
 }) => {
   const handleEquip = (inv: Inventory) => {
     playClick();
-    actions?.equip(inv.item.index);
+    actions?.equip(inv.item.index, inv.item.name);
   };
 
   const handleUnequip = (slot: SlotKey) => {
     playClick();
-    actions?.unequip(slot);
+    const itemName = equipped[slot]?.item.name ?? slot;
+    actions?.unequip(slot, itemName);
   };
 
   const getSlotOptions = (slot: SlotKey): IconListButtonOption[] => {
@@ -88,7 +88,8 @@ export const Equipment = ({
     });
   }, [equipped, utils]);
 
-  const getSlotTooltip = (hasOptions: boolean) => {
+  const getSlotTooltip = (slot: SlotKey, hasOptions: boolean) => {
+    if (UNAVAILABLE_SLOTS.includes(slot)) return { text: ['This slot is not available yet.'] };
     if (!isResting) return { text: ['Kami must be resting.'] };
     if (!hasOptions) return { text: ['No items compatible with this slot.'] };
     return undefined;
@@ -121,14 +122,15 @@ export const Equipment = ({
       );
     }
 
+    const isUnavailable = UNAVAILABLE_SLOTS.includes(slot);
     return (
       <IconListButton
         text='+'
         options={options}
         scale={3}
         radius={0.5}
-        disabled={!options.length || !actions || isAtCapacity || !isResting}
-        tooltip={getSlotTooltip(options.length > 0)}
+        disabled={isUnavailable || !options.length || !actions || isAtCapacity || !isResting}
+        tooltip={getSlotTooltip(slot, options.length > 0)}
       />
     );
   };
