@@ -7,6 +7,7 @@ import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
 import { LibKami } from "libraries/LibKami.sol";
 
@@ -39,6 +40,13 @@ contract Kami721UnstakeSystem is System {
     // checks before action
     LibKami.verifyAccount(components, kamiID, accID);
     LibKami.verifyState(components, kamiID, "RESTING");
+
+    // force unequip all items before bridging out
+    uint256[] memory equipped = LibEquipment.getAllEquipped(components, kamiID);
+    for (uint256 i; i < equipped.length; i++) {
+      string memory slot = LibEquipment.getSlot(components, equipped[i]);
+      LibEquipment.unequip(world, components, kamiID, accID, slot);
+    }
 
     // actions to be taken upon bridging out
     LibKami.unstake(components, kamiID);

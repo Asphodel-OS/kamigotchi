@@ -80,6 +80,11 @@ contract _RoomRegistrySystem is System, AuthRoles {
     LibRoom.addFlag(components, index, flag);
   }
 
+  function removeAllGates(uint32 roomIndex) public onlyAdmin(components) {
+    require(LibRoom.getByIndex(components, roomIndex) != 0, "Room: does not exist");
+    LibRoom.removeGates(components, LibRoom.queryAllGates(components, roomIndex));
+  }
+
   function remove(uint32 index) public onlyAdmin(components) {
     uint256 roomID = LibRoom.getByIndex(components, index);
     require(roomID != 0, "Room: does not exist");
