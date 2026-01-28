@@ -100,7 +100,10 @@ export const Equipment = ({
 
     if (equippedItem) {
       const itemTooltip = utils
-        ? { text: [<ItemTooltip key={slot} item={equippedItem.item} utils={utils} />], maxWidth: 25 }
+        ? {
+            text: [<ItemTooltip key={slot} item={equippedItem.item} utils={utils} />],
+            maxWidth: 25,
+          }
         : undefined;
 
       return (
@@ -189,18 +192,21 @@ const Wrapper = styled.div`
   flex-direction: column;
   padding: 0.7vw;
   user-select: none;
+  align-items: center;
 `;
 
 const ColumnsContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 1.5vw;
+  width: 100%;
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  width: 100%;
 `;
 
 const ColumnHeader = styled.div`
@@ -276,10 +282,10 @@ const InventoryBar = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-top: 1vw;
   padding: 0.5vw;
   border: solid black 0.15vw;
   border-radius: 0.5vw;
+  width: 100%;
 `;
 
 const InventoryIcon = styled.span`
