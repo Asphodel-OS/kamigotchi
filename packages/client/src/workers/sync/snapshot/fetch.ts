@@ -93,11 +93,11 @@ async function fetchWithRetry<TChunk>({
       return;
     } catch (error) {
       retryCount++;
-      log.debug(`[snapshot] ${name} error`, { retryCount, error });
+      log.warn(`[snapshot] ${name} error`, { retryCount, error });
       if (retryCount > MAX_RETRIES) throw error;
 
       const delay = RETRY_DELAYS[Math.min(retryCount - 1, RETRY_DELAYS.length - 1)];
-      log.debug(
+      log.warn(
         `[snapshot] ${name} retry ${retryCount}/${MAX_RETRIES} in ${delay / 1000}s`,
         getRetryContext?.()
       );
