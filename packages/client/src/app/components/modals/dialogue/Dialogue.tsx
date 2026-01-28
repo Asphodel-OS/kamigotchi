@@ -87,7 +87,12 @@ export const DialogueModal: UIComponent = {
     } as DialogueNode);
     const [dialogueLength, setDialogueLength] = useState(0);
     const [step, setStep] = useState(0);
-    const [npc, setNpc] = useState({ name: '', img: '', color: '', special: { name: '', onclick: () => {} } });
+    const [npc, setNpc] = useState({
+      name: '',
+      img: '',
+      color: '',
+      special: { name: '', onclick: () => {} },
+    });
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
@@ -298,7 +303,7 @@ export const DialogueModal: UIComponent = {
             colStart: 66,
             colEnd: 99,
             rowStart: 7,
-            rowEnd: 74,
+            rowEnd: 90,
             position: 'fixed',
           }}
           noScroll

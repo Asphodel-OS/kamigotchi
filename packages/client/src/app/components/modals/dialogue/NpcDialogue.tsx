@@ -55,15 +55,18 @@ export const NpcDialogue = ({
         <NpcSprite src={npcImage} />
         <OptionColumn color={npcColor}>
           {special && (
-            <Option
-              color={npcColor}
-              onClick={() => {
-                playClick();
-                special.onclick();
-              }}
-            >
-              {special.name}
-            </Option>
+            <>
+              <OptionsLabel color={npcColor}>Rituals:</OptionsLabel>
+              <Option
+                color={npcColor}
+                onClick={() => {
+                  playClick();
+                  special.onclick();
+                }}
+              >
+                {special.name}
+              </Option>
+            </>
           )}
           <OptionsLabel color={npcColor}>Available Quests:</OptionsLabel>
           {hasAvailableQuests.length > 0 ? (
