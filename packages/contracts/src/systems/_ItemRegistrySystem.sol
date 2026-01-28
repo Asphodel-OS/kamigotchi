@@ -9,6 +9,8 @@ import { LibAllo } from "libraries/LibAllo.sol";
 import { Condition } from "libraries/LibConditional.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibItem } from "libraries/LibItem.sol";
+import { TokenAddressComponent, ID as TokenAddressCompID } from "components/TokenAddressComponent.sol";
+import { getAddrByID } from "solecs/utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.item.registry"));
 
@@ -167,6 +169,19 @@ contract _ItemRegistrySystem is System, AuthRoles {
     uint256 registryID = LibItem.getByIndex(components, index);
     require(registryID != 0, "ItemReg: item does not exist");
     LibItem.enable(components, index);
+  }
+
+  /// @notice Update the rarity of an existing item. Silently skips if item doesn't exist or has a token address.
+  /// @param arguments ABI encoded (uint32 index, uint32 rarity)
+  /// @return success True if item exists and was updated, false otherwise
+  function setRarity(bytes memory arguments) public onlyAdmin(components) returns (bool success) {
+    (uint32 index, uint32 rarity) = abi.decode(arguments, (uint32, uint32));
+    uint256 registryID = LibItem.getByIndex(components, index);
+    if (registryID == 0) return false; // Skip non-existent items gracefully
+    // Skip items with token addresses (e.g., MUSU, VIPP) - these are protected
+    if (TokenAddressComponent(getAddrByID(components, TokenAddressCompID)).has(registryID)) return false;
+    LibItem.setRarity(components, registryID, rarity);
+    return true;
   }
 
   function execute(bytes memory arguments) public onlyAdmin(components) returns (bytes memory) {
