@@ -29,6 +29,7 @@ import {
   initMintConfigs,
   initNodes,
   initNpcs,
+  initNPCDroptables,
   initPortalConfigs,
   initPortalTokens,
   initQuests,
@@ -138,6 +139,7 @@ export class WorldState {
     },
     npcs: {
       init: () => this.genCalls(initNpcs),
+      initDroptables: () => this.genCalls(initNPCDroptables),
     } as SubFunc,
     nodes: {
       init: (indices?: number[]) => this.genCalls((api) => initNodes(api, indices)),
