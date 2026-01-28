@@ -167,7 +167,6 @@ library LibEquipment {
   }
 
   /// @notice Verify kami can be equipped (must be in RESTING state)
-  /// @dev For account equipment, you may want a different check or none
   function verifyKamiCanEquip(IUintComp components, uint256 kamiID) internal view {
     LibKami.verifyState(components, kamiID, "RESTING");
   }
@@ -227,10 +226,6 @@ library LibEquipment {
   /// @notice Get the allo ID for an equipment item's EQUIP use case bonus
   /// @dev The bonus registry entries are anchored to the allo entity, not the allo anchor
   function getEquipBonusAlloID(uint32 itemIndex) internal pure returns (uint256) {
-    // Build the same anchor that addAlloBonus uses:
-    // refID = LibItem.createUseCase(components, index, "EQUIP") = LibReference.genID("EQUIP", genRefAnchor(index))
-    // anchorID = LibItem.genAlloAnchor(refID)
-    // alloID = LibAllo.genID(anchorID, "BONUS", 1)
     uint256 refAnchor = LibItem.genRefAnchor(itemIndex);
     uint256 refID = LibReference.genID("EQUIP", refAnchor);
     uint256 alloAnchor = LibItem.genAlloAnchor(refID);
