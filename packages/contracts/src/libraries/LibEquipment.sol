@@ -9,6 +9,7 @@ import { getAddrByID } from "solecs/utils.sol";
 import { ForComponent, ID as ForCompID } from "components/ForComponent.sol";
 import { IDOwnsEquipmentComponent, ID as IDOwnsEquipCompID } from "components/IDOwnsEquipmentComponent.sol";
 import { IndexItemComponent, ID as IndexItemCompID } from "components/IndexItemComponent.sol";
+import { SlotsComponent, ID as SlotsCompID } from "components/SlotsComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
@@ -25,7 +26,7 @@ import { LibKami } from "libraries/LibKami.sol";
  *
  * Equipment items are regular items (type="EQUIPMENT") with:
  * - For (slot) stored on the item registry (e.g., "Kami_Pet_Slot", "Account_Badge_Slot")
- * - Bonuses with end type "ON_UNEQUIP_{SLOT}" for automatic cleanup
+ * - Bonuses with end type "UPON_UNEQUIP_{SLOT}" for automatic cleanup
  *
  * The "For" value encodes both the target type and slot:
  * - "Kami_Pet_Slot" = equipment for kamis, goes in pet slot
@@ -45,7 +46,7 @@ library LibEquipment {
   using LibString for string;
 
   string constant ENTITY_TYPE = "EQUIPMENT";
-  string constant END_TYPE_PREFIX = "ON_UNEQUIP_";
+  string constant END_TYPE_PREFIX = "UPON_UNEQUIP_";
 
   // Equipment capacity: base limit on total equipment an entity can have equipped
   uint256 constant DEFAULT_CAPACITY = 1;
@@ -118,9 +119,9 @@ library LibEquipment {
     equipID = createInstance(components, holderID, itemIndex, slot);
 
     // Assign bonuses from item to holder
-    // Bonuses use end type "ON_UNEQUIP_{SLOT}" for slot-specific cleanup
-    uint256 bonusAlloID = getEquipBonusAlloID(itemIndex);
-    LibBonus.assignTemporary(components, bonusAlloID, holderID);
+    // Bonuses use end type "UPON_UNEQUIP_{SLOT}" for slot-specific cleanup
+    uint256 alloAnchor = getEquipAlloAnchor(itemIndex);
+    LibBonus.assignTemporary(components, alloAnchor, holderID);
   }
 
   /// @notice Unequip an item from a holder slot
@@ -210,12 +211,16 @@ library LibEquipment {
     return comp.has(itemID) ? comp.get(itemID) : "";
   }
 
-  /// @notice Get total equipment capacity for a holder (default + bonuses)
+  /// @notice Get total equipment capacity for a holder (base slots from traits + bonuses)
   function getCapacity(IUintComp components, uint256 holderID) internal view returns (uint256) {
+    // Read base slots from SlotsComponent (set from kami traits), fallback to DEFAULT_CAPACITY
+    int32 baseSlots = SlotsComponent(getAddrByID(components, SlotsCompID)).safeGet(holderID).base;
+    uint256 base = baseSlots > 0 ? uint256(int256(baseSlots)) : DEFAULT_CAPACITY;
+
     int256 bonus = LibBonus.getFor(components, CAPACITY_BONUS_TYPE, holderID);
     // Bonus can be negative but total capacity should never go below 0
-    if (bonus < 0 && uint256(-bonus) >= DEFAULT_CAPACITY) return 0;
-    return uint256(int256(DEFAULT_CAPACITY) + bonus);
+    if (bonus < 0 && uint256(-bonus) >= base) return 0;
+    return uint256(int256(base) + bonus);
   }
 
   /// @notice Get current equipment count for a holder
@@ -223,13 +228,12 @@ library LibEquipment {
     return getAllEquipped(components, holderID).length;
   }
 
-  /// @notice Get the allo ID for an equipment item's EQUIP use case bonus
-  /// @dev The bonus registry entries are anchored to the allo entity, not the allo anchor
-  function getEquipBonusAlloID(uint32 itemIndex) internal pure returns (uint256) {
+  /// @notice Get the allo anchor for an equipment item's EQUIP use case
+  /// @dev This anchor groups all allos (bonuses, stats, etc.) for the EQUIP usecase
+  function getEquipAlloAnchor(uint32 itemIndex) internal pure returns (uint256) {
     uint256 refAnchor = LibItem.genRefAnchor(itemIndex);
     uint256 refID = LibReference.genID("EQUIP", refAnchor);
-    uint256 alloAnchor = LibItem.genAlloAnchor(refID);
-    return LibAllo.genID(alloAnchor, "BONUS", 1);
+    return LibItem.genAlloAnchor(refID);
   }
 
   /////////////////
