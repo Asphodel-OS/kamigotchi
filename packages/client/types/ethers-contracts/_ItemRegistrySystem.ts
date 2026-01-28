@@ -45,6 +45,8 @@ export interface _ItemRegistrySystemInterface extends Interface {
       | "remove"
       | "renounceOwnership"
       | "requestOwnershipHandover"
+      | "setRarity"
+      | "setSlot"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -121,6 +123,14 @@ export interface _ItemRegistrySystemInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setRarity",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSlot",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
@@ -174,6 +184,8 @@ export interface _ItemRegistrySystemInterface extends Interface {
     functionFragment: "requestOwnershipHandover",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setRarity", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setSlot", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -344,6 +356,18 @@ export interface _ItemRegistrySystem extends BaseContract {
 
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
+  setRarity: TypedContractMethod<
+    [arguments: BytesLike],
+    [boolean],
+    "nonpayable"
+  >;
+
+  setSlot: TypedContractMethod<
+    [index: BigNumberish, slot: string],
+    [void],
+    "nonpayable"
+  >;
+
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
     [void],
@@ -415,6 +439,16 @@ export interface _ItemRegistrySystem extends BaseContract {
   getFunction(
     nameOrSignature: "requestOwnershipHandover"
   ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "setRarity"
+  ): TypedContractMethod<[arguments: BytesLike], [boolean], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setSlot"
+  ): TypedContractMethod<
+    [index: BigNumberish, slot: string],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
