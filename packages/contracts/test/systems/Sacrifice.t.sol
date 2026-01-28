@@ -188,9 +188,7 @@ contract SacrificeTest is MintTemplate {
 
     // Use the registry system to set up all droptables
     __SacrificeRegistrySystem.setAllDroptables(
-      normalKeys, normalWeights,
-      uncommonKeys, uncommonWeights,
-      rareKeys, rareWeights
+      abi.encode(normalKeys, normalWeights, uncommonKeys, uncommonWeights, rareKeys, rareWeights)
     );
 
     vm.stopPrank();
