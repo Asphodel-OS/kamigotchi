@@ -56,20 +56,18 @@ contract _SacrificeRegistrySystem is System, AuthRoles {
   }
 
   /// @notice Convenience function to set all droptables at once
-  /// @param normalKeys Item indices for normal droptable
-  /// @param normalWeights Weights for normal droptable
-  /// @param uncommonKeys Item indices for uncommon pity droptable
-  /// @param uncommonWeights Weights for uncommon pity droptable
-  /// @param rareKeys Item indices for rare pity droptable
-  /// @param rareWeights Weights for rare pity droptable
-  function setAllDroptables(
-    uint32[] memory normalKeys,
-    uint256[] memory normalWeights,
-    uint32[] memory uncommonKeys,
-    uint256[] memory uncommonWeights,
-    uint32[] memory rareKeys,
-    uint256[] memory rareWeights
-  ) public onlyAdmin(components) {
+  /// @param data ABI-encoded (uint32[], uint256[], uint32[], uint256[], uint32[], uint256[])
+  ///        containing normalKeys, normalWeights, uncommonKeys, uncommonWeights, rareKeys, rareWeights
+  function setAllDroptables(bytes memory data) public onlyAdmin(components) {
+    (
+      uint32[] memory normalKeys,
+      uint256[] memory normalWeights,
+      uint32[] memory uncommonKeys,
+      uint256[] memory uncommonWeights,
+      uint32[] memory rareKeys,
+      uint256[] memory rareWeights
+    ) = abi.decode(data, (uint32[], uint256[], uint32[], uint256[], uint32[], uint256[]));
+
     setNormalDroptable(normalKeys, normalWeights);
     setUncommonPityDroptable(uncommonKeys, uncommonWeights);
     setRarePityDroptable(rareKeys, rareWeights);
