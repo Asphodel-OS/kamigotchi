@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAccountKamis } from 'app/cache/account';
@@ -8,7 +8,6 @@ import {
   IconListButtonOption,
   KamiCard,
   ModalWrapper,
-  Overlay,
 } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
@@ -114,26 +113,24 @@ export const TempleOfTheWheel: UIComponent = {
       </Header>
     );
 
-    const FooterRenderer = useMemo(() => {
-      const uncommonPity = getUncommonPity();
-      const rarePity = getRarePity();
-      const totalSacrifices = getTotalSacrifices();
-      return (
-        <Footer>
-          <Text size={0.8}>
-            <span style={{ color: 'red' }}>{uncommonPity.current}</span>/{uncommonPity.threshold}{' '}
-            sacrifices for a guaranteed Uncommon!
-          </Text>
-          <Text size={0.8}>
-            <span style={{ color: 'red' }}>{rarePity.current}</span>/{rarePity.threshold} sacrifices
-            for a guaranteed Rare!
-          </Text>
-          <Text size={0.8}>
-            Total Kami sacrificed worldwide: <span style={{ color: 'red' }}>{totalSacrifices}</span>
-          </Text>
-        </Footer>
-      );
-    }, [getUncommonPity, getRarePity, getTotalSacrifices]);
+    const uncommonPity = getUncommonPity();
+    const rarePity = getRarePity();
+    const totalSacrifices = getTotalSacrifices();
+    const FooterRenderer = (
+      <Footer>
+        <Text size={0.8}>
+          <span style={{ color: 'red' }}>{uncommonPity.current}</span>/{uncommonPity.threshold}{' '}
+          sacrifices for a guaranteed Uncommon!
+        </Text>
+        <Text size={0.8}>
+          <span style={{ color: 'red' }}>{rarePity.current}</span>/{rarePity.threshold} sacrifices
+          for a guaranteed Rare!
+        </Text>
+        <Text size={0.8}>
+          Total Kami sacrificed worldwide: <span style={{ color: 'red' }}>{totalSacrifices}</span>
+        </Text>
+      </Footer>
+    );
 
     return (
       <ModalWrapper
@@ -147,7 +144,6 @@ export const TempleOfTheWheel: UIComponent = {
         noInternalBorder
       >
         <Content>
-          <Overlay top={4} left={5} gap={0.3} orientation='column' align='flex-end'></Overlay>
           <Text spacing={-0.14}>Select your Sacrifice</Text>
           <SelectionRow>
             {selectedKami.entity === 0 ? (
@@ -163,7 +159,7 @@ export const TempleOfTheWheel: UIComponent = {
               </SelectedKamiWrapper>
             )}
           </SelectionRow>
-          <Text spacing={-0.14}> Recieve a MicroKami</Text>
+          <Text spacing={-0.14}>Receive a MicroKami</Text>
           <ButtonsRow>
             <Button
               disabled={isDisabled || selectedKami.entity === 0}
