@@ -3,7 +3,10 @@ import { EntityID, EntityIndex } from 'engine/recs';
 import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
-import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
+import { getTempBonuses } from 'app/cache/bonus';
+import { getEquipped, getEquipmentCapacity } from 'app/cache/equipment/equipment';
+import { cleanInventories } from 'app/cache/inventory';
+import { getKami as _getKami, getKamiAccount, isResting } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
 import {
   getSkillUpgradeError as _getSkillUpgradeError,
@@ -16,19 +19,21 @@ import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { Condition } from 'network/shapes/Conditional';
-import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
+import { parseAllos as _parseAllos } from 'network/shapes/Allo';
+import { Condition, parseConditionalText } from 'network/shapes/Conditional';
+import { getItemBalance as _getItemBalance, Item } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
 import { Skill } from 'network/shapes/Skill';
 import { getCompAddr } from 'network/shapes/utils';
 import { Battles } from './battles/Battles';
+import { Equipment } from './equipment/Equipment';
 import { Header } from './header/Header';
 import { Tabs } from './header/Tabs';
 import { Skills } from './skills/Skills';
 import { Traits } from './traits/Traits';
 
 const SYNC_TIME = 1000;
-export type TabType = 'TRAITS' | 'SKILLS' | 'BATTLES';
+export type TabType = 'TRAITS' | 'EQUIPMENT' | 'SKILLS' | 'BATTLES';
 
 export const KamiModal: UIComponent = {
   id: 'KamiModal',
@@ -81,6 +86,9 @@ export const KamiModal: UIComponent = {
             parseSkillRequirementText(world, components, requirement),
           getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
           getNodeByIndex: (index: number) => _getNodeByIndex(world, components, index),
+          getTempBonuses: (kami: Kami) => getTempBonuses(world, components, kami.entity, 2),
+          getKamiEquipped: (kami: Kami) => getEquipped(world, components, kami.id),
+          getEquipmentCapacity: (kami: Kami) => getEquipmentCapacity(world, components, kami.id),
         },
       };
     })();
@@ -170,6 +178,28 @@ export const KamiModal: UIComponent = {
       });
     };
 
+    const equipItem = (kami: Kami, itemIndex: number, itemName: string) => {
+      actions.add({
+        action: 'KamiEquip',
+        params: [kami.id, itemIndex],
+        description: `Equipping ${itemName} to ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.equipment.equip(kami.id, itemIndex);
+        },
+      });
+    };
+
+    const unequipItem = (kami: Kami, slotType: string, itemName: string) => {
+      actions.add({
+        action: 'KamiUnequip',
+        params: [kami.id, slotType],
+        description: `Unequipping ${itemName} from ${kami.name}`,
+        execute: async () => {
+          return api.player.pet.equipment.unequip(kami.id, slotType);
+        },
+      });
+    };
+
     /////////////////
     // DISPLAY
 
@@ -192,6 +222,25 @@ export const KamiModal: UIComponent = {
         noPadding
       >
         {tab === 'TRAITS' && <Traits kami={kami} />}
+        {tab === 'EQUIPMENT' && (
+          <Equipment
+            inventories={cleanInventories(account.inventories ?? [])}
+            equipped={utils.getKamiEquipped(kami)}
+            capacity={utils.getEquipmentCapacity(kami)}
+            isResting={isResting(kami)}
+            actions={{
+              equip: (itemIndex: number, itemName: string) => equipItem(kami, itemIndex, itemName),
+              unequip: (slot: string, itemName: string) => unequipItem(kami, slot, itemName),
+            }}
+            utils={{
+              displayRequirements: (item: Item) =>
+                item.requirements.use
+                  .map((req) => parseConditionalText(network.world, network.components, req))
+                  .join(', ') || '???',
+              parseAllos: (allo) => _parseAllos(network.world, network.components, allo),
+            }}
+          />
+        )}
         {tab === 'SKILLS' && (
           <Skills
             data={{ account, kami, owner }}
