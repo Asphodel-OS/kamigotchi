@@ -34,7 +34,7 @@ async function withTimeout<T>(fn: () => Promise<T>, ms: number): Promise<T> {
 interface StreamingFetchOptions<TChunk> {
   name: string;
   createStream: () => AsyncIterable<TChunk>;
-  processChunk: (chunk: TChunk) => void;
+  processChunk: (chunk: TChunk) => Promise<void>;
   getProgress: (chunk: TChunk) => { pending: number };
   getChunkLogData?: (chunk: TChunk, chunkIndex: number) => Record<string, unknown>;
   getRetryContext?: () => Record<string, unknown>;
@@ -78,7 +78,7 @@ async function fetchWithRetry<TChunk>({
             log.debug(`[snapshot] ${name} chunk received`, getChunkLogData(chunk, chunkIndex));
           }
 
-          processChunk(chunk);
+          await processChunk(chunk);
 
           const processedChunks = chunkIndex + 1;
           const percent = progressRange.start + (processedChunks / totalChunks) * progressSpan;
@@ -267,7 +267,7 @@ async function fetchEntities({
   await fetchWithRetry({
     name: 'fetchEntities',
     createStream: () => kamigazeClient.getEntities({ fromIdx: stateCache.lastKamigazeEntity }),
-    processChunk: (chunk) => {
+    processChunk: async (chunk) => {
       storeStateEntities(stateCache, chunk.entities);
       stateCache.lastKamigazeEntity = stateCache.entities.length - 1;
     },
@@ -300,7 +300,7 @@ async function fetchStateRemovals({
         fromBlock: stateCache.lastStateRemovalsBlock || stateCache.lastKamigazeBlock,
         removals: true,
       }),
-    processChunk: (chunk) => {
+    processChunk: async (chunk) => {
       removeStateValues(stateCache, chunk.state);
       if (chunk.lastBlockNumber > stateCache.lastStateRemovalsBlock) {
         stateCache.lastStateRemovalsBlock = chunk.lastBlockNumber;
@@ -338,8 +338,8 @@ async function fetchStateValues({
         fromBlock: stateCache.lastStateValuesBlock || stateCache.lastKamigazeBlock,
         removals: false,
       }),
-    processChunk: (chunk) => {
-      storeStateValues(stateCache, chunk.state, decode);
+    processChunk: async (chunk) => {
+      await storeStateValues(stateCache, chunk.state, decode);
       if (chunk.lastBlockNumber > stateCache.lastStateValuesBlock) {
         stateCache.lastStateValuesBlock = chunk.lastBlockNumber;
       }
