@@ -17,10 +17,9 @@ const EQUIPMENT_SLOTS = [
 
 // equipment instance
 export function genEquipmentID(holderID: EntityID, slot: string): EntityID {
-  const holderBigInt = BigInt(holderID);
   const hash = solidityPackedKeccak256(
     ['string', 'uint256', 'string'],
-    ['equipment.instance', holderBigInt, slot]
+    ['equipment.instance', BigInt(holderID), slot]
   );
   return formatEntityID(hash);
 }

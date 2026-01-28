@@ -24,7 +24,7 @@ const SLOT_LABELS: Record<SlotKey, string> = {
 };
 const EQUIPMENT_SLOTS: SlotKey[] = ['Head_Slot', 'Body_Slot', 'Hands_Slot'];
 const ACCESSORY_SLOTS: SlotKey[] = ['Passport_slot', 'Kami_Pet_Slot'];
-const UNAVAILABLE_SLOTS: SlotKey[] = ['Head_Slot', 'Body_Slot', 'Hands_Slot', 'Passport_slot'];
+const AVAILABLE_SLOTS: SlotKey[] = ['Kami_Pet_Slot'];
 
 export interface EquipmentActions {
   equip: (itemIndex: number, itemName: string) => void;
@@ -51,6 +51,28 @@ export const Equipment = ({
   isResting?: boolean;
   utils?: EquipmentUtils;
 }) => {
+  ////////////////////
+  // INTERPRETATION
+
+  const equippedCount = Object.values(equipped).filter(Boolean).length;
+  const isAtCapacity = equippedCount >= capacity;
+  const restingTooltip = { text: ['Kami must be resting.'] };
+
+  const equipmentBonuses = useMemo(() => {
+    if (!utils) return [];
+    return Object.values(equipped)
+      .filter(Boolean)
+      .flatMap((inv) =>
+        utils.parseAllos(inv!.item.effects?.use ?? []).map((entity) => ({
+          source: inv!.item.name,
+          text: entity.description ?? '',
+        }))
+      );
+  }, [equipped, utils]);
+
+  ////////////////////
+  // INTERACTION
+
   const handleEquip = (inv: Inventory) => {
     playClick();
     actions?.equip(inv.item.index, inv.item.name);
@@ -58,53 +80,27 @@ export const Equipment = ({
 
   const handleUnequip = (slot: SlotKey) => {
     playClick();
-    const itemName = equipped[slot]?.item.name ?? slot;
-    actions?.unequip(slot, itemName);
+    actions?.unequip(slot, equipped[slot]?.item.name ?? slot);
   };
 
-  const getSlotOptions = (slot: SlotKey): IconListButtonOption[] => {
-    const filtered = filterInventories(inventories, 'EQUIPMENT', slot);
-    return filtered.map((inv) => ({
+  ////////////////////
+  // DISPLAY
+
+  const getSlotOptions = (slot: SlotKey): IconListButtonOption[] =>
+    filterInventories(inventories, 'EQUIPMENT', slot).map((inv) => ({
       text: inv.item.name,
       image: inv.item.image,
       onClick: () => handleEquip(inv),
     }));
-  };
-
-  const equippedCount = Object.values(equipped).filter(Boolean).length;
-  const isAtCapacity = equippedCount >= capacity;
-
-  // TODO: maybe move this to a separate component?
-  const equipmentBonuses = useMemo(() => {
-    if (!utils) return [];
-    const items = Object.values(equipped).filter(Boolean);
-    return items.flatMap((inv) => {
-      const effects = inv?.item?.effects?.use ?? [];
-      const parsed = utils.parseAllos(effects);
-      return parsed.map((entity) => ({
-        source: { name: inv?.item?.name ?? '' },
-        text: entity.description ?? '',
-      }));
-    });
-  }, [equipped, utils]);
-
-  const getSlotTooltip = (slot: SlotKey, hasOptions: boolean) => {
-    if (UNAVAILABLE_SLOTS.includes(slot)) return { text: ['This slot is not available yet.'] };
-    if (!isResting) return { text: ['Kami must be resting.'] };
-    if (!hasOptions) return { text: ['No items compatible with this slot.'] };
-    return undefined;
-  };
 
   const renderSlot = (slot: SlotKey) => {
-    const equippedItem = equipped[slot] ?? null;
+    const equippedItem = equipped[slot];
     const options = getSlotOptions(slot);
+    const isAvailable = AVAILABLE_SLOTS.includes(slot);
 
     if (equippedItem) {
       const itemTooltip = utils
-        ? {
-            text: [<ItemTooltip key={slot} item={equippedItem.item} utils={utils} />],
-            maxWidth: 25,
-          }
+        ? { text: [<ItemTooltip key={slot} item={equippedItem.item} utils={utils} />], maxWidth: 25 }
         : undefined;
 
       return (
@@ -115,25 +111,34 @@ export const Equipment = ({
             scale={3}
             radius={0.5}
             disabled={!isResting}
-            tooltip={!isResting ? { text: ['Kami must be resting.'] } : itemTooltip}
+            tooltip={isResting ? itemTooltip : restingTooltip}
           />
           {isResting && <RemoveButton onClick={() => handleUnequip(slot)}>X</RemoveButton>}
         </FilledSlotWrapper>
       );
     }
 
-    const isUnavailable = UNAVAILABLE_SLOTS.includes(slot);
+    const getTooltip = () => {
+      if (!isAvailable) return { text: ['This slot is not available yet.'] };
+      if (!isResting) return restingTooltip;
+      if (!options.length) return { text: ['No items compatible with this slot.'] };
+      return undefined;
+    };
+
     return (
       <IconListButton
         text='+'
         options={options}
         scale={3}
         radius={0.5}
-        disabled={isUnavailable || !options.length || !actions || isAtCapacity || !isResting}
-        tooltip={getSlotTooltip(slot, options.length > 0)}
+        disabled={!isAvailable || !options.length || !actions || isAtCapacity || !isResting}
+        tooltip={getTooltip()}
       />
     );
   };
+
+  ////////////////////
+  // RENDER
 
   return (
     <Wrapper>
@@ -160,7 +165,7 @@ export const Equipment = ({
             {equipmentBonuses.length > 0 ? (
               equipmentBonuses.map((bonus, i) => (
                 <TextTooltip key={i} text={[bonus.text]}>
-                  <BuffIcon src={getItemImage(bonus.source?.name ?? '')} />
+                  <BuffIcon src={getItemImage(bonus.source)} />
                 </TextTooltip>
               ))
             ) : (
