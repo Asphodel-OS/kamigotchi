@@ -48,7 +48,7 @@
       "name": "execute",
       "inputs": [
         {
-          "name": "",
+          "name": "arguments",
           "type": "bytes",
           "internalType": "bytes"
         }
@@ -60,7 +60,33 @@
           "internalType": "bytes"
         }
       ],
-      "stateMutability": "pure"
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "executeTyped",
+      "inputs": [
+        {
+          "name": "commitID",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "executeTypedBatch",
+      "inputs": [
+        {
+          "name": "commitIDs",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -107,73 +133,6 @@
       "inputs": [],
       "outputs": [],
       "stateMutability": "payable"
-    },
-    {
-      "type": "function",
-      "name": "setAllDroptables",
-      "inputs": [
-        {
-          "name": "data",
-          "type": "bytes",
-          "internalType": "bytes"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setNormalDroptable",
-      "inputs": [
-        {
-          "name": "keys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "weights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setRarePityDroptable",
-      "inputs": [
-        {
-          "name": "keys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "weights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setUncommonPityDroptable",
-      "inputs": [
-        {
-          "name": "keys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "weights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -265,14 +224,12 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
+    "executeTyped(uint256)": "3e991df3",
+    "executeTypedBatch(uint256[])": "4b9338a7",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setAllDroptables(bytes)": "bb8589c7",
-    "setNormalDroptable(uint32[],uint256[])": "3070b927",
-    "setRarePityDroptable(uint32[],uint256[])": "24997b09",
-    "setUncommonPityDroptable(uint32[],uint256[])": "22b3a2d3",
     "transferOwnership(address)": "f2fde38b"
   }
 }
