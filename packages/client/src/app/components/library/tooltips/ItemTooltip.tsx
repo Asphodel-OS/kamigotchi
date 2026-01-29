@@ -29,16 +29,15 @@ export const ItemTooltip = ({
 
   const getEffectsString = (item: Item) => {
     const isLootbox = type === 'LOOTBOX';
+    if (isLootbox) return 'None';
+
     const effects = item.effects;
-    let text = '';
+    const useEffects = effects?.use?.length > 0 ? parseAllos(effects.use) : [];
+    const equipEffects = effects?.equip?.length > 0 ? parseAllos(effects.equip) : [];
+    const all = [...useEffects, ...equipEffects];
 
-    if (!isLootbox && effects?.use?.length > 0) {
-      text = parseAllos(effects.use)
-        .map((entry) => entry.description)
-        .join('\n');
-    } else text = 'None';
-
-    return text;
+    if (all.length === 0) return 'None';
+    return all.map((entry) => entry.description).join('\n');
   };
 
   return (

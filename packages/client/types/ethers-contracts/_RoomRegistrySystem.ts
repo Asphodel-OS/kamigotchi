@@ -36,6 +36,7 @@ export interface _RoomRegistrySystemInterface extends Interface {
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "remove"
+      | "removeAllGates"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "setTexts"
@@ -76,6 +77,10 @@ export interface _RoomRegistrySystemInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "removeAllGates",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -111,6 +116,10 @@ export interface _RoomRegistrySystemInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeAllGates",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -248,6 +257,12 @@ export interface _RoomRegistrySystem extends BaseContract {
 
   remove: TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
 
+  removeAllGates: TypedContractMethod<
+    [roomIndex: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   renounceOwnership: TypedContractMethod<[], [void], "payable">;
 
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
@@ -302,6 +317,9 @@ export interface _RoomRegistrySystem extends BaseContract {
   getFunction(
     nameOrSignature: "remove"
   ): TypedContractMethod<[index: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "removeAllGates"
+  ): TypedContractMethod<[roomIndex: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "payable">;

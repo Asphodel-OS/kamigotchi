@@ -74,14 +74,7 @@ export interface _SacrificeRegistrySystemInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setAllDroptables",
-    values: [
-      BigNumberish[],
-      BigNumberish[],
-      BigNumberish[],
-      BigNumberish[],
-      BigNumberish[],
-      BigNumberish[]
-    ]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setNormalDroptable",
@@ -260,14 +253,7 @@ export interface _SacrificeRegistrySystem extends BaseContract {
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
   setAllDroptables: TypedContractMethod<
-    [
-      normalKeys: BigNumberish[],
-      normalWeights: BigNumberish[],
-      uncommonKeys: BigNumberish[],
-      uncommonWeights: BigNumberish[],
-      rareKeys: BigNumberish[],
-      rareWeights: BigNumberish[]
-    ],
+    [data: BytesLike],
     [void],
     "nonpayable"
   >;
@@ -326,18 +312,7 @@ export interface _SacrificeRegistrySystem extends BaseContract {
   ): TypedContractMethod<[], [void], "payable">;
   getFunction(
     nameOrSignature: "setAllDroptables"
-  ): TypedContractMethod<
-    [
-      normalKeys: BigNumberish[],
-      normalWeights: BigNumberish[],
-      uncommonKeys: BigNumberish[],
-      uncommonWeights: BigNumberish[],
-      rareKeys: BigNumberish[],
-      rareWeights: BigNumberish[]
-    ],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[data: BytesLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setNormalDroptable"
   ): TypedContractMethod<
