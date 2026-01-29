@@ -128,7 +128,8 @@ export const PartyModal: UIComponent = {
 
     const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
-
+    const [initialized, setInitialized] = useState(false);
+    const [viewInitialized, setViewInitialized] = useState(false);
     /////////////////
     // SUBSCRIPTIONS
 
@@ -151,7 +152,8 @@ export const PartyModal: UIComponent = {
     useEffect(() => {
       // populate initial data
       setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
-      setKamis(getWorldKamis());
+      const worldKamis = getWorldKamis();
+      setKamis(worldKamis);
 
       // set ticking
       const refreshClock = () => setTick(Date.now());
@@ -172,6 +174,11 @@ export const PartyModal: UIComponent = {
       // update the list of kamis in the world
       const worldKamis = getWorldKamis();
       setKamis(worldKamis);
+
+      // mark as initialized after first fetch with modal open
+      if (!initialized) {
+        setInitialized(true);
+      }
 
       // check if we need to update the list of accounts
       const accountEntities = queryAllAccounts() as EntityIndex[];
@@ -208,12 +215,16 @@ export const PartyModal: UIComponent = {
       }
     }, [nftData]);
 
-    // if there are no world kamis and only wild, set the view to External
+    // set initial view based on kami availability (runs once after first modal open)
     useEffect(() => {
-      if (wildKamis.length && kamis.length === 0) {
+      if (!initialized || viewInitialized) return;
+
+      // only run once: if no world kamis but has wild kamis, switch to external
+      if (wildKamis.length > 0 && kamis.length === 0) {
         setView('external');
       }
-    }, [wildKamis.length, kamis.length]);
+      setViewInitialized(true);
+    }, [initialized, viewInitialized, wildKamis.length, kamis.length]);
 
     /////////////////
     // ACTIONS
