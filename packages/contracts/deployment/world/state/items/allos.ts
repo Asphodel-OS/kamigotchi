@@ -20,6 +20,9 @@ export const getAlloMap = async () => {
 // add all all of an item's allos
 export const addAllos = async (api: AdminAPI, itemRow: any) => {
   const index = Number(itemRow['Index']);
+  const type = String(itemRow['Type']).toUpperCase();
+  const useCase = type === 'EQUIPMENT' ? 'EQUIP' : 'USE';
+  const slot = type === 'EQUIPMENT' ? String(itemRow['For'] || '').trim() : '';
 
   const map = await getAlloMap();
   const keys = itemRow['Effects'].split(',');
@@ -28,46 +31,53 @@ export const addAllos = async (api: AdminAPI, itemRow: any) => {
     if (!key) continue;
 
     const allo = map.get(key);
-    if (allo) await addAllo(api, index, allo);
+    if (allo) await addAllo(api, index, allo, useCase, slot);
     else console.log(`Error: Could not find Allo ${key} for item ${index}`);
   }
 };
 
 // add a single allo to an item
-export async function addAllo(api: AdminAPI, itemIndex: number, entry: any) {
+export async function addAllo(
+  api: AdminAPI,
+  itemIndex: number,
+  entry: any,
+  useCase: string,
+  slot: string
+) {
   const type = entry['Type'].toUpperCase();
   const alloAPI = api.registry.item.add.allo;
 
-  if (type === 'BONUS') addBonus(alloAPI, itemIndex, entry);
-  else if (type === 'STAT') addStat(alloAPI, itemIndex, entry);
-  else if (type === 'FLAG') addFlag(alloAPI, itemIndex, entry);
-  else if (type === 'STATE') addState(alloAPI, itemIndex, entry);
-  else if (type === 'ITEM_DROPTABLE') addDroptable(alloAPI, itemIndex, entry);
-  else addBasic(alloAPI, itemIndex, entry);
+  if (type === 'BONUS') addBonus(alloAPI, itemIndex, entry, useCase, slot);
+  else if (type === 'STAT') addStat(alloAPI, itemIndex, entry, useCase);
+  else if (type === 'FLAG') addFlag(alloAPI, itemIndex, entry, useCase);
+  else if (type === 'STATE') addState(alloAPI, itemIndex, entry, useCase);
+  else if (type === 'ITEM_DROPTABLE') addDroptable(alloAPI, itemIndex, entry, useCase);
+  else addBasic(alloAPI, itemIndex, entry, useCase);
 }
 
 // add a basic allo to an item
-async function addBasic(api: any, itemIndex: number, entry: any) {
+async function addBasic(api: any, itemIndex: number, entry: any, useCase: string) {
   const type = entry['Type'].toUpperCase();
   const index = Number(entry['Index']);
   const value = Number(entry['Value']);
   console.log(`  adding basic allo ${type} ${index} ${value}`);
-  await api.basic(itemIndex, 'USE', type, index, value);
+  await api.basic(itemIndex, useCase, type, index, value);
 }
 
 // add a bonus allo to an item
-async function addBonus(api: any, itemIndex: number, entry: any) {
+async function addBonus(api: any, itemIndex: number, entry: any, useCase: string, slot: string) {
   const descriptor = entry['Descriptor'].toUpperCase();
-  const terminator = entry['Terminator'];
+  const rawTerminator = String(entry['Terminator'] ?? '').trim().toUpperCase();
+  const terminator = normalizeTerminator(useCase, rawTerminator, slot);
   const value = Number(entry['Value']);
   console.log(`  adding bonus allo: ${value} ${descriptor} ${terminator} `);
-  await api.bonus(itemIndex, 'USE', descriptor, terminator, 0, value);
+  await api.bonus(itemIndex, useCase, descriptor, terminator, 0, value);
 }
 
 // add a droptable allo to an item
 // NOTE: really inefficient rn
 // TODO: should centralize sheet loads/mappings in singleton pattern
-async function addDroptable(api: any, itemIndex: number, entry: any) {
+async function addDroptable(api: any, itemIndex: number, entry: any, useCase: string) {
   const dtCSV = await readFile('items/droptables.csv');
 
   // find the droptable row
@@ -78,12 +88,12 @@ async function addDroptable(api: any, itemIndex: number, entry: any) {
     console.log(`  adding droptable allo to ${itemIndex}`);
     const indices = stringToNumberArray(dtRow['Indices']);
     const tiers = stringToNumberArray(dtRow['Tiers']);
-    await api.droptable(itemIndex, 'USE', indices, tiers, 1);
+    await api.droptable(itemIndex, useCase, indices, tiers, 1);
   } else console.log(`  Could not find droptable ${dtKey} row for ${itemIndex}`);
 }
 
 // add a flag allo to an item
-async function addFlag(api: any, itemIndex: number, entry: any) {
+async function addFlag(api: any, itemIndex: number, entry: any, useCase: string) {
   let flag = entry['Descriptor'].toUpperCase() as string;
   console.log(`  adding flag allo ${flag}`);
   let value = 1;
@@ -91,14 +101,14 @@ async function addFlag(api: any, itemIndex: number, entry: any) {
     value = 0;
     flag = flag.replace('_FALSE', '');
   }
-  await api.basic(itemIndex, 'USE', `FLAG_${flag}`, 0, value);
+  await api.basic(itemIndex, useCase, `FLAG_${flag}`, 0, value);
 }
 
 const STAT_TOTALS = ['HEALTH', 'POWER', 'VIOLENCE', 'HARMONY', 'STAMINA'];
 const STAT_POINTS = ['HP', 'SP'];
 
 // add a stat allo to an item
-export async function addStat(api: any, itemIndex: number, entry: any) {
+export async function addStat(api: any, itemIndex: number, entry: any, useCase: string) {
   const value = Number(entry['Value']);
   let statType = entry['Descriptor'].toUpperCase();
   console.log(`  adding stat allo ${statType} ${value}`);
@@ -111,12 +121,22 @@ export async function addStat(api: any, itemIndex: number, entry: any) {
   if (statType === 'HP') statType = 'HEALTH';
   if (statType === 'SP') statType = 'STAMINA';
 
-  await api.stat(itemIndex, 'USE', statType, stat.base, stat.shift, stat.boost, stat.sync);
+  await api.stat(itemIndex, useCase, statType, stat.base, stat.shift, stat.boost, stat.sync);
 }
 
 // add a state allo to an item
-async function addState(api: any, itemIndex: number, entry: any) {
+async function addState(api: any, itemIndex: number, entry: any, useCase: string) {
   const index = parseKamiStateToIndex(entry['Descriptor']);
   console.log(`  adding state allo ${index}`);
-  await api.basic(itemIndex, 'USE', `STATE`, index, 0);
+  await api.basic(itemIndex, useCase, `STATE`, index, 0);
+}
+
+function normalizeTerminator(useCase: string, terminator: string, slot: string) {
+  if (useCase !== 'EQUIP') return terminator;
+  if (!terminator) return terminator;
+  if (!slot) return terminator;
+  if (terminator === 'UPON_UNEQUIP' || terminator === 'ON_UNEQUIP') {
+    return `UPON_UNEQUIP_${slot}`;
+  }
+  return terminator;
 }
