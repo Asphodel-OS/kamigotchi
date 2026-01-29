@@ -38,7 +38,7 @@ export const AllyKards = ({
   const { collect, stop } = actions;
   const { account, kamis } = data;
   const { UseItemButton } = display;
-  const { getTempBonuses } = utils;
+  const { getTempBonuses, getEquipmentEffects } = utils;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   /////////////////
@@ -80,7 +80,7 @@ export const AllyKards = ({
             ]}
             content={<StatsDisplay kami={kami} />}
             label={getLabel(kami)}
-            utils={{ getTempBonuses }}
+            utils={{ getTempBonuses, getEquipmentEffects }}
             show={{
               battery: true,
               cooldown: true,
