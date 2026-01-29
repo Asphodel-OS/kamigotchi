@@ -3,9 +3,11 @@ import { solidityPackedKeccak256 } from 'ethers';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { parseAllos } from 'network/shapes/Allo';
 import { getBonusValue } from 'network/shapes/Bonus';
 import { Inventory } from 'network/shapes/Inventory';
 import { getItemByIndex } from 'network/shapes/Item';
+import { getItemImage } from 'network/shapes/utils/images';
 
 const EQUIPMENT_SLOTS = [
   'Head_Slot',
@@ -65,4 +67,28 @@ export function getEquipmentCapacity(
 ): number {
   const bonus = getBonusValue(world, components, 'EQUIP_CAPACITY_SHIFT', kamiID);
   return Math.max(1, 1 + bonus);
+}
+
+export function parseEquippedEffects(
+  equipped: Record<string, Inventory | null>,
+  parseAllosFn: (allos: Inventory['item']['effects']['equip']) => { description?: string }[]
+): { source: string; image: string; text: string }[] {
+  return Object.values(equipped)
+    .filter(Boolean)
+    .flatMap((inv) =>
+      parseAllosFn(inv!.item.effects?.equip ?? []).map((detail) => ({
+        source: inv!.item.name,
+        image: getItemImage(inv!.item.name),
+        text: detail.description ?? '',
+      }))
+    );
+}
+
+export function getEquipmentEffects(
+  world: World,
+  components: Components,
+  kamiID: EntityID
+): { image: string; text: string }[] {
+  const equipped = getEquipped(world, components, kamiID);
+  return parseEquippedEffects(equipped, (allos) => parseAllos(world, components, allos));
 }

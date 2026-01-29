@@ -31,6 +31,7 @@ export const AllyKards = ({
   };
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
+    getEquipmentEffects: (kami: Kami) => { image: string; text: string }[];
   };
   tick: number;
 }) => {
