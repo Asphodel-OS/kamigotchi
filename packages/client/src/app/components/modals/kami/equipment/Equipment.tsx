@@ -11,7 +11,6 @@ import {
 import { Allo } from 'network/shapes/Allo';
 import { Item } from 'network/shapes/Item';
 import { DetailedEntity } from 'network/shapes/utils';
-import { getItemImage } from 'network/shapes/utils/images';
 import { playClick } from 'utils/sounds';
 
 type SlotKey = 'Head_Slot' | 'Body_Slot' | 'Hands_Slot' | 'Passport_slot' | 'Kami_Pet_Slot';
@@ -34,6 +33,11 @@ export interface EquipmentActions {
 export interface EquipmentUtils {
   displayRequirements: (item: Item) => string;
   parseAllos: (allo: Allo[]) => DetailedEntity[];
+  getEquipmentEffects: (equipped: Record<string, Inventory | null>) => {
+    source: string;
+    image: string;
+    text: string;
+  }[];
 }
 
 export const Equipment = ({
@@ -60,14 +64,7 @@ export const Equipment = ({
 
   const equipmentBonuses = useMemo(() => {
     if (!utils) return [];
-    return Object.values(equipped)
-      .filter(Boolean)
-      .flatMap((inv) =>
-        utils.parseAllos(inv!.item.effects?.use ?? []).map((entity) => ({
-          source: inv!.item.name,
-          text: entity.description ?? '',
-        }))
-      );
+    return utils.getEquipmentEffects(equipped);
   }, [equipped, utils]);
 
   ////////////////////
@@ -168,7 +165,7 @@ export const Equipment = ({
             {equipmentBonuses.length > 0 ? (
               equipmentBonuses.map((bonus, i) => (
                 <TextTooltip key={i} text={[bonus.text]}>
-                  <BuffIcon src={getItemImage(bonus.source)} />
+                  <BuffIcon src={bonus.image} />
                 </TextTooltip>
               ))
             ) : (

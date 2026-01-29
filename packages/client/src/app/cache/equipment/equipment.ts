@@ -3,9 +3,11 @@ import { solidityPackedKeccak256 } from 'ethers';
 
 import { formatEntityID } from 'engine/utils';
 import { Components } from 'network/';
+import { parseAllos } from 'network/shapes/Allo';
 import { getBonusValue } from 'network/shapes/Bonus';
 import { Inventory } from 'network/shapes/Inventory';
 import { getItemByIndex } from 'network/shapes/Item';
+import { getItemImage } from 'network/shapes/utils/images';
 
 const EQUIPMENT_SLOTS = [
   'Head_Slot',
@@ -65,4 +67,31 @@ export function getEquipmentCapacity(
 ): number {
   const bonus = getBonusValue(world, components, 'EQUIP_CAPACITY_SHIFT', kamiID);
   return Math.max(1, 1 + bonus);
+}
+
+// parses equipped items into displayable effects
+export function parseEquippedEffects(
+  world: World,
+  components: Components,
+  equipped: Record<string, Inventory | null>
+) {
+  return Object.values(equipped)
+    .filter((inv): inv is Inventory => inv !== null)
+    .flatMap((inv) =>
+      parseAllos(world, components, inv.item.effects?.equip ?? []).map((parsed) => ({
+        source: inv.item.name,
+        image: getItemImage(inv.item.name),
+        text: parsed.description ?? '',
+      }))
+    );
+}
+
+// returns equipment effects for a kami (for KamiCard display)
+export function getEquipmentEffects(
+  world: World,
+  components: Components,
+  kamiID: EntityID
+) {
+  const equipped = getEquipped(world, components, kamiID);
+  return parseEquippedEffects(world, components, equipped);
 }
