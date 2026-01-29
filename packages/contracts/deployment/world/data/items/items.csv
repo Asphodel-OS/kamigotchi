@@ -3,20 +3,20 @@
 ,In Game,VIPP,2,Consumable,Common,Account,,VIP1,VIP_ROOM,"Sacred paper which can be sacrificed for VIP status. "
 ,In Game,Gacha Ticket,10,Misc,Legendary,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,Epic,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
-,In Game,Kamigotchi World Passport (Yellow),20,NFT,Rare,,,,,Your ticket to great fortunes. In yellow.
-,In Game,Kamigotchi World Passport (Orange),21,NFT,Rare,,,,,Your ticket to great fortunes. In orange.
-,In Game,Kamigotchi World Passport (Pink),22,NFT,Rare,,,,,Your ticket to great fortunes. In pink.
-,In Game,Kamigotchi World Passport (Red),23,NFT,Rare,,,,,"Your ticket to great fortunes. In red. "
-,In Game,Kamigotchi World Passport (Blue),24,NFT,Rare,,,,,"Your ticket to great fortunes. In blue. "
-,In Game,Kamigotchi World Passport (Green),25,NFT,Rare,,,,,Your ticket to great fortunes. In green.
-,In Game,Kamigotchi World Passport (White),26,NFT,Epic,,,,,Your ticket to great fortunes. In white.
-,In Game,Kamigotchi World Passport (Grey),27,NFT,Epic,,,,,Your ticket to great fortunes. In grey.
-,In Game,Kamigotchi World Passport (Purple),28,NFT,Epic,,,,,Your ticket to great fortunes. In purple.
-,In Game,Kamigotchi World Passport (Lime Green),29,NFT,Epic,,,,,Your ticket to great fortunes. In lime green.
-,In Game,Kamigotchi World Passport (1-bit Red and White),30,NFT,Legendary,,,,,Your ticket to great fortunes. In 1-bit red.
-,In Game,Kamigotchi World Passport (1-bit Pink),31,NFT,Legendary,,,,,Your ticket to great fortunes. In 1-bit pink.
-,In Game,Kamigotchi World Passport (1-bit Green),32,NFT,Legendary,,,,,Your ticket to great fortunes. In 1-bit green.
-,In Game,Kamigotchi World Passport (1-bit Black and White),33,NFT,Legendary,,,,,Your ticket to great fortunes. In 1-bit black.
+,In Game,Kamigotchi World Passport (Yellow),20,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In yellow.
+,In Game,Kamigotchi World Passport (Orange),21,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In orange.
+,In Game,Kamigotchi World Passport (Pink),22,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In pink.
+,In Game,Kamigotchi World Passport (Red),23,NFT,Rare,Passport_slot,,,,"Your ticket to great fortunes. In red. "
+,In Game,Kamigotchi World Passport (Blue),24,NFT,Rare,Passport_slot,,,,"Your ticket to great fortunes. In blue. "
+,In Game,Kamigotchi World Passport (Green),25,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In green.
+,In Game,Kamigotchi World Passport (White),26,NFT,Epic,Passport_slot,,,,Your ticket to great fortunes. In white.
+,In Game,Kamigotchi World Passport (Grey),27,NFT,Epic,Passport_slot,,,,Your ticket to great fortunes. In grey.
+,In Game,Kamigotchi World Passport (Purple),28,NFT,Epic,Passport_slot,,,,Your ticket to great fortunes. In purple.
+,In Game,Kamigotchi World Passport (Lime Green),29,NFT,Epic,Passport_slot,,,,Your ticket to great fortunes. In lime green.
+,In Game,Kamigotchi World Passport (1-bit Red and White),30,NFT,Legendary,Passport_slot,,,,Your ticket to great fortunes. In 1-bit red.
+,In Game,Kamigotchi World Passport (1-bit Pink),31,NFT,Legendary,Passport_slot,,,,Your ticket to great fortunes. In 1-bit pink.
+,In Game,Kamigotchi World Passport (1-bit Green),32,NFT,Legendary,Passport_slot,,,,Your ticket to great fortunes. In 1-bit green.
+,In Game,Kamigotchi World Passport (1-bit Black and White),33,NFT,Legendary,Passport_slot,,,,Your ticket to great fortunes. In 1-bit black.
 ,In Game,Onyx Shard,100,ERC20,Uncommon,,,,,"Kamigotchi World’s premium game currency.
 
 You want this. You want this so bad."
@@ -25,7 +25,7 @@ You want this. You want this so bad."
 ,In Game,Plastic Bottle,1003,Material,Uncommon,,,,,"Can be reprocessed into valuable raw Microplastics. "
 ,In Game,Pine Cone,1004,Material,Uncommon,,,,,"It’s a pine cone. 
 
-Slightly sacred."
+Slightly sacred. "
 ,In Game,Scrap Metal,1005,Material,Common,,,,,A small chunk of scrap metal. Maybe useful if processed.
 ,In Game,Glass Jar,1006,Material,Rare,,,,,"A somehow-unbroken jar of clear glass. "
 ,In Game,Red Amber Crystal,1007,Material,Epic,,,,,"A crystal of pure red amber, formed deep in the forest."
@@ -67,9 +67,9 @@ Slightly sacred."
 ,In Game,Red Ribbon Gummy,11001,Revive,Rare,Kami,,"STATE-RESTING,HP+10",,This candy ribbon is so delicious that it can bring a Kami back after it’s been liquidated. They can’t say no to the flavor.
 ,In Game,“Melkarth’s Heroic Awakening” Spell Card,11002,Revive,Rare,Kami,NOT_TRADABLE,"STATE-RESTING,HP+50",,The card depicts the figure of an ancient god silhouetted by a wreath of energy that obscures the details of his face and attire. Melkarth grants a blessing of rebirth to fallen warriors. Activating this Spell Card will revive a Kamigotchi that has been incapacitated.
 ,In Game,Djed Pillar,11003,Consumable,Epic,Kami,,"STATE-RESTING,HP+5",,"An artifact that carries the magic of resurrection. Scholars say it resembles a sheaf of reeds, or a spine, or a tree. Use this on a liquidated Kami to bring it back from death."
-,In Game,Pale Potion,11004,Revive,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
+,In Game,Pale Potion,11004,Potion,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
-,To Deploy,Cleaning Fluid,11020,Potion,Rare,Kami,,CLEARALL,,A suspension of pleasant-smelling reagents in holy syrup. Used for ritual purification and ablution.
+,In Game,Cleaning Fluid,11020,Potion,Rare,Kami,,CLEARALL,,A suspension of pleasant-smelling reagents in holy syrup. Used for ritual purification and ablution.
 ,In Game,Gaokerena Mochi,11110,Food,Epic,Kami,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
 ,In Game,Sunset Apple Mochi,11120,Food,Epic,Kami,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
 ,In Game,Kami Mochi,11130,Food,Epic,Kami,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
@@ -132,6 +132,42 @@ Slightly sacred."
 ,In Game,Spice Grinder,23100,Tool,Rare,,,,,Can be used to break down ingredients.
 ,In Game,Portable Burner,23101,Tool,Rare,,,,,"Can be used to make Potions at a riverside. "
 ,In Game,Screwdriver,23102,Tool,Epic,,,,,For driving screws. May be of practical use….
+,Ready,Mask of Avarice,30001,Equipment,Common,Kami_Pet_Slot,,E_POWER+3,,"The empty eyes of the old theatre mask stare back at you, its empty grimace seems to whisper of musu and power."
+,Ready,Veil of Avarice,30002,Equipment,Uncommon,Kami_Pet_Slot,,E_POWER+4,,"The theatre veil’s eye sockets glint hungrily, its haunting whisper offers a promise of musu and power."
+,Ready,Visage of Avarice,30003,Equipment,Rare,Kami_Pet_Slot,,E_POWER+5,,"The visage of avarice hungers, greedy eyes and a haunting grimace demand the pursuit of ever greater musu and power."
+,Ready,Mask of Contempt,30004,Equipment,Common,Kami_Pet_Slot,,E_DTS+6%,,"The empty eyes of the old ogre mask stare back at you, its hollow frown seems to whisper of armor and defense."
+,Ready,Veil of Contempt,30005,Equipment,Uncommon,Kami_Pet_Slot,,E_DTS+8%,,"The ogre veil’s eye sockets glint disdainfully, its murmuring voice offers a promise of armor and defense."
+,Ready,Visage of Contempt,30006,Equipment,Rare,Kami_Pet_Slot,,E_DTS+10%,,"The visage of contempt glowers, haughty eyes and a sneering frown demand the pursuit of ever greater armor and defense."
+,Ready,Mask of Mischief,30007,Equipment,Common,Kami_Pet_Slot,,E_ASR+6%,,"The empty eyes of the old goblin mask stare back at you, its unmoving grin seems to whisper of battle and plunder."
+,Ready,Veil of Mischief,30008,Equipment,Uncommon,Kami_Pet_Slot,,E_ASR+8%,,"The goblin veil’s eye sockets glint impishly, its taunting whisper offers a promise of battle and plunder."
+,Ready,Visage of Mischief,30009,Equipment,Rare,Kami_Pet_Slot,,E_ASR+10%,,"The visage of mischief snickers, malevolent eyes and a fiendish smirk demand the pursuit of ever greater battle and plunder."
+,Ready,Old Leafling,30010,Equipment,Common,Kami_Pet_Slot,,E_BOUNTY+12%,,The old leafling bounces happily and shares a few tricks to increase your kami’s bounty.
+,Ready,Wise Leafling,30011,Equipment,Uncommon,Kami_Pet_Slot,,E_BOUNTY+16%,,The wise leafling hops contentedly and shares its skillful techniques to increase your kami’s bounty.
+,Ready,Elder Leafling,30012,Equipment,Rare,Kami_Pet_Slot,,E_BOUNTY+20%,,The elder leafling wiggles affectionately and shares its foraging secrets to increase your kami’s bounty.
+,Ready,Old Gumdrop,30013,Equipment,Common,Kami_Pet_Slot,,RMB+15%,,The old gumdrop offers soft hugs and reminds your kami to rest and drink water.
+,Ready,Wise Gumdrop,30014,Equipment,Uncommon,Kami_Pet_Slot,,RMB+20%,,The wise gumdrop offers gentle cuddles and reminds your kami to rest and drink water.
+,Ready,Elder Gumdrop,30015,Equipment,Rare,Kami_Pet_Slot,,RMB+25%,,The elder gumdrop offers a shoulder to cry on and reminds your kami to rest and drink water.
+,Ready,Old Critter,30016,Equipment,Common,Kami_Pet_Slot,,E_HEALTH+30,,The skittish old critter is constantly on guard for threats to your kami’s health.
+,Ready,Wise Critter,30017,Equipment,Uncommon,Kami_Pet_Slot,,E_HEALTH+40,,The wise experienced critter is constantly on guard for threats to your kami’s health.
+,Ready,Elder Critter,30018,Equipment,Rare,Kami_Pet_Slot,,E_HEALTH+50,,The esteemed elder critter is constantly on guard for threats to your kami’s health.
+,Ready,Crawling Greed,30019,Equipment,Common,Kami_Pet_Slot,,E_HFB+18%,,A condensation of hunger and greed in the form of cute crawling ladybugs provide your kami with increased harvest fertility.
+,Ready,Teeming Greed,30020,Equipment,Uncommon,Kami_Pet_Slot,,E_HFB+24%,,A distillation of hunger and greed in the form of adorable teeming ladybugs provide your kami with increased harvest fertility.
+,Ready,Swarming Greed,30021,Equipment,Rare,Kami_Pet_Slot,,E_HFB+30%,,A crystallization of hunger and greed in the form of happily swarming ladybugs provide your kami with increased harvest fertility.
+,Ready,Crawling Wrath,30022,Equipment,Common,Kami_Pet_Slot,,E_VIOLENCE+3,,A condensation of predatory aggression in the form of cute crawling bees fill your kami with a desire for violence.
+,Ready,Teeming Wrath,30023,Equipment,Uncommon,Kami_Pet_Slot,,E_VIOLENCE+4,,A distillation of predatory aggression in the form of adorable teeming bees fill your kami with a desire for violence.
+,Ready,Swarming Wrath,30024,Equipment,Rare,Kami_Pet_Slot,,E_VIOLENCE+5,,A crystallization of predatory aggression in the form of happily swarming bees fill your kami with a desire for violence.
+,Ready,Crawling Cope,30025,Equipment,Common,Kami_Pet_Slot,,E_DSR+6%,,A condensation of fearful cowardice in the form of cute crawling worms protect your kami’s harvest from predators.
+,Ready,Teeming Cope,30026,Equipment,Uncommon,Kami_Pet_Slot,,E_DSR+8%,,A distillation of fearful cowardice in the form of adorable teeming worms protect your kami’s harvest from predators.
+,Ready,Swarming Cope,30027,Equipment,Rare,Kami_Pet_Slot,,E_DSR+10%,,A crystallization of fearful cowardice in the form of happily swarming worms protect your kami’s harvest from predators.
+,Ready,Antique Tape,30028,Equipment,Common,Kami_Pet_Slot,,E_ATS+6%,,"This antique tape may not be very sticky anymore, and yet still it remains filled with hatred for kami."
+,Ready,Heirloom Tape,30029,Equipment,Uncommon,Kami_Pet_Slot,,E_ATS+8%,,What this heirloom tape has lost in stickiness has more than been made up for by its powerful hatred for kami.
+,Ready,Ancient Tape,30030,Equipment,Rare,Kami_Pet_Slot,,E_ATS+10%,,"An ancient tape from an earlier age, it’s adhesiveness long gone, all that remains is a distilled and concentrated hatred for kami."
+,Ready,Antique Automata,30031,Equipment,Common,Kami_Pet_Slot,,E_HIB+15P,,"This antique automata may be partly broken, and yet still it drives your kami to harvest with ever greater intensity."
+,Ready,Heirloom Automata,30032,Equipment,Uncommon,Kami_Pet_Slot,,E_HIB+20,,What this heirloom automata has lost in functional machinery has more than been made up for in the way it drives your kami to harvest with ever greater intensity.
+,Ready,Ancient Automata,30033,Equipment,Rare,Kami_Pet_Slot,,E_HIB+25P,,"An ancient automata from an earlier age, it’s gears long frozen, all that remains is a frantic force driving your kami to harvest with ever greater intensity."
+,Ready,Antique Ledger,30034,Equipment,Common,Kami_Pet_Slot,,E_HARMONY+3,,"This antique ledger is mostly drained of funds, and yet it remains filled with a desire for peace and harmony among kamikind."
+,Ready,Heirloom Ledger,30035,Equipment,Uncommon,Kami_Pet_Slot,,E_HARMONY+4,,What this heirloom ledger has lost in account balance has more than been made up for by its desire for peace and harmony among kamikind.
+,Ready,Ancient Ledger,30036,Equipment,Rare,Kami_Pet_Slot,,E_HARMONY+5,,"An ancient ledger from an earlier age, it’s wallet long emptied, all that remains is a powerful longing for peace and harmony among kamikind."
 ,In Game,Astrolabe Disk,100001,Key Item,Epic,,,,,"A golden disk. It resembles the tympan of an astrolabe, but the engraving doesn’t look right."
 ,In Game,Ancient Machine Part,100002,Key Item,Epic,,,,,A durable part of some kind of high-tech machinery. It has wear and corrosion like it’s been exposed to the elements for thousands of years.
 ,In Game,Disc-Shaped Map,100003,Key Item,Epic,,,,,"A golden disk inlaid with other metals. It resembles an overhead map of a temple complex. Seems to depict roads, pyramids, and other structures."

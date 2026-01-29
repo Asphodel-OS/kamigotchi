@@ -87,7 +87,12 @@ export const DialogueModal: UIComponent = {
     } as DialogueNode);
     const [dialogueLength, setDialogueLength] = useState(0);
     const [step, setStep] = useState(0);
-    const [npc, setNpc] = useState({ name: '' });
+    const [npc, setNpc] = useState({
+      name: '',
+      img: '',
+      color: '',
+      special: { name: '', onclick: () => {} },
+    });
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
@@ -103,7 +108,13 @@ export const DialogueModal: UIComponent = {
       setStep(0);
       setDialogueNode(dialogues[dialogueIndex]);
       setDialogueLength(dialogues[dialogueIndex].text.length);
-      setNpc(dialogues[dialogueIndex].npc || { name: '' });
+      const npcData = dialogues[dialogueIndex].npc;
+      setNpc({
+        name: npcData?.name ?? '',
+        img: npcData?.img ?? '',
+        color: npcData?.color ?? '#cc88ff',
+        special: npcData?.special ?? { name: '', onclick: () => {} },
+      });
     }, [dialogueIndex]);
 
     // update account data when the modal opens
@@ -285,14 +296,14 @@ export const DialogueModal: UIComponent = {
       return (
         <ModalWrapper
           id='dialogue'
-          header={<Header>{npc.name}</Header>}
+          header={<Header $color={npc.color}>{npc.name}</Header>}
           canExit
           backgroundColor={'white'}
           positionOverride={{
             colStart: 66,
             colEnd: 99,
             rowStart: 7,
-            rowEnd: 74,
+            rowEnd: 90,
             position: 'fixed',
           }}
           noScroll
@@ -302,12 +313,14 @@ export const DialogueModal: UIComponent = {
             hasOngoingQuests={ongoingQuests}
             npcColor='#000000ff'
             npcName={npc.name}
+            npcImage={npc.img}
             dialogueText={getText(dialogueNode.text[step])}
             dialogueButtons={{
               BackButton: BackButton,
               NextButton: NextButton,
               MiddleButton: MiddleButton,
             }}
+            special={npc.special.name ? npc.special : undefined}
           />
         </ModalWrapper>
       );
@@ -357,9 +370,9 @@ const ButtonRow = styled.div`
   justify-content: space-between;
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ $color: string }>`
   padding: 1vw;
   font-size: 1.4vw;
-  color: #cc88ffff;
+  color: ${(props) => props.$color};
   border-color: white;
 `;

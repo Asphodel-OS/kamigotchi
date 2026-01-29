@@ -26,6 +26,7 @@
     { "comp": "IDOwnsQuest", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsEquipment", "name": "OwnsEquipID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTax", "name": "OwnsTaxID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsWithdrawal", "name": "OwnsWithdrawalID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -185,6 +186,10 @@
     {
       "name": "_SkillRegistrySystem",
       "writeAccess": ["*"]
+    },
+    {
+      "name": "_SacrificeRegistrySystem",
+      "writeAccess": ["Keys", "Weights"]
     },
     {
       "name": "_TraitRegistrySystem",
@@ -612,6 +617,41 @@
       "writeAccess": ["*"]
     },
     {
+      "name": "KamiEquipSystem",
+      "writeAccess": [
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDType",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "Time",
+        "TimeLast",
+        "Type",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiUnequipSystem",
+      "writeAccess": [
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDType",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "Time",
+        "TimeLast",
+        "Value"
+      ]
+    },
+    {
       "name": "QuestAcceptSystem",
       "writeAccess": [
         "EntityType",
@@ -773,6 +813,43 @@
     {
       "name": "_721BatchMinterSystem",
       "writeAccess": ["*", "ProxyPermissionsERC721"]
+    },
+    {
+      "name": "KamiSacrificeCommitSystem",
+      "writeAccess": [
+        "BlockReveal",
+        "EntityType",
+        "Health",
+        "IDOwnsKami",
+        "IdHolder",
+        "IdSource",
+        "ProxyPermissionsERC721",
+        "State",
+        "TimeLast",
+        "TimeLastAction",
+        "Type",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiSacrificeRevealSystem",
+      "writeAccess": [
+        "Balance",
+        "BlockReveal",
+        "EntityType",
+        "IdHolder",
+        "IdSource",
+        "IDOwnsInventory",
+        "IndexItem",
+        "Keys",
+        "Time",
+        "TimeLast",
+        "TimeLastAction",
+        "Type",
+        "Value",
+        "Values",
+        "Weights"
+      ]
     }
   ],
   "libraries": [
@@ -786,6 +863,7 @@
     "LibConfig",
     "LibData",
     "LibDroptable",
+    "LibEquipment",
     "LibExperience",
     "LibFaction",
     "LibFlag",
@@ -807,6 +885,7 @@
     "LibRelationshipRegistry",
     "LibRelationship",
     "LibRoom",
+    "LibSacrifice",
     "LibScavenge",
     "LibScore",
     "LibSkillRegistry",

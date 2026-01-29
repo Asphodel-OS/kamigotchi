@@ -52,6 +52,7 @@ export const EnemyCards = ({
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
     getTempBonuses: (kami: Kami) => Bonus[];
+    getEquipmentEffects: (kami: Kami) => { image: string; text: string }[];
   };
   tick: number;
 }) => {
@@ -59,7 +60,7 @@ export const EnemyCards = ({
   const { account, allies, enemyEntities } = data;
   const { CastItemButton } = display;
   const { limit } = state;
-  const { getOwner, getKami, getTempBonuses } = utils;
+  const { getOwner, getKami, getTempBonuses, getEquipmentEffects } = utils;
 
   const accountModalOpen = useVisibility((s) => s.modals.account);
   const setModals = useVisibility((s) => s.setModals);
@@ -225,7 +226,7 @@ export const EnemyCards = ({
               content={<StatsDisplay kami={kami} />}
               label={getLabel(kami)}
               labelAlt={getLabelAlt(kami)}
-              utils={{ getTempBonuses }}
+              utils={{ getTempBonuses, getEquipmentEffects }}
               show={{
                 battery: true,
                 cooldown: true,

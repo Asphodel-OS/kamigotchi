@@ -1,3 +1,4 @@
+import { objectMinaRed } from 'assets/images/rooms/13_giftshop';
 import { DialogueNode } from '.';
 
 const LoyaltyText = (loyalty: number) => {
@@ -17,6 +18,8 @@ export const mina: DialogueNode = {
   text: [LoyaltyText, `Welcome to the gift shop.`],
   npc: {
     name: 'Mina',
+    img: objectMinaRed,
+    color: '#cc88ff',
   },
 };
 

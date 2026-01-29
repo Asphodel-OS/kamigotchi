@@ -5,6 +5,7 @@ export type {
   AuctionBuy,
   AuctionBuysRequest,
   AuctionBuysResponse,
+  DroptableReveal,
   Feed,
   HarvestEnd,
   KamiCast,
@@ -13,6 +14,7 @@ export type {
   Movement,
   RoomRequest,
   RoomResponse,
+  SacrificeReveal,
   StreamRequest,
   StreamResponse,
 } from './proto';

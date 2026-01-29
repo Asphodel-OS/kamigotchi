@@ -53,6 +53,7 @@ export const KamiBar = ({
     levelUp?: (kami: Kami) => void;
     calcExpRequirement?: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
+    getEquipmentEffects?: (kami: Kami) => { image: string; text: string }[];
   };
 }) => {
   const kamiIndex = useSelected((s) => s.kamiIndex);
@@ -203,10 +204,14 @@ export const KamiBar = ({
 
     return `${currentHealth}/${totalHealth} (${healthPercent.toFixed(0)}%)`;
   };
-  // get the description of temp bonuses currently applied to the kami
+  // get the description of temp bonuses and equipment effects
+  // currently applied to the kami
   const getBonusesDescription = (kami: Kami) => {
-    const bonuses = utils.getTempBonuses(kami);
-    return bonuses.map((bonus) => parseBonusText(bonus));
+    const bonuses = utils.getTempBonuses(kami).map((bonus) => parseBonusText(bonus));
+    const equipEffects = utils.getEquipmentEffects
+      ? utils.getEquipmentEffects(kami).map((effect) => effect.text)
+      : [];
+    return [...bonuses, ...equipEffects];
   };
 
   const getKamiState = (kami: Kami) => {

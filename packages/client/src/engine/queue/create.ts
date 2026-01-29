@@ -165,7 +165,7 @@ export function create<C extends Contracts>(
 
     const estimateGas = async (): Promise<BigNumberish> => {
       if (callOverrides?.gasLimit) {
-        log.debug(`[estimateGas] Using callOverride ${callOverrides.gasLimit}`);
+        log.time.info(`[queue] Using callOverride ${callOverrides.gasLimit}`);
         return callOverrides.gasLimit;
       }
 
@@ -176,7 +176,7 @@ export function create<C extends Contracts>(
         }
       }
       try {
-        log.debug('[estimateGas] Simulating transaction');
+        log.time.info('[queue] Simulating transaction');
         const gasEstimate = await signer!.estimateGas(txRequest);
         if (cacheKey) {
           gasCache.set(cacheKey, gasEstimate);

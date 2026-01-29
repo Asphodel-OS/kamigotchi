@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 import { ActionState, ActionSystem } from '../ActionSystem';
 import { NotificationSystem } from '../NotificationSystem';
 import { notifyResult, sendKeepAliveNotif } from './functions';
-import { CommitData } from './types';
+import { CommitData, RevealType } from './types';
 
 export type DTRevealerSystem = ReturnType<typeof createDTRevealerSystem>;
 
@@ -37,7 +37,7 @@ export function createDTRevealerSystem(
   // for naming reveal types based on their parent entity. optional
   const entityNameMap = new Map<EntityID, string>();
 
-  function add(commit: DTCommit) {
+  function add(commit: DTCommit, revealType: RevealType = 'droptable') {
     // filters out commits that are already in the system
     if (allCommits.has(commit.id)) return;
 
@@ -45,21 +45,23 @@ export function createDTRevealerSystem(
     const data: CommitData = {
       ...commit,
       failures: 0,
+      revealType,
     };
     allCommits.set(commit.id, data);
     if (canRevealCommit(commit)) queuedCommits.add(commit.id);
   }
 
-  function extractQueue(): EntityID[] {
+  function extractQueue(revealType?: RevealType): EntityID[] {
     const { State } = components;
 
     if (queuedCommits.size === 0) return [];
 
-    // notification: keep alive
-    sendKeepAliveNotif(notifications, true);
-
     const commits: EntityID[] = [];
     queuedCommits.forEach((id) => {
+      const commitData = allCommits.get(id);
+      // filter by reveal type
+      if (revealType && commitData?.revealType !== revealType) return;
+
       queuedCommits.delete(id);
       commits.push(id);
       revealingCommits.add(id);
@@ -68,6 +70,9 @@ export function createDTRevealerSystem(
       if (!entity) entity = createEntity(world, undefined, { id: id });
       setComponent(State, entity, { value: 'REVEALING' });
     });
+
+    // keep alive notiffs
+    if (commits.length > 0) sendKeepAliveNotif(notifications, true);
 
     return commits;
   }

@@ -60,6 +60,8 @@ export interface Feed {
   Kills: Kill[];
   Trades: Trade[];
   KamiCasts: KamiCast[];
+  DroptableReveals: DroptableReveal[];
+  SacrificeReveals: SacrificeReveal[];
 }
 
 export interface AuctionBuy {
@@ -106,6 +108,25 @@ export interface KamiCast {
   TargetID: string;
   itemIndex: number;
   nodeIndex: number;
+}
+
+export interface DroptableReveal {
+  CommitID: string;
+  HolderID: string;
+  DtID: string;
+  Timestamp: number;
+  ItemIndices: number[];
+  ItemAmounts: string[];
+}
+
+export interface SacrificeReveal {
+  CommitID: string;
+  HolderID: string;
+  KamiID: string;
+  DtID: string;
+  Timestamp: number;
+  ItemIndices: number[];
+  ItemAmounts: string[];
 }
 
 export interface PortalReceipt {
@@ -722,7 +743,15 @@ export const BattleStats: MessageFns<BattleStats> = {
 };
 
 function createBaseFeed(): Feed {
-  return { Movements: [], HarvestEnds: [], Kills: [], Trades: [], KamiCasts: [] };
+  return {
+    Movements: [],
+    HarvestEnds: [],
+    Kills: [],
+    Trades: [],
+    KamiCasts: [],
+    DroptableReveals: [],
+    SacrificeReveals: [],
+  };
 }
 
 export const Feed: MessageFns<Feed> = {
@@ -741,6 +770,12 @@ export const Feed: MessageFns<Feed> = {
     }
     for (const v of message.KamiCasts) {
       KamiCast.encode(v!, writer.uint32(42).fork()).join();
+    }
+    for (const v of message.DroptableReveals) {
+      DroptableReveal.encode(v!, writer.uint32(50).fork()).join();
+    }
+    for (const v of message.SacrificeReveals) {
+      SacrificeReveal.encode(v!, writer.uint32(58).fork()).join();
     }
     return writer;
   },
@@ -792,6 +827,22 @@ export const Feed: MessageFns<Feed> = {
           message.KamiCasts.push(KamiCast.decode(reader, reader.uint32()));
           continue;
         }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.DroptableReveals.push(DroptableReveal.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.SacrificeReveals.push(SacrificeReveal.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -811,6 +862,10 @@ export const Feed: MessageFns<Feed> = {
     message.Kills = object.Kills?.map((e) => Kill.fromPartial(e)) || [];
     message.Trades = object.Trades?.map((e) => Trade.fromPartial(e)) || [];
     message.KamiCasts = object.KamiCasts?.map((e) => KamiCast.fromPartial(e)) || [];
+    message.DroptableReveals =
+      object.DroptableReveals?.map((e) => DroptableReveal.fromPartial(e)) || [];
+    message.SacrificeReveals =
+      object.SacrificeReveals?.map((e) => SacrificeReveal.fromPartial(e)) || [];
     return message;
   },
 };
@@ -1389,6 +1444,262 @@ export const KamiCast: MessageFns<KamiCast> = {
     message.TargetID = object.TargetID ?? '';
     message.itemIndex = object.itemIndex ?? 0;
     message.nodeIndex = object.nodeIndex ?? 0;
+    return message;
+  },
+};
+
+function createBaseDroptableReveal(): DroptableReveal {
+  return { CommitID: '', HolderID: '', DtID: '', Timestamp: 0, ItemIndices: [], ItemAmounts: [] };
+}
+
+export const DroptableReveal: MessageFns<DroptableReveal> = {
+  encode(message: DroptableReveal, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.CommitID !== '') {
+      writer.uint32(10).string(message.CommitID);
+    }
+    if (message.HolderID !== '') {
+      writer.uint32(18).string(message.HolderID);
+    }
+    if (message.DtID !== '') {
+      writer.uint32(26).string(message.DtID);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(32).uint64(message.Timestamp);
+    }
+    writer.uint32(42).fork();
+    for (const v of message.ItemIndices) {
+      writer.uint32(v);
+    }
+    writer.join();
+    for (const v of message.ItemAmounts) {
+      writer.uint32(50).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): DroptableReveal {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseDroptableReveal();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.CommitID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.HolderID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.DtID = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 5: {
+          if (tag === 40) {
+            message.ItemIndices.push(reader.uint32());
+
+            continue;
+          }
+
+          if (tag === 42) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.ItemIndices.push(reader.uint32());
+            }
+
+            continue;
+          }
+
+          break;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.ItemAmounts.push(reader.string());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<DroptableReveal>): DroptableReveal {
+    return DroptableReveal.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<DroptableReveal>): DroptableReveal {
+    const message = createBaseDroptableReveal();
+    message.CommitID = object.CommitID ?? '';
+    message.HolderID = object.HolderID ?? '';
+    message.DtID = object.DtID ?? '';
+    message.Timestamp = object.Timestamp ?? 0;
+    message.ItemIndices = object.ItemIndices?.map((e) => e) || [];
+    message.ItemAmounts = object.ItemAmounts?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseSacrificeReveal(): SacrificeReveal {
+  return {
+    CommitID: '',
+    HolderID: '',
+    KamiID: '',
+    DtID: '',
+    Timestamp: 0,
+    ItemIndices: [],
+    ItemAmounts: [],
+  };
+}
+
+export const SacrificeReveal: MessageFns<SacrificeReveal> = {
+  encode(message: SacrificeReveal, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.CommitID !== '') {
+      writer.uint32(10).string(message.CommitID);
+    }
+    if (message.HolderID !== '') {
+      writer.uint32(18).string(message.HolderID);
+    }
+    if (message.KamiID !== '') {
+      writer.uint32(26).string(message.KamiID);
+    }
+    if (message.DtID !== '') {
+      writer.uint32(34).string(message.DtID);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(40).uint64(message.Timestamp);
+    }
+    writer.uint32(50).fork();
+    for (const v of message.ItemIndices) {
+      writer.uint32(v);
+    }
+    writer.join();
+    for (const v of message.ItemAmounts) {
+      writer.uint32(58).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SacrificeReveal {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSacrificeReveal();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.CommitID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.HolderID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.KamiID = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.DtID = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 6: {
+          if (tag === 48) {
+            message.ItemIndices.push(reader.uint32());
+
+            continue;
+          }
+
+          if (tag === 50) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.ItemIndices.push(reader.uint32());
+            }
+
+            continue;
+          }
+
+          break;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.ItemAmounts.push(reader.string());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<SacrificeReveal>): SacrificeReveal {
+    return SacrificeReveal.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<SacrificeReveal>): SacrificeReveal {
+    const message = createBaseSacrificeReveal();
+    message.CommitID = object.CommitID ?? '';
+    message.HolderID = object.HolderID ?? '';
+    message.KamiID = object.KamiID ?? '';
+    message.DtID = object.DtID ?? '';
+    message.Timestamp = object.Timestamp ?? 0;
+    message.ItemIndices = object.ItemIndices?.map((e) => e) || [];
+    message.ItemAmounts = object.ItemAmounts?.map((e) => e) || [];
     return message;
   },
 };

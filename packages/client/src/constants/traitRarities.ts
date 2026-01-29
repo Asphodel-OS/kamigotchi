@@ -1,9 +1,9 @@
-export const getRarities = (tier: number) => {
-  if (tier > rarities.length + 1) return rarities[0];
-  return rarities[tier];
+export const getTraitRarities = (tier: number) => {
+  if (tier > traitRarities.length - 1) return traitRarities[0];
+  return traitRarities[tier];
 };
 
-const rarities = [
+const traitRarities = [
   {
     // 0
     title: 'UNKNOWN',

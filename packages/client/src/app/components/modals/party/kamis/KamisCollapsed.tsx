@@ -35,6 +35,7 @@ export const KamisCollapsed = ({
     levelUp: (kami: Kami) => void;
     calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
+    getEquipmentEffects: (kami: Kami) => { image: string; text: string }[];
   };
 }) => {
   /////////////////

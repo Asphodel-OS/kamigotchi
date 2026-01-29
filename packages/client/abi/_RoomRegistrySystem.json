@@ -165,6 +165,19 @@
     },
     {
       "type": "function",
+      "name": "removeAllGates",
+      "inputs": [
+        {
+          "name": "roomIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "renounceOwnership",
       "inputs": [],
       "outputs": [],
@@ -301,6 +314,7 @@
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "remove(uint32)": "00d84fd8",
+    "removeAllGates(uint32)": "3adf6594",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
     "setTexts(uint32,string,string)": "bc50578f",

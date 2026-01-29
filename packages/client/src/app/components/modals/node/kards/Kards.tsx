@@ -37,6 +37,7 @@ export const Kards = ({
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
     getTempBonuses: (kami: Kami) => Bonus[];
+    getEquipmentEffects: (kami: Kami) => { image: string; text: string }[];
   };
   tick: number;
 }) => {
