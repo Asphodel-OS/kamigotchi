@@ -69,26 +69,29 @@ export function getEquipmentCapacity(
   return Math.max(1, 1 + bonus);
 }
 
+// parses equipped items into displayable effects
 export function parseEquippedEffects(
-  equipped: Record<string, Inventory | null>,
-  parseAllosFn: (allos: Inventory['item']['effects']['equip']) => { description?: string }[]
-): { source: string; image: string; text: string }[] {
+  world: World,
+  components: Components,
+  equipped: Record<string, Inventory | null>
+) {
   return Object.values(equipped)
-    .filter(Boolean)
+    .filter((inv): inv is Inventory => inv !== null)
     .flatMap((inv) =>
-      parseAllosFn(inv!.item.effects?.equip ?? []).map((detail) => ({
-        source: inv!.item.name,
-        image: getItemImage(inv!.item.name),
-        text: detail.description ?? '',
+      parseAllos(world, components, inv.item.effects?.equip ?? []).map((parsed) => ({
+        source: inv.item.name,
+        image: getItemImage(inv.item.name),
+        text: parsed.description ?? '',
       }))
     );
 }
 
+// returns equipment effects for a kami (for KamiCard display)
 export function getEquipmentEffects(
   world: World,
   components: Components,
   kamiID: EntityID
-): { image: string; text: string }[] {
+) {
   const equipped = getEquipped(world, components, kamiID);
-  return parseEquippedEffects(equipped, (allos) => parseAllos(world, components, allos));
+  return parseEquippedEffects(world, components, equipped);
 }

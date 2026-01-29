@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { parseEquippedEffects } from 'app/cache/equipment/equipment';
 import { filterInventories, Inventory } from 'app/cache/inventory';
 import {
   IconListButton,
@@ -34,6 +33,11 @@ export interface EquipmentActions {
 export interface EquipmentUtils {
   displayRequirements: (item: Item) => string;
   parseAllos: (allo: Allo[]) => DetailedEntity[];
+  getEquipmentEffects: (equipped: Record<string, Inventory | null>) => {
+    source: string;
+    image: string;
+    text: string;
+  }[];
 }
 
 export const Equipment = ({
@@ -60,7 +64,7 @@ export const Equipment = ({
 
   const equipmentBonuses = useMemo(() => {
     if (!utils) return [];
-    return parseEquippedEffects(equipped, utils.parseAllos);
+    return utils.getEquipmentEffects(equipped);
   }, [equipped, utils]);
 
   ////////////////////

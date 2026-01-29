@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react';
 
 import { getAccount } from 'app/cache/account';
 import { getTempBonuses } from 'app/cache/bonus';
-import { getEquipped, getEquipmentCapacity } from 'app/cache/equipment/equipment';
-import { cleanInventories } from 'app/cache/inventory';
+import {
+  getEquipped,
+  getEquipmentCapacity,
+  parseEquippedEffects,
+} from 'app/cache/equipment/equipment';
+import { cleanInventories, Inventory } from 'app/cache/inventory';
 import { getKami as _getKami, getKamiAccount, isResting } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
 import {
@@ -89,6 +93,8 @@ export const KamiModal: UIComponent = {
           getTempBonuses: (kami: Kami) => getTempBonuses(world, components, kami.entity, 2),
           getKamiEquipped: (kami: Kami) => getEquipped(world, components, kami.id),
           getEquipmentCapacity: (kami: Kami) => getEquipmentCapacity(world, components, kami.id),
+          getEquipmentEffects: (equipped: Record<string, Inventory | null>) =>
+            parseEquippedEffects(world, components, equipped),
         },
       };
     })();
@@ -238,6 +244,7 @@ export const KamiModal: UIComponent = {
                   .map((req) => parseConditionalText(network.world, network.components, req))
                   .join(', ') || '???',
               parseAllos: (allo) => _parseAllos(network.world, network.components, allo),
+              getEquipmentEffects: utils.getEquipmentEffects,
             }}
           />
         )}
