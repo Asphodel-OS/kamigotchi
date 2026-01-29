@@ -128,6 +128,7 @@ export const PartyModal: UIComponent = {
 
     const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
+    const [initialized, setInitialized] = useState(false);
 
     /////////////////
     // SUBSCRIPTIONS
@@ -152,6 +153,7 @@ export const PartyModal: UIComponent = {
       // populate initial data
       setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
       setKamis(getWorldKamis());
+      setInitialized(true);
 
       // set ticking
       const refreshClock = () => setTick(Date.now());
@@ -210,10 +212,11 @@ export const PartyModal: UIComponent = {
 
     // if there are no world kamis and only wild, set the view to External
     useEffect(() => {
+      if (!initialized) return;
       if (wildKamis.length && kamis.length === 0) {
         setView('external');
       }
-    }, [wildKamis.length, kamis.length]);
+    }, [initialized, wildKamis.length, kamis.length]);
 
     /////////////////
     // ACTIONS
