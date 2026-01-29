@@ -9,11 +9,13 @@ export interface Effects {
   // burn: Allo[];
   // craft: Allo[];
   use: Allo[];
+  equip: Allo[];
 }
 
 export const getEffects = (world: World, comps: Components, index: number): Effects => {
   return {
     use: getActionAllos(world, comps, index, 'USE'),
+    equip: getActionAllos(world, comps, index, 'EQUIP'),
   };
 };
 
