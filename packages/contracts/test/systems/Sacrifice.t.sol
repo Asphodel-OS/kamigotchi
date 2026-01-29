@@ -188,9 +188,7 @@ contract SacrificeTest is MintTemplate {
 
     // Use the registry system to set up all droptables
     __SacrificeRegistrySystem.setAllDroptables(
-      normalKeys, normalWeights,
-      uncommonKeys, uncommonWeights,
-      rareKeys, rareWeights
+      abi.encode(normalKeys, normalWeights, uncommonKeys, uncommonWeights, rareKeys, rareWeights)
     );
 
     vm.stopPrank();
@@ -462,7 +460,6 @@ contract SacrificeTest is MintTemplate {
     vm.expectRevert(); // Expect any revert - the exact error depends on what component lookup fails first
     _SacrificeRevealSystem.executeTypedBatch(commitIDs);
   }
-
 }
 
 contract FilterNonZeroTest is Test {
@@ -488,7 +485,10 @@ contract FilterNonZeroTest is Test {
     amounts[3] = 0;
     amounts[4] = 0;
 
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
+    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(
+      indices,
+      amounts
+    );
 
     assertEq(filteredIndices.length, 1);
     assertEq(filteredAmounts.length, 1);
@@ -511,7 +511,10 @@ contract FilterNonZeroTest is Test {
     amounts[3] = 0;
     amounts[4] = 1;
 
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
+    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(
+      indices,
+      amounts
+    );
 
     assertEq(filteredIndices.length, 3);
     assertEq(filteredAmounts.length, 3);
@@ -534,7 +537,10 @@ contract FilterNonZeroTest is Test {
     amounts[1] = 0;
     amounts[2] = 0;
 
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
+    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(
+      indices,
+      amounts
+    );
 
     assertEq(filteredIndices.length, 0);
     assertEq(filteredAmounts.length, 0);
@@ -551,7 +557,10 @@ contract FilterNonZeroTest is Test {
     amounts[1] = 2;
     amounts[2] = 3;
 
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
+    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(
+      indices,
+      amounts
+    );
 
     assertEq(filteredIndices.length, 3);
     assertEq(filteredAmounts.length, 3);
@@ -567,7 +576,10 @@ contract FilterNonZeroTest is Test {
     uint32[] memory indices = new uint32[](0);
     uint256[] memory amounts = new uint256[](0);
 
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
+    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(
+      indices,
+      amounts
+    );
 
     assertEq(filteredIndices.length, 0);
     assertEq(filteredAmounts.length, 0);
@@ -584,7 +596,10 @@ contract FilterNonZeroTest is Test {
     }
     amounts[17] = 1; // Index 30018 wins
 
-    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(indices, amounts);
+    (uint32[] memory filteredIndices, uint256[] memory filteredAmounts) = harness.filterNonZero(
+      indices,
+      amounts
+    );
 
     assertEq(filteredIndices.length, 1);
     assertEq(filteredAmounts.length, 1);

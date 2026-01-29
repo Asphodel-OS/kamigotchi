@@ -113,34 +113,9 @@
       "name": "setAllDroptables",
       "inputs": [
         {
-          "name": "normalKeys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "normalWeights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        },
-        {
-          "name": "uncommonKeys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "uncommonWeights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
-        },
-        {
-          "name": "rareKeys",
-          "type": "uint32[]",
-          "internalType": "uint32[]"
-        },
-        {
-          "name": "rareWeights",
-          "type": "uint256[]",
-          "internalType": "uint256[]"
+          "name": "data",
+          "type": "bytes",
+          "internalType": "bytes"
         }
       ],
       "outputs": [],
@@ -294,7 +269,7 @@
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setAllDroptables(uint32[],uint256[],uint32[],uint256[],uint32[],uint256[])": "7f7d6a76",
+    "setAllDroptables(bytes)": "bb8589c7",
     "setNormalDroptable(uint32[],uint256[])": "3070b927",
     "setRarePityDroptable(uint32[],uint256[])": "24997b09",
     "setUncommonPityDroptable(uint32[],uint256[])": "22b3a2d3",
