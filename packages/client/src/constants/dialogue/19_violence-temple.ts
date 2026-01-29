@@ -1,4 +1,3 @@
-import { triggerTempleOfTheWheelModal } from 'app/triggers';
 import { dimiBoth } from 'assets/images/rooms/19_temple-of-the-wheel';
 import { DialogueNode } from '.';
 
@@ -36,12 +35,12 @@ export const Dimidiatus: DialogueNode = {
     name: 'Dimidiatus',
     img: dimiBoth,
     color: '#d4a017',
-    special: {
+    /*  special: {
       name: 'Kami Sacrifice',
       onclick: () => {
         triggerTempleOfTheWheelModal();
       },
-    },
+    },*/
   },
 };
 
