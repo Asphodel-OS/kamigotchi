@@ -19,7 +19,7 @@ export const room18: Room = {
     {
       name: 'staking a claim',
       coordinates: { x1: 83, y1: 74, x2: 107, y2: 99 },
-      onClick: () => triggerGoalModal([0]),
+      onClick: () => triggerGoalModal([12]),
     },
   ],
 };
