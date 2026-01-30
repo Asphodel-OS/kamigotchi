@@ -1,2 +1,2 @@
-import bgPlaytestDay from './backgrounds/room18a.png';
+import bgPlaytestDay from './backgrounds/room18b.png';
 export { bgPlaytestDay };
