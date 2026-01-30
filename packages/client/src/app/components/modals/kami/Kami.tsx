@@ -238,6 +238,7 @@ export const KamiModal: UIComponent = {
             equipped={utils.getKamiEquipped(kami)}
             capacity={utils.getEquipmentCapacity(kami)}
             isResting={isResting(kami)}
+            isOwned={account.index === owner.index}
             actions={{
               equip: (itemIndex: number, itemName: string) => equipItem(kami, itemIndex, itemName),
               unequip: (slot: string, itemName: string) => unequipItem(kami, slot, itemName),
