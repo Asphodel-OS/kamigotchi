@@ -211,6 +211,7 @@ export function create<C extends Contracts>(
   async function processQueue() {
     const queueItem = queue.next();
     if (!queueItem) return;
+
     processQueue();
 
     await submissionMutex.runExclusive(async () => {
@@ -227,32 +228,38 @@ export function create<C extends Contracts>(
       const txPromise = executeTxWithRetry(queueItem.execute, txOverrides);
 
       const raceResult = await Promise.race([
-        txPromise.then((result) => ({ status: 'completed' as const, result })),
+        txPromise
+          .then((result) => ({ status: 'completed' as const, result }))
+          .catch((error) => ({ status: 'error' as const, error })),
         sleep(MUTEX_RELEASE_MS).then(() => ({ status: 'timeout' as const })),
       ]);
 
+      incNonce();
+
       if (raceResult.status === 'completed') {
         queueItem.resolve(raceResult.result);
-        incNonce();
         log.info('[TXQueue] TX confirmed (fast)', { hash: raceResult.result.hash });
-      } else {
-        incNonce();
-        log.info('[TXQueue] Releasing mutex, TX still pending');
-
-        txPromise
-          .then((result) => {
-            queueItem.resolve(result);
-            log.info('[TXQueue] TX confirmed (background)', { hash: result.hash });
-          })
-          .catch((error) => {
-            queueItem.reject(error);
-            logTxError('TX failed (background)', error);
-
-            if (queueItem.cacheKey) {
-              gasCache.delete(queueItem.cacheKey);
-            }
-          });
+        return;
       }
+
+      if (raceResult.status === 'error') {
+        queueItem.reject(raceResult.error);
+        logTxError('TX failed (fast)', raceResult.error);
+        if (queueItem.cacheKey) gasCache.delete(queueItem.cacheKey);
+        return;
+      }
+
+      log.info('[TXQueue] Releasing mutex, TX still pending');
+      txPromise
+        .then((result) => {
+          queueItem.resolve(result);
+          log.info('[TXQueue] TX confirmed (background)', { hash: result.hash });
+        })
+        .catch((error) => {
+          queueItem.reject(error);
+          logTxError('TX failed (background)', error);
+          if (queueItem.cacheKey) gasCache.delete(queueItem.cacheKey);
+        });
     });
 
     processQueue();
