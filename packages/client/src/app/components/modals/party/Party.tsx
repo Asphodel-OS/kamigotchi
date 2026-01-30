@@ -9,7 +9,6 @@ import {
   getAccountKamis,
 } from 'app/cache/account';
 import { getTempBonuses as _getTempBonuses } from 'app/cache/bonus';
-import { getEquipmentEffects as _getEquipmentEffects } from 'app/cache/equipment/equipment';
 import { getConfigAddress } from 'app/cache/config';
 import { getKami as _getKami } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
@@ -92,7 +91,6 @@ export const PartyModal: UIComponent = {
           getAllAccounts: () => _getAllAccounts(world, components),
           getTempBonuses: (kami: Kami) =>
             _getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
-          getEquipmentEffects: (kami: Kami) => _getEquipmentEffects(world, components, kami.id),
           getItem: (index: number) => getItemByIndex(world, components, index),
           getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiRefreshOptions),
           getNode: (index: number) => getNodeByIndex(world, components, index),

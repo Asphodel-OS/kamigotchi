@@ -35,7 +35,6 @@ export const KamisExpanded = ({
   utils: {
     calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
-    getEquipmentEffects: (kami: Kami) => { image: string; text: string }[];
   };
 
   isVisible: boolean;

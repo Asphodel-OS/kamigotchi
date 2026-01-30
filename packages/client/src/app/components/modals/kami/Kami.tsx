@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 import { getAccount } from 'app/cache/account';
 import { getTempBonuses } from 'app/cache/bonus';
 import {
-  getEquipped,
+  getEquipmentBonuses,
   getEquipmentCapacity,
-  parseEquippedEffects,
+  getEquipped,
 } from 'app/cache/equipment/equipment';
-import { cleanInventories, Inventory } from 'app/cache/inventory';
+import { cleanInventories } from 'app/cache/inventory';
 import { getKami as _getKami, getKamiAccount, isResting } from 'app/cache/kami';
 import { getNodeByIndex as _getNodeByIndex } from 'app/cache/node';
 import {
@@ -23,7 +23,7 @@ import { ModalWrapper } from 'app/components/library';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { BaseAccount, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
-import { parseAllos as _parseAllos } from 'network/shapes/Allo';
+import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { Condition, parseConditionalText } from 'network/shapes/Conditional';
 import { getItemBalance as _getItemBalance, Item } from 'network/shapes/Item';
 import { calcKamiExpRequirement, Kami, queryKamis } from 'network/shapes/Kami';
@@ -91,10 +91,14 @@ export const KamiModal: UIComponent = {
           getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
           getNodeByIndex: (index: number) => _getNodeByIndex(world, components, index),
           getTempBonuses: (kami: Kami) => getTempBonuses(world, components, kami.entity, 2),
+          getEquipmentBonuses: (kami: Kami) => getEquipmentBonuses(world, components, kami.entity),
           getKamiEquipped: (kami: Kami) => getEquipped(world, components, kami.id),
           getEquipmentCapacity: (kami: Kami) => getEquipmentCapacity(world, components, kami.id),
-          getEquipmentEffects: (equipped: Record<string, Inventory | null>) =>
-            parseEquippedEffects(world, components, equipped),
+          displayRequirements: (item: Item) =>
+            item.requirements.use
+              .map((req) => parseConditionalText(world, components, req))
+              .join('\n '),
+          parseAllos: (allo: Allo[]) => _parseAllos(world, components, allo),
         },
       };
     })();
@@ -239,12 +243,9 @@ export const KamiModal: UIComponent = {
               unequip: (slot: string, itemName: string) => unequipItem(kami, slot, itemName),
             }}
             utils={{
-              displayRequirements: (item: Item) =>
-                item.requirements.use
-                  .map((req) => parseConditionalText(network.world, network.components, req))
-                  .join(', ') || '???',
-              parseAllos: (allo) => _parseAllos(network.world, network.components, allo),
-              getEquipmentEffects: utils.getEquipmentEffects,
+              displayRequirements: utils.displayRequirements,
+              parseAllos: utils.parseAllos,
+              getEquipmentBonuses: () => utils.getEquipmentBonuses(kami),
             }}
           />
         )}

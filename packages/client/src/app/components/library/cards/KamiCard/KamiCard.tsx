@@ -27,7 +27,7 @@ export const KamiCard = ({
   actions,
   show,
   tick,
-  utils: { calcExpRequirement, getTempBonuses, getEquipmentEffects } = {},
+  utils: { calcExpRequirement, getTempBonuses } = {},
 }: {
   kami: Kami; // assumed to have a harvest attached
   actions?: ReactNode;
@@ -45,7 +45,6 @@ export const KamiCard = ({
   utils?: {
     calcExpRequirement?: (lvl: number) => number;
     getTempBonuses?: (kami: Kami) => Bonus[];
-    getEquipmentEffects?: (kami: Kami) => { image: string; text: string }[];
   };
   tick: number;
 }) => {
@@ -98,9 +97,8 @@ export const KamiCard = ({
           text: parseBonusText(bonus),
         }))
       : [];
-    const equipEffects = getEquipmentEffects ? getEquipmentEffects(kami) : [];
-    return [...tempBonuses, ...equipEffects];
-  }, [getTempBonuses, getEquipmentEffects, kami]);
+    return tempBonuses;
+  }, [getTempBonuses, kami]);
 
   /////////////////
   // RENDER
