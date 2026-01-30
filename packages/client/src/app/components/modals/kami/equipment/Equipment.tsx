@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { filterInventories, Inventory } from 'app/cache/inventory';
@@ -33,11 +32,7 @@ export interface EquipmentActions {
 export interface EquipmentUtils {
   displayRequirements: (item: Item) => string;
   parseAllos: (allo: Allo[]) => DetailedEntity[];
-  getEquipmentEffects: (equipped: Record<string, Inventory | null>) => {
-    source: string;
-    image: string;
-    text: string;
-  }[];
+  getEquipmentBonuses?: () => { image: string; text: string }[];
 }
 
 export const Equipment = ({
@@ -46,6 +41,7 @@ export const Equipment = ({
   capacity = 1,
   actions,
   isResting = true,
+  isOwned = true,
   utils,
 }: {
   inventories: Inventory[];
@@ -53,6 +49,7 @@ export const Equipment = ({
   capacity?: number;
   actions?: EquipmentActions;
   isResting?: boolean;
+  isOwned?: boolean;
   utils?: EquipmentUtils;
 }) => {
   ////////////////////
@@ -61,11 +58,7 @@ export const Equipment = ({
   const equippedCount = Object.values(equipped).filter(Boolean).length;
   const isAtCapacity = equippedCount >= capacity;
   const restingTooltip = { text: ['Kami must be resting.'] };
-
-  const equipmentBonuses = useMemo(() => {
-    if (!utils) return [];
-    return utils.getEquipmentEffects(equipped);
-  }, [equipped, utils]);
+  const equipmentBonuses = utils?.getEquipmentBonuses?.() ?? [];
 
   ////////////////////
   // INTERACTION
@@ -113,7 +106,9 @@ export const Equipment = ({
             disabled={!isResting}
             tooltip={isResting ? itemTooltip : restingTooltip}
           />
-          {isResting && <RemoveButton onClick={() => handleUnequip(slot)}>X</RemoveButton>}
+          {isResting && isOwned && (
+            <RemoveButton onClick={() => handleUnequip(slot)}>X</RemoveButton>
+          )}
         </FilledSlotWrapper>
       );
     }

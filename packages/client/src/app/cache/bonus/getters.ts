@@ -14,12 +14,15 @@ export const getTemp = (
   world: World,
   components: Components,
   holder: EntityIndex,
-  update: number
+  update: number,
+  equipmentOnly?: boolean
 ) => {
   // todo: add SOURCE to bonus shape. queries based on end type for now
   const equipmentBonuses = EQUIPMENT_SLOTS.flatMap((slot) =>
     getForEndType(world, components, `UPON_UNEQUIP_${slot}`, holder, update)
   );
+
+  if (equipmentOnly) return equipmentBonuses;
 
   return [
     ...getForEndType(world, components, 'UPON_HARVEST_ACTION', holder, update),

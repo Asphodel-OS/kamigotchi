@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { getTempBonuses as _getTempBonuses, getBonusesForEndType } from 'app/cache/bonus';
-import { getEquipmentEffects as _getEquipmentEffects } from 'app/cache/equipment/equipment';
 import { getKami as _getKami, getKamiAccount } from 'app/cache/kami';
 import { getNodeByIndex } from 'app/cache/node';
 import { getRoomByIndex } from 'app/cache/room';
@@ -123,7 +122,6 @@ export const NodeModal: UIComponent = {
             _parseConditionalText(world, components, condition, tracking),
           getTempBonuses: (kami: Kami) =>
             _getTempBonuses(world, components, kami.entity, kamiRefreshOptions.bonuses),
-          getEquipmentEffects: (kami: Kami) => _getEquipmentEffects(world, components, kami.id),
         },
       };
     })();

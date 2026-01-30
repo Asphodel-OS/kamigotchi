@@ -42,7 +42,6 @@ export const KamiList = ({
   utils: {
     calcExpRequirement: (lvl: number) => number;
     getTempBonuses: (kami: Kami) => Bonus[];
-    getEquipmentEffects: (kami: Kami) => { image: string; text: string }[];
     getAllAccounts: () => Account[];
   };
 }) => {
