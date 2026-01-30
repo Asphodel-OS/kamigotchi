@@ -271,7 +271,7 @@ export const KamiBar = ({
         <Overlay top={0.2} left={0.5}>
           <OutputSection>
             <Text size={0.6}>{calcOutput(kami)}</Text>
-            {item && <OutputIcon src={item.image} />}
+            {item?.image && <OutputIcon src={item.image} />}
           </OutputSection>
         </Overlay>
         <TextTooltip text={getTooltip(kami)} direction='row'>
