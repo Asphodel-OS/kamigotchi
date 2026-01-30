@@ -22,7 +22,7 @@ import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce } from './utils';
 import { GasEstimationCache } from './gasCache';
 
 export const MAX_NONCE_RETRIES = 1; // Retry nonce errors exactly once
-export const MUTEX_RELEASE_MS = 2000; // Release mutex after 2s even if TX pending
+export const MUTEX_RELEASE_MS = 1500; // Release mutex after 1.5s even if TX pending
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
