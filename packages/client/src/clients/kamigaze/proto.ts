@@ -24,8 +24,6 @@ export interface Component {
 export interface State {
   packedIdx: number;
   data: Uint8Array;
-  componentIdx: number;
-  entityIdx: number;
 }
 
 export interface ECSEvent {
@@ -61,6 +59,7 @@ export interface BlockResponse {
 export interface StateResponse {
   state: State[];
   pending: number;
+  lastBlockNumber: number;
 }
 
 export interface StreamResponse {
@@ -227,7 +226,7 @@ export const Component: MessageFns<Component> = {
 };
 
 function createBaseState(): State {
-  return { packedIdx: 0, data: new Uint8Array(0), componentIdx: 0, entityIdx: 0 };
+  return { packedIdx: 0, data: new Uint8Array(0) };
 }
 
 export const State: MessageFns<State> = {
@@ -237,12 +236,6 @@ export const State: MessageFns<State> = {
     }
     if (message.data.length !== 0) {
       writer.uint32(18).bytes(message.data);
-    }
-    if (message.componentIdx !== 0) {
-      writer.uint32(24).uint32(message.componentIdx);
-    }
-    if (message.entityIdx !== 0) {
-      writer.uint32(32).uint32(message.entityIdx);
     }
     return writer;
   },
@@ -270,22 +263,6 @@ export const State: MessageFns<State> = {
           message.data = reader.bytes();
           continue;
         }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.componentIdx = reader.uint32();
-          continue;
-        }
-        case 4: {
-          if (tag !== 32) {
-            break;
-          }
-
-          message.entityIdx = reader.uint32();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -302,8 +279,6 @@ export const State: MessageFns<State> = {
     const message = createBaseState();
     message.packedIdx = object.packedIdx ?? 0;
     message.data = object.data ?? new Uint8Array(0);
-    message.componentIdx = object.componentIdx ?? 0;
-    message.entityIdx = object.entityIdx ?? 0;
     return message;
   },
 };
@@ -657,7 +632,7 @@ export const BlockResponse: MessageFns<BlockResponse> = {
 };
 
 function createBaseStateResponse(): StateResponse {
-  return { state: [], pending: 0 };
+  return { state: [], pending: 0, lastBlockNumber: 0 };
 }
 
 export const StateResponse: MessageFns<StateResponse> = {
@@ -667,6 +642,9 @@ export const StateResponse: MessageFns<StateResponse> = {
     }
     if (message.pending !== 0) {
       writer.uint32(16).uint32(message.pending);
+    }
+    if (message.lastBlockNumber !== 0) {
+      writer.uint32(24).uint64(message.lastBlockNumber);
     }
     return writer;
   },
@@ -694,6 +672,14 @@ export const StateResponse: MessageFns<StateResponse> = {
           message.pending = reader.uint32();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.lastBlockNumber = longToNumber(reader.uint64());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -710,6 +696,7 @@ export const StateResponse: MessageFns<StateResponse> = {
     const message = createBaseStateResponse();
     message.state = object.state?.map((e) => State.fromPartial(e)) || [];
     message.pending = object.pending ?? 0;
+    message.lastBlockNumber = object.lastBlockNumber ?? 0;
     return message;
   },
 };
