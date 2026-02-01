@@ -9,7 +9,7 @@ import {
 } from 'ethers';
 import { log } from 'utils/logger';
 
-const SYNC_TX_TIMEOUT_MS = 10000;
+const SYNC_TX_TIMEOUT_MS = 15000;
 
 /**
  * Get the revert reason from a failed transaction using debug_traceTransaction.
