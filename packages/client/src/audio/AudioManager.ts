@@ -616,6 +616,10 @@ export class AudioManager {
   }
 
   private resolveAssetUrl(src: string): string {
+    // If the source is already a full URL (http/https), return as-is
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      return src;
+    }
     // Allow registry to specify paths relative to src root via "assets/..."
     // From this file (src/audio/..), assets live at ../assets/...
     const fixed = src.startsWith('assets/') ? `../${src}` : src;

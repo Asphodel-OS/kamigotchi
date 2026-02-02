@@ -1,15 +1,19 @@
-import click from './click.m4a';
-import dice from './dice.m4a';
-import echo from './echo.m4a';
-import fund from './fund.m4a';
-import message from './message.m4a';
-import phase from './phase.m4a';
-import scribble from './scribble.m4a';
-import signup from './signup.m4a';
-import success from './success.m4a';
-import teleport from './teleport.m4a';
-import trade from './trade.m4a';
-import vend from './vend.m4a';
+const CDN_BASE_URL = import.meta.env.VITE_CDN_BASE_URL || 'https://cdn.prod.kamigotchi.io';
+
+const fx = (filename: string, ext: string = 'm4a') => `${CDN_BASE_URL}/sound/fx/interaction/${filename}.${ext}`;
+
+export const click = fx('click');
+export const dice = fx('dice');
+export const echo = fx('echo');
+export const fund = fx('fund');
+export const message = fx('message');
+export const phase = fx('phase');
+export const scribble = fx('scribble');
+export const signup = fx('signup');
+export const success = fx('success');
+export const teleport = fx('teleport');
+export const trade = fx('trade');
+export const vend = fx('vend');
 
 export const InteractionFX = {
   click,
@@ -25,3 +29,5 @@ export const InteractionFX = {
   vend,
   message,
 };
+
+export { fx };

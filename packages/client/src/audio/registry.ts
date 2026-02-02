@@ -1,4 +1,4 @@
-import { withAudioExt } from './constants';
+import { cdnAudio } from './constants';
 import type { AudioRegistry } from './types';
 
 const registry: AudioRegistry = {
@@ -10,7 +10,7 @@ const registry: AudioRegistry = {
   assets: [
     {
       key: 'bgm.cave',
-      src: withAudioExt('assets/sound/ost/cave'),
+      src: cdnAudio('sound/ost/cave'),
       bus: 'bgm',
       chain: 'presets/warm-room.json',
       loop: true,
@@ -19,7 +19,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.click',
-      src: withAudioExt('assets/sound/fx/interaction/click'),
+      src: cdnAudio('sound/fx/interaction/click'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -29,7 +29,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.fund',
-      src: withAudioExt('assets/sound/fx/interaction/fund'),
+      src: cdnAudio('sound/fx/interaction/fund'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -39,7 +39,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.scribble',
-      src: withAudioExt('assets/sound/fx/interaction/scribble'),
+      src: cdnAudio('sound/fx/interaction/scribble'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -49,7 +49,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.signup',
-      src: withAudioExt('assets/sound/fx/interaction/signup'),
+      src: cdnAudio('sound/fx/interaction/signup'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -59,7 +59,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.success',
-      src: withAudioExt('assets/sound/fx/interaction/success'),
+      src: cdnAudio('sound/fx/interaction/success'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -69,7 +69,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.vend',
-      src: withAudioExt('assets/sound/fx/interaction/vend'),
+      src: cdnAudio('sound/fx/interaction/vend'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -79,7 +79,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.message',
-      src: withAudioExt('assets/sound/fx/interaction/message'),
+      src: cdnAudio('sound/fx/interaction/message'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
