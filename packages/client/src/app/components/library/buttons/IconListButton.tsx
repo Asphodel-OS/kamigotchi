@@ -2,8 +2,8 @@ import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
-import { TextTooltip } from '../poppers';
-import { Popover } from '../poppers/Popover';
+import { Popover } from '../poppers';
+import { TextTooltip } from '../tooltips';
 import { IconButton } from './IconButton';
 
 export interface Option {
@@ -25,11 +25,15 @@ export function IconListButton({
   scaleOrientation,
   searchable,
   icon,
+  filter,
+  shake,
   tooltip,
   disabled,
+  cooldownBackground,
 }: {
   options: Option[];
   searchable?: boolean;
+  filter?: string;
 
   // button
   img?: string;
@@ -41,6 +45,8 @@ export function IconListButton({
   width?: number;
   fullWidth?: boolean;
   balance?: number;
+  shake?: boolean;
+  cooldownBackground?: string;
 
   // tooltip
   tooltip?: {
@@ -122,6 +128,9 @@ export function IconListButton({
           balance={balance}
           corner={!balance}
           icon={icon}
+          filter={filter}
+          shake={shake}
+          cooldownBackground={cooldownBackground}
         />
       </TextTooltip>
     </Popover>

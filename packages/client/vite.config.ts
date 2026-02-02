@@ -1,17 +1,56 @@
 import dsv from '@rollup/plugin-dsv';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: path.resolve(__dirname, '.'),
-  plugins: [dsv(), react()],
-  assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.m4a', '**/*.png', '**/*.webp'],
+  plugins: [
+    dsv(),
+    react(),
+    // Add bundle analyzer in dev
+    process.env.ANALYZE &&
+      visualizer({
+        filename: 'dist/bundle-analysis.html',
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+  ].filter(Boolean),
+  assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.m4a', '**/*.mp3', '**/*.png', '**/*.wav', '**/*.webp'],
   build: {
     assetsInlineLimit: 0,
+    chunkSizeWarningLimit: 1000, // Warn at 1MB instead of 500KB
+    // Performance budgets
     rollupOptions: {
-      input: path.resolve(__dirname, 'index.html'),
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-dom') || id.includes('/react/')) {
+              return 'react-vendor';
+            }
+            if (id.includes('chart.js')) {
+              return 'chart-vendor';
+            }
+            if (
+              (id.includes('@initia/') || id.includes('@cosmjs/')) &&
+              !id.includes('interwovenkit-react')
+            ) {
+              return 'cosmos-vendor';
+            }
+            if (id.includes('antd') || id.includes('@mui/')) {
+              return 'ui-vendor';
+            }
+            if (id.includes('/three/')) {
+              return 'three-vendor';
+            }
+            if (id.includes('ethers')) {
+              return 'ethers-vendor';
+            }
+          }
+        },
+      },
     },
   },
   resolve: {

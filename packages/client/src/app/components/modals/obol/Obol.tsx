@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { ModalWrapper, Overlay } from 'app/components/library';
-import { UIComponent } from 'app/root/types';
 import { useLayers } from 'app/root/hooks';
+import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
 import { hoverFx } from 'app/styles/effects';
 import { ItemImages } from 'assets/images/items';
 import { OBOL_INDEX } from 'constants/items';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance } from 'network/shapes/Item';
-import { didActionComplete } from 'network/utils';
+import { didActionSucceed } from 'network/utils';
 
 const obolsPerEgg = 5;
 const arrowButtons = [
@@ -27,7 +27,7 @@ export const ObolModal: UIComponent = {
 
     const {
       network,
-      utils: { getObolsBalance }
+      utils: { getObolsBalance },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
@@ -80,7 +80,7 @@ export const ObolModal: UIComponent = {
           return api.player.account.item.craft(index, amount);
         },
       });
-      const completed = await didActionComplete(actions.Action, transaction);
+      const completed = await didActionSucceed(actions.Action, transaction);
       if (completed) {
         setEggsQuantity(1);
       }

@@ -39,8 +39,8 @@ export const LeftMenuFixture: UIComponent = {
         <PartyMenuButton />
         <MapMenuButton />
         <NodeMenuButton disabled={!nodeEntity} />
-        <SudoMenuButton />
         <OnyxMenuButton />
+        <SudoMenuButton />
         <StudioMenuButton />
       </Wrapper>
     );

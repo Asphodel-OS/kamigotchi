@@ -48,6 +48,7 @@ export async function deleteRooms(api: AdminAPI, overrideIndices?: number[]) {
 
   for (let i = 0; i < indices.length; i++) {
     try {
+      console.log('deleting room at roomIndex ' + indices[i]);
       await api.room.delete(indices[i]);
     } catch {
       console.error('Could not delete room at roomIndex ' + indices[i]);
@@ -90,6 +91,22 @@ async function initRoom(api: AdminAPI, entry: any, liveRooms: number[]) {
     console.error(`Could not create room ${index}`, e);
   } finally {
     if (success) await createGates(api, index);
+  }
+}
+
+// set the name and description of a list of specified rooms
+export async function setRoomText(api: AdminAPI, indices: number[]) {
+  const csv = await getSheet('rooms', 'rooms');
+  if (!csv) return console.log('No rooms/rooms.csv found');
+
+  for (let i = 0; i < csv.length; i++) {
+    const room = csv[i];
+    const index = Number(room['Index']);
+    if (!indices.includes(index)) continue;
+
+    const name = room['Name'];
+    const description = room['Description'];
+    await api.room.setText(index, name, description);
   }
 }
 

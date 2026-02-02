@@ -132,24 +132,49 @@ enum Effectiveness {
 // calculate the shift in harvest Efficacy (Fertility Boost)
 export const calcEfficacyShifts = (harvest: Harvest, kami: Kami): number => {
   const node = harvest.node;
-  if (!node || !kami.traits || !node.affinity || node.affinity === 'NORMAL') return 0;
+  if (!node || !kami.traits || !node.affinity) return 0;
   if (!kami.config) return 0;
 
+  const bodyAff = getKamiBodyAffinity(kami);
+  const handAff = getKamiHandAffinity(kami);
+
+  const nodeAffs = node.affinity;
+  if (nodeAffs.length > 2) {
+    console.warn('invalid number of node affinities found', nodeAffs);
+    return 0;
+  }
+
+  // determine most favorable matchup order
+  // NOTE: below logic assumes no XX-NORMAL nodes and impact body > impact hand
+  let nodeBodyAff = '';
+  let nodeHandAff = '';
+  if (nodeAffs.length == 1) {
+    nodeBodyAff = nodeAffs[0];
+    nodeHandAff = nodeAffs[0];
+  } else if (nodeAffs.length == 2) {
+    let isReversed = false;
+    if (bodyAff === nodeAffs[1]) isReversed = true;
+    else if (bodyAff !== nodeAffs[0] && handAff === nodeAffs[0]) isReversed = true;
+    nodeBodyAff = isReversed ? nodeAffs[1] : nodeAffs[0];
+    nodeHandAff = isReversed ? nodeAffs[0] : nodeAffs[1];
+  }
+
+  // calculate the efficacy shifts
   let shift = 0;
-  const nodeAffinity = node.affinity;
+  const config = kami.config.harvest.efficacy;
   const upShiftBonus = kami.bonuses?.harvest.fertility.boost ?? 0;
 
-  // body
-  const bodyAffinity = getKamiBodyAffinity(kami);
-  const bodyEffectiveness = getHarvestEffectiveness(nodeAffinity, bodyAffinity);
-  const bodyConfig = kami.config.harvest.efficacy.body;
-  shift += calcEfficacyShift(bodyEffectiveness, bodyConfig, upShiftBonus);
+  if (bodyAff === 'NORMAL') shift += upShiftBonus / 2;
+  else {
+    const effectiveness = getHarvestEffectiveness(nodeBodyAff, bodyAff);
+    shift += calcEfficacyShift(effectiveness, config.body, upShiftBonus);
+  }
 
-  // hand
-  const handAffinity = getKamiHandAffinity(kami);
-  const handEffectiveness = getHarvestEffectiveness(nodeAffinity, handAffinity);
-  const handConfig = kami.config.harvest.efficacy.hand;
-  shift += calcEfficacyShift(handEffectiveness, handConfig, upShiftBonus);
+  if (handAff === 'NORMAL') shift += upShiftBonus / 2;
+  else {
+    const effectiveness = getHarvestEffectiveness(nodeHandAff, handAff);
+    shift += calcEfficacyShift(effectiveness, config.hand, upShiftBonus);
+  }
 
   return shift;
 };
@@ -168,7 +193,6 @@ export const calcEfficacyShift = (
 
 // determine how effective a trait matchup is for a harvest
 export const getHarvestEffectiveness = (nodeAff: string, traitAff: string): Effectiveness => {
-  if (nodeAff === 'NORMAL' && traitAff === 'NORMAL') return Effectiveness.SPECIAL;
   if (nodeAff === 'NORMAL' || traitAff === 'NORMAL') return Effectiveness.NEUTRAL;
   if (nodeAff === traitAff) return Effectiveness.UP;
   return Effectiveness.DOWN;

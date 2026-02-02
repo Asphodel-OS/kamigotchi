@@ -2,6 +2,9 @@
 pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
+import { IEmitter } from "solecs/interfaces/IEmitter.sol";
+import { Emitter } from "solecs/Emitter.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 contract GoalsTest is SetupTemplate {
   PlayerAccount accLurker;
@@ -48,15 +51,17 @@ contract GoalsTest is SetupTemplate {
     _createGenericItem(100); // reward - bronze tier
     _createGenericItem(200); // reward - silver tier
     _createGenericItem(300); // reward - gold tier
+    _createGenericItem(400); // reward - proportional
     uint256 goalID = _createGoal(
       goalIndex,
       0,
       Condition("ITEM", "CURR_MIN", MUSU_INDEX, targetAmt, "")
     );
-    uint256 rwdBronze = _createGoalRewardBasic(goalIndex, 100, "ITEM", 100, 1);
-    uint256 rwdSilver = _createGoalRewardBasic(goalIndex, 200, "ITEM", 200, 1);
-    uint256 rwdGold = _createGoalRewardBasic(goalIndex, 300, "ITEM", 300, 1);
-    uint256 rwdDisplay = _createGoalRewardDisplay(goalIndex, "name");
+    _createGoalRewardBasic(goalIndex, 100, "ITEM", 100, 1); // bronze tier
+    _createGoalRewardBasic(goalIndex, 200, "ITEM", 200, 1); // silver tier
+    _createGoalRewardBasic(goalIndex, 300, "ITEM", 300, 1); // gold tier
+    _createGoalRewardDisplay(goalIndex, "name"); // display only
+    _createGoalRewardBasic(goalIndex, 0, "ITEM", 400, 3); // proportional
 
     _fundAccount(accSlacker.index, 50);
     _fundAccount(accBronze.index, 100);
@@ -68,30 +73,35 @@ contract GoalsTest is SetupTemplate {
 
     // check contribution shape; slacker contributes 50
     vm.prank(accSlacker.operator);
-    _GoalContributeSystem.executeTyped(goalIndex, 50);
-    currContribAmt += 50;
-    _assertContribution(goalID, accSlacker.id, 50);
+    uint256 slackerContrib = 50;
+    _GoalContributeSystem.executeTyped(goalIndex, slackerContrib);
+    currContribAmt += slackerContrib;
+    _assertContribution(goalID, accSlacker.id, slackerContrib);
     assertEq(0, LibInventory.getBalanceOf(components, accSlacker.id, MUSU_INDEX));
     _assertGoalStatus(goalID, currContribAmt, false);
 
     // add contribution for bronze and silver (alr checked shape)
     vm.prank(accBronze.operator);
-    _GoalContributeSystem.executeTyped(goalIndex, 100);
-    currContribAmt += 100;
+    uint256 bronzeContrib = 100;
+    _GoalContributeSystem.executeTyped(goalIndex, bronzeContrib);
+    currContribAmt += bronzeContrib;
     vm.prank(accSilver.operator);
-    _GoalContributeSystem.executeTyped(goalIndex, 200);
-    currContribAmt += 200;
+    uint256 silverContrib = 200;
+    _GoalContributeSystem.executeTyped(goalIndex, silverContrib);
+    currContribAmt += silverContrib;
 
     // gold first contribution
     vm.prank(accGold.operator);
-    _GoalContributeSystem.executeTyped(goalIndex, 100);
-    currContribAmt += 100;
+    uint256 goldContrib = 100;
+    _GoalContributeSystem.executeTyped(goalIndex, goldContrib);
+    currContribAmt += goldContrib;
 
-    // gold contributes, but it caps out at 1111 - 450 = 611
+    // gold contributes, but it caps out at 1111 - 450 = 661
     vm.prank(accGold.operator);
     _GoalContributeSystem.executeTyped(goalIndex, 1000);
-    currContribAmt += 611;
-    _assertContribution(goalID, accGold.id, 761);
+    currContribAmt += 661;
+    goldContrib += 661;
+    _assertContribution(goalID, accGold.id, goldContrib);
     assertEq(1239, LibInventory.getBalanceOf(components, accGold.id, MUSU_INDEX)); // 2000 - 761 = 1289
     _assertGoalStatus(goalID, 1111, true);
 
@@ -109,12 +119,11 @@ contract GoalsTest is SetupTemplate {
     _GoalClaimSystem.executeTyped(goalIndex);
 
     {
-      // not-even-bronze claims, gets nothing
+      // not-even-bronze claims, gets only proportional rewards
       uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
-        goalID,
-        accSlacker.id
+        LibGoal.getContributionAmt(components, goalID, accSlacker.id)
       );
       assertEq(4, claimableTiers.length, "claimable tiers mismatch");
       for (uint256 i; i < claimableTiers.length; i++) assertEq(claimableTiers[i], 0);
@@ -125,6 +134,7 @@ contract GoalsTest is SetupTemplate {
       assertEq(0, _getItemBal(accSlacker, 100), "slacker bronze mismatch");
       assertEq(0, _getItemBal(accSlacker, 200), "slacker silver mismatch");
       assertEq(0, _getItemBal(accSlacker, 300), "slacker gold mismatch");
+      assertEq(slackerContrib * 3, _getItemBal(accSlacker, 400), "slacker proportional mismatch");
     }
 
     {
@@ -132,8 +142,7 @@ contract GoalsTest is SetupTemplate {
       uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
-        goalID,
-        accBronze.id
+        LibGoal.getContributionAmt(components, goalID, accBronze.id)
       );
       uint256[] memory rewards = LibGoal.getRewards(components, claimableTiers);
       assertEq(1, rewards.length, "bronzer rewards mismatch");
@@ -142,6 +151,7 @@ contract GoalsTest is SetupTemplate {
       assertEq(1, _getItemBal(accBronze, 100), "bronzer bronze mismatch");
       assertEq(0, _getItemBal(accBronze, 200), "bronzer silver mismatch");
       assertEq(0, _getItemBal(accBronze, 300), "bronzer gold mismatch");
+      assertEq(bronzeContrib * 3, _getItemBal(accBronze, 400), "bronzer proportional mismatch");
     }
 
     {
@@ -149,8 +159,7 @@ contract GoalsTest is SetupTemplate {
       uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
-        goalID,
-        accSilver.id
+        LibGoal.getContributionAmt(components, goalID, accSilver.id)
       );
       uint256[] memory rewards = LibGoal.getRewards(components, claimableTiers);
       assertEq(2, rewards.length, "silverer rewards mismatch");
@@ -159,6 +168,7 @@ contract GoalsTest is SetupTemplate {
       assertEq(1, _getItemBal(accSilver, 100), "silverer bronze mismatch");
       assertEq(1, _getItemBal(accSilver, 200), "silverer silver mismatch");
       assertEq(0, _getItemBal(accSilver, 300), "silverer gold mismatch");
+      assertEq(silverContrib * 3, _getItemBal(accSilver, 400), "silverer proportional mismatch");
     }
 
     {
@@ -166,8 +176,7 @@ contract GoalsTest is SetupTemplate {
       uint256[] memory claimableTiers = LibGoal.getClaimableTiers(
         components,
         goalIndex,
-        goalID,
-        accGold.id
+        LibGoal.getContributionAmt(components, goalID, accGold.id)
       );
       uint256[] memory rewards = LibGoal.getRewards(components, claimableTiers);
       assertEq(3, rewards.length, "goldier rewards mismatch");
@@ -176,7 +185,46 @@ contract GoalsTest is SetupTemplate {
       assertEq(1, _getItemBal(accGold, 100), "goldier bronze mismatch");
       assertEq(1, _getItemBal(accGold, 200), "goldier silver mismatch");
       assertEq(1, _getItemBal(accGold, 300), "goldier gold mismatch");
+      assertEq(goldContrib * 3, _getItemBal(accGold, 400), "goldier proportional mismatch");
     }
+  }
+
+  function testGoalCompleteEventEmission() public {
+    uint32 goalIndex = 99;
+    uint256 targetAmt = 100;
+
+    // Set up emitter for event testing
+    vm.prank(deployer);
+    Emitter emitter = new Emitter(world);
+    vm.prank(deployer);
+    world.updateEmitter(address(emitter));
+
+    // Create a simple goal
+    uint256 goalID = _createGoal(
+      goalIndex,
+      0,
+      Condition("ITEM", "CURR_MIN", MUSU_INDEX, targetAmt, "")
+    );
+
+    // Fund account to be able to complete the goal in one contribution
+    _fundAccount(accGold.index, 100);
+
+    // Build expected event parameters
+    uint8[] memory schema = new uint8[](3);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT32);  // goalIndex
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // goalID
+    schema[2] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
+
+    // Expect the GOAL_COMPLETE event to be emitted
+    vm.expectEmit(address(emitter));
+    emit IEmitter.WorldEvent("GOAL_COMPLETE", schema, abi.encode(goalIndex, goalID, block.timestamp));
+
+    // Contribute the full amount to complete the goal
+    vm.prank(accGold.operator);
+    _GoalContributeSystem.executeTyped(goalIndex, 100);
+
+    // Verify goal is complete
+    assertTrue(LibGoal.isComplete(components, goalID), "Goal should be complete");
   }
 
   //////////////////

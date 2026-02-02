@@ -11,17 +11,17 @@ import { LibKami } from "libraries/LibKami.sol";
 import { LibInventory, ONYX_INDEX } from "libraries/LibInventory.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.onyx.revive"));
-uint256 constant PRICE = 3000; // 3.000
+uint256 constant PRICE = 33; // priced in shards
+int32 constant HEALTH_RESET = 33; // health to reset to on revival
 
 // name pet
 contract KamiOnyxReviveSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    revert("Onyx Features are temporarily disabled.");
-
-    uint256 id = abi.decode(arguments, (uint256));
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    uint32 index = abi.decode(arguments, (uint32));
+    uint256 id = LibKami.getByIndex(components, index);
+    uint256 accID = LibAccount.getByOperator(components, msg.sender);
 
     // checks
     LibKami.verifyAccount(components, id, accID);
@@ -32,7 +32,7 @@ contract KamiOnyxReviveSystem is System {
     LibInventory.decFor(components, accID, ONYX_INDEX, PRICE);
     LibKami.sync(components, id);
     LibKami.setState(components, id, "RESTING");
-    LibKami.heal(components, id, 10);
+    LibKami.heal(components, id, HEALTH_RESET);
 
     // log
     LibAccount.updateLastTs(components, accID);

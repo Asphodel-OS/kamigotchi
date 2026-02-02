@@ -38,3 +38,11 @@ export const getHandAffinity = (kami: Kami) => {
   if (!hand || !hand.affinity) return 'NORMAL';
   return hand.affinity;
 };
+
+// get the room index where the kami is currently harvesting
+// default to 0 if no harvest is found
+export const getRoomIndex = (kami: Kami) => {
+  const node = kami.harvest?.node;
+  if (!node) return 0;
+  return node.index;
+};

@@ -17,6 +17,6 @@ export const config: PrivyClientConfig = {
     logo: import.meta.env.VITE_PRIVY_APP_LOGO,
     showWalletLoginFirst: true,
     walletChainType: 'ethereum-only',
-    walletList: ['detected_ethereum_wallets'],
+    walletList: ['detected_ethereum_wallets','metamask'],
   },
 };

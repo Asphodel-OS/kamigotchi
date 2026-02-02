@@ -88,7 +88,7 @@ async function initSkill(api: AdminAPI, skill: any) {
 
 async function initBonus(api: AdminAPI, skill: any, effectsCSV: any) {
   const index = Number(skill['Index']);
-  const key = skill['Effect'].split(' ')[0];
+  const key = skill['Effect'];
   const effect = effectsCSV.find((e: any) => e['Key'] === key);
 
   const rawType = effect['Type'].toUpperCase(); // effect context

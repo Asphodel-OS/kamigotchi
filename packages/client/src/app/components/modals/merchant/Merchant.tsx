@@ -10,8 +10,12 @@ import { useLayers } from 'app/root/hooks';
 import { useSelected, useVisibility } from 'app/stores';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
+import { Allo, parseAllos as _parseAllos } from 'network/shapes/Allo';
+import { parseConditionalText } from 'network/shapes/Conditional';
 import { Inventory } from 'network/shapes/Inventory';
+import { Item } from 'network/shapes/Item';
 import { Listing } from 'network/shapes/Listing';
+import { DetailedEntity } from 'network/shapes/utils';
 import { Cart } from './cart';
 import { Catalog } from './catalog';
 import { Header } from './header';
@@ -30,12 +34,11 @@ export const MerchantModal: UIComponent = {
         getNPC,
         cleanListings,
         refreshListings,
-        getMusuBalance
+        getMusuBalance,
+        parseAllos,
+        displayItemRequirements,
       },
-      network: {
-        actions,
-        api,
-      }
+      network: { actions, api },
     } = (() => {
       const { network } = layers;
       const { components, world } = network;
@@ -52,6 +55,11 @@ export const MerchantModal: UIComponent = {
           refreshListings: (npc: NPC) => refreshNPCListings(components, npc),
           getMusuBalance: (inventories: Inventory[]) =>
             getInventoryBalance(inventories, MUSU_INDEX),
+          parseAllos: (allo: Allo[]): DetailedEntity[] => _parseAllos(world, components, allo),
+          displayItemRequirements: (item: Item) =>
+            item?.requirements?.use
+              ?.map((req) => parseConditionalText(world, components, req))
+              .join('\n') || 'None',
         },
         network,
       };
@@ -117,7 +125,16 @@ export const MerchantModal: UIComponent = {
       <ModalWrapper id='merchant' canExit overlay>
         <Header merchant={merchant} player={account} balance={musuBalance} />
         <Body>
-          <Catalog account={account} listings={listings} cart={cart} setCart={setCart} />
+          <Catalog
+            account={account}
+            listings={listings}
+            cart={cart}
+            setCart={setCart}
+            utils={{
+              parseAllos,
+              displayRequirements: displayItemRequirements,
+            }}
+          />
           <Cart account={account} cart={cart} setCart={setCart} buy={buy} />
         </Body>
       </ModalWrapper>

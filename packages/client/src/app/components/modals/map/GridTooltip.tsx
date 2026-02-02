@@ -37,7 +37,10 @@ export const GridTooltip = ({
     <>
       <TopSection>
         <TextRow>
-          Type: <Icon src={getAffinityImage(node.affinity)} />
+          Type:{' '}
+          {node.affinity.map((aff: string) => (
+            <Icon key={aff} src={getAffinityImage(aff)} />
+          ))}
         </TextRow>
         {drops[0] && (
           <TextRow>

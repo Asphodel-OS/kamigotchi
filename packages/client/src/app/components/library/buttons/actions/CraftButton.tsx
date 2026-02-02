@@ -17,14 +17,14 @@ export const CraftButton = ({
     craft: (amount: number) => void;
   };
   utils: {
-    meetsRequirements: (recipe: Recipe) => boolean;
-    displayRequirements: (recipe: Recipe) => string;
+    meetsRequirementsRecipe: (recipe: Recipe) => boolean;
+    displayRecipeRequirements: (recipe: Recipe) => string;
     getItemBalance: (index: number) => number;
   };
 }) => {
   const { craft } = actions;
   const { quantity, recipe, stamina } = data;
-  const { meetsRequirements, displayRequirements, getItemBalance } = utils;
+  const { meetsRequirementsRecipe, displayRecipeRequirements, getItemBalance } = utils;
 
   const handleCraft = () => {
     playMessage();
@@ -35,13 +35,14 @@ export const CraftButton = ({
   // VALIDATION
 
   const isDisabled = () => {
-    return !meetsRequirements(recipe) || !meetsInputs() || !meetsStamina();
+    return !meetsRequirementsRecipe(recipe) || !meetsInputs() || !meetsStamina();
   };
 
   // determine disabled tooltip from validations
   const getDisabledTooltip = () => {
     let tooltip = '';
-    if (!meetsRequirements(recipe)) tooltip = 'Requires: \n' + displayRequirements(recipe);
+    if (!meetsRequirementsRecipe(recipe))
+      tooltip = 'Requires: \n' + displayRecipeRequirements(recipe);
     else if (!meetsInputs()) tooltip = 'Not enough items';
     else if (!meetsStamina()) tooltip = 'Not enough stamina';
     return `Craft (${quantity})`;

@@ -14,5 +14,16 @@ export const room60: Room = {
     key: 'k1',
     path: k1,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'bisected notebook',
+      coordinates: { x1: 54, y1: 92, x2: 70, y2: 100 },
+      dialogue: 601,
+    },
+    {
+      name: 'bisected shovel',
+      coordinates: { x1: 33, y1: 102, x2: 72, y2: 116 },
+      dialogue: 602,
+    },
+  ],
 };

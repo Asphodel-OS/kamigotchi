@@ -10,14 +10,24 @@ import { addRewards } from './rewards';
 export const init = async (api: AdminAPI, entry: any): Promise<boolean> => {
   const index = Number(entry['Index']);
   const name = entry['Title'];
-  const description = entry['Description'] ?? '';
-  const altDescription = entry['Resolution text'] ?? '';
+  const description = entry['Introduction Dialogue'] ?? '';
+  const altDescription = entry['Resolution Dialogue'] ?? '';
   const isDaily = entry['Daily'] === 'Yes';
+  const questType = entry['Type'] ?? '';
+  const questGiver = entry['Giver'] ?? '';
 
   let success = true;
   try {
     console.log(`Creating ${isDaily ? 'Daily' : ''} Quest: ${index} (${name})`);
-    await api.registry.quest.create(index, name, description, altDescription, isDaily ? 64800 : 0);
+    await api.registry.quest.create(
+      index,
+      name,
+      description,
+      altDescription,
+      questType,
+      questGiver,
+      isDaily ? 64800 : 0
+    );
   } catch (e) {
     console.log(`Error: Failed to create Quest ${index}`);
     console.log(`  ${!!description} ${!!altDescription} ${isDaily}`);
@@ -62,7 +72,7 @@ export async function initQuests(api: AdminAPI, indices?: number[], all?: boolea
     await addRequirements(api, row);
     await addObjectives(api, row);
     await addRewards(api, row);
-    await enable(api, index);
+    await enableQuest(api, index);
   }
 }
 
@@ -108,11 +118,34 @@ export async function reviseQuests(api: AdminAPI, overrideIndices?: number[]) {
   await initQuests(api, indices);
 }
 
-export async function enable(api: AdminAPI, index: number) {
+async function disableQuest(api: AdminAPI, index: number) {
   try {
-    // console.log(`Enabling quest ${index}`);
+    console.log(`Disabling quest ${index}`);
+    await api.registry.quest.disable(index);
+  } catch (e) {
+    console.error(`!! Could not disable quest ${index}`, e);
+  }
+}
+
+async function enableQuest(api: AdminAPI, index: number) {
+  try {
+    console.log(`Enabling quest ${index}`);
     await api.registry.quest.enable(index);
   } catch (e) {
     console.error(`!! Could not enable quest ${index}`, e);
+  }
+}
+
+export async function disableQuests(api: AdminAPI, indices: number[]) {
+  console.log('\n==DISABLING QUESTS==');
+  for (let i = 0; i < indices.length; i++) {
+    await disableQuest(api, indices[i]);
+  }
+}
+
+export async function enableQuests(api: AdminAPI, indices: number[]) {
+  console.log('\n==ENABLING QUESTS==');
+  for (let i = 0; i < indices.length; i++) {
+    await enableQuest(api, indices[i]);
   }
 }

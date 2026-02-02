@@ -6,7 +6,7 @@ import { KAMI_BASE_URI } from 'constants/media';
 import { BaseAccount } from 'network/shapes/Account';
 import { playClick } from 'utils/sounds';
 import { Card } from '..';
-import { TextTooltip } from '../../poppers';
+import { TextTooltip } from '../../tooltips';
 
 // AccountCard is a Card that displays information about an Account
 export const AccountCard = ({
@@ -56,7 +56,7 @@ export const AccountCard = ({
         </TextTooltip>
       </TitleBar>
       <Content>
-        <BioColumn key='col-1' tabIndex={0} role="region" aria-label="Account bio">
+        <BioColumn key='col-1' tabIndex={0} role='region' aria-label='Account bio'>
           {description.map((text, i) => (
             <TextMedium key={`desc-${i}`}>{text}</TextMedium>
           ))}
@@ -97,7 +97,7 @@ const Content = styled.div`
   min-height: 4vw;
 
   display: grid;
-  grid-template-columns: 9fr 1fr; 
+  grid-template-columns: 9fr 1fr;
   align-items: stretch;
 `;
 
@@ -106,8 +106,8 @@ const BioColumn = styled.div`
   flex-flow: column nowrap;
   max-height: 3.5vw;
   overflow-y: auto;
-  overflow-wrap: break-word; 
-  
+  overflow-wrap: break-word;
+
   /* Hide scrollbar by default and show on hover */
   &::-webkit-scrollbar {
     width: 1vw;

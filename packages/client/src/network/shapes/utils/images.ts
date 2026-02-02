@@ -1,3 +1,4 @@
+import { PlaceholderIcon } from 'assets/images/icons';
 import { FactionIcons } from 'assets/images/icons/factions';
 import { ItemImages } from 'assets/images/items';
 import { SkillImages } from 'assets/images/skills';
@@ -5,6 +6,7 @@ import { AffinityIcons } from 'constants/affinities';
 import { StatIcons } from 'constants/stats';
 
 export const getAffinityImage = (name: string) => {
+  if (name === 'UNKNOWN') return PlaceholderIcon;
   const key = cleanName(name) as keyof typeof AffinityIcons;
   if (!key) throw new Error(`No affinity image found for ${name}`);
   return AffinityIcons[key];

@@ -12,7 +12,7 @@ import { getRequirements } from './getters';
 export interface BaseNode extends DetailedEntity {
   ObjectType: 'NODE';
   id: EntityID;
-  affinity: string;
+  affinity: string[];
   index: number;
 }
 
@@ -33,11 +33,13 @@ export const getBaseNode = (
 ): BaseNode => {
   const { Affinity, Name, NodeIndex } = components;
 
+  const affinity = parseAffinity(getComponentValue(Affinity, entity)?.value as string);
+
   return {
     ObjectType: 'NODE',
     id: world.entities[entity],
     entity,
-    affinity: getComponentValue(Affinity, entity)?.value as string,
+    affinity,
     index: getComponentValue(NodeIndex, entity)?.value as number,
     name: getComponentValue(Name, entity)?.value as string,
     image: '',
@@ -68,6 +70,13 @@ export const getNode = (world: World, components: Components, entity: EntityInde
   };
 
   return node;
+};
+
+/////////////////
+// UTILS
+
+const parseAffinity = (affinity: string): string[] => {
+  return affinity.split('-');
 };
 
 ////////////////

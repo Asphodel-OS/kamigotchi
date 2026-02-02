@@ -25,6 +25,8 @@ import { EmaBoardModal } from './modals/naming';
 import { NodeModal } from './modals/node';
 import { ObolModal } from './modals/obol';
 import { PartyModal } from './modals/party';
+import { TempleOfTheWheel } from './modals/templeOfTheWheel';
+import { QuestDetailsModal } from './modals/questDetails';
 import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
@@ -148,6 +150,10 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 75, rowEnd: 99 },
   },
   {
+    uiComponent: QuestDetailsModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 85 },
+  },
+  {
     uiComponent: EmaBoardModal,
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 15, rowEnd: 99 },
   },
@@ -177,6 +183,10 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: ObolModal,
+    gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
+  },
+  {
+    uiComponent: TempleOfTheWheel,
     gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
   },
   {

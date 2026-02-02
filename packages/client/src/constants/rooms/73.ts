@@ -9,5 +9,16 @@ export const room73: Room = {
     key: 'brokenTube',
     path: brokenTube,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'large panel',
+      coordinates: { x1: 100, y1: 90, x2: 127, y2: 122 },
+      dialogue: 731,
+    },
+    {
+      name: 'broken tube',
+      coordinates: { x1: 20, y1: 25, x2: 55, y2: 110 },
+      dialogue: 732,
+    },
+  ],
 };

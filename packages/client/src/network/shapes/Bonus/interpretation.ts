@@ -13,7 +13,7 @@ export const parseBonusText = (bonus: Bonus): string => {
   // number formatting
   if (type.includes('STAT')) text += value * 1;
   else if (type.includes('COOLDOWN')) text += `${value * 1}s`;
-  else if (type.includes('INTENSITY')) text += `${value * 1}musu/hr`;
+  else if (type.includes('INTENSITY')) text += `${value * 1}`;
   else text += `${(value / 10).toFixed(1)}%`; // default %
 
   // type
@@ -38,10 +38,16 @@ export const parseBonusText = (bonus: Bonus): string => {
   return text;
 };
 
+export const parseTooltipText = (bonus: Bonus): string[] => {
+  return [];
+};
+
 const parseEndtype = (bonus: Bonus): string => {
   if (bonus.endType === 'TIMED') return 'for ' + bonus.duration + 's';
   else if (bonus.endType === 'UPON_HARVEST_ACTION') return 'til next action';
   else if (bonus.endType === 'UPON_DEATH') return 'til death';
   else if (bonus.endType === 'UPON_LIQUIDATION') return 'til kami liquidates';
+  else if (bonus.endType === 'UPON_KILL_OR_KILLED') return 'til kami kills or is killed';
+  else if (bonus.endType?.startsWith('UPON_UNEQUIP_')) return 'til unequipped';
   else return '';
 };

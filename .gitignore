@@ -4,3 +4,7 @@ dist/
 .eslintcache
 .env
 .DS_STORE
+ 
+.claude
+CLAUDE.md
+**/.serena

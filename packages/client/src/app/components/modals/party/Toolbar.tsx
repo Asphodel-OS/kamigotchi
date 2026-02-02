@@ -1,7 +1,15 @@
 import { Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { calcHealthPercent, canHarvest, isHarvesting, onCooldown } from 'app/cache/kami';
+import {
+  calcHealthPercent,
+  calcHealthRate,
+  getKamiRoomIndex,
+  isFull,
+  isHarvesting,
+  isResting,
+  onCooldown,
+} from 'app/cache/kami';
 import { compareTraitAffinity, compareTraitName, compareTraitRarity } from 'app/cache/trait';
 import { IconButton, IconListButton, TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
@@ -66,139 +74,105 @@ export const Toolbar = ({
   /////////////////
   // SUBSCRIPTIONS
 
+  // sort kamis when changes are detected
+  useEffect(() => {
+    if (!isModalOpen) return;
+
+    const base = view === 'external' ? wildKamis : kamis;
+    const sorted = [...base];
+
+    switch (sort) {
+      case 'name':
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'state':
+        sorted.sort((a, b) => {
+          const stateDiff = a.state.localeCompare(b.state);
+          if (stateDiff != 0) return stateDiff;
+          return calcHealthPercent(a) - calcHealthPercent(b);
+        });
+        break;
+      case 'traits':
+        sorted.sort((a, b) => {
+          let diff = 0;
+          if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
+          if (diff === 0) diff = compareTraitRarity(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitName(a.traits?.body!, b.traits?.body!);
+          if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
+          if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
+          return diff;
+        });
+        break;
+      case 'harvest rate':
+        sorted.sort((a, b) => {
+          const rateA = isHarvesting(a) ? (a.harvest?.rates?.total?.average ?? 0) : 0;
+          const rateB = isHarvesting(b) ? (b.harvest?.rates?.total?.average ?? 0) : 0;
+          return rateB - rateA;
+        });
+        break;
+      case 'strain':
+        sorted.sort((a, b) => {
+          const rateA = isHarvesting(a) ? calcHealthRate(a) : 0;
+          const rateB = isHarvesting(b) ? calcHealthRate(b) : 0;
+          return rateA - rateB;
+        });
+        break;
+      case 'resting rate':
+        sorted.sort((a, b) => {
+          const rateA = isResting(a) && !isFull(a) ? calcHealthRate(a) : 0;
+          const rateB = isResting(b) && !isFull(b) ? calcHealthRate(b) : 0;
+          return rateB - rateA;
+        });
+        break;
+    }
+
+    setDisplayedKamis(sorted);
+  }, [isModalOpen, wildKamis.length, kamis.length, view, sort, tick]);
+
+  // updates the list of action options based on state updates
   useEffect(() => {
     if (!isModalOpen) return;
 
     // if external view, set stake options directly from list of displayed kamis
     if (view === 'external') {
-      const stakeOptions = wildKamis.map((kami) => ({ text: kami.name, object: kami }));
+      const stakeOptions = displayedKamis.map((kami) => ({ text: kami.name, object: kami }));
       setStakeOptions(stakeOptions);
       return;
     }
 
-    // otherwise, set dropdown options based on internal kami states
-    const addOptions = displayedKamis
-      .filter((kami) => canHarvest(kami) && passesNodeReqs(kami))
+    // otherwise, set dropdown options based on world kami states
+    const freeKamis = displayedKamis.filter((kami) => !onCooldown(kami));
+
+    const addOptions = freeKamis
+      .filter((kami) => isResting(kami) && passesNodeReqs(kami))
       .map((kami) => ({ text: kami.name, object: kami }));
 
-    const collectOptions = displayedKamis
-      .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
+    const collectOptions = freeKamis
+      .filter((kami) => isHarvesting(kami) && getKamiRoomIndex(kami) === account.roomIndex)
       .map((kami) => ({ text: kami.name, object: kami }));
 
-    const stopOptions = displayedKamis
-      .filter((kami) => isHarvesting(kami) && !onCooldown(kami))
+    const stopOptions = freeKamis
+      .filter((kami) => isHarvesting(kami) && getKamiRoomIndex(kami) === account.roomIndex)
       .map((kami) => ({ text: kami.name, object: kami }));
 
     setAddOptions(addOptions);
     setCollectOptions(collectOptions);
     setStopOptions(stopOptions);
-  }, [displayedKamis, tick, isModalOpen]);
-
-  // sort kamis when changes are detected
-  // TODO: trigger updates after successful state updates
-  // NOTE: sorts in place (setDisplayedKamis is just used to trigger a rendering update)
-  useEffect(() => {
-    if (!isModalOpen) return;
-
-    let sorted = view === 'external' ? wildKamis : kamis;
-    if (sort === 'name') {
-      sorted = sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sort === 'state') {
-      sorted = sorted.sort((a, b) => {
-        const stateDiff = a.state.localeCompare(b.state);
-        if (stateDiff != 0) return stateDiff;
-        return calcHealthPercent(a) - calcHealthPercent(b);
-      });
-    } else if (sort === 'traits') {
-      sorted = sorted.sort((a, b) => {
-        let diff = 0;
-        if (diff === 0) diff = compareTraitAffinity(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitAffinity(a.traits?.hand!, b.traits?.hand!);
-        if (diff === 0) diff = compareTraitRarity(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitName(a.traits?.body!, b.traits?.body!);
-        if (diff === 0) diff = compareTraitRarity(a.traits?.hand!, b.traits?.hand!);
-        if (diff === 0) diff = compareTraitName(a.traits?.hand!, b.traits?.hand!);
-        return diff;
-      });
-    }
-
-    setDisplayedKamis(sorted);
-  }, [isModalOpen, kamis.length, sort, view]);
-
-  /*
-  // JS-driven sticky fallback across browsers: translateY toolbar as parent scrolls
-  useEffect(() => {
-    if (!isModalOpen) return;
-    const toolbarEl = toolbarRef.current;
-    if (!toolbarEl) return;
-
-    // Helper: find the nearest scrollable ancestor if explicit container not found
-    const findScrollContainer = (start: HTMLElement): HTMLElement | null => {
-      let el: HTMLElement | null = start;
-      while (el) {
-        const style = window.getComputedStyle(el);
-        const overflowY = style.overflowY;
-        if ((overflowY === 'auto' || overflowY === 'scroll') && el.scrollHeight > el.clientHeight) {
-          return el;
-        }
-        el = el.parentElement;
-      }
-      return (document.scrollingElement as HTMLElement) || document.documentElement;
-    };
-
-    const explicit = toolbarEl.closest("[data-scroll-container='true']") as HTMLElement | null;
-    const container = explicit ?? findScrollContainer(toolbarEl);
-    if (!container) return;
-
-    let rafId = 0;
-
-    const setY = (y: number) => {
-      // Use direct transform to avoid dependency issues and keep this hotfix minimal
-      toolbarEl.style.transform = `translateY(${y}px)`;
-    };
-
-    const readScrollTop = () => {
-      if (container === document.scrollingElement || container === document.documentElement) {
-        return document.scrollingElement?.scrollTop ?? window.scrollY ?? 0;
-      }
-      return (container as HTMLElement).scrollTop;
-    };
-
-    const onScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        const y = readScrollTop();
-        setY(y);
-        rafId = 0;
-      });
-    };
-
-    // initialize position and bind
-    onScroll();
-    container.addEventListener(
-      'scroll',
-      onScroll as EventListener,
-      { passive: true } as AddEventListenerOptions
-    );
-    detachScroll.current = () => {
-      container.removeEventListener('scroll', onScroll as EventListener);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-    return () => {
-      if (detachScroll.current) detachScroll.current();
-      toolbarEl.style.transform = 'translateY(0px)';
-    };
-  }, [isModalOpen]);
-*/
+  }, [isModalOpen, displayedKamis, tick]);
 
   /////////////////
   // INTERACTION
 
   // toggle between views
+  // only show external view if
+  // player has no kami in world
+  // or player has kami in the wild
   const toggleView = () => {
-    if (view === 'external') setView('expanded');
-    if (view === 'expanded') setView('collapsed');
-    if (view === 'collapsed') setView('external');
+    const showExternal = kamis.length === 0 || wildKamis.length > 0;
+    if (view === 'external') setView('collapsed');
+    else if (view === 'collapsed') setView('expanded');
+    else setView(showExternal ? 'external' : 'collapsed');
   };
 
   /////////////////
@@ -230,7 +204,7 @@ export const Toolbar = ({
 
   // get DropDownToggle tooltips, depending on view
   const getDDTTooltips = (mode: View) => {
-    if (mode === 'external') return ['Stake Kami. (You must be at Scrap Confluence)'];
+    if (mode === 'external') return ['Import Kami. (You must be at Scrap Confluence)'];
     return ['Add Kami to Node', 'Collect Harvest', 'Stop Harvest'];
   };
 
@@ -249,7 +223,6 @@ export const Toolbar = ({
   // RENDER
 
   return (
-    // <Container ref={toolbarRef}>
     <Container>
       <Section>
         <TextTooltip text={[`${view}`]}>
@@ -258,7 +231,7 @@ export const Toolbar = ({
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
       </Section>
       <DropdownToggle
-        limit={33}
+        limit={12}
         button={{
           images: getDDTIcons(view),
           tooltips: getDDTTooltips(view),
@@ -279,7 +252,7 @@ const Container = styled.div`
   /* Avoid Safari white-screen bug when sticky is nested in overflow containers  will-change: transform; position: relative;*/
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
 
   width: 100%;
   padding: 0.6vw;

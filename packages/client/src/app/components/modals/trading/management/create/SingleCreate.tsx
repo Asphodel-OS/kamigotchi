@@ -2,8 +2,13 @@ import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { getInventoryBalance } from 'app/cache/inventory';
-import { IconButton, IconListButtonOption, Overlay, Text } from 'app/components/library';
-import { TextTooltip } from 'app/components/library/poppers';
+import {
+  IconButton,
+  IconListButtonOption,
+  Overlay,
+  Text,
+  TextTooltip,
+} from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { MUSU_INDEX, STONE_INDEX } from 'constants/items';
 import { Account, Inventory } from 'network/shapes';

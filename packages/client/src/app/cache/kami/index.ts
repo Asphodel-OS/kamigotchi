@@ -5,6 +5,7 @@ export {
   calcHarvestTime,
   calcHealth,
   calcHealthPercent,
+  calcHealthRate,
   calcLiqKarma,
   calcLiqStrain,
   calcLiqThreshold,
@@ -27,6 +28,7 @@ export {
 export {
   getBodyAffinity as getKamiBodyAffinity,
   getHandAffinity as getKamiHandAffinity,
+  getRoomIndex as getKamiRoomIndex,
   updateRates,
 } from './functions';
 export { getKamiAccount, getKamiHarvest, getKamiTraits } from './getters';

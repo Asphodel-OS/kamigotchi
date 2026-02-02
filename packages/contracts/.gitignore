@@ -23,3 +23,7 @@ deployment/contracts/Imports.sol
 deployment/transactions/
 test/utils/TestSetupImports.t.sol
 /types/
+
+
+temp/
+**/CLAUDE.md

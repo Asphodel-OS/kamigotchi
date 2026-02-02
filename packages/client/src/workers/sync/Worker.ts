@@ -16,13 +16,8 @@ import {
   map,
   Observable,
   of,
-  retry,
   Subject,
-  Subscription,
   take,
-  throwError,
-  timeout,
-  timer,
 } from 'rxjs';
 
 import { VERSION as IDB_VERSION } from 'cache/db';
@@ -30,6 +25,7 @@ import { GodID, SyncState, SyncStatus } from 'engine/constants';
 import { createDecode } from 'engine/encoders';
 import { createBlockNumberStream } from 'engine/executors';
 import { createReconnectingProvider } from 'engine/providers';
+import { log } from 'utils/logger';
 import { debug as parentDebug } from '../debug';
 import {
   isNetworkComponentUpdateEvent,
@@ -48,12 +44,11 @@ import {
   saveStateCacheToStore,
   storeStateEvents,
 } from './state';
-import { connectStreamService, createTransformWorldEvents } from './stream';
+import { createStream, fillGap, HEALTH_CHECK_BUFFER_MS, KEEPALIVE_INTERVAL_MS } from './stream';
 import {
   createFetchSystemCallsFromEvents,
   createFetchWorldEventsInBlockRange,
   createLatestEventStreamRPC,
-  fetchEventsInBlockRangeChunked,
 } from './utils';
 
 const debug = parentDebug.extend('SyncWorker');
@@ -61,15 +56,27 @@ const debug = parentDebug.extend('SyncWorker');
 export enum InputType {
   Ack,
   Config,
+  Wake,
+  BlockUpdate,
 }
 export type Config = { type: InputType.Config; data: SyncWorkerConfig };
 export type Ack = { type: InputType.Ack };
+export type Wake = { type: InputType.Wake; timestamp: number };
+export type BlockUpdate = { type: InputType.BlockUpdate; blockNumber: number };
 export const ack = { type: InputType.Ack as const };
-export type Input = Config | Ack;
+export const createWake = (): Wake => ({ type: InputType.Wake, timestamp: Date.now() });
+export const createBlockUpdate = (blockNumber: number): BlockUpdate => ({
+  type: InputType.BlockUpdate,
+  blockNumber,
+});
+export type Input = Config | Ack | Wake | BlockUpdate;
 
 export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEvent<C>[]> {
   private input$ = new Subject<Input>();
   private output$ = new Subject<NetworkEvent<C>>();
+  private wakeSignal$ = new Subject<void>();
+  private blockUpdate$ = new Subject<number>();
+  private lastMessageTime = Date.now();
   private syncState: SyncStatus = { state: SyncState.CONNECTING, msg: '', percentage: 0 };
   private config?: SyncWorkerConfig;
 
@@ -189,87 +196,34 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
     const stateCache = { current: createStateCache() };
     const { blockNumber$ } = createBlockNumberStream(providers);
 
-    // Setup RPC event stream
-    const latestEventRPC$ = createLatestEventStreamRPC(
-      blockNumber$,
-      fetchWorldEvents,
-      fetchSystemCalls ? createFetchSystemCallsFromEvents(provider) : undefined
-    );
-    let currentSubscription: Subscription;
-    // Setup Stream Service -> RPC event stream fallback
-    const transformWorldEvents = createTransformWorldEvents(decode);
-    let latestEvent$ = streamServiceUrl
-      ? connectStreamService(
-          streamServiceUrl,
-          worldContract.address,
-          transformWorldEvents,
-          Boolean(fetchSystemCalls),
-          fetchWorldEvents
-        )
-      : latestEventRPC$;
-
-    // Create the new event stream upon failure
-    const handleStreamReconnection = () => {
-      console.log('[worker] handleEventStreamError');
-      latestEvent$ = streamServiceUrl
-        ? connectStreamService(
-            streamServiceUrl,
-            worldContract.address,
-            transformWorldEvents,
-            Boolean(fetchSystemCalls),
-            fetchWorldEvents
-          )
-        : latestEventRPC$;
-      if (currentSubscription) currentSubscription.unsubscribe();
-      // Restart the subscription
-      currentSubscription.unsubscribe();
-      currentSubscription = subscribeToEventStream(latestEvent$);
-    };
-
+    // Setup event stream: use Kamigaze stream service if available, otherwise RPC
     const initialLiveEvents: NetworkComponentUpdate<Components>[] = [];
-    const subscribeToEventStream = (stream$: Observable<any>): Subscription => {
-      console.log('[worker] Subscribing to the event stream');
-      return stream$
-        .pipe(
-          timeout({
-            first: 60000, // Align with cloufront timeout/iddling
-            each: 60000,
-            with: () =>
-              throwError(() => {
-                console.log('Timeout');
-                return new Error('Stream timeout - no data received for 60s');
-              }),
-          }),
-          map((res) => res),
-          retry({
-            count: 3,
-            delay: (error, retryCount) => {
-              console.log(`retrying kamigaze stream subscription... ${retryCount}`);
-              const delayMs = 3000;
-              return timer(delayMs);
-            },
-          })
-        )
-        .subscribe({
-          next: (event) => {
-            if (event.component === 'Void') return;
-            if (!outputLiveEvents) {
-              if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
-              return;
-            }
-            this.output$.next(event as NetworkEvent<C>); //this is the sync magic
+    const eventStream$ = streamServiceUrl
+      ? createStream({
+          url: streamServiceUrl!,
+          worldAddress: worldContract.address,
+          decode,
+          includeSystemCalls: Boolean(fetchSystemCalls),
+          fetchWorldEvents,
+          wakeSignal$: this.wakeSignal$,
+          blockUpdate$: this.blockUpdate$,
+          onMessage: () => {
+            this.lastMessageTime = Date.now();
           },
-          error: (error) => {
-            console.log(`[worker] error, attempting to re-subscribe to stream ${error}`, error);
-            handleStreamReconnection();
-          },
-          complete: () => {
-            console.log('[worker] stream completed');
-            handleStreamReconnection();
-          },
-        });
-    };
-    currentSubscription = subscribeToEventStream(latestEvent$);
+        })
+      : createLatestEventStreamRPC(
+          blockNumber$,
+          fetchWorldEvents,
+          fetchSystemCalls ? createFetchSystemCallsFromEvents(provider) : undefined
+        );
+
+    eventStream$.subscribe((event) => {
+      if (!outputLiveEvents) {
+        if (isNetworkComponentUpdateEvent(event)) initialLiveEvents.push(event);
+        return;
+      }
+      this.output$.next(event as NetworkEvent<C>);
+    });
 
     const streamStartBlockNumberPromise = awaitStreamValue(blockNumber$);
 
@@ -334,13 +288,14 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
       percentage: 0,
     });
 
-    const gapStateEvents = await fetchEventsInBlockRangeChunked(
+    const gapStateEvents = await fillGap({
+      kamigazeUrl: streamServiceUrl!,
+      decode,
       fetchWorldEvents,
-      initialState.blockNumber,
-      streamStartBlockNumber,
-      50,
-      (percentage: number) => this.setLoadingState({ percentage })
-    );
+      fromBlock: initialState.blockNumber,
+      toBlock: streamStartBlockNumber,
+      setPercentage: (percentage: number) => this.setLoadingState({ percentage }),
+    });
 
     // Merge initial state, gap state and live events since initial sync started
     storeStateEvents(initialState, [...gapStateEvents, ...initialLiveEvents]);
@@ -410,23 +365,44 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
   }
 
   public work(input$: Observable<Input>): Observable<NetworkEvent<C>[]> {
-    input$.subscribe(this.input$);
+    input$.subscribe((e) => {
+      if (e.type === InputType.Wake) {
+        const timeSinceLastMessage = Date.now() - this.lastMessageTime;
+        const healthThreshold = KEEPALIVE_INTERVAL_MS + HEALTH_CHECK_BUFFER_MS;
+        if (timeSinceLastMessage < healthThreshold) {
+          log.debug(
+            `[SyncWorker] Stream healthy (last msg ${timeSinceLastMessage}ms ago), ignoring wake`
+          );
+          return;
+        }
+        console.log(
+          `[SyncWorker] Stream appears dead (${timeSinceLastMessage}ms since last msg), reconnecting`
+        );
+        this.wakeSignal$.next();
+        return;
+      }
+      if (e.type === InputType.BlockUpdate) {
+        this.blockUpdate$.next(e.blockNumber);
+        return;
+      }
+      this.input$.next(e);
+    });
     const throttledOutput$ = new Subject<NetworkEvent<C>[]>();
 
     this.output$
       .pipe(
         bufferTime(33, null, 33333),
         filter((updates) => updates.length > 0),
-        concatMap((updates) =>
-          concat(
+        concatMap((updates) => {
+          return concat(
             of(updates),
             input$.pipe(
               filter((e) => e.type === InputType.Ack),
               take(1),
               ignoreElements()
             )
-          )
-        )
+          );
+        })
       )
       .subscribe(throttledOutput$);
 

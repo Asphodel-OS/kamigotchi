@@ -1,11 +1,12 @@
 import { SvgIconComponent } from '@mui/icons-material';
 import { ForwardedRef, forwardRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-import { clickFx, hoverFx, pulseFx } from 'app/styles/effects';
+import { clickFx, hoverFx, pulseFx, shakeFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
-// ActionButton is a text button that triggers an Action when clicked
+// IconButton is a button that triggers an action when clicked
+// TODO: clean up these parameters as nested objects
 export const IconButton = forwardRef(function IconButton(
   {
     img,
@@ -27,17 +28,21 @@ export const IconButton = forwardRef(function IconButton(
     icon,
     filter,
     noBorder,
+    shake,
+    cooldownBackground,
   }: {
-    img?: string | SvgIconComponent;
     onClick: Function;
+    img?: string | SvgIconComponent; // TODO: get rid of all svg icons and mui references
     text?: string;
     width?: number;
+    shake?: boolean;
 
     // general styling
     color?: string;
     disabled?: boolean;
     fullWidth?: boolean;
     pulse?: boolean;
+    cooldownBackground?: string;
 
     balance?: number; // shows a balance on icon (for Inventory)
     corner?: boolean; // indicates button has options
@@ -80,6 +85,7 @@ export const IconButton = forwardRef(function IconButton(
             iconInsetPx={resolvedIconInsetPx}
             iconInsetXpx={resolvedIconInsetXpx}
             iconInsetYpx={resolvedIconInsetYpx}
+            filter={filter}
           />
         );
       }
@@ -105,6 +111,8 @@ export const IconButton = forwardRef(function IconButton(
       flatten={flatten}
       noBorder={noBorder}
       filter={filter}
+      shake={shake}
+      cooldownBackground={cooldownBackground}
     >
       {MyImage()}
       {text && (
@@ -132,6 +140,8 @@ const Container = styled.button<{
   shadow?: boolean;
   noBorder?: boolean;
   filter?: string;
+  shake?: boolean;
+  cooldownBackground?: string;
 }>`
   position: relative;
   border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15vw')};
@@ -147,7 +157,8 @@ const Container = styled.button<{
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
+  background: ${({ color, disabled, cooldownBackground }) =>
+    cooldownBackground || (disabled ? '#bbb' : color)};
   box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
 
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
@@ -162,6 +173,10 @@ const Container = styled.button<{
         ` border-top-left-radius: 0;
       border-bottom-left-radius: 0;
   `}
+
+  ${({ pulse }) => pulse && pulseAnimationRule}
+  ${({ shake }) => shake && shakeAnimationRule}
+
   &:hover {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
@@ -170,9 +185,6 @@ const Container = styled.button<{
   &:active {
     animation: ${() => clickFx()} 0.3s;
   }
-
-  ${({ pulse }) => pulse && `animation: ${pulseFx} 2.5s ease-in-out infinite;`}
-  ${({ filter }) => filter && `filter: ${filter};`}
 `;
 
 const Image = styled.img<{
@@ -181,6 +193,7 @@ const Image = styled.img<{
   iconInsetPx?: number;
   iconInsetXpx?: number;
   iconInsetYpx?: number;
+  filter?: string;
 }>`
   width: ${({ scale, orientation, iconInsetPx, iconInsetXpx }) =>
     `calc(${scale * 0.75}${orientation} - ${iconInsetXpx ?? iconInsetPx ?? 0}px)`};
@@ -188,6 +201,7 @@ const Image = styled.img<{
     `calc(${scale * 0.75}${orientation} - ${iconInsetYpx ?? iconInsetPx ?? 0}px)`};
   ${({ scale }) => (scale > 4 ? 'image-rendering: pixelated;' : '')}
   user-drag: none;
+  ${({ filter }) => filter && `filter: ${filter};`}
 `;
 
 const Text = styled.div<{ scale: number; orientation: string; withIcon?: boolean }>`
@@ -233,4 +247,12 @@ const Balance = styled.div`
   align-items: center;
   justify-content: center;
   padding: 0.2vw;
+`;
+
+const pulseAnimationRule = css`
+  animation: ${pulseFx} 2.5s ease-in-out infinite;
+`;
+
+const shakeAnimationRule = css`
+  animation: ${shakeFx} 0.5s ease-in-out infinite;
 `;

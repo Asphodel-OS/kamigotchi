@@ -12,19 +12,29 @@ export const Details = ({
   goal: Goal;
   getFromDescription: (type: string, index: number) => DetailedEntity;
 }) => {
+  /////////////////
+  // PARSING
+
+  const helpText = (tier: Tier) => {
+    if (tier.cutoff > 0) {
+      return `Have a contribution score of at least ${tier.cutoff}`;
+    } else {
+      if (tier.name === 'Proportional') {
+        return 'Get this per unit contributed';
+      }
+      return 'Everyone gets this';
+    }
+  };
+
   ////////////////
   // SMALL DISPLAYS
 
   const TierBox = (tier: Tier) => {
-    const helpText =
-      tier.cutoff > 0
-        ? `Have a contribution score of at least ${tier.cutoff}`
-        : 'Everyone gets this';
     return (
       <Box key={tier.name} style={{ padding: '0 0.4vw' }}>
         <Row>
           <SmallTitleText>{tier.name}</SmallTitleText>
-          <HelpChip tooltip={{ text: [helpText] }} />
+          <HelpChip tooltip={{ text: [helpText(tier)] }} />
         </Row>
 
         <Row>
@@ -34,6 +44,7 @@ export const Details = ({
               item={getFromDescription(reward.type, reward.index ?? 0)}
               size='small'
               balance={reward.value ?? 0}
+              suffix={tier.name === 'Proportional' ? ` per contribution` : undefined}
               styleOverride={{ box: { borderColor: '#444', marginBottom: '0' } }}
             />
           ))}

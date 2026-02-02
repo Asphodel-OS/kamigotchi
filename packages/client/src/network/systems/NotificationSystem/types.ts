@@ -15,4 +15,7 @@ export type NotificationData = {
   description: string;
   time: string;
   modal?: string;
+  questIndex?: EntityIndex;
+  itemIndices?: number[];
+  itemAmounts?: string[];
 };

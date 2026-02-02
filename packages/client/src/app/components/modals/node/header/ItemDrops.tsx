@@ -31,7 +31,7 @@ export const ItemDrops = ({
     <Container>
       <Label>Drops: </Label>
       <TextTooltip text={[nodeDrops[0]?.name ?? '']}>
-        <Icon key={'node-' + nodeDrops[0]?.name} src={nodeDrops[0]?.image ?? ''} />
+        <Icon key={'node-' + nodeDrops[0]?.name} src={nodeDrops[0]?.image ?? null} />
       </TextTooltip>
 
       <TextTooltip text={drops.map((entry) => `${entry.name} [${entry.description}]`)}>

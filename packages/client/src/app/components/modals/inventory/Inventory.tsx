@@ -14,7 +14,7 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { InventoryIcon } from 'assets/images/icons/menu';
-import { MUSU_INDEX, OBOL_INDEX } from 'constants/items';
+import { MUSU_INDEX, OBOL_INDEX, WONDER_EGG_INDEX } from 'constants/items';
 import {
   queryAllAccounts as _queryAllAccounts,
   Account,
@@ -25,7 +25,8 @@ import { parseAllos as _parseAllos, Allo } from 'network/shapes/Allo';
 import { parseConditionalText, passesConditions } from 'network/shapes/Conditional';
 import { getItemBalance, Item } from 'network/shapes/Item';
 import { Kami } from 'network/shapes/Kami';
-import { didActionComplete } from 'network/utils';
+import { didActionSucceed } from 'network/utils';
+import { playWonderegg } from 'utils/sounds';
 import { ItemGrid } from './items/ItemGrid';
 import { MusuRow } from './MusuRow';
 import { Transfer } from './transfer/Transfer';
@@ -69,8 +70,9 @@ export const InventoryModal: UIComponent = {
           accountEntity,
         },
         utils: {
-          displayRequirements: (recipe: Item) =>
-            recipe.requirements.use
+          // TODO: horrendous pattern. refactor when/how we parse conditional text
+          displayRequirements: (item: Item) =>
+            item.requirements.use
               .map((req) => parseConditionalText(world, components, req))
               .join('\n '),
           getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
@@ -161,7 +163,7 @@ export const InventoryModal: UIComponent = {
           return api.account.item.transfer(itemsIndexes, amts, account.id);
         },
       });
-      const completed = await didActionComplete(actions.Action, tx);
+      const completed = await didActionSucceed(actions.Action, tx);
       if (completed) {
         setResetSend(true);
       }
@@ -181,11 +183,11 @@ export const InventoryModal: UIComponent = {
     };
 
     // use an item on an Account
-    const useForAccountTx = (item: Item, amount: number) => {
+    const useForAccountTx = async (item: Item, amount: number) => {
       let actionKey = 'Using';
       if (item.type === 'LOOTBOX') actionKey = 'Opening';
 
-      actions.add({
+      const transaction = actions.add({
         action: 'AccountFeed',
         params: [item.index],
         description: `${actionKey} ${item.name}`,
@@ -193,6 +195,14 @@ export const InventoryModal: UIComponent = {
           return api.player.account.item.use(item.index, amount);
         },
       });
+
+      // if item used was a wonder egg play the sound
+      if (item.index === WONDER_EGG_INDEX) {
+        const completed = await didActionSucceed(actions.Action, transaction);
+        if (completed) {
+          playWonderegg();
+        }
+      }
     };
 
     /////////////////
@@ -224,7 +234,6 @@ export const InventoryModal: UIComponent = {
         onClose={() => setMode('STOCK')}
         canExit
         noPadding
-        overlay
         truncate
       >
         {!accountEntity ? (

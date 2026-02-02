@@ -15,8 +15,10 @@ import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibAllo } from "libraries/LibAllo.sol";
+import { LibTypes } from "solecs/LibTypes.sol";
 
 /** @notice
  * Scavenge (scav bar) is a point counter that distributes fungible rewards on a linear curve.
@@ -119,7 +121,11 @@ library LibScavenge {
     uint256 holderID
   ) internal {
     uint256[] memory rwdIDs = getRewards(components, regID);
-    LibAllo.distribute(world, components, rwdIDs, count, holderID);
+    uint256[] memory commitIDs = LibAllo.distribute(world, components, rwdIDs, count, holderID);
+
+    string memory scavengeType = TypeComponent(getAddrByID(components, TypeCompID)).get(regID);
+    uint32 nodeIndex = IndexComponent(getAddrByID(components, IndexCompID)).get(regID);
+    emitLog(world, regID, scavengeType, nodeIndex, holderID, commitIDs);
   }
 
   /////////////////
@@ -161,7 +167,7 @@ library LibScavenge {
   /////////////////
   // LOGGING
 
-  function logClaim(IUintComp components, Base memory data, uint256 amt, uint256 accID) public {
+  function logClaim(IUintComp components, Base memory data, uint256 amt, uint256 accID) internal {
     uint32[] memory indices = new uint32[](3);
     indices[1] = data.index; // rolls claim per index (e.g. node)
     indices[2] = 0; // rolls claim per affinity (e.g. SCRAP, NORMAL)
@@ -171,6 +177,62 @@ library LibScavenge {
     types[2] = string("SCAV_CLAIM_AFFINITY_").concat(data.affinity);
 
     LibData.inc(components, accID, indices, types, amt);
+  }
+
+  function emitLog(
+    IWorld world,
+    uint256 regID,
+    string memory scavengeType,
+    uint32 nodeIndex,
+    uint256 holderID,
+    uint256[] memory commitIDs
+  ) internal {
+    ScavengeRewardsEventData memory eventData = ScavengeRewardsEventData({
+      regID: regID,
+      scavengeType: scavengeType,
+      nodeIndex: nodeIndex,
+      holderID: holderID,
+      timestamp: block.timestamp,
+      commitIDs: commitIDs
+    });
+
+    LibEmitter.emitEvent(
+      world,
+      "SCAVENGE_REWARDS",
+      _schema(),
+      _encodeScavengeRewardsEvent(eventData)
+    );
+  }
+
+  struct ScavengeRewardsEventData {
+    uint256 regID;
+    string scavengeType;
+    uint32 nodeIndex;
+    uint256 holderID;
+    uint256 timestamp;
+    uint256[] commitIDs;
+  }
+
+  function _schema() internal pure returns (uint8[] memory) {
+    uint8[] memory schema = new uint8[](6);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT256);       // regID
+    schema[1] = uint8(LibTypes.SchemaValue.STRING);        // scavengeType
+    schema[2] = uint8(LibTypes.SchemaValue.UINT32);        // nodeIndex
+    schema[3] = uint8(LibTypes.SchemaValue.UINT256);       // holderID
+    schema[4] = uint8(LibTypes.SchemaValue.UINT256);       // timestamp
+    schema[5] = uint8(LibTypes.SchemaValue.UINT256_ARRAY); // commitIDs
+    return schema;
+  }
+
+  function _encodeScavengeRewardsEvent(ScavengeRewardsEventData memory data) internal pure returns (bytes memory) {
+    return abi.encode(
+      data.regID,
+      data.scavengeType,
+      data.nodeIndex,
+      data.holderID,
+      data.timestamp,
+      data.commitIDs
+    );
   }
 
   /////////////////

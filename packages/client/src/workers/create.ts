@@ -4,6 +4,7 @@ import { map, Observable, Subject, timer } from 'rxjs';
 import { fromWorker } from 'workers/utils';
 import { Ack, ack, Input } from './sync/Worker';
 import { NetworkEvent } from './types';
+import { createVisibilityHandler } from './visibility';
 
 /**
  * Create a new SyncWorker ({@link Sync.worker.ts}) to performn contract/client state sync.
@@ -22,23 +23,8 @@ export function createSyncWorker<C extends Components>(ack$?: Observable<Ack>) {
   });
   const ecsEvents$ = new Subject<NetworkEvent<C>[]>();
 
-  // Handle reloads from worker
-  worker.addEventListener('message', (event) => {
-    if (event.data.type === 'RELOAD_REQUIRED') {
-      const lastReload = localStorage.getItem('lastBlockGapReload');
-      const now = Date.now();
-
-      if (!lastReload || now - parseInt(lastReload) > event.data.minTimeBetweenReloads) {
-        console.log('Large block gap detected, reloadingpage...');
-        localStorage.setItem('lastBlockGapReload', now.toString());
-        window.location.reload();
-      } else {
-        console.log(
-          `Skipping reload.. ${now - parseInt(lastReload)} > ${event.data.minTimeBetweenReloads}`
-        );
-      }
-    }
-  });
+  // Handle visibility changes (wake signals + main-thread gapfill)
+  const visibilityHandler = createVisibilityHandler({ input$, ecsEvents$ });
 
   // Send ack every 16ms if no external ack$ is provided
   ack$ = ack$ || timer(0, 16).pipe(map(() => ack));
@@ -46,10 +32,12 @@ export function createSyncWorker<C extends Components>(ack$?: Observable<Ack>) {
 
   // Pass in a "config stream", receive a stream of ECS events
   const subscription = fromWorker<Input, NetworkEvent<C>[]>(worker, input$).subscribe(ecsEvents$);
+
   const dispose = () => {
     worker.terminate();
     subscription?.unsubscribe();
     ackSub?.unsubscribe();
+    visibilityHandler.dispose();
   };
 
   return {

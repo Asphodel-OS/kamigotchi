@@ -28,7 +28,7 @@ contract DroptableRevealSystem is System, AuthRoles {
 
     // revealing
     LibCommit.filterInvalid(components, ids);
-    LibDroptable.reveal(components, ids);
+    LibDroptable.reveal(world, components, ids);
     return "";
   }
 
@@ -41,7 +41,7 @@ contract DroptableRevealSystem is System, AuthRoles {
     LibDroptable.checkAndExtractIsCommit(components, ids);
 
     LibCommit.resetBlocks(components, ids);
-    LibDroptable.reveal(components, ids);
+    LibDroptable.reveal(world, components, ids);
   }
 
   function executeTyped(uint256[] memory ids) public returns (bytes memory) {

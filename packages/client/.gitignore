@@ -3,3 +3,9 @@
 .DS_Store
 dist
 node_modules
+temp
+
+temp
+**/CLAUDE.md
+bundle-stats.html
+.serena

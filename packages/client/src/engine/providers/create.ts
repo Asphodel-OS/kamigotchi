@@ -2,6 +2,7 @@ import { callWithRetry, observableToComputed, timeoutAfter } from '@mud-classic/
 import { BrowserProvider, JsonRpcProvider, Networkish, WebSocketProvider } from 'ethers';
 import { IComputedValue, IObservableValue, observable, reaction, runInAction } from 'mobx';
 
+import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 import { ConnectionState, MUDJsonRpcProvider, ProviderConfig, Providers } from './types';
 
 /**
@@ -24,11 +25,15 @@ export function create({
     chainId,
     name: 'yominet',
   };
+  const useWebSocket = Boolean(wsRpcUrl) && !isSafariOrIOS();
+  if (wsRpcUrl && !useWebSocket) {
+    console.log('[provider] Safari/iOS detected – skipping WebSocket provider');
+  }
   const providers = externalProvider
     ? { json: externalProvider, ws: undefined }
     : {
         json: new MUDJsonRpcProvider(jsonRpcUrl, network),
-        ws: wsRpcUrl ? new WebSocketProvider(wsRpcUrl, network) : undefined,
+        ws: useWebSocket ? new WebSocketProvider(wsRpcUrl!, network) : undefined,
       };
 
   if (options?.pollingInterval) {

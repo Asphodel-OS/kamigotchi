@@ -1,19 +1,12 @@
 import styled from 'styled-components';
 import { ActionButton } from '../buttons';
-import { TextTooltip } from '../poppers/TextTooltip';
+import { TextTooltip } from '../tooltips';
 
 export const Warning = ({
-  text: {
-    color: textColor = 'black',
-    size: textSize = 0.9,
-    value: textValue,
-  },
+  text: { color: textColor = 'black', size: textSize = 0.9, value: textValue },
   color = 'orange',
   tooltip = [],
-  action: {
-    onClick: actionOnClick,
-    label: actionLabel = 'Fix',
-  } = {}
+  action: { onClick: actionOnClick, label: actionLabel = 'Fix' } = {},
 }: {
   color?: string;
   text: {
@@ -27,7 +20,6 @@ export const Warning = ({
     label?: string;
   };
 }) => {
-
   return (
     <Container color={color} size={textSize}>
       <TextTooltip text={tooltip}>

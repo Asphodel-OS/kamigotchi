@@ -1,0 +1,126 @@
+# .github/workflows/performance.yml
+name: Performance Monitoring
+
+on:
+  push:
+    branches: [main, beta, hbr.cicd]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.13.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript Check
+        run: pnpm --filter client tsc --noEmit
+
+      # nations will crumble
+      - name: ESLint
+        run: pnpm --filter client eslint . --ext .ts,.tsx --max-warnings 0
+
+      #- name: Prettier Check
+      #  run: pnpm --filter client prettier src --check
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-and-typecheck
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.13.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build client
+        run: pnpm --filter client build:prod
+
+      - name: Check bundle sizes
+        working-directory: packages/client
+        run: bash ../../.github/scripts/check-bundle-sizes.sh
+        continue-on-error: true # TODO: remove this once pipes are set
+
+      - name: Upload bundle report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bundle-analysis
+          path: packages/client/bundle-report.html
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-dist
+          path: packages/client/dist
+          retention-days: 7
+
+      # TODO
+      #- name: Memory Leak Test
+      #  run: |
+      #    # Run puppeteer memory tests
+      #    npm run test:memory
+
+  lighthouse:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: client-dist
+          path: packages/client/dist
+
+      - name: Run Lighthouse CI (Desktop)
+        run: npx @lhci/cli@0.13.x autorun --collect.outputDir=.lighthouseci/desktop
+        working-directory: packages/client
+        continue-on-error: true
+
+      - name: Run Lighthouse CI (Mobile)
+        run: npx @lhci/cli@0.13.x autorun --collect.settings.formFactor=mobile --collect.settings.screenEmulation.mobile=true --collect.outputDir=.lighthouseci/mobile
+        working-directory: packages/client
+        continue-on-error: true
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: packages/client/.lighthouseci
+          retention-days: 7

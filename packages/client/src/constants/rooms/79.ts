@@ -9,5 +9,16 @@ export const room79: Room = {
     key: 'abandonedCamp',
     path: abandonedCamp,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'charcoal drawing',
+      coordinates: { x1: 56, y1: 6, x2: 100, y2: 35 },
+      dialogue: 791,
+    },
+    {
+      name: 'makeshift tent',
+      coordinates: { x1: 11, y1: 9, x2: 58, y2: 58 },
+      dialogue: 792,
+    },
+  ],
 };

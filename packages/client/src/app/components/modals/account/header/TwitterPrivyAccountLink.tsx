@@ -3,8 +3,7 @@ import { useLinkAccount, usePrivy } from '@privy-io/react-auth';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { IconButton } from 'app/components/library/buttons/IconButton';
-import { TextTooltip } from 'app/components/library/poppers/TextTooltip';
+import { IconButton, TextTooltip } from 'app/components/library';
 import SocialIcon from 'assets/images/icons/menu/social.png';
 
 export const TwitterPrivyAccountLink = () => {
@@ -24,9 +23,9 @@ export const TwitterPrivyAccountLink = () => {
         <>
           <TextTooltip
             text={[
-              <span key="unlinked-text">
+              <span key='unlinked-text'>
                 Link <XIcon style={{ fontSize: '1.2vw', verticalAlign: 'middle' }} /> Account
-              </span>
+              </span>,
             ]}
           >
             <IconButton
@@ -35,7 +34,7 @@ export const TwitterPrivyAccountLink = () => {
               disabled={!(ready && authenticated)}
               color='transparent'
               noBorder
-              filter="opacity(0.5)"
+              filter='opacity(0.5)'
             />
           </TextTooltip>
         </>
@@ -43,7 +42,7 @@ export const TwitterPrivyAccountLink = () => {
         <>
           <TextTooltip
             text={[
-              <XIcon key="x-icon" style={{ fontSize: '1.2vw', marginBottom: '0.7vw' }} />,
+              <XIcon key='x-icon' style={{ fontSize: '1.2vw', marginBottom: '0.7vw' }} />,
               `${user?.twitter?.username}`,
               `Linked ${moment(twitterAccount?.firstVerifiedAt).fromNow()}`,
               `\n`,
@@ -56,7 +55,7 @@ export const TwitterPrivyAccountLink = () => {
               disabled={!(ready && authenticated)}
               color='transparent'
               noBorder
-              filter="drop-shadow(0 0 3px #2E7D32)"
+              filter='drop-shadow(0 0 3px #2E7D32)'
             />
           </TextTooltip>
         </>

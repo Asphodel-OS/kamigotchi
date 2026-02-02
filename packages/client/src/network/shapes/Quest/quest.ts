@@ -4,6 +4,7 @@ import { Components } from 'network/';
 import { Allo } from '../Allo';
 import { hasFlag } from '../Flag';
 import { getEntityByHash } from '../utils';
+import { getIsDisabled } from '../utils/component';
 import { Objective, getObjectives } from './objective';
 import { query } from './queries';
 import { Requirement, getRequirements } from './requirement';
@@ -31,6 +32,10 @@ export interface Quest extends BaseQuest {
   requirements: Requirement[];
   objectives: Objective[];
   rewards: Allo[];
+  descriptionAlt: string;
+  subType: string;
+  typeComp: string;
+  isDisabled: boolean;
 }
 
 // Get a Quest Registry object, complete with all Requirements, Objectives, and Rewards
@@ -59,7 +64,7 @@ export const getBase = (world: World, components: Components, entity: EntityInde
 
 // populate a BareQuest with all the details of a full Quest
 export const populate = (world: World, components: Components, base: BaseQuest): Quest => {
-  const { IsComplete, StartTime, LastTime } = components;
+  const { IsComplete, StartTime, LastTime, DescriptionAlt, Subtype, Type } = components;
   const entity = base.entity;
 
   return {
@@ -70,6 +75,10 @@ export const populate = (world: World, components: Components, base: BaseQuest):
     requirements: getRequirements(world, components, base.index),
     objectives: getObjectives(world, components, base.index),
     rewards: getRewards(world, components, base.index),
+    descriptionAlt: getComponentValue(DescriptionAlt, base.registryEntityIndex)?.value ?? '',
+    subType: getComponentValue(Subtype, base.registryEntityIndex)?.value ?? '',
+    typeComp: getComponentValue(Type, base.registryEntityIndex)?.value ?? '',
+    isDisabled: getIsDisabled(components, base.registryEntityIndex),
   };
 };
 

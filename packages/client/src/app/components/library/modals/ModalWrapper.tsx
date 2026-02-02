@@ -18,8 +18,10 @@ export const ModalWrapper = ({
   overlay,
   positionOverride,
   scrollBarColor,
+  backgroundColor,
   shuffle = false,
   truncate,
+  noScroll,
 }: {
   canExit?: boolean;
   children: React.ReactNode;
@@ -30,6 +32,7 @@ export const ModalWrapper = ({
   noPadding?: boolean;
   onClose?: () => void;
   overlay?: boolean;
+  backgroundColor?: string;
   positionOverride?: {
     colStart: number;
     colEnd: number;
@@ -40,6 +43,7 @@ export const ModalWrapper = ({
   scrollBarColor?: string;
   shuffle?: boolean;
   truncate?: boolean;
+  noScroll?: boolean;
 }) => {
   const isVisible = useVisibility((s) => s.modals[id]);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
@@ -76,7 +80,12 @@ export const ModalWrapper = ({
 
   return (
     <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
-      <Content isOpen={isVisible} truncate={truncate} data-resizable={id === 'trading'}>
+      <Content
+        backgroundColor={backgroundColor}
+        isOpen={isVisible}
+        truncate={truncate}
+        data-resizable={id === 'trading'}
+      >
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
         {canExit && (
           <ButtonRow>
@@ -85,6 +94,7 @@ export const ModalWrapper = ({
         )}
         <Children
           scrollBarColor={scrollBarColor}
+          noScroll={noScroll}
           noPadding={noPadding}
           // data-scroll-container='true'
           // data-modal-id={id}
@@ -137,6 +147,7 @@ const Wrapper = styled.div<{
 const Content = styled.div<{
   isOpen: boolean;
   truncate?: boolean;
+  backgroundColor?: string;
 }>`
   position: relative;
   background-color: white;
@@ -161,6 +172,7 @@ const Content = styled.div<{
     min-width: 48vw;
     min-height: 42vh;
   }
+  background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
 `;
 
 const ButtonRow = styled.div`
@@ -178,6 +190,7 @@ const Header = styled.div<{ noBorder?: boolean }>`
   border-radius: 1.05vw 1.05vw 0 0;
   display: flex;
   flex-flow: column nowrap;
+  border-color: grey;
 `;
 
 const Footer = styled.div<{ noBorder?: boolean }>`
@@ -190,9 +203,10 @@ const Footer = styled.div<{ noBorder?: boolean }>`
 const Children = styled.div<{
   noPadding?: boolean;
   scrollBarColor?: string;
+  noScroll?: boolean;
 }>`
   position: relative;
-  overflow-y: auto;
+  overflow: ${({ noScroll }) => (noScroll ? 'hidden' : 'auto')};
   max-height: 100%;
   height: 100%;
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}

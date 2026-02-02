@@ -52,9 +52,14 @@ export const getDTLogByHash = (
   world: World,
   components: Components,
   holderID: EntityID,
-  dtID: EntityID
+  dtID: EntityID,
+  logPrefix: string = 'droptable.item.log'
 ): DTLog => {
-  const entity = getLogEntityIndex(world, holderID, dtID);
+  const entity = getEntityByHash(
+    world,
+    [logPrefix, holderID, dtID],
+    ['string', 'uint256', 'uint256']
+  );
   if (!entity) return NullDTLog;
 
   const { Values } = components;
@@ -119,18 +124,19 @@ export const queryDTCommits = (
   });
 };
 
-//////////////////
-// IDs
+export const querySacrificeCommits = (
+  world: World,
+  components: Components,
+  holderID: EntityID
+): DTCommit[] => {
+  const { SourceID } = components;
 
-const getLogEntityIndex = (
-  world: any,
-  holderID: EntityID | undefined,
-  dtID: EntityID | undefined
-): EntityIndex | undefined => {
-  if (!holderID) return;
-  return getEntityByHash(
-    world,
-    ['droptable.item.log', holderID, dtID],
-    ['string', 'uint256', 'uint256']
-  );
+  const commits = getHolderCommits(world, components, 'KAMI_SACRIFICE_COMMIT', holderID);
+  return commits.map((commit) => {
+    return {
+      ...commit,
+      anchorID: formatEntityID((getComponentValue(SourceID, commit.entity)?.value || 0).toString()),
+      rolls: 1,
+    };
+  });
 };

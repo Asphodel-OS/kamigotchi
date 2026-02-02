@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, IconListButtonOption } from 'app/components/library';
-import { TextTooltip } from 'app/components/library/poppers';
+import {
+  IconButton,
+  IconListButton,
+  IconListButtonOption,
+  TextTooltip,
+} from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { MenuIcons } from 'assets/images/icons/menu';
@@ -73,7 +77,12 @@ export const SendBar = ({
 
   const getSendTooltip = () => {
     if (selectedKami.entity === 0 || selectedAccount.entity === 0) {
-      return ['You must select a Kami and an Account'];
+      return [
+        'Send Kami to another account.',
+        '\n',
+        'You must first select',
+        'a Kami and an Account',
+      ];
     }
 
     return [

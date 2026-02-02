@@ -21,5 +21,6 @@ export const room77: Room = {
       coordinates: { x1: 0, y1: 15, x2: 25, y2: 45 },
       onClick: () => triggerGoalModal([6]),
     },
+    { name: 'luminous mushrooms', coordinates: { x1: 30, y1: 40, x2: 100, y2: 100 }, dialogue: 771 },
   ],
 };

@@ -81,6 +81,16 @@ export const getFlagsByFilter = (
 };
 
 ///////////////
+// INTERPRETATION
+
+export const parseFlagString = (str: string): string => {
+  if (str.toUpperCase() === 'FLAG_NOT_NAMEABLE') return 'Enable kami renaming';
+  else if (str.toUpperCase() === 'FLAG_CAN_RESET_SKILLS') return 'Enable skill reset';
+  else if (str.toUpperCase() === 'FLAG_CAVES_UNLOCKED') return 'Unlock Caves';
+  else return 'Set ' + str.toLowerCase().replaceAll('_', ' ');
+};
+
+///////////////
 // UTILS
 
 // gets the entity index for a flag based on the holder and field

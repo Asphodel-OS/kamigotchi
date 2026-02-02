@@ -8,6 +8,9 @@ export function defineNotificationComponent<T = undefined>(world: World) {
       description: Type.String,
       time: Type.String,
       modal: Type.OptionalString,
+      questIndex: Type.OptionalNumber,
+      itemIndices: Type.OptionalNumberArray,
+      itemAmounts: Type.OptionalStringArray,
     },
     { id: 'Notification' }
   );

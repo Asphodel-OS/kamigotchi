@@ -18,6 +18,7 @@ import { LibDeployTokens } from "deployment/LibDeployTokens.s.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibERC20 } from "libraries/utils/LibERC20.sol";
 import { LibGetter } from "libraries/utils/LibGetter.sol";
+import { Emitter } from "solecs/Emitter.sol";
 
 abstract contract SetupTemplate is TestSetupImports {
   using LibString for string;
@@ -81,6 +82,12 @@ abstract contract SetupTemplate is TestSetupImports {
     // registering sender as system for getUniqueEntityId()
     vm.prank(address(world));
     systems.set(uint256(uint160((address(ExternalCaller)))), 0);
+
+    // Deploy and set up Emitter for event testing
+    vm.startPrank(deployer);
+    Emitter emitter = new Emitter(world);
+    world.updateEmitter(address(emitter));
+    vm.stopPrank();
   }
 
   function setUpTokens() public virtual {
@@ -878,7 +885,7 @@ abstract contract SetupTemplate is TestSetupImports {
   function _createQuest(uint32 index, uint duration) public returns (uint256 id) {
     vm.startPrank(deployer);
     id = __QuestRegistrySystem.create(
-      abi.encode(index, LibString.toString(index), "DESCRIPTION", "", duration)
+      abi.encode(index, LibString.toString(index), "DESCRIPTION", "", "type", "giver", duration)
     );
     __QuestRegistrySystem.setDisabled(index, false);
     vm.stopPrank();

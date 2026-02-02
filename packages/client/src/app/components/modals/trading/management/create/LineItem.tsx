@@ -40,7 +40,7 @@ export const LineItem = ({
       )}
       <TextTooltip title={selected.name} text={[selected.description]}>
         {iconOnly ? (
-          <IconImage src={selected.image} />
+          selected.image && <IconImage src={selected.image} />
         ) : (
           <IconListButton
             img={selected.image}

@@ -1,7 +1,10 @@
-import { hoverFx } from 'app/styles/effects';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import { hoverFx } from 'app/styles/effects';
+
+// TODO: needs robust positioning calculations
+// good opportunity for pair programming (@tisiphone + @acheron)
 export const VerticalToggle = ({
   setModeSelected,
 }: {
@@ -16,7 +19,9 @@ export const VerticalToggle = ({
     setModeSelected(mode);
   };
 
-  const getTranslate = (pos: number) => (pos % 3) * 55 + '%';
+  const getTranslate = (pos: number) => {
+    return (pos % 3) * 55 + '%';
+  };
 
   return (
     <Container onClick={handleClick}>
@@ -62,10 +67,11 @@ const SwitchHolder = styled.div`
 
 const Switch = styled.div<{ position: string }>`
   position: absolute;
-  width: 70%;
-  aspect-ratio: 1;
   background-color: #494545;
   border-radius: 50%;
+  aspect-ratio: 1;
+  width: 70%;
+
   transition: transform 0.3s ease;
   transform: translateY(${({ position }) => position});
 `;

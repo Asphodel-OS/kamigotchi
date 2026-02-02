@@ -1,3 +1,4 @@
+import { getRevertReason } from 'engine/queue/utils';
 import {
   EntityID,
   EntityIndex,
@@ -10,8 +11,9 @@ import {
 } from 'engine/recs';
 import { Provider } from 'ethers';
 import { Observable } from 'rxjs';
+import { log } from 'utils/logger';
+import { playError } from 'utils/sounds';
 import { v4 as uuid } from 'uuid';
-
 import { defineActionComponent } from './ActionComponent';
 import { ActionState } from './constants';
 import { ActionRequest } from './types';
@@ -25,9 +27,6 @@ export function createActionSystem<M = undefined>(
 ) {
   const Action = defineActionComponent<M>(world);
   const requests = new Map<EntityIndex, ActionRequest>();
-  const queueOrder: EntityIndex[] = [];
-  let running: boolean = false;
-  let currentIndex: EntityIndex | null = null;
 
   /**
    * Schedules an Action from an ActionRequest and schedules it for execution.
@@ -64,46 +63,12 @@ export function createActionSystem<M = undefined>(
       txHash: undefined,
     });
 
-    // Store the request with the Action System and enqueue it
+    // Store the request with the Action System and execute it
     request.index = entity;
     requests.set(entity, request);
-    queueOrder.push(entity);
-    processNext();
+    execute(request);
     return entity;
   }
-  async function processNext() {
-    if (running) return;
-    // find next requested (not canceled) action
-    while (queueOrder.length > 0) {
-      const idx = queueOrder[0]!;
-      const state = getComponentValue(Action, idx)?.state;
-      if (state === ActionState.Canceled) {
-        queueOrder.shift();
-        continue;
-      }
-      if (state === ActionState.Requested) {
-        running = true;
-        currentIndex = idx;
-        try {
-          await execute(requests.get(idx)!);
-        } finally {
-          // remove from queue and continue
-          queueOrder.shift();
-          currentIndex = null;
-          running = false;
-          // kick off next
-          setTimeout(processNext, 0);
-        }
-        return;
-      }
-      // if not in a requested state, remove and continue
-      queueOrder.shift();
-    }
-  }
-
-  // Track cancellations requested while action is executing
-  const canceled = new Set<EntityIndex>();
-  const execCancels = new Map<EntityIndex, () => void>();
 
   /**
    * Executes the given Action and sets the corresponding fields accordingly.
@@ -117,54 +82,18 @@ export function createActionSystem<M = undefined>(
     const updateAction = (data: any) => updateComponent(Action, request.index!, data);
     updateAction({ state: ActionState.Executing });
 
-    // If a cancel was requested before execution starts, honor it
-    if (canceled.has(request.index!)) {
-      updateAction({ state: ActionState.Canceled });
-      return;
-    }
-
     try {
       // Execute the action
-      const execPromise: any = request.execute();
-      const cancelFn =
-        typeof execPromise?.cancel === 'function'
-          ? execPromise.cancel.bind(execPromise)
-          : undefined;
-      if (cancelFn) execCancels.set(request.index!, cancelFn);
+      const tx = await request.execute();
+      updateAction({ state: ActionState.WaitingForTxEvents }); // pending
 
-      // If user already canceled, propagate to queue immediately
-      if (canceled.has(request.index!) && cancelFn) {
-        try {
-          cancelFn();
-        } catch {}
-        updateAction({ state: ActionState.Canceled });
-        execCancels.delete(request.index!);
-        return;
+      if (tx) {
+        updateAction({ txHash: (tx as any).hash });
       }
 
-      const tx = await execPromise;
-      // Mark pending and expose hash immediately so UI can cancel/replace
-      updateAction({
-        state: ActionState.WaitingForTxEvents,
-        txHash: tx?.hash,
-      });
-
-      // If cancel requested after submission, do not proceed to completion
-      if (canceled.has(request.index!)) {
-        updateAction({ state: ActionState.Canceled });
-        return;
-      }
-
-      if (tx && !request.skipConfirmation) {
-        await tx.wait();
-      }
-
-      if (canceled.has(request.index!)) updateAction({ state: ActionState.Canceled });
-      else updateAction({ state: ActionState.Complete });
-      execCancels.delete(request.index!);
+      updateAction({ state: ActionState.Complete });
     } catch (e) {
-      handleError(e, request);
-      execCancels.delete(request.index!);
+      await handleError(e, request);
     }
   }
 
@@ -179,28 +108,14 @@ export function createActionSystem<M = undefined>(
       console.warn(`Trying to cancel Action Request that does not exist.`);
       return false;
     }
-    const state = getComponentValue(Action, index)?.state;
-    if (state === ActionState.Requested) {
-      // remove from local queue before it ever executes
-      const pos = queueOrder.indexOf(index);
-      if (pos !== -1) queueOrder.splice(pos, 1);
-      canceled.add(index);
-      updateComponent(Action, index, { state: ActionState.Canceled });
-      return true;
+    if (getComponentValue(Action, index)?.state !== ActionState.Requested) {
+      console.warn(`Trying to cancel Action Request ${request.id} not in the "Requested" state.`);
+      return false;
     }
-    if (state === ActionState.Executing || state === ActionState.WaitingForTxEvents) {
-      canceled.add(index);
-      const fn = execCancels.get(index);
-      if (fn) {
-        try {
-          fn();
-        } catch {}
-      }
-      updateComponent(Action, index, { state: ActionState.Canceled });
-      return true;
-    }
-    console.warn(`Trying to cancel Action Request ${request.id} not in a cancellable state.`);
-    return false;
+
+    updateComponent(Action, index, { state: ActionState.Canceled });
+    // remove(index);
+    return true;
   }
 
   /**
@@ -220,19 +135,38 @@ export function createActionSystem<M = undefined>(
     requests.delete(index); // Remove the request from the ActionSystem
   }
 
-  // Set the action's state to ActionState.Failed and pass through the error
-  // message as metadata. The rest of the error is logged as a warning and can
-  // be bubbled up, but does not appear to be useful for clientside reporting.
-  function handleError(error: any, action: ActionRequest) {
-    // console.warn('handleError()', '\naction: ', action, '\nerror: ', error);
+  // Set the action's state to ActionState.Failed and fetch revert reason via debug_traceTransaction.
+  // The revert reason is stored in metadata for display in the UI tooltip.
+  async function handleError(error: any, action: ActionRequest) {
     if (!action.index) return;
 
-    let metadata = error;
-    if (metadata.reason) metadata = metadata.reason;
-    if (metadata.error) metadata = metadata.error;
-    else if (metadata.data) metadata = metadata.data;
-    if (metadata.message) metadata = metadata.message;
+    const txHash = error?.receipt?.transactionHash || error?.transactionHash || error?.hash;
+    let metadata: string | undefined;
+
+    // Fetch revert reason and persist it in metadata
+    if (txHash) {
+      try {
+        metadata = await getRevertReason(txHash, provider);
+        if (metadata) {
+          log.warn('[ActionSystem] TX FAILED', { txHash, revertReason: metadata });
+        }
+      } catch {
+        // Fall through to default extraction
+      }
+    }
+
+    // Fallback: extract from error object
+    if (!metadata) {
+      let errData = error;
+      if (errData.reason) errData = errData.reason;
+      if (errData.error) errData = errData.error;
+      else if (errData.data) errData = errData.data;
+      if (errData.message) errData = errData.message;
+      metadata = typeof errData === 'string' ? errData : error.message || 'Transaction failed';
+    }
+
     updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
+    playError();
   }
 
   return {

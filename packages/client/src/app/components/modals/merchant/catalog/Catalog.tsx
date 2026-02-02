@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 
 import { Account } from 'network/shapes/Account';
+import { Allo } from 'network/shapes/Allo';
+import { Item } from 'network/shapes/Item';
 import { Listing } from 'network/shapes/Listing';
+import { DetailedEntity } from 'network/shapes/utils';
 import { CartItem } from '../types';
 import { CatalogRow } from './CatalogRow';
 
@@ -10,11 +13,16 @@ export const Catalog = ({
   listings,
   cart,
   setCart,
+  utils,
 }: {
   account: Account;
   listings: Listing[];
   cart: CartItem[];
   setCart: (cart: CartItem[]) => void;
+  utils: {
+    parseAllos: (allo: Allo[]) => DetailedEntity[];
+    displayRequirements: (item: Item) => string;
+  };
 }) => {
 
   const toggleListing = (itemIndex: number) => {
@@ -38,6 +46,7 @@ export const Catalog = ({
             listing={l}
             cart={cart}
             toggle={() => toggleListing(l.item.index)}
+            utils={utils}
           />
         ))}
       </Items>

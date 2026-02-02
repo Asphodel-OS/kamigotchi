@@ -60,7 +60,7 @@ async function addBonus(api: any, itemIndex: number, entry: any) {
   const descriptor = entry['Descriptor'].toUpperCase();
   const terminator = entry['Terminator'];
   const value = Number(entry['Value']);
-  console.log(`  adding bonus allo ${descriptor} ${terminator} `);
+  console.log(`  adding bonus allo: ${value} ${descriptor} ${terminator} `);
   await api.bonus(itemIndex, 'USE', descriptor, terminator, 0, value);
 }
 

@@ -14,6 +14,7 @@ export const Kards = ({
   data,
   display,
   utils,
+  tick,
 }: {
   actions: {
     collect: (kami: Kami) => void;
@@ -37,6 +38,7 @@ export const Kards = ({
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
     getTempBonuses: (kami: Kami) => Bonus[];
   };
+  tick: number;
 }) => {
   const { account, kamiEntities } = data;
   const { getKami } = utils;
@@ -49,14 +51,6 @@ export const Kards = ({
   const [alliesUpdating, setAlliesUpdating] = useState(false);
   const [enemyEntities, setEnemyEntities] = useState<EntityIndex[]>([]);
   const [visibleEnemies, setVisibleEnemies] = useState(0); // count of visible enemies
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
-
-  // ticking
-  useEffect(() => {
-    const refreshClock = () => setLastRefresh(Date.now());
-    const timerId = setInterval(refreshClock, 2500);
-    return () => clearInterval(timerId);
-  }, []);
 
   // identify ally vs enemy kamis whenever the list of kamis changes
   useEffect(() => {
@@ -84,7 +78,7 @@ export const Kards = ({
     if (!nodeModalVisible || alliesUpdating) return;
     const newAllies = allies.map((ally) => getKami(ally.entity));
     setAllies(newAllies);
-  }, [nodeModalVisible, lastRefresh]);
+  }, [nodeModalVisible, tick]);
 
   // scrolling effects for enemy kards
   useEffect(() => {
@@ -130,6 +124,7 @@ export const Kards = ({
         data={{ account, kamis: allies }}
         display={display}
         utils={utils}
+        tick={tick}
       />
       <EnemyCards
         actions={actions}
@@ -137,6 +132,7 @@ export const Kards = ({
         display={display}
         state={{ limit: { val: visibleEnemies, set: setVisibleEnemies } }}
         utils={utils}
+        tick={tick}
       />
     </Container>
   );
@@ -147,4 +143,5 @@ const Container = styled.div`
   flex-flow: column nowrap;
   overflow-y: auto;
   gap: 0.3vw;
+  scrollbar-gutter: stable;
 `;

@@ -40,6 +40,7 @@ import {
 import { ScavBar, queryScavInstance as _queryScavInstance } from 'network/shapes/Scavenge/';
 import { getValue as _getValue } from 'network/shapes/utils/component';
 import { waitForActionCompletion } from 'network/utils';
+import { playLiquidate, playScavenge } from 'utils/sounds';
 import { Header } from './header/Header';
 import { Kards } from './kards/Kards';
 
@@ -110,7 +111,6 @@ export const NodeModal: UIComponent = {
             getKamiAccount(world, components, kamiEntity, accountRefreshOptions),
           getNode: (index: number) => getNodeByIndex(world, components, index),
           getRoom: (index: number) => getRoomByIndex(world, components, index),
-          getScavenge: (index: number) => getNodeByIndex(world, components, index).scavenge,
           getValue: (entity: EntityIndex) => _getValue(components, entity),
           parseAllos: (allos: Allo[]) => _parseAllos(world, components, allos, true),
           queryScavInstance: (index: number, holderID: EntityID) =>
@@ -184,6 +184,7 @@ export const NodeModal: UIComponent = {
           return api.player.pet.harvest.liquidate(enemyKami.harvest!.id, myKami.id);
         },
       });
+      playLiquidate();
     };
 
     // starts a harvest for the given pet and node
@@ -225,6 +226,7 @@ export const NodeModal: UIComponent = {
           return api.player.scavenge.claim(scavBar.id);
         },
       });
+      playScavenge();
       await waitForActionCompletion(
         actions!.Action,
         world.entityToIndex.get(actionID) as EntityIndex
@@ -265,6 +267,7 @@ export const NodeModal: UIComponent = {
           data={{ ...data, account }}
           display={display}
           utils={utils}
+          tick={tick}
         />
       </ModalWrapper>
     );

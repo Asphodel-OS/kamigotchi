@@ -9,5 +9,11 @@ export const room83: Room = {
     key: 'canyonBridge',
     path: canyonBridge,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'bridge',
+      coordinates: { x1: 30, y1: 50, x2: 100, y2: 95 },
+      dialogue: 831,
+    },
+  ],
 };

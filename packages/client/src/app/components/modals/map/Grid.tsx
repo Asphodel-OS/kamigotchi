@@ -1,25 +1,27 @@
 import { EntityID, EntityIndex } from 'engine/recs';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Account } from 'app/cache/account';
 import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
+import { triggerNodeModal } from 'app/triggers';
 import { HelpMenuIcons } from 'assets/images/help';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { insectIcon } from 'assets/images/icons/affinities';
 import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
+import { StaminaIcon } from 'assets/images/icons/stats';
 import { mapBackgrounds } from 'assets/images/map';
 import { Zones } from 'constants/zones';
 import { Allo } from 'network/shapes/Allo';
-import { Condition } from 'network/shapes/Conditional';
 import { BaseKami } from 'network/shapes/Kami/types';
 import { Node } from 'network/shapes/Node';
-import { NullRoom, Room } from 'network/shapes/Room';
+import { calculatePathStaminaCost, findPath, NullRoom, Room } from 'network/shapes/Room';
 import { DetailedEntity } from 'network/shapes/utils';
 import { playClick } from 'utils/sounds';
 import { GridFilter } from './GridFilter';
 import { GridTooltip } from './GridTooltip';
+import { TileContextMenu } from './TileContextMenu';
 
 type Mode = 'RoomType' | 'KamiCount' | 'OperatorCount' | 'MyKamis';
 
@@ -35,6 +37,7 @@ export const Grid = ({
   actions: { move },
   state: { tick },
   utils,
+  network,
 }: {
   actions: {
     move: (roomIndex: number) => void;
@@ -50,7 +53,7 @@ export const Grid = ({
   utils: {
     getKami: (entity: EntityIndex) => BaseKami;
     getKamiLocation: (entity: EntityIndex) => number | undefined;
-    passesConditions: (account: Account, gates: Condition[]) => boolean;
+    canEnterRoom: (room: Room) => boolean;
     queryNodeByIndex: (index: number) => EntityIndex;
     queryNodeKamis: (nodeEntity: EntityIndex) => EntityIndex[];
     queryRoomAccounts: (roomIndex: number) => EntityIndex[];
@@ -59,11 +62,15 @@ export const Grid = ({
     queryScavInstance: (index: number, holderID: EntityID) => EntityIndex | undefined;
     getValue: (entity: EntityIndex) => number;
   };
+  network: {
+    world: any;
+    components: any;
+  };
 }) => {
   const {
     getKamiLocation,
     getKami,
-    passesConditions,
+    canEnterRoom,
     queryNodeByIndex,
     queryNodeKamis,
     queryRoomAccounts,
@@ -76,7 +83,12 @@ export const Grid = ({
   const [kamiEntities, setKamiEntities] = useState<EntityIndex[]>([]);
   const [playerEntities, setPlayerEntities] = useState<EntityIndex[]>([]);
   const [mode, setMode] = useState<Mode[]>(['MyKamis']);
+  const [contextMenu, setContextMenu] = useState<{
+    room: Room;
+    position: { x: number; y: number };
+  } | null>(null);
 
+  // track the number of scavenge rolls are in each room
   const rolls = useMemo(() => {
     const map = new Map<number, number>();
     rooms.forEach((room) => {
@@ -125,26 +137,9 @@ export const Grid = ({
   }, [accountKamis]);
 
   /////////////////
-  // INTERPRETATION
-
-  const isRoomBlocked = (room: Room) => {
-    return !passesConditions(account, room.gates);
-  };
-
-  const currExit = (room: Room) => {
-    return rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
-  };
-
-  const getTileColor = (room: Room) => {
-    if (!room.index) return;
-    if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
-    if (!currExit(room)) return;
-    return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
-  };
-
-  /////////////////
   // INTERACTION
 
+  // move the player to a room
   const handleRoomMove = (roomIndex: number) => {
     playClick();
     move(roomIndex);
@@ -157,14 +152,96 @@ export const Grid = ({
     setKamiEntities(queryNodeKamis(queryNodeByIndex(roomIndex)));
   };
 
+  // set the view mode
   const setType = (option: Mode[]) => {
     setMode(option);
   };
 
-  // used for the GrdiFilter, calculates averages to use
-  // for the floating icons coloring
-  // and maps to check if there are any kami
-  // or players on a tile
+  // Open the context menu when right-clicking a room tile
+  // Prevents opening menu on current room or empty tiles
+  const handleRightClick = useCallback(
+    (event: React.MouseEvent, room: Room) => {
+      event.preventDefault();
+      if (!room.index || room.index === roomIndex) return;
+      playClick();
+      setContextMenu({
+        room,
+        position: { x: event.clientX, y: event.clientY },
+      });
+    },
+    [roomIndex]
+  );
+
+  // Queue moves along the shortest path to the target room
+  // Skips first element (current position) and enqueues remaining path
+  const handleAutoTravel = useCallback(
+    (targetRoom: Room) => {
+      const { world, components } = network;
+      const pathResult = findPath(world, components, roomIndex, targetRoom.index);
+
+      if (!pathResult.reachable || pathResult.path.length <= 1) return;
+
+      pathResult.path.slice(1).forEach((nextRoomIndex) => {
+        move(nextRoomIndex);
+      });
+    },
+    [network, roomIndex, move]
+  );
+
+  /////////////////
+  // INTERPRETATION
+
+  // check if a room is blocked by gates (requirements)
+  const isRoomBlocked = (room: Room) => {
+    return !canEnterRoom(room);
+  };
+
+  // check if a room is an exit from another room
+  const currExit = (room: Room) => {
+    return rooms.get(roomIndex)?.exits?.some((e) => e.toIndex === room.index);
+  };
+
+  // get the color of a room tile
+  const getTileColor = (room: Room) => {
+    if (!room.index) return;
+    if (room.index === roomIndex) return 'rgba(51,187,51,0.9)';
+    if (!currExit(room)) return;
+    return isRoomBlocked(room) ? 'rgba(0,0,0,0.3)' : 'rgba(255,136,85,0.6)';
+  };
+
+  // get the context menu options for a room
+  const contextMenuOptions = useMemo(() => {
+    if (!contextMenu) return [];
+
+    const { world, components } = network;
+    const room = contextMenu.room;
+
+    const pathResult = findPath(world, components, roomIndex, room.index);
+    const staminaCost = pathResult.reachable ? calculatePathStaminaCost(pathResult.distance) : -1;
+    const canTravel =
+      room.index !== roomIndex && staminaCost >= 0 && account.stamina.total >= staminaCost;
+
+    return [
+      {
+        text: `Auto Travel (${staminaCost >= 0 ? staminaCost : '?'})`,
+        onClick: () => handleAutoTravel(room),
+        image: StaminaIcon,
+        disabled: !canTravel || !pathResult.reachable || pathResult.distance <= 1,
+      },
+      {
+        text: 'Show Node',
+        onClick: () => triggerNodeModal(room.index),
+        disabled: false,
+      },
+      {
+        text: 'Cancel',
+        onClick: () => setContextMenu(null),
+        disabled: false,
+      },
+    ];
+  }, [contextMenu, network, roomIndex, account.stamina.total, handleAutoTravel]);
+
+  // populate the GridFilter details for room stats
   const { kamiCountMap, operatorCountMap, kamiAverage, operatorAverage } = useMemo(() => {
     const kamiCountMap = new Map<number, number>();
     const operatorCountMap = new Map<number, number>();
@@ -252,6 +329,7 @@ export const Grid = ({
                     onClick={() =>
                       room.index !== 0 && !isRoomBlocked(room) && handleRoomMove(room.index)
                     }
+                    onContextMenu={(e) => handleRightClick(e, room)}
                     hasRoom={room.index !== 0}
                     isHighlighted={!!backgroundColor}
                     onMouseEnter={() => updateRoomStats(room.index)}
@@ -275,6 +353,13 @@ export const Grid = ({
           </Row>
         ))}
       </Overlay>
+      {contextMenu && (
+        <TileContextMenu
+          options={contextMenuOptions}
+          position={contextMenu.position}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </Container>
   );
 };

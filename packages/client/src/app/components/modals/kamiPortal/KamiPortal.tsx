@@ -14,7 +14,7 @@ import { MenuIcons } from 'assets/images/icons/menu';
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Kami, queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami';
-import { didActionComplete } from 'network/utils';
+import { didActionSucceed } from 'network/utils';
 import { Controls } from './Controls';
 import { WildKamis } from './WildKamis';
 import { WorldKamis } from './WorldKamis';
@@ -147,7 +147,7 @@ export const KamiPortalModal: UIComponent = {
       });
 
       // reset array if successful
-      const completed = await didActionComplete(actions.Action, tx);
+      const completed = await didActionSucceed(actions.Action, tx);
       if (completed) {
         setSelectedWild([]);
       }
@@ -177,7 +177,7 @@ export const KamiPortalModal: UIComponent = {
       });
 
       // reset array if successful
-      const completed = await didActionComplete(actions.Action, tx);
+      const completed = await didActionSucceed(actions.Action, tx);
       if (completed) {
         setSelectedWorld([]);
       }

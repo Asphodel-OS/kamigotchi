@@ -16,6 +16,7 @@ import {
   ModalHeader,
   ModalWrapper,
   HarvestButton as _HarvestButton,
+  OnyxReviveButton as _OnyxReviveButton,
   UseItemButton as _UseItemButton,
 } from 'app/components/library';
 import { UIComponent, useLayers } from 'app/root';
@@ -36,7 +37,7 @@ import {
   calcKamiExpRequirement,
 } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs as _passesNodeReqs } from 'network/shapes/Node';
-import { KamiList } from './KamiList';
+import { KamiList } from './kamis/KamiList';
 import { SendBar } from './SendBar';
 import { Toolbar } from './Toolbar';
 import { Sort, View } from './types';
@@ -78,6 +79,8 @@ export const PartyModal: UIComponent = {
         display: {
           HarvestButton: (account: Account, kami: Kami, node: Node) =>
             _HarvestButton({ network, account, kami, node }),
+          OnyxReviveButton: (account: Account, kami: Kami) =>
+            _OnyxReviveButton({ network, account, kami }),
           UseItemButton: (kami: Kami, account: Account, icon: string) =>
             _UseItemButton(network, kami, account, icon),
         },
@@ -125,7 +128,8 @@ export const PartyModal: UIComponent = {
 
     const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
-
+    const [initialized, setInitialized] = useState(false);
+    const [viewInitialized, setViewInitialized] = useState(false);
     /////////////////
     // SUBSCRIPTIONS
 
@@ -148,7 +152,8 @@ export const PartyModal: UIComponent = {
     useEffect(() => {
       // populate initial data
       setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
-      setKamis(getWorldKamis());
+      const worldKamis = getWorldKamis();
+      setKamis(worldKamis);
 
       // set ticking
       const refreshClock = () => setTick(Date.now());
@@ -169,6 +174,11 @@ export const PartyModal: UIComponent = {
       // update the list of kamis in the world
       const worldKamis = getWorldKamis();
       setKamis(worldKamis);
+
+      // mark as initialized after first fetch with modal open
+      if (!initialized) {
+        setInitialized(true);
+      }
 
       // check if we need to update the list of accounts
       const accountEntities = queryAllAccounts() as EntityIndex[];
@@ -194,7 +204,7 @@ export const PartyModal: UIComponent = {
     }, [nodeIndex]);
 
     // update list of wild kamis whenever that changes
-    // TOTO: properly typecast the result of the abi call
+    // TODO: properly typecast the result of the abi call
     useEffect(() => {
       const result = (nftData?.[0]?.result ?? []) as number[];
       if (result.length != wildKamis.length) {
@@ -205,11 +215,22 @@ export const PartyModal: UIComponent = {
       }
     }, [nftData]);
 
+    // set initial view based on kami availability (runs once after first modal open)
+    useEffect(() => {
+      if (!initialized || viewInitialized) return;
+
+      // only run once: if no world kamis but has wild kamis, switch to external
+      if (wildKamis.length > 0 && kamis.length === 0) {
+        setView('external');
+      }
+      setViewInitialized(true);
+    }, [initialized, viewInitialized, wildKamis.length, kamis.length]);
+
     /////////////////
     // ACTIONS
 
     // send a kami NFT to another player
-    const sendKamiTx = (kami: Kami, to: Account) => {
+    const send = (kami: Kami, to: Account) => {
       writeContract({
         abi: erc721Abi,
         address: kamiNFTAddress,
@@ -219,7 +240,7 @@ export const PartyModal: UIComponent = {
     };
 
     // import a kami from the wild to the world
-    const stakeKamiTx = (kamis: Kami[]) => {
+    const stake = (kamis: Kami[]) => {
       const api = ownerAPIs.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
@@ -227,7 +248,7 @@ export const PartyModal: UIComponent = {
       actions.add({
         action: 'KamiDeposit',
         params: [kamis[0].index],
-        description: `Staking Kami ${kamis[0].index}`,
+        description: `Importing Kami ${kamis[0].index}`,
         execute: async () => {
           return api.portal.ERC721.kami.batch.stake(indices);
         },
@@ -283,7 +304,7 @@ export const PartyModal: UIComponent = {
     };
 
     /////////////////
-    // DISPLAY
+    // RENDER
 
     return (
       <ModalWrapper
@@ -298,7 +319,7 @@ export const PartyModal: UIComponent = {
             addKami: (kamis: Kami[]) => start(kamis, node),
             collectKami: (kamis: Kami[]) => collect(kamis),
             stopKami: (kamis: Kami[]) => stop(kamis),
-            stakeKami: (kamis: Kami[]) => stakeKamiTx(kamis),
+            stakeKami: (kamis: Kami[]) => stake(kamis),
           }}
           controls={{ sort, setSort, view, setView }}
           data={{ account, kamis, wildKamis }}
@@ -306,11 +327,6 @@ export const PartyModal: UIComponent = {
           utils={{ passesNodeReqs: (kami: Kami) => passesNodeReqs(node, kami) }}
         />
         <KamiList
-          actions={{
-            addKamis: (kamis: Kami[]) => start(kamis, node),
-            stakeKamis: stakeKamiTx,
-            sendKamis: sendKamiTx,
-          }}
           controls={{ view }}
           data={{ account, accounts, kamis, wildKamis, node }}
           display={display}
@@ -318,7 +334,7 @@ export const PartyModal: UIComponent = {
           utils={utils}
         />
         <SendBar
-          actions={{ sendKami: (k: Kami, a: Account) => sendKamiTx(k, a) }}
+          actions={{ sendKami: (k: Kami, a: Account) => send(k, a) }}
           controls={{ sort, view }}
           data={{ accounts }}
           state={{ kamis: displayedKamis }}

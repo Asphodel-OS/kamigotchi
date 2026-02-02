@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
 import { LevelUpArrows } from '../animations/LevelUp';
-import { TextTooltip } from '../poppers/TextTooltip';
 import { Overlay } from '../styles';
+import { TextTooltip } from '../tooltips';
 
 // Card is a card that displays a visually encapsulated image (left) and text-based content (right)
 export const Card = ({
@@ -16,20 +16,23 @@ export const Card = ({
   image?: {
     icon?: string;
     onClick?: () => void;
-    overlay?: string;
+    fit?: 'cover' | 'contain';
     padding?: number;
     scale?: number;
-    showLevelUp?: boolean;
-    showSkillPoints?: boolean;
-    tooltip?: string[];
-    skillPoints?: boolean;
-    background?: React.ReactNode;
-    foreground?: React.ReactNode; // rendered above image
-    filter?: string; // CSS filter applied to base image only
+    tooltip?: { text: string[] | React.ReactNode[]; maxWidth?: number };
+    effects?: {
+      overlay?: string;
+      showLevelUp?: boolean; // TODO: move this field up one level to KamiCard, pass in as Foreground
+      showSkillPoints?: boolean; // TODO: move this field up one level to KamiCard, pass in as Foreground or Overlay
+      background?: React.ReactNode;
+      foreground?: React.ReactNode; // rendered above image
+      filter?: string; // CSS filter applied to base image only
+    };
   };
   fullWidth?: boolean;
 }) => {
   const scale = image?.scale ?? 9;
+  const effects = image?.effects;
 
   // handle image click if there is one
   const handleImageClick = () => {
@@ -41,18 +44,23 @@ export const Card = ({
 
   return (
     <Wrapper fullWidth={fullWidth}>
-      <TextTooltip text={image?.tooltip ?? []}>
+      <TextTooltip text={image?.tooltip?.text ?? []} maxWidth={image?.tooltip?.maxWidth}>
         <ImageContainer scale={scale} padding={image?.padding}>
-          {!!image?.background && <BackgroundSlot>{image.background}</BackgroundSlot>}
+          {!!effects?.background && <BackgroundSlot>{effects.background}</BackgroundSlot>}
           <Overlay bottom={scale * 0.075} right={scale * 0.06}>
-            <Text size={scale * 0.075}>{image?.overlay}</Text>
+            <Text size={scale * 0.075}>{effects?.overlay}</Text>
           </Overlay>
-          {!!image?.showLevelUp && <LevelUpArrows />}
+          {!!effects?.showLevelUp && <LevelUpArrows />}
           <Overlay top={0.5} right={0.5}>
-            {!!image?.showSkillPoints && <Sp>SP</Sp>}
+            {!!effects?.showSkillPoints && <Sp>SP</Sp>}
           </Overlay>
-          <Image src={image?.icon} onClick={handleImageClick} style={{ filter: image?.filter }} />
-          {!!image?.foreground && <ForegroundSlot>{image.foreground}</ForegroundSlot>}
+          <Image
+            src={image?.icon}
+            onClick={handleImageClick}
+            style={{ filter: effects?.filter }}
+            fit={image?.fit}
+          />
+          {!!effects?.foreground && <ForegroundSlot>{effects.foreground}</ForegroundSlot>}
         </ImageContainer>
       </TextTooltip>
       <Container>{children}</Container>
@@ -63,7 +71,7 @@ export const Card = ({
 const Wrapper = styled.div<{ fullWidth?: boolean }>`
   background-color: #fff;
   border: 0.15vw solid black;
-  border-radius: 0.6vw;
+  border-radius: 0.75vw;
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
@@ -74,21 +82,22 @@ const Wrapper = styled.div<{ fullWidth?: boolean }>`
 const ImageContainer = styled.div<{ scale: number; padding?: number }>`
   position: relative;
   border-right: solid black 0.15vw;
-  border-radius: 0.45vw 0vw 0vw 0.45vw;
+  border-radius: 0.6vw 0vw 0vw 0.6vw;
+
   min-height: 100%;
   height: ${({ scale }) => scale}vw;
   width: ${({ scale }) => scale}vw;
   padding: ${({ padding }) => padding ?? 0}vw;
+
   ${({ scale }) => scale > 4 && `image-rendering: pixelated;`}
   user-select: none;
   overflow: hidden;
 `;
 
-const Image = styled.img<{ onClick?: () => void }>`
-  object-fit: cover;
+const Image = styled.img<{ onClick?: () => void; fit?: string }>`
+  object-fit: ${({ fit }) => fit ?? 'cover'};
   height: 100%;
   width: 100%;
-
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
   &:hover {
     opacity: 0.75;

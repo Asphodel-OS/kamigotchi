@@ -53,6 +53,24 @@ export const radiateFx = keyframes`
   }
 `;
 
+export const shakeFx = keyframes`
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(0.1vw, 0.1vw) rotate(5deg);
+  }
+  50% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  75% {
+    transform: translate(-0.1vw, 0.1vw) rotate(-5deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+`;
+
 export const Shimmer = styled.div`
   height: 90%;
   width: 90%;
@@ -77,11 +95,5 @@ export const Shimmer = styled.div`
     9% {
       background-position-x: 10%;
     }
-  }
-`;
-
-export const Spin = keyframes` 
-  100% { 
-    transform: rotateZ(360deg); 
   }
 `;

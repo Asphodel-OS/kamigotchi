@@ -6,6 +6,7 @@ export {
   initMint as initMintConfigs,
   initPortal as initPortalConfigs,
   initProdConfigs,
+  initStats as initStatsConfigs,
   initTestingConfigs,
   initTokens as initTokenConfigs,
   initTrade as initTradeConfigs,

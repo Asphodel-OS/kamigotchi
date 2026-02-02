@@ -2,17 +2,19 @@ import { EntityIndex } from 'engine/recs';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { calcHealth, calcHealthPercent, calcOutput, Kami } from 'app/cache/kami';
+import { getHarvestItem } from 'app/cache/harvest';
+import { calcHealthPercent, calcOutput, Kami } from 'app/cache/kami';
 import { EmptyText, IconListButton, KamiCard, LiquidateButton } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { CooldownIcon } from 'assets/images/icons/battles';
 import { StatIcons } from 'constants/stats';
 import { Account, BaseAccount } from 'network/shapes/Account';
+import { Bonus } from 'network/shapes/Bonus';
 import { playClick } from 'utils/sounds';
+import { StatsDisplay } from './StatsDisplay';
 
 type KamiSort = 'violence' | 'health' | 'output' | 'cooldown';
-const REFRESH_INTERVAL = 1000;
 const SortMap: Record<KamiSort, string> = {
   cooldown: CooldownIcon,
   health: ActionIcons.liquidate,
@@ -27,6 +29,7 @@ export const EnemyCards = ({
   display,
   state,
   utils,
+  tick,
 }: {
   actions: {
     liquidate: (allyKami: Kami, enemyKami: Kami) => void;
@@ -48,13 +51,15 @@ export const EnemyCards = ({
   utils: {
     getKami: (entity: EntityIndex, refresh?: boolean) => Kami;
     getOwner: (kamiEntity: EntityIndex) => BaseAccount;
+    getTempBonuses: (kami: Kami) => Bonus[];
   };
+  tick: number;
 }) => {
   const { liquidate } = actions;
   const { account, allies, enemyEntities } = data;
   const { CastItemButton } = display;
   const { limit } = state;
-  const { getOwner, getKami } = utils;
+  const { getOwner, getKami, getTempBonuses } = utils;
 
   const accountModalOpen = useVisibility((s) => s.modals.account);
   const setModals = useVisibility((s) => s.setModals);
@@ -64,7 +69,6 @@ export const EnemyCards = ({
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   const [enemies, setEnemies] = useState<Kami[]>([]);
   const [sorted, setSorted] = useState<Kami[]>([]);
@@ -80,13 +84,6 @@ export const EnemyCards = ({
       })),
     []
   );
-
-  // set up ticking
-  useEffect(() => {
-    const refreshClock = () => setLastRefresh(Date.now());
-    const timerId = setInterval(refreshClock, REFRESH_INTERVAL);
-    return () => clearInterval(timerId);
-  }, []);
 
   // populate enemy kami data as the list of entities changes.
   // the purpose of this hook is to incrementally ensure all kamis that belong
@@ -135,7 +132,7 @@ export const EnemyCards = ({
       if (newEnemies[i] != enemies[i]) enemiesStale = true;
     }
     if (enemiesStale) setEnemies(newEnemies);
-  }, [isCollapsed, lastRefresh]);
+  }, [isCollapsed, tick]);
 
   // sort whenever the list of enemies changes or the sort changes
   useEffect(() => {
@@ -163,6 +160,33 @@ export const EnemyCards = ({
   }, [nodeIndex]);
 
   /////////////////
+  // INTERPRETATION
+
+  // get the harvest balance label for a kami
+  const getLabel = (kami: Kami) => {
+    const harvestOutput = calcOutput(kami);
+    const harvestItem = getHarvestItem(kami.harvest!);
+    return { text: `${harvestOutput}`, icon: harvestItem.image };
+  };
+
+  // get the owner label for a kami
+  const getLabelAlt = (kami: Kami) => {
+    const owner = getOwner(kami.entity);
+    return {
+      text: `${owner.name}`,
+      color: getOwnerColor(owner),
+      onClick: () => selectAccount(owner.index),
+    };
+  };
+
+  // get the color of the owner text (e.g. friend, guild, etc)
+  const getOwnerColor = (owner: BaseAccount) => {
+    const friends = account.friends?.friends ?? [];
+    const isFriend = friends.some((fren) => fren.target.index === owner.index);
+    return isFriend ? '#1a1' : '#333';
+  };
+
+  /////////////////
   // INTERACTION
 
   const handleCollapseToggle = () => {
@@ -170,38 +194,15 @@ export const EnemyCards = ({
     setIsCollapsed(!isCollapsed);
   };
 
-  /////////////////
-  // INTERPRETATION
-
-  // get the description on the card
-  const getDescription = (kami: Kami): string[] => {
-    const health = calcHealth(kami);
-    const description = [
-      '',
-      `Health: ${health.toFixed()}/${kami.stats?.health.total ?? 0}`,
-      `Harmony: ${kami.stats?.harmony.total ?? 0}`,
-      `Violence: ${kami.stats?.violence.total ?? 0}`,
-    ];
-    return description;
-  };
-
-  const getActions = (kami: Kami) => {
-    const sharedWidth = 2.0;
-    return [
-      CastItemButton(kami, account, sharedWidth),
-      LiquidateButton(kami, allies, liquidate, sharedWidth),
-    ];
-  };
-
-  /////////////////
-  // INTERACTION
-
   // toggle the node modal to the selected one
   const selectAccount = (index: number) => {
     if (!accountModalOpen) setModals({ account: true, party: false, map: false });
     if (accountIndex !== index) setAccount(index);
     playClick();
   };
+
+  /////////////////
+  // RENDER
 
   return (
     <Container style={{ display: enemyEntities.length > 0 ? 'flex' : 'none' }}>
@@ -213,18 +214,23 @@ export const EnemyCards = ({
       </StickyRow>
       {!isCollapsed &&
         sorted.slice(0, limit.val).map((kami: Kami) => {
-          const owner = getOwner(kami.entity);
           return (
             <KamiCard
-              isFriend={account.friends?.friends.some((fren) => fren.target.index === owner.index)}
               key={kami.index}
               kami={kami}
-              subtext={`${owner.name} (\$${calcOutput(kami)})`}
-              subtextOnClick={() => selectAccount(owner.index)}
-              actions={getActions(kami)}
-              description={getDescription(kami)}
-              showBattery
-              showCooldown
+              actions={[
+                CastItemButton(kami, account, 2.0),
+                LiquidateButton(kami, allies, liquidate, 2.0),
+              ]}
+              content={<StatsDisplay kami={kami} />}
+              label={getLabel(kami)}
+              labelAlt={getLabelAlt(kami)}
+              utils={{ getTempBonuses }}
+              show={{
+                battery: true,
+                cooldown: true,
+              }}
+              tick={tick}
             />
           );
         })}
@@ -244,7 +250,7 @@ const Container = styled.div`
 
 const StickyRow = styled.div`
   position: sticky;
-  z-index: 1;
+  z-index: 2;
   top: 0;
 
   background-color: white;
@@ -264,7 +270,6 @@ const Title = styled.div`
   font-size: 1.2vw;
   color: #333;
   cursor: pointer;
-
   &:hover {
     opacity: 0.8;
   }

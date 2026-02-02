@@ -29,6 +29,7 @@ import {
   initMintConfigs,
   initNodes,
   initNpcs,
+  initNPCDroptables,
   initPortalConfigs,
   initPortalTokens,
   initQuests,
@@ -37,6 +38,7 @@ import {
   initRooms,
   initSkills,
   initSnapshot,
+  initStatsConfigs,
   initTestingConfigs,
   initTokenConfigs,
   initTradeConfigs,
@@ -53,8 +55,11 @@ import {
   reviseRooms,
   reviseSkills,
   setPortalTokens,
+  setRoomText,
   unsetPortalTokens,
 } from './state';
+import { disableItems, enableItems } from './state/items';
+import { disableQuests, enableQuests } from './state/quests/quests';
 import { cancelTrades, completeTrades } from './state/trades';
 
 // TODO: rename this file to something that makes more sense
@@ -106,6 +111,7 @@ export class WorldState {
       initLiquidation: () => this.genCalls(initLiquidationConfigs),
       initMint: () => this.genCalls(initMintConfigs),
       initPortal: () => this.genCalls(initPortalConfigs),
+      initStats: () => this.genCalls(initStatsConfigs),
       initTrade: () => this.genCalls(initTradeConfigs),
       initTokens: () => this.genCalls(initTokenConfigs),
     } as SubFunc,
@@ -123,6 +129,8 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initItems(api, indices)),
       delete: (indices: number[]) => this.genCalls((api) => deleteItems(api, indices)),
       revise: (indices: number[]) => this.genCalls((api) => reviseItems(api, indices)),
+      enable: (indices: number[]) => this.genCalls((api) => enableItems(api, indices)),
+      disable: (indices: number[]) => this.genCalls((api) => disableItems(api, indices)),
     } as SubFunc,
     listings: {
       init: (indices?: number[]) => this.genCalls((api) => initListings(api, indices)),
@@ -131,6 +139,7 @@ export class WorldState {
     },
     npcs: {
       init: () => this.genCalls(initNpcs),
+      initDroptables: () => this.genCalls(initNPCDroptables),
     } as SubFunc,
     nodes: {
       init: (indices?: number[]) => this.genCalls((api) => initNodes(api, indices)),
@@ -152,6 +161,8 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initQuests(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteQuests(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseQuests(api, indices)),
+      disable: (indices: number[]) => this.genCalls((api) => disableQuests(api, indices)),
+      enable: (indices: number[]) => this.genCalls((api) => enableQuests(api, indices)),
     } as SubFunc,
     recipes: {
       init: (indices?: number[]) => this.genCalls((api) => initRecipes(api, indices)),
@@ -167,6 +178,7 @@ export class WorldState {
       init: (indices?: number[]) => this.genCalls((api) => initRooms(api, indices)),
       delete: (indices?: number[]) => this.genCalls((api) => deleteRooms(api, indices)),
       revise: (indices?: number[]) => this.genCalls((api) => reviseRooms(api, indices)),
+      setText: (indices: number[]) => this.genCalls((api) => setRoomText(api, indices)),
     } as SubFunc,
     skills: {
       init: (indices?: number[]) => this.genCalls((api) => initSkills(api, indices)),

@@ -16,9 +16,9 @@ const calcEfficacy = (attacker: Kami, defender: Kami): number => {
 
   const base = threshConfig.ratio.value;
   const shiftNeut = effConfig.base;
-  const shiftUp = effConfig.up + attBonus + defBonus;
+  const shiftUp = effConfig.up + attBonus - defBonus;
   const shiftDown = effConfig.down;
-  const shiftSpec = effConfig.special + attBonus + defBonus;
+  const shiftSpec = effConfig.special + attBonus - defBonus;
 
   let shift = shiftNeut;
   if (attacker.traits && defender.traits) {
@@ -66,7 +66,7 @@ export const calcThreshold = (attacker: Kami, defender: Kami): number => {
 
   const base = calcAnimosity(attacker, defender);
   const ratio = calcEfficacy(attacker, defender);
-  const shift = thresholdConfig.shift.value + attShift + defShift;
+  const shift = thresholdConfig.shift.value + attShift - defShift;
   const boost = defender.stats?.health.total ?? 0;
   const threshold = (base * ratio + shift) * boost;
   return Math.floor(threshold);

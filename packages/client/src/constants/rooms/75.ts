@@ -9,5 +9,11 @@ export const room75: Room = {
     key: 'floodMural',
     path: floodMural,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'apocalypse mural',
+      coordinates: { x1: 61, y1: 39, x2: 125, y2: 51 },
+      dialogue: 751,
+    },
+  ],
 };

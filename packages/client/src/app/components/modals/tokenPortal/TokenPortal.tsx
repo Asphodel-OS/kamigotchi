@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { getAccount as _getAccount } from 'app/cache/account';
+import { getAccount as _getAccount, getAccountByID } from 'app/cache/account';
 import { getPortalConfig } from 'app/cache/config';
-import { getItem as _getItem } from 'app/cache/item';
-import { getReceipt as _getReceipt } from 'app/cache/receipts';
+import { getItem as _getItem, getItemByIndex as _getItemByIndex } from 'app/cache/item';
 import {
   EmptyText,
   HelpChip,
@@ -18,16 +17,19 @@ import { UIComponent, useLayers } from 'app/root';
 import { useNetwork, useVisibility } from 'app/stores';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
+import { getKamidenClient } from 'clients/kamiden';
+import { PortalReceipt, TokenPortalRequest } from 'clients/kamiden/proto';
 import { ETH_INDEX, ONYX_INDEX } from 'constants/items';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { Account, NullAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { Item, NullItem, queryItems } from 'network/shapes/Item';
-import { queryReceipts as _queryReceipts, Receipt } from 'network/shapes/Portal';
 import { getCompAddr } from 'network/shapes/utils';
 import { HELP_TEXT } from './constants';
 import { Queue } from './queue';
 import { Swap } from './swap';
 import { getResultWithdraw, openBaselineLink } from './utils';
+
+const KamidenClient = getKamidenClient();
 
 export const TokenPortalModal: UIComponent = {
   id: 'TokenPortal',
@@ -51,9 +53,9 @@ export const TokenPortalModal: UIComponent = {
         },
         utils: {
           getAccount: () => _getAccount(world, components, accountEntity, { inventory: 2 }),
+          getAccountByID: (id: EntityID) => getAccountByID(world, components, id),
           getItem: (entity: EntityIndex) => _getItem(world, components, entity),
-          getReceipt: (entity: EntityIndex) => _getReceipt(world, components, entity),
-          queryReceipts: () => _queryReceipts(components),
+          getItemByIndex: (index: number) => _getItemByIndex(world, components, index),
           queryTokenItems: () => queryItems(components, { registry: true, type: 'ERC20' }),
         },
       };
@@ -64,7 +66,7 @@ export const TokenPortalModal: UIComponent = {
 
     const { actions } = network;
     const { accountEntity, config, spenderAddr } = data;
-    const { getAccount, getItem, getReceipt, queryTokenItems, queryReceipts } = utils;
+    const { getAccount, getItem, queryTokenItems } = utils;
 
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
@@ -73,7 +75,8 @@ export const TokenPortalModal: UIComponent = {
     const [account, setAccount] = useState<Account>(NullAccount);
     const [options, setOptions] = useState<Item[]>([]);
     const [selected, setSelected] = useState<Item>(NullItem); // selected item for import/export
-    const [receipts, setReceipts] = useState<Receipt[]>([]);
+    const [myReceipts, setMyReceipts] = useState<PortalReceipt[]>([]);
+    const [othersReceipts, setOthersReceipts] = useState<PortalReceipt[]>([]);
     const [showQueue, setShowQueue] = useState<boolean>(false);
     const [tick, setTick] = useState(Date.now());
 
@@ -105,16 +108,15 @@ export const TokenPortalModal: UIComponent = {
       if (!accountEntity) return;
       const account = getAccount();
       setAccount(account);
+      getTokenHistory(account.id);
     }, [accountEntity]);
 
     // query for the list of Receipts
     // TODO: set up a caching for receipts
     useEffect(() => {
       if (!isOpen) return;
-      const receiptEntities = queryReceipts();
-      const receipts = receiptEntities.map((receipt) => getReceipt(receipt));
-      setReceipts(receipts);
-      getAccount();
+      const tickSeconds = Math.floor(tick / 1000);
+      if (tickSeconds % 5 === 0) getTokenHistory(account.id);
     }, [isOpen, tick]);
 
     /////////////////
@@ -174,32 +176,56 @@ export const TokenPortalModal: UIComponent = {
     };
 
     // claim a withdrawal receipt whose time has come
-    const claimTx = async (receipt: Receipt) => {
+    const claimTx = async (receipt: PortalReceipt) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       // construct the transaction and push it to the queue
       const tx = actions.add({
         action: 'TokenReceiptClaim',
-        params: [receipt.id],
-        description: `Claiming withdrawal of ${receipt.amt / 10 ** 18} $ONYX`,
-        execute: async () => api.portal.ERC20.claim(receipt.id),
+        params: [receipt.ReceiptID],
+        description: `Claiming withdrawal of ${Number(receipt.TokenAmt) / 10 ** 18} $ONYX`,
+        execute: async () => api.portal.ERC20.claim(receipt.ReceiptID),
       });
     };
 
     // cancel a withdrawal receipt
-    const cancelTx = async (receipt: Receipt) => {
+    const cancelTx = async (receipt: PortalReceipt) => {
       const api = apis.get(selectedAddress);
       if (!api) return console.error(`API not established for ${selectedAddress}`);
 
       // construct the transaction and push it to the queue
       const tx = actions.add({
         action: 'TokenReceiptCancel',
-        params: [receipt.id],
-        description: `Canceling withdrawal of ${receipt.amt / 10 ** 18} $ONYX`,
-        execute: async () => api.portal.ERC20.cancel(receipt.id),
+        params: [receipt.ReceiptID],
+        description: `Canceling withdrawal of ${Number(receipt.TokenAmt) / 10 ** 18} $ONYX`,
+        execute: async () => api.portal.ERC20.cancel(receipt.ReceiptID),
       });
     };
+
+    async function getTokenHistory(accountId: string) {
+      const parsedAccountId = BigInt(accountId).toString();
+      try {
+        const request: TokenPortalRequest = {
+          AccountID: parsedAccountId,
+        };
+        const requestOthers: TokenPortalRequest = {
+          AccountID: '',
+        };
+        const myWidthdrawals = await KamidenClient?.getTokenWithdrawals(request);
+        const myDeposits = await KamidenClient?.getTokenDeposits(request);
+        setMyReceipts((myWidthdrawals?.Receipts ?? []).concat(myDeposits?.Receipts ?? []));
+        const allWithdrawals = await KamidenClient?.getOpenWithdrawals(requestOthers);
+        const allReceipts = allWithdrawals?.Receipts ?? [];
+        const othersReceipts = allReceipts.filter(
+          (receipt) => receipt.AccountID !== parsedAccountId
+        );
+        setOthersReceipts(othersReceipts);
+      } catch (error) {
+        console.error('Error getting token history :', error);
+        throw error;
+      }
+    }
 
     /////////////////
     // DISPLAY
@@ -234,7 +260,7 @@ export const TokenPortalModal: UIComponent = {
               deposit: depositTx,
               withdraw: withdrawTx,
             }}
-            data={{ account, config, inventory: account.inventories ?? [] }}
+            data={{ config, inventory: account.inventories ?? [] }}
             state={{ options, selected, setSelected }}
           />
         )}
@@ -249,9 +275,9 @@ export const TokenPortalModal: UIComponent = {
             claim: claimTx,
             cancel: cancelTx,
           }}
-          data={{ account, receipts }}
-          state={{ options, setOptions }}
+          data={{ myReceipts, othersReceipts, config, account }}
           isVisible={showQueue}
+          utils={utils}
         />
       </ModalWrapper>
     );

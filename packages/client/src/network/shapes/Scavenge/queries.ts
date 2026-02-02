@@ -24,5 +24,5 @@ export const queryInstance = (
 
 // get the ID of the Reward Anchor virtual entity
 export const queryRewardAnchor = (regID: EntityID): EntityID => {
-  return hashArgs(['scavenge.reward', regID], ['string', 'uint256'], true);
+  return hashArgs(['scavenge.reward', regID], ['string', 'uint256']);
 };

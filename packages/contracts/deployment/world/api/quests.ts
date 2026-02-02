@@ -9,13 +9,15 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
     name: string,
     description: string,
     endText: string,
+    questType: string,
+    questGiver: string,
     repeatTime: number
   ) {
     const callData = generateCallData(
       'system.quest.registry',
-      [index, name, description, endText, repeatTime],
+      [index, name, description, endText, questType, questGiver, repeatTime],
       'create',
-      ['uint32', 'string', 'string', 'string', 'uint256']
+      ['uint32', 'string', 'string', 'string', 'string', 'string', 'uint256']
     );
     compiledCalls.push(callData);
   }
@@ -26,8 +28,25 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
     compiledCalls.push(callData);
   }
 
+  async function disable(index: number) {
+    const callData = generateCallData(
+      'system.quest.registry',
+      [index, true],
+      'setDisabled',
+      undefined,
+      '800000'
+    );
+    compiledCalls.push(callData);
+  }
+
   async function enable(index: number) {
-    const callData = generateCallData('system.quest.registry', [index, false], 'setDisabled');
+    const callData = generateCallData(
+      'system.quest.registry',
+      [index, false],
+      'setDisabled',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
@@ -119,6 +138,7 @@ export function questsAPI(generateCallData: GenerateCallData, compiledCalls: str
   return {
     create: create,
     delete: remove,
+    disable: disable,
     enable: enable,
     add: {
       objective: addObjective,

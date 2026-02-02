@@ -6,14 +6,17 @@ import { IUint256Component as IUintComp } from "solecs/interfaces/IUint256Compon
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddrByID, getCompByID } from "solecs/utils.sol";
 
-import { DescriptionAltComponent, ID as DescAltCompID } from "components/DescriptionAltComponent.sol";
+import {
+  DescriptionAltComponent,
+  ID as DescAltCompID
+} from "components/DescriptionAltComponent.sol";
 import { DescriptionComponent, ID as DescCompID } from "components/DescriptionComponent.sol";
 import { IndexQuestComponent, ID as IndexQuestCompID } from "components/IndexQuestComponent.sol";
 import { IsRegistryComponent, ID as IsRegCompID } from "components/IsRegistryComponent.sol";
 import { NameComponent, ID as NameCompID } from "components/NameComponent.sol";
 import { TimeComponent, ID as TimeCompID } from "components/TimeComponent.sol";
 import { TypeComponent, ID as TypeCompID } from "components/TypeComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { SubtypeComponent, ID as SubtypeCompID } from "components/SubtypeComponent.sol";
 
 import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibDisabled } from "libraries/utils/LibDisabled.sol";
@@ -29,14 +32,15 @@ library LibQuestRegistry {
   /////////////////
   // INTERACTIONS
 
-  // Create a registry entry for a Quest
-  // requires that all requirements, objectives and rewards are already registered
+  /// @notice Create a registry entry for a Quest
   function createQuest(
     IUintComp components,
     uint32 index,
     string memory name,
     string memory description,
-    string memory endText
+    string memory endText,
+    string memory type_, // e.g. main, side, faction
+    string memory giver // quest giver, e.g. mina, menu
   ) internal returns (uint256 id) {
     id = genQuestID(index);
     require(!LibEntityType.has(components, id), "LibRegQ.createQ: index used");
@@ -47,6 +51,8 @@ library LibQuestRegistry {
     NameComponent(getAddrByID(components, NameCompID)).set(id, name);
     DescriptionComponent(getAddrByID(components, DescCompID)).set(id, description);
     DescriptionAltComponent(getAddrByID(components, DescAltCompID)).set(id, endText);
+    TypeComponent(getAddrByID(components, TypeCompID)).set(id, type_);
+    SubtypeComponent(getAddrByID(components, SubtypeCompID)).set(id, giver);
 
     LibDisabled.set(components, id, true); // disabled initially
   }
@@ -87,6 +93,8 @@ library LibQuestRegistry {
     NameComponent(getAddrByID(components, NameCompID)).remove(questID);
     DescriptionComponent(getAddrByID(components, DescCompID)).remove(questID);
     DescriptionAltComponent(getAddrByID(components, DescAltCompID)).remove(questID);
+    TypeComponent(getAddrByID(components, TypeCompID)).remove(questID);
+    SubtypeComponent(getAddrByID(components, SubtypeCompID)).remove(questID);
     LibDisabled.set(components, questID, false);
 
     LibFlag.removeFull(components, LibFlag.queryFor(components, questID));

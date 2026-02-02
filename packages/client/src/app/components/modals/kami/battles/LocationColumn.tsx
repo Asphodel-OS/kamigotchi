@@ -28,6 +28,13 @@ export const LocationColumn = ({
     playClick();
   };
 
+  ////////////////
+  // DISPLAY
+
+  function affinityIcons(affs: string[]) {
+    return affs.map((aff) => <Icon src={getAffinityImage(aff)} />);
+  }
+
   return (
     <Container>
       <Text size={1.2}>Location</Text>
@@ -36,7 +43,7 @@ export const LocationColumn = ({
         return (
           <TextTooltip key={index} text={[node.name]}>
             <Row key={index} onClick={() => showNode(node)}>
-              <Icon src={getAffinityImage(node.affinity)} />
+              {affinityIcons(node.affinity)}
               <Text size={0.9}> {abbreviateString(node.name)}</Text>
             </Row>
           </TextTooltip>

@@ -14,14 +14,16 @@ export const EmptyText = ({
   text,
   size = 1.2,
   gapScale = 3,
+  linkColor = '#0077ccff',
+  textColor = '#333333ff',
   isHidden,
-  linkColor,
 }: {
   text: TextPart[];
   size?: number;
   gapScale?: number;
-  isHidden?: boolean;
   linkColor?: string;
+  textColor?: string;
+  isHidden?: boolean;
 }) => {
   return (
     <Container isHidden={!!isHidden}>
@@ -30,22 +32,20 @@ export const EmptyText = ({
         text.map((part, index) => {
           if (typeof part === 'string') {
             return (
-              <Text key={index} size={size} gapScale={gapScale}>
+              <Text key={index} size={size} color={textColor} gapScale={gapScale}>
                 {part}
               </Text>
             );
-          }
-          // link
-          if (typeof part === 'object') {
+          } else if (typeof part === 'object') {
             return (
-              <Text key={index} size={size} gapScale={gapScale}>
+              <Text key={index} size={size} color={textColor} gapScale={gapScale}>
                 {part.before}
                 <Link
                   href={part.href}
                   target='_blank'
                   rel='noopener noreferrer'
                   size={size}
-                  linkColor={linkColor}
+                  color={linkColor}
                   gapScale={gapScale}
                 >
                   {part.linkText}
@@ -72,15 +72,16 @@ const Container = styled.div<{ isHidden: boolean }>`
   user-select: none;
 `;
 
-const Text = styled.div<{ size: number; gapScale: number }>`
+const Text = styled.div<{ size: number; gapScale: number; color: string }>`
+  color: ${({ color }) => color};
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size, gapScale }) => gapScale * size}vw;
   text-align: center;
   pointer-events: auto;
 `;
 
-const Link = styled.a<{ size: number; linkColor?: string; gapScale: number }>`
-  color: ${({ linkColor }) => linkColor ?? '#0077cc'};
+const Link = styled.a<{ size: number; gapScale: number; color: string }>`
+  color: ${({ color }) => color};
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size, gapScale }) => gapScale * size}vw;
   text-decoration: underline;

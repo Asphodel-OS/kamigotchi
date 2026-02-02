@@ -5,8 +5,7 @@ import styled from 'styled-components';
 import { getInventoryBalance } from 'app/cache/inventory';
 import { calcTradeTax, getTradeType, Trade } from 'app/cache/trade';
 import { getPerUnitPrice } from 'app/cache/trade/functions';
-import { EmptyText, Pairing, Text, TextTooltip } from 'app/components/library';
-import { ItemGridTooltip } from 'app/components/modals/inventory/items/ItemGridTooltip';
+import { EmptyText, ItemTooltip, Pairing, Text, TextTooltip } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 import { MUSU_INDEX } from 'constants/items';
 import { Account, Item } from 'network/shapes';
@@ -45,6 +44,8 @@ export const Offers = ({
   data: { account: Account; trades: Trade[] };
   utils: {
     getItemByIndex: (index: number) => Item;
+    parseAllos: (allo: any[]) => any[];
+    displayItemRequirements: (item: Item) => string;
   };
   extraFilter?: (t: Trade) => boolean;
   filtersEnabled?: boolean;
@@ -571,10 +572,13 @@ export const Offers = ({
                     <ItemCell>
                       <TextTooltip
                         text={[
-                          <ItemGridTooltip
+                          <ItemTooltip
                             key={`img-${item.index}`}
                             item={item as any}
-                            utils={{ displayRequirements: () => '', parseAllos: () => [] }}
+                            utils={{
+                              displayRequirements: utils.displayItemRequirements,
+                              parseAllos: utils.parseAllos,
+                            }}
                           />,
                         ]}
                         maxWidth={25}
@@ -590,10 +594,13 @@ export const Offers = ({
                       </TextTooltip>
                       <TextTooltip
                         text={[
-                          <ItemGridTooltip
+                          <ItemTooltip
                             key={`name-${item.index}`}
                             item={item as any}
-                            utils={{ displayRequirements: () => '', parseAllos: () => [] }}
+                            utils={{
+                              displayRequirements: utils.displayItemRequirements,
+                              parseAllos: utils.parseAllos,
+                            }}
                           />,
                         ]}
                         maxWidth={25}

@@ -7,6 +7,8 @@ export interface State {
   accountIndex: number;
   assignerID: string;
   dialogueIndex: number;
+  questIndex: EntityIndex;
+  questJustCompleted: EntityIndex | null;
   goalIndex: number[];
   kamiIndex: number;
   listingEntityIndex: EntityIndex;
@@ -22,6 +24,7 @@ interface Actions {
   setDialogue: (dialogueIndex: number) => void;
   setGoal: (goalIndex: number[]) => void;
   setKami: (kamiIndex: number) => void;
+  setQuest: (questIndex: EntityIndex) => void;
   setleaderboardKey: (leaderboardKey: LeaderboardKey) => void;
   setListing: (listingEntityIndex: EntityIndex) => void;
   setNode: (nodeIndex: number) => void;
@@ -37,6 +40,8 @@ export const useSelected = create<State & Actions>((set) => {
     goalIndex: [0] as number[],
     kamiIndex: 0 as number,
     leaderboardKey: 'default',
+    questIndex: 0 as EntityIndex,
+    questJustCompleted: null,
     listingEntityIndex: 0 as EntityIndex,
     nodeIndex: 0 as number,
     npcIndex: 0 as number,
@@ -50,6 +55,7 @@ export const useSelected = create<State & Actions>((set) => {
     setDialogue: (dialogueIndex: number) => set((state: State) => ({ ...state, dialogueIndex })),
     setGoal: (goalIndex: number[]) => set((state: State) => ({ ...state, goalIndex })),
     setKami: (kamiIndex: number) => set((state: State) => ({ ...state, kamiIndex })),
+    setQuest: (questIndex: EntityIndex) => set((state: State) => ({ ...state, questIndex })),
     setleaderboardKey: (leaderboardKey: LeaderboardKey) =>
       set((state: State) => ({ ...state, leaderboardKey })),
     setListing: (listingEntityIndex: EntityIndex) =>

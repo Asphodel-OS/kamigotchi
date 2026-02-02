@@ -7,6 +7,7 @@ import { DetailedEntity, getItemImage } from '../utils';
 import {
   getDescription,
   getFor,
+  getIsDisabled,
   getItemIndex,
   getName,
   getRarity,
@@ -29,6 +30,7 @@ export interface Item extends DetailedEntity {
   requirements: Requirements;
   effects: Effects;
   is: {
+    disabled: boolean;
     tradeable: boolean;
   };
   token?: {
@@ -70,6 +72,7 @@ export const getItem = (world: World, comps: Components, entity: EntityIndex): I
     requirements: getRequirements(world, comps, index),
     effects: getEffects(world, comps, index),
     is: {
+      disabled: getIsDisabled(comps, entity),
       tradeable: !hasFlag(world, comps, entity, 'NOT_TRADABLE'),
     },
   };
