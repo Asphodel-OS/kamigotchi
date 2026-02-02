@@ -1,6 +1,7 @@
 import { Subject, Subscription } from 'rxjs';
 
 import { getKamigazeClient } from 'clients/kamigaze';
+import { SyncState, SyncStatus } from 'engine/constants';
 import { createDecode } from 'engine/encoders';
 import { Components } from 'engine/recs';
 import { log } from 'utils/logger';
@@ -8,7 +9,7 @@ import { log } from 'utils/logger';
 import { createBlockUpdate, createWake, Input } from './sync/Worker';
 import { parseGetEventsSinceResponse } from './sync/stream/gapfill';
 import { HEALTH_CHECK_BUFFER_MS, KEEPALIVE_INTERVAL_MS } from './sync/stream/stream';
-import { NetworkEvent } from './types';
+import { NetworkEvent, NetworkEvents } from './types';
 
 const WAKE_DEBOUNCE_MS = 1000;
 const HEALTH_THRESHOLD_MS = KEEPALIVE_INTERVAL_MS + HEALTH_CHECK_BUFFER_MS;
@@ -36,6 +37,7 @@ export function createVisibilityHandler<C extends Components>(
   let lastWakeSignal = 0;
   let lastKnownBlock = 0;
   let lastEventTime = 0;
+  let isLive = false;
   const decode = createDecode();
 
   const handleVisibilityChange = async () => {
@@ -50,6 +52,11 @@ export function createVisibilityHandler<C extends Components>(
     lastWakeSignal = now;
     log.debug('[Visibility] App became visible, sending wake signal');
     input$.next(createWake());
+
+    if (!isLive) {
+      log.debug('[Visibility] Not in LIVE state, skipping main-thread gapfill');
+      return;
+    }
 
     // Skip gapfill if stream is healthy
     const timeSinceLastEvent = now - lastEventTime;
@@ -88,11 +95,17 @@ export function createVisibilityHandler<C extends Components>(
     }
   };
 
-  // Track the latest block number and timestamp for main-thread gapfill
+  // Track sync state, latest block number, and timestamp for main-thread gapfill
   let blockTrackingSub: Subscription | undefined;
   blockTrackingSub = ecsEvents$.subscribe((events) => {
     const now = Date.now();
     for (const event of events) {
+      if (event.type === NetworkEvents.NetworkComponentUpdate && 'value' in event) {
+        const value = event.value as SyncStatus | undefined;
+        if (value && typeof value === 'object' && 'state' in value) {
+          isLive = value.state === SyncState.LIVE;
+        }
+      }
       if ('blockNumber' in event && event.blockNumber > lastKnownBlock) {
         lastKnownBlock = event.blockNumber;
       }
