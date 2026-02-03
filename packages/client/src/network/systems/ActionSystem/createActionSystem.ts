@@ -17,6 +17,8 @@ import { v4 as uuid } from 'uuid';
 import { defineActionComponent } from './ActionComponent';
 import { ActionState } from './constants';
 import { ActionRequest } from './types';
+import { logTxError } from 'clients/kamiden/txErrorLogger';
+import { useAccount } from 'app/stores/account';
 
 export type ActionSystem = ReturnType<typeof createActionSystem>;
 
@@ -167,6 +169,18 @@ export function createActionSystem<M = undefined>(
 
     updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
     playError();
+
+    const account = useAccount.getState().account;
+    log.debug('[ActionSystem] Logging tx error', { operatorAddress: account.operatorAddress, action: action.action, description: action.description });
+    if (account.operatorAddress) {
+      logTxError(error, {
+        sender: account.operatorAddress,
+        system: action.action ?? 'unknown',
+        method: action.description ?? 'unknown',
+      });
+    } else {
+      log.warn('[ActionSystem] No operator address, skipping tx error logging');
+    }
   }
 
   return {
