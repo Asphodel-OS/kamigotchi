@@ -140,7 +140,7 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
 
   width: 100%;
   height: ${({ isExpanded }) => (isExpanded ? '65%' : '0%')};
-  padding: 0vw 1vw;
+  padding: 0em 1em;
   top: 0;
 
   flex-grow: 1;
@@ -148,8 +148,8 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
   flex-flow: column nowrap;
   justify-content: flex-start;
 
-  font-size: 1vw;
-  line-height: 2vw;
+  font-size: 1em;
+  line-height: 2em;
   text-align: justify;
   white-space: pre-line;
   word-wrap: break-word;
@@ -164,19 +164,19 @@ const Text = styled.div<{ isExpanded?: boolean; color?: string }>`
 
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.3vw;
+    width: 0.3em;
   }
 
   ::-webkit-scrollbar-thumb {
     background-color: ${({ color }) => color};
-    border-radius: 0.3vw;
+    border-radius: 0.3em;
     background-clip: padding-box;
   }
 `;
 
 const Divider = styled.button<{ color?: string; expanded?: boolean }>`
   position: relative;
-  border: ${({ color }) => `solid ${color} 0.15vw`};
+  border: ${({ color }) => `solid ${color} 0.15em`};
 
   width: 100%;
   height: 3%;
@@ -186,8 +186,8 @@ const Divider = styled.button<{ color?: string; expanded?: boolean }>`
   justify-content: space-between;
   align-items: center;
 
-  font-size: 1vw;
-  padding: 0.8vw;
+  font-size: 1em;
+  padding: 0.8em;
   color: ${({ color }) => color};
 
   cursor: pointer;
@@ -195,8 +195,8 @@ const Divider = styled.button<{ color?: string; expanded?: boolean }>`
   ::after {
     content: ${({ expanded }) => (expanded ? '"▾"' : '"▸"')};
     color: ${({ color }) => color};
-    font-size: 2.5vw;
-    transform: scale(0.8) translateY(-0.2vw);
+    font-size: 2.5em;
+    transform: scale(0.8);
     transition: transform 0.3s ease;
   }
 `;

@@ -14,7 +14,6 @@ export const Progress = ({
   };
   step: Step;
 }) => {
-
   /////////////////
   // WALLET CONNECTION
 
@@ -114,14 +113,14 @@ export const Progress = ({
         </TextTooltip>
         <Text>Connection</Text>
       </Pairing>
-      <DottedLines left={10.5} top={3.3} />
+      <Connector />
       <Pairing>
         <TextTooltip text={getNetworkTooltip()} alignText='center'>
           <StatusCircle state={getNetworkStatus()} size={4.5} />
         </TextTooltip>
         <Text>Network</Text>
       </Pairing>
-      <DottedLines left={22.5} top={3.3} />
+      <Connector />
       <Pairing>
         <TextTooltip text={getAuthenticationTooltip()} alignText='center'>
           <StatusCircle state={getAuthenticationStatus()} size={4.5} />
@@ -135,8 +134,7 @@ export const Progress = ({
 const Container = styled.div`
   position: relative;
 
-  width: 36vw;
-  height: 9vw;
+  height: 9em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -145,10 +143,9 @@ const Container = styled.div`
 `;
 
 const Pairing = styled.div`
-  width: 100%;
-  height: 7.5vw;
-  gap: 0.6vw;
-
+  height: 7.5em;
+  gap: 0.6em;
+  width: 25%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -159,14 +156,11 @@ const Pairing = styled.div`
 
 const Text = styled.div`
   color: #333;
-  font-size: 0.9vw;
+  font-size: 0.9em;
   text-align: center;
 `;
 
-const DottedLines = styled.div<{ left: number; top: number }>`
-  position: absolute;
-  border-top: 0.6vw dotted gray;
-  width: 3vw;
-  left: ${({ left }) => left}vw;
-  top: ${({ top }) => top}vw;
+const Connector = styled.div`
+  width: 3em;
+  border-top: 0.6em dotted gray;
 `;

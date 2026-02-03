@@ -155,7 +155,7 @@ const Content = styled.div`
   flex-direction: column;
   flex-grow: 1;
   position: relative;
-  padding: 0.2vw;
+  padding: 0.2em;
   user-select: none;
 `;
 
@@ -169,12 +169,12 @@ const Column = styled.div`
   flex-flow: column nowrap;
   flex-grow: 1;
   position: relative;
-  margin: 0.2vw;
-  padding-top: 0.2vw;
+  margin: 0.2em;
+  padding-top: 0.2em;
 `;
 
 const Label = styled.div`
-  gap: 0.3vw;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -193,53 +193,58 @@ const Label = styled.div`
 `;
 
 const LabelIcon = styled.img`
-  height: 1.2vw;
-  margin-bottom: 0.15vw;
+  height: 1.2em;
+  margin-bottom: 0.15em;
 `;
 
 const Buffs = styled.div`
   background-color: rgba(255, 255, 255, 1);
   position: absolute;
-  max-width: 95%;
-  bottom: 0.15vw;
-  left: 0.15vw;
+  bottom: 0.15em;
+  left: 0.15em;
 
-  border: solid black 0.15vw;
-  border-radius: 0.45vw;
-  padding: 0.1vw;
-  gap: 0.1vw;
+  max-width: 95%;
+  width: max-content;
+
+  border: solid black 0.15em;
+  border-radius: 0.45em;
+  margin: 0 0 0 0.4em;
+  padding: 0.2em;
+  gap: 0.2em;
 
   display: flex;
   flex-flow: row nowrap;
+  align-items: center;
 
   pointer-events: auto;
   overflow: auto hidden;
 
   &::-webkit-scrollbar {
-    height: 0.2vw;
+    height: 0.2em;
   }
   &::-webkit-scrollbar-track {
     background-color: rgba(202, 202, 56, 1);
   }
   &::-webkit-scrollbar-thumb {
     background-color: rgba(201, 150, 9, 1);
-    border-radius: 0.2vw;
+    border-radius: 0.2em;
   }
 `;
 
 const Buff = styled.img`
-  width: 1.3vw;
-  height: 1.3vw;
-  object-fit: cover;
+  height: 1.6em;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 `;
 
 const Actions = styled.div`
-  position: absolute;
-  right: 0.15vw;
-  bottom: 0.15vw;
-  gap: 0.15vw;
-
+  position: relative;
+  right: 0.15em;
+  bottom: 0.15em;
+  max-width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
+  gap: 0.3em;
 `;

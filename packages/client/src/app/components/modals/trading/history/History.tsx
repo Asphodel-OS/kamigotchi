@@ -26,6 +26,7 @@ export const History = ({
   };
 }) => {
   const [typeFilter, setTypeFilter] = useState<TradeType>('All' as any);
+
   return (
     <Content isVisible={isVisible}>
       <OffersTable

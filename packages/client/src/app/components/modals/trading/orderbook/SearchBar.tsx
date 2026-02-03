@@ -118,7 +118,7 @@ export const SearchBar = ({
         onClick={toggleTypeFilter}
         color={typeFilter === 'Buy' ? '#e9ffe9' : '#ffe9e9'}
       />
-      <IconListButton img={getSortIcon(sort)} text={sort} options={getSortOptions()} />
+      <IconListButton img={getSortIcon(sort)} text={sort} options={getSortOptions()} scale={1.3} />
       <TextTooltip text={[ascending ? 'sorting by ascending' : 'sorting by descending']}>
         <IconButton text={ascending ? '↑' : '↓'} onClick={() => setAscending(!ascending)} />
       </TextTooltip>
@@ -143,8 +143,8 @@ export const SearchBar = ({
 const Container = styled.div`
   position: relative;
   width: 100%;
-  gap: 0.6vw;
-  padding: 0.3vw;
+  gap: 0.6em;
+  padding: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -153,22 +153,17 @@ const Container = styled.div`
 
   /* Keep search controls comfortably smaller than their container */
   & button {
-    height: 1.8vw;
-    line-height: 1.8vw;
-    padding: 0 0.6vw;
-    font-size: 0.9vw;
+    height: 1.8em;
+    line-height: 1.8em;
+    padding: 0 0.6em;
+    font-size: 0.9em;
     max-height: 100%;
   }
-  @media (min-width: 1400px) {
-    & button {
-      height: 1.6vw;
-      line-height: 1.6vw;
-    }
-  }
+
   @media (min-width: 1800px) {
     & button {
-      height: 1.5vw;
-      line-height: 1.5vw;
+      height: 1.5em;
+      line-height: 1.5em;
     }
   }
 `;
@@ -176,28 +171,28 @@ const Container = styled.div`
 const SearchInput = styled.input`
   flex: 1 1 auto;
   min-width: 0;
-  height: 1.8vw;
-  padding: 0 0.6vw;
+  height: 1.8em;
+  padding: 0 0.6em;
 
-  font-size: 0.9vw;
-  line-height: 1.8vw;
+  font-size: 0.9em;
+  line-height: 1.8em;
 `;
 
 const SuggestBox = styled.div`
   position: absolute;
-  top: calc(100% + 0.3vw);
+  top: calc(100% + 0.3em);
   left: 0;
   right: 0;
   background: #fff;
-  border: 0.12vw solid black;
-  max-height: 12vw;
+  border: 0.12em solid black;
+  max-height: 12em;
   overflow: auto;
   z-index: 1;
 `;
 
 const Suggest = styled.div`
-  padding: 0.45vw 0.6vw;
-  font-size: 0.9vw;
+  padding: 0.45em 0.6em;
+  font-size: 0.9em;
   cursor: pointer;
   &:hover {
     background: #eee;

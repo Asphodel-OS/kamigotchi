@@ -232,12 +232,7 @@ export const DialogueModal: UIComponent = {
       const disabled = step === 0;
       return (
         <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
-          <IconButton
-            scale={1.8}
-            img={ArrowIcons.left}
-            disabled={disabled}
-            onClick={() => setStep(step - 1)}
-          />
+          <IconButton img={ArrowIcons.left} disabled={disabled} onClick={() => setStep(step - 1)} />
         </div>
       );
     };
@@ -251,7 +246,6 @@ export const DialogueModal: UIComponent = {
           }}
         >
           <IconButton
-            scale={1.8}
             img={ArrowIcons.right}
             disabled={disabled}
             onClick={() => setStep(step + 1)}
@@ -300,7 +294,7 @@ export const DialogueModal: UIComponent = {
           canExit
           backgroundColor={'white'}
           positionOverride={{
-            colStart: 66,
+            colStart: 56,
             colEnd: 99,
             rowStart: 7,
             rowEnd: 90,
@@ -326,7 +320,7 @@ export const DialogueModal: UIComponent = {
       );
     }
     return (
-      <ModalWrapper id='dialogue' canExit overlay>
+      <ModalWrapper id='dialogue' canExit overlay zIndex={10}>
         <Text>
           {getText(dialogueNode.text[step])}
           <ButtonRow>
@@ -340,39 +334,32 @@ export const DialogueModal: UIComponent = {
   },
 };
 
+const Header = styled.div<{ $color: string }>`
+  padding: 1em;
+  font-size: 1.4em;
+  color: ${(props) => props.$color};
+  border-color: white;
+`;
+
 const Text = styled.div`
   background-color: rgb(255, 255, 204);
   text-align: center;
   height: 100%;
-  min-height: max-content;
   width: 100%;
-  padding: 0vw 9vw;
-
+  padding: 2em 0 0 0;
   display: flex;
   flex-grow: 1;
   flex-flow: column nowrap;
-  justify-content: center;
-
-  font-size: 1.2vw;
-  line-height: 2.4vw;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 1.8;
   white-space: pre-line;
 `;
 
 const ButtonRow = styled.div`
-  position: absolute;
-  align-self: center;
   width: 100%;
-  bottom: 0;
-  padding: 0.7vw;
-
+  padding: 0.7em;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-`;
-
-const Header = styled.div<{ $color: string }>`
-  padding: 1vw;
-  font-size: 1.4vw;
-  color: ${(props) => props.$color};
-  border-color: white;
 `;

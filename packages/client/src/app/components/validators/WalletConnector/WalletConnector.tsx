@@ -4,7 +4,6 @@ import {
   usePrivy,
   useWallets,
 } from '@privy-io/react-auth';
-import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 import { switchChain } from '@wagmi/core';
 import { ethers } from 'ethers';
 import { isEqual } from 'lodash';
@@ -12,8 +11,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Address } from 'viem';
 import { useAccount, useConnect } from 'wagmi';
+import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 
-import { ActionButton, ValidatorWrapper } from 'app/components/library';
+import { IconButton, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
@@ -232,7 +232,7 @@ export const WalletConnecter: UIComponent = {
             }}
             step={getCurrentStep()}
           />
-          <ActionButton onClick={handleClick} text={getButtonLabel()} size='large' />
+          <IconButton onClick={handleClick} text={getButtonLabel()} />
         </Container>
       </ValidatorWrapper>
     );
@@ -240,8 +240,6 @@ export const WalletConnecter: UIComponent = {
 };
 
 const Container = styled.div`
-  height: 15vw;
-
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-around;

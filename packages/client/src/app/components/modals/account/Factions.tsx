@@ -60,19 +60,19 @@ export const Factions = ({
 
 const Container = styled.div`
   width: 90%;
-  padding: 0.5vw;
+  padding: 0.5em;
   display: flex;
   flex-flow: column;
   -webkit-box-pack: start;
   justify-content: flex-start;
-  font-size: 0.7vw;
-  gap: 0.6vw;
+  font-size: 0.7em;
+  gap: 0.6em;
   z-index: 0;
   align-factions: flex-start;
 `;
 
 const Row = styled.div`
-  padding: 0.15vw 0px;
+  padding: 0.15em 0px;
   display: flex;
   flex-flow: row;
   -webkit-box-align: center;

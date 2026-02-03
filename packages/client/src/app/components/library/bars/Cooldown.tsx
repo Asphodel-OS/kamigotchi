@@ -66,5 +66,5 @@ const Wrapper = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;

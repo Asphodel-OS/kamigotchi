@@ -15,6 +15,7 @@ export const IconButton = forwardRef(function IconButton(
     disabled,
     color,
     fullWidth,
+    fullHeight,
     pulse,
     shadow,
     width,
@@ -23,8 +24,7 @@ export const IconButton = forwardRef(function IconButton(
     corner,
     cornerAlt,
     radius = 0.45,
-    scale = 2.5,
-    scaleOrientation = 'vw',
+    scale = 1.3,
     icon,
     filter,
     noBorder,
@@ -40,6 +40,7 @@ export const IconButton = forwardRef(function IconButton(
     // general styling
     color?: string;
     disabled?: boolean;
+    fullHeight?: boolean;
     fullWidth?: boolean;
     pulse?: boolean;
     cooldownBackground?: string;
@@ -50,7 +51,6 @@ export const IconButton = forwardRef(function IconButton(
 
     radius?: number;
     scale?: number;
-    scaleOrientation?: 'vw' | 'vh';
     shadow?: boolean;
     flatten?: `left` | `right`; // flattens a side, for use with dropdowns
     noBorder?: boolean;
@@ -81,7 +81,6 @@ export const IconButton = forwardRef(function IconButton(
           <Image
             src={img}
             scale={scale}
-            orientation={scaleOrientation}
             iconInsetPx={resolvedIconInsetPx}
             iconInsetXpx={resolvedIconInsetXpx}
             iconInsetYpx={resolvedIconInsetYpx}
@@ -91,7 +90,7 @@ export const IconButton = forwardRef(function IconButton(
       }
       // This allows the use of MUI icons, we want this to use placeholders until Lux has the icons ready
       const Icon = img;
-      return <Icon sx={{ fontSize: `${scale * 0.75}${scaleOrientation}` }} />;
+      return <Icon sx={{ fontSize: `${scale * 1.5}em` }} />;
     }
   };
 
@@ -101,9 +100,9 @@ export const IconButton = forwardRef(function IconButton(
       color={color ?? '#fff'}
       onClick={!disabled ? handleClick : () => {}}
       scale={scale}
-      orientation={scaleOrientation}
       radius={radius}
       fullWidth={fullWidth}
+      fullHeight={fullHeight}
       disabled={disabled}
       pulse={pulse}
       shadow={shadow}
@@ -112,17 +111,18 @@ export const IconButton = forwardRef(function IconButton(
       noBorder={noBorder}
       filter={filter}
       shake={shake}
+      img={!!img}
       cooldownBackground={cooldownBackground}
     >
       {MyImage()}
       {text && (
-        <Text scale={scale} orientation={scaleOrientation} withIcon={!!img}>
+        <Text scale={scale} withIcon={!!img}>
           {text}
         </Text>
       )}
-      {balance !== undefined && <Balance>{balance}</Balance>}
-      {corner && <Corner radius={radius - 0.15} orientation={scaleOrientation} flatten={flatten} />}
-      {cornerAlt && <CornerAlt radius={radius - 0.15} orientation={scaleOrientation} />}
+      {balance !== undefined && <Balance scale={scale}>{balance}</Balance>}
+      {corner && <Corner radius={radius - 0.15} flatten={flatten} />}
+      {cornerAlt && <CornerAlt radius={radius - 0.15} />}
     </Container>
   );
 });
@@ -131,9 +131,9 @@ const Container = styled.button<{
   width?: number;
   color: string;
   scale: number;
-  orientation: string;
   radius: number;
   fullWidth?: boolean;
+  fullHeight?: boolean;
   disabled?: boolean;
   pulse?: boolean;
   flatten?: `left` | `right`;
@@ -141,17 +141,18 @@ const Container = styled.button<{
   noBorder?: boolean;
   filter?: string;
   shake?: boolean;
+  img: boolean;
   cooldownBackground?: string;
 }>`
   position: relative;
-  border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15vw')};
-  border-radius: ${({ radius, orientation }) => `${radius}${orientation}`};
+  border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15em')};
+  border-radius: ${({ radius }) => `${radius * 1.2}em`};
 
-  height: ${({ scale, orientation }) => `${scale}${orientation}`};
-  width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}vw` : 'auto')};
+  width: ${({ fullWidth, width }) => (fullWidth ? '100%' : width ? `${width}em` : 'auto')};
+  min-height: fit-content;
   min-width: fit-content;
-  padding: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
-  gap: ${({ scale, orientation }) => `${scale * 0.1}${orientation}`};
+  height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
+  padding: ${({ img, scale }) => scale * (img ? 0.15 : 0.3)}em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -159,7 +160,7 @@ const Container = styled.button<{
   align-items: center;
   background: ${({ color, disabled, cooldownBackground }) =>
     cooldownBackground || (disabled ? '#bbb' : color)};
-  box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
+  box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}em black`};
 
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
@@ -177,44 +178,48 @@ const Container = styled.button<{
   ${({ pulse }) => pulse && pulseAnimationRule}
   ${({ shake }) => shake && shakeAnimationRule}
 
-  &:hover {
-    animation: ${() => hoverFx()} 0.2s;
-    transform: scale(1.05);
-    z-index: 1;
-  }
-  &:active {
-    animation: ${() => clickFx()} 0.3s;
-  }
+  ${({ disabled }) =>
+    !disabled &&
+    css`
+      &:hover {
+        animation: ${() => hoverFx()} 0.2s;
+        transform: scale(1.05);
+        z-index: 1;
+      }
+      &:active {
+        animation: ${() => clickFx()} 0.3s;
+      }
+    `}
 `;
 
 const Image = styled.img<{
   scale: number;
-  orientation: string;
   iconInsetPx?: number;
   iconInsetXpx?: number;
   iconInsetYpx?: number;
   filter?: string;
 }>`
-  width: ${({ scale, orientation, iconInsetPx, iconInsetXpx }) =>
-    `calc(${scale * 0.75}${orientation} - ${iconInsetXpx ?? iconInsetPx ?? 0}px)`};
-  height: ${({ scale, orientation, iconInsetPx, iconInsetYpx }) =>
-    `calc(${scale * 0.75}${orientation} - ${iconInsetYpx ?? iconInsetPx ?? 0}px)`};
-  ${({ scale }) => (scale > 4 ? 'image-rendering: pixelated;' : '')}
+  width: ${({ scale }) => `${scale * 1.9}em`};
+  height: ${({ scale }) => `${scale * 1.9}em`};
+
   user-drag: none;
+  ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
   ${({ filter }) => filter && `filter: ${filter};`}
 `;
 
-const Text = styled.div<{ scale: number; orientation: string; withIcon?: boolean }>`
-  font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
-  padding: ${({ withIcon }) => (withIcon ? '0' : '0 0.6vw')};
+const Text = styled.div<{
+  scale: number;
+  withIcon?: boolean;
+}>`
+  font-size: ${({ scale }) => `${scale * 0.8}em`};
+  white-space: nowrap;
 `;
 
-// TODO: get this scaling correctly with parent hover
-const Corner = styled.div<{ radius: number; orientation: string; flatten?: string }>`
+const Corner = styled.div<{ radius: number; flatten?: string }>`
   position: absolute;
-  border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
+  border: solid black ${({ radius }) => radius * 0.9}em;
   border-bottom-right-radius: ${({ radius, flatten }) =>
-      flatten === 'right' ? 0 : radius - 0.15}${({ orientation }) => orientation};
+    flatten === 'right' ? 0 : `${radius * 1.2}em`};
   border-color: transparent black black transparent;
   bottom: 0;
   right: 0;
@@ -222,11 +227,10 @@ const Corner = styled.div<{ radius: number; orientation: string; flatten?: strin
   height: 0;
 `;
 
-// TODO: get this scaling correctly with parent hover
-const CornerAlt = styled.div<{ radius: number; orientation: string }>`
+const CornerAlt = styled.div<{ radius: number }>`
   position: absolute;
-  border: solid black ${({ radius }) => radius}${({ orientation }) => orientation};
-  border-top-right-radius: ${({ radius }) => radius - 0.15}${({ orientation }) => orientation};
+  border: solid black ${({ radius }) => radius * 0.25}em;
+  border-top-right-radius: ${({ radius }) => `${radius * 0.25}em`};
   border-color: black black transparent transparent;
   top: 0;
   right: 0;
@@ -234,19 +238,31 @@ const CornerAlt = styled.div<{ radius: number; orientation: string }>`
   height: 0;
 `;
 
-const Balance = styled.div`
+const Balance = styled.div<{ scale: number }>`
   position: absolute;
   background-color: white;
-  border-top: solid black 0.15vw;
-  border-left: solid black 0.15vw;
-  border-radius: 0.3vw 0 0.3vw 0;
+  border-top: solid black 0.05em;
+  border-left: solid black 0.05em;
+  border-radius: 0.15em 0 0.45em 0;
   bottom: 0;
   right: 0;
-
-  font-size: 0.75vw;
+  font-size: ${({ scale }) => `${scale * 0.5}em`};
   align-items: center;
   justify-content: center;
-  padding: 0.2vw;
+  padding: 0.1em;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: auto hidden;
+  pointer-events: auto;
+
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    height: 0.2em;
+  }
+  ::-webkit-scrollbar-thumb {
+    height: 0.2em;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 `;
 
 const pulseAnimationRule = css`

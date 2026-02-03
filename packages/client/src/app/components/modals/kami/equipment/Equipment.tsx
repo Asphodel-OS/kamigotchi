@@ -92,7 +92,7 @@ export const Equipment = ({
       const itemTooltip = utils
         ? {
             text: [<ItemTooltip key={slot} item={equippedItem.item} utils={utils} />],
-            maxWidth: 25,
+            maxWidth: { desktop: 25 },
           }
         : undefined;
 
@@ -101,7 +101,6 @@ export const Equipment = ({
           <IconListButton
             img={equippedItem.item.image}
             options={options}
-            scale={3}
             radius={0.5}
             disabled={!isResting}
             tooltip={isResting ? itemTooltip : restingTooltip}
@@ -124,7 +123,6 @@ export const Equipment = ({
       <IconListButton
         text='+'
         options={options}
-        scale={3}
         radius={0.5}
         disabled={!isAvailable || !options.length || !actions || isAtCapacity || !isResting}
         tooltip={getTooltip()}
@@ -182,15 +180,16 @@ export const Equipment = ({
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0.7vw;
+  padding: 0.7em;
   user-select: none;
   align-items: center;
+  overflow-y: auto;
 `;
 
 const ColumnsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 1.5vw;
+  gap: 1.5em;
   width: 100%;
 `;
 
@@ -202,30 +201,30 @@ const Column = styled.div`
 `;
 
 const ColumnHeader = styled.div`
-  font-size: 1vw;
+  font-size: 1em;
   font-weight: bold;
   color: black;
-  padding: 0.5vw;
-  margin-bottom: 0.5vw;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
 `;
 
 const SlotRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 0.7vw;
-  border: solid black 0.15vw;
-  border-radius: 0.5vw;
-  padding: 0.5vw;
-  gap: 0.5vw;
-  min-height: 5vw;
+  margin-bottom: 0.7em;
+  border: solid black 0.15em;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  gap: 0.5em;
+  min-height: 5em;
 `;
 
 const SlotLabel = styled.div`
   position: relative;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   color: black;
-  padding: 0.3vw;
+  padding: 0.3em;
 `;
 
 const FilledSlotWrapper = styled.div`
@@ -234,17 +233,17 @@ const FilledSlotWrapper = styled.div`
 
 const RemoveButton = styled.div`
   position: absolute;
-  top: -0.5vw;
-  right: -0.5vw;
-  width: 1.2vw;
-  height: 1.2vw;
-  border: solid black 0.1vw;
+  top: -0.5em;
+  right: -0.5em;
+  width: 1.2em;
+  height: 1.2em;
+  border: solid black 0.1em;
   border-radius: 50%;
   background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8vw;
+  font-size: 0.8em;
   cursor: pointer;
   z-index: 2;
   &:hover {
@@ -257,15 +256,15 @@ const RemoveButton = styled.div`
 `;
 
 const BuffIcon = styled.img`
-  width: 2.5vw;
-  height: 2.5vw;
-  border: solid black 0.15vw;
-  border-radius: 0.5vw;
+  width: 2.5em;
+  height: 2.5em;
+  border: solid black 0.15em;
+  border-radius: 0.5em;
   object-fit: contain;
 `;
 
 const EmptyEffects = styled.div`
-  font-size: 0.9vw;
+  font-size: 0.9em;
   color: #888;
 `;
 
@@ -274,18 +273,18 @@ const InventoryBar = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 0.5vw;
-  border: solid black 0.15vw;
-  border-radius: 0.5vw;
+  padding: 0.5em;
+  border: solid black 0.15em;
+  border-radius: 0.5em;
   width: 100%;
 `;
 
 const InventoryIcon = styled.span`
-  font-size: 1.5vw;
-  margin-right: 0.5vw;
+  font-size: 1.5em;
+  margin-right: 0.5em;
 `;
 
 const InventoryText = styled.div`
-  font-size: 1.2vw;
+  font-size: 1.2em;
   color: black;
 `;

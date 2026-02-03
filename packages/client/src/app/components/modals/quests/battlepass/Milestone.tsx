@@ -26,7 +26,7 @@ export const Milestone = ({
     complete: boolean;
     disabled: boolean;
   };
-  size?: number; // vw of diameter
+  size?: number; // em of diameter
   pulse?: boolean;
 }) => {
 
@@ -83,7 +83,7 @@ const Container = styled.div`
 `;
 
 const BaseButton = styled.div<{
-  size: number; // vw of diameter
+  size: number; // em of diameter
   position: number; // 0-100%
   scale: number;
   shift: number;
@@ -95,10 +95,10 @@ const BaseButton = styled.div<{
   transform: translateX(${({ shift }) => 100 * shift}%);
   background-color: ${({ color }) => color};
 
-  border: solid black 0.15vw;
-  border-radius: ${({ size }) => size * 0.5}vw;
-  height: ${({ size }) => size}vw;
-  width: ${({ size }) => size}vw;
+  border: solid black 0.15em;
+  border-radius: ${({ size }) => size * 0.5}em;
+  height: ${({ size }) => size}em;
+  width: ${({ size }) => size}em;
 
   display: flex;
   align-items: center;
@@ -124,8 +124,8 @@ const ActiveButton = styled(BaseButton)`
 const InnerRing = styled.div<{ scale: number; color: string; isVisible?: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
   position: absolute;
-  border: solid ${({ color }) => color} 0.15vw;
-  border-radius: 0.6vw;
+  border: solid ${({ color }) => color} 0.15em;
+  border-radius: 0.6em;
   height: ${({ scale }) => scale * 100}%;
   width: ${({ scale }) => scale * 100}%;
 `;

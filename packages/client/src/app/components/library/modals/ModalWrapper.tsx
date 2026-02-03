@@ -22,6 +22,7 @@ export const ModalWrapper = ({
   shuffle = false,
   truncate,
   noScroll,
+  zIndex,
 }: {
   canExit?: boolean;
   children: React.ReactNode;
@@ -44,6 +45,7 @@ export const ModalWrapper = ({
   shuffle?: boolean;
   truncate?: boolean;
   noScroll?: boolean;
+  zIndex?: number;
 }) => {
   const isVisible = useVisibility((s) => s.modals[id]);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
@@ -79,12 +81,20 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
+    <Wrapper
+      id={id}
+      isOpen={shouldDisplay}
+      overlay={!!overlay}
+      style={gridStyle}
+      shuffle={shuffle}
+      zIndex={zIndex}
+    >
       <Content
         backgroundColor={backgroundColor}
         isOpen={isVisible}
         truncate={truncate}
         data-resizable={id === 'trading'}
+        noScroll={noScroll}
       >
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
         {canExit && (
@@ -124,6 +134,7 @@ const Wrapper = styled.div<{
   isOpen: boolean;
   overlay: boolean;
   shuffle: boolean;
+  zIndex?: number;
 }>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
@@ -138,21 +149,19 @@ const Wrapper = styled.div<{
           `}
       ${shuffle && css`, ${Shuffle} 0.4s ease-in-out`};
   `}
-  margin: 0.2vw;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  z-index: ${({ zIndex }) => zIndex || 1};
 `;
 
 const Content = styled.div<{
   isOpen: boolean;
   truncate?: boolean;
   backgroundColor?: string;
+  noScroll?: boolean;
 }>`
   position: relative;
   background-color: white;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
+  border: solid black 0.15em;
+  border-radius: 1.2em;
 
   width: 100%;
   ${({ truncate }) => (truncate ? `max-height: 100%;` : `height: 100%;`)}
@@ -160,7 +169,7 @@ const Content = styled.div<{
 
   display: flex;
   flex-flow: column nowrap;
-  overflow: hidden;
+  overflow: ${({ noScroll }) => (noScroll ? 'hidden' : 'hidden auto')};
   &[data-resizable='true'] {
     resize: both;
     overflow: auto;
@@ -173,11 +182,21 @@ const Content = styled.div<{
     min-height: 42vh;
   }
   background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
+  &::-webkit-scrollbar {
+    width: 0.5em;
+  }
+  &::-webkit-scrollbar-track {
+    background: trasparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: #b6b6b6ff;
+  }
 `;
 
 const ButtonRow = styled.div`
   position: absolute;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: inline-flex;
   flex-flow: row nowrap;
@@ -186,16 +205,16 @@ const ButtonRow = styled.div`
 `;
 
 const Header = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15vw;')}
-  border-radius: 1.05vw 1.05vw 0 0;
+  ${({ noBorder }) => (noBorder ? '' : 'border-bottom: solid black 0.15em;')}
+  border-radius: 1.05em 1.05em 0 0;
   display: flex;
   flex-flow: column nowrap;
   border-color: grey;
 `;
 
 const Footer = styled.div<{ noBorder?: boolean }>`
-  ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15vw;')}
-  border-radius: 0 0 1.05vw 1.05vw;
+  ${({ noBorder }) => (noBorder ? '' : 'border-top: solid black 0.15em;')}
+  border-radius: 0 0 1.05em 1.05em;
   display: flex;
   flex-flow: column nowrap;
 `;
@@ -206,13 +225,14 @@ const Children = styled.div<{
   noScroll?: boolean;
 }>`
   position: relative;
-  overflow: ${({ noScroll }) => (noScroll ? 'hidden' : 'auto')};
+  overflow: hidden auto;
   max-height: 100%;
   height: 100%;
+  overflow: ${({ noScroll }) => (noScroll ? 'hidden' : 'hidden auto')};
   ${({ scrollBarColor }) => scrollBarColor && `scrollbar-color:${scrollBarColor};`}
   display: flex;
   flex-flow: column nowrap;
-  padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
+  padding: ${({ noPadding }) => (noPadding ? `0` : `.6em`)};
 `;
 
 const fadeIn = keyframes`

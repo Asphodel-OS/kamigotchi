@@ -54,8 +54,8 @@ export const StatsDisplay = ({ kami }: { kami: Kami }) => {
 };
 
 const Container = styled.div`
-  padding: 0 0.3vw;
-  gap: 0.45vw;
+  padding: 0 0.3em;
+  gap: 0.45em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -66,35 +66,35 @@ const Container = styled.div`
 const Row = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
-  width: 1.2vw;
+  height: 2.2em;
+  width: 2.2em;
 `;
 
 const Affinities = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.2vw;
-  border: solid black 0.15vw;
-  border-radius: 0.3vw;
-  padding: 0.3vw 0.5vw;
-  font-size: 0.6vw;
+  gap: 0.2em;
+  border: solid black 0.15em;
+  border-radius: 0.3em;
+  padding: 0.3em 0.5em;
+  font-size: 0.6em;
 
   filter: sepia(1) saturate(100%);
   background-color: #ffffd6;
-  border: solid 0.15vw #4e4e03ff;
+  border: solid 0.15em #4e4e03ff;
 `;
 
 const Affinity = styled.span`
   display: flex;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const Slash = styled.span`
-  font-size: 0.9vw;
+  font-size: 0.9em;
 `;

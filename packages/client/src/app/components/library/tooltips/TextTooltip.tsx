@@ -30,7 +30,7 @@ export const TextTooltip = ({
   grow?: boolean;
   direction?: 'row' | 'column';
   delay?: number;
-  maxWidth?: number;
+  maxWidth?: { desktop?: number; mobile?: number };
   size?: number;
   alignText?: 'left' | 'right' | 'center';
   color?: string;
@@ -69,8 +69,8 @@ export const TextTooltip = ({
 
 
 const Text = styled.div<{ size: number; align?: string }>`
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 1.8}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.8}em;
   text-align: ${({ align }) => align ?? 'center'};
   white-space: pre-line;
   img {

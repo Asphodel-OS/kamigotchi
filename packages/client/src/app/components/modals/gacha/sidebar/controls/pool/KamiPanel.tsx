@@ -155,7 +155,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;
@@ -167,7 +167,7 @@ const Container = styled.div<{ isVisible: boolean }>`
 
 const Section = styled.div`
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -176,8 +176,8 @@ const Section = styled.div`
 `;
 
 const Row = styled.div`
-  padding: 0 0.3vw;
-  gap: 0.3vw;
+  padding: 0 0.3em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: row wrap;
@@ -186,8 +186,8 @@ const Row = styled.div`
 `;
 
 const Text = styled.div`
-  height: 1.2vw;
-  margin-top: 0.6vw;
-  font-size: 1vw;
+  height: 1.2em;
+  margin-top: 0.6em;
+  font-size: 1em;
   color: #333;
 `;

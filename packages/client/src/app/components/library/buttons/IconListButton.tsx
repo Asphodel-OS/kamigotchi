@@ -2,15 +2,17 @@ import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { playClick } from 'utils/sounds';
+
 import { Popover } from '../poppers';
 import { TextTooltip } from '../tooltips';
 import { IconButton } from './IconButton';
 
 export interface Option {
   text: string;
-  onClick: Function;
+  onClick?: Function;
   image?: string;
   disabled?: boolean;
+  options?: Option[];
 }
 
 export function IconListButton({
@@ -22,13 +24,13 @@ export function IconListButton({
   fullWidth,
   radius,
   scale,
-  scaleOrientation,
   searchable,
   icon,
   filter,
   shake,
   tooltip,
   disabled,
+  menuButton = false,
   cooldownBackground,
 }: {
   options: Option[];
@@ -41,11 +43,11 @@ export function IconListButton({
   icon?: { inset?: { px?: number; x?: number; y?: number } };
   radius?: number;
   scale?: number;
-  scaleOrientation?: 'vw' | 'vh';
   width?: number;
   fullWidth?: boolean;
   balance?: number;
   shake?: boolean;
+  menuButton?: boolean;
   cooldownBackground?: string;
 
   // tooltip
@@ -56,7 +58,7 @@ export function IconListButton({
     grow?: boolean;
     direction?: 'row' | 'column';
     delay?: number;
-    maxWidth?: number;
+    maxWidth?: { desktop?: number; mobile?: number };
     size?: number;
     alignText?: 'left' | 'right' | 'center';
     color?: string;
@@ -68,6 +70,7 @@ export function IconListButton({
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [search, setSearch] = useState<string>('');
+  const [forceCloseAll, setForceCloseAll] = useState(false);
 
   const handleOpen = () => {
     if (!disabled && toggleRef.current) {
@@ -82,9 +85,50 @@ export function IconListButton({
 
   // close the menu and layer in a sound effect
   const onSelect = (option: Option) => {
-    playClick();
-    option.onClick();
-    handleClose();
+    if (option.onClick) {
+      playClick();
+      option.onClick();
+      handleClose();
+      setForceCloseAll(true);
+    }
+  };
+
+  const NestedMenuOption = ({ option }: { option: Option }) => {
+    if (option.options) {
+      const nestedContent = (
+        <div>
+          {option.options.map((subOption, j) => (
+            <MenuOption
+              key={j}
+              disabled={subOption.disabled}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(subOption);
+              }}
+            >
+              {subOption.image && <OptionIcon src={subOption.image} />}
+              {subOption.text && <OptionText>{subOption.text}</OptionText>}
+            </MenuOption>
+          ))}
+        </div>
+      );
+
+      return (
+        <Popover content={nestedContent}>
+          <MenuOption disabled={option.disabled}>
+            {option.image && <OptionIcon src={option.image} />}
+            {option.text && <OptionText>{option.text}</OptionText>}
+          </MenuOption>
+        </Popover>
+      );
+    }
+
+    return (
+      <MenuOption disabled={option.disabled} onClick={() => onSelect(option)}>
+        {option.image && <OptionIcon src={option.image} />}
+        {option.text && <OptionText>{option.text}</OptionText>}
+      </MenuOption>
+    );
   };
 
   const OptionsMap = () => {
@@ -103,17 +147,21 @@ export function IconListButton({
         {options
           .filter((option) => !searchable || option.text.toLowerCase().includes(search))
           .map((option, i) => (
-            <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
-              {option.image && <OptionIcon src={option.image} />}
-              {option.text && <OptionText>{option.text}</OptionText>}
-            </MenuOption>
+            <NestedMenuOption key={i} option={option} />
           ))}
       </MenuWrapper>
     );
   };
 
   return (
-    <Popover content={OptionsMap()} maxHeight={33} fullWidth={fullWidth} disabled={disabled}>
+    <Popover
+      content={OptionsMap()}
+      maxHeight={33}
+      fullWidth={fullWidth}
+      disabled={disabled}
+      forceClose={forceCloseAll}
+      onClose={() => setForceCloseAll(false)}
+    >
       <TextTooltip {...tooltip} text={tooltip?.text ?? ['']}>
         <IconButton
           img={img}
@@ -121,8 +169,7 @@ export function IconListButton({
           onClick={handleOpen}
           disabled={disabled}
           radius={radius ?? 0.45}
-          scale={scale ?? 2.5}
-          scaleOrientation={scaleOrientation ?? 'vw'}
+          scale={scale}
           width={width}
           fullWidth={fullWidth}
           balance={balance}
@@ -139,34 +186,35 @@ export function IconListButton({
 
 const MenuWrapper = styled.div`
   position: relative;
-  max-width: 30vw;
+  max-width: 30em;
 `;
 
 const MenuInput = styled.input`
   position: sticky;
-  border: 0.15vw solid black;
-  border-radius: 0.45vw;
+  border: 0.15em solid black;
+  border-radius: 0.45em;
 
   width: 90%;
-  height: 2.5vw;
-  box-sizing: border-box;
-  top: 0.6vw;
+  height: 2.5em;
 
-  padding: 0vw 0.6vw;
-  margin: 0.6vw;
+  box-sizing: border-box;
+  top: 0.6em;
+
+  padding: 0em 0.6em;
+  margin: 0.6em;
   flex-grow: 1;
 
-  font-size: 0.75vw;
+  font-size: 0.75em;
 `;
 
 const MenuOption = styled.div<{ disabled?: boolean }>`
   position: relative;
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  border-radius: 0.45vw;
+  border-radius: 0.45em;
 
   width: 100%;
-  padding: 0.45vw;
-  gap: 0.6vw;
+  padding: 0.45em;
+  gap: 0.6em;
 
   display: flex;
   align-items: center;
@@ -177,7 +225,7 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
   &:hover {
     background-color: #7d7;
     background-color: #ddd;
-    outline: 0.15vw solid #444;
+    outline: 0.15em solid #444;
     z-index: 1;
   }
   &:active {
@@ -186,18 +234,16 @@ const MenuOption = styled.div<{ disabled?: boolean }>`
 `;
 
 const OptionIcon = styled.img`
-  border-radius: 0.3vw;
-  height: 1.8vw;
+  border-radius: 0.3em;
+  height: 2em;
   user-drag: none;
 `;
 
 const OptionText = styled.div`
   height: 100%;
-
   display: flex;
   justify-content: flex-start;
   align-items: center;
-
-  font-size: 0.9vw;
-  line-height: 1.5vw;
+  font-size: 1em;
+  line-height: 1.5em;
 `;

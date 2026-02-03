@@ -86,11 +86,11 @@ export const Filter = ({
 const Container = styled.div`
   background-color: #eee;
   position: relative;
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  padding: 0.6vw;
-  margin: 0.3vw;
-  filter: drop-shadow(0.1vw 0.1vw 0.05vw black);
+  border: solid black 0.15em;
+  border-radius: 0.6em;
+  padding: 0.6em;
+  margin: 0.3em;
+  filter: drop-shadow(0.1em 0.1em 0.05em black);
 
   display: flex;
   flex-flow: column nowrap;
@@ -100,7 +100,7 @@ const Container = styled.div`
 
 const Row = styled.div`
   width: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -112,31 +112,31 @@ const Grouping = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const Icon = styled.img`
-  height: 1.8vw;
-  width: 1.8vw;
+  height: 1.8em;
+  width: 1.8em;
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
+  font-size: ${({ size }) => size}em;
   color: #333;
 `;
 
 const Quantity = styled.input`
-  border: solid black 0.15vw;
-  border-radius: 0.4vw;
+  border: solid black 0.15em;
+  border-radius: 0.4em;
   background-color: #fff;
 
-  width: 3vw;
-  padding: 0.45vw 0.3vw;
+  width: 3em;
+  padding: 0.45em 0.3em;
 
   color: black;
-  font-size: 0.75vw;
+  font-size: 0.75em;
   text-align: center;
 
   cursor: text;
-  box-shadow: inset 0.1vw 0.1vw 0.2vw rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0.1em 0.1em 0.2em rgba(0, 0, 0, 0.5);
 `;

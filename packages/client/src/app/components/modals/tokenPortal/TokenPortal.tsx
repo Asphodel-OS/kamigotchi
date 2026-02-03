@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import { getAccount as _getAccount, getAccountByID } from 'app/cache/account';
@@ -239,37 +240,39 @@ export const TokenPortalModal: UIComponent = {
         noPadding
         truncate
       >
-        <Overlay left={0.6} top={0.6}>
-          <HelpChip tooltip={{ text: HELP_TEXT, size: 0.6 }} size={1.2} />
-        </Overlay>
-        <Overlay right={0.6} top={0.6}>
-          <Text
-            size={0.6}
-            color='#3b3'
-            onClick={() => openBaselineLink(selected.token?.address ?? '')}
-          >
-            Purchase $ONYX
-          </Text>
-        </Overlay>
-        {!accountEntity ? (
-          <EmptyText text={['Failed to Connect Account']} size={1} />
-        ) : (
-          <Swap
-            actions={{
-              approve: approveTx,
-              deposit: depositTx,
-              withdraw: withdrawTx,
-            }}
-            data={{ config, inventory: account.inventories ?? [] }}
-            state={{ options, selected, setSelected }}
-          />
-        )}
-        <Overlay right={0.6} top={12.5}>
-          <IconButton
-            img={showQueue ? TriggerIcons.eyeOpen : TriggerIcons.eyeClosed}
-            onClick={() => setShowQueue(!showQueue)}
-          />
-        </Overlay>
+        <Wrapper style={{ position: 'relative' }}>
+          <Overlay right={0.6} bottom={1}>
+            <IconButton
+              img={showQueue ? TriggerIcons.eyeOpen : TriggerIcons.eyeClosed}
+              onClick={() => setShowQueue(!showQueue)}
+            />
+          </Overlay>
+          <Overlay left={0.6} top={0.6}>
+            <HelpChip tooltip={{ text: HELP_TEXT, size: 0.6 }} size={2.2} />
+          </Overlay>
+          <Overlay right={0.6} top={0.6}>
+            <Text
+              size={0.9}
+              color='#3b3'
+              onClick={() => openBaselineLink(selected.token?.address ?? '')}
+            >
+              Purchase $ONYX
+            </Text>
+          </Overlay>
+          {!accountEntity ? (
+            <EmptyText text={['Failed to Connect Account']} size={1} />
+          ) : (
+            <Swap
+              actions={{
+                approve: approveTx,
+                deposit: depositTx,
+                withdraw: withdrawTx,
+              }}
+              data={{ config, inventory: account.inventories ?? [] }}
+              state={{ options, selected, setSelected }}
+            />
+          )}
+        </Wrapper>
         <Queue
           actions={{
             claim: claimTx,
@@ -283,3 +286,7 @@ export const TokenPortalModal: UIComponent = {
     );
   },
 };
+
+const Wrapper = styled.div`
+  display: flex;
+`;

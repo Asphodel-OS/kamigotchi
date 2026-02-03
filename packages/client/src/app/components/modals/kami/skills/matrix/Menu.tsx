@@ -26,18 +26,18 @@ export const Menu = ({
 };
 
 const Container = styled.div`
-  position: absolute;
-  border-bottom: solid black 0.15vw;
+  position: sticky;
+  border-bottom: solid black 0.15em;
   background-color: #999;
   opacity: 0.9;
+  top: 0;
+  width: 100%;
+  padding: 0.6em 0.6em;
+  gap: 1em;
   z-index: 1;
 
-  width: 100%;
-  padding: 0.6vw 0.6vw;
-  gap: 1vw;
-
   display: flex;
-  flex-flow: row;
+  flex-flow: row wrap;
   justify-content: center;
   align-items: center;
 `;

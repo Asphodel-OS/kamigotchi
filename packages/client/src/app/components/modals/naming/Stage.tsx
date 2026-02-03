@@ -108,7 +108,6 @@ export const Stage = ({
         <TextTooltip text={getHolyTooltip()}>
           <IconButton
             img={holyDustItem.image}
-            scale={2.6}
             onClick={handleHolyClick}
             disabled={isHolyDisabled()}
             shadow
@@ -121,7 +120,7 @@ export const Stage = ({
 
 const Container = styled.div`
   position: relative;
-  margin: 0.9vw;
+  margin: 0.9em;
   background-color: #fff;
 
   display: flex;
@@ -133,13 +132,13 @@ const Container = styled.div`
 `;
 
 const Input = styled.input`
-  border: solid 0.15vw black;
-  border-radius: 0.45vw;
+  border: solid 0.15em black;
+  border-radius: 0.45em;
 
-  width: 18vw;
-  padding: 0.75vw 1vw;
+  width: 18em;
+  padding: 0.75em 1em;
 
-  font-size: 0.75vw;
+  font-size: 0.75em;
   text-align: center;
   text-decoration: none;
 
@@ -150,8 +149,8 @@ const Input = styled.input`
 const Row = styled.div`
   position: relative;
   width: 90%;
-  padding-top: 0.6vw;
-  gap: 0.3vw;
+  padding-top: 0.6em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: row nowrap;

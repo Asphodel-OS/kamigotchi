@@ -85,17 +85,17 @@ const Header = styled.div`
   position: sticky;
   top: 0;
 
-  padding: 0.6vw;
+  padding: 0.6em;
   background-color: rgb(238, 238, 238);
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
 
-  font-size: 0.9vw;
-  line-height: 1.5vw;
+  font-size: 0.9em;
+  line-height: 1.5em;
   text-align: center;
 `;
 
@@ -114,6 +114,6 @@ const Scrollable = styled.div`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size }) => size * 1.5}vw;
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size }) => size * 1.5}em;
 `;

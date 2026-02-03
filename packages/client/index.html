@@ -1,5 +1,6 @@
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kamigotchi</title>
     <meta
       http-equiv="Content-Security-Policy"
@@ -25,8 +26,17 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: Pixel;
         color: #333;
+        font: inherit;
+      }
+
+      :root {
+        overflow: hidden;
+        font-family: Pixel;
+      }
+
+      body {
+        overflow: hidden;
       }
     </style>
     <link rel="icon" href="./src/favicon.ico" />

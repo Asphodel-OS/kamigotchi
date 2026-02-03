@@ -3,12 +3,7 @@ import styled from 'styled-components';
 import { Pairing } from 'app/components/library';
 import { ItemImages } from 'assets/images/items';
 
-export const Balance = ({
-  balance,
-}: {
-  balance: number;
-}) => {
-
+export const Balance = ({ balance }: { balance: number }) => {
   return (
     <Container>
       <Title>Balance</Title>
@@ -21,11 +16,11 @@ export const Balance = ({
 
 const Container = styled.div`
   position: relative;
-  border: solid black 0.15vw;
-  border-radius: 0.4vw;
+  border: solid black 0.15em;
+  border-radius: 0.4em;
 
-  margin: 2vw 0 1.2vw 0;
-  height: 59%;
+  margin: 2em 0 1.2em 0;
+
   width: 30%;
 
   overflow: hidden;
@@ -41,17 +36,18 @@ const Container = styled.div`
 const Title = styled.div`
   background-color: #ddd;
   width: 100%;
-  padding: 0.8vw;
+  padding: 0.8em;
   opacity: 0.9;
+  height: 55%;
 
   color: black;
-  font-size: 1vw;
+  font-size: 1em;
   z-index: 1;
 `;
 
 const Content = styled.div`
   height: 100%;
-  padding-left: 0.6vw;
+  padding-left: 0.6em;
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;

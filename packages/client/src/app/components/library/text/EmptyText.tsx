@@ -63,7 +63,7 @@ export const EmptyText = ({
 const Container = styled.div<{ isHidden: boolean }>`
   overflow-y: auto;
   height: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: ${({ isHidden }) => (isHidden ? 'none' : 'flex')};
   flex-flow: column nowrap;
@@ -74,16 +74,18 @@ const Container = styled.div<{ isHidden: boolean }>`
 
 const Text = styled.div<{ size: number; gapScale: number; color: string }>`
   color: ${({ color }) => color};
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size, gapScale }) => gapScale * size}vw;
+
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size, gapScale }) => gapScale * size}em;
   text-align: center;
   pointer-events: auto;
 `;
 
 const Link = styled.a<{ size: number; gapScale: number; color: string }>`
-  color: ${({ color }) => color};
-  font-size: ${({ size }) => size}vw;
-  line-height: ${({ size, gapScale }) => gapScale * size}vw;
+  color: ${({ color }) => color ?? '#0077cc'};
+
+  font-size: ${({ size }) => size}em;
+  line-height: ${({ size, gapScale }) => gapScale * size}em;
   text-decoration: underline;
   &:hover {
     text-decoration: none;

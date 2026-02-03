@@ -41,7 +41,7 @@ export const ProgressBar = ({
 };
 
 const Container = styled.div<{ width?: number }>`
-  width: ${({ width }) => (width ? `${width}vw;` : '100%')};
+  width: ${({ width }) => (width ? `${width}em;` : '100%')};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,9 +50,9 @@ const Container = styled.div<{ width?: number }>`
 const Icon = styled.img<{ position: number }>`
   left: ${({ position }) => `calc(${position}% - 10px)`};
   position: absolute;
-  height: 1.8vw;
+  height: 1.8em;
   width: auto;
-  border: solid black 0.15vw;
+  border: solid black 0.15em;
   background-color: white;
   border-radius: 50%;
 `;
@@ -64,9 +64,9 @@ const Bar = styled.div<{
   fgColor: string;
 }>`
   position: relative;
-  border: solid black 0.15vw;
-  border-radius: ${({ height }) => height * 0.5}vw;
-  height: ${({ height }) => height}vw;
+  border: solid black 0.15em;
+  border-radius: ${({ height }) => height * 0.5}em;
+  height: ${({ height }) => height}em;
   width: 100%;
 
   background: ${({ percent, bgColor, fgColor }) =>

@@ -56,10 +56,10 @@ export const Header = ({
 
   return (
     <Container>
-      <KamiImage data={data} actions={actions} utils={utils} />
       <Content>
-        <Title size={2.4}>{kami.name}</Title>
+        <Title size={2}>{kami.name}</Title>
         <Row>
+          <KamiImage data={data} actions={actions} utils={utils} />
           <AffinityContainer>
             <AffinityBlock kami={kami} traitKey='body' />
             <AffinityBlock kami={kami} traitKey='hand' />
@@ -87,7 +87,7 @@ export const Header = ({
               })}
           </StatsContainer>
         </Row>
-        <Overlay bottom={0.75} right={0.75}>
+        <Overlay bottom={0} right={0.75}>
           <Footer onClick={handleAccountClick}>{isMine() ? 'yours' : owner.name}</Footer>
         </Overlay>
       </Content>
@@ -96,7 +96,7 @@ export const Header = ({
 };
 
 const Container = styled.div`
-  border-bottom: solid black 0.15vw;
+  border-bottom: solid black 0.15em;
   display: flex;
   flex-flow: row nowrap;
   user-select: none;
@@ -105,67 +105,68 @@ const Container = styled.div`
 const Content = styled.div`
   position: relative;
   height: 100%;
-  padding: 0.75vw 0vw;
+  padding: 0.75em 0.5em;
 
   flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
+  align-items: center;
+  pointer-events: none;
 `;
 
 const Title = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  padding: ${({ size }) => `${size * 0.75}vw ${size * 0.45}vw`};
-
-  align-self: flex-start;
+  font-size: ${({ size }) => size}em;
   user-select: none;
 `;
 
 const Row = styled.div`
-  height: 10vw;
-  gap: 0.9vw;
-
+  height: 25cqmin;
+  gap: 0.9em;
+  width: 95cqi;
   display: flex;
   flex-flow: row nowrap;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-bottom: 0.6em;
+  align-items: center;
 `;
 
 const AffinityContainer = styled.div`
-  height: 100%;
-  gap: 0.6vw;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
+  font-size: min(2cqi, 0.8em);
 `;
 
 const StatsContainer = styled.div`
   background-color: #999;
-  border: solid black 0.15vw;
-  border-radius: 1.2vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
+  border: solid black 0.15em;
+  border-radius: 1.2em;
+  filter: drop-shadow(0.1em 0.1em 0.15em black);
 
-  height: 100%;
-  width: 19.3vw;
-  padding: 0.6vw;
-  gap: 0.6vw;
+  width: 19.3em;
+  padding: 0.6em;
+  gap: 0.6em;
 
   display: flex;
   flex-flow: row wrap;
   align-items: center;
   justify-content: stretch;
+  font-size: min(2cqi, 0.8em);
 `;
 
 const StatPairing = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color ?? '#fff'};
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  filter: drop-shadow(0.3vw 0.3vw 0.15vw black);
+  border: solid black 0.15em;
+  border-radius: 0.6em;
+  filter: drop-shadow(0.1em 0.1em 0.15em black);
 
-  padding: 0.75vw;
-  gap: 0.45vw;
-  min-width: 7.5vw;
-  min-height: 4vw;
+  padding: 0.75em;
+  gap: 0.45em;
+  min-width: 7.5em;
+  min-height: 4em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -183,23 +184,22 @@ const StatPairing = styled.div<{ color?: string }>`
 `;
 
 const Text = styled.div<{ size: number }>`
-  font-size: ${({ size }) => size}vw;
-  text-shadow: ${({ size }) => `0 0 ${size * 0.4}vw white`};
+  font-size: ${({ size }) => size}em;
+  text-shadow: ${({ size }) => `0 0 ${size * 0.4}rem white`};
   pointer-events: none;
 `;
 
 const Icon = styled.img<{ size: number }>`
-  height: ${({ size }) => size}vw;
-  width: ${({ size }) => size}vw;
-  filter: drop-shadow(0 0 0.2vw #bbb);
+  height: ${({ size }) => size}em;
+  width: ${({ size }) => size}em;
+  filter: drop-shadow(0 0 0.2em #bbb);
   user-drag: none;
 `;
 
 const Footer = styled.div`
-  font-size: 0.6vw;
+  font-size: 1em;
   text-align: right;
   color: #666;
-
   user-select: none;
   ${({ onClick }) => !onClick && 'pointer-events: none;'}
   &:hover {

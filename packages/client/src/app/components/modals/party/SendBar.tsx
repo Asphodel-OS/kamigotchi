@@ -130,7 +130,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   bottom: 0;
 
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
   opacity: 0.9;
 
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
@@ -143,7 +143,7 @@ const Container = styled.div<{ isVisible: boolean }>`
 `;
 
 const Section = styled.div`
-  gap: 0.3vw;
+  gap: 0.3em;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;

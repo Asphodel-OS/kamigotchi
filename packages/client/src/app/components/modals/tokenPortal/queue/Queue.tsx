@@ -43,7 +43,7 @@ export const Queue = ({
 const Container = styled.div<{ isVisible: boolean }>`
   position: relative;
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  border-top: 0.15vw solid black;
+  border-top: 0.15em solid black;
   width: 100%;
 
   flex-flow: column nowrap;

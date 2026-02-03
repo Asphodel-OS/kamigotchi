@@ -2,7 +2,7 @@ import { EntityIndex } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { ActionButton, InputSingleNumberForm } from 'app/components/library';
+import { IconButton, InputSingleNumberForm, TextTooltip } from 'app/components/library';
 import { Account } from 'network/shapes/Account';
 import { Goal } from 'network/shapes/Goals';
 import { DetailedEntity } from 'network/shapes/utils';
@@ -91,13 +91,9 @@ export const ActionBar = ({
 
     return (
       <Column>
-        <ActionButton
-          onClick={txClaim}
-          text='Claim'
-          size='large'
-          disabled={!canDo}
-          tooltip={!canDo ? [errorText] : undefined}
-        />
+        <TextTooltip text={!canDo ? [errorText] : []}>
+          <IconButton onClick={txClaim} text='Claim' disabled={!canDo} />
+        </TextTooltip>
         <SubText>Receive completion rewards</SubText>
       </Column>
     );
@@ -107,7 +103,7 @@ export const ActionBar = ({
 };
 
 const Container = styled.div`
-  margin: 2vh 1vw 1vh;
+  margin: 2em 1em 1em;
 `;
 
 const Column = styled.div`
@@ -117,10 +113,10 @@ const Column = styled.div`
 `;
 
 const SubText = styled.p`
-  font-size: 0.8vw;
+  font-size: 0.8em;
   font-family: Pixel;
   text-align: center;
   color: #666;
 
-  padding: 1vh 1vw 0;
+  padding: 1em 1em 0;
 `;

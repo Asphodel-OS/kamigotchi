@@ -289,8 +289,8 @@ export const KamiBar = ({
 };
 
 const Container = styled.div`
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
 
   height: 100%;
   display: flex;
@@ -303,7 +303,8 @@ const Container = styled.div`
 `;
 
 const Left = styled.div`
-  gap: 0.3vw;
+  gap: 0.3em;
+  flex-shrink: 0;
 
   display: flex;
   flex-flow: row nowrap;
@@ -314,11 +315,12 @@ const Left = styled.div`
 const Right = styled.div`
   display: flex;
   position: relative;
+  flex-shrink: 0;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 0.3vw;
-  gap: 0.3vw;
+  padding-right: 0.3em;
+  gap: 0.3em;
 `;
 
 interface MiddleProps {
@@ -327,12 +329,13 @@ interface MiddleProps {
 }
 const Middle = styled.div<MiddleProps>`
   position: relative;
-  height: 3vw;
+  height: 3em;
+  min-width: 0;
+  border-right: solid black 0.15em;
+  border-left: solid black 0.15em;
+  margin: 0 0.3em 0 0.3em;
+  gap: 0.3em;
 
-  border-right: solid black 0.15vw;
-  border-left: solid black 0.15vw;
-  margin: 0 0.2vw 0 0.2vw;
-  padding: 0 0.2vw;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -345,15 +348,14 @@ const Middle = styled.div<MiddleProps>`
 
 const ImageWrapper = styled.div`
   position: relative;
-  width: 3vw;
-  height: 3vw;
+  width: 3em;
+  height: 3em;
 `;
 
 const Image = styled.img`
-  border-right: solid black 0.15vw;
-
-  width: 3vw;
-  height: 3vw;
+  border-right: solid black 0.15em;
+  width: 3em;
+  height: 3em;
 
   cursor: pointer;
   user-select: none;
@@ -364,7 +366,7 @@ const Image = styled.img`
 `;
 
 const Sp = styled.div`
-  font-size: 0.85vw;
+  font-size: 0.85em;
   font-weight: bold;
   background: linear-gradient(to right, #0b0d0eff, #ee0979);
   -webkit-background-clip: text;
@@ -372,8 +374,8 @@ const Sp = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 1.5em;
+  height: 1.5em;
   user-select: none;
   user-drag: none;
 `;
@@ -382,18 +384,18 @@ const OutputSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  gap: 0.4vw;
+  gap: 0.4em;
 `;
 
 const OutputIcon = styled.img`
-  width: 1vw;
-  height: 1vw;
+  width: 1em;
+  height: 1em;
 `;
 
 const StateIcon = styled.img`
-  margin-right: 0.3vw;
-  width: 2vw;
-  height: 2vw;
+  margin-right: 0.3em;
+  width: 2em;
+  height: 2em;
 `;
 
 const StateSection = styled.div`
@@ -404,8 +406,8 @@ const StateSection = styled.div`
 
 const LevelUpButton = styled.div<{ disabled?: boolean }>`
   position: absolute;
-  width: 3vw;
-  height: 3vw;
+  width: 3em;
+  height: 3em;
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
   display: flex;
   align-items: center;

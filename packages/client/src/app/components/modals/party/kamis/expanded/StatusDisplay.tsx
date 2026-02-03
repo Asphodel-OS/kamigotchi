@@ -148,7 +148,7 @@ export const StatusDisplay = ({ kami, tick }: { kami: Kami; tick: number }) => {
       )}
       <Description onClick={getDescriptionOnClick(kami)}>
         {description.map((text, i) => (
-          <Text key={i} size={0.6}>
+          <Text key={i} size={0.8}>
             {text}
           </Text>
         ))}
@@ -168,16 +168,16 @@ const StateRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.2vw;
+  gap: 0.2em;
 `;
 
 const StateIcon = styled.img`
-  width: 1.7vw;
-  height: 1.7vw;
+  width: 1.7em;
+  height: 1.7em;
 `;
 
 const Description = styled.div`
-  padding-left: 0.3vw;
+  padding-left: 0.3em;
   display: flex;
   flex-flow: column nowrap;
 

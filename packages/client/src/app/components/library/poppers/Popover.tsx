@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 import { mouseBttnClicked } from 'app/utils';
-
+// TODO: fix closeOnClick dont working ok for nested buttons
 export const Popover = ({
   children,
   content,
@@ -59,7 +60,12 @@ export const Popover = ({
       const tRef = triggerRef.current;
       if (!pRef || !tRef) return;
 
-      const didSelect = closeOnClick && pRef.contains(event.target) && !clickedScrollBar;
+      // prevents popover from closing
+      // when a nested button is clicked
+      const clickedTrigger = (event.target as HTMLElement).closest('[data-popover-trigger]');
+      const isNestedTrigger = clickedTrigger && clickedTrigger !== tRef;
+      const didSelect =
+        closeOnClick && pRef.contains(event.target) && !clickedScrollBar && !isNestedTrigger;
       const didOffclick = !pRef.contains(event.target) && !tRef.contains(event.target);
       if (didSelect || didOffclick) {
         setTimeout(() => {
@@ -86,6 +92,10 @@ export const Popover = ({
     const leftBound = rightBound - (pRef.offsetWidth - pRef.clientWidth);
     if (clickX >= leftBound && clickX <= rightBound) setClickedScrollBar(true);
     else setClickedScrollBar(false);
+
+    const clickedTrigger = (event.target as HTMLElement).closest('[data-popover-trigger]');
+    const isNestedTrigger = clickedTrigger && clickedTrigger !== triggerRef.current;
+    if (isNestedTrigger) return;
 
     closeOnClick ? setIsVisible(false) : setIsVisible(true);
     if (!isVisible && onClose) onClose();
@@ -140,20 +150,23 @@ export const Popover = ({
       >
         {children}
       </PopoverTrigger>
-      <PopoverContent
-        isVisible={isVisible}
-        ref={popoverRef}
-        popoverPosition={popoverPosition}
-        maxHeight={maxHeight}
-        onClick={(e) => {
-          if (disabled) return;
-          handleClick(e);
-        }}
-      >
-        {Array.isArray(content)
-          ? content.map((item, index) => <div key={`popover-item-${index}`}>{item}</div>)
-          : content}
-      </PopoverContent>
+      {createPortal(
+        <PopoverContent
+          isVisible={isVisible}
+          ref={popoverRef}
+          popoverPosition={popoverPosition}
+          maxHeight={maxHeight}
+          onClick={(e) => {
+            if (disabled) return;
+            handleClick(e);
+          }}
+        >
+          {Array.isArray(content)
+            ? content.map((item, index) => <div key={`popover-item-${index}`}>{item}</div>)
+            : content}
+        </PopoverContent>,
+        document.body
+      )}
     </PopoverContainer>
   );
 };
@@ -164,7 +177,7 @@ const PopoverContainer = styled.div<{ $fullwidth?: boolean }>`
   ${({ $fullwidth }) => $fullwidth && 'width: 100%;'}
 `;
 
-const PopoverTrigger = styled.div<{ cursor: string }>`
+const PopoverTrigger = styled.div.attrs({ 'data-popover-trigger': true })<{ cursor: string }>`
   border: none;
   cursor: ${({ cursor }) => cursor};
   height: 100%;
@@ -189,31 +202,27 @@ const PopoverContent = styled.div.attrs<{
   popoverPosition: { x: number; y: number };
   maxHeight?: number;
 }>`
+  position: fixed;
+  font-size: clamp(0.75rem, 1.5vmin + 0.3rem, 1.1rem);
   overflow-y: auto;
   overflow-x: hidden;
-  position: fixed;
   background-color: white;
-  border: 0.15vw solid black;
-  border-radius: 0.75vw;
+  border: 0.1em solid black;
+  border-radius: 0.5em;
   z-index: 10;
-  white-space: nowrap;
   max-width: fit-content;
-  font-size: 0.6vw;
   white-space: normal;
   overflow-wrap: break-word;
 
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.9vw;
+    width: 0.6em;
   }
 
   ::-webkit-scrollbar-thumb {
-    border: 0.2vw solid transparent;
+    border: 0.15em solid transparent;
     background-clip: padding-box;
-    border-radius: 0.2vw;
+    border-radius: 0.15em;
     background-color: rgba(0, 0, 0, 0.15);
-    &:hover {
-      cursor: auto;
-    }
   }
 `;

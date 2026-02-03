@@ -21,8 +21,19 @@ export const Room = ({ index }: { index: number }) => {
   const setNode = useSelected((s) => s.setNode);
   const [room, setRoom] = useState(rooms[0]);
   const [bgm, setBgm] = useState<Howl>();
+  const [isMobile, setIsMobile] = useState(false);
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(pointer:coarse)');
+    setIsMobile(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mediaQuery.addEventListener('change', handler);
+
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
 
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
@@ -30,7 +41,7 @@ export const Room = ({ index }: { index: number }) => {
   // but ideally we should keep all played tracks in a state map for reuse.
   useEffect(() => {
     if (index == room.index) return;
-    const newRoom = rooms[index];
+    const newRoom = rooms[index] ?? rooms[0];
     let music = newRoom.music;
     if (!music) {
       music = defaultBgm;
@@ -130,7 +141,15 @@ export const Room = ({ index }: { index: number }) => {
     else if (object.onClick) onClick = object.onClick;
 
     return object.name !== 'trading' ? (
-      <Clickbox key={object.name} x1={x1} y1={y1} x2={x2} y2={y2} onClick={onClick} />
+      <Clickbox
+        key={object.name}
+        x1={x1}
+        y1={y1}
+        x2={x2}
+        y2={y2}
+        IsMobile={isMobile}
+        onClick={onClick}
+      />
     ) : (
       <Clickbox
         key={object.name}
@@ -138,6 +157,7 @@ export const Room = ({ index }: { index: number }) => {
         y1={y1}
         x2={x2}
         y2={y2}
+        IsMobile={isMobile}
         onClick={() => {
           setModals({ trading: !tradingModalOpen });
         }}
@@ -149,27 +169,16 @@ export const Room = ({ index }: { index: number }) => {
   // RENDER
 
   return (
-    <Wrapper>
-      <Container>
-        <Background draggable='false' src={getBackground()} />
-        {room.objects.map((object) => getClickbox(object))}
-      </Container>
-    </Wrapper>
+    <Container>
+      <Background draggable='false' src={getBackground()} />
+      {room.objects.map((object) => getClickbox(object))}
+    </Container>
   );
 };
 
-const Wrapper = styled.div`
-  position: absolute;
-  width: auto;
-  height: 100%;
-  z-index: -2;
-`;
-
 const Container = styled.div`
   position: relative;
-  width: auto;
-  height: auto;
-  height: 100%;
+  aspect-ratio: 1;
 `;
 
 const Background = styled.img`
@@ -181,15 +190,16 @@ const Background = styled.img`
   image-rendering: crisp-edges;
 `;
 
-interface Coordinates {
+interface ClickBoxProps {
   x1: number;
   y1: number;
   x2: number;
   y2: number;
+  IsMobile: boolean;
 }
 
-const Clickbox = styled.div<Coordinates>`
-  border-radius: 3vw;
+const Clickbox = styled.div<ClickBoxProps>`
+  border-radius: 3em;
   position: absolute;
   top: ${({ y1 }) => y1}%;
   left: ${({ x1 }) => x1}%;
@@ -199,14 +209,22 @@ const Clickbox = styled.div<Coordinates>`
   cursor: pointer;
   pointer-events: auto;
   opacity: 0.2;
-
-  &:hover {
-    animation: ${({}) => radiateFx} 1.5s linear infinite;
+  ${({ IsMobile }) =>
+    IsMobile
+      ? ` 
+    background: radial-gradient(
+      closest-side,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(1, 1, 242, 1) 70%,
+      rgba(80, 80, 80, 0) 90%
+    );`
+      : ` &:hover { 
     background: radial-gradient(
       closest-side,
       rgba(255, 255, 255, 1) 0%,
       rgba(80, 80, 205, 1) 70%,
       rgba(80, 80, 80, 0) 90%
     );
-  }
+  };`};
+  animation: ${({}) => radiateFx} 1.5s linear infinite;
 `;

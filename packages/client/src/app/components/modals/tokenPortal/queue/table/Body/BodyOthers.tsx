@@ -97,14 +97,14 @@ export const BodyOthers = ({
         return (
           <Row key={i} style={{ backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white' }}>
             <TextTooltip text={[getDate(r.Timestamp, false)]}>
-              <Field width={4}>{getDate(r.Timestamp, true)}</Field>
+              <Field width={6}>{getDate(r.Timestamp, true)}</Field>
             </TextTooltip>
             <TextTooltip text={[getAccount(r).name]} alignText={'right'}>
-              <Field width={4} onClick={() => onClickAccount(getAccount(r))}>
+              <Field width={7} onClick={() => onClickAccount(getAccount(r))}>
                 <Name>{getAccount(r).name}</Name>
               </Field>
             </TextTooltip>
-            <Field width={2}>
+            <Field width={5}>
               <TextTooltip text={['$ONYX']} alignText={'right'}>
                 <Icon
                   src={TokenIcons.onyx}
@@ -112,8 +112,8 @@ export const BodyOthers = ({
                 />
               </TextTooltip>
             </Field>
-            <Field width={3.5}>{getTokenConversion(r)}</Field>
-            <Field width={4}>{getStatus(r)}</Field>
+            <Field width={7}>{getTokenConversion(r)}</Field>
+            <Field width={7}>{getStatus(r)}</Field>
           </Row>
         );
       })}
@@ -127,26 +127,30 @@ const Container = styled.div<{ visible?: boolean }>`
   max-height: 100%;
   width: 100%;
 
-  padding: 0.6vw 0;
+  padding: 0.6em 0;
 
   flex-flow: column nowrap;
   align-items: center;
+  white-space: normal;
+  word-break: break-word;
 `;
 
 const Row = styled.div`
   position: relative;
   width: 96%;
-  height: 2.4vw;
+  height: 2.4em;
 
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
   align-items: center;
+  font-size: 0.7em;
+  height: 3em;
 `;
 
 const Field = styled.div<{ width: number }>`
-  gap: 0.6vw;
-  width: ${({ width }) => width}vw;
+  gap: 0.6em;
+  width: ${({ width }) => width}em;
   height: 100%;
 
   display: flex;
@@ -154,13 +158,13 @@ const Field = styled.div<{ width: number }>`
   justify-content: center;
   align-items: center;
 
-  font-size: 0.6vw;
+  font-size: 1em;
   user-select: none;
 `;
 
 const Icon = styled.img`
-  width: 1.2vw;
-  height: 1.2vw;
+  width: 1.2em;
+  height: 1.2em;
 
   &:hover {
     opacity: 0.8;
@@ -169,10 +173,10 @@ const Icon = styled.img`
 `;
 
 const Name = styled.div`
-  width: 12ch;
+  width: 9ch;
   overflow: hidden;
   white-space: nowrap;
-  margin-left: 2.3vw;
+  margin-left: 2.3em;
   text-overflow: ellipsis;
   cursor: pointer;
 `;

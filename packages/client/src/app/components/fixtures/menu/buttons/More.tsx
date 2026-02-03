@@ -2,20 +2,54 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 
 import { IconListButton } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { useIsMobile } from 'app/root/hooks';
+import { Modals, useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
-import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
+import {
+  ExternalIcon,
+  HelpIcon,
+  MoreIcon,
+  ResetIcon,
+  SettingsIcon,
+  SudoIcon,
+  Whispo,
+} from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { useBridgeOpener } from 'network/utils/hooks';
+
+const KAMI_ADDR = '0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677';
 
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
   const setModals = useVisibility((s) => s.setModals);
-  const settingsVisible = useVisibility((s) => s.modals.settings);
-  const helpVisible = useVisibility((s) => s.modals.help);
   const openBridge = useBridgeOpener();
-
   const [disabled, setDisabled] = useState(true);
+  const isMobile = useIsMobile();
+
+  const openSudoLink = () => {
+    window.open(`https://sudoswap.xyz/#/browse/yominet/buy/${KAMI_ADDR}`, '_blank', 'noopener');
+  };
+  const openKamibotsLink = () => {
+    window.open(`https://www.kamibots.xyz`, '_blank', 'noopener');
+  };
+
+  const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
+    const { modals } = useVisibility.getState();
+    const isModalOpen = modals[targetModal];
+    let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
+    if (!isModalOpen) {
+      if (isMobile) {
+        // Close everything except
+        // the target modal
+        const { modals } = useVisibility.getState();
+        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
+        nextModals = { ...allClosed, [targetModal]: true };
+      } else {
+        nextModals = { ...nextModals, ...hideModals };
+      }
+    }
+    setModals(nextModals);
+  };
 
   useEffect(() => {
     if (ready) setDisabled(!authenticated);
@@ -33,7 +67,7 @@ export const MoreMenuButton = () => {
     await clearCache();
     clearStorage();
     location.reload();
-  };;
+  };
 
   /////////////////
   // INTERACTION
@@ -58,7 +92,7 @@ export const MoreMenuButton = () => {
         });
       })
     );
-  };;
+  };
 
   // cleares all cookies
   // TODO: move this to helper function next time we need it
@@ -75,48 +109,56 @@ export const MoreMenuButton = () => {
     localStorage.clear();
   };
 
-  const toggleSettings = () => {
-    if (settingsVisible) setModals({ settings: false });
-    else {
-      setModals({
-        chat: false,
-        help: false,
-        inventory: false,
-        quests: false,
-        settings: true,
-        trading: false,
-      });
-    }
+  const toggleSettings = (targetModal: keyof Modals) => {
+    const modalsToHide: Partial<Modals> = {
+      chat: false,
+      help: false,
+      inventory: false,
+      quests: false,
+      settings: true,
+      trading: false,
+    };
+    manageMobile(targetModal, modalsToHide);
   };
 
-  const toggleHelp = () => {
-    if (helpVisible) setModals({ help: false });
-    else {
-      setModals({
-        chat: false,
-        help: true,
-        inventory: false,
-        quests: false,
-        settings: false,
-        trading: false,
-      });
-    }
+  const toggleHelp = (targetModal: keyof Modals) => {
+    const modalsToHide: Partial<Modals> = {
+      chat: false,
+      help: true,
+      inventory: false,
+      quests: false,
+      settings: false,
+      trading: false,
+    };
+    manageMobile(targetModal, modalsToHide);
   };
+
+  const options = [
+    ...(!isMobile
+      ? [
+          {
+            text: 'External Apps',
+            image: ExternalIcon,
+            options: [
+              { text: 'Sudoswap', image: SudoIcon, onClick: openSudoLink },
+              { text: 'KamiBots', image: Whispo, onClick: openKamibotsLink },
+            ],
+          },
+        ]
+      : []),
+    { text: 'Bridge', image: TokenIcons.init, onClick: openBridge },
+    {
+      text: 'Settings',
+      disabled,
+      image: SettingsIcon,
+      onClick: () => toggleSettings('settings'),
+    },
+    { text: 'Help', image: HelpIcon, onClick: () => toggleHelp('help') },
+    { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
+    { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
+  ];
 
   return (
-    <IconListButton
-      img={MoreIcon}
-      options={[
-        { text: 'Bridge', image: TokenIcons.init, onClick: openBridge },
-        { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
-        { text: 'Help', image: HelpIcon, onClick: toggleHelp },
-        { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
-        { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
-      ]}
-      scale={4.5}
-      scaleOrientation='vh'
-      radius={0.9}
-      tooltip={{ text: ['More'] }}
-    />
+    <IconListButton img={MoreIcon} options={options} radius={0.4} tooltip={{ text: ['More'] }} />
   );
 };

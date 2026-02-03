@@ -230,6 +230,7 @@ export const KamiModal: UIComponent = {
         canExit
         overlay
         noPadding
+        noScroll
       >
         {tab === 'TRAITS' && <Traits kami={kami} />}
         {tab === 'EQUIPMENT' && (

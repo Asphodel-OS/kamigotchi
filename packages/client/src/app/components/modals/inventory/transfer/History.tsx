@@ -62,7 +62,7 @@ export const History = ({
   return (
     <Container>
       <TitleBar>
-        <Text size={0.9}>Your Transfer History</Text>
+        <Text size={1.1}>Your Transfer History</Text>
         <Text size={0.75}>Fee: 15 MUSU</Text>
       </TitleBar>
       <List>
@@ -102,10 +102,10 @@ export const History = ({
 
 const Container = styled.div`
   position: relative;
-  border-top: 0.15vw solid black;
+  border-top: 0.15em solid black;
   width: 100%;
   height: 100%;
-  gap: 0.3vw;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -120,10 +120,10 @@ const TitleBar = styled.div`
   position: sticky;
   top: 0;
   width: 100%;
-  height: 3vw;
+  height: 3em;
 
-  margin-bottom: 0.3vw;
-  padding: 0.9vw;
+  margin-bottom: 0.3em;
+  padding: 0.9em;
 
   display: flex;
   flex-flow: row nowrap;
@@ -148,19 +148,20 @@ const List = styled.div`
 
 const Row = styled.div`
   width: 96%;
-  height: 1.2vw;
-  gap: 0.3vw;
+  height: 1.2em;
+  gap: 0.3em;
+  line-height: 1.5em;
 
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   justify-content: flex-start;
 
-  font-size: 0.6vw;
+  font-size: 1.1em;
 `;
 
 const Icon = styled.img`
   position: relative;
-  width: 0.9vw;
-  height: 0.9vw;
+  width: 0.9em;
+  height: 0.9em;
 `;

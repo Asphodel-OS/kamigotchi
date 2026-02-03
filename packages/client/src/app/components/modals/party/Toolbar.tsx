@@ -226,9 +226,15 @@ export const Toolbar = ({
     <Container>
       <Section>
         <TextTooltip text={[`${view}`]}>
-          <IconButton img={ViewIcons[view]} onClick={() => toggleView()} radius={0.6} />
+          <IconButton img={ViewIcons[view]} onClick={() => toggleView()} radius={0.6} scale={1.1} />
         </TextTooltip>
-        <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />
+        <IconListButton
+          img={SortIcons[sort]}
+          text={sort}
+          options={SortOptions}
+          radius={0.6}
+          scale={1.1}
+        />
       </Section>
       <DropdownToggle
         limit={12}
@@ -255,18 +261,18 @@ const Container = styled.div`
   z-index: 2;
 
   width: 100%;
-  padding: 0.6vw;
+  padding: 0.6em;
 
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   justify-content: space-between;
   align-items: center;
-
+  gap: 0.3em;
   user-select: none;
 `;
 
 const Section = styled.div`
-  gap: 0.3vw;
+  gap: 0.3em;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;

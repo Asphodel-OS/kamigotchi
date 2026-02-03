@@ -38,7 +38,25 @@ export const QuestModal: UIComponent = {
     const isNetworkReady =
       validations.authenticated && validations.chainMatches && burnerAddress !== DEAD_ADDRESS;
 
-    const { network, data, utils } = (() => {
+    const {
+      network,
+      components: { IsRegistry, OwnsQuestID, IsComplete },
+      data: { accountEntity, account },
+      utils: {
+        describeEntity,
+        getBase,
+        getItem,
+        getItemBalance,
+        filterByAvailable,
+        parseObjectives,
+        parseRequirements,
+        parseStatus,
+        populate,
+        queryRegistry,
+        queryOngoing,
+        queryCompleted,
+      },
+    } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -49,6 +67,7 @@ export const QuestModal: UIComponent = {
 
       return {
         network,
+        components,
         data: {
           accountEntity,
           account,
@@ -78,10 +97,7 @@ export const QuestModal: UIComponent = {
     })();
 
     const { actions, api, components, notifications } = network;
-    const { IsRegistry, OwnsQuestID, IsComplete } = components;
-    const { accountEntity, account } = data;
-    const { getBase, getItem, filterByAvailable, populate } = utils;
-    const { queryRegistry, queryOngoing, queryCompleted } = utils;
+
     const questsModalVisible = useVisibility((s) => s.modals.quests);
 
     const isUpdating = useRef(false);
@@ -128,7 +144,7 @@ export const QuestModal: UIComponent = {
       setAvailable(populated);
       if (populated.length > available.length) setTab('AVAILABLE');
 
-      const populatedOngoing = ongoing.map((q) => utils.parseObjectives(populate(q)));
+      const populatedOngoing = ongoing.map((q) => parseObjectives(populate(q)));
       const completableQuests = populatedOngoing.filter((q) => meetsObjectives(q));
       setCompletable(completableQuests);
 
@@ -181,7 +197,10 @@ export const QuestModal: UIComponent = {
         if (n == 0) notifications.remove(id);
         else {
           const quest = completable[n - 1];
-          notifications.update(id, { description: `You can complete: ${quest.name}`, questIndex: quest.entity });
+          notifications.update(id, {
+            description: `You can complete: ${quest.name}`,
+            questIndex: quest.entity,
+          });
         }
       } else if (n > 0) {
         const quest = completable[n - 1];
@@ -259,7 +278,14 @@ export const QuestModal: UIComponent = {
           quests={{ available, ongoing, completed }}
           mode={tab}
           actions={transactions}
-          utils={utils}
+          utils={{
+            describeEntity,
+            getItemBalance,
+            parseObjectives,
+            parseRequirements,
+            parseStatus,
+            populate,
+          }}
         />
       </ModalWrapper>
     );

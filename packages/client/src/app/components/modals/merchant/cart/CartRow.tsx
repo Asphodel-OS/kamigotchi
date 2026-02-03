@@ -40,7 +40,9 @@ export const CartRow = ({
         <Image src={listing.item.image} />
       </TextTooltip>
       <Quantity type='string' value={quantity.toString()} onChange={(e) => handleChange(e)} />
-      <Stepper value={quantity} set={setQuantity} scale={3} min={min} max={max} />
+      <StepperWrapper>
+        <Stepper value={quantity} set={setQuantity} scale={3} min={min} max={max} />
+      </StepperWrapper>
       <TotalPrice>
         <Icon src={getItemImage(listing.payItem.name)} />
         <Text>{calcListingBuyPrice(listing, quantity).toLocaleString()}</Text>
@@ -51,8 +53,8 @@ export const CartRow = ({
 
 const Container = styled.div`
   position: relative;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
+  border: 0.15em solid black;
+  border-radius: 0.4em;
   width: 90%;
 
   display: flex;
@@ -63,19 +65,19 @@ const Container = styled.div`
 // circular exit button on the top right of the Container
 const ExitButton = styled.div`
   position: absolute;
-  border: 0.15vw solid black;
-  border-radius: 0.6vw;
+  border: 0.15em solid black;
+  border-radius: 0.6em;
   background-color: #fff;
   cursor: pointer;
 
-  width: 1.2vw;
-  height: 1.2vw;
-  top: -0.4vw;
-  right: -0.4vw;
+  width: 1.2em;
+  height: 1.2em;
+  top: -0.4em;
+  right: -0.4em;
 
   color: black;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
   text-align: center;
 
   &:hover {
@@ -87,49 +89,74 @@ const ExitButton = styled.div`
 `;
 
 const Image = styled.img`
-  width: 3vw;
-  padding: 0.3vw;
+  width: 3em;
+  padding: 0.3em;
   font-family: Pixel;
   image-rendering: pixelated;
+
+  @media (max-aspect-ratio: 11/16) or (width < 900px) {
+    width: 2.2em;
+    padding: 0.2em;
+  }
 `;
 
 const Quantity = styled.input`
   border: none;
   background-color: #eee;
-  border-right: 0.15vw solid black;
-  border-left: 0.15vw solid black;
-  width: 4.5vw;
+  border-right: 0.15em solid black;
+  border-left: 0.15em solid black;
+  width: 4.5em;
   height: 100%;
-  padding: 0.3vw;
+  padding: 0.3em;
   margin: 0w;
   cursor: text;
 
   color: black;
   font-family: Pixel;
-  font-size: 1.2vw;
+  font-size: 1.2em;
   text-align: center;
+
+  @media (max-aspect-ratio: 11/16) or (width < 900px) {
+    width: 2.5em;
+    font-size: 0.9em;
+    padding: 0.2em;
+  }
+`;
+
+const StepperWrapper = styled.div`
+  height: 100%;
+
+  @media (max-aspect-ratio: 11/16) or (width < 900px) {
+    display: none;
+  }
 `;
 
 const TotalPrice = styled.div`
   height: 100%;
-  padding: 0 0.6vw;
+  padding: 0 0.6em;
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
+  flex-flow: row wrap;
+  justify-content: flex-end;
   align-items: center;
   flex-grow: 1;
+  min-width: 4em;
+
+  @media (max-aspect-ratio: 11/16) or (width < 900px) {
+    padding: 0 0.3em;
+    min-width: 3em;
+  }
 `;
 
 const Icon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
-  margin-right: 0.3vw;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.3em;
 `;
 
 const Text = styled.div`
   color: black;
   font-family: Pixel;
-  font-size: 0.9vw;
+  font-size: 0.9em;
 
   display: flex;
   flex-flow: row nowrap;

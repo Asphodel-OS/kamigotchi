@@ -81,9 +81,9 @@ export const Categories = ({
 };
 
 const Container = styled.div`
-  border-right: 0.15vw solid black;
+  border-right: 0.15em solid black;
   width: 40%;
-  gap: 0.3vw;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -94,14 +94,14 @@ const Container = styled.div`
 `;
 
 const TitleBar = styled.div`
-  border-bottom: 0.12vw solid black;
+  border-bottom: 0.12em solid black;
   background: rgb(221, 221, 221);
   position: sticky;
   top: 0;
 
   width: 100%;
-  padding: 0.45vw 0.6vw;
-  font-size: 0.9vw;
+  padding: 0.45em 0.6em;
+  font-size: 0.9em;
   opacity: 0.9;
 
   display: flex;
@@ -111,15 +111,15 @@ const TitleBar = styled.div`
 `;
 
 const CategoryButton = styled.button`
-  border: 0.12vw solid black;
+  border: 0.12em solid black;
   background: #efefef;
 
-  padding: 0.24vw 0.45vw;
+  padding: 0.24em 0.45em;
   width: 90%;
 
   text-align: left;
   text-overflow: ellipsis;
-  font-size: 0.85vw;
+  font-size: 0.85em;
   white-space: nowrap;
 
   cursor: pointer;

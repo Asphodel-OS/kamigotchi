@@ -67,7 +67,11 @@ export const OnyxReviveButton = ({
   // DISPLAY
 
   return (
-    <TextTooltip title={`Revive your Kami with Onyx`} text={getTooltip()} maxWidth={24}>
+    <TextTooltip
+      title={`Revive your Kami with Onyx`}
+      text={getTooltip()}
+      maxWidth={{ desktop: 24 }}
+    >
       <IconButton
         key='onyx-button'
         img={ItemImages.onyx_shard}

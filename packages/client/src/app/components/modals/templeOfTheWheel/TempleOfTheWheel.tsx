@@ -176,7 +176,7 @@ export const TempleOfTheWheel: UIComponent = {
 
 const Content = styled.div`
   position: relative;
-  gap: 0.6vw;
+  gap: 0.6em;
   flex-grow: 1;
   display: flex;
   flex-flow: column nowrap;
@@ -184,11 +184,11 @@ const Content = styled.div`
   overflow: hidden auto;
   background-color: white;
   color: black;
-  border: 0.1vw solid black;
+  border: 0.1em solid black;
   align-items: center;
-  padding: 2vw;
-  font-size: 1vw;
-  padding-bottom: 0.5vw;
+  padding: 2em;
+  font-size: 1em;
+  padding-bottom: 0.5em;
   width: 100%;
   height: 100%;
 `;
@@ -200,13 +200,13 @@ const Header = styled.div`
   flex-flow: row nowrap;
   justify-content: space-around;
   align-items: center;
-  gap: 0.5vw;
-  padding: 1vw;
+  gap: 0.5em;
+  padding: 1em;
   padding-bottom: 0;
   flex-direction: column;
-  line-height: 1vw;
-  border: 0.1vw solid black;
-  border-radius: 1vw 1vw 0 0;
+  line-height: 1em;
+  border: 0.1em solid black;
+  border-radius: 1em 1em 0 0;
 `;
 
 const HeaderRow = styled.div<{ position: string }>`
@@ -219,9 +219,9 @@ const HeaderRow = styled.div<{ position: string }>`
 const HeaderPart = styled.div<{ size: number; weight?: string; spacing?: number }>`
   position: relative;
   color: black;
-  padding: 0.3vw;
-  letter-spacing: ${({ spacing }) => spacing || -0.1}vw;
-  font-size: ${({ size }) => size}vw;
+  padding: 0.3em;
+  letter-spacing: ${({ spacing }) => spacing || -0.1}em;
+  font-size: ${({ size }) => size}em;
   font-weight: ${({ weight }) => weight || 'normal'};
 `;
 
@@ -231,14 +231,14 @@ const Footer = styled.div`
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: left;
-  gap: 0.3vw;
+  gap: 0.3em;
   background-color: white;
   color: black;
-  border: 0.1vw solid black;
-  border-radius: 0 0 1vw 1vw;
-  height: 3.8vw;
+  border: 0.1em solid black;
+  border-radius: 0 0 1em 1em;
+  height: 3.8em;
   width: 100%;
-  padding: 0.3vw;
+  padding: 0.3em;
 `;
 
 const ButtonsRow = styled.div`
@@ -248,18 +248,18 @@ const ButtonsRow = styled.div`
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  gap: 0.5vw;
-  padding: 0.5vw;
+  gap: 0.5em;
+  padding: 0.5em;
 `;
 
 const Button = styled.button`
-  border: 0.1vw solid black;
+  border: 0.1em solid black;
   background-color: white;
-  border-radius: 0.3vw;
+  border-radius: 0.3em;
   color: black;
-  padding: 0.4vw;
-  font-size: 0.8vw;
-  letter-spacing: -0.1vw;
+  padding: 0.4em;
+  font-size: 0.8em;
+  letter-spacing: -0.1em;
   &:hover:not(:disabled) {
     animation: ${() => hoverFx()} 0.2s;
     transform: scale(1.05);
@@ -273,8 +273,8 @@ const Button = styled.button`
 
 const Text = styled.span<{ size?: number; weight?: string; spacing?: number }>`
   color: black;
-  letter-spacing: ${({ spacing }) => spacing || -0.1}vw;
-  ${({ size }) => (size ? `font-size: ${size}vw;` : '0.8vw;')}
+  letter-spacing: ${({ spacing }) => spacing || -0.1}em;
+  ${({ size }) => (size ? `font-size: ${size}em;` : '0.8em;')}
   ${({ weight }) => (weight ? `font-weight: ${weight};` : 'normal;')}
 `;
 
@@ -283,7 +283,7 @@ const SelectionRow = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  gap: 1vw;
+  gap: 1em;
   width: 100%;
   height: 100%;
 `;
@@ -296,15 +296,15 @@ const SelectedKamiWrapper = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: -0.5vw;
-  right: -0.5vw;
-  width: 1.2vw;
-  height: 1.2vw;
+  top: -0.5em;
+  right: -0.5em;
+  width: 1.2em;
+  height: 1.2em;
   border-radius: 50%;
-  border: 0.1vw solid black;
+  border: 0.1em solid black;
   background-color: white;
   color: black;
-  font-size: 0.6vw;
+  font-size: 0.6em;
   cursor: pointer;
   display: flex;
   align-items: center;

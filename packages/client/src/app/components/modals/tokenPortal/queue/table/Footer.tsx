@@ -27,7 +27,7 @@ const Container = styled.div`
   background-color: rgb(221, 221, 221);
   bottom: 0;
   width: 100%;
-  height: 3vw;
+  height: 2em;
   opacity: 0.9;
 
   display: flex;

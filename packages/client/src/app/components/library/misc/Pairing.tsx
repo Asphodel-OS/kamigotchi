@@ -52,7 +52,7 @@ export const Pairing = ({
 };
 
 const Container = styled.div<{ gap: number; color: string; border: string }>`
-  gap: ${({ gap }) => gap * 0.3}vw;
+  gap: ${({ gap }) => gap * 0.5}em;
 
   display: flex;
   flex-direction: row;
@@ -63,14 +63,14 @@ const Container = styled.div<{ gap: number; color: string; border: string }>`
   pointer-events: auto;
 
   background: ${({ color }) => color};
-  padding: 0.15vw;
-  border: solid ${({ border }) => border} 0.15vw;
-  border-radius: 0.3vw;
+  padding: 0.15em;
+  border: solid ${({ border }) => border} 0.15em;
+  border-radius: 0.3em;
 `;
 
 const Icon = styled.img<{ scale: number }>`
-  height: ${({ scale }) => scale * 1.5}vw;
-  margin-bottom: ${({ scale }) => scale * 0.12}vw;
+  height: ${({ scale }) => scale * 1.5}em;
+  margin-bottom: ${({ scale }) => scale * 0.12}em;
   ${({ scale }) => (scale > 2 ? 'image-rendering: pixelated;' : '')}
   user-drag: none;
 `;

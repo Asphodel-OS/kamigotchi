@@ -60,13 +60,13 @@ export const TooltipContent = ({
 };
 
 const Container = styled.div<{ $borderColor?: string }>`
-  padding: 0.2vw;
-  min-width: 20vw;
+  padding: 0.2em;
+  min-width: 20em;
   ${({ $borderColor }) =>
     $borderColor &&
     `
     outline: 0.15vw solid ${$borderColor};
-    border-radius: 0.4vw;
+    border-radius: 0.4em;
   `}
 `;
 
@@ -75,15 +75,15 @@ const Header = styled.span`
   align-items: stretch;
   background-color: transparent;
   color: #666;
-  border-radius: 0.4vw;
-  padding: 0 0.3vw;
+  border-radius: 0.4em;
+  padding: 0 0.3em;
 `;
 
 const Section = styled.span<{ align?: 'center' | 'flex-start' | 'flex-end' }>`
   color: #666;
   background: #f0f0f0;
-  border-radius: 0.4vw;
-  padding: 0 0.3vw;
+  border-radius: 0.4em;
+  padding: 0 0.3em;
   width: 100%;
 
   display: flex;
@@ -95,46 +95,46 @@ const Section = styled.span<{ align?: 'center' | 'flex-start' | 'flex-end' }>`
 const SubSection = styled.span`
   display: flex;
   flex-direction: column;
-  margin-left: 0.5vw;
+  margin-left: 0.5em;
   align-items: flex-start;
   text-align: left;
-  margin-top: 0.5vw;
+  margin-top: 0.5em;
 `;
 
 const BottomSection = styled.div`
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: 0.5vw;
-  padding: 0.5vw;
+  gap: 0.5em;
+  padding: 0.5em;
 `;
 
 const Image = styled.img`
-  width: 4.5vw;
-  height: 4.5vw;
-  padding: 0.3vw;
-  border-radius: 0.6vw;
+  width: 4.5em;
+  height: 4.5em;
+  padding: 0.3em;
+  border-radius: 0.6em;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: solid black 0.15vw;
+  border: solid black 0.15em;
 `;
 
 const Title = styled.div<{ $color?: string }>`
-  font-size: 1.2vw;
+  font-size: 1.2em;
   font-weight: bold;
   ${({ $color }) => $color && `color: ${$color};`}
 `;
 
 const Subtitle = styled.div`
   display: flex;
-  gap: 0.3vw;
+  gap: 0.3em;
   align-items: flex-start;
 `;
 
 const Description = styled.div`
-  margin: 0.5vw 0 0 0;
-  font-size: 0.8vw;
+  margin: 0.5em 0 0 0;
+
   font-style: italic;
   white-space: normal;
 `;

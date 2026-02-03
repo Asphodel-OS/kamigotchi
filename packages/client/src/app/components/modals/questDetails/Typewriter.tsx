@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import styled from 'styled-components';
 
 const boldName = (text: string, key: number | string) => (
-  <strong style={{ color: 'inherit' }} key={key}>
+  <strong style={{ color: 'inherit', fontWeight: `bold` }} key={key}>
     {text}
   </strong>
 );
@@ -233,7 +233,7 @@ const ClickableArea = styled.div`
 const Arrow = styled.span`
   margin-left: 0.3em;
   animation: flicker 1s steps(1) infinite;
-  font-size: 1.8vw;
+  font-size: 1.8em;
   @keyframes flicker {
     0% {
       opacity: 1;

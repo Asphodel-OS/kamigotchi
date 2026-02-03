@@ -581,7 +581,7 @@ export const Offers = ({
                             }}
                           />,
                         ]}
-                        maxWidth={25}
+                        maxWidth={{ desktop: 30 }}
                       >
                         <Icon
                           src={item.image}
@@ -603,7 +603,7 @@ export const Offers = ({
                             }}
                           />,
                         ]}
-                        maxWidth={25}
+                        maxWidth={{ desktop: 25 }}
                       >
                         <Name
                           onClick={() =>
@@ -713,16 +713,16 @@ const FilterBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.6vw;
-  padding: 0.3vw 0.6vw;
+  gap: 0.6em;
+  padding: 0.3em 0.6em;
   background: #f0f0f0;
-  border-bottom: 0.12vw solid black;
+  border-bottom: 0.12em solid black;
 `;
 
 const ClearButton = styled.button`
-  border: 0.12vw solid black;
-  padding: 0.15vw 0.6vw;
-  font-size: 0.85vw;
+  border: 0.12em solid black;
+  padding: 0.15em 0.6em;
+  font-size: 0.85em;
   cursor: pointer;
   background: #eee;
 `;
@@ -741,7 +741,7 @@ const TableWrap = styled.div`
 `;
 
 const Table = styled.table<{ $withStatus?: boolean; $manageMode?: boolean }>`
-  width: 100%;
+  width: 99%;
   border-collapse: collapse;
   table-layout: fixed;
   display: table;
@@ -776,10 +776,13 @@ const HeaderRow = styled.tr`
   top: 0;
   background: #e6e6e6;
   z-index: 1;
+  white-space: normal;
+  word-break: break-word;
   & > th {
+    width: 90%;
     text-align: left;
-    padding: 0.6vw 0.9vw;
-    border-bottom: 0.12vw solid black;
+    padding: 0.6em 0.9em;
+    border-bottom: 0.12em solid black;
   }
 `;
 
@@ -790,28 +793,28 @@ const SortableTh = styled.th`
 
 const Row = styled.tr`
   & > td {
-    padding: 0.45vw 0.6vw;
-    border-bottom: 0.06vw solid #ccc;
-    font-size: 0.9vw;
+    padding: 0.45em 0.6em;
+    border-bottom: 0.06em solid #ccc;
+    font-size: 0.9em;
     vertical-align: middle;
-    white-space: nowrap;
   }
 `;
 
 const ItemCell = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;
 
 const Icon = styled.img`
-  width: 1.5vw;
-  height: 1.5vw;
+  width: 1.5em;
+  height: 1.5em;
   image-rendering: pixelated;
 `;
 
 const Name = styled.div`
-  max-width: 20vw;
+  max-width: 20em;
   overflow: hidden;
   white-space: normal;
   word-break: break-word;
@@ -821,6 +824,8 @@ const TypeLink = styled.span`
   color: #336;
   text-decoration: underline;
   cursor: pointer;
+  white-space: normal;
+  word-break: break-word;
   &:hover {
     opacity: 0.85;
   }
@@ -830,19 +835,19 @@ const OrderTypeCell = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.2vw;
+  gap: 0.2em;
 `;
 
 const Badge = styled.span<{ $variant: 'offer' | 'seek' | 'neutral' }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.8vw;
-  height: 1.2vw;
-  padding: 0 0.3vw;
-  border: 0.09vw solid black;
-  border-radius: 0.2vw;
-  font-size: 0.75vw;
+  min-width: 1.8em;
+  height: 1.2em;
+  padding: 0 0.3em;
+  border: 0.09em solid black;
+  border-radius: 0.2em;
+  font-size: 0.75em;
   line-height: 1;
   color: #192702;
   background: ${({ $variant }) =>
@@ -850,10 +855,10 @@ const Badge = styled.span<{ $variant: 'offer' | 'seek' | 'neutral' }>`
 `;
 
 const ActionButton = styled.button`
-  border: 0.12vw solid black;
+  border: 0.12em solid black;
   background: #e6ffd6;
-  padding: 0.3vw 0.6vw;
-  font-size: 0.85vw;
+  padding: 0.3em 0.6em;
+  font-size: 0.85em;
   cursor: pointer;
   &:disabled {
     background: #eee;
@@ -865,7 +870,7 @@ const ActionButton = styled.button`
 const ActionCell = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.3vw;
+  gap: 0.3em;
   align-items: flex-start;
 `;
 
@@ -888,7 +893,7 @@ const TotalCell = styled.td`
 const ConfirmParagraph = styled.div`
   color: #333;
   flex-grow: 1;
-  padding: 1.8vw;
+  padding: 1.8em;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-evenly;
@@ -901,5 +906,5 @@ const ConfirmRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6vw;
+  gap: 0.6em;
 `;

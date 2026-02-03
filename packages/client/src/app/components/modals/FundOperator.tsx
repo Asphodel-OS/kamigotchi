@@ -166,11 +166,11 @@ export const FundOperator: UIComponent = {
       return (
         <BoxButton style={{ backgroundColor: color }} onClick={() => setIsFunding(fundState)}>
           <Overlay top={0.3} left={0.3}>
-            <Text size={0.75} color={textColor}>
+            <Text size={1.3} color={textColor}>
               {text}
             </Text>
           </Overlay>
-          <Text size={1.2} color={textColor}>
+          <Text size={1.5} color={textColor}>
             {balance}
           </Text>
           <Overlay bottom={0.3} right={0.3}>
@@ -188,8 +188,12 @@ export const FundOperator: UIComponent = {
     return (
       <ModalWrapper id='operatorFund' canExit overlay truncate>
         <Header>
-          <Text size={1.5}>Operator gas</Text>
-          <Text size={0.9}>Your Operator needs gas to function.</Text>
+          <Text size={2} noLineHeight>
+            Operator gas
+          </Text>
+          <Text size={1.3} noLineHeight>
+            Your Operator needs gas to function.
+          </Text>
         </Header>
         <Row>
           {StateBox(true)}
@@ -216,7 +220,6 @@ export const FundOperator: UIComponent = {
               />
               <IconButton
                 onClick={triggerAction}
-                scale={3}
                 text={isFunding! ? 'Fund Operator' : 'Send to Owner'}
               />
             </Row>
@@ -230,8 +233,8 @@ export const FundOperator: UIComponent = {
 
 const Header = styled.div`
   color: black;
-  padding: 1.2vw;
-  gap: 0.3vw;
+  padding: 1.2em;
+  gap: 0.3em;
 
   display: flex;
   flex-flow: column nowrap;
@@ -241,11 +244,11 @@ const Header = styled.div`
 
 const BoxButton = styled.button`
   position: relative;
-  border: solid black 0.15vw;
+  border: solid black 0.15em;
   background-color: #fff;
 
   width: 45%;
-  padding: 1.8vw 0;
+  padding: 1.8em 0;
 
   display: flex;
   flex-direction: column;
@@ -260,26 +263,26 @@ const Row = styled.div`
   flex-direction: row nowrap;
   align-items: center;
   justify-content: center;
-
-  gap: 0.6vw;
+  flex-flow: wrap;
+  gap: 0.6em;
 `;
 
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1vw;
-  padding: 0.6vw;
-  margin-top: 1.2vw;
+  gap: 1em;
+  padding: 0.6em;
+  margin-top: 1.2em;
 `;
 
 const Input = styled.input`
   display: inline-block;
-  border-radius: 0.45vw;
-  width: 12vw;
-  padding: 1vh 0.6vw;
+  border-radius: 0.45em;
+  width: 12em;
+  padding: 1vh 0.6em;
 
-  font-size: 1.2vw;
+  font-size: 1.7em;
   text-align: center;
   text-decoration: none;
 
@@ -292,9 +295,9 @@ const Input = styled.input`
 const WarnText = styled.div`
   background-color: #ffffff;
   color: #ff785b;
-  padding: 0.75vw;
+  padding: 0.75em;
 
-  font-size: 0.8vw;
+  font-size: 1.3em;
   text-align: center;
 `;
 
@@ -303,5 +306,5 @@ const BridgeGroup = styled.div`
   flex-flow: column nowrap;
   align-items: center;
 
-  padding: 0.6vw;
+  padding: 0.6em;
 `;

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import styled from 'styled-components';
 
 import { getHarvestItem } from 'app/cache/harvest';
@@ -75,16 +76,21 @@ export const KamisExpanded = ({
   const DisplayedActions = (account: Account, kami: Kami, node: Node) => {
     if (!isVisible) return <></>;
 
-    let buttons = [];
     if (!isDead(kami)) {
-      buttons.push(UseItemButton(kami, account, FeedIcon));
-      buttons.push(HarvestButton(account, kami, node));
+      return (
+        <>
+          <Fragment key="feed">{UseItemButton(kami, account, FeedIcon)}</Fragment>
+          <Fragment key="harvest">{HarvestButton(account, kami, node)}</Fragment>
+        </>
+      );
     } else {
-      buttons.push(OnyxReviveButton(account, kami));
-      buttons.push(UseItemButton(kami, account, ReviveIcon));
+      return (
+        <>
+          <Fragment key="onyx">{OnyxReviveButton(account, kami)}</Fragment>
+          <Fragment key="revive">{UseItemButton(kami, account, ReviveIcon)}</Fragment>
+        </>
+      );
     }
-
-    return buttons;
   };
 
   /////////////////
@@ -118,6 +124,6 @@ export const KamisExpanded = ({
 const Container = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-flow: column nowrap;
-  gap: 0.45vw;
-  padding: 0.6vw;
+  gap: 0.45em;
+  padding: 0.6em;
 `;

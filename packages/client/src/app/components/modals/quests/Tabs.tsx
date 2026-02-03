@@ -18,14 +18,14 @@ export const Tabs = ({
   return (
     <Container>
       <Button
-        style={{ borderRight: 'solid black .15vw' }}
+        style={{ borderRight: 'solid black .15em' }}
         onClick={() => setTab('AVAILABLE')}
         disabled={tab === 'AVAILABLE'}
       >
         Available
       </Button>
       <Button
-        style={{ borderRight: 'solid black .15vw' }}
+        style={{ borderRight: 'solid black .15em' }}
         onClick={() => setTab('ONGOING')}
         disabled={tab === 'ONGOING'}
       >
@@ -40,7 +40,7 @@ export const Tabs = ({
 
 const Container = styled.div`
   width: 100%;
-  border-top: solid black 0.15vw;
+  border-top: solid black 0.15em;
   background-color: white;
   display: flex;
   flex-flow: row nowrap;
@@ -49,13 +49,13 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5vw;
+  padding: 0.5em;
   flex-grow: 1;
   color: black;
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: center;
 
   cursor: pointer;

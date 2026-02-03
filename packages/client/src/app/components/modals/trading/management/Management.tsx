@@ -109,6 +109,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   flex-direction: column;
   user-select: none;
+  overflow: hidden scroll;
 `;
 
 const Top = styled.div`

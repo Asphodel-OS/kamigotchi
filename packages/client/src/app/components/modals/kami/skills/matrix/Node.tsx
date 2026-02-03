@@ -47,7 +47,7 @@ export const Node = ({
   };
 
   return (
-    <TextTooltip title={skill.name} text={getTooltip()} maxWidth={24}>
+    <TextTooltip title={skill.name} text={getTooltip()} maxWidth={{ desktop: 24 }}>
       <Container key={index} onClick={handleClick} percent={getPercentCompletion()}>
         <Image src={image} />
       </Container>
@@ -56,14 +56,14 @@ export const Node = ({
 };
 
 const Container = styled.div<{ percent: number }>`
-  border: solid black 0.15vw;
-  border-radius: 0.5vw;
+  border: solid black 0.15em;
+  border-radius: 0.5em;
   position: relative;
   overflow: hidden;
 
-  width: 5vw;
-  height: 5vw;
-  padding: 0.1vw;
+  width: 5em;
+  height: 5em;
+  padding: 0.1em;
 
   align-items: center;
   justify-content: center;
@@ -80,8 +80,8 @@ const Container = styled.div<{ percent: number }>`
 `;
 
 const Image = styled.img`
-  border: solid black 0.15vw;
-  border-radius: 0.4vw;
+  border: solid black 0.15em;
+  border-radius: 0.4em;
   height: 100%;
   width: 100%;
   image-rendering: pixelated;

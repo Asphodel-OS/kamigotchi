@@ -1,8 +1,6 @@
-import styled from 'styled-components';
-
-import { TextTooltip } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
+import { useIsMobile } from 'app/root/hooks';
 import { Modals, useVisibility } from 'app/stores';
-import { clickFx, hoverFx } from 'app/styles/effects';
 import { playClick } from 'utils/sounds';
 
 // MenuButton renders a button that toggles a target modal.
@@ -25,6 +23,7 @@ export const MenuButton = ({
 }) => {
   const setModals = useVisibility((s) => s.setModals);
   const isModalOpen = useVisibility((s) => (targetModal ? s.modals[targetModal] : false));
+  const isMobile = useIsMobile();
 
   // toggles the target modal open and closed
   const handleToggle = () => {
@@ -33,44 +32,25 @@ export const MenuButton = ({
     if (!targetModal) return;
 
     let nextModals = { [targetModal]: !isModalOpen };
-    if (!isModalOpen) nextModals = { ...nextModals, ...hideModals };
+    if (!isModalOpen) {
+      if (isMobile) {
+        // Close everything except
+        // the target modal
+        const { modals } = useVisibility.getState();
+        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
+        nextModals = { ...allClosed, [targetModal]: true };
+      } else {
+        nextModals = { ...nextModals, ...hideModals };
+      }
+    }
     setModals(nextModals);
   };
 
   return (
-    <TextTooltip text={[tooltip]}>
-      <div id={id}>
-        <Button onClick={handleToggle} effectScale={0.1} disabled={disabled}>
-          <Image src={image} alt={id} />
-        </Button>
-      </div>
-    </TextTooltip>
+    <div id={id}>
+      <TextTooltip text={[tooltip]}>
+        <IconButton img={image} onClick={handleToggle} radius={0.4} disabled={disabled} />
+      </TextTooltip>
+    </div>
   );
 };
-
-const Button = styled.button<{
-  effectScale: number;
-  disabled?: boolean;
-}>`
-  height: 4.5vh;
-  border-radius: 0.9vh;
-  border: solid black 0.15vw;
-
-  cursor: pointer;
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-
-  &:hover {
-    animation: ${({ effectScale }) => hoverFx(effectScale)} 0.2s;
-    transform: scale(${({ effectScale }) => 1 + effectScale});
-  }
-  &:active {
-    animation: ${({ effectScale }) => clickFx(effectScale)} 0.3s;
-  }
-`;
-
-const Image = styled.img`
-  height: 100%;
-  width: auto;
-  padding: 0.15vh;
-  user-drag: none;
-`;

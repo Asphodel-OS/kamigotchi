@@ -183,37 +183,37 @@ const Container = styled.div<{ color: string }>`
   position: relative;
   display: flex;
   flex-flow: row nowrap;
-  border-top: solid grey 0.15vw;
-  height: 26vh;
+  border-top: solid grey 0.15em;
+  height: 25vh;
   transition: height 0.3s ease;
   overflow-y: auto;
   ::-webkit-scrollbar {
     background: transparent;
-    width: 0.3vw;
+    width: 0.3em;
   }
   ::-webkit-scrollbar-thumb {
     background-color: ${({ color }) => color};
-    border-radius: 0.3vw;
+    border-radius: 0.3em;
   }
 `;
 
 const DetailsSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  width: 75%;
-  padding: 0.5vw 1vw 0 1vw;
-  gap: 0.8vw;
-  line-height: 1.2vw;
+  width: 60%;
+  padding: 0.5em 1em 0 1em;
+  gap: 0.8em;
+  line-height: 1.2em;
 `;
 
 const Section = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  gap: 0.4vw;
+  gap: 0.4em;
 `;
 
 const SectionTitle = styled.div<{ color?: string }>`
-  font-size: 0.8vw;
+  font-size: 0.8em;
   font-weight: bold;
   color: ${({ color }) => color};
 `;
@@ -221,23 +221,24 @@ const SectionTitle = styled.div<{ color?: string }>`
 const ItemsRow = styled.div`
   display: flex;
   flex-flow: row wrap;
-  gap: 0.5vw;
+  gap: 0.5em;
 `;
 
 const RewardItem = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3vw;
-  padding: 0.3vw;
-  border: solid #5e4a14ff 0.1vw;
-  border-radius: 0.3vw;
-  font-size: 0.7vw;
+  gap: 0.3em;
+  padding: 0.3em;
+  border: solid #5e4a14ff 0.1em;
+  border-radius: 0.3em;
+  font-size: 0.7em;
+  background-color: rgba(248, 246, 228, 0.8);
 `;
 
 const RewardImage = styled.img`
-  height: 1.5vw;
-  width: 1.5vw;
+  height: 1.5em;
+  width: 1.5em;
   image-rendering: pixelated;
 `;
 
@@ -245,19 +246,19 @@ const ObjectiveRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const ObjectiveItem = styled.div<{ complete?: boolean; color?: string }>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  gap: 0.3vw;
-  padding: 0.3vw;
-  border: solid #5e4a14ff 0.1vw;
-  border-radius: 0.3vw;
-  font-size: 0.83vw;
-
+  gap: 0.3em;
+  padding: 0.3em;
+  border: solid #5e4a14ff 0.1em;
+  border-radius: 0.3em;
+  font-size: 0.83em;
+  background-color: rgba(248, 246, 228, 0.8);
   color: ${({ color }) => color};
   ${({ complete }) => complete && 'opacity: 0.6;'}
 `;
@@ -271,27 +272,28 @@ const Options = styled.div`
   width: 45%;
   justify-content: flex-start;
   align-items: flex-end;
-  gap: 0.3vw;
-  padding-top: 1vw;
-  padding-right: 1vw;
+  gap: 0.9em;
+  padding-top: 1em;
+  padding-right: 1em;
 `;
 
 const Label = styled.div<{ color?: string }>`
-  font-size: 1vw;
+  font-size: 1em;
+  margin-right: 41%;
   color: ${({ color }) => color};
 `;
 
 const Option = styled.button<{ color?: string; backgroundColor?: string }>`
   position: relative;
-  ${({ color }) => color && `color: ${color};  border: solid ${color} 0.15vw;`}
-  padding: 0.2vw 0.3vw 0vw 0.3vw;
-  font-size: 0.8vw;
+  ${({ color }) => color && `color: ${color};  border: solid ${color} 0.15em;`}
+  padding: 0.2em 0.3em 0em 0.3em;
+  font-size: 0.8em;
   z-index: 3;
-  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 1);
   cursor: pointer;
   width: 47%;
-  border-radius: 0.3vw;
-  line-height: 1.3vw;
+  border-radius: 0.3em;
+  line-height: 1.3em;
 
   &:disabled {
     opacity: 0.3;

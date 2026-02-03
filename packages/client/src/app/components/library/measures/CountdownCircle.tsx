@@ -21,8 +21,8 @@ export const CountdownCircle = ({ total, current }: { total: number; current: nu
 
 const Container = styled.div`
   position: relative;
-  width: 1.1vw;
-  height: 1.1vw;
+  width: 1.1em;
+  height: 1.1em;
 `;
 
 const OuterCircle = styled.div.attrs<{

@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-
 export const Tooltip = ({
   children,
   grow,
@@ -18,59 +17,140 @@ export const Tooltip = ({
   grow?: boolean;
   direction?: 'row' | 'column';
   delay?: number;
-  maxWidth?: number;
+  maxWidth?: { desktop?: number; mobile?: number };
   color?: string;
   content: React.ReactNode;
   isDisabled: boolean;
   fullWidth?: boolean;
   cursor?: string;
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [shouldBeVisible, setShouldBeVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
+  const isTouchActiveRef = useRef(false);
+  const cursorPosRef = useRef({ x: 0, y: 0 });
+  const longPressTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  /////////////////
-  // HANDLERS
+  useEffect(() => {
+    const handleScroll = () => closeTooltip();
 
-  const handleMouseMove = (event: React.MouseEvent) => {
-    const { clientX: cursorX, clientY: cursorY } = event;
+    const handleTouchEnd = () => {
+      setTimeout(() => {
+        isTouchActiveRef.current = false;
+      }, 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchcancel', handleTouchEnd);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchEnd);
+      if (longPressTimeoutRef.current) {
+        clearTimeout(longPressTimeoutRef.current);
+      }
+      setIsActive(false);
+      setShouldBeVisible(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isDisabled) closeTooltip();
+  }, [isDisabled]);
+
+  //////////////////
+  // POSITIONING
+
+  const updatePosition = () => {
+    const { x: cursorX, y: cursorY } = cursorPosRef.current;
     const width = tooltipRef.current?.offsetWidth || 0;
     const height = tooltipRef.current?.offsetHeight || 0;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
+
     let x = cursorX + 12;
     let y = cursorY + 12;
+
     if (x + width + 10 > viewportWidth) {
       x = cursorX - width - 10;
     }
     if (y + height + 10 > viewportHeight) {
       y = cursorY - height - 10;
     }
+
     setTooltipPosition({ x, y });
   };
 
-  const handleMouseEnter = (event: React.MouseEvent) => {
-    handleMouseMove(event);
+  //////////////////
+  // EVENT HANDLERS
 
-    if (!isDisabled) {
-      setIsActive(true);
+  const handleMouseMove = (event: React.MouseEvent | React.TouchEvent) => {
+    if (!event.type.startsWith('touch') && isTouchActiveRef.current) return;
+
+    if (event.type.startsWith('touch')) {
+      const touch = (event as React.TouchEvent).touches[0];
+      cursorPosRef.current = { x: touch.clientX, y: touch.clientY };
+    } else {
+      const mouse = event as React.MouseEvent;
+      cursorPosRef.current = { x: mouse.clientX, y: mouse.clientY };
     }
   };
 
-  /////////////////
-  // HOOKS
+  const handleMouseEnter = (event: React.MouseEvent) => {
+    if (isTouchActiveRef.current || isDisabled) return;
+    handleMouseMove(event);
+    setIsActive(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (isTouchActiveRef.current) return;
+    closeTooltip();
+  };
+
+  const handleTouchStart = (event: React.TouchEvent) => {
+    if (isDisabled) return;
+    isTouchActiveRef.current = true;
+    handleMouseMove(event);
+
+    longPressTimeoutRef.current = setTimeout(() => {
+      setIsActive(true);
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimeoutRef.current) {
+      clearTimeout(longPressTimeoutRef.current);
+      longPressTimeoutRef.current = null;
+    }
+
+    closeTooltip();
+  };
+
+  const closeTooltip = () => {
+    setIsActive(false);
+    setShouldBeVisible(false);
+  };
+
+  //////////////////
+  // VISIBILITY
 
   useEffect(() => {
-    let timeoutId: ReturnType<typeof window.setTimeout>;
-    if (isActive) {
-      timeoutId = setTimeout(() => {
-        if (!isDisabled) setIsVisible(true);
-      }, delay);
-    }
-    return () => clearTimeout(timeoutId);
+    if (!isActive) return;
+
+    const actualDelay = isTouchActiveRef.current ? 0 : delay;
+
+    setTimeout(() => {
+      if (!isDisabled) setShouldBeVisible(true);
+    }, actualDelay);
   }, [isActive, delay, isDisabled]);
+
+  useLayoutEffect(() => {
+    if (isActive) updatePosition();
+  }, [isActive]);
 
   /////////////////
   // DISPLAY
@@ -82,25 +162,25 @@ export const Tooltip = ({
       fullWidth={fullWidth}
       disabled={isDisabled}
       cursor={cursor}
-      onMouseEnter={(e) => handleMouseEnter(e)}
-      onMouseLeave={() => {
-        (setIsActive(false), setIsVisible(false));
-      }}
-      onMouseMove={(e) => {
-        handleMouseMove(e);
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       {isActive &&
         createPortal(
           <PopoverContainer
-            isVisible={isVisible}
+            shouldBeVisible={shouldBeVisible}
+            tooltipPosition={tooltipPosition}
             maxWidth={maxWidth}
             color={color}
-            tooltipPosition={tooltipPosition}
             ref={tooltipRef}
           >
             {content}
           </PopoverContainer>,
+
           document.body
         )}
       {children}
@@ -112,7 +192,6 @@ const Container = styled.span<{
   flexGrow: string;
   disabled?: boolean;
   direction?: string;
-  ref?: any;
   fullWidth?: boolean;
   cursor?: string;
 }>`
@@ -124,39 +203,45 @@ const Container = styled.span<{
 `;
 
 const PopoverContainer = styled.span.attrs<{
-  isVisible: boolean;
+  shouldBeVisible: boolean;
   color?: string;
   tooltipPosition?: any;
-  maxWidth?: number;
-}>(({ isVisible, color, tooltipPosition, maxWidth }) => ({
+  maxWidth?: { desktop?: number; mobile?: number };
+}>(({ shouldBeVisible, color, tooltipPosition, maxWidth }) => ({
   style: {
     backgroundColor: color ?? '#fff',
-    opacity: isVisible ? 1 : 0,
+    color: color || '#333',
+    opacity: shouldBeVisible ? 1 : 0,
     top: tooltipPosition.y,
     left: tooltipPosition.x,
-    maxWidth: maxWidth ? `${maxWidth}vw` : '36vw',
-  },
+    '--max-width-desktop': maxWidth?.desktop ? `${maxWidth.desktop}vw` : '25vw',
+    '--max-width-mobile': maxWidth?.mobile ? `${maxWidth.mobile}vw` : '49vw',
+  } as React.CSSProperties,
 }))<{
-  isVisible: boolean;
+  shouldBeVisible: boolean;
   color?: string;
   tooltipPosition?: any;
-  maxWidth?: number;
+  maxWidth?: { desktop?: number; mobile?: number };
 }>`
   position: fixed;
-  border: solid black 0.15vw;
-  border-radius: 0.6vw;
-  padding: 0.9vw;
-  color: ${({ color }) => color || '#333'};
+  font-size: clamp(0.8rem, 1.5vmin + 0.3rem, 1.2rem);
+  border: solid black 0.1em;
+  border-radius: 0.4em;
+  padding: 0.6em;
+  line-height: 1.5;
 
   display: flex;
   flex-direction: column;
   overflow-wrap: anywhere;
 
-  font-size: 0.7vw;
-  line-height: 1.25vw;
-  white-space: normal;
-  z-index: 10;
-
+  min-width: min-content;
   pointer-events: none;
   user-select: none;
+  white-space: normal;
+  z-index: 20;
+
+  max-width: var(--max-width-desktop);
+  @media (pointer: coarse) {
+    max-width: var(--max-width-mobile);
+  }
 `;

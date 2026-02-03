@@ -4,14 +4,17 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
+import { useEffect, useState } from 'react';
 import {
   AccountMenuButton,
+  CraftMenuButton,
+  InventoryMenuButton,
   MapMenuButton,
+  MoreMenuButton,
   NodeMenuButton,
-  OnyxMenuButton,
   PartyMenuButton,
-  StudioMenuButton,
-  SudoMenuButton,
+  QuestMenuButton,
+  ShopMenuButton,
 } from './buttons';
 
 export const LeftMenuFixture: UIComponent = {
@@ -19,7 +22,17 @@ export const LeftMenuFixture: UIComponent = {
   Render: () => {
     const layers = useLayers();
     const menuVisible = useVisibility((s) => s.fixtures.menu);
+    const [isMobile, setIsMobile] = useState(false);
 
+    useEffect(() => {
+      const desktopQuery = window.matchMedia('(max-aspect-ratio: 11/16) ');
+      setIsMobile(desktopQuery.matches);
+      const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+      desktopQuery.addEventListener('change', handler);
+      return () => {
+        desktopQuery.removeEventListener('change', handler);
+      };
+    }, []);
     /////////////////
     // PREPARATION
 
@@ -34,22 +47,44 @@ export const LeftMenuFixture: UIComponent = {
     // RENDER
 
     return (
-      <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
-        <AccountMenuButton />
-        <PartyMenuButton />
-        <MapMenuButton />
-        <NodeMenuButton disabled={!nodeEntity} />
-        <OnyxMenuButton />
-        <SudoMenuButton />
-        <StudioMenuButton />
+      <Wrapper>
+        {!isMobile && (
+          <>
+            <MoreMenuButton />
+            {menuVisible && (
+              <>
+                <AccountMenuButton />
+                <PartyMenuButton />
+                <MapMenuButton />
+                <NodeMenuButton disabled={!nodeEntity} />
+                <CraftMenuButton />
+                <ShopMenuButton />
+                <InventoryMenuButton />
+                <QuestMenuButton />
+              </>
+            )}
+          </>
+        )}
       </Wrapper>
     );
   },
 };
 
 const Wrapper = styled.div`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.6vh;
+  justify-self: start;
+
+  @media (max-aspect-ratio: 11/16) {
+    justify-self: stretch;
+
+    > * {
+      flex: 1;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  display: flex;
+  gap: 0.3em;
 `;

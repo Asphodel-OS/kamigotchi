@@ -75,4 +75,5 @@ const Wrapper = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
   user-select: none;
+  position: relative;
 `;

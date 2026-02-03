@@ -20,7 +20,7 @@ export const Tabs = ({
       <Button
         onClick={() => setTab('allies')}
         disabled={tab === 'allies'}
-        style={{ borderRight: 'solid black .15vw' }}
+        style={{ borderRight: 'solid black .15em' }}
       >
         Allies
       </Button>
@@ -41,13 +41,13 @@ const Container = styled.div`
 
 const Button = styled.button`
   border: none;
-  padding: 0.5vw;
+  padding: 0.5em;
   flex-grow: 1;
   color: black;
   justify-content: center;
 
   font-family: Pixel;
-  font-size: 1vw;
+  font-size: 1em;
   text-align: center;
 
   cursor: pointer;

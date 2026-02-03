@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
-import { TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
 import { Mode } from './types';
 
@@ -82,25 +81,6 @@ export const MusuRow = ({
     <Container key='musu'>
       <Icons>
         <TextTooltip
-          text={[
-            'View the Kamigotchi World Orderbook\n\n',
-            'You must be in a designated Trade room',
-            'to interact with outstanding Orders.',
-          ]}
-          direction='row'
-        >
-          <IconButton
-            img={TradeIcon}
-            onClick={() => setModals({ ...modals, trading: !modals.trading })}
-            radius={0.9}
-          />
-        </TextTooltip>
-        <IconButton
-          img={ItemImages.obol}
-          onClick={() => setModals({ ...modals, lootBox: !modals.lootBox })}
-          radius={0.9}
-        />
-        <TextTooltip
           text={mode === 'TRANSFER' ? ['Back to Inventory'] : ['Send Item']}
           direction='row'
         >
@@ -123,8 +103,8 @@ export const MusuRow = ({
 
 const Container = styled.div`
   width: 100%;
-  padding: 0.45vw;
-  gap: 0.45vw;
+  padding: 0.45em;
+  gap: 0.45em;
 
   user-select: none;
   display: flex;
@@ -140,25 +120,25 @@ const MusuSection = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const Icons = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const Icon = styled.img`
-  width: 1.8vw;
-  height: 1.8vw;
-  margin-top: 0.12vw;
+  width: 1.8em;
+  height: 1.8em;
+  margin-top: 0.12em;
 `;
 
 const Balance = styled.div`
-  border: solid #333 0.15vw;
-  border-radius: 0.6vw 0 0.6vw 0.6vw;
-  padding: 0.3vw;
+  border: solid #333 0.15em;
+  border-radius: 0.6em 0 0.6em 0.6em;
+  padding: 0.3em;
   width: 50%;
 
   display: flex;
@@ -167,6 +147,6 @@ const Balance = styled.div`
   align-items: center;
 
   color: black;
-  font-size: 0.9vw;
-  line-height: 1.2vw;
+  font-size: 0.9em;
+  line-height: 1.2em;
 `;

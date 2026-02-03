@@ -74,19 +74,19 @@ export const TileContextMenu = ({
 const MenuContainer = styled.div`
   position: fixed;
   background-color: white;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
+  border: 0.15em solid black;
+  border-radius: 0.4em;
   z-index: 1000;
-  min-width: 10vw;
-  box-shadow: 0 0.2vw 0.5vw rgba(0, 0, 0, 0.2);
+  min-width: 10em;
+  box-shadow: 0 0.2em 0.5em rgba(0, 0, 0, 0.2);
   font-family: Pixel;
 `;
 
 const MenuItem = styled.div<{ disabled?: boolean }>`
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  border-radius: 0.6vw;
-  padding: 0.6vw;
-  gap: 0.3vw;
+  border-radius: 0.6em;
+  padding: 0.6em;
+  gap: 0.3em;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -104,7 +104,7 @@ const MenuItem = styled.div<{ disabled?: boolean }>`
 `;
 
 const Icon = styled.img`
-  width: 1.4vw;
+  width: 1.4em;
   image-rendering: pixelated;
   user-drag: none;
 `;

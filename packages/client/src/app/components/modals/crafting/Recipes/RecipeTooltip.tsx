@@ -42,7 +42,7 @@ export const RecipeTooltip = ({
   const getCosts = () => {
     const text = [
       <p key='stamina'>
-        {recipe.cost.stamina} <img style={{ width: '1.2vw' }} src={StaminaIcon} />
+        {recipe.cost.stamina} <img style={{ width: '1.2em' }} src={StaminaIcon} />
       </p>,
     ];
     recipe.inputs.forEach((input, i) => {
@@ -72,14 +72,14 @@ export const RecipeTooltip = ({
 };
 
 const Icon = styled.img`
-  height: 1.2vw;
+  height: 1.2em;
 `;
 
 const Requirements = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.3vw;
+  gap: 0.3em;
 `;
 
 const Costs = styled.p`

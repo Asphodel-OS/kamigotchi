@@ -3,13 +3,7 @@ import { playClick } from 'utils/sounds';
 
 import { ActionButton } from 'app/components/library';
 
-export const Tabs = ({
-  tab,
-  setTab: _setTab,
-}: {
-  tab: string;
-  setTab: (tab: string) => void;
-}) => {
+export const Tabs = ({ tab, setTab: _setTab }: { tab: string; setTab: (tab: string) => void }) => {
   // layer on a sound effect
   const setTab = async (tab: string) => {
     playClick();
@@ -40,6 +34,6 @@ const Container = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-end;
 
-  margin: 1vh 1vw 0vh 1vw;
+  margin: 1em 1em 0em 1em;
   right: 0;
 `;

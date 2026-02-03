@@ -64,7 +64,7 @@ export const Health = ({
 
 const Container = styled.div`
   position: relative;
-  border-right: solid black 0.15vw;
+  border-right: solid black 0.15em;
 
   height: 100%;
   flex-grow: 1;
@@ -98,14 +98,14 @@ const Pairing = styled.div`
   align-items: center;
   justify-content: center;
 
-  gap: 0.15vw;
+  gap: 0.15em;
   z-index: 1;
-  margin-right: 0.3vw;
+  margin-right: 0.3em;
 `;
 
 const Icon = styled.img`
-  height: 1.2vw;
-  width: 1.2vw;
+  height: 1.2em;
+  width: 1.2em;
   transform-origin: center;
   transform: rotate(20deg);
   user-drag: none;
