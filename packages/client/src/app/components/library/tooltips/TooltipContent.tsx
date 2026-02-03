@@ -64,7 +64,7 @@ const Container = styled.div<{ $borderColor?: string }>`
   ${({ $borderColor }) =>
     $borderColor &&
     `
-    outline: 0.15vw solid ${$borderColor};
+    outline: 0.2em solid ${$borderColor};
     border-radius: 0.4em;
   `}
 `;

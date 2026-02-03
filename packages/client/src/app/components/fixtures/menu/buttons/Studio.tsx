@@ -1,10 +1,13 @@
 import { IconButton, TextTooltip } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { useIsMobile, useIsPortrait, getPortraitCollidingModals } from 'app/root/hooks';
+import { Modals, useVisibility } from 'app/stores';
 import { MenuIcons } from 'assets/images/icons/menu';
 
 export const StudioMenuButton = () => {
   const setModals = useVisibility((s) => s.setModals);
   const isStudioOpen = useVisibility((s) => s.modals.animationStudio);
+  const isMobile = useIsMobile();
+  const isPortrait = useIsPortrait();
 
   // Only show in development mode (localhost:3000); SSR-safe
   const isDev =
@@ -15,7 +18,18 @@ export const StudioMenuButton = () => {
   if (!isDev) return null;
 
   const handleClick = () => {
-    setModals({ animationStudio: !isStudioOpen });
+    const { modals } = useVisibility.getState();
+    let nextModals: Partial<Modals> = { animationStudio: !isStudioOpen };
+    if (!isStudioOpen) {
+      if (isMobile) {
+        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
+        nextModals = { ...allClosed, animationStudio: true };
+      } else if (isPortrait) {
+        const collidingModals = getPortraitCollidingModals('animationStudio');
+        nextModals = { ...nextModals, ...collidingModals };
+      }
+    }
+    setModals(nextModals);
   };
 
   return (

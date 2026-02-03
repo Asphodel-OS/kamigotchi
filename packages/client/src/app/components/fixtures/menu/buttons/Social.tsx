@@ -1,5 +1,5 @@
 import { IconListButton } from 'app/components/library';
-import { useIsMobile } from 'app/root/hooks';
+import { useIsMobile, useIsPortrait, getPortraitCollidingModals } from 'app/root/hooks';
 import { Modals, useAccount, useSelected, useVisibility } from 'app/stores';
 import { KamiIcon, OperatorIcon, QuestsIcon, Social2 } from 'assets/images/icons/menu';
 
@@ -8,6 +8,7 @@ export const SocialMenuButton = () => {
   const setAccount = useSelected((s) => s.setAccount);
   const accountIndex = useAccount((s) => s.account.index);
   const isMobile = useIsMobile();
+  const isPortrait = useIsPortrait();
 
   const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
     const { modals } = useVisibility.getState();
@@ -15,9 +16,11 @@ export const SocialMenuButton = () => {
     let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
     if (!isModalOpen) {
       if (isMobile) {
-        const { modals } = useVisibility.getState();
         const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
         nextModals = { ...allClosed, [targetModal]: true };
+      } else if (isPortrait) {
+        const collidingModals = getPortraitCollidingModals(targetModal);
+        nextModals = { ...nextModals, ...collidingModals };
       } else {
         nextModals = { ...nextModals, ...hideModals };
       }

@@ -2,7 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 
 import { IconListButton } from 'app/components/library';
-import { useIsMobile } from 'app/root/hooks';
+import { useIsMobile, useIsPortrait, getPortraitCollidingModals } from 'app/root/hooks';
 import { Modals, useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import {
@@ -25,6 +25,7 @@ export const MoreMenuButton = () => {
   const openBridge = useBridgeOpener();
   const [disabled, setDisabled] = useState(true);
   const isMobile = useIsMobile();
+  const isPortrait = useIsPortrait();
 
   const openSudoLink = () => {
     window.open(`https://sudoswap.xyz/#/browse/yominet/buy/${KAMI_ADDR}`, '_blank', 'noopener');
@@ -39,11 +40,11 @@ export const MoreMenuButton = () => {
     let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
     if (!isModalOpen) {
       if (isMobile) {
-        // Close everything except
-        // the target modal
-        const { modals } = useVisibility.getState();
         const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
         nextModals = { ...allClosed, [targetModal]: true };
+      } else if (isPortrait) {
+        const collidingModals = getPortraitCollidingModals(targetModal);
+        nextModals = { ...nextModals, ...collidingModals };
       } else {
         nextModals = { ...nextModals, ...hideModals };
       }

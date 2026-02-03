@@ -224,7 +224,7 @@ const PopoverContainer = styled.span.attrs<{
   width?: { desktop?: number; mobile?: number };
 }>`
   position: fixed;
-  font-size: clamp(0.8rem, 1.8vmin, 1.8rem);
+  font-size: clamp(0.8rem, 1.9vmin, 1.8rem);
   border: solid black 0.1em;
   border-radius: 0.5em;
   padding: 0.6em;

@@ -241,8 +241,8 @@ const CornerAlt = styled.div<{ radius: number }>`
 const Balance = styled.div<{ scale: number }>`
   position: absolute;
   background-color: white;
-  border-top: solid black 0.05em;
-  border-left: solid black 0.05em;
+  border-top: solid black 0.1em;
+  border-left: solid black 0.1em;
   border-radius: 0.15em 0 0.45em 0;
   bottom: 0;
   right: 0;

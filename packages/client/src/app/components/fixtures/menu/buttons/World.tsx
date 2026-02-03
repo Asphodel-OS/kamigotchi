@@ -1,5 +1,5 @@
 import { IconListButton } from 'app/components/library';
-import { useIsMobile, useLayers } from 'app/root/hooks';
+import { useIsMobile, useIsPortrait, getPortraitCollidingModals, useLayers } from 'app/root/hooks';
 import { Modals, useSelected, useVisibility } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
 import { HarvestIcon } from 'assets/images/icons/actions';
@@ -11,6 +11,7 @@ export const WorldMenuButton = () => {
   const setNode = useSelected((s) => s.setNode);
   const roomIndex = useSelected((s) => s.roomIndex);
   const isMobile = useIsMobile();
+  const isPortrait = useIsPortrait();
 
   const { world } = layers.network;
   const nodeEntity = queryNodeByIndex(world, roomIndex);
@@ -21,9 +22,11 @@ export const WorldMenuButton = () => {
     let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
     if (!isModalOpen) {
       if (isMobile) {
-        const { modals } = useVisibility.getState();
         const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
         nextModals = { ...allClosed, [targetModal]: true };
+      } else if (isPortrait) {
+        const collidingModals = getPortraitCollidingModals(targetModal);
+        nextModals = { ...nextModals, ...collidingModals };
       } else {
         nextModals = { ...nextModals, ...hideModals };
       }

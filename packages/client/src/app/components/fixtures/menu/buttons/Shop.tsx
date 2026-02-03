@@ -1,5 +1,5 @@
 import { IconListButton } from 'app/components/library';
-import { useIsMobile } from 'app/root/hooks';
+import { useIsMobile, useIsPortrait, getPortraitCollidingModals } from 'app/root/hooks';
 import { Modals, useVisibility } from 'app/stores';
 import { TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
@@ -8,6 +8,7 @@ import { TokenIcons } from 'assets/images/tokens';
 export const ShopMenuButton = () => {
   const setModals = useVisibility((s) => s.setModals);
   const isMobile = useIsMobile();
+  const isPortrait = useIsPortrait();
 
   const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
     const { modals } = useVisibility.getState();
@@ -15,9 +16,11 @@ export const ShopMenuButton = () => {
     let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
     if (!isModalOpen) {
       if (isMobile) {
-        const { modals } = useVisibility.getState();
         const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
         nextModals = { ...allClosed, [targetModal]: true };
+      } else if (isPortrait) {
+        const collidingModals = getPortraitCollidingModals(targetModal);
+        nextModals = { ...nextModals, ...collidingModals };
       } else {
         nextModals = { ...nextModals, ...hideModals };
       }
