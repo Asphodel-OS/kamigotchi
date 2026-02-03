@@ -184,7 +184,7 @@ const Container = styled.div<{ color: string }>`
   display: flex;
   flex-flow: row nowrap;
   border-top: solid grey 0.15em;
-  height: 25vh;
+  height: 26vh;
   transition: height 0.3s ease;
   overflow-y: auto;
   ::-webkit-scrollbar {
@@ -200,7 +200,7 @@ const Container = styled.div<{ color: string }>`
 const DetailsSection = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  width: 60%;
+  width: 75%;
   padding: 0.5em 1em 0 1em;
   gap: 0.8em;
   line-height: 1.2em;
@@ -233,7 +233,6 @@ const RewardItem = styled.div`
   border: solid #5e4a14ff 0.1em;
   border-radius: 0.3em;
   font-size: 0.7em;
-  background-color: rgba(248, 246, 228, 0.8);
 `;
 
 const RewardImage = styled.img`
@@ -258,7 +257,6 @@ const ObjectiveItem = styled.div<{ complete?: boolean; color?: string }>`
   border: solid #5e4a14ff 0.1em;
   border-radius: 0.3em;
   font-size: 0.83em;
-  background-color: rgba(248, 246, 228, 0.8);
   color: ${({ color }) => color};
   ${({ complete }) => complete && 'opacity: 0.6;'}
 `;
@@ -272,14 +270,13 @@ const Options = styled.div`
   width: 45%;
   justify-content: flex-start;
   align-items: flex-end;
-  gap: 0.9em;
+  gap: 0.3em;
   padding-top: 1em;
   padding-right: 1em;
 `;
 
 const Label = styled.div<{ color?: string }>`
   font-size: 1em;
-  margin-right: 41%;
   color: ${({ color }) => color};
 `;
 
@@ -294,7 +291,7 @@ const Option = styled.button<{ color?: string; backgroundColor?: string }>`
   width: 47%;
   border-radius: 0.3em;
   line-height: 1.3em;
-
+  min-width: fit-content;
   &:disabled {
     opacity: 0.3;
     cursor: not-allowed;
