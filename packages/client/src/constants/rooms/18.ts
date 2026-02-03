@@ -1,4 +1,5 @@
 import { triggerGoalModal } from 'app/triggers';
+import { triggerShopModal } from 'app/triggers/triggerShopModal';
 import { bgPlaytestDay } from 'assets/images/rooms/18_cave-crossroads';
 import { caveCrossroads } from 'assets/sound/ost';
 import { Room } from './types';
@@ -20,6 +21,11 @@ export const room18: Room = {
       name: 'staking a claim',
       coordinates: { x1: 83, y1: 74, x2: 107, y2: 99 },
       onClick: () => triggerGoalModal([12]),
+    },
+    {
+      name: 'vending machine',
+      coordinates: { x1: 80, y1: 70, x2: 115, y2: 112 },
+      onClick: () => triggerShopModal(2),
     },
   ],
 };

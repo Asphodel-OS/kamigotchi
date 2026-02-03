@@ -8,6 +8,7 @@ export async function initNpcs(api: AdminAPI) {
 export async function initMerchants(api: AdminAPI) {
   // create our hottie merchant ugajin. names are unique
   await api.npc.create(1, 'Mina', 13);
+  await api.npc.create(2, 'Vending Machine', 18);
 }
 
 // NPC Droptables (for NPC sacrifices)
