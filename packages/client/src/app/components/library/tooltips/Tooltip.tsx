@@ -244,4 +244,5 @@ const PopoverContainer = styled.span.attrs<{
   @media (pointer: coarse) {
     width: var(--width-mobile);
   }
+  max-width: fit-content;
 `;
