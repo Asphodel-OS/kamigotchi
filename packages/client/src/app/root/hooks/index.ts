@@ -1,3 +1,4 @@
 export { useIsMobile } from './useIsMobile';
-export { useIsPortrait, getPortraitCollidingModals } from './useIsPortrait';
+export { useIsPortrait } from './useIsPortrait';
+export { useModalToggle } from './useModalToggle';
 export { useLayers as useLayers } from './useLayers';

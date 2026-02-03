@@ -129,7 +129,7 @@ export const ItemGrid = ({
               disabled={options.length == 0 || item.is.disabled}
               tooltip={{
                 text: [<ItemTooltip key={item.index} item={item} utils={utils} />],
-                width: { mobile: 56 },
+                width: { mobile: 50 },
               }}
             />
           </ItemWrapper>

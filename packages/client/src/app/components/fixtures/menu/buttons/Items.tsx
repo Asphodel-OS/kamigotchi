@@ -1,36 +1,16 @@
 import { IconListButton } from 'app/components/library';
-import { useIsMobile, useIsPortrait, getPortraitCollidingModals } from 'app/root/hooks';
-import { Modals, useVisibility } from 'app/stores';
+import { useModalToggle } from 'app/root/hooks';
+import { Modals } from 'app/stores';
 import { CraftIcon } from 'assets/images/icons/actions';
 import { InventoryIcon, Items, TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
 import { TokenIcons } from 'assets/images/tokens';
 
 export const ItemsMenuButton = () => {
-  const setModals = useVisibility((s) => s.setModals);
-  const isMobile = useIsMobile();
-  const isPortrait = useIsPortrait();
+  const toggleModal = useModalToggle();
 
-  const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
-    const { modals } = useVisibility.getState();
-    const isModalOpen = modals[targetModal];
-    let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
-    if (!isModalOpen) {
-      if (isMobile) {
-        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
-        nextModals = { ...allClosed, [targetModal]: true };
-      } else if (isPortrait) {
-        const collidingModals = getPortraitCollidingModals(targetModal);
-        nextModals = { ...nextModals, ...collidingModals };
-      } else {
-        nextModals = { ...nextModals, ...hideModals };
-      }
-    }
-    setModals(nextModals);
-  };
-
-  const toggleInventory = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleInventory = () => {
+    const hideModals: Partial<Modals> = {
       chat: false,
       help: false,
       quests: false,
@@ -39,11 +19,11 @@ export const ItemsMenuButton = () => {
       dialogue: false,
       kami: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('inventory', hideModals);
   };
 
-  const toggleCrafting = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleCrafting = () => {
+    const hideModals: Partial<Modals> = {
       bridgeERC20: false,
       bridgeERC721: false,
       dialogue: false,
@@ -55,20 +35,20 @@ export const ItemsMenuButton = () => {
       presale: false,
       trading: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('crafting', hideModals);
   };
 
-  const toggleTokenPortal = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleTokenPortal = () => {
+    const hideModals: Partial<Modals> = {
       crafting: false,
       node: false,
       kami: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('tokenPortal', hideModals);
   };
 
-  const toggleOrderbook = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleOrderbook = () => {
+    const hideModals: Partial<Modals> = {
       account: false,
       bridgeERC20: false,
       dialogue: false,
@@ -86,11 +66,11 @@ export const ItemsMenuButton = () => {
       tokenPortal: false,
       node: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('trading', hideModals);
   };
 
-  const toggleObol = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleObol = () => {
+    const hideModals: Partial<Modals> = {
       goal: false,
       crafting: false,
       bridgeERC20: false,
@@ -104,34 +84,18 @@ export const ItemsMenuButton = () => {
       trading: false,
       node: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('lootBox', hideModals);
   };
 
   return (
     <IconListButton
       img={Items}
       options={[
-        {
-          text: 'Inventory',
-          image: InventoryIcon,
-          onClick: () => toggleInventory('inventory'),
-        },
-        { text: 'Craft', image: CraftIcon, onClick: () => toggleCrafting('crafting') },
-        {
-          text: 'Trade',
-          image: TradeIcon,
-          onClick: () => toggleOrderbook('trading'),
-        },
-        {
-          text: 'Pop-up Shop',
-          image: ItemImages.obol,
-          onClick: () => toggleObol('lootBox'),
-        },
-        {
-          text: 'Token Portal',
-          image: TokenIcons.onyx,
-          onClick: () => toggleTokenPortal('tokenPortal'),
-        },
+        { text: 'Inventory', image: InventoryIcon, onClick: toggleInventory },
+        { text: 'Craft', image: CraftIcon, onClick: toggleCrafting },
+        { text: 'Trade', image: TradeIcon, onClick: toggleOrderbook },
+        { text: 'Pop-up Shop', image: ItemImages.obol, onClick: toggleObol },
+        { text: 'Token Portal', image: TokenIcons.onyx, onClick: toggleTokenPortal },
       ]}
       tooltip={{ text: ['Items'] }}
       menuButton={true}

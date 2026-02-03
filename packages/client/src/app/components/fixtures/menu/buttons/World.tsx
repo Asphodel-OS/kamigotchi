@@ -1,41 +1,21 @@
 import { IconListButton } from 'app/components/library';
-import { useIsMobile, useIsPortrait, getPortraitCollidingModals, useLayers } from 'app/root/hooks';
-import { Modals, useSelected, useVisibility } from 'app/stores';
+import { useModalToggle, useLayers } from 'app/root/hooks';
+import { Modals, useSelected } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
 import { HarvestIcon } from 'assets/images/icons/actions';
 import { ChatIcon, MapIcon, World } from 'assets/images/icons/menu';
 
 export const WorldMenuButton = () => {
   const layers = useLayers();
-  const setModals = useVisibility((s) => s.setModals);
   const setNode = useSelected((s) => s.setNode);
   const roomIndex = useSelected((s) => s.roomIndex);
-  const isMobile = useIsMobile();
-  const isPortrait = useIsPortrait();
+  const toggleModal = useModalToggle();
 
   const { world } = layers.network;
   const nodeEntity = queryNodeByIndex(world, roomIndex);
 
-  const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
-    const { modals } = useVisibility.getState();
-    const isModalOpen = modals[targetModal];
-    let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
-    if (!isModalOpen) {
-      if (isMobile) {
-        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
-        nextModals = { ...allClosed, [targetModal]: true };
-      } else if (isPortrait) {
-        const collidingModals = getPortraitCollidingModals(targetModal);
-        nextModals = { ...nextModals, ...collidingModals };
-      } else {
-        nextModals = { ...nextModals, ...hideModals };
-      }
-    }
-    setModals(nextModals);
-  };
-
-  const toggleMap = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleMap = () => {
+    const hideModals: Partial<Modals> = {
       account: false,
       bridgeERC20: false,
       bridgeERC721: false,
@@ -48,13 +28,13 @@ export const WorldMenuButton = () => {
       party: false,
       trading: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('map', hideModals);
   };
 
-  const toggleHarvest = (targetModal: keyof Modals) => {
+  const toggleHarvest = () => {
     const { roomIndex } = useSelected.getState();
     setNode(roomIndex);
-    const modalsToHide: Partial<Modals> = {
+    const hideModals: Partial<Modals> = {
       goal: false,
       crafting: false,
       bridgeERC20: false,
@@ -67,11 +47,11 @@ export const WorldMenuButton = () => {
       tokenPortal: false,
       trading: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('node', hideModals);
   };
 
-  const toggleChat = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleChat = () => {
+    const hideModals: Partial<Modals> = {
       help: false,
       inventory: false,
       quests: false,
@@ -80,16 +60,16 @@ export const WorldMenuButton = () => {
       dialogue: false,
       kami: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('chat', hideModals);
   };
 
   return (
     <IconListButton
       img={World}
       options={[
-        { text: 'Map', image: MapIcon, onClick: () => toggleMap('map') },
-        { text: 'Node', image: HarvestIcon, onClick: () => toggleHarvest('node'), disabled: !nodeEntity },
-        { text: 'Chat', image: ChatIcon, onClick: () => toggleChat('chat') },
+        { text: 'Map', image: MapIcon, onClick: toggleMap },
+        { text: 'Node', image: HarvestIcon, onClick: toggleHarvest, disabled: !nodeEntity },
+        { text: 'Chat', image: ChatIcon, onClick: toggleChat },
       ]}
       tooltip={{ text: ['World'] }}
       menuButton={true}

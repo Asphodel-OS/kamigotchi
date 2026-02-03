@@ -1,36 +1,16 @@
 import { IconListButton } from 'app/components/library';
-import { useIsMobile, useIsPortrait, getPortraitCollidingModals } from 'app/root/hooks';
-import { Modals, useAccount, useSelected, useVisibility } from 'app/stores';
+import { useModalToggle } from 'app/root/hooks';
+import { Modals, useAccount, useSelected } from 'app/stores';
 import { KamiIcon, OperatorIcon, QuestsIcon, Social2 } from 'assets/images/icons/menu';
 
 export const SocialMenuButton = () => {
-  const setModals = useVisibility((s) => s.setModals);
   const setAccount = useSelected((s) => s.setAccount);
   const accountIndex = useAccount((s) => s.account.index);
-  const isMobile = useIsMobile();
-  const isPortrait = useIsPortrait();
+  const toggleModal = useModalToggle();
 
-  const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
-    const { modals } = useVisibility.getState();
-    const isModalOpen = modals[targetModal];
-    let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
-    if (!isModalOpen) {
-      if (isMobile) {
-        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
-        nextModals = { ...allClosed, [targetModal]: true };
-      } else if (isPortrait) {
-        const collidingModals = getPortraitCollidingModals(targetModal);
-        nextModals = { ...nextModals, ...collidingModals };
-      } else {
-        nextModals = { ...nextModals, ...hideModals };
-      }
-    }
-    setModals(nextModals);
-  };
-
-  const toggleAccount = (targetModal: keyof Modals) => {
+  const toggleAccount = () => {
     setAccount(accountIndex);
-    const modalsToHide: Partial<Modals> = {
+    const hideModals: Partial<Modals> = {
       bridgeERC20: false,
       bridgeERC721: false,
       dialogue: false,
@@ -42,11 +22,11 @@ export const SocialMenuButton = () => {
       party: false,
       trading: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('account', hideModals);
   };
 
-  const toggleParty = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleParty = () => {
+    const hideModals: Partial<Modals> = {
       account: false,
       bridgeERC20: false,
       dialogue: false,
@@ -56,11 +36,11 @@ export const SocialMenuButton = () => {
       merchant: false,
       trading: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('party', hideModals);
   };
 
-  const toggleQuests = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleQuests = () => {
+    const hideModals: Partial<Modals> = {
       chat: false,
       help: false,
       inventory: false,
@@ -69,16 +49,16 @@ export const SocialMenuButton = () => {
       dialogue: false,
       kami: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('quests', hideModals);
   };
 
   return (
     <IconListButton
       img={Social2}
       options={[
-        { text: 'Account', image: OperatorIcon, onClick: () => toggleAccount('account') },
-        { text: 'Party', image: KamiIcon, onClick: () => toggleParty('party') },
-        { text: 'Quests', image: QuestsIcon, onClick: () => toggleQuests('quests') },
+        { text: 'Account', image: OperatorIcon, onClick: toggleAccount },
+        { text: 'Party', image: KamiIcon, onClick: toggleParty },
+        { text: 'Quests', image: QuestsIcon, onClick: toggleQuests },
       ]}
       tooltip={{ text: ['Social'] }}
       menuButton={true}

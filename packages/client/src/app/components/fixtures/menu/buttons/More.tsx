@@ -2,8 +2,8 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 
 import { IconListButton } from 'app/components/library';
-import { useIsMobile, useIsPortrait, getPortraitCollidingModals } from 'app/root/hooks';
-import { Modals, useVisibility } from 'app/stores';
+import { useIsMobile, useModalToggle } from 'app/root/hooks';
+import { Modals } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import {
   ExternalIcon,
@@ -21,35 +21,16 @@ const KAMI_ADDR = '0x5d4376b62fa8ac16dfabe6a9861e11c33a48c677';
 
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
-  const setModals = useVisibility((s) => s.setModals);
   const openBridge = useBridgeOpener();
   const [disabled, setDisabled] = useState(true);
   const isMobile = useIsMobile();
-  const isPortrait = useIsPortrait();
+  const toggleModal = useModalToggle();
 
   const openSudoLink = () => {
     window.open(`https://sudoswap.xyz/#/browse/yominet/buy/${KAMI_ADDR}`, '_blank', 'noopener');
   };
   const openKamibotsLink = () => {
     window.open(`https://www.kamibots.xyz`, '_blank', 'noopener');
-  };
-
-  const manageMobile = (targetModal: keyof Modals, hideModals: Partial<Modals>) => {
-    const { modals } = useVisibility.getState();
-    const isModalOpen = modals[targetModal];
-    let nextModals: Partial<Modals> = { [targetModal]: !isModalOpen };
-    if (!isModalOpen) {
-      if (isMobile) {
-        const allClosed = Object.fromEntries(Object.keys(modals).map((key) => [key, false]));
-        nextModals = { ...allClosed, [targetModal]: true };
-      } else if (isPortrait) {
-        const collidingModals = getPortraitCollidingModals(targetModal);
-        nextModals = { ...nextModals, ...collidingModals };
-      } else {
-        nextModals = { ...nextModals, ...hideModals };
-      }
-    }
-    setModals(nextModals);
   };
 
   useEffect(() => {
@@ -110,8 +91,8 @@ export const MoreMenuButton = () => {
     localStorage.clear();
   };
 
-  const toggleSettings = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleSettings = () => {
+    const hideModals: Partial<Modals> = {
       chat: false,
       help: false,
       inventory: false,
@@ -119,11 +100,11 @@ export const MoreMenuButton = () => {
       settings: true,
       trading: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('settings', hideModals);
   };
 
-  const toggleHelp = (targetModal: keyof Modals) => {
-    const modalsToHide: Partial<Modals> = {
+  const toggleHelp = () => {
+    const hideModals: Partial<Modals> = {
       chat: false,
       help: true,
       inventory: false,
@@ -131,7 +112,7 @@ export const MoreMenuButton = () => {
       settings: false,
       trading: false,
     };
-    manageMobile(targetModal, modalsToHide);
+    toggleModal('help', hideModals);
   };
 
   const options = [
@@ -152,9 +133,9 @@ export const MoreMenuButton = () => {
       text: 'Settings',
       disabled,
       image: SettingsIcon,
-      onClick: () => toggleSettings('settings'),
+      onClick: toggleSettings,
     },
-    { text: 'Help', image: HelpIcon, onClick: () => toggleHelp('help') },
+    { text: 'Help', image: HelpIcon, onClick: toggleHelp },
     { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },
     { text: 'Reset State', image: ResetIcon, onClick: handleResetState },
   ];
