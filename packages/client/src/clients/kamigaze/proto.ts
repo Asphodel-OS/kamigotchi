@@ -24,8 +24,6 @@ export interface Component {
 export interface State {
   packedIdx: number;
   data: Uint8Array;
-  componentIdx: number;
-  entityIdx: number;
 }
 
 export interface ECSEvent {
@@ -229,7 +227,7 @@ export const Component: MessageFns<Component> = {
 };
 
 function createBaseState(): State {
-  return { packedIdx: 0, data: new Uint8Array(0), componentIdx: 0, entityIdx: 0 };
+  return { packedIdx: 0, data: new Uint8Array(0) };
 }
 
 export const State: MessageFns<State> = {
@@ -239,12 +237,6 @@ export const State: MessageFns<State> = {
     }
     if (message.data.length !== 0) {
       writer.uint32(18).bytes(message.data);
-    }
-    if (message.componentIdx !== 0) {
-      writer.uint32(24).uint32(message.componentIdx);
-    }
-    if (message.entityIdx !== 0) {
-      writer.uint32(32).uint32(message.entityIdx);
     }
     return writer;
   },
@@ -272,22 +264,6 @@ export const State: MessageFns<State> = {
           message.data = reader.bytes();
           continue;
         }
-        case 3: {
-          if (tag !== 24) {
-            break;
-          }
-
-          message.componentIdx = reader.uint32();
-          continue;
-        }
-        case 4: {
-          if (tag !== 32) {
-            break;
-          }
-
-          message.entityIdx = reader.uint32();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -304,8 +280,6 @@ export const State: MessageFns<State> = {
     const message = createBaseState();
     message.packedIdx = object.packedIdx ?? 0;
     message.data = object.data ?? new Uint8Array(0);
-    message.componentIdx = object.componentIdx ?? 0;
-    message.entityIdx = object.entityIdx ?? 0;
     return message;
   },
 };
