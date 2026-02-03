@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { calcListingBuyPrice } from 'app/cache/npc';
-import { Overlay, Pairing, TextTooltip } from 'app/components/library';
+import { Pairing, TextTooltip } from 'app/components/library';
 import { clickFx, hoverFx } from 'app/styles/effects';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { PricingIcons } from 'assets/images/icons/pricing';
@@ -118,14 +118,12 @@ export const CatalogRow = ({
           icon={getItemImage(payItem.name)}
           text={calcListingBuyPrice(listing, 1).toLocaleString()}
         />
-      </Details>
-      <Overlay bottom={0.3} right={0.6} orientation='row'>
         <Pairing
           icon={MenuIcons.inventory}
           text={getInventoryQuantity().toLocaleString()}
           reverse
         />
-      </Overlay>
+      </Details>
     </Container>
   );
 };
@@ -169,7 +167,7 @@ const Image = styled.img<{ isInCart: boolean }>`
 
 const Details = styled.div`
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: row wrap;
   justify-content: space-around;
   align-items: flex-start;
   height: 100%;

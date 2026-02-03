@@ -55,7 +55,7 @@ const Container = styled.div<{ gap: number; color: string; border: string }>`
   gap: ${({ gap }) => gap * 0.5}em;
 
   display: flex;
-  flex-direction: row;
+  flex-direction: row nowrap;
   align-items: center;
   justify-content: center;
 
