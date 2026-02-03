@@ -22,7 +22,8 @@ export async function genSingleCall(systemID: string, func: string, args: any[])
 export async function genInitScript(
   category: keyof WorldAPI,
   action: keyof SubFunc | keyof WorldAPI['admin'],
-  args?: number[]
+  args?: number[],
+  npcArgs?: number[]
 ) {
   const world = new WorldState();
 
@@ -32,6 +33,11 @@ export async function genInitScript(
     const call = world.api.admin[action as keyof WorldAPI['admin']];
     if (!call) throw new Error(`No such action ${action} on world.admin`);
     await call(args || [0]);
+  } else if (category === 'listings') {
+    const func = world.api.listings;
+    const call = func[action as keyof typeof func];
+    if (!call) throw new Error(`No such action ${action} on world.listings`);
+    await call(args, npcArgs);
   } else {
     const func = world.api[category] as SubFunc; // init special case filtered out
     if (!func) throw new Error(`No such category ${category}`);

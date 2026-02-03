@@ -30,6 +30,7 @@ import {
   initNodes,
   initNpcs,
   initNPCDroptables,
+  reviseNpcs,
   initPortalConfigs,
   initPortalTokens,
   initQuests,
@@ -133,12 +134,13 @@ export class WorldState {
       disable: (indices: number[]) => this.genCalls((api) => disableItems(api, indices)),
     } as SubFunc,
     listings: {
-      init: (indices?: number[]) => this.genCalls((api) => initListings(api, indices)),
-      delete: (indices?: number[]) => this.genCalls((api) => deleteListings(api, indices || [])),
-      revise: (indices?: number[]) => this.genCalls((api) => reviseListings(api, indices)),
+      init: (indices?: number[], npcIndices?: number[]) => this.genCalls((api) => initListings(api, indices, undefined, npcIndices)),
+      delete: (indices?: number[], npcIndices?: number[]) => this.genCalls((api) => deleteListings(api, indices || [], npcIndices)),
+      revise: (indices?: number[], npcIndices?: number[]) => this.genCalls((api) => reviseListings(api, indices, npcIndices)),
     },
     npcs: {
-      init: () => this.genCalls(initNpcs),
+      init: (indices?: number[]) => this.genCalls((api) => initNpcs(api, indices)),
+      revise: (indices?: number[]) => this.genCalls((api) => reviseNpcs(api, indices)),
       initDroptables: () => this.genCalls(initNPCDroptables),
     } as SubFunc,
     nodes: {

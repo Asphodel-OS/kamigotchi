@@ -1,14 +1,43 @@
 import { AdminAPI } from '../api';
 import { getSheet, textToNumberArray } from './utils';
 
-export async function initNpcs(api: AdminAPI) {
-  await initMerchants(api);
+export async function initNpcs(api: AdminAPI, indices?: number[]) {
+  await initMerchants(api, indices);
 }
 
-export async function initMerchants(api: AdminAPI) {
-  // create our hottie merchant ugajin. names are unique
-  await api.npc.create(1, 'Mina', 13);
-  await api.npc.create(2, 'Vending Machine', 18);
+export async function initMerchants(api: AdminAPI, indices?: number[]) {
+  const npcCSV = await getSheet('npc', 'npc');
+  if (!npcCSV) return console.log('No npc/npc.csv found');
+  console.log('\n==INITIALIZING NPCS==');
+
+  for (let i = 0; i < npcCSV.length; i++) {
+    const row = npcCSV[i];
+    const npcIndex = Number(row['Index']);
+    if (indices && !indices.includes(npcIndex)) continue;
+
+    const name = String(row['Name']);
+    const roomIndex = Number(row['Room Index']);
+    await api.npc.create(npcIndex, name, roomIndex);
+    console.log(`Creating NPC: ${name} (index ${npcIndex}) in room ${roomIndex}`);
+  }
+}
+
+export async function reviseNpcs(api: AdminAPI, indices?: number[]) {
+  const npcCSV = await getSheet('npc', 'npc');
+  if (!npcCSV) return console.log('No npc/npc.csv found');
+  console.log('\n==REVISING NPCS==');
+
+  for (let i = 0; i < npcCSV.length; i++) {
+    const row = npcCSV[i];
+    const npcIndex = Number(row['Index']);
+    if (indices && !indices.includes(npcIndex)) continue;
+
+    const name = String(row['Name']);
+    const roomIndex = Number(row['Room Index']);
+    await api.npc.set.name(npcIndex, name);
+    await api.npc.set.room(npcIndex, roomIndex);
+    console.log(`Revising NPC: ${name} (index ${npcIndex}) in room ${roomIndex}`);
+  }
 }
 
 // NPC Droptables (for NPC sacrifices)
