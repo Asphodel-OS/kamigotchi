@@ -232,7 +232,7 @@ export const WalletConnecter: UIComponent = {
             }}
             step={getCurrentStep()}
           />
-          <IconButton onClick={handleClick} text={getButtonLabel()} />
+          <IconButton onClick={handleClick} text={getButtonLabel()} scale={1.5} />
         </Container>
       </ValidatorWrapper>
     );

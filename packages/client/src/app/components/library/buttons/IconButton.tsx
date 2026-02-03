@@ -24,7 +24,7 @@ export const IconButton = forwardRef(function IconButton(
     corner,
     cornerAlt,
     radius = 0.45,
-    scale = 1.3,
+    scale = 1.1,
     icon,
     filter,
     noBorder,
