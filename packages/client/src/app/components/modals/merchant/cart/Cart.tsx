@@ -80,6 +80,7 @@ const Container = styled.div`
   display: flex;
   flex-flow: column nowrap;
   width: 50%;
+  overflow: hidden;
 `;
 
 const Title = styled.div`
