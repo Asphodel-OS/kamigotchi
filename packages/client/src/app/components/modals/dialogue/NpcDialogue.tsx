@@ -210,7 +210,7 @@ const Option = styled.button<{ color?: string }>`
   position: relative;
   color: ${({ color }) => color || 'black'};
   border: solid black 0.15em;
-  padding: 0.1em;
+
   text-wrap: wrap;
   font-size: 0.7em;
   z-index: 3;
@@ -218,7 +218,7 @@ const Option = styled.button<{ color?: string }>`
   cursor: pointer;
   width: 55%;
   max-width: fit-content;
-  padding: 0 0.5em;
+  padding: 0.35em;
   border-radius: 0.3em;
   line-height: 1.3em;
   background-color: white;
@@ -231,7 +231,7 @@ const Option = styled.button<{ color?: string }>`
 const Message = styled.div<{ color?: string }>`
   position: relative;
   color: ${({ color }) => color || 'black'};
-  padding: 0.2em 0.3em 0em 0.3em;
+  padding: 0.35em;
   font-size: 0.7em;
   z-index: 3;
   box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 1);

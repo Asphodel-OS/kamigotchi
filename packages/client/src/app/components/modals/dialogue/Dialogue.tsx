@@ -296,8 +296,8 @@ export const DialogueModal: UIComponent = {
           backgroundColor={'white'}
           positionOverride={
             isMobile
-              ? { colStart: 1, colEnd: 100, rowStart: 7, rowEnd: 85, position: 'fixed' }
-              : { colStart: 70, colEnd: 99, rowStart: 7, rowEnd: 85, position: 'fixed' }
+              ? { colStart: 1, colEnd: 100, rowStart: 7, rowEnd: 80, position: 'fixed' }
+              : { colStart: 66, colEnd: 99, rowStart: 7, rowEnd: 85, position: 'fixed' }
           }
           noScroll
         >
