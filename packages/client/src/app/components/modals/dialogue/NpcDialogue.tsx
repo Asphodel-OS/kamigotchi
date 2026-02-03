@@ -114,7 +114,7 @@ const Text = styled.div<{
   flex-flow: column nowrap;
   justify-content: flex-start;
   top: 0;
-  font-size: 1.3em;
+  font-size: 1em;
   line-height: 2em;
   white-space: pre-line;
   word-wrap: break-word;
@@ -132,18 +132,12 @@ const Text = styled.div<{
     border-radius: 0.3em;
     background-clip: padding-box;
   }
-
-  @media (max-aspect-ratio: 11/16) {
-    font-size: 0.7em;
-    line-height: 1.6em;
-  }
-  height: 40%;
 `;
 
 const ButtonRow = styled.div`
   position: absolute;
   right: 2%;
-  top: -2.5em;
+  top: -3em;
   z-index: 6;
   display: flex;
 `;
@@ -179,7 +173,6 @@ const Bottom = styled.div<{ hasQuests: boolean }>`
   border-top: solid grey 0.15em;
   height: ${({ hasQuests }) => (hasQuests ? '60%' : '40%')};
   transition: height 0.3s ease;
-  height: 60%;
 `;
 
 const OptionColumn = styled.div<{ color: string }>`
@@ -209,12 +202,8 @@ const OptionColumn = styled.div<{ color: string }>`
 `;
 
 const OptionsLabel = styled.div<{ color?: string }>`
-  font-size: 1.3em;
+  font-size: 0.9em;
   color: ${({ color }) => color};
-
-  @media (max-aspect-ratio: 11/16) {
-    font-size: 0.7em;
-  }
 `;
 
 const Option = styled.button<{ color?: string }>`
@@ -223,7 +212,7 @@ const Option = styled.button<{ color?: string }>`
   border: solid black 0.15em;
   padding: 0.1em;
   text-wrap: wrap;
-  font-size: 1.3em;
+  font-size: 0.7em;
   z-index: 3;
   box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 1);
   cursor: pointer;
@@ -237,16 +226,11 @@ const Option = styled.button<{ color?: string }>`
     opacity: 0.5;
     cursor: not-allowed;
   }
-
-  @media (max-aspect-ratio: 11/16) {
-    font-size: 0.7em;
-    width: 70%;
-  }
 `;
 
 const Message = styled.div<{ color?: string }>`
   position: relative;
-  color: ${({ color }) => color};
+  color: ${({ color }) => color || 'black'};
   padding: 0.2em 0.3em 0em 0.3em;
   font-size: 0.7em;
   z-index: 3;
@@ -255,5 +239,5 @@ const Message = styled.div<{ color?: string }>`
 
   border-radius: 0.3em;
   line-height: 1.3em;
-  background-color: black;
+  background-color: white;
 `;

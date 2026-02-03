@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { getAccount as _getAccount } from 'app/cache/account';
 import { getRoomByIndex } from 'app/cache/room';
 import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
-import { useLayers } from 'app/root/hooks';
+import { useIsMobile, useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useSelected, useVisibility } from 'app/stores';
 import { triggerGoalModal, triggerKamiBridgeModal, triggerTradingModal } from 'app/triggers';
@@ -36,6 +36,7 @@ export const DialogueModal: UIComponent = {
   id: 'DialogueModal',
   Render: () => {
     const layers = useLayers();
+    const isMobile = useIsMobile();
 
     const {
       network,
@@ -293,13 +294,11 @@ export const DialogueModal: UIComponent = {
           header={<Header $color={npc.color}>{npc.name}</Header>}
           canExit
           backgroundColor={'white'}
-          positionOverride={{
-            colStart: 56,
-            colEnd: 99,
-            rowStart: 7,
-            rowEnd: 90,
-            position: 'fixed',
-          }}
+          positionOverride={
+            isMobile
+              ? { colStart: 1, colEnd: 100, rowStart: 7, rowEnd: 85, position: 'fixed' }
+              : { colStart: 70, colEnd: 99, rowStart: 7, rowEnd: 85, position: 'fixed' }
+          }
           noScroll
         >
           <NpcDialogue
@@ -320,7 +319,7 @@ export const DialogueModal: UIComponent = {
       );
     }
     return (
-      <ModalWrapper id='dialogue' canExit overlay zIndex={10}>
+      <ModalWrapper id='dialogue' canExit overlay>
         <Text>
           {getText(dialogueNode.text[step])}
           <ButtonRow>
@@ -334,32 +333,39 @@ export const DialogueModal: UIComponent = {
   },
 };
 
+const Text = styled.div`
+  background-color: rgb(255, 255, 204);
+  text-align: center;
+  height: 100%;
+  min-height: max-content;
+  width: 100%;
+  padding: 0em 9em;
+
+  display: flex;
+  flex-grow: 1;
+  flex-flow: column nowrap;
+  justify-content: center;
+
+  font-size: 1.2em;
+  line-height: 2.4em;
+  white-space: pre-line;
+`;
+
+const ButtonRow = styled.div`
+  position: absolute;
+  align-self: center;
+  width: 100%;
+  bottom: 0;
+  padding: 0.7em;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+`;
+
 const Header = styled.div<{ $color: string }>`
   padding: 1em;
   font-size: 1.4em;
   color: ${(props) => props.$color};
   border-color: white;
-`;
-
-const Text = styled.div`
-  background-color: rgb(255, 255, 204);
-  text-align: center;
-  height: 100%;
-  width: 100%;
-  padding: 2em 0 0 0;
-  display: flex;
-  flex-grow: 1;
-  flex-flow: column nowrap;
-  justify-content: space-between;
-  align-items: center;
-  line-height: 1.8;
-  white-space: pre-line;
-`;
-
-const ButtonRow = styled.div`
-  width: 100%;
-  padding: 0.7em;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
 `;
