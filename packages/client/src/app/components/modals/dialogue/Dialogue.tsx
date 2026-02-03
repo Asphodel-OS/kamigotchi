@@ -339,7 +339,7 @@ const Text = styled.div`
   height: 100%;
   min-height: max-content;
   width: 100%;
-  padding: 0.3em;
+  padding-top: 1em;
 
   display: flex;
   flex-grow: 1;
