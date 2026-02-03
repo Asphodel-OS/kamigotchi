@@ -339,7 +339,7 @@ const Text = styled.div`
   height: 100%;
   min-height: max-content;
   width: 100%;
-  padding: 0em 9em;
+  padding: 0.3em;
 
   display: flex;
   flex-grow: 1;
@@ -352,11 +352,10 @@ const Text = styled.div`
 `;
 
 const ButtonRow = styled.div`
-  position: absolute;
+  position: relative;
   align-self: center;
   width: 100%;
   bottom: 0;
-  padding: 0.7em;
 
   display: flex;
   flex-flow: row nowrap;
