@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 
+import { initMediaQueryListeners } from 'app/root/hooks/useMediaQuery';
 import 'app/styles/font.css';
 import 'app/styles/GlobalStyle.css';
 import { Layers } from 'network/';
@@ -17,6 +18,9 @@ export const setLayers: { current: (layers: Layers) => void } = {
 export function boot() {
   const rootElement = document.getElementById('react-root');
   if (!rootElement) return console.warn('React root not found');
+
+  //initialise media query listeners
+  initMediaQueryListeners();
 
   const root = ReactDOM.createRoot(rootElement);
   root.render(<Root setLayers={setLayers} mountReact={mountReact} />);
