@@ -81,7 +81,6 @@ export const Categories = ({
 };
 
 const Container = styled.div`
-  border-right: 0.15em solid black;
   width: 40%;
   gap: 0.3em;
 

@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useMemo } from 'react';
+import { Dispatch, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Trade, TradeType } from 'app/cache/trade';
@@ -34,6 +34,7 @@ export const Controls = ({
   const { itemFilter, setItemFilter, typeFilter } = controls;
   const { setQuery, category, setCategory } = controls;
   const { items, trades } = data;
+  const [isCollapsed, setIsCollapsed] = useState(false);
   // smart search across items and categories
 
   // respond to external category change events
@@ -98,13 +99,16 @@ export const Controls = ({
 
   return (
     <Container>
-      <Categories
-        items={items}
-        selected={itemFilter}
-        setSelected={setItemFilter}
-        category={category}
-        onCategoryChange={setCategory}
-      />
+      {!isCollapsed && (
+        <Categories
+          items={items}
+          selected={itemFilter}
+          setSelected={setItemFilter}
+          category={category}
+          onCategoryChange={setCategory}
+        />
+      )}
+      <CollapseButton onClick={() => setIsCollapsed(!isCollapsed)} $expanded={!isCollapsed} />
       <ItemBrowser
         controls={{ selected: itemFilter, setSelected: setItemFilter, typeFilter }}
         data={{
@@ -125,4 +129,18 @@ const Container = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
   overflow-y: auto;
+`;
+
+const CollapseButton = styled.div<{ $expanded?: boolean }>`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 0.2em;
+  border-left: 0.15em solid black;
+  border-right: 0.15em solid black;
+  height: 100%;
+  &::before {
+    content: ${({ $expanded }) => ($expanded ? '"◂"' : '"▸"')};
+    font-size: 2em;
+  }
 `;
