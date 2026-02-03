@@ -191,7 +191,6 @@ const Container = styled.div`
 
 const HeaderRow = styled.div<{ $expanded?: boolean }>`
   font-size: 1.2em;
-  padding: 0.5em 0;
   cursor: pointer;
 
   display: flex;
@@ -201,7 +200,7 @@ const HeaderRow = styled.div<{ $expanded?: boolean }>`
 
   &::before {
     content: ${({ $expanded }) => ($expanded ? '"▾"' : '"▸"')};
-    font-size: 1.2em;
+    font-size: 2.2em;
     transition: transform 0.3s ease;
   }
 
