@@ -6,7 +6,7 @@ export const Tooltip = ({
   grow,
   direction,
   delay = 350,
-  maxWidth,
+  width,
   color,
   content,
   isDisabled,
@@ -17,7 +17,7 @@ export const Tooltip = ({
   grow?: boolean;
   direction?: 'row' | 'column';
   delay?: number;
-  maxWidth?: { desktop?: number; mobile?: number };
+  width?: { desktop?: number; mobile?: number };
   color?: string;
   content: React.ReactNode;
   isDisabled: boolean;
@@ -174,7 +174,7 @@ export const Tooltip = ({
           <PopoverContainer
             shouldBeVisible={shouldBeVisible}
             tooltipPosition={tooltipPosition}
-            maxWidth={maxWidth}
+            width={width}
             color={color}
             ref={tooltipRef}
           >
@@ -206,27 +206,27 @@ const PopoverContainer = styled.span.attrs<{
   shouldBeVisible: boolean;
   color?: string;
   tooltipPosition?: any;
-  maxWidth?: { desktop?: number; mobile?: number };
-}>(({ shouldBeVisible, color, tooltipPosition, maxWidth }) => ({
+  width?: { desktop?: number; mobile?: number };
+}>(({ shouldBeVisible, color, tooltipPosition, width }) => ({
   style: {
     backgroundColor: color ?? '#fff',
     color: color || '#333',
     opacity: shouldBeVisible ? 1 : 0,
     top: tooltipPosition.y,
     left: tooltipPosition.x,
-    '--max-width-desktop': maxWidth?.desktop ? `${maxWidth.desktop}vw` : '25vw',
-    '--max-width-mobile': maxWidth?.mobile ? `${maxWidth.mobile}vw` : '49vw',
+    '--width-desktop': width?.desktop ? `${width.desktop}vw` : '25vw',
+    '--width-mobile': width?.mobile ? `${width.mobile}vw` : '49vw',
   } as React.CSSProperties,
 }))<{
   shouldBeVisible: boolean;
   color?: string;
   tooltipPosition?: any;
-  maxWidth?: { desktop?: number; mobile?: number };
+  width?: { desktop?: number; mobile?: number };
 }>`
   position: fixed;
-  font-size: clamp(0.8rem, 1.5vmin + 0.3rem, 1.2rem);
+  font-size: clamp(0.8rem, 1.8vmin + 0.3rem, 1.8rem);
   border: solid black 0.1em;
-  border-radius: 0.4em;
+  border-radius: 0.5em;
   padding: 0.6em;
   line-height: 1.5;
 
@@ -240,8 +240,8 @@ const PopoverContainer = styled.span.attrs<{
   white-space: normal;
   z-index: 20;
 
-  max-width: var(--max-width-desktop);
+  width: var(--width-desktop);
   @media (pointer: coarse) {
-    max-width: var(--max-width-mobile);
+    width: var(--width-mobile);
   }
 `;

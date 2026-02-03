@@ -61,7 +61,6 @@ export const TooltipContent = ({
 
 const Container = styled.div<{ $borderColor?: string }>`
   padding: 0.2em;
-  min-width: 20em;
   ${({ $borderColor }) =>
     $borderColor &&
     `

@@ -58,7 +58,7 @@ export function IconListButton({
     grow?: boolean;
     direction?: 'row' | 'column';
     delay?: number;
-    maxWidth?: { desktop?: number; mobile?: number };
+    width?: { desktop?: number; mobile?: number };
     size?: number;
     alignText?: 'left' | 'right' | 'center';
     color?: string;

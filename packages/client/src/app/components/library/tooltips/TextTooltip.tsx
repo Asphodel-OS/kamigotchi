@@ -17,7 +17,7 @@ export const TextTooltip = ({
   grow,
   direction,
   delay,
-  maxWidth,
+  width,
   size: textSize = 0.75,
   alignText = 'center',
   color,
@@ -30,7 +30,7 @@ export const TextTooltip = ({
   grow?: boolean;
   direction?: 'row' | 'column';
   delay?: number;
-  maxWidth?: { desktop?: number; mobile?: number };
+  width?: { desktop?: number; mobile?: number };
   size?: number;
   alignText?: 'left' | 'right' | 'center';
   color?: string;
@@ -42,7 +42,7 @@ export const TextTooltip = ({
       grow={grow}
       direction={direction}
       delay={delay}
-      maxWidth={maxWidth}
+      width={width}
       fullWidth={fullWidth}
       color={color}
       cursor={cursor}

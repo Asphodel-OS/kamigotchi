@@ -21,7 +21,7 @@ export const Card = ({
     scale?: number;
     tooltip?: {
       text: string[] | React.ReactNode[];
-      maxWidth?: { desktop?: number; mobile?: number };
+      width?: { desktop?: number; mobile?: number };
     };
     effects?: {
       overlay?: string;
@@ -49,9 +49,9 @@ export const Card = ({
     <Wrapper fullWidth={fullWidth}>
       <TextTooltip
         text={image?.tooltip?.text ?? []}
-        maxWidth={{
-          desktop: image?.tooltip?.maxWidth?.desktop,
-          mobile: image?.tooltip?.maxWidth?.mobile,
+        width={{
+          desktop: image?.tooltip?.width?.desktop,
+          mobile: image?.tooltip?.width?.mobile,
         }}
       >
         <ImageContainer scale={scale} padding={image?.padding}>
