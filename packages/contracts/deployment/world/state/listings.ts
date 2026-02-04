@@ -2,7 +2,7 @@ import { AdminAPI } from '../api';
 import { generateRegID, getSheet, readFile } from './utils';
 
 // TODO: trigger more verbose console logs (e.g. item/npc names) and only on a verbose flag
-export async function initListings(api: AdminAPI, indices?: number[], all?: boolean) {
+export async function initListings(api: AdminAPI, indices?: number[], all?: boolean, npcIndices?: number[]) {
   const listingCSV = await getSheet('listings', 'listings');
   if (!listingCSV) return console.log('No listings/listings.csv found');
   const pricingCSV = await getSheet('listings', 'pricing');
@@ -25,11 +25,14 @@ export async function initListings(api: AdminAPI, indices?: number[], all?: bool
     const itemIndex = Number(row['Item Index']);
     if (indices && !indices.includes(itemIndex)) continue;
 
+    // skip if npc indices are specified and row isn't included
+    const npcIndex = Number(row['NPC Index']);
+    if (npcIndices && !npcIndices.includes(npcIndex)) continue;
+
     const status = String(row['Status']);
     if (!validStatuses.includes(status)) continue;
 
     // Initial creation
-    const npcIndex = Number(row['NPC Index']);
     const targetValue = Number(row['Value']);
     const currency = Number(row['Currency Index']);
 
@@ -99,32 +102,42 @@ export async function initListings(api: AdminAPI, indices?: number[], all?: bool
 }
 
 // indices = item index. todo: upgrade to multiple merchants
-export async function deleteListings(api: AdminAPI, indices: number[]) {
-  // assume NPC index = 1 (mina)
-  for (let i = 0; i < indices.length; i++) {
+export async function deleteListings(api: AdminAPI, indices: number[], npcIndices?: number[]) {
+  const listingCSV = await getSheet('listings', 'listings');
+  if (!listingCSV) return console.log('No listings/listings.csv found');
+
+  for (let i = 0; i < listingCSV.length; i++) {
+    const row = listingCSV[i];
+    const itemIndex = Number(row['Item Index']);
+    const npcIndex = Number(row['NPC Index']);
+
+    if (indices.length > 0 && !indices.includes(itemIndex)) continue;
+    if (npcIndices && !npcIndices.includes(npcIndex)) continue;
+
     try {
-      await api.listing.remove(1, indices[i]);
+      await api.listing.remove(npcIndex, itemIndex);
     } catch {
-      console.error('Could not delete listing ' + indices[i]);
+      console.error(`Could not delete listing npc=${npcIndex} item=${itemIndex}`);
     }
   }
 }
 
 // indices = item index
 // WARNING: this will reset GDA prices
-export async function reviseListings(api: AdminAPI, overrideIndices?: number[]) {
+export async function reviseListings(api: AdminAPI, overrideIndices?: number[], npcIndices?: number[]) {
   let indices: number[] = [];
   if (overrideIndices) indices = overrideIndices;
   else {
     const listingsCSV = await readFile('listings/listings.csv');
     for (let i = 0; i < listingsCSV.length; i++) {
+      if (npcIndices && !npcIndices.includes(Number(listingsCSV[i]['NPC Index']))) continue;
       // revise all, using item index
       indices.push(Number(listingsCSV[i]['Item Index']));
     }
   }
 
-  await deleteListings(api, indices);
-  await initListings(api, indices);
+  await deleteListings(api, indices, npcIndices);
+  await initListings(api, indices, undefined, npcIndices);
 }
 
 export async function createListing(

@@ -25,10 +25,16 @@ const run = async () => {
         .split(',') // ensure array
         .map((a: string) => Number(a)) // cast to number
     : undefined;
+  const npcArgs = argv.npc
+    ? argv.npc
+        .toString()
+        .split(',')
+        .map((a: string) => Number(a))
+    : undefined;
 
   setAutoMine(true);
 
-  await genInitScript(category, action, args);
+  await genInitScript(category, action, args, npcArgs);
   await initWorld(world, argv.forge); // running script.sol
 
   setAutoMine(false);
