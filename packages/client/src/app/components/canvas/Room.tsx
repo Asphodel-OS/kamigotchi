@@ -179,10 +179,10 @@ export const Room = ({ index }: { index: number }) => {
 const Container = styled.div`
   position: relative;
   aspect-ratio: 1;
+  height: 100%;
 `;
 
 const Background = styled.img`
-  width: 100%;
   height: 100%;
   object-fit: contain;
   image-rendering: pixelated;
