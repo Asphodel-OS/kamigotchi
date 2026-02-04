@@ -66,7 +66,7 @@ const Wallpaper = styled.div<{ src: string }>`
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: url(${props => props.src});
+  background-image: url(${(props) => props.src});
   background-repeat: repeat;
   background-size: contain;
   image-rendering: pixelated;

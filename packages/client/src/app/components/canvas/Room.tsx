@@ -179,11 +179,13 @@ export const Room = ({ index }: { index: number }) => {
 const Container = styled.div`
   position: relative;
   aspect-ratio: 1;
-  height: 100%;
+  width: min(100vw, 100vh);
+  max-width: 100%;
+  max-height: 100%;
 `;
 
 const Background = styled.img`
-  height: 100%;
+  width: 100%;
   object-fit: contain;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
