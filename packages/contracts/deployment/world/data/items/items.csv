@@ -70,10 +70,10 @@ Slightly sacred. "
 ,In Game,Pale Potion,11004,Potion,Rare,Kami,,"STATE-RESTING,HP+75",,A unique potion that can draw a Kami back from beyond. The bottle glows blue with a wan phosphorescence.
 ,In Game,Holy Dust,11011,Misc,Rare,Kami,,,,This sacred dust can be used to rename Kamigotchi… At the proper place.
 ,In Game,Cleaning Fluid,11020,Potion,Rare,Kami,,CLEARALL,,A suspension of pleasant-smelling reagents in holy syrup. Used for ritual purification and ablution.
-,In Game,Gaokerena Mochi,11110,Food,Epic,Kami,,HEALTH+10,,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
-,In Game,Sunset Apple Mochi,11120,Food,Epic,Kami,,POWER+1,,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
-,In Game,Kami Mochi,11130,Food,Epic,Kami,,VIOLENCE+1,,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
-,In Game,Mana Mochi,11140,Food,Epic,Kami,,HARMONY+1,,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
+,In Game,Gaokerena Mochi,11110,Food,Epic,Kami,,HEALTH+10,MOCHI_LIMIT,"A glossy purple mochi. It's filled with a green and fibrous root paste confection made with milk. Permanently adds +10 to a Kamigotchi’s Health. "
+,In Game,Sunset Apple Mochi,11120,Food,Epic,Kami,,POWER+1,MOCHI_LIMIT,"A deep red and orange mochi. It's filled with a golden apple jam that has a warm, heavenly flavor. Permanently adds +1 to a Kamigotchi’s Power."
+,In Game,Kami Mochi,11130,Food,Epic,Kami,,VIOLENCE+1,MOCHI_LIMIT,"A deep blue mochi with a butterfly stamp. It's filled with soft, white curds that resemble a fresh cheese. Permanently adds +1 to a Kamigotchi’s Violence. "
+,In Game,Mana Mochi,11140,Food,Epic,Kami,,HARMONY+1,MOCHI_LIMIT,A sky blue mochi. It's filled with small white grains that burst with a honey-sweet flavor. Permanently adds +1 to a Kamigotchi’s Harmony.
 ,In Game,XP Candy (Small),11201,Food,Uncommon,Kami,NOT_TRADABLE,"HP+5,XP+25",,"Feed this to a Kamigotchi to give them a little bit of experience. "
 ,In Game,XP Candy (Medium),11202,Food,Uncommon,Kami,NOT_TRADABLE,"HP+10,XP+100",,"Provides a decent amount of XP when fed to a Kami. "
 ,In Game,XP Candy (Large),11203,Food,Uncommon,Kami,NOT_TRADABLE,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "
@@ -123,6 +123,7 @@ Slightly sacred. "
 ,In Game,Wonder Egg,21003,Lootbox,Rare,Account,,DT Wonder Egg,,"A cracked egg held together by blood-red wax. The contents are a surprise. "
 ,In Game,Booster Pack,21004,Lootbox,Rare,Account,,DT Booster Pack,,Open this magical booster pack to receive a Spell Card. You might find something super rare!
 ,In Game,Mochibox,21005,Lootbox,Epic,Account,,DT Mochibox,,A sacred box containing exactly one Mochi.
+,To Deploy,Atonement Box,21006,Lootbox,Epic,Account,,,,A box with “From: Dimidiatus” scrawled on it in an unsettling script. Something inside is making noise and desperate to get out.
 ,In Game,Ice Cream,21201,Food,Uncommon,Account,,SP+20,,"Restorative ice-cream. Food for you, personally. Restores a little bit of your stamina."
 ,In Game,Better Ice Cream,21202,Food,Rare,Account,,SP+40,,"A slightly larger and higher-quality ice-cream. What is this made of? Restores a medium amount of stamina. "
 ,In Game,Best Ice Cream,21203,Food,Rare,Account,,SP+80,,"A huge, lavishly decorated ice-cream. It doesn’t seem to be melting at all… Restores a lot of stamina. "
@@ -132,42 +133,42 @@ Slightly sacred. "
 ,In Game,Spice Grinder,23100,Tool,Rare,,,,,Can be used to break down ingredients.
 ,In Game,Portable Burner,23101,Tool,Rare,,,,,"Can be used to make Potions at a riverside. "
 ,In Game,Screwdriver,23102,Tool,Epic,,,,,For driving screws. May be of practical use….
-,Ready,Mask of Avarice,30001,Equipment,Common,Kami_Pet_Slot,,E_POWER+3,,"The empty eyes of the old theatre mask stare back at you, its empty grimace seems to whisper of musu and power."
-,Ready,Veil of Avarice,30002,Equipment,Uncommon,Kami_Pet_Slot,,E_POWER+4,,"The theatre veil’s eye sockets glint hungrily, its haunting whisper offers a promise of musu and power."
-,Ready,Visage of Avarice,30003,Equipment,Rare,Kami_Pet_Slot,,E_POWER+5,,"The visage of avarice hungers, greedy eyes and a haunting grimace demand the pursuit of ever greater musu and power."
-,Ready,Mask of Contempt,30004,Equipment,Common,Kami_Pet_Slot,,E_DTS+6%,,"The empty eyes of the old ogre mask stare back at you, its hollow frown seems to whisper of armor and defense."
-,Ready,Veil of Contempt,30005,Equipment,Uncommon,Kami_Pet_Slot,,E_DTS+8%,,"The ogre veil’s eye sockets glint disdainfully, its murmuring voice offers a promise of armor and defense."
-,Ready,Visage of Contempt,30006,Equipment,Rare,Kami_Pet_Slot,,E_DTS+10%,,"The visage of contempt glowers, haughty eyes and a sneering frown demand the pursuit of ever greater armor and defense."
-,Ready,Mask of Mischief,30007,Equipment,Common,Kami_Pet_Slot,,E_ASR+6%,,"The empty eyes of the old goblin mask stare back at you, its unmoving grin seems to whisper of battle and plunder."
-,Ready,Veil of Mischief,30008,Equipment,Uncommon,Kami_Pet_Slot,,E_ASR+8%,,"The goblin veil’s eye sockets glint impishly, its taunting whisper offers a promise of battle and plunder."
-,Ready,Visage of Mischief,30009,Equipment,Rare,Kami_Pet_Slot,,E_ASR+10%,,"The visage of mischief snickers, malevolent eyes and a fiendish smirk demand the pursuit of ever greater battle and plunder."
-,Ready,Old Leafling,30010,Equipment,Common,Kami_Pet_Slot,,E_BOUNTY+12%,,The old leafling bounces happily and shares a few tricks to increase your kami’s bounty.
-,Ready,Wise Leafling,30011,Equipment,Uncommon,Kami_Pet_Slot,,E_BOUNTY+16%,,The wise leafling hops contentedly and shares its skillful techniques to increase your kami’s bounty.
-,Ready,Elder Leafling,30012,Equipment,Rare,Kami_Pet_Slot,,E_BOUNTY+20%,,The elder leafling wiggles affectionately and shares its foraging secrets to increase your kami’s bounty.
-,Ready,Old Gumdrop,30013,Equipment,Common,Kami_Pet_Slot,,RMB+15%,,The old gumdrop offers soft hugs and reminds your kami to rest and drink water.
-,Ready,Wise Gumdrop,30014,Equipment,Uncommon,Kami_Pet_Slot,,RMB+20%,,The wise gumdrop offers gentle cuddles and reminds your kami to rest and drink water.
-,Ready,Elder Gumdrop,30015,Equipment,Rare,Kami_Pet_Slot,,RMB+25%,,The elder gumdrop offers a shoulder to cry on and reminds your kami to rest and drink water.
-,Ready,Old Critter,30016,Equipment,Common,Kami_Pet_Slot,,E_HEALTH+30,,The skittish old critter is constantly on guard for threats to your kami’s health.
-,Ready,Wise Critter,30017,Equipment,Uncommon,Kami_Pet_Slot,,E_HEALTH+40,,The wise experienced critter is constantly on guard for threats to your kami’s health.
-,Ready,Elder Critter,30018,Equipment,Rare,Kami_Pet_Slot,,E_HEALTH+50,,The esteemed elder critter is constantly on guard for threats to your kami’s health.
-,Ready,Crawling Greed,30019,Equipment,Common,Kami_Pet_Slot,,E_HFB+18%,,A condensation of hunger and greed in the form of cute crawling ladybugs provide your kami with increased harvest fertility.
-,Ready,Teeming Greed,30020,Equipment,Uncommon,Kami_Pet_Slot,,E_HFB+24%,,A distillation of hunger and greed in the form of adorable teeming ladybugs provide your kami with increased harvest fertility.
-,Ready,Swarming Greed,30021,Equipment,Rare,Kami_Pet_Slot,,E_HFB+30%,,A crystallization of hunger and greed in the form of happily swarming ladybugs provide your kami with increased harvest fertility.
-,Ready,Crawling Wrath,30022,Equipment,Common,Kami_Pet_Slot,,E_VIOLENCE+3,,A condensation of predatory aggression in the form of cute crawling bees fill your kami with a desire for violence.
-,Ready,Teeming Wrath,30023,Equipment,Uncommon,Kami_Pet_Slot,,E_VIOLENCE+4,,A distillation of predatory aggression in the form of adorable teeming bees fill your kami with a desire for violence.
-,Ready,Swarming Wrath,30024,Equipment,Rare,Kami_Pet_Slot,,E_VIOLENCE+5,,A crystallization of predatory aggression in the form of happily swarming bees fill your kami with a desire for violence.
-,Ready,Crawling Cope,30025,Equipment,Common,Kami_Pet_Slot,,E_DSR+6%,,A condensation of fearful cowardice in the form of cute crawling worms protect your kami’s harvest from predators.
-,Ready,Teeming Cope,30026,Equipment,Uncommon,Kami_Pet_Slot,,E_DSR+8%,,A distillation of fearful cowardice in the form of adorable teeming worms protect your kami’s harvest from predators.
-,Ready,Swarming Cope,30027,Equipment,Rare,Kami_Pet_Slot,,E_DSR+10%,,A crystallization of fearful cowardice in the form of happily swarming worms protect your kami’s harvest from predators.
-,Ready,Antique Tape,30028,Equipment,Common,Kami_Pet_Slot,,E_ATS+6%,,"This antique tape may not be very sticky anymore, and yet still it remains filled with hatred for kami."
-,Ready,Heirloom Tape,30029,Equipment,Uncommon,Kami_Pet_Slot,,E_ATS+8%,,What this heirloom tape has lost in stickiness has more than been made up for by its powerful hatred for kami.
-,Ready,Ancient Tape,30030,Equipment,Rare,Kami_Pet_Slot,,E_ATS+10%,,"An ancient tape from an earlier age, it’s adhesiveness long gone, all that remains is a distilled and concentrated hatred for kami."
-,Ready,Antique Automata,30031,Equipment,Common,Kami_Pet_Slot,,E_HIB+15P,,"This antique automata may be partly broken, and yet still it drives your kami to harvest with ever greater intensity."
-,Ready,Heirloom Automata,30032,Equipment,Uncommon,Kami_Pet_Slot,,E_HIB+20,,What this heirloom automata has lost in functional machinery has more than been made up for in the way it drives your kami to harvest with ever greater intensity.
-,Ready,Ancient Automata,30033,Equipment,Rare,Kami_Pet_Slot,,E_HIB+25P,,"An ancient automata from an earlier age, it’s gears long frozen, all that remains is a frantic force driving your kami to harvest with ever greater intensity."
-,Ready,Antique Ledger,30034,Equipment,Common,Kami_Pet_Slot,,E_HARMONY+3,,"This antique ledger is mostly drained of funds, and yet it remains filled with a desire for peace and harmony among kamikind."
-,Ready,Heirloom Ledger,30035,Equipment,Uncommon,Kami_Pet_Slot,,E_HARMONY+4,,What this heirloom ledger has lost in account balance has more than been made up for by its desire for peace and harmony among kamikind.
-,Ready,Ancient Ledger,30036,Equipment,Rare,Kami_Pet_Slot,,E_HARMONY+5,,"An ancient ledger from an earlier age, it’s wallet long emptied, all that remains is a powerful longing for peace and harmony among kamikind."
+,In Game,Mask of Avarice,30001,Equipment,Common,Kami_Pet_Slot,,E_POWER+3,,"The empty eyes of the old theatre mask stare back at you, its empty grimace seems to whisper of musu and power."
+,In Game,Veil of Avarice,30002,Equipment,Uncommon,Kami_Pet_Slot,,E_POWER+4,,"The theatre veil’s eye sockets glint hungrily, its haunting whisper offers a promise of musu and power."
+,In Game,Visage of Avarice,30003,Equipment,Rare,Kami_Pet_Slot,,E_POWER+5,,"The visage of avarice hungers, greedy eyes and a haunting grimace demand the pursuit of ever greater musu and power."
+,In Game,Mask of Contempt,30004,Equipment,Common,Kami_Pet_Slot,,E_DTS+6%,,"The empty eyes of the old ogre mask stare back at you, its hollow frown seems to whisper of armor and defense."
+,In Game,Veil of Contempt,30005,Equipment,Uncommon,Kami_Pet_Slot,,E_DTS+8%,,"The ogre veil’s eye sockets glint disdainfully, its murmuring voice offers a promise of armor and defense."
+,In Game,Visage of Contempt,30006,Equipment,Rare,Kami_Pet_Slot,,E_DTS+10%,,"The visage of contempt glowers, haughty eyes and a sneering frown demand the pursuit of ever greater armor and defense."
+,In Game,Mask of Mischief,30007,Equipment,Common,Kami_Pet_Slot,,E_ASR+6%,,"The empty eyes of the old goblin mask stare back at you, its unmoving grin seems to whisper of battle and plunder."
+,In Game,Veil of Mischief,30008,Equipment,Uncommon,Kami_Pet_Slot,,E_ASR+8%,,"The goblin veil’s eye sockets glint impishly, its taunting whisper offers a promise of battle and plunder."
+,In Game,Visage of Mischief,30009,Equipment,Rare,Kami_Pet_Slot,,E_ASR+10%,,"The visage of mischief snickers, malevolent eyes and a fiendish smirk demand the pursuit of ever greater battle and plunder."
+,In Game,Old Leafling,30010,Equipment,Common,Kami_Pet_Slot,,E_BOUNTY+12%,,The old leafling bounces happily and shares a few tricks to increase your kami’s bounty.
+,In Game,Wise Leafling,30011,Equipment,Uncommon,Kami_Pet_Slot,,E_BOUNTY+16%,,The wise leafling hops contentedly and shares its skillful techniques to increase your kami’s bounty.
+,In Game,Elder Leafling,30012,Equipment,Rare,Kami_Pet_Slot,,E_BOUNTY+20%,,The elder leafling wiggles affectionately and shares its foraging secrets to increase your kami’s bounty.
+,In Game,Old Gumdrop,30013,Equipment,Common,Kami_Pet_Slot,,RMB+15%,,The old gumdrop offers soft hugs and reminds your kami to rest and drink water.
+,In Game,Wise Gumdrop,30014,Equipment,Uncommon,Kami_Pet_Slot,,RMB+20%,,The wise gumdrop offers gentle cuddles and reminds your kami to rest and drink water.
+,In Game,Elder Gumdrop,30015,Equipment,Rare,Kami_Pet_Slot,,RMB+25%,,The elder gumdrop offers a shoulder to cry on and reminds your kami to rest and drink water.
+,In Game,Old Critter,30016,Equipment,Common,Kami_Pet_Slot,,E_HEALTH+30,,The skittish old critter is constantly on guard for threats to your kami’s health.
+,In Game,Wise Critter,30017,Equipment,Uncommon,Kami_Pet_Slot,,E_HEALTH+40,,The wise experienced critter is constantly on guard for threats to your kami’s health.
+,In Game,Elder Critter,30018,Equipment,Rare,Kami_Pet_Slot,,E_HEALTH+50,,The esteemed elder critter is constantly on guard for threats to your kami’s health.
+,In Game,Crawling Greed,30019,Equipment,Common,Kami_Pet_Slot,,E_HFB+18%,,A condensation of hunger and greed in the form of cute crawling ladybugs provide your kami with increased harvest fertility.
+,In Game,Teeming Greed,30020,Equipment,Uncommon,Kami_Pet_Slot,,E_HFB+24%,,A distillation of hunger and greed in the form of adorable teeming ladybugs provide your kami with increased harvest fertility.
+,In Game,Swarming Greed,30021,Equipment,Rare,Kami_Pet_Slot,,E_HFB+30%,,A crystallization of hunger and greed in the form of happily swarming ladybugs provide your kami with increased harvest fertility.
+,In Game,Crawling Wrath,30022,Equipment,Common,Kami_Pet_Slot,,E_VIOLENCE+3,,A condensation of predatory aggression in the form of cute crawling bees fill your kami with a desire for violence.
+,In Game,Teeming Wrath,30023,Equipment,Uncommon,Kami_Pet_Slot,,E_VIOLENCE+4,,A distillation of predatory aggression in the form of adorable teeming bees fill your kami with a desire for violence.
+,In Game,Swarming Wrath,30024,Equipment,Rare,Kami_Pet_Slot,,E_VIOLENCE+5,,A crystallization of predatory aggression in the form of happily swarming bees fill your kami with a desire for violence.
+,In Game,Crawling Cope,30025,Equipment,Common,Kami_Pet_Slot,,E_DSR+6%,,A condensation of fearful cowardice in the form of cute crawling worms protect your kami’s harvest from predators.
+,In Game,Teeming Cope,30026,Equipment,Uncommon,Kami_Pet_Slot,,E_DSR+8%,,A distillation of fearful cowardice in the form of adorable teeming worms protect your kami’s harvest from predators.
+,In Game,Swarming Cope,30027,Equipment,Rare,Kami_Pet_Slot,,E_DSR+10%,,A crystallization of fearful cowardice in the form of happily swarming worms protect your kami’s harvest from predators.
+,In Game,Antique Tape,30028,Equipment,Common,Kami_Pet_Slot,,E_ATS+6%,,"This antique tape may not be very sticky anymore, and yet still it remains filled with hatred for kami."
+,In Game,Heirloom Tape,30029,Equipment,Uncommon,Kami_Pet_Slot,,E_ATS+8%,,What this heirloom tape has lost in stickiness has more than been made up for by its powerful hatred for kami.
+,In Game,Ancient Tape,30030,Equipment,Rare,Kami_Pet_Slot,,E_ATS+10%,,"An ancient tape from an earlier age, it’s adhesiveness long gone, all that remains is a distilled and concentrated hatred for kami."
+,In Game,Antique Automata,30031,Equipment,Common,Kami_Pet_Slot,,E_HIB+15P,,"This antique automata may be partly broken, and yet still it drives your kami to harvest with ever greater intensity."
+,In Game,Heirloom Automata,30032,Equipment,Uncommon,Kami_Pet_Slot,,E_HIB+20,,What this heirloom automata has lost in functional machinery has more than been made up for in the way it drives your kami to harvest with ever greater intensity.
+,In Game,Ancient Automata,30033,Equipment,Rare,Kami_Pet_Slot,,E_HIB+25P,,"An ancient automata from an earlier age, it’s gears long frozen, all that remains is a frantic force driving your kami to harvest with ever greater intensity."
+,In Game,Antique Ledger,30034,Equipment,Common,Kami_Pet_Slot,,E_HARMONY+3,,"This antique ledger is mostly drained of funds, and yet it remains filled with a desire for peace and harmony among kamikind."
+,In Game,Heirloom Ledger,30035,Equipment,Uncommon,Kami_Pet_Slot,,E_HARMONY+4,,What this heirloom ledger has lost in account balance has more than been made up for by its desire for peace and harmony among kamikind.
+,In Game,Ancient Ledger,30036,Equipment,Rare,Kami_Pet_Slot,,E_HARMONY+5,,"An ancient ledger from an earlier age, it’s wallet long emptied, all that remains is a powerful longing for peace and harmony among kamikind."
 ,In Game,Astrolabe Disk,100001,Key Item,Epic,,,,,"A golden disk. It resembles the tympan of an astrolabe, but the engraving doesn’t look right."
 ,In Game,Ancient Machine Part,100002,Key Item,Epic,,,,,A durable part of some kind of high-tech machinery. It has wear and corrosion like it’s been exposed to the elements for thousands of years.
 ,In Game,Disc-Shaped Map,100003,Key Item,Epic,,,,,"A golden disk inlaid with other metals. It resembles an overhead map of a temple complex. Seems to depict roads, pyramids, and other structures."

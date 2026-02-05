@@ -5,6 +5,7 @@ import _AdminSetFlagSystem from "../abi/_AdminSetFlagSystem.json";
 import _AuctionRegistrySystem from "../abi/_AuctionRegistrySystem.json";
 import _AuthManageRoleSystem from "../abi/_AuthManageRoleSystem.json";
 import _ConfigSetSystem from "../abi/_ConfigSetSystem.json";
+import _DistributeItemSystem from "../abi/_DistributeItemSystem.json";
 import _FactionRegistrySystem from "../abi/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../abi/_GoalRegistrySystem.json";
 import _HarvestAdminSystem from "../abi/_HarvestAdminSystem.json";
@@ -90,6 +91,7 @@ export const SystemAbis = {
   "system.auction.registry": _AuctionRegistrySystem.abi,
   "system.auth.registry": _AuthManageRoleSystem.abi,
   "system.config.registry": _ConfigSetSystem.abi,
+  "system.distribute.item": _DistributeItemSystem.abi,
   "system.faction.registry": _FactionRegistrySystem.abi,
   "system.goal.registry": _GoalRegistrySystem.abi,
   "system.harvest.admin": _HarvestAdminSystem.abi,

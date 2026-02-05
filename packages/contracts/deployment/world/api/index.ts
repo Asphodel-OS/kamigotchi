@@ -363,6 +363,17 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
+  function distributeItem(accounts: string[], itemIndex: number, amounts: number[]) {
+    const callData = generateCallData(
+      'system.distribute.item' as any,
+      [accounts, itemIndex, amounts],
+      undefined,
+      ['address[]', 'uint32', 'uint256[]'],
+      `${400000 * accounts.length}`
+    );
+    compiledCalls.push(callData);
+  }
+
   // used for initial setup
   // function distributePassports(owners: string[], amts: number[]) {
   //   const callData = generateCallData(
@@ -504,6 +515,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
       live: {
         flags: setFlag,
+        distributeItem: distributeItem,
         // passports: distributePassports,
         // whitelists: distributeGachaWhitelists,
       },

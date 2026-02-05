@@ -5,6 +5,7 @@ import ancient_ledger from './ancient_ledger.png';
 import ancient_machine_part from './ancient_machine_part.png';
 import ancient_tape from './ancient_tape.png';
 import animistic_poison from './animistic_poison.png';
+import atonement_box from './atonement_box.png';
 import antique_automata from './antique_automata.png';
 import antique_ledger from './antique_ledger.png';
 import antique_tape from './antique_tape.png';
@@ -184,6 +185,7 @@ export const ItemImages = {
   ancient_machine_part: ancient_machine_part,
   ancient_tape: ancient_tape,
   animistic_poison: animistic_poison,
+  atonement_box: atonement_box,
   antique_automata: antique_automata,
   antique_ledger: antique_ledger,
   antique_tape: antique_tape,
