@@ -21,7 +21,7 @@ const registry: AudioRegistry = {
       key: 'fx.bell',
       src: cdnAudio('sound/fx/interaction/bell', 'm4a'),
       bus: 'fx',
-      chain: 'presets/click-tight.json',
+      chain: 'presets/fx-round.json',
       allowOverlap: true,
       maxInstances: 4,
       cooldownMs: 10,

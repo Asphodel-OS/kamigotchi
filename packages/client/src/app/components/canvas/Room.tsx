@@ -35,7 +35,8 @@ export const Room = ({ index }: { index: number }) => {
       music = defaultBgm;
     }
     if (music.path !== room.music?.path || !newRoom.music) {
-      audioManager.playBgmBySrc(music.path, { loop: true, fadeMs: 3000, volume: bgmVolume });
+      // BGM base volume is set by the track itself; user volume is handled via the bgm bus.
+      audioManager.playBgmBySrc(music.path, { loop: true, fadeMs: 3000 });
       setBgmKey(music.path);
     }
 
