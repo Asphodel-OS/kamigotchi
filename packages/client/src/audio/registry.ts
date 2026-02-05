@@ -10,7 +10,7 @@ const registry: AudioRegistry = {
   assets: [
     {
       key: 'bgm.cave',
-      src: cdnAudio('sound/ost/cave', 'mp3'),
+      src: cdnAudio('sound/ost/cave', 'm4a'),
       bus: 'bgm',
       chain: 'presets/warm-room.json',
       loop: true,
@@ -19,7 +19,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.bell',
-      src: cdnAudio('sound/fx/interaction/bell', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/bell', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -29,7 +29,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.click',
-      src: cdnAudio('sound/fx/interaction/click2', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/click2', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -39,7 +39,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.crafting',
-      src: cdnAudio('sound/fx/interaction/crafting', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/crafting', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -49,7 +49,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.error',
-      src: cdnAudio('sound/fx/interaction/error', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/error', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -59,7 +59,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.fund',
-      src: cdnAudio('sound/fx/interaction/fund', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/fund', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -69,7 +69,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.levelup',
-      src: cdnAudio('sound/fx/interaction/levelup', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/levelup', 'm4a'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -79,7 +79,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.liquidate',
-      src: cdnAudio('sound/fx/interaction/liquidate', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/liquidate', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -89,7 +89,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.message',
-      src: cdnAudio('sound/fx/interaction/message', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/message', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -99,7 +99,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.questaccept',
-      src: cdnAudio('sound/fx/interaction/questaccept', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/questaccept', 'm4a'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -109,7 +109,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.questcomplete',
-      src: cdnAudio('sound/fx/interaction/questcomplete', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/questcomplete', 'm4a'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -119,7 +119,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.revive',
-      src: cdnAudio('sound/fx/interaction/revive', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/revive', 'm4a'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -129,7 +129,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.sacrifice',
-      src: cdnAudio('sound/fx/interaction/sacrifice', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/sacrifice', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -139,7 +139,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.scavenge',
-      src: cdnAudio('sound/fx/interaction/scavenge', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/scavenge', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -149,7 +149,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.scribble',
-      src: cdnAudio('sound/fx/interaction/scribble', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/scribble', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -159,7 +159,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.signup',
-      src: cdnAudio('sound/fx/interaction/signup', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/signup', 'm4a'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -169,7 +169,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.success',
-      src: cdnAudio('sound/fx/interaction/success', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/success', 'm4a'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
@@ -179,7 +179,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.vend',
-      src: cdnAudio('sound/fx/interaction/vend', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/vend', 'm4a'),
       bus: 'fx',
       chain: 'presets/click-tight.json',
       allowOverlap: true,
@@ -189,7 +189,7 @@ const registry: AudioRegistry = {
     },
     {
       key: 'fx.wonderegg',
-      src: cdnAudio('sound/fx/interaction/wonderegg', 'mp3'),
+      src: cdnAudio('sound/fx/interaction/wonderegg', 'm4a'),
       bus: 'fx',
       chain: 'presets/success-sparkle.json',
       allowOverlap: true,
