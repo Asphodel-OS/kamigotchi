@@ -52,6 +52,8 @@ export class AudioManager {
     this.listener = new THREE.AudioListener();
     // three.js exposes the context via listener.context in recent versions
     this.context = (this.listener.context || THREE.AudioContext.getContext()) as AudioContext;
+    // Ensure Tone uses the same AudioContext as three.js
+    Tone.setContext(this.context);
     this.loader = new THREE.AudioLoader();
 
     this.masterGain = this.context.createGain();
@@ -85,6 +87,7 @@ export class AudioManager {
 
   async resume(): Promise<void> {
     if (this.context.state !== 'running') await this.context.resume();
+    if (Tone.getContext().state !== 'running') await Tone.start();
   }
 
   setMasterVolume(value: number): void {
@@ -227,30 +230,31 @@ export class AudioManager {
     this.fxInstances.set(asset.key, active + 1);
 
     try {
+      if (Tone.getContext().state !== 'running') await Tone.start();
       const chain = asset.chain ? await this.getOrLoadChain(asset.chain) : null;
       const buffer = await this.getOrLoadToneBuffer(asset.src);
       const player = new Tone.Player(buffer);
       // build Tone chain and connect to fx bus
       const { input, output } = this.buildToneChain(chain);
-      player.connect(input);
       output.connect(this.fxToneBus);
       // gain per asset
       const vol = this.safeVolume(asset.volume ?? 1.0);
       const g = new Tone.Gain(vol);
+      // connect player -> gain -> (optional pitch) -> chain input
       player.connect(g);
-      g.connect(input);
+      let head: Tone.ToneAudioNode = g;
       // pitch shift if specified
       const ps = this.createTonePitchNode(chain);
       if (ps) {
-        g.disconnect();
-        g.connect(ps);
-        ps.connect(input);
+        head.connect(ps);
+        head = ps;
       }
+      head.connect(input);
 
       // Optional ducking: reduce bgm temporarily
       this.duckBgmOnFx();
 
-      player.autostart = true;
+      player.start();
       player.onstop = () => {
         player.dispose();
         g.dispose();
