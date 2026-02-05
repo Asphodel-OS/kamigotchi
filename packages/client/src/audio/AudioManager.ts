@@ -2,6 +2,10 @@ import * as THREE from 'three';
 import * as Tone from 'tone';
 
 import { AUDIO_QUALITY_DEFAULT, withAudioQuality } from './constants';
+import clickTight from './presets/click-tight.json';
+import fxRound from './presets/fx-round.json';
+import successSparkle from './presets/success-sparkle.json';
+import warmRoom from './presets/warm-room.json';
 import registry from './registry';
 import type {
   AssetConfig,
@@ -10,6 +14,13 @@ import type {
   FilterPedalParams,
   PedalConfig,
 } from './types';
+
+const CHAIN_PRESETS: Record<string, ChainPreset> = {
+  'presets/click-tight.json': clickTight as ChainPreset,
+  'presets/fx-round.json': fxRound as ChainPreset,
+  'presets/success-sparkle.json': successSparkle as ChainPreset,
+  'presets/warm-room.json': warmRoom as ChainPreset,
+};
 
 type PlayOptions = {
   volume?: number;
@@ -308,11 +319,10 @@ export class AudioManager {
 
   private async getOrLoadChain(path: string): Promise<ChainPreset> {
     if (this.chains.has(path)) return this.chains.get(path) as ChainPreset;
-    const url = new URL(path, import.meta.url).toString();
-    const res = await fetch(url);
-    const json = (await res.json()) as ChainPreset;
-    this.chains.set(path, json);
-    return json;
+    const preset = CHAIN_PRESETS[path];
+    if (!preset) throw new Error(`Unknown chain preset: ${path}`);
+    this.chains.set(path, preset);
+    return preset;
   }
 
   private async getOrLoadToneBuffer(src: string): Promise<Tone.ToneAudioBuffer> {
