@@ -22,6 +22,9 @@ import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce } from './utils';
 import { GasEstimationCache } from './gasCache';
 
 export const MAX_NONCE_RETRIES = 1; // Retry nonce errors exactly once
+export const MUTEX_RELEASE_MS = 1500; // Release mutex after 1.5s even if TX pending
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
@@ -183,7 +186,7 @@ export function create<C extends Contracts>(
         }
         return gasEstimate;
       } catch (error) {
-        console.log(error)
+        console.log(error);
         throw error;
       }
     };
@@ -208,9 +211,10 @@ export function create<C extends Contracts>(
   async function processQueue() {
     const queueItem = queue.next();
     if (!queueItem) return;
-    processQueue(); // Start processing another request from the queue
-    const txResult = await submissionMutex.runExclusive(async () => {
-      // Estimate gas and get nonce
+
+    processQueue();
+
+    await submissionMutex.runExclusive(async () => {
       let txOverrides: Overrides = {};
       try {
         const { nonce } = await awaitValue(readyState);
@@ -219,42 +223,44 @@ export function create<C extends Contracts>(
       } catch (e: any) {
         log.warn('[processQueue] Gas estimation failed using default gas limit');
         txOverrides.gasLimit = 6_000_000n;
-        //queueItem.reject(e as Error);
-        //return;
       }
-      // Execute with retry on nonce errors
-      try {
-        const result = await executeTxWithRetry(queueItem.execute, txOverrides);
-        queueItem.resolve(result);
-        incNonce();
-        return { hash: result.hash, receipt: result.receipt };
-      } catch (e) {
-        queueItem.reject(e as Error);
-        if (queueItem.cacheKey) {
-          gasCache.delete(queueItem.cacheKey);
-        }
-      }
-    });
 
-    // Await confirmation
-    // Using EIP-7966 (eth_sendRawTransactionSync), receipt is already available
-    // so we can access it directly without calling wait()
-    if (txResult?.hash) {
-      try {
-        // Original async confirmation - commented out because we're using EIP-7966 sync transactions
-        // const tx = await txResult.wait();
-        const receipt = (txResult as any).receipt;
-        if (receipt) {
-          log.info('[TXQueue] TX Confirmed', receipt);
-        }
-      } catch (e: any) {
-        logTxError('TX FAILED', e, txResult?.hash);
-        if (queueItem.cacheKey) {
-          gasCache.delete(queueItem.cacheKey);
-        }
+      const txPromise = executeTxWithRetry(queueItem.execute, txOverrides);
+
+      const raceResult = await Promise.race([
+        txPromise
+          .then((result) => ({ status: 'completed' as const, result }))
+          .catch((error) => ({ status: 'error' as const, error })),
+        sleep(MUTEX_RELEASE_MS).then(() => ({ status: 'timeout' as const })),
+      ]);
+
+      incNonce();
+
+      if (raceResult.status === 'completed') {
+        queueItem.resolve(raceResult.result);
+        log.info('[TXQueue] TX confirmed (fast)', { hash: raceResult.result.hash });
         return;
       }
-    }
+
+      if (raceResult.status === 'error') {
+        queueItem.reject(raceResult.error);
+        logTxError('TX failed (fast)', raceResult.error);
+        if (queueItem.cacheKey) gasCache.delete(queueItem.cacheKey);
+        return;
+      }
+
+      log.info('[TXQueue] Releasing mutex, TX still pending');
+      txPromise
+        .then((result) => {
+          queueItem.resolve(result);
+          log.info('[TXQueue] TX confirmed (background)', { hash: result.hash });
+        })
+        .catch((error) => {
+          queueItem.reject(error);
+          logTxError('TX failed (background)', error);
+          if (queueItem.cacheKey) gasCache.delete(queueItem.cacheKey);
+        });
+    });
 
     processQueue();
   }

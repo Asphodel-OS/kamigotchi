@@ -9,6 +9,8 @@ import {
 } from 'ethers';
 import { log } from 'utils/logger';
 
+const SYNC_TX_TIMEOUT_MS = 15000;
+
 /**
  * Get the revert reason from a failed transaction using debug_traceTransaction.
  *
@@ -89,7 +91,7 @@ export async function sendTx(
     const sendStart = performance.now();
     const receipt = await (signer.provider as any).send('eth_sendRawTransactionSync', [
       signedTx,
-      8000,
+      SYNC_TX_TIMEOUT_MS,
     ]);
     const sendDuration = performance.now() - sendStart;
     log.time.info(`[queue] Got receipt (took ${sendDuration.toFixed(0)}ms)`);
