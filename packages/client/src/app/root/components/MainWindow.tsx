@@ -192,7 +192,7 @@ const Stack = styled.div`
     grid-area: Stack;
     container-type: inline-size;
   }
-  font-size: clamp(0.7rem, 1cqi, 1.75rem);
+  font-size: clamp(0.7rem, 0.85cqi, 1.75rem);
 `;
 
 const UIGrid = styled.div`

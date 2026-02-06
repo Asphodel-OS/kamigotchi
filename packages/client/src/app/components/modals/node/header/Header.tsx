@@ -256,7 +256,7 @@ const Icon = styled.img`
 const Description = styled.div`
   font-size: 0.9em;
   line-height: 1.1em;
-  text-align: justify;
+  text-align: left;
   padding: 0.45em 0.3em;
 `;
 

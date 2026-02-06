@@ -166,7 +166,7 @@ const Text = styled.div`
   color: #333;
   margin: 0.2em;
 
-  font-size: 0.9em;
+  font-size: 0.7em;
   line-height: 0.9em;
   text-align: left;
 `;
