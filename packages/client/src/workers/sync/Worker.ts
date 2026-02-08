@@ -368,6 +368,13 @@ export class SyncWorker<C extends Components> implements DoWork<Input, NetworkEv
 
     outputLiveEvents = true;
 
+    // StateCache is no longer used after init; clear to free memory.
+    stateCache.current.state.clear();
+    stateCache.current.components = [];
+    stateCache.current.componentToIndex.clear();
+    stateCache.current.entities = [];
+    stateCache.current.entityToIndex.clear();
+
     performance.measure('connection', 'connecting', 'setup');
     performance.measure('setup', 'setup', 'backfill');
     performance.measure('backfill', 'backfill', 'gapfill');
