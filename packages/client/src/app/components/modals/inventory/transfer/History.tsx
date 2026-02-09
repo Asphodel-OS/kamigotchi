@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { EmptyText, Text, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ItemTransfer } from 'clients/kamiden/proto';
+import { TRANSFER_FEE } from 'constants/prices';
 import { formatEntityID } from 'engine/utils';
 import { Account, Item } from 'network/shapes';
 import { Mode } from '../types';
@@ -69,7 +70,7 @@ export const History = ({
           <CollapseIcon $isCollapsed={isCollapsed}>▼</CollapseIcon>
           <Text size={0.9}>Transfer History</Text>
         </TitleLeft>
-        <Text size={0.75}>Fee: 15 MUSU per item type</Text>
+        <Text size={0.75}>{`Fee: ${TRANSFER_FEE} MUSU per item type`}</Text>
       </TitleBar>
 
       <ContentWrapper $isCollapsed={isCollapsed}>

@@ -51,7 +51,7 @@ export const TransferLineItem = ({
       <QuantityWrapper>
         <Quantity
           type='text'
-          value={amt.toLocaleString()}
+          value={new Intl.NumberFormat('en-US').format(amt)}
           onChange={setAmt}
           disabled={!selected}
           $isError={isOverBalance}
