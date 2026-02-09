@@ -12,6 +12,7 @@ import { getKamidenClient } from 'clients/kamiden';
 import { KAMI_BASE_URI } from 'constants/media';
 import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { MUSU_INDEX } from 'constants/items';
+import { TRANSFER_FEE } from 'constants/prices';
 import { Account } from 'network/shapes/Account';
 import { Item } from 'network/shapes/Item';
 import { Mode } from '../types';
@@ -90,16 +91,21 @@ export const Transfer = ({
 
   // Remove a row by id
   const removeRow = (id: string) => {
-    setRows((prev) => prev.filter((row) => row.id !== id));
+    setRows((prev) => {
+      const remaining = prev.filter((row) => row.id !== id);
+      return remaining.length === 0 ? createInitialRows() : remaining;
+    });
+  };
+
+  // Get max sendable amount for an item (MUSU reserves 1000)
+  const getMaxAmt = (item: Item): number => {
+    const balance = getBalance(inventories, item.index);
+    return item.index === MUSU_INDEX ? Math.max(0, balance - MUSU_RESERVE) : balance;
   };
 
   // Update item for a row, auto-set max amount, and auto-grow if all rows filled
   const setRowItem = (id: string, item: Item) => {
-    const balance = getBalance(inventories, item.index);
-    // For MUSU, leave 1000 as reserve
-    const maxAmt = item.index === MUSU_INDEX
-      ? Math.max(0, balance - MUSU_RESERVE)
-      : balance;
+    const maxAmt = getMaxAmt(item);
     setRows((prev) => {
       const updated = prev.map((row) => (row.id === id ? { ...row, item, amt: maxAmt } : row));
       const allFilled = updated.every((r) => r.item !== null);
@@ -115,16 +121,11 @@ export const Transfer = ({
     setRows((prev) => prev.map((row) => (row.id === id ? { ...row, amt } : row)));
   };
 
-  // Set max amount for a row (MUSU reserves 1000)
+  // Set max amount for a row
   const setRowMax = (id: string) => {
     const row = rows.find((r) => r.id === id);
     if (!row || !row.item) return;
-    const balance = getBalance(inventories, row.item.index);
-    // For MUSU, leave 1000 as reserve
-    const max = row.item.index === MUSU_INDEX
-      ? Math.max(0, balance - MUSU_RESERVE)
-      : balance;
-    setRowAmt(id, max);
+    setRowAmt(id, getMaxAmt(row.item));
   };
 
   // Get available items for a row (excludes items already selected in other rows)
@@ -143,9 +144,16 @@ export const Transfer = ({
     if (rows.length === 0) return false;
     const validRows = rows.filter((row) => row.item !== null);
     if (validRows.length === 0) return false;
-    return validRows.every(
+    const rowsOk = validRows.every(
       (row) => row.amt > 0 && row.amt <= getBalance(inventories, row.item!.index)
     );
+    if (!rowsOk) return false;
+    // Check sender has enough MUSU for batch fee (after any MUSU being sent)
+    const musuBalance = getBalance(inventories, MUSU_INDEX);
+    const musuBeingSent = validRows
+      .filter((r) => r.item!.index === MUSU_INDEX)
+      .reduce((sum, r) => sum + r.amt, 0);
+    return musuBalance >= musuBeingSent + TRANSFER_FEE * validRows.length;
   };
 
   // Get count of valid items
@@ -223,7 +231,7 @@ export const Transfer = ({
     if (!row || !row.item) return;
 
     const quantityStr = event.target.value.replace(/[^\d.]/g, '');
-    const rawQuantity = parseInt(quantityStr.replaceAll(',', '') || '0');
+    const rawQuantity = parseInt(quantityStr.replaceAll(',', ''), 10) || 0;
     const max = getBalance(inventories, row.item.index);
     const amt = Math.max(0, Math.min(max, rawQuantity));
     setRowAmt(rowId, amt);
@@ -313,7 +321,7 @@ export const Transfer = ({
           {validItemCount > 0 && (
             <FeeLabel>
               <MusuIcon src={ItemImages.musu} />
-              {(15 * validItemCount).toLocaleString()}
+              {(TRANSFER_FEE * validItemCount).toLocaleString()}
             </FeeLabel>
           )}
         </SendRow>
@@ -324,7 +332,7 @@ export const Transfer = ({
         data={{ account, events: history }}
         state={{ mode, isCollapsed: historyCollapsed }}
         utils={{ getAccount, getEntityIndex, getItem }}
-        onToggleCollapse={() => setHistoryCollapsed(!historyCollapsed)}
+        onToggleCollapse={() => setHistoryCollapsed((prev) => !prev)}
       />
     </Container>
   );
