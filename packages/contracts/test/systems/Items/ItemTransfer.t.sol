@@ -2,12 +2,14 @@
 pragma solidity >=0.8.28;
 
 import "./Item.t.sol";
+import { MUSU_INDEX, TRANSFER_FEE } from "libraries/LibInventory.sol";
 
 contract ItemTransferTest is ItemTemplate {
   function testTransferBasic() public {
     uint32 itemA = 1;
     uint32 itemB = 2;
     _giveItem(alice, itemA, 3);
+    _fundAccount(alice.index, 100); // ensure enough MUSU for scaled batch fee
 
     // transfer to bob
     _transfer(alice, bob, itemA, 1);
@@ -31,6 +33,46 @@ contract ItemTransferTest is ItemTemplate {
     assertEq(_getItemBal(bob, itemA), 2);
     assertEq(_getItemBal(alice, itemB), 3);
     assertEq(_getItemBal(bob, itemB), 2);
+  }
+
+  function testTransferFeeScalesSingleItem() public {
+    uint32 itemA = 2;
+    _giveItem(alice, itemA, 10);
+    _fundAccount(alice.index, 100);
+
+    uint256 musuBefore = _getAccountBalance(alice.index);
+
+    // single-item transfer should charge 1 × TRANSFER_FEE
+    _transfer(alice, bob, itemA, 1);
+
+    uint256 musuAfter = _getAccountBalance(alice.index);
+    assertEq(musuBefore - musuAfter, TRANSFER_FEE);
+  }
+
+  function testTransferFeeScalesBatch() public {
+    uint32 itemA = 2;
+    uint32 itemB = 3;
+    uint32 itemC = 4;
+    _giveItem(alice, itemA, 10);
+    _giveItem(alice, itemB, 10);
+    _giveItem(alice, itemC, 10);
+    _fundAccount(alice.index, 500);
+
+    uint256 musuBefore = _getAccountBalance(alice.index);
+
+    // batch transfer of 3 item types should charge 3 × TRANSFER_FEE
+    uint32[] memory indices = new uint32[](3);
+    indices[0] = itemA;
+    indices[1] = itemB;
+    indices[2] = itemC;
+    uint256[] memory amts = new uint256[](3);
+    amts[0] = 2;
+    amts[1] = 3;
+    amts[2] = 4;
+    _transfer(alice, bob, indices, amts);
+
+    uint256 musuAfter = _getAccountBalance(alice.index);
+    assertEq(musuBefore - musuAfter, TRANSFER_FEE * 3);
   }
 
   ////////////////////
