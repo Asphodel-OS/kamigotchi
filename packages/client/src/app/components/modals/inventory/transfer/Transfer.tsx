@@ -298,6 +298,7 @@ export const Transfer = ({
               onRemove={() => removeRow(row.id)}
               onAdd={addRow}
               onMax={() => setRowMax(row.id)}
+              isMaxRows={rows.length >= MAX_ITEMS}
             />
           ))
         )}
@@ -334,6 +335,8 @@ const Container = styled.div<{ isVisible: boolean }>`
   display: ${({ isVisible }) => (isVisible ? `flex` : `none`)};
   flex-direction: column;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
   font-size: 0.75vw;
 `;
 
@@ -381,7 +384,9 @@ const RowsSection = styled.div`
   flex-direction: column;
   gap: 0.5vw;
   padding: 0.8vw;
-  min-height: 5vh;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   background: #fafafa;
 
   ::-webkit-scrollbar {
