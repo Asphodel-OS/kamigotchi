@@ -3,6 +3,7 @@
 ,In Game,VIPP,2,Consumable,Common,Account,,VIP1,VIP_ROOM,"Sacred paper which can be sacrificed for VIP status. "
 ,In Game,Gacha Ticket,10,Misc,Legendary,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,Epic,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
+,To Deploy,Coat Check Ticket,12,Misc,Epic,Account,NOT_TRADABLE,,,This ticket says it can be exchanged for an exclusive Operator cosmetic item. But who will take the ticket?
 ,In Game,Kamigotchi World Passport (Yellow),20,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In yellow.
 ,In Game,Kamigotchi World Passport (Orange),21,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In orange.
 ,In Game,Kamigotchi World Passport (Pink),22,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In pink.
