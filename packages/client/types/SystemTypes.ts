@@ -5,6 +5,7 @@ import { _AdminSetFlagSystem } from "./ethers-contracts/_AdminSetFlagSystem";
 import { _AuctionRegistrySystem } from "./ethers-contracts/_AuctionRegistrySystem";
 import { _AuthManageRoleSystem } from "./ethers-contracts/_AuthManageRoleSystem";
 import { _ConfigSetSystem } from "./ethers-contracts/_ConfigSetSystem";
+import { _DistributeItemSystem } from "./ethers-contracts/_DistributeItemSystem";
 import { _FactionRegistrySystem } from "./ethers-contracts/_FactionRegistrySystem";
 import { _GoalRegistrySystem } from "./ethers-contracts/_GoalRegistrySystem";
 import { _HarvestAdminSystem } from "./ethers-contracts/_HarvestAdminSystem";
@@ -90,6 +91,7 @@ export type SystemTypes = {
   "system.auction.registry": _AuctionRegistrySystem;
   "system.auth.registry": _AuthManageRoleSystem;
   "system.config.registry": _ConfigSetSystem;
+  "system.distribute.item": _DistributeItemSystem;
   "system.faction.registry": _FactionRegistrySystem;
   "system.goal.registry": _GoalRegistrySystem;
   "system.harvest.admin": _HarvestAdminSystem;

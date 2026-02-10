@@ -26,7 +26,7 @@ contract ItemTransferSystem is System {
 
     // transfer
     LibInventory.transferFor(components, accID, targetID, indices, amts);
-    LibInventory.decFor(components, accID, MUSU_INDEX, TRANSFER_FEE);
+    LibInventory.decFor(components, accID, MUSU_INDEX, indices.length * TRANSFER_FEE);
 
     // data logging and event emission
     LibInventory.emitTransfer(world, components, accID, targetID, indices, amts);
