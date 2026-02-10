@@ -35,7 +35,7 @@ contract KamiUseItemSystem is System {
     LibKami.verifyCooldown(components, kamiID);
 
     // item checks
-    LibItem.verifyForShape(components, itemIndex, "KAMI");
+    LibItem.verifyForShapeOr(components, itemIndex, "KAMI", "ANY_KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", kamiID);
 
     // reset action bonuses

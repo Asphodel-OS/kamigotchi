@@ -24,7 +24,7 @@ contract KamiCastItemSystem is System {
     LibKami.verifyRoom(components, targetID, accID);
 
     // item checks
-    LibItem.verifyForShape(components, itemIndex, "ENEMY_KAMI");
+    LibItem.verifyForShapeOr(components, itemIndex, "ENEMY_KAMI", "ANY_KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", targetID);
     LibItem.verifyEnabled(components, itemIndex);
 
