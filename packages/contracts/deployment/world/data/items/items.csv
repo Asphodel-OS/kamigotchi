@@ -3,7 +3,7 @@
 ,In Game,VIPP,2,Consumable,Common,Account,,VIP1,VIP_ROOM,"Sacred paper which can be sacrificed for VIP status. "
 ,In Game,Gacha Ticket,10,Misc,Legendary,,,,,"Redeemable for one Kami. You should take this to the vending machine… "
 ,In Game,Reroll Ticket,11,Misc,Epic,,,,,"Allows you to reroll a Kami once. You should take this to the vending machine… "
-,To Deploy,Coat Check Ticket,12,Misc,Epic,Account,NOT_TRADABLE,,,This ticket says it can be exchanged for an exclusive Operator cosmetic item. But who will take the ticket?
+,In Game,Coat Check Ticket,12,Misc,Epic,Account,NOT_TRADABLE,,,This ticket says it can be exchanged for an exclusive Operator cosmetic item. But who will take the ticket?
 ,In Game,Kamigotchi World Passport (Yellow),20,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In yellow.
 ,In Game,Kamigotchi World Passport (Orange),21,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In orange.
 ,In Game,Kamigotchi World Passport (Pink),22,NFT,Rare,Passport_slot,,,,Your ticket to great fortunes. In pink.
@@ -79,10 +79,10 @@ Slightly sacred. "
 ,In Game,XP Candy (Medium),11202,Food,Uncommon,Kami,NOT_TRADABLE,"HP+10,XP+100",,"Provides a decent amount of XP when fed to a Kami. "
 ,In Game,XP Candy (Large),11203,Food,Uncommon,Kami,NOT_TRADABLE,"HP+20,XP+200",,"This gives a lot of XP when fed to a Kamigotchi. "
 ,In Game,XP Candy (Huge),11204,Food,Rare,Kami,NOT_TRADABLE,"HP+50,XP+1000",,This is far larger than any XP Candy you’ve seen before. Gives a huge amount of XP when fed to a Kamigotchi.
-,In Game,“Cultivation I” Spell Card,11211,Food,Uncommon,Kami,NOT_TRADABLE,"XP+100,HP+20",,"The card depicts a pale sprout emerging from rich, black soil. Activating this Spell Card on a Kamigotchi will restore 20 HP and grant 100 XP."
-,In Game,“Cultivation II” Spell Card,11212,Food,Uncommon,Kami,NOT_TRADABLE,"XP+200,HP+50",,The card depicts a teardrop-shaped flowerbud growing out of light brown soil. Activating this Spell Card on a Kamigotchi will restore 50 HP and grant 200 XP.
-,In Game,“Cultivation III” Spell Card,11213,Food,Rare,Kami,NOT_TRADABLE,"XP+1000,HP+100",,The card depicts a flower heartily blooming in pale and sandy earth. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 1000 XP.
-,In Game,“Cultivation IV” Spell Card,11214,Food,Rare,Kami,NOT_TRADABLE,"XP+5000,HP+100",,The card depicts a massive flower spreading across the frame. A baby sleeps in the center. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 5000 XP.
+,In Game,“Cultivation I” Spell Card,11211,Food,Uncommon,Kami,NOT_TRADABLE,"HP+20,XP+1000",,"The card depicts a pale sprout emerging from rich, black soil. Activating this Spell Card on a Kamigotchi will restore 20 HP and grant 100 XP."
+,In Game,“Cultivation II” Spell Card,11212,Food,Uncommon,Kami,NOT_TRADABLE,"HP+50,XP+5000",,The card depicts a teardrop-shaped flowerbud growing out of light brown soil. Activating this Spell Card on a Kamigotchi will restore 50 HP and grant 200 XP.
+,In Game,“Cultivation III” Spell Card,11213,Food,Rare,Kami,NOT_TRADABLE,"HP+100,XP+15000",,The card depicts a flower heartily blooming in pale and sandy earth. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 1000 XP.
+,In Game,“Cultivation IV” Spell Card,11214,Food,Rare,Kami,NOT_TRADABLE,"HP+100,XP+50000",,The card depicts a massive flower spreading across the frame. A baby sleeps in the center. Activating this Spell Card on a Kamigotchi will restore 100 HP and grant 5000 XP.
 ,In Game,Full Heart Crystal,11221,Food,Rare,Kami,,XP+15000,,"It pulses with warmth. Give this to your Kami to grant it a large amount of XP. "
 ,In Game,Half Heart Crystal,11222,Food,Uncommon,Kami,,XP+1000,,It feels slightly warm in your hand. Give this to your Kami to grant it a moderate amount of XP.
 ,In Game,Great Heart Crystal,11223,Food,Epic,Kami,,XP+50000,,"The crystal beats like a real heart. It radiates with heat enough to warm your surroundings. Give this to your kami to grant it a very large amount of XP. "

@@ -123,7 +123,7 @@ export async function initGoals(api: AdminAPI) {
   //   await api.goal.add.reward.basic(6, 'Gold', 42, 'ITEM', 11502, 10);
   //   await api.goal.enable(6);
 
-  await api.goal.create(
+  /*await api.goal.create(
     7,
     'Titanic Offering',
     `You should be able to squeeze past that hand, but the darkness is impenetrable. It's almost like a physical barrier.
@@ -144,7 +144,7 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(7, 'Gold', 42, 'LOYALTY', 1, 3);
   await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 11020, 30);
   await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 21003, 25);
-  await api.goal.enable(7);
+  await api.goal.enable(7);*/
 
   await api.goal.create(
     13,
@@ -154,14 +154,17 @@ export async function initGoals(api: AdminAPI) {
     'ITEM',
     'CURR_MIN',
     1203,
-    99
+    50
   );
   await api.goal.add.reward.display(13, 'Fast Travel unlocked between Room 19 and Room 59');
-  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 13);
-  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 6);
-  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 11002, 13);
-  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 1007, 4);
-  await api.goal.add.reward.basic(13, 'Gold', 5, 'ITEM', 12, 1);
+  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 15);
+  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 30);
+  await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11214, 20);
+  await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11002, 30);
+  await api.goal.add.reward.basic(13, 'Silver', 2, 'ITEM', 11502, 2);
+  await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 12, 1);
+  await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 11214, 25);
+  await api.goal.add.reward.basic(13, 'Gold', 3, 'ITEM', 11, 15);
   await api.goal.enable(13);
 
   //   await api.goal.create(
