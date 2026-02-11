@@ -1,0 +1,9 @@
+{
+  "name": "success-sparkle",
+  "pedals": [
+    { "pedal": "gain", "params": { "level": 1.0 } },
+    { "pedal": "sparkle", "params": { "amount": 0.35 } },
+    { "pedal": "reverb", "params": { "size": 0.2, "mix": 0.15, "color": 0.6 } },
+    { "pedal": "limiter", "params": { "ceilingDb": -1.0 } }
+  ]
+}

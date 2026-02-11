@@ -1,6 +1,6 @@
 const CDN_BASE_URL = import.meta.env.VITE_CDN_BASE_URL || 'https://cdn.prod.kamigotchi.io';
 
-const ost = (filename: string) => `${CDN_BASE_URL}/sound/ost/${filename}.mp3`;
+const ost = (filename: string) => `${CDN_BASE_URL}/sound/ost/${filename}.m4a`;
 
 export const abandoned = ost('abandoned');
 export const abandonedCamp = ost('abandonedCamp');

@@ -1,0 +1,8 @@
+{
+  "name": "bell-round",
+  "pedals": [
+    { "pedal": "gain", "params": { "level": 1.0 } },
+    { "pedal": "warmth", "params": { "amount": 0.35 } },
+    { "pedal": "limiter", "params": { "ceilingDb": -0.6 } }
+  ]
+}

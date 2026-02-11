@@ -1,0 +1,9 @@
+{
+  "name": "warm-room",
+  "pedals": [
+    { "pedal": "gain", "params": { "level": 1.0 } },
+    { "pedal": "warmth", "params": { "amount": 0.2 } },
+    { "pedal": "sparkle", "params": { "amount": 0.1 } },
+    { "pedal": "compressor", "params": { "tightness": 0.3, "makeup": 1.0 } }
+  ]
+}

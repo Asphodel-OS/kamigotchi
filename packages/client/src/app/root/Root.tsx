@@ -2,6 +2,7 @@ import { injectStyles, InterwovenKitProvider } from '@initia/interwovenkit-react
 import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { audioManager } from 'audio/AudioManager';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { WagmiProvider } from 'wagmi';
@@ -35,6 +36,29 @@ export const Root = observer(
       mountReact.current = (mounted: boolean) => setMounted(mounted);
       setLayers.current = (layers: Layers) => _setLayers(layers);
       localStorage.removeItem('wagmi.store');
+    }, []);
+
+    // audio bootstrap: resume on first interaction, preload common assets
+    useEffect(() => {
+      try {
+        const raw = localStorage.getItem('settings');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed?.audioQuality) {
+            audioManager.setQuality(parsed.audioQuality);
+          }
+        }
+      } catch {
+        // ignore malformed settings
+      }
+      const onFirst = () => {
+        audioManager.resume();
+        window.removeEventListener('pointerdown', onFirst);
+        window.removeEventListener('keydown', onFirst);
+      };
+      window.addEventListener('pointerdown', onFirst, { once: true });
+      window.addEventListener('keydown', onFirst, { once: true });
+      audioManager.preload().catch(() => void 0);
     }, []);
 
     // show boot screen until network is loaded

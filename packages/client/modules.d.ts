@@ -1,5 +1,4 @@
 declare module '*.csv';
-declare module '*.mp3';
+declare module '*.m4a';
 declare module '*.png';
-declare module '*.wav';
 declare module 'types/SystemAbis';

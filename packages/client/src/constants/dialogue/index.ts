@@ -90,8 +90,6 @@ const dialogueList = dialogues00.concat(
   dialogues64,
   dialogues65,
   dialogues66,
-  dialogues72,
-  dialogues88,
   dialogues68,
   dialogues69,
   dialogues70,
