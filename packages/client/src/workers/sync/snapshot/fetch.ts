@@ -1,5 +1,7 @@
 import { KamigazeServiceClient } from 'clients/kamigaze';
+import { getMiddlewareClient } from 'clients/middleware';
 import { createDecode } from 'engine/encoders';
+import { formatComponentID, formatEntityID } from 'engine/utils';
 import { log } from 'utils/logger';
 import {
   StateCache,
@@ -10,6 +12,9 @@ import {
   storeStateEntities,
   storeStateValues,
 } from '../state';
+import { storeEvent } from '../state/cache';
+
+import { NetworkEvents } from '../../types';
 
 const CHUNK_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 20;
@@ -118,6 +123,104 @@ interface FetchOptions {
   setMessage?: (msg: string) => void;
 }
 
+async function doTheThing(state: StateCache, decode: ReturnType<typeof createDecode>) {
+  const client = getMiddlewareClient();
+  let res = await client?.getComponentValuesByType({ key: 'ACCOUNT' });
+
+  if (!res) return;
+
+  for (const entity of res.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+  res = await client?.getComponentValuesByType({ key: 'ROOM' });
+
+  if (!res) return;
+
+  for (const entity of res.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+
+  res = await client?.getComponentValuesByType({ key: 'NODE' });
+  if (!res) return;
+
+  for (const entity of res.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+  res = await client?.getComponentValuesByType({ key: 'ITEM' });
+  if (!res) return;
+
+  for (const entity of res.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+
+  res = await client?.getComponentValuesByType({ key: 'KAMI' });
+  if (!res) return;
+
+  for (const entity of res.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+}
+
 export const fetchSnapshot = async (
   stateCache: StateCache,
   kamigazeClient: KamigazeServiceClient,
@@ -145,6 +248,13 @@ export const fetchSnapshot = async (
     setPercentage,
     setMessage,
   };
+
+  options.stateCache.lastStateValuesBlock = 24475627;
+  options.stateCache.lastStateRemovalsBlock = 24475627;
+  options.stateCache.lastKamigazeBlock = 24475627;
+  //HERE
+  doTheThing(options.stateCache, options.decode);
+  return options.stateCache;
 
   try {
     setMessage?.('Querying for State Info');
