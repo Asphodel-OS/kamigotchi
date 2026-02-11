@@ -28,6 +28,7 @@
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsEquipment", "name": "OwnsEquipID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTax", "name": "OwnsTaxID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsKamiOrder", "name": "OwnsKamiOrderID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsWithdrawal", "name": "OwnsWithdrawalID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDAnchor", "name": "AnchorID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -618,6 +619,30 @@
       "writeAccess": ["*"]
     },
     {
+      "name": "KamiMarketListSystem",
+      "writeAccess": ["EntityType", "IDOwnsKamiOrder", "IndexKami", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+    },
+    {
+      "name": "KamiMarketBuySystem",
+      "writeAccess": ["EntityType", "IDOwnsKamiOrder", "IndexKami", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+    },
+    {
+      "name": "KamiMarketOfferSystem",
+      "writeAccess": ["Balance", "EntityType", "IDOwnsKamiOrder", "IndexKami", "Max", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+    },
+    {
+      "name": "KamiMarketAcceptOfferSystem",
+      "writeAccess": ["Balance", "EntityType", "IDOwnsKamiOrder", "IndexKami", "Max", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+    },
+    {
+      "name": "KamiMarketCancelSystem",
+      "writeAccess": ["Balance", "EntityType", "IDOwnsKamiOrder", "IndexKami", "Max", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+    },
+    {
+      "name": "_KamiMarketRegistrySystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "KamiEquipSystem",
       "writeAccess": [
         "EntityType",
@@ -881,6 +906,7 @@
     "LibKami",
     "LibKami721",
     "LibKamiCreate",
+    "LibKamiMarket",
     "LibQuestRegistry",
     "LibQuest",
     "LibRelationshipRegistry",

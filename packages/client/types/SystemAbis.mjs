@@ -10,6 +10,7 @@ import _FactionRegistrySystem from "../abi/_FactionRegistrySystem.json";
 import _GoalRegistrySystem from "../abi/_GoalRegistrySystem.json";
 import _HarvestAdminSystem from "../abi/_HarvestAdminSystem.json";
 import _ItemRegistrySystem from "../abi/_ItemRegistrySystem.json";
+import _KamiMarketRegistrySystem from "../abi/_KamiMarketRegistrySystem.json";
 import _ListingRegistrySystem from "../abi/_ListingRegistrySystem.json";
 import _NodeRegistrySystem from "../abi/_NodeRegistrySystem.json";
 import _NPCRegistrySystem from "../abi/_NPCRegistrySystem.json";
@@ -61,6 +62,11 @@ import KamiGachaMintSystem from "../abi/KamiGachaMintSystem.json";
 import KamiGachaRerollSystem from "../abi/KamiGachaRerollSystem.json";
 import KamiGachaRevealSystem from "../abi/KamiGachaRevealSystem.json";
 import KamiLevelSystem from "../abi/KamiLevelSystem.json";
+import KamiMarketAcceptOfferSystem from "../abi/KamiMarketAcceptOfferSystem.json";
+import KamiMarketBuySystem from "../abi/KamiMarketBuySystem.json";
+import KamiMarketCancelSystem from "../abi/KamiMarketCancelSystem.json";
+import KamiMarketListSystem from "../abi/KamiMarketListSystem.json";
+import KamiMarketOfferSystem from "../abi/KamiMarketOfferSystem.json";
 import KamiNameSystem from "../abi/KamiNameSystem.json";
 import KamiOnyxRenameSystem from "../abi/KamiOnyxRenameSystem.json";
 import KamiOnyxRespecSystem from "../abi/KamiOnyxRespecSystem.json";
@@ -96,6 +102,7 @@ export const SystemAbis = {
   "system.goal.registry": _GoalRegistrySystem.abi,
   "system.harvest.admin": _HarvestAdminSystem.abi,
   "system.item.registry": _ItemRegistrySystem.abi,
+  "system.kamimarket.registry": _KamiMarketRegistrySystem.abi,
   "system.listing.registry": _ListingRegistrySystem.abi,
   "system.node.registry": _NodeRegistrySystem.abi,
   "system.npc.registry": _NPCRegistrySystem.abi,
@@ -147,6 +154,11 @@ export const SystemAbis = {
   "system.kami.gacha.reroll": KamiGachaRerollSystem.abi,
   "system.kami.gacha.reveal": KamiGachaRevealSystem.abi,
   "system.kami.level": KamiLevelSystem.abi,
+  "system.kamimarket.acceptoffer": KamiMarketAcceptOfferSystem.abi,
+  "system.kamimarket.buy": KamiMarketBuySystem.abi,
+  "system.kamimarket.cancel": KamiMarketCancelSystem.abi,
+  "system.kamimarket.list": KamiMarketListSystem.abi,
+  "system.kamimarket.offer": KamiMarketOfferSystem.abi,
   "system.kami.name": KamiNameSystem.abi,
   "system.kami.onyx.rename": KamiOnyxRenameSystem.abi,
   "system.kami.onyx.respec": KamiOnyxRespecSystem.abi,
