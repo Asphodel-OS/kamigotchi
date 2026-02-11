@@ -1,3 +1,5 @@
+import { useAccount } from 'app/stores/account';
+import { logTxError } from 'clients/kamiden/txErrorLogger';
 import { getRevertReason } from 'engine/queue/utils';
 import {
   EntityID,
@@ -165,8 +167,20 @@ export function createActionSystem<M = undefined>(
       metadata = typeof errData === 'string' ? errData : error.message || 'Transaction failed';
     }
 
-    updateComponent(Action, action.index, { state: ActionState.Failed, metadata });
+    updateComponent(Action, action.index, { state: ActionState.Failed, metadata: metadata as M });
     playError();
+
+    const account = useAccount.getState().account;
+    log.debug('[ActionSystem] Logging tx error', {
+      operatorAddress: account.operatorAddress,
+      action: action.action,
+      description: action.description,
+    });
+    logTxError(error, {
+      sender: account.operatorAddress ?? '',
+      system: action.action ?? 'unknown',
+      method: action.description ?? 'unknown',
+    });
   }
 
   return {
