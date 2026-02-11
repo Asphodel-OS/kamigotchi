@@ -26,6 +26,7 @@ import chalkberry from './chalkberry.png';
 import cheeseburger from './cheeseburger.png';
 import cigarette_butt from './cigarette_butt.png';
 import cleaning_fluid from './cleaning_fluid.png';
+import coat_check_ticket from './coat_check_ticket.png';
 import crawling_cope from './crawling_cope.png';
 import crawling_greed from './crawling_greed.png';
 import crawling_wrath from './crawling_wrath.png';
@@ -206,6 +207,7 @@ export const ItemImages = {
   cheeseburger: cheeseburger,
   cigarette_butt: cigarette_butt,
   cleaning_fluid: cleaning_fluid,
+  coat_check_ticket: coat_check_ticket,
   crawling_cope: crawling_cope,
   crawling_greed: crawling_greed,
   crawling_wrath: crawling_wrath,

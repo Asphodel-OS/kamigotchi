@@ -12,6 +12,7 @@
       "abi/*": ["./abi/*", "./abi"],
       "types/*": ["./types/*", "./types"],
       "app/*": ["./src/app/*", "./src/app"],
+      "audio/*": ["./src/audio/*", "./src/audio"],
       "assets/*": ["./src/assets/*", "./src/assets"],
       "cache/*": ["./src/cache/*", "./src/cache"],
       "clients/*": ["./src/clients/*", "./src/clients"],

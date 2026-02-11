@@ -18,7 +18,7 @@ export default defineConfig({
         brotliSize: true,
       }),
   ].filter(Boolean),
-  assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.mp3', '**/*.png', '**/*.wav', '**/*.webp'],
+  assetsInclude: ['**/*.gif', '**/*.jpg', '**/*.m4a', '**/*.mp3', '**/*.png', '**/*.wav', '**/*.webp'],
   build: {
     assetsInlineLimit: 0,
     chunkSizeWarningLimit: 1000, // Warn at 1MB instead of 500KB
@@ -59,6 +59,7 @@ export default defineConfig({
       src: path.resolve(__dirname, './src'),
       types: path.resolve(__dirname, './types'),
       app: path.resolve(__dirname, './src/app'),
+      audio: path.resolve(__dirname, './src/audio'),
       assets: path.resolve(__dirname, './src/assets'),
       cache: path.resolve(__dirname, './src/cache'),
       clients: path.resolve(__dirname, './src/clients'),

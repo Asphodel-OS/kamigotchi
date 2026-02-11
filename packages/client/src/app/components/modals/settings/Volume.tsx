@@ -1,4 +1,4 @@
-import { Howler } from 'howler';
+import { audioManager } from 'audio/AudioManager';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
@@ -11,14 +11,23 @@ import { playClick } from 'utils/sounds';
 export const Volume = () => {
   const [settings, setSettings] = useLocalStorage('settings', {
     volume: { fx: 0.5, bgm: 0.5 },
+    audioQuality: 'low',
   });
   const [bgmVolume, setBgmVolume] = useState(settings.volume.bgm);
   const [fxVolume, setFxVolume] = useState(settings.volume.fx);
+  const [audioQuality, setAudioQuality] = useState<'low' | 'high'>(
+    (settings as any).audioQuality || 'low'
+  );
 
   useEffect(() => {
-    setSettings({ ...settings, volume: { bgm: bgmVolume, fx: fxVolume } });
-    Howler.volume(bgmVolume);
-  }, [bgmVolume, fxVolume]);
+    setSettings({ ...settings, volume: { bgm: bgmVolume, fx: fxVolume }, audioQuality });
+    audioManager.setBusVolume('bgm', bgmVolume);
+    audioManager.setBusVolume('fx', fxVolume);
+  }, [bgmVolume, fxVolume, audioQuality]);
+
+  useEffect(() => {
+    audioManager.setQuality(audioQuality);
+  }, [audioQuality]);
 
   const toggleVolume = (type: string) => {
     let volume = type === 'fx' ? fxVolume : bgmVolume;
@@ -38,81 +47,101 @@ export const Volume = () => {
           max='1'
           step='0.1'
           value={bgmVolume}
-          onChange={(e) => setBgmVolume(e.target.value as unknown as number)}
+          onChange={(e) => setBgmVolume(parseFloat(e.target.value))}
         />
         <Icon src={icon} onClick={() => toggleVolume('bgm')} />
       </Row>
     );
   };
 
-  const SoundEffectsRow = () => {
-    const icon = fxVolume == 0 ? TriggerIcons.soundOff : TriggerIcons.soundOn;
-    return (
-      <Row>
-        <Text style={{ flexGrow: 2 }}>Sounds</Text>
-        <RangeInput
-          type='range'
-          min='0'
-          max='1'
-          step='0.1'
-          value={fxVolume}
-          onChange={(e) => setFxVolume(e.target.value as unknown as number)}
-        />
-        <Icon src={icon} onClick={() => toggleVolume('fx')} />
-      </Row>
-    );
-  };
+  const SoundEffectsRow = () => (
+    <Row>
+      <Text style={{ flexGrow: 2 }}>Sound FX</Text>
+      <RangeInput
+        type='range'
+        min='0'
+        max='1'
+        step='0.1'
+        value={fxVolume}
+        onChange={(e) => setFxVolume(parseFloat(e.target.value))}
+      />
+      <Icon
+        src={fxVolume == 0 ? TriggerIcons.soundOff : TriggerIcons.soundOn}
+        onClick={() => toggleVolume('fx')}
+      />
+    </Row>
+  );
 
   return (
-    <Section>
-      <Header>Volume</Header>
-      <MusicRow />
-      <SoundEffectsRow />
-    </Section>
+    <Container>
+      <Section>
+        <Title>Volume</Title>
+        {MusicRow()}
+        {SoundEffectsRow()}
+      </Section>
+      <Section>
+        <Title>Audio Quality</Title>
+        <Row>
+          <Text style={{ flexGrow: 2 }}>Prefer faster downloads</Text>
+          <Select
+            value={audioQuality}
+            onChange={(e) => {
+              const q = e.target.value as 'low' | 'high';
+              setAudioQuality(q);
+            }}
+          >
+            <option value='low'>Fast (96 kbps)</option>
+            <option value='high'>Standard (128 kbps)</option>
+          </Select>
+        </Row>
+      </Section>
+    </Container>
   );
 };
 
 const Section = styled.div`
   display: flex;
-  flex-flow: column nowrap;
-  padding: 0.6vw;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 16px;
 `;
 
-const Header = styled.div`
-  font-size: 1vw;
-  color: #333;
-  text-align: left;
-  font-family: Pixel;
-  padding-bottom: 0.5vw;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const Title = styled.div`
+  font-weight: 600;
+  font-size: 1.4rem;
+  margin-bottom: 4px;
 `;
 
 const Row = styled.div`
-  padding-left: 0.7vw;
-  padding-right: 0.7vw;
-  padding-bottom: 0.3vw;
-
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
   align-items: center;
+  gap: 8px;
+`;
+
+const Text = styled.div`
+  font-size: 1rem;
+`;
+
+const RangeInput = styled.input`
+  width: 180px;
 `;
 
 const Icon = styled.img`
-  width: 3vw;
-  height: 3vw;
-  margin: 0vw 1vw;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 `;
 
-const Text = styled.p`
-  color: #333;
-  font-family: Pixel;
-  font-size: 0.8vw;
-  text-align: left;
-`;
-
-// how df do you style this thing
-const RangeInput = styled.input`
-  padding: 0;
-  cursor: pointer;
+const Select = styled.select`
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
 `;

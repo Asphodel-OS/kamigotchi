@@ -1,27 +1,31 @@
-import bell from './bell.mp3';
-import click from './click.mp3';
-import click2 from './click2.mp3';
-import crafting from './crafting.mp3';
-import dice from './dice.mp3';
-import echo from './echo.mp3';
-import error from './error.mp3';
-import fund from './fund.mp3';
-import levelup from './levelup.mp3';
-import liquidate from './liquidate.mp3';
-import message from './message.mp3';
-import phase from './phase.mp3';
-import questaccept from './questaccept.mp3';
-import questcomplete from './questcomplete.mp3';
-import revive from './revive.mp3';
-import sacrifice from './sacrifice.mp3';
-import scavenge from './scavenge.mp3';
-import scribble from './scribble.mp3';
-import signup from './signup.mp3';
-import success from './success.mp3';
-import teleport from './teleport.mp3';
-import trade from './trade.wav';
-import vend from './vend.mp3';
-import wonderegg from './wonderegg.mp3';
+const CDN_BASE_URL = import.meta.env.VITE_CDN_BASE_URL || 'https://cdn.prod.kamigotchi.io';
+
+const fx = (filename: string, ext: string = 'mp3') => `${CDN_BASE_URL}/sound/fx/interaction/${filename}.${ext}`;
+
+export const bell = fx('bell');
+export const click = fx('click');
+export const click2 = fx('click2');
+export const crafting = fx('crafting');
+export const dice = fx('dice');
+export const echo = fx('echo');
+export const error = fx('error');
+export const fund = fx('fund');
+export const levelup = fx('levelup');
+export const liquidate = fx('liquidate');
+export const message = fx('message');
+export const phase = fx('phase');
+export const questaccept = fx('questaccept');
+export const questcomplete = fx('questcomplete');
+export const revive = fx('revive');
+export const sacrifice = fx('sacrifice');
+export const scavenge = fx('scavenge');
+export const scribble = fx('scribble');
+export const signup = fx('signup');
+export const success = fx('success');
+export const teleport = fx('teleport');
+export const trade = fx('trade', 'wav');
+export const vend = fx('vend');
+export const wonderegg = fx('wonderegg');
 
 export const InteractionFX = {
   bell,
@@ -49,3 +53,5 @@ export const InteractionFX = {
   vend,
   wonderegg,
 };
+
+export { fx };

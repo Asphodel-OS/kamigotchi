@@ -1,4 +1,5 @@
-import { Howl } from 'howler';
+// migrated: use three.js AudioManager for BGM instead of howler
+import { audioManager } from 'audio/AudioManager';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
@@ -11,7 +12,7 @@ import { rooms } from 'constants/rooms';
 import { RoomAsset } from 'constants/rooms/types';
 import { getCurrPhase } from 'utils/time';
 
-const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
+// legacy cache removed; AudioManager handles crossfades
 const defaultBgm = { key: 'cave', path: cave };
 
 // painting of the room alongside any clickable objects
@@ -20,14 +21,12 @@ export const Room = ({ index }: { index: number }) => {
   const setModals = useVisibility((s) => s.setModals);
   const setNode = useSelected((s) => s.setNode);
   const [room, setRoom] = useState(rooms[0]);
-  const [bgm, setBgm] = useState<Howl>();
+  const [bgmKey, setBgmKey] = useState<string>('');
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
 
   // Set the new room when the index changes. If the new room has new music,
-  // stop the old bgm and play the new one. Global howler audio is controlled
-  // in the Volume Settings modal. This recreates any new music from scratch,
-  // but ideally we should keep all played tracks in a state map for reuse.
+  // crossfade via AudioManager. Volume is controlled by settings UI via bus volume.
   useEffect(() => {
     if (index == room.index) return;
     const newRoom = rooms[index];
@@ -35,17 +34,10 @@ export const Room = ({ index }: { index: number }) => {
     if (!music) {
       music = defaultBgm;
     }
-    // if prev music is the same, or starting new room with default music
     if (music.path !== room.music?.path || !newRoom.music) {
-      if (!RoomsBgm.has(music.path)) {
-        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
-      }
-      if (bgm) bgm.stop();
-
-      const newBgm = RoomsBgm.get(music.path);
-      newBgm?.play();
-      newBgm?.fade(0, bgmVolume, 3000);
-      setBgm(newBgm);
+      // BGM base volume is set by the track itself; user volume is handled via the bgm bus.
+      audioManager.playBgmBySrc(music.path, { loop: true, fadeMs: 3000 });
+      setBgmKey(music.path);
     }
 
     setRoom(newRoom);
@@ -84,16 +76,9 @@ export const Room = ({ index }: { index: number }) => {
 
 */
 
-  // manages volume changes from the variable stored in local storage
+  // responds to volume changes by setting the bgm bus gain
   useEffect(() => {
-    if (!bgm) return;
-
-    if (bgmVolume === 0) {
-      bgm.stop();
-    } else {
-      if (!bgm.playing()) bgm.play();
-      bgm.fade(bgm.volume(), bgmVolume, 3000);
-    }
+    audioManager.setBusVolume('bgm', bgmVolume);
   }, [bgmVolume]);
 
   // close any room-specific modals as the user changes rooms
