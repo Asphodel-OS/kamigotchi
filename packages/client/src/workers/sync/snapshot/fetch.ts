@@ -219,6 +219,44 @@ async function doTheThing(state: StateCache, decode: ReturnType<typeof createDec
       });
     }
   }
+
+  res = await client?.getComponentValuesByType({ key: 'INVENTORY' });
+  if (!res) return;
+
+  for (const entity of res.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
+
+  res = await client?.getComponentValuesByType({ key: 'RECIPE' });
+  if (!res) return;
+
+  for (const entity of res.entities) {
+    const entityId = formatEntityID(entity.entityId);
+    for (const component of entity.components) {
+      const componentId = formatComponentID(component.componentId);
+      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      const value = await decode(componentId, component.value);
+      storeEvent(state, {
+        type: NetworkEvents.NetworkComponentUpdate,
+        component: componentId,
+        entity: entityId,
+        value,
+        blockNumber: state.blockNumber,
+      });
+    }
+  }
 }
 
 export const fetchSnapshot = async (
@@ -249,9 +287,9 @@ export const fetchSnapshot = async (
     setMessage,
   };
 
-  options.stateCache.lastStateValuesBlock = 24475627;
-  options.stateCache.lastStateRemovalsBlock = 24475627;
-  options.stateCache.lastKamigazeBlock = 24475627;
+  options.stateCache.lastStateValuesBlock = 24763220;
+  options.stateCache.lastStateRemovalsBlock = 24763220;
+  options.stateCache.lastKamigazeBlock = 24763220;
   //HERE
   doTheThing(options.stateCache, options.decode);
   return options.stateCache;
