@@ -485,7 +485,7 @@
     },
     {
       "name": "Kami721StakeSystem",
-      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
+      "writeAccess": ["Balance", "EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IdHolder", "IndexKami", "Max", "ProxyPermissionsERC721", "State", "TimeLast", "TimeStart", "TimeEnd", "Type", "Value"],
       "skipEnv": ["testing"]
     },
     {

@@ -212,8 +212,10 @@ library LibKami {
   }
 
   // Check whether a kami's ERC721 token is in the game world
+  // LISTED kamis are external (still in owner's wallet), just with a marketplace listing
   function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
-    return !getCompByID(components, StateCompID).eqString(id, "721_EXTERNAL");
+    IComponent stateComp = getCompByID(components, StateCompID);
+    return !stateComp.eqString(id, "721_EXTERNAL") && !stateComp.eqString(id, "LISTED");
   }
 
   function isState(

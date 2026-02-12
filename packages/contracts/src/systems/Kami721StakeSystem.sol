@@ -8,6 +8,7 @@ import { getAddrByID } from "solecs/utils.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami721.stake"));
 uint256 constant ROOM = 12;
@@ -36,6 +37,7 @@ contract Kami721StakeSystem is System {
     // checks before action
     require(LibKami721.getEOAOwner(components, tokenIndex) == msg.sender, "Kami721Stake: not urs");
     require(LibKami.getAccount(components, kamiID) == 0, "Kami721Stake: already linked");
+    LibKamiMarket.cancelListingsForKami(world, components, tokenIndex);
     require(!LibKami.isInWorld(components, kamiID), "Kami721Stake: already in world");
 
     LibKami.stake(components, kamiID, accID);

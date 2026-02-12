@@ -199,6 +199,24 @@ library LibKamiMarket {
     _markCancelled(comps, id);
   }
 
+  /// @notice Cancel all active listings for a kami index (used on transfer/bridge)
+  /// @dev Only runs if kami is still in LISTED state — prevents double-cancel in fill flows
+  function cancelListingsForKami(IWorld world, IUintComp comps, uint32 kamiIndex) internal {
+    uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
+    if (!LibKami.isState(comps, kamiID, "LISTED")) return;
+
+    IndexKamiComponent indexComp = IndexKamiComponent(getAddrByID(comps, IndexKamiCompID));
+    uint256[] memory orders = LibEntityType.queryWithValue(
+      comps, "KAMI_LISTING", IComponent(address(indexComp)), abi.encode(kamiIndex)
+    );
+    for (uint256 i; i < orders.length; i++) {
+      uint256 accID = getOwner(comps, orders[i]);
+      cancelListing(comps, orders[i]);
+      emitCancel(world, orders[i], accID);
+      logCancel(comps, accID);
+    }
+  }
+
   /// @notice Cancel an offer or collection offer — no kami/WETH to return
   function cancelOffer(IUintComp comps, uint256 id) internal {
     _markCancelled(comps, id);
