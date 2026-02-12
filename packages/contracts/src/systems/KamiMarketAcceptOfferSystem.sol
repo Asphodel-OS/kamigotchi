@@ -19,7 +19,7 @@ contract KamiMarketAcceptOfferSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 offerID, uint32 kamiIndex) = abi.decode(arguments, (uint256, uint32));
 
-    uint256 sellerAccID = LibAccount.getByOwner(components, msg.sender);
+    uint256 sellerAccID = uint256(uint160(msg.sender));
     LibKamiMarket.verifyEnabled(components);
     LibKamiMarket.verifyActive(components, offerID);
     LibKamiMarket.verifyNotExpired(components, offerID);
@@ -66,7 +66,9 @@ contract KamiMarketAcceptOfferSystem is System {
     // data logging and event emission
     LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, kamiIndex, price);
     LibKamiMarket.logAcceptOffer(components, sellerAccID);
-    LibAccount.updateLastTs(components, sellerAccID);
+    if (LibAccount.isAccount(components, sellerAccID)) {
+      LibAccount.updateLastTs(components, sellerAccID);
+    }
 
     return "";
   }

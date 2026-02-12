@@ -19,7 +19,7 @@ contract KamiMarketCancelSystem is System, AuthRoles {
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256 id = abi.decode(arguments, (uint256));
 
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accID = uint256(uint160(msg.sender));
     LibKamiMarket.verifyActive(components, id);
     LibKamiMarket.verifyOwner(components, id, accID);
 
@@ -49,7 +49,9 @@ contract KamiMarketCancelSystem is System, AuthRoles {
 
     LibKamiMarket.emitCancel(world, id, accID);
     LibKamiMarket.logCancel(components, accID);
-    LibAccount.updateLastTs(components, accID);
+    if (LibAccount.isAccount(components, accID)) {
+      LibAccount.updateLastTs(components, accID);
+    }
   }
 
   /// @param id Order entity ID to cancel

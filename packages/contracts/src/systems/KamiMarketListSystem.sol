@@ -17,7 +17,7 @@ contract KamiMarketListSystem is System {
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint32 kamiIndex, uint256 price, uint256 expiry) = abi.decode(arguments, (uint32, uint256, uint256));
 
-    uint256 accID = LibAccount.getByOwner(components, msg.sender);
+    uint256 accID = uint256(uint160(msg.sender));
     LibKamiMarket.verifyEnabled(components);
     LibKamiMarket.verifyMaxOrders(components, accID);
     LibKamiMarket.verifyKamiExternal(components, kamiIndex);
@@ -35,7 +35,9 @@ contract KamiMarketListSystem is System {
     // data logging and event emission
     LibKamiMarket.emitList(world, id, accID, kamiIndex, price);
     LibKamiMarket.logList(components, accID);
-    LibAccount.updateLastTs(components, accID);
+    if (LibAccount.isAccount(components, accID)) {
+      LibAccount.updateLastTs(components, accID);
+    }
 
     return abi.encode(id);
   }
