@@ -178,11 +178,11 @@ export const Transfer = ({
     setTransferEvents(account.id);
   }, [accountEntity, resetSend, mode]);
 
-  // reset form values when a reset update is triggered (keep recipient)
+  // reset form values when a reset update is triggered
   useEffect(() => {
     if (resetSend) {
       setRows(createInitialRows());
-      // Keep targetAcc as is - don't reset recipient
+      setTargetAcc(null);
       setResetSend(false);
     }
   }, [resetSend]);
