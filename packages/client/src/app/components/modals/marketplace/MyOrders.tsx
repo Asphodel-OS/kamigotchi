@@ -2,7 +2,7 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import { IconListButton } from 'app/components/library';
+import { IconListButton, TextTooltip } from 'app/components/library';
 import { TokenIcons } from 'assets/images/tokens';
 
 export const MyOrders = ({ isVisible }: { isVisible: boolean }) => {
@@ -16,12 +16,14 @@ export const MyOrders = ({ isVisible }: { isVisible: boolean }) => {
   return (
     <Tab isVisible={isVisible}>
       <ButtonWrapper>
-        <IconListButton
-          img={SwapVertIcon as any}
-          text={sortBy}
-          options={sortOptions}
-          radius={0.6}
-        />
+        <TextTooltip text={['Sorting']}>
+          <IconListButton
+            img={SwapVertIcon as any}
+            text={sortBy}
+            options={sortOptions}
+            radius={0.6}
+          />
+        </TextTooltip>
       </ButtonWrapper>
       <Row>
         <Column>
