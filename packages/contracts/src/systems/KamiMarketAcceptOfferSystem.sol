@@ -41,7 +41,12 @@ contract KamiMarketAcceptOfferSystem is System {
         LibKamiMarket.getKamiIndex(components, offerID) == kamiIndex,
         "KamiMarketAccept: kami mismatch"
       );
-      (buyerAddress, price, ) = LibKamiMarket.fillOffer(components, offerID, sellerAccID, msg.sender);
+      (buyerAddress, price, ) = LibKamiMarket.fillOffer(
+        components,
+        offerID,
+        sellerAccID,
+        msg.sender
+      );
     } else if (keccak256(bytes(orderType)) == keccak256(bytes("KAMI_COLLECTION_OFFER"))) {
       (buyerAddress, price) = LibKamiMarket.fillCollectionOffer(
         components,

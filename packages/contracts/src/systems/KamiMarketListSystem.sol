@@ -15,7 +15,10 @@ contract KamiMarketListSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (uint32 kamiIndex, uint256 price, uint256 expiry) = abi.decode(arguments, (uint32, uint256, uint256));
+    (uint32 kamiIndex, uint256 price, uint256 expiry) = abi.decode(
+      arguments,
+      (uint32, uint256, uint256)
+    );
 
     uint256 accID = uint256(uint160(msg.sender));
     LibKamiMarket.verifyEnabled(components);
@@ -45,7 +48,11 @@ contract KamiMarketListSystem is System {
   /// @param kamiIndex Kami token index to list
   /// @param price Listing price in wei (ETH)
   /// @param expiry Expiry timestamp (0 = never)
-  function executeTyped(uint32 kamiIndex, uint256 price, uint256 expiry) public returns (bytes memory) {
+  function executeTyped(
+    uint32 kamiIndex,
+    uint256 price,
+    uint256 expiry
+  ) public returns (bytes memory) {
     return execute(abi.encode(kamiIndex, price, expiry));
   }
 }

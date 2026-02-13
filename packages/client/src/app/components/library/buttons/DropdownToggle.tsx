@@ -1,7 +1,8 @@
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { SvgIconTypeMap } from '@mui/material';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { playClick } from 'utils/sounds';
 import { Popover } from '../poppers';
 import { Tooltip } from '../tooltips';
@@ -14,7 +15,6 @@ interface Option {
   object?: any;
   disabled?: boolean;
 }
-
 export const DropdownToggle = ({
   onClick,
   button,
@@ -24,10 +24,11 @@ export const DropdownToggle = ({
   radius = 0.45,
   simplified,
   limit,
+  clearTrigger,
 }: {
   onClick: ((selected: any[]) => void)[];
   button: {
-    images: string[];
+    images: string[] | (OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & { muiName: string })[];
     tooltips?: string[];
   };
   options: Option[][];
@@ -36,6 +37,7 @@ export const DropdownToggle = ({
   radius?: number;
   simplified?: boolean;
   limit?: number;
+  clearTrigger?: boolean;
 }) => {
   const { images, tooltips } = button;
   const [checked, setChecked] = useState<boolean[]>([]);
@@ -74,6 +76,13 @@ export const DropdownToggle = ({
   useEffect(() => {
     setForceClose(modeOptions.length === 0);
   }, [modeOptions]);
+
+  // reset selection when clearTrigger is toggled externally
+  useEffect(() => {
+    if (clearTrigger !== undefined) {
+      setChecked(Array(modeOptions.length).fill(false));
+    }
+  }, [clearTrigger]);
 
   const toggleOption = (e: React.MouseEvent, index: number) => {
     // prevent popover from closing
@@ -175,7 +184,7 @@ export const DropdownToggle = ({
         forceClose={forceClose}
       >
         <IconButton
-          img={simplified ? FilterListIcon : undefined}
+          img={simplified ? button.images[0] : undefined}
           text={simplified ? undefined : `${checked.filter(Boolean).length} Selected`}
           width={simplified ? 2 : 10}
           onClick={() => {}}
