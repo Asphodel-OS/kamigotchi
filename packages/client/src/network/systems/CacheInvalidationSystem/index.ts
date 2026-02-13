@@ -1,15 +1,10 @@
 import { invalidateTempBonusesCache } from 'app/cache/bonus';
-import { invalidateKamiAfterCast } from 'app/cache/kami';
-import { KamiCast, subscribeToFeed } from 'clients/kamiden';
+import { invalidateKamiAfterCast, invalidateKamiAfterKill } from 'app/cache/kami';
+import { KamiCast, Kill, subscribeToFeed } from 'clients/kamiden';
 import { formatEntityID } from 'engine/utils';
 import { NetworkLayer } from 'network/';
 import { log } from 'utils/logger';
 
-/**
- * Subscribes to the Kamiden KamiCasts feed and invalidates relevant caches
- * whenever ANY player casts an item on a Kami. This replaces manual invalidation
- * in UI components (e.g., CastItemButton) with a centralized, event-driven approach.
- */
 export function setupCacheInvalidationHandler(network: NetworkLayer) {
   const { world } = network;
 
@@ -22,6 +17,26 @@ export function setupCacheInvalidationHandler(network: NetworkLayer) {
       log.debug(`CacheInvalidation: cast on entity ${targetEntity} (item ${cast.itemIndex})`);
       invalidateKamiAfterCast(targetEntity);
       invalidateTempBonusesCache(world, targetEntity);
+    });
+
+    feed.Kills.forEach((kill: Kill) => {
+      const killerID = formatEntityID(kill.KillerId);
+      const victimID = formatEntityID(kill.VictimId);
+
+      const killerEntity = world.entityToIndex.get(killerID);
+      const victimEntity = world.entityToIndex.get(victimID);
+
+      if (killerEntity !== undefined) {
+        log.debug(`CacheInvalidation: killer ${killerEntity}`);
+        invalidateKamiAfterKill(killerEntity);
+        invalidateTempBonusesCache(world, killerEntity);
+      }
+
+      if (victimEntity !== undefined) {
+        log.debug(`CacheInvalidation: victim ${victimEntity}`);
+        invalidateKamiAfterKill(victimEntity);
+        invalidateTempBonusesCache(world, victimEntity);
+      }
     });
   });
 }
