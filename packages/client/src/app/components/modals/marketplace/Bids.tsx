@@ -146,7 +146,7 @@ const EthIcon = styled.img`
 const BottomSection = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
-  flex: 0 0 45%;
+  flex: 0 0 50%;
   overflow: auto;
   border-top: 0.15vw solid black;
   width: 100%;
@@ -158,6 +158,9 @@ const Header = styled.div`
   background-color: rgb(221, 221, 221);
   padding: 0.8vw;
   font-size: 1.2vw;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 `;
 
 const HeaderTitle = styled.span`
