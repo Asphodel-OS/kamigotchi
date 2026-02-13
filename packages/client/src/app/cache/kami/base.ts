@@ -32,6 +32,50 @@ const StatsUpdateTs = new Map<EntityIndex, number>(); // last update of the stat
 const TimeUpdateTs = new Map<EntityIndex, number>(); // last update of the time sub-object (s)
 const TraitsUpdateTs = new Map<EntityIndex, number>(); // last update of the traits sub-object (s)
 
+// ── Individual invalidation functions ──
+
+export const invalidateKamiBonuses = (entity: EntityIndex) => {
+  BonusesUpdateTs.delete(entity);
+};
+
+export const invalidateKamiStats = (entity: EntityIndex) => {
+  StatsUpdateTs.delete(entity);
+};
+
+export const invalidateKamiTime = (entity: EntityIndex) => {
+  TimeUpdateTs.delete(entity);
+};
+
+export const invalidateKamiLive = (entity: EntityIndex) => {
+  LiveUpdateTs.delete(entity);
+};
+
+export const invalidateKamiHarvest = (entity: EntityIndex) => {
+  HarvestUpdateTs.delete(entity);
+};
+
+export const invalidateKamiFlags = (entity: EntityIndex) => {
+  FlagsUpdateTs.delete(entity);
+};
+
+// ── Composite invalidation functions ──
+
+/** After a cast event: bonuses + stats + time + live */
+export const invalidateKamiAfterCast = (entity: EntityIndex) => {
+  BonusesUpdateTs.delete(entity);
+  StatsUpdateTs.delete(entity);
+  TimeUpdateTs.delete(entity);
+  LiveUpdateTs.delete(entity);
+};
+
+/** After a kill/liquidation event: live + bonuses + stats + harvest */
+export const invalidateKamiAfterKill = (entity: EntityIndex) => {
+  LiveUpdateTs.delete(entity);
+  BonusesUpdateTs.delete(entity);
+  StatsUpdateTs.delete(entity);
+  HarvestUpdateTs.delete(entity);
+};
+
 // retrieve a kami's most recent data and update it on the cache
 export const process = (world: World, components: Components, entity: EntityIndex) => {
   const kami = getKami(world, components, entity);
