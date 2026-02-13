@@ -87,17 +87,23 @@ export const CreateOrder = ({
   };
 
   const handleCreate = () => {
+    const getExpiryTs = () => {
+      if (expiration === 0) return 0;
+      const now = Math.floor(Date.now() / 1000);
+      return now + expiration * 60 * 60;
+    };
+
     if (orderType === 'Sell') {
       if (!selectedKami[0] || !price) return;
-      createSellOrder(selectedKami[0].index, price, expiration);
+      createSellOrder(selectedKami[0].index, price, getExpiryTs());
     }
     if (orderType === 'Buy') {
       if (!price) return;
       if (selectedBuyKami) {
-        createBuyKamiOrder(selectedBuyKami.index, price, expiration);
+        createBuyKamiOrder(selectedBuyKami.index, price, getExpiryTs());
       } else {
         if (!quantity) return;
-        createBuyOrder(price, Number(quantity), expiration);
+        createBuyOrder(price, Number(quantity), getExpiryTs());
       }
     }
   };
