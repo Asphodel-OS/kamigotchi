@@ -18,6 +18,7 @@ export const Bids = ({
   onCloseCreateOrder: () => void;
   utils: {
     getAccountKamis: () => Kami[];
+    getExternalKamis: () => Kami[];
   };
 }) => {
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
@@ -32,7 +33,7 @@ export const Bids = ({
   }, [showCreateOrder]);
 
   const restingKamis = useMemo(() => {
-    return utils.getAccountKamis().filter((kami) => kami.state === '721_EXTERNAL');
+    return utils.getExternalKamis();
   }, [utils]);
 
   const toggleKami = (index: number) => {
