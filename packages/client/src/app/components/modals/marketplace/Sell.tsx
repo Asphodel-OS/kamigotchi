@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
@@ -23,6 +24,7 @@ export const Sell = ({
   setPrice,
   expiration,
   setExpiration,
+  hasExternalKamis,
 }: {
   isVisible: boolean;
   kamiOptions: { text: string; object: any; img: string }[];
@@ -33,6 +35,7 @@ export const Sell = ({
   setPrice: (val: string) => void;
   expiration: number;
   setExpiration: (val: number) => void;
+  hasExternalKamis: boolean;
 }) => {
   const [clearTrigger, setClearTrigger] = useState(false);
 
@@ -47,18 +50,24 @@ export const Sell = ({
         <Row>
           <Section>
             <SubHeader>Kami</SubHeader>
-            <DropdownToggle
-              limit={1}
-              options={[kamiOptions]}
-              onClick={[handleKamiSelect]}
-              button={{
-                images: [MenuIcons.kami],
-                tooltips: ['Select Kami'],
-              }}
-              radius={0.6}
-              simplified
-              clearTrigger={clearTrigger}
-            />
+            <TextTooltip
+              text={hasExternalKamis ? [] : [`You don't have out of world Kami`]}
+              alignText='center'
+            >
+              <DropdownToggle
+                limit={1}
+                options={[kamiOptions]}
+                onClick={[handleKamiSelect]}
+                disabled={[!hasExternalKamis]}
+                button={{
+                  images: [MenuIcons.kami],
+                  tooltips: ['Select Kami'],
+                }}
+                radius={0.6}
+                simplified
+                clearTrigger={clearTrigger}
+              />
+            </TextTooltip>
             {selectedKami[0].id !== NullKami.id && (
               <KamiImage
                 src={selectedKami[0].image}
