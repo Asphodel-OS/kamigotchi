@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { isResting } from 'app/cache/kami';
-import { IconButton } from 'app/components/library';
+import { EmptyText, IconButton } from 'app/components/library';
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
 
@@ -33,7 +32,7 @@ export const Bids = ({
   }, [showCreateOrder]);
 
   const restingKamis = useMemo(() => {
-    return utils.getAccountKamis().filter((kami) => isResting(kami));
+    return utils.getAccountKamis().filter((kami) => kami.state === '721_EXTERNAL');
   }, [utils]);
 
   const toggleKami = (index: number) => {
@@ -80,6 +79,9 @@ export const Bids = ({
           <IconButton text='X' onClick={() => setShowSelectKami(false)} scale={1.5} />
         </Header>
         <KamiGrid>
+          {restingKamis.length === 0 && (
+            <EmptyText text={[`You don't have out of world Kami`]} size={0.9} />
+          )}
           {restingKamis.map((kami) => (
             <KamiSlot key={kami.index} onClick={() => toggleKami(kami.index)}>
               <KamiImage src={kami.image} alt={kami.name} />
@@ -120,7 +122,7 @@ const Row = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   width: 100%;
-`;;
+`;
 
 const Column = styled.div`
   display: flex;
@@ -134,7 +136,7 @@ const ColumnHeader = styled.div`
   justify-content: center;
   padding: 0.8vw;
   font-size: 1.1vw;
-`;;
+`;
 
 const EthIcon = styled.img`
   width: 1.4vw;

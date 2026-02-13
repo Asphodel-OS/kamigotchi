@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { isResting } from 'app/cache/kami';
 import { IconButton } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { BigNumberish } from 'ethers';
@@ -54,7 +53,10 @@ export const CreateOrder = ({
   const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
   const allKamis = useMemo(() => utils.getAllKamis(), [utils]);
 
-  const restingKamis = useMemo(() => accountKamis.filter((kami) => isResting(kami)), [accountKamis]);
+  const restingKamis = useMemo(
+    () => accountKamis.filter((kami) => kami.state === '721_EXTERNAL'),
+    [accountKamis]
+  );
 
   const kamiOptions = useMemo(
     () => restingKamis.map((k) => ({ text: k.name, object: k, img: k.image })),
@@ -141,6 +143,7 @@ export const CreateOrder = ({
         setPrice={setPrice}
         expiration={expiration}
         setExpiration={setExpiration}
+        hasExternalKamis={restingKamis.length > 0}
       />
       <Buy
         isVisible={orderType === 'Buy'}
