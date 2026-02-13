@@ -19,12 +19,15 @@ export const DropdownToggle = ({
   onClick,
   button,
   options,
+  selected,
   disabled = [],
   balance,
   radius = 0.45,
   simplified,
   limit,
   clearTrigger,
+  trigger,
+  hideActionButton,
 }: {
   onClick: ((selected: any[]) => void)[];
   button: {
@@ -32,12 +35,15 @@ export const DropdownToggle = ({
     tooltips?: string[];
   };
   options: Option[][];
+  selected?: any[][];
   disabled?: boolean[];
   balance?: number;
   radius?: number;
   simplified?: boolean;
   limit?: number;
   clearTrigger?: boolean;
+  trigger?: React.ReactNode;
+  hideActionButton?: boolean;
 }) => {
   const { images, tooltips } = button;
   const [checked, setChecked] = useState<boolean[]>([]);
@@ -53,6 +59,14 @@ export const DropdownToggle = ({
   // necessary to properly create the checked array,
   // this way it waits for the options to be populated
   useEffect(() => {
+    if (selected?.[currentMode]) {
+      const selectedForMode = selected[currentMode];
+      const nextChecked = modeOptions.map((option) =>
+        selectedForMode.includes(option.object ?? option.text)
+      );
+      setChecked(nextChecked);
+      return;
+    }
     if (checked.length !== modeOptions.length) {
       const initialChecked = Array(modeOptions.length).fill(false);
       setChecked(initialChecked);
@@ -65,7 +79,7 @@ export const DropdownToggle = ({
         }, 1000);
       }
     }
-  }, [modeOptions]);
+  }, [modeOptions, selected, currentMode]);
 
   useEffect(() => {
     setChecked([]);
@@ -99,7 +113,12 @@ export const DropdownToggle = ({
         // !prev[index] is neccesary so the player can decrease
         // the number of selected options when the limit is reached
         if (!prev[index] && limit && selected >= limit) return prev;
-        return prev.map((val, i) => (i === index ? !val : val));
+        const next = prev.map((val, i) => (i === index ? !val : val));
+        if (hideActionButton) {
+          const selectedObjects = modeOptions.filter((_, i) => next[i]).map((opt) => opt.object);
+          onClick[currentMode]?.(selectedObjects);
+        }
+        return next;
       });
     }
   };
@@ -116,7 +135,12 @@ export const DropdownToggle = ({
     // check if all are selected
     const allSelected = selected >= selectLimit;
     // If all selected deselect all, else select up to the limit
-    setChecked(checked.map((_, i) => !allSelected && i < selectLimit));
+    const next = checked.map((_, i) => !allSelected && i < selectLimit);
+    setChecked(next);
+    if (hideActionButton) {
+      const selectedObjects = modeOptions.filter((_, i) => next[i]).map((opt) => opt.object);
+      onClick[currentMode]?.(selectedObjects);
+    }
   };
 
   const handleTriggerClick = () => {
@@ -183,20 +207,22 @@ export const DropdownToggle = ({
         disabled={modeDisabled}
         forceClose={forceClose}
       >
-        <IconButton
-          img={simplified ? button.images[0] : undefined}
-          text={simplified ? undefined : `${checked.filter(Boolean).length} Selected`}
-          width={simplified ? 2 : 10}
-          onClick={() => {}}
-          disabled={modeDisabled}
-          balance={balance}
-          corner={!balance}
-          flatten={simplified ? undefined : 'right'}
-          radius={radius ?? 0.45}
-        />
+        {trigger ?? (
+          <IconButton
+            img={simplified ? button.images[0] : undefined}
+            text={simplified ? undefined : `${checked.filter(Boolean).length} Selected`}
+            width={simplified ? 2 : 10}
+            onClick={() => {}}
+            disabled={modeDisabled}
+            balance={balance}
+            corner={!balance}
+            flatten={simplified ? undefined : 'right'}
+            radius={radius ?? 0.45}
+          />
+        )}
       </Popover>
       {options.length > 1 && <VerticalToggle setModeSelected={setModeSelected} />}
-      {!simplified && (
+      {!simplified && !hideActionButton && (
         <Tooltip content={tooltips?.[currentMode]} isDisabled={!tooltips?.[currentMode]}>
           <IconButton
             img={images[currentMode]}

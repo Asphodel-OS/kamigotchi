@@ -1,39 +1,10 @@
 import { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, Popover, Slider } from 'app/components/library';
+import { IconButton, Slider, TextTooltip } from 'app/components/library';
+import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { Trait, TraitType } from 'network/shapes/Trait';
-
-const FilterDropdown = ({
-  icon,
-  options,
-  selectedSet,
-  onToggle,
-}: {
-  icon: string;
-  options: string[];
-  selectedSet: Set<string>;
-  onToggle: (item: string) => void;
-}) => {
-  const count = selectedSet.size;
-  return (
-    <Popover
-      closeOnClick={false}
-      content={options.map((opt) => (
-        <DropdownOption key={opt} onMouseDown={() => onToggle(opt)}>
-          <DropdownCheckbox type='checkbox' checked={selectedSet.has(opt)} readOnly />
-          <DropdownLabel>{opt}</DropdownLabel>
-        </DropdownOption>
-      ))}
-    >
-      <DropdownButton>
-        <TraitIcon src={icon} />
-        {count > 0 && ` (${count})`} ▾
-      </DropdownButton>
-    </Popover>
-  );
-};
 
 export const FilterBy = ({
   isVisible,
@@ -45,11 +16,11 @@ export const FilterBy = ({
   utils: { getRegistryTraits: (specificType?: TraitType[]) => Trait[] };
 }) => {
   const [selected, setSelected] = useState<Record<string, Set<string>>>({
-    Head: new Set(),
-    Hand: new Set(),
-    Body: new Set(),
+    Face: new Set(),
+    Hands: new Set(),
+    'Body Type': new Set(),
+    'Body Color': new Set(),
     Background: new Set(),
-    Color: new Set(),
   });
 
   const statTypes = ['Health', 'Power', 'Violence', 'Harmony', 'Slots'] as const;
@@ -60,23 +31,18 @@ export const FilterBy = ({
 
   const columns = useMemo(
     () => [
-      { icon: TraitIcons.face, key: 'Head', traits: utils.getRegistryTraits(['Face']) },
-      { icon: TraitIcons.hand, key: 'Hand', traits: utils.getRegistryTraits(['Hand']) },
-      { icon: TraitIcons.body, key: 'Body', traits: utils.getRegistryTraits(['Body']) },
-      { icon: TraitIcons.color, key: 'Color', traits: utils.getRegistryTraits(['Color']) },
-      { icon: TraitIcons.background, key: 'Background', traits: utils.getRegistryTraits(['Background']) },
+      { icon: TraitIcons.face, key: 'Face', traits: utils.getRegistryTraits(['Face']) },
+      { icon: TraitIcons.hand, key: 'Hands', traits: utils.getRegistryTraits(['Hand']) },
+      { icon: TraitIcons.body, key: 'Body Type', traits: utils.getRegistryTraits(['Body']) },
+      { icon: TraitIcons.color, key: 'Body Color', traits: utils.getRegistryTraits(['Color']) },
+      {
+        icon: TraitIcons.background,
+        key: 'Background',
+        traits: utils.getRegistryTraits(['Background']),
+      },
     ],
     []
   );
-
-  const toggleTrait = (column: string, traitName: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev[column]);
-      if (next.has(traitName)) next.delete(traitName);
-      else next.add(traitName);
-      return { ...prev, [column]: next };
-    });
-  };
 
   const setStatValue = (stat: string, value: number) => {
     setStatValues((prev) => ({ ...prev, [stat]: value }));
@@ -85,11 +51,11 @@ export const FilterBy = ({
   const handleFilter = () => {};
   const handleClear = () => {
     setSelected({
-      Head: new Set(),
-      Hand: new Set(),
-      Body: new Set(),
+      Face: new Set(),
+      Hands: new Set(),
+      'Body Type': new Set(),
+      'Body Color': new Set(),
       Background: new Set(),
-      Color: new Set(),
     });
     setStatValues(Object.fromEntries(statTypes.map((s) => [s, 10])));
   };
@@ -104,13 +70,31 @@ export const FilterBy = ({
         <SectionLabel>Traits</SectionLabel>
         <DropdownRow>
           {columns.map((col) => (
-            <FilterDropdown
-              key={col.key}
-              icon={col.icon}
-              options={col.traits.map((t) => t.name)}
-              selectedSet={selected[col.key]}
-              onToggle={(name) => toggleTrait(col.key, name)}
-            />
+            <TextTooltip key={col.key} text={[col.key]}>
+              <DropdownToggle
+                options={[
+                  col.traits.map((t) => ({
+                    text: t.name,
+                    object: t.name,
+                  })),
+                ]}
+                selected={[Array.from(selected[col.key])]}
+                onClick={[
+                  (values) => {
+                    setSelected((prev) => ({ ...prev, [col.key]: new Set(values) }));
+                  },
+                ]}
+                button={{ images: [col.icon] }}
+                radius={0.4}
+                hideActionButton
+                trigger={
+                  <DropdownButton>
+                    <TraitIcon src={col.icon} />
+                    {selected[col.key].size > 0 && ` (${selected[col.key].size})`} ▾
+                  </DropdownButton>
+                }
+              />
+            </TextTooltip>
           ))}
         </DropdownRow>
         <SectionLabel>Stats</SectionLabel>
@@ -196,26 +180,6 @@ const DropdownButton = styled.div`
 const TraitIcon = styled.img`
   width: 1.3vw;
   height: 1.3vw;
-`;
-
-const DropdownOption = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.3vw;
-  padding: 0.3vw 0.5vw;
-  cursor: pointer;
-`;
-
-const DropdownCheckbox = styled.input`
-  width: 0.65vw;
-  height: 0.65vw;
-  cursor: pointer;
-  accent-color: rgb(203, 186, 61);
-  pointer-events: none;
-`;
-
-const DropdownLabel = styled.span`
-  font-size: 0.65vw;
 `;
 
 const SlidersRow = styled.div`
