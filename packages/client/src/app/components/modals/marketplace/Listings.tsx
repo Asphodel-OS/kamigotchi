@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
-import { IconButton, IconListButton } from 'app/components/library';
+import { IconButton, IconListButton, TextTooltip } from 'app/components/library';
 
 export const Listings = ({
   isVisible,
@@ -19,9 +19,15 @@ export const Listings = ({
   return (
     <Tab isVisible={isVisible}>
       <ButtonWrapper>
-        <IconListButton img={SwapVertIcon as any} options={sortOptions} radius={0.6} />
-        <IconButton img={FilterListIcon} onClick={onOpenFilter} />
-        <IconButton img={ShoppingCartIcon} onClick={() => {}} />
+        <TextTooltip text={['Sorting']}>
+          <IconListButton img={SwapVertIcon as any} options={sortOptions} radius={0.6} />
+        </TextTooltip>
+        <TextTooltip text={['Filters']}>
+          <IconButton img={FilterListIcon} onClick={onOpenFilter} />
+        </TextTooltip>
+        <TextTooltip text={['Cart']}>
+          <IconButton img={ShoppingCartIcon} onClick={() => {}} />
+        </TextTooltip>
       </ButtonWrapper>
       <Placeholder>Listings coming soon...</Placeholder>
     </Tab>
