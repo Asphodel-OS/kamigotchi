@@ -8,6 +8,7 @@ import { useNetwork } from 'app/stores';
 import VendIcon from 'assets/images/rooms/18_cave-crossroads/vend.png';
 import { BigNumberish } from 'ethers';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import { getAllKamis as _getAllKamis } from 'network/shapes/Kami';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
 import { Bids } from './Bids';
 import { CreateOrder } from './CreateOrder';
@@ -30,6 +31,7 @@ export const MarketPlaceModal: UIComponent = {
       return {
         utils: {
           getAccountKamis: () => _getAccountKamis(world, components, accountEntity),
+          getAllKamis: () => _getAllKamis(world, components),
           getRegistryTraits: (specificType?: TraitType[]) =>
             _getRegistryTraits(world, components, specificType),
         },
@@ -60,6 +62,18 @@ export const MarketPlaceModal: UIComponent = {
         params: [price, quantity, expiry],
         description: `Creating buy order for ${quantity} Kami`,
         execute: async () => api.account.kamiMarket.offerCollection(price, quantity, expiry),
+      });
+    };
+
+    const createBuyKamiOrder = (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      actions.add({
+        action: 'KamiMarketOffer',
+        params: [kamiIndex, price, expiry],
+        description: `Creating buy offer for Kami ${kamiIndex}`,
+        execute: async () => api.account.kamiMarket.offer(kamiIndex, price, expiry),
       });
     };
 
@@ -100,6 +114,7 @@ export const MarketPlaceModal: UIComponent = {
           utils={utils}
           createSellOrder={createSellOrder}
           createBuyOrder={createBuyOrder}
+          createBuyKamiOrder={createBuyKamiOrder}
         />
         <FilterBy isVisible={showFilter} onClose={closeFilter} utils={utils} />
       </ModalWrapper>

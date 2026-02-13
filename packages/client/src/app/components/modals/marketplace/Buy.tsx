@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 
+import { IconListButton, IconListButtonOption } from 'app/components/library';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
+import { Kami } from 'network/shapes/Kami';
 
 const expirationOptions = [
   { value: 1, label: '1 Hour' },
@@ -18,6 +20,8 @@ export const Buy = ({
   setPrice,
   expiration,
   setExpiration,
+  kamiOptions,
+  selectedBuyKami,
 }: {
   isVisible: boolean;
   quantity: string;
@@ -26,25 +30,32 @@ export const Buy = ({
   setPrice: (val: string) => void;
   expiration: number;
   setExpiration: (val: number) => void;
+  kamiOptions: IconListButtonOption[];
+  selectedBuyKami: Kami | null;
 }) => (
   <Conditional isVisible={isVisible}>
     <Body>
       <Row>
         <Section>
-          <SubHeader>Quantity</SubHeader>
-          <Price>
-            <PriceInput
-              type='text'
-              inputMode='numeric'
-              placeholder='0'
-              value={quantity}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || /^\d+$/.test(val)) setQuantity(val);
-              }}
-            />
-            <KamiIcon src={MenuIcons.kami} alt='Kami' />
-          </Price>
+          <SubHeader>Kami</SubHeader>
+          <KamiPickerRow>
+            <Price>
+              <PriceInput
+                type='text'
+                inputMode='numeric'
+                placeholder='0'
+                value={quantity}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || /^\d+$/.test(val)) setQuantity(val);
+                }}
+              />
+              <KamiIcon src={MenuIcons.kami} alt='Kami' />
+            </Price>
+            <Divider>or</Divider>
+            <IconListButton img={MenuIcons.kami} options={kamiOptions} searchable />
+          </KamiPickerRow>
+          {selectedBuyKami && <KamiImage src={selectedBuyKami.image} alt={selectedBuyKami.name} />}
         </Section>
         <Section>
           <SubHeader>Price</SubHeader>
@@ -164,4 +175,25 @@ const RadioLabel = styled.label`
     accent-color: rgb(203, 186, 61);
     cursor: pointer;
   }
+`;
+
+const Divider = styled.div`
+  font-size: 0.9vw;
+  text-align: center;
+  color: #888;
+  margin: 0 0.2vw;
+`;
+
+const KamiPickerRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const KamiImage = styled.img`
+  height: 6vw;
+  width: 6vw;
+  border: solid 0.15vw black;
+  border-radius: 0.6vw;
+  image-rendering: pixelated;
 `;

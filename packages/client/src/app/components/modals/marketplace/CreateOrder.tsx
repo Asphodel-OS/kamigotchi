@@ -19,14 +19,17 @@ export const CreateOrder = ({
   utils,
   createSellOrder,
   createBuyOrder,
+  createBuyKamiOrder,
 }: {
   isVisible: boolean;
   onClose: () => void;
   utils: {
     getAccountKamis: () => Kami[];
+    getAllKamis: () => Kami[];
   };
   createSellOrder: (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => void;
   createBuyOrder: (price: BigNumberish, quantity: number, expiry: BigNumberish) => void;
+  createBuyKamiOrder: (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => void;
 }) => {
   const [orderType, setOrderType] = useState<OrderType>('Sell');
   const [price, setPrice] = useState('');
@@ -48,13 +51,34 @@ export const CreateOrder = ({
     playClick();
   };
 
-  const restingKamis = useMemo(() => {
-    return utils.getAccountKamis().filter((kami) => isResting(kami));
-  }, [utils]);
+  const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
+  const allKamis = useMemo(() => utils.getAllKamis(), [utils]);
+
+  const restingKamis = useMemo(() => accountKamis.filter((kami) => isResting(kami)), [accountKamis]);
 
   const kamiOptions = useMemo(
     () => restingKamis.map((k) => ({ text: k.name, object: k, img: k.image })),
     [restingKamis]
+  );
+
+  const [selectedBuyKami, setSelectedBuyKami] = useState<Kami | null>(null);
+
+  const accountKamiIds = useMemo(() => new Set(accountKamis.map((k) => k.id)), [accountKamis]);
+  const unownedKamis = useMemo(
+    () => allKamis.filter((k) => !accountKamiIds.has(k.id)),
+    [allKamis, accountKamiIds]
+  );
+  const allKamiOptions = useMemo(
+    () =>
+      unownedKamis.map((k) => ({
+        text: k.name,
+        image: k.image,
+        onClick: () => {
+          setSelectedBuyKami(k);
+          setQuantity('');
+        },
+      })),
+    [unownedKamis]
   );
 
   const handleKamiSelect = (selected: Kami[]) => {
@@ -67,8 +91,13 @@ export const CreateOrder = ({
       createSellOrder(selectedKami[0].index, price, expiration);
     }
     if (orderType === 'Buy') {
-      if (!quantity || !price) return;
-      createBuyOrder(price, Number(quantity), expiration);
+      if (!price) return;
+      if (selectedBuyKami) {
+        createBuyKamiOrder(selectedBuyKami.index, price, expiration);
+      } else {
+        if (!quantity) return;
+        createBuyOrder(price, Number(quantity), expiration);
+      }
     }
   };
 
@@ -76,6 +105,7 @@ export const CreateOrder = ({
     setPrice('');
     setQuantity('');
     setSelectedKami([NullKami]);
+    setSelectedBuyKami(null);
     setExpiration(1);
   };
 
@@ -111,11 +141,16 @@ export const CreateOrder = ({
       <Buy
         isVisible={orderType === 'Buy'}
         quantity={quantity}
-        setQuantity={setQuantity}
+        setQuantity={(val) => {
+          setQuantity(val);
+          if (val) setSelectedBuyKami(null);
+        }}
         price={price}
         setPrice={setPrice}
         expiration={expiration}
         setExpiration={setExpiration}
+        kamiOptions={allKamiOptions}
+        selectedBuyKami={selectedBuyKami}
       />
       <Actions>
         <IconButton text='Create' onClick={handleCreate} />
