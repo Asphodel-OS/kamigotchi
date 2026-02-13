@@ -39,6 +39,13 @@ contract _ListingRegistrySystem is System, AuthRoles {
     LibListingRegistry.remove(components, id);
   }
 
+  // reset the GDA tracking values (balance, timeStart) on a listing
+  function reset(uint32 npcIndex, uint32 itemIndex) public onlyAdmin(components) {
+    uint256 id = LibListingRegistry.get(components, npcIndex, itemIndex);
+    require(id != 0, "Listing does not exist");
+    LibListingRegistry.reset(components, id);
+  }
+
   /////////////////
   // PRICING
 

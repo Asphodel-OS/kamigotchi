@@ -84,6 +84,12 @@ library LibAuctionRegistry {
     for (uint256 i; i < reqs.length; i++) LibConditional.remove(comps, reqs[i]);
   }
 
+  // reset the GDA tracking values (balance, timeStart) on an auction
+  function reset(IUintComp comps, uint256 id) internal {
+    BalanceComponent(getAddrByID(comps, BalanceCompID)).set(id, 0);
+    TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
+  }
+
   // create a requirement for the auction
   function addRequirement(
     IWorld world,

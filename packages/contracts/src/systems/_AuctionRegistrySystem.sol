@@ -57,6 +57,13 @@ contract _AuctionRegistrySystem is System, AuthRoles {
     LibAuctionRegistry.remove(components, id);
   }
 
+  // reset the GDA tracking values (balance, timeStart) on an auction
+  function reset(uint32 itemIndex) public onlyAdmin(components) {
+    uint256 id = LibAuctionRegistry.get(components, itemIndex);
+    require(id != 0, "Auction does not exist");
+    LibAuctionRegistry.reset(components, id);
+  }
+
   // add a requirement to participate in an auction
   function addRequirement(
     uint32 itemIndex, // index of the item being auctioned
