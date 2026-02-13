@@ -53,6 +53,7 @@ export interface Modals {
   kami: boolean;
   leaderboard: boolean;
   lootBox: boolean;
+  marketplace: boolean;
   templeOfTheWheel: boolean;
   map: boolean;
   merchant: boolean;
@@ -84,6 +85,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   kami: isOn,
   leaderboard: isOn,
   lootBox: isOn,
+  marketplace: isOn,
   templeOfTheWheel: isOn,
   map: isOn,
   questDialogue: isOn,
@@ -137,6 +139,7 @@ export const useVisibility = create<State & Actions>((set) => {
       kami: false,
       leaderboard: false,
       lootBox: false,
+      marketplace: false,
       templeOfTheWheel: false,
       map: false,
       merchant: false,

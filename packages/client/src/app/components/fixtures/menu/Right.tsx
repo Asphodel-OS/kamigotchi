@@ -5,6 +5,7 @@ import {
   ChatMenuButton,
   CraftMenuButton,
   InventoryMenuButton,
+  MarketplaceMenuButton,
   MoreMenuButton,
   QuestMenuButton,
 } from './buttons';
@@ -17,6 +18,7 @@ export const RightMenuFixture: UIComponent = {
       <>
         <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
           <CraftMenuButton />
+          <MarketplaceMenuButton />
           <InventoryMenuButton />
           <QuestMenuButton />
           <ChatMenuButton />
