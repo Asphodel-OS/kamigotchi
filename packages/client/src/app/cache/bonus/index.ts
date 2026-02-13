@@ -3,6 +3,10 @@ export {
   getRegistry as getBonusRegistry,
   process as processBonus,
 } from './base';
-export { getForEndType as getBonusesForEndType, getTemp as getTempBonuses } from './getters';
+export {
+  getForEndType as getBonusesForEndType,
+  getTemp as getTempBonuses,
+  invalidateTempBonusesCache,
+} from './getters';
 
 export type { Bonus, BonusInstance } from 'network/shapes/Bonus';
