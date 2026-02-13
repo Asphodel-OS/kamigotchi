@@ -128,7 +128,7 @@ export const Toolbar = ({
     }
 
     setDisplayedKamis(sorted);
-  }, [isModalOpen, wildKamis.length, kamis.length, view, sort, tick]);
+  }, [isModalOpen, wildKamis.length, kamis.length, view, sort]);
 
   // updates the list of action options based on state updates
   useEffect(() => {
