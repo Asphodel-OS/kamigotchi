@@ -45,6 +45,7 @@ export const Buy = ({
                 inputMode='numeric'
                 placeholder='0'
                 value={quantity}
+                disabled={!!selectedBuyKami}
                 onChange={(e) => {
                   const val = e.target.value;
                   if (val === '' || /^\d+$/.test(val)) setQuantity(val);
@@ -53,7 +54,12 @@ export const Buy = ({
               <KamiIcon src={MenuIcons.kami} alt='Kami' />
             </Price>
             <Divider>or</Divider>
-            <IconListButton img={MenuIcons.kami} options={kamiOptions} searchable />
+            <IconListButton
+              img={MenuIcons.kami}
+              options={kamiOptions}
+              searchable
+              disabled={!!quantity}
+            />
           </KamiPickerRow>
           {selectedBuyKami && <KamiImage src={selectedBuyKami.image} alt={selectedBuyKami.name} />}
         </Section>
@@ -144,6 +150,12 @@ const PriceInput = styled.input`
   border-radius: 0.6vw;
   outline: none;
   background: white;
+
+  &:disabled {
+    background: #e9e9e9;
+    color: #666;
+    cursor: not-allowed;
+  }
 `;
 
 const EthIcon = styled.img`
