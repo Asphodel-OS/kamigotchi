@@ -115,6 +115,10 @@ export const CreateOrder = ({
     if (orderType === 'Buy') setOrderType('Sell');
   };
 
+  const isSellComplete = selectedKami[0]?.id !== NullKami.id && !!price;
+  const isBuyComplete = !!price && (!!selectedBuyKami || !!quantity);
+  const isCreateDisabled = orderType === 'Sell' ? !isSellComplete : !isBuyComplete;
+
   return (
     <Container isVisible={isVisible}>
       <Header>
@@ -153,7 +157,7 @@ export const CreateOrder = ({
         selectedBuyKami={selectedBuyKami}
       />
       <Actions>
-        <IconButton text='Create' onClick={handleCreate} />
+        <IconButton text='Create' onClick={handleCreate} disabled={isCreateDisabled} />
         <IconButton text='Clear' onClick={handleClear} />
       </Actions>
     </Container>
