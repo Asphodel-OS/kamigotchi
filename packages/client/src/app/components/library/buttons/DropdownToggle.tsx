@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { SvgIconTypeMap } from '@mui/material';
@@ -56,22 +56,21 @@ export const DropdownToggle = ({
   const modeOptions = options[currentMode] ?? [];
   const modeDisabled = disabled?.[currentMode] ?? false;
 
-  // necessary to properly create the checked array,
-  // this way it waits for the options to be populated
+  // sync checked state with options/selected
   useEffect(() => {
     if (selected?.[currentMode]) {
       const selectedForMode = selected[currentMode];
-      const nextChecked = modeOptions.map((option) =>
-        selectedForMode.includes(option.object ?? option.text)
+      setChecked(
+        modeOptions.map((option) => selectedForMode.includes(option.object ?? option.text))
       );
-      setChecked(nextChecked);
       return;
     }
+
     if (checked.length !== modeOptions.length) {
       const initialChecked = Array(modeOptions.length).fill(false);
       setChecked(initialChecked);
-      // if simplified,  first option is selected by default
-      if (simplified) {
+      // if simplified, first option is selected by default (delayed for UI parity)
+      if (simplified && modeOptions.length > 0) {
         setTimeout(() => {
           initialChecked[0] = true;
           setChecked(initialChecked);
@@ -79,11 +78,7 @@ export const DropdownToggle = ({
         }, 1000);
       }
     }
-  }, [modeOptions, selected, currentMode]);
-
-  useEffect(() => {
-    setChecked([]);
-  }, [currentMode]);
+  }, [modeOptions, selected, currentMode, checked.length, simplified]);
 
   // force close the popover if there are no options left
   // and the checklist is in the process of being emptied
@@ -97,6 +92,13 @@ export const DropdownToggle = ({
       setChecked(Array(modeOptions.length).fill(false));
     }
   }, [clearTrigger]);
+
+  const maxSelectable = useMemo(
+    () => Math.min(limit ?? modeOptions.length, modeOptions.length),
+    [limit, modeOptions.length]
+  );
+  const selectedCount = useMemo(() => checked.filter(Boolean).length, [checked]);
+  const allSelected = useMemo(() => selectedCount >= maxSelectable, [selectedCount, maxSelectable]);
 
   const toggleOption = (e: React.MouseEvent, index: number) => {
     // prevent popover from closing
@@ -128,14 +130,8 @@ export const DropdownToggle = ({
 
   const toggleAll = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent popover from closing
-    // currently selected
-    const selected = checked.filter(Boolean).length;
-    // limit
-    const selectLimit = Math.min(limit ?? modeOptions.length, modeOptions.length);
-    // check if all are selected
-    const allSelected = selected >= selectLimit;
     // If all selected deselect all, else select up to the limit
-    const next = checked.map((_, i) => !allSelected && i < selectLimit);
+    const next = checked.map((_, i) => !allSelected && i < maxSelectable);
     setChecked(next);
     if (hideActionButton) {
       const selectedObjects = modeOptions.filter((_, i) => next[i]).map((opt) => opt.object);
@@ -160,10 +156,6 @@ export const DropdownToggle = ({
     isSelectAll: boolean
   ) => {
     const imageSrc = img ?? object?.image;
-    const selected = checked.filter(Boolean).length;
-
-    const maxSelectable = Math.min(limit ?? modeOptions.length, modeOptions.length);
-    const allSelected = selected >= maxSelectable;
     const isChecked = isSelectAll ? allSelected : !!checked[i!];
 
     return (
@@ -182,7 +174,7 @@ export const DropdownToggle = ({
           />
           <span>
             {text}
-            {isSelectAll && limit && selected >= limit ? ` (max ${limit})` : ''}
+            {isSelectAll && limit && selectedCount >= limit ? ` (max ${limit})` : ''}
           </span>
         </Row>
         {imageSrc && <Image src={imageSrc} />}

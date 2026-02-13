@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { IconButton } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
 import { playClick } from 'utils/sounds';
 
 export const Tabs = ({
@@ -33,7 +33,9 @@ export const Tabs = ({
           disabled={tab === 'myOrders'}
         />
       </TabButtons>
-      <IconButton text='+' onClick={onCreateOrder} />
+      <TextTooltip text={['Create Order']}>
+        <IconButton text='+' onClick={onCreateOrder} />
+      </TextTooltip>
     </Container>
   );
 };
