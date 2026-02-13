@@ -20,7 +20,7 @@ export {
   UseItemButton,
 } from './buttons';
 export { AccountCard, Card, KamiCard } from './cards';
-export { Stepper } from './controls';
+export { Slider, Stepper } from './controls';
 export { InputSingleNumberForm, InputSingleTextForm } from './inputs';
 export { KamiBlock } from './KamiBlock';
 export { Battery, CountdownBar, CountdownCircle, ProgressBar } from './measures';
