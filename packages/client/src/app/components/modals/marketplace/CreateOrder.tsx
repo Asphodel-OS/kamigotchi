@@ -25,6 +25,7 @@ export const CreateOrder = ({
   utils: {
     getAccountKamis: () => Kami[];
     getAllKamis: () => Kami[];
+    getExternalKamis: () => Kami[];
   };
   createSellOrder: (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => void;
   createBuyOrder: (price: BigNumberish, quantity: number, expiry: BigNumberish) => void;
@@ -51,12 +52,10 @@ export const CreateOrder = ({
   };
 
   const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
+  const externalKamis = useMemo(() => utils.getExternalKamis(), [utils]);
   const allKamis = useMemo(() => utils.getAllKamis(), [utils]);
 
-  const restingKamis = useMemo(
-    () => accountKamis.filter((kami) => kami.state === '721_EXTERNAL'),
-    [accountKamis]
-  );
+  const restingKamis = useMemo(() => externalKamis, [externalKamis]);
 
   const kamiOptions = useMemo(
     () => restingKamis.map((k) => ({ text: k.name, object: k, img: k.image })),
