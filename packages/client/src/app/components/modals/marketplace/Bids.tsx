@@ -95,7 +95,7 @@ export const Bids = ({
           ))}
         </KamiGrid>
         <Actions>
-          <IconButton text='Sell' onClick={handleSell} />
+          <IconButton text='Sell' onClick={handleSell} disabled={selectedKamis.size === 0} />
           <IconButton text='Clear' onClick={handleClear} />
         </Actions>
       </BottomSection>
