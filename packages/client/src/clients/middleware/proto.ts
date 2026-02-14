@@ -41,19 +41,22 @@ export interface ComponentValue {
 export interface EntityComponents {
   entityId: string;
   components: ComponentValue[];
+  children: EntityComponents[];
 }
 
 export interface GetComponentValuesRequest {
   entityId: string;
   key: string;
+  includeChildren: boolean;
 }
 
 export interface GetComponentValuesResponse {
-  components: ComponentValue[];
+  entity: EntityComponents | undefined;
 }
 
 export interface GetComponentValuesByTypeRequest {
   key: string;
+  includeChildren: boolean;
 }
 
 export interface GetComponentValuesByTypeResponse {
@@ -381,7 +384,7 @@ export const ComponentValue: MessageFns<ComponentValue> = {
 };
 
 function createBaseEntityComponents(): EntityComponents {
-  return { entityId: "", components: [] };
+  return { entityId: "", components: [], children: [] };
 }
 
 export const EntityComponents: MessageFns<EntityComponents> = {
@@ -391,6 +394,9 @@ export const EntityComponents: MessageFns<EntityComponents> = {
     }
     for (const v of message.components) {
       ComponentValue.encode(v!, writer.uint32(18).fork()).join();
+    }
+    for (const v of message.children) {
+      EntityComponents.encode(v!, writer.uint32(26).fork()).join();
     }
     return writer;
   },
@@ -418,6 +424,14 @@ export const EntityComponents: MessageFns<EntityComponents> = {
           message.components.push(ComponentValue.decode(reader, reader.uint32()));
           continue;
         }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.children.push(EntityComponents.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -434,12 +448,13 @@ export const EntityComponents: MessageFns<EntityComponents> = {
     const message = createBaseEntityComponents();
     message.entityId = object.entityId ?? "";
     message.components = object.components?.map((e) => ComponentValue.fromPartial(e)) || [];
+    message.children = object.children?.map((e) => EntityComponents.fromPartial(e)) || [];
     return message;
   },
 };
 
 function createBaseGetComponentValuesRequest(): GetComponentValuesRequest {
-  return { entityId: "", key: "" };
+  return { entityId: "", key: "", includeChildren: false };
 }
 
 export const GetComponentValuesRequest: MessageFns<GetComponentValuesRequest> = {
@@ -449,6 +464,9 @@ export const GetComponentValuesRequest: MessageFns<GetComponentValuesRequest> = 
     }
     if (message.key !== "") {
       writer.uint32(18).string(message.key);
+    }
+    if (message.includeChildren !== false) {
+      writer.uint32(24).bool(message.includeChildren);
     }
     return writer;
   },
@@ -476,6 +494,14 @@ export const GetComponentValuesRequest: MessageFns<GetComponentValuesRequest> = 
           message.key = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.includeChildren = reader.bool();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -492,18 +518,19 @@ export const GetComponentValuesRequest: MessageFns<GetComponentValuesRequest> = 
     const message = createBaseGetComponentValuesRequest();
     message.entityId = object.entityId ?? "";
     message.key = object.key ?? "";
+    message.includeChildren = object.includeChildren ?? false;
     return message;
   },
 };
 
 function createBaseGetComponentValuesResponse(): GetComponentValuesResponse {
-  return { components: [] };
+  return { entity: undefined };
 }
 
 export const GetComponentValuesResponse: MessageFns<GetComponentValuesResponse> = {
   encode(message: GetComponentValuesResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.components) {
-      ComponentValue.encode(v!, writer.uint32(10).fork()).join();
+    if (message.entity !== undefined) {
+      EntityComponents.encode(message.entity, writer.uint32(10).fork()).join();
     }
     return writer;
   },
@@ -520,7 +547,7 @@ export const GetComponentValuesResponse: MessageFns<GetComponentValuesResponse> 
             break;
           }
 
-          message.components.push(ComponentValue.decode(reader, reader.uint32()));
+          message.entity = EntityComponents.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -537,19 +564,24 @@ export const GetComponentValuesResponse: MessageFns<GetComponentValuesResponse> 
   },
   fromPartial(object: DeepPartial<GetComponentValuesResponse>): GetComponentValuesResponse {
     const message = createBaseGetComponentValuesResponse();
-    message.components = object.components?.map((e) => ComponentValue.fromPartial(e)) || [];
+    message.entity = (object.entity !== undefined && object.entity !== null)
+      ? EntityComponents.fromPartial(object.entity)
+      : undefined;
     return message;
   },
 };
 
 function createBaseGetComponentValuesByTypeRequest(): GetComponentValuesByTypeRequest {
-  return { key: "" };
+  return { key: "", includeChildren: false };
 }
 
 export const GetComponentValuesByTypeRequest: MessageFns<GetComponentValuesByTypeRequest> = {
   encode(message: GetComponentValuesByTypeRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.key !== "") {
       writer.uint32(10).string(message.key);
+    }
+    if (message.includeChildren !== false) {
+      writer.uint32(24).bool(message.includeChildren);
     }
     return writer;
   },
@@ -569,6 +601,14 @@ export const GetComponentValuesByTypeRequest: MessageFns<GetComponentValuesByTyp
           message.key = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.includeChildren = reader.bool();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -584,6 +624,7 @@ export const GetComponentValuesByTypeRequest: MessageFns<GetComponentValuesByTyp
   fromPartial(object: DeepPartial<GetComponentValuesByTypeRequest>): GetComponentValuesByTypeRequest {
     const message = createBaseGetComponentValuesByTypeRequest();
     message.key = object.key ?? "";
+    message.includeChildren = object.includeChildren ?? false;
     return message;
   },
 };

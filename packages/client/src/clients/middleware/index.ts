@@ -5,8 +5,6 @@ export type {
   ComponentValue,
   ECSEvent,
   EntityComponents,
-  GetComponentValues,
-  GetComponentValuesByType,
   GetComponentValuesByTypeRequest,
   GetComponentValuesByTypeResponse,
   GetComponentValuesRequest,

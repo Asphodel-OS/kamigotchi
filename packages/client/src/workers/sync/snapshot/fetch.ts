@@ -3,6 +3,7 @@ import { getMiddlewareClient } from 'clients/middleware';
 import { createDecode } from 'engine/encoders';
 import { formatComponentID, formatEntityID } from 'engine/utils';
 import { log } from 'utils/logger';
+import { NetworkEvents } from 'workers/types';
 import {
   StateCache,
   createStateCache,
@@ -13,8 +14,6 @@ import {
   storeStateValues,
 } from '../state';
 import { storeEvent } from '../state/cache';
-
-import { NetworkEvents } from '../../types';
 
 const CHUNK_TIMEOUT_MS = 30000;
 const MAX_RETRIES = 20;
@@ -124,72 +123,39 @@ interface FetchOptions {
 }
 
 async function doTheThing(state: StateCache, decode: ReturnType<typeof createDecode>) {
+  console.error('[thing] hi');
+  let kamion = '0x000000000000000000000000f23fe9f3f9e4b8dbd17722486a849434b2842fc3';
   const client = getMiddlewareClient();
-  let res = await client?.getComponentValuesByType({ key: 'ACCOUNT' });
+  let res = await client?.getComponentValues({
+    key: 'ACCOUNT',
+    entityId: kamion,
+    includeChildren: true,
+  });
 
   if (!res) return;
-
-  for (const entity of res.entities) {
-    const entityId = formatEntityID(entity.entityId);
-    for (const component of entity.components) {
-      const componentId = formatComponentID(component.componentId);
-      console.log(`entityId ${entityId} compoonentId ${componentId}`);
-      const value = await decode(componentId, component.value);
-      storeEvent(state, {
-        type: NetworkEvents.NetworkComponentUpdate,
-        component: componentId,
-        entity: entityId,
-        value,
-        blockNumber: state.blockNumber,
-      });
-    }
-  }
-  res = await client?.getComponentValuesByType({ key: 'ROOM' });
-
-  if (!res) return;
-
-  for (const entity of res.entities) {
-    const entityId = formatEntityID(entity.entityId);
-    for (const component of entity.components) {
-      const componentId = formatComponentID(component.componentId);
-      console.log(`entityId ${entityId} compoonentId ${componentId}`);
-      const value = await decode(componentId, component.value);
-      storeEvent(state, {
-        type: NetworkEvents.NetworkComponentUpdate,
-        component: componentId,
-        entity: entityId,
-        value,
-        blockNumber: state.blockNumber,
-      });
-    }
+  let entity = res.entity!;
+  console.log('Got account');
+  const entityId = formatEntityID(entity.entityId);
+  for (const component of entity.components) {
+    const componentId = formatComponentID(component.componentId);
+    //console.log(`entityId ${entityId} compoonentId ${componentId}`);
+    const value = await decode(componentId, component.value);
+    storeEvent(state, {
+      type: NetworkEvents.NetworkComponentUpdate,
+      component: componentId,
+      entity: entityId,
+      value,
+      blockNumber: state.blockNumber,
+    });
   }
 
-  res = await client?.getComponentValuesByType({ key: 'NODE' });
-  if (!res) return;
-
-  for (const entity of res.entities) {
+  let res2 = await client?.getComponentValuesByType({ key: 'ROOM' });
+  if (!res2) return;
+  for (const entity of res2.entities) {
     const entityId = formatEntityID(entity.entityId);
     for (const component of entity.components) {
       const componentId = formatComponentID(component.componentId);
-      console.log(`entityId ${entityId} compoonentId ${componentId}`);
-      const value = await decode(componentId, component.value);
-      storeEvent(state, {
-        type: NetworkEvents.NetworkComponentUpdate,
-        component: componentId,
-        entity: entityId,
-        value,
-        blockNumber: state.blockNumber,
-      });
-    }
-  }
-  res = await client?.getComponentValuesByType({ key: 'ITEM' });
-  if (!res) return;
-
-  for (const entity of res.entities) {
-    const entityId = formatEntityID(entity.entityId);
-    for (const component of entity.components) {
-      const componentId = formatComponentID(component.componentId);
-      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      //console.log(`entityId ${entityId} compoonentId ${componentId}`);
       const value = await decode(componentId, component.value);
       storeEvent(state, {
         type: NetworkEvents.NetworkComponentUpdate,
@@ -201,52 +167,13 @@ async function doTheThing(state: StateCache, decode: ReturnType<typeof createDec
     }
   }
 
-  res = await client?.getComponentValuesByType({ key: 'KAMI' });
-  if (!res) return;
-
-  for (const entity of res.entities) {
+  res2 = await client?.getComponentValuesByType({ key: 'NODE' });
+  if (!res2) return;
+  for (const entity of res2.entities) {
     const entityId = formatEntityID(entity.entityId);
     for (const component of entity.components) {
       const componentId = formatComponentID(component.componentId);
-      console.log(`entityId ${entityId} compoonentId ${componentId}`);
-      const value = await decode(componentId, component.value);
-      storeEvent(state, {
-        type: NetworkEvents.NetworkComponentUpdate,
-        component: componentId,
-        entity: entityId,
-        value,
-        blockNumber: state.blockNumber,
-      });
-    }
-  }
-
-  res = await client?.getComponentValuesByType({ key: 'INVENTORY' });
-  if (!res) return;
-
-  for (const entity of res.entities) {
-    const entityId = formatEntityID(entity.entityId);
-    for (const component of entity.components) {
-      const componentId = formatComponentID(component.componentId);
-      console.log(`entityId ${entityId} compoonentId ${componentId}`);
-      const value = await decode(componentId, component.value);
-      storeEvent(state, {
-        type: NetworkEvents.NetworkComponentUpdate,
-        component: componentId,
-        entity: entityId,
-        value,
-        blockNumber: state.blockNumber,
-      });
-    }
-  }
-
-  res = await client?.getComponentValuesByType({ key: 'RECIPE' });
-  if (!res) return;
-
-  for (const entity of res.entities) {
-    const entityId = formatEntityID(entity.entityId);
-    for (const component of entity.components) {
-      const componentId = formatComponentID(component.componentId);
-      console.log(`entityId ${entityId} compoonentId ${componentId}`);
+      //console.log(`entityId ${entityId} compoonentId ${componentId}`);
       const value = await decode(componentId, component.value);
       storeEvent(state, {
         type: NetworkEvents.NetworkComponentUpdate,
@@ -287,11 +214,12 @@ export const fetchSnapshot = async (
     setMessage,
   };
 
-  options.stateCache.lastStateValuesBlock = 24763220;
-  options.stateCache.lastStateRemovalsBlock = 24763220;
-  options.stateCache.lastKamigazeBlock = 24763220;
-  //HERE
+  options.stateCache.lastStateValuesBlock = 248247900;
+  options.stateCache.lastStateRemovalsBlock = 248247900;
+  options.stateCache.lastKamigazeBlock = 248247900;
+  //HEREA
   doTheThing(options.stateCache, options.decode);
+  console.error('[thing] did the zing');
   return options.stateCache;
 
   try {
