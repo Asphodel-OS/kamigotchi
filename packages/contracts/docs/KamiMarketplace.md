@@ -519,9 +519,9 @@ Events are emitted via `LibEmitter.emitEvent` with structured schemas:
 | Event Name | Fields | Emitted By |
 |------------|--------|------------|
 | `KAMI_MARKET_LIST` | `(orderID: uint256, accID: uint256, kamiIndex: uint32, price: uint256)` | `KamiMarketListSystem` |
-| `KAMI_MARKET_BUY` | `(orderID: uint256, buyerAccID: uint256, kamiIndex: uint32, price: uint256)` | `KamiMarketBuySystem` |
+| `KAMI_MARKET_BUY` | `(orderID: uint256, buyerAccID: uint256, sellerAccID: uint256, kamiIndex: uint32, price: uint256)` | `KamiMarketBuySystem` |
 | `KAMI_MARKET_OFFER` | `(orderID: uint256, accID: uint256, price: uint256)` | `KamiMarketOfferSystem` |
-| `KAMI_MARKET_ACCEPT` | `(orderID: uint256, sellerAccID: uint256, kamiIndex: uint32, price: uint256)` | `KamiMarketAcceptOfferSystem` |
+| `KAMI_MARKET_ACCEPT` | `(orderID: uint256, sellerAccID: uint256, buyerAccID: uint256, kamiIndex: uint32, price: uint256)` | `KamiMarketAcceptOfferSystem` |
 | `KAMI_MARKET_CANCEL` | `(orderID: uint256, accID: uint256)` | `KamiMarketCancelSystem` |
 
 ---

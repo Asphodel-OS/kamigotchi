@@ -404,13 +404,21 @@ library LibKamiMarket {
     LibEmitter.emitEvent(world, "KAMI_MARKET_LIST", _schema, abi.encode(orderID, accID, kamiIndex, price, expiry));
   }
 
-  function emitBuy(IWorld world, uint256 orderID, uint256 buyerAccID, uint32 kamiIndex, uint256 price) internal {
-    uint8[] memory _schema = new uint8[](4);
+  function emitBuy(
+    IWorld world,
+    uint256 orderID,
+    uint256 buyerAccID,
+    uint256 sellerAccID,
+    uint32 kamiIndex,
+    uint256 price
+  ) internal {
+    uint8[] memory _schema = new uint8[](5);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
-    LibEmitter.emitEvent(world, "KAMI_MARKET_BUY", _schema, abi.encode(orderID, buyerAccID, kamiIndex, price));
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
+    LibEmitter.emitEvent(world, "KAMI_MARKET_BUY", _schema, abi.encode(orderID, buyerAccID, sellerAccID, kamiIndex, price));
   }
 
   function emitOffer(
@@ -441,15 +449,17 @@ library LibKamiMarket {
     IWorld world,
     uint256 orderID,
     uint256 sellerAccID,
+    uint256 buyerAccID,
     uint32 kamiIndex,
     uint256 price
   ) internal {
-    uint8[] memory _schema = new uint8[](4);
+    uint8[] memory _schema = new uint8[](5);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
-    _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
-    LibEmitter.emitEvent(world, "KAMI_MARKET_ACCEPT", _schema, abi.encode(orderID, sellerAccID, kamiIndex, price));
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
+    LibEmitter.emitEvent(world, "KAMI_MARKET_ACCEPT", _schema, abi.encode(orderID, sellerAccID, buyerAccID, kamiIndex, price));
   }
 
   function emitCancel(IWorld world, uint256 orderID, uint256 accID) internal {

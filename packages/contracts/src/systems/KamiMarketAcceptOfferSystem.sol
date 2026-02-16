@@ -29,6 +29,8 @@ contract KamiMarketAcceptOfferSystem is System {
     LibKamiMarket.verifyKamiExternalOrListed(components, kamiIndex);
     LibKamiMarket.verifyKamiOwner(components, kamiIndex, msg.sender);
 
+    uint256 buyerAccID = LibKamiMarket.getOwner(components, offerID);
+
     string memory orderType = LibEntityType.get(components, offerID);
     address buyerAddress;
     uint256 price;
@@ -64,7 +66,7 @@ contract KamiMarketAcceptOfferSystem is System {
     }
 
     // data logging and event emission
-    LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, kamiIndex, price);
+    LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, price);
     LibKamiMarket.logAcceptOffer(components, sellerAccID);
     if (LibAccount.isAccount(components, sellerAccID)) {
       LibAccount.updateLastTs(components, sellerAccID);

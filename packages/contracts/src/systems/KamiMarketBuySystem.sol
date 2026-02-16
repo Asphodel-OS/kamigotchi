@@ -48,6 +48,8 @@ contract KamiMarketBuySystem is System {
     for (uint256 i; i < listingIDs.length; i++) {
       uint256 id = listingIDs[i];
 
+      uint256 sellerAccID = LibKamiMarket.getOwner(components, id);
+
       (address sellerAddress, uint256 price, uint32 kamiIndex) = LibKamiMarket.fillListing(
         components,
         id,
@@ -61,7 +63,7 @@ contract KamiMarketBuySystem is System {
 
       _transferETH(sellerAddress, sellerReceives);
 
-      LibKamiMarket.emitBuy(world, id, accID, kamiIndex, price);
+      LibKamiMarket.emitBuy(world, id, accID, sellerAccID, kamiIndex, price);
       LibKamiMarket.logBuy(components, accID);
     }
 

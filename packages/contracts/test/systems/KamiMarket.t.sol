@@ -874,6 +874,56 @@ contract KamiMarketTest is SetupTemplate {
     vm.stopPrank();
   }
 
+  function testBuyEventIncludesBuyerAndSellerAccIDs() public {
+    (, uint32 kamiIndex) = _createExternalKami(alice);
+    uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
+
+    vm.deal(bob.owner, LIST_PRICE);
+    vm.recordLogs();
+    _buyKami(bob, orderID, LIST_PRICE);
+
+    Vm.Log memory eventLog = _findWorldEvent(vm.getRecordedLogs(), "KAMI_MARKET_BUY");
+    (, bytes memory values) = abi.decode(eventLog.data, (uint8[], bytes));
+    (
+      uint256 eventOrderID,
+      uint256 buyerAccID,
+      uint256 sellerAccID,
+      uint32 eventKamiIndex,
+      uint256 eventPrice
+    ) = abi.decode(values, (uint256, uint256, uint256, uint32, uint256));
+
+    assertEq(eventOrderID, orderID);
+    assertEq(buyerAccID, bob.id);
+    assertEq(sellerAccID, alice.id);
+    assertEq(eventKamiIndex, kamiIndex);
+    assertEq(eventPrice, LIST_PRICE);
+  }
+
+  function testAcceptEventIncludesSellerAndBuyerAccIDs() public {
+    (, uint32 kamiIndex) = _createExternalKami(alice);
+    _setupWETH(bob, OFFER_PRICE);
+    uint256 orderID = _offerKami(bob, kamiIndex, OFFER_PRICE);
+
+    vm.recordLogs();
+    _acceptOffer(alice, orderID, kamiIndex);
+
+    Vm.Log memory eventLog = _findWorldEvent(vm.getRecordedLogs(), "KAMI_MARKET_ACCEPT");
+    (, bytes memory values) = abi.decode(eventLog.data, (uint8[], bytes));
+    (
+      uint256 eventOrderID,
+      uint256 sellerAccID,
+      uint256 buyerAccID,
+      uint32 eventKamiIndex,
+      uint256 eventPrice
+    ) = abi.decode(values, (uint256, uint256, uint256, uint32, uint256));
+
+    assertEq(eventOrderID, orderID);
+    assertEq(sellerAccID, alice.id);
+    assertEq(buyerAccID, bob.id);
+    assertEq(eventKamiIndex, kamiIndex);
+    assertEq(eventPrice, OFFER_PRICE);
+  }
+
   function testOfferEventNormalizesQuantityForSpecificOffer() public {
     (, uint32 kamiIndex) = _createExternalKami(alice);
     _setupWETH(bob, OFFER_PRICE);
