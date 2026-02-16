@@ -15,9 +15,18 @@ export const calcHarvestTime = (kami: Kami): number => {
 // RATES
 
 // update the harvest rate on the kami's harvest. do nothing if no harvest
+// zeroes displayed rates if HP budget is exhausted (starve cutoff)
 export const updateHarvestRate = (kami: Kami): number => {
   if (!kami.harvest || kami.harvest.state !== 'ACTIVE') return 0;
-  return updateHarvestRates(kami.harvest, kami);
+  updateHarvestRates(kami.harvest, kami);
+
+  const maxMusu = calcMaxMusu(kami);
+  if (maxMusu <= 0 || calcHarvestNetBounty(kami.harvest) >= maxMusu) {
+    kami.harvest.rates.total = { average: 0, spot: 0 };
+    return 0;
+  }
+
+  return kami.harvest.rates.total.average;
 };
 
 // calculate the rate of health drain while harvesting
