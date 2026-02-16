@@ -27,17 +27,23 @@ contract KamiMarketOfferSystem is System {
     require(price > 0, "KamiMarketOffer: price must be > 0");
 
     uint256 id;
+    uint32 eventKamiIndex;
+    uint32 eventQuantity;
     if (isCollection) {
       require(quantity > 0 && quantity <= uint32(type(int32).max), "KamiMarketOffer: invalid quantity");
       id = LibKamiMarket.createCollectionOffer(world, components, accID, price, quantity, expiry);
+      eventKamiIndex = 0;
+      eventQuantity = quantity;
     } else {
       // verify target kami exists
       require(LibKami.getByIndex(components, kamiIndex) != 0, "KamiMarketOffer: kami not found");
       id = LibKamiMarket.createOffer(world, components, accID, kamiIndex, price, expiry);
+      eventKamiIndex = kamiIndex;
+      eventQuantity = 1;
     }
 
     // data logging and event emission
-    LibKamiMarket.emitOffer(world, id, accID, price);
+    LibKamiMarket.emitOffer(world, id, accID, eventKamiIndex, eventQuantity, price, expiry);
     LibKamiMarket.logOffer(components, accID);
     if (LibAccount.isAccount(components, accID)) {
       LibAccount.updateLastTs(components, accID);

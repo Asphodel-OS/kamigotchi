@@ -33,7 +33,7 @@ contract KamiMarketListSystem is System {
     uint256 id = LibKamiMarket.createListing(world, components, accID, kamiIndex, price, expiry);
 
     // data logging and event emission
-    LibKamiMarket.emitList(world, id, accID, kamiIndex, price);
+    LibKamiMarket.emitList(world, id, accID, kamiIndex, price, expiry);
     LibKamiMarket.logList(components, accID);
     if (LibAccount.isAccount(components, accID)) {
       LibAccount.updateLastTs(components, accID);

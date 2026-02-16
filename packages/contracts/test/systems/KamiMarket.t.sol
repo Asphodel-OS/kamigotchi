@@ -2,6 +2,7 @@
 pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
+import { Vm } from "forge-std/Vm.sol";
 import { Kami721 } from "tokens/Kami721.sol";
 import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 import { OpenMintable } from "tokens/OpenMintable.sol";
@@ -147,6 +148,16 @@ contract KamiMarketTest is SetupTemplate {
     weth.mint(acc.owner, amount);
     vm.prank(acc.owner);
     weth.approve(address(vault), type(uint256).max);
+  }
+
+  function _findWorldEvent(Vm.Log[] memory logs, string memory identifier) internal pure returns (Vm.Log memory) {
+    bytes32 identifierHash = keccak256(bytes(identifier));
+    for (uint256 i = 0; i < logs.length; i++) {
+      if (logs[i].topics.length > 1 && logs[i].topics[1] == identifierHash) {
+        return logs[i];
+      }
+    }
+    revert("WorldEvent not found");
   }
 
   /////////////////
@@ -861,6 +872,47 @@ contract KamiMarketTest is SetupTemplate {
     vm.expectRevert();
     _KamiMarketOfferSystem.executeTypedCollection(OFFER_PRICE, uint32(type(int32).max) + 1, 0);
     vm.stopPrank();
+  }
+
+  function testOfferEventNormalizesQuantityForSpecificOffer() public {
+    (, uint32 kamiIndex) = _createExternalKami(alice);
+    _setupWETH(bob, OFFER_PRICE);
+
+    vm.recordLogs();
+    vm.prank(bob.owner);
+    uint256 orderID =
+      abi.decode(_KamiMarketOfferSystem.execute(abi.encode(false, kamiIndex, OFFER_PRICE, uint32(7), 0)), (uint256));
+
+    Vm.Log memory eventLog = _findWorldEvent(vm.getRecordedLogs(), "KAMI_MARKET_OFFER");
+    (, bytes memory values) = abi.decode(eventLog.data, (uint8[], bytes));
+    (uint256 eventOrderID,, uint32 eventKamiIndex, uint32 eventQuantity, uint256 eventPrice, uint256 eventExpiry) =
+      abi.decode(values, (uint256, uint256, uint32, uint32, uint256, uint256));
+
+    assertEq(eventOrderID, orderID);
+    assertEq(eventKamiIndex, kamiIndex);
+    assertEq(eventQuantity, 1);
+    assertEq(eventPrice, OFFER_PRICE);
+    assertEq(eventExpiry, 0);
+  }
+
+  function testOfferEventNormalizesKamiIndexForCollectionOffer() public {
+    _setupWETH(bob, OFFER_PRICE * 2);
+
+    vm.recordLogs();
+    vm.prank(bob.owner);
+    uint256 orderID =
+      abi.decode(_KamiMarketOfferSystem.execute(abi.encode(true, uint32(777), OFFER_PRICE, uint32(2), 0)), (uint256));
+
+    Vm.Log memory eventLog = _findWorldEvent(vm.getRecordedLogs(), "KAMI_MARKET_OFFER");
+    (, bytes memory values) = abi.decode(eventLog.data, (uint8[], bytes));
+    (uint256 eventOrderID,, uint32 eventKamiIndex, uint32 eventQuantity, uint256 eventPrice, uint256 eventExpiry) =
+      abi.decode(values, (uint256, uint256, uint32, uint32, uint256, uint256));
+
+    assertEq(eventOrderID, orderID);
+    assertEq(eventKamiIndex, 0);
+    assertEq(eventQuantity, 2);
+    assertEq(eventPrice, OFFER_PRICE);
+    assertEq(eventExpiry, 0);
   }
 
   /////////////////

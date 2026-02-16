@@ -387,13 +387,21 @@ library LibKamiMarket {
   /////////////////
   // EVENT EMISSION
 
-  function emitList(IWorld world, uint256 orderID, uint256 accID, uint32 kamiIndex, uint256 price) internal {
-    uint8[] memory _schema = new uint8[](4);
+  function emitList(
+    IWorld world,
+    uint256 orderID,
+    uint256 accID,
+    uint32 kamiIndex,
+    uint256 price,
+    uint256 expiry
+  ) internal {
+    uint8[] memory _schema = new uint8[](5);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256);
     _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
     _schema[3] = uint8(LibTypes.SchemaValue.UINT256);
-    LibEmitter.emitEvent(world, "KAMI_MARKET_LIST", _schema, abi.encode(orderID, accID, kamiIndex, price));
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
+    LibEmitter.emitEvent(world, "KAMI_MARKET_LIST", _schema, abi.encode(orderID, accID, kamiIndex, price, expiry));
   }
 
   function emitBuy(IWorld world, uint256 orderID, uint256 buyerAccID, uint32 kamiIndex, uint256 price) internal {
@@ -405,12 +413,28 @@ library LibKamiMarket {
     LibEmitter.emitEvent(world, "KAMI_MARKET_BUY", _schema, abi.encode(orderID, buyerAccID, kamiIndex, price));
   }
 
-  function emitOffer(IWorld world, uint256 orderID, uint256 accID, uint256 price) internal {
-    uint8[] memory _schema = new uint8[](3);
+  function emitOffer(
+    IWorld world,
+    uint256 orderID,
+    uint256 accID,
+    uint32 kamiIndex,
+    uint32 quantity,
+    uint256 price,
+    uint256 expiry
+  ) internal {
+    uint8[] memory _schema = new uint8[](6);
     _schema[0] = uint8(LibTypes.SchemaValue.UINT256);
     _schema[1] = uint8(LibTypes.SchemaValue.UINT256);
-    _schema[2] = uint8(LibTypes.SchemaValue.UINT256);
-    LibEmitter.emitEvent(world, "KAMI_MARKET_OFFER", _schema, abi.encode(orderID, accID, price));
+    _schema[2] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[3] = uint8(LibTypes.SchemaValue.UINT32);
+    _schema[4] = uint8(LibTypes.SchemaValue.UINT256);
+    _schema[5] = uint8(LibTypes.SchemaValue.UINT256);
+    LibEmitter.emitEvent(
+      world,
+      "KAMI_MARKET_OFFER",
+      _schema,
+      abi.encode(orderID, accID, kamiIndex, quantity, price, expiry)
+    );
   }
 
   function emitAcceptOffer(
