@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { SvgIconTypeMap } from '@mui/material';
@@ -69,7 +69,7 @@ export const DropdownToggle = ({
     if (checked.length !== modeOptions.length) {
       const initialChecked = Array(modeOptions.length).fill(false);
       setChecked(initialChecked);
-      // if simplified, first option is selected by default (delayed for UI parity)
+      // if simplified, first option is selected by default
       if (simplified && modeOptions.length > 0) {
         setTimeout(() => {
           initialChecked[0] = true;
@@ -93,12 +93,12 @@ export const DropdownToggle = ({
     }
   }, [clearTrigger]);
 
-  const maxSelectable = useMemo(
-    () => Math.min(limit ?? modeOptions.length, modeOptions.length),
-    [limit, modeOptions.length]
-  );
-  const selectedCount = useMemo(() => checked.filter(Boolean).length, [checked]);
-  const allSelected = useMemo(() => selectedCount >= maxSelectable, [selectedCount, maxSelectable]);
+  const maxSelectable = Math.min(limit ?? modeOptions.length, modeOptions.length);
+  const selectedCount = checked.filter(Boolean).length;
+  const allSelected = selectedCount >= maxSelectable;
+
+  const getSelectedObjects = (nextChecked = checked) =>
+    modeOptions.filter((_, i) => nextChecked[i]).map((opt) => opt.object);
 
   const toggleOption = (e: React.MouseEvent, index: number) => {
     // prevent popover from closing
@@ -116,10 +116,7 @@ export const DropdownToggle = ({
         // the number of selected options when the limit is reached
         if (!prev[index] && limit && selected >= limit) return prev;
         const next = prev.map((val, i) => (i === index ? !val : val));
-        if (hideActionButton) {
-          const selectedObjects = modeOptions.filter((_, i) => next[i]).map((opt) => opt.object);
-          onClick[currentMode]?.(selectedObjects);
-        }
+        if (hideActionButton) onClick[currentMode]?.(getSelectedObjects(next));
         return next;
       });
     }
@@ -133,35 +130,32 @@ export const DropdownToggle = ({
     // If all selected deselect all, else select up to the limit
     const next = checked.map((_, i) => !allSelected && i < maxSelectable);
     setChecked(next);
-    if (hideActionButton) {
-      const selectedObjects = modeOptions.filter((_, i) => next[i]).map((opt) => opt.object);
-      onClick[currentMode]?.(selectedObjects);
-    }
+    if (hideActionButton) onClick[currentMode]?.(getSelectedObjects(next));
   };
 
   const handleTriggerClick = () => {
-    const selected = modeOptions.filter((_, index) => checked[index]);
-    const selectedObjects = selected.map((option) => option.object);
     playClick();
-    onClick[currentMode]?.(selectedObjects);
+    onClick[currentMode]?.(getSelectedObjects());
   };
 
   /////////////////
   // DISPLAY
 
-  const MenuCheckListOption = (
+  const renderOption = (
     { text, img, object }: Option,
-    i: number | null,
-    onClick: (e: React.MouseEvent) => void,
-    isSelectAll: boolean
+    i: number,
+    isSelectAll = false
   ) => {
     const imageSrc = img ?? object?.image;
-    const isChecked = isSelectAll ? allSelected : !!checked[i!];
+    const isChecked = isSelectAll ? allSelected : !!checked[i];
+    const handleClick = isSelectAll
+      ? (e: React.MouseEvent) => toggleAll(e)
+      : (e: React.MouseEvent) => toggleOption(e, i);
 
     return (
       <MenuOption
         key={isSelectAll ? 'SelectAll' : `toggle-${i}`}
-        onClick={onClick}
+        onClick={handleClick}
         isSelectAll={isSelectAll}
         disabled={modeDisabled}
       >
@@ -189,12 +183,8 @@ export const DropdownToggle = ({
     <Container>
       <Popover
         content={[
-          ...(simplified
-            ? []
-            : [MenuCheckListOption({ text: 'Select All' }, null, (e) => toggleAll(e), true)]),
-          ...modeOptions.map((option, i) =>
-            MenuCheckListOption(option, i, (e) => toggleOption(e, i), false)
-          ),
+          ...(!simplified ? [renderOption({ text: 'Select All' }, 0, true)] : []),
+          ...modeOptions.map((option, i) => renderOption(option, i)),
         ]}
         disabled={modeDisabled}
         forceClose={forceClose}
@@ -202,7 +192,7 @@ export const DropdownToggle = ({
         {trigger ?? (
           <IconButton
             img={simplified ? button.images[0] : undefined}
-            text={simplified ? undefined : `${checked.filter(Boolean).length} Selected`}
+            text={simplified ? undefined : `${selectedCount} Selected`}
             width={simplified ? 2 : 10}
             onClick={() => {}}
             disabled={modeDisabled}
