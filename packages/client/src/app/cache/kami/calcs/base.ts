@@ -1,6 +1,6 @@
 import { calcHarvestIdleTime, calcHarvestNetBounty } from 'app/cache/harvest';
 import { Kami } from 'network/shapes/Kami/types';
-import { calcHarvestingHealthRate, calcStrainFromBalance } from './harvest';
+import { calcHarvestingHealthRate, calcMaxMusu, calcStrainFromBalance } from './harvest';
 
 ////////////////
 // STATE CHECKS
@@ -107,7 +107,9 @@ export const calcHealth = (kami: Kami): number => {
 
   if (isHarvesting(kami) && kami.harvest) {
     const netBounty = calcHarvestNetBounty(kami.harvest);
-    const strain = calcStrainFromBalance(kami, netBounty, true);
+    const maxMusu = calcMaxMusu(kami);
+    const capped = netBounty < maxMusu ? netBounty : maxMusu;
+    const strain = calcStrainFromBalance(kami, capped, true);
     health -= strain;
   } else if (isResting(kami)) {
     const duration = calcIdleTime(kami);

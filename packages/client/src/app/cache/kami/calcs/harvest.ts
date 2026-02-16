@@ -34,7 +34,10 @@ export const calcHarvestingHealthRate = (kami: Kami): number => {
 // calculate the expected output from a pet harvest based on start time
 export const calcOutput = (kami: Kami): number => {
   if (!isHarvesting(kami) || !kami.harvest) return 0;
-  return kami.harvest.balance + calcHarvestNetBounty(kami.harvest);
+  const netBounty = calcHarvestNetBounty(kami.harvest);
+  const maxMusu = calcMaxMusu(kami);
+  const capped = netBounty < maxMusu ? netBounty : maxMusu;
+  return kami.harvest.balance + capped;
 };
 
 ////////////////////
@@ -53,3 +56,24 @@ export const calcStrainFromBalance = (kami: Kami, balance: number, roundUp = tru
   const strain = (balance * ratio * boost) / (harmony + baseHarmony);
   return roundUp ? Math.ceil(strain) : strain;
 };
+
+// Max MUSU a kami can earn given its current HP. Inverse of calcStrainFromBalance.
+// strain = amt * ratio * boost / (harmony + base) => max_amt = hp * (harmony + base) / (ratio * boost)
+export const calcMaxMusu = (kami: Kami): number => {
+  const hp = kami.stats?.health.sync ?? 0;
+  if (hp <= 0) return 0;
+
+  const config = kami.config?.harvest.strain;
+  if (!config) return Infinity;
+
+  const ratio = config.ratio.value;
+  const harmony = kami.stats?.harmony.total ?? 0;
+  const baseHarmony = config.nudge.value;
+  const boostBonus = kami.bonuses?.harvest.strain.boost ?? 0;
+  const boost = config.boost.value + boostBonus;
+  const denom = ratio * boost;
+  if (denom === 0) return Infinity;
+
+  return Math.floor((hp * (harmony + baseHarmony)) / denom);
+};
+
