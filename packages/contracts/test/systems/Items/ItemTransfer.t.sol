@@ -2,11 +2,17 @@
 pragma solidity >=0.8.28;
 
 import "./Item.t.sol";
+import { MUSU_INDEX, TRANSFER_FEE } from "libraries/LibInventory.sol";
 
 contract ItemTransferTest is ItemTemplate {
   function testTransferBasic() public {
-    uint32 itemA = 1;
-    uint32 itemB = 2;
+    uint32 itemA = 20001;
+    uint32 itemB = 20002;
+    _createGenericItem(itemA);
+    _createGenericItem(itemB);
+
+    // transfer fee is charged in MUSU based on number of indices transferred.
+    _fundAccount(alice.index, 3 * TRANSFER_FEE);
     _giveItem(alice, itemA, 3);
 
     // transfer to bob
@@ -31,6 +37,16 @@ contract ItemTransferTest is ItemTemplate {
     assertEq(_getItemBal(bob, itemA), 2);
     assertEq(_getItemBal(alice, itemB), 3);
     assertEq(_getItemBal(bob, itemB), 2);
+    assertEq(_getItemBal(alice, MUSU_INDEX), 0);
+  }
+
+  function testTransferRequiresFeeBalance() public {
+    uint32 itemA = 20003;
+    _createGenericItem(itemA);
+    _giveItem(alice, itemA, 1);
+
+    vm.expectRevert();
+    _transfer(alice, bob, itemA, 1);
   }
 
   ////////////////////

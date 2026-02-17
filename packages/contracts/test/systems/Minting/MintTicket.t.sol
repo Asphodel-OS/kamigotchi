@@ -4,7 +4,6 @@ pragma solidity >=0.8.28;
 // import { GACHA_ID } from "libraries/LibGacha.sol";
 import { GACHA_TICKET_INDEX } from "libraries/LibInventory.sol";
 import "tests/utils/SetupTemplate.t.sol";
-import { ERC20 } from "solmate/tokens/ERC20.sol";
 import { CURRENCY } from "systems/GachaBuyTicketSystem.sol";
 
 contract MintTicketTest is SetupTemplate {
@@ -17,8 +16,6 @@ contract MintTicketTest is SetupTemplate {
   uint256 private mintsPublic; // public mints allowed per account
   uint256 private pricePublic; // price of public mint
   uint256 private startPublic; // start epoch ts of public mint
-
-  ERC20 private currency20;
 
   function setUp() public override {
     super.setUp();
@@ -36,14 +33,7 @@ contract MintTicketTest is SetupTemplate {
 
     // creating items
     _createGenericItem(CURRENCY);
-    currency20 = ERC20(_createERC20("currency", "CURRENCY"));
-    _addItemERC20(CURRENCY, address(currency20), 3);
     _createGenericItem(GACHA_TICKET_INDEX);
-
-    // pre-approving erc20
-    _approveERC20(address(currency20), alice.owner);
-    _approveERC20(address(currency20), bob.owner);
-    _approveERC20(address(currency20), charlie.owner);
   }
 
   // check some basic, relative values between WL and Public mint configs
@@ -63,10 +53,10 @@ contract MintTicketTest is SetupTemplate {
     _setFlag(bob.id, "MINT_WHITELISTED", bWL);
     _setFlag(charlie.id, "MINT_WHITELISTED", cWL);
 
-    // mint some tokens to everyone
-    _mintERC20(address(currency20), priceWL, alice.owner);
-    _mintERC20(address(currency20), priceWL, bob.owner);
-    _mintERC20(address(currency20), priceWL, charlie.owner);
+    // fund everyone with in-game currency
+    _fundCurrency(alice.index, priceWL);
+    _fundCurrency(bob.index, priceWL);
+    _fundCurrency(charlie.index, priceWL);
 
     // set the start time of the whitelist mint to be in the past
     uint256 time = _getTime();
@@ -96,7 +86,7 @@ contract MintTicketTest is SetupTemplate {
 
     // set up alice for success
     _setFlag(alice.id, "MINT_WHITELISTED", true);
-    _mintERC20(address(currency20), priceWL, alice.owner);
+    _fundCurrency(alice.index, priceWL);
 
     // shift current and start time
     uint256 startTime = _currTs;
@@ -119,7 +109,7 @@ contract MintTicketTest is SetupTemplate {
     // set up alice for success
     uint256 tokenBalInitial = priceWL * limit;
     _setFlag(alice.id, "MINT_WHITELISTED", true);
-    _mintERC20(address(currency20), tokenBalInitial, alice.owner);
+    _fundCurrency(alice.index, tokenBalInitial);
 
     // configure mint
     _setConfig("MINT_MAX_WL", limit);
@@ -136,8 +126,8 @@ contract MintTicketTest is SetupTemplate {
     }
 
     // check final state
-    uint256 tokenBal = _getTokenBal(address(currency20), alice.owner);
-    uint256 tokenBalRemaining = (tokenBalInitial - (priceWL * numMinted)) * 1e15; // these unit conversions are gonna bite us eventually..
+    uint256 tokenBal = _getItemBal(alice.id, CURRENCY);
+    uint256 tokenBalRemaining = tokenBalInitial - (priceWL * numMinted);
     assertEq(tokenBal, tokenBalRemaining, "unexpected token balance");
     assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), numMinted, "post buy mismatch ticket");
     assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), numMinted, "unexpected mint amount");
@@ -167,8 +157,7 @@ contract MintTicketTest is SetupTemplate {
     uint256 tokenBalInitial = priceWL * _accLimit;
     for (uint256 i = 0; i < _numAccounts; i++) {
       account = _accounts[i];
-      _mintERC20(address(currency20), tokenBalInitial, account.owner);
-      _approveERC20(address(currency20), account.owner);
+      _fundCurrency(i, tokenBalInitial);
       if (i % 2 == 0) _setFlag(account.id, "MINT_WHITELISTED", true);
     }
 
@@ -210,8 +199,8 @@ contract MintTicketTest is SetupTemplate {
     for (uint256 i = 0; i < _numAccounts; i++) {
       account = _accounts[i];
       amtSpent = numMinted[i] * priceWL;
-      accTokenBal = _getTokenBal(address(currency20), account.owner);
-      assertEq(accTokenBal, (tokenBalInitial - amtSpent) * 1e15, "unexpected token balance");
+      accTokenBal = _getItemBal(account.id, CURRENCY);
+      assertEq(accTokenBal, tokenBalInitial - amtSpent, "unexpected token balance");
     }
 
     // check that the sum of item balances is correct
@@ -232,7 +221,7 @@ contract MintTicketTest is SetupTemplate {
     vm.assume(_currTs > 1 << 32); // healthy bounds to prevent underflow
 
     // set up alice for success
-    _mintERC20(address(currency20), pricePublic, alice.owner);
+    _fundCurrency(alice.index, pricePublic);
 
     // shift current and start time
     uint256 startTime = _currTs;
@@ -254,7 +243,7 @@ contract MintTicketTest is SetupTemplate {
 
     // set up alice for success
     uint256 tokenBalInitial = pricePublic * limit;
-    _mintERC20(address(currency20), tokenBalInitial, alice.owner);
+    _fundCurrency(alice.index, tokenBalInitial);
 
     // configure mint
     _setConfig("MINT_MAX_PUBLIC", limit);
@@ -274,8 +263,8 @@ contract MintTicketTest is SetupTemplate {
     }
 
     // check final state
-    uint256 tokenBal = _getTokenBal(address(currency20), alice.owner);
-    uint256 tokenBalRemaining = (tokenBalInitial - (pricePublic * numMinted)) * 1e15; // these unit conversions are gonna bite us eventually..
+    uint256 tokenBal = _getItemBal(alice.id, CURRENCY);
+    uint256 tokenBalRemaining = tokenBalInitial - (pricePublic * numMinted);
     assertEq(tokenBal, tokenBalRemaining, "unexpected token balance");
     assertEq(_getItemBal(alice.id, GACHA_TICKET_INDEX), numMinted, "post buy mismatch ticket");
     assertEq(LibData.get(components, 0, 0, "MINT_NUM_TOTAL"), numMinted, "unexpected mint amount");
@@ -306,8 +295,7 @@ contract MintTicketTest is SetupTemplate {
     uint256 tokenBalInitial = pricePublic * _accLimit;
     for (uint256 i = 0; i < _numAccounts; i++) {
       account = _accounts[i];
-      _mintERC20(address(currency20), tokenBalInitial, account.owner);
-      _approveERC20(address(currency20), account.owner);
+      _fundCurrency(i, tokenBalInitial);
     }
 
     // configure mint
@@ -334,7 +322,6 @@ contract MintTicketTest is SetupTemplate {
       } else {
         numMinted[accIndex] += numToMint;
         totalMinted += numToMint;
-        _numMints++;
       }
       _GachaBuyTicketSystem.buyPublic(numToMint);
     }
@@ -349,8 +336,8 @@ contract MintTicketTest is SetupTemplate {
     for (uint256 i = 0; i < _numAccounts; i++) {
       account = _accounts[i];
       amtSpent = numMinted[i] * pricePublic;
-      accTokenBal = _getTokenBal(address(currency20), account.owner);
-      assertEq(accTokenBal, (tokenBalInitial - amtSpent) * 1e15, "unexpected token balance");
+      accTokenBal = _getItemBal(account.id, CURRENCY);
+      assertEq(accTokenBal, tokenBalInitial - amtSpent, "unexpected token balance");
     }
 
     // check that the sum of item balances is correct
@@ -392,8 +379,7 @@ contract MintTicketTest is SetupTemplate {
     uint256 tokenBalInitial = pricePublic * _publicLimit + priceWL;
     for (uint256 i = 0; i < _numAccounts; i++) {
       account = _accounts[i];
-      _mintERC20(address(currency20), tokenBalInitial, account.owner);
-      _approveERC20(address(currency20), account.owner);
+      _fundCurrency(i, tokenBalInitial);
       if (i % 3 == 0) _setFlag(account.id, "MINT_WHITELISTED", true);
     }
 
@@ -409,7 +395,7 @@ contract MintTicketTest is SetupTemplate {
       vm.prank(account.owner);
       if (seed % 3 == 0) {
         numToMint = 1;
-        if (totalMinted + numToMint > maxMints) {
+        if (totalMinted + numToMint > _maxMints) {
           vm.expectRevert("max mints reached");
         } else if (accIndex % 3 != 0) {
           vm.expectRevert("not whitelisted");
@@ -422,7 +408,7 @@ contract MintTicketTest is SetupTemplate {
         _GachaBuyTicketSystem.buyWL();
       } else {
         numToMint = (uint256(keccak256(abi.encodePacked(seed, i))) % _publicLimit) + 1;
-        if (totalMinted + numToMint > maxMints) {
+        if (totalMinted + numToMint > _maxMints) {
           vm.expectRevert("max mints reached");
         } else if (numMinted[accIndex] + numToMint > _publicLimit) {
           vm.expectRevert("max public mint per account reached");
@@ -433,5 +419,9 @@ contract MintTicketTest is SetupTemplate {
         _GachaBuyTicketSystem.buyPublic(numToMint);
       }
     }
+  }
+
+  function _fundCurrency(uint256 accountIndex, uint256 amt) internal {
+    _giveItem(_accounts[accountIndex], CURRENCY, amt);
   }
 }

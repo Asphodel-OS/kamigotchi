@@ -210,14 +210,13 @@ contract GoalsTest is SetupTemplate {
     _fundAccount(accGold.index, 100);
 
     // Build expected event parameters
-    uint8[] memory schema = new uint8[](3);
-    schema[0] = uint8(LibTypes.SchemaValue.UINT32);  // goalIndex
-    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // goalID
-    schema[2] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
+    uint8[] memory schema = new uint8[](2);
+    schema[0] = uint8(LibTypes.SchemaValue.UINT32); // goalIndex
+    schema[1] = uint8(LibTypes.SchemaValue.UINT256); // timestamp
 
     // Expect the GOAL_COMPLETE event to be emitted
     vm.expectEmit(address(emitter));
-    emit IEmitter.WorldEvent("GOAL_COMPLETE", schema, abi.encode(goalIndex, goalID, block.timestamp));
+    emit IEmitter.WorldEvent("GOAL_COMPLETE", schema, abi.encode(goalIndex, block.timestamp));
 
     // Contribute the full amount to complete the goal
     vm.prank(accGold.operator);
