@@ -10,8 +10,11 @@ import { getSigner } from '../utils/chain';
 import { ignoreSolcErrors } from '../utils';
 
 const argv = yargs(hideBin(process.argv))
-  .usage('Usage: $0 --weth <address>')
+  .usage('Usage: $0 --weth <address> --feeRecipient <address> [--feeRate <pct>] [--maxOrders <n>]')
   .option('weth', { type: 'string', demandOption: true, describe: 'WETH / native ERC-20 address' })
+  .option('feeRecipient', { type: 'string', demandOption: true, describe: 'Fee recipient address' })
+  .option('feeRate', { type: 'number', default: 0, describe: 'Fee rate in basis points (e.g. 250 = 2.5%)' })
+  .option('maxOrders', { type: 'number', default: 0, describe: 'Max open orders per account (0 = unlimited)' })
   .option('forge', { type: 'string', describe: 'Extra forge flags' })
   .parse();
 
@@ -23,7 +26,13 @@ const VaultABI = [
   'function owner() view returns (address)',
 ];
 
-const RegistryABI = ['function setVault(address vault) external'];
+const RegistryABI = [
+  'function setVault(address vault) external',
+  'function setFeeRecipient(address recipient) external',
+  'function setFeeRate(uint32[8] rate) external',
+  'function setMaxOrders(uint256 max) external',
+  'function setEnabled(bool enabled) external',
+];
 
 const ValueCompABI = ['function get(uint256 entity) view returns (uint256)'];
 
@@ -82,11 +91,38 @@ async function run() {
     console.log(`  ${name} (${systemAddr}) -> authorized (${tx.hash})`);
   }
 
+  // 5. Configure marketplace settings
+  console.log('\n--- Configuring marketplace ---');
+
+  const tx2 = await registry.setFeeRecipient(argv.feeRecipient);
+  await tx2.wait();
+  console.log(`setFeeRecipient(${argv.feeRecipient}) tx: ${tx2.hash}`);
+
+  // fee rate: [precision, numerator] — basis points means precision=4
+  const feeRate: number[] = [4, argv.feeRate, 0, 0, 0, 0, 0, 0];
+  const tx3 = await registry.setFeeRate(feeRate);
+  await tx3.wait();
+  console.log(`setFeeRate(${argv.feeRate} bps = ${argv.feeRate / 100}%) tx: ${tx3.hash}`);
+
+  const maxOrders = argv.maxOrders > 0
+    ? BigInt(argv.maxOrders)
+    : ethers.MaxUint256;
+  const tx4 = await registry.setMaxOrders(maxOrders);
+  await tx4.wait();
+  console.log(`setMaxOrders(${argv.maxOrders > 0 ? argv.maxOrders : 'unlimited'}) tx: ${tx4.hash}`);
+
+  const tx5 = await registry.setEnabled(true);
+  await tx5.wait();
+  console.log(`setEnabled(true) tx: ${tx5.hash}`);
+
   console.log('\n--- Done ---');
-  console.log(`Vault:    ${vaultAddr}`);
-  console.log(`WETH:     ${argv.weth}`);
-  console.log(`Kami721:  ${kami721}`);
-  console.log(`Owner:    ${deployer}`);
+  console.log(`Vault:         ${vaultAddr}`);
+  console.log(`WETH:          ${argv.weth}`);
+  console.log(`Kami721:        ${kami721}`);
+  console.log(`Owner:          ${deployer}`);
+  console.log(`Fee Recipient:  ${argv.feeRecipient}`);
+  console.log(`Fee Rate:       ${argv.feeRate} bps (${argv.feeRate / 100}%)`);
+  console.log(`Max Orders:     ${argv.maxOrders > 0 ? argv.maxOrders : 'unlimited'}`);
 }
 
 async function deployVault(weth: string, kami721: string, owner: string, forge?: string): Promise<string> {
