@@ -1,9 +1,20 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { formatUnits } from 'viem';
 
 import { EmptyText, IconButton } from 'app/components/library';
+import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
+
+const KamidenClient = getKamidenClient();
+
+const formatPrice = (weiString: string) => {
+  if (!weiString || weiString === '0') return '0';
+  const num = Number(formatUnits(BigInt(weiString), 18));
+  if (num < 0.001) return '<0.001';
+  return num.toFixed(3);
+};
 
 export const Bids = ({
   isVisible,
@@ -23,6 +34,12 @@ export const Bids = ({
 }) => {
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
   const [showSelectKami, setShowSelectKami] = useState(false);
+  const [bids, setBids] = useState<KamiMarketBid[]>([]);
+
+  useEffect(() => {
+    if (!isVisible || !KamidenClient) return;
+    KamidenClient.getKamiMarketBids({}).then((res) => setBids(res.Bids ?? []));
+  }, [isVisible]);
 
   useEffect(() => {
     if (isVisible) setShowFilter(false);
@@ -63,16 +80,43 @@ export const Bids = ({
             }}
           />
         </SellButtonWrapper>
-        <Row>
+        <HeaderRow>
           <Column>
             <ColumnHeader>Offer</ColumnHeader>
           </Column>
           <Column>
             <ColumnHeader>
-              <EthIcon src={TokenIcons.eth} alt='ETH' />
+              <EthIcon src={TokenIcons.eth} alt='ETH' /> /Kami
             </ColumnHeader>
           </Column>
-        </Row>
+          <Column>
+            <ColumnHeader>Total</ColumnHeader>
+          </Column>
+          <Column>
+            <ColumnHeader>Qty</ColumnHeader>
+          </Column>
+        </HeaderRow>
+        {bids.length === 0 && <EmptyText text={['No bids found']} size={0.9} />}
+        {bids.map((bid) => (
+          <DataRow key={bid.OrderID}>
+            <Column>
+              <CellText>
+                {bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
+                  ? `Kami #${bid.KamiIndex}`
+                  : 'Collection'}
+              </CellText>
+            </Column>
+            <Column>
+              <CellText>{formatPrice(bid.Price)}</CellText>
+            </Column>
+            <Column>
+              <CellText>{bid.Total}</CellText>
+            </Column>
+            <Column>
+              <CellText>{bid.Quantity}</CellText>
+            </Column>
+          </DataRow>
+        ))}
       </Tab>
       <BottomSection isVisible={isVisible && !showCreateOrder && showSelectKami}>
         <Header>
@@ -118,16 +162,30 @@ const SellButtonWrapper = styled.div`
   padding: 0.4vw;
 `;
 
-const Row = styled.div`
+const HeaderRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   width: 100%;
+  border-bottom: 0.15vw solid black;
+`;
+
+const DataRow = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  width: 100%;
+  border-bottom: 0.06vw solid #ccc;
+
+  &:hover {
+    background-color: #eee;
+  }
 `;
 
 const Column = styled.div`
   display: flex;
-  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
   flex: 1;
 `;
 
@@ -135,8 +193,14 @@ const ColumnHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.2vw;
   padding: 0.8vw;
   font-size: 1.1vw;
+`;
+
+const CellText = styled.span`
+  font-size: 0.9vw;
+  padding: 0.4vw;
 `;
 
 const EthIcon = styled.img`

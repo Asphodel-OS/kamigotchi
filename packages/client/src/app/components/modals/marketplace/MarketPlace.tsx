@@ -137,7 +137,11 @@ export const MarketPlaceModal: UIComponent = {
         canExit
       >
         <Tabs tab={tab} setTab={setTab} onCreateOrder={openCreateOrder} />
-        <Listings isVisible={tab === 'listings'} onOpenFilter={openFilter} />
+        <Listings
+          isVisible={tab === 'listings'}
+          onOpenFilter={openFilter}
+          utils={{ queryKamiByIndex: utils.queryKamiByIndex, getKami: utils.getKami }}
+        />
         <Bids
           isVisible={tab === 'bids'}
           showCreateOrder={showCreateOrder}
