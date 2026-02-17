@@ -1,16 +1,23 @@
 ﻿Name,Key,Type,Period,Decay,Rate
-FIXED,FIXED,FIXED,0,,
-GDA 1500 Daily 50% Decay,GDA 1500 Daily 50% Decay,GDA,86400,0.5,1500
-GDA 750 Daily 50% Decay,GDA 750 Daily 50% Decay,GDA,86400,0.5,750
-GDA 250 Daily 50% Decay,GDA 250 Daily 50% Decay,GDA,86400,0.5,250
-GDA 60 Daily 50% Decay,GDA 60 Daily 50% Decay,GDA,86400,0.5,60
-GDA 300 Daily 50% Decay,GDA 300 Daily 50% Decay,GDA,86400,0.5,300
-GDA 40 Daily 50% Decay,GDA 40 Daily 50% Decay,GDA,86400,0.5,40
 GDA 20 Daily 50% Decay,GDA 20 Daily 50% Decay,GDA,86400,0.5,20
-GDA 75 Daily 50% Decay,GDA 75 Daily 50% Decay,GDA,86400,0.5,75
-GDA 150 Daily 50% Decay,GDA 150 Daily 50% Decay,GDA,86400,0.5,150
-GDA 50 Daily 50% Decay,GDA 50 Daily 50% Decay,GDA,86400,0.5,50
-GDA 12 Daily 50% Decay,GDA 12 Daily 50% Decay,GDA,86400,0.5,12
-GDA 8 Daily 50% Decay,GDA 8 Daily 50% Decay,GDA,86400,0.5,8
 GDA 4 Daily 50% Decay,GDA 4 Daily 50% Decay,GDA,86400,0.5,4
+GDA 8 Daily 50% Decay,GDA 8 Daily 50% Decay,GDA,86400,0.5,8
+GDA 12 Daily 50% Decay,GDA 12 Daily 50% Decay,GDA,86400,0.5,12
+GDA 50 Daily 50% Decay,GDA 50 Daily 50% Decay,GDA,86400,0.5,50
+GDA 150 Daily 50% Decay,GDA 150 Daily 50% Decay,GDA,86400,0.5,150
+GDA 75 Daily 50% Decay,GDA 75 Daily 50% Decay,GDA,86400,0.5,75
 GDA 20 Daily 50% Decay,GDA 20 Daily 50% Decay,GDA,86400,0.5,20
+GDA 40 Daily 50% Decay,GDA 40 Daily 50% Decay,GDA,86400,0.5,40
+GDA 300 Daily 50% Decay,GDA 300 Daily 50% Decay,GDA,86400,0.5,300
+GDA 60 Daily 50% Decay,GDA 60 Daily 50% Decay,GDA,86400,0.5,60
+GDA 250 Daily 50% Decay,GDA 250 Daily 50% Decay,GDA,86400,0.5,250
+GDA 750 Daily 50% Decay,GDA 750 Daily 50% Decay,GDA,86400,0.5,750
+GDA 1500 Daily 50% Decay,GDA 1500 Daily 50% Decay,GDA,86400,0.5,1500
+FIXED,FIXED,FIXED,0,,
+GDA 20 Bidaily 50% Decay,GDA 20 Bidaily 50% Decay,GDA,172800,0.5,20
+GDA 4 Bidaily 50% Decay,GDA 4 Bidaily 50% Decay,GDA,172800,0.5,4
+GDA 8 Bidaily 50% Decay,GDA 8 Bidaily 50% Decay,GDA,172800,0.5,8
+GDA 50 Bidaily 50% Decay,GDA 50 Bidaily 50% Decay,GDA,172800,0.5,50
+GDA 300 Bidaily 50% Decay,GDA 300 Bidaily 50% Decay,GDA,172800,0.5,300
+GDA 150 Bidaily 50% Decay,GDA 150 Bidaily 50% Decay,GDA,172800,0.5,150
+GDA 12 Bidaily 50% Decay,GDA 12 Bidaily 50% Decay,GDA,172800,0.5,12
