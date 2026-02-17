@@ -5,10 +5,17 @@
 // source: kamiden.proto
 
 /* eslint-disable */
-import { BinaryReader, BinaryWriter } from '@bufbuild/protobuf/wire';
-import type { CallContext, CallOptions } from 'nice-grpc-common';
+import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import type { CallContext, CallOptions } from "nice-grpc-common";
 
-export const protobufPackage = 'kamiden';
+export const protobufPackage = "kamiden";
+
+export enum KamiMarketBidType {
+  KAMI_MARKET_BID_TYPE_UNSPECIFIED = 0,
+  KAMI_MARKET_BID_TYPE_ANY = 1,
+  KAMI_MARKET_BID_TYPE_SPECIFIC = 2,
+  UNRECOGNIZED = -1,
+}
 
 /** Base type */
 export interface Message {
@@ -62,6 +69,11 @@ export interface Feed {
   KamiCasts: KamiCast[];
   DroptableReveals: DroptableReveal[];
   SacrificeReveals: SacrificeReveal[];
+  KamiMarketLists: KamiMarketList[];
+  KamiMarketBuys: KamiMarketBuy[];
+  KamiMarketOffers: KamiMarketOffer[];
+  KamiMarketAccepts: KamiMarketAccept[];
+  KamiMarketCancels: KamiMarketCancel[];
 }
 
 export interface AuctionBuy {
@@ -143,6 +155,80 @@ export interface PortalReceipt {
   IsClaimed: boolean;
 }
 
+export interface KamiMarketList {
+  OrderID: string;
+  AccountID: string;
+  KamiIndex: number;
+  Price: string;
+  Expiry: string;
+  Timestamp: number;
+}
+
+export interface KamiMarketBuy {
+  OrderID: string;
+  BuyerAccountID: string;
+  SellerAccountID: string;
+  KamiIndex: number;
+  Price: string;
+  Timestamp: number;
+}
+
+export interface KamiMarketOffer {
+  OrderID: string;
+  AccountID: string;
+  KamiIndex: number;
+  Quantity: number;
+  Price: string;
+  Expiry: string;
+  Timestamp: number;
+}
+
+export interface KamiMarketAccept {
+  OrderID: string;
+  SellerAccountID: string;
+  BuyerAccountID: string;
+  KamiIndex: number;
+  Price: string;
+  Timestamp: number;
+}
+
+export interface KamiMarketCancel {
+  OrderID: string;
+  AccountID: string;
+  Timestamp: number;
+}
+
+export interface KamiMarketListing {
+  OrderID: string;
+  SellerAccountID: string;
+  KamiIndex: number;
+  Price: string;
+  Expiry: string;
+  Timestamp: number;
+}
+
+export interface KamiMarketBid {
+  OrderID: string;
+  BuyerAccountID: string;
+  KamiIndex: number;
+  Total: number;
+  Price: string;
+  Expiry: string;
+  Timestamp: number;
+  BidType: KamiMarketBidType;
+  Quantity: number;
+}
+
+export interface KamiMarketHistoryEvent {
+  Timestamp: number;
+  OrderID: string;
+  List?: KamiMarketList | undefined;
+  Buy?: KamiMarketBuy | undefined;
+  Offer?: KamiMarketOffer | undefined;
+  Accept?: KamiMarketAccept | undefined;
+  Cancel?: KamiMarketCancel | undefined;
+}
+
 /** REQUESTS */
 export interface RoomRequest {
   RoomIndex: number;
@@ -150,7 +236,8 @@ export interface RoomRequest {
   Size?: number | undefined;
 }
 
-export interface StreamRequest {}
+export interface StreamRequest {
+}
 
 export interface BattlesRequest {
   KillerId?: string | undefined;
@@ -187,7 +274,24 @@ export interface TokenPortalRequest {
   AccountID: string;
 }
 
-export interface LeaderboardRequest {}
+export interface KamiMarketListingsRequest {
+  Timestamp?: number | undefined;
+  Size?: number | undefined;
+}
+
+export interface KamiMarketBidsRequest {
+  Timestamp?: number | undefined;
+  Size?: number | undefined;
+}
+
+export interface KamiMarketHistoryRequest {
+  AccountId: string;
+  Timestamp?: number | undefined;
+  Size?: number | undefined;
+}
+
+export interface LeaderboardRequest {
+}
 
 /** RESPONSE */
 export interface RoomResponse {
@@ -228,13 +332,25 @@ export interface TokenPortalResponse {
   Receipts: PortalReceipt[];
 }
 
+export interface KamiMarketListingsResponse {
+  Listings: KamiMarketListing[];
+}
+
+export interface KamiMarketBidsResponse {
+  Bids: KamiMarketBid[];
+}
+
+export interface KamiMarketHistoryResponse {
+  Events: KamiMarketHistoryEvent[];
+}
+
 export interface LeaderboardRow {
   Name: string;
   Value: string;
 }
 
 function createBaseMessage(): Message {
-  return { RoomIndex: 0, AccountId: '', Message: '', Timestamp: 0 };
+  return { RoomIndex: 0, AccountId: "", Message: "", Timestamp: 0 };
 }
 
 export const Message: MessageFns<Message> = {
@@ -242,10 +358,10 @@ export const Message: MessageFns<Message> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.AccountId !== '') {
+    if (message.AccountId !== "") {
       writer.uint32(18).string(message.AccountId);
     }
-    if (message.Message !== '') {
+    if (message.Message !== "") {
       writer.uint32(26).string(message.Message);
     }
     if (message.Timestamp !== 0) {
@@ -308,15 +424,15 @@ export const Message: MessageFns<Message> = {
   fromPartial(object: DeepPartial<Message>): Message {
     const message = createBaseMessage();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.AccountId = object.AccountId ?? '';
-    message.Message = object.Message ?? '';
+    message.AccountId = object.AccountId ?? "";
+    message.Message = object.Message ?? "";
     message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
 };
 
 function createBaseMovement(): Movement {
-  return { RoomIndex: 0, AccountId: '', Timestamp: 0 };
+  return { RoomIndex: 0, AccountId: "", Timestamp: 0 };
 }
 
 export const Movement: MessageFns<Movement> = {
@@ -324,7 +440,7 @@ export const Movement: MessageFns<Movement> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.AccountId !== '') {
+    if (message.AccountId !== "") {
       writer.uint32(18).string(message.AccountId);
     }
     if (message.Timestamp !== 0) {
@@ -379,14 +495,14 @@ export const Movement: MessageFns<Movement> = {
   fromPartial(object: DeepPartial<Movement>): Movement {
     const message = createBaseMovement();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.AccountId = object.AccountId ?? '';
+    message.AccountId = object.AccountId ?? "";
     message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
 };
 
 function createBaseHarvestEnd(): HarvestEnd {
-  return { RoomIndex: 0, KamiId: '', Timestamp: 0 };
+  return { RoomIndex: 0, KamiId: "", Timestamp: 0 };
 }
 
 export const HarvestEnd: MessageFns<HarvestEnd> = {
@@ -394,7 +510,7 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(8).uint32(message.RoomIndex);
     }
-    if (message.KamiId !== '') {
+    if (message.KamiId !== "") {
       writer.uint32(18).string(message.KamiId);
     }
     if (message.Timestamp !== 0) {
@@ -449,7 +565,7 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
   fromPartial(object: DeepPartial<HarvestEnd>): HarvestEnd {
     const message = createBaseHarvestEnd();
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.KamiId = object.KamiId ?? '';
+    message.KamiId = object.KamiId ?? "";
     message.Timestamp = object.Timestamp ?? 0;
     return message;
   },
@@ -457,18 +573,18 @@ export const HarvestEnd: MessageFns<HarvestEnd> = {
 
 function createBaseKill(): Kill {
   return {
-    AccountID: '',
+    AccountID: "",
     Timestamp: 0,
     RoomIndex: 0,
-    KillerId: '',
+    KillerId: "",
     KillerHealthSync: 0,
     KillerHealthTotal: 0,
-    VictimId: '',
+    VictimId: "",
     VictimHealthSync: 0,
     VictimHealthTotal: 0,
-    Bounty: '',
-    Salvage: '',
-    Spoils: '',
+    Bounty: "",
+    Salvage: "",
+    Spoils: "",
     IsDeath: false,
     BlockNumber: undefined,
   };
@@ -476,7 +592,7 @@ function createBaseKill(): Kill {
 
 export const Kill: MessageFns<Kill> = {
   encode(message: Kill, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.AccountID !== '') {
+    if (message.AccountID !== "") {
       writer.uint32(10).string(message.AccountID);
     }
     if (message.Timestamp !== 0) {
@@ -485,7 +601,7 @@ export const Kill: MessageFns<Kill> = {
     if (message.RoomIndex !== 0) {
       writer.uint32(24).uint32(message.RoomIndex);
     }
-    if (message.KillerId !== '') {
+    if (message.KillerId !== "") {
       writer.uint32(34).string(message.KillerId);
     }
     if (message.KillerHealthSync !== 0) {
@@ -494,7 +610,7 @@ export const Kill: MessageFns<Kill> = {
     if (message.KillerHealthTotal !== 0) {
       writer.uint32(48).int32(message.KillerHealthTotal);
     }
-    if (message.VictimId !== '') {
+    if (message.VictimId !== "") {
       writer.uint32(58).string(message.VictimId);
     }
     if (message.VictimHealthSync !== 0) {
@@ -503,13 +619,13 @@ export const Kill: MessageFns<Kill> = {
     if (message.VictimHealthTotal !== 0) {
       writer.uint32(72).int32(message.VictimHealthTotal);
     }
-    if (message.Bounty !== '') {
+    if (message.Bounty !== "") {
       writer.uint32(82).string(message.Bounty);
     }
-    if (message.Salvage !== '') {
+    if (message.Salvage !== "") {
       writer.uint32(90).string(message.Salvage);
     }
-    if (message.Spoils !== '') {
+    if (message.Spoils !== "") {
       writer.uint32(98).string(message.Spoils);
     }
     if (message.IsDeath !== false) {
@@ -654,18 +770,18 @@ export const Kill: MessageFns<Kill> = {
   },
   fromPartial(object: DeepPartial<Kill>): Kill {
     const message = createBaseKill();
-    message.AccountID = object.AccountID ?? '';
+    message.AccountID = object.AccountID ?? "";
     message.Timestamp = object.Timestamp ?? 0;
     message.RoomIndex = object.RoomIndex ?? 0;
-    message.KillerId = object.KillerId ?? '';
+    message.KillerId = object.KillerId ?? "";
     message.KillerHealthSync = object.KillerHealthSync ?? 0;
     message.KillerHealthTotal = object.KillerHealthTotal ?? 0;
-    message.VictimId = object.VictimId ?? '';
+    message.VictimId = object.VictimId ?? "";
     message.VictimHealthSync = object.VictimHealthSync ?? 0;
     message.VictimHealthTotal = object.VictimHealthTotal ?? 0;
-    message.Bounty = object.Bounty ?? '';
-    message.Salvage = object.Salvage ?? '';
-    message.Spoils = object.Spoils ?? '';
+    message.Bounty = object.Bounty ?? "";
+    message.Salvage = object.Salvage ?? "";
+    message.Spoils = object.Spoils ?? "";
     message.IsDeath = object.IsDeath ?? false;
     message.BlockNumber = object.BlockNumber ?? undefined;
     return message;
@@ -751,6 +867,11 @@ function createBaseFeed(): Feed {
     KamiCasts: [],
     DroptableReveals: [],
     SacrificeReveals: [],
+    KamiMarketLists: [],
+    KamiMarketBuys: [],
+    KamiMarketOffers: [],
+    KamiMarketAccepts: [],
+    KamiMarketCancels: [],
   };
 }
 
@@ -776,6 +897,21 @@ export const Feed: MessageFns<Feed> = {
     }
     for (const v of message.SacrificeReveals) {
       SacrificeReveal.encode(v!, writer.uint32(58).fork()).join();
+    }
+    for (const v of message.KamiMarketLists) {
+      KamiMarketList.encode(v!, writer.uint32(66).fork()).join();
+    }
+    for (const v of message.KamiMarketBuys) {
+      KamiMarketBuy.encode(v!, writer.uint32(74).fork()).join();
+    }
+    for (const v of message.KamiMarketOffers) {
+      KamiMarketOffer.encode(v!, writer.uint32(82).fork()).join();
+    }
+    for (const v of message.KamiMarketAccepts) {
+      KamiMarketAccept.encode(v!, writer.uint32(90).fork()).join();
+    }
+    for (const v of message.KamiMarketCancels) {
+      KamiMarketCancel.encode(v!, writer.uint32(98).fork()).join();
     }
     return writer;
   },
@@ -843,6 +979,46 @@ export const Feed: MessageFns<Feed> = {
           message.SacrificeReveals.push(SacrificeReveal.decode(reader, reader.uint32()));
           continue;
         }
+        case 8: {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.KamiMarketLists.push(KamiMarketList.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 9: {
+          if (tag !== 74) {
+            break;
+          }
+
+          message.KamiMarketBuys.push(KamiMarketBuy.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.KamiMarketOffers.push(KamiMarketOffer.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          message.KamiMarketAccepts.push(KamiMarketAccept.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 12: {
+          if (tag !== 98) {
+            break;
+          }
+
+          message.KamiMarketCancels.push(KamiMarketCancel.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -862,21 +1038,24 @@ export const Feed: MessageFns<Feed> = {
     message.Kills = object.Kills?.map((e) => Kill.fromPartial(e)) || [];
     message.Trades = object.Trades?.map((e) => Trade.fromPartial(e)) || [];
     message.KamiCasts = object.KamiCasts?.map((e) => KamiCast.fromPartial(e)) || [];
-    message.DroptableReveals =
-      object.DroptableReveals?.map((e) => DroptableReveal.fromPartial(e)) || [];
-    message.SacrificeReveals =
-      object.SacrificeReveals?.map((e) => SacrificeReveal.fromPartial(e)) || [];
+    message.DroptableReveals = object.DroptableReveals?.map((e) => DroptableReveal.fromPartial(e)) || [];
+    message.SacrificeReveals = object.SacrificeReveals?.map((e) => SacrificeReveal.fromPartial(e)) || [];
+    message.KamiMarketLists = object.KamiMarketLists?.map((e) => KamiMarketList.fromPartial(e)) || [];
+    message.KamiMarketBuys = object.KamiMarketBuys?.map((e) => KamiMarketBuy.fromPartial(e)) || [];
+    message.KamiMarketOffers = object.KamiMarketOffers?.map((e) => KamiMarketOffer.fromPartial(e)) || [];
+    message.KamiMarketAccepts = object.KamiMarketAccepts?.map((e) => KamiMarketAccept.fromPartial(e)) || [];
+    message.KamiMarketCancels = object.KamiMarketCancels?.map((e) => KamiMarketCancel.fromPartial(e)) || [];
     return message;
   },
 };
 
 function createBaseAuctionBuy(): AuctionBuy {
-  return { AccountIndex: '', ItemIndex: 0, Amount: 0, Currency: 0, Cost: 0, Timestamp: 0 };
+  return { AccountIndex: "", ItemIndex: 0, Amount: 0, Currency: 0, Cost: 0, Timestamp: 0 };
 }
 
 export const AuctionBuy: MessageFns<AuctionBuy> = {
   encode(message: AuctionBuy, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.AccountIndex !== '') {
+    if (message.AccountIndex !== "") {
       writer.uint32(10).string(message.AccountIndex);
     }
     if (message.ItemIndex !== 0) {
@@ -966,7 +1145,7 @@ export const AuctionBuy: MessageFns<AuctionBuy> = {
   },
   fromPartial(object: DeepPartial<AuctionBuy>): AuctionBuy {
     const message = createBaseAuctionBuy();
-    message.AccountIndex = object.AccountIndex ?? '';
+    message.AccountIndex = object.AccountIndex ?? "";
     message.ItemIndex = object.ItemIndex ?? 0;
     message.Amount = object.Amount ?? 0;
     message.Currency = object.Currency ?? 0;
@@ -977,18 +1156,18 @@ export const AuctionBuy: MessageFns<AuctionBuy> = {
 };
 
 function createBaseRankRow(): RankRow {
-  return { KamiName: '', OwnerName: '', OwnerAddress: '', KamiIndex: 0, Amount: 0 };
+  return { KamiName: "", OwnerName: "", OwnerAddress: "", KamiIndex: 0, Amount: 0 };
 }
 
 export const RankRow: MessageFns<RankRow> = {
   encode(message: RankRow, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.KamiName !== '') {
+    if (message.KamiName !== "") {
       writer.uint32(10).string(message.KamiName);
     }
-    if (message.OwnerName !== '') {
+    if (message.OwnerName !== "") {
       writer.uint32(18).string(message.OwnerName);
     }
-    if (message.OwnerAddress !== '') {
+    if (message.OwnerAddress !== "") {
       writer.uint32(26).string(message.OwnerAddress);
     }
     if (message.KamiIndex !== 0) {
@@ -1061,9 +1240,9 @@ export const RankRow: MessageFns<RankRow> = {
   },
   fromPartial(object: DeepPartial<RankRow>): RankRow {
     const message = createBaseRankRow();
-    message.KamiName = object.KamiName ?? '';
-    message.OwnerName = object.OwnerName ?? '';
-    message.OwnerAddress = object.OwnerAddress ?? '';
+    message.KamiName = object.KamiName ?? "";
+    message.OwnerName = object.OwnerName ?? "";
+    message.OwnerAddress = object.OwnerAddress ?? "";
     message.KamiIndex = object.KamiIndex ?? 0;
     message.Amount = object.Amount ?? 0;
     return message;
@@ -1072,29 +1251,29 @@ export const RankRow: MessageFns<RankRow> = {
 
 function createBaseTrade(): Trade {
   return {
-    TradeId: '',
-    MakerId: '',
-    TakerId: '',
+    TradeId: "",
+    MakerId: "",
+    TakerId: "",
     BuyOrderIndices: [],
     BuyOrderAmounts: [],
     SellOrderIndices: [],
     SellOrderAmounts: [],
-    CreateTimestamp: '',
-    CancelTimestamp: '',
-    ExecuteTimestamp: '',
-    CompleteTimestamp: '',
+    CreateTimestamp: "",
+    CancelTimestamp: "",
+    ExecuteTimestamp: "",
+    CompleteTimestamp: "",
   };
 }
 
 export const Trade: MessageFns<Trade> = {
   encode(message: Trade, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.TradeId !== '') {
+    if (message.TradeId !== "") {
       writer.uint32(10).string(message.TradeId);
     }
-    if (message.MakerId !== '') {
+    if (message.MakerId !== "") {
       writer.uint32(18).string(message.MakerId);
     }
-    if (message.TakerId !== '') {
+    if (message.TakerId !== "") {
       writer.uint32(26).string(message.TakerId);
     }
     writer.uint32(34).fork();
@@ -1113,16 +1292,16 @@ export const Trade: MessageFns<Trade> = {
     for (const v of message.SellOrderAmounts) {
       writer.uint32(58).string(v!);
     }
-    if (message.CreateTimestamp !== '') {
+    if (message.CreateTimestamp !== "") {
       writer.uint32(66).string(message.CreateTimestamp);
     }
-    if (message.CancelTimestamp !== '') {
+    if (message.CancelTimestamp !== "") {
       writer.uint32(74).string(message.CancelTimestamp);
     }
-    if (message.ExecuteTimestamp !== '') {
+    if (message.ExecuteTimestamp !== "") {
       writer.uint32(82).string(message.ExecuteTimestamp);
     }
-    if (message.CompleteTimestamp !== '') {
+    if (message.CompleteTimestamp !== "") {
       writer.uint32(90).string(message.CompleteTimestamp);
     }
     return writer;
@@ -1257,37 +1436,37 @@ export const Trade: MessageFns<Trade> = {
   },
   fromPartial(object: DeepPartial<Trade>): Trade {
     const message = createBaseTrade();
-    message.TradeId = object.TradeId ?? '';
-    message.MakerId = object.MakerId ?? '';
-    message.TakerId = object.TakerId ?? '';
+    message.TradeId = object.TradeId ?? "";
+    message.MakerId = object.MakerId ?? "";
+    message.TakerId = object.TakerId ?? "";
     message.BuyOrderIndices = object.BuyOrderIndices?.map((e) => e) || [];
     message.BuyOrderAmounts = object.BuyOrderAmounts?.map((e) => e) || [];
     message.SellOrderIndices = object.SellOrderIndices?.map((e) => e) || [];
     message.SellOrderAmounts = object.SellOrderAmounts?.map((e) => e) || [];
-    message.CreateTimestamp = object.CreateTimestamp ?? '';
-    message.CancelTimestamp = object.CancelTimestamp ?? '';
-    message.ExecuteTimestamp = object.ExecuteTimestamp ?? '';
-    message.CompleteTimestamp = object.CompleteTimestamp ?? '';
+    message.CreateTimestamp = object.CreateTimestamp ?? "";
+    message.CancelTimestamp = object.CancelTimestamp ?? "";
+    message.ExecuteTimestamp = object.ExecuteTimestamp ?? "";
+    message.CompleteTimestamp = object.CompleteTimestamp ?? "";
     return message;
   },
 };
 
 function createBaseItemTransfer(): ItemTransfer {
-  return { SenderAccountID: '', RecvAccountID: '', ItemIndex: 0, Amount: '' };
+  return { SenderAccountID: "", RecvAccountID: "", ItemIndex: 0, Amount: "" };
 }
 
 export const ItemTransfer: MessageFns<ItemTransfer> = {
   encode(message: ItemTransfer, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.SenderAccountID !== '') {
+    if (message.SenderAccountID !== "") {
       writer.uint32(10).string(message.SenderAccountID);
     }
-    if (message.RecvAccountID !== '') {
+    if (message.RecvAccountID !== "") {
       writer.uint32(18).string(message.RecvAccountID);
     }
     if (message.ItemIndex !== 0) {
       writer.uint32(24).uint32(message.ItemIndex);
     }
-    if (message.Amount !== '') {
+    if (message.Amount !== "") {
       writer.uint32(34).string(message.Amount);
     }
     return writer;
@@ -1346,27 +1525,27 @@ export const ItemTransfer: MessageFns<ItemTransfer> = {
   },
   fromPartial(object: DeepPartial<ItemTransfer>): ItemTransfer {
     const message = createBaseItemTransfer();
-    message.SenderAccountID = object.SenderAccountID ?? '';
-    message.RecvAccountID = object.RecvAccountID ?? '';
+    message.SenderAccountID = object.SenderAccountID ?? "";
+    message.RecvAccountID = object.RecvAccountID ?? "";
     message.ItemIndex = object.ItemIndex ?? 0;
-    message.Amount = object.Amount ?? '';
+    message.Amount = object.Amount ?? "";
     return message;
   },
 };
 
 function createBaseKamiCast(): KamiCast {
-  return { AccountID: '', Timestamp: 0, TargetID: '', itemIndex: 0, nodeIndex: 0 };
+  return { AccountID: "", Timestamp: 0, TargetID: "", itemIndex: 0, nodeIndex: 0 };
 }
 
 export const KamiCast: MessageFns<KamiCast> = {
   encode(message: KamiCast, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.AccountID !== '') {
+    if (message.AccountID !== "") {
       writer.uint32(10).string(message.AccountID);
     }
     if (message.Timestamp !== 0) {
       writer.uint32(16).uint64(message.Timestamp);
     }
-    if (message.TargetID !== '') {
+    if (message.TargetID !== "") {
       writer.uint32(26).string(message.TargetID);
     }
     if (message.itemIndex !== 0) {
@@ -1439,9 +1618,9 @@ export const KamiCast: MessageFns<KamiCast> = {
   },
   fromPartial(object: DeepPartial<KamiCast>): KamiCast {
     const message = createBaseKamiCast();
-    message.AccountID = object.AccountID ?? '';
+    message.AccountID = object.AccountID ?? "";
     message.Timestamp = object.Timestamp ?? 0;
-    message.TargetID = object.TargetID ?? '';
+    message.TargetID = object.TargetID ?? "";
     message.itemIndex = object.itemIndex ?? 0;
     message.nodeIndex = object.nodeIndex ?? 0;
     return message;
@@ -1449,18 +1628,18 @@ export const KamiCast: MessageFns<KamiCast> = {
 };
 
 function createBaseDroptableReveal(): DroptableReveal {
-  return { CommitID: '', HolderID: '', DtID: '', Timestamp: 0, ItemIndices: [], ItemAmounts: [] };
+  return { CommitID: "", HolderID: "", DtID: "", Timestamp: 0, ItemIndices: [], ItemAmounts: [] };
 }
 
 export const DroptableReveal: MessageFns<DroptableReveal> = {
   encode(message: DroptableReveal, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.CommitID !== '') {
+    if (message.CommitID !== "") {
       writer.uint32(10).string(message.CommitID);
     }
-    if (message.HolderID !== '') {
+    if (message.HolderID !== "") {
       writer.uint32(18).string(message.HolderID);
     }
-    if (message.DtID !== '') {
+    if (message.DtID !== "") {
       writer.uint32(26).string(message.DtID);
     }
     if (message.Timestamp !== 0) {
@@ -1556,9 +1735,9 @@ export const DroptableReveal: MessageFns<DroptableReveal> = {
   },
   fromPartial(object: DeepPartial<DroptableReveal>): DroptableReveal {
     const message = createBaseDroptableReveal();
-    message.CommitID = object.CommitID ?? '';
-    message.HolderID = object.HolderID ?? '';
-    message.DtID = object.DtID ?? '';
+    message.CommitID = object.CommitID ?? "";
+    message.HolderID = object.HolderID ?? "";
+    message.DtID = object.DtID ?? "";
     message.Timestamp = object.Timestamp ?? 0;
     message.ItemIndices = object.ItemIndices?.map((e) => e) || [];
     message.ItemAmounts = object.ItemAmounts?.map((e) => e) || [];
@@ -1567,29 +1746,21 @@ export const DroptableReveal: MessageFns<DroptableReveal> = {
 };
 
 function createBaseSacrificeReveal(): SacrificeReveal {
-  return {
-    CommitID: '',
-    HolderID: '',
-    KamiID: '',
-    DtID: '',
-    Timestamp: 0,
-    ItemIndices: [],
-    ItemAmounts: [],
-  };
+  return { CommitID: "", HolderID: "", KamiID: "", DtID: "", Timestamp: 0, ItemIndices: [], ItemAmounts: [] };
 }
 
 export const SacrificeReveal: MessageFns<SacrificeReveal> = {
   encode(message: SacrificeReveal, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.CommitID !== '') {
+    if (message.CommitID !== "") {
       writer.uint32(10).string(message.CommitID);
     }
-    if (message.HolderID !== '') {
+    if (message.HolderID !== "") {
       writer.uint32(18).string(message.HolderID);
     }
-    if (message.KamiID !== '') {
+    if (message.KamiID !== "") {
       writer.uint32(26).string(message.KamiID);
     }
-    if (message.DtID !== '') {
+    if (message.DtID !== "") {
       writer.uint32(34).string(message.DtID);
     }
     if (message.Timestamp !== 0) {
@@ -1693,10 +1864,10 @@ export const SacrificeReveal: MessageFns<SacrificeReveal> = {
   },
   fromPartial(object: DeepPartial<SacrificeReveal>): SacrificeReveal {
     const message = createBaseSacrificeReveal();
-    message.CommitID = object.CommitID ?? '';
-    message.HolderID = object.HolderID ?? '';
-    message.KamiID = object.KamiID ?? '';
-    message.DtID = object.DtID ?? '';
+    message.CommitID = object.CommitID ?? "";
+    message.HolderID = object.HolderID ?? "";
+    message.KamiID = object.KamiID ?? "";
+    message.DtID = object.DtID ?? "";
     message.Timestamp = object.Timestamp ?? 0;
     message.ItemIndices = object.ItemIndices?.map((e) => e) || [];
     message.ItemAmounts = object.ItemAmounts?.map((e) => e) || [];
@@ -1706,14 +1877,14 @@ export const SacrificeReveal: MessageFns<SacrificeReveal> = {
 
 function createBasePortalReceipt(): PortalReceipt {
   return {
-    Timestamp: '',
-    AccountID: '',
-    ReceiptID: '',
+    Timestamp: "",
+    AccountID: "",
+    ReceiptID: "",
     ItemIndex: 0,
-    ItemAmt: '',
-    TaxAmt: '',
-    TokenAddress: '',
-    TokenAmt: '',
+    ItemAmt: "",
+    TaxAmt: "",
+    TokenAddress: "",
+    TokenAmt: "",
     IsWithdrawal: false,
     IsCanceled: false,
     IsClaimed: false,
@@ -1722,28 +1893,28 @@ function createBasePortalReceipt(): PortalReceipt {
 
 export const PortalReceipt: MessageFns<PortalReceipt> = {
   encode(message: PortalReceipt, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.Timestamp !== '') {
+    if (message.Timestamp !== "") {
       writer.uint32(10).string(message.Timestamp);
     }
-    if (message.AccountID !== '') {
+    if (message.AccountID !== "") {
       writer.uint32(18).string(message.AccountID);
     }
-    if (message.ReceiptID !== '') {
+    if (message.ReceiptID !== "") {
       writer.uint32(26).string(message.ReceiptID);
     }
     if (message.ItemIndex !== 0) {
       writer.uint32(32).uint32(message.ItemIndex);
     }
-    if (message.ItemAmt !== '') {
+    if (message.ItemAmt !== "") {
       writer.uint32(42).string(message.ItemAmt);
     }
-    if (message.TaxAmt !== '') {
+    if (message.TaxAmt !== "") {
       writer.uint32(50).string(message.TaxAmt);
     }
-    if (message.TokenAddress !== '') {
+    if (message.TokenAddress !== "") {
       writer.uint32(58).string(message.TokenAddress);
     }
-    if (message.TokenAmt !== '') {
+    if (message.TokenAmt !== "") {
       writer.uint32(66).string(message.TokenAmt);
     }
     if (message.IsWithdrawal !== false) {
@@ -1867,17 +2038,915 @@ export const PortalReceipt: MessageFns<PortalReceipt> = {
   },
   fromPartial(object: DeepPartial<PortalReceipt>): PortalReceipt {
     const message = createBasePortalReceipt();
-    message.Timestamp = object.Timestamp ?? '';
-    message.AccountID = object.AccountID ?? '';
-    message.ReceiptID = object.ReceiptID ?? '';
+    message.Timestamp = object.Timestamp ?? "";
+    message.AccountID = object.AccountID ?? "";
+    message.ReceiptID = object.ReceiptID ?? "";
     message.ItemIndex = object.ItemIndex ?? 0;
-    message.ItemAmt = object.ItemAmt ?? '';
-    message.TaxAmt = object.TaxAmt ?? '';
-    message.TokenAddress = object.TokenAddress ?? '';
-    message.TokenAmt = object.TokenAmt ?? '';
+    message.ItemAmt = object.ItemAmt ?? "";
+    message.TaxAmt = object.TaxAmt ?? "";
+    message.TokenAddress = object.TokenAddress ?? "";
+    message.TokenAmt = object.TokenAmt ?? "";
     message.IsWithdrawal = object.IsWithdrawal ?? false;
     message.IsCanceled = object.IsCanceled ?? false;
     message.IsClaimed = object.IsClaimed ?? false;
+    return message;
+  },
+};
+
+function createBaseKamiMarketList(): KamiMarketList {
+  return { OrderID: "", AccountID: "", KamiIndex: 0, Price: "", Expiry: "", Timestamp: 0 };
+}
+
+export const KamiMarketList: MessageFns<KamiMarketList> = {
+  encode(message: KamiMarketList, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.OrderID !== "") {
+      writer.uint32(10).string(message.OrderID);
+    }
+    if (message.AccountID !== "") {
+      writer.uint32(18).string(message.AccountID);
+    }
+    if (message.KamiIndex !== 0) {
+      writer.uint32(24).uint32(message.KamiIndex);
+    }
+    if (message.Price !== "") {
+      writer.uint32(34).string(message.Price);
+    }
+    if (message.Expiry !== "") {
+      writer.uint32(42).string(message.Expiry);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(48).uint64(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketList {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketList();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.AccountID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.KamiIndex = reader.uint32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.Price = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.Expiry = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketList>): KamiMarketList {
+    return KamiMarketList.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketList>): KamiMarketList {
+    const message = createBaseKamiMarketList();
+    message.OrderID = object.OrderID ?? "";
+    message.AccountID = object.AccountID ?? "";
+    message.KamiIndex = object.KamiIndex ?? 0;
+    message.Price = object.Price ?? "";
+    message.Expiry = object.Expiry ?? "";
+    message.Timestamp = object.Timestamp ?? 0;
+    return message;
+  },
+};
+
+function createBaseKamiMarketBuy(): KamiMarketBuy {
+  return { OrderID: "", BuyerAccountID: "", SellerAccountID: "", KamiIndex: 0, Price: "", Timestamp: 0 };
+}
+
+export const KamiMarketBuy: MessageFns<KamiMarketBuy> = {
+  encode(message: KamiMarketBuy, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.OrderID !== "") {
+      writer.uint32(10).string(message.OrderID);
+    }
+    if (message.BuyerAccountID !== "") {
+      writer.uint32(18).string(message.BuyerAccountID);
+    }
+    if (message.SellerAccountID !== "") {
+      writer.uint32(26).string(message.SellerAccountID);
+    }
+    if (message.KamiIndex !== 0) {
+      writer.uint32(32).uint32(message.KamiIndex);
+    }
+    if (message.Price !== "") {
+      writer.uint32(42).string(message.Price);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(48).uint64(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketBuy {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketBuy();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.BuyerAccountID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.SellerAccountID = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.KamiIndex = reader.uint32();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.Price = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketBuy>): KamiMarketBuy {
+    return KamiMarketBuy.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketBuy>): KamiMarketBuy {
+    const message = createBaseKamiMarketBuy();
+    message.OrderID = object.OrderID ?? "";
+    message.BuyerAccountID = object.BuyerAccountID ?? "";
+    message.SellerAccountID = object.SellerAccountID ?? "";
+    message.KamiIndex = object.KamiIndex ?? 0;
+    message.Price = object.Price ?? "";
+    message.Timestamp = object.Timestamp ?? 0;
+    return message;
+  },
+};
+
+function createBaseKamiMarketOffer(): KamiMarketOffer {
+  return { OrderID: "", AccountID: "", KamiIndex: 0, Quantity: 0, Price: "", Expiry: "", Timestamp: 0 };
+}
+
+export const KamiMarketOffer: MessageFns<KamiMarketOffer> = {
+  encode(message: KamiMarketOffer, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.OrderID !== "") {
+      writer.uint32(10).string(message.OrderID);
+    }
+    if (message.AccountID !== "") {
+      writer.uint32(18).string(message.AccountID);
+    }
+    if (message.KamiIndex !== 0) {
+      writer.uint32(24).uint32(message.KamiIndex);
+    }
+    if (message.Quantity !== 0) {
+      writer.uint32(32).uint32(message.Quantity);
+    }
+    if (message.Price !== "") {
+      writer.uint32(42).string(message.Price);
+    }
+    if (message.Expiry !== "") {
+      writer.uint32(50).string(message.Expiry);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(56).uint64(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketOffer {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketOffer();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.AccountID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.KamiIndex = reader.uint32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.Quantity = reader.uint32();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.Price = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.Expiry = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketOffer>): KamiMarketOffer {
+    return KamiMarketOffer.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketOffer>): KamiMarketOffer {
+    const message = createBaseKamiMarketOffer();
+    message.OrderID = object.OrderID ?? "";
+    message.AccountID = object.AccountID ?? "";
+    message.KamiIndex = object.KamiIndex ?? 0;
+    message.Quantity = object.Quantity ?? 0;
+    message.Price = object.Price ?? "";
+    message.Expiry = object.Expiry ?? "";
+    message.Timestamp = object.Timestamp ?? 0;
+    return message;
+  },
+};
+
+function createBaseKamiMarketAccept(): KamiMarketAccept {
+  return { OrderID: "", SellerAccountID: "", BuyerAccountID: "", KamiIndex: 0, Price: "", Timestamp: 0 };
+}
+
+export const KamiMarketAccept: MessageFns<KamiMarketAccept> = {
+  encode(message: KamiMarketAccept, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.OrderID !== "") {
+      writer.uint32(10).string(message.OrderID);
+    }
+    if (message.SellerAccountID !== "") {
+      writer.uint32(18).string(message.SellerAccountID);
+    }
+    if (message.BuyerAccountID !== "") {
+      writer.uint32(26).string(message.BuyerAccountID);
+    }
+    if (message.KamiIndex !== 0) {
+      writer.uint32(32).uint32(message.KamiIndex);
+    }
+    if (message.Price !== "") {
+      writer.uint32(42).string(message.Price);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(48).uint64(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketAccept {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketAccept();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.SellerAccountID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.BuyerAccountID = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.KamiIndex = reader.uint32();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.Price = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketAccept>): KamiMarketAccept {
+    return KamiMarketAccept.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketAccept>): KamiMarketAccept {
+    const message = createBaseKamiMarketAccept();
+    message.OrderID = object.OrderID ?? "";
+    message.SellerAccountID = object.SellerAccountID ?? "";
+    message.BuyerAccountID = object.BuyerAccountID ?? "";
+    message.KamiIndex = object.KamiIndex ?? 0;
+    message.Price = object.Price ?? "";
+    message.Timestamp = object.Timestamp ?? 0;
+    return message;
+  },
+};
+
+function createBaseKamiMarketCancel(): KamiMarketCancel {
+  return { OrderID: "", AccountID: "", Timestamp: 0 };
+}
+
+export const KamiMarketCancel: MessageFns<KamiMarketCancel> = {
+  encode(message: KamiMarketCancel, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.OrderID !== "") {
+      writer.uint32(10).string(message.OrderID);
+    }
+    if (message.AccountID !== "") {
+      writer.uint32(18).string(message.AccountID);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(24).uint64(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketCancel {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketCancel();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.AccountID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketCancel>): KamiMarketCancel {
+    return KamiMarketCancel.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketCancel>): KamiMarketCancel {
+    const message = createBaseKamiMarketCancel();
+    message.OrderID = object.OrderID ?? "";
+    message.AccountID = object.AccountID ?? "";
+    message.Timestamp = object.Timestamp ?? 0;
+    return message;
+  },
+};
+
+function createBaseKamiMarketListing(): KamiMarketListing {
+  return { OrderID: "", SellerAccountID: "", KamiIndex: 0, Price: "", Expiry: "", Timestamp: 0 };
+}
+
+export const KamiMarketListing: MessageFns<KamiMarketListing> = {
+  encode(message: KamiMarketListing, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.OrderID !== "") {
+      writer.uint32(10).string(message.OrderID);
+    }
+    if (message.SellerAccountID !== "") {
+      writer.uint32(18).string(message.SellerAccountID);
+    }
+    if (message.KamiIndex !== 0) {
+      writer.uint32(24).uint32(message.KamiIndex);
+    }
+    if (message.Price !== "") {
+      writer.uint32(34).string(message.Price);
+    }
+    if (message.Expiry !== "") {
+      writer.uint32(42).string(message.Expiry);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(48).uint64(message.Timestamp);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketListing {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketListing();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.SellerAccountID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.KamiIndex = reader.uint32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.Price = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.Expiry = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketListing>): KamiMarketListing {
+    return KamiMarketListing.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketListing>): KamiMarketListing {
+    const message = createBaseKamiMarketListing();
+    message.OrderID = object.OrderID ?? "";
+    message.SellerAccountID = object.SellerAccountID ?? "";
+    message.KamiIndex = object.KamiIndex ?? 0;
+    message.Price = object.Price ?? "";
+    message.Expiry = object.Expiry ?? "";
+    message.Timestamp = object.Timestamp ?? 0;
+    return message;
+  },
+};
+
+function createBaseKamiMarketBid(): KamiMarketBid {
+  return {
+    OrderID: "",
+    BuyerAccountID: "",
+    KamiIndex: 0,
+    Total: 0,
+    Price: "",
+    Expiry: "",
+    Timestamp: 0,
+    BidType: 0,
+    Quantity: 0,
+  };
+}
+
+export const KamiMarketBid: MessageFns<KamiMarketBid> = {
+  encode(message: KamiMarketBid, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.OrderID !== "") {
+      writer.uint32(10).string(message.OrderID);
+    }
+    if (message.BuyerAccountID !== "") {
+      writer.uint32(18).string(message.BuyerAccountID);
+    }
+    if (message.KamiIndex !== 0) {
+      writer.uint32(24).uint32(message.KamiIndex);
+    }
+    if (message.Total !== 0) {
+      writer.uint32(32).uint32(message.Total);
+    }
+    if (message.Price !== "") {
+      writer.uint32(42).string(message.Price);
+    }
+    if (message.Expiry !== "") {
+      writer.uint32(50).string(message.Expiry);
+    }
+    if (message.Timestamp !== 0) {
+      writer.uint32(56).uint64(message.Timestamp);
+    }
+    if (message.BidType !== 0) {
+      writer.uint32(64).int32(message.BidType);
+    }
+    if (message.Quantity !== 0) {
+      writer.uint32(72).uint32(message.Quantity);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketBid {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketBid();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.BuyerAccountID = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.KamiIndex = reader.uint32();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.Total = reader.uint32();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.Price = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.Expiry = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 8: {
+          if (tag !== 64) {
+            break;
+          }
+
+          message.BidType = reader.int32() as any;
+          continue;
+        }
+        case 9: {
+          if (tag !== 72) {
+            break;
+          }
+
+          message.Quantity = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketBid>): KamiMarketBid {
+    return KamiMarketBid.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketBid>): KamiMarketBid {
+    const message = createBaseKamiMarketBid();
+    message.OrderID = object.OrderID ?? "";
+    message.BuyerAccountID = object.BuyerAccountID ?? "";
+    message.KamiIndex = object.KamiIndex ?? 0;
+    message.Total = object.Total ?? 0;
+    message.Price = object.Price ?? "";
+    message.Expiry = object.Expiry ?? "";
+    message.Timestamp = object.Timestamp ?? 0;
+    message.BidType = object.BidType ?? 0;
+    message.Quantity = object.Quantity ?? 0;
+    return message;
+  },
+};
+
+function createBaseKamiMarketHistoryEvent(): KamiMarketHistoryEvent {
+  return {
+    Timestamp: 0,
+    OrderID: "",
+    List: undefined,
+    Buy: undefined,
+    Offer: undefined,
+    Accept: undefined,
+    Cancel: undefined,
+  };
+}
+
+export const KamiMarketHistoryEvent: MessageFns<KamiMarketHistoryEvent> = {
+  encode(message: KamiMarketHistoryEvent, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.Timestamp !== 0) {
+      writer.uint32(8).uint64(message.Timestamp);
+    }
+    if (message.OrderID !== "") {
+      writer.uint32(18).string(message.OrderID);
+    }
+    if (message.List !== undefined) {
+      KamiMarketList.encode(message.List, writer.uint32(82).fork()).join();
+    }
+    if (message.Buy !== undefined) {
+      KamiMarketBuy.encode(message.Buy, writer.uint32(90).fork()).join();
+    }
+    if (message.Offer !== undefined) {
+      KamiMarketOffer.encode(message.Offer, writer.uint32(98).fork()).join();
+    }
+    if (message.Accept !== undefined) {
+      KamiMarketAccept.encode(message.Accept, writer.uint32(106).fork()).join();
+    }
+    if (message.Cancel !== undefined) {
+      KamiMarketCancel.encode(message.Cancel, writer.uint32(114).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketHistoryEvent {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketHistoryEvent();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.OrderID = reader.string();
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.List = KamiMarketList.decode(reader, reader.uint32());
+          continue;
+        }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          message.Buy = KamiMarketBuy.decode(reader, reader.uint32());
+          continue;
+        }
+        case 12: {
+          if (tag !== 98) {
+            break;
+          }
+
+          message.Offer = KamiMarketOffer.decode(reader, reader.uint32());
+          continue;
+        }
+        case 13: {
+          if (tag !== 106) {
+            break;
+          }
+
+          message.Accept = KamiMarketAccept.decode(reader, reader.uint32());
+          continue;
+        }
+        case 14: {
+          if (tag !== 114) {
+            break;
+          }
+
+          message.Cancel = KamiMarketCancel.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketHistoryEvent>): KamiMarketHistoryEvent {
+    return KamiMarketHistoryEvent.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketHistoryEvent>): KamiMarketHistoryEvent {
+    const message = createBaseKamiMarketHistoryEvent();
+    message.Timestamp = object.Timestamp ?? 0;
+    message.OrderID = object.OrderID ?? "";
+    message.List = (object.List !== undefined && object.List !== null)
+      ? KamiMarketList.fromPartial(object.List)
+      : undefined;
+    message.Buy = (object.Buy !== undefined && object.Buy !== null) ? KamiMarketBuy.fromPartial(object.Buy) : undefined;
+    message.Offer = (object.Offer !== undefined && object.Offer !== null)
+      ? KamiMarketOffer.fromPartial(object.Offer)
+      : undefined;
+    message.Accept = (object.Accept !== undefined && object.Accept !== null)
+      ? KamiMarketAccept.fromPartial(object.Accept)
+      : undefined;
+    message.Cancel = (object.Cancel !== undefined && object.Cancel !== null)
+      ? KamiMarketCancel.fromPartial(object.Cancel)
+      : undefined;
     return message;
   },
 };
@@ -2149,7 +3218,7 @@ export const BattleStatsRequest: MessageFns<BattleStatsRequest> = {
 };
 
 function createBaseRankingRequest(): RankingRequest {
-  return { StartBlock: 0, EndBlock: 0, ApiKey: '', IsVip: undefined, ByCount: undefined };
+  return { StartBlock: 0, EndBlock: 0, ApiKey: "", IsVip: undefined, ByCount: undefined };
 }
 
 export const RankingRequest: MessageFns<RankingRequest> = {
@@ -2160,7 +3229,7 @@ export const RankingRequest: MessageFns<RankingRequest> = {
     if (message.EndBlock !== 0) {
       writer.uint32(16).uint64(message.EndBlock);
     }
-    if (message.ApiKey !== '') {
+    if (message.ApiKey !== "") {
       writer.uint32(26).string(message.ApiKey);
     }
     if (message.IsVip !== undefined) {
@@ -2235,7 +3304,7 @@ export const RankingRequest: MessageFns<RankingRequest> = {
     const message = createBaseRankingRequest();
     message.StartBlock = object.StartBlock ?? 0;
     message.EndBlock = object.EndBlock ?? 0;
-    message.ApiKey = object.ApiKey ?? '';
+    message.ApiKey = object.ApiKey ?? "";
     message.IsVip = object.IsVip ?? undefined;
     message.ByCount = object.ByCount ?? undefined;
     return message;
@@ -2243,15 +3312,15 @@ export const RankingRequest: MessageFns<RankingRequest> = {
 };
 
 function createBaseTradesRequest(): TradesRequest {
-  return { AccountId: '', Timestamp: '' };
+  return { AccountId: "", Timestamp: "" };
 }
 
 export const TradesRequest: MessageFns<TradesRequest> = {
   encode(message: TradesRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.AccountId !== '') {
+    if (message.AccountId !== "") {
       writer.uint32(10).string(message.AccountId);
     }
-    if (message.Timestamp !== '') {
+    if (message.Timestamp !== "") {
       writer.uint32(18).string(message.Timestamp);
     }
     return writer;
@@ -2294,19 +3363,19 @@ export const TradesRequest: MessageFns<TradesRequest> = {
   },
   fromPartial(object: DeepPartial<TradesRequest>): TradesRequest {
     const message = createBaseTradesRequest();
-    message.AccountId = object.AccountId ?? '';
-    message.Timestamp = object.Timestamp ?? '';
+    message.AccountId = object.AccountId ?? "";
+    message.Timestamp = object.Timestamp ?? "";
     return message;
   },
 };
 
 function createBaseItemTransferRequest(): ItemTransferRequest {
-  return { AccountID: '' };
+  return { AccountID: "" };
 }
 
 export const ItemTransferRequest: MessageFns<ItemTransferRequest> = {
   encode(message: ItemTransferRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.AccountID !== '') {
+    if (message.AccountID !== "") {
       writer.uint32(10).string(message.AccountID);
     }
     return writer;
@@ -2341,18 +3410,18 @@ export const ItemTransferRequest: MessageFns<ItemTransferRequest> = {
   },
   fromPartial(object: DeepPartial<ItemTransferRequest>): ItemTransferRequest {
     const message = createBaseItemTransferRequest();
-    message.AccountID = object.AccountID ?? '';
+    message.AccountID = object.AccountID ?? "";
     return message;
   },
 };
 
 function createBaseTokenPortalRequest(): TokenPortalRequest {
-  return { AccountID: '' };
+  return { AccountID: "" };
 }
 
 export const TokenPortalRequest: MessageFns<TokenPortalRequest> = {
   encode(message: TokenPortalRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.AccountID !== '') {
+    if (message.AccountID !== "") {
       writer.uint32(10).string(message.AccountID);
     }
     return writer;
@@ -2387,7 +3456,193 @@ export const TokenPortalRequest: MessageFns<TokenPortalRequest> = {
   },
   fromPartial(object: DeepPartial<TokenPortalRequest>): TokenPortalRequest {
     const message = createBaseTokenPortalRequest();
-    message.AccountID = object.AccountID ?? '';
+    message.AccountID = object.AccountID ?? "";
+    return message;
+  },
+};
+
+function createBaseKamiMarketListingsRequest(): KamiMarketListingsRequest {
+  return { Timestamp: undefined, Size: undefined };
+}
+
+export const KamiMarketListingsRequest: MessageFns<KamiMarketListingsRequest> = {
+  encode(message: KamiMarketListingsRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.Timestamp !== undefined) {
+      writer.uint32(8).uint64(message.Timestamp);
+    }
+    if (message.Size !== undefined) {
+      writer.uint32(16).uint32(message.Size);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketListingsRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketListingsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.Size = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketListingsRequest>): KamiMarketListingsRequest {
+    return KamiMarketListingsRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketListingsRequest>): KamiMarketListingsRequest {
+    const message = createBaseKamiMarketListingsRequest();
+    message.Timestamp = object.Timestamp ?? undefined;
+    message.Size = object.Size ?? undefined;
+    return message;
+  },
+};
+
+function createBaseKamiMarketBidsRequest(): KamiMarketBidsRequest {
+  return { Timestamp: undefined, Size: undefined };
+}
+
+export const KamiMarketBidsRequest: MessageFns<KamiMarketBidsRequest> = {
+  encode(message: KamiMarketBidsRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.Timestamp !== undefined) {
+      writer.uint32(8).uint64(message.Timestamp);
+    }
+    if (message.Size !== undefined) {
+      writer.uint32(16).uint32(message.Size);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketBidsRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketBidsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.Size = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketBidsRequest>): KamiMarketBidsRequest {
+    return KamiMarketBidsRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketBidsRequest>): KamiMarketBidsRequest {
+    const message = createBaseKamiMarketBidsRequest();
+    message.Timestamp = object.Timestamp ?? undefined;
+    message.Size = object.Size ?? undefined;
+    return message;
+  },
+};
+
+function createBaseKamiMarketHistoryRequest(): KamiMarketHistoryRequest {
+  return { AccountId: "", Timestamp: undefined, Size: undefined };
+}
+
+export const KamiMarketHistoryRequest: MessageFns<KamiMarketHistoryRequest> = {
+  encode(message: KamiMarketHistoryRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.AccountId !== "") {
+      writer.uint32(10).string(message.AccountId);
+    }
+    if (message.Timestamp !== undefined) {
+      writer.uint32(16).uint64(message.Timestamp);
+    }
+    if (message.Size !== undefined) {
+      writer.uint32(24).uint32(message.Size);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketHistoryRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketHistoryRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.AccountId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.Timestamp = longToNumber(reader.uint64());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.Size = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketHistoryRequest>): KamiMarketHistoryRequest {
+    return KamiMarketHistoryRequest.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketHistoryRequest>): KamiMarketHistoryRequest {
+    const message = createBaseKamiMarketHistoryRequest();
+    message.AccountId = object.AccountId ?? "";
+    message.Timestamp = object.Timestamp ?? undefined;
+    message.Size = object.Size ?? undefined;
     return message;
   },
 };
@@ -2537,8 +3792,7 @@ export const StreamResponse: MessageFns<StreamResponse> = {
   fromPartial(object: DeepPartial<StreamResponse>): StreamResponse {
     const message = createBaseStreamResponse();
     message.Messages = object.Messages?.map((e) => Message.fromPartial(e)) || [];
-    message.Feed =
-      object.Feed !== undefined && object.Feed !== null ? Feed.fromPartial(object.Feed) : undefined;
+    message.Feed = (object.Feed !== undefined && object.Feed !== null) ? Feed.fromPartial(object.Feed) : undefined;
     return message;
   },
 };
@@ -2676,10 +3930,9 @@ export const BattleStatsResponse: MessageFns<BattleStatsResponse> = {
   },
   fromPartial(object: DeepPartial<BattleStatsResponse>): BattleStatsResponse {
     const message = createBaseBattleStatsResponse();
-    message.BattleStats =
-      object.BattleStats !== undefined && object.BattleStats !== null
-        ? BattleStats.fromPartial(object.BattleStats)
-        : undefined;
+    message.BattleStats = (object.BattleStats !== undefined && object.BattleStats !== null)
+      ? BattleStats.fromPartial(object.BattleStats)
+      : undefined;
     return message;
   },
 };
@@ -2868,16 +4121,154 @@ export const TokenPortalResponse: MessageFns<TokenPortalResponse> = {
   },
 };
 
+function createBaseKamiMarketListingsResponse(): KamiMarketListingsResponse {
+  return { Listings: [] };
+}
+
+export const KamiMarketListingsResponse: MessageFns<KamiMarketListingsResponse> = {
+  encode(message: KamiMarketListingsResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Listings) {
+      KamiMarketListing.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketListingsResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketListingsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Listings.push(KamiMarketListing.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketListingsResponse>): KamiMarketListingsResponse {
+    return KamiMarketListingsResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketListingsResponse>): KamiMarketListingsResponse {
+    const message = createBaseKamiMarketListingsResponse();
+    message.Listings = object.Listings?.map((e) => KamiMarketListing.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseKamiMarketBidsResponse(): KamiMarketBidsResponse {
+  return { Bids: [] };
+}
+
+export const KamiMarketBidsResponse: MessageFns<KamiMarketBidsResponse> = {
+  encode(message: KamiMarketBidsResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Bids) {
+      KamiMarketBid.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketBidsResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketBidsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Bids.push(KamiMarketBid.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketBidsResponse>): KamiMarketBidsResponse {
+    return KamiMarketBidsResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketBidsResponse>): KamiMarketBidsResponse {
+    const message = createBaseKamiMarketBidsResponse();
+    message.Bids = object.Bids?.map((e) => KamiMarketBid.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseKamiMarketHistoryResponse(): KamiMarketHistoryResponse {
+  return { Events: [] };
+}
+
+export const KamiMarketHistoryResponse: MessageFns<KamiMarketHistoryResponse> = {
+  encode(message: KamiMarketHistoryResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.Events) {
+      KamiMarketHistoryEvent.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketHistoryResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseKamiMarketHistoryResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.Events.push(KamiMarketHistoryEvent.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  create(base?: DeepPartial<KamiMarketHistoryResponse>): KamiMarketHistoryResponse {
+    return KamiMarketHistoryResponse.fromPartial(base ?? {});
+  },
+  fromPartial(object: DeepPartial<KamiMarketHistoryResponse>): KamiMarketHistoryResponse {
+    const message = createBaseKamiMarketHistoryResponse();
+    message.Events = object.Events?.map((e) => KamiMarketHistoryEvent.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseLeaderboardRow(): LeaderboardRow {
-  return { Name: '', Value: '' };
+  return { Name: "", Value: "" };
 }
 
 export const LeaderboardRow: MessageFns<LeaderboardRow> = {
   encode(message: LeaderboardRow, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.Name !== '') {
+    if (message.Name !== "") {
       writer.uint32(10).string(message.Name);
     }
-    if (message.Value !== '') {
+    if (message.Value !== "") {
       writer.uint32(18).string(message.Value);
     }
     return writer;
@@ -2920,8 +4311,8 @@ export const LeaderboardRow: MessageFns<LeaderboardRow> = {
   },
   fromPartial(object: DeepPartial<LeaderboardRow>): LeaderboardRow {
     const message = createBaseLeaderboardRow();
-    message.Name = object.Name ?? '';
-    message.Value = object.Value ?? '';
+    message.Name = object.Name ?? "";
+    message.Value = object.Value ?? "";
     return message;
   },
 };
@@ -2929,12 +4320,12 @@ export const LeaderboardRow: MessageFns<LeaderboardRow> = {
 /** Replies */
 export type KamidenServiceDefinition = typeof KamidenServiceDefinition;
 export const KamidenServiceDefinition = {
-  name: 'KamidenService',
-  fullName: 'kamiden.KamidenService',
+  name: "KamidenService",
+  fullName: "kamiden.KamidenService",
   methods: {
     /** Requests the latest block number based on the latest ECS state. */
     getRoomMessages: {
-      name: 'GetRoomMessages',
+      name: "GetRoomMessages",
       requestType: RoomRequest,
       requestStream: false,
       responseType: RoomResponse,
@@ -2942,7 +4333,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getAuctionBuys: {
-      name: 'GetAuctionBuys',
+      name: "GetAuctionBuys",
       requestType: AuctionBuysRequest,
       requestStream: false,
       responseType: AuctionBuysResponse,
@@ -2950,7 +4341,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getBattles: {
-      name: 'GetBattles',
+      name: "GetBattles",
       requestType: BattlesRequest,
       requestStream: false,
       responseType: BattlesResponse,
@@ -2958,7 +4349,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getBattleStats: {
-      name: 'GetBattleStats',
+      name: "GetBattleStats",
       requestType: BattleStatsRequest,
       requestStream: false,
       responseType: BattleStatsResponse,
@@ -2966,7 +4357,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getHarvestRanking: {
-      name: 'GetHarvestRanking',
+      name: "GetHarvestRanking",
       requestType: RankingRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -2974,7 +4365,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getKillerRanking: {
-      name: 'GetKillerRanking',
+      name: "GetKillerRanking",
       requestType: RankingRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -2982,7 +4373,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getTradeHistory: {
-      name: 'GetTradeHistory',
+      name: "GetTradeHistory",
       requestType: TradesRequest,
       requestStream: false,
       responseType: TradesResponse,
@@ -2990,7 +4381,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getOpenOffers: {
-      name: 'GetOpenOffers',
+      name: "GetOpenOffers",
       requestType: TradesRequest,
       requestStream: false,
       responseType: TradesResponse,
@@ -2998,7 +4389,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getItemTransfers: {
-      name: 'GetItemTransfers',
+      name: "GetItemTransfers",
       requestType: ItemTransferRequest,
       requestStream: false,
       responseType: ItemTransferResponse,
@@ -3006,7 +4397,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getTokenWithdrawals: {
-      name: 'GetTokenWithdrawals',
+      name: "GetTokenWithdrawals",
       requestType: TokenPortalRequest,
       requestStream: false,
       responseType: TokenPortalResponse,
@@ -3014,7 +4405,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getTokenDeposits: {
-      name: 'GetTokenDeposits',
+      name: "GetTokenDeposits",
       requestType: TokenPortalRequest,
       requestStream: false,
       responseType: TokenPortalResponse,
@@ -3022,15 +4413,39 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getOpenWithdrawals: {
-      name: 'GetOpenWithdrawals',
+      name: "GetOpenWithdrawals",
       requestType: TokenPortalRequest,
       requestStream: false,
       responseType: TokenPortalResponse,
       responseStream: false,
       options: {},
     },
+    getKamiMarketListings: {
+      name: "GetKamiMarketListings",
+      requestType: KamiMarketListingsRequest,
+      requestStream: false,
+      responseType: KamiMarketListingsResponse,
+      responseStream: false,
+      options: {},
+    },
+    getKamiMarketBids: {
+      name: "GetKamiMarketBids",
+      requestType: KamiMarketBidsRequest,
+      requestStream: false,
+      responseType: KamiMarketBidsResponse,
+      responseStream: false,
+      options: {},
+    },
+    getKamiMarketHistory: {
+      name: "GetKamiMarketHistory",
+      requestType: KamiMarketHistoryRequest,
+      requestStream: false,
+      responseType: KamiMarketHistoryResponse,
+      responseStream: false,
+      options: {},
+    },
     getKillsByAccount: {
-      name: 'GetKillsByAccount',
+      name: "GetKillsByAccount",
       requestType: LeaderboardRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -3038,7 +4453,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getDeathsByAccount: {
-      name: 'GetDeathsByAccount',
+      name: "GetDeathsByAccount",
       requestType: LeaderboardRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -3046,7 +4461,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getMusuByAccount: {
-      name: 'GetMusuByAccount',
+      name: "GetMusuByAccount",
       requestType: LeaderboardRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -3054,7 +4469,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getMovementsByAccount: {
-      name: 'GetMovementsByAccount',
+      name: "GetMovementsByAccount",
       requestType: LeaderboardRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -3062,7 +4477,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getKillsByKami: {
-      name: 'GetKillsByKami',
+      name: "GetKillsByKami",
       requestType: LeaderboardRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -3070,7 +4485,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getDeathsByKami: {
-      name: 'GetDeathsByKami',
+      name: "GetDeathsByKami",
       requestType: LeaderboardRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -3078,7 +4493,7 @@ export const KamidenServiceDefinition = {
       options: {},
     },
     getPNLByKami: {
-      name: 'GetPNLByKami',
+      name: "GetPNLByKami",
       requestType: LeaderboardRequest,
       requestStream: false,
       responseType: LeaderboardResponse,
@@ -3087,7 +4502,7 @@ export const KamidenServiceDefinition = {
     },
     /** Stream */
     subscribeToStream: {
-      name: 'SubscribeToStream',
+      name: "SubscribeToStream",
       requestType: StreamRequest,
       requestStream: false,
       responseType: StreamResponse,
@@ -3099,200 +4514,194 @@ export const KamidenServiceDefinition = {
 
 export interface KamidenServiceImplementation<CallContextExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getRoomMessages(
-    request: RoomRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<RoomResponse>>;
+  getRoomMessages(request: RoomRequest, context: CallContext & CallContextExt): Promise<DeepPartial<RoomResponse>>;
   getAuctionBuys(
     request: AuctionBuysRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<AuctionBuysResponse>>;
-  getBattles(
-    request: BattlesRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<BattlesResponse>>;
+  getBattles(request: BattlesRequest, context: CallContext & CallContextExt): Promise<DeepPartial<BattlesResponse>>;
   getBattleStats(
     request: BattleStatsRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<BattleStatsResponse>>;
   getHarvestRanking(
     request: RankingRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   getKillerRanking(
     request: RankingRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
-  getTradeHistory(
-    request: TradesRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<TradesResponse>>;
-  getOpenOffers(
-    request: TradesRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<TradesResponse>>;
+  getTradeHistory(request: TradesRequest, context: CallContext & CallContextExt): Promise<DeepPartial<TradesResponse>>;
+  getOpenOffers(request: TradesRequest, context: CallContext & CallContextExt): Promise<DeepPartial<TradesResponse>>;
   getItemTransfers(
     request: ItemTransferRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<ItemTransferResponse>>;
   getTokenWithdrawals(
     request: TokenPortalRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<TokenPortalResponse>>;
   getTokenDeposits(
     request: TokenPortalRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<TokenPortalResponse>>;
   getOpenWithdrawals(
     request: TokenPortalRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<TokenPortalResponse>>;
+  getKamiMarketListings(
+    request: KamiMarketListingsRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<KamiMarketListingsResponse>>;
+  getKamiMarketBids(
+    request: KamiMarketBidsRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<KamiMarketBidsResponse>>;
+  getKamiMarketHistory(
+    request: KamiMarketHistoryRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<KamiMarketHistoryResponse>>;
   getKillsByAccount(
     request: LeaderboardRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   getDeathsByAccount(
     request: LeaderboardRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   getMusuByAccount(
     request: LeaderboardRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   getMovementsByAccount(
     request: LeaderboardRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   getKillsByKami(
     request: LeaderboardRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   getDeathsByKami(
     request: LeaderboardRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   getPNLByKami(
     request: LeaderboardRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): Promise<DeepPartial<LeaderboardResponse>>;
   /** Stream */
   subscribeToStream(
     request: StreamRequest,
-    context: CallContext & CallContextExt
+    context: CallContext & CallContextExt,
   ): ServerStreamingMethodResult<DeepPartial<StreamResponse>>;
 }
 
 export interface KamidenServiceClient<CallOptionsExt = {}> {
   /** Requests the latest block number based on the latest ECS state. */
-  getRoomMessages(
-    request: DeepPartial<RoomRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<RoomResponse>;
+  getRoomMessages(request: DeepPartial<RoomRequest>, options?: CallOptions & CallOptionsExt): Promise<RoomResponse>;
   getAuctionBuys(
     request: DeepPartial<AuctionBuysRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<AuctionBuysResponse>;
-  getBattles(
-    request: DeepPartial<BattlesRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<BattlesResponse>;
+  getBattles(request: DeepPartial<BattlesRequest>, options?: CallOptions & CallOptionsExt): Promise<BattlesResponse>;
   getBattleStats(
     request: DeepPartial<BattleStatsRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<BattleStatsResponse>;
   getHarvestRanking(
     request: DeepPartial<RankingRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   getKillerRanking(
     request: DeepPartial<RankingRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
-  getTradeHistory(
-    request: DeepPartial<TradesRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<TradesResponse>;
-  getOpenOffers(
-    request: DeepPartial<TradesRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<TradesResponse>;
+  getTradeHistory(request: DeepPartial<TradesRequest>, options?: CallOptions & CallOptionsExt): Promise<TradesResponse>;
+  getOpenOffers(request: DeepPartial<TradesRequest>, options?: CallOptions & CallOptionsExt): Promise<TradesResponse>;
   getItemTransfers(
     request: DeepPartial<ItemTransferRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<ItemTransferResponse>;
   getTokenWithdrawals(
     request: DeepPartial<TokenPortalRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<TokenPortalResponse>;
   getTokenDeposits(
     request: DeepPartial<TokenPortalRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<TokenPortalResponse>;
   getOpenWithdrawals(
     request: DeepPartial<TokenPortalRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<TokenPortalResponse>;
+  getKamiMarketListings(
+    request: DeepPartial<KamiMarketListingsRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<KamiMarketListingsResponse>;
+  getKamiMarketBids(
+    request: DeepPartial<KamiMarketBidsRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<KamiMarketBidsResponse>;
+  getKamiMarketHistory(
+    request: DeepPartial<KamiMarketHistoryRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<KamiMarketHistoryResponse>;
   getKillsByAccount(
     request: DeepPartial<LeaderboardRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   getDeathsByAccount(
     request: DeepPartial<LeaderboardRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   getMusuByAccount(
     request: DeepPartial<LeaderboardRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   getMovementsByAccount(
     request: DeepPartial<LeaderboardRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   getKillsByKami(
     request: DeepPartial<LeaderboardRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   getDeathsByKami(
     request: DeepPartial<LeaderboardRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   getPNLByKami(
     request: DeepPartial<LeaderboardRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): Promise<LeaderboardResponse>;
   /** Stream */
   subscribeToStream(
     request: DeepPartial<StreamRequest>,
-    options?: CallOptions & CallOptionsExt
+    options?: CallOptions & CallOptionsExt,
   ): AsyncIterable<StreamResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends globalThis.Array<infer U>
-    ? globalThis.Array<DeepPartial<U>>
-    : T extends ReadonlyArray<infer U>
-      ? ReadonlyArray<DeepPartial<U>>
-      : T extends {}
-        ? { [K in keyof T]?: DeepPartial<T[K]> }
-        : Partial<T>;
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends globalThis.Array<infer U> ? globalThis.Array<DeepPartial<U>>
+  : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
+  : Partial<T>;
 
 function longToNumber(int64: { toString(): string }): number {
   const num = globalThis.Number(int64.toString());
   if (num > globalThis.Number.MAX_SAFE_INTEGER) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
   }
   if (num < globalThis.Number.MIN_SAFE_INTEGER) {
-    throw new globalThis.Error('Value is smaller than Number.MIN_SAFE_INTEGER');
+    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
   }
   return num;
 }
 
-export type ServerStreamingMethodResult<Response> = {
-  [Symbol.asyncIterator](): AsyncIterator<Response, void>;
-};
+export type ServerStreamingMethodResult<Response> = { [Symbol.asyncIterator](): AsyncIterator<Response, void> };
 
 export interface MessageFns<T> {
   encode(message: T, writer?: BinaryWriter): BinaryWriter;
