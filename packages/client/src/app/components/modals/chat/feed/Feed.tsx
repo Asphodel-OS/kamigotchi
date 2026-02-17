@@ -10,10 +10,13 @@ import { Kami } from 'app/cache/kami';
 import { Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
+import { formatUnits } from 'viem';
 import {
   KamiCast as CastEvent,
   getKamidenClient,
   HarvestEnd as HarvestEndEvent,
+  KamiMarketList as ListEvent,
+  KamiMarketOffer as OfferEvent,
   Message as KamiMessage,
   Kill as KillEvent,
   Movement as MovementEvent,
@@ -44,6 +47,7 @@ export const Feed = ({
   utils: {
     getAccount: (entityIndex: EntityIndex) => Account;
     getKami: (entityIndex: EntityIndex) => Kami;
+    getKamiByIndex: (index: number) => Kami;
     getEntityIndex: (entity: EntityID) => EntityIndex;
     getRoomByIndex: (nodeIndex: number) => Room;
     getItemByIndex: (itemIndex: number) => Item;
@@ -59,7 +63,8 @@ export const Feed = ({
     };
   };
 }) => {
-  const { getAccount, getEntityIndex, getKami, getRoomByIndex, getItemByIndex } = utils;
+  const { getAccount, getEntityIndex, getKami, getKamiByIndex, getRoomByIndex, getItemByIndex } =
+    utils;
   const selectAccount = useSelected((s) => s.setAccount);
   const selectedAccount = useSelected((s) => s.accountIndex);
   const selectKami = useSelected((s) => s.setKami);
@@ -201,6 +206,63 @@ export const Feed = ({
             <TextTooltip text={[room.name]}>
               <RoomIcon src={getRoomImage(room)} onClick={() => openNodeModal(room)} />
             </TextTooltip>
+          </Row>
+        );
+      });
+
+      feed.KamiMarketLists.forEach((listing: ListEvent) => {
+        const account = getAccount(getEntityIndex(formatEntityID(listing.AccountID)));
+        const kami = getKamiByIndex(listing.KamiIndex);
+        const price = Number(formatUnits(BigInt(listing.Price), 18)).toFixed(3);
+        const expiry = Number(listing.Expiry);
+        const expiryText =
+          expiry === 0
+            ? '(no expiration)'
+            : (() => {
+                const hours = Math.max(0, Math.floor((expiry - Date.now() / 1000) / 3600));
+                return hours <= 0 ? '(expired)' : `(expires in ${hours}h)`;
+              })();
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(listing.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {account.name}
+            </Text>
+            <Bold color='#b8860b'> listed </Bold>
+            <TextTooltip text={[kami.name]}>
+              <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+            </TextTooltip>
+            for {price}
+            <Bold color='#333'>ETH</Bold>
+            {expiryText}
+          </Row>
+        );
+      });
+
+      feed.KamiMarketOffers.forEach((offer: OfferEvent) => {
+        const account = getAccount(getEntityIndex(formatEntityID(offer.AccountID)));
+        const price = Number(formatUnits(BigInt(offer.Price), 18)).toFixed(3);
+        const expiry = Number(offer.Expiry);
+        const expiryText =
+          expiry === 0
+            ? '(no expiration)'
+            : (() => {
+                const hours = Math.max(0, Math.floor((expiry - Date.now() / 1000) / 3600));
+                return hours <= 0 ? '(expired)' : `(expires in ${hours}h)`;
+              })();
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(offer.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {account.name}
+            </Text>
+            placed a
+            <Bold color='#006400'> bid </Bold>
+            for {offer.Quantity} kamis at {price}
+            <Bold color='#333'>ETH</Bold>
+            {expiryText}
           </Row>
         );
       });
