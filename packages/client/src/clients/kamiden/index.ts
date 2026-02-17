@@ -1,6 +1,8 @@
 export { getClient as getKamidenClient } from './client';
 export { subscribeToFeed, subscribeToMessages } from './subscriptions';
 
+export { KamiMarketBidType } from './proto';
+
 export type {
   AuctionBuy,
   AuctionBuysRequest,
@@ -9,6 +11,8 @@ export type {
   Feed,
   HarvestEnd,
   KamiCast,
+  KamiMarketBid,
+  KamiMarketListing,
   Kill,
   Message,
   Movement,
