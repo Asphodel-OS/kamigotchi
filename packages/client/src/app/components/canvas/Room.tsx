@@ -9,6 +9,7 @@ import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { cave } from 'assets/sound/ost';
 import { rooms } from 'constants/rooms';
+import { getComponentValue } from 'engine/recs';
 import { RoomAsset } from 'constants/rooms/types';
 import { passesConditions } from 'network/shapes/Conditional';
 import { Account } from 'network/shapes/Account';
@@ -30,6 +31,7 @@ export const Room = ({ index }: { index: number }) => {
   const { network } = useLayers();
   const { world, components } = network;
   const accountEntity = useAccount((s) => s.account.entity);
+  const [subVersion, setSubVersion] = useState(0);
 
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
@@ -91,6 +93,27 @@ export const Room = ({ index }: { index: number }) => {
 
 */
 
+  // Recompute room visibility when the active account completes quests.
+  useEffect(() => {
+    if (!accountEntity) return;
+    const accountID = world.entities[accountEntity];
+    if (!accountID) return;
+
+    const { EntityType, IsComplete, OwnsQuestID } = components;
+    const sub = IsComplete.update$.subscribe((update) => {
+      const entityType = getComponentValue(EntityType, update.entity)?.value;
+      if (entityType !== 'QUEST') return;
+
+      const ownerID = getComponentValue(OwnsQuestID, update.entity)?.value;
+      if (ownerID !== accountID) return;
+      setSubVersion((v) => v + 1);
+    });
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [accountEntity, world, components]);
+
   // filter objects by requirements and resolve background overrides
   const { visibleObjects, resolvedBackgrounds } = useMemo(() => {
     const holder = { entity: accountEntity } as Account;
@@ -110,7 +133,7 @@ export const Room = ({ index }: { index: number }) => {
     }
 
     return { visibleObjects: visible, resolvedBackgrounds: backgrounds };
-  }, [room, accountEntity, world, components]);
+  }, [room, accountEntity, world, components, subVersion]);
 
   // manages volume changes from the variable stored in local storage
   useEffect(() => {
