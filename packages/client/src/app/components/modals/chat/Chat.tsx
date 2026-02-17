@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getAccount as _getAccount } from 'app/cache/account';
 import { getItemByIndex as _getItemByIndex } from 'app/cache/item';
 import { getKami as _getKami } from 'app/cache/kami';
+import { getKamiByIndex as _getKamiByIndex } from 'network/shapes/Kami';
 import { getRoomByIndex as _getRoomByIndex } from 'app/cache/room';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
@@ -24,7 +25,7 @@ export const ChatModal: UIComponent = {
 
     const {
       data: { accountEntity, world, components },
-      utils: { getAccount, getRoomByIndex, getEntityIndex, getKami, getItemByIndex },
+      utils: { getAccount, getRoomByIndex, getEntityIndex, getKami, getKamiByIndex, getItemByIndex },
       network,
     } = (() => {
       const { network } = layers;
@@ -43,6 +44,7 @@ export const ChatModal: UIComponent = {
           getRoomByIndex: (nodeIndex: number) => _getRoomByIndex(world, components, nodeIndex),
           getEntityIndex: (entity: EntityID) => world.entityToIndex.get(entity)!,
           getKami: (entity: EntityIndex) => _getKami(world, components, entity),
+          getKamiByIndex: (index: number) => _getKamiByIndex(world, components, index),
           getItemByIndex: (itemIndex: number) => _getItemByIndex(world, components, itemIndex),
         },
         network,
@@ -96,6 +98,7 @@ export const ChatModal: UIComponent = {
             getRoomByIndex,
             getEntityIndex,
             getKami,
+            getKamiByIndex,
             getItemByIndex,
           }}
           player={account}
