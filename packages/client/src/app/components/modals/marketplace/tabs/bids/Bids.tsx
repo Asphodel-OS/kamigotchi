@@ -22,7 +22,7 @@ export const Bids = ({
   showCreateOrder: boolean;
   setShowFilter: Dispatch<SetStateAction<boolean>>;
   onCloseCreateOrder: () => void;
-  onAcceptOffer: (offerID: string, kamiIndex: number) => void;
+  onAcceptOffer: (offerID: string, kamiIndex: number) => Promise<void>;
   accountId: string;
   utils: {
     getAccountKamis: () => Kami[];
@@ -167,12 +167,12 @@ export const Bids = ({
 
   const handleCloseFilter = () => setShowFilterSection(false);
 
-  const handleSell = () => {
+  const handleSell = async () => {
     if (!selectedBid || selectedKamis.size === 0) return;
     const selectedIndices = Array.from(selectedKamis);
-    selectedIndices.forEach((kamiIndex) => {
-      onAcceptOffer(selectedBid.OrderID, kamiIndex);
-    });
+    for (const kamiIndex of selectedIndices) {
+      await onAcceptOffer(selectedBid.OrderID, kamiIndex);
+    }
     setSelectedKamis(new Set());
     setShowSelectKami(false);
   };

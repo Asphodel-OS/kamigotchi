@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 
@@ -17,6 +18,20 @@ export function useBalance(owner: Address, token: Address) {
         ? results.data[0].result.map((i) => Number(i))
         : [],
   };
+}
+
+// uses ethersjs for RECS compatibility
+export function setApprovalForAll(
+  addToQueue: any,
+  token: string,
+  operator: string,
+  approved: boolean
+) {
+  const iERC721 = new ethers.Interface(erc721ABI);
+  return addToQueue({
+    data: iERC721.encodeFunctionData('setApprovalForAll', [operator, approved]),
+    to: token,
+  });
 }
 
 ////////////////
@@ -41,5 +56,47 @@ export const erc721ABI = [
         type: 'uint256[]',
       },
     ],
+  },
+  {
+    name: 'isApprovedForAll',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'owner',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'operator',
+        type: 'address',
+      },
+    ],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+  },
+  {
+    name: 'setApprovalForAll',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'operator',
+        type: 'address',
+      },
+      {
+        internalType: 'bool',
+        name: 'approved',
+        type: 'bool',
+      },
+    ],
+    outputs: [],
   },
 ];
