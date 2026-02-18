@@ -6,10 +6,12 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { EmptyText, IconButton, IconListButton, TextTooltip } from 'app/components/library';
+import { useSelected, useVisibility } from 'app/stores';
 import { getKamidenClient, KamiMarketListing } from 'clients/kamiden';
 import { TokenIcons } from 'assets/images/tokens';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
+import { playClick } from 'utils/sounds';
 
 const KamidenClient = getKamidenClient();
 
@@ -33,22 +35,34 @@ const formatExpiry = (expiryStr: string) => {
 export const Listings = ({
   isVisible,
   onOpenFilter,
+  onBuyListings,
   utils,
 }: {
   isVisible: boolean;
   onOpenFilter: () => void;
+  onBuyListings: (listingIDs: string[], kamiIndices: number[]) => void;
   utils: {
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
   };
 }) => {
+  const kamiIndex = useSelected((s) => s.kamiIndex);
+  const setKami = useSelected((s) => s.setKami);
+  const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const setModals = useVisibility((s) => s.setModals);
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
   const [sortBy, setSortBy] = useState('Latest');
+  const [showCart, setShowCart] = useState(false);
+  const [cart, setCart] = useState<KamiMarketListing[]>([]);
 
   useEffect(() => {
     if (!isVisible || !KamidenClient) return;
     KamidenClient.getKamiMarketListings({}).then((res) => setListings(res.Listings ?? []));
   }, [isVisible]);
+
+  useEffect(() => {
+    setCart((prev) => prev.filter((item) => listings.some((l) => l.OrderID === item.OrderID)));
+  }, [listings]);
 
   const resolvedListings = useMemo(
     () =>
@@ -75,55 +89,164 @@ export const Listings = ({
     { text: 'Price High', onClick: () => setSortBy('Price High') },
   ];
 
+  const isListingExpired = (expiryStr: string) => {
+    const expiry = Number(expiryStr);
+    if (!expiry) return false;
+    return expiry <= Math.floor(Date.now() / 1000);
+  };
+
+  const isInCart = (orderId: string) => cart.some((item) => item.OrderID === orderId);
+
+  const openKamiModal = (index: number) => {
+    const sameKami = kamiIndex === index;
+    if (!sameKami) setKami(index);
+    if (kamiModalOpen && sameKami) setModals({ kami: false });
+    else setModals({ kami: true });
+    playClick();
+  };
+
+  const resolveKami = (index: number) => {
+    const entity = utils.queryKamiByIndex(index);
+    return entity !== undefined ? utils.getKami(entity) : undefined;
+  };
+
+  const addToCart = (listing: KamiMarketListing) => {
+    if (isInCart(listing.OrderID)) return;
+    setCart((prev) => [...prev, listing]);
+  };
+
+  const removeFromCart = (orderId: string) => {
+    setCart((prev) => prev.filter((item) => item.OrderID !== orderId));
+  };
+
+  const handleBuyCart = () => {
+    if (cart.length === 0) return;
+    onBuyListings(
+      cart.map((item) => item.OrderID),
+      cart.map((item) => item.KamiIndex)
+    );
+    setCart([]);
+    setShowCart(false);
+  };
+
   return (
-    <Tab isVisible={isVisible}>
-      <ButtonWrapper>
-        <TextTooltip text={['Sorting']}>
-          <IconListButton
-            img={SwapVertIcon as any}
-            text={sortBy}
-            options={sortOptions}
-            radius={0.6}
-          />
-        </TextTooltip>
-        <TextTooltip text={['Filters']}>
-          <IconButton img={FilterListIcon} onClick={onOpenFilter} />
-        </TextTooltip>
-        <TextTooltip text={['Cart']}>
-          <IconButton img={ShoppingCartIcon} onClick={() => {}} />
-        </TextTooltip>
-      </ButtonWrapper>
-      <HeaderRow>
-        <Column flex={2}>
-          <ColumnHeader>Kami</ColumnHeader>
-        </Column>
-        <Column>
-          <ColumnHeader>
-            <EthIcon src={TokenIcons.eth} alt='ETH' />
-          </ColumnHeader>
-        </Column>
-        <Column>
-          <ColumnHeader>Expiry</ColumnHeader>
-        </Column>
-      </HeaderRow>
-      {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
-      {sorted.map(({ listing, kami }) => (
-        <Row key={listing.OrderID}>
+    <>
+      <Tab isVisible={isVisible}>
+        <ButtonWrapper>
+          <TextTooltip text={['Sorting']}>
+            <IconListButton
+              img={SwapVertIcon as any}
+              text={sortBy}
+              options={sortOptions}
+              radius={0.6}
+            />
+          </TextTooltip>
+          <TextTooltip text={['Filters']}>
+            <IconButton img={FilterListIcon} onClick={onOpenFilter} />
+          </TextTooltip>
+          <TextTooltip text={['Cart']}>
+            <IconButton img={ShoppingCartIcon} onClick={() => setShowCart((prev) => !prev)} />
+          </TextTooltip>
+        </ButtonWrapper>
+        <HeaderRow>
+          <Column flex={2}>
+            <ColumnHeader align='left'>Kami</ColumnHeader>
+          </Column>
+          <Column>
+            <ColumnHeader>
+              <EthIcon src={TokenIcons.eth} alt='ETH' />
+            </ColumnHeader>
+          </Column>
+          <Column>
+            <ColumnHeader>Expiry</ColumnHeader>
+          </Column>
+          <Column>
+            <ColumnHeader>Actions</ColumnHeader>
+          </Column>
+        </HeaderRow>
+        {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
+        {sorted.map(({ listing, kami }) => (
+          <Row key={listing.OrderID}>
           <Column flex={2}>
             <KamiCell>
-              {kami && <KamiThumbnail src={kami.image} alt={kami.name} />}
+              {kami && (
+                <KamiThumbnail
+                  src={kami.image}
+                  alt={kami.name}
+                  onClick={() => openKamiModal(listing.KamiIndex)}
+                />
+              )}
               <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
             </KamiCell>
           </Column>
+            <Column>
+              <CellText>{formatPrice(listing.Price)}</CellText>
+            </Column>
+            <Column>
+              <CellText>{formatExpiry(listing.Expiry)}</CellText>
+            </Column>
           <Column>
-            <CellText>{formatPrice(listing.Price)}</CellText>
-          </Column>
-          <Column>
-            <CellText>{formatExpiry(listing.Expiry)}</CellText>
+            {isListingExpired(listing.Expiry) ? (
+              <TextTooltip text={['Listing expired']}>
+                <IconButton
+                  text='Add'
+                  onClick={() => addToCart(listing)}
+                  disabled
+                />
+              </TextTooltip>
+            ) : (
+              <IconButton
+                text={isInCart(listing.OrderID) ? 'Added' : 'Add'}
+                onClick={() => addToCart(listing)}
+                disabled={isInCart(listing.OrderID)}
+              />
+            )}
           </Column>
         </Row>
       ))}
-    </Tab>
+      </Tab>
+      <CartSection isVisible={isVisible && showCart}>
+        <CartHeader>
+          <HeaderTitle>Cart</HeaderTitle>
+          <IconButton text='X' onClick={() => setShowCart(false)} scale={1.5} />
+        </CartHeader>
+        <CartHeaderRow>
+          <CartHeaderCell>Kami</CartHeaderCell>
+          <CartHeaderCell>
+            <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+          </CartHeaderCell>
+          <CartHeaderCell>Actions</CartHeaderCell>
+        </CartHeaderRow>
+        <CartBody>
+          {cart.length === 0 && <EmptyText text={['Your cart is empty']} size={0.9} />}
+        {cart.map((item) => {
+          const kami = resolveKami(item.KamiIndex);
+          return (
+            <CartRow key={item.OrderID}>
+              <CartItem>
+                {kami && (
+                  <CartKamiThumbnail
+                    src={kami.image}
+                    alt={kami.name}
+                    onClick={() => openKamiModal(item.KamiIndex)}
+                  />
+                )}
+                <CartItemText>{kami?.name ?? `Kami #${item.KamiIndex}`}</CartItemText>
+              </CartItem>
+              <CartPriceText>{formatPrice(item.Price)}</CartPriceText>
+              <CartActions>
+                <IconButton text='Remove' onClick={() => removeFromCart(item.OrderID)} />
+              </CartActions>
+            </CartRow>
+          );
+        })}
+        </CartBody>
+        <CartFooter>
+          <IconButton text='Buy' onClick={handleBuyCart} disabled={cart.length === 0} />
+          <IconButton text='Clear' onClick={() => setCart([])} disabled={cart.length === 0} />
+        </CartFooter>
+      </CartSection>
+    </>
   );
 };
 
@@ -148,7 +271,7 @@ const HeaderRow = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   width: 100%;
-  border-bottom: 0.15vw solid black;
+  min-height: 3vw;
 `;
 
 const Row = styled.div`
@@ -157,6 +280,8 @@ const Row = styled.div`
   align-items: center;
   width: 100%;
   border-bottom: 0.06vw solid #ccc;
+  min-height: 3vw;
+  margin: 0.2vw 0;
 
   &:hover {
     background-color: #eee;
@@ -170,12 +295,13 @@ const Column = styled.div<{ flex?: number }>`
   flex: ${({ flex }) => flex ?? 1};
 `;
 
-const ColumnHeader = styled.div`
+const ColumnHeader = styled.div<{ align?: 'left' | 'center' }>`
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.8vw;
-  font-size: 1.1vw;
+  justify-content: ${({ align }) => (align === 'left' ? 'flex-start' : 'center')};
+  padding: 0.4vw 0.6vw;
+  font-size: 1.05vw;
+  line-height: 1.2;
 `;
 
 const EthIcon = styled.img`
@@ -196,6 +322,7 @@ const KamiThumbnail = styled.img`
   border-radius: 0.3vw;
   border: 0.1vw solid black;
   image-rendering: pixelated;
+  cursor: pointer;
 `;
 
 const KamiName = styled.span`
@@ -203,6 +330,122 @@ const KamiName = styled.span`
 `;
 
 const CellText = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95vw;
+  line-height: 1.2;
+  padding: 0.4vw 0.6vw;
+`;
+
+const CartSection = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
+  flex-direction: column;
+  flex: 0 0 50%;
+  overflow: auto;
+  border-top: 0.15vw solid black;
+  width: 100%;
+`;
+
+const CartHeader = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: rgb(221, 221, 221);
+  padding: 0.8vw;
+  font-size: 1.2vw;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+`;
+
+const HeaderTitle = styled.span`
+  flex: 1;
+  text-align: center;
+  font-size: 1.1vw;
+`;
+
+const CartBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vw;
+  padding: 0.6vw;
+`;
+
+const CartHeaderRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  padding: 0.3vw 0.6vw;
+  min-height: 2.6vw;
+`;
+
+const CartHeaderCell = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1vw;
+  line-height: 1.2;
+  height: 100%;
+
+  &:first-child {
+    justify-content: flex-start;
+  }
+`;
+
+const CartEthIcon = styled.img`
+  width: 1.1vw;
+  height: 1.1vw;
+`;
+
+const CartRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  gap: 0.6vw;
+  padding: 0.4vw 0.6vw;
+  border: 0.06vw solid #ccc;
+  border-radius: 0.3vw;
+`;
+
+const CartItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+`;
+
+const CartItemText = styled.span`
   font-size: 0.9vw;
-  padding: 0.4vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+const CartKamiThumbnail = styled.img`
+  width: 2.4vw;
+  height: 2.4vw;
+  border-radius: 0.3vw;
+  border: 0.1vw solid black;
+  image-rendering: pixelated;
+  cursor: pointer;
+`;
+const CartPriceText = styled.span`
+  font-size: 0.9vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CartActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  justify-content: center;
+`;
+
+const CartFooter = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 0.6vw;
+  padding: 0.6vw;
+  margin-top: auto;
 `;
