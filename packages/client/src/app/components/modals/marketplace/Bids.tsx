@@ -85,19 +85,16 @@ export const Bids = ({
   };
 
   const getBidLabel = (bid: KamiMarketBid) =>
-    bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
-      ? `Kami #${bid.KamiIndex}`
-      : '';
+    bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC ? `Kami #${bid.KamiIndex}` : '';
 
   const getBidProgress = (bid: KamiMarketBid) => {
     const total = bid.Total ?? 0;
     const quantity = bid.Quantity ?? 0;
     if (quantity <= 0) return '';
-    return `${total}/${quantity}`;
+    return `${total - quantity}/${total}`;
   };
 
-  const isSpecificBid =
-    selectedBid?.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
+  const isSpecificBid = selectedBid?.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
   const specificKamiIndex = selectedBid?.KamiIndex;
   const canSelectKami = (index: number) => !isSpecificBid || index === specificKamiIndex;
 
@@ -185,7 +182,9 @@ export const Bids = ({
             <Column>
               {getBidProgress(bid) ? (
                 <TextTooltip
-                  text={[`${bid.Total}/${bid.Quantity} kami in this bid have already been purchased.`]}
+                  text={[
+                    `${bid.Total}/${bid.Quantity} kami in this bid have already been purchased.`,
+                  ]}
                 >
                   <CellText>
                     {getBidLabel(bid)} {getBidProgress(bid)}
