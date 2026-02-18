@@ -59,7 +59,7 @@ export const Buy = ({
               options={kamiOptions}
               searchable
               disabled={!!quantity}
-              tooltip={{ text: ['Select Kami'] }}
+              tooltip={{ text: ['Select Kami.'] }}
             />
           </KamiPickerRow>
           {selectedBuyKami && <KamiImage src={selectedBuyKami.image} alt={selectedBuyKami.name} />}

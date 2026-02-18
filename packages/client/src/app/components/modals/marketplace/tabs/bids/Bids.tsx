@@ -205,7 +205,7 @@ export const Bids = ({
     <>
       <Tab isVisible={isVisible}>
         <ButtonWrapper>
-          <TextTooltip text={['Filters', filterBy]}>
+          <TextTooltip text={['Filters.', `${filterBy}.`]}>
             <IndicatorWrapper>
               <IconButton img={FilterListIcon} onClick={handleOpenFilter} />
               {filterBy !== 'Show all' && <IndicatorBadge>1</IndicatorBadge>}

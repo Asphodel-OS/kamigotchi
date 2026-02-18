@@ -38,7 +38,7 @@ export const Tabs = ({
           disabled={tab === 'myOrders'}
         />
       </TabButtons>
-      <TextTooltip text={['Create Order']}>
+      <TextTooltip text={['Create Order.']}>
         <IconButton text='+' onClick={onCreateOrder} />
       </TextTooltip>
     </Container>
