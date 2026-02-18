@@ -16,6 +16,7 @@ export const Bids = ({
   setShowFilter,
   onCloseCreateOrder,
   onAcceptOffer,
+  accountId,
   utils,
 }: {
   isVisible: boolean;
@@ -23,6 +24,7 @@ export const Bids = ({
   setShowFilter: Dispatch<SetStateAction<boolean>>;
   onCloseCreateOrder: () => void;
   onAcceptOffer: (offerID: string, kamiIndex: number) => void;
+  accountId: string;
   utils: {
     getAccountKamis: () => Kami[];
     getExternalKamis: () => Kami[];
@@ -37,8 +39,25 @@ export const Bids = ({
 
   useEffect(() => {
     if (!isVisible || !KamidenClient) return;
-    KamidenClient.getKamiMarketBids({}).then((res) => setBids(res.Bids ?? []));
-  }, [isVisible]);
+    KamidenClient.getKamiMarketBids({}).then((res) => {
+      const all = res.Bids ?? [];
+      const parsedAccountId = (() => {
+        try {
+          return BigInt(accountId).toString();
+        } catch {
+          return accountId;
+        }
+      })();
+      const filtered = all.filter((bid) => {
+        try {
+          return BigInt(bid.BuyerAccountID).toString() !== parsedAccountId;
+        } catch {
+          return bid.BuyerAccountID !== parsedAccountId;
+        }
+      });
+      setBids(filtered);
+    });
+  }, [isVisible, accountId]);
 
   useEffect(() => {
     if (isVisible) setShowFilter(false);
@@ -68,7 +87,14 @@ export const Bids = ({
   const getBidLabel = (bid: KamiMarketBid) =>
     bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
       ? `Kami #${bid.KamiIndex}`
-      : 'Collection';
+      : '';
+
+  const getBidProgress = (bid: KamiMarketBid) => {
+    const total = bid.Total ?? 0;
+    const quantity = bid.Quantity ?? 0;
+    if (quantity <= 0) return '';
+    return `${total}/${quantity}`;
+  };
 
   const isSpecificBid =
     selectedBid?.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
@@ -154,7 +180,17 @@ export const Bids = ({
             }}
           >
             <Column>
-              <CellText>{getBidLabel(bid)}</CellText>
+              {getBidProgress(bid) ? (
+                <TextTooltip
+                  text={[`${bid.Total}/${bid.Quantity} kami in this bid have already been purchased.`]}
+                >
+                  <CellText>
+                    {getBidLabel(bid)} {getBidProgress(bid)}
+                  </CellText>
+                </TextTooltip>
+              ) : (
+                <CellText>{getBidLabel(bid)}</CellText>
+              )}
             </Column>
             <Column>
               <CellText>{formatPrice(bid.Price)}</CellText>

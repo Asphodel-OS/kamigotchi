@@ -37,6 +37,8 @@ export const Listings = ({
   onOpenFilter,
   onBuyListings,
   onCloseFilter,
+  createOrderOpen,
+  accountId,
   filters,
   utils,
 }: {
@@ -44,6 +46,8 @@ export const Listings = ({
   onOpenFilter: () => void;
   onBuyListings: (listingIDs: string[], kamiIndices: number[]) => void;
   onCloseFilter: () => void;
+  createOrderOpen: boolean;
+  accountId: string;
   filters: {
     selected: Record<string, Set<string>>;
     stats: Record<string, number>;
@@ -65,8 +69,29 @@ export const Listings = ({
 
   useEffect(() => {
     if (!isVisible || !KamidenClient) return;
-    KamidenClient.getKamiMarketListings({}).then((res) => setListings(res.Listings ?? []));
-  }, [isVisible]);
+    KamidenClient.getKamiMarketListings({}).then((res) => {
+      const all = res.Listings ?? [];
+      const parsedAccountId = (() => {
+        try {
+          return BigInt(accountId).toString();
+        } catch {
+          return accountId;
+        }
+      })();
+      const filtered = all.filter((listing) => {
+        try {
+          return BigInt(listing.SellerAccountID).toString() !== parsedAccountId;
+        } catch {
+          return listing.SellerAccountID !== parsedAccountId;
+        }
+      });
+      setListings(filtered);
+    });
+  }, [isVisible, accountId]);
+
+  useEffect(() => {
+    if (createOrderOpen) setShowCart(false);
+  }, [createOrderOpen]);
 
   useEffect(() => {
     setCart((prev) => prev.filter((item) => listings.some((l) => l.OrderID === item.OrderID)));
@@ -250,46 +275,44 @@ export const Listings = ({
             <ColumnHeader>Actions</ColumnHeader>
           </Column>
         </HeaderRow>
-        {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
-        {sorted.map(({ listing, kami }) => (
-          <Row key={listing.OrderID}>
-          <Column flex={2}>
-            <KamiCell>
-              {kami && (
-                <KamiThumbnail
-                  src={kami.image}
-                  alt={kami.name}
-                  onClick={() => openKamiModal(listing.KamiIndex)}
-                />
-              )}
-              <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
-            </KamiCell>
-          </Column>
-            <Column>
-              <CellText>{formatPrice(listing.Price)}</CellText>
-            </Column>
-            <Column>
-              <CellText>{formatExpiry(listing.Expiry)}</CellText>
-            </Column>
-          <Column>
-            {isListingExpired(listing.Expiry) ? (
-              <TextTooltip text={['Listing expired']}>
-                <IconButton
-                  text='Add'
-                  onClick={() => addToCart(listing)}
-                  disabled
-                />
-              </TextTooltip>
-            ) : (
-              <IconButton
-                text={isInCart(listing.OrderID) ? 'Added' : 'Add'}
-                onClick={() => addToCart(listing)}
-                disabled={isInCart(listing.OrderID)}
-              />
-            )}
-          </Column>
-        </Row>
-      ))}
+        <ListingsBody>
+          {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
+          {sorted.map(({ listing, kami }) => (
+            <Row key={listing.OrderID}>
+              <Column flex={2}>
+                <KamiCell>
+                  {kami && (
+                    <KamiThumbnail
+                      src={kami.image}
+                      alt={kami.name}
+                      onClick={() => openKamiModal(listing.KamiIndex)}
+                    />
+                  )}
+                  <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
+                </KamiCell>
+              </Column>
+              <Column>
+                <CellText>{formatPrice(listing.Price)}</CellText>
+              </Column>
+              <Column>
+                <CellText>{formatExpiry(listing.Expiry)}</CellText>
+              </Column>
+              <Column>
+                {isListingExpired(listing.Expiry) ? (
+                  <TextTooltip text={['Listing expired']}>
+                    <IconButton text='Add' onClick={() => addToCart(listing)} disabled />
+                  </TextTooltip>
+                ) : (
+                  <IconButton
+                    text={isInCart(listing.OrderID) ? 'Added' : 'Add'}
+                    onClick={() => addToCart(listing)}
+                    disabled={isInCart(listing.OrderID)}
+                  />
+                )}
+              </Column>
+            </Row>
+          ))}
+        </ListingsBody>
       </Tab>
       <CartSection isVisible={isVisible && showCart}>
         <CartHeader>
@@ -340,7 +363,7 @@ const Tab = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   width: 100%;
   min-height: 10vw;
 `;
@@ -391,6 +414,13 @@ const HeaderRow = styled.div`
   align-items: center;
   width: 100%;
   min-height: 3vw;
+`;
+
+const ListingsBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex: 1;
 `;
 
 const Row = styled.div`
