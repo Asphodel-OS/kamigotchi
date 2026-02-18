@@ -242,14 +242,13 @@ export const Listings = ({
     <>
       <Tab isVisible={isVisible}>
         <ButtonWrapper>
-          <TextTooltip text={['Sorting']}>
-            <IconListButton
-              img={SwapVertIconImage}
-              text={sortBy}
-              options={sortOptions}
-              radius={0.6}
-            />
-          </TextTooltip>
+          <IconListButton
+            img={SwapVertIconImage}
+            text={sortBy}
+            options={sortOptions}
+            radius={0.6}
+            tooltip={{ text: ['Sorting'] }}
+          />
           <TextTooltip text={['Filters']}>
             <IndicatorWrapper>
               <IconButton

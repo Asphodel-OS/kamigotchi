@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
+import { useAccount } from 'app/stores';
 import { useSelected, useVisibility } from 'app/stores';
+import { getKamidenClient, KamiMarketOrder } from 'clients/kamiden';
 import { BigNumberish } from 'ethers';
 import { Kami, NullKami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -11,6 +13,7 @@ import { Buy } from './Buy';
 import { Sell } from './Sell';
 
 type OrderType = 'Sell' | 'Buy';
+const KamidenClient = getKamidenClient();
 const getExpiryTimestamp = (expirationHours: number) => {
   if (expirationHours === 0) return 0;
   return Math.floor(Date.now() / 1000) + expirationHours * 60 * 60;
@@ -52,11 +55,13 @@ export const CreateOrder = ({
   const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
   const [externalKamis, setExternalKamis] = useState<Kami[]>([]);
   const [allKamis, setAllKamis] = useState<Kami[]>([]);
+  const [hasActiveListedOrders, setHasActiveListedOrders] = useState(false);
 
   const setModals = useVisibility((s) => s.setModals);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const kamiIndex = useSelected((s) => s.kamiIndex);
+  const account = useAccount((s) => s.account);
 
   const handleKamiClick = () => {
     if (!selectedKami[0]) return;
@@ -74,11 +79,31 @@ export const CreateOrder = ({
     if (!isVisible) return;
 
     let isActive = true;
-    const refreshKamis = () => {
+    const refreshKamis = async () => {
       if (!isActive) return;
       setAccountKamis(utils.getAccountKamis());
       setExternalKamis(utils.getExternalKamis());
       setAllKamis(utils.getAllKamis());
+
+      if (!KamidenClient) return;
+      const normalizedAccountId = (() => {
+        try {
+          return BigInt(account.id).toString();
+        } catch {
+          return account.id;
+        }
+      })();
+      const res = await KamidenClient.getKamiMarketHistory({
+        AccountId: normalizedAccountId,
+        Timestamp: 0,
+        Size: 200,
+      });
+      if (!isActive) return;
+      const orders = (res as { Orders?: KamiMarketOrder[] })?.Orders ?? [];
+      const hasActiveListings = orders.some(
+        (order) => !!order.Listing && !order.IsCanceled && !order.IsComplete
+      );
+      setHasActiveListedOrders(hasActiveListings);
     };
 
     refreshKamis();
@@ -87,7 +112,7 @@ export const CreateOrder = ({
       isActive = false;
       window.clearInterval(intervalId);
     };
-  }, [isVisible, utils]);
+  }, [isVisible, utils, account.id]);
 
   const sellableKamis = useMemo(() => externalKamis.filter(isSellEligibleKami), [externalKamis]);
 
@@ -98,6 +123,13 @@ export const CreateOrder = ({
     if (!stillSellable) setSelectedKami([NullKami]);
   }, [sellableKamis, selectedKami]);
 
+  useEffect(() => {
+    const current = selectedKami[0];
+    if (!current || current.id !== NullKami.id) return;
+    if (sellableKamis.length === 0) return;
+    setSelectedKami([sellableKamis[0]]);
+  }, [sellableKamis, selectedKami]);
+
   const kamiOptions = useMemo(
     () => sellableKamis.map((k) => ({ text: k.name, object: k, img: k.image })),
     [sellableKamis]
@@ -106,6 +138,10 @@ export const CreateOrder = ({
   const [selectedBuyKami, setSelectedBuyKami] = useState<Kami | null>(null);
 
   const accountKamiIds = useMemo(() => new Set(accountKamis.map((k) => k.id)), [accountKamis]);
+  const hasListedKamis = useMemo(() => {
+    const hasListedState = accountKamis.some((kami) => kami.state === 'LISTED');
+    return hasListedState || hasActiveListedOrders;
+  }, [accountKamis, hasActiveListedOrders]);
   const unownedKamis = useMemo(
     () => allKamis.filter((k) => !accountKamiIds.has(k.id)),
     [allKamis, accountKamiIds]
@@ -177,6 +213,9 @@ export const CreateOrder = ({
   })();
   const isCreateDisabled =
     orderType === 'Sell' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
+  const sellSelectionTooltip = hasListedKamis
+    ? 'You already have listed Kami. Cancel listing first.'
+    : `You don't have out of world Kami`;
 
   /////////////////
   // DISPLAY
@@ -204,6 +243,7 @@ export const CreateOrder = ({
         expiration={expiration}
         setExpiration={setExpiration}
         hasExternalKamis={sellableKamis.length > 0}
+        unavailableTooltip={sellSelectionTooltip}
       />
       <Buy
         isVisible={orderType === 'Buy'}
