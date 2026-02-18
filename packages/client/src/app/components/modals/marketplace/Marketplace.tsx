@@ -194,6 +194,8 @@ export const MarketplaceModal: UIComponent = {
           onOpenFilter={openFilter}
           onBuyListings={buyListings}
           onCloseFilter={closeFilter}
+          createOrderOpen={showCreateOrder}
+          accountId={account.id}
           filters={{ selected: selectedFilters, stats: statFilters }}
           utils={{
             queryKamiByIndex: utils.queryKamiByIndex,
@@ -207,9 +209,14 @@ export const MarketplaceModal: UIComponent = {
           setShowFilter={setShowFilter}
           onCloseCreateOrder={closeCreateOrder}
           onAcceptOffer={acceptOffer}
+          accountId={account.id}
           utils={{ ...utils, getExternalKamis: () => externalKamis }}
         />
-        <MyOrders isVisible={tab === 'myOrders'} onCancelOrder={cancelOrder} />
+        <MyOrders
+          isVisible={tab === 'myOrders'}
+          onCancelOrder={cancelOrder}
+          utils={{ queryKamiByIndex: utils.queryKamiByIndex, getKami: utils.getKami }}
+        />
         <CreateOrder
           isVisible={showCreateOrder}
           onClose={closeCreateOrder}
