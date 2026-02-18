@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
-import { useAccount } from 'app/stores';
-import { useSelected, useVisibility } from 'app/stores';
+import { useAccount, useSelected, useVisibility } from 'app/stores';
 import { getKamidenClient, KamiMarketOrder } from 'clients/kamiden';
 import { BigNumberish } from 'ethers';
 import { Kami, NullKami } from 'network/shapes/Kami';
@@ -14,12 +13,24 @@ import { Sell } from './Sell';
 
 type OrderType = 'Sell' | 'Buy';
 const KamidenClient = getKamidenClient();
+
+const normalizeAccountId = (accountId: string) => {
+  try {
+    return BigInt(accountId).toString();
+  } catch {
+    return accountId;
+  }
+};
+
 const getExpiryTimestamp = (expirationHours: number) => {
   if (expirationHours === 0) return 0;
   return Math.floor(Date.now() / 1000) + expirationHours * 60 * 60;
 };
+
 const isKamiExternal = (state: string) => state === '721_EXTERNAL' || state === 'EXTERNAL';
-const isSellEligibleKami = (kami: Kami) => isKamiExternal(kami.state ?? '') && kami.state !== 'LISTED';
+
+const isSellEligibleKami = (kami: Kami) =>
+  isKamiExternal(kami.state ?? '') && kami.state !== 'LISTED';
 
 export const CreateOrder = ({
   isVisible,
@@ -36,7 +47,11 @@ export const CreateOrder = ({
     getAllKamis: () => Kami[];
     getExternalKamis: () => Kami[];
   };
-  createSellOrder: (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => Promise<boolean>;
+  createSellOrder: (
+    kamiIndex: number,
+    price: BigNumberish,
+    expiry: BigNumberish
+  ) => Promise<boolean>;
   createBuyOrder: (price: BigNumberish, quantity: number, expiry: BigNumberish) => Promise<boolean>;
   createBuyKamiOrder: (
     kamiIndex: number,
@@ -86,15 +101,8 @@ export const CreateOrder = ({
       setAllKamis(utils.getAllKamis());
 
       if (!KamidenClient) return;
-      const normalizedAccountId = (() => {
-        try {
-          return BigInt(account.id).toString();
-        } catch {
-          return account.id;
-        }
-      })();
       const res = await KamidenClient.getKamiMarketHistory({
-        AccountId: normalizedAccountId,
+        AccountId: normalizeAccountId(account.id),
         Timestamp: 0,
         Size: 200,
       });
@@ -242,8 +250,8 @@ export const CreateOrder = ({
         setPrice={setPrice}
         expiration={expiration}
         setExpiration={setExpiration}
-        hasExternalKamis={sellableKamis.length > 0}
-        unavailableTooltip={sellSelectionTooltip}
+        hasSellableKamis={sellableKamis.length > 0}
+        disabledTooltip={sellSelectionTooltip}
       />
       <Buy
         isVisible={orderType === 'Buy'}
