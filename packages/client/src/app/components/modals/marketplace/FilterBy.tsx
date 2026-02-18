@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, Slider, TextTooltip } from 'app/components/library';
@@ -9,25 +9,25 @@ import { Trait, TraitType } from 'network/shapes/Trait';
 export const FilterBy = ({
   isVisible,
   onClose,
+  selected,
+  statValues,
+  onSelectedChange,
+  onStatValuesChange,
+  onClear,
+  onApply,
   utils,
 }: {
   isVisible: boolean;
   onClose: () => void;
+  selected: Record<string, Set<string>>;
+  statValues: Record<string, number>;
+  onSelectedChange: (next: Record<string, Set<string>>) => void;
+  onStatValuesChange: (next: Record<string, number>) => void;
+  onClear: () => void;
+  onApply: () => void;
   utils: { getRegistryTraits: (specificType?: TraitType[]) => Trait[] };
 }) => {
-  const [selected, setSelected] = useState<Record<string, Set<string>>>({
-    Face: new Set(),
-    Hands: new Set(),
-    'Body Type': new Set(),
-    'Body Color': new Set(),
-    Background: new Set(),
-  });
-
   const statTypes = ['Health', 'Power', 'Violence', 'Harmony', 'Slots'] as const;
-
-  const [statValues, setStatValues] = useState<Record<string, number>>(() =>
-    Object.fromEntries(statTypes.map((s) => [s, 10]))
-  );
 
   const columns = useMemo(
     () => [
@@ -41,24 +41,15 @@ export const FilterBy = ({
         traits: utils.getRegistryTraits(['Background']),
       },
     ],
-    []
+    [utils]
   );
 
   const setStatValue = (stat: string, value: number) => {
-    setStatValues((prev) => ({ ...prev, [stat]: value }));
+    onStatValuesChange({ ...statValues, [stat]: value });
   };
 
-  const handleFilter = () => {};
-  const handleClear = () => {
-    setSelected({
-      Face: new Set(),
-      Hands: new Set(),
-      'Body Type': new Set(),
-      'Body Color': new Set(),
-      Background: new Set(),
-    });
-    setStatValues(Object.fromEntries(statTypes.map((s) => [s, 10])));
-  };
+  const handleFilter = () => onApply();
+  const handleClear = () => onClear();
 
   return (
     <Container isVisible={isVisible}>
@@ -81,7 +72,7 @@ export const FilterBy = ({
                 selected={[Array.from(selected[col.key])]}
                 onClick={[
                   (values) => {
-                    setSelected((prev) => ({ ...prev, [col.key]: new Set(values) }));
+                    onSelectedChange({ ...selected, [col.key]: new Set(values) });
                   },
                 ]}
                 button={{ images: [col.icon] }}
@@ -99,20 +90,23 @@ export const FilterBy = ({
         </DropdownRow>
         <SectionLabel>Stats</SectionLabel>
         <SlidersRow>
-          {statTypes.map((stat) => (
-            <Slider
-              key={stat}
-              label={stat}
-              value={statValues[stat]}
-              onChange={(v) => setStatValue(stat, v)}
-              min={10}
-              max={50}
-            />
-          ))}
+          {statTypes.map((stat) => {
+            const min = stat === 'Slots' ? 1 : 10;
+            const max = stat === 'Health' ? 300 : stat === 'Slots' ? 5 : 50;
+            return (
+              <Slider
+                key={stat}
+                label={stat}
+                value={statValues[stat]}
+                onChange={(v) => setStatValue(stat, v)}
+                min={min}
+                max={max}
+              />
+            );
+          })}
         </SlidersRow>
       </Body>
       <Actions>
-        <IconButton text='Filter' onClick={handleFilter} />
         <IconButton text='Clear' onClick={handleClear} />
       </Actions>
     </Container>
