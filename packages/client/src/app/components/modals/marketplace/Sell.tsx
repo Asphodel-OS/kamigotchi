@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { TextTooltip } from 'app/components/library';
-import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
-import { MenuIcons } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
-import { Kami, NullKami } from 'network/shapes/Kami';
+import { Kami } from 'network/shapes/Kami';
+import { SelectYourKami } from './SelectYourKami';
 
 const expirationOptions = [
   { value: 1, label: '1 Hour' },
@@ -37,45 +34,17 @@ export const Sell = ({
   setExpiration: (val: number) => void;
   hasExternalKamis: boolean;
 }) => {
-  const [clearTrigger, setClearTrigger] = useState(false);
-
-  useEffect(() => {
-    if (selectedKami[0]?.id === NullKami.id) {
-      setClearTrigger((prev) => !prev);
-    }
-  }, [selectedKami]);
   return (
     <Conditional isVisible={isVisible}>
       <Body>
         <Row>
-          <Section>
-            <SubHeader>Kami</SubHeader>
-            <TextTooltip
-              text={hasExternalKamis ? [] : [`You don't have out of world Kami`]}
-              alignText='center'
-            >
-              <DropdownToggle
-                limit={1}
-                options={[kamiOptions]}
-                onClick={[handleKamiSelect]}
-                disabled={[!hasExternalKamis]}
-                button={{
-                  images: [MenuIcons.kami],
-                  tooltips: ['Select Kami'],
-                }}
-                radius={0.6}
-                simplified
-                clearTrigger={clearTrigger}
-              />
-            </TextTooltip>
-            {selectedKami[0].id !== NullKami.id && (
-              <KamiImage
-                src={selectedKami[0].image}
-                alt={selectedKami[0].name}
-                onClick={onKamiClick}
-              />
-            )}
-          </Section>
+          <SelectYourKami
+            kamiOptions={kamiOptions}
+            handleKamiSelect={handleKamiSelect}
+            selectedKami={selectedKami}
+            onKamiClick={onKamiClick}
+            hasExternalKamis={hasExternalKamis}
+          />
           <Section>
             <SubHeader>Price</SubHeader>
             <Price>
@@ -189,17 +158,5 @@ const RadioLabel = styled.label`
   input[type='radio'] {
     accent-color: rgb(203, 186, 61);
     cursor: pointer;
-  }
-`;
-
-const KamiImage = styled.img`
-  height: 6vw;
-  width: 6vw;
-  border: solid 0.15vw black;
-  border-radius: 0.6vw;
-  image-rendering: pixelated;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.75;
   }
 `;
