@@ -3,16 +3,18 @@ import styled from 'styled-components';
 import { IconButton, TextTooltip } from 'app/components/library';
 import { playClick } from 'utils/sounds';
 
+export type MarketplaceTab = 'listings' | 'bids' | 'myOrders';
+
 export const Tabs = ({
   tab,
   setTab,
   onCreateOrder,
 }: {
-  tab: string;
-  setTab: (tab: string) => void;
+  tab: MarketplaceTab;
+  setTab: (tab: MarketplaceTab) => void;
   onCreateOrder: () => void;
 }) => {
-  const handleTabClick = (newTab: string) => {
+  const handleTabClick = (newTab: MarketplaceTab) => {
     playClick();
     setTab(newTab);
   };

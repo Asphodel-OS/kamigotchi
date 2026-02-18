@@ -14,7 +14,6 @@ export const FilterBy = ({
   onSelectedChange,
   onStatValuesChange,
   onClear,
-  onApply,
   utils,
 }: {
   isVisible: boolean;
@@ -24,7 +23,6 @@ export const FilterBy = ({
   onSelectedChange: (next: Record<string, Set<string>>) => void;
   onStatValuesChange: (next: Record<string, number>) => void;
   onClear: () => void;
-  onApply: () => void;
   utils: { getRegistryTraits: (specificType?: TraitType[]) => Trait[] };
 }) => {
   const statTypes = ['Health', 'Power', 'Violence', 'Harmony', 'Slots'] as const;
@@ -48,7 +46,6 @@ export const FilterBy = ({
     onStatValuesChange({ ...statValues, [stat]: value });
   };
 
-  const handleFilter = () => onApply();
   const handleClear = () => onClear();
 
   return (

@@ -6,6 +6,12 @@ import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { Kami, NullKami } from 'network/shapes/Kami';
 
+export interface KamiOption {
+  text: string;
+  object: Kami;
+  img: string;
+}
+
 export const SelectYourKami = ({
   kamiOptions,
   handleKamiSelect,
@@ -13,8 +19,8 @@ export const SelectYourKami = ({
   onKamiClick,
   hasExternalKamis,
 }: {
-  kamiOptions: { text: string; object: any; img: string }[];
-  handleKamiSelect: (selected: any[]) => void;
+  kamiOptions: KamiOption[];
+  handleKamiSelect: (selected: Kami[]) => void;
   selectedKami: Kami[];
   onKamiClick: () => void;
   hasExternalKamis: boolean;
@@ -56,17 +62,19 @@ export const SelectYourKami = ({
 };
 
 const Section = styled.div`
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-flow: column nowrap;
-  width: 100%;
   gap: 0.6vw;
 `;
 
 const SubHeader = styled.div`
   border-bottom: 0.15vw solid black;
   padding: 0.8vw;
-  font-size: 1.1vw;
+  font-size: 1vw;
   text-align: left;
+  white-space: nowrap;
 `;
 
 const KamiImage = styled.img`

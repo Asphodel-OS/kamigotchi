@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { formatUnits } from 'viem';
 
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -15,13 +14,7 @@ import { playClick } from 'utils/sounds';
 import { Cart } from './Cart';
 
 const KamidenClient = getKamidenClient();
-
-const formatPrice = (weiString: string) => {
-  if (!weiString || weiString === '0') return '0';
-  const num = Number(formatUnits(BigInt(weiString), 18));
-  if (num < 0.001) return '<0.001';
-  return num.toFixed(3);
-};
+const SwapVertIconImage = SwapVertIcon as unknown as string;
 
 const formatExpiry = (expiryStr: string) => {
   const expiry = Number(expiryStr);
@@ -57,38 +50,52 @@ export const Listings = ({
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
     getKamiDetailed: (entity: EntityIndex) => Kami;
+    isDifferentAccountId: (lhs: string, rhs: string) => boolean;
+    formatEthPrice: (weiString: string, decimals: number) => string;
   };
 }) => {
+  /////////////////
+  // INSTANTIATIONS
+
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setModals = useVisibility((s) => s.setModals);
+
+  /////////////////
+  // INSTANTIATIONS
+
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
   const [sortBy, setSortBy] = useState('Latest');
   const [showCart, setShowCart] = useState(false);
   const [cart, setCart] = useState<KamiMarketListing[]>([]);
 
+  /////////////////
+  // SUBSCRIPTIONS
+
   useEffect(() => {
     if (!isVisible || !KamidenClient) return;
-    KamidenClient.getKamiMarketListings({}).then((res) => {
+
+    let isActive = true;
+    const refreshListings = async () => {
+      const res = await KamidenClient.getKamiMarketListings({});
+      if (!isActive) return;
       const all = res.Listings ?? [];
-      const parsedAccountId = (() => {
-        try {
-          return BigInt(accountId).toString();
-        } catch {
-          return accountId;
-        }
-      })();
-      const filtered = all.filter((listing) => {
-        try {
-          return BigInt(listing.SellerAccountID).toString() !== parsedAccountId;
-        } catch {
-          return listing.SellerAccountID !== parsedAccountId;
-        }
-      });
+      const filtered = all.filter((listing) =>
+        utils.isDifferentAccountId(listing.SellerAccountID, accountId)
+      );
       setListings(filtered);
-    });
+    };
+
+    refreshListings();
+    const intervalId = window.setInterval(refreshListings, 10000);
+    return () => {
+      isActive = false;
+      window.clearInterval(intervalId);
+    };
   }, [isVisible, accountId]);
+
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 3);
 
   useEffect(() => {
     if (createOrderOpen) setShowCart(false);
@@ -97,6 +104,9 @@ export const Listings = ({
   useEffect(() => {
     setCart((prev) => prev.filter((item) => listings.some((l) => l.OrderID === item.OrderID)));
   }, [listings]);
+
+  /////////////////
+  // PREPARATION
 
   const resolvedListings = useMemo(
     () =>
@@ -183,6 +193,9 @@ export const Listings = ({
     { text: 'Price High', onClick: () => setSortBy('Price High') },
   ];
 
+  /////////////////
+  // ACTIONS
+
   const isListingExpired = (expiryStr: string) => {
     const expiry = Number(expiryStr);
     if (!expiry) return false;
@@ -223,13 +236,16 @@ export const Listings = ({
     setShowCart(false);
   };
 
+  /////////////////
+  // DISPLAY
+
   return (
     <>
       <Tab isVisible={isVisible}>
         <ButtonWrapper>
           <TextTooltip text={['Sorting']}>
             <IconListButton
-              img={SwapVertIcon as any}
+              img={SwapVertIconImage}
               text={sortBy}
               options={sortOptions}
               radius={0.6}
@@ -349,18 +365,6 @@ const ButtonWrapper = styled.div`
 const IndicatorWrapper = styled.div`
   position: relative;
   display: inline-flex;
-`;
-
-const IndicatorDot = styled.span`
-  position: absolute;
-  top: -0.1vw;
-  right: -0.1vw;
-  width: 0.5vw;
-  height: 0.5vw;
-  border-radius: 50%;
-  background: #d04a2f;
-  border: 0.08vw solid white;
-  z-index: 2;
 `;
 
 const IndicatorBadge = styled.span`

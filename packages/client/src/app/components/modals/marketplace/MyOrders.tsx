@@ -1,7 +1,6 @@
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { formatUnits } from 'viem';
 
 import { EmptyText, IconButton, IconListButton, TextTooltip } from 'app/components/library';
 import { useAccount, useSelected, useVisibility } from 'app/stores';
@@ -13,6 +12,7 @@ import { playClick } from 'utils/sounds';
 import { HistorySection } from './History';
 
 const KamidenClient = getKamidenClient();
+const SwapVertIconImage = SwapVertIcon as unknown as string;
 
 export type MyOrder =
   | {
@@ -31,6 +31,43 @@ export type MyOrder =
       kamiIndex: number;
     };
 
+type MyOrderHistory = MyOrder & { state: 'Cancelled' | 'Completed' };
+
+const parseOrder = (order: KamiMarketOrder): MyOrder | null => {
+  if (order.Listing) {
+    return {
+      type: 'Listing',
+      orderId: order.OrderID,
+      price: order.Listing.Price,
+      kamiIndex: order.Listing.KamiIndex,
+    };
+  }
+  if (!order.Bid) return null;
+  return {
+    type: 'Bid',
+    orderId: order.OrderID,
+    price: order.Bid.Price,
+    total: order.Bid.Total,
+    quantity: order.Bid.Quantity,
+    bidType: order.Bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC ? 'Kami' : '',
+    kamiIndex: order.Bid.KamiIndex,
+  };
+};
+
+const sortOrders = <T extends MyOrder>(orders: T[], sortBy: string) => {
+  if (sortBy === 'Price') {
+    return [...orders].sort((a, b) => {
+      try {
+        return Number(BigInt(b.price) - BigInt(a.price));
+      } catch {
+        return 0;
+      }
+    });
+  }
+  if (sortBy === 'Type') return [...orders].sort((a, b) => a.type.localeCompare(b.type));
+  return orders;
+};
+
 export const MyOrders = ({
   isVisible,
   onCancelOrder,
@@ -45,29 +82,32 @@ export const MyOrders = ({
   utils: {
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
+    normalizeAccountId: (accountId: string) => string;
+    formatEthPrice: (weiString: string, decimals: number) => string;
   };
 }) => {
+  /////////////////
+  // INSTANTIATIONS
+
   const [sortBy, setSortBy] = useState<string>('');
   const [showHistory, setShowHistory] = useState(false);
   const [orders, setOrders] = useState<KamiMarketOrder[]>([]);
+
   const account = useAccount((s) => s.account);
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setModals = useVisibility((s) => s.setModals);
 
-  const accountId = useMemo(() => {
-    try {
-      return BigInt(account.id).toString();
-    } catch {
-      return account.id;
-    }
-  }, [account.id]);
+  const accountId = useMemo(() => utils.normalizeAccountId(account.id), [account.id]);
 
   const sortOptions = [
     { text: 'Price', onClick: () => setSortBy('Price') },
     { text: 'Type', onClick: () => setSortBy('Type') },
   ];
+
+  /////////////////
+  // SUBSCRIPTIONS
 
   useEffect(() => {
     if (!isVisible || !KamidenClient) return;
@@ -80,7 +120,7 @@ export const MyOrders = ({
         Size: 200,
       });
       if (!isActive) return;
-      setOrders((res as any)?.Orders ?? []);
+      setOrders((res as { Orders?: KamiMarketOrder[] })?.Orders ?? []);
     };
 
     refresh();
@@ -95,78 +135,40 @@ export const MyOrders = ({
     if (createOrderOpen) setShowHistory(false);
   }, [createOrderOpen]);
 
-  const mapOrders = (source: KamiMarketOrder[]) =>
-    source
-      .map((order) => {
-        if (order.Listing) {
-          return {
-            type: 'Listing' as const,
-            orderId: order.OrderID,
-            price: order.Listing.Price,
-            kamiIndex: order.Listing.KamiIndex,
-          };
-        }
-        if (order.Bid) {
-          return {
-            type: 'Bid' as const,
-            orderId: order.OrderID,
-            price: order.Bid.Price,
-            total: order.Bid.Total,
-            quantity: order.Bid.Quantity,
-            bidType:
-              order.Bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC ? 'Kami' : '',
-            kamiIndex: order.Bid.KamiIndex,
-          };
-        }
-        return null;
-      })
-      .filter((order): order is MyOrder => order !== null);
+  /////////////////
+  // PREPARATION
 
   const currentOrders = useMemo<MyOrder[]>(() => {
     const active = orders.filter(
-      (order) => !Boolean(order.IsCanceled) && !Boolean(order.IsComplete)
+      (order) => !order.IsCanceled && !order.IsComplete
     );
-    const combined = mapOrders(active);
-    if (sortBy === 'Price') {
-      return combined.sort((a, b) => Number(BigInt(b.price) - BigInt(a.price)));
-    }
-    if (sortBy === 'Type') {
-      return combined.sort((a, b) => a.type.localeCompare(b.type));
-    }
-    return combined;
+    const mapped = active.map(parseOrder).filter((order): order is MyOrder => order !== null);
+    return sortOrders(mapped, sortBy);
   }, [orders, sortBy]);
 
-  const historyMapped = useMemo<(MyOrder & { state: 'Cancelled' | 'Completed' })[]>(() => {
+  const historyMapped = useMemo<MyOrderHistory[]>(() => {
     const history = orders.filter(
-      (order) => Boolean(order.IsCanceled) || Boolean(order.IsComplete)
+      (order) => order.IsCanceled || order.IsComplete
     );
-    const mapped = history
+    const mapped: MyOrderHistory[] = history
       .map((order) => {
-        const base = mapOrders([order])[0];
+        const base = parseOrder(order);
         if (!base) return null;
         return {
           ...base,
           state: order.IsCanceled ? 'Cancelled' : 'Completed',
         };
       })
-      .filter((order): order is MyOrder & { state: 'Cancelled' | 'Completed' } => order !== null);
-    if (sortBy === 'Price') {
-      return mapped.sort((a, b) => Number(BigInt(b.price) - BigInt(a.price)));
-    }
-    if (sortBy === 'Type') {
-      return mapped.sort((a, b) => a.type.localeCompare(b.type));
-    }
-    return mapped;
+      .filter((order): order is MyOrderHistory => order !== null);
+    return sortOrders(mapped, sortBy);
   }, [orders, sortBy]);
 
   const myOrders = currentOrders;
 
-  const formatPrice = (weiString: string) => {
-    if (!weiString || weiString === '0') return '0';
-    const num = Number(formatUnits(BigInt(weiString), 18));
-    if (num < 0.001) return '<0.001';
-    return num.toFixed(3);
-  };
+  /////////////////
+  // ACTIONS
+
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 3);
 
   const getBidProgress = (total: number, quantity: number) => {
     if (quantity <= 0) return '';
@@ -186,12 +188,15 @@ export const MyOrders = ({
     return entity !== undefined ? utils.getKami(entity) : undefined;
   };
 
+  /////////////////
+  // DISPLAY
+
   return (
     <Tab isVisible={isVisible}>
       <ButtonWrapper>
         <TextTooltip text={['Sorting']}>
           <IconListButton
-            img={SwapVertIcon as any}
+            img={SwapVertIconImage}
             text={sortBy}
             options={sortOptions}
             radius={0.6}
@@ -224,43 +229,15 @@ export const MyOrders = ({
         </Row>
         {myOrders.length === 0 && <EmptyText text={['No active orders']} size={0.9} />}
         {myOrders.map((order) => (
-          <Row key={`${order.type}-${order.orderId}`}>
-            <Column>
-              <CellText>{order.type}</CellText>
-            </Column>
-            <Column>
-              {order.type === 'Listing' ? (
-                <OrderKami>
-                  {resolveKami(order.kamiIndex) && (
-                    <OrderKamiImage
-                      src={resolveKami(order.kamiIndex)?.image}
-                      alt={resolveKami(order.kamiIndex)?.name ?? `Kami #${order.kamiIndex}`}
-                      onClick={() => openKamiModal(order.kamiIndex)}
-                    />
-                  )}
-                </OrderKami>
-              ) : getBidProgress(order.total, order.quantity) ? (
-                <TextTooltip
-                  text={[
-                    `${order.total - order.quantity}/${order.total} kami in this bid have already been purchased.`,
-                  ]}
-                >
-                  <CellText>
-                    {order.bidType === 'Kami' ? `Kami #${order.kamiIndex} ` : ''}
-                    {getBidProgress(order.total, order.quantity)}
-                  </CellText>
-                </TextTooltip>
-              ) : (
-                <CellText>{order.bidType === 'Kami' ? `Kami #${order.kamiIndex}` : ''}</CellText>
-              )}
-            </Column>
-            <Column>
-              <CellText>{formatPrice(order.price)}</CellText>
-            </Column>
-            <Column>
-              <IconButton text='Cancel' onClick={() => onCancelOrder(order.orderId)} />
-            </Column>
-          </Row>
+          <OrderRow
+            key={`${order.type}-${order.orderId}`}
+            order={order}
+            resolveKami={resolveKami}
+            openKamiModal={openKamiModal}
+            getBidProgress={getBidProgress}
+            formatPrice={formatPrice}
+            onCancelOrder={onCancelOrder}
+          />
         ))}
       </OrdersBody>
       <HistorySection
@@ -273,6 +250,64 @@ export const MyOrders = ({
         resolveKami={resolveKami}
       />
     </Tab>
+  );
+};
+
+const OrderRow = ({
+  order,
+  resolveKami,
+  openKamiModal,
+  getBidProgress,
+  formatPrice,
+  onCancelOrder,
+}: {
+  order: MyOrder;
+  resolveKami: (index: number) => Kami | undefined;
+  openKamiModal: (index: number) => void;
+  getBidProgress: (total: number, quantity: number) => string;
+  formatPrice: (weiString: string) => string;
+  onCancelOrder: (orderID: string) => void;
+}) => {
+  const kami = resolveKami(order.kamiIndex);
+
+  return (
+    <Row>
+      <Column>
+        <CellText>{order.type}</CellText>
+      </Column>
+      <Column>
+        {order.type === 'Listing' ? (
+          <OrderKami>
+            {kami && (
+              <OrderKamiImage
+                src={kami.image}
+                alt={kami.name ?? `Kami #${order.kamiIndex}`}
+                onClick={() => openKamiModal(order.kamiIndex)}
+              />
+            )}
+          </OrderKami>
+        ) : getBidProgress(order.total, order.quantity) ? (
+          <TextTooltip
+            text={[
+              `${order.total - order.quantity}/${order.total} kami in this bid have already been purchased.`,
+            ]}
+          >
+            <CellText>
+              {order.bidType === 'Kami' ? `Kami #${order.kamiIndex} ` : ''}
+              {getBidProgress(order.total, order.quantity)}
+            </CellText>
+          </TextTooltip>
+        ) : (
+          <CellText>{order.bidType === 'Kami' ? `Kami #${order.kamiIndex}` : ''}</CellText>
+        )}
+      </Column>
+      <Column>
+        <CellText>{formatPrice(order.price)}</CellText>
+      </Column>
+      <Column>
+        <IconButton text='Cancel' onClick={() => onCancelOrder(order.orderId)} />
+      </Column>
+    </Row>
   );
 };
 
