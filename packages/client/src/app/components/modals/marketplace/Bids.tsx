@@ -98,12 +98,47 @@ export const Bids = ({
   const specificKamiIndex = selectedBid?.KamiIndex;
   const canSelectKami = (index: number) => !isSpecificBid || index === specificKamiIndex;
 
+  const filteredBids = useMemo(() => {
+    if (filterBy === 'Show all') return bids;
+    if (ownedKamiIndices.size === 0) return [];
+    return bids.filter((bid) => {
+      if (bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC) {
+        return ownedKamiIndices.has(bid.KamiIndex);
+      }
+      return true;
+    });
+  }, [bids, filterBy, ownedKamiIndices]);
+
+  const sortedBids = useMemo(() => {
+    const copy = [...filteredBids];
+    return copy.sort((a, b) => {
+      try {
+        return Number(BigInt(b.Price) - BigInt(a.Price));
+      } catch {
+        return 0;
+      }
+    });
+  }, [filteredBids]);
+
+  const getBestBidForKami = (kamiIndex: number) =>
+    sortedBids.find((bid) =>
+      bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
+        ? bid.KamiIndex === kamiIndex
+        : true
+    );
+
   const toggleKami = (index: number) => {
     if (!canSelectKami(index)) return;
     setSelectedKamis((prev) => {
       const next = new Set(prev);
       if (next.has(index)) next.delete(index);
       else next.add(index);
+      if (next.size === 0) {
+        setSelectedBid(null);
+      } else if (!selectedBid) {
+        const bestBid = getBestBidForKami(index);
+        if (bestBid) setSelectedBid(bestBid);
+      }
       return next;
     });
   };
@@ -133,19 +168,24 @@ export const Bids = ({
   };
   const handleClear = () => {
     setSelectedKamis(new Set());
-    setShowSelectKami(false);
+    setSelectedBid(null);
   };
 
-  const filteredBids = useMemo(() => {
-    if (filterBy === 'Show all') return bids;
-    if (ownedKamiIndices.size === 0) return [];
-    return bids.filter((bid) => {
-      if (bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC) {
-        return ownedKamiIndices.has(bid.KamiIndex);
-      }
-      return true;
-    });
-  }, [bids, filterBy, ownedKamiIndices]);
+  const handleSelectMax = () => {
+    const bestBid = selectedBid ?? sortedBids[0];
+    if (!bestBid) return;
+    const eligible = restingKamis
+      .filter((kami) => canSelectKami(kami.index))
+      .filter((kami) =>
+        bestBid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
+          ? kami.index === bestBid.KamiIndex
+          : true
+      );
+    const maxCount = Math.min(bestBid.Quantity ?? 0, eligible.length);
+    const next = new Set(eligible.slice(0, maxCount).map((kami) => kami.index));
+    setSelectedBid(bestBid);
+    setSelectedKamis(next);
+  };
 
   return (
     <>
@@ -169,21 +209,26 @@ export const Bids = ({
             </ColumnHeader>
           </Column>
         </HeaderRow>
-        {filteredBids.length === 0 && <EmptyText text={['No bids found']} size={0.9} />}
-        {filteredBids.map((bid) => (
+        {sortedBids.length === 0 && <EmptyText text={['No bids found']} size={0.9} />}
+        {sortedBids.map((bid) => (
           <DataRow
             key={bid.OrderID}
             isSelected={selectedBid?.OrderID === bid.OrderID}
             onClick={() => {
-              setSelectedBid(bid);
-              setSelectedKamis(new Set());
+              if (selectedBid?.OrderID === bid.OrderID) {
+                setSelectedBid(null);
+                setSelectedKamis(new Set());
+              } else {
+                setSelectedBid(bid);
+                setSelectedKamis(new Set());
+              }
             }}
           >
             <Column>
               {getBidProgress(bid) ? (
                 <TextTooltip
                   text={[
-                    `${bid.Total}/${bid.Quantity} kami in this bid have already been purchased.`,
+                    `${bid.Total - bid.Quantity}/${bid.Total} kami in this bid have already been purchased.`,
                   ]}
                 >
                   <CellText>
@@ -205,9 +250,14 @@ export const Bids = ({
           <HeaderTitle>Select Your Kami</HeaderTitle>
           <IconButton text='X' onClick={handleCloseSelect} scale={1.5} />
         </Header>
+        <SelectRow>
+          <TextTooltip text={['Select the maximum Kami for the best bid.']}>
+            <IconButton text='Max' onClick={handleSelectMax} />
+          </TextTooltip>
+        </SelectRow>
         <KamiGrid>
           {restingKamis.length === 0 && (
-            <EmptyText text={[`You don't have out of world Kami`]} size={0.9} />
+            <EmptyText text={[`You don't have out of world Kami.`]} size={0.9} />
           )}
           {restingKamis.map((kami) => (
             <KamiSlot
@@ -389,6 +439,12 @@ const HeaderTitle = styled.span`
   flex: 1;
   text-align: center;
   font-size: 1.1vw;
+`;
+
+const SelectRow = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0.4vw 0.6vw;
 `;
 
 const FilterBody = styled.div`
