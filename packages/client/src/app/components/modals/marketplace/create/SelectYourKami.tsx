@@ -17,15 +17,15 @@ export const SelectYourKami = ({
   handleKamiSelect,
   selectedKami,
   onKamiClick,
-  hasExternalKamis,
-  unavailableTooltip,
+  hasSellableKamis,
+  disabledTooltip,
 }: {
   kamiOptions: KamiOption[];
   handleKamiSelect: (selected: Kami[]) => void;
   selectedKami: Kami[];
   onKamiClick: () => void;
-  hasExternalKamis: boolean;
-  unavailableTooltip: string;
+  hasSellableKamis: boolean;
+  disabledTooltip: string;
 }) => {
   const [clearTrigger, setClearTrigger] = useState(false);
 
@@ -38,15 +38,12 @@ export const SelectYourKami = ({
   return (
     <Section>
       <SubHeader>Select your kami</SubHeader>
-      <TextTooltip
-        text={hasExternalKamis ? [] : [unavailableTooltip]}
-        alignText='center'
-      >
+      <TextTooltip text={hasSellableKamis ? [] : [disabledTooltip]} alignText='center'>
         <DropdownToggle
           limit={1}
           options={[kamiOptions]}
           onClick={[handleKamiSelect]}
-          disabled={[!hasExternalKamis]}
+          disabled={[!hasSellableKamis]}
           button={{
             images: [MenuIcons.kami],
             tooltips: ['Select Kami'],

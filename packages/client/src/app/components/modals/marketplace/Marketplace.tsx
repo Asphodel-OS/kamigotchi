@@ -213,12 +213,16 @@ export const MarketplaceModal: UIComponent = {
       setShowFilter(false);
       setShowCreateOrder(true);
     };
+
     const closeCreateOrder = () => setShowCreateOrder(false);
+
     const openFilter = () => {
       setShowCreateOrder(false);
       setShowFilter(true);
     };
+
     const closeFilter = () => setShowFilter(false);
+
     const normalizeAccountId = (accountId: string) => {
       try {
         return BigInt(accountId).toString();
@@ -226,6 +230,7 @@ export const MarketplaceModal: UIComponent = {
         return accountId;
       }
     };
+
     const isDifferentAccountId = (lhs: string, rhs: string) => {
       try {
         return BigInt(lhs).toString() !== BigInt(rhs).toString();
@@ -233,6 +238,7 @@ export const MarketplaceModal: UIComponent = {
         return lhs !== rhs;
       }
     };
+
     const formatEthPrice = (weiString: string, decimals: number) => {
       if (!weiString || weiString === '0') return '0';
       const num = Number(formatUnits(BigInt(weiString), 18));

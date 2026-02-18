@@ -158,11 +158,13 @@ export const Bids = ({
   };
 
   const handleCloseSelect = () => setShowSelectKami(false);
+
   const handleOpenFilter = () => {
     onCloseCreateOrder();
     setShowSelectKami(false);
     setShowFilterSection(true);
   };
+
   const handleCloseFilter = () => setShowFilterSection(false);
 
   const handleSell = () => {
@@ -174,6 +176,7 @@ export const Bids = ({
     setSelectedKamis(new Set());
     setShowSelectKami(false);
   };
+
   const handleClear = () => {
     setSelectedKamis(new Set());
     setSelectedBid(null);

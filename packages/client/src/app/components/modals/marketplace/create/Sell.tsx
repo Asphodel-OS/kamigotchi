@@ -21,8 +21,8 @@ export const Sell = ({
   setPrice,
   expiration,
   setExpiration,
-  hasExternalKamis,
-  unavailableTooltip,
+  hasSellableKamis,
+  disabledTooltip,
 }: {
   isVisible: boolean;
   kamiOptions: KamiOption[];
@@ -33,8 +33,8 @@ export const Sell = ({
   setPrice: (val: string) => void;
   expiration: number;
   setExpiration: (val: number) => void;
-  hasExternalKamis: boolean;
-  unavailableTooltip: string;
+  hasSellableKamis: boolean;
+  disabledTooltip: string;
 }) => {
   return (
     <Conditional isVisible={isVisible}>
@@ -45,8 +45,8 @@ export const Sell = ({
             handleKamiSelect={handleKamiSelect}
             selectedKami={selectedKami}
             onKamiClick={onKamiClick}
-            hasExternalKamis={hasExternalKamis}
-            unavailableTooltip={unavailableTooltip}
+            hasSellableKamis={hasSellableKamis}
+            disabledTooltip={disabledTooltip}
           />
           <Section>
             <SubHeader>Price</SubHeader>
