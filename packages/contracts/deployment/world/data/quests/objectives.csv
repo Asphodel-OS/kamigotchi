@@ -60,6 +60,7 @@
 ,Give 5 Daffodil,MIN,INC,ITEM_BURN,1011,5
 ,Give 15 Daffodil,MIN,INC,ITEM_BURN,1011,15
 ,Give 1 Mint,MIN,INC,ITEM_BURN,1012,1
+,Give 10 Sanguine Shroom,MIN,INC,ITEM_BURN,1013,10
 ,Give 5 Obols,MIN,INC,ITEM_BURN,1015,5
 ,Give 1 Cigarette Butt,MIN,INC,ITEM_BURN,1018,1
 ,Give 1 Irradiated Root,MIN,INC,ITEM_BURN,1021,1
@@ -73,6 +74,8 @@
 ,Give 1 Ingot,MIN,INC,ITEM_BURN,1303,1
 ,Give 1 Essence of Hearing,MIN,INC,ITEM_BURN,6001,1
 ,Give 1 Essence of Sight,MIN,INC,ITEM_BURN,6003,1
+,Give 10 Red Ribbon Gummy,MIN,INC,ITEM_BURN,11001,10
+,Give 10 Honeydew Scale,MIN,INC,ITEM_BURN,11312,10
 ,Give 5 Blue Pansy,MIN,INC,ITEM_BURN,11314,5
 ,Give Mina 20 Blue Pansy,MIN,INC,ITEM_BURN,11314,20
 ,Give 1 Energy Drink,MIN,INC,ITEM_BURN,11409,1
@@ -102,13 +105,13 @@
 ,During Moonside,IS,BOOL,PHASE,,
 ,Move to Tunnel of Trees,IS,BOOL,ROOM,2,
 ,Move to Torii Gate,IS,BOOL,ROOM,3,
-,Move to Restricted Area,IS,BOOL,ROOM,5,
 ,Go to the Temple by the Waterfall,IS,BOOL,ROOM,11,
 ,Move to Convenience Store,IS,BOOL,ROOM,13,
 ,Enter Mina's Shop,IS,BOOL,ROOM,13,
 ,"Use the object ""Waterfall"" in ""Temple by the Waterfall"" to enter a new zone",IS,BOOL,ROOM,15,
 ,Move to Techno Temple,IS,BOOL,ROOM,16,
 ,Move to Cave Crossroads,IS,BOOL,ROOM,18,
+,Move to Temple of the Wheel,IS,BOOL,ROOM,19,
 ,Move to Lost Skeleton,IS,BOOL,ROOM,25,
 ,Move to the Trash-Strewn Graves,IS,BOOL,ROOM,26,
 ,Move to Shady Path,IS,BOOL,ROOM,55,
@@ -122,6 +125,7 @@
 ,Make 9 Scavenging Rolls at Labs Entrance,MIN,INC,SCAV_CLAIM_NODE,6,9
 ,Make 2 Scavenging Rolls at Scrap Confluence,MIN,INC,SCAV_CLAIM_NODE,12,2
 ,Make 7 Scavenging Rolls at Temple Cave,MIN,INC,SCAV_CLAIM_NODE,15,7
+,Make 3 Scavenging Rolls at Temple of the Wheel,MIN,INC,SCAV_CLAIM_NODE,19,3
 ,Make 5 Scavenging Rolls at Lost Skeleton,MIN,INC,SCAV_CLAIM_NODE,25,5
 ,Make 3 Scavenging Rolls at Clearing,MIN,INC,SCAV_CLAIM_NODE,49,3
 ,Make 3 Scavenging Rolls at Airplane Crash,MIN,INC,SCAV_CLAIM_NODE,52,3
@@ -160,3 +164,5 @@
 ,Craft Uninteresting Paste,MIN,INC,CRAFT_ITEM,21206,1
 ,Assemble the Dowsing Rod,MIN,INC,CRAFT_ITEM,100010,1
 ,Use the machine to buy something in the Marketplace,MIN,INC,TRADE_EXECUTE,,1
+,Give 1 Otherworld Coin,,,,,
+,Sacrifice 1 Kami,,,,,
