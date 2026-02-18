@@ -88,7 +88,7 @@ export const Bids = ({
   const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
   const showFilterBottom = isVisible && !showCreateOrder && showFilterSection;
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 4);
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
   const getBidLabel = (bid: KamiMarketBid) =>
     bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC ? `Kami #${bid.KamiIndex}` : '';

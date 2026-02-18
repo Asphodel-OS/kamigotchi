@@ -168,7 +168,7 @@ export const MyOrders = ({
   /////////////////
   // ACTIONS
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 3);
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
   const getBidProgress = (total: number, quantity: number) => {
     if (quantity <= 0) return '';
