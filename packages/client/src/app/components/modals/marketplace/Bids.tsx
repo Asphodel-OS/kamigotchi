@@ -2,7 +2,8 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { formatUnits } from 'viem';
 
-import { EmptyText, IconButton } from 'app/components/library';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { Kami } from 'network/shapes/Kami';
@@ -25,20 +26,11 @@ export const Bids = ({
     getExternalKamis: () => Kami[];
   };
 }) => {
-  const formatPrice = (weiString: string) => {
-    if (!weiString || weiString === '0') return '0';
-    const num = Number(formatUnits(BigInt(weiString), 18));
-    if (num < 0.001) return '<0.001';
-    return num.toFixed(4);
-  };
-
-  const getBidLabel = (bid: KamiMarketBid) =>
-    bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
-      ? `Kami #${bid.KamiIndex}`
-      : 'Collection';
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
+  const [filterBy, setFilterBy] = useState('Show all');
+  const [showFilterSection, setShowFilterSection] = useState(false);
 
   useEffect(() => {
     if (!isVisible || !KamidenClient) return;
@@ -54,8 +46,26 @@ export const Bids = ({
   }, [showCreateOrder]);
 
   const restingKamis = useMemo(() => utils.getExternalKamis(), [utils]);
+  const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
+  const ownedKamiIndices = useMemo(
+    () => new Set(accountKamis.map((kami) => kami.index)),
+    [accountKamis]
+  );
   const isTabVisible = isVisible;
   const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
+  const showFilterBottom = isVisible && !showCreateOrder && showFilterSection;
+
+  const formatPrice = (weiString: string) => {
+    if (!weiString || weiString === '0') return '0';
+    const num = Number(formatUnits(BigInt(weiString), 18));
+    if (num < 0.001) return '<0.001';
+    return num.toFixed(4);
+  };
+
+  const getBidLabel = (bid: KamiMarketBid) =>
+    bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
+      ? `Kami #${bid.KamiIndex}`
+      : 'Collection';
 
   const toggleKami = (index: number) => {
     setSelectedKamis((prev) => {
@@ -68,10 +78,17 @@ export const Bids = ({
 
   const handleOpenSell = () => {
     onCloseCreateOrder();
+    setShowFilterSection(false);
     setShowSelectKami(true);
   };
 
   const handleCloseSelect = () => setShowSelectKami(false);
+  const handleOpenFilter = () => {
+    onCloseCreateOrder();
+    setShowSelectKami(false);
+    setShowFilterSection(true);
+  };
+  const handleCloseFilter = () => setShowFilterSection(false);
 
   const handleSell = () => {};
   const handleClear = () => {
@@ -79,10 +96,24 @@ export const Bids = ({
     setShowSelectKami(false);
   };
 
+  const filteredBids = useMemo(() => {
+    if (filterBy === 'Show all') return bids;
+    if (ownedKamiIndices.size === 0) return [];
+    return bids.filter((bid) => {
+      if (bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC) {
+        return ownedKamiIndices.has(bid.KamiIndex);
+      }
+      return true;
+    });
+  }, [bids, filterBy, ownedKamiIndices]);
+
   return (
     <>
       <Tab isVisible={isTabVisible}>
         <ButtonWrapper>
+          <TextTooltip text={['Filters', filterBy]}>
+            <IconButton img={FilterListIcon} onClick={handleOpenFilter} />
+          </TextTooltip>
           <IconButton text='Sell' onClick={handleOpenSell} />
         </ButtonWrapper>
         <HeaderRow>
@@ -101,8 +132,8 @@ export const Bids = ({
             <ColumnHeader>Qty</ColumnHeader>
           </Column>
         </HeaderRow>
-        {bids.length === 0 && <EmptyText text={['No bids found']} size={0.9} />}
-        {bids.map((bid) => (
+        {filteredBids.length === 0 && <EmptyText text={['No bids found']} size={0.9} />}
+        {filteredBids.map((bid) => (
           <DataRow key={bid.OrderID}>
             <Column>
               <CellText>{getBidLabel(bid)}</CellText>
@@ -145,6 +176,34 @@ export const Bids = ({
           <IconButton text='Clear' onClick={handleClear} />
         </Actions>
       </BottomSection>
+      <FilterSection isVisible={showFilterBottom}>
+        <Header>
+          <HeaderTitle>Filter Bids</HeaderTitle>
+          <IconButton text='X' onClick={handleCloseFilter} scale={1.5} />
+        </Header>
+        <FilterBody>
+          <FilterOption>
+            <input
+              type='radio'
+              name='bids-filter'
+              value='Show all'
+              checked={filterBy === 'Show all'}
+              onChange={() => setFilterBy('Show all')}
+            />
+            Show all
+          </FilterOption>
+          <FilterOption>
+            <input
+              type='radio'
+              name='bids-filter'
+              value='Bids on my kami'
+              checked={filterBy === 'Bids on my kami'}
+              onChange={() => setFilterBy('Bids on my kami')}
+            />
+            Bids on my kami
+          </FilterOption>
+        </FilterBody>
+      </FilterSection>
     </>
   );
 };
@@ -159,6 +218,8 @@ const Tab = styled.div<{ isVisible: boolean }>`
 `;
 
 const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 0.4vw;
   width: fit-content;
   padding: 0.4vw;
 `;
@@ -218,6 +279,15 @@ const BottomSection = styled.div<{ isVisible: boolean }>`
   width: 100%;
 `;
 
+const FilterSection = styled.div<{ isVisible: boolean }>`
+  ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
+  flex-direction: column;
+  flex: 0 0 50%;
+  overflow: auto;
+  border-top: 0.15vw solid black;
+  width: 100%;
+`;
+
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -233,6 +303,26 @@ const HeaderTitle = styled.span`
   flex: 1;
   text-align: center;
   font-size: 1.1vw;
+`;
+
+const FilterBody = styled.div`
+  padding: 0.6vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6vw;
+`;
+
+const FilterOption = styled.label`
+  font-size: 1vw;
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+  cursor: pointer;
+
+  input[type='radio'] {
+    accent-color: rgb(203, 186, 61);
+    cursor: pointer;
+  }
 `;
 
 const KamiGrid = styled.div`
