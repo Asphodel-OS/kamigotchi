@@ -242,7 +242,7 @@ export const MyOrders = ({
               ) : getBidProgress(order.total, order.quantity) ? (
                 <TextTooltip
                   text={[
-                    `${order.total}/${order.quantity} kami in this bid have already been purchased.`,
+                    `${order.total - order.quantity}/${order.total} kami in this bid have already been purchased.`,
                   ]}
                 >
                   <CellText>
