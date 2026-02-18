@@ -76,7 +76,7 @@ export const FilterBy = ({
               radius={0.4}
               hideActionButton
               trigger={
-                <Tooltip content={col.key} isDisabled={false}>
+                <Tooltip content={`${col.key}.`} isDisabled={false}>
                   <DropdownButton>
                     <TraitIcon src={col.icon} />
                     {selected[col.key].size > 0 && ` (${selected[col.key].size})`} ▾
