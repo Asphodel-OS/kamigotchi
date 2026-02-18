@@ -58,8 +58,7 @@ export const Sell = ({
                 value={price}
                 onChange={(e) => {
                   const val = e.target.value;
-                  // TODO: remove \.? if we dont want decimals
-                  if (val === '' || /^\d*\.?\d*$/.test(val)) setPrice(val);
+                  if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
                 }}
               />
               <EthIcon src={TokenIcons.eth} alt='ETH' />
