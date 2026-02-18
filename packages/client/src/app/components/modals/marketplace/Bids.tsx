@@ -71,7 +71,9 @@ export const Bids = ({
   }, [isVisible]);
 
   useEffect(() => {
-    if (showCreateOrder) setShowSelectKami(false);
+    if (!showCreateOrder) return;
+    setShowSelectKami(false);
+    setShowFilterSection(false);
   }, [showCreateOrder]);
 
   /////////////////
