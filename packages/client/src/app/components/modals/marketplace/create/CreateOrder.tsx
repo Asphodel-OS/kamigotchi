@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { parseEther } from 'viem';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { useAccount, useSelected, useVisibility } from 'app/stores';
@@ -31,6 +32,15 @@ const isKamiExternal = (state: string) => state === '721_EXTERNAL' || state === 
 
 const isSellEligibleKami = (kami: Kami) =>
   isKamiExternal(kami.state ?? '') && kami.state !== 'LISTED';
+
+const parseEthToWei = (ethAmount: string) => {
+  if (!ethAmount) return null;
+  try {
+    return parseEther(ethAmount);
+  } catch {
+    return null;
+  }
+};
 
 export const CreateOrder = ({
   isVisible,
@@ -176,20 +186,21 @@ export const CreateOrder = ({
 
   const handleCreate = async () => {
     const expiry = getExpiryTimestamp(expiration);
+    const priceWei = parseEthToWei(price);
 
     if (orderType === 'Sell') {
-      if (!selectedKami[0] || !price) return;
-      const completed = await createSellOrder(selectedKami[0].index, price, expiry);
+      if (!selectedKami[0] || priceWei === null) return;
+      const completed = await createSellOrder(selectedKami[0].index, priceWei, expiry);
       if (completed) handleClear();
     }
     if (orderType === 'Buy') {
-      if (!price) return;
+      if (priceWei === null) return;
       if (selectedBuyKami) {
-        const completed = await createBuyKamiOrder(selectedBuyKami.index, price, expiry);
+        const completed = await createBuyKamiOrder(selectedBuyKami.index, priceWei, expiry);
         if (completed) handleClear();
       } else {
         if (!quantity) return;
-        const completed = await createBuyOrder(price, Number(quantity), expiry);
+        const completed = await createBuyOrder(priceWei, Number(quantity), expiry);
         if (completed) handleClear();
       }
     }
@@ -208,8 +219,9 @@ export const CreateOrder = ({
     setOrderType((prev) => (prev === 'Sell' ? 'Buy' : 'Sell'));
   };
 
-  const isSellComplete = selectedKami[0]?.id !== NullKami.id && !!price;
-  const isBuyComplete = !!price && (!!selectedBuyKami || !!quantity);
+  const isPriceValid = parseEthToWei(price) !== null;
+  const isSellComplete = selectedKami[0]?.id !== NullKami.id && isPriceValid;
+  const isBuyComplete = isPriceValid && (!!selectedBuyKami || !!quantity);
   const selectedKamiState = selectedKami[0]?.state ?? '';
   const isSelectedKamiExternal = isKamiExternal(selectedKamiState);
   const isSelectedKamiNotListed = selectedKami[0]?.state !== 'LISTED';
