@@ -205,6 +205,7 @@ export interface KamiMarketListing {
   Price: string;
   Expiry: string;
   Timestamp: number;
+  BuyerAccountID: string;
 }
 
 export interface KamiMarketBid {
@@ -217,16 +218,15 @@ export interface KamiMarketBid {
   Timestamp: number;
   BidType: KamiMarketBidType;
   Quantity: number;
+  BoughtKamiIndexes: number[];
 }
 
-export interface KamiMarketHistoryEvent {
+export interface KamiMarketOrder {
   Timestamp: number;
   OrderID: string;
-  List?: KamiMarketList | undefined;
-  Buy?: KamiMarketBuy | undefined;
-  Offer?: KamiMarketOffer | undefined;
-  Accept?: KamiMarketAccept | undefined;
-  Cancel?: KamiMarketCancel | undefined;
+  IsCanceled: boolean;
+  Listing?: KamiMarketListing | undefined;
+  Bid?: KamiMarketBid | undefined;
 }
 
 /** REQUESTS */
@@ -237,6 +237,8 @@ export interface RoomRequest {
 }
 
 export interface StreamRequest {
+  /** Optional: empty = all events (backwards compatible) */
+  topics: string[];
 }
 
 export interface BattlesRequest {
@@ -341,7 +343,7 @@ export interface KamiMarketBidsResponse {
 }
 
 export interface KamiMarketHistoryResponse {
-  Events: KamiMarketHistoryEvent[];
+  Orders: KamiMarketOrder[];
 }
 
 export interface LeaderboardRow {
@@ -2560,7 +2562,7 @@ export const KamiMarketCancel: MessageFns<KamiMarketCancel> = {
 };
 
 function createBaseKamiMarketListing(): KamiMarketListing {
-  return { OrderID: "", SellerAccountID: "", KamiIndex: 0, Price: "", Expiry: "", Timestamp: 0 };
+  return { OrderID: "", SellerAccountID: "", KamiIndex: 0, Price: "", Expiry: "", Timestamp: 0, BuyerAccountID: "" };
 }
 
 export const KamiMarketListing: MessageFns<KamiMarketListing> = {
@@ -2582,6 +2584,9 @@ export const KamiMarketListing: MessageFns<KamiMarketListing> = {
     }
     if (message.Timestamp !== 0) {
       writer.uint32(48).uint64(message.Timestamp);
+    }
+    if (message.BuyerAccountID !== "") {
+      writer.uint32(58).string(message.BuyerAccountID);
     }
     return writer;
   },
@@ -2641,6 +2646,14 @@ export const KamiMarketListing: MessageFns<KamiMarketListing> = {
           message.Timestamp = longToNumber(reader.uint64());
           continue;
         }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.BuyerAccountID = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -2661,6 +2674,7 @@ export const KamiMarketListing: MessageFns<KamiMarketListing> = {
     message.Price = object.Price ?? "";
     message.Expiry = object.Expiry ?? "";
     message.Timestamp = object.Timestamp ?? 0;
+    message.BuyerAccountID = object.BuyerAccountID ?? "";
     return message;
   },
 };
@@ -2676,6 +2690,7 @@ function createBaseKamiMarketBid(): KamiMarketBid {
     Timestamp: 0,
     BidType: 0,
     Quantity: 0,
+    BoughtKamiIndexes: [],
   };
 }
 
@@ -2708,6 +2723,11 @@ export const KamiMarketBid: MessageFns<KamiMarketBid> = {
     if (message.Quantity !== 0) {
       writer.uint32(72).uint32(message.Quantity);
     }
+    writer.uint32(82).fork();
+    for (const v of message.BoughtKamiIndexes) {
+      writer.uint32(v);
+    }
+    writer.join();
     return writer;
   },
 
@@ -2790,6 +2810,24 @@ export const KamiMarketBid: MessageFns<KamiMarketBid> = {
           message.Quantity = reader.uint32();
           continue;
         }
+        case 10: {
+          if (tag === 80) {
+            message.BoughtKamiIndexes.push(reader.uint32());
+
+            continue;
+          }
+
+          if (tag === 82) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.BoughtKamiIndexes.push(reader.uint32());
+            }
+
+            continue;
+          }
+
+          break;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -2813,52 +2851,39 @@ export const KamiMarketBid: MessageFns<KamiMarketBid> = {
     message.Timestamp = object.Timestamp ?? 0;
     message.BidType = object.BidType ?? 0;
     message.Quantity = object.Quantity ?? 0;
+    message.BoughtKamiIndexes = object.BoughtKamiIndexes?.map((e) => e) || [];
     return message;
   },
 };
 
-function createBaseKamiMarketHistoryEvent(): KamiMarketHistoryEvent {
-  return {
-    Timestamp: 0,
-    OrderID: "",
-    List: undefined,
-    Buy: undefined,
-    Offer: undefined,
-    Accept: undefined,
-    Cancel: undefined,
-  };
+function createBaseKamiMarketOrder(): KamiMarketOrder {
+  return { Timestamp: 0, OrderID: "", IsCanceled: false, Listing: undefined, Bid: undefined };
 }
 
-export const KamiMarketHistoryEvent: MessageFns<KamiMarketHistoryEvent> = {
-  encode(message: KamiMarketHistoryEvent, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const KamiMarketOrder: MessageFns<KamiMarketOrder> = {
+  encode(message: KamiMarketOrder, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.Timestamp !== 0) {
       writer.uint32(8).uint64(message.Timestamp);
     }
     if (message.OrderID !== "") {
       writer.uint32(18).string(message.OrderID);
     }
-    if (message.List !== undefined) {
-      KamiMarketList.encode(message.List, writer.uint32(82).fork()).join();
+    if (message.IsCanceled !== false) {
+      writer.uint32(24).bool(message.IsCanceled);
     }
-    if (message.Buy !== undefined) {
-      KamiMarketBuy.encode(message.Buy, writer.uint32(90).fork()).join();
+    if (message.Listing !== undefined) {
+      KamiMarketListing.encode(message.Listing, writer.uint32(82).fork()).join();
     }
-    if (message.Offer !== undefined) {
-      KamiMarketOffer.encode(message.Offer, writer.uint32(98).fork()).join();
-    }
-    if (message.Accept !== undefined) {
-      KamiMarketAccept.encode(message.Accept, writer.uint32(106).fork()).join();
-    }
-    if (message.Cancel !== undefined) {
-      KamiMarketCancel.encode(message.Cancel, writer.uint32(114).fork()).join();
+    if (message.Bid !== undefined) {
+      KamiMarketBid.encode(message.Bid, writer.uint32(90).fork()).join();
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketHistoryEvent {
+  decode(input: BinaryReader | Uint8Array, length?: number): KamiMarketOrder {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseKamiMarketHistoryEvent();
+    const message = createBaseKamiMarketOrder();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -2878,12 +2903,20 @@ export const KamiMarketHistoryEvent: MessageFns<KamiMarketHistoryEvent> = {
           message.OrderID = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.IsCanceled = reader.bool();
+          continue;
+        }
         case 10: {
           if (tag !== 82) {
             break;
           }
 
-          message.List = KamiMarketList.decode(reader, reader.uint32());
+          message.Listing = KamiMarketListing.decode(reader, reader.uint32());
           continue;
         }
         case 11: {
@@ -2891,31 +2924,7 @@ export const KamiMarketHistoryEvent: MessageFns<KamiMarketHistoryEvent> = {
             break;
           }
 
-          message.Buy = KamiMarketBuy.decode(reader, reader.uint32());
-          continue;
-        }
-        case 12: {
-          if (tag !== 98) {
-            break;
-          }
-
-          message.Offer = KamiMarketOffer.decode(reader, reader.uint32());
-          continue;
-        }
-        case 13: {
-          if (tag !== 106) {
-            break;
-          }
-
-          message.Accept = KamiMarketAccept.decode(reader, reader.uint32());
-          continue;
-        }
-        case 14: {
-          if (tag !== 114) {
-            break;
-          }
-
-          message.Cancel = KamiMarketCancel.decode(reader, reader.uint32());
+          message.Bid = KamiMarketBid.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -2927,26 +2936,18 @@ export const KamiMarketHistoryEvent: MessageFns<KamiMarketHistoryEvent> = {
     return message;
   },
 
-  create(base?: DeepPartial<KamiMarketHistoryEvent>): KamiMarketHistoryEvent {
-    return KamiMarketHistoryEvent.fromPartial(base ?? {});
+  create(base?: DeepPartial<KamiMarketOrder>): KamiMarketOrder {
+    return KamiMarketOrder.fromPartial(base ?? {});
   },
-  fromPartial(object: DeepPartial<KamiMarketHistoryEvent>): KamiMarketHistoryEvent {
-    const message = createBaseKamiMarketHistoryEvent();
+  fromPartial(object: DeepPartial<KamiMarketOrder>): KamiMarketOrder {
+    const message = createBaseKamiMarketOrder();
     message.Timestamp = object.Timestamp ?? 0;
     message.OrderID = object.OrderID ?? "";
-    message.List = (object.List !== undefined && object.List !== null)
-      ? KamiMarketList.fromPartial(object.List)
+    message.IsCanceled = object.IsCanceled ?? false;
+    message.Listing = (object.Listing !== undefined && object.Listing !== null)
+      ? KamiMarketListing.fromPartial(object.Listing)
       : undefined;
-    message.Buy = (object.Buy !== undefined && object.Buy !== null) ? KamiMarketBuy.fromPartial(object.Buy) : undefined;
-    message.Offer = (object.Offer !== undefined && object.Offer !== null)
-      ? KamiMarketOffer.fromPartial(object.Offer)
-      : undefined;
-    message.Accept = (object.Accept !== undefined && object.Accept !== null)
-      ? KamiMarketAccept.fromPartial(object.Accept)
-      : undefined;
-    message.Cancel = (object.Cancel !== undefined && object.Cancel !== null)
-      ? KamiMarketCancel.fromPartial(object.Cancel)
-      : undefined;
+    message.Bid = (object.Bid !== undefined && object.Bid !== null) ? KamiMarketBid.fromPartial(object.Bid) : undefined;
     return message;
   },
 };
@@ -3022,11 +3023,14 @@ export const RoomRequest: MessageFns<RoomRequest> = {
 };
 
 function createBaseStreamRequest(): StreamRequest {
-  return {};
+  return { topics: [] };
 }
 
 export const StreamRequest: MessageFns<StreamRequest> = {
-  encode(_: StreamRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+  encode(message: StreamRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.topics) {
+      writer.uint32(10).string(v!);
+    }
     return writer;
   },
 
@@ -3037,6 +3041,14 @@ export const StreamRequest: MessageFns<StreamRequest> = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.topics.push(reader.string());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -3049,8 +3061,9 @@ export const StreamRequest: MessageFns<StreamRequest> = {
   create(base?: DeepPartial<StreamRequest>): StreamRequest {
     return StreamRequest.fromPartial(base ?? {});
   },
-  fromPartial(_: DeepPartial<StreamRequest>): StreamRequest {
+  fromPartial(object: DeepPartial<StreamRequest>): StreamRequest {
     const message = createBaseStreamRequest();
+    message.topics = object.topics?.map((e) => e) || [];
     return message;
   },
 };
@@ -4214,13 +4227,13 @@ export const KamiMarketBidsResponse: MessageFns<KamiMarketBidsResponse> = {
 };
 
 function createBaseKamiMarketHistoryResponse(): KamiMarketHistoryResponse {
-  return { Events: [] };
+  return { Orders: [] };
 }
 
 export const KamiMarketHistoryResponse: MessageFns<KamiMarketHistoryResponse> = {
   encode(message: KamiMarketHistoryResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    for (const v of message.Events) {
-      KamiMarketHistoryEvent.encode(v!, writer.uint32(10).fork()).join();
+    for (const v of message.Orders) {
+      KamiMarketOrder.encode(v!, writer.uint32(10).fork()).join();
     }
     return writer;
   },
@@ -4237,7 +4250,7 @@ export const KamiMarketHistoryResponse: MessageFns<KamiMarketHistoryResponse> = 
             break;
           }
 
-          message.Events.push(KamiMarketHistoryEvent.decode(reader, reader.uint32()));
+          message.Orders.push(KamiMarketOrder.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -4254,7 +4267,7 @@ export const KamiMarketHistoryResponse: MessageFns<KamiMarketHistoryResponse> = 
   },
   fromPartial(object: DeepPartial<KamiMarketHistoryResponse>): KamiMarketHistoryResponse {
     const message = createBaseKamiMarketHistoryResponse();
-    message.Events = object.Events?.map((e) => KamiMarketHistoryEvent.fromPartial(e)) || [];
+    message.Orders = object.Orders?.map((e) => KamiMarketOrder.fromPartial(e)) || [];
     return message;
   },
 };
