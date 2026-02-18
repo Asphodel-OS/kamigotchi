@@ -3,18 +3,11 @@ import styled from 'styled-components';
 import { formatUnits } from 'viem';
 
 import { EmptyText, IconButton } from 'app/components/library';
-import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { TokenIcons } from 'assets/images/tokens';
+import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { Kami } from 'network/shapes/Kami';
 
 const KamidenClient = getKamidenClient();
-
-const formatPrice = (weiString: string) => {
-  if (!weiString || weiString === '0') return '0';
-  const num = Number(formatUnits(BigInt(weiString), 18));
-  if (num < 0.001) return '<0.001';
-  return num.toFixed(3);
-};
 
 export const Bids = ({
   isVisible,
@@ -32,6 +25,17 @@ export const Bids = ({
     getExternalKamis: () => Kami[];
   };
 }) => {
+  const formatPrice = (weiString: string) => {
+    if (!weiString || weiString === '0') return '0';
+    const num = Number(formatUnits(BigInt(weiString), 18));
+    if (num < 0.001) return '<0.001';
+    return num.toFixed(4);
+  };
+
+  const getBidLabel = (bid: KamiMarketBid) =>
+    bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
+      ? `Kami #${bid.KamiIndex}`
+      : 'Collection';
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
@@ -49,9 +53,9 @@ export const Bids = ({
     if (showCreateOrder) setShowSelectKami(false);
   }, [showCreateOrder]);
 
-  const restingKamis = useMemo(() => {
-    return utils.getExternalKamis();
-  }, [utils]);
+  const restingKamis = useMemo(() => utils.getExternalKamis(), [utils]);
+  const isTabVisible = isVisible;
+  const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
 
   const toggleKami = (index: number) => {
     setSelectedKamis((prev) => {
@@ -62,6 +66,13 @@ export const Bids = ({
     });
   };
 
+  const handleOpenSell = () => {
+    onCloseCreateOrder();
+    setShowSelectKami(true);
+  };
+
+  const handleCloseSelect = () => setShowSelectKami(false);
+
   const handleSell = () => {};
   const handleClear = () => {
     setSelectedKamis(new Set());
@@ -70,16 +81,10 @@ export const Bids = ({
 
   return (
     <>
-      <Tab isVisible={isVisible}>
-        <SellButtonWrapper>
-          <IconButton
-            text='Sell'
-            onClick={() => {
-              onCloseCreateOrder();
-              setShowSelectKami(true);
-            }}
-          />
-        </SellButtonWrapper>
+      <Tab isVisible={isTabVisible}>
+        <ButtonWrapper>
+          <IconButton text='Sell' onClick={handleOpenSell} />
+        </ButtonWrapper>
         <HeaderRow>
           <Column>
             <ColumnHeader>Offer</ColumnHeader>
@@ -100,11 +105,7 @@ export const Bids = ({
         {bids.map((bid) => (
           <DataRow key={bid.OrderID}>
             <Column>
-              <CellText>
-                {bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
-                  ? `Kami #${bid.KamiIndex}`
-                  : 'Collection'}
-              </CellText>
+              <CellText>{getBidLabel(bid)}</CellText>
             </Column>
             <Column>
               <CellText>{formatPrice(bid.Price)}</CellText>
@@ -118,10 +119,10 @@ export const Bids = ({
           </DataRow>
         ))}
       </Tab>
-      <BottomSection isVisible={isVisible && !showCreateOrder && showSelectKami}>
+      <BottomSection isVisible={showBottomSection}>
         <Header>
           <HeaderTitle>Select Your Kami</HeaderTitle>
-          <IconButton text='X' onClick={() => setShowSelectKami(false)} scale={1.5} />
+          <IconButton text='X' onClick={handleCloseSelect} scale={1.5} />
         </Header>
         <KamiGrid>
           {restingKamis.length === 0 && (
@@ -157,7 +158,7 @@ const Tab = styled.div<{ isVisible: boolean }>`
   min-height: 10vw;
 `;
 
-const SellButtonWrapper = styled.div`
+const ButtonWrapper = styled.div`
   width: fit-content;
   padding: 0.4vw;
 `;
