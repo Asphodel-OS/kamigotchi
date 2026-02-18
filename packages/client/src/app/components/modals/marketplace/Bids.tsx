@@ -155,7 +155,10 @@ export const Bids = ({
       <Tab isVisible={isTabVisible}>
         <ButtonWrapper>
           <TextTooltip text={['Filters', filterBy]}>
-            <IconButton img={FilterListIcon} onClick={handleOpenFilter} />
+            <IndicatorWrapper>
+              <IconButton img={FilterListIcon} onClick={handleOpenFilter} />
+              {filterBy !== 'Show all' && <IndicatorBadge>1</IndicatorBadge>}
+            </IndicatorWrapper>
           </TextTooltip>
           <IconButton text='Sell' onClick={handleOpenSell} />
         </ButtonWrapper>
@@ -279,6 +282,28 @@ const ButtonWrapper = styled.div`
   gap: 0.4vw;
   width: fit-content;
   padding: 0.4vw;
+`;
+
+const IndicatorWrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+`;
+
+const IndicatorBadge = styled.span`
+  position: absolute;
+  top: -0.3vw;
+  right: -0.3vw;
+  min-width: 1vw;
+  height: 1vw;
+  padding: 0 0.2vw;
+  border-radius: 1vw;
+  background: #d04a2f;
+  color: white;
+  font-size: 0.7vw;
+  line-height: 1vw;
+  text-align: center;
+  border: 0.08vw solid white;
+  z-index: 2;
 `;
 
 const HeaderRow = styled.div`
