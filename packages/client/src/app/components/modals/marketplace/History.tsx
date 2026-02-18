@@ -46,46 +46,71 @@ export const HistorySection = ({
         </Row>
         {orders.length === 0 && <EmptyText text={['No history']} size={0.9} />}
         {orders.map((order) => (
-          <Row key={`history-${order.type}-${order.orderId}`}>
-            <Column>
-              <CellText>{order.type}</CellText>
-            </Column>
-            <Column>
-              {order.type === 'Listing' ? (
-                <OrderKami>
-                  {resolveKami(order.kamiIndex) && (
-                    <OrderKamiImage
-                      src={resolveKami(order.kamiIndex)?.image}
-                      alt={resolveKami(order.kamiIndex)?.name ?? `Kami #${order.kamiIndex}`}
-                      onClick={() => openKamiModal(order.kamiIndex)}
-                    />
-                  )}
-                </OrderKami>
-              ) : getBidProgress(order.total, order.quantity) ? (
-                <TextTooltip
-                  text={[
-                    `${order.total}/${order.quantity} kami in this bid have already been purchased.`,
-                  ]}
-                >
-                  <CellText>
-                    {order.bidType === 'Kami' ? `Kami #${order.kamiIndex} ` : ''}
-                    {getBidProgress(order.total, order.quantity)}
-                  </CellText>
-                </TextTooltip>
-              ) : (
-                <CellText>{order.bidType === 'Kami' ? `Kami #${order.kamiIndex}` : ''}</CellText>
-              )}
-            </Column>
-            <Column>
-              <CellText>{formatPrice(order.price)}</CellText>
-            </Column>
-            <Column>
-              <CellText>{order.state}</CellText>
-            </Column>
-          </Row>
+          <HistoryRow
+            key={`history-${order.type}-${order.orderId}`}
+            order={order}
+            resolveKami={resolveKami}
+            openKamiModal={openKamiModal}
+            getBidProgress={getBidProgress}
+            formatPrice={formatPrice}
+          />
         ))}
       </HistoryBody>
     </HistoryContainer>
+  );
+};
+
+const HistoryRow = ({
+  order,
+  resolveKami,
+  openKamiModal,
+  getBidProgress,
+  formatPrice,
+}: {
+  order: MyOrder & { state: 'Cancelled' | 'Completed' };
+  resolveKami: (index: number) => { image: string; name: string } | undefined;
+  openKamiModal: (index: number) => void;
+  getBidProgress: (total: number, quantity: number) => string;
+  formatPrice: (wei: string) => string;
+}) => {
+  const kami = resolveKami(order.kamiIndex);
+
+  return (
+    <Row>
+      <Column>
+        <CellText>{order.type}</CellText>
+      </Column>
+      <Column>
+        {order.type === 'Listing' ? (
+          <OrderKami>
+            {kami && (
+              <OrderKamiImage
+                src={kami.image}
+                alt={kami.name ?? `Kami #${order.kamiIndex}`}
+                onClick={() => openKamiModal(order.kamiIndex)}
+              />
+            )}
+          </OrderKami>
+        ) : getBidProgress(order.total, order.quantity) ? (
+          <TextTooltip
+            text={[`${order.total}/${order.quantity} kami in this bid have already been purchased.`]}
+          >
+            <CellText>
+              {order.bidType === 'Kami' ? `Kami #${order.kamiIndex} ` : ''}
+              {getBidProgress(order.total, order.quantity)}
+            </CellText>
+          </TextTooltip>
+        ) : (
+          <CellText>{order.bidType === 'Kami' ? `Kami #${order.kamiIndex}` : ''}</CellText>
+        )}
+      </Column>
+      <Column>
+        <CellText>{formatPrice(order.price)}</CellText>
+      </Column>
+      <Column>
+        <CellText>{order.state}</CellText>
+      </Column>
+    </Row>
   );
 };
 

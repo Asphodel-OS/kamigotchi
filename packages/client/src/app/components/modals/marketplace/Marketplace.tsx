@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { formatUnits } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -18,20 +19,40 @@ import {
   queryKamiByIndex as _queryKamiByIndex,
 } from 'network/shapes/Kami';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
+import { didActionSucceed } from 'network/utils';
 import { Bids } from './Bids';
 import { CreateOrder } from './CreateOrder';
 import { FilterBy } from './FilterBy';
 import { Listings } from './Listings';
 import { MyOrders } from './MyOrders';
-import { Tabs } from './tabs/Tabs';
+import { MarketplaceTab, Tabs } from './tabs/Tabs';
+
+const DEFAULT_SELECTED_FILTERS = () => ({
+  Face: new Set<string>(),
+  Hands: new Set<string>(),
+  'Body Type': new Set<string>(),
+  'Body Color': new Set<string>(),
+  Background: new Set<string>(),
+});
+
+const DEFAULT_STAT_FILTERS = () => ({
+  Health: 10,
+  Power: 10,
+  Violence: 10,
+  Harmony: 10,
+  Slots: 1,
+});
 
 export const MarketplaceModal: UIComponent = {
   id: 'MarketplaceModal',
   Render: () => {
+    /////////////////
+    // PREPARATION
+
     const {
       utils,
       data,
-      network: { actions, api },
+      network: { actions },
     } = (() => {
       const { network } = useLayers();
       const { world, components } = network;
@@ -54,6 +75,10 @@ export const MarketplaceModal: UIComponent = {
         data: { kamiNFTAddress },
       };
     })();
+
+    /////////////////
+    // INSTANTIATIONS
+
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const account = useAccount((s) => s.account);
@@ -73,6 +98,9 @@ export const MarketplaceModal: UIComponent = {
       onBlockNumber: () => refetchNFTs(),
     });
 
+    /////////////////
+    // PREPARATION
+
     const externalKamis = useMemo(() => {
       const result = (nftData?.[0]?.result ?? []) as number[];
       const entities = result
@@ -81,45 +109,65 @@ export const MarketplaceModal: UIComponent = {
       return entities.map((entity) => utils.getKami(entity));
     }, [nftData]);
 
-    const createSellOrder = (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => {
+    const getApi = () => {
       const api = apis.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
+      if (!api) console.error(`API not established for ${selectedAddress}`);
+      return api;
+    };
 
-      actions.add({
+    /////////////////
+    // ACTIONS
+
+    const createSellOrder = async (
+      kamiIndex: number,
+      price: BigNumberish,
+      expiry: BigNumberish
+    ) => {
+      const api = getApi();
+      if (!api) return false;
+
+      const tx = actions.add({
         action: 'KamiMarketList',
         params: [kamiIndex, price, expiry],
         description: `Creating sell order for Kami ${kamiIndex}`,
         execute: async () => api.account.kamiMarket.list(kamiIndex, price, expiry),
       });
+      return didActionSucceed(actions.Action, tx);
     };
 
-    const createBuyOrder = (price: BigNumberish, quantity: number, expiry: BigNumberish) => {
-      const api = apis.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
+    const createBuyOrder = async (price: BigNumberish, quantity: number, expiry: BigNumberish) => {
+      const api = getApi();
+      if (!api) return false;
 
-      actions.add({
+      const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [price, quantity, expiry],
         description: `Creating buy order for ${quantity} Kami`,
         execute: async () => api.account.kamiMarket.offerCollection(price, quantity, expiry),
       });
+      return didActionSucceed(actions.Action, tx);
     };
 
-    const createBuyKamiOrder = (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => {
-      const api = apis.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
+    const createBuyKamiOrder = async (
+      kamiIndex: number,
+      price: BigNumberish,
+      expiry: BigNumberish
+    ) => {
+      const api = getApi();
+      if (!api) return false;
 
-      actions.add({
+      const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [kamiIndex, price, expiry],
         description: `Creating buy offer for Kami ${kamiIndex}`,
         execute: async () => api.account.kamiMarket.offer(kamiIndex, price, expiry),
       });
+      return didActionSucceed(actions.Action, tx);
     };
 
     const buyListings = (listingIDs: BigNumberish[], kamiIndices: number[]) => {
-      const api = apis.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
+      const api = getApi();
+      if (!api) return;
 
       actions.add({
         action: 'KamiMarketBuy',
@@ -130,46 +178,39 @@ export const MarketplaceModal: UIComponent = {
     };
 
     const cancelOrder = (orderID: BigNumberish) => {
-      const api = apis.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
+      const api = getApi();
+      if (!api) return;
 
       actions.add({
         action: 'KamiMarketCancel',
         params: [orderID],
-        description: `Canceling order ${orderID}`,
+        description: `Canceling marketplace order`,
         execute: async () => api.account.kamiMarket.cancel(orderID),
       });
     };
 
     const acceptOffer = (offerID: BigNumberish, kamiIndex: number) => {
-      const api = apis.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
+      const api = getApi();
+      if (!api) return;
 
       actions.add({
         action: 'KamiMarketAcceptOffer',
         params: [offerID, kamiIndex],
-        description: `Accepting offer ${offerID} for Kami ${kamiIndex}`,
+        description: `Accepting offer for Kami #${kamiIndex}`,
         execute: async () => api.account.kamiMarket.acceptOffer(offerID, kamiIndex),
       });
     };
 
-    const [tab, setTab] = useState('listings');
+    /////////////////
+    // INSTANTIATIONS
+
+    const [tab, setTab] = useState<MarketplaceTab>('listings');
     const [showCreateOrder, setShowCreateOrder] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
-    const [selectedFilters, setSelectedFilters] = useState<Record<string, Set<string>>>({
-      Face: new Set(),
-      Hands: new Set(),
-      'Body Type': new Set(),
-      'Body Color': new Set(),
-      Background: new Set(),
-    });
-    const [statFilters, setStatFilters] = useState<Record<string, number>>({
-      Health: 10,
-      Power: 10,
-      Violence: 10,
-      Harmony: 10,
-      Slots: 1,
-    });
+    const [selectedFilters, setSelectedFilters] = useState<Record<string, Set<string>>>(
+      DEFAULT_SELECTED_FILTERS
+    );
+    const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
 
     const openCreateOrder = () => {
       setShowFilter(false);
@@ -181,6 +222,29 @@ export const MarketplaceModal: UIComponent = {
       setShowFilter(true);
     };
     const closeFilter = () => setShowFilter(false);
+    const normalizeAccountId = (accountId: string) => {
+      try {
+        return BigInt(accountId).toString();
+      } catch {
+        return accountId;
+      }
+    };
+    const isDifferentAccountId = (lhs: string, rhs: string) => {
+      try {
+        return BigInt(lhs).toString() !== BigInt(rhs).toString();
+      } catch {
+        return lhs !== rhs;
+      }
+    };
+    const formatEthPrice = (weiString: string, decimals: number) => {
+      if (!weiString || weiString === '0') return '0';
+      const num = Number(formatUnits(BigInt(weiString), 18));
+      if (num < 0.001) return '<0.001';
+      return num.toFixed(decimals);
+    };
+
+    /////////////////
+    // DISPLAY
 
     return (
       <ModalWrapper
@@ -201,6 +265,8 @@ export const MarketplaceModal: UIComponent = {
             queryKamiByIndex: utils.queryKamiByIndex,
             getKami: utils.getKami,
             getKamiDetailed: utils.getKamiDetailed,
+            isDifferentAccountId,
+            formatEthPrice,
           }}
         />
         <Bids
@@ -210,14 +276,24 @@ export const MarketplaceModal: UIComponent = {
           onCloseCreateOrder={closeCreateOrder}
           onAcceptOffer={acceptOffer}
           accountId={account.id}
-          utils={{ ...utils, getExternalKamis: () => externalKamis }}
+          utils={{
+            ...utils,
+            getExternalKamis: () => externalKamis,
+            isDifferentAccountId,
+            formatEthPrice,
+          }}
         />
         <MyOrders
           isVisible={tab === 'myOrders'}
           onCancelOrder={cancelOrder}
           onOpenHistory={closeCreateOrder}
           createOrderOpen={showCreateOrder}
-          utils={{ queryKamiByIndex: utils.queryKamiByIndex, getKami: utils.getKami }}
+          utils={{
+            queryKamiByIndex: utils.queryKamiByIndex,
+            getKami: utils.getKami,
+            normalizeAccountId,
+            formatEthPrice,
+          }}
         />
         <CreateOrder
           isVisible={showCreateOrder}
@@ -235,22 +311,9 @@ export const MarketplaceModal: UIComponent = {
           onSelectedChange={setSelectedFilters}
           onStatValuesChange={setStatFilters}
           onClear={() => {
-            setSelectedFilters({
-              Face: new Set(),
-              Hands: new Set(),
-              'Body Type': new Set(),
-              'Body Color': new Set(),
-              Background: new Set(),
-            });
-            setStatFilters({
-              Health: 10,
-              Power: 10,
-              Violence: 10,
-              Harmony: 10,
-              Slots: 1,
-            });
+            setSelectedFilters(DEFAULT_SELECTED_FILTERS());
+            setStatFilters(DEFAULT_STAT_FILTERS());
           }}
-          onApply={closeFilter}
           utils={utils}
         />
       </ModalWrapper>
