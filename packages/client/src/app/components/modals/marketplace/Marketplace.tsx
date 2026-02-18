@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { formatUnits } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
+import { v4 as uuid } from 'uuid';
 
 import { getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
@@ -10,7 +11,7 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork } from 'app/stores';
 import VendIcon from 'assets/images/rooms/18_cave-crossroads/vend.png';
-import { EntityIndex } from 'engine/recs';
+import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { erc721ABI } from 'network/chain/ERC721';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -19,7 +20,7 @@ import {
   queryKamiByIndex as _queryKamiByIndex,
 } from 'network/shapes/Kami';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
-import { didActionSucceed } from 'network/utils';
+import { didActionSucceed, waitForActionCompletion } from 'network/utils';
 import { Bids } from './tabs/bids/Bids';
 import { CreateOrder } from './create/CreateOrder';
 import { FilterBy } from './tabs/listings/FilterBy';
@@ -52,13 +53,14 @@ export const MarketplaceModal: UIComponent = {
     const {
       utils,
       data,
-      network: { actions },
+      network: { actions, world },
     } = (() => {
       const { network } = useLayers();
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
 
       const kamiNFTAddress = getConfigAddress(world, components, 'KAMI721_ADDRESS');
+      const marketVaultAddress = getConfigAddress(world, components, 'KAMI_MARKET_VAULT');
 
       return {
         utils: {
@@ -72,7 +74,7 @@ export const MarketplaceModal: UIComponent = {
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
         },
         network,
-        data: { kamiNFTAddress },
+        data: { kamiNFTAddress, marketVaultAddress },
       };
     })();
 
@@ -94,6 +96,12 @@ export const MarketplaceModal: UIComponent = {
           functionName: 'getAllTokens',
           args: [account.ownerAddress],
         },
+        {
+          address: data.kamiNFTAddress,
+          abi: erc721ABI,
+          functionName: 'isApprovedForAll',
+          args: [account.ownerAddress, data.marketVaultAddress],
+        },
       ],
     });
 
@@ -108,11 +116,30 @@ export const MarketplaceModal: UIComponent = {
         .filter((entity) => !!entity) as EntityIndex[];
       return entities.map((entity) => utils.getKami(entity));
     }, [nftData]);
+    const isVaultApproved = nftData?.[1]?.result === true;
 
     const getApi = () => {
       const api = apis.get(selectedAddress);
       if (!api) console.error(`API not established for ${selectedAddress}`);
       return api;
+    };
+
+    const ensureVaultApproval = async (api: any) => {
+      if (isVaultApproved) return;
+      if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'KamiMarketVaultApproval',
+        params: [data.kamiNFTAddress, data.marketVaultAddress, true],
+        description: `Approving marketplace vault to transfer your Kami`,
+        execute: async () =>
+          api.erc721.setApprovalForAll(data.kamiNFTAddress, data.marketVaultAddress, true),
+      });
+
+      await waitForActionCompletion(actions.Action, world.entityToIndex.get(actionID) as EntityIndex);
+      await refetchNFTs();
     };
 
     /////////////////
@@ -125,6 +152,7 @@ export const MarketplaceModal: UIComponent = {
     ) => {
       const api = getApi();
       if (!api) return false;
+      await ensureVaultApproval(api);
 
       const tx = actions.add({
         action: 'KamiMarketList',
@@ -165,15 +193,19 @@ export const MarketplaceModal: UIComponent = {
       return didActionSucceed(actions.Action, tx);
     };
 
-    const buyListings = (listingIDs: BigNumberish[], kamiIndices: number[]) => {
+    const buyListings = (
+      listingIDs: BigNumberish[],
+      kamiIndices: number[],
+      totalPrice: bigint
+    ) => {
       const api = getApi();
       if (!api) return;
 
       actions.add({
         action: 'KamiMarketBuy',
-        params: [listingIDs],
+        params: [listingIDs, totalPrice],
         description: `Buying Kami ${kamiIndices.join(', ')}`,
-        execute: async () => api.account.kamiMarket.buy(listingIDs),
+        execute: async () => api.account.kamiMarket.buy(listingIDs, totalPrice),
       });
     };
 
@@ -189,9 +221,10 @@ export const MarketplaceModal: UIComponent = {
       });
     };
 
-    const acceptOffer = (offerID: BigNumberish, kamiIndex: number) => {
+    const acceptOffer = async (offerID: BigNumberish, kamiIndex: number) => {
       const api = getApi();
       if (!api) return;
+      await ensureVaultApproval(api);
 
       actions.add({
         action: 'KamiMarketAcceptOffer',
