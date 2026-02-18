@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, Slider, TextTooltip } from 'app/components/library';
+import { IconButton, Slider, Tooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { TraitIcons } from 'assets/images/icons/traits';
 import { Trait, TraitType } from 'network/shapes/Trait';
@@ -58,31 +58,32 @@ export const FilterBy = ({
         <SectionLabel>Traits</SectionLabel>
         <DropdownRow>
           {columns.map((col) => (
-            <TextTooltip key={col.key} text={[col.key]}>
-              <DropdownToggle
-                options={[
-                  col.traits.map((t) => ({
-                    text: t.name,
-                    object: t.name,
-                  })),
-                ]}
-                selected={[Array.from(selected[col.key])]}
-                onClick={[
-                  (values) => {
-                    onSelectedChange({ ...selected, [col.key]: new Set(values) });
-                  },
-                ]}
-                button={{ images: [col.icon] }}
-                radius={0.4}
-                hideActionButton
-                trigger={
+            <DropdownToggle
+              key={col.key}
+              options={[
+                col.traits.map((t) => ({
+                  text: t.name,
+                  object: t.name,
+                })),
+              ]}
+              selected={[Array.from(selected[col.key])]}
+              onClick={[
+                (values) => {
+                  onSelectedChange({ ...selected, [col.key]: new Set(values) });
+                },
+              ]}
+              button={{ images: [col.icon] }}
+              radius={0.4}
+              hideActionButton
+              trigger={
+                <Tooltip content={col.key} isDisabled={false}>
                   <DropdownButton>
                     <TraitIcon src={col.icon} />
                     {selected[col.key].size > 0 && ` (${selected[col.key].size})`} ▾
                   </DropdownButton>
-                }
-              />
-            </TextTooltip>
+                </Tooltip>
+              }
+            />
           ))}
         </DropdownRow>
         <SectionLabel>Stats</SectionLabel>
