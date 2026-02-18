@@ -1,1 +1,1 @@
-export { MarketPlaceModal } from './MarketPlace';
+export { MarketplaceModal } from './Marketplace';

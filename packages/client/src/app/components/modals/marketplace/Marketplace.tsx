@@ -25,8 +25,8 @@ import { Listings } from './Listings';
 import { MyOrders } from './MyOrders';
 import { Tabs } from './tabs/Tabs';
 
-export const MarketPlaceModal: UIComponent = {
-  id: 'MarketPlaceModal',
+export const MarketplaceModal: UIComponent = {
+  id: 'MarketplaceModal',
   Render: () => {
     const {
       utils,

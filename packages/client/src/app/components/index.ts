@@ -20,7 +20,7 @@ import { KamiModal } from './modals/kami';
 import { KamiPortalModal } from './modals/kamiPortal';
 import { LeaderboardModal } from './modals/leaderboard';
 import { MapModal } from './modals/map';
-import { MarketPlaceModal } from './modals/marketplace';
+import { MarketplaceModal } from './modals/marketplace';
 import { MerchantModal } from './modals/merchant';
 import { EmaBoardModal } from './modals/naming';
 import { NodeModal } from './modals/node';
@@ -203,7 +203,7 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
   {
-    uiComponent: MarketPlaceModal,
+    uiComponent: MarketplaceModal,
     gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
   },
 
