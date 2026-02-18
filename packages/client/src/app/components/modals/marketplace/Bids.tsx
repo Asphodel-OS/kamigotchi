@@ -15,12 +15,14 @@ export const Bids = ({
   showCreateOrder,
   setShowFilter,
   onCloseCreateOrder,
+  onAcceptOffer,
   utils,
 }: {
   isVisible: boolean;
   showCreateOrder: boolean;
   setShowFilter: Dispatch<SetStateAction<boolean>>;
   onCloseCreateOrder: () => void;
+  onAcceptOffer: (offerID: string, kamiIndex: number) => void;
   utils: {
     getAccountKamis: () => Kami[];
     getExternalKamis: () => Kami[];
@@ -29,6 +31,7 @@ export const Bids = ({
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
+  const [selectedBid, setSelectedBid] = useState<KamiMarketBid | null>(null);
   const [filterBy, setFilterBy] = useState('Show all');
   const [showFilterSection, setShowFilterSection] = useState(false);
 
@@ -67,7 +70,13 @@ export const Bids = ({
       ? `Kami #${bid.KamiIndex}`
       : 'Collection';
 
+  const isSpecificBid =
+    selectedBid?.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
+  const specificKamiIndex = selectedBid?.KamiIndex;
+  const canSelectKami = (index: number) => !isSpecificBid || index === specificKamiIndex;
+
   const toggleKami = (index: number) => {
+    if (!canSelectKami(index)) return;
     setSelectedKamis((prev) => {
       const next = new Set(prev);
       if (next.has(index)) next.delete(index);
@@ -90,7 +99,15 @@ export const Bids = ({
   };
   const handleCloseFilter = () => setShowFilterSection(false);
 
-  const handleSell = () => {};
+  const handleSell = () => {
+    if (!selectedBid || selectedKamis.size === 0) return;
+    const selectedIndices = Array.from(selectedKamis);
+    selectedIndices.forEach((kamiIndex) => {
+      onAcceptOffer(selectedBid.OrderID, kamiIndex);
+    });
+    setSelectedKamis(new Set());
+    setShowSelectKami(false);
+  };
   const handleClear = () => {
     setSelectedKamis(new Set());
     setShowSelectKami(false);
@@ -125,27 +142,22 @@ export const Bids = ({
               <EthIcon src={TokenIcons.eth} alt='ETH' /> /Kami
             </ColumnHeader>
           </Column>
-          <Column>
-            <ColumnHeader>Total</ColumnHeader>
-          </Column>
-          <Column>
-            <ColumnHeader>Qty</ColumnHeader>
-          </Column>
         </HeaderRow>
         {filteredBids.length === 0 && <EmptyText text={['No bids found']} size={0.9} />}
         {filteredBids.map((bid) => (
-          <DataRow key={bid.OrderID}>
+          <DataRow
+            key={bid.OrderID}
+            isSelected={selectedBid?.OrderID === bid.OrderID}
+            onClick={() => {
+              setSelectedBid(bid);
+              setSelectedKamis(new Set());
+            }}
+          >
             <Column>
               <CellText>{getBidLabel(bid)}</CellText>
             </Column>
             <Column>
               <CellText>{formatPrice(bid.Price)}</CellText>
-            </Column>
-            <Column>
-              <CellText>{bid.Total}</CellText>
-            </Column>
-            <Column>
-              <CellText>{bid.Quantity}</CellText>
             </Column>
           </DataRow>
         ))}
@@ -160,19 +172,28 @@ export const Bids = ({
             <EmptyText text={[`You don't have out of world Kami`]} size={0.9} />
           )}
           {restingKamis.map((kami) => (
-            <KamiSlot key={kami.index} onClick={() => toggleKami(kami.index)}>
+            <KamiSlot
+              key={kami.index}
+              onClick={() => toggleKami(kami.index)}
+              isDisabled={!canSelectKami(kami.index)}
+            >
               <KamiImage src={kami.image} alt={kami.name} />
               <Checkbox
                 type='checkbox'
                 checked={selectedKamis.has(kami.index)}
                 onChange={() => toggleKami(kami.index)}
                 onClick={(e) => e.stopPropagation()}
+                disabled={!canSelectKami(kami.index)}
               />
             </KamiSlot>
           ))}
         </KamiGrid>
         <Actions>
-          <IconButton text='Sell' onClick={handleSell} disabled={selectedKamis.size === 0} />
+          <IconButton
+            text='Sell'
+            onClick={handleSell}
+            disabled={!selectedBid || selectedKamis.size === 0}
+          />
           <IconButton text='Clear' onClick={handleClear} />
         </Actions>
       </BottomSection>
@@ -229,19 +250,24 @@ const HeaderRow = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   width: 100%;
-  border-bottom: 0.15vw solid black;
 `;
 
-const DataRow = styled.div`
+const DataRow = styled.div<{ isSelected: boolean }>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
   width: 100%;
-  border-bottom: 0.06vw solid #ccc;
 
   &:hover {
     background-color: #eee;
   }
+
+  ${({ isSelected }) =>
+    isSelected
+      ? `
+    background-color: #f3f0d1;
+  `
+      : ''}
 `;
 
 const Column = styled.div`
@@ -334,16 +360,17 @@ const KamiGrid = styled.div`
   padding: 0.6vw;
 `;
 
-const KamiSlot = styled.div`
+const KamiSlot = styled.div<{ isDisabled: boolean }>`
   position: relative;
   width: 5vw;
   height: 5vw;
   border: 0.15vw solid black;
   border-radius: 0.4vw;
-  cursor: pointer;
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.4 : 1)};
 `;
 
 const KamiImage = styled.img`
