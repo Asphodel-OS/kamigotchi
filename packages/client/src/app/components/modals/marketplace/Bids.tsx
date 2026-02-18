@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { formatUnits } from 'viem';
 
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
@@ -28,8 +27,13 @@ export const Bids = ({
   utils: {
     getAccountKamis: () => Kami[];
     getExternalKamis: () => Kami[];
+    isDifferentAccountId: (lhs: string, rhs: string) => boolean;
+    formatEthPrice: (weiString: string, decimals: number) => string;
   };
 }) => {
+  /////////////////
+  // INSTANTIATIONS
+
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
@@ -37,26 +41,29 @@ export const Bids = ({
   const [filterBy, setFilterBy] = useState('Show all');
   const [showFilterSection, setShowFilterSection] = useState(false);
 
+  /////////////////
+  // SUBSCRIPTIONS
+
   useEffect(() => {
     if (!isVisible || !KamidenClient) return;
-    KamidenClient.getKamiMarketBids({}).then((res) => {
+
+    let isActive = true;
+    const refreshBids = async () => {
+      const res = await KamidenClient.getKamiMarketBids({});
+      if (!isActive) return;
       const all = res.Bids ?? [];
-      const parsedAccountId = (() => {
-        try {
-          return BigInt(accountId).toString();
-        } catch {
-          return accountId;
-        }
-      })();
-      const filtered = all.filter((bid) => {
-        try {
-          return BigInt(bid.BuyerAccountID).toString() !== parsedAccountId;
-        } catch {
-          return bid.BuyerAccountID !== parsedAccountId;
-        }
-      });
+      const filtered = all.filter((bid) =>
+        utils.isDifferentAccountId(bid.BuyerAccountID, accountId)
+      );
       setBids(filtered);
-    });
+    };
+
+    refreshBids();
+    const intervalId = window.setInterval(refreshBids, 10000);
+    return () => {
+      isActive = false;
+      window.clearInterval(intervalId);
+    };
   }, [isVisible, accountId]);
 
   useEffect(() => {
@@ -67,22 +74,19 @@ export const Bids = ({
     if (showCreateOrder) setShowSelectKami(false);
   }, [showCreateOrder]);
 
-  const restingKamis = useMemo(() => utils.getExternalKamis(), [utils]);
+  /////////////////
+  // PREPARATION
+
+  const externalKamis = useMemo(() => utils.getExternalKamis(), [utils]);
   const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
   const ownedKamiIndices = useMemo(
     () => new Set(accountKamis.map((kami) => kami.index)),
     [accountKamis]
   );
-  const isTabVisible = isVisible;
   const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
   const showFilterBottom = isVisible && !showCreateOrder && showFilterSection;
 
-  const formatPrice = (weiString: string) => {
-    if (!weiString || weiString === '0') return '0';
-    const num = Number(formatUnits(BigInt(weiString), 18));
-    if (num < 0.001) return '<0.001';
-    return num.toFixed(4);
-  };
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 4);
 
   const getBidLabel = (bid: KamiMarketBid) =>
     bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC ? `Kami #${bid.KamiIndex}` : '';
@@ -110,8 +114,7 @@ export const Bids = ({
   }, [bids, filterBy, ownedKamiIndices]);
 
   const sortedBids = useMemo(() => {
-    const copy = [...filteredBids];
-    return copy.sort((a, b) => {
+    return [...filteredBids].sort((a, b) => {
       try {
         return Number(BigInt(b.Price) - BigInt(a.Price));
       } catch {
@@ -126,6 +129,9 @@ export const Bids = ({
         ? bid.KamiIndex === kamiIndex
         : true
     );
+
+  /////////////////
+  // ACTIONS
 
   const toggleKami = (index: number) => {
     if (!canSelectKami(index)) return;
@@ -174,7 +180,7 @@ export const Bids = ({
   const handleSelectMax = () => {
     const bestBid = selectedBid ?? sortedBids[0];
     if (!bestBid) return;
-    const eligible = restingKamis
+    const eligible = externalKamis
       .filter((kami) => canSelectKami(kami.index))
       .filter((kami) =>
         bestBid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
@@ -187,9 +193,12 @@ export const Bids = ({
     setSelectedKamis(next);
   };
 
+  /////////////////
+  // DISPLAY
+
   return (
     <>
-      <Tab isVisible={isTabVisible}>
+      <Tab isVisible={isVisible}>
         <ButtonWrapper>
           <TextTooltip text={['Filters', filterBy]}>
             <IndicatorWrapper>
@@ -256,10 +265,10 @@ export const Bids = ({
           </TextTooltip>
         </SelectRow>
         <KamiGrid>
-          {restingKamis.length === 0 && (
+          {externalKamis.length === 0 && (
             <EmptyText text={[`You don't have out of world Kami.`]} size={0.9} />
           )}
-          {restingKamis.map((kami) => (
+          {externalKamis.map((kami) => (
             <KamiSlot
               key={kami.index}
               onClick={() => toggleKami(kami.index)}

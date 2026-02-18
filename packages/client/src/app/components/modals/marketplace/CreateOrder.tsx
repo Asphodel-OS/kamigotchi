@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { IconButton } from 'app/components/library';
+import { IconButton, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { BigNumberish } from 'ethers';
 import { Kami, NullKami } from 'network/shapes/Kami';
@@ -11,6 +11,12 @@ import { Buy } from './Buy';
 import { Sell } from './Sell';
 
 type OrderType = 'Sell' | 'Buy';
+const getExpiryTimestamp = (expirationHours: number) => {
+  if (expirationHours === 0) return 0;
+  return Math.floor(Date.now() / 1000) + expirationHours * 60 * 60;
+};
+const isKamiExternal = (state: string) => state === '721_EXTERNAL' || state === 'EXTERNAL';
+const isSellEligibleKami = (kami: Kami) => isKamiExternal(kami.state ?? '') && kami.state !== 'LISTED';
 
 export const CreateOrder = ({
   isVisible,
@@ -27,15 +33,25 @@ export const CreateOrder = ({
     getAllKamis: () => Kami[];
     getExternalKamis: () => Kami[];
   };
-  createSellOrder: (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => void;
-  createBuyOrder: (price: BigNumberish, quantity: number, expiry: BigNumberish) => void;
-  createBuyKamiOrder: (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => void;
+  createSellOrder: (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => Promise<boolean>;
+  createBuyOrder: (price: BigNumberish, quantity: number, expiry: BigNumberish) => Promise<boolean>;
+  createBuyKamiOrder: (
+    kamiIndex: number,
+    price: BigNumberish,
+    expiry: BigNumberish
+  ) => Promise<boolean>;
 }) => {
+  /////////////////
+  // INSTANTIATIONS
+
   const [orderType, setOrderType] = useState<OrderType>('Sell');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [expiration, setExpiration] = useState(1);
   const [selectedKami, setSelectedKami] = useState<Kami[]>([NullKami]);
+  const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
+  const [externalKamis, setExternalKamis] = useState<Kami[]>([]);
+  const [allKamis, setAllKamis] = useState<Kami[]>([]);
 
   const setModals = useVisibility((s) => s.setModals);
   const setKami = useSelected((s) => s.setKami);
@@ -51,15 +67,40 @@ export const CreateOrder = ({
     playClick();
   };
 
-  const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
-  const externalKamis = useMemo(() => utils.getExternalKamis(), [utils]);
-  const allKamis = useMemo(() => utils.getAllKamis(), [utils]);
+  /////////////////
+  // PREPARATION
 
-  const restingKamis = useMemo(() => externalKamis, [externalKamis]);
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let isActive = true;
+    const refreshKamis = () => {
+      if (!isActive) return;
+      setAccountKamis(utils.getAccountKamis());
+      setExternalKamis(utils.getExternalKamis());
+      setAllKamis(utils.getAllKamis());
+    };
+
+    refreshKamis();
+    const intervalId = window.setInterval(refreshKamis, 3000);
+    return () => {
+      isActive = false;
+      window.clearInterval(intervalId);
+    };
+  }, [isVisible, utils]);
+
+  const sellableKamis = useMemo(() => externalKamis.filter(isSellEligibleKami), [externalKamis]);
+
+  useEffect(() => {
+    const current = selectedKami[0];
+    if (!current || current.id === NullKami.id) return;
+    const stillSellable = sellableKamis.some((kami) => kami.index === current.index);
+    if (!stillSellable) setSelectedKami([NullKami]);
+  }, [sellableKamis, selectedKami]);
 
   const kamiOptions = useMemo(
-    () => restingKamis.map((k) => ({ text: k.name, object: k, img: k.image })),
-    [restingKamis]
+    () => sellableKamis.map((k) => ({ text: k.name, object: k, img: k.image })),
+    [sellableKamis]
   );
 
   const [selectedBuyKami, setSelectedBuyKami] = useState<Kami | null>(null);
@@ -83,27 +124,29 @@ export const CreateOrder = ({
   );
 
   const handleKamiSelect = (selected: Kami[]) => {
-    setSelectedKami(selected ?? NullKami);
+    setSelectedKami(selected?.length ? selected : [NullKami]);
   };
 
-  const handleCreate = () => {
-    const getExpiryTs = () => {
-      if (expiration === 0) return 0;
-      const now = Math.floor(Date.now() / 1000);
-      return now + expiration * 60 * 60;
-    };
+  /////////////////
+  // ACTIONS
+
+  const handleCreate = async () => {
+    const expiry = getExpiryTimestamp(expiration);
 
     if (orderType === 'Sell') {
       if (!selectedKami[0] || !price) return;
-      createSellOrder(selectedKami[0].index, price, getExpiryTs());
+      const completed = await createSellOrder(selectedKami[0].index, price, expiry);
+      if (completed) handleClear();
     }
     if (orderType === 'Buy') {
       if (!price) return;
       if (selectedBuyKami) {
-        createBuyKamiOrder(selectedBuyKami.index, price, getExpiryTs());
+        const completed = await createBuyKamiOrder(selectedBuyKami.index, price, expiry);
+        if (completed) handleClear();
       } else {
         if (!quantity) return;
-        createBuyOrder(price, Number(quantity), getExpiryTs());
+        const completed = await createBuyOrder(price, Number(quantity), expiry);
+        if (completed) handleClear();
       }
     }
   };
@@ -118,13 +161,25 @@ export const CreateOrder = ({
 
   const toggleOrderType = () => {
     handleClear();
-    if (orderType === 'Sell') setOrderType('Buy');
-    if (orderType === 'Buy') setOrderType('Sell');
+    setOrderType((prev) => (prev === 'Sell' ? 'Buy' : 'Sell'));
   };
 
   const isSellComplete = selectedKami[0]?.id !== NullKami.id && !!price;
   const isBuyComplete = !!price && (!!selectedBuyKami || !!quantity);
-  const isCreateDisabled = orderType === 'Sell' ? !isSellComplete : !isBuyComplete;
+  const selectedKamiState = selectedKami[0]?.state ?? '';
+  const isSelectedKamiExternal = isKamiExternal(selectedKamiState);
+  const isSelectedKamiNotListed = selectedKami[0]?.state !== 'LISTED';
+  const sellBlockedReason = (() => {
+    if (orderType !== 'Sell' || selectedKami[0]?.id === NullKami.id) return '';
+    if (!isSelectedKamiNotListed) return 'This Kami already has an active listing.';
+    if (!isSelectedKamiExternal) return 'This Kami is not out of world.';
+    return '';
+  })();
+  const isCreateDisabled =
+    orderType === 'Sell' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
+
+  /////////////////
+  // DISPLAY
 
   return (
     <Container isVisible={isVisible}>
@@ -148,7 +203,7 @@ export const CreateOrder = ({
         setPrice={setPrice}
         expiration={expiration}
         setExpiration={setExpiration}
-        hasExternalKamis={restingKamis.length > 0}
+        hasExternalKamis={sellableKamis.length > 0}
       />
       <Buy
         isVisible={orderType === 'Buy'}
@@ -165,7 +220,15 @@ export const CreateOrder = ({
         selectedBuyKami={selectedBuyKami}
       />
       <Actions>
-        <IconButton text='Create' onClick={handleCreate} disabled={isCreateDisabled} />
+        {sellBlockedReason ? (
+          <TextTooltip text={[sellBlockedReason]}>
+            <span>
+              <IconButton text='Create' onClick={handleCreate} disabled={isCreateDisabled} />
+            </span>
+          </TextTooltip>
+        ) : (
+          <IconButton text='Create' onClick={handleCreate} disabled={isCreateDisabled} />
+        )}
         <IconButton text='Clear' onClick={handleClear} />
       </Actions>
     </Container>

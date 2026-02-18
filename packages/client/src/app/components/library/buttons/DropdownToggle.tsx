@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { SvgIconTypeMap } from '@mui/material';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { playClick } from 'utils/sounds';
 import { Popover } from '../poppers';
 import { Tooltip } from '../tooltips';
@@ -31,7 +29,7 @@ export const DropdownToggle = ({
 }: {
   onClick: ((selected: any[]) => void)[];
   button: {
-    images: string[] | (OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & { muiName: string })[];
+    images: string[] | any;
     tooltips?: string[];
   };
   options: Option[][];
@@ -141,11 +139,7 @@ export const DropdownToggle = ({
   /////////////////
   // DISPLAY
 
-  const renderOption = (
-    { text, img, object }: Option,
-    i: number,
-    isSelectAll = false
-  ) => {
+  const renderOption = ({ text, img, object }: Option, i: number, isSelectAll = false) => {
     const imageSrc = img ?? object?.image;
     const isChecked = isSelectAll ? allSelected : !!checked[i];
     const handleClick = isSelectAll

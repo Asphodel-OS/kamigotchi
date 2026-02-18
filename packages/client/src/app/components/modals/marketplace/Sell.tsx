@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
-import { SelectYourKami } from './SelectYourKami';
+import { KamiOption, SelectYourKami } from './SelectYourKami';
 
 const expirationOptions = [
   { value: 1, label: '1 Hour' },
@@ -24,8 +24,8 @@ export const Sell = ({
   hasExternalKamis,
 }: {
   isVisible: boolean;
-  kamiOptions: { text: string; object: any; img: string }[];
-  handleKamiSelect: (selected: any[]) => void;
+  kamiOptions: KamiOption[];
+  handleKamiSelect: (selected: Kami[]) => void;
   selectedKami: Kami[];
   onKamiClick: () => void;
   price: string;
@@ -90,16 +90,17 @@ const Conditional = styled.div<{ isVisible: boolean }>`
 `;
 
 const Section = styled.div`
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-flow: column nowrap;
-  width: 100%;
   gap: 0.6vw;
 `;
 
 const SubHeader = styled.div`
   border-bottom: 0.15vw solid black;
   padding: 0.8vw;
-  font-size: 1.1vw;
+  font-size: 1vw;
   text-align: left;
 `;
 
@@ -122,6 +123,7 @@ const Row = styled.div`
   gap: 0.6vw;
   display: flex;
   flex-flow: row nowrap;
+  align-items: flex-start;
 `;
 
 const PriceInput = styled.input`

@@ -116,7 +116,7 @@ const Section = styled.div`
 const SubHeader = styled.div`
   border-bottom: 0.15vw solid black;
   padding: 0.8vw;
-  font-size: 1.1vw;
+  font-size: 1vw;
   text-align: left;
 `;
 
