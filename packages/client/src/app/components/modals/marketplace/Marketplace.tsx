@@ -215,6 +215,8 @@ export const MarketplaceModal: UIComponent = {
         <MyOrders
           isVisible={tab === 'myOrders'}
           onCancelOrder={cancelOrder}
+          onOpenHistory={closeCreateOrder}
+          createOrderOpen={showCreateOrder}
           utils={{ queryKamiByIndex: utils.queryKamiByIndex, getKami: utils.getKami }}
         />
         <CreateOrder
