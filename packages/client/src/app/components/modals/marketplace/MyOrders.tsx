@@ -126,6 +126,11 @@ export const MyOrders = ({
     return num.toFixed(3);
   };
 
+  const getBidProgress = (total: number, quantity: number) => {
+    if (quantity <= 0) return '';
+    return `${total - quantity}/${total}`;
+  };
+
   const openKamiModal = (index: number) => {
     const sameKami = kamiIndex === index;
     if (!sameKami) setKami(index);
@@ -184,7 +189,7 @@ export const MyOrders = ({
                   />
                 )}
               </OrderKami>
-            ) : (
+            ) : getBidProgress(order.total, order.quantity) ? (
               <TextTooltip
                 text={[
                   `${order.total}/${order.quantity} kami in this bid have already been purchased.`,
@@ -192,9 +197,11 @@ export const MyOrders = ({
               >
                 <CellText>
                   {order.bidType === 'Kami' ? `Kami #${order.kamiIndex} ` : ''}
-                  {order.total}/{order.quantity}
+                  {getBidProgress(order.total, order.quantity)}
                 </CellText>
               </TextTooltip>
+            ) : (
+              <CellText>{order.bidType === 'Kami' ? `Kami #${order.kamiIndex}` : ''}</CellText>
             )}
           </Column>
           <Column>
