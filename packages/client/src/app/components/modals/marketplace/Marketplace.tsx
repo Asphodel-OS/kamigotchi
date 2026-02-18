@@ -115,6 +115,42 @@ export const MarketplaceModal: UIComponent = {
       });
     };
 
+    const buyListings = (listingIDs: BigNumberish[], kamiIndices: number[]) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      actions.add({
+        action: 'KamiMarketBuy',
+        params: [listingIDs],
+        description: `Buying Kami ${kamiIndices.join(', ')}`,
+        execute: async () => api.account.kamiMarket.buy(listingIDs),
+      });
+    };
+
+    const cancelOrder = (orderID: BigNumberish) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      actions.add({
+        action: 'KamiMarketCancel',
+        params: [orderID],
+        description: `Canceling order ${orderID}`,
+        execute: async () => api.account.kamiMarket.cancel(orderID),
+      });
+    };
+
+    const acceptOffer = (offerID: BigNumberish, kamiIndex: number) => {
+      const api = apis.get(selectedAddress);
+      if (!api) return console.error(`API not established for ${selectedAddress}`);
+
+      actions.add({
+        action: 'KamiMarketAcceptOffer',
+        params: [offerID, kamiIndex],
+        description: `Accepting offer ${offerID} for Kami ${kamiIndex}`,
+        execute: async () => api.account.kamiMarket.acceptOffer(offerID, kamiIndex),
+      });
+    };
+
     const [tab, setTab] = useState('listings');
     const [showCreateOrder, setShowCreateOrder] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
@@ -140,6 +176,7 @@ export const MarketplaceModal: UIComponent = {
         <Listings
           isVisible={tab === 'listings'}
           onOpenFilter={openFilter}
+          onBuyListings={buyListings}
           utils={{ queryKamiByIndex: utils.queryKamiByIndex, getKami: utils.getKami }}
         />
         <Bids
@@ -147,9 +184,10 @@ export const MarketplaceModal: UIComponent = {
           showCreateOrder={showCreateOrder}
           setShowFilter={setShowFilter}
           onCloseCreateOrder={closeCreateOrder}
+          onAcceptOffer={acceptOffer}
           utils={{ ...utils, getExternalKamis: () => externalKamis }}
         />
-        <MyOrders isVisible={tab === 'myOrders'} />
+        <MyOrders isVisible={tab === 'myOrders'} onCancelOrder={cancelOrder} />
         <CreateOrder
           isVisible={showCreateOrder}
           onClose={closeCreateOrder}
