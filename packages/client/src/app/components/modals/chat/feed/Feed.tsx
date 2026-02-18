@@ -15,6 +15,9 @@ import {
   KamiCast as CastEvent,
   getKamidenClient,
   HarvestEnd as HarvestEndEvent,
+  KamiMarketAccept as AcceptEvent,
+  KamiMarketBuy as BuyEvent,
+  KamiMarketCancel as CancelEvent,
   KamiMarketList as ListEvent,
   KamiMarketOffer as OfferEvent,
   Message as KamiMessage,
@@ -213,7 +216,7 @@ export const Feed = ({
       feed.KamiMarketLists.forEach((listing: ListEvent) => {
         const account = getAccount(getEntityIndex(formatEntityID(listing.AccountID)));
         const kami = getKamiByIndex(listing.KamiIndex);
-        const price = Number(formatUnits(BigInt(listing.Price), 18)).toFixed(3);
+        const price = Number(formatUnits(BigInt(listing.Price), 18)).toFixed(5);
         const expiry = Number(listing.Expiry);
         const expiryText =
           expiry === 0
@@ -240,9 +243,35 @@ export const Feed = ({
         );
       });
 
+      feed.KamiMarketBuys.forEach((buy: BuyEvent) => {
+        const buyer = getAccount(getEntityIndex(formatEntityID(buy.BuyerAccountID)));
+        const seller = getAccount(getEntityIndex(formatEntityID(buy.SellerAccountID)));
+        const kami = getKamiByIndex(buy.KamiIndex);
+        const price = Number(formatUnits(BigInt(buy.Price), 18)).toFixed(5);
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(buy.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(buyer)}>
+              {buyer.name}
+            </Text>
+            <Bold color='#006400'> bought </Bold>
+            <TextTooltip text={[kami.name]}>
+              <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+            </TextTooltip>
+            from
+            <Text size={0.6} onClick={() => openAccountModal(seller)}>
+              {seller.name}
+            </Text>
+            for {price}
+            <Bold color='#333'>ETH</Bold>
+          </Row>
+        );
+      });
+
       feed.KamiMarketOffers.forEach((offer: OfferEvent) => {
         const account = getAccount(getEntityIndex(formatEntityID(offer.AccountID)));
-        const price = Number(formatUnits(BigInt(offer.Price), 18)).toFixed(3);
+        const price = Number(formatUnits(BigInt(offer.Price), 18)).toFixed(5);
         const expiry = Number(offer.Expiry);
         const expiryText =
           expiry === 0
@@ -263,6 +292,47 @@ export const Feed = ({
             for {offer.Quantity} kamis at {price}
             <Bold color='#333'>ETH</Bold>
             {expiryText}
+          </Row>
+        );
+      });
+
+      feed.KamiMarketAccepts.forEach((accept: AcceptEvent) => {
+        const seller = getAccount(getEntityIndex(formatEntityID(accept.SellerAccountID)));
+        const buyer = getAccount(getEntityIndex(formatEntityID(accept.BuyerAccountID)));
+        const kami = getKamiByIndex(accept.KamiIndex);
+        const price = Number(formatUnits(BigInt(accept.Price), 18)).toFixed(5);
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(accept.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(seller)}>
+              {seller.name}
+            </Text>
+            <Bold color='#33a58f'> sold </Bold>
+            <TextTooltip text={[kami.name]}>
+              <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+            </TextTooltip>
+            to
+            <Text size={0.6} onClick={() => openAccountModal(buyer)}>
+              {buyer.name}
+            </Text>
+            for {price}
+            <Bold color='#333'>ETH</Bold>
+          </Row>
+        );
+      });
+
+      feed.KamiMarketCancels.forEach((cancel: CancelEvent) => {
+        const account = getAccount(getEntityIndex(formatEntityID(cancel.AccountID)));
+
+        feedMessage.push(
+          <Row>
+            <Bold color='#333'>{getDateString(cancel.Timestamp, 3)}:</Bold>
+            <Text size={0.6} onClick={() => openAccountModal(account)}>
+              {account.name}
+            </Text>
+            <Bold color='#666'> cancelled </Bold>
+            a listing
           </Row>
         );
       });
