@@ -182,7 +182,6 @@ const SlidersRow = styled.div`
   gap: 2vw;
 `;
 
-
 const Actions = styled.div`
   display: flex;
   flex-flow: row nowrap;
