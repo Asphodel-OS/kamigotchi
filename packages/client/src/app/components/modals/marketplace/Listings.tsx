@@ -36,14 +36,22 @@ export const Listings = ({
   isVisible,
   onOpenFilter,
   onBuyListings,
+  onCloseFilter,
+  filters,
   utils,
 }: {
   isVisible: boolean;
   onOpenFilter: () => void;
   onBuyListings: (listingIDs: string[], kamiIndices: number[]) => void;
+  onCloseFilter: () => void;
+  filters: {
+    selected: Record<string, Set<string>>;
+    stats: Record<string, number>;
+  };
   utils: {
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
+    getKamiDetailed: (entity: EntityIndex) => Kami;
   };
 }) => {
   const kamiIndex = useSelected((s) => s.kamiIndex);
@@ -69,19 +77,79 @@ export const Listings = ({
       listings.map((listing) => {
         const entity = utils.queryKamiByIndex(listing.KamiIndex);
         const kami = entity !== undefined ? utils.getKami(entity) : undefined;
-        return { listing, kami };
+        return { listing, kami, entity };
       }),
-    [listings]
+    [listings, utils]
   );
 
+  const hasActiveFilters = useMemo(() => {
+    const traitActive = Object.values(filters.selected).some((set) => set.size > 0);
+    const statActive = Object.entries(filters.stats).some(([key, value]) =>
+      key === 'Slots' ? value > 1 : value > 10
+    );
+    return traitActive || statActive;
+  }, [filters.selected, filters.stats]);
+
+  const activeFilterCount = useMemo(() => {
+    const traitCount = Object.values(filters.selected).reduce(
+      (sum, set) => sum + (set.size > 0 ? 1 : 0),
+      0
+    );
+    const statCount = Object.entries(filters.stats).reduce(
+      (sum, [key, value]) => sum + (key === 'Slots' ? (value > 1 ? 1 : 0) : value > 10 ? 1 : 0),
+      0
+    );
+    return traitCount + statCount;
+  }, [filters.selected, filters.stats]);
+
+  const filteredListings = useMemo(() => {
+    if (!hasActiveFilters) return resolvedListings;
+    return resolvedListings.filter(({ entity }) => {
+      if (entity === undefined) return false;
+      const kamiDetailed = utils.getKamiDetailed(entity);
+      const traits = kamiDetailed?.traits;
+      const stats = kamiDetailed?.stats;
+      if (!traits || !stats) return false;
+
+      const traitMatches = (key: string, value?: string) => {
+        const selected = filters.selected[key];
+        if (!selected || selected.size === 0) return true;
+        if (!value) return false;
+        return selected.has(value);
+      };
+
+      if (!traitMatches('Face', traits.face?.name)) return false;
+      if (!traitMatches('Hands', traits.hand?.name)) return false;
+      if (!traitMatches('Body Type', traits.body?.name)) return false;
+      if (!traitMatches('Body Color', traits.color?.name)) return false;
+      if (!traitMatches('Background', traits.background?.name)) return false;
+
+      const meetsStat = (key: string, statTotal?: number) => {
+        const min = filters.stats[key] ?? 10;
+        const base = key === 'Slots' ? 1 : 10;
+        if (min <= base) return true;
+        if (statTotal == null) return false;
+        return statTotal >= min;
+      };
+
+      if (!meetsStat('Health', stats.health?.total)) return false;
+      if (!meetsStat('Power', stats.power?.total)) return false;
+      if (!meetsStat('Violence', stats.violence?.total)) return false;
+      if (!meetsStat('Harmony', stats.harmony?.total)) return false;
+      if (!meetsStat('Slots', stats.slots?.total)) return false;
+
+      return true;
+    });
+  }, [resolvedListings, hasActiveFilters, filters.selected, filters.stats, utils]);
+
   const sorted = useMemo(() => {
-    const copy = [...resolvedListings];
+    const copy = [...filteredListings];
     if (sortBy === 'Price Low')
       return copy.sort((a, b) => Number(BigInt(a.listing.Price) - BigInt(b.listing.Price)));
     if (sortBy === 'Price High')
       return copy.sort((a, b) => Number(BigInt(b.listing.Price) - BigInt(a.listing.Price)));
     return copy.sort((a, b) => b.listing.Timestamp - a.listing.Timestamp);
-  }, [resolvedListings, sortBy]);
+  }, [filteredListings, sortBy]);
 
   const sortOptions = [
     { text: 'Latest', onClick: () => setSortBy('Latest') },
@@ -142,10 +210,28 @@ export const Listings = ({
             />
           </TextTooltip>
           <TextTooltip text={['Filters']}>
-            <IconButton img={FilterListIcon} onClick={onOpenFilter} />
+            <IndicatorWrapper>
+              <IconButton
+                img={FilterListIcon}
+                onClick={() => {
+                  setShowCart(false);
+                  onOpenFilter();
+                }}
+              />
+              {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
+            </IndicatorWrapper>
           </TextTooltip>
           <TextTooltip text={['Cart']}>
-            <IconButton img={ShoppingCartIcon} onClick={() => setShowCart((prev) => !prev)} />
+            <IndicatorWrapper>
+              <IconButton
+                img={ShoppingCartIcon}
+                onClick={() => {
+                  onCloseFilter();
+                  setShowCart((prev) => !prev);
+                }}
+              />
+              {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
+            </IndicatorWrapper>
           </TextTooltip>
         </ButtonWrapper>
         <HeaderRow>
@@ -266,6 +352,37 @@ const ButtonWrapper = styled.div`
   width: fit-content;
 `;
 
+const IndicatorWrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+`;
+
+const IndicatorDot = styled.span`
+  position: absolute;
+  top: -0.1vw;
+  right: -0.1vw;
+  width: 0.5vw;
+  height: 0.5vw;
+  border-radius: 50%;
+  background: #d04a2f;
+  border: 0.08vw solid white;
+`;
+
+const IndicatorBadge = styled.span`
+  position: absolute;
+  top: -0.3vw;
+  right: -0.3vw;
+  min-width: 1vw;
+  height: 1vw;
+  padding: 0 0.2vw;
+  border-radius: 1vw;
+  background: #d04a2f;
+  color: white;
+  font-size: 0.7vw;
+  line-height: 1vw;
+  text-align: center;
+  border: 0.08vw solid white;
+`;
 const HeaderRow = styled.div`
   display: flex;
   flex-flow: row nowrap;

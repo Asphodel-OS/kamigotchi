@@ -46,6 +46,8 @@ export const MarketplaceModal: UIComponent = {
           getRegistryTraits: (specificType?: TraitType[]) =>
             _getRegistryTraits(world, components, specificType),
           getKami: (entity: EntityIndex) => _getKami(world, components, entity, { live: 0 }),
+          getKamiDetailed: (entity: EntityIndex) =>
+            _getKami(world, components, entity, { live: 0, traits: 0, stats: 0 }),
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
         },
         network,
@@ -154,6 +156,20 @@ export const MarketplaceModal: UIComponent = {
     const [tab, setTab] = useState('listings');
     const [showCreateOrder, setShowCreateOrder] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
+    const [selectedFilters, setSelectedFilters] = useState<Record<string, Set<string>>>({
+      Face: new Set(),
+      Hands: new Set(),
+      'Body Type': new Set(),
+      'Body Color': new Set(),
+      Background: new Set(),
+    });
+    const [statFilters, setStatFilters] = useState<Record<string, number>>({
+      Health: 10,
+      Power: 10,
+      Violence: 10,
+      Harmony: 10,
+      Slots: 1,
+    });
 
     const openCreateOrder = () => {
       setShowFilter(false);
@@ -177,7 +193,13 @@ export const MarketplaceModal: UIComponent = {
           isVisible={tab === 'listings'}
           onOpenFilter={openFilter}
           onBuyListings={buyListings}
-          utils={{ queryKamiByIndex: utils.queryKamiByIndex, getKami: utils.getKami }}
+          onCloseFilter={closeFilter}
+          filters={{ selected: selectedFilters, stats: statFilters }}
+          utils={{
+            queryKamiByIndex: utils.queryKamiByIndex,
+            getKami: utils.getKami,
+            getKamiDetailed: utils.getKamiDetailed,
+          }}
         />
         <Bids
           isVisible={tab === 'bids'}
@@ -196,7 +218,32 @@ export const MarketplaceModal: UIComponent = {
           createBuyOrder={createBuyOrder}
           createBuyKamiOrder={createBuyKamiOrder}
         />
-        <FilterBy isVisible={showFilter} onClose={closeFilter} utils={utils} />
+        <FilterBy
+          isVisible={showFilter}
+          onClose={closeFilter}
+          selected={selectedFilters}
+          statValues={statFilters}
+          onSelectedChange={setSelectedFilters}
+          onStatValuesChange={setStatFilters}
+          onClear={() => {
+            setSelectedFilters({
+              Face: new Set(),
+              Hands: new Set(),
+              'Body Type': new Set(),
+              'Body Color': new Set(),
+              Background: new Set(),
+            });
+            setStatFilters({
+              Health: 10,
+              Power: 10,
+              Violence: 10,
+              Harmony: 10,
+              Slots: 1,
+            });
+          }}
+          onApply={closeFilter}
+          utils={utils}
+        />
       </ModalWrapper>
     );
   },
