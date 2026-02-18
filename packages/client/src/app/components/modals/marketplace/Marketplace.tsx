@@ -20,11 +20,11 @@ import {
 } from 'network/shapes/Kami';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
 import { didActionSucceed } from 'network/utils';
-import { Bids } from './Bids';
-import { CreateOrder } from './CreateOrder';
-import { FilterBy } from './FilterBy';
-import { Listings } from './Listings';
-import { MyOrders } from './MyOrders';
+import { Bids } from './tabs/bids/Bids';
+import { CreateOrder } from './create/CreateOrder';
+import { FilterBy } from './tabs/listings/FilterBy';
+import { Listings } from './tabs/listings/Listings';
+import { MyOrders } from './tabs/orders/MyOrders';
 import { MarketplaceTab, Tabs } from './tabs/Tabs';
 
 const DEFAULT_SELECTED_FILTERS = () => ({
