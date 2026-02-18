@@ -94,7 +94,7 @@ export const Listings = ({
     };
   }, [isVisible, accountId]);
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 3);
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
   useEffect(() => {
     if (createOrderOpen) setShowCart(false);
