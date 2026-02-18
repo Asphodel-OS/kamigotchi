@@ -93,7 +93,9 @@ const HistoryRow = ({
           </OrderKami>
         ) : getBidProgress(order.total, order.quantity) ? (
           <TextTooltip
-            text={[`${order.total}/${order.quantity} kami in this bid have already been purchased.`]}
+            text={[
+              `${order.total - order.quantity}/${order.total} kami in this bid have already been purchased.`,
+            ]}
           >
             <CellText>
               {order.bidType === 'Kami' ? `Kami #${order.kamiIndex} ` : ''}
