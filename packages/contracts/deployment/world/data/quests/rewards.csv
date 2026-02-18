@@ -6,6 +6,7 @@
 ,10000x MUSU (Test),ITEM,1,10000
 ,20x Gacha Tickets (Test),ITEM,10,20
 ,100x Stick,ITEM,1001,100
+,1x Stone,ITEM,1002,1
 ,100x Stone,ITEM,1002,100
 ,50x Plastic Bottle,ITEM,1003,50
 ,100x Pine Cones,ITEM,1004,100
@@ -13,18 +14,21 @@
 ,10x Glass Jar,ITEM,1006,10
 ,100x Shroom,ITEM,1013,100
 ,100x Chalkberry,ITEM,1014,100
+,10x Otherworld Coin,ITEM,1019,10
 ,1x Irradiated Root,ITEM,1021,1
 ,1x Ingot,ITEM,1303,1
 ,1x Essence of Sight,ITEM,6003,1
 ,10 Revives,ITEM,11001,10
 ,1x “Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
 ,"3x ""Melkarth's Heroic Awakening"" Spell Card",ITEM,11002,3
+,"5x ""Melkarth's heroic awakening"" spell card",ITEM,11002,5
 ,100x Holy Dust,ITEM,11011,100
 ,1x XP Candy (Small),ITEM,11201,1
 ,1x XP Candy (Medium),ITEM,11202,1
 ,1x “Cultivation I” Spell Card,ITEM,11211,1
 ,2 “Cultivation I” Spell Card,ITEM,11211,2
 ,1x “Cultivation II” Spell Card,ITEM,11212,1
+,"3x ""Cultivation II"" Spell Card",ITEM,11212,3
 ,2x “Cultivation III” Spell Card,ITEM,11213,2
 ,,ITEM,11301,25
 ,100x Burgers,ITEM,11302,100
