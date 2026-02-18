@@ -15,6 +15,7 @@ export type {
   KamiMarketList,
   KamiMarketListing,
   KamiMarketOffer,
+  KamiMarketOrder,
   Kill,
   Message,
   Movement,
