@@ -366,6 +366,7 @@ const IndicatorDot = styled.span`
   border-radius: 50%;
   background: #d04a2f;
   border: 0.08vw solid white;
+  z-index: 2;
 `;
 
 const IndicatorBadge = styled.span`
@@ -382,6 +383,7 @@ const IndicatorBadge = styled.span`
   line-height: 1vw;
   text-align: center;
   border: 0.08vw solid white;
+  z-index: 2;
 `;
 const HeaderRow = styled.div`
   display: flex;
@@ -459,7 +461,7 @@ const CartSection = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
   flex: 0 0 50%;
-  overflow: auto;
+  overflow: hidden;
   border-top: 0.15vw solid black;
   width: 100%;
 `;
@@ -486,6 +488,8 @@ const CartBody = styled.div`
   flex-direction: column;
   gap: 0.4vw;
   padding: 0.6vw;
+  flex: 1;
+  overflow-y: auto;
 `;
 
 const CartHeaderRow = styled.div`
@@ -564,5 +568,8 @@ const CartFooter = styled.div`
   justify-content: center;
   gap: 0.6vw;
   padding: 0.6vw;
+  position: sticky;
+  bottom: 0;
+  background-color: rgb(255, 255, 255);
   margin-top: auto;
 `;
