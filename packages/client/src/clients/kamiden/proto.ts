@@ -225,6 +225,7 @@ export interface KamiMarketOrder {
   Timestamp: number;
   OrderID: string;
   IsCanceled: boolean;
+  IsComplete: boolean;
   Listing?: KamiMarketListing | undefined;
   Bid?: KamiMarketBid | undefined;
 }
@@ -2857,7 +2858,7 @@ export const KamiMarketBid: MessageFns<KamiMarketBid> = {
 };
 
 function createBaseKamiMarketOrder(): KamiMarketOrder {
-  return { Timestamp: 0, OrderID: "", IsCanceled: false, Listing: undefined, Bid: undefined };
+  return { Timestamp: 0, OrderID: "", IsCanceled: false, IsComplete: false, Listing: undefined, Bid: undefined };
 }
 
 export const KamiMarketOrder: MessageFns<KamiMarketOrder> = {
@@ -2870,6 +2871,9 @@ export const KamiMarketOrder: MessageFns<KamiMarketOrder> = {
     }
     if (message.IsCanceled !== false) {
       writer.uint32(24).bool(message.IsCanceled);
+    }
+    if (message.IsComplete !== false) {
+      writer.uint32(32).bool(message.IsComplete);
     }
     if (message.Listing !== undefined) {
       KamiMarketListing.encode(message.Listing, writer.uint32(82).fork()).join();
@@ -2911,6 +2915,14 @@ export const KamiMarketOrder: MessageFns<KamiMarketOrder> = {
           message.IsCanceled = reader.bool();
           continue;
         }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.IsComplete = reader.bool();
+          continue;
+        }
         case 10: {
           if (tag !== 82) {
             break;
@@ -2944,6 +2956,7 @@ export const KamiMarketOrder: MessageFns<KamiMarketOrder> = {
     message.Timestamp = object.Timestamp ?? 0;
     message.OrderID = object.OrderID ?? "";
     message.IsCanceled = object.IsCanceled ?? false;
+    message.IsComplete = object.IsComplete ?? false;
     message.Listing = (object.Listing !== undefined && object.Listing !== null)
       ? KamiMarketListing.fromPartial(object.Listing)
       : undefined;
