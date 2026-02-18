@@ -39,7 +39,7 @@ export const Listings = ({
 }: {
   isVisible: boolean;
   onOpenFilter: () => void;
-  onBuyListings: (listingIDs: string[], kamiIndices: number[]) => void;
+  onBuyListings: (listingIDs: string[], kamiIndices: number[], totalPrice: bigint) => void;
   onCloseFilter: () => void;
   onCloseCreateOrder: () => void;
   createOrderOpen: boolean;
@@ -227,9 +227,11 @@ export const Listings = ({
 
   const handleBuyCart = () => {
     if (cart.length === 0) return;
+    const totalPrice = cart.reduce((sum, item) => sum + BigInt(item.Price), 0n);
     onBuyListings(
       cart.map((item) => item.OrderID),
-      cart.map((item) => item.KamiIndex)
+      cart.map((item) => item.KamiIndex),
+      totalPrice
     );
     setCart([]);
     setShowCart(false);

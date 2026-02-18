@@ -8,8 +8,8 @@ export const kamiMarketAPI = (systems: SystemQueue<any>) => {
   }
 
   // buy a kami from a listing
-  function buy(listingIDs: BigNumberish[]) {
-    return systems['system.kamimarket.buy'].executeTyped(listingIDs);
+  function buy(listingIDs: BigNumberish[], totalPrice: BigNumberish) {
+    return systems['system.kamimarket.buy'].executeTyped(listingIDs, { value: totalPrice });
   }
 
   // cancel your own order
