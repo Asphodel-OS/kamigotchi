@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
-import { v4 as uuid } from 'uuid';
 
 import { getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
@@ -21,8 +21,8 @@ import {
 } from 'network/shapes/Kami';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
 import { didActionSucceed, waitForActionCompletion } from 'network/utils';
-import { Bids } from './tabs/bids/Bids';
 import { CreateOrder } from './create/CreateOrder';
+import { Bids } from './tabs/bids/Bids';
 import { FilterBy } from './tabs/listings/FilterBy';
 import { Listings } from './tabs/listings/Listings';
 import { MyOrders } from './tabs/orders/MyOrders';
@@ -138,7 +138,10 @@ export const MarketplaceModal: UIComponent = {
           api.erc721.setApprovalForAll(data.kamiNFTAddress, data.marketVaultAddress, true),
       });
 
-      await waitForActionCompletion(actions.Action, world.entityToIndex.get(actionID) as EntityIndex);
+      await waitForActionCompletion(
+        actions.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
+      );
       await refetchNFTs();
     };
 
@@ -193,11 +196,7 @@ export const MarketplaceModal: UIComponent = {
       return didActionSucceed(actions.Action, tx);
     };
 
-    const buyListings = (
-      listingIDs: BigNumberish[],
-      kamiIndices: number[],
-      totalPrice: bigint
-    ) => {
+    const buyListings = (listingIDs: BigNumberish[], kamiIndices: number[], totalPrice: bigint) => {
       const api = getApi();
       if (!api) return;
 
@@ -237,9 +236,8 @@ export const MarketplaceModal: UIComponent = {
     const [tab, setTab] = useState<MarketplaceTab>('listings');
     const [showCreateOrder, setShowCreateOrder] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
-    const [selectedFilters, setSelectedFilters] = useState<Record<string, Set<string>>>(
-      DEFAULT_SELECTED_FILTERS
-    );
+    const [selectedFilters, setSelectedFilters] =
+      useState<Record<string, Set<string>>>(DEFAULT_SELECTED_FILTERS);
     const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
 
     const openCreateOrder = () => {
@@ -275,8 +273,8 @@ export const MarketplaceModal: UIComponent = {
     const formatEthPrice = (weiString: string, decimals: number) => {
       if (!weiString || weiString === '0') return '0';
       const num = Number(formatUnits(BigInt(weiString), 18));
-      if (num < 0.001) return '<0.001';
-      return num.toFixed(decimals);
+      if (num > 0 && num < 0.00001) return '<0.00001';
+      return num.toFixed(decimals).replace(/\.?0+$/, '');
     };
 
     /////////////////
