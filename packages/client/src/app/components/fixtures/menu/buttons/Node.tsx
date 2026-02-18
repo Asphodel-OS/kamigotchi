@@ -15,6 +15,7 @@ export const NodeMenuButton = ({ disabled }: { disabled?: boolean }) => {
     kami: false,
     gacha: false,
     emaBoard: false,
+    marketplace: false,
     presale: false,
     tokenPortal: false,
     trading: false,

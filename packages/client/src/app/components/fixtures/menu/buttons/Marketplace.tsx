@@ -6,8 +6,11 @@ export const MarketplaceMenuButton = () => {
   const modalsToHide: Partial<Modals> = {
     bridgeERC20: false,
     bridgeERC721: false,
+    crafting: false,
     dialogue: false,
     emaBoard: false,
+    gacha: false,
+    goal: false,
     kami: false,
     leaderboard: false,
     node: false,
