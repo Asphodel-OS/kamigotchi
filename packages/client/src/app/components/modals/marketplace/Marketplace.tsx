@@ -83,6 +83,9 @@ export const MarketplaceModal: UIComponent = {
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const account = useAccount((s) => s.account);
 
+    /////////////////
+    // SUBSCRIPTIONS
+
     const { refetch: refetchNFTs, data: nftData } = useReadContracts({
       contracts: [
         {
@@ -97,9 +100,6 @@ export const MarketplaceModal: UIComponent = {
     useWatchBlockNumber({
       onBlockNumber: () => refetchNFTs(),
     });
-
-    /////////////////
-    // PREPARATION
 
     const externalKamis = useMemo(() => {
       const result = (nftData?.[0]?.result ?? []) as number[];
@@ -201,9 +201,6 @@ export const MarketplaceModal: UIComponent = {
       });
     };
 
-    /////////////////
-    // INSTANTIATIONS
-
     const [tab, setTab] = useState<MarketplaceTab>('listings');
     const [showCreateOrder, setShowCreateOrder] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
@@ -252,12 +249,18 @@ export const MarketplaceModal: UIComponent = {
         header={<ModalHeader title='Marketplace' icon={VendIcon} />}
         canExit
       >
-        <Tabs tab={tab} setTab={setTab} onCreateOrder={openCreateOrder} />
+        <Tabs
+          tab={tab}
+          setTab={setTab}
+          onCreateOrder={openCreateOrder}
+          onCloseCreateOrder={closeCreateOrder}
+        />
         <Listings
           isVisible={tab === 'listings'}
           onOpenFilter={openFilter}
           onBuyListings={buyListings}
           onCloseFilter={closeFilter}
+          onCloseCreateOrder={closeCreateOrder}
           createOrderOpen={showCreateOrder}
           accountId={account.id}
           filters={{ selected: selectedFilters, stats: statFilters }}

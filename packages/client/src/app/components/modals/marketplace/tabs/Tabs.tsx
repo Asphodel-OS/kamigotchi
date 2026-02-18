@@ -9,13 +9,16 @@ export const Tabs = ({
   tab,
   setTab,
   onCreateOrder,
+  onCloseCreateOrder,
 }: {
   tab: MarketplaceTab;
   setTab: (tab: MarketplaceTab) => void;
   onCreateOrder: () => void;
+  onCloseCreateOrder: () => void;
 }) => {
   const handleTabClick = (newTab: MarketplaceTab) => {
     playClick();
+    onCloseCreateOrder();
     setTab(newTab);
   };
 

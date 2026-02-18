@@ -31,6 +31,7 @@ export const Listings = ({
   onOpenFilter,
   onBuyListings,
   onCloseFilter,
+  onCloseCreateOrder,
   createOrderOpen,
   accountId,
   filters,
@@ -40,6 +41,7 @@ export const Listings = ({
   onOpenFilter: () => void;
   onBuyListings: (listingIDs: string[], kamiIndices: number[]) => void;
   onCloseFilter: () => void;
+  onCloseCreateOrder: () => void;
   createOrderOpen: boolean;
   accountId: string;
   filters: {
@@ -61,9 +63,6 @@ export const Listings = ({
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const setModals = useVisibility((s) => s.setModals);
-
-  /////////////////
-  // INSTANTIATIONS
 
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
   const [sortBy, setSortBy] = useState('Latest');
@@ -268,6 +267,7 @@ export const Listings = ({
               <IconButton
                 img={ShoppingCartIcon}
                 onClick={() => {
+                  onCloseCreateOrder();
                   onCloseFilter();
                   setShowCart((prev) => !prev);
                 }}
@@ -332,7 +332,7 @@ export const Listings = ({
         </ListingsBody>
       </Tab>
       <Cart
-        isVisible={isVisible && showCart}
+        isVisible={isVisible && showCart && !createOrderOpen}
         cart={cart}
         onClose={() => setShowCart(false)}
         onBuy={handleBuyCart}

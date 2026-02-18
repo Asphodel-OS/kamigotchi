@@ -241,7 +241,7 @@ export const MyOrders = ({
         ))}
       </OrdersBody>
       <HistorySection
-        isVisible={showHistory}
+        isVisible={showHistory && !createOrderOpen}
         onClose={() => setShowHistory(false)}
         orders={historyMapped}
         formatPrice={formatPrice}
