@@ -199,7 +199,7 @@ export const MyOrders = ({
           text={sortBy}
           options={sortOptions}
           radius={0.6}
-          tooltip={{ text: ['Sorting'] }}
+          tooltip={{ text: ['Sorting.'] }}
         />
         <IconButton
           text='History'

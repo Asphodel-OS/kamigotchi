@@ -247,9 +247,9 @@ export const Listings = ({
             text={sortBy}
             options={sortOptions}
             radius={0.6}
-            tooltip={{ text: ['Sorting'] }}
+            tooltip={{ text: ['Sorting.'] }}
           />
-          <TextTooltip text={['Filters']}>
+          <TextTooltip text={['Filters.']}>
             <IndicatorWrapper>
               <IconButton
                 img={FilterListIcon}
@@ -261,7 +261,7 @@ export const Listings = ({
               {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
             </IndicatorWrapper>
           </TextTooltip>
-          <TextTooltip text={['Cart']}>
+          <TextTooltip text={['Cart.']}>
             <IndicatorWrapper>
               <IconButton
                 img={ShoppingCartIcon}
@@ -315,7 +315,7 @@ export const Listings = ({
               </Column>
               <Column>
                 {isListingExpired(listing.Expiry) ? (
-                  <TextTooltip text={['Listing expired']}>
+                  <TextTooltip text={['Listing expired.']}>
                     <IconButton text='Add' onClick={() => addToCart(listing)} disabled />
                   </TextTooltip>
                 ) : (

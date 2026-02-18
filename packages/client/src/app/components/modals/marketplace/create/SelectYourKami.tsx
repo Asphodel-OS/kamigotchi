@@ -46,7 +46,7 @@ export const SelectYourKami = ({
           disabled={[!hasSellableKamis]}
           button={{
             images: [MenuIcons.kami],
-            tooltips: ['Select Kami'],
+            tooltips: ['Select Kami.'],
           }}
           radius={0.6}
           simplified
