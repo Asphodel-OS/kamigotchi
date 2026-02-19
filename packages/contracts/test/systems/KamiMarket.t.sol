@@ -9,6 +9,7 @@ import { OpenMintable } from "tokens/OpenMintable.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
+import { LibAccount } from "libraries/LibAccount.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 contract GasHeavyReceiver {
@@ -172,7 +173,8 @@ contract KamiMarketTest is SetupTemplate {
     assertTrue(LibEntityType.isShape(components, orderID, "KAMI_LISTING"));
     assertEq(_StateComponent.get(orderID), "ACTIVE");
     assertEq(_ValueComponent.get(orderID), LIST_PRICE);
-    assertEq(_IndexKamiComponent.get(orderID), kamiIndex);
+    assertEq(_IndexKamiListingComponent.get(orderID), kamiIndex);
+    assertTrue(!_IndexKamiComponent.has(orderID));
 
     // Verify kami is marked LISTED but still in seller's wallet (no escrow)
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
@@ -385,6 +387,35 @@ contract KamiMarketTest is SetupTemplate {
     // Kami state should still be 721_EXTERNAL (cancel didn't corrupt it)
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     assertEq(LibKami.getState(components, kamiID), "721_EXTERNAL");
+  }
+
+  function testStakeCancelsListingAfterOwnershipTransfer() public {
+    (, uint32 kamiIndex) = _createExternalKami(alice);
+    uint256 listingID = _listKami(alice, kamiIndex, LIST_PRICE);
+
+    // Transfer while listed (listing now stale against original seller account)
+    Kami721 kami721 = LibKami721.getContract(components);
+    vm.prank(alice.owner);
+    kami721.transferFrom(alice.owner, bob.owner, kamiIndex);
+    assertEq(LibKami721.getEOAOwner(components, kamiIndex), bob.owner);
+
+    // Bob stakes the kami
+    uint32 bobRoom = LibAccount.getRoom(components, bob.id);
+    vm.prank(deployer);
+    _IndexRoomComponent.set(bob.id, 12);
+    vm.prank(bob.owner);
+    _Kami721StakeSystem.executeTyped(kamiIndex);
+    vm.prank(deployer);
+    _IndexRoomComponent.set(bob.id, bobRoom);
+
+    // Listing is cancelled and cleaned even after ownership transfer.
+    assertEq(_StateComponent.get(listingID), "CANCELLED");
+    assertTrue(!_IDOwnsKamiOrderComponent.has(listingID));
+
+    // Kami was staked successfully.
+    uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+    assertEq(LibKami.getState(components, kamiID), "RESTING");
+    assertEq(LibKami.getAccount(components, kamiID), bob.id);
   }
 
   function testAcceptCollectionOfferForListedKami() public {

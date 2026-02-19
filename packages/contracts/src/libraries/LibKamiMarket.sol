@@ -10,13 +10,16 @@ import { LibTypes } from "solecs/LibTypes.sol";
 import { BalanceComponent, ID as BalanceCompID } from "components/BalanceComponent.sol";
 import { IDOwnsKamiOrderComponent, ID as IDOwnsKamiOrderCompID } from "components/IDOwnsKamiOrderComponent.sol";
 import { IndexKamiComponent, ID as IndexKamiCompID } from "components/IndexKamiComponent.sol";
+import { IndexKamiListingComponent, ID as IndexKamiListingCompID } from "components/IndexKamiListingComponent.sol";
 import { MaxComponent, ID as MaxCompID } from "components/MaxComponent.sol";
 import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeEndComponent, ID as TimeEndCompID } from "components/TimeEndComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
 import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
+import { ID as EntityTypeCompID } from "components/EntityTypeComponent.sol";
 
 import { IComponent } from "solecs/interfaces/IComponent.sol";
+import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
 
 import { LibComp } from "libraries/utils/LibComp.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
@@ -52,7 +55,7 @@ library LibKamiMarket {
     LibEntityType.set(comps, id, "KAMI_LISTING");
     StateComponent(getAddrByID(comps, StateCompID)).set(id, string("ACTIVE"));
     IDOwnsKamiOrderComponent(getAddrByID(comps, IDOwnsKamiOrderCompID)).set(id, accID);
-    IndexKamiComponent(getAddrByID(comps, IndexKamiCompID)).set(id, kamiIndex);
+    IndexKamiListingComponent(getAddrByID(comps, IndexKamiListingCompID)).set(id, kamiIndex);
     ValueComponent(getAddrByID(comps, ValueCompID)).set(id, price);
     TimeStartComponent(getAddrByID(comps, TimeStartCompID)).set(id, block.timestamp);
     if (expiry > 0) TimeEndComponent(getAddrByID(comps, TimeEndCompID)).set(id, expiry);
@@ -114,7 +117,7 @@ library LibKamiMarket {
     uint256 sellerAccID = getOwner(comps, id);
     sellerAddress = LibAccount.getOwner(comps, sellerAccID);
     price = getPrice(comps, id);
-    kamiIndex = getKamiIndex(comps, id);
+    kamiIndex = getListingKamiIndex(comps, id);
 
     uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
 
@@ -188,7 +191,7 @@ library LibKamiMarket {
 
   /// @notice Cancel a listing — restore kami state if still listed
   function cancelListing(IUintComp comps, uint256 id) internal {
-    uint32 kamiIndex = getKamiIndex(comps, id);
+    uint32 kamiIndex = getListingKamiIndex(comps, id);
     uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
 
     // only restore state if kami is still LISTED (may be stale if offer was accepted)
@@ -201,14 +204,26 @@ library LibKamiMarket {
 
   /// @notice Cancel all active listings for a kami index (used on transfer/bridge)
   /// @dev Only runs if kami is still in LISTED state — prevents double-cancel in fill flows
+  /// @dev Listing lookup is owner-agnostic so transferred listings can still be cancelled.
   function cancelListingsForKami(IWorld world, IUintComp comps, uint32 kamiIndex) internal {
     uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
     if (!LibKami.isState(comps, kamiID, "LISTED")) return;
 
-    IndexKamiComponent indexComp = IndexKamiComponent(getAddrByID(comps, IndexKamiCompID));
-    uint256[] memory orders = LibEntityType.queryWithValue(
-      comps, "KAMI_LISTING", IComponent(address(indexComp)), abi.encode(kamiIndex)
+    QueryFragment[] memory fragments = new QueryFragment[](2);
+    fragments[0] = QueryFragment(
+      QueryType.HasValue,
+      IComponent(getAddrByID(comps, IndexKamiListingCompID)),
+      abi.encode(kamiIndex)
     );
+    fragments[1] = QueryFragment(
+      QueryType.HasValue,
+      IComponent(getAddrByID(comps, EntityTypeCompID)),
+      abi.encode("KAMI_LISTING")
+    );
+
+    uint256[] memory orders = LibQuery.query(fragments);
+    if (orders.length == 0) revert("KamiMarket: listing index missing");
+
     for (uint256 i; i < orders.length; i++) {
       uint256 accID = getOwner(comps, orders[i]);
       cancelListing(comps, orders[i]);
@@ -253,6 +268,9 @@ library LibKamiMarket {
     // conditionally remove optional components
     IndexKamiComponent indexComp = IndexKamiComponent(getAddrByID(comps, IndexKamiCompID));
     if (indexComp.has(id)) indexComp.remove(id);
+
+    IndexKamiListingComponent listingIndexComp = IndexKamiListingComponent(getAddrByID(comps, IndexKamiListingCompID));
+    if (listingIndexComp.has(id)) listingIndexComp.remove(id);
 
     ValueComponent(getAddrByID(comps, ValueCompID)).remove(id);
 
@@ -347,6 +365,10 @@ library LibKamiMarket {
 
   function getKamiIndex(IUintComp comps, uint256 id) internal view returns (uint32) {
     return IndexKamiComponent(getAddrByID(comps, IndexKamiCompID)).get(id);
+  }
+
+  function getListingKamiIndex(IUintComp comps, uint256 id) internal view returns (uint32) {
+    return IndexKamiListingComponent(getAddrByID(comps, IndexKamiListingCompID)).get(id);
   }
 
   function getNumOrders(IUintComp comps, uint256 accID) internal view returns (uint256) {
