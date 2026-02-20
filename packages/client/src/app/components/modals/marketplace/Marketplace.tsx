@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
@@ -70,7 +71,7 @@ export const MarketplaceModal: UIComponent = {
             _getRegistryTraits(world, components, specificType),
           getKami: (entity: EntityIndex) => _getKami(world, components, entity, { live: 0 }),
           getKamiDetailed: (entity: EntityIndex) =>
-            _getKami(world, components, entity, { live: 0, traits: 0, stats: 0 }),
+            _getKami(world, components, entity, { live: 0, traits: 0, stats: 0, progress: 0 }),
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
         },
         network,
@@ -302,71 +303,83 @@ export const MarketplaceModal: UIComponent = {
           onCreateOrder={openCreateOrder}
           onCloseCreateOrder={closeCreateOrder}
         />
-        <Listings
-          isVisible={tab === 'listings'}
-          onOpenFilter={openFilter}
-          onBuyListings={buyListings}
-          onCloseFilter={closeFilter}
-          onCloseCreateOrder={closeCreateOrder}
-          createOrderOpen={showCreateOrder}
-          accountId={account.id}
-          filters={{ selected: selectedFilters, stats: statFilters }}
-          utils={{
-            queryKamiByIndex: utils.queryKamiByIndex,
-            getKami: utils.getKami,
-            getKamiDetailed: utils.getKamiDetailed,
-            isDifferentAccountId,
-            formatEthPrice,
-          }}
-        />
-        <Bids
-          isVisible={tab === 'bids'}
-          showCreateOrder={showCreateOrder}
-          setShowFilter={setShowFilter}
-          onCloseCreateOrder={closeCreateOrder}
-          onAcceptOffer={acceptOffer}
-          accountId={account.id}
-          utils={{
-            ...utils,
-            getExternalKamis: () => externalKamis,
-            isDifferentAccountId,
-            formatEthPrice,
-          }}
-        />
-        <MyOrders
-          isVisible={tab === 'myOrders'}
-          onCancelOrder={cancelOrder}
-          onOpenHistory={closeCreateOrder}
-          createOrderOpen={showCreateOrder}
-          utils={{
-            queryKamiByIndex: utils.queryKamiByIndex,
-            getKami: utils.getKami,
-            normalizeAccountId,
-            formatEthPrice,
-          }}
-        />
-        <CreateOrder
-          isVisible={showCreateOrder}
-          onClose={closeCreateOrder}
-          utils={{ ...utils, getExternalKamis: () => externalKamis }}
-          createSellOrder={createSellOrder}
-          createBuyOrder={createBuyOrder}
-          createBuyKamiOrder={createBuyKamiOrder}
-        />
-        <FilterBy
-          isVisible={showFilter}
-          onClose={closeFilter}
-          selected={selectedFilters}
-          statValues={statFilters}
-          onSelectedChange={setSelectedFilters}
-          onStatValuesChange={setStatFilters}
-          onClear={() => {
-            setSelectedFilters(DEFAULT_SELECTED_FILTERS());
-            setStatFilters(DEFAULT_STAT_FILTERS());
-          }}
-          utils={utils}
-        />
+        <Content>
+          <Listings
+            isVisible={tab === 'listings'}
+            onOpenFilter={openFilter}
+            onBuyListings={buyListings}
+            onCloseFilter={closeFilter}
+            onCloseCreateOrder={closeCreateOrder}
+            createOrderOpen={showCreateOrder}
+            accountId={account.id}
+            filters={{ selected: selectedFilters, stats: statFilters }}
+            utils={{
+              queryKamiByIndex: utils.queryKamiByIndex,
+              getKami: utils.getKami,
+              getKamiDetailed: utils.getKamiDetailed,
+              isDifferentAccountId,
+              formatEthPrice,
+            }}
+          />
+          <Bids
+            isVisible={tab === 'bids'}
+            showCreateOrder={showCreateOrder}
+            setShowFilter={setShowFilter}
+            onCloseCreateOrder={closeCreateOrder}
+            onAcceptOffer={acceptOffer}
+            accountId={account.id}
+            utils={{
+              ...utils,
+              getExternalKamis: () => externalKamis,
+              isDifferentAccountId,
+              formatEthPrice,
+            }}
+          />
+          <MyOrders
+            isVisible={tab === 'myOrders'}
+            onCancelOrder={cancelOrder}
+            onOpenHistory={closeCreateOrder}
+            createOrderOpen={showCreateOrder}
+            utils={{
+              queryKamiByIndex: utils.queryKamiByIndex,
+              getKami: utils.getKami,
+              normalizeAccountId,
+              formatEthPrice,
+            }}
+          />
+          <CreateOrder
+            isVisible={showCreateOrder}
+            onClose={closeCreateOrder}
+            utils={{ ...utils, getExternalKamis: () => externalKamis }}
+            createSellOrder={createSellOrder}
+            createBuyOrder={createBuyOrder}
+            createBuyKamiOrder={createBuyKamiOrder}
+          />
+          <FilterBy
+            isVisible={showFilter}
+            onClose={closeFilter}
+            selected={selectedFilters}
+            statValues={statFilters}
+            onSelectedChange={setSelectedFilters}
+            onStatValuesChange={setStatFilters}
+            onClear={() => {
+              setSelectedFilters(DEFAULT_SELECTED_FILTERS());
+              setStatFilters(DEFAULT_STAT_FILTERS());
+            }}
+            utils={utils}
+          />
+        </Content>
       </ModalWrapper>
     );
   },
 };
+
+const Content = styled.div`
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding: 0 0.6vw;
+`;

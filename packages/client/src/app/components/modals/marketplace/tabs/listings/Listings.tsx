@@ -7,12 +7,14 @@ import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { ClockIcon } from 'assets/images/icons/menu';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { getKamidenClient, KamiMarketListing } from 'clients/kamiden';
 import { TokenIcons } from 'assets/images/tokens';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { Cart } from './Cart';
+import { ListingCard } from './ListingCard';
 
 const KamidenClient = getKamidenClient();
 
@@ -23,6 +25,13 @@ const SortIcons: Record<SortMethod, string> = {
   'Latest': ClockIcon,
   'Price Low': ArrowIcons.up,
   'Price High': ArrowIcons.down,
+};
+
+const VIEW_CYCLE = ['grid', 'list'] as const;
+type ViewMode = (typeof VIEW_CYCLE)[number];
+const ViewIcons: Record<ViewMode, string> = {
+  grid: TriggerIcons.eyeOpen,
+  list: TriggerIcons.eyeHalf,
 };
 
 const formatExpiry = (expiryStr: string) => {
@@ -75,6 +84,7 @@ export const Listings = ({
 
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
   const [sortBy, setSortBy] = useState<SortMethod>('Latest');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showCart, setShowCart] = useState(false);
   const [cart, setCart] = useState<KamiMarketListing[]>([]);
 
@@ -120,10 +130,11 @@ export const Listings = ({
     () =>
       listings.map((listing) => {
         const entity = utils.queryKamiByIndex(listing.KamiIndex);
-        const kami = entity !== undefined ? utils.getKami(entity) : undefined;
+        const getter = viewMode === 'grid' ? utils.getKamiDetailed : utils.getKami;
+        const kami = entity !== undefined ? getter(entity) : undefined;
         return { listing, kami, entity };
       }),
-    [listings, utils]
+    [listings, utils, viewMode]
   );
 
   const hasActiveFilters = useMemo(() => {
@@ -200,6 +211,11 @@ export const Listings = ({
     setSortBy(SORT_CYCLE[(idx + 1) % SORT_CYCLE.length]);
   };
 
+  const cycleView = () => {
+    const idx = VIEW_CYCLE.indexOf(viewMode);
+    setViewMode(VIEW_CYCLE[(idx + 1) % VIEW_CYCLE.length]);
+  };
+
   /////////////////
   // ACTIONS
 
@@ -267,6 +283,13 @@ export const Listings = ({
             </IndicatorWrapper>
           </TextTooltip>
           <ButtonGroup>
+            <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}.`]}>
+              <IconButton
+                img={ViewIcons[viewMode]}
+                onClick={cycleView}
+                radius={0.6}
+              />
+            </TextTooltip>
             <TextTooltip text={[`Sort: ${sortBy}.`]}>
               <IconButton
                 img={SortIcons[sortBy]}
@@ -288,66 +311,87 @@ export const Listings = ({
             </TextTooltip>
           </ButtonGroup>
         </ButtonRow>
-        <HeaderRow>
-          <Column flex={2}>
-            <ColumnHeader align='left'>Kami</ColumnHeader>
-          </Column>
-          <Column>
-            <ColumnHeader>
-              <EthIcon src={TokenIcons.eth} alt='ETH' />
-            </ColumnHeader>
-          </Column>
-          <Column>
-            <ColumnHeader>Expiry</ColumnHeader>
-          </Column>
-          <Column>
-            <ColumnHeader>Actions</ColumnHeader>
-          </Column>
-        </HeaderRow>
-        <ListingsBody>
-          {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
-          {sorted.map(({ listing, kami }) => (
-            <Row key={listing.OrderID}>
-              <Column flex={2}>
-                <KamiCell>
-                  {kami && (
-                    <KamiThumbnail
-                      src={kami.image}
-                      alt={kami.name}
-                      onClick={() => openKamiModal(listing.KamiIndex)}
+        {viewMode === 'list' && (
+          <HeaderRow>
+            <Column flex={2}>
+              <ColumnHeader align='left'>Kami</ColumnHeader>
+            </Column>
+            <Column>
+              <ColumnHeader>
+                <EthIcon src={TokenIcons.eth} alt='ETH' />
+              </ColumnHeader>
+            </Column>
+            <Column>
+              <ColumnHeader>Expiry</ColumnHeader>
+            </Column>
+            <Column>
+              <ColumnHeader>Actions</ColumnHeader>
+            </Column>
+          </HeaderRow>
+        )}
+        {viewMode === 'list' ? (
+          <ListingsBody>
+            {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
+            {sorted.map(({ listing, kami }) => (
+              <Row key={listing.OrderID}>
+                <Column flex={2}>
+                  <KamiCell>
+                    {kami && (
+                      <KamiThumbnail
+                        src={kami.image}
+                        alt={kami.name}
+                        onClick={() => openKamiModal(listing.KamiIndex)}
+                      />
+                    )}
+                    <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
+                  </KamiCell>
+                </Column>
+                <Column>
+                  <CellText>{formatPrice(listing.Price)}</CellText>
+                </Column>
+                <Column>
+                  <CellText>{formatExpiry(listing.Expiry)}</CellText>
+                </Column>
+                <Column>
+                  {isListingExpired(listing.Expiry) ? (
+                    <TextTooltip text={['Listing expired.']}>
+                      <IconButton text='Add' onClick={() => addToCart(listing)} disabled />
+                    </TextTooltip>
+                  ) : isInCart(listing.OrderID) ? (
+                    <IconButton
+                      text='Remove'
+                      onClick={() => removeFromCart(listing.OrderID)}
+                      color='#FDECEC'
+                    />
+                  ) : (
+                    <IconButton
+                      text='Add'
+                      onClick={() => addToCart(listing)}
+                      color='#E8F5E9'
                     />
                   )}
-                  <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
-                </KamiCell>
-              </Column>
-              <Column>
-                <CellText>{formatPrice(listing.Price)}</CellText>
-              </Column>
-              <Column>
-                <CellText>{formatExpiry(listing.Expiry)}</CellText>
-              </Column>
-              <Column>
-                {isListingExpired(listing.Expiry) ? (
-                  <TextTooltip text={['Listing expired.']}>
-                    <IconButton text='Add' onClick={() => addToCart(listing)} disabled />
-                  </TextTooltip>
-                ) : isInCart(listing.OrderID) ? (
-                  <IconButton
-                    text='Remove'
-                    onClick={() => removeFromCart(listing.OrderID)}
-                    color='#FDECEC'
-                  />
-                ) : (
-                  <IconButton
-                    text='Add'
-                    onClick={() => addToCart(listing)}
-                    color='#E8F5E9'
-                  />
-                )}
-              </Column>
-            </Row>
-          ))}
-        </ListingsBody>
+                </Column>
+              </Row>
+            ))}
+          </ListingsBody>
+        ) : (
+          <ListingsGrid>
+            {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
+            {sorted.map(({ listing, kami }) => (
+              <ListingCard
+                key={listing.OrderID}
+                listing={listing}
+                kami={kami}
+                isInCart={isInCart(listing.OrderID)}
+                isExpired={isListingExpired(listing.Expiry)}
+                formatPrice={formatPrice}
+                onAddToCart={() => addToCart(listing)}
+                onRemoveFromCart={() => removeFromCart(listing.OrderID)}
+                onOpenKami={() => openKamiModal(listing.KamiIndex)}
+              />
+            ))}
+          </ListingsGrid>
+        )}
       </Tab>
       <Cart
         isVisible={isVisible && showCart && !createOrderOpen}
@@ -380,6 +424,7 @@ const ButtonRow = styled.div`
   gap: 0.4vw;
   padding: 0.4vw;
   width: 100%;
+  border-bottom: solid #ccc 0.1vw;
 `;
 
 const ButtonGroup = styled.div`
@@ -419,6 +464,15 @@ const HeaderRow = styled.div`
 const ListingsBody = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  flex: 1;
+`;
+
+const ListingsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11vw, 1fr));
+  gap: 0.6vw;
+  padding: 0.4vw;
   overflow-y: auto;
   flex: 1;
 `;

@@ -388,6 +388,7 @@ const ButtonWrapper = styled.div`
   gap: 0.4vw;
   padding: 0.4vw;
   width: 100%;
+  border-bottom: solid #ccc 0.1vw;
 `;
 
 const OrdersBody = styled.div`

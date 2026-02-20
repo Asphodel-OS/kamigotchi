@@ -175,10 +175,6 @@ export const allComponents: UIComponentWithGrid[] = [
     gridConfig: { colStart: 25, colEnd: 75, rowStart: 8, rowEnd: 75 },
   },
   {
-    uiComponent: KamiModal,
-    gridConfig: { colStart: 11, colEnd: 67, rowStart: 8, rowEnd: 99 },
-  },
-  {
     uiComponent: LeaderboardModal,
     gridConfig: { colStart: 32, colEnd: 70, rowStart: 20, rowEnd: 78 },
   },
@@ -205,6 +201,12 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: MarketplaceModal,
     gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
+  },
+
+  // detail overlay — renders last so it paints on top of all other modals
+  {
+    uiComponent: KamiModal,
+    gridConfig: { colStart: 11, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
 
   // dev-only

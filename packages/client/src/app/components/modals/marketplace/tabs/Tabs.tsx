@@ -30,12 +30,14 @@ export const Tabs = ({
           onClick={() => handleTabClick('listings')}
           disabled={tab === 'listings'}
           color='#FFF0E0'
+          scale={3}
         />
         <IconButton
           text='Bids'
           onClick={() => handleTabClick('bids')}
           disabled={tab === 'bids'}
           color='#E0EEFF'
+          scale={3}
         />
       </TabButtons>
       <RightButtons>
@@ -43,9 +45,10 @@ export const Tabs = ({
           text='My Orders'
           onClick={() => handleTabClick('myOrders')}
           disabled={tab === 'myOrders'}
+          scale={3}
         />
         <TextTooltip text={['Create Order.']}>
-          <IconButton text='+' onClick={onCreateOrder} />
+          <IconButton text='+' onClick={onCreateOrder} scale={3} />
         </TextTooltip>
       </RightButtons>
     </Container>
@@ -53,12 +56,18 @@ export const Tabs = ({
 };
 
 const Container = styled.div`
-  margin-bottom: 0.6vw;
   width: 100%;
   background-color: white;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
+  align-items: center;
+  padding: 0.4vw 0.6vw;
+  border-bottom: solid #ccc 0.1vw;
+
+  & button {
+    font-weight: 600;
+  }
 `;
 
 const TabButtons = styled.div`
