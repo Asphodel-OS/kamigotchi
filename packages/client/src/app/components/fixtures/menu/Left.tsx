@@ -50,4 +50,6 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 0.6vh;
+  position: relative;
+  z-index: 10;
 `;

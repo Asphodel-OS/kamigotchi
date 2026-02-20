@@ -102,6 +102,69 @@ export const toggleModals = (isOn: boolean): Modals => ({
 });
 
 ////////////////
+// MODAL ZONES — screen regions each modal occupies.
+// When a modal opens, all other modals sharing a zone are auto-closed.
+
+type ScreenZone = 'left' | 'center' | 'right';
+
+const MODAL_ZONES: Partial<Record<keyof Modals, ScreenZone[]>> = {
+  // Left zone (col 2-33)
+  account: ['left'],
+  map: ['left'],
+  party: ['left'],
+
+  // Center zone (col 33-67)
+  crafting: ['center'],
+  node: ['center'],
+  emaBoard: ['center'],
+  tokenPortal: ['center'],
+  lootBox: ['center'],
+  templeOfTheWheel: ['center'],
+  leaderboard: ['center'],
+  operatorFund: ['center'],
+  reveal: ['center'],
+
+  // Wide: left + center (col 2-67)
+  trading: ['left', 'center'],
+  merchant: ['left', 'center'],
+  marketplace: ['left', 'center'],
+
+  // Nearly full-screen
+  gacha: ['left', 'center', 'right'],
+  goal: ['left', 'center', 'right'],
+
+  // Right zone (col 67-100)
+  help: ['right'],
+  chat: ['right'],
+  inventory: ['right'],
+  quests: ['right'],
+  settings: ['right'],
+  questDialogue: ['right'],
+};
+
+const resolveConflicts = (current: Modals, incoming: Partial<Modals>): Modals => {
+  const merged = { ...current, ...incoming };
+
+  for (const [key, value] of Object.entries(incoming)) {
+    const modal = key as keyof Modals;
+    // Only resolve when a modal is newly opened (was closed, now open)
+    if (value !== true || current[modal]) continue;
+
+    const zones = MODAL_ZONES[modal];
+    if (!zones) continue;
+
+    for (const [otherKey, otherZones] of Object.entries(MODAL_ZONES)) {
+      if (otherKey === key) continue;
+      if (otherZones!.some((z) => zones.includes(z))) {
+        merged[otherKey as keyof Modals] = false;
+      }
+    }
+  }
+
+  return merged;
+};
+
+////////////////
 // VALIDATORS
 
 export interface Validators {
@@ -166,7 +229,7 @@ export const useVisibility = create<State & Actions>((set) => {
     setFixtures: (data: Partial<Fixtures>) =>
       set((state: State) => ({ ...state, fixtures: { ...state.fixtures, ...data } })),
     setModals: (data: Partial<Modals>) =>
-      set((state: State) => ({ ...state, modals: { ...state.modals, ...data } })),
+      set((state: State) => ({ ...state, modals: resolveConflicts(state.modals, data) })),
     setValidators: (data: Partial<Validators>) =>
       set((state: State) => ({ ...state, validators: { ...state.validators, ...data } })),
     toggleFixtures: (isOn: boolean) =>

@@ -293,6 +293,8 @@ export const MarketplaceModal: UIComponent = {
         id='marketplace'
         header={<ModalHeader title='KamiSwap!' icon={TradeIcon} />}
         canExit
+        noPadding
+        overlay
       >
         <Tabs
           tab={tab}

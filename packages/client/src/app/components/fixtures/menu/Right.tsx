@@ -39,5 +39,5 @@ const Wrapper = styled.div`
   padding-right: 0.32vw;
   gap: 0.6vh;
   position: relative;
-  z-index: 3;
+  z-index: 10;
 `;

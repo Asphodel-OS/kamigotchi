@@ -204,7 +204,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: MarketplaceModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+    gridConfig: { colStart: 2, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
 
   // dev-only
