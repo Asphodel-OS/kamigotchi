@@ -10,7 +10,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork } from 'app/stores';
-import VendIcon from 'assets/images/rooms/18_cave-crossroads/vend.png';
+import { TradeIcon } from 'assets/images/icons/menu';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { erc721ABI } from 'network/chain/ERC721';
@@ -241,6 +241,10 @@ export const MarketplaceModal: UIComponent = {
     const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
 
     const openCreateOrder = () => {
+      if (showCreateOrder) {
+        setShowCreateOrder(false);
+        return;
+      }
       setShowFilter(false);
       setShowCreateOrder(true);
     };
@@ -248,6 +252,10 @@ export const MarketplaceModal: UIComponent = {
     const closeCreateOrder = () => setShowCreateOrder(false);
 
     const openFilter = () => {
+      if (showFilter) {
+        setShowFilter(false);
+        return;
+      }
       setShowCreateOrder(false);
       setShowFilter(true);
     };
@@ -283,7 +291,7 @@ export const MarketplaceModal: UIComponent = {
     return (
       <ModalWrapper
         id='marketplace'
-        header={<ModalHeader title='Marketplace' icon={VendIcon} />}
+        header={<ModalHeader title='KamiSwap!' icon={TradeIcon} />}
         canExit
       >
         <Tabs

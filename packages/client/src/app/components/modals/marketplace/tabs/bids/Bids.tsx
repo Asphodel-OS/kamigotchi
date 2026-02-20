@@ -1,11 +1,21 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import FilterListIcon from '@mui/icons-material/FilterList';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
+import { KamiIcon } from 'assets/images/icons/menu';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { Kami } from 'network/shapes/Kami';
+
+const FILTER_CYCLE = ['Show all', 'Bids on my kami'] as const;
+type BidFilter = (typeof FILTER_CYCLE)[number];
+
+const FilterIcons: Record<BidFilter, string> = {
+  'Show all': TriggerIcons.eyeOpen,
+  'Bids on my kami': KamiIcon,
+};
 
 const KamidenClient = getKamidenClient();
 
@@ -38,8 +48,7 @@ export const Bids = ({
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
   const [selectedBid, setSelectedBid] = useState<KamiMarketBid | null>(null);
-  const [filterBy, setFilterBy] = useState('Show all');
-  const [showFilterSection, setShowFilterSection] = useState(false);
+  const [filterBy, setFilterBy] = useState<BidFilter>('Show all');
 
   /////////////////
   // SUBSCRIPTIONS
@@ -73,7 +82,6 @@ export const Bids = ({
   useEffect(() => {
     if (!showCreateOrder) return;
     setShowSelectKami(false);
-    setShowFilterSection(false);
   }, [showCreateOrder]);
 
   /////////////////
@@ -86,7 +94,6 @@ export const Bids = ({
     [accountKamis]
   );
   const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
-  const showFilterBottom = isVisible && !showCreateOrder && showFilterSection;
 
   const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
@@ -152,20 +159,20 @@ export const Bids = ({
   };
 
   const handleOpenSell = () => {
+    if (showSelectKami) {
+      setShowSelectKami(false);
+      return;
+    }
     onCloseCreateOrder();
-    setShowFilterSection(false);
     setShowSelectKami(true);
   };
 
   const handleCloseSelect = () => setShowSelectKami(false);
 
-  const handleOpenFilter = () => {
-    onCloseCreateOrder();
-    setShowSelectKami(false);
-    setShowFilterSection(true);
+  const cycleFilter = () => {
+    const idx = FILTER_CYCLE.indexOf(filterBy);
+    setFilterBy(FILTER_CYCLE[(idx + 1) % FILTER_CYCLE.length]);
   };
-
-  const handleCloseFilter = () => setShowFilterSection(false);
 
   const handleSell = async () => {
     if (!selectedBid || selectedKamis.size === 0) return;
@@ -205,13 +212,10 @@ export const Bids = ({
     <>
       <Tab isVisible={isVisible}>
         <ButtonWrapper>
-          <TextTooltip text={['Filters.', `${filterBy}.`]}>
-            <IndicatorWrapper>
-              <IconButton img={FilterListIcon} onClick={handleOpenFilter} />
-              {filterBy !== 'Show all' && <IndicatorBadge>1</IndicatorBadge>}
-            </IndicatorWrapper>
+          <IconButton img={ShoppingCartIcon} text='Sell to Bids' onClick={handleOpenSell} />
+          <TextTooltip text={[`Filter: ${filterBy}.`]}>
+            <IconButton img={FilterIcons[filterBy]} onClick={cycleFilter} radius={0.6} />
           </TextTooltip>
-          <IconButton text='Sell' onClick={handleOpenSell} />
         </ButtonWrapper>
         <HeaderRow>
           <Column>
@@ -299,34 +303,6 @@ export const Bids = ({
           <IconButton text='Clear' onClick={handleClear} />
         </Actions>
       </BottomSection>
-      <FilterSection isVisible={showFilterBottom}>
-        <Header>
-          <HeaderTitle>Filter Bids</HeaderTitle>
-          <IconButton text='X' onClick={handleCloseFilter} scale={1.5} />
-        </Header>
-        <FilterBody>
-          <FilterOption>
-            <input
-              type='radio'
-              name='bids-filter'
-              value='Show all'
-              checked={filterBy === 'Show all'}
-              onChange={() => setFilterBy('Show all')}
-            />
-            Show all
-          </FilterOption>
-          <FilterOption>
-            <input
-              type='radio'
-              name='bids-filter'
-              value='Bids on my kami'
-              checked={filterBy === 'Bids on my kami'}
-              onChange={() => setFilterBy('Bids on my kami')}
-            />
-            Bids on my kami
-          </FilterOption>
-        </FilterBody>
-      </FilterSection>
     </>
   );
 };
@@ -342,31 +318,11 @@ const Tab = styled.div<{ isVisible: boolean }>`
 
 const ButtonWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.4vw;
-  width: fit-content;
   padding: 0.4vw;
-`;
-
-const IndicatorWrapper = styled.div`
-  position: relative;
-  display: inline-flex;
-`;
-
-const IndicatorBadge = styled.span`
-  position: absolute;
-  top: -0.3vw;
-  right: -0.3vw;
-  min-width: 1vw;
-  height: 1vw;
-  padding: 0 0.2vw;
-  border-radius: 1vw;
-  background: #d04a2f;
-  color: white;
-  font-size: 0.7vw;
-  line-height: 1vw;
-  text-align: center;
-  border: 0.08vw solid white;
-  z-index: 2;
+  width: 100%;
 `;
 
 const HeaderRow = styled.div`
@@ -429,15 +385,6 @@ const BottomSection = styled.div<{ isVisible: boolean }>`
   width: 100%;
 `;
 
-const FilterSection = styled.div<{ isVisible: boolean }>`
-  ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
-  flex-direction: column;
-  flex: 0 0 50%;
-  overflow: auto;
-  border-top: 0.15vw solid black;
-  width: 100%;
-`;
-
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -459,26 +406,6 @@ const SelectRow = styled.div`
   display: flex;
   align-items: center;
   padding: 0.4vw 0.6vw;
-`;
-
-const FilterBody = styled.div`
-  padding: 0.6vw;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6vw;
-`;
-
-const FilterOption = styled.label`
-  font-size: 1vw;
-  display: flex;
-  align-items: center;
-  gap: 0.3vw;
-  cursor: pointer;
-
-  input[type='radio'] {
-    accent-color: rgb(203, 186, 61);
-    cursor: pointer;
-  }
 `;
 
 const KamiGrid = styled.div`

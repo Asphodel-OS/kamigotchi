@@ -3,9 +3,10 @@ import styled from 'styled-components';
 
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import SwapVertIcon from '@mui/icons-material/SwapVert';
-import { EmptyText, IconButton, IconListButton, TextTooltip } from 'app/components/library';
+import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
+import { ClockIcon } from 'assets/images/icons/menu';
 import { getKamidenClient, KamiMarketListing } from 'clients/kamiden';
 import { TokenIcons } from 'assets/images/tokens';
 import { EntityIndex } from 'engine/recs';
@@ -14,7 +15,15 @@ import { playClick } from 'utils/sounds';
 import { Cart } from './Cart';
 
 const KamidenClient = getKamidenClient();
-const SwapVertIconImage = SwapVertIcon as unknown as string;
+
+const SORT_CYCLE = ['Latest', 'Price Low', 'Price High'] as const;
+type SortMethod = (typeof SORT_CYCLE)[number];
+
+const SortIcons: Record<SortMethod, string> = {
+  'Latest': ClockIcon,
+  'Price Low': ArrowIcons.up,
+  'Price High': ArrowIcons.down,
+};
 
 const formatExpiry = (expiryStr: string) => {
   const expiry = Number(expiryStr);
@@ -65,7 +74,7 @@ export const Listings = ({
   const setModals = useVisibility((s) => s.setModals);
 
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
-  const [sortBy, setSortBy] = useState('Latest');
+  const [sortBy, setSortBy] = useState<SortMethod>('Latest');
   const [showCart, setShowCart] = useState(false);
   const [cart, setCart] = useState<KamiMarketListing[]>([]);
 
@@ -186,11 +195,10 @@ export const Listings = ({
     return copy.sort((a, b) => b.listing.Timestamp - a.listing.Timestamp);
   }, [filteredListings, sortBy]);
 
-  const sortOptions = [
-    { text: 'Latest', onClick: () => setSortBy('Latest') },
-    { text: 'Price Low', onClick: () => setSortBy('Price Low') },
-    { text: 'Price High', onClick: () => setSortBy('Price High') },
-  ];
+  const cycleSort = () => {
+    const idx = SORT_CYCLE.indexOf(sortBy);
+    setSortBy(SORT_CYCLE[(idx + 1) % SORT_CYCLE.length]);
+  };
 
   /////////////////
   // ACTIONS
@@ -243,30 +251,12 @@ export const Listings = ({
   return (
     <>
       <Tab isVisible={isVisible}>
-        <ButtonWrapper>
-          <IconListButton
-            img={SwapVertIconImage}
-            text={sortBy}
-            options={sortOptions}
-            radius={0.6}
-            tooltip={{ text: ['Sorting.'] }}
-          />
-          <TextTooltip text={['Filters.']}>
-            <IndicatorWrapper>
-              <IconButton
-                img={FilterListIcon}
-                onClick={() => {
-                  setShowCart(false);
-                  onOpenFilter();
-                }}
-              />
-              {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
-            </IndicatorWrapper>
-          </TextTooltip>
+        <ButtonRow>
           <TextTooltip text={['Cart.']}>
             <IndicatorWrapper>
               <IconButton
                 img={ShoppingCartIcon}
+                text='Cart'
                 onClick={() => {
                   onCloseCreateOrder();
                   onCloseFilter();
@@ -276,7 +266,28 @@ export const Listings = ({
               {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
             </IndicatorWrapper>
           </TextTooltip>
-        </ButtonWrapper>
+          <ButtonGroup>
+            <TextTooltip text={[`Sort: ${sortBy}.`]}>
+              <IconButton
+                img={SortIcons[sortBy]}
+                onClick={cycleSort}
+                radius={0.6}
+              />
+            </TextTooltip>
+            <TextTooltip text={['Filters.']}>
+              <IndicatorWrapper>
+                <IconButton
+                  img={FilterListIcon}
+                  onClick={() => {
+                    setShowCart(false);
+                    onOpenFilter();
+                  }}
+                />
+                {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
+              </IndicatorWrapper>
+            </TextTooltip>
+          </ButtonGroup>
+        </ButtonRow>
         <HeaderRow>
           <Column flex={2}>
             <ColumnHeader align='left'>Kami</ColumnHeader>
@@ -320,11 +331,17 @@ export const Listings = ({
                   <TextTooltip text={['Listing expired.']}>
                     <IconButton text='Add' onClick={() => addToCart(listing)} disabled />
                   </TextTooltip>
+                ) : isInCart(listing.OrderID) ? (
+                  <IconButton
+                    text='Remove'
+                    onClick={() => removeFromCart(listing.OrderID)}
+                    color='#FDECEC'
+                  />
                 ) : (
                   <IconButton
-                    text={isInCart(listing.OrderID) ? 'Added' : 'Add'}
+                    text='Add'
                     onClick={() => addToCart(listing)}
-                    disabled={isInCart(listing.OrderID)}
+                    color='#E8F5E9'
                   />
                 )}
               </Column>
@@ -356,11 +373,18 @@ const Tab = styled.div<{ isVisible: boolean }>`
   min-height: 10vw;
 `;
 
-const ButtonWrapper = styled.div`
+const ButtonRow = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.4vw;
   padding: 0.4vw;
-  width: fit-content;
+  width: 100%;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.4vw;
 `;
 
 const IndicatorWrapper = styled.div`

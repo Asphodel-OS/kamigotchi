@@ -1,9 +1,10 @@
-import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { EmptyText, IconButton, IconListButton, TextTooltip } from 'app/components/library';
+import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useAccount, useSelected, useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
+import { ClockIcon, TradeIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBidType, KamiMarketOrder } from 'clients/kamiden';
 import { EntityIndex } from 'engine/recs';
@@ -12,7 +13,14 @@ import { playClick } from 'utils/sounds';
 import { HistorySection } from './History';
 
 const KamidenClient = getKamidenClient();
-const SwapVertIconImage = SwapVertIcon as unknown as string;
+
+const SORT_CYCLE = ['Price', 'Type'] as const;
+type SortMethod = (typeof SORT_CYCLE)[number];
+
+const SortIcons: Record<SortMethod, string> = {
+  'Price': ArrowIcons.up,
+  'Type': TradeIcon,
+};
 
 export type MyOrder =
   | {
@@ -89,7 +97,7 @@ export const MyOrders = ({
   /////////////////
   // INSTANTIATIONS
 
-  const [sortBy, setSortBy] = useState<string>('');
+  const [sortBy, setSortBy] = useState<SortMethod>('Price');
   const [showHistory, setShowHistory] = useState(false);
   const [orders, setOrders] = useState<KamiMarketOrder[]>([]);
 
@@ -101,10 +109,10 @@ export const MyOrders = ({
 
   const accountId = useMemo(() => utils.normalizeAccountId(account.id), [account.id]);
 
-  const sortOptions = [
-    { text: 'Price', onClick: () => setSortBy('Price') },
-    { text: 'Type', onClick: () => setSortBy('Type') },
-  ];
+  const cycleSort = () => {
+    const idx = SORT_CYCLE.indexOf(sortBy);
+    setSortBy(SORT_CYCLE[(idx + 1) % SORT_CYCLE.length]);
+  };
 
   /////////////////
   // SUBSCRIPTIONS
@@ -194,20 +202,25 @@ export const MyOrders = ({
   return (
     <Tab isVisible={isVisible}>
       <ButtonWrapper>
-        <IconListButton
-          img={SwapVertIconImage}
-          text={sortBy}
-          options={sortOptions}
-          radius={0.6}
-          tooltip={{ text: ['Sorting.'] }}
-        />
         <IconButton
-          text='History'
+          img={ClockIcon}
+          text='My Trade History'
           onClick={() => {
+            if (showHistory) {
+              setShowHistory(false);
+              return;
+            }
             onOpenHistory();
             setShowHistory(true);
           }}
         />
+        <TextTooltip text={[`Sort: ${sortBy}.`]}>
+          <IconButton
+            img={SortIcons[sortBy]}
+            onClick={cycleSort}
+            radius={0.6}
+          />
+        </TextTooltip>
       </ButtonWrapper>
       <OrdersBody>
         <Row>
@@ -272,33 +285,18 @@ const OrderRow = ({
   return (
     <Row>
       <Column>
-        <CellText>{order.type}</CellText>
+        <TypeText type={order.type}>{order.type}</TypeText>
       </Column>
       <Column>
-        {order.type === 'Listing' ? (
-          <OrderKami>
-            {kami && (
-              <OrderKamiImage
-                src={kami.image}
-                alt={kami.name ?? `Kami #${order.kamiIndex}`}
-                onClick={() => openKamiModal(order.kamiIndex)}
-              />
-            )}
-          </OrderKami>
-        ) : getBidProgress(order.total, order.quantity) ? (
-          <TextTooltip
-            text={[
-              `${order.total - order.quantity}/${order.total} kami in this bid have already been purchased.`,
-            ]}
-          >
-            <CellText>
-              {order.bidType === 'Kami' ? `Kami #${order.kamiIndex} ` : ''}
-              {getBidProgress(order.total, order.quantity)}
-            </CellText>
-          </TextTooltip>
-        ) : (
-          <CellText>{order.bidType === 'Kami' ? `Kami #${order.kamiIndex}` : ''}</CellText>
-        )}
+        <OrderKami>
+          {kami && (
+            <OrderKamiImage
+              src={kami.image}
+              alt={kami.name ?? `Kami #${order.kamiIndex}`}
+              onClick={() => openKamiModal(order.kamiIndex)}
+            />
+          )}
+        </OrderKami>
       </Column>
       <Column>
         <CellText>{formatPrice(order.price)}</CellText>
@@ -352,6 +350,17 @@ const CellText = styled.span`
   padding: 0.4vw 0.6vw;
 `;
 
+const TypeText = styled.span<{ type: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95vw;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 0.4vw 0.6vw;
+  color: ${({ type }) => (type === 'Listing' ? '#C45A00' : '#1A4DB0')};
+`;
+
 const OrderKami = styled.div`
   display: flex;
   align-items: center;
@@ -374,9 +383,11 @@ const EthIcon = styled.img`
 
 const ButtonWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.4vw;
   padding: 0.4vw;
-  width: fit-content;
+  width: 100%;
 `;
 
 const OrdersBody = styled.div`
