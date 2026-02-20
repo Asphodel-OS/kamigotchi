@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ResetIcon } from 'assets/images/icons/menu';
+import { OperatorIcon, ResetIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
 import { AffinityColors, AffinityIcons } from 'constants/affinities';
@@ -17,6 +17,8 @@ interface ListingCardProps {
   onAddToCart: () => void;
   onRemoveFromCart: () => void;
   onOpenKami: () => void;
+  getAccountByID: (id: string) => { name: string; index: number };
+  allFlipped: boolean;
 }
 
 const STAT_KEYS = ['health', 'power', 'violence', 'harmony', 'slots'] as const;
@@ -31,12 +33,19 @@ export const ListingCard = ({
   onAddToCart,
   onRemoveFromCart,
   onOpenKami,
+  getAccountByID,
+  allFlipped,
 }: ListingCardProps) => {
   const [flipped, setFlipped] = useState(false);
+
+  useEffect(() => {
+    setFlipped(allFlipped);
+  }, [allFlipped]);
 
   const stats = kami?.stats;
   const traits = kami?.traits;
   const level = kami?.progress?.level;
+  const seller = getAccountByID(listing.SellerAccountID);
   const bodyAffinity = traits?.body?.affinity?.toLowerCase() as
     | keyof typeof AffinityColors
     | undefined;
@@ -122,10 +131,10 @@ export const ListingCard = ({
           </BackContent>
 
           <BackBottomBar>
-            <PriceChip>
-              <EthIcon src={TokenIcons.eth} />
-              <BackPriceText>{formatPrice(listing.Price)}</BackPriceText>
-            </PriceChip>
+            <SellerChip>
+              <SellerIcon src={OperatorIcon} />
+              <SellerName>{seller.name || 'Unknown'}</SellerName>
+            </SellerChip>
             <FlipBtn onClick={() => setFlipped(false)}>
               <FlipIconImgDark src={ResetIcon} />
             </FlipBtn>
@@ -168,6 +177,7 @@ const RightColumn = styled.div`
   position: absolute;
   top: 0;
   right: 0;
+  bottom: 65%;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -199,25 +209,27 @@ const CartBadge = styled.button<{ $color: string }>`
 `;
 
 const LevelCard = styled.div`
-  background: #E8D5F5;
+  background: #1B6B5A;
   width: 3.6vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.25vw 0 0.35vw;
-  border-radius: 0 0 0 0.35vw;
+  justify-content: center;
+  flex: 1;
+  border-radius: 0.35vw 0 0 0.35vw;
 `;
 
 const LevelLabel = styled.span`
-  font-size: 0.5vw;
-  color: #5a3d6e;
+  font-size: 0.55vw;
+  color: rgba(255, 255, 255, 0.7);
   line-height: 1;
+  margin-bottom: 0.15vw;
 `;
 
 const LevelValue = styled.span`
-  font-size: 1vw;
+  font-size: 1.1vw;
   font-weight: 700;
-  color: #3a1f50;
+  color: #fff;
   line-height: 1.15;
 `;
 
@@ -364,10 +376,27 @@ const AffinityIconImg = styled.img`
   height: 65%;
 `;
 
-const BackPriceText = styled.span`
-  font-size: 0.8vw;
-  font-weight: 600;
-  color: #333;
+const SellerChip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25vw;
+  min-width: 0;
+`;
+
+const SellerIcon = styled.img`
+  width: 1.1vw;
+  height: 1.1vw;
+  flex-shrink: 0;
+`;
+
+const SellerName = styled.span`
+  font-size: 0.65vw;
+  font-weight: 500;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 7vw;
 `;
 
 const BackBottomBar = styled.div`

@@ -314,6 +314,8 @@ const Tab = styled.div<{ isVisible: boolean }>`
   overflow: auto;
   width: 100%;
   min-height: 10vw;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const ButtonWrapper = styled.div`
@@ -384,6 +386,8 @@ const BottomSection = styled.div<{ isVisible: boolean }>`
   overflow: auto;
   border-top: 0.15vw solid black;
   width: 100%;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const Header = styled.div`

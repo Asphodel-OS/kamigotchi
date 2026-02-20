@@ -6,7 +6,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
-import { ClockIcon } from 'assets/images/icons/menu';
+import { ClockIcon, ResetIcon } from 'assets/images/icons/menu';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { getKamidenClient, KamiMarketListing } from 'clients/kamiden';
 import { TokenIcons } from 'assets/images/tokens';
@@ -70,6 +70,7 @@ export const Listings = ({
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
     getKamiDetailed: (entity: EntityIndex) => Kami;
+    getAccountByID: (id: string) => { name: string; index: number };
     isDifferentAccountId: (lhs: string, rhs: string) => boolean;
     formatEthPrice: (weiString: string, decimals: number) => string;
   };
@@ -87,6 +88,7 @@ export const Listings = ({
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showCart, setShowCart] = useState(false);
   const [cart, setCart] = useState<KamiMarketListing[]>([]);
+  const [allFlipped, setAllFlipped] = useState(false);
 
   /////////////////
   // SUBSCRIPTIONS
@@ -99,8 +101,11 @@ export const Listings = ({
       const res = await KamidenClient.getKamiMarketListings({});
       if (!isActive) return;
       const all = res.Listings ?? [];
-      const filtered = all.filter((listing) =>
-        utils.isDifferentAccountId(listing.SellerAccountID, accountId)
+      const now = Math.floor(Date.now() / 1000);
+      const filtered = all.filter(
+        (listing) =>
+          utils.isDifferentAccountId(listing.SellerAccountID, accountId) &&
+          (!Number(listing.Expiry) || Number(listing.Expiry) > now)
       );
       setListings(filtered);
     };
@@ -268,20 +273,29 @@ export const Listings = ({
     <>
       <Tab isVisible={isVisible}>
         <ButtonRow>
-          <TextTooltip text={['Cart.']}>
-            <IndicatorWrapper>
+          <ButtonGroup>
+            <TextTooltip text={['Cart.']}>
+              <IndicatorWrapper>
+                <IconButton
+                  img={ShoppingCartIcon}
+                  text='Cart'
+                  onClick={() => {
+                    onCloseCreateOrder();
+                    onCloseFilter();
+                    setShowCart((prev) => !prev);
+                  }}
+                />
+                {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
+              </IndicatorWrapper>
+            </TextTooltip>
+            {viewMode === 'grid' && (
               <IconButton
-                img={ShoppingCartIcon}
-                text='Cart'
-                onClick={() => {
-                  onCloseCreateOrder();
-                  onCloseFilter();
-                  setShowCart((prev) => !prev);
-                }}
+                img={ResetIcon}
+                onClick={() => setAllFlipped((prev) => !prev)}
+                radius={0.6}
               />
-              {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
-            </IndicatorWrapper>
-          </TextTooltip>
+            )}
+          </ButtonGroup>
           <ButtonGroup>
             <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}.`]}>
               <IconButton
@@ -388,6 +402,8 @@ export const Listings = ({
                 onAddToCart={() => addToCart(listing)}
                 onRemoveFromCart={() => removeFromCart(listing.OrderID)}
                 onOpenKami={() => openKamiModal(listing.KamiIndex)}
+                getAccountByID={utils.getAccountByID}
+                allFlipped={allFlipped}
               />
             ))}
           </ListingsGrid>
@@ -466,15 +482,20 @@ const ListingsBody = styled.div`
   flex-direction: column;
   overflow-y: auto;
   flex: 1;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const ListingsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11vw, 1fr));
+  align-content: start;
   gap: 0.6vw;
   padding: 0.4vw;
   overflow-y: auto;
   flex: 1;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const Row = styled.div`

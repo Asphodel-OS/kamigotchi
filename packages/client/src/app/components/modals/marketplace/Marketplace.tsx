@@ -15,7 +15,11 @@ import { TradeIcon } from 'assets/images/icons/menu';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { erc721ABI } from 'network/chain/ERC721';
-import { queryAccountFromEmbedded } from 'network/shapes/Account';
+import {
+  getAccountByID as _getAccountByID,
+  queryAccountFromEmbedded,
+} from 'network/shapes/Account';
+import type { Account } from 'network/shapes/Account';
 import {
   getAllKamis as _getAllKamis,
   queryKamiByIndex as _queryKamiByIndex,
@@ -73,6 +77,7 @@ export const MarketplaceModal: UIComponent = {
           getKamiDetailed: (entity: EntityIndex) =>
             _getKami(world, components, entity, { live: 0, traits: 0, stats: 0, progress: 0 }),
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
+          getAccountByID: (id: string) => _getAccountByID(world, components, id as EntityID),
         },
         network,
         data: { kamiNFTAddress, marketVaultAddress },
@@ -317,6 +322,7 @@ export const MarketplaceModal: UIComponent = {
               queryKamiByIndex: utils.queryKamiByIndex,
               getKami: utils.getKami,
               getKamiDetailed: utils.getKamiDetailed,
+              getAccountByID: utils.getAccountByID,
               isDifferentAccountId,
               formatEthPrice,
             }}
