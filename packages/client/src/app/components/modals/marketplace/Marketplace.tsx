@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import { erc20Abi, formatUnits, getAddress, parseEther } from 'viem';
+import { erc20Abi, formatUnits, getAddress } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -82,6 +82,7 @@ export const MarketplaceModal: UIComponent = {
     /////////////////
     // INSTANTIATIONS
 
+    const UNLIMITED_APPROVAL = 1e15;
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const account = useAccount((s) => s.account);
@@ -152,8 +153,6 @@ export const MarketplaceModal: UIComponent = {
       );
       await refetchNFTs();
     };
-
-    const UNLIMITED_APPROVAL = 1e15;
 
     const ensureWethApproval = async (api: any, amountWei: bigint) => {
       if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
