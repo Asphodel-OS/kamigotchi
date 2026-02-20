@@ -1,4 +1,5 @@
 import ChatIcon from './chat.png';
+import ClockIcon from './clock.png';
 import HelpIcon from './help.png';
 import InventoryIcon from './inventory.png';
 import KamiIcon from './kami.png';
@@ -16,6 +17,7 @@ import Whispo from './whispo.png';
 
 export {
   ChatIcon,
+  ClockIcon,
   ExternalIcon,
   HelpIcon,
   InventoryIcon,
@@ -33,6 +35,7 @@ export {
 };
 
 export const MenuIcons = {
+  clock: ClockIcon,
   trade: TradeIcon,
   whispo: Whispo,
   link_to_external_apps: ExternalIcon,

@@ -29,18 +29,25 @@ export const Tabs = ({
           text='Listings'
           onClick={() => handleTabClick('listings')}
           disabled={tab === 'listings'}
+          color='#FFF0E0'
         />
-
-        <IconButton text='Bids' onClick={() => handleTabClick('bids')} disabled={tab === 'bids'} />
+        <IconButton
+          text='Bids'
+          onClick={() => handleTabClick('bids')}
+          disabled={tab === 'bids'}
+          color='#E0EEFF'
+        />
+      </TabButtons>
+      <RightButtons>
         <IconButton
           text='My Orders'
           onClick={() => handleTabClick('myOrders')}
           disabled={tab === 'myOrders'}
         />
-      </TabButtons>
-      <TextTooltip text={['Create Order.']}>
-        <IconButton text='+' onClick={onCreateOrder} />
-      </TextTooltip>
+        <TextTooltip text={['Create Order.']}>
+          <IconButton text='+' onClick={onCreateOrder} />
+        </TextTooltip>
+      </RightButtons>
     </Container>
   );
 };
@@ -55,6 +62,11 @@ const Container = styled.div`
 `;
 
 const TabButtons = styled.div`
+  display: flex;
+  gap: 1vw;
+`;
+
+const RightButtons = styled.div`
   display: flex;
   gap: 1vw;
 `;

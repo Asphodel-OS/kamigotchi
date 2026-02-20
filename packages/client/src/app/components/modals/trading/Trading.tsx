@@ -312,7 +312,7 @@ export const TradingModal: UIComponent = {
     return (
       <ModalWrapper
         id='trading'
-        header={<ModalHeader title='Trade' icon={TradeIcon} />}
+        header={<ModalHeader title='Kamigotchi World Order Book' icon={TradeIcon} />}
         canExit
         noPadding
         overlay

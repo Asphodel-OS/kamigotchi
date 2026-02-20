@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import { erc20Abi, formatUnits, getAddress } from 'viem';
+import { formatUnits } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -10,8 +10,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork } from 'app/stores';
-import VendIcon from 'assets/images/rooms/18_cave-crossroads/vend.png';
-import { Tokens } from 'constants/tokens';
+import { TradeIcon } from 'assets/images/icons/menu';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { erc721ABI } from 'network/chain/ERC721';
@@ -82,7 +81,6 @@ export const MarketplaceModal: UIComponent = {
     /////////////////
     // INSTANTIATIONS
 
-    const UNLIMITED_APPROVAL = 1e15;
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const account = useAccount((s) => s.account);
@@ -104,12 +102,6 @@ export const MarketplaceModal: UIComponent = {
           functionName: 'isApprovedForAll',
           args: [account.ownerAddress, data.marketVaultAddress],
         },
-        {
-          address: Tokens.ETH.address,
-          abi: erc20Abi,
-          functionName: 'allowance',
-          args: [account.ownerAddress, data.marketVaultAddress],
-        },
       ],
     });
 
@@ -125,7 +117,6 @@ export const MarketplaceModal: UIComponent = {
       return entities.map((entity) => utils.getKami(entity));
     }, [nftData]);
     const isVaultApproved = nftData?.[1]?.result === true;
-    const wethAllowance = (nftData?.[2]?.result as bigint) ?? 0n;
 
     const getApi = () => {
       const api = apis.get(selectedAddress);
@@ -145,29 +136,6 @@ export const MarketplaceModal: UIComponent = {
         description: `Approving marketplace vault to transfer your Kami`,
         execute: async () =>
           api.erc721.setApprovalForAll(data.kamiNFTAddress, data.marketVaultAddress, true),
-      });
-
-      await waitForActionCompletion(
-        actions.Action,
-        world.entityToIndex.get(actionID) as EntityIndex
-      );
-      await refetchNFTs();
-    };
-
-    const ensureWethApproval = async (api: any, amountWei: bigint) => {
-      if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
-      if (wethAllowance >= amountWei) return;
-
-      const checksumToken = getAddress(Tokens.ETH.address);
-      const checksumSpender = getAddress(data.marketVaultAddress);
-
-      const actionID = uuid() as EntityID;
-      actions.add({
-        id: actionID,
-        action: 'KamiMarketWethApproval',
-        params: [checksumToken, checksumSpender, 'unlimited'],
-        description: `Approving WETH for marketplace vault`,
-        execute: async () => api.erc20.approve(checksumToken, checksumSpender, UNLIMITED_APPROVAL),
       });
 
       await waitForActionCompletion(
@@ -201,7 +169,6 @@ export const MarketplaceModal: UIComponent = {
     const createBuyOrder = async (price: BigNumberish, quantity: number, expiry: BigNumberish) => {
       const api = getApi();
       if (!api) return false;
-      await ensureWethApproval(api, BigInt(price.toString()) * BigInt(quantity));
 
       const tx = actions.add({
         action: 'KamiMarketOffer',
@@ -219,7 +186,6 @@ export const MarketplaceModal: UIComponent = {
     ) => {
       const api = getApi();
       if (!api) return false;
-      await ensureWethApproval(api, BigInt(price.toString()));
 
       const tx = actions.add({
         action: 'KamiMarketOffer',
@@ -275,6 +241,10 @@ export const MarketplaceModal: UIComponent = {
     const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
 
     const openCreateOrder = () => {
+      if (showCreateOrder) {
+        setShowCreateOrder(false);
+        return;
+      }
       setShowFilter(false);
       setShowCreateOrder(true);
     };
@@ -282,6 +252,10 @@ export const MarketplaceModal: UIComponent = {
     const closeCreateOrder = () => setShowCreateOrder(false);
 
     const openFilter = () => {
+      if (showFilter) {
+        setShowFilter(false);
+        return;
+      }
       setShowCreateOrder(false);
       setShowFilter(true);
     };
@@ -317,7 +291,7 @@ export const MarketplaceModal: UIComponent = {
     return (
       <ModalWrapper
         id='marketplace'
-        header={<ModalHeader title='Marketplace' icon={VendIcon} />}
+        header={<ModalHeader title='KamiSwap!' icon={TradeIcon} />}
         canExit
       >
         <Tabs
