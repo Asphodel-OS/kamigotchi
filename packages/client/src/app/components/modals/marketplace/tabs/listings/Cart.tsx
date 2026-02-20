@@ -25,49 +25,73 @@ export const Cart = ({
   onOpenKami: (index: number) => void;
   resolveKami: (index: number) => Kami | undefined;
   formatPrice: (weiString: string) => string;
-}) => (
-  <CartSection isVisible={isVisible}>
-    <CartHeader>
-      <HeaderTitle>Cart</HeaderTitle>
-      <IconButton text='X' onClick={onClose} scale={1.5} />
-    </CartHeader>
-    <CartHeaderRow>
-      <CartHeaderCell>Kami</CartHeaderCell>
-      <CartHeaderCell>
-        <CartEthIcon src={TokenIcons.eth} alt='ETH' />
-      </CartHeaderCell>
-      <CartHeaderCell>Actions</CartHeaderCell>
-    </CartHeaderRow>
-    <CartBody>
-      {cart.length === 0 && <EmptyText text={['Your cart is empty']} size={0.9} />}
-      {cart.map((item) => {
-        const kami = resolveKami(item.KamiIndex);
-        return (
-          <CartRow key={item.OrderID}>
-            <CartItem>
-              {kami && (
-                <CartKamiThumbnail
-                  src={kami.image}
-                  alt={kami.name}
-                  onClick={() => onOpenKami(item.KamiIndex)}
+}) => {
+  const totalPrice = cart.reduce((sum, item) => sum + BigInt(item.Price), 0n);
+  const formattedTotal = cart.length > 0 ? formatPrice(totalPrice.toString()) : '0';
+
+  return (
+    <CartSection isVisible={isVisible}>
+      <CartHeader>
+        <HeaderTitle>Cart</HeaderTitle>
+        <IconButton text='X' onClick={onClose} scale={1.5} />
+      </CartHeader>
+      <CartBody>
+        {cart.length === 0 && <EmptyText text={['Your cart is empty']} size={0.9} />}
+        {cart.map((item) => {
+          const kami = resolveKami(item.KamiIndex);
+          return (
+            <CartRow key={item.OrderID}>
+              <CartItem>
+                {kami && (
+                  <CartKamiThumbnail
+                    src={kami.image}
+                    alt={kami.name}
+                    onClick={() => onOpenKami(item.KamiIndex)}
+                  />
+                )}
+                <CartItemText>{kami?.name ?? `Kami #${item.KamiIndex}`}</CartItemText>
+              </CartItem>
+              <CartPriceCell>
+                <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+                <CartPriceText>{formatPrice(item.Price)}</CartPriceText>
+              </CartPriceCell>
+              <CartActions>
+                <IconButton
+                  text='Remove'
+                  onClick={() => onRemove(item.OrderID)}
+                  color='#FDECEC'
                 />
-              )}
-              <CartItemText>{kami?.name ?? `Kami #${item.KamiIndex}`}</CartItemText>
-            </CartItem>
-            <CartPriceText>{formatPrice(item.Price)}</CartPriceText>
-            <CartActions>
-              <IconButton text='Remove' onClick={() => onRemove(item.OrderID)} />
-            </CartActions>
-          </CartRow>
-        );
-      })}
-    </CartBody>
-    <CartFooter>
-      <IconButton text='Buy' onClick={onBuy} disabled={cart.length === 0} />
-      <IconButton text='Clear' onClick={onClear} disabled={cart.length === 0} />
-    </CartFooter>
-  </CartSection>
-);
+              </CartActions>
+            </CartRow>
+          );
+        })}
+      </CartBody>
+      <CartFooter>
+        <TotalSection>
+          <TotalLabel>Total Price:</TotalLabel>
+          <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+          <TotalValue>{formattedTotal}</TotalValue>
+        </TotalSection>
+        <FooterButtons>
+          <IconButton
+            text='Remove All'
+            onClick={onClear}
+            disabled={cart.length === 0}
+            color='#FDECEC'
+            scale={3}
+          />
+          <BuyButton
+            text='Buy All'
+            onClick={onBuy}
+            disabled={cart.length === 0}
+            color='#A2D9CE'
+            scale={3}
+          />
+        </FooterButtons>
+      </CartFooter>
+    </CartSection>
+  );
+};
 
 const CartSection = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
@@ -102,42 +126,19 @@ const CartBody = styled.div`
   padding: 0.6vw;
   flex: 1;
   overflow-y: auto;
-`;
-
-const CartHeaderRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  padding: 0.3vw 0.6vw;
-  min-height: 2.6vw;
-`;
-
-const CartHeaderCell = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1vw;
-  line-height: 1.2;
-  height: 100%;
-
-  &:first-child {
-    justify-content: flex-start;
-  }
-`;
-
-const CartEthIcon = styled.img`
-  width: 1.1vw;
-  height: 1.1vw;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const CartRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1.4fr 0.8fr 0.8fr;
   align-items: center;
   gap: 0.6vw;
   padding: 0.4vw 0.6vw;
   border: 0.06vw solid #ccc;
   border-radius: 0.3vw;
+  background: #fafafa;
 `;
 
 const CartItem = styled.div`
@@ -162,11 +163,20 @@ const CartKamiThumbnail = styled.img`
   cursor: pointer;
 `;
 
-const CartPriceText = styled.span`
-  font-size: 0.9vw;
+const CartPriceCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.3vw;
+`;
+
+const CartEthIcon = styled.img`
+  width: 1.1vw;
+  height: 1.1vw;
+`;
+
+const CartPriceText = styled.span`
+  font-size: 0.9vw;
 `;
 
 const CartActions = styled.div`
@@ -178,11 +188,37 @@ const CartActions = styled.div`
 
 const CartFooter = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 0.6vw;
+  align-items: center;
+  justify-content: space-between;
   padding: 0.6vw;
   position: sticky;
   bottom: 0;
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(240, 240, 240);
+  border-top: 0.1vw solid #ccc;
   margin-top: auto;
+`;
+
+const TotalSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const TotalLabel = styled.span`
+  font-size: 0.95vw;
+  font-weight: bold;
+`;
+
+const TotalValue = styled.span`
+  font-size: 0.95vw;
+  font-weight: bold;
+`;
+
+const FooterButtons = styled.div`
+  display: flex;
+  gap: 0.4vw;
+`;
+
+const BuyButton = styled(IconButton)`
+  font-weight: bold;
 `;

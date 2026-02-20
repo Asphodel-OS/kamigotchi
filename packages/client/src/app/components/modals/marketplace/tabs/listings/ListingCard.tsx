@@ -108,7 +108,7 @@ export const ListingCard = ({
                 return (
                   <StatRow key={key} $bg={color}>
                     <StatIconImg src={StatIcons[key as StatKey]} />
-                    <StatValue>{stat ? Math.round(stat.base + stat.shift) : '?'}</StatValue>
+                    <StatValue>{stat ? Math.round(stat.total) : '?'}</StatValue>
                   </StatRow>
                 );
               })}

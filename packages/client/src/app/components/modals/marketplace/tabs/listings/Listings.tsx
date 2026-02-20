@@ -84,11 +84,13 @@ export const Listings = ({
   const setModals = useVisibility((s) => s.setModals);
 
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
-  const [sortBy, setSortBy] = useState<SortMethod>('Latest');
+  const [sortBy, setSortBy] = useState<SortMethod>('Price Low');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showCart, setShowCart] = useState(false);
   const [cart, setCart] = useState<KamiMarketListing[]>([]);
   const [allFlipped, setAllFlipped] = useState(false);
+  const [sweepActive, setSweepActive] = useState(false);
+  const [sweepCount, setSweepCount] = useState(0);
 
   /////////////////
   // SUBSCRIPTIONS
@@ -121,7 +123,11 @@ export const Listings = ({
   const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
   useEffect(() => {
-    if (createOrderOpen) setShowCart(false);
+    if (createOrderOpen) {
+      setShowCart(false);
+      setSweepActive(false);
+      setSweepCount(0);
+    }
   }, [createOrderOpen]);
 
   useEffect(() => {
@@ -145,7 +151,7 @@ export const Listings = ({
   const hasActiveFilters = useMemo(() => {
     const traitActive = Object.values(filters.selected).some((set) => set.size > 0);
     const statActive = Object.entries(filters.stats).some(([key, value]) =>
-      key === 'Slots' ? value > 1 : value > 10
+      key === 'Slots' ? value > 0 : value > 10
     );
     return traitActive || statActive;
   }, [filters.selected, filters.stats]);
@@ -156,7 +162,7 @@ export const Listings = ({
       0
     );
     const statCount = Object.entries(filters.stats).reduce(
-      (sum, [key, value]) => sum + (key === 'Slots' ? (value > 1 ? 1 : 0) : value > 10 ? 1 : 0),
+      (sum, [key, value]) => sum + (key === 'Slots' ? (value > 0 ? 1 : 0) : value > 10 ? 1 : 0),
       0
     );
     return traitCount + statCount;
@@ -186,7 +192,7 @@ export const Listings = ({
 
       const meetsStat = (key: string, statTotal?: number) => {
         const min = filters.stats[key] ?? 10;
-        const base = key === 'Slots' ? 1 : 10;
+        const base = key === 'Slots' ? 0 : 10;
         if (min <= base) return true;
         if (statTotal == null) return false;
         return statTotal >= min;
@@ -222,6 +228,35 @@ export const Listings = ({
   };
 
   /////////////////
+  // SWEEP
+
+  const toggleSweep = () => {
+    const next = !sweepActive;
+    setSweepActive(next);
+    if (next) {
+      setShowCart(true);
+      onCloseCreateOrder();
+      onCloseFilter();
+    } else {
+      setSweepCount(0);
+      setShowCart(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!sweepActive) return;
+    const priceAsc = [...filteredListings]
+      .filter(({ listing }) => {
+        const expiry = Number(listing.Expiry);
+        if (!expiry) return true;
+        return expiry > Math.floor(Date.now() / 1000);
+      })
+      .sort((a, b) => Number(BigInt(a.listing.Price) - BigInt(b.listing.Price)));
+    const swept = priceAsc.slice(0, sweepCount).map(({ listing }) => listing);
+    setCart(swept);
+  }, [sweepActive, sweepCount, filteredListings]);
+
+  /////////////////
   // ACTIONS
 
   const isListingExpired = (expiryStr: string) => {
@@ -247,11 +282,18 @@ export const Listings = ({
 
   const addToCart = (listing: KamiMarketListing) => {
     if (isInCart(listing.OrderID)) return;
+    if (sweepActive) setSweepActive(false);
     setCart((prev) => [...prev, listing]);
+    setShowCart(true);
   };
 
   const removeFromCart = (orderId: string) => {
-    setCart((prev) => prev.filter((item) => item.OrderID !== orderId));
+    if (sweepActive) setSweepActive(false);
+    setCart((prev) => {
+      const next = prev.filter((item) => item.OrderID !== orderId);
+      if (next.length === 0) setShowCart(false);
+      return next;
+    });
   };
 
   const handleBuyCart = () => {
@@ -297,6 +339,24 @@ export const Listings = ({
             )}
           </ButtonGroup>
           <ButtonGroup>
+            <SweepControl>
+              <IconButton
+                text='Sweep!'
+                onClick={toggleSweep}
+                radius={0.6}
+                color={sweepActive ? '#d4edda' : undefined}
+              />
+              <SweepSliderWrap $active={sweepActive}>
+                <SweepRange
+                  type='range'
+                  min={0}
+                  max={30}
+                  value={sweepCount}
+                  onChange={(e) => setSweepCount(Number(e.target.value))}
+                />
+                <SweepLabel>{sweepCount}</SweepLabel>
+              </SweepSliderWrap>
+            </SweepControl>
             <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}.`]}>
               <IconButton
                 img={ViewIcons[viewMode]}
@@ -331,6 +391,9 @@ export const Listings = ({
               <ColumnHeader align='left'>Kami</ColumnHeader>
             </Column>
             <Column>
+              <ColumnHeader>Seller</ColumnHeader>
+            </Column>
+            <Column>
               <ColumnHeader>
                 <EthIcon src={TokenIcons.eth} alt='ETH' />
               </ColumnHeader>
@@ -345,7 +408,11 @@ export const Listings = ({
         )}
         {viewMode === 'list' ? (
           <ListingsBody>
-            {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
+            {sorted.length === 0 && (
+              <EmptyCenter>
+                <EmptyText text={['No listings found']} size={0.9} />
+              </EmptyCenter>
+            )}
             {sorted.map(({ listing, kami }) => (
               <Row key={listing.OrderID}>
                 <Column flex={2}>
@@ -359,6 +426,9 @@ export const Listings = ({
                     )}
                     <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
                   </KamiCell>
+                </Column>
+                <Column>
+                  <CellText>{utils.getAccountByID(listing.SellerAccountID).name || 'Unknown'}</CellText>
                 </Column>
                 <Column>
                   <CellText>{formatPrice(listing.Price)}</CellText>
@@ -390,7 +460,11 @@ export const Listings = ({
           </ListingsBody>
         ) : (
           <ListingsGrid>
-            {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
+            {sorted.length === 0 && (
+              <EmptyCenter>
+                <EmptyText text={['No listings found']} size={0.9} />
+              </EmptyCenter>
+            )}
             {sorted.map(({ listing, kami }) => (
               <ListingCard
                 key={listing.OrderID}
@@ -477,6 +551,15 @@ const HeaderRow = styled.div`
   min-height: 3vw;
 `;
 
+const EmptyCenter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  grid-column: 1 / -1;
+`;
+
 const ListingsBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -502,6 +585,7 @@ const Row = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  flex-shrink: 0;
   width: 100%;
   border-bottom: 0.06vw solid #ccc;
   min-height: 3vw;
@@ -560,4 +644,34 @@ const CellText = styled.span`
   font-size: 0.95vw;
   line-height: 1.2;
   padding: 0.4vw 0.6vw;
+`;
+
+const SweepControl = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const SweepSliderWrap = styled.div<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.2vw;
+  max-width: ${({ $active }) => ($active ? '14vw' : '0')};
+  overflow: hidden;
+  opacity: ${({ $active }) => ($active ? 1 : 0)};
+  transition: max-width 0.3s ease, opacity 0.2s ease;
+`;
+
+const SweepRange = styled.input`
+  width: 10.5vw;
+  height: 0.3vw;
+  cursor: pointer;
+  accent-color: #333;
+`;
+
+const SweepLabel = styled.span`
+  font-size: 0.75vw;
+  min-width: 1.2vw;
+  text-align: center;
+  white-space: nowrap;
 `;

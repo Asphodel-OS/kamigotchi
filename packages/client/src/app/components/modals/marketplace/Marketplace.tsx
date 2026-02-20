@@ -46,7 +46,7 @@ const DEFAULT_STAT_FILTERS = () => ({
   Power: 10,
   Violence: 10,
   Harmony: 10,
-  Slots: 1,
+  Slots: 0,
 });
 
 export const MarketplaceModal: UIComponent = {
@@ -297,7 +297,7 @@ export const MarketplaceModal: UIComponent = {
     return (
       <ModalWrapper
         id='marketplace'
-        header={<ModalHeader title='KamiSwap!' icon={TradeIcon} />}
+        header={<ModalHeader title='KamiSwap' icon={TradeIcon} />}
         canExit
         noPadding
         overlay

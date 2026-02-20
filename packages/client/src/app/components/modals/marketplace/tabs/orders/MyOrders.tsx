@@ -97,7 +97,7 @@ export const MyOrders = ({
   /////////////////
   // INSTANTIATIONS
 
-  const [sortBy, setSortBy] = useState<SortMethod>('Price');
+  const [sortBy, setSortBy] = useState<SortMethod>('Type');
   const [showHistory, setShowHistory] = useState(false);
   const [orders, setOrders] = useState<KamiMarketOrder[]>([]);
 

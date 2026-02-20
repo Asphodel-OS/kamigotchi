@@ -27,7 +27,7 @@ export const TradingMenuButton = () => {
           onClick: () => setModals({ ...modals, lootBox: !modals.lootBox }),
         },
         {
-          text: 'KamiSwap!',
+          text: 'KamiSwap',
           image: TradeIcon,
           onClick: () => setModals({ ...modals, marketplace: !modals.marketplace }),
         },
