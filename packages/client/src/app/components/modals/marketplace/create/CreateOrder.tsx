@@ -234,7 +234,7 @@ export const CreateOrder = ({
   const isCreateDisabled =
     orderType === 'Sell' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
   const sellSelectionTooltip = hasListedKamis
-    ? 'You already have listed Kami. Cancel listing first.'
+    ? 'All your Kami are already listed'
     : `You don't have out of world Kami.`;
 
   /////////////////

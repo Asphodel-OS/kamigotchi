@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { formatUnits } from 'viem';
@@ -10,7 +10,7 @@ import { getKami as _getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useNetwork } from 'app/stores';
+import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { TradeIcon } from 'assets/images/icons/menu';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
@@ -239,12 +239,23 @@ export const MarketplaceModal: UIComponent = {
       });
     };
 
+    const isMarketplaceOpen = useVisibility((s) => s.modals.marketplace);
+
     const [tab, setTab] = useState<MarketplaceTab>('listings');
     const [showCreateOrder, setShowCreateOrder] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
     const [selectedFilters, setSelectedFilters] =
       useState<Record<string, Set<string>>>(DEFAULT_SELECTED_FILTERS);
     const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
+
+    // Reset all state when the modal opens
+    useEffect(() => {
+      if (!isMarketplaceOpen) return;
+      setShowCreateOrder(false);
+      setShowFilter(false);
+      setSelectedFilters(DEFAULT_SELECTED_FILTERS());
+      setStatFilters(DEFAULT_STAT_FILTERS());
+    }, [isMarketplaceOpen]);
 
     const openCreateOrder = () => {
       if (showCreateOrder) {
@@ -307,6 +318,7 @@ export const MarketplaceModal: UIComponent = {
           setTab={setTab}
           onCreateOrder={openCreateOrder}
           onCloseCreateOrder={closeCreateOrder}
+          createOrderOpen={showCreateOrder}
         />
         <Content>
           <Listings
@@ -344,7 +356,6 @@ export const MarketplaceModal: UIComponent = {
           <MyOrders
             isVisible={tab === 'myOrders'}
             onCancelOrder={cancelOrder}
-            onOpenHistory={closeCreateOrder}
             createOrderOpen={showCreateOrder}
             utils={{
               queryKamiByIndex: utils.queryKamiByIndex,

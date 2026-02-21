@@ -1,6 +1,11 @@
 import styled from 'styled-components';
+import { formatUnits } from 'viem';
+import { useBalance, useWatchBlockNumber } from 'wagmi';
 
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { EmptyText, IconButton } from 'app/components/library';
+import { useAccount } from 'app/stores';
+import { OperatorIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
 import { Kami } from 'network/shapes/Kami';
@@ -26,8 +31,19 @@ export const Cart = ({
   resolveKami: (index: number) => Kami | undefined;
   formatPrice: (weiString: string) => string;
 }) => {
+  const account = useAccount((s) => s.account);
+  const { data: balanceData, refetch } = useBalance({
+    address: account.ownerAddress,
+  });
+  useWatchBlockNumber({ onBlockNumber: () => refetch() });
+
+  const formattedBalance = balanceData
+    ? Number(formatUnits(balanceData.value, 18)).toFixed(5).replace(/\.?0+$/, '')
+    : '—';
+
   const totalPrice = cart.reduce((sum, item) => sum + BigInt(item.Price), 0n);
   const formattedTotal = cart.length > 0 ? formatPrice(totalPrice.toString()) : '0';
+  const overBudget = balanceData ? totalPrice > balanceData.value : false;
 
   return (
     <CartSection isVisible={isVisible}>
@@ -67,11 +83,18 @@ export const Cart = ({
         })}
       </CartBody>
       <CartFooter>
-        <TotalSection>
-          <TotalLabel>Total Price:</TotalLabel>
-          <CartEthIcon src={TokenIcons.eth} alt='ETH' />
-          <TotalValue>{formattedTotal}</TotalValue>
-        </TotalSection>
+        <FooterInfo>
+          <InfoChip $variant='blue'>
+            <ChipIcon src={OperatorIcon} />
+            <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+            <InfoValue>{formattedBalance}</InfoValue>
+          </InfoChip>
+          <InfoChip $variant={overBudget ? 'red' : 'green'}>
+            <StyledCartIcon />
+            <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+            <InfoValue>{formattedTotal}</InfoValue>
+          </InfoChip>
+        </FooterInfo>
         <FooterButtons>
           <IconButton
             text='Remove All'
@@ -80,13 +103,23 @@ export const Cart = ({
             color='#FDECEC'
             scale={3}
           />
-          <BuyButton
-            text='Buy All'
-            onClick={onBuy}
-            disabled={cart.length === 0}
-            color='#A2D9CE'
-            scale={3}
-          />
+          {overBudget ? (
+            <NoFundsButton
+              text='Not Enough Funds'
+              onClick={() => {}}
+              disabled
+              color='#FDECEC'
+              scale={3}
+            />
+          ) : (
+            <BuyButton
+              text={cart.length <= 1 ? 'Buy' : 'Buy All'}
+              onClick={onBuy}
+              disabled={cart.length === 0}
+              color='#A2D9CE'
+              scale={3}
+            />
+          )}
         </FooterButtons>
       </CartFooter>
     </CartSection>
@@ -198,20 +231,45 @@ const CartFooter = styled.div`
   margin-top: auto;
 `;
 
-const TotalSection = styled.div`
+const FooterInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.5vw;
 `;
 
-const TotalLabel = styled.span`
-  font-size: 0.95vw;
-  font-weight: bold;
+const CHIP_STYLES = {
+  blue: { bg: '#E8F0FE', border: '#A0C0E8' },
+  green: { bg: '#E8F5E9', border: '#A0D8A8' },
+  red: { bg: '#FDECEC', border: '#E8A0A0' },
+};
+
+const InfoChip = styled.div<{ $variant: 'blue' | 'green' | 'red' }>`
+  display: flex;
+  align-items: center;
+  gap: 0.25vw;
+  padding: 0.3vw 0.5vw;
+  border-radius: 0.3vw;
+  background: ${({ $variant }) => CHIP_STYLES[$variant].bg};
+  border: 0.06vw solid ${({ $variant }) => CHIP_STYLES[$variant].border};
 `;
 
-const TotalValue = styled.span`
-  font-size: 0.95vw;
-  font-weight: bold;
+const ChipIcon = styled.img`
+  width: 1.2vw;
+  height: 1.2vw;
+`;
+
+const StyledCartIcon = styled(ShoppingCartIcon)`
+  && {
+    width: 1.2vw;
+    height: 1.2vw;
+    font-size: 1.2vw;
+    color: #555;
+  }
+`;
+
+const InfoValue = styled.span`
+  font-size: 0.85vw;
+  font-weight: 700;
 `;
 
 const FooterButtons = styled.div`
@@ -220,5 +278,9 @@ const FooterButtons = styled.div`
 `;
 
 const BuyButton = styled(IconButton)`
+  font-weight: bold;
+`;
+
+const NoFundsButton = styled(IconButton)`
   font-weight: bold;
 `;

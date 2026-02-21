@@ -81,6 +81,7 @@ export const Listings = ({
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const isMarketplaceOpen = useVisibility((s) => s.modals.marketplace);
   const setModals = useVisibility((s) => s.setModals);
 
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
@@ -91,6 +92,17 @@ export const Listings = ({
   const [allFlipped, setAllFlipped] = useState(false);
   const [sweepActive, setSweepActive] = useState(false);
   const [sweepCount, setSweepCount] = useState(0);
+
+  // Reset on modal open
+  useEffect(() => {
+    if (!isMarketplaceOpen) return;
+    setSortBy('Price Low');
+    setShowCart(false);
+    setCart([]);
+    setSweepActive(false);
+    setSweepCount(0);
+    setAllFlipped(false);
+  }, [isMarketplaceOpen]);
 
   /////////////////
   // SUBSCRIPTIONS
@@ -103,13 +115,7 @@ export const Listings = ({
       const res = await KamidenClient.getKamiMarketListings({});
       if (!isActive) return;
       const all = res.Listings ?? [];
-      const now = Math.floor(Date.now() / 1000);
-      const filtered = all.filter(
-        (listing) =>
-          utils.isDifferentAccountId(listing.SellerAccountID, accountId) &&
-          (!Number(listing.Expiry) || Number(listing.Expiry) > now)
-      );
-      setListings(filtered);
+      setListings(all);
     };
 
     refreshListings();
@@ -247,6 +253,7 @@ export const Listings = ({
     if (!sweepActive) return;
     const priceAsc = [...filteredListings]
       .filter(({ listing }) => {
+        if (isOwnListing(listing)) return false;
         const expiry = Number(listing.Expiry);
         if (!expiry) return true;
         return expiry > Math.floor(Date.now() / 1000);
@@ -265,6 +272,9 @@ export const Listings = ({
     return expiry <= Math.floor(Date.now() / 1000);
   };
 
+  const isOwnListing = (listing: KamiMarketListing) =>
+    !utils.isDifferentAccountId(listing.SellerAccountID, accountId);
+
   const isInCart = (orderId: string) => cart.some((item) => item.OrderID === orderId);
 
   const openKamiModal = (index: number) => {
@@ -281,7 +291,7 @@ export const Listings = ({
   };
 
   const addToCart = (listing: KamiMarketListing) => {
-    if (isInCart(listing.OrderID)) return;
+    if (isInCart(listing.OrderID) || isOwnListing(listing)) return;
     if (sweepActive) setSweepActive(false);
     setCart((prev) => [...prev, listing]);
     setShowCart(true);
@@ -316,7 +326,7 @@ export const Listings = ({
       <Tab isVisible={isVisible}>
         <ButtonRow>
           <ButtonGroup>
-            <TextTooltip text={['Cart.']}>
+            <TextTooltip text={['Cart']}>
               <IndicatorWrapper>
                 <IconButton
                   img={ShoppingCartIcon}
@@ -329,6 +339,13 @@ export const Listings = ({
                 />
                 {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
               </IndicatorWrapper>
+            </TextTooltip>
+            <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}`]}>
+              <IconButton
+                img={ViewIcons[viewMode]}
+                onClick={cycleView}
+                radius={0.6}
+              />
             </TextTooltip>
             {viewMode === 'grid' && (
               <IconButton
@@ -357,21 +374,7 @@ export const Listings = ({
                 <SweepLabel>{sweepCount}</SweepLabel>
               </SweepSliderWrap>
             </SweepControl>
-            <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}.`]}>
-              <IconButton
-                img={ViewIcons[viewMode]}
-                onClick={cycleView}
-                radius={0.6}
-              />
-            </TextTooltip>
-            <TextTooltip text={[`Sort: ${sortBy}.`]}>
-              <IconButton
-                img={SortIcons[sortBy]}
-                onClick={cycleSort}
-                radius={0.6}
-              />
-            </TextTooltip>
-            <TextTooltip text={['Filters.']}>
+            <TextTooltip text={['Filters']}>
               <IndicatorWrapper>
                 <IconButton
                   img={FilterListIcon}
@@ -383,12 +386,19 @@ export const Listings = ({
                 {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
               </IndicatorWrapper>
             </TextTooltip>
+            <TextTooltip text={[`Sort: ${sortBy}`]}>
+              <IconButton
+                img={SortIcons[sortBy]}
+                onClick={cycleSort}
+                radius={0.6}
+              />
+            </TextTooltip>
           </ButtonGroup>
         </ButtonRow>
         {viewMode === 'list' && (
           <HeaderRow>
             <Column flex={2}>
-              <ColumnHeader align='left'>Kami</ColumnHeader>
+              <ColumnHeader>Kami</ColumnHeader>
             </Column>
             <Column>
               <ColumnHeader>Seller</ColumnHeader>
@@ -437,9 +447,13 @@ export const Listings = ({
                   <CellText>{formatExpiry(listing.Expiry)}</CellText>
                 </Column>
                 <Column>
-                  {isListingExpired(listing.Expiry) ? (
-                    <TextTooltip text={['Listing expired.']}>
-                      <IconButton text='Add' onClick={() => addToCart(listing)} disabled />
+                  {isOwnListing(listing) ? (
+                    <TextTooltip text={['Your listing']}>
+                      <IconButton text='x' onClick={() => {}} disabled />
+                    </TextTooltip>
+                  ) : isListingExpired(listing.Expiry) ? (
+                    <TextTooltip text={['Listing expired']}>
+                      <IconButton text='x' onClick={() => {}} disabled />
                     </TextTooltip>
                   ) : isInCart(listing.OrderID) ? (
                     <IconButton
@@ -472,6 +486,7 @@ export const Listings = ({
                 kami={kami}
                 isInCart={isInCart(listing.OrderID)}
                 isExpired={isListingExpired(listing.Expiry)}
+                isOwn={isOwnListing(listing)}
                 formatPrice={formatPrice}
                 onAddToCart={() => addToCart(listing)}
                 onRemoveFromCart={() => removeFromCart(listing.OrderID)}
@@ -603,10 +618,10 @@ const Column = styled.div<{ flex?: number }>`
   flex: ${({ flex }) => flex ?? 1};
 `;
 
-const ColumnHeader = styled.div<{ align?: 'left' | 'center' }>`
+const ColumnHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: ${({ align }) => (align === 'left' ? 'flex-start' : 'center')};
+  justify-content: center;
   padding: 0.4vw 0.6vw;
   font-size: 1.05vw;
   line-height: 1.2;
@@ -622,11 +637,13 @@ const KamiCell = styled.div`
   align-items: center;
   gap: 0.4vw;
   padding: 0.4vw;
+  width: 11vw;
 `;
 
 const KamiThumbnail = styled.img`
   width: 3vw;
   height: 3vw;
+  flex-shrink: 0;
   border-radius: 0.3vw;
   border: 0.1vw solid black;
   image-rendering: pixelated;
@@ -635,6 +652,7 @@ const KamiThumbnail = styled.img`
 
 const KamiName = styled.span`
   font-size: 0.9vw;
+  white-space: nowrap;
 `;
 
 const CellText = styled.span`

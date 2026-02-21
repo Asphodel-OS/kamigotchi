@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { TextTooltip } from 'app/components/library';
 import { OperatorIcon, ResetIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
@@ -13,6 +14,7 @@ interface ListingCardProps {
   kami: Kami | undefined;
   isInCart: boolean;
   isExpired: boolean;
+  isOwn: boolean;
   formatPrice: (weiString: string) => string;
   onAddToCart: () => void;
   onRemoveFromCart: () => void;
@@ -29,6 +31,7 @@ export const ListingCard = ({
   kami,
   isInCart,
   isExpired,
+  isOwn,
   formatPrice,
   onAddToCart,
   onRemoveFromCart,
@@ -53,9 +56,23 @@ export const ListingCard = ({
     | keyof typeof AffinityColors
     | undefined;
 
-  const badgeClick = isExpired ? undefined : isInCart ? onRemoveFromCart : onAddToCart;
-  const badgeChar = isExpired ? 'x' : isInCart ? '-' : '+';
-  const badgeColor = isExpired ? '#888' : isInCart ? '#d04a2f' : '#3a8f47';
+  const isLocked = isExpired || isOwn;
+  const badgeClick = isLocked ? undefined : isInCart ? onRemoveFromCart : onAddToCart;
+  const badgeChar = isLocked ? 'x' : isInCart ? '-' : '+';
+  const badgeColor = isLocked ? '#888' : isInCart ? '#d04a2f' : '#3a8f47';
+  const badgeTooltip = isOwn ? 'Your listing' : isExpired ? 'Expired listing' : '';
+
+  const BadgeElement = (
+    <CartBadge $color={badgeColor} onClick={badgeClick} disabled={isLocked}>
+      {badgeChar}
+    </CartBadge>
+  );
+
+  const WrappedBadge = badgeTooltip ? (
+    <TextTooltip text={[badgeTooltip]}>{BadgeElement}</TextTooltip>
+  ) : (
+    BadgeElement
+  );
 
   return (
     <CardContainer>
@@ -69,9 +86,7 @@ export const ListingCard = ({
           )}
 
           <RightColumn>
-            <CartBadge $color={badgeColor} onClick={badgeClick} disabled={isExpired}>
-              {badgeChar}
-            </CartBadge>
+            {WrappedBadge}
           </RightColumn>
 
           <BottomBar>
@@ -88,9 +103,7 @@ export const ListingCard = ({
         {/* ===== BACK ===== */}
         <CardBack>
           <RightColumn>
-            <CartBadge $color={badgeColor} onClick={badgeClick} disabled={isExpired}>
-              {badgeChar}
-            </CartBadge>
+            {WrappedBadge}
             {level !== undefined && (
               <LevelCard>
                 <LevelLabel>Lv.</LevelLabel>
