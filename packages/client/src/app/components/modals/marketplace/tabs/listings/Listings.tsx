@@ -48,6 +48,7 @@ export const Listings = ({
   isVisible,
   onOpenFilter,
   onBuyListings,
+  onCancelListing,
   onCloseFilter,
   onCloseCreateOrder,
   createOrderOpen,
@@ -58,6 +59,7 @@ export const Listings = ({
   isVisible: boolean;
   onOpenFilter: () => void;
   onBuyListings: (listingIDs: string[], kamiIndices: number[], totalPrice: bigint) => void;
+  onCancelListing: (orderID: string) => void;
   onCloseFilter: () => void;
   onCloseCreateOrder: () => void;
   createOrderOpen: boolean;
@@ -448,9 +450,11 @@ export const Listings = ({
                 </Column>
                 <Column>
                   {isOwnListing(listing) ? (
-                    <TextTooltip text={['Your listing']}>
-                      <IconButton text='x' onClick={() => {}} disabled />
-                    </TextTooltip>
+                    <IconButton
+                      text='Cancel'
+                      onClick={() => onCancelListing(listing.OrderID)}
+                      color='#FDECEC'
+                    />
                   ) : isListingExpired(listing.Expiry) ? (
                     <TextTooltip text={['Listing expired']}>
                       <IconButton text='x' onClick={() => {}} disabled />

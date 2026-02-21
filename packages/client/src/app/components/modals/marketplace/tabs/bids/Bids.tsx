@@ -72,12 +72,12 @@ export const Bids = ({
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
   const [selectedBid, setSelectedBid] = useState<KamiMarketBid | null>(null);
-  const [filterBy, setFilterBy] = useState<BidFilter>('Only generic');
+  const [filterBy, setFilterBy] = useState<BidFilter>('Show all');
 
   // Reset on modal open
   useEffect(() => {
     if (!isMarketplaceOpen) return;
-    setFilterBy('Only generic');
+    setFilterBy('Show all');
     setSelectedBid(null);
     setSelectedKamis(new Set());
     setShowSelectKami(false);
@@ -139,11 +139,19 @@ export const Bids = ({
     }
   };
 
+  const externalIndices = useMemo(
+    () => new Set(externalKamis.map((k) => k.index)),
+    [externalKamis]
+  );
   const allOwnedIndices = useMemo(() => {
     const set = new Set(ownedKamiIndices);
     externalKamis.forEach((k) => set.add(k.index));
     return set;
   }, [ownedKamiIndices, externalKamis]);
+  const stakedKamis = useMemo(
+    () => accountKamis.filter((k) => !externalIndices.has(k.index)),
+    [accountKamis, externalIndices]
+  );
 
   const getBidProgress = (bid: KamiMarketBid) => {
     const total = bid.Total ?? 0;
@@ -172,14 +180,14 @@ export const Bids = ({
         (bid) => bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
       );
     }
-    // Bids on my kami — only specific bids targeting kami you own
-    if (ownedKamiIndices.size === 0) return [];
+    // Bids on my kami — only specific bids targeting kami you own (staked + unstaked)
+    if (allOwnedIndices.size === 0) return [];
     return bids.filter(
       (bid) =>
         bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC &&
-        ownedKamiIndices.has(bid.KamiIndex)
+        allOwnedIndices.has(bid.KamiIndex)
     );
-  }, [bids, filterBy, ownedKamiIndices]);
+  }, [bids, filterBy, allOwnedIndices]);
 
   const sortedBids = useMemo(() => {
     return [...filteredBids].sort((a, b) => {
@@ -231,7 +239,13 @@ export const Bids = ({
       return;
     }
     setSelectedBid(bid);
-    setSelectedKamis(new Set());
+    // Auto-select kami for specific bids if we own it externally
+    const isSpecific = bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
+    if (isSpecific && externalIndices.has(bid.KamiIndex)) {
+      setSelectedKamis(new Set([bid.KamiIndex]));
+    } else {
+      setSelectedKamis(new Set());
+    }
     onCloseCreateOrder();
     setShowSelectKami(true);
   };
@@ -384,9 +398,9 @@ export const Bids = ({
           <IconButton text='X' onClick={handleCloseSelect} scale={1.5} />
         </Header>
         <KamiGrid>
-          {externalKamis.length === 0 && (
+          {externalKamis.length === 0 && stakedKamis.length === 0 && (
             <EmptyGridCenter>
-              <EmptyText text={[`You don't have out of world Kami.`]} size={0.9} />
+              <EmptyText text={[`You don't have any Kami`]} size={0.9} />
             </EmptyGridCenter>
           )}
           {externalKamis.map((kami) => (
@@ -394,6 +408,7 @@ export const Bids = ({
               key={kami.index}
               onClick={() => toggleKami(kami.index)}
               isDisabled={!canSelectKami(kami.index)}
+              $selected={selectedKamis.has(kami.index)}
             >
               <KamiSlotImage src={kami.image} alt={kami.name} />
               <Checkbox
@@ -404,6 +419,15 @@ export const Bids = ({
                 disabled={!canSelectKami(kami.index)}
               />
             </KamiSlot>
+          ))}
+          {stakedKamis.map((kami) => (
+            <StakedKamiSlot key={kami.index}>
+              <KamiSlotImage src={kami.image} alt={kami.name} />
+              <StakedOverlay>
+                <StakedLabel>Needs</StakedLabel>
+                <StakedLabel>Unstake</StakedLabel>
+              </StakedOverlay>
+            </StakedKamiSlot>
           ))}
         </KamiGrid>
         <Footer>
@@ -612,17 +636,53 @@ const KamiGrid = styled.div`
   &::-webkit-scrollbar { display: none; }
 `;
 
-const KamiSlot = styled.div<{ isDisabled: boolean }>`
+const KamiSlot = styled.div<{ isDisabled: boolean; $selected?: boolean }>`
   position: relative;
   aspect-ratio: 1;
-  border: 0.06vw solid #ccc;
   border-radius: 0.3vw;
   background: #fafafa;
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: ${({ isDisabled }) => (isDisabled ? 0.4 : 1)};
+  opacity: ${({ isDisabled, $selected }) => (isDisabled && !$selected ? 0.4 : 1)};
+  border: 0.18vw solid ${({ $selected }) => ($selected ? '#222' : 'transparent')};
+  outline: ${({ $selected }) => ($selected ? 'none' : '0.06vw solid #ccc')};
+  overflow: hidden;
+`;
+
+const StakedKamiSlot = styled.div`
+  position: relative;
+  aspect-ratio: 1;
+  border: 0.06vw solid #ccc;
+  border-radius: 0.3vw;
+  background: #fafafa;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StakedOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 0.3vw;
+  z-index: 1;
+`;
+
+const StakedLabel = styled.span`
+  font-size: 0.65vw;
+  font-weight: 700;
+  color: #ffd54f;
+  text-transform: uppercase;
+  letter-spacing: 0.05vw;
+  line-height: 1.2;
+  text-shadow: 0 0.05vw 0.15vw rgba(0, 0, 0, 0.8);
 `;
 
 const KamiSlotImage = styled.img`

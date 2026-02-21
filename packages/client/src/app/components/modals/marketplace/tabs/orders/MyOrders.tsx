@@ -332,7 +332,7 @@ const OrderRow = ({
         : 'Kami Bid';
 
   const statusColors = STATUS_COLORS[order.status];
-  const isActive = order.status === 'Active';
+  const isCancellable = order.status === 'Active' || order.status === 'Expired';
 
   return (
     <Row>
@@ -367,7 +367,7 @@ const OrderRow = ({
         </StatusPill>
       </Column>
       <Column>
-        {isActive ? (
+        {isCancellable ? (
           <IconButton
             text='Cancel'
             onClick={() => onCancelOrder(order.orderId)}

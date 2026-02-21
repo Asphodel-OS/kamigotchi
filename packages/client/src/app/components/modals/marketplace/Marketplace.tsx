@@ -325,6 +325,7 @@ export const MarketplaceModal: UIComponent = {
             isVisible={tab === 'listings'}
             onOpenFilter={openFilter}
             onBuyListings={buyListings}
+            onCancelListing={cancelOrder}
             onCloseFilter={closeFilter}
             onCloseCreateOrder={closeCreateOrder}
             createOrderOpen={showCreateOrder}
