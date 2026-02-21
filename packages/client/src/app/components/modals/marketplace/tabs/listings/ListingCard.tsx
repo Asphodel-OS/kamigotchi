@@ -164,8 +164,8 @@ const CardFace = styled.div`
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border: 0.18vw solid black;
-  border-radius: 0.75vw;
+  border: 0.13vw solid black;
+  border-radius: 0.55vw;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -182,20 +182,20 @@ const RightColumn = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.2vw;
+  gap: 0.15vw;
 `;
 
 const CartBadge = styled.button<{ $color: string }>`
-  width: 3.6vw;
-  height: 2vw;
+  width: 2.55vw;
+  height: 1.4vw;
   background: ${({ $color }) => $color};
   color: #fff;
-  font-size: 1.2vw;
+  font-size: 0.85vw;
   font-weight: 700;
-  line-height: 2vw;
+  line-height: 1.4vw;
   text-align: center;
   border: none;
-  border-radius: 0 0.57vw 0 0.4vw;
+  border-radius: 0 0.4vw 0 0.3vw;
   cursor: pointer;
   transition: filter 0.15s;
 
@@ -210,24 +210,24 @@ const CartBadge = styled.button<{ $color: string }>`
 
 const LevelCard = styled.div`
   background: #1B6B5A;
-  width: 3.6vw;
+  width: 2.55vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex: 1;
-  border-radius: 0.35vw 0 0 0.35vw;
+  border-radius: 0.25vw 0 0 0.25vw;
 `;
 
 const LevelLabel = styled.span`
-  font-size: 0.55vw;
+  font-size: 0.4vw;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1;
-  margin-bottom: 0.15vw;
+  margin-bottom: 0.1vw;
 `;
 
 const LevelValue = styled.span`
-  font-size: 1.1vw;
+  font-size: 0.8vw;
   font-weight: 700;
   color: #fff;
   line-height: 1.15;
@@ -263,25 +263,25 @@ const BottomBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5vw 0.5vw;
+  padding: 0.35vw;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
-  border-top: 0.1vw solid rgba(255, 255, 255, 0.08);
+  border-top: 0.07vw solid rgba(255, 255, 255, 0.08);
 `;
 
 const PriceChip = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25vw;
+  gap: 0.18vw;
 `;
 
 const EthIcon = styled.img`
-  width: 1.15vw;
-  height: 1.15vw;
+  width: 0.8vw;
+  height: 0.8vw;
 `;
 
 const PriceText = styled.span`
-  font-size: 0.8vw;
+  font-size: 0.57vw;
   font-weight: 600;
   color: #fff;
 `;
@@ -290,7 +290,7 @@ const FlipBtn = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.15vw;
+  padding: 0.1vw;
   display: flex;
   align-items: center;
   opacity: 0.75;
@@ -301,14 +301,14 @@ const FlipBtn = styled.button`
 `;
 
 const FlipIconImg = styled.img`
-  width: 1.6vw;
-  height: 1.6vw;
+  width: 1.15vw;
+  height: 1.15vw;
   filter: brightness(3);
 `;
 
 const FlipIconImgDark = styled.img`
-  width: 1.6vw;
-  height: 1.6vw;
+  width: 1.15vw;
+  height: 1.15vw;
   opacity: 0.5;
 `;
 
@@ -318,45 +318,45 @@ const CardBack = styled(CardFace)`
   transform: rotateY(180deg);
   background: #FFF8E7;
   justify-content: space-between;
-  padding: 0.4vw 0.5vw 0.5vw;
+  padding: 0.3vw 0.35vw 0.35vw;
 `;
 
 const BackContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.4vw;
+  gap: 0.3vw;
   flex: 1;
 `;
 
 const StatsSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.25vw;
+  gap: 0.18vw;
   width: 65%;
 `;
 
 const StatRow = styled.div<{ $bg: string }>`
   display: flex;
   align-items: center;
-  gap: 0.35vw;
-  padding: 0.2vw 0.4vw;
-  border-radius: 0.35vw;
+  gap: 0.25vw;
+  padding: 0.15vw 0.3vw;
+  border-radius: 0.25vw;
   background: ${({ $bg }) => $bg};
 `;
 
 const StatIconImg = styled.img`
-  width: 1.1vw;
-  height: 1.1vw;
+  width: 0.8vw;
+  height: 0.8vw;
 `;
 
 const StatValue = styled.span`
-  font-size: 0.75vw;
+  font-size: 0.55vw;
   font-weight: 600;
 `;
 
 const AffinitySection = styled.div`
   display: flex;
-  gap: 0.25vw;
+  gap: 0.18vw;
   width: 65%;
 `;
 
@@ -367,8 +367,8 @@ const AffinityCard = styled.div<{ $bg: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.35vw;
-  border: 0.1vw solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.25vw;
+  border: 0.07vw solid rgba(0, 0, 0, 0.2);
 `;
 
 const AffinityIconImg = styled.img`
@@ -379,30 +379,30 @@ const AffinityIconImg = styled.img`
 const SellerChip = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.25vw;
+  gap: 0.18vw;
   min-width: 0;
 `;
 
 const SellerIcon = styled.img`
-  width: 1.1vw;
-  height: 1.1vw;
+  width: 0.8vw;
+  height: 0.8vw;
   flex-shrink: 0;
 `;
 
 const SellerName = styled.span`
-  font-size: 0.65vw;
+  font-size: 0.46vw;
   font-weight: 500;
   color: #555;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 7vw;
+  max-width: 5vw;
 `;
 
 const BackBottomBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 0.3vw;
-  border-top: 0.1vw solid rgba(0, 0, 0, 0.1);
+  padding-top: 0.2vw;
+  border-top: 0.07vw solid rgba(0, 0, 0, 0.1);
 `;

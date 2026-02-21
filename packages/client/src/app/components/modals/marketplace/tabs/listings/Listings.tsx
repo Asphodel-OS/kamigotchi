@@ -571,9 +571,9 @@ const ListingsBody = styled.div`
 
 const ListingsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(11vw, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(7.8vw, 1fr));
   align-content: start;
-  gap: 0.6vw;
+  gap: 0.5vw;
   padding: 0.4vw;
   overflow-y: auto;
   flex: 1;
