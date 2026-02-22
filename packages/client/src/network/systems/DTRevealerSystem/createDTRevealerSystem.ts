@@ -14,6 +14,7 @@ import { DTCommit } from 'network/shapes/Droptable';
 import { Observable } from 'rxjs';
 import { ActionState, ActionSystem } from '../ActionSystem';
 import { NotificationSystem } from '../NotificationSystem';
+import { isBlockedRevealCommitID } from './blocklist';
 import { notifyResult, sendKeepAliveNotif } from './functions';
 import { CommitData, RevealType } from './types';
 
@@ -37,7 +38,24 @@ export function createDTRevealerSystem(
   // for naming reveal types based on their parent entity. optional
   const entityNameMap = new Map<EntityID, string>();
 
+  function isBlockedCommit(id: EntityID, context: 'add' | 'extractQueue' | 'forceQueue') {
+    const blocked = isBlockedRevealCommitID(id);
+
+    console.log(`revealer: commit in ${context}`, {
+      commitId: String(id),
+      blocked,
+    });
+
+    if (blocked) {
+      console.warn(`revealer: blocked blacklisted commit in ${context}`, { commitId: String(id) });
+    }
+
+    return blocked;
+  }
+
   function add(commit: DTCommit, revealType: RevealType = 'droptable') {
+    if (isBlockedCommit(commit.id, 'add')) return;
+
     // filters out commits that are already in the system
     if (allCommits.has(commit.id)) return;
 
@@ -58,6 +76,13 @@ export function createDTRevealerSystem(
 
     const commits: EntityID[] = [];
     queuedCommits.forEach((id) => {
+      if (isBlockedCommit(id, 'extractQueue')) {
+        queuedCommits.delete(id);
+        revealingCommits.delete(id);
+        allCommits.delete(id);
+        return;
+      }
+
       const commitData = allCommits.get(id);
       // filter by reveal type
       if (revealType && commitData?.revealType !== revealType) return;
@@ -81,8 +106,10 @@ export function createDTRevealerSystem(
     const { State } = components;
 
     for (let i = 0; i < commits.length; i++) {
+      if (isBlockedCommit(commits[i], 'forceQueue')) continue;
+
       queuedCommits.delete(commits[i]);
-      revealingCommits.add(commits[0]);
+      revealingCommits.add(commits[i]);
 
       let entity = world.entityToIndex.get(commits[i]) as EntityIndex;
       if (!entity) entity = createEntity(world, undefined, { id: commits[i] });

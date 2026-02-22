@@ -9,6 +9,7 @@ import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { SettingsIcon } from 'assets/images/icons/menu';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
 import { queryDTCommits, querySacrificeCommits } from 'network/shapes/Droptable';
+import { isBlockedRevealCommitID } from 'network/systems/DTRevealerSystem/blocklist';
 import { useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
 
@@ -50,8 +51,12 @@ export const RevealModal: UIComponent = {
     });
 
     useEffect(() => {
-      commits.map((commit) => DTRevealer.add(commit, 'droptable'));
-      sacrificeCommits.map((commit) => DTRevealer.add(commit, 'sacrifice'));
+      commits
+        .filter((commit) => !isBlockedRevealCommitID(commit.id))
+        .map((commit) => DTRevealer.add(commit, 'droptable'));
+      sacrificeCommits
+        .filter((commit) => !isBlockedRevealCommitID(commit.id))
+        .map((commit) => DTRevealer.add(commit, 'sacrifice'));
     }, [commits, sacrificeCommits, blockNumber]);
 
     useEffect(() => {
@@ -79,11 +84,12 @@ export const RevealModal: UIComponent = {
     }
 
     async function overrideExecute(commits: EntityID[]) {
-      if (commits.length === 0) return;
+      const filteredCommits = commits.filter((id) => !isBlockedRevealCommitID(id));
+      if (filteredCommits.length === 0) return;
 
-      DTRevealer.forceQueue(commits);
-      const actionIndex = await revealTx(commits, 'droptable');
-      DTRevealer.finishReveal(actionIndex, commits);
+      DTRevealer.forceQueue(filteredCommits);
+      const actionIndex = await revealTx(filteredCommits, 'droptable');
+      DTRevealer.finishReveal(actionIndex, filteredCommits);
     }
 
     /////////////////
@@ -135,7 +141,10 @@ export const RevealModal: UIComponent = {
       >
         <Container>
           <Commits
-            data={{ commits: commits, blockNumber: Number(blockNumber) }}
+            data={{
+              commits: commits.filter((commit) => !isBlockedRevealCommitID(commit.id)),
+              blockNumber: Number(blockNumber),
+            }}
             actions={{ revealTx: overrideExecute }}
             utils={{ getCommitState }}
           />
