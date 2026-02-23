@@ -12,6 +12,7 @@ import { Components } from 'network/components';
 import { canRevealCommit } from 'network/shapes/Commit';
 import { DTCommit } from 'network/shapes/Droptable';
 import { Observable } from 'rxjs';
+import { log } from 'utils/logger';
 import { ActionState, ActionSystem } from '../ActionSystem';
 import { NotificationSystem } from '../NotificationSystem';
 import { isBlockedRevealCommitID } from './blocklist';
@@ -41,13 +42,13 @@ export function createDTRevealerSystem(
   function isBlockedCommit(id: EntityID, context: 'add' | 'extractQueue' | 'forceQueue') {
     const blocked = isBlockedRevealCommitID(id);
 
-    console.log(`revealer: commit in ${context}`, {
+    log.info(`revealer: commit in ${context}`, {
       commitId: String(id),
       blocked,
     });
 
     if (blocked) {
-      console.warn(`revealer: blocked blacklisted commit in ${context}`, { commitId: String(id) });
+      log.warn(`revealer: blocked blacklisted commit in ${context}`, { commitId: String(id) });
     }
 
     return blocked;
@@ -128,7 +129,6 @@ export function createDTRevealerSystem(
         notifyResult(world, components, notifications, allCommits.get(commits[i]));
       }
     } else {
-      console.log('revealer: reveal failed');
       // increment failure count, remove from queue after 3 tries
       for (let i = 0; i < commits.length; i++) {
         const curr = allCommits.get(commits[i]);
