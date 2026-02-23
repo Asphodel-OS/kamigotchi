@@ -220,12 +220,13 @@ const BidTypeOption = styled.div<{ $active: boolean }>`
   align-items: center;
   gap: 0.15vw;
   cursor: pointer;
-  padding: 0.2vw;
+  padding: 0.15vw 0.15vw 0.2vw;
   border-radius: 0.4vw;
   border: 0.15vw solid ${({ $active }) => ($active ? '#7aa8d4' : '#ddd')};
   background: ${({ $active }) => ($active ? '#E0EEFF' : '#f0f0f0')};
   opacity: ${({ $active }) => ($active ? 1 : 0.5)};
   transition: all 0.15s;
+  overflow: hidden;
 
   &:hover {
     opacity: 1;
@@ -235,7 +236,7 @@ const BidTypeOption = styled.div<{ $active: boolean }>`
 const BidTypeImage = styled.img<{ $isIcon?: boolean }>`
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 0.3vw;
+  border-radius: 0.25vw;
   image-rendering: pixelated;
   object-fit: ${({ $isIcon }) => ($isIcon ? 'contain' : 'cover')};
   padding: ${({ $isIcon }) => ($isIcon ? '15%' : '0')};
@@ -339,6 +340,18 @@ const KamiPickerRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.6vw;
+
+  & button {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  & button img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0.3vw;
+    image-rendering: pixelated;
+  }
 `;
 
 const SelectedKamiName = styled.span`

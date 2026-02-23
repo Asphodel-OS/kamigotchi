@@ -175,6 +175,18 @@ const KamiPickerRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.6vw;
+
+  & button {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  & button img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0.3vw;
+    image-rendering: pixelated;
+  }
 `;
 
 const SelectedKamiName = styled.span`
