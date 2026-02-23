@@ -78,16 +78,14 @@ export const ListingCard = ({
     <CardContainer>
       <CardInner $flipped={flipped}>
         {/* ===== FRONT ===== */}
-        <CardFront>
+        <CardFront $flipped={flipped}>
           {kami ? (
             <KamiImage src={kami.image} alt={kami.name} onClick={onOpenKami} />
           ) : (
             <ImagePlaceholder />
           )}
 
-          <RightColumn>
-            {WrappedBadge}
-          </RightColumn>
+          <RightColumn>{WrappedBadge}</RightColumn>
 
           <BottomBar>
             <PriceChip>
@@ -101,7 +99,7 @@ export const ListingCard = ({
         </CardFront>
 
         {/* ===== BACK ===== */}
-        <CardBack>
+        <CardBack $flipped={flipped}>
           <RightColumn>
             {WrappedBadge}
             {level !== undefined && (
@@ -130,14 +128,18 @@ export const ListingCard = ({
             {(bodyAffinity || handAffinity) && (
               <AffinitySection>
                 {bodyAffinity && (
-                  <AffinityCard $bg={AffinityColors[bodyAffinity] ?? '#ccc'}>
-                    <AffinityIconImg src={AffinityIcons[bodyAffinity]} />
-                  </AffinityCard>
+                  <TextTooltip text={[`Body: ${bodyAffinity}`]}>
+                    <AffinityCard $bg={AffinityColors[bodyAffinity] ?? '#ccc'}>
+                      <AffinityIconImg src={AffinityIcons[bodyAffinity]} />
+                    </AffinityCard>
+                  </TextTooltip>
                 )}
                 {handAffinity && (
-                  <AffinityCard $bg={AffinityColors[handAffinity] ?? '#ccc'}>
-                    <AffinityIconImg src={AffinityIcons[handAffinity]} />
-                  </AffinityCard>
+                  <TextTooltip text={[`Hand: ${handAffinity}`]}>
+                    <AffinityCard $bg={AffinityColors[handAffinity] ?? '#ccc'}>
+                      <AffinityIconImg src={AffinityIcons[handAffinity]} />
+                    </AffinityCard>
+                  </TextTooltip>
                 )}
               </AffinitySection>
             )}
@@ -222,7 +224,7 @@ const CartBadge = styled.button<{ $color: string }>`
 `;
 
 const LevelCard = styled.div`
-  background: #1B6B5A;
+  background: #1b6b5a;
   width: 2.55vw;
   display: flex;
   flex-direction: column;
@@ -248,8 +250,9 @@ const LevelValue = styled.span`
 
 // ─── Front Face ───────────────────────────────────────────
 
-const CardFront = styled(CardFace)`
+const CardFront = styled(CardFace)<{ $flipped: boolean }>`
   background: #111;
+  pointer-events: ${({ $flipped }) => ($flipped ? 'none' : 'auto')};
 `;
 
 const KamiImage = styled.img`
@@ -327,11 +330,12 @@ const FlipIconImgDark = styled.img`
 
 // ─── Back Face ────────────────────────────────────────────
 
-const CardBack = styled(CardFace)`
+const CardBack = styled(CardFace)<{ $flipped: boolean }>`
   transform: rotateY(180deg);
-  background: #FFF8E7;
+  background: #fff8e7;
   justify-content: space-between;
   padding: 0.3vw 0.35vw 0.35vw;
+  pointer-events: ${({ $flipped }) => ($flipped ? 'auto' : 'none')};
 `;
 
 const BackContent = styled.div`
