@@ -68,8 +68,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
 
-  overflow: hidden scroll;
-  scrollbar-color: transparent transparent;
+  overflow: hidden;
 `;
 
 const Title = styled.div`

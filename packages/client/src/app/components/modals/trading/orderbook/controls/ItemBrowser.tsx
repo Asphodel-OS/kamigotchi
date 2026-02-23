@@ -74,14 +74,14 @@ export const ItemBrowser = ({
 };
 
 const Container = styled.div`
-  width: 60%;
+  width: 70%;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
   overflow: auto;
-  scrollbar-color: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const Header = styled.tr`
@@ -95,7 +95,7 @@ const Header = styled.tr`
   & > th {
     padding: 0.45vw 0.6vw;
     text-align: left;
-    font-size: 0.9vw;
+    font-size: 0.7vw;
   }
 `;
 
@@ -104,6 +104,10 @@ const Table = styled.table`
   border-collapse: collapse;
   table-layout: fixed;
   padding: 0.6vw;
+
+  th:nth-child(1), td:nth-child(1) { width: 60%; }
+  th:nth-child(2), td:nth-child(2) { width: 30%; }
+  th:nth-child(3), td:nth-child(3) { width: 10%; }
 `;
 
 const DataRow = styled.tr<{ selected: boolean; color: string }>`
@@ -122,12 +126,7 @@ const RowItem = styled.div`
   gap: 0.6vw;
 `;
 
-const RowName = styled.div`
-  max-width: 18vw;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`;
+const RowName = styled.div``;
 
 const Thumb = styled.img`
   width: 1.8vw;

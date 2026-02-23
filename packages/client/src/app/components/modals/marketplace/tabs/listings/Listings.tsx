@@ -3,18 +3,36 @@ import styled from 'styled-components';
 
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import SwapVertIcon from '@mui/icons-material/SwapVert';
-import { EmptyText, IconButton, IconListButton, TextTooltip } from 'app/components/library';
+import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
+import { ClockIcon, ResetIcon } from 'assets/images/icons/menu';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { getKamidenClient, KamiMarketListing } from 'clients/kamiden';
 import { TokenIcons } from 'assets/images/tokens';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { Cart } from './Cart';
+import { ListingCard } from './ListingCard';
 
 const KamidenClient = getKamidenClient();
-const SwapVertIconImage = SwapVertIcon as unknown as string;
+
+const SORT_CYCLE = ['Latest', 'Price Low', 'Price High'] as const;
+type SortMethod = (typeof SORT_CYCLE)[number];
+
+const SortIcons: Record<SortMethod, string> = {
+  'Latest': ClockIcon,
+  'Price Low': ArrowIcons.up,
+  'Price High': ArrowIcons.down,
+};
+
+const VIEW_CYCLE = ['grid', 'list'] as const;
+type ViewMode = (typeof VIEW_CYCLE)[number];
+const ViewIcons: Record<ViewMode, string> = {
+  grid: TriggerIcons.eyeOpen,
+  list: TriggerIcons.eyeHalf,
+};
 
 const formatExpiry = (expiryStr: string) => {
   const expiry = Number(expiryStr);
@@ -30,6 +48,7 @@ export const Listings = ({
   isVisible,
   onOpenFilter,
   onBuyListings,
+  onCancelListing,
   onCloseFilter,
   onCloseCreateOrder,
   createOrderOpen,
@@ -40,6 +59,7 @@ export const Listings = ({
   isVisible: boolean;
   onOpenFilter: () => void;
   onBuyListings: (listingIDs: string[], kamiIndices: number[], totalPrice: bigint) => void;
+  onCancelListing: (orderID: string) => void;
   onCloseFilter: () => void;
   onCloseCreateOrder: () => void;
   createOrderOpen: boolean;
@@ -52,6 +72,7 @@ export const Listings = ({
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
     getKamiDetailed: (entity: EntityIndex) => Kami;
+    getAccountByID: (id: string) => { name: string; index: number };
     isDifferentAccountId: (lhs: string, rhs: string) => boolean;
     formatEthPrice: (weiString: string, decimals: number) => string;
   };
@@ -62,12 +83,28 @@ export const Listings = ({
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const isMarketplaceOpen = useVisibility((s) => s.modals.marketplace);
   const setModals = useVisibility((s) => s.setModals);
 
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
-  const [sortBy, setSortBy] = useState('Latest');
+  const [sortBy, setSortBy] = useState<SortMethod>('Price Low');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showCart, setShowCart] = useState(false);
   const [cart, setCart] = useState<KamiMarketListing[]>([]);
+  const [allFlipped, setAllFlipped] = useState(false);
+  const [sweepActive, setSweepActive] = useState(false);
+  const [sweepCount, setSweepCount] = useState(0);
+
+  // Reset on modal open
+  useEffect(() => {
+    if (!isMarketplaceOpen) return;
+    setSortBy('Price Low');
+    setShowCart(false);
+    setCart([]);
+    setSweepActive(false);
+    setSweepCount(0);
+    setAllFlipped(false);
+  }, [isMarketplaceOpen]);
 
   /////////////////
   // SUBSCRIPTIONS
@@ -80,10 +117,7 @@ export const Listings = ({
       const res = await KamidenClient.getKamiMarketListings({});
       if (!isActive) return;
       const all = res.Listings ?? [];
-      const filtered = all.filter((listing) =>
-        utils.isDifferentAccountId(listing.SellerAccountID, accountId)
-      );
-      setListings(filtered);
+      setListings(all);
     };
 
     refreshListings();
@@ -97,7 +131,11 @@ export const Listings = ({
   const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
   useEffect(() => {
-    if (createOrderOpen) setShowCart(false);
+    if (createOrderOpen) {
+      setShowCart(false);
+      setSweepActive(false);
+      setSweepCount(0);
+    }
   }, [createOrderOpen]);
 
   useEffect(() => {
@@ -111,16 +149,17 @@ export const Listings = ({
     () =>
       listings.map((listing) => {
         const entity = utils.queryKamiByIndex(listing.KamiIndex);
-        const kami = entity !== undefined ? utils.getKami(entity) : undefined;
+        const getter = viewMode === 'grid' ? utils.getKamiDetailed : utils.getKami;
+        const kami = entity !== undefined ? getter(entity) : undefined;
         return { listing, kami, entity };
       }),
-    [listings, utils]
+    [listings, utils, viewMode]
   );
 
   const hasActiveFilters = useMemo(() => {
     const traitActive = Object.values(filters.selected).some((set) => set.size > 0);
     const statActive = Object.entries(filters.stats).some(([key, value]) =>
-      key === 'Slots' ? value > 1 : value > 10
+      key === 'Slots' ? value > 0 : value > 10
     );
     return traitActive || statActive;
   }, [filters.selected, filters.stats]);
@@ -131,7 +170,7 @@ export const Listings = ({
       0
     );
     const statCount = Object.entries(filters.stats).reduce(
-      (sum, [key, value]) => sum + (key === 'Slots' ? (value > 1 ? 1 : 0) : value > 10 ? 1 : 0),
+      (sum, [key, value]) => sum + (key === 'Slots' ? (value > 0 ? 1 : 0) : value > 10 ? 1 : 0),
       0
     );
     return traitCount + statCount;
@@ -161,7 +200,7 @@ export const Listings = ({
 
       const meetsStat = (key: string, statTotal?: number) => {
         const min = filters.stats[key] ?? 10;
-        const base = key === 'Slots' ? 1 : 10;
+        const base = key === 'Slots' ? 0 : 10;
         if (min <= base) return true;
         if (statTotal == null) return false;
         return statTotal >= min;
@@ -186,11 +225,45 @@ export const Listings = ({
     return copy.sort((a, b) => b.listing.Timestamp - a.listing.Timestamp);
   }, [filteredListings, sortBy]);
 
-  const sortOptions = [
-    { text: 'Latest', onClick: () => setSortBy('Latest') },
-    { text: 'Price Low', onClick: () => setSortBy('Price Low') },
-    { text: 'Price High', onClick: () => setSortBy('Price High') },
-  ];
+  const cycleSort = () => {
+    const idx = SORT_CYCLE.indexOf(sortBy);
+    setSortBy(SORT_CYCLE[(idx + 1) % SORT_CYCLE.length]);
+  };
+
+  const cycleView = () => {
+    const idx = VIEW_CYCLE.indexOf(viewMode);
+    setViewMode(VIEW_CYCLE[(idx + 1) % VIEW_CYCLE.length]);
+  };
+
+  /////////////////
+  // SWEEP
+
+  const toggleSweep = () => {
+    const next = !sweepActive;
+    setSweepActive(next);
+    if (next) {
+      setShowCart(true);
+      onCloseCreateOrder();
+      onCloseFilter();
+    } else {
+      setSweepCount(0);
+      setShowCart(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!sweepActive) return;
+    const priceAsc = [...filteredListings]
+      .filter(({ listing }) => {
+        if (isOwnListing(listing)) return false;
+        const expiry = Number(listing.Expiry);
+        if (!expiry) return true;
+        return expiry > Math.floor(Date.now() / 1000);
+      })
+      .sort((a, b) => Number(BigInt(a.listing.Price) - BigInt(b.listing.Price)));
+    const swept = priceAsc.slice(0, sweepCount).map(({ listing }) => listing);
+    setCart(swept);
+  }, [sweepActive, sweepCount, filteredListings]);
 
   /////////////////
   // ACTIONS
@@ -200,6 +273,9 @@ export const Listings = ({
     if (!expiry) return false;
     return expiry <= Math.floor(Date.now() / 1000);
   };
+
+  const isOwnListing = (listing: KamiMarketListing) =>
+    !utils.isDifferentAccountId(listing.SellerAccountID, accountId);
 
   const isInCart = (orderId: string) => cart.some((item) => item.OrderID === orderId);
 
@@ -217,12 +293,19 @@ export const Listings = ({
   };
 
   const addToCart = (listing: KamiMarketListing) => {
-    if (isInCart(listing.OrderID)) return;
+    if (isInCart(listing.OrderID) || isOwnListing(listing)) return;
+    if (sweepActive) setSweepActive(false);
     setCart((prev) => [...prev, listing]);
+    setShowCart(true);
   };
 
   const removeFromCart = (orderId: string) => {
-    setCart((prev) => prev.filter((item) => item.OrderID !== orderId));
+    if (sweepActive) setSweepActive(false);
+    setCart((prev) => {
+      const next = prev.filter((item) => item.OrderID !== orderId);
+      if (next.length === 0) setShowCart(false);
+      return next;
+    });
   };
 
   const handleBuyCart = () => {
@@ -243,94 +326,181 @@ export const Listings = ({
   return (
     <>
       <Tab isVisible={isVisible}>
-        <ButtonWrapper>
-          <IconListButton
-            img={SwapVertIconImage}
-            text={sortBy}
-            options={sortOptions}
-            radius={0.6}
-            tooltip={{ text: ['Sorting.'] }}
-          />
-          <TextTooltip text={['Filters.']}>
-            <IndicatorWrapper>
+        <ButtonRow>
+          <ButtonGroup>
+            <TextTooltip text={['Cart']}>
+              <IndicatorWrapper>
+                <IconButton
+                  img={ShoppingCartIcon}
+                  text='Cart'
+                  onClick={() => {
+                    onCloseCreateOrder();
+                    onCloseFilter();
+                    setShowCart((prev) => !prev);
+                  }}
+                />
+                {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
+              </IndicatorWrapper>
+            </TextTooltip>
+            <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}`]}>
               <IconButton
-                img={FilterListIcon}
-                onClick={() => {
-                  setShowCart(false);
-                  onOpenFilter();
-                }}
+                img={ViewIcons[viewMode]}
+                onClick={cycleView}
+                radius={0.6}
               />
-              {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
-            </IndicatorWrapper>
-          </TextTooltip>
-          <TextTooltip text={['Cart.']}>
-            <IndicatorWrapper>
+            </TextTooltip>
+            {viewMode === 'grid' && (
               <IconButton
-                img={ShoppingCartIcon}
-                onClick={() => {
-                  onCloseCreateOrder();
-                  onCloseFilter();
-                  setShowCart((prev) => !prev);
-                }}
+                img={ResetIcon}
+                onClick={() => setAllFlipped((prev) => !prev)}
+                radius={0.6}
               />
-              {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
-            </IndicatorWrapper>
-          </TextTooltip>
-        </ButtonWrapper>
-        <HeaderRow>
-          <Column flex={2}>
-            <ColumnHeader align='left'>Kami</ColumnHeader>
-          </Column>
-          <Column>
-            <ColumnHeader>
-              <EthIcon src={TokenIcons.eth} alt='ETH' />
-            </ColumnHeader>
-          </Column>
-          <Column>
-            <ColumnHeader>Expiry</ColumnHeader>
-          </Column>
-          <Column>
-            <ColumnHeader>Actions</ColumnHeader>
-          </Column>
-        </HeaderRow>
-        <ListingsBody>
-          {sorted.length === 0 && <EmptyText text={['No listings found']} size={0.9} />}
-          {sorted.map(({ listing, kami }) => (
-            <Row key={listing.OrderID}>
-              <Column flex={2}>
-                <KamiCell>
-                  {kami && (
-                    <KamiThumbnail
-                      src={kami.image}
-                      alt={kami.name}
-                      onClick={() => openKamiModal(listing.KamiIndex)}
+            )}
+          </ButtonGroup>
+          <ButtonGroup>
+            <SweepControl>
+              <IconButton
+                text='Sweep!'
+                onClick={toggleSweep}
+                radius={0.6}
+                color={sweepActive ? '#d4edda' : undefined}
+              />
+              <SweepSliderWrap $active={sweepActive}>
+                <SweepRange
+                  type='range'
+                  min={0}
+                  max={30}
+                  value={sweepCount}
+                  onChange={(e) => setSweepCount(Number(e.target.value))}
+                />
+                <SweepLabel>{sweepCount}</SweepLabel>
+              </SweepSliderWrap>
+            </SweepControl>
+            <TextTooltip text={['Filters']}>
+              <IndicatorWrapper>
+                <IconButton
+                  img={FilterListIcon}
+                  onClick={() => {
+                    setShowCart(false);
+                    onOpenFilter();
+                  }}
+                />
+                {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
+              </IndicatorWrapper>
+            </TextTooltip>
+            <TextTooltip text={[`Sort: ${sortBy}`]}>
+              <IconButton
+                img={SortIcons[sortBy]}
+                onClick={cycleSort}
+                radius={0.6}
+              />
+            </TextTooltip>
+          </ButtonGroup>
+        </ButtonRow>
+        {viewMode === 'list' && (
+          <HeaderRow>
+            <Column flex={2}>
+              <ColumnHeader>Kami</ColumnHeader>
+            </Column>
+            <Column>
+              <ColumnHeader>Seller</ColumnHeader>
+            </Column>
+            <Column>
+              <ColumnHeader>
+                <EthIcon src={TokenIcons.eth} alt='ETH' />
+              </ColumnHeader>
+            </Column>
+            <Column>
+              <ColumnHeader>Expiry</ColumnHeader>
+            </Column>
+            <Column>
+              <ColumnHeader>Actions</ColumnHeader>
+            </Column>
+          </HeaderRow>
+        )}
+        {viewMode === 'list' ? (
+          <ListingsBody>
+            {sorted.length === 0 && (
+              <EmptyCenter>
+                <EmptyText text={['No listings found']} size={0.9} />
+              </EmptyCenter>
+            )}
+            {sorted.map(({ listing, kami }) => (
+              <Row key={listing.OrderID}>
+                <Column flex={2}>
+                  <KamiCell>
+                    {kami && (
+                      <KamiThumbnail
+                        src={kami.image}
+                        alt={kami.name}
+                        onClick={() => openKamiModal(listing.KamiIndex)}
+                      />
+                    )}
+                    <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
+                  </KamiCell>
+                </Column>
+                <Column>
+                  <CellText>{utils.getAccountByID(listing.SellerAccountID).name || 'Unknown'}</CellText>
+                </Column>
+                <Column>
+                  <CellText>{formatPrice(listing.Price)}</CellText>
+                </Column>
+                <Column>
+                  <CellText>{formatExpiry(listing.Expiry)}</CellText>
+                </Column>
+                <Column>
+                  {isOwnListing(listing) ? (
+                    <IconButton
+                      text='Cancel'
+                      onClick={() => onCancelListing(listing.OrderID)}
+                      color='#FDECEC'
+                    />
+                  ) : isListingExpired(listing.Expiry) ? (
+                    <TextTooltip text={['Listing expired']}>
+                      <IconButton text='x' onClick={() => {}} disabled />
+                    </TextTooltip>
+                  ) : isInCart(listing.OrderID) ? (
+                    <IconButton
+                      text='Remove'
+                      onClick={() => removeFromCart(listing.OrderID)}
+                      color='#FDECEC'
+                    />
+                  ) : (
+                    <IconButton
+                      text='Add'
+                      onClick={() => addToCart(listing)}
+                      color='#E8F5E9'
                     />
                   )}
-                  <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
-                </KamiCell>
-              </Column>
-              <Column>
-                <CellText>{formatPrice(listing.Price)}</CellText>
-              </Column>
-              <Column>
-                <CellText>{formatExpiry(listing.Expiry)}</CellText>
-              </Column>
-              <Column>
-                {isListingExpired(listing.Expiry) ? (
-                  <TextTooltip text={['Listing expired.']}>
-                    <IconButton text='Add' onClick={() => addToCart(listing)} disabled />
-                  </TextTooltip>
-                ) : (
-                  <IconButton
-                    text={isInCart(listing.OrderID) ? 'Added' : 'Add'}
-                    onClick={() => addToCart(listing)}
-                    disabled={isInCart(listing.OrderID)}
-                  />
-                )}
-              </Column>
-            </Row>
-          ))}
-        </ListingsBody>
+                </Column>
+              </Row>
+            ))}
+          </ListingsBody>
+        ) : (
+          <ListingsGrid>
+            {sorted.length === 0 && (
+              <EmptyCenter>
+                <EmptyText text={['No listings found']} size={0.9} />
+              </EmptyCenter>
+            )}
+            {sorted.map(({ listing, kami }) => (
+              <ListingCard
+                key={listing.OrderID}
+                listing={listing}
+                kami={kami}
+                isInCart={isInCart(listing.OrderID)}
+                isExpired={isListingExpired(listing.Expiry)}
+                isOwn={isOwnListing(listing)}
+                formatPrice={formatPrice}
+                onAddToCart={() => addToCart(listing)}
+                onRemoveFromCart={() => removeFromCart(listing.OrderID)}
+                onOpenKami={() => openKamiModal(listing.KamiIndex)}
+                getAccountByID={utils.getAccountByID}
+                allFlipped={allFlipped}
+              />
+            ))}
+          </ListingsGrid>
+        )}
       </Tab>
       <Cart
         isVisible={isVisible && showCart && !createOrderOpen}
@@ -356,11 +526,19 @@ const Tab = styled.div<{ isVisible: boolean }>`
   min-height: 10vw;
 `;
 
-const ButtonWrapper = styled.div`
+const ButtonRow = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 0.4vw;
   padding: 0.4vw;
-  width: fit-content;
+  width: 100%;
+  border-bottom: solid #ccc 0.1vw;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.4vw;
 `;
 
 const IndicatorWrapper = styled.div`
@@ -392,17 +570,41 @@ const HeaderRow = styled.div`
   min-height: 3vw;
 `;
 
+const EmptyCenter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  grid-column: 1 / -1;
+`;
+
 const ListingsBody = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   flex: 1;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+`;
+
+const ListingsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.8vw, 1fr));
+  align-content: start;
+  gap: 0.5vw;
+  padding: 0.4vw;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const Row = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
+  flex-shrink: 0;
   width: 100%;
   border-bottom: 0.06vw solid #ccc;
   min-height: 3vw;
@@ -420,10 +622,10 @@ const Column = styled.div<{ flex?: number }>`
   flex: ${({ flex }) => flex ?? 1};
 `;
 
-const ColumnHeader = styled.div<{ align?: 'left' | 'center' }>`
+const ColumnHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: ${({ align }) => (align === 'left' ? 'flex-start' : 'center')};
+  justify-content: center;
   padding: 0.4vw 0.6vw;
   font-size: 1.05vw;
   line-height: 1.2;
@@ -439,11 +641,13 @@ const KamiCell = styled.div`
   align-items: center;
   gap: 0.4vw;
   padding: 0.4vw;
+  width: 11vw;
 `;
 
 const KamiThumbnail = styled.img`
   width: 3vw;
   height: 3vw;
+  flex-shrink: 0;
   border-radius: 0.3vw;
   border: 0.1vw solid black;
   image-rendering: pixelated;
@@ -452,6 +656,7 @@ const KamiThumbnail = styled.img`
 
 const KamiName = styled.span`
   font-size: 0.9vw;
+  white-space: nowrap;
 `;
 
 const CellText = styled.span`
@@ -461,4 +666,34 @@ const CellText = styled.span`
   font-size: 0.95vw;
   line-height: 1.2;
   padding: 0.4vw 0.6vw;
+`;
+
+const SweepControl = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const SweepSliderWrap = styled.div<{ $active: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 0.2vw;
+  max-width: ${({ $active }) => ($active ? '14vw' : '0')};
+  overflow: hidden;
+  opacity: ${({ $active }) => ($active ? 1 : 0)};
+  transition: max-width 0.3s ease, opacity 0.2s ease;
+`;
+
+const SweepRange = styled.input`
+  width: 10.5vw;
+  height: 0.3vw;
+  cursor: pointer;
+  accent-color: #333;
+`;
+
+const SweepLabel = styled.span`
+  font-size: 0.75vw;
+  min-width: 1.2vw;
+  text-align: center;
+  white-space: nowrap;
 `;
