@@ -9,12 +9,12 @@ import { ArrowIcons } from 'assets/images/icons/arrows';
 import { ClockIcon, ResetIcon } from 'assets/images/icons/menu';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import { getKamidenClient, KamiMarketListing } from 'clients/kamiden';
-import { TokenIcons } from 'assets/images/tokens';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { Cart } from './Cart';
 import { ListingCard } from './ListingCard';
+import { ListingsListView } from './ListingsListView';
 
 const KamidenClient = getKamidenClient();
 
@@ -397,85 +397,20 @@ export const Listings = ({
             </TextTooltip>
           </ButtonGroup>
         </ButtonRow>
-        {viewMode === 'list' && (
-          <HeaderRow>
-            <Column flex={2}>
-              <ColumnHeader>Kami</ColumnHeader>
-            </Column>
-            <Column>
-              <ColumnHeader>Seller</ColumnHeader>
-            </Column>
-            <Column>
-              <ColumnHeader>
-                <EthIcon src={TokenIcons.eth} alt='ETH' />
-              </ColumnHeader>
-            </Column>
-            <Column>
-              <ColumnHeader>Expiry</ColumnHeader>
-            </Column>
-            <Column>
-              <ColumnHeader>Actions</ColumnHeader>
-            </Column>
-          </HeaderRow>
-        )}
         {viewMode === 'list' ? (
-          <ListingsBody>
-            {sorted.length === 0 && (
-              <EmptyCenter>
-                <EmptyText text={['No listings found']} size={0.9} />
-              </EmptyCenter>
-            )}
-            {sorted.map(({ listing, kami }) => (
-              <Row key={listing.OrderID}>
-                <Column flex={2}>
-                  <KamiCell>
-                    {kami && (
-                      <KamiThumbnail
-                        src={kami.image}
-                        alt={kami.name}
-                        onClick={() => openKamiModal(listing.KamiIndex)}
-                      />
-                    )}
-                    <KamiName>{kami?.name ?? `Kami #${listing.KamiIndex}`}</KamiName>
-                  </KamiCell>
-                </Column>
-                <Column>
-                  <CellText>{utils.getAccountByID(listing.SellerAccountID).name || 'Unknown'}</CellText>
-                </Column>
-                <Column>
-                  <CellText>{formatPrice(listing.Price)}</CellText>
-                </Column>
-                <Column>
-                  <CellText>{formatExpiry(listing.Expiry)}</CellText>
-                </Column>
-                <Column>
-                  {isOwnListing(listing) ? (
-                    <IconButton
-                      text='Cancel'
-                      onClick={() => onCancelListing(listing.OrderID)}
-                      color='#FDECEC'
-                    />
-                  ) : isListingExpired(listing.Expiry) ? (
-                    <TextTooltip text={['Listing expired']}>
-                      <IconButton text='x' onClick={() => {}} disabled />
-                    </TextTooltip>
-                  ) : isInCart(listing.OrderID) ? (
-                    <IconButton
-                      text='Remove'
-                      onClick={() => removeFromCart(listing.OrderID)}
-                      color='#FDECEC'
-                    />
-                  ) : (
-                    <IconButton
-                      text='Add'
-                      onClick={() => addToCart(listing)}
-                      color='#E8F5E9'
-                    />
-                  )}
-                </Column>
-              </Row>
-            ))}
-          </ListingsBody>
+          <ListingsListView
+            listings={sorted}
+            formatPrice={formatPrice}
+            formatExpiry={formatExpiry}
+            isOwnListing={isOwnListing}
+            isListingExpired={isListingExpired}
+            isInCart={isInCart}
+            onAddToCart={addToCart}
+            onRemoveFromCart={removeFromCart}
+            onCancelListing={onCancelListing}
+            onOpenKami={openKamiModal}
+            getAccountByID={utils.getAccountByID}
+          />
         ) : (
           <ListingsGrid>
             {sorted.length === 0 && (
@@ -562,14 +497,6 @@ const IndicatorBadge = styled.span`
   border: 0.08vw solid white;
   z-index: 2;
 `;
-const HeaderRow = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  width: 100%;
-  min-height: 3vw;
-`;
-
 const EmptyCenter = styled.div`
   display: flex;
   align-items: center;
@@ -577,15 +504,6 @@ const EmptyCenter = styled.div`
   flex: 1;
   width: 100%;
   grid-column: 1 / -1;
-`;
-
-const ListingsBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  flex: 1;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
 `;
 
 const ListingsGrid = styled.div`
@@ -600,73 +518,6 @@ const ListingsGrid = styled.div`
   &::-webkit-scrollbar { display: none; }
 `;
 
-const Row = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  flex-shrink: 0;
-  width: 100%;
-  border-bottom: 0.06vw solid #ccc;
-  min-height: 3vw;
-  margin: 0.2vw 0;
-
-  &:hover {
-    background-color: #eee;
-  }
-`;
-
-const Column = styled.div<{ flex?: number }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: ${({ flex }) => flex ?? 1};
-`;
-
-const ColumnHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.4vw 0.6vw;
-  font-size: 1.05vw;
-  line-height: 1.2;
-`;
-
-const EthIcon = styled.img`
-  width: 1.4vw;
-  height: 1.4vw;
-`;
-
-const KamiCell = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.4vw;
-  padding: 0.4vw;
-  width: 11vw;
-`;
-
-const KamiThumbnail = styled.img`
-  width: 3vw;
-  height: 3vw;
-  flex-shrink: 0;
-  border-radius: 0.3vw;
-  border: 0.1vw solid black;
-  image-rendering: pixelated;
-  cursor: pointer;
-`;
-
-const KamiName = styled.span`
-  font-size: 0.9vw;
-  white-space: nowrap;
-`;
-
-const CellText = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.95vw;
-  line-height: 1.2;
-  padding: 0.4vw 0.6vw;
-`;
 
 const SweepControl = styled.div`
   display: flex;
