@@ -340,10 +340,6 @@ library LibKamiMarket {
     require(uint32(remaining) >= count, "KamiMarket: insufficient quantity");
   }
 
-  function verifyMaxOrders(IUintComp comps, uint256 accID) internal view {
-    uint256 max = LibConfig.get(comps, "MAX_KAMI_MARKET_ORDERS");
-    if (getNumOrders(comps, accID) >= max) revert("KamiMarket: order limit reached");
-  }
 
   /// @notice Verify kami exists, is RESTING, and owned by accID
   function verifyKamiResting(IUintComp comps, uint32 kamiIndex, uint256 accID) internal view {
@@ -386,9 +382,6 @@ library LibKamiMarket {
     return IndexKamiListingComponent(getAddrByID(comps, IndexKamiListingCompID)).get(id);
   }
 
-  function getNumOrders(IUintComp comps, uint256 accID) internal view returns (uint256) {
-    return IDOwnsKamiOrderComponent(getAddrByID(comps, IDOwnsKamiOrderCompID)).size(abi.encode(accID));
-  }
 
   function getVault(IUintComp comps) internal view returns (KamiMarketVault) {
     return KamiMarketVault(LibConfig.getAddress(comps, "KAMI_MARKET_VAULT"));

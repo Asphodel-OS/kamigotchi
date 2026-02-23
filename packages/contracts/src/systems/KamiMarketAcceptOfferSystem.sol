@@ -131,20 +131,25 @@ contract KamiMarketAcceptOfferSystem is System {
 
       LibKamiMarket.fillCollectionOffer(world, components, offerID, sellerAccID, kamiIndex);
       LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, pricePerKami);
+      LibKamiMarket.logAcceptOffer(components, sellerAccID);
     }
 
     // --- batched WETH transfers ---
-    uint256 totalPrice = pricePerKami * kamiIndices.length;
+    uint256 totalPrice;
+    uint256 totalFee;
+    for (uint256 i; i < kamiIndices.length; i++) {
+      uint256 fee = LibKamiMarket.calcFee(components, pricePerKami);
+      totalFee += fee;
+      totalPrice += pricePerKami;
+    }
     KamiMarketVault vault = LibKamiMarket.getVault(components);
-    uint256 totalFee = LibKamiMarket.calcFee(components, totalPrice);
     vault.transferWETH(buyerAddress, sellerAddress, totalPrice - totalFee);
     if (totalFee > 0) {
       vault.transferWETH(buyerAddress, LibKamiMarket.getFeeRecipient(components), totalFee);
     }
 
-    // --- TWAP + logging (once) ---
+    // --- TWAP (once) ---
     LibTWAP.poke(components, pricePerKami);
-    LibKamiMarket.logAcceptOffer(components, sellerAccID);
     LibAccount.updateLastTs(components, sellerAccID);
 
     return "";

@@ -20,7 +20,6 @@ contract KamiMarketListSystem is System {
 
     uint256 accID = LibAccount.verifyOperator(components);
     LibKamiMarket.verifyEnabled(components);
-    LibKamiMarket.verifyMaxOrders(components, accID);
     LibKamiMarket.verifyKamiResting(components, kamiIndex, accID);
     require(price > 0, "KamiMarketList: price must be > 0");
 

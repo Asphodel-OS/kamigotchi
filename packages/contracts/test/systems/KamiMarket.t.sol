@@ -55,7 +55,6 @@ contract KamiMarketTest is SetupTemplate {
     // Set marketplace configs
     __KamiMarketRegistrySystem.setVault(address(vault));
     __KamiMarketRegistrySystem.setFeeRecipient(treasury);
-    __KamiMarketRegistrySystem.setMaxOrders(50);
     __KamiMarketRegistrySystem.setEnabled(true);
     __KamiMarketRegistrySystem.setPurchaseCooldown(3600); // 1 hour
 
@@ -567,29 +566,6 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   /////////////////
-  // MAX ORDERS TEST
-
-  function testMaxOrders() public {
-    // Set max to 2 for testing
-    vm.prank(deployer);
-    __KamiMarketRegistrySystem.setMaxOrders(2);
-
-    (, uint32 kamiIndex1) = _createStakedKami(alice);
-    (, uint32 kamiIndex2) = _createStakedKami(alice);
-    (, uint32 kamiIndex3) = _createStakedKami(alice);
-
-    // Create 2 listings (should succeed)
-    _listKami(alice, kamiIndex1, LIST_PRICE);
-    _listKami(alice, kamiIndex2, LIST_PRICE);
-
-    // 3rd should fail
-    vm.startPrank(alice.operator);
-    vm.expectRevert();
-    _KamiMarketListSystem.executeTyped(kamiIndex3, LIST_PRICE, 0);
-    vm.stopPrank();
-  }
-
-  /////////////////
   // ADMIN TESTS
 
   function testAdminCancel() public {
@@ -1001,33 +977,6 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   /////////////////
-  // MAX ORDERS FREED BY CANCEL
-
-  function testMaxOrdersFreedByCancel() public {
-    vm.prank(deployer);
-    __KamiMarketRegistrySystem.setMaxOrders(2);
-
-    (, uint32 kamiIndex1) = _createStakedKami(alice);
-    (, uint32 kamiIndex2) = _createStakedKami(alice);
-    (, uint32 kamiIndex3) = _createStakedKami(alice);
-
-    // Create 2 listings (hits max)
-    uint256 orderID1 = _listKami(alice, kamiIndex1, LIST_PRICE);
-    _listKami(alice, kamiIndex2, LIST_PRICE);
-
-    // 3rd should fail
-    vm.startPrank(alice.operator);
-    vm.expectRevert();
-    _KamiMarketListSystem.executeTyped(kamiIndex3, LIST_PRICE, 0);
-    vm.stopPrank();
-
-    // Cancel first listing — frees a slot
-    _cancelOrder(alice, orderID1);
-
-    // Now 3rd should succeed
-    _listKami(alice, kamiIndex3, LIST_PRICE);
-  }
-
   /////////////////
   // PURCHASE COOLDOWN TESTS
 

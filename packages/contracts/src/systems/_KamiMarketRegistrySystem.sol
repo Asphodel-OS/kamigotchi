@@ -9,7 +9,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.registry"));
 
-/// @notice Admin — set fee rates, max orders, vault address, enable/disable
+/// @notice Admin — set fee rates, vault address, enable/disable
 contract _KamiMarketRegistrySystem is System, AuthRoles {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
@@ -27,10 +27,6 @@ contract _KamiMarketRegistrySystem is System, AuthRoles {
     LibConfig.setAddress(components, "KAMI_MARKET_FEE_RECIPIENT", recipient);
   }
 
-  /// @notice Set the max open orders per account
-  function setMaxOrders(uint256 max) public onlyAdmin(components) {
-    LibConfig.set(components, "MAX_KAMI_MARKET_ORDERS", max);
-  }
 
   /// @notice Set the vault contract address
   function setVault(address vault) public onlyAdmin(components) {

@@ -23,7 +23,6 @@ contract KamiMarketOfferSystem is System {
 
     uint256 accID = LibAccount.verifyOperator(components);
     LibKamiMarket.verifyEnabled(components);
-    LibKamiMarket.verifyMaxOrders(components, accID);
     require(price > 0, "KamiMarketOffer: price must be > 0");
 
     uint256 id;

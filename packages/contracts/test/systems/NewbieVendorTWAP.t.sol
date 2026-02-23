@@ -45,7 +45,6 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     vault.authorizeCaller(address(_KamiMarketAcceptOfferSystem));
     __KamiMarketRegistrySystem.setVault(address(vault));
     __KamiMarketRegistrySystem.setFeeRecipient(treasury);
-    __KamiMarketRegistrySystem.setMaxOrders(50);
     __KamiMarketRegistrySystem.setEnabled(true);
     __KamiMarketRegistrySystem.setPurchaseCooldown(3600);
 
