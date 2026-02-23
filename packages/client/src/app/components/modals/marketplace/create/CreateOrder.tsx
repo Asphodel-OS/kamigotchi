@@ -12,7 +12,7 @@ import { playClick } from 'utils/sounds';
 import { Buy } from './Buy';
 import { Sell } from './Sell';
 
-type OrderType = 'Sell' | 'Buy';
+type OrderType = 'listing' | 'bid';
 const KamidenClient = getKamidenClient();
 
 const normalizeAccountId = (accountId: string) => {
@@ -72,7 +72,7 @@ export const CreateOrder = ({
   /////////////////
   // INSTANTIATIONS
 
-  const [orderType, setOrderType] = useState<OrderType>('Sell');
+  const [orderType, setOrderType] = useState<OrderType>('listing');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [expiration, setExpiration] = useState(1);
@@ -188,19 +188,21 @@ export const CreateOrder = ({
     const expiry = getExpiryTimestamp(expiration);
     const priceWei = parseEthToWei(price);
 
-    if (orderType === 'Sell') {
+    if (orderType === 'listing') {
       if (!selectedKami[0] || priceWei === null) return;
       const completed = await createSellOrder(selectedKami[0].index, priceWei, expiry);
       if (completed) handleClear();
     }
-    if (orderType === 'Buy') {
+    if (orderType === 'bid') {
       if (priceWei === null) return;
       if (selectedBuyKami) {
         const completed = await createBuyKamiOrder(selectedBuyKami.index, priceWei, expiry);
         if (completed) handleClear();
       } else {
         if (!quantity) return;
-        const completed = await createBuyOrder(priceWei, Number(quantity), expiry);
+        const qty = Number(quantity);
+        const perKamiWei = BigInt(priceWei.toString()) / BigInt(qty);
+        const completed = await createBuyOrder(perKamiWei, qty, expiry);
         if (completed) handleClear();
       }
     }
@@ -214,9 +216,11 @@ export const CreateOrder = ({
     setExpiration(1);
   };
 
-  const toggleOrderType = () => {
+  const handleTabSwitch = (newType: OrderType) => {
+    if (newType === orderType) return;
     handleClear();
-    setOrderType((prev) => (prev === 'Sell' ? 'Buy' : 'Sell'));
+    setOrderType(newType);
+    playClick();
   };
 
   const isPriceValid = parseEthToWei(price) !== null;
@@ -226,16 +230,18 @@ export const CreateOrder = ({
   const isSelectedKamiExternal = isKamiExternal(selectedKamiState);
   const isSelectedKamiNotListed = selectedKami[0]?.state !== 'LISTED';
   const sellBlockedReason = (() => {
-    if (orderType !== 'Sell' || selectedKami[0]?.id === NullKami.id) return '';
+    if (orderType !== 'listing' || selectedKami[0]?.id === NullKami.id) return '';
     if (!isSelectedKamiNotListed) return 'This Kami already has an active listing.';
     if (!isSelectedKamiExternal) return 'This Kami is not out of world.';
     return '';
   })();
   const isCreateDisabled =
-    orderType === 'Sell' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
+    orderType === 'listing' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
   const sellSelectionTooltip = hasListedKamis
     ? 'All your Kami are already listed'
     : `You don't have out of world Kami.`;
+
+  const actionText = orderType === 'listing' ? 'Place Listing' : 'Place Bid';
 
   /////////////////
   // DISPLAY
@@ -243,53 +249,76 @@ export const CreateOrder = ({
   return (
     <Container isVisible={isVisible}>
       <Header>
-        <HeaderTitle>Create order</HeaderTitle>
+        <HeaderTitle>Create Order</HeaderTitle>
         <IconButton text='X' onClick={onClose} scale={1.5} />
       </Header>
-      <Body>
-        <Row style={{ alignItems: `center` }}>
-          <Label>I want to:</Label>
-          <IconButton text={`< ${orderType} >`} onClick={toggleOrderType} />
-        </Row>
-      </Body>
-      <Sell
-        isVisible={orderType === 'Sell'}
-        kamiOptions={kamiOptions}
-        handleKamiSelect={handleKamiSelect}
-        selectedKami={selectedKami}
-        onKamiClick={handleKamiClick}
-        price={price}
-        setPrice={setPrice}
-        expiration={expiration}
-        setExpiration={setExpiration}
-        hasSellableKamis={sellableKamis.length > 0}
-        disabledTooltip={sellSelectionTooltip}
-      />
-      <Buy
-        isVisible={orderType === 'Buy'}
-        quantity={quantity}
-        setQuantity={(val) => {
-          setQuantity(val);
-          if (val) setSelectedBuyKami(null);
-        }}
-        price={price}
-        setPrice={setPrice}
-        expiration={expiration}
-        setExpiration={setExpiration}
-        kamiOptions={allKamiOptions}
-        selectedBuyKami={selectedBuyKami}
-      />
+      <BookmarkRow>
+        <BookmarkTab
+          $active={orderType === 'listing'}
+          $color='#FFF0E0'
+          onClick={() => handleTabSwitch('listing')}
+        >
+          Listing
+        </BookmarkTab>
+        <BookmarkTab
+          $active={orderType === 'bid'}
+          $color='#E0EEFF'
+          onClick={() => handleTabSwitch('bid')}
+        >
+          Bid
+        </BookmarkTab>
+      </BookmarkRow>
+      <ContentArea>
+        <Sell
+          isVisible={orderType === 'listing'}
+          kamiOptions={kamiOptions}
+          handleKamiSelect={handleKamiSelect}
+          selectedKami={selectedKami}
+          onKamiClick={handleKamiClick}
+          price={price}
+          setPrice={setPrice}
+          expiration={expiration}
+          setExpiration={setExpiration}
+          hasSellableKamis={sellableKamis.length > 0}
+          disabledTooltip={sellSelectionTooltip}
+        />
+        <Buy
+          isVisible={orderType === 'bid'}
+          quantity={quantity}
+          setQuantity={(val) => {
+            setQuantity(val);
+            if (val) setSelectedBuyKami(null);
+          }}
+          price={price}
+          setPrice={setPrice}
+          expiration={expiration}
+          setExpiration={setExpiration}
+          kamiOptions={allKamiOptions}
+          selectedBuyKami={selectedBuyKami}
+          onClearBuyKami={() => setSelectedBuyKami(null)}
+        />
+      </ContentArea>
       <Actions>
         {sellBlockedReason ? (
           <TextTooltip text={[sellBlockedReason]}>
             <span>
-              <IconButton text='Create' onClick={handleCreate} disabled={isCreateDisabled} />
+              <IconButton
+                text={actionText}
+                onClick={handleCreate}
+                disabled={isCreateDisabled}
+                color='#E8F5E9'
+              />
             </span>
           </TextTooltip>
         ) : (
-          <IconButton text='Create' onClick={handleCreate} disabled={isCreateDisabled} />
+          <IconButton
+            text={actionText}
+            onClick={handleCreate}
+            disabled={isCreateDisabled}
+            color='#E8F5E9'
+          />
         )}
-        <IconButton text='Clear' onClick={handleClear} />
+        <IconButton text='Clear' onClick={handleClear} color='#E0EEFF' />
       </Actions>
     </Container>
   );
@@ -308,7 +337,7 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   background-color: rgb(221, 221, 221);
-  padding: 0.8vw;
+  padding: 0.5vw 0.8vw;
   font-size: 1.2vw;
   position: sticky;
   top: 0;
@@ -321,23 +350,36 @@ const HeaderTitle = styled.span`
   font-size: 1.1vw;
 `;
 
-const Body = styled.div`
-  padding: 0.3vw 0 0 0.3vw;
-  gap: 0.6vw;
+const BookmarkRow = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
-
-const Row = styled.div`
   width: 100%;
-  gap: 0.6vw;
-  display: flex;
-  flex-flow: row nowrap;
 `;
 
-const Label = styled.span`
-  font-size: 1vw;
+const BookmarkTab = styled.button<{ $active: boolean; $color: string }>`
+  flex: 1;
+  padding: 0.5vw 0;
+  font-size: 0.9vw;
+  line-height: 1.2vw;
+  font-weight: ${({ $active }) => ($active ? '700' : '500')};
+  background: ${({ $active, $color }) => ($active ? $color : '#f0f0f0')};
+  border: none;
+  border-bottom: 0.15vw solid ${({ $active }) => ($active ? 'transparent' : '#ccc')};
+  cursor: pointer;
+  transition: background 0.15s;
+  color: ${({ $active }) => ($active ? '#222' : '#888')};
+
+  &:hover {
+    background: ${({ $active, $color }) => ($active ? $color : '#e8e8e8')};
+  }
+`;
+
+const ContentArea = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Actions = styled.div`
@@ -347,4 +389,6 @@ const Actions = styled.div`
   gap: 0.6vw;
   padding: 0.6vw;
   margin-top: auto;
+  background: rgb(240, 240, 240);
+  border-top: 0.1vw solid #ccc;
 `;

@@ -232,7 +232,8 @@ export const Bids = ({
   };
 
   const handleSellBid = (bid: KamiMarketBid) => {
-    if (selectedBid?.OrderID === bid.OrderID && showSelectKami) {
+    // Clicking the same bid again (whether modal is open or not) deselects
+    if (selectedBid?.OrderID === bid.OrderID) {
       setSelectedBid(null);
       setSelectedKamis(new Set());
       setShowSelectKami(false);
@@ -250,7 +251,11 @@ export const Bids = ({
     setShowSelectKami(true);
   };
 
-  const handleCloseSelect = () => setShowSelectKami(false);
+  const handleCloseSelect = () => {
+    setShowSelectKami(false);
+    setSelectedBid(null);
+    setSelectedKamis(new Set());
+  };
 
   const cycleFilter = () => {
     const idx = FILTER_CYCLE.indexOf(filterBy);
@@ -689,7 +694,6 @@ const KamiSlotImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0.3vw;
   image-rendering: pixelated;
 `;
 

@@ -1,16 +1,15 @@
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { formatUnits, parseEther } from 'viem';
 
 import { IconListButton, IconListButtonOption } from 'app/components/library';
+import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
+import { ExpirySlider } from './ExpirySlider';
 
-const expirationOptions = [
-  { value: 1, label: '1 Hour' },
-  { value: 3, label: '3 Hours' },
-  { value: 24, label: '24 Hours' },
-  { value: 0, label: 'Never' },
-];
+type BidMode = 'generic' | 'specific';
 
 export const Buy = ({
   isVisible,
@@ -22,6 +21,7 @@ export const Buy = ({
   setExpiration,
   kamiOptions,
   selectedBuyKami,
+  onClearBuyKami,
 }: {
   isVisible: boolean;
   quantity: string;
@@ -32,116 +32,257 @@ export const Buy = ({
   setExpiration: (val: number) => void;
   kamiOptions: IconListButtonOption[];
   selectedBuyKami: Kami | null;
-}) => (
-  <Conditional isVisible={isVisible}>
-    <Body>
-      <Row>
-        <Section>
-          <SubHeader>Kami</SubHeader>
-          <KamiPickerRow>
-            <Price>
-              <PriceInput
-                type='text'
-                inputMode='numeric'
-                placeholder='0'
-                value={quantity}
-                disabled={!!selectedBuyKami}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === '' || /^\d+$/.test(val)) setQuantity(val);
-                }}
+  onClearBuyKami: () => void;
+}) => {
+  const [bidMode, setBidMode] = useState<BidMode>('generic');
+
+  const handleModeSwitch = (mode: BidMode) => {
+    if (mode === bidMode) return;
+    setPrice('');
+    if (mode === 'generic') {
+      onClearBuyKami();
+    } else {
+      setQuantity('');
+    }
+    setBidMode(mode);
+  };
+
+  const perKamiDisplay = useMemo(() => {
+    if (!price || !quantity) return null;
+    const qty = Number(quantity);
+    if (qty <= 0) return null;
+    try {
+      const totalWei = parseEther(price);
+      const perKamiWei = totalWei / BigInt(qty);
+      const num = Number(formatUnits(perKamiWei, 18));
+      if (num > 0 && num < 0.00001) return '<0.00001';
+      return num.toFixed(5).replace(/\.?0+$/, '');
+    } catch {
+      return null;
+    }
+  }, [price, quantity]);
+
+  return (
+    <Conditional isVisible={isVisible}>
+      <MainLayout>
+        <BidTypeColumn>
+          <BidTypeTitle>Bid Type</BidTypeTitle>
+          <BidTypeRow>
+            <BidTypeOption
+              $active={bidMode === 'generic'}
+              onClick={() => handleModeSwitch('generic')}
+            >
+              <BidTypeImage src={placeholderKami} alt='Generic' />
+              <BidTypeLabel>Generic</BidTypeLabel>
+            </BidTypeOption>
+            <BidTypeOption
+              $active={bidMode === 'specific'}
+              onClick={() => handleModeSwitch('specific')}
+            >
+              <BidTypeImage
+                src={selectedBuyKami?.image ?? MenuIcons.kami}
+                alt='Specific'
+                $isIcon={!selectedBuyKami}
               />
-              <KamiIcon src={MenuIcons.kami} alt='Kami' />
-            </Price>
-            <Divider>or</Divider>
-            <IconListButton
-              img={MenuIcons.kami}
-              options={kamiOptions}
-              searchable
-              disabled={!!quantity}
-              tooltip={{ text: ['Select Kami.'] }}
-            />
-          </KamiPickerRow>
-          {selectedBuyKami && <KamiImage src={selectedBuyKami.image} alt={selectedBuyKami.name} />}
-        </Section>
-        <Section>
-          <SubHeader>Price</SubHeader>
-          <Price>
-            <PriceInput
-              type='text'
-              inputMode='decimal'
-              placeholder='0'
-              value={price}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
-              }}
-            />
-            <EthIcon src={TokenIcons.eth} alt='ETH' />
-          </Price>
-        </Section>
-      </Row>
-    </Body>
-    <SubHeader>Expiration</SubHeader>
-    <Body>
-      <ExpirationRow>
-        {expirationOptions.map((opt) => (
-          <RadioLabel key={opt.value}>
-            <input
-              type='radio'
-              name='buy-expiration'
-              value={opt.value}
-              checked={expiration === opt.value}
-              onChange={() => setExpiration(opt.value)}
-            />
-            {opt.label}
-          </RadioLabel>
-        ))}
-      </ExpirationRow>
-    </Body>
-  </Conditional>
-);
+              <BidTypeLabel>Specific</BidTypeLabel>
+            </BidTypeOption>
+          </BidTypeRow>
+        </BidTypeColumn>
+
+        <VerticalDivider />
+
+        <FieldsColumn>
+          {bidMode === 'generic' && (
+            <>
+              <FieldGroup>
+                <SectionLabel>Quantity</SectionLabel>
+                <InputRow>
+                  <StyledInput
+                    type='text'
+                    inputMode='numeric'
+                    placeholder='0'
+                    value={quantity}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^\d+$/.test(val)) setQuantity(val);
+                    }}
+                  />
+                  <InputIcon src={MenuIcons.kami} alt='Kami' />
+                </InputRow>
+              </FieldGroup>
+              <FieldGroup>
+                <SectionLabel>Total Bid</SectionLabel>
+                <TotalBidRow>
+                  <InputRow>
+                    <StyledInput
+                      type='text'
+                      inputMode='decimal'
+                      placeholder='0'
+                      value={price}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
+                      }}
+                    />
+                    <InputIcon src={TokenIcons.eth} alt='ETH' />
+                  </InputRow>
+                  <PerKamiChip>
+                    <PerKamiLabel>Per Kami:</PerKamiLabel>
+                    <PerKamiIcon src={TokenIcons.eth} alt='ETH' />
+                    <PerKamiValue>{perKamiDisplay ?? '—'}</PerKamiValue>
+                  </PerKamiChip>
+                </TotalBidRow>
+              </FieldGroup>
+            </>
+          )}
+
+          {bidMode === 'specific' && (
+            <>
+              <FieldGroup>
+                <SectionLabel>Select Kami</SectionLabel>
+                <KamiPickerRow>
+                  <IconListButton
+                    img={MenuIcons.kami}
+                    options={kamiOptions}
+                    searchable
+                    tooltip={{ text: ['Select Kami'] }}
+                  />
+                </KamiPickerRow>
+              </FieldGroup>
+              <FieldGroup>
+                <SectionLabel>Bid Amount</SectionLabel>
+                <InputRow>
+                  <StyledInput
+                    type='text'
+                    inputMode='decimal'
+                    placeholder='0'
+                    value={price}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
+                    }}
+                  />
+                  <InputIcon src={TokenIcons.eth} alt='ETH' />
+                </InputRow>
+              </FieldGroup>
+            </>
+          )}
+        </FieldsColumn>
+      </MainLayout>
+
+      <ExpirySection>
+        <SectionLabel>Expiration</SectionLabel>
+        <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
+      </ExpirySection>
+    </Conditional>
+  );
+};
 
 const Conditional = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `` : `display: none;`)}
 `;
 
-const Section = styled.div`
+const MainLayout = styled.div`
   display: flex;
-  flex-flow: column nowrap;
-  width: 100%;
-  gap: 0.6vw;
+  padding: 0.5vw 0.6vw;
+  gap: 0;
 `;
 
-const SubHeader = styled.div`
-  border-bottom: 0.15vw solid black;
-  padding: 0.8vw;
-  font-size: 1vw;
-  text-align: left;
-`;
-
-const Body = styled.div`
-  padding: 0.3vw 0 0 0.3vw;
-  gap: 0.6vw;
+const BidTypeColumn = styled.div`
+  flex: 0 0 25%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 0.3vw;
+  padding-right: 0.5vw;
 `;
 
-const Price = styled.div`
+const BidTypeTitle = styled.span`
+  font-weight: bold;
+  font-size: 0.8vw;
+`;
+
+const BidTypeRow = styled.div`
+  display: flex;
+  gap: 0.3vw;
+  width: 100%;
+`;
+
+const BidTypeOption = styled.div<{ $active: boolean }>`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15vw;
+  cursor: pointer;
+  padding: 0.2vw;
+  border-radius: 0.4vw;
+  border: 0.15vw solid ${({ $active }) => ($active ? '#7aa8d4' : '#ddd')};
+  background: ${({ $active }) => ($active ? '#E0EEFF' : '#f0f0f0')};
+  opacity: ${({ $active }) => ($active ? 1 : 0.5)};
+  transition: all 0.15s;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const BidTypeImage = styled.img<{ $isIcon?: boolean }>`
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.3vw;
+  image-rendering: pixelated;
+  object-fit: ${({ $isIcon }) => ($isIcon ? 'contain' : 'cover')};
+  padding: ${({ $isIcon }) => ($isIcon ? '15%' : '0')};
+  background: white;
+`;
+
+const BidTypeLabel = styled.span`
+  font-size: 0.55vw;
+  font-weight: 600;
+  color: #555;
+`;
+
+const VerticalDivider = styled.div`
+  width: 0.08vw;
+  background: #ddd;
+  align-self: stretch;
+`;
+
+const FieldsColumn = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vw;
+  padding-left: 0.6vw;
+`;
+
+const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3vw;
+`;
+
+const SectionLabel = styled.div`
+  font-weight: bold;
+  font-size: 0.8vw;
+  padding-bottom: 0.2vw;
+  border-bottom: 0.08vw solid #ddd;
+`;
+
+const TotalBidRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+`;
+
+const InputRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.4vw;
 `;
 
-const Row = styled.div`
-  width: 100%;
-  gap: 0.6vw;
-  display: flex;
-  flex-flow: row nowrap;
-`;
-
-const PriceInput = styled.input`
+const StyledInput = styled.input`
   font-size: 1vw;
   width: 6vw;
   height: 2.5vw;
@@ -158,42 +299,35 @@ const PriceInput = styled.input`
   }
 `;
 
-const EthIcon = styled.img`
+const InputIcon = styled.img`
   width: 1.4vw;
   height: 1.4vw;
 `;
 
-const KamiIcon = styled.img`
-  width: 1.4vw;
-  height: 1.4vw;
-`;
-
-const ExpirationRow = styled.div`
-  margin-top: 0.3vw;
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 1.2vw;
-  align-items: center;
-`;
-
-const RadioLabel = styled.label`
-  font-size: 1vw;
+const PerKamiChip = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.2vw;
-  cursor: pointer;
-
-  input[type='radio'] {
-    accent-color: rgb(203, 186, 61);
-    cursor: pointer;
-  }
+  gap: 0.25vw;
+  padding: 0.3vw 0.5vw;
+  border-radius: 0.3vw;
+  background: #f0f4f0;
+  border: 0.06vw solid #d0d8d0;
+  width: fit-content;
 `;
 
-const Divider = styled.div`
-  font-size: 0.9vw;
-  text-align: center;
-  color: #888;
-  margin: 0 0.2vw;
+const PerKamiLabel = styled.span`
+  font-size: 0.7vw;
+  color: #666;
+`;
+
+const PerKamiIcon = styled.img`
+  width: 0.9vw;
+  height: 0.9vw;
+`;
+
+const PerKamiValue = styled.span`
+  font-size: 0.75vw;
+  font-weight: 700;
 `;
 
 const KamiPickerRow = styled.div`
@@ -202,10 +336,9 @@ const KamiPickerRow = styled.div`
   gap: 0.6vw;
 `;
 
-const KamiImage = styled.img`
-  height: 6vw;
-  width: 6vw;
-  border: solid 0.15vw black;
-  border-radius: 0.6vw;
-  image-rendering: pixelated;
+const ExpirySection = styled.div`
+  padding: 0 0.6vw 0.3vw;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vw;
 `;

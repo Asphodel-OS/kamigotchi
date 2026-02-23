@@ -2,14 +2,8 @@ import styled from 'styled-components';
 
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
+import { ExpirySlider } from './ExpirySlider';
 import { KamiOption, SelectYourKami } from './SelectYourKami';
-
-const expirationOptions = [
-  { value: 1, label: '1 Hour' },
-  { value: 3, label: '3 Hours' },
-  { value: 24, label: '24 Hours' },
-  { value: 0, label: 'Never' },
-];
 
 export const Sell = ({
   isVisible,
@@ -49,7 +43,7 @@ export const Sell = ({
             disabledTooltip={disabledTooltip}
           />
           <Section>
-            <SubHeader>Price</SubHeader>
+            <SectionLabel>Price</SectionLabel>
             <Price>
               <PriceInput
                 type='text'
@@ -66,23 +60,10 @@ export const Sell = ({
           </Section>
         </Row>
       </Body>
-      <SubHeader>Expiration</SubHeader>
-      <Body>
-        <ExpirationRow>
-          {expirationOptions.map((opt) => (
-            <RadioLabel key={opt.value}>
-              <input
-                type='radio'
-                name='expiration'
-                value={opt.value}
-                checked={expiration === opt.value}
-                onChange={() => setExpiration(opt.value)}
-              />
-              {opt.label}
-            </RadioLabel>
-          ))}
-        </ExpirationRow>
-      </Body>
+      <ExpirySection>
+        <SectionLabel>Expiration</SectionLabel>
+        <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
+      </ExpirySection>
     </Conditional>
   );
 };
@@ -96,18 +77,18 @@ const Section = styled.div`
   min-width: 0;
   display: flex;
   flex-flow: column nowrap;
-  gap: 0.6vw;
+  gap: 0.4vw;
 `;
 
-const SubHeader = styled.div`
-  border-bottom: 0.15vw solid black;
-  padding: 0.8vw;
-  font-size: 1vw;
-  text-align: left;
+const SectionLabel = styled.div`
+  font-weight: bold;
+  font-size: 0.8vw;
+  padding-bottom: 0.2vw;
+  border-bottom: 0.08vw solid #ddd;
 `;
 
 const Body = styled.div`
-  padding: 0.3vw 0 0 0.3vw;
+  padding: 0.6vw;
   gap: 0.6vw;
   display: flex;
   flex-direction: column;
@@ -144,23 +125,9 @@ const EthIcon = styled.img`
   height: 1.4vw;
 `;
 
-const ExpirationRow = styled.div`
-  margin-top: 0.3vw;
+const ExpirySection = styled.div`
+  padding: 0 0.6vw 0.3vw;
   display: flex;
-  flex-flow: row nowrap;
-  gap: 1.2vw;
-  align-items: center;
-`;
-
-const RadioLabel = styled.label`
-  font-size: 1vw;
-  display: flex;
-  align-items: center;
-  gap: 0.2vw;
-  cursor: pointer;
-
-  input[type='radio'] {
-    accent-color: rgb(203, 186, 61);
-    cursor: pointer;
-  }
+  flex-direction: column;
+  gap: 0.4vw;
 `;
