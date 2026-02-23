@@ -392,4 +392,162 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     _KamiMarketListSystem.executeTyped(kamiIndex, 1 ether, 0);
     vm.stopPrank();
   }
+
+  //////////////////
+  // BATCH COLLECTION OFFER TESTS
+
+  function _collectionOffer(
+    PlayerAccount memory acc,
+    uint256 price,
+    uint32 quantity
+  ) internal returns (uint256 orderID) {
+    vm.startPrank(acc.operator);
+    orderID = abi.decode(
+      _KamiMarketOfferSystem.executeTypedCollection(price, quantity, 0),
+      (uint256)
+    );
+    vm.stopPrank();
+  }
+
+  function _batchAcceptCollection(
+    PlayerAccount memory acc,
+    uint256 offerID,
+    uint32[] memory kamiIndices
+  ) internal {
+    vm.startPrank(acc.operator);
+    _KamiMarketAcceptOfferSystem.executeTyped(offerID, kamiIndices);
+    vm.stopPrank();
+  }
+
+  function testBatchAcceptCollectionOffer() public {
+    // alice creates 3 kamis, bob makes collection offer for 3
+    (uint256 kamiID1, uint32 idx1) = _createStakedKami(alice);
+    (uint256 kamiID2, uint32 idx2) = _createStakedKami(alice);
+    (uint256 kamiID3, uint32 idx3) = _createStakedKami(alice);
+
+    uint256 price = 0.1 ether;
+    _setupWETH(bob, price * 3);
+    uint256 offerID = _collectionOffer(bob, price, 3);
+
+    uint32[] memory indices = new uint32[](3);
+    indices[0] = idx1;
+    indices[1] = idx2;
+    indices[2] = idx3;
+
+    _batchAcceptCollection(alice, offerID, indices);
+
+    // all kamis transferred to bob
+    assertEq(LibKami.getAccount(components, kamiID1), bob.id);
+    assertEq(LibKami.getAccount(components, kamiID2), bob.id);
+    assertEq(LibKami.getAccount(components, kamiID3), bob.id);
+
+    // offer fully filled
+    assertEq(_StateComponent.get(offerID), "FILLED");
+
+    // WETH moved from bob to alice (0% fee)
+    assertEq(weth.balanceOf(alice.owner), price * 3);
+    assertEq(weth.balanceOf(bob.owner), 0);
+  }
+
+  function testBatchAcceptPartialFill() public {
+    // collection offer for 5, alice batch-fills 2
+    (, uint32 idx1) = _createStakedKami(alice);
+    (, uint32 idx2) = _createStakedKami(alice);
+
+    uint256 price = 0.1 ether;
+    _setupWETH(bob, price * 5);
+    uint256 offerID = _collectionOffer(bob, price, 5);
+
+    uint32[] memory indices = new uint32[](2);
+    indices[0] = idx1;
+    indices[1] = idx2;
+
+    _batchAcceptCollection(alice, offerID, indices);
+
+    // offer still active with 3 remaining
+    assertEq(_StateComponent.get(offerID), "ACTIVE");
+    assertEq(_BalanceComponent.get(offerID), int32(3));
+
+    // WETH: alice gets 2 * price
+    assertEq(weth.balanceOf(alice.owner), price * 2);
+  }
+
+  function testBatchAcceptExactFill() public {
+    // collection offer for 3, alice fills all 3
+    (, uint32 idx1) = _createStakedKami(alice);
+    (, uint32 idx2) = _createStakedKami(alice);
+    (, uint32 idx3) = _createStakedKami(alice);
+
+    uint256 price = 0.05 ether;
+    _setupWETH(bob, price * 3);
+    uint256 offerID = _collectionOffer(bob, price, 3);
+
+    uint32[] memory indices = new uint32[](3);
+    indices[0] = idx1;
+    indices[1] = idx2;
+    indices[2] = idx3;
+
+    _batchAcceptCollection(alice, offerID, indices);
+
+    assertEq(_StateComponent.get(offerID), "FILLED");
+  }
+
+  function testBatchAcceptExceedsQuantity() public {
+    // collection offer for 2, try to fill 3
+    (, uint32 idx1) = _createStakedKami(alice);
+    (, uint32 idx2) = _createStakedKami(alice);
+    (, uint32 idx3) = _createStakedKami(alice);
+
+    uint256 price = 0.1 ether;
+    _setupWETH(bob, price * 3);
+    uint256 offerID = _collectionOffer(bob, price, 2);
+
+    uint32[] memory indices = new uint32[](3);
+    indices[0] = idx1;
+    indices[1] = idx2;
+    indices[2] = idx3;
+
+    vm.startPrank(alice.operator);
+    vm.expectRevert("KamiMarket: insufficient quantity");
+    _KamiMarketAcceptOfferSystem.executeTyped(offerID, indices);
+    vm.stopPrank();
+  }
+
+  function testBatchAcceptSoulboundBlocks() public {
+    // one kami is soulbound from vendor buy — entire batch reverts
+    (uint32 sbIdx, ) = _vendorBuyAsCharlie();
+    (, uint32 normalIdx) = _createStakedKami(charlie);
+
+    uint256 price = 0.1 ether;
+    _setupWETH(bob, price * 2);
+    uint256 offerID = _collectionOffer(bob, price, 2);
+
+    uint32[] memory indices = new uint32[](2);
+    indices[0] = normalIdx;
+    indices[1] = sbIdx; // soulbound kami second
+
+    vm.startPrank(charlie.operator);
+    vm.expectRevert("kami is soulbound");
+    _KamiMarketAcceptOfferSystem.executeTyped(offerID, indices);
+    vm.stopPrank();
+  }
+
+  function testBatchAcceptNotCollectionOffer() public {
+    // try batch with a specific offer ID — should revert
+    (, uint32 idx1) = _createStakedKami(alice);
+    (, uint32 idx2) = _createStakedKami(alice);
+
+    uint256 price = 0.1 ether;
+    _setupWETH(bob, price);
+    uint256 offerID = _offerKami(bob, idx1, price);
+
+    uint32[] memory indices = new uint32[](2);
+    indices[0] = idx1;
+    indices[1] = idx2;
+
+    vm.startPrank(alice.operator);
+    vm.expectRevert("KamiMarket: wrong order type");
+    _KamiMarketAcceptOfferSystem.executeTyped(offerID, indices);
+    vm.stopPrank();
+  }
 }

@@ -335,6 +335,11 @@ library LibKamiMarket {
     if (getOwner(comps, id) == accID) revert("KamiMarket: cannot self-trade");
   }
 
+  function verifyCollectionOfferQuantity(IUintComp comps, uint256 id, uint256 count) internal view {
+    int32 remaining = BalanceComponent(getAddrByID(comps, BalanceCompID)).get(id);
+    require(uint32(remaining) >= count, "KamiMarket: insufficient quantity");
+  }
+
   function verifyMaxOrders(IUintComp comps, uint256 accID) internal view {
     uint256 max = LibConfig.get(comps, "MAX_KAMI_MARKET_ORDERS");
     if (getNumOrders(comps, accID) >= max) revert("KamiMarket: order limit reached");
