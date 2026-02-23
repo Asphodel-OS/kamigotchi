@@ -42,11 +42,6 @@ export function createDTRevealerSystem(
   function isBlockedCommit(id: EntityID, context: 'add' | 'extractQueue' | 'forceQueue') {
     const blocked = isBlockedRevealCommitID(id);
 
-    log.info(`revealer: commit in ${context}`, {
-      commitId: String(id),
-      blocked,
-    });
-
     if (blocked) {
       log.warn(`revealer: blocked blacklisted commit in ${context}`, { commitId: String(id) });
     }
