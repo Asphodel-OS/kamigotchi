@@ -112,29 +112,35 @@ export const Buy = ({
                   <InputIcon src={MenuIcons.kami} alt='Kami' />
                 </InputRow>
               </FieldGroup>
-              <FieldGroup>
-                <SectionLabel>Total Bid</SectionLabel>
-                <TotalBidRow>
-                  <InputRow>
-                    <StyledInput
-                      type='text'
-                      inputMode='decimal'
-                      placeholder='0'
-                      value={price}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
-                      }}
-                    />
-                    <InputIcon src={TokenIcons.eth} alt='ETH' />
-                  </InputRow>
-                  <PerKamiChip>
-                    <PerKamiLabel>Per Kami:</PerKamiLabel>
-                    <PerKamiIcon src={TokenIcons.eth} alt='ETH' />
-                    <PerKamiValue>{perKamiDisplay ?? '—'}</PerKamiValue>
-                  </PerKamiChip>
-                </TotalBidRow>
-              </FieldGroup>
+              <FieldRow>
+                <RowFieldGroup>
+                  <SectionLabel>Total Bid</SectionLabel>
+                  <TotalBidRow>
+                    <InputRow>
+                      <StyledInput
+                        type='text'
+                        inputMode='decimal'
+                        placeholder='0'
+                        value={price}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
+                        }}
+                      />
+                      <InputIcon src={TokenIcons.eth} alt='ETH' />
+                    </InputRow>
+                    <PerKamiChip>
+                      <PerKamiLabel>Per Kami:</PerKamiLabel>
+                      <PerKamiIcon src={TokenIcons.eth} alt='ETH' />
+                      <PerKamiValue>{perKamiDisplay ?? '—'}</PerKamiValue>
+                    </PerKamiChip>
+                  </TotalBidRow>
+                </RowFieldGroup>
+                <RowFieldGroup>
+                  <SectionLabel>Choose Expiration</SectionLabel>
+                  <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
+                </RowFieldGroup>
+              </FieldRow>
             </>
           )}
 
@@ -154,29 +160,30 @@ export const Buy = ({
                   )}
                 </KamiPickerRow>
               </FieldGroup>
-              <FieldGroup>
-                <SectionLabel>Bid Amount</SectionLabel>
-                <InputRow>
-                  <StyledInput
-                    type='text'
-                    inputMode='decimal'
-                    placeholder='0'
-                    value={price}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
-                    }}
-                  />
-                  <InputIcon src={TokenIcons.eth} alt='ETH' />
-                </InputRow>
-              </FieldGroup>
+              <FieldRow>
+                <RowFieldGroup>
+                  <SectionLabel>Bid Amount</SectionLabel>
+                  <InputRow>
+                    <StyledInput
+                      type='text'
+                      inputMode='decimal'
+                      placeholder='0'
+                      value={price}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
+                      }}
+                    />
+                    <InputIcon src={TokenIcons.eth} alt='ETH' />
+                  </InputRow>
+                </RowFieldGroup>
+                <RowFieldGroup>
+                  <SectionLabel>Choose Expiration</SectionLabel>
+                  <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
+                </RowFieldGroup>
+              </FieldRow>
             </>
           )}
-
-          <FieldGroup>
-            <SectionLabel>Choose Expiration</SectionLabel>
-            <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
-          </FieldGroup>
         </FieldsColumn>
       </MainLayout>
     </Conditional>
@@ -269,6 +276,17 @@ const FieldGroup = styled.div`
   gap: 0.3vw;
 `;
 
+const FieldRow = styled.div`
+  display: flex;
+  gap: 0.8vw;
+  flex-wrap: wrap;
+`;
+
+const RowFieldGroup = styled(FieldGroup)`
+  flex: 1;
+  min-width: 12vw;
+`;
+
 const SectionLabel = styled.div`
   font-weight: bold;
   font-size: 0.8vw;
@@ -359,4 +377,3 @@ const SelectedKamiName = styled.span`
   font-size: 0.8vw;
   color: #222;
 `;
-
