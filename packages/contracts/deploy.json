@@ -625,7 +625,7 @@
     },
     {
       "name": "KamiMarketBuySystem",
-      "writeAccess": ["EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": ["EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
     },
     {
       "name": "KamiMarketOfferSystem",
@@ -633,7 +633,7 @@
     },
     {
       "name": "KamiMarketAcceptOfferSystem",
-      "writeAccess": ["Balance", "EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKami", "IndexKamiListing", "Max", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": ["Balance", "EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKami", "IndexKamiListing", "Max", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
     },
     {
       "name": "KamiMarketCancelSystem",
@@ -930,6 +930,7 @@
     "LibTokenPortal",
     "LibTrade",
     "LibTraitRegistry",
+    "LibTWAP",
     "LibVIP"
   ]
 }

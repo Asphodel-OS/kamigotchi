@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
+import { LibTWAP } from "libraries/LibTWAP.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
@@ -64,6 +65,9 @@ contract KamiMarketAcceptOfferSystem is System {
     if (fee > 0) {
       vault.transferWETH(buyerAddress, feeRecipient, fee);
     }
+
+    // feed sale price into TWAP oracle
+    LibTWAP.poke(components, price);
 
     // data logging and event emission
     LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, price);

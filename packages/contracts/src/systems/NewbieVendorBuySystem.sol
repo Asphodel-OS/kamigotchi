@@ -3,15 +3,10 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { IComponent } from "solecs/interfaces/IComponent.sol";
-import { getAddrByID, getCompByID } from "solecs/utils.sol";
-import { LibQuery, QueryFragment, QueryType } from "solecs/LibQuery.sol";
+import { getAddrByID } from "solecs/utils.sol";
 import { LibTypes } from "solecs/LibTypes.sol";
 
-import { ID as EntityTypeCompID } from "components/EntityTypeComponent.sol";
-import { StateComponent, ID as StateCompID } from "components/StateComponent.sol";
 import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartComponent.sol";
-import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol";
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
@@ -24,10 +19,12 @@ import { LibKami } from "libraries/LibKami.sol";
 uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
 
 uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
+uint256 constant TWAP_ENTITY = uint256(keccak256("newbie.vendor.twap"));
+uint256 constant DEFAULT_MIN_PRICE = 0.005 ether;
 
-/// @notice Newbie Kami Vendor — buy one kami at 1.5x marketplace floor price (one-time per player)
-/// @dev Price is computed on-chain by querying the minimum active KAMI_LISTING price
-///      and multiplying by 1.5 (3/2). The vendor holds kamis staked in-game.
+/// @notice Newbie Kami Vendor — buy one kami at TWAP price (one-time per player)
+/// @dev Price is derived from a TWAP oracle fed by marketplace sales (LibTWAP).
+///      Returns max(twapPrice, minPrice). The vendor holds kamis staked in-game.
 ///      Admin sets a pool of kami indices; the first 3 are displayed for sale.
 ///      When one is bought, the next from the pool fills in.
 contract NewbieVendorBuySystem is System {
@@ -51,7 +48,7 @@ contract NewbieVendorBuySystem is System {
       "NewbieVendor: already purchased"
     );
 
-    // compute price: 1.5x marketplace floor
+    // compute price from TWAP oracle
     uint256 price = _calcPrice();
     require(msg.value >= price, "NewbieVendor: insufficient ETH");
 
@@ -134,31 +131,35 @@ contract NewbieVendorBuySystem is System {
     }
   }
 
-  /// @notice Compute vendor price: 1.5x the marketplace floor (minimum active listing price)
-  function _calcPrice() internal view returns (uint256) {
-    QueryFragment[] memory fragments = new QueryFragment[](2);
-    fragments[0] = QueryFragment(
-      QueryType.HasValue,
-      IComponent(getAddrByID(components, EntityTypeCompID)),
-      abi.encode("KAMI_LISTING")
-    );
-    fragments[1] = QueryFragment(
-      QueryType.HasValue,
-      IComponent(getAddrByID(components, StateCompID)),
-      abi.encode("ACTIVE")
-    );
+  /// @notice Compute vendor price from TWAP oracle, floored at minimum price
+  /// @return price max(twapPrice, minPrice)
+  function _calcPrice() internal view returns (uint256 price) {
+    uint256 minPrice = LibConfig.get(components, "NEWBIE_VENDOR_MIN_PRICE");
+    if (minPrice == 0) minPrice = DEFAULT_MIN_PRICE;
 
-    uint256[] memory listings = LibQuery.query(fragments);
-    require(listings.length > 0, "NewbieVendor: no active listings for floor price");
+    ValuesComponent valuesComp = ValuesComponent(getAddrByID(components, ValuesCompID));
+    if (!valuesComp.has(TWAP_ENTITY)) return minPrice;
 
-    ValueComponent valueComp = ValueComponent(getAddrByID(components, ValueCompID));
-    uint256 floor = type(uint256).max;
-    for (uint256 i; i < listings.length; i++) {
-      uint256 p = valueComp.get(listings[i]);
-      if (p < floor) floor = p;
+    uint256[] memory data = valuesComp.get(TWAP_ENTITY);
+    if (data.length != 5) return minPrice;
+
+    uint256 cumulativePriceSeconds = data[0];
+    uint256 lastPrice = data[1];
+    uint256 lastUpdateTime = data[2];
+    uint256 snapshotCumulative = data[3];
+    uint256 snapshotTimestamp = data[4];
+
+    uint256 windowTime = block.timestamp - snapshotTimestamp;
+    if (windowTime == 0) {
+      // just after snapshot — use lastPrice
+      return lastPrice > minPrice ? lastPrice : minPrice;
     }
 
-    return (floor * 3) / 2;
+    // extend cumulative to now
+    uint256 liveCumulative = cumulativePriceSeconds + lastPrice * (block.timestamp - lastUpdateTime);
+    uint256 twapPrice = (liveCumulative - snapshotCumulative) / windowTime;
+
+    return twapPrice > minPrice ? twapPrice : minPrice;
   }
 
   function _emitBuy(uint256 accID, uint32 kamiIndex, uint256 price) internal {

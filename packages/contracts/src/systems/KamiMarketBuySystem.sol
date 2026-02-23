@@ -6,6 +6,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
+import { LibTWAP } from "libraries/LibTWAP.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.buy"));
 
@@ -59,6 +60,9 @@ contract KamiMarketBuySystem is System {
       uint256 fee = LibKamiMarket.calcFee(components, price);
       uint256 sellerReceives = price - fee;
       totalFee += fee;
+
+      // feed sale price into TWAP oracle
+      LibTWAP.poke(components, price);
 
       _transferETH(sellerAddress, sellerReceives);
 

@@ -14,6 +14,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 uint256 constant ID = uint256(keccak256("system.newbievendor.registry"));
 
 uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
+uint256 constant TWAP_ENTITY = uint256(keccak256("newbie.vendor.twap"));
 
 /// @notice Admin system for Newbie Kami Vendor configuration
 contract _NewbieVendorRegistrySystem is System, AuthRoles {
@@ -57,5 +58,27 @@ contract _NewbieVendorRegistrySystem is System, AuthRoles {
     for (uint256 i; i < kamiIndices.length; i++) updated[current.length + i] = kamiIndices[i];
 
     valuesComp.set(VENDOR_ENTITY, updated);
+  }
+
+  /// @notice Set the minimum vendor price in wei
+  function setMinPrice(uint256 price) public onlyAdmin(components) {
+    LibConfig.set(components, "NEWBIE_VENDOR_MIN_PRICE", price);
+  }
+
+  /// @notice Set the TWAP snapshot window in seconds (e.g. 86400 = 24h)
+  function setTWAPWindow(uint256 duration) public onlyAdmin(components) {
+    LibConfig.set(components, "NEWBIE_VENDOR_TWAP_WINDOW", duration);
+  }
+
+  /// @notice Initialize the TWAP oracle with an initial price seed
+  /// @param initialPrice The starting price to seed the TWAP accumulator
+  function initTWAP(uint256 initialPrice) public onlyAdmin(components) {
+    uint256[] memory data = new uint256[](5);
+    data[0] = 0;                  // cumulativePriceSeconds
+    data[1] = initialPrice;       // lastPrice
+    data[2] = block.timestamp;    // lastUpdateTime
+    data[3] = 0;                  // snapshotCumulative
+    data[4] = block.timestamp;    // snapshotTimestamp
+    ValuesComponent(getAddrByID(components, ValuesCompID)).set(TWAP_ENTITY, data);
   }
 }
