@@ -7,6 +7,7 @@ import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami } from 'network/shapes/Kami';
+import { playClick } from 'utils/sounds';
 import { ExpirySlider } from './ExpirySlider';
 
 type BidMode = 'generic' | 'specific';
@@ -38,6 +39,7 @@ export const Buy = ({
 
   const handleModeSwitch = (mode: BidMode) => {
     if (mode === bidMode) return;
+    playClick();
     setPrice('');
     if (mode === 'generic') {
       onClearBuyKami();
@@ -142,11 +144,14 @@ export const Buy = ({
                 <SectionLabel>Select Kami</SectionLabel>
                 <KamiPickerRow>
                   <IconListButton
-                    img={MenuIcons.kami}
+                    img={selectedBuyKami?.image ?? MenuIcons.kami}
                     options={kamiOptions}
                     searchable
                     tooltip={{ text: ['Select Kami'] }}
                   />
+                  {selectedBuyKami && (
+                    <SelectedKamiName>{selectedBuyKami.name}</SelectedKamiName>
+                  )}
                 </KamiPickerRow>
               </FieldGroup>
               <FieldGroup>
@@ -167,13 +172,13 @@ export const Buy = ({
               </FieldGroup>
             </>
           )}
+
+          <FieldGroup>
+            <SectionLabel>Choose Expiration</SectionLabel>
+            <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
+          </FieldGroup>
         </FieldsColumn>
       </MainLayout>
-
-      <ExpirySection>
-        <SectionLabel>Expiration</SectionLabel>
-        <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
-      </ExpirySection>
     </Conditional>
   );
 };
@@ -336,9 +341,9 @@ const KamiPickerRow = styled.div`
   gap: 0.6vw;
 `;
 
-const ExpirySection = styled.div`
-  padding: 0 0.6vw 0.3vw;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4vw;
+const SelectedKamiName = styled.span`
+  font-weight: bold;
+  font-size: 0.8vw;
+  color: #222;
 `;
+

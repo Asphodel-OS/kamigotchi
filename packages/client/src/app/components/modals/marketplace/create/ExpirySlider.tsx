@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 import { MenuIcons } from 'assets/images/icons/menu';
 
-const EXPIRY_STEPS = [1, 2, 3, 6, 12, 24, 48, 72, 168] as const;
-const EXPIRY_LABELS = ['1h', '2h', '3h', '6h', '12h', '1d', '2d', '3d', '7d'] as const;
+const EXPIRY_STEPS = [2, 6, 24, 72, 168, 720] as const;
+const EXPIRY_LABELS = ['2h', '6h', '24h', '3d', '7d', '30d'] as const;
 const SLIDER_COLOR = '#FFF3C4';
 
 export const ExpirySlider = ({
@@ -20,7 +20,7 @@ export const ExpirySlider = ({
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const idx = Number(e.target.value);
-    setExpirationHours(EXPIRY_STEPS[idx]);
+    setExpirationHours(EXPIRY_STEPS[idx]); // overrides No Expiry if active
   };
 
   const handleNoExpiryToggle = () => {
@@ -34,9 +34,9 @@ export const ExpirySlider = ({
   return (
     <Wrapper>
       <NoExpiryCard $active={isNoExpiry} onClick={handleNoExpiryToggle}>
-        <NoExpiryText>No Expiry</NoExpiryText>
+        <NoExpiryText $active={isNoExpiry}>No Expiry</NoExpiryText>
       </NoExpiryCard>
-      <ExpiryCard $ratio={isNoExpiry ? 0 : ratio} $disabled={isNoExpiry}>
+      <ExpiryCard $ratio={isNoExpiry ? 0 : ratio} $dimmed={isNoExpiry}>
         <ClockIcon src={MenuIcons.clock} alt='Expiry' />
         <SliderInput
           type='range'
@@ -45,10 +45,10 @@ export const ExpirySlider = ({
           step={1}
           value={currentIndex}
           onChange={handleSliderChange}
-          disabled={isNoExpiry}
+          $dimmed={isNoExpiry}
         />
         <ExpiryLabel $active={!isNoExpiry}>
-          {isNoExpiry ? '—' : EXPIRY_LABELS[currentIndex]}
+          {EXPIRY_LABELS[currentIndex]}
         </ExpiryLabel>
       </ExpiryCard>
     </Wrapper>
@@ -78,26 +78,38 @@ const NoExpiryCard = styled.div<{ $active: boolean }>`
   }
 `;
 
-const NoExpiryText = styled.span`
+const NoExpiryText = styled.span<{ $active: boolean }>`
   font-size: 0.65vw;
-  font-weight: 600;
+  font-weight: ${({ $active }) => ($active ? 'bold' : '600')};
   color: #555;
   white-space: nowrap;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+
+  &::after {
+    content: 'No Expiry';
+    font-weight: bold;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    display: block;
+  }
 `;
 
-const ExpiryCard = styled.div<{ $ratio: number; $disabled: boolean }>`
+const ExpiryCard = styled.div<{ $ratio: number; $dimmed: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.5vw;
   padding: 0.35vw 0.5vw;
   border-radius: 0.4vw;
   flex: 1;
-  background: ${({ $disabled, $ratio }) =>
-    $disabled
-      ? '#f0f0f0'
+  background: ${({ $dimmed, $ratio }) =>
+    $dimmed
+      ? '#f5f5f5'
       : `color-mix(in srgb, ${SLIDER_COLOR} ${Math.round(30 + $ratio * 70)}%, white)`};
   border: 0.1vw solid
-    rgba(0, 0, 0, ${({ $disabled, $ratio }) => ($disabled ? '0.06' : (0.08 + 0.12 * $ratio).toFixed(2))});
+    rgba(0, 0, 0, ${({ $dimmed, $ratio }) => ($dimmed ? '0.06' : (0.08 + 0.12 * $ratio).toFixed(2))});
   transition: background 0.15s, border-color 0.15s;
 `;
 
@@ -107,14 +119,15 @@ const ClockIcon = styled.img`
   flex-shrink: 0;
 `;
 
-const SliderInput = styled.input`
+const SliderInput = styled.input<{ $dimmed: boolean }>`
   flex: 1;
   height: 0.35vw;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
-  opacity: ${({ disabled }) => (disabled ? 0.4 : 1)};
+  opacity: ${({ $dimmed }) => ($dimmed ? 0.5 : 1)};
+  transition: opacity 0.15s;
 
   &::-webkit-slider-runnable-track {
     height: 0.35vw;
@@ -129,7 +142,7 @@ const SliderInput = styled.input`
     background: #222;
     border: none;
     margin-top: -0.22vw;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    cursor: pointer;
   }
   &::-moz-range-track {
     height: 0.35vw;
@@ -142,7 +155,7 @@ const SliderInput = styled.input`
     border-radius: 50%;
     background: #222;
     border: none;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    cursor: pointer;
   }
 `;
 
