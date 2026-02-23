@@ -158,7 +158,7 @@ async function getValueCompAddr(provider: ethers.Provider, compsRegistryAddr: st
   const registry = new ethers.Contract(compsRegistryAddr, [
     'function getEntitiesWithValue(uint256 value) view returns (uint256[])',
   ], provider);
-  const valueCompID = ethers.solidityPackedKeccak256(['string'], ['solecs.component.Value']);
+  const valueCompID = ethers.solidityPackedKeccak256(['string'], ['component.value']);
   const entities: bigint[] = await registry.getEntitiesWithValue(valueCompID);
   if (entities.length === 0) throw new Error('Value component not found in world');
   return ethers.getAddress('0x' + entities[0].toString(16).padStart(40, '0'));

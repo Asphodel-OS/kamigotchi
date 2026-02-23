@@ -644,6 +644,14 @@
       "writeAccess": ["*"]
     },
     {
+      "name": "_NewbieVendorRegistrySystem",
+      "writeAccess": ["Value", "Values", "TimeStart"]
+    },
+    {
+      "name": "NewbieVendorBuySystem",
+      "writeAccess": ["HasFlag", "Values", "TimeLast"]
+    },
+    {
       "name": "KamiEquipSystem",
       "writeAccess": [
         "EntityType",
