@@ -14,6 +14,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibSoulbound } from "libraries/LibSoulbound.sol";
 
 uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
 
@@ -60,6 +61,10 @@ contract NewbieVendorBuySystem is System {
 
     // verify vendor owns kami, transfer, send ETH
     _transferKami(kamiIndex, price, accID);
+
+    // soulbind for 24h — prevents listing, unstaking, or accepting offers
+    uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+    LibSoulbound.set(components, kamiID, 3 days);
 
     // mark as purchased (one-time flag)
     LibFlag.set(components, accID, "NEWBIE_VENDOR_PURCHASED", true);

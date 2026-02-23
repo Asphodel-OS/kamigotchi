@@ -649,7 +649,7 @@
     },
     {
       "name": "NewbieVendorBuySystem",
-      "writeAccess": ["HasFlag", "IDOwnsKami", "State", "Values", "TimeLast"]
+      "writeAccess": ["HasFlag", "IDOwnsKami", "State", "Value", "Values", "TimeLast"]
     },
     {
       "name": "KamiEquipSystem",
@@ -924,6 +924,7 @@
     "LibSacrifice",
     "LibScavenge",
     "LibScore",
+    "LibSoulbound",
     "LibSkillRegistry",
     "LibSkill",
     "LibStat",

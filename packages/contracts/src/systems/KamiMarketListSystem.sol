@@ -7,6 +7,7 @@ import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
+import { LibSoulbound } from "libraries/LibSoulbound.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.list"));
 
@@ -26,6 +27,7 @@ contract KamiMarketListSystem is System {
     // mark kami as listed (no escrow — kami stays in seller's wallet)
     // "LISTED" state prevents bridge-in via isInWorld() check
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+    LibSoulbound.verify(components, kamiID);
     LibKami.setState(components, kamiID, "LISTED");
 
     // create listing entity

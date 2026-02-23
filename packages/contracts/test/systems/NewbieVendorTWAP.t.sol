@@ -106,6 +106,21 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     vm.stopPrank();
   }
 
+  /// @notice Helper: alice's vendor sells a kami to charlie, returns the kami info
+  function _vendorBuyAsCharlie() internal returns (uint32 kamiIndex, uint256 kamiID) {
+    kamiID = _mintKami(alice);
+    kamiIndex = LibKami.getIndex(components, kamiID);
+
+    uint256[] memory pool = new uint256[](1);
+    pool[0] = uint256(kamiIndex);
+    vm.prank(deployer);
+    __NewbieVendorRegistrySystem.setPool(pool);
+
+    vm.deal(charlie.owner, 1 ether);
+    vm.prank(charlie.owner);
+    _NewbieVendorBuySystem.executeTyped{value: 0.1 ether}(kamiIndex);
+  }
+
   //////////////////
   // TESTS
 
@@ -304,5 +319,77 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     _NewbieVendorBuySystem.executeTyped{value: expectedPrice}(kamiIndex);
 
     assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
+  }
+
+  //////////////////
+  // SOULBOUND TESTS
+
+  function testVendorBuySetsKamiSoulbound() public {
+    (uint32 kamiIndex, ) = _vendorBuyAsCharlie();
+
+    // kami should be soulbound — listing reverts
+    vm.startPrank(charlie.operator);
+    vm.expectRevert("kami is soulbound");
+    _KamiMarketListSystem.executeTyped(kamiIndex, 1 ether, 0);
+    vm.stopPrank();
+  }
+
+  function testSoulboundBlocksUnstake() public {
+    (uint32 kamiIndex, ) = _vendorBuyAsCharlie();
+
+    // move charlie to room 12 (bridge room) for unstaking
+    vm.prank(deployer);
+    _IndexRoomComponent.set(charlie.id, uint32(12));
+
+    vm.startPrank(charlie.owner);
+    vm.expectRevert("kami is soulbound");
+    _Kami721UnstakeSystem.executeTyped(kamiIndex);
+    vm.stopPrank();
+  }
+
+  function testSoulboundBlocksAcceptOffer() public {
+    (uint32 kamiIndex, ) = _vendorBuyAsCharlie();
+
+    // bob makes an offer on charlie's soulbound kami
+    _setupWETH(bob, 1 ether);
+    uint256 offerID = _offerKami(bob, kamiIndex, 0.5 ether);
+
+    // charlie tries to accept — soulbound blocks it
+    vm.startPrank(charlie.operator);
+    vm.expectRevert("kami is soulbound");
+    _KamiMarketAcceptOfferSystem.executeTyped(offerID, kamiIndex);
+    vm.stopPrank();
+  }
+
+  function testSoulboundExpiresAfter3Days() public {
+    (uint32 kamiIndex, ) = _vendorBuyAsCharlie();
+
+    // still soulbound — listing fails
+    vm.startPrank(charlie.operator);
+    vm.expectRevert("kami is soulbound");
+    _KamiMarketListSystem.executeTyped(kamiIndex, 1 ether, 0);
+    vm.stopPrank();
+
+    // warp past 3 days
+    _fastForward(3 days);
+
+    // now listing succeeds
+    vm.startPrank(charlie.operator);
+    _KamiMarketListSystem.executeTyped(kamiIndex, 1 ether, 0);
+    vm.stopPrank();
+  }
+
+  function testMarketplaceBuyDoesNotSetSoulbound() public {
+    // regular marketplace buy — no soulbound applied
+    (, uint32 kamiIndex) = _createStakedKami(alice);
+    uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
+
+    vm.deal(bob.owner, 1 ether);
+    _buyKami(bob, orderID, LIST_PRICE);
+
+    // bob can immediately list the kami (no soulbound)
+    vm.startPrank(bob.operator);
+    _KamiMarketListSystem.executeTyped(kamiIndex, 1 ether, 0);
+    vm.stopPrank();
   }
 }

@@ -5,7 +5,9 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibKami } from "libraries/LibKami.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
+import { LibSoulbound } from "libraries/LibSoulbound.sol";
 import { LibTWAP } from "libraries/LibTWAP.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
@@ -29,6 +31,9 @@ contract KamiMarketAcceptOfferSystem is System {
 
     // verify seller owns the kami and it's available (resting or listed)
     LibKamiMarket.verifyKamiOwnedRestingOrListed(components, kamiIndex, sellerAccID);
+
+    // verify kami is not soulbound
+    LibSoulbound.verify(components, LibKami.getByIndex(components, kamiIndex));
 
     uint256 buyerAccID = LibKamiMarket.getOwner(components, offerID);
 
