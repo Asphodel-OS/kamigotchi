@@ -12,6 +12,7 @@ import { getKamidenClient, KamiMarketListing } from 'clients/kamiden';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
+import { formatExpiry, isExpired } from '../../helpers';
 import { Cart } from './Cart';
 import { ListingCard } from './ListingCard';
 import { ListingsListView } from './ListingsListView';
@@ -32,16 +33,6 @@ type ViewMode = (typeof VIEW_CYCLE)[number];
 const ViewIcons: Record<ViewMode, string> = {
   grid: TriggerIcons.eyeOpen,
   list: TriggerIcons.eyeHalf,
-};
-
-const formatExpiry = (expiryStr: string) => {
-  const expiry = Number(expiryStr);
-  if (expiry === 0) return 'Never';
-  const diff = expiry - Math.floor(Date.now() / 1000);
-  if (diff <= 0) return 'Expired';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-  return `${Math.floor(diff / 86400)}d`;
 };
 
 export const Listings = ({
@@ -268,11 +259,7 @@ export const Listings = ({
   /////////////////
   // ACTIONS
 
-  const isListingExpired = (expiryStr: string) => {
-    const expiry = Number(expiryStr);
-    if (!expiry) return false;
-    return expiry <= Math.floor(Date.now() / 1000);
-  };
+  const isListingExpired = isExpired;
 
   const isOwnListing = (listing: KamiMarketListing) =>
     !utils.isDifferentAccountId(listing.SellerAccountID, accountId);

@@ -31,7 +31,8 @@ import { Bids } from './tabs/bids/Bids';
 import { FilterBy } from './tabs/listings/FilterBy';
 import { Listings } from './tabs/listings/Listings';
 import { MyOrders } from './tabs/orders/MyOrders';
-import { MarketplaceTab, Tabs } from './tabs/Tabs';
+import { Tabs } from './tabs/Tabs';
+import { MarketplaceTab } from './types';
 
 const DEFAULT_SELECTED_FILTERS = () => ({
   Face: new Set<string>(),
