@@ -625,7 +625,7 @@
     },
     {
       "name": "KamiMarketBuySystem",
-      "writeAccess": ["EntityType", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": ["EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value"]
     },
     {
       "name": "KamiMarketOfferSystem",
@@ -633,7 +633,7 @@
     },
     {
       "name": "KamiMarketAcceptOfferSystem",
-      "writeAccess": ["Balance", "EntityType", "IDOwnsKamiOrder", "IndexKami", "Max", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": ["Balance", "EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKami", "IndexKamiListing", "Max", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value"]
     },
     {
       "name": "KamiMarketCancelSystem",
@@ -649,7 +649,7 @@
     },
     {
       "name": "NewbieVendorBuySystem",
-      "writeAccess": ["HasFlag", "Values", "TimeLast"]
+      "writeAccess": ["HasFlag", "IDOwnsKami", "State", "TimeNext", "Values", "TimeLast"]
     },
     {
       "name": "KamiEquipSystem",

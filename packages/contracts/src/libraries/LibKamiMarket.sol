@@ -29,7 +29,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibKami } from "libraries/LibKami.sol";
-import { LibKami721 } from "libraries/LibKami721.sol";
+import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 
 import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 
@@ -104,15 +104,14 @@ library LibKamiMarket {
   // FILL
 
   /// @notice Fill a listing — buyer sends ETH, seller receives ETH minus fee
-  /// @dev Kami stays in seller's wallet until purchase. Transfer via vault (ERC-721 transferFrom).
+  /// @dev Kami stays staked. Ownership transferred via IDOwnsKami reassignment.
   /// @return sellerAddress The seller's address for ETH payment
   /// @return price The listing price
   /// @return kamiIndex The kami token index
   function fillListing(
     IUintComp comps,
     uint256 id,
-    uint256, /* buyerAccID */
-    address buyerAddress
+    uint256 buyerAccID
   ) internal returns (address sellerAddress, uint256 price, uint32 kamiIndex) {
     uint256 sellerAccID = getOwner(comps, id);
     sellerAddress = LibAccount.getOwner(comps, sellerAccID);
@@ -121,37 +120,40 @@ library LibKamiMarket {
 
     uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
 
-    // verify seller still owns the kami and it's still listed
+    // verify kami is still listed and seller still owns via IDOwnsKami
     LibKami.verifyState(comps, kamiID, "LISTED");
-    require(LibKami721.getEOAOwner(comps, kamiIndex) == sellerAddress, "KamiMarket: seller no longer owns kami");
+    LibKami.verifyAccount(comps, kamiID, sellerAccID);
 
-    // restore state so isOutOfWorld check passes, then transfer via vault
-    LibKami.setState(comps, kamiID, "721_EXTERNAL");
-    KamiMarketVault vault = getVault(comps);
-    vault.transferKami(sellerAddress, buyerAddress, kamiIndex);
+    // reassign ownership and restore state
+    LibKami.setOwner(comps, kamiID, buyerAccID);
+    LibKami.setState(comps, kamiID, "RESTING");
+    _setPurchaseCooldown(comps, kamiID);
 
     // mark filled and clean up
     _markFilled(comps, id);
   }
 
-  /// @notice Fill a specific offer — vault pulls WETH from buyer, kami transferred via vault
+  /// @notice Fill a specific offer — WETH pulled from buyer, kami reassigned via IDOwnsKami
   function fillOffer(
+    IWorld world,
     IUintComp comps,
     uint256 id,
-    uint256, /* sellerAccID */
-    address sellerAddress
+    uint256 sellerAccID
   ) internal returns (address buyerAddress, uint256 price, uint32 kamiIndex) {
     uint256 buyerAccID = getOwner(comps, id);
     buyerAddress = LibAccount.getOwner(comps, buyerAccID);
     price = getPrice(comps, id);
     kamiIndex = getKamiIndex(comps, id);
 
-    // if kami is listed, restore state so ERC-721 transfer works
-    _ensureTransferable(comps, kamiIndex);
+    uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
 
-    // transfer kami via vault (standard ERC-721 transferFrom)
-    KamiMarketVault vault = getVault(comps);
-    vault.transferKami(sellerAddress, buyerAddress, kamiIndex);
+    // if kami is listed, cancel listings first
+    _cancelListingsIfListed(world, comps, kamiIndex);
+
+    // reassign ownership and set RESTING
+    LibKami.setOwner(comps, kamiID, buyerAccID);
+    LibKami.setState(comps, kamiID, "RESTING");
+    _setPurchaseCooldown(comps, kamiID);
 
     // mark filled and clean up
     _markFilled(comps, id);
@@ -159,22 +161,25 @@ library LibKamiMarket {
 
   /// @notice Fill one unit of a collection offer
   function fillCollectionOffer(
+    IWorld world,
     IUintComp comps,
     uint256 id,
-    uint256, /* sellerAccID */
-    address sellerAddress,
+    uint256 sellerAccID,
     uint32 kamiIndex
   ) internal returns (address buyerAddress, uint256 price) {
     uint256 buyerAccID = getOwner(comps, id);
     buyerAddress = LibAccount.getOwner(comps, buyerAccID);
     price = getPrice(comps, id);
 
-    // if kami is listed, restore state so ERC-721 transfer works
-    _ensureTransferable(comps, kamiIndex);
+    uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
 
-    // transfer kami via vault (standard ERC-721 transferFrom)
-    KamiMarketVault vault = getVault(comps);
-    vault.transferKami(sellerAddress, buyerAddress, kamiIndex);
+    // if kami is listed, cancel listings first
+    _cancelListingsIfListed(world, comps, kamiIndex);
+
+    // reassign ownership and set RESTING
+    LibKami.setOwner(comps, kamiID, buyerAccID);
+    LibKami.setState(comps, kamiID, "RESTING");
+    _setPurchaseCooldown(comps, kamiID);
 
     // decrement balance
     BalanceComponent balComp = BalanceComponent(getAddrByID(comps, BalanceCompID));
@@ -196,7 +201,7 @@ library LibKamiMarket {
 
     // only restore state if kami is still LISTED (may be stale if offer was accepted)
     if (LibKami.isState(comps, kamiID, "LISTED")) {
-      LibKami.setState(comps, kamiID, "721_EXTERNAL");
+      LibKami.setState(comps, kamiID, "RESTING");
     }
 
     _markCancelled(comps, id);
@@ -240,12 +245,18 @@ library LibKamiMarket {
   /////////////////
   // INTERNAL HELPERS
 
-  /// @notice If kami is LISTED, restore to 721_EXTERNAL so ERC-721 transfer works
-  function _ensureTransferable(IUintComp comps, uint32 kamiIndex) internal {
+  /// @notice If kami is LISTED, cancel all its listings before transfer
+  function _cancelListingsIfListed(IWorld world, IUintComp comps, uint32 kamiIndex) internal {
     uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
     if (LibKami.isState(comps, kamiID, "LISTED")) {
-      LibKami.setState(comps, kamiID, "721_EXTERNAL");
+      cancelListingsForKami(world, comps, kamiIndex);
     }
+  }
+
+  /// @notice Apply post-purchase cooldown if configured
+  function _setPurchaseCooldown(IUintComp comps, uint256 kamiID) internal {
+    uint256 cd = LibConfig.get(comps, "KAMI_MARKET_PURCHASE_COOLDOWN");
+    if (cd > 0) LibCooldown.modify(comps, kamiID, int256(cd));
   }
 
   /////////////////
@@ -329,23 +340,22 @@ library LibKamiMarket {
     if (getNumOrders(comps, accID) >= max) revert("KamiMarket: order limit reached");
   }
 
-  function verifyKamiExternal(IUintComp comps, uint32 kamiIndex) internal view {
+  /// @notice Verify kami exists, is RESTING, and owned by accID
+  function verifyKamiResting(IUintComp comps, uint32 kamiIndex, uint256 accID) internal view {
     uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
     if (kamiID == 0) revert("KamiMarket: kami not found");
-    LibKami.verifyState(comps, kamiID, "721_EXTERNAL");
+    LibKami.verifyState(comps, kamiID, "RESTING");
+    LibKami.verifyAccount(comps, kamiID, accID);
   }
 
-  /// @notice Verify kami is external or listed (for accepting offers on listed kamis)
-  function verifyKamiExternalOrListed(IUintComp comps, uint32 kamiIndex) internal view {
+  /// @notice Verify kami exists, is RESTING or LISTED, and owned by accID
+  function verifyKamiOwnedRestingOrListed(IUintComp comps, uint32 kamiIndex, uint256 accID) internal view {
     uint256 kamiID = LibKami.getByIndex(comps, kamiIndex);
     if (kamiID == 0) revert("KamiMarket: kami not found");
-    if (!LibKami.isState(comps, kamiID, "721_EXTERNAL") && !LibKami.isState(comps, kamiID, "LISTED")) {
+    if (!LibKami.isState(comps, kamiID, "RESTING") && !LibKami.isState(comps, kamiID, "LISTED")) {
       revert("KamiMarket: kami not available");
     }
-  }
-
-  function verifyKamiOwner(IUintComp comps, uint32 kamiIndex, address owner) internal view {
-    if (LibKami721.getEOAOwner(comps, kamiIndex) != owner) revert("KamiMarket: not kami owner");
+    LibKami.verifyAccount(comps, kamiID, accID);
   }
 
   function verifyEnabled(IUintComp comps) internal view {

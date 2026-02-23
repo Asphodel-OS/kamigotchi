@@ -12,22 +12,22 @@ import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.acceptoffer"));
 
-/// @notice Accept any offer — vault pulls WETH from buyer, kami transferred via vault
+/// @notice Accept any offer — WETH pulled from buyer, kami reassigned via IDOwnsKami
 contract KamiMarketAcceptOfferSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     (uint256 offerID, uint32 kamiIndex) = abi.decode(arguments, (uint256, uint32));
 
-    uint256 sellerAccID = uint256(uint160(msg.sender));
+    uint256 sellerAccID = LibAccount.verifyOperator(components);
+    address sellerAddress = LibAccount.getOwner(components, sellerAccID);
     LibKamiMarket.verifyEnabled(components);
     LibKamiMarket.verifyActive(components, offerID);
     LibKamiMarket.verifyNotExpired(components, offerID);
     LibKamiMarket.verifyNotOwner(components, offerID, sellerAccID);
 
-    // verify seller owns the kami and it's available (external or listed)
-    LibKamiMarket.verifyKamiExternalOrListed(components, kamiIndex);
-    LibKamiMarket.verifyKamiOwner(components, kamiIndex, msg.sender);
+    // verify seller owns the kami and it's available (resting or listed)
+    LibKamiMarket.verifyKamiOwnedRestingOrListed(components, kamiIndex, sellerAccID);
 
     uint256 buyerAccID = LibKamiMarket.getOwner(components, offerID);
 
@@ -41,13 +41,13 @@ contract KamiMarketAcceptOfferSystem is System {
         LibKamiMarket.getKamiIndex(components, offerID) == kamiIndex,
         "KamiMarketAccept: kami mismatch"
       );
-      (buyerAddress, price, ) = LibKamiMarket.fillOffer(components, offerID, sellerAccID, msg.sender);
+      (buyerAddress, price, ) = LibKamiMarket.fillOffer(world, components, offerID, sellerAccID);
     } else if (keccak256(bytes(orderType)) == keccak256(bytes("KAMI_COLLECTION_OFFER"))) {
       (buyerAddress, price) = LibKamiMarket.fillCollectionOffer(
+        world,
         components,
         offerID,
         sellerAccID,
-        msg.sender,
         kamiIndex
       );
     } else {
@@ -60,7 +60,7 @@ contract KamiMarketAcceptOfferSystem is System {
     uint256 sellerReceives = price - fee;
     address feeRecipient = LibKamiMarket.getFeeRecipient(components);
 
-    vault.transferWETH(buyerAddress, msg.sender, sellerReceives);
+    vault.transferWETH(buyerAddress, sellerAddress, sellerReceives);
     if (fee > 0) {
       vault.transferWETH(buyerAddress, feeRecipient, fee);
     }
@@ -68,9 +68,7 @@ contract KamiMarketAcceptOfferSystem is System {
     // data logging and event emission
     LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, price);
     LibKamiMarket.logAcceptOffer(components, sellerAccID);
-    if (LibAccount.isAccount(components, sellerAccID)) {
-      LibAccount.updateLastTs(components, sellerAccID);
-    }
+    LibAccount.updateLastTs(components, sellerAccID);
 
     return "";
   }

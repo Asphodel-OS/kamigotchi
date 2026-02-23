@@ -64,6 +64,7 @@ export function createComponents(world: World) {
     NodeIndex: defineNumberComponent(world, 'NodeIndex', 'component.index.node'),
     NPCIndex: defineNumberComponent(world, 'NPCIndex', 'component.index.npc', true),
     KamiIndex: defineNumberComponent(world, 'KamiIndex', 'component.index.kami', true),
+    KamiListingIndex: defineNumberComponent(world, 'KamiListingIndex', 'component.index.kami.listing', true),
     QuestIndex: defineNumberComponent(world, 'QuestIndex', 'component.index.quest'),
     RecipeIndex: defineNumberComponent(world, 'RecipeIndex', 'component.index.recipe', true),
     RelationshipIndex: defineNumberComponent(world, 'RelationshipIndex', 'component.index.relationship'),

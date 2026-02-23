@@ -21,7 +21,7 @@ contract KamiMarketOfferSystem is System {
       (bool, uint32, uint256, uint32, uint256)
     );
 
-    uint256 accID = uint256(uint160(msg.sender));
+    uint256 accID = LibAccount.verifyOperator(components);
     LibKamiMarket.verifyEnabled(components);
     LibKamiMarket.verifyMaxOrders(components, accID);
     require(price > 0, "KamiMarketOffer: price must be > 0");
@@ -45,9 +45,7 @@ contract KamiMarketOfferSystem is System {
     // data logging and event emission
     LibKamiMarket.emitOffer(world, id, accID, eventKamiIndex, eventQuantity, price, expiry);
     LibKamiMarket.logOffer(components, accID);
-    if (LibAccount.isAccount(components, accID)) {
-      LibAccount.updateLastTs(components, accID);
-    }
+    LibAccount.updateLastTs(components, accID);
 
     return abi.encode(id);
   }

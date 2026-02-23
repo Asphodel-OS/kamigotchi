@@ -25,7 +25,7 @@ contract KamiMarketBuySystem is System {
   }
 
   function _buy(uint256[] memory listingIDs) internal returns (bytes memory) {
-    uint256 accID = uint256(uint160(msg.sender));
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
     LibKamiMarket.verifyEnabled(components);
 
     // First pass: verify all listings and calculate total price
@@ -53,8 +53,7 @@ contract KamiMarketBuySystem is System {
       (address sellerAddress, uint256 price, uint32 kamiIndex) = LibKamiMarket.fillListing(
         components,
         id,
-        accID,
-        msg.sender
+        accID
       );
 
       uint256 fee = LibKamiMarket.calcFee(components, price);
@@ -78,9 +77,7 @@ contract KamiMarketBuySystem is System {
       _transferETH(msg.sender, excess);
     }
 
-    if (LibAccount.isAccount(components, accID)) {
-      LibAccount.updateLastTs(components, accID);
-    }
+    LibAccount.updateLastTs(components, accID);
     return "";
   }
 

@@ -3,13 +3,13 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 import { Vm } from "forge-std/Vm.sol";
-import { Kami721 } from "tokens/Kami721.sol";
 import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 import { OpenMintable } from "tokens/OpenMintable.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
 contract GasHeavyReceiver {
@@ -20,7 +20,7 @@ contract GasHeavyReceiver {
   }
 }
 
-/// @notice tests for Kami Marketplace orderbook
+/// @notice tests for Kami Marketplace orderbook (staked model)
 contract KamiMarketTest is SetupTemplate {
   KamiMarketVault vault;
   OpenMintable weth;
@@ -50,7 +50,6 @@ contract KamiMarketTest is SetupTemplate {
     vm.startPrank(deployer);
 
     // Authorize marketplace systems to call vault
-    vault.authorizeCaller(address(_KamiMarketBuySystem));
     vault.authorizeCaller(address(_KamiMarketAcceptOfferSystem));
 
     // Set marketplace configs
@@ -58,6 +57,7 @@ contract KamiMarketTest is SetupTemplate {
     __KamiMarketRegistrySystem.setFeeRecipient(treasury);
     __KamiMarketRegistrySystem.setMaxOrders(50);
     __KamiMarketRegistrySystem.setEnabled(true);
+    __KamiMarketRegistrySystem.setPurchaseCooldown(3600); // 1 hour
 
     // Fee rate: 2.5% → [4, 250, 0, 0, 0, 0, 0, 0] → 250/10^4 = 0.025
     uint32[8] memory feeRate;
@@ -71,20 +71,13 @@ contract KamiMarketTest is SetupTemplate {
   /////////////////
   // HELPERS
 
-  /// @notice Mint a kami and bridge it out (721_EXTERNAL state)
-  function _createExternalKami(PlayerAccount memory acc) internal returns (uint256 kamiID, uint32 kamiIndex) {
+  /// @notice Mint a staked kami (already RESTING after mint)
+  function _createStakedKami(PlayerAccount memory acc) internal returns (uint256 kamiID, uint32 kamiIndex) {
     kamiID = _mintKami(acc);
     kamiIndex = LibKami.getIndex(components, kamiID);
-    // Bridge out: the kami is currently in-world (RESTING), need to unstake
-    _unstakeKami(kamiID);
-    // Verify it's now 721_EXTERNAL
-    assertTrue(LibKami.isState(components, kamiID, "721_EXTERNAL"));
-    // Verify EOA owner
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), acc.owner);
-    // Approve vault for Kami721 transfers (like approving OpenSea)
-    Kami721 kami721 = LibKami721.getContract(components);
-    vm.prank(acc.owner);
-    kami721.setApprovalForAll(address(vault), true);
+    // Kami is already staked (RESTING) after mint — no unstake needed
+    assertTrue(LibKami.isState(components, kamiID, "RESTING"));
+    assertEq(LibKami.getAccount(components, kamiID), acc.id);
   }
 
   function _listKami(
@@ -92,7 +85,7 @@ contract KamiMarketTest is SetupTemplate {
     uint32 kamiIndex,
     uint256 price
   ) internal returns (uint256 orderID) {
-    vm.startPrank(acc.owner);
+    vm.startPrank(acc.operator);
     orderID = abi.decode(_KamiMarketListSystem.executeTyped(kamiIndex, price, 0), (uint256));
     vm.stopPrank();
   }
@@ -114,7 +107,7 @@ contract KamiMarketTest is SetupTemplate {
     uint32 kamiIndex,
     uint256 price
   ) internal returns (uint256 orderID) {
-    vm.startPrank(acc.owner);
+    vm.startPrank(acc.operator);
     orderID = abi.decode(_KamiMarketOfferSystem.executeTypedOffer(kamiIndex, price, 0), (uint256));
     vm.stopPrank();
   }
@@ -124,7 +117,7 @@ contract KamiMarketTest is SetupTemplate {
     uint256 price,
     uint32 quantity
   ) internal returns (uint256 orderID) {
-    vm.startPrank(acc.owner);
+    vm.startPrank(acc.operator);
     orderID = abi.decode(
       _KamiMarketOfferSystem.executeTypedCollection(price, quantity, 0),
       (uint256)
@@ -133,13 +126,13 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function _acceptOffer(PlayerAccount memory acc, uint256 offerID, uint32 kamiIndex) internal {
-    vm.startPrank(acc.owner);
+    vm.startPrank(acc.operator);
     _KamiMarketAcceptOfferSystem.executeTyped(offerID, kamiIndex);
     vm.stopPrank();
   }
 
   function _cancelOrder(PlayerAccount memory acc, uint256 orderID) internal {
-    vm.startPrank(acc.owner);
+    vm.startPrank(acc.operator);
     _KamiMarketCancelSystem.executeTyped(orderID);
     vm.stopPrank();
   }
@@ -165,7 +158,7 @@ contract KamiMarketTest is SetupTemplate {
   // LISTING TESTS
 
   function testListKami() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
@@ -176,14 +169,14 @@ contract KamiMarketTest is SetupTemplate {
     assertEq(_IndexKamiListingComponent.get(orderID), kamiIndex);
     assertTrue(!_IndexKamiComponent.has(orderID));
 
-    // Verify kami is marked LISTED but still in seller's wallet (no escrow)
+    // Verify kami is marked LISTED and still owned by seller account
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     assertEq(LibKami.getState(components, kamiID), "LISTED");
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), alice.owner);
+    assertEq(LibKami.getAccount(components, kamiID), alice.id);
   }
 
   function testBuyListing() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     // Give Bob ETH
@@ -193,10 +186,13 @@ contract KamiMarketTest is SetupTemplate {
     // Buy
     _buyKami(bob, orderID, LIST_PRICE);
 
-    // Verify kami transferred to Bob
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), bob.owner);
+    // Verify kami transferred to Bob's account
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
-    assertEq(LibKami.getState(components, kamiID), "721_EXTERNAL");
+    assertEq(LibKami.getAccount(components, kamiID), bob.id);
+    assertEq(LibKami.getState(components, kamiID), "RESTING");
+
+    // Verify purchase cooldown is active
+    assertTrue(LibCooldown.isActive(components, kamiID));
 
     // Verify ETH distribution: seller gets price - fee, treasury gets fee
     uint256 fee = (LIST_PRICE * 250) / 10000; // 2.5%
@@ -209,8 +205,8 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testBatchBuyListings() public {
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
 
     uint256 orderID1 = _listKami(alice, kamiIndex1, 1 ether);
     uint256 orderID2 = _listKami(alice, kamiIndex2, 2 ether);
@@ -224,9 +220,11 @@ contract KamiMarketTest is SetupTemplate {
     ids[1] = orderID2;
     _buyKami(bob, ids, totalPrice);
 
-    // Both kamis now owned by Bob
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex1), bob.owner);
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex2), bob.owner);
+    // Both kamis now owned by Bob's account
+    uint256 kamiID1 = LibKami.getByIndex(components, kamiIndex1);
+    uint256 kamiID2 = LibKami.getByIndex(components, kamiIndex2);
+    assertEq(LibKami.getAccount(components, kamiID1), bob.id);
+    assertEq(LibKami.getAccount(components, kamiID2), bob.id);
 
     // Alice received total minus fees
     uint256 totalFee = (totalPrice * 250) / 10000;
@@ -236,7 +234,7 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testBuyRefundsExcess() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     uint256 excess = 0.5 ether;
@@ -252,7 +250,7 @@ contract KamiMarketTest is SetupTemplate {
   // OFFER TESTS
 
   function testCreateOffer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Bob creates offer for alice's kami
     _setupWETH(bob, OFFER_PRICE);
@@ -281,7 +279,7 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testAcceptOffer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Bob offers for alice's kami
     _setupWETH(bob, OFFER_PRICE);
@@ -290,8 +288,13 @@ contract KamiMarketTest is SetupTemplate {
     // Alice accepts
     _acceptOffer(alice, orderID, kamiIndex);
 
-    // Verify kami transferred to Bob
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), bob.owner);
+    // Verify kami transferred to Bob's account
+    uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+    assertEq(LibKami.getAccount(components, kamiID), bob.id);
+    assertEq(LibKami.getState(components, kamiID), "RESTING");
+
+    // Verify purchase cooldown is active
+    assertTrue(LibCooldown.isActive(components, kamiID));
 
     // Verify WETH distribution
     uint256 fee = (OFFER_PRICE * 250) / 10000;
@@ -305,8 +308,8 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testAcceptCollectionOffer() public {
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
 
     // Bob makes collection offer for 2 kamis
     _setupWETH(bob, OFFER_PRICE * 2);
@@ -316,14 +319,15 @@ contract KamiMarketTest is SetupTemplate {
     _acceptOffer(alice, orderID, kamiIndex1);
 
     // Verify partial fill
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex1), bob.owner);
+    uint256 kamiID1 = LibKami.getByIndex(components, kamiIndex1);
+    assertEq(LibKami.getAccount(components, kamiID1), bob.id);
     assertEq(_BalanceComponent.get(orderID), int32(1)); // 1 remaining
     assertEq(_StateComponent.get(orderID), "ACTIVE"); // still active
   }
 
   function testAcceptCollectionOfferFull() public {
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
 
     _setupWETH(bob, OFFER_PRICE * 2);
     uint256 orderID = _collectionOffer(bob, OFFER_PRICE, 2);
@@ -334,15 +338,17 @@ contract KamiMarketTest is SetupTemplate {
 
     // Fully filled
     assertEq(_StateComponent.get(orderID), "FILLED");
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex1), bob.owner);
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex2), bob.owner);
+    uint256 kamiID1 = LibKami.getByIndex(components, kamiIndex1);
+    uint256 kamiID2 = LibKami.getByIndex(components, kamiIndex2);
+    assertEq(LibKami.getAccount(components, kamiID1), bob.id);
+    assertEq(LibKami.getAccount(components, kamiID2), bob.id);
   }
 
   /////////////////
   // ACCEPT OFFER FOR LISTED KAMI
 
   function testAcceptOfferForListedKami() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Alice lists the kami
     uint256 listingID = _listKami(alice, kamiIndex, LIST_PRICE);
@@ -356,9 +362,12 @@ contract KamiMarketTest is SetupTemplate {
     // Alice accepts Bob's offer while kami is still listed
     _acceptOffer(alice, offerID, kamiIndex);
 
-    // Verify kami transferred to Bob
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), bob.owner);
-    assertEq(LibKami.getState(components, kamiID), "721_EXTERNAL");
+    // Verify kami transferred to Bob's account
+    assertEq(LibKami.getAccount(components, kamiID), bob.id);
+    assertEq(LibKami.getState(components, kamiID), "RESTING");
+
+    // Verify purchase cooldown is active
+    assertTrue(LibCooldown.isActive(components, kamiID));
 
     // Verify WETH distribution
     uint256 fee = (OFFER_PRICE * 250) / 10000;
@@ -371,56 +380,27 @@ contract KamiMarketTest is SetupTemplate {
     _buyKami(charlie, listingID, LIST_PRICE);
   }
 
-  function testCancelStaleListing() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+  function testListingAutoCancelledOnOfferAccept() public {
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
-    // Alice lists, then accepts an offer (making listing stale)
+    // Alice lists, then accepts an offer — listing should be auto-cancelled
     uint256 listingID = _listKami(alice, kamiIndex, LIST_PRICE);
     _setupWETH(bob, OFFER_PRICE);
     uint256 offerID = _offerKami(bob, kamiIndex, OFFER_PRICE);
     _acceptOffer(alice, offerID, kamiIndex);
 
-    // Alice can cancel the stale listing to free her order slot
-    _cancelOrder(alice, listingID);
+    // Listing was auto-cancelled by fillOffer's _cancelListingsIfListed
     assertEq(_StateComponent.get(listingID), "CANCELLED");
 
-    // Kami state should still be 721_EXTERNAL (cancel didn't corrupt it)
-    uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
-    assertEq(LibKami.getState(components, kamiID), "721_EXTERNAL");
-  }
-
-  function testStakeCancelsListingAfterOwnershipTransfer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
-    uint256 listingID = _listKami(alice, kamiIndex, LIST_PRICE);
-
-    // Transfer while listed (listing now stale against original seller account)
-    Kami721 kami721 = LibKami721.getContract(components);
-    vm.prank(alice.owner);
-    kami721.transferFrom(alice.owner, bob.owner, kamiIndex);
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), bob.owner);
-
-    // Bob stakes the kami
-    uint32 bobRoom = LibAccount.getRoom(components, bob.id);
-    vm.prank(deployer);
-    _IndexRoomComponent.set(bob.id, 12);
-    vm.prank(bob.owner);
-    _Kami721StakeSystem.executeTyped(kamiIndex);
-    vm.prank(deployer);
-    _IndexRoomComponent.set(bob.id, bobRoom);
-
-    // Listing is cancelled and cleaned even after ownership transfer.
-    assertEq(_StateComponent.get(listingID), "CANCELLED");
-    assertTrue(!_IDOwnsKamiOrderComponent.has(listingID));
-
-    // Kami was staked successfully.
+    // Kami state should be RESTING (owned by buyer now)
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     assertEq(LibKami.getState(components, kamiID), "RESTING");
     assertEq(LibKami.getAccount(components, kamiID), bob.id);
   }
 
   function testAcceptCollectionOfferForListedKami() public {
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
 
     // List one of the kamis
     _listKami(alice, kamiIndex1, LIST_PRICE);
@@ -431,11 +411,13 @@ contract KamiMarketTest is SetupTemplate {
 
     // Alice accepts with the listed kami
     _acceptOffer(alice, orderID, kamiIndex1);
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex1), bob.owner);
+    uint256 kamiID1 = LibKami.getByIndex(components, kamiIndex1);
+    assertEq(LibKami.getAccount(components, kamiID1), bob.id);
 
     // Alice accepts with the unlisted kami
     _acceptOffer(alice, orderID, kamiIndex2);
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex2), bob.owner);
+    uint256 kamiID2 = LibKami.getByIndex(components, kamiIndex2);
+    assertEq(LibKami.getAccount(components, kamiID2), bob.id);
     assertEq(_StateComponent.get(orderID), "FILLED");
   }
 
@@ -443,27 +425,27 @@ contract KamiMarketTest is SetupTemplate {
   // CANCEL TESTS
 
   function testCancelListing() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
-    // Verify kami marked LISTED but still in seller's wallet
+    // Verify kami marked LISTED but still owned by seller account
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     assertEq(LibKami.getState(components, kamiID), "LISTED");
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), alice.owner);
+    assertEq(LibKami.getAccount(components, kamiID), alice.id);
 
     // Cancel
     _cancelOrder(alice, orderID);
 
-    // Verify kami state restored (seller still owns it, no escrow to unwind)
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), alice.owner);
-    assertEq(LibKami.getState(components, kamiID), "721_EXTERNAL");
+    // Verify kami state restored to RESTING
+    assertEq(LibKami.getAccount(components, kamiID), alice.id);
+    assertEq(LibKami.getState(components, kamiID), "RESTING");
 
     // Verify order cancelled
     assertEq(_StateComponent.get(orderID), "CANCELLED");
   }
 
   function testCancelOffer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     _setupWETH(bob, OFFER_PRICE);
     uint256 orderID = _offerKami(bob, kamiIndex, OFFER_PRICE);
 
@@ -479,7 +461,7 @@ contract KamiMarketTest is SetupTemplate {
   // PERMISSION TESTS
 
   function testPermissions() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     // Bob can't cancel alice's listing
@@ -491,7 +473,7 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testSelfTradeBlocked() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     // Alice can't buy her own listing
@@ -501,7 +483,7 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testSelfTradeBlockedOffer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Alice makes offer for her own kami
     _setupWETH(alice, OFFER_PRICE);
@@ -516,10 +498,10 @@ contract KamiMarketTest is SetupTemplate {
   // EXPIRY TESTS
 
   function testExpiredListing() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Create listing with 1 hour expiry
-    vm.prank(alice.owner);
+    vm.prank(alice.operator);
     uint256 orderID = abi.decode(
       _KamiMarketListSystem.executeTyped(kamiIndex, LIST_PRICE, block.timestamp + 1 hours),
       (uint256)
@@ -535,11 +517,11 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testExpiredOffer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Bob creates offer with 1 hour expiry
     _setupWETH(bob, OFFER_PRICE);
-    vm.prank(bob.owner);
+    vm.prank(bob.operator);
     uint256 orderID = abi.decode(
       _KamiMarketOfferSystem.executeTypedOffer(kamiIndex, OFFER_PRICE, block.timestamp + 1 hours),
       (uint256)
@@ -557,7 +539,7 @@ contract KamiMarketTest is SetupTemplate {
   // FEE TESTS
 
   function testFees() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, 4 ether);
 
     vm.deal(bob.owner, 4 ether);
@@ -571,7 +553,7 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testFeesWETH() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     _setupWETH(bob, 4 ether);
     uint256 orderID = _offerKami(bob, kamiIndex, 4 ether);
@@ -592,16 +574,16 @@ contract KamiMarketTest is SetupTemplate {
     vm.prank(deployer);
     __KamiMarketRegistrySystem.setMaxOrders(2);
 
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
-    (, uint32 kamiIndex3) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
+    (, uint32 kamiIndex3) = _createStakedKami(alice);
 
     // Create 2 listings (should succeed)
     _listKami(alice, kamiIndex1, LIST_PRICE);
     _listKami(alice, kamiIndex2, LIST_PRICE);
 
     // 3rd should fail
-    vm.startPrank(alice.owner);
+    vm.startPrank(alice.operator);
     vm.expectRevert();
     _KamiMarketListSystem.executeTyped(kamiIndex3, LIST_PRICE, 0);
     vm.stopPrank();
@@ -611,7 +593,7 @@ contract KamiMarketTest is SetupTemplate {
   // ADMIN TESTS
 
   function testAdminCancel() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     // Admin cancels
@@ -620,18 +602,18 @@ contract KamiMarketTest is SetupTemplate {
     vm.prank(deployer);
     _KamiMarketCancelSystem.executeAdmin(ids);
 
-    // Verify cancelled and kami state restored (seller still owns it)
+    // Verify cancelled and kami state restored
     assertEq(_StateComponent.get(orderID), "CANCELLED");
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex), alice.owner);
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
-    assertEq(LibKami.getState(components, kamiID), "721_EXTERNAL");
+    assertEq(LibKami.getAccount(components, kamiID), alice.id);
+    assertEq(LibKami.getState(components, kamiID), "RESTING");
   }
 
   /////////////////
   // INSUFFICIENT WETH TEST
 
   function testInsufficientWETH() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Bob approves vault but has no WETH
     vm.prank(bob.owner);
@@ -645,15 +627,19 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   /////////////////
-  // ONLY EXTERNAL KAMI TEST
+  // ONLY RESTING KAMI TEST
 
-  function testOnlyExternalKami() public {
-    // Mint a kami but don't unstake (stays in-world as RESTING)
+  function testOnlyRestingKami() public {
+    // Mint a kami — it's RESTING by default
     uint256 kamiID = _mintKami(alice);
     uint32 kamiIndex = LibKami.getIndex(components, kamiID);
 
-    // Listing should fail — kami not 721_EXTERNAL
-    vm.startPrank(alice.owner);
+    // Put kami in HARVESTING state so it can't be listed
+    vm.prank(deployer);
+    _StateComponent.set(kamiID, string("HARVESTING"));
+
+    // Listing should fail — kami not RESTING
+    vm.startPrank(alice.operator);
     vm.expectRevert();
     _KamiMarketListSystem.executeTyped(kamiIndex, LIST_PRICE, 0);
     vm.stopPrank();
@@ -663,7 +649,7 @@ contract KamiMarketTest is SetupTemplate {
   // INSUFFICIENT ETH TEST
 
   function testInsufficientETH() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     // Bob doesn't have enough ETH
@@ -676,14 +662,14 @@ contract KamiMarketTest is SetupTemplate {
   // DISABLED MARKETPLACE TEST
 
   function testDisabledMarketplace() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Disable marketplace
     vm.prank(deployer);
     __KamiMarketRegistrySystem.setEnabled(false);
 
     // List should fail
-    vm.startPrank(alice.owner);
+    vm.startPrank(alice.operator);
     vm.expectRevert();
     _KamiMarketListSystem.executeTyped(kamiIndex, LIST_PRICE, 0);
     vm.stopPrank();
@@ -704,7 +690,7 @@ contract KamiMarketTest is SetupTemplate {
 
     // Offer should fail
     _setupWETH(bob, OFFER_PRICE);
-    vm.startPrank(bob.owner);
+    vm.startPrank(bob.operator);
     vm.expectRevert();
     _KamiMarketOfferSystem.executeTypedOffer(kamiIndex, OFFER_PRICE, 0);
     vm.stopPrank();
@@ -718,14 +704,14 @@ contract KamiMarketTest is SetupTemplate {
   // RELIST AFTER CANCEL
 
   function testRelistAfterCancel() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // List, cancel, relist
     uint256 orderID1 = _listKami(alice, kamiIndex, LIST_PRICE);
     _cancelOrder(alice, orderID1);
 
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
-    assertEq(LibKami.getState(components, kamiID), "721_EXTERNAL");
+    assertEq(LibKami.getState(components, kamiID), "RESTING");
 
     // Relist same kami — should succeed
     uint256 orderID2 = _listKami(alice, kamiIndex, 2 ether);
@@ -738,7 +724,7 @@ contract KamiMarketTest is SetupTemplate {
   // BUY ALREADY FILLED LISTING
 
   function testBuyAlreadyFilledListing() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     // Bob buys it
@@ -756,8 +742,8 @@ contract KamiMarketTest is SetupTemplate {
   // ACCEPT ALREADY FILLED OFFER
 
   function testAcceptAlreadyFilledOffer() public {
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
 
     _setupWETH(bob, OFFER_PRICE);
     uint256 orderID = _offerKami(bob, kamiIndex1, OFFER_PRICE);
@@ -775,8 +761,8 @@ contract KamiMarketTest is SetupTemplate {
   // BATCH BUY MULTIPLE SELLERS
 
   function testBatchBuyMultipleSellers() public {
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(bob);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(bob);
 
     uint256 orderID1 = _listKami(alice, kamiIndex1, 1 ether);
     uint256 orderID2 = _listKami(bob, kamiIndex2, 2 ether);
@@ -798,17 +784,19 @@ contract KamiMarketTest is SetupTemplate {
     assertEq(bob.owner.balance - bobBalBefore, 2 ether - fee2);
     assertEq(treasury.balance, fee1 + fee2);
 
-    // Both kamis to charlie
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex1), charlie.owner);
-    assertEq(LibKami721.getEOAOwner(components, kamiIndex2), charlie.owner);
+    // Both kamis to charlie's account
+    uint256 kamiID1 = LibKami.getByIndex(components, kamiIndex1);
+    uint256 kamiID2 = LibKami.getByIndex(components, kamiIndex2);
+    assertEq(LibKami.getAccount(components, kamiID1), charlie.id);
+    assertEq(LibKami.getAccount(components, kamiID2), charlie.id);
   }
 
   /////////////////
   // ACCEPT OFFER KAMI MISMATCH
 
   function testAcceptOfferKamiMismatch() public {
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
 
     // Bob offers for kami1
     _setupWETH(bob, OFFER_PRICE);
@@ -840,7 +828,7 @@ contract KamiMarketTest is SetupTemplate {
   // DUPLICATE LISTING IN BATCH
 
   function testDuplicateListingInBatch() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     // Try to buy the same listing twice in one batch
@@ -858,7 +846,7 @@ contract KamiMarketTest is SetupTemplate {
   // CANCEL ALREADY CANCELLED
 
   function testCancelAlreadyCancelled() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     _cancelOrder(alice, orderID);
@@ -873,20 +861,20 @@ contract KamiMarketTest is SetupTemplate {
   // ZERO PRICE VALIDATION
 
   function testZeroPriceListing() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Price = 0 should revert
-    vm.startPrank(alice.owner);
+    vm.startPrank(alice.operator);
     vm.expectRevert();
     _KamiMarketListSystem.executeTyped(kamiIndex, 0, 0);
     vm.stopPrank();
   }
 
   function testZeroPriceOffer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // Offer with price = 0 should revert
-    vm.startPrank(bob.owner);
+    vm.startPrank(bob.operator);
     vm.expectRevert();
     _KamiMarketOfferSystem.executeTypedOffer(kamiIndex, 0, 0);
     vm.stopPrank();
@@ -899,14 +887,14 @@ contract KamiMarketTest is SetupTemplate {
     _setupWETH(bob, 100 ether);
 
     // quantity > int32 max should revert (overflow guard)
-    vm.startPrank(bob.owner);
+    vm.startPrank(bob.operator);
     vm.expectRevert();
     _KamiMarketOfferSystem.executeTypedCollection(OFFER_PRICE, uint32(type(int32).max) + 1, 0);
     vm.stopPrank();
   }
 
   function testBuyEventIncludesBuyerAndSellerAccIDs() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
 
     vm.deal(bob.owner, LIST_PRICE);
@@ -931,7 +919,7 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testAcceptEventIncludesSellerAndBuyerAccIDs() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     _setupWETH(bob, OFFER_PRICE);
     uint256 orderID = _offerKami(bob, kamiIndex, OFFER_PRICE);
 
@@ -956,11 +944,11 @@ contract KamiMarketTest is SetupTemplate {
   }
 
   function testOfferEventNormalizesQuantityForSpecificOffer() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
     _setupWETH(bob, OFFER_PRICE);
 
     vm.recordLogs();
-    vm.prank(bob.owner);
+    vm.prank(bob.operator);
     uint256 orderID =
       abi.decode(_KamiMarketOfferSystem.execute(abi.encode(false, kamiIndex, OFFER_PRICE, uint32(7), 0)), (uint256));
 
@@ -980,7 +968,7 @@ contract KamiMarketTest is SetupTemplate {
     _setupWETH(bob, OFFER_PRICE * 2);
 
     vm.recordLogs();
-    vm.prank(bob.owner);
+    vm.prank(bob.operator);
     uint256 orderID =
       abi.decode(_KamiMarketOfferSystem.execute(abi.encode(true, uint32(777), OFFER_PRICE, uint32(2), 0)), (uint256));
 
@@ -1000,13 +988,13 @@ contract KamiMarketTest is SetupTemplate {
   // DOUBLE LIST SAME KAMI
 
   function testDoubleListSameKami() public {
-    (, uint32 kamiIndex) = _createExternalKami(alice);
+    (, uint32 kamiIndex) = _createStakedKami(alice);
 
     // List the kami
     _listKami(alice, kamiIndex, LIST_PRICE);
 
-    // Try to list again — should fail because kami is now LISTED, not 721_EXTERNAL
-    vm.startPrank(alice.owner);
+    // Try to list again — should fail because kami is now LISTED, not RESTING
+    vm.startPrank(alice.operator);
     vm.expectRevert();
     _KamiMarketListSystem.executeTyped(kamiIndex, 2 ether, 0);
     vm.stopPrank();
@@ -1019,16 +1007,16 @@ contract KamiMarketTest is SetupTemplate {
     vm.prank(deployer);
     __KamiMarketRegistrySystem.setMaxOrders(2);
 
-    (, uint32 kamiIndex1) = _createExternalKami(alice);
-    (, uint32 kamiIndex2) = _createExternalKami(alice);
-    (, uint32 kamiIndex3) = _createExternalKami(alice);
+    (, uint32 kamiIndex1) = _createStakedKami(alice);
+    (, uint32 kamiIndex2) = _createStakedKami(alice);
+    (, uint32 kamiIndex3) = _createStakedKami(alice);
 
     // Create 2 listings (hits max)
     uint256 orderID1 = _listKami(alice, kamiIndex1, LIST_PRICE);
     _listKami(alice, kamiIndex2, LIST_PRICE);
 
     // 3rd should fail
-    vm.startPrank(alice.owner);
+    vm.startPrank(alice.operator);
     vm.expectRevert();
     _KamiMarketListSystem.executeTyped(kamiIndex3, LIST_PRICE, 0);
     vm.stopPrank();
@@ -1038,5 +1026,40 @@ contract KamiMarketTest is SetupTemplate {
 
     // Now 3rd should succeed
     _listKami(alice, kamiIndex3, LIST_PRICE);
+  }
+
+  /////////////////
+  // PURCHASE COOLDOWN TESTS
+
+  function testPurchaseCooldown() public {
+    (, uint32 kamiIndex) = _createStakedKami(alice);
+    uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
+    uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+
+    vm.deal(bob.owner, LIST_PRICE);
+    _buyKami(bob, orderID, LIST_PRICE);
+
+    // Cooldown should be active right after purchase
+    assertTrue(LibCooldown.isActive(components, kamiID));
+
+    // Fast forward past cooldown (1 hour)
+    _fastForward(1 hours);
+
+    // Cooldown should have expired
+    assertTrue(!LibCooldown.isActive(components, kamiID));
+  }
+
+  function testCooldownDoesNotPreventListing() public {
+    (, uint32 kamiIndex) = _createStakedKami(alice);
+    uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+
+    // Manually set a cooldown on the kami
+    vm.prank(deployer);
+    _TimeNextComponent.set(kamiID, block.timestamp + 1 hours);
+    assertTrue(LibCooldown.isActive(components, kamiID));
+
+    // Kami can still be listed even with active cooldown
+    uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
+    assertEq(_StateComponent.get(orderID), "ACTIVE");
   }
 }

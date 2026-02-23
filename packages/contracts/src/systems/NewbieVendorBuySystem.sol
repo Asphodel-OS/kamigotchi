@@ -15,14 +15,11 @@ import { ValueComponent, ID as ValueCompID } from "components/ValueComponent.sol
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
+import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibKami } from "libraries/LibKami.sol";
-import { LibKami721 } from "libraries/LibKami721.sol";
-import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
-
-import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 
 uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
 
@@ -30,7 +27,7 @@ uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
 
 /// @notice Newbie Kami Vendor — buy one kami at 1.5x marketplace floor price (one-time per player)
 /// @dev Price is computed on-chain by querying the minimum active KAMI_LISTING price
-///      and multiplying by 1.5 (3/2). The vendor holds kamis in a specific wallet.
+///      and multiplying by 1.5 (3/2). The vendor holds kamis staked in-game.
 ///      Admin sets a pool of kami indices; the first 3 are displayed for sale.
 ///      When one is bought, the next from the pool fills in.
 contract NewbieVendorBuySystem is System {
@@ -46,7 +43,7 @@ contract NewbieVendorBuySystem is System {
   }
 
   function _buy(uint32 kamiIndex) internal returns (bytes memory) {
-    uint256 accID = uint256(uint160(msg.sender));
+    uint256 accID = LibAccount.getByOwner(components, msg.sender);
 
     require(LibConfig.getBool(components, "NEWBIE_VENDOR_ENABLED"), "NewbieVendor: disabled");
     require(
@@ -62,7 +59,7 @@ contract NewbieVendorBuySystem is System {
     _verifyDisplayAndRemove(kamiIndex);
 
     // verify vendor owns kami, transfer, send ETH
-    _transferKami(kamiIndex, price);
+    _transferKami(kamiIndex, price, accID);
 
     // mark as purchased (one-time flag)
     LibFlag.set(components, accID, "NEWBIE_VENDOR_PURCHASED", true);
@@ -70,9 +67,7 @@ contract NewbieVendorBuySystem is System {
     // emit event
     _emitBuy(accID, kamiIndex, price);
 
-    if (LibAccount.isAccount(components, accID)) {
-      LibAccount.updateLastTs(components, accID);
-    }
+    LibAccount.updateLastTs(components, accID);
 
     return "";
   }
@@ -112,21 +107,22 @@ contract NewbieVendorBuySystem is System {
     valuesComp.set(VENDOR_ENTITY, newPool);
   }
 
-  /// @notice Verify vendor ownership, transfer kami, handle ETH payments
-  function _transferKami(uint32 kamiIndex, uint256 price) internal {
+  /// @notice Verify vendor ownership, reassign kami, handle ETH payments
+  function _transferKami(uint32 kamiIndex, uint256 price, uint256 buyerAccID) internal {
     address vendorAddr = LibConfig.getAddress(components, "NEWBIE_VENDOR_ADDRESS");
-    require(
-      LibKami721.getEOAOwner(components, kamiIndex) == vendorAddr,
-      "NewbieVendor: vendor no longer owns kami"
-    );
+    uint256 vendorAccID = uint256(uint160(vendorAddr));
 
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     require(kamiID != 0, "NewbieVendor: kami not found");
-    LibKami.verifyState(components, kamiID, "721_EXTERNAL");
+    LibKami.verifyAccount(components, kamiID, vendorAccID);
+    LibKami.verifyState(components, kamiID, "RESTING");
 
-    // transfer kami via marketplace vault
-    KamiMarketVault vault = LibKamiMarket.getVault(components);
-    vault.transferKami(vendorAddr, msg.sender, kamiIndex);
+    // reassign ownership via IDOwnsKami
+    LibKami.setOwner(components, kamiID, buyerAccID);
+
+    // set purchase cooldown
+    uint256 cd = LibConfig.get(components, "KAMI_MARKET_PURCHASE_COOLDOWN");
+    if (cd > 0) LibCooldown.modify(components, kamiID, int256(cd));
 
     // send ETH to vendor address
     _transferETH(vendorAddr, price);

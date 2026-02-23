@@ -41,4 +41,9 @@ contract _KamiMarketRegistrySystem is System, AuthRoles {
   function setEnabled(bool enabled) public onlyAdmin(components) {
     LibConfig.setBool(components, "KAMI_MARKET_ENABLED", enabled);
   }
+
+  /// @notice Set the post-purchase cooldown duration in seconds (0 = disabled)
+  function setPurchaseCooldown(uint256 cooldown) public onlyAdmin(components) {
+    LibConfig.set(components, "KAMI_MARKET_PURCHASE_COOLDOWN", cooldown);
+  }
 }

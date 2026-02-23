@@ -12,6 +12,7 @@ import _HarvestAdminSystem from "../../../out/_HarvestAdminSystem.sol/_HarvestAd
 import _ItemRegistrySystem from "../../../out/_ItemRegistrySystem.sol/_ItemRegistrySystem.json";
 import _KamiMarketRegistrySystem from "../../../out/_KamiMarketRegistrySystem.sol/_KamiMarketRegistrySystem.json";
 import _ListingRegistrySystem from "../../../out/_ListingRegistrySystem.sol/_ListingRegistrySystem.json";
+import _NewbieVendorRegistrySystem from "../../../out/_NewbieVendorRegistrySystem.sol/_NewbieVendorRegistrySystem.json";
 import _NodeRegistrySystem from "../../../out/_NodeRegistrySystem.sol/_NodeRegistrySystem.json";
 import _NPCRegistrySystem from "../../../out/_NPCRegistrySystem.sol/_NPCRegistrySystem.json";
 import _QuestRegistrySystem from "../../../out/_QuestRegistrySystem.sol/_QuestRegistrySystem.json";
@@ -77,6 +78,7 @@ import KamiUnequipSystem from "../../../out/KamiUnequipSystem.sol/KamiUnequipSys
 import KamiUseItemSystem from "../../../out/KamiUseItemSystem.sol/KamiUseItemSystem.json";
 import ListingBuySystem from "../../../out/ListingBuySystem.sol/ListingBuySystem.json";
 import ListingSellSystem from "../../../out/ListingSellSystem.sol/ListingSellSystem.json";
+import NewbieVendorBuySystem from "../../../out/NewbieVendorBuySystem.sol/NewbieVendorBuySystem.json";
 import QuestAcceptSystem from "../../../out/QuestAcceptSystem.sol/QuestAcceptSystem.json";
 import QuestCompleteSystem from "../../../out/QuestCompleteSystem.sol/QuestCompleteSystem.json";
 import QuestDropSystem from "../../../out/QuestDropSystem.sol/QuestDropSystem.json";
@@ -104,6 +106,7 @@ export const SystemBytecodes = {
   "system.item.registry": _ItemRegistrySystem,
   "system.kamimarket.registry": _KamiMarketRegistrySystem,
   "system.listing.registry": _ListingRegistrySystem,
+  "system.newbievendor.registry": _NewbieVendorRegistrySystem,
   "system.node.registry": _NodeRegistrySystem,
   "system.npc.registry": _NPCRegistrySystem,
   "system.quest.registry": _QuestRegistrySystem,
@@ -169,6 +172,7 @@ export const SystemBytecodes = {
   "system.kami.use.item": KamiUseItemSystem,
   "system.listing.buy": ListingBuySystem,
   "system.listing.sell": ListingSellSystem,
+  "system.newbievendor.buy": NewbieVendorBuySystem,
   "system.quest.accept": QuestAcceptSystem,
   "system.quest.complete": QuestCompleteSystem,
   "system.quest.drop": QuestDropSystem,
