@@ -56,18 +56,18 @@ contract NewbieVendorBuySystem is System {
     uint256 price = _calcPrice();
     require(msg.value >= price, "NewbieVendor: insufficient ETH");
 
+    // prevent them from making future purchases from the newbie vendor
+    LibFlag.set(components, accID, "NEWBIE_VENDOR_PURCHASED", true);
+
     // verify kami is on display + remove from pool
     _verifyDisplayAndRemove(kamiIndex);
 
     // verify vendor owns kami, transfer, send ETH
     _transferKami(kamiIndex, price, accID);
 
-    // soulbind for 24h — prevents listing, unstaking, or accepting offers
+    // soulbind — prevents listing, unstaking, or accepting offers
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     LibSoulbound.set(components, kamiID, 3 days);
-
-    // mark as purchased (one-time flag)
-    LibFlag.set(components, accID, "NEWBIE_VENDOR_PURCHASED", true);
 
     // emit event
     _emitBuy(accID, kamiIndex, price);
