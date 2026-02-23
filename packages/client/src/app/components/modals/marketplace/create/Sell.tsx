@@ -83,26 +83,28 @@ export const Sell = ({
               {hasSelection && <SelectedKamiName>{selected.name}</SelectedKamiName>}
             </KamiPickerRow>
           </FieldGroup>
-          <FieldGroup>
-            <SectionLabel>Listing Price</SectionLabel>
-            <InputRow>
-              <StyledInput
-                type='text'
-                inputMode='decimal'
-                placeholder='0'
-                value={price}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
-                }}
-              />
-              <InputIcon src={TokenIcons.eth} alt='ETH' />
-            </InputRow>
-          </FieldGroup>
-          <FieldGroup>
-            <SectionLabel>Choose Expiration</SectionLabel>
-            <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
-          </FieldGroup>
+          <FieldRow>
+            <RowFieldGroup>
+              <SectionLabel>Listing Price</SectionLabel>
+              <InputRow>
+                <StyledInput
+                  type='text'
+                  inputMode='decimal'
+                  placeholder='0'
+                  value={price}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
+                  }}
+                />
+                <InputIcon src={TokenIcons.eth} alt='ETH' />
+              </InputRow>
+            </RowFieldGroup>
+            <RowFieldGroup>
+              <SectionLabel>Choose Expiration</SectionLabel>
+              <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
+            </RowFieldGroup>
+          </FieldRow>
         </FieldsColumn>
       </MainLayout>
     </Conditional>
@@ -158,10 +160,21 @@ const FieldsColumn = styled.div`
   padding-left: 0.6vw;
 `;
 
+const FieldRow = styled.div`
+  display: flex;
+  gap: 0.8vw;
+  flex-wrap: wrap;
+`;
+
 const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.3vw;
+`;
+
+const RowFieldGroup = styled(FieldGroup)`
+  flex: 1;
+  min-width: 12vw;
 `;
 
 const SectionLabel = styled.div`
@@ -216,4 +229,3 @@ const InputIcon = styled.img`
   width: 1.4vw;
   height: 1.4vw;
 `;
-
