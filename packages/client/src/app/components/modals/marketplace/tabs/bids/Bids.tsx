@@ -11,6 +11,7 @@ import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kami
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
 import { SelectBidKamis } from './SelectBidKamis';
+import { formatExpiry } from '../../helpers';
 
 const FILTER_CYCLE = ['Show all', 'Bids on my kami', 'Only generic'] as const;
 type BidFilter = (typeof FILTER_CYCLE)[number];
@@ -22,16 +23,6 @@ const FilterIcons: Record<BidFilter, string> = {
 };
 
 const KamidenClient = getKamidenClient();
-
-const formatExpiry = (expiryStr: string) => {
-  const expiry = Number(expiryStr);
-  if (expiry === 0) return 'Never';
-  const diff = expiry - Math.floor(Date.now() / 1000);
-  if (diff <= 0) return 'Expired';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-  return `${Math.floor(diff / 86400)}d`;
-};
 
 export const Bids = ({
   isVisible,

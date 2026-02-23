@@ -2,8 +2,7 @@ import styled from 'styled-components';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { playClick } from 'utils/sounds';
-
-export type MarketplaceTab = 'listings' | 'bids' | 'myOrders';
+import { MarketplaceTab } from '../types';
 
 export const Tabs = ({
   tab,

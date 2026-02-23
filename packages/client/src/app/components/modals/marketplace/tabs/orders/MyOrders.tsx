@@ -12,6 +12,7 @@ import { getKamidenClient, KamiMarketBidType, KamiMarketOrder } from 'clients/ka
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
+import { formatExpiry, isExpired } from '../../helpers';
 
 const KamidenClient = getKamidenClient();
 
@@ -41,22 +42,6 @@ const STATUS_COLORS: Record<OrderStatus, { color: string; bg: string }> = {
   Cancelled: { color: '#C62828', bg: '#FDECEC' },
   Filled: { color: '#1A4DB0', bg: '#E8F0FE' },
   Expired: { color: '#666', bg: '#ECECEC' },
-};
-
-const formatExpiry = (expiryStr: string) => {
-  const expiry = Number(expiryStr);
-  if (expiry === 0) return 'Never';
-  const diff = expiry - Math.floor(Date.now() / 1000);
-  if (diff <= 0) return 'Expired';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-  return `${Math.floor(diff / 86400)}d`;
-};
-
-const isExpired = (expiryStr: string) => {
-  const expiry = Number(expiryStr);
-  if (!expiry) return false;
-  return expiry <= Math.floor(Date.now() / 1000);
 };
 
 export type MyOrder = {
