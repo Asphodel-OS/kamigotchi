@@ -47,6 +47,10 @@ contract NewbieVendorBuySystem is System {
       "NewbieVendor: already purchased"
     );
 
+    // only accounts created in the last 24h can use the vendor
+    uint256 accountCreated = TimeStartComponent(getAddrByID(components, TimeStartCompID)).get(accID);
+    require(block.timestamp - accountCreated <= 86400, "NewbieVendor: account too old");
+
     // compute price from TWAP oracle
     uint256 price = _calcPrice();
     require(msg.value >= price, "NewbieVendor: insufficient ETH");
