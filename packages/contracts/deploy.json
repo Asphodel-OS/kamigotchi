@@ -649,7 +649,7 @@
     },
     {
       "name": "NewbieVendorBuySystem",
-      "writeAccess": ["HasFlag", "IDOwnsKami", "State", "TimeNext", "Values", "TimeLast"]
+      "writeAccess": ["HasFlag", "IDOwnsKami", "State", "Values", "TimeLast"]
     },
     {
       "name": "KamiEquipSystem",

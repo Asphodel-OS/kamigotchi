@@ -10,7 +10,6 @@ import { TimeStartComponent, ID as TimeStartCompID } from "components/TimeStartC
 import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.sol";
 
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
-import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
@@ -116,10 +115,6 @@ contract NewbieVendorBuySystem is System {
 
     // reassign ownership via IDOwnsKami
     LibKami.setOwner(components, kamiID, buyerAccID);
-
-    // set purchase cooldown
-    uint256 cd = LibConfig.get(components, "KAMI_MARKET_PURCHASE_COOLDOWN");
-    if (cd > 0) LibCooldown.modify(components, kamiID, int256(cd));
 
     // send ETH to vendor address
     _transferETH(vendorAddr, price);
