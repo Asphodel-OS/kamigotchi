@@ -26,6 +26,7 @@ export const DropdownToggle = ({
   clearTrigger,
   trigger,
   hideActionButton,
+  maxHeight,
 }: {
   onClick: ((selected: any[]) => void)[];
   button: {
@@ -42,6 +43,7 @@ export const DropdownToggle = ({
   clearTrigger?: boolean;
   trigger?: React.ReactNode;
   hideActionButton?: boolean;
+  maxHeight?: number;
 }) => {
   const { images, tooltips } = button;
   const [checked, setChecked] = useState<boolean[]>([]);
@@ -182,6 +184,7 @@ export const DropdownToggle = ({
         ]}
         disabled={modeDisabled}
         forceClose={forceClose}
+        maxHeight={maxHeight}
       >
         {trigger ?? (
           <IconButton
@@ -226,11 +229,11 @@ const MenuOption = styled.div<{
   justify-content: left;
   gap: 0.4vw;
   border-radius: 0.4vw;
-  font-size: 0.8vw;
+  font-size: 0.85vw;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  padding: ${({ isSelectAll }) => (isSelectAll ? '1vw 0.6vw 0.4vw 0.9vw ' : '0 0.2vw 0.1vw 2.2vw')};
+  padding: ${({ isSelectAll }) => (isSelectAll ? '0.8vw 0.6vw 0.4vw 0.9vw' : '0.25vw 0.4vw 0.25vw 2.2vw')};
 
   &:hover {
     background-color: #ddd;

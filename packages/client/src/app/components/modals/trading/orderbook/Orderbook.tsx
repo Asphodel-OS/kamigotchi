@@ -147,6 +147,8 @@ const TopPane = styled.div<{ collapsed: boolean }>`
   pointer-events: ${({ collapsed }) => (collapsed ? 'none' : 'auto')};
   background: transparent;
   visibility: ${({ collapsed }) => (collapsed ? 'hidden' : 'visible')};
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const BottomPane = styled.div`
@@ -157,6 +159,8 @@ const BottomPane = styled.div`
   min-height: 0;
   overflow: hidden auto;
   z-index: 0;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const ToggleRow = styled.div`

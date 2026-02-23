@@ -1,13 +1,42 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
+import { useVisibility } from 'app/stores';
+import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
+import { OperatorIcon } from 'assets/images/icons/menu';
+import { TriggerIcons } from 'assets/images/icons/triggers';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
+import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
 
+const FILTER_CYCLE = ['Show all', 'Bids on my kami', 'Only generic'] as const;
+type BidFilter = (typeof FILTER_CYCLE)[number];
+
+const FilterIcons: Record<BidFilter, string> = {
+  'Show all': TriggerIcons.eyeOpen,
+  'Bids on my kami': OperatorIcon,
+  'Only generic': placeholderKami,
+};
+
 const KamidenClient = getKamidenClient();
+
+const formatExpiry = (expiryStr: string) => {
+  const expiry = Number(expiryStr);
+  if (expiry === 0) return 'Never';
+  const diff = expiry - Math.floor(Date.now() / 1000);
+  if (diff <= 0) return 'Expired';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+  return `${Math.floor(diff / 86400)}d`;
+};
+
+const isBidExpired = (expiryStr: string) => {
+  const expiry = Number(expiryStr);
+  if (!expiry) return false;
+  return expiry <= Math.floor(Date.now() / 1000);
+};
 
 export const Bids = ({
   isVisible,
@@ -27,6 +56,9 @@ export const Bids = ({
   utils: {
     getAccountKamis: () => Kami[];
     getExternalKamis: () => Kami[];
+    queryKamiByIndex: (index: number) => EntityIndex | undefined;
+    getKami: (entity: EntityIndex) => Kami;
+    getAccountByID: (id: string) => { name: string; index: number };
     isDifferentAccountId: (lhs: string, rhs: string) => boolean;
     formatEthPrice: (weiString: string, decimals: number) => string;
   };
@@ -34,12 +66,22 @@ export const Bids = ({
   /////////////////
   // INSTANTIATIONS
 
+  const isMarketplaceOpen = useVisibility((s) => s.modals.marketplace);
+
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
   const [selectedBid, setSelectedBid] = useState<KamiMarketBid | null>(null);
-  const [filterBy, setFilterBy] = useState('Show all');
-  const [showFilterSection, setShowFilterSection] = useState(false);
+  const [filterBy, setFilterBy] = useState<BidFilter>('Show all');
+
+  // Reset on modal open
+  useEffect(() => {
+    if (!isMarketplaceOpen) return;
+    setFilterBy('Show all');
+    setSelectedBid(null);
+    setSelectedKamis(new Set());
+    setShowSelectKami(false);
+  }, [isMarketplaceOpen]);
 
   /////////////////
   // SUBSCRIPTIONS
@@ -73,7 +115,6 @@ export const Bids = ({
   useEffect(() => {
     if (!showCreateOrder) return;
     setShowSelectKami(false);
-    setShowFilterSection(false);
   }, [showCreateOrder]);
 
   /////////////////
@@ -86,34 +127,67 @@ export const Bids = ({
     [accountKamis]
   );
   const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
-  const showFilterBottom = isVisible && !showCreateOrder && showFilterSection;
 
   const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
-  const getBidLabel = (bid: KamiMarketBid) =>
-    bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC ? `Kami #${bid.KamiIndex}` : '';
+  const formatRemainingBid = (bid: KamiMarketBid) => {
+    try {
+      const remaining = (BigInt(bid.Price) * BigInt(bid.Quantity)).toString();
+      return utils.formatEthPrice(remaining, 5);
+    } catch {
+      return '?';
+    }
+  };
+
+  const externalIndices = useMemo(
+    () => new Set(externalKamis.map((k) => k.index)),
+    [externalKamis]
+  );
+  const allOwnedIndices = useMemo(() => {
+    const set = new Set(ownedKamiIndices);
+    externalKamis.forEach((k) => set.add(k.index));
+    return set;
+  }, [ownedKamiIndices, externalKamis]);
+  const stakedKamis = useMemo(
+    () => accountKamis.filter((k) => !externalIndices.has(k.index)),
+    [accountKamis, externalIndices]
+  );
 
   const getBidProgress = (bid: KamiMarketBid) => {
     const total = bid.Total ?? 0;
     const quantity = bid.Quantity ?? 0;
-    if (quantity <= 0) return '';
+    if (total <= 1) return '';
     return `${total - quantity}/${total}`;
   };
 
   const isSpecificBid = selectedBid?.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
   const specificKamiIndex = selectedBid?.KamiIndex;
-  const canSelectKami = (index: number) => !isSpecificBid || index === specificKamiIndex;
+  const maxFillable = selectedBid?.Quantity ?? 0;
+  const isFull = selectedKamis.size >= maxFillable && maxFillable > 0;
+  const canSelectKami = (index: number) => {
+    if (isSpecificBid && index !== specificKamiIndex) return false;
+    // Already selected kamis can always be toggled off
+    if (selectedKamis.has(index)) return true;
+    // If we've hit the fill limit, lock remaining unselected kamis
+    if (isFull) return false;
+    return true;
+  };
 
   const filteredBids = useMemo(() => {
     if (filterBy === 'Show all') return bids;
-    if (ownedKamiIndices.size === 0) return [];
-    return bids.filter((bid) => {
-      if (bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC) {
-        return ownedKamiIndices.has(bid.KamiIndex);
-      }
-      return true;
-    });
-  }, [bids, filterBy, ownedKamiIndices]);
+    if (filterBy === 'Only generic') {
+      return bids.filter(
+        (bid) => bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
+      );
+    }
+    // Bids on my kami — only specific bids targeting kami you own (staked + unstaked)
+    if (allOwnedIndices.size === 0) return [];
+    return bids.filter(
+      (bid) =>
+        bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC &&
+        allOwnedIndices.has(bid.KamiIndex)
+    );
+  }, [bids, filterBy, allOwnedIndices]);
 
   const sortedBids = useMemo(() => {
     return [...filteredBids].sort((a, b) => {
@@ -131,6 +205,12 @@ export const Bids = ({
         ? bid.KamiIndex === kamiIndex
         : true
     );
+
+  const resolveKami = (bid: KamiMarketBid) => {
+    if (bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC) return undefined;
+    const entity = utils.queryKamiByIndex(bid.KamiIndex);
+    return entity !== undefined ? utils.getKami(entity) : undefined;
+  };
 
   /////////////////
   // ACTIONS
@@ -151,21 +231,36 @@ export const Bids = ({
     });
   };
 
-  const handleOpenSell = () => {
+  const handleSellBid = (bid: KamiMarketBid) => {
+    // Clicking the same bid again (whether modal is open or not) deselects
+    if (selectedBid?.OrderID === bid.OrderID) {
+      setSelectedBid(null);
+      setSelectedKamis(new Set());
+      setShowSelectKami(false);
+      return;
+    }
+    setSelectedBid(bid);
+    // Auto-select kami for specific bids if we own it externally
+    const isSpecific = bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
+    if (isSpecific && externalIndices.has(bid.KamiIndex)) {
+      setSelectedKamis(new Set([bid.KamiIndex]));
+    } else {
+      setSelectedKamis(new Set());
+    }
     onCloseCreateOrder();
-    setShowFilterSection(false);
     setShowSelectKami(true);
   };
 
-  const handleCloseSelect = () => setShowSelectKami(false);
-
-  const handleOpenFilter = () => {
-    onCloseCreateOrder();
+  const handleCloseSelect = () => {
     setShowSelectKami(false);
-    setShowFilterSection(true);
+    setSelectedBid(null);
+    setSelectedKamis(new Set());
   };
 
-  const handleCloseFilter = () => setShowFilterSection(false);
+  const cycleFilter = () => {
+    const idx = FILTER_CYCLE.indexOf(filterBy);
+    setFilterBy(FILTER_CYCLE[(idx + 1) % FILTER_CYCLE.length]);
+  };
 
   const handleSell = async () => {
     if (!selectedBid || selectedKamis.size === 0) return;
@@ -205,81 +300,122 @@ export const Bids = ({
     <>
       <Tab isVisible={isVisible}>
         <ButtonWrapper>
-          <TextTooltip text={['Filters.', `${filterBy}.`]}>
-            <IndicatorWrapper>
-              <IconButton img={FilterListIcon} onClick={handleOpenFilter} />
-              {filterBy !== 'Show all' && <IndicatorBadge>1</IndicatorBadge>}
-            </IndicatorWrapper>
+          <TextTooltip text={[`Filter: ${filterBy}`]}>
+            <IconButton img={FilterIcons[filterBy]} onClick={cycleFilter} radius={0.6} />
           </TextTooltip>
-          <IconButton text='Sell' onClick={handleOpenSell} />
         </ButtonWrapper>
         <HeaderRow>
+          <Column flex={2}>
+            <ColumnHeader>Kami</ColumnHeader>
+          </Column>
           <Column>
-            <ColumnHeader>Offer</ColumnHeader>
+            <ColumnHeader>Bidder</ColumnHeader>
           </Column>
           <Column>
             <ColumnHeader>
               <EthIcon src={TokenIcons.eth} alt='ETH' /> /Kami
             </ColumnHeader>
           </Column>
+          <Column>
+            <ColumnHeader>
+              <EthIcon src={TokenIcons.eth} alt='ETH' />
+            </ColumnHeader>
+          </Column>
+          <Column>
+            <ColumnHeader>Expiry</ColumnHeader>
+          </Column>
+          <Column>
+            <ColumnHeader>Actions</ColumnHeader>
+          </Column>
         </HeaderRow>
-        {sortedBids.length === 0 && <EmptyText text={['No bids found']} size={0.9} />}
-        {sortedBids.map((bid) => (
-          <DataRow
-            key={bid.OrderID}
-            isSelected={selectedBid?.OrderID === bid.OrderID}
-            onClick={() => {
-              if (selectedBid?.OrderID === bid.OrderID) {
-                setSelectedBid(null);
-                setSelectedKamis(new Set());
-              } else {
-                setSelectedBid(bid);
-                setSelectedKamis(new Set());
-              }
-            }}
-          >
-            <Column>
-              {getBidProgress(bid) ? (
-                <TextTooltip
-                  text={[
-                    `${bid.Total - bid.Quantity}/${bid.Total} kami in this bid have already been purchased.`,
-                  ]}
-                >
-                  <CellText>
-                    {getBidLabel(bid)} {getBidProgress(bid)}
-                  </CellText>
-                </TextTooltip>
-              ) : (
-                <CellText>{getBidLabel(bid)}</CellText>
-              )}
-            </Column>
-            <Column>
-              <CellText>{formatPrice(bid.Price)}</CellText>
-            </Column>
-          </DataRow>
-        ))}
+        <BidsBody>
+          {sortedBids.length === 0 && (
+            <EmptyCenter>
+              <EmptyText text={['No bids found']} size={0.9} />
+            </EmptyCenter>
+          )}
+          {sortedBids.map((bid) => {
+            const isSpecific =
+              bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
+            const kami = resolveKami(bid);
+            const bidder = utils.getAccountByID(bid.BuyerAccountID);
+            const progress = getBidProgress(bid);
+            const isSelected = selectedBid?.OrderID === bid.OrderID;
+            const notYourKami =
+              isSpecific && !allOwnedIndices.has(bid.KamiIndex);
+
+            return (
+              <Row
+                key={bid.OrderID}
+                isSelected={isSelected}
+              >
+                <Column flex={2}>
+                  <KamiCell>
+                    <KamiThumbnail
+                      src={isSpecific && kami ? kami.image : placeholderKami}
+                      alt={isSpecific ? kami?.name ?? `Kami #${bid.KamiIndex}` : 'Any Kami'}
+                    />
+                    <KamiInfo>
+                      <KamiName>
+                        {isSpecific ? kami?.name ?? `Kami #${bid.KamiIndex}` : 'Any Kami'}
+                      </KamiName>
+                      {progress && <ProgressText>{progress}</ProgressText>}
+                    </KamiInfo>
+                  </KamiCell>
+                </Column>
+                <Column>
+                  <CellText>{bidder.name || 'Unknown'}</CellText>
+                </Column>
+                <Column>
+                  <CellText>{formatPrice(bid.Price)}</CellText>
+                </Column>
+                <Column>
+                  <CellText>{formatRemainingBid(bid)}</CellText>
+                </Column>
+                <Column>
+                  <CellText>{formatExpiry(bid.Expiry)}</CellText>
+                </Column>
+                <Column>
+                  {notYourKami ? (
+                    <IconButton text='Not Ur Kami' onClick={() => {}} disabled />
+                  ) : isSelected ? (
+                    <IconButton
+                      text='Deselect'
+                      onClick={() => handleSellBid(bid)}
+                      color='#FDECEC'
+                    />
+                  ) : (
+                    <IconButton
+                      text='Fill Bid'
+                      onClick={() => handleSellBid(bid)}
+                      color='#E8F5E9'
+                    />
+                  )}
+                </Column>
+              </Row>
+            );
+          })}
+        </BidsBody>
       </Tab>
       <BottomSection isVisible={showBottomSection}>
         <Header>
           <HeaderTitle>Select Your Kami</HeaderTitle>
           <IconButton text='X' onClick={handleCloseSelect} scale={1.5} />
         </Header>
-        <SelectRow>
-          <TextTooltip text={['Select the maximum Kami for the best bid.']}>
-            <IconButton text='Max' onClick={handleSelectMax} />
-          </TextTooltip>
-        </SelectRow>
         <KamiGrid>
-          {externalKamis.length === 0 && (
-            <EmptyText text={[`You don't have out of world Kami.`]} size={0.9} />
+          {externalKamis.length === 0 && stakedKamis.length === 0 && (
+            <EmptyGridCenter>
+              <EmptyText text={[`You don't have any Kami`]} size={0.9} />
+            </EmptyGridCenter>
           )}
           {externalKamis.map((kami) => (
             <KamiSlot
               key={kami.index}
               onClick={() => toggleKami(kami.index)}
               isDisabled={!canSelectKami(kami.index)}
+              $selected={selectedKamis.has(kami.index)}
             >
-              <KamiImage src={kami.image} alt={kami.name} />
+              <KamiSlotImage src={kami.image} alt={kami.name} />
               <Checkbox
                 type='checkbox'
                 checked={selectedKamis.has(kami.index)}
@@ -289,44 +425,46 @@ export const Bids = ({
               />
             </KamiSlot>
           ))}
+          {stakedKamis.map((kami) => (
+            <StakedKamiSlot key={kami.index}>
+              <KamiSlotImage src={kami.image} alt={kami.name} />
+              <StakedOverlay>
+                <StakedLabel>Needs</StakedLabel>
+                <StakedLabel>Unstake</StakedLabel>
+              </StakedOverlay>
+            </StakedKamiSlot>
+          ))}
         </KamiGrid>
-        <Actions>
-          <IconButton
-            text='Sell'
-            onClick={handleSell}
-            disabled={!selectedBid || selectedKamis.size === 0}
-          />
-          <IconButton text='Clear' onClick={handleClear} />
-        </Actions>
+        <Footer>
+          <FooterLeft>
+            <SelectedLabel>{selectedKamis.size} Selected</SelectedLabel>
+          </FooterLeft>
+          <FooterButtons>
+            {selectedKamis.size > 0 && (
+              <IconButton
+                text='Clear'
+                onClick={handleClear}
+                color='#FDECEC'
+                scale={3}
+              />
+            )}
+            <TextTooltip text={['Select the maximum Kami for the best bid']}>
+              <IconButton text='Max' onClick={handleSelectMax} color='#DCEEFB' scale={3} />
+            </TextTooltip>
+            <IconButton
+              text={
+                selectedBid && selectedKamis.size > 0
+                  ? `Sell to ${utils.getAccountByID(selectedBid.BuyerAccountID).name || 'Unknown'} for ${formatPrice((BigInt(selectedBid.Price) * BigInt(selectedKamis.size)).toString())}`
+                  : 'Sell'
+              }
+              onClick={handleSell}
+              disabled={!selectedBid || selectedKamis.size === 0}
+              color='#A2D9CE'
+              scale={3}
+            />
+          </FooterButtons>
+        </Footer>
       </BottomSection>
-      <FilterSection isVisible={showFilterBottom}>
-        <Header>
-          <HeaderTitle>Filter Bids</HeaderTitle>
-          <IconButton text='X' onClick={handleCloseFilter} scale={1.5} />
-        </Header>
-        <FilterBody>
-          <FilterOption>
-            <input
-              type='radio'
-              name='bids-filter'
-              value='Show all'
-              checked={filterBy === 'Show all'}
-              onChange={() => setFilterBy('Show all')}
-            />
-            Show all
-          </FilterOption>
-          <FilterOption>
-            <input
-              type='radio'
-              name='bids-filter'
-              value='Bids on my kami'
-              checked={filterBy === 'Bids on my kami'}
-              onChange={() => setFilterBy('Bids on my kami')}
-            />
-            Bids on my kami
-          </FilterOption>
-        </FilterBody>
-      </FilterSection>
     </>
   );
 };
@@ -335,38 +473,19 @@ const Tab = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   width: 100%;
   min-height: 10vw;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
+  justify-content: flex-end;
+  align-items: center;
   gap: 0.4vw;
-  width: fit-content;
   padding: 0.4vw;
-`;
-
-const IndicatorWrapper = styled.div`
-  position: relative;
-  display: inline-flex;
-`;
-
-const IndicatorBadge = styled.span`
-  position: absolute;
-  top: -0.3vw;
-  right: -0.3vw;
-  min-width: 1vw;
-  height: 1vw;
-  padding: 0 0.2vw;
-  border-radius: 1vw;
-  background: #d04a2f;
-  color: white;
-  font-size: 0.7vw;
-  line-height: 1vw;
-  text-align: center;
-  border: 0.08vw solid white;
-  z-index: 2;
+  width: 100%;
+  border-bottom: solid #ccc 0.1vw;
 `;
 
 const HeaderRow = styled.div`
@@ -374,31 +493,56 @@ const HeaderRow = styled.div`
   flex-flow: row nowrap;
   align-items: center;
   width: 100%;
+  min-height: 3vw;
 `;
 
-const DataRow = styled.div<{ isSelected: boolean }>`
+const BidsBody = styled.div`
   display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  width: 100%;
-
-  &:hover {
-    background-color: #eee;
-  }
-
-  ${({ isSelected }) =>
-    isSelected
-      ? `
-    background-color: #f3f0d1;
-  `
-      : ''}
+  flex-direction: column;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
-const Column = styled.div`
+const EmptyGridCenter = styled.div`
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+`;
+
+const EmptyCenter = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1;
+  width: 100%;
+`;
+
+const Row = styled.div<{ isSelected: boolean }>`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  flex-shrink: 0;
+  width: 100%;
+  border-bottom: 0.06vw solid #ccc;
+  min-height: 3vw;
+  margin: 0.2vw 0;
+  background-color: ${({ isSelected }) => (isSelected ? '#f3f0d1' : 'transparent')};
+
+  &:hover {
+    background-color: ${({ isSelected }) => (isSelected ? '#f3f0d1' : '#eee')};
+  }
+`;
+
+const Column = styled.div<{ flex?: number }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: ${({ flex }) => flex ?? 1};
 `;
 
 const ColumnHeader = styled.div`
@@ -406,13 +550,9 @@ const ColumnHeader = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.2vw;
-  padding: 0.8vw;
-  font-size: 1.1vw;
-`;
-
-const CellText = styled.span`
-  font-size: 0.9vw;
-  padding: 0.4vw;
+  padding: 0.4vw 0.6vw;
+  font-size: 1.05vw;
+  line-height: 1.2;
 `;
 
 const EthIcon = styled.img`
@@ -420,20 +560,54 @@ const EthIcon = styled.img`
   height: 1.4vw;
 `;
 
+const KamiCell = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  padding: 0.4vw;
+  width: 11vw;
+`;
+
+const KamiThumbnail = styled.img`
+  width: 3vw;
+  height: 3vw;
+  flex-shrink: 0;
+  border-radius: 0.3vw;
+  border: 0.1vw solid black;
+  image-rendering: pixelated;
+`;
+
+const KamiInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.1vw;
+  min-width: 0;
+`;
+
+const KamiName = styled.span`
+  font-size: 0.9vw;
+  white-space: nowrap;
+`;
+
+const ProgressText = styled.span`
+  font-size: 0.7vw;
+  color: #888;
+`;
+
+const CellText = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95vw;
+  line-height: 1.2;
+  padding: 0.4vw 0.6vw;
+`;
+
 const BottomSection = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
   flex: 0 0 50%;
-  overflow: auto;
-  border-top: 0.15vw solid black;
-  width: 100%;
-`;
-
-const FilterSection = styled.div<{ isVisible: boolean }>`
-  ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
-  flex-direction: column;
-  flex: 0 0 50%;
-  overflow: auto;
+  overflow: hidden;
   border-top: 0.15vw solid black;
   width: 100%;
 `;
@@ -455,59 +629,72 @@ const HeaderTitle = styled.span`
   font-size: 1.1vw;
 `;
 
-const SelectRow = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0.4vw 0.6vw;
-`;
-
-const FilterBody = styled.div`
-  padding: 0.6vw;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6vw;
-`;
-
-const FilterOption = styled.label`
-  font-size: 1vw;
-  display: flex;
-  align-items: center;
-  gap: 0.3vw;
-  cursor: pointer;
-
-  input[type='radio'] {
-    accent-color: rgb(203, 186, 61);
-    cursor: pointer;
-  }
-`;
-
 const KamiGrid = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5vw, 1fr));
+  align-content: start;
   gap: 0.4vw;
   padding: 0.6vw;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
-const KamiSlot = styled.div<{ isDisabled: boolean }>`
+const KamiSlot = styled.div<{ isDisabled: boolean; $selected?: boolean }>`
   position: relative;
-  width: 5vw;
-  height: 5vw;
-  border: 0.15vw solid black;
-  border-radius: 0.4vw;
+  aspect-ratio: 1;
+  border-radius: 0.3vw;
+  background: #fafafa;
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: ${({ isDisabled }) => (isDisabled ? 0.4 : 1)};
+  opacity: ${({ isDisabled, $selected }) => (isDisabled && !$selected ? 0.4 : 1)};
+  border: 0.18vw solid ${({ $selected }) => ($selected ? '#222' : 'transparent')};
+  outline: ${({ $selected }) => ($selected ? 'none' : '0.06vw solid #ccc')};
+  overflow: hidden;
 `;
 
-const KamiImage = styled.img`
+const StakedKamiSlot = styled.div`
+  position: relative;
+  aspect-ratio: 1;
+  border: 0.06vw solid #ccc;
+  border-radius: 0.3vw;
+  background: #fafafa;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StakedOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 0.3vw;
+  z-index: 1;
+`;
+
+const StakedLabel = styled.span`
+  font-size: 0.65vw;
+  font-weight: 700;
+  color: #ffd54f;
+  text-transform: uppercase;
+  letter-spacing: 0.05vw;
+  line-height: 1.2;
+  text-shadow: 0 0.05vw 0.15vw rgba(0, 0, 0, 0.8);
+`;
+
+const KamiSlotImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0.3vw;
+  image-rendering: pixelated;
 `;
 
 const Checkbox = styled.input`
@@ -520,11 +707,32 @@ const Checkbox = styled.input`
   accent-color: rgb(203, 186, 61);
 `;
 
-const Actions = styled.div`
+const Footer = styled.div`
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  gap: 0.6vw;
+  align-items: center;
+  justify-content: space-between;
   padding: 0.6vw;
+  position: sticky;
+  bottom: 0;
+  background-color: rgb(240, 240, 240);
+  border-top: 0.1vw solid #ccc;
   margin-top: auto;
 `;
+
+const FooterLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const SelectedLabel = styled.span`
+  font-size: 0.95vw;
+  font-weight: bold;
+`;
+
+const FooterButtons = styled.div`
+  display: flex;
+  gap: 0.4vw;
+`;
+
+

@@ -125,4 +125,6 @@ const Container = styled.div`
   flex-flow: row nowrap;
   justify-content: flex-start;
   overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
