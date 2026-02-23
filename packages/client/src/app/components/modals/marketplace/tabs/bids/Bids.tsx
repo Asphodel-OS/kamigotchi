@@ -10,6 +10,7 @@ import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
+import { SelectBidKamis } from './SelectBidKamis';
 
 const FILTER_CYCLE = ['Show all', 'Bids on my kami', 'Only generic'] as const;
 type BidFilter = (typeof FILTER_CYCLE)[number];
@@ -30,12 +31,6 @@ const formatExpiry = (expiryStr: string) => {
   if (diff < 3600) return `${Math.floor(diff / 60)}m`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
   return `${Math.floor(diff / 86400)}d`;
-};
-
-const isBidExpired = (expiryStr: string) => {
-  const expiry = Number(expiryStr);
-  if (!expiry) return false;
-  return expiry <= Math.floor(Date.now() / 1000);
 };
 
 export const Bids = ({
@@ -296,6 +291,11 @@ export const Bids = ({
   /////////////////
   // DISPLAY
 
+  const sellLabel =
+    selectedBid && selectedKamis.size > 0
+      ? `Sell to ${utils.getAccountByID(selectedBid.BuyerAccountID).name || 'Unknown'} for ${formatPrice((BigInt(selectedBid.Price) * BigInt(selectedKamis.size)).toString())}`
+      : 'Sell';
+
   return (
     <>
       <Tab isVisible={isVisible}>
@@ -397,74 +397,21 @@ export const Bids = ({
           })}
         </BidsBody>
       </Tab>
-      <BottomSection isVisible={showBottomSection}>
-        <Header>
-          <HeaderTitle>Select Your Kami</HeaderTitle>
-          <IconButton text='X' onClick={handleCloseSelect} scale={1.5} />
-        </Header>
-        <KamiGrid>
-          {externalKamis.length === 0 && stakedKamis.length === 0 && (
-            <EmptyGridCenter>
-              <EmptyText text={[`You don't have any Kami`]} size={0.9} />
-            </EmptyGridCenter>
-          )}
-          {externalKamis.map((kami) => (
-            <KamiSlot
-              key={kami.index}
-              onClick={() => toggleKami(kami.index)}
-              isDisabled={!canSelectKami(kami.index)}
-              $selected={selectedKamis.has(kami.index)}
-            >
-              <KamiSlotImage src={kami.image} alt={kami.name} />
-              <Checkbox
-                type='checkbox'
-                checked={selectedKamis.has(kami.index)}
-                onChange={() => toggleKami(kami.index)}
-                onClick={(e) => e.stopPropagation()}
-                disabled={!canSelectKami(kami.index)}
-              />
-            </KamiSlot>
-          ))}
-          {stakedKamis.map((kami) => (
-            <StakedKamiSlot key={kami.index}>
-              <KamiSlotImage src={kami.image} alt={kami.name} />
-              <StakedOverlay>
-                <StakedLabel>Needs</StakedLabel>
-                <StakedLabel>Unstake</StakedLabel>
-              </StakedOverlay>
-            </StakedKamiSlot>
-          ))}
-        </KamiGrid>
-        <Footer>
-          <FooterLeft>
-            <SelectedLabel>{selectedKamis.size} Selected</SelectedLabel>
-          </FooterLeft>
-          <FooterButtons>
-            {selectedKamis.size > 0 && (
-              <IconButton
-                text='Clear'
-                onClick={handleClear}
-                color='#FDECEC'
-                scale={3}
-              />
-            )}
-            <TextTooltip text={['Select the maximum Kami for the best bid']}>
-              <IconButton text='Max' onClick={handleSelectMax} color='#DCEEFB' scale={3} />
-            </TextTooltip>
-            <IconButton
-              text={
-                selectedBid && selectedKamis.size > 0
-                  ? `Sell to ${utils.getAccountByID(selectedBid.BuyerAccountID).name || 'Unknown'} for ${formatPrice((BigInt(selectedBid.Price) * BigInt(selectedKamis.size)).toString())}`
-                  : 'Sell'
-              }
-              onClick={handleSell}
-              disabled={!selectedBid || selectedKamis.size === 0}
-              color='#A2D9CE'
-              scale={3}
-            />
-          </FooterButtons>
-        </Footer>
-      </BottomSection>
+      <SelectBidKamis
+        isVisible={showBottomSection}
+        externalKamis={externalKamis}
+        stakedKamis={stakedKamis}
+        selectedCount={selectedKamis.size}
+        canSelectKami={canSelectKami}
+        isSelected={(index) => selectedKamis.has(index)}
+        onToggleKami={toggleKami}
+        onClose={handleCloseSelect}
+        onClear={handleClear}
+        onSelectMax={handleSelectMax}
+        onSell={handleSell}
+        sellLabel={sellLabel}
+        sellDisabled={!selectedBid || selectedKamis.size === 0}
+      />
     </>
   );
 };
@@ -503,15 +450,6 @@ const BidsBody = styled.div`
   flex: 1;
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
-`;
-
-const EmptyGridCenter = styled.div`
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
 `;
 
 const EmptyCenter = styled.div`
@@ -602,137 +540,3 @@ const CellText = styled.span`
   line-height: 1.2;
   padding: 0.4vw 0.6vw;
 `;
-
-const BottomSection = styled.div<{ isVisible: boolean }>`
-  ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
-  flex-direction: column;
-  flex: 0 0 50%;
-  overflow: hidden;
-  border-top: 0.15vw solid black;
-  width: 100%;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: rgb(221, 221, 221);
-  padding: 0.8vw;
-  font-size: 1.2vw;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-`;
-
-const HeaderTitle = styled.span`
-  flex: 1;
-  text-align: center;
-  font-size: 1.1vw;
-`;
-
-const KamiGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(5vw, 1fr));
-  align-content: start;
-  gap: 0.4vw;
-  padding: 0.6vw;
-  flex: 1;
-  overflow-y: auto;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
-`;
-
-const KamiSlot = styled.div<{ isDisabled: boolean; $selected?: boolean }>`
-  position: relative;
-  aspect-ratio: 1;
-  border-radius: 0.3vw;
-  background: #fafafa;
-  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: ${({ isDisabled, $selected }) => (isDisabled && !$selected ? 0.4 : 1)};
-  border: 0.18vw solid ${({ $selected }) => ($selected ? '#222' : 'transparent')};
-  outline: ${({ $selected }) => ($selected ? 'none' : '0.06vw solid #ccc')};
-  overflow: hidden;
-`;
-
-const StakedKamiSlot = styled.div`
-  position: relative;
-  aspect-ratio: 1;
-  border: 0.06vw solid #ccc;
-  border-radius: 0.3vw;
-  background: #fafafa;
-  cursor: not-allowed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StakedOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.55);
-  border-radius: 0.3vw;
-  z-index: 1;
-`;
-
-const StakedLabel = styled.span`
-  font-size: 0.65vw;
-  font-weight: 700;
-  color: #ffd54f;
-  text-transform: uppercase;
-  letter-spacing: 0.05vw;
-  line-height: 1.2;
-  text-shadow: 0 0.05vw 0.15vw rgba(0, 0, 0, 0.8);
-`;
-
-const KamiSlotImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  image-rendering: pixelated;
-`;
-
-const Checkbox = styled.input`
-  position: absolute;
-  top: 0.1vw;
-  right: 0.1vw;
-  width: 0.9vw;
-  height: 0.9vw;
-  cursor: pointer;
-  accent-color: rgb(203, 186, 61);
-`;
-
-const Footer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.6vw;
-  position: sticky;
-  bottom: 0;
-  background-color: rgb(240, 240, 240);
-  border-top: 0.1vw solid #ccc;
-  margin-top: auto;
-`;
-
-const FooterLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.3vw;
-`;
-
-const SelectedLabel = styled.span`
-  font-size: 0.95vw;
-  font-weight: bold;
-`;
-
-const FooterButtons = styled.div`
-  display: flex;
-  gap: 0.4vw;
-`;
-
-
