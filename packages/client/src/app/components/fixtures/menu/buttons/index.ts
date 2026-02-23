@@ -3,7 +3,7 @@ import { ChatMenuButton } from './Chat';
 import { CraftMenuButton } from './Crafting';
 import { InventoryMenuButton } from './Inventory';
 import { MapMenuButton } from './Map';
-import { MarketplaceMenuButton } from './Marketplace';
+import { TradingMenuButton } from './Marketplace';
 import { MoreMenuButton } from './More';
 import { NodeMenuButton } from './Node';
 import { OnyxMenuButton } from './Onyx';
@@ -18,7 +18,7 @@ export {
   CraftMenuButton,
   InventoryMenuButton,
   MapMenuButton,
-  MarketplaceMenuButton,
+  TradingMenuButton,
   MoreMenuButton,
   NodeMenuButton,
   OnyxMenuButton,

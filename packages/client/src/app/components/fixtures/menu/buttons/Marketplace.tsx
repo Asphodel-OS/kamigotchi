@@ -1,31 +1,41 @@
-import { Modals } from 'app/stores';
-import VendIcon from 'assets/images/rooms/18_cave-crossroads/vend.png';
-import { MenuButton } from './MenuButton';
+import { IconListButton } from 'app/components/library';
+import { useVisibility } from 'app/stores';
+import { TradeIcon } from 'assets/images/icons/menu';
+import { ItemImages } from 'assets/images/items';
+import { TokenIcons } from 'assets/images/tokens';
 
-export const MarketplaceMenuButton = () => {
-  const modalsToHide: Partial<Modals> = {
-    bridgeERC20: false,
-    bridgeERC721: false,
-    crafting: false,
-    dialogue: false,
-    emaBoard: false,
-    gacha: false,
-    goal: false,
-    kami: false,
-    leaderboard: false,
-    node: false,
-    tokenPortal: false,
-    presale: false,
-    trading: false,
-  };
+export const TradingMenuButton = () => {
+  const { modals, setModals } = useVisibility();
 
   return (
-    <MenuButton
-      id='marketplace-button'
-      image={VendIcon}
-      tooltip='Marketplace'
-      targetModal='marketplace'
-      hideModals={modalsToHide}
+    <IconListButton
+      img={TradeIcon}
+      options={[
+        {
+          text: 'Token Portal',
+          image: TokenIcons.onyx,
+          onClick: () => setModals({ ...modals, tokenPortal: !modals.tokenPortal }),
+        },
+        {
+          text: 'Kamigotchi World Order Book',
+          image: TradeIcon,
+          onClick: () => setModals({ ...modals, trading: !modals.trading }),
+        },
+        {
+          text: 'Obol Pop-Up Shop!',
+          image: ItemImages.obol,
+          onClick: () => setModals({ ...modals, lootBox: !modals.lootBox }),
+        },
+        {
+          text: 'KamiSwap',
+          image: TradeIcon,
+          onClick: () => setModals({ ...modals, marketplace: !modals.marketplace }),
+        },
+      ]}
+      scale={4.5}
+      scaleOrientation='vh'
+      radius={0.9}
+      tooltip={{ text: ['Trading'] }}
     />
   );
 };

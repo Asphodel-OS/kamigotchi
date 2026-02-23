@@ -1,10 +1,19 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { IconButton, Slider, Tooltip } from 'app/components/library';
+import { IconButton, Tooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { TraitIcons } from 'assets/images/icons/traits';
+import { StatColors, StatIcons } from 'constants/stats';
 import { Trait, TraitType } from 'network/shapes/Trait';
+
+const STAT_DEFS = [
+  { key: 'Health', icon: StatIcons.health, color: StatColors.health, min: 10, max: 300, step: 10 },
+  { key: 'Power', icon: StatIcons.power, color: StatColors.power, min: 10, max: 50, step: 1 },
+  { key: 'Violence', icon: StatIcons.violence, color: StatColors.violence, min: 10, max: 50, step: 1 },
+  { key: 'Harmony', icon: StatIcons.harmony, color: StatColors.harmony, min: 10, max: 50, step: 1 },
+  { key: 'Slots', icon: StatIcons.slots, color: '#c8c8c8', min: 0, max: 3, step: 1 },
+];
 
 export const FilterBy = ({
   isVisible,
@@ -25,8 +34,6 @@ export const FilterBy = ({
   onClear: () => void;
   utils: { getRegistryTraits: (specificType?: TraitType[]) => Trait[] };
 }) => {
-  const statTypes = ['Health', 'Power', 'Violence', 'Harmony', 'Slots'] as const;
-
   const columns = useMemo(
     () => [
       { icon: TraitIcons.face, key: 'Face', traits: utils.getRegistryTraits(['Face']) },
@@ -46,8 +53,6 @@ export const FilterBy = ({
     onStatValuesChange({ ...statValues, [stat]: value });
   };
 
-  const handleClear = () => onClear();
-
   return (
     <Container isVisible={isVisible}>
       <Header>
@@ -55,58 +60,77 @@ export const FilterBy = ({
         <IconButton text='X' onClick={onClose} scale={1.5} />
       </Header>
       <Body>
-        <SectionLabel>Traits</SectionLabel>
-        <DropdownRow>
-          {columns.map((col) => (
-            <DropdownToggle
-              key={col.key}
-              options={[
-                col.traits.map((t) => ({
-                  text: t.name,
-                  object: t.name,
-                })),
-              ]}
-              selected={[Array.from(selected[col.key])]}
-              onClick={[
-                (values) => {
-                  onSelectedChange({ ...selected, [col.key]: new Set(values) });
-                },
-              ]}
-              button={{ images: [col.icon] }}
-              radius={0.4}
-              hideActionButton
-              trigger={
-                <Tooltip content={`${col.key}.`} isDisabled={false}>
-                  <DropdownButton>
-                    <TraitIcon src={col.icon} />
-                    {selected[col.key].size > 0 && ` (${selected[col.key].size})`} ▾
-                  </DropdownButton>
-                </Tooltip>
-              }
-            />
-          ))}
-        </DropdownRow>
-        <SectionLabel>Stats</SectionLabel>
-        <SlidersRow>
-          {statTypes.map((stat) => {
-            const min = stat === 'Slots' ? 1 : 10;
-            const max = stat === 'Health' ? 300 : stat === 'Slots' ? 5 : 50;
-            return (
-              <Slider
-                key={stat}
-                label={stat}
-                value={statValues[stat]}
-                onChange={(v) => setStatValue(stat, v)}
-                min={min}
-                max={max}
+        <HalfSection>
+          <SectionLabel>Traits</SectionLabel>
+          <TraitsGrid>
+            {columns.map((col) => (
+              <DropdownToggle
+                key={col.key}
+                options={[
+                  col.traits.map((t) => ({
+                    text: t.name,
+                    object: t.name,
+                  })),
+                ]}
+                selected={[Array.from(selected[col.key])]}
+                onClick={[
+                  (values) => {
+                    onSelectedChange({ ...selected, [col.key]: new Set(values) });
+                  },
+                ]}
+                button={{ images: [col.icon] }}
+                radius={0.4}
+                hideActionButton
+                maxHeight={40}
+                trigger={
+                  <Tooltip content={`${col.key}.`} isDisabled={false}>
+                    <DropdownButton>
+                      <TraitIcon src={col.icon} />
+                      <TraitLabel>
+                        {col.key}
+                        {selected[col.key].size > 0 && (
+                          <TraitCount>({selected[col.key].size})</TraitCount>
+                        )}
+                      </TraitLabel>
+                      <Chevron>▾</Chevron>
+                    </DropdownButton>
+                  </Tooltip>
+                }
               />
-            );
-          })}
-        </SlidersRow>
+            ))}
+          </TraitsGrid>
+        </HalfSection>
+
+        <Divider />
+
+        <HalfSection>
+          <SectionLabel>Min. Stats</SectionLabel>
+          <StatsGrid>
+            {STAT_DEFS.map((stat) => {
+              const val = statValues[stat.key] ?? stat.min;
+              const isActive = stat.key === 'Slots' ? val > 0 : val > 10;
+              const ratio = (val - stat.min) / (stat.max - stat.min);
+              return (
+                <StatCard key={stat.key} $color={stat.color} $ratio={ratio}>
+                  <StatIconImg src={stat.icon} />
+                  <StatSlider
+                    type='range'
+                    min={stat.min}
+                    max={stat.max}
+                    step={stat.step}
+                    value={val}
+                    onChange={(e) => setStatValue(stat.key, Number(e.target.value))}
+                  />
+                  <StatValue $active={isActive}>{val}</StatValue>
+                </StatCard>
+              );
+            })}
+          </StatsGrid>
+        </HalfSection>
       </Body>
-      <Actions>
-        <IconButton text='Clear' onClick={handleClear} />
-      </Actions>
+      <Footer>
+        <IconButton text='Clear Filters' onClick={onClear} color='#FDECEC' />
+      </Footer>
     </Container>
   );
 };
@@ -114,8 +138,6 @@ export const FilterBy = ({
 const Container = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
-  flex: 0 0 50%;
-  overflow: auto;
   border-top: 0.15vw solid black;
   width: 100%;
 `;
@@ -124,11 +146,8 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   background-color: rgb(221, 221, 221);
-  padding: 0.8vw;
+  padding: 0.5vw 0.8vw;
   font-size: 1.2vw;
-  position: sticky;
-  top: 0;
-  z-index: 1;
 `;
 
 const HeaderTitle = styled.span`
@@ -138,57 +157,149 @@ const HeaderTitle = styled.span`
 `;
 
 const Body = styled.div`
-  padding: 0.3vw 0 0 0.3vw;
-  gap: 0.6vw;
+  display: flex;
+  padding: 0.8vw;
+  gap: 0.8vw;
+`;
+
+const Divider = styled.div`
+  width: 0.1vw;
+  background: #ccc;
+  align-self: stretch;
+`;
+
+const HalfSection = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  flex: 1;
-  overflow-y: auto;
+  gap: 0.5vw;
 `;
 
 const SectionLabel = styled.div`
   font-weight: bold;
-  font-size: 0.9vw;
-  text-align: left;
+  font-size: 0.8vw;
+  padding-bottom: 0.2vw;
+  border-bottom: 0.08vw solid #ddd;
 `;
 
-const DropdownRow = styled.div`
+const TraitsGrid = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4vw;
+  flex-direction: column;
+  gap: 0.35vw;
 `;
 
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.3vw;
+  gap: 0.4vw;
   font-size: 0.75vw;
-  border: 0.15vw solid black;
+  border: 0.12vw solid #999;
   border-radius: 0.4vw;
-  padding: 0.3vw 0.6vw;
+  padding: 0.35vw 0.6vw;
   cursor: pointer;
   background: white;
   white-space: nowrap;
+  width: 100%;
+
+  &:hover {
+    border-color: #555;
+    background: #fafafa;
+  }
 `;
 
 const TraitIcon = styled.img`
   width: 1.3vw;
   height: 1.3vw;
+  flex-shrink: 0;
 `;
 
-const SlidersRow = styled.div`
+const TraitLabel = styled.span`
+  flex: 1;
   display: flex;
-  gap: 2vw;
+  align-items: center;
+  gap: 0.3vw;
 `;
 
-const Actions = styled.div`
+const TraitCount = styled.span`
+  color: #888;
+  font-size: 0.65vw;
+`;
+
+const Chevron = styled.span`
+  color: #999;
+  font-size: 0.6vw;
+`;
+
+const StatsGrid = styled.div`
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  gap: 0.6vw;
-  padding: 0.6vw;
-  position: sticky;
-  bottom: 0;
-  background-color: rgb(255, 255, 255);
+  flex-direction: column;
+  gap: 0.35vw;
+`;
+
+const StatCard = styled.div<{ $color: string; $ratio: number }>`
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 0.35vw 0.5vw;
+  border-radius: 0.4vw;
+  background: color-mix(in srgb, ${({ $color }) => $color} ${({ $ratio }) => Math.round(30 + $ratio * 70)}%, white);
+  border: 0.1vw solid rgba(0, 0, 0, ${({ $ratio }) => (0.08 + 0.12 * $ratio).toFixed(2)});
+  transition: background 0.15s, border-color 0.15s;
+`;
+
+const StatIconImg = styled.img`
+  width: 1.3vw;
+  height: 1.3vw;
+  flex-shrink: 0;
+`;
+
+const StatSlider = styled.input`
+  flex: 1;
+  height: 0.35vw;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+
+  &::-webkit-slider-runnable-track {
+    height: 0.35vw;
+    border-radius: 0.2vw;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0.8vw;
+    height: 0.8vw;
+    border-radius: 50%;
+    background: #222;
+    border: none;
+    margin-top: -0.22vw;
+    cursor: pointer;
+  }
+  &::-moz-range-track {
+    height: 0.35vw;
+    border-radius: 0.2vw;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  &::-moz-range-thumb {
+    width: 0.8vw;
+    height: 0.8vw;
+    border-radius: 50%;
+    background: #222;
+    border: none;
+    cursor: pointer;
+  }
+`;
+
+const StatValue = styled.span<{ $active: boolean }>`
+  font-size: 0.75vw;
+  font-weight: ${({ $active }) => ($active ? 'bold' : 'normal')};
+  min-width: 1.5vw;
+  text-align: right;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.4vw 0.8vw 0.6vw;
 `;

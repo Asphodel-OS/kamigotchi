@@ -171,6 +171,8 @@ const Content = styled.div<{
     /* Sensible minimums to avoid text overlap */
     min-width: 48vw;
     min-height: 42vh;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
   }
   background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
 `;
@@ -213,6 +215,8 @@ const Children = styled.div<{
   display: flex;
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const fadeIn = keyframes`

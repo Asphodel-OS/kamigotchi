@@ -1,6 +1,11 @@
 import styled from 'styled-components';
+import { formatUnits } from 'viem';
+import { useBalance, useWatchBlockNumber } from 'wagmi';
 
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { EmptyText, IconButton } from 'app/components/library';
+import { useAccount } from 'app/stores';
+import { OperatorIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
 import { Kami } from 'network/shapes/Kami';
@@ -25,49 +30,101 @@ export const Cart = ({
   onOpenKami: (index: number) => void;
   resolveKami: (index: number) => Kami | undefined;
   formatPrice: (weiString: string) => string;
-}) => (
-  <CartSection isVisible={isVisible}>
-    <CartHeader>
-      <HeaderTitle>Cart</HeaderTitle>
-      <IconButton text='X' onClick={onClose} scale={1.5} />
-    </CartHeader>
-    <CartHeaderRow>
-      <CartHeaderCell>Kami</CartHeaderCell>
-      <CartHeaderCell>
-        <CartEthIcon src={TokenIcons.eth} alt='ETH' />
-      </CartHeaderCell>
-      <CartHeaderCell>Actions</CartHeaderCell>
-    </CartHeaderRow>
-    <CartBody>
-      {cart.length === 0 && <EmptyText text={['Your cart is empty']} size={0.9} />}
-      {cart.map((item) => {
-        const kami = resolveKami(item.KamiIndex);
-        return (
-          <CartRow key={item.OrderID}>
-            <CartItem>
-              {kami && (
-                <CartKamiThumbnail
-                  src={kami.image}
-                  alt={kami.name}
-                  onClick={() => onOpenKami(item.KamiIndex)}
+}) => {
+  const account = useAccount((s) => s.account);
+  const { data: balanceData, refetch } = useBalance({
+    address: account.ownerAddress,
+  });
+  useWatchBlockNumber({ onBlockNumber: () => refetch() });
+
+  const formattedBalance = balanceData
+    ? Number(formatUnits(balanceData.value, 18)).toFixed(5).replace(/\.?0+$/, '')
+    : '—';
+
+  const totalPrice = cart.reduce((sum, item) => sum + BigInt(item.Price), 0n);
+  const formattedTotal = cart.length > 0 ? formatPrice(totalPrice.toString()) : '0';
+  const overBudget = balanceData ? totalPrice > balanceData.value : false;
+
+  return (
+    <CartSection isVisible={isVisible}>
+      <CartHeader>
+        <HeaderTitle>Cart</HeaderTitle>
+        <IconButton text='X' onClick={onClose} scale={1.5} />
+      </CartHeader>
+      <CartBody>
+        {cart.length === 0 && <EmptyText text={['Your cart is empty']} size={0.9} />}
+        {cart.map((item) => {
+          const kami = resolveKami(item.KamiIndex);
+          return (
+            <CartRow key={item.OrderID}>
+              <CartItem>
+                {kami && (
+                  <CartKamiThumbnail
+                    src={kami.image}
+                    alt={kami.name}
+                    onClick={() => onOpenKami(item.KamiIndex)}
+                  />
+                )}
+                <CartItemText>{kami?.name ?? `Kami #${item.KamiIndex}`}</CartItemText>
+              </CartItem>
+              <CartPriceCell>
+                <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+                <CartPriceText>{formatPrice(item.Price)}</CartPriceText>
+              </CartPriceCell>
+              <CartActions>
+                <IconButton
+                  text='Remove'
+                  onClick={() => onRemove(item.OrderID)}
+                  color='#FDECEC'
                 />
-              )}
-              <CartItemText>{kami?.name ?? `Kami #${item.KamiIndex}`}</CartItemText>
-            </CartItem>
-            <CartPriceText>{formatPrice(item.Price)}</CartPriceText>
-            <CartActions>
-              <IconButton text='Remove' onClick={() => onRemove(item.OrderID)} />
-            </CartActions>
-          </CartRow>
-        );
-      })}
-    </CartBody>
-    <CartFooter>
-      <IconButton text='Buy' onClick={onBuy} disabled={cart.length === 0} />
-      <IconButton text='Clear' onClick={onClear} disabled={cart.length === 0} />
-    </CartFooter>
-  </CartSection>
-);
+              </CartActions>
+            </CartRow>
+          );
+        })}
+      </CartBody>
+      <CartFooter>
+        <FooterInfo>
+          <InfoChip $variant='blue'>
+            <ChipIcon src={OperatorIcon} />
+            <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+            <InfoValue>{formattedBalance}</InfoValue>
+          </InfoChip>
+          <InfoChip $variant={overBudget ? 'red' : 'green'}>
+            <StyledCartIcon />
+            <CartEthIcon src={TokenIcons.eth} alt='ETH' />
+            <InfoValue>{formattedTotal}</InfoValue>
+          </InfoChip>
+        </FooterInfo>
+        <FooterButtons>
+          <IconButton
+            text='Remove All'
+            onClick={onClear}
+            disabled={cart.length === 0}
+            color='#FDECEC'
+            scale={3}
+          />
+          {overBudget ? (
+            <NoFundsButton
+              text='Not Enough Funds'
+              onClick={() => {}}
+              disabled
+              color='#FDECEC'
+              scale={3}
+            />
+          ) : (
+            <BuyButton
+              text={cart.length <= 1 ? 'Buy' : 'Buy All'}
+              onClick={onBuy}
+              disabled={cart.length === 0}
+              color='#A2D9CE'
+              scale={3}
+            />
+          )}
+        </FooterButtons>
+      </CartFooter>
+    </CartSection>
+  );
+};
 
 const CartSection = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
@@ -102,42 +159,19 @@ const CartBody = styled.div`
   padding: 0.6vw;
   flex: 1;
   overflow-y: auto;
-`;
-
-const CartHeaderRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  padding: 0.3vw 0.6vw;
-  min-height: 2.6vw;
-`;
-
-const CartHeaderCell = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1vw;
-  line-height: 1.2;
-  height: 100%;
-
-  &:first-child {
-    justify-content: flex-start;
-  }
-`;
-
-const CartEthIcon = styled.img`
-  width: 1.1vw;
-  height: 1.1vw;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const CartRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1.4fr 0.8fr 0.8fr;
   align-items: center;
   gap: 0.6vw;
   padding: 0.4vw 0.6vw;
   border: 0.06vw solid #ccc;
   border-radius: 0.3vw;
+  background: #fafafa;
 `;
 
 const CartItem = styled.div`
@@ -162,11 +196,20 @@ const CartKamiThumbnail = styled.img`
   cursor: pointer;
 `;
 
-const CartPriceText = styled.span`
-  font-size: 0.9vw;
+const CartPriceCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.3vw;
+`;
+
+const CartEthIcon = styled.img`
+  width: 1.1vw;
+  height: 1.1vw;
+`;
+
+const CartPriceText = styled.span`
+  font-size: 0.9vw;
 `;
 
 const CartActions = styled.div`
@@ -178,11 +221,66 @@ const CartActions = styled.div`
 
 const CartFooter = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 0.6vw;
+  align-items: center;
+  justify-content: space-between;
   padding: 0.6vw;
   position: sticky;
   bottom: 0;
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(240, 240, 240);
+  border-top: 0.1vw solid #ccc;
   margin-top: auto;
+`;
+
+const FooterInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+`;
+
+const CHIP_STYLES = {
+  blue: { bg: '#E8F0FE', border: '#A0C0E8' },
+  green: { bg: '#E8F5E9', border: '#A0D8A8' },
+  red: { bg: '#FDECEC', border: '#E8A0A0' },
+};
+
+const InfoChip = styled.div<{ $variant: 'blue' | 'green' | 'red' }>`
+  display: flex;
+  align-items: center;
+  gap: 0.25vw;
+  padding: 0.3vw 0.5vw;
+  border-radius: 0.3vw;
+  background: ${({ $variant }) => CHIP_STYLES[$variant].bg};
+  border: 0.06vw solid ${({ $variant }) => CHIP_STYLES[$variant].border};
+`;
+
+const ChipIcon = styled.img`
+  width: 1.2vw;
+  height: 1.2vw;
+`;
+
+const StyledCartIcon = styled(ShoppingCartIcon)`
+  && {
+    width: 1.2vw;
+    height: 1.2vw;
+    font-size: 1.2vw;
+    color: #555;
+  }
+`;
+
+const InfoValue = styled.span`
+  font-size: 0.85vw;
+  font-weight: 700;
+`;
+
+const FooterButtons = styled.div`
+  display: flex;
+  gap: 0.4vw;
+`;
+
+const BuyButton = styled(IconButton)`
+  font-weight: bold;
+`;
+
+const NoFundsButton = styled(IconButton)`
+  font-weight: bold;
 `;

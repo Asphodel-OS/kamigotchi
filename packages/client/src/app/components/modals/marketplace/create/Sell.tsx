@@ -1,15 +1,17 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
+import { IconListButton } from 'app/components/library';
+import { MenuIcons } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
-import { Kami } from 'network/shapes/Kami';
-import { KamiOption, SelectYourKami } from './SelectYourKami';
+import { Kami, NullKami } from 'network/shapes/Kami';
+import { ExpirySlider } from './ExpirySlider';
 
-const expirationOptions = [
-  { value: 1, label: '1 Hour' },
-  { value: 3, label: '3 Hours' },
-  { value: 24, label: '24 Hours' },
-  { value: 0, label: 'Never' },
-];
+export interface KamiOption {
+  text: string;
+  object: Kami;
+  img: string;
+}
 
 export const Sell = ({
   isVisible,
@@ -36,22 +38,55 @@ export const Sell = ({
   hasSellableKamis: boolean;
   disabledTooltip: string;
 }) => {
+  const selected = selectedKami[0];
+  const hasSelection = selected?.id !== NullKami.id;
+
+  const iconListOptions = useMemo(
+    () =>
+      kamiOptions.map((opt) => ({
+        text: opt.text,
+        image: opt.img,
+        onClick: () => handleKamiSelect([opt.object]),
+      })),
+    [kamiOptions, handleKamiSelect]
+  );
+
   return (
     <Conditional isVisible={isVisible}>
-      <Body>
-        <Row>
-          <SelectYourKami
-            kamiOptions={kamiOptions}
-            handleKamiSelect={handleKamiSelect}
-            selectedKami={selectedKami}
-            onKamiClick={onKamiClick}
-            hasSellableKamis={hasSellableKamis}
-            disabledTooltip={disabledTooltip}
+      <MainLayout>
+        <KamiPreviewColumn>
+          <SectionLabel>Kami to List</SectionLabel>
+          <KamiImage
+            src={hasSelection ? selected.image : MenuIcons.kami}
+            alt={hasSelection ? selected.name : 'Kami'}
+            $isIcon={!hasSelection}
+            $clickable={hasSelection}
+            onClick={hasSelection ? onKamiClick : undefined}
           />
-          <Section>
-            <SubHeader>Price</SubHeader>
-            <Price>
-              <PriceInput
+        </KamiPreviewColumn>
+
+        <VerticalDivider />
+
+        <FieldsColumn>
+          <FieldGroup>
+            <SectionLabel>Select Kami</SectionLabel>
+            <KamiPickerRow>
+              <IconListButton
+                img={hasSelection ? selected.image : MenuIcons.kami}
+                options={iconListOptions}
+                searchable
+                tooltip={{
+                  text: hasSellableKamis ? ['Select Kami'] : [disabledTooltip],
+                }}
+                disabled={!hasSellableKamis}
+              />
+              {hasSelection && <SelectedKamiName>{selected.name}</SelectedKamiName>}
+            </KamiPickerRow>
+          </FieldGroup>
+          <FieldGroup>
+            <SectionLabel>Listing Price</SectionLabel>
+            <InputRow>
+              <StyledInput
                 type='text'
                 inputMode='decimal'
                 placeholder='0'
@@ -61,28 +96,15 @@ export const Sell = ({
                   if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
                 }}
               />
-              <EthIcon src={TokenIcons.eth} alt='ETH' />
-            </Price>
-          </Section>
-        </Row>
-      </Body>
-      <SubHeader>Expiration</SubHeader>
-      <Body>
-        <ExpirationRow>
-          {expirationOptions.map((opt) => (
-            <RadioLabel key={opt.value}>
-              <input
-                type='radio'
-                name='expiration'
-                value={opt.value}
-                checked={expiration === opt.value}
-                onChange={() => setExpiration(opt.value)}
-              />
-              {opt.label}
-            </RadioLabel>
-          ))}
-        </ExpirationRow>
-      </Body>
+              <InputIcon src={TokenIcons.eth} alt='ETH' />
+            </InputRow>
+          </FieldGroup>
+          <FieldGroup>
+            <SectionLabel>Choose Expiration</SectionLabel>
+            <ExpirySlider expirationHours={expiration} setExpirationHours={setExpiration} />
+          </FieldGroup>
+        </FieldsColumn>
+      </MainLayout>
     </Conditional>
   );
 };
@@ -91,44 +113,95 @@ const Conditional = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `` : `display: none;`)}
 `;
 
-const Section = styled.div`
-  flex: 1;
-  min-width: 0;
+const MainLayout = styled.div`
   display: flex;
-  flex-flow: column nowrap;
-  gap: 0.6vw;
+  padding: 0.5vw 0.6vw;
+  gap: 0;
 `;
 
-const SubHeader = styled.div`
-  border-bottom: 0.15vw solid black;
-  padding: 0.8vw;
-  font-size: 1vw;
-  text-align: left;
-`;
-
-const Body = styled.div`
-  padding: 0.3vw 0 0 0.3vw;
-  gap: 0.6vw;
+const KamiPreviewColumn = styled.div`
+  flex: 0 0 25%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 0.3vw;
+  padding-right: 0.5vw;
 `;
 
-const Price = styled.div`
+const KamiImage = styled.img<{ $isIcon?: boolean; $clickable?: boolean }>`
+  width: 50%;
+  aspect-ratio: 1;
+  border-radius: 0.4vw;
+  image-rendering: pixelated;
+  object-fit: ${({ $isIcon }) => ($isIcon ? 'contain' : 'cover')};
+  padding: ${({ $isIcon }) => ($isIcon ? '15%' : '0')};
+  background: white;
+  border: 0.15vw solid #ddd;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+
+  &:hover {
+    opacity: ${({ $clickable }) => ($clickable ? 0.75 : 1)};
+  }
+`;
+
+const VerticalDivider = styled.div`
+  width: 0.08vw;
+  background: #ddd;
+  align-self: stretch;
+`;
+
+const FieldsColumn = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vw;
+  padding-left: 0.6vw;
+`;
+
+const FieldGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3vw;
+`;
+
+const SectionLabel = styled.div`
+  font-weight: bold;
+  font-size: 0.8vw;
+  padding-bottom: 0.2vw;
+  border-bottom: 0.08vw solid #ddd;
+`;
+
+const KamiPickerRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+
+  & button {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  & button img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0.3vw;
+    image-rendering: pixelated;
+  }
+`;
+
+const SelectedKamiName = styled.span`
+  font-weight: bold;
+  font-size: 0.8vw;
+  color: #222;
+`;
+
+const InputRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.4vw;
 `;
 
-const Row = styled.div`
-  width: 100%;
-  gap: 0.6vw;
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: flex-start;
-`;
-
-const PriceInput = styled.input`
+const StyledInput = styled.input`
   font-size: 1vw;
   width: 6vw;
   height: 2.5vw;
@@ -139,28 +212,8 @@ const PriceInput = styled.input`
   background: white;
 `;
 
-const EthIcon = styled.img`
+const InputIcon = styled.img`
   width: 1.4vw;
   height: 1.4vw;
 `;
 
-const ExpirationRow = styled.div`
-  margin-top: 0.3vw;
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 1.2vw;
-  align-items: center;
-`;
-
-const RadioLabel = styled.label`
-  font-size: 1vw;
-  display: flex;
-  align-items: center;
-  gap: 0.2vw;
-  cursor: pointer;
-
-  input[type='radio'] {
-    accent-color: rgb(203, 186, 61);
-    cursor: pointer;
-  }
-`;
