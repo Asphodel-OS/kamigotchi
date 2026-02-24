@@ -160,19 +160,18 @@ export const Bids = ({
   };
 
   const filteredBids = useMemo(() => {
-    if (filterBy === 'Show all') return bids;
-    if (filterBy === 'Only generic') {
-      return bids.filter(
-        (bid) => bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
-      );
+    switch (filterBy) {
+      case 'Show all': return bids;
+      case 'Only generic':
+        return bids.filter((bid) => bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC);
+      default: // Bids on my kami — only specific bids targeting kami you own (staked + unstaked)
+        if (allOwnedIndices.size === 0) return [];
+        return bids.filter(
+          (bid) =>
+            bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC &&
+            allOwnedIndices.has(bid.KamiIndex)
+        );
     }
-    // Bids on my kami — only specific bids targeting kami you own (staked + unstaked)
-    if (allOwnedIndices.size === 0) return [];
-    return bids.filter(
-      (bid) =>
-        bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC &&
-        allOwnedIndices.has(bid.KamiIndex)
-    );
   }, [bids, filterBy, allOwnedIndices]);
 
   const sortedBids = useMemo(() => {

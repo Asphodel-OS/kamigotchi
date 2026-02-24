@@ -89,15 +89,6 @@ export const CreateOrder = ({
   const kamiIndex = useSelected((s) => s.kamiIndex);
   const account = useAccount((s) => s.account);
 
-  const handleKamiClick = () => {
-    if (!selectedKami[0]) return;
-    const sameKami = kamiIndex === selectedKami[0].index;
-    setKami(selectedKami[0].index);
-    if (kamiModalOpen && sameKami) setModals({ kami: false });
-    else setModals({ kami: true });
-    playClick();
-  };
-
   /////////////////
   // PREPARATION
 
@@ -178,12 +169,40 @@ export const CreateOrder = ({
     [unownedKamis]
   );
 
-  const handleKamiSelect = (selected: Kami[]) => {
-    setSelectedKami(selected?.length ? selected : [NullKami]);
-  };
+  const isPriceValid = parseEthToWei(price) !== null;
+  const isSellComplete = selectedKami[0]?.id !== NullKami.id && isPriceValid;
+  const isBuyComplete = isPriceValid && (!!selectedBuyKami || Number(quantity) > 0);
+  const selectedKamiState = selectedKami[0]?.state ?? '';
+  const isSelectedKamiResting = isKamiResting(selectedKamiState);
+  const isSelectedKamiNotListed = selectedKami[0]?.state !== 'LISTED';
+  const sellBlockedReason = (() => {
+    if (orderType !== 'listing' || selectedKami[0]?.id === NullKami.id) return '';
+    if (!isSelectedKamiNotListed) return 'This Kami already has an active listing.';
+    if (!isSelectedKamiResting) return 'This Kami is not resting.';
+    return '';
+  })();
+  const isCreateDisabled =
+    orderType === 'listing' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
+  const sellSelectionTooltip = hasListedKamis
+    ? 'All your Kami are already listed'
+    : `You don't have resting Kami.`;
+  const actionText = orderType === 'listing' ? 'Place Listing' : 'Place Bid';
 
   /////////////////
   // ACTIONS
+
+  const handleKamiClick = () => {
+    if (!selectedKami[0]) return;
+    const sameKami = kamiIndex === selectedKami[0].index;
+    setKami(selectedKami[0].index);
+    if (kamiModalOpen && sameKami) setModals({ kami: false });
+    else setModals({ kami: true });
+    playClick();
+  };
+
+  const handleKamiSelect = (selected: Kami[]) => {
+    setSelectedKami(selected?.length ? selected : [NullKami]);
+  };
 
   const handleCreate = async () => {
     const expiry = getExpiryTimestamp(expiration);
@@ -223,26 +242,6 @@ export const CreateOrder = ({
     setOrderType(newType);
     playClick();
   };
-
-  const isPriceValid = parseEthToWei(price) !== null;
-  const isSellComplete = selectedKami[0]?.id !== NullKami.id && isPriceValid;
-  const isBuyComplete = isPriceValid && (!!selectedBuyKami || Number(quantity) > 0);
-  const selectedKamiState = selectedKami[0]?.state ?? '';
-  const isSelectedKamiResting = isKamiResting(selectedKamiState);
-  const isSelectedKamiNotListed = selectedKami[0]?.state !== 'LISTED';
-  const sellBlockedReason = (() => {
-    if (orderType !== 'listing' || selectedKami[0]?.id === NullKami.id) return '';
-    if (!isSelectedKamiNotListed) return 'This Kami already has an active listing.';
-    if (!isSelectedKamiResting) return 'This Kami is not resting.';
-    return '';
-  })();
-  const isCreateDisabled =
-    orderType === 'listing' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
-  const sellSelectionTooltip = hasListedKamis
-    ? 'All your Kami are already listed'
-    : `You don't have resting Kami.`;
-
-  const actionText = orderType === 'listing' ? 'Place Listing' : 'Place Bid';
 
   /////////////////
   // DISPLAY

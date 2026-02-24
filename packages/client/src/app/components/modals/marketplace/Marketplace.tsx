@@ -40,11 +40,7 @@ export const MarketplaceModal: UIComponent = {
     /////////////////
     // PREPARATION
 
-    const {
-      utils,
-      data,
-      network,
-    } = (() => {
+    const { utils, data, network } = (() => {
       const { network } = useLayers();
       const { world, components } = network;
       const accountEntity = queryAccountFromEmbedded(network);
@@ -53,6 +49,8 @@ export const MarketplaceModal: UIComponent = {
       const marketVaultAddress = getConfigAddress(world, components, 'KAMI_MARKET_VAULT');
 
       return {
+        network,
+        data: { kamiNFTAddress, marketVaultAddress },
         utils: {
           getAccountKamis: () => _getAccountKamis(world, components, accountEntity, { live: 0 }),
           getAllKamis: () => _getAllKamis(world, components),
@@ -64,19 +62,13 @@ export const MarketplaceModal: UIComponent = {
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
           getAccountByID: (id: string) => _getAccountByID(world, components, id as EntityID),
         },
-        network,
-        data: { kamiNFTAddress, marketVaultAddress },
       };
     })();
-
-    /////////////////
-    // INSTANTIATIONS
 
     const { actions, world, api } = network;
     const account = useAccount((s) => s.account);
 
     /////////////////
-    // SUBSCRIPTIONS
 
     const { refetch: refetchApproval, data: approvalData } = useReadContracts({
       contracts: [
@@ -89,15 +81,70 @@ export const MarketplaceModal: UIComponent = {
       ],
     });
 
-    useWatchBlockNumber({
-      onBlockNumber: () => refetchApproval(),
-    });
+    useWatchBlockNumber({ onBlockNumber: () => refetchApproval() });
+
+    const isVaultApproved = approvalData?.[0]?.result === true;
 
     const restingKamis = useMemo(
       () => utils.getAccountKamis().filter((kami) => kami.state === 'RESTING'),
       [utils, account.id, account.ownerAddress]
     );
-    const isVaultApproved = approvalData?.[0]?.result === true;
+
+    const isMarketplaceOpen = useVisibility((s) => s.modals.marketplace);
+
+    const [tab, setTab] = useState<MarketplaceTab>('listings');
+    const [showCreateOrder, setShowCreateOrder] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
+    const [selectedFilters, setSelectedFilters] =
+      useState<Record<string, Set<string>>>(DEFAULT_SELECTED_FILTERS);
+    const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
+
+    useEffect(() => {
+      if (!isMarketplaceOpen) return;
+      setShowCreateOrder(false);
+      setShowFilter(false);
+      setSelectedFilters(DEFAULT_SELECTED_FILTERS());
+      setStatFilters(DEFAULT_STAT_FILTERS());
+    }, [isMarketplaceOpen]);
+
+    /////////////////
+    // PREPARATION
+
+    const openCreateOrder = () => {
+      if (showCreateOrder) { setShowCreateOrder(false); return; }
+      setShowFilter(false);
+      setShowCreateOrder(true);
+    };
+
+    const closeCreateOrder = () => setShowCreateOrder(false);
+
+    const openFilter = () => {
+      if (showFilter) { setShowFilter(false); return; }
+      setShowCreateOrder(false);
+      setShowFilter(true);
+    };
+
+    const closeFilter = () => setShowFilter(false);
+
+    const normalizeAccountId = (accountId: string) => {
+      try { return BigInt(accountId).toString(); }
+      catch { return accountId; }
+    };
+
+    const isDifferentAccountId = (lhs: string, rhs: string) => {
+      try { return BigInt(lhs).toString() !== BigInt(rhs).toString(); }
+      catch { return lhs !== rhs; }
+    };
+
+    const formatEthPrice = (weiString: string, decimals: number) => {
+      if (!weiString || weiString === '0') return '0';
+      const num = Number(formatUnits(BigInt(weiString), 18));
+      if (num > 0 && num < 0.00001) return '<0.00001';
+      return num.toFixed(decimals).replace(/\.?0+$/, '');
+    };
+
+    /////////////////
+    // ACTIONS
 
     const ensureVaultApproval = async () => {
       if (isVaultApproved) return;
@@ -110,30 +157,15 @@ export const MarketplaceModal: UIComponent = {
         params: [data.kamiNFTAddress, data.marketVaultAddress, true],
         description: `Approving marketplace vault to transfer your Kami`,
         execute: async () =>
-          api.player.erc721.setApprovalForAll(
-            data.kamiNFTAddress,
-            data.marketVaultAddress,
-            true
-          ),
+          api.player.erc721.setApprovalForAll(data.kamiNFTAddress, data.marketVaultAddress, true),
       });
 
-      await waitForActionCompletion(
-        actions.Action,
-        world.entityToIndex.get(actionID) as EntityIndex
-      );
+      await waitForActionCompletion(actions.Action, world.entityToIndex.get(actionID) as EntityIndex);
       await refetchApproval();
     };
 
-    /////////////////
-    // ACTIONS
-
-    const createSellOrder = async (
-      kamiIndex: number,
-      price: BigNumberish,
-      expiry: BigNumberish
-    ) => {
+    const createSellOrder = async (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => {
       await ensureVaultApproval();
-
       const tx = actions.add({
         action: 'KamiMarketList',
         params: [kamiIndex, price, expiry],
@@ -148,17 +180,12 @@ export const MarketplaceModal: UIComponent = {
         action: 'KamiMarketOffer',
         params: [price, quantity, expiry],
         description: `Creating buy order for ${quantity} Kami`,
-        execute: async () =>
-          api.player.account.kamiMarket.offerCollection(price, quantity, expiry),
+        execute: async () => api.player.account.kamiMarket.offerCollection(price, quantity, expiry),
       });
       return didActionSucceed(actions.Action, tx);
     };
 
-    const createBuyKamiOrder = async (
-      kamiIndex: number,
-      price: BigNumberish,
-      expiry: BigNumberish
-    ) => {
+    const createBuyKamiOrder = async (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => {
       const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [kamiIndex, price, expiry],
@@ -188,76 +215,12 @@ export const MarketplaceModal: UIComponent = {
 
     const acceptOfferBatch = async (offerID: BigNumberish, kamiIndices: number[]) => {
       await ensureVaultApproval();
-
       actions.add({
         action: 'KamiMarketAcceptOffer',
         params: [offerID, kamiIndices],
         description: `Accepting offer for ${kamiIndices.length} Kamis`,
         execute: async () => api.player.account.kamiMarket.acceptOfferBatch(offerID, kamiIndices),
       });
-    };
-
-    const isMarketplaceOpen = useVisibility((s) => s.modals.marketplace);
-
-    const [tab, setTab] = useState<MarketplaceTab>('listings');
-    const [showCreateOrder, setShowCreateOrder] = useState(false);
-    const [showFilter, setShowFilter] = useState(false);
-    const [selectedFilters, setSelectedFilters] =
-      useState<Record<string, Set<string>>>(DEFAULT_SELECTED_FILTERS);
-    const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
-
-    // Reset all state when the modal opens
-    useEffect(() => {
-      if (!isMarketplaceOpen) return;
-      setShowCreateOrder(false);
-      setShowFilter(false);
-      setSelectedFilters(DEFAULT_SELECTED_FILTERS());
-      setStatFilters(DEFAULT_STAT_FILTERS());
-    }, [isMarketplaceOpen]);
-
-    const openCreateOrder = () => {
-      if (showCreateOrder) {
-        setShowCreateOrder(false);
-        return;
-      }
-      setShowFilter(false);
-      setShowCreateOrder(true);
-    };
-
-    const closeCreateOrder = () => setShowCreateOrder(false);
-
-    const openFilter = () => {
-      if (showFilter) {
-        setShowFilter(false);
-        return;
-      }
-      setShowCreateOrder(false);
-      setShowFilter(true);
-    };
-
-    const closeFilter = () => setShowFilter(false);
-
-    const normalizeAccountId = (accountId: string) => {
-      try {
-        return BigInt(accountId).toString();
-      } catch {
-        return accountId;
-      }
-    };
-
-    const isDifferentAccountId = (lhs: string, rhs: string) => {
-      try {
-        return BigInt(lhs).toString() !== BigInt(rhs).toString();
-      } catch {
-        return lhs !== rhs;
-      }
-    };
-
-    const formatEthPrice = (weiString: string, decimals: number) => {
-      if (!weiString || weiString === '0') return '0';
-      const num = Number(formatUnits(BigInt(weiString), 18));
-      if (num > 0 && num < 0.00001) return '<0.00001';
-      return num.toFixed(decimals).replace(/\.?0+$/, '');
     };
 
     /////////////////
