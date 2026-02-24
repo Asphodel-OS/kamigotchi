@@ -10,8 +10,8 @@ import { getKami as _getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useVisibility } from 'app/stores';
-import { MarketplaceIcon, TradeIcon } from 'assets/images/icons/menu';
+import { useAccount, useNetwork, useVisibility } from 'app/stores';
+import { MarketplaceIcon } from 'assets/images/icons/menu';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { erc721ABI } from 'network/chain/ERC721';
@@ -25,13 +25,13 @@ import {
 } from 'network/shapes/Kami';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
 import { didActionSucceed, waitForActionCompletion } from 'network/utils';
+import { DEFAULT_SELECTED_FILTERS, DEFAULT_STAT_FILTERS } from './constants';
 import { CreateOrder } from './create/CreateOrder';
 import { Bids } from './tabs/bids/Bids';
 import { FilterBy } from './tabs/listings/FilterBy';
 import { Listings } from './tabs/listings/Listings';
 import { MyOrders } from './tabs/orders/MyOrders';
 import { Tabs } from './tabs/Tabs';
-import { DEFAULT_SELECTED_FILTERS, DEFAULT_STAT_FILTERS } from './constants';
 import { MarketplaceTab } from './types';
 
 export const MarketplaceModal: UIComponent = {
@@ -67,6 +67,8 @@ export const MarketplaceModal: UIComponent = {
 
     const { actions, world, api } = network;
     const account = useAccount((s) => s.account);
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
 
     /////////////////
 
@@ -111,7 +113,10 @@ export const MarketplaceModal: UIComponent = {
     // PREPARATION
 
     const openCreateOrder = () => {
-      if (showCreateOrder) { setShowCreateOrder(false); return; }
+      if (showCreateOrder) {
+        setShowCreateOrder(false);
+        return;
+      }
       setShowFilter(false);
       setShowCreateOrder(true);
     };
@@ -119,7 +124,10 @@ export const MarketplaceModal: UIComponent = {
     const closeCreateOrder = () => setShowCreateOrder(false);
 
     const openFilter = () => {
-      if (showFilter) { setShowFilter(false); return; }
+      if (showFilter) {
+        setShowFilter(false);
+        return;
+      }
       setShowCreateOrder(false);
       setShowFilter(true);
     };
@@ -127,13 +135,19 @@ export const MarketplaceModal: UIComponent = {
     const closeFilter = () => setShowFilter(false);
 
     const normalizeAccountId = (accountId: string) => {
-      try { return BigInt(accountId).toString(); }
-      catch { return accountId; }
+      try {
+        return BigInt(accountId).toString();
+      } catch {
+        return accountId;
+      }
     };
 
     const isDifferentAccountId = (lhs: string, rhs: string) => {
-      try { return BigInt(lhs).toString() !== BigInt(rhs).toString(); }
-      catch { return lhs !== rhs; }
+      try {
+        return BigInt(lhs).toString() !== BigInt(rhs).toString();
+      } catch {
+        return lhs !== rhs;
+      }
     };
 
     const formatEthPrice = (weiString: string, decimals: number) => {
@@ -160,11 +174,18 @@ export const MarketplaceModal: UIComponent = {
           api.player.erc721.setApprovalForAll(data.kamiNFTAddress, data.marketVaultAddress, true),
       });
 
-      await waitForActionCompletion(actions.Action, world.entityToIndex.get(actionID) as EntityIndex);
+      await waitForActionCompletion(
+        actions.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
+      );
       await refetchApproval();
     };
 
-    const createSellOrder = async (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => {
+    const createSellOrder = async (
+      kamiIndex: number,
+      price: BigNumberish,
+      expiry: BigNumberish
+    ) => {
       await ensureVaultApproval();
       const tx = actions.add({
         action: 'KamiMarketList',
@@ -185,7 +206,11 @@ export const MarketplaceModal: UIComponent = {
       return didActionSucceed(actions.Action, tx);
     };
 
-    const createBuyKamiOrder = async (kamiIndex: number, price: BigNumberish, expiry: BigNumberish) => {
+    const createBuyKamiOrder = async (
+      kamiIndex: number,
+      price: BigNumberish,
+      expiry: BigNumberish
+    ) => {
       const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [kamiIndex, price, expiry],
@@ -196,11 +221,13 @@ export const MarketplaceModal: UIComponent = {
     };
 
     const buyListings = (listingIDs: BigNumberish[], kamiIndices: number[], totalPrice: bigint) => {
+      const ownerApi = apis.get(selectedAddress);
+      if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
       actions.add({
         action: 'KamiMarketBuy',
         params: [listingIDs, totalPrice],
         description: `Buying Kami ${kamiIndices.join(', ')}`,
-        execute: async () => api.player.account.kamiMarket.buy(listingIDs, totalPrice),
+        execute: async () => ownerApi.account.kamiMarket.buy(listingIDs, totalPrice),
       });
     };
 
