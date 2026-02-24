@@ -565,6 +565,22 @@ contract KamiMarketTest is SetupTemplate {
     assertEq(weth.balanceOf(bob.owner), 0);
   }
 
+  function testRegistryRejectsFeeRateAbove100Percent() public {
+    vm.startPrank(deployer);
+    uint32[8] memory feeRate;
+    feeRate[0] = 4;
+    feeRate[1] = 10001; // 100.01%
+    vm.expectRevert("KamiMarketRegistry: fee rate > 100%");
+    __KamiMarketRegistrySystem.setFeeRate(feeRate);
+    vm.stopPrank();
+  }
+
+  function testRegistryRejectsNonContractVault() public {
+    vm.prank(deployer);
+    vm.expectRevert("KamiMarketRegistry: vault not a contract");
+    __KamiMarketRegistrySystem.setVault(address(0xBEEF));
+  }
+
   /////////////////
   // ADMIN TESTS
 

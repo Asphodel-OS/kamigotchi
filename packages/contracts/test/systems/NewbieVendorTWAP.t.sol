@@ -10,6 +10,48 @@ import { LibKami721 } from "libraries/LibKami721.sol";
 uint256 constant TWAP_ENTITY = uint256(keccak256("newbie.vendor.twap"));
 uint256 constant VENDOR_ENTITY = uint256(keccak256("newbie.vendor"));
 
+interface INewbieVendorBuySystem {
+  function executeTyped(uint32 kamiIndex) external payable returns (bytes memory);
+}
+
+contract ReentrantNewbieVendorBuyer {
+  INewbieVendorBuySystem internal immutable _vendor;
+
+  bool internal _reenter;
+  uint32 internal _reenterKamiIndex;
+  uint256 internal _reenterValue;
+
+  uint256 public reentryCount;
+  bool public lastReentryCallSucceeded;
+
+  constructor(address vendor) {
+    _vendor = INewbieVendorBuySystem(vendor);
+  }
+
+  function buyWithRefundReentry(
+    uint32 firstKamiIndex,
+    uint32 secondKamiIndex,
+    uint256 firstValue,
+    uint256 secondValue
+  ) external {
+    _reenter = true;
+    _reenterKamiIndex = secondKamiIndex;
+    _reenterValue = secondValue;
+    _vendor.executeTyped{value: firstValue}(firstKamiIndex);
+    _reenter = false;
+  }
+
+  receive() external payable {
+    if (!_reenter) return;
+    _reenter = false;
+    reentryCount++;
+    (bool ok, ) = address(_vendor).call{ value: _reenterValue }(
+      abi.encodeWithSelector(INewbieVendorBuySystem.executeTyped.selector, _reenterKamiIndex)
+    );
+    lastReentryCallSucceeded = ok;
+  }
+}
+
 /// @notice Tests for Newbie Vendor TWAP pricing oracle (fed by marketplace sales)
 contract NewbieVendorTWAPTest is SetupTemplate {
   uint256 constant MIN_PRICE = 0.005 ether;
@@ -320,6 +362,38 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
   }
 
+  function testRefundReentrancyCannotBypassOneTimePurchase() public {
+    ReentrantNewbieVendorBuyer attacker = new ReentrantNewbieVendorBuyer(address(_NewbieVendorBuySystem));
+
+    // Register a real account for the contract buyer (owner = contract address)
+    vm.prank(address(attacker));
+    _AccountRegisterSystem.executeTyped(makeAddr("reentrant-operator"), "reenter");
+
+    uint256 kamiID1 = _mintKami(alice);
+    uint32 idx1 = LibKami.getIndex(components, kamiID1);
+    uint256 kamiID2 = _mintKami(alice);
+    uint32 idx2 = LibKami.getIndex(components, kamiID2);
+
+    uint256[] memory pool = new uint256[](2);
+    pool[0] = uint256(idx1);
+    pool[1] = uint256(idx2);
+    vm.prank(deployer);
+    __NewbieVendorRegistrySystem.setPool(pool);
+
+    uint256 price = 0.01 ether; // seeded TWAP price at current timestamp
+    vm.deal(address(attacker), price * 2 + 1 wei);
+
+    // Overpay the first purchase so the refund callback attempts a reentrant second buy.
+    attacker.buyWithRefundReentry(idx1, idx2, price * 2 + 1 wei, price);
+
+    uint256 attackerAccID = uint256(uint160(address(attacker)));
+    assertEq(LibKami.getAccount(components, kamiID1), attackerAccID);
+    assertEq(LibKami.getAccount(components, kamiID2), alice.id);
+    assertEq(attacker.reentryCount(), 1);
+    assertTrue(!attacker.lastReentryCallSucceeded());
+    assertTrue(LibFlag.has(components, attackerAccID, "NEWBIE_VENDOR_PURCHASED"));
+  }
+
   //////////////////
   // SOULBOUND TESTS
 
@@ -389,6 +463,39 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     // bob can immediately list the kami (no soulbound)
     vm.startPrank(bob.operator);
     _KamiMarketListSystem.executeTyped(kamiIndex, 1 ether, 0);
+    vm.stopPrank();
+  }
+
+  function testZeroCycleDurationBricksVendorBuy() public {
+    uint256 kamiID = _mintKami(alice);
+    uint32 kamiIndex = LibKami.getIndex(components, kamiID);
+
+    uint256[] memory pool = new uint256[](1);
+    pool[0] = uint256(kamiIndex);
+
+    vm.startPrank(deployer);
+    __NewbieVendorRegistrySystem.setPool(pool);
+    __NewbieVendorRegistrySystem.setCycleDuration(0);
+    vm.stopPrank();
+
+    vm.deal(charlie.owner, 1 ether);
+    vm.startPrank(charlie.owner);
+    vm.expectRevert();
+    _NewbieVendorBuySystem.executeTyped{value: 0.1 ether}(kamiIndex);
+    vm.stopPrank();
+  }
+
+  function testStalePoolEntryRevertsAfterDisplayCheck() public {
+    uint32 staleKamiIndex = 999_999;
+    uint256[] memory pool = new uint256[](1);
+    pool[0] = uint256(staleKamiIndex);
+    vm.prank(deployer);
+    __NewbieVendorRegistrySystem.setPool(pool);
+
+    vm.deal(charlie.owner, 1 ether);
+    vm.startPrank(charlie.owner);
+    vm.expectRevert("NewbieVendor: kami not found");
+    _NewbieVendorBuySystem.executeTyped{value: 0.1 ether}(staleKamiIndex);
     vm.stopPrank();
   }
 
