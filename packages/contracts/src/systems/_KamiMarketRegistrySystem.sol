@@ -18,18 +18,22 @@ contract _KamiMarketRegistrySystem is System, AuthRoles {
   }
 
   /// @notice Set the fee rate array [precision, numerator, ...]
+  /// @dev fee = price * rate[1] / 10^rate[0]. rate[1] must be <= 10^rate[0] (fee <= 100%).
   function setFeeRate(uint32[8] memory rate) public onlyAdmin(components) {
+    require(rate[0] > 0, "KamiMarketRegistry: precision must be > 0");
+    require(rate[1] <= 10 ** rate[0], "KamiMarketRegistry: fee rate > 100%");
     LibConfig.setArray(components, "KAMI_MARKET_FEE_RATE", rate);
   }
 
   /// @notice Set the fee recipient address
   function setFeeRecipient(address recipient) public onlyAdmin(components) {
+    require(recipient != address(0), "KamiMarketRegistry: zero address");
     LibConfig.setAddress(components, "KAMI_MARKET_FEE_RECIPIENT", recipient);
   }
 
-
   /// @notice Set the vault contract address
   function setVault(address vault) public onlyAdmin(components) {
+    require(vault.code.length > 0, "KamiMarketRegistry: vault not a contract");
     LibConfig.setAddress(components, "KAMI_MARKET_VAULT", vault);
   }
 
