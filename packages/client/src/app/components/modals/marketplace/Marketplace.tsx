@@ -164,6 +164,9 @@ export const MarketplaceModal: UIComponent = {
       if (isVaultApproved) return;
       if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
 
+      const ownerApi = apis.get(selectedAddress);
+      if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
+
       const actionID = uuid() as EntityID;
       actions.add({
         id: actionID,
@@ -171,7 +174,11 @@ export const MarketplaceModal: UIComponent = {
         params: [data.kamiNFTAddress, data.marketVaultAddress, true],
         description: `Approving marketplace vault to transfer your Kami`,
         execute: async () =>
-          api.player.erc721.setApprovalForAll(data.kamiNFTAddress, data.marketVaultAddress, true),
+          ownerApi.erc721.setApprovalForAll(
+            data.kamiNFTAddress,
+            data.marketVaultAddress,
+            true
+          ),
       });
 
       await waitForActionCompletion(
