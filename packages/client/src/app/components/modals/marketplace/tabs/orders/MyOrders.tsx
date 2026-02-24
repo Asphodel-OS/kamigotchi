@@ -98,17 +98,15 @@ const parseOrder = (order: KamiMarketOrder): MyOrder | null => {
 };
 
 const sortOrders = (orders: MyOrder[], sortBy: SortMethod) => {
-  if (sortBy === 'Price') {
-    return [...orders].sort((a, b) => {
-      try {
-        return Number(BigInt(b.price) - BigInt(a.price));
-      } catch {
-        return 0;
-      }
-    });
+  switch (sortBy) {
+    case 'Price':
+      return [...orders].sort((a, b) => {
+        try { return Number(BigInt(b.price) - BigInt(a.price)); }
+        catch { return 0; }
+      });
+    case 'Type': return [...orders].sort((a, b) => a.type.localeCompare(b.type));
+    default: return orders;
   }
-  if (sortBy === 'Type') return [...orders].sort((a, b) => a.type.localeCompare(b.type));
-  return orders;
 };
 
 export const MyOrders = ({
@@ -148,16 +146,6 @@ export const MyOrders = ({
     setSortBy('Type');
     setStatusFilter('All');
   }, [isMarketplaceOpen]);
-
-  const cycleSort = () => {
-    const idx = SORT_CYCLE.indexOf(sortBy);
-    setSortBy(SORT_CYCLE[(idx + 1) % SORT_CYCLE.length]);
-  };
-
-  const cycleStatusFilter = () => {
-    const idx = STATUS_FILTER_CYCLE.indexOf(statusFilter);
-    setStatusFilter(STATUS_FILTER_CYCLE[(idx + 1) % STATUS_FILTER_CYCLE.length]);
-  };
 
   /////////////////
   // SUBSCRIPTIONS
@@ -199,6 +187,16 @@ export const MyOrders = ({
 
   /////////////////
   // ACTIONS
+
+  const cycleSort = () => {
+    const idx = SORT_CYCLE.indexOf(sortBy);
+    setSortBy(SORT_CYCLE[(idx + 1) % SORT_CYCLE.length]);
+  };
+
+  const cycleStatusFilter = () => {
+    const idx = STATUS_FILTER_CYCLE.indexOf(statusFilter);
+    setStatusFilter(STATUS_FILTER_CYCLE[(idx + 1) % STATUS_FILTER_CYCLE.length]);
+  };
 
   const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 

@@ -23,7 +23,7 @@ const SORT_CYCLE = ['Latest', 'Price Low', 'Price High'] as const;
 type SortMethod = (typeof SORT_CYCLE)[number];
 
 const SortIcons: Record<SortMethod, string> = {
-  'Latest': ClockIcon,
+  Latest: ClockIcon,
   'Price Low': ArrowIcons.up,
   'Price High': ArrowIcons.down,
 };
@@ -119,8 +119,6 @@ export const Listings = ({
     };
   }, [isVisible, accountId]);
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
-
   useEffect(() => {
     if (createOrderOpen) {
       setShowCart(false);
@@ -135,6 +133,8 @@ export const Listings = ({
 
   /////////////////
   // PREPARATION
+
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
 
   const resolvedListings = useMemo(
     () =>
@@ -209,11 +209,14 @@ export const Listings = ({
 
   const sorted = useMemo(() => {
     const copy = [...filteredListings];
-    if (sortBy === 'Price Low')
-      return copy.sort((a, b) => Number(BigInt(a.listing.Price) - BigInt(b.listing.Price)));
-    if (sortBy === 'Price High')
-      return copy.sort((a, b) => Number(BigInt(b.listing.Price) - BigInt(a.listing.Price)));
-    return copy.sort((a, b) => b.listing.Timestamp - a.listing.Timestamp);
+    switch (sortBy) {
+      case 'Price Low':
+        return copy.sort((a, b) => Number(BigInt(a.listing.Price) - BigInt(b.listing.Price)));
+      case 'Price High':
+        return copy.sort((a, b) => Number(BigInt(b.listing.Price) - BigInt(a.listing.Price)));
+      default:
+        return copy.sort((a, b) => b.listing.Timestamp - a.listing.Timestamp); // by latest
+    }
   }, [filteredListings, sortBy]);
 
   const cycleSort = () => {
@@ -330,11 +333,7 @@ export const Listings = ({
               </IndicatorWrapper>
             </TextTooltip>
             <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}`]}>
-              <IconButton
-                img={ViewIcons[viewMode]}
-                onClick={cycleView}
-                radius={0.6}
-              />
+              <IconButton img={ViewIcons[viewMode]} onClick={cycleView} radius={0.6} />
             </TextTooltip>
             {viewMode === 'grid' && (
               <IconButton
@@ -376,11 +375,7 @@ export const Listings = ({
               </IndicatorWrapper>
             </TextTooltip>
             <TextTooltip text={[`Sort: ${sortBy}`]}>
-              <IconButton
-                img={SortIcons[sortBy]}
-                onClick={cycleSort}
-                radius={0.6}
-              />
+              <IconButton img={SortIcons[sortBy]} onClick={cycleSort} radius={0.6} />
             </TextTooltip>
           </ButtonGroup>
         </ButtonRow>
@@ -502,9 +497,10 @@ const ListingsGrid = styled.div`
   overflow-y: auto;
   flex: 1;
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
-
 
 const SweepControl = styled.div`
   display: flex;
@@ -519,7 +515,9 @@ const SweepSliderWrap = styled.div<{ $active: boolean }>`
   max-width: ${({ $active }) => ($active ? '14vw' : '0')};
   overflow: hidden;
   opacity: ${({ $active }) => ($active ? 1 : 0)};
-  transition: max-width 0.3s ease, opacity 0.2s ease;
+  transition:
+    max-width 0.3s ease,
+    opacity 0.2s ease;
 `;
 
 const SweepRange = styled.input`
