@@ -253,9 +253,11 @@ library LibKamiMarket {
     }
   }
 
-  /// @notice Apply post-purchase cooldown if configured
+  /// @notice Apply post-purchase cooldown (defaults to 1 hour if not configured)
   function _setPurchaseCooldown(IUintComp comps, uint256 kamiID) internal {
-    uint256 cd = LibConfig.get(comps, "KAMI_MARKET_PURCHASE_COOLDOWN");
+    uint256 cd = LibConfig.has(comps, "KAMI_MARKET_PURCHASE_COOLDOWN")
+      ? LibConfig.get(comps, "KAMI_MARKET_PURCHASE_COOLDOWN")
+      : 3600;
     if (cd > 0) LibCooldown.modify(comps, kamiID, int256(cd));
   }
 
