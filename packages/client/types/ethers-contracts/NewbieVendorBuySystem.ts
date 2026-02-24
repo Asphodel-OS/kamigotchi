@@ -23,15 +23,14 @@ import type {
   TypedContractMethod,
 } from "./common";
 
-export interface KamiMarketAcceptOfferSystemInterface extends Interface {
+export interface NewbieVendorBuySystemInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "deprecate"
       | "execute"
-      | "executeTyped(uint256,uint32[])"
-      | "executeTyped(uint256,uint32)"
+      | "executeTyped"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "renounceOwnership"
@@ -58,12 +57,8 @@ export interface KamiMarketAcceptOfferSystemInterface extends Interface {
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
   encodeFunctionData(
-    functionFragment: "executeTyped(uint256,uint32[])",
-    values: [BigNumberish, BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "executeTyped(uint256,uint32)",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "executeTyped",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -94,11 +89,7 @@ export interface KamiMarketAcceptOfferSystemInterface extends Interface {
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "executeTyped(uint256,uint32[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "executeTyped(uint256,uint32)",
+    functionFragment: "executeTyped",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -167,11 +158,11 @@ export namespace SystemDeprecatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface KamiMarketAcceptOfferSystem extends BaseContract {
-  connect(runner?: ContractRunner | null): KamiMarketAcceptOfferSystem;
+export interface NewbieVendorBuySystem extends BaseContract {
+  connect(runner?: ContractRunner | null): NewbieVendorBuySystem;
   waitForDeployment(): Promise<this>;
 
-  interface: KamiMarketAcceptOfferSystemInterface;
+  interface: NewbieVendorBuySystemInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -222,16 +213,10 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
 
   execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
 
-  "executeTyped(uint256,uint32[])": TypedContractMethod<
-    [offerID: BigNumberish, kamiIndices: BigNumberish[]],
+  executeTyped: TypedContractMethod<
+    [kamiIndex: BigNumberish],
     [string],
-    "nonpayable"
-  >;
-
-  "executeTyped(uint256,uint32)": TypedContractMethod<
-    [offerID: BigNumberish, kamiIndex: BigNumberish],
-    [string],
-    "nonpayable"
+    "payable"
   >;
 
   owner: TypedContractMethod<[], [string], "view">;
@@ -269,19 +254,8 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
     nameOrSignature: "execute"
   ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
   getFunction(
-    nameOrSignature: "executeTyped(uint256,uint32[])"
-  ): TypedContractMethod<
-    [offerID: BigNumberish, kamiIndices: BigNumberish[]],
-    [string],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "executeTyped(uint256,uint32)"
-  ): TypedContractMethod<
-    [offerID: BigNumberish, kamiIndex: BigNumberish],
-    [string],
-    "nonpayable"
-  >;
+    nameOrSignature: "executeTyped"
+  ): TypedContractMethod<[kamiIndex: BigNumberish], [string], "payable">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;

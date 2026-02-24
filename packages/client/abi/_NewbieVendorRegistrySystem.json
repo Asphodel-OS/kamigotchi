@@ -18,6 +18,19 @@
     },
     {
       "type": "function",
+      "name": "addToPool",
+      "inputs": [
+        {
+          "name": "kamiIndices",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "cancelOwnershipHandover",
       "inputs": [],
       "outputs": [],
@@ -60,6 +73,19 @@
           "internalType": "bytes"
         }
       ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "initTWAP",
+      "inputs": [
+        {
+          "name": "initialPrice",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
       "stateMutability": "nonpayable"
     },
     {
@@ -110,6 +136,19 @@
     },
     {
       "type": "function",
+      "name": "setCycleDuration",
+      "inputs": [
+        {
+          "name": "duration",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
       "name": "setEnabled",
       "inputs": [
         {
@@ -123,36 +162,10 @@
     },
     {
       "type": "function",
-      "name": "setFeeRate",
+      "name": "setMinPrice",
       "inputs": [
         {
-          "name": "rate",
-          "type": "uint32[8]",
-          "internalType": "uint32[8]"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setFeeRecipient",
-      "inputs": [
-        {
-          "name": "recipient",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setPurchaseCooldown",
-      "inputs": [
-        {
-          "name": "cooldown",
+          "name": "price",
           "type": "uint256",
           "internalType": "uint256"
         }
@@ -162,10 +175,36 @@
     },
     {
       "type": "function",
-      "name": "setVault",
+      "name": "setPool",
       "inputs": [
         {
-          "name": "vault",
+          "name": "kamiIndices",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setTWAPWindow",
+      "inputs": [
+        {
+          "name": "duration",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setVendorAddress",
+      "inputs": [
+        {
+          "name": "vendor",
           "type": "address",
           "internalType": "address"
         }
@@ -259,19 +298,22 @@
     }
   ],
   "methodIdentifiers": {
+    "addToPool(uint256[])": "a2f774e0",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
+    "initTWAP(uint256)": "9cced066",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
+    "setCycleDuration(uint256)": "8cc23934",
     "setEnabled(bool)": "328d8f72",
-    "setFeeRate(uint32[8])": "50a2df2f",
-    "setFeeRecipient(address)": "e74b981b",
-    "setPurchaseCooldown(uint256)": "74baa131",
-    "setVault(address)": "6817031b",
+    "setMinPrice(uint256)": "5ea8cd12",
+    "setPool(uint256[])": "e0b7dcf4",
+    "setTWAPWindow(uint256)": "068d4825",
+    "setVendorAddress(address)": "d91376f3",
     "transferOwnership(address)": "f2fde38b"
   }
 }

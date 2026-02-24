@@ -37,7 +37,7 @@ export interface _KamiMarketRegistrySystemInterface extends Interface {
       | "setEnabled"
       | "setFeeRate"
       | "setFeeRecipient"
-      | "setMaxOrders"
+      | "setPurchaseCooldown"
       | "setVault"
       | "transferOwnership"
   ): FunctionFragment;
@@ -83,7 +83,7 @@ export interface _KamiMarketRegistrySystemInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMaxOrders",
+    functionFragment: "setPurchaseCooldown",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -125,7 +125,7 @@ export interface _KamiMarketRegistrySystemInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setMaxOrders",
+    functionFragment: "setPurchaseCooldown",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setVault", data: BytesLike): Result;
@@ -259,7 +259,11 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
     "nonpayable"
   >;
 
-  setMaxOrders: TypedContractMethod<[max: BigNumberish], [void], "nonpayable">;
+  setPurchaseCooldown: TypedContractMethod<
+    [cooldown: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
   setVault: TypedContractMethod<[vault: AddressLike], [void], "nonpayable">;
 
@@ -307,8 +311,8 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
     nameOrSignature: "setFeeRecipient"
   ): TypedContractMethod<[recipient: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setMaxOrders"
-  ): TypedContractMethod<[max: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: "setPurchaseCooldown"
+  ): TypedContractMethod<[cooldown: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setVault"
   ): TypedContractMethod<[vault: AddressLike], [void], "nonpayable">;

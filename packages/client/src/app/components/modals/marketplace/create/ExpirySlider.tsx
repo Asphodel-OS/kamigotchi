@@ -14,7 +14,9 @@ export const ExpirySlider = ({
   setExpirationHours: (hours: number) => void;
 }) => {
   const isNoExpiry = expirationHours === 0;
-  const stepIndex = isNoExpiry ? 0 : EXPIRY_STEPS.indexOf(expirationHours as any);
+  const stepIndex = isNoExpiry
+    ? 0
+    : EXPIRY_STEPS.findIndex((step) => step === expirationHours);
   const currentIndex = stepIndex === -1 ? 0 : stepIndex;
   const ratio = currentIndex / (EXPIRY_STEPS.length - 1);
 

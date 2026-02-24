@@ -14,6 +14,7 @@ import { Sell } from './Sell';
 
 type OrderType = 'listing' | 'bid';
 const KamidenClient = getKamidenClient();
+const DEFAULT_EXPIRY_HOURS = 2;
 
 const normalizeAccountId = (accountId: string) => {
   try {
@@ -28,10 +29,10 @@ const getExpiryTimestamp = (expirationHours: number) => {
   return Math.floor(Date.now() / 1000) + expirationHours * 60 * 60;
 };
 
-const isKamiExternal = (state: string) => state === '721_EXTERNAL' || state === 'EXTERNAL';
+const isKamiResting = (state: string) => state === 'RESTING';
 
 const isSellEligibleKami = (kami: Kami) =>
-  isKamiExternal(kami.state ?? '') && kami.state !== 'LISTED';
+  isKamiResting(kami.state ?? '') && kami.state !== 'LISTED';
 
 const parseEthToWei = (ethAmount: string) => {
   if (!ethAmount) return null;
@@ -55,7 +56,7 @@ export const CreateOrder = ({
   utils: {
     getAccountKamis: () => Kami[];
     getAllKamis: () => Kami[];
-    getExternalKamis: () => Kami[];
+    getRestingKamis: () => Kami[];
   };
   createSellOrder: (
     kamiIndex: number,
@@ -75,10 +76,10 @@ export const CreateOrder = ({
   const [orderType, setOrderType] = useState<OrderType>('listing');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [expiration, setExpiration] = useState(1);
+  const [expiration, setExpiration] = useState(DEFAULT_EXPIRY_HOURS);
   const [selectedKami, setSelectedKami] = useState<Kami[]>([NullKami]);
   const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
-  const [externalKamis, setExternalKamis] = useState<Kami[]>([]);
+  const [restingKamis, setRestingKamis] = useState<Kami[]>([]);
   const [allKamis, setAllKamis] = useState<Kami[]>([]);
   const [hasActiveListedOrders, setHasActiveListedOrders] = useState(false);
 
@@ -107,7 +108,7 @@ export const CreateOrder = ({
     const refreshKamis = async () => {
       if (!isActive) return;
       setAccountKamis(utils.getAccountKamis());
-      setExternalKamis(utils.getExternalKamis());
+      setRestingKamis(utils.getRestingKamis());
       setAllKamis(utils.getAllKamis());
 
       if (!KamidenClient) return;
@@ -132,7 +133,7 @@ export const CreateOrder = ({
     };
   }, [isVisible, utils, account.id]);
 
-  const sellableKamis = useMemo(() => externalKamis.filter(isSellEligibleKami), [externalKamis]);
+  const sellableKamis = useMemo(() => restingKamis.filter(isSellEligibleKami), [restingKamis]);
 
   useEffect(() => {
     const current = selectedKami[0];
@@ -213,7 +214,7 @@ export const CreateOrder = ({
     setQuantity('');
     setSelectedKami([NullKami]);
     setSelectedBuyKami(null);
-    setExpiration(1);
+    setExpiration(DEFAULT_EXPIRY_HOURS);
   };
 
   const handleTabSwitch = (newType: OrderType) => {
@@ -225,21 +226,21 @@ export const CreateOrder = ({
 
   const isPriceValid = parseEthToWei(price) !== null;
   const isSellComplete = selectedKami[0]?.id !== NullKami.id && isPriceValid;
-  const isBuyComplete = isPriceValid && (!!selectedBuyKami || !!quantity);
+  const isBuyComplete = isPriceValid && (!!selectedBuyKami || Number(quantity) > 0);
   const selectedKamiState = selectedKami[0]?.state ?? '';
-  const isSelectedKamiExternal = isKamiExternal(selectedKamiState);
+  const isSelectedKamiResting = isKamiResting(selectedKamiState);
   const isSelectedKamiNotListed = selectedKami[0]?.state !== 'LISTED';
   const sellBlockedReason = (() => {
     if (orderType !== 'listing' || selectedKami[0]?.id === NullKami.id) return '';
     if (!isSelectedKamiNotListed) return 'This Kami already has an active listing.';
-    if (!isSelectedKamiExternal) return 'This Kami is not out of world.';
+    if (!isSelectedKamiResting) return 'This Kami is not resting.';
     return '';
   })();
   const isCreateDisabled =
     orderType === 'listing' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
   const sellSelectionTooltip = hasListedKamis
     ? 'All your Kami are already listed'
-    : `You don't have out of world Kami.`;
+    : `You don't have resting Kami.`;
 
   const actionText = orderType === 'listing' ? 'Place Listing' : 'Place Bid';
 

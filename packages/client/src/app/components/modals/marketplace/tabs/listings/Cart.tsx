@@ -106,7 +106,6 @@ export const Cart = ({
           {overBudget ? (
             <NoFundsButton
               text='Not Enough Funds'
-              onClick={() => {}}
               disabled
               color='#FDECEC'
               scale={3}

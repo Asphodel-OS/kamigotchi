@@ -7,6 +7,7 @@ import ExternalIcon from './link_to_external_apps.png';
 import MapIcon from './map.png';
 import MoreIcon from './more.png';
 import OperatorIcon from './operator.png';
+import MarketplaceIcon from './marketplace.png';
 import QuestsIcon from './quests.png';
 import ResetIcon from './reset.png';
 import SettingsIcon from './settings.png';
@@ -23,6 +24,7 @@ export {
   InventoryIcon,
   KamiIcon,
   MapIcon,
+  MarketplaceIcon,
   MoreIcon,
   OperatorIcon,
   QuestsIcon,
@@ -44,6 +46,7 @@ export const MenuIcons = {
   inventory: InventoryIcon,
   kami: KamiIcon,
   map: MapIcon,
+  marketplace: MarketplaceIcon,
   more: MoreIcon,
   operator: OperatorIcon,
   quests: QuestsIcon,

@@ -114,12 +114,10 @@ const sortOrders = (orders: MyOrder[], sortBy: SortMethod) => {
 export const MyOrders = ({
   isVisible,
   onCancelOrder,
-  createOrderOpen,
   utils,
 }: {
   isVisible: boolean;
   onCancelOrder: (orderID: string) => void;
-  createOrderOpen: boolean;
   utils: {
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
