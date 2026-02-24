@@ -4,7 +4,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ActionButton, IconButton, TextTooltip } from 'app/components/library';
-import { useTokens } from 'app/stores';
+import { useAccount, useTokens } from 'app/stores';
 import { copy } from 'app/utils';
 import { TokenIcons } from 'assets/images/tokens';
 import { GasConstants } from 'constants/gas';
@@ -35,6 +35,8 @@ export const Registration = ({
 }) => {
   const openBridge = useBridgeOpener();
   const ethBalance = useTokens((s) => s.eth.balance);
+  const validations = useAccount((s) => s.validations);
+  const setValidations = useAccount((s) => s.setValidations);
 
   const [name, setName] = useState('');
 
@@ -75,6 +77,7 @@ export const Registration = ({
       const actionID = actions.createAccount(name);
       if (!actionID) throw new Error('Account creation failed');
       await utils.waitForActionCompletion(actionID);
+      setValidations({ ...validations, accountExists: true });
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
     }
