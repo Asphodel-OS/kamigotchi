@@ -31,7 +31,7 @@ export const IconButton = forwardRef(function IconButton(
     shake,
     cooldownBackground,
   }: {
-    onClick: Function;
+    onClick?: () => void | Promise<void>;
     img?: string | SvgIconComponent; // TODO: get rid of all svg icons and mui references
     text?: string;
     width?: number;
@@ -66,6 +66,7 @@ export const IconButton = forwardRef(function IconButton(
 ) {
   // layer on a sound effect
   const handleClick = async () => {
+    if (!onClick) return;
     playClick();
     await onClick();
   };
@@ -99,7 +100,7 @@ export const IconButton = forwardRef(function IconButton(
     <Container
       width={width}
       color={color ?? '#fff'}
-      onClick={!disabled ? handleClick : () => {}}
+      onClick={!disabled && onClick ? handleClick : undefined}
       scale={scale}
       orientation={scaleOrientation}
       radius={radius}

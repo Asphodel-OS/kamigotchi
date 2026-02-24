@@ -5,8 +5,8 @@ import { Kami } from 'network/shapes/Kami';
 
 export const SelectBidKamis = ({
   isVisible,
-  externalKamis,
-  stakedKamis,
+  restingKamis,
+  nonRestingKamis,
   selectedCount,
   canSelectKami,
   isSelected,
@@ -19,8 +19,8 @@ export const SelectBidKamis = ({
   sellDisabled,
 }: {
   isVisible: boolean;
-  externalKamis: Kami[];
-  stakedKamis: Kami[];
+  restingKamis: Kami[];
+  nonRestingKamis: Kami[];
   selectedCount: number;
   canSelectKami: (index: number) => boolean;
   isSelected: (index: number) => boolean;
@@ -39,12 +39,12 @@ export const SelectBidKamis = ({
         <IconButton text='X' onClick={onClose} scale={1.5} />
       </Header>
       <KamiGrid>
-        {externalKamis.length === 0 && stakedKamis.length === 0 && (
+        {restingKamis.length === 0 && nonRestingKamis.length === 0 && (
           <EmptyGridCenter>
             <EmptyText text={[`You don't have any Kami`]} size={0.9} />
           </EmptyGridCenter>
         )}
-        {externalKamis.map((kami) => (
+        {restingKamis.map((kami) => (
           <KamiSlot
             key={kami.index}
             onClick={() => onToggleKami(kami.index)}
@@ -61,12 +61,12 @@ export const SelectBidKamis = ({
             />
           </KamiSlot>
         ))}
-        {stakedKamis.map((kami) => (
+        {nonRestingKamis.map((kami) => (
           <StakedKamiSlot key={kami.index}>
             <KamiSlotImage src={kami.image} alt={kami.name} />
             <StakedOverlay>
               <StakedLabel>Needs</StakedLabel>
-              <StakedLabel>Unstake</StakedLabel>
+              <StakedLabel>Rest</StakedLabel>
             </StakedOverlay>
           </StakedKamiSlot>
         ))}

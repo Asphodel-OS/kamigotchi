@@ -72,6 +72,30 @@
           "internalType": "uint256"
         },
         {
+          "name": "kamiIndices",
+          "type": "uint32[]",
+          "internalType": "uint32[]"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "executeTyped",
+      "inputs": [
+        {
+          "name": "offerID",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
           "name": "kamiIndex",
           "type": "uint32",
           "internalType": "uint32"
@@ -213,6 +237,11 @@
     },
     {
       "type": "error",
+      "name": "QueryOrderNotSupported",
+      "inputs": []
+    },
+    {
+      "type": "error",
       "name": "Unauthorized",
       "inputs": []
     }
@@ -223,6 +252,7 @@
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
     "executeTyped(uint256,uint32)": "e60f3a76",
+    "executeTyped(uint256,uint32[])": "46abd2a3",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",

@@ -48,7 +48,7 @@
       "name": "execute",
       "inputs": [
         {
-          "name": "",
+          "name": "arguments",
           "type": "bytes",
           "internalType": "bytes"
         }
@@ -61,6 +61,25 @@
         }
       ],
       "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "executeTyped",
+      "inputs": [
+        {
+          "name": "kamiIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes",
+          "internalType": "bytes"
+        }
+      ],
+      "stateMutability": "payable"
     },
     {
       "type": "function",
@@ -107,71 +126,6 @@
       "inputs": [],
       "outputs": [],
       "stateMutability": "payable"
-    },
-    {
-      "type": "function",
-      "name": "setEnabled",
-      "inputs": [
-        {
-          "name": "enabled",
-          "type": "bool",
-          "internalType": "bool"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setFeeRate",
-      "inputs": [
-        {
-          "name": "rate",
-          "type": "uint32[8]",
-          "internalType": "uint32[8]"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setFeeRecipient",
-      "inputs": [
-        {
-          "name": "recipient",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setPurchaseCooldown",
-      "inputs": [
-        {
-          "name": "cooldown",
-          "type": "uint256",
-          "internalType": "uint256"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "setVault",
-      "inputs": [
-        {
-          "name": "vault",
-          "type": "address",
-          "internalType": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -263,15 +217,11 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
+    "executeTyped(uint32)": "09c90324",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",
     "requestOwnershipHandover()": "25692962",
-    "setEnabled(bool)": "328d8f72",
-    "setFeeRate(uint32[8])": "50a2df2f",
-    "setFeeRecipient(address)": "e74b981b",
-    "setPurchaseCooldown(uint256)": "74baa131",
-    "setVault(address)": "6817031b",
     "transferOwnership(address)": "f2fde38b"
   }
 }

@@ -23,19 +23,25 @@ import type {
   TypedContractMethod,
 } from "./common";
 
-export interface KamiMarketAcceptOfferSystemInterface extends Interface {
+export interface _NewbieVendorRegistrySystemInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "addToPool"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "deprecate"
       | "execute"
-      | "executeTyped(uint256,uint32[])"
-      | "executeTyped(uint256,uint32)"
+      | "initTWAP"
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "renounceOwnership"
       | "requestOwnershipHandover"
+      | "setCycleDuration"
+      | "setEnabled"
+      | "setMinPrice"
+      | "setPool"
+      | "setTWAPWindow"
+      | "setVendorAddress"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -48,6 +54,10 @@ export interface KamiMarketAcceptOfferSystemInterface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
+    functionFragment: "addToPool",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
     values?: undefined
   ): string;
@@ -58,12 +68,8 @@ export interface KamiMarketAcceptOfferSystemInterface extends Interface {
   encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
   encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
   encodeFunctionData(
-    functionFragment: "executeTyped(uint256,uint32[])",
-    values: [BigNumberish, BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "executeTyped(uint256,uint32)",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "initTWAP",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -79,10 +85,32 @@ export interface KamiMarketAcceptOfferSystemInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setCycleDuration",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "setEnabled", values: [boolean]): string;
+  encodeFunctionData(
+    functionFragment: "setMinPrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPool",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTWAPWindow",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setVendorAddress",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addToPool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
     data: BytesLike
@@ -93,14 +121,7 @@ export interface KamiMarketAcceptOfferSystemInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "executeTyped(uint256,uint32[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "executeTyped(uint256,uint32)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "initTWAP", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipHandoverExpiresAt",
@@ -112,6 +133,24 @@ export interface KamiMarketAcceptOfferSystemInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setCycleDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setEnabled", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setTWAPWindow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setVendorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -167,11 +206,11 @@ export namespace SystemDeprecatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface KamiMarketAcceptOfferSystem extends BaseContract {
-  connect(runner?: ContractRunner | null): KamiMarketAcceptOfferSystem;
+export interface _NewbieVendorRegistrySystem extends BaseContract {
+  connect(runner?: ContractRunner | null): _NewbieVendorRegistrySystem;
   waitForDeployment(): Promise<this>;
 
-  interface: KamiMarketAcceptOfferSystemInterface;
+  interface: _NewbieVendorRegistrySystemInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -210,6 +249,12 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  addToPool: TypedContractMethod<
+    [kamiIndices: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+
   cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
   completeOwnershipHandover: TypedContractMethod<
@@ -220,17 +265,11 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
 
   deprecate: TypedContractMethod<[], [void], "nonpayable">;
 
-  execute: TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+  execute: TypedContractMethod<[arg0: BytesLike], [string], "nonpayable">;
 
-  "executeTyped(uint256,uint32[])": TypedContractMethod<
-    [offerID: BigNumberish, kamiIndices: BigNumberish[]],
-    [string],
-    "nonpayable"
-  >;
-
-  "executeTyped(uint256,uint32)": TypedContractMethod<
-    [offerID: BigNumberish, kamiIndex: BigNumberish],
-    [string],
+  initTWAP: TypedContractMethod<
+    [initialPrice: BigNumberish],
+    [void],
     "nonpayable"
   >;
 
@@ -246,6 +285,34 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
 
   requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
+  setCycleDuration: TypedContractMethod<
+    [duration: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  setEnabled: TypedContractMethod<[enabled: boolean], [void], "nonpayable">;
+
+  setMinPrice: TypedContractMethod<[price: BigNumberish], [void], "nonpayable">;
+
+  setPool: TypedContractMethod<
+    [kamiIndices: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+
+  setTWAPWindow: TypedContractMethod<
+    [duration: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  setVendorAddress: TypedContractMethod<
+    [vendor: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
     [void],
@@ -257,6 +324,9 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "addToPool"
+  ): TypedContractMethod<[kamiIndices: BigNumberish[]], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "cancelOwnershipHandover"
   ): TypedContractMethod<[], [void], "payable">;
   getFunction(
@@ -267,21 +337,10 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "execute"
-  ): TypedContractMethod<[arguments: BytesLike], [string], "nonpayable">;
+  ): TypedContractMethod<[arg0: BytesLike], [string], "nonpayable">;
   getFunction(
-    nameOrSignature: "executeTyped(uint256,uint32[])"
-  ): TypedContractMethod<
-    [offerID: BigNumberish, kamiIndices: BigNumberish[]],
-    [string],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "executeTyped(uint256,uint32)"
-  ): TypedContractMethod<
-    [offerID: BigNumberish, kamiIndex: BigNumberish],
-    [string],
-    "nonpayable"
-  >;
+    nameOrSignature: "initTWAP"
+  ): TypedContractMethod<[initialPrice: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -294,6 +353,24 @@ export interface KamiMarketAcceptOfferSystem extends BaseContract {
   getFunction(
     nameOrSignature: "requestOwnershipHandover"
   ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
+    nameOrSignature: "setCycleDuration"
+  ): TypedContractMethod<[duration: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setEnabled"
+  ): TypedContractMethod<[enabled: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setMinPrice"
+  ): TypedContractMethod<[price: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setPool"
+  ): TypedContractMethod<[kamiIndices: BigNumberish[]], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setTWAPWindow"
+  ): TypedContractMethod<[duration: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setVendorAddress"
+  ): TypedContractMethod<[vendor: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;

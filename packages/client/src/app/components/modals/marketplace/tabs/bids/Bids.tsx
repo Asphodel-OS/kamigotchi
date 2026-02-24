@@ -29,7 +29,7 @@ export const Bids = ({
   showCreateOrder,
   setShowFilter,
   onCloseCreateOrder,
-  onAcceptOffer,
+  onAcceptOfferBatch,
   accountId,
   utils,
 }: {
@@ -37,11 +37,11 @@ export const Bids = ({
   showCreateOrder: boolean;
   setShowFilter: Dispatch<SetStateAction<boolean>>;
   onCloseCreateOrder: () => void;
-  onAcceptOffer: (offerID: string, kamiIndex: number) => Promise<void>;
+  onAcceptOfferBatch: (offerID: string, kamiIndices: number[]) => Promise<void>;
   accountId: string;
   utils: {
     getAccountKamis: () => Kami[];
-    getExternalKamis: () => Kami[];
+    getRestingKamis: () => Kami[];
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
     getAccountByID: (id: string) => { name: string; index: number };
@@ -106,7 +106,7 @@ export const Bids = ({
   /////////////////
   // PREPARATION
 
-  const externalKamis = useMemo(() => utils.getExternalKamis(), [utils]);
+  const restingKamis = useMemo(() => utils.getRestingKamis(), [utils]);
   const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
   const ownedKamiIndices = useMemo(
     () => new Set(accountKamis.map((kami) => kami.index)),
@@ -125,18 +125,18 @@ export const Bids = ({
     }
   };
 
-  const externalIndices = useMemo(
-    () => new Set(externalKamis.map((k) => k.index)),
-    [externalKamis]
+  const restingIndices = useMemo(
+    () => new Set(restingKamis.map((k) => k.index)),
+    [restingKamis]
   );
   const allOwnedIndices = useMemo(() => {
     const set = new Set(ownedKamiIndices);
-    externalKamis.forEach((k) => set.add(k.index));
+    restingKamis.forEach((k) => set.add(k.index));
     return set;
-  }, [ownedKamiIndices, externalKamis]);
-  const stakedKamis = useMemo(
-    () => accountKamis.filter((k) => !externalIndices.has(k.index)),
-    [accountKamis, externalIndices]
+  }, [ownedKamiIndices, restingKamis]);
+  const nonRestingKamis = useMemo(
+    () => accountKamis.filter((k) => !restingIndices.has(k.index)),
+    [accountKamis, restingIndices]
   );
 
   const getBidProgress = (bid: KamiMarketBid) => {
@@ -226,9 +226,9 @@ export const Bids = ({
       return;
     }
     setSelectedBid(bid);
-    // Auto-select kami for specific bids if we own it externally
+    // Auto-select kami for specific bids if we own it and it is resting
     const isSpecific = bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
-    if (isSpecific && externalIndices.has(bid.KamiIndex)) {
+    if (isSpecific && restingIndices.has(bid.KamiIndex)) {
       setSelectedKamis(new Set([bid.KamiIndex]));
     } else {
       setSelectedKamis(new Set());
@@ -251,9 +251,7 @@ export const Bids = ({
   const handleSell = async () => {
     if (!selectedBid || selectedKamis.size === 0) return;
     const selectedIndices = Array.from(selectedKamis);
-    for (const kamiIndex of selectedIndices) {
-      await onAcceptOffer(selectedBid.OrderID, kamiIndex);
-    }
+    await onAcceptOfferBatch(selectedBid.OrderID, selectedIndices);
     setSelectedKamis(new Set());
     setShowSelectKami(false);
   };
@@ -266,7 +264,7 @@ export const Bids = ({
   const handleSelectMax = () => {
     const bestBid = selectedBid ?? sortedBids[0];
     if (!bestBid) return;
-    const eligible = externalKamis
+    const eligible = restingKamis
       .filter((kami) => canSelectKami(kami.index))
       .filter((kami) =>
         bestBid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
@@ -368,7 +366,7 @@ export const Bids = ({
                 </Column>
                 <Column>
                   {notYourKami ? (
-                    <IconButton text='Not Ur Kami' onClick={() => {}} disabled />
+                    <IconButton text='Not Ur Kami' disabled />
                   ) : isSelected ? (
                     <IconButton
                       text='Deselect'
@@ -390,8 +388,8 @@ export const Bids = ({
       </Tab>
       <SelectBidKamis
         isVisible={showBottomSection}
-        externalKamis={externalKamis}
-        stakedKamis={stakedKamis}
+        restingKamis={restingKamis}
+        nonRestingKamis={nonRestingKamis}
         selectedCount={selectedKamis.size}
         canSelectKami={canSelectKami}
         isSelected={(index) => selectedKamis.has(index)}

@@ -1,6 +1,6 @@
 import { IconListButton } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { TradeIcon } from 'assets/images/icons/menu';
+import { MarketplaceIcon, TradeIcon } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
 import { TokenIcons } from 'assets/images/tokens';
 
@@ -28,7 +28,7 @@ export const TradingMenuButton = () => {
         },
         {
           text: 'KamiSwap',
-          image: TradeIcon,
+          image: MarketplaceIcon,
           onClick: () => setModals({ ...modals, marketplace: !modals.marketplace }),
         },
       ]}

@@ -10,8 +10,8 @@ import { getKami as _getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useAccount, useNetwork, useVisibility } from 'app/stores';
-import { TradeIcon } from 'assets/images/icons/menu';
+import { useAccount, useVisibility } from 'app/stores';
+import { MarketplaceIcon, TradeIcon } from 'assets/images/icons/menu';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { erc721ABI } from 'network/chain/ERC721';
@@ -19,7 +19,6 @@ import {
   getAccountByID as _getAccountByID,
   queryAccountFromEmbedded,
 } from 'network/shapes/Account';
-import type { Account } from 'network/shapes/Account';
 import {
   getAllKamis as _getAllKamis,
   queryKamiByIndex as _queryKamiByIndex,
@@ -44,7 +43,7 @@ export const MarketplaceModal: UIComponent = {
     const {
       utils,
       data,
-      network: { actions, world },
+      network,
     } = (() => {
       const { network } = useLayers();
       const { world, components } = network;
@@ -73,21 +72,14 @@ export const MarketplaceModal: UIComponent = {
     /////////////////
     // INSTANTIATIONS
 
-    const apis = useNetwork((s) => s.apis);
-    const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const { actions, world, api } = network;
     const account = useAccount((s) => s.account);
 
     /////////////////
     // SUBSCRIPTIONS
 
-    const { refetch: refetchNFTs, data: nftData } = useReadContracts({
+    const { refetch: refetchApproval, data: approvalData } = useReadContracts({
       contracts: [
-        {
-          address: data.kamiNFTAddress,
-          abi: erc721ABI,
-          functionName: 'getAllTokens',
-          args: [account.ownerAddress],
-        },
         {
           address: data.kamiNFTAddress,
           abi: erc721ABI,
@@ -98,25 +90,16 @@ export const MarketplaceModal: UIComponent = {
     });
 
     useWatchBlockNumber({
-      onBlockNumber: () => refetchNFTs(),
+      onBlockNumber: () => refetchApproval(),
     });
 
-    const externalKamis = useMemo(() => {
-      const result = (nftData?.[0]?.result ?? []) as number[];
-      const entities = result
-        .map((index: number) => utils.queryKamiByIndex(index))
-        .filter((entity) => !!entity) as EntityIndex[];
-      return entities.map((entity) => utils.getKami(entity));
-    }, [nftData]);
-    const isVaultApproved = nftData?.[1]?.result === true;
+    const restingKamis = useMemo(
+      () => utils.getAccountKamis().filter((kami) => kami.state === 'RESTING'),
+      [utils, account.id, account.ownerAddress]
+    );
+    const isVaultApproved = approvalData?.[0]?.result === true;
 
-    const getApi = () => {
-      const api = apis.get(selectedAddress);
-      if (!api) console.error(`API not established for ${selectedAddress}`);
-      return api;
-    };
-
-    const ensureVaultApproval = async (api: any) => {
+    const ensureVaultApproval = async () => {
       if (isVaultApproved) return;
       if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
 
@@ -127,14 +110,18 @@ export const MarketplaceModal: UIComponent = {
         params: [data.kamiNFTAddress, data.marketVaultAddress, true],
         description: `Approving marketplace vault to transfer your Kami`,
         execute: async () =>
-          api.erc721.setApprovalForAll(data.kamiNFTAddress, data.marketVaultAddress, true),
+          api.player.erc721.setApprovalForAll(
+            data.kamiNFTAddress,
+            data.marketVaultAddress,
+            true
+          ),
       });
 
       await waitForActionCompletion(
         actions.Action,
         world.entityToIndex.get(actionID) as EntityIndex
       );
-      await refetchNFTs();
+      await refetchApproval();
     };
 
     /////////////////
@@ -145,28 +132,24 @@ export const MarketplaceModal: UIComponent = {
       price: BigNumberish,
       expiry: BigNumberish
     ) => {
-      const api = getApi();
-      if (!api) return false;
-      await ensureVaultApproval(api);
+      await ensureVaultApproval();
 
       const tx = actions.add({
         action: 'KamiMarketList',
         params: [kamiIndex, price, expiry],
         description: `Creating sell order for Kami ${kamiIndex}`,
-        execute: async () => api.account.kamiMarket.list(kamiIndex, price, expiry),
+        execute: async () => api.player.account.kamiMarket.list(kamiIndex, price, expiry),
       });
       return didActionSucceed(actions.Action, tx);
     };
 
     const createBuyOrder = async (price: BigNumberish, quantity: number, expiry: BigNumberish) => {
-      const api = getApi();
-      if (!api) return false;
-
       const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [price, quantity, expiry],
         description: `Creating buy order for ${quantity} Kami`,
-        execute: async () => api.account.kamiMarket.offerCollection(price, quantity, expiry),
+        execute: async () =>
+          api.player.account.kamiMarket.offerCollection(price, quantity, expiry),
       });
       return didActionSucceed(actions.Action, tx);
     };
@@ -176,52 +159,41 @@ export const MarketplaceModal: UIComponent = {
       price: BigNumberish,
       expiry: BigNumberish
     ) => {
-      const api = getApi();
-      if (!api) return false;
-
       const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [kamiIndex, price, expiry],
         description: `Creating buy offer for Kami ${kamiIndex}`,
-        execute: async () => api.account.kamiMarket.offer(kamiIndex, price, expiry),
+        execute: async () => api.player.account.kamiMarket.offer(kamiIndex, price, expiry),
       });
       return didActionSucceed(actions.Action, tx);
     };
 
     const buyListings = (listingIDs: BigNumberish[], kamiIndices: number[], totalPrice: bigint) => {
-      const api = getApi();
-      if (!api) return;
-
       actions.add({
         action: 'KamiMarketBuy',
         params: [listingIDs, totalPrice],
         description: `Buying Kami ${kamiIndices.join(', ')}`,
-        execute: async () => api.account.kamiMarket.buy(listingIDs, totalPrice),
+        execute: async () => api.player.account.kamiMarket.buy(listingIDs, totalPrice),
       });
     };
 
     const cancelOrder = (orderID: BigNumberish) => {
-      const api = getApi();
-      if (!api) return;
-
       actions.add({
         action: 'KamiMarketCancel',
         params: [orderID],
         description: `Canceling marketplace order`,
-        execute: async () => api.account.kamiMarket.cancel(orderID),
+        execute: async () => api.player.account.kamiMarket.cancel(orderID),
       });
     };
 
-    const acceptOffer = async (offerID: BigNumberish, kamiIndex: number) => {
-      const api = getApi();
-      if (!api) return;
-      await ensureVaultApproval(api);
+    const acceptOfferBatch = async (offerID: BigNumberish, kamiIndices: number[]) => {
+      await ensureVaultApproval();
 
       actions.add({
         action: 'KamiMarketAcceptOffer',
-        params: [offerID, kamiIndex],
-        description: `Accepting offer for Kami #${kamiIndex}`,
-        execute: async () => api.account.kamiMarket.acceptOffer(offerID, kamiIndex),
+        params: [offerID, kamiIndices],
+        description: `Accepting offer for ${kamiIndices.length} Kamis`,
+        execute: async () => api.player.account.kamiMarket.acceptOfferBatch(offerID, kamiIndices),
       });
     };
 
@@ -294,7 +266,7 @@ export const MarketplaceModal: UIComponent = {
     return (
       <ModalWrapper
         id='marketplace'
-        header={<ModalHeader title='KamiSwap' icon={TradeIcon} />}
+        header={<ModalHeader title='KamiSwap' icon={MarketplaceIcon} />}
         canExit
         noPadding
         overlay
@@ -331,11 +303,11 @@ export const MarketplaceModal: UIComponent = {
             showCreateOrder={showCreateOrder}
             setShowFilter={setShowFilter}
             onCloseCreateOrder={closeCreateOrder}
-            onAcceptOffer={acceptOffer}
+            onAcceptOfferBatch={acceptOfferBatch}
             accountId={account.id}
             utils={{
               ...utils,
-              getExternalKamis: () => externalKamis,
+              getRestingKamis: () => restingKamis,
               isDifferentAccountId,
               formatEthPrice,
             }}
@@ -343,7 +315,6 @@ export const MarketplaceModal: UIComponent = {
           <MyOrders
             isVisible={tab === 'myOrders'}
             onCancelOrder={cancelOrder}
-            createOrderOpen={showCreateOrder}
             utils={{
               queryKamiByIndex: utils.queryKamiByIndex,
               getKami: utils.getKami,
@@ -354,7 +325,7 @@ export const MarketplaceModal: UIComponent = {
           <CreateOrder
             isVisible={showCreateOrder}
             onClose={closeCreateOrder}
-            utils={{ ...utils, getExternalKamis: () => externalKamis }}
+            utils={{ ...utils, getRestingKamis: () => restingKamis }}
             createSellOrder={createSellOrder}
             createBuyOrder={createBuyOrder}
             createBuyKamiOrder={createBuyKamiOrder}

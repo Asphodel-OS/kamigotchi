@@ -89,7 +89,7 @@ export const ListingsListView = ({
                 />
               ) : isListingExpired(listing.Expiry) ? (
                 <TextTooltip text={['Listing expired']}>
-                  <IconButton text='x' onClick={() => {}} disabled />
+                  <IconButton text='x' disabled />
                 </TextTooltip>
               ) : isInCart(listing.OrderID) ? (
                 <IconButton
