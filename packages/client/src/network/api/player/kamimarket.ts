@@ -36,7 +36,7 @@ export const kamiMarketAPI = (systems: SystemQueue<any>) => {
 
   // sell multiple kamis on a single bid in one tx
   function acceptOfferBatch(offerID: BigNumberish, kamiIndices: number[]) {
-    return systems['system.kamimarket.acceptoffer']['executeTyped(uint256,uint32[])'](offerID, kamiIndices);
+    return systems['system.kamimarket.acceptoffer'].executeTyped(offerID, kamiIndices);
   }
 
   return {
