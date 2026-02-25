@@ -371,6 +371,11 @@ export const Bids = ({
           </Column>
         </HeaderRow>
         <BidsBody>
+          {loading && (
+            <EmptyCenter>
+              <EmptyText text={['Loading bids...']} size={0.9} />
+            </EmptyCenter>
+          )}
           {pagedBids.length === 0 && !loading && (
             <EmptyCenter>
               <EmptyText text={['No bids found']} size={0.9} />

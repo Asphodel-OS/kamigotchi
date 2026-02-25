@@ -297,6 +297,11 @@ export const MyOrders = ({
         </Column>
       </HeaderRow>
       <OrdersBody>
+        {loading && (
+          <EmptyCenter>
+            <EmptyText text={['Loading orders...']} size={0.9} />
+          </EmptyCenter>
+        )}
         {pagedOrders.length === 0 && !loading && (
           <EmptyCenter>
             <EmptyText text={['No orders found']} size={0.9} />

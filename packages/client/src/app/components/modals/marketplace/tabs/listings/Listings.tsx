@@ -434,6 +434,11 @@ export const Listings = ({
           />
         ) : (
           <ListingsGrid>
+            {loading && (
+              <EmptyCenter>
+                <EmptyText text={['Loading listings...']} size={0.9} />
+              </EmptyCenter>
+            )}
             {paged.length === 0 && !loading && (
               <EmptyCenter>
                 <EmptyText text={['No listings found']} size={0.9} />

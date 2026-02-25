@@ -312,7 +312,9 @@ export const MarketplaceModal: UIComponent = {
       const tx = actions.add({
         action: 'KamiMarketAcceptOffer',
         params: [offerID, kamiIndices],
-        description: `Accepting offer for ${kamiIndices.length} Kamis`,
+        description: kamiIndices.length === 1
+          ? `Accepting offer for ${(() => { const e = utils.queryKamiByIndex(kamiIndices[0]); return e !== undefined ? utils.getKami(e).name : `Kami #${kamiIndices[0]}`; })()}`
+          : `Accepting offer for ${kamiIndices.length} Kamis`,
         execute: async () => api.player.account.kamiMarket.acceptOfferBatch(offerID, kamiIndices),
       });
       return didActionSucceed(actions.Action, tx);

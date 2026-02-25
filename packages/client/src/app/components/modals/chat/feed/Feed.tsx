@@ -255,6 +255,8 @@ export const Feed = ({
 
       feed.KamiMarketOffers.forEach((offer: OfferEvent) => {
         const account = getAccount(getEntityIndex(formatEntityID(offer.AccountID)));
+        const isSpecific = offer.KamiIndex !== 0;
+        const kami = isSpecific ? getKamiByIndex(offer.KamiIndex) : undefined;
 
         feedMessage.push(
           <Row>
@@ -264,7 +266,14 @@ export const Feed = ({
             </Text>
             placed a
             <Bold color='#006400'> bid </Bold>
-            for {offer.Quantity} kamis
+            for
+            {isSpecific && kami ? (
+              <TextTooltip text={[kami.name]}>
+                <KamiIcon src={kami.image} onClick={() => openKamiModal(kami)} />
+              </TextTooltip>
+            ) : (
+              <>{' '}{offer.Quantity} kamis</>
+            )}
           </Row>
         );
       });

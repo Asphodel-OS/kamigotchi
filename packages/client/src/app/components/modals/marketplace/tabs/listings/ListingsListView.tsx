@@ -54,6 +54,11 @@ export const ListingsListView = ({
         </Column>
       </HeaderRow>
       <ListingsBody>
+        {loading && (
+          <EmptyCenter>
+            <EmptyText text={['Loading listings...']} size={0.9} />
+          </EmptyCenter>
+        )}
         {listings.length === 0 && !loading && (
           <EmptyCenter>
             <EmptyText text={['No listings found']} size={0.9} />
