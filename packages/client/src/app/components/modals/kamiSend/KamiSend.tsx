@@ -80,7 +80,12 @@ export const KamiSendModal: UIComponent = {
     const removeRow = (id: string) => {
       setRows((prev) => {
         const remaining = prev.filter((row) => row.id !== id);
-        return remaining.length === 0 ? createInitialRows() : remaining;
+        if (remaining.length === 0) return createInitialRows();
+        const allFilled = remaining.every((r) => r.kami !== null);
+        if (allFilled && remaining.length < MAX_KAMIS) {
+          return [...remaining, { id: uuid(), kami: null }];
+        }
+        return remaining;
       });
     };
 
@@ -219,15 +224,6 @@ export const KamiSendModal: UIComponent = {
               <RecipientName>{targetAccount.name}</RecipientName>
             </RecipientDisplay>
           )}
-          <RecipientSpacer />
-          <TextTooltip
-            text={['Sent Kami need to take a 60m nap!']}
-            size={0.9}
-            delay={0}
-            alignText='center'
-          >
-            <HintIcon>?</HintIcon>
-          </TextTooltip>
         </RecipientSection>
 
         {/* SECTION 2: Kami Grid */}
@@ -246,6 +242,14 @@ export const KamiSendModal: UIComponent = {
 
         {/* SECTION 3: Send Button */}
         <SendSection>
+          <TextTooltip
+            text={['Sent Kami need to take a 60m nap!']}
+            size={0.9}
+            delay={0}
+            alignText='center'
+          >
+            <HintIcon>?</HintIcon>
+          </TextTooltip>
           <SendButton onClick={handleSend} disabled={!isValid}>
             {getSendButtonText()}
           </SendButton>
@@ -269,10 +273,18 @@ const RecipientSection = styled.div`
   background: #f5f5f5;
   border-bottom: 0.1vw solid #ddd;
   flex-shrink: 0;
-`;
 
-const RecipientSpacer = styled.div`
-  flex: 1;
+  & button {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  & button img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0.3vw;
+    image-rendering: pixelated;
+  }
 `;
 
 const RecipientLabel = styled.span`
@@ -336,6 +348,9 @@ const KamiGrid = styled.div`
 `;
 
 const SendSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
   padding: 0.8vw 1vw;
   border-bottom: 0.15vw solid black;
   flex-shrink: 0;

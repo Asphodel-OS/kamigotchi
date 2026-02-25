@@ -356,6 +356,18 @@ const RecipientSection = styled.div`
   background: #f5f5f5;
   border-bottom: 0.1vw solid #ddd;
   flex-shrink: 0;
+
+  & button {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  & button img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0.3vw;
+    image-rendering: pixelated;
+  }
 `;
 
 const RecipientLabel = styled.span`
