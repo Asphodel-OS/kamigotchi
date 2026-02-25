@@ -1,12 +1,28 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 
+const STATE_ORDER: Record<string, number> = {
+  HARVESTING: 0,
+  LISTED: 1,
+  DEAD: 2,
+  '721_EXTERNAL': 3,
+};
+
+const getOverlayLabel = (state: string): string[] => {
+  if (state === 'DEAD') return ['NEEDS', 'REVIVAL'];
+  if (state === 'HARVESTING') return ['NEEDS', 'REST'];
+  if (state === 'LISTED') return ['CURRENTLY', 'LISTED'];
+  if (state === '721_EXTERNAL') return ['CURRENTLY', 'OFF WORLD'];
+  return ['UNAVAILABLE'];
+};
+
 export const SelectBidKamis = ({
   isVisible,
   restingKamis,
-  nonRestingKamis,
+  unavailableKamis,
   selectedCount,
   canSelectKami,
   isSelected,
@@ -20,7 +36,7 @@ export const SelectBidKamis = ({
 }: {
   isVisible: boolean;
   restingKamis: Kami[];
-  nonRestingKamis: Kami[];
+  unavailableKamis: Kami[];
   selectedCount: number;
   canSelectKami: (index: number) => boolean;
   isSelected: (index: number) => boolean;
@@ -32,6 +48,14 @@ export const SelectBidKamis = ({
   sellLabel: string;
   sellDisabled: boolean;
 }) => {
+  const sortedUnavailable = useMemo(
+    () =>
+      [...unavailableKamis].sort(
+        (a, b) => (STATE_ORDER[a.state] ?? 99) - (STATE_ORDER[b.state] ?? 99)
+      ),
+    [unavailableKamis]
+  );
+
   return (
     <BottomSection isVisible={isVisible}>
       <Header>
@@ -39,7 +63,7 @@ export const SelectBidKamis = ({
         <IconButton text='X' onClick={onClose} scale={1.5} />
       </Header>
       <KamiGrid>
-        {restingKamis.length === 0 && nonRestingKamis.length === 0 && (
+        {restingKamis.length === 0 && unavailableKamis.length === 0 && (
           <EmptyGridCenter>
             <EmptyText text={[`You don't have any Kami`]} size={0.9} />
           </EmptyGridCenter>
@@ -61,15 +85,19 @@ export const SelectBidKamis = ({
             />
           </KamiSlot>
         ))}
-        {nonRestingKamis.map((kami) => (
-          <StakedKamiSlot key={kami.index}>
-            <KamiSlotImage src={kami.image} alt={kami.name} />
-            <StakedOverlay>
-              <StakedLabel>Needs</StakedLabel>
-              <StakedLabel>Rest</StakedLabel>
-            </StakedOverlay>
-          </StakedKamiSlot>
-        ))}
+        {sortedUnavailable.map((kami) => {
+          const lines = getOverlayLabel(kami.state);
+          return (
+            <LockedKamiSlot key={kami.index}>
+              <KamiSlotImage src={kami.image} alt={kami.name} />
+              <LockedOverlay>
+                {lines.map((line, i) => (
+                  <LockedLabel key={i}>{line}</LockedLabel>
+                ))}
+              </LockedOverlay>
+            </LockedKamiSlot>
+          );
+        })}
       </KamiGrid>
       <Footer>
         <FooterLeft>
@@ -159,7 +187,7 @@ const KamiSlot = styled.div<{ isDisabled: boolean; $selected?: boolean }>`
   overflow: hidden;
 `;
 
-const StakedKamiSlot = styled.div`
+const LockedKamiSlot = styled.div`
   position: relative;
   aspect-ratio: 1;
   border: 0.06vw solid #ccc;
@@ -171,7 +199,7 @@ const StakedKamiSlot = styled.div`
   justify-content: center;
 `;
 
-const StakedOverlay = styled.div`
+const LockedOverlay = styled.div`
   position: absolute;
   inset: 0;
   display: flex;
@@ -181,15 +209,17 @@ const StakedOverlay = styled.div`
   background: rgba(0, 0, 0, 0.55);
   border-radius: 0.3vw;
   z-index: 1;
+  padding: 0.2vw;
 `;
 
-const StakedLabel = styled.span`
-  font-size: 0.65vw;
+const LockedLabel = styled.span`
+  font-size: 0.55vw;
   font-weight: 700;
   color: #ffd54f;
   text-transform: uppercase;
-  letter-spacing: 0.05vw;
-  line-height: 1.2;
+  letter-spacing: -0.01vw;
+  line-height: 1.15;
+  text-align: center;
   text-shadow: 0 0.05vw 0.15vw rgba(0, 0, 0, 0.8);
 `;
 

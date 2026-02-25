@@ -15,6 +15,7 @@ import { playClick } from 'utils/sounds';
 import { formatExpiry, isExpired } from '../../helpers';
 
 const KamidenClient = getKamidenClient();
+const PAGE_SIZE = 35;
 
 type OrderStatus = 'Active' | 'Cancelled' | 'Filled' | 'Expired';
 
@@ -136,6 +137,7 @@ export const MyOrders = ({
   const [sortBy, setSortBy] = useState<SortMethod>('Type');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('All');
   const [orders, setOrders] = useState<KamiMarketOrder[]>([]);
+  const [page, setPage] = useState(0);
 
   const account = useAccount((s) => s.account);
   const kamiIndex = useSelected((s) => s.kamiIndex);
@@ -150,6 +152,7 @@ export const MyOrders = ({
     if (!isMarketplaceOpen) return;
     setSortBy('Type');
     setStatusFilter('All');
+    setPage(0);
   }, [isMarketplaceOpen]);
 
   /////////////////
@@ -163,7 +166,7 @@ export const MyOrders = ({
       const res = await KamidenClient.getKamiMarketHistory({
         AccountId: accountId,
         Timestamp: 0,
-        Size: 100,
+        Size: 500,
       });
       if (!isActive) return;
       setOrders((res as { Orders?: KamiMarketOrder[] })?.Orders ?? []);
@@ -203,6 +206,17 @@ export const MyOrders = ({
     setStatusFilter(STATUS_FILTER_CYCLE[(idx + 1) % STATUS_FILTER_CYCLE.length]);
   };
 
+  const totalPages = Math.ceil(filteredOrders.length / PAGE_SIZE);
+  const pagedOrders = filteredOrders.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const hasPrevPage = page > 0;
+  const hasNextPage = page < totalPages - 1;
+
+  const goNextPage = () => { if (hasNextPage) setPage((p) => p + 1); };
+  const goPrevPage = () => { if (hasPrevPage) setPage((p) => p - 1); };
+
+  // Reset page when sort/filter changes
+  useEffect(() => { setPage(0); }, [sortBy, statusFilter]);
+
   const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 6);
 
   const getBidProgress = (total: number, quantity: number) => {
@@ -229,16 +243,34 @@ export const MyOrders = ({
   return (
     <Tab isVisible={isVisible}>
       <ButtonWrapper>
-        <TextTooltip text={[`Filter: ${statusFilter}`]}>
+        <ButtonGroup />
+        <PageNav>
           <IconButton
-            img={StatusFilterIcons[statusFilter]}
-            onClick={cycleStatusFilter}
+            img={ArrowIcons.left}
+            onClick={goPrevPage}
+            disabled={!hasPrevPage}
             radius={0.6}
           />
-        </TextTooltip>
-        <TextTooltip text={[`Sort: ${sortBy}`]}>
-          <IconButton img={SortIcons[sortBy]} onClick={cycleSort} radius={0.6} />
-        </TextTooltip>
+          <PageLabel>{page + 1}</PageLabel>
+          <IconButton
+            img={ArrowIcons.right}
+            onClick={goNextPage}
+            disabled={!hasNextPage}
+            radius={0.6}
+          />
+        </PageNav>
+        <ButtonGroup>
+          <TextTooltip text={[`Filter: ${statusFilter}`]}>
+            <IconButton
+              img={StatusFilterIcons[statusFilter]}
+              onClick={cycleStatusFilter}
+              radius={0.6}
+            />
+          </TextTooltip>
+          <TextTooltip text={[`Sort: ${sortBy}`]}>
+            <IconButton img={SortIcons[sortBy]} onClick={cycleSort} radius={0.6} />
+          </TextTooltip>
+        </ButtonGroup>
       </ButtonWrapper>
       <HeaderRow>
         <Column flex={2}>
@@ -263,12 +295,12 @@ export const MyOrders = ({
         </Column>
       </HeaderRow>
       <OrdersBody>
-        {filteredOrders.length === 0 && (
+        {pagedOrders.length === 0 && (
           <EmptyCenter>
             <EmptyText text={['No orders found']} size={0.9} />
           </EmptyCenter>
         )}
-        {filteredOrders.map((order) => (
+        {pagedOrders.map((order) => (
           <OrderRow
             key={`${order.type}-${order.orderId}`}
             order={order}
@@ -364,13 +396,36 @@ const Tab = styled.div<{ isVisible: boolean }>`
 `;
 
 const ButtonWrapper = styled.div`
+  position: relative;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 0.4vw;
   padding: 0.4vw;
   width: 100%;
   border-bottom: solid #ccc 0.1vw;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.4vw;
+`;
+
+const PageNav = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const PageLabel = styled.span`
+  font-size: 0.8vw;
+  font-weight: 600;
+  min-width: 1.4vw;
+  text-align: center;
 `;
 
 const HeaderRow = styled.div`

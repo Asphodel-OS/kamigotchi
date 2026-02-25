@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
+import { ArrowIcons } from 'assets/images/icons/arrows';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { TriggerIcons } from 'assets/images/icons/triggers';
 import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
@@ -23,6 +24,7 @@ const FilterIcons: Record<BidFilter, string> = {
 };
 
 const KamidenClient = getKamidenClient();
+const PAGE_SIZE = 35;
 
 export const Bids = ({
   isVisible,
@@ -42,6 +44,7 @@ export const Bids = ({
   utils: {
     getAccountKamis: () => Kami[];
     getRestingKamis: () => Kami[];
+    getWildKamis: () => Kami[];
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
     getKami: (entity: EntityIndex) => Kami;
     getAccountByID: (id: string) => { name: string; index: number };
@@ -59,6 +62,8 @@ export const Bids = ({
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
   const [selectedBid, setSelectedBid] = useState<KamiMarketBid | null>(null);
   const [filterBy, setFilterBy] = useState<BidFilter>('Show all');
+  const [page, setPage] = useState(0);
+  const [recentlySoldIndices, setRecentlySoldIndices] = useState<Set<number>>(new Set());
 
   // Reset on modal open
   useEffect(() => {
@@ -67,6 +72,8 @@ export const Bids = ({
     setSelectedBid(null);
     setSelectedKamis(new Set());
     setShowSelectKami(false);
+    setPage(0);
+    setRecentlySoldIndices(new Set());
   }, [isMarketplaceOpen]);
 
   /////////////////
@@ -77,9 +84,7 @@ export const Bids = ({
 
     let isActive = true;
     const refreshBids = async () => {
-      const res = await KamidenClient.getKamiMarketBids({
-        Size: 28,
-      });
+      const res = await KamidenClient.getKamiMarketBids({ Size: 500 });
       if (!isActive) return;
       const all = res.Bids ?? [];
       const filtered = all.filter((bid) =>
@@ -108,7 +113,10 @@ export const Bids = ({
   /////////////////
   // PREPARATION
 
-  const restingKamis = useMemo(() => utils.getRestingKamis(), [utils]);
+  const restingKamis = useMemo(
+    () => utils.getRestingKamis().filter((k) => !recentlySoldIndices.has(k.index)),
+    [utils, recentlySoldIndices]
+  );
   const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
   const ownedKamiIndices = useMemo(
     () => new Set(accountKamis.map((kami) => kami.index)),
@@ -127,16 +135,17 @@ export const Bids = ({
     }
   };
 
+  const wildKamis = useMemo(() => utils.getWildKamis(), [utils]);
   const restingIndices = useMemo(() => new Set(restingKamis.map((k) => k.index)), [restingKamis]);
   const allOwnedIndices = useMemo(() => {
     const set = new Set(ownedKamiIndices);
     restingKamis.forEach((k) => set.add(k.index));
     return set;
   }, [ownedKamiIndices, restingKamis]);
-  const nonRestingKamis = useMemo(
-    () => accountKamis.filter((k) => !restingIndices.has(k.index)),
-    [accountKamis, restingIndices]
-  );
+  const unavailableKamis = useMemo(() => {
+    const nonResting = accountKamis.filter((k) => !restingIndices.has(k.index));
+    return [...nonResting, ...wildKamis];
+  }, [accountKamis, restingIndices, wildKamis]);
 
   const getBidProgress = (bid: KamiMarketBid) => {
     const total = bid.Total ?? 0;
@@ -249,10 +258,26 @@ export const Bids = ({
     setFilterBy(FILTER_CYCLE[(idx + 1) % FILTER_CYCLE.length]);
   };
 
+  const totalPages = Math.ceil(sortedBids.length / PAGE_SIZE);
+  const pagedBids = sortedBids.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const hasPrevPage = page > 0;
+  const hasNextPage = page < totalPages - 1;
+
+  const goNextPage = () => { if (hasNextPage) setPage((p) => p + 1); };
+  const goPrevPage = () => { if (hasPrevPage) setPage((p) => p - 1); };
+
+  // Reset page when filter changes
+  useEffect(() => { setPage(0); }, [filterBy]);
+
   const handleSell = async () => {
     if (!selectedBid || selectedKamis.size === 0) return;
     const selectedIndices = Array.from(selectedKamis);
     await onAcceptOfferBatch(selectedBid.OrderID, selectedIndices);
+    setRecentlySoldIndices((prev) => {
+      const next = new Set(prev);
+      selectedIndices.forEach((i) => next.add(i));
+      return next;
+    });
     setSelectedKamis(new Set());
     setShowSelectKami(false);
   };
@@ -290,9 +315,27 @@ export const Bids = ({
     <>
       <Tab isVisible={isVisible}>
         <ButtonWrapper>
-          <TextTooltip text={[`Filter: ${filterBy}`]}>
-            <IconButton img={FilterIcons[filterBy]} onClick={cycleFilter} radius={0.6} />
-          </TextTooltip>
+          <ButtonGroup />
+          <PageNav>
+            <IconButton
+              img={ArrowIcons.left}
+              onClick={goPrevPage}
+              disabled={!hasPrevPage}
+              radius={0.6}
+            />
+            <PageLabel>{page + 1}</PageLabel>
+            <IconButton
+              img={ArrowIcons.right}
+              onClick={goNextPage}
+              disabled={!hasNextPage}
+              radius={0.6}
+            />
+          </PageNav>
+          <ButtonGroup>
+            <TextTooltip text={[`Filter: ${filterBy}`]}>
+              <IconButton img={FilterIcons[filterBy]} onClick={cycleFilter} radius={0.6} />
+            </TextTooltip>
+          </ButtonGroup>
         </ButtonWrapper>
         <HeaderRow>
           <Column flex={2}>
@@ -319,12 +362,12 @@ export const Bids = ({
           </Column>
         </HeaderRow>
         <BidsBody>
-          {sortedBids.length === 0 && (
+          {pagedBids.length === 0 && (
             <EmptyCenter>
               <EmptyText text={['No bids found']} size={0.9} />
             </EmptyCenter>
           )}
-          {sortedBids.map((bid) => {
+          {pagedBids.map((bid) => {
             const isSpecific = bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
             const kami = resolveKami(bid);
             const bidder = utils.getAccountByID(bid.BuyerAccountID);
@@ -385,7 +428,7 @@ export const Bids = ({
       <SelectBidKamis
         isVisible={showBottomSection}
         restingKamis={restingKamis}
-        nonRestingKamis={nonRestingKamis}
+        unavailableKamis={unavailableKamis}
         selectedCount={selectedKamis.size}
         canSelectKami={canSelectKami}
         isSelected={(index) => selectedKamis.has(index)}
@@ -411,13 +454,36 @@ const Tab = styled.div<{ isVisible: boolean }>`
 `;
 
 const ButtonWrapper = styled.div`
+  position: relative;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 0.4vw;
   padding: 0.4vw;
   width: 100%;
   border-bottom: solid #ccc 0.1vw;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.4vw;
+`;
+
+const PageNav = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const PageLabel = styled.span`
+  font-size: 0.8vw;
+  font-weight: 600;
+  min-width: 1.4vw;
+  text-align: center;
 `;
 
 const HeaderRow = styled.div`

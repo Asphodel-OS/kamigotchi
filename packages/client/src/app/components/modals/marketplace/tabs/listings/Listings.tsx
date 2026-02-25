@@ -18,6 +18,7 @@ import { ListingCard } from './ListingCard';
 import { ListingsListView } from './ListingsListView';
 
 const KamidenClient = getKamidenClient();
+const PAGE_SIZE = 35;
 
 const SORT_CYCLE = ['Latest', 'Price Low', 'Price High'] as const;
 type SortMethod = (typeof SORT_CYCLE)[number];
@@ -85,6 +86,7 @@ export const Listings = ({
   const [allFlipped, setAllFlipped] = useState(false);
   const [sweepActive, setSweepActive] = useState(false);
   const [sweepCount, setSweepCount] = useState(0);
+  const [page, setPage] = useState(0);
 
   // Reset on modal open
   useEffect(() => {
@@ -95,6 +97,7 @@ export const Listings = ({
     setSweepActive(false);
     setSweepCount(0);
     setAllFlipped(false);
+    setPage(0);
   }, [isMarketplaceOpen]);
 
   /////////////////
@@ -105,10 +108,9 @@ export const Listings = ({
 
     let isActive = true;
     const refreshListings = async () => {
-      const res = await KamidenClient.getKamiMarketListings({ Size: 28 });
+      const res = await KamidenClient.getKamiMarketListings({ Size: 500 });
       if (!isActive) return;
-      const all = res.Listings ?? [];
-      setListings(all);
+      setListings(res.Listings ?? []);
     };
 
     refreshListings();
@@ -229,6 +231,17 @@ export const Listings = ({
     setViewMode(VIEW_CYCLE[(idx + 1) % VIEW_CYCLE.length]);
   };
 
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const hasPrevPage = page > 0;
+  const hasNextPage = page < totalPages - 1;
+
+  const goNextPage = () => { if (hasNextPage) setPage((p) => p + 1); };
+  const goPrevPage = () => { if (hasPrevPage) setPage((p) => p - 1); };
+
+  // Reset page when sort/filter changes
+  useEffect(() => { setPage(0); }, [sortBy, filters.selected, filters.stats]);
+
   /////////////////
   // SWEEP
 
@@ -343,6 +356,21 @@ export const Listings = ({
               />
             )}
           </ButtonGroup>
+          <PageNav>
+            <IconButton
+              img={ArrowIcons.left}
+              onClick={goPrevPage}
+              disabled={!hasPrevPage}
+              radius={0.6}
+            />
+            <PageLabel>{page + 1}</PageLabel>
+            <IconButton
+              img={ArrowIcons.right}
+              onClick={goNextPage}
+              disabled={!hasNextPage}
+              radius={0.6}
+            />
+          </PageNav>
           <ButtonGroup>
             <SweepControl>
               <IconButton
@@ -381,7 +409,7 @@ export const Listings = ({
         </ButtonRow>
         {viewMode === 'list' ? (
           <ListingsListView
-            listings={sorted}
+            listings={paged}
             formatPrice={formatPrice}
             formatExpiry={formatExpiry}
             isOwnListing={isOwnListing}
@@ -395,12 +423,12 @@ export const Listings = ({
           />
         ) : (
           <ListingsGrid>
-            {sorted.length === 0 && (
+            {paged.length === 0 && (
               <EmptyCenter>
                 <EmptyText text={['No listings found']} size={0.9} />
               </EmptyCenter>
             )}
-            {sorted.map(({ listing, kami }) => (
+            {paged.map(({ listing, kami }) => (
               <ListingCard
                 key={listing.OrderID}
                 listing={listing}
@@ -444,6 +472,7 @@ const Tab = styled.div<{ isVisible: boolean }>`
 `;
 
 const ButtonRow = styled.div`
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -456,6 +485,23 @@ const ButtonRow = styled.div`
 const ButtonGroup = styled.div`
   display: flex;
   gap: 0.4vw;
+`;
+
+const PageNav = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+`;
+
+const PageLabel = styled.span`
+  font-size: 0.8vw;
+  font-weight: 600;
+  min-width: 1.4vw;
+  text-align: center;
 `;
 
 const IndicatorWrapper = styled.div`

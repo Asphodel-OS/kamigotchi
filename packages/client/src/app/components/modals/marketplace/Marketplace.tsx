@@ -101,6 +101,26 @@ export const MarketplaceModal: UIComponent = {
       [utils, account.id, account.ownerAddress]
     );
 
+    const { refetch: refetchNFTs, data: nftData } = useReadContracts({
+      contracts: [
+        {
+          address: data.kamiNFTAddress,
+          abi: erc721ABI,
+          functionName: 'getAllTokens',
+          args: [account.ownerAddress],
+        },
+      ],
+    });
+
+    useWatchBlockNumber({ onBlockNumber: () => refetchNFTs() });
+
+    const wildKamis = useMemo(() => {
+      const result = (nftData?.[0]?.result ?? []) as number[];
+      const entities = result.map((index: number) => utils.queryKamiByIndex(index));
+      const filtered = entities.filter((entity) => !!entity) as EntityIndex[];
+      return filtered.map((entity: EntityIndex) => utils.getKami(entity));
+    }, [nftData, utils]);
+
     const isMarketplaceOpen = useVisibility((s) => s.modals.marketplace);
 
     const [tab, setTab] = useState<MarketplaceTab>('listings');
@@ -344,6 +364,7 @@ export const MarketplaceModal: UIComponent = {
             utils={{
               ...utils,
               getRestingKamis: () => restingKamis,
+              getWildKamis: () => wildKamis,
               isDifferentAccountId,
               formatEthPrice,
             }}
