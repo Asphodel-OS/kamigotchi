@@ -46,6 +46,7 @@ export const ModalWrapper = ({
   noScroll?: boolean;
 }) => {
   const isVisible = useVisibility((s) => s.modals[id]);
+  const setModals = useVisibility((s) => s.setModals);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
 
@@ -60,6 +61,18 @@ export const ModalWrapper = ({
       setShouldDisplay(false);
     }
   }, [isVisible]);
+
+  // ESC key closes overlay modals that render on top of others
+  useEffect(() => {
+    if (!canExit || !overlay || !isVisible) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setModals({ [id]: false });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [canExit, overlay, isVisible, id]);
 
   useEffect(() => {
     if (positionOverride) {

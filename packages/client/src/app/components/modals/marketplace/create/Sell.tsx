@@ -92,6 +92,7 @@ export const Sell = ({
                   inputMode='decimal'
                   placeholder='Enter Price'
                   value={price}
+                  onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val === '' || /^\d*\.?\d{0,6}$/.test(val)) {
