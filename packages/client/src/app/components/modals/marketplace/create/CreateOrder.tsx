@@ -14,7 +14,7 @@ import { Sell } from './Sell';
 
 type OrderType = 'listing' | 'bid';
 const KamidenClient = getKamidenClient();
-const DEFAULT_EXPIRY_HOURS = 2;
+const DEFAULT_EXPIRY_HOURS = 0;
 
 const normalizeAccountId = (accountId: string) => {
   try {
@@ -82,6 +82,7 @@ export const CreateOrder = ({
   const [restingKamis, setRestingKamis] = useState<Kami[]>([]);
   const [allKamis, setAllKamis] = useState<Kami[]>([]);
   const [hasActiveListedOrders, setHasActiveListedOrders] = useState(false);
+  const [recentlyListedIndices, setRecentlyListedIndices] = useState<Set<number>>(new Set());
 
   const setModals = useVisibility((s) => s.setModals);
   const setKami = useSelected((s) => s.setKami);
@@ -124,7 +125,29 @@ export const CreateOrder = ({
     };
   }, [isVisible, utils, account.id]);
 
-  const sellableKamis = useMemo(() => restingKamis.filter(isSellEligibleKami), [restingKamis]);
+  const sellableKamis = useMemo(
+    () => restingKamis.filter((k) => isSellEligibleKami(k) && !recentlyListedIndices.has(k.index)),
+    [restingKamis, recentlyListedIndices]
+  );
+
+  // clear recently listed entries once ECS catches up (kami no longer resting/eligible)
+  useEffect(() => {
+    if (recentlyListedIndices.size === 0) return;
+    const restingIndices = new Set(restingKamis.filter(isSellEligibleKami).map((k) => k.index));
+    const stale = [...recentlyListedIndices].filter((idx) => !restingIndices.has(idx));
+    if (stale.length > 0) {
+      setRecentlyListedIndices((prev) => {
+        const next = new Set(prev);
+        stale.forEach((idx) => next.delete(idx));
+        return next;
+      });
+    }
+  }, [restingKamis, recentlyListedIndices]);
+
+  // clear recently listed when modal closes
+  useEffect(() => {
+    if (!isVisible) setRecentlyListedIndices(new Set());
+  }, [isVisible]);
 
   useEffect(() => {
     const current = selectedKami[0];
@@ -210,8 +233,12 @@ export const CreateOrder = ({
 
     if (orderType === 'listing') {
       if (!selectedKami[0] || priceWei === null) return;
-      const completed = await createSellOrder(selectedKami[0].index, priceWei, expiry);
-      if (completed) handleClear();
+      const listedIndex = selectedKami[0].index;
+      const completed = await createSellOrder(listedIndex, priceWei, expiry);
+      if (completed) {
+        setRecentlyListedIndices((prev) => new Set(prev).add(listedIndex));
+        handleClear();
+      }
     }
     if (orderType === 'bid') {
       if (priceWei === null) return;

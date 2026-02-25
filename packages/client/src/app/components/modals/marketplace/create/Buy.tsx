@@ -57,8 +57,8 @@ export const Buy = ({
       const totalWei = parseEther(price);
       const perKamiWei = totalWei / BigInt(qty);
       const num = Number(formatUnits(perKamiWei, 18));
-      if (num > 0 && num < 0.00001) return '<0.00001';
-      return num.toFixed(5).replace(/\.?0+$/, '');
+      if (num > 0 && num < 0.000001) return '<0.000001';
+      return num.toFixed(6).replace(/\.?0+$/, '');
     } catch {
       return null;
     }

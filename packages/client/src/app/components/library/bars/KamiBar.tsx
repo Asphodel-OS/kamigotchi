@@ -15,6 +15,7 @@ import { calcHealTime, calcIdleTime, isOffWorld } from 'app/cache/kami/calcs/bas
 import { Overlay, Text, TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
 import { Shimmer } from 'app/styles/effects';
+import { MarketplaceIcon } from 'assets/images/icons/menu';
 import { StatusIcons } from 'assets/images/icons/statuses';
 import { AffinityIcons } from 'constants/affinities';
 import { HarvestingMoods, RestingMoods } from 'constants/kamis';
@@ -31,7 +32,7 @@ import { Cooldown } from './Cooldown';
 export const KamiBar = ({
   kami,
   actions,
-  options: { showCooldown, showLevelUp, showPercent, showTooltip, showSkillPoints } = {},
+  options: { showCooldown, showLevelUp, showPercent, showTooltip, showSkillPoints, minimal } = {},
   utils,
   tick,
 }: {
@@ -45,6 +46,7 @@ export const KamiBar = ({
     showPercent?: boolean; // whether to show the percent health
     showTooltip?: boolean;
     showSkillPoints?: boolean;
+    minimal?: boolean;
   };
   tick: number;
 
@@ -133,7 +135,7 @@ export const KamiBar = ({
 
   // get the percent health the kami has remaining
   const calcHealthPercent = () => {
-    if (isOffWorld(kami)) return 100;
+    if (isOffWorld(kami) || kami.state === 'LISTED') return 100;
     const total = kami.stats?.health.total ?? 0;
     if (total === 0) return 0;
     return (100 * currentHealth) / total;
@@ -142,6 +144,9 @@ export const KamiBar = ({
   // get the tooltip for the kami
   const getTooltip = (kami: Kami) => {
     // check for external and dead cases first to short circuit the tooltip
+    if (kami.state === 'LISTED') {
+      return [`${kami.name} is listed on the market`];
+    }
     if (isOffWorld(kami)) {
       return [`${kami.name} is not of this world`, `you may import them at the Scrap Confluence`];
     }
@@ -221,6 +226,8 @@ export const KamiBar = ({
 
   // get the color of the kami's status bar
   const getStatusColor = (level: number) => {
+    if (kami.state === 'LISTED') return '#d4a5e5';
+    if (isOffWorld(kami)) return '#f5e6a3';
     if (isResting(kami)) return HealthColors.resting;
     if (level <= 25) return HealthColors.dying;
     if (level <= 50) return HealthColors.vulnerable;
@@ -233,6 +240,7 @@ export const KamiBar = ({
     if (state === 'RESTING') return StatusIcons.kami_resting;
     if (state === 'DEAD') return StatusIcons.kami_dead;
     if (state === 'WANDERING') return StatusIcons.kami_wandering;
+    if (state === 'LISTED') return MarketplaceIcon;
   };
 
   const kamiState = getKamiState(kami);
@@ -268,16 +276,18 @@ export const KamiBar = ({
         </TextTooltip>
       </Left>
       <Middle percent={healthPercent} color={statusColor}>
-        <Overlay top={0.2} left={0.5}>
-          <OutputSection>
-            <Text size={0.6}>{calcOutput(kami)}</Text>
-            {item?.image && <OutputIcon src={item.image} />}
-          </OutputSection>
-        </Overlay>
+        {!minimal && (
+          <Overlay top={0.2} left={0.5}>
+            <OutputSection>
+              <Text size={0.6}>{calcOutput(kami)}</Text>
+              {item?.image && <OutputIcon src={item.image} />}
+            </OutputSection>
+          </Overlay>
+        )}
         <TextTooltip text={getTooltip(kami)} direction='row'>
           <StateSection>
             <StateIcon src={getKamiStateIcon(kamiState)} />
-            {showPercent && <Text size={0.7}>{showHealth(kami)}</Text>}
+            {showPercent && !minimal && <Text size={0.7}>{showHealth(kami)}</Text>}
           </StateSection>
         </TextTooltip>
       </Middle>

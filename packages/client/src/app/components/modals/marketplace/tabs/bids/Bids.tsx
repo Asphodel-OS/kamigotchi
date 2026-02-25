@@ -114,12 +114,12 @@ export const Bids = ({
   );
   const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 6);
 
   const formatRemainingBid = (bid: KamiMarketBid) => {
     try {
       const remaining = (BigInt(bid.Price) * BigInt(bid.Quantity)).toString();
-      return utils.formatEthPrice(remaining, 5);
+      return utils.formatEthPrice(remaining, 6);
     } catch {
       return '?';
     }

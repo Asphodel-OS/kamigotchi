@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { formatUnits } from 'viem';
+import { erc20Abi, formatUnits } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -12,6 +12,7 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { MarketplaceIcon } from 'assets/images/icons/menu';
+import { Tokens } from 'constants/tokens';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { BigNumberish } from 'ethers';
 import { erc721ABI } from 'network/chain/ERC721';
@@ -80,12 +81,20 @@ export const MarketplaceModal: UIComponent = {
           functionName: 'isApprovedForAll',
           args: [account.ownerAddress, data.marketVaultAddress],
         },
+        {
+          address: Tokens.ETH.address,
+          abi: erc20Abi,
+          functionName: 'allowance',
+          args: [account.ownerAddress, data.marketVaultAddress],
+        },
       ],
     });
 
     useWatchBlockNumber({ onBlockNumber: () => refetchApproval() });
 
     const isVaultApproved = approvalData?.[0]?.result === true;
+    const wethAllowance = (approvalData?.[1]?.result as bigint) ?? 0n;
+    const isWethApproved = wethAllowance > 0n;
 
     const restingKamis = useMemo(
       () => utils.getAccountKamis().filter((kami) => kami.state === 'RESTING'),
@@ -188,6 +197,34 @@ export const MarketplaceModal: UIComponent = {
       await refetchApproval();
     };
 
+    const ensureWethApproval = async () => {
+      if (isWethApproved) return;
+      if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
+
+      const ownerApi = apis.get(selectedAddress);
+      if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
+
+      const actionID = uuid() as EntityID;
+      actions.add({
+        id: actionID,
+        action: 'KamiMarketWethApproval',
+        params: [Tokens.ETH.address, data.marketVaultAddress],
+        description: `Approving marketplace vault to use your ETH for bids`,
+        execute: async () =>
+          ownerApi.erc20.approve(
+            Tokens.ETH.address,
+            data.marketVaultAddress,
+            Number.MAX_SAFE_INTEGER
+          ),
+      });
+
+      await waitForActionCompletion(
+        actions.Action,
+        world.entityToIndex.get(actionID) as EntityIndex
+      );
+      await refetchApproval();
+    };
+
     const createSellOrder = async (
       kamiIndex: number,
       price: BigNumberish,
@@ -204,6 +241,7 @@ export const MarketplaceModal: UIComponent = {
     };
 
     const createBuyOrder = async (price: BigNumberish, quantity: number, expiry: BigNumberish) => {
+      await ensureWethApproval();
       const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [price, quantity, expiry],
@@ -218,6 +256,7 @@ export const MarketplaceModal: UIComponent = {
       price: BigNumberish,
       expiry: BigNumberish
     ) => {
+      await ensureWethApproval();
       const tx = actions.add({
         action: 'KamiMarketOffer',
         params: [kamiIndex, price, expiry],

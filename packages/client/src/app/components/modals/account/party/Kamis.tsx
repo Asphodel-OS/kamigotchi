@@ -4,7 +4,7 @@ import { useWatchBlockNumber } from 'wagmi';
 
 import { TextTooltip } from 'app/components/library';
 import { useSelected, useVisibility } from 'app/stores';
-import { ExternalIcon } from 'assets/images/icons/menu';
+import { ExternalIcon, MarketplaceIcon } from 'assets/images/icons/menu';
 import { useBalance } from 'network/chain/ERC721';
 import { Account } from 'network/shapes/Account';
 import { Kami } from 'network/shapes/Kami';
@@ -82,14 +82,27 @@ export const Kamis = ({
     playClick();
   };
 
-  if (kamis.length === 0 && wildKamis.length === 0) return <EmptyText>no kamis. ngmi</EmptyText>;
+  const worldKamis = kamis.filter((k) => k.state !== 'LISTED');
+  const listedKamis = kamis.filter((k) => k.state === 'LISTED');
+
+  if (worldKamis.length === 0 && wildKamis.length === 0 && listedKamis.length === 0)
+    return <EmptyText>no kamis. ngmi</EmptyText>;
 
   return (
     <Container key='grid'>
-      {kamis.map((kami, idx) => (
+      {worldKamis.map((kami, idx) => (
         <TextTooltip key={`internal-${kami.index}-${kami.id}-${idx}`} text={[kami.name, '']}>
           <CellContainer id={`grid-${kami.id}`}>
             <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
+          </CellContainer>
+        </TextTooltip>
+      ))}
+
+      {listedKamis.map((kami, idx) => (
+        <TextTooltip key={`listed-${kami.index}-${kami.id}-${idx}`} text={[kami.name, 'in the market']}>
+          <CellContainer id={`grid-${kami.id}`}>
+            <Image onClick={() => kamiOnClick(kami)} src={kami.image} />
+            <ExtIcon src={MarketplaceIcon} />
           </CellContainer>
         </TextTooltip>
       ))}

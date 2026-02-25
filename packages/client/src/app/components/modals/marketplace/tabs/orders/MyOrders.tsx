@@ -198,7 +198,7 @@ export const MyOrders = ({
     setStatusFilter(STATUS_FILTER_CYCLE[(idx + 1) % STATUS_FILTER_CYCLE.length]);
   };
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 6);
 
   const getBidProgress = (total: number, quantity: number) => {
     if (total <= 1) return '';

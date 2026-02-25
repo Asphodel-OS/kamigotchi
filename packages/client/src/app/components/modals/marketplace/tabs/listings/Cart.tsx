@@ -38,7 +38,7 @@ export const Cart = ({
   useWatchBlockNumber({ onBlockNumber: () => refetch() });
 
   const formattedBalance = balanceData
-    ? Number(formatUnits(balanceData.value, 18)).toFixed(5).replace(/\.?0+$/, '')
+    ? Number(formatUnits(balanceData.value, 18)).toFixed(6).replace(/\.?0+$/, '')
     : '—';
 
   const totalPrice = cart.reduce((sum, item) => sum + BigInt(item.Price), 0n);

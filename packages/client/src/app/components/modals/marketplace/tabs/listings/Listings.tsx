@@ -134,7 +134,7 @@ export const Listings = ({
   /////////////////
   // PREPARATION
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 5);
+  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 6);
 
   const resolvedListings = useMemo(
     () =>

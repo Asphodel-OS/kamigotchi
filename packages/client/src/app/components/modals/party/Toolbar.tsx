@@ -78,7 +78,7 @@ export const Toolbar = ({
   useEffect(() => {
     if (!isModalOpen) return;
 
-    const base = view === 'external' ? wildKamis : kamis;
+    const base = view === 'external' ? wildKamis : kamis.filter((k) => k.state !== 'LISTED');
     const sorted = [...base];
 
     switch (sort) {
