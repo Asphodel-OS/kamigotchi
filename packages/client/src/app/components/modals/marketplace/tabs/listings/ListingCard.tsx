@@ -39,7 +39,7 @@ export const ListingCard = ({
   getAccountByID,
   allFlipped,
 }: ListingCardProps) => {
-  const [flipped, setFlipped] = useState(false);
+  const [flipped, setFlipped] = useState(allFlipped);
 
   useEffect(() => {
     setFlipped(allFlipped);

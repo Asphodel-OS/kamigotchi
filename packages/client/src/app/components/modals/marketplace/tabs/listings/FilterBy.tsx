@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { IconButton, Tooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { TraitIcons } from 'assets/images/icons/traits';
+import { AffinityIcons } from 'constants/affinities';
 import { StatColors, StatIcons } from 'constants/stats';
 import { Trait, TraitType } from 'network/shapes/Trait';
 
@@ -15,13 +16,25 @@ const STAT_DEFS = [
   { key: 'Slots', icon: StatIcons.slots, color: '#c8c8c8', min: 0, max: 3, step: 1 },
 ];
 
+const AFFINITIES = [
+  { key: 'SCRAP', label: 'Scrap', icon: AffinityIcons.scrap, color: '#FFD4D4' },
+  { key: 'INSECT', label: 'Insect', icon: AffinityIcons.insect, color: '#D4F5D4' },
+  { key: 'EERIE', label: 'Eerie', icon: AffinityIcons.eerie, color: '#E4D4F5' },
+  { key: 'NORMAL', label: 'Normal', icon: AffinityIcons.normal, color: '#FFF5D4' },
+];
+
+const getAffinityColor = (key: string | null) =>
+  AFFINITIES.find((a) => a.key === key)?.color ?? undefined;
+
 export const FilterBy = ({
   isVisible,
   onClose,
   selected,
   statValues,
+  affinityValues,
   onSelectedChange,
   onStatValuesChange,
+  onAffinityChange,
   onClear,
   utils,
 }: {
@@ -29,28 +42,69 @@ export const FilterBy = ({
   onClose: () => void;
   selected: Record<string, Set<string>>;
   statValues: Record<string, number>;
+  affinityValues: { body: string | null; hand: string | null };
   onSelectedChange: (next: Record<string, Set<string>>) => void;
   onStatValuesChange: (next: Record<string, number>) => void;
+  onAffinityChange: (next: { body: string | null; hand: string | null }) => void;
   onClear: () => void;
   utils: { getRegistryTraits: (specificType?: TraitType[]) => Trait[] };
 }) => {
+  const allBodyTraits = useMemo(() => utils.getRegistryTraits(['Body']), [utils]);
+  const allHandTraits = useMemo(() => utils.getRegistryTraits(['Hand']), [utils]);
+
   const columns = useMemo(
     () => [
-      { icon: TraitIcons.face, key: 'Face', traits: utils.getRegistryTraits(['Face']) },
-      { icon: TraitIcons.hand, key: 'Hands', traits: utils.getRegistryTraits(['Hand']) },
-      { icon: TraitIcons.body, key: 'Body Type', traits: utils.getRegistryTraits(['Body']) },
-      { icon: TraitIcons.color, key: 'Body Color', traits: utils.getRegistryTraits(['Color']) },
+      { icon: TraitIcons.face, key: 'Face', traits: utils.getRegistryTraits(['Face']), affinityColor: undefined as string | undefined },
+      {
+        icon: TraitIcons.hand,
+        key: 'Hands',
+        traits: affinityValues.hand
+          ? allHandTraits.filter((t) => t.affinity === affinityValues.hand)
+          : allHandTraits,
+        affinityColor: getAffinityColor(affinityValues.hand),
+      },
+      {
+        icon: TraitIcons.body,
+        key: 'Body',
+        traits: affinityValues.body
+          ? allBodyTraits.filter((t) => t.affinity === affinityValues.body)
+          : allBodyTraits,
+        affinityColor: getAffinityColor(affinityValues.body),
+      },
+      { icon: TraitIcons.color, key: 'Color', traits: utils.getRegistryTraits(['Color']), affinityColor: undefined as string | undefined },
       {
         icon: TraitIcons.background,
         key: 'Background',
         traits: utils.getRegistryTraits(['Background']),
+        affinityColor: undefined as string | undefined,
       },
     ],
-    [utils]
+    [utils, affinityValues.body, affinityValues.hand, allBodyTraits, allHandTraits]
   );
 
   const setStatValue = (stat: string, value: number) => {
     onStatValuesChange({ ...statValues, [stat]: value });
+  };
+
+  const handleAffinityClick = (type: 'body' | 'hand', affinityKey: string) => {
+    const current = type === 'body' ? affinityValues.body : affinityValues.hand;
+    const traitKey = type === 'body' ? 'Body' : 'Hands';
+    const allTraits = type === 'body' ? allBodyTraits : allHandTraits;
+
+    if (current === affinityKey) {
+      // Deselect
+      onAffinityChange({ ...affinityValues, [type]: null });
+    } else {
+      onAffinityChange({ ...affinityValues, [type]: affinityKey });
+      // Clamp: remove selected traits that don't match the new affinity
+      const matching = new Set(
+        allTraits.filter((t) => t.affinity === affinityKey).map((t) => t.name)
+      );
+      const clamped = new Set([...selected[traitKey]].filter((name) => matching.has(name)));
+      if (clamped.size !== selected[traitKey].size) {
+        onSelectedChange({ ...selected, [traitKey]: clamped });
+      }
+    }
   };
 
   return (
@@ -60,7 +114,7 @@ export const FilterBy = ({
         <IconButton text='X' onClick={onClose} scale={1.5} />
       </Header>
       <Body>
-        <HalfSection>
+        <ThirdSection>
           <SectionLabel>Traits</SectionLabel>
           <TraitsGrid>
             {columns.map((col) => (
@@ -81,10 +135,11 @@ export const FilterBy = ({
                 button={{ images: [col.icon] }}
                 radius={0.4}
                 hideActionButton
+                noSelectAll
                 maxHeight={40}
                 trigger={
-                  <Tooltip content={`${col.key}.`} isDisabled={false}>
-                    <DropdownButton>
+                  <Tooltip content={`${col.key}`} isDisabled={false}>
+                    <DropdownButton $affinityColor={col.affinityColor}>
                       <TraitIcon src={col.icon} />
                       <TraitLabel>
                         {col.key}
@@ -99,11 +154,47 @@ export const FilterBy = ({
               />
             ))}
           </TraitsGrid>
-        </HalfSection>
+        </ThirdSection>
 
         <Divider />
 
-        <HalfSection>
+        <ThirdSection>
+          <AffinityHalf>
+            <SectionLabel>Body Affinity</SectionLabel>
+            <AffinityRow>
+              {AFFINITIES.map((a) => (
+                <AffinityOption
+                  key={a.key}
+                  $color={a.color}
+                  $active={affinityValues.body === a.key}
+                  onClick={() => handleAffinityClick('body', a.key)}
+                >
+                  <AffinityIcon src={a.icon} />
+                </AffinityOption>
+              ))}
+            </AffinityRow>
+          </AffinityHalf>
+          <HorizontalDivider />
+          <AffinityHalf>
+            <SectionLabel>Hand Affinity</SectionLabel>
+            <AffinityRow>
+              {AFFINITIES.map((a) => (
+                <AffinityOption
+                  key={a.key}
+                  $color={a.color}
+                  $active={affinityValues.hand === a.key}
+                  onClick={() => handleAffinityClick('hand', a.key)}
+                >
+                  <AffinityIcon src={a.icon} />
+                </AffinityOption>
+              ))}
+            </AffinityRow>
+          </AffinityHalf>
+        </ThirdSection>
+
+        <Divider />
+
+        <ThirdSection>
           <SectionLabel>Min. Stats</SectionLabel>
           <StatsGrid>
             {STAT_DEFS.map((stat) => {
@@ -126,7 +217,7 @@ export const FilterBy = ({
               );
             })}
           </StatsGrid>
-        </HalfSection>
+        </ThirdSection>
       </Body>
       <Footer>
         <IconButton text='Clear Filters' onClick={onClear} color='#FDECEC' />
@@ -168,11 +259,57 @@ const Divider = styled.div`
   align-self: stretch;
 `;
 
-const HalfSection = styled.div`
+const HorizontalDivider = styled.div`
+  height: 0.1vw;
+  background: #ccc;
+  width: 100%;
+`;
+
+const ThirdSection = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.5vw;
+`;
+
+const AffinityHalf = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4vw;
+`;
+
+const AffinityRow = styled.div`
+  display: flex;
+  gap: 0.4vw;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+`;
+
+const AffinityOption = styled.div<{ $color: string; $active: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3vw;
+  height: 3vw;
+  border-radius: 0.4vw;
+  cursor: pointer;
+  border: 0.15vw solid ${({ $active }) => ($active ? '#555' : '#ddd')};
+  background: ${({ $active, $color }) => ($active ? $color : '#f5f5f5')};
+  opacity: ${({ $active }) => ($active ? 1 : 0.5)};
+  transition: all 0.15s;
+
+  &:hover {
+    opacity: 1;
+    border-color: #999;
+  }
+`;
+
+const AffinityIcon = styled.img`
+  width: 2.1vw;
+  height: 2.1vw;
+  image-rendering: pixelated;
 `;
 
 const SectionLabel = styled.div`
@@ -188,22 +325,23 @@ const TraitsGrid = styled.div`
   gap: 0.35vw;
 `;
 
-const DropdownButton = styled.div`
+const DropdownButton = styled.div<{ $affinityColor?: string }>`
   display: flex;
   align-items: center;
   gap: 0.4vw;
   font-size: 0.75vw;
-  border: 0.12vw solid #999;
+  border: 0.12vw solid ${({ $affinityColor }) => ($affinityColor ? '#999' : '#999')};
   border-radius: 0.4vw;
   padding: 0.35vw 0.6vw;
   cursor: pointer;
-  background: white;
+  background: ${({ $affinityColor }) => $affinityColor ?? 'white'};
   white-space: nowrap;
   width: 100%;
+  transition: background 0.15s;
 
   &:hover {
     border-color: #555;
-    background: #fafafa;
+    background: ${({ $affinityColor }) => $affinityColor ?? '#fafafa'};
   }
 `;
 

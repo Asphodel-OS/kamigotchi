@@ -20,6 +20,7 @@ export const Cart = ({
   onOpenKami,
   resolveKami,
   formatPrice,
+  sweepActive,
 }: {
   isVisible: boolean;
   cart: KamiMarketListing[];
@@ -30,6 +31,7 @@ export const Cart = ({
   onOpenKami: (index: number) => void;
   resolveKami: (index: number) => Kami | undefined;
   formatPrice: (weiString: string) => string;
+  sweepActive?: boolean;
 }) => {
   const account = useAccount((s) => s.account);
   const { data: balanceData, refetch } = useBalance({
@@ -52,7 +54,12 @@ export const Cart = ({
         <IconButton text='X' onClick={onClose} scale={1.5} />
       </CartHeader>
       <CartBody>
-        {cart.length === 0 && <EmptyText text={['Your cart is empty']} size={0.9} />}
+        {cart.length === 0 && (
+          <EmptyText
+            text={sweepActive ? ['Sweep mode active!', 'Slide to fill your cart.'] : ['Your cart is empty!']}
+            size={0.9}
+          />
+        )}
         {cart.map((item) => {
           const kami = resolveKami(item.KamiIndex);
           return (

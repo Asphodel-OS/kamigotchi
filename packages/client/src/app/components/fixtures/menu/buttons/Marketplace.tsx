@@ -12,24 +12,24 @@ export const TradingMenuButton = () => {
       img={TradeIcon}
       options={[
         {
-          text: 'Token Portal',
-          image: TokenIcons.onyx,
-          onClick: () => setModals({ ...modals, tokenPortal: !modals.tokenPortal }),
-        },
-        {
           text: 'Kamigotchi World Order Book',
           image: TradeIcon,
           onClick: () => setModals({ ...modals, trading: !modals.trading }),
         },
         {
-          text: 'Obol Pop-Up Shop!',
-          image: ItemImages.obol,
-          onClick: () => setModals({ ...modals, lootBox: !modals.lootBox }),
-        },
-        {
           text: 'KamiSwap',
           image: MarketplaceIcon,
           onClick: () => setModals({ ...modals, marketplace: !modals.marketplace }),
+        },
+        {
+          text: 'Token Portal',
+          image: TokenIcons.onyx,
+          onClick: () => setModals({ ...modals, tokenPortal: !modals.tokenPortal }),
+        },
+        {
+          text: 'Obol Pop-Up Shop!',
+          image: ItemImages.obol,
+          onClick: () => setModals({ ...modals, lootBox: !modals.lootBox }),
         },
       ]}
       scale={4.5}

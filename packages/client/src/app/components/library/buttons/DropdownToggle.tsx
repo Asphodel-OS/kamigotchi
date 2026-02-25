@@ -27,6 +27,7 @@ export const DropdownToggle = ({
   trigger,
   hideActionButton,
   maxHeight,
+  noSelectAll,
 }: {
   onClick: ((selected: any[]) => void)[];
   button: {
@@ -44,6 +45,7 @@ export const DropdownToggle = ({
   trigger?: React.ReactNode;
   hideActionButton?: boolean;
   maxHeight?: number;
+  noSelectAll?: boolean;
 }) => {
   const { images, tooltips } = button;
   const [checked, setChecked] = useState<boolean[]>([]);
@@ -179,7 +181,7 @@ export const DropdownToggle = ({
     <Container>
       <Popover
         content={[
-          ...(!simplified ? [renderOption({ text: 'Select All' }, 0, true)] : []),
+          ...(!simplified && !noSelectAll ? [renderOption({ text: 'Select All' }, 0, true)] : []),
           ...modeOptions.map((option, i) => renderOption(option, i)),
         ]}
         disabled={modeDisabled}
@@ -233,7 +235,7 @@ const MenuOption = styled.div<{
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  padding: ${({ isSelectAll }) => (isSelectAll ? '0.8vw 0.6vw 0.4vw 0.9vw' : '0.25vw 0.4vw 0.25vw 2.2vw')};
+  padding: ${({ isSelectAll }) => (isSelectAll ? '0.5vw 0.6vw' : '0.3vw 0.6vw')};
 
   &:hover {
     background-color: #ddd;

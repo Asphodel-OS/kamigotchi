@@ -86,6 +86,9 @@ export const Tooltip = ({
       onMouseLeave={() => {
         (setIsActive(false), setIsVisible(false));
       }}
+      onMouseDown={() => {
+        (setIsActive(false), setIsVisible(false));
+      }}
       onMouseMove={(e) => {
         handleMouseMove(e);
       }}

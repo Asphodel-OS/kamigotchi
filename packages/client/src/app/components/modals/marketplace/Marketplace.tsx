@@ -26,7 +26,7 @@ import {
 } from 'network/shapes/Kami';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
 import { didActionSucceed, waitForActionCompletion } from 'network/utils';
-import { DEFAULT_SELECTED_FILTERS, DEFAULT_STAT_FILTERS } from './constants';
+import { DEFAULT_AFFINITY_FILTERS, DEFAULT_SELECTED_FILTERS, DEFAULT_STAT_FILTERS } from './constants';
 import { CreateOrder } from './create/CreateOrder';
 import { Bids } from './tabs/bids/Bids';
 import { FilterBy } from './tabs/listings/FilterBy';
@@ -129,6 +129,7 @@ export const MarketplaceModal: UIComponent = {
     const [selectedFilters, setSelectedFilters] =
       useState<Record<string, Set<string>>>(DEFAULT_SELECTED_FILTERS);
     const [statFilters, setStatFilters] = useState<Record<string, number>>(DEFAULT_STAT_FILTERS);
+    const [affinityFilters, setAffinityFilters] = useState<{ body: string | null; hand: string | null }>(DEFAULT_AFFINITY_FILTERS);
 
     useEffect(() => {
       if (!isMarketplaceOpen) return;
@@ -136,6 +137,7 @@ export const MarketplaceModal: UIComponent = {
       setShowFilter(false);
       setSelectedFilters(DEFAULT_SELECTED_FILTERS());
       setStatFilters(DEFAULT_STAT_FILTERS());
+      setAffinityFilters(DEFAULT_AFFINITY_FILTERS());
     }, [isMarketplaceOpen]);
 
     /////////////////
@@ -359,7 +361,7 @@ export const MarketplaceModal: UIComponent = {
             onCloseCreateOrder={closeCreateOrder}
             createOrderOpen={showCreateOrder}
             accountId={account.id}
-            filters={{ selected: selectedFilters, stats: statFilters }}
+            filters={{ selected: selectedFilters, stats: statFilters, affinity: affinityFilters }}
             utils={{
               queryKamiByIndex: utils.queryKamiByIndex,
               getKami: utils.getKami,
@@ -408,11 +410,14 @@ export const MarketplaceModal: UIComponent = {
             onClose={closeFilter}
             selected={selectedFilters}
             statValues={statFilters}
+            affinityValues={affinityFilters}
             onSelectedChange={setSelectedFilters}
             onStatValuesChange={setStatFilters}
+            onAffinityChange={setAffinityFilters}
             onClear={() => {
               setSelectedFilters(DEFAULT_SELECTED_FILTERS());
               setStatFilters(DEFAULT_STAT_FILTERS());
+              setAffinityFilters(DEFAULT_AFFINITY_FILTERS());
             }}
             utils={utils}
           />

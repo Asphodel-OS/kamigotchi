@@ -59,6 +59,7 @@ export const Listings = ({
   filters: {
     selected: Record<string, Set<string>>;
     stats: Record<string, number>;
+    affinity: { body: string | null; hand: string | null };
   };
   utils: {
     queryKamiByIndex: (index: number) => EntityIndex | undefined;
@@ -160,8 +161,9 @@ export const Listings = ({
     const statActive = Object.entries(filters.stats).some(([key, value]) =>
       key === 'Slots' ? value > 0 : value > 10
     );
-    return traitActive || statActive;
-  }, [filters.selected, filters.stats]);
+    const affinityActive = filters.affinity.body !== null || filters.affinity.hand !== null;
+    return traitActive || statActive || affinityActive;
+  }, [filters.selected, filters.stats, filters.affinity]);
 
   const activeFilterCount = useMemo(() => {
     const traitCount = Object.values(filters.selected).reduce(
@@ -172,8 +174,9 @@ export const Listings = ({
       (sum, [key, value]) => sum + (key === 'Slots' ? (value > 0 ? 1 : 0) : value > 10 ? 1 : 0),
       0
     );
-    return traitCount + statCount;
-  }, [filters.selected, filters.stats]);
+    const affinityCount = (filters.affinity.body !== null ? 1 : 0) + (filters.affinity.hand !== null ? 1 : 0);
+    return traitCount + statCount + affinityCount;
+  }, [filters.selected, filters.stats, filters.affinity]);
 
   const filteredListings = useMemo(() => {
     if (!hasActiveFilters) return resolvedListings;
@@ -193,9 +196,12 @@ export const Listings = ({
 
       if (!traitMatches('Face', traits.face?.name)) return false;
       if (!traitMatches('Hands', traits.hand?.name)) return false;
-      if (!traitMatches('Body Type', traits.body?.name)) return false;
-      if (!traitMatches('Body Color', traits.color?.name)) return false;
+      if (!traitMatches('Body', traits.body?.name)) return false;
+      if (!traitMatches('Color', traits.color?.name)) return false;
       if (!traitMatches('Background', traits.background?.name)) return false;
+
+      if (filters.affinity.body && traits.body?.affinity !== filters.affinity.body) return false;
+      if (filters.affinity.hand && traits.hand?.affinity !== filters.affinity.hand) return false;
 
       const meetsStat = (key: string, statTotal?: number) => {
         const min = filters.stats[key] ?? 10;
@@ -213,7 +219,7 @@ export const Listings = ({
 
       return true;
     });
-  }, [resolvedListings, hasActiveFilters, filters.selected, filters.stats, utils]);
+  }, [resolvedListings, hasActiveFilters, filters.selected, filters.stats, filters.affinity, utils]);
 
   const sorted = useMemo(() => {
     const copy = [...filteredListings];
@@ -246,7 +252,7 @@ export const Listings = ({
   const goPrevPage = () => { if (hasPrevPage) setPage((p) => p - 1); };
 
   // Reset page when sort/filter changes
-  useEffect(() => { setPage(0); }, [sortBy, filters.selected, filters.stats]);
+  useEffect(() => { setPage(0); }, [sortBy, filters.selected, filters.stats, filters.affinity]);
 
   /////////////////
   // SWEEP
@@ -383,12 +389,14 @@ export const Listings = ({
           </PageNav>
           <ButtonGroup>
             <SweepControl>
-              <IconButton
-                text='Sweep!'
-                onClick={toggleSweep}
-                radius={0.6}
-                color={sweepActive ? '#d4edda' : undefined}
-              />
+              <TextTooltip text={['Auto-fill your cart with the', 'cheapest listings available']}>
+                <IconButton
+                  text='Sweep!'
+                  onClick={toggleSweep}
+                  radius={0.6}
+                  color={sweepActive ? '#d4edda' : undefined}
+                />
+              </TextTooltip>
               <SweepSliderWrap $active={sweepActive}>
                 <SweepRange
                   type='range'
@@ -473,6 +481,7 @@ export const Listings = ({
         onOpenKami={openKamiModal}
         resolveKami={resolveKami}
         formatPrice={formatPrice}
+        sweepActive={sweepActive}
       />
     </>
   );
