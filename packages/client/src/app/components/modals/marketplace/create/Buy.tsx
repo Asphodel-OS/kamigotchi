@@ -138,7 +138,7 @@ export const Buy = ({
                         onBlur={() => {
                           if (price === '') return;
                           let val = price;
-
+                          if (Number(val) > 0 && Number(val) < 0.000001) val = '0.000001';
                           if (val.includes('.')) val = val.replace(/0+$/, '').replace(/\.$/, '');
                           if (val !== price) setPrice(val);
                         }}
@@ -196,7 +196,7 @@ export const Buy = ({
                       onBlur={() => {
                         if (price === '') return;
                         let val = price;
-                        if (Number(val) > 0 && Number(val) < 0.001) val = '0.001';
+                        if (Number(val) > 0 && Number(val) < 0.000001) val = '0.000001';
                         if (val.includes('.')) val = val.replace(/0+$/, '').replace(/\.$/, '');
                         if (val !== price) setPrice(val);
                       }}

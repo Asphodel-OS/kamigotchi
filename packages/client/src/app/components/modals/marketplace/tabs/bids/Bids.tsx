@@ -11,7 +11,7 @@ import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
-import { formatExpiry } from '../../helpers';
+import { formatExpiry, isExpired } from '../../helpers';
 import { SelectBidKamis } from './SelectBidKamis';
 
 const FILTER_CYCLE = ['Show all', 'Bids on my kami', 'Only generic'] as const;
@@ -174,7 +174,9 @@ export const Bids = ({
   };
 
   const filteredBids = useMemo(() => {
-    const active = bids.filter((b) => !recentlyFilledBids.has(b.OrderID));
+    const active = bids
+      .filter((b) => !recentlyFilledBids.has(b.OrderID))
+      .filter((b) => !isExpired(b.Expiry));
     switch (filterBy) {
       case 'Show all':
         return active;

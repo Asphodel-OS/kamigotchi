@@ -14,7 +14,7 @@ import { Sell } from './Sell';
 
 type OrderType = 'listing' | 'bid';
 const DEFAULT_EXPIRY_HOURS = 0;
-const MIN_PRICE_ETH = 0;
+const MIN_PRICE_ETH = 0.000001;
 const MAX_PRICE_ETH = 100;
 const MAX_QUANTITY = 30;
 
@@ -48,6 +48,7 @@ export const CreateOrder = ({
     getAccountKamis: () => Kami[];
     getAllKamis: () => Kami[];
     getRestingKamis: () => Kami[];
+    getWildKamis: () => Kami[];
   };
   createSellOrder: (
     kamiIndex: number,
@@ -126,10 +127,15 @@ export const CreateOrder = ({
 
   const [selectedBuyKami, setSelectedBuyKami] = useState<Kami | null>(null);
 
-  const accountKamiIds = useMemo(() => new Set(accountKamis.map((k) => k.id)), [accountKamis]);
+  const wildKamis = useMemo(() => utils.getWildKamis(), [utils]);
+  const ownedKamiIds = useMemo(() => {
+    const ids = new Set(accountKamis.map((k) => k.id));
+    wildKamis.forEach((k) => ids.add(k.id));
+    return ids;
+  }, [accountKamis, wildKamis]);
   const unownedKamis = useMemo(
-    () => allKamis.filter((k) => !accountKamiIds.has(k.id)),
-    [allKamis, accountKamiIds]
+    () => allKamis.filter((k) => !ownedKamiIds.has(k.id)),
+    [allKamis, ownedKamiIds]
   );
   const allKamiOptions = useMemo(
     () =>

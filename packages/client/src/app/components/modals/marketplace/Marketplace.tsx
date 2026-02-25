@@ -236,7 +236,7 @@ export const MarketplaceModal: UIComponent = {
           ownerApi.erc20.approve(
             Tokens.ETH.address,
             data.marketVaultAddress,
-            Number.MAX_SAFE_INTEGER
+            2n ** 256n - 1n
           ),
       });
 
@@ -400,7 +400,7 @@ export const MarketplaceModal: UIComponent = {
           <CreateOrder
             isVisible={showCreateOrder}
             onClose={closeCreateOrder}
-            utils={{ ...utils, getRestingKamis: () => restingKamis }}
+            utils={{ ...utils, getRestingKamis: () => restingKamis, getWildKamis: () => wildKamis }}
             createSellOrder={createSellOrder}
             createBuyOrder={createBuyOrder}
             createBuyKamiOrder={createBuyKamiOrder}
