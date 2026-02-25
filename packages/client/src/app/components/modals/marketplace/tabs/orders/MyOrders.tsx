@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useAccount, useSelected, useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
-import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
 import { ClockIcon, InventoryIcon, ResetIcon, TradeIcon } from 'assets/images/icons/menu';
 import { TriggerIcons } from 'assets/images/icons/triggers';
+import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBidType, KamiMarketOrder } from 'clients/kamiden';
 import { EntityIndex } from 'engine/recs';
@@ -101,11 +101,16 @@ const sortOrders = (orders: MyOrder[], sortBy: SortMethod) => {
   switch (sortBy) {
     case 'Price':
       return [...orders].sort((a, b) => {
-        try { return Number(BigInt(b.price) - BigInt(a.price)); }
-        catch { return 0; }
+        try {
+          return Number(BigInt(b.price) - BigInt(a.price));
+        } catch {
+          return 0;
+        }
       });
-    case 'Type': return [...orders].sort((a, b) => a.type.localeCompare(b.type));
-    default: return orders;
+    case 'Type':
+      return [...orders].sort((a, b) => a.type.localeCompare(b.type));
+    default:
+      return orders;
   }
 };
 
@@ -158,7 +163,7 @@ export const MyOrders = ({
       const res = await KamidenClient.getKamiMarketHistory({
         AccountId: accountId,
         Timestamp: 0,
-        Size: 200,
+        Size: 100,
       });
       if (!isActive) return;
       setOrders((res as { Orders?: KamiMarketOrder[] })?.Orders ?? []);
@@ -232,11 +237,7 @@ export const MyOrders = ({
           />
         </TextTooltip>
         <TextTooltip text={[`Sort: ${sortBy}`]}>
-          <IconButton
-            img={SortIcons[sortBy]}
-            onClick={cycleSort}
-            radius={0.6}
-          />
+          <IconButton img={SortIcons[sortBy]} onClick={cycleSort} radius={0.6} />
         </TextTooltip>
       </ButtonWrapper>
       <HeaderRow>
@@ -305,12 +306,7 @@ const OrderRow = ({
       ? getBidProgress(order.total, order.quantity)
       : '';
 
-  const typeLabel =
-    order.type === 'Listing'
-      ? 'Listing'
-      : isGenericBid
-        ? 'Gen. Bid'
-        : 'Kami Bid';
+  const typeLabel = order.type === 'Listing' ? 'Listing' : isGenericBid ? 'Gen. Bid' : 'Kami Bid';
 
   const statusColors = STATUS_COLORS[order.status];
   const isCancellable = order.status === 'Active' || order.status === 'Expired';
@@ -321,13 +317,13 @@ const OrderRow = ({
         <KamiCell>
           <KamiThumbnail
             src={isGenericBid ? placeholderKami : kami?.image}
-            alt={isGenericBid ? 'Any Kami' : kami?.name ?? `Kami #${order.kamiIndex}`}
+            alt={isGenericBid ? 'Any Kami' : (kami?.name ?? `Kami #${order.kamiIndex}`)}
             $clickable={!isGenericBid}
             onClick={isGenericBid ? undefined : () => openKamiModal(order.kamiIndex)}
           />
           <KamiInfo>
             <KamiName>
-              {isGenericBid ? 'Any Kami' : kami?.name ?? `Kami #${order.kamiIndex}`}
+              {isGenericBid ? 'Any Kami' : (kami?.name ?? `Kami #${order.kamiIndex}`)}
             </KamiName>
             {progress && <ProgressText>{progress}</ProgressText>}
           </KamiInfo>
@@ -349,11 +345,7 @@ const OrderRow = ({
       </Column>
       <Column>
         {isCancellable ? (
-          <IconButton
-            text='Cancel'
-            onClick={() => onCancelOrder(order.orderId)}
-            color='#FDECEC'
-          />
+          <IconButton text='Cancel' onClick={() => onCancelOrder(order.orderId)} color='#FDECEC' />
         ) : (
           <CellText style={{ opacity: 0.4 }}>—</CellText>
         )}
@@ -395,7 +387,9 @@ const OrdersBody = styled.div`
   overflow-y: auto;
   flex: 1;
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const EmptyCenter = styled.div`

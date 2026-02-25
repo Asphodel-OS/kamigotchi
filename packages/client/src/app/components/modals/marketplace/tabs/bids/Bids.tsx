@@ -3,15 +3,15 @@ import styled from 'styled-components';
 
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { TriggerIcons } from 'assets/images/icons/triggers';
+import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
 import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
-import { SelectBidKamis } from './SelectBidKamis';
 import { formatExpiry } from '../../helpers';
+import { SelectBidKamis } from './SelectBidKamis';
 
 const FILTER_CYCLE = ['Show all', 'Bids on my kami', 'Only generic'] as const;
 type BidFilter = (typeof FILTER_CYCLE)[number];
@@ -77,7 +77,9 @@ export const Bids = ({
 
     let isActive = true;
     const refreshBids = async () => {
-      const res = await KamidenClient.getKamiMarketBids({});
+      const res = await KamidenClient.getKamiMarketBids({
+        Size: 100,
+      });
       if (!isActive) return;
       const all = res.Bids ?? [];
       const filtered = all.filter((bid) =>
@@ -125,10 +127,7 @@ export const Bids = ({
     }
   };
 
-  const restingIndices = useMemo(
-    () => new Set(restingKamis.map((k) => k.index)),
-    [restingKamis]
-  );
+  const restingIndices = useMemo(() => new Set(restingKamis.map((k) => k.index)), [restingKamis]);
   const allOwnedIndices = useMemo(() => {
     const set = new Set(ownedKamiIndices);
     restingKamis.forEach((k) => set.add(k.index));
@@ -161,9 +160,12 @@ export const Bids = ({
 
   const filteredBids = useMemo(() => {
     switch (filterBy) {
-      case 'Show all': return bids;
+      case 'Show all':
+        return bids;
       case 'Only generic':
-        return bids.filter((bid) => bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC);
+        return bids.filter(
+          (bid) => bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
+        );
       default: // Bids on my kami — only specific bids targeting kami you own (staked + unstaked)
         if (allOwnedIndices.size === 0) return [];
         return bids.filter(
@@ -323,29 +325,24 @@ export const Bids = ({
             </EmptyCenter>
           )}
           {sortedBids.map((bid) => {
-            const isSpecific =
-              bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
+            const isSpecific = bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
             const kami = resolveKami(bid);
             const bidder = utils.getAccountByID(bid.BuyerAccountID);
             const progress = getBidProgress(bid);
             const isSelected = selectedBid?.OrderID === bid.OrderID;
-            const notYourKami =
-              isSpecific && !allOwnedIndices.has(bid.KamiIndex);
+            const notYourKami = isSpecific && !allOwnedIndices.has(bid.KamiIndex);
 
             return (
-              <Row
-                key={bid.OrderID}
-                isSelected={isSelected}
-              >
+              <Row key={bid.OrderID} isSelected={isSelected}>
                 <Column flex={2}>
                   <KamiCell>
                     <KamiThumbnail
                       src={isSpecific && kami ? kami.image : placeholderKami}
-                      alt={isSpecific ? kami?.name ?? `Kami #${bid.KamiIndex}` : 'Any Kami'}
+                      alt={isSpecific ? (kami?.name ?? `Kami #${bid.KamiIndex}`) : 'Any Kami'}
                     />
                     <KamiInfo>
                       <KamiName>
-                        {isSpecific ? kami?.name ?? `Kami #${bid.KamiIndex}` : 'Any Kami'}
+                        {isSpecific ? (kami?.name ?? `Kami #${bid.KamiIndex}`) : 'Any Kami'}
                       </KamiName>
                       {progress && <ProgressText>{progress}</ProgressText>}
                     </KamiInfo>
@@ -437,7 +434,9 @@ const BidsBody = styled.div`
   overflow-y: auto;
   flex: 1;
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const EmptyCenter = styled.div`

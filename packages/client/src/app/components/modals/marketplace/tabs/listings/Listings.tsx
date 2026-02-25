@@ -105,7 +105,7 @@ export const Listings = ({
 
     let isActive = true;
     const refreshListings = async () => {
-      const res = await KamidenClient.getKamiMarketListings({});
+      const res = await KamidenClient.getKamiMarketListings({ Size: 100 });
       if (!isActive) return;
       const all = res.Listings ?? [];
       setListings(all);

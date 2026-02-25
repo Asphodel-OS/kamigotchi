@@ -107,7 +107,7 @@ export const CreateOrder = ({
       const res = await KamidenClient.getKamiMarketHistory({
         AccountId: normalizeAccountId(account.id),
         Timestamp: 0,
-        Size: 200,
+        Size: 100,
       });
       if (!isActive) return;
       const orders = (res as { Orders?: KamiMarketOrder[] })?.Orders ?? [];
