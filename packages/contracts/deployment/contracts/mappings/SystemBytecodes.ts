@@ -74,6 +74,7 @@ import KamiOnyxRespecSystem from "../../../out/KamiOnyxRespecSystem.sol/KamiOnyx
 import KamiOnyxReviveSystem from "../../../out/KamiOnyxReviveSystem.sol/KamiOnyxReviveSystem.json";
 import KamiSacrificeCommitSystem from "../../../out/KamiSacrificeCommitSystem.sol/KamiSacrificeCommitSystem.json";
 import KamiSacrificeRevealSystem from "../../../out/KamiSacrificeRevealSystem.sol/KamiSacrificeRevealSystem.json";
+import KamiSendSystem from "../../../out/KamiSendSystem.sol/KamiSendSystem.json";
 import KamiUnequipSystem from "../../../out/KamiUnequipSystem.sol/KamiUnequipSystem.json";
 import KamiUseItemSystem from "../../../out/KamiUseItemSystem.sol/KamiUseItemSystem.json";
 import ListingBuySystem from "../../../out/ListingBuySystem.sol/ListingBuySystem.json";
@@ -168,6 +169,7 @@ export const SystemBytecodes = {
   "system.kami.onyx.revive": KamiOnyxReviveSystem,
   "system.kami.sacrifice.commit": KamiSacrificeCommitSystem,
   "system.kami.sacrifice.reveal": KamiSacrificeRevealSystem,
+  "system.kami.send": KamiSendSystem,
   "system.kami.unequip": KamiUnequipSystem,
   "system.kami.use.item": KamiUseItemSystem,
   "system.listing.buy": ListingBuySystem,

@@ -147,7 +147,7 @@ export const Listings = ({
     () =>
       listings
         .filter((listing) => !recentlyBoughtListings.has(listing.OrderID))
-        .filter((listing) => !isListingExpired(listing.Expiry))
+        .filter((listing) => !isExpired(listing.Expiry))
         .map((listing) => {
           const entity = utils.queryKamiByIndex(listing.KamiIndex);
           const getter = viewMode === 'grid' ? utils.getKamiDetailed : utils.getKami;

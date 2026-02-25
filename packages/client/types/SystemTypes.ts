@@ -74,6 +74,7 @@ import { KamiOnyxRespecSystem } from "./ethers-contracts/KamiOnyxRespecSystem";
 import { KamiOnyxReviveSystem } from "./ethers-contracts/KamiOnyxReviveSystem";
 import { KamiSacrificeCommitSystem } from "./ethers-contracts/KamiSacrificeCommitSystem";
 import { KamiSacrificeRevealSystem } from "./ethers-contracts/KamiSacrificeRevealSystem";
+import { KamiSendSystem } from "./ethers-contracts/KamiSendSystem";
 import { KamiUnequipSystem } from "./ethers-contracts/KamiUnequipSystem";
 import { KamiUseItemSystem } from "./ethers-contracts/KamiUseItemSystem";
 import { ListingBuySystem } from "./ethers-contracts/ListingBuySystem";
@@ -168,6 +169,7 @@ export type SystemTypes = {
   "system.kami.onyx.revive": KamiOnyxReviveSystem;
   "system.kami.sacrifice.commit": KamiSacrificeCommitSystem;
   "system.kami.sacrifice.reveal": KamiSacrificeRevealSystem;
+  "system.kami.send": KamiSendSystem;
   "system.kami.unequip": KamiUnequipSystem;
   "system.kami.use.item": KamiUseItemSystem;
   "system.listing.buy": ListingBuySystem;

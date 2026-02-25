@@ -51,6 +51,7 @@ export interface Modals {
   help: boolean;
   inventory: boolean;
   kami: boolean;
+  kamiSend: boolean;
   leaderboard: boolean;
   lootBox: boolean;
   marketplace: boolean;
@@ -83,6 +84,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   help: isOn,
   inventory: isOn,
   kami: isOn,
+  kamiSend: isOn,
   leaderboard: isOn,
   lootBox: isOn,
   marketplace: isOn,
@@ -137,6 +139,7 @@ const MODAL_ZONES: Partial<Record<keyof Modals, ScreenZone[]>> = {
   help: ['right'],
   chat: ['right'],
   inventory: ['right'],
+  kamiSend: ['right'],
   quests: ['right'],
   settings: ['right'],
   questDialogue: ['right'],
@@ -200,6 +203,7 @@ export const useVisibility = create<State & Actions>((set) => {
       help: false,
       inventory: false,
       kami: false,
+      kamiSend: false,
       leaderboard: false,
       lootBox: false,
       marketplace: false,

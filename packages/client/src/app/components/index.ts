@@ -16,6 +16,7 @@ import { GachaModal } from './modals/gacha';
 import { GoalModal } from './modals/goals';
 import { HelpModal } from './modals/help';
 import { InventoryModal } from './modals/inventory';
+import { KamiSendModal } from './modals/kamiSend';
 import { KamiModal } from './modals/kami';
 import { KamiPortalModal } from './modals/kamiPortal';
 import { LeaderboardModal } from './modals/leaderboard';
@@ -134,6 +135,10 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: QuestModal,
+    gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: KamiSendModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
   },
   {

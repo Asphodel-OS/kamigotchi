@@ -74,6 +74,7 @@ import KamiOnyxRespecSystem from "../abi/KamiOnyxRespecSystem.json";
 import KamiOnyxReviveSystem from "../abi/KamiOnyxReviveSystem.json";
 import KamiSacrificeCommitSystem from "../abi/KamiSacrificeCommitSystem.json";
 import KamiSacrificeRevealSystem from "../abi/KamiSacrificeRevealSystem.json";
+import KamiSendSystem from "../abi/KamiSendSystem.json";
 import KamiUnequipSystem from "../abi/KamiUnequipSystem.json";
 import KamiUseItemSystem from "../abi/KamiUseItemSystem.json";
 import ListingBuySystem from "../abi/ListingBuySystem.json";
@@ -168,6 +169,7 @@ export const SystemAbis = {
   "system.kami.onyx.revive": KamiOnyxReviveSystem.abi,
   "system.kami.sacrifice.commit": KamiSacrificeCommitSystem.abi,
   "system.kami.sacrifice.reveal": KamiSacrificeRevealSystem.abi,
+  "system.kami.send": KamiSendSystem.abi,
   "system.kami.unequip": KamiUnequipSystem.abi,
   "system.kami.use.item": KamiUseItemSystem.abi,
   "system.listing.buy": ListingBuySystem.abi,
