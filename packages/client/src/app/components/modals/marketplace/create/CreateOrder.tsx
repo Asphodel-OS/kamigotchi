@@ -14,7 +14,7 @@ import { Sell } from './Sell';
 
 type OrderType = 'listing' | 'bid';
 const DEFAULT_EXPIRY_HOURS = 0;
-const MIN_PRICE_ETH = 0.001;
+const MIN_PRICE_ETH = 0;
 const MAX_PRICE_ETH = 100;
 const MAX_QUANTITY = 30;
 
