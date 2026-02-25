@@ -137,6 +137,7 @@ export const MyOrders = ({
   const [sortBy, setSortBy] = useState<SortMethod>('Type');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('All');
   const [orders, setOrders] = useState<KamiMarketOrder[]>([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
 
   const account = useAccount((s) => s.account);
@@ -170,6 +171,7 @@ export const MyOrders = ({
       });
       if (!isActive) return;
       setOrders((res as { Orders?: KamiMarketOrder[] })?.Orders ?? []);
+      setLoading(false);
     };
 
     refresh();
@@ -295,7 +297,7 @@ export const MyOrders = ({
         </Column>
       </HeaderRow>
       <OrdersBody>
-        {pagedOrders.length === 0 && (
+        {pagedOrders.length === 0 && !loading && (
           <EmptyCenter>
             <EmptyText text={['No orders found']} size={0.9} />
           </EmptyCenter>

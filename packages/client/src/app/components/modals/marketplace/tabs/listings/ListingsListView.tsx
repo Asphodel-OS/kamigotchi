@@ -17,6 +17,7 @@ export const ListingsListView = ({
   onCancelListing,
   onOpenKami,
   getAccountByID,
+  loading,
 }: {
   listings: { listing: KamiMarketListing; kami?: Kami }[];
   formatPrice: (weiString: string) => string;
@@ -29,6 +30,7 @@ export const ListingsListView = ({
   onCancelListing: (orderId: string) => void;
   onOpenKami: (index: number) => void;
   getAccountByID: (id: string) => { name: string; index: number };
+  loading?: boolean;
 }) => {
   return (
     <>
@@ -52,7 +54,7 @@ export const ListingsListView = ({
         </Column>
       </HeaderRow>
       <ListingsBody>
-        {listings.length === 0 && (
+        {listings.length === 0 && !loading && (
           <EmptyCenter>
             <EmptyText text={['No listings found']} size={0.9} />
           </EmptyCenter>

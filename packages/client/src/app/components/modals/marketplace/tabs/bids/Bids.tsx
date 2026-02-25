@@ -60,6 +60,7 @@ export const Bids = ({
   const [selectedKamis, setSelectedKamis] = useState<Set<number>>(new Set());
   const [showSelectKami, setShowSelectKami] = useState(false);
   const [bids, setBids] = useState<KamiMarketBid[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedBid, setSelectedBid] = useState<KamiMarketBid | null>(null);
   const [filterBy, setFilterBy] = useState<BidFilter>('Show all');
   const [page, setPage] = useState(0);
@@ -93,6 +94,7 @@ export const Bids = ({
         utils.isDifferentAccountId(bid.BuyerAccountID, accountId)
       );
       setBids(filtered);
+      setLoading(false);
     };
 
     refreshBids();
@@ -369,7 +371,7 @@ export const Bids = ({
           </Column>
         </HeaderRow>
         <BidsBody>
-          {pagedBids.length === 0 && (
+          {pagedBids.length === 0 && !loading && (
             <EmptyCenter>
               <EmptyText text={['No bids found']} size={0.9} />
             </EmptyCenter>

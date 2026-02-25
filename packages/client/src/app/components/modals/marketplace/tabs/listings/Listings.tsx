@@ -79,6 +79,7 @@ export const Listings = ({
   const setModals = useVisibility((s) => s.setModals);
 
   const [listings, setListings] = useState<KamiMarketListing[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortMethod>('Price Low');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showCart, setShowCart] = useState(false);
@@ -113,6 +114,7 @@ export const Listings = ({
       const res = await KamidenClient.getKamiMarketListings({ Size: 500 });
       if (!isActive) return;
       setListings(res.Listings ?? []);
+      setLoading(false);
     };
 
     refreshListings();
@@ -428,10 +430,11 @@ export const Listings = ({
             onCancelListing={onCancelListing}
             onOpenKami={openKamiModal}
             getAccountByID={utils.getAccountByID}
+            loading={loading}
           />
         ) : (
           <ListingsGrid>
-            {paged.length === 0 && (
+            {paged.length === 0 && !loading && (
               <EmptyCenter>
                 <EmptyText text={['No listings found']} size={0.9} />
               </EmptyCenter>
