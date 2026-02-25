@@ -320,6 +320,17 @@ export const MarketplaceModal: UIComponent = {
       return didActionSucceed(actions.Action, tx);
     };
 
+    const acceptOffer = async (offerID: BigNumberish, kamiIndex: number) => {
+      await ensureVaultApproval();
+      const tx = actions.add({
+        action: 'KamiMarketAcceptOffer',
+        params: [offerID, kamiIndex],
+        description: `Accepting offer for Kami ${kamiIndex}`,
+        execute: async () => api.player.account.kamiMarket.acceptOffer(offerID, kamiIndex),
+      });
+      return didActionSucceed(actions.Action, tx);
+    };
+
     /////////////////
     // DISPLAY
 
@@ -363,6 +374,7 @@ export const MarketplaceModal: UIComponent = {
             showCreateOrder={showCreateOrder}
             setShowFilter={setShowFilter}
             onCloseCreateOrder={closeCreateOrder}
+            onAcceptOffer={acceptOffer}
             onAcceptOfferBatch={acceptOfferBatch}
             accountId={account.id}
             utils={{

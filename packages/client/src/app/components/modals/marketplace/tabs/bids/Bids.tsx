@@ -31,6 +31,7 @@ export const Bids = ({
   showCreateOrder,
   setShowFilter,
   onCloseCreateOrder,
+  onAcceptOffer,
   onAcceptOfferBatch,
   accountId,
   utils,
@@ -39,6 +40,7 @@ export const Bids = ({
   showCreateOrder: boolean;
   setShowFilter: Dispatch<SetStateAction<boolean>>;
   onCloseCreateOrder: () => void;
+  onAcceptOffer: (offerID: string, kamiIndex: number) => Promise<boolean>;
   onAcceptOfferBatch: (offerID: string, kamiIndices: number[]) => Promise<boolean>;
   accountId: string;
   utils: {
@@ -278,7 +280,11 @@ export const Bids = ({
     if (!selectedBid || selectedKamis.size === 0) return;
     const selectedIndices = Array.from(selectedKamis);
     const bidId = selectedBid.OrderID;
-    const success = await onAcceptOfferBatch(bidId, selectedIndices);
+    const isSpecificBid =
+      selectedBid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC;
+    const success = isSpecificBid
+      ? await onAcceptOffer(bidId, selectedIndices[0])
+      : await onAcceptOfferBatch(bidId, selectedIndices);
     if (success) {
       setRecentlyFilledBids((prev) => new Set(prev).add(bidId));
       setRecentlySoldIndices((prev) => {
