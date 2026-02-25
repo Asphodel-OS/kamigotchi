@@ -13,7 +13,7 @@ import { BaseQuest, Quest, populate } from './quest';
 // CHECKERS
 
 // check whether a Repeatable Quest is Available to be repeated now
-const canRepeat = (completed: Quest) => {
+export const canRepeat = (completed: Quest) => {
   if (!completed.repeatable) return false;
   const now = Date.now() / 1000;
   const cooldown = completed.repeatDuration ?? 0;

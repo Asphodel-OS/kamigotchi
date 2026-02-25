@@ -7,6 +7,7 @@ export {
   findNextInChain as findNextQuestInChain,
   hasCompletedDelay as hasCompletedDelayQuest,
   hasCompleted as hasCompletedQuest,
+  canRepeat as canRepeatQuest,
   meetsObjectives,
   meetsRequirements,
   parseObjectives as parseQuestObjectives,
