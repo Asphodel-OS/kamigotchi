@@ -39,7 +39,7 @@ export const Bids = ({
   showCreateOrder: boolean;
   setShowFilter: Dispatch<SetStateAction<boolean>>;
   onCloseCreateOrder: () => void;
-  onAcceptOfferBatch: (offerID: string, kamiIndices: number[]) => Promise<void>;
+  onAcceptOfferBatch: (offerID: string, kamiIndices: number[]) => Promise<boolean>;
   accountId: string;
   utils: {
     getAccountKamis: () => Kami[];
@@ -64,6 +64,7 @@ export const Bids = ({
   const [filterBy, setFilterBy] = useState<BidFilter>('Show all');
   const [page, setPage] = useState(0);
   const [recentlySoldIndices, setRecentlySoldIndices] = useState<Set<number>>(new Set());
+  const [recentlyFilledBids, setRecentlyFilledBids] = useState<Set<string>>(new Set());
 
   // Reset on modal open
   useEffect(() => {
@@ -74,6 +75,7 @@ export const Bids = ({
     setShowSelectKami(false);
     setPage(0);
     setRecentlySoldIndices(new Set());
+    setRecentlyFilledBids(new Set());
   }, [isMarketplaceOpen]);
 
   /////////////////
@@ -168,22 +170,23 @@ export const Bids = ({
   };
 
   const filteredBids = useMemo(() => {
+    const active = bids.filter((b) => !recentlyFilledBids.has(b.OrderID));
     switch (filterBy) {
       case 'Show all':
-        return bids;
+        return active;
       case 'Only generic':
-        return bids.filter(
+        return active.filter(
           (bid) => bid.BidType !== KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC
         );
       default: // Bids on my kami — only specific bids targeting kami you own (staked + unstaked)
         if (allOwnedIndices.size === 0) return [];
-        return bids.filter(
+        return active.filter(
           (bid) =>
             bid.BidType === KamiMarketBidType.KAMI_MARKET_BID_TYPE_SPECIFIC &&
             allOwnedIndices.has(bid.KamiIndex)
         );
     }
-  }, [bids, filterBy, allOwnedIndices]);
+  }, [bids, filterBy, allOwnedIndices, recentlyFilledBids]);
 
   const sortedBids = useMemo(() => {
     return [...filteredBids].sort((a, b) => {
@@ -272,12 +275,16 @@ export const Bids = ({
   const handleSell = async () => {
     if (!selectedBid || selectedKamis.size === 0) return;
     const selectedIndices = Array.from(selectedKamis);
-    await onAcceptOfferBatch(selectedBid.OrderID, selectedIndices);
-    setRecentlySoldIndices((prev) => {
-      const next = new Set(prev);
-      selectedIndices.forEach((i) => next.add(i));
-      return next;
-    });
+    const bidId = selectedBid.OrderID;
+    const success = await onAcceptOfferBatch(bidId, selectedIndices);
+    if (success) {
+      setRecentlyFilledBids((prev) => new Set(prev).add(bidId));
+      setRecentlySoldIndices((prev) => {
+        const next = new Set(prev);
+        selectedIndices.forEach((i) => next.add(i));
+        return next;
+      });
+    }
     setSelectedKamis(new Set());
     setShowSelectKami(false);
   };

@@ -50,7 +50,7 @@ export const Listings = ({
 }: {
   isVisible: boolean;
   onOpenFilter: () => void;
-  onBuyListings: (listingIDs: string[], kamiIndices: number[], totalPrice: bigint) => void;
+  onBuyListings: (listingIDs: string[], kamiIndices: number[], totalPrice: bigint) => Promise<boolean>;
   onCancelListing: (orderID: string) => void;
   onCloseFilter: () => void;
   onCloseCreateOrder: () => void;
@@ -87,6 +87,7 @@ export const Listings = ({
   const [sweepActive, setSweepActive] = useState(false);
   const [sweepCount, setSweepCount] = useState(0);
   const [page, setPage] = useState(0);
+  const [recentlyBoughtListings, setRecentlyBoughtListings] = useState<Set<string>>(new Set());
 
   // Reset on modal open
   useEffect(() => {
@@ -98,6 +99,7 @@ export const Listings = ({
     setSweepCount(0);
     setAllFlipped(false);
     setPage(0);
+    setRecentlyBoughtListings(new Set());
   }, [isMarketplaceOpen]);
 
   /////////////////
@@ -140,13 +142,15 @@ export const Listings = ({
 
   const resolvedListings = useMemo(
     () =>
-      listings.map((listing) => {
-        const entity = utils.queryKamiByIndex(listing.KamiIndex);
-        const getter = viewMode === 'grid' ? utils.getKamiDetailed : utils.getKami;
-        const kami = entity !== undefined ? getter(entity) : undefined;
-        return { listing, kami, entity };
-      }),
-    [listings, utils, viewMode]
+      listings
+        .filter((listing) => !recentlyBoughtListings.has(listing.OrderID))
+        .map((listing) => {
+          const entity = utils.queryKamiByIndex(listing.KamiIndex);
+          const getter = viewMode === 'grid' ? utils.getKamiDetailed : utils.getKami;
+          const kami = entity !== undefined ? getter(entity) : undefined;
+          return { listing, kami, entity };
+        }),
+    [listings, utils, viewMode, recentlyBoughtListings]
   );
 
   const hasActiveFilters = useMemo(() => {
@@ -311,14 +315,18 @@ export const Listings = ({
     });
   };
 
-  const handleBuyCart = () => {
+  const handleBuyCart = async () => {
     if (cart.length === 0) return;
     const totalPrice = cart.reduce((sum, item) => sum + BigInt(item.Price), 0n);
-    onBuyListings(
-      cart.map((item) => item.OrderID),
-      cart.map((item) => item.KamiIndex),
-      totalPrice
-    );
+    const boughtIds = cart.map((item) => item.OrderID);
+    const success = await onBuyListings(boughtIds, cart.map((item) => item.KamiIndex), totalPrice);
+    if (success) {
+      setRecentlyBoughtListings((prev) => {
+        const next = new Set(prev);
+        boughtIds.forEach((id) => next.add(id));
+        return next;
+      });
+    }
     setCart([]);
     setShowCart(false);
   };

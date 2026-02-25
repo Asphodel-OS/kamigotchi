@@ -156,6 +156,7 @@ const KamiGrid = styled.div`
   gap: 0.4vw;
   padding: 0.6vw;
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -174,13 +175,10 @@ const EmptyGridCenter = styled.div`
 
 const KamiSlot = styled.div<{ isDisabled: boolean; $selected?: boolean }>`
   position: relative;
-  aspect-ratio: 1;
+  padding-bottom: 100%;
   border-radius: 0.3vw;
   background: #fafafa;
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: ${({ isDisabled, $selected }) => (isDisabled && !$selected ? 0.4 : 1)};
   border: 0.18vw solid ${({ $selected }) => ($selected ? '#222' : 'transparent')};
   outline: ${({ $selected }) => ($selected ? 'none' : '0.06vw solid #ccc')};
@@ -189,14 +187,12 @@ const KamiSlot = styled.div<{ isDisabled: boolean; $selected?: boolean }>`
 
 const LockedKamiSlot = styled.div`
   position: relative;
-  aspect-ratio: 1;
+  padding-bottom: 100%;
   border: 0.06vw solid #ccc;
   border-radius: 0.3vw;
   background: #fafafa;
   cursor: not-allowed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
 `;
 
 const LockedOverlay = styled.div`
@@ -224,6 +220,8 @@ const LockedLabel = styled.span`
 `;
 
 const KamiSlotImage = styled.img`
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;

@@ -3,7 +3,7 @@ import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { EmptyText, IconButton } from 'app/components/library';
+import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
@@ -96,6 +96,14 @@ export const Cart = ({
           </InfoChip>
         </FooterInfo>
         <FooterButtons>
+          <TextTooltip
+            text={['Newly adopted Kami need to take a 60m nap!']}
+            size={0.9}
+            delay={0}
+            alignText='center'
+          >
+            <HintIcon>?</HintIcon>
+          </TextTooltip>
           <IconButton
             text='Remove All'
             onClick={onClear}
@@ -273,7 +281,24 @@ const InfoValue = styled.span`
 
 const FooterButtons = styled.div`
   display: flex;
-  gap: 0.4vw;
+  align-items: center;
+  gap: 0.6vw;
+`;
+
+const HintIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8vw;
+  height: 1.8vw;
+  border-radius: 50%;
+  border: 0.15vw solid #999;
+  background: #f0f0f0;
+  color: #555;
+  font-size: 1.1vw;
+  font-weight: 900;
+  cursor: help;
+  flex-shrink: 0;
 `;
 
 const BuyButton = styled(IconButton)`

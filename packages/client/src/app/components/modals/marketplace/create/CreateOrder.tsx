@@ -14,6 +14,9 @@ import { Sell } from './Sell';
 
 type OrderType = 'listing' | 'bid';
 const DEFAULT_EXPIRY_HOURS = 0;
+const MIN_PRICE_ETH = 0.001;
+const MAX_PRICE_ETH = 100;
+const MAX_QUANTITY = 30;
 
 const getExpiryTimestamp = (expirationHours: number) => {
   if (expirationHours === 0) return 0;
@@ -63,7 +66,7 @@ export const CreateOrder = ({
 
   const [orderType, setOrderType] = useState<OrderType>('listing');
   const [price, setPrice] = useState('');
-  const [quantity, setQuantity] = useState('');
+  const [quantity, setQuantity] = useState('5');
   const [expiration, setExpiration] = useState(DEFAULT_EXPIRY_HOURS);
   const [selectedKami, setSelectedKami] = useState<Kami[]>([NullKami]);
   const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
@@ -141,9 +144,13 @@ export const CreateOrder = ({
     [unownedKamis]
   );
 
-  const isPriceValid = parseEthToWei(price) !== null;
+  const priceNum = Number(price);
+  const isPriceValid =
+    parseEthToWei(price) !== null && priceNum >= MIN_PRICE_ETH && priceNum <= MAX_PRICE_ETH;
   const isSellComplete = selectedKami[0]?.id !== NullKami.id && isPriceValid;
-  const isBuyComplete = isPriceValid && (!!selectedBuyKami || Number(quantity) > 0);
+  const quantityNum = Number(quantity);
+  const isQuantityValid = quantityNum >= 1 && quantityNum <= MAX_QUANTITY;
+  const isBuyComplete = isPriceValid && (!!selectedBuyKami || isQuantityValid);
   const selectedKamiState = selectedKami[0]?.state ?? '';
   const isSelectedKamiResting = isKamiResting(selectedKamiState);
   const isSelectedKamiNotListed = selectedKami[0]?.state !== 'LISTED';
@@ -200,7 +207,7 @@ export const CreateOrder = ({
 
   const handleClear = () => {
     setPrice('');
-    setQuantity('');
+    setQuantity('5');
     setSelectedKami([NullKami]);
     setSelectedBuyKami(null);
     setExpiration(DEFAULT_EXPIRY_HOURS);

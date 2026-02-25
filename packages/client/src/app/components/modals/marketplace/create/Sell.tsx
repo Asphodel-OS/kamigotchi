@@ -90,11 +90,21 @@ export const Sell = ({
                 <StyledInput
                   type='text'
                   inputMode='decimal'
-                  placeholder='0'
+                  placeholder='Enter Price'
                   value={price}
                   onChange={(e) => {
                     const val = e.target.value;
-                    if (val === '' || /^\d*\.?\d{0,18}$/.test(val)) setPrice(val);
+                    if (val === '' || /^\d*\.?\d{0,6}$/.test(val)) {
+                      if (val !== '' && Number(val) > 100) return;
+                      setPrice(val);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (price === '') return;
+                    let val = price;
+                    if (Number(val) > 0 && Number(val) < 0.001) val = '0.001';
+                    if (val.includes('.')) val = val.replace(/0+$/, '').replace(/\.$/, '');
+                    if (val !== price) setPrice(val);
                   }}
                 />
                 <InputIcon src={TokenIcons.eth} alt='ETH' />
@@ -216,13 +226,29 @@ const InputRow = styled.div`
 
 const StyledInput = styled.input`
   font-size: 1vw;
-  width: 6vw;
+  width: 10vw;
   height: 2.5vw;
-  padding: 0.3vw 0.4vw;
+  padding: 0.3vw 0.6vw;
   border: 0.15vw solid black;
   border-radius: 0.6vw;
   outline: none;
   background: white;
+  text-align: center;
+  caret-color: transparent;
+
+  &::placeholder {
+    color: transparent;
+    font-size: 0.8vw;
+  }
+
+  &:focus {
+    border-width: 0.25vw;
+    background: #FFF9E0;
+  }
+
+  &:focus::placeholder {
+    color: #aaa;
+  }
 `;
 
 const InputIcon = styled.img`

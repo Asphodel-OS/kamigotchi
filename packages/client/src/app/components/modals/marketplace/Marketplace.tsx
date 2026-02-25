@@ -286,15 +286,16 @@ export const MarketplaceModal: UIComponent = {
       return didActionSucceed(actions.Action, tx);
     };
 
-    const buyListings = (listingIDs: BigNumberish[], kamiIndices: number[], totalPrice: bigint) => {
+    const buyListings = async (listingIDs: BigNumberish[], kamiIndices: number[], totalPrice: bigint) => {
       const ownerApi = apis.get(selectedAddress);
-      if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
-      actions.add({
+      if (!ownerApi) { console.error(`API not established for ${selectedAddress}`); return false; }
+      const tx = actions.add({
         action: 'KamiMarketBuy',
         params: [listingIDs, totalPrice],
         description: `Buying Kami ${kamiIndices.join(', ')}`,
         execute: async () => ownerApi.account.kamiMarket.buy(listingIDs, totalPrice),
       });
+      return didActionSucceed(actions.Action, tx);
     };
 
     const cancelOrder = (orderID: BigNumberish) => {
@@ -308,12 +309,13 @@ export const MarketplaceModal: UIComponent = {
 
     const acceptOfferBatch = async (offerID: BigNumberish, kamiIndices: number[]) => {
       await ensureVaultApproval();
-      actions.add({
+      const tx = actions.add({
         action: 'KamiMarketAcceptOffer',
         params: [offerID, kamiIndices],
         description: `Accepting offer for ${kamiIndices.length} Kamis`,
         execute: async () => api.player.account.kamiMarket.acceptOfferBatch(offerID, kamiIndices),
       });
+      return didActionSucceed(actions.Action, tx);
     };
 
     /////////////////
