@@ -867,6 +867,23 @@
       ]
     },
     {
+      "name": "KamiSendSystem",
+      "writeAccess": [
+        "Balance",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IndexKami",
+        "IndexKamiListing",
+        "Max",
+        "State",
+        "TimeNext",
+        "TimeLast",
+        "TimeStart",
+        "TimeEnd",
+        "Value"
+      ]
+    },
+    {
       "name": "KamiSacrificeRevealSystem",
       "writeAccess": [
         "Balance",
