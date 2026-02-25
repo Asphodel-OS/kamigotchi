@@ -80,13 +80,14 @@ export const CreateOrder = ({
   useEffect(() => {
     if (!isVisible) return;
     const refreshKamiLists = () => {
-      setAccountKamis(utils.getAccountKamis());
-      setRestingKamis(utils.getRestingKamis());
+      const nextAccountKamis = utils.getAccountKamis();
+      setAccountKamis(nextAccountKamis);
+      setRestingKamis(nextAccountKamis.filter((kami) => kami.state === 'RESTING'));
       setAllKamis(utils.getAllKamis());
     };
 
     refreshKamiLists();
-    const intervalId = window.setInterval(refreshKamiLists, 1000);
+    const intervalId = window.setInterval(refreshKamiLists, 3000);
     return () => window.clearInterval(intervalId);
   }, [isVisible, utils]);
 
