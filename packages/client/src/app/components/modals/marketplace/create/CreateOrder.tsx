@@ -79,26 +79,41 @@ export const CreateOrder = ({
 
   useEffect(() => {
     if (!isVisible) return;
-    setAccountKamis(utils.getAccountKamis());
-    setRestingKamis(utils.getRestingKamis());
-    setAllKamis(utils.getAllKamis());
+    const refreshKamiLists = () => {
+      setAccountKamis(utils.getAccountKamis());
+      setRestingKamis(utils.getRestingKamis());
+      setAllKamis(utils.getAllKamis());
+    };
+
+    refreshKamiLists();
+    const intervalId = window.setInterval(refreshKamiLists, 1000);
+    return () => window.clearInterval(intervalId);
   }, [isVisible, utils]);
 
   const sellableKamis = restingKamis;
 
   useEffect(() => {
-    const current = selectedKami[0];
-    if (!current || current.id === NullKami.id) return;
-    const stillSellable = sellableKamis.some((kami) => kami.index === current.index);
-    if (!stillSellable) setSelectedKami([NullKami]);
-  }, [sellableKamis, selectedKami]);
+    setSelectedKami((prev) => {
+      const current = prev[0];
 
-  useEffect(() => {
-    const current = selectedKami[0];
-    if (!current || current.id !== NullKami.id) return;
-    if (sellableKamis.length === 0) return;
-    setSelectedKami([sellableKamis[0]]);
-  }, [sellableKamis, selectedKami]);
+      if (sellableKamis.length === 0) {
+        return current?.id === NullKami.id ? prev : [NullKami];
+      }
+
+      if (!current || current.id === NullKami.id) return [sellableKamis[0]];
+
+      const updatedSelection = sellableKamis.find((kami) => kami.index === current.index);
+      if (!updatedSelection) return [sellableKamis[0]];
+
+      const isSameSelectionContent =
+        current.id === updatedSelection.id &&
+        current.name === updatedSelection.name &&
+        current.image === updatedSelection.image &&
+        current.state === updatedSelection.state;
+
+      return isSameSelectionContent ? prev : [updatedSelection];
+    });
+  }, [sellableKamis]);
 
   const kamiOptions = useMemo(
     () => sellableKamis.map((k) => ({ text: k.name, object: k, img: k.image })),
