@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { parseEther } from 'viem';
 
 import { IconButton, TextTooltip } from 'app/components/library';
-import { useAccount, useSelected, useVisibility } from 'app/stores';
-import { getKamidenClient, KamiMarketOrder } from 'clients/kamiden';
+import { useSelected, useVisibility } from 'app/stores';
+
 import { BigNumberish } from 'ethers';
 import { Kami, NullKami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
@@ -13,16 +13,7 @@ import { Buy } from './Buy';
 import { Sell } from './Sell';
 
 type OrderType = 'listing' | 'bid';
-const KamidenClient = getKamidenClient();
 const DEFAULT_EXPIRY_HOURS = 0;
-
-const normalizeAccountId = (accountId: string) => {
-  try {
-    return BigInt(accountId).toString();
-  } catch {
-    return accountId;
-  }
-};
 
 const getExpiryTimestamp = (expirationHours: number) => {
   if (expirationHours === 0) return 0;
@@ -30,9 +21,6 @@ const getExpiryTimestamp = (expirationHours: number) => {
 };
 
 const isKamiResting = (state: string) => state === 'RESTING';
-
-const isSellEligibleKami = (kami: Kami) =>
-  isKamiResting(kami.state ?? '') && kami.state !== 'LISTED';
 
 const parseEthToWei = (ethAmount: string) => {
   if (!ethAmount) return null;
@@ -81,73 +69,22 @@ export const CreateOrder = ({
   const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
   const [restingKamis, setRestingKamis] = useState<Kami[]>([]);
   const [allKamis, setAllKamis] = useState<Kami[]>([]);
-  const [hasActiveListedOrders, setHasActiveListedOrders] = useState(false);
-  const [recentlyListedIndices, setRecentlyListedIndices] = useState<Set<number>>(new Set());
-
   const setModals = useVisibility((s) => s.setModals);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const kamiIndex = useSelected((s) => s.kamiIndex);
-  const account = useAccount((s) => s.account);
 
   /////////////////
   // PREPARATION
 
   useEffect(() => {
     if (!isVisible) return;
+    setAccountKamis(utils.getAccountKamis());
+    setRestingKamis(utils.getRestingKamis());
+    setAllKamis(utils.getAllKamis());
+  }, [isVisible, utils]);
 
-    let isActive = true;
-    const refreshKamis = async () => {
-      if (!isActive) return;
-      setAccountKamis(utils.getAccountKamis());
-      setRestingKamis(utils.getRestingKamis());
-      setAllKamis(utils.getAllKamis());
-
-      if (!KamidenClient) return;
-      const res = await KamidenClient.getKamiMarketHistory({
-        AccountId: normalizeAccountId(account.id),
-        Timestamp: 0,
-        Size: 100,
-      });
-      if (!isActive) return;
-      const orders = (res as { Orders?: KamiMarketOrder[] })?.Orders ?? [];
-      const hasActiveListings = orders.some(
-        (order) => !!order.Listing && !order.IsCanceled && !order.IsComplete
-      );
-      setHasActiveListedOrders(hasActiveListings);
-    };
-
-    refreshKamis();
-    const intervalId = window.setInterval(refreshKamis, 3000);
-    return () => {
-      isActive = false;
-      window.clearInterval(intervalId);
-    };
-  }, [isVisible, utils, account.id]);
-
-  const sellableKamis = useMemo(
-    () => restingKamis.filter((k) => isSellEligibleKami(k) && !recentlyListedIndices.has(k.index)),
-    [restingKamis, recentlyListedIndices]
-  );
-
-  // clear recently listed entries once ECS catches up (kami no longer resting/eligible)
-  useEffect(() => {
-    if (recentlyListedIndices.size === 0) return;
-    const restingIndices = new Set(restingKamis.filter(isSellEligibleKami).map((k) => k.index));
-    const stale = [...recentlyListedIndices].filter((idx) => !restingIndices.has(idx));
-    if (stale.length > 0) {
-      setRecentlyListedIndices((prev) => {
-        const next = new Set(prev);
-        stale.forEach((idx) => next.delete(idx));
-        return next;
-      });
-    }
-  }, [restingKamis, recentlyListedIndices]);
-
-  // clear recently listed when modal closes
-  useEffect(() => {
-    if (!isVisible) setRecentlyListedIndices(new Set());
-  }, [isVisible]);
+  const sellableKamis = restingKamis;
 
   useEffect(() => {
     const current = selectedKami[0];
@@ -171,10 +108,6 @@ export const CreateOrder = ({
   const [selectedBuyKami, setSelectedBuyKami] = useState<Kami | null>(null);
 
   const accountKamiIds = useMemo(() => new Set(accountKamis.map((k) => k.id)), [accountKamis]);
-  const hasListedKamis = useMemo(() => {
-    const hasListedState = accountKamis.some((kami) => kami.state === 'LISTED');
-    return hasListedState || hasActiveListedOrders;
-  }, [accountKamis, hasActiveListedOrders]);
   const unownedKamis = useMemo(
     () => allKamis.filter((k) => !accountKamiIds.has(k.id)),
     [allKamis, accountKamiIds]
@@ -206,9 +139,7 @@ export const CreateOrder = ({
   })();
   const isCreateDisabled =
     orderType === 'listing' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
-  const sellSelectionTooltip = hasListedKamis
-    ? 'All your Kami are already listed'
-    : `You don't have resting Kami.`;
+  const sellSelectionTooltip = `You don't have resting Kami.`;
   const actionText = orderType === 'listing' ? 'Place Listing' : 'Place Bid';
 
   /////////////////
@@ -233,12 +164,8 @@ export const CreateOrder = ({
 
     if (orderType === 'listing') {
       if (!selectedKami[0] || priceWei === null) return;
-      const listedIndex = selectedKami[0].index;
-      const completed = await createSellOrder(listedIndex, priceWei, expiry);
-      if (completed) {
-        setRecentlyListedIndices((prev) => new Set(prev).add(listedIndex));
-        handleClear();
-      }
+      const completed = await createSellOrder(selectedKami[0].index, priceWei, expiry);
+      if (completed) handleClear();
     }
     if (orderType === 'bid') {
       if (priceWei === null) return;

@@ -78,7 +78,7 @@ export const Bids = ({
     let isActive = true;
     const refreshBids = async () => {
       const res = await KamidenClient.getKamiMarketBids({
-        Size: 100,
+        Size: 70,
       });
       if (!isActive) return;
       const all = res.Bids ?? [];
