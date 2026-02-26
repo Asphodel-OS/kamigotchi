@@ -290,7 +290,7 @@ export const Bids = ({
       ? await onAcceptOffer(bidId, selectedIndices[0])
       : await onAcceptOfferBatch(bidId, selectedIndices);
     if (success) {
-      setRecentlyFilledBids((prev) => new Set(prev).add(bidId));
+      if (isSpecificBid) setRecentlyFilledBids((prev) => new Set(prev).add(bidId));
       setRecentlySoldIndices((prev) => {
         const next = new Set(prev);
         selectedIndices.forEach((i) => next.add(i));
