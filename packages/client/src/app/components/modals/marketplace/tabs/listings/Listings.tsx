@@ -302,11 +302,6 @@ export const Listings = ({
     setCart(swept);
   }, [sweepActive, sweepCount, filteredListings]);
 
-  // Auto-close cart when it becomes empty
-  useEffect(() => {
-    if (cart.length === 0 && showCart) setShowCart(false);
-  }, [cart, showCart]);
-
   /////////////////
   // ACTIONS
 
@@ -338,14 +333,11 @@ export const Listings = ({
 
   const addToCart = useCallback((listing: KamiMarketListing) => {
     if (!utils.isDifferentAccountId(listing.SellerAccountID, accountId)) return;
-    let added = false;
+    setSweepActive(false);
     setCart((prev) => {
       if (prev.some((item) => item.OrderID === listing.OrderID)) return prev;
-      added = true;
       return [...prev, listing];
     });
-    if (!added) return;
-    setSweepActive(false);
     setShowCart(true);
   }, [utils, accountId]);
 
@@ -394,7 +386,7 @@ export const Listings = ({
                 {cart.length > 0 && <IndicatorBadge>{cart.length}</IndicatorBadge>}
               </IndicatorWrapper>
             </TextTooltip>
-            <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}`]}>
+            <TextTooltip text={[`View: ${viewMode === 'list' ? 'List' : 'Grid'}`]} persistOnClick>
               <IconButton img={ViewIcons[viewMode]} onClick={cycleView} radius={0.6} />
             </TextTooltip>
             {viewMode === 'grid' && (
@@ -453,7 +445,7 @@ export const Listings = ({
                 {hasActiveFilters && <IndicatorBadge>{activeFilterCount}</IndicatorBadge>}
               </IndicatorWrapper>
             </TextTooltip>
-            <TextTooltip text={[`Sort: ${sortBy}`]}>
+            <TextTooltip text={[`Sort: ${sortBy}`]} persistOnClick>
               <IconButton img={SortIcons[sortBy]} onClick={cycleSort} radius={0.6} />
             </TextTooltip>
           </ButtonGroup>

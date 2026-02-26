@@ -188,13 +188,13 @@ export const MarketplaceModal: UIComponent = {
 
     const ensureVaultApproval = async () => {
       if (isVaultApproved) return;
-      if (!marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
+      if (!marketVaultAddress) throw new Error('KAMI_MARKET_VAULT is not configured');
 
       const ownerApi = apis.get(selectedAddress);
-      if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
+      if (!ownerApi) throw new Error(`API not established for ${selectedAddress}`);
 
       const actionID = uuid() as EntityID;
-      actions.add({
+      const tx = actions.add({
         id: actionID,
         action: 'KamiMarketVaultApproval',
         params: [kamiNFTAddress, marketVaultAddress, true],
@@ -207,22 +207,20 @@ export const MarketplaceModal: UIComponent = {
           ),
       });
 
-      await waitForActionCompletion(
-        actions.Action,
-        world.entityToIndex.get(actionID) as EntityIndex
-      );
+      const succeeded = await didActionSucceed(actions.Action, tx);
+      if (!succeeded) throw new Error('Vault approval failed');
       await refetchApproval();
     };
 
     const ensureWethApproval = async () => {
       if (isWethApproved) return;
-      if (!marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
+      if (!marketVaultAddress) throw new Error('KAMI_MARKET_VAULT is not configured');
 
       const ownerApi = apis.get(selectedAddress);
-      if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
+      if (!ownerApi) throw new Error(`API not established for ${selectedAddress}`);
 
       const actionID = uuid() as EntityID;
-      actions.add({
+      const tx = actions.add({
         id: actionID,
         action: 'KamiMarketWethApproval',
         params: [Tokens.ETH.address, marketVaultAddress],
@@ -235,10 +233,8 @@ export const MarketplaceModal: UIComponent = {
           ),
       });
 
-      await waitForActionCompletion(
-        actions.Action,
-        world.entityToIndex.get(actionID) as EntityIndex
-      );
+      const succeeded = await didActionSucceed(actions.Action, tx);
+      if (!succeeded) throw new Error('WETH approval failed');
       await refetchApproval();
     };
 

@@ -69,6 +69,7 @@ export const Bids = ({
   const [page, setPage] = useState(0);
   const [recentlySoldIndices, setRecentlySoldIndices] = useState<Set<number>>(new Set());
   const [recentlyFilledBids, setRecentlyFilledBids] = useState<Set<string>>(new Set());
+  const [optimisticFills, setOptimisticFills] = useState<Map<string, number>>(new Map());
 
   // Reset on modal open
   useEffect(() => {
@@ -80,6 +81,7 @@ export const Bids = ({
     setPage(0);
     setRecentlySoldIndices(new Set());
     setRecentlyFilledBids(new Set());
+    setOptimisticFills(new Map());
   }, [isMarketplaceOpen]);
 
   /////////////////
@@ -97,6 +99,7 @@ export const Bids = ({
         utils.isDifferentAccountId(bid.BuyerAccountID, accountId)
       );
       setBids(filtered);
+      setOptimisticFills(new Map());
       setLoading(false);
     };
 
@@ -128,7 +131,7 @@ export const Bids = ({
     if (!isVisible) return;
     const refresh = () => {
       const nextAccount = utils.getAccountKamis();
-      const nextResting = utils.getRestingKamis().filter((k) => !recentlySoldIndices.has(k.index));
+      const nextResting = nextAccount.filter((k) => k.state === 'RESTING' && !recentlySoldIndices.has(k.index));
       const nextWild = utils.getWildKamis();
       setAccountKamis(nextAccount);
       setRestingKamis(nextResting);
@@ -190,7 +193,14 @@ export const Bids = ({
   const filteredBids = useMemo(() => {
     const active = bids
       .filter((b) => !recentlyFilledBids.has(b.OrderID))
-      .filter((b) => !isExpired(b.Expiry));
+      .filter((b) => !isExpired(b.Expiry))
+      .map((b) => {
+        const filled = optimisticFills.get(b.OrderID);
+        if (!filled) return b;
+        const newQty = b.Quantity - filled;
+        return newQty <= 0 ? null : { ...b, Quantity: newQty };
+      })
+      .filter((b): b is KamiMarketBid => b !== null);
     switch (filterBy) {
       case 'Show all':
         return active;
@@ -206,7 +216,7 @@ export const Bids = ({
             allOwnedIndices.has(bid.KamiIndex)
         );
     }
-  }, [bids, filterBy, allOwnedIndices, recentlyFilledBids]);
+  }, [bids, filterBy, allOwnedIndices, recentlyFilledBids, optimisticFills]);
 
   const sortedBids = useMemo(() => {
     return [...filteredBids].sort((a, b) => {
@@ -303,7 +313,15 @@ export const Bids = ({
       ? await onAcceptOffer(bidId, selectedIndices[0])
       : await onAcceptOfferBatch(bidId, selectedIndices);
     if (success) {
-      if (isSpecificBid) setRecentlyFilledBids((prev) => new Set(prev).add(bidId));
+      if (isSpecificBid) {
+        setRecentlyFilledBids((prev) => new Set(prev).add(bidId));
+      } else {
+        setOptimisticFills((prev) => {
+          const next = new Map(prev);
+          next.set(bidId, (next.get(bidId) ?? 0) + selectedIndices.length);
+          return next;
+        });
+      }
       setRecentlySoldIndices((prev) => {
         const next = new Set(prev);
         selectedIndices.forEach((i) => next.add(i));
@@ -363,7 +381,7 @@ export const Bids = ({
             />
           </PageNav>
           <ButtonGroup>
-            <TextTooltip text={[`Filter: ${filterBy}`]}>
+            <TextTooltip text={[`Filter: ${filterBy}`]} persistOnClick>
               <IconButton img={FilterIcons[filterBy]} onClick={cycleFilter} radius={0.6} />
             </TextTooltip>
           </ButtonGroup>

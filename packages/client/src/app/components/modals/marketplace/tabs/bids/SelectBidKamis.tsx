@@ -62,12 +62,12 @@ export const SelectBidKamis = ({
         <HeaderTitle>Select Your Kami</HeaderTitle>
         <IconButton text='X' onClick={onClose} scale={1.5} />
       </Header>
+      {restingKamis.length === 0 && unavailableKamis.length === 0 ? (
+        <EmptyGridCenter>
+          <EmptyText text={[`You don't have any Kami!`]} size={0.9} />
+        </EmptyGridCenter>
+      ) : (
       <KamiGrid>
-        {restingKamis.length === 0 && unavailableKamis.length === 0 && (
-          <EmptyGridCenter>
-            <EmptyText text={[`You don't have any Kami`]} size={0.9} />
-          </EmptyGridCenter>
-        )}
         {restingKamis.map((kami) => (
           <KamiSlot
             key={kami.index}
@@ -99,6 +99,7 @@ export const SelectBidKamis = ({
           );
         })}
       </KamiGrid>
+      )}
       <Footer>
         <FooterLeft>
           <SelectedLabel>{selectedCount} Selected</SelectedLabel>
@@ -166,12 +167,11 @@ const KamiGrid = styled.div`
 `;
 
 const EmptyGridCenter = styled.div`
-  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
   width: 100%;
-  height: 100%;
 `;
 
 const KamiSlot = styled.div<{ isDisabled: boolean; $selected?: boolean }>`

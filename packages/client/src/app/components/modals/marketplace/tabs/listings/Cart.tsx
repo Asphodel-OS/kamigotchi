@@ -143,7 +143,7 @@ export const Cart = ({
 const CartSection = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
-  flex: 0 0 50%;
+  flex: 0 0 40%;
   overflow: hidden;
   border-top: 0.15vw solid black;
   width: 100%;

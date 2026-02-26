@@ -55,9 +55,10 @@ export type MyOrder = {
   bidType?: 'generic' | 'specific';
   total?: number;
   quantity?: number;
+  isOwn: boolean;
 };
 
-const parseOrder = (order: KamiMarketOrder): MyOrder | null => {
+const parseOrder = (order: KamiMarketOrder, accountId: string, normalize: (id: string) => string): MyOrder | null => {
   if (order.Listing) {
     const expiry = order.Listing.Expiry;
     let status: OrderStatus = 'Active';
@@ -72,6 +73,7 @@ const parseOrder = (order: KamiMarketOrder): MyOrder | null => {
       kamiIndex: order.Listing.KamiIndex,
       expiry,
       status,
+      isOwn: normalize(order.Listing.SellerAccountID) === accountId,
     };
   }
   if (!order.Bid) return null;
@@ -95,6 +97,7 @@ const parseOrder = (order: KamiMarketOrder): MyOrder | null => {
         : 'generic',
     total: order.Bid.Total,
     quantity: order.Bid.Quantity,
+    isOwn: normalize(order.Bid.BuyerAccountID) === accountId,
   };
 };
 
@@ -186,7 +189,7 @@ export const MyOrders = ({
   // PREPARATION
 
   const allOrders = useMemo<MyOrder[]>(() => {
-    const mapped = orders.map(parseOrder).filter((o): o is MyOrder => o !== null);
+    const mapped = orders.map((o) => parseOrder(o, accountId, utils.normalizeAccountId)).filter((o): o is MyOrder => o !== null);
     return sortOrders(mapped, sortBy);
   }, [orders, sortBy]);
 
@@ -262,14 +265,14 @@ export const MyOrders = ({
           />
         </PageNav>
         <ButtonGroup>
-          <TextTooltip text={[`Filter: ${statusFilter}`]}>
+          <TextTooltip text={[`Filter: ${statusFilter}`]} persistOnClick>
             <IconButton
               img={StatusFilterIcons[statusFilter]}
               onClick={cycleStatusFilter}
               radius={0.6}
             />
           </TextTooltip>
-          <TextTooltip text={[`Sort: ${sortBy}`]}>
+          <TextTooltip text={[`Sort: ${sortBy}`]} persistOnClick>
             <IconButton img={SortIcons[sortBy]} onClick={cycleSort} radius={0.6} />
           </TextTooltip>
         </ButtonGroup>
@@ -348,7 +351,7 @@ const OrderRow = ({
   const typeLabel = order.type === 'Listing' ? 'Listing' : isGenericBid ? 'Gen. Bid' : 'Kami Bid';
 
   const statusColors = STATUS_COLORS[order.status];
-  const isCancellable = order.status === 'Active' || order.status === 'Expired';
+  const isCancellable = order.isOwn && (order.status === 'Active' || order.status === 'Expired');
 
   return (
     <Row>
@@ -385,6 +388,8 @@ const OrderRow = ({
       <Column>
         {isCancellable ? (
           <IconButton text='Cancel' onClick={() => onCancelOrder(order.orderId)} color='#FDECEC' />
+        ) : !order.isOwn ? (
+          <IconButton text='You Filled' disabled />
         ) : (
           <CellText style={{ opacity: 0.4 }}>—</CellText>
         )}

@@ -96,16 +96,17 @@ export const Sell = ({
                   onFocus={() => playClick()}
                   onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                   onChange={(e) => {
-                    const val = e.target.value;
+                    let val = e.target.value;
                     if (val === '' || /^\d*\.?\d{0,6}$/.test(val)) {
                       if (val !== '' && Number(val) > 100) return;
+                      val = val.replace(/^0+(\d)/, '$1');
                       setPrice(val);
                     }
                   }}
                   onBlur={() => {
                     if (price === '') return;
                     let val = price;
-                    if (Number(val) > 0 && Number(val) < 0.000001) val = '0.000001';
+                    if (Number(val) > 0 && Number(val) < 0.001) val = '0.001';
                     if (val.includes('.')) val = val.replace(/0+$/, '').replace(/\.$/, '');
                     if (val !== price) setPrice(val);
                   }}

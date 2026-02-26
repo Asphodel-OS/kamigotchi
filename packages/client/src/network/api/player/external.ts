@@ -13,8 +13,9 @@ export function externalAPI(callQueue: any) {
   }
 
   // approves full spend
-  function ERC20Approve(token: string, spender: string, amount: number) {
-    return approveERC20(callQueue, token, spender, parseEther(amount.toString()));
+  function ERC20Approve(token: string, spender: string, amount: number | bigint) {
+    const wei = typeof amount === 'bigint' ? amount : parseEther(amount.toString());
+    return approveERC20(callQueue, token, spender, wei);
   }
 
   // deposits to presale

@@ -225,7 +225,7 @@ export const Toolbar = ({
   return (
     <Container>
       <Section>
-        <TextTooltip text={[`${view}`]}>
+        <TextTooltip text={[`${view}`]} persistOnClick>
           <IconButton img={ViewIcons[view]} onClick={() => toggleView()} radius={0.6} />
         </TextTooltip>
         <IconListButton img={SortIcons[sort]} text={sort} options={SortOptions} radius={0.6} />

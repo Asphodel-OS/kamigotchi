@@ -14,7 +14,7 @@ import { Sell } from './Sell';
 
 type OrderType = 'listing' | 'bid';
 const DEFAULT_EXPIRY_HOURS = 0;
-const MIN_PRICE_ETH = 0.000001;
+const MIN_PRICE_ETH = 0.001;
 const MAX_PRICE_ETH = 100;
 const MAX_QUANTITY = 30;
 
@@ -311,7 +311,7 @@ export const CreateOrder = ({
 const Container = styled.div<{ isVisible: boolean }>`
   ${({ isVisible }) => (isVisible ? `display: flex;` : `display: none;`)}
   flex-direction: column;
-  flex: 0 0 50%;
+  flex: 0 0 40%;
   overflow: auto;
   border-top: 0.15vw solid black;
   width: 100%;
