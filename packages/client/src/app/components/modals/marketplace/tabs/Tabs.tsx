@@ -76,6 +76,7 @@ const Container = styled.div`
   align-items: center;
   padding: 0.4vw 0.6vw;
   border-bottom: solid #ccc 0.1vw;
+  user-select: none;
 
   & button {
     font-weight: 600;
@@ -93,8 +94,6 @@ const RightButtons = styled.div`
 `;
 
 const TabItem = styled.div<{ $active: boolean; $color: string }>`
-  border-bottom: 0.2vw solid ${({ $active, $color }) => ($active ? $color : 'transparent')};
-  padding-bottom: 0.15vw;
   opacity: ${({ $active }) => ($active ? 1 : 0.55)};
   transition: opacity 0.15s;
 

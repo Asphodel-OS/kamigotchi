@@ -399,6 +399,7 @@ const Tab = styled.div<{ isVisible: boolean }>`
   flex: 1;
   overflow: hidden;
   width: 100%;
+  user-select: none;
   min-height: 10vw;
 `;
 
@@ -498,7 +499,7 @@ const CellText = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95vw;
+  font-size: 0.73vw;
   line-height: 1.2;
   padding: 0.4vw 0.6vw;
 `;
@@ -507,7 +508,7 @@ const TypeText = styled.span<{ $type: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85vw;
+  font-size: 0.63vw;
   font-weight: 600;
   line-height: 1.2;
   padding: 0.3vw 0.5vw;
@@ -520,7 +521,7 @@ const StatusPill = styled.span<{ $color: string; $bg: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8vw;
+  font-size: 0.6vw;
   font-weight: 600;
   line-height: 1.2;
   padding: 0.25vw 0.45vw;
@@ -555,12 +556,12 @@ const KamiInfo = styled.div`
 `;
 
 const KamiName = styled.span`
-  font-size: 0.9vw;
+  font-size: 0.7vw;
   white-space: nowrap;
 `;
 
 const ProgressText = styled.span`
-  font-size: 0.7vw;
+  font-size: 0.55vw;
   color: #888;
 `;
 

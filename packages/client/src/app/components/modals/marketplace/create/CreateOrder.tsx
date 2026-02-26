@@ -315,6 +315,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   overflow: auto;
   border-top: 0.15vw solid black;
   width: 100%;
+  user-select: none;
 `;
 
 const Header = styled.div`

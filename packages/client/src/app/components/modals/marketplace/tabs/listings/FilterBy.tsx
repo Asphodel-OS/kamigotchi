@@ -253,6 +253,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   flex-direction: column;
   border-top: 0.15vw solid black;
   width: 100%;
+  user-select: none;
 `;
 
 const Header = styled.div`

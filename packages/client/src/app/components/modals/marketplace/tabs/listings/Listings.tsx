@@ -367,6 +367,8 @@ export const Listings = ({
     }
     setCart([]);
     setShowCart(false);
+    setSweepActive(false);
+    setSweepCount(0);
   };
 
   /////////////////
@@ -524,6 +526,7 @@ const Tab = styled.div<{ isVisible: boolean }>`
   overflow: hidden;
   width: 100%;
   min-height: 10vw;
+  user-select: none;
 `;
 
 const ButtonRow = styled.div`

@@ -125,6 +125,7 @@ const HeaderRow = styled.div`
   align-items: center;
   width: 100%;
   min-height: 3vw;
+  user-select: none;
 `;
 
 const ListingsBody = styled.div`
@@ -155,6 +156,7 @@ const Row = styled.div`
   border-bottom: 0.06vw solid #ccc;
   min-height: 3vw;
   margin: 0.2vw 0;
+  user-select: none;
 
   &:hover {
     background-color: #eee;
@@ -201,7 +203,7 @@ const KamiThumbnail = styled.img`
 `;
 
 const KamiName = styled.span`
-  font-size: 0.9vw;
+  font-size: 0.7vw;
   white-space: nowrap;
 `;
 
@@ -209,7 +211,7 @@ const CellText = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95vw;
+  font-size: 0.73vw;
   line-height: 1.2;
   padding: 0.4vw 0.6vw;
 `;

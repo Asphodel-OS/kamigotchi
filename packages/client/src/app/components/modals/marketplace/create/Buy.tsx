@@ -105,12 +105,14 @@ export const Buy = ({
                     inputMode='numeric'
                     placeholder='Enter Amount'
                     value={quantity}
-                    onFocus={() => playClick()}
+                    onFocus={(e) => { playClick(); e.currentTarget.select(); setQuantity(''); }}
+                    onBlur={() => { if (!quantity) setQuantity('5'); }}
                     onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                     onChange={(e) => {
                       const val = e.target.value;
                       if (val === '' || /^\d+$/.test(val)) {
                         if (val !== '' && Number(val) > 30) setQuantity('30');
+                        else if (val === '0') return;
                         else setQuantity(val);
                       }
                     }}
