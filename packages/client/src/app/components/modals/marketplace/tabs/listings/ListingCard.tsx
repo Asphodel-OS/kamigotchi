@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { TextTooltip } from 'app/components/library';
@@ -17,9 +17,9 @@ interface ListingCardProps {
   isExpired: boolean;
   isOwn: boolean;
   formatPrice: (weiString: string) => string;
-  onAddToCart: () => void;
-  onRemoveFromCart: () => void;
-  onOpenKami: () => void;
+  onAddToCart: (listing: KamiMarketListing) => void;
+  onRemoveFromCart: (orderId: string) => void;
+  onOpenKami: (kamiIndex: number) => void;
   getAccountByID: (id: string) => { name: string; index: number };
   allFlipped: boolean;
 }
@@ -27,7 +27,7 @@ interface ListingCardProps {
 const STAT_KEYS = ['health', 'power', 'violence', 'harmony', 'slots'] as const;
 type StatKey = (typeof STAT_KEYS)[number];
 
-export const ListingCard = ({
+export const ListingCard = memo(({
   listing,
   kami,
   isInCart,
@@ -62,7 +62,8 @@ export const ListingCard = ({
     ? undefined
     : () => {
         playClick();
-        (isInCart ? onRemoveFromCart : onAddToCart)();
+        if (isInCart) onRemoveFromCart(listing.OrderID);
+        else onAddToCart(listing);
       };
   const badgeChar = isLocked ? 'x' : isInCart ? '-' : '+';
   const badgeColor = isLocked ? '#888' : isInCart ? '#d04a2f' : '#3a8f47';
@@ -86,7 +87,7 @@ export const ListingCard = ({
         {/* ===== FRONT ===== */}
         <CardFront $flipped={flipped}>
           {kami ? (
-            <KamiImage src={kami.image} alt={kami.name} onClick={onOpenKami} />
+            <KamiImage src={kami.image} alt={kami.name} onClick={() => onOpenKami(listing.KamiIndex)} />
           ) : (
             <ImagePlaceholder />
           )}
@@ -160,7 +161,18 @@ export const ListingCard = ({
       </CardInner>
     </CardContainer>
   );
-};
+}, (prev, next) =>
+  prev.listing.OrderID === next.listing.OrderID &&
+  prev.listing.Price === next.listing.Price &&
+  prev.kami === next.kami &&
+  prev.isInCart === next.isInCart &&
+  prev.isExpired === next.isExpired &&
+  prev.isOwn === next.isOwn &&
+  prev.allFlipped === next.allFlipped &&
+  prev.onAddToCart === next.onAddToCart &&
+  prev.onRemoveFromCart === next.onRemoveFromCart &&
+  prev.onOpenKami === next.onOpenKami
+);
 
 // ─── 3D Flip Shell ────────────────────────────────────────
 

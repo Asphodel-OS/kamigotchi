@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { erc20Abi, formatUnits } from 'viem';
@@ -41,32 +41,27 @@ export const MarketplaceModal: UIComponent = {
     /////////////////
     // PREPARATION
 
-    const { utils, data, network } = (() => {
-      const { network } = useLayers();
-      const { world, components } = network;
-      const accountEntity = queryAccountFromEmbedded(network);
+    const { network } = useLayers();
+    const { world, components, actions, api } = network;
+    const accountEntity = queryAccountFromEmbedded(network);
 
-      const kamiNFTAddress = getConfigAddress(world, components, 'KAMI721_ADDRESS');
-      const marketVaultAddress = getConfigAddress(world, components, 'KAMI_MARKET_VAULT');
+    const kamiNFTAddress = getConfigAddress(world, components, 'KAMI721_ADDRESS');
+    const marketVaultAddress = getConfigAddress(world, components, 'KAMI_MARKET_VAULT');
 
-      return {
-        network,
-        data: { kamiNFTAddress, marketVaultAddress },
-        utils: {
-          getAccountKamis: () => _getAccountKamis(world, components, accountEntity, { live: 0 }),
-          getAllKamis: () => _getAllKamis(world, components),
-          getRegistryTraits: (specificType?: TraitType[]) =>
-            _getRegistryTraits(world, components, specificType),
-          getKami: (entity: EntityIndex) => _getKami(world, components, entity, { live: 0 }),
-          getKamiDetailed: (entity: EntityIndex) =>
-            _getKami(world, components, entity, { live: 0, traits: 0, stats: 0, progress: 0 }),
-          queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
-          getAccountByID: (id: string) => _getAccountByID(world, components, id as EntityID),
-        },
-      };
-    })();
-
-    const { actions, world, api } = network;
+    const utils = useMemo(
+      () => ({
+        getAccountKamis: () => _getAccountKamis(world, components, accountEntity, { live: 0 }),
+        getAllKamis: () => _getAllKamis(world, components),
+        getRegistryTraits: (specificType?: TraitType[]) =>
+          _getRegistryTraits(world, components, specificType),
+        getKami: (entity: EntityIndex) => _getKami(world, components, entity, { live: 0 }),
+        getKamiDetailed: (entity: EntityIndex) =>
+          _getKami(world, components, entity, { live: 0, traits: 0, stats: 0, progress: 0 }),
+        queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
+        getAccountByID: (id: string) => _getAccountByID(world, components, id as EntityID),
+      }),
+      [world, components, accountEntity]
+    );
     const account = useAccount((s) => s.account);
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
@@ -76,16 +71,16 @@ export const MarketplaceModal: UIComponent = {
     const { refetch: refetchApproval, data: approvalData } = useReadContracts({
       contracts: [
         {
-          address: data.kamiNFTAddress,
+          address: kamiNFTAddress,
           abi: erc721ABI,
           functionName: 'isApprovedForAll',
-          args: [account.ownerAddress, data.marketVaultAddress],
+          args: [account.ownerAddress, marketVaultAddress],
         },
         {
           address: Tokens.ETH.address,
           abi: erc20Abi,
           functionName: 'allowance',
-          args: [account.ownerAddress, data.marketVaultAddress],
+          args: [account.ownerAddress, marketVaultAddress],
         },
       ],
     });
@@ -104,7 +99,7 @@ export const MarketplaceModal: UIComponent = {
     const { refetch: refetchNFTs, data: nftData } = useReadContracts({
       contracts: [
         {
-          address: data.kamiNFTAddress,
+          address: kamiNFTAddress,
           abi: erc721ABI,
           functionName: 'getAllTokens',
           args: [account.ownerAddress],
@@ -165,35 +160,35 @@ export const MarketplaceModal: UIComponent = {
 
     const closeFilter = () => setShowFilter(false);
 
-    const normalizeAccountId = (accountId: string) => {
+    const normalizeAccountId = useCallback((accountId: string) => {
       try {
         return BigInt(accountId).toString();
       } catch {
         return accountId;
       }
-    };
+    }, []);
 
-    const isDifferentAccountId = (lhs: string, rhs: string) => {
+    const isDifferentAccountId = useCallback((lhs: string, rhs: string) => {
       try {
         return BigInt(lhs).toString() !== BigInt(rhs).toString();
       } catch {
         return lhs !== rhs;
       }
-    };
+    }, []);
 
-    const formatEthPrice = (weiString: string, decimals: number) => {
+    const formatEthPrice = useCallback((weiString: string, decimals: number) => {
       if (!weiString || weiString === '0') return '0';
       const num = Number(formatUnits(BigInt(weiString), 18));
       if (num > 0 && num < 0.00001) return '<0.00001';
       return num.toFixed(decimals).replace(/\.?0+$/, '');
-    };
+    }, []);
 
     /////////////////
     // ACTIONS
 
     const ensureVaultApproval = async () => {
       if (isVaultApproved) return;
-      if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
+      if (!marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
 
       const ownerApi = apis.get(selectedAddress);
       if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
@@ -202,12 +197,12 @@ export const MarketplaceModal: UIComponent = {
       actions.add({
         id: actionID,
         action: 'KamiMarketVaultApproval',
-        params: [data.kamiNFTAddress, data.marketVaultAddress, true],
+        params: [kamiNFTAddress, marketVaultAddress, true],
         description: `Approving marketplace vault to transfer your Kami`,
         execute: async () =>
           ownerApi.erc721.setApprovalForAll(
-            data.kamiNFTAddress,
-            data.marketVaultAddress,
+            kamiNFTAddress,
+            marketVaultAddress,
             true
           ),
       });
@@ -221,7 +216,7 @@ export const MarketplaceModal: UIComponent = {
 
     const ensureWethApproval = async () => {
       if (isWethApproved) return;
-      if (!data.marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
+      if (!marketVaultAddress) return console.error('KAMI_MARKET_VAULT is not configured');
 
       const ownerApi = apis.get(selectedAddress);
       if (!ownerApi) return console.error(`API not established for ${selectedAddress}`);
@@ -230,12 +225,12 @@ export const MarketplaceModal: UIComponent = {
       actions.add({
         id: actionID,
         action: 'KamiMarketWethApproval',
-        params: [Tokens.ETH.address, data.marketVaultAddress],
+        params: [Tokens.ETH.address, marketVaultAddress],
         description: `Approving marketplace vault to use your ETH for bids`,
         execute: async () =>
           ownerApi.erc20.approve(
             Tokens.ETH.address,
-            data.marketVaultAddress,
+            marketVaultAddress,
             2n ** 256n - 1n
           ),
       });
@@ -334,6 +329,62 @@ export const MarketplaceModal: UIComponent = {
     };
 
     /////////////////
+    // MEMOIZED PROP OBJECTS
+
+    const listingsUtils = useMemo(
+      () => ({
+        queryKamiByIndex: utils.queryKamiByIndex,
+        getKami: utils.getKami,
+        getKamiDetailed: utils.getKamiDetailed,
+        getAccountByID: utils.getAccountByID,
+        isDifferentAccountId,
+        formatEthPrice,
+      }),
+      [utils, isDifferentAccountId, formatEthPrice]
+    );
+
+    const bidsUtils = useMemo(
+      () => ({
+        ...utils,
+        getRestingKamis: () => restingKamis,
+        getWildKamis: () => wildKamis,
+        isDifferentAccountId,
+        formatEthPrice,
+      }),
+      [utils, restingKamis, wildKamis, isDifferentAccountId, formatEthPrice]
+    );
+
+    const myOrdersUtils = useMemo(
+      () => ({
+        queryKamiByIndex: utils.queryKamiByIndex,
+        getKami: utils.getKami,
+        normalizeAccountId,
+        formatEthPrice,
+      }),
+      [utils, normalizeAccountId, formatEthPrice]
+    );
+
+    const createOrderUtils = useMemo(
+      () => ({
+        ...utils,
+        getRestingKamis: () => restingKamis,
+        getWildKamis: () => wildKamis,
+      }),
+      [utils, restingKamis, wildKamis]
+    );
+
+    const filters = useMemo(
+      () => ({ selected: selectedFilters, stats: statFilters, affinity: affinityFilters }),
+      [selectedFilters, statFilters, affinityFilters]
+    );
+
+    const handleClearFilters = useCallback(() => {
+      setSelectedFilters(DEFAULT_SELECTED_FILTERS());
+      setStatFilters(DEFAULT_STAT_FILTERS());
+      setAffinityFilters(DEFAULT_AFFINITY_FILTERS());
+    }, []);
+
+    /////////////////
     // DISPLAY
 
     return (
@@ -361,15 +412,8 @@ export const MarketplaceModal: UIComponent = {
             onCloseCreateOrder={closeCreateOrder}
             createOrderOpen={showCreateOrder}
             accountId={account.id}
-            filters={{ selected: selectedFilters, stats: statFilters, affinity: affinityFilters }}
-            utils={{
-              queryKamiByIndex: utils.queryKamiByIndex,
-              getKami: utils.getKami,
-              getKamiDetailed: utils.getKamiDetailed,
-              getAccountByID: utils.getAccountByID,
-              isDifferentAccountId,
-              formatEthPrice,
-            }}
+            filters={filters}
+            utils={listingsUtils}
           />
           <Bids
             isVisible={tab === 'bids'}
@@ -379,28 +423,17 @@ export const MarketplaceModal: UIComponent = {
             onAcceptOffer={acceptOffer}
             onAcceptOfferBatch={acceptOfferBatch}
             accountId={account.id}
-            utils={{
-              ...utils,
-              getRestingKamis: () => restingKamis,
-              getWildKamis: () => wildKamis,
-              isDifferentAccountId,
-              formatEthPrice,
-            }}
+            utils={bidsUtils}
           />
           <MyOrders
             isVisible={tab === 'myOrders'}
             onCancelOrder={cancelOrder}
-            utils={{
-              queryKamiByIndex: utils.queryKamiByIndex,
-              getKami: utils.getKami,
-              normalizeAccountId,
-              formatEthPrice,
-            }}
+            utils={myOrdersUtils}
           />
           <CreateOrder
             isVisible={showCreateOrder}
             onClose={closeCreateOrder}
-            utils={{ ...utils, getRestingKamis: () => restingKamis, getWildKamis: () => wildKamis }}
+            utils={createOrderUtils}
             createSellOrder={createSellOrder}
             createBuyOrder={createBuyOrder}
             createBuyKamiOrder={createBuyKamiOrder}
@@ -414,11 +447,7 @@ export const MarketplaceModal: UIComponent = {
             onSelectedChange={setSelectedFilters}
             onStatValuesChange={setStatFilters}
             onAffinityChange={setAffinityFilters}
-            onClear={() => {
-              setSelectedFilters(DEFAULT_SELECTED_FILTERS());
-              setStatFilters(DEFAULT_STAT_FILTERS());
-              setAffinityFilters(DEFAULT_AFFINITY_FILTERS());
-            }}
+            onClear={handleClearFilters}
             utils={utils}
           />
         </Content>

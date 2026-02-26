@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { IconButton, Tooltip } from 'app/components/library';
@@ -83,9 +83,28 @@ export const FilterBy = ({
     [utils, affinityValues.body, affinityValues.hand, allBodyTraits, allHandTraits]
   );
 
-  const setStatValue = (stat: string, value: number) => {
-    onStatValuesChange({ ...statValues, [stat]: value });
-  };
+  // Debounced stat slider: local state for immediate visual feedback, delayed commit to parent
+  const [localStats, setLocalStats] = useState(statValues);
+  const localStatsRef = useRef(localStats);
+  localStatsRef.current = localStats;
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // Sync from parent when parent resets (e.g. "Clear Filters")
+  useEffect(() => {
+    setLocalStats(statValues);
+  }, [statValues]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => () => clearTimeout(debounceRef.current), []);
+
+  const setStatValue = useCallback((stat: string, value: number) => {
+    const next = { ...localStatsRef.current, [stat]: value };
+    setLocalStats(next);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onStatValuesChange(next);
+    }, 200);
+  }, [onStatValuesChange]);
 
   const handleAffinityClick = (type: 'body' | 'hand', affinityKey: string) => {
     playClick();
@@ -201,7 +220,7 @@ export const FilterBy = ({
           <SectionLabel>Min. Stats</SectionLabel>
           <StatsGrid>
             {STAT_DEFS.map((stat) => {
-              const val = statValues[stat.key] ?? stat.min;
+              const val = localStats[stat.key] ?? stat.min;
               const isActive = stat.key === 'Slots' ? val > 0 : val > 10;
               const ratio = (val - stat.min) / (stat.max - stat.min);
               return (

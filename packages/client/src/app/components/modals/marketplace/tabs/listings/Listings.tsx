@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -142,7 +142,10 @@ export const Listings = ({
   /////////////////
   // PREPARATION
 
-  const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 6);
+  const formatPrice = useCallback(
+    (weiString: string) => utils.formatEthPrice(weiString, 6),
+    [utils]
+  );
 
   const resolvedListings = useMemo(
     () =>
@@ -151,11 +154,10 @@ export const Listings = ({
         .filter((listing) => !isExpired(listing.Expiry))
         .map((listing) => {
           const entity = utils.queryKamiByIndex(listing.KamiIndex);
-          const getter = viewMode === 'grid' ? utils.getKamiDetailed : utils.getKami;
-          const kami = entity !== undefined ? getter(entity) : undefined;
+          const kami = entity !== undefined ? utils.getKamiDetailed(entity) : undefined;
           return { listing, kami, entity };
         }),
-    [listings, utils, viewMode, recentlyBoughtListings]
+    [listings, utils, recentlyBoughtListings]
   );
 
   const hasActiveFilters = useMemo(() => {
@@ -246,7 +248,18 @@ export const Listings = ({
   };
 
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
-  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const cartIds = useMemo(() => new Set(cart.map((c) => c.OrderID)), [cart]);
+  const paged = useMemo(
+    () =>
+      sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(({ listing, kami }) => ({
+        listing,
+        kami,
+        isInCart: cartIds.has(listing.OrderID),
+        isExpired: isExpired(listing.Expiry),
+        isOwn: !utils.isDifferentAccountId(listing.SellerAccountID, accountId),
+      })),
+    [sorted, page, cartIds, utils, accountId]
+  );
   const hasPrevPage = page > 0;
   const hasNextPage = page < totalPages - 1;
 
@@ -299,34 +312,46 @@ export const Listings = ({
 
   const isInCart = (orderId: string) => cart.some((item) => item.OrderID === orderId);
 
-  const openKamiModal = (index: number) => {
-    const sameKami = kamiIndex === index;
+  // Refs to avoid stale closures in stable callbacks
+  const kamiIndexRef = useRef(kamiIndex);
+  kamiIndexRef.current = kamiIndex;
+  const kamiModalOpenRef = useRef(kamiModalOpen);
+  kamiModalOpenRef.current = kamiModalOpen;
+
+  const openKamiModal = useCallback((index: number) => {
+    const sameKami = kamiIndexRef.current === index;
     if (!sameKami) setKami(index);
-    if (kamiModalOpen && sameKami) setModals({ kami: false });
+    if (kamiModalOpenRef.current && sameKami) setModals({ kami: false });
     else setModals({ kami: true });
     playClick();
-  };
+  }, [setKami, setModals]);
 
-  const resolveKami = (index: number) => {
+  const resolveKami = useCallback((index: number) => {
     const entity = utils.queryKamiByIndex(index);
     return entity !== undefined ? utils.getKami(entity) : undefined;
-  };
+  }, [utils]);
 
-  const addToCart = (listing: KamiMarketListing) => {
-    if (isInCart(listing.OrderID) || isOwnListing(listing)) return;
-    if (sweepActive) setSweepActive(false);
-    setCart((prev) => [...prev, listing]);
+  const addToCart = useCallback((listing: KamiMarketListing) => {
+    if (!utils.isDifferentAccountId(listing.SellerAccountID, accountId)) return;
+    let added = false;
+    setCart((prev) => {
+      if (prev.some((item) => item.OrderID === listing.OrderID)) return prev;
+      added = true;
+      return [...prev, listing];
+    });
+    if (!added) return;
+    setSweepActive(false);
     setShowCart(true);
-  };
+  }, [utils, accountId]);
 
-  const removeFromCart = (orderId: string) => {
-    if (sweepActive) setSweepActive(false);
+  const removeFromCart = useCallback((orderId: string) => {
+    setSweepActive(false);
     setCart((prev) => {
       const next = prev.filter((item) => item.OrderID !== orderId);
       if (next.length === 0) setShowCart(false);
       return next;
     });
-  };
+  }, []);
 
   const handleBuyCart = async () => {
     if (cart.length === 0) return;
@@ -457,18 +482,18 @@ export const Listings = ({
                 <EmptyText text={['No listings found']} size={0.9} />
               </EmptyCenter>
             )}
-            {paged.map(({ listing, kami }) => (
+            {paged.map(({ listing, kami, isInCart: inCart, isExpired: expired, isOwn }) => (
               <ListingCard
                 key={listing.OrderID}
                 listing={listing}
                 kami={kami}
-                isInCart={isInCart(listing.OrderID)}
-                isExpired={isListingExpired(listing.Expiry)}
-                isOwn={isOwnListing(listing)}
+                isInCart={inCart}
+                isExpired={expired}
+                isOwn={isOwn}
                 formatPrice={formatPrice}
-                onAddToCart={() => addToCart(listing)}
-                onRemoveFromCart={() => removeFromCart(listing.OrderID)}
-                onOpenKami={() => openKamiModal(listing.KamiIndex)}
+                onAddToCart={addToCart}
+                onRemoveFromCart={removeFromCart}
+                onOpenKami={openKamiModal}
                 getAccountByID={utils.getAccountByID}
                 allFlipped={allFlipped}
               />
