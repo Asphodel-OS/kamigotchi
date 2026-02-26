@@ -7,6 +7,7 @@ import { Inventory } from 'app/cache/inventory';
 import { IconListButton, IconListButtonOption } from 'app/components/library';
 import { useVisibility } from 'app/stores';
 import { ItemImages } from 'assets/images/items';
+import { ActionIcons } from 'assets/images/icons/actions';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { getKamidenClient } from 'clients/kamiden';
 import { KAMI_BASE_URI } from 'constants/media';
@@ -269,17 +270,24 @@ export const Transfer = ({
       {/* SECTION 1: Recipient Selection */}
       <RecipientSection>
         <RecipientLabel>Send to:</RecipientLabel>
-        <IconListButton
-          img={targetAcc ? `${KAMI_BASE_URI}${targetAcc.pfpURI}.gif` : MenuIcons.operator}
-          options={accounts.map((acc) => ({
-            text: `${acc.name} (#${acc.index})`,
-            image: `${KAMI_BASE_URI}${acc.pfpURI}.gif`,
-            onClick: () => setTargetAcc(acc),
-          }))}
-          searchable
-          scale={2.4}
-          tooltip={{ text: [targetAcc ? `Recipient: ${targetAcc.name}` : 'Select recipient'] }}
-        />
+        <AccountButtonWrapper>
+          <IconListButton
+            img={targetAcc ? `${KAMI_BASE_URI}${targetAcc.pfpURI}.gif` : MenuIcons.operator}
+            options={accounts.map((acc) => ({
+              text: `${acc.name} (#${acc.index})`,
+              image: `${KAMI_BASE_URI}${acc.pfpURI}.gif`,
+              onClick: () => setTargetAcc(acc),
+            }))}
+            searchable
+            scale={2.4}
+            tooltip={{ text: [targetAcc ? `Recipient: ${targetAcc.name}` : 'Select recipient'] }}
+          />
+          {targetAcc && (
+            <AccountClearOverlay onClick={() => setTargetAcc(null)}>
+              <AccountClearIcon src={ActionIcons.cancel} alt='Clear' />
+            </AccountClearOverlay>
+          )}
+        </AccountButtonWrapper>
         {targetAcc && (
           <RecipientDisplay>
             <RecipientPfp src={`${KAMI_BASE_URI}${targetAcc.pfpURI}.gif`} alt={targetAcc.name} />
@@ -476,12 +484,43 @@ const MusuIcon = styled.img`
   object-fit: contain;
 `;
 
+const AccountButtonWrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+`;
+
+const AccountClearOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(180, 30, 30, 0.45);
+  opacity: 0;
+  transition: opacity 0.15s;
+  cursor: pointer;
+  border-radius: 0.3vw;
+  z-index: 1;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const AccountClearIcon = styled.img`
+  width: 1.2vw;
+  height: 1.2vw;
+  image-rendering: pixelated;
+  pointer-events: none;
+  filter: drop-shadow(0 0 0.2vw rgba(0, 0, 0, 0.5));
+`;
+
 const SendButton = styled.button<{ disabled?: boolean }>`
   width: 100%;
   padding: 0.7vw 1vw;
-  background: ${({ disabled }) => (disabled ? '#ccc' : '#4CAF50')};
-  color: ${({ disabled }) => (disabled ? '#888' : 'white')};
-  border: 0.12vw solid ${({ disabled }) => (disabled ? '#aaa' : '#3d8b40')};
+  background: ${({ disabled }) => (disabled ? '#ccc' : '#E8F5E9')};
+  color: ${({ disabled }) => (disabled ? '#888' : '#2E7D32')};
+  border: 0.15vw solid ${({ disabled }) => (disabled ? '#aaa' : 'black')};
   border-radius: 0.4vw;
   font-size: 0.9vw;
   font-family: Pixel, sans-serif;
@@ -489,10 +528,10 @@ const SendButton = styled.button<{ disabled?: boolean }>`
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    background: #45a049;
+    background: #C8E6C9;
   }
 
   &:active:not(:disabled) {
-    background: #3d8b40;
+    background: #A5D6A7;
   }
 `;

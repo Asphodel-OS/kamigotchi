@@ -179,7 +179,7 @@ const CardFace = styled.div`
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border: 0.13vw solid black;
+  border: 0.18vw solid black;
   border-radius: 0.55vw;
   overflow: hidden;
   display: flex;
@@ -209,7 +209,9 @@ const CartBadge = styled.button<{ $color: string }>`
   font-weight: 700;
   line-height: 1.4vw;
   text-align: center;
-  border: none;
+  border: 0.13vw solid black;
+  border-top: none;
+  border-right: none;
   border-radius: 0 0.4vw 0 0.3vw;
   cursor: pointer;
   transition: filter 0.15s;
@@ -280,9 +282,18 @@ const BottomBar = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0.35vw;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(4px);
-  border-top: 0.07vw solid rgba(255, 255, 255, 0.08);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: black;
+    opacity: 0.45;
+  }
+
+  & > * {
+    position: relative;
+  }
 `;
 
 const PriceChip = styled.div`
@@ -292,8 +303,9 @@ const PriceChip = styled.div`
 `;
 
 const EthIcon = styled.img`
-  width: 0.8vw;
-  height: 0.8vw;
+  width: 1.1vw;
+  height: 1.1vw;
+  filter: invert(1);
 `;
 
 const PriceText = styled.span`
