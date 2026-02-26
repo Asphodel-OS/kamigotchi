@@ -302,6 +302,11 @@ export const Listings = ({
     setCart(swept);
   }, [sweepActive, sweepCount, filteredListings]);
 
+  // Auto-close cart when it becomes empty
+  useEffect(() => {
+    if (cart.length === 0 && showCart) setShowCart(false);
+  }, [cart, showCart]);
+
   /////////////////
   // ACTIONS
 
@@ -346,11 +351,7 @@ export const Listings = ({
 
   const removeFromCart = useCallback((orderId: string) => {
     setSweepActive(false);
-    setCart((prev) => {
-      const next = prev.filter((item) => item.OrderID !== orderId);
-      if (next.length === 0) setShowCart(false);
-      return next;
-    });
+    setCart((prev) => prev.filter((item) => item.OrderID !== orderId));
   }, []);
 
   const handleBuyCart = async () => {

@@ -120,11 +120,25 @@ export const Bids = ({
   /////////////////
   // PREPARATION
 
-  const restingKamis = useMemo(
-    () => utils.getRestingKamis().filter((k) => !recentlySoldIndices.has(k.index)),
-    [utils, recentlySoldIndices]
-  );
-  const accountKamis = useMemo(() => utils.getAccountKamis(), [utils]);
+  const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
+  const [restingKamis, setRestingKamis] = useState<Kami[]>([]);
+  const [wildKamis, setWildKamis] = useState<Kami[]>([]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const refresh = () => {
+      const nextAccount = utils.getAccountKamis();
+      const nextResting = utils.getRestingKamis().filter((k) => !recentlySoldIndices.has(k.index));
+      const nextWild = utils.getWildKamis();
+      setAccountKamis(nextAccount);
+      setRestingKamis(nextResting);
+      setWildKamis(nextWild);
+    };
+    refresh();
+    const intervalId = window.setInterval(refresh, 3000);
+    return () => window.clearInterval(intervalId);
+  }, [isVisible, utils, recentlySoldIndices]);
+
   const ownedKamiIndices = useMemo(
     () => new Set(accountKamis.map((kami) => kami.index)),
     [accountKamis]
@@ -142,7 +156,6 @@ export const Bids = ({
     }
   };
 
-  const wildKamis = useMemo(() => utils.getWildKamis(), [utils]);
   const restingIndices = useMemo(() => new Set(restingKamis.map((k) => k.index)), [restingKamis]);
   const allOwnedIndices = useMemo(() => {
     const set = new Set(ownedKamiIndices);
@@ -303,7 +316,6 @@ export const Bids = ({
 
   const handleClear = () => {
     setSelectedKamis(new Set());
-    setSelectedBid(null);
   };
 
   const handleSelectMax = () => {
