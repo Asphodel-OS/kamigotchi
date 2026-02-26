@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { TextTooltip } from 'app/components/library';
 import { OperatorIcon, ResetIcon } from 'assets/images/icons/menu';
+import { playClick } from 'utils/sounds';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
 import { AffinityColors, AffinityIcons } from 'constants/affinities';
@@ -57,7 +58,12 @@ export const ListingCard = ({
     | undefined;
 
   const isLocked = isExpired || isOwn;
-  const badgeClick = isLocked ? undefined : isInCart ? onRemoveFromCart : onAddToCart;
+  const badgeClick = isLocked
+    ? undefined
+    : () => {
+        playClick();
+        (isInCart ? onRemoveFromCart : onAddToCart)();
+      };
   const badgeChar = isLocked ? 'x' : isInCart ? '-' : '+';
   const badgeColor = isLocked ? '#888' : isInCart ? '#d04a2f' : '#3a8f47';
   const badgeTooltip = isOwn ? 'Your listing' : isExpired ? 'Expired listing' : '';
@@ -92,7 +98,7 @@ export const ListingCard = ({
               <EthIcon src={TokenIcons.eth} />
               <PriceText>{formatPrice(listing.Price)}</PriceText>
             </PriceChip>
-            <FlipBtn onClick={() => setFlipped(true)}>
+            <FlipBtn onClick={() => { playClick(); setFlipped(true); }}>
               <FlipIconImg src={ResetIcon} />
             </FlipBtn>
           </BottomBar>
@@ -128,18 +134,14 @@ export const ListingCard = ({
             {(bodyAffinity || handAffinity) && (
               <AffinitySection>
                 {bodyAffinity && (
-                  <TextTooltip text={[`Body: ${bodyAffinity}`]}>
-                    <AffinityCard $bg={AffinityColors[bodyAffinity] ?? '#ccc'}>
-                      <AffinityIconImg src={AffinityIcons[bodyAffinity]} />
-                    </AffinityCard>
-                  </TextTooltip>
+                  <AffinityCard $bg={AffinityColors[bodyAffinity] ?? '#ccc'}>
+                    <AffinityIconImg src={AffinityIcons[bodyAffinity]} />
+                  </AffinityCard>
                 )}
                 {handAffinity && (
-                  <TextTooltip text={[`Hand: ${handAffinity}`]}>
-                    <AffinityCard $bg={AffinityColors[handAffinity] ?? '#ccc'}>
-                      <AffinityIconImg src={AffinityIcons[handAffinity]} />
-                    </AffinityCard>
-                  </TextTooltip>
+                  <AffinityCard $bg={AffinityColors[handAffinity] ?? '#ccc'}>
+                    <AffinityIconImg src={AffinityIcons[handAffinity]} />
+                  </AffinityCard>
                 )}
               </AffinitySection>
             )}
@@ -150,7 +152,7 @@ export const ListingCard = ({
               <SellerIcon src={OperatorIcon} />
               <SellerName>{seller.name || 'Unknown'}</SellerName>
             </SellerChip>
-            <FlipBtn onClick={() => setFlipped(false)}>
+            <FlipBtn onClick={() => { playClick(); setFlipped(false); }}>
               <FlipIconImgDark src={ResetIcon} />
             </FlipBtn>
           </BackBottomBar>
@@ -184,6 +186,8 @@ const CardFace = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  user-select: none;
+  cursor: default;
 `;
 
 // ─── Right Column (cart badge + level) ────────────────────
@@ -253,7 +257,7 @@ const LevelValue = styled.span`
 // ─── Front Face ───────────────────────────────────────────
 
 const CardFront = styled(CardFace)<{ $flipped: boolean }>`
-  background: #111;
+  background: #e0e0e0;
   pointer-events: ${({ $flipped }) => ($flipped ? 'none' : 'auto')};
 `;
 
@@ -270,7 +274,7 @@ const KamiImage = styled.img`
 const ImagePlaceholder = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, #d0d0d0 0%, #c8c8c8 50%, #bbb 100%);
 `;
 
 const BottomBar = styled.div`
@@ -287,8 +291,9 @@ const BottomBar = styled.div`
     content: '';
     position: absolute;
     inset: 0;
-    background: black;
-    opacity: 0.45;
+    background: #bbb;
+    opacity: 0.6;
+    border-top: solid black 0.15vw;
   }
 
   & > * {
@@ -305,13 +310,13 @@ const PriceChip = styled.div`
 const EthIcon = styled.img`
   width: 1.1vw;
   height: 1.1vw;
-  filter: invert(1);
 `;
 
 const PriceText = styled.span`
   font-size: 0.57vw;
   font-weight: 600;
-  color: #fff;
+  color: black;
+  text-shadow: 0 0 0.5vw white;
 `;
 
 const FlipBtn = styled.button`
@@ -331,7 +336,6 @@ const FlipBtn = styled.button`
 const FlipIconImg = styled.img`
   width: 1.15vw;
   height: 1.15vw;
-  filter: brightness(3);
 `;
 
 const FlipIconImgDark = styled.img`

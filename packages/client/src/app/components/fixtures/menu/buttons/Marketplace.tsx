@@ -22,7 +22,7 @@ export const TradingMenuButton = () => {
           onClick: () => setModals({ ...modals, marketplace: !modals.marketplace }),
         },
         {
-          text: 'Kami Send',
+          text: 'KamiSend',
           image: MenuIcons.kami,
           onClick: () => setModals({ ...modals, kamiSend: !modals.kamiSend }),
         },

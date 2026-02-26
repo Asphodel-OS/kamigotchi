@@ -201,7 +201,7 @@ export const KamiSendModal: UIComponent = {
     return (
       <ModalWrapper
         id='kamiSend'
-        header={<ModalHeader title='Kami Send' icon={MenuIcons.kami} />}
+        header={<ModalHeader title='KamiSend' icon={MenuIcons.kami} />}
         canExit
         noPadding
       >

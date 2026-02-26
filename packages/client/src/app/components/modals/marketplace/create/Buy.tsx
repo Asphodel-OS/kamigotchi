@@ -105,6 +105,7 @@ export const Buy = ({
                     inputMode='numeric'
                     placeholder='Enter Amount'
                     value={quantity}
+                    onFocus={() => playClick()}
                     onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -127,6 +128,7 @@ export const Buy = ({
                         inputMode='decimal'
                         placeholder='Enter Bid'
                         value={price}
+                        onFocus={() => playClick()}
                         onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                         onChange={(e) => {
                           const val = e.target.value;
@@ -185,6 +187,7 @@ export const Buy = ({
                       inputMode='decimal'
                       placeholder='Enter Bid'
                       value={price}
+                      onFocus={() => playClick()}
                       onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -239,6 +242,8 @@ const BidTypeColumn = styled.div`
 const BidTypeTitle = styled.span`
   font-weight: bold;
   font-size: 0.8vw;
+  padding-bottom: 0.2vw;
+  border-bottom: 0.08vw solid #ddd;
 `;
 
 const BidTypeRow = styled.div`
@@ -344,6 +349,7 @@ const StyledInput = styled.input`
   background: white;
   text-align: center;
   caret-color: transparent;
+  cursor: pointer;
 
   &::placeholder {
     color: transparent;

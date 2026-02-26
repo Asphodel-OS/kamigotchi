@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -89,6 +89,7 @@ export const Listings = ({
   const [sweepActive, setSweepActive] = useState(false);
   const [sweepCount, setSweepCount] = useState(0);
   const [page, setPage] = useState(0);
+  const gridRef = useRef<HTMLDivElement>(null);
   const [recentlyBoughtListings, setRecentlyBoughtListings] = useState<Set<string>>(new Set());
 
   // Reset on modal open
@@ -251,6 +252,9 @@ export const Listings = ({
 
   const goNextPage = () => { if (hasNextPage) setPage((p) => p + 1); };
   const goPrevPage = () => { if (hasPrevPage) setPage((p) => p - 1); };
+
+  // Scroll grid to top on page change
+  useEffect(() => { gridRef.current?.scrollTo(0, 0); }, [page]);
 
   // Reset page when sort/filter changes
   useEffect(() => { setPage(0); }, [sortBy, filters.selected, filters.stats, filters.affinity]);
@@ -442,7 +446,7 @@ export const Listings = ({
             loading={loading}
           />
         ) : (
-          <ListingsGrid>
+          <ListingsGrid ref={gridRef}>
             {loading && (
               <EmptyCenter>
                 <EmptyText text={['Loading listings...']} size={0.9} />
@@ -524,10 +528,11 @@ const PageNav = styled.div`
 `;
 
 const PageLabel = styled.span`
-  font-size: 0.8vw;
-  font-weight: 600;
+  font-size: 1vw;
+  font-weight: 800;
   min-width: 1.4vw;
   text-align: center;
+  margin: 0 0.4vw;
 `;
 
 const IndicatorWrapper = styled.div`

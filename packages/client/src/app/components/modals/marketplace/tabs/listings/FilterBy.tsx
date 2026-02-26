@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { IconButton, Tooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { TraitIcons } from 'assets/images/icons/traits';
+import { playClick } from 'utils/sounds';
 import { AffinityIcons } from 'constants/affinities';
 import { StatColors, StatIcons } from 'constants/stats';
 import { Trait, TraitType } from 'network/shapes/Trait';
@@ -87,6 +88,7 @@ export const FilterBy = ({
   };
 
   const handleAffinityClick = (type: 'body' | 'hand', affinityKey: string) => {
+    playClick();
     const current = type === 'body' ? affinityValues.body : affinityValues.hand;
     const traitKey = type === 'body' ? 'Body' : 'Hands';
     const allTraits = type === 'body' ? allBodyTraits : allHandTraits;
@@ -129,6 +131,7 @@ export const FilterBy = ({
                 selected={[Array.from(selected[col.key])]}
                 onClick={[
                   (values) => {
+                    playClick();
                     onSelectedChange({ ...selected, [col.key]: new Set(values) });
                   },
                 ]}
@@ -139,7 +142,7 @@ export const FilterBy = ({
                 maxHeight={40}
                 trigger={
                   <Tooltip content={`${col.key}`} isDisabled={false}>
-                    <DropdownButton $affinityColor={col.affinityColor}>
+                    <DropdownButton $affinityColor={col.affinityColor} onClick={() => playClick()}>
                       <TraitIcon src={col.icon} />
                       <TraitLabel>
                         {col.key}
@@ -220,7 +223,7 @@ export const FilterBy = ({
         </ThirdSection>
       </Body>
       <Footer>
-        <IconButton text='Clear Filters' onClick={onClear} color='#FDECEC' />
+        <IconButton text='Clear Filters' onClick={() => { playClick(); onClear(); }} color='#FDECEC' />
       </Footer>
     </Container>
   );

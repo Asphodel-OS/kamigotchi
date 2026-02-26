@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { IconListButton } from 'app/components/library';
 import { MenuIcons } from 'assets/images/icons/menu';
+import { playClick } from 'utils/sounds';
 import { TokenIcons } from 'assets/images/tokens';
 import { Kami, NullKami } from 'network/shapes/Kami';
 import { ExpirySlider } from './ExpirySlider';
@@ -92,6 +93,7 @@ export const Sell = ({
                   inputMode='decimal'
                   placeholder='Enter Price'
                   value={price}
+                  onFocus={() => playClick()}
                   onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -236,6 +238,7 @@ const StyledInput = styled.input`
   background: white;
   text-align: center;
   caret-color: transparent;
+  cursor: pointer;
 
   &::placeholder {
     color: transparent;

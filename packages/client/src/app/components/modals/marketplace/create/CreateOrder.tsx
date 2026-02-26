@@ -105,10 +105,11 @@ export const CreateOrder = ({
         return current?.id === NullKami.id ? prev : [NullKami];
       }
 
-      if (!current || current.id === NullKami.id) return [sellableKamis[0]];
+      // Don't auto-fill — leave empty until user picks
+      if (!current || current.id === NullKami.id) return prev;
 
       const updatedSelection = sellableKamis.find((kami) => kami.index === current.index);
-      if (!updatedSelection) return [sellableKamis[0]];
+      if (!updatedSelection) return [NullKami];
 
       const isSameSelectionContent =
         current.id === updatedSelection.id &&

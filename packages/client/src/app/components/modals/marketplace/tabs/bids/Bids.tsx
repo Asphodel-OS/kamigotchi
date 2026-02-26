@@ -11,6 +11,7 @@ import { TokenIcons } from 'assets/images/tokens';
 import { getKamidenClient, KamiMarketBid, KamiMarketBidType } from 'clients/kamiden';
 import { EntityIndex } from 'engine/recs';
 import { Kami } from 'network/shapes/Kami';
+import { playClick } from 'utils/sounds';
 import { formatExpiry, isExpired } from '../../helpers';
 import { SelectBidKamis } from './SelectBidKamis';
 
@@ -222,6 +223,7 @@ export const Bids = ({
 
   const toggleKami = (index: number) => {
     if (!canSelectKami(index)) return;
+    playClick();
     setSelectedKamis((prev) => {
       const next = new Set(prev);
       if (next.has(index)) next.delete(index);
@@ -502,10 +504,11 @@ const PageNav = styled.div`
 `;
 
 const PageLabel = styled.span`
-  font-size: 0.8vw;
-  font-weight: 600;
+  font-size: 1vw;
+  font-weight: 800;
   min-width: 1.4vw;
   text-align: center;
+  margin: 0 0.4vw;
 `;
 
 const HeaderRow = styled.div`

@@ -62,9 +62,9 @@ export const ModalWrapper = ({
     }
   }, [isVisible]);
 
-  // ESC key closes overlay modals that render on top of others
+  // ESC key closes the Kami modal
   useEffect(() => {
-    if (!canExit || !overlay || !isVisible) return;
+    if (!canExit || !isVisible || id !== 'kami') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setModals({ [id]: false });
@@ -72,7 +72,7 @@ export const ModalWrapper = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [canExit, overlay, isVisible, id]);
+  }, [canExit, isVisible, id]);
 
   useEffect(() => {
     if (positionOverride) {

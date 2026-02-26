@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { MenuIcons } from 'assets/images/icons/menu';
+import { playClick } from 'utils/sounds';
 
 const EXPIRY_STEPS = [2, 6, 24, 72, 168, 720] as const;
 const EXPIRY_LABELS = ['2h', '6h', '24h', '3d', '7d', '30d'] as const;
@@ -26,6 +27,7 @@ export const ExpirySlider = ({
   };
 
   const handleNoExpiryToggle = () => {
+    playClick();
     if (isNoExpiry) {
       setExpirationHours(EXPIRY_STEPS[0]);
     } else {
