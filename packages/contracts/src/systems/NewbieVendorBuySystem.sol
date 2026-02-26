@@ -53,7 +53,7 @@ contract NewbieVendorBuySystem is System {
     require(block.timestamp - accountCreated <= 86400, "NewbieVendor: account too old");
 
     // compute price from TWAP oracle
-    uint256 price = _calcPrice();
+    uint256 price = calcPrice();
     require(msg.value >= price, "NewbieVendor: insufficient ETH");
 
     // prevent them from making future purchases from the newbie vendor
@@ -137,7 +137,7 @@ contract NewbieVendorBuySystem is System {
 
   /// @notice Compute vendor price from TWAP oracle, floored at minimum price
   /// @return price max(twapPrice, minPrice)
-  function _calcPrice() internal view returns (uint256 price) {
+  function calcPrice() public view returns (uint256 price) {
     uint256 minPrice = LibConfig.get(components, "NEWBIE_VENDOR_MIN_PRICE");
     if (minPrice == 0) minPrice = DEFAULT_MIN_PRICE;
 

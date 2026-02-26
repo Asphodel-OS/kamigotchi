@@ -74,6 +74,7 @@ abstract contract SetupTemplate is TestSetupImports {
     setUpItems();
     setUpRooms();
     setUpNodes();
+    setUpNewbieVendor();
   }
 
   function setUpWorld() public virtual {
@@ -151,6 +152,16 @@ abstract contract SetupTemplate is TestSetupImports {
     _createHarvestingNode(2, 1, "Test Node", "this is a node", "SCRAP");
     _createHarvestingNode(3, 2, "Test Node", "this is a node", "EERIE");
     _createHarvestingNode(4, 2, "Test Node", "this is a node", "INSECT");
+  }
+
+  function setUpNewbieVendor() public virtual {
+    vm.startPrank(deployer);
+    __NewbieVendorRegistrySystem.setMinPrice(0.005 ether);
+    __NewbieVendorRegistrySystem.setTWAPWindow(86400);
+    __NewbieVendorRegistrySystem.initTWAP(0.01 ether);
+    __NewbieVendorRegistrySystem.setEnabled(true);
+    __NewbieVendorRegistrySystem.setCycleDuration(172800);
+    vm.stopPrank();
   }
 
   function setUpTime() public virtual {
