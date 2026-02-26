@@ -16,6 +16,7 @@ export async function initConfigs(api: AdminAPI) {
 
   await initTokens(api);
   await initPortal(api);
+  await initNewbieVendor(api);
 }
 
 // local config settings for faster testing
@@ -176,4 +177,12 @@ async function initVIP(api: AdminAPI) {
   // starts on April 24, 2025 8:00:00 AM UTC
   // each stage is 2 weeks
   await api.config.set.array('VIP_STAGE', [1745481600, 1209600, 0, 0, 0, 0, 0, 0]);
+}
+
+async function initNewbieVendor(api: AdminAPI) {
+  await api.config.set.number('NEWBIE_VENDOR_MIN_PRICE', 5000000000000000); // 0.005 ether
+  await api.config.set.number('NEWBIE_VENDOR_TWAP_WINDOW', 86400); // 24h
+  await api.config.set.bool('NEWBIE_VENDOR_ENABLED', true);
+  await api.vendor.setCycleDuration(172800); // 48h
+  await api.vendor.initTWAP(5000000000000000); // 0.005 ether
 }

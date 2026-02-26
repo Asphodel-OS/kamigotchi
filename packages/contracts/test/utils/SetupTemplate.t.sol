@@ -158,7 +158,7 @@ abstract contract SetupTemplate is TestSetupImports {
     vm.startPrank(deployer);
     __NewbieVendorRegistrySystem.setMinPrice(0.005 ether);
     __NewbieVendorRegistrySystem.setTWAPWindow(86400);
-    __NewbieVendorRegistrySystem.initTWAP(0.01 ether);
+    __NewbieVendorRegistrySystem.initTWAP(0.005 ether);
     __NewbieVendorRegistrySystem.setEnabled(true);
     __NewbieVendorRegistrySystem.setCycleDuration(172800);
     vm.stopPrank();
