@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { parseEther } from 'viem';
+import { formatUnits, parseEther } from 'viem';
+import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { IconButton, TextTooltip } from 'app/components/library';
-import { useSelected, useVisibility } from 'app/stores';
+import { useAccount, useSelected, useVisibility } from 'app/stores';
+import { OperatorIcon } from 'assets/images/icons/menu';
+import { TokenIcons } from 'assets/images/tokens';
 
 import { BigNumberish } from 'ethers';
 import { Kami, NullKami } from 'network/shapes/Kami';
@@ -77,6 +80,16 @@ export const CreateOrder = ({
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
   const kamiIndex = useSelected((s) => s.kamiIndex);
+
+  const account = useAccount((s) => s.account);
+  const { data: balanceData, refetch } = useBalance({
+    address: account.ownerAddress,
+  });
+  useWatchBlockNumber({ onBlockNumber: () => refetch() });
+
+  const formattedBalance = balanceData
+    ? Number(formatUnits(balanceData.value, 18)).toFixed(6).replace(/\.?0+$/, '')
+    : '—';
 
   /////////////////
   // PREPARATION
@@ -167,8 +180,13 @@ export const CreateOrder = ({
     if (!isSelectedKamiResting) return 'This Kami is not resting.';
     return '';
   })();
+  const totalBidWei = parseEthToWei(price);
+  const overBudget =
+    orderType === 'bid' && balanceData && totalBidWei !== null && totalBidWei > balanceData.value;
   const isCreateDisabled =
-    orderType === 'listing' ? !isSellComplete || !!sellBlockedReason : !isBuyComplete;
+    orderType === 'listing'
+      ? !isSellComplete || !!sellBlockedReason
+      : !isBuyComplete || !!overBudget;
   const sellSelectionTooltip = `You don't have resting Kami.`;
   const actionText = orderType === 'listing' ? 'Place Listing' : 'Place Bid';
 
@@ -283,26 +301,37 @@ export const CreateOrder = ({
         />
       </ContentArea>
       <Actions>
-        {sellBlockedReason ? (
-          <TextTooltip text={[sellBlockedReason]}>
-            <span>
-              <IconButton
-                text={actionText}
-                onClick={handleCreate}
-                disabled={isCreateDisabled}
-                color='#E8F5E9'
-              />
-            </span>
-          </TextTooltip>
-        ) : (
-          <IconButton
-            text={actionText}
-            onClick={handleCreate}
-            disabled={isCreateDisabled}
-            color='#E8F5E9'
-          />
+        {orderType === 'bid' && (
+          <InfoChip>
+            <ChipIcon src={OperatorIcon} />
+            <EthChipIcon src={TokenIcons.eth} alt='ETH' />
+            <InfoValue>{formattedBalance}</InfoValue>
+          </InfoChip>
         )}
-        <IconButton text='Clear' onClick={handleClear} color='#E0EEFF' />
+        <FooterButtons>
+          <IconButton text='Clear' onClick={handleClear} color='#E0EEFF' />
+          {overBudget ? (
+            <IconButton text='Not Enough Funds' disabled color='#FDECEC' />
+          ) : sellBlockedReason ? (
+            <TextTooltip text={[sellBlockedReason]}>
+              <span>
+                <IconButton
+                  text={actionText}
+                  onClick={handleCreate}
+                  disabled={isCreateDisabled}
+                  color='#E8F5E9'
+                />
+              </span>
+            </TextTooltip>
+          ) : (
+            <IconButton
+              text={actionText}
+              onClick={handleCreate}
+              disabled={isCreateDisabled}
+              color='#E8F5E9'
+            />
+          )}
+        </FooterButtons>
       </Actions>
     </Container>
   );
@@ -370,10 +399,43 @@ const ContentArea = styled.div`
 const Actions = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.6vw;
   padding: 0.6vw;
   margin-top: auto;
   background: rgb(240, 240, 240);
   border-top: 0.1vw solid #ccc;
+`;
+
+const FooterButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6vw;
+  margin-left: auto;
+`;
+
+const InfoChip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25vw;
+  padding: 0.3vw 0.5vw;
+  border-radius: 0.3vw;
+  background: #E8F0FE;
+  border: 0.06vw solid #A0C0E8;
+`;
+
+const InfoValue = styled.span`
+  font-size: 0.85vw;
+  font-weight: 700;
+`;
+
+const ChipIcon = styled.img`
+  width: 1.2vw;
+  height: 1.2vw;
+`;
+
+const EthChipIcon = styled.img`
+  width: 1.1vw;
+  height: 1.1vw;
 `;
