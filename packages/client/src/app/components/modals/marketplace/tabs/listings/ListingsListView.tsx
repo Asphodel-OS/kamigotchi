@@ -92,7 +92,7 @@ export const ListingsListView = ({
                 <IconButton
                   text='Cancel'
                   onClick={() => onCancelListing(listing.OrderID)}
-                  color='#FDECEC'
+                  color='#F8D6D6'
                 />
               ) : isListingExpired(listing.Expiry) ? (
                 <TextTooltip text={['Listing expired']}>
@@ -102,13 +102,13 @@ export const ListingsListView = ({
                 <IconButton
                   text='Remove'
                   onClick={() => onRemoveFromCart(listing.OrderID)}
-                  color='#FDECEC'
+                  color='#F8D6D6'
                 />
               ) : (
                 <IconButton
                   text='Add'
                   onClick={() => onAddToCart(listing)}
-                  color='#E8F5E9'
+                  color='#A8E6A8'
                 />
               )}
             </Column>

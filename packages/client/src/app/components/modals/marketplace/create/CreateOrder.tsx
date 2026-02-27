@@ -311,7 +311,7 @@ export const CreateOrder = ({
         <FooterButtons>
           <IconButton text='Clear' onClick={handleClear} color='#E0EEFF' />
           {overBudget ? (
-            <IconButton text='Not Enough Funds' disabled color='#FDECEC' />
+            <IconButton text='Not Enough Funds' disabled color='#F8D6D6' />
           ) : sellBlockedReason ? (
             <TextTooltip text={[sellBlockedReason]}>
               <span>
@@ -319,7 +319,7 @@ export const CreateOrder = ({
                   text={actionText}
                   onClick={handleCreate}
                   disabled={isCreateDisabled}
-                  color='#E8F5E9'
+                  color='#A8E6A8'
                 />
               </span>
             </TextTooltip>
@@ -328,7 +328,7 @@ export const CreateOrder = ({
               text={actionText}
               onClick={handleCreate}
               disabled={isCreateDisabled}
-              color='#E8F5E9'
+              color='#A8E6A8'
             />
           )}
         </FooterButtons>

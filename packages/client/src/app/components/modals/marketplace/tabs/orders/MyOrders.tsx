@@ -387,7 +387,7 @@ const OrderRow = ({
       </Column>
       <Column>
         {isCancellable ? (
-          <IconButton text='Cancel' onClick={() => onCancelOrder(order.orderId)} color='#FDECEC' />
+          <IconButton text='Cancel' onClick={() => onCancelOrder(order.orderId)} color='#F8D6D6' />
         ) : !order.isOwn ? (
           <IconButton text='You Filled' disabled />
         ) : (

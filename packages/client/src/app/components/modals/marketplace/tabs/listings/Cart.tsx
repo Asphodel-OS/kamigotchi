@@ -82,7 +82,7 @@ export const Cart = ({
                 <IconButton
                   text='Remove'
                   onClick={() => onRemove(item.OrderID)}
-                  color='#FDECEC'
+                  color='#F8D6D6'
                 />
               </CartActions>
             </CartRow>
@@ -115,14 +115,14 @@ export const Cart = ({
             text='Remove All'
             onClick={onClear}
             disabled={cart.length === 0}
-            color='#FDECEC'
+            color='#F8D6D6'
             scale={3}
           />
           {overBudget ? (
             <NoFundsButton
               text='Not Enough Funds'
               disabled
-              color='#FDECEC'
+              color='#F8D6D6'
               scale={3}
             />
           ) : (
@@ -130,7 +130,7 @@ export const Cart = ({
               text={cart.length <= 1 ? 'Buy' : 'Buy All'}
               onClick={onBuy}
               disabled={cart.length === 0}
-              color='#E8F5E9'
+              color='#A8E6A8'
               scale={3}
             />
           )}

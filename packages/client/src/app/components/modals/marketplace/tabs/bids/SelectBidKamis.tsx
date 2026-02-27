@@ -106,7 +106,7 @@ export const SelectBidKamis = ({
         </FooterLeft>
         <FooterButtons>
           {selectedCount > 0 && (
-            <IconButton text='Clear' onClick={onClear} color='#FDECEC' scale={3} />
+            <IconButton text='Clear' onClick={onClear} color='#F8D6D6' scale={3} />
           )}
           <TextTooltip text={['Select the maximum Kami for the best bid']}>
             <IconButton text='Max' onClick={onSelectMax} color='#DCEEFB' scale={3} />
@@ -115,7 +115,7 @@ export const SelectBidKamis = ({
             text={sellLabel}
             onClick={onSell}
             disabled={sellDisabled}
-            color='#E8F5E9'
+            color='#A8E6A8'
             scale={3}
           />
         </FooterButtons>

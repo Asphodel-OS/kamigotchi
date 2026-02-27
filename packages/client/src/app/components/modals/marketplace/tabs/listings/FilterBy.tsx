@@ -242,7 +242,7 @@ export const FilterBy = ({
         </ThirdSection>
       </Body>
       <Footer>
-        <IconButton text='Clear Filters' onClick={() => { playClick(); onClear(); }} color='#FDECEC' />
+        <IconButton text='Clear Filters' onClick={() => { playClick(); onClear(); }} color='#F8D6D6' />
       </Footer>
     </Container>
   );
