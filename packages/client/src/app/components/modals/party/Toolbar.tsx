@@ -169,7 +169,7 @@ export const Toolbar = ({
   // player has no kami in world
   // or player has kami in the wild
   const toggleView = () => {
-    const hasExternal = wildKamis.length > 0;
+    const hasExternal = wildKamis.length > 0 || kamis.some((k) => k.state === 'LISTED');
     if (view === 'expanded') setView('collapsed');
     else if (view === 'collapsed') setView(hasExternal ? 'external' : 'expanded');
     else setView('expanded');
