@@ -10,6 +10,7 @@ import { ActionIcons } from 'assets/images/icons/actions';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { ItemImages } from 'assets/images/items';
 import { getKamidenClient } from 'clients/kamiden';
+import { KAMI_BASE_URI } from 'constants/media';
 import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { MUSU_INDEX } from 'constants/items';
 import { KAMI_BASE_URI } from 'constants/media';
