@@ -10,6 +10,7 @@ import { TokenIcons } from 'assets/images/tokens';
 
 import { BigNumberish } from 'ethers';
 import { Kami, NullKami } from 'network/shapes/Kami';
+import type { BaseKami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 
 import { Buy } from './Buy';
@@ -49,9 +50,8 @@ export const CreateOrder = ({
   onClose: () => void;
   utils: {
     getAccountKamis: () => Kami[];
-    getAllKamis: () => Kami[];
     getRestingKamis: () => Kami[];
-    getWildKamis: () => Kami[];
+    searchKamis: (term: string) => BaseKami[];
   };
   createSellOrder: (
     kamiIndex: number,
@@ -75,7 +75,6 @@ export const CreateOrder = ({
   const [selectedKami, setSelectedKami] = useState<Kami[]>([NullKami]);
   const [accountKamis, setAccountKamis] = useState<Kami[]>([]);
   const [restingKamis, setRestingKamis] = useState<Kami[]>([]);
-  const [allKamis, setAllKamis] = useState<Kami[]>([]);
   const setModals = useVisibility((s) => s.setModals);
   const setKami = useSelected((s) => s.setKami);
   const kamiModalOpen = useVisibility((s) => s.modals.kami);
@@ -100,7 +99,6 @@ export const CreateOrder = ({
       const nextAccountKamis = utils.getAccountKamis();
       setAccountKamis(nextAccountKamis);
       setRestingKamis(nextAccountKamis.filter((kami) => kami.state === 'RESTING'));
-      setAllKamis(utils.getAllKamis());
     };
 
     refreshKamiLists();
@@ -139,30 +137,7 @@ export const CreateOrder = ({
     [sellableKamis]
   );
 
-  const [selectedBuyKami, setSelectedBuyKami] = useState<Kami | null>(null);
-
-  const wildKamis = useMemo(() => utils.getWildKamis(), [utils]);
-  const ownedKamiIds = useMemo(() => {
-    const ids = new Set(accountKamis.map((k) => k.id));
-    wildKamis.forEach((k) => ids.add(k.id));
-    return ids;
-  }, [accountKamis, wildKamis]);
-  const unownedKamis = useMemo(
-    () => allKamis.filter((k) => !ownedKamiIds.has(k.id)),
-    [allKamis, ownedKamiIds]
-  );
-  const allKamiOptions = useMemo(
-    () =>
-      unownedKamis.map((k) => ({
-        text: k.name,
-        image: k.image,
-        onClick: () => {
-          setSelectedBuyKami(k);
-          setQuantity('');
-        },
-      })),
-    [unownedKamis]
-  );
+  const [selectedBuyKami, setSelectedBuyKami] = useState<BaseKami | null>(null);
 
   const priceNum = Number(price);
   const isPriceValid =
@@ -295,8 +270,12 @@ export const CreateOrder = ({
           setPrice={setPrice}
           expiration={expiration}
           setExpiration={setExpiration}
-          kamiOptions={allKamiOptions}
+          searchKamis={utils.searchKamis}
           selectedBuyKami={selectedBuyKami}
+          onSelectBuyKami={(kami: BaseKami) => {
+            setSelectedBuyKami(kami);
+            setQuantity('');
+          }}
           onClearBuyKami={() => setSelectedBuyKami(null)}
         />
       </ContentArea>
