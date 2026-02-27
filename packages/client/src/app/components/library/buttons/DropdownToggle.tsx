@@ -90,10 +90,9 @@ export const DropdownToggle = ({
 
   // reset selection when clearTrigger is toggled externally
   useEffect(() => {
-    if (clearTrigger !== undefined) {
-      setChecked(Array(modeOptions.length).fill(false));
-    }
-  }, [clearTrigger]);
+    if (!clearTrigger) return;
+    setChecked(Array(modeOptions.length).fill(false));
+  }, [clearTrigger, modeOptions.length]);
 
   const maxSelectable = Math.min(limit ?? modeOptions.length, modeOptions.length);
   const selectedCount = checked.filter(Boolean).length;
