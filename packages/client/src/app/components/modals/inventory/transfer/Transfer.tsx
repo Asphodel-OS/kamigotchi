@@ -6,13 +6,13 @@ import styled from 'styled-components';
 import { Inventory } from 'app/cache/inventory';
 import { IconListButton, IconListButtonOption } from 'app/components/library';
 import { useVisibility } from 'app/stores';
-import { ItemImages } from 'assets/images/items';
 import { ActionIcons } from 'assets/images/icons/actions';
 import { MenuIcons } from 'assets/images/icons/menu';
+import { ItemImages } from 'assets/images/items';
 import { getKamidenClient } from 'clients/kamiden';
-import { KAMI_BASE_URI } from 'constants/media';
 import { ItemTransfer, ItemTransferRequest } from 'clients/kamiden/proto';
 import { MUSU_INDEX } from 'constants/items';
+import { KAMI_BASE_URI } from 'constants/media';
 import { TRANSFER_FEE } from 'constants/prices';
 import { Account } from 'network/shapes/Account';
 import { Item } from 'network/shapes/Item';
@@ -528,10 +528,10 @@ const SendButton = styled.button<{ disabled?: boolean }>`
   transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    background: #C8E6C9;
+    background: #c8e6c9;
   }
 
   &:active:not(:disabled) {
-    background: #A5D6A7;
+    background: #a5d6a7;
   }
 `;
