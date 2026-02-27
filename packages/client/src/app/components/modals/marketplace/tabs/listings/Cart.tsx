@@ -130,7 +130,7 @@ export const Cart = ({
               text={cart.length <= 1 ? 'Buy' : 'Buy All'}
               onClick={onBuy}
               disabled={cart.length === 0}
-              color='#A2D9CE'
+              color='#E8F5E9'
               scale={3}
             />
           )}
