@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
-import { useVisibility } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
 import { ArrowIcons } from 'assets/images/icons/arrows';
 import { OperatorIcon } from 'assets/images/icons/menu';
 import { TriggerIcons } from 'assets/images/icons/triggers';
@@ -146,6 +146,19 @@ export const Bids = ({
     () => new Set(accountKamis.map((kami) => kami.index)),
     [accountKamis]
   );
+  const kamiIndex = useSelected((s) => s.kamiIndex);
+  const setKami = useSelected((s) => s.setKami);
+  const kamiModalOpen = useVisibility((s) => s.modals.kami);
+  const setModals = useVisibility((s) => s.setModals);
+
+  const openKamiModal = (index: number) => {
+    const sameKami = kamiIndex === index;
+    if (!sameKami) setKami(index);
+    if (kamiModalOpen && sameKami) setModals({ kami: false });
+    else setModals({ kami: true });
+    playClick();
+  };
+
   const showBottomSection = isVisible && !showCreateOrder && showSelectKami;
 
   const formatPrice = (weiString: string) => utils.formatEthPrice(weiString, 6);
@@ -436,6 +449,8 @@ export const Bids = ({
                     <KamiThumbnail
                       src={isSpecific && kami ? kami.image : placeholderKami}
                       alt={isSpecific ? (kami?.name ?? `Kami #${bid.KamiIndex}`) : 'Any Kami'}
+                      $clickable={isSpecific}
+                      onClick={isSpecific ? () => openKamiModal(bid.KamiIndex) : undefined}
                     />
                     <KamiInfo>
                       <KamiName>
@@ -615,13 +630,14 @@ const KamiCell = styled.div`
   width: 11vw;
 `;
 
-const KamiThumbnail = styled.img`
+const KamiThumbnail = styled.img<{ $clickable: boolean }>`
   width: 3vw;
   height: 3vw;
   flex-shrink: 0;
   border-radius: 0.3vw;
   border: 0.1vw solid black;
   image-rendering: pixelated;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 `;
 
 const KamiInfo = styled.div`
