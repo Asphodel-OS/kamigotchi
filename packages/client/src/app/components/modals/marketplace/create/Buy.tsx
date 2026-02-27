@@ -1,12 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { formatUnits, parseEther } from 'viem';
 
-import { IconListButton, IconListButtonOption } from 'app/components/library';
 import placeholderKami from 'assets/images/kamis/placeholderKami.gif';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
-import { Kami } from 'network/shapes/Kami';
+import type { BaseKami } from 'network/shapes/Kami';
 import { playClick } from 'utils/sounds';
 import { ExpirySlider } from './ExpirySlider';
 
@@ -20,8 +19,9 @@ export const Buy = ({
   setPrice,
   expiration,
   setExpiration,
-  kamiOptions,
+  searchKamis,
   selectedBuyKami,
+  onSelectBuyKami,
   onClearBuyKami,
 }: {
   isVisible: boolean;
@@ -31,11 +31,67 @@ export const Buy = ({
   setPrice: (val: string) => void;
   expiration: number;
   setExpiration: (val: number) => void;
-  kamiOptions: IconListButtonOption[];
-  selectedBuyKami: Kami | null;
+  searchKamis: (term: string) => BaseKami[];
+  selectedBuyKami: BaseKami | null;
+  onSelectBuyKami: (kami: BaseKami) => void;
   onClearBuyKami: () => void;
 }) => {
   const [bidMode, setBidMode] = useState<BidMode>('generic');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<BaseKami[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dropdownPos, setDropdownPos] = useState<{ left: number; top: number; width: number } | null>(null);
+
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      setHasSearched(false);
+      setShowResults(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      const results = searchKamis(searchTerm);
+      setSearchResults(results);
+      setHasSearched(true);
+      setShowResults(true);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (showResults && inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownPos({ left: rect.left, top: rect.top, width: rect.width });
+    }
+  }, [showResults, searchResults]);
+
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const blurTimerRef = useRef<number>();
+
+  useEffect(() => {
+    return () => clearTimeout(blurTimerRef.current);
+  }, []);
+
+  const handleBlur = () => {
+    blurTimerRef.current = window.setTimeout(() => {
+      const active = document.activeElement;
+      const inSearch = searchRef.current?.contains(active);
+      const inResults = resultsRef.current?.contains(active);
+      if (!inSearch && !inResults) setShowResults(false);
+    }, 150);
+  };
+
+  const handleSelect = (kami: BaseKami) => {
+    playClick();
+    onSelectBuyKami(kami);
+    setSearchTerm('');
+    setSearchResults([]);
+    setShowResults(false);
+    setHasSearched(false);
+  };
 
   const handleModeSwitch = (mode: BidMode) => {
     if (mode === bidMode) return;
@@ -47,6 +103,10 @@ export const Buy = ({
     } else {
       setQuantity('');
     }
+    setSearchTerm('');
+    setSearchResults([]);
+    setShowResults(false);
+    setHasSearched(false);
     setBidMode(mode);
   };
 
@@ -170,17 +230,53 @@ export const Buy = ({
             <>
               <FieldGroup>
                 <SectionLabel>Select Kami</SectionLabel>
-                <KamiPickerRow>
-                  <IconListButton
-                    img={selectedBuyKami?.image ?? MenuIcons.kami}
-                    options={kamiOptions}
-                    searchable
-                    tooltip={{ text: ['Select Kami'] }}
-                  />
-                  {selectedBuyKami && (
-                    <SelectedKamiName>{selectedBuyKami.name}</SelectedKamiName>
-                  )}
-                </KamiPickerRow>
+                {selectedBuyKami ? (
+                  <SelectedRow>
+                    <SelectedImage src={selectedBuyKami.image} />
+                    <SelectedName>{selectedBuyKami.name}</SelectedName>
+                    <ClearSearchButton onClick={() => { playClick(); onClearBuyKami(); setSearchTerm(''); }}>×</ClearSearchButton>
+                  </SelectedRow>
+                ) : (
+                  <SearchWrapper ref={searchRef} onBlur={handleBlur}>
+                    <KamiSearchInput
+                      ref={inputRef}
+                      type='text'
+                      placeholder='Name or #index'
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onFocus={() => { playClick(); if (hasSearched) setShowResults(true); }}
+                    />
+                    {showResults && dropdownPos && (searchResults.length > 0 || hasSearched) && (
+                      <ResultsList
+                        ref={resultsRef}
+                        style={{
+                          position: 'fixed',
+                          left: dropdownPos.left,
+                          bottom: window.innerHeight - dropdownPos.top,
+                          width: dropdownPos.width,
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                      >
+                        {searchResults.length > 0 ? (
+                          <>
+                            {searchResults.map((kami) => (
+                              <ResultItem key={kami.entity} onClick={() => handleSelect(kami)}>
+                                <ResultImage src={kami.image} />
+                                <ResultName>{kami.name}</ResultName>
+                                <ResultIndex>#{kami.index}</ResultIndex>
+                              </ResultItem>
+                            ))}
+                            {searchResults.length >= 20 && (
+                              <ResultsHint>Refine your search for more results</ResultsHint>
+                            )}
+                          </>
+                        ) : (
+                          <ResultsHint>No kamis found</ResultsHint>
+                        )}
+                      </ResultsList>
+                    )}
+                  </SearchWrapper>
+                )}
               </FieldGroup>
               <FieldRow>
                 <RowFieldGroup>
@@ -407,26 +503,123 @@ const PerKamiValue = styled.span`
   font-weight: 700;
 `;
 
-const KamiPickerRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.6vw;
+const SearchWrapper = styled.div`
+  position: relative;
+`;
 
-  & button {
-    padding: 0 !important;
-    overflow: hidden;
+const KamiSearchInput = styled.input`
+  font-size: 1vw;
+  width: 50%;
+  height: 2.5vw;
+  padding: 0.3vw 0.6vw;
+  border: 0.15vw solid black;
+  border-radius: 0.6vw;
+  outline: none;
+  background: white;
+  text-align: center;
+  caret-color: transparent;
+  cursor: pointer;
+
+  &::placeholder {
+    color: transparent;
+    font-size: 0.8vw;
   }
-  & button img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    border-radius: 0.3vw;
-    image-rendering: pixelated;
+
+  &:focus {
+    border-width: 0.25vw;
+    background: #FFF9E0;
+  }
+
+  &:focus::placeholder {
+    color: #aaa;
   }
 `;
 
-const SelectedKamiName = styled.span`
+const ResultsList = styled.div`
+  max-height: 15vw;
+  overflow-y: auto;
+  background: white;
+  border: 0.15vw solid #ccc;
+  border-bottom: none;
+  border-radius: 0.4vw 0.4vw 0 0;
+  z-index: 9999;
+`;
+
+const ResultItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  padding: 0.3vw 0.5vw;
+  cursor: pointer;
+
+  &:hover {
+    background: #f0f4f8;
+  }
+`;
+
+const ResultImage = styled.img`
+  width: 1.8vw;
+  height: 1.8vw;
+  border-radius: 0.2vw;
+  image-rendering: pixelated;
+  object-fit: cover;
+`;
+
+const ResultName = styled.span`
+  font-size: 0.8vw;
+  flex: 1;
+`;
+
+const ResultIndex = styled.span`
+  font-size: 0.7vw;
+  color: #888;
+`;
+
+const ResultsHint = styled.div`
+  padding: 0.4vw 0.5vw;
+  font-size: 0.7vw;
+  color: #999;
+  text-align: center;
+`;
+
+const SelectedRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5vw;
+  padding: 0.3vw;
+  background: #f8f8f8;
+  border-radius: 0.4vw;
+  border: 0.15vw solid #ddd;
+  width: 50%;
+`;
+
+const SelectedImage = styled.img`
+  width: 2.2vw;
+  height: 2.2vw;
+  border-radius: 0.3vw;
+  image-rendering: pixelated;
+  object-fit: cover;
+`;
+
+const SelectedName = styled.span`
   font-weight: bold;
   font-size: 0.8vw;
   color: #222;
+`;
+
+const ClearSearchButton = styled.button`
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.1vw;
+  cursor: pointer;
+  color: #888;
+  padding: 0 0.3vw;
+  display: flex;
+  align-items: center;
+  align-self: center;
+
+  &:hover {
+    color: #333;
+  }
 `;
