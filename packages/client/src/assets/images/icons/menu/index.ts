@@ -1,4 +1,5 @@
 import ChatIcon from './chat.png';
+import ClockIcon from './clock.png';
 import HelpIcon from './help.png';
 import InventoryIcon from './inventory.png';
 import KamiIcon from './kami.png';
@@ -6,6 +7,7 @@ import ExternalIcon from './link_to_external_apps.png';
 import MapIcon from './map.png';
 import MoreIcon from './more.png';
 import OperatorIcon from './operator.png';
+import MarketplaceIcon from './marketplace.png';
 import QuestsIcon from './quests.png';
 import ResetIcon from './reset.png';
 import SettingsIcon from './settings.png';
@@ -16,11 +18,13 @@ import Whispo from './whispo.png';
 
 export {
   ChatIcon,
+  ClockIcon,
   ExternalIcon,
   HelpIcon,
   InventoryIcon,
   KamiIcon,
   MapIcon,
+  MarketplaceIcon,
   MoreIcon,
   OperatorIcon,
   QuestsIcon,
@@ -33,6 +37,7 @@ export {
 };
 
 export const MenuIcons = {
+  clock: ClockIcon,
   trade: TradeIcon,
   whispo: Whispo,
   link_to_external_apps: ExternalIcon,
@@ -41,6 +46,7 @@ export const MenuIcons = {
   inventory: InventoryIcon,
   kami: KamiIcon,
   map: MapIcon,
+  marketplace: MarketplaceIcon,
   more: MoreIcon,
   operator: OperatorIcon,
   quests: QuestsIcon,

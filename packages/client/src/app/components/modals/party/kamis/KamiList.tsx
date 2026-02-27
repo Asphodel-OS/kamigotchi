@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText } from 'app/components/library';
@@ -47,6 +48,11 @@ export const KamiList = ({
 }) => {
   const partyModalVisible = useVisibility((s) => s.modals.party);
 
+  const listedKamis = useMemo(
+    () => data.kamis.filter((kami) => kami.state === 'LISTED'),
+    [data.kamis]
+  );
+
   /////////////////
   // DISPLAY
 
@@ -93,7 +99,7 @@ export const KamiList = ({
       />
       <KamisExternal
         controls={{ view }}
-        data={{ ...data, kamis: data.wildKamis }}
+        data={{ ...data, kamis: data.wildKamis, listedKamis }}
         utils={utils}
         isVisible={partyModalVisible && view === 'external'}
       />

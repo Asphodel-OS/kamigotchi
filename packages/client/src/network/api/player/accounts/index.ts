@@ -1,6 +1,7 @@
 import { SystemQueue } from 'engine/queue';
 import { BigNumberish } from 'ethers';
 
+import { kamiMarketAPI } from '../kamimarket';
 import { chatAPI } from './chat';
 import { friendsAPI } from './friends';
 import { itemsAPI } from './items';
@@ -48,5 +49,6 @@ export function accountsAPI(systems: SystemQueue<any>) {
     quest: questsAPI(systems),
     set: settingsAPI(systems),
     trade: tradesAPI(systems),
+    kamiMarket: kamiMarketAPI(systems),
   };
 }

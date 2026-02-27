@@ -20,8 +20,10 @@ contract KamiMarketAcceptOfferSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
-    (bool isBatch, uint256 offerID, uint32 kamiIndex, uint32[] memory kamiIndices) =
-      abi.decode(arguments, (bool, uint256, uint32, uint32[]));
+    (bool isBatch, uint256 offerID, uint32 kamiIndex, uint32[] memory kamiIndices) = abi.decode(
+      arguments,
+      (bool, uint256, uint32, uint32[])
+    );
 
     if (isBatch) {
       return _acceptBatch(offerID, kamiIndices);
@@ -38,7 +40,10 @@ contract KamiMarketAcceptOfferSystem is System {
 
   /// @param offerID The collection offer entity ID
   /// @param kamiIndices Array of kami token indices to sell
-  function executeTyped(uint256 offerID, uint32[] memory kamiIndices) public returns (bytes memory) {
+  function executeTyped(
+    uint256 offerID,
+    uint32[] memory kamiIndices
+  ) public returns (bytes memory) {
     return _acceptBatch(offerID, kamiIndices);
   }
 
@@ -103,7 +108,10 @@ contract KamiMarketAcceptOfferSystem is System {
   }
 
   /// @notice Accept a collection offer for multiple kamis in one tx
-  function _acceptBatch(uint256 offerID, uint32[] memory kamiIndices) internal returns (bytes memory) {
+  function _acceptBatch(
+    uint256 offerID,
+    uint32[] memory kamiIndices
+  ) internal returns (bytes memory) {
     require(kamiIndices.length > 0, "KamiMarketAccept: empty batch");
 
     // --- shared checks (once) ---
@@ -130,7 +138,14 @@ contract KamiMarketAcceptOfferSystem is System {
       LibSoulbound.verify(components, LibKami.getByIndex(components, kamiIndex));
 
       LibKamiMarket.fillCollectionOffer(world, components, offerID, sellerAccID, kamiIndex);
-      LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, pricePerKami);
+      LibKamiMarket.emitAcceptOffer(
+        world,
+        offerID,
+        sellerAccID,
+        buyerAccID,
+        kamiIndex,
+        pricePerKami
+      );
       LibKamiMarket.logAcceptOffer(components, sellerAccID);
     }
 

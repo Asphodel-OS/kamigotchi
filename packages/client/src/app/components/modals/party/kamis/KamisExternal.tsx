@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, KamiBar } from 'app/components/library';
@@ -8,7 +9,7 @@ import { Kami } from 'network/shapes/Kami';
 import { View } from '../types';
 
 export const KamisExternal = ({
-  data: { kamis },
+  data: { kamis, listedKamis },
   isVisible,
   utils,
 }: {
@@ -19,34 +20,58 @@ export const KamisExternal = ({
     account: Account;
     accounts: Account[];
     kamis: Kami[];
+    listedKamis: Kami[];
   };
   utils: {
     getTempBonuses: (kami: Kami) => Bonus[];
   };
   isVisible: boolean;
 }) => {
+  const allKamis = useMemo(() => {
+    const merged = [...listedKamis, ...kamis];
+    return merged.sort((a, b) => {
+      const aListed = a.state === 'LISTED' ? 0 : 1;
+      const bListed = b.state === 'LISTED' ? 0 : 1;
+      return aListed - bListed;
+    });
+  }, [listedKamis, kamis]);
+
   /////////////////
   // RENDER
 
   return (
     <Container isVisible={isVisible}>
-      <Kamis>
-        {kamis.map((kami) => (
-          <KamiBar key={kami.entity} kami={kami} utils={utils} tick={0} />
-        ))}
-      </Kamis>
-      <EmptyText text={['You can import your new Kami', 'through the Kami Portal.']} size={1.2} />
-      <Row>
-        <EmptyText
-          text={[
-            'You can find the Portal',
-            'at the Scrap Confluence,',
-            'West of the Vending Machine.',
-          ]}
-          size={0.9}
-        />
-        <Image src={objectBellShapedDevice} />
-      </Row>
+      {allKamis.length > 0 ? (
+        <Kamis>
+          {allKamis.map((kami) => (
+            <KamiBar
+              key={kami.entity}
+              kami={kami}
+              options={{ minimal: true }}
+              utils={utils}
+              tick={0}
+            />
+          ))}
+        </Kamis>
+      ) : (
+        <>
+          <EmptyText
+            text={['You can import your new Kami', 'through the Kami Portal.']}
+            size={1.2}
+          />
+          <Row>
+            <EmptyText
+              text={[
+                'You can find the Portal',
+                'at the Scrap Confluence,',
+                'West of the Vending Machine.',
+              ]}
+              size={0.9}
+            />
+            <Image src={objectBellShapedDevice} />
+          </Row>
+        </>
+      )}
     </Container>
   );
 };
@@ -59,7 +84,7 @@ const Container = styled.div<{ isVisible: boolean }>`
 const Kamis = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  padding: 0.6vw 0.6vw 0 0.6vw;
+  padding: 0.6vw;
   gap: 0.45vw;
 `;
 

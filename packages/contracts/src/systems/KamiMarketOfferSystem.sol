@@ -16,10 +16,8 @@ contract KamiMarketOfferSystem is System {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     // decode: isCollection flag, kamiIndex (0 for collection), price, quantity (1 for specific), expiry
-    (bool isCollection, uint32 kamiIndex, uint256 price, uint32 quantity, uint256 expiry) = abi.decode(
-      arguments,
-      (bool, uint32, uint256, uint32, uint256)
-    );
+    (bool isCollection, uint32 kamiIndex, uint256 price, uint32 quantity, uint256 expiry) = abi
+      .decode(arguments, (bool, uint32, uint256, uint32, uint256));
 
     uint256 accID = LibAccount.verifyOperator(components);
     LibKamiMarket.verifyEnabled(components);
@@ -29,7 +27,10 @@ contract KamiMarketOfferSystem is System {
     uint32 eventKamiIndex;
     uint32 eventQuantity;
     if (isCollection) {
-      require(quantity > 0 && quantity <= uint32(type(int32).max), "KamiMarketOffer: invalid quantity");
+      require(
+        quantity > 0 && quantity <= uint32(type(int32).max),
+        "KamiMarketOffer: invalid quantity"
+      );
       id = LibKamiMarket.createCollectionOffer(world, components, accID, price, quantity, expiry);
       eventKamiIndex = 0;
       eventQuantity = quantity;
@@ -50,12 +51,20 @@ contract KamiMarketOfferSystem is System {
   }
 
   /// @notice Create a specific offer for a kami
-  function executeTypedOffer(uint32 kamiIndex, uint256 price, uint256 expiry) public returns (bytes memory) {
+  function executeTypedOffer(
+    uint32 kamiIndex,
+    uint256 price,
+    uint256 expiry
+  ) public returns (bytes memory) {
     return execute(abi.encode(false, kamiIndex, price, uint32(1), expiry));
   }
 
   /// @notice Create a collection offer
-  function executeTypedCollection(uint256 price, uint32 quantity, uint256 expiry) public returns (bytes memory) {
+  function executeTypedCollection(
+    uint256 price,
+    uint32 quantity,
+    uint256 expiry
+  ) public returns (bytes memory) {
     return execute(abi.encode(true, uint32(0), price, quantity, expiry));
   }
 }

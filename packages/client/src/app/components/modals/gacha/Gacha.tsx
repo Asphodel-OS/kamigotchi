@@ -161,10 +161,9 @@ export const GachaModal: UIComponent = {
       }
     }, [isModalVisible, tab, mode, accountEntity, tick]);
 
-    // open the party modal when the reveal is triggered
+    // clear the waiting flag once reveal starts (gacha stays open)
     useEffect(() => {
       if (!waitingToReveal) return;
-      setModals({ party: true });
       setWaitingToReveal(false);
     }, [waitingToReveal]);
 

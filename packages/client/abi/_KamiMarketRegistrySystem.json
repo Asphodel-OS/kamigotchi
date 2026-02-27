@@ -149,10 +149,10 @@
     },
     {
       "type": "function",
-      "name": "setMaxOrders",
+      "name": "setPurchaseCooldown",
       "inputs": [
         {
-          "name": "max",
+          "name": "cooldown",
           "type": "uint256",
           "internalType": "uint256"
         }
@@ -270,7 +270,7 @@
     "setEnabled(bool)": "328d8f72",
     "setFeeRate(uint32[8])": "50a2df2f",
     "setFeeRecipient(address)": "e74b981b",
-    "setMaxOrders(uint256)": "b9847549",
+    "setPurchaseCooldown(uint256)": "74baa131",
     "setVault(address)": "6817031b",
     "transferOwnership(address)": "f2fde38b"
   }

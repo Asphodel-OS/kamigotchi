@@ -11,6 +11,7 @@ import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
+  canRepeatQuest,
   filterOngoingQuests,
   findNextQuestInChain,
   getBaseQuest,
@@ -275,20 +276,25 @@ export const QuestDetailsModal: UIComponent = {
           describeEntity={describeEntity}
           burnItems={burnQuestItems}
           getItemBalance={getItemBalance}
-          questStatus={
-            quest.startTime === 0 ? 'AVAILABLE' : quest.complete ? 'COMPLETED' : 'ONGOING'
-          }
+          questStatus={(() => {
+            if (quest.startTime === 0) return 'AVAILABLE';
+            if (quest.complete && canRepeatQuest(quest)) return 'AVAILABLE';
+            if (quest.complete) return 'COMPLETED';
+            return 'ONGOING';
+          })()}
           buttons={{
             AcceptButton: {
               backgroundColor: '#f8f6e4',
-              onClick: quest.complete
+              onClick: quest.complete && !canRepeatQuest(quest)
                 ? journeyOnwards
                 : () => {
                     acceptQuest(quest);
                     playQuestaccept();
                   },
-              disabled: quest.complete ? !findNextInChain(quest.index) : quest.startTime !== 0,
-              label: quest.complete ? 'Journey Onwards' : 'Accept',
+              disabled: quest.complete && !canRepeatQuest(quest)
+                ? !findNextInChain(quest.index)
+                : quest.startTime !== 0 && !canRepeatQuest(quest),
+              label: quest.complete && !canRepeatQuest(quest) ? 'Journey Onwards' : 'Accept',
             },
             CompleteButton: {
               backgroundColor: '#f8f6e4',
