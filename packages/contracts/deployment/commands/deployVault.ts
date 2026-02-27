@@ -10,11 +10,10 @@ import { getSigner } from '../utils/chain';
 import { ignoreSolcErrors } from '../utils';
 
 const argv = yargs(hideBin(process.argv))
-  .usage('Usage: $0 --weth <address> --feeRecipient <address> [--feeRate <pct>] [--maxOrders <n>]')
+  .usage('Usage: $0 --weth <address> --feeRecipient <address> [--feeRate <pct>]')
   .option('weth', { type: 'string', demandOption: true, describe: 'WETH / native ERC-20 address' })
   .option('feeRecipient', { type: 'string', demandOption: true, describe: 'Fee recipient address' })
   .option('feeRate', { type: 'number', default: 0, describe: 'Fee rate in basis points (e.g. 250 = 2.5%)' })
-  .option('maxOrders', { type: 'number', default: 0, describe: 'Max open orders per account (0 = unlimited)' })
   .option('forge', { type: 'string', describe: 'Extra forge flags' })
   .parse();
 
@@ -30,7 +29,6 @@ const RegistryABI = [
   'function setVault(address vault) external',
   'function setFeeRecipient(address recipient) external',
   'function setFeeRate(uint32[8] rate) external',
-  'function setMaxOrders(uint256 max) external',
   'function setEnabled(bool enabled) external',
 ];
 
@@ -104,16 +102,9 @@ async function run() {
   await tx3.wait();
   console.log(`setFeeRate(${argv.feeRate} bps = ${argv.feeRate / 100}%) tx: ${tx3.hash}`);
 
-  const maxOrders = argv.maxOrders > 0
-    ? BigInt(argv.maxOrders)
-    : ethers.MaxUint256;
-  const tx4 = await registry.setMaxOrders(maxOrders);
+  const tx4 = await registry.setEnabled(true);
   await tx4.wait();
-  console.log(`setMaxOrders(${argv.maxOrders > 0 ? argv.maxOrders : 'unlimited'}) tx: ${tx4.hash}`);
-
-  const tx5 = await registry.setEnabled(true);
-  await tx5.wait();
-  console.log(`setEnabled(true) tx: ${tx5.hash}`);
+  console.log(`setEnabled(true) tx: ${tx4.hash}`);
 
   console.log('\n--- Done ---');
   console.log(`Vault:         ${vaultAddr}`);
@@ -122,7 +113,6 @@ async function run() {
   console.log(`Owner:          ${deployer}`);
   console.log(`Fee Recipient:  ${argv.feeRecipient}`);
   console.log(`Fee Rate:       ${argv.feeRate} bps (${argv.feeRate / 100}%)`);
-  console.log(`Max Orders:     ${argv.maxOrders > 0 ? argv.maxOrders : 'unlimited'}`);
 }
 
 async function deployVault(weth: string, kami721: string, owner: string, forge?: string): Promise<string> {

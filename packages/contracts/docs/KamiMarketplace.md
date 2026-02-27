@@ -144,7 +144,6 @@ All configuration is stored via `LibConfig` (key-value store) and managed throug
 | `KAMI_MARKET_FEE_RATE` | `uint32[8]` | Fee rate array: `[precision, numerator, ...]` | `[4, 250, 0, ...]` = 2.5% |
 | `KAMI_MARKET_FEE_RECIPIENT` | `address` | Treasury address receiving all fees | `0x...` |
 | `KAMI_MARKET_VAULT` | `address` | Deployed `KamiMarketVault` contract address | `0x...` |
-| `MAX_KAMI_MARKET_ORDERS` | `uint256` | Max open orders per account | `50` |
 
 ---
 
@@ -376,7 +375,6 @@ Admin-only system for marketplace configuration.
 ```solidity
 function setFeeRate(uint32[8] memory rate) public onlyAdmin;
 function setFeeRecipient(address recipient) public onlyAdmin;
-function setMaxOrders(uint256 max) public onlyAdmin;
 function setVault(address vault) public onlyAdmin;
 function setEnabled(bool enabled) public onlyAdmin;
 ```
@@ -391,7 +389,7 @@ function setEnabled(bool enabled) public onlyAdmin;
 Seller                    KamiMarketListSystem                                   ECS
   |                              |                                               |
   |-- executeTyped(idx,price) -->|                                               |
-  |                              |-- verify checks (external, owner, maxOrders)->|
+  |                              |-- verify checks (external, owner) ----------->|
   |                              |-- LibKami.setState("LISTED") ---------------->|
   |                              |   (no token movement — kami stays in wallet)  |
   |                              |-- createListing() --------------------------->|
@@ -597,7 +595,6 @@ Per-account orders can be queried via the indexed `IDOwnsKamiOrder` component us
 
 - **Self-trade prevention**: `verifyNotOwner` prevents buying your own listing or accepting your own offer.
 - **Expiry enforcement**: `verifyNotExpired` checked on all buy/accept operations. Creating with `expiry = 0` means no expiry.
-- **Order limit**: `verifyMaxOrders` prevents spamming. Configurable via `MAX_KAMI_MARKET_ORDERS`.
 - **Kami state gating**: Only kamis in `721_EXTERNAL` state can be listed. Offers can be accepted for kamis in `721_EXTERNAL` or `LISTED` state (accepting an offer for a listed kami makes the listing stale). In-game kamis cannot enter the marketplace. Listed kamis cannot be bridged in-game because `isInWorld()` returns `true` for non-`721_EXTERNAL` states.
 - **Seller ownership verification**: At buy time, `fillListing` verifies the seller still owns the kami. If the kami was transferred away, the purchase reverts cleanly.
 - **No escrow risk on listings**: Kamis stay in the seller's wallet. If the seller transfers the kami externally, the listing becomes stale — a buyer attempting to purchase gets a revert, not a loss of funds.
