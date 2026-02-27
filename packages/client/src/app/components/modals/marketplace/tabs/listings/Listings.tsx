@@ -419,7 +419,7 @@ export const Listings = ({
                   text='Sweep!'
                   onClick={toggleSweep}
                   radius={0.6}
-                  color={sweepActive ? '#d4edda' : undefined}
+                  color={sweepActive ? '#C2F0C2' : undefined}
                 />
               </TextTooltip>
               <SweepSliderWrap $active={sweepActive}>

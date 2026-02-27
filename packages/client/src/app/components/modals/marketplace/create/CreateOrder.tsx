@@ -319,7 +319,7 @@ export const CreateOrder = ({
                   text={actionText}
                   onClick={handleCreate}
                   disabled={isCreateDisabled}
-                  color='#A8E6A8'
+                  color='#C2F0C2'
                 />
               </span>
             </TextTooltip>
@@ -328,7 +328,7 @@ export const CreateOrder = ({
               text={actionText}
               onClick={handleCreate}
               disabled={isCreateDisabled}
-              color='#A8E6A8'
+              color='#C2F0C2'
             />
           )}
         </FooterButtons>

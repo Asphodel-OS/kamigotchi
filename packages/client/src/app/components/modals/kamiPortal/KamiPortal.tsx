@@ -161,6 +161,7 @@ const Container = styled.div`
   width: 100%;
   max-height: 100%;
   z-index: 2;
+  flex: 1;
 
   display: flex;
   flex-flow: row nowrap;

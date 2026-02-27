@@ -470,7 +470,7 @@ export const Bids = ({
                     <IconButton
                       text='Fill Bid'
                       onClick={() => handleSellBid(bid)}
-                      color='#A8E6A8'
+                      color='#C2F0C2'
                     />
                   )}
                 </Column>

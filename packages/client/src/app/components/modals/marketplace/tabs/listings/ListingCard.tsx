@@ -68,7 +68,7 @@ export const ListingCard = memo(({
         else onAddToCart(listing);
       };
   const badgeChar = isLocked ? '\u00d7' : isInCart ? '-' : '+';
-  const badgeColor = isLocked ? '#888' : isInCart ? '#F8D6D6' : '#A8E6A8';
+  const badgeColor = isLocked ? '#888' : isInCart ? '#F8D6D6' : '#C2F0C2';
   const badgeTooltip = isOwn ? 'Your listing' : isExpired ? 'Expired listing' : '';
 
   const BadgeElement = (

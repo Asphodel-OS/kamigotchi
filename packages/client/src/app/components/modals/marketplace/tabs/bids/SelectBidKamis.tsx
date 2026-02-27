@@ -115,7 +115,7 @@ export const SelectBidKamis = ({
             text={sellLabel}
             onClick={onSell}
             disabled={sellDisabled}
-            color='#A8E6A8'
+            color='#C2F0C2'
             scale={3}
           />
         </FooterButtons>

@@ -108,7 +108,7 @@ export const ListingsListView = ({
                 <IconButton
                   text='Add'
                   onClick={() => onAddToCart(listing)}
-                  color='#A8E6A8'
+                  color='#C2F0C2'
                 />
               )}
             </Column>
