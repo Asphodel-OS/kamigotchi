@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { TextTooltip } from 'app/components/library';
 import { OperatorIcon, ResetIcon } from 'assets/images/icons/menu';
+import { InfoIcon } from 'assets/images/icons/misc';
 import { playClick } from 'utils/sounds';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
@@ -60,13 +61,14 @@ export const ListingCard = memo(({
   const isLocked = isExpired || isOwn;
   const badgeClick = isLocked
     ? undefined
-    : () => {
+    : (e: React.MouseEvent) => {
+        e.stopPropagation();
         playClick();
         if (isInCart) onRemoveFromCart(listing.OrderID);
         else onAddToCart(listing);
       };
-  const badgeChar = isLocked ? 'x' : isInCart ? '-' : '+';
-  const badgeColor = isLocked ? '#888' : isInCart ? '#d04a2f' : '#3a8f47';
+  const badgeChar = isLocked ? '\u00d7' : isInCart ? '-' : '+';
+  const badgeColor = isLocked ? '#888' : isInCart ? '#ee1111' : '#11ee11';
   const badgeTooltip = isOwn ? 'Your listing' : isExpired ? 'Expired listing' : '';
 
   const BadgeElement = (
@@ -87,7 +89,7 @@ export const ListingCard = memo(({
         {/* ===== FRONT ===== */}
         <CardFront $flipped={flipped}>
           {kami ? (
-            <KamiImage src={kami.image} alt={kami.name} onClick={() => onOpenKami(listing.KamiIndex)} />
+            <KamiImage src={kami.image} alt={kami.name} onClick={() => { playClick(); setFlipped(true); }} />
           ) : (
             <ImagePlaceholder />
           )}
@@ -99,14 +101,14 @@ export const ListingCard = memo(({
               <EthIcon src={TokenIcons.eth} />
               <PriceText>{formatPrice(listing.Price)}</PriceText>
             </PriceChip>
-            <FlipBtn onClick={() => { playClick(); setFlipped(true); }}>
-              <FlipIconImg src={ResetIcon} />
+            <FlipBtn onClick={() => { playClick(); onOpenKami(listing.KamiIndex); }}>
+              <InfoIconImg src={InfoIcon} />
             </FlipBtn>
           </BottomBar>
         </CardFront>
 
         {/* ===== BACK ===== */}
-        <CardBack $flipped={flipped}>
+        <CardBack $flipped={flipped} onClick={() => { playClick(); setFlipped(false); }}>
           <RightColumn>
             {WrappedBadge}
             {level !== undefined && (
@@ -153,9 +155,6 @@ export const ListingCard = memo(({
               <SellerIcon src={OperatorIcon} />
               <SellerName>{seller.name || 'Unknown'}</SellerName>
             </SellerChip>
-            <FlipBtn onClick={() => { playClick(); setFlipped(false); }}>
-              <FlipIconImgDark src={ResetIcon} />
-            </FlipBtn>
           </BackBottomBar>
         </CardBack>
       </CardInner>
@@ -219,13 +218,15 @@ const RightColumn = styled.div`
 const CartBadge = styled.button<{ $color: string }>`
   width: 2.55vw;
   height: 1.4vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: ${({ $color }) => $color};
-  color: #fff;
+  color: #000;
   font-size: 0.85vw;
   font-weight: 700;
-  line-height: 1.4vw;
-  text-align: center;
-  border: 0.13vw solid black;
+  line-height: 1;
+  border: 0.18vw solid black;
   border-top: none;
   border-right: none;
   border-radius: 0 0.4vw 0 0.3vw;
@@ -281,6 +282,8 @@ const KamiImage = styled.img`
   object-fit: cover;
   image-rendering: pixelated;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-drag: none;
 `;
 
 const ImagePlaceholder = styled.div`
@@ -324,11 +327,16 @@ const EthIcon = styled.img`
   height: 1.1vw;
 `;
 
-const PriceText = styled.span`
-  font-size: 0.57vw;
+const PriceText = styled.div`
+  font-size: 0.68vw;
   font-weight: 600;
   color: black;
   text-shadow: 0 0 0.5vw white;
+  height: 0.85vw;
+  display: flex;
+  align-items: center;
+  position: relative;
+  top: 0.06vw;
 `;
 
 const FlipBtn = styled.button`
@@ -340,14 +348,26 @@ const FlipBtn = styled.button`
   align-items: center;
   opacity: 0.75;
   transition: opacity 0.15s;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
   &:hover {
     opacity: 1;
+  }
+  &:focus-visible {
+    outline: none;
   }
 `;
 
 const FlipIconImg = styled.img`
   width: 1.15vw;
   height: 1.15vw;
+`;
+
+const InfoIconImg = styled.img`
+  width: 0.85vw;
+  height: 0.85vw;
+  cursor: pointer;
 `;
 
 const FlipIconImgDark = styled.img`
@@ -364,6 +384,8 @@ const CardBack = styled(CardFace)<{ $flipped: boolean }>`
   justify-content: space-between;
   padding: 0.3vw 0.35vw 0.35vw;
   pointer-events: ${({ $flipped }) => ($flipped ? 'auto' : 'none')};
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 `;
 
 const BackContent = styled.div`
@@ -402,13 +424,13 @@ const StatValue = styled.span`
 const AffinitySection = styled.div`
   display: flex;
   gap: 0.18vw;
-  width: 65%;
+  margin-bottom: 0.25vw;
 `;
 
 const AffinityCard = styled.div<{ $bg: string }>`
   background: ${({ $bg }) => $bg};
-  flex: 1;
-  aspect-ratio: 1;
+  width: 2.1vw;
+  height: 2.1vw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -417,8 +439,8 @@ const AffinityCard = styled.div<{ $bg: string }>`
 `;
 
 const AffinityIconImg = styled.img`
-  width: 65%;
-  height: 65%;
+  width: 1.34vw;
+  height: 1.34vw;
 `;
 
 const SellerChip = styled.div`
@@ -429,8 +451,8 @@ const SellerChip = styled.div`
 `;
 
 const SellerIcon = styled.img`
-  width: 0.8vw;
-  height: 0.8vw;
+  width: 1.04vw;
+  height: 1.15vw;
   flex-shrink: 0;
 `;
 
@@ -438,10 +460,6 @@ const SellerName = styled.span`
   font-size: 0.46vw;
   font-weight: 500;
   color: #555;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 5vw;
 `;
 
 const BackBottomBar = styled.div`

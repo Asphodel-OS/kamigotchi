@@ -5,7 +5,7 @@ import { useBalance, useWatchBlockNumber } from 'wagmi';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
 import { useAccount } from 'app/stores';
-import { OperatorIcon } from 'assets/images/icons/menu';
+import { HelpIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
 import { Kami } from 'network/shapes/Kami';
@@ -109,7 +109,7 @@ export const Cart = ({
             delay={0}
             alignText='center'
           >
-            <HintIcon>?</HintIcon>
+            <HelpIconImg src={HelpIcon} />
           </TextTooltip>
           <IconButton
             text='Remove All'
@@ -293,18 +293,9 @@ const FooterButtons = styled.div`
   gap: 0.6vw;
 `;
 
-const HintIcon = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const HelpIconImg = styled.img`
   width: 1.8vw;
   height: 1.8vw;
-  border-radius: 50%;
-  border: 0.15vw solid #999;
-  background: #f0f0f0;
-  color: #555;
-  font-size: 1.1vw;
-  font-weight: 900;
   cursor: help;
   flex-shrink: 0;
 `;

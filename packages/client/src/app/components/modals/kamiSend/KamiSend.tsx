@@ -14,7 +14,7 @@ import {
 import { UIComponent, useLayers } from 'app/root';
 import { useVisibility } from 'app/stores';
 import { ActionIcons } from 'assets/images/icons/actions';
-import { MenuIcons } from 'assets/images/icons/menu';
+import { HelpIcon, MenuIcons } from 'assets/images/icons/menu';
 import { KAMI_BASE_URI } from 'constants/media';
 import { EntityIndex } from 'engine/recs';
 import {
@@ -256,7 +256,7 @@ export const KamiSendModal: UIComponent = {
             delay={0}
             alignText='center'
           >
-            <HintIcon>?</HintIcon>
+            <HelpIconImg src={HelpIcon} />
           </TextTooltip>
           <SendButton onClick={handleSend} disabled={!isValid}>
             {getSendButtonText()}
@@ -301,18 +301,9 @@ const RecipientLabel = styled.span`
   color: #555;
 `;
 
-const HintIcon = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const HelpIconImg = styled.img`
   width: 1.8vw;
   height: 1.8vw;
-  border-radius: 50%;
-  border: 0.15vw solid #999;
-  background: #f0f0f0;
-  color: #555;
-  font-size: 1.1vw;
-  font-weight: 900;
   cursor: help;
   flex-shrink: 0;
 `;
@@ -359,7 +350,7 @@ const SendSection = styled.div`
   display: flex;
   align-items: center;
   gap: 0.6vw;
-  padding: 0.8vw 1vw;
+  padding: 0.8vw 0.6vw;
   border-bottom: 0.15vw solid black;
   flex-shrink: 0;
 `;
