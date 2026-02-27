@@ -8,13 +8,12 @@ import { KamiBlock } from '../../library/KamiBlock';
 
 export const WildKamis = ({
   kamis,
-  state: { selectedWild, setSelectedWild, selectedWorld },
+  state: { selectedWild, setSelectedWild },
 }: {
   kamis: Kami[];
   state: {
     selectedWild: Kami[];
     setSelectedWild: React.Dispatch<React.SetStateAction<Kami[]>>;
-    selectedWorld?: Kami[];
   };
 }) => {
   const [displayed, setDisplayed] = useState<Kami[]>([]);
@@ -46,7 +45,7 @@ export const WildKamis = ({
             setSelectedWild(kamis);
           }}
           text={`Select All (${kamis.length})`}
-          disabled={(selectedWorld?.length ?? 0) > 0 || selectedWild.length === kamis.length}
+          disabled={selectedWild.length === kamis.length}
         />
       </Header>
       <Scrollable>
@@ -54,10 +53,9 @@ export const WildKamis = ({
           <KamiBlock
             key={kami.index}
             kami={kami}
-            tooltip={(selectedWorld?.length ?? 0) > 0 ? ['Only imports or exports at a time'] : []}
             select={{
               isSelected: selectedWild.some((k) => k.index === kami.index),
-              isDisabled: (selectedWorld?.length ?? 0) > 0,
+              isDisabled: false,
               onClick: () => handleSelect(kami),
             }}
           />
@@ -74,7 +72,8 @@ export const WildKamis = ({
 
 const Container = styled.div`
   position: relative;
-  width: 40%;
+  flex: 1;
+  min-width: 0;
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
@@ -99,16 +98,18 @@ const Header = styled.div`
 `;
 
 const Scrollable = styled.div`
-  display: flex;
-  flex-flow: row;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
   overflow-y: scroll;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  > div {
+    zoom: 0.84;
   }
 `;
 
