@@ -7,6 +7,7 @@ import {
   InventoryMenuButton,
   MoreMenuButton,
   QuestMenuButton,
+  TradingMenuButton,
 } from './buttons';
 
 export const RightMenuFixture: UIComponent = {
@@ -16,6 +17,7 @@ export const RightMenuFixture: UIComponent = {
     return (
       <>
         <Wrapper style={{ display: menuVisible ? 'flex' : 'none' }}>
+          <TradingMenuButton />
           <CraftMenuButton />
           <InventoryMenuButton />
           <QuestMenuButton />
@@ -37,5 +39,5 @@ const Wrapper = styled.div`
   padding-right: 0.32vw;
   gap: 0.6vh;
   position: relative;
-  z-index: 3;
+  z-index: 10;
 `;

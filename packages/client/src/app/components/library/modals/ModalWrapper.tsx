@@ -46,6 +46,7 @@ export const ModalWrapper = ({
   noScroll?: boolean;
 }) => {
   const isVisible = useVisibility((s) => s.modals[id]);
+  const setModals = useVisibility((s) => s.setModals);
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
 
@@ -60,6 +61,18 @@ export const ModalWrapper = ({
       setShouldDisplay(false);
     }
   }, [isVisible]);
+
+  // ESC key closes the Kami modal
+  useEffect(() => {
+    if (!canExit || !isVisible || id !== 'kami') return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setModals({ [id]: false });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [canExit, isVisible, id]);
 
   useEffect(() => {
     if (positionOverride) {
@@ -171,6 +184,8 @@ const Content = styled.div<{
     /* Sensible minimums to avoid text overlap */
     min-width: 48vw;
     min-height: 42vh;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
   }
   background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
 `;
@@ -213,6 +228,8 @@ const Children = styled.div<{
   display: flex;
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const fadeIn = keyframes`

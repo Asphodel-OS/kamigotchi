@@ -5,7 +5,7 @@ import { getItemByIndex } from 'app/cache/item';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility } from 'app/stores';
+import { useNetwork } from 'app/stores';
 import { QuestsIcon } from 'assets/images/icons/menu';
 import { DEAD_ADDRESS } from 'constants/addresses';
 import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
@@ -82,12 +82,19 @@ export const QuestModal: UIComponent = {
     const { accountEntity, account } = data;
     const { getBase, getItem, filterByAvailable, populate } = utils;
     const { queryRegistry, queryOngoing, queryCompleted } = utils;
-    const questsModalVisible = useVisibility((s) => s.modals.quests);
-
     const isUpdating = useRef(false);
     const [tab, setTab] = useState<TabType>('ONGOING');
     const [available, setAvailable] = useState<Quest[]>([]);
     const [completable, setCompletable] = useState<Quest[]>([]);
+    const [tick, setTick] = useState(0);
+
+    // Poll every 5s to catch game state changes that affect quest requirements
+    // (e.g. player location, item balances) which aren't tracked by ECS subscriptions
+    useEffect(() => {
+      if (!isNetworkReady) return;
+      const id = setInterval(() => setTick((t) => t + 1), 5000);
+      return () => clearInterval(id);
+    }, [isNetworkReady]);
 
     // Reactively subscribe to ECS changes relevant to quests
     const registryEntities = useComponentEntities(IsRegistry) || [];
@@ -133,7 +140,7 @@ export const QuestModal: UIComponent = {
       setCompletable(completableQuests);
 
       isUpdating.current = false;
-    }, [questsModalVisible, registry, completed, ongoing, isNetworkReady]);
+    }, [tick, registry, completed, ongoing, isNetworkReady]);
 
     // update the Notifications when the number of available quests changes
     useEffect(() => {

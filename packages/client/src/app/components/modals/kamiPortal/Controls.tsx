@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
-import { IconButton, KamiBlock, Overlay } from 'app/components/library';
-import { ArrowIcons } from 'assets/images/icons/arrows';
+import { IconButton, KamiBlock } from 'app/components/library';
 import { Kami } from 'network/shapes/Kami';
 
 export const Controls = ({
@@ -10,86 +9,77 @@ export const Controls = ({
 }: {
   actions: {
     import: (kamis: Kami[]) => void;
-    export: (kamis: Kami[]) => void;
   };
   state: {
     selectedWild: Kami[];
     setSelectedWild: (kamis: Kami[]) => void;
-    selectedWorld: Kami[];
-    setSelectedWorld: (kamis: Kami[]) => void;
   };
 }) => {
-  const { selectedWild, selectedWorld, setSelectedWild, setSelectedWorld } = state;
-
-  // this allows importing and exporting at the same time
-  const handleAction = () => {
-    const kamisToImport = selectedWild;
-    const kamisToExport = selectedWorld;
-    if (kamisToImport.length > 0) {
-      actions.import(kamisToImport);
-    }
-    if (kamisToExport.length > 0) {
-      actions.export(kamisToExport);
-    }
-  };
+  const { selectedWild, setSelectedWild } = state;
+  const expand = selectedWild.length > 0;
 
   return (
-    <Container expand={selectedWild.length > 0 || selectedWorld.length > 0}>
-      <Overlay top={0.9} orientation='column' fullWidth>
-        <Text size={0.9}>
-          {selectedWild.length > 0
-            ? `Import (${selectedWild.length})`
-            : `Export (${selectedWorld.length})`}
-        </Text>
+    <Container expand={expand}>
+      <TopSection>
+        <Text size={0.9}>{`Import (${selectedWild.length})`}</Text>
         <IconButton
-          img={selectedWild.length > 0 ? ArrowIcons.left : ArrowIcons.right}
-          onClick={handleAction}
-          text={selectedWild.length > 0 ? 'Import' : 'Export'}
-          disabled={selectedWild.length === 0 && selectedWorld.length === 0}
+          onClick={() => expand && actions.import(selectedWild)}
+          text={'Import'}
+          disabled={!expand}
+          color='#C2F0C2'
         />
-      </Overlay>
+      </TopSection>
       <Scrollable>
-        {selectedWild.length > 0 &&
-          selectedWild.map((kami) => <KamiBlock key={`wild-${kami.index}`} kami={kami} />)}
-        {selectedWorld.length > 0 &&
-          selectedWorld.map((kami) => <KamiBlock key={`world-${kami.index}`} kami={kami} />)}
+        {selectedWild.map((kami) => (
+          <KamiBlock key={`wild-${kami.index}`} kami={kami} />
+        ))}
       </Scrollable>
-      <Overlay bottom={1.2} fullWidth>
+      <BottomSection>
         <IconButton
-          onClick={() => {
-            setSelectedWild([]);
-            setSelectedWorld([]);
-          }}
+          onClick={() => setSelectedWild([])}
           text={'Clear'}
-          disabled={selectedWild.length === 0 && selectedWorld.length === 0}
+          disabled={!expand}
+          color='#E8F0FE'
         />
-      </Overlay>
+      </BottomSection>
     </Container>
   );
 };
 
 const Container = styled.div<{ expand: boolean }>`
-  position: relative;
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
+  align-items: center;
   border-left: solid black 0.15vw;
-  border-right: solid black 0.15vw;
 
-  ${({ expand }) => (expand ? 'width: 40%; justify-content: flex-start;' : 'width: 23%;')}
-  transition: width 0.8s ease-in-out;
-  padding-top: 6vw;
-  will-change: width;
+  flex: 0 0 ${({ expand }) => (expand ? '40%' : '24%')};
+  transition: flex-basis 0.8s ease-in-out;
+  will-change: flex-basis;
   overflow: hidden;
+`;
+
+const TopSection = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  padding: 1vw 0;
+  gap: 0.6vw;
+`;
+
+const BottomSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1vw 0;
+  margin-top: auto;
 `;
 
 const Scrollable = styled.div`
   display: flex;
-  flex-flow: row;
-  overflow-y: scroll;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   justify-content: center;
+  overflow-y: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -100,5 +90,4 @@ const Scrollable = styled.div`
 const Text = styled.div<{ size: number }>`
   font-size: ${(props) => props.size}vw;
   line-height: ${(props) => props.size * 1.5}vw;
-  margin-bottom: 1vw;
 `;

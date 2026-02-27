@@ -72,7 +72,7 @@ export const Cart = ({
           </BuyButton>
         </Checkout>
       ) : (
-        <EmptyText>Your cart is empty.</EmptyText>
+        <EmptyText>Your cart is empty!</EmptyText>
       )}
     </Container>
   );

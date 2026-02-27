@@ -7,6 +7,14 @@
     "id": "system.setup.snapshot.t2",
    "encodedID": "0x851d8e95f287a91e743c13eaceb26b9a9d0642c3c73fe49b415ddaea091ce47e"
   },
+  "_AdminSetFlagSystem": {
+    "id": "system.admin.set.flag",
+   "encodedID": "0x7f75b5c73f24bb25cc7e34bc43934ad62982ad7c2871fd3238e8dbb40c760f04"
+  },
+  "_DistributeItemSystem": {
+    "id": "system.distribute.item",
+   "encodedID": "0x81dbee84bd9b42b628b12846ee8a80ba4bcf028f237c643f27dcd107b1372974"
+  },
   "_AuctionRegistrySystem": {
     "id": "system.auction.registry",
    "encodedID": "0x2f3019adcd6f1f2306feda75a8fa84cf2d67a9793d55bf008129a8cf8ab76e6f"
@@ -62,6 +70,10 @@
   "_SkillRegistrySystem": {
     "id": "system.skill.registry",
    "encodedID": "0xbc25ac58ab8b04702b16480ed1fed26ed7b27647b3f3bd3482347f49d0a7c845"
+  },
+  "_SacrificeRegistrySystem": {
+    "id": "system.sacrifice.registry",
+   "encodedID": "0x951a379659aceb85d62bb6673e8daf0721754a903ebc5f784103971513c1b599"
   },
   "_TraitRegistrySystem": {
     "id": "system.trait.registry",
@@ -251,6 +263,38 @@
     "id": "system.kami.cast.item",
    "encodedID": "0xc88d40c7661b34896bfdf51b38a3ce07afaf132f326be0d3bd4f93e27935e019"
   },
+  "KamiMarketListSystem": {
+    "id": "system.kamimarket.list",
+   "encodedID": "0xd131836b2725d9ae7028447202133e481ae7ab27e360bbbbfb9b1bee2eee3d6e"
+  },
+  "KamiMarketBuySystem": {
+    "id": "system.kamimarket.buy",
+   "encodedID": "0xd0b65f2abb96e14cb841119389eb2b3dab4a3f5a98b50ada729945395b88cb7e"
+  },
+  "KamiMarketOfferSystem": {
+    "id": "system.kamimarket.offer",
+   "encodedID": "0x2c53c201194559d7be56b9d011a932a509bf4ad68fe9abfe991cf1a19ae3c6d6"
+  },
+  "KamiMarketAcceptOfferSystem": {
+    "id": "system.kamimarket.acceptoffer",
+   "encodedID": "0xbea2aa6623d8a9a592835e284bbb892c7a98458e8352c4c5cf31038cf615fd8a"
+  },
+  "KamiMarketCancelSystem": {
+    "id": "system.kamimarket.cancel",
+   "encodedID": "0xf5bbc4336ba3ecab311f6453dc5b92551033eca1ae3ba1075ed5127a37a6b8c4"
+  },
+  "_KamiMarketRegistrySystem": {
+    "id": "system.kamimarket.registry",
+   "encodedID": "0xd76f0b2779dfea98d7da01435487fbcf33769a22af54166b777b2b7ece07e855"
+  },
+  "KamiEquipSystem": {
+    "id": "system.kami.equip",
+   "encodedID": "0x8e4170213eb2771325dfb1ef73ac5bbb827d2002b20f0c90780e393e89c791a4"
+  },
+  "KamiUnequipSystem": {
+    "id": "system.kami.unequip",
+   "encodedID": "0xa86e6628c57f0f361d6d0ce316080726ad05b5f926065b939a9578530c23f3ac"
+  },
   "QuestAcceptSystem": {
     "id": "system.quest.accept",
    "encodedID": "0xe186a0d9134f37176fc5f797b772b3195045e28b488cc7008850e59f580d9332"
@@ -279,6 +323,10 @@
     "id": "system.skill.upgrade",
    "encodedID": "0x09cef0a10b68723b6093265abba0776ad700c0f456c34e1d9ee5a33dcc15545d"
   },
+  "TokenPortalSystem": {
+    "id": "system.erc20.portal",
+   "encodedID": "0x4c0772b3a913240dee83f847960c34439d2d4953c975c84bcb1f9024afcda07e"
+  },
   "TradeCancelSystem": {
     "id": "system.trade.cancel",
    "encodedID": "0xbaf7472afc2a9e70d2959e6b90476288a3d32c25c0d80fe7c3cc7ca6f4195069"
@@ -298,5 +346,13 @@
   "_721BatchMinterSystem": {
     "id": "system.Kami721.BatchMint",
    "encodedID": "0xc320b5e640af581696f372e55eb3a72bc3050a397fc6f67ceb56f744a8aa03df"
+  },
+  "KamiSacrificeCommitSystem": {
+    "id": "system.kami.sacrifice.commit",
+   "encodedID": "0x09d3a037c1f14ca3e102dd2698f2b87c700a6a86533738872cadc56eddec05d2"
+  },
+  "KamiSacrificeRevealSystem": {
+    "id": "system.kami.sacrifice.reveal",
+   "encodedID": "0xbe7032f0cf82737b3eae6546814c974f4fd71a5ff753d18d0568a217eb6efab5"
   },
 }
