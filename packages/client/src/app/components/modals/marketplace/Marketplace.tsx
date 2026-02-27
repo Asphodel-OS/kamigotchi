@@ -22,8 +22,12 @@ import {
 } from 'network/shapes/Account';
 import {
   getAllKamis as _getAllKamis,
+  getBaseKami as _getBaseKami,
   queryKamiByIndex as _queryKamiByIndex,
+  queryKamis as _queryKamis,
 } from 'network/shapes/Kami';
+import type { BaseKami } from 'network/shapes/Kami';
+import { getName as _getName } from 'network/shapes/utils/component';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
 import { didActionSucceed, waitForActionCompletion } from 'network/utils';
 import { DEFAULT_AFFINITY_FILTERS, DEFAULT_SELECTED_FILTERS, DEFAULT_STAT_FILTERS } from './constants';
@@ -48,10 +52,44 @@ export const MarketplaceModal: UIComponent = {
     const kamiNFTAddress = getConfigAddress(world, components, 'KAMI721_ADDRESS');
     const marketVaultAddress = getConfigAddress(world, components, 'KAMI_MARKET_VAULT');
 
+    const ownedKamiIds = useMemo(() => {
+      const accountKamis = _getAccountKamis(world, components, accountEntity, { live: 0 });
+      return new Set(accountKamis.map((k) => k.id));
+    }, [world, components, accountEntity]);
+
     const utils = useMemo(
       () => ({
         getAccountKamis: () => _getAccountKamis(world, components, accountEntity, { live: 0 }),
         getAllKamis: () => _getAllKamis(world, components),
+        searchKamis: (term: string): BaseKami[] => {
+          const trimmed = term.trim();
+          if (!trimmed) return [];
+
+          if (/^#?\d+$/.test(trimmed)) {
+            const num = Number(trimmed.replace('#', ''));
+            if (num > 0) {
+              const entity = _queryKamiByIndex(world, components, num);
+              if (entity !== undefined) {
+                const id = world.entities[entity];
+                if (!ownedKamiIds.has(id)) return [_getBaseKami(world, components, entity)];
+              }
+            }
+            return [];
+          }
+
+          const lower = trimmed.toLowerCase();
+          const allEntities = _queryKamis(components, {});
+          const results: BaseKami[] = [];
+          for (const entity of allEntities) {
+            if (results.length >= 20) break;
+            const name = _getName(components, entity);
+            if (name.toLowerCase().includes(lower)) {
+              const id = world.entities[entity];
+              if (!ownedKamiIds.has(id)) results.push(_getBaseKami(world, components, entity));
+            }
+          }
+          return results;
+        },
         getRegistryTraits: (specificType?: TraitType[]) =>
           _getRegistryTraits(world, components, specificType),
         getKami: (entity: EntityIndex) => _getKami(world, components, entity, { live: 0 }),
@@ -60,7 +98,7 @@ export const MarketplaceModal: UIComponent = {
         queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
         getAccountByID: (id: string) => _getAccountByID(world, components, id as EntityID),
       }),
-      [world, components, accountEntity]
+      [world, components, accountEntity, ownedKamiIds]
     );
     const account = useAccount((s) => s.account);
     const apis = useNetwork((s) => s.apis);
