@@ -216,8 +216,10 @@ export const PartyModal: UIComponent = {
     useEffect(() => {
       if (!initialized || viewInitialized) return;
 
-      // only run once: if no world kamis but has wild kamis, switch to external
-      if (wildKamis.length > 0 && kamis.length === 0) {
+      // if expanded/collapsed views would be empty, switch to external
+      const nonListedWorldKamis = kamis.filter((k) => k.state !== 'LISTED');
+      const hasExternalContent = wildKamis.length > 0 || kamis.some((k) => k.state === 'LISTED');
+      if (nonListedWorldKamis.length === 0 && hasExternalContent) {
         setView('external');
       }
       setViewInitialized(true);
