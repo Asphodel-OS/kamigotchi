@@ -1,5 +1,6 @@
 export { getClient as getKamidenClient } from './client';
 export { subscribeToFeed, subscribeToMessages } from './subscriptions';
+export { logTxError } from './txErrorLogger';
 
 export { KamiMarketBidType } from './proto';
 
