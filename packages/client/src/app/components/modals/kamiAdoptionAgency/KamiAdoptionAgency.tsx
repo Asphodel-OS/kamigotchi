@@ -1,12 +1,22 @@
 import { EntityIndex } from 'engine/recs';
+import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { useReadContract } from 'wagmi';
 
-import { ModalWrapper } from 'app/components/library';
+import NewbieVendorBuySystem from 'abi/NewbieVendorBuySystem.json';
+import { IconButton, ModalWrapper } from 'app/components/library';
 import { ListingCard } from 'app/components/modals/marketplace/tabs/listings/ListingCard';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
+import { useVisibility } from 'app/stores';
 import { getKami as _getKami } from 'network/shapes/Kami';
 import { getDisplayedKamis as _getDisplayedKamis } from 'network/shapes/NewbieVendor/queries';
+import { getSystemAddr } from 'network/shapes/utils';
+import { didActionSucceed } from 'network/utils';
+import { formatEthPriceLabel } from 'utils/numbers';
+import { type Abi } from 'viem';
+
+const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
 
 export const KamiAdoptionAgency: UIComponent = {
   id: 'KamiAdoptionAgencyModal',
@@ -16,16 +26,20 @@ export const KamiAdoptionAgency: UIComponent = {
     /////////////////
     // PREPARATION
 
-    const { network, utils } = (() => {
+    const { network, data, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
 
       return {
         network,
+        data: {
+          newbieVendorSystemAddress: getSystemAddr(world, components, NEWBIE_VENDOR_BUY_SYSTEM_ID),
+        },
         utils: {
           getDisplayedKamiEntities: (): EntityIndex[] => _getDisplayedKamis(world, components),
           getKami: (entity: EntityIndex) =>
             _getKami(world, components, entity, { stats: true, traits: true, progress: true }),
+          formatEthPrice: formatEthPriceLabel,
         },
       };
     })();
@@ -33,8 +47,61 @@ export const KamiAdoptionAgency: UIComponent = {
     /////////////////
     // INSTANTIATIONS
 
-    const { getDisplayedKamiEntities, getKami } = utils;
-    const displayedKamis = getDisplayedKamiEntities().map((entity) => getKami(entity));
+    const { actions, api } = network;
+    const { newbieVendorSystemAddress } = data;
+    const { getDisplayedKamiEntities, getKami, formatEthPrice } = utils;
+
+    const isModalOpen = useVisibility((s) => s.modals.kamiAdoptionAgency);
+    const [buyingKamiIndex, setBuyingKamiIndex] = useState<number | null>(null);
+    const displayedKamis = useMemo(
+      () => getDisplayedKamiEntities().map((entity) => getKami(entity)),
+      [getDisplayedKamiEntities, getKami]
+    );
+    const systemAddress = newbieVendorSystemAddress;
+
+    /////////////////
+    // SUBSCRIPTIONS
+
+    const { data: priceData } = useReadContract({
+      address: systemAddress,
+      abi: NewbieVendorBuySystem.abi as Abi,
+      functionName: 'calcPrice',
+      query: { enabled: isModalOpen && !!systemAddress },
+    });
+
+    const priceWei = useMemo(() => {
+      try {
+        return priceData === undefined || priceData === null
+          ? undefined
+          : BigInt(priceData.toString());
+      } catch {
+        return undefined;
+      }
+    }, [priceData]);
+
+    const priceLabel = useMemo(() => formatEthPrice(priceData), [priceData, formatEthPrice]);
+
+    /////////////////
+    // ACTIONS
+
+    const buyKami = useCallback(
+      async (kamiIndex: number, kamiName: string) => {
+        if (!systemAddress || priceWei === undefined) return;
+        setBuyingKamiIndex(kamiIndex);
+        try {
+          const transaction = actions.add({
+            action: 'NewbieVendorBuy',
+            params: [kamiIndex, priceWei.toString()],
+            description: `Adopting ${kamiName}`,
+            execute: async () => api.player.newbieVendor.buy(kamiIndex, priceWei),
+          });
+          await didActionSucceed(actions.Action, transaction);
+        } finally {
+          setBuyingKamiIndex(null);
+        }
+      },
+      [actions, api, priceWei, systemAddress]
+    );
 
     /////////////////
     // RENDER
@@ -70,7 +137,21 @@ export const KamiAdoptionAgency: UIComponent = {
         <Content>
           <KamiGrid>
             {displayedKamis.map((kami) => (
-              <ListingCard key={kami.entity} variant='adoption' kami={kami} />
+              <KamiTile key={kami.entity}>
+                <ListingCard variant='adoption' kami={kami} priceLabel={priceLabel} />
+                <IconButton
+                  text='Buy Kami'
+                  fullWidth
+                  scale={2.3}
+                  disabled={
+                    !isModalOpen ||
+                    !systemAddress ||
+                    priceWei === undefined ||
+                    buyingKamiIndex !== null
+                  }
+                  onClick={() => buyKami(kami.index, kami.name)}
+                />
+              </KamiTile>
             ))}
           </KamiGrid>
           {displayedKamis.length === 0 && (
@@ -147,4 +228,10 @@ const KamiGrid = styled.div`
   gap: 0.5vw;
   padding: 0.4vw;
   margin-top: 1vw;
+`;
+
+const KamiTile = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35vw;
 `;
