@@ -2,6 +2,7 @@ import { EntityIndex } from 'engine/recs';
 import styled from 'styled-components';
 
 import { ModalWrapper } from 'app/components/library';
+import { ListingCard } from 'app/components/modals/marketplace/tabs/listings/ListingCard';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { getKami as _getKami } from 'network/shapes/Kami';
@@ -23,7 +24,8 @@ export const KamiAdoptionAgency: UIComponent = {
         network,
         utils: {
           getDisplayedKamiEntities: (): EntityIndex[] => _getDisplayedKamis(world, components),
-          getKami: (entity: EntityIndex) => _getKami(world, components, entity),
+          getKami: (entity: EntityIndex) =>
+            _getKami(world, components, entity, { stats: true, traits: true, progress: true }),
         },
       };
     })();
@@ -68,11 +70,7 @@ export const KamiAdoptionAgency: UIComponent = {
         <Content>
           <KamiGrid>
             {displayedKamis.map((kami) => (
-              <KamiCard key={kami.entity}>
-                <KamiImage src={kami.image} alt={kami.name} />
-                <KamiName>{kami.name}</KamiName>
-                <KamiIndex>#{kami.index}</KamiIndex>
-              </KamiCard>
+              <ListingCard key={kami.entity} variant='adoption' kami={kami} />
             ))}
           </KamiGrid>
           {displayedKamis.length === 0 && (
@@ -144,37 +142,9 @@ const BodyText = styled.div`
 const KamiGrid = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1vw;
+  grid-template-columns: repeat(auto-fill, minmax(7.8vw, 1fr));
+  align-content: start;
+  gap: 0.5vw;
+  padding: 0.4vw;
   margin-top: 1vw;
-`;
-
-const KamiCard = styled.div`
-  border: 0.2vw solid #000000;
-  background-color: #ffffff;
-  padding: 0.8vw;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4vw;
-`;
-
-const KamiImage = styled.img`
-  width: 8vw;
-  height: 8vw;
-  object-fit: contain;
-  border: 0.12vw solid #000000;
-  background-color: #ffffff;
-`;
-
-const KamiName = styled.div`
-  font-size: 0.75vw;
-  font-weight: bold;
-  text-align: center;
-`;
-
-const KamiIndex = styled.div`
-  font-size: 0.7vw;
-  color: #000000;
 `;

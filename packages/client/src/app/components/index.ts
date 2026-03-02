@@ -17,6 +17,7 @@ import { GoalModal } from './modals/goals';
 import { HelpModal } from './modals/help';
 import { InventoryModal } from './modals/inventory';
 import { KamiModal } from './modals/kami';
+import { KamiAdoptionAgency } from './modals/kamiAdoptionAgency';
 import { KamiPortalModal } from './modals/kamiPortal';
 import { KamiSendModal } from './modals/kamiSend';
 import { LeaderboardModal } from './modals/leaderboard';

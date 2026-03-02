@@ -51,6 +51,7 @@ export interface Modals {
   help: boolean;
   inventory: boolean;
   kami: boolean;
+  kamiAdoptionAgency: boolean;
   kamiSend: boolean;
   leaderboard: boolean;
   lootBox: boolean;
@@ -84,6 +85,7 @@ export const toggleModals = (isOn: boolean): Modals => ({
   help: isOn,
   inventory: isOn,
   kami: isOn,
+  kamiAdoptionAgency: isOn,
   kamiSend: isOn,
   leaderboard: isOn,
   lootBox: isOn,
@@ -203,6 +205,7 @@ export const useVisibility = create<State & Actions>((set) => {
       help: false,
       inventory: false,
       kami: false,
+      kamiAdoptionAgency: false,
       kamiSend: false,
       leaderboard: false,
       lootBox: false,

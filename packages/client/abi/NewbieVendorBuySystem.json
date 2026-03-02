@@ -18,6 +18,19 @@
     },
     {
       "type": "function",
+      "name": "calcPrice",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "price",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
       "name": "cancelOwnershipHandover",
       "inputs": [],
       "outputs": [],
@@ -213,6 +226,7 @@
     }
   ],
   "methodIdentifiers": {
+    "calcPrice()": "d98c4408",
     "cancelOwnershipHandover()": "54d1f13d",
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
