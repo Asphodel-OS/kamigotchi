@@ -279,12 +279,14 @@ export async function sendTx(
   txData.maxPriorityFeePerGas = 0;
 
   log.time.info('[queue] Signing tx');
-  const signedTx = await signer.signTransaction(txData);
-  const txHash = keccak256(signedTx);
-  const from = await signer.getAddress().catch(() => undefined);
-  const nonce = toNonceNumber(txData.nonce);
+  let signedTx, txHash, from, nonce;
 
   try {
+    signedTx = await signer.signTransaction(txData);
+    txHash = keccak256(signedTx);
+    from = await signer.getAddress().catch(() => undefined);
+    nonce = toNonceNumber(txData.nonce);
+
     log.time.info(`[queue] Sending tx (sync) ${txHash}`);
     const sendStart = performance.now();
     const receipt = (await (signer.provider as any).send('eth_sendRawTransactionSync', [
