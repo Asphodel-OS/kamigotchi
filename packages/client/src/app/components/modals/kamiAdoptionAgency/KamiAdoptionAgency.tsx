@@ -9,7 +9,7 @@ import { IconButton, ModalWrapper, TextTooltip } from 'app/components/library';
 import { ListingCard } from 'app/components/modals/marketplace/tabs/listings/ListingCard';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useSelected, useVisibility } from 'app/stores';
+import { useNetwork, useSelected, useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getKami as _getKami } from 'network/shapes/Kami';
 import { getDisplayedKamis as _getDisplayedKamis } from 'network/shapes/NewbieVendor/queries';
@@ -57,7 +57,7 @@ export const KamiAdoptionAgency: UIComponent = {
     /////////////////
     // INSTANTIATIONS
 
-    const { actions, api } = network;
+    const { actions } = network;
     const { newbieVendorSystemAddress } = data;
     const {
       getDisplayedKamiEntities,
@@ -68,6 +68,8 @@ export const KamiAdoptionAgency: UIComponent = {
     } = utils;
 
     const isModalOpen = useVisibility((s) => s.modals.kamiAdoptionAgency);
+    const apis = useNetwork((s) => s.apis);
+    const selectedAddress = useNetwork((s) => s.selectedAddress);
     const kamiModalOpen = useVisibility((s) => s.modals.kami);
     const setModals = useVisibility((s) => s.setModals);
     const kamiIndex = useSelected((s) => s.kamiIndex);
@@ -84,7 +86,7 @@ export const KamiAdoptionAgency: UIComponent = {
     /////////////////
     // SUBSCRIPTIONS
 
-    const { data: priceData } = useReadContract({
+    const { data: priceData, refetch: refetchPrice } = useReadContract({
       address: systemAddress,
       abi: NewbieVendorBuySystem.abi as Abi,
       functionName: 'calcPrice',
@@ -116,18 +118,25 @@ export const KamiAdoptionAgency: UIComponent = {
         if (!systemAddress || priceWei === undefined) return;
         setBuyingKamiIndex(kamiIndex);
         try {
+          const ownerApi = apis.get(selectedAddress);
+          if (!ownerApi) throw new Error(`API not established for ${selectedAddress}`);
+
+          const latestPriceRaw = (await refetchPrice()).data ?? priceData;
+          if (latestPriceRaw === undefined || latestPriceRaw === null) return;
+          const latestPriceWei = BigInt(latestPriceRaw.toString());
+
           const transaction = actions.add({
             action: 'NewbieVendorBuy',
-            params: [kamiIndex, priceWei.toString()],
+            params: [kamiIndex, latestPriceWei.toString()],
             description: `Adopting ${kamiName}`,
-            execute: async () => api.player.newbieVendor.buy(kamiIndex, priceWei),
+            execute: async () => ownerApi.newbieVendor.buy(kamiIndex, latestPriceWei),
           });
           await didActionSucceed(actions.Action, transaction);
         } finally {
           setBuyingKamiIndex(null);
         }
       },
-      [actions, api, priceWei, systemAddress]
+      [actions, apis, priceData, priceWei, refetchPrice, selectedAddress, systemAddress]
     );
 
     const openKamiModal = useCallback(
@@ -179,14 +188,6 @@ export const KamiAdoptionAgency: UIComponent = {
                     text='Buy Kami'
                     fullWidth
                     scale={2.3}
-                    disabled={
-                      userHasKami ||
-                      !userAccountIsWithin24Hours ||
-                      !isModalOpen ||
-                      !systemAddress ||
-                      priceWei === undefined ||
-                      buyingKamiIndex !== null
-                    }
                     onClick={() => buyKami(kami.index, kami.name)}
                   />
                 </TextTooltip>
