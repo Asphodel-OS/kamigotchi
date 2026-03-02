@@ -20,7 +20,7 @@ export const room13: Room = {
     {
       name: 'mina',
       coordinates: { x1: 33, y1: 12, x2: 63, y2: 68 },
-      dialogue: 132,
+      dialogue: 10001,
     },
     {
       name: 'exit',

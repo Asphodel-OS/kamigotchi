@@ -15,5 +15,6 @@ export const room03: Room = {
     //   coordinates: { x1: 48, y1: 29, x2: 123, y2: 85 },
     //   onClick: () => triggerGoalModal([6]),
     // },
+    { name: 'Zevana', coordinates: { x1: 10, y1: 30, x2: 80, y2: 132 }, dialogue: 30001 },
   ],
 };

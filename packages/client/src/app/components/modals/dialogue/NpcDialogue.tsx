@@ -15,6 +15,7 @@ export const NpcDialogue = ({
   npcName = '',
   npcImage = '',
   dialogueText = '',
+  dialogueOptions = [],
   npcColor = '',
   dialogueButtons = { BackButton: () => <></>, NextButton: () => <></>, MiddleButton: () => <></> },
   special,
@@ -23,6 +24,7 @@ export const NpcDialogue = ({
   hasOngoingQuests?: Quest[];
   npcName: string;
   dialogueText: string;
+  dialogueOptions?: Array<{ label: string; onClick: () => void }>;
   npcColor: string;
   npcImage: string;
   dialogueButtons: {
@@ -44,15 +46,38 @@ export const NpcDialogue = ({
       <Overlay bottom={1} left={1.5}>
         <NpcName>{npcName}</NpcName>
       </Overlay>
+      {dialogueOptions.length > 0 ? (
+        <DialogueOptionsSection>
+          <DialogueOptionsRow>
+            {dialogueOptions.map((option, index) => {
+              const isLastOddOption =
+                dialogueOptions.length % 2 === 1 && index === dialogueOptions.length - 1;
+              return (
+                <DialogueOptionButton
+                  key={`${option.label}-${index}`}
+                  $fullRow={isLastOddOption}
+                  color={npcColor}
+                  onClick={() => {
+                    playClick();
+                    option.onClick();
+                  }}
+                >
+                  {option.label}
+                </DialogueOptionButton>
+              );
+            })}
+          </DialogueOptionsRow>
+        </DialogueOptionsSection>
+      ) : null}
       <Bottom hasQuests={hasAvailableQuests.length > 0 || hasOngoingQuests.length > 0}>
         {dialogueButtons && (
-          <ButtonRow>
+          <NavigationRow>
             {dialogueButtons.BackButton()}
             {dialogueButtons.MiddleButton()}
             {dialogueButtons.NextButton()}
-          </ButtonRow>
+          </NavigationRow>
         )}
-        <NpcSprite src={npcImage} />
+        {npcImage ? <NpcSprite src={npcImage} /> : null}
         <OptionColumn color={npcColor}>
           {special && (
             <>
@@ -134,12 +159,53 @@ const Text = styled.div<{
   }
 `;
 
-const ButtonRow = styled.div`
+const NavigationRow = styled.div`
   position: absolute;
   right: 2%;
   top: -2vw;
-  z-index: 6;
   display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.3vw;
+  z-index: 6;
+`;
+
+const DialogueOptionsSection = styled.div`
+  width: 100%;
+  padding: 0 0.6vw 0.2vw 0.6vw;
+  margin-top: -0.15vw;
+  margin-bottom: 2vw;
+`;
+
+const DialogueOptionsRow = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35vw 0.5vw;
+  align-items: stretch;
+`;
+
+const DialogueOptionButton = styled.button<{ color?: string; $fullRow?: boolean }>`
+  color: ${({ color }) => color || 'black'};
+  border: solid black 0.15vw;
+  background: white;
+  border-radius: 0.3vw;
+  box-shadow: 0 0.1vw 0.2vw rgba(0, 0, 0, 1);
+  cursor: pointer;
+  font-size: 0.75vw;
+  line-height: 1.2vw;
+  padding: 0.15vw 0.5vw;
+  white-space: normal;
+  width: 100%;
+  ${({ $fullRow }) =>
+    $fullRow
+      ? `
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 50%;
+  `
+      : ''}
 `;
 
 const NpcSprite = styled.img`

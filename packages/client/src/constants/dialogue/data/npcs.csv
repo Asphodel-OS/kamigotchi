@@ -1,0 +1,10 @@
+﻿Index,Name,Default Image,Room Index,Text Color,Ritual
+0,Menu,menu_chibi_thinking.png,,#36a6ff,
+1,Mina,mina_default_1.png,13,#c777d9,Shop 1
+3,Zevana,huntress.png,3,#77d97c,Kami Adoption Agency
+2,Dimidiatus,dimidiatus_both.png,19,#f5d107,Kami Sacrifice
+5,Rob,robtransparent1.png,5,#8e74e4,
+4,Vending Machine,vend.png,18,#c777d9,Shop 2
+6,Nurse Why,nurse_lecturing.png,,#e2685c,
+7,Dolores,lola_default.png,,#bfe25c,
+8,Artie Zbirak,artie_default_1.png,,#e25c81,Equipment/Gear Shop?

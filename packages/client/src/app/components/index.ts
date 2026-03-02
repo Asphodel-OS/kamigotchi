@@ -16,9 +16,9 @@ import { GachaModal } from './modals/gacha';
 import { GoalModal } from './modals/goals';
 import { HelpModal } from './modals/help';
 import { InventoryModal } from './modals/inventory';
-import { KamiSendModal } from './modals/kamiSend';
 import { KamiModal } from './modals/kami';
 import { KamiPortalModal } from './modals/kamiPortal';
+import { KamiSendModal } from './modals/kamiSend';
 import { LeaderboardModal } from './modals/leaderboard';
 import { MapModal } from './modals/map';
 import { MarketplaceModal } from './modals/marketplace';
@@ -27,12 +27,12 @@ import { EmaBoardModal } from './modals/naming';
 import { NodeModal } from './modals/node';
 import { ObolModal } from './modals/obol';
 import { PartyModal } from './modals/party';
-import { TempleOfTheWheel } from './modals/templeOfTheWheel';
 import { QuestDetailsModal } from './modals/questDetails';
 import { QuestModal } from './modals/quests';
 import { RevealModal } from './modals/reveal';
 import { SettingsModal } from './modals/settings';
 import { AnimationStudio } from './modals/studio/AnimationStudio';
+import { TempleOfTheWheel } from './modals/templeOfTheWheel';
 import { TokenPortalModal } from './modals/tokenPortal';
 import { TradingModal } from './modals/trading';
 import {
@@ -189,6 +189,10 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: TempleOfTheWheel,
+    gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
+  },
+  {
+    uiComponent: KamiAdoptionAgency,
     gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
   },
   {

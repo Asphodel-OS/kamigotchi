@@ -91,7 +91,7 @@ export const TempleOfTheWheel: UIComponent = {
       if (completed) {
         playSacrifice();
         setSelectedKami(NullKami);
-        useSelected.setState({ dialogueIndex: 194 });
+        useSelected.setState({ dialogueIndex: 20011 });
         setModals({ dialogue: true });
       }
       setIsDisabled(false);

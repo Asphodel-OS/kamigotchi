@@ -81,16 +81,19 @@ export const DialogueModal: UIComponent = {
     const dialogueModalOpen = useVisibility((s) => s.modals.dialogue);
     const setModals = useVisibility((s) => s.setModals);
     const dialogueIndex = useSelected((s) => s.dialogueIndex);
+    const setDialogue = useSelected((s) => s.setDialogue);
 
     const [dialogueNode, setDialogueNode] = useState({
       text: [''],
     } as DialogueNode);
     const [dialogueLength, setDialogueLength] = useState(0);
     const [step, setStep] = useState(0);
+    const [dialogueHistory, setDialogueHistory] = useState<number[]>([]);
     const [npc, setNpc] = useState({
       name: '',
       img: '',
       color: '',
+      mood: '',
       special: { name: '', onclick: () => {} },
     });
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
@@ -101,18 +104,23 @@ export const DialogueModal: UIComponent = {
     // SUBSCRIPTION
 
     // reset the step to 0 whenever the dialogue modal is toggled
-    useEffect(() => setStep(0), [dialogueModalOpen]);
+    useEffect(() => {
+      setStep(0);
+      if (!dialogueModalOpen) setDialogueHistory([]);
+    }, [dialogueModalOpen]);
 
     // set the current dialogue node when the dialogue index changes
     useEffect(() => {
       setStep(0);
-      setDialogueNode(dialogues[dialogueIndex]);
-      setDialogueLength(dialogues[dialogueIndex].text.length);
-      const npcData = dialogues[dialogueIndex].npc;
+      const node = dialogues[dialogueIndex] ?? dialogues[0];
+      setDialogueNode(node);
+      setDialogueLength(node.text.length);
+      const npcData = node.npc;
       setNpc({
         name: npcData?.name ?? '',
         img: npcData?.img ?? '',
         color: npcData?.color ?? '#cc88ff',
+        mood: npcData?.mood ?? '',
         special: npcData?.special ?? { name: '', onclick: () => {} },
       });
     }, [dialogueIndex]);
@@ -191,6 +199,7 @@ export const DialogueModal: UIComponent = {
       else if (typeof raw === 'function') return raw(getArgs());
       return '';
     };
+    const dialogueOptions = dialogueNode.next ? Array.from(dialogueNode.next.entries()) : [];
 
     const getArgs = () => {
       if (!dialogueNode.args) return [];
@@ -229,21 +238,31 @@ export const DialogueModal: UIComponent = {
     // DISPLAY
 
     const BackButton = () => {
-      const disabled = step === 0;
+      const disabled = step === 0 && dialogueHistory.length === 0;
       return (
         <div style={{ visibility: disabled ? 'hidden' : 'visible' }}>
           <IconButton
             scale={1.8}
             img={ArrowIcons.left}
             disabled={disabled}
-            onClick={() => setStep(step - 1)}
+            onClick={() => {
+              if (step > 0) {
+                setStep(step - 1);
+                return;
+              }
+              const previousDialogue = dialogueHistory[dialogueHistory.length - 1];
+              if (previousDialogue === undefined) return;
+              setDialogueHistory((prev) => prev.slice(0, -1));
+              setDialogue(previousDialogue);
+            }}
           />
         </div>
       );
     };
 
     const NextButton = () => {
-      const disabled = step === dialogueLength - 1;
+      const canAdvance = step < dialogueLength - 1 || !!dialogueNode.npc?.nextDialogue;
+      const disabled = !canAdvance;
       return (
         <div
           style={{
@@ -254,7 +273,17 @@ export const DialogueModal: UIComponent = {
             scale={1.8}
             img={ArrowIcons.right}
             disabled={disabled}
-            onClick={() => setStep(step + 1)}
+            onClick={() => {
+              if (step < dialogueLength - 1) {
+                setStep(step + 1);
+                return;
+              }
+              if (dialogueNode.npc?.nextDialogue) {
+                setDialogueHistory((prev) => [...prev, dialogueIndex]);
+                setStep(0);
+                setDialogue(dialogueNode.npc.nextDialogue);
+              }
+            }}
           />
         </div>
       );
@@ -313,8 +342,16 @@ export const DialogueModal: UIComponent = {
             hasOngoingQuests={ongoingQuests}
             npcColor='#000000ff'
             npcName={npc.name}
-            npcImage={npc.img}
+            npcImage={npc.mood || npc.img}
             dialogueText={getText(dialogueNode.text[step])}
+            dialogueOptions={dialogueOptions.map(([label, nextIndex]) => ({
+              label,
+              onClick: () => {
+                setDialogueHistory((prev) => [...prev, dialogueIndex]);
+                setStep(0);
+                setDialogue(nextIndex);
+              },
+            }))}
             dialogueButtons={{
               BackButton: BackButton,
               NextButton: NextButton,
