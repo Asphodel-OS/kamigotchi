@@ -9,7 +9,7 @@ import { IconButton, ModalWrapper, TextTooltip } from 'app/components/library';
 import { ListingCard } from 'app/components/modals/marketplace/tabs/listings/ListingCard';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useVisibility } from 'app/stores';
+import { useSelected, useVisibility } from 'app/stores';
 import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getKami as _getKami } from 'network/shapes/Kami';
 import { getDisplayedKamis as _getDisplayedKamis } from 'network/shapes/NewbieVendor/queries';
@@ -68,6 +68,10 @@ export const KamiAdoptionAgency: UIComponent = {
     } = utils;
 
     const isModalOpen = useVisibility((s) => s.modals.kamiAdoptionAgency);
+    const kamiModalOpen = useVisibility((s) => s.modals.kami);
+    const setModals = useVisibility((s) => s.setModals);
+    const kamiIndex = useSelected((s) => s.kamiIndex);
+    const setKami = useSelected((s) => s.setKami);
     const [buyingKamiIndex, setBuyingKamiIndex] = useState<number | null>(null);
     const displayedKamis = useMemo(
       () => getDisplayedKamiEntities().map((entity) => getKami(entity)),
@@ -126,6 +130,16 @@ export const KamiAdoptionAgency: UIComponent = {
       [actions, api, priceWei, systemAddress]
     );
 
+    const openKamiModal = useCallback(
+      (index: number) => {
+        const sameKami = kamiIndex === index;
+        if (!sameKami) setKami(index);
+        if (kamiModalOpen && sameKami) setModals({ kami: false });
+        else setModals({ kami: true });
+      },
+      [kamiIndex, kamiModalOpen, setKami, setModals]
+    );
+
     /////////////////
     // RENDER
 
@@ -147,13 +161,6 @@ export const KamiAdoptionAgency: UIComponent = {
         canExit
         noPadding
         overlay
-        positionOverride={{
-          colStart: 33,
-          colEnd: 67,
-          rowStart: 3,
-          rowEnd: 99,
-          position: 'fixed',
-        }}
         truncate
         header={HeaderRenderer}
       >
@@ -161,7 +168,12 @@ export const KamiAdoptionAgency: UIComponent = {
           <KamiGrid>
             {displayedKamis.map((kami) => (
               <KamiTile key={kami.entity}>
-                <ListingCard variant='adoption' kami={kami} priceLabel={priceLabel} />
+                <ListingCard
+                  variant='adoption'
+                  kami={kami}
+                  priceLabel={priceLabel}
+                  onOpenKami={openKamiModal}
+                />
                 <TextTooltip text={[buyTooltipMessage]} delay={0} alignText='center'>
                   <IconButton
                     text='Buy Kami'
@@ -201,7 +213,7 @@ const Header = styled.div`
   padding-bottom: 0;
   flex-direction: column;
   line-height: 1vw;
-  border: 0.3vw solid #000000;
+  border: 0.15vw solid #000000;
   border-bottom: none;
   border-radius: 1vw 1vw 0 0;
 `;
@@ -233,7 +245,7 @@ const Content = styled.div`
   overflow: hidden auto;
   background-color: #ffffff;
   color: #000000;
-  border: 0.3vw solid #000000;
+  border: 0.15vw solid #000000;
   border-top: none;
   border-radius: 0 0 1vw 1vw;
   box-sizing: border-box;

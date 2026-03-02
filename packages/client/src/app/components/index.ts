@@ -194,7 +194,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: KamiAdoptionAgency,
-    gridConfig: { colStart: 36, colEnd: 65, rowStart: 20, rowEnd: 80 },
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
   },
   {
     uiComponent: RevealModal,
