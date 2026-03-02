@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { getAccount as _getAccount } from 'app/cache/account';
+import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
 import { getRoomByIndex } from 'app/cache/room';
 import { ActionButton, IconButton, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
@@ -28,6 +28,8 @@ import { canEnterRoom } from 'network/shapes/Room';
 import { getBalance } from 'network/shapes/utils';
 import { useComponentEntities } from 'network/utils/hooks';
 import { NpcDialogue } from './NpcDialogue';
+
+const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
 
 // TODO: maybe in the future
 // have another dialogue modal
@@ -61,6 +63,7 @@ export const DialogueModal: UIComponent = {
           getBase: (entity: EntityIndex) => getBaseQuest(world, components, entity),
           populate: (base: BaseQuest) => populateQuest(world, components, base),
           getAccount: (entity: EntityIndex) => _getAccount(world, components, entity, accRefresh),
+          getAccountKamis: (entity: EntityIndex) => _getAccountKamis(world, components, entity),
           queryOngoing: (accountId: EntityID) => queryOngoingQuests(components, accountId),
           queryCompleted: (account: Account) => queryCompletedQuests(components, account.id),
           filterByAvailable: (
@@ -99,6 +102,7 @@ export const DialogueModal: UIComponent = {
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
+    const [hasAnyKamis, setHasAnyKamis] = useState(false);
 
     /////////////////
     // SUBSCRIPTION
@@ -130,6 +134,7 @@ export const DialogueModal: UIComponent = {
       if (!dialogueModalOpen) return;
       const account = utils.getAccount(accEntity);
       setAccount(account);
+      setHasAnyKamis(utils.getAccountKamis(accEntity).length > 0);
     }, [dialogueModalOpen, accEntity]);
 
     useEffect(() => {
@@ -321,6 +326,14 @@ export const DialogueModal: UIComponent = {
     //////////////////
     // NPCS DIALOGUES
 
+    const shouldShowNpcSpecial = (() => {
+      if (!npc.special.name) return false;
+      if (npc.special.name !== 'Kami Adoption Agency') return true;
+      if (hasAnyKamis) return false;
+      const now = Math.floor(Date.now() / 1000);
+      return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
+    })();
+
     if (npc.name.length > 0) {
       return (
         <ModalWrapper
@@ -357,7 +370,7 @@ export const DialogueModal: UIComponent = {
               NextButton: NextButton,
               MiddleButton: MiddleButton,
             }}
-            special={npc.special.name ? npc.special : undefined}
+            special={shouldShowNpcSpecial ? npc.special : undefined}
           />
         </ModalWrapper>
       );
