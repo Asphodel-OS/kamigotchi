@@ -4,11 +4,13 @@ import styled from 'styled-components';
 import { useReadContract } from 'wagmi';
 
 import NewbieVendorBuySystem from 'abi/NewbieVendorBuySystem.json';
-import { IconButton, ModalWrapper } from 'app/components/library';
+import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
+import { IconButton, ModalWrapper, TextTooltip } from 'app/components/library';
 import { ListingCard } from 'app/components/modals/marketplace/tabs/listings/ListingCard';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useVisibility } from 'app/stores';
+import { queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getKami as _getKami } from 'network/shapes/Kami';
 import { getDisplayedKamis as _getDisplayedKamis } from 'network/shapes/NewbieVendor/queries';
 import { getSystemAddr } from 'network/shapes/utils';
@@ -17,6 +19,7 @@ import { formatEthPriceLabel } from 'utils/numbers';
 import { type Abi } from 'viem';
 
 const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
+const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
 
 export const KamiAdoptionAgency: UIComponent = {
   id: 'KamiAdoptionAgencyModal',
@@ -29,6 +32,7 @@ export const KamiAdoptionAgency: UIComponent = {
     const { network, data, utils } = (() => {
       const { network } = layers;
       const { world, components } = network;
+      const accountEntity = queryAccountFromEmbedded(network);
 
       return {
         network,
@@ -39,6 +43,12 @@ export const KamiAdoptionAgency: UIComponent = {
           getDisplayedKamiEntities: (): EntityIndex[] => _getDisplayedKamis(world, components),
           getKami: (entity: EntityIndex) =>
             _getKami(world, components, entity, { stats: true, traits: true, progress: true }),
+          hasAnyKamis: () => _getAccountKamis(world, components, accountEntity).length > 0,
+          isAccountWithin24Hours: () => {
+            const creation = _getAccount(world, components, accountEntity).time.creation;
+            const now = Math.floor(Date.now() / 1000);
+            return now - creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
+          },
           formatEthPrice: formatEthPriceLabel,
         },
       };
@@ -49,7 +59,13 @@ export const KamiAdoptionAgency: UIComponent = {
 
     const { actions, api } = network;
     const { newbieVendorSystemAddress } = data;
-    const { getDisplayedKamiEntities, getKami, formatEthPrice } = utils;
+    const {
+      getDisplayedKamiEntities,
+      getKami,
+      hasAnyKamis,
+      isAccountWithin24Hours,
+      formatEthPrice,
+    } = utils;
 
     const isModalOpen = useVisibility((s) => s.modals.kamiAdoptionAgency);
     const [buyingKamiIndex, setBuyingKamiIndex] = useState<number | null>(null);
@@ -57,6 +73,8 @@ export const KamiAdoptionAgency: UIComponent = {
       () => getDisplayedKamiEntities().map((entity) => getKami(entity)),
       [getDisplayedKamiEntities, getKami]
     );
+    const userHasKami = hasAnyKamis();
+    const userAccountIsWithin24Hours = isAccountWithin24Hours();
     const systemAddress = newbieVendorSystemAddress;
 
     /////////////////
@@ -80,6 +98,11 @@ export const KamiAdoptionAgency: UIComponent = {
     }, [priceData]);
 
     const priceLabel = useMemo(() => formatEthPrice(priceData), [priceData, formatEthPrice]);
+    const buyTooltipMessage = useMemo(() => {
+      if (userHasKami) return 'You already have Kami.';
+      if (!userAccountIsWithin24Hours) return 'Your account was created more than 24 hours ago.';
+      return 'Purchase this Kami.';
+    }, [userHasKami, userAccountIsWithin24Hours]);
 
     /////////////////
     // ACTIONS
@@ -139,18 +162,22 @@ export const KamiAdoptionAgency: UIComponent = {
             {displayedKamis.map((kami) => (
               <KamiTile key={kami.entity}>
                 <ListingCard variant='adoption' kami={kami} priceLabel={priceLabel} />
-                <IconButton
-                  text='Buy Kami'
-                  fullWidth
-                  scale={2.3}
-                  disabled={
-                    !isModalOpen ||
-                    !systemAddress ||
-                    priceWei === undefined ||
-                    buyingKamiIndex !== null
-                  }
-                  onClick={() => buyKami(kami.index, kami.name)}
-                />
+                <TextTooltip text={[buyTooltipMessage]} delay={0} alignText='center'>
+                  <IconButton
+                    text='Buy Kami'
+                    fullWidth
+                    scale={2.3}
+                    disabled={
+                      userHasKami ||
+                      !userAccountIsWithin24Hours ||
+                      !isModalOpen ||
+                      !systemAddress ||
+                      priceWei === undefined ||
+                      buyingKamiIndex !== null
+                    }
+                    onClick={() => buyKami(kami.index, kami.name)}
+                  />
+                </TextTooltip>
               </KamiTile>
             ))}
           </KamiGrid>
