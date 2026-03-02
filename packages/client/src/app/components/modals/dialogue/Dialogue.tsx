@@ -328,7 +328,10 @@ export const DialogueModal: UIComponent = {
 
     const shouldShowNpcSpecial = (() => {
       if (!npc.special.name) return false;
-      return true;
+      if (npc.special.name !== 'Kami Adoption Agency') return true;
+      if (hasAnyKamis) return false;
+      const now = Math.floor(Date.now() / 1000);
+      return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
     })();
 
     if (npc.name.length > 0) {
