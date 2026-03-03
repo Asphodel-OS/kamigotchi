@@ -75,6 +75,7 @@ export const KamiAdoptionAgency: UIComponent = {
     const kamiIndex = useSelected((s) => s.kamiIndex);
     const setKami = useSelected((s) => s.setKami);
     const [buyingKamiIndex, setBuyingKamiIndex] = useState<number | null>(null);
+    const [hasCompletedAdoption, setHasCompletedAdoption] = useState(false);
     const displayedKamis = useMemo(
       () => getDisplayedKamiEntities().map((entity) => getKami(entity)),
       [getDisplayedKamiEntities, getKami]
@@ -104,11 +105,29 @@ export const KamiAdoptionAgency: UIComponent = {
     }, [priceData]);
 
     const priceLabel = useMemo(() => formatEthPrice(priceData), [priceData, formatEthPrice]);
+    const isBuyDisabled = useMemo(
+      () =>
+        hasCompletedAdoption ||
+        userHasKami ||
+        !userAccountIsWithin24Hours ||
+        buyingKamiIndex !== null ||
+        !systemAddress ||
+        priceWei === undefined,
+      [
+        buyingKamiIndex,
+        hasCompletedAdoption,
+        priceWei,
+        systemAddress,
+        userAccountIsWithin24Hours,
+        userHasKami,
+      ]
+    );
     const buyTooltipMessage = useMemo(() => {
+      if (hasCompletedAdoption) return 'You already adopted a Kami.';
       if (userHasKami) return 'You already have Kami.';
       if (!userAccountIsWithin24Hours) return 'Your account was created more than 24 hours ago.';
       return 'Purchase this Kami.';
-    }, [userHasKami, userAccountIsWithin24Hours]);
+    }, [hasCompletedAdoption, userHasKami, userAccountIsWithin24Hours]);
 
     /////////////////
     // ACTIONS
@@ -131,7 +150,8 @@ export const KamiAdoptionAgency: UIComponent = {
             description: `Adopting ${kamiName}`,
             execute: async () => ownerApi.newbieVendor.buy(kamiIndex, latestPriceWei),
           });
-          await didActionSucceed(actions.Action, transaction);
+          const didComplete = await didActionSucceed(actions.Action, transaction);
+          if (didComplete) setHasCompletedAdoption(true);
         } finally {
           setBuyingKamiIndex(null);
         }
@@ -188,6 +208,7 @@ export const KamiAdoptionAgency: UIComponent = {
                     text='Buy Kami'
                     fullWidth
                     scale={2.3}
+                    disabled={isBuyDisabled}
                     onClick={() => buyKami(kami.index, kami.name)}
                   />
                 </TextTooltip>
