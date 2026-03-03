@@ -35,7 +35,11 @@ const UIGrid = styled.div`
   pointer-events: none;
   z-index: 10;
   overflow: hidden;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  * {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    user-drag: none;
+    -webkit-user-drag: none;
+  }
 `;
