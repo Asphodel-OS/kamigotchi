@@ -232,7 +232,6 @@ const Header = styled.div`
   align-items: center;
   gap: 0.5vw;
   padding: 1vw;
-  padding-bottom: 0;
   flex-direction: column;
   line-height: 1vw;
   border: 0.15vw solid #000000;
@@ -250,7 +249,8 @@ const HeaderRow = styled.div`
 const HeaderPart = styled.div<{ size: number; weight?: string; spacing?: number }>`
   position: relative;
   color: #000000;
-  padding: 0.5vw;
+  padding-top: 0.3vw;
+  padding-left: 0.5vw;
   letter-spacing: ${({ spacing }) => spacing || -0.08}vw;
   font-size: ${({ size }) => size}vw;
   font-weight: ${({ weight }) => weight || 'normal'};
