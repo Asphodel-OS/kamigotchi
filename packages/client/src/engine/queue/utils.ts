@@ -10,7 +10,7 @@ import {
 } from 'ethers';
 import { log } from 'utils/logger';
 
-const SYNC_TX_TIMEOUT_MS = 15000;
+const SYNC_TX_TIMEOUT_MS = 15_000;
 const RECONCILE_MAX_MS = 60_000;
 const RECONCILE_POLL_MS = 2_500;
 const RECONCILE_JITTER_MS = 500;
@@ -60,10 +60,7 @@ function isDeterministicSubmissionError(error: any): boolean {
 }
 
 function shouldReconcileSubmissionError(error: any): boolean {
-  if (isMethodUnsupportedError(error)) return false;
-  if (isDeterministicSubmissionError(error)) return false;
-
-  const message = normalizeMessage(error);
+  if (isMethodUnsupportedError(error) || isDeterministicSubmissionError(error)) return false;
   // Default to reconciliation for non-deterministic sync-send errors to avoid false negatives.
   return true;
 }
@@ -163,6 +160,7 @@ async function reconcileSubmittedTx(
         const error = new Error(`Transaction failed with status ${(receipt as any).status}`);
         (error as any).receipt = receipt;
         (error as any).transactionHash = txHash;
+        (error as any).nonce = nonce;
         throw error;
       }
 
@@ -201,6 +199,8 @@ async function reconcileSubmittedTx(
   );
   (error as any).code = 'TX_RECONCILE_TIMEOUT';
   (error as any).transactionHash = txHash;
+  (error as any).nonce = nonce;
+  (error as any).transactionNonce = nonce;
   (error as any).seenInPool = seenInPool;
   (error as any).elapsedMs = elapsedMs;
   throw error;
@@ -282,10 +282,10 @@ export async function sendTx(
   let signedTx, txHash, from, nonce;
 
   try {
+    nonce = toNonceNumber(txData.nonce);
     signedTx = await signer.signTransaction(txData);
     txHash = keccak256(signedTx);
     from = await signer.getAddress().catch(() => undefined);
-    nonce = toNonceNumber(txData.nonce);
 
     log.time.info(`[queue] Sending tx (sync) ${txHash}`);
     const sendStart = performance.now();

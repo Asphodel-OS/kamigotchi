@@ -1,5 +1,5 @@
 import { useAccount } from 'app/stores/account';
-import { logTxError } from 'clients/kamiden/txErrorLogger';
+import { logTxErrorToDB } from 'clients/kamiden/txErrorLogger';
 import { getRevertReason } from 'engine/queue/utils';
 import {
   EntityID,
@@ -143,6 +143,7 @@ export function createActionSystem<M = undefined>(
     if (!action.index) return;
 
     const txHash = error?.receipt?.transactionHash || error?.transactionHash || error?.hash;
+    const nonce = error?.nonce ?? '';
     let metadata: string | undefined;
 
     // Fetch revert reason and persist it in metadata
@@ -176,10 +177,12 @@ export function createActionSystem<M = undefined>(
       action: action.action,
       description: action.description,
     });
-    logTxError(error, {
+    logTxErrorToDB(error, {
       sender: account.operatorAddress ?? '',
       system: action.action ?? 'unknown',
       method: action.description ?? 'unknown',
+      nonce: nonce != null ? String(nonce) : undefined,
+      txhash: txHash,
     });
   }
 

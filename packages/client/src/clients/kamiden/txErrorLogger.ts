@@ -1,12 +1,41 @@
 import { log } from 'utils/logger';
 
-const KAMIDEN_URL = import.meta.env.VITE_KAMIGAZE_URL;
+const KAMIDEN_URL = 'http://localhost:82'; //import.meta.env.VITE_KAMIGAZE_URL;
 
 interface TxErrorContext {
   sender: string;
   system: string;
   method: string;
-  nonce: string;
+  nonce?: string | number;
+  txhash?: string;
+  txHash?: string;
+}
+
+function toNonceString(nonce: unknown): string | undefined {
+  if (nonce == null) return undefined;
+  if (typeof nonce === 'number' || typeof nonce === 'bigint') return nonce.toString();
+  if (typeof nonce === 'string') return nonce;
+  return undefined;
+}
+
+function extractNonce(error: any): string | undefined {
+  return (
+    toNonceString(error?.nonce) ??
+    toNonceString(error?.transactionNonce) ??
+    toNonceString(error?.transaction?.nonce) ??
+    toNonceString(error?.receipt?.nonce)
+  );
+}
+
+function extractTxHash(error: any): string | undefined {
+  const txHash =
+    error?.receipt?.transactionHash ||
+    error?.transactionHash ||
+    error?.hash ||
+    error?.txhash ||
+    error?.txHash ||
+    error?.transaction?.hash;
+  return typeof txHash === 'string' ? txHash : undefined;
 }
 
 function safeStringify(obj: unknown): string {
@@ -31,14 +60,17 @@ export async function logTxErrorToDB(error: unknown, context: TxErrorContext): P
   }
 
   try {
+    const resolvedNonce = extractNonce(error) ?? toNonceString(context.nonce) ?? '';
+    const resolvedTxHash = extractTxHash(error) ?? context.txhash ?? context.txHash ?? '';
+
     const payload = {
       sender: context.sender,
       system: context.system,
       method: context.method,
       timestamp: Date.now(),
       error: error,
-      nonce: context.nonce,
-      hash: context.method,
+      nonce: resolvedNonce,
+      txhash: resolvedTxHash,
     };
 
     log.debug('[txErrorLogger] Sending to backend', { url: `${KAMIDEN_URL}/tx-errors`, payload });
