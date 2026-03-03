@@ -271,9 +271,8 @@ const Content = styled.div`
   border-top: none;
   border-radius: 0 0 1vw 1vw;
   box-sizing: border-box;
-  padding: 2vw;
+  padding: 1vw;
   font-size: 1vw;
-  padding-bottom: 0.5vw;
 `;
 
 const BodyText = styled.div`
@@ -288,7 +287,6 @@ const KamiGrid = styled.div`
   align-content: start;
   gap: 0.5vw;
   padding: 0.4vw;
-  margin-top: 1vw;
 `;
 
 const KamiTile = styled.div`

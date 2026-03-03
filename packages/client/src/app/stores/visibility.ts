@@ -119,6 +119,7 @@ const MODAL_ZONES: Partial<Record<keyof Modals, ScreenZone[]>> = {
 
   // Center zone (col 33-67)
   crafting: ['center'],
+  kamiAdoptionAgency: ['center'],
   node: ['center'],
   emaBoard: ['center'],
   tokenPortal: ['center'],

@@ -2,25 +2,19 @@ import { useVisibility } from 'app/stores';
 import { playClick } from 'utils/sounds';
 
 export const triggerKamiAdoptionAgencyModal = () => {
-  const { modals } = useVisibility.getState();
+  const { modals, setModals } = useVisibility.getState();
   playClick();
 
   if (!modals.kamiAdoptionAgency) {
-    useVisibility.setState({
-      modals: {
-        ...modals,
-        kamiAdoptionAgency: true,
-        bridgeERC20: false,
-        bridgeERC721: false,
-        crafting: false,
-        dialogue: false,
-        kami: false,
-        emaBoard: false,
-        map: false,
-        node: false,
-      },
+    setModals({
+      kamiAdoptionAgency: true,
+      bridgeERC20: false,
+      bridgeERC721: false,
+      dialogue: false,
+      kami: false,
+      map: false,
     });
   } else {
-    useVisibility.setState({ modals: { ...modals, kamiAdoptionAgency: false } });
+    setModals({ kamiAdoptionAgency: false });
   }
 };
