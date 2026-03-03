@@ -306,6 +306,9 @@ export async function sendTx(
 
     return receipt;
   } catch (e: any) {
+    if (shouldResetNonce(e)) {
+      throw e;
+    }
     if (isMethodUnsupportedError(e)) {
       log.time.info('[queue] eth_sendRawTransactionSync not supported, using legacy path');
       const response = await signer.sendTransaction(txData);
