@@ -23,6 +23,11 @@ contract KamiCastItemSystem is System {
     LibKami.verifyIsKami(components, targetID);
     LibKami.verifyRoom(components, targetID, accID);
 
+    // enemy kamis must be harvesting (exposed on node)
+    if (!LibKami.checkAccount(components, targetID, accID)) {
+      LibKami.verifyState(components, targetID, "HARVESTING");
+    }
+
     // item checks
     LibItem.verifyForShapeOr(components, itemIndex, "ENEMY_KAMI", "ANY_KAMI");
     LibItem.verifyRequirements(components, itemIndex, "USE", targetID);
