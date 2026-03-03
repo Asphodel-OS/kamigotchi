@@ -22,8 +22,8 @@ function safeStringify(obj: unknown): string {
   }
 }
 
-export async function logTxError(error: unknown, context: TxErrorContext): Promise<void> {
-  log.debug('[txErrorLogger] logTxError called', { context, KAMIDEN_URL });
+export async function logTxErrorToDB(error: unknown, context: TxErrorContext): Promise<void> {
+  log.debug('[txErrorLogger] logTxErrorToDB called', { context, KAMIDEN_URL });
 
   if (!KAMIDEN_URL) {
     log.warn('[txErrorLogger] KAMIDEN_URL not set, skipping error logging');
