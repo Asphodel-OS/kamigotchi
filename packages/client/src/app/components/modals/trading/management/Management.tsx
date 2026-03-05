@@ -117,8 +117,9 @@ const Top = styled.div`
 
 const Bottom = styled.div`
   flex: 1 1 auto;
+  min-height: 0;
   display: flex;
-  height: 100%;
+  overflow: hidden;
   & > div {
     width: 100% !important;
   }
