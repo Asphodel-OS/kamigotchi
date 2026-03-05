@@ -61,9 +61,13 @@
     "build:abi:clean": "for i in ../client/abi/*; do jq 'del(.bytecode) | del(.deployedBytecode) | del(.ast) | del(.rawMetadata) | del(.metadata) | del(.ast) | del(.id)' \"$i\" > \"$i\".tmp && mv \"$i\".tmp \"$i\"; done",
     "build:abi:types": "rimraf ../client/types && mkdir ../client/types && pnpm build:abi:types:gen && pnpm build:abi:types:mappings && rimraf ../client/types/ethers-contracts/factories",
     "build:abi:types:gen": "pnpm typechain --target=ethers-v6 --out-dir ../client/types/ethers-contracts ../client/abi/*.json",
-    "build:abi:types:mappings": "ts-node deployment/commands/genMappings.ts"
+    "build:abi:types:mappings": "ts-node deployment/commands/genMappings.ts",
+    "----- NOTION SYNC -----": "---------------------------",
+    "notion:sync": "ts-node deployment/commands/syncNotion.ts --all",
+    "notion:sync:script": "ts-node deployment/commands/syncNotion.ts"
   },
   "devDependencies": {
+    "@notionhq/client": "^2.2.15",
     "@typechain/ethers-v6": "^0.5.1",
     "@types/ejs": "^3.1.5",
     "@types/glob": "^8.1.0",

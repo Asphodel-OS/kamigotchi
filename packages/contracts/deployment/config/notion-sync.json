@@ -1,0 +1,402 @@
+{
+  "auctions/auctions": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Sale Index", "csv": "Sale Index", "type": "number" },
+      { "notion": "Pay Index", "csv": "Pay Index", "type": "number" },
+      { "notion": "Supply", "csv": "Supply", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "number" },
+      { "notion": "Period", "csv": "Period", "type": "number" },
+      { "notion": "Decay", "csv": "Decay", "type": "number" },
+      { "notion": "Rate", "csv": "Rate", "type": "number" },
+      { "notion": "Start Epoch", "csv": "Start Epoch", "type": "number" }
+    ]
+  },
+  "auth/roles": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Address", "csv": "Address", "type": "rich_text" },
+      { "notion": "Roles", "csv": "Roles", "type": "rich_text" },
+      { "notion": "Environment", "csv": "Environment", "type": "select" }
+    ]
+  },
+  "crafting/recipes": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Status", "csv": "Status", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Output Index", "csv": "Output Index", "type": "number" },
+      { "notion": "Output Amount", "csv": "Output Amount", "type": "number" },
+      { "notion": "Input Indices", "csv": "Input Indices", "type": "rich_text" },
+      { "notion": "Input Amounts", "csv": "Input Amounts", "type": "rich_text" },
+      { "notion": "Cost (Stamina)", "csv": "Cost (Stamina)", "type": "number" },
+      { "notion": "XP Output", "csv": "XP Output", "type": "number" },
+      { "notion": "Tool Index", "csv": "Tool Index", "type": "number" },
+      { "notion": "Min Level", "csv": "Min Level", "type": "number" }
+    ]
+  },
+  "envs/testing/whitelists/addresses": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Address", "csv": "Address", "type": "rich_text" }
+    ]
+  },
+  "factions/factions": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Image", "csv": "Image", "type": "files" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Key", "csv": "Key", "type": "rich_text" },
+      { "notion": "Description", "csv": "Description", "type": "rich_text" }
+    ]
+  },
+  "items/allos": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Descriptor", "csv": "Descriptor", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "number" },
+      { "notion": "Terminator", "csv": "Terminator", "type": "select" },
+      { "notion": "Droptable", "csv": "Droptable", "type": "rich_text" }
+    ]
+  },
+  "items/droptables": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Indices", "csv": "Indices", "type": "rich_text" },
+      { "notion": "Tiers", "csv": "Tiers", "type": "rich_text" }
+    ]
+  },
+  "items/items": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Status", "csv": "Status", "type": "select" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Rarity", "csv": "Rarity", "type": "select" },
+      { "notion": "For", "csv": "For", "type": "select" },
+      { "notion": "Flags", "csv": "Flags", "type": "multi_select" },
+      { "notion": "Effects", "csv": "Effects", "type": "rich_text" },
+      { "notion": "Requirements", "csv": "Requirements", "type": "rich_text" },
+      { "notion": "Description", "csv": "Description", "type": "rich_text" }
+    ]
+  },
+  "items/requirements": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Items", "csv": "Items", "type": "rich_text" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Preposition", "csv": "Preposition", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "rich_text" },
+      { "notion": "Key", "csv": "Key", "type": "rich_text" }
+    ]
+  },
+  "listings/listings": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Status", "csv": "Status", "type": "select" },
+      { "notion": "NPC Index", "csv": "NPC Index", "type": "number" },
+      { "notion": "Item Index", "csv": "Item Index", "type": "number" },
+      { "notion": "Currency Index", "csv": "Currency Index", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "number" },
+      { "notion": "Buy Price", "csv": "Buy Price", "type": "rich_text" },
+      { "notion": "Sell Price", "csv": "Sell Price", "type": "rich_text" },
+      { "notion": "Requirements", "csv": "Requirements", "type": "rich_text" }
+    ]
+  },
+  "listings/pricing": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Key", "csv": "Key", "type": "rich_text" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Period", "csv": "Period", "type": "number" },
+      { "notion": "Decay", "csv": "Decay", "type": "number" },
+      { "notion": "Rate", "csv": "Rate", "type": "number" }
+    ]
+  },
+  "listings/requirements": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Key", "csv": "Key", "type": "rich_text" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Logic", "csv": "Logic", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "rich_text" },
+      { "notion": "ValueField", "csv": "ValueField", "type": "rich_text" },
+      { "notion": "ValueIndex", "csv": "ValueIndex", "type": "number" }
+    ]
+  },
+  "npc/droptables": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Indices", "csv": "Indices", "type": "rich_text" },
+      { "notion": "Tiers", "csv": "Tiers", "type": "rich_text" }
+    ]
+  },
+  "npc/npc": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Room", "csv": "Room", "type": "relation_with_url" },
+      { "notion": "Room Index", "csv": "Room Index", "type": "number" },
+      { "notion": "Description", "csv": "Description", "type": "rich_text" }
+    ]
+  },
+  "portal/tokens": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Status", "csv": "Status", "type": "select" },
+      { "notion": "Item Index", "csv": "Item Index", "type": "number" },
+      { "notion": "Address", "csv": "Address", "type": "rich_text" },
+      { "notion": "Scale", "csv": "Scale", "type": "number" }
+    ]
+  },
+  "quests/objectives": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Description", "csv": "Description", "type": "title" },
+      { "notion": "Operator", "csv": "Operator", "type": "select" },
+      { "notion": "DeltaType", "csv": "DeltaType", "type": "select" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "number" }
+    ]
+  },
+  "quests/quests": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Key", "csv": "Key", "type": "title" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Status", "csv": "Status", "type": "select" },
+      { "notion": "Title", "csv": "Title", "type": "rich_text" },
+      { "notion": "Daily", "csv": "Daily", "type": "select" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Giver", "csv": "Giver", "type": "select" },
+      { "notion": "Introduction Dialogue", "csv": "Introduction Dialogue", "type": "rich_text" },
+      { "notion": "Resolution Dialogue", "csv": "Resolution Dialogue", "type": "rich_text" },
+      { "notion": "Requirements", "csv": "Requirements", "type": "rich_text" },
+      { "notion": "Objectives", "csv": "Objectives", "type": "rich_text" },
+      { "notion": "Rewards", "csv": "Rewards", "type": "rich_text" }
+    ]
+  },
+  "quests/requirements": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Description", "csv": "Description", "type": "title" },
+      { "notion": "Operator", "csv": "Operator", "type": "select" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "number" }
+    ]
+  },
+  "quests/rewards": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Description", "csv": "Description", "type": "title" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Value", "csv": "Value", "type": "number" }
+    ]
+  },
+  "rooms/droptables": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Indices", "csv": "Indices", "type": "rich_text" },
+      { "notion": "Tiers", "csv": "Tiers", "type": "rich_text" }
+    ]
+  },
+  "rooms/nodes": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Status", "csv": "Status", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Drops", "csv": "Drops", "type": "rich_text" },
+      { "notion": "Affinity", "csv": "Affinity", "type": "select" },
+      { "notion": "Level Limit", "csv": "Level Limit", "type": "number" },
+      { "notion": "YieldIndex", "csv": "YieldIndex", "type": "number" },
+      { "notion": "Scav Cost", "csv": "Scav Cost", "type": "number" },
+      { "notion": "\ud83d\udca5 Node Effects", "csv": "\ud83d\udca5 Node Effects", "type": "rich_text" }
+    ]
+  },
+  "rooms/rooms": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Status", "csv": "Status", "type": "select" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Exits", "csv": "Exits", "type": "rich_text" },
+      { "notion": "Description", "csv": "Description", "type": "rich_text" },
+      { "notion": "Z", "csv": "Z", "type": "number" },
+      { "notion": "Y", "csv": "Y", "type": "number" },
+      { "notion": "X", "csv": "X", "type": "number" },
+      { "notion": "Custom Exit Refs", "csv": "Custom Exit Refs", "type": "relation_with_url" }
+    ]
+  },
+  "skills/effects": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Context", "csv": "Context", "type": "select" },
+      { "notion": "Key", "csv": "Key", "type": "title" },
+      { "notion": "Name", "csv": "Name", "type": "rich_text" },
+      { "notion": "Type", "csv": "Type", "type": "select" },
+      { "notion": "AsphoAST", "csv": "AsphoAST", "type": "select" },
+      { "notion": "Operation", "csv": "Operation", "type": "select" },
+      { "notion": "Units", "csv": "Units", "type": "select" },
+      { "notion": "Baseline", "csv": "Baseline", "type": "number" },
+      { "notion": "Precision", "csv": "Precision", "type": "number" },
+      { "notion": "Notes", "csv": "Notes", "type": "rich_text" }
+    ]
+  },
+  "skills/skills": {
+    "databaseId": "",
+    "columns": [
+      { "notion": ".", "csv": ".", "type": "checkbox" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Tree", "csv": "Tree", "type": "select" },
+      { "notion": "Tier", "csv": "Tier", "type": "number" },
+      { "notion": "Tree req", "csv": "Tree req", "type": "number" },
+      { "notion": "Max", "csv": "Max", "type": "number" },
+      { "notion": "Cost", "csv": "Cost", "type": "number" },
+      { "notion": "Effect", "csv": "Effect", "type": "select" },
+      { "notion": "Value", "csv": "Value", "type": "number" },
+      { "notion": "Units", "csv": "Units", "type": "select" },
+      { "notion": "Exclusion", "csv": "Exclusion", "type": "rich_text" },
+      { "notion": "Description", "csv": "Description", "type": "rich_text" }
+    ]
+  },
+  "snapshot/gacha_whitelist": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Address", "csv": "Address", "type": "title" },
+      { "notion": "Reputation", "csv": "Reputation", "type": "number" }
+    ]
+  },
+  "snapshot/passports": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Address", "csv": "Address", "type": "title" },
+      { "notion": "Count", "csv": "Count", "type": "number" }
+    ]
+  },
+  "traits/backgrounds": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Image", "csv": "Image", "type": "files" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Tier", "csv": "Tier", "type": "number" },
+      { "notion": "Tuning", "csv": "Tuning", "type": "number" },
+      { "notion": "Health", "csv": "Health", "type": "number" },
+      { "notion": "Power", "csv": "Power", "type": "number" },
+      { "notion": "Violence", "csv": "Violence", "type": "number" },
+      { "notion": "Harmony", "csv": "Harmony", "type": "number" },
+      { "notion": "Hex code", "csv": "Hex code", "type": "rich_text" },
+      { "notion": "Rarity", "csv": "Rarity", "type": "select" },
+      { "notion": "BPs", "csv": "BPs", "type": "number" }
+    ]
+  },
+  "traits/bodies": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Image", "csv": "Image", "type": "files" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Affinity", "csv": "Affinity", "type": "select" },
+      { "notion": "Rarity", "csv": "Rarity", "type": "select" },
+      { "notion": "Tier", "csv": "Tier", "type": "number" },
+      { "notion": "Tuning", "csv": "Tuning", "type": "number" },
+      { "notion": "Health", "csv": "Health", "type": "number" },
+      { "notion": "Power", "csv": "Power", "type": "number" },
+      { "notion": "Violence", "csv": "Violence", "type": "number" },
+      { "notion": "Harmony", "csv": "Harmony", "type": "number" },
+      { "notion": "Slots", "csv": "Slots", "type": "number" },
+      { "notion": "BPs", "csv": "BPs", "type": "number" }
+    ]
+  },
+  "traits/colors": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Image", "csv": "Image", "type": "files" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Tier", "csv": "Tier", "type": "number" },
+      { "notion": "Tuning", "csv": "Tuning", "type": "number" },
+      { "notion": "Health", "csv": "Health", "type": "number" },
+      { "notion": "Power", "csv": "Power", "type": "number" },
+      { "notion": "Violence", "csv": "Violence", "type": "number" },
+      { "notion": "Harmony", "csv": "Harmony", "type": "number" },
+      { "notion": "Rarity", "csv": "Rarity", "type": "select" },
+      { "notion": "Hex", "csv": "Hex", "type": "rich_text" },
+      { "notion": "BPs", "csv": "BPs", "type": "number" },
+      { "notion": "Done", "csv": "Done", "type": "checkbox" }
+    ]
+  },
+  "traits/faces": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Image", "csv": "Image", "type": "files" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Tier", "csv": "Tier", "type": "number" },
+      { "notion": "Tuning", "csv": "Tuning", "type": "number" },
+      { "notion": "Health", "csv": "Health", "type": "number" },
+      { "notion": "Power", "csv": "Power", "type": "number" },
+      { "notion": "Violence", "csv": "Violence", "type": "number" },
+      { "notion": "Harmony", "csv": "Harmony", "type": "number" },
+      { "notion": "Slots", "csv": "Slots", "type": "number" },
+      { "notion": "Rarity", "csv": "Rarity", "type": "select" },
+      { "notion": "BPs", "csv": "BPs", "type": "number" },
+      { "notion": "Gated", "csv": "Gated", "type": "checkbox" },
+      { "notion": "Affinity", "csv": "Affinity", "type": "select" }
+    ]
+  },
+  "traits/hands": {
+    "databaseId": "",
+    "columns": [
+      { "notion": "Image", "csv": "Image", "type": "files" },
+      { "notion": "Index", "csv": "Index", "type": "number" },
+      { "notion": "Name", "csv": "Name", "type": "title" },
+      { "notion": "Affinity", "csv": "Affinity", "type": "select" },
+      { "notion": "Rarity", "csv": "Rarity", "type": "select" },
+      { "notion": "Tier", "csv": "Tier", "type": "number" },
+      { "notion": "Tuning", "csv": "Tuning", "type": "number" },
+      { "notion": "Health", "csv": "Health", "type": "number" },
+      { "notion": "Power", "csv": "Power", "type": "number" },
+      { "notion": "Violence", "csv": "Violence", "type": "number" },
+      { "notion": "Harmony", "csv": "Harmony", "type": "number" },
+      { "notion": "Slots", "csv": "Slots", "type": "number" },
+      { "notion": "BPs", "csv": "BPs", "type": "number" }
+    ]
+  }
+}
