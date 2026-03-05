@@ -2,7 +2,7 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
@@ -43,6 +43,14 @@ export const RevealModal: UIComponent = {
     } = network;
 
     const [blockNumber, setBlockNumber] = useState(BigInt(0));
+    const allowedCommits = useMemo(
+      () => commits.filter((commit) => !isBlockedRevealCommitID(commit.id)),
+      [commits]
+    );
+    const allowedSacrificeCommits = useMemo(
+      () => sacrificeCommits.filter((commit) => !isBlockedRevealCommitID(commit.id)),
+      [sacrificeCommits]
+    );
 
     useWatchBlockNumber({
       onBlockNumber: (n) => {
@@ -51,13 +59,9 @@ export const RevealModal: UIComponent = {
     });
 
     useEffect(() => {
-      commits
-        .filter((commit) => !isBlockedRevealCommitID(commit.id))
-        .map((commit) => DTRevealer.add(commit, 'droptable'));
-      sacrificeCommits
-        .filter((commit) => !isBlockedRevealCommitID(commit.id))
-        .map((commit) => DTRevealer.add(commit, 'sacrifice'));
-    }, [commits, sacrificeCommits, blockNumber]);
+      allowedCommits.forEach((commit) => DTRevealer.add(commit, 'droptable'));
+      allowedSacrificeCommits.forEach((commit) => DTRevealer.add(commit, 'sacrifice'));
+    }, [allowedCommits, allowedSacrificeCommits, blockNumber]);
 
     useEffect(() => {
       executeDroptableReveal();
@@ -142,7 +146,7 @@ export const RevealModal: UIComponent = {
         <Container>
           <Commits
             data={{
-              commits: commits.filter((commit) => !isBlockedRevealCommitID(commit.id)),
+              commits: allowedCommits,
               blockNumber: Number(blockNumber),
             }}
             actions={{ revealTx: overrideExecute }}
