@@ -19,12 +19,31 @@ interface Result {
   detail: string;
 }
 
+interface StateResult {
+  category: string;
+  name: string;
+  status: string;       // CSV status
+  onChain: boolean;
+  state: 'CURRENT' | 'STALE' | 'MISSING' | 'PENDING' | 'ERROR';
+  detail: string;
+}
+
 ///////////////
 // CONFIG
 
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000';
 
-const VALID_STATUSES = ['In Game', 'Ready', 'To Deploy', 'To Update'];
+// Statuses that mean the entity should exist on-chain
+const DEPLOYED_STATUSES = ['In Game'];
+
+// Statuses that mean the entity needs a redeploy/update
+const STALE_STATUSES = ['To Update', 'To Update Text', 'Revise Deployment'];
+
+// Statuses that mean the entity is queued for first deployment
+const PENDING_STATUSES = ['To Deploy', 'Ready', 'Test'];
+
+// All statuses we care about
+const ALL_STATUSES = [...DEPLOYED_STATUSES, ...STALE_STATUSES, ...PENDING_STATUSES];
 
 const ENTITY_TYPES = [
   { label: 'Items', indexComp: 'component.index.item', regField: 'registry.item', csv: 'items/items.csv', indexCol: 'Index', nameCol: 'Name' },
@@ -90,6 +109,8 @@ async function run() {
   // Phase 3: World State
   console.log(`\n=== WORLD STATE ===`);
 
+  const stateResults: StateResult[] = [];
+
   for (const entityType of ENTITY_TYPES) {
     let rows: any[];
     try {
@@ -99,9 +120,10 @@ async function run() {
       continue;
     }
 
-    // Filter by status if applicable
-    if (!('noStatus' in entityType && entityType.noStatus)) {
-      rows = rows.filter((row: any) => VALID_STATUSES.includes(row['Status']));
+    // Filter to relevant statuses (or keep all if no status column)
+    const hasStatus = !('noStatus' in entityType && entityType.noStatus);
+    if (hasStatus) {
+      rows = rows.filter((row: any) => ALL_STATUSES.includes(row['Status']));
     }
 
     if (rows.length === 0) {
@@ -116,7 +138,7 @@ async function run() {
       for (const row of rows) {
         const idx = Number(row[entityType.indexCol]);
         const name = row[entityType.nameCol] || `#${idx}`;
-        results.push({ category: entityType.label, name: `${name} (#${idx})`, passed: false, detail: 'Index component not registered' });
+        stateResults.push({ category: entityType.label, name: `${name} (#${idx})`, status: row['Status'] || '', onChain: false, state: 'ERROR', detail: 'Index component not registered' });
       }
       continue;
     }
@@ -130,15 +152,18 @@ async function run() {
       if (isNaN(idx) || idx === 0) continue;
 
       const name = row[entityType.nameCol] || `#${idx}`;
+      const csvStatus = hasStatus ? row['Status'] : 'In Game';
       const entityID = generateRegID(entityType.regField, idx);
 
       try {
-        const exists: boolean = await indexContract.has(entityID);
-        results.push({ category: entityType.label, name: `${name} (#${idx})`, passed: exists, detail: exists ? 'OK' : 'Entity not found on-chain' });
-        console.log(`    ${exists ? 'PASS' : 'FAIL'}  ${entityType.label} #${idx} (${name})`);
+        const onChain: boolean = await indexContract.has(entityID);
+        const state = classifyState(csvStatus, onChain);
+        const icon = STATE_ICONS[state];
+        stateResults.push({ category: entityType.label, name: `${name} (#${idx})`, status: csvStatus, onChain, state, detail: STATE_DETAIL[state] });
+        console.log(`    ${icon}  ${entityType.label} #${idx} (${name})  [${state}]`);
       } catch (e: any) {
-        results.push({ category: entityType.label, name: `${name} (#${idx})`, passed: false, detail: `RPC error: ${e.message?.slice(0, 60)}` });
-        console.log(`    FAIL  ${entityType.label} #${idx} (${name}) - RPC error`);
+        stateResults.push({ category: entityType.label, name: `${name} (#${idx})`, status: csvStatus, onChain: false, state: 'ERROR', detail: `RPC error: ${e.message?.slice(0, 60)}` });
+        console.log(`    !!  ${entityType.label} #${idx} (${name})  [ERROR]`);
       }
 
       await delay(30);
@@ -148,30 +173,79 @@ async function run() {
   // Phase 4: Summary
   const compResults = results.filter((r) => r.category === 'Component');
   const sysResults = results.filter((r) => r.category === 'System');
-  const stateResults = results.filter((r) => !['Component', 'System'].includes(r.category));
   const failures = results.filter((r) => !r.passed);
 
   const compPass = compResults.filter((r) => r.passed).length;
   const sysPass = sysResults.filter((r) => r.passed).length;
-  const statePass = stateResults.filter((r) => r.passed).length;
+
+  const current = stateResults.filter((r) => r.state === 'CURRENT');
+  const stale = stateResults.filter((r) => r.state === 'STALE');
+  const missing = stateResults.filter((r) => r.state === 'MISSING');
+  const pending = stateResults.filter((r) => r.state === 'PENDING');
+  const errors = stateResults.filter((r) => r.state === 'ERROR');
 
   console.log(`\n========================================`);
   console.log(`         VERIFICATION SUMMARY`);
   console.log(`========================================`);
-  console.log(`Components: ${compPass}/${compResults.length} passed`);
-  console.log(`Systems: ${sysPass}/${sysResults.length} passed`);
-  console.log(`World State: ${statePass}/${stateResults.length} passed`);
+  console.log(`Components: ${compPass}/${compResults.length} registered`);
+  console.log(`Systems: ${sysPass}/${sysResults.length} registered`);
+  console.log(`\nWorld State (${stateResults.length} entries):`);
+  console.log(`  CURRENT:  ${current.length}  (In Game + on-chain)`);
+  console.log(`  STALE:    ${stale.length}  (needs update on-chain)`);
+  console.log(`  MISSING:  ${missing.length}  (should be on-chain but isn't)`);
+  console.log(`  PENDING:  ${pending.length}  (not yet deployed, expected)`);
+  if (errors.length > 0)
+    console.log(`  ERROR:    ${errors.length}  (RPC or component errors)`);
+
+  const hasIssues = failures.length > 0 || stale.length > 0 || missing.length > 0 || errors.length > 0;
+
+  if (stale.length > 0) {
+    console.log(`\nSTALE (needs world:state update):`);
+    for (const r of stale) {
+      console.log(`  ${r.category}: ${r.name}  [${r.status}]`);
+    }
+  }
+
+  if (missing.length > 0) {
+    console.log(`\nMISSING (should be deployed but not found):`);
+    for (const r of missing) {
+      console.log(`  ${r.category}: ${r.name}`);
+    }
+  }
 
   if (failures.length > 0) {
-    console.log(`\nFAILURES:`);
+    console.log(`\nUNREGISTERED:`);
     for (const f of failures) {
-      console.log(`  ${f.category}: ${f.name} - ${f.detail}`);
+      console.log(`  ${f.category}: ${f.name}`);
     }
-    console.log(`\nRESULT: FAIL (${failures.length} failures)`);
-    process.exit(1);
-  } else {
-    console.log(`\nRESULT: PASS`);
   }
+
+  if (errors.length > 0) {
+    console.log(`\nERRORS:`);
+    for (const r of errors) {
+      console.log(`  ${r.category}: ${r.name} - ${r.detail}`);
+    }
+  }
+
+  if (pending.length > 0) {
+    console.log(`\nPENDING DEPLOY (${pending.length} entries):`);
+    // Group by category for compactness
+    const grouped = new Map<string, string[]>();
+    for (const r of pending) {
+      if (!grouped.has(r.category)) grouped.set(r.category, []);
+      grouped.get(r.category)!.push(`${r.name} [${r.status}]`);
+    }
+    for (const [cat, items] of grouped) {
+      console.log(`  ${cat}: ${items.length} entries`);
+      for (const item of items) {
+        console.log(`    ${item}`);
+      }
+    }
+  }
+
+  const isCurrent = !hasIssues;
+  console.log(`\nRESULT: ${isCurrent ? 'CURRENT' : 'OUT OF SYNC'}`);
+  if (!isCurrent) process.exit(1);
 }
 
 run().catch((e) => {
@@ -181,6 +255,35 @@ run().catch((e) => {
 
 ///////////////
 // INTERNAL
+
+const STATE_ICONS: Record<string, string> = {
+  CURRENT: 'OK',
+  STALE: '!!',
+  MISSING: 'XX',
+  PENDING: '--',
+  ERROR: '??',
+};
+
+const STATE_DETAIL: Record<string, string> = {
+  CURRENT: 'Deployed and current',
+  STALE: 'Needs update on-chain',
+  MISSING: 'Should be on-chain but not found',
+  PENDING: 'Not yet deployed',
+  ERROR: 'Error checking',
+};
+
+function classifyState(csvStatus: string, onChain: boolean): StateResult['state'] {
+  if (DEPLOYED_STATUSES.includes(csvStatus)) {
+    return onChain ? 'CURRENT' : 'MISSING';
+  }
+  if (STALE_STATUSES.includes(csvStatus)) {
+    return 'STALE'; // needs update regardless of on-chain state
+  }
+  if (PENDING_STATUSES.includes(csvStatus)) {
+    return onChain ? 'CURRENT' : 'PENDING';
+  }
+  return 'ERROR';
+}
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
