@@ -59,8 +59,8 @@ function processReveal(
   const holderID = formatEntityID(reveal.HolderID);
   if (holderID !== accountID) return;
 
-  if (reveal.ItemIndices.length !== reveal.ItemAmounts.length) {
-    log.warn(`${config.logPrefix}: misaligned arrays`, { commitID: reveal.CommitID });
+  if (reveal.ItemIndices.length > reveal.ItemAmounts.length) {
+    log.warn(`${config.logPrefix}: more indices than amounts`, { commitID: reveal.CommitID });
     return;
   }
 
