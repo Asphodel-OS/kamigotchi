@@ -59,10 +59,9 @@ function processReveal(
   const holderID = formatEntityID(reveal.HolderID);
   if (holderID !== accountID) return;
 
-  if (reveal.ItemIndices.length > reveal.ItemAmounts.length) {
-    log.warn(`${config.logPrefix}: more indices than amounts`, { commitID: reveal.CommitID });
-    return;
-  }
+  const len = Math.min(reveal.ItemIndices.length, reveal.ItemAmounts.length);
+  reveal.ItemIndices = reveal.ItemIndices.slice(0, len);
+  reveal.ItemAmounts = reveal.ItemAmounts.slice(0, len);
 
   const commitID = formatEntityID(reveal.CommitID);
   const notifId = `${config.notifPrefix}-${commitID}` as EntityID;
