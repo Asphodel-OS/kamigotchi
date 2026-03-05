@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
@@ -70,6 +70,7 @@ export const Bids = ({
   const [recentlySoldIndices, setRecentlySoldIndices] = useState<Set<number>>(new Set());
   const [recentlyFilledBids, setRecentlyFilledBids] = useState<Set<string>>(new Set());
   const [optimisticFills, setOptimisticFills] = useState<Map<string, number>>(new Map());
+  const hasBootstrappedBids = useRef(false);
 
   // Reset on modal open
   useEffect(() => {
@@ -88,12 +89,9 @@ export const Bids = ({
   // SUBSCRIPTIONS
 
   useEffect(() => {
-    if (!isVisible || !KamidenClient) return;
-
-    let isActive = true;
+    if (!KamidenClient) return;
     const refreshBids = async () => {
       const res = await KamidenClient.getKamiMarketBids({ Size: 500 });
-      if (!isActive) return;
       const all = res.Bids ?? [];
       const filtered = all.filter((bid) =>
         utils.isDifferentAccountId(bid.BuyerAccountID, accountId)
@@ -103,13 +101,23 @@ export const Bids = ({
       setLoading(false);
     };
 
-    refreshBids();
+    const isBootstrapRun = !hasBootstrappedBids.current;
+    if (isBootstrapRun) {
+      hasBootstrappedBids.current = true;
+      refreshBids();
+    }
+
+    if (!isMarketplaceOpen || !isVisible) {
+      return;
+    }
+
+    if (!isBootstrapRun) refreshBids();
+
     const intervalId = window.setInterval(refreshBids, 10000);
     return () => {
-      isActive = false;
       window.clearInterval(intervalId);
     };
-  }, [isVisible, accountId]);
+  }, [isMarketplaceOpen, isVisible, accountId]);
 
   useEffect(() => {
     if (isVisible) setShowFilter(false);
