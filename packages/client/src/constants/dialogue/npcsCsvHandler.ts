@@ -85,9 +85,7 @@ const loadNpcs = () => {
     const img = resolveImage(getField(rawRow, ['default image', 'image']));
     const color = getField(rawRow, ['text color', 'color'])?.trim() || undefined;
     const ritualName = getField(rawRow, ['ritual', 'rituals'])?.trim();
-    const special = ritualName
-      ? (ritualMap[ritualName] ?? { name: ritualName, onclick: () => {} })
-      : undefined;
+    const special = ritualName ? ritualMap[ritualName] : undefined;
     const npc = {
       name,
       img,
