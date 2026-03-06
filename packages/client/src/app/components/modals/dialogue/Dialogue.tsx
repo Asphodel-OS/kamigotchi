@@ -83,7 +83,7 @@ export const DialogueModal: UIComponent = {
     // INSTANTIATIONS
 
     const { actions, components, world } = network;
-    const { IsRegistry, OwnsQuestID, IsComplete } = components;
+    const { IsRegistry, OwnsQuestID, IsComplete, OwnsKamiID } = components;
     const { queryRegistry, queryOngoing, getBase, populate, filterByAvailable, queryCompleted } =
       utils;
 
@@ -122,6 +122,7 @@ export const DialogueModal: UIComponent = {
     const registryEntities = useComponentEntities(IsRegistry) || [];
     const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
     const isCompleteEntities = useComponentEntities(IsComplete) || [];
+    const ownsKamiEntities = useComponentEntities(OwnsKamiID) || [];
 
     /////////////////
     // SUBSCRIPTIONS
@@ -142,13 +143,13 @@ export const DialogueModal: UIComponent = {
       internalDialogueTransitionRef.current = false;
     }, [dialogueIndex, dialogueModalOpen]);
 
-    // update account data when the modal opens
+    // update account data when the modal opens and when kami ownership changes
     useEffect(() => {
       if (!dialogueModalOpen) return;
       const account = utils.getAccount(accEntity);
       setAccount(account);
       setHasAnyKamis(utils.getAccountKamis(accEntity).length > 0);
-    }, [dialogueModalOpen, accEntity]);
+    }, [dialogueModalOpen, accEntity, ownsKamiEntities]);
 
     useEffect(() => {
       if (npc.name.length > 0 && dialogueModalOpen) {
