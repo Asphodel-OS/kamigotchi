@@ -8,6 +8,7 @@ export interface DialogueNode {
     mood?: string;
     special?: { name: string; onclick: () => void };
     nextDialogue?: number;
+    endDialogue?: boolean;
   };
   action?: ActionParam | Array<ActionParam>; // apply to last step or specific steps
   next?: Map<string, number>; // points to more dialogue nodes

@@ -19,6 +19,7 @@ export const NpcDialogue = ({
   npcColor = '',
   dialogueButtons = { BackButton: () => <></>, NextButton: () => <></>, MiddleButton: () => <></> },
   special,
+  onDialogueComplete,
 }: {
   hasAvailableQuests?: Quest[];
   hasOngoingQuests?: Quest[];
@@ -33,6 +34,7 @@ export const NpcDialogue = ({
     MiddleButton: () => JSX.Element | null;
   };
   special?: { name: string; onclick: () => void };
+  onDialogueComplete?: () => void;
 }) => {
   //NOTE:
   //  typewriter should retrigger like this
@@ -41,7 +43,11 @@ export const NpcDialogue = ({
   return (
     <>
       <Text color={npcColor}>
-        <TypewriterComponent retrigger={`${dialogueText}${Date.now()}`} text={dialogueText} />
+        <TypewriterComponent
+          retrigger={`${dialogueText}${Date.now()}`}
+          text={dialogueText}
+          onComplete={onDialogueComplete}
+        />
       </Text>
       <Overlay bottom={1} left={1.5}>
         <NpcName>{npcName}</NpcName>

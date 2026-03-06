@@ -12,6 +12,7 @@ type DialogueData = {
   mood?: string;
   text: string;
   nextDialogue?: number;
+  endDialogue?: boolean;
   choiceDialogueIndices?: number[];
 };
 
@@ -115,7 +116,9 @@ const loadDialogues = () => {
       (npcRef ? npcIndexByName.get(npcRef.toLowerCase().replace(/\s+/g, ' ').trim()) : undefined);
     const mood = resolveImage(getField(row, ['mood'])) || undefined;
     const text = getField(row, ['text']) ?? '';
-    const nextDialogue = indexParser(getField(row, ['nextDialogue', 'next dialogue']));
+    const rawNextDialogue = getField(row, ['nextDialogue', 'next dialogue']);
+    const endDialogue = rawNextDialogue?.trim().toLowerCase() === 'end dialogue';
+    const nextDialogue = endDialogue ? undefined : indexParser(rawNextDialogue);
     const choiceDialogueIndices = (getField(row, ['choice']) ?? '')
       .split(',')
       .map((value) => indexParser(value.trim()))
@@ -126,6 +129,7 @@ const loadDialogues = () => {
       mood,
       text,
       nextDialogue,
+      endDialogue,
       choiceDialogueIndices,
     });
   });
@@ -146,6 +150,7 @@ const buildDialogueNode = (index: number): DialogueNode => {
         ...npcBase,
         mood: dialogueSprite,
         nextDialogue: row.nextDialogue,
+        endDialogue: row.endDialogue,
       }
     : undefined;
 

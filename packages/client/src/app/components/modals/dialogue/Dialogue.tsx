@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -98,6 +98,7 @@ export const DialogueModal: UIComponent = {
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
     const [hasAnyKamis, setHasAnyKamis] = useState(false);
+    const endDialogueTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const dialogueNode = useMemo<DialogueNode>(
       () => dialogues[dialogueIndex] ?? dialogues[0],
       [dialogueIndex]
@@ -188,6 +189,14 @@ export const DialogueModal: UIComponent = {
       completed,
       npc.name,
     ]);
+
+    useEffect(() => {
+      if (endDialogueTimeoutRef.current) {
+        clearTimeout(endDialogueTimeoutRef.current);
+        endDialogueTimeoutRef.current = null;
+      }
+    }, [dialogueIndex, dialogueModalOpen, step]);
+
     /////////////////
     // INTERPRETATION
 
@@ -224,6 +233,17 @@ export const DialogueModal: UIComponent = {
 
     /////////////////
     // ACTIONS
+
+    const handleNpcDialogueComplete = useCallback(() => {
+      if (!dialogueModalOpen) return;
+      if (!dialogueNode.npc?.endDialogue) return;
+      if (step !== dialogueLength - 1) return;
+
+      if (endDialogueTimeoutRef.current) clearTimeout(endDialogueTimeoutRef.current);
+      endDialogueTimeoutRef.current = setTimeout(() => {
+        setModals({ dialogue: false });
+      }, 3000);
+    }, [dialogueLength, dialogueModalOpen, dialogueNode.npc?.endDialogue, setModals, step]);
 
     const getAction = (type: string, input?: number) => {
       if (type === 'move') return move(input ?? 0);
@@ -355,6 +375,7 @@ export const DialogueModal: UIComponent = {
             npcName={npc.name}
             npcImage={npc.mood || npc.img}
             dialogueText={getText(dialogueNode.text[step])}
+            onDialogueComplete={handleNpcDialogueComplete}
             dialogueOptions={dialogueOptions.map(([label, nextIndex]) => ({
               label,
               onClick: () => {
