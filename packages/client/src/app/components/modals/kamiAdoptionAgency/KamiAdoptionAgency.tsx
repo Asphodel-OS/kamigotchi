@@ -123,10 +123,9 @@ export const KamiAdoptionAgency: UIComponent = {
       ]
     );
     const buyTooltipMessage = useMemo(() => {
-      if (hasCompletedAdoption) return 'You already adopted a Kami.';
-      if (userHasKami) return 'You already have Kami.';
+      if (hasCompletedAdoption || userHasKami) return 'You already have Kami.';
       if (!userAccountIsWithin24Hours) return 'Your account was created more than 24 hours ago.';
-      return 'Purchase this Kami.';
+      return 'Purchase this Kami. You can only adopt one so choose wisely!';
     }, [hasCompletedAdoption, userHasKami, userAccountIsWithin24Hours]);
 
     /////////////////
@@ -194,6 +193,7 @@ export const KamiAdoptionAgency: UIComponent = {
         header={HeaderRenderer}
       >
         <Content>
+          {displayedKamis.length > 0 && <BodyText>Choose one</BodyText>}
           <KamiGrid>
             {displayedKamis.map((kami) => (
               <KamiTile key={kami.entity}>
