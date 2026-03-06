@@ -1,9 +1,8 @@
 import { triggerKamiAdoptionAgencyModal, triggerTempleOfTheWheelModal } from 'app/triggers';
 import { NpcImages } from 'assets/images/npcs';
-import { DialogueNode } from './types';
-
 import dialoguesCsv from './data/npcDialogues.csv';
 import npcsCsv from './data/npcs.csv';
+import { DialogueNode } from './types';
 
 // all of this will be handled by contracts in the future
 // this is just a placeholder
@@ -15,13 +14,11 @@ type DialogueData = {
   nextDialogue?: number;
   choiceDialogueIndices?: number[];
 };
+
 type CsvRow = Record<string, string>;
 
-const npcByIndex = new Map<number, NonNullable<DialogueNode['npc']>>();
-const npcIndexByName = new Map<string, number>();
-const dialogueByIndex = new Map<number, DialogueData>();
-const npcRows: CsvRow[] = npcsCsv;
-const dialogueRows: CsvRow[] = dialoguesCsv;
+///////////////
+// PREPARATION
 
 const ritualMap: Record<string, { name: string; onclick: () => void }> = {
   'Kami Sacrifice': {
@@ -33,58 +30,65 @@ const ritualMap: Record<string, { name: string; onclick: () => void }> = {
     onclick: () => triggerKamiAdoptionAgencyModal(),
   },
 };
-const imageMap = NpcImages;
 
-const normalizeKey = (key: string) => key.replace(/^\uFEFF/, '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+const npcByIndex = new Map<number, NonNullable<DialogueNode['npc']>>();
+const npcIndexByName = new Map<string, number>();
+const dialogueByIndex = new Map<number, DialogueData>();
 
-const getField = (row: CsvRow, keys: string[]) => {
+///////////////
+// HELPERS
+
+const normalizeKey = (key: string) =>
+  key
+    .replace(/^\uFEFF/, '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+
+const normalizeRow = (row: CsvRow) => {
   const normalizedRow = new Map<string, string>();
   Object.entries(row).forEach(([key, value]) => {
     normalizedRow.set(normalizeKey(key), value);
   });
+  return normalizedRow;
+};
 
+const getField = (row: Map<string, string>, keys: string[]) => {
   for (const key of keys) {
-    const value = normalizedRow.get(normalizeKey(key));
+    const value = row.get(normalizeKey(key));
     if (value !== undefined) return value;
   }
   return undefined;
 };
 
-const toNumberOrUndefined = (raw?: string) => {
+const indexParser = (raw?: string) => {
   if (!raw?.trim()) return undefined;
   const parsed = Number(raw);
   return Number.isFinite(parsed) ? parsed : undefined;
 };
 
-// returns image url if theres any
 const resolveImage = (raw?: string) => {
   const key = raw?.trim();
   if (!key) return '';
   const basename = key.split('/').pop() ?? key;
   const corrected = basename.endsWith('_png') ? `${basename.slice(0, -4)}.png` : basename;
   const normalized = corrected.includes('.') ? corrected : `${corrected}.png`;
-  return imageMap[normalized] ?? '';
+  return NpcImages[normalized] ?? '';
 };
 
-// parse dialogue text
-const parseDialogueText = (raw: string | undefined) => {
-  if (!raw) return [''];
-  const parts = raw.includes('||') ? raw.split('||') : [raw];
-  return parts.map((part) => {
-    return part.replaceAll('\\n', '\n').replaceAll('\\r', '\r');
-  });
-};
+///////////////
+// LOADERS
 
-// load NPC data
 const loadNpcs = () => {
-  npcRows.forEach((rawRow) => {
-    const index = toNumberOrUndefined(getField(rawRow, ['index']));
+  npcsCsv.forEach((rawRow: CsvRow) => {
+    const row = normalizeRow(rawRow);
+    const index = indexParser(getField(row, ['index']));
     if (index === undefined) return;
 
-    const name = getField(rawRow, ['name'])?.trim() ?? '';
-    const img = resolveImage(getField(rawRow, ['default image', 'image']));
-    const color = getField(rawRow, ['text color', 'color'])?.trim() || undefined;
-    const ritualName = getField(rawRow, ['ritual', 'rituals'])?.trim();
+    const name = getField(row, ['name'])?.trim() ?? '';
+    const img = resolveImage(getField(row, ['default image', 'image']));
+    const color = getField(row, ['text color', 'color'])?.trim() || undefined;
+    const ritualName = getField(row, ['ritual', 'rituals'])?.trim();
     const special = ritualName ? ritualMap[ritualName] : undefined;
     const npc = {
       name,
@@ -98,23 +102,23 @@ const loadNpcs = () => {
   });
 };
 
-// load dialogue data
 const loadDialogues = () => {
-  dialogueRows.forEach((rawRow) => {
-    const index = toNumberOrUndefined(getField(rawRow, ['index']));
+  dialoguesCsv.forEach((rawRow: CsvRow) => {
+    const row = normalizeRow(rawRow);
+    const index = indexParser(getField(row, ['index']));
     if (index === undefined) return;
 
-    const npcRef = getField(rawRow, ['npcIndex', 'npc index', 'npc'])?.trim();
-    const numericNpcIndex = toNumberOrUndefined(npcRef);
+    const npcRef = getField(row, ['npcIndex', 'npc index', 'npc'])?.trim();
+    const numericNpcIndex = indexParser(npcRef);
     const npcIndex =
       numericNpcIndex ??
       (npcRef ? npcIndexByName.get(npcRef.toLowerCase().replace(/\s+/g, ' ').trim()) : undefined);
-    const mood = resolveImage(getField(rawRow, ['mood'])) || undefined;
-    const text = getField(rawRow, ['text']) ?? '';
-    const nextDialogue = toNumberOrUndefined(getField(rawRow, ['nextDialogue', 'next dialogue']));
-    const choiceDialogueIndices = (getField(rawRow, ['choice']) ?? '')
+    const mood = resolveImage(getField(row, ['mood'])) || undefined;
+    const text = getField(row, ['text']) ?? '';
+    const nextDialogue = indexParser(getField(row, ['nextDialogue', 'next dialogue']));
+    const choiceDialogueIndices = (getField(row, ['choice']) ?? '')
       .split(',')
-      .map((value) => toNumberOrUndefined(value.trim()))
+      .map((value) => indexParser(value.trim()))
       .filter((value): value is number => value !== undefined);
 
     dialogueByIndex.set(index, {
@@ -127,8 +131,8 @@ const loadDialogues = () => {
   });
 };
 
-loadNpcs();
-loadDialogues();
+///////////////
+// BUILDERS
 
 const buildDialogueNode = (index: number): DialogueNode => {
   const row = dialogueByIndex.get(index);
@@ -149,23 +153,29 @@ const buildDialogueNode = (index: number): DialogueNode => {
   row.choiceDialogueIndices?.forEach((choiceIndex) => {
     const choiceRow = dialogueByIndex.get(choiceIndex);
     if (!choiceRow?.nextDialogue) return;
-    const [label] = parseDialogueText(choiceRow.text);
+    const label = choiceRow.text;
     if (!label) return;
     next.set(label, choiceRow.nextDialogue);
   });
 
   return {
     index,
-    text: parseDialogueText(row.text),
+    text: [row.text],
     npc,
     next: next.size > 0 ? next : undefined,
   };
 };
 
-// fetch dialogue data with resolved NPC info
-export const getNpcDialogueByIndex = (index: number): DialogueNode => {
-  return buildDialogueNode(index);
-};
+///////////////
+// INITIALIZATION
+
+loadNpcs();
+loadDialogues();
+
+///////////////
+// EXPORTS
+
+export const getNpcDialogueByIndex = (index: number): DialogueNode => buildDialogueNode(index);
 
 export const getAllNpcDialogues = (): DialogueNode[] => {
   return Array.from(dialogueByIndex.keys())
