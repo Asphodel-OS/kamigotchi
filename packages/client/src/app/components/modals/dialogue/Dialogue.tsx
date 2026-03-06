@@ -230,9 +230,21 @@ export const DialogueModal: UIComponent = {
       const now = Math.floor(Date.now() / 1000);
       return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
     }, [account.time.creation, hasAnyKamis, npc.special.name]);
+    const userQualifiesForAdoptionAgency = useMemo(() => {
+      if (hasAnyKamis) return false;
+      const now = Math.floor(Date.now() / 1000);
+      return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
+    }, [account.time.creation, hasAnyKamis]);
 
     /////////////////
     // ACTIONS
+
+    useEffect(() => {
+      if (!dialogueModalOpen) return;
+      if (dialogueIndex !== 30001) return;
+      if (!userQualifiesForAdoptionAgency) return;
+      setModals({ kamiAdoptionAgency: true });
+    }, [dialogueIndex, dialogueModalOpen, setModals, userQualifiesForAdoptionAgency]);
 
     const handleNpcDialogueComplete = useCallback(() => {
       if (!dialogueModalOpen) return;

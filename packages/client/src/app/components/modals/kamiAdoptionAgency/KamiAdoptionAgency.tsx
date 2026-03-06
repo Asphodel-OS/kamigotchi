@@ -5,7 +5,7 @@ import { useReadContract } from 'wagmi';
 
 import NewbieVendorBuySystem from 'abi/NewbieVendorBuySystem.json';
 import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
-import { IconButton, ModalWrapper, TextTooltip } from 'app/components/library';
+import { IconButton, ModalWrapper } from 'app/components/library';
 import { ListingCard } from 'app/components/modals/marketplace/tabs/listings/ListingCard';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
@@ -122,11 +122,15 @@ export const KamiAdoptionAgency: UIComponent = {
         userHasKami,
       ]
     );
-    const buyTooltipMessage = useMemo(() => {
-      if (hasCompletedAdoption || userHasKami) return 'You already have Kami.';
-      if (!userAccountIsWithin24Hours) return 'Your account was created more than 24 hours ago.';
-      return 'Purchase this Kami. You can only adopt one so choose wisely!';
-    }, [hasCompletedAdoption, userHasKami, userAccountIsWithin24Hours]);
+    const userQualifiesForAdoption =
+      !hasCompletedAdoption && !userHasKami && userAccountIsWithin24Hours;
+    const adoptionBadgeMessage = useMemo(
+      () =>
+        !userQualifiesForAdoption
+          ? "You don't qualify for the adoption agency."
+          : 'You can only adopt one so choose wisely!',
+      [userQualifiesForAdoption]
+    );
 
     /////////////////
     // ACTIONS
@@ -194,6 +198,9 @@ export const KamiAdoptionAgency: UIComponent = {
       >
         <Content>
           {displayedKamis.length > 0 && <BodyText>Choose one</BodyText>}
+          {displayedKamis.length > 0 && (
+            <AdoptionBadge $warning={!userQualifiesForAdoption}>{adoptionBadgeMessage}</AdoptionBadge>
+          )}
           <KamiGrid>
             {displayedKamis.map((kami) => (
               <KamiTile key={kami.entity}>
@@ -203,15 +210,13 @@ export const KamiAdoptionAgency: UIComponent = {
                   priceLabel={priceLabel}
                   onOpenKami={openKamiModal}
                 />
-                <TextTooltip text={[buyTooltipMessage]} delay={0} alignText='center'>
-                  <IconButton
-                    text='Buy Kami'
-                    fullWidth
-                    scale={2.3}
-                    disabled={isBuyDisabled}
-                    onClick={() => buyKami(kami.index, kami.name)}
-                  />
-                </TextTooltip>
+                <IconButton
+                  text='Buy Kami'
+                  fullWidth
+                  scale={2.3}
+                  disabled={isBuyDisabled}
+                  onClick={() => buyKami(kami.index, kami.name)}
+                />
               </KamiTile>
             ))}
           </KamiGrid>
@@ -251,6 +256,7 @@ const HeaderPart = styled.div<{ size: number; weight?: string; spacing?: number 
   color: #000000;
   padding-top: 0.3vw;
   padding-left: 0.5vw;
+  margin-bottom: ${({ weight }) => (weight === 'bolder' ? '0.3vw' : '0')};
   letter-spacing: ${({ spacing }) => spacing || -0.08}vw;
   font-size: ${({ size }) => size}vw;
   font-weight: ${({ weight }) => weight || 'normal'};
@@ -278,6 +284,17 @@ const Content = styled.div`
 const BodyText = styled.div`
   font-size: 0.85vw;
   font-weight: bold;
+`;
+
+const AdoptionBadge = styled.div<{ $warning: boolean }>`
+  padding: 0.35vw 0.7vw;
+  border: 0.15vw solid #000000;
+  border-radius: 0.5vw;
+  background-color: ${({ $warning }) => ($warning ? '#f8d6d6' : '#fff1bf')};
+  font-size: 0.75vw;
+  font-weight: bold;
+  line-height: 1.1vw;
+  text-align: center;
 `;
 
 const KamiGrid = styled.div`
