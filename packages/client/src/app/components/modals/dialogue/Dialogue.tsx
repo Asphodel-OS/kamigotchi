@@ -39,6 +39,9 @@ export const DialogueModal: UIComponent = {
   Render: () => {
     const layers = useLayers();
 
+    /////////////////
+    // PREPARATION
+
     const {
       network,
       data: { accEntity },
@@ -76,6 +79,9 @@ export const DialogueModal: UIComponent = {
       };
     })();
 
+    /////////////////
+    // INSTANTIATIONS
+
     const { actions, components, world } = network;
     const { IsRegistry, OwnsQuestID, IsComplete } = components;
     const { queryRegistry, queryOngoing, getBase, populate, filterByAvailable, queryCompleted } =
@@ -86,26 +92,37 @@ export const DialogueModal: UIComponent = {
     const dialogueIndex = useSelected((s) => s.dialogueIndex);
     const setDialogue = useSelected((s) => s.setDialogue);
 
-    const [dialogueNode, setDialogueNode] = useState({
-      text: [''],
-    } as DialogueNode);
-    const [dialogueLength, setDialogueLength] = useState(0);
     const [step, setStep] = useState(0);
     const [dialogueHistory, setDialogueHistory] = useState<number[]>([]);
-    const [npc, setNpc] = useState({
-      name: '',
-      img: '',
-      color: '',
-      mood: '',
-      special: { name: '', onclick: () => {} },
-    });
     const [availableQuests, setAvailableQuests] = useState<Quest[]>([]);
     const [ongoingQuests, setOngoingQuests] = useState<Quest[]>([]);
     const [account, setAccount] = useState<Account>(NullAccount);
     const [hasAnyKamis, setHasAnyKamis] = useState(false);
+    const dialogueNode = useMemo<DialogueNode>(
+      () => dialogues[dialogueIndex] ?? dialogues[0],
+      [dialogueIndex]
+    );
+    const dialogueLength = dialogueNode.text.length;
+    const npc = useMemo(() => {
+      const npcData = dialogueNode.npc;
+      return {
+        name: npcData?.name ?? '',
+        img: npcData?.img ?? '',
+        color: npcData?.color ?? '#cc88ff',
+        mood: npcData?.mood ?? '',
+        special: npcData?.special ?? { name: '', onclick: () => void 0 },
+      };
+    }, [dialogueNode.npc]);
+    const dialogueOptions = useMemo(
+      () => (dialogueNode.next ? Array.from(dialogueNode.next.entries()) : []),
+      [dialogueNode.next]
+    );
+    const registryEntities = useComponentEntities(IsRegistry) || [];
+    const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
+    const isCompleteEntities = useComponentEntities(IsComplete) || [];
 
     /////////////////
-    // SUBSCRIPTION
+    // SUBSCRIPTIONS
 
     // reset the step to 0 whenever the dialogue modal is toggled
     useEffect(() => {
@@ -113,21 +130,8 @@ export const DialogueModal: UIComponent = {
       if (!dialogueModalOpen) setDialogueHistory([]);
     }, [dialogueModalOpen]);
 
-    // set the current dialogue node when the dialogue index changes
-    useEffect(() => {
-      setStep(0);
-      const node = dialogues[dialogueIndex] ?? dialogues[0];
-      setDialogueNode(node);
-      setDialogueLength(node.text.length);
-      const npcData = node.npc;
-      setNpc({
-        name: npcData?.name ?? '',
-        img: npcData?.img ?? '',
-        color: npcData?.color ?? '#cc88ff',
-        mood: npcData?.mood ?? '',
-        special: npcData?.special ?? { name: '', onclick: () => {} },
-      });
-    }, [dialogueIndex]);
+    // reset text step when changing dialogue entry
+    useEffect(() => setStep(0), [dialogueIndex]);
 
     // update account data when the modal opens
     useEffect(() => {
@@ -147,10 +151,6 @@ export const DialogueModal: UIComponent = {
         });
       }
     }, [dialogueModalOpen, npc.name.length, setModals]);
-
-    const registryEntities = useComponentEntities(IsRegistry) || [];
-    const ownsQuestEntities = useComponentEntities(OwnsQuestID) || [];
-    const isCompleteEntities = useComponentEntities(IsComplete) || [];
 
     const registry = useMemo(() => {
       return queryRegistry().map((entity) => getBase(entity));
@@ -188,7 +188,7 @@ export const DialogueModal: UIComponent = {
       completed,
       npc.name,
     ]);
-    //////////////////
+    /////////////////
     // INTERPRETATION
 
     const isDisabled = (action: ActionParam) => {
@@ -204,19 +204,25 @@ export const DialogueModal: UIComponent = {
       else if (typeof raw === 'function') return raw(getArgs());
       return '';
     };
-    const dialogueOptions = dialogueNode.next ? Array.from(dialogueNode.next.entries()) : [];
 
     const getArgs = () => {
       if (!dialogueNode.args) return [];
-      const result: any[] = [];
+      const result: number[] = [];
       dialogueNode.args.forEach((param) => {
         result.push(getBalance(world, components, accEntity, param.index, param.type));
       });
 
       return result;
     };
+    const shouldShowNpcSpecial = useMemo(() => {
+      if (!npc.special.name) return false;
+      if (npc.special.name !== 'Kami Adoption Agency') return true;
+      if (hasAnyKamis) return false;
+      const now = Math.floor(Date.now() / 1000);
+      return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
+    }, [account.time.creation, hasAnyKamis, npc.special.name]);
 
-    //////////////////
+    /////////////////
     // ACTIONS
 
     const getAction = (type: string, input?: number) => {
@@ -239,7 +245,7 @@ export const DialogueModal: UIComponent = {
       });
     };
 
-    //////////////////
+    /////////////////
     // DISPLAY
 
     const BackButton = () => {
@@ -323,16 +329,8 @@ export const DialogueModal: UIComponent = {
       );
     };
 
-    //////////////////
-    // NPCS DIALOGUES
-
-    const shouldShowNpcSpecial = (() => {
-      if (!npc.special.name) return false;
-      if (npc.special.name !== 'Kami Adoption Agency') return true;
-      if (hasAnyKamis) return false;
-      const now = Math.floor(Date.now() / 1000);
-      return now - account.time.creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
-    })();
+    /////////////////
+    // RENDER
 
     if (npc.name.length > 0) {
       return (
