@@ -12,6 +12,7 @@ export const triggerERC20BridgeModal = () => {
       bridgeERC721: false,
       dialogue: false,
       kami: false,
+      kamiAdoptionAgency: false,
       emaBoard: false,
       map: false,
       node: false,

@@ -205,6 +205,15 @@ export const DialogueModal: UIComponent = {
       }
     }, [dialogueIndex, dialogueModalOpen, step]);
 
+    useEffect(() => {
+      return () => {
+        if (endDialogueTimeoutRef.current) {
+          clearTimeout(endDialogueTimeoutRef.current);
+          endDialogueTimeoutRef.current = null;
+        }
+      };
+    }, []);
+
     /////////////////
     // INTERPRETATION
 
