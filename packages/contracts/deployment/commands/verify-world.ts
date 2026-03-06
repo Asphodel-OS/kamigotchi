@@ -124,7 +124,7 @@ async function run() {
     // Compare on-chain bytecode with compiled artifact
     const artifactPath = path.join(artifactsDir, `${sysName}.sol/${sysName}.json`);
     if (!fs.existsSync(artifactPath)) {
-      results.push({ category: 'System', name: sysName, passed: true, state: 'NO_ARTIFACT', detail: `Registered at ${addr} (no artifact to compare)` });
+      results.push({ category: 'System', name: sysName, passed: false, state: 'NO_ARTIFACT', detail: `Registered at ${addr} (no artifact to verify)` });
       console.log(`  --  ${sysName}  ${addr}  (no artifact)`);
       await delay(30);
       continue;
@@ -269,7 +269,7 @@ async function run() {
 
   // Detailed failure lists
   const hasIssues =
-    compUnreg.length > 0 || sysStale.length > 0 || sysUnreg.length > 0 || sysErrors.length > 0 ||
+    compUnreg.length > 0 || sysStale.length > 0 || sysUnreg.length > 0 || sysNoArt.length > 0 || sysErrors.length > 0 ||
     wsStale.length > 0 || wsMissing.length > 0 || wsErrors.length > 0;
 
   if (sysStale.length > 0) {
@@ -282,6 +282,13 @@ async function run() {
   if (sysUnreg.length > 0) {
     console.log(`\nUNREGISTERED SYSTEMS:`);
     for (const r of sysUnreg) {
+      console.log(`  ${r.name}`);
+    }
+  }
+
+  if (sysNoArt.length > 0) {
+    console.log(`\nNO ARTIFACT (cannot verify bytecode):`);
+    for (const r of sysNoArt) {
       console.log(`  ${r.name}`);
     }
   }
