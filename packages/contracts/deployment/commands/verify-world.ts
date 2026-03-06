@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 import { ethers } from 'ethers';
+import * as fs from 'fs';
+import * as path from 'path';
 import { DeployConfig, WorldAddresses } from '../utils';
 import { filterDeployConfigByEnv, getCompIDByName, getSystemIDByName } from '../utils/deploy';
 import { getCompAddr } from '../utils/addresses';
@@ -16,6 +18,7 @@ interface Result {
   category: string;
   name: string;
   passed: boolean;
+  state: 'CURRENT' | 'STALE' | 'NOT_REGISTERED' | 'NO_ARTIFACT' | 'ERROR';
   detail: string;
 }
 
@@ -75,6 +78,7 @@ async function run() {
   await World.init();
 
   const results: Result[] = [];
+  const artifactsDir = path.join(__dirname, '../../out');
 
   // Phase 1: Components
   const compNames = deploy.components.map((comp: any) => comp.comp);
@@ -86,23 +90,66 @@ async function run() {
     const addr = await World.getCompAddr(compIDs[i]);
     const passed = addr !== ZERO_ADDR;
     const detail = passed ? addr! : 'Not registered';
-    results.push({ category: 'Component', name: compNames[i], passed, detail });
-    console.log(`  ${passed ? 'PASS' : 'FAIL'}  ${compNames[i]}  ${detail}`);
+    const state = passed ? 'CURRENT' : 'NOT_REGISTERED';
+    results.push({ category: 'Component', name: compNames[i], passed, state, detail });
+    console.log(`  ${passed ? 'OK' : 'XX'}  ${compNames[i]}  ${detail}`);
     await delay(30);
   }
 
-  // Phase 2: Systems
+  // Phase 2: Systems (registration + bytecode comparison)
   const systemNames = deploy.systems.map((sys: any) => sys.name);
   const systemIDs = deploy.systems.map((sys: any) => getSystemIDByName(sys.name));
 
   console.log(`\n=== SYSTEMS (${systemNames.length}) ===`);
 
   for (let i = 0; i < systemNames.length; i++) {
-    const addr = await World.getSysAddr(systemIDs[i]);
-    const passed = addr !== ZERO_ADDR;
-    const detail = passed ? addr! : 'Not registered';
-    results.push({ category: 'System', name: systemNames[i], passed, detail });
-    console.log(`  ${passed ? 'PASS' : 'FAIL'}  ${systemNames[i]}  ${detail}`);
+    const sysName = systemNames[i];
+    const sysID = systemIDs[i];
+
+    if (!sysID) {
+      results.push({ category: 'System', name: sysName, passed: false, state: 'ERROR', detail: 'No mapping ID' });
+      console.log(`  ??  ${sysName}  No mapping ID`);
+      await delay(30);
+      continue;
+    }
+
+    const addr = await World.getSysAddr(sysID);
+    if (!addr || addr === ZERO_ADDR) {
+      results.push({ category: 'System', name: sysName, passed: false, state: 'NOT_REGISTERED', detail: 'Not registered' });
+      console.log(`  XX  ${sysName}  Not registered`);
+      await delay(30);
+      continue;
+    }
+
+    // Compare on-chain bytecode with compiled artifact
+    const artifactPath = path.join(artifactsDir, `${sysName}.sol/${sysName}.json`);
+    if (!fs.existsSync(artifactPath)) {
+      results.push({ category: 'System', name: sysName, passed: true, state: 'NO_ARTIFACT', detail: `Registered at ${addr} (no artifact to compare)` });
+      console.log(`  --  ${sysName}  ${addr}  (no artifact)`);
+      await delay(30);
+      continue;
+    }
+
+    try {
+      const onChainCode = await provider.getCode(addr);
+      const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf-8'));
+      const compiledCode = artifact.deployedBytecode.object;
+      const imm = artifact.deployedBytecode.immutableReferences || {};
+      const links = artifact.deployedBytecode.linkReferences || {};
+
+      const match = compareBytecode(onChainCode, compiledCode, imm, links);
+      if (match) {
+        results.push({ category: 'System', name: sysName, passed: true, state: 'CURRENT', detail: addr });
+        console.log(`  OK  ${sysName}  ${addr}`);
+      } else {
+        results.push({ category: 'System', name: sysName, passed: false, state: 'STALE', detail: `Bytecode differs (needs redeploy)` });
+        console.log(`  !!  ${sysName}  ${addr}  STALE`);
+      }
+    } catch (e: any) {
+      results.push({ category: 'System', name: sysName, passed: false, state: 'ERROR', detail: `Bytecode check failed: ${e.message?.slice(0, 60)}` });
+      console.log(`  ??  ${sysName}  ${addr}  Error comparing bytecode`);
+    }
+
     await delay(30);
   }
 
@@ -173,65 +220,106 @@ async function run() {
   // Phase 4: Summary
   const compResults = results.filter((r) => r.category === 'Component');
   const sysResults = results.filter((r) => r.category === 'System');
-  const failures = results.filter((r) => !r.passed);
 
-  const compPass = compResults.filter((r) => r.passed).length;
-  const sysPass = sysResults.filter((r) => r.passed).length;
+  const compCurrent = compResults.filter((r) => r.state === 'CURRENT').length;
+  const compUnreg = compResults.filter((r) => r.state === 'NOT_REGISTERED');
 
-  const current = stateResults.filter((r) => r.state === 'CURRENT');
-  const stale = stateResults.filter((r) => r.state === 'STALE');
-  const missing = stateResults.filter((r) => r.state === 'MISSING');
-  const pending = stateResults.filter((r) => r.state === 'PENDING');
-  const errors = stateResults.filter((r) => r.state === 'ERROR');
+  const sysCurrent = sysResults.filter((r) => r.state === 'CURRENT').length;
+  const sysStale = sysResults.filter((r) => r.state === 'STALE');
+  const sysUnreg = sysResults.filter((r) => r.state === 'NOT_REGISTERED');
+  const sysNoArt = sysResults.filter((r) => r.state === 'NO_ARTIFACT');
+  const sysErrors = sysResults.filter((r) => r.state === 'ERROR');
+
+  const wsCurrent = stateResults.filter((r) => r.state === 'CURRENT');
+  const wsStale = stateResults.filter((r) => r.state === 'STALE');
+  const wsMissing = stateResults.filter((r) => r.state === 'MISSING');
+  const wsPending = stateResults.filter((r) => r.state === 'PENDING');
+  const wsErrors = stateResults.filter((r) => r.state === 'ERROR');
 
   console.log(`\n========================================`);
   console.log(`         VERIFICATION SUMMARY`);
   console.log(`========================================`);
-  console.log(`Components: ${compPass}/${compResults.length} registered`);
-  console.log(`Systems: ${sysPass}/${sysResults.length} registered`);
+
+  console.log(`\nComponents (${compResults.length}):`);
+  console.log(`  CURRENT:         ${compCurrent}`);
+  if (compUnreg.length > 0)
+    console.log(`  NOT REGISTERED:  ${compUnreg.length}`);
+
+  console.log(`\nSystems (${sysResults.length}):`);
+  console.log(`  CURRENT:         ${sysCurrent}  (bytecode matches artifact)`);
+  if (sysStale.length > 0)
+    console.log(`  STALE:           ${sysStale.length}  (bytecode differs, needs redeploy)`);
+  if (sysUnreg.length > 0)
+    console.log(`  NOT REGISTERED:  ${sysUnreg.length}`);
+  if (sysNoArt.length > 0)
+    console.log(`  NO ARTIFACT:     ${sysNoArt.length}  (registered but can't verify bytecode)`);
+  if (sysErrors.length > 0)
+    console.log(`  ERROR:           ${sysErrors.length}`);
+
   console.log(`\nWorld State (${stateResults.length} entries):`);
-  console.log(`  CURRENT:  ${current.length}  (In Game + on-chain)`);
-  console.log(`  STALE:    ${stale.length}  (needs update on-chain)`);
-  console.log(`  MISSING:  ${missing.length}  (should be on-chain but isn't)`);
-  console.log(`  PENDING:  ${pending.length}  (not yet deployed, expected)`);
-  if (errors.length > 0)
-    console.log(`  ERROR:    ${errors.length}  (RPC or component errors)`);
+  console.log(`  CURRENT:  ${wsCurrent.length}  (In Game + on-chain)`);
+  if (wsStale.length > 0)
+    console.log(`  STALE:    ${wsStale.length}  (needs update on-chain)`);
+  if (wsMissing.length > 0)
+    console.log(`  MISSING:  ${wsMissing.length}  (should be on-chain but isn't)`);
+  if (wsPending.length > 0)
+    console.log(`  PENDING:  ${wsPending.length}  (not yet deployed, expected)`);
+  if (wsErrors.length > 0)
+    console.log(`  ERROR:    ${wsErrors.length}  (RPC or component errors)`);
 
-  const hasIssues = failures.length > 0 || stale.length > 0 || missing.length > 0 || errors.length > 0;
+  // Detailed failure lists
+  const hasIssues =
+    compUnreg.length > 0 || sysStale.length > 0 || sysUnreg.length > 0 || sysErrors.length > 0 ||
+    wsStale.length > 0 || wsMissing.length > 0 || wsErrors.length > 0;
 
-  if (stale.length > 0) {
-    console.log(`\nSTALE (needs world:state update):`);
-    for (const r of stale) {
+  if (sysStale.length > 0) {
+    console.log(`\nSTALE SYSTEMS (needs redeploy):`);
+    for (const r of sysStale) {
+      console.log(`  ${r.name}`);
+    }
+  }
+
+  if (sysUnreg.length > 0) {
+    console.log(`\nUNREGISTERED SYSTEMS:`);
+    for (const r of sysUnreg) {
+      console.log(`  ${r.name}`);
+    }
+  }
+
+  if (compUnreg.length > 0) {
+    console.log(`\nUNREGISTERED COMPONENTS:`);
+    for (const r of compUnreg) {
+      console.log(`  ${r.name}`);
+    }
+  }
+
+  if (wsStale.length > 0) {
+    console.log(`\nSTALE WORLD STATE (needs world:state update):`);
+    for (const r of wsStale) {
       console.log(`  ${r.category}: ${r.name}  [${r.status}]`);
     }
   }
 
-  if (missing.length > 0) {
-    console.log(`\nMISSING (should be deployed but not found):`);
-    for (const r of missing) {
-      console.log(`  ${r.category}: ${r.name}`);
-    }
-  }
-
-  if (failures.length > 0) {
-    console.log(`\nUNREGISTERED:`);
-    for (const f of failures) {
-      console.log(`  ${f.category}: ${f.name}`);
-    }
-  }
-
-  if (errors.length > 0) {
-    console.log(`\nERRORS:`);
-    for (const r of errors) {
-      console.log(`  ${r.category}: ${r.name} - ${r.detail}`);
-    }
-  }
-
-  if (pending.length > 0) {
-    console.log(`\nPENDING DEPLOY (${pending.length} entries):`);
+  if (wsMissing.length > 0) {
+    console.log(`\nMISSING WORLD STATE (should be deployed but not found):`);
     // Group by category for compactness
     const grouped = new Map<string, string[]>();
-    for (const r of pending) {
+    for (const r of wsMissing) {
+      if (!grouped.has(r.category)) grouped.set(r.category, []);
+      grouped.get(r.category)!.push(r.name);
+    }
+    for (const [cat, items] of grouped) {
+      console.log(`  ${cat} (${items.length}):`);
+      for (const item of items) {
+        console.log(`    ${item}`);
+      }
+    }
+  }
+
+  if (wsPending.length > 0) {
+    console.log(`\nPENDING DEPLOY (${wsPending.length} entries):`);
+    const grouped = new Map<string, string[]>();
+    for (const r of wsPending) {
       if (!grouped.has(r.category)) grouped.set(r.category, []);
       grouped.get(r.category)!.push(`${r.name} [${r.status}]`);
     }
@@ -255,6 +343,53 @@ run().catch((e) => {
 
 ///////////////
 // INTERNAL
+
+// Strip CBOR-encoded metadata appended by Solidity compiler
+// Last 2 bytes of bytecode encode the metadata length
+function stripMetadata(bytecode: string): string {
+  const hex = bytecode.startsWith('0x') ? bytecode.slice(2) : bytecode;
+  if (hex.length < 4) return hex;
+  const metaLen = parseInt(hex.slice(-4), 16);
+  const stripLen = (metaLen + 2) * 2; // convert to hex chars
+  if (stripLen >= hex.length || metaLen > 1000) return hex; // sanity check
+  return hex.slice(0, hex.length - stripLen);
+}
+
+// Zero out immutable values and library addresses baked into bytecode
+// These differ between deployments but don't represent code changes
+function maskRefs(hexNoPrefix: string, imm: any, links: any): string {
+  let buf = hexNoPrefix.toLowerCase();
+  for (const positions of Object.values(imm) as any[]) {
+    for (const { start, length } of positions) {
+      const s = start * 2;
+      if (s + length * 2 <= buf.length) {
+        buf = buf.substring(0, s) + '00'.repeat(length) + buf.substring(s + length * 2);
+      }
+    }
+  }
+  for (const libs of Object.values(links) as any[]) {
+    for (const positions of Object.values(libs) as any[]) {
+      for (const { start, length } of positions) {
+        const s = start * 2;
+        if (s + length * 2 <= buf.length) {
+          buf = buf.substring(0, s) + '00'.repeat(length) + buf.substring(s + length * 2);
+        }
+      }
+    }
+  }
+  return buf;
+}
+
+// Compare on-chain runtime bytecode with compiled artifact bytecode
+// Strips metadata and masks immutable/library refs before comparing
+function compareBytecode(onChainCode: string, compiledCode: string, immutableRefs: any, linkRefs: any): boolean {
+  const strippedOnChain = stripMetadata(onChainCode);
+  const strippedCompiled = stripMetadata(compiledCode);
+  if (strippedOnChain.length !== strippedCompiled.length) return false;
+  const maskedOnChain = maskRefs(strippedOnChain, immutableRefs, linkRefs);
+  const maskedCompiled = maskRefs(strippedCompiled, immutableRefs, linkRefs);
+  return maskedOnChain === maskedCompiled;
+}
 
 const STATE_ICONS: Record<string, string> = {
   CURRENT: 'OK',
