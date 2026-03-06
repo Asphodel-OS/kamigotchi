@@ -101,6 +101,25 @@
     { "name": "__LocalSetupSystem", "writeAccess": ["*"], "skipEnv": ["testing", "production"] },
     { "name": "_SnapshotT2System", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "Value"] },
     { "name": "_AdminSetFlagSystem", "writeAccess": ["HasFlag"] },
+    {
+      "name": "_AdminResetLevelSystem",
+      "writeAccess": [
+        "EntityType",
+        "Experience",
+        "Health",
+        "IDAnchor",
+        "IDOwnsSkill",
+        "IDType",
+        "IdSource",
+        "IndexSkill",
+        "Level",
+        "SkillPoint",
+        "TimeLast",
+        "TimeStart",
+        "Type",
+        "Value"
+      ]
+    },
     { "name": "_DistributeItemSystem", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "Value"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {

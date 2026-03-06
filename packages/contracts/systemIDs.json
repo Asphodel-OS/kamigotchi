@@ -11,6 +11,10 @@
     "id": "system.admin.set.flag",
    "encodedID": "0x7f75b5c73f24bb25cc7e34bc43934ad62982ad7c2871fd3238e8dbb40c760f04"
   },
+  "_AdminResetLevelSystem": {
+    "id": "system.admin.reset.level",
+   "encodedID": "0x80a15e213d79a8e53277fe8e9e44d63741f9fc379cf70a68f3dc3ea6e8e691a2"
+  },
   "_DistributeItemSystem": {
     "id": "system.distribute.item",
    "encodedID": "0x81dbee84bd9b42b628b12846ee8a80ba4bcf028f237c643f27dcd107b1372974"
@@ -287,6 +291,14 @@
     "id": "system.kamimarket.registry",
    "encodedID": "0xd76f0b2779dfea98d7da01435487fbcf33769a22af54166b777b2b7ece07e855"
   },
+  "_NewbieVendorRegistrySystem": {
+    "id": "system.newbievendor.registry",
+   "encodedID": "0x704fe26bd50ca2f372d19fbd9bd36d71674c8886e2d6e41a1f76387bed8b7dca"
+  },
+  "NewbieVendorBuySystem": {
+    "id": "system.newbievendor.buy",
+   "encodedID": "0x185a687016acc9bcd2f3bb942a1486354c17fd2615c671385ee132f745928c56"
+  },
   "KamiEquipSystem": {
     "id": "system.kami.equip",
    "encodedID": "0x8e4170213eb2771325dfb1ef73ac5bbb827d2002b20f0c90780e393e89c791a4"
@@ -350,6 +362,10 @@
   "KamiSacrificeCommitSystem": {
     "id": "system.kami.sacrifice.commit",
    "encodedID": "0x09d3a037c1f14ca3e102dd2698f2b87c700a6a86533738872cadc56eddec05d2"
+  },
+  "KamiSendSystem": {
+    "id": "system.kami.send",
+   "encodedID": "0x9d20c9eda0528b8683ef33f26acd71c89dbe7d91ae9812e8fd960696d2b657a7"
   },
   "KamiSacrificeRevealSystem": {
     "id": "system.kami.sacrifice.reveal",
