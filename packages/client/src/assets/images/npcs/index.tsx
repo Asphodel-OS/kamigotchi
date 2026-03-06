@@ -6,7 +6,7 @@ import artieShocked1 from './artie_shocked_1.png';
 import artieShrug1 from './artie_shrug_1.png';
 import dimidiatusBoth from './dimidiatus_both.png';
 import dimidiatusFrown from './dimidiatus_frown.png';
-import dimitiatusLaugh from './dimitiatus_laugh.png';
+import dimidiatusLaugh from './dimitiatus_laugh.png';
 import huntress from './huntress.png';
 import huntressDay from './huntress_day.png';
 import huntressDaySmall from './huntress_day_small.png';
@@ -47,7 +47,7 @@ export const NpcImages: Record<string, string> = {
   'artie_shrug_1.png': artieShrug1,
   'dimidiatus_both.png': dimidiatusBoth,
   'dimidiatus_frown.png': dimidiatusFrown,
-  'dimitiatus_laugh.png': dimitiatusLaugh,
+  'dimidiatus_laugh.png': dimidiatusLaugh,
   'huntress.png': huntress,
   'huntress_day.png': huntressDay,
   'huntress_day_small.png': huntressDaySmall,

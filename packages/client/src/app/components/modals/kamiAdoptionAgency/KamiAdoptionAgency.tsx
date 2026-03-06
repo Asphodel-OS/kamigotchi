@@ -75,10 +75,17 @@ export const KamiAdoptionAgency: UIComponent = {
     const kamiIndex = useSelected((s) => s.kamiIndex);
     const setKami = useSelected((s) => s.setKami);
     const [buyingKamiIndex, setBuyingKamiIndex] = useState<number | null>(null);
-    const [hasCompletedAdoption, setHasCompletedAdoption] = useState(false);
+    const [completedAdoptionsByAddress, setCompletedAdoptionsByAddress] = useState<
+      Record<string, boolean>
+    >({});
     const displayedKamis = useMemo(
       () => getDisplayedKamiEntities().map((entity) => getKami(entity)),
       [getDisplayedKamiEntities, getKami]
+    );
+    const ownerApi = useMemo(() => apis.get(selectedAddress), [apis, selectedAddress]);
+    const hasCompletedAdoption = useMemo(
+      () => (selectedAddress ? !!completedAdoptionsByAddress[selectedAddress] : false),
+      [completedAdoptionsByAddress, selectedAddress]
     );
     const userHasKami = hasAnyKamis();
     const userAccountIsWithin24Hours = isAccountWithin24Hours();
@@ -112,10 +119,12 @@ export const KamiAdoptionAgency: UIComponent = {
         !userAccountIsWithin24Hours ||
         buyingKamiIndex !== null ||
         !systemAddress ||
-        priceWei === undefined,
+        priceWei === undefined ||
+        !ownerApi,
       [
         buyingKamiIndex,
         hasCompletedAdoption,
+        ownerApi,
         priceWei,
         systemAddress,
         userAccountIsWithin24Hours,
@@ -137,12 +146,9 @@ export const KamiAdoptionAgency: UIComponent = {
 
     const buyKami = useCallback(
       async (kamiIndex: number, kamiName: string) => {
-        if (!systemAddress || priceWei === undefined) return;
+        if (!systemAddress || priceWei === undefined || !ownerApi) return;
         setBuyingKamiIndex(kamiIndex);
         try {
-          const ownerApi = apis.get(selectedAddress);
-          if (!ownerApi) throw new Error(`API not established for ${selectedAddress}`);
-
           const latestPriceRaw = (await refetchPrice()).data ?? priceData;
           if (latestPriceRaw === undefined || latestPriceRaw === null) return;
           const latestPriceWei = BigInt(latestPriceRaw.toString());
@@ -154,12 +160,14 @@ export const KamiAdoptionAgency: UIComponent = {
             execute: async () => ownerApi.newbieVendor.buy(kamiIndex, latestPriceWei),
           });
           const didComplete = await didActionSucceed(actions.Action, transaction);
-          if (didComplete) setHasCompletedAdoption(true);
+          if (didComplete && selectedAddress) {
+            setCompletedAdoptionsByAddress((prev) => ({ ...prev, [selectedAddress]: true }));
+          }
         } finally {
           setBuyingKamiIndex(null);
         }
       },
-      [actions, apis, priceData, priceWei, refetchPrice, selectedAddress, systemAddress]
+      [actions, ownerApi, priceData, priceWei, refetchPrice, selectedAddress, systemAddress]
     );
 
     const openKamiModal = useCallback(
@@ -199,7 +207,9 @@ export const KamiAdoptionAgency: UIComponent = {
         <Content>
           {displayedKamis.length > 0 && <BodyText>Choose one</BodyText>}
           {displayedKamis.length > 0 && (
-            <AdoptionBadge $warning={!userQualifiesForAdoption}>{adoptionBadgeMessage}</AdoptionBadge>
+            <AdoptionBadge $warning={!userQualifiesForAdoption}>
+              {adoptionBadgeMessage}
+            </AdoptionBadge>
           )}
           <KamiGrid>
             {displayedKamis.map((kami) => (

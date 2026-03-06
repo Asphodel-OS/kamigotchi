@@ -24,7 +24,7 @@ export const getDisplayedKamiIndices = (world: World, components: Components): n
   if (!cycleDuration) return [];
 
   const now = Math.floor(Date.now() / 1000);
-  const cycleNumber = Math.floor((now - cycleStart) / cycleDuration);
+  const cycleNumber = Math.max(0, Math.floor((now - cycleStart) / cycleDuration));
   const offset = (cycleNumber * 3) % pool.length;
 
   const displaySize = Math.min(pool.length, 3);

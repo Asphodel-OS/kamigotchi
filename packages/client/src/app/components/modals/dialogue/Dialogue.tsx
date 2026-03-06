@@ -99,6 +99,7 @@ export const DialogueModal: UIComponent = {
     const [account, setAccount] = useState<Account>(NullAccount);
     const [hasAnyKamis, setHasAnyKamis] = useState(false);
     const endDialogueTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const internalDialogueTransitionRef = useRef(false);
     const dialogueNode = useMemo<DialogueNode>(
       () => dialogues[dialogueIndex] ?? dialogues[0],
       [dialogueIndex]
@@ -132,7 +133,14 @@ export const DialogueModal: UIComponent = {
     }, [dialogueModalOpen]);
 
     // reset text step when changing dialogue entry
-    useEffect(() => setStep(0), [dialogueIndex]);
+    // clear history only when dialogue root is changed externally while modal is still open
+    useEffect(() => {
+      setStep(0);
+      if (dialogueModalOpen && !internalDialogueTransitionRef.current) {
+        setDialogueHistory([]);
+      }
+      internalDialogueTransitionRef.current = false;
+    }, [dialogueIndex, dialogueModalOpen]);
 
     // update account data when the modal opens
     useEffect(() => {
@@ -277,6 +285,11 @@ export const DialogueModal: UIComponent = {
       });
     };
 
+    const transitionDialogue = (nextDialogueIndex: number) => {
+      internalDialogueTransitionRef.current = true;
+      setDialogue(nextDialogueIndex);
+    };
+
     /////////////////
     // DISPLAY
 
@@ -296,7 +309,7 @@ export const DialogueModal: UIComponent = {
               const previousDialogue = dialogueHistory[dialogueHistory.length - 1];
               if (previousDialogue === undefined) return;
               setDialogueHistory((prev) => prev.slice(0, -1));
-              setDialogue(previousDialogue);
+              transitionDialogue(previousDialogue);
             }}
           />
         </div>
@@ -324,7 +337,7 @@ export const DialogueModal: UIComponent = {
               if (dialogueNode.npc?.nextDialogue) {
                 setDialogueHistory((prev) => [...prev, dialogueIndex]);
                 setStep(0);
-                setDialogue(dialogueNode.npc.nextDialogue);
+                transitionDialogue(dialogueNode.npc.nextDialogue);
               }
             }}
           />
@@ -393,7 +406,7 @@ export const DialogueModal: UIComponent = {
               onClick: () => {
                 setDialogueHistory((prev) => [...prev, dialogueIndex]);
                 setStep(0);
-                setDialogue(nextIndex);
+                transitionDialogue(nextIndex);
               },
             }))}
             dialogueButtons={{
