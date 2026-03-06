@@ -114,6 +114,7 @@
         "IndexSkill",
         "Level",
         "SkillPoint",
+        "Time",
         "TimeLast",
         "TimeStart",
         "Type",

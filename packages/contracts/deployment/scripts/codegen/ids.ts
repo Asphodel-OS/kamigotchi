@@ -23,9 +23,9 @@ export async function generateIDs() {
           `  "${comp.name}": {
     "id": "${comp.id}",
     "encodedID": "${comp.encodedID}"
-  },`
+  }`
       )
-      .join('\n') +
+      .join(',\n') +
     '\n}';
   await writeFile(path.join(contractsDir, 'componentIDs.json'), compIDs);
 
@@ -43,9 +43,9 @@ export async function generateIDs() {
           `  "${sys.name}": {
     "id": "${sys.id}",
    "encodedID": "${sys.encodedID}"
-  },`
+  }`
       )
-      .join('\n') +
+      .join(',\n') +
     '\n}';
   await writeFile(path.join(contractsDir, 'systemIDs.json'), sysIDs);
 }

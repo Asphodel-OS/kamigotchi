@@ -40,7 +40,7 @@ contract _AdminResetLevelSystem is System, AuthRoles {
     // zero out XP, level, and skill points
     LibExperience.set(components, kamiID, 0);
     LibExperience.setLevel(components, kamiID, 1);
-    LibSkill.setPoints(components, kamiID, 0);
+    LibSkill.setPoints(components, kamiID, 1);
 
     // signal metadata update for ERC721
     LibKami721.updateEvent(components, LibKami.getIndex(components, kamiID));
