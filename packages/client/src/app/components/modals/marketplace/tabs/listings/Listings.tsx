@@ -91,6 +91,7 @@ export const Listings = ({
   const [page, setPage] = useState(0);
   const gridRef = useRef<HTMLDivElement>(null);
   const [recentlyBoughtListings, setRecentlyBoughtListings] = useState<Set<string>>(new Set());
+  const hasBootstrappedListings = useRef(false);
 
   // Reset on modal open
   useEffect(() => {
@@ -109,23 +110,30 @@ export const Listings = ({
   // SUBSCRIPTIONS
 
   useEffect(() => {
-    if (!isVisible || !KamidenClient) return;
-
-    let isActive = true;
+    if (!KamidenClient) return;
     const refreshListings = async () => {
       const res = await KamidenClient.getKamiMarketListings({ Size: 500 });
-      if (!isActive) return;
       setListings(res.Listings ?? []);
       setLoading(false);
     };
 
-    refreshListings();
+    const isBootstrapRun = !hasBootstrappedListings.current;
+    if (isBootstrapRun) {
+      hasBootstrappedListings.current = true;
+      refreshListings();
+    }
+
+    if (!isMarketplaceOpen || !isVisible) {
+      return;
+    }
+
+    if (!isBootstrapRun) refreshListings();
+
     const intervalId = window.setInterval(refreshListings, 10000);
     return () => {
-      isActive = false;
       window.clearInterval(intervalId);
     };
-  }, [isVisible, accountId]);
+  }, [isMarketplaceOpen, isVisible, accountId]);
 
   useEffect(() => {
     if (createOrderOpen) {

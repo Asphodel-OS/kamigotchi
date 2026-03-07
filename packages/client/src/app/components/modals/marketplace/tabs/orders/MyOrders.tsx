@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EmptyText, IconButton, TextTooltip } from 'app/components/library';
@@ -142,6 +142,7 @@ export const MyOrders = ({
   const [orders, setOrders] = useState<KamiMarketOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const hasBootstrappedOrders = useRef(false);
 
   const account = useAccount((s) => s.account);
   const kamiIndex = useSelected((s) => s.kamiIndex);
@@ -163,8 +164,7 @@ export const MyOrders = ({
   // SUBSCRIPTIONS
 
   useEffect(() => {
-    if (!isVisible || !KamidenClient) return;
-    let isActive = true;
+    if (!KamidenClient) return;
 
     const refresh = async () => {
       const res = await KamidenClient.getKamiMarketHistory({
@@ -172,18 +172,27 @@ export const MyOrders = ({
         Timestamp: 0,
         Size: 500,
       });
-      if (!isActive) return;
       setOrders((res as { Orders?: KamiMarketOrder[] })?.Orders ?? []);
       setLoading(false);
     };
 
-    refresh();
+    const isBootstrapRun = !hasBootstrappedOrders.current;
+    if (isBootstrapRun) {
+      hasBootstrappedOrders.current = true;
+      refresh();
+    }
+
+    if (!isMarketplaceOpen || !isVisible) {
+      return;
+    }
+
+    if (!isBootstrapRun) refresh();
+
     const intervalId = window.setInterval(refresh, 5000);
     return () => {
-      isActive = false;
       window.clearInterval(intervalId);
     };
-  }, [isVisible, accountId]);
+  }, [isMarketplaceOpen, isVisible, accountId]);
 
   /////////////////
   // PREPARATION
