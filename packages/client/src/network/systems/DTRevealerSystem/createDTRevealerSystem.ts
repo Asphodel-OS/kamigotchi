@@ -82,7 +82,7 @@ export function createDTRevealerSystem(
 
     for (let i = 0; i < commits.length; i++) {
       queuedCommits.delete(commits[i]);
-      revealingCommits.add(commits[0]);
+      revealingCommits.add(commits[i]);
 
       let entity = world.entityToIndex.get(commits[i]) as EntityIndex;
       if (!entity) entity = createEntity(world, undefined, { id: commits[i] });
@@ -101,7 +101,6 @@ export function createDTRevealerSystem(
         notifyResult(world, components, notifications, allCommits.get(commits[i]));
       }
     } else {
-      console.log('revealer: reveal failed');
       // increment failure count, remove from queue after 3 tries
       for (let i = 0; i < commits.length; i++) {
         const curr = allCommits.get(commits[i]);
