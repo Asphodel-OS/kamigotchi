@@ -1,6 +1,6 @@
 import { log } from 'utils/logger';
 
-const KAMIDEN_URL = 'http://localhost:82'; //import.meta.env.VITE_KAMIGAZE_URL;
+const KAMIDEN_URL = import.meta.env.VITE_KAMIGAZE_URL;
 
 interface TxErrorContext {
   sender: string;
