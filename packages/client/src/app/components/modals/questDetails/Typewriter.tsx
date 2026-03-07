@@ -1,11 +1,18 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-const boldName = (text: string, key: number | string) => (
-  <strong style={{ color: 'inherit' }} key={key}>
-    {text}
-  </strong>
-);
+const formatBoldKeywords = (text: string) => {
+  const parts = text.split(/(MINA|MENU)/g);
+  return parts.map((part, i) =>
+    /^(MINA|MENU)$/.test(part) ? (
+      <strong style={{ color: 'inherit' }} key={i}>
+        {part}
+      </strong>
+    ) : (
+      part
+    )
+  );
+};
 
 export const useTypewriter = (
   text: string,
@@ -15,54 +22,45 @@ export const useTypewriter = (
   interrupted?: boolean,
   onComplete?: () => void
 ) => {
-  const [displayedText, setDisplayedText] = useState<ReactNode[]>([]);
-  const indexRef = useRef(0);
+  const [revealedIndex, setRevealedIndex] = useState(0);
+  const retriggerRef = useRef(retrigger);
+
+  const isResetting = retriggerRef.current !== retrigger;
+
+  // If interrupted, always show full text immediately (no flash)
+  // Otherwise, show 0 during reset to prevent stale index flash
+  const displayIndex = interrupted ? text.length : isResetting ? 0 : revealedIndex;
 
   useEffect(() => {
-    setDisplayedText([]);
-    indexRef.current = 0;
+    retriggerRef.current = retrigger;
+    setRevealedIndex(0);
   }, [retrigger]);
 
   useEffect(() => {
-    if (!text) return;
-
-    if (interrupted) {
-      const parts = text.split(/(MINA|MENU)/g);
-      const result = parts.map((part, i) =>
-        /^(MINA|MENU)$/.test(part) ? boldName(part, i) : part
-      );
-      setDisplayedText(result);
-      indexRef.current = text.length;
-      onComplete?.();
+    if (!text || interrupted) {
+      if (interrupted) {
+        setRevealedIndex(text.length);
+        onComplete?.();
+      }
       return;
     }
 
     const interval = setInterval(() => {
-      if (indexRef.current >= text.length) {
-        clearInterval(interval);
-        onComplete?.();
-        return;
-      }
-
-      // leaving this hardcorded for now
-      const remaining = text.substring(indexRef.current);
-      const Mina = remaining.startsWith('MINA');
-      const Menu = remaining.startsWith('MENU');
-      if (Mina || Menu) {
-        setDisplayedText((prev) => [...prev, boldName(Mina ? 'MINA' : 'MENU', indexRef.current)]);
-        indexRef.current += 4;
-      } else {
-        setDisplayedText((prev) => [...prev, remaining[0]]);
-        indexRef.current += 1;
-      }
-
-      if (onUpdate) onUpdate();
+      setRevealedIndex((prev) => {
+        if (prev >= text.length) {
+          clearInterval(interval);
+          onComplete?.();
+          return prev;
+        }
+        onUpdate?.();
+        return prev + 1;
+      });
     }, speed);
 
     return () => clearInterval(interval);
   }, [text, speed, retrigger, onUpdate, interrupted, onComplete]);
 
-  return displayedText;
+  return displayIndex;
 };
 
 // all in one block
@@ -83,10 +81,14 @@ const SingleLineTypewriter = ({
   onComplete?: () => void;
   showContinueArrow?: boolean;
 }) => {
-  const displayedText = useTypewriter(text, speed, retrigger, onUpdate, interrupted, onComplete);
+  const revealedIndex = useTypewriter(text, speed, retrigger, onUpdate, interrupted, onComplete);
+  const revealed = text.slice(0, revealedIndex);
+  const remaining = text.slice(revealedIndex);
+
   return (
     <Container>
-      {displayedText}
+      <span>{formatBoldKeywords(revealed)}</span>
+      <span style={{ visibility: 'hidden' }}>{formatBoldKeywords(remaining)}</span>
       {showContinueArrow && <Arrow>▸</Arrow>}
     </Container>
   );
@@ -233,7 +235,9 @@ const ClickableArea = styled.div`
 const Arrow = styled.span`
   margin-left: 0.3em;
   animation: flicker 1s steps(1) infinite;
-  font-size: 1.8vw;
+  font-size: 1.4em;
+  line-height: 1;
+  vertical-align: middle;
   @keyframes flicker {
     0% {
       opacity: 1;
