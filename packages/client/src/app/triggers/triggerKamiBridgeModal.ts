@@ -10,6 +10,7 @@ export const triggerKamiBridgeModal = () => {
       ...modals,
       bridgeERC721: true,
       bridgeERC20: false,
+      kamiAdoptionAgency: false,
       dialogue: false,
       kami: false,
       emaBoard: false,

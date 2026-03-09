@@ -43,7 +43,7 @@ export const ListingCard = memo(({
   variant = 'listing',
   kami,
   allFlipped = false,
-  onOpenKami = () => {},
+  onOpenKami,
   ...rest
 }: ListingCardProps) => {
   /////////////////
@@ -83,7 +83,7 @@ export const ListingCard = memo(({
   const listingPriceLabel =
     listing && listingProps ? listingProps.formatPrice(listing.Price) : undefined;
   const priceLabel = isListing ? listingPriceLabel : adoptionPriceLabel;
-  const showInfoButton = kamiIndex !== undefined;
+  const showInfoButton = kamiIndex !== undefined && !!onOpenKami;
 
   const badgeChar = isLocked ? '\u00d7' : isInCart ? '-' : '+';
   const badgeColor = isLocked ? '#888' : isInCart ? '#F8D6D6' : '#C2F0C2';
@@ -127,7 +127,7 @@ export const ListingCard = memo(({
   }, []);
 
   const handleOpenKami = useCallback(() => {
-    if (kamiIndex === undefined) return;
+    if (kamiIndex === undefined || !onOpenKami) return;
     playClick();
     onOpenKami(kamiIndex);
   }, [kamiIndex, onOpenKami]);
