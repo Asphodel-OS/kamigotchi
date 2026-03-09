@@ -10,6 +10,7 @@ import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
+import { LibSoulbound } from "libraries/LibSoulbound.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 
@@ -54,6 +55,7 @@ contract KamiSendSystem is System {
       // verify kami is owned and RESTING or LISTED
       LibKamiMarket.verifyKamiOwnedRestingOrListed(components, kamiIndex, senderAccID);
       uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+      LibSoulbound.verify(components, kamiID);
 
       // if listed, cancel all listings first
       LibKamiMarket.cancelListingsForKami(world, components, kamiIndex);
