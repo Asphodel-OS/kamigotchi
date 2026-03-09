@@ -2,88 +2,137 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  AddressLike,
   BaseContract,
   BigNumberish,
   BytesLike,
-  ContractMethod,
-  ContractRunner,
-  EventFragment,
   FunctionFragment,
-  Interface,
-  Listener,
   Result,
-} from 'ethers';
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 import type {
   TypedContractEvent,
-  TypedContractMethod,
   TypedDeferredTopicFilter,
   TypedEventLog,
-  TypedListener,
   TypedLogDescription,
-} from './common';
+  TypedListener,
+  TypedContractMethod,
+} from "./common";
 
 export interface _KamiMarketRegistrySystemInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | 'cancelOwnershipHandover'
-      | 'completeOwnershipHandover'
-      | 'deprecate'
-      | 'execute'
-      | 'owner'
-      | 'ownershipHandoverExpiresAt'
-      | 'renounceOwnership'
-      | 'requestOwnershipHandover'
-      | 'setEnabled'
-      | 'setFeeRate'
-      | 'setFeeRecipient'
-      | 'setMaxOrders'
-      | 'setPurchaseCooldown'
-      | 'setVault'
-      | 'transferOwnership'
+      | "cancelOwnershipHandover"
+      | "completeOwnershipHandover"
+      | "deprecate"
+      | "execute"
+      | "owner"
+      | "ownershipHandoverExpiresAt"
+      | "renounceOwnership"
+      | "requestOwnershipHandover"
+      | "setEnabled"
+      | "setFeeRate"
+      | "setFeeRecipient"
+      | "setPurchaseCooldown"
+      | "setVault"
+      | "transferOwnership"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
-      | 'OwnershipHandoverCanceled'
-      | 'OwnershipHandoverRequested'
-      | 'OwnershipTransferred'
-      | 'SystemDeprecated'
+      | "OwnershipHandoverCanceled"
+      | "OwnershipHandoverRequested"
+      | "OwnershipTransferred"
+      | "SystemDeprecated"
   ): EventFragment;
 
-  encodeFunctionData(functionFragment: 'cancelOwnershipHandover', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'completeOwnershipHandover', values: [AddressLike]): string;
-  encodeFunctionData(functionFragment: 'deprecate', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'execute', values: [BytesLike]): string;
-  encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'ownershipHandoverExpiresAt', values: [AddressLike]): string;
-  encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'requestOwnershipHandover', values?: undefined): string;
-  encodeFunctionData(functionFragment: 'setEnabled', values: [boolean]): string;
-  encodeFunctionData(functionFragment: 'setFeeRate', values: [BigNumberish[]]): string;
-  encodeFunctionData(functionFragment: 'setFeeRecipient', values: [AddressLike]): string;
   encodeFunctionData(
-    functionFragment: 'setMaxOrders',
-    functionFragment: 'setPurchaseCooldown',
+    functionFragment: "cancelOwnershipHandover",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "completeOwnershipHandover",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(functionFragment: "deprecate", values?: undefined): string;
+  encodeFunctionData(functionFragment: "execute", values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ownershipHandoverExpiresAt",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requestOwnershipHandover",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "setEnabled", values: [boolean]): string;
+  encodeFunctionData(
+    functionFragment: "setFeeRate",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFeeRecipient",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPurchaseCooldown",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: 'setVault', values: [AddressLike]): string;
-  encodeFunctionData(functionFragment: 'transferOwnership', values: [AddressLike]): string;
+  encodeFunctionData(
+    functionFragment: "setVault",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [AddressLike]
+  ): string;
 
-  decodeFunctionResult(functionFragment: 'cancelOwnershipHandover', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'completeOwnershipHandover', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'deprecate', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'execute', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'ownershipHandoverExpiresAt', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'requestOwnershipHandover', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'setEnabled', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'setFeeRate', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'setFeeRecipient', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'setPurchaseCooldown', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'setVault', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "completeOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "deprecate", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ownershipHandoverExpiresAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requestOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setEnabled", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setFeeRate", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setFeeRecipient",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPurchaseCooldown",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setVault", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace OwnershipHandoverCanceledEvent {
@@ -172,98 +221,128 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
     event: TCEvent
   ): Promise<Array<TypedListener<TCEvent>>>;
   listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(event?: TCEvent): Promise<this>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-  cancelOwnershipHandover: TypedContractMethod<[], [void], 'payable'>;
+  cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-  completeOwnershipHandover: TypedContractMethod<[pendingOwner: AddressLike], [void], 'payable'>;
+  completeOwnershipHandover: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-  deprecate: TypedContractMethod<[], [void], 'nonpayable'>;
+  deprecate: TypedContractMethod<[], [void], "nonpayable">;
 
-  execute: TypedContractMethod<[arg0: BytesLike], [string], 'nonpayable'>;
+  execute: TypedContractMethod<[arg0: BytesLike], [string], "nonpayable">;
 
-  owner: TypedContractMethod<[], [string], 'view'>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-  ownershipHandoverExpiresAt: TypedContractMethod<[pendingOwner: AddressLike], [bigint], 'view'>;
+  ownershipHandoverExpiresAt: TypedContractMethod<
+    [pendingOwner: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-  renounceOwnership: TypedContractMethod<[], [void], 'payable'>;
+  renounceOwnership: TypedContractMethod<[], [void], "payable">;
 
-  requestOwnershipHandover: TypedContractMethod<[], [void], 'payable'>;
+  requestOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
-  setEnabled: TypedContractMethod<[enabled: boolean], [void], 'nonpayable'>;
+  setEnabled: TypedContractMethod<[enabled: boolean], [void], "nonpayable">;
 
-  setFeeRate: TypedContractMethod<[rate: BigNumberish[]], [void], 'nonpayable'>;
+  setFeeRate: TypedContractMethod<[rate: BigNumberish[]], [void], "nonpayable">;
 
-  setFeeRecipient: TypedContractMethod<[recipient: AddressLike], [void], 'nonpayable'>;
+  setFeeRecipient: TypedContractMethod<
+    [recipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  setPurchaseCooldown: TypedContractMethod<[cooldown: BigNumberish], [void], 'nonpayable'>;
+  setPurchaseCooldown: TypedContractMethod<
+    [cooldown: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
-  setVault: TypedContractMethod<[vault: AddressLike], [void], 'nonpayable'>;
+  setVault: TypedContractMethod<[vault: AddressLike], [void], "nonpayable">;
 
-  transferOwnership: TypedContractMethod<[newOwner: AddressLike], [void], 'payable'>;
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "payable"
+  >;
 
-  getFunction<T extends ContractMethod = ContractMethod>(key: string | FunctionFragment): T;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
   getFunction(
-    nameOrSignature: 'cancelOwnershipHandover'
-  ): TypedContractMethod<[], [void], 'payable'>;
+    nameOrSignature: "cancelOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
   getFunction(
-    nameOrSignature: 'completeOwnershipHandover'
-  ): TypedContractMethod<[pendingOwner: AddressLike], [void], 'payable'>;
-  getFunction(nameOrSignature: 'deprecate'): TypedContractMethod<[], [void], 'nonpayable'>;
+    nameOrSignature: "completeOwnershipHandover"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [void], "payable">;
   getFunction(
-    nameOrSignature: 'execute'
-  ): TypedContractMethod<[arg0: BytesLike], [string], 'nonpayable'>;
-  getFunction(nameOrSignature: 'owner'): TypedContractMethod<[], [string], 'view'>;
+    nameOrSignature: "deprecate"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: 'ownershipHandoverExpiresAt'
-  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], 'view'>;
-  getFunction(nameOrSignature: 'renounceOwnership'): TypedContractMethod<[], [void], 'payable'>;
+    nameOrSignature: "execute"
+  ): TypedContractMethod<[arg0: BytesLike], [string], "nonpayable">;
   getFunction(
-    nameOrSignature: 'requestOwnershipHandover'
-  ): TypedContractMethod<[], [void], 'payable'>;
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: 'setEnabled'
-  ): TypedContractMethod<[enabled: boolean], [void], 'nonpayable'>;
+    nameOrSignature: "ownershipHandoverExpiresAt"
+  ): TypedContractMethod<[pendingOwner: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: 'setFeeRate'
-  ): TypedContractMethod<[rate: BigNumberish[]], [void], 'nonpayable'>;
+    nameOrSignature: "renounceOwnership"
+  ): TypedContractMethod<[], [void], "payable">;
   getFunction(
-    nameOrSignature: 'setFeeRecipient'
-  ): TypedContractMethod<[recipient: AddressLike], [void], 'nonpayable'>;
+    nameOrSignature: "requestOwnershipHandover"
+  ): TypedContractMethod<[], [void], "payable">;
   getFunction(
-    nameOrSignature: 'setPurchaseCooldown'
-  ): TypedContractMethod<[cooldown: BigNumberish], [void], 'nonpayable'>;
+    nameOrSignature: "setEnabled"
+  ): TypedContractMethod<[enabled: boolean], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: 'setVault'
-  ): TypedContractMethod<[vault: AddressLike], [void], 'nonpayable'>;
+    nameOrSignature: "setFeeRate"
+  ): TypedContractMethod<[rate: BigNumberish[]], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: 'transferOwnership'
-  ): TypedContractMethod<[newOwner: AddressLike], [void], 'payable'>;
+    nameOrSignature: "setFeeRecipient"
+  ): TypedContractMethod<[recipient: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setPurchaseCooldown"
+  ): TypedContractMethod<[cooldown: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setVault"
+  ): TypedContractMethod<[vault: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "payable">;
 
   getEvent(
-    key: 'OwnershipHandoverCanceled'
+    key: "OwnershipHandoverCanceled"
   ): TypedContractEvent<
     OwnershipHandoverCanceledEvent.InputTuple,
     OwnershipHandoverCanceledEvent.OutputTuple,
     OwnershipHandoverCanceledEvent.OutputObject
   >;
   getEvent(
-    key: 'OwnershipHandoverRequested'
+    key: "OwnershipHandoverRequested"
   ): TypedContractEvent<
     OwnershipHandoverRequestedEvent.InputTuple,
     OwnershipHandoverRequestedEvent.OutputTuple,
     OwnershipHandoverRequestedEvent.OutputObject
   >;
   getEvent(
-    key: 'OwnershipTransferred'
+    key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
     OwnershipTransferredEvent.OutputTuple,
     OwnershipTransferredEvent.OutputObject
   >;
   getEvent(
-    key: 'SystemDeprecated'
+    key: "SystemDeprecated"
   ): TypedContractEvent<
     SystemDeprecatedEvent.InputTuple,
     SystemDeprecatedEvent.OutputTuple,
@@ -271,7 +350,7 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
   >;
 
   filters: {
-    'OwnershipHandoverCanceled(address)': TypedContractEvent<
+    "OwnershipHandoverCanceled(address)": TypedContractEvent<
       OwnershipHandoverCanceledEvent.InputTuple,
       OwnershipHandoverCanceledEvent.OutputTuple,
       OwnershipHandoverCanceledEvent.OutputObject
@@ -282,7 +361,7 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
       OwnershipHandoverCanceledEvent.OutputObject
     >;
 
-    'OwnershipHandoverRequested(address)': TypedContractEvent<
+    "OwnershipHandoverRequested(address)": TypedContractEvent<
       OwnershipHandoverRequestedEvent.InputTuple,
       OwnershipHandoverRequestedEvent.OutputTuple,
       OwnershipHandoverRequestedEvent.OutputObject
@@ -293,7 +372,7 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
       OwnershipHandoverRequestedEvent.OutputObject
     >;
 
-    'OwnershipTransferred(address,address)': TypedContractEvent<
+    "OwnershipTransferred(address,address)": TypedContractEvent<
       OwnershipTransferredEvent.InputTuple,
       OwnershipTransferredEvent.OutputTuple,
       OwnershipTransferredEvent.OutputObject
@@ -304,7 +383,7 @@ export interface _KamiMarketRegistrySystem extends BaseContract {
       OwnershipTransferredEvent.OutputObject
     >;
 
-    'SystemDeprecated()': TypedContractEvent<
+    "SystemDeprecated()": TypedContractEvent<
       SystemDeprecatedEvent.InputTuple,
       SystemDeprecatedEvent.OutputTuple,
       SystemDeprecatedEvent.OutputObject
