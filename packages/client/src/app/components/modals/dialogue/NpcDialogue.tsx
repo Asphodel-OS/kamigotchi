@@ -20,6 +20,7 @@ export const NpcDialogue = ({
   dialogueButtons = { BackButton: () => <></>, NextButton: () => <></>, MiddleButton: () => <></> },
   special,
   onDialogueComplete,
+  twoColumnText = false,
 }: {
   hasAvailableQuests?: Quest[];
   hasOngoingQuests?: Quest[];
@@ -35,20 +36,39 @@ export const NpcDialogue = ({
   };
   special?: { name: string; onclick: () => void };
   onDialogueComplete?: () => void;
+  twoColumnText?: boolean;
 }) => {
-  //NOTE:
-  //  typewriter should retrigger like this
-  // not like questdialogue does
-  //  it will bug otherwise
+  const columnTexts = dialogueText
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+  const leftColumnText = twoColumnText ? (columnTexts[0] ?? '') : dialogueText;
+  const rightColumnText = twoColumnText ? (columnTexts[1] ?? '') : '';
+
   return (
     <>
-      <Text color={npcColor}>
-        <TypewriterComponent
-          retrigger={`${dialogueText}${Date.now()}`}
-          text={dialogueText}
-          onComplete={onDialogueComplete}
-        />
-      </Text>
+      {twoColumnText ? (
+        <ParallelColumns>
+          <Text color={npcColor}>
+            <TypewriterComponent
+              text={leftColumnText}
+              retrigger={`${leftColumnText}${Date.now()}`}
+              onComplete={onDialogueComplete}
+            />
+          </Text>
+          <Text color={npcColor}>
+            <TypewriterComponent text={rightColumnText} retrigger={`${rightColumnText}${Date.now()}`} />
+          </Text>
+        </ParallelColumns>
+      ) : (
+        <Text color={npcColor}>
+          <TypewriterComponent
+            text={dialogueText}
+            retrigger={`${dialogueText}${Date.now()}`}
+            onComplete={onDialogueComplete}
+          />
+        </Text>
+      )}
       <Overlay bottom={1} left={1.5}>
         <NpcName>{npcName}</NpcName>
       </Overlay>
@@ -163,6 +183,16 @@ const Text = styled.div<{
     border-radius: 0.3vw;
     background-clip: padding-box;
   }
+`;
+
+const ParallelColumns = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2vw;
+  align-items: stretch;
+  flex-grow: 1;
+  min-height: 0;
 `;
 
 const NavigationRow = styled.div`
