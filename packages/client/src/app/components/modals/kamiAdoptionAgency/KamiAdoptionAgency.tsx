@@ -15,7 +15,8 @@ import { getKami as _getKami } from 'network/shapes/Kami';
 import { getDisplayedKamis as _getDisplayedKamis } from 'network/shapes/NewbieVendor/queries';
 import { getSystemAddr } from 'network/shapes/utils';
 import { didActionSucceed } from 'network/utils';
-import { type Abi, formatUnits } from 'viem';
+import { formatEthPriceLabel } from 'utils/numbers';
+import { type Abi } from 'viem';
 
 const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
 const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
@@ -48,16 +49,7 @@ export const KamiAdoptionAgency: UIComponent = {
             const now = Math.floor(Date.now() / 1000);
             return now - creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
           },
-          formatEthPrice: (value: unknown) => {
-            if (value === undefined || value === null) return '—';
-            try {
-              const formatted = formatUnits(BigInt(value.toString()), 18);
-              if (!formatted.includes('.')) return formatted;
-              return formatted.replace(/\.?0+$/, '');
-            } catch {
-              return '—';
-            }
-          },
+          formatEthPrice: (value: unknown) => formatEthPriceLabel(value, 5),
         },
       };
     })();
