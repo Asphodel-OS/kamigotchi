@@ -1,13 +1,7 @@
-import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { bgPlaytestDay, bgPlaytestEvening, bgPlaytestNight } from 'assets/images/rooms/3_gate';
 import { arrival } from 'assets/sound/ost';
-import {
-  getAccountFromEmbedded,
-  queryAccountFromEmbedded,
-  queryAccountKamis,
-} from 'network/shapes/Account';
 import { Room } from './types';
-
+/*
 const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
 
 const onClickZevanaDialogue = () => {
@@ -21,7 +15,7 @@ const onClickZevanaDialogue = () => {
   //const dialogueIndex = !hasAnyKamis && isNewbie ? alternativeindex : 30001;
   const dialogueIndex = 30001;
   triggerDialogueModal(dialogueIndex);
-};
+};*/
 
 export const room03: Room = {
   index: 3,
@@ -39,7 +33,8 @@ export const room03: Room = {
     {
       name: 'Zevana',
       coordinates: { x1: 10, y1: 30, x2: 80, y2: 132 },
-      onClick: onClickZevanaDialogue,
+      dialogue: 30001,
+      // onClick: onClickZevanaDialogue,
     },
   ],
 };
