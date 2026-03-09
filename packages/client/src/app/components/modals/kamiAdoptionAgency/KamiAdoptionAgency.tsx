@@ -149,7 +149,7 @@ export const KamiAdoptionAgency: UIComponent = {
         if (!systemAddress || priceWei === undefined || !ownerApi) return;
         setBuyingKamiIndex(kamiIndex);
         try {
-          const latestPriceRaw = (await refetchPrice()).data ?? priceData;
+          const latestPriceRaw = await ownerApi.newbieVendor.calcPrice();
           if (latestPriceRaw === undefined || latestPriceRaw === null) return;
           const latestPriceWei = BigInt(latestPriceRaw.toString());
 
@@ -162,12 +162,13 @@ export const KamiAdoptionAgency: UIComponent = {
           const didComplete = await didActionSucceed(actions.Action, transaction);
           if (didComplete && selectedAddress) {
             setCompletedAdoptionsByAddress((prev) => ({ ...prev, [selectedAddress]: true }));
+            refetchPrice();
           }
         } finally {
           setBuyingKamiIndex(null);
         }
       },
-      [actions, ownerApi, priceData, priceWei, refetchPrice, selectedAddress, systemAddress]
+      [actions, ownerApi, priceWei, refetchPrice, selectedAddress, systemAddress]
     );
 
     const openKamiModal = useCallback(
