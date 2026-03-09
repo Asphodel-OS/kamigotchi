@@ -173,8 +173,8 @@ export const ListingCard = memo(({
                 </PriceChip>
               )}
               {showInfoButton && (
-                <FlipBtn onClick={handleOpenKami}>
-                  <InfoIconImg src={InfoIcon} />
+                <FlipBtn onClick={handleOpenKami} aria-label='Open Kami details'>
+                  <InfoIconImg src={InfoIcon} alt='' aria-hidden='true' />
                 </FlipBtn>
               )}
             </BottomBar>

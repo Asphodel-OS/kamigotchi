@@ -46,7 +46,8 @@ export const KamiAdoptionAgency: UIComponent = {
       _getKami(world, components, entity, { stats: true, traits: true, progress: true });
     const hasAnyKamis = () => _getAccountKamis(world, components, accountEntity).length > 0;
     const isAccountWithin24Hours = () => {
-      const creation = _getAccount(world, components, accountEntity).time.creation;
+      const creation = _getAccount(world, components, accountEntity)?.time?.creation;
+      if (typeof creation !== 'number' || !Number.isFinite(creation)) return false;
       const now = getNowInSeconds();
       return now - creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
     };
