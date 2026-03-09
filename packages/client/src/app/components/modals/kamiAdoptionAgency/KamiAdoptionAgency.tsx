@@ -108,7 +108,6 @@ export const KamiAdoptionAgency: UIComponent = {
       functionName: 'calcPrice',
       query: { enabled: isModalOpen && !!systemAddress },
     });
-
     const priceWei = useMemo(() => {
       try {
         return priceData === undefined || priceData === null
@@ -159,7 +158,7 @@ export const KamiAdoptionAgency: UIComponent = {
         try {
           const latestPriceRaw = (await refetchPrice()).data ?? priceData;
           if (latestPriceRaw === undefined || latestPriceRaw === null) return;
-          const latestPriceWei = BigInt(latestPriceRaw.toString());
+          const latestPriceWei = (BigInt(latestPriceRaw.toString()) * 101n) / 100n;
 
           const transaction = actions.add({
             action: 'NewbieVendorBuy',

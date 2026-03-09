@@ -1,5 +1,5 @@
-import { BigNumberish } from 'ethers';
 import { SystemQueue } from 'engine/queue';
+import { BigNumberish } from 'ethers';
 
 export const newbieVendorAPI = (systems: SystemQueue<any>) => {
   async function calcPrice() {
