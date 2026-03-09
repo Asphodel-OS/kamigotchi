@@ -28,17 +28,17 @@ export const Traits = ({
           'lorem ipsum dolor sit amet consectetur adipisicing elit. fugiat, quis?',
         ];
         return (
-          <Column>
-            <TextTooltip key={key} text={tooltipText}>
+          <Column key={key}>
+            <TextTooltip text={tooltipText}>
               <Icon size={1.3} src={icon} />
             </TextTooltip>
             <Grouping>
               {Object.entries(stats).map(([key, stat]: [string, Stat]) => {
-                if (key === 'stamina') return <></>;
+                if (key === 'stamina') return null;
                 const base = stat.base;
                 const statString = base > 0 ? base.toString() : '';
                 return (
-                  <Cell>
+                  <Cell key={key}>
                     <Text size={0.75}>{statString}</Text>
                   </Cell>
                 );
