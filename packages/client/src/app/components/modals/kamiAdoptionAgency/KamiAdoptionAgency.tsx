@@ -20,52 +20,36 @@ import { type Abi } from 'viem';
 
 const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
 const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
+const getNowInSeconds = () => Math.floor(Date.now() / 1000);
+const parseBigIntSafe = (value: unknown): bigint | undefined => {
+  if (value === undefined || value === null) return undefined;
+  try {
+    return BigInt(value.toString());
+  } catch {
+    return undefined;
+  }
+};
 
 export const KamiAdoptionAgency: UIComponent = {
   id: 'KamiAdoptionAgencyModal',
   Render: () => {
-    const layers = useLayers();
+    const { network } = useLayers();
+    const { world, components, actions } = network;
+    const accountEntity = queryAccountFromEmbedded(network);
 
     /////////////////
     // PREPARATION
 
-    const { network, data, utils } = (() => {
-      const { network } = layers;
-      const { world, components } = network;
-      const accountEntity = queryAccountFromEmbedded(network);
-
-      return {
-        network,
-        data: {
-          newbieVendorSystemAddress: getSystemAddr(world, components, NEWBIE_VENDOR_BUY_SYSTEM_ID),
-        },
-        utils: {
-          getDisplayedKamiEntities: (): EntityIndex[] => _getDisplayedKamis(world, components),
-          getKami: (entity: EntityIndex) =>
-            _getKami(world, components, entity, { stats: true, traits: true, progress: true }),
-          hasAnyKamis: () => _getAccountKamis(world, components, accountEntity).length > 0,
-          isAccountWithin24Hours: () => {
-            const creation = _getAccount(world, components, accountEntity).time.creation;
-            const now = Math.floor(Date.now() / 1000);
-            return now - creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
-          },
-          formatEthPrice: (value: unknown) => formatEthPriceLabel(value, 5),
-        },
-      };
-    })();
-
-    /////////////////
-    // INSTANTIATIONS
-
-    const { actions } = network;
-    const { newbieVendorSystemAddress } = data;
-    const {
-      getDisplayedKamiEntities,
-      getKami,
-      hasAnyKamis,
-      isAccountWithin24Hours,
-      formatEthPrice,
-    } = utils;
+    const newbieVendorSystemAddress = getSystemAddr(world, components, NEWBIE_VENDOR_BUY_SYSTEM_ID);
+    const getDisplayedKamiEntities = (): EntityIndex[] => _getDisplayedKamis(world, components);
+    const getKami = (entity: EntityIndex) =>
+      _getKami(world, components, entity, { stats: true, traits: true, progress: true });
+    const hasAnyKamis = () => _getAccountKamis(world, components, accountEntity).length > 0;
+    const isAccountWithin24Hours = () => {
+      const creation = _getAccount(world, components, accountEntity).time.creation;
+      const now = getNowInSeconds();
+      return now - creation <= NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS;
+    };
 
     const isModalOpen = useVisibility((s) => s.modals.kamiAdoptionAgency);
     const apis = useNetwork((s) => s.apis);
@@ -78,11 +62,10 @@ export const KamiAdoptionAgency: UIComponent = {
     const [completedAdoptionsByAddress, setCompletedAdoptionsByAddress] = useState<
       Record<string, boolean>
     >({});
-    const displayedKamis = useMemo(
-      () => getDisplayedKamiEntities().map((entity) => getKami(entity)),
-      [getDisplayedKamiEntities, getKami]
-    );
-    const ownerApi = useMemo(() => apis.get(selectedAddress), [apis, selectedAddress]);
+    const displayedKamis = useMemo(() => {
+      return getDisplayedKamiEntities().map((entity) => getKami(entity));
+    }, [world, components]);
+    const ownerApi = apis.get(selectedAddress);
     const hasCompletedAdoption = useMemo(
       () => (selectedAddress ? !!completedAdoptionsByAddress[selectedAddress] : false),
       [completedAdoptionsByAddress, selectedAddress]
@@ -100,17 +83,8 @@ export const KamiAdoptionAgency: UIComponent = {
       functionName: 'calcPrice',
       query: { enabled: isModalOpen && !!systemAddress },
     });
-    const priceWei = useMemo(() => {
-      try {
-        return priceData === undefined || priceData === null
-          ? undefined
-          : BigInt(priceData.toString());
-      } catch {
-        return undefined;
-      }
-    }, [priceData]);
-
-    const priceLabel = useMemo(() => formatEthPrice(priceData), [priceData, formatEthPrice]);
+    const priceWei = useMemo(() => parseBigIntSafe(priceData), [priceData]);
+    const priceLabel = useMemo(() => formatEthPriceLabel(priceData, 5), [priceData]);
     const isBuyDisabled = useMemo(
       () =>
         hasCompletedAdoption ||
@@ -130,8 +104,10 @@ export const KamiAdoptionAgency: UIComponent = {
         userHasKami,
       ]
     );
-    const userQualifiesForAdoption =
-      !hasCompletedAdoption && !userHasKami && userAccountIsWithin24Hours;
+    const userQualifiesForAdoption = useMemo(
+      () => !hasCompletedAdoption && !userHasKami && userAccountIsWithin24Hours,
+      [hasCompletedAdoption, userHasKami, userAccountIsWithin24Hours]
+    );
     const adoptionBadgeMessage = useMemo(
       () =>
         !userQualifiesForAdoption
@@ -149,8 +125,9 @@ export const KamiAdoptionAgency: UIComponent = {
         setBuyingKamiIndex(kamiIndex);
         try {
           const latestPriceRaw = (await refetchPrice()).data ?? priceData;
-          if (latestPriceRaw === undefined || latestPriceRaw === null) return;
-          const latestPriceWei = (BigInt(latestPriceRaw.toString()) * 101n) / 100n;
+          const latestPrice = parseBigIntSafe(latestPriceRaw);
+          if (latestPrice === undefined) return;
+          const latestPriceWei = (latestPrice * 101n) / 100n;
 
           const transaction = actions.add({
             action: 'NewbieVendorBuy',
@@ -183,7 +160,7 @@ export const KamiAdoptionAgency: UIComponent = {
     /////////////////
     // RENDER
 
-    const HeaderRenderer = (
+    const headerRenderer = (
       <Header>
         <HeaderPart size={1.7} weight={'bolder'} spacing={-0.12}>
           Kami Adoption Agency
@@ -202,7 +179,7 @@ export const KamiAdoptionAgency: UIComponent = {
         noPadding
         overlay
         truncate
-        header={HeaderRenderer}
+        header={headerRenderer}
       >
         <Content>
           {displayedKamis.length > 0 && <BodyText>Choose one</BodyText>}

@@ -398,7 +398,7 @@ export const DialogueModal: UIComponent = {
             colStart: 66,
             colEnd: 99,
             rowStart: 7,
-            rowEnd: 90,
+            rowEnd: 84,
             position: 'fixed',
           }}
           noScroll
