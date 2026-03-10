@@ -105,10 +105,10 @@ library LibPack {
     uint256 position,
     uint256 packed
   ) internal pure returns (uint256) {
-    return pUpdateAt(uint256(newElement), position, 8, 32, packed);
+    return pUpdateAt(uint256(newElement), position, 7, 32, packed);
   }
 
   function pGetAtU32(uint256 packed, uint256 position) internal pure returns (uint32) {
-    return uint32(pGetAt(packed, position, 8, 32));
+    return uint32(pGetAt(packed, position, 7, 32));
   }
 }
