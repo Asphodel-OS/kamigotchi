@@ -155,13 +155,14 @@ contract NewbieVendorBuySystem is System {
 
     uint256 windowTime = block.timestamp - snapshotTimestamp;
     if (windowTime == 0) {
-      // just after snapshot — use lastPrice
-      return lastPrice > minPrice ? lastPrice : minPrice;
+      // just after snapshot — use lastPrice * 1.5x
+      uint256 adjusted = lastPrice * 3 / 2;
+      return adjusted > minPrice ? adjusted : minPrice;
     }
 
     // extend cumulative to now
     uint256 liveCumulative = cumulativePriceSeconds + lastPrice * (block.timestamp - lastUpdateTime);
-    uint256 twapPrice = (liveCumulative - snapshotCumulative) / windowTime;
+    uint256 twapPrice = (liveCumulative - snapshotCumulative) * 3 / (windowTime * 2);
 
     return twapPrice > minPrice ? twapPrice : minPrice;
   }
