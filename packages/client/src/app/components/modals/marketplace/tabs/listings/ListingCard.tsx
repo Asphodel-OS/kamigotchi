@@ -1,17 +1,18 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { TextTooltip } from 'app/components/library';
-import { OperatorIcon, ResetIcon } from 'assets/images/icons/menu';
+import { OperatorIcon } from 'assets/images/icons/menu';
 import { InfoIcon } from 'assets/images/icons/misc';
-import { playClick } from 'utils/sounds';
 import { TokenIcons } from 'assets/images/tokens';
 import { KamiMarketListing } from 'clients/kamiden';
 import { AffinityColors, AffinityIcons } from 'constants/affinities';
 import { StatColors, StatIcons } from 'constants/stats';
 import { Kami } from 'network/shapes/Kami';
+import { playClick } from 'utils/sounds';
 
-interface ListingCardProps {
+type ListingCardListingProps = {
+  variant?: 'listing';
   listing: KamiMarketListing;
   kami: Kami | undefined;
   isInCart: boolean;
@@ -23,24 +24,35 @@ interface ListingCardProps {
   onOpenKami: (kamiIndex: number) => void;
   getAccountByID: (id: string) => { name: string; index: number };
   allFlipped: boolean;
-}
+};
+
+type ListingCardAdoptionProps = {
+  variant: 'adoption';
+  kami: Kami | undefined;
+  onOpenKami?: (kamiIndex: number) => void;
+  allFlipped?: boolean;
+  priceLabel?: string;
+};
+
+type ListingCardProps = ListingCardListingProps | ListingCardAdoptionProps;
 
 const STAT_KEYS = ['health', 'power', 'violence', 'harmony', 'slots'] as const;
 type StatKey = (typeof STAT_KEYS)[number];
 
 export const ListingCard = memo(({
-  listing,
+  variant = 'listing',
   kami,
-  isInCart,
-  isExpired,
-  isOwn,
-  formatPrice,
-  onAddToCart,
-  onRemoveFromCart,
+  allFlipped = false,
   onOpenKami,
-  getAccountByID,
-  allFlipped,
+  ...rest
 }: ListingCardProps) => {
+  /////////////////
+  // PREPARATION
+
+  const isListing = variant === 'listing';
+  const listingProps = isListing ? (rest as ListingCardListingProps) : null;
+  const listing = listingProps?.listing;
+
   const [flipped, setFlipped] = useState(allFlipped);
 
   useEffect(() => {
@@ -50,34 +62,90 @@ export const ListingCard = memo(({
   const stats = kami?.stats;
   const traits = kami?.traits;
   const level = kami?.progress?.level;
-  const seller = getAccountByID(listing.SellerAccountID);
-  const bodyAffinity = traits?.body?.affinity?.toLowerCase() as
-    | keyof typeof AffinityColors
-    | undefined;
-  const handAffinity = traits?.hand?.affinity?.toLowerCase() as
-    | keyof typeof AffinityColors
-    | undefined;
+  const seller = listing ? listingProps?.getAccountByID(listing.SellerAccountID) : undefined;
 
-  const isLocked = isExpired || isOwn;
-  const badgeClick = isLocked
-    ? undefined
-    : (e: React.MouseEvent) => {
-        e.stopPropagation();
-        playClick();
-        if (isInCart) onRemoveFromCart(listing.OrderID);
-        else onAddToCart(listing);
-      };
+  const bodyAffinity = useMemo(
+    () => (traits?.body?.affinity?.toLowerCase() as keyof typeof AffinityColors | undefined),
+    [traits?.body?.affinity]
+  );
+  const handAffinity = useMemo(
+    () => (traits?.hand?.affinity?.toLowerCase() as keyof typeof AffinityColors | undefined),
+    [traits?.hand?.affinity]
+  );
+
+  const isInCart = listingProps?.isInCart ?? false;
+  const isExpired = listingProps?.isExpired ?? false;
+  const isOwn = listingProps?.isOwn ?? false;
+  const isLocked = isListing ? isExpired || isOwn : false;
+
+  const kamiIndex = listing ? listing.KamiIndex : kami?.index;
+  const adoptionPriceLabel = !isListing ? (rest as ListingCardAdoptionProps).priceLabel : undefined;
+  const listingPriceLabel =
+    listing && listingProps ? listingProps.formatPrice(listing.Price) : undefined;
+  const priceLabel = isListing ? listingPriceLabel : adoptionPriceLabel;
+  const showInfoButton = kamiIndex !== undefined && !!onOpenKami;
+
   const badgeChar = isLocked ? '\u00d7' : isInCart ? '-' : '+';
   const badgeColor = isLocked ? '#888' : isInCart ? '#F8D6D6' : '#C2F0C2';
   const badgeTooltip = isOwn ? 'Your listing' : isExpired ? 'Expired listing' : '';
 
-  const BadgeElement = (
-    <CartBadge $color={badgeColor} onClick={badgeClick} disabled={isLocked}>
-      {badgeChar}
-    </CartBadge>
+  const statRows = useMemo(() => {
+    return STAT_KEYS.map((key) => {
+      const stat = stats?.[key];
+      const color = key !== 'slots' ? StatColors[key as keyof typeof StatColors] : '#e0e0e0';
+      return (
+        <StatRow key={key} $bg={color}>
+          <StatIconImg src={StatIcons[key as StatKey]} />
+          <StatValue>{stat ? Math.round(stat.total) : '?'}</StatValue>
+        </StatRow>
+      );
+    });
+  }, [stats]);
+
+  /////////////////
+  // INTERACTION
+
+  const handleBadgeClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      playClick();
+      if (!listingProps || !listing) return;
+      if (isInCart) listingProps.onRemoveFromCart(listing.OrderID);
+      else listingProps.onAddToCart(listing);
+    },
+    [isInCart, listing, listingProps]
   );
 
-  const WrappedBadge = badgeTooltip ? (
+  const handleFlipToBack = useCallback(() => {
+    playClick();
+    setFlipped(true);
+  }, []);
+
+  const handleFlipToFront = useCallback(() => {
+    playClick();
+    setFlipped(false);
+  }, []);
+
+  const handleOpenKami = useCallback(() => {
+    if (kamiIndex === undefined || !onOpenKami) return;
+    playClick();
+    onOpenKami(kamiIndex);
+  }, [kamiIndex, onOpenKami]);
+
+  /////////////////
+  // RENDER
+
+  const BadgeElement = isListing ? (
+    <CartBadge
+      $color={badgeColor}
+      onClick={isLocked ? undefined : handleBadgeClick}
+      disabled={isLocked}
+    >
+      {badgeChar}
+    </CartBadge>
+  ) : null;
+
+  const WrappedBadge = isListing && badgeTooltip ? (
     <TextTooltip text={[badgeTooltip]}>{BadgeElement}</TextTooltip>
   ) : (
     BadgeElement
@@ -89,28 +157,34 @@ export const ListingCard = memo(({
         {/* ===== FRONT ===== */}
         <CardFront $flipped={flipped}>
           {kami ? (
-            <KamiImage src={kami.image} alt={kami.name} onClick={() => { playClick(); setFlipped(true); }} />
+            <KamiImage src={kami.image} alt={kami.name} onClick={handleFlipToBack} />
           ) : (
             <ImagePlaceholder />
           )}
 
-          <RightColumn>{WrappedBadge}</RightColumn>
+          {isListing && <RightColumn>{WrappedBadge}</RightColumn>}
 
-          <BottomBar>
-            <PriceChip>
-              <EthIcon src={TokenIcons.eth} />
-              <PriceText>{formatPrice(listing.Price)}</PriceText>
-            </PriceChip>
-            <FlipBtn onClick={() => { playClick(); onOpenKami(listing.KamiIndex); }}>
-              <InfoIconImg src={InfoIcon} />
-            </FlipBtn>
-          </BottomBar>
+          {(priceLabel || showInfoButton) && (
+            <BottomBar $alignRight={!priceLabel}>
+              {priceLabel && (
+                <PriceChip>
+                  <EthIcon src={TokenIcons.eth} />
+                  <PriceText>{priceLabel}</PriceText>
+                </PriceChip>
+              )}
+              {showInfoButton && (
+                <FlipBtn onClick={handleOpenKami} aria-label='Open Kami details'>
+                  <InfoIconImg src={InfoIcon} alt='' aria-hidden='true' />
+                </FlipBtn>
+              )}
+            </BottomBar>
+          )}
         </CardFront>
 
         {/* ===== BACK ===== */}
-        <CardBack $flipped={flipped} onClick={() => { playClick(); setFlipped(false); }}>
+        <CardBack $flipped={flipped} onClick={handleFlipToFront}>
           <RightColumn>
-            {WrappedBadge}
+            {isListing && WrappedBadge}
             {level !== undefined && (
               <LevelCard>
                 <LevelLabel>Lv.</LevelLabel>
@@ -120,19 +194,7 @@ export const ListingCard = memo(({
           </RightColumn>
 
           <BackContent>
-            <StatsSection>
-              {STAT_KEYS.map((key) => {
-                const stat = stats?.[key];
-                const color =
-                  key !== 'slots' ? StatColors[key as keyof typeof StatColors] : '#e0e0e0';
-                return (
-                  <StatRow key={key} $bg={color}>
-                    <StatIconImg src={StatIcons[key as StatKey]} />
-                    <StatValue>{stat ? Math.round(stat.total) : '?'}</StatValue>
-                  </StatRow>
-                );
-              })}
-            </StatsSection>
+            <StatsSection>{statRows}</StatsSection>
 
             {(bodyAffinity || handAffinity) && (
               <AffinitySection>
@@ -150,28 +212,19 @@ export const ListingCard = memo(({
             )}
           </BackContent>
 
-          <BackBottomBar>
-            <SellerChip>
-              <SellerIcon src={OperatorIcon} />
-              <SellerName>{seller.name || 'Unknown'}</SellerName>
-            </SellerChip>
-          </BackBottomBar>
+          {isListing && (
+            <BackBottomBar>
+              <SellerChip>
+                <SellerIcon src={OperatorIcon} />
+                <SellerName>{seller?.name || 'Unknown'}</SellerName>
+              </SellerChip>
+            </BackBottomBar>
+          )}
         </CardBack>
       </CardInner>
     </CardContainer>
   );
-}, (prev, next) =>
-  prev.listing.OrderID === next.listing.OrderID &&
-  prev.listing.Price === next.listing.Price &&
-  prev.kami === next.kami &&
-  prev.isInCart === next.isInCart &&
-  prev.isExpired === next.isExpired &&
-  prev.isOwn === next.isOwn &&
-  prev.allFlipped === next.allFlipped &&
-  prev.onAddToCart === next.onAddToCart &&
-  prev.onRemoveFromCart === next.onRemoveFromCart &&
-  prev.onOpenKami === next.onOpenKami
-);
+});
 
 // ─── 3D Flip Shell ────────────────────────────────────────
 
@@ -292,14 +345,14 @@ const ImagePlaceholder = styled.div`
   background: linear-gradient(135deg, #d0d0d0 0%, #c8c8c8 50%, #bbb 100%);
 `;
 
-const BottomBar = styled.div`
+const BottomBar = styled.div<{ $alignRight?: boolean }>`
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: ${({ $alignRight }) => ($alignRight ? 'flex-end' : 'space-between')};
   padding: 0.35vw;
 
   &::before {
@@ -359,21 +412,10 @@ const FlipBtn = styled.button`
   }
 `;
 
-const FlipIconImg = styled.img`
-  width: 1.15vw;
-  height: 1.15vw;
-`;
-
 const InfoIconImg = styled.img`
   width: 0.85vw;
   height: 0.85vw;
   cursor: pointer;
-`;
-
-const FlipIconImgDark = styled.img`
-  width: 1.15vw;
-  height: 1.15vw;
-  opacity: 0.5;
 `;
 
 // ─── Back Face ────────────────────────────────────────────

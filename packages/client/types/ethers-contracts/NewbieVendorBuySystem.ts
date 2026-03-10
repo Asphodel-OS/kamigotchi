@@ -26,6 +26,7 @@ import type {
 export interface NewbieVendorBuySystemInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "calcPrice"
       | "cancelOwnershipHandover"
       | "completeOwnershipHandover"
       | "deprecate"
@@ -46,6 +47,7 @@ export interface NewbieVendorBuySystemInterface extends Interface {
       | "SystemDeprecated"
   ): EventFragment;
 
+  encodeFunctionData(functionFragment: "calcPrice", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "cancelOwnershipHandover",
     values?: undefined
@@ -78,6 +80,7 @@ export interface NewbieVendorBuySystemInterface extends Interface {
     values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "calcPrice", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
     data: BytesLike
@@ -201,6 +204,8 @@ export interface NewbieVendorBuySystem extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  calcPrice: TypedContractMethod<[], [bigint], "view">;
+
   cancelOwnershipHandover: TypedContractMethod<[], [void], "payable">;
 
   completeOwnershipHandover: TypedContractMethod<
@@ -241,6 +246,9 @@ export interface NewbieVendorBuySystem extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "calcPrice"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "cancelOwnershipHandover"
   ): TypedContractMethod<[], [void], "payable">;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { erc20Abi, formatUnits } from 'viem';
+import { erc20Abi } from 'viem';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import { getAccountKamis as _getAccountKamis } from 'app/cache/account';
@@ -30,6 +30,7 @@ import type { BaseKami } from 'network/shapes/Kami';
 import { getName as _getName } from 'network/shapes/utils/component';
 import { getRegistryTraits as _getRegistryTraits, TraitType } from 'network/shapes/Trait';
 import { didActionSucceed, waitForActionCompletion } from 'network/utils';
+import { formatEthPriceLabel } from 'utils/numbers';
 import { DEFAULT_AFFINITY_FILTERS, DEFAULT_SELECTED_FILTERS, DEFAULT_STAT_FILTERS } from './constants';
 import { CreateOrder } from './create/CreateOrder';
 import { Bids } from './tabs/bids/Bids';
@@ -214,12 +215,7 @@ export const MarketplaceModal: UIComponent = {
       }
     }, []);
 
-    const formatEthPrice = useCallback((weiString: string, decimals: number) => {
-      if (!weiString || weiString === '0') return '0';
-      const num = Number(formatUnits(BigInt(weiString), 18));
-      if (num > 0 && num < 0.00001) return '<0.00001';
-      return num.toFixed(decimals).replace(/\.?0+$/, '');
-    }, []);
+    const formatEthPrice = formatEthPriceLabel;
 
     /////////////////
     // ACTIONS
