@@ -62,12 +62,12 @@ contract NewbieVendorBuySystem is System {
     // verify kami is on display + remove from pool
     _verifyDisplayAndRemove(kamiIndex);
 
-    // verify vendor owns kami, transfer, send ETH
-    _transferKami(kamiIndex, price, accID);
-
-    // soulbind — prevents listing, unstaking, or accepting offers
+    // soulbind BEFORE external calls — prevents listing during refund reentrancy
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     LibSoulbound.set(components, kamiID, 3 days);
+
+    // verify vendor owns kami, transfer, send ETH
+    _transferKami(kamiIndex, price, accID);
 
     // emit event
     _emitBuy(accID, kamiIndex, price);
