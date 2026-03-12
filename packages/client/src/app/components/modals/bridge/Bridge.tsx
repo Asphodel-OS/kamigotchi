@@ -75,7 +75,6 @@ export const BridgeModal: UIComponent = {
     const wasOpenRef = useRef(false);
     const abortBridgeRef = useRef(false);
     const previousWalletChainIdRef = useRef<string | null>(null);
-    const shouldRestoreWalletChainRef = useRef(false);
     const hasOpenedWalletPromptRef = useRef(false);
     const closedDuringWalletPromptRef = useRef(false);
 
@@ -91,6 +90,9 @@ export const BridgeModal: UIComponent = {
       }
     })();
     const hasSufficientSourceBalance = parsedAmount ? sourceBalance >= parsedAmount : false;
+    const hasSubmittedBridge = updates.some(
+      (update) => update.tone === 'meta' && update.text.startsWith('Tx: ')
+    );
     const injectedWallet =
       wallets.find(
         (wallet) =>
@@ -123,7 +125,6 @@ export const BridgeModal: UIComponent = {
       setShouldResetOnNextOpen(false);
       abortBridgeRef.current = false;
       previousWalletChainIdRef.current = null;
-      shouldRestoreWalletChainRef.current = false;
       hasOpenedWalletPromptRef.current = false;
       closedDuringWalletPromptRef.current = false;
     };
@@ -159,7 +160,7 @@ export const BridgeModal: UIComponent = {
     };
 
     const restorePreviousWalletChain = async (wallet: EVMWalletProvider) => {
-      if (!shouldRestoreWalletChainRef.current || !previousWalletChainIdRef.current) {
+      if (!previousWalletChainIdRef.current) {
         return;
       }
 
@@ -171,7 +172,7 @@ export const BridgeModal: UIComponent = {
       } catch (error) {
         console.warn('Failed to restore wallet chain after bridge abort.', error);
       } finally {
-        shouldRestoreWalletChainRef.current = false;
+        previousWalletChainIdRef.current = null;
       }
     };
 
@@ -261,7 +262,7 @@ export const BridgeModal: UIComponent = {
       const route = await fetchBridgeRoute(routeRequest);
       await throwIfBridgeAborted();
       const requiredChainAddresses = route.required_chain_addresses ?? [];
-      const amountOut = route.amount_out ?? route.amount_in;
+      const amountOut = typeof route.amount_out === 'string' ? route.amount_out : amountInWei;
       const requiredAddressCount = Math.max(requiredChainAddresses.length, 2);
       const addressList = Array.from({ length: requiredAddressCount }, () => selectedAddress);
 
@@ -288,8 +289,9 @@ export const BridgeModal: UIComponent = {
       const yominetChainId = `0x${BigInt(DefaultChain.id).toString(16)}`;
       const currentWalletChainId = await wallet.request({ method: 'eth_chainId' });
       previousWalletChainIdRef.current =
-        typeof currentWalletChainId === 'string' ? currentWalletChainId : null;
-      shouldRestoreWalletChainRef.current = previousWalletChainIdRef.current !== walletChainId;
+        typeof currentWalletChainId === 'string' && currentWalletChainId !== walletChainId
+          ? currentWalletChainId
+          : null;
 
       await throwIfBridgeAborted(wallet);
       appendUpdate('status', 'Switching wallet to source chain...');
@@ -317,14 +319,12 @@ export const BridgeModal: UIComponent = {
           ],
         });
       } catch (error) {
+        const restoreTargetChainId = previousWalletChainIdRef.current ?? yominetChainId;
         await restorePreviousWalletChain(wallet);
         hasOpenedWalletPromptRef.current = false;
         const shouldAbortAfterRejection = closedDuringWalletPromptRef.current;
         closedDuringWalletPromptRef.current = false;
-        releaseBridgeProcessWhenWalletSettles(
-          wallet,
-          previousWalletChainIdRef.current ?? yominetChainId
-        );
+        releaseBridgeProcessWhenWalletSettles(wallet, restoreTargetChainId);
         if (shouldAbortAfterRejection) {
           resetBridgeUiState();
           throw createBridgeAbortError();
@@ -345,7 +345,7 @@ export const BridgeModal: UIComponent = {
       }
       hasOpenedWalletPromptRef.current = false;
       closedDuringWalletPromptRef.current = false;
-      shouldRestoreWalletChainRef.current = false;
+      previousWalletChainIdRef.current = null;
       appendUpdate('meta', `Tx: ${hash}`);
       appendUpdate('status', 'This will take a moment! Come back in 5 minutes!');
       releaseBridgeProcessWhenWalletSettles(wallet, yominetChainId);
@@ -426,6 +426,9 @@ export const BridgeModal: UIComponent = {
           'Close requested. Waiting for wallet response before closing the bridge modal.'
         );
         return false;
+      }
+      if (hasSubmittedBridge) {
+        return true;
       }
       abortBridgeRef.current = true;
       setIsBridging(false);

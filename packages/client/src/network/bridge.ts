@@ -7,15 +7,13 @@ export const BRIDGE_STATUS_URL =
 export const BRIDGE_OPEN_REQUEST_EVENT = 'kamigotchi:bridge-open-request';
 export const YOMINET_CHAIN_ID = 'yominet-1';
 export const YOMINET_ETH_DENOM = 'evm/E1Ff7038eAAAF027031688E1535a055B2Bac2546';
-const ROUTER_API_PATHS = ['route', 'msgs'] as const;
 const BRIDGE_STATUS_KEYS = ['host', 'child', 'batch_submitter', 'da'] as const;
 
 ////////////////
 // TYPES
 
-type RouterApiPath = (typeof ROUTER_API_PATHS)[number];
+type RouterApiPath = 'route' | 'msgs';
 type BridgeOperation = Record<string, unknown>;
-type JsonRecord = Record<string, unknown>;
 export type BridgeEvmTx = {
   chain_id: string;
   to: string;
@@ -87,65 +85,9 @@ export function buildBridgeRouteRequest(
 }
 
 ////////////////
-// UTILITIES
-
-function isJsonRecord(value: unknown): value is JsonRecord {
-  return typeof value === 'object' && value !== null;
-}
-
-function isOptionalArrayOf<T>(
-  value: unknown,
-  predicate: (item: unknown) => item is T
-): value is T[] | undefined {
-  return value === undefined || (Array.isArray(value) && value.every(predicate));
-}
-
-function isBridgeEvmTx(value: unknown): value is BridgeEvmTx {
-  if (!isJsonRecord(value)) return false;
-
-  return (
-    typeof value.chain_id === 'string' &&
-    typeof value.to === 'string' &&
-    typeof value.value === 'string' &&
-    typeof value.data === 'string' &&
-    (value.signer_address === undefined || typeof value.signer_address === 'string') &&
-    (value.required_erc20_approvals === undefined || Array.isArray(value.required_erc20_approvals))
-  );
-}
-
-function isBridgeRouteResponse(value: unknown): value is BridgeRouteResponse {
-  if (!isJsonRecord(value)) return false;
-  return (
-    Array.isArray(value.operations) &&
-    (value.amount_out === undefined || typeof value.amount_out === 'string') &&
-    isOptionalArrayOf(
-      value.required_chain_addresses,
-      (item): item is string => typeof item === 'string'
-    )
-  );
-}
-
-function isBridgeMsgsResponse(value: unknown): value is BridgeMsgsResponse {
-  if (!isJsonRecord(value)) return false;
-  if (value.txs === undefined) return true;
-  if (!Array.isArray(value.txs)) return false;
-
-  return value.txs.every((tx) => {
-    if (!isJsonRecord(tx)) return false;
-    if (
-      !isOptionalArrayOf(tx.operations_indices, (item): item is number => typeof item === 'number')
-    ) {
-      return false;
-    }
-
-    return tx.evm_tx === undefined || isBridgeEvmTx(tx.evm_tx);
-  });
-}
-
-////////////////
 // REQUESTS
 
-async function postRouterApi(path: RouterApiPath, body: Record<string, unknown>): Promise<unknown> {
+async function postRouterApi<T>(path: RouterApiPath, body: Record<string, unknown>): Promise<T> {
   const response = await fetch(`${ROUTER_API_BASE_URL}/${path}`, {
     method: 'POST',
     headers: {
@@ -159,12 +101,18 @@ async function postRouterApi(path: RouterApiPath, body: Record<string, unknown>)
     throw new Error(`Bridge ${path} request failed (${response.status}): ${error}`);
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 }
 
 export async function fetchBridgeRoute(body: BridgeRouteRequest): Promise<BridgeRouteResponse> {
-  const route = await postRouterApi('route', body);
-  if (!isBridgeRouteResponse(route)) {
+  const route = await postRouterApi<BridgeRouteResponse>('route', body);
+  if (!route || typeof route !== 'object' || !Array.isArray(route.operations)) {
+    throw new Error('Bridge route response has an unexpected shape');
+  }
+  if (
+    route.required_chain_addresses !== undefined &&
+    !Array.isArray(route.required_chain_addresses)
+  ) {
     throw new Error('Bridge route response has an unexpected shape');
   }
 
@@ -172,8 +120,11 @@ export async function fetchBridgeRoute(body: BridgeRouteRequest): Promise<Bridge
 }
 
 export async function fetchBridgeMsgs(body: BridgeMsgsRequest): Promise<BridgeMsgsResponse> {
-  const msgs = await postRouterApi('msgs', body);
-  if (!isBridgeMsgsResponse(msgs)) {
+  const msgs = await postRouterApi<BridgeMsgsResponse>('msgs', body);
+  if (!msgs || typeof msgs !== 'object') {
+    throw new Error('Bridge msgs response has an unexpected shape');
+  }
+  if (msgs.txs !== undefined && !Array.isArray(msgs.txs)) {
     throw new Error('Bridge msgs response has an unexpected shape');
   }
 
@@ -184,14 +135,13 @@ export async function fetchBridgeMsgs(body: BridgeMsgsRequest): Promise<BridgeMs
 // HEALTH
 
 function interpretBridgeHealth(payload: unknown): BridgeServiceStatus {
-  if (!isJsonRecord(payload)) {
+  if (!payload || typeof payload !== 'object') {
     return { healthy: false, detail: 'Bridge status response has an unexpected shape' };
   }
 
+  const payloadRecord = payload as Record<string, { node?: { syncing?: unknown } }>;
   const syncingFlags = BRIDGE_STATUS_KEYS.map((key) => {
-    const section = payload[key];
-    if (!isJsonRecord(section) || !isJsonRecord(section.node)) return undefined;
-    return section.node.syncing;
+    return payloadRecord[key]?.node?.syncing;
   });
 
   if (syncingFlags.every((flag) => flag === false)) {
