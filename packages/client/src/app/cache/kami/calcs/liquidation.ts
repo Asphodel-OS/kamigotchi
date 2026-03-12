@@ -117,13 +117,12 @@ export const calcStrain = (attacker: Kami, defender: Kami): number => {
 // calculate Karma — Gaussian-based combat multiplier for recoil (PR #2384)
 // uses the same CDF curve as calcAnimosity but with defender's violence vs attacker's harmony.
 // old formula was linear (v2 - h1 + nudge); new formula is smooth (Gaussian CDF of log ratio).
-// result is a multiplier (~0 to karmaTemp.ratio.value), NOT raw HP damage.
+// result is a multiplier (~0 to karma.ratio.value), NOT raw HP damage.
 export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const config = attacker.config ?? defender.config;
   if (!config) return 0;
 
-  // reads from KAMI_LIQ_KARMA-temp (new Gaussian-based karma)
-  const karmaConfig = config.liquidation.karmaTemp;
+  const karmaConfig = config.liquidation.karma;
   const defViolence = defender.stats?.violence.total ?? 1;
   const attHarmony = attacker.stats?.harmony.total ?? 1;
 
@@ -173,10 +172,9 @@ export const calcRecoilEfficacy = (attacker: Kami, defender: Kami, baseEfficacy:
 // ATK_RECOIL_BOOST (attacker, reduces recoil). higher boost = more recoil on the attacker.
 export const calcRecoil = (attacker: Kami, defender: Kami): number => {
   const baseConfig = attacker.config ?? defender.config;
-  if (!baseConfig || !baseConfig.liquidation.recoilTemp) return 0;
+  if (!baseConfig || !baseConfig.liquidation.recoil) return 0;
 
-  // reads from KAMI_LIQ_RECOIL-temp
-  const config = baseConfig.liquidation.recoilTemp;
+  const config = baseConfig.liquidation.recoil;
 
   const karma = calcKarma(attacker, defender);
   const baseEfficacy = config.nudge.value; // config[0]/10^config[1] — base efficacy value

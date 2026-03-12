@@ -28,10 +28,8 @@ interface LiquidationConfig {
   salvage: AsphoAST;
   spoils: AsphoAST;
   karma: AsphoAST;
-  karmaEfficacy: Efficacy;
   recoil: AsphoAST;
-  karmaTemp: AsphoAST;
-  recoilTemp: AsphoAST;
+  karmaEfficacy: Efficacy; // affinity shifts applied to recoil via karma (PR #2384)
 }
 
 interface RestConfig {
@@ -86,10 +84,8 @@ export const getConfigs = (world: World, comps: Components): Configs => {
       salvage: getASTNode(world, comps, 'KAMI_LIQ_SALVAGE'),
       spoils: getASTNode(world, comps, 'KAMI_LIQ_SPOILS'),
       karma: getASTNode(world, comps, 'KAMI_LIQ_KARMA'),
-      karmaEfficacy: getEfficacyNode(world, comps, 'KAMI_LIQ_KARMA_EFFICACY'),
       recoil: getASTNode(world, comps, 'KAMI_LIQ_RECOIL'),
-      karmaTemp: getASTNode(world, comps, 'KAMI_LIQ_KARMA-temp'),
-      recoilTemp: getASTNode(world, comps, 'KAMI_LIQ_RECOIL-temp'),
+      karmaEfficacy: getEfficacyNode(world, comps, 'KAMI_LIQ_KARMA_EFFICACY'),
     },
     rest: {
       metabolism: getASTNode(world, comps, 'KAMI_REST_METABOLISM'),
