@@ -15,11 +15,13 @@ export const BridgeUpdates = ({ updates, messagesBodyRef, onScroll }: BridgeUpda
     <MessagesBody ref={messagesBodyRef} onScroll={onScroll}>
       {updates.map((update, index) => (
         <UpdateItem key={update.id}>
-          <UpdateDot
-            tone={update.tone}
-            active={index === updates.length - 1 && update.tone !== 'error'}
-          />
-          {index < updates.length - 1 && <UpdateLine />}
+          <UpdateMarker>
+            <UpdateDot
+              tone={update.tone}
+              active={index === updates.length - 1 && update.tone !== 'error'}
+            />
+            {index < updates.length - 1 && <UpdateLine />}
+          </UpdateMarker>
           <UpdateText
             tone={update.tone}
             active={index === updates.length - 1 && update.tone !== 'error'}
@@ -108,8 +110,20 @@ const EmptyUpdates = styled.div`
 `;
 
 const UpdateItem = styled.div`
+  flex: 0 0 auto;
   position: relative;
-  padding-left: 0.9vw;
+  display: grid;
+  grid-template-columns: 0.42vw minmax(0, 1fr);
+  column-gap: 0.45vw;
+  align-items: start;
+`;
+
+const UpdateMarker = styled.div`
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-height: 1.4vw;
 `;
 
@@ -119,9 +133,9 @@ const activeUpdatePulse = keyframes`
 `;
 
 const UpdateDot = styled.div<{ tone: BridgeUpdateTone; active?: boolean }>`
-  position: absolute;
-  left: 0;
-  top: 0.12vw;
+  position: relative;
+  z-index: 1;
+  margin-top: 0.12vw;
   width: 0.42vw;
   height: 0.42vw;
   border-radius: 999px;
@@ -136,14 +150,17 @@ const UpdateDot = styled.div<{ tone: BridgeUpdateTone; active?: boolean }>`
 
 const UpdateLine = styled.div`
   position: absolute;
-  left: 0.18vw;
+  left: 50%;
   top: 0.58vw;
-  bottom: -0.55vw;
+  bottom: -0.45vw;
+  transform: translateX(-50%);
   width: 0.08vw;
   background: #b7b7b7;
 `;
 
 const UpdateText = styled.div<{ tone: BridgeUpdateTone; active?: boolean }>`
+  min-width: 0;
+  padding-top: 0.02vw;
   color: ${({ tone }) => UPDATE_TEXT_COLORS[tone]};
   font-size: 0.8vw;
   line-height: 1.2;

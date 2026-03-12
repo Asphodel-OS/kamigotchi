@@ -18,18 +18,18 @@ import {
   getBridgeServiceStatus,
   isBridgeOpenDetail,
 } from 'network/bridge';
+import { BridgeForm } from './BridgeForm';
+import { BridgeUpdates } from './BridgeUpdates';
 import {
   DEAD_ADDRESS,
-  DISABLED_SOURCE_CHAIN_IDS,
   DEGRADED_POLL_INTERVAL_MS,
+  DISABLED_SOURCE_CHAIN_IDS,
   POLL_INTERVAL_MS,
   POLL_MAX_ATTEMPTS,
   SOURCE_CHAIN_OPTIONS,
   STATUS_RECHECK_EVERY_ATTEMPTS,
   YOMINET_RPC_URL,
 } from './constants';
-import { BridgeForm } from './BridgeForm';
-import { BridgeUpdates } from './BridgeUpdates';
 import { createBridgeAbortError, isBridgeAbortError, waitForWalletChain } from './flow';
 import { BridgeUpdateEntry, BridgeUpdateTone, EVMChainOption, EVMWalletProvider } from './types';
 import {
@@ -46,7 +46,13 @@ const getDefaultSourceChain = () =>
   SOURCE_CHAIN_OPTIONS.find((option) => !DISABLED_SOURCE_CHAIN_IDS.has(option.chainId)) ??
   SOURCE_CHAIN_OPTIONS[0];
 
-type BridgePhase = 'idle' | 'preparing' | 'switchingWallet' | 'awaitingApproval' | 'submitted' | 'aborted';
+type BridgePhase =
+  | 'idle'
+  | 'preparing'
+  | 'switchingWallet'
+  | 'awaitingApproval'
+  | 'submitted'
+  | 'aborted';
 
 export const BridgeModal: UIComponent = {
   id: 'BridgeModal',
@@ -359,7 +365,10 @@ export const BridgeModal: UIComponent = {
     };
 
     const waitForBridgeCompletion = async (baseline: bigint, sourceTxHash: string) => {
-      let sourceTransactionStatus = await getSourceTransactionStatus(sourceChain.rpcUrl, sourceTxHash);
+      let sourceTransactionStatus = await getSourceTransactionStatus(
+        sourceChain.rpcUrl,
+        sourceTxHash
+      );
 
       for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt++) {
         let pollIntervalMs = POLL_INTERVAL_MS;
@@ -375,7 +384,10 @@ export const BridgeModal: UIComponent = {
         }
 
         await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-        sourceTransactionStatus = await getSourceTransactionStatus(sourceChain.rpcUrl, sourceTxHash);
+        sourceTransactionStatus = await getSourceTransactionStatus(
+          sourceChain.rpcUrl,
+          sourceTxHash
+        );
         if (sourceTransactionStatus === 'reverted') {
           appendUpdate(
             'error',
