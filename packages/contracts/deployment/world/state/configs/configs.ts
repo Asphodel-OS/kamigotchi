@@ -138,8 +138,14 @@ export async function initLiquidation(api: AdminAPI) {
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_SPOILS', [45, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
+
   await api.config.set.array('KAMI_LIQ_KARMA', [10, 0, 1000, 3, 0, 0, 2000, 3]);
   await api.config.set.array('KAMI_LIQ_RECOIL', [0, 0, 600, 3, 0, 0, 1000, 3]);
+
+  // [prec, neut, +, -, n-n]
+  await api.config.set.array('KAMI_LIQ_KARMA_EFFICACY', [3, 0, 1000, 1000, 400]);
+  await api.config.set.array('KAMI_LIQ_KARMA-temp', [0, 0, 2000, 3, 0, 0, 0, 0]);
+  await api.config.set.array('KAMI_LIQ_RECOIL-temp', [1000, 3, 0, 0, 0, 0, 1000, 3]);
 }
 
 export async function initPortal(api: AdminAPI) {

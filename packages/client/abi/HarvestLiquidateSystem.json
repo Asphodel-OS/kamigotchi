@@ -203,6 +203,11 @@
     },
     {
       "type": "error",
+      "name": "Min",
+      "inputs": []
+    },
+    {
+      "type": "error",
       "name": "NewOwnerIsZeroAddress",
       "inputs": []
     },
