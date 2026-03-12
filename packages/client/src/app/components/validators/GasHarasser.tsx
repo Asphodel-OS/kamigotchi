@@ -5,15 +5,15 @@ import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { ActionButton, IconButton, TextTooltip, ValidatorWrapper } from 'app/components/library';
+import { triggerBridgeModal } from 'app/triggers';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useTokens, useVisibility } from 'app/stores';
 import { copy } from 'app/utils';
-import { TokenIcons } from 'assets/images/tokens';
+import { MenuIcons } from 'assets/images/icons/menu';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
-import { useBridgeOpener } from 'network/utils/hooks';
 import { abbreviateAddress } from 'utils/address';
 import { playFund, playSuccess } from 'utils/sounds';
 
@@ -35,8 +35,6 @@ export const GasHarasser: UIComponent = {
     const validators = useVisibility((s) => s.validators);
     const setValidators = useVisibility((s) => s.setValidators);
     const ethBalance = useTokens((s) => s.eth.balance);
-
-    const openBridge = useBridgeOpener();
 
     const fullGas = GasConstants.Full; // js floating points are retarded
     const [value, setValue] = useState(fullGas);
@@ -157,7 +155,7 @@ export const GasHarasser: UIComponent = {
         {needsToBridge() ? (
           <Bridge>
             <Text> Not enough gas. You need to bridge some ETH first.</Text>
-            <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+            <IconButton img={MenuIcons.kami} onClick={() => triggerBridgeModal()} text={'Bridge ETH'} />
           </Bridge>
         ) : (
           <Row>

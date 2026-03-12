@@ -46,11 +46,14 @@ export function createBlockNumberStream(
 
       let streamEmpty = true;
       // Get the current block number (skipped if a new block arrives faster)
-      provider?.getBlockNumber().then((blockNumber) => {
-        if (streamEmpty) {
-          blockNumberEvent$.next(blockNumber);
-        }
-      });
+      provider
+        ?.getBlockNumber()
+        .then((blockNumber) => {
+          if (streamEmpty) {
+            blockNumberEvent$.next(blockNumber);
+          }
+        })
+        .catch(() => {});
       // Stream new block numbers
       provider?.on('block', (blockNumber: number) => {
         streamEmpty = false;

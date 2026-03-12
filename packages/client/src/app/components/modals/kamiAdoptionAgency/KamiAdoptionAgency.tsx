@@ -15,21 +15,12 @@ import { getKami as _getKami } from 'network/shapes/Kami';
 import { getDisplayedKamis as _getDisplayedKamis } from 'network/shapes/NewbieVendor/queries';
 import { getSystemAddr } from 'network/shapes/utils';
 import { didActionSucceed } from 'network/utils';
-import { formatEthPriceLabel } from 'utils/numbers';
+import { formatEthPriceLabel, parseBigIntSafe } from 'utils/numbers';
 import { type Abi } from 'viem';
 
 const NEWBIE_VENDOR_BUY_SYSTEM_ID = 'system.newbievendor.buy';
 const NEWBIE_VENDOR_MAX_ACCOUNT_AGE_SECONDS = 24 * 60 * 60;
 const getNowInSeconds = () => Math.floor(Date.now() / 1000);
-const parseBigIntSafe = (value: unknown): bigint | undefined => {
-  if (value === undefined || value === null) return undefined;
-  try {
-    return BigInt(value.toString());
-  } catch {
-    return undefined;
-  }
-};
-
 export const KamiAdoptionAgency: UIComponent = {
   id: 'KamiAdoptionAgencyModal',
   Render: () => {

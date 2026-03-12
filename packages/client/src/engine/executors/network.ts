@@ -90,7 +90,7 @@ async function getSigner(
   config: NetworkConfig,
   currentProviders: Providers
 ): Promise<Signer | undefined> {
-  if (config.provider.externalProvider) return currentProviders.json.getSigner();
+  if (currentProviders.signer) return currentProviders.signer.getSigner();
   const privateKey = config.privateKey;
   if (privateKey && currentProviders) return new Wallet(privateKey, currentProviders.json);
   return undefined;

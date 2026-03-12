@@ -4,12 +4,14 @@ import { create } from 'zustand';
 // OVERVIEW
 
 interface State {
+  bridgeProcessActive: boolean;
   fixtures: Fixtures;
   modals: Modals;
   validators: Validators;
 }
 
 interface Actions {
+  setBridgeProcessActive: (isActive: boolean) => void;
   setFixtures: (data: Partial<Fixtures>) => void;
   setModals: (data: Partial<Modals>) => void;
   setValidators: (data: Partial<Validators>) => void;
@@ -40,6 +42,7 @@ export const toggleFixtures = (isOn: boolean): Fixtures => ({
 export interface Modals {
   account: boolean;
   bridgeERC20: boolean;
+  bridge: boolean;
   bridgeERC721: boolean;
   chat: boolean;
   crafting: boolean;
@@ -74,6 +77,7 @@ export interface Modals {
 export const toggleModals = (isOn: boolean): Modals => ({
   account: isOn,
   bridgeERC20: isOn,
+  bridge: isOn,
   bridgeERC721: isOn,
   chat: isOn,
   crafting: isOn,
@@ -111,6 +115,24 @@ export const toggleModals = (isOn: boolean): Modals => ({
 
 type ScreenZone = 'left' | 'center' | 'right';
 
+const BRIDGE_OPEN_CLOSE_MODALS: Array<keyof Modals> = [
+  'bridgeERC20',
+  'bridgeERC721',
+  'crafting',
+  'kamiAdoptionAgency',
+  'node',
+  'emaBoard',
+  'tokenPortal',
+  'lootBox',
+  'templeOfTheWheel',
+  'leaderboard',
+  'operatorFund',
+  'reveal',
+  'dialogue',
+  'kami',
+  'map',
+];
+
 const MODAL_ZONES: Partial<Record<keyof Modals, ScreenZone[]>> = {
   // Left zone (col 2-33)
   account: ['left'],
@@ -118,6 +140,8 @@ const MODAL_ZONES: Partial<Record<keyof Modals, ScreenZone[]>> = {
   party: ['left'],
 
   // Center zone (col 33-67)
+  bridgeERC20: ['center'],
+  bridge: ['center'],
   crafting: ['center'],
   kamiAdoptionAgency: ['center'],
   node: ['center'],
@@ -156,11 +180,20 @@ const resolveConflicts = (current: Modals, incoming: Partial<Modals>): Modals =>
     // Only resolve when a modal is newly opened (was closed, now open)
     if (value !== true || current[modal]) continue;
 
+    if (modal === 'bridge') {
+      for (const otherModal of BRIDGE_OPEN_CLOSE_MODALS) {
+        if (otherModal !== modal) {
+          merged[otherModal] = false;
+        }
+      }
+    }
+
     const zones = MODAL_ZONES[modal];
     if (!zones) continue;
 
     for (const [otherKey, otherZones] of Object.entries(MODAL_ZONES)) {
       if (otherKey === key) continue;
+      if (otherKey === 'bridge' && key !== 'bridge') continue;
       if (otherZones!.some((z) => zones.includes(z))) {
         merged[otherKey as keyof Modals] = false;
       }
@@ -185,6 +218,7 @@ export interface Validators {
 
 export const useVisibility = create<State & Actions>((set) => {
   const initialState: State = {
+    bridgeProcessActive: false,
     fixtures: {
       actionQueue: false,
       header: false,
@@ -194,6 +228,7 @@ export const useVisibility = create<State & Actions>((set) => {
     modals: {
       account: false,
       bridgeERC20: false,
+      bridge: false,
       bridgeERC721: false,
       chat: false,
       crafting: false,
@@ -234,6 +269,8 @@ export const useVisibility = create<State & Actions>((set) => {
 
   return {
     ...initialState,
+    setBridgeProcessActive: (isActive: boolean) =>
+      set((state: State) => ({ ...state, bridgeProcessActive: isActive })),
     setFixtures: (data: Partial<Fixtures>) =>
       set((state: State) => ({ ...state, fixtures: { ...state.fixtures, ...data } })),
     setModals: (data: Partial<Modals>) =>
@@ -243,6 +280,9 @@ export const useVisibility = create<State & Actions>((set) => {
     toggleFixtures: (isOn: boolean) =>
       set((state: State) => ({ ...state, fixtures: toggleFixtures(isOn) })),
     toggleModals: (isOn: boolean) =>
-      set((state: State) => ({ ...state, modals: toggleModals(isOn) })),
+      set((state: State) => ({
+        ...state,
+        modals: { ...toggleModals(isOn), bridge: state.modals.bridge },
+      })),
   };
 });

@@ -30,6 +30,7 @@ export function IconListButton({
   tooltip,
   disabled,
   cooldownBackground,
+  optionFontSize,
 }: {
   options: Option[];
   searchable?: boolean;
@@ -47,6 +48,7 @@ export function IconListButton({
   balance?: number;
   shake?: boolean;
   cooldownBackground?: string;
+  optionFontSize?: string;
 
   // tooltip
   tooltip?: {
@@ -105,7 +107,7 @@ export function IconListButton({
           .map((option, i) => (
             <MenuOption key={i} disabled={option.disabled} onClick={() => onSelect(option)}>
               {option.image && <OptionIcon src={option.image} />}
-              {option.text && <OptionText>{option.text}</OptionText>}
+              {option.text && <OptionText fontSize={optionFontSize}>{option.text}</OptionText>}
             </MenuOption>
           ))}
       </MenuWrapper>
@@ -191,13 +193,13 @@ const OptionIcon = styled.img`
   user-drag: none;
 `;
 
-const OptionText = styled.div`
+const OptionText = styled.div<{ fontSize?: string }>`
   height: 100%;
 
   display: flex;
   justify-content: flex-start;
   align-items: center;
 
-  font-size: 0.9vw;
+  font-size: ${({ fontSize }) => fontSize ?? '0.9vw'};
   line-height: 1.5vw;
 `;

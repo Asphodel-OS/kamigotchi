@@ -1,4 +1,3 @@
-import { useInterwovenKit } from '@initia/interwovenkit-react';
 import {
   Component,
   defineQuery,
@@ -75,18 +74,4 @@ export function useComponentEntities<T extends Schema>(component: Component<T>) 
   }, [component]);
 
   return list;
-}
-
-export function useBridgeOpener() {
-  const { openBridge } = useInterwovenKit();
-
-  const bridgeTransferDetails = {
-    srcChainId: '1',
-    srcDenom: 'ethereum-native',
-    dstChainId: 'yominet-1',
-    dstDenom: 'evm/E1Ff7038eAAAF027031688E1535a055B2Bac2546',
-    quantity: '0',
-  };
-
-  return () => openBridge(bridgeTransferDetails);
 }
