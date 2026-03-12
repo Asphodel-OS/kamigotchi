@@ -2,17 +2,21 @@ import InfoIcon from '@mui/icons-material/Info';
 import { EntityID } from 'engine/recs';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { parseEther } from 'viem';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { triggerBridgeModal } from 'app/triggers';
 import { useAccount, useTokens } from 'app/stores';
 import { copy } from 'app/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
+import { GasConstants } from 'constants/gas';
 import { NameCache, OperatorCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { playSignup } from 'utils/sounds';
 import { Description, Row } from './components';
 import { Section } from './components/shared';
+
+const REGISTRATION_BRIDGE_AMOUNT_WEI = parseEther(GasConstants.Empty.toString()).toString();
 
 export const Registration = ({
   address,
@@ -46,7 +50,7 @@ export const Registration = ({
   };
 
   const needsToBridge = () => {
-    return ethBalance <= 0 && import.meta.env.MODE !== 'puter';
+    return ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
   };
 
   const catchKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -133,7 +137,13 @@ export const Registration = ({
               <IconButton
                 scale={3}
                 img={MenuIcons.kami}
-                onClick={() => triggerBridgeModal()}
+                onClick={() =>
+                  triggerBridgeModal({
+                    routeRequest: {
+                      amount_in: REGISTRATION_BRIDGE_AMOUNT_WEI,
+                    },
+                  })
+                }
                 text='Bridge ETH to Yominet'
               />
             </Description>

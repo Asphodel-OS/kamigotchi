@@ -14,6 +14,7 @@ import {
   queryAllAccounts,
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
+import { GasConstants } from 'constants/gas';
 import { Registration } from './Registration';
 
 export const AccountRegistrar: UIComponent = {
@@ -154,7 +155,7 @@ export const AccountRegistrar: UIComponent = {
     /////////////////
     // RENDERING
 
-    const needsBridge = ethBalance <= 0 && import.meta.env.MODE !== 'puter';
+    const needsBridge = ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
 
     return (
       <ValidatorWrapper
