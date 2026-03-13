@@ -14,12 +14,20 @@ export const BridgeUpdates = ({ updates, messagesBodyRef, onScroll }: BridgeUpda
     <div className='bridge-updates__header'>Bridge Updates</div>
     <MessagesBody ref={messagesBodyRef} onScroll={onScroll}>
       {updates.map((update, index) => (
-        <UpdateItem
-          key={update.id}
-          tone={update.tone}
-          active={index === updates.length - 1 && update.tone !== 'error'}
-        >
-          <span>{update.text}</span>
+        <UpdateItem key={update.id}>
+          <UpdateMarker>
+            <UpdateDot
+              $tone={update.tone}
+              $active={index === updates.length - 1 && update.tone !== 'error'}
+            />
+            {index < updates.length - 1 && <UpdateLine />}
+          </UpdateMarker>
+          <UpdateText
+            $tone={update.tone}
+            $active={index === updates.length - 1 && update.tone !== 'error'}
+          >
+            {update.text}
+          </UpdateText>
         </UpdateItem>
       ))}
       {!updates.length && <div className='bridge-updates__empty'>Progress will appear here.</div>}
@@ -95,59 +103,63 @@ const MessagesBody = styled.div`
   }
 `;
 
-const UpdateItem = styled.div<{
-  tone: BridgeUpdateTone;
-  active?: boolean;
-}>`
+const UpdateItem = styled.div`
   flex: 0 0 auto;
   position: relative;
-  min-width: 0;
+  display: grid;
+  grid-template-columns: 0.42vw minmax(0, 1fr);
+  column-gap: 0.45vw;
+  align-items: start;
+`;
+
+const UpdateMarker = styled.div`
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-height: 1.4vw;
-  padding-left: 0.87vw;
-  color: ${({ tone }) => UPDATE_COLORS[tone].text};
+`;
+
+const UpdateDot = styled.div<{ $tone: BridgeUpdateTone; $active?: boolean }>`
+  position: relative;
+  z-index: 1;
+  margin-top: 0.12vw;
+  width: 0.42vw;
+  height: 0.42vw;
+  border-radius: 999px;
+  background: ${({ $tone }) => UPDATE_COLORS[$tone].dot};
+  animation: ${({ $active }) =>
+    $active
+      ? css`
+          ${activeUpdatePulse} 1.2s ease-in-out infinite
+        `
+      : 'none'};
+`;
+
+const UpdateLine = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 0.58vw;
+  bottom: -0.45vw;
+  transform: translateX(-50%);
+  width: 0.08vw;
+  background: #b7b7b7;
+`;
+
+const UpdateText = styled.div<{ $tone: BridgeUpdateTone; $active?: boolean }>`
+  min-width: 0;
+  padding-top: 0.02vw;
+  color: ${({ $tone }) => UPDATE_COLORS[$tone].text};
   font-size: 0.8vw;
   line-height: 1.2;
   word-break: break-word;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0.12vw;
-    left: 0;
-    z-index: 1;
-    width: 0.42vw;
-    height: 0.42vw;
-    border-radius: 999px;
-    background: ${({ tone }) => UPDATE_COLORS[tone].dot};
-    animation: ${({ active }) =>
-      active
-        ? css`
-            ${activeUpdatePulse} 1.2s ease-in-out infinite
-          `
-        : 'none'};
-  }
-
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 0.17vw;
-    top: 0.58vw;
-    bottom: -0.45vw;
-    width: 0.08vw;
-    background: #b7b7b7;
-  }
-
-  span {
-    display: block;
-    min-width: 0;
-    padding-top: 0.02vw;
-    animation: ${({ active }) =>
-      active
-        ? css`
-            ${activeUpdatePulse} 1.2s ease-in-out infinite
-          `
-        : 'none'};
-  }
+  animation: ${({ $active }) =>
+    $active
+      ? css`
+          ${activeUpdatePulse} 1.2s ease-in-out infinite
+        `
+      : 'none'};
 `;
 
 const activeUpdatePulse = keyframes`
