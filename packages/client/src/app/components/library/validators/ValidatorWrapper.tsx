@@ -8,6 +8,7 @@ import { ExitButton } from '../modals/ExitButton';
 export const ValidatorWrapper = ({
   id,
   canExit,
+  onExit,
   divName,
   title,
   children,
@@ -17,6 +18,7 @@ export const ValidatorWrapper = ({
 }: {
   id: string;
   canExit?: boolean;
+  onExit?: () => void;
   divName: keyof Validators;
   title: string;
   children: React.ReactNode;
@@ -38,7 +40,7 @@ export const ValidatorWrapper = ({
     <Wrapper id={id} isOpen={isVisible}>
       {canExit && (
         <ButtonRow>
-          <ExitButton divName={id} isValidator />
+          <ExitButton divName={divName} isValidator onClose={onExit} />
         </ButtonRow>
       )}
       <Content>
@@ -101,7 +103,7 @@ const Header = styled.div`
 const Title = styled.div`
   color: #333;
   padding: 0.6vw;
-  font-size: 2.1vw;
+  font-size: 1.8vw;
   text-align: center;
 `;
 

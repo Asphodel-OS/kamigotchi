@@ -19,6 +19,7 @@ import {
   isBridgeOpenDetail,
 } from 'network/bridge';
 import { BridgeForm } from './BridgeForm';
+import { BridgeFundStep } from './BridgeFundStep';
 import { BridgeUpdates } from './BridgeUpdates';
 import {
   DEAD_ADDRESS,
@@ -63,6 +64,7 @@ export const BridgeModal: UIComponent = {
     const isOpen = useVisibility((s) => s.modals.bridge);
     const setBridgeProcessActive = useVisibility((s) => s.setBridgeProcessActive);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
+    const burnerAddress = useNetwork((s) => s.burnerAddress);
     const { wallets } = useWallets();
 
     /////////////////
@@ -76,6 +78,7 @@ export const BridgeModal: UIComponent = {
     const isRefreshingBalancesRef = useRef(false);
 
     const [phase, setPhase] = useState<BridgePhase>('idle');
+    const [showFundStep, setShowFundStep] = useState(false);
     const [updates, setUpdates] = useState<BridgeUpdateEntry[]>([]);
     const [shouldResetOnNextOpen, setShouldResetOnNextOpen] = useState(false);
     const messagesBodyRef = useRef<HTMLDivElement>(null);
@@ -132,6 +135,7 @@ export const BridgeModal: UIComponent = {
 
     const resetBridgeUiState = () => {
       setUpdates([]);
+      setShowFundStep(false);
       setShouldResetOnNextOpen(false);
       setBridgePhase('idle');
       previousWalletChainIdRef.current = null;
@@ -359,7 +363,7 @@ export const BridgeModal: UIComponent = {
       closedDuringWalletPromptRef.current = false;
       previousWalletChainIdRef.current = null;
       appendUpdate('meta', `Tx: ${hash}`);
-      appendUpdate('status', 'This will take a moment! Come back in 5 minutes!');
+      appendUpdate('status', 'This will take a moment! Do not close this window and come back in 5 minutes!');
       releaseBridgeProcessWhenWalletSettles(wallet, yominetChainId);
       return hash;
     };
@@ -399,7 +403,10 @@ export const BridgeModal: UIComponent = {
         const nextBalance = await getYominetEthBalance(selectedAddress);
         setYomiBalance(nextBalance);
         if (nextBalance > baseline) {
-          appendUpdate('success', 'Bridge Complete Congratulations');
+          appendUpdate('success', 'Bridge complete! Follow the instructions to fund your game wallet.');
+          if (burnerAddress && burnerAddress !== DEAD_ADDRESS) {
+            setShowFundStep(true);
+          }
           return;
         }
       }
@@ -471,7 +478,9 @@ export const BridgeModal: UIComponent = {
           }
           if (routeRequest.amount_in) {
             try {
-              setAmount(formatEther(BigInt(routeRequest.amount_in)));
+              const parsed = formatEther(BigInt(routeRequest.amount_in));
+              const num = Number(parsed);
+              setAmount(!num || num < 0.001 ? '0.001' : parsed);
             } catch {
               // ignore malformed prefills
             }
@@ -563,18 +572,36 @@ export const BridgeModal: UIComponent = {
         truncate
       >
         <Content>
-          <BridgeForm
-            sourceChain={sourceChain}
-            amount={amount}
-            sourceBalance={sourceBalance}
-            yomiBalance={yomiBalance}
-            isBridging={isBridging}
-            accountReady={accountReady}
-            hasSufficientSourceBalance={hasSufficientSourceBalance}
-            onAmountChange={setAmount}
-            onSourceChainChange={setSourceChain}
-            onSubmit={startBridge}
-          />
+          {showFundStep ? (
+            <BridgeFundStep
+              ownerAddress={selectedAddress}
+              operatorAddress={burnerAddress}
+              injectedWallet={injectedWallet}
+              appendUpdate={appendUpdate}
+              onComplete={() => {
+                setShowFundStep(false);
+                setShouldResetOnNextOpen(true);
+              }}
+              onSkip={() => {
+                setShowFundStep(false);
+                setShouldResetOnNextOpen(true);
+                appendUpdate('meta', 'Operator funding skipped.');
+              }}
+            />
+          ) : (
+            <BridgeForm
+              sourceChain={sourceChain}
+              amount={amount}
+              sourceBalance={sourceBalance}
+              yomiBalance={yomiBalance}
+              isBridging={isBridging}
+              accountReady={accountReady}
+              hasSufficientSourceBalance={hasSufficientSourceBalance}
+              onAmountChange={setAmount}
+              onSourceChainChange={setSourceChain}
+              onSubmit={startBridge}
+            />
+          )}
           <BridgeUpdates
             updates={updates}
             messagesBodyRef={messagesBodyRef}

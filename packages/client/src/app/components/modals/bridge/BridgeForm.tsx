@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, Text } from 'app/components/library';
+import { IconButton, IconListButton, StepButton, Text } from 'app/components/library';
 import { MenuIcons } from 'assets/images/icons/menu';
+import { TokenIcons } from 'assets/images/tokens';
 import { formatEthPriceLabel } from 'utils/numbers';
 import {
   DISABLED_SOURCE_CHAIN_IDS,
@@ -34,7 +35,25 @@ export const BridgeForm = ({
   onAmountChange,
   onSourceChainChange,
   onSubmit,
-}: BridgeFormProps) => (
+}: BridgeFormProps) => {
+  const DEFAULT_AMOUNT = '0.001';
+  const STEP = 0.001;
+
+  const handleBlur = () => {
+    const num = Number(amount);
+    if (!amount || !num || num < Number(DEFAULT_AMOUNT)) {
+      onAmountChange(DEFAULT_AMOUNT);
+    }
+  };
+
+  const nudge = (direction: 1 | -1) => {
+    const current = Number(amount) || 0;
+    const raw = +(current + direction * STEP).toFixed(7);
+    const next = Math.max(Number(DEFAULT_AMOUNT), raw);
+    onAmountChange(next.toString());
+  };
+
+  return (
   <FormColumn>
     <Label>Source Chain</Label>
     <IconListButton
@@ -53,26 +72,38 @@ export const BridgeForm = ({
     />
     <Label>Destination Chain</Label>
     <DestinationText>Yominet</DestinationText>
-    <Label>Amount (ETH)</Label>
-    <Input
-      type='number'
-      min='0'
-      step='0.0001'
-      value={amount}
-      onChange={(event) => onAmountChange(event.target.value)}
-    />
+    <Label>Amount</Label>
+    <InputRow>
+      <EthIcon src={TokenIcons.eth} alt='ETH' />
+      <Input
+        type='text'
+        inputMode='decimal'
+        placeholder='Input Amount'
+        value={amount}
+        onFocus={() => onAmountChange('')}
+        onBlur={handleBlur}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (val === '' || /^\d*\.?\d{0,7}$/.test(val)) onAmountChange(val);
+        }}
+      />
+      <StepButton label='-' onStep={() => nudge(-1)} />
+      <StepButton label='+' onStep={() => nudge(1)} />
+    </InputRow>
     <Balances>
       <BalanceItem>
         <BalanceLabel>Source balance:</BalanceLabel>
-        <Text size={0.8}>
-          <BalanceNumber>{formatEthPriceLabel(sourceBalance, 5)}</BalanceNumber> ETH
-        </Text>
+        <BalanceValueRow>
+          <EthIcon src={TokenIcons.eth} alt='ETH' $small />
+          <Text size={0.8}>{formatEthPriceLabel(sourceBalance, 5)}</Text>
+        </BalanceValueRow>
       </BalanceItem>
       <BalanceItem>
-        <BalanceLabel>Yominet bridged ETH:</BalanceLabel>
-        <Text size={0.8}>
-          <BalanceNumber>{formatEthPriceLabel(yomiBalance, 5)}</BalanceNumber> ETH
-        </Text>
+        <BalanceLabel>Yominet bridged:</BalanceLabel>
+        <BalanceValueRow>
+          <EthIcon src={TokenIcons.eth} alt='ETH' $small />
+          <Text size={0.8}>{formatEthPriceLabel(yomiBalance, 5)}</Text>
+        </BalanceValueRow>
       </BalanceItem>
     </Balances>
     <IconButton
@@ -83,7 +114,8 @@ export const BridgeForm = ({
       fullWidth
     />
   </FormColumn>
-);
+  );
+};
 
 const FormColumn = styled.div`
   display: flex;
@@ -108,12 +140,44 @@ const Label = styled.label`
   font-weight: 700;
 `;
 
-const Input = styled.input`
-  border: solid black 0.12vw;
-  border-radius: 0.5vw;
-  padding: 0.45vw;
-  font-size: 0.78vw;
+const InputRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.35vw;
 `;
+
+const EthIcon = styled.img<{ $small?: boolean }>`
+  width: ${({ $small }) => ($small ? '0.9vw' : '1.1vw')};
+  height: ${({ $small }) => ($small ? '0.9vw' : '1.1vw')};
+`;
+
+const Input = styled.input`
+  background: #fafafa;
+  border: 0.12vw solid #ccc;
+  border-radius: 0.5vw;
+  padding: 0.45vw 0.6vw;
+  font-size: 0.78vw;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+  caret-color: transparent;
+  cursor: pointer;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:focus {
+    border-color: #a0c0e8;
+    background: #fff9e0;
+    outline: none;
+  }
+
+  &:focus::placeholder {
+    color: #aaa;
+  }
+`;
+
 
 const DestinationText = styled.div`
   border-radius: 0.5vw;
@@ -144,6 +208,9 @@ const BalanceLabel = styled.span`
   font-weight: 700;
 `;
 
-const BalanceNumber = styled.span`
-  margin-left: 1vw;
+const BalanceValueRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.25vw;
+  margin-left: 0.4vw;
 `;
