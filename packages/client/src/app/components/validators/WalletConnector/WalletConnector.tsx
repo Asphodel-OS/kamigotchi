@@ -16,11 +16,12 @@ import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useAccount as usePlayerAccount, useVisibility } from 'app/stores';
+import { emptyAccountDetails, useNetwork, useAccount as usePlayerAccount, useVisibility } from 'app/stores';
 import { getInjectedWallet } from 'app/utils';
 import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
+import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { Progress } from './Progress';
 
@@ -47,6 +48,8 @@ export const WalletConnecter: UIComponent = {
     const { validators, setValidators } = useVisibility();
     const bridgeFlowActive = useVisibility((s) => s.modals.bridge || s.bridgeProcessActive);
     const accountExists = usePlayerAccount((s) => s.validations.accountExists);
+    const setPlayerAccount = usePlayerAccount((s) => s.setAccount);
+    const setPlayerValidations = usePlayerAccount((s) => s.setValidations);
 
     const [isUpdating, setIsUpdating] = useState(false);
     const [state, setState] = useState('');
@@ -74,18 +77,37 @@ export const WalletConnecter: UIComponent = {
       if (isCorrectChain != chainMatches) setChainMatches(isCorrectChain);
     }, [chain, isConnected]);
 
-    // adjust visibility of windows based on above determination
+    // reset account state and query caches on logout so that re-login
+    // with a different wallet triggers a fresh account lookup
     useEffect(() => {
+      if (!authenticated) {
+        setPlayerAccount(emptyAccountDetails());
+        setPlayerValidations({ accountChecked: false, accountExists: false, operatorMatches: false, operatorHasGas: true });
+        OperatorCache.clear();
+        NameCache.clear();
+        OwnerCache.clear();
+      }
+    }, [authenticated]);
+
+    // adjust visibility of windows based on above determination.
+    // Uses Privy/wagmi hook values directly (not the store mirror) so the
+    // visibility decision is made in the same render cycle as the auth state,
+    // avoiding a one-frame flash where the store hasn't been updated yet.
+    useEffect(() => {
+      if (!ready) return;
       if (bridgeFlowActive) return;
+
+      const chainOk = chain?.id === DefaultChain.id;
+
       if (
         validators.accountRegistrar &&
         !accountExists &&
-        validations.authenticated &&
-        validations.chainMatches
+        authenticated &&
+        chainOk
       )
         return;
 
-      const isVisible = !validations.authenticated || !validations.chainMatches;
+      const isVisible = !authenticated || !chainOk;
       if (isVisible) {
         toggleModals(false);
         toggleFixtures(false);
@@ -99,7 +121,9 @@ export const WalletConnecter: UIComponent = {
         });
       }
     }, [
-      validations,
+      ready,
+      authenticated,
+      chain,
       bridgeFlowActive,
       validators.accountRegistrar,
       accountExists,
