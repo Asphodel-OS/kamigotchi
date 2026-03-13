@@ -78,8 +78,12 @@ export const WalletConnecter: UIComponent = {
     }, [chain, isConnected]);
 
     // reset account state and query caches on logout so that re-login
-    // with a different wallet triggers a fresh account lookup
+    // with a different wallet triggers a fresh account lookup.
+    // Guarded by bridgeFlowActive: bridge chain-switching can cause
+    // transient auth blips on some wallets — nuking state mid-bridge
+    // would cascade through validators and pop WalletConnector.
     useEffect(() => {
+      if (bridgeFlowActive) return;
       if (!authenticated) {
         setPlayerAccount(emptyAccountDetails());
         setPlayerValidations({ accountChecked: false, accountExists: false, operatorMatches: false, operatorHasGas: true });
@@ -87,27 +91,26 @@ export const WalletConnecter: UIComponent = {
         NameCache.clear();
         OwnerCache.clear();
       }
-    }, [authenticated]);
+    }, [authenticated, bridgeFlowActive]);
 
     // adjust visibility of windows based on above determination.
-    // Uses Privy/wagmi hook values directly (not the store mirror) so the
-    // visibility decision is made in the same render cycle as the auth state,
-    // avoiding a one-frame flash where the store hasn't been updated yet.
+    // Gated by `ready` so the effect doesn't run before Privy initialises
+    // (prevents a one-frame WalletConnector flash on login).
+    // Uses store-mirrored `validations` for the actual decision — the one-
+    // render-cycle delay acts as a natural debounce against transient
+    // chain/auth blips that occur during bridge wallet-switching.
     useEffect(() => {
       if (!ready) return;
       if (bridgeFlowActive) return;
-
-      const chainOk = chain?.id === DefaultChain.id;
-
       if (
         validators.accountRegistrar &&
         !accountExists &&
-        authenticated &&
-        chainOk
+        validations.authenticated &&
+        validations.chainMatches
       )
         return;
 
-      const isVisible = !authenticated || !chainOk;
+      const isVisible = !validations.authenticated || !validations.chainMatches;
       if (isVisible) {
         toggleModals(false);
         toggleFixtures(false);
@@ -122,8 +125,7 @@ export const WalletConnecter: UIComponent = {
       }
     }, [
       ready,
-      authenticated,
-      chain,
+      validations,
       bridgeFlowActive,
       validators.accountRegistrar,
       accountExists,
