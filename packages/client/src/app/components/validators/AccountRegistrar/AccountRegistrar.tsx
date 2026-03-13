@@ -1,7 +1,6 @@
 import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
 import { useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
-
 import { AccountCache, getAccount } from 'app/cache/account';
 import { ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
@@ -48,6 +47,7 @@ export const AccountRegistrar: UIComponent = {
       return {
         data: {
           accountEntity,
+          isLive: loadingState?.state === SyncState.LIVE,
         },
         network,
         utils: {
@@ -64,7 +64,7 @@ export const AccountRegistrar: UIComponent = {
     /////////////////
     // INSTANTIATION
 
-    const { accountEntity } = data;
+    const { accountEntity, isLive } = data;
     const { getBaseAccount } = utils;
     const { actions } = network;
 
@@ -89,17 +89,32 @@ export const AccountRegistrar: UIComponent = {
     // SUBSCRIPTION
 
     // update the Kami Account and validation based on changes to the
-    // connected address and detected account in the world
+    // connected address and detected account in the world.
+    // Two gates prevent premature evaluation:
+    //   isLive: ECS world must be synced (accountEntity is meaningless before)
+    //   burnerAddress: embedded wallet must be established (queryAccountFromEmbedded
+    //     uses MUD's connectedAddress which is only set after updateNetworkLayer)
+    const DEAD = '0x000000000000000000000000000000000000dEaD';
     useEffect(() => {
+      if (!isLive) return;
+      if (burnerAddress === DEAD) return;
+
       if (accountEntity) {
         const account = getBaseAccount(accountEntity);
-        setAccount({ ...account });
-        setValidations({ ...validations, accountExists: true });
+        // Only mark accountExists once we have valid account data populated,
+        // so downstream validators (OperatorUpdater) don't see the dead default address.
+        const hasValidOperator =
+          !!account.operatorAddress &&
+          account.operatorAddress !== DEAD;
+        if (hasValidOperator) {
+          setAccount({ ...account });
+          setValidations({ ...validations, accountChecked: true, accountExists: true });
+        }
       } else {
         setAccount(emptyAccountDetails());
-        setValidations({ accountExists: false, operatorMatches: false, operatorHasGas: false });
+        setValidations({ accountChecked: true, accountExists: false, operatorMatches: false, operatorHasGas: true });
       }
-    }, [accountEntity]);
+    }, [accountEntity, isLive, burnerAddress]);
 
     // adjust visibility of windows based on above determination
     useEffect(() => {
@@ -112,7 +127,7 @@ export const AccountRegistrar: UIComponent = {
       // the bridge process is still settling.
       if (!validations.accountExists && accountRegistrarVisible && !isValidated && bridgeFlowActive) return;
 
-      const isVisible = isValidated && !validations.accountExists;
+      const isVisible = isValidated && validations.accountChecked && !validations.accountExists;
 
       if (isVisible) {
         toggleModals(false);
@@ -129,7 +144,7 @@ export const AccountRegistrar: UIComponent = {
           gasHarasser: false,
         });
       }
-    }, [networkValidations, validations.accountExists, bridgeFlowActive]);
+    }, [networkValidations, validations.accountChecked, validations.accountExists, bridgeFlowActive]);
 
     /////////////////
     // ACTIONS
