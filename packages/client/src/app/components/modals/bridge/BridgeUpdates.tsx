@@ -11,7 +11,7 @@ type BridgeUpdatesProps = {
 
 export const BridgeUpdates = ({ updates, messagesBodyRef, onScroll }: BridgeUpdatesProps) => (
   <MessagesColumn>
-    <div className='bridge-updates__header'>Bridge Updates</div>
+    <MessagesHeader>Bridge Updates</MessagesHeader>
     <MessagesBody ref={messagesBodyRef} onScroll={onScroll}>
       {updates.map((update, index) => (
         <UpdateItem
@@ -22,7 +22,7 @@ export const BridgeUpdates = ({ updates, messagesBodyRef, onScroll }: BridgeUpda
           <span>{update.text}</span>
         </UpdateItem>
       ))}
-      {!updates.length && <div className='bridge-updates__empty'>Progress will appear here.</div>}
+      {!updates.length && <EmptyUpdates>Progress will appear here.</EmptyUpdates>}
     </MessagesBody>
   </MessagesColumn>
 );
@@ -59,11 +59,12 @@ const MessagesColumn = styled.div`
     border-radius: 999px;
   }
 
-  .bridge-updates__header {
-    font-size: 0.78vw;
-    font-weight: 700;
-    color: #222;
-  }
+`;
+
+const MessagesHeader = styled.div`
+  font-size: 0.78vw;
+  font-weight: 700;
+  color: #222;
 `;
 
 const MessagesBody = styled.div`
@@ -83,16 +84,17 @@ const MessagesBody = styled.div`
     height: 0;
   }
 
-  .bridge-updates__empty {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #6b6b6b;
-    font-size: 0.74vw;
-    line-height: 1.2;
-  }
+`;
+
+const EmptyUpdates = styled.div`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #6b6b6b;
+  font-size: 0.74vw;
+  line-height: 1.2;
 `;
 
 const UpdateItem = styled.div<{
@@ -141,6 +143,7 @@ const UpdateItem = styled.div<{
     display: block;
     min-width: 0;
     padding-top: 0.02vw;
+    color: inherit;
     animation: ${({ active }) =>
       active
         ? css`
