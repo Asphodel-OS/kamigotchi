@@ -1,14 +1,18 @@
 import { Howl } from 'howler';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { useSelected, useVisibility } from 'app/stores';
+import { useLayers } from 'app/root/hooks';
+import { useAccount, useSelected, useVisibility } from 'app/stores';
 import { radiateFx } from 'app/styles/effects';
 import { triggerDialogueModal } from 'app/triggers/triggerDialogueModal';
 import { cave } from 'assets/sound/ost';
 import { rooms } from 'constants/rooms';
+import { getComponentValue } from 'engine/recs';
 import { RoomAsset } from 'constants/rooms/types';
+import { passesConditions } from 'network/shapes/Conditional';
+import { Account } from 'network/shapes/Account';
 import { getCurrPhase } from 'utils/time';
 
 const RoomsBgm: Map<string, Howl> = new Map<string, Howl>();
@@ -23,6 +27,11 @@ export const Room = ({ index }: { index: number }) => {
   const [bgm, setBgm] = useState<Howl>();
   const [settings] = useLocalStorage('settings', { volume: { fx: 0.5, bgm: 0.5 } });
   const bgmVolume = settings.volume.bgm;
+
+  const { network } = useLayers();
+  const { world, components } = network;
+  const accountEntity = useAccount((s) => s.account.entity);
+  const [subVersion, setSubVersion] = useState(0);
 
   // Set the new room when the index changes. If the new room has new music,
   // stop the old bgm and play the new one. Global howler audio is controlled
@@ -84,6 +93,48 @@ export const Room = ({ index }: { index: number }) => {
 
 */
 
+  // Recompute room visibility when the active account completes quests.
+  useEffect(() => {
+    if (!accountEntity) return;
+    const accountID = world.entities[accountEntity];
+    if (!accountID) return;
+
+    const { EntityType, IsComplete, OwnsQuestID } = components;
+    const sub = IsComplete.update$.subscribe((update) => {
+      const entityType = getComponentValue(EntityType, update.entity)?.value;
+      if (entityType !== 'QUEST') return;
+
+      const ownerID = getComponentValue(OwnsQuestID, update.entity)?.value;
+      if (ownerID !== accountID) return;
+      setSubVersion((v) => v + 1);
+    });
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [accountEntity, world, components]);
+
+  // filter objects by requirements and resolve background overrides
+  const { visibleObjects, resolvedBackgrounds } = useMemo(() => {
+    const holder = { entity: accountEntity } as Account;
+    const visible: RoomAsset[] = [];
+    let backgrounds = room.backgrounds;
+
+    for (const obj of room.objects) {
+      if (obj.requirements && obj.requirements.length > 0) {
+        if (!accountEntity || !passesConditions(world, components, obj.requirements, holder)) {
+          continue;
+        }
+      }
+      visible.push(obj);
+      if (obj.backgrounds) {
+        backgrounds = obj.backgrounds;
+      }
+    }
+
+    return { visibleObjects: visible, resolvedBackgrounds: backgrounds };
+  }, [room, accountEntity, world, components, subVersion]);
+
   // manages volume changes from the variable stored in local storage
   useEffect(() => {
     if (!bgm) return;
@@ -112,8 +163,8 @@ export const Room = ({ index }: { index: number }) => {
   // return the background path for now
   const getBackground = () => {
     // phases start at 1, make start at 0
-    const phase = (getCurrPhase() - 1) % room.backgrounds.length;
-    return room.backgrounds[phase];
+    const phase = (getCurrPhase() - 1) % resolvedBackgrounds.length;
+    return resolvedBackgrounds[phase];
   };
 
   const getClickbox = (object: RoomAsset) => {
@@ -152,7 +203,7 @@ export const Room = ({ index }: { index: number }) => {
     <Wrapper>
       <Container>
         <Background draggable='false' src={getBackground()} />
-        {room.objects.map((object) => getClickbox(object))}
+        {visibleObjects.map((object) => getClickbox(object))}
       </Container>
     </Wrapper>
   );
