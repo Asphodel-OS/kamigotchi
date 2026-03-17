@@ -579,35 +579,41 @@ export const BridgeModal: UIComponent = {
     // RENDERING
 
     return (
-      <ModalWrapper
-        id='bridge'
-        header={<ModalHeader title='Bridge ETH to Yominet' icon={MenuIcons.kami} />}
-        canExit
-        onClose={handleBridgeModalClose}
-        overlay
-        noScroll
-        wrapperZIndex={1000}
-        truncate
-      >
-        <Content>
-          <BridgeForm
-            sourceChain={sourceChain}
-            amount={amount}
-            sourceBalance={sourceBalance}
-            yomiBalance={yomiBalance}
-            isBridging={isBridging}
-            accountReady={accountReady}
-            hasSufficientSourceBalance={hasSufficientSourceBalance}
-            onAmountChange={setAmount}
-            onSourceChainChange={setSourceChain}
-            onSubmit={startBridge}
-          />
-          <BridgeUpdates updates={updates} isOpen={isOpen} />
-        </Content>
-      </ModalWrapper>
+      <BridgeOverlay>
+        <ModalWrapper
+          id='bridge'
+          header={<ModalHeader title='Bridge ETH to Yominet' icon={MenuIcons.kami} />}
+          canExit
+          onClose={handleBridgeModalClose}
+          noScroll
+          truncate
+        >
+          <Content>
+            <BridgeForm
+              sourceChain={sourceChain}
+              amount={amount}
+              sourceBalance={sourceBalance}
+              yomiBalance={yomiBalance}
+              isBridging={isBridging}
+              accountReady={accountReady}
+              hasSufficientSourceBalance={hasSufficientSourceBalance}
+              onAmountChange={setAmount}
+              onSourceChainChange={setSourceChain}
+              onSubmit={startBridge}
+            />
+            <BridgeUpdates updates={updates} isOpen={isOpen} />
+          </Content>
+        </ModalWrapper>
+      </BridgeOverlay>
     );
   },
 };
+const BridgeOverlay = styled.div`
+  position: relative;
+  z-index: 1000;
+  height: 100%;
+`;
+
 const Content = styled.div`
   display: flex;
   flex-direction: row;

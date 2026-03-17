@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
 import { Modals, useVisibility } from 'app/stores';
@@ -20,7 +20,6 @@ export const ModalWrapper = ({
   scrollBarColor,
   backgroundColor,
   shuffle = false,
-  wrapperZIndex,
   truncate,
   noScroll,
 }: {
@@ -43,7 +42,6 @@ export const ModalWrapper = ({
   };
   scrollBarColor?: string;
   shuffle?: boolean;
-  wrapperZIndex?: number;
   truncate?: boolean;
   noScroll?: boolean;
 }) => {
@@ -92,14 +90,7 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper
-      id={id}
-      isOpen={shouldDisplay}
-      overlay={!!overlay}
-      style={gridStyle}
-      shuffle={shuffle}
-      zIndex={wrapperZIndex}
-    >
+    <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
       <Content
         backgroundColor={backgroundColor}
         isOpen={isVisible}
@@ -144,11 +135,10 @@ const Wrapper = styled.div<{
   isOpen: boolean;
   overlay: boolean;
   shuffle: boolean;
-  zIndex?: number;
 }>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
-  z-index: ${({ overlay, zIndex }) => (overlay ? (zIndex ?? 3) : 0)};
+  z-index: ${({ overlay }) => (overlay ? 3 : 0)};
   ${({ isOpen, shuffle }) => css`
     animation: ${isOpen
         ? css`
@@ -193,9 +183,7 @@ const Content = styled.div<{
     min-width: 48vw;
     min-height: 42vh;
     scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
   }
   background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
 `;
@@ -239,9 +227,7 @@ const Children = styled.div<{
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
   scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  &::-webkit-scrollbar { display: none; }
 `;
 
 const fadeIn = keyframes`

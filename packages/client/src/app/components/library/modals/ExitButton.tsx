@@ -18,7 +18,6 @@ export const ExitButton = ({
 
   // closes the modal this exit button is on
   const handleClose = () => {
-    // this is for the bridge modal
     const shouldClose = onClose?.();
     if (shouldClose === false) return;
     playClick();
