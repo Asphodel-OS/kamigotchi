@@ -8,6 +8,7 @@ import { NotificationFixture } from './fixtures/notifications';
 import { ActionQueue } from './fixtures/queue';
 
 import { AccountModal } from './modals/account';
+import { BridgeModal } from './modals/bridge';
 import { ChatModal } from './modals/chat';
 import { CraftingModal } from './modals/crafting';
 import { DialogueModal } from './modals/dialogue';
@@ -113,6 +114,10 @@ export const allComponents: UIComponentWithGrid[] = [
   {
     uiComponent: ChatModal,
     gridConfig: { colStart: 67, colEnd: 100, rowStart: 8, rowEnd: 75 },
+  },
+  {
+    uiComponent: BridgeModal,
+    gridConfig: { colStart: 33, colEnd: 71, rowStart: 20, rowEnd: 80 },
   },
   {
     uiComponent: CraftingModal,

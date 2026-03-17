@@ -29,18 +29,15 @@ export function create({
   if (wsRpcUrl && !useWebSocket) {
     console.log('[provider] Safari/iOS detected – skipping WebSocket provider');
   }
-  const providers = externalProvider
-    ? { json: externalProvider, ws: undefined }
-    : {
-        json: new MUDJsonRpcProvider(jsonRpcUrl, network),
-        ws: useWebSocket ? new WebSocketProvider(wsRpcUrl!, network) : undefined,
-      };
+  const json = new MUDJsonRpcProvider(jsonRpcUrl, network);
+  const ws = useWebSocket ? new WebSocketProvider(wsRpcUrl!, network) : undefined;
+  const signer = externalProvider;
 
   if (options?.pollingInterval) {
-    providers.json.pollingInterval = options.pollingInterval;
+    json.pollingInterval = options.pollingInterval;
   }
 
-  return providers;
+  return { json, ws, signer };
 }
 
 /**

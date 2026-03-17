@@ -30,7 +30,7 @@ export const ModalWrapper = ({
   id: keyof Modals;
   noInternalBorder?: boolean;
   noPadding?: boolean;
-  onClose?: () => void;
+  onClose?: () => boolean | void;
   overlay?: boolean;
   backgroundColor?: string;
   positionOverride?: {
@@ -50,14 +50,10 @@ export const ModalWrapper = ({
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
 
-  // execute cleaning func when modal closes
   useEffect(() => {
     if (isVisible) {
       setShouldDisplay(true);
     } else {
-      if (onClose) {
-        onClose();
-      }
       setShouldDisplay(false);
     }
   }, [isVisible]);
@@ -67,12 +63,14 @@ export const ModalWrapper = ({
     if (!canExit || !isVisible || id !== 'kami') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        const shouldClose = onClose?.();
+        if (shouldClose === false) return;
         setModals({ [id]: false });
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [canExit, isVisible, id]);
+  }, [canExit, isVisible, id, onClose, setModals]);
 
   useEffect(() => {
     if (positionOverride) {
@@ -102,7 +100,7 @@ export const ModalWrapper = ({
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
         {canExit && (
           <ButtonRow>
-            <ExitButton divName={id} />
+            <ExitButton divName={id} onClose={onClose} />
           </ButtonRow>
         )}
         <Children

@@ -6,6 +6,7 @@ export const abandoned = ost('abandoned');
 export const abandonedCamp = ost('abandonedCamp');
 export const amusement = ost('amusement');
 export const arrival = ost('arrival');
+export const arrivalRemaster = ost('arrivalRemaster');
 export const brokenTube = ost('brokenTube');
 export const canyonBridge = ost('canyonBridge');
 export const cave = ost('cave');

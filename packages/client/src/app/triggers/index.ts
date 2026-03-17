@@ -1,3 +1,4 @@
+export { triggerBridgeModal } from './triggerBridgeModal';
 export { triggerDialogueModal } from './triggerDialogueModal';
 export { triggerERC20BridgeModal } from './triggerERC20BridgeModal';
 export { triggerGachaModal } from './triggerGachaModal';
