@@ -345,6 +345,11 @@ export const BridgeModal: UIComponent = {
       return hash;
     };
 
+    const persistCompletion = () => {
+      const persisted = loadBridgePolling();
+      if (persisted) saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
+    };
+
     const waitForBridgeCompletion = async (
       pollingSourceChain: EVMChainOption,
       yominetStartBlock: number,
@@ -382,6 +387,7 @@ export const BridgeModal: UIComponent = {
             'error',
             `Source transaction reverted on ${pollingSourceChain.label}. The bridge transfer was not completed.`
           );
+          persistCompletion();
           return;
         }
 
@@ -395,6 +401,7 @@ export const BridgeModal: UIComponent = {
         if (receivedOnYominet) {
           appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${DefaultChain.blockExplorers?.default.url}/tx/${receivedOnYominet}`);
           appendUpdate('celebrate', 'Bridge Complete Congratulations');
+          persistCompletion();
           return;
         }
       }
@@ -404,6 +411,7 @@ export const BridgeModal: UIComponent = {
           'error',
           `Source transaction confirmed on ${pollingSourceChain.label}, but no matching Yominet transfer has been observed yet. Please check again shortly.`
         );
+        persistCompletion();
         return;
       }
 
@@ -411,6 +419,7 @@ export const BridgeModal: UIComponent = {
         'error',
         `Source transaction is still pending on ${pollingSourceChain.label}. Please check your wallet or explorer and try again shortly.`
       );
+      persistCompletion();
     };
 
     const handleBridgeModalClose = () => {
@@ -494,8 +503,6 @@ export const BridgeModal: UIComponent = {
         persisted.sourceTxHash,
         bridgeAbortRef.current.signal
       ).finally(() => {
-        const p = loadBridgePolling();
-        if (p) saveBridgePolling({ ...p, updates: updatesRef.current, completed: true });
         setBridgePhase('idle');
       });
     }, [selectedAddress]);
@@ -560,11 +567,10 @@ export const BridgeModal: UIComponent = {
           }
         }
       } finally {
-        if (signal.aborted) return;
-        const persisted = loadBridgePolling();
-        if (persisted) saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
-        if (phaseRef.current !== 'aborted') {
-          setBridgePhase('idle');
+        if (!signal.aborted) {
+          if (phaseRef.current !== 'aborted') {
+            setBridgePhase('idle');
+          }
         }
       }
     };

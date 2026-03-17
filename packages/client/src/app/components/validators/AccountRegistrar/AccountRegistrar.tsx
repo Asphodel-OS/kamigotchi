@@ -107,9 +107,10 @@ export const AccountRegistrar: UIComponent = {
       if (bridgeFlowActive) return;
 
       const isValidated = networkValidations.authenticated && networkValidations.chainMatches;
-      // If user is in registration flow, don't hide this validator just because
-      // chain validation changed after bridge interactions.
-      if (!validations.accountExists && accountRegistrarVisible && !isValidated) return;
+      // If user is in registration flow and chain validation dropped due to a
+      // recent bridge interaction, don't hide the registrar. Only applies while
+      // the bridge process is still settling.
+      if (!validations.accountExists && accountRegistrarVisible && !isValidated && bridgeFlowActive) return;
 
       const isVisible = isValidated && !validations.accountExists;
 

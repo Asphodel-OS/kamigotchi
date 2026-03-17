@@ -193,6 +193,7 @@ const resolveConflicts = (current: Modals, incoming: Partial<Modals>): Modals =>
 
     for (const [otherKey, otherZones] of Object.entries(MODAL_ZONES)) {
       if (otherKey === key) continue;
+      // bridge is only closed by the user via the exit button.
       if (otherKey === 'bridge' && key !== 'bridge') continue;
       if (otherZones!.some((z) => zones.includes(z))) {
         merged[otherKey as keyof Modals] = false;
@@ -282,6 +283,7 @@ export const useVisibility = create<State & Actions>((set) => {
     toggleModals: (isOn: boolean) =>
       set((state: State) => ({
         ...state,
+        // Bridge is only closed by the user via the exit button.
         modals: { ...toggleModals(isOn), bridge: state.modals.bridge },
       })),
   };

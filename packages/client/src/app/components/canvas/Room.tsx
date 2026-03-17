@@ -28,10 +28,17 @@ export const Room = ({ index }: { index: number }) => {
   const bgmVolume = settings.volume.bgm;
   const useArrivalMusic = !authenticated || !accountExists;
 
-  // Set the new room when the index changes. If the new room has new music,
-  // stop the old bgm and play the new one. Global howler audio is controlled
-  // in the Volume Settings modal. This recreates any new music from scratch,
-  // but ideally we should keep all played tracks in a state map for reuse.
+  // Room-change side effects: update state, reset node, close modals.
+  useEffect(() => {
+    setRoom(rooms[index]);
+    setNode(index);
+    closeModals();
+  }, [index]);
+
+  // Music management: swap BGM when room or auth state changes.
+  // Global howler audio is controlled in the Volume Settings modal.
+  // This recreates any new music from scratch, but ideally we should
+  // keep all played tracks in a state map for reuse.
   useEffect(() => {
     const newRoom = rooms[index];
     let music = newRoom.music;
@@ -40,22 +47,18 @@ export const Room = ({ index }: { index: number }) => {
       music = defaultBgm;
     }
 
-    // if prev music is the same, or starting new room with default music
-    if (music.path !== room.music?.path || !newRoom.music) {
-      if (!RoomsBgm.has(music.path)) {
-        RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
-      }
-      if (bgm) bgm.stop();
+    // Skip if the same track is already playing
+    if (bgm && RoomsBgm.get(music.path) === bgm) return;
 
-      const newBgm = RoomsBgm.get(music.path);
-      newBgm?.play();
-      newBgm?.fade(0, bgmVolume, 3000);
-      setBgm(newBgm);
+    if (!RoomsBgm.has(music.path)) {
+      RoomsBgm.set(music.path, new Howl({ src: [music.path], loop: true, volume: bgmVolume }));
     }
+    if (bgm) bgm.stop();
 
-    setRoom(newRoom);
-    setNode(index);
-    closeModals();
+    const newBgm = RoomsBgm.get(music.path);
+    newBgm?.play();
+    newBgm?.fade(0, bgmVolume, 3000);
+    setBgm(newBgm);
   }, [index, useArrivalMusic]);
 
   /* TODO: when the time comes to have multiple tracks per room,

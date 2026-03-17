@@ -26,4 +26,5 @@ export async function waitForWalletChain(
     if (currentChainId === targetChainId) return;
     await new Promise((resolve) => window.setTimeout(resolve, WALLET_CHAIN_SETTLE_INTERVAL_MS));
   }
+  throw new Error(`Wallet did not switch to chain ${targetChainId} after ${WALLET_CHAIN_SETTLE_ATTEMPTS} attempts.`);
 }

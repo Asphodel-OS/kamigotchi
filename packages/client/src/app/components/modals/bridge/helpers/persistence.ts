@@ -19,7 +19,18 @@ export const saveBridgePolling = (data: PersistedBridgePolling) =>
 export const loadBridgePolling = (): PersistedBridgePolling | null => {
   try {
     const raw = localStorage.getItem(BRIDGE_POLLING_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (
+      typeof parsed?.sourceTxHash !== 'string' ||
+      typeof parsed?.selectedAddress !== 'string' ||
+      typeof parsed?.sourceChainId !== 'string' ||
+      typeof parsed?.timestamp !== 'number' ||
+      typeof parsed?.completed !== 'boolean'
+    ) {
+      return null;
+    }
+    return parsed as PersistedBridgePolling;
   } catch {
     return null;
   }
