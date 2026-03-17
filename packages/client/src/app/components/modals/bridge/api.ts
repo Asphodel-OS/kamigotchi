@@ -1,12 +1,19 @@
-////////////////
-// OVERVIEW
+import { Contract, JsonRpcProvider, getAddress, id as keccak256 } from 'ethers';
+import { DefaultChain } from 'constants/chains';
+import { Tokens } from 'constants/tokens';
+import { toBigInt } from 'utils/numbers';
 
-export const ROUTER_API_BASE_URL = 'https://router-api.initia.xyz/v2/fungible';
-export const BRIDGE_STATUS_URL =
+////////////////
+// CONFIG
+
+const ROUTER_API_BASE_URL = 'https://router-api.initia.xyz/v2/fungible';
+const BRIDGE_STATUS_URL =
   'https://opinit-api-yominet-1.anvil.asia-southeast.initia.xyz/status';
 export const BRIDGE_OPEN_REQUEST_EVENT = 'kamigotchi:bridge-open-request';
-export const YOMINET_CHAIN_ID = 'yominet-1';
-export const YOMINET_ETH_DENOM = 'evm/E1Ff7038eAAAF027031688E1535a055B2Bac2546';
+const YOMINET_CHAIN_ID = 'yominet-1';
+const YOMINET_ETH_DENOM = `evm/${Tokens.ETH.address.slice(2)}`;
+const YOMINET_RPC_URL = DefaultChain.rpcUrls.default.http[0] ?? '';
+const YOMINET_ETH_TOKEN_ADDRESS = Tokens.ETH.address;
 const BRIDGE_STATUS_KEYS = ['host', 'child', 'batch_submitter', 'da'] as const;
 
 ////////////////
@@ -34,24 +41,24 @@ export type BridgeRouteRequest = {
   allow_unsafe: boolean;
 };
 
-export type BridgeRouteResponse = {
+type BridgeRouteResponse = {
   operations: BridgeOperation[];
   amount_out?: string;
   required_chain_addresses?: string[];
 } & Record<string, unknown>;
 
-export type BridgeMsgsResponse = {
+type BridgeMsgsResponse = {
   txs?: Array<{
     operations_indices?: number[];
     evm_tx?: BridgeEvmTx;
   }>;
 };
 
-export type BridgeMsgsRequest = {
+type BridgeMsgsRequest = {
   operations: BridgeOperation[];
 } & Record<string, unknown>;
 
-export type BridgeServiceStatus = {
+type BridgeServiceStatus = {
   healthy: boolean;
   detail?: string;
 };
@@ -173,4 +180,76 @@ export async function getBridgeServiceStatus(): Promise<BridgeServiceStatus> {
   } catch (error) {
     return { healthy: false, detail: error instanceof Error ? error.message : 'Unknown error' };
   }
+}
+
+////////////////
+// RPC QUERIES
+
+const providerCache = new Map<string, JsonRpcProvider>();
+const yominetEthAbi = ['function balanceOf(address account) view returns (uint256)'];
+
+function getRpcProvider(rpcUrl: string): JsonRpcProvider {
+  // putting this here because
+  // we are checking balance every 5 seconds
+  const cached = providerCache.get(rpcUrl);
+  if (cached) return cached;
+
+  const provider = new JsonRpcProvider(rpcUrl);
+  providerCache.set(rpcUrl, provider);
+  return provider;
+}
+
+export type SourceTransactionStatus = 'pending' | 'success' | 'reverted';
+
+export async function getNativeBalance(rpcUrl: string, address: string): Promise<bigint> {
+  const provider = getRpcProvider(rpcUrl);
+  return provider.getBalance(getAddress(address));
+}
+
+export async function getYominetEthBalance(address: string): Promise<bigint> {
+  const provider = getRpcProvider(YOMINET_RPC_URL);
+  const contract = new Contract(YOMINET_ETH_TOKEN_ADDRESS, yominetEthAbi, provider);
+  const balance = await contract.balanceOf(getAddress(address));
+  return toBigInt(balance);
+}
+
+export async function getSourceTransactionStatus(
+  rpcUrl: string,
+  txHash: string
+): Promise<SourceTransactionStatus> {
+  const provider = getRpcProvider(rpcUrl);
+  const receipt = await provider.getTransactionReceipt(txHash);
+
+  if (!receipt) return 'pending';
+  const receiptStatus = Number(receipt.status);
+  if (receiptStatus === 1) return 'success';
+  if (receiptStatus === 0) return 'reverted';
+  return 'pending';
+}
+
+// adding this until we know how to check
+// tx state from INITIA API
+const TRANSFER_EVENT_TOPIC = keccak256('Transfer(address,address,uint256)');
+const ZERO_ADDRESS_TOPIC = '0x' + '0'.repeat(64);
+
+export async function getYominetBlockNumber(): Promise<number> {
+  const provider = getRpcProvider(YOMINET_RPC_URL);
+  return provider.getBlockNumber();
+}
+
+export async function hasReceivedYominetEthMintSince(
+  address: string,
+  fromBlock: number,
+  expectedAmount: bigint
+): Promise<string | null> {
+  const provider = getRpcProvider(YOMINET_RPC_URL);
+  const paddedAddress = '0x' + getAddress(address).slice(2).toLowerCase().padStart(64, '0');
+  const logs = await provider.getLogs({
+    address: YOMINET_ETH_TOKEN_ADDRESS,
+    topics: [TRANSFER_EVENT_TOPIC, ZERO_ADDRESS_TOPIC, paddedAddress],
+    fromBlock,
+    toBlock: 'latest',
+  });
+  const match = logs.find((log) => BigInt(log.data) === expectedAmount);
+  return match?.transactionHash ?? null;
 }

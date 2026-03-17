@@ -8,6 +8,7 @@ import { UIComponent } from 'app/root/types';
 import { useNetwork, useVisibility } from 'app/stores';
 import { getEvmWalletProvider, getInjectedWallet } from 'app/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
+import { DEAD_ADDRESS } from 'constants/addresses';
 import { DefaultChain } from 'constants/chains';
 import {
   BRIDGE_OPEN_REQUEST_EVENT,
@@ -16,15 +17,19 @@ import {
   fetchBridgeMsgs,
   fetchBridgeRoute,
   getBridgeServiceStatus,
+  getNativeBalance,
+  getSourceTransactionStatus,
+  getYominetBlockNumber,
+  getYominetEthBalance,
+  hasReceivedYominetEthMintSince,
   isBridgeOpenDetail,
-} from 'network/bridge';
+} from './api';
 import { BridgeForm } from './BridgeForm';
 import { BridgeUpdates } from './BridgeUpdates';
 import {
   BridgePhase,
   BridgeUpdateEntry,
   BridgeUpdateTone,
-  DEAD_ADDRESS,
   DEGRADED_POLL_INTERVAL_MS,
   DISABLED_SOURCE_CHAIN_IDS,
   EVMChainOption,
@@ -33,17 +38,10 @@ import {
   POLL_MAX_ATTEMPTS,
   SOURCE_CHAIN_OPTIONS,
   STATUS_RECHECK_EVERY_ATTEMPTS,
-  YOMINET_EXPLORER_URL,
-  YOMINET_RPC_URL,
 } from './constants';
 import { clearBridgePolling, loadBridgePolling, saveBridgePolling } from './persistence';
 import {
   createBridgeAbortError,
-  getNativeBalance,
-  getSourceTransactionStatus,
-  getYominetBlockNumber,
-  getYominetEthBalance,
-  hasReceivedYominetEthMintSince,
   isBridgeAbortError,
   toHexQuantity,
   waitForWalletChain,
@@ -202,7 +200,7 @@ export const BridgeModal: UIComponent = {
         return undefined;
       }
 
-      if (!YOMINET_RPC_URL) {
+      if (!DefaultChain.rpcUrls.default.http[0]) {
         appendUpdate('error', 'Missing Yominet RPC url configuration.');
         return undefined;
       }
@@ -391,7 +389,7 @@ export const BridgeModal: UIComponent = {
         setYomiBalance(nextBalance);
         if (receivedOnYominet) {
           appendUpdate('success', 'Bridge Complete Congratulations');
-          appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${YOMINET_EXPLORER_URL}/tx/${receivedOnYominet}`);
+          appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${DefaultChain.blockExplorers?.default.url}/tx/${receivedOnYominet}`);
           return;
         }
       }

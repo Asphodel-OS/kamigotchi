@@ -70,13 +70,6 @@ export const SOURCE_CHAIN_ICON_BY_CHAIN_ID: Record<string, string> = {
 };
 
 ////////////////
-// RPC
-
-export const YOMINET_ETH_TOKEN_ADDRESS = '0xE1Ff7038eAAAF027031688E1535a055B2Bac2546';
-export const YOMINET_RPC_URL = import.meta.env.VITE_RPC_TRANSPORT_URL ?? '';
-export const YOMINET_EXPLORER_URL = 'https://scan.initia.xyz/yominet-1';
-
-////////////////
 // POLLING
 
 export const POLL_INTERVAL_MS = 15_000;
@@ -84,7 +77,3 @@ export const DEGRADED_POLL_INTERVAL_MS = 45_000;
 export const POLL_MAX_ATTEMPTS = 40;
 export const STATUS_RECHECK_EVERY_ATTEMPTS = 4;
 
-////////////////
-// FALLBACKS
-
-export const DEAD_ADDRESS = '0x000000000000000000000000000000000000dEaD';
