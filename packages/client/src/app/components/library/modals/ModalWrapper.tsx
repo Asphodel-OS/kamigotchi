@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
 import { Modals, useVisibility } from 'app/stores';
@@ -20,6 +20,7 @@ export const ModalWrapper = ({
   scrollBarColor,
   backgroundColor,
   shuffle = false,
+  wrapperZIndex,
   truncate,
   noScroll,
 }: {
@@ -30,7 +31,7 @@ export const ModalWrapper = ({
   id: keyof Modals;
   noInternalBorder?: boolean;
   noPadding?: boolean;
-  onClose?: () => void;
+  onClose?: () => boolean | void;
   overlay?: boolean;
   backgroundColor?: string;
   positionOverride?: {
@@ -42,6 +43,7 @@ export const ModalWrapper = ({
   };
   scrollBarColor?: string;
   shuffle?: boolean;
+  wrapperZIndex?: number;
   truncate?: boolean;
   noScroll?: boolean;
 }) => {
@@ -50,14 +52,10 @@ export const ModalWrapper = ({
   const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
 
-  // execute cleaning func when modal closes
   useEffect(() => {
     if (isVisible) {
       setShouldDisplay(true);
     } else {
-      if (onClose) {
-        onClose();
-      }
       setShouldDisplay(false);
     }
   }, [isVisible]);
@@ -67,12 +65,14 @@ export const ModalWrapper = ({
     if (!canExit || !isVisible || id !== 'kami') return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        const shouldClose = onClose?.();
+        if (shouldClose === false) return;
         setModals({ [id]: false });
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [canExit, isVisible, id]);
+  }, [canExit, isVisible, id, onClose, setModals]);
 
   useEffect(() => {
     if (positionOverride) {
@@ -92,7 +92,14 @@ export const ModalWrapper = ({
   }, [positionOverride]);
 
   return (
-    <Wrapper id={id} isOpen={shouldDisplay} overlay={!!overlay} style={gridStyle} shuffle={shuffle}>
+    <Wrapper
+      id={id}
+      isOpen={shouldDisplay}
+      overlay={!!overlay}
+      style={gridStyle}
+      shuffle={shuffle}
+      zIndex={wrapperZIndex}
+    >
       <Content
         backgroundColor={backgroundColor}
         isOpen={isVisible}
@@ -102,7 +109,7 @@ export const ModalWrapper = ({
         {header && <Header noBorder={noInternalBorder}>{header}</Header>}
         {canExit && (
           <ButtonRow>
-            <ExitButton divName={id} />
+            <ExitButton divName={id} onClose={onClose} />
           </ButtonRow>
         )}
         <Children
@@ -137,10 +144,11 @@ const Wrapper = styled.div<{
   isOpen: boolean;
   overlay: boolean;
   shuffle: boolean;
+  zIndex?: number;
 }>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   position: ${({ overlay }) => (overlay ? 'relative' : 'static')};
-  z-index: ${({ overlay }) => (overlay ? 3 : 0)};
+  z-index: ${({ overlay, zIndex }) => (overlay ? (zIndex ?? 3) : 0)};
   ${({ isOpen, shuffle }) => css`
     animation: ${isOpen
         ? css`
@@ -185,7 +193,9 @@ const Content = styled.div<{
     min-width: 48vw;
     min-height: 42vh;
     scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
 `;
@@ -229,7 +239,9 @@ const Children = styled.div<{
   flex-flow: column nowrap;
   padding: ${({ noPadding }) => (noPadding ? `0` : `.6vw`)};
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const fadeIn = keyframes`
