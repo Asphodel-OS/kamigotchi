@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { IconButton, IconListButton, Text } from 'app/components/library';
+import { IconButton, IconListButton, Text, TextTooltip } from 'app/components/library';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { formatEthPriceLabel } from 'utils/numbers';
 import {
@@ -8,11 +8,14 @@ import {
   EVMChainOption,
   SOURCE_CHAIN_ICON_BY_CHAIN_ID,
   SOURCE_CHAIN_OPTIONS,
-} from './constants';
+} from './helpers/constants';
+
+const MIN_BRIDGE_AMOUNT = 1_000_000_000_000n; // 0.000001 ETH
 
 type BridgeFormProps = {
   sourceChain: EVMChainOption;
   amount: string;
+  parsedAmount: bigint | null;
   sourceBalance: bigint;
   yomiBalance: bigint;
   isBridging: boolean;
@@ -23,9 +26,23 @@ type BridgeFormProps = {
   onSubmit: () => void;
 };
 
+const getDisabledReason = (
+  isBridging: boolean,
+  accountReady: boolean,
+  hasSufficientSourceBalance: boolean,
+  parsedAmount: bigint | null
+): string | undefined => {
+  if (isBridging) return 'Bridge transaction in progress.';
+  if (!accountReady) return 'Connect your wallet first.';
+  if (!parsedAmount || parsedAmount < MIN_BRIDGE_AMOUNT) return 'Minimum amount is 0.000001 ETH.';
+  if (!hasSufficientSourceBalance) return 'Insufficient source chain balance.';
+  return undefined;
+};
+
 export const BridgeForm = ({
   sourceChain,
   amount,
+  parsedAmount,
   sourceBalance,
   yomiBalance,
   isBridging,
@@ -34,55 +51,72 @@ export const BridgeForm = ({
   onAmountChange,
   onSourceChainChange,
   onSubmit,
-}: BridgeFormProps) => (
-  <FormColumn>
-    <Label>Source Chain</Label>
-    <IconListButton
-      img={SOURCE_CHAIN_ICON_BY_CHAIN_ID[sourceChain.chainId]}
-      text={sourceChain.label}
-      fullWidth
-      scale={2.2}
-      disabled={isBridging}
-      options={SOURCE_CHAIN_OPTIONS.map((option) => ({
-        text: option.label,
-        image: SOURCE_CHAIN_ICON_BY_CHAIN_ID[option.chainId],
-        disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId),
-        onClick: () => onSourceChainChange(option),
-      }))}
-    />
-    <Label>Destination Chain</Label>
-    <DestinationText>Yominet</DestinationText>
-    <Label>Amount (ETH)</Label>
-    <Input
-      type='number'
-      min='0'
-      step='0.0001'
-      value={amount}
-      onChange={(event) => onAmountChange(event.target.value)}
-    />
-    <Balances>
-      <BalanceItem>
-        <BalanceLabel>Source balance:</BalanceLabel>
-        <Text size={0.8}>
-          <BalanceNumber>{formatEthPriceLabel(sourceBalance, 5)}</BalanceNumber> ETH
-        </Text>
-      </BalanceItem>
-      <BalanceItem>
-        <BalanceLabel>Yominet bridged ETH:</BalanceLabel>
-        <Text size={0.8}>
-          <BalanceNumber>{formatEthPriceLabel(yomiBalance, 5)}</BalanceNumber> ETH
-        </Text>
-      </BalanceItem>
-    </Balances>
-    <IconButton
-      img={MenuIcons.kami}
-      text={isBridging ? 'Bridging...' : 'Bridge to Yominet'}
-      onClick={onSubmit}
-      disabled={isBridging || !accountReady || !hasSufficientSourceBalance}
-      fullWidth
-    />
-  </FormColumn>
-);
+}: BridgeFormProps) => {
+  const isDisabled =
+    isBridging ||
+    !accountReady ||
+    !hasSufficientSourceBalance ||
+    !parsedAmount ||
+    parsedAmount < MIN_BRIDGE_AMOUNT;
+  const disabledReason = getDisabledReason(
+    isBridging,
+    accountReady,
+    hasSufficientSourceBalance,
+    parsedAmount
+  );
+
+  return (
+    <FormColumn>
+      <Label>Source Chain</Label>
+      <IconListButton
+        img={SOURCE_CHAIN_ICON_BY_CHAIN_ID[sourceChain.chainId]}
+        text={sourceChain.label}
+        fullWidth
+        scale={2.2}
+        disabled={isBridging}
+        options={SOURCE_CHAIN_OPTIONS.map((option) => ({
+          text: option.label,
+          image: SOURCE_CHAIN_ICON_BY_CHAIN_ID[option.chainId],
+          disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId),
+          onClick: () => onSourceChainChange(option),
+        }))}
+      />
+      <Label>Destination Chain</Label>
+      <DestinationText>Yominet</DestinationText>
+      <Label>Amount (ETH)</Label>
+      <Input
+        type='number'
+        min='0'
+        step='0.0001'
+        value={amount}
+        onChange={(event) => onAmountChange(event.target.value)}
+      />
+      <Balances>
+        <BalanceItem>
+          <BalanceLabel>Source balance:</BalanceLabel>
+          <Text size={0.8}>
+            <BalanceNumber>{formatEthPriceLabel(sourceBalance, 5)}</BalanceNumber> ETH
+          </Text>
+        </BalanceItem>
+        <BalanceItem>
+          <BalanceLabel>Yominet bridged ETH:</BalanceLabel>
+          <Text size={0.8}>
+            <BalanceNumber>{formatEthPriceLabel(yomiBalance, 5)}</BalanceNumber> ETH
+          </Text>
+        </BalanceItem>
+      </Balances>
+      <TextTooltip text={disabledReason ? [disabledReason] : []} fullWidth cursor='help'>
+        <IconButton
+          img={MenuIcons.kami}
+          text={isBridging ? 'Bridging...' : 'Bridge to Yominet'}
+          onClick={onSubmit}
+          disabled={isDisabled}
+          fullWidth
+        />
+      </TextTooltip>
+    </FormColumn>
+  );
+};
 
 const FormColumn = styled.div`
   display: flex;

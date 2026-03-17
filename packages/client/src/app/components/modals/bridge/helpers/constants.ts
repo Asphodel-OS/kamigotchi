@@ -13,7 +13,7 @@ export type EVMChainOption = {
   explorerUrl: string;
 };
 
-export type BridgeUpdateTone = 'status' | 'success' | 'error' | 'meta' | 'approval';
+export type BridgeUpdateTone = 'status' | 'success' | 'error' | 'meta' | 'approval' | 'celebrate';
 
 export type BridgeUpdateEntry = {
   id: number;

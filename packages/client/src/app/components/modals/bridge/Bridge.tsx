@@ -23,7 +23,7 @@ import {
   getYominetEthBalance,
   hasReceivedYominetEthMintSince,
   isBridgeOpenDetail,
-} from './api';
+} from './helpers/api';
 import { BridgeForm } from './BridgeForm';
 import { BridgeUpdates } from './BridgeUpdates';
 import {
@@ -38,14 +38,14 @@ import {
   POLL_MAX_ATTEMPTS,
   SOURCE_CHAIN_OPTIONS,
   STATUS_RECHECK_EVERY_ATTEMPTS,
-} from './constants';
-import { clearBridgePolling, loadBridgePolling, saveBridgePolling } from './persistence';
+} from './helpers/constants';
+import { clearBridgePolling, loadBridgePolling, saveBridgePolling } from './helpers/persistence';
 import {
   createBridgeAbortError,
   isBridgeAbortError,
   toHexQuantity,
   waitForWalletChain,
-} from './utils';
+} from './helpers/utils';
 
 export const BridgeModal: UIComponent = {
   id: 'BridgeModal',
@@ -195,8 +195,9 @@ export const BridgeModal: UIComponent = {
         return undefined;
       }
 
-      if (!parsedAmount || parsedAmount <= 0n) {
-        appendUpdate('error', 'Enter a valid bridge amount.');
+      const MIN_BRIDGE_AMOUNT = 1_000_000_000_000n; // 0.000001 ETH
+      if (!parsedAmount || parsedAmount < MIN_BRIDGE_AMOUNT) {
+        appendUpdate('error', 'Minimum bridge amount is 0.000001 ETH.');
         return undefined;
       }
 
@@ -388,8 +389,8 @@ export const BridgeModal: UIComponent = {
         const nextBalance = await getYominetEthBalance(selectedAddress);
         setYomiBalance(nextBalance);
         if (receivedOnYominet) {
-          appendUpdate('success', 'Bridge Complete Congratulations');
           appendUpdate('success', `**Yominet** Tx: ${receivedOnYominet}`, `${DefaultChain.blockExplorers?.default.url}/tx/${receivedOnYominet}`);
+          appendUpdate('celebrate', 'Bridge Complete Congratulations');
           return;
         }
       }
@@ -590,6 +591,7 @@ export const BridgeModal: UIComponent = {
             <BridgeForm
               sourceChain={sourceChain}
               amount={amount}
+              parsedAmount={parsedAmount}
               sourceBalance={sourceBalance}
               yomiBalance={yomiBalance}
               isBridging={isBridging}

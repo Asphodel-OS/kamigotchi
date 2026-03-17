@@ -3,7 +3,7 @@ import {
   BRIDGE_OPEN_REQUEST_EVENT,
   BridgeOpenerOptions,
   buildBridgeRouteRequest,
-} from 'app/components/modals/bridge/api';
+} from 'app/components/modals/bridge/helpers/api';
 import { playClick } from 'utils/sounds';
 
 export const triggerBridgeModal = (options: BridgeOpenerOptions = {}) => {

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
-import { BridgeUpdateEntry, BridgeUpdateTone } from './constants';
+import { BridgeUpdateEntry, BridgeUpdateTone } from './helpers/constants';
 
 const renderBoldText = (text: string) => {
   const parts = text.split(/(\*\*.*?\*\*)/g);
@@ -69,6 +69,7 @@ const UPDATE_COLORS: Record<BridgeUpdateTone, { dot: string; text: string }> = {
   error: { dot: '#b42318', text: '#9b1c1c' },
   meta: { dot: '#6b6b6b', text: '#4b4b4b' },
   approval: { dot: '#1ea7ff', text: '#0b63c9' },
+  celebrate: { dot: '#cc7722', text: '#a65d1b' },
 };
 
 const MessagesColumn = styled.div`
