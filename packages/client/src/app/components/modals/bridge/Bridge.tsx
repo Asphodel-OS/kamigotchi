@@ -71,12 +71,21 @@ export const BridgeModal: UIComponent = {
     const isRefreshingBalancesRef = useRef(false);
 
     const [phase, setPhase] = useState<BridgePhase>('idle');
-    const [updates, setUpdates] = useState<BridgeUpdateEntry[]>([]);
+    const [updates, _setUpdates] = useState<BridgeUpdateEntry[]>([]);
+    const updatesRef = useRef<BridgeUpdateEntry[]>([]);
     const [shouldResetOnNextOpen, setShouldResetOnNextOpen] = useState(false);
     const phaseRef = useRef<BridgePhase>('idle');
     const previousWalletChainIdRef = useRef<string | null>(null);
     const closedDuringWalletPromptRef = useRef(false);
     const bridgeAbortRef = useRef<AbortController>(new AbortController());
+
+    const setUpdates = (value: BridgeUpdateEntry[] | ((prev: BridgeUpdateEntry[]) => BridgeUpdateEntry[])) => {
+      _setUpdates((prev) => {
+        const next = typeof value === 'function' ? value(prev) : value;
+        updatesRef.current = next;
+        return next;
+      });
+    };
 
     const accountReady = Boolean(selectedAddress && selectedAddress !== DEAD_ADDRESS);
     const parsedAmount = (() => {
@@ -198,11 +207,6 @@ export const BridgeModal: UIComponent = {
 
       if (!parsedAmount || parsedAmount < MIN_BRIDGE_AMOUNT) {
         appendUpdate('error', 'Minimum bridge amount is 0.000001 ETH.');
-        return undefined;
-      }
-
-      if (!DefaultChain.rpcUrls.default.http[0]) {
-        appendUpdate('error', 'Missing Yominet RPC url configuration.');
         return undefined;
       }
 
@@ -490,11 +494,8 @@ export const BridgeModal: UIComponent = {
         persisted.sourceTxHash,
         bridgeAbortRef.current.signal
       ).finally(() => {
-        setUpdates((current) => {
-          const p = loadBridgePolling();
-          if (p) saveBridgePolling({ ...p, updates: current, completed: true });
-          return current;
-        });
+        const p = loadBridgePolling();
+        if (p) saveBridgePolling({ ...p, updates: updatesRef.current, completed: true });
         setBridgePhase('idle');
       });
     }, [selectedAddress]);
@@ -533,18 +534,15 @@ export const BridgeModal: UIComponent = {
         if (signal.aborted) throw createBridgeAbortError();
         const sourceTxHash = await submitBridgeTransaction(wallet, preparedBridge.evmTx);
         if (signal.aborted) throw createBridgeAbortError();
-        setUpdates((current) => {
-          saveBridgePolling({
-            sourceTxHash,
-            expectedAmountOut: preparedBridge.expectedAmountOut,
-            sourceChainId: sourceChain.chainId,
-            yominetStartBlock,
-            selectedAddress,
-            updates: current,
-            timestamp: Date.now(),
-            completed: false,
-          });
-          return current;
+        saveBridgePolling({
+          sourceTxHash,
+          expectedAmountOut: preparedBridge.expectedAmountOut,
+          sourceChainId: sourceChain.chainId,
+          yominetStartBlock,
+          selectedAddress,
+          updates: updatesRef.current,
+          timestamp: Date.now(),
+          completed: false,
         });
         await waitForBridgeCompletion(
           sourceChain,
@@ -563,11 +561,8 @@ export const BridgeModal: UIComponent = {
         }
       } finally {
         if (signal.aborted) return;
-        setUpdates((current) => {
-          const persisted = loadBridgePolling();
-          if (persisted) saveBridgePolling({ ...persisted, updates: current, completed: true });
-          return current;
-        });
+        const persisted = loadBridgePolling();
+        if (persisted) saveBridgePolling({ ...persisted, updates: updatesRef.current, completed: true });
         if (phaseRef.current !== 'aborted') {
           setBridgePhase('idle');
         }
