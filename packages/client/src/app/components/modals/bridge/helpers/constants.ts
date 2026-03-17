@@ -70,6 +70,11 @@ export const SOURCE_CHAIN_ICON_BY_CHAIN_ID: Record<string, string> = {
 };
 
 ////////////////
+// VALIDATION
+
+export const MIN_BRIDGE_AMOUNT = 1_000_000_000_000n; // 0.000001 ETH
+
+////////////////
 // POLLING
 
 export const POLL_INTERVAL_MS = 15_000;

@@ -69,7 +69,7 @@ const UPDATE_COLORS: Record<BridgeUpdateTone, { dot: string; text: string }> = {
   error: { dot: '#b42318', text: '#9b1c1c' },
   meta: { dot: '#6b6b6b', text: '#4b4b4b' },
   approval: { dot: '#1ea7ff', text: '#0b63c9' },
-  celebrate: { dot: '#cc7722', text: '#a65d1b' },
+  celebrate: { dot: '#f5c518', text: '#d4a800' },
 };
 
 const MessagesColumn = styled.div`
@@ -155,6 +155,7 @@ const UpdateItem = styled.div<{
   min-height: 1.4vw;
   padding-left: 0.87vw;
   color: ${({ tone }) => UPDATE_COLORS[tone].text};
+  font-weight: ${({ tone }) => (tone === 'celebrate' ? 700 : 'normal')};
   font-size: 0.8vw;
   line-height: 1.2;
   word-break: break-word;

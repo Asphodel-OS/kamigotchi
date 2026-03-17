@@ -6,11 +6,10 @@ import { formatEthPriceLabel } from 'utils/numbers';
 import {
   DISABLED_SOURCE_CHAIN_IDS,
   EVMChainOption,
+  MIN_BRIDGE_AMOUNT,
   SOURCE_CHAIN_ICON_BY_CHAIN_ID,
   SOURCE_CHAIN_OPTIONS,
 } from './helpers/constants';
-
-const MIN_BRIDGE_AMOUNT = 1_000_000_000_000n; // 0.000001 ETH
 
 type BridgeFormProps = {
   sourceChain: EVMChainOption;

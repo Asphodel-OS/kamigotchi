@@ -32,6 +32,7 @@ import {
   BridgeUpdateTone,
   DEGRADED_POLL_INTERVAL_MS,
   DISABLED_SOURCE_CHAIN_IDS,
+  MIN_BRIDGE_AMOUNT,
   EVMChainOption,
   EVMWalletProvider,
   POLL_INTERVAL_MS,
@@ -195,7 +196,6 @@ export const BridgeModal: UIComponent = {
         return undefined;
       }
 
-      const MIN_BRIDGE_AMOUNT = 1_000_000_000_000n; // 0.000001 ETH
       if (!parsedAmount || parsedAmount < MIN_BRIDGE_AMOUNT) {
         appendUpdate('error', 'Minimum bridge amount is 0.000001 ETH.');
         return undefined;
