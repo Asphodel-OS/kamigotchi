@@ -17,11 +17,28 @@ const RETRY_DELAYS = [1000, 2000, 3000, 5000, 10000];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const maybeThrow = () => {
-  if (Math.random() < 0.6) {
-    log.warn('[snapshot] Throwing on purpose');
-    throw new Error('[snapshot] [TEST] Random chunk failure (1 in 5)');
-  }
+const createMonotonicProgress = (
+  setPercentage: (p: number) => void,
+  setMessage?: (msg: string) => void
+) => {
+  let highWaterMark = 0;
+  let aborted = false;
+
+  return {
+    setPercentage: (percentage: number) => {
+      if (aborted || percentage <= highWaterMark) return;
+      highWaterMark = percentage;
+      setPercentage(percentage);
+    },
+    setMessage: setMessage
+      ? (msg: string) => {
+          if (!aborted) setMessage(msg);
+        }
+      : undefined,
+    abort: () => {
+      aborted = true;
+    },
+  };
 };
 
 async function withTimeout<T>(fn: () => Promise<T>, ms: number): Promise<T> {
@@ -137,17 +154,19 @@ export const fetchSnapshot = async (
     lastStateRemovalsBlock: stateCache.lastStateRemovalsBlock,
   });
 
+  const progress = createMonotonicProgress(setPercentage, setMessage);
+
   const options: FetchOptions = {
     stateCache,
     kamigazeClient,
     decode,
     numChunks,
-    setPercentage,
-    setMessage,
+    setPercentage: progress.setPercentage,
+    setMessage: progress.setMessage,
   };
 
   try {
-    setMessage?.('Querying for State Info');
+    progress.setMessage?.('Querying for State Info');
     log.debug('[snapshot] Fetching state block');
     let BlockResponse = await fetchStateBlock(kamigazeClient);
     log.debug('[snapshot] State block received', {
@@ -165,23 +184,37 @@ export const fetchSnapshot = async (
     options.stateCache.lastStateValuesBlock = options.stateCache.lastKamigazeBlock;
     options.stateCache.lastStateRemovalsBlock = options.stateCache.lastKamigazeBlock;
 
-    setMessage?.('Querying for Components');
-    log.debug('[snapshot] Starting fetchComponents');
-    await fetchComponents(options);
+    progress.setMessage?.('Querying for Components & State');
 
     if (!initialLoad) {
-      setMessage?.('Querying for State Removals');
-      log.debug('[snapshot] Starting fetchStateRemovals (incremental load)');
-      await fetchStateRemovals(options);
+      log.debug('[snapshot] Starting concurrent fetch (incremental)');
+      try {
+        await Promise.all([
+          (async () => {
+            log.debug('[snapshot] Starting fetchComponents');
+            await fetchComponents(options);
+            log.debug('[snapshot] Starting fetchStateValues');
+            await fetchStateValues(options);
+          })(),
+          (async () => {
+            log.debug('[snapshot] Starting fetchStateRemovals');
+            await fetchStateRemovals(options);
+          })(),
+        ]);
+      } catch (error) {
+        progress.abort();
+        throw error;
+      }
     } else {
+      log.debug('[snapshot] Starting sequential fetch (initial load)');
+      log.debug('[snapshot] Starting fetchComponents');
+      await fetchComponents(options);
       log.debug('[snapshot] Skipping fetchStateRemovals (initial load)');
+      log.debug('[snapshot] Starting fetchStateValues');
+      await fetchStateValues(options);
     }
 
-    setMessage?.('Querying for State');
-    log.debug('[snapshot] Starting fetchStateValues');
-    await fetchStateValues(options);
-
-    setMessage?.('Querying for Entities');
+    progress.setMessage?.('Querying for Entities');
     log.debug('[snapshot] Starting fetchEntities');
     await fetchEntities(options);
 
