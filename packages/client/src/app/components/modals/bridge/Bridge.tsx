@@ -80,11 +80,9 @@ export const BridgeModal: UIComponent = {
     const bridgeAbortRef = useRef<AbortController>(new AbortController());
 
     const setUpdates = (value: BridgeUpdateEntry[] | ((prev: BridgeUpdateEntry[]) => BridgeUpdateEntry[])) => {
-      _setUpdates((prev) => {
-        const next = typeof value === 'function' ? value(prev) : value;
-        updatesRef.current = next;
-        return next;
-      });
+      const next = typeof value === 'function' ? value(updatesRef.current) : value;
+      updatesRef.current = next;
+      _setUpdates(next);
     };
 
     const accountReady = Boolean(selectedAddress && selectedAddress !== DEAD_ADDRESS);
