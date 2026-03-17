@@ -4,19 +4,20 @@ import {
   usePrivy,
   useWallets,
 } from '@privy-io/react-auth';
-import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 import { switchChain } from '@wagmi/core';
 import { ethers } from 'ethers';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Address } from 'viem';
-import { useAccount, useConnect } from 'wagmi';
+import { useConnect, useAccount as useWagmiAccount } from 'wagmi';
+import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility } from 'app/stores';
+import { useNetwork, useAccount as usePlayerAccount, useVisibility } from 'app/stores';
+import { getInjectedWallet } from 'app/utils';
 import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
@@ -34,7 +35,7 @@ export const WalletConnecter: UIComponent = {
   // positioning controlled by validator wrapper
   Render: () => {
     const { network } = useLayers();
-    const { address: wagmiAddress, chain, isConnected } = useAccount();
+    const { address: wagmiAddress, chain, isConnected } = useWagmiAccount();
     const { connectors, connect } = useConnect();
     const { ready, authenticated, login, logout } = usePrivy();
     const { wallets, ready: walletsReady } = useWallets();
@@ -44,6 +45,8 @@ export const WalletConnecter: UIComponent = {
     const { validations, setValidations } = useNetwork();
     const { toggleModals, toggleFixtures } = useVisibility();
     const { validators, setValidators } = useVisibility();
+    const bridgeFlowActive = useVisibility((s) => s.modals.bridge || s.bridgeProcessActive);
+    const accountExists = usePlayerAccount((s) => s.validations.accountExists);
 
     const [isUpdating, setIsUpdating] = useState(false);
     const [state, setState] = useState('');
@@ -73,6 +76,15 @@ export const WalletConnecter: UIComponent = {
 
     // adjust visibility of windows based on above determination
     useEffect(() => {
+      if (bridgeFlowActive) return;
+      if (
+        validators.accountRegistrar &&
+        !accountExists &&
+        validations.authenticated &&
+        validations.chainMatches
+      )
+        return;
+
       const isVisible = !validations.authenticated || !validations.chainMatches;
       if (isVisible) {
         toggleModals(false);
@@ -86,10 +98,17 @@ export const WalletConnecter: UIComponent = {
           gasHarasser: false,
         });
       }
-    }, [validations]);
+    }, [
+      validations,
+      bridgeFlowActive,
+      validators.accountRegistrar,
+      accountExists,
+    ]);
 
     // force logout the user when certain conditions are met:
     useEffect(() => {
+      // Bridge may temporarily alter connection state; avoid forced logout mid-bridge.
+      if (bridgeFlowActive) return;
       if (!authenticated) return; // wait for privy authentication
 
       // when the injected wallet is disconnected
@@ -109,7 +128,13 @@ export const WalletConnecter: UIComponent = {
           return;
         }
       }
-    }, [isConnected, authenticated, wallets, wagmiAddress]);
+    }, [
+      isConnected,
+      authenticated,
+      wallets,
+      wagmiAddress,
+      bridgeFlowActive,
+    ]);
 
     /////////////////
     // ACTIONS
@@ -177,11 +202,6 @@ export const WalletConnecter: UIComponent = {
 
     /////////////////
     // INTERPRETATION
-
-    // get the wallet labeled as 'injected' from the list of privy ConnectedWallets
-    const getInjectedWallet = (wallets: ConnectedWallet[]) => {
-      return wallets.find((w) => w.connectorType === 'injected');
-    };
 
     // get the wallet labeled as 'embedded' from the list of privy ConnectedWallets
     const getEmbeddedWallet = (wallets: ConnectedWallet[]) => {

@@ -5,14 +5,14 @@ import { formatUnits } from 'viem';
 import { useBalance, useWatchBlockNumber } from 'wagmi';
 
 import { IconButton, ModalWrapper, Overlay, Text } from 'app/components/library';
+import { triggerBridgeModal } from 'app/triggers';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { useAccount, useNetwork, useTokens } from 'app/stores';
-import { TokenIcons } from 'assets/images/tokens';
+import { MenuIcons } from 'assets/images/icons/menu';
 import { GasConstants, GasExponent } from 'constants/gas';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
-import { useBridgeOpener } from 'network/utils/hooks';
 import { parseTokenBalance } from 'utils/numbers';
 import { playFund } from 'utils/sounds';
 
@@ -28,8 +28,6 @@ export const FundOperator: UIComponent = {
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const ownerBalance = useTokens((s) => s.eth.balance);
-    const openBridge = useBridgeOpener();
-
     const [isFunding, setIsFunding] = useState(true);
     const [amount, setAmount] = useState(GasConstants.Full);
     const [statusText, setStatusText] = useState('');
@@ -198,7 +196,7 @@ export const FundOperator: UIComponent = {
         {isFunding && needsToBridge() ? (
           <BridgeGroup>
             <WarnText>You need to bridge some ETH first.</WarnText>
-            <IconButton img={TokenIcons.init} onClick={openBridge} text={'Bridge ETH'} />
+            <IconButton img={MenuIcons.kami} onClick={() => triggerBridgeModal()} text={'Bridge ETH'} />
           </BridgeGroup>
         ) : (
           <Column>

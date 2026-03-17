@@ -1,12 +1,12 @@
 import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { AccountCache, getAccount } from 'app/cache/account';
 import { ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { emptyAccountDetails, useAccount, useNetwork, useVisibility } from 'app/stores';
+import { emptyAccountDetails, useAccount, useNetwork, useTokens, useVisibility } from 'app/stores';
 import { GodID, SyncState } from 'engine/constants';
 import {
   getBaseAccount as _getBaseAccount,
@@ -14,7 +14,7 @@ import {
   queryAllAccounts,
 } from 'network/shapes/Account';
 import { waitForActionCompletion } from 'network/utils';
-import { IntroStep1, IntroStep2 } from './IntroSteps';
+import { GasConstants } from 'constants/gas';
 import { Registration } from './Registration';
 
 export const AccountRegistrar: UIComponent = {
@@ -76,14 +76,14 @@ export const AccountRegistrar: UIComponent = {
     const toggleModals = useVisibility((s) => s.toggleModals);
     const toggleFixtures = useVisibility((s) => s.toggleFixtures);
     const accountRegistrarVisible = useVisibility((s) => s.validators.accountRegistrar);
-    const walletConnectorVisible = useVisibility((s) => s.validators.walletConnector);
+    const bridgeFlowActive = useVisibility((s) => s.modals.bridge || s.bridgeProcessActive);
     const setValidators = useVisibility((s) => s.setValidators);
 
     const validations = useAccount((s) => s.validations);
     const setValidations = useAccount((s) => s.setValidations);
     const setAccount = useAccount((s) => s.setAccount);
 
-    const [step, setStep] = useState(0);
+    const ethBalance = useTokens((s) => s.eth.balance);
 
     /////////////////
     // SUBSCRIPTION
@@ -103,7 +103,15 @@ export const AccountRegistrar: UIComponent = {
 
     // adjust visibility of windows based on above determination
     useEffect(() => {
+      // Keep registration visible while bridge modal is active.
+      if (bridgeFlowActive) return;
+
       const isValidated = networkValidations.authenticated && networkValidations.chainMatches;
+      // If user is in registration flow and chain validation dropped due to a
+      // recent bridge interaction, don't hide the registrar. Only applies while
+      // the bridge process is still settling.
+      if (!validations.accountExists && accountRegistrarVisible && !isValidated && bridgeFlowActive) return;
+
       const isVisible = isValidated && !validations.accountExists;
 
       if (isVisible) {
@@ -121,7 +129,7 @@ export const AccountRegistrar: UIComponent = {
           gasHarasser: false,
         });
       }
-    }, [networkValidations, validations.accountExists, walletConnectorVisible]);
+    }, [networkValidations, validations.accountExists, bridgeFlowActive]);
 
     /////////////////
     // ACTIONS
@@ -148,10 +156,19 @@ export const AccountRegistrar: UIComponent = {
     /////////////////
     // RENDERING
 
-    const GetSteps = () => {
-      return [
-        <IntroStep1 step={step} setStep={setStep} />,
-        <IntroStep2 step={step} setStep={setStep} />,
+    const needsBridge = ethBalance < GasConstants.Empty && import.meta.env.MODE !== 'puter';
+
+    return (
+      <ValidatorWrapper
+        id='account-registrar'
+        divName='accountRegistrar'
+        title='Welcome'
+        subtitle={
+          needsBridge
+            ? 'You need to bridge Ether to Yominet.'
+            : 'You need to create an Operator account.'
+        }
+      >
         <Registration
           address={{
             selected: selectedAddress,
@@ -159,25 +176,10 @@ export const AccountRegistrar: UIComponent = {
           }}
           actions={{ createAccount }}
           utils={{
-            setStep,
             toggleFixtures,
             waitForActionCompletion: utils.waitForActionCompletion,
           }}
-        />,
-      ];
-    };
-
-    /////////////////
-    // DISPLAY
-
-    return (
-      <ValidatorWrapper
-        id='account-registrar'
-        divName='accountRegistrar'
-        title='Welcome'
-        subtitle='You must register an Account.'
-      >
-        {GetSteps()[step]}
+        />
       </ValidatorWrapper>
     );
   },

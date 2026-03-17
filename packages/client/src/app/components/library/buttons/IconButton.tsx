@@ -205,8 +205,12 @@ const Image = styled.img<{
   ${({ filter }) => filter && `filter: ${filter};`}
 `;
 
-const Text = styled.div<{ scale: number; orientation: string; withIcon?: boolean }>`
-  font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
+const Text = styled.div<{
+  scale: number;
+  orientation: string;
+  withIcon?: boolean;
+}>`
+  font-size: ${({ scale }) => scale * 0.4}${({ orientation }) => orientation};
   padding: ${({ withIcon }) => (withIcon ? '0' : '0 0.6vw')};
 `;
 
