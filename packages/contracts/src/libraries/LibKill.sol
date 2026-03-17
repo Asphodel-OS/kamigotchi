@@ -204,7 +204,7 @@ library LibKill {
     uint256 sourceID, // defender
     uint256 targetID, // attacker
     uint256 strain
-  ) internal view returns (uint256) {
+  ) public view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_RECOIL-temp");
     uint256 base = calcKarma(comps, sourceID, targetID);
     uint256 nudge = calcRecoilEfficacy(comps, sourceID, targetID, config[0]);
