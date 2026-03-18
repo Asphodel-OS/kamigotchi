@@ -4,6 +4,7 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import { ethers } from 'ethers';
 import * as fs from 'fs';
 import * as path from 'path';
+import { execSync } from 'child_process';
 import { DeployConfig, WorldAddresses } from '../utils';
 import { filterDeployConfigByEnv, getCompIDByName, getSystemIDByName } from '../utils/deploy';
 import { getCompAddr } from '../utils/addresses';
@@ -62,10 +63,19 @@ const ENTITY_TYPES = [
 ///////////////
 // MAIN
 
+const argv = require('yargs/yargs')(require('yargs/helpers').hideBin(process.argv)).argv;
+
 async function run() {
   const env = process.env.NODE_ENV || 'testing';
   const worldAddr = process.env.WORLD!;
   const rpc = process.env.RPC!;
+
+  // Recompile artifacts unless --skip-build is passed
+  if (!argv.skipBuild) {
+    console.log('Building artifacts (use --skip-build to skip)...');
+    execSync('forge build', { cwd: path.join(__dirname, '../..'), stdio: 'inherit' });
+    console.log('');
+  }
 
   console.log(`\nVerifying World (${env})`);
   console.log(`World: ${worldAddr}`);
