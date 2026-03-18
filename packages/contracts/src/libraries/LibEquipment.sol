@@ -154,6 +154,33 @@ library LibEquipment {
     LibInventory.incFor(components, inventoryID, itemIndex, 1);
   }
 
+  /// @notice Strip all equipment from a holder, returning items to inventory
+  /// @param components The components registry
+  /// @param holderID The entity being stripped (kami)
+  /// @param inventoryID The entity whose inventory to return items to (account)
+  function stripAll(
+    IUintComp components,
+    uint256 holderID,
+    uint256 inventoryID
+  ) internal {
+    uint256[] memory equipped = getAllEquipped(components, holderID);
+    for (uint256 i; i < equipped.length; i++) {
+      uint256 equipID = equipped[i];
+      uint32 itemIndex = IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(equipID);
+      string memory slot = ForComponent(getAddrByID(components, ForCompID)).get(equipID);
+
+      // Clear bonuses for this slot
+      string memory endType = genEndType(slot);
+      LibBonus.unassignBy(components, endType, holderID);
+
+      // Remove equipment instance
+      removeInstance(components, equipID);
+
+      // Return item to inventory
+      LibInventory.incFor(components, inventoryID, itemIndex, 1);
+    }
+  }
+
   /////////////////
   // CHECKERS
 

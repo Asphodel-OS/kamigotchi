@@ -28,6 +28,7 @@ import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 
@@ -124,6 +125,10 @@ library LibKamiMarket {
     LibKami.verifyState(comps, kamiID, "LISTED");
     LibKami.verifyAccount(comps, kamiID, sellerAccID);
 
+    // defense in depth: strip any remaining equipment (covers legacy listings
+    // created before list-time stripping was added)
+    LibEquipment.stripAll(comps, kamiID, sellerAccID);
+
     // reassign ownership and restore state
     LibKami.setOwner(comps, kamiID, buyerAccID);
     LibKami.setState(comps, kamiID, "RESTING");
@@ -150,6 +155,9 @@ library LibKamiMarket {
     // if kami is listed, cancel listings first
     _cancelListingsIfListed(world, comps, kamiIndex);
 
+    // strip all equipment from kami before transfer, return items to seller's inventory
+    LibEquipment.stripAll(comps, kamiID, sellerAccID);
+
     // reassign ownership and set RESTING
     LibKami.setOwner(comps, kamiID, buyerAccID);
     LibKami.setState(comps, kamiID, "RESTING");
@@ -175,6 +183,9 @@ library LibKamiMarket {
 
     // if kami is listed, cancel listings first
     _cancelListingsIfListed(world, comps, kamiIndex);
+
+    // strip all equipment from kami before transfer, return items to seller's inventory
+    LibEquipment.stripAll(comps, kamiID, sellerAccID);
 
     // reassign ownership and set RESTING
     LibKami.setOwner(comps, kamiID, buyerAccID);

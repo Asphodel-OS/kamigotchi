@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
 import { LibSoulbound } from "libraries/LibSoulbound.sol";
@@ -27,6 +28,10 @@ contract KamiMarketListSystem is System {
     // "LISTED" state prevents bridge-in via isInWorld() check
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     LibSoulbound.verify(components, kamiID);
+
+    // strip all equipment from kami before listing, return items to seller's inventory
+    LibEquipment.stripAll(components, kamiID, accID);
+
     LibKami.setState(components, kamiID, "LISTED");
 
     // create listing entity

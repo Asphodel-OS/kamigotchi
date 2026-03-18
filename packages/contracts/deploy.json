@@ -621,11 +621,11 @@
     },
     {
       "name": "KamiMarketListSystem",
-      "writeAccess": ["EntityType", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": ["EntityType", "For", "IDAnchor", "IDOwnsEquipment", "IDOwnsInventory", "IDOwnsKamiOrder", "IDType", "IdSource", "IndexItem", "IndexKamiListing", "Level", "State", "Time", "TimeStart", "TimeEnd", "TimeLast", "Value"]
     },
     {
       "name": "KamiMarketBuySystem",
-      "writeAccess": ["EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
+      "writeAccess": ["EntityType", "For", "IDAnchor", "IDOwnsEquipment", "IDOwnsInventory", "IDOwnsKami", "IDOwnsKamiOrder", "IDType", "IdSource", "IndexItem", "IndexKamiListing", "Level", "State", "Time", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
     },
     {
       "name": "KamiMarketOfferSystem",
@@ -633,7 +633,7 @@
     },
     {
       "name": "KamiMarketAcceptOfferSystem",
-      "writeAccess": ["Balance", "EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKami", "IndexKamiListing", "Max", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
+      "writeAccess": ["Balance", "EntityType", "For", "IDAnchor", "IDOwnsEquipment", "IDOwnsInventory", "IDOwnsKami", "IDOwnsKamiOrder", "IDType", "IdSource", "IndexItem", "IndexKami", "IndexKamiListing", "Level", "Max", "State", "Time", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
     },
     {
       "name": "KamiMarketCancelSystem",

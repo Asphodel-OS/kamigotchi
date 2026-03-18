@@ -11,6 +11,7 @@ import { LibKami721 } from "libraries/LibKami721.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 
 contract GasHeavyReceiver {
   uint256 public numReceives;
@@ -1026,5 +1027,123 @@ contract KamiMarketTest is SetupTemplate {
     // Kami can still be listed even with active cooldown
     uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
     assertEq(_StateComponent.get(orderID), "ACTIVE");
+  }
+
+  /////////////////
+  // EQUIPMENT STRIP TESTS
+
+  // Equipment item indices for strip tests
+  uint32 constant EQUIP_ITEM_INDEX = 9001;
+  string constant EQUIP_SLOT = "Kami_Pet_Slot";
+
+  function _createEquipmentItem() internal {
+    vm.startPrank(deployer);
+    __ItemRegistrySystem.create(
+      abi.encode(EQUIP_ITEM_INDEX, "EQUIPMENT", "PetPet", "A pet for your pet", "media", uint32(1))
+    );
+    __ItemRegistrySystem.setSlot(EQUIP_ITEM_INDEX, EQUIP_SLOT);
+    __ItemRegistrySystem.addAlloBonus(
+      abi.encode(EQUIP_ITEM_INDEX, "EQUIP", "STAT_POWER_SHIFT", "ON_UNEQUIP_Kami_Pet_Slot", uint256(0), int256(10))
+    );
+    vm.stopPrank();
+  }
+
+  function _equipKami(PlayerAccount memory acc, uint256 kamiID, uint32 itemIndex) internal {
+    vm.prank(acc.operator);
+    _KamiEquipSystem.executeTyped(kamiID, itemIndex);
+  }
+
+  function testListStripsEquipment() public {
+    _createEquipmentItem();
+    (uint256 kamiID, uint32 kamiIndex) = _createStakedKami(alice);
+
+    // Give alice the equipment item and equip it
+    _giveItem(alice, EQUIP_ITEM_INDEX, 1);
+    _equipKami(alice, kamiID, EQUIP_ITEM_INDEX);
+
+    // Verify equipped
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 1);
+    assertEq(_getItemBal(alice, EQUIP_ITEM_INDEX), 0);
+
+    // List the kami — should strip equipment
+    _listKami(alice, kamiIndex, LIST_PRICE);
+
+    // Verify equipment stripped and item returned to seller inventory
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 0);
+    assertEq(_getItemBal(alice, EQUIP_ITEM_INDEX), 1);
+  }
+
+  function testBuyListingStripsEquipmentDefenseInDepth() public {
+    _createEquipmentItem();
+    (uint256 kamiID, uint32 kamiIndex) = _createStakedKami(alice);
+
+    // List first (strips equipment — kami has none so no-op)
+    uint256 orderID = _listKami(alice, kamiIndex, LIST_PRICE);
+
+    // Buy the listing
+    vm.deal(bob.owner, LIST_PRICE);
+    _buyKami(bob, orderID, LIST_PRICE);
+
+    // Verify kami transferred and has no equipment
+    assertEq(LibKami.getAccount(components, kamiID), bob.id);
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 0);
+  }
+
+  function testAcceptOfferStripsEquipment() public {
+    _createEquipmentItem();
+    (uint256 kamiID, uint32 kamiIndex) = _createStakedKami(alice);
+
+    // Give alice the equipment item and equip it
+    _giveItem(alice, EQUIP_ITEM_INDEX, 1);
+    _equipKami(alice, kamiID, EQUIP_ITEM_INDEX);
+
+    // Verify equipped
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 1);
+    assertEq(_getItemBal(alice, EQUIP_ITEM_INDEX), 0);
+
+    // Bob makes offer, alice accepts
+    _setupWETH(bob, OFFER_PRICE);
+    uint256 offerID = _offerKami(bob, kamiIndex, OFFER_PRICE);
+    _acceptOffer(alice, offerID, kamiIndex);
+
+    // Verify kami transferred to bob
+    assertEq(LibKami.getAccount(components, kamiID), bob.id);
+
+    // Verify equipment stripped and item returned to alice (seller) inventory
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 0);
+    assertEq(_getItemBal(alice, EQUIP_ITEM_INDEX), 1);
+
+    // Verify bob does NOT have the item
+    assertEq(_getItemBal(bob, EQUIP_ITEM_INDEX), 0);
+  }
+
+  function testAcceptCollectionOfferStripsEquipment() public {
+    _createEquipmentItem();
+    (uint256 kamiID, uint32 kamiIndex) = _createStakedKami(alice);
+
+    // Give alice the equipment item and equip it
+    _giveItem(alice, EQUIP_ITEM_INDEX, 1);
+    _equipKami(alice, kamiID, EQUIP_ITEM_INDEX);
+
+    // Bob makes collection offer, alice accepts
+    _setupWETH(bob, OFFER_PRICE);
+    uint256 offerID = _collectionOffer(bob, OFFER_PRICE, 1);
+    _acceptOffer(alice, offerID, kamiIndex);
+
+    // Verify equipment stripped and item returned to alice (seller)
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 0);
+    assertEq(_getItemBal(alice, EQUIP_ITEM_INDEX), 1);
+    assertEq(LibKami.getAccount(components, kamiID), bob.id);
+  }
+
+  function testStripNoEquipmentIsNoOp() public {
+    (, uint32 kamiIndex) = _createStakedKami(alice);
+
+    // List kami with no equipment — should work fine
+    _listKami(alice, kamiIndex, LIST_PRICE);
+
+    uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
+    assertEq(LibEquipment.getEquippedCount(components, kamiID), 0);
+    assertEq(LibKami.getState(components, kamiID), "LISTED");
   }
 }
