@@ -54,8 +54,8 @@ const ENTITY_TYPES = [
   { label: 'NPCs', indexComp: 'component.index.npc', regField: 'NPC', csv: 'npc/npc.csv', indexCol: 'Index', nameCol: 'Name', noStatus: true },
   { label: 'Quests', indexComp: 'component.index.quest', regField: 'registry.quest', csv: 'quests/quests.csv', indexCol: 'Index', nameCol: 'Title' },
   { label: 'Recipes', indexComp: 'component.index.recipe', regField: 'registry.recipe', csv: 'crafting/recipes.csv', indexCol: 'Index', nameCol: 'Name' },
-  { label: 'Skills', indexComp: 'component.index.skill', regField: 'registry.skill', csv: 'skills/skills.csv', indexCol: 'Index', nameCol: 'Name' },
-  { label: 'Factions', indexComp: 'component.index.faction', regField: 'faction', csv: 'factions/factions.csv', indexCol: 'Index', nameCol: 'Name' },
+  { label: 'Skills', indexComp: 'component.index.skill', regField: 'registry.skill', csv: 'skills/skills.csv', indexCol: 'Index', nameCol: 'Name', noStatus: true },
+  { label: 'Factions', indexComp: 'component.index.faction', regField: 'faction', csv: 'factions/factions.csv', indexCol: 'Index', nameCol: 'Name', noStatus: true },
   { label: 'Nodes', indexComp: 'component.index.node', regField: 'node', csv: 'rooms/nodes.csv', indexCol: 'Index', nameCol: 'Name' },
 ];
 
@@ -69,7 +69,11 @@ async function run() {
 
   console.log(`\nVerifying World (${env})`);
   console.log(`World: ${worldAddr}`);
-  console.log(`RPC: ${rpc}\n`);
+  const redactedRpc = (() => {
+    try { const u = new URL(rpc); return `${u.protocol}//${u.hostname}/***`; }
+    catch { return '(invalid URL, redacted)'; }
+  })();
+  console.log(`RPC: ${redactedRpc}\n`);
 
   const deploy = filterDeployConfigByEnv(DeployConfig);
   const provider = getProvider();
@@ -87,6 +91,12 @@ async function run() {
   console.log(`=== COMPONENTS (${compNames.length}) ===`);
 
   for (let i = 0; i < compNames.length; i++) {
+    if (!compIDs[i]) {
+      results.push({ category: 'Component', name: compNames[i], passed: false, state: 'ERROR', detail: 'No mapping ID' });
+      console.log(`  ??  ${compNames[i]}  No mapping ID`);
+      await delay(30);
+      continue;
+    }
     const addr = await World.getCompAddr(compIDs[i]);
     const passed = addr !== ZERO_ADDR;
     const detail = passed ? addr! : 'Not registered';
@@ -223,6 +233,7 @@ async function run() {
 
   const compCurrent = compResults.filter((r) => r.state === 'CURRENT').length;
   const compUnreg = compResults.filter((r) => r.state === 'NOT_REGISTERED');
+  const compErrors = compResults.filter((r) => r.state === 'ERROR');
 
   const sysCurrent = sysResults.filter((r) => r.state === 'CURRENT').length;
   const sysStale = sysResults.filter((r) => r.state === 'STALE');
@@ -244,6 +255,8 @@ async function run() {
   console.log(`  CURRENT:         ${compCurrent}`);
   if (compUnreg.length > 0)
     console.log(`  NOT REGISTERED:  ${compUnreg.length}`);
+  if (compErrors.length > 0)
+    console.log(`  ERROR:           ${compErrors.length}`);
 
   console.log(`\nSystems (${sysResults.length}):`);
   console.log(`  CURRENT:         ${sysCurrent}  (bytecode matches artifact)`);
@@ -269,7 +282,7 @@ async function run() {
 
   // Detailed failure lists
   const hasIssues =
-    compUnreg.length > 0 || sysStale.length > 0 || sysUnreg.length > 0 || sysNoArt.length > 0 || sysErrors.length > 0 ||
+    compUnreg.length > 0 || compErrors.length > 0 || sysStale.length > 0 || sysUnreg.length > 0 || sysNoArt.length > 0 || sysErrors.length > 0 ||
     wsStale.length > 0 || wsMissing.length > 0 || wsErrors.length > 0;
 
   if (sysStale.length > 0) {
@@ -297,6 +310,13 @@ async function run() {
     console.log(`\nUNREGISTERED COMPONENTS:`);
     for (const r of compUnreg) {
       console.log(`  ${r.name}`);
+    }
+  }
+
+  if (compErrors.length > 0) {
+    console.log(`\nCOMPONENT ERRORS:`);
+    for (const r of compErrors) {
+      console.log(`  ${r.name}  ${r.detail}`);
     }
   }
 
