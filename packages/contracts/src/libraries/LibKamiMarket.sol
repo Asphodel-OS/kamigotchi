@@ -311,6 +311,24 @@ library LibKamiMarket {
   }
 
   /////////////////
+  // WETH TRANSFERS
+
+  /// @notice Transfer WETH with fee split via vault
+  function transferWithFee(
+    IUintComp comps,
+    address from,
+    address to,
+    uint256 amount
+  ) internal {
+    KamiMarketVault vault = getVault(comps);
+    uint256 fee = calcFee(comps, amount);
+    vault.transferWETH(from, to, amount - fee);
+    if (fee > 0) {
+      vault.transferWETH(from, getFeeRecipient(comps), fee);
+    }
+  }
+
+  /////////////////
   // FEE CALCULATION
 
   /// @notice Calculate fee from price using configured rate array

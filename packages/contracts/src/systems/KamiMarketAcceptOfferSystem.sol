@@ -11,7 +11,6 @@ import { LibSoulbound } from "libraries/LibSoulbound.sol";
 import { LibTWAP } from "libraries/LibTWAP.sol";
 import { LibEntityType } from "libraries/utils/LibEntityType.sol";
 
-import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.acceptoffer"));
 
@@ -42,19 +41,45 @@ contract KamiMarketAcceptOfferSystem is System {
     return _acceptBatch(offerID, kamiIndices);
   }
 
-  function _acceptSingle(uint256 offerID, uint32 kamiIndex) internal returns (bytes memory) {
-    uint256 sellerAccID = LibAccount.verifyOperator(components);
-    address sellerAddress = LibAccount.getOwner(components, sellerAccID);
+  function _verifyAndPrepare(uint256 offerID) internal returns (uint256 sellerAccID, address sellerAddress) {
+    sellerAccID = LibAccount.verifyOperator(components);
+    sellerAddress = LibAccount.getOwner(components, sellerAccID);
     LibKamiMarket.verifyEnabled(components);
     LibKamiMarket.verifyActive(components, offerID);
     LibKamiMarket.verifyNotExpired(components, offerID);
     LibKamiMarket.verifyNotOwner(components, offerID, sellerAccID);
+  }
 
-    // verify seller owns the kami and it's available (resting or listed)
+  function _verifyKami(uint32 kamiIndex, uint256 sellerAccID) internal view {
     LibKamiMarket.verifyKamiOwnedRestingOrListed(components, kamiIndex, sellerAccID);
-
-    // verify kami is not soulbound
     LibSoulbound.verify(components, LibKami.getByIndex(components, kamiIndex));
+  }
+
+  function _settle(
+    address buyerAddress,
+    address sellerAddress,
+    uint256 sellerAccID,
+    uint256 price
+  ) internal {
+    LibKamiMarket.transferWithFee(components, buyerAddress, sellerAddress, price);
+    LibTWAP.poke(components, price);
+    LibAccount.updateLastTs(components, sellerAccID);
+  }
+
+  function _emitAndLog(
+    uint256 offerID,
+    uint256 sellerAccID,
+    uint256 buyerAccID,
+    uint32 kamiIndex,
+    uint256 price
+  ) internal {
+    LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, price);
+    LibKamiMarket.logAcceptOffer(components, sellerAccID);
+  }
+
+  function _acceptSingle(uint256 offerID, uint32 kamiIndex) internal returns (bytes memory) {
+    (uint256 sellerAccID, address sellerAddress) = _verifyAndPrepare(offerID);
+    _verifyKami(kamiIndex, sellerAccID);
 
     uint256 buyerAccID = LibKamiMarket.getOwner(components, offerID);
 
@@ -63,94 +88,46 @@ contract KamiMarketAcceptOfferSystem is System {
     uint256 price;
 
     if (keccak256(bytes(orderType)) == keccak256(bytes("KAMI_OFFER"))) {
-      // specific offer: verify the offer targets this kami
       require(
         LibKamiMarket.getKamiIndex(components, offerID) == kamiIndex,
-        "KamiMarketAccept: kami mismatch"
+        "KMA: kami mismatch"
       );
       (buyerAddress, price, ) = LibKamiMarket.fillOffer(world, components, offerID, sellerAccID);
     } else if (keccak256(bytes(orderType)) == keccak256(bytes("KAMI_COLLECTION_OFFER"))) {
       (buyerAddress, price) = LibKamiMarket.fillCollectionOffer(
-        world,
-        components,
-        offerID,
-        sellerAccID,
-        kamiIndex
+        world, components, offerID, sellerAccID, kamiIndex
       );
     } else {
-      revert("KamiMarketAccept: invalid order type");
+      revert("KMA: invalid order type");
     }
 
-    // WETH transfers via vault
-    {
-      KamiMarketVault vault = LibKamiMarket.getVault(components);
-      uint256 fee = LibKamiMarket.calcFee(components, price);
-      vault.transferWETH(buyerAddress, sellerAddress, price - fee);
-      if (fee > 0) {
-        vault.transferWETH(buyerAddress, LibKamiMarket.getFeeRecipient(components), fee);
-      }
-    }
-
-    // feed sale price into TWAP oracle
-    LibTWAP.poke(components, price);
-
-    // data logging and event emission
-    LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, price);
-    LibKamiMarket.logAcceptOffer(components, sellerAccID);
-    LibAccount.updateLastTs(components, sellerAccID);
+    _settle(buyerAddress, sellerAddress, sellerAccID, price);
+    _emitAndLog(offerID, sellerAccID, buyerAccID, kamiIndex, price);
 
     return "";
   }
 
   /// @notice Accept a collection offer for multiple kamis in one tx
   function _acceptBatch(uint256 offerID, uint32[] memory kamiIndices) internal returns (bytes memory) {
-    require(kamiIndices.length > 0, "KamiMarketAccept: empty batch");
+    require(kamiIndices.length > 0, "KMA: empty batch");
 
-    // --- shared checks (once) ---
-    uint256 sellerAccID = LibAccount.verifyOperator(components);
-    address sellerAddress = LibAccount.getOwner(components, sellerAccID);
-    LibKamiMarket.verifyEnabled(components);
-    LibKamiMarket.verifyActive(components, offerID);
-    LibKamiMarket.verifyNotExpired(components, offerID);
-    LibKamiMarket.verifyNotOwner(components, offerID, sellerAccID);
+    (uint256 sellerAccID, address sellerAddress) = _verifyAndPrepare(offerID);
 
-    // verify this is a collection offer with enough remaining quantity
     LibKamiMarket.verifyIsType(components, offerID, "KAMI_COLLECTION_OFFER");
     LibKamiMarket.verifyCollectionOfferQuantity(components, offerID, kamiIndices.length);
 
-    // cache shared state
     uint256 buyerAccID = LibKamiMarket.getOwner(components, offerID);
     address buyerAddress = LibAccount.getOwner(components, buyerAccID);
     uint256 pricePerKami = LibKamiMarket.getPrice(components, offerID);
 
-    // --- per-kami fills ---
     for (uint256 i; i < kamiIndices.length; i++) {
       uint32 kamiIndex = kamiIndices[i];
-      LibKamiMarket.verifyKamiOwnedRestingOrListed(components, kamiIndex, sellerAccID);
-      LibSoulbound.verify(components, LibKami.getByIndex(components, kamiIndex));
-
+      _verifyKami(kamiIndex, sellerAccID);
       LibKamiMarket.fillCollectionOffer(world, components, offerID, sellerAccID, kamiIndex);
-      LibKamiMarket.emitAcceptOffer(world, offerID, sellerAccID, buyerAccID, kamiIndex, pricePerKami);
-      LibKamiMarket.logAcceptOffer(components, sellerAccID);
+      _emitAndLog(offerID, sellerAccID, buyerAccID, kamiIndex, pricePerKami);
     }
 
-    // --- batched WETH transfers ---
-    uint256 totalPrice;
-    uint256 totalFee;
-    for (uint256 i; i < kamiIndices.length; i++) {
-      uint256 fee = LibKamiMarket.calcFee(components, pricePerKami);
-      totalFee += fee;
-      totalPrice += pricePerKami;
-    }
-    KamiMarketVault vault = LibKamiMarket.getVault(components);
-    vault.transferWETH(buyerAddress, sellerAddress, totalPrice - totalFee);
-    if (totalFee > 0) {
-      vault.transferWETH(buyerAddress, LibKamiMarket.getFeeRecipient(components), totalFee);
-    }
-
-    // --- TWAP (once) ---
-    LibTWAP.poke(components, pricePerKami);
-    LibAccount.updateLastTs(components, sellerAccID);
+    _settle(buyerAddress, sellerAddress, sellerAccID, pricePerKami * kamiIndices.length);
 
     return "";
   }
