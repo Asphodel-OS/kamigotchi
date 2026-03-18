@@ -155,6 +155,7 @@ export const GasHarasser: UIComponent = {
 
       const actionID = uuid() as EntityID;
       actions.add({
+        id: actionID,
         action: 'AccountFund',
         params: [amount],
         description: `Funding Operator ${amount} ETH`,
