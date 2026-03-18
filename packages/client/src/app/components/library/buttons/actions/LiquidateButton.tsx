@@ -19,7 +19,7 @@ export const LiquidateButton = (
 
     return {
       image: myKami.image,
-      text: `${myKami.name} (+${spoils}MUSU; -${recoil}HP)`,
+      text: `${myKami.name} (+${spoils.toLocaleString()}MUSU; -${recoil.toLocaleString}HP)`,
       onClick: () => triggerAction(myKami, target),
     };
   });
