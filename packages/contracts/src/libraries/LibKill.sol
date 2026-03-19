@@ -167,7 +167,7 @@ library LibKill {
     uint256 sourceID, // defender
     uint256 targetID // attacker
   ) internal view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_KARMA-temp");
+    uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_KARMA");
     uint256 v2 = LibStat.getTotal(comps, "VIOLENCE", sourceID).toUint256();
     uint256 h1 = LibStat.getTotal(comps, "HARMONY", targetID).toUint256();
     int256 combatRatio = ((1e18 * v2) / h1).toInt256();
@@ -205,7 +205,7 @@ library LibKill {
     uint256 targetID, // attacker
     uint256 strain
   ) public view returns (uint256) {
-    uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_RECOIL-temp");
+    uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_RECOIL");
     uint256 base = calcKarma(comps, sourceID, targetID);
     uint256 nudge = calcRecoilEfficacy(comps, sourceID, targetID, config[0]);
 
