@@ -1,28 +1,24 @@
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 import styled from 'styled-components';
 
 import { IconButton, IconListButton, Text, TextTooltip } from 'app/components/library';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { formatEthPriceLabel } from 'utils/numbers';
 import {
+  BridgeFormActions,
+  BridgeFormState,
+  BridgeFormStatus,
+  CHAIN_ICON_BY_CHAIN_ID,
   DISABLED_SOURCE_CHAIN_IDS,
-  EVMChainOption,
   MIN_BRIDGE_AMOUNT,
-  SOURCE_CHAIN_ICON_BY_CHAIN_ID,
   SOURCE_CHAIN_OPTIONS,
+  YOMINET_CHAIN_OPTION,
 } from './helpers/constants';
 
 type BridgeFormProps = {
-  sourceChain: EVMChainOption;
-  amount: string;
-  parsedAmount: bigint | null;
-  sourceBalance: bigint;
-  yomiBalance: bigint;
-  isBridging: boolean;
-  accountReady: boolean;
-  hasSufficientSourceBalance: boolean;
-  onAmountChange: (amount: string) => void;
-  onSourceChainChange: (chain: EVMChainOption) => void;
-  onSubmit: () => void;
+  state: BridgeFormState;
+  status: BridgeFormStatus;
+  actions: BridgeFormActions;
 };
 
 const getDisabledReason = (
@@ -38,19 +34,11 @@ const getDisabledReason = (
   return undefined;
 };
 
-export const BridgeForm = ({
-  sourceChain,
-  amount,
-  parsedAmount,
-  sourceBalance,
-  yomiBalance,
-  isBridging,
-  accountReady,
-  hasSufficientSourceBalance,
-  onAmountChange,
-  onSourceChainChange,
-  onSubmit,
-}: BridgeFormProps) => {
+export const BridgeForm = ({ state, status, actions }: BridgeFormProps) => {
+  const { externalChain, direction, amount, parsedAmount, externalBalance, yomiBalance } = state;
+  const { isBridging, accountReady, hasSufficientSourceBalance } = status;
+  const { onAmountChange, onSourceChainChange, onSwapDirection, onSubmit } = actions;
+
   const isDisabled =
     isBridging ||
     !accountReady ||
@@ -64,24 +52,40 @@ export const BridgeForm = ({
     parsedAmount
   );
 
+  const chainSelector = (
+    <IconListButton
+      img={CHAIN_ICON_BY_CHAIN_ID[externalChain.chainId]}
+      text={externalChain.label}
+      fullWidth
+      scale={2.2}
+      disabled={isBridging}
+      options={SOURCE_CHAIN_OPTIONS.map((option) => ({
+        text: option.label,
+        image: CHAIN_ICON_BY_CHAIN_ID[option.chainId],
+        disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId),
+        onClick: () => onSourceChainChange(option),
+      }))}
+    />
+  );
+
+  const yominetDisplay = (
+    <FixedChainRow>
+      <ChainIcon src={CHAIN_ICON_BY_CHAIN_ID[YOMINET_CHAIN_OPTION.chainId]} />
+      <ChainText>Yominet</ChainText>
+    </FixedChainRow>
+  );
+
+  const bridgeLabel = direction === 'in' ? `Bridge to Yominet` : `Bridge to ${externalChain.label}`;
+
   return (
     <FormColumn>
       <Label>Source Chain</Label>
-      <IconListButton
-        img={SOURCE_CHAIN_ICON_BY_CHAIN_ID[sourceChain.chainId]}
-        text={sourceChain.label}
-        fullWidth
-        scale={2.2}
-        disabled={isBridging}
-        options={SOURCE_CHAIN_OPTIONS.map((option) => ({
-          text: option.label,
-          image: SOURCE_CHAIN_ICON_BY_CHAIN_ID[option.chainId],
-          disabled: DISABLED_SOURCE_CHAIN_IDS.has(option.chainId),
-          onClick: () => onSourceChainChange(option),
-        }))}
-      />
+      {direction === 'in' ? chainSelector : yominetDisplay}
+      <SwapRow>
+        <IconButton img={SwapVertIcon} onClick={onSwapDirection} disabled={isBridging} scale={2} />
+      </SwapRow>
       <Label>Destination Chain</Label>
-      <DestinationText>Yominet</DestinationText>
+      {direction === 'in' ? yominetDisplay : chainSelector}
       <Label>Amount (ETH)</Label>
       <Input
         type='number'
@@ -92,22 +96,32 @@ export const BridgeForm = ({
       />
       <Balances>
         <BalanceItem>
-          <BalanceLabel>Source balance:</BalanceLabel>
+          <BalanceLabel>
+            {direction === 'in' ? `${externalChain.label} balance:` : 'Yominet bridged ETH:'}
+          </BalanceLabel>
           <Text size={0.8}>
-            <BalanceNumber>{formatEthPriceLabel(sourceBalance, 5)}</BalanceNumber> ETH
+            <BalanceNumber>
+              {formatEthPriceLabel(direction === 'in' ? externalBalance : yomiBalance, 5)}
+            </BalanceNumber>{' '}
+            ETH
           </Text>
         </BalanceItem>
         <BalanceItem>
-          <BalanceLabel>Yominet bridged ETH:</BalanceLabel>
+          <BalanceLabel>
+            {direction === 'in' ? 'Yominet bridged ETH:' : `${externalChain.label} balance:`}
+          </BalanceLabel>
           <Text size={0.8}>
-            <BalanceNumber>{formatEthPriceLabel(yomiBalance, 5)}</BalanceNumber> ETH
+            <BalanceNumber>
+              {formatEthPriceLabel(direction === 'in' ? yomiBalance : externalBalance, 5)}
+            </BalanceNumber>{' '}
+            ETH
           </Text>
         </BalanceItem>
       </Balances>
       <TextTooltip text={disabledReason ? [disabledReason] : []} fullWidth cursor='help'>
         <IconButton
           img={MenuIcons.kami}
-          text={isBridging ? 'Bridging...' : 'Bridge to Yominet'}
+          text={isBridging ? 'Bridging...' : bridgeLabel}
           onClick={onSubmit}
           disabled={isDisabled}
           fullWidth
@@ -147,12 +161,28 @@ const Input = styled.input`
   font-size: 0.78vw;
 `;
 
-const DestinationText = styled.div`
-  border-radius: 0.5vw;
-  padding: 0.45vw;
+const ChainText = styled.div`
   font-size: 0.78vw;
   color: #111;
+`;
+
+const SwapRow = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const FixedChainRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4vw;
+  border-radius: 0.5vw;
+  padding: 0.45vw;
   background: #f0f0f0;
+`;
+
+const ChainIcon = styled.img`
+  width: 1.4vw;
+  height: 1.4vw;
 `;
 
 const Balances = styled.div`

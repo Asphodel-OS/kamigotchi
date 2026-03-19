@@ -1,4 +1,5 @@
 import { TokenIcons } from 'assets/images/tokens';
+import { Tokens } from 'constants/tokens';
 
 ////////////////
 // TYPES
@@ -30,6 +31,28 @@ export type BridgePhase =
   | 'submitted'
   | 'aborted';
 
+export type BridgeFormState = {
+  externalChain: EVMChainOption;
+  direction: BridgeDirection;
+  amount: string;
+  parsedAmount: bigint | null;
+  externalBalance: bigint;
+  yomiBalance: bigint;
+};
+
+export type BridgeFormStatus = {
+  isBridging: boolean;
+  accountReady: boolean;
+  hasSufficientSourceBalance: boolean;
+};
+
+export type BridgeFormActions = {
+  onAmountChange: (amount: string) => void;
+  onSourceChainChange: (chain: EVMChainOption) => void;
+  onSwapDirection: () => void;
+  onSubmit: () => void;
+};
+
 ////////////////
 // OVERVIEW
 
@@ -57,16 +80,26 @@ export const SOURCE_CHAIN_OPTIONS: EVMChainOption[] = [
   },
 ];
 
+export const YOMINET_CHAIN_OPTION: EVMChainOption = {
+  chainId: 'yominet-1',
+  denom: `evm/${Tokens.ETH.address.slice(2)}`,
+  label: 'Yominet',
+  rpcUrl: '',
+  explorerUrl: 'https://scan.initia.xyz/yominet-1',
+};
+
+export type BridgeDirection = 'in' | 'out';
+
 export const DISABLED_SOURCE_CHAIN_IDS = new Set(['10']);
 
 ////////////////
 // DISPLAY
 
-export const SOURCE_CHAIN_ICON_BY_CHAIN_ID: Record<string, string> = {
+export const CHAIN_ICON_BY_CHAIN_ID: Record<string, string> = {
   '1': TokenIcons.eth,
-
   '8453': TokenIcons.base,
   '42161': TokenIcons.arbitrum,
+  'yominet-1': TokenIcons.yominet,
 };
 
 ////////////////

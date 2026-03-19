@@ -3,6 +3,7 @@ import base from './base.png';
 import eth from './eth.png';
 import init from './init.png';
 import onyx from './onyx.png';
+import yominet from './yominet.png';
 
 export const TokenIcons = {
   arbitrum,
@@ -10,4 +11,5 @@ export const TokenIcons = {
   eth,
   init,
   onyx,
+  yominet,
 };

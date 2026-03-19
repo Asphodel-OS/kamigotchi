@@ -117,7 +117,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: BridgeModal,
-    gridConfig: { colStart: 33, colEnd: 71, rowStart: 20, rowEnd: 80 },
+    gridConfig: { colStart: 33, colEnd: 71, rowStart: 20, rowEnd: 74 },
   },
   {
     uiComponent: CraftingModal,

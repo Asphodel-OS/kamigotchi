@@ -1,14 +1,13 @@
-import { Contract, JsonRpcProvider, getAddress, id as keccak256 } from 'ethers';
 import { DefaultChain } from 'constants/chains';
 import { Tokens } from 'constants/tokens';
+import { Contract, JsonRpcProvider, getAddress, id as keccak256 } from 'ethers';
 import { toBigInt } from 'utils/numbers';
 
 ////////////////
 // CONFIG
 
 const ROUTER_API_BASE_URL = 'https://router-api.initia.xyz/v2/fungible';
-const BRIDGE_STATUS_URL =
-  'https://opinit-api-yominet-1.anvil.asia-southeast.initia.xyz/status';
+const BRIDGE_STATUS_URL = 'https://opinit-api-yominet-1.anvil.asia-southeast.initia.xyz/status';
 export const BRIDGE_OPEN_REQUEST_EVENT = 'kamigotchi:bridge-open-request';
 const YOMINET_CHAIN_ID = 'yominet-1';
 const YOMINET_ETH_DENOM = `evm/${Tokens.ETH.address.slice(2)}`;
@@ -28,6 +27,13 @@ export type BridgeEvmTx = {
   data: string;
   signer_address?: string;
   required_erc20_approvals?: unknown[];
+};
+
+export type BridgeCosmosTx = {
+  chain_id: string;
+  path: string[];
+  msgs: Array<{ msg_type_url: string; msg: string }>;
+  signer_address: string;
 };
 
 export type BridgeRouteRequest = {
@@ -51,6 +57,7 @@ type BridgeMsgsResponse = {
   txs?: Array<{
     operations_indices?: number[];
     evm_tx?: BridgeEvmTx;
+    cosmos_tx?: BridgeCosmosTx;
   }>;
 };
 
