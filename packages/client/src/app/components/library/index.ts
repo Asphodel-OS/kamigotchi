@@ -16,6 +16,7 @@ export {
   IconListButton,
   LiquidateButton,
   OnyxReviveButton,
+  StepButton,
   StopButton,
   UseItemButton,
 } from './buttons';
