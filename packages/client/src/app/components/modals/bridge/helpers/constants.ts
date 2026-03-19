@@ -63,7 +63,7 @@ export const DISABLED_SOURCE_CHAIN_IDS = new Set(['10']);
 // DISPLAY
 
 export const SOURCE_CHAIN_ICON_BY_CHAIN_ID: Record<string, string> = {
-  '1': TokenIcons.eth,
+  '1': TokenIcons.eth_old,
 
   '8453': TokenIcons.base,
   '42161': TokenIcons.arbitrum,
