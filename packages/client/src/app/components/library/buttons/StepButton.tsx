@@ -46,6 +46,7 @@ export const StepButton = ({ label, onStep }: StepButtonProps) => {
       onMouseLeave={stop}
       onTouchStart={start}
       onTouchEnd={stop}
+      onTouchCancel={stop}
     >
       {label}
     </Button>

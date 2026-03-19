@@ -144,7 +144,7 @@ export const GasHarasser: UIComponent = {
       }
     }, [amount, ownerBalanceWei]);
 
-    const isAmountValid = !!parsedWei && parsedWei > 0n && !overBudget;
+    const isAmountValid = !!parsedWei && parsedWei >= parseEther(MIN_FUND_ETH.toString()) && !overBudget;
 
     /////////////////
     // ACTION
