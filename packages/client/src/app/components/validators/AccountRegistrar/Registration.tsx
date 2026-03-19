@@ -6,7 +6,7 @@ import { parseEther } from 'viem';
 
 import { IconButton, TextTooltip } from 'app/components/library';
 import { triggerBridgeModal } from 'app/triggers';
-import { useAccount, useTokens } from 'app/stores';
+import { useTokens } from 'app/stores';
 import { copy } from 'app/utils';
 import { MenuIcons } from 'assets/images/icons/menu';
 import { GasConstants } from 'constants/gas';
@@ -36,8 +36,6 @@ export const Registration = ({
   };
 }) => {
   const ethBalance = useTokens((s) => s.eth.balance);
-  const validations = useAccount((s) => s.validations);
-  const setValidations = useAccount((s) => s.setValidations);
 
   const [name, setName] = useState('');
 
@@ -72,7 +70,11 @@ export const Registration = ({
       const actionID = actions.createAccount(name);
       if (!actionID) throw new Error('Account creation failed');
       await utils.waitForActionCompletion(actionID);
-      setValidations({ ...validations, accountExists: true });
+
+      // Clear stale account query caches so the AccountRegistrar's ECS query
+      // picks up the freshly created account on the next render cycle.
+      OperatorCache.clear();
+      NameCache.clear();
     } catch (e) {
       console.error('ERROR CREATING ACCOUNT:', e);
     }

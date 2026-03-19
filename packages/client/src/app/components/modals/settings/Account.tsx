@@ -2,13 +2,27 @@ import { usePrivy } from '@privy-io/react-auth';
 import styled from 'styled-components';
 
 import { ActionButton, CopyButton, TextTooltip } from 'app/components/library';
-import { useAccount, useVisibility } from 'app/stores';
+import { useAccount, useNetwork, useVisibility } from 'app/stores';
 import { abbreviateAddress } from 'utils/address';
+
+const DEAD_ADDRESS = '0x000000000000000000000000000000000000dEaD';
 
 export const Account = () => {
   const { account: kamiAccount } = useAccount();
   const setModals = useVisibility((s) => s.setModals);
   const { exportWallet } = usePrivy();
+
+  // Fall back to network store addresses when account hasn't been populated yet
+  const selectedAddress = useNetwork((s) => s.selectedAddress);
+  const burnerAddress = useNetwork((s) => s.burnerAddress);
+  const ownerAddress =
+    kamiAccount.ownerAddress && kamiAccount.ownerAddress !== DEAD_ADDRESS
+      ? kamiAccount.ownerAddress
+      : selectedAddress;
+  const operatorAddress =
+    kamiAccount.operatorAddress && kamiAccount.operatorAddress !== DEAD_ADDRESS
+      ? kamiAccount.operatorAddress
+      : burnerAddress;
 
   const FieldRow = (label: string, value: string) => {
     return (
@@ -40,11 +54,11 @@ export const Account = () => {
       </HeaderRow>
       <Section key='owner'>
         <SubHeader>Owner (Injected Wallet)</SubHeader>
-        {FieldRow('Address', kamiAccount.ownerAddress)}
+        {FieldRow('Address', ownerAddress)}
       </Section>
       <Section key='operator'>
         <SubHeader>Operator (Embedded Wallet)</SubHeader>
-        {FieldRow('Address', kamiAccount.operatorAddress)}
+        {FieldRow('Address', operatorAddress)}
         <Row>
           <Text>Private Key</Text>
           <ActionButton text='Export' onClick={() => exportWallet()} size='small' />
