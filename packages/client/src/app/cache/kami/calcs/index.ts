@@ -27,6 +27,7 @@ export {
 export {
   calcKarma as calcLiqKarma,
   calcRecoil as calcLiqRecoil,
+  calcRecoilEfficacy as calcLiqRecoilEfficacy,
   calcSpoils as calcLiqSpoils,
   calcStrain as calcLiqStrain,
   calcThreshold as calcLiqThreshold,

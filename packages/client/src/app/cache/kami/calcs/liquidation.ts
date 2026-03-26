@@ -114,34 +114,80 @@ export const calcStrain = (attacker: Kami, defender: Kami): number => {
   return calcStrainFromBalance(attacker, spoils, true);
 };
 
-// calculate Karma, the liquidation hp recoil due to violence
-// NOTE: one of the few intermediary results that don't round up
+// calculate Karma — Gaussian-based combat multiplier for recoil (PR #2384)
+// uses the same CDF curve as calcAnimosity but with defender's violence vs attacker's harmony.
+// old formula was linear (v2 - h1 + nudge); new formula is smooth (Gaussian CDF of log ratio).
+// result is a multiplier (~0 to karma.ratio.value), NOT raw HP damage.
 export const calcKarma = (attacker: Kami, defender: Kami): number => {
   const config = attacker.config ?? defender.config;
   if (!config) return 0;
 
   const karmaConfig = config.liquidation.karma;
-  const v2 = defender.stats?.violence.total ?? 0;
-  const h1 = attacker.stats?.harmony.total ?? 0;
-  const core = Math.max(0, v2 - h1 + karmaConfig.nudge.value);
-  const efficacy = calcEfficacy(defender, attacker);
-  const karma = core * efficacy * karmaConfig.boost.value;
-  return Math.floor(karma);
+  const defViolence = defender.stats?.violence.total ?? 1;
+  const attHarmony = attacker.stats?.harmony.total ?? 1;
+
+  const base = cdf(Math.log(defViolence / attHarmony), 0, 1);
+  const ratio = karmaConfig.ratio.value; // karma range (e.g. 2.0 from config [0, 0, 2000, 3, ...])
+  return base * ratio;
 };
 
-// calculate total liquidation hp recoil
+// calculate the affinity-based efficacy nudge applied to recoil (PR #2384)
+// mirrors calcEfficacy but uses defender's HAND vs attacker's BODY (opposite direction),
+// and reads from KAMI_LIQ_KARMA_EFFICACY config instead of KAMI_LIQ_EFFICACY.
+// advantage = defender's hand beats attacker's body → more recoil on the attacker.
+export const calcRecoilEfficacy = (attacker: Kami, defender: Kami, baseEfficacy: number): number => {
+  const config = attacker.config ?? defender.config;
+  if (!config) return Math.max(0, baseEfficacy);
+
+  const effConfig = config.liquidation.karmaEfficacy;
+
+  let shift = effConfig.base; // neutral shift
+  if (defender.traits && attacker.traits) {
+    // NOTE: reversed direction from threshold efficacy — defender's hand vs attacker's body
+    const defAffinity = defender.traits.hand.affinity;
+    const atkAffinity = attacker.traits.body.affinity;
+
+    if (defAffinity === 'EERIE') {
+      if (atkAffinity === 'SCRAP') shift = effConfig.up;
+      else if (atkAffinity === 'INSECT') shift = effConfig.down;
+    } else if (defAffinity === 'SCRAP') {
+      if (atkAffinity === 'INSECT') shift = effConfig.up;
+      else if (atkAffinity === 'EERIE') shift = effConfig.down;
+    } else if (defAffinity === 'INSECT') {
+      if (atkAffinity === 'EERIE') shift = effConfig.up;
+      else if (atkAffinity === 'SCRAP') shift = effConfig.down;
+    } else if (defAffinity === 'NORMAL') {
+      if (atkAffinity === 'NORMAL') shift = effConfig.special;
+    }
+  }
+
+  // no bonuses applied here yet (hardcoded zeroes in contract), floor at 0
+  return Math.max(0, baseEfficacy + shift);
+};
+
+// calculate total liquidation hp recoil (PR #2384)
+// old formula: (strain * ratio + karma) * boost — additive karma, single boost
+// new formula: (karma + recoilEfficacy) * strain * boost — multiplicative, dual-sided boost
+// boost now includes both DEF_RECOIL_BOOST (defender, increases recoil) and
+// ATK_RECOIL_BOOST (attacker, reduces recoil). higher boost = more recoil on the attacker.
 export const calcRecoil = (attacker: Kami, defender: Kami): number => {
   const baseConfig = attacker.config ?? defender.config;
   if (!baseConfig || !baseConfig.liquidation.recoil) return 0;
 
-  const bonus = attacker.bonuses?.attack.recoil;
   const config = baseConfig.liquidation.recoil;
 
-  const ratio = config.ratio.value;
-  const boost = config.boost.value + (bonus?.boost ?? 0);
   const karma = calcKarma(attacker, defender);
+  const baseEfficacy = config.nudge.value; // config[0]/10^config[1] — base efficacy value
+  const nudge = calcRecoilEfficacy(attacker, defender, baseEfficacy);
   const strain = calcStrain(attacker, defender);
-  const recoil = (strain * ratio + karma) * boost;
+
+  // boost: config base + defender's DEF_RECOIL_BOOST - attacker's ATK_RECOIL_BOOST
+  const atkBoostBonus = attacker.bonuses?.attack.recoil?.boost ?? 0;
+  const defBoostBonus = defender.bonuses?.defense.recoil?.boost ?? 0;
+  const boostRaw = config.boost.value + defBoostBonus - atkBoostBonus;
+  const boost = Math.max(0, boostRaw); // clamp to 0 (can't have negative recoil)
+
+  const recoil = (karma + nudge) * strain * boost;
   return Math.floor(recoil);
 };
 

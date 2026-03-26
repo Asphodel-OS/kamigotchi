@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.28;
 
+import { SafeCastLib } from "solady/utils/SafeCastLib.sol";
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
@@ -16,6 +17,8 @@ uint256 constant ID = uint256(keccak256("system.harvest.liquidate"));
 
 // liquidates a target harvest using a player's pet.
 contract HarvestLiquidateSystem is System {
+  using SafeCastLib for uint256;
+
   constructor(IWorld _world, address _components) System(_world, _components) {}
 
   function execute(bytes memory arguments) public returns (bytes memory) {
@@ -42,8 +45,9 @@ contract HarvestLiquidateSystem is System {
     // check that the pet is capable of liquidating the target harvest
     uint256 victimID = LibHarvest.getKami(components, victimHarvID);
     LibKami.sync(components, victimID);
-    if (!LibKill.isLiquidatableBy(components, victimID, killerID))
+    if (!LibKill.isLiquidatableBy(components, victimID, killerID)) {
       revert("kami lacks violence (weak)");
+    }
 
     // calculate musu/experience for victim
     uint256 bounty = LibHarvest.getBalance(components, victimHarvID);
@@ -55,12 +59,10 @@ contract HarvestLiquidateSystem is System {
     LibKill.sendSpoils(components, harvID, spoils);
 
     // calculate health impact on killer
-    uint256 strain = LibKami.calcStrain(components, killerID, spoils);
-    uint256 karma = LibKill.calcKarma(components, killerID, victimID);
-    int32 recoil = LibKill.calcRecoil(components, killerID, strain, karma);
+    uint256 strain = LibKami.calcStrain(components, killerID, spoils); // killer's would-be strain
+    uint256 recoil = LibKill.calcRecoil(components, victimID, killerID, strain);
 
     // log kill (before health changes)
-    // TODO: update how we log values. maybe drop strain/karma for final recoil
     LibKill.log(
       world,
       components,
@@ -68,11 +70,11 @@ contract HarvestLiquidateSystem is System {
       killerID,
       victimID,
       nodeID,
-      KillLog(bounty, salvage, spoils, strain, karma)
+      KillLog(bounty, salvage, spoils, recoil, 0) // TODO: update backend (no longer tracking karma + strain)
     );
 
     // killer post-death actions
-    LibKami.drain(components, killerID, recoil); // killer takes recoil
+    LibKami.drain(components, killerID, recoil.toInt32()); // killer takes recoil
     LibKill.rewardKiller(components, accID); // killer gets reward
     LibBonus.resetUponLiquidation(components, killerID); // resets killer's liquidation bonus
     LibKami.resetCooldown(components, killerID); // resets killer's cooldown

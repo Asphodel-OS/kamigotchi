@@ -24,6 +24,8 @@ import { LibStat, Stat } from "libraries/LibStat.sol";
 import { Gaussian } from "utils/Gaussian.sol";
 
 uint256 constant ANIMOSITY_PREC = 6;
+uint256 constant KARMA_PREC = 3; // don't change this
+uint256 constant RECOIL_PREC = 0;
 
 struct KillLog {
   uint256 bounty;
@@ -93,11 +95,11 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_ANIMOSITY");
 
-    uint256 sourceViolence = LibStat.getTotal(comps, "VIOLENCE", sourceID).toUint256();
-    uint256 targetHarmony = LibStat.getTotal(comps, "HARMONY", targetID).toUint256();
-    int256 imbalance = ((1e18 * sourceViolence) / targetHarmony).toInt256();
-    uint256 base = Gaussian.cdf(LibFPMath.lnWad(imbalance)).toUint256();
-    uint256 ratio = config[2]; // core animosity baseline
+    uint256 v1 = LibStat.getTotal(comps, "VIOLENCE", sourceID).toUint256();
+    uint256 h2 = LibStat.getTotal(comps, "HARMONY", targetID).toUint256();
+    int256 combatRatio = ((1e18 * v1) / h2).toInt256();
+    uint256 base = Gaussian.cdf(LibFPMath.lnWad(combatRatio)).toUint256();
+    uint256 ratio = config[2]; // core animosity range
 
     // flipped precision as inputs are more precise than output
     uint256 precision = 10 ** (18 + config[3] - ANIMOSITY_PREC);
@@ -105,7 +107,7 @@ library LibKill {
   }
 
   /// @notice Calculate the affinity multiplier for attacks between two kamis.
-  function calcEfficacy(
+  function calcThresholdEfficacy(
     IUintComp comps,
     uint256 sourceID,
     uint256 targetID,
@@ -143,13 +145,13 @@ library LibKill {
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_THRESHOLD");
     uint256 base = calcAnimosity(comps, sourceID, targetID);
-    uint256 ratio = calcEfficacy(comps, sourceID, targetID, config[2]);
+    uint256 ratio = calcThresholdEfficacy(comps, sourceID, targetID, config[2]);
 
     // apply attack and defense shifts
     uint256 shiftPrec = 10 ** (ANIMOSITY_PREC + config[3] - config[5]);
-    int256 shiftAttBonus = LibBonus.getFor(comps, "ATK_THRESHOLD_SHIFT", sourceID);
+    int256 shiftAtkBonus = LibBonus.getFor(comps, "ATK_THRESHOLD_SHIFT", sourceID);
     int256 shiftDefBonus = LibBonus.getFor(comps, "DEF_THRESHOLD_SHIFT", targetID);
-    int256 shift = (shiftAttBonus - shiftDefBonus) * int256(shiftPrec);
+    int256 shift = (shiftAtkBonus - shiftDefBonus) * int256(shiftPrec);
 
     int256 postShiftVal = int256(base * ratio) + shift;
     if (postShiftVal < 0) return 0;
@@ -159,39 +161,62 @@ library LibKill {
     return (uint(postShiftVal) * totalHealth) / precision;
   }
 
-  /// @notice Calculate the resulting Karma (HP loss) from two kamis duking it out. Round down.
+  /// @notice Calculate the resulting Karma (multiplier) from two kamis duking it out. Round down.
   function calcKarma(
     IUintComp comps,
-    uint256 sourceID,
-    uint256 targetID
+    uint256 sourceID, // defender
+    uint256 targetID // attacker
   ) internal view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_KARMA");
-    int32 v2 = LibStat.getTotal(comps, "VIOLENCE", targetID);
-    int32 h1 = LibStat.getTotal(comps, "HARMONY", sourceID);
-    int32 nudge = config[0].toInt32(); // assumed 0 precision
-    if (nudge + v2 - h1 < 0) return 0;
+    uint256 v2 = LibStat.getTotal(comps, "VIOLENCE", sourceID).toUint256();
+    uint256 h1 = LibStat.getTotal(comps, "HARMONY", targetID).toUint256();
+    int256 combatRatio = ((1e18 * v2) / h1).toInt256();
+    uint256 base = Gaussian.cdf(LibFPMath.lnWad(combatRatio)).toUint256();
+    uint256 ratio = config[2]; // core karma range
 
-    uint256 ratio = calcEfficacy(comps, targetID, sourceID, config[2]);
-    uint256 boost = uint256(config[6]);
-    uint256 precision = 10 ** uint256(config[3] + config[7]);
-    return (uint32(nudge + v2 - h1) * ratio * boost) / precision;
+    uint256 precision = 10 ** (18 + config[3] - KARMA_PREC);
+    return (base * ratio) / precision;
+  }
+
+  /// @notice Calculate the efficacy nudge applied to Karma for Recoil damage. minimum of 0.
+  function calcRecoilEfficacy(
+    IUintComp comps,
+    uint256 sourceID, // defender
+    uint256 targetID, // attacker
+    uint256 base
+  ) internal view returns (uint256) {
+    // sum the applied shift with the base efficacy value to get the final value
+    int256 efficacy = base.toInt256();
+    string memory sourceAff = LibKami.getHandAffinity(comps, sourceID);
+    string memory targetAff = LibKami.getBodyAffinity(comps, targetID);
+    efficacy += LibAffinity.calcEfficacyShift(
+      LibAffinity.getAttackEffectiveness(sourceAff, targetAff),
+      LibAffinity.getShifts(comps, "KAMI_LIQ_KARMA_EFFICACY"),
+      Shifts({ base: 0, up: 0, down: 0, special: 0 }) // no bonuses atm
+    );
+
+    return (efficacy > 0) ? uint(efficacy) : 0; // scaling is hardcoded (assumed 3 to match Karma)
   }
 
   /// @notice Calculate the total resulting HP damage from a liquidation
   function calcRecoil(
     IUintComp comps,
-    uint256 sourceID,
-    uint256 strain,
-    uint256 karma
-  ) internal view returns (int32) {
+    uint256 sourceID, // defender
+    uint256 targetID, // attacker
+    uint256 strain
+  ) public view returns (uint256) {
     uint32[8] memory config = LibConfig.getArray(comps, "KAMI_LIQ_RECOIL");
-    int256 boostBonus = LibBonus.getFor(comps, "ATK_RECOIL_BOOST", sourceID);
-    uint256 ratio = config[2];
-    uint256 core = strain * ratio + karma * 10 ** uint256(config[3]); // scale karma (shift) by the precision of the ratio
-    uint256 boost = (config[6].toInt256() + boostBonus).toUint256(); // need to be wary here of negative values
+    uint256 base = calcKarma(comps, sourceID, targetID);
+    uint256 nudge = calcRecoilEfficacy(comps, sourceID, targetID, config[0]);
 
-    uint256 precision = 10 ** uint256(config[3] + config[7]);
-    return ((core * boost) / precision).toInt32();
+    // determine recoil boost based on bonuses
+    int256 boostAtkBonus = LibBonus.getFor(comps, "ATK_RECOIL_BOOST", targetID);
+    int256 boostDefBonus = LibBonus.getFor(comps, "DEF_RECOIL_BOOST", sourceID);
+    int256 boostRaw = config[6].toInt256() + boostDefBonus - boostAtkBonus;
+    uint256 boost = boostRaw > 0 ? uint256(boostRaw) : 0;
+
+    uint256 precision = 10 ** uint256(config[1] + config[3] + config[7]);
+    return (((base + nudge) * strain * boost) / precision);
   }
 
   /// @notice Calculate the amount of MUSU salvaged by a target from a given balance. Round down.
