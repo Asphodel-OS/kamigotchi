@@ -10,7 +10,7 @@ export interface DialogueNode {
     nextDialogue?: number;
     endDialogue?: boolean;
   };
-  action?: ActionParam | Array<ActionParam>; // apply to last step or specific steps
+  action?: ActionParam | Array<ActionParam | ActionParam[] | undefined>; // apply to last step or specific steps
   next?: Map<string, number>; // points to more dialogue nodes
   args?: GetterParam[];
 }
