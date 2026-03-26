@@ -356,31 +356,34 @@ export const DialogueModal: UIComponent = {
     };
     const MiddleButton = () => {
       if (!dialogueNode.action) return <div />;
-      let action: ActionParam;
-      let show = false;
 
-      // split by step if action is an array
+      let actions: ActionParam[];
+
       if ('label' in dialogueNode.action) {
-        // only on last step
-        action = dialogueNode.action;
-        show = step !== dialogueLength - 1 && !!action;
+        // single action: show on last step only
+        if (step !== dialogueLength - 1) return <div />;
+        actions = [dialogueNode.action];
       } else {
-        // per step
-        action = dialogueNode.action[step];
-        show = action === undefined;
+        // per-step array
+        const entry = dialogueNode.action[step];
+        if (entry === undefined) return <div />;
+        actions = Array.isArray(entry) ? entry : [entry];
       }
 
-      if (show) return <div />;
-
       return (
-        <ActionButton
-          text={action.label}
-          disabled={isDisabled(action)}
-          onClick={() => {
-            action.onClick?.();
-            getAction(action.type, action.input);
-          }}
-        />
+        <div style={{ display: 'flex', gap: '0.5vw' }}>
+          {actions.map((action, i) => (
+            <ActionButton
+              key={i}
+              text={action.label}
+              disabled={isDisabled(action)}
+              onClick={() => {
+                action.onClick?.();
+                getAction(action.type, action.input);
+              }}
+            />
+          ))}
+        </div>
       );
     };
 
