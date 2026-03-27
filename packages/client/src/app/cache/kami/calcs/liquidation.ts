@@ -181,10 +181,10 @@ export const calcRecoil = (attacker: Kami, defender: Kami): number => {
   const nudge = calcRecoilEfficacy(attacker, defender, baseEfficacy);
   const strain = calcStrain(attacker, defender);
 
-  // boost: config base + defender's DEF_RECOIL_BOOST - attacker's ATK_RECOIL_BOOST
+  // boost: config base + defender's DEF_RECOIL_BOOST + attacker's ATK_RECOIL_BOOST
   const atkBoostBonus = attacker.bonuses?.attack.recoil?.boost ?? 0;
   const defBoostBonus = defender.bonuses?.defense.recoil?.boost ?? 0;
-  const boostRaw = config.boost.value + defBoostBonus - atkBoostBonus;
+  const boostRaw = config.boost.value + defBoostBonus + atkBoostBonus;
   const boost = Math.max(0, boostRaw); // clamp to 0 (can't have negative recoil)
 
   const recoil = (karma + nudge) * strain * boost;
