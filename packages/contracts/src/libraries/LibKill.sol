@@ -212,7 +212,7 @@ library LibKill {
     // determine recoil boost based on bonuses
     int256 boostAtkBonus = LibBonus.getFor(comps, "ATK_RECOIL_BOOST", targetID);
     int256 boostDefBonus = LibBonus.getFor(comps, "DEF_RECOIL_BOOST", sourceID);
-    int256 boostRaw = config[6].toInt256() + boostDefBonus - boostAtkBonus;
+    int256 boostRaw = config[6].toInt256() + boostDefBonus + boostAtkBonus;
     uint256 boost = boostRaw > 0 ? uint256(boostRaw) : 0;
 
     uint256 precision = 10 ** uint256(config[1] + config[3] + config[7]);
