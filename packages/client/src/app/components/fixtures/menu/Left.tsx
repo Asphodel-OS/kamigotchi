@@ -6,8 +6,10 @@ import { useSelected, useVisibility } from 'app/stores';
 import { queryNodeByIndex } from 'network/shapes/Node';
 import {
   AccountMenuButton,
+  KamiSwapMenuButton,
   MapMenuButton,
   NodeMenuButton,
+  OnyxMenuButton,
   PartyMenuButton,
   StudioMenuButton,
   SudoMenuButton,
@@ -38,7 +40,9 @@ export const LeftMenuFixture: UIComponent = {
         <PartyMenuButton />
         <MapMenuButton />
         <NodeMenuButton disabled={!nodeEntity} />
+        <KamiSwapMenuButton />
         <SudoMenuButton />
+        <OnyxMenuButton />
         <StudioMenuButton />
       </Wrapper>
     );
