@@ -8,6 +8,7 @@ import {
   AccountMenuButton,
   MapMenuButton,
   NodeMenuButton,
+  OnyxMenuButton,
   PartyMenuButton,
   StudioMenuButton,
   SudoMenuButton,
@@ -39,6 +40,7 @@ export const LeftMenuFixture: UIComponent = {
         <MapMenuButton />
         <NodeMenuButton disabled={!nodeEntity} />
         <SudoMenuButton />
+        <OnyxMenuButton />
         <StudioMenuButton />
       </Wrapper>
     );
