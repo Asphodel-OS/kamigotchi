@@ -78,6 +78,7 @@ contract HarvestLiquidateSystem is System {
     LibKill.rewardKiller(components, accID); // killer gets reward
     LibBonus.resetUponLiquidation(components, killerID); // resets killer's liquidation bonus
     LibKami.resetCooldown(components, killerID); // resets killer's cooldown
+    LibBonus.resetUponCooldownSet(components, killerID); // consumes cooldown bonuses (e.g. Energy Drink)
 
     // victim post-death actions
     LibKami.kill(components, victimID); // kills victim

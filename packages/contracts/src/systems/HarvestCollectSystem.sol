@@ -94,6 +94,7 @@ contract HarvestCollectSystem is System {
     uint256 output = LibHarvest.claim(components, id, accID);
     LibExperience.inc(components, kamiID, output);
     LibKami.resetCooldown(components, kamiID);
+    LibBonus.resetUponCooldownSet(components, kamiID);
 
     // scavenge
     uint256 nodeID = LibHarvest.getNode(components, id);

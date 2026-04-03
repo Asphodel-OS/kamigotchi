@@ -316,6 +316,11 @@ library LibBonus {
     unassignBy(components, "UPON_HARVEST_STOP", holderID);
   }
 
+  /// @notice resets cooldown-related bonuses (e.g. Energy Drink) after cooldown is set
+  function resetUponCooldownSet(IUintComp components, uint256 holderID) public {
+    unassignBy(components, "UPON_COOLDOWN_SET", holderID);
+  }
+
   /// @notice resets upon kami death
   function resetUponDeath(IUintComp components, uint256 holderID) public {
     unassignBy(components, "UPON_DEATH", holderID);
@@ -338,6 +343,7 @@ library LibBonus {
     // no need to call resetUponHarvestAction since it's included in resetUponHarvestStop
 
     resetUponHarvestStop(components, holderID);
+    resetUponCooldownSet(components, holderID);
     resetUponDeath(components, holderID);
     resetUponLiquidation(components, holderID);
     resetTimed(components, holderID);

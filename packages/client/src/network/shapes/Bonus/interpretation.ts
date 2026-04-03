@@ -45,6 +45,7 @@ export const parseTooltipText = (bonus: Bonus): string[] => {
 const parseEndtype = (bonus: Bonus): string => {
   if (bonus.endType === 'TIMED') return 'for ' + bonus.duration + 's';
   else if (bonus.endType === 'UPON_HARVEST_ACTION') return 'til next action';
+  else if (bonus.endType === 'UPON_COOLDOWN_SET') return 'til next cooldown';
   else if (bonus.endType === 'UPON_DEATH') return 'til death';
   else if (bonus.endType === 'UPON_LIQUIDATION') return 'til kami liquidates';
   else if (bonus.endType === 'UPON_KILL_OR_KILLED') return 'til kami kills or is killed';
