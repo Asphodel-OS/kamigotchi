@@ -445,6 +445,7 @@
         "Level",
         "Rate",
         "State",
+        "Time",
         "TimeNext",
         "TimeLast",
         "TimeReset",
@@ -486,7 +487,22 @@
     },
     {
       "name": "Kami721StakeSystem",
-      "writeAccess": ["Balance", "EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IdHolder", "IndexKamiListing", "Max", "ProxyPermissionsERC721", "State", "TimeLast", "TimeStart", "TimeEnd", "Type", "Value"],
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IdHolder",
+        "IndexKamiListing",
+        "Max",
+        "ProxyPermissionsERC721",
+        "State",
+        "TimeLast",
+        "TimeStart",
+        "TimeEnd",
+        "Type",
+        "Value"
+      ],
       "skipEnv": ["testing"]
     },
     {
@@ -621,23 +637,82 @@
     },
     {
       "name": "KamiMarketListSystem",
-      "writeAccess": ["EntityType", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": [
+        "EntityType",
+        "IDOwnsKamiOrder",
+        "IndexKamiListing",
+        "State",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value"
+      ]
     },
     {
       "name": "KamiMarketBuySystem",
-      "writeAccess": ["EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKamiListing", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
+      "writeAccess": [
+        "EntityType",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IndexKamiListing",
+        "State",
+        "TimeNext",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
     },
     {
       "name": "KamiMarketOfferSystem",
-      "writeAccess": ["Balance", "EntityType", "IDOwnsKamiOrder", "IndexKami", "Max", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "IDOwnsKamiOrder",
+        "IndexKami",
+        "Max",
+        "State",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value"
+      ]
     },
     {
       "name": "KamiMarketAcceptOfferSystem",
-      "writeAccess": ["Balance", "EntityType", "IDOwnsKami", "IDOwnsKamiOrder", "IndexKami", "IndexKamiListing", "Max", "State", "TimeNext", "TimeStart", "TimeEnd", "TimeLast", "Value", "Values"]
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IndexKami",
+        "IndexKamiListing",
+        "Max",
+        "State",
+        "TimeNext",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
     },
     {
       "name": "KamiMarketCancelSystem",
-      "writeAccess": ["Balance", "EntityType", "IDOwnsKamiOrder", "IndexKami", "IndexKamiListing", "Max", "State", "TimeStart", "TimeEnd", "TimeLast", "Value"]
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "IDOwnsKamiOrder",
+        "IndexKami",
+        "IndexKamiListing",
+        "Max",
+        "State",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value"
+      ]
     },
     {
       "name": "_KamiMarketRegistrySystem",
