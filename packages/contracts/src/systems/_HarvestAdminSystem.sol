@@ -47,6 +47,7 @@ contract _HarvestAdminSystem is System, AuthRoles {
     LibKami.resetCooldown(components, kamiID);
 
     // reset action bonuses
+    LibBonus.resetUponCooldownSet(components, kamiID);
     LibBonus.resetUponHarvestStop(components, kamiID);
 
     // standard logging and tracking
