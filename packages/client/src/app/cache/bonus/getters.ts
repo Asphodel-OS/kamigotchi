@@ -11,6 +11,7 @@ const QueryUpdateTs = new Map<EntityID, number>();
 // End types that are queried for temp bonuses
 const TEMP_BONUS_END_TYPES = [
   'UPON_HARVEST_ACTION',
+  'UPON_COOLDOWN_SET',
   'UPON_LIQUIDATION',
   'UPON_DEATH',
   'UPON_KILL_OR_KILLED',
