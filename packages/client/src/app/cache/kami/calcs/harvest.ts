@@ -14,8 +14,13 @@ export const calcHarvestTime = (kami: Kami): number => {
 ////////////////
 // RATES
 
-// update the harvest rate on the kami's harvest. do nothing if no harvest
-// zeroes displayed rates if HP budget is exhausted (starve cutoff)
+// update the harvest rate on the kami's harvest. do nothing if no harvest.
+// zeroes the cached rates when HP budget is exhausted (starve cutoff).
+// this zeroing is intentional: it keeps all downstream rate consumers correct,
+// including calcHarvestingHealthRate (which would otherwise show a drain rate
+// on a kami whose health is already capped at 0) and all display components.
+// calcHealth and calcOutput must NOT read from the zeroed cache: they use
+// calcRawNetBounty instead to get the real bounty for cap/strain math.
 export const updateHarvestRate = (kami: Kami): number => {
   if (!kami.harvest || kami.harvest.state !== 'ACTIVE') return 0;
   updateHarvestRates(kami.harvest, kami);
@@ -40,7 +45,9 @@ export const calcHarvestingHealthRate = (kami: Kami): number => {
 ////////////////
 // OUTPUT
 
-// calculate the expected output from a pet harvest based on start time
+// calculate the expected output from a pet harvest based on start time.
+// uses calcRawNetBounty (not calcNetBounty) because the rate cache may
+// be zeroed by updateHarvestRate for display; we need the real bounty here.
 export const calcOutput = (kami: Kami): number => {
   if (!isHarvesting(kami) || !kami.harvest) return 0;
   const netBounty = calcHarvestRawNetBounty(kami.harvest, kami);

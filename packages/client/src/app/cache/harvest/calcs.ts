@@ -45,6 +45,9 @@ export const calcNetBounty = (harvest: Harvest): number => {
 // Calculate the bounty since last sync from first principles.
 // Does not read from the rate cache, so it is safe to call even when
 // rates have been zeroed for display (starve cutoff).
+// Used by calcHealth and calcOutput, which need the real bounty to compute
+// cap and strain correctly. See updateHarvestRate in kami/calcs/harvest.ts
+// for why the rate cache gets zeroed and why these callers can't use it.
 export const calcRawNetBounty = (harvest: Harvest, kami: Kami): number => {
   if (harvest.state !== 'ACTIVE' || !kami.config) return 0;
   const config = kami.config.harvest.bounty;
