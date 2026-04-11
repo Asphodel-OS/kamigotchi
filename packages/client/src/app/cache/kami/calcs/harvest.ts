@@ -1,4 +1,4 @@
-import { calcHarvestIdleTime, calcHarvestNetBounty, updateHarvestRates } from 'app/cache/harvest';
+import { calcHarvestIdleTime, calcHarvestNetBounty, calcHarvestRawNetBounty, updateHarvestRates } from 'app/cache/harvest';
 import { Kami } from 'network/shapes/Kami/types';
 import { isHarvesting } from './base';
 
@@ -43,7 +43,7 @@ export const calcHarvestingHealthRate = (kami: Kami): number => {
 // calculate the expected output from a pet harvest based on start time
 export const calcOutput = (kami: Kami): number => {
   if (!isHarvesting(kami) || !kami.harvest) return 0;
-  const netBounty = calcHarvestNetBounty(kami.harvest);
+  const netBounty = calcHarvestRawNetBounty(kami.harvest, kami);
   const maxMusu = calcMaxMusu(kami);
   const capped = netBounty < maxMusu ? netBounty : maxMusu;
   return kami.harvest.balance + capped;
