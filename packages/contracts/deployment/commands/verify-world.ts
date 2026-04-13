@@ -65,6 +65,21 @@ const ENTITY_TYPES = [
 
 const argv = require('yargs/yargs')(require('yargs/helpers').hideBin(process.argv)).argv;
 
+// filtering flags:
+//   --allcomponents / --allsystems / --allstate   run only those phases (default: all three)
+//   --components Name                             check a single component
+//   --systems Name                                check a single system
+//   --type Label                                  check a single entity type, e.g. Items
+//   --index N                                     check a single index within --type
+const filterComponent: string | undefined = argv.components;
+const filterSystem: string | undefined = argv.systems;
+const filterType: string | undefined = argv.type;
+const filterIndex: number | undefined = argv.index != null ? Number(argv.index) : undefined;
+
+const runComponents = argv.allcomponents || filterComponent || (!argv.allsystems && !argv.allstate && !filterSystem && !filterType);
+const runSystems = argv.allsystems || filterSystem || (!argv.allcomponents && !argv.allstate && !filterComponent && !filterType);
+const runState = argv.allstate || filterType || (!argv.allcomponents && !argv.allsystems && !filterComponent && !filterSystem);
+
 async function run() {
   const env = process.env.NODE_ENV || 'testing';
   const worldAddr = process.env.WORLD!;
@@ -95,8 +110,11 @@ async function run() {
   const artifactsDir = path.join(__dirname, '../../out');
 
   // Phase 1: Components
-  const compNames = deploy.components.map((comp: any) => comp.comp);
-  const compIDs = deploy.components.map((comp: any) => getCompIDByName(comp.comp));
+  if (runComponents) {
+  let comps = deploy.components;
+  if (filterComponent) comps = comps.filter((c: any) => c.comp === filterComponent);
+  const compNames = comps.map((comp: any) => comp.comp);
+  const compIDs = comps.map((comp: any) => getCompIDByName(comp.comp));
 
   console.log(`=== COMPONENTS (${compNames.length}) ===`);
 
@@ -115,10 +133,14 @@ async function run() {
     console.log(`  ${passed ? 'OK' : 'XX'}  ${compNames[i]}  ${detail}`);
     await delay(30);
   }
+  }
 
   // Phase 2: Systems (registration + bytecode comparison)
-  const systemNames = deploy.systems.map((sys: any) => sys.name);
-  const systemIDs = deploy.systems.map((sys: any) => getSystemIDByName(sys.name));
+  if (runSystems) {
+  let sysList = deploy.systems;
+  if (filterSystem) sysList = sysList.filter((s: any) => s.name === filterSystem);
+  const systemNames = sysList.map((sys: any) => sys.name);
+  const systemIDs = sysList.map((sys: any) => getSystemIDByName(sys.name));
 
   console.log(`\n=== SYSTEMS (${systemNames.length}) ===`);
 
@@ -172,13 +194,18 @@ async function run() {
 
     await delay(30);
   }
+  }
 
   // Phase 3: World State
-  console.log(`\n=== WORLD STATE ===`);
-
   const stateResults: StateResult[] = [];
 
-  for (const entityType of ENTITY_TYPES) {
+  if (runState) {
+  console.log(`\n=== WORLD STATE ===`);
+
+  let entityTypes = ENTITY_TYPES;
+  if (filterType) entityTypes = entityTypes.filter((t) => t.label.toLowerCase() === filterType.toLowerCase());
+
+  for (const entityType of entityTypes) {
     let rows: any[];
     try {
       rows = await readFile(entityType.csv);
@@ -191,6 +218,11 @@ async function run() {
     const hasStatus = !('noStatus' in entityType && entityType.noStatus);
     if (hasStatus) {
       rows = rows.filter((row: any) => ALL_STATUSES.includes(row['Status']));
+    }
+
+    // Filter by specific index if provided
+    if (filterIndex != null) {
+      rows = rows.filter((row: any) => Number(row[entityType.indexCol]) === filterIndex);
     }
 
     if (rows.length === 0) {
@@ -235,6 +267,7 @@ async function run() {
 
       await delay(30);
     }
+  }
   }
 
   // Phase 4: Summary
