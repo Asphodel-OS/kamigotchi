@@ -74,7 +74,16 @@ const argv = require('yargs/yargs')(require('yargs/helpers').hideBin(process.arg
 const filterComponent: string | undefined = argv.components;
 const filterSystem: string | undefined = argv.systems;
 const filterType: string | undefined = argv.type;
-const filterIndex: number | undefined = argv.index != null ? Number(argv.index) : undefined;
+const parsedIndex: number | undefined = argv.index != null ? Number(argv.index) : undefined;
+if (parsedIndex !== undefined) {
+  if (!Number.isInteger(parsedIndex) || parsedIndex <= 0) {
+    throw new Error(`invalid --index "${argv.index}": expected a positive integer`);
+  }
+  if (!filterType) {
+    throw new Error('--index requires --type');
+  }
+}
+const filterIndex = parsedIndex;
 
 const runComponents = argv.allcomponents || filterComponent || (!argv.allsystems && !argv.allstate && !filterSystem && !filterType);
 const runSystems = argv.allsystems || filterSystem || (!argv.allcomponents && !argv.allstate && !filterComponent && !filterType);
@@ -112,7 +121,10 @@ async function run() {
   // Phase 1: Components
   if (runComponents) {
   let comps = deploy.components;
-  if (filterComponent) comps = comps.filter((c: any) => c.comp === filterComponent);
+  if (filterComponent) {
+    comps = comps.filter((c: any) => c.comp === filterComponent);
+    if (comps.length === 0) throw new Error(`no components matched --components "${filterComponent}"`);
+  }
   const compNames = comps.map((comp: any) => comp.comp);
   const compIDs = comps.map((comp: any) => getCompIDByName(comp.comp));
 
@@ -138,7 +150,10 @@ async function run() {
   // Phase 2: Systems (registration + bytecode comparison)
   if (runSystems) {
   let sysList = deploy.systems;
-  if (filterSystem) sysList = sysList.filter((s: any) => s.name === filterSystem);
+  if (filterSystem) {
+    sysList = sysList.filter((s: any) => s.name === filterSystem);
+    if (sysList.length === 0) throw new Error(`no systems matched --systems "${filterSystem}"`);
+  }
   const systemNames = sysList.map((sys: any) => sys.name);
   const systemIDs = sysList.map((sys: any) => getSystemIDByName(sys.name));
 
@@ -203,7 +218,10 @@ async function run() {
   console.log(`\n=== WORLD STATE ===`);
 
   let entityTypes = ENTITY_TYPES;
-  if (filterType) entityTypes = entityTypes.filter((t) => t.label.toLowerCase() === filterType.toLowerCase());
+  if (filterType) {
+    entityTypes = entityTypes.filter((t) => t.label.toLowerCase() === filterType.toLowerCase());
+    if (entityTypes.length === 0) throw new Error(`unknown --type "${filterType}"`);
+  }
 
   for (const entityType of entityTypes) {
     let rows: any[];
