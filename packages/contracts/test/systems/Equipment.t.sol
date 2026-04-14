@@ -63,13 +63,13 @@ contract EquipmentTest is MintTemplate {
     );
     __ItemRegistrySystem.setSlot(PETPET_INDEX, SLOT_PETPET);
 
-    // Add bonus with ON_UNEQUIP end type (must match slot)
+    // Add bonus with UPON_UNEQUIP end type (must match slot)
     __ItemRegistrySystem.addAlloBonus(
       abi.encode(
         PETPET_INDEX,
         "EQUIP", // use case
         "STAT_POWER_SHIFT", // bonus type
-        "ON_UNEQUIP_Kami_Pet_Slot", // end type (slot-specific)
+        "UPON_UNEQUIP_Kami_Pet_Slot", // end type (slot-specific)
         uint256(0), // duration (0 for permanent until unequip)
         POWER_BONUS // value
       )
@@ -81,13 +81,13 @@ contract EquipmentTest is MintTemplate {
     );
     __ItemRegistrySystem.setSlot(HAT_INDEX, SLOT_HAT);
 
-    // Add bonus with ON_UNEQUIP end type (must match slot)
+    // Add bonus with UPON_UNEQUIP end type (must match slot)
     __ItemRegistrySystem.addAlloBonus(
       abi.encode(
         HAT_INDEX,
         "EQUIP",
         "STAT_HEALTH_SHIFT",
-        "ON_UNEQUIP_Kami_Hat_Slot",
+        "UPON_UNEQUIP_Kami_Hat_Slot",
         uint256(0),
         HEALTH_BONUS
       )
@@ -667,9 +667,9 @@ contract EquipmentTest is MintTemplate {
 
   function testGenEndType() public {
     string memory endType = LibEquipment.genEndType(SLOT_PETPET);
-    assertEq(endType, "ON_UNEQUIP_Kami_Pet_Slot", "End type should be ON_UNEQUIP_ + slot");
+    assertEq(endType, "UPON_UNEQUIP_Kami_Pet_Slot", "End type should be UPON_UNEQUIP_ + slot");
 
     string memory endType2 = LibEquipment.genEndType(SLOT_HAT);
-    assertEq(endType2, "ON_UNEQUIP_Kami_Hat_Slot", "End type should match slot");
+    assertEq(endType2, "UPON_UNEQUIP_Kami_Hat_Slot", "End type should match slot");
   }
 }

@@ -122,7 +122,7 @@ contract EquipmentTransferTest is EquipmentTest {
       string.concat(context, ": item not returned to inventory")
     );
 
-    // (b) ON_UNEQUIP_{slot} bonus cleared
+    // (b) UPON_UNEQUIP_{slot} bonus cleared
     int256 powerBonus = LibBonus.getFor(components, "STAT_POWER_SHIFT", kamiID);
     assertEq(
       powerBonus, 0,
