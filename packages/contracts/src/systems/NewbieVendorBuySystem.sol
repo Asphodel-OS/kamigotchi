@@ -12,6 +12,7 @@ import { ValuesComponent, ID as ValuesCompID } from "components/ValuesComponent.
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibSoulbound } from "libraries/LibSoulbound.sol";
@@ -121,6 +122,9 @@ contract NewbieVendorBuySystem is System {
     require(kamiID != 0, "NewbieVendor: kami not found");
     LibKami.verifyAccount(components, kamiID, vendorAccID);
     LibKami.verifyState(components, kamiID, "RESTING");
+
+    // defense-in-depth: unequip any items before vendor transfer
+    LibEquipment.unequipAll(components, kamiID, vendorAccID);
 
     // reassign ownership via IDOwnsKami
     LibKami.setOwner(components, kamiID, buyerAccID);

@@ -238,6 +238,36 @@ library LibEquipment {
   }
 
   /////////////////
+  // BULK OPERATIONS
+
+  /// @notice Force-unequip all items from a holder, returning items to inventory
+  /// @dev Used by marketplace/transfer flows to ensure no equipment persists through ownership changes
+  /// @param components The components registry
+  /// @param holderID The entity being unequipped (kami or account)
+  /// @param inventoryID The entity whose inventory to return items to (usually account)
+  function unequipAll(
+    IUintComp components,
+    uint256 holderID,
+    uint256 inventoryID
+  ) internal {
+    uint256[] memory equipIDs = getAllEquipped(components, holderID);
+    for (uint256 i; i < equipIDs.length; i++) {
+      uint256 equipID = equipIDs[i];
+      uint32 itemIndex = IndexItemComponent(getAddrByID(components, IndexItemCompID)).get(equipID);
+      string memory slot = ForComponent(getAddrByID(components, ForCompID)).get(equipID);
+
+      // clear bonuses for this slot
+      LibBonus.unassignBy(components, genEndType(slot), holderID);
+
+      // remove equipment instance
+      removeInstance(components, equipID);
+
+      // return item to inventory
+      LibInventory.incFor(components, inventoryID, itemIndex, 1);
+    }
+  }
+
+  /////////////////
   // SETTERS
 
   /// @notice Set slot on an item registry entry (via For component)
