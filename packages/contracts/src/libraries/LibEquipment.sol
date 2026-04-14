@@ -45,7 +45,7 @@ library LibEquipment {
   using LibString for string;
 
   string constant ENTITY_TYPE = "EQUIPMENT";
-  string constant END_TYPE_PREFIX = "ON_UNEQUIP_";
+  string constant END_TYPE_PREFIX = "UPON_UNEQUIP_";
 
   // Equipment capacity: base limit on total equipment an entity can have equipped
   uint256 constant DEFAULT_CAPACITY = 1;
