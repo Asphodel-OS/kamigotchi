@@ -15,6 +15,10 @@ import { KamiMarketVault } from "tokens/KamiMarketVault.sol";
 
 uint256 constant ID = uint256(keccak256("system.kamimarket.acceptoffer"));
 
+error KamiMarketAcceptKamiMismatch();
+error KamiMarketAcceptInvalidOrderType();
+error KamiMarketAcceptEmptyBatch();
+
 /// @notice Accept any offer — WETH pulled from buyer, kami reassigned via IDOwnsKami
 contract KamiMarketAcceptOfferSystem is System {
   constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -69,10 +73,9 @@ contract KamiMarketAcceptOfferSystem is System {
 
     if (keccak256(bytes(orderType)) == keccak256(bytes("KAMI_OFFER"))) {
       // specific offer: verify the offer targets this kami
-      require(
-        LibKamiMarket.getKamiIndex(components, offerID) == kamiIndex,
-        "KamiMarketAccept: kami mismatch"
-      );
+      if (LibKamiMarket.getKamiIndex(components, offerID) != kamiIndex) {
+        revert KamiMarketAcceptKamiMismatch();
+      }
       (buyerAddress, price, ) = LibKamiMarket.fillOffer(world, components, offerID, sellerAccID);
     } else if (keccak256(bytes(orderType)) == keccak256(bytes("KAMI_COLLECTION_OFFER"))) {
       (buyerAddress, price) = LibKamiMarket.fillCollectionOffer(
@@ -83,7 +86,7 @@ contract KamiMarketAcceptOfferSystem is System {
         kamiIndex
       );
     } else {
-      revert("KamiMarketAccept: invalid order type");
+      revert KamiMarketAcceptInvalidOrderType();
     }
 
     // WETH transfers via vault
@@ -112,7 +115,7 @@ contract KamiMarketAcceptOfferSystem is System {
     uint256 offerID,
     uint32[] memory kamiIndices
   ) internal returns (bytes memory) {
-    require(kamiIndices.length > 0, "KamiMarketAccept: empty batch");
+    if (kamiIndices.length == 0) revert KamiMarketAcceptEmptyBatch();
 
     // --- shared checks (once) ---
     uint256 sellerAccID = LibAccount.verifyOperator(components);
@@ -150,13 +153,10 @@ contract KamiMarketAcceptOfferSystem is System {
     }
 
     // --- batched WETH transfers ---
-    uint256 totalPrice;
-    uint256 totalFee;
-    for (uint256 i; i < kamiIndices.length; i++) {
-      uint256 fee = LibKamiMarket.calcFee(components, pricePerKami);
-      totalFee += fee;
-      totalPrice += pricePerKami;
-    }
+    uint256 batchCount = kamiIndices.length;
+    uint256 feePerKami = LibKamiMarket.calcFee(components, pricePerKami);
+    uint256 totalPrice = pricePerKami * batchCount;
+    uint256 totalFee = feePerKami * batchCount;
     KamiMarketVault vault = LibKamiMarket.getVault(components);
     vault.transferWETH(buyerAddress, sellerAddress, totalPrice - totalFee);
     if (totalFee > 0) {
