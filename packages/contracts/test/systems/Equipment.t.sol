@@ -26,7 +26,7 @@ contract EquipmentTest is MintTemplate {
   // Capacity skill for testing
   uint32 constant CAPACITY_SKILL_INDEX = 9999;
 
-  function setUp() public override {
+  function setUp() public virtual override {
     super.setUp();
     _createEquipmentItems();
     _createCapacitySkill();
