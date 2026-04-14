@@ -8,6 +8,7 @@ import { LibTypes } from "solecs/LibTypes.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
 import { LibCooldown } from "libraries/utils/LibCooldown.sol";
@@ -57,6 +58,9 @@ contract KamiSendSystem is System {
 
       // if listed, cancel all listings first
       LibKamiMarket.cancelListingsForKami(world, components, kamiIndex);
+
+      // unequip all items before transfer (return to sender)
+      LibEquipment.unequipAll(components, kamiID, senderAccID);
 
       // reassign ownership and set RESTING
       LibKami.setOwner(components, kamiID, targetAccID);

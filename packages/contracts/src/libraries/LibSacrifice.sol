@@ -20,6 +20,7 @@ import { WeightsComponent, ID as WeightsCompID } from "components/WeightsCompone
 import { LibCommit } from "libraries/LibCommit.sol";
 import { LibData } from "libraries/LibData.sol";
 import { LibEmitter } from "libraries/utils/LibEmitter.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibInventory } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
@@ -79,6 +80,9 @@ library LibSacrifice {
 
     // Store the kami ID being sacrificed (for logging/events)
     ValueComponent(getAddrByID(components, ValueCompID)).set(commitID, kamiID);
+
+    // Unequip all items before sacrifice (return to account inventory)
+    LibEquipment.unequipAll(components, kamiID, accID);
 
     // Burn the kami: transfer 721 to burn address and update ECS state
     burn(components, kamiID);
