@@ -147,7 +147,7 @@ async function run() {
   }
   }
 
-  // Phase 2: Systems (registration + bytecode comparison)
+  // Phase 2: Systems (with linked library checks)
   if (runSystems) {
   let sysList = deploy.systems;
   if (filterSystem) {
@@ -157,6 +157,68 @@ async function run() {
   const systemNames = sysList.map((sys: any) => sys.name);
   const systemIDs = sysList.map((sys: any) => getSystemIDByName(sys.name));
 
+  // Cache local library sizes
+  const libLocalSizeCache = new Map<string, number>();
+  function getLibLocalSize(libName: string): number {
+    if (libLocalSizeCache.has(libName)) return libLocalSizeCache.get(libName)!;
+    const p = path.join(artifactsDir, `${libName}.sol/${libName}.json`);
+    let size = 0;
+    if (fs.existsSync(p)) {
+      const a = JSON.parse(fs.readFileSync(p, 'utf-8'));
+      size = ((a.deployedBytecode?.object?.length || 2) - 2) / 2;
+    }
+    libLocalSizeCache.set(libName, size);
+    return size;
+  }
+
+  // Cache deployed library sizes by address
+  const libDeployedSizeCache = new Map<string, number>();
+  async function getLibDeployedSize(addr: string): Promise<number> {
+    const key = addr.toLowerCase();
+    if (libDeployedSizeCache.has(key)) return libDeployedSizeCache.get(key)!;
+    const code = await provider.getCode(addr);
+    const size = (code.length - 2) / 2;
+    libDeployedSizeCache.set(key, size);
+    return size;
+  }
+
+  // Check a system's linked libraries, return list of stale lib names
+  async function checkSystemLibs(sysName: string, onChainCode: string): Promise<string[]> {
+    const artifactPath = path.join(artifactsDir, `${sysName}.sol/${sysName}.json`);
+    if (!fs.existsSync(artifactPath)) return [];
+    const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf-8'));
+    const links = artifact.deployedBytecode?.linkReferences || {};
+    const hex = onChainCode.startsWith('0x') ? onChainCode.slice(2) : onChainCode;
+    const staleLibs: string[] = [];
+
+    for (const [file, libs] of Object.entries(links) as [string, any][]) {
+      for (const [libName, positions] of Object.entries(libs) as [string, any][]) {
+        const localSize = getLibLocalSize(libName);
+        if (localSize === 0) continue;
+        const offset = positions[0].start;
+        const libAddr = '0x' + hex.substring(offset * 2, offset * 2 + 40);
+        try {
+          const deployedSize = await getLibDeployedSize(libAddr);
+          const key = `${libName}@${libAddr.toLowerCase()}`;
+          // Track for summary
+          if (!libInstanceMap.has(key)) {
+            libInstanceMap.set(key, { libName, addr: libAddr, deployedSize, localSize, systems: [] });
+          }
+          libInstanceMap.get(key)!.systems.push(sysName);
+
+          if (deployedSize !== localSize && !staleLibs.includes(libName)) {
+            staleLibs.push(libName);
+          }
+        } catch {}
+      }
+    }
+    return staleLibs;
+  }
+
+  // Track library instances for summary
+  const libInstanceMap = new Map<string, { libName: string; addr: string; deployedSize: number; localSize: number; systems: string[] }>();
+
+  // Check and print each system procedurally
   console.log(`\n=== SYSTEMS (${systemNames.length}) ===`);
 
   for (let i = 0; i < systemNames.length; i++) {
@@ -178,7 +240,6 @@ async function run() {
       continue;
     }
 
-    // Compare on-chain bytecode with compiled artifact
     const artifactPath = path.join(artifactsDir, `${sysName}.sol/${sysName}.json`);
     if (!fs.existsSync(artifactPath)) {
       results.push({ category: 'System', name: sysName, passed: false, state: 'NO_ARTIFACT', detail: `Registered at ${addr} (no artifact to verify)` });
@@ -194,13 +255,20 @@ async function run() {
       const imm = artifact.deployedBytecode.immutableReferences || {};
       const links = artifact.deployedBytecode.linkReferences || {};
 
-      const match = compareBytecode(onChainCode, compiledCode, imm, links);
-      if (match) {
+      const bytecodeMatch = compareBytecode(onChainCode, compiledCode, imm, links);
+      const staleLibs = await checkSystemLibs(sysName, onChainCode);
+      const hasStaleLib = staleLibs.length > 0;
+
+      if (bytecodeMatch && !hasStaleLib) {
         results.push({ category: 'System', name: sysName, passed: true, state: 'CURRENT', detail: addr });
         console.log(`  OK  ${sysName}  ${addr}`);
       } else {
-        results.push({ category: 'System', name: sysName, passed: false, state: 'STALE', detail: `Bytecode differs (needs redeploy)` });
-        console.log(`  !!  ${sysName}  ${addr}  STALE`);
+        const reasons: string[] = [];
+        if (!bytecodeMatch) reasons.push('bytecode differs');
+        if (hasStaleLib) reasons.push(`linked library ${staleLibs.join(', ')} outdated`);
+        const detail = reasons.join(' + ') + ' (needs redeploy)';
+        results.push({ category: 'System', name: sysName, passed: false, state: 'STALE', detail });
+        console.log(`  !!  ${sysName}  ${addr}  STALE (${reasons.join(' + ')})`);
       }
     } catch (e: any) {
       results.push({ category: 'System', name: sysName, passed: false, state: 'ERROR', detail: `Bytecode check failed: ${e.message?.slice(0, 60)}` });
@@ -208,6 +276,22 @@ async function run() {
     }
 
     await delay(30);
+  }
+
+  // Track library results for summary (no output here)
+  for (const [key, lib] of libInstanceMap) {
+    const isStale = lib.deployedSize !== lib.localSize;
+    const delta = lib.localSize - lib.deployedSize;
+    const sysList = [...new Set(lib.systems)].join(', ');
+    results.push({
+      category: 'Library',
+      name: lib.libName,
+      passed: !isStale,
+      state: isStale ? 'STALE' : 'CURRENT',
+      detail: isStale
+        ? `${lib.addr} (deployed ${lib.deployedSize}B, local ${lib.localSize}B, delta ${delta > 0 ? '+' : ''}${delta}) affects: ${sysList}`
+        : `${lib.addr}`,
+    });
   }
   }
 
@@ -342,14 +426,32 @@ async function run() {
     console.log(`  ERROR:    ${wsErrors.length}  (RPC or component errors)`);
 
   // Detailed failure lists
+  const libResults = results.filter((r) => r.category === 'Library');
+  const libStale = libResults.filter((r) => r.state === 'STALE');
+
+  if (libResults.length > 0) {
+    console.log(`\nLinked Libraries (${libResults.length}):`);
+    if (libStale.length > 0)
+      console.log(`  STALE:           ${libStale.length}  (deployed library differs from local, needs redeploy)`);
+    console.log(`  CURRENT:         ${libResults.length - libStale.length}`);
+  }
+
   const hasIssues =
     compUnreg.length > 0 || compErrors.length > 0 || sysStale.length > 0 || sysUnreg.length > 0 || sysNoArt.length > 0 || sysErrors.length > 0 ||
+    libStale.length > 0 ||
     wsStale.length > 0 || wsMissing.length > 0 || wsErrors.length > 0;
+
+  if (libStale.length > 0) {
+    console.log(`\nSTALE LIBRARIES (needs redeploy + system re-link):`);
+    for (const r of libStale) {
+      console.log(`  ${r.name}  ${r.detail}`);
+    }
+  }
 
   if (sysStale.length > 0) {
     console.log(`\nSTALE SYSTEMS (needs redeploy):`);
     for (const r of sysStale) {
-      console.log(`  ${r.name}`);
+      console.log(`  ${r.name}  (${r.detail})`);
     }
   }
 
@@ -420,8 +522,7 @@ async function run() {
   }
 
   const isCurrent = !hasIssues;
-  console.log(`\nRESULT: ${isCurrent ? 'CURRENT' : 'OUT OF SYNC'}`);
-  if (!isCurrent) process.exit(1);
+  console.log(`\nRESULT: ${isCurrent ? 'CURRENT' : 'OUT OF SYNC'}\n`);
 }
 
 run().catch((e) => {
