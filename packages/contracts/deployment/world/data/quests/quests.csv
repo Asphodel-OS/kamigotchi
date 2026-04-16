@@ -16,7 +16,7 @@ MENU: “Once you get there, I’ll give you a Spell Card.”","MENU: “Here yo
 MENU: “Spell Cards can have different effects. This one restores Stamina. If you get too tired to move, you can use it to restore yourself.”
 MENU: “You can also recover Stamina by eating the right foods, or by resting and letting it recover slowly.”
 MENU: “Even if you’re totally exhausted you’ll bounce back eventually, but it might take a bit of time without any items, so be careful not to run out at an inopportune moment.
-MENU: “Now, let’s head into town and find you a kami.”",Complete MSQ001,Move to Torii Gate,"1x ""Neith’s River of Life"" Spell Card"
+MENU: “Now, let’s head into town and find you a kami.”",Complete MSQ001,Move to Torii Gate,1x ”Neith’s River of Life” Spell Card
 MSQ003,3,In Game,Your First Kami,No,MAIN,MENU,"MENU: “Uh oh.”
 MENU: “Something very peculiar seems to be going on with my sensors.”
 MENU: “Where did that junkyard come from? Where is the town?”
@@ -100,7 +100,7 @@ MENU: “That will make them a good place to begin our investigation I think.”
 MENU: “Collect three scavenges from normal type rooms and lets see what we can learn.”","MENU: “These items are in fact pretty normal.”
 MENU: “Something being normal is kinda like it being natural, but it’s natural for wherever it actually is, the normal thing in that place.”
 MENU: “So these are very normal items for this normal place, a representative sample of normality.”
-MENU: “That will be useful later, but we’ll need more information to compare it with.”",Complete MSQ009,Make a Scavenging roll in 3 rooms of the Normal type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MENU: “That will be useful later, but we’ll need more information to compare it with.”",Complete MSQ009,Make a Scavenging roll in 3 rooms of the Normal type,"4x Agency Reputation,1x ”Neith’s River of Life” Spell Card"
 MSQ011,11,In Game,That Eerie Feeling,No,MAIN,MENU,"MENU: “The “Eerie” type comes into being when the normal state of things gets changed by something divine or supernatural.”
 MENU: “If you ask me, this entire world is a little bit eerie, but there’s places where that effect is heightened enough for it to be the main influence on the local environment.”
 MENU: “By comparing the items from an eerie room to ones from a normal room, we might be able to chart out how this world has been changed.”
@@ -127,7 +127,7 @@ MENU: “Perhaps that’s why there’s so much of it. There could have been som
 MENU: “Collect three scavenges from scrap type rooms, maybe we’ll find evidence of what happened.”","MENU: “Somewhat unsurprisingly these results continue to be very inconclusive.”
 MENU: “We’ve learned a few things, but I don’t think we’re much closer to understanding what’s going on with this world than we were before.”
 MENU: “We’ll have to try some different methods of analysis.”
-MENU: “Don’t worry though, I already have a plan in mind for our next steps.”",Complete MSQ012,Make a Scavenging roll in 3 rooms of the Scrap type,"4x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MENU: “Don’t worry though, I already have a plan in mind for our next steps.”",Complete MSQ012,Make a Scavenging roll in 3 rooms of the Scrap type,"4x Agency Reputation,1x ”Neith’s River of Life” Spell Card"
 MSQ014,14,In Game,Identifying Materials: Wood,No,MAIN,MENU,"MENU: “You probably picked up a Wooden Stick or two while out scavenging with your Kami.”
 MENU: “Well, here’s a rumor: These trees are all branches of one huge tree, connected by the roots!”
 MENU: “That’s why all the Wooden Sticks you’ll find are pretty much the same, no matter where you pick them up.”
@@ -163,7 +163,7 @@ MENU: “So it’s time for a thorough search. I’ll collect data and look for 
 MENU: “Once I know where they are, maybe I can help open them up.”","MENU: “Quite the workout, no? Here, this spell card will perk you up.”
 MENU: “That huge lab facility stands out like a sore thumb, it’s totally out of place in this world.”
 MENU: “We should definitely check it out, but it’s locked up tight for now.”
-MENU: “Keep looking around, maybe there’s something we’ve missed.”",Complete MSQ016,Move 100 times,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MENU: “Keep looking around, maybe there’s something we’ve missed.”",Complete MSQ016,Move 100 times,"2x Agency Reputation,1x ”Neith’s River of Life” Spell Card"
 MSQ018,18,In Game,Harvesting Data I,No,MAIN,MENU,"MENU: “On my original maps, the area occupied by the scrapyard is supposed to be the location of the starter town, full of quest givers and shops.”
 MENU: “I want to find out what happened to that town. Is there anything left from it? Did it ever exist? 
 MENU: “Please hike to the deepest part of the scrapyard and check it out for me.”
@@ -199,7 +199,7 @@ MENU: “I’ve confirmed the existence of a cave beyond the waterfall.”
 MENU: “Unfortunately, I don’t think you can just jump inside.”
 MENU: “I don’t mean to be rude, but you seem to abhor running water.”
 MENU: “There has to be a way to get us in despite that.”
-MENU: “Maybe a second entrance somewhere...”",Complete MSQ019,Harvest for >720 minutes at the Hollow Path,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card,1x “Melkarth’s Heroic Awakening” Spell Card"
+MENU: “Maybe a second entrance somewhere...”",Complete MSQ019,Harvest for >720 minutes at the Hollow Path,"4x Agency Reputation,1x “Paeon’s Field of Flowers” Spell Card,1x ”Melkarth’s Heroic Awakening” Spell Card"
 MSQ021,21,In Game,Squaring the Circle I,No,MAIN,MENU,"MENU: “The holes in my memory are frustrating.”
 MENU: “I should know how to progress, but it’s like someone wanted me to forget.”
 MENU: “Bear with me for a while, okay? I have one more thing to try.”
@@ -264,7 +264,7 @@ MENU: “Keep that thing safe until we can read it!”
 MENU: “We can’t read it yet, but I’m not about to let something like that hold us back.”
 MENU: “The laptop’s battery is missing. I can’t read the chip without a device to interface with. 
 MENU: “These are pretty big problems, but compared to the ones we had before? Light work.”
-MENU: “Thanks for doing this with me.”",Complete MSQ026,Make 5 Scavenging Rolls at Lost Skeleton,"6x Agency Reputation,1x Booster Pack,""KW Maps"" Data Chip"
+MENU: “Thanks for doing this with me.”",Complete MSQ026,Make 5 Scavenging Rolls at Lost Skeleton,"6x Agency Reputation,1x Booster Pack,”KW Maps” Data Chip"
 MSQ028,28,In Game,Deeper Understanding,No,MAIN,MENU,"MENU: “Try the Scrap Confluence for something that might be able to read a data chip.”
 MENU: “There’s so much tech there, some of it is bound to work.”
 MENU: “Fingers crossed you find a laptop battery.”","MENU: “You know, some of this stuff would be really interesting if it weren’t all broken crap.”
@@ -500,7 +500,7 @@ MENU: “These are a fine source of Microplastics!”
 MENU: “You can just grind them up in that Spice Grinder from Mina’s shop.”
 MINA: “I should sell you a second one.”
 MINA: “You can use it just for cigarettes.”
-MINA: “And here, take this card. You might need it after dealing with such filthy things.”",Complete MSQ049,Scavenge 15 Cigarette Butts,"2x Elders Loyalty,2x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
+MINA: “And here, take this card. You might need it after dealing with such filthy things.”",Complete MSQ049,Scavenge 15 Cigarette Butts,"2x Elders Loyalty,2x Agency Reputation,1x ”Melkarth’s Heroic Awakening” Spell Card"
 MSQ051,51,In Game,Ringing Any Bells II,No,MAIN,MENU,"MENU: “Something in the cave crossroads is still ringing a bell. Pardon the joke.”
 MENU: “You still have that essence of hearing your Kami scavenged earlier, right?”
 MENU: “Mina, do you think it would let me hear things the way a human can?”
@@ -1035,7 +1035,7 @@ DIMIDIATUS: “The scale insects of the Kamigotchi World are master confectioner
 DIMIDIATUS: “Sweets crafted even by the hands of higher beings could not compare.”
 MENU: “Don’t let Mina hear you say that.”
 MENU: “But yeah, she could stand to work on her recipes a little.”
-MENU: “Or get some new ones in the store.”",Complete MSQ107,Give 10 Honeydew Scale,"2x Agency Reputation,3x ""Cultivation II"" Spell Card"
+MENU: “Or get some new ones in the store.”",Complete MSQ107,Give 10 Honeydew Scale,"2x Agency Reputation,3x “Cultivation II“ Spell Card"
 MSQ109,109,In Game,Remain Unburdened of Attachments,No,MAIN,DIMIDIATUS,"DIMIDIATUS: “You have become attached to this world.”
 DIMIDIATUS: “One may perceive this as good, or bad, or both. But it is a restrictive condition.”
 DIMIDIATUS: “You may not want to let things go. You may feel scared.”
@@ -1059,7 +1059,7 @@ MINA: ”I don’t care how you get it. Just bring me more and I’ll be happy.�
 MINA: “——— Mina.”","MINA: “Take this card.”
 MINA: “Even someone lacking in magical ability can use it to cast a little spell.”
 MINA: “These aren’t mine to sell, but I’ll give them away for good behavior.”
-MINA: “——— Mina.”",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ""Neith’s River of Life"" Spell Card"
+MINA: “——— Mina.”",Complete MIN001,Spend 1000 $MUSU at Mina’s Shop,"4x Elders Loyalty,1x ”Neith’s River of Life” Spell Card"
 MIN003,2003,In Game,Early Market Research - I,No,MAIN,MINA,"MINA: “Relics and mementos from the past are brought into this world with $MUSU.”
 MINA: “Humans grow attached to many things.”
 MINA: “The first coin they earned, a trowel used to plant the food that fed their family, a transforming robot toy that made other children jealous.”
@@ -1211,7 +1211,7 @@ MENU: “If you can’t wait, give your Kami a snack or use a Spell Card to rest
 MENU: “Kamigotchi don’t need food to live, but they can draw energy from food to bolster their spirit.”
 MENU: “Use an item to heal a Kami and complete this quest. If you already used the Spell Card that I gave you, go buy some food or dig up a Cheeseburger.”","MENU: “While Kami don’t see Harvesting as labor, they still get tired and lose Health.”
 MENU: “Kamigotchi hold their bodies together with spiritual energy. As they expend energy, it gets harder to maintain their form.”
-MENU: “Low Health doesn’t mean a Kami is physically hurt, but it’s still a problem you should take care of.”",Complete MSQ004,Use an item to heal a Kamigotchi that has been reduced below 100% Health,"2x Agency Reputation,1x ""Neith’s River of Life"" Spell Card"
+MENU: “Low Health doesn’t mean a Kami is physically hurt, but it’s still a problem you should take care of.”",Complete MSQ004,Use an item to heal a Kamigotchi that has been reduced below 100% Health,"2x Agency Reputation,1x ”Neith’s River of Life” Spell Card"
 SQ003,3003,In Game,There Are Levels to This,No,SIDE,MENU,"MENU: “Unlike humans, Kamigotchi have the potential to grow and change by using xenoplasticity, or “XP” for short.”
 MENU: “This means that they can assimilate many different things to form a new cohesive whole.”
 MENU: “Take a look at your roster.
@@ -1233,7 +1233,7 @@ MENU: “In this world it’s usually possible to return to form no matter what 
 MENU: “The essence of something remains unless it’s been totally erased from existence.”","MENU: Take this and use it on a Kami that has been Liquidated.
 MENU: “Just read the incantation printed on the front, and presto! This powerful spell card brings your Kami back to action. 
 MENU: “It’s the only freebie I’m allowed to give you. You’ll have to work for more spell cards like this one.”
-MENU: “Certain shopkeepers might sell different kinds of revival magic, but these cards are premium SSR.”",Have one of your own Kami liquidated,,"2x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
+MENU: “Certain shopkeepers might sell different kinds of revival magic, but these cards are premium SSR.”",Have one of your own Kami liquidated,,"2x Agency Reputation,1x ”Melkarth’s Heroic Awakening” Spell Card"
 SQ006,3006,In Game,What’s In a Name?,No,SIDE,MENU,"MENU: “Southeast through the old forest you can find a small shrine by a mountain waterfall.”
 MENU: “With the rare Holy Dust item, you can perform a ritual there to grant your Kami a name.”
 MENU: “If you don’t have Holy Dust, a small donation of $ONYX to the shrine will suffice!”","MENU: “I think that fits.”
@@ -1330,7 +1330,7 @@ MINA: “These have been worthless for quite some time. The value crashed after 
 MINA: “Speculating on this coin lost me a chunk of wealth, but still, I’m glad that hag is dead.”
 MENU: “They might be useless, but I think it’s fine if the Operator collects them.”
 MENU: “I sort of like having them around. They’re neat. Maybe we’ll find a buyer later!”
-MINA: “Ridiculous. They might as well be scrap metal.”",Complete SQ017,Scavenge 25 Otherworld Coins,"4x Agency Reputation,1x “Melkarth’s Heroic Awakening” Spell Card"
+MINA: “Ridiculous. They might as well be scrap metal.”",Complete SQ017,Scavenge 25 Otherworld Coins,"4x Agency Reputation,1x ”Melkarth’s Heroic Awakening” Spell Card"
 SQ019,3019,In Game,Happy Hunting Ground,No,SIDE,MINA,"MINA: “If you haven’t figured it out yet, this is another world entirely.”
 MINA: “We’re far, far from the Kamigotchi World, warped through the reflection off of a mirrored blade.”
 MINA: “The trophies on display commemorate the slaying of monsters you may have never seen before.”
@@ -1381,7 +1381,7 @@ ROB: “I’m a traveler at heart too, y’see. But this treasure chamber? It’
 ROB: “You seemed to get in just fine, though. I might’ve even seen ya leave again.”
 ROB: “How’s about I follow you out?”
 ROB: “Heh heh. Just kidding. I’m fettered tight to this stone for now.”
-ROB: “Still hungry, too. Got any meat?”",Complete SQ021,Give 3 Rock Candyfloss,"3x ""Melkarth's Heroic Awakening"" Spell Card"
+ROB: “Still hungry, too. Got any meat?”",Complete SQ021,Give 3 Rock Candyfloss,3x ”Melkarth's Heroic Awakening” Spell Card
 SQ028,3028,In Game,The More the Merrier,No,SIDE,ROB,"MENU: “Do you see that? The little… I don’t really know what it is. It’s dancing on top of that pole.”
 MENU: “Is it maybe a bird? But I’ve never seen any bird as strange as that.”
 ROB: “Lady, y’know I can hear you.”
@@ -1399,7 +1399,7 @@ ROB: “Suppose if the little ones cozy up like that, you can’t be all bad.”
 ROB: “You can let ‘em down here to play. I won’t bother ‘em.”","ROB: “Those Kami play rough for bein’ so fragile.”
 ROB: “You might want to keep a close eye on ‘em while they’re out. Take this for the trouble.”
 ROB: “Don’t expect them to look after themselves, either.”
-ROB: “They can’t look after a damn thing. Bastards didn’t even look at my dancin’.”",Complete SQ028,Harvest for >30 minutes at Restricted Area,1x “Melkarth’s Heroic Awakening” Spell Card
+ROB: “They can’t look after a damn thing. Bastards didn’t even look at my dancin’.”",Complete SQ028,Harvest for >30 minutes at Restricted Area,1x ”Melkarth’s Heroic Awakening” Spell Card
 SQ030,3030,In Game,Container Deposit,No,SIDE,ROB,"ROB: “You like to fill your pockets of fine goods, right, kid?”
 ROB: “I’ve got a hoard of who knows what. And plenty of money besides.”
 ROB: “Care for a trade?”
@@ -1442,7 +1442,7 @@ ZEVANA: “Follow the path, or stray from it. Get familiar with this place.”
 ZEVANA: “Don’t cry. You can come back soon.”","ZEVANA: “Just seeing how well you follow instructions.”
 ZEVANA: “Take this and freshen up, then come talk to me in person.”
 ZEVANA: “You should know that I sell companionship.”
-ZEVANA: “I mean, come to me to buy a starter Kamigotchi.”",In Room: Torii Gate,Move 4 Times,"1x ""Neith’s River of Life"" Spell Card"
+ZEVANA: “I mean, come to me to buy a starter Kamigotchi.”",In Room: Torii Gate,Move 4 Times,1x ”Neith’s River of Life” Spell Card
 SQ035,3035,In Game,Rookie Training I,No,SIDE,ZEVANA,"ZEVANA: “By now you should have at least one Kamigotchi by your side.”
 ZEVANA: “If you don’t, what are you waiting for?”
 ZEVANA: “Fork it over and I’ll hook you up. We can make deals on the side.”
@@ -1456,7 +1456,7 @@ ZEVANA: “We’ll talk later.”",Complete SQ034,Harvest for >15 minutes,1x “
 SQ036,3036,In Game,Rookie Training II,No,SIDE,ZEVANA,"ZEVANA: “When your Kamigotchi harvests for long periods of time, it builds up opportunities to scavenge.”
 ZEVANA: “I want you to have your friend collect a memento from this node.”
 ZEVANA: “This may take some time. Be careful with the poor thing’s health.”","ZEVANA: “Take this card in case your Kamigotchi falls to a predator.”
-ZEVANA: “You should feel ashamed every time you use one.”",Complete SQ035,Make 1 Scavenging Roll in Torii Gate,1x “Melkarth’s Heroic Awakening” Spell Card
+ZEVANA: “You should feel ashamed every time you use one.”",Complete SQ035,Make 1 Scavenging Roll in Torii Gate,1x ”Melkarth’s Heroic Awakening” Spell Card
 SQ037,3037,In Game,Old Acquaintance,No,SIDE,ZEVANA,"ZEVANA: “It’s possible to leave your Kamigotchi behind while you explore.”
 ZEVANA: “You can let your companion roam free while you go shopping or exploring.”
 ZEVANA: “Only ignorant and neglectful scum would do this, of course.”
@@ -1472,7 +1472,7 @@ ZEVANA: “And by now, I’m sure you realize I’m not the only one offering qu
 ZEVANA: “Do you really have the basics down?”
 ZEVANA: “Can your Kamigotchi survive an hour?”","ZEVANA: “If you’re better than scum, your Kamigotchi survived through that task.”
 ZEVANA: “They’re strong enough to get out there in the world. But they can always be stronger.”
-ZEVANA: “Take these. They’ll help out a begi.”",Complete SQ037,Harvest for >60 minutes,"3x ""Cultivation I"" Spell Card"
+ZEVANA: “Take these. They’ll help out a begi.”",Complete SQ037,Harvest for >60 minutes,3x “Cultivation I“ Spell Card
 SQ039,3039,In Game,Danger Lies Ahead…,No,SIDE,MENU,"MENU: “Hey hold up here for a second, don’t go further into world yet.”
 MENU: “See the vending machine over there? It’s something like a standing stone.”
 MENU: “Operators like you can use it to summon new kami into existence. Pretty neat huh?”
@@ -1480,14 +1480,14 @@ MENU: “But listen, the area we’ve been exploring so far, between the river a
 MENU: “The ambient energy of the area is rather weak and only supports the deployment of kami of up to level 15.”
 MENU: “As a result, it’s safe from high level predators.”
 MENU: “But if you go further, you will leave that region of relative safety.”
-MENU: “Steel yourself operator, many dangers lie ahead.”","MENU: “Here, take this, since you’re intent on wearing yourself out exploring.”",In Room: Vending Machine,,"1x ""Neith’s River of Life"" Spell Card"
+MENU: “Steel yourself operator, many dangers lie ahead.”","MENU: “Here, take this, since you’re intent on wearing yourself out exploring.”",In Room: Vending Machine,,1x ”Neith’s River of Life” Spell Card
 SQ040,3040,In Game,A Cautionary Note,No,SIDE,MENU,"MENU: “I should mention something important.”
 MENU: “The are we’ve been in so far is something like a safe zone.”
 MENU: “The ambient energy of the area is pretty weak, so it can only support the deployment of kami that are less than level 15.”
 MENU: “But the further down this path you go the denser and more powerful the local energies will become.”
 MENU: “That means a high level predator could decide to snack on your kami if you go too far.”
 MENU: “Just thought I’d give you the heads up.”","MENU: “You’ll use up all your stamina if you go too far.”
-MENU: “Here, take this in case you wear yourself out.”",In Room: Shady Path,,"1x ""Neith’s River of Life"" Spell Card"
+MENU: “Here, take this in case you wear yourself out.”",In Room: Shady Path,,1x ”Neith’s River of Life” Spell Card
 SQ041,3041,To Deploy,The Rot Creeps,No,SIDE,MINA,"MENU: “The dowsing rod is picking something up again.”
 MENU: “I don’t get it. There’s nothing here but decay.”
 MINA: “Hmm.”
@@ -1569,7 +1569,7 @@ MENU: “I’m retroactively experiencing altered events.”
 MENU: “Suddenly, I’ve known this Zevana from the start.”
 MENU: “She works with the Kami. I know she’s careful with them.”
 MENU: “If you were new here, she’d help you get started.”
-MENU: “Oh, you must be tired after coming here. Take this.”",Temporary Quest for 3/6/26 to 3/20/26. Should only affect currently active accounts if possible.,Move to Torii Gate,"1x ""Neith’s River of Life"" Spell Card"
+MENU: “Oh, you must be tired after coming here. Take this.”",Temporary Quest for 3/6/26 to 3/20/26. Should only affect currently active accounts if possible.,Move to Torii Gate,1x ”Neith’s River of Life” Spell Card
 SQ803,3803,In Game,Never Brought to Mind,No,SIDE,ROB,"ROB: “Hey kid. I see you down the road by that red gate.”
 ROB: “I feel like we’ve met before, but whatever. Let’s meet again.”
 ROB: “Come on down and let’s yap.”","ROB: “So do you remember me? Can’t place you, myself. Just a familiar feelin’.”
@@ -1587,9 +1587,9 @@ MINA: “Will you indulge it?”
 MENU: “What’s it going to do?”
 MENU: “Is it even safe?”
 MINA: “I think that’s something the Operator should determine.”","Own the Aetheric Sextant,In Room: Slippery Pit",In Room: Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
-SQ999,10002,In Game,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ""Melkarth's Heroic Awakening"" Spell Card"
+SQ999,10002,In Game,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ”Melkarth's Heroic Awakening” Spell Card"
 SQ997,10003,In Game,Condolences on your Recent Liquidations,No,SIDE,MENU,"MENU: “I was not having a good time this weekend, and it seems like you weren’t either.”
-MENU: “Take these, they should help you get back on your feet.”","MENU: “I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet too. ",At least 1 Kami liquidated,,"5x ""Melkarth's heroic awakening"" spell card"
+MENU: “Take these, they should help you get back on your feet.”","MENU: “I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet too. ",At least 1 Kami liquidated,,5x ”Melkarth's Heroic Awakening” spell card
 test-0,1000000,Test,Daily Test Quest,Yes,,,Beg for your MUSU.,,,,"10000x MUSU (Test),2x Agency Reputation"
 test-1,1000001,Test,Crafting Materials,No,,,Let there be Craft,,,Move 3 Times,"100x Stone,100x Stick,50x Plastic Bottle,10x Glass Jar,100x Pine Cones,100x Burgers"
 test-2,1000002,Test,Lottery Loving,No,,,Stop being Kamiless,,,,20x Gacha Tickets (Test)
