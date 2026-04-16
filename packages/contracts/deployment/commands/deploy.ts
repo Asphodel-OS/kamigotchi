@@ -7,11 +7,13 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import { clearInitWorld } from '../scripts/codegen';
 import { generateAndDeploy } from '../scripts/deployer';
 import { genInitScript } from '../scripts/worldIniter';
-import { setAutoMine, setTimestamp } from '../utils';
+import { assertProductionBranch, setAutoMine, setTimestamp } from '../utils';
 
 const argv = yargs(hideBin(process.argv)).argv;
 
 const run = async () => {
+  await assertProductionBranch();
+
   const partialDeployment =
     argv.partial ??
     (argv.components != undefined || argv.systems != undefined || argv.emitter != undefined);
