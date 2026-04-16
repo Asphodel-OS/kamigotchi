@@ -84,7 +84,7 @@ async function initFriends(api: AdminAPI) {
 export async function initKamiSwap(api: AdminAPI) {
   await api.config.set.address(
     'KAMI_MARKET_FEE_RECIPIENT',
-    '0x6a2350be9eA194cB67df934Df24bFA939A1aAd40'
+    '0x3d7f111B3b69C657624b8633a997A56300212872'
   );
 }
 
