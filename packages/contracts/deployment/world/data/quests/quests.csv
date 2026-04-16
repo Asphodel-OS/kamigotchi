@@ -612,7 +612,7 @@ MINA: “Harvest some $MUSU while I read this and I’ll tell you about it.""","
 MINA: “The gods can’t seem to help themselves.”
 MINA: “A fascination with the ephemeral, perhaps?”
 MINA: “Or possibly, it’s like wanting the best for your pets.”
-MINA: “Whatever the motivation, gods have granted knowledge or power to humans  countless times throughout history.”
+MINA: “Whatever the motivation, gods have granted knowledge or power to humans countless times throughout history.”
 MINA: “This is just one of many. A mythic world forgotten and left abandoned.”
 MINA: “Until recently, it seems.”",Complete MSQ065,Harvest for >360 minutes at Engraved Door,"4x Elders Loyalty,1x Booster Pack"
 MSQ067,67,To Update Text,Soaked to the Bone,No,MAIN,MENU,"MENU: “There’s another skeleton in the caves here, crumpled in the water underneath that observation deck.”
@@ -689,7 +689,7 @@ MENU: “Head back to the Restricted Area and take a look at that office complex
 MENU: “This might be a pain, but I want you to make sure.”
 MENU: “You can keep exploring and put this off for now.”
 MENU: “Just keep it in mind.”","MENU: “Definitely the same logo. It looks like the letter A.”
-MENU: “Wonder what it stands for?”",Complete MSQ075,,"6x Agency Reputation,2x Booster Pack"
+MENU: “Wonder what it stands for?”",Complete MSQ075,Move to Restricted Area,"6x Agency Reputation,2x Booster Pack"
 MSQ077,77,In Game,"Yep, That’s Wood",No,MAIN,MENU,"MENU: “Check out the construction on these supports.”
 MENU: “Wood, yeah. But it’s like that stuff you make out of sticks and stems.”
 MENU: “You might as well grab a few more while you’re here.”","MENU: “So, the wood.”
@@ -1276,7 +1276,7 @@ SQ021,3021,In Game,Castle in the Air,No,SIDE,ROB,"???: “Don’t bother to say 
 ROB: “And you? Let’s have a look at ya.”
 ROB: “Sheesh, you’re a real sight. But I shouldn’t throw stones in glass houses.”
 ROB: “Nice to meet ya. Really. Don’t be a stranger.”",In Room: Scenic View,Move to Trophies of the Hunt,2x Booster Pack
-SQ022,3022,To Update,Sweet Deal,No,SIDE,ROB,"ROB: “I’m starvin’ over here. You know that?”
+SQ022,3022,In Game,Sweet Deal,No,SIDE,ROB,"ROB: “I’m starvin’ over here. You know that?”
 ROB: “Got a nice view and all, but they stopped with the lunches a long time back.”
 ROB: “Even when we got food, it was just a little barley and milk.”
 ROB: “Nothin’ for the sweet tooth at all. That’d be spoiling me.”
