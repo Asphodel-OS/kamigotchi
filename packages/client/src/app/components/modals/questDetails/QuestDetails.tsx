@@ -11,6 +11,7 @@ import { getAccount, queryAccountFromEmbedded } from 'network/shapes/Account';
 import { getItemBalance as _getItemBalance } from 'network/shapes/Item';
 import {
   Quest,
+  canRepeatQuest,
   filterOngoingQuests,
   findNextQuestInChain,
   getBaseQuest,
@@ -25,7 +26,7 @@ import {
 import { BaseQuest } from 'network/shapes/Quest/quest';
 import { getFromDescription } from 'network/shapes/utils/parse';
 import { useComponentEntities } from 'network/utils/hooks';
-import { playClick } from 'utils/sounds';
+import { playClick, playQuestaccept, playQuestcomplete } from 'utils/sounds';
 import { Bottom } from './Bottom';
 import { Dialogue } from './Dialogue';
 
@@ -275,26 +276,31 @@ export const QuestDetailsModal: UIComponent = {
           describeEntity={describeEntity}
           burnItems={burnQuestItems}
           getItemBalance={getItemBalance}
-          questStatus={
-            quest.startTime === 0 ? 'AVAILABLE' : quest.complete ? 'COMPLETED' : 'ONGOING'
-          }
+          questStatus={(() => {
+            if (quest.startTime === 0) return 'AVAILABLE';
+            if (quest.complete && canRepeatQuest(quest)) return 'AVAILABLE';
+            if (quest.complete) return 'COMPLETED';
+            return 'ONGOING';
+          })()}
           buttons={{
             AcceptButton: {
               backgroundColor: '#f8f6e4',
-              onClick: quest.complete
+              onClick: quest.complete && !canRepeatQuest(quest)
                 ? journeyOnwards
                 : () => {
                     acceptQuest(quest);
-                    playClick();
+                    playQuestaccept();
                   },
-              disabled: quest.complete ? !findNextInChain(quest.index) : quest.startTime !== 0,
-              label: quest.complete ? 'Journey Onwards' : 'Accept',
+              disabled: quest.complete && !canRepeatQuest(quest)
+                ? !findNextInChain(quest.index)
+                : quest.startTime !== 0 && !canRepeatQuest(quest),
+              label: quest.complete && !canRepeatQuest(quest) ? 'Journey Onwards' : 'Accept',
             },
             CompleteButton: {
               backgroundColor: '#f8f6e4',
               onClick: () => {
                 completeQuest(quest);
-                playClick();
+                playQuestcomplete();
               },
               disabled: !meetsObjectives(quest) || quest.complete || quest.startTime === 0,
               label: 'Complete',

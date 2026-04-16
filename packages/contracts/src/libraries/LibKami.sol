@@ -212,6 +212,7 @@ library LibKami {
   }
 
   // Check whether a kami's ERC721 token is in the game world
+  // LISTED kamis are staked (in-world) — only 721_EXTERNAL is "not in world"
   function isInWorld(IUintComp components, uint256 id) internal view returns (bool) {
     return !getCompByID(components, StateCompID).eqString(id, "721_EXTERNAL");
   }

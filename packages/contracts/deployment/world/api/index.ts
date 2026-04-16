@@ -7,6 +7,7 @@ import { nodesAPI } from './nodes';
 import { portalAPI } from './portal';
 import { questsAPI } from './quests';
 import { roomAPI } from './rooms';
+import { sacrificeAPI } from './sacrifice';
 import { tradeAPI } from './trades';
 import { generateCallData } from './utils';
 
@@ -17,7 +18,13 @@ export function createAdminAPI(compiledCalls: string[]) {
   // AUTH
 
   async function addRole(addr: string, role: string) {
-    const callData = generateCallData('system.auth.registry', [addr, role], 'addRole');
+    const callData = generateCallData(
+      'system.auth.registry',
+      [addr, role],
+      'addRole',
+      undefined,
+      '800000'
+    );
     compiledCalls.push(callData);
   }
 
@@ -356,6 +363,17 @@ export function createAdminAPI(compiledCalls: string[]) {
     compiledCalls.push(callData);
   }
 
+  function distributeItem(accounts: string[], itemIndex: number, amounts: number[]) {
+    const callData = generateCallData(
+      'system.distribute.item' as any,
+      [accounts, itemIndex, amounts],
+      undefined,
+      ['address[]', 'uint32', 'uint256[]'],
+      `${400000 * accounts.length}`
+    );
+    compiledCalls.push(callData);
+  }
+
   // used for initial setup
   // function distributePassports(owners: string[], amts: number[]) {
   //   const callData = generateCallData(
@@ -379,6 +397,31 @@ export function createAdminAPI(compiledCalls: string[]) {
   //   );
   //   compiledCalls.push(callData);
   // }
+
+  /////////////////
+  // NEWBIE VENDOR
+
+  function vendorInitTWAP(initialPriceWei: number) {
+    const callData = generateCallData(
+      'system.newbievendor.registry',
+      [initialPriceWei],
+      'initTWAP',
+      undefined,
+      '800000'
+    );
+    compiledCalls.push(callData);
+  }
+
+  function vendorSetCycleDuration(duration: number) {
+    const callData = generateCallData(
+      'system.newbievendor.registry',
+      [duration],
+      'setCycleDuration',
+      undefined,
+      '800000'
+    );
+    compiledCalls.push(callData);
+  }
 
   ////////////////
   // SETUP (testing)
@@ -481,7 +524,12 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
     },
     room: roomAPI(generateCallData, compiledCalls),
+    sacrifice: sacrificeAPI(generateCallData, compiledCalls),
     trade: tradeAPI(generateCallData, compiledCalls),
+    vendor: {
+      initTWAP: vendorInitTWAP,
+      setCycleDuration: vendorSetCycleDuration,
+    },
     setup: {
       local: {
         initAccounts: initAccounts,
@@ -496,6 +544,7 @@ export function createAdminAPI(compiledCalls: string[]) {
       },
       live: {
         flags: setFlag,
+        distributeItem: distributeItem,
         // passports: distributePassports,
         // whitelists: distributeGachaWhitelists,
       },

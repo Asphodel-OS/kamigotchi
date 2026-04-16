@@ -21,8 +21,8 @@ export const room05: Room = {
     },
     {
       name: 'company building',
-      coordinates: { x1: 18, y1: 9, x2: 49, y2: 58 },
-      dialogue: 52,
+      coordinates: { x1: 25, y1: 25, x2: 59, y2: 88 },
+      dialogue: 50001,
     },
     {
       name: 'warning sign',

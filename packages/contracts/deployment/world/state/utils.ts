@@ -26,7 +26,7 @@ export async function readFile(file: string) {
   const fs = require('fs');
   const path = require('path');
   const result = fs.readFileSync(path.join(__dirname, '../data/', file), 'utf8');
-  return await parse(result, { columns: true });
+  return await parse(result, { columns: true, bom: true });
 }
 
 ///////////////

@@ -1,0 +1,1 @@
+export { TempleOfTheWheel } from './TempleOfTheWheel';

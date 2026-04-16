@@ -7,8 +7,10 @@ import { getAddrByID } from "solecs/utils.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibData } from "libraries/LibData.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibKami721 } from "libraries/LibKami721.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibSoulbound } from "libraries/LibSoulbound.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami721.unstake"));
 uint256 constant ROOM = 12;
@@ -39,6 +41,10 @@ contract Kami721UnstakeSystem is System {
     // checks before action
     LibKami.verifyAccount(components, kamiID, accID);
     LibKami.verifyState(components, kamiID, "RESTING");
+    LibSoulbound.verify(components, kamiID);
+
+    // unequip all items before bridging out (return to account inventory)
+    LibEquipment.unequipAll(components, kamiID, accID);
 
     // actions to be taken upon bridging out
     LibKami.unstake(components, kamiID);

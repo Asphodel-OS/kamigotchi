@@ -26,6 +26,7 @@ export const getConfig = (world: World, comps: Components): KamiConfigs => {
       spoils: getAST(world, comps, 'KAMI_LIQ_SPOILS'),
       karma: getAST(world, comps, 'KAMI_LIQ_KARMA'),
       recoil: getAST(world, comps, 'KAMI_LIQ_RECOIL'),
+      karmaEfficacy: getEfficacy(world, comps, 'KAMI_LIQ_KARMA_EFFICACY'),
     },
     rest: {
       metabolism: getAST(world, comps, 'KAMI_REST_METABOLISM'),
@@ -59,6 +60,7 @@ export const processConfig = (world: World, comps: Components): KamiConfigs => {
       spoils: processAST(world, comps, 'KAMI_LIQ_SPOILS'),
       karma: processAST(world, comps, 'KAMI_LIQ_KARMA'),
       recoil: processAST(world, comps, 'KAMI_LIQ_RECOIL'),
+      karmaEfficacy: processEfficacy(world, comps, 'KAMI_LIQ_KARMA_EFFICACY'),
     },
     rest: {
       metabolism: processAST(world, comps, 'KAMI_REST_METABOLISM'),
@@ -87,6 +89,7 @@ export const isFalsey = (configs: KamiConfigs) => {
     isFalseyAST(configs.liquidation.spoils) ||
     isFalseyAST(configs.liquidation.karma) ||
     isFalseyAST(configs.liquidation.recoil) ||
+    isFalseyEfficacy(configs.liquidation.karmaEfficacy) ||
     isFalseyAST(configs.rest.metabolism) ||
     isFalseyAST(configs.rest.recovery)
   );

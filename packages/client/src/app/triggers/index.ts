@@ -1,3 +1,4 @@
+export { triggerBridgeModal } from './triggerBridgeModal';
 export { triggerDialogueModal } from './triggerDialogueModal';
 export { triggerERC20BridgeModal } from './triggerERC20BridgeModal';
 export { triggerGachaModal } from './triggerGachaModal';
@@ -7,4 +8,6 @@ export { triggerLeaderboardModal } from './triggerLeaderboardModal';
 export { triggerNodeModal } from './triggerNodeModal';
 export { triggerPetNamingModal } from './triggerPetNamingModal';
 export { triggerShopModal } from './triggerShopModal';
+export { triggerKamiAdoptionAgencyModal } from './triggerKamiAdoptionAgencyModal';
+export { triggerTempleOfTheWheelModal } from './triggerTempleOfTheWheelModal';
 export { triggerTradingModal } from './triggerTradingModal';

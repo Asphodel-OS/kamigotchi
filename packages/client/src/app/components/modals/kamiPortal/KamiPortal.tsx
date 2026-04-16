@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
-import { getAccount as _getAccount, getAccountKamis as _getAccountKamis } from 'app/cache/account';
+import { getAccount as _getAccount } from 'app/cache/account';
 import { getConfigAddress } from 'app/cache/config';
-import { getKami as _getKami, isDead, isHarvesting, onCooldown } from 'app/cache/kami';
+import { getKami as _getKami } from 'app/cache/kami';
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
@@ -17,7 +17,6 @@ import { Kami, queryKamiByIndex as _queryKamiByIndex } from 'network/shapes/Kami
 import { didActionSucceed } from 'network/utils';
 import { Controls } from './Controls';
 import { WildKamis } from './WildKamis';
-import { WorldKamis } from './WorldKamis';
 
 export const KamiPortalModal: UIComponent = {
   id: 'KamiPortalModal',
@@ -45,8 +44,6 @@ export const KamiPortalModal: UIComponent = {
         utils: {
           queryKamiByIndex: (index: number) => _queryKamiByIndex(world, components, index),
           getKami: (entity: EntityIndex) => _getKami(world, components, entity, kamiRefreshOptions),
-          getAccountKamis: (accountEntity: EntityIndex) =>
-            _getAccountKamis(world, components, accountEntity, kamiRefreshOptions),
         },
       };
     })();
@@ -56,17 +53,14 @@ export const KamiPortalModal: UIComponent = {
 
     const { actions } = network;
     const { kamiNFTAddress, account } = data;
-    const { getAccountKamis, getKami, queryKamiByIndex } = utils;
+    const { getKami, queryKamiByIndex } = utils;
 
     const apis = useNetwork((s) => s.apis);
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const modals = useVisibility((s) => s.modals);
 
-    const [worldKamis, setWorldKamis] = useState<Kami[]>([]);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
     const [selectedWild, setSelectedWild] = useState<Kami[]>([]);
-    const [selectedWorld, setSelectedWorld] = useState<Kami[]>([]);
-    const [tick, setTick] = useState(Date.now());
 
     /////////////////
     // SUBSCRIPTIONS
@@ -84,30 +78,16 @@ export const KamiPortalModal: UIComponent = {
       ],
     });
 
-    // ticking
+    // refetch NFTs on mount
     useEffect(() => {
       refetchNFTs();
-      const tick = () => setTick(Math.floor(Date.now() / 1000));
-      const timerID = setInterval(tick, 1000);
-      return () => clearInterval(timerID);
     }, []);
 
-    // clear out the selected kamis whenever the mode changes or the modal is opened
+    // clear out the selected kamis whenever the modal is opened
     useEffect(() => {
       if (!modals.bridgeERC721) return;
       setSelectedWild([]);
-      setSelectedWorld([]);
     }, [modals.bridgeERC721]);
-
-    // refresh world kamis every tick
-    useEffect(() => {
-      if (!modals.bridgeERC721) return;
-      const accountKamis = getAccountKamis(account.entity) as Kami[];
-      const filteredKamis = accountKamis.filter(
-        (kami) => !onCooldown(kami) && !isHarvesting(kami) && !isDead(kami)
-      );
-      setWorldKamis(filteredKamis);
-    }, [modals.bridgeERC721, tick]);
 
     // update list of wild kamis
     // TOTO: properly typecast the result of the abi call
@@ -153,36 +133,6 @@ export const KamiPortalModal: UIComponent = {
       }
     };
 
-    // export a kami from the world to the wild
-    const withdrawTx = async (kamis: Kami[]) => {
-      const api = apis.get(selectedAddress);
-      if (!api) return console.error(`API not established for ${selectedAddress}`);
-
-      const numKamis = kamis.length;
-      const indices = kamis.map((kami) => kami.index);
-
-      // determine the description based on number of kamis
-      let description = '';
-      if (numKamis == 1) description = `Unstaking ${kamis[0].name}`;
-      else description = `Unstaking ${numKamis} Kami`;
-
-      // add the transaction to the queue
-      const tx = actions.add({
-        action: 'KamiWithdraw',
-        params: indices,
-        description,
-        execute: async () => {
-          return api.portal.ERC721.kami.batch.unstake(indices);
-        },
-      });
-
-      // reset array if successful
-      const completed = await didActionSucceed(actions.Action, tx);
-      if (completed) {
-        setSelectedWorld([]);
-      }
-    };
-
     /////////////////
     // RENDER
 
@@ -195,15 +145,11 @@ export const KamiPortalModal: UIComponent = {
         overlay
       >
         <Container>
-          <WorldKamis
-            kamis={worldKamis}
-            state={{ selectedWild, selectedWorld, setSelectedWorld }}
-          />
+          <WildKamis kamis={wildKamis} state={{ selectedWild, setSelectedWild }} />
           <Controls
-            actions={{ import: depositTx, export: withdrawTx }}
-            state={{ selectedWild, setSelectedWild, selectedWorld, setSelectedWorld }}
+            actions={{ import: depositTx }}
+            state={{ selectedWild, setSelectedWild }}
           />
-          <WildKamis kamis={wildKamis} state={{ selectedWild, setSelectedWild, selectedWorld }} />
         </Container>
       </ModalWrapper>
     );
@@ -215,6 +161,7 @@ const Container = styled.div`
   width: 100%;
   max-height: 100%;
   z-index: 2;
+  flex: 1;
 
   display: flex;
   flex-flow: row nowrap;

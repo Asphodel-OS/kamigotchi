@@ -5,6 +5,7 @@ import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
 import { LibAccount } from "libraries/LibAccount.sol";
+import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibInventory, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
@@ -23,6 +24,11 @@ contract KamiGachaRerollSystem is System {
     require(accID != 0, "no account detected");
     LibKami.verifyAccount(components, kamiIDs, accID);
     LibKami.verifyState(components, kamiIDs, "RESTING");
+
+    // unequip all items before depositing into gacha pool
+    for (uint256 i; i < kamiIDs.length; i++) {
+      LibEquipment.unequipAll(components, kamiIDs[i], accID);
+    }
 
     // get previous data
     uint256[] memory prevRerolls = LibGacha.extractRerollBatch(components, kamiIDs);

@@ -26,7 +26,9 @@
     { "comp": "IDOwnsQuest", "name": "OwnsQuestID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsRelationship", "name": "OwnsRsID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsSkill", "name": "OwnsSkillID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsEquipment", "name": "OwnsEquipID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTax", "name": "OwnsTaxID", "type": "uint256", "FEtype": "string", "indexed": true },
+    { "comp": "IDOwnsKamiOrder", "name": "OwnsKamiOrderID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsTrade", "name": "OwnsTradeID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDOwnsWithdrawal", "name": "OwnsWithdrawalID", "type": "uint256", "FEtype": "string", "indexed": true },
     { "comp": "IDAnchor", "name": "AnchorID", "type": "uint256", "FEtype": "string", "indexed": true },
@@ -47,6 +49,7 @@
     { "comp": "IndexNode", "name": "NodeIndex", "type": "uint32" },
     { "comp": "IndexNPC", "name": "NPCIndex", "type": "uint32", "indexed": true },
     { "comp": "IndexKami", "name": "KamiIndex", "type": "uint32", "indexed": true },
+    { "comp": "IndexKamiListing", "name": "KamiListingIndex", "type": "uint32", "indexed": true },
     { "comp": "IndexQuest", "name": "QuestIndex", "type": "uint32" },
     { "comp": "IndexRecipe", "name": "RecipeIndex", "type": "uint32", "indexed": true },
     { "comp": "IndexRelationship", "name": "RelationshipIndex", "type": "uint32" },
@@ -98,6 +101,7 @@
     { "name": "__LocalSetupSystem", "writeAccess": ["*"], "skipEnv": ["testing", "production"] },
     { "name": "_SnapshotT2System", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "HasFlag", "Value"] },
     { "name": "_AdminSetFlagSystem", "writeAccess": ["HasFlag"] },
+    { "name": "_DistributeItemSystem", "writeAccess": ["EntityType", "IDOwnsInventory", "IndexItem", "Value"] },
     { "name": "_AuctionRegistrySystem", "writeAccess": ["*"] },
     {
       "name": "_AuthManageRoleSystem",
@@ -185,6 +189,10 @@
     {
       "name": "_SkillRegistrySystem",
       "writeAccess": ["*"]
+    },
+    {
+      "name": "_SacrificeRegistrySystem",
+      "writeAccess": ["Keys", "Weights"]
     },
     {
       "name": "_TraitRegistrySystem",
@@ -437,6 +445,7 @@
         "Level",
         "Rate",
         "State",
+        "Time",
         "TimeNext",
         "TimeLast",
         "TimeReset",
@@ -478,12 +487,45 @@
     },
     {
       "name": "Kami721StakeSystem",
-      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IdHolder",
+        "IndexKamiListing",
+        "Max",
+        "ProxyPermissionsERC721",
+        "State",
+        "TimeLast",
+        "TimeStart",
+        "TimeEnd",
+        "Type",
+        "Value"
+      ],
       "skipEnv": ["testing"]
     },
     {
       "name": "Kami721UnstakeSystem",
-      "writeAccess": ["IDOwnsKami", "IdHolder", "ProxyPermissionsERC721", "State", "TimeLast", "Type", "Value"],
+      "writeAccess": [
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IDType",
+        "IdHolder",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "ProxyPermissionsERC721",
+        "State",
+        "Time",
+        "TimeLast",
+        "Type",
+        "Value"
+      ],
       "skipEnv": ["testing"]
     },
     {
@@ -529,14 +571,21 @@
       "writeAccess": [
         "BlockReveal",
         "EntityType",
+        "For",
+        "IDAnchor",
+        "IDOwnsEquipment",
         "IDOwnsInventory",
         "IDOwnsKami",
+        "IDType",
         "IdHolder",
+        "IdSource",
         "IndexItem",
+        "Level",
         "Reroll",
+        "State",
+        "Time",
         "TimeLast",
         "Type",
-        "State",
         "Value"
       ]
     },
@@ -610,6 +659,159 @@
     {
       "name": "KamiCastItemSystem",
       "writeAccess": ["*"]
+    },
+    {
+      "name": "KamiMarketListSystem",
+      "writeAccess": [
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IDOwnsKamiOrder",
+        "IDType",
+        "IdSource",
+        "IndexItem",
+        "IndexKamiListing",
+        "Level",
+        "State",
+        "Time",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiMarketBuySystem",
+      "writeAccess": [
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IDType",
+        "IdSource",
+        "IndexItem",
+        "IndexKamiListing",
+        "Level",
+        "State",
+        "Time",
+        "TimeNext",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
+    },
+    {
+      "name": "KamiMarketOfferSystem",
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "IDOwnsKamiOrder",
+        "IndexKami",
+        "Max",
+        "State",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiMarketAcceptOfferSystem",
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IDType",
+        "IdSource",
+        "IndexItem",
+        "IndexKami",
+        "IndexKamiListing",
+        "Level",
+        "Max",
+        "State",
+        "Time",
+        "TimeNext",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value",
+        "Values"
+      ]
+    },
+    {
+      "name": "KamiMarketCancelSystem",
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "IDOwnsKamiOrder",
+        "IndexKami",
+        "IndexKamiListing",
+        "Max",
+        "State",
+        "TimeStart",
+        "TimeEnd",
+        "TimeLast",
+        "Value"
+      ]
+    },
+    {
+      "name": "_KamiMarketRegistrySystem",
+      "writeAccess": ["*"]
+    },
+    {
+      "name": "_NewbieVendorRegistrySystem",
+      "writeAccess": ["Value", "Values", "TimeStart"]
+    },
+    {
+      "name": "NewbieVendorBuySystem",
+      "writeAccess": ["HasFlag", "IDOwnsKami", "State", "Value", "Values", "TimeLast"]
+    },
+    {
+      "name": "KamiEquipSystem",
+      "writeAccess": [
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDType",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "Time",
+        "TimeLast",
+        "Type",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiUnequipSystem",
+      "writeAccess": [
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDType",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "Time",
+        "TimeLast",
+        "Value"
+      ]
     },
     {
       "name": "QuestAcceptSystem",
@@ -773,6 +975,78 @@
     {
       "name": "_721BatchMinterSystem",
       "writeAccess": ["*", "ProxyPermissionsERC721"]
+    },
+    {
+      "name": "KamiSacrificeCommitSystem",
+      "writeAccess": [
+        "BlockReveal",
+        "EntityType",
+        "For",
+        "Health",
+        "IDAnchor",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IDType",
+        "IdHolder",
+        "IdSource",
+        "IndexItem",
+        "Level",
+        "ProxyPermissionsERC721",
+        "State",
+        "Time",
+        "TimeLast",
+        "TimeLastAction",
+        "Type",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiSendSystem",
+      "writeAccess": [
+        "Balance",
+        "EntityType",
+        "For",
+        "IDAnchor",
+        "IDOwnsEquipment",
+        "IDOwnsInventory",
+        "IDOwnsKami",
+        "IDOwnsKamiOrder",
+        "IDType",
+        "IdSource",
+        "IndexItem",
+        "IndexKami",
+        "IndexKamiListing",
+        "Level",
+        "Max",
+        "State",
+        "Time",
+        "TimeNext",
+        "TimeLast",
+        "TimeStart",
+        "TimeEnd",
+        "Value"
+      ]
+    },
+    {
+      "name": "KamiSacrificeRevealSystem",
+      "writeAccess": [
+        "Balance",
+        "BlockReveal",
+        "EntityType",
+        "IdHolder",
+        "IdSource",
+        "IDOwnsInventory",
+        "IndexItem",
+        "Keys",
+        "Time",
+        "TimeLast",
+        "TimeLastAction",
+        "Type",
+        "Value",
+        "Values",
+        "Weights"
+      ]
     }
   ],
   "libraries": [
@@ -786,6 +1060,7 @@
     "LibConfig",
     "LibData",
     "LibDroptable",
+    "LibEquipment",
     "LibExperience",
     "LibFaction",
     "LibFlag",
@@ -802,19 +1077,23 @@
     "LibKami",
     "LibKami721",
     "LibKamiCreate",
+    "LibKamiMarket",
     "LibQuestRegistry",
     "LibQuest",
     "LibRelationshipRegistry",
     "LibRelationship",
     "LibRoom",
+    "LibSacrifice",
     "LibScavenge",
     "LibScore",
+    "LibSoulbound",
     "LibSkillRegistry",
     "LibSkill",
     "LibStat",
     "LibTokenPortal",
     "LibTrade",
     "LibTraitRegistry",
+    "LibTWAP",
     "LibVIP"
   ]
 }

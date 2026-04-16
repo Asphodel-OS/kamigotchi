@@ -36,4 +36,22 @@ const templecave: DialogueNode = {
   },
 };
 
-export default [templegrass, templedoor, templecave];
+const crownedstatue: DialogueNode = {
+  index: 154,
+  text: [
+    'A large male figure sitting in a throne.',
+    'He seems to be wearing a leotard with gloves, boots, and a belt, like a comic book superhero.',
+    'His crown resembles a fish head.',
+  ],
+};
+
+const monkstatues: DialogueNode = {
+  index: 155,
+  text: [
+    'Short figures with large bald heads.',
+    'They wear flowing robes fastened at the front with a large pearl brooch.',
+    'Their hands are clasped, palms together horizontally, in a symbolic gesture.',
+  ],
+};
+
+export default [templegrass, templedoor, templecave, crownedstatue, monkstatues];

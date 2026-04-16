@@ -49,6 +49,7 @@ interface Debug {
 
 // represents the result of key validations run on a connected set of EOAs
 interface Validations {
+  accountChecked: boolean;
   accountExists: boolean;
   operatorMatches: boolean;
   operatorHasGas: boolean;
@@ -62,9 +63,10 @@ export const useAccount = create<State & Actions>((set) => {
     account: emptyAccountDetails(),
     debug: { cache: false },
     validations: {
+      accountChecked: false,
       accountExists: false,
       operatorMatches: false,
-      operatorHasGas: false,
+      operatorHasGas: true,
     },
   };
   return {

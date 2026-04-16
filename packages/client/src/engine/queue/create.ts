@@ -1,4 +1,4 @@
-import { awaitValue, cacheUntilReady, mapObject } from '@mud-classic/utils';
+import { awaitValue, cacheUntilReady } from '@mud-classic/utils';
 import { Mutex } from 'async-mutex';
 import {
   BigNumberish,
@@ -19,14 +19,18 @@ import { createPriorityQueue } from './priorityQueue';
 import { TxQueue } from './types';
 import { isOverrides, sendTx, shouldIncNonce, shouldResetNonce } from './utils';
 
+import { GasEstimationCache } from './gasCache';
+
 export const MAX_NONCE_RETRIES = 1; // Retry nonce errors exactly once
+export const MUTEX_RELEASE_MS = 1500; // Release mutex after 1.5s even if TX pending
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 type ReturnTypeStrict<T> = T extends (...args: any) => any ? ReturnType<T> : never;
 
 type TxResult = {
   hash: string;
-  wait: () => Promise<TransactionReceipt>;
-  response: Promise<any>;
+  receipt?: TransactionReceipt;
 };
 
 /**
@@ -51,11 +55,14 @@ export function create<C extends Contracts>(
     estimateGas: () => Promise<BigNumberish>;
     resolve: (result: TxResult) => void;
     reject: (error: Error) => void;
+    cacheKey?: string;
   };
 
   const queue = createPriorityQueue<QueueItem>();
   const submissionMutex = new Mutex();
   const _nonce = observable.box<number | null>(null);
+
+  const gasCache = new GasEstimationCache();
 
   const readyState = computed(() => {
     const connected = network.connected.get();
@@ -153,20 +160,33 @@ export function create<C extends Contracts>(
 
   async function queueCall(
     txRequest: TransactionRequest,
-    callOverrides?: Overrides
+    callOverrides?: Overrides,
+    cacheKey?: string
   ): Promise<TxResult> {
     const [resolve, reject, promise] = deferred<TxResult>();
     const { signer } = await awaitValue(readyState);
 
     const estimateGas = async (): Promise<BigNumberish> => {
       if (callOverrides?.gasLimit) {
-        log.debug(`[estimateGas] Using callOverride ${callOverrides.gasLimit}`);
+        log.time.info(`[queue] Using callOverride ${callOverrides.gasLimit}`);
         return callOverrides.gasLimit;
       }
+
+      if (cacheKey) {
+        const cached = gasCache.get(cacheKey);
+        if (cached) {
+          return cached;
+        }
+      }
       try {
-        log.debug('[estimateGas] Simulating transaction');
-        return await signer!.estimateGas(txRequest);
+        log.time.info('[queue] Simulating transaction');
+        const gasEstimate = await signer!.estimateGas(txRequest);
+        if (cacheKey) {
+          gasCache.set(cacheKey, gasEstimate);
+        }
+        return gasEstimate;
       } catch (error) {
+        console.log(error);
         throw error;
       }
     };
@@ -177,18 +197,13 @@ export function create<C extends Contracts>(
       if (!tx) {
         throw new Error('Failed to send transaction: signer missing or sendTx returned undefined');
       }
-      const hash = tx.hash;
-      log.debug(`[TXQueue] TX Sent ${tx.hash}`);
-      const wait = async () => {
-        const receipt = await tx.wait();
-        if (!receipt) throw new Error('tx receipt null');
-        return receipt;
-      };
-      const response = Promise.resolve(tx);
-      return { hash, wait, response };
+      const hash = tx.transactionHash ?? tx.hash;
+      log.debug(`[TXQueue] TX Sent ${hash}`);
+      // Get receipt directly from sync transaction (EIP-7966)
+      return { hash, receipt: tx };
     };
 
-    queue.add(uuid(), { execute, estimateGas, resolve, reject });
+    queue.add(uuid(), { execute, estimateGas, resolve, reject, cacheKey });
     processQueue();
     return promise;
   }
@@ -196,9 +211,10 @@ export function create<C extends Contracts>(
   async function processQueue() {
     const queueItem = queue.next();
     if (!queueItem) return;
-    processQueue(); // Start processing another request from the queue
-    const txResult = await submissionMutex.runExclusive(async () => {
-      // Estimate gas and get nonce
+
+    processQueue();
+
+    await submissionMutex.runExclusive(async () => {
       let txOverrides: Overrides = {};
       try {
         const { nonce } = await awaitValue(readyState);
@@ -207,70 +223,92 @@ export function create<C extends Contracts>(
       } catch (e: any) {
         log.warn('[processQueue] Gas estimation failed using default gas limit');
         txOverrides.gasLimit = 6_000_000n;
-        //queueItem.reject(e as Error);
-        //return;
       }
-      // Execute with retry on nonce errors
-      try {
-        const result = await executeTxWithRetry(queueItem.execute, txOverrides);
-        queueItem.resolve(result);
-        incNonce();
-        return { hash: result.hash, wait: result.wait };
-      } catch (e) {
-        queueItem.reject(e as Error);
-      }
-    });
 
-    // Await confirmation
-    if (txResult?.hash) {
-      try {
-        const tx = await txResult.wait();
-        log.info('[TXQueue] TX Confirmed', tx);
-      } catch (e: any) {
-        logTxError('TX FAILED', e, txResult?.hash);
+      const txPromise = executeTxWithRetry(queueItem.execute, txOverrides);
+
+      const raceResult = await Promise.race([
+        txPromise
+          .then((result) => ({ status: 'completed' as const, result }))
+          .catch((error) => ({ status: 'error' as const, error })),
+        sleep(MUTEX_RELEASE_MS).then(() => ({ status: 'timeout' as const })),
+      ]);
+
+      incNonce();
+
+      if (raceResult.status === 'completed') {
+        queueItem.resolve(raceResult.result);
+        log.info('[TXQueue] TX confirmed (fast)', { hash: raceResult.result.hash });
         return;
       }
-    }
+
+      if (raceResult.status === 'error') {
+        queueItem.reject(raceResult.error);
+        logTxError('TX failed (fast)', raceResult.error);
+        if (queueItem.cacheKey) gasCache.delete(queueItem.cacheKey);
+        return;
+      }
+
+      log.info('[TXQueue] Releasing mutex, TX still pending');
+      txPromise
+        .then((result) => {
+          queueItem.resolve(result);
+          log.info('[TXQueue] TX confirmed (background)', { hash: result.hash });
+        })
+        .catch((error) => {
+          queueItem.reject(error);
+          logTxError('TX failed (background)', error);
+          if (queueItem.cacheKey) gasCache.delete(queueItem.cacheKey);
+        });
+    });
 
     processQueue();
   }
 
   // queue up a system call in the txQueue
   async function queueCallSystem(
+    systemName: string,
     target: C[keyof C],
     prop: keyof C[keyof C],
     args: unknown[]
   ): Promise<{
     hash: string;
-    wait: () => Promise<TransactionReceipt>;
-    response: Promise<ReturnTypeStrict<(typeof target)[typeof prop]>>;
+    receipt?: TransactionReceipt;
   }> {
     // Extract existing overrides from function call
     const hasOverrides = args.length > 0 && isOverrides(args[args.length - 1]);
     const callOverrides = (hasOverrides ? args[args.length - 1] : {}) as Overrides;
     const argsWithoutOverrides = hasOverrides ? args.slice(0, args.length - 1) : args;
 
+    const cacheKey = gasCache.generateKey(systemName, prop.toString(), argsWithoutOverrides);
+
     const fn = target.getFunction(prop.toString());
     const populatedTx = await fn.populateTransaction(...argsWithoutOverrides);
-    return queueCall(populatedTx, callOverrides);
+    return queueCall(populatedTx, callOverrides, cacheKey);
   }
 
   // wraps contract call with txQueue
   function proxyContract<Contract extends C[keyof C]>(
+    systemName: string,
     contract: any
   ): any extends Contract ? any : never {
     const methods: string[] = [];
     contract.interface.forEachFunction((func: FunctionFragment) => methods.push(func.name));
     methods.forEach((method) => {
-      contract[method] = (...args: unknown[]) => queueCallSystem(contract, method, args);
+      contract[method] = (...args: unknown[]) =>
+        queueCallSystem(systemName, contract, method, args);
     });
     return contract;
   }
-
-  // todo: optimize: this runs on every call, should only need once at the start + upon system update
   const proxiedContracts = computed(() => {
     const contracts = readyState.get()?.contracts;
-    return contracts ? mapObject(contracts, proxyContract) : undefined;
+    if (!contracts) return undefined;
+
+    const result: Record<string, any> = {};
+    for (const [systemName, contract] of Object.entries(contracts)) {
+      result[systemName] = proxyContract(systemName, contract);
+    }
+    return result as C;
   });
 
   const cachedProxiedContracts = cacheUntilReady(proxiedContracts);

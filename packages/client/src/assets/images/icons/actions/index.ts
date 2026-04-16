@@ -1,4 +1,5 @@
 import CancelIcon from './cancel.png';
+import CartIcon from './cart.svg';
 import CastIcon from './cast.png';
 import ChatIcon from './chat.png';
 import CollectIcon from './collect.png';
@@ -15,6 +16,7 @@ import UseIcon from './use.png';
 
 export {
   CancelIcon,
+  CartIcon,
   CastIcon,
   ChatIcon,
   CollectIcon,
@@ -32,6 +34,7 @@ export {
 
 export const ActionIcons = {
   cancel: CancelIcon,
+  cart: CartIcon,
   cast: CastIcon,
   chat: ChatIcon,
   collect: CollectIcon,

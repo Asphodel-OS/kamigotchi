@@ -1,4 +1,3 @@
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -14,28 +13,39 @@ interface Option {
   object?: any;
   disabled?: boolean;
 }
-
 export const DropdownToggle = ({
   onClick,
   button,
   options,
+  selected,
   disabled = [],
   balance,
   radius = 0.45,
   simplified,
   limit,
+  clearTrigger,
+  trigger,
+  hideActionButton,
+  maxHeight,
+  noSelectAll,
 }: {
   onClick: ((selected: any[]) => void)[];
   button: {
-    images: string[];
+    images: string[] | any;
     tooltips?: string[];
   };
   options: Option[][];
+  selected?: any[][];
   disabled?: boolean[];
   balance?: number;
   radius?: number;
   simplified?: boolean;
   limit?: number;
+  clearTrigger?: boolean;
+  trigger?: React.ReactNode;
+  hideActionButton?: boolean;
+  maxHeight?: number;
+  noSelectAll?: boolean;
 }) => {
   const { images, tooltips } = button;
   const [checked, setChecked] = useState<boolean[]>([]);
@@ -48,14 +58,21 @@ export const DropdownToggle = ({
   const modeOptions = options[currentMode] ?? [];
   const modeDisabled = disabled?.[currentMode] ?? false;
 
-  // necessary to properly create the checked array,
-  // this way it waits for the options to be populated
+  // sync checked state with options/selected
   useEffect(() => {
+    if (selected?.[currentMode]) {
+      const selectedForMode = selected[currentMode];
+      setChecked(
+        modeOptions.map((option) => selectedForMode.includes(option.object ?? option.text))
+      );
+      return;
+    }
+
     if (checked.length !== modeOptions.length) {
       const initialChecked = Array(modeOptions.length).fill(false);
       setChecked(initialChecked);
-      // if simplified,  first option is selected by default
-      if (simplified) {
+      // if simplified, first option is selected by default
+      if (simplified && modeOptions.length > 0) {
         setTimeout(() => {
           initialChecked[0] = true;
           setChecked(initialChecked);
@@ -63,17 +80,26 @@ export const DropdownToggle = ({
         }, 1000);
       }
     }
-  }, [modeOptions]);
-
-  useEffect(() => {
-    setChecked([]);
-  }, [currentMode]);
+  }, [modeOptions, selected, currentMode, checked.length, simplified]);
 
   // force close the popover if there are no options left
   // and the checklist is in the process of being emptied
   useEffect(() => {
     setForceClose(modeOptions.length === 0);
   }, [modeOptions]);
+
+  // reset selection when clearTrigger is toggled externally
+  useEffect(() => {
+    if (!clearTrigger) return;
+    setChecked(Array(modeOptions.length).fill(false));
+  }, [clearTrigger, modeOptions.length]);
+
+  const maxSelectable = Math.min(limit ?? modeOptions.length, modeOptions.length);
+  const selectedCount = checked.filter(Boolean).length;
+  const allSelected = selectedCount >= maxSelectable;
+
+  const getSelectedObjects = (nextChecked = checked) =>
+    modeOptions.filter((_, i) => nextChecked[i]).map((opt) => opt.object);
 
   const toggleOption = (e: React.MouseEvent, index: number) => {
     // prevent popover from closing
@@ -90,7 +116,9 @@ export const DropdownToggle = ({
         // !prev[index] is neccesary so the player can decrease
         // the number of selected options when the limit is reached
         if (!prev[index] && limit && selected >= limit) return prev;
-        return prev.map((val, i) => (i === index ? !val : val));
+        const next = prev.map((val, i) => (i === index ? !val : val));
+        if (hideActionButton) onClick[currentMode]?.(getSelectedObjects(next));
+        return next;
       });
     }
   };
@@ -100,43 +128,31 @@ export const DropdownToggle = ({
 
   const toggleAll = (e: React.MouseEvent) => {
     e.stopPropagation(); // prevent popover from closing
-    // currently selected
-    const selected = checked.filter(Boolean).length;
-    // limit
-    const selectLimit = Math.min(limit ?? modeOptions.length, modeOptions.length);
-    // check if all are selected
-    const allSelected = selected >= selectLimit;
     // If all selected deselect all, else select up to the limit
-    setChecked(checked.map((_, i) => !allSelected && i < selectLimit));
+    const next = checked.map((_, i) => !allSelected && i < maxSelectable);
+    setChecked(next);
+    if (hideActionButton) onClick[currentMode]?.(getSelectedObjects(next));
   };
 
   const handleTriggerClick = () => {
-    const selected = modeOptions.filter((_, index) => checked[index]);
-    const selectedObjects = selected.map((option) => option.object);
     playClick();
-    onClick[currentMode]?.(selectedObjects);
+    onClick[currentMode]?.(getSelectedObjects());
   };
 
   /////////////////
   // DISPLAY
 
-  const MenuCheckListOption = (
-    { text, img, object }: Option,
-    i: number | null,
-    onClick: (e: React.MouseEvent) => void,
-    isSelectAll: boolean
-  ) => {
+  const renderOption = ({ text, img, object }: Option, i: number, isSelectAll = false) => {
     const imageSrc = img ?? object?.image;
-    const selected = checked.filter(Boolean).length;
-
-    const maxSelectable = Math.min(limit ?? modeOptions.length, modeOptions.length);
-    const allSelected = selected >= maxSelectable;
-    const isChecked = isSelectAll ? allSelected : !!checked[i!];
+    const isChecked = isSelectAll ? allSelected : !!checked[i];
+    const handleClick = isSelectAll
+      ? (e: React.MouseEvent) => toggleAll(e)
+      : (e: React.MouseEvent) => toggleOption(e, i);
 
     return (
       <MenuOption
         key={isSelectAll ? 'SelectAll' : `toggle-${i}`}
-        onClick={onClick}
+        onClick={handleClick}
         isSelectAll={isSelectAll}
         disabled={modeDisabled}
       >
@@ -149,7 +165,7 @@ export const DropdownToggle = ({
           />
           <span>
             {text}
-            {isSelectAll && limit && selected >= limit ? ` (max ${limit})` : ''}
+            {isSelectAll && limit && selectedCount >= limit ? ` (max ${limit})` : ''}
           </span>
         </Row>
         {imageSrc && <Image src={imageSrc} />}
@@ -164,30 +180,29 @@ export const DropdownToggle = ({
     <Container>
       <Popover
         content={[
-          ...(simplified
-            ? []
-            : [MenuCheckListOption({ text: 'Select All' }, null, (e) => toggleAll(e), true)]),
-          ...modeOptions.map((option, i) =>
-            MenuCheckListOption(option, i, (e) => toggleOption(e, i), false)
-          ),
+          ...(!simplified && !noSelectAll ? [renderOption({ text: 'Select All' }, 0, true)] : []),
+          ...modeOptions.map((option, i) => renderOption(option, i)),
         ]}
         disabled={modeDisabled}
         forceClose={forceClose}
+        maxHeight={maxHeight}
       >
-        <IconButton
-          img={simplified ? FilterListIcon : undefined}
-          text={simplified ? undefined : `${checked.filter(Boolean).length} Selected`}
-          width={simplified ? 2 : 10}
-          onClick={() => {}}
-          disabled={modeDisabled}
-          balance={balance}
-          corner={!balance}
-          flatten={simplified ? undefined : 'right'}
-          radius={radius ?? 0.45}
-        />
+        {trigger ?? (
+          <IconButton
+            img={simplified ? button.images[0] : undefined}
+            text={simplified ? undefined : `${selectedCount} Selected`}
+            width={simplified ? 2 : 10}
+            onClick={() => {}}
+            disabled={modeDisabled}
+            balance={balance}
+            corner={!balance}
+            flatten={simplified ? undefined : 'right'}
+            radius={radius ?? 0.45}
+          />
+        )}
       </Popover>
       {options.length > 1 && <VerticalToggle setModeSelected={setModeSelected} />}
-      {!simplified && (
+      {!simplified && !hideActionButton && (
         <Tooltip content={tooltips?.[currentMode]} isDisabled={!tooltips?.[currentMode]}>
           <IconButton
             img={images[currentMode]}
@@ -215,11 +230,11 @@ const MenuOption = styled.div<{
   justify-content: left;
   gap: 0.4vw;
   border-radius: 0.4vw;
-  font-size: 0.8vw;
+  font-size: 0.85vw;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
-  padding: ${({ isSelectAll }) => (isSelectAll ? '1vw 0.6vw 0.4vw 0.9vw ' : '0 0.2vw 0.1vw 2.2vw')};
+  padding: ${({ isSelectAll }) => (isSelectAll ? '0.5vw 0.6vw' : '0.3vw 0.6vw')};
 
   &:hover {
     background-color: #ddd;

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { erc721Abi } from 'viem';
-import { useReadContracts, useWatchBlockNumber, useWriteContract } from 'wagmi';
+import { useReadContracts, useWatchBlockNumber } from 'wagmi';
 
 import {
   AccountOptions,
@@ -38,7 +37,6 @@ import {
 } from 'network/shapes/Kami';
 import { Node, NullNode, passesNodeReqs as _passesNodeReqs } from 'network/shapes/Node';
 import { KamiList } from './kamis/KamiList';
-import { SendBar } from './SendBar';
 import { Toolbar } from './Toolbar';
 import { Sort, View } from './types';
 
@@ -112,7 +110,6 @@ export const PartyModal: UIComponent = {
     const { getNode, getAccount, queryAllAccounts } = utils;
     const { getKami, getWorldKamis, queryKamiByIndex, passesNodeReqs } = utils;
 
-    const { writeContract } = useWriteContract();
     const selectedAddress = useNetwork((s) => s.selectedAddress);
     const ownerAPIs = useNetwork((s) => s.apis);
     const nodeIndex = useSelected((s) => s.nodeIndex);
@@ -128,7 +125,8 @@ export const PartyModal: UIComponent = {
 
     const [displayedKamis, setDisplayedKamis] = useState<Kami[]>(kamis);
     const [wildKamis, setWildKamis] = useState<Kami[]>([]);
-
+    const [initialized, setInitialized] = useState(false);
+    const [viewInitialized, setViewInitialized] = useState(false);
     /////////////////
     // SUBSCRIPTIONS
 
@@ -151,7 +149,8 @@ export const PartyModal: UIComponent = {
     useEffect(() => {
       // populate initial data
       setAccount(getAccount(accountEntity, { live: 0, inventory: 2 }));
-      setKamis(getWorldKamis());
+      const worldKamis = getWorldKamis();
+      setKamis(worldKamis);
 
       // set ticking
       const refreshClock = () => setTick(Date.now());
@@ -172,6 +171,11 @@ export const PartyModal: UIComponent = {
       // update the list of kamis in the world
       const worldKamis = getWorldKamis();
       setKamis(worldKamis);
+
+      // mark as initialized after first fetch with modal open
+      if (!initialized) {
+        setInitialized(true);
+      }
 
       // check if we need to update the list of accounts
       const accountEntities = queryAllAccounts() as EntityIndex[];
@@ -208,25 +212,21 @@ export const PartyModal: UIComponent = {
       }
     }, [nftData]);
 
-    // if there are no world kamis and only wild, set the view to External
+    // set initial view based on kami availability (runs once after first modal open)
     useEffect(() => {
-      if (wildKamis.length && kamis.length === 0) {
+      if (!initialized || viewInitialized) return;
+
+      // if expanded/collapsed views would be empty, switch to external
+      const nonListedWorldKamis = kamis.filter((k) => k.state !== 'LISTED');
+      const hasExternalContent = wildKamis.length > 0 || kamis.some((k) => k.state === 'LISTED');
+      if (nonListedWorldKamis.length === 0 && hasExternalContent) {
         setView('external');
       }
-    }, [wildKamis.length, kamis.length]);
+      setViewInitialized(true);
+    }, [initialized, viewInitialized, wildKamis.length, kamis.length]);
 
     /////////////////
     // ACTIONS
-
-    // send a kami NFT to another player
-    const send = (kami: Kami, to: Account) => {
-      writeContract({
-        abi: erc721Abi,
-        address: kamiNFTAddress,
-        functionName: 'safeTransferFrom',
-        args: [account.ownerAddress, to.ownerAddress, BigInt(kami.index)],
-      });
-    };
 
     // import a kami from the wild to the world
     const stake = (kamis: Kami[]) => {
@@ -321,13 +321,6 @@ export const PartyModal: UIComponent = {
           display={display}
           state={{ displayedKamis, tick }}
           utils={utils}
-        />
-        <SendBar
-          actions={{ sendKami: (k: Kami, a: Account) => send(k, a) }}
-          controls={{ sort, view }}
-          data={{ accounts }}
-          state={{ kamis: displayedKamis }}
-          isVisible={isModalOpen && view === 'external'}
         />
       </ModalWrapper>
     );

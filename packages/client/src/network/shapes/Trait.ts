@@ -39,6 +39,8 @@ export interface TraitEntities {
   hand: EntityIndex;
 }
 
+export type TraitType = 'Background' | 'Body' | 'Color' | 'Face' | 'Hand';
+
 // get the Stats from the EnityIndex of a Kami
 // feed in the trait registry entity
 export const getTrait = (world: World, comps: Components, entity: EntityIndex): Trait => {
@@ -70,16 +72,29 @@ export const getTraitByIndex = (
 };
 
 // get all the Traits from the registry
-export const getRegistryTraits = (world: World, comps: Components): Trait[] => {
+export const getRegistryTraits = (
+  world: World,
+  comps: Components,
+  specificType?: TraitType[]
+): Trait[] => {
   const { IsRegistry, BackgroundIndex, BodyIndex, ColorIndex, FaceIndex, HandIndex } = comps;
 
-  const entityIndices = [
-    ...Array.from(runQuery([Has(IsRegistry), Has(BackgroundIndex)])),
-    ...Array.from(runQuery([Has(IsRegistry), Has(BodyIndex)])),
-    ...Array.from(runQuery([Has(IsRegistry), Has(ColorIndex)])),
-    ...Array.from(runQuery([Has(IsRegistry), Has(FaceIndex)])),
-    ...Array.from(runQuery([Has(IsRegistry), Has(HandIndex)])),
-  ];
+  const typeIndex: Record<TraitType, any> = {
+    Background: BackgroundIndex,
+    Body: BodyIndex,
+    Color: ColorIndex,
+    Face: FaceIndex,
+    Hand: HandIndex,
+  };
+
+  const typesToQuery = specificType?.length
+    ? specificType
+    : (Object.keys(typeIndex) as TraitType[]);
+
+  const entityIndices = typesToQuery.flatMap((type) =>
+    Array.from(runQuery([Has(IsRegistry), Has(typeIndex[type])]))
+  );
+
   return entityIndices.map((index) => getTrait(world, comps, index));
 };
 

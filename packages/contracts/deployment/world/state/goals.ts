@@ -146,6 +146,24 @@ export async function initGoals(api: AdminAPI) {
   await api.goal.add.reward.basic(7, 'Gold', 42, 'ITEM', 21003, 25);
   await api.goal.enable(7);
 
+  await api.goal.create(
+    13,
+    'Secret of the Ooze',
+    `The headless man speaks through a frowning mask. \n\n"Our concerns lie only with the Kami. However, you may wish to use this temple for another purpose. This dark pool beneath the Wheel was once used as a means of transportation. Should you choose, you may restore this function. Contribute more of the fuliginous ooze, and the current will flow once again."`,
+    19,
+    'ITEM',
+    'CURR_MIN',
+    1203,
+    99
+  );
+  await api.goal.add.reward.display(13, 'Fast Travel unlocked between Room 19 and Room 59');
+  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 11214, 13);
+  await api.goal.add.reward.basic(13, 'Bronze', 1, 'ITEM', 21204, 6);
+  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 11002, 13);
+  await api.goal.add.reward.basic(13, 'Silver', 3, 'ITEM', 1007, 4);
+  await api.goal.add.reward.basic(13, 'Gold', 5, 'ITEM', 12, 1);
+  await api.goal.enable(13);
+
   //   await api.goal.create(
   //     8,
   //     'Secret Teachings of the Ages',

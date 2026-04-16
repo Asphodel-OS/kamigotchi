@@ -114,6 +114,7 @@ const Content = styled.div`
 
 const Title = styled.div<{ size: number }>`
   font-size: ${({ size }) => size}vw;
+  line-height: 1;
   padding: ${({ size }) => `${size * 0.75}vw ${size * 0.45}vw`};
 
   align-self: flex-start;

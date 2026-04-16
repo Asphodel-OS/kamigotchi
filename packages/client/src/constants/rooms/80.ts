@@ -9,5 +9,11 @@ export const room80: Room = {
     key: 'radiantCrystal',
     path: radiantCrystal,
   },
-  objects: [],
+  objects: [
+    {
+      name: 'crystal',
+      coordinates: { x1: 35, y1: 15, x2: 95, y2: 85 },
+      dialogue: 801,
+    },
+  ],
 };

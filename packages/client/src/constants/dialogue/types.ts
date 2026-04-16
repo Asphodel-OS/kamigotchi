@@ -1,8 +1,16 @@
 export interface DialogueNode {
   index: number;
   text: Array<string | ((...args: any[]) => string)>;
-  npc?: { name: string };
-  action?: ActionParam | Array<ActionParam>; // apply to last step or specific steps
+  npc?: {
+    name: string;
+    img: string;
+    color?: string;
+    mood?: string;
+    special?: { name: string; onclick: () => void };
+    nextDialogue?: number;
+    endDialogue?: boolean;
+  };
+  action?: ActionParam | Array<ActionParam | ActionParam[] | undefined>; // apply to last step or specific steps
   next?: Map<string, number>; // points to more dialogue nodes
   args?: GetterParam[];
 }
@@ -17,4 +25,5 @@ export interface ActionParam {
   label: string;
   type: string;
   input?: number;
+  onClick?: () => void;
 }

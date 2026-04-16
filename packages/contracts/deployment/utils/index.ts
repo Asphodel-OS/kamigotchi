@@ -12,3 +12,4 @@ export {
 export { findLog } from './findLog';
 export { ignoreSolcErrors } from './forge';
 export { extractIdFromFile, getAllCompIDs, getAllSystemIDs, keccak256 } from './ids';
+export { assertProductionBranch } from './prodGuard';

@@ -1,3 +1,4 @@
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { EntityID, EntityIndex } from 'engine/recs';
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -7,7 +8,6 @@ import { TextTooltip } from 'app/components/library';
 import { DropdownToggle } from 'app/components/library/buttons/DropdownToggle';
 import { triggerNodeModal } from 'app/triggers';
 import { HelpMenuIcons } from 'assets/images/help';
-import { ActionIcons } from 'assets/images/icons/actions';
 import { insectIcon } from 'assets/images/icons/affinities';
 import { KamiIcon, OperatorIcon } from 'assets/images/icons/menu';
 import { StaminaIcon } from 'assets/images/icons/stats';
@@ -287,7 +287,7 @@ export const Grid = ({
           <DropdownToggle
             limit={33}
             button={{
-              images: [ActionIcons.search],
+              images: [FilterListIcon],
               tooltips: ['Filter tile by Type'],
             }}
             onClick={[setType]}

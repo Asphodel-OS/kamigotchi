@@ -612,8 +612,7 @@ MINA: “Harvest some $MUSU while I read this and I’ll tell you about it.""","
 MINA: “The gods can’t seem to help themselves.”
 MINA: “A fascination with the ephemeral, perhaps?”
 MINA: “Or possibly, it’s like wanting the best for your pets.”
-MINA: “Whatever the motivation, gods have granted knowledge or power to humans  countless times throughout history.”
-MINA: “It’s likely that more of these events have been forgotten than recorded.”
+MINA: “Whatever the motivation, gods have granted knowledge or power to humans countless times throughout history.”
 MINA: “This is just one of many. A mythic world forgotten and left abandoned.”
 MINA: “Until recently, it seems.”",Complete MSQ065,Harvest for >360 minutes at Engraved Door,"4x Elders Loyalty,1x Booster Pack"
 MSQ067,67,To Update Text,Soaked to the Bone,No,MAIN,MENU,"MENU: “There’s another skeleton in the caves here, crumpled in the water underneath that observation deck.”
@@ -902,6 +901,57 @@ MINA: “All the sensations of mundane life in a single pulsating mass.”
 MINA: “It’s not immortality or life extension. It won’t keep you sustained. But it will let you feel what it’s like to live to the fullest.”
 MINA: “The finest food, the most enticing perfume, the softest silks, the most entrancing song, the most beautiful sights, the sublimity of imagination.”
 MINA: “To many individuals, that means more than anything.”",Complete MSQ102,Craft 1 Pure Essence,4x Elders Loyalty
+MSQ105,105,To Deploy,The Turning of the Wheel,No,MAIN,MENU,"MENU: “That huge engraved door has opened.”
+MENU: “I wonder what’s behind it?”
+MINA: “The whole of the Sanctuary Caves seems to have been manipulated in order to generate sensory essences.”
+MINA: “I had believed it was part of a complex lock to keep curious visitors out, but now I’m not so sure.”
+MENU: “You’re saying it was like a test, or a puzzle? They wanted us to open it?”
+MINA: “Something like that, yes.”
+MENU: “It is what it is. Go check it out, Operator.”","MENU: “This room is almost beyond my ability to understand. Almost.”
+MENU: “It’s some kind of technology even more advanced than what I’m familiar with. Doesn’t really follow the rules.”
+MENU: “It might be like Mina’s magic… Maybe it’s both?”
+MENU: “And what is that thing standing by the wheel?”",Complete MSQ104,Move to Temple of the Wheel,2x Agency Reputation
+MSQ106,106,To Deploy,Two Faces Under One Hood,No,MAIN,MINA,"MINA: “See if the Kami can tolerate the presence of that individual.”
+MINA: “Your little spirits are a fine judge of character.”
+MINA: “Put them down and get them busy, then check in on them later.”
+MENU: “Is it an individual, or do they count as two people?”
+MENU: “That might be rude to ask…”
+MENU: “Anyway, Mina and I can take a closer look at this room while the Kami are busy.”","MINA: “We’ve been scrying this room since you last checked in.”
+MINA: “Menu was onto something.”
+MINA: “This is a fusion of magic and technology far more intricate than what you’ve seen in the Sanctuary Caves.”
+MINA: “It has the power to enable an ancient means of travel.”
+MINA: “A portal to move between the domain’s visible layers.”
+MENU: “Like a backdoor. Does it work?”
+MINA: “I’m not sure. The Operator will have to determine that.”
+MENU: “At least the wheel’s attendant doesn’t seem to mind the Kami.”
+MENU: “Though I don’t think he particularly likes them, either.”
+MENU: “I’ll have to reach out behind the scenes and say hello.”",Complete MSQ105,Make 3 Scavenging Rolls at Temple of the Wheel,"2x Elders Loyalty,1x Booster Pack"
+MSQ107,107,To Deploy,Get a Foot In The Door,No,MAIN,DIMIDIATUS,"DIMIDIATUS: “We have communicated with the local guardian deity and explained our contract.”
+DIMIDIATUS: “She understands we are not at odds.”
+DIMIDIATUS: “We suggest an exchange of gifts to increase our amity.”
+DIMIDIATUS: “We have heard you enjoy collecting cards.”
+DIMIDIATUS: “Bring us some of the sanguine mushrooms that grow in this place, and we will make a trade.”","DIMIDIATUS: “We give our thanks.”
+DIMIDIATUS: “May we remain associates for eternity.”
+MENU: “Like they said, I’ve been talking with them off screen. They’re nice guys.”
+MENU: “Well, at least the sad one is. The laughing one, I don’t know if I like him.”
+MENU: “I’ve had worse coworkers either way.”",Complete MSQ106,Give 10 Sanguine Shroom,"4x Agency Reputation,1x Booster Pack"
+MSQ108,108,To Deploy,Treat Yourself,No,MAIN,DIMIDIATUS,"DIMIDIATUS: “You have sated our needs, but a desire lingers.”
+DIMIDIATUS: “We are burdened by what you call a sweet tooth, notwithstanding our lack of dentition.”
+DIMIDIATUS: “Bring us a handful of candy. We will compensate your efforts.”","DIMIDIATUS: “We are grateful. This is a delight.”
+DIMIDIATUS: “The scale insects of the Kamigotchi World are master confectioners.”
+DIMIDIATUS: “Sweets crafted even by the hands of higher beings could not compare.”
+MENU: “Don’t let Mina hear you say that.”
+MENU: “But yeah, she could stand to work on her recipes a little.”
+MENU: “Or get some new ones in the store.”",Complete MSQ107,Give 10 Honeydew Scale,"2x Agency Reputation,3x ""Cultivation II"" Spell Card"
+MSQ109,109,To Deploy,Remain Unburdened of Attachments,No,MAIN,DIMIDIATUS,"DIMIDIATUS: “You have become attached to this world.”
+DIMIDIATUS: “One may perceive this as good, or bad, or both. But it is a restrictive condition.”
+DIMIDIATUS: “You may not want to let things go. You may feel scared.”
+DIMIDIATUS: “You may act as a guardian to the spirits in your charge. You may refuse to let them fall in battle.”
+DIMIDIATUS: “You may be a confident hexer, assured that your stockpile of magic can bring back any loss.”
+DIMIDIATUS: “You must abandon these attachments.”
+DIMIDIATUS: “Give up your powers of revival as a symbolic gesture.”","DIMIDIATUS: “You are now unburdened. Step lighter upon your exit from this temple.”
+DIMIDIATUS: “You have lost nothing but shackles. The power of revival is still within your hands.”
+DIMIDIATUS: “Consider what it would mean to truly give up this ability. You must cherish it.”",Complete MSQ108,Give 10 Red Ribbon Gummy,"2x Agency Reputation,5x Booster Pack"
 MIN001,2001,In Game,Grand Opening,No,MAIN,MINA,"MINA: “Hello, whoever you are. Is this how you receive your letters?”
 MINA: “It seems functional, although inelegant.”
 MINA: “Tired? Hungry? $MUSU burning a hole in your pocket?”
@@ -1238,7 +1288,7 @@ ROB: “I’m a traveler at heart too, y’see. But this treasure chamber? It’
 ROB: “You seemed to get in just fine, though. I might’ve even seen ya leave again.”
 ROB: “How’s about I follow you out?”
 ROB: “Heh heh. Just kidding. I’m fettered tight to this stone for now.”
-ROB: “Still hungry, too. Got any meat?”",Completed SQ021,Give 3 Rock Candyfloss,"3x ""Melkarth's Heroic Awakening"" Spell Card"
+ROB: “Still hungry, too. Got any meat?”",Complete SQ021,Give 3 Rock Candyfloss,"3x ""Melkarth's Heroic Awakening"" Spell Card"
 SQ998,3998,In Game,Hidden GEM,No,SIDE,MENU,"MENU: “Whoa! Stop right there!”
 MENU: “That machine in your inventory, it’s spinning up!”
 MENU: “I think it’s responding to an energy field in these caves!”
@@ -1250,6 +1300,8 @@ MENU: “What’s it going to do?”
 MENU: “Is it even safe?”
 MINA: “I think that’s something the Operator should determine.”","Own the Aetheric Sextant,In Room: Slippery Pit",In Room: Hatch to Nowhere,"2x Agency Reputation,2x Elders Loyalty"
 SQ999,10002,In Game,Claim Your Free Gift!,No,,,"I was really going through it on the 21st. It had me feeling bad enough that it must have affected you too. Here, take this. ","I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet again. ","Before 25/10/25 0 GMT,At least 1 Kami liquidated",,"5x Booster Pack,3x ""Melkarth's Heroic Awakening"" Spell Card"
+SQ997,10003,In Game,Condolences on your Recent Liquidations,No,SIDE,MENU,"MENU: “I was not having a good time this weekend, and it seems like you weren’t either.”
+MENU: “Take these, they should help you get back on your feet.”","MENU: “I’m back to 100 percent and processing faster than ever. I hope that gift helped you get back on your feet too. ",At least 1 Kami liquidated,,"5x ""Melkarth's heroic awakening"" spell card"
 test-0,1000000,Test,Daily Test Quest,Yes,,,Beg for your MUSU.,,,,"10000x MUSU (Test),2x Agency Reputation"
 test-1,1000001,Test,Crafting Materials,No,,,Let there be Craft,,,Move 3 Times,"100x Stone,100x Stick,50x Plastic Bottle,10x Glass Jar,100x Pine Cones,100x Burgers"
 test-2,1000002,Test,Lottery Loving,No,,,Stop being Kamiless,,,,20x Gacha Tickets (Test)

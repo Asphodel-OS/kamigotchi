@@ -20,6 +20,7 @@ interface Attack {
 interface Defense {
   threshold: AsphoAST;
   salvage: AsphoAST;
+  recoil: AsphoAST;
 }
 
 interface Harvest {
@@ -90,6 +91,12 @@ export const getBonuses = (
         ratio: getBonus('DEF_SALVAGE_RATIO', 3),
         shift: 0,
         boost: 0,
+      },
+      recoil: {
+        nudge: 0,
+        ratio: 0,
+        shift: 0,
+        boost: getBonus('DEF_RECOIL_BOOST', 3),
       },
     },
     harvest: {

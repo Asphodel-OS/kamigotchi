@@ -13,6 +13,7 @@ export const Tooltip = ({
   isDisabled,
   fullWidth,
   cursor,
+  persistOnClick,
 }: {
   children: React.ReactNode;
   grow?: boolean;
@@ -24,6 +25,7 @@ export const Tooltip = ({
   isDisabled: boolean;
   fullWidth?: boolean;
   cursor?: string;
+  persistOnClick?: boolean;
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -85,6 +87,9 @@ export const Tooltip = ({
       onMouseEnter={(e) => handleMouseEnter(e)}
       onMouseLeave={() => {
         (setIsActive(false), setIsVisible(false));
+      }}
+      onMouseDown={() => {
+        if (!persistOnClick) (setIsActive(false), setIsVisible(false));
       }}
       onMouseMove={(e) => {
         handleMouseMove(e);

@@ -6,6 +6,28 @@ const boldName = (text: string, key: number | string) => (
     {text}
   </strong>
 );
+const SPEAKER_TAG_AT_START = /^([A-Z][A-Z0-9 ]{1,24})(?=:)/;
+const SPEAKER_TAG_GLOBAL = /([A-Z][A-Z0-9 ]{1,24})(?=:)/g;
+
+const renderSpeakerTags = (text: string): ReactNode[] => {
+  const result: ReactNode[] = [];
+  let cursor = 0;
+  let key = 0;
+
+  for (const match of text.matchAll(SPEAKER_TAG_GLOBAL)) {
+    const index = match.index ?? 0;
+    const speaker = match[1];
+
+    if (index > cursor) result.push(text.slice(cursor, index));
+    result.push(boldName(speaker, key));
+
+    key += 1;
+    cursor = index + speaker.length;
+  }
+
+  if (cursor < text.length) result.push(text.slice(cursor));
+  return result;
+};
 
 export const useTypewriter = (
   text: string,
@@ -27,11 +49,7 @@ export const useTypewriter = (
     if (!text) return;
 
     if (interrupted) {
-      const parts = text.split(/(MINA|MENU)/g);
-      const result = parts.map((part, i) =>
-        /^(MINA|MENU)$/.test(part) ? boldName(part, i) : part
-      );
-      setDisplayedText(result);
+      setDisplayedText(renderSpeakerTags(text));
       indexRef.current = text.length;
       onComplete?.();
       return;
@@ -44,13 +62,12 @@ export const useTypewriter = (
         return;
       }
 
-      // leaving this hardcorded for now
       const remaining = text.substring(indexRef.current);
-      const Mina = remaining.startsWith('MINA');
-      const Menu = remaining.startsWith('MENU');
-      if (Mina || Menu) {
-        setDisplayedText((prev) => [...prev, boldName(Mina ? 'MINA' : 'MENU', indexRef.current)]);
-        indexRef.current += 4;
+      const speakerMatch = remaining.match(SPEAKER_TAG_AT_START);
+      const speaker = speakerMatch?.[1];
+      if (speaker) {
+        setDisplayedText((prev) => [...prev, boldName(speaker, indexRef.current)]);
+        indexRef.current += speaker.length;
       } else {
         setDisplayedText((prev) => [...prev, remaining[0]]);
         indexRef.current += 1;

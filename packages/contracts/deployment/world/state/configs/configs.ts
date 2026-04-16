@@ -16,6 +16,7 @@ export async function initConfigs(api: AdminAPI) {
 
   await initTokens(api);
   await initPortal(api);
+  await initNewbieVendor(api);
 }
 
 // local config settings for faster testing
@@ -80,6 +81,13 @@ async function initFriends(api: AdminAPI) {
   await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 }
 
+export async function initKamiSwap(api: AdminAPI) {
+  await api.config.set.address(
+    'KAMI_MARKET_FEE_RECIPIENT',
+    '0x3d7f111B3b69C657624b8633a997A56300212872'
+  );
+}
+
 async function initLeveling(api: AdminAPI) {
   await api.config.set.number('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
   await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
@@ -128,21 +136,27 @@ export async function initHarvest(api: AdminAPI) {
   await api.config.set.array('KAMI_HARV_STRAIN', [20, 0, 6500, 3, 0, 0, 1000, 3]); // hijacking nudge here for denominator base value
 }
 
+// @dev standard configs uint32[8] suppport:
+//   [nudge, n_prec, ratio, r_prec, shift, s_prec, boost, b_prec]
+// @dev efficacy configs support [prec, neut, +, -, n-n]
 export async function initLiquidation(api: AdminAPI) {
-  // [prec, neut, +, -, n-n]
+  // threshold calcs
   await api.config.set.array('KAMI_LIQ_EFFICACY', [3, 0, 500, 500, 200]);
   await api.config.set.array('KAMI_LIQ_ANIMOSITY', [0, 0, 400, 3]); // ratio applies to iCDF
-
-  // standard configs [nudge, n_prec, ratio, r_prec, shift, s_prec, boost, b_prec]
   await api.config.set.array('KAMI_LIQ_THRESHOLD', [0, 3, 1000, 3, 0, 3, 0, 0]);
+
+  // money calcs
   await api.config.set.array('KAMI_LIQ_SALVAGE', [0, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
   await api.config.set.array('KAMI_LIQ_SPOILS', [45, 2, 0, 3, 0, 0, 0, 0]); // hijacked nudge for power tuning (REQUIRED: config[3] >= config[1])
-  await api.config.set.array('KAMI_LIQ_KARMA', [10, 0, 1000, 3, 0, 0, 2000, 3]);
-  await api.config.set.array('KAMI_LIQ_RECOIL', [0, 0, 600, 3, 0, 0, 1000, 3]);
+
+  // recoil calcs
+  await api.config.set.array('KAMI_LIQ_KARMA_EFFICACY', [3, 0, 1000, 1000, 400]);
+  await api.config.set.array('KAMI_LIQ_KARMA', [0, 0, 2000, 3, 0, 0, 0, 0]);
+  await api.config.set.array('KAMI_LIQ_RECOIL', [1000, 3, 0, 0, 0, 0, 1000, 3]);
 }
 
 export async function initPortal(api: AdminAPI) {
-  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 3 * 24 * 3600); // measured in seconds (3 days)
+  await api.config.set.number('PORTAL_TOKEN_EXPORT_DELAY', 1 * 24 * 3600); // measured in seconds (1 day)
   await api.config.set.array('PORTAL_ITEM_EXPORT_TAX', [
     1, // flat tax (in resulting item)
     100, // % in basis points
@@ -176,4 +190,12 @@ async function initVIP(api: AdminAPI) {
   // starts on April 24, 2025 8:00:00 AM UTC
   // each stage is 2 weeks
   await api.config.set.array('VIP_STAGE', [1745481600, 1209600, 0, 0, 0, 0, 0, 0]);
+}
+
+async function initNewbieVendor(api: AdminAPI) {
+  await api.config.set.number('NEWBIE_VENDOR_MIN_PRICE', 5000000000000000); // 0.005 ether
+  await api.config.set.number('NEWBIE_VENDOR_TWAP_WINDOW', 86400); // 24h
+  await api.config.set.bool('NEWBIE_VENDOR_ENABLED', true);
+  await api.vendor.setCycleDuration(172800); // 48h
+  await api.vendor.initTWAP(5000000000000000); // 0.005 ether
 }

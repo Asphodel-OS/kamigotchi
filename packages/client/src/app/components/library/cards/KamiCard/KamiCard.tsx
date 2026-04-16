@@ -37,7 +37,9 @@ export const KamiCard = ({
   show?: {
     battery?: boolean;
     cooldown?: boolean;
+    hideName?: boolean;
     levelUp?: boolean;
+    showPercent?: boolean;
     skillPoints?: boolean;
   };
   utils?: {
@@ -87,14 +89,15 @@ export const KamiCard = ({
   /////////////////
   // DISPLAY
 
-  // get the list of item bonuses to display
+  // get the list of item and equipment bonuses to display
   const itemBonuses = useMemo(() => {
-    if (!getTempBonuses) return [];
-    return getTempBonuses(kami).map((bonus) => ({
-      image: getItemImage(bonus.source?.name ?? ''),
-      itemName: bonus.source?.name ?? '',
-      text: parseBonusText(bonus),
-    }));
+    const tempBonuses = getTempBonuses
+      ? getTempBonuses(kami).map((bonus) => ({
+          image: getItemImage(bonus.source?.name ?? ''),
+          text: parseBonusText(bonus),
+        }))
+      : [];
+    return tempBonuses;
   }, [getTempBonuses, kami]);
 
   /////////////////

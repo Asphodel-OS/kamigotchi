@@ -1,11 +1,23 @@
-export { get as getKami } from './base';
+export {
+  get as getKami,
+  invalidateKamiAfterCast,
+  invalidateKamiAfterKill,
+  invalidateKamiBonuses,
+  invalidateKamiFlags,
+  invalidateKamiHarvest,
+  invalidateKamiLive,
+  invalidateKamiStats,
+  invalidateKamiTime,
+} from './base';
 export {
   calcCooldown,
   calcCooldownRequirement,
   calcHarvestTime,
   calcHealth,
   calcHealthPercent,
+  calcHealthRate,
   calcLiqKarma,
+  calcLiqRecoilEfficacy,
   calcLiqStrain,
   calcLiqThreshold,
   calcOutput,

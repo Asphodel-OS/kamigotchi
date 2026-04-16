@@ -103,13 +103,25 @@
     "id": "component.id.skill.owns",
     "encodedID": "0x062cd306ad225a632b22436963e5460cbeffac9c848eb8ae319dc628c6acd64c"
   },
+  "OwnsEquipID": {
+    "id": "component.id.equipment.owns",
+    "encodedID": "0xdae45b6433b7ad9982276bf2ad80e49f631fb4705c2475cf1795cfe45b6568ab"
+  },
   "OwnsTaxID": {
     "id": "component.id.tax.owns",
     "encodedID": "0xada9efea9b60db2f3de8535bcf056d66fc7d5ab3def1fb1dd3efe8117c4b4607"
   },
+  "OwnsKamiOrderID": {
+    "id": "component.id.kamiorder.owns",
+    "encodedID": "0xe71badbf78da4d89e78fdcc5cab0a0bbdc0172feed5567d2bcfd4c351a8d67b6"
+  },
   "OwnsTradeID": {
     "id": "component.id.trade.owns",
     "encodedID": "0x4570b4c20b1780474e20c57e9886741763e9fd018b544cf42ed3c228b98e9045"
+  },
+  "OwnsWithdrawalID": {
+    "id": "component.id.token.withdraw.owns",
+    "encodedID": "0xe93a8d0227b54356d8f8d432c8475f3fc3d46c46d271f0346ed9e6436c10d894"
   },
   "AnchorID": {
     "id": "component.id.anchor",
@@ -295,9 +307,17 @@
     "id": "component.subtype",
     "encodedID": "0xa7b4bd2d760054205ea7cf761a119827e2316646eabcbc6653656187e7d030cb"
   },
+  "Tax": {
+    "id": "component.tax",
+    "encodedID": "0x21bcbbcf63994fa38357d01b111e9fe623c9548e14d85efdcd5f0021d776ad10"
+  },
   "Time": {
     "id": "component.Time",
     "encodedID": "0x040fc38fe5717491c84059f73f7686f4157d14971215773d341a2ede964d65ac"
+  },
+  "TimeEnd": {
+    "id": "component.Time.End",
+    "encodedID": "0x3389be3fd45382f52327bb456aea60eeff2690763a6bfa49719045a6c4afba72"
   },
   "LastActionTime": {
     "id": "component.Time.LastAction",
@@ -330,6 +350,10 @@
   "TokenAllowance": {
     "id": "component.token.allowance",
     "encodedID": "0x6c3c0812fd9b660e25d8c46a7a176468a291aea02a77ff5e253a8ce4bbfc8e32"
+  },
+  "TokenHolder": {
+    "id": "component.token.holder",
+    "encodedID": "0x5f03ded89d2735053791bf1f4d0d89caf92753060908eabf438f693d99bf9fcf"
   },
   "Value": {
     "id": "component.value",

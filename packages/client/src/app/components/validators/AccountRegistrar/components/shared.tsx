@@ -13,7 +13,14 @@ export const Description = styled.div<{ size: number }>`
   color: #333;
   font-size: ${({ size }) => size}vw;
   line-height: ${({ size }) => size * 2.4}vw;
-  text-align: center;
+  text-align: justify;
+  background-color: #f4f4f4;
+  border-radius: 0.5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45vw;
+  padding: 0.45vw;
 `;
 
 export const Section = styled.div<{ padding: number }>`

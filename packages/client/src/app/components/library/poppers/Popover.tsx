@@ -202,18 +202,6 @@ const PopoverContent = styled.div.attrs<{
   white-space: normal;
   overflow-wrap: break-word;
 
-  ::-webkit-scrollbar {
-    background: transparent;
-    width: 0.9vw;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border: 0.2vw solid transparent;
-    background-clip: padding-box;
-    border-radius: 0.2vw;
-    background-color: rgba(0, 0, 0, 0.15);
-    &:hover {
-      cursor: auto;
-    }
-  }
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 `;

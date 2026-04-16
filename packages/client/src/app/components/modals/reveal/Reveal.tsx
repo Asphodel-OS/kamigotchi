@@ -2,13 +2,14 @@ import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
 import { EntityID, EntityIndex, getComponentValue } from 'engine/recs';
 import { waitForActionCompletion } from 'network/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { ModalHeader, ModalWrapper } from 'app/components/library';
 import { SettingsIcon } from 'assets/images/icons/menu';
 import { getAccountFromEmbedded } from 'network/shapes/Account';
-import { queryDTCommits } from 'network/shapes/Droptable';
+import { queryDTCommits, querySacrificeCommits } from 'network/shapes/Droptable';
+import { isBlockedRevealCommitID } from 'network/systems/DTRevealerSystem/blocklist';
 import { useWatchBlockNumber } from 'wagmi';
 import { Commits } from './Commits';
 
@@ -19,16 +20,17 @@ export const RevealModal: UIComponent = {
 
     const {
       network,
-      data: { commits },
+      data: { commits, sacrificeCommits },
     } = (() => {
       const { network } = layers;
       const { world, components } = network;
       const account = getAccountFromEmbedded(network);
       const commits = queryDTCommits(world, components, account.id);
+      const sacrificeCommits = querySacrificeCommits(world, components, account.id);
 
       return {
         network: layers.network,
-        data: { commits },
+        data: { commits, sacrificeCommits },
       };
     })();
 
@@ -41,6 +43,14 @@ export const RevealModal: UIComponent = {
     } = network;
 
     const [blockNumber, setBlockNumber] = useState(BigInt(0));
+    const allowedCommits = useMemo(
+      () => commits.filter((commit) => !isBlockedRevealCommitID(commit.id)),
+      [commits]
+    );
+    const allowedSacrificeCommits = useMemo(
+      () => sacrificeCommits.filter((commit) => !isBlockedRevealCommitID(commit.id)),
+      [sacrificeCommits]
+    );
 
     useWatchBlockNumber({
       onBlockNumber: (n) => {
@@ -49,43 +59,68 @@ export const RevealModal: UIComponent = {
     });
 
     useEffect(() => {
-      commits.map((commit) => DTRevealer.add(commit));
-    }, [commits, blockNumber]);
+      allowedCommits.forEach((commit) => DTRevealer.add(commit, 'droptable'));
+      allowedSacrificeCommits.forEach((commit) => DTRevealer.add(commit, 'sacrifice'));
+    }, [allowedCommits, allowedSacrificeCommits, blockNumber]);
 
     useEffect(() => {
-      execute();
+      executeDroptableReveal();
+      executeSacrificeReveal();
     }, [blockNumber]);
 
     /////////////////
     // REVEAL LOGIC
 
-    async function execute() {
-      const commits = DTRevealer.extractQueue();
+    async function executeDroptableReveal() {
+      const commits = DTRevealer.extractQueue('droptable');
       if (commits.length === 0) return;
 
-      const actionIndex = await revealTx(commits);
+      const actionIndex = await revealTx(commits, 'droptable');
+      DTRevealer.finishReveal(actionIndex, commits);
+    }
+
+    async function executeSacrificeReveal() {
+      const commits = DTRevealer.extractQueue('sacrifice');
+      if (commits.length === 0) return;
+
+      const actionIndex = await revealTx(commits, 'sacrifice');
       DTRevealer.finishReveal(actionIndex, commits);
     }
 
     async function overrideExecute(commits: EntityID[]) {
-      if (commits.length === 0) return;
+      const filteredCommits = commits.filter((id) => !isBlockedRevealCommitID(id));
+      if (filteredCommits.length === 0) return;
 
-      DTRevealer.forceQueue(commits);
-      const actionIndex = await revealTx(commits);
-      DTRevealer.finishReveal(actionIndex, commits);
+      DTRevealer.forceQueue(filteredCommits);
+      const actionIndex = await revealTx(filteredCommits, 'droptable');
+      DTRevealer.finishReveal(actionIndex, filteredCommits);
     }
 
     /////////////////
     // TRANSACTIONS
 
-    const revealTx = async (commits: EntityID[]): Promise<EntityIndex> => {
-      const actionIndex = actions.add({
-        action: 'Droptable reveal',
-        params: [commits],
-        description: `Inspecting item contents`,
-        execute: async () => {
-          return api.player.droptable.reveal(commits);
+    const revealTx = async (
+      commits: EntityID[],
+      type: 'droptable' | 'sacrifice'
+    ): Promise<EntityIndex> => {
+      const config = {
+        droptable: {
+          action: 'Droptable reveal',
+          description: 'Inspecting item contents',
+          execute: () => api.player.droptable.reveal(commits),
         },
+        sacrifice: {
+          action: 'Sacrifice reveal',
+          description: 'Revealing MicroKami',
+          execute: () => api.player.pet.sacrificeReveal(commits),
+        },
+      };
+
+      const actionIndex = actions.add({
+        action: config[type].action,
+        params: [commits],
+        description: config[type].description,
+        execute: async () => config[type].execute(),
       });
       await waitForActionCompletion(actions.Action, actionIndex);
       return actionIndex;
@@ -110,7 +145,10 @@ export const RevealModal: UIComponent = {
       >
         <Container>
           <Commits
-            data={{ commits: commits, blockNumber: Number(blockNumber) }}
+            data={{
+              commits: allowedCommits,
+              blockNumber: Number(blockNumber),
+            }}
             actions={{ revealTx: overrideExecute }}
             utils={{ getCommitState }}
           />

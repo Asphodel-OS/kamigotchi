@@ -102,7 +102,9 @@ export const KamisExpanded = ({
           show={{
             battery: true,
             cooldown: true,
+            hideName: true,
             levelUp: true,
+            showPercent: true,
             skillPoints: true,
           }}
           tick={tick}

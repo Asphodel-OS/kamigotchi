@@ -111,6 +111,14 @@ library LibItem {
     return LibReference.create(components, useCase, genRefAnchor(index));
   }
 
+  /// @notice update the rarity of an existing item registry entry
+  /// @param components The components registry
+  /// @param registryID The item's registry entity ID (from genID or getByIndex)
+  /// @param rarity The new rarity value
+  function setRarity(IUintComp components, uint256 registryID, uint32 rarity) internal {
+    RarityComponent(getAddrByID(components, RarityCompID)).set(registryID, rarity);
+  }
+
   /// @notice set optional ERC20 fields (token address + conversion scale) to a registry instance
   /// @dev actual address/scale is determined by TokenPortal. this is for FE legibility
   /// @dev do not call anywhere outside of TokenPortal

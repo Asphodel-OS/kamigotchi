@@ -2,19 +2,17 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 
 import { IconListButton } from 'app/components/library';
+import { triggerBridgeModal } from 'app/triggers';
 import { useVisibility } from 'app/stores';
 import { LogoutIcon } from 'assets/images/icons/actions';
 import { HelpIcon, MoreIcon, ResetIcon, SettingsIcon } from 'assets/images/icons/menu';
-import { TokenIcons } from 'assets/images/tokens';
-import { useBridgeOpener } from 'network/utils/hooks';
+import { MenuIcons } from 'assets/images/icons/menu';
 
 export const MoreMenuButton = () => {
   const { ready, authenticated, logout } = usePrivy();
   const setModals = useVisibility((s) => s.setModals);
   const settingsVisible = useVisibility((s) => s.modals.settings);
   const helpVisible = useVisibility((s) => s.modals.help);
-  const openBridge = useBridgeOpener();
-
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
@@ -28,12 +26,12 @@ export const MoreMenuButton = () => {
     if (ready && authenticated) logout();
   };
 
-  const handleResetState = () => {
+  const handleResetState = async () => {
     clearCookies();
-    clearCache();
+    await clearCache();
     clearStorage();
     location.reload();
-  };
+  };;
 
   /////////////////
   // INTERACTION
@@ -41,15 +39,24 @@ export const MoreMenuButton = () => {
   // clear all indexDBs
   const clearCache = async () => {
     const dbs = await indexedDB.databases();
-    dbs.forEach((db) => {
-      if (db.name) {
-        const request = indexedDB.deleteDatabase(db.name);
-        request.onsuccess = function (event) {
-          console.log('Database deleted successfully');
-        };
-      }
-    });
-  };
+    await Promise.all(
+      dbs.map((db) => {
+        if (!db.name) return Promise.resolve();
+        return new Promise<void>((resolve, reject) => {
+          const request = indexedDB.deleteDatabase(db.name!);
+          request.onsuccess = () => {
+            console.log(`Database ${db.name} deleted successfully`);
+            resolve();
+          };
+          request.onerror = () => reject(request.error);
+          request.onblocked = () => {
+            console.warn(`Database ${db.name} deletion blocked`);
+            resolve();
+          };
+        });
+      })
+    );
+  };;
 
   // cleares all cookies
   // TODO: move this to helper function next time we need it
@@ -98,7 +105,7 @@ export const MoreMenuButton = () => {
     <IconListButton
       img={MoreIcon}
       options={[
-        { text: 'Bridge', image: TokenIcons.init, onClick: openBridge },
+        { text: 'Bridge', image: MenuIcons.kami, onClick: () => triggerBridgeModal() },
         { text: 'Settings', disabled, image: SettingsIcon, onClick: toggleSettings },
         { text: 'Help', image: HelpIcon, onClick: toggleHelp },
         { text: 'Logout', disabled, image: LogoutIcon, onClick: handleLogout },

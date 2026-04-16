@@ -4,22 +4,24 @@ import {
   usePrivy,
   useWallets,
 } from '@privy-io/react-auth';
-import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 import { switchChain } from '@wagmi/core';
 import { ethers } from 'ethers';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Address } from 'viem';
-import { useAccount, useConnect } from 'wagmi';
+import { useConnect, useAccount as useWagmiAccount } from 'wagmi';
+import { isSafariOrIOS } from 'workers/sync/grpcTransport';
 
 import { ActionButton, ValidatorWrapper } from 'app/components/library';
 import { useLayers } from 'app/root/hooks';
 import { UIComponent } from 'app/root/types';
-import { useNetwork, useVisibility } from 'app/stores';
+import { emptyAccountDetails, useNetwork, useAccount as usePlayerAccount, useVisibility } from 'app/stores';
+import { getInjectedWallet } from 'app/utils';
 import { wagmiConfig } from 'clients/wagmi';
 import { DefaultChain } from 'constants/chains';
 import { createNetworkInstance, updateNetworkLayer } from 'network/';
+import { NameCache, OperatorCache, OwnerCache } from 'network/shapes/Account';
 import { abbreviateAddress } from 'utils/address';
 import { Progress } from './Progress';
 
@@ -34,7 +36,7 @@ export const WalletConnecter: UIComponent = {
   // positioning controlled by validator wrapper
   Render: () => {
     const { network } = useLayers();
-    const { address: wagmiAddress, chain, isConnected } = useAccount();
+    const { address: wagmiAddress, chain, isConnected } = useWagmiAccount();
     const { connectors, connect } = useConnect();
     const { ready, authenticated, login, logout } = usePrivy();
     const { wallets, ready: walletsReady } = useWallets();
@@ -44,6 +46,10 @@ export const WalletConnecter: UIComponent = {
     const { validations, setValidations } = useNetwork();
     const { toggleModals, toggleFixtures } = useVisibility();
     const { validators, setValidators } = useVisibility();
+    const bridgeFlowActive = useVisibility((s) => s.modals.bridge || s.bridgeProcessActive);
+    const accountExists = usePlayerAccount((s) => s.validations.accountExists);
+    const setPlayerAccount = usePlayerAccount((s) => s.setAccount);
+    const setPlayerValidations = usePlayerAccount((s) => s.setValidations);
 
     const [isUpdating, setIsUpdating] = useState(false);
     const [state, setState] = useState('');
@@ -71,8 +77,39 @@ export const WalletConnecter: UIComponent = {
       if (isCorrectChain != chainMatches) setChainMatches(isCorrectChain);
     }, [chain, isConnected]);
 
-    // adjust visibility of windows based on above determination
+    // reset account state and query caches on logout so that re-login
+    // with a different wallet triggers a fresh account lookup.
+    // Guarded by bridgeFlowActive: bridge chain-switching can cause
+    // transient auth blips on some wallets — nuking state mid-bridge
+    // would cascade through validators and pop WalletConnector.
     useEffect(() => {
+      if (bridgeFlowActive) return;
+      if (!authenticated) {
+        setPlayerAccount(emptyAccountDetails());
+        setPlayerValidations({ accountChecked: false, accountExists: false, operatorMatches: false, operatorHasGas: true });
+        OperatorCache.clear();
+        NameCache.clear();
+        OwnerCache.clear();
+      }
+    }, [authenticated, bridgeFlowActive]);
+
+    // adjust visibility of windows based on above determination.
+    // Gated by `ready` so the effect doesn't run before Privy initialises
+    // (prevents a one-frame WalletConnector flash on login).
+    // Uses store-mirrored `validations` for the actual decision — the one-
+    // render-cycle delay acts as a natural debounce against transient
+    // chain/auth blips that occur during bridge wallet-switching.
+    useEffect(() => {
+      if (!ready) return;
+      if (bridgeFlowActive) return;
+      if (
+        validators.accountRegistrar &&
+        !accountExists &&
+        validations.authenticated &&
+        validations.chainMatches
+      )
+        return;
+
       const isVisible = !validations.authenticated || !validations.chainMatches;
       if (isVisible) {
         toggleModals(false);
@@ -86,10 +123,18 @@ export const WalletConnecter: UIComponent = {
           gasHarasser: false,
         });
       }
-    }, [validations]);
+    }, [
+      ready,
+      validations,
+      bridgeFlowActive,
+      validators.accountRegistrar,
+      accountExists,
+    ]);
 
     // force logout the user when certain conditions are met:
     useEffect(() => {
+      // Bridge may temporarily alter connection state; avoid forced logout mid-bridge.
+      if (bridgeFlowActive) return;
       if (!authenticated) return; // wait for privy authentication
 
       // when the injected wallet is disconnected
@@ -109,7 +154,13 @@ export const WalletConnecter: UIComponent = {
           return;
         }
       }
-    }, [isConnected, authenticated, wallets, wagmiAddress]);
+    }, [
+      isConnected,
+      authenticated,
+      wallets,
+      wagmiAddress,
+      bridgeFlowActive,
+    ]);
 
     /////////////////
     // ACTIONS
@@ -177,11 +228,6 @@ export const WalletConnecter: UIComponent = {
 
     /////////////////
     // INTERPRETATION
-
-    // get the wallet labeled as 'injected' from the list of privy ConnectedWallets
-    const getInjectedWallet = (wallets: ConnectedWallet[]) => {
-      return wallets.find((w) => w.connectorType === 'injected');
-    };
 
     // get the wallet labeled as 'embedded' from the list of privy ConnectedWallets
     const getEmbeddedWallet = (wallets: ConnectedWallet[]) => {

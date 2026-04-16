@@ -29,8 +29,9 @@ export const IconButton = forwardRef(function IconButton(
     filter,
     noBorder,
     shake,
+    cooldownBackground,
   }: {
-    onClick: Function;
+    onClick?: () => void | Promise<void>;
     img?: string | SvgIconComponent; // TODO: get rid of all svg icons and mui references
     text?: string;
     width?: number;
@@ -41,6 +42,7 @@ export const IconButton = forwardRef(function IconButton(
     disabled?: boolean;
     fullWidth?: boolean;
     pulse?: boolean;
+    cooldownBackground?: string;
 
     balance?: number; // shows a balance on icon (for Inventory)
     corner?: boolean; // indicates button has options
@@ -64,6 +66,7 @@ export const IconButton = forwardRef(function IconButton(
 ) {
   // layer on a sound effect
   const handleClick = async () => {
+    if (!onClick) return;
     playClick();
     await onClick();
   };
@@ -97,7 +100,7 @@ export const IconButton = forwardRef(function IconButton(
     <Container
       width={width}
       color={color ?? '#fff'}
-      onClick={!disabled ? handleClick : () => {}}
+      onClick={!disabled && onClick ? handleClick : undefined}
       scale={scale}
       orientation={scaleOrientation}
       radius={radius}
@@ -110,6 +113,7 @@ export const IconButton = forwardRef(function IconButton(
       noBorder={noBorder}
       filter={filter}
       shake={shake}
+      cooldownBackground={cooldownBackground}
     >
       {MyImage()}
       {text && (
@@ -138,6 +142,7 @@ const Container = styled.button<{
   noBorder?: boolean;
   filter?: string;
   shake?: boolean;
+  cooldownBackground?: string;
 }>`
   position: relative;
   border: ${({ noBorder }) => (noBorder ? 'none' : 'solid black 0.15vw')};
@@ -153,7 +158,8 @@ const Container = styled.button<{
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  background-color: ${({ color, disabled }) => (disabled ? '#bbb' : color)};
+  background: ${({ color, disabled, cooldownBackground }) =>
+    cooldownBackground || (disabled ? '#bbb' : color)};
   box-shadow: ${({ shadow, scale }) => shadow && `0 0 ${scale * 0.1}vw black`};
 
   cursor: ${({ disabled }) => (disabled ? 'help' : 'pointer')};
@@ -199,8 +205,12 @@ const Image = styled.img<{
   ${({ filter }) => filter && `filter: ${filter};`}
 `;
 
-const Text = styled.div<{ scale: number; orientation: string; withIcon?: boolean }>`
-  font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
+const Text = styled.div<{
+  scale: number;
+  orientation: string;
+  withIcon?: boolean;
+}>`
+  font-size: ${({ scale }) => scale * 0.4}${({ orientation }) => orientation};
   padding: ${({ withIcon }) => (withIcon ? '0' : '0 0.6vw')};
 `;
 

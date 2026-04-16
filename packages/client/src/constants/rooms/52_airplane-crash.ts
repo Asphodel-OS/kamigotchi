@@ -19,5 +19,20 @@ export const room52: Room = {
       coordinates: { x1: 30, y1: 64, x2: 50, y2: 82 },
       dialogue: 521,
     },
+    {
+      name: 'airplane',
+      coordinates: { x1: 54, y1: 62, x2: 91, y2: 74 },
+      dialogue: 522,
+    },
+    {
+      name: 'tail fin symbol',
+      coordinates: { x1: 99, y1: 47, x2: 116, y2: 67 },
+      dialogue: 523,
+    },
+    {
+      name: 'broken trees',
+      coordinates: { x1: 65, y1: 85, x2: 128, y2: 128 },
+      dialogue: 524,
+    },
   ],
 };

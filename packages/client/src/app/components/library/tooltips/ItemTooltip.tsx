@@ -1,5 +1,6 @@
 import { Item } from 'app/cache/item';
 import { TooltipContent } from 'app/components/library';
+import { getItemRarities } from 'constants/itemRarities';
 import { Allo } from 'network/shapes/Allo';
 import { DetailedEntity } from 'network/shapes/utils';
 
@@ -18,7 +19,8 @@ export const ItemTooltip = ({
   const type = item.type;
   const description = item.description;
   const requirements = item.requirements;
-
+  const rarity = getItemRarities(item.rarity ?? 0) ?? getItemRarities(0);
+  const rarityColor = rarity.color;
   const display = (item: Item) => {
     const disp = displayRequirements(item);
     if (disp === '???') return 'None';
@@ -27,16 +29,15 @@ export const ItemTooltip = ({
 
   const getEffectsString = (item: Item) => {
     const isLootbox = type === 'LOOTBOX';
+    if (isLootbox) return 'None';
+
     const effects = item.effects;
-    let text = '';
+    const useEffects = effects?.use?.length > 0 ? parseAllos(effects.use) : [];
+    const equipEffects = effects?.equip?.length > 0 ? parseAllos(effects.equip) : [];
+    const all = [...useEffects, ...equipEffects];
 
-    if (!isLootbox && effects?.use?.length > 0) {
-      text = parseAllos(effects.use)
-        .map((entry) => entry.description)
-        .join('\n');
-    } else text = 'None';
-
-    return text;
+    if (all.length === 0) return 'None';
+    return all.map((entry) => entry.description).join('\n');
   };
 
   return (
@@ -53,6 +54,8 @@ export const ItemTooltip = ({
         text: 'Effects',
         content: getEffectsString(item),
       }}
+      borderColor={rarityColor}
+      titleColor={rarityColor}
     />
   );
 };
