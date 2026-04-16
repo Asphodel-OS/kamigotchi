@@ -81,6 +81,13 @@ async function initFriends(api: AdminAPI) {
   await api.config.set.number('FRIENDS_REQUEST_LIMIT', 10);
 }
 
+export async function initKamiSwap(api: AdminAPI) {
+  await api.config.set.address(
+    'KAMI_MARKET_FEE_RECIPIENT',
+    '0x3d7f111B3b69C657624b8633a997A56300212872'
+  );
+}
+
 async function initLeveling(api: AdminAPI) {
   await api.config.set.number('KAMI_LVL_REQ_BASE', 40); // experience required for level 1->2
   await api.config.set.array('KAMI_LVL_REQ_MULT_BASE', [1259, 3]);
