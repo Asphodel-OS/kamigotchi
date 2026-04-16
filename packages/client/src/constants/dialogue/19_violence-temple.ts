@@ -20,6 +20,13 @@ const blackPool: DialogueNode = {
     'This pool of black ooze rests at the exact center of the circular temple.',
     'You could see it as a spoke within a greater wheel.',
   ],
+  action: [
+    undefined, // no buttons on step 0
+    [
+      { type: 'goal', label: 'Co-op', input: 13 },
+      { type: 'move', label: 'Enter', input: 59 },
+    ],
+  ],
 };
 
 export const Dimidiatus: DialogueNode = getNpcDialogueByIndex(20001);

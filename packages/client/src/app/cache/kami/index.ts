@@ -17,6 +17,7 @@ export {
   calcHealthPercent,
   calcHealthRate,
   calcLiqKarma,
+  calcLiqRecoilEfficacy,
   calcLiqStrain,
   calcLiqThreshold,
   calcOutput,

@@ -46,6 +46,7 @@ export const getTemp = (
 
   return [
     ...getForEndType(world, components, 'UPON_HARVEST_ACTION', holder, update),
+    ...getForEndType(world, components, 'UPON_COOLDOWN_SET', holder, update),
     ...getForEndType(world, components, 'UPON_LIQUIDATION', holder, update),
     ...getForEndType(world, components, 'UPON_DEATH', holder, update),
     ...getForEndType(world, components, 'UPON_KILL_OR_KILLED', holder, update),

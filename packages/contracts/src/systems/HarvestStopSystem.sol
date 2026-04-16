@@ -96,6 +96,7 @@ contract HarvestStopSystem is System {
     LibKami.setState(components, kamiID, "RESTING");
     LibExperience.inc(components, kamiID, output);
     LibKami.resetCooldown(components, kamiID);
+    LibBonus.resetUponCooldownSet(components, kamiID);
 
     // scavenge
     uint256 nodeID = LibHarvest.getNode(components, harvestID);

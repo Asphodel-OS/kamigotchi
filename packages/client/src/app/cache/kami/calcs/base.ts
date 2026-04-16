@@ -1,6 +1,6 @@
-import { calcHarvestIdleTime, calcHarvestNetBounty } from 'app/cache/harvest';
+import { calcHarvestIdleTime, calcHarvestRawNetBounty } from 'app/cache/harvest';
 import { Kami } from 'network/shapes/Kami/types';
-import { calcHarvestingHealthRate, calcStrainFromBalance } from './harvest';
+import { calcHarvestingHealthRate, calcMaxMusu, calcStrainFromBalance } from './harvest';
 
 ////////////////
 // STATE CHECKS
@@ -99,15 +99,20 @@ export const calcCooldownRequirement = (kami: Kami): number => {
 ////////////////
 // HEALTH CALCS
 
-// calculate health based on the drain against last confirmed health
-// assumes that kami health rate has been updated
+// calculate health based on the drain against last confirmed health.
+// assumes that kami health rate has been updated.
+// uses calcRawNetBounty (not calcNetBounty) because the rate cache may
+// be zeroed by updateHarvestRate for display; we need the real bounty
+// to compute how much strain the kami has actually taken.
 export const calcHealth = (kami: Kami): number => {
   const totalHealth = kami.stats?.health.total ?? 0;
   let health = kami.stats?.health.sync ?? 0;
 
   if (isHarvesting(kami) && kami.harvest) {
-    const netBounty = calcHarvestNetBounty(kami.harvest);
-    const strain = calcStrainFromBalance(kami, netBounty, true);
+    const netBounty = calcHarvestRawNetBounty(kami.harvest, kami);
+    const maxMusu = calcMaxMusu(kami);
+    const capped = netBounty < maxMusu ? netBounty : maxMusu;
+    const strain = calcStrainFromBalance(kami, capped, true);
     health -= strain;
   } else if (isResting(kami)) {
     const duration = calcIdleTime(kami);

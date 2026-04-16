@@ -167,7 +167,31 @@ library LibHarvest {
 
     // precision is only divided this time as applied > final (1e0)
     uint256 precision = 10 ** (RATE_PREC + config[3] + config[7]);
-    return (rate * ratio * boost) / precision;
+    uint256 rawBounty = (rate * ratio * boost) / precision;
+
+    // cap bounty at max MUSU sustainable by current HP (inverse strain)
+    uint256 maxMusu = calcMaxMusu(components, kamiID);
+    return rawBounty < maxMusu ? rawBounty : maxMusu;
+  }
+
+  /// @notice Max MUSU a kami can earn given its current HP. Inverse of LibKami.calcStrain.
+  /// strain = ceil(amt * core * boost / divisor) => max_amt = floor(hp * divisor / (core * boost))
+  function calcMaxMusu(IUintComp components, uint256 kamiID) internal view returns (uint256) {
+    int32 hp = LibStat.getCurrent(components, "HEALTH", kamiID);
+    if (hp <= 0) return 0;
+
+    uint32[8] memory config = LibConfig.getArray(components, "KAMI_HARV_STRAIN");
+    int256 bonusBoost = LibBonus.getFor(components, "STND_STRAIN_BOOST", kamiID);
+    uint256 core = config[2];
+    uint256 boost = (config[6].toInt256() + bonusBoost).toUint256();
+    uint256 denom = core * boost;
+    if (denom == 0) return type(uint256).max; // no strain = no cap
+
+    uint256 harmony = LibStat.getTotal(components, "HARMONY", kamiID).toUint256();
+    uint256 precision = 10 ** uint(config[3] + config[7]);
+    uint256 divisor = precision * (harmony + config[0]);
+
+    return (hp.toUint256() * divisor) / denom;
   }
 
   // Calculate the efficacy of a kami's core harvesting calc (min 0).

@@ -115,7 +115,7 @@ const harvestCollect = (network: NetworkLayer, kami: Kami) => {
 
   const harvest = kami.harvest;
   actions.add({
-    action: 'Use item on kami',
+    action: 'Collecting Harvest for Kami',
     params: [harvest.id],
     description: `Collecting harvest for ${kami.name}`,
     execute: async () => {
@@ -128,7 +128,7 @@ const harvestCollect = (network: NetworkLayer, kami: Kami) => {
 const harvestStart = (network: NetworkLayer, kami: Kami, node: Node) => {
   const { actions, api } = network;
   actions.add({
-    action: 'Use item on kami',
+    action: 'Starting Harvest for Kami',
     params: [kami.id, node.id],
     description: `Deploying ${kami.name} onto ${node.name}`,
     execute: async () => {
@@ -147,7 +147,7 @@ const harvestStop = (network: NetworkLayer, kami: Kami) => {
 
   const harvest = kami.harvest;
   actions.add({
-    action: 'Use item on kami',
+    action: 'Stopping Harvest for Kami',
     params: [harvest.id],
     description: `Stopping harvest for ${kami.name}`,
     execute: async () => {
