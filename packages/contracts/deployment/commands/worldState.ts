@@ -7,14 +7,26 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import { ethers } from 'ethers';
 import { genInitScript } from '../scripts/worldIniter';
 import { ignoreSolcErrors, setAutoMine } from '../utils';
+import { syncNotionSheets } from '../world/notion/sync';
 import { SubFunc, WorldAPI } from '../world/world';
 
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 -world <address> -categories <string> -action <string>  -args <number[]>')
   .alias('category', 'c')
+  .option('sync-notion', {
+    type: 'boolean',
+    describe: 'Sync world CSVs from Notion before generating init calls',
+    default: false,
+  })
   .parse();
 
 const run = async () => {
+  if (argv['sync-notion'] || process.env.NOTION_SYNC === 'true') {
+    console.log('Syncing world CSVs from Notion...');
+    const results = await syncNotionSheets();
+    console.log(`Synced ${results.length} sheet${results.length === 1 ? '' : 's'} from Notion.`);
+  }
+
   // setup
   const world = argv.world ? argv.world : process.env.WORLD;
   const category: keyof WorldAPI = argv.category ?? 'init';
