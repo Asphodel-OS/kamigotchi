@@ -362,6 +362,27 @@ contract NewbieVendorTWAPTest is SetupTemplate {
     assertTrue(LibFlag.has(components, charlie.id, "NEWBIE_VENDOR_PURCHASED"));
   }
 
+  function testVendorBuyRoutesProceedsToMarketFeeRecipient() public {
+    uint256 kamiID = _mintKami(alice);
+    uint32 kamiIndex = LibKami.getIndex(components, kamiID);
+
+    uint256[] memory pool = new uint256[](1);
+    pool[0] = uint256(kamiIndex);
+    vm.prank(deployer);
+    __NewbieVendorRegistrySystem.setPool(pool);
+
+    uint256 price = _NewbieVendorBuySystem.calcPrice();
+    uint256 treasuryBalanceBefore = treasury.balance;
+    uint256 vendorBalanceBefore = alice.owner.balance;
+
+    vm.deal(charlie.owner, price);
+    vm.prank(charlie.owner);
+    _NewbieVendorBuySystem.executeTyped{value: price}(kamiIndex);
+
+    assertEq(treasury.balance - treasuryBalanceBefore, price);
+    assertEq(alice.owner.balance - vendorBalanceBefore, 0);
+  }
+
   function testRefundReentrancyCannotBypassOneTimePurchase() public {
     ReentrantNewbieVendorBuyer attacker = new ReentrantNewbieVendorBuyer(address(_NewbieVendorBuySystem));
 
