@@ -14,6 +14,7 @@ import { LibAccount } from "libraries/LibAccount.sol";
 import { LibConfig } from "libraries/LibConfig.sol";
 import { LibFlag } from "libraries/LibFlag.sol";
 import { LibKami } from "libraries/LibKami.sol";
+import { LibKamiMarket } from "libraries/LibKamiMarket.sol";
 import { LibSoulbound } from "libraries/LibSoulbound.sol";
 
 uint256 constant ID = uint256(keccak256("system.newbievendor.buy"));
@@ -116,6 +117,8 @@ contract NewbieVendorBuySystem is System {
   function _transferKami(uint32 kamiIndex, uint256 price, uint256 buyerAccID) internal {
     address vendorAddr = LibConfig.getAddress(components, "NEWBIE_VENDOR_ADDRESS");
     uint256 vendorAccID = uint256(uint160(vendorAddr));
+    address feeRecipient = LibKamiMarket.getFeeRecipient(components);
+    if (feeRecipient == address(0)) feeRecipient = vendorAddr;
 
     uint256 kamiID = LibKami.getByIndex(components, kamiIndex);
     require(kamiID != 0, "NewbieVendor: kami not found");
@@ -125,8 +128,8 @@ contract NewbieVendorBuySystem is System {
     // reassign ownership via IDOwnsKami
     LibKami.setOwner(components, kamiID, buyerAccID);
 
-    // send ETH to vendor address
-    _transferETH(vendorAddr, price);
+    // route newbie-vendor proceeds to marketplace fee recipient when configured
+    _transferETH(feeRecipient, price);
 
     // refund excess
     uint256 excess = msg.value - price;
