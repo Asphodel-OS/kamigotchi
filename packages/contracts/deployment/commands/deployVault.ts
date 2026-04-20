@@ -32,10 +32,11 @@ const argv = yargs(hideBin(process.argv))
 
 // ABIs (only what we need)
 const VaultABI = [
-  'function authorizeCaller(address caller) external',
   'function WETH() view returns (address)',
   'function KAMI721() view returns (address)',
   'function owner() view returns (address)',
+  'function authorizeCaller(address caller) external',
+  'function unauthorizeCaller(address caller) external',
   'function transferOwnership(address newOwner) external',
 ];
 
@@ -77,9 +78,11 @@ async function run() {
   const kami721 = ethers.getAddress('0x' + kami721Raw.toString(16).padStart(40, '0'));
 
   // deploy the vault with the world-set Kami721 address
-  // TODO: include option to deploy new vault (uncommon)
+  // TODO: include option to deploy new vault (very uncommon)
   // const vaultAddr = await deploy(argv.weth, kami721, deployer, argv.forge);
-  const vaultAddr = '0x54fE9bFD7B267D7d4f1C7f5C9b221B1aba67035c'; // pulled from onchain. maybe better by script
+
+  // pulled from onchain. maybe better by script it but unclear how
+  const vaultAddr = '0x54fE9bFD7B267D7d4f1C7f5C9b221B1aba67035c';
 
   // await transferOwnership(signer, vaultAddr);
   await authorizeSystems(signer, vaultAddr);
@@ -117,6 +120,17 @@ async function authorizeSystems(signer: Signer, vaultAddr: string) {
     await tx.wait();
     console.log(`  ${name} (${systemAddr}) -> authorized (${tx.hash})`);
   }
+}
+
+// unauthorize system from the vault
+async function unauthorizeSystem(signer: Signer, vaultAddr: string, systemID: string) {
+  console.log('\n--- Unauthorizing system ---');
+  const vault = new ethers.Contract(vaultAddr, VaultABI, signer);
+  const systemAddr = await getSystemAddr(systemID);
+  console.log(systemID, systemAddr);
+  const tx = await vault.unauthorizeCaller(systemAddr);
+  await tx.wait();
+  console.log(`   (${systemAddr}) -> unauthorized (${tx.hash})`);
 }
 
 // configure marketplace settings
