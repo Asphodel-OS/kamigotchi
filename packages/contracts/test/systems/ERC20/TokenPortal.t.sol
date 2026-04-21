@@ -3,7 +3,7 @@ pragma solidity >=0.8.28;
 
 import "tests/utils/SetupTemplate.t.sol";
 
-import { RESERVE_ACC } from "libraries/LibTokenPortal.sol";
+import { LibTokenPortal, RESERVE_ACC } from "libraries/LibTokenPortal.sol";
 
 /// @notice basic system testing for systems that are not directly tested elsewhere
 /** @dev
@@ -129,6 +129,101 @@ contract TokenPortalTest is SetupTemplate {
     assertEq(token.balanceOf(alice.owner), 0);
     assertEq(_getItemBal(alice, tokenItem), 0);
     assertEq(_getItemBal(RESERVE_ACC, tokenItem), reserveBal + expectedTax2);
+  }
+
+  /// @notice After switching portal ERC20, new withdrawals pay out in the new token; liquidity in the old token remains in TokenHolder.
+  function testTokenPortal_changeTokenAddress_newWithdrawalsUseNewToken_oldTokenUntouched() public {
+    OpenMintable tokenOld = token;
+    OpenMintable tokenNew = new OpenMintable("newOnyx", "NOX");
+
+    tokenOld.mint(alice.owner, 11 ether);
+    _approveERC20(address(tokenOld), alice.owner);
+    _deposit(alice, tokenItem, LibERC20.toGameUnits(11 ether, 3));
+
+    address holder = address(_TokenHolderComponent);
+    uint256 oldInHolderAfterDeposit = tokenOld.balanceOf(holder);
+    assertEq(oldInHolderAfterDeposit, 11 ether);
+
+    vm.startPrank(deployer);
+    _TokenPortalSystem.unsetItem(tokenItem);
+    _TokenPortalSystem.setItem(tokenItem, address(tokenNew), 3);
+    vm.stopPrank();
+
+    assertEq(tokenOld.balanceOf(holder), oldInHolderAfterDeposit);
+
+    uint256 invBal = _getItemBal(alice, tokenItem);
+    uint256 owed = LibERC20.toTokenUnits(invBal, 3);
+    tokenNew.mint(holder, owed);
+
+    uint256 receiptID = _initiateWithdraw(alice, tokenItem, invBal);
+
+    _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
+    vm.prank(alice.owner);
+    _TokenPortalSystem.claim(receiptID);
+
+    assertEq(tokenNew.balanceOf(alice.owner), owed);
+    assertEq(tokenOld.balanceOf(holder), oldInHolderAfterDeposit);
+    assertEq(tokenOld.balanceOf(alice.owner), 0);
+  }
+
+  /// @notice Pending receipt created with token A pays out token A after portal switches to token B (no new-token liquidity needed for that claim).
+  function testTokenPortal_changeTokenAddress_pendingReceiptPaysOldTokenOnly() public {
+    OpenMintable tokenOld = token;
+    OpenMintable tokenNew = new OpenMintable("altOnyx", "AOX");
+
+    tokenOld.mint(alice.owner, 11 ether);
+    _approveERC20(address(tokenOld), alice.owner);
+    _deposit(alice, tokenItem, LibERC20.toGameUnits(11 ether, 3));
+
+    address holder = address(_TokenHolderComponent);
+    uint256 pendingGame = LibERC20.toGameUnits(5 ether, 3);
+    uint256 receiptID = _initiateWithdraw(alice, tokenItem, pendingGame);
+
+    vm.startPrank(deployer);
+    _TokenPortalSystem.unsetItem(tokenItem);
+    _TokenPortalSystem.setItem(tokenItem, address(tokenNew), 3);
+    vm.stopPrank();
+
+    assertEq(tokenNew.balanceOf(holder), 0);
+
+    _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
+    vm.prank(alice.owner);
+    _TokenPortalSystem.claim(receiptID);
+
+    assertEq(tokenOld.balanceOf(alice.owner), 5 ether);
+    assertEq(tokenNew.balanceOf(alice.owner), 0);
+    assertEq(tokenOld.balanceOf(holder), 11 ether - 5 ether);
+  }
+
+  /// @notice With portal mapping cleared via unsetItem, new deposits and new withdrawals revert; an existing receipt should still be claimable from TokenHolder using the token address stored on the receipt.
+  function testTokenPortal_unsetItem_blocksNewFlow_existingReceiptClaimable() public {
+    token.mint(alice.owner, 11 ether);
+    _approveERC20(address(token), alice.owner);
+    _deposit(alice, tokenItem, LibERC20.toGameUnits(11 ether, 3));
+
+    uint256 receiptID = _initiateWithdraw(alice, tokenItem, LibERC20.toGameUnits(4 ether, 3));
+
+    vm.startPrank(deployer);
+    _TokenPortalSystem.unsetItem(tokenItem);
+    vm.stopPrank();
+
+    vm.expectRevert(bytes("Token Portal: item not registered"));
+    vm.startPrank(alice.owner);
+    _TokenPortalSystem.deposit(tokenItem, LibERC20.toGameUnits(1 ether, 3));
+    vm.stopPrank();
+
+    vm.expectRevert(bytes("Token Portal: item not registered"));
+    vm.startPrank(alice.owner);
+    _TokenPortalSystem.withdraw(tokenItem, LibERC20.toGameUnits(1 ether, 3));
+    vm.stopPrank();
+
+    // SYSTEM NOTE: after unsetItem, TokenPortal.claim still succeeds because LibTokenPortal transfers using the receipt's token + wei amount.
+    // itemScales[itemIndex] is cleared (0), which can skew logging / any path that recomputes item amounts from wei using the live portal scale.
+    _setTime(block.timestamp + LibTokenPortal.calcWithdrawalDelay(components));
+    vm.prank(alice.owner);
+    _TokenPortalSystem.claim(receiptID);
+
+    assertEq(token.balanceOf(alice.owner), 4 ether);
   }
 
   //////////////////
