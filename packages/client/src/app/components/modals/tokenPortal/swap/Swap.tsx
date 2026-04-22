@@ -13,6 +13,10 @@ import { playClick } from 'utils/sounds';
 import { getNeededDeposit, getResultWithdraw, getSwapRate } from '../utils';
 import { Mode } from './types';
 
+/** While true, deposit/withdraw (and mode toggle) are disabled; claim/cancel stay in Queue. */
+const SWAP_DISABLED_FOR_ONYX_MIGRATION = true;
+const ONYX_MIGRATION_TOOLTIP = 'Temporarily unavailable during ONYX migration';
+
 export const Swap = ({
   actions,
   data,
@@ -47,6 +51,7 @@ export const Swap = ({
 
   // toggle between depositing and withdrawing
   const toggleMode = () => {
+    if (SWAP_DISABLED_FOR_ONYX_MIGRATION) return;
     if (mode === 'DEPOSIT') setMode('WITHDRAW');
     else setMode('DEPOSIT');
   };
@@ -61,7 +66,7 @@ export const Swap = ({
 
   // trigger the action when the user presses enter
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && !isDisabled()) {
+    if (event.key === 'Enter' && !isSwapActionDisabled()) {
       triggerAction();
       playClick();
     }
@@ -69,6 +74,7 @@ export const Swap = ({
 
   // get the action to perform based on the mode
   const triggerAction = () => {
+    if (SWAP_DISABLED_FOR_ONYX_MIGRATION) return;
     if (mode === 'DEPOSIT') {
       const neededAmt = getNeededDeposit(config, amt);
       const tokenAmt = neededAmt / getSwapRate(selected);
@@ -163,9 +169,14 @@ export const Swap = ({
     return [];
   };
 
-  const isDisabled = () => {
+  const isSwapActionDisabled = () => {
+    if (SWAP_DISABLED_FOR_ONYX_MIGRATION) return true;
     if (amt === 0) return true;
+    return false;
   };
+
+  const swapTooltipText = (): string[] =>
+    SWAP_DISABLED_FOR_ONYX_MIGRATION ? [ONYX_MIGRATION_TOOLTIP] : [''];
 
   /////////////////
   // DISPLAY
@@ -185,7 +196,13 @@ export const Swap = ({
         </Column>
         <Column style={{ width: '6vw' }}>
           <Text size={0.9}>{mode}</Text>
-          <IconButton img={getModeIcon(mode)} onClick={toggleMode} />
+          <TextTooltip text={swapTooltipText()}>
+            <IconButton
+              img={getModeIcon(mode)}
+              onClick={toggleMode}
+              disabled={SWAP_DISABLED_FOR_ONYX_MIGRATION}
+            />
+          </TextTooltip>
           <TextTooltip text={getRateTooltip()} size={0.6} maxWidth={24}>
             <Text size={0.6}>{`(${getSwapRate(selected)}:1)`}</Text>
           </TextTooltip>
@@ -201,12 +218,14 @@ export const Swap = ({
           <Input type='text' value={getTokenConversion(amt)} disabled />
         </Column>
       </Row>
-      <IconButton
-        text={getActionText()}
-        scale={3}
-        onClick={triggerAction}
-        disabled={isDisabled()}
-      />
+      <TextTooltip text={swapTooltipText()}>
+        <IconButton
+          text={getActionText()}
+          scale={3}
+          onClick={triggerAction}
+          disabled={isSwapActionDisabled()}
+        />
+      </TextTooltip>
     </Container>
   );
 };

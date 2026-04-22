@@ -227,6 +227,21 @@
     },
     {
       "type": "error",
+      "name": "KamiMarketAcceptEmptyBatch",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "KamiMarketAcceptInvalidOrderType",
+      "inputs": []
+    },
+    {
+      "type": "error",
+      "name": "KamiMarketAcceptKamiMismatch",
+      "inputs": []
+    },
+    {
+      "type": "error",
       "name": "NewOwnerIsZeroAddress",
       "inputs": []
     },

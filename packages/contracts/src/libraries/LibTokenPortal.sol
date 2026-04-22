@@ -53,7 +53,7 @@ uint256 constant RESERVE_ACC = uint256(uint160(0x3d7f111B3b69C657624b8633a997A56
  *  Receipt: ID = new entity ID
  *   - IDOwnsWithdrawal (owner address)
  *   - ItemIndex
- *   - TokenAddress (must match itemIndex upon inventory increase actions)
+ *   - TokenAddress (must match itemIndex for inventory adjustments)
  *   - Value (token amount being withdrawn)
  *   - Tax (tax being collected, denominated in units of item)
  *   - StartTime
@@ -63,6 +63,9 @@ library LibTokenPortal {
   ///////////////
   // SHAPES
 
+  /// @notice create a Withdrawal Receipt entity
+  /// @dev token address is only included for legibility
+  // TODO: remove tax and token address fields? (must consider FE legibility)
   function createReceipt(
     IWorld world,
     IUintComp comps,
@@ -156,21 +159,27 @@ library LibTokenPortal {
   }
 
   /// @notice execute a pending Withdrawal Receipt to claim tokens
-  /// @dev tax already handled
-  function claim(IWorld world, IUintComp comps, uint256 receiptID, int32 scale) public {
+  /// @dev tax already handled during Receipt generation (withdraw step)
+  /// @dev address/scale are read directly from TokenPortalSystem storage
+  function claim(
+    IWorld world,
+    IUintComp comps,
+    uint256 receiptID,
+    address tokenAddress,
+    int32 scale
+  ) public {
     uint256 accID = OwnerComponent(getAddrByID(comps, OwnerCompID)).get(receiptID);
-    address tokenAddr = TokenAddressComponent(getAddrByID(comps, TokenAddrCompID)).get(receiptID);
     uint256 tokenAmt = ValueComponent(getAddrByID(comps, ValueCompID)).get(receiptID);
     uint32 itemIndex = IndexItemComponent(getAddrByID(comps, ItemIndexCompID)).get(receiptID);
     uint256 itemAmt = LibERC20.toGameUnits(tokenAmt, scale);
 
     // send tokens to owner and clear receipt
     TokenHolderComponent walletComp = TokenHolderComponent(getAddrByID(comps, TokenHolderCompID));
-    walletComp.withdraw(tokenAddr, LibAccount.getOwner(comps, accID), tokenAmt);
+    walletComp.withdraw(tokenAddress, LibAccount.getOwner(comps, accID), tokenAmt);
     removeReceipt(comps, receiptID);
 
-    // logging
-    LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddr, tokenAmt);
+    // logging redundant info to withdraw() for better traceability
+    LogData memory logData = LogData(accID, itemIndex, itemAmt, 0, tokenAddress, tokenAmt);
     logClaim(comps, logData);
     emitClaim(world, accID, receiptID);
   }
