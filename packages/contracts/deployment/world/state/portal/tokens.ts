@@ -69,3 +69,8 @@ export async function initTokens(api: AdminAPI, indices: number[]) {
     }
   }
 }
+
+// toggle the portal on or off
+export async function toggleEnabled(api: AdminAPI, enabled: boolean) {
+  await api.portal.token.toggleEnabled(enabled);
+}
