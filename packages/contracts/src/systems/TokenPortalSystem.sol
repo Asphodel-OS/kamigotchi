@@ -131,7 +131,7 @@ contract TokenPortalSystem is System, AuthRoles {
     LibTokenPortal.cancel(world, components, receiptID, scale);
   }
 
-  /// @notice cancel a Withdrawal Receipt, as an admin
+  /// @notice toggle the Portal functionality on or off, as Owner only
   function adminToggleEnabled(bool enabled) public onlyOwner {
     isEnabled = enabled;
   }
