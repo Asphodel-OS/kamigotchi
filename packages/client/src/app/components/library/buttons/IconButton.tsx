@@ -210,7 +210,7 @@ const Text = styled.div<{
   orientation: string;
   withIcon?: boolean;
 }>`
-  font-size: ${({ scale }) => scale * 0.4}${({ orientation }) => orientation};
+  font-size: ${({ scale }) => scale * 0.3}${({ orientation }) => orientation};
   padding: ${({ withIcon }) => (withIcon ? '0' : '0 0.6vw')};
 `;
 
