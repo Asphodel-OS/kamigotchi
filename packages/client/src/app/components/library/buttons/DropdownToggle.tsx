@@ -230,7 +230,7 @@ const MenuOption = styled.div<{
   justify-content: left;
   gap: 0.4vw;
   border-radius: 0.4vw;
-  font-size: 0.85vw;
+  font-size: 0.8vw;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   background-color: ${({ disabled }) => (disabled ? '#bbb' : '#fff')};
