@@ -18,8 +18,11 @@ export const getResultWithdraw = (config: PortalConfigs, target: number) => {
 };
 
 // open the link to Baseline Markets ONYX listing
+// just hardcoded for now
 export const openBaselineLink = (address: string) => {
-  window.open(`https://app.baseline.markets/trade/yominet/${address}`, '_blank');
+  const urlOld = `https://legacy.baseline.markets/trade/yominet/${address}`;
+  const urlNew = `https://app.baseline.markets/tokens/1/0x80Ea38D56E262457D73c0d8dFe027AE8925821e2`;
+  https: window.open(urlNew, '_blank');
   playClick();
 };
 
