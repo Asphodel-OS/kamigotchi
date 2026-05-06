@@ -4,13 +4,12 @@ pragma solidity >=0.8.28;
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibAccount } from "libraries/LibAccount.sol";
 import { LibEquipment } from "libraries/LibEquipment.sol";
 import { LibGacha } from "libraries/LibGacha.sol";
 import { LibInventory, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 import { LibKami } from "libraries/LibKami.sol";
-import { LibERC20 } from "libraries/utils/LibERC20.sol";
-import { LibInventory, REROLL_TICKET_INDEX } from "libraries/LibInventory.sol";
 
 uint256 constant ID = uint256(keccak256("system.kami.gacha.reroll"));
 
@@ -22,6 +21,7 @@ contract KamiGachaRerollSystem is System {
   function reroll(uint256[] memory kamiIDs) external returns (uint256[] memory) {
     uint256 accID = LibAccount.getByOwner(components, msg.sender);
     require(accID != 0, "no account detected");
+    LibArray.sortAndVerifyNoRepeats(kamiIDs); // sort in place in this step
     LibKami.verifyAccount(components, kamiIDs, accID);
     LibKami.verifyState(components, kamiIDs, "RESTING");
 

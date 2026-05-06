@@ -3,13 +3,10 @@ pragma solidity >=0.8.28;
 
 import { System } from "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { getAddrByID } from "solecs/utils.sol";
 
-import { LibAccount } from "libraries/LibAccount.sol";
-import { LibDroptable } from "libraries/LibDroptable.sol";
+import { LibArray } from "libraries/utils/LibArray.sol";
 import { LibCommit } from "libraries/LibCommit.sol";
-import { LibInventory } from "libraries/LibInventory.sol";
-import { LibRandom } from "libraries/utils/LibRandom.sol";
+import { LibDroptable } from "libraries/LibDroptable.sol";
 
 import { AuthRoles } from "libraries/utils/AuthRoles.sol";
 
@@ -21,9 +18,9 @@ contract DroptableRevealSystem is System, AuthRoles {
 
   function execute(bytes memory arguments) public returns (bytes memory) {
     uint256[] memory ids = abi.decode(arguments, (uint256[]));
-
-    // checks
     if (ids.length == 0) revert("ItemReveal: no reveals");
+    LibArray.sortAndVerifyNoRepeats(ids); // sort in place; must precede filterInvalid,
+    // which zeroes drained ids and would otherwise present as duplicate zeros
     LibCommit.filterInvalid(components, ids); // drop already-drained commits first
     LibDroptable.checkIsCommit(components, ids);
 
