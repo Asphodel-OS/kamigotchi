@@ -5,7 +5,6 @@ import ancient_ledger from './ancient_ledger.png';
 import ancient_machine_part from './ancient_machine_part.png';
 import ancient_tape from './ancient_tape.png';
 import animistic_poison from './animistic_poison.png';
-import atonement_box from './atonement_box.png';
 import antique_automata from './antique_automata.png';
 import antique_ledger from './antique_ledger.png';
 import antique_tape from './antique_tape.png';
@@ -13,6 +12,7 @@ import apology_letter from './apology_letter.png';
 import ash_pearl from './ash_pearl.png';
 import ashlar from './ashlar.png';
 import astrolabe_disk from './astrolabe_disk.png';
+import atonement_box from './atonement_box.png';
 import berry_chalk from './berry_chalk.png';
 import best_ice_cream from './best_ice_cream.png';
 import better_ice_cream from './better_ice_cream.png';
@@ -136,6 +136,7 @@ import reroll_ticket from './reroll_ticket.png';
 import resin from './resin.png';
 import resin_tincture from './resin_tincture.png';
 import respec_potion from './respec_potion.png';
+import ring_of_spirits from './ring_of_spirits.webp';
 import rock_candyfloss from './rock_candyfloss.png';
 import rock_crystal_lens from './rock_crystal_lens.png';
 import sanguine_shroom from './sanguine_shroom.png';
@@ -317,6 +318,7 @@ export const ItemImages = {
   resin: resin,
   resin_tincture: resin_tincture,
   respec_potion: respec_potion,
+  ring_of_spirits: ring_of_spirits,
   rock_candyfloss: rock_candyfloss,
   rock_crystal_lens: rock_crystal_lens,
   sanguine_shroom: sanguine_shroom,
