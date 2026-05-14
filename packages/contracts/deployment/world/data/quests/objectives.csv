@@ -9,12 +9,14 @@
 ,Harvest for >720 minutes at the Techno Temple,MIN,INC,HARVEST_TIME,16,43200
 ,Harvest for >720 minutes at Cave Crossroads,MIN,INC,HARVEST_TIME,18,43200
 ,Harvest for >720 minutes at Wheel Temple,MIN,INC,HARVEST_TIME,19,43200
-,Harvest for >720 minutes on Trash-Strewn Graves,MIN,INC,HARVEST_TIME,26,43200
+,Harvest for >24 hours on Trash-Strewn Graves,MIN,INC,HARVEST_TIME,26,86400
+,Harvest for >24 hours on Trash-Strewn Graves,MIN,INC,HARVEST_TIME,26,86400
 ,Harvest for >720 minutes at the Hollow Path,MIN,INC,HARVEST_TIME,37,43200
 ,Harvest for >720 minutes at Black Pool,MIN,INC,HARVEST_TIME,59,43200
 ,Harvest for >720 minutes at Centipedes,MIN,INC,HARVEST_TIME,62,43200
 ,Harvest for >720 minutes at Still Stream,MIN,INC,HARVEST_TIME,70,43200
 ,Harvest for >720 minutes at Shabby Deck,MIN,INC,HARVEST_TIME,71,43200
+,Harvest for >1 week at Shabby Deck,MIN,INC,HARVEST_TIME,71,604800
 ,Harvest for >720 minutes at Hatch to Nowhere,MIN,INC,HARVEST_TIME,72,43200
 ,Harvest for >720 minutes at Broken Tube,MIN,INC,HARVEST_TIME,73,43200
 ,Harvest for >720 minutes at Engraved Door,MIN,INC,HARVEST_TIME,74,43200
@@ -25,7 +27,7 @@
 ,Harvest for >360 minutes at Canyon Bridge,MIN,INC,HARVEST_TIME,83,21600
 ,Harvest for >360 minutes at Reinforced Tunnel,MIN,INC,HARVEST_TIME,84,21600
 ,Harvest for >720 minutes at Giant's Palm,MIN,INC,HARVEST_TIME,85,43200
-,Harvest for >720 minutes at Guardian Skull,MIN,INC,HARVEST_TIME,86,43200
+,Harvest for >3 days at Guardian Skull,MIN,INC,HARVEST_TIME,86,259200
 ,Harvest for >720 minutes at the Sacrarium,MIN,INC,HARVEST_TIME,87,43200
 ,Harvest for >360 minutes at Treasure Hoard,MIN,INC,HARVEST_TIME,88,21600
 ,Harvest 1 minute,MIN,INC,HARVEST_TIME,,60
@@ -59,6 +61,7 @@
 ,Give 2 Wooden Sticks,MIN,INC,ITEM_BURN,1001,2
 ,Give 5 Wooden Sticks,MIN,INC,ITEM_BURN,1001,5
 ,Give 5 Stone,MIN,INC,ITEM_BURN,1002,5
+,Give 93 Stone,MIN,INC,ITEM_BURN,1002,93
 ,Give 3 Plastic Bottles,MIN,INC,ITEM_BURN,1003,3
 ,Give 5 Plastic Bottle,MIN,INC,ITEM_BURN,1003,5
 ,Give 5 Pine Cone,MIN,INC,ITEM_BURN,1004,5
@@ -86,6 +89,7 @@
 ,Give 1 Essence of Hearing,MIN,INC,ITEM_BURN,6001,1
 ,Give 1 Essence of Sight,MIN,INC,ITEM_BURN,6003,1
 ,Give 10 Red Ribbon Gummy,MIN,INC,ITEM_BURN,11001,10
+,Give 1 Pale Potion,MIN,INC,ITEM_BURN,11004,1
 ,Give 1 Fetid Egg,MIN,INC,ITEM_BURN,11227,1
 ,Give 1 Pom-Pom Fruit Candy,MIN,INC,ITEM_BURN,11303,1
 ,Give 10 Honeydew Scale,MIN,INC,ITEM_BURN,11312,10
@@ -98,6 +102,7 @@
 ,Give 1 Wonder Egg,MIN,INC,ITEM_BURN,21003,1
 ,Give 3 Rock Candyfloss,MIN,INC,ITEM_BURN,21205,3
 ,Give Uninteresting Paste,MIN,INC,ITEM_BURN,21206,1
+,Give 1 Screwdriver,MIN,INC,ITEM_BURN,23102,1
 ,Give Pyramid Engine (Soulbound),MIN,INC,ITEM_BURN,100005,1
 ,Buy something from any vendor using $MUSU,MIN,INC,LISTING_BUY_TOTAL,,1
 ,Collect 500 $MUSU,MIN,INC,ITEM_TOTAL,1,500
@@ -130,6 +135,8 @@
 ,Move to Lost Skeleton,IS,BOOL,ROOM,25,
 ,Move to the Trash-Strewn Graves,IS,BOOL,ROOM,26,
 ,Move to Shady Path,IS,BOOL,ROOM,55,
+,Move to Black Pool,IS,BOOL,ROOM,59,
+,Move to the Marketplace,IS,BOOL,ROOM,66,
 ,Move to Slippery Pit,IS,BOOL,ROOM,68,
 ,In Room: Hatch to Nowhere,IS,BOOL,ROOM,72,
 ,Move to Flood Mural,IS,BOOL,ROOM,75,
@@ -144,14 +151,18 @@
 ,Make 3 Scavenging Rolls at Temple of the Wheel,MIN,INC,SCAV_CLAIM_NODE,19,3
 ,Make 5 Scavenging Rolls at Lost Skeleton,MIN,INC,SCAV_CLAIM_NODE,25,5
 ,Make 3 Scavenging Rolls at Clearing,MIN,INC,SCAV_CLAIM_NODE,49,3
+,Make 20 Scavenging Rolls at the Clearing,MIN,INC,SCAV_CLAIM_NODE,49,20
 ,Make 3 Scavenging Rolls at Airplane Crash,MIN,INC,SCAV_CLAIM_NODE,52,3
 ,Make 1 Scavenging Roll at Blooming Tree,MIN,INC,SCAV_CLAIM_NODE,53,1
 ,Make 3 Scavenging Rolls at Blooming Tree,MIN,INC,SCAV_CLAIM_NODE,53,3
+,Make 50 Scavenging Rolls at Mouth of Scrap,MIN,INC,SCAV_CLAIM_NODE,58,50
+,Make 5 Scavenging Rolls at Black Pool,MIN,INC,SCAV_CLAIM_NODE,59,5
 ,Make 2 Scavenging rolls at Scrap Trees,MIN,INC,SCAV_CLAIM_NODE,60,2
 ,Make 3 Scavenging Rolls at Centipedes,MIN,INC,SCAV_CLAIM_NODE,62,3
 ,Make 7 Scavenging Rolls at Broken Tube,MIN,INC,SCAV_CLAIM_NODE,73,7
 ,Make 3 Scavenging Rolls at Toadstool Platforms,MIN,INC,SCAV_CLAIM_NODE,78,3
 ,Make 6 Scavenging Rolls at Abandoned Campsite,MIN,INC,SCAV_CLAIM_NODE,79,6
+,Make 30 Scavenging Rolls at Abandoned Campsite,MIN,INC,SCAV_CLAIM_NODE,79,30
 ,Make 3 Scavenging Rolls at Radiant Crystal,MIN,INC,SCAV_CLAIM_NODE,80,3
 ,Make 3 Scavenging Rolls at Flower Mural,MIN,INC,SCAV_CLAIM_NODE,81,3
 ,Make 1 Scavenging Roll at Geometric Cliffs,MIN,INC,SCAV_CLAIM_NODE,82,1
@@ -179,5 +190,5 @@
 ,Craft 1 Hostility Potion,MIN,INC,CRAFT_ITEM,11410,1
 ,Craft Uninteresting Paste,MIN,INC,CRAFT_ITEM,21206,1
 ,Assemble the Dowsing Rod,MIN,INC,CRAFT_ITEM,100010,1
-,Use the machine to buy something in the Marketplace,MIN,INC,TRADE_EXECUTE,,1
+,Make a trade using the Marketplace,MIN,INC,TRADE_EXECUTE,,1
 ,Sacrifice 1 Kami,,,,,

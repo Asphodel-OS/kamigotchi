@@ -24,6 +24,7 @@
 ,1x ”Melkarth’s Heroic Awakening” Spell Card,ITEM,11002,1
 ,3x ”Melkarth's Heroic Awakening” Spell Card,ITEM,11002,3
 ,5x ”Melkarth's Heroic Awakening” spell card,ITEM,11002,5
+,2x Holy Dust,ITEM,11011,2
 ,100x Holy Dust,ITEM,11011,100
 ,1x XP Candy (Small),ITEM,11201,1
 ,1x XP Candy (Medium),ITEM,11202,1
@@ -39,14 +40,17 @@
 ,1x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,1
 ,2x “Paeon’s Field of Flowers” Spell Card,ITEM,11305,2
 ,100x Resin,ITEM,11311,100
+,3x Honeydew Scale,ITEM,11312,3
 ,1x Hostility Potion,ITEM,11410,1
 ,1x Sarcophagus Honey,ITEM,11502,1
 ,1x Booster Pack,ITEM,21004,1
 ,2x Booster Pack,ITEM,21004,2
+,3x Booster Pack,ITEM,21004,3
 ,5x Booster Pack,ITEM,21004,5
 ,1x ”Neith’s River of Life” Spell Card,ITEM,21204,1
 ,2x “Neith’s River of Life” Spell Card,ITEM,21204,2
 ,3x “Neith’s River of Life” Spell Card,ITEM,21204,3
+,Ring of Spirits,ITEM,22802,1
 ,1x Grinder,ITEM,23100,1
 ,1x Burner,ITEM,23101,1
 ,1x Screwdriver,ITEM,23102,1
