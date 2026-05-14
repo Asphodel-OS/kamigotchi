@@ -271,12 +271,12 @@ MENU: “Fingers crossed you find a laptop battery.”","MENU: “You know, some
 MENU: “I compiled some notes. I don’t think they’re relevant, but you might find it fun to read.”
 MENU: “This was a failure, but I feel like it was a good try.”
 MENU: “The next place is bound to work!”",Complete MSQ027,Make 2 Scavenging Rolls at Scrap Confluence,4x Agency Reputation
-MSQ029,29,In Game,Computer Blues,No,MAIN,MENU,"MENU: “Try the Marketplace room for anything that might be able to read a data chip.”
+MSQ029,29,To Update,Computer Blues,No,MAIN,MENU,"MENU: “Try the Marketplace room for anything that might be able to read a data chip.”
 MENU: “That’s the only working computer around here, I think.”
 MENU: “Just go buy something and look for an SD card port while you’re doing it.”","MENU: “Another failure.”
 MENU: “It was a longshot, but I really thought that machine might have had a functional data port.”
 MENU: “It doesn’t even have USB!”
-MENU: “We might need to resort to drastic measures.”",Complete MSQ028,Use the machine to buy something in the Marketplace,2x Agency Reputation
+MENU: “We might need to resort to drastic measures.”",Complete MSQ028,Move to the Marketplace,2x Agency Reputation
 MSQ030,30,In Game,Humility,No,MAIN,MENU,"MENU: “I’ve been avoiding this for a while, but I think we should go ask Mina for help.”
 MENU: “Mina is kind of scary. She’s also completely foreign to my databases, like that crashed jet, but Mina is alive.”
 MENU: “And independent. And powerful!”
@@ -908,13 +908,13 @@ MINA: “Craft the device. We’ll see what it turns up.”","MINA: “The rod i
 MINA: “It will respond when you get close to the right places.”
 MINA: “You should be able to use it to find the crystal’s tree above ground.”
 MINA: “There’s a possibility of detecting other things as well, so take some time to wander around with it, maybe something unexpected will turn up.”",Complete MSQ093,Assemble the Dowsing Rod,4x Elders Loyalty
-MSQ095,95,In Game,Bitter Fruits,No,MAIN,MINA,"MINA: “The rod senses something.” 
+MSQ095,95,To Update,Bitter Fruits,No,MAIN,MINA,"MINA: “The rod senses something.” 
 MINA: “You see what I meant? You might have figured this out already, Operator.”
 MINA: “Not many trees that look like this.”
 MINA: “Get a little closer and buy something. I want to see how it reacts.”","MINA: “Awful.”
 MINA: “It gave me the shivers, even from the distance of scrying.”
 MINA: “There’s more than just the crystal in the caves.”
-MINA: “Something else is living in that tree. Tied in to those roots.”","Complete MSQ094,Own the Dowsing Rod,In Room: Marketplace",Use the machine to buy something in the Marketplace,"2x Elders Loyalty,250 $MUSU"
+MINA: “Something else is living in that tree. Tied in to those roots.”","Complete MSQ094,Own the Dowsing Rod,In Room: Marketplace",Move to the Marketplace,"2x Elders Loyalty,250 $MUSU"
 MSQ096,96,In Game,Into the Canyon,No,MAIN,MENU,"MENU: “That giant skeleton at the bottom of the caves almost looks real.”
 MINA: “It does a real enough job of holding our Operator back.”
 MINA: “And the magic is so thick in the air you can taste it.”
@@ -947,7 +947,7 @@ MENU: “Yeah, but it must be a model. The craftsmanship is really impressive.�
 MENU: “Operator, check this place out for a while with your Kami. I can run an analysis.”","MENU: “I must be bugging out again.”
 MENU: “It’s solid bone, but that doesn’t make much sense.”
 MINA: “My friend, sometimes things are just how they appear.”
-MENU: “Yeah, well, if someone’s trying to creep me out by spoofing my sensors, it’s working.”",In Room: Guardian Skull,Harvest for >720 minutes at Guardian Skull,2x Agency Reputation
+MENU: “Yeah, well, if someone’s trying to creep me out by spoofing my sensors, it’s working.”",In Room: Guardian Skull,Harvest for >3 days at Guardian Skull,2x Agency Reputation
 MSQ101,101,In Game,Pillars of the Earth,No,MAIN,MINA,"MINA: “Our dear friend Menu is having a hard time accepting the reality of this great corpse.”
 MINA: “Yes, of course it’s real. In fact, I recognize him.”
 MINA: “He was an old friend and mentor. Someone I thought would hang on forever.”
@@ -1084,7 +1084,7 @@ MINA: “——— Mina.”","MINA: “You see, they have an air of uncommon pur
 MINA: “Are they buried saints?”
 MINA: “Were they interred as some kind of rite to bolster the spiritual foundation?”
 MINA: “These are questions for another time.”
-MINA: “——— Mina.”",Complete MIN004,Harvest for >720 minutes on Trash-Strewn Graves,"4x Elders Loyalty,2x “Neith’s River of Life” Spell Card"
+MINA: “——— Mina.”",Complete MIN004,Harvest for >24 hours on Trash-Strewn Graves,"4x Elders Loyalty,2x “Neith’s River of Life” Spell Card"
 MIN006,2006,In Game,Community Outreach,No,MAIN,MINA,"MINA: “With human garbage as far as the eye can see, one might expect to see more humans along with it.”
 MINA: “There are mountains of their attachments changing the landscape of this place, but few actual souls.”
 MINA: “A dead one was laying by the edge of the forest, you know.” 
@@ -1157,9 +1157,9 @@ MINA: “——— Mina.”","MINA: “Thank you for helping me reminisce.”
 MINA: “You can pet Ahi if you’d like, he won’t bite unless I give the order.”
 MINA: “And you’d better not tell anyone I’m old.”
 MINA: “——— Mina.”",Complete MIN011,Give 1 Red Amber Crystal,6x Elders Loyalty
-MIN013,2013,In Game,Memorial for the Forgotten,No,MAIN,MINA,"MINA: “Reminiscing about that lost friend has gotten me sentimental.”
-MINA: “He’s not one of the dead interred in the graves here, of course.”
-MINA: “Still, they deserve something.”
+MIN013,2013,To Update Text,Memorial for the Forgotten,No,MAIN,MINA,"MINA: “Reminiscing about that lost friend has gotten me sentimental.”
+MINA: “He’s not interred in the graves here, of course.”
+MINA: “Still, these old spirits deserve something.”
 MINA: “There’s far too much trash to pick up, but you can lay down something beautiful for a change.”
 MINA: “——— Mina.”","MINA: “Letting something new grow from the remains of the old is a fine enough thing, but an eyesore like this landfill?”
 MINA: “Disrespectful.”
@@ -1488,7 +1488,7 @@ MENU: “But the further down this path you go the denser and more powerful the 
 MENU: “That means a high level predator could decide to snack on your kami if you go too far.”
 MENU: “Just thought I’d give you the heads up.”","MENU: “You’ll use up all your stamina if you go too far.”
 MENU: “Here, take this in case you wear yourself out.”",In Room: Shady Path,,1x ”Neith’s River of Life” Spell Card
-SQ041,3041,To Deploy,The Rot Creeps,No,SIDE,MINA,"MENU: “The dowsing rod is picking something up again.”
+SQ041,3041,In Game,The Rot Creeps,No,SIDE,MINA,"MENU: “The dowsing rod is picking something up again.”
 MENU: “I don’t get it. There’s nothing here but decay.”
 MINA: “Hmm.”
 MINA:” The flora of the underworld thrives on decay, but the rod’s reaction is curious…”
@@ -1499,8 +1499,8 @@ MENU: “Is it what you suspected earlier? The nature of the decay?”
 MINA: “It’s not the decay itself that caught the rod’s attention, but the nature of that which decays.”
 MENU: “…What’s down there, Mina?”
 MINA: “Something foul and dreaming whose nature I know far better than I’d like.”
-MINA: “It has no temptations to offer. Let’s move on.”","Complete MSQ094,Own the Dowsing Rod,In room: Centipedes",Harvest for >720 minutes at Centipedes,"2x Elders Loyalty,2x Agency Reputation"
-SQ042,3042,To Deploy,Some Alien Vastness,No,SIDE,MENU,"MENU: “The dowsing rod is picking something up? Here?”
+MINA: “It has no temptations to offer. Let’s move on.”","Complete MSQ094,Own the Dowsing Rod,In Room: Centipedes",Harvest for >720 minutes at Centipedes,"2x Elders Loyalty,2x Agency Reputation"
+SQ042,3042,In Game,Some Alien Vastness,No,SIDE,MENU,"MENU: “The dowsing rod is picking something up? Here?”
 MINA: “Does that surprise you?”
 MINA: “The mundane and modern aesthetic of these structures is what’s truly out of place here.”
 MINA: “The presence of some alien vastness within them is to be expected.”
@@ -1516,7 +1516,7 @@ MINA: “This skill will serve you and the Operator well in the future.”
 MENU: “Yeah! I just realized that myself.”
 MENU: “We might be able to use this rod not just to passively notice interesting stuff, but to actively navigate.”
 MENU: “You know, once we finally get inside this office.”","Complete MSQ094,Own the Dowsing Rod,In Room: Lab Entrance",Harvest for >720 minutes at Lab Entrance,4x Agency Reputation
-SQ043,3043,To Deploy,Ringing Other Bells,No,SIDE,MENU,"MENU: “The dowsing rod is picking something up from that big bell machine.”
+SQ043,3043,In Game,Ringing Other Bells,No,SIDE,MENU,"MENU: “The dowsing rod is picking something up from that big bell machine.”
 MENU: “I said it could warp your Kami through dimensions a while ago, but I have to admit something.”
 MENU: “I don’t think it can really do that.”
 MENU: “But these readings are still suspicious.”
@@ -1525,7 +1525,7 @@ MENU: “It’s somehow connected to an external space I can’t access. Can’t
 MENU: “When I try to map it, I just see a big zone of mauve.”
 MENU: “I hope they don’t get into too much trouble out there.”
 MENU: “And here. Take this, for your own trouble.”","Complete MSQ094,Own the Dowsing Rod,In Room: Scrap Confluence",Harvest for >720 minutes at Scrap Confluence,"2x Agency Reputation,1x Booster Pack"
-SQ044,3044,To Deploy,Resonant Drip,No,SIDE,DIMIDIATUS,"MENU: “…Hey, the dowsing rod is going off again. I almost didn’t notice.”
+SQ044,3044,In Game,Resonant Drip,No,SIDE,DIMIDIATUS,"MENU: “…Hey, the dowsing rod is going off again. I almost didn’t notice.”
 MENU: “I’d think it would be getting stronger readings in here, but it barely registers.”
 DIMIDIATUS: “We observe your observations, Miss Menu.”
 DIMIDIATUS: “And we ponder, is it your device which errs, or is it your reasoning?”
@@ -1539,7 +1539,7 @@ DIMIDIATUS: “Is this not a joyful sensation, to acquire new knowledge of the w
 MENU: “It’s interesting.”
 MENU: “Thank you, I will have to ponder this further.”
 MENU: “And thank you too, Operator. You’re always so helpful.”","Own the Dowsing Rod,In Room: Wheel Temple,Complete MSQ099",Harvest for >720 minutes at Wheel Temple,"1x Booster Pack,4x Agency Reputation"
-SQ045,3045,To Deploy,Resonant Flow,No,SIDE,MINA,"MENU: “The dowsing rod is picking something up again.”
+SQ045,3045,In Game,Resonant Flow,No,SIDE,MINA,"MENU: “The dowsing rod is picking something up again.”
 MENU: “And by something, I mean that weird pool of ooze.”
 MENU: “It’s pretty obvious that it’s the source.”
 MINA: “Hmm, ooze you say? Interesting, interesting.”
@@ -1558,6 +1558,154 @@ MINA: “It merely sits at rest. In sleep mode, as you might say.”
 MINA: “Reawakening it will be a great challenge, one that requires substantial sacrifice.”
 MINA: “Despite that, it will be a worthwhile mission to undertake, sometime down the line.”
 MINA: “For now, satisfy yourself with my gratitude.” ","Complete MSQ094,Own the Dowsing Rod,In Room: Black Pool",Harvest for >720 minutes at Black Pool,"2x Elders Loyalty,2x Agency Reputation"
+SQ100,3100,To Deploy,Get On the Other Side,No,MAIN,MENU,"MENU: “That Dimidiatus is as two faced as he looks. Nice enough when he’s not smiling, though.”
+MENU: “His transporting pool is functioning again. You want to try it out?”
+MENU: “Okay, it’s not his, exactly, but he’s right there.”
+MENU: “Say hi to be polite before you jump in.”","MENU: “So it connects to someplace in the junkyard, huh.”
+MENU: “Was this always the destination? I guess it wasn’t always covered in junk.”
+MENU: “This place looks important, too…”
+MENU: “Actually, it almost looks like a server farm.”",Complete MSQ109,Move to Black Pool,2x Agency Reputation
+SQ101,3101,To Deploy,Don’t Look Back,No,MAIN,MINA,"MENU: “If this is a server room of sorts, I wonder if I’m on there somewhere?”
+MENU: “Don’t look.”
+MENU: “Actually please look.”
+MENU: “You get your Kami drawing from the local ambience, I’ll do my thing while they’re plugged in.”
+MENU: “Maybe we’ll learn something.”","MENU: “Are we missing something here?”
+MENU: “Some strange and interesting things recorded here, but none of it seems very familiar.”
+MENU: “This kind of magic-augmented tech might be beyond our ability to analyze right now.”
+MENU: “What the hell?”
+MENU: “No secret codes, no keys, no tunnels, no clue to get into the damn office...”
+MENU: “Let’s see if Mina has any ideas.”",Complete SQ100,Make 5 Scavenging Rolls at Black Pool,2x Elders Loyalty
+SQ102,3102,To Deploy,Find a Needle in the Haystack,No,MAIN,MINA,"MINA: “I’m afraid I have nothing for you when it comes to that ‘server’.”
+MINA: “However, you might be interested in something else.”
+MINA: “That passage you opened between the cave and the junkyard. It called my attention to a part of this world it seems you hadn’t noticed before.”
+MINA: “You know, that tiny path between the tallest piles of scrap.”
+MINA: “I detect an instance of magic there.”
+MINA: “All sorts of forgotten things seem to pile up here.”
+MINA: “There’s bound to be something good in all the garbage once in a while.”
+MINA: “It’ll be like looking for a needle in a haystack, but I’ll help you out.”","MINA: “Ooh, I wonder how a ferryman’s ring got left behind in this junkyard?”
+MINA: “However it happened, it belongs to you now.”
+MINA: “You might find it a useful tool to get certain individuals to open up.”
+MINA: “You’ve seen them around. They haven’t been very talkative.”
+MINA: “Remember where you saw them? Skeletons and that sort of thing?”
+MINA: “Lost souls like that are blinded by their own cognition. They haven’t accepted the situation.”
+MINA: “Convinced they’ve met a permanent end, they may degrade and withdraw from the world.”
+MINA: “The ring is like a badge that marks you as someone who can help.”
+MINA: “Of course, you aren’t obligated to follow through.”",Complete SQ101,Make 50 Scavenging Rolls at Mouth of Scrap,"2x Elders Loyalty,Ring of Spirits"
+SQ104,3104,To Deploy,Call Your Grandparents,No,SIDE,MINA,"MINA: “I’m not so hopeful, but while you’re here, try saying something to the old graves.”
+MENU: “Hasn’t the Operator already done that?”
+MINA: “They were silent every other time we’ve come around, yes.”
+MINA: “But now you possess that Ring. The situation may be different.”
+MINA: “If there’s anyone left, I think they would appreciate someone reaching out to them.”
+MENU: “Yeah! Giving your elders a call once in a while is just a nice thing to do.”","MINA: “There are no lost souls here at all. Not even remnants.”
+MINA: “And this was all too far in the past for them to be mementos of the last war.”
+MENU: “So the graves are purely symbolic. Nice decoration, huh?”
+MINA: “Symbols have power, so it’s more than just decoration.”
+MINA: “But it seems I had no reason to get sentimental.”","Own the Ring of Spirits,In Room: Trash-Strewn Graves",Harvest for >24 hours on Trash-Strewn Graves,"2x Elders Loyalty,3x Booster Pack"
+SQ105,3105,To Deploy,Get Blood From a Stone,No,SIDE,MENU,"MENU: “Now that you have that ring, maybe you should check this clearing one more time.”
+MENU: “We didn’t find anything the last time you were through here, yeah.”
+MENU: “But now you’ve got a new approach to take.”
+MENU: “While you’re calling out, have the Kami scavenge around.”
+MENU: “They might find something left behind by whoever built this cairn.”","MENU: “Still nothing, huh? Now that’s weird.”
+MINA: “It may not be a burial site at all.”
+MINA: “A monument to someone, perhaps, but not a grave marker.”
+MENU: “Damn. Sorry about taking up so much of your time for nothing.”
+MENU: “Wait, you’re all dusty. Is that what I think it is?”
+MENU: “Let’s get that bottled up.”","Own the Ring of Spirits,In Room: Clearing",Make 20 Scavenging Rolls at the Clearing,"2x Agency Reputation,2x Holy Dust"
+SQ107,3107,To Deploy,Look Who’s Talking,No,SIDE,MENU,"MENU: “The skeleton here doesn’t look very comfortable.”
+MENU: “Will it really start talking?”
+MENU: “…”
+WET BONES: “You don’t look like anyone I know. Everyone I know I don’t like.”
+MENU: “Ah!”
+WET BONES: “Closest ones are the furthest away. No trust between us. Not like that.”
+WET BONES: “Need to take a breath, but there’s no air. Nothing real here.”
+MENU: “It’s like he can see you, but he’s just kind of saying things.”
+MENU: “Doesn’t seem like he can hear me, either. He’s really dissociated.”
+MENU: “I feel bad, I really thought he was just part of the background.”
+MENU: “But if he’s stressed and needs to take a breath…”
+MENU: “I’ve got a crazy idea.”","WET BONES: “Aaahh, how vivid! Painful poison fills my lungs.”
+WET BONES: “Even though I don’t have any lungs.”
+WET BONES: “Strange to see a stranger walking around. Much more a kind one.”
+WET BONES: “Or is this only a prelude to some devilish torture?”
+WET BONES: “I don’t trust you. Come back another time.”
+WET BONES: “You understand.”
+WET BONES: “…”
+MENU: “I’m glad that worked.”
+MENU: “He still seems deranged, no offense, but he’s on the right track.”
+MENU: “Right?”","Own the Ring of Spirits,In Room: Shabby Deck",Give Uninteresting Paste,4x Agency Reputation
+SQ108,3108,To Deploy,My Ears Are Burning,No,SIDE,MENU,"MENU: “The guy over at the Shabby Deck has been calling out for you.”
+MENU: “It hasn’t been that long since you were there, has it?”
+MENU: “He’s saying he wants to tell you something, and it might take a long time.”","WET BONES: “…and that’s when they sealed the mouth of the cave.”
+WET BONES: “They left me behind to die in the dark.”
+WET BONES: “Although I’m still here. So I’m not dead, right?”
+WET BONES: “Or I’m somewhere dead people live.”
+WET BONES: “Can you go there if you don’t believe in it? Where am I, anyway?”
+WET BONES: “Is this the Kamigotchi World?”
+WET BONES: “…”
+WET BONES: “What is the Kamigotchi World?”
+WET BONES: “…”
+MENU: “God, this is giving me a headache. I think I worked with this guy.”
+MENU: “But I can’t remember what he looked like. I can’t even remember his real name.”
+MENU: “And at least he has a skeleton. I don’t even have a body anymore…”
+MENU: “Uh. Take these cards. You and the Kami put a lot of work in.”
+MENU: “I don’t want you to leave empty handed.”",Complete SQ107,Harvest for >1 week at Shabby Deck,"5x Booster Pack,6x Agency Reputation"
+SQ109,3109,To Deploy,Get the Story Straight I,No,SIDE,MENU,"MENU: “This one has been bugging me for a long time. Even more after we got that chip.”
+MENU: “Call out with that fancy ring of yours.”
+MENU: “Maybe this skeleton will finally have something to chatter about.”
+MENU: “…”
+LOST SKELETON: “Holy shit, you look scary!”
+LOST SKELETON: “You’re going to swallow my soul, right? I don’t deserve it!”
+LOST SKELETON: “It’s love! I wasn’t doing anything wrong!”
+LOST SKELETON: “Wait, you aren’t after me? Yeah, that’s what I mean, I’m innocent.”
+MENU: “He doesn’t sound innocent.”
+LOST SKELETON: “Say, you know, I actually lost something around here.”
+LOST SKELETON: “It’s this screwdriver with a red handle. It has an ‘A’ on it, maybe.”
+LOST SKELETON: “Can you get it for me?”","LOST SKELETON: “Wow! You really did it!”
+LOST SKELETON: “It’s just like the one the guy at Arawn uses.”
+LOST SKELETON: “I mean, it’s my old screwdriver! Thank you!”
+MENU: “I don’t know who this guy is, but he sounds like a stalker.”
+MENU: “Doesn’t seem like I was paying much attention back then. Kind of glad.”
+LOST SKELETON: “You’re nice for being some kind of shadow person freak.”
+LOST SKELETON: “Maybe we could, uh, hang out more?”
+LOST SKELETON: “Share some information, something like that?”
+LOST SKELETON: “It’s nice to have an accomplice.”
+","Own the Ring of Spirits,In Room: Lost Skeleton",Give 1 Screwdriver,"2x Agency Reputation,1x Screwdriver"
+SQ110,3110,To Deploy,Get the Story Straight II,No,SIDE,MENU,"MENU: “The Lost Skeleton has been crying out for you.”
+MENU: “By the way, I really don’t like that I can hear them, but they can’t hear me.”
+MENU: “At first, I liked that I could whisper to you in private, sure.”
+MENU: “But now, it feels like I’m not really here.”
+MENU: “Anyway. He says he’s curious if any other employees left stuff behind.”
+MENU: “There’s that campsite in the caves, remember?”
+MENU: “Go dig around there, maybe you’ll turn something up.”","MENU: “I don’t know what he was expecting, but there’s nothing special here.”
+MENU: “Mostly just a bunch of cigarette butts.”
+MENU: “Actually, that might count… Let’s go tell him about it.”
+MENU: “You might not even need to bring any with you.”",Complete SQ109,Make 30 Scavenging Rolls at Abandoned Campsite,"4x Agency Reputation,3x Booster Pack"
+SQ111,3111,To Deploy,Get the Story Straight III,No,SIDE,MENU,"MENU: “Head back to the Lost Skeleton, he wants to talk to you again.”
+MENU: “Knowing this weirdo’s interests, it might be important. Head over quick.”
+MENU: “And, you know…”
+MENU: “…It’s not like I want him to butt into the dialogue box like Mina…”
+MENU: “But I already hate taking messages from this guy.”","LOST SKELETON: “Lotta cigarette butts, huh? Lot of smokers at that company.”
+LOST SKELETON: “Mostly cigarettes. Of those mostly lights and menthols. One hand roller.”
+LOST SKELETON: “The boss? Always cigars.”
+MENU: “Oh… The smell really lingered. I just remembered.”
+LOST SKELETON: “You couldn’t get close to the doors without somebody seeing you.”
+LOST SKELETON: “Nosy, I tell you. Real slackers and gossips, am I right?”
+MENU: “NOT a slacker, thank you very much.”
+LOST SKELETON: “I got inside once. You believe me, I can tell you do.”
+LOST SKELETON: “Some weird shit went down in there. Some real Coast to Coast AM shit.”
+LOST SKELETON: “Let’s be friends, I’ll tell you about it some other time.”
+MENU: “…”
+MENU: “As much as I think I hate this person, this is the best lead we’ve got on the offices.”
+MENU: “I’ll keep listening for him. Make sure to keep in touch.”",Complete SQ110,Move to Lost Skeleton,2x Agency Reputation
+SQ112,3112,To Deploy,See the Glass as Half Full,No,SIDE,MINA,"MINA: “My large old friend in the caves has surely lost all but his body.”
+MINA: “And I have of course accepted his loss and had you pay respects on my behalf.”
+MINA: “But a part of me remains hopeful.”
+MINA: “And another part, curious if some spiritual parasite might have taken residence in his corpse.”
+MINA: “Please take some time here and call out with the Kami at your side.”
+MINA: “If only as a favor to me.”","MENU: “So what do you mean that he’s lost all but his body? I thought that wasn’t really how it worked here.”
+MINA: “For human souls, no. Other things follow other rules.” 
+MINA: “The skeletal giant ‘lives’, but without a mind or animating soul.”
+MINA: “The body might linger and grow for eternity, even in this form.”
+MINA: “It still pains me to see him like this, but I’m reassured it’s not worse.”","Own the Ring of Spirits,In Room: Guardian Skull",Harvest for >3 days at Guardian Skull,"5x Booster Pack,6x Elders Loyalty"
 SQ802,3802,In Game,Quest Diagnostics,No,SIDE,MENU,"MENU: “Excuse me. Sorry to butt in, if you’re busy.”
 MENU: “I’ve been running the usual diagnostics and defrags. Usually nothing comes up.”
 MENU: “But this time, I think there’s been a real change.”
@@ -1569,7 +1717,7 @@ MENU: “I’m retroactively experiencing altered events.”
 MENU: “Suddenly, I’ve known this Zevana from the start.”
 MENU: “She works with the Kami. I know she’s careful with them.”
 MENU: “If you were new here, she’d help you get started.”
-MENU: “Oh, you must be tired after coming here. Take this.”",Temporary Quest for 3/6/26 to 3/20/26. Should only affect currently active accounts if possible.,Move to Torii Gate,1x ”Neith’s River of Life” Spell Card
+MENU: “Oh, you must be tired after coming here. Take this.”",Temp Quest until 3/20/26.,Move to Torii Gate,1x ”Neith’s River of Life” Spell Card
 SQ803,3803,In Game,Never Brought to Mind,No,SIDE,ROB,"ROB: “Hey kid. I see you down the road by that red gate.”
 ROB: “I feel like we’ve met before, but whatever. Let’s meet again.”
 ROB: “Come on down and let’s yap.”","ROB: “So do you remember me? Can’t place you, myself. Just a familiar feelin’.”

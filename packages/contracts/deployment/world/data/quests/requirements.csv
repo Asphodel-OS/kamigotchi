@@ -2,14 +2,14 @@
 ,After 12/9/24 8pm GMT,MIN,BLOCKTIME,,1733774400
 ,Own at least 1 Obol,MIN,ITEM,1015,1
 ,Own at least 1 Otherworld Coin,MIN,ITEM,1019,1
+,Own the Ring of Spirits,MIN,ITEM,22802,1
 ,Own the Aetheric Sextant,MIN,ITEM,100004,1
 ,Own the Dowsing Rod,MIN,ITEM,100010,1
 ,At least 1 Kami liquidated,MIN,LIQUIDATED_VICTIM,,1
 ,Have one of your own Kami liquidated,MIN,LIQUIDATED_VICTIM,,1
-,Temporary Quest for 3/6/26 to 3/20/26. Should only affect currently active accounts if possible.,MAX,BLOCKTIME,,26541167
+,Temp Quest until 3/20/26.,MAX,BLOCKTIME,,26541167
 ,Before 25/10/25 0 GMT,MAX,BLOCKTIME,,1761350400
 ,In Room: Torii Gate,IS,ROOM,3,
-,In Room: Vending Machine,IS,ROOM,4,
 ,In Room: Vending Machine,IS,ROOM,4,
 ,In Room: Restricted Area,IS,ROOM,5,
 ,In Room: Lab Entrance,IS,ROOM,6,
@@ -17,12 +17,16 @@
 ,In Room: Convenience Store,IS,ROOM,13,
 ,In Room: Wheel Temple,IS,ROOM,19,
 ,In Room: Temple of the Wheel,IS,ROOM,19,
+,In Room: Lost Skeleton,IS,ROOM,25,
+,In Room: Trash-Strewn Graves,IS,ROOM,26,
+,In Room: Clearing,IS,ROOM,49,
 ,In Room: Blooming Tree,IS,ROOM,53,
 ,In Room: Shady Path,IS,ROOM,55,
 ,In Room: Black Pool,IS,ROOM,59,
-,In room: Centipedes,IS,ROOM,62,
+,In Room: Centipedes,IS,ROOM,62,
 ,In Room: Marketplace,IS,ROOM,66,
 ,In Room: Slippery Pit,IS,ROOM,68,
+,In Room: Shabby Deck,IS,ROOM,71,
 ,In Room: Toadstool Platforms,IS,ROOM,78,
 ,In Room: Radiant Crystal,IS,ROOM,80,
 ,In Room: Flower Mural,IS,ROOM,81,
@@ -139,6 +143,7 @@
 ,Complete MSQ106,COMPLETE,QUEST,106,
 ,Complete MSQ107,COMPLETE,QUEST,107,
 ,Complete MSQ108,COMPLETE,QUEST,108,
+,Complete MSQ109,COMPLETE,QUEST,109,
 ,Complete MIN001,COMPLETE,QUEST,2001,
 ,Complete MIN002,COMPLETE,QUEST,2002,
 ,Complete MIN003,COMPLETE,QUEST,2003,
@@ -175,6 +180,11 @@
 ,Complete SQ035,COMPLETE,QUEST,3035,
 ,Complete SQ036,COMPLETE,QUEST,3036,
 ,Complete SQ037,COMPLETE,QUEST,3037,
+,Complete SQ100,COMPLETE,QUEST,3100,
+,Complete SQ101,COMPLETE,QUEST,3101,
+,Complete SQ107,COMPLETE,QUEST,3107,
+,Complete SQ109,COMPLETE,QUEST,3109,
+,Complete SQ110,COMPLETE,QUEST,3110,
 ,Complete SQ802,COMPLETE,QUEST,3802,
 ,Complete TTX01,COMPLETE,QUEST,10001,
 ,Complete TTX02,COMPLETE,QUEST,10002,
