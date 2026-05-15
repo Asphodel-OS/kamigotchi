@@ -1,14 +1,11 @@
 # Global
-*       @chlwys @jiracheron
+* @Asphodel-OS/Kamigotchi
 
 # By Language
-*.sol   @chlwys @ExistentialEnso
+*.sol @jiracheron
 
 # By Domain
-pnpm-lock.yaml @Xenofluxx @hubur @deeterbleater @ExistentialEnso
+pnpm-lock.yaml @Asphodel-OS/Kamigotchi
 
-packages/client/ @Xenofluxx @deeterbleater @hubur @ExistentialEnso @jiracheron @chlwys
-packages/contracts/ @ExistentialEnso @chlwys @jiracheron 
-
-.github/workflows/ @hubur
-.github/scripts/ @hubur
+.github/workflows/ @hubur @Cooops
+.github/scripts/ @hubur @Cooops
