@@ -121,7 +121,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: CraftingModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
   {
     uiComponent: InventoryModal,
@@ -133,7 +133,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: NodeModal,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
   {
     uiComponent: PartyModal,
@@ -199,7 +199,7 @@ export const allComponents: UIComponentWithGrid[] = [
   },
   {
     uiComponent: KamiAdoptionAgency,
-    gridConfig: { colStart: 33, colEnd: 67, rowStart: 3, rowEnd: 99 },
+    gridConfig: { colStart: 33, colEnd: 67, rowStart: 8, rowEnd: 99 },
   },
   {
     uiComponent: RevealModal,
