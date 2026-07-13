@@ -396,57 +396,48 @@ async function run() {
   console.log(`         VERIFICATION SUMMARY`);
   console.log(`========================================`);
 
-  console.log(`\nComponents (${compResults.length}):`);
-  console.log(`  CURRENT:         ${compCurrent}`);
-  if (compUnreg.length > 0)
-    console.log(`  NOT REGISTERED:  ${compUnreg.length}`);
-  if (compErrors.length > 0)
-    console.log(`  ERROR:           ${compErrors.length}`);
+  if (runComponents) {
+    console.log(`\nComponents (${compResults.length}):`);
+    console.log(`  CURRENT:         ${compCurrent}`);
+    if (compUnreg.length > 0)
+      console.log(`  NOT REGISTERED:  ${compUnreg.length}`);
+    if (compErrors.length > 0)
+      console.log(`  ERROR:           ${compErrors.length}`);
+  }
 
-  console.log(`\nSystems (${sysResults.length}):`);
-  console.log(`  CURRENT:         ${sysCurrent}  (bytecode matches artifact)`);
-  if (sysStale.length > 0)
-    console.log(`  STALE:           ${sysStale.length}  (bytecode differs, needs redeploy)`);
-  if (sysUnreg.length > 0)
-    console.log(`  NOT REGISTERED:  ${sysUnreg.length}`);
-  if (sysNoArt.length > 0)
-    console.log(`  NO ARTIFACT:     ${sysNoArt.length}  (registered but can't verify bytecode)`);
-  if (sysErrors.length > 0)
-    console.log(`  ERROR:           ${sysErrors.length}`);
+  if (runSystems) {
+    console.log(`\nSystems (${sysResults.length}):`);
+    console.log(`  CURRENT:         ${sysCurrent}  (bytecode matches artifact)`);
+    if (sysStale.length > 0)
+      console.log(`  STALE:           ${sysStale.length}  (bytecode differs, needs redeploy)`);
+    if (sysUnreg.length > 0)
+      console.log(`  NOT REGISTERED:  ${sysUnreg.length}`);
+    if (sysNoArt.length > 0)
+      console.log(`  NO ARTIFACT:     ${sysNoArt.length}  (registered but can't verify bytecode)`);
+    if (sysErrors.length > 0)
+      console.log(`  ERROR:           ${sysErrors.length}`);
+  }
 
-  console.log(`\nWorld State (${stateResults.length} entries):`);
-  console.log(`  CURRENT:  ${wsCurrent.length}  (In Game + on-chain)`);
-  if (wsStale.length > 0)
-    console.log(`  STALE:    ${wsStale.length}  (needs update on-chain)`);
-  if (wsMissing.length > 0)
-    console.log(`  MISSING:  ${wsMissing.length}  (should be on-chain but isn't)`);
-  if (wsPending.length > 0)
-    console.log(`  PENDING:  ${wsPending.length}  (not yet deployed, expected)`);
-  if (wsErrors.length > 0)
-    console.log(`  ERROR:    ${wsErrors.length}  (RPC or component errors)`);
+  if (runState) {
+    console.log(`\nWorld State (${stateResults.length} entries):`);
+    console.log(`  CURRENT:  ${wsCurrent.length}  (In Game + on-chain)`);
+    if (wsStale.length > 0)
+      console.log(`  STALE:    ${wsStale.length}  (needs update on-chain)`);
+    if (wsMissing.length > 0)
+      console.log(`  MISSING:  ${wsMissing.length}  (should be on-chain but isn't)`);
+    if (wsPending.length > 0)
+      console.log(`  PENDING:  ${wsPending.length}  (not yet deployed, expected)`);
+    if (wsErrors.length > 0)
+      console.log(`  ERROR:    ${wsErrors.length}  (RPC or component errors)`);
+  }
 
   // Detailed failure lists
   const libResults = results.filter((r) => r.category === 'Library');
   const libStale = libResults.filter((r) => r.state === 'STALE');
 
-  if (libResults.length > 0) {
-    console.log(`\nLinked Libraries (${libResults.length}):`);
-    if (libStale.length > 0)
-      console.log(`  STALE:           ${libStale.length}  (deployed library differs from local, needs redeploy)`);
-    console.log(`  CURRENT:         ${libResults.length - libStale.length}`);
-  }
-
   const hasIssues =
     compUnreg.length > 0 || compErrors.length > 0 || sysStale.length > 0 || sysUnreg.length > 0 || sysNoArt.length > 0 || sysErrors.length > 0 ||
-    libStale.length > 0 ||
     wsStale.length > 0 || wsMissing.length > 0 || wsErrors.length > 0;
-
-  if (libStale.length > 0) {
-    console.log(`\nSTALE LIBRARIES (needs redeploy + system re-link):`);
-    for (const r of libStale) {
-      console.log(`  ${r.name}  ${r.detail}`);
-    }
-  }
 
   if (sysStale.length > 0) {
     console.log(`\nSTALE SYSTEMS (needs redeploy):`);
