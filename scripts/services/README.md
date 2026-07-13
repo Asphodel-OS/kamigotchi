@@ -44,12 +44,25 @@ underflow.
 ## kamigaze indexer
 
 `indexer up` handles the one-time setup from kamigaze's README automatically:
-starts the Postgres container (`make start-db`), creates the python venv and
+starts Docker Desktop itself if needed, brings up the Postgres container
+(`make start-db`), creates the python venv (recreating it when its shebangs
+are stale from a repo move, pinned to python ≤3.12 for psycopg2 wheels) and
 deploys the schema on first run (marker: `.local-stack/kamigaze-schema.done`),
 then runs `go run ./cmd/indexer -mode local` pointed at the local chain.
-Exported env (`DB_HOST=127.0.0.1`, `RPC_WS_PROVIDER=ws://127.0.0.1:8545`)
-overrides kamigaze's `.env.local` (godotenv doesn't clobber existing vars), so
-no `/etc/hosts` alias or config edits are needed.
+
+Exported env overrides kamigaze's `.env.local` (godotenv doesn't clobber
+existing vars), so no `/etc/hosts` alias or config edits are needed:
+`DB_HOST=127.0.0.1`, `RPC_HTTP_PROVIDER`/`RPC_WS_PROVIDER` → local anvil, and
+`EMITTER_ADDRESS` read live from the world contract (`_emitter()`). The
+starting block comes from the snapshot meta's `start` (the world's deploy
+block — snapshot-restored chains keep their historical logs, so backfill
+works). `INDEXER_OVERRIDE=true stack.sh indexer up` forces a re-backfill,
+ignoring the db's last-seen block.
+
+Known kamigaze quirks surfaced by the schema deploy (non-blocking): 
+`900_VIEW_Accounts.sql` and `902_VIEW_Kamis.sql` reference `events.values_*`
+tables the indexer only creates at runtime, so those two views fail on a
+fresh db — rerun them after the first backfill if you need them.
 
 ## Notes
 

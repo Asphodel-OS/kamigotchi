@@ -54,8 +54,14 @@ snapshot_save() {
   # so decode now and keep it gzipped on disk
   cast rpc anvil_dumpState --rpc-url "$RPC" | tr -d '"' | sed 's/^0x//' \
     | xxd -r -p | gunzip | gzip > "$SNAP"
-  echo "world=$(world_addr) block=$block saved=$(date '+%Y-%m-%d %H:%M:%S')" > "$SNAP_META"
-  ok "snapshot saved: $(du -h "$SNAP" | cut -f1) at block $block"
+  # `start` = the world's deploy start block — where clients and indexers must
+  # begin their event sync (the snapshot block would skip the init events,
+  # which DO survive restore). falls back to any previously recorded value
+  local start
+  start="$(grep -oE 'Start block: [0-9]+' "$LOGS/deploy.log" 2>/dev/null | tail -1 | grep -oE '[0-9]+')" \
+    || start="$(meta_get start || echo 0)"
+  echo "world=$(world_addr) start=${start:-0} block=$block saved=$(date '+%Y-%m-%d %H:%M:%S')" > "$SNAP_META"
+  ok "snapshot saved: $(du -h "$SNAP" | cut -f1) at block $block (sync from ${start:-0})"
 }
 
 snapshot_clear() { rm -f "$SNAP" "$SNAP_META"; ok "snapshot cleared"; }
@@ -115,9 +121,21 @@ start_client() {
 
 indexer_pid_alive() { [ -f "$PIDS/indexer.pid" ] && kill -0 "$(cat "$PIDS/indexer.pid")" 2>/dev/null; }
 
+# start the Docker daemon if it isn't running (macOS: Docker Desktop)
+ensure_docker() {
+  docker_up && return
+  if [ "$(uname)" = "Darwin" ] && [ -d /Applications/Docker.app ]; then
+    c "starting Docker Desktop"
+    open -a Docker
+    for _ in $(seq 1 90); do docker_up && { ok "Docker up"; return; }; sleep 2; done
+  fi
+  err "Docker is not running (and could not be started) — kamigaze needs it for Postgres"
+  exit 1
+}
+
 indexer_up() {
   [ -d "$KAMIGAZE" ] || { err "kamigaze repo not found at $KAMIGAZE"; exit 1; }
-  docker_up || { err "Docker is not running — kamigaze needs it for Postgres"; exit 1; }
+  ensure_docker
   anvil_up && world_up || { err "anvil/world not up — run start first"; exit 1; }
 
   # 1. postgres
@@ -139,12 +157,21 @@ indexer_up() {
     c "deploying kamigaze db schema (one-time)"
     (
       cd "$KAMIGAZE"
-      if [ ! -d sql/deployment/venv ]; then
-        python3 -m venv sql/deployment/venv
-        ./sql/deployment/venv/bin/pip install -q -r sql/deployment/requirements.txt
-      fi
+      # venvs hardcode their creation path — recreate if missing OR broken
+      # (e.g. stale shebangs after the repo moved). probe pip, not python3:
+      # the python3 symlink survives a move but script shebangs don't.
+      # pin to an older interpreter when available — psycopg2-binary has no
+      # wheels yet for bleeding-edge pythons (e.g. 3.14)
+      local py=python3
+      for v in 3.12 3.11 3.10; do command -v "python$v" >/dev/null && { py="python$v"; break; }; done
+      ./sql/deployment/venv/bin/pip --version >/dev/null 2>&1 \
+        || { rm -rf sql/deployment/venv; "$py" -m venv sql/deployment/venv; }
+      ./sql/deployment/venv/bin/pip install -q -r sql/deployment/requirements.txt
       # shellcheck disable=SC1091
-      source sql/deployment/venv/bin/activate && python3 sql/deployment/deploy.py local dev 127.0.0.1
+      # deploy.py confirms interactively; finite printf (not `yes`) since
+      # pipefail would turn yes's SIGPIPE into a failure
+      source sql/deployment/venv/bin/activate \
+        && printf 'y\ny\ny\n' | python3 sql/deployment/deploy.py local dev 127.0.0.1
     ) >> "$LOGS/indexer.log" 2>&1 \
       && { touch "$STATE/kamigaze-schema.done"; ok "schema deployed"; } \
       || { err "schema deploy failed — see $LOGS/indexer.log (README one-time steps may be needed)"; exit 1; }
@@ -158,14 +185,27 @@ indexer_up() {
     return
   fi
   c "starting kamigaze indexer against $(world_addr)"
-  local block; block="$(meta_get block || echo 0)"
+  local start; start="$(meta_get start || echo 0)"
+  local emitter; emitter="$(cast call "$(world_addr)" '_emitter()(address)' --rpc-url "$RPC")"
+  # INDEXER_OVERRIDE=true forces reprocessing from the start block, ignoring
+  # the db's last-seen block (one-shot repair after a bad starting block)
+  local logmark; logmark="$(wc -l < "$LOGS/indexer.log" 2>/dev/null || echo 0)"
   (
     cd "$KAMIGAZE" \
-      && DB_HOST=127.0.0.1 RPC_WS_PROVIDER="ws://127.0.0.1:8545" \
+      && DB_HOST=127.0.0.1 EMITTER_ADDRESS="$emitter" \
+         RPC_HTTP_PROVIDER="http://127.0.0.1:8545" RPC_WS_PROVIDER="ws://127.0.0.1:8545" \
          go run ./cmd/indexer/main.go -mode local \
-           -world-addresses "$(world_addr)" -starting-block "${block:-0}"
+           -world-addresses "$(world_addr)" -emitter-addresses "$emitter" \
+           -starting-block "${start:-0}" \
+           -override-db-block "${INDEXER_OVERRIDE:-false}"
   ) >> "$LOGS/indexer.log" 2>&1 &
   save_pid indexer $!
+  # `go run` compiles first, so wait for the app to actually boot before judging
+  for _ in $(seq 1 45); do
+    indexer_pid_alive || break
+    tail -n +"$((logmark + 1))" "$LOGS/indexer.log" | grep -q 'Configuration loaded' && break
+    sleep 2
+  done
   sleep 3
   indexer_pid_alive || { err "indexer exited — tail of $LOGS/indexer.log:"; tail -10 "$LOGS/indexer.log" >&2; exit 1; }
   ok "indexer up (pid $(cat "$PIDS/indexer.pid"), log $LOGS/indexer.log)"
@@ -196,10 +236,10 @@ cmd_start() {
     deploy_world "$redeploy"
   fi
   start_client
-  local block; block="$(meta_get block || echo 0)"
+  local start; start="$(meta_get start || echo 0)"
   echo
   c "stack is up:"
-  echo "  ${BOLD}$CLIENT_URL/?worldAddress=$(world_addr)&initialBlockNumber=${block:-0}${RESET}"
+  echo "  ${BOLD}$CLIENT_URL/?worldAddress=$(world_addr)&initialBlockNumber=${start:-0}${RESET}"
 }
 
 cmd_stop() {
