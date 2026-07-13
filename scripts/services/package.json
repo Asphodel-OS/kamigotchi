@@ -2,13 +2,17 @@
   "name": "services",
   "version": "1.0.0",
   "private": true,
-  "description": "Local Kamigotchi stack orchestration: anvil + world deploy + client",
+  "description": "Local Kamigotchi stack orchestration: anvil + world deploy + client (+ snapshots, kamigaze indexer)",
   "scripts": {
     "start": "bash stack.sh start",
     "start:fresh": "bash stack.sh start --redeploy",
     "stop": "bash stack.sh stop",
     "status": "bash stack.sh status",
     "smoke": "bash stack.sh smoke",
+    "snapshot": "bash stack.sh snapshot save",
+    "snapshot:clear": "bash stack.sh snapshot clear",
+    "indexer": "bash stack.sh indexer up",
+    "indexer:down": "bash stack.sh indexer down",
     "logs": "bash stack.sh logs"
   }
 }

@@ -8,11 +8,14 @@
 DEV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_DIR="$(cd "$DEV_DIR/.." && pwd)"
 KAMIGOTCHI="$(cd "$SCRIPTS_DIR/.." && pwd)"
+KAMIGAZE="$(cd "$KAMIGOTCHI/.." && pwd)/kamigaze"
 CONTRACTS="$KAMIGOTCHI/packages/contracts"
 CLIENT="$KAMIGOTCHI/packages/client"
 STATE="$KAMIGOTCHI/.local-stack"
 LOGS="$STATE/logs"
 PIDS="$STATE/pids"
+SNAP="$STATE/anvil-state.json.gz"
+SNAP_META="$STATE/snapshot.meta"
 mkdir -p "$LOGS" "$PIDS"
 
 RPC="${RPC:-http://127.0.0.1:8545}"
@@ -40,6 +43,11 @@ world_addr() { (. "$CONTRACTS/.env.puter" && printf '%s' "$WORLD"); }
 anvil_up()   { cast block-number --rpc-url "$RPC" >/dev/null 2>&1; }
 client_up()  { curl -sf -o /dev/null "$CLIENT_URL" 2>/dev/null; }
 world_up()   { [ "$(cast code "$(world_addr)" --rpc-url "$RPC" 2>/dev/null)" != "0x" ]; }
+docker_up()  { docker info >/dev/null 2>&1; }
+kamigaze_db_up() { docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^kamigaze_db$'; }
+
+# snapshot.meta stores "world=<addr> block=<n> saved=<date>"
+meta_get() { grep -oE "$1=[^ ]+" "$SNAP_META" 2>/dev/null | cut -d= -f2; }
 
 # record/reap background service pids ($1 = service name)
 save_pid()  { echo "$2" > "$PIDS/$1.pid"; }
