@@ -49,7 +49,7 @@ export const getLocalConfig = (provider?: BrowserProvider): NetworkConfig => {
   const params = new URLSearchParams(window.location.search);
   let config: NetworkConfig = <NetworkConfig>{
     devMode: true,
-    chainId: 1337,
+    chainId: 31337,
     jsonRpc: 'http://localhost:8545',
     wsRpc: 'ws://localhost:8545',
     worldAddress: params.get('worldAddress') ?? '0xceeDaE2390570eD717A8c07f462D59234b12D39d',
