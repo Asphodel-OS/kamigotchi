@@ -154,10 +154,12 @@ indexer_up() {
   else
     c "starting kamigaze Postgres"
     ( cd "$KAMIGAZE" && make start-db ) > "$LOGS/indexer.log" 2>&1
+    # require a real query, not just pg_isready — on a fresh data dir postgres
+    # initdb's then restarts, and pg_isready passes during the transient window
     for _ in $(seq 1 30); do
-      docker exec kamigaze_db pg_isready -q 2>/dev/null && break; sleep 1
+      docker exec kamigaze_db psql -U kami -d dev -qc 'select 1' >/dev/null 2>&1 && break; sleep 1
     done
-    docker exec kamigaze_db pg_isready -q 2>/dev/null \
+    docker exec kamigaze_db psql -U kami -d dev -qc 'select 1' >/dev/null 2>&1 \
       || { err "kamigaze_db not ready — see $LOGS/indexer.log"; exit 1; }
     ok "kamigaze_db up"
   fi
