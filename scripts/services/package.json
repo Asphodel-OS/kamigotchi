@@ -1,0 +1,14 @@
+{
+  "name": "services",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local Kamigotchi stack orchestration: anvil + world deploy + client",
+  "scripts": {
+    "start": "bash stack.sh start",
+    "start:fresh": "bash stack.sh start --redeploy",
+    "stop": "bash stack.sh stop",
+    "status": "bash stack.sh status",
+    "smoke": "bash stack.sh smoke",
+    "logs": "bash stack.sh logs"
+  }
+}
