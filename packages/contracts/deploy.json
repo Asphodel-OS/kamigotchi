@@ -136,6 +136,10 @@
       "writeAccess": ["EntityType", "IndexNPC", "IndexRoom", "Name"]
     },
     {
+      "name": "_PoolRegistrySystem",
+      "writeAccess": ["*"]
+    },
+    {
       "name": "_QuestRegistrySystem",
       "writeAccess": ["*"]
     },
@@ -377,6 +381,19 @@
         "TimeLast",
         "Type",
         "Value"
+      ]
+    },
+    {
+      "name": "PoolSystem",
+      "writeAccess": [
+        "EntityType",
+        "IdHolder",
+        "IDOwnsInventory",
+        "IDType",
+        "IndexItem",
+        "TimeLast",
+        "Value",
+        "Values"
       ]
     },
     {
@@ -1073,6 +1090,7 @@
     "LibKill",
     "LibListing",
     "LibNode",
+    "LibPool",
     "LibNPC",
     "LibKami",
     "LibKami721",

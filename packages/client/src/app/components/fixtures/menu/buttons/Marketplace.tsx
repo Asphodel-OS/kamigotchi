@@ -25,6 +25,11 @@ export const TradingMenuButton = () => {
           image: ItemImages.obol,
           onClick: () => setModals({ ...modals, lootBox: !modals.lootBox }),
         },
+        {
+          text: 'Item Pools',
+          image: ItemImages.musu,
+          onClick: () => setModals({ ...modals, pool: !modals.pool }),
+        },
       ]}
       scale={4.5}
       scaleOrientation='vh'

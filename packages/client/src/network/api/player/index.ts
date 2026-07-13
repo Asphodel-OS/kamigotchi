@@ -10,6 +10,7 @@ import { goalsAPI } from './goals';
 import { kamisAPI } from './kamis';
 import { newbieVendorAPI } from './newbieVendor';
 import { npcsAPI } from './npcs';
+import { poolsAPI } from './pools';
 import { portalAPI } from './portal';
 
 export type PlayerAPI = ReturnType<typeof createPlayerAPI>;
@@ -41,6 +42,7 @@ export function createPlayerAPI(txQueue: TxQueue) {
     gacha: gachaAPI(systems),
     npc: npcsAPI(systems),
     pet: kamisAPI(systems),
+    pool: poolsAPI(systems),
     newbieVendor: newbieVendorAPI(systems),
 
     // TODO: consider how to reorganize the below
