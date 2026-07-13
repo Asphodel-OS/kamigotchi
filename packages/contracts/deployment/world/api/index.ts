@@ -438,7 +438,7 @@ export function createAdminAPI(compiledCalls: string[]) {
   }
 
   ////////////////
-  // SETUP (puter)
+  // SETUP (local)
 
   function initAccounts() {
     const callData = generateCallData('system.local.setup', [], 'initAccounts');

@@ -9,7 +9,7 @@ export const createConfig = (provider?: BrowserProvider): SetupContractConfig | 
 
   // resolve the network config based on the environment mode
   let mode = import.meta.env.MODE;
-  if (mode === 'puter') config = getLocalConfig(provider);
+  if (mode === 'development') config = getLocalConfig(provider);
   else config = getConfig(provider);
 
   if (
