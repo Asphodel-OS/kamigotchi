@@ -1,5 +1,5 @@
 import { addRpcUrlOverrideToChain } from '@privy-io/react-auth';
-import { Chain, localhost } from '@wagmi/core/chains';
+import { Chain, foundry } from '@wagmi/core/chains';
 
 // chain configuration for mainnet (prod and test world)
 const YominetRaw = {
@@ -25,7 +25,7 @@ const YominetRaw = {
 const yominet = addRpcUrlOverrideToChain(YominetRaw, import.meta.env.VITE_RPC_TRANSPORT_URL);
 
 export const chainConfigs: Map<string, Chain> = new Map();
-chainConfigs.set('development', localhost);
+chainConfigs.set('development', foundry); // anvil's chain id (31337); wagmi's `localhost` is 1337
 chainConfigs.set('testing', yominet);
 chainConfigs.set('staging', yominet);
 chainConfigs.set('production', yominet);
